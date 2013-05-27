@@ -1,0 +1,30 @@
+<resources>
+
+    <item name="menu_shows_upcoming" type="id" />
+    <item name="menu_shows_watched" type="id" />
+    <item name="menu_shows_collection" type="id" />
+    <item name="menu_shows_watchlist" type="id" />
+    <item name="menu_shows_ratings" type="id" />
+    <item name="menu_shows_charts" type="id" />
+
+    <item name="menu_episodes_watchlist" type="id" />
+
+    <item name="menu_movies_library" type="id" />
+    <item name="menu_movies_watchlist" type="id" />
+    <item name="menu_movies_ratings" type="id" />
+    <item name="menu_movies_charts" type="id" />
+
+    <item name="action_watched" type="id" />
+    <item name="action_unwatched" type="id" />
+    <item name="action_refresh" type="id" />
+    <item name="action_collection_add" type="id" />
+    <item name="action_collection_remove" type="id" />
+    <item name="action_watchlist_add" type="id" />
+    <item name="action_watchlist_remove" type="id" />
+
+    <item name="front" type="id" />
+    <item name="back" type="id" />
+    <item name="leftSwipe" type="id" />
+    <item name="rightSwipe" type="id" />
+
+</resources>

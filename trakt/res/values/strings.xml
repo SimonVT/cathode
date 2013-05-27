@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="email">E-mail</string>
+    <string name="login">Login</string>
+
+    <string name="watched">Watched</string>
+
+    <string name="airdate_unknown">Unknown airdate</string>
+
+    <string name="title_shows_watched">Watched shows</string>
+    <string name="title_shows_upcoming">Upcoming shows</string>
+    <string name="title_shows_collection">Show collection</string>
+    <string name="title_shows_watchlist">Show watchlist</string>
+
+    <string name="action_refresh">Refresh</string>
+    <string name="action_sort_by">Sort by</string>
+    <string name="action_watched">Watched</string>
+    <string name="action_watched_next">Watched next</string>
+    <string name="action_unwatched">Unwatched</string>
+    <string name="action_collection_add">Add to collection</string>
+    <string name="action_collection_add_all">Add all episodes</string>
+    <string name="action_collection_remove">Remove from collection</string>
+    <string name="action_watchlist_add">Add to watchlist</string>
+    <string name="action_watchlist_remove">Remove from watchlist</string>
+    <string name="action_add_show">Add show</string>
+    <string name="action_search">Search</string>
+
+    <string name="checkmark_watched">Watched</string>
+    <string name="checkmark_collection">In collection</string>
+    <string name="checkmark_watchlist">In watchlist</string>
+
+    <string name="full_sync_warning">Performing a complete sync with Trakt, this might take a while..</string>
+
+    <!-- Login fragment -->
+    <string name="login_sign_in">Sign in to Trakt</string>
+    <string name="login_create_new">Check to create a Trakt account</string>
+    <string name="login_verify_fail">Unable to verify login with Trakt</string>
+    <string name="create_user_failed">Creating user failed</string>
+    <string name="wrong_password">Wrong username or password</string>
+    <string name="login_success">Successfully logged in</string>
+
+    <!-- Navigation fragment -->
+    <string name="navigation_title_shows">Shows</string>
+    <string name="navigation_shows_upcoming">Upcoming</string>
+    <string name="navigation_shows_watched">Watched</string>
+    <string name="navigation_shows_collection">Collection</string>
+    <string name="navigation_shows_watchlist">Show watchlist</string>
+    <string name="navigation_episodes_watchlist">Episode watchlist</string>
+    <string name="navigation_shows_ratings">Ratings</string>
+    <string name="navigation_shows_charts">Charts</string>
+    <string name="navigation_title_movies">Movies</string>
+    <string name="navigation_movies_library">Library</string>
+    <string name="navigation_movies_watchlist">Watchlist</string>
+    <string name="navigation_movies_ratings">Ratings</string>
+    <string name="navigation_movies_charts">Charts</string>
+
+    <string name="episode_x">Episode %d</string>
+    <plurals name="x_unwatched">
+        <item quantity="zero">All episodes watched</item>
+        <item quantity="other">%d unwatched episodes</item>
+    </plurals>
+    <plurals name="x_uncollected">
+        <item quantity="zero">All episodes collected</item>
+        <item quantity="other">%d episodes not collected</item>
+    </plurals>
+    <string name="x_unaired">%d unaired</string>
+
+    <plurals name="season_x">
+        <item quantity="zero">Special</item>
+        <item quantity="other">Season %d</item>
+    </plurals>
+
+</resources>

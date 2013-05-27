@@ -1,0 +1,64 @@
+<resources>
+
+    <style name="Widget" parent="android:Widget.Holo" />
+
+    <style name="Widget.InfoTitle">
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:padding">8dp</item>
+    </style>
+
+    <style name="Widget.InfoText">
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:fontFamily">sans-light</item>
+        <item name="android:textColor">#FF777777</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
+
+    <style name="Widget.CheckMark">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:drawablePadding">4dp</item>
+    </style>
+
+    <style name="Menu" />
+
+    <style name="Menu.Drawer" parent="Widget.MenuDrawer">
+        <item name="mdMenuBackground">@color/drawerBackground</item>
+        <!--item name="mdContentBackground">@color/contentBackground</item-->
+        <item name="mdActiveIndicator">@drawable/menu_arrow</item>
+    </style>
+
+    <style name="Menu.Category">
+        <item name="android:textColor">?android:attr/textColorSecondaryInverse</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:background">@drawable/list_section_divider_holo_dark</item>
+
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">16dp</item>
+
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="Menu.Item">
+        <!--item name="android:background">?android:attr/listSelector</item-->
+        <item name="android:textAppearance">?android:attr/textAppearance</item>
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:minHeight">?android:attr/listPreferredItemHeightSmall</item>
+        <item name="android:paddingLeft">32dp</item>
+        <item name="android:paddingRight">32dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:drawablePadding">16dp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+</resources>

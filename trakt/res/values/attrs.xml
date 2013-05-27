@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="RemoteImageView">
+        <attr name="dominantMeasurement" format="enum">
+            <enum name="height" value="0" />
+            <enum name="width" value="1" />
+        </attr>
+
+        <attr name="aspectRatio" format="float" />
+
+        <attr name="placeholder" format="reference" />
+    </declare-styleable>
+
+</resources>
