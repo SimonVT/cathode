@@ -4,21 +4,6 @@ import java.util.List;
 
 public class UpdatedShows {
 
-    public static class Timestamp {
-
-        private Long start;
-
-        private Long current;
-
-        public Long getStart() {
-            return start;
-        }
-
-        public Long getCurrent() {
-            return current;
-        }
-    }
-
     public static class ShowTimestamp {
 
         private Long lastUpdated;
