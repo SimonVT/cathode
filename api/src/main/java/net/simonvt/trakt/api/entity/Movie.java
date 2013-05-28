@@ -4,6 +4,33 @@ import java.util.List;
 
 public class Movie {
 
+    public static class People {
+
+        private List<Person> directors;
+
+        private List<Person> writers;
+
+        private List<Person> producers;
+
+        private List<Person> actors;
+
+        public List<Person> getDirectors() {
+            return directors;
+        }
+
+        public List<Person> getWriters() {
+            return writers;
+        }
+
+        public List<Person> getProducers() {
+            return producers;
+        }
+
+        public List<Person> getActors() {
+            return actors;
+        }
+    }
+
     private String title;
 
     private Integer year;
@@ -34,13 +61,13 @@ public class Movie {
 
     private Images images;
 
-    // TODO: private List<UserProfile> topWatchers;
+    private List<UserProfile> topWatchers;
 
     private Ratings ratings;
 
     private Stats stats;
 
-    // TODO: private List<Person> people;
+    private People people;
 
     private List<String> genres;
 
@@ -55,4 +82,108 @@ public class Movie {
     private Boolean inWatchlist;
 
     private Boolean inCollection;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public Long getReleased() {
+        return released;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getTrailer() {
+        return trailer;
+    }
+
+    public Integer getRuntime() {
+        return runtime;
+    }
+
+    public String getTagline() {
+        return tagline;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public String getCertification() {
+        return certification;
+    }
+
+    public String getImdbId() {
+        return imdbId;
+    }
+
+    public Long getTmdbId() {
+        return tmdbId;
+    }
+
+    public Long getRtId() {
+        return rtId;
+    }
+
+    public long getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public String getPoster() {
+        return poster;
+    }
+
+    public Images getImages() {
+        return images;
+    }
+
+    public List<UserProfile> getTopWatchers() {
+        return topWatchers;
+    }
+
+    public Ratings getRatings() {
+        return ratings;
+    }
+
+    public Stats getStats() {
+        return stats;
+    }
+
+    public People getPeople() {
+        return people;
+    }
+
+    public List<String> getGenres() {
+        return genres;
+    }
+
+    public Boolean getWatched() {
+        return watched;
+    }
+
+    public Integer getPlays() {
+        return plays;
+    }
+
+    public Boolean getRating() {
+        return rating;
+    }
+
+    public Integer getRatingAdvanced() {
+        return ratingAdvanced;
+    }
+
+    public Boolean getInWatchlist() {
+        return inWatchlist;
+    }
+
+    public Boolean getInCollection() {
+        return inCollection;
+    }
 }
