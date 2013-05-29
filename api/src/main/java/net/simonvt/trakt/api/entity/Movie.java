@@ -73,6 +73,8 @@ public class Movie {
 
     private Boolean watched;
 
+    private Boolean unseen;
+
     private Integer plays;
 
     private Boolean rating;
@@ -163,8 +165,14 @@ public class Movie {
         return genres;
     }
 
-    public Boolean getWatched() {
-        return watched;
+    public Boolean isWatched() {
+        if (watched != null) {
+            return watched;
+        } else if (unseen != null) {
+            return !unseen;
+        }
+
+        return null;
     }
 
     public Integer getPlays() {
@@ -179,11 +187,11 @@ public class Movie {
         return ratingAdvanced;
     }
 
-    public Boolean getInWatchlist() {
+    public Boolean isInWatchlist() {
         return inWatchlist;
     }
 
-    public Boolean getInCollection() {
+    public Boolean isInCollection() {
         return inCollection;
     }
 }

@@ -213,15 +213,33 @@ public final class MovieWrapper {
 
         // TODO: Top watchers
 
-        if (movie.getWatched() != null) cv.put(Movies.WATCHED, movie.getWatched());
+        if (movie.isWatched() != null) cv.put(Movies.WATCHED, movie.isWatched());
 
         cv.put(Movies.PLAYS, movie.getPlays());
 
         // TODO: rating
         // TODO: ratingAdvanced
-        cv.put(Movies.IN_WATCHLIST, movie.getInWatchlist());
-        cv.put(Movies.IN_COLLECTION, movie.getInCollection());
+        cv.put(Movies.IN_WATCHLIST, movie.isInWatchlist());
+        cv.put(Movies.IN_COLLECTION, movie.isInCollection());
 
         return cv;
+    }
+
+    public static void setIsWatched(ContentResolver resolver, long movieId, boolean isWatched) {
+        ContentValues cv = new ContentValues();
+        cv.put(Movies.WATCHED, isWatched);
+        resolver.update(Movies.buildMovieUri(movieId), cv, null, null);
+    }
+
+    public static void setIsInCollection(ContentResolver resolver, long movieId, boolean inCollection) {
+        ContentValues cv = new ContentValues();
+        cv.put(Movies.IN_COLLECTION, inCollection);
+        resolver.update(Movies.buildMovieUri(movieId), cv, null, null);
+    }
+
+    public static void setIsInWatchlist(ContentResolver resolver, long movieId, boolean inWatchlist) {
+        ContentValues cv = new ContentValues();
+        cv.put(Movies.IN_WATCHLIST, inWatchlist);
+        resolver.update(Movies.buildMovieUri(movieId), cv, null, null);
     }
 }

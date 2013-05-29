@@ -34,8 +34,12 @@ public class SyncMoviesTask extends TraktTask {
             List<Movie> movies = mUserService.moviesAll(DetailLevel.MIN);
             for (Movie movie : movies) {
                 final Long tmdbId = movie.getTmdbId();
-                if (!MovieWrapper.exists(mService.getContentResolver(), tmdbId)) {
+                final long movieId = MovieWrapper.getMovieId(mService.getContentResolver(), tmdbId);
+                if (movieId == -1) {
                     queueTask(new SyncMovieTask(tmdbId));
+                } else {
+                    MovieWrapper.setIsInCollection(mService.getContentResolver(), movieId, movie.isInCollection());
+                    MovieWrapper.setIsWatched(mService.getContentResolver(), movieId, movie.isWatched());
                 }
             }
 
@@ -60,6 +64,8 @@ public class SyncMoviesTask extends TraktTask {
             settings.edit()
                     .putLong(Settings.SHOWS_LAST_UPDATED, updatedMovies.getTimestamps().getCurrent())
                     .apply();
+
+            queueTask(new SyncMoviesWatchlistTask());
 
             postOnSuccess();
 

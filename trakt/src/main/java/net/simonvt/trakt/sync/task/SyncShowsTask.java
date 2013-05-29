@@ -65,6 +65,7 @@ public class SyncShowsTask extends TraktTask {
             queueTask(new SyncWatchedStatusTask());
             queueTask(new SyncEpisodeWatchlist());
             queueTask(new SyncShowsWatchlistTask());
+            queueTask(new SyncShowsCollectionTask());
 
             postOnSuccess();
 
