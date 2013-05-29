@@ -2,6 +2,9 @@ package net.simonvt.trakt.ui.fragment;
 
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
+import net.simonvt.trakt.sync.PriorityTraktTaskQueue;
+import net.simonvt.trakt.sync.TraktTaskQueue;
+import net.simonvt.trakt.sync.task.SyncTask;
 import net.simonvt.trakt.ui.MoviesNavigationListener;
 import net.simonvt.trakt.ui.adapter.MoviesAdapter;
 
@@ -11,12 +14,21 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
+import javax.inject.Inject;
+
 public abstract class MoviesFragment extends AbsAdapterFragment<MoviesAdapter>
         implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    @Inject TraktTaskQueue mQueue;
+
+    @Inject PriorityTraktTaskQueue mPriorityQueue;
 
     private MoviesNavigationListener mNavigationListener;
 
@@ -48,6 +60,23 @@ public abstract class MoviesFragment extends AbsAdapterFragment<MoviesAdapter>
     public void onDestroy() {
         getLoaderManager().destroyLoader(getLoaderId());
         super.onDestroy();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_movies, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_refresh:
+                mQueue.add(new SyncTask());
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
