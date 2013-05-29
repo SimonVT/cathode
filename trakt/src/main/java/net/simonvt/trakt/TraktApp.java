@@ -25,7 +25,6 @@ import net.simonvt.trakt.sync.TraktTaskSerializer;
 import net.simonvt.trakt.sync.TraktTaskService;
 import net.simonvt.trakt.sync.task.EpisodeCollectionTask;
 import net.simonvt.trakt.sync.task.EpisodeWatchedTask;
-import net.simonvt.trakt.sync.task.SyncTask;
 import net.simonvt.trakt.sync.task.SyncEpisodeTask;
 import net.simonvt.trakt.sync.task.SyncEpisodeWatchlist;
 import net.simonvt.trakt.sync.task.SyncMovieTask;
@@ -35,24 +34,29 @@ import net.simonvt.trakt.sync.task.SyncShowTask;
 import net.simonvt.trakt.sync.task.SyncShowsCollectionTask;
 import net.simonvt.trakt.sync.task.SyncShowsTask;
 import net.simonvt.trakt.sync.task.SyncShowsWatchlistTask;
+import net.simonvt.trakt.sync.task.SyncTask;
 import net.simonvt.trakt.sync.task.SyncWatchedStatusTask;
 import net.simonvt.trakt.sync.task.TraktTask;
 import net.simonvt.trakt.sync.task.UpdateSeasonCountTask;
 import net.simonvt.trakt.sync.task.UpdateShowCountTask;
 import net.simonvt.trakt.ui.HomeActivity;
 import net.simonvt.trakt.ui.adapter.EpisodeWatchlistAdapter;
+import net.simonvt.trakt.ui.adapter.MoviesAdapter;
 import net.simonvt.trakt.ui.adapter.SeasonsAdapter;
 import net.simonvt.trakt.ui.adapter.ShowsAdapter;
 import net.simonvt.trakt.ui.fragment.AddShowFragment;
 import net.simonvt.trakt.ui.fragment.EpisodeFragment;
 import net.simonvt.trakt.ui.fragment.EpisodesWatchlistFragment;
 import net.simonvt.trakt.ui.fragment.LoginFragment;
+import net.simonvt.trakt.ui.fragment.MovieCollectionFragment;
+import net.simonvt.trakt.ui.fragment.MovieWatchlistFragment;
 import net.simonvt.trakt.ui.fragment.SeasonFragment;
 import net.simonvt.trakt.ui.fragment.SeasonsFragment;
 import net.simonvt.trakt.ui.fragment.ShowInfoFragment;
 import net.simonvt.trakt.ui.fragment.ShowsCollectionFragment;
 import net.simonvt.trakt.ui.fragment.ShowsWatchlistFragment;
 import net.simonvt.trakt.ui.fragment.UpcomingShowsFragment;
+import net.simonvt.trakt.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.trakt.ui.fragment.WatchedShowsFragment;
 import net.simonvt.trakt.util.LogWrapper;
 import net.simonvt.trakt.util.ShowSearchHandler;
@@ -112,18 +116,22 @@ public class TraktApp extends Application {
                     EpisodeFragment.class,
                     EpisodesWatchlistFragment.class,
                     LoginFragment.class,
+                    MovieCollectionFragment.class,
+                    MovieWatchlistFragment.class,
                     SeasonFragment.class,
                     SeasonsFragment.class,
                     ShowInfoFragment.class,
                     ShowsCollectionFragment.class,
                     ShowsWatchlistFragment.class,
                     UpcomingShowsFragment.class,
+                    WatchedMoviesFragment.class,
                     WatchedShowsFragment.class,
 
                     // ListAdapters
                     EpisodeWatchlistAdapter.class,
                     SeasonsAdapter.class,
                     ShowsAdapter.class,
+                    MoviesAdapter.class,
 
                     // Views
                     PhoneEpisodeView.class,

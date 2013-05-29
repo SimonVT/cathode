@@ -37,9 +37,11 @@ public class NavigationFragment extends AbsAdapterFragment {
         mMenuItems.add(new MenuItem(R.id.menu_episodes_watchlist, R.string.navigation_episodes_watchlist, 0));
         // mMenuItems.add(new MenuItem(R.id.menu_shows_ratings, R.string.navigation_shows_ratings, 0));
         // mMenuItems.add(new MenuItem(R.id.menu_shows_charts, R.string.navigation_shows_charts, 0));
-        // mMenuItems.add(new NavigationItem(R.string.navigation_title_movies));
-        // mMenuItems.add(new MenuItem(R.id.menu_movies_library, R.string.navigation_movies_library, 0));
-        // mMenuItems.add(new MenuItem(R.id.menu_movies_watchlist, R.string.navigation_movies_watchlist, 0));
+
+        mMenuItems.add(new NavigationItem(R.string.navigation_title_movies));
+        mMenuItems.add(new MenuItem(R.id.menu_movies_watched, R.string.navigation_movies_watched, 0));
+        mMenuItems.add(new MenuItem(R.id.menu_movies_collection, R.string.navigation_movies_collection, 0));
+        mMenuItems.add(new MenuItem(R.id.menu_movies_watchlist, R.string.navigation_movies_watchlist, 0));
         // mMenuItems.add(new MenuItem(R.id.menu_movies_ratings, R.string.navigation_movies_ratings, 0));
         // mMenuItems.add(new MenuItem(R.id.menu_movies_charts, R.string.navigation_movies_charts, 0));
     }

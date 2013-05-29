@@ -52,7 +52,8 @@
     <string name="navigation_shows_ratings">Ratings</string>
     <string name="navigation_shows_charts">Charts</string>
     <string name="navigation_title_movies">Movies</string>
-    <string name="navigation_movies_library">Library</string>
+    <string name="navigation_movies_watched">Watched</string>
+    <string name="navigation_movies_collection">Collection</string>
     <string name="navigation_movies_watchlist">Watchlist</string>
     <string name="navigation_movies_ratings">Ratings</string>
     <string name="navigation_movies_charts">Charts</string>

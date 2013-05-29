@@ -9,7 +9,8 @@
 
     <item name="menu_episodes_watchlist" type="id" />
 
-    <item name="menu_movies_library" type="id" />
+    <item name="menu_movies_watched" type="id" />
+    <item name="menu_movies_collection" type="id" />
     <item name="menu_movies_watchlist" type="id" />
     <item name="menu_movies_ratings" type="id" />
     <item name="menu_movies_charts" type="id" />

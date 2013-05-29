@@ -18,6 +18,8 @@ import net.simonvt.trakt.ui.fragment.BaseFragment;
 import net.simonvt.trakt.ui.fragment.EpisodeFragment;
 import net.simonvt.trakt.ui.fragment.EpisodesWatchlistFragment;
 import net.simonvt.trakt.ui.fragment.LoginFragment;
+import net.simonvt.trakt.ui.fragment.MovieCollectionFragment;
+import net.simonvt.trakt.ui.fragment.MovieWatchlistFragment;
 import net.simonvt.trakt.ui.fragment.NavigationFragment;
 import net.simonvt.trakt.ui.fragment.SeasonFragment;
 import net.simonvt.trakt.ui.fragment.SeasonsFragment;
@@ -25,6 +27,7 @@ import net.simonvt.trakt.ui.fragment.ShowInfoFragment;
 import net.simonvt.trakt.ui.fragment.ShowsCollectionFragment;
 import net.simonvt.trakt.ui.fragment.ShowsWatchlistFragment;
 import net.simonvt.trakt.ui.fragment.UpcomingShowsFragment;
+import net.simonvt.trakt.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.trakt.ui.fragment.WatchedShowsFragment;
 import net.simonvt.trakt.util.DateUtils;
 import net.simonvt.trakt.util.FragmentStack;
@@ -39,7 +42,7 @@ import android.view.View;
 import javax.inject.Inject;
 
 public class HomeActivity extends BaseActivity
-        implements NavigationFragment.OnMenuClickListener, ShowsNavigationListener {
+        implements NavigationFragment.OnMenuClickListener, ShowsNavigationListener, MoviesNavigationListener {
 
     private static final String TAG = "HomeActivity";
 
@@ -59,6 +62,9 @@ public class HomeActivity extends BaseActivity
     private static final String FRAGMENT_EPISODES_WATCHLIST =
             "net.simonvt.trakt.ui.HomeActivity.episodesWatchlistFragment";
     private static final String FRAGMENT_ADD_SHOW = "net.simonvt.trakt.ui.HomeActivity.addShowFragment";
+    private static final String FRAGMENT_MOVIES_WATCHED = "net.simonvt.trakt.ui.HomeActivity.moviesWatched";
+    private static final String FRAGMENT_MOVIES_COLLECTION = "net.simonvt.trakt.ui.HomeActivity.moviesCollection";
+    private static final String FRAGMENT_MOVIES_WATCHLIST = "net.simonvt.trakt.ui.HomeActivity.moviesWatchlist";
 
     @Inject TraktTaskQueue mQueue;
 
@@ -259,12 +265,29 @@ public class HomeActivity extends BaseActivity
                 mNavTitle = "Episodes watchlist";
                 break;
 
-            case R.id.menu_shows_ratings:
-            case R.id.menu_shows_charts:
-            case R.id.menu_movies_library:
+            // case R.id.menu_shows_ratings:
+            // case R.id.menu_shows_charts:
+
+            case R.id.menu_movies_watched:
+                WatchedMoviesFragment watchedMoviesFragment = new WatchedMoviesFragment();
+                mStack.setTopFragment(watchedMoviesFragment, FRAGMENT_MOVIES_WATCHED);
+                mNavTitle = "Watched movies";
+                break;
+
+            case R.id.menu_movies_collection:
+                MovieCollectionFragment movieCollectionFragment = new MovieCollectionFragment();
+                mStack.setTopFragment(movieCollectionFragment, FRAGMENT_MOVIES_COLLECTION);
+                mNavTitle = "Movie collection";
+                break;
+
             case R.id.menu_movies_watchlist:
-            case R.id.menu_movies_ratings:
-            case R.id.menu_movies_charts:
+                MovieWatchlistFragment movieWatchlistFragment = new MovieWatchlistFragment();
+                mStack.setTopFragment(movieWatchlistFragment, FRAGMENT_MOVIES_WATCHLIST);
+                mNavTitle = "Movie watchlist";
+                break;
+
+            // case R.id.menu_movies_ratings:
+            // case R.id.menu_movies_charts:
         }
 
         mMenuDrawer.closeMenu();
@@ -296,7 +319,7 @@ public class HomeActivity extends BaseActivity
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // Show navigation callbacks
+    // Navigation callbacks
     ///////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -332,5 +355,9 @@ public class HomeActivity extends BaseActivity
         AddShowFragment fragment = AddShowFragment.newInstance(query);
         mStack.addFragment(fragment, FRAGMENT_ADD_SHOW);
         mStack.commit();
+    }
+
+    @Override
+    public void onDisplayMovie(long movieId) {
     }
 }
