@@ -1,13 +1,13 @@
 package net.simonvt.trakt.provider;
 
 import net.simonvt.trakt.api.entity.Season;
+import net.simonvt.trakt.util.DateUtils;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.text.format.DateUtils;
 
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -127,7 +127,7 @@ public final class SeasonWrapper {
             final long firstAired = c.getLong(firstAiredIndex);
             if (c.getInt(watchedIndex) > 0) watchedCount++;
             // Unaired
-            if (firstAired > 1 * DateUtils.YEAR_IN_MILLIS / DateUtils.SECOND_IN_MILLIS) {
+            if (firstAired > 1 * DateUtils.YEAR_IN_SECONDS) {
                 airdateCount++;
                 if (firstAired <= currentTimeSeconds) {
                     airedCount++;

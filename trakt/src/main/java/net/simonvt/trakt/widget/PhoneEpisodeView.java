@@ -7,7 +7,7 @@ import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
 import net.simonvt.trakt.ui.LibraryType;
-import net.simonvt.trakt.util.UiUtils;
+import net.simonvt.trakt.util.DateUtils;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -152,7 +152,7 @@ public class PhoneEpisodeView extends AbsEpisodeView {
     protected void onDataBound() {
         mTitle.setText(mEpisodeTitle);
 
-        mFirstAired.setText(UiUtils.secondsToDate(getContext(), mEpisodeAired));
+        mFirstAired.setText(DateUtils.secondsToDate(getContext(), mEpisodeAired));
         mNumber.setText(String.valueOf(mEpisodeNumber));
 
         mScreen.setImage(mEpisodeScreenUrl);

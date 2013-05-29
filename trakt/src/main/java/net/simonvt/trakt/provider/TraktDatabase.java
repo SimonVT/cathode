@@ -18,12 +18,12 @@ import net.simonvt.trakt.provider.TraktContract.ShowTopWatchers;
 import net.simonvt.trakt.provider.TraktContract.TopEpisodeColumns;
 import net.simonvt.trakt.provider.TraktContract.TopWatcherColumns;
 import net.simonvt.trakt.provider.TraktContract.UserActivity;
+import net.simonvt.trakt.util.DateUtils;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
-import android.text.format.DateUtils;
 
 public class TraktDatabase extends SQLiteOpenHelper {
 
@@ -36,12 +36,12 @@ public class TraktDatabase extends SQLiteOpenHelper {
 
         String SHOWS_WITH_UNWATCHED = SHOWS + " LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
                 + " episodes WHERE episodes.watched=0 AND episodes.showId=shows._id AND episodes.season<>0"
-                + " AND episodes.episodeFirstAired>" + DateUtils.YEAR_IN_MILLIS / 1000 // TODO: Find better solution
+                + " AND episodes.episodeFirstAired>" + DateUtils.YEAR_IN_SECONDS // TODO: Find better solution
                 + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
 
         String SHOWS_WITH_UNCOLLECTED = SHOWS + " LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
                 + " episodes WHERE episodes.inCollection=0 AND episodes.showId=shows._id AND episodes.season<>0"
-                + " AND episodes.episodeFirstAired>" + DateUtils.YEAR_IN_MILLIS / 1000 // TODO: Find better solution
+                + " AND episodes.episodeFirstAired>" + DateUtils.YEAR_IN_SECONDS // TODO: Find better solution
                 + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
 
         String SHOW_TOP_WATCHERS = "showTopWatchers";
@@ -195,6 +195,7 @@ public class TraktDatabase extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + Tables.MOVIES + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + MovieColumns.TITLE + " TEXT NOT NULL,"
+                + MovieColumns.YEAR + " INTEGER,"
                 + MovieColumns.RELEASED + " INTEGER,"
                 + MovieColumns.URL + " TEXT,"
                 + MovieColumns.TRAILER + " TEXT,"
@@ -203,7 +204,12 @@ public class TraktDatabase extends SQLiteOpenHelper {
                 + MovieColumns.OVERVIEW + " TEXT,"
                 + MovieColumns.CERTIFICATION + " TEXT,"
                 + MovieColumns.IMDB_ID + " TEXT,"
-                + MovieColumns.TMDB_ID + " TEXT,"
+                + MovieColumns.TMDB_ID + " INTEGER,"
+                + MovieColumns.RT_ID + " INTEGER DEFAULT 0,"
+                + ImageColumns.POSTER + " TEXT,"
+                + ImageColumns.FANART + " TEXT,"
+                + ImageColumns.SCREEN + " TEXT,"
+                + ImageColumns.BANNER + " TEXT,"
                 + MovieColumns.RATING_PERCENTAGE + " INTEGER,"
                 + MovieColumns.RATING_VOTES + " INTEGER DEFAULT 0,"
                 + MovieColumns.RATING_LOVED + " INTEGER DEFAULT 0,"
@@ -212,6 +218,9 @@ public class TraktDatabase extends SQLiteOpenHelper {
                 + MovieColumns.PLAYS + " INTEGER DEFAULT 0,"
                 + MovieColumns.SCROBBLES + " INTEGER DEFAULT 0,"
                 + MovieColumns.CHECKINS + " INTEGER DEFAULT 0,"
+                + MovieColumns.LAST_UPDATED + " INTEGER DEFAULT 0,"
+                + MovieColumns.WATCHED + " INTEGER DEFAULT 0,"
+                + MovieColumns.IN_WATCHLIST + " INTEGER DEFAULT 0,"
                 + MovieColumns.IN_COLLECTION + " INTEGER DEFAULT 0)");
 
         db.execSQL("CREATE TABLE " + Tables.MOVIE_GENRES + " ("
@@ -238,24 +247,28 @@ public class TraktDatabase extends SQLiteOpenHelper {
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + MovieActors.MOVIE_ID + " INTEGER " + References.MOVIE_ID + ","
                 + ActorColumns.NAME + " TEXT NOT NULL,"
-                + ActorColumns.CHARACTER + " TEXT)");
+                + ActorColumns.CHARACTER + " TEXT,"
+                + ActorColumns.HEADSHOT + " TEXT)");
 
         db.execSQL("CREATE TABLE " + Tables.MOVIE_DIRECTORS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + MovieDirectors.MOVIE_ID + " INTEGER " + References.MOVIE_ID + ","
-                + MovieDirectors.NAME + " TEXT NOT NULL)");
+                + MovieDirectors.NAME + " TEXT NOT NULL,"
+                + MovieDirectors.HEADSHOT + " TEXT)");
 
         db.execSQL("CREATE TABLE " + Tables.MOVIE_WRITERS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + MovieWriters.MOVIE_ID + " INTEGER " + References.MOVIE_ID + ","
                 + MovieWriters.NAME + " TEXT NOT NULL,"
-                + MovieWriters.JOB + " TEXT)");
+                + MovieWriters.JOB + " TEXT,"
+                + MovieWriters.HEADSHOT + " TEXT)");
 
         db.execSQL("CREATE TABLE " + Tables.MOVIE_PRODUCERS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + MovieProducers.MOVIE_ID + " INTEGER " + References.MOVIE_ID + ","
                 + MovieProducers.NAME + " TEXT NOT NULL,"
-                + MovieProducers.EXECUTIVE + " INTEGER NOT NULL)");
+                + MovieProducers.EXECUTIVE + " INTEGER NOT NULL,"
+                + MovieProducers.HEADSHOT + " TEXT)");
 
         db.execSQL("CREATE TABLE " + Tables.USER_ACTIVITY + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"

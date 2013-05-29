@@ -107,16 +107,18 @@ public class TraktProvider extends ContentProvider {
 
         URI_MATCHER.addURI(AUTHORITY, TraktContract.PATH_MOVIES, MOVIES);
         URI_MATCHER.addURI(AUTHORITY, TraktContract.PATH_MOVIES + "/*", MOVIE_ID);
-        URI_MATCHER.addURI(AUTHORITY, TraktContract.PATH_GENRES + "/" + TraktContract.PATH_MOVIES + "/*", MOVIE_GENRES);
+        URI_MATCHER.addURI(AUTHORITY, TraktContract.PATH_GENRES + "/" + TraktContract.PATH_FROMMOVIE + "/*",
+                MOVIE_GENRES);
         URI_MATCHER.addURI(AUTHORITY,
                 TraktContract.PATH_TOPWATCHERS + "/" + TraktContract.PATH_MOVIES + "/*", MOVIE_TOP_WATCHERS);
-        URI_MATCHER.addURI(AUTHORITY, TraktContract.PATH_ACTORS + "/" + TraktContract.PATH_MOVIES + "/*", MOVIE_ACTORS);
+        URI_MATCHER.addURI(AUTHORITY, TraktContract.PATH_ACTORS + "/" + TraktContract.PATH_FROMMOVIE + "/*",
+                MOVIE_ACTORS);
         URI_MATCHER.addURI(AUTHORITY,
-                TraktContract.PATH_DIRECTORS + "/" + TraktContract.PATH_MOVIES + "/*", MOVIE_DIRECTORS);
+                TraktContract.PATH_DIRECTORS + "/" + TraktContract.PATH_FROMMOVIE + "/*", MOVIE_DIRECTORS);
         URI_MATCHER.addURI(AUTHORITY,
-                TraktContract.PATH_WRITERS + "/" + TraktContract.PATH_MOVIES + "/*", MOVIE_WRITERS);
+                TraktContract.PATH_WRITERS + "/" + TraktContract.PATH_FROMMOVIE + "/*", MOVIE_WRITERS);
         URI_MATCHER.addURI(AUTHORITY,
-                TraktContract.PATH_PRODUCERS + "/" + TraktContract.PATH_MOVIES + "/*", MOVIE_PRODUCERS);
+                TraktContract.PATH_PRODUCERS + "/" + TraktContract.PATH_FROMMOVIE + "/*", MOVIE_PRODUCERS);
     }
 
     @Override

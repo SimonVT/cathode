@@ -6,7 +6,7 @@ import butterknife.Views;
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.util.LogWrapper;
-import net.simonvt.trakt.util.UiUtils;
+import net.simonvt.trakt.util.DateUtils;
 import net.simonvt.trakt.widget.RemoteImageView;
 
 import android.database.Cursor;
@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,7 +79,7 @@ public class EpisodeFragment extends BaseFragment {
             mTitle.setText(cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.TITLE)));
             mOverview.setText(cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.OVERVIEW)));
             mScreen.setImage(cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.SCREEN)));
-            mFirstAired.setText(UiUtils.secondsToDate(getActivity(),
+            mFirstAired.setText(DateUtils.secondsToDate(getActivity(),
                     cursor.getLong(cursor.getColumnIndex(TraktContract.Episodes.FIRST_AIRED))));
         }
     }
@@ -99,7 +98,7 @@ public class EpisodeFragment extends BaseFragment {
                     new CursorLoader(getActivity(), TraktContract.Episodes.buildFromId(mEpisodeId),
                             EPISODE_PROJECTION,
                             null, null, null);
-            cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
+            cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
             return cl;
         }
 

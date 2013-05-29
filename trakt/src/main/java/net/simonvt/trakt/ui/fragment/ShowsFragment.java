@@ -5,7 +5,7 @@ import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
 import net.simonvt.trakt.sync.TraktTaskQueue;
-import net.simonvt.trakt.sync.task.QuickSyncTask;
+import net.simonvt.trakt.sync.task.SyncTask;
 import net.simonvt.trakt.ui.LibraryType;
 import net.simonvt.trakt.ui.ShowsNavigationListener;
 import net.simonvt.trakt.ui.adapter.ShowsAdapter;
@@ -105,7 +105,7 @@ public abstract class ShowsFragment extends AbsAdapterFragment implements Loader
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
-                mQueue.add(new QuickSyncTask());
+                mQueue.add(new SyncTask());
                 return true;
 
             default:

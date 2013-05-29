@@ -19,13 +19,13 @@ public interface UserService {
     @GET("/user/lastactivity.json/{apikey}/{username}")
     Activity lastActivity();
 
-    @GET("/user/library/movies/all.format/{apikey}/{username}/{detallLevel}")
+    @GET("/user/library/movies/all.json/{apikey}/{username}/{detailLevel}")
     List<Movie> moviesAll(@Path("detailLevel") DetailLevel detailLevel);
 
-    @GET("/user/library/movies/collection.format/{apikey}/{username}/{detallLevel}")
+    @GET("/user/library/movies/collection.json/{apikey}/{username}/{detailLevel}")
     List<Movie> moviesCollection(@Path("detailLevel") DetailLevel detailLevel);
 
-    @GET("/user/library/movies/watched.format/{apikey}/{username}/{detallLevel}")
+    @GET("/user/library/movies/watched.json/{apikey}/{username}/{detailLevel}")
     List<Movie> moviesWatched(@Path("detailLevel") DetailLevel detailLevel);
 
     @GET("/user/library/shows/all.json/{apikey}/{username}/{detailLevel}")

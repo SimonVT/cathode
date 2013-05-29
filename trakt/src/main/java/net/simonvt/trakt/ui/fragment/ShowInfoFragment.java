@@ -14,7 +14,7 @@ import net.simonvt.trakt.scheduler.ShowTaskScheduler;
 import net.simonvt.trakt.sync.TraktTaskQueue;
 import net.simonvt.trakt.ui.LibraryType;
 import net.simonvt.trakt.ui.ShowsNavigationListener;
-import net.simonvt.trakt.util.UiUtils;
+import net.simonvt.trakt.util.DateUtils;
 import net.simonvt.trakt.widget.OverflowView;
 import net.simonvt.trakt.widget.RemoteImageView;
 
@@ -25,7 +25,6 @@ import android.provider.BaseColumns;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -266,7 +265,7 @@ public class ShowInfoFragment extends BaseFragment {
 
             mNextEpisodeTitle.setText(cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.TITLE)));
             final long airTime = cursor.getLong(cursor.getColumnIndex(TraktContract.Episodes.FIRST_AIRED));
-            final String airTimeStr = UiUtils.secondsToDate(getActivity(), airTime);
+            final String airTimeStr = DateUtils.secondsToDate(getActivity(), airTime);
             mNextEpisodeAirTime.setText(airTimeStr);
             final int season = cursor.getInt(cursor.getColumnIndex(TraktContract.Episodes.SEASON));
             final int episode = cursor.getInt(cursor.getColumnIndex(TraktContract.Episodes.EPISODE));
@@ -309,7 +308,7 @@ public class ShowInfoFragment extends BaseFragment {
             CursorLoader cl = new CursorLoader(getActivity(), TraktContract.Episodes.buildFromShowId(mShowId),
                     EPISODE_PROJECTION, where.toString(), null,
                     TraktContract.Episodes.EPISODE + " ASC, " + TraktContract.Episodes.SEASON + " ASC LIMIT 1");
-            cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
+            cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
             return cl;
         }
 
@@ -328,7 +327,7 @@ public class ShowInfoFragment extends BaseFragment {
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             CursorLoader cl = new CursorLoader(getActivity(), TraktContract.ShowGenres.buildFromShowUri(mShowId),
                     GENRES_PROJECTION, null, null, TraktContract.ShowGenres.DEFAULT_SORT);
-            cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
+            cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
             return cl;
         }
 
@@ -347,7 +346,7 @@ public class ShowInfoFragment extends BaseFragment {
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             CursorLoader cl =
                     new CursorLoader(getActivity(), Shows.buildShowUri(mShowId), SHOW_PROJECTION, null, null, null);
-            cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
+            cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
             return cl;
         }
 

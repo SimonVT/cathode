@@ -7,7 +7,7 @@ import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
-import net.simonvt.trakt.util.UiUtils;
+import net.simonvt.trakt.util.DateUtils;
 import net.simonvt.trakt.widget.OverflowView;
 import net.simonvt.trakt.widget.RemoteImageView;
 
@@ -58,7 +58,7 @@ public class EpisodeWatchlistAdapter extends CursorAdapter {
 
         vh.mScreen.setImage(posterUrl);
         vh.mTitle.setText(title);
-        vh.mFirstAired.setText(UiUtils.secondsToDate(context, firstAired));
+        vh.mFirstAired.setText(DateUtils.secondsToDate(context, firstAired));
         vh.mEpisode.setText(season + "x" + episode);
         vh.mOverflow.setListener(new OverflowView.OverflowActionListener() {
             @Override

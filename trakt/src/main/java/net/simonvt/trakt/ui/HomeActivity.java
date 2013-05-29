@@ -12,8 +12,7 @@ import net.simonvt.trakt.event.LoginEvent;
 import net.simonvt.trakt.event.MessageEvent;
 import net.simonvt.trakt.settings.Settings;
 import net.simonvt.trakt.sync.TraktTaskQueue;
-import net.simonvt.trakt.sync.task.FullSyncTask;
-import net.simonvt.trakt.sync.task.QuickSyncTask;
+import net.simonvt.trakt.sync.task.SyncTask;
 import net.simonvt.trakt.ui.fragment.AddShowFragment;
 import net.simonvt.trakt.ui.fragment.BaseFragment;
 import net.simonvt.trakt.ui.fragment.EpisodeFragment;
@@ -27,13 +26,13 @@ import net.simonvt.trakt.ui.fragment.ShowsCollectionFragment;
 import net.simonvt.trakt.ui.fragment.ShowsWatchlistFragment;
 import net.simonvt.trakt.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.trakt.ui.fragment.WatchedShowsFragment;
+import net.simonvt.trakt.util.DateUtils;
 import net.simonvt.trakt.util.FragmentStack;
 import net.simonvt.trakt.util.LogWrapper;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -151,20 +150,13 @@ public class HomeActivity extends BaseActivity
 
         } else {
             getActionBar().setDisplayHomeAsUpEnabled(true);
-            final boolean initialSyncDone = settings.getBoolean(Settings.INITIAL_SYNC_DONE, false);
-            if (!initialSyncDone) {
-                onShowMessage(new MessageEvent(R.string.full_sync_warning));
-                mQueue.add(new FullSyncTask());
-                settings.edit().putBoolean(Settings.INITIAL_SYNC_DONE, true).apply();
 
-            } else if (state == null) {
-                final long lastUpdated = settings.getLong(Settings.SHOWS_LAST_UPDATED, 0);
-                final long currentTimeInMillis = System.currentTimeMillis();
-                if (currentTimeInMillis >= lastUpdated + 6L * DateUtils.HOUR_IN_MILLIS) {
-                    LogWrapper.i(TAG, "Queueing QuickSyncTask");
-                    settings.edit().putLong(Settings.SHOWS_LAST_UPDATED, currentTimeInMillis).apply();
-                    mQueue.add(new QuickSyncTask());
-                }
+            final long lastUpdated = settings.getLong(Settings.SHOWS_LAST_UPDATED, 0);
+            final long currentTimeSeconds = DateUtils.currentTimeSeconds();
+            if (currentTimeSeconds >= lastUpdated + 6L * DateUtils.HOUR_IN_SECONDS) {
+                LogWrapper.i(TAG, "Queueing SyncTask");
+                settings.edit().putLong(Settings.SHOWS_LAST_UPDATED, currentTimeSeconds).apply();
+                mQueue.add(new SyncTask());
             }
 
             if (state == null) {

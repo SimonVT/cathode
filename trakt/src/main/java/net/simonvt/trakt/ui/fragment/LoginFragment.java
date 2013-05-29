@@ -17,7 +17,7 @@ import net.simonvt.trakt.event.LoginEvent;
 import net.simonvt.trakt.event.MessageEvent;
 import net.simonvt.trakt.settings.Settings;
 import net.simonvt.trakt.sync.TraktTaskQueue;
-import net.simonvt.trakt.sync.task.FullSyncTask;
+import net.simonvt.trakt.sync.task.SyncTask;
 import net.simonvt.trakt.util.ApiUtils;
 import net.simonvt.trakt.util.LogWrapper;
 
@@ -161,7 +161,7 @@ public class LoginFragment extends BaseFragment {
                 editor.apply();
 
                 mCredentials.setCredentials(username, password);
-                mQueue.add(new FullSyncTask());
+                mQueue.add(new SyncTask());
 
                 mBus.post(new LoginEvent(mUsername, mPassword));
 
@@ -216,7 +216,7 @@ public class LoginFragment extends BaseFragment {
                 editor.apply();
 
                 mCredentials.setCredentials(username, password);
-                mQueue.add(new FullSyncTask());
+                mQueue.add(new SyncTask());
 
                 mBus.post(new LoginEvent(mUsername, mPassword));
 

@@ -33,7 +33,7 @@ public class UpdatedMovies {
         return timestamps;
     }
 
-    public List<MovieTimestamp> getOvies() {
+    public List<MovieTimestamp> getMovies() {
         return movies;
     }
 }

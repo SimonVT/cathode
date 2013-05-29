@@ -25,13 +25,15 @@ import net.simonvt.trakt.sync.TraktTaskSerializer;
 import net.simonvt.trakt.sync.TraktTaskService;
 import net.simonvt.trakt.sync.task.EpisodeCollectionTask;
 import net.simonvt.trakt.sync.task.EpisodeWatchedTask;
-import net.simonvt.trakt.sync.task.FullSyncTask;
-import net.simonvt.trakt.sync.task.QuickSyncTask;
+import net.simonvt.trakt.sync.task.SyncTask;
 import net.simonvt.trakt.sync.task.SyncEpisodeTask;
 import net.simonvt.trakt.sync.task.SyncEpisodeWatchlist;
+import net.simonvt.trakt.sync.task.SyncMovieTask;
+import net.simonvt.trakt.sync.task.SyncMoviesTask;
 import net.simonvt.trakt.sync.task.SyncSeasonTask;
 import net.simonvt.trakt.sync.task.SyncShowTask;
 import net.simonvt.trakt.sync.task.SyncShowsCollectionTask;
+import net.simonvt.trakt.sync.task.SyncShowsTask;
 import net.simonvt.trakt.sync.task.SyncShowsWatchlistTask;
 import net.simonvt.trakt.sync.task.SyncWatchedStatusTask;
 import net.simonvt.trakt.sync.task.TraktTask;
@@ -133,17 +135,19 @@ public class TraktApp extends Application {
                     // Tasks
                     EpisodeCollectionTask.class,
                     EpisodeWatchedTask.class,
-                    FullSyncTask.class,
                     SyncShowsCollectionTask.class,
                     SyncEpisodeTask.class,
                     SyncEpisodeWatchlist.class,
+                    SyncMovieTask.class,
+                    SyncMoviesTask.class,
                     SyncSeasonTask.class,
                     SyncShowTask.class,
+                    SyncShowsTask.class,
                     SyncShowsWatchlistTask.class,
                     SyncWatchedStatusTask.class,
                     UpdateSeasonCountTask.class,
                     UpdateShowCountTask.class,
-                    QuickSyncTask.class,
+                    SyncTask.class,
 
                     // Misc
                     ResponseParser.class,

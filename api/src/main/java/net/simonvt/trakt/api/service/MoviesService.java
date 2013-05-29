@@ -1,6 +1,5 @@
 package net.simonvt.trakt.api.service;
 
-import retrofit.RetrofitError;
 import retrofit.http.GET;
 import retrofit.http.Path;
 

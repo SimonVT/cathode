@@ -3,24 +3,35 @@ package net.simonvt.trakt.util;
 import net.simonvt.trakt.R;
 
 import android.content.Context;
-import android.text.format.DateUtils;
 
 import java.util.Calendar;
 import java.util.Locale;
 
-public final class UiUtils {
+public final class DateUtils {
 
-    private static final String TAG = "UiUtils";
+    private static final String TAG = "DateUtils";
 
-    private UiUtils() {
+    public static final long MINUTE_IN_SECONDS = 60;
+
+    public static final long HOUR_IN_SECONDS = 60 * MINUTE_IN_SECONDS;
+
+    public static final long DAY_IN_SECONDS = 24 * HOUR_IN_SECONDS;
+
+    public static final long YEAR_IN_SECONDS = 365 * DAY_IN_SECONDS;
+
+    private DateUtils() {
+    }
+
+    public static long currentTimeSeconds() {
+        return System.currentTimeMillis() / 1000L;
     }
 
     // TODO: Check that this actually works.. It returns a date string, but no idea if it's correctly converted to the
     //       users timezone.. It probably isn't.
     public static String secondsToDate(Context context, long seconds) {
-        final long millis = seconds * DateUtils.SECOND_IN_MILLIS;
+        final long millis = seconds * android.text.format.DateUtils.SECOND_IN_MILLIS;
 
-        if (millis < DateUtils.YEAR_IN_MILLIS) {
+        if (millis < android.text.format.DateUtils.YEAR_IN_MILLIS) {
             return context.getResources().getString(R.string.airdate_unknown);
         }
 

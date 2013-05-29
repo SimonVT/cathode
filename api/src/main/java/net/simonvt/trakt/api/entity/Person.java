@@ -10,6 +10,8 @@ public class Person {
 
     private Images images;
 
+    private Boolean executive;
+
     public String getName() {
         return name;
     }
@@ -24,5 +26,9 @@ public class Person {
 
     public Images getImages() {
         return images;
+    }
+
+    public Boolean isExecutive() {
+        return executive;
     }
 }

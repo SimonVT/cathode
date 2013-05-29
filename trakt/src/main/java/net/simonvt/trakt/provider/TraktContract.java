@@ -78,6 +78,7 @@ public final class TraktContract {
 
         String NAME = "name";
         String CHARACTER = "character";
+        String HEADSHOT = "headshot";
     }
 
     interface SeasonColumns {
@@ -118,6 +119,7 @@ public final class TraktContract {
     interface MovieColumns {
 
         String TITLE = "title";
+        String YEAR = "year";
         String RELEASED = "released";
         String URL = "url";
         String TRAILER = "trailer";
@@ -127,6 +129,7 @@ public final class TraktContract {
         String CERTIFICATION = "certification";
         String IMDB_ID = "imdbId";
         String TMDB_ID = "tmdbId";
+        String RT_ID = "rtId";
         String RATING_PERCENTAGE = "ratingPercentage";
         String RATING_VOTES = "ratingVotes";
         String RATING_LOVED = "ratingLoved";
@@ -135,7 +138,10 @@ public final class TraktContract {
         String PLAYS = "plays";
         String SCROBBLES = "scrobbles";
         String CHECKINS = "checkins";
-        String IN_COLLECTION = "incollection";
+        String WATCHED = "watched";
+        String IN_COLLECTION = "inCollection";
+        String IN_WATCHLIST = "inWatchlist";
+        String LAST_UPDATED = "lastUpdated";
     }
 
     interface ImageColumns {
@@ -346,13 +352,13 @@ public final class TraktContract {
         }
     }
 
-    public static class Movies implements MovieColumns, BaseColumns {
+    public static class Movies implements MovieColumns, ImageColumns, BaseColumns {
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIES).build();
 
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.simonvt.trakt.movie";
 
-        public static Uri buildMovieUri(int movieId) {
+        public static Uri buildMovieUri(long movieId) {
             return CONTENT_URI.buildUpon().appendPath(String.valueOf(movieId)).build();
         }
 
@@ -370,7 +376,7 @@ public final class TraktContract {
         public static final String MOVIE_ID = "movieId";
         public static final String GENRE = "genre";
 
-        public static Uri buildFromMovieUri(int movieId) {
+        public static Uri buildFromMovieId(long movieId) {
             return CONTENT_URI.buildUpon().appendPath(PATH_FROMMOVIE).appendPath(String.valueOf(movieId)).build();
         }
 
@@ -404,7 +410,7 @@ public final class TraktContract {
 
         public static final String MOVIE_ID = "movieId";
 
-        public static Uri buildFromMovieUri(int movieId) {
+        public static Uri buildFromMovieId(long movieId) {
             return CONTENT_URI.buildUpon().appendPath(PATH_FROMMOVIE).appendPath(String.valueOf(movieId)).build();
         }
 
@@ -421,8 +427,9 @@ public final class TraktContract {
 
         public static final String MOVIE_ID = "movieId";
         public static final String NAME = "name";
+        public static final String HEADSHOT = "headshot";
 
-        public static Uri buildFromMovieUri(int movieId) {
+        public static Uri buildFromMovieId(long movieId) {
             return CONTENT_URI.buildUpon().appendPath(PATH_FROMMOVIE).appendPath(String.valueOf(movieId)).build();
         }
 
@@ -439,9 +446,10 @@ public final class TraktContract {
 
         public static final String MOVIE_ID = "movieId";
         public static final String NAME = "name";
+        public static final String HEADSHOT = "headshot";
         public static final String JOB = "job";
 
-        public static Uri buildFromMovieUri(int movieId) {
+        public static Uri buildFromMovieId(long movieId) {
             return CONTENT_URI.buildUpon().appendPath(PATH_FROMMOVIE).appendPath(String.valueOf(movieId)).build();
         }
 
@@ -459,8 +467,9 @@ public final class TraktContract {
         public static final String MOVIE_ID = "movieId";
         public static final String NAME = "name";
         public static final String EXECUTIVE = "executive";
+        public static final String HEADSHOT = "headshot";
 
-        public static Uri buildFromMovieUri(int movieId) {
+        public static Uri buildFromMovieId(long movieId) {
             return CONTENT_URI.buildUpon().appendPath(PATH_FROMMOVIE).appendPath(String.valueOf(movieId)).build();
         }
 
