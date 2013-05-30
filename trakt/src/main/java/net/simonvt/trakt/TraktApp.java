@@ -45,7 +45,7 @@ import net.simonvt.trakt.ui.adapter.EpisodeWatchlistAdapter;
 import net.simonvt.trakt.ui.adapter.MoviesAdapter;
 import net.simonvt.trakt.ui.adapter.SeasonsAdapter;
 import net.simonvt.trakt.ui.adapter.ShowsAdapter;
-import net.simonvt.trakt.ui.fragment.AddShowFragment;
+import net.simonvt.trakt.ui.fragment.SearchShowFragment;
 import net.simonvt.trakt.ui.fragment.EpisodeFragment;
 import net.simonvt.trakt.ui.fragment.EpisodesWatchlistFragment;
 import net.simonvt.trakt.ui.fragment.LoginFragment;
@@ -115,7 +115,7 @@ public class TraktApp extends Application {
                     HomeActivity.class,
 
                     // Fragments
-                    AddShowFragment.class,
+                    SearchShowFragment.class,
                     EpisodeFragment.class,
                     EpisodesWatchlistFragment.class,
                     LoginFragment.class,

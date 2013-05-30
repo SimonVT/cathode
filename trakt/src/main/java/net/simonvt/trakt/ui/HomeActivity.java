@@ -13,7 +13,7 @@ import net.simonvt.trakt.event.MessageEvent;
 import net.simonvt.trakt.settings.Settings;
 import net.simonvt.trakt.sync.TraktTaskQueue;
 import net.simonvt.trakt.sync.task.SyncTask;
-import net.simonvt.trakt.ui.fragment.AddShowFragment;
+import net.simonvt.trakt.ui.fragment.SearchShowFragment;
 import net.simonvt.trakt.ui.fragment.BaseFragment;
 import net.simonvt.trakt.ui.fragment.EpisodeFragment;
 import net.simonvt.trakt.ui.fragment.EpisodesWatchlistFragment;
@@ -227,8 +227,6 @@ public class HomeActivity extends BaseActivity
 
                 return true;
 
-            case R.id.menu_add_show:
-
         }
 
         return false;
@@ -354,7 +352,7 @@ public class HomeActivity extends BaseActivity
 
     @Override
     public void onSearchShow(String query) {
-        AddShowFragment fragment = AddShowFragment.newInstance(query);
+        SearchShowFragment fragment = SearchShowFragment.newInstance(query);
         mStack.addFragment(fragment, FRAGMENT_ADD_SHOW);
         mStack.commit();
     }

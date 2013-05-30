@@ -25,7 +25,6 @@
     <string name="action_collection_remove">Remove from collection</string>
     <string name="action_watchlist_add">Add to watchlist</string>
     <string name="action_watchlist_remove">Remove from watchlist</string>
-    <string name="action_add_show">Add show</string>
     <string name="action_search">Search</string>
 
     <string name="checkmark_watched">Watched</string>

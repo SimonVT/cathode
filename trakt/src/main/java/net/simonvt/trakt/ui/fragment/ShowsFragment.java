@@ -85,7 +85,7 @@ public abstract class ShowsFragment extends AbsAdapterFragment implements Loader
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_shows, menu);
 
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_add_show).getActionView();
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

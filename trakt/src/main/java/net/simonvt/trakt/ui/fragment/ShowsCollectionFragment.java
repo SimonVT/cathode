@@ -10,6 +10,7 @@ import net.simonvt.trakt.sync.task.SyncShowsCollectionTask;
 import net.simonvt.trakt.ui.LibraryType;
 import net.simonvt.trakt.ui.ShowsNavigationListener;
 import net.simonvt.trakt.ui.adapter.ShowsAdapter;
+import net.simonvt.trakt.util.LogWrapper;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -27,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.SearchView;
 
 import javax.inject.Inject;
 
@@ -56,14 +58,14 @@ public class ShowsCollectionFragment extends AbsAdapterFragment implements Loade
 
     private ShowsAdapter mShowsAdapter;
 
-    private ShowsNavigationListener mNavigationInterface;
+    private ShowsNavigationListener mNavigationListener;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         try {
-            mNavigationInterface = (ShowsNavigationListener) activity;
+            mNavigationListener = (ShowsNavigationListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement ShowsNavigationListener");
         }
@@ -99,6 +101,21 @@ public class ShowsCollectionFragment extends AbsAdapterFragment implements Loade
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_shows, menu);
+
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                LogWrapper.v(TAG, "Query: " + query);
+                mNavigationListener.onSearchShow(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
     }
 
     @Override
@@ -115,7 +132,7 @@ public class ShowsCollectionFragment extends AbsAdapterFragment implements Loade
 
     @Override
     protected void onItemClick(AdapterView l, View v, int position, long id) {
-        mNavigationInterface.onDisplayShow(id, LibraryType.COLLECTION);
+        mNavigationListener.onDisplayShow(id, LibraryType.COLLECTION);
     }
 
     @Override

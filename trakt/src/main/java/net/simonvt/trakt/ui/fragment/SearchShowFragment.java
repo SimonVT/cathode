@@ -33,13 +33,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class AddShowFragment extends AbsAdapterFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class SearchShowFragment extends AbsAdapterFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String TAG = "AddShowFragment";
+    private static final String TAG = "SearchShowFragment";
 
-    private static final String ARGS_QUERY = "net.simonvt.trakt.ui.AddShowFragment.query";
+    private static final String ARGS_QUERY = "net.simonvt.trakt.ui.SearchShowFragment.query";
 
-    private static final String STATE_QUERY = "net.simonvt.trakt.ui.AddShowFragment.query";
+    private static final String STATE_QUERY = "net.simonvt.trakt.ui.SearchShowFragment.query";
 
     private static final int LOADER_SEARCH = 200;
 
@@ -55,8 +55,8 @@ public class AddShowFragment extends AbsAdapterFragment implements LoaderManager
 
     private ShowsNavigationListener mNavigationListener;
 
-    public static AddShowFragment newInstance(String query) {
-        AddShowFragment f = new AddShowFragment();
+    public static SearchShowFragment newInstance(String query) {
+        SearchShowFragment f = new SearchShowFragment();
 
         Bundle args = new Bundle();
         args.putString(ARGS_QUERY, query);
