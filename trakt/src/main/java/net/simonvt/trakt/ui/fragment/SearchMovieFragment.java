@@ -78,8 +78,6 @@ public class SearchMovieFragment extends AbsAdapterFragment<MovieSearchAdapter>
     public void onCreate(Bundle state) {
         super.onCreate(state);
         TraktApp.inject(getActivity(), this);
-        mBus.register(this);
-        setHasOptionsMenu(true);
 
         if (state == null) {
             Bundle args = getArguments();
@@ -92,6 +90,9 @@ public class SearchMovieFragment extends AbsAdapterFragment<MovieSearchAdapter>
                 mSearchHandler.search(mQuery);
             }
         }
+
+        mBus.register(this);
+        setHasOptionsMenu(true);
     }
 
     @Override

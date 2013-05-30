@@ -79,8 +79,6 @@ public class SearchShowFragment extends AbsAdapterFragment implements LoaderMana
     public void onCreate(Bundle state) {
         super.onCreate(state);
         TraktApp.inject(getActivity(), this);
-        mBus.register(this);
-        setHasOptionsMenu(true);
 
         if (state == null) {
             Bundle args = getArguments();
@@ -93,6 +91,9 @@ public class SearchShowFragment extends AbsAdapterFragment implements LoaderMana
                 mSearchHandler.search(mQuery);
             }
         }
+
+        mBus.register(this);
+        setHasOptionsMenu(true);
     }
 
     @Override
