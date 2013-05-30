@@ -7,6 +7,7 @@ import net.simonvt.trakt.sync.TraktTaskQueue;
 import net.simonvt.trakt.sync.task.SyncTask;
 import net.simonvt.trakt.ui.MoviesNavigationListener;
 import net.simonvt.trakt.ui.adapter.MoviesAdapter;
+import net.simonvt.trakt.util.LogWrapper;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -20,11 +21,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.SearchView;
 
 import javax.inject.Inject;
 
 public abstract class MoviesFragment extends AbsAdapterFragment<MoviesAdapter>
         implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    private static final String TAG = "MoviesFragment";
 
     @Inject TraktTaskQueue mQueue;
 
@@ -66,6 +70,21 @@ public abstract class MoviesFragment extends AbsAdapterFragment<MoviesAdapter>
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_movies, menu);
+
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                LogWrapper.v(TAG, "Query: " + query);
+                mNavigationListener.onSearchMovie(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
     }
 
     @Override

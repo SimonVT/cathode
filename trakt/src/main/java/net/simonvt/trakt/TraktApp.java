@@ -51,6 +51,7 @@ import net.simonvt.trakt.ui.fragment.EpisodesWatchlistFragment;
 import net.simonvt.trakt.ui.fragment.LoginFragment;
 import net.simonvt.trakt.ui.fragment.MovieCollectionFragment;
 import net.simonvt.trakt.ui.fragment.MovieWatchlistFragment;
+import net.simonvt.trakt.ui.fragment.SearchMovieFragment;
 import net.simonvt.trakt.ui.fragment.SeasonFragment;
 import net.simonvt.trakt.ui.fragment.SeasonsFragment;
 import net.simonvt.trakt.ui.fragment.ShowInfoFragment;
@@ -60,6 +61,7 @@ import net.simonvt.trakt.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.trakt.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.trakt.ui.fragment.WatchedShowsFragment;
 import net.simonvt.trakt.util.LogWrapper;
+import net.simonvt.trakt.util.MovieSearchHandler;
 import net.simonvt.trakt.util.ShowSearchHandler;
 import net.simonvt.trakt.widget.PhoneEpisodeView;
 import net.simonvt.trakt.widget.RemoteImageView;
@@ -119,6 +121,7 @@ public class TraktApp extends Application {
                     LoginFragment.class,
                     MovieCollectionFragment.class,
                     MovieWatchlistFragment.class,
+                    SearchMovieFragment.class,
                     SeasonFragment.class,
                     SeasonsFragment.class,
                     ShowInfoFragment.class,
@@ -162,7 +165,9 @@ public class TraktApp extends Application {
                     // Misc
                     ResponseParser.class,
                     ShowSearchHandler.class,
-                    ShowSearchHandler.SearchThread.class
+                    ShowSearchHandler.SearchThread.class,
+                    MovieSearchHandler.class,
+                    MovieSearchHandler.SearchThread.class
             }
     )
     static class AppModule {
@@ -217,6 +222,12 @@ public class TraktApp extends Application {
         @Singleton
         ShowSearchHandler provideShowSearchHandler(Bus bus) {
             return new ShowSearchHandler(mAppContext, bus);
+        }
+
+        @Provides
+        @Singleton
+        MovieSearchHandler provideMovieSearchHandler(Bus bus) {
+            return new MovieSearchHandler(mAppContext, bus);
         }
 
         @Provides

@@ -4,6 +4,7 @@ public class SearchFailureEvent {
 
     public enum Type {
         SHOW,
+        MOVIE,
     }
 
     private static final String TAG = "SearchFailureEvent";

@@ -21,6 +21,7 @@ import net.simonvt.trakt.ui.fragment.LoginFragment;
 import net.simonvt.trakt.ui.fragment.MovieCollectionFragment;
 import net.simonvt.trakt.ui.fragment.MovieWatchlistFragment;
 import net.simonvt.trakt.ui.fragment.NavigationFragment;
+import net.simonvt.trakt.ui.fragment.SearchMovieFragment;
 import net.simonvt.trakt.ui.fragment.SeasonFragment;
 import net.simonvt.trakt.ui.fragment.SeasonsFragment;
 import net.simonvt.trakt.ui.fragment.ShowInfoFragment;
@@ -65,6 +66,7 @@ public class HomeActivity extends BaseActivity
     private static final String FRAGMENT_MOVIES_WATCHED = "net.simonvt.trakt.ui.HomeActivity.moviesWatched";
     private static final String FRAGMENT_MOVIES_COLLECTION = "net.simonvt.trakt.ui.HomeActivity.moviesCollection";
     private static final String FRAGMENT_MOVIES_WATCHLIST = "net.simonvt.trakt.ui.HomeActivity.moviesWatchlist";
+    private static final String FRAGMENT_SEARCH_MOVIE = "net.simonvt.trakt.ui.HomeActivity.searchMovieFragment";
 
     @Inject TraktTaskQueue mQueue;
 
@@ -359,5 +361,12 @@ public class HomeActivity extends BaseActivity
 
     @Override
     public void onDisplayMovie(long movieId) {
+    }
+
+    @Override
+    public void onSearchMovie(String query) {
+        SearchMovieFragment fragment = SearchMovieFragment.newInstance(query);
+        mStack.addFragment(fragment, FRAGMENT_SEARCH_MOVIE);
+        mStack.commit();
     }
 }
