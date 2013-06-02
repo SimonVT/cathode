@@ -47,7 +47,8 @@ public class UpcomingShowsFragment extends ShowsFragment {
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         final Uri contentUri = TraktContract.Shows.SHOWS_WITHNEXT_IGNOREWATCHED;
-        CursorLoader cl = new CursorLoader(getActivity(), contentUri, PROJECTION, null,
+        CursorLoader cl = new CursorLoader(getActivity(), contentUri, PROJECTION,
+                TraktContract.Shows.WATCHED_COUNT + ">0",
                 null, TraktContract.Shows.DEFAULT_SORT);
         cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
         return cl;
