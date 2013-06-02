@@ -13,15 +13,16 @@ import net.simonvt.trakt.event.MessageEvent;
 import net.simonvt.trakt.settings.Settings;
 import net.simonvt.trakt.sync.TraktTaskQueue;
 import net.simonvt.trakt.sync.task.SyncTask;
-import net.simonvt.trakt.ui.fragment.SearchShowFragment;
 import net.simonvt.trakt.ui.fragment.BaseFragment;
 import net.simonvt.trakt.ui.fragment.EpisodeFragment;
 import net.simonvt.trakt.ui.fragment.EpisodesWatchlistFragment;
 import net.simonvt.trakt.ui.fragment.LoginFragment;
 import net.simonvt.trakt.ui.fragment.MovieCollectionFragment;
+import net.simonvt.trakt.ui.fragment.MovieFragment;
 import net.simonvt.trakt.ui.fragment.MovieWatchlistFragment;
 import net.simonvt.trakt.ui.fragment.NavigationFragment;
 import net.simonvt.trakt.ui.fragment.SearchMovieFragment;
+import net.simonvt.trakt.ui.fragment.SearchShowFragment;
 import net.simonvt.trakt.ui.fragment.SeasonFragment;
 import net.simonvt.trakt.ui.fragment.SeasonsFragment;
 import net.simonvt.trakt.ui.fragment.ShowInfoFragment;
@@ -63,10 +64,12 @@ public class HomeActivity extends BaseActivity
     private static final String FRAGMENT_EPISODES_WATCHLIST =
             "net.simonvt.trakt.ui.HomeActivity.episodesWatchlistFragment";
     private static final String FRAGMENT_ADD_SHOW = "net.simonvt.trakt.ui.HomeActivity.addShowFragment";
-    private static final String FRAGMENT_MOVIES_WATCHED = "net.simonvt.trakt.ui.HomeActivity.moviesWatched";
-    private static final String FRAGMENT_MOVIES_COLLECTION = "net.simonvt.trakt.ui.HomeActivity.moviesCollection";
-    private static final String FRAGMENT_MOVIES_WATCHLIST = "net.simonvt.trakt.ui.HomeActivity.moviesWatchlist";
-    private static final String FRAGMENT_SEARCH_MOVIE = "net.simonvt.trakt.ui.HomeActivity.searchMovieFragment";
+    private static final String FRAGMENT_MOVIES_WATCHED = "net.simonvt.trakt.ui.HomeActivity.moviesWatchedFragment";
+    private static final String FRAGMENT_MOVIES_COLLECTION =
+            "net.simonvt.trakt.ui.HomeActivity.moviesCollectionFragment";
+    private static final String FRAGMENT_MOVIES_WATCHLIST = "net.simonvt.trakt.ui.HomeActivity.moviesWatchlistFragment";
+    private static final String FRAGMENT_SEARCH_MOVIE = "net.simonvt.trakt.ui.HomeActivity.searchMovieFragmentFragment";
+    private static final String FRAGMENT_MOVIE = "net.simonvt.trakt.ui.HomeActivity.movieFragment";
 
     @Inject TraktTaskQueue mQueue;
 
@@ -359,6 +362,9 @@ public class HomeActivity extends BaseActivity
 
     @Override
     public void onDisplayMovie(long movieId) {
+        MovieFragment fragment = MovieFragment.newInstance(movieId);
+        mStack.addFragment(fragment, FRAGMENT_MOVIE);
+        mStack.commit();
     }
 
     @Override

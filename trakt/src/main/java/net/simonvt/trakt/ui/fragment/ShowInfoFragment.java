@@ -213,7 +213,7 @@ public class ShowInfoFragment extends BaseFragment {
     };
 
     private void updateShowView(final Cursor cursor) {
-        if (!cursor.moveToFirst()) return;
+        if (cursor == null || !cursor.moveToFirst()) return;
 
         mShowTitle = cursor.getString(cursor.getColumnIndex(Shows.TITLE));
         final int year = cursor.getInt(cursor.getColumnIndex(Shows.YEAR));
