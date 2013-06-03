@@ -31,8 +31,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class SearchMovieFragment extends AbsAdapterFragment<MovieSearchAdapter>
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+public class SearchMovieFragment extends AbsAdapterFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "SearchMovieFragment";
 

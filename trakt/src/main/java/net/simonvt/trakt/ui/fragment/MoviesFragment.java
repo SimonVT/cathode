@@ -25,8 +25,7 @@ import android.widget.SearchView;
 
 import javax.inject.Inject;
 
-public abstract class MoviesFragment extends AbsAdapterFragment<MoviesAdapter>
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+public abstract class MoviesFragment extends AbsAdapterFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "MoviesFragment";
 
@@ -107,7 +106,7 @@ public abstract class MoviesFragment extends AbsAdapterFragment<MoviesAdapter>
         if (getAdapter() == null) {
             setAdapter(new MoviesAdapter(getActivity(), cursor));
         } else {
-            getAdapter().changeCursor(cursor);
+            ((MoviesAdapter) getAdapter()).changeCursor(cursor);
         }
     }
 

@@ -16,13 +16,13 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public abstract class AbsAdapterFragment<T extends BaseAdapter> extends BaseFragment {
+public abstract class AbsAdapterFragment extends BaseFragment {
 
     private static final String SAVED_EMPTY_TEXT = "savedEmptyText";
 
     private static final int ANIMATION_DURATION = 600;
 
-    private T mAdapter;
+    private BaseAdapter mAdapter;
 
     @InjectView(R.id.progressContainer) View mProgressContainer;
     @InjectView(R.id.listContainer) View mListContainer;
@@ -153,7 +153,7 @@ public abstract class AbsAdapterFragment<T extends BaseAdapter> extends BaseFrag
         return mAdapterView;
     }
 
-    public void setAdapter(T adapter) {
+    public void setAdapter(BaseAdapter adapter) {
         if (adapter != mAdapter) {
             mAdapter = adapter;
             if (mAdapter != null) {
@@ -169,7 +169,7 @@ public abstract class AbsAdapterFragment<T extends BaseAdapter> extends BaseFrag
         }
     }
 
-    public T getAdapter() {
+    public BaseAdapter getAdapter() {
         return mAdapter;
     }
 
