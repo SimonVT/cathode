@@ -128,17 +128,17 @@ public class SeasonsAdapter extends CursorAdapter {
         }
 
         vh.mOverflow.removeItems();
-        if (airedCount - collectedCount > 0) {
-            vh.mOverflow.addItem(R.id.action_collection_add, R.string.action_collection_add);
-        }
-        if (collectedCount > 0) {
-            vh.mOverflow.addItem(R.id.action_collection_remove, R.string.action_collection_remove);
-        }
         if (airedCount - watchedCount > 0) {
             vh.mOverflow.addItem(R.id.action_watched, R.string.action_watched);
         }
         if (watchedCount > 0) {
             vh.mOverflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
+        }
+        if (airedCount - collectedCount > 0) {
+            vh.mOverflow.addItem(R.id.action_collection_add, R.string.action_collection_add);
+        }
+        if (collectedCount > 0) {
+            vh.mOverflow.addItem(R.id.action_collection_remove, R.string.action_collection_remove);
         }
 
         vh.mTitle.setText(mResources.getQuantityString(R.plurals.season_x, seasonNumber, seasonNumber));
