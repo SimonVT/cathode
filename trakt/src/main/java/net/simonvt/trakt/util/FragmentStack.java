@@ -70,6 +70,22 @@ public final class FragmentStack<T extends Fragment> {
         mHandler = new Handler();
     }
 
+    public void attach() {
+        T f = mBackStack.peekLast();
+        if (f != null) {
+            attachFragment(f, f.getTag());
+            mFragmentTransaction.commit();
+        }
+    }
+
+    public void detach() {
+        T f = mBackStack.peekLast();
+        if (f != null) {
+            detachFragment(f);
+            mFragmentTransaction.commit();
+        }
+    }
+
     public void onSaveInstanceState(Bundle outState) {
         executePendingTransactions();
 
