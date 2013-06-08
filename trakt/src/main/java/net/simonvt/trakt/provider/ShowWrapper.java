@@ -287,7 +287,9 @@ public final class ShowWrapper {
             cv.put(Shows.CHECKINS, show.getStats().getCheckins());
         }
         if (show.getStatus() != null) cv.put(Shows.STATUS, show.getStatus().toString());
-        // TODO: if (show.rating != null) cv.put(Shows.RATING, show.rating.toString());
+        if (show.getRatingAdvanced() != null) {
+            cv.put(Shows.RATING, show.getRatingAdvanced());
+        }
 
         return cv;
     }

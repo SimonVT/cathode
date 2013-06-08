@@ -1,14 +1,15 @@
 package net.simonvt.trakt.scheduler;
 
-import net.simonvt.trakt.api.enumeration.Rating;
 import net.simonvt.trakt.provider.EpisodeWrapper;
 import net.simonvt.trakt.provider.ShowWrapper;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.sync.task.EpisodeCollectionTask;
+import net.simonvt.trakt.sync.task.EpisodeRateTask;
 import net.simonvt.trakt.sync.task.EpisodeWatchedTask;
 import net.simonvt.trakt.sync.task.EpisodeWatchlistTask;
 import net.simonvt.trakt.sync.task.SyncEpisodeTask;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
@@ -189,17 +190,24 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
      * @param rating    A rating betweeo 1 and 10. Use 0 to undo rating.
      */
     public void rate(final long episodeId, final int rating) {
-        // TODO
-    }
+        execute(new Runnable() {
+            @Override
+            public void run() {
+                final long tvdbId = EpisodeWrapper.getShowTvdbId(mContext.getContentResolver(), episodeId);
+                Cursor c = EpisodeWrapper.query(mContext.getContentResolver(), episodeId,
+                        TraktContract.Episodes.EPISODE);
 
-    /**
-     * Rate an episode on trakt. Depending on the user settings, this will also send out social updates to facebook,
-     * twitter, and tumblr.
-     *
-     * @param episodeId The database id of the episode.
-     * @param rating    A value from {@link Rating}.
-     */
-    public void rate(final long episodeId, final Rating rating) {
-        // TODO
+                if (c.moveToFirst()) {
+                    final int episode = c.getInt(c.getColumnIndex(TraktContract.Episodes.EPISODE));
+
+                    ContentValues cv = new ContentValues();
+                    cv.put(TraktContract.Episodes.RATING, rating);
+                    mContext.getContentResolver().update(TraktContract.Episodes.buildFromId(episodeId), cv, null, null);
+
+                    mQueue.add(new EpisodeRateTask(tvdbId, episode, rating));
+                }
+            }
+        });
+        // TODO:
     }
 }

@@ -26,6 +26,7 @@
     <string name="action_watchlist_add">Add to watchlist</string>
     <string name="action_watchlist_remove">Remove from watchlist</string>
     <string name="action_search">Search</string>
+    <string name="action_rate">Rate</string>
 
     <string name="checkmark_watched">Watched</string>
     <string name="checkmark_collection">In collection</string>
@@ -72,5 +73,19 @@
         <item quantity="zero">Special</item>
         <item quantity="other">Season %d</item>
     </plurals>
+
+    <string-array name="ratings">
+        <item>Unrated</item>
+        <item>Weak sauce :(</item>
+        <item>Terrible</item>
+        <item>Bad</item>
+        <item>Poor</item>
+        <item>Meh</item>
+        <item>Fair</item>
+        <item>Good</item>
+        <item>Great</item>
+        <item>Superb</item>
+        <item>Totally ninja!</item>
+    </string-array>
 
 </resources>

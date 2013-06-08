@@ -1,5 +1,10 @@
 package net.simonvt.trakt.scheduler;
 
+import net.simonvt.trakt.provider.MovieWrapper;
+import net.simonvt.trakt.provider.TraktContract;
+import net.simonvt.trakt.sync.task.MovieRateTask;
+
+import android.content.ContentValues;
 import android.content.Context;
 
 public class MovieTaskScheduler extends BaseTaskScheduler {
@@ -135,23 +140,22 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
      * Rate a movie on trakt. Depending on the user settings, this will also send out social updates to facebook,
      * twitter, and tumblr.
      *
-     * @param context The Context the method is called from.
      * @param movieId The database id of the movie.
      * @param rating  A rating betweeo 1 and 10. Use 0 to undo rating.
      */
-    public static void rate(Context context, long movieId, int rating) {
+    public void rate(final long movieId, final int rating) {
+        execute(new Runnable() {
+            @Override
+            public void run() {
+                final long tmdbId = MovieWrapper.getTmdbId(mContext.getContentResolver(), movieId);
+
+                ContentValues cv = new ContentValues();
+                cv.put(TraktContract.Movies.RATING, rating);
+                mContext.getContentResolver().update(TraktContract.Movies.buildMovieUri(movieId), cv, null, null);
+
+                mQueue.add(new MovieRateTask(tmdbId, rating));
+            }
+        });
         // TODO:
     }
-
-    /**
-     * Rate a movie on trakt. Depending on the user settings, this will also send out social updates to facebook,
-     * twitter, and tumblr.
-     *
-     * @param context The Context the method is called from.
-     * @param movieId The database id of the movie.
-     * @param rating  A value from {@link Rating}.
-     */
-    //    public static void rate(Context context, long movieId, Rating rating) {
-    //        // TODO:
-    //    }
 }
