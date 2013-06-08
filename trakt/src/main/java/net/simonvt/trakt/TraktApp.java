@@ -24,7 +24,10 @@ import net.simonvt.trakt.sync.TraktTaskQueue;
 import net.simonvt.trakt.sync.TraktTaskSerializer;
 import net.simonvt.trakt.sync.TraktTaskService;
 import net.simonvt.trakt.sync.task.EpisodeCollectionTask;
+import net.simonvt.trakt.sync.task.EpisodeRateTask;
 import net.simonvt.trakt.sync.task.EpisodeWatchedTask;
+import net.simonvt.trakt.sync.task.MovieRateTask;
+import net.simonvt.trakt.sync.task.ShowRateTask;
 import net.simonvt.trakt.sync.task.SyncEpisodeTask;
 import net.simonvt.trakt.sync.task.SyncEpisodeWatchlist;
 import net.simonvt.trakt.sync.task.SyncMovieTask;
@@ -45,14 +48,15 @@ import net.simonvt.trakt.ui.adapter.EpisodeWatchlistAdapter;
 import net.simonvt.trakt.ui.adapter.MoviesAdapter;
 import net.simonvt.trakt.ui.adapter.SeasonsAdapter;
 import net.simonvt.trakt.ui.adapter.ShowsAdapter;
-import net.simonvt.trakt.ui.fragment.MovieFragment;
-import net.simonvt.trakt.ui.fragment.SearchShowFragment;
+import net.simonvt.trakt.ui.dialog.RatingDialog;
 import net.simonvt.trakt.ui.fragment.EpisodeFragment;
 import net.simonvt.trakt.ui.fragment.EpisodesWatchlistFragment;
 import net.simonvt.trakt.ui.fragment.LoginFragment;
 import net.simonvt.trakt.ui.fragment.MovieCollectionFragment;
+import net.simonvt.trakt.ui.fragment.MovieFragment;
 import net.simonvt.trakt.ui.fragment.MovieWatchlistFragment;
 import net.simonvt.trakt.ui.fragment.SearchMovieFragment;
+import net.simonvt.trakt.ui.fragment.SearchShowFragment;
 import net.simonvt.trakt.ui.fragment.SeasonFragment;
 import net.simonvt.trakt.ui.fragment.SeasonsFragment;
 import net.simonvt.trakt.ui.fragment.ShowInfoFragment;
@@ -133,6 +137,9 @@ public class TraktApp extends Application {
                     WatchedMoviesFragment.class,
                     WatchedShowsFragment.class,
 
+                    // Dialogs
+                    RatingDialog.class,
+
                     // ListAdapters
                     EpisodeWatchlistAdapter.class,
                     SeasonsAdapter.class,
@@ -148,7 +155,10 @@ public class TraktApp extends Application {
 
                     // Tasks
                     EpisodeCollectionTask.class,
+                    EpisodeRateTask.class,
                     EpisodeWatchedTask.class,
+                    MovieRateTask.class,
+                    ShowRateTask.class,
                     SyncShowsCollectionTask.class,
                     SyncEpisodeTask.class,
                     SyncEpisodeWatchlist.class,
@@ -278,17 +288,17 @@ public class TraktApp extends Application {
 
         @Provides
         @Singleton
+        MovieTaskScheduler provideMovieScheduler() {
+            return new MovieTaskScheduler(mAppContext);
+        }
+
+        @Provides
+        @Singleton
         UserCredentials provideCredentials() {
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mAppContext);
             final String username = settings.getString(Settings.USERNAME, null);
             final String password = settings.getString(Settings.PASSWORD, null);
             return new UserCredentials(username, password);
         }
-
-        //@Provides
-        //@Singleton
-        //MovieTaskScheduler provideMovieScheduler() {
-        //    return new MovieTaskScheduler(mAppContext);
-        //}
     }
 }

@@ -1,6 +1,7 @@
 package net.simonvt.trakt.api.entity;
 
 import net.simonvt.trakt.api.enumeration.DayOfWeek;
+import net.simonvt.trakt.api.enumeration.Rating;
 import net.simonvt.trakt.api.enumeration.ShowStatus;
 
 import java.util.List;
@@ -41,7 +42,9 @@ public class TvShow {
 
     private ShowStatus status;
 
-    //TODO rating;
+    private Rating rating;
+
+    private Integer ratingAdvanced;
 
     private Ratings ratings;
 
@@ -119,6 +122,14 @@ public class TvShow {
 
     public ShowStatus getStatus() {
         return status;
+    }
+
+    public Rating getRating() {
+        return rating;
+    }
+
+    public Integer getRatingAdvanced() {
+        return ratingAdvanced;
     }
 
     public Ratings getRatings() {

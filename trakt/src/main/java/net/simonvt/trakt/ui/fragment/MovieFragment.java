@@ -6,6 +6,7 @@ import butterknife.Views;
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.provider.TraktContract;
+import net.simonvt.trakt.ui.dialog.RatingDialog;
 import net.simonvt.trakt.widget.RemoteImageView;
 
 import android.database.Cursor;
@@ -17,6 +18,7 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 public class MovieFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -24,6 +26,8 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
     private static final String TAG = "MovieFragment";
 
     private static final String ARG_ID = "net.simonvt.trakt.ui.fragment.MovieFragment.id";
+
+    private static final String DIALOG_RATING = "net.simonvt.trakt.ui.fragment.MovieFragment.ratingDialog";
 
     private static final int LOADER_MOVIE = 400;
 
@@ -33,8 +37,12 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
     @InjectView(R.id.overview) TextView mOverview;
     @InjectView(R.id.inCollection) TextView mCollection;
     @InjectView(R.id.inWatchlist) TextView mWatchlist;
+    @InjectView(R.id.ratingContainer) View mRatingContainer;
+    @InjectView(R.id.rating) RatingBar mRating;
 
     private long mMovieId;
+
+    private int mCurrentRating;
 
     public static MovieFragment newInstance(long movieId) {
         MovieFragment f = new MovieFragment();
@@ -65,6 +73,14 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
         super.onViewCreated(view, savedInstanceState);
         Views.inject(this, view);
 
+        mRatingContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RatingDialog.newInstance(RatingDialog.Type.MOVIE, mMovieId, mCurrentRating)
+                        .show(getFragmentManager(), DIALOG_RATING);
+            }
+        });
+
         getLoaderManager().initLoader(LOADER_MOVIE, null, this);
     }
 
@@ -83,6 +99,8 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
         if (fanart != null) {
             mBanner.setImage(fanart);
         }
+        mCurrentRating = cursor.getInt(cursor.getColumnIndex(TraktContract.Movies.RATING));
+        mRating.setRating(mCurrentRating);
 
         final String overview = cursor.getString(cursor.getColumnIndex(TraktContract.Movies.OVERVIEW));
         final boolean inWatchlist = cursor.getInt(cursor.getColumnIndex(TraktContract.Movies.IN_WATCHLIST)) == 1;

@@ -14,6 +14,7 @@ import net.simonvt.trakt.scheduler.ShowTaskScheduler;
 import net.simonvt.trakt.sync.TraktTaskQueue;
 import net.simonvt.trakt.ui.LibraryType;
 import net.simonvt.trakt.ui.ShowsNavigationListener;
+import net.simonvt.trakt.ui.dialog.RatingDialog;
 import net.simonvt.trakt.util.DateUtils;
 import net.simonvt.trakt.widget.OverflowView;
 import net.simonvt.trakt.widget.RemoteImageView;
@@ -31,6 +32,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import javax.inject.Inject;
@@ -41,6 +43,8 @@ public class ShowInfoFragment extends BaseFragment {
 
     private static final String ARG_SHOWID = "net.simonvt.trakt.ui.fragment.ShowInfoFragment.showId";
     private static final String ARG_TYPE = "net.simonvt.trakt.ui.fragment.ShowInfoFragment.type";
+
+    private static final String DIALOG_RATING = "net.simonvt.trakt.ui.fragment.ShowInfoFragment.ratingDialog";
 
     private static final int LOADER_SHOW = 10;
     private static final int LOADER_GENRES = 11;
@@ -55,6 +59,7 @@ public class ShowInfoFragment extends BaseFragment {
             Shows.CERTIFICATION,
             Shows.BANNER,
             Shows.RATING_PERCENTAGE,
+            Shows.RATING,
             Shows.OVERVIEW,
             Shows.IN_WATCHLIST,
             Shows.IN_COLLECTION_COUNT,
@@ -78,11 +83,13 @@ public class ShowInfoFragment extends BaseFragment {
     private long mShowId;
 
     @InjectView(R.id.title) TextView mTitle;
+    @InjectView(R.id.ratingContainer) View mRatingContainer;
+    @InjectView(R.id.rating) RatingBar mRating;
+    @InjectView(R.id.allRatings) TextView mAllRatings;
     //@InjectView(R.id.year) TextView mYear;
     @InjectView(R.id.airtime) TextView mAirTime;
     @InjectView(R.id.certification) TextView mCertification;
     @InjectView(R.id.banner) RemoteImageView mBanner;
-    //@InjectView(R.id.rating) TextView mRating;
     @InjectView(R.id.genres) TextView mGenres;
     @InjectView(R.id.overview) TextView mOverview;
     @InjectView(R.id.inCollection) TextView mCollection;
@@ -104,6 +111,8 @@ public class ShowInfoFragment extends BaseFragment {
     @Inject Bus mBus;
 
     private String mShowTitle;
+
+    private int mCurrentRating;
 
     private LibraryType mType;
 
@@ -152,8 +161,15 @@ public class ShowInfoFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         Views.inject(this, view);
 
-        mNextEpisodeContainer.setOnClickListener(mNextEpisodeClickListener);
+        mRatingContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RatingDialog.newInstance(RatingDialog.Type.SHOW, mShowId, mCurrentRating)
+                        .show(getFragmentManager(), DIALOG_RATING);
+            }
+        });
 
+        mNextEpisodeContainer.setOnClickListener(mNextEpisodeClickListener);
         mNextEpisodeOverflow.setListener(new OverflowView.OverflowActionListener() {
             @Override
             public void onPopupShown() {
@@ -225,10 +241,14 @@ public class ShowInfoFragment extends BaseFragment {
         if (bannerUrl != null) {
             mBanner.setImage(bannerUrl);
         }
-        final int rating = cursor.getInt(cursor.getColumnIndex(Shows.RATING_PERCENTAGE));
+        mCurrentRating = cursor.getInt(cursor.getColumnIndex(Shows.RATING));
+        final int ratingAll = cursor.getInt(cursor.getColumnIndex(Shows.RATING_PERCENTAGE));
         final String overview = cursor.getString(cursor.getColumnIndex(Shows.OVERVIEW));
         final boolean inWatchlist = cursor.getInt(cursor.getColumnIndex(Shows.IN_WATCHLIST)) == 1;
         final int inCollectionCount = cursor.getInt(cursor.getColumnIndex(Shows.IN_COLLECTION_COUNT));
+
+        mRating.setProgress(mCurrentRating);
+        mAllRatings.setText(ratingAll + "%");
 
         mCollection.setVisibility(inCollectionCount > 0 ? View.VISIBLE : View.GONE);
         mWatchlist.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);

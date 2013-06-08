@@ -55,7 +55,7 @@ public class BaseTaskScheduler {
         });
     }
 
-    protected static void execute(Runnable r) {
+    protected void execute(Runnable r) {
         SERIAL_EXECUTOR.execute(r);
     }
 

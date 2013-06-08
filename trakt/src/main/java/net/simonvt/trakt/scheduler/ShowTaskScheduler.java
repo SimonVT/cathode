@@ -1,15 +1,16 @@
 package net.simonvt.trakt.scheduler;
 
 import net.simonvt.trakt.TraktApp;
-import net.simonvt.trakt.api.enumeration.Rating;
 import net.simonvt.trakt.provider.ShowWrapper;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.sync.task.EpisodeCollectionTask;
 import net.simonvt.trakt.sync.task.EpisodeWatchedTask;
 import net.simonvt.trakt.sync.task.ShowCollectionTask;
+import net.simonvt.trakt.sync.task.ShowRateTask;
 import net.simonvt.trakt.sync.task.ShowWatchlistTask;
 import net.simonvt.trakt.sync.task.SyncShowTask;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
@@ -144,38 +145,15 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         execute(new Runnable() {
             @Override
             public void run() {
-                // TODO:
-            }
-        });
-    }
+                final long tvdbId = ShowWrapper.getTvdbId(mContext.getContentResolver(), showId);
 
-    /**
-     * Rate a show on trakt. Depending on the user settings, this will also send out social updates to facebook,
-     * twitter, and tumblr.
-     *
-     * @param showId The database id of the show.
-     * @param rating A value from {@link Rating}.
-     */
-    public void rate(final long showId, final Rating rating) {
-        execute(new Runnable() {
-            @Override
-            public void run() {
-                // TODO:
-            }
-        });
-    }
+                ContentValues cv = new ContentValues();
+                cv.put(TraktContract.Shows.RATING, rating);
+                mContext.getContentResolver().update(TraktContract.Shows.buildShowUri(showId), cv, null, null);
 
-    /**
-     * Unrate a show on trakt.
-     *
-     * @param showId The database id of the show.
-     */
-    public void unrate(final long showId) {
-        execute(new Runnable() {
-            @Override
-            public void run() {
-                // TODO:
+                mQueue.add(new ShowRateTask(tvdbId, rating));
             }
         });
+        // TODO:
     }
 }

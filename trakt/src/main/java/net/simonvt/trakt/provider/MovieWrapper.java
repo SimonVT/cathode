@@ -19,7 +19,7 @@ public final class MovieWrapper {
     private MovieWrapper() {
     }
 
-    public static int getTmdbId(ContentResolver resolver, long movieId) {
+    public static long getTmdbId(ContentResolver resolver, long movieId) {
         Cursor c = resolver.query(Movies.buildMovieUri(movieId), new String[] {
                 TraktContract.MovieColumns.TMDB_ID,
         }, null, null, null);

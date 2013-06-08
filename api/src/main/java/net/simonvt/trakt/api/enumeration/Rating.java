@@ -5,7 +5,8 @@ import java.util.Map;
 
 public enum Rating {
     LOVE("love"),
-    HATE("hate");
+    HATE("hate"),
+    FALSE("false");
 
     private final String mValue;
 

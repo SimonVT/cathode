@@ -134,6 +134,7 @@ public final class TraktContract {
         String RATING_VOTES = "ratingVotes";
         String RATING_LOVED = "ratingLoved";
         String RATING_HATED = "ratingHated";
+        String RATING = "rating";
         String WATCHERS = "watchers";
         String PLAYS = "plays";
         String SCROBBLES = "scrobbles";

@@ -59,6 +59,7 @@ public class SyncShowsWatchlistTask extends TraktTask {
 
         } catch (RetrofitError e) {
             postOnFailure();
+            e.printStackTrace();
         }
     }
 }
