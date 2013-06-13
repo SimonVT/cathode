@@ -55,11 +55,11 @@
     </style>
 
     <style name="Menu.Category">
-        <item name="android:textColor">?android:attr/textColorSecondaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:background">@drawable/list_section_divider_holo_dark</item>
+        <item name="android:background">@drawable/list_section_divider_holo_light</item>
 
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">16dp</item>
@@ -71,7 +71,7 @@
     <style name="Menu.Item">
         <!--item name="android:background">?android:attr/listSelector</item-->
         <item name="android:textAppearance">?android:attr/textAppearance</item>
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textSize">18sp</item>
         <item name="android:minHeight">?android:attr/listPreferredItemHeightSmall</item>
         <item name="android:paddingLeft">32dp</item>
