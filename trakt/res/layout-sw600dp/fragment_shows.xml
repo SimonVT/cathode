@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/listContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@android:id/empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp" />
+
+        <GridView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:dividerHeight="4.0dp"
+            android:drawSelectorOnTop="true"
+            android:numColumns="@integer/showsColumns"
+            android:paddingTop="4dp"
+            android:paddingLeft="32dp"
+            android:paddingRight="32dp"
+            android:horizontalSpacing="8dp"
+            android:verticalSpacing="8dp"
+            android:clipToPadding="false"
+            android:scrollbarStyle="outsideOverlay" />
+    </FrameLayout>
+
+    <include layout="@layout/fragment_list_progressbar" />
+</FrameLayout>

@@ -4,6 +4,7 @@ import com.squareup.picasso.Picasso;
 
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
+import net.simonvt.trakt.util.LogWrapper;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -218,28 +219,37 @@ public class RemoteImageView extends ImageView {
         int height = MeasureSpec.getSize(heightMeasureSpec);
 
         if (widthMode == MeasureSpec.UNSPECIFIED && heightMode == MeasureSpec.UNSPECIFIED) {
-            throw new IllegalArgumentException("RemoteImageView must be measured as EXACTLY");
-        }
+            //throw new IllegalArgumentException("RemoteImageView must be measured as EXACTLY");
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        if (mAspectRatio != 0.0f) {
-            switch (mDominantMeasurement) {
-                case MEASUREMENT_HEIGHT:
-                    width = (int) ((height - getPaddingTop() - getPaddingBottom()) * mAspectRatio) + getPaddingLeft()
-                            + getPaddingRight();
-                    break;
+        } else {
+            if (mAspectRatio != 0.0f) {
+                switch (mDominantMeasurement) {
+                    case MEASUREMENT_HEIGHT:
+                        width = (int) ((height - getPaddingTop() - getPaddingBottom()) * mAspectRatio) +
+                                getPaddingLeft()
+                                + getPaddingRight();
+                        break;
 
-                case MEASUREMENT_WIDTH:
-                    height = (int) ((width - getPaddingLeft() - getPaddingRight()) * mAspectRatio) + getPaddingTop()
-                            + getPaddingBottom();
-                    break;
+                    case MEASUREMENT_WIDTH:
+                        height = (int) ((width - getPaddingLeft() - getPaddingRight()) * mAspectRatio) + getPaddingTop()
+                                + getPaddingBottom();
+                        break;
+                }
             }
-        }
 
-        setMeasuredDimension(width, height);
+            LogWrapper.v("RemoteImageView",
+                    "Height: " + height + " - width: " + width + " pt: " + getPaddingTop() + " bt: " +
+                            getPaddingBottom());
+
+            setMeasuredDimension(width, height);
+        }
 
         mMeasured = true;
 
-        if (mImageUrl != null) {
+        if (mImageUrl != null
+                && getMeasuredWidth() - getPaddingLeft() - getPaddingRight() > 0
+                && getMeasuredHeight() - getPaddingTop() - getPaddingBottom() > 0) {
             mPicasso.load(mImageUrl)
                     .resize(getMeasuredWidth() - getPaddingLeft() - getPaddingRight(),
                             getMeasuredHeight() - getPaddingTop() - getPaddingBottom())

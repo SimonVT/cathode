@@ -67,7 +67,7 @@ public abstract class ShowsFragment extends AbsAdapterFragment implements Loader
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_list_cards, container, false);
+        return inflater.inflate(R.layout.fragment_shows, container, false);
     }
 
     @Override

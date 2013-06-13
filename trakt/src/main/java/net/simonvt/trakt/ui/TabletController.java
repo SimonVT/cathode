@@ -24,11 +24,9 @@ import net.simonvt.trakt.util.FragmentStack;
 import android.os.Bundle;
 import android.view.View;
 
-public class PhoneController extends UiController {
+public class TabletController extends UiController {
 
-    private static final String TAG = "PhoneController";
-
-    private static final String STATE_NAV_TITLE = "net.simonvt.trakt.ui.PhoneController.navTitle";
+    private static final String TAG = "TabletController";
 
     private FragmentStack<BaseFragment> mStack;
 
@@ -38,11 +36,11 @@ public class PhoneController extends UiController {
 
     private NavigationFragment mNavigation;
 
-    public static PhoneController newInstance(HomeActivity activity) {
-        return new PhoneController(activity);
+    public static TabletController newInstance(HomeActivity activity) {
+        return new TabletController(activity);
     }
 
-    PhoneController(HomeActivity activity) {
+    TabletController(HomeActivity activity) {
         super(activity);
     }
 

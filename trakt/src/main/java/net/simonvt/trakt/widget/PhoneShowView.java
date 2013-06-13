@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class PhoneShowView extends AbsShowView {
+public class PhoneShowView extends ViewGroup {
 
     private int mMinHeight;
 

@@ -7,8 +7,10 @@ import com.squareup.otto.Bus;
 
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
+import net.simonvt.trakt.provider.CollectLoader;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.provider.TraktContract.Shows;
+import net.simonvt.trakt.provider.WatchedLoader;
 import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
 import net.simonvt.trakt.scheduler.ShowTaskScheduler;
 import net.simonvt.trakt.sync.TraktTaskQueue;
@@ -32,6 +34,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -48,7 +51,8 @@ public class ShowInfoFragment extends BaseFragment {
 
     private static final int LOADER_SHOW = 10;
     private static final int LOADER_GENRES = 11;
-    private static final int LOADER_NEXT_EPISODE = 12;
+    private static final int LOADER_WATCH = 12;
+    private static final int LOADER_COLLECT = 13;
 
     private static final String[] SHOW_PROJECTION = new String[] {
             Shows.TITLE,
@@ -63,6 +67,7 @@ public class ShowInfoFragment extends BaseFragment {
             Shows.OVERVIEW,
             Shows.IN_WATCHLIST,
             Shows.IN_COLLECTION_COUNT,
+            Shows.WATCHED_COUNT,
     };
 
     private static final String[] EPISODE_PROJECTION = new String[] {
@@ -95,14 +100,41 @@ public class ShowInfoFragment extends BaseFragment {
     @InjectView(R.id.inCollection) TextView mCollection;
     @InjectView(R.id.inWatchlist) TextView mWatchlist;
 
-    @InjectView(R.id.nextEpisodeContainer) View mNextEpisodeContainer;
-    @InjectView(R.id.nextEpisodeDivider) View mNextEpisodeDivider;
-    @InjectView(R.id.nextEpisode) TextView mNextEpisode;
-    @InjectView(R.id.nextEpisodeBanner) RemoteImageView mNextEpisodeBanner;
-    @InjectView(R.id.nextEpisodeTitle) TextView mNextEpisodeTitle;
-    @InjectView(R.id.nextEpisodeAirTime) TextView mNextEpisodeAirTime;
-    @InjectView(R.id.nextEpisodeEpisode) TextView mNextEpisodeEpisode;
-    @InjectView(R.id.nextEpisodeOverflow) OverflowView mNextEpisodeOverflow;
+    @InjectView(R.id.episodesTitle) View mEpisodesTitle;
+    @InjectView(R.id.episodes) LinearLayout mEpisodes;
+
+    @InjectView(R.id.watchTitle) View mWatchTitle;
+    @InjectView(R.id.collectTitle) View mCollectTitle;
+
+    @InjectView(R.id.toWatch) View mToWatch;
+    private EpisodeHolder mToWatchHolder;
+    private long mToWatchId = -1;
+
+    @InjectView(R.id.lastWatched) View mLastWatched;
+    private EpisodeHolder mLastWatchedHolder;
+    private long mLastWatchedId = -1;
+
+    @InjectView(R.id.toCollect) View mToCollect;
+    private EpisodeHolder mToCollectHolder;
+    private long mToCollectId = -1;
+
+    @InjectView(R.id.lastCollected) View mLastCollected;
+    private EpisodeHolder mLastCollectedHolder;
+    private long mLastCollectedId = -1;
+
+    static class EpisodeHolder {
+
+        @InjectView(R.id.episode) TextView mEpisode;
+        @InjectView(R.id.episodeBanner) RemoteImageView mEpisodeBanner;
+        @InjectView(R.id.episodeTitle) TextView mEpisodeTitle;
+        @InjectView(R.id.episodeAirTime) TextView mEpisodeAirTime;
+        @InjectView(R.id.episodeEpisode) TextView mEpisodeEpisode;
+        @InjectView(R.id.episodeOverflow) OverflowView mEpisodeOverflow;
+
+        public EpisodeHolder(View v) {
+            Views.inject(this, v);
+        }
+    }
 
     @Inject ShowTaskScheduler mShowScheduler;
     @Inject EpisodeTaskScheduler mEpisodeScheduler;
@@ -115,8 +147,6 @@ public class ShowInfoFragment extends BaseFragment {
     private int mCurrentRating;
 
     private LibraryType mType;
-
-    private long mNextEpisodeId = -1;
 
     public static ShowInfoFragment newInstance(long showId, LibraryType type) {
         ShowInfoFragment f = new ShowInfoFragment();
@@ -169,32 +199,139 @@ public class ShowInfoFragment extends BaseFragment {
             }
         });
 
-        mNextEpisodeContainer.setOnClickListener(mNextEpisodeClickListener);
-        mNextEpisodeOverflow.setListener(new OverflowView.OverflowActionListener() {
-            @Override
-            public void onPopupShown() {
-            }
-
-            @Override
-            public void onPopupDismissed() {
-            }
-
-            @Override
-            public void onActionSelected(int action) {
-                switch (action) {
-                    case R.id.action_watched:
-                        if (mNextEpisodeId != -1) {
-                            mEpisodeScheduler.setWatched(mNextEpisodeId, true);
-                        }
-                        break;
+        if (mToWatch != null) {
+            mToWatchHolder = new EpisodeHolder(mToWatch);
+            mToWatch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mToWatchId != -1) mNavigationCallbacks.onDisplayEpisode(mToWatchId, mType);
                 }
-            }
-        });
-        mNextEpisodeOverflow.addItem(R.id.action_watched, R.string.action_watched);
+            });
+
+            mToWatchHolder.mEpisodeOverflow.addItem(R.id.action_watched, R.string.action_watched);
+            mToWatchHolder.mEpisodeOverflow.setListener(new OverflowView.OverflowActionListener() {
+                @Override
+                public void onPopupShown() {
+                }
+
+                @Override
+                public void onPopupDismissed() {
+                }
+
+                @Override
+                public void onActionSelected(int action) {
+                    switch (action) {
+                        case R.id.action_watched:
+                            if (mToWatchId != -1) {
+                                mEpisodeScheduler.setWatched(mToWatchId, true);
+                            }
+                            break;
+                    }
+                }
+            });
+        }
+
+        if (mLastWatched != null) {
+            mLastWatchedHolder = new EpisodeHolder(mLastWatched);
+            mLastWatched.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mLastWatchedId != -1) mNavigationCallbacks.onDisplayEpisode(mLastWatchedId, mType);
+                }
+            });
+
+            mLastWatchedHolder.mEpisodeOverflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
+            mLastWatchedHolder.mEpisodeOverflow.setListener(new OverflowView.OverflowActionListener() {
+                @Override
+                public void onPopupShown() {
+                }
+
+                @Override
+                public void onPopupDismissed() {
+                }
+
+                @Override
+                public void onActionSelected(int action) {
+                    switch (action) {
+                        case R.id.action_watched:
+                            if (mLastWatchedId != -1) {
+                                mEpisodeScheduler.setWatched(mLastWatchedId, true);
+                            }
+                            break;
+                    }
+                }
+            });
+        }
+
+        if (mToCollect != null) {
+            mToCollectHolder = new EpisodeHolder(mToCollect);
+            mToCollect.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mToCollectId != -1) mNavigationCallbacks.onDisplayEpisode(mToCollectId, mType);
+                }
+            });
+
+            mToCollectHolder.mEpisodeOverflow.addItem(R.id.action_collection_add, R.string.action_collection_add);
+            mToCollectHolder.mEpisodeOverflow.setListener(new OverflowView.OverflowActionListener() {
+                @Override
+                public void onPopupShown() {
+                }
+
+                @Override
+                public void onPopupDismissed() {
+                }
+
+                @Override
+                public void onActionSelected(int action) {
+                    switch (action) {
+                        case R.id.action_watched:
+                            if (mToCollectId != -1) {
+                                mEpisodeScheduler.setWatched(mToCollectId, true);
+                            }
+                            break;
+                    }
+                }
+            });
+        }
+
+        if (mLastCollected != null) {
+            mLastCollectedHolder = new EpisodeHolder(mLastCollected);
+            mLastCollected.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mLastCollectedId != -1) mNavigationCallbacks.onDisplayEpisode(mLastCollectedId, mType);
+                }
+            });
+
+            mLastCollectedHolder.mEpisodeOverflow
+                    .addItem(R.id.action_collection_remove, R.string.action_collection_remove);
+            mLastCollectedHolder.mEpisodeOverflow.setListener(new OverflowView.OverflowActionListener() {
+                @Override
+                public void onPopupShown() {
+                }
+
+                @Override
+                public void onPopupDismissed() {
+                }
+
+                @Override
+                public void onActionSelected(int action) {
+                    switch (action) {
+                        case R.id.action_watched:
+                            if (mLastCollectedId != -1) {
+                                mEpisodeScheduler.setWatched(mLastCollectedId, true);
+                            }
+                            break;
+                    }
+                }
+            });
+        }
 
         getLoaderManager().initLoader(LOADER_SHOW, null, mLoaderCallbacks);
         getLoaderManager().initLoader(LOADER_GENRES, null, mGenreCallbacks);
-        getLoaderManager().initLoader(LOADER_NEXT_EPISODE, null, mNextEpisodeCallbacks);
+        getLoaderManager().initLoader(LOADER_WATCH, null, mEpisodeWatchCallbacks);
+        getLoaderManager().initLoader(LOADER_COLLECT, null, mEpisodeCollectCallbacks);
     }
 
     @Override
@@ -215,18 +352,12 @@ public class ShowInfoFragment extends BaseFragment {
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
         getLoaderManager().destroyLoader(LOADER_SHOW);
         getLoaderManager().destroyLoader(LOADER_GENRES);
-        getLoaderManager().destroyLoader(LOADER_NEXT_EPISODE);
+        getLoaderManager().destroyLoader(LOADER_WATCH);
+        getLoaderManager().destroyLoader(LOADER_COLLECT);
+        super.onDestroyView();
     }
-
-    private View.OnClickListener mNextEpisodeClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (mNextEpisodeId != -1) mNavigationCallbacks.onDisplayEpisode(mNextEpisodeId, mType);
-        }
-    };
 
     private void updateShowView(final Cursor cursor) {
         if (cursor == null || !cursor.moveToFirst()) return;
@@ -246,6 +377,7 @@ public class ShowInfoFragment extends BaseFragment {
         final String overview = cursor.getString(cursor.getColumnIndex(Shows.OVERVIEW));
         final boolean inWatchlist = cursor.getInt(cursor.getColumnIndex(Shows.IN_WATCHLIST)) == 1;
         final int inCollectionCount = cursor.getInt(cursor.getColumnIndex(Shows.IN_COLLECTION_COUNT));
+        final int watchedCount = cursor.getInt(cursor.getColumnIndex(Shows.WATCHED_COUNT));
 
         mRating.setProgress(mCurrentRating);
         mAllRatings.setText(ratingAll + "%");
@@ -259,7 +391,6 @@ public class ShowInfoFragment extends BaseFragment {
         mCertification.setText(certification);
         // mRating.setText(String.valueOf(rating));
         mOverview.setText(overview);
-
     }
 
     private void updateGenreViews(final Cursor cursor) {
@@ -274,67 +405,134 @@ public class ShowInfoFragment extends BaseFragment {
         mGenres.setText(sb.toString());
     }
 
-    private void updateNextEpisodeViews(final Cursor cursor) {
+    private void updateEpisodeWatchViews(Cursor cursor) {
         if (cursor.moveToFirst()) {
-            mNextEpisodeId = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
+            mToWatch.setVisibility(View.VISIBLE);
+            mWatchTitle.setVisibility(View.VISIBLE);
 
-            mNextEpisodeContainer.setVisibility(View.VISIBLE);
-            mNextEpisodeBanner.setVisibility(View.VISIBLE);
-            mNextEpisodeDivider.setVisibility(View.VISIBLE);
-            mNextEpisode.setVisibility(View.VISIBLE);
+            mToWatchId = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
 
-            mNextEpisodeTitle.setText(cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.TITLE)));
+            mToWatchHolder.mEpisodeTitle.setText(cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.TITLE)));
+
             final long airTime = cursor.getLong(cursor.getColumnIndex(TraktContract.Episodes.FIRST_AIRED));
             final String airTimeStr = DateUtils.secondsToDate(getActivity(), airTime);
-            mNextEpisodeAirTime.setText(airTimeStr);
+            mToWatchHolder.mEpisodeAirTime.setText(airTimeStr);
+
             final int season = cursor.getInt(cursor.getColumnIndex(TraktContract.Episodes.SEASON));
             final int episode = cursor.getInt(cursor.getColumnIndex(TraktContract.Episodes.EPISODE));
-            mNextEpisodeEpisode.setText("S" + season + "E" + episode);
+            mToWatchHolder.mEpisodeEpisode.setText("S" + season + "E" + episode);
 
             final String bannerUrl = cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.SCREEN));
-            if (bannerUrl != null) {
-                mNextEpisodeBanner.setImage(bannerUrl);
-            }
+            mToWatchHolder.mEpisodeBanner.setImage(bannerUrl);
         } else {
-            mNextEpisodeContainer.setVisibility(View.GONE);
-            mNextEpisodeBanner.setVisibility(View.GONE);
-            mNextEpisodeDivider.setVisibility(View.GONE);
-            mNextEpisode.setVisibility(View.GONE);
+            mToWatch.setVisibility(View.GONE);
+            mWatchTitle.setVisibility(View.GONE);
+            mToWatchId = -1;
+        }
+
+        if (mLastWatched != null) {
+            if (cursor.moveToNext()) {
+                mLastWatched.setVisibility(View.VISIBLE);
+
+                mLastWatchedId = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
+
+                mLastWatchedHolder.mEpisodeTitle
+                        .setText(cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.TITLE)));
+
+                final long airTime = cursor.getLong(cursor.getColumnIndex(TraktContract.Episodes.FIRST_AIRED));
+                final String airTimeStr = DateUtils.secondsToDate(getActivity(), airTime);
+                mLastWatchedHolder.mEpisodeAirTime.setText(airTimeStr);
+
+                final int season = cursor.getInt(cursor.getColumnIndex(TraktContract.Episodes.SEASON));
+                final int episode = cursor.getInt(cursor.getColumnIndex(TraktContract.Episodes.EPISODE));
+                mLastWatchedHolder.mEpisodeEpisode.setText("S" + season + "E" + episode);
+
+                final String bannerUrl = cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.SCREEN));
+                mLastWatchedHolder.mEpisodeBanner.setImage(bannerUrl);
+            } else {
+                mLastWatched.setVisibility(View.GONE);
+                mLastWatchedId = -1;
+            }
+        }
+
+        if (mToWatchId == -1 && mLastWatchedId == -1 && mToCollectId == -1 && mLastCollectedId == -1) {
+            mEpisodes.setVisibility(View.GONE);
+        } else {
+            mEpisodes.setVisibility(View.VISIBLE);
         }
     }
 
-    private LoaderManager.LoaderCallbacks<Cursor> mNextEpisodeCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
+    private void updateEpisodeCollectViews(Cursor cursor) {
+        if (cursor.moveToFirst()) {
+            mToCollect.setVisibility(View.VISIBLE);
+            mCollectTitle.setVisibility(View.VISIBLE);
+
+            mToCollectId = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
+
+            mToCollectHolder.mEpisodeTitle
+                    .setText(cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.TITLE)));
+
+            final long airTime = cursor.getLong(cursor.getColumnIndex(TraktContract.Episodes.FIRST_AIRED));
+            final String airTimeStr = DateUtils.secondsToDate(getActivity(), airTime);
+            mToCollectHolder.mEpisodeAirTime.setText(airTimeStr);
+
+            final int season = cursor.getInt(cursor.getColumnIndex(TraktContract.Episodes.SEASON));
+            final int episode = cursor.getInt(cursor.getColumnIndex(TraktContract.Episodes.EPISODE));
+            mToCollectHolder.mEpisodeEpisode.setText("S" + season + "E" + episode);
+
+            final String bannerUrl = cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.SCREEN));
+            mToCollectHolder.mEpisodeBanner.setImage(bannerUrl);
+        } else {
+            mToCollect.setVisibility(View.GONE);
+            mCollectTitle.setVisibility(View.GONE);
+            mToCollectId = -1;
+        }
+
+        if (mLastCollected != null) {
+            if (cursor.moveToNext()) {
+                mLastCollected.setVisibility(View.VISIBLE);
+
+                mLastCollectedId = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
+
+                mLastCollectedHolder.mEpisodeTitle
+                        .setText(cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.TITLE)));
+
+                final long airTime = cursor.getLong(cursor.getColumnIndex(TraktContract.Episodes.FIRST_AIRED));
+                final String airTimeStr = DateUtils.secondsToDate(getActivity(), airTime);
+                mLastCollectedHolder.mEpisodeAirTime.setText(airTimeStr);
+
+                final int season = cursor.getInt(cursor.getColumnIndex(TraktContract.Episodes.SEASON));
+                final int episode = cursor.getInt(cursor.getColumnIndex(TraktContract.Episodes.EPISODE));
+                mLastCollectedHolder.mEpisodeEpisode.setText("S" + season + "E" + episode);
+
+                final String bannerUrl = cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.SCREEN));
+                mLastCollectedHolder.mEpisodeBanner.setImage(bannerUrl);
+            } else {
+                mLastCollectedId = -1;
+                mLastCollected.setVisibility(View.GONE);
+            }
+        }
+
+        if (mToWatchId == -1 && mLastWatchedId == -1 && mToCollectId == -1 && mLastCollectedId == -1) {
+            mEpisodes.setVisibility(View.GONE);
+        } else {
+            mEpisodes.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            StringBuilder where = new StringBuilder();
-            switch (mType) {
-                case WATCHLIST:
-                case WATCHED:
-                    where.append(TraktContract.Episodes.WATCHED)
-                            .append("=0")
-                            .append(" AND ")
-                            .append(TraktContract.Episodes.SEASON)
-                            .append(">0");
-                    break;
-
-                case COLLECTION:
-                    where.append(TraktContract.Episodes.IN_COLLECTION)
-                            .append("=0")
-                            .append(" AND ")
-                            .append(TraktContract.Episodes.SEASON)
-                            .append(">0");
-                    break;
-            }
-            CursorLoader cl = new CursorLoader(getActivity(), TraktContract.Episodes.buildFromShowId(mShowId),
-                    EPISODE_PROJECTION, where.toString(), null,
-                    TraktContract.Episodes.EPISODE + " ASC, " + TraktContract.Episodes.SEASON + " ASC LIMIT 1");
+            CursorLoader cl =
+                    new CursorLoader(getActivity(), Shows.buildShowUri(mShowId), SHOW_PROJECTION, null, null, null);
             cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
             return cl;
+
         }
 
         @Override
         public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
-            updateNextEpisodeViews(data);
+            updateShowView(data);
         }
 
         @Override
@@ -361,22 +559,36 @@ public class ShowInfoFragment extends BaseFragment {
         }
     };
 
-    private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
+    private LoaderManager.LoaderCallbacks<Cursor> mEpisodeWatchCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            CursorLoader cl =
-                    new CursorLoader(getActivity(), Shows.buildShowUri(mShowId), SHOW_PROJECTION, null, null, null);
-            cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
-            return cl;
+        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+            return new WatchedLoader(getActivity(), mShowId);
         }
 
         @Override
-        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
-            updateShowView(data);
+        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+            updateEpisodeWatchViews(cursor);
         }
 
         @Override
         public void onLoaderReset(Loader<Cursor> cursorLoader) {
         }
     };
+
+    private LoaderManager.LoaderCallbacks<Cursor> mEpisodeCollectCallbacks =
+            new LoaderManager.LoaderCallbacks<Cursor>() {
+                @Override
+                public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+                    return new CollectLoader(getActivity(), mShowId);
+                }
+
+                @Override
+                public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+                    updateEpisodeCollectViews(cursor);
+                }
+
+                @Override
+                public void onLoaderReset(Loader<Cursor> cursorLoader) {
+                }
+            };
 }

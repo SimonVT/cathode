@@ -1,0 +1,5 @@
+<resources>
+
+    <integer name="showsColumns">3</integer>
+
+</resources>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/episodes"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <TextView
+        android:id="@+id/watchTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="To watch"
+        style="@style/Widget.InfoTitle" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <include
+            android:id="@+id/toWatch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="8dp"
+            android:visibility="gone"
+            layout="@layout/show_info_episode" />
+
+        <include
+            android:id="@+id/lastWatched"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="8dp"
+            android:visibility="gone"
+            layout="@layout/show_info_episode" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/collectTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="To collect"
+        style="@style/Widget.InfoTitle" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <include
+            android:id="@+id/toCollect"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="8dp"
+            android:visibility="gone"
+            layout="@layout/show_info_episode" />
+
+        <include
+            android:id="@+id/lastCollected"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="gone"
+            layout="@layout/show_info_episode" />
+    </LinearLayout>
+</LinearLayout>

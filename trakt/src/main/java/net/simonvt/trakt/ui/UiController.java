@@ -73,11 +73,6 @@ public class UiController
     }
 
     @Override
-    public void onActiveViewChanged(int position, View activeView) {
-        LogWrapper.v(TAG, "[onActiveViewChanged]");
-    }
-
-    @Override
     public void onDisplayMovie(long movieId) {
         LogWrapper.v(TAG, "[onDisplayMovie]");
     }

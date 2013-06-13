@@ -4,6 +4,7 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import net.simonvt.messagebar.MessageBar;
+import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.event.AuthFailedEvent;
 import net.simonvt.trakt.event.LoginEvent;
@@ -55,7 +56,11 @@ public class HomeActivity extends BaseActivity
         final String password = settings.getString(Settings.PASSWORD, null);
 
         Bundle uiState = state != null ? state.getBundle(STATE_UICONTROLLER) : null;
-        mUiController = PhoneController.newInstance(this);
+        if (getResources().getBoolean(R.bool.isTablet)) {
+            mUiController = TabletController.newInstance(this);
+        } else {
+            mUiController = PhoneController.newInstance(this);
+        }
         mUiController.onCreate(uiState);
 
         if (username == null || password == null) {
@@ -125,11 +130,6 @@ public class HomeActivity extends BaseActivity
     @Override
     public void onMenuItemClicked(int id) {
         mActiveController.onMenuItemClicked(id);
-    }
-
-    @Override
-    public void onActiveViewChanged(int position, View activeView) {
-        mActiveController.onActiveViewChanged(position, activeView);
     }
 
     @Subscribe

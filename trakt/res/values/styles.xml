@@ -51,6 +51,7 @@
         <item name="mdMenuBackground">@color/drawerBackground</item>
         <!--item name="mdContentBackground">@color/contentBackground</item-->
         <item name="mdActiveIndicator">@drawable/menu_arrow</item>
+        <item name="mdMenuSize">260dp</item>
     </style>
 
     <style name="Menu.Category">

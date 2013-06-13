@@ -12,4 +12,9 @@
         <attr name="placeholder" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="MaxSizeLinearLayout">
+        <attr name="maxWidth" format="dimension" />
+        <attr name="maxHeight" format="dimension" />
+    </declare-styleable>
+
 </resources>

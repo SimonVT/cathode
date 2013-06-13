@@ -22,8 +22,6 @@ public class NavigationFragment extends AbsAdapterFragment {
     public interface OnMenuClickListener {
 
         void onMenuItemClicked(int id);
-
-        void onActiveViewChanged(int position, View activeView);
     }
 
     private List<NavigationItem> mMenuItems = new ArrayList<NavigationItem>();
@@ -84,7 +82,6 @@ public class NavigationFragment extends AbsAdapterFragment {
         mListener.onMenuItemClicked(item.mId);
 
         mSelectedPosition = position;
-        mListener.onActiveViewChanged(position, v);
     }
 
     private static class NavigationItem {
@@ -194,7 +191,7 @@ public class NavigationFragment extends AbsAdapterFragment {
             }
 
             if (position == mSelectedPosition) {
-                mListener.onActiveViewChanged(position, v);
+                // TODO: Mark item
             }
 
             v.setTag(R.id.mdActiveViewPosition, position);
