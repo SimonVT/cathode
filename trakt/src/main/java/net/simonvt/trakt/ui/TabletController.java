@@ -137,7 +137,7 @@ public class TabletController extends UiController {
         mMenuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_BEZEL);
         mMenuDrawer.setDrawerIndicatorEnabled(mStack.getStackSize() == 1);
 
-        mActivity.getActionBar().setHomeButtonEnabled(false);
+        mActivity.getActionBar().setHomeButtonEnabled(true);
         mActivity.getActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (mStack.getStackSize() == 0) {
