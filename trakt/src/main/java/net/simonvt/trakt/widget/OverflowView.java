@@ -83,6 +83,7 @@ public class OverflowView extends ImageView {
     }
 
     private void init(final Context context) {
+        setWillNotDraw(true);
         setImageResource(R.drawable.item_overflow);
         setOnClickListener(new OnClickListener() {
             @Override
@@ -116,10 +117,12 @@ public class OverflowView extends ImageView {
 
     public void removeItems() {
         mItems.clear();
+        setWillNotDraw(true);
     }
 
     public void addItem(int action, int title) {
         mItems.add(new OverflowItem(action, title));
+        setWillNotDraw(false);
     }
 
     public void setListener(OverflowActionListener listener) {
