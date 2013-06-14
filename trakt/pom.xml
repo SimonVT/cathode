@@ -32,8 +32,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.simonvt</groupId>
-            <artifactId>android-menudrawer</artifactId>
+            <groupId>net.simonvt.menudrawer</groupId>
+            <artifactId>menudrawer</artifactId>
             <type>apklib</type>
         </dependency>
         <dependency>
