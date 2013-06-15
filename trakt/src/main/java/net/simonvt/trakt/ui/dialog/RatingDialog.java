@@ -42,6 +42,8 @@ public class RatingDialog extends DialogFragment {
 
     private long mId;
 
+    private int mRating;
+
     private String[] mRatingText;
 
     public static RatingDialog newInstance(Type type, long id, int rating) {
@@ -64,6 +66,7 @@ public class RatingDialog extends DialogFragment {
         Bundle args = getArguments();
         mType = (Type) args.getSerializable(ARG_TYPE);
         mId = args.getLong(ARG_ID);
+        mRating = args.getInt(ARG_RATING);
 
         mRatingText = getResources().getStringArray(R.array.ratings);
     }
@@ -75,11 +78,13 @@ public class RatingDialog extends DialogFragment {
         View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_rating, null);
         final int rating = getArguments().getInt(ARG_RATING);
         final TextView ratingText = (TextView) v.findViewById(R.id.ratingText);
+        ratingText.setText(mRatingText[mRating]);
         final RatingBar ratingBar = (RatingBar) v.findViewById(R.id.rating);
         ratingBar.setRating(rating);
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+                mRating = (int) v;
                 ratingText.setText(mRatingText[(int) v]);
             }
         });
