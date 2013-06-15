@@ -1,41 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:padding="16dp"
-    android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/title"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:fontFamily="sans-light"
-        android:text="This is a show name"/>
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/firstAired"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:fontFamily="sans-light"
-        android:text="OCT 20, 2011" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    <net.simonvt.trakt.widget.RemoteImageView
-        android:id="@+id/screen"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/header_bg"
-        app:dominantMeasurement="width"
-        app:placeholder="@drawable/placeholder_default"
-        app:aspectRatio="0.5625" />
+            <include
+                layout="@layout/info_rating"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="4dp" />
 
-    <TextView
-        android:id="@+id/overview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Text goes here"
-        style="@style/Widget.InfoText" />
-</LinearLayout>
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="8dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:fontFamily="sans-light"
+                android:text="This is a show name" />
+
+            <TextView
+                android:id="@+id/firstAired"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="sans-light"
+                android:text="OCT 20, 2011" />
+
+            <net.simonvt.trakt.widget.RemoteImageView
+                android:id="@+id/screen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/header_bg"
+                app:dominantMeasurement="width"
+                app:placeholder="@drawable/placeholder_default"
+                app:aspectRatio="0.5625" />
+
+            <TextView
+                android:id="@+id/overview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:text="Text goes here"
+                style="@style/Widget.InfoText" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:orientation="vertical"
+            android:gravity="right">
+
+            <TextView
+                android:id="@+id/watched"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginRight="8dp"
+                android:drawableRight="@drawable/ic_checkmark_watched"
+                android:text="@string/checkmark_watched"
+                android:textColor="@color/watchedCheckbox"
+                style="@style/Widget.CheckMark" />
+
+            <TextView
+                android:id="@+id/inCollection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginRight="8dp"
+                android:drawableRight="@drawable/ic_checkmark_collection"
+                android:text="@string/checkmark_collection"
+                android:textColor="@color/collectionCheckbox"
+                style="@style/Widget.CheckMark" />
+
+            <TextView
+                android:id="@+id/inWatchlist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginRight="8dp"
+                android:drawableRight="@drawable/ic_checkmark_watchlist"
+                android:text="@string/checkmark_watchlist"
+                android:textColor="@color/watchlistCheckbox"
+                style="@style/Widget.CheckMark" />
+        </LinearLayout>
+    </FrameLayout>
+</ScrollView>

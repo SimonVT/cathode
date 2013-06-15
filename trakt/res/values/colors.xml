@@ -1,7 +1,10 @@
 <resources>
 
     <color name="drawerBackground">#FFD5D5D5</color>
-
     <color name="contentBackground">#FFE5E5E5</color>
+
+    <color name="watchedCheckbox">@android:color/holo_blue_dark</color>
+    <color name="collectionCheckbox">@android:color/holo_orange_dark</color>
+    <color name="watchlistCheckbox">@android:color/holo_red_dark</color>
 
 </resources>

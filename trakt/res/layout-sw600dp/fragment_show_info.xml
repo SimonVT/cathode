@@ -20,7 +20,7 @@
                 android:orientation="vertical">
 
                 <include
-                    layout="@layout/show_info_rating"
+                    layout="@layout/info_rating"
                     android:layout_marginLeft="32dp"
                     android:layout_marginTop="4dp" />
 

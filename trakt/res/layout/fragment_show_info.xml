@@ -20,7 +20,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <include layout="@layout/show_info_rating" />
+                <include layout="@layout/info_rating" />
 
                 <TextView
                     android:id="@+id/overviewTitle"
