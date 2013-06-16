@@ -4,7 +4,6 @@ import com.squareup.picasso.Picasso;
 
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
-import net.simonvt.trakt.util.LogWrapper;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -237,10 +236,6 @@ public class RemoteImageView extends ImageView {
                         break;
                 }
             }
-
-            LogWrapper.v("RemoteImageView",
-                    "Height: " + height + " - width: " + width + " pt: " + getPaddingTop() + " bt: " +
-                            getPaddingBottom());
 
             setMeasuredDimension(width, height);
         }
