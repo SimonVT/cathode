@@ -74,9 +74,12 @@ public abstract class AbsAdapterFragment extends BaseFragment {
         if (mAdapter == null) {
             mListContainer.setVisibility(View.GONE);
             mProgressContainer.setVisibility(View.VISIBLE);
+            mCurrentState = STATE_PROGRESS_VISIBLE;
         } else {
             mAdapterView.setAdapter(mAdapter);
-            changeState(STATE_LIST_VISIBLE, false);
+            mCurrentState = STATE_LIST_VISIBLE;
+            mListContainer.setVisibility(View.VISIBLE);
+            mProgressContainer.setVisibility(View.GONE);
         }
     }
 
@@ -146,7 +149,7 @@ public abstract class AbsAdapterFragment extends BaseFragment {
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    if (mCurrentState == STATE_LIST_VISIBLE) {
+                    if (newState == STATE_LIST_VISIBLE) {
                         mProgressContainer.setVisibility(View.GONE);
                     } else {
                         mListContainer.setVisibility(View.GONE);
@@ -165,8 +168,8 @@ public abstract class AbsAdapterFragment extends BaseFragment {
                 @Override
                 public void run() {
                     if (mListContainer != null) {
-                        mListContainer.startAnimation(mCurrentState == STATE_LIST_VISIBLE ? fadeIn : fadeOut);
-                        mProgressContainer.startAnimation(mCurrentState == STATE_LIST_VISIBLE ? fadeOut : fadeIn);
+                        mListContainer.startAnimation(newState == STATE_LIST_VISIBLE ? fadeIn : fadeOut);
+                        mProgressContainer.startAnimation(newState == STATE_LIST_VISIBLE ? fadeOut : fadeIn);
                     }
                 }
             });
