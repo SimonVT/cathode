@@ -10,15 +10,19 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public abstract class AbsAdapterFragment extends BaseFragment {
 
     private static final String SAVED_EMPTY_TEXT = "savedEmptyText";
+
+    private static final int STATE_NONE = -1;
+    private static final int STATE_PROGRESS_VISIBLE = 0;
+    private static final int STATE_LIST_VISIBLE = 1;
 
     private static final int ANIMATION_DURATION = 600;
 
@@ -29,12 +33,16 @@ public abstract class AbsAdapterFragment extends BaseFragment {
     @InjectView(android.R.id.list) AbsListView mAdapterView;
     @InjectView(android.R.id.empty) TextView mEmpty;
 
-    private LinearLayout mProgress;
     private Context mAppContext;
 
     private String mEmptyText = "";
 
     protected boolean mAttachLongClickListener;
+
+    private boolean mAnimating;
+
+    private int mCurrentState = STATE_PROGRESS_VISIBLE;
+    private int mPendingStateChange = STATE_NONE;
 
     @Override
     public void onCreate(Bundle state) {
@@ -68,28 +76,68 @@ public abstract class AbsAdapterFragment extends BaseFragment {
             mProgressContainer.setVisibility(View.VISIBLE);
         } else {
             mAdapterView.setAdapter(mAdapter);
-            showList(true, false);
+            changeState(STATE_LIST_VISIBLE, false);
         }
     }
 
-    private void showList(final boolean showList, final boolean animate) {
-        if (!showList && mListContainer.getVisibility() != View.VISIBLE) {
+    @Override
+    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+        Animation animation = null;
+        if (nextAnim != 0) {
+            animation = AnimationUtils.loadAnimation(getActivity(), nextAnim);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    mAnimating = true;
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    mAnimating = false;
+                    if (mPendingStateChange != STATE_NONE) {
+                        changeState(mPendingStateChange, true);
+                        mPendingStateChange = STATE_NONE;
+                    }
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+        }
+
+        return animation;
+    }
+
+    private void changeState(final int newState, final boolean animate) {
+        if (newState == mCurrentState) {
             return;
         }
 
-        if (showList && !animate) {
+        if (mAnimating) {
+            mPendingStateChange = newState;
+            return;
+        }
+
+        mCurrentState = newState;
+
+        if (newState == STATE_PROGRESS_VISIBLE && mListContainer.getVisibility() != View.VISIBLE) {
+            return;
+        }
+
+        if (newState == STATE_LIST_VISIBLE && !animate) {
             mListContainer.setVisibility(View.VISIBLE);
             mProgressContainer.setVisibility(View.GONE);
-        } else if (!showList && !animate) {
+        } else if (newState == STATE_PROGRESS_VISIBLE && !animate) {
             mListContainer.setVisibility(View.GONE);
             mProgressContainer.setVisibility(View.VISIBLE);
         } else {
             mListContainer.setVisibility(View.VISIBLE);
             mProgressContainer.setVisibility(View.VISIBLE);
 
-            Animation fadeIn = new AlphaAnimation(0.0f, 1.0f);
+            final Animation fadeIn = new AlphaAnimation(0.0f, 1.0f);
             fadeIn.setDuration(ANIMATION_DURATION);
-            Animation fadeOut = new AlphaAnimation(1.0f, 0.0f);
+            final Animation fadeOut = new AlphaAnimation(1.0f, 0.0f);
             fadeOut.setDuration(ANIMATION_DURATION);
             fadeOut.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -98,7 +146,7 @@ public abstract class AbsAdapterFragment extends BaseFragment {
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    if (showList) {
+                    if (mCurrentState == STATE_LIST_VISIBLE) {
                         mProgressContainer.setVisibility(View.GONE);
                     } else {
                         mListContainer.setVisibility(View.GONE);
@@ -113,8 +161,15 @@ public abstract class AbsAdapterFragment extends BaseFragment {
                 }
             });
 
-            mListContainer.startAnimation(showList ? fadeIn : fadeOut);
-            mProgressContainer.startAnimation(showList ? fadeOut : fadeIn);
+            getView().postOnAnimation(new Runnable() {
+                @Override
+                public void run() {
+                    if (mListContainer != null) {
+                        mListContainer.startAnimation(mCurrentState == STATE_LIST_VISIBLE ? fadeIn : fadeOut);
+                        mProgressContainer.startAnimation(mCurrentState == STATE_LIST_VISIBLE ? fadeOut : fadeIn);
+                    }
+                }
+            });
         }
     }
 
@@ -124,7 +179,6 @@ public abstract class AbsAdapterFragment extends BaseFragment {
         mListContainer = null;
         mEmpty = null;
         mAdapterView = null;
-        mProgress = null;
 
         super.onDestroyView();
     }
@@ -160,11 +214,11 @@ public abstract class AbsAdapterFragment extends BaseFragment {
                 if (mAdapterView != null) {
                     mAdapterView.setAdapter(mAdapter);
                     if (mListContainer.getVisibility() != View.VISIBLE) {
-                        showList(true, true);
+                        changeState(STATE_LIST_VISIBLE, true);
                     }
                 }
             } else if (mAdapterView != null) {
-                showList(false, true);
+                changeState(STATE_PROGRESS_VISIBLE, true);
             }
         }
     }
