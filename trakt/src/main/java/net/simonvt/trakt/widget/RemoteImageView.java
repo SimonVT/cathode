@@ -1,19 +1,21 @@
 package net.simonvt.trakt.widget;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
+import net.simonvt.trakt.util.LogWrapper;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.os.SystemClock;
 import android.util.AttributeSet;
-import android.widget.ImageView;
-import android.widget.Scroller;
+import android.view.View;
 
 import javax.inject.Inject;
 
@@ -25,9 +27,11 @@ import javax.inject.Inject;
  * {@link #setAspectRatio(float)} must be called. The non-fixed dimension will then be calculated by multiplying the
  * fixed dimension with this value.
  */
-public class RemoteImageView extends ImageView {
+public class RemoteImageView extends View implements Target {
 
-    private static final int ANIMATION_DURATION = 600;
+    private static final String TAG = "RemoteImageView";
+
+    private static final float ANIMATION_DURATION = 300.0f;
 
     private static final int MEASUREMENT_HEIGHT = 0;
 
@@ -35,17 +39,17 @@ public class RemoteImageView extends ImageView {
 
     @Inject Picasso mPicasso;
 
-    private Bitmap mPlaceHolder;
+    private Drawable mPlaceHolder;
 
     private Bitmap mImage;
 
-    private int mImageAlpha;
+    private boolean mAnimating;
+
+    private long mStartTimeMillis;
+
+    private int mAlpha;
 
     private Paint mPaint = new Paint();
-
-    private Rect mDstRect = new Rect();
-
-    private Scroller mScroller;
 
     private String mImageUrl;
 
@@ -54,8 +58,6 @@ public class RemoteImageView extends ImageView {
     private int mDominantMeasurement = MEASUREMENT_HEIGHT;
 
     private boolean mMeasured;
-
-    private int mPlaceholderRes;
 
     public RemoteImageView(Context context) {
         this(context, null);
@@ -73,9 +75,10 @@ public class RemoteImageView extends ImageView {
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RemoteImageView);
 
-        mPlaceholderRes =
-                a.getResourceId(R.styleable.RemoteImageView_placeholder, R.drawable.placeholder_default);
-        mPlaceHolder = BitmapFactory.decodeResource(getResources(), mPlaceholderRes);
+        mPlaceHolder = a.getDrawable(R.styleable.RemoteImageView_placeholder);
+        if (mPlaceHolder == null) {
+            mPlaceHolder = getResources().getDrawable(R.drawable.placeholder_default);
+        }
         mAspectRatio = a.getFloat(R.styleable.RemoteImageView_aspectRatio, 0.0f);
         mDominantMeasurement = a.getInt(R.styleable.RemoteImageView_dominantMeasurement, MEASUREMENT_HEIGHT);
 
@@ -83,35 +86,95 @@ public class RemoteImageView extends ImageView {
     }
 
     public void setImage(String imageUrl) {
-        //removeCallbacks(mAnimationRunnable);
-
         mPicasso.cancelRequest(this);
 
         mImageUrl = imageUrl;
         mImage = null;
-        mImageAlpha = 0;
+        mAlpha = 0;
+        mStartTimeMillis = 0;
+        mAnimating = false;
 
         if (mMeasured) {
-            mPicasso.load(imageUrl)
-                    .resize(getMeasuredWidth() - getPaddingLeft() - getPaddingRight(),
-                            getMeasuredHeight() - getPaddingTop() - getPaddingBottom())
-                    .placeholder(mPlaceholderRes)
-                    .centerCrop()
-                    .into(this);
-            //resetAnimation();
+            loadBitmap();
+        }
+
+        invalidate();
+    }
+
+    private void loadBitmap() {
+        mAlpha = 0;
+        mImage = null;
+        mPicasso.load(mImageUrl)
+                .resize(getMeasuredWidth() - getPaddingLeft() - getPaddingRight(),
+                        getMeasuredHeight() - getPaddingTop() - getPaddingBottom())
+                .centerCrop()
+                .into(this);
+        if (mImage != null) {
+            mAnimating = false;
+            mStartTimeMillis = 0;
+            mAlpha = 0xFF;
         }
     }
 
-    //    public void setImage(Bitmap bitmap) {
-    //        removeCallbacks(mAnimationRunnable);
-    //        mPicasso.cancelRequest(this);
-    //        mImage = bitmap;
-    //        mImageAlpha = 0;
-    //        if (bitmap != null) {
-    //            startAnimation();
-    //        }
-    //        invalidate();
-    //    }
+    @Override
+    public void onSuccess(Bitmap bitmap) {
+        mImage = bitmap;
+        mAnimating = true;
+        mStartTimeMillis = 0;
+        mAlpha = 0;
+        invalidate();
+    }
+
+    @Override
+    public void onError() {
+        LogWrapper.d(TAG, "[onError]");
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        final int width = getWidth();
+        final int height = getHeight();
+
+        if (mImage == null) {
+            mPlaceHolder.setBounds(getPaddingLeft(), getPaddingTop(), width - getPaddingRight(),
+                    height - getPaddingBottom());
+            mPlaceHolder.setAlpha(0xFF);
+            mPlaceHolder.draw(canvas);
+            return;
+        }
+
+        boolean done = true;
+
+        if (mAnimating) {
+            if (mStartTimeMillis == 0) {
+                mStartTimeMillis = SystemClock.uptimeMillis();
+                done = false;
+                mAlpha = 0;
+            } else {
+                float normalized = (SystemClock.uptimeMillis() - mStartTimeMillis) / ANIMATION_DURATION;
+                done = normalized >= 1.0f;
+                normalized = Math.min(normalized, 1.0f);
+                mAlpha = (int) (0xFF * normalized);
+                mAnimating = mAlpha != 0xFF;
+            }
+        }
+
+        if (done) {
+            canvas.drawBitmap(mImage, getPaddingLeft(), getPaddingTop(), null);
+        } else {
+            mPlaceHolder.setBounds(getPaddingLeft(), getPaddingTop(), width - getPaddingRight(),
+                    height - getPaddingBottom());
+            mPlaceHolder.setAlpha(0xFF - mAlpha);
+            mPlaceHolder.draw(canvas);
+
+            if (mAlpha > 0) {
+                mPaint.setAlpha(mAlpha);
+                canvas.drawBitmap(mImage, getPaddingLeft(), getPaddingRight(), mPaint);
+            }
+
+            invalidate();
+        }
+    }
 
     public void setAspectRatio(float aspectRatio) {
         mAspectRatio = aspectRatio;
@@ -119,95 +182,11 @@ public class RemoteImageView extends ImageView {
         invalidate();
     }
 
-    //    @Override
-    //    public void onSuccess(Bitmap bitmap) {
-    //        if (bitmap == null) {
-    //            LogWrapper.d("RemoteImageView", "Picasso returned a null bitmap.. wtf?");
-    //        }
-    //        setImage(bitmap);
-    //    }
-    //
-    //    @Override
-    //    public void onError() {
-    //        LogWrapper.d("RemoteImageView", "[onError]");
-    //        postDelayed(new Runnable() {
-    //            @Override
-    //            public void run() {
-    //                setImage(mImageUrl);
-    //            }
-    //        }, 10 * DateUtils.SECOND_IN_MILLIS);
-    //    }
-
-    //    private void startAnimation() {
-    //        if (mScroller == null) {
-    //            mScroller = new Scroller(getContext(), new AccelerateDecelerateInterpolator());
-    //        }
-    //
-    //        mScroller.startScroll(0, 0, 255, 0, ANIMATION_DURATION);
-    //        mAnimationRunnable.run();
-    //    }
-    //
-    //    private Runnable mAnimationRunnable = new Runnable() {
-    //        @Override
-    //        public void run() {
-    //            if (mScroller.computeScrollOffset()) {
-    //                final int alpha = mScroller.getCurrX();
-    //
-    //                if (alpha != mImageAlpha) {
-    //                    mImageAlpha = alpha;
-    //                    invalidate();
-    //                }
-    //                if (alpha != mScroller.getFinalX()) {
-    //                    postOnAnimation(this);
-    //                    return;
-    //                }
-    //            }
-    //
-    //            endAnimation();
-    //        }
-    //    };
-    //
-    //    void endAnimation() {
-    //        mImageAlpha = mImage != null ? 255 : 0;
-    //        invalidate();
-    //    }
-    //
-    //    public void resetAnimation() {
-    //        removeCallbacks(mAnimationRunnable);
-    //        mImageAlpha = mImage != null ? 255 : 0;
-    //        invalidate();
-    //    }
-
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         mMeasured = false;
     }
-
-    //    @Override
-    //    protected void onDraw(Canvas canvas) {
-    //        final int width = getWidth();
-    //        final int height = getHeight();
-    //
-    //        if (mImageAlpha == 255 && mImage == null) {
-    //            //throw new RuntimeException("mImageAlpha == 255 && mImage == null");
-    //        }
-    //
-    //        if (mImageAlpha != 255) {
-    //            mDstRect.left = getPaddingLeft();
-    //            mDstRect.top = getPaddingTop();
-    //            mDstRect.right = width - getPaddingRight();
-    //            mDstRect.bottom = height - getPaddingBottom();
-    //
-    //            mPaint.setAlpha(255 - mImageAlpha);
-    //            canvas.drawBitmap(mPlaceHolder, null, mDstRect, mPaint);
-    //        }
-    //
-    //        if (mImage != null && mImageAlpha != 0) {
-    //            mPaint.setAlpha(mImageAlpha);
-    //            canvas.drawBitmap(mImage, getPaddingLeft(), getPaddingTop(), mPaint);
-    //        }
-    //    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -218,7 +197,6 @@ public class RemoteImageView extends ImageView {
         int height = MeasureSpec.getSize(heightMeasureSpec);
 
         if (widthMode == MeasureSpec.UNSPECIFIED && heightMode == MeasureSpec.UNSPECIFIED) {
-            //throw new IllegalArgumentException("RemoteImageView must be measured as EXACTLY");
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
         } else {
@@ -242,16 +220,9 @@ public class RemoteImageView extends ImageView {
 
         mMeasured = true;
 
-        if (mImageUrl != null
-                && getMeasuredWidth() - getPaddingLeft() - getPaddingRight() > 0
+        if (mImageUrl != null && getMeasuredWidth() - getPaddingLeft() - getPaddingRight() > 0
                 && getMeasuredHeight() - getPaddingTop() - getPaddingBottom() > 0) {
-            mPicasso.load(mImageUrl)
-                    .resize(getMeasuredWidth() - getPaddingLeft() - getPaddingRight(),
-                            getMeasuredHeight() - getPaddingTop() - getPaddingBottom())
-                    .placeholder(mPlaceholderRes)
-                    .centerCrop()
-                    .into(this);
-            //resetAnimation();
+            loadBitmap();
         }
     }
 }
