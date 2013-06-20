@@ -16,8 +16,10 @@ import net.simonvt.trakt.scheduler.ShowTaskScheduler;
 import net.simonvt.trakt.sync.TraktTaskQueue;
 import net.simonvt.trakt.ui.LibraryType;
 import net.simonvt.trakt.ui.ShowsNavigationListener;
+import net.simonvt.trakt.ui.adapter.SeasonsAdapter;
 import net.simonvt.trakt.ui.dialog.RatingDialog;
 import net.simonvt.trakt.util.DateUtils;
+import net.simonvt.trakt.widget.HiddenPaneLayout;
 import net.simonvt.trakt.widget.OverflowView;
 import net.simonvt.trakt.widget.RemoteImageView;
 
@@ -34,7 +36,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -53,6 +57,7 @@ public class ShowInfoFragment extends BaseFragment {
     private static final int LOADER_GENRES = 11;
     private static final int LOADER_WATCH = 12;
     private static final int LOADER_COLLECT = 13;
+    private static final int LOADER_SEASONS = 14;
 
     private static final String[] SHOW_PROJECTION = new String[] {
             Shows.TITLE,
@@ -86,6 +91,11 @@ public class ShowInfoFragment extends BaseFragment {
     private ShowsNavigationListener mNavigationCallbacks;
 
     private long mShowId;
+
+    @InjectView(R.id.hiddenPaneLayout) HiddenPaneLayout mHiddenPaneLayout;
+
+    @InjectView(R.id.seasons) ListView mSeasons;
+    private SeasonsAdapter mSeasonsAdapter;
 
     @InjectView(R.id.title) TextView mTitle;
     @InjectView(R.id.ratingContainer) View mRatingContainer;
@@ -179,6 +189,8 @@ public class ShowInfoFragment extends BaseFragment {
         Bundle args = getArguments();
         mShowId = args.getLong(ARG_SHOWID);
         mType = (LibraryType) args.getSerializable(ARG_TYPE);
+
+        mSeasonsAdapter = new SeasonsAdapter(getActivity(), mType);
     }
 
     @Override
@@ -190,6 +202,14 @@ public class ShowInfoFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Views.inject(this, view);
+
+        mSeasons.setAdapter(mSeasonsAdapter);
+        mSeasons.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                mNavigationCallbacks.onDisplaySeason(mShowId, id, mType);
+            }
+        });
 
         mRatingContainer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -332,6 +352,7 @@ public class ShowInfoFragment extends BaseFragment {
         getLoaderManager().initLoader(LOADER_GENRES, null, mGenreCallbacks);
         getLoaderManager().initLoader(LOADER_WATCH, null, mEpisodeWatchCallbacks);
         getLoaderManager().initLoader(LOADER_COLLECT, null, mEpisodeCollectCallbacks);
+        getLoaderManager().initLoader(LOADER_SEASONS, null, mSeasonsLoader);
     }
 
     @Override
@@ -343,7 +364,7 @@ public class ShowInfoFragment extends BaseFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_seasons:
-                mNavigationCallbacks.onDisplaySeasons(mShowId, mType);
+                mHiddenPaneLayout.toggle();
                 return true;
         }
 
@@ -356,6 +377,7 @@ public class ShowInfoFragment extends BaseFragment {
         getLoaderManager().destroyLoader(LOADER_GENRES);
         getLoaderManager().destroyLoader(LOADER_WATCH);
         getLoaderManager().destroyLoader(LOADER_COLLECT);
+        getLoaderManager().destroyLoader(LOADER_SEASONS);
         super.onDestroyView();
     }
 
@@ -591,4 +613,26 @@ public class ShowInfoFragment extends BaseFragment {
                 public void onLoaderReset(Loader<Cursor> cursorLoader) {
                 }
             };
+
+    private LoaderManager.LoaderCallbacks<Cursor> mSeasonsLoader = new LoaderManager.LoaderCallbacks<Cursor>() {
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            CursorLoader cl =
+                    new CursorLoader(getActivity(), TraktContract.Seasons.buildFromShowId(mShowId), null, null, null,
+                            TraktContract.Seasons.DEFAULT_SORT);
+            cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
+            return cl;
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
+            data.setNotificationUri(getActivity().getContentResolver(), TraktContract.Seasons.CONTENT_URI);
+            mSeasonsAdapter.changeCursor(data);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> cursorLoader) {
+            mSeasonsAdapter.changeCursor(null);
+        }
+    };
 }

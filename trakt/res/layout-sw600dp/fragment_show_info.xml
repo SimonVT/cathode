@@ -1,115 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<net.simonvt.trakt.widget.HiddenPaneLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/hiddenPaneLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <include layout="@layout/show_info_header" />
-
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <LinearLayout
+            <include layout="@layout/show_info_header" />
+
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="wrap_content">
 
-                <include
-                    layout="@layout/info_rating"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginTop="4dp" />
-
-                <TextView
-                    android:id="@+id/overviewTitle"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginRight="32dp"
-                    android:text="Overview"
-                    style="@style/Widget.InfoTitle" />
-
-                <TextView
-                    android:id="@+id/overview"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginRight="32dp"
-                    android:text="From the delightfully twisted creative minds behind Family Guy comes American Dad, the animated tour de force featuring CIA operative Stan Smith, his outrageous family, and Roger, the alcoholic extra-terrestrial who lives with them! Whether it's rigging elections, erasing memories, chasing sleazy strip clubs, or staging bum fights, it's all in a day's work for Stan."
-                    style="@style/Widget.InfoText" />
+                    android:orientation="vertical">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginRight="32dp"
-                    android:background="#FFC3C3C3" />
+                    <include
+                        layout="@layout/info_rating"
+                        android:layout_marginLeft="32dp"
+                        android:layout_marginTop="4dp" />
 
-                <TextView
-                    android:id="@+id/genresTitle"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginRight="32dp"
-                    android:text="Genres"
-                    style="@style/Widget.InfoTitle" />
+                    <TextView
+                        android:id="@+id/overviewTitle"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="32dp"
+                        android:layout_marginRight="32dp"
+                        android:text="Overview"
+                        style="@style/Widget.InfoTitle" />
 
-                <TextView
-                    android:id="@+id/genres"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginRight="32dp"
-                    android:text="Animation, Comedy"
-                    style="@style/Widget.InfoText" />
+                    <TextView
+                        android:id="@+id/overview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="32dp"
+                        android:layout_marginRight="32dp"
+                        android:text="From the delightfully twisted creative minds behind Family Guy comes American Dad, the animated tour de force featuring CIA operative Stan Smith, his outrageous family, and Roger, the alcoholic extra-terrestrial who lives with them! Whether it's rigging elections, erasing memories, chasing sleazy strip clubs, or staging bum fights, it's all in a day's work for Stan."
+                        style="@style/Widget.InfoText" />
 
-                <View
-                    android:id="@+id/nextEpisodeDivider"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginRight="32dp"
-                    android:layout_marginTop="12dp"
-                    android:background="#FFC3C3C3" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="32dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginRight="32dp"
+                        android:background="#FFC3C3C3" />
 
-                <include
-                    layout="@layout/show_info_episodes" />
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/genresTitle"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="32dp"
+                        android:layout_marginRight="32dp"
+                        android:text="Genres"
+                        style="@style/Widget.InfoTitle" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:orientation="vertical"
-                android:gravity="right">
+                    <TextView
+                        android:id="@+id/genres"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="32dp"
+                        android:layout_marginRight="32dp"
+                        android:text="Animation, Comedy"
+                        style="@style/Widget.InfoText" />
 
-                <TextView
-                    android:id="@+id/inCollection"
+                    <View
+                        android:id="@+id/nextEpisodeDivider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="32dp"
+                        android:layout_marginRight="32dp"
+                        android:layout_marginTop="12dp"
+                        android:background="#FFC3C3C3" />
+
+                    <include
+                        layout="@layout/show_info_episodes" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginRight="8dp"
-                    android:drawableRight="@drawable/ic_checkmark_collection"
-                    android:text="@string/checkmark_collection"
-                    android:textColor="@android:color/holo_orange_dark"
-                    style="@style/Widget.CheckMark" />
+                    android:layout_gravity="right"
+                    android:orientation="vertical"
+                    android:gravity="right">
 
-                <TextView
-                    android:id="@+id/inWatchlist"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginRight="8dp"
-                    android:drawableRight="@drawable/ic_checkmark_watchlist"
-                    android:text="@string/checkmark_watchlist"
-                    android:textColor="@android:color/holo_red_dark"
-                    style="@style/Widget.CheckMark" />
-            </LinearLayout>
-        </FrameLayout>
-    </LinearLayout>
-</ScrollView>
+                    <TextView
+                        android:id="@+id/inCollection"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="8dp"
+                        android:drawableRight="@drawable/ic_checkmark_collection"
+                        android:text="@string/checkmark_collection"
+                        android:textColor="@android:color/holo_orange_dark"
+                        style="@style/Widget.CheckMark" />
+
+                    <TextView
+                        android:id="@+id/inWatchlist"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="8dp"
+                        android:drawableRight="@drawable/ic_checkmark_watchlist"
+                        android:text="@string/checkmark_watchlist"
+                        android:textColor="@android:color/holo_red_dark"
+                        style="@style/Widget.CheckMark" />
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <ListView
+        android:id="@+id/seasons"
+        android:layout_height="match_parent"
+        android:layout_width="260dp" />
+</net.simonvt.trakt.widget.HiddenPaneLayout>
