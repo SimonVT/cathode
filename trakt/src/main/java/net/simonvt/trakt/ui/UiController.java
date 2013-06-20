@@ -4,7 +4,6 @@ import net.simonvt.trakt.ui.fragment.NavigationFragment;
 import net.simonvt.trakt.util.LogWrapper;
 
 import android.os.Bundle;
-import android.view.View;
 
 public class UiController
         implements ShowsNavigationListener, MoviesNavigationListener, NavigationFragment.OnMenuClickListener {

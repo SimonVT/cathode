@@ -203,9 +203,8 @@ public class RemoteImageView extends View implements Target {
             if (mAspectRatio != 0.0f) {
                 switch (mDominantMeasurement) {
                     case MEASUREMENT_HEIGHT:
-                        width = (int) ((height - getPaddingTop() - getPaddingBottom()) * mAspectRatio) +
-                                getPaddingLeft()
-                                + getPaddingRight();
+                        width = (int) ((height - getPaddingTop() - getPaddingBottom()) * mAspectRatio)
+                                + getPaddingLeft() + getPaddingRight();
                         break;
 
                     case MEASUREMENT_WIDTH:

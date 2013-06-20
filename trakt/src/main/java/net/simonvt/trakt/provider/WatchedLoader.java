@@ -36,8 +36,8 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
 
         Cursor lastWatched =
                 getContext().getContentResolver().query(TraktContract.Episodes.buildFromShowId(mShowId), null,
-                        TraktContract.Episodes.WATCHED + "=1", null, TraktContract.Episodes.SEASON + " DESC, " +
-                        TraktContract.Episodes.EPISODE + " DESC LIMIT 1");
+                        TraktContract.Episodes.WATCHED + "=1", null, TraktContract.Episodes.SEASON + " DESC, "
+                        + TraktContract.Episodes.EPISODE + " DESC LIMIT 1");
         lastWatched.getCount();
 
         return new MergeCursor(new Cursor[] {

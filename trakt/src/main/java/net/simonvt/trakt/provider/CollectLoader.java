@@ -36,8 +36,8 @@ public class CollectLoader extends AsyncTaskLoader<Cursor> {
 
         Cursor lastCollected =
                 getContext().getContentResolver().query(TraktContract.Episodes.buildFromShowId(mShowId), null,
-                        TraktContract.Episodes.IN_COLLECTION + "=1", null, TraktContract.Episodes.SEASON + " DESC, " +
-                        TraktContract.Episodes.EPISODE + " DESC LIMIT 1");
+                        TraktContract.Episodes.IN_COLLECTION + "=1", null, TraktContract.Episodes.SEASON + " DESC, "
+                        + TraktContract.Episodes.EPISODE + " DESC LIMIT 1");
         lastCollected.getCount();
 
         return new MergeCursor(new Cursor[] {

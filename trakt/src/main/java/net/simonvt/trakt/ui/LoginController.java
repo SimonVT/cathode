@@ -1,10 +1,8 @@
 package net.simonvt.trakt.ui;
 
-import net.simonvt.menudrawer.MenuDrawer;
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.ui.fragment.LoginFragment;
 
-import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 

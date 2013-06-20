@@ -22,7 +22,6 @@ import net.simonvt.trakt.ui.fragment.WatchedShowsFragment;
 import net.simonvt.trakt.util.FragmentStack;
 
 import android.os.Bundle;
-import android.view.View;
 
 public class PhoneController extends UiController {
 
