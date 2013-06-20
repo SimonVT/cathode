@@ -9,6 +9,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -266,6 +267,33 @@ public class HiddenPaneLayout extends ViewGroup {
         }
     }
 
+    protected void logState(int state) {
+        switch (state) {
+            case STATE_CLOSED:
+                Log.v(TAG, "[State] STATE_CLOSED");
+                break;
+
+            case STATE_CLOSING:
+                Log.v(TAG, "[State] STATE_CLOSING");
+                break;
+
+            case STATE_DRAGGING:
+                Log.v(TAG, "[State] STATE_DRAGGING");
+                break;
+
+            case STATE_OPENING:
+                Log.v(TAG, "[State] STATE_OPENING");
+                break;
+
+            case STATE_OPEN:
+                Log.v(TAG, "[State] STATE_OPEN");
+                break;
+
+            default:
+                Log.v(TAG, "[State] Unknown: " + state);
+        }
+    }
+
     protected void animateOffsetTo(int position, int velocity, boolean animate) {
         endDrag();
         stopAnimation();
@@ -293,7 +321,7 @@ public class HiddenPaneLayout extends ViewGroup {
     }
 
     protected void animateOffsetTo(final int position, int duration) {
-        if (position < mOffsetPixels) {
+        if (position < Math.abs(mOffsetPixels)) {
             setState(STATE_OPENING);
         } else {
             setState(STATE_CLOSING);
@@ -455,10 +483,11 @@ public class HiddenPaneLayout extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (mOffsetPixels == 0.0f) {
+        final int action = ev.getAction() & MotionEvent.ACTION_MASK;
+
+        if (action == MotionEvent.ACTION_DOWN && mOffsetPixels == 0.0f) {
             return false;
         }
-        final int action = ev.getAction() & MotionEvent.ACTION_MASK;
 
         if (mVelocityTracker == null) mVelocityTracker = VelocityTracker.obtain();
         mVelocityTracker.addMovement(ev);
@@ -520,9 +549,6 @@ public class HiddenPaneLayout extends ViewGroup {
             }
 
             case MotionEvent.ACTION_CANCEL:
-
-                break;
-
             case MotionEvent.ACTION_UP: {
                 final int index = ev.findPointerIndex(mActivePointerId);
                 final int x = (int) ev.getX(index);

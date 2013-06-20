@@ -1,90 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<net.simonvt.trakt.widget.HiddenPaneLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/hiddenPaneLayout"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/episodes"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="32dp"
+    android:layout_marginRight="32dp"
+    android:orientation="vertical"
+    android:visibility="gone">
 
     <LinearLayout
-        android:id="@+id/episodes"
+        android:id="@+id/episodesTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
-        android:orientation="vertical"
-        android:visibility="gone">
+        android:weightSum="2"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/episodesTitle"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/watchTitle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="32dp"
-            android:weightSum="2"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:text="To watch"
+            style="@style/Widget.InfoTitle" />
 
-            <TextView
-                android:id="@+id/watchTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="To watch"
-                style="@style/Widget.InfoTitle" />
-
-            <TextView
-                android:id="@+id/collectTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="To collect"
-                style="@style/Widget.InfoTitle" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/collectTitle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:baselineAligned="false"
-            android:orientation="horizontal"
-            android:weightSum="4">
-
-            <include
-                android:id="@+id/toWatch"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginRight="8dp"
-                android:visibility="gone"
-                layout="@layout/show_info_episode" />
-
-            <include
-                android:id="@+id/lastWatched"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginRight="8dp"
-                android:visibility="gone"
-                layout="@layout/show_info_episode" />
-
-            <include
-                android:id="@+id/toCollect"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginRight="8dp"
-                android:visibility="gone"
-                layout="@layout/show_info_episode" />
-
-            <include
-                android:id="@+id/lastCollected"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:visibility="gone"
-                layout="@layout/show_info_episode" />
-        </LinearLayout>
+            android:layout_weight="1"
+            android:text="To collect"
+            style="@style/Widget.InfoTitle" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/seasons"
-        android:layout_height="match_parent"
-        android:layout_width="260dp" />
-</net.simonvt.trakt.widget.HiddenPaneLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:weightSum="4">
+
+        <include
+            android:id="@+id/toWatch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="8dp"
+            android:visibility="gone"
+            layout="@layout/show_info_episode" />
+
+        <include
+            android:id="@+id/lastWatched"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="8dp"
+            android:visibility="gone"
+            layout="@layout/show_info_episode" />
+
+        <include
+            android:id="@+id/toCollect"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="8dp"
+            android:visibility="gone"
+            layout="@layout/show_info_episode" />
+
+        <include
+            android:id="@+id/lastCollected"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="gone"
+            layout="@layout/show_info_episode" />
+    </LinearLayout>
+</LinearLayout>
