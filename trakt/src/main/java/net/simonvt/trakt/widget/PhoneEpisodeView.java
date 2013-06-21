@@ -5,36 +5,22 @@ import butterknife.Views;
 
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
-import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
-import net.simonvt.trakt.ui.LibraryType;
-import net.simonvt.trakt.util.DateUtils;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import javax.inject.Inject;
-
-public class PhoneEpisodeView extends AbsEpisodeView {
+public class PhoneEpisodeView extends ViewGroup {
 
     private static final float SCREEN_RATIO = 680.f / 1000.f;
 
     @InjectView(R.id.screen) RemoteImageView mScreen;
 
     @InjectView(R.id.infoParent) ViewGroup mInfoParent;
-    @InjectView(R.id.title) TextView mTitle;
-    @InjectView(R.id.firstAired) TextView mFirstAired;
-    @InjectView(R.id.episode) TextView mNumber;
     @InjectView(R.id.overflow) OverflowView mOverflow;
     @InjectView(R.id.checkbox) CheckMark mCheckbox;
 
-    @Inject EpisodeTaskScheduler mEpisodeScheduler;
-
     private int mMinHeight;
-    private int mPosterHeight;
-    private int mPosterWidth;
 
     public PhoneEpisodeView(Context context) {
         super(context);
@@ -57,112 +43,9 @@ public class PhoneEpisodeView extends AbsEpisodeView {
     }
 
     @Override
-    public void setType(LibraryType type) {
-        super.setType(type);
-        if (mCheckbox != null) mCheckbox.setType(type == LibraryType.COLLECTION ? type : LibraryType.WATCHED);
-    }
-
-    @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
         Views.inject(this);
-        if (mType != null) mCheckbox.setType(mType);
-        mOverflow.setListener(new OverflowView.OverflowActionListener() {
-            @Override
-            public void onPopupShown() {
-                setHasTransientState(true);
-            }
-
-            @Override
-            public void onPopupDismissed() {
-                setHasTransientState(false);
-            }
-
-            @Override
-            public void onActionSelected(int action) {
-                switch (action) {
-                    case R.id.action_watched:
-                        mEpisodeWatched = true;
-                        updateOverflowMenu();
-                        mEpisodeScheduler.setWatched(mEpisodeId, true);
-                        if (mType == LibraryType.WATCHED) mCheckbox.setVisibility(View.VISIBLE);
-                        break;
-
-                    case R.id.action_unwatched:
-                        mEpisodeWatched = false;
-                        updateOverflowMenu();
-                        mEpisodeScheduler.setWatched(mEpisodeId, false);
-                        if (mType == LibraryType.WATCHED) mCheckbox.setVisibility(View.INVISIBLE);
-                        break;
-
-                    case R.id.action_collection_add:
-                        mEpisodeInCollection = true;
-                        updateOverflowMenu();
-                        mEpisodeScheduler.setIsInCollection(mEpisodeId, true);
-                        if (mType == LibraryType.COLLECTION) mCheckbox.setVisibility(View.VISIBLE);
-                        break;
-
-                    case R.id.action_collection_remove:
-                        mEpisodeInCollection = false;
-                        updateOverflowMenu();
-                        mEpisodeScheduler.setIsInCollection(mEpisodeId, false);
-                        if (mType == LibraryType.COLLECTION) mCheckbox.setVisibility(View.INVISIBLE);
-                        break;
-
-                    case R.id.action_watchlist_add:
-                        mEpisodeInWatchlist = true;
-                        updateOverflowMenu();
-                        mEpisodeScheduler.setIsInWatchlist(mEpisodeId, true);
-                        break;
-
-                    case R.id.action_watchlist_remove:
-                        mEpisodeInWatchlist = false;
-                        updateOverflowMenu();
-                        mEpisodeScheduler.setIsInWatchlist(mEpisodeId, false);
-                        break;
-                }
-
-                setHasTransientState(false);
-            }
-        });
-    }
-
-    private void updateOverflowMenu() {
-        mOverflow.removeItems();
-        if (mEpisodeWatched) {
-            mOverflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
-        } else {
-            mOverflow.addItem(R.id.action_watched, R.string.action_watched);
-        }
-
-        if (mEpisodeInCollection) {
-            mOverflow.addItem(R.id.action_collection_remove, R.string.action_collection_remove);
-        } else {
-            mOverflow.addItem(R.id.action_collection_add, R.string.action_collection_add);
-        }
-
-        if (mEpisodeInWatchlist) {
-            mOverflow.addItem(R.id.action_watchlist_remove, R.string.action_watchlist_remove);
-        } else if (!mEpisodeWatched) {
-            mOverflow.addItem(R.id.action_watchlist_add, R.string.action_watchlist_add);
-        }
-    }
-
-    @Override
-    protected void onDataBound() {
-        mTitle.setText(mEpisodeTitle);
-
-        mFirstAired.setText(DateUtils.secondsToDate(getContext(), mEpisodeAired));
-        mNumber.setText(String.valueOf(mEpisodeNumber));
-
-        mScreen.setImage(mEpisodeScreenUrl);
-
-        if (mType == LibraryType.COLLECTION) {
-            mCheckbox.setVisibility(mEpisodeInCollection ? View.VISIBLE : View.INVISIBLE);
-        } else {
-            mCheckbox.setVisibility(mEpisodeWatched ? View.VISIBLE : View.INVISIBLE);
-        }
-        updateOverflowMenu();
     }
 
     @Override
@@ -211,13 +94,13 @@ public class PhoneEpisodeView extends AbsEpisodeView {
         final int viewWidth = MeasureSpec.getSize(widthMeasureSpec);
         final int viewHeight = Math.max(infoParentHeight + getPaddingTop() + getPaddingBottom(), mMinHeight);
 
-        mPosterHeight = viewHeight - posterLp.topMargin - posterLp.bottomMargin;
-        mPosterWidth = (int) (viewHeight * SCREEN_RATIO);
-        final int posterWidthMeasureSpec = MeasureSpec.makeMeasureSpec(mPosterWidth, MeasureSpec.EXACTLY);
-        final int posterHeightMeasureSpec = MeasureSpec.makeMeasureSpec(mPosterHeight, MeasureSpec.EXACTLY);
+        int posterHeight = viewHeight - posterLp.topMargin - posterLp.bottomMargin;
+        int posterWidth = (int) (viewHeight * SCREEN_RATIO);
+        final int posterWidthMeasureSpec = MeasureSpec.makeMeasureSpec(posterWidth, MeasureSpec.EXACTLY);
+        final int posterHeightMeasureSpec = MeasureSpec.makeMeasureSpec(posterHeight, MeasureSpec.EXACTLY);
         mScreen.measure(posterWidthMeasureSpec, posterHeightMeasureSpec);
 
-        final int infoParentWidth = viewWidth - mPosterWidth - posterLp.leftMargin - posterLp.rightMargin
+        final int infoParentWidth = viewWidth - posterWidth - posterLp.leftMargin - posterLp.rightMargin
                 - infoParentLp.leftMargin - infoParentLp.rightMargin - getPaddingLeft() - getPaddingRight();
         final int infoParentWidthMeasureSpec =
                 MeasureSpec.makeMeasureSpec(infoParentWidth, MeasureSpec.EXACTLY);

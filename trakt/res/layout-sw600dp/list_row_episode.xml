@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/card_bg"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <RelativeLayout
+        android:id="@+id/episodeContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="4dp">
+
+        <net.simonvt.trakt.widget.RemoteImageView
+            android:id="@+id/screen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/header_bg"
+            app:dominantMeasurement="width"
+            app:placeholder="@drawable/placeholder_default"
+            app:aspectRatio="0.5625" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/screen"
+            android:layout_toLeftOf="@id/episode"
+            android:fontFamily="sans-serif-light"
+            android:singleLine="true"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="16sp"
+            android:text="Some Random Episode That is really long" />
+
+        <TextView
+            android:id="@+id/firstAired"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_below="@id/title"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="14sp"
+            android:text="OCT 20, 2010 (MON)" />
+
+        <TextView
+            android:id="@+id/episode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="8dp"
+            android:layout_below="@id/screen"
+            android:layout_alignParentRight="true"
+            android:layout_alignBaseline="@id/title"
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorHint"
+            android:text="S10E20" />
+
+        <net.simonvt.trakt.widget.OverflowView
+            android:id="@+id/overflow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+
+    <net.simonvt.trakt.widget.CheckMark
+        android:id="@+id/checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginRight="2dp"
+        android:layout_gravity="right|bottom"
+        style="@style/Widget.CheckMark" />
+</FrameLayout>
+

@@ -176,13 +176,15 @@ public class SeasonFragment extends AbsAdapterFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mShowTitle.setText(mTitle);
-        mShowBanner.setImage(mBannerUrl);
-        if (mSeasonNumber != -1) {
-            mSeason.setText(getResources().getQuantityString(R.plurals.season_x, mSeasonNumber, mSeasonNumber));
-            mSeason.setVisibility(View.VISIBLE);
-        } else {
-            mSeason.setVisibility(View.GONE);
+        if (mShowTitle != null) {
+            mShowTitle.setText(mTitle);
+            mShowBanner.setImage(mBannerUrl);
+            if (mSeasonNumber != -1) {
+                mSeason.setText(getResources().getQuantityString(R.plurals.season_x, mSeasonNumber, mSeasonNumber));
+                mSeason.setVisibility(View.VISIBLE);
+            } else {
+                mSeason.setVisibility(View.GONE);
+            }
         }
     }
 
