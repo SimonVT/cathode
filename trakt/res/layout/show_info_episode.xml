@@ -19,7 +19,6 @@
         android:layout_marginRight="16dp"
         android:background="@drawable/header_bg"
         app:dominantMeasurement="width"
-        app:placeholder="@drawable/placeholder_default"
         app:aspectRatio="0.5625" />
 
     <TextView

@@ -12,7 +12,6 @@
         android:layout_height="match_parent"
         android:background="#FF00FF00"
         app:dominantMeasurement="height"
-        app:placeholder="@drawable/placeholder_default"
         app:aspectRatio="0.68" />
 
     <LinearLayout

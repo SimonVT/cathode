@@ -18,8 +18,7 @@
             android:layout_marginRight="8dp"
             android:layout_height="64dp"
             app:aspectRatio="0.68"
-            app:dominantMeasurement="height"
-            app:placeholder="@drawable/placeholder_poster" />
+            app:dominantMeasurement="height" />
 
         <RelativeLayout
             android:orientation="vertical"

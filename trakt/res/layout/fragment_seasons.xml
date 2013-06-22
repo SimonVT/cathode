@@ -15,7 +15,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:dominantMeasurement="width"
-            app:placeholder="@drawable/placeholder_default"
             app:aspectRatio="0.1846" />
 
         <TextView

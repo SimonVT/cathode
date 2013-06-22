@@ -77,7 +77,7 @@ public class RemoteImageView extends View implements Target {
 
         mPlaceHolder = a.getDrawable(R.styleable.RemoteImageView_placeholder);
         if (mPlaceHolder == null) {
-            mPlaceHolder = getResources().getDrawable(R.drawable.placeholder_default);
+            mPlaceHolder = getResources().getDrawable(R.drawable.placeholder);
         }
         mAspectRatio = a.getFloat(R.styleable.RemoteImageView_aspectRatio, 0.0f);
         mDominantMeasurement = a.getInt(R.styleable.RemoteImageView_dominantMeasurement, MEASUREMENT_HEIGHT);
