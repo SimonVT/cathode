@@ -4,4 +4,6 @@
 
     <integer name="episodesColumns">3</integer>
 
+    <integer name="movieColumns">3</integer>
+
 </resources>

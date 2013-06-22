@@ -102,7 +102,7 @@ public class SearchMovieFragment extends AbsAdapterFragment implements LoaderMan
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_list_cards, container, false);
+        return inflater.inflate(R.layout.fragment_movies, container, false);
     }
 
     @Override
@@ -158,6 +158,10 @@ public class SearchMovieFragment extends AbsAdapterFragment implements LoaderMan
             TraktDatabase.Tables.MOVIES + "." + TraktContract.Movies.TITLE,
             TraktDatabase.Tables.MOVIES + "." + TraktContract.Movies.OVERVIEW,
             TraktDatabase.Tables.MOVIES + "." + TraktContract.Movies.POSTER,
+            TraktDatabase.Tables.MOVIES + "." + TraktContract.Movies.TMDB_ID,
+            TraktDatabase.Tables.MOVIES + "." + TraktContract.Movies.WATCHED,
+            TraktDatabase.Tables.MOVIES + "." + TraktContract.Movies.IN_COLLECTION,
+            TraktDatabase.Tables.MOVIES + "." + TraktContract.Movies.IN_WATCHLIST,
     };
 
     @Override

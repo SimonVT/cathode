@@ -45,8 +45,10 @@ import net.simonvt.trakt.sync.task.UpdateSeasonCountTask;
 import net.simonvt.trakt.sync.task.UpdateShowCountTask;
 import net.simonvt.trakt.ui.HomeActivity;
 import net.simonvt.trakt.ui.adapter.EpisodeWatchlistAdapter;
+import net.simonvt.trakt.ui.adapter.MovieSearchAdapter;
 import net.simonvt.trakt.ui.adapter.MoviesAdapter;
 import net.simonvt.trakt.ui.adapter.SeasonsAdapter;
+import net.simonvt.trakt.ui.adapter.ShowSearchAdapter;
 import net.simonvt.trakt.ui.adapter.ShowsAdapter;
 import net.simonvt.trakt.ui.dialog.RatingDialog;
 import net.simonvt.trakt.ui.fragment.EpisodeFragment;
@@ -144,7 +146,9 @@ public class TraktApp extends Application {
                     EpisodeWatchlistAdapter.class,
                     SeasonsAdapter.class,
                     ShowsAdapter.class,
+                    ShowSearchAdapter.class,
                     MoviesAdapter.class,
+                    MovieSearchAdapter.class,
 
                     // Views
                     PhoneEpisodeView.class,

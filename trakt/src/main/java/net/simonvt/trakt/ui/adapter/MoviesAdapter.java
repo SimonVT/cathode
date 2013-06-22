@@ -34,7 +34,7 @@ public class MoviesAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.list_row_search_show, parent, false);
+        View v = LayoutInflater.from(mContext).inflate(R.layout.list_row_movie, parent, false);
         v.setTag(new ViewHolder(v));
         return v;
     }

@@ -56,7 +56,7 @@ public abstract class MoviesFragment extends AbsAdapterFragment implements Loade
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_list_cards, container, false);
+        return inflater.inflate(R.layout.fragment_movies, container, false);
     }
 
     @Override
