@@ -225,7 +225,7 @@ public final class MovieWrapper {
         return cv;
     }
 
-    public static void setIsWatched(ContentResolver resolver, long movieId, boolean isWatched) {
+    public static void setWatched(ContentResolver resolver, long movieId, boolean isWatched) {
         ContentValues cv = new ContentValues();
         cv.put(Movies.WATCHED, isWatched);
         resolver.update(Movies.buildMovieUri(movieId), cv, null, null);

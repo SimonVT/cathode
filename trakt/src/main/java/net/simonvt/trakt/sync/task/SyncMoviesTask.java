@@ -39,7 +39,7 @@ public class SyncMoviesTask extends TraktTask {
                     queueTask(new SyncMovieTask(tmdbId));
                 } else {
                     MovieWrapper.setIsInCollection(mService.getContentResolver(), movieId, movie.isInCollection());
-                    MovieWrapper.setIsWatched(mService.getContentResolver(), movieId, movie.isWatched());
+                    MovieWrapper.setWatched(mService.getContentResolver(), movieId, movie.isWatched());
                 }
             }
 

@@ -5,9 +5,8 @@ import butterknife.Views;
 
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
-import net.simonvt.trakt.api.body.MoviesBody;
-import net.simonvt.trakt.api.service.MovieService;
 import net.simonvt.trakt.provider.TraktContract;
+import net.simonvt.trakt.scheduler.MovieTaskScheduler;
 import net.simonvt.trakt.widget.IndicatorView;
 import net.simonvt.trakt.widget.OverflowView;
 import net.simonvt.trakt.widget.RemoteImageView;
@@ -26,7 +25,7 @@ public class MovieSearchAdapter extends CursorAdapter {
 
     private static final String TAG = "MovieSearchAdapter";
 
-    @Inject MovieService mMovieService;
+    @Inject MovieTaskScheduler mMovieScheduler;
 
     public MovieSearchAdapter(Context context) {
         super(context, null, 0);
@@ -88,27 +87,27 @@ public class MovieSearchAdapter extends CursorAdapter {
             public void onActionSelected(int action) {
                 switch (action) {
                     case R.id.action_watched:
-                        mMovieService.seen(new MoviesBody(tmdbId));
+                        mMovieScheduler.setWatched(tmdbId, true);
                         break;
 
                     case R.id.action_unwatched:
-                        mMovieService.unseen(new MoviesBody(tmdbId));
+                        mMovieScheduler.setWatched(tmdbId, false);
                         break;
 
                     case R.id.action_watchlist_add:
-                        mMovieService.watchlist(new MoviesBody(tmdbId));
+                        mMovieScheduler.setIsInWatchlist(tmdbId, true);
                         break;
 
                     case R.id.action_watchlist_remove:
-                        mMovieService.unwatchlist(new MoviesBody(tmdbId));
+                        mMovieScheduler.setIsInWatchlist(tmdbId, false);
                         break;
 
                     case R.id.action_collection_add:
-                        mMovieService.library(new MoviesBody(tmdbId));
+                        mMovieScheduler.setIsInCollection(tmdbId, true);
                         break;
 
                     case R.id.action_collection_remove:
-                        mMovieService.unlibrary(new MoviesBody(tmdbId));
+                        mMovieScheduler.setIsInCollection(tmdbId, false);
                         break;
                 }
             }

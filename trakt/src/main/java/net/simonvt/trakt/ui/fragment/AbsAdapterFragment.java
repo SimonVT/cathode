@@ -206,7 +206,7 @@ public abstract class AbsAdapterFragment extends BaseFragment {
         return false;
     }
 
-    public AdapterView getAdapterView() {
+    public AbsListView getAdapterView() {
         return mAdapterView;
     }
 

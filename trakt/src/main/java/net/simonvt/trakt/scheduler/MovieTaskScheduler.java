@@ -2,7 +2,10 @@ package net.simonvt.trakt.scheduler;
 
 import net.simonvt.trakt.provider.MovieWrapper;
 import net.simonvt.trakt.provider.TraktContract;
+import net.simonvt.trakt.sync.task.MovieCollectionTask;
 import net.simonvt.trakt.sync.task.MovieRateTask;
+import net.simonvt.trakt.sync.task.MovieWatchedTask;
+import net.simonvt.trakt.sync.task.MovieWatchlistTask;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -14,73 +17,49 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
     }
 
     /**
-     * Sync data for movie with Trakt.
+     * Add episodes watched outside of trakt to user library.
      *
-     * @param context The Context the method is called from.
-     * @param movieId The database id of the movie.
+     * @param movieId The database id of the episode.
+     * @param watched Whether the episode has been watched.
      */
-    public static void sync(Context context, long movieId) {
-        // TODO:
+    public void setWatched(final long movieId, final boolean watched) {
+        execute(new Runnable() {
+            @Override
+            public void run() {
+                final long tmdbId = MovieWrapper.getTmdbId(mContext.getContentResolver(), movieId);
+
+                MovieWrapper.setWatched(mContext.getContentResolver(), movieId, watched);
+                MovieWrapper.setIsInWatchlist(mContext.getContentResolver(), movieId, false);
+
+                postPriorityTask(new MovieWatchedTask(tmdbId, watched));
+            }
+        });
     }
 
-    /**
-     * Add movies watched outside of trakt to user library.
-     *
-     * @param context The Context this method is called from.
-     * @param movieId The database id of the movie.
-     */
-    public static void seen(Context context, long movieId) {
-        // TODO:
+    public void setIsInWatchlist(final long movieId, final boolean inWatchlist) {
+        execute(new Runnable() {
+            @Override
+            public void run() {
+                final long tmdbId = MovieWrapper.getTmdbId(mContext.getContentResolver(), movieId);
+
+                MovieWrapper.setIsInWatchlist(mContext.getContentResolver(), movieId, inWatchlist);
+
+                postPriorityTask(new MovieWatchlistTask(tmdbId, inWatchlist));
+            }
+        });
     }
 
-    /**
-     * Remove movies watched outside of trakt from user library.
-     *
-     * @param context The Context this method is called from.
-     * @param movieId The database id of the movie.
-     */
-    public static void unseen(Context context, long movieId) {
-        // TODO:
-    }
+    public void setIsInCollection(final long movieId, final boolean inCollection) {
+        execute(new Runnable() {
+            @Override
+            public void run() {
+                final long tmdbId = MovieWrapper.getTmdbId(mContext.getContentResolver(), movieId);
 
-    /**
-     * Add movie to user library collection.
-     *
-     * @param context The Context this method is called from.
-     * @param movieId The database id of the movie.
-     */
-    public static void library(Context context, long movieId) {
-        // TODO:
-    }
+                MovieWrapper.setIsInCollection(mContext.getContentResolver(), movieId, inCollection);
 
-    /**
-     * Remove movie from user library collection.
-     *
-     * @param context The Context this method is called from.
-     * @param movieId The database id of the movie.
-     */
-    public static void unlibrary(Context context, long movieId) {
-        // TODO:
-    }
-
-    /**
-     * Add movie to user watchlist.
-     *
-     * @param context The Context this method is called from.
-     * @param movieId The database id of the movie.
-     */
-    public static void watchlist(Context context, long movieId) {
-        // TODO:
-    }
-
-    /**
-     * Remove movie from user watchlist.
-     *
-     * @param context The Context this method is called from.
-     * @param movieId The database id of the movie.
-     */
-    public static void unwatchlist(Context context, long movieId) {
-        // TODO:
+                postPriorityTask(new MovieCollectionTask(tmdbId, inCollection));
+            }
+        });
     }
 
     /**

@@ -6,7 +6,7 @@ public class MoviesBody {
 
     private Movie[] movies;
 
-    public MoviesBody(Integer... tmdbIds) {
+    public MoviesBody(Long... tmdbIds) {
         final int length = tmdbIds.length;
         movies = new Movie[length];
         for (int i = 0; i < length; i++) {
@@ -16,9 +16,9 @@ public class MoviesBody {
 
     public static class Movie {
 
-        @SerializedName("tmdb_id") int tmdbId;
+        @SerializedName("tmdb_id") long tmdbId;
 
-        public Movie(int tmdbId) {
+        public Movie(long tmdbId) {
             this.tmdbId = tmdbId;
         }
     }

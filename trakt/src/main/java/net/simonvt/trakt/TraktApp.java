@@ -26,7 +26,10 @@ import net.simonvt.trakt.sync.TraktTaskService;
 import net.simonvt.trakt.sync.task.EpisodeCollectionTask;
 import net.simonvt.trakt.sync.task.EpisodeRateTask;
 import net.simonvt.trakt.sync.task.EpisodeWatchedTask;
+import net.simonvt.trakt.sync.task.MovieCollectionTask;
 import net.simonvt.trakt.sync.task.MovieRateTask;
+import net.simonvt.trakt.sync.task.MovieWatchedTask;
+import net.simonvt.trakt.sync.task.MovieWatchlistTask;
 import net.simonvt.trakt.sync.task.ShowRateTask;
 import net.simonvt.trakt.sync.task.SyncEpisodeTask;
 import net.simonvt.trakt.sync.task.SyncEpisodeWatchlist;
@@ -163,7 +166,10 @@ public class TraktApp extends Application {
                     EpisodeCollectionTask.class,
                     EpisodeRateTask.class,
                     EpisodeWatchedTask.class,
+                    MovieCollectionTask.class,
                     MovieRateTask.class,
+                    MovieWatchedTask.class,
+                    MovieWatchlistTask.class,
                     ShowRateTask.class,
                     SyncShowsCollectionTask.class,
                     SyncEpisodeTask.class,
