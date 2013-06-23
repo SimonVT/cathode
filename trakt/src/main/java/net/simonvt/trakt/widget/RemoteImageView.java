@@ -57,8 +57,6 @@ public class RemoteImageView extends View implements Target {
 
     private int mDominantMeasurement = MEASUREMENT_HEIGHT;
 
-    private boolean mMeasured;
-
     public RemoteImageView(Context context) {
         this(context, null);
     }
@@ -94,7 +92,8 @@ public class RemoteImageView extends View implements Target {
         mStartTimeMillis = 0;
         mAnimating = false;
 
-        if (mMeasured) {
+        if (getWidth() - getPaddingLeft() - getPaddingRight() > 0
+                && getHeight() - getPaddingTop() - getPaddingBottom() > 0) {
             loadBitmap();
         }
 
@@ -104,9 +103,10 @@ public class RemoteImageView extends View implements Target {
     private void loadBitmap() {
         mAlpha = 0;
         mImage = null;
+        final int width = getWidth() - getPaddingLeft() - getPaddingRight();
+        final int height = getHeight() - getPaddingTop() - getPaddingBottom();
         mPicasso.load(mImageUrl)
-                .resize(getMeasuredWidth() - getPaddingLeft() - getPaddingRight(),
-                        getMeasuredHeight() - getPaddingTop() - getPaddingBottom())
+                .resize(width, height)
                 .centerCrop()
                 .into(this);
         if (mImage != null) {
@@ -128,6 +128,16 @@ public class RemoteImageView extends View implements Target {
     @Override
     public void onError() {
         LogWrapper.d(TAG, "[onError]");
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+
+        if (mImageUrl != null && w - getPaddingLeft() - getPaddingRight() > 0
+                && h - getPaddingTop() - getPaddingBottom() > 0) {
+            loadBitmap();
+        }
     }
 
     @Override
@@ -169,7 +179,7 @@ public class RemoteImageView extends View implements Target {
 
             if (mAlpha > 0) {
                 mPaint.setAlpha(mAlpha);
-                canvas.drawBitmap(mImage, getPaddingLeft(), getPaddingRight(), mPaint);
+                canvas.drawBitmap(mImage, getPaddingLeft(), getPaddingTop(), mPaint);
             }
 
             invalidate();
@@ -180,12 +190,6 @@ public class RemoteImageView extends View implements Target {
         mAspectRatio = aspectRatio;
         requestLayout();
         invalidate();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        mMeasured = false;
     }
 
     @Override
@@ -215,13 +219,6 @@ public class RemoteImageView extends View implements Target {
             }
 
             setMeasuredDimension(width, height);
-        }
-
-        mMeasured = true;
-
-        if (mImageUrl != null && getMeasuredWidth() - getPaddingLeft() - getPaddingRight() > 0
-                && getMeasuredHeight() - getPaddingTop() - getPaddingBottom() > 0) {
-            loadBitmap();
         }
     }
 }
