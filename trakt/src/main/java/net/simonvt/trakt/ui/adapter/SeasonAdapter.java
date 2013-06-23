@@ -4,6 +4,7 @@ import butterknife.InjectView;
 import butterknife.Views;
 
 import net.simonvt.trakt.R;
+import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
 import net.simonvt.trakt.ui.LibraryType;
@@ -33,6 +34,7 @@ public class SeasonAdapter extends CursorAdapter {
     public SeasonAdapter(Context context, LibraryType type) {
         super(context, null, 0);
         mType = type;
+        TraktApp.inject(context, this);
     }
 
     @Override
