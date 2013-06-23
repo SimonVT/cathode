@@ -8,6 +8,7 @@ import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.api.body.MoviesBody;
 import net.simonvt.trakt.api.service.MovieService;
 import net.simonvt.trakt.provider.TraktContract;
+import net.simonvt.trakt.widget.IndicatorView;
 import net.simonvt.trakt.widget.OverflowView;
 import net.simonvt.trakt.widget.RemoteImageView;
 
@@ -52,6 +53,10 @@ public class MovieSearchAdapter extends CursorAdapter {
         vh.mPoster.setImage(cursor.getString(cursor.getColumnIndex(TraktContract.Movies.POSTER)));
         vh.mTitle.setText(cursor.getString(cursor.getColumnIndex(TraktContract.Movies.TITLE)));
         vh.mOverview.setText(cursor.getString(cursor.getColumnIndex(TraktContract.Movies.OVERVIEW)));
+
+        vh.mIndicator.setWatched(watched);
+        vh.mIndicator.setCollected(inCollection);
+        vh.mIndicator.setInWatchlist(inWatchlist);
 
         vh.mOverflow.removeItems();
         if (watched) {
@@ -113,6 +118,7 @@ public class MovieSearchAdapter extends CursorAdapter {
     static class ViewHolder {
 
         @InjectView(R.id.poster) RemoteImageView mPoster;
+        @InjectView(R.id.indicator) IndicatorView mIndicator;
         @InjectView(R.id.title) TextView mTitle;
         @InjectView(R.id.overview) TextView mOverview;
         @InjectView(R.id.overflow) OverflowView mOverflow;

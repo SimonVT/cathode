@@ -160,6 +160,10 @@ public class SearchShowFragment extends AbsAdapterFragment implements LoaderMana
             TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows.TITLE,
             TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows.OVERVIEW,
             TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows.POSTER,
+            TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows.TVDB_ID,
+            TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows.WATCHED_COUNT,
+            TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows.IN_COLLECTION_COUNT,
+            TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows.IN_WATCHLIST,
     };
 
     @Override

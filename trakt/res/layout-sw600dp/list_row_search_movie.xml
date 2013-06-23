@@ -18,6 +18,11 @@
             app:dominantMeasurement="width"
             app:aspectRatio="0.68" />
 
+        <net.simonvt.trakt.widget.IndicatorView
+            android:id="@+id/indicator"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"/>
+
         <LinearLayout
             android:id="@+id/infoParent"
             android:layout_width="match_parent"

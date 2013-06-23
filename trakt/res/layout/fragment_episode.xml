@@ -76,7 +76,7 @@
                 android:layout_marginRight="8dp"
                 android:drawableRight="@drawable/ic_checkmark_watched"
                 android:text="@string/checkmark_watched"
-                android:textColor="@color/watchedCheckbox"
+                android:textColor="@color/watchedColor"
                 style="@style/Widget.CheckMark" />
 
             <TextView
@@ -87,7 +87,7 @@
                 android:layout_marginRight="8dp"
                 android:drawableRight="@drawable/ic_checkmark_collection"
                 android:text="@string/checkmark_collection"
-                android:textColor="@color/collectionCheckbox"
+                android:textColor="@color/collectedColor"
                 style="@style/Widget.CheckMark" />
 
             <TextView
@@ -98,7 +98,7 @@
                 android:layout_marginRight="8dp"
                 android:drawableRight="@drawable/ic_checkmark_watchlist"
                 android:text="@string/checkmark_watchlist"
-                android:textColor="@color/watchlistCheckbox"
+                android:textColor="@color/watchlistColor"
                 style="@style/Widget.CheckMark" />
         </LinearLayout>
     </FrameLayout>
