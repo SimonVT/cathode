@@ -29,7 +29,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
                 final long tmdbId = MovieWrapper.getTmdbId(mContext.getContentResolver(), movieId);
 
                 MovieWrapper.setWatched(mContext.getContentResolver(), movieId, watched);
-                MovieWrapper.setIsInWatchlist(mContext.getContentResolver(), movieId, false);
+                if (watched)  MovieWrapper.setIsInWatchlist(mContext.getContentResolver(), movieId, false);
 
                 postPriorityTask(new MovieWatchedTask(tmdbId, watched));
             }
