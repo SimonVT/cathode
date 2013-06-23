@@ -47,6 +47,7 @@ import net.simonvt.trakt.ui.HomeActivity;
 import net.simonvt.trakt.ui.adapter.EpisodeWatchlistAdapter;
 import net.simonvt.trakt.ui.adapter.MovieSearchAdapter;
 import net.simonvt.trakt.ui.adapter.MoviesAdapter;
+import net.simonvt.trakt.ui.adapter.SeasonAdapter;
 import net.simonvt.trakt.ui.adapter.SeasonsAdapter;
 import net.simonvt.trakt.ui.adapter.ShowSearchAdapter;
 import net.simonvt.trakt.ui.adapter.ShowsAdapter;
@@ -144,6 +145,7 @@ public class TraktApp extends Application {
 
                     // ListAdapters
                     EpisodeWatchlistAdapter.class,
+                    SeasonAdapter.class,
                     SeasonsAdapter.class,
                     ShowsAdapter.class,
                     ShowSearchAdapter.class,
