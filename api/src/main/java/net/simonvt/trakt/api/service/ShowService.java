@@ -54,7 +54,7 @@ public interface ShowService {
 
     //    show/episode/watchingnow
 
-    @GET("/show/library/{apikey}")
+    @POST("/show/library/{apikey}")
     TraktResponse library(@Body ShowBody shows);
 
     //    show/related
@@ -70,21 +70,21 @@ public interface ShowService {
     @GET("/show/seasons.json/{apikey}/{tvdbid}")
     List<Season> seasons(@Path("tvdbid") int tvdbId) throws RetrofitError;
 
-    @GET("/show/seen/{apikey}")
+    @POST("/show/seen/{apikey}")
     TraktResponse seen(@Body ShowBody shows);
 
     @GET("/show/summary.json/{apikey}/{tvdbid}/{detail_level}")
     TvShow summary(@Path("tvdbid") int tvdbId, @Path("detail_level") DetailLevel detailLevel) throws RetrofitError;
 
-    @GET("/show/unlibrary/{apikey}")
+    @POST("/show/unlibrary/{apikey}")
     TraktResponse unlibrary(@Body ShowBody shows);
 
-    @GET("/show/unwatchlist/{apikey}")
+    @POST("/show/unwatchlist/{apikey}")
     TraktResponse unwatchlist(@Body ShowsBody shows);
 
     //    show/watching
     //    show/watchingnow
 
-    @GET("/show/watchlist/{apikey}")
+    @POST("/show/watchlist/{apikey}")
     TraktResponse watchlist(@Body ShowsBody shows);
 }

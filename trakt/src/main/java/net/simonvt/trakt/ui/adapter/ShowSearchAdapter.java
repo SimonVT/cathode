@@ -4,9 +4,9 @@ import butterknife.InjectView;
 import butterknife.Views;
 
 import net.simonvt.trakt.R;
-import net.simonvt.trakt.api.body.ShowsBody;
-import net.simonvt.trakt.api.service.ShowService;
+import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.provider.TraktContract;
+import net.simonvt.trakt.scheduler.ShowTaskScheduler;
 import net.simonvt.trakt.widget.IndicatorView;
 import net.simonvt.trakt.widget.OverflowView;
 import net.simonvt.trakt.widget.RemoteImageView;
@@ -25,11 +25,12 @@ public class ShowSearchAdapter extends CursorAdapter {
 
     private static final String TAG = "ShowSearchAdapter";
 
-    @Inject ShowService mShowService;
+    @Inject ShowTaskScheduler mShowScheduler;
 
     public ShowSearchAdapter(Context context) {
         super(context, null, 0);
         mContext = context;
+        TraktApp.inject(context, this);
     }
 
     @Override
@@ -43,7 +44,7 @@ public class ShowSearchAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         ViewHolder vh = (ViewHolder) view.getTag();
 
-        final int tvdbId = cursor.getInt(cursor.getColumnIndex(TraktContract.Shows.TVDB_ID));
+        final long id = cursor.getLong(cursor.getColumnIndex(TraktContract.Shows._ID));
         final boolean watched = cursor.getInt(cursor.getColumnIndex(TraktContract.Shows.WATCHED_COUNT)) > 0;
         final boolean inCollection = cursor.getInt(cursor.getColumnIndex(TraktContract.Shows.IN_COLLECTION_COUNT)) > 1;
         final boolean inWatchlist = cursor.getInt(cursor.getColumnIndex(TraktContract.Shows.IN_WATCHLIST)) == 1;
@@ -76,11 +77,11 @@ public class ShowSearchAdapter extends CursorAdapter {
             public void onActionSelected(int action) {
                 switch (action) {
                     case R.id.action_watchlist_add:
-                        mShowService.watchlist(new ShowsBody(tvdbId));
+                        mShowScheduler.setIsInWatchlist(id, true);
                         break;
 
                     case R.id.action_watchlist_remove:
-                        mShowService.unwatchlist(new ShowsBody(tvdbId));
+                        mShowScheduler.setIsInWatchlist(id, false);
                         break;
                 }
             }
