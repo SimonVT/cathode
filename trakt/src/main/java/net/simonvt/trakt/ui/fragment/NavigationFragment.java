@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
@@ -46,7 +47,7 @@ public class NavigationFragment extends AbsAdapterFragment {
 
     private OnMenuClickListener mListener;
 
-    private int mSelectedPosition = 2;
+    private int mSelectedPosition = 1;
 
     @Override
     public void onAttach(Activity activity) {
@@ -77,11 +78,21 @@ public class NavigationFragment extends AbsAdapterFragment {
     }
 
     @Override
-    protected void onItemClick(AdapterView l, View v, int position, long id) {
-        NavigationItem item = (NavigationItem) getAdapter().getItem(position);
-        mListener.onMenuItemClicked(item.mId);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        getAdapterView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+        getAdapterView().setItemChecked(mSelectedPosition, true);
+    }
 
-        mSelectedPosition = position;
+    @Override
+    protected void onItemClick(AdapterView l, View v, int position, long id) {
+        if (position != mSelectedPosition) {
+            NavigationItem item = (NavigationItem) getAdapter().getItem(position);
+            mListener.onMenuItemClicked(item.mId);
+
+            mSelectedPosition = position;
+            getAdapterView().setItemChecked(mSelectedPosition, true);
+        }
     }
 
     private static class NavigationItem {
@@ -188,10 +199,6 @@ public class NavigationFragment extends AbsAdapterFragment {
 
                 v.setText(menuItem.mTitle);
                 v.setCompoundDrawablesWithIntrinsicBounds(menuItem.mIconRes, 0, 0, 0);
-            }
-
-            if (position == mSelectedPosition) {
-                // TODO: Mark item
             }
 
             v.setTag(R.id.mdActiveViewPosition, position);
