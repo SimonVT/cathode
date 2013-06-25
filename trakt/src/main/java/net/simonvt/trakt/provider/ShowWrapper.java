@@ -50,7 +50,7 @@ public final class ShowWrapper {
             cv.put(TraktContract.ShowGenres.SHOW_ID, showId);
             cv.put(TraktContract.ShowGenres.GENRE, genre);
 
-            resolver.insert(TraktContract.ShowGenres.buildFromShowUri(showId), cv);
+            resolver.insert(TraktContract.ShowGenres.buildFromShowId(showId), cv);
         }
     }
 

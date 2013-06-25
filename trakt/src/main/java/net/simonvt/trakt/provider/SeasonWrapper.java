@@ -54,6 +54,18 @@ public final class SeasonWrapper {
         }
     }
 
+    public static long getShowId(ContentResolver resolver, long seasonId) {
+        Cursor c = resolver.query(TraktContract.Seasons.buildFromId(seasonId), new String[] {
+                TraktContract.Seasons.SHOW_ID,
+        }, null, null, null);
+
+        if (c.moveToFirst()) {
+            return c.getLong(0);
+        }
+
+        return -1L;
+    }
+
     public static long updateOrInsertSeason(ContentResolver resolver, Season season, long showId) {
         long seasonId = getSeasonId(resolver, season);
 

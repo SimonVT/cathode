@@ -15,7 +15,6 @@ import net.simonvt.trakt.provider.TraktContract.ShowTopWatchers;
 import net.simonvt.trakt.provider.TraktContract.Shows;
 import net.simonvt.trakt.provider.TraktContract.TopEpisodes;
 import net.simonvt.trakt.provider.TraktDatabase.Tables;
-import net.simonvt.trakt.util.LogWrapper;
 import net.simonvt.trakt.util.SelectionBuilder;
 
 import android.content.ContentProvider;
@@ -28,6 +27,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.provider.BaseColumns;
 
 import java.util.ArrayList;
 
@@ -130,12 +130,228 @@ public class TraktProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         final SQLiteDatabase db = mDatabase.getReadableDatabase();
+        final SelectionBuilder builder = new SelectionBuilder();
         final int match = URI_MATCHER.match(uri);
         switch (match) {
+            case SHOWS: {
+                Cursor c = builder.table(Tables.SHOWS).where(selection, selectionArgs).query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), Shows.CONTENT_URI);
+                return c;
+            }
+            case SHOWS_WITHNEXT: {
+                Cursor c = builder.table(Tables.SHOWS_WITH_UNWATCHED)
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), Shows.CONTENT_URI);
+                return c;
+            }
+            case SHOWS_WITHNEXT_IGNOREWATCHED: {
+                Cursor c =
+                        builder.table(Tables.SHOWS_WITH_UNWATCHED)
+                                .where(TraktContract.ShowColumns.WATCHED_COUNT + "<"
+                                        + TraktContract.ShowColumns.AIRED_COUNT, null)
+                                .where(selection, selectionArgs)
+                                .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), Shows.CONTENT_URI);
+                return c;
+            }
+            case SHOWS_ID: {
+                final String showId = Shows.getShowId(uri);
+                Cursor c = builder.table(Tables.SHOWS)
+                        .where(Shows._ID + "=?", showId)
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), uri);
+                return c;
+            }
+            case SHOW_TOP_WATCHERS: {
+                final String showId = ShowTopWatchers.getShowId(uri);
+                Cursor c = builder.table(Tables.SHOW_TOP_WATCHERS)
+                        .where(Shows._ID + "=?", showId)
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), uri);
+                return c;
+            }
+            case SHOW_TOP_EPISODES: {
+                final String showId = TopEpisodes.getShowId(uri);
+                Cursor c = builder.table(Tables.SHOW_TOP_EPISODES)
+                        .where(Shows._ID + "=?", showId)
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), uri);
+                return c;
+            }
+            case SHOW_ACTORS: {
+                final String showId = ShowActor.getShowId(uri);
+                Cursor c = builder.table(Tables.SHOW_ACTORS)
+                        .where(Shows._ID + "=?", showId)
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), uri);
+                return c;
+            }
+            case SHOW_GENRES: {
+                final String showId = ShowGenres.getShowId(uri);
+                Cursor c = builder.table(Tables.SHOW_GENRES)
+                        .where(Shows._ID + "=?", showId)
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), uri);
+                return c;
+            }
+            case SHOWS_WATCHLIST: {
+                Cursor c = builder.table(Tables.SHOWS_WITH_UNWATCHED)
+                        .where(Shows.IN_WATCHLIST + "=1")
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), Shows.CONTENT_URI);
+                return c;
+            }
+            case SHOWS_COLLECTION: {
+                Cursor c = builder.table(Tables.SHOWS_WITH_UNCOLLECTED)
+                        .where(Shows.IN_COLLECTION_COUNT + ">0")
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), Shows.CONTENT_URI);
+                return c;
+            }
+            case SHOWS_WATCHED: {
+                Cursor c = builder.table(Tables.SHOWS_WITH_UNWATCHED)
+                        .where(Shows.WATCHED_COUNT + ">0")
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), Shows.CONTENT_URI);
+                return c;
+            }
+            case SEASONS: {
+                Cursor c =
+                        builder.table(Tables.SEASONS).where(selection, selectionArgs).query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), Seasons.CONTENT_URI);
+                return c;
+            }
+            case SEASON_ID: {
+                final String seasonId = Seasons.getSeasonId(uri);
+                Cursor c = builder.table(Tables.SEASONS)
+                        .where(Seasons._ID + "=?", seasonId)
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), uri);
+                return c;
+            }
+            case SEASONS_OFSHOW: {
+                final String showId = Seasons.getShowId(uri);
+                Cursor c = builder.table(Tables.SEASONS)
+                        .where(Seasons.SHOW_ID + "=?", showId)
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), uri);
+                return c;
+            }
+            case EPISODES: {
+                Cursor c =
+                        builder.table(Tables.EPISODES).where(selection, selectionArgs).query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), Episodes.CONTENT_URI);
+                return c;
+            }
+            case EPISODE_ID: {
+                final String episodeId = Episodes.getEpisodeId(uri);
+                Cursor c = builder.table(Tables.EPISODES)
+                        .where(Episodes._ID + "=?", episodeId)
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), uri);
+                return c;
+            }
+            case EPISODES_FROMSHOW: {
+                final String showId = Episodes.getShowId(uri);
+                Cursor c = builder.table(Tables.EPISODES)
+                        .where(Episodes.SHOW_ID + "=?", showId)
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), uri);
+                return c;
+            }
+            case EPISODES_FROMSEASON: {
+                final String seasonId = Episodes.getSeasonId(uri);
+                Cursor c = builder.table(Tables.EPISODES)
+                        .where(Episodes.SEASON_ID + "=?", seasonId)
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), uri);
+                return c;
+            }
+            case MOVIES: {
+                Cursor c =
+                        builder.table(Tables.MOVIES).where(selection, selectionArgs).query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), Movies.CONTENT_URI);
+                return c;
+            }
+            case MOVIE_ID: {
+                final String movieId = Movies.getMovieId(uri);
+                Cursor c = builder.table(Tables.MOVIES)
+                        .where(Movies._ID + "=?", movieId)
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), uri);
+                return c;
+            }
+            case MOVIE_GENRES: {
+                final String movieId = MovieGenres.getMovieId(uri);
+                Cursor c = builder.table(Tables.MOVIE_GENRES)
+                        .where(MovieGenres.MOVIE_ID + "=?", movieId)
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), uri);
+                return c;
+            }
+            case MOVIE_TOP_WATCHERS: {
+                final String movieId = MovieTopWatchers.getMovieId(uri);
+                Cursor c = builder.table(Tables.MOVIE_TOP_WATCHERS)
+                        .where(MovieTopWatchers.MOVIE_ID + "=?", movieId)
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), uri);
+                return c;
+            }
+            case MOVIE_ACTORS: {
+                final String movieId = MovieActors.getMovieId(uri);
+                Cursor c = builder.table(Tables.MOVIE_ACTORS)
+                        .where(MovieActors.MOVIE_ID + "=?", movieId)
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), uri);
+                return c;
+            }
+            case MOVIE_DIRECTORS: {
+                final String movieId = MovieDirectors.getMovieId(uri);
+                Cursor c = builder.table(Tables.MOVIE_DIRECTORS)
+                        .where(MovieDirectors.MOVIE_ID + "=?", movieId)
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), uri);
+                return c;
+            }
+            case MOVIE_WRITERS: {
+                final String movieId = MovieWriters.getMovieId(uri);
+                Cursor c = builder.table(Tables.MOVIE_WRITERS)
+                        .where(MovieWriters.MOVIE_ID + "=?", movieId)
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), uri);
+                return c;
+            }
+            case MOVIE_PRODUCERS: {
+                final String movieId = MovieProducers.getMovieId(uri);
+                Cursor c = builder.table(Tables.MOVIE_PRODUCERS)
+                        .where(MovieProducers.MOVIE_ID + "=?", movieId)
+                        .where(selection, selectionArgs)
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), uri);
+                return c;
+            }
             default: {
-                // Most cases are handled with simple SelectionBuilder
-                final SelectionBuilder builder = buildExpandedSelection(uri, match);
-                return builder.where(selection, selectionArgs).query(db, projection, sortOrder);
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
             }
         }
     }
@@ -202,74 +418,87 @@ public class TraktProvider extends ContentProvider {
         final SQLiteDatabase db = mDatabase.getWritableDatabase();
         switch (URI_MATCHER.match(uri)) {
             case SHOWS: {
-                LogWrapper.v(TAG, "Insert URI: " + uri.toString() + " - Shows URI: " + Shows.CONTENT_URI.toString());
-                long rowId = db.insertOrThrow(Tables.SHOWS, null, values);
-                getContext().getContentResolver().notifyChange(Shows.CONTENT_URI, null);
-                return Shows.buildShowUri(rowId);
+                final long showId = db.insertOrThrow(Tables.SHOWS, null, values);
+                getContext().getContentResolver().notifyChange(Shows.buildShowUri(showId), null);
+                return Shows.buildShowUri(showId);
             }
             case SHOW_TOP_WATCHERS: {
-                long rowId = db.insertOrThrow(Tables.SHOW_TOP_WATCHERS, null, values);
-                getContext().getContentResolver().notifyChange(ShowTopWatchers.CONTENT_URI, null);
+                final long rowId = db.insertOrThrow(Tables.SHOW_TOP_WATCHERS, null, values);
+                final long showId = values.getAsLong(ShowTopWatchers.SHOW_ID);
+                getContext().getContentResolver().notifyChange(ShowTopWatchers.buildFromShowId(showId), null);
                 return ContentUris.withAppendedId(ShowTopWatchers.CONTENT_URI, rowId);
             }
             case SHOW_TOP_EPISODES: {
-                long rowId = db.insertOrThrow(Tables.SHOW_TOP_EPISODES, null, values);
-                getContext().getContentResolver().notifyChange(uri, null);
+                final long rowId = db.insertOrThrow(Tables.SHOW_TOP_EPISODES, null, values);
+                final long showId = values.getAsLong(TopEpisodes.SHOW_ID);
+                getContext().getContentResolver().notifyChange(TopEpisodes.buildFromShowId(showId), null);
                 return ContentUris.withAppendedId(TopEpisodes.CONTENT_URI, rowId);
             }
             case SHOW_ACTORS: {
-                long rowId = db.insertOrThrow(Tables.SHOW_ACTORS, null, values);
-                getContext().getContentResolver().notifyChange(uri, null);
+                final long rowId = db.insertOrThrow(Tables.SHOW_ACTORS, null, values);
+                final long showId = values.getAsLong(ShowActor.SHOW_ID);
+                getContext().getContentResolver().notifyChange(ShowActor.buildFromShowId(showId), null);
                 return ContentUris.withAppendedId(ShowActor.CONTENT_URI, rowId);
             }
             case SHOW_GENRES: {
-                long rowId = db.insertOrThrow(Tables.SHOW_GENRES, null, values);
-                getContext().getContentResolver().notifyChange(uri, null);
+                final long rowId = db.insertOrThrow(Tables.SHOW_GENRES, null, values);
+                final long showId = values.getAsLong(ShowGenres.SHOW_ID);
+                getContext().getContentResolver().notifyChange(ShowGenres.buildFromShowId(showId), null);
                 return ContentUris.withAppendedId(ShowGenres.CONTENT_URI, rowId);
             }
             case SEASONS: {
-                long rowId = db.insertOrThrow(Tables.SEASONS, null, values);
-                getContext().getContentResolver().notifyChange(Seasons.CONTENT_URI, null);
-                return Seasons.buildFromId(rowId);
+                final long seasonId = db.insertOrThrow(Tables.SEASONS, null, values);
+                final long showId = values.getAsLong(TraktContract.SeasonColumns.SHOW_ID);
+                getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(showId), null);
+                return Seasons.buildFromId(seasonId);
             }
             case EPISODES: {
-                long rowId = db.insertOrThrow(Tables.EPISODES, null, values);
-                getContext().getContentResolver().notifyChange(Episodes.CONTENT_URI, null);
-                return Episodes.buildFromId(rowId);
+                final long episodeId = db.insertOrThrow(Tables.EPISODES, null, values);
+                final long showId = values.getAsLong(TraktContract.EpisodeColumns.SHOW_ID);
+                final long seasonId = values.getAsLong(TraktContract.EpisodeColumns.SEASON_ID);
+                getContext().getContentResolver().notifyChange(Episodes.buildFromShowId(showId), null);
+                getContext().getContentResolver().notifyChange(Episodes.buildFromSeasonId(seasonId), null);
+                return Episodes.buildFromId(episodeId);
             }
             case MOVIES: {
-                long rowId = db.insertOrThrow(Tables.MOVIES, null, values);
-                getContext().getContentResolver().notifyChange(uri, null);
-                return ContentUris.withAppendedId(Movies.CONTENT_URI, rowId);
+                final long movieId = db.insertOrThrow(Tables.MOVIES, null, values);
+                getContext().getContentResolver().notifyChange(Movies.buildMovieUri(movieId), null);
+                return ContentUris.withAppendedId(Movies.CONTENT_URI, movieId);
             }
             case MOVIE_GENRES: {
-                long rowId = db.insertOrThrow(Tables.MOVIE_GENRES, null, values);
-                getContext().getContentResolver().notifyChange(uri, null);
+                final long rowId = db.insertOrThrow(Tables.MOVIE_GENRES, null, values);
+                final long movieId = values.getAsLong(MovieGenres.MOVIE_ID);
+                getContext().getContentResolver().notifyChange(MovieGenres.buildFromMovieId(movieId), null);
                 return ContentUris.withAppendedId(MovieGenres.CONTENT_URI, rowId);
             }
             case MOVIE_TOP_WATCHERS: {
-                long rowId = db.insertOrThrow(Tables.MOVIE_TOP_WATCHERS, null, values);
-                getContext().getContentResolver().notifyChange(uri, null);
+                final long rowId = db.insertOrThrow(Tables.MOVIE_TOP_WATCHERS, null, values);
+                final long movieId = values.getAsLong(MovieTopWatchers.MOVIE_ID);
+                getContext().getContentResolver().notifyChange(MovieTopWatchers.buildFromMovieId(movieId), null);
                 return ContentUris.withAppendedId(MovieTopWatchers.CONTENT_URI, rowId);
             }
             case MOVIE_ACTORS: {
-                long rowId = db.insertOrThrow(Tables.MOVIE_ACTORS, null, values);
-                getContext().getContentResolver().notifyChange(uri, null);
+                final long rowId = db.insertOrThrow(Tables.MOVIE_ACTORS, null, values);
+                final long movieId = values.getAsLong(MovieActors.MOVIE_ID);
+                getContext().getContentResolver().notifyChange(MovieActors.buildFromMovieId(movieId), null);
                 return ContentUris.withAppendedId(MovieActors.CONTENT_URI, rowId);
             }
             case MOVIE_DIRECTORS: {
-                long rowId = db.insertOrThrow(Tables.MOVIE_DIRECTORS, null, values);
-                getContext().getContentResolver().notifyChange(uri, null);
+                final long rowId = db.insertOrThrow(Tables.MOVIE_DIRECTORS, null, values);
+                final long movieId = values.getAsLong(MovieDirectors.MOVIE_ID);
+                getContext().getContentResolver().notifyChange(MovieDirectors.buildFromMovieId(movieId), null);
                 return ContentUris.withAppendedId(MovieDirectors.CONTENT_URI, rowId);
             }
             case MOVIE_WRITERS: {
-                long rowId = db.insertOrThrow(Tables.MOVIE_WRITERS, null, values);
-                getContext().getContentResolver().notifyChange(uri, null);
+                final long rowId = db.insertOrThrow(Tables.MOVIE_WRITERS, null, values);
+                final long movieId = values.getAsLong(MovieWriters.MOVIE_ID);
+                getContext().getContentResolver().notifyChange(MovieWriters.buildFromMovieId(movieId), null);
                 return ContentUris.withAppendedId(MovieWriters.CONTENT_URI, rowId);
             }
             case MOVIE_PRODUCERS: {
-                long rowId = db.insertOrThrow(Tables.MOVIE_PRODUCERS, null, values);
-                getContext().getContentResolver().notifyChange(uri, null);
+                final long rowId = db.insertOrThrow(Tables.MOVIE_PRODUCERS, null, values);
+                final long movieId = values.getAsLong(MovieProducers.MOVIE_ID);
+                getContext().getContentResolver().notifyChange(MovieProducers.buildFromMovieId(movieId), null);
                 return ContentUris.withAppendedId(MovieProducers.CONTENT_URI, rowId);
             }
             default:
@@ -289,10 +518,274 @@ public class TraktProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
         final SQLiteDatabase db = mDatabase.getWritableDatabase();
-        final SelectionBuilder builder = buildSimpleSelection(uri);
-        int count = builder.where(where, whereArgs).update(db, values);
-        getContext().getContentResolver().notifyChange(getBaseUri(uri), null);
-        return count;
+
+        final SelectionBuilder builder = new SelectionBuilder();
+        final int match = URI_MATCHER.match(uri);
+        switch (match) {
+            case SHOWS: {
+                final int count = builder.table(Tables.SHOWS).where(where, whereArgs).update(db, values);
+                if (count > 0) {
+                    Cursor c = db.query(Tables.SHOWS, new String[] {
+                            BaseColumns._ID,
+                    }, where, whereArgs, null, null, null);
+                    while (c.moveToNext()) {
+                        final long id = c.getLong(0);
+                        getContext().getContentResolver().notifyChange(Shows.buildShowUri(id), null);
+                    }
+                    c.close();
+                }
+                return count;
+            }
+
+            case SHOWS_ID: {
+                final String showId = Shows.getShowId(uri);
+                final int count = builder.table(Tables.SHOWS).where(Shows._ID + "=?", showId).update(db, values);
+                if (count > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return count;
+            }
+            case SHOW_TOP_WATCHERS: {
+                final String showId = ShowTopWatchers.getShowId(uri);
+                final int count = builder
+                        .table(Tables.SHOW_TOP_WATCHERS)
+                        .where(Shows._ID + "=?", showId)
+                        .update(db, values);
+
+                if (count > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return count;
+            }
+            case SHOW_TOP_EPISODES: {
+                final String showId = TopEpisodes.getShowId(uri);
+                final int count = builder.table(Tables.SHOW_TOP_EPISODES).where(Shows._ID + "=?", showId)
+                        .update(db, values);
+
+                if (count > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return count;
+            }
+            case SHOW_ACTORS: {
+                final String showId = ShowActor.getShowId(uri);
+                final int count = builder.table(Tables.SHOW_ACTORS).where(Shows._ID + "=?", showId)
+                        .update(db, values);
+
+                if (count > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return count;
+            }
+            case SHOW_GENRES: {
+                final String showId = ShowGenres.getShowId(uri);
+                final int count = builder.table(Tables.SHOW_GENRES).where(Shows._ID + "=?", showId)
+                        .update(db, values);
+
+                if (count > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return count;
+            }
+            case SEASONS_OFSHOW: {
+                final String showId = Seasons.getShowId(uri);
+                builder.where(Seasons.SHOW_ID + "=?", showId);
+            }
+            case SEASONS: {
+                final int count = builder.table(Tables.SEASONS).where(where, whereArgs).update(db, values);
+                if (count > 0) {
+                    Cursor c = db.query(Tables.SEASONS, new String[] {
+                            BaseColumns._ID,
+                            Seasons.SHOW_ID,
+                    }, where, whereArgs, null, null, null);
+                    while (c.moveToNext()) {
+                        final long id = c.getLong(0);
+                        final long showId = c.getLong(1);
+                        getContext().getContentResolver().notifyChange(Seasons.buildFromId(id), null);
+                        getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(showId), null);
+                    }
+                    c.close();
+                }
+                return count;
+            }
+            case SEASON_ID: {
+                final String seasonId = Seasons.getSeasonId(uri);
+                final int count = builder.table(Tables.SEASONS).where(Seasons._ID + "=?", seasonId).update(db, values);
+                if (count > 0) {
+                    final long showId =
+                            SeasonWrapper.getShowId(getContext().getContentResolver(), Long.valueOf(seasonId));
+                    getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(showId), null);
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return count;
+            }
+            case EPISODES: {
+                final int count = builder.table(Tables.EPISODES).where(where, whereArgs).update(db, values);
+                if (count > 0) {
+                    Cursor c = db.query(Tables.EPISODES, new String[] {
+                            BaseColumns._ID,
+                            Episodes.SHOW_ID,
+                            Episodes.SEASON_ID,
+                    }, where, whereArgs, null, null, null);
+                    while (c.moveToNext()) {
+                        final long id = c.getLong(0);
+                        final long showId = c.getLong(1);
+                        final long seasonId = c.getLong(2);
+                        getContext().getContentResolver().notifyChange(Episodes.buildFromId(id), null);
+                        getContext().getContentResolver().notifyChange(Episodes.buildFromShowId(showId), null);
+                        getContext().getContentResolver().notifyChange(Episodes.buildFromSeasonId(seasonId), null);
+                    }
+                    c.close();
+                }
+                return count;
+            }
+            case EPISODE_ID: {
+                final String episodeId = Episodes.getEpisodeId(uri);
+                final int count =
+                        builder.table(Tables.EPISODES).where(Episodes._ID + "=?", episodeId).update(db, values);
+                if (count > 0) {
+                    final long id = Long.valueOf(episodeId);
+                    final long showId = EpisodeWrapper.getShowId(getContext().getContentResolver(), id);
+                    final long seasonId = EpisodeWrapper.getSeasonId(getContext().getContentResolver(), id);
+                    getContext().getContentResolver().notifyChange(Episodes.buildFromId(id), null);
+                    getContext().getContentResolver().notifyChange(Episodes.buildFromShowId(showId), null);
+                    getContext().getContentResolver().notifyChange(Episodes.buildFromSeasonId(seasonId), null);
+                }
+                return count;
+            }
+            case EPISODES_FROMSHOW: {
+                final String showIdStr = Episodes.getShowId(uri);
+                final int count = builder.table(Tables.EPISODES)
+                        .where(Episodes.SHOW_ID + "=?", showIdStr)
+                        .update(db, values);
+                if (count > 0) {
+                    Cursor c = builder.query(db, new String[] {
+                            BaseColumns._ID,
+                            Episodes.SHOW_ID,
+                            Episodes.SEASON_ID,
+                    }, null);
+                    while (c.moveToNext()) {
+                        final long id = c.getLong(0);
+                        final long showId = c.getLong(1);
+                        final long seasonId = c.getLong(2);
+                        getContext().getContentResolver().notifyChange(Episodes.buildFromId(id), null);
+                        getContext().getContentResolver().notifyChange(Episodes.buildFromShowId(showId), null);
+                        getContext().getContentResolver().notifyChange(Episodes.buildFromSeasonId(seasonId), null);
+                    }
+                    c.close();
+                }
+                return count;
+            }
+            case EPISODES_FROMSEASON: {
+                final String seasonIdStr = Episodes.getSeasonId(uri);
+                final int count = builder.table(Tables.EPISODES)
+                        .where(Episodes.SEASON_ID + "=?", seasonIdStr)
+                        .update(db, values);
+                if (count > 0) {
+                    Cursor c = builder.query(db, new String[] {
+                            BaseColumns._ID,
+                            Episodes.SHOW_ID,
+                            Episodes.SEASON_ID,
+                    }, null);
+                    while (c.moveToNext()) {
+                        final long id = c.getLong(0);
+                        final long showId = c.getLong(1);
+                        final long seasonId = c.getLong(2);
+                        getContext().getContentResolver().notifyChange(Episodes.buildFromId(id), null);
+                        getContext().getContentResolver().notifyChange(Episodes.buildFromShowId(showId), null);
+                        getContext().getContentResolver().notifyChange(Episodes.buildFromSeasonId(seasonId), null);
+                    }
+                    c.close();
+                }
+                return count;
+            }
+            case MOVIES: {
+                final int count = builder.table(Tables.MOVIES).where(where, whereArgs).update(db, values);
+                if (count > 0) {
+                    Cursor c = db.query(Tables.MOVIES, new String[] {
+                            BaseColumns._ID,
+                    }, where, whereArgs, null, null, null);
+                    while (c.moveToNext()) {
+                        final long id = c.getLong(0);
+                        getContext().getContentResolver().notifyChange(Movies.buildMovieUri(id), null);
+                    }
+                    c.close();
+                }
+                return count;
+            }
+            case MOVIE_ID: {
+                final String movieId = Movies.getMovieId(uri);
+                final int count = builder.table(Tables.MOVIES).where(Movies._ID + "=?", movieId).update(db, values);
+                if (count > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return count;
+            }
+            case MOVIE_GENRES: {
+                final String movieId = MovieGenres.getMovieId(uri);
+                final int count = builder.table(Tables.MOVIE_GENRES)
+                        .where(MovieGenres.MOVIE_ID + "=?", movieId)
+                        .update(db, values);
+                if (count > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return count;
+            }
+            case MOVIE_TOP_WATCHERS: {
+                final String movieId = MovieTopWatchers.getMovieId(uri);
+                final int count = builder.table(Tables.MOVIE_TOP_WATCHERS)
+                        .where(MovieTopWatchers.MOVIE_ID + "=?", movieId)
+                        .update(db, values);
+                if (count > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return count;
+            }
+            case MOVIE_ACTORS: {
+                final String movieId = MovieActors.getMovieId(uri);
+                final int count = builder.table(Tables.MOVIE_ACTORS)
+                        .where(MovieActors.MOVIE_ID + "=?", movieId)
+                        .update(db, values);
+                if (count > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return count;
+            }
+            case MOVIE_DIRECTORS: {
+                final String movieId = MovieDirectors.getMovieId(uri);
+                final int count = builder.table(Tables.MOVIE_DIRECTORS)
+                        .where(MovieDirectors.MOVIE_ID + "=?", movieId)
+                        .update(db, values);
+                if (count > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return count;
+            }
+            case MOVIE_WRITERS: {
+                final String movieId = MovieWriters.getMovieId(uri);
+                final int count = builder.table(Tables.MOVIE_WRITERS)
+                        .where(MovieWriters.MOVIE_ID + "=?", movieId)
+                        .update(db, values);
+                if (count > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return count;
+            }
+            case MOVIE_PRODUCERS: {
+                final String movieId = MovieProducers.getMovieId(uri);
+                final int count = builder.table(Tables.MOVIE_PRODUCERS)
+                        .where(MovieProducers.MOVIE_ID + "=?", movieId)
+                        .update(db, values);
+                if (count > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return count;
+            }
+
+            default: {
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+            }
+        }
     }
 
     private Uri getBaseUri(Uri uri) {
@@ -401,20 +894,6 @@ public class TraktProvider extends ContentProvider {
             }
             default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
-            }
-        }
-    }
-
-    /**
-     * Build an advanced {@link SelectionBuilder} to match the requested
-     * {@link Uri}. This is usually only used by {@link #query}, since it
-     * performs table joins useful for {@link Cursor} data.
-     */
-    private SelectionBuilder buildExpandedSelection(Uri uri, int match) {
-        final SelectionBuilder builder = new SelectionBuilder();
-        switch (match) {
-            default: {
-                return buildSimpleSelection(uri);
             }
         }
     }

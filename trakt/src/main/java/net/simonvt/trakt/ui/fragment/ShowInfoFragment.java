@@ -565,7 +565,7 @@ public class ShowInfoFragment extends BaseFragment {
     private LoaderManager.LoaderCallbacks<Cursor> mGenreCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            CursorLoader cl = new CursorLoader(getActivity(), TraktContract.ShowGenres.buildFromShowUri(mShowId),
+            CursorLoader cl = new CursorLoader(getActivity(), TraktContract.ShowGenres.buildFromShowId(mShowId),
                     GENRES_PROJECTION, null, null, TraktContract.ShowGenres.DEFAULT_SORT);
             cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
             return cl;
@@ -626,7 +626,6 @@ public class ShowInfoFragment extends BaseFragment {
 
         @Override
         public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
-            data.setNotificationUri(getActivity().getContentResolver(), TraktContract.Seasons.CONTENT_URI);
             mSeasonsAdapter.changeCursor(data);
         }
 

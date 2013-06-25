@@ -30,6 +30,7 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
                 TraktContract.Episodes.WATCHED + "=0 AND " + TraktContract.Episodes.FIRST_AIRED + ">"
                         + DateUtils.YEAR_IN_SECONDS + " AND " + TraktContract.Episodes.SEASON + ">0", null,
                 TraktContract.Episodes.SEASON + " ASC, " + TraktContract.Episodes.EPISODE + " ASC LIMIT 1");
+        toWatch.registerContentObserver(mObserver);
         if (toWatch.getCount() == 0) {
             return toWatch;
         }
@@ -38,6 +39,7 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
                 getContext().getContentResolver().query(TraktContract.Episodes.buildFromShowId(mShowId), null,
                         TraktContract.Episodes.WATCHED + "=1", null, TraktContract.Episodes.SEASON + " DESC, "
                         + TraktContract.Episodes.EPISODE + " DESC LIMIT 1");
+        lastWatched.registerContentObserver(mObserver);
         lastWatched.getCount();
 
         return new MergeCursor(new Cursor[] {

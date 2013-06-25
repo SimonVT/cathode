@@ -210,7 +210,6 @@ public class SeasonFragment extends AbsAdapterFragment {
 
         @Override
         public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
-            data.setNotificationUri(getActivity().getContentResolver(), TraktContract.Episodes.CONTENT_URI);
             mEpisodeAdapter.changeCursor(data);
         }
 

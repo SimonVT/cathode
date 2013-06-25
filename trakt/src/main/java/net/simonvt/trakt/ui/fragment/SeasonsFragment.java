@@ -165,7 +165,6 @@ public class SeasonsFragment extends AbsAdapterFragment {
 
         @Override
         public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
-            data.setNotificationUri(getActivity().getContentResolver(), TraktContract.Seasons.CONTENT_URI);
             mSeasonsAdapter.changeCursor(data);
         }
 

@@ -234,7 +234,7 @@ public final class TraktContract {
 
         public static final String SHOW_ID = "showId";
 
-        public static Uri buildFromShowUri(int showId) {
+        public static Uri buildFromShowId(long showId) {
             return CONTENT_URI.buildUpon().appendPath(PATH_FROMSHOW).appendPath(String.valueOf(showId)).build();
         }
 
@@ -249,7 +249,7 @@ public final class TraktContract {
 
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.simonvt.trakt.showTopEpisode";
 
-        public static Uri buildFromShowUri(int showId) {
+        public static Uri buildFromShowId(long showId) {
             return CONTENT_URI.buildUpon().appendPath(PATH_FROMSHOW).appendPath(String.valueOf(showId)).build();
         }
 
@@ -266,7 +266,7 @@ public final class TraktContract {
 
         public static final String SHOW_ID = "showId";
 
-        public static Uri buildFromShowUri(int showId) {
+        public static Uri buildFromShowId(long showId) {
             return CONTENT_URI.buildUpon().appendPath(PATH_FROMSHOW).appendPath(String.valueOf(showId)).build();
         }
 
@@ -286,7 +286,7 @@ public final class TraktContract {
 
         public static final String DEFAULT_SORT = GENRE + " ASC";
 
-        public static Uri buildFromShowUri(long showId) {
+        public static Uri buildFromShowId(long showId) {
             return CONTENT_URI.buildUpon().appendPath(PATH_FROMSHOW).appendPath(String.valueOf(showId)).build();
         }
 
@@ -394,7 +394,7 @@ public final class TraktContract {
 
         public static final String MOVIE_ID = "movieId";
 
-        public static Uri buildFromMovieUri(int movieId) {
+        public static Uri buildFromMovieId(long movieId) {
             return CONTENT_URI.buildUpon().appendPath(PATH_FROMMOVIE).appendPath(String.valueOf(movieId)).build();
         }
 

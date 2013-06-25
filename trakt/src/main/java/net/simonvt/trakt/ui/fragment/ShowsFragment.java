@@ -2,7 +2,6 @@ package net.simonvt.trakt.ui.fragment;
 
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
-import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
 import net.simonvt.trakt.sync.TraktTaskQueue;
 import net.simonvt.trakt.sync.task.SyncTask;
@@ -135,7 +134,6 @@ public abstract class ShowsFragment extends AbsAdapterFragment implements Loader
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         LogWrapper.d(TAG, "[onLoadFinished]");
-        cursor.setNotificationUri(getActivity().getContentResolver(), TraktContract.Shows.CONTENT_URI);
         setCursor(cursor);
     }
 

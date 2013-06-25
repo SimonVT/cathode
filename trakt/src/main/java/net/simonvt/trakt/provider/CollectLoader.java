@@ -30,6 +30,7 @@ public class CollectLoader extends AsyncTaskLoader<Cursor> {
                         TraktContract.Episodes.IN_COLLECTION + "=0 AND " + TraktContract.Episodes.FIRST_AIRED + ">"
                                 + DateUtils.YEAR_IN_SECONDS + " AND " + TraktContract.Episodes.SEASON + ">0", null,
                         TraktContract.Episodes.SEASON + " ASC, " + TraktContract.Episodes.EPISODE + " ASC LIMIT 1");
+        toCollect.registerContentObserver(mObserver);
         if (toCollect.getCount() == 0) {
             return toCollect;
         }
@@ -38,6 +39,7 @@ public class CollectLoader extends AsyncTaskLoader<Cursor> {
                 getContext().getContentResolver().query(TraktContract.Episodes.buildFromShowId(mShowId), null,
                         TraktContract.Episodes.IN_COLLECTION + "=1", null, TraktContract.Episodes.SEASON + " DESC, "
                         + TraktContract.Episodes.EPISODE + " DESC LIMIT 1");
+        lastCollected.registerContentObserver(mObserver);
         lastCollected.getCount();
 
         return new MergeCursor(new Cursor[] {
