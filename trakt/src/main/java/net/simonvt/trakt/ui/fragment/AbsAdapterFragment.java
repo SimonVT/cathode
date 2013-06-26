@@ -149,6 +149,10 @@ public abstract class AbsAdapterFragment extends BaseFragment {
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
+                    if (mProgressContainer == null) {
+                        // In case fragment is removed before animation is done
+                        return;
+                    }
                     if (newState == STATE_LIST_VISIBLE) {
                         mProgressContainer.setVisibility(View.GONE);
                     } else {
