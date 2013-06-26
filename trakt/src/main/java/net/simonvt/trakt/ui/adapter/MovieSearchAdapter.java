@@ -44,7 +44,7 @@ public class MovieSearchAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         ViewHolder vh = (ViewHolder) view.getTag();
 
-        final int tmdbId = cursor.getInt(cursor.getColumnIndex(TraktContract.Movies.TMDB_ID));
+        final int id = cursor.getInt(cursor.getColumnIndex(TraktContract.Movies._ID));
         final boolean watched = cursor.getInt(cursor.getColumnIndex(TraktContract.Movies.WATCHED)) == 1;
         final boolean inCollection = cursor.getInt(cursor.getColumnIndex(TraktContract.Movies.IN_COLLECTION)) == 1;
         final boolean inWatchlist = cursor.getInt(cursor.getColumnIndex(TraktContract.Movies.IN_WATCHLIST)) == 1;
@@ -87,27 +87,27 @@ public class MovieSearchAdapter extends CursorAdapter {
             public void onActionSelected(int action) {
                 switch (action) {
                     case R.id.action_watched:
-                        mMovieScheduler.setWatched(tmdbId, true);
+                        mMovieScheduler.setWatched(id, true);
                         break;
 
                     case R.id.action_unwatched:
-                        mMovieScheduler.setWatched(tmdbId, false);
+                        mMovieScheduler.setWatched(id, false);
                         break;
 
                     case R.id.action_watchlist_add:
-                        mMovieScheduler.setIsInWatchlist(tmdbId, true);
+                        mMovieScheduler.setIsInWatchlist(id, true);
                         break;
 
                     case R.id.action_watchlist_remove:
-                        mMovieScheduler.setIsInWatchlist(tmdbId, false);
+                        mMovieScheduler.setIsInWatchlist(id, false);
                         break;
 
                     case R.id.action_collection_add:
-                        mMovieScheduler.setIsInCollection(tmdbId, true);
+                        mMovieScheduler.setIsInCollection(id, true);
                         break;
 
                     case R.id.action_collection_remove:
-                        mMovieScheduler.setIsInCollection(tmdbId, false);
+                        mMovieScheduler.setIsInCollection(id, false);
                         break;
                 }
             }
