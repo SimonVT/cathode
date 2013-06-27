@@ -9,6 +9,8 @@ import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
 import net.simonvt.trakt.scheduler.ShowTaskScheduler;
 import net.simonvt.trakt.ui.LibraryType;
+import net.simonvt.trakt.util.ApiUtils;
+import net.simonvt.trakt.util.DateUtils;
 import net.simonvt.trakt.util.LogWrapper;
 import net.simonvt.trakt.widget.OverflowView;
 import net.simonvt.trakt.widget.RemoteImageView;
@@ -95,10 +97,12 @@ public class ShowsAdapter extends CursorAdapter {
 
         String episodeText;
         if (episodeTitle == null) {
-            // TODO: Fade out text a bit.. It's not important
             episodeText = showStatus;
+            vh.mFirstAired.setVisibility(View.GONE);
         } else {
             episodeText = "Next: " + episodeSeasonNumber + "x" + episodeNumber + " " + episodeTitle;
+            vh.mFirstAired.setVisibility(View.VISIBLE);
+            vh.mFirstAired.setText(DateUtils.secondsToDate(mContext, episodeFirstAired));
         }
         vh.mNextEpisode.setText(episodeText);
         vh.mNextEpisode.setEnabled(episodeTitle != null);
@@ -161,6 +165,7 @@ public class ShowsAdapter extends CursorAdapter {
         @InjectView(R.id.watched) TextView mWatched;
         @InjectView(R.id.progress) ProgressBar mProgressBar;
         @InjectView(R.id.nextEpisode) TextView mNextEpisode;
+        @InjectView(R.id.firstAired) TextView mFirstAired;
         @InjectView(R.id.overflow) OverflowView mOverflow;
         @InjectView(R.id.poster) RemoteImageView mPoster;
 
