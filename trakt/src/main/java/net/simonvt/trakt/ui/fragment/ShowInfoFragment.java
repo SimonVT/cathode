@@ -472,7 +472,7 @@ public class ShowInfoFragment extends BaseFragment {
                 final String bannerUrl = cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.SCREEN));
                 mLastWatchedHolder.mEpisodeBanner.setImage(bannerUrl);
             } else {
-                mLastWatched.setVisibility(View.GONE);
+                mLastWatched.setVisibility(View.INVISIBLE);
                 mLastWatchedId = -1;
             }
         }
@@ -531,7 +531,7 @@ public class ShowInfoFragment extends BaseFragment {
                 mLastCollectedHolder.mEpisodeBanner.setImage(bannerUrl);
             } else {
                 mLastCollectedId = -1;
-                mLastCollected.setVisibility(View.GONE);
+                mLastCollected.setVisibility(View.INVISIBLE);
             }
         }
 
