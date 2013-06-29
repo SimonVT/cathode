@@ -243,6 +243,20 @@ public final class EpisodeWrapper {
         resolver.update(Episodes.buildFromId(episodeId), cv, null, null);
     }
 
+    public static void setRating(ContentResolver resolver, Integer tvdbId, Integer season, Integer episode,
+            Integer ratingAdvanced) {
+        final long showId = ShowWrapper.getShowId(resolver, tvdbId);
+        final long episodeId = EpisodeWrapper.getEpisodeId(resolver, showId, season, episode);
+        setRating(resolver, episodeId, ratingAdvanced);
+    }
+
+    public static void setRating(ContentResolver resolver, long episodeId, int ratingAdvanced) {
+        ContentValues cv = new ContentValues();
+        cv.put(EpisodeColumns.RATING, ratingAdvanced);
+
+        resolver.update(Episodes.buildFromId(episodeId), cv, null, null);
+    }
+
     public static ContentValues getEpisodeCVs(Episode episode) {
         ContentValues cv = new ContentValues();
 
