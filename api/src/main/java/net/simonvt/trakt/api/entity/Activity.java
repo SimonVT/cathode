@@ -1,43 +1,18 @@
 package net.simonvt.trakt.api.entity;
 
+import java.util.List;
+
 public class Activity {
 
-    public static class ActivityItem {
+    private Timestamp timestamp;
 
-        private Long watched;
+    private List<ActivityItem> activity;
 
-        private Long scrobble;
-
-        private Long seen;
-
-        private Long checkin;
-
-        private Long collection;
-
-        public Long getWatched() {
-            return watched;
-        }
-
-        public Long getScrobble() {
-            return scrobble;
-        }
-
-        public Long getSeen() {
-            return seen;
-        }
-
-        public Long getCheckin() {
-            return checkin;
-        }
-
-        public Long getCollection() {
-            return collection;
-        }
+    public Timestamp getTimestamp() {
+        return timestamp;
     }
 
-    private Long all;
-
-    private ActivityItem movie;
-
-    private ActivityItem episode;
+    public List<ActivityItem> getActivity() {
+        return activity;
+    }
 }

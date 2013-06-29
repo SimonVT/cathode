@@ -3,7 +3,7 @@ package net.simonvt.trakt.api.service;
 import retrofit.http.GET;
 import retrofit.http.Path;
 
-import net.simonvt.trakt.api.entity.Activity;
+import net.simonvt.trakt.api.entity.LastActivity;
 import net.simonvt.trakt.api.entity.CalendarDate;
 import net.simonvt.trakt.api.entity.Movie;
 import net.simonvt.trakt.api.entity.TvShow;
@@ -17,7 +17,7 @@ public interface UserService {
     List<CalendarDate> calendarShows(@Path("date") String date, @Path("days") int days);
 
     @GET("/user/lastactivity.json/{apikey}/{username}")
-    Activity lastActivity();
+    LastActivity lastActivity();
 
     @GET("/user/library/movies/all.json/{apikey}/{username}/{detailLevel}")
     List<Movie> moviesAll(@Path("detailLevel") DetailLevel detailLevel);

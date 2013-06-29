@@ -13,6 +13,7 @@ public enum ActivityAction {
     RATING("rating"),
     WATCHLIST("watchlist"),
     SHOUT("shout"),
+    REVIEW("review"),
     CREATED("created"),
     ITEM_ADDED("item_added");
 
