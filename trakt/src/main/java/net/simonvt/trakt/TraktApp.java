@@ -43,6 +43,8 @@ import net.simonvt.trakt.sync.task.SyncShowsCollectionTask;
 import net.simonvt.trakt.sync.task.SyncShowsTask;
 import net.simonvt.trakt.sync.task.SyncShowsWatchlistTask;
 import net.simonvt.trakt.sync.task.SyncTask;
+import net.simonvt.trakt.sync.task.SyncUpdatedMovies;
+import net.simonvt.trakt.sync.task.SyncUpdatedShows;
 import net.simonvt.trakt.sync.task.SyncWatchedStatusTask;
 import net.simonvt.trakt.sync.task.TraktTask;
 import net.simonvt.trakt.sync.task.UpdateSeasonCountTask;
@@ -184,6 +186,8 @@ public class TraktApp extends Application {
                     SyncShowsTask.class,
                     SyncShowsWatchlistTask.class,
                     SyncWatchedStatusTask.class,
+                    SyncUpdatedMovies.class,
+                    SyncUpdatedShows.class,
                     UpdateSeasonCountTask.class,
                     UpdateShowCountTask.class,
                     SyncTask.class,

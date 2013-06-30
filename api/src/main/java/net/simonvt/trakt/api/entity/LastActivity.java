@@ -40,4 +40,16 @@ public class LastActivity {
     private ActivityItem movie;
 
     private ActivityItem episode;
+
+    public Long getAll() {
+        return all;
+    }
+
+    public ActivityItem getMovie() {
+        return movie;
+    }
+
+    public ActivityItem getEpisode() {
+        return episode;
+    }
 }
