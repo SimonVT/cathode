@@ -23,7 +23,7 @@ public class SyncMoviesTask extends TraktTask {
         LogWrapper.v(TAG, "[doTask]");
 
         try {
-            queueTask(new SyncMoviesTask());
+            queueTask(new SyncUpdatedMovies());
 
             List<Movie> movies = mUserService.moviesAll(DetailLevel.MIN);
             for (Movie movie : movies) {
