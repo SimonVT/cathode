@@ -23,6 +23,8 @@ public class SyncMoviesTask extends TraktTask {
         LogWrapper.v(TAG, "[doTask]");
 
         try {
+            queueTask(new SyncMoviesTask());
+
             List<Movie> movies = mUserService.moviesAll(DetailLevel.MIN);
             for (Movie movie : movies) {
                 final Long tmdbId = movie.getTmdbId();

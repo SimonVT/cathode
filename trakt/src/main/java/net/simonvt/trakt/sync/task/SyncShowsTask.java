@@ -23,6 +23,8 @@ public class SyncShowsTask extends TraktTask {
         LogWrapper.v(TAG, "[doTask]");
 
         try {
+            queueTask(new SyncUpdatedShows());
+
             List<TvShow> shows = mUserService.libraryShowsAll(DetailLevel.MIN);
 
             for (TvShow show : shows) {
