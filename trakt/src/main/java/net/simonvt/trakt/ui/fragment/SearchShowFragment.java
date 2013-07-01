@@ -55,14 +55,10 @@ public class SearchShowFragment extends AbsAdapterFragment implements LoaderMana
 
     private ShowsNavigationListener mNavigationListener;
 
-    public static SearchShowFragment newInstance(String query) {
-        SearchShowFragment f = new SearchShowFragment();
-
+    public static Bundle getArgs(String query) {
         Bundle args = new Bundle();
         args.putString(ARGS_QUERY, query);
-        f.setArguments(args);
-
-        return f;
+        return args;
     }
 
     @Override

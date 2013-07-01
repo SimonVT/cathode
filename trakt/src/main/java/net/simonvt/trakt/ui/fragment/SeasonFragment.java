@@ -66,16 +66,12 @@ public class SeasonFragment extends AbsAdapterFragment {
     @InjectView(R.id.banner) RemoteImageView mShowBanner;
     @InjectView(R.id.season) TextView mSeason;
 
-    public static SeasonFragment newInstance(long showId, long seasonId, LibraryType type) {
-        SeasonFragment f = new SeasonFragment();
-
+    public static Bundle getArgs(long showId, long seasonId, LibraryType type) {
         Bundle args = new Bundle();
         args.putLong(ARG_SHOW_ID, showId);
         args.putLong(ARG_SEASONID, seasonId);
         args.putSerializable(ARG_TYPE, type);
-        f.setArguments(args);
-
-        return f;
+        return args;
     }
 
     @Override

@@ -53,14 +53,10 @@ public class SearchMovieFragment extends AbsAdapterFragment implements LoaderMan
 
     private MoviesNavigationListener mNavigationListener;
 
-    public static SearchMovieFragment newInstance(String query) {
-        SearchMovieFragment f = new SearchMovieFragment();
-
+    public static Bundle getArgs(String query) {
         Bundle args = new Bundle();
         args.putString(ARGS_QUERY, query);
-        f.setArguments(args);
-
-        return f;
+        return args;
     }
 
     @Override

@@ -2,9 +2,11 @@ package net.simonvt.trakt.util;
 
 import net.simonvt.trakt.R;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
@@ -22,14 +24,16 @@ public final class FragmentStack<T extends Fragment> {
         void onStackChanged(int stackSize, F topFragment);
     }
 
-    public static <T extends Fragment> FragmentStack<T> forContainer(FragmentManager fragmentManager, int containerId,
+    public static <T extends Fragment> FragmentStack<T> forContainer(FragmentActivity activity, int containerId,
             Callback<T> callback) {
-        return new FragmentStack<T>(fragmentManager, containerId, callback);
+        return new FragmentStack<T>(activity, containerId, callback);
     }
 
-    private static final String STATE_BACKSTACK = "net.simonvt.trakt.util.FragmentStack.backStack";
+    private static final String STATE_STACK = "net.simonvt.trakt.util.FragmentStack.stack";
 
-    private LinkedList<T> mBackStack = new LinkedList<T>();
+    private LinkedList<T> mStack = new LinkedList<T>();
+
+    private Activity mActivity;
 
     private FragmentManager mFragmentManager;
     private FragmentTransaction mFragmentTransaction;
@@ -62,16 +66,17 @@ public final class FragmentStack<T extends Fragment> {
         }
     };
 
-    private FragmentStack(FragmentManager fragmentManager, int containerId, Callback<T> callback) {
+    private FragmentStack(FragmentActivity activity, int containerId, Callback<T> callback) {
+        mActivity = activity;
+        mFragmentManager = activity.getSupportFragmentManager();
         mContainerId = containerId;
-        mFragmentManager = fragmentManager;
         mCallback = callback;
 
         mHandler = new Handler();
     }
 
     public void attach() {
-        T f = mBackStack.peekLast();
+        T f = mStack.peekLast();
         if (f != null) {
             attachFragment(f, f.getTag());
             mFragmentTransaction.commit();
@@ -79,7 +84,7 @@ public final class FragmentStack<T extends Fragment> {
     }
 
     public void detach() {
-        T f = mBackStack.peekLast();
+        T f = mStack.peekLast();
         if (f != null) {
             detachFragment(f);
             mFragmentTransaction.commit();
@@ -89,64 +94,92 @@ public final class FragmentStack<T extends Fragment> {
     public void onSaveInstanceState(Bundle outState) {
         executePendingTransactions();
 
-        final int backStackSize = mBackStack.size();
-        String[] backStackTags = new String[backStackSize];
+        final int stackSize = mStack.size();
+        String[] stackTags = new String[stackSize];
 
         int i = 0;
-        for (T f : mBackStack) {
-            backStackTags[i++] = f.getTag();
+        for (T f : mStack) {
+            stackTags[i++] = f.getTag();
         }
 
-        outState.putStringArray(STATE_BACKSTACK, backStackTags);
+        outState.putStringArray(STATE_STACK, stackTags);
     }
 
     public void onRestoreInstanceState(Bundle state) {
-        String[] backStackTags = state.getStringArray(STATE_BACKSTACK);
-        for (String tag : backStackTags) {
+        String[] stackTags = state.getStringArray(STATE_STACK);
+        for (String tag : stackTags) {
             T f = (T) mFragmentManager.findFragmentByTag(tag);
-            mBackStack.add(f);
+            mStack.add(f);
         }
         dispatchOnStackChangedEvent();
     }
 
     public int getStackSize() {
-        return mBackStack.size();
+        return mStack.size();
     }
 
     public T getTopFragment() {
-        return mBackStack.peekLast();
+        return mStack.peekLast();
+    }
+
+    public void setTopFragment(Class fragment, String tag) {
+        setTopFragment(fragment, tag, null);
     }
 
     /**
      * Clears the stack and displays the fragment.
      *
-     * @param f   The fragment to display.
-     * @param tag The tag of the fragment.
+     * @param fragment The fragment to display.
+     * @param tag      The tag of the fragment.
      */
-    public void setTopFragment(T f, String tag) {
+    public void setTopFragment(Class fragment, String tag, Bundle args) {
+        Fragment first = mStack.peekFirst();
+        if (first != null && tag.equals(first.getTag())) {
+            while (mStack.size() > 1) {
+                popStack();
+            }
+            return;
+        }
+
+        T f = (T) mFragmentManager.findFragmentByTag(tag);
+        if (f == null) {
+            f = (T) Fragment.instantiate(mActivity, fragment.getName(), args);
+        }
+
         ensureTransaction();
         mFragmentTransaction.setCustomAnimations(mEnterAnimation, mExitAnimation);
-        clearBackStack();
+        clearStack();
         attachFragment(f, tag);
-        mBackStack.add(f);
+        mStack.add(f);
+    }
+
+    public void addFragment(Class fragment, String tag) {
+        addFragment(fragment, tag, null);
     }
 
     /**
      * Adds a new fragment to the stack and displays it.
      *
-     * @param f   The fragment to display.
-     * @param tag The tag of the fragment.
+     * @param fragment The fragment to display.
+     * @param tag      The tag of the fragment.
      */
-    public void addFragment(final T f, String tag) {
+    public void addFragment(Class fragment, String tag, Bundle args) {
         ensureTransaction();
         mFragmentTransaction.setCustomAnimations(mEnterAnimation, mExitAnimation);
         detachTop();
+
+        T f = (T) mFragmentManager.findFragmentByTag(tag);
+
+        if (f == null) {
+            f = (T) Fragment.instantiate(mActivity, fragment.getName(), args);
+        }
+
         attachFragment(f, tag);
-        mBackStack.add(f);
+        mStack.add(f);
     }
 
     private void detachTop() {
-        T f = mBackStack.peekLast();
+        T f = mStack.peekLast();
         detachFragment(f);
     }
 
@@ -156,7 +189,7 @@ public final class FragmentStack<T extends Fragment> {
      *
      * @return Whether a transaction has been enqueued.
      */
-    public boolean popBackStack() {
+    public boolean popStack() {
         return popStack(false);
     }
 
@@ -168,12 +201,12 @@ public final class FragmentStack<T extends Fragment> {
      * @return Whether a transaction has been enqueued.
      */
     public boolean popStack(boolean commit) {
-        LogWrapper.d("FragmentStack", "Stack size: " + mBackStack.size());
-        if (mBackStack.size() > 1) {
+        LogWrapper.d("FragmentStack", "Stack size: " + mStack.size());
+        if (mStack.size() > 1) {
             ensureTransaction();
             mFragmentTransaction.setCustomAnimations(mPopStackEnterAnimation, mPopStackExitAnimation);
-            removeFragment(mBackStack.pollLast());
-            T f = mBackStack.peekLast();
+            removeFragment(mStack.pollLast());
+            Fragment f = mStack.peekLast();
             attachFragment(f, f.getTag());
 
             if (commit) commit();
@@ -188,17 +221,22 @@ public final class FragmentStack<T extends Fragment> {
      * Removes all fragment in the stack. The fragment at the base of the stack will stay added to the
      * {@link FragmentManager}, but its view will be detached.
      */
-    private void clearBackStack() {
-        for (T f : mBackStack) {
-            removeFragment(f);
+    private void clearStack() {
+        Fragment first = mStack.peekFirst();
+        for (Fragment f : mStack) {
+            if (f == first) {
+                detachFragment(f);
+            } else {
+                removeFragment(f);
+            }
         }
 
-        mBackStack.clear();
+        mStack.clear();
     }
 
     private void dispatchOnStackChangedEvent() {
         if (mCallback != null) {
-            mCallback.onStackChanged(mBackStack.size(), mBackStack.peekLast());
+            mCallback.onStackChanged(mStack.size(), mStack.peekLast());
         }
     }
 
@@ -208,7 +246,7 @@ public final class FragmentStack<T extends Fragment> {
         return mFragmentTransaction;
     }
 
-    private void attachFragment(T fragment, String tag) {
+    private void attachFragment(Fragment fragment, String tag) {
         if (fragment != null) {
             if (fragment.isDetached()) {
                 ensureTransaction();
@@ -223,14 +261,14 @@ public final class FragmentStack<T extends Fragment> {
         }
     }
 
-    private void detachFragment(T fragment) {
+    private void detachFragment(Fragment fragment) {
         if (fragment != null && !fragment.isDetached()) {
             ensureTransaction();
             mFragmentTransaction.detach(fragment);
         }
     }
 
-    private void removeFragment(T fragment) {
+    private void removeFragment(Fragment fragment) {
         if (fragment != null && fragment.isAdded()) {
             ensureTransaction();
             mFragmentTransaction.remove(fragment);

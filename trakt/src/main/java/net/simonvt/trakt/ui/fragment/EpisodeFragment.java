@@ -65,14 +65,10 @@ public class EpisodeFragment extends BaseFragment {
 
     private boolean mInWatchlist;
 
-    public static EpisodeFragment newInstance(long episodeId) {
-        EpisodeFragment f = new EpisodeFragment();
-
+    public static Bundle getArgs(long episodeId) {
         Bundle args = new Bundle();
         args.putLong(ARG_EPISODEID, episodeId);
-        f.setArguments(args);
-
-        return f;
+        return args;
     }
 
     @Override

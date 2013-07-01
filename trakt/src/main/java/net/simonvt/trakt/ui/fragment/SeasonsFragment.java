@@ -60,6 +60,13 @@ public class SeasonsFragment extends AbsAdapterFragment {
     @InjectView(R.id.title) TextView mShowTitle;
     @InjectView(R.id.banner) RemoteImageView mShowBanner;
 
+    public static Bundle getArgs(long showId, LibraryType type) {
+        Bundle args = new Bundle();
+        args.putLong(ARG_SHOW_ID, showId);
+        args.putSerializable(ARG_TYPE, type);
+        return args;
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -68,17 +75,6 @@ public class SeasonsFragment extends AbsAdapterFragment {
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement ShowsNavigationListener");
         }
-    }
-
-    public static SeasonsFragment newInstance(long showId, LibraryType type) {
-        SeasonsFragment f = new SeasonsFragment();
-
-        Bundle args = new Bundle();
-        args.putLong(ARG_SHOW_ID, showId);
-        args.putSerializable(ARG_TYPE, type);
-        f.setArguments(args);
-
-        return f;
     }
 
     @Override

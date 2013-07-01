@@ -60,14 +60,10 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
 
     private boolean mInWatchlist;
 
-    public static MovieFragment newInstance(long movieId) {
-        MovieFragment f = new MovieFragment();
-
+    public static Bundle getArgs(long movieId) {
         Bundle args = new Bundle();
         args.putLong(ARG_ID, movieId);
-        f.setArguments(args);
-
-        return f;
+        return args;
     }
 
     @Override

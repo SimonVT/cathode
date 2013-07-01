@@ -86,13 +86,11 @@ public class NavigationFragment extends AbsAdapterFragment {
 
     @Override
     protected void onItemClick(AdapterView l, View v, int position, long id) {
-        if (position != mSelectedPosition) {
-            NavigationItem item = (NavigationItem) getAdapter().getItem(position);
-            mListener.onMenuItemClicked(item.mId);
+        NavigationItem item = (NavigationItem) getAdapter().getItem(position);
+        mListener.onMenuItemClicked(item.mId);
 
-            mSelectedPosition = position;
-            getAdapterView().setItemChecked(mSelectedPosition, true);
-        }
+        mSelectedPosition = position;
+        getAdapterView().setItemChecked(mSelectedPosition, true);
     }
 
     private static class NavigationItem {

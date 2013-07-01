@@ -158,15 +158,11 @@ public class ShowInfoFragment extends BaseFragment {
 
     private LibraryType mType;
 
-    public static ShowInfoFragment newInstance(long showId, LibraryType type) {
-        ShowInfoFragment f = new ShowInfoFragment();
-
+    public static Bundle getArgs(long showId, LibraryType type) {
         Bundle args = new Bundle();
         args.putLong(ARG_SHOWID, showId);
         args.putSerializable(ARG_TYPE, type);
-        f.setArguments(args);
-
-        return f;
+        return args;
     }
 
     @Override
