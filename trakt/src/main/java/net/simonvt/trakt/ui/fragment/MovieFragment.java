@@ -43,6 +43,7 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
     @InjectView(R.id.year) TextView mYear;
     @InjectView(R.id.banner) RemoteImageView mBanner;
     @InjectView(R.id.overview) TextView mOverview;
+    @InjectView(R.id.isWatched) TextView mIsWatched;
     @InjectView(R.id.inCollection) TextView mCollection;
     @InjectView(R.id.inWatchlist) TextView mWatchlist;
     @InjectView(R.id.ratingContainer) View mRatingContainer;
@@ -175,6 +176,7 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
         mCollected = cursor.getInt(cursor.getColumnIndex(TraktContract.Movies.IN_COLLECTION)) == 1;
         mInWatchlist = cursor.getInt(cursor.getColumnIndex(TraktContract.Movies.IN_WATCHLIST)) == 1;
 
+        mIsWatched.setVisibility(mWatched ? View.VISIBLE : View.GONE);
         mCollection.setVisibility(mCollected ? View.VISIBLE : View.GONE);
         mWatchlist.setVisibility(mInWatchlist ? View.VISIBLE : View.GONE);
 

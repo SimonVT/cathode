@@ -107,6 +107,7 @@ public class ShowInfoFragment extends BaseFragment {
     @InjectView(R.id.banner) RemoteImageView mBanner;
     @InjectView(R.id.genres) TextView mGenres;
     @InjectView(R.id.overview) TextView mOverview;
+    @InjectView(R.id.isWatched) TextView mWatched;
     @InjectView(R.id.inCollection) TextView mCollection;
     @InjectView(R.id.inWatchlist) TextView mWatchlist;
 
@@ -400,6 +401,7 @@ public class ShowInfoFragment extends BaseFragment {
         mRating.setProgress(mCurrentRating);
         mAllRatings.setText(ratingAll + "%");
 
+        mWatched.setVisibility(watchedCount > 0 ? View.VISIBLE : View.GONE);
         mCollection.setVisibility(inCollectionCount > 0 ? View.VISIBLE : View.GONE);
         mWatchlist.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
 
