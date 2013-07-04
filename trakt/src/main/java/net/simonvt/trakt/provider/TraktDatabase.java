@@ -50,6 +50,8 @@ public class TraktDatabase extends SQLiteOpenHelper {
         String SHOW_GENRES = "showGenres";
         String SEASONS = "seasons";
         String EPISODES = "episodes";
+        String EPISODES_WITH_SHOW_TITLE = EPISODES + " JOIN " + SHOWS + " AS shows ON " + SHOWS + "." + TraktContract.Shows._ID
+                + "=" + EPISODES + "." + TraktContract.Episodes.SHOW_ID;
         String MOVIES = "movies";
         String MOVIE_GENRES = "movieGenres";
         String MOVIE_TOP_WATCHERS = "movieTopWatchers";

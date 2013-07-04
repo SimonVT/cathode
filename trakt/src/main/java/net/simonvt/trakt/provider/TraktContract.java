@@ -324,6 +324,8 @@ public final class TraktContract {
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_EPISODES).build();
 
+        public static final Uri WATCHLIST_URI = CONTENT_URI.buildUpon().appendPath(PATH_WATCHLIST).build();
+
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.simonvt.trakt.episode";
 
         public static final String DEFAULT_SORT = EpisodeColumns.EPISODE + " ASC";

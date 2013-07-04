@@ -34,11 +34,11 @@ public class SeasonFragment extends AbsAdapterFragment {
 
     private static final String ARG_SHOW_ID = "net.simonvt.trakt.ui.fragment.SeasonFragment.showId";
     private static final String ARG_SEASONID = "net.simonvt.trakt.ui.fragment.SeasonFragment.seasonId";
+    private static final String ARG_SHOW_TITLE = "net.simonvt.trakt.ui.fragment.SeasonFragment.showTitle";
+    private static final String ARG_SEASON_NUMBER = "net.simonvt.trakt.ui.fragment.SeasonFragment.seasonNumber";
     private static final String ARG_TYPE = "net.simonvt.trakt.ui.fragment.SeasonFragment.type";
 
-    private static final String STATE_SHOW_TITLE = "net.simonvt.trakt.ui.fragment.SeasonFragment.showTitle";
     private static final String STATE_SHOW_BANNER = "net.simonvt.trakt.ui.fragment.SeasonFragment.showBanner";
-    private static final String STATE_SEASON_NUMBER = "net.simonvt.trakt.ui.fragment.SeasonFragment.seasonNumber";
 
     private static final int LOADER_EPISODES = 30;
 
@@ -66,10 +66,12 @@ public class SeasonFragment extends AbsAdapterFragment {
     @InjectView(R.id.banner) RemoteImageView mShowBanner;
     @InjectView(R.id.season) TextView mSeason;
 
-    public static Bundle getArgs(long showId, long seasonId, LibraryType type) {
+    public static Bundle getArgs(long showId, long seasonId, String showTitle, int seasonNumber, LibraryType type) {
         Bundle args = new Bundle();
         args.putLong(ARG_SHOW_ID, showId);
         args.putLong(ARG_SEASONID, seasonId);
+        args.putString(ARG_SHOW_TITLE, showTitle);
+        args.putInt(ARG_SEASON_NUMBER, seasonNumber);
         args.putSerializable(ARG_TYPE, type);
         return args;
     }
@@ -92,12 +94,12 @@ public class SeasonFragment extends AbsAdapterFragment {
         Bundle args = getArguments();
         mShowId = args.getLong(ARG_SHOW_ID);
         mSeasonId = args.getLong(ARG_SEASONID);
+        mTitle = args.getString(ARG_SHOW_TITLE);
+        mSeasonNumber = args.getInt(ARG_SEASON_NUMBER);
         mType = (LibraryType) args.getSerializable(ARG_TYPE);
 
         if (state != null) {
-            mTitle = state.getString(STATE_SHOW_TITLE);
             mBannerUrl = state.getString(STATE_SHOW_BANNER);
-            mSeasonNumber = state.getInt(STATE_SEASON_NUMBER);
         }
 
         mEpisodeAdapter = new SeasonAdapter(getActivity(), mType);
@@ -157,11 +159,23 @@ public class SeasonFragment extends AbsAdapterFragment {
     }
 
     @Override
+    public String getTitle() {
+        return mTitle;
+    }
+
+    @Override
+    public String getSubtitle() {
+        if (mSeasonNumber == 0) {
+            return getResources().getString(R.string.season_special);
+        } else {
+            return getResources().getString(R.string.season_x, mSeasonNumber);
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(STATE_SHOW_TITLE, mTitle);
         outState.putString(STATE_SHOW_BANNER, mBannerUrl);
-        outState.putInt(STATE_SEASON_NUMBER, mSeasonNumber);
     }
 
     @Override
@@ -192,7 +206,7 @@ public class SeasonFragment extends AbsAdapterFragment {
 
     @Override
     protected void onItemClick(AdapterView l, View v, int position, long id) {
-        mNavigationCallbacks.onDisplayEpisode(id, mType);
+        mNavigationCallbacks.onDisplayEpisode(id, mTitle);
     }
 
     private LoaderManager.LoaderCallbacks<Cursor> mEpisodesLoader = new LoaderManager.LoaderCallbacks<Cursor>() {

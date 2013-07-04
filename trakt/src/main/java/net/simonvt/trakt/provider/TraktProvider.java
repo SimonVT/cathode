@@ -57,6 +57,7 @@ public class TraktProvider extends ContentProvider {
     private static final int EPISODE_ID = 301;
     private static final int EPISODES_FROMSHOW = 302;
     private static final int EPISODES_FROMSEASON = 303;
+    private static final int EPISODES_WATCHLIST = 304;
 
     private static final int MOVIES = 400;
     private static final int MOVIE_ID = 401;
@@ -104,6 +105,8 @@ public class TraktProvider extends ContentProvider {
                 TraktContract.PATH_EPISODES + "/" + TraktContract.PATH_FROMSHOW + "/*", EPISODES_FROMSHOW);
         URI_MATCHER.addURI(AUTHORITY,
                 TraktContract.PATH_EPISODES + "/" + TraktContract.PATH_FROMSEASON + "/*", EPISODES_FROMSEASON);
+        URI_MATCHER.addURI(AUTHORITY,
+                TraktContract.PATH_EPISODES + "/" + TraktContract.PATH_WATCHLIST, EPISODES_WATCHLIST);
 
         URI_MATCHER.addURI(AUTHORITY, TraktContract.PATH_MOVIES, MOVIES);
         URI_MATCHER.addURI(AUTHORITY, TraktContract.PATH_MOVIES + "/*", MOVIE_ID);
@@ -279,6 +282,13 @@ public class TraktProvider extends ContentProvider {
                         .where(selection, selectionArgs)
                         .query(db, projection, sortOrder);
                 c.setNotificationUri(getContext().getContentResolver(), uri);
+                return c;
+            }
+            case EPISODES_WATCHLIST: {
+                Cursor c = builder.table(Tables.EPISODES_WITH_SHOW_TITLE)
+                        .where(Episodes.IN_WATCHLIST + "=1")
+                        .query(db, projection, sortOrder);
+                c.setNotificationUri(getContext().getContentResolver(), Episodes.CONTENT_URI);
                 return c;
             }
             case MOVIES: {

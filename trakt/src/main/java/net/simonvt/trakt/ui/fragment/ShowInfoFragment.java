@@ -7,6 +7,7 @@ import com.squareup.otto.Bus;
 
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
+import net.simonvt.trakt.event.OnTitleChangedEvent;
 import net.simonvt.trakt.provider.CollectLoader;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.provider.TraktContract.Shows;
@@ -49,6 +50,7 @@ public class ShowInfoFragment extends BaseFragment {
     private static final String TAG = "ShowInfoFragment";
 
     private static final String ARG_SHOWID = "net.simonvt.trakt.ui.fragment.ShowInfoFragment.showId";
+    private static final String ARG_TITLE = "net.simonvt.trakt.ui.fragment.ShowInfoFragment.title";
     private static final String ARG_TYPE = "net.simonvt.trakt.ui.fragment.ShowInfoFragment.type";
 
     private static final String DIALOG_RATING = "net.simonvt.trakt.ui.fragment.ShowInfoFragment.ratingDialog";
@@ -159,9 +161,10 @@ public class ShowInfoFragment extends BaseFragment {
 
     private LibraryType mType;
 
-    public static Bundle getArgs(long showId, LibraryType type) {
+    public static Bundle getArgs(long showId, String title, LibraryType type) {
         Bundle args = new Bundle();
         args.putLong(ARG_SHOWID, showId);
+        args.putString(ARG_TITLE, title);
         args.putSerializable(ARG_TYPE, type);
         return args;
     }
@@ -185,9 +188,15 @@ public class ShowInfoFragment extends BaseFragment {
 
         Bundle args = getArguments();
         mShowId = args.getLong(ARG_SHOWID);
+        mShowTitle = args.getString(ARG_TITLE);
         mType = (LibraryType) args.getSerializable(ARG_TYPE);
 
         mSeasonsAdapter = new SeasonsAdapter(getActivity(), mType);
+    }
+
+    @Override
+    public String getTitle() {
+        return mShowTitle == null ? "" : mShowTitle;
     }
 
     @Override
@@ -204,7 +213,9 @@ public class ShowInfoFragment extends BaseFragment {
         mSeasons.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                mNavigationCallbacks.onDisplaySeason(mShowId, id, mType);
+                Cursor c = (Cursor) mSeasonsAdapter.getItem(position);
+                mNavigationCallbacks.onDisplaySeason(mShowId, id, mShowTitle, c.getInt(c.getColumnIndex(
+                        TraktContract.Seasons.SEASON)), mType);
             }
         });
 
@@ -221,7 +232,7 @@ public class ShowInfoFragment extends BaseFragment {
             mToWatch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mToWatchId != -1) mNavigationCallbacks.onDisplayEpisode(mToWatchId, mType);
+                    if (mToWatchId != -1) mNavigationCallbacks.onDisplayEpisode(mToWatchId, mShowTitle);
                 }
             });
 
@@ -253,7 +264,7 @@ public class ShowInfoFragment extends BaseFragment {
             mLastWatched.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mLastWatchedId != -1) mNavigationCallbacks.onDisplayEpisode(mLastWatchedId, mType);
+                    if (mLastWatchedId != -1) mNavigationCallbacks.onDisplayEpisode(mLastWatchedId, mShowTitle);
                 }
             });
 
@@ -285,7 +296,7 @@ public class ShowInfoFragment extends BaseFragment {
             mToCollect.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mToCollectId != -1) mNavigationCallbacks.onDisplayEpisode(mToCollectId, mType);
+                    if (mToCollectId != -1) mNavigationCallbacks.onDisplayEpisode(mToCollectId, mShowTitle);
                 }
             });
 
@@ -317,7 +328,7 @@ public class ShowInfoFragment extends BaseFragment {
             mLastCollected.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mLastCollectedId != -1) mNavigationCallbacks.onDisplayEpisode(mLastCollectedId, mType);
+                    if (mLastCollectedId != -1) mNavigationCallbacks.onDisplayEpisode(mLastCollectedId, mShowTitle);
                 }
             });
 
@@ -381,7 +392,11 @@ public class ShowInfoFragment extends BaseFragment {
     private void updateShowView(final Cursor cursor) {
         if (cursor == null || !cursor.moveToFirst()) return;
 
-        mShowTitle = cursor.getString(cursor.getColumnIndex(Shows.TITLE));
+        String title = cursor.getString(cursor.getColumnIndex(Shows.TITLE));
+        if (!title.equals(mShowTitle)) {
+            mShowTitle = title;
+            mBus.post(new OnTitleChangedEvent());
+        }
         final int year = cursor.getInt(cursor.getColumnIndex(Shows.YEAR));
         final String airTime = cursor.getString(cursor.getColumnIndex(Shows.AIR_TIME));
         final String airDay = cursor.getString(cursor.getColumnIndex(Shows.AIR_DAY));

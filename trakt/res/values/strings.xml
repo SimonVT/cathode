@@ -21,6 +21,11 @@
     <string name="title_shows_collection">Show collection</string>
     <string name="title_shows_watchlist">Show watchlist</string>
 
+    <string name="title_movies_watched">Watched movies</string>
+    <string name="title_movies_upcoming">Upcoming movies</string>
+    <string name="title_movies_collection">Movie collection</string>
+    <string name="title_movies_watchlist">Movie watchlist</string>
+
     <string name="action_refresh">Refresh</string>
     <string name="action_sort_by">Sort by</string>
     <string name="action_watched">Watched</string>
@@ -74,6 +79,9 @@
         <item quantity="other">%d episodes not collected</item>
     </plurals>
     <string name="x_unaired">%d unaired</string>
+
+    <string name="season_x">Season %d</string>
+    <string name="season_special">Special</string>
 
     <plurals name="season_x">
         <item quantity="zero">Special</item>

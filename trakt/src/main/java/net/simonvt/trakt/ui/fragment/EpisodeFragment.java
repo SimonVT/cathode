@@ -33,6 +33,7 @@ public class EpisodeFragment extends BaseFragment {
     private static final String TAG = "EpisodeFragment";
 
     private static final String ARG_EPISODEID = "net.simonvt.trakt.ui.fragment.EpisodeFragment.episodeId";
+    private static final String ARG_SHOW_TITLE = "net.simonvt.trakt.ui.fragment.EpisodeFragment.showTitle";
 
     private static final String DIALOG_RATING = "net.simonvt.trakt.ui.fragment.EpisodeFragment.ratingDialog";
 
@@ -55,6 +56,8 @@ public class EpisodeFragment extends BaseFragment {
     @InjectView(R.id.inCollection) View mInCollectionView;
     @InjectView(R.id.inWatchlist) View mInWatchlistView;
 
+    private String mShowTitle;
+
     private int mCurrentRating;
 
     private boolean mLoaded;
@@ -65,9 +68,10 @@ public class EpisodeFragment extends BaseFragment {
 
     private boolean mInWatchlist;
 
-    public static Bundle getArgs(long episodeId) {
+    public static Bundle getArgs(long episodeId, String showTitle) {
         Bundle args = new Bundle();
         args.putLong(ARG_EPISODEID, episodeId);
+        args.putString(ARG_SHOW_TITLE, showTitle);
         return args;
     }
 
@@ -78,9 +82,15 @@ public class EpisodeFragment extends BaseFragment {
 
         Bundle args = getArguments();
         mEpisodeId = args.getLong(ARG_EPISODEID);
+        mShowTitle = args.getString(ARG_SHOW_TITLE);
         getLoaderManager().initLoader(LOADER_EPISODE, null, mEpisodeCallbacks);
 
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public String getTitle() {
+        return mShowTitle;
     }
 
     @Override

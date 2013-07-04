@@ -1,7 +1,12 @@
 package net.simonvt.trakt.ui;
 
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
+
 import net.simonvt.menudrawer.MenuDrawer;
 import net.simonvt.trakt.R;
+import net.simonvt.trakt.TraktApp;
+import net.simonvt.trakt.event.OnTitleChangedEvent;
 import net.simonvt.trakt.ui.fragment.BaseFragment;
 import net.simonvt.trakt.ui.fragment.EpisodeFragment;
 import net.simonvt.trakt.ui.fragment.EpisodesWatchlistFragment;
@@ -12,7 +17,6 @@ import net.simonvt.trakt.ui.fragment.NavigationFragment;
 import net.simonvt.trakt.ui.fragment.SearchMovieFragment;
 import net.simonvt.trakt.ui.fragment.SearchShowFragment;
 import net.simonvt.trakt.ui.fragment.SeasonFragment;
-import net.simonvt.trakt.ui.fragment.SeasonsFragment;
 import net.simonvt.trakt.ui.fragment.ShowInfoFragment;
 import net.simonvt.trakt.ui.fragment.ShowsCollectionFragment;
 import net.simonvt.trakt.ui.fragment.ShowsWatchlistFragment;
@@ -23,15 +27,17 @@ import net.simonvt.trakt.util.FragmentStack;
 
 import android.os.Bundle;
 
+import javax.inject.Inject;
+
 public class PhoneController extends UiController {
 
     private static final String TAG = "PhoneController";
 
     private static final String STATE_NAV_TITLE = "net.simonvt.trakt.ui.PhoneController.navTitle";
 
-    private FragmentStack<BaseFragment> mStack;
+    @Inject Bus mBus;
 
-    private String mNavTitle;
+    private FragmentStack<BaseFragment> mStack;
 
     private MenuDrawer mMenuDrawer;
 
@@ -43,6 +49,7 @@ public class PhoneController extends UiController {
 
     PhoneController(HomeActivity activity) {
         super(activity);
+        TraktApp.inject(activity, this);
     }
 
     @Override
@@ -69,10 +76,14 @@ public class PhoneController extends UiController {
                     @Override
                     public void onStackChanged(int stackSize, BaseFragment topFragment) {
                         mMenuDrawer.setDrawerIndicatorEnabled(stackSize <= 1);
-                        if (stackSize > 1) {
-                            mActivity.getActionBar().setTitle(R.string.app_name);
-                        } else {
-                            mActivity.getActionBar().setTitle(mNavTitle);
+                        if (!mMenuDrawer.isMenuVisible()) {
+                            String title = topFragment.getTitle();
+                            if (title != null) {
+                                mActivity.getActionBar().setTitle(title);
+                            } else {
+                                mActivity.getActionBar().setTitle(R.string.app_name);
+                            }
+                            mActivity.getActionBar().setSubtitle(topFragment.getSubtitle());
                         }
                     }
                 });
@@ -83,11 +94,13 @@ public class PhoneController extends UiController {
                 switch (newState) {
                     case MenuDrawer.STATE_CLOSED:
                         if (!mStack.commit()) {
-                            if (mStack.getStackSize() > 1) {
-                                mActivity.getActionBar().setTitle(R.string.app_name);
+                            String title = mStack.getTopFragment().getTitle();
+                            if (title != null) {
+                                mActivity.getActionBar().setTitle(title);
                             } else {
-                                mActivity.getActionBar().setTitle(mNavTitle);
+                                mActivity.getActionBar().setTitle(R.string.app_name);
                             }
+                            mActivity.getActionBar().setSubtitle(mStack.getTopFragment().getSubtitle());
                         }
 
                         mStack.getTopFragment().setMenuVisibility(true);
@@ -107,6 +120,19 @@ public class PhoneController extends UiController {
 
         if (state != null) {
             mStack.onRestoreInstanceState(state);
+        }
+    }
+
+    @Subscribe
+    public void onTitleChanged(OnTitleChangedEvent event) {
+        if (!mMenuDrawer.isMenuVisible()) {
+            String title = mStack.getTopFragment().getTitle();
+            if (title != null) {
+                mActivity.getActionBar().setTitle(title);
+            } else {
+                mActivity.getActionBar().setTitle(R.string.app_name);
+            }
+            mActivity.getActionBar().setSubtitle(mStack.getTopFragment().getSubtitle());
         }
     }
 
@@ -145,10 +171,13 @@ public class PhoneController extends UiController {
             mStack.setTopFragment(UpcomingShowsFragment.class, FRAGMENT_SHOWS_UPCOMING);
             mStack.commit();
         }
+
+        mBus.register(this);
     }
 
     @Override
     public void onDetach() {
+        mBus.unregister(this);
         super.onDetach();
     }
 
@@ -168,27 +197,22 @@ public class PhoneController extends UiController {
         switch (id) {
             case R.id.menu_shows_upcoming:
                 mStack.setTopFragment(UpcomingShowsFragment.class, FRAGMENT_SHOWS_UPCOMING);
-                mNavTitle = "Upcoming shows";
                 break;
 
             case R.id.menu_shows_watched:
                 mStack.setTopFragment(WatchedShowsFragment.class, FRAGMENT_SHOWS);
-                mNavTitle = "Watched shows";
                 break;
 
             case R.id.menu_shows_collection:
                 mStack.setTopFragment(ShowsCollectionFragment.class, FRAGMENT_SHOWS_COLLECTION);
-                mNavTitle = "Shows collection";
                 break;
 
             case R.id.menu_shows_watchlist:
                 mStack.setTopFragment(ShowsWatchlistFragment.class, FRAGMENT_SHOWS_WATCHLIST);
-                mNavTitle = "Shows watchlist";
                 break;
 
             case R.id.menu_episodes_watchlist:
                 mStack.setTopFragment(EpisodesWatchlistFragment.class, FRAGMENT_EPISODES_WATCHLIST);
-                mNavTitle = "Episodes watchlist";
                 break;
 
             // case R.id.menu_shows_ratings:
@@ -196,17 +220,14 @@ public class PhoneController extends UiController {
 
             case R.id.menu_movies_watched:
                 mStack.setTopFragment(WatchedMoviesFragment.class, FRAGMENT_MOVIES_WATCHED);
-                mNavTitle = "Watched movies";
                 break;
 
             case R.id.menu_movies_collection:
                 mStack.setTopFragment(MovieCollectionFragment.class, FRAGMENT_MOVIES_COLLECTION);
-                mNavTitle = "Movie collection";
                 break;
 
             case R.id.menu_movies_watchlist:
                 mStack.setTopFragment(MovieWatchlistFragment.class, FRAGMENT_MOVIES_WATCHLIST);
-                mNavTitle = "Movie watchlist";
                 break;
 
             // case R.id.menu_movies_ratings:
@@ -221,26 +242,21 @@ public class PhoneController extends UiController {
     ///////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void onDisplayShow(long showId, LibraryType type) {
-        mStack.addFragment(ShowInfoFragment.class, FRAGMENT_SHOW, ShowInfoFragment.getArgs(showId, type));
+    public void onDisplayShow(long showId, String title, LibraryType type) {
+        mStack.addFragment(ShowInfoFragment.class, FRAGMENT_SHOW, ShowInfoFragment.getArgs(showId, title, type));
         mStack.commit();
     }
 
     @Override
-    public void onDisplaySeasons(long showId, LibraryType type) {
-        mStack.addFragment(SeasonsFragment.class, FRAGMENT_SEASONS, SeasonsFragment.getArgs(showId, type));
+    public void onDisplayEpisode(long episodeId, String showTitle) {
+        mStack.addFragment(EpisodeFragment.class, FRAGMENT_EPISODE, EpisodeFragment.getArgs(episodeId, showTitle));
         mStack.commit();
     }
 
     @Override
-    public void onDisplayEpisode(long episodeId, LibraryType type) {
-        mStack.addFragment(EpisodeFragment.class, FRAGMENT_EPISODE, EpisodeFragment.getArgs(episodeId));
-        mStack.commit();
-    }
-
-    @Override
-    public void onDisplaySeason(long showId, long seasonId, LibraryType type) {
-        mStack.addFragment(SeasonFragment.class, FRAGMENT_SEASON, SeasonFragment.getArgs(showId, seasonId, type));
+    public void onDisplaySeason(long showId, long seasonId, String showTitle, int seasonNumber, LibraryType type) {
+        mStack.addFragment(SeasonFragment.class, FRAGMENT_SEASON,
+                SeasonFragment.getArgs(showId, seasonId, showTitle, seasonNumber, type));
         mStack.commit();
     }
 
@@ -251,8 +267,8 @@ public class PhoneController extends UiController {
     }
 
     @Override
-    public void onDisplayMovie(long movieId) {
-        mStack.addFragment(MovieFragment.class, FRAGMENT_MOVIE, MovieFragment.getArgs(movieId));
+    public void onDisplayMovie(long movieId, String title) {
+        mStack.addFragment(MovieFragment.class, FRAGMENT_MOVIE, MovieFragment.getArgs(movieId, title));
         mStack.commit();
     }
 

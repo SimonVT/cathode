@@ -133,7 +133,9 @@ public class SearchShowFragment extends AbsAdapterFragment implements LoaderMana
 
     @Override
     protected void onItemClick(AdapterView l, View v, int position, long id) {
-        mNavigationListener.onDisplayShow(id, LibraryType.WATCHED);
+        Cursor c = (Cursor) getAdapter().getItem(position);
+        mNavigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(TraktContract.Shows.TITLE)),
+                LibraryType.WATCHED);
     }
 
     @Subscribe

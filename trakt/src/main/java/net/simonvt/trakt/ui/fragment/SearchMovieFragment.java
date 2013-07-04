@@ -131,7 +131,8 @@ public class SearchMovieFragment extends AbsAdapterFragment implements LoaderMan
 
     @Override
     protected void onItemClick(AdapterView l, View v, int position, long id) {
-        mNavigationListener.onDisplayMovie(id);
+        Cursor c = (Cursor) getAdapter().getItem(position);
+        mNavigationListener.onDisplayMovie(id, c.getString(c.getColumnIndex(TraktContract.Movies.TITLE)));
     }
 
     @Subscribe

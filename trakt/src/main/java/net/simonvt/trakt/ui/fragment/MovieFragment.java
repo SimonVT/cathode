@@ -3,8 +3,11 @@ package net.simonvt.trakt.ui.fragment;
 import butterknife.InjectView;
 import butterknife.Views;
 
+import com.squareup.otto.Bus;
+
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
+import net.simonvt.trakt.event.OnTitleChangedEvent;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.scheduler.MovieTaskScheduler;
 import net.simonvt.trakt.ui.dialog.RatingDialog;
@@ -32,12 +35,14 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
     private static final String TAG = "MovieFragment";
 
     private static final String ARG_ID = "net.simonvt.trakt.ui.fragment.MovieFragment.id";
+    private static final String ARG_TITLE = "net.simonvt.trakt.ui.fragment.MovieFragment.title";
 
     private static final String DIALOG_RATING = "net.simonvt.trakt.ui.fragment.MovieFragment.ratingDialog";
 
     private static final int LOADER_MOVIE = 400;
 
     @Inject MovieTaskScheduler mMovieScheduler;
+    @Inject Bus mBus;
 
     @InjectView(R.id.title) TextView mTitle;
     @InjectView(R.id.year) TextView mYear;
@@ -51,6 +56,8 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
 
     private long mMovieId;
 
+    private String mMovieTitle;
+
     private int mCurrentRating;
 
     private boolean mLoaded;
@@ -61,9 +68,10 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
 
     private boolean mInWatchlist;
 
-    public static Bundle getArgs(long movieId) {
+    public static Bundle getArgs(long movieId, String movieTitle) {
         Bundle args = new Bundle();
         args.putLong(ARG_ID, movieId);
+        args.putString(ARG_TITLE, movieTitle);
         return args;
     }
 
@@ -76,6 +84,12 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
 
         Bundle args = getArguments();
         mMovieId = args.getLong(ARG_ID);
+        mMovieTitle = args.getString(ARG_TITLE);
+    }
+
+    @Override
+    public String getTitle() {
+        return mMovieTitle == null ? "" : mMovieTitle;
     }
 
     @Override
@@ -163,6 +177,10 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
         mLoaded = true;
 
         final String title = cursor.getString(cursor.getColumnIndex(TraktContract.Movies.TITLE));
+        if (!title.equals(mMovieTitle)) {
+            mMovieTitle = title;
+            mBus.post(new OnTitleChangedEvent());
+        }
         final int year = cursor.getInt(cursor.getColumnIndex(TraktContract.Movies.YEAR));
         final String fanart = cursor.getString(cursor.getColumnIndex(TraktContract.Movies.FANART));
         if (fanart != null) {

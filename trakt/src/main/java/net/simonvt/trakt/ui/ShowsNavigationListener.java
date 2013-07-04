@@ -2,13 +2,11 @@ package net.simonvt.trakt.ui;
 
 public interface ShowsNavigationListener {
 
-    void onDisplayShow(long showId, LibraryType type);
+    void onDisplayShow(long showId, String title, LibraryType type);
 
-    void onDisplaySeasons(long showId, LibraryType type);
+    void onDisplaySeason(long showId, long seasonId, String showTitle, int seasonNumber, LibraryType type);
 
-    void onDisplaySeason(long showId, long seasonId, LibraryType type);
-
-    void onDisplayEpisode(long episodeId, LibraryType type);
+    void onDisplayEpisode(long episodeId, String showTitle);
 
     void onSearchShow(String query);
 }

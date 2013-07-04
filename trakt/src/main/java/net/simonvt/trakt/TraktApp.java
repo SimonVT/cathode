@@ -50,6 +50,7 @@ import net.simonvt.trakt.sync.task.TraktTask;
 import net.simonvt.trakt.sync.task.UpdateSeasonCountTask;
 import net.simonvt.trakt.sync.task.UpdateShowCountTask;
 import net.simonvt.trakt.ui.HomeActivity;
+import net.simonvt.trakt.ui.PhoneController;
 import net.simonvt.trakt.ui.adapter.EpisodeWatchlistAdapter;
 import net.simonvt.trakt.ui.adapter.MovieSearchAdapter;
 import net.simonvt.trakt.ui.adapter.MoviesAdapter;
@@ -193,6 +194,7 @@ public class TraktApp extends Application {
                     SyncTask.class,
 
                     // Misc
+                    PhoneController.class,
                     ResponseParser.class,
                     ShowSearchHandler.class,
                     ShowSearchHandler.SearchThread.class,

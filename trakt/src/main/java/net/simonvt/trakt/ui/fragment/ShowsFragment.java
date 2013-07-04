@@ -2,6 +2,7 @@ package net.simonvt.trakt.ui.fragment;
 
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
+import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
 import net.simonvt.trakt.sync.TraktTaskQueue;
 import net.simonvt.trakt.sync.task.SyncTask;
@@ -114,7 +115,9 @@ public abstract class ShowsFragment extends AbsAdapterFragment implements Loader
 
     @Override
     protected void onItemClick(AdapterView l, View v, int position, long id) {
-        mNavigationListener.onDisplayShow(id, getLibraryType());
+        Cursor c = (Cursor) getAdapter().getItem(position);
+        mNavigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(TraktContract.Shows.TITLE)),
+                LibraryType.WATCHED);
     }
 
     private void setCursor(Cursor cursor) {

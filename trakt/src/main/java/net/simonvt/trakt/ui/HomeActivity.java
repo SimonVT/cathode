@@ -158,23 +158,18 @@ public class HomeActivity extends BaseActivity
     ///////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void onDisplayShow(long showId, LibraryType type) {
-        mActiveController.onDisplayShow(showId, type);
+    public void onDisplayShow(long showId, String title, LibraryType type) {
+        mActiveController.onDisplayShow(showId, title, type);
     }
 
     @Override
-    public void onDisplaySeasons(long showId, LibraryType type) {
-        mActiveController.onDisplaySeasons(showId, type);
+    public void onDisplayEpisode(long episodeId, String showTitle) {
+        mActiveController.onDisplayEpisode(episodeId, showTitle);
     }
 
     @Override
-    public void onDisplayEpisode(long episodeId, LibraryType type) {
-        mActiveController.onDisplayEpisode(episodeId, type);
-    }
-
-    @Override
-    public void onDisplaySeason(long showId, long seasonId, LibraryType type) {
-        mActiveController.onDisplaySeason(showId, seasonId, type);
+    public void onDisplaySeason(long showId, long seasonId, String showTitle, int seasonNumber, LibraryType type) {
+        mActiveController.onDisplaySeason(showId, seasonId, showTitle, seasonNumber, type);
     }
 
     @Override
@@ -183,8 +178,8 @@ public class HomeActivity extends BaseActivity
     }
 
     @Override
-    public void onDisplayMovie(long movieId) {
-        mActiveController.onDisplayMovie(movieId);
+    public void onDisplayMovie(long movieId, String title) {
+        mActiveController.onDisplayMovie(movieId, title);
     }
 
     @Override

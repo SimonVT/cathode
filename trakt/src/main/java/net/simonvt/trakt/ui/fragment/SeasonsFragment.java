@@ -146,7 +146,9 @@ public class SeasonsFragment extends AbsAdapterFragment {
 
     @Override
     protected void onItemClick(AdapterView l, View v, int position, long id) {
-        mDisplaySeasonListener.onDisplaySeason(mShowId, id, mType);
+        Cursor c = (Cursor) getAdapter().getItem(position);
+        mDisplaySeasonListener.onDisplaySeason(mShowId, id, mTitle, c.getInt(c.getColumnIndex(
+                TraktContract.Seasons.SEASON)), mType);
     }
 
     private LoaderManager.LoaderCallbacks<Cursor> mSeasonsLoader = new LoaderManager.LoaderCallbacks<Cursor>() {

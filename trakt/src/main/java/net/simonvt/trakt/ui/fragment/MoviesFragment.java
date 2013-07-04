@@ -2,6 +2,7 @@ package net.simonvt.trakt.ui.fragment;
 
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
+import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.sync.PriorityTraktTaskQueue;
 import net.simonvt.trakt.sync.TraktTaskQueue;
 import net.simonvt.trakt.sync.task.SyncTask;
@@ -99,7 +100,8 @@ public abstract class MoviesFragment extends AbsAdapterFragment implements Loade
 
     @Override
     protected void onItemClick(AdapterView l, View v, int position, long id) {
-        mNavigationListener.onDisplayMovie(id);
+        Cursor c = (Cursor) getAdapter().getItem(position);
+        mNavigationListener.onDisplayMovie(id, c.getString(c.getColumnIndex(TraktContract.Movies.TITLE)));
     }
 
     void setCursor(Cursor cursor) {

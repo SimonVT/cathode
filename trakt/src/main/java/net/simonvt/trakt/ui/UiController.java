@@ -72,7 +72,7 @@ public class UiController
     }
 
     @Override
-    public void onDisplayMovie(long movieId) {
+    public void onDisplayMovie(long movieId, String title) {
         LogWrapper.v(TAG, "[onDisplayMovie]");
     }
 
@@ -82,22 +82,17 @@ public class UiController
     }
 
     @Override
-    public void onDisplayShow(long showId, LibraryType type) {
+    public void onDisplayShow(long showId, String title, LibraryType type) {
         LogWrapper.v(TAG, "[onDisplayShow]");
     }
 
     @Override
-    public void onDisplaySeasons(long showId, LibraryType type) {
-        LogWrapper.v(TAG, "[onDisplaySeasons]");
-    }
-
-    @Override
-    public void onDisplaySeason(long showId, long seasonId, LibraryType type) {
+    public void onDisplaySeason(long showId, long seasonId, String showTitle, int seasonNumber, LibraryType type) {
         LogWrapper.v(TAG, "[onDisplaySeason]");
     }
 
     @Override
-    public void onDisplayEpisode(long episodeId, LibraryType type) {
+    public void onDisplayEpisode(long episodeId, String showTitle) {
         LogWrapper.v(TAG, "[onDisplayEpisode]");
     }
 
