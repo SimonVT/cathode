@@ -82,6 +82,17 @@
                     android:gravity="right">
 
                     <TextView
+                        android:id="@+id/isWatched"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="8dp"
+                        android:drawableRight="@drawable/ic_checkmark_watched"
+                        android:text="@string/checkmark_watched"
+                        android:textColor="@color/watchedColor"
+                        style="@style/Widget.CheckMark" />
+
+                    <TextView
                         android:id="@+id/inCollection"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -89,7 +100,7 @@
                         android:layout_marginRight="8dp"
                         android:drawableRight="@drawable/ic_checkmark_collection"
                         android:text="@string/checkmark_collection"
-                        android:textColor="@android:color/holo_orange_dark"
+                        android:textColor="@color/collectedColor"
                         style="@style/Widget.CheckMark" />
 
                     <TextView
@@ -100,7 +111,7 @@
                         android:layout_marginRight="8dp"
                         android:drawableRight="@drawable/ic_checkmark_watchlist"
                         android:text="@string/checkmark_watchlist"
-                        android:textColor="@android:color/holo_red_dark"
+                        android:textColor="@color/watchlistColor"
                         style="@style/Widget.CheckMark" />
                 </LinearLayout>
             </FrameLayout>
