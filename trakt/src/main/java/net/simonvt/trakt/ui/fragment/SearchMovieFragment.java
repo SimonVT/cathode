@@ -7,6 +7,7 @@ import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.event.MovieSearchResult;
 import net.simonvt.trakt.event.OnTitleChangedEvent;
+import net.simonvt.trakt.event.SearchFailureEvent;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.provider.TraktDatabase;
 import net.simonvt.trakt.ui.MoviesNavigationListener;
@@ -149,9 +150,18 @@ public class SearchMovieFragment extends AbsAdapterFragment implements LoaderMan
     }
 
     @Subscribe
-    public void onShowSearchEvent(MovieSearchResult result) {
+    public void onSearchEvent(MovieSearchResult result) {
         mSearchMovieIds = result.getMovieIds();
         getLoaderManager().restartLoader(LOADER_SEARCH, null, this);
+        setEmptyText(R.string.no_results, mQuery);
+    }
+
+    @Subscribe
+    public void onSearchFailure(SearchFailureEvent event) {
+        if (event.getType() == SearchFailureEvent.Type.MOVIE) {
+            setCursor(null);
+            setEmptyText(R.string.search_failure, mQuery);
+        }
     }
 
     private void setCursor(Cursor cursor) {

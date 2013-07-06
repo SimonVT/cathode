@@ -6,6 +6,8 @@
     <string name="email">E-mail</string>
     <string name="login">Login</string>
 
+    <string name="retry">Retry</string>
+
     <string name="now">Now</string>
     <string name="in_minutes">In %d minutes</string>
     <string name="minutes_ago">%d minutes ago</string>
@@ -42,6 +44,9 @@
     <string name="checkmark_watched">Watched</string>
     <string name="checkmark_collection">In collection</string>
     <string name="checkmark_watchlist">In watchlist</string>
+
+    <string name="no_results">No results for query \'%s\'</string>
+    <string name="search_failure">Search failed</string>
 
     <string name="full_sync_warning">Performing a complete sync with Trakt, this might take a while..</string>
 

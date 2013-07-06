@@ -6,6 +6,7 @@ import com.squareup.otto.Subscribe;
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.event.OnTitleChangedEvent;
+import net.simonvt.trakt.event.SearchFailureEvent;
 import net.simonvt.trakt.event.ShowSearchResult;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.provider.TraktDatabase;
@@ -143,9 +144,18 @@ public class SearchShowFragment extends AbsAdapterFragment implements LoaderMana
     }
 
     @Subscribe
-    public void onShowSearchEvent(ShowSearchResult result) {
+    public void onSearchEvent(ShowSearchResult result) {
         mSearchShowIds = result.getShowIds();
         getLoaderManager().restartLoader(LOADER_SEARCH, null, this);
+        setEmptyText(R.string.no_results, mQuery);
+    }
+
+    @Subscribe
+    public void onSearchFailure(SearchFailureEvent event) {
+        if (event.getType() == SearchFailureEvent.Type.SHOW) {
+            setCursor(null);
+            setEmptyText(R.string.search_failure, mQuery);
+        }
     }
 
     private void setCursor(Cursor cursor) {
