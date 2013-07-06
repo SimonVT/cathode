@@ -6,11 +6,11 @@ import com.squareup.otto.Subscribe;
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.event.MovieSearchResult;
+import net.simonvt.trakt.event.OnTitleChangedEvent;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.provider.TraktDatabase;
 import net.simonvt.trakt.ui.MoviesNavigationListener;
 import net.simonvt.trakt.ui.adapter.MovieSearchAdapter;
-import net.simonvt.trakt.util.LogWrapper;
 import net.simonvt.trakt.util.MovieSearchHandler;
 
 import android.app.Activity;
@@ -22,10 +22,10 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.SearchView;
 
 import java.util.List;
 
@@ -91,6 +91,16 @@ public class SearchMovieFragment extends AbsAdapterFragment implements LoaderMan
     }
 
     @Override
+    public String getTitle() {
+        return mQuery;
+    }
+
+    @Override
+    public String getSubtitle() {
+        return mSearchMovieIds != null ? mSearchMovieIds.size() + "results" : null;
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_QUERY, mQuery);
@@ -110,23 +120,26 @@ public class SearchMovieFragment extends AbsAdapterFragment implements LoaderMan
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_search_movie, menu);
+    }
 
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                LogWrapper.v(TAG, "Query: " + query);
-                mSearchHandler.search(query);
-                mMovieAdapter = null;
-                setAdapter(null);
-                return false;
-            }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_search:
+                mNavigationListener.onStartMovieSearch();
+                return true;
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
+            default:
                 return false;
-            }
-        });
+        }
+    }
+
+    public void query(String query) {
+        mQuery = query;
+        mSearchHandler.search(query);
+        mMovieAdapter = null;
+        setAdapter(null);
+        mBus.post(new OnTitleChangedEvent());
     }
 
     @Override

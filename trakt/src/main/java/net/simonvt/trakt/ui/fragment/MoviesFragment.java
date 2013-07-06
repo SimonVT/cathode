@@ -70,21 +70,6 @@ public abstract class MoviesFragment extends AbsAdapterFragment implements Loade
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_movies, menu);
-
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                LogWrapper.v(TAG, "Query: " + query);
-                mNavigationListener.onSearchMovie(query);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
     }
 
     @Override
@@ -92,6 +77,10 @@ public abstract class MoviesFragment extends AbsAdapterFragment implements Loade
         switch (item.getItemId()) {
             case R.id.menu_refresh:
                 mQueue.add(new SyncTask());
+                return true;
+
+            case R.id.menu_search:
+                mNavigationListener.onStartMovieSearch();
                 return true;
         }
 

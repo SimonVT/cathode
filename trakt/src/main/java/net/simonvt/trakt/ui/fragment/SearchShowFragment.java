@@ -5,13 +5,13 @@ import com.squareup.otto.Subscribe;
 
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
+import net.simonvt.trakt.event.OnTitleChangedEvent;
 import net.simonvt.trakt.event.ShowSearchResult;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.provider.TraktDatabase;
 import net.simonvt.trakt.ui.LibraryType;
 import net.simonvt.trakt.ui.ShowsNavigationListener;
 import net.simonvt.trakt.ui.adapter.ShowSearchAdapter;
-import net.simonvt.trakt.util.LogWrapper;
 import net.simonvt.trakt.util.ShowSearchHandler;
 
 import android.app.Activity;
@@ -24,10 +24,10 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.SearchView;
 
 import java.util.List;
 
@@ -76,6 +76,8 @@ public class SearchShowFragment extends AbsAdapterFragment implements LoaderMana
         super.onCreate(state);
         TraktApp.inject(getActivity(), this);
 
+        mBus.register(this);
+
         if (state == null) {
             Bundle args = getArguments();
             mQuery = args.getString(ARGS_QUERY);
@@ -88,7 +90,6 @@ public class SearchShowFragment extends AbsAdapterFragment implements LoaderMana
             }
         }
 
-        mBus.register(this);
         setHasOptionsMenu(true);
     }
 
@@ -112,23 +113,26 @@ public class SearchShowFragment extends AbsAdapterFragment implements LoaderMana
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_add_show, menu);
+    }
 
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                LogWrapper.v(TAG, "Query: " + query);
-                mSearchHandler.search(query);
-                mShowsAdapter = null;
-                setAdapter(null);
-                return false;
-            }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_search:
+                mNavigationListener.onStartShowSearch();
+                return true;
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
+            default:
                 return false;
-            }
-        });
+        }
+    }
+
+    public void query(String query) {
+        mQuery = query;
+        mSearchHandler.search(query);
+        mShowsAdapter = null;
+        setAdapter(null);
+        mBus.post(new OnTitleChangedEvent());
     }
 
     @Override

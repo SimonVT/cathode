@@ -21,11 +21,11 @@ public class UiController
     static final String FRAGMENT_EPISODE = "net.simonvt.trakt.ui.HomeActivity.episodeFragment";
     static final String FRAGMENT_SHOWS_WATCHLIST = "net.simonvt.trakt.ui.HomeActivity.showsWatchlistFragment";
     static final String FRAGMENT_EPISODES_WATCHLIST = "net.simonvt.trakt.ui.HomeActivity.episodesWatchlistFragment";
-    static final String FRAGMENT_ADD_SHOW = "net.simonvt.trakt.ui.HomeActivity.addShowFragment";
+    static final String FRAGMENT_SEARCH_SHOW = "net.simonvt.trakt.ui.HomeActivity.searchShowFragment";
     static final String FRAGMENT_MOVIES_WATCHED = "net.simonvt.trakt.ui.HomeActivity.moviesWatchedFragment";
     static final String FRAGMENT_MOVIES_COLLECTION = "net.simonvt.trakt.ui.HomeActivity.moviesCollectionFragment";
     static final String FRAGMENT_MOVIES_WATCHLIST = "net.simonvt.trakt.ui.HomeActivity.moviesWatchlistFragment";
-    static final String FRAGMENT_SEARCH_MOVIE = "net.simonvt.trakt.ui.HomeActivity.searchMovieFragmentFragment";
+    static final String FRAGMENT_SEARCH_MOVIE = "net.simonvt.trakt.ui.HomeActivity.searchMovieFragment";
     static final String FRAGMENT_MOVIE = "net.simonvt.trakt.ui.HomeActivity.movieFragment";
 
     protected HomeActivity mActivity;
@@ -77,8 +77,8 @@ public class UiController
     }
 
     @Override
-    public void onSearchMovie(String query) {
-        LogWrapper.v(TAG, "[onSearchMovie]");
+    public void onStartMovieSearch() {
+        LogWrapper.v(TAG, "[onStartMovieSearch]");
     }
 
     @Override
@@ -97,7 +97,7 @@ public class UiController
     }
 
     @Override
-    public void onSearchShow(String query) {
-        LogWrapper.v(TAG, "[onSearchShow]");
+    public void onStartShowSearch() {
+        LogWrapper.v(TAG, "[onStartShowSearch]");
     }
 }

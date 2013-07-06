@@ -24,8 +24,13 @@ import net.simonvt.trakt.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.trakt.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.trakt.ui.fragment.WatchedShowsFragment;
 import net.simonvt.trakt.util.FragmentStack;
+import net.simonvt.trakt.util.LogWrapper;
 
+import android.app.ActionBar;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import android.widget.SearchView;
 
 import javax.inject.Inject;
 
@@ -33,7 +38,11 @@ public class PhoneController extends UiController {
 
     private static final String TAG = "PhoneController";
 
-    private static final String STATE_NAV_TITLE = "net.simonvt.trakt.ui.PhoneController.navTitle";
+    private static final String STATE_SEARCH_TYPE = "net.simonvt.trakt.ui.PhoneController.searchType";
+    private static final String STATE_SEARCH_QUERY = "net.simonvt.trakt.ui.PhoneController.searchQuery";
+
+    private static final int SEARCH_TYPE_SHOW = 1;
+    private static final int SEARCH_TYPE_MOVIE = 2;
 
     @Inject Bus mBus;
 
@@ -42,6 +51,9 @@ public class PhoneController extends UiController {
     private MenuDrawer mMenuDrawer;
 
     private NavigationFragment mNavigation;
+
+    private int mSearchType;
+    private SearchView mSearchView;
 
     public static PhoneController newInstance(HomeActivity activity) {
         return new PhoneController(activity);
@@ -75,6 +87,7 @@ public class PhoneController extends UiController {
                 new FragmentStack.Callback<BaseFragment>() {
                     @Override
                     public void onStackChanged(int stackSize, BaseFragment topFragment) {
+                        LogWrapper.v(TAG, "[onStackChanged] " + topFragment.getTag());
                         mMenuDrawer.setDrawerIndicatorEnabled(stackSize <= 1);
                         if (!mMenuDrawer.isMenuVisible()) {
                             String title = topFragment.getTitle();
@@ -85,6 +98,15 @@ public class PhoneController extends UiController {
                             }
                             mActivity.getActionBar().setSubtitle(topFragment.getSubtitle());
                         }
+                        if (mSearchView != null) {
+                            if (!FRAGMENT_SEARCH_MOVIE.equals(topFragment.getTag())
+                                    && !FRAGMENT_SEARCH_SHOW.equals(topFragment.getTag())) {
+                                mActivity.getActionBar().setDisplayShowCustomEnabled(false);
+                                mActivity.getActionBar().setCustomView(null);
+                                mSearchView = null;
+                            }
+                        }
+                        topFragment.setMenuVisibility(mSearchView == null);
                     }
                 });
 
@@ -103,13 +125,18 @@ public class PhoneController extends UiController {
                             mActivity.getActionBar().setSubtitle(mStack.getTopFragment().getSubtitle());
                         }
 
-                        mStack.getTopFragment().setMenuVisibility(true);
+                        if (mSearchView != null) {
+                            mActivity.getActionBar().setDisplayShowCustomEnabled(true);
+                        } else {
+                            mStack.getTopFragment().setMenuVisibility(true);
+                        }
                         break;
 
                     default:
                         mStack.getTopFragment().setMenuVisibility(false);
-                        mStack.getTopFragment().setMenuVisibility(false);
+                        mActivity.getActionBar().setDisplayShowCustomEnabled(false);
                         mActivity.getActionBar().setTitle(R.string.app_name);
+                        break;
                 }
             }
 
@@ -120,6 +147,12 @@ public class PhoneController extends UiController {
 
         if (state != null) {
             mStack.onRestoreInstanceState(state);
+            CharSequence query = state.getCharSequence(STATE_SEARCH_QUERY);
+            if (query != null) {
+                mSearchType = state.getInt(STATE_SEARCH_TYPE);
+                createSearchView(mSearchType);
+                mSearchView.setQuery(query, false);
+            }
         }
     }
 
@@ -144,6 +177,14 @@ public class PhoneController extends UiController {
             return true;
         }
 
+        if (mSearchView != null) {
+            mActivity.getActionBar().setDisplayShowCustomEnabled(false);
+            mActivity.getActionBar().setCustomView(null);
+            mStack.getTopFragment().setMenuVisibility(true);
+            mSearchView = null;
+            return true;
+        }
+
         if (mStack.popStack(true)) {
             return true;
         }
@@ -155,6 +196,10 @@ public class PhoneController extends UiController {
     public Bundle onSaveInstanceState() {
         Bundle state = new Bundle();
         mStack.onSaveInstanceState(state);
+        if (mSearchView != null) {
+            state.putInt(STATE_SEARCH_TYPE, mSearchType);
+            state.putCharSequence(STATE_SEARCH_QUERY, mSearchView.getQuery());
+        }
         return state;
     }
 
@@ -184,9 +229,15 @@ public class PhoneController extends UiController {
     @Override
     public void onHomeClicked() {
         super.onHomeClicked();
+
         final int drawerState = mMenuDrawer.getDrawerState();
         if (drawerState == MenuDrawer.STATE_OPEN || drawerState == MenuDrawer.STATE_OPENING) {
             mMenuDrawer.closeMenu();
+        } else if (mSearchView != null) {
+            mActivity.getActionBar().setDisplayShowCustomEnabled(false);
+            mActivity.getActionBar().setCustomView(null);
+            mStack.getTopFragment().setMenuVisibility(true);
+            mSearchView = null;
         } else if (!mStack.popStack(drawerState == MenuDrawer.STATE_CLOSED)) {
             mMenuDrawer.toggleMenu();
         }
@@ -237,6 +288,59 @@ public class PhoneController extends UiController {
         mMenuDrawer.closeMenu();
     }
 
+    private void createSearchView(int searchType) {
+        mSearchType = searchType;
+        mSearchView = (SearchView) LayoutInflater.from(mActivity.getActionBar().getThemedContext())
+                .inflate(R.layout.search, null);
+        mSearchView.onActionViewExpanded();
+        mActivity.getActionBar().setDisplayShowCustomEnabled(true);
+        mActivity.getActionBar().setCustomView(mSearchView,
+                new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+        mStack.getTopFragment().setMenuVisibility(false);
+        mMenuDrawer.setDrawerIndicatorEnabled(false);
+        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                mSearchView = null;
+                mStack.getTopFragment().setMenuVisibility(true);
+                return true;
+            }
+        });
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                LogWrapper.v(TAG, "[onQueryTextSubmit] Query: " + query);
+                if (mSearchType == SEARCH_TYPE_MOVIE) {
+                    SearchMovieFragment f = mStack.getFragment(FRAGMENT_SEARCH_MOVIE);
+                    if (f == null) {
+                        mStack.addFragment(SearchMovieFragment.class, FRAGMENT_SEARCH_MOVIE,
+                                SearchMovieFragment.getArgs(query));
+                        mStack.commit();
+                    } else {
+                        f.query(query);
+                    }
+                } else {
+                    SearchShowFragment f = mStack.getFragment(FRAGMENT_SEARCH_SHOW);
+                    if (f == null) {
+                        mStack.addFragment(SearchShowFragment.class, FRAGMENT_SEARCH_SHOW,
+                                SearchShowFragment.getArgs(query));
+                        mStack.commit();
+                    } else {
+                        f.query(query);
+                    }
+                }
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // Navigation callbacks
     ///////////////////////////////////////////////////////////////////////////
@@ -261,9 +365,9 @@ public class PhoneController extends UiController {
     }
 
     @Override
-    public void onSearchShow(String query) {
-        mStack.addFragment(SearchShowFragment.class, FRAGMENT_ADD_SHOW, SearchShowFragment.getArgs(query));
-        mStack.commit();
+    public void onStartShowSearch() {
+        super.onStartShowSearch();
+        createSearchView(SEARCH_TYPE_SHOW);
     }
 
     @Override
@@ -273,8 +377,8 @@ public class PhoneController extends UiController {
     }
 
     @Override
-    public void onSearchMovie(String query) {
-        mStack.addFragment(SearchMovieFragment.class, FRAGMENT_SEARCH_MOVIE, SearchMovieFragment.getArgs(query));
-        mStack.commit();
+    public void onStartMovieSearch() {
+        super.onStartMovieSearch();
+        createSearchView(SEARCH_TYPE_MOVIE);
     }
 }

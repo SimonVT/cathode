@@ -15,6 +15,7 @@ import net.simonvt.trakt.ui.fragment.NavigationFragment;
 import net.simonvt.trakt.util.DateUtils;
 import net.simonvt.trakt.util.LogWrapper;
 
+import android.app.ActionBar;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -173,8 +174,8 @@ public class HomeActivity extends BaseActivity
     }
 
     @Override
-    public void onSearchShow(String query) {
-        mActiveController.onSearchShow(query);
+    public void onStartShowSearch() {
+        mActiveController.onStartShowSearch();
     }
 
     @Override
@@ -183,7 +184,7 @@ public class HomeActivity extends BaseActivity
     }
 
     @Override
-    public void onSearchMovie(String query) {
-        mActiveController.onSearchMovie(query);
+    public void onStartMovieSearch() {
+        mActiveController.onStartMovieSearch();
     }
 }

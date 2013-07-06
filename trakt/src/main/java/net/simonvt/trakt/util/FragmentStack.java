@@ -118,6 +118,10 @@ public final class FragmentStack<T extends Fragment> {
         return mStack.size();
     }
 
+    public <T> T getFragment(String tag) {
+        return (T) mFragmentManager.findFragmentByTag(tag);
+    }
+
     public T getTopFragment() {
         return mStack.peekLast();
     }

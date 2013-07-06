@@ -23,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.SearchView;
 
 import javax.inject.Inject;
 
@@ -84,21 +83,6 @@ public abstract class ShowsFragment extends AbsAdapterFragment implements Loader
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_shows, menu);
-
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                LogWrapper.v(TAG, "Query: " + query);
-                mNavigationListener.onSearchShow(query);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
     }
 
     @Override
@@ -106,6 +90,10 @@ public abstract class ShowsFragment extends AbsAdapterFragment implements Loader
         switch (item.getItemId()) {
             case R.id.menu_refresh:
                 mQueue.add(new SyncTask());
+                return true;
+
+            case R.id.menu_search:
+                mNavigationListener.onStartShowSearch();
                 return true;
 
             default:

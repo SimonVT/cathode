@@ -56,15 +56,18 @@ public class ShowSearchHandler {
     }
 
     public void deliverResult(List<Long> showIds) {
+        LogWrapper.v(TAG, "[deliverResult]");
         mShowIds = showIds;
         mBus.post(new ShowSearchResult(showIds));
     }
 
     public void deliverFailure() {
+        LogWrapper.v(TAG, "[deliverFailure]");
         mBus.post(new SearchFailureEvent(SearchFailureEvent.Type.SHOW));
     }
 
     public void search(final String query) {
+        LogWrapper.v(TAG, "[search] Query: " + query);
         mShowIds = null;
 
         if (mThread != null) {

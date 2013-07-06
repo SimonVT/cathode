@@ -8,5 +8,5 @@ public interface ShowsNavigationListener {
 
     void onDisplayEpisode(long episodeId, String showTitle);
 
-    void onSearchShow(String query);
+    void onStartShowSearch();
 }
