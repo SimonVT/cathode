@@ -12,6 +12,9 @@ import android.provider.BaseColumns;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 public class UpcomingShowsFragment extends ShowsFragment {
 
@@ -28,6 +31,11 @@ public class UpcomingShowsFragment extends ShowsFragment {
             TraktDatabase.Tables.EPISODES + "." + TraktContract.Episodes.SEASON,
             TraktDatabase.Tables.EPISODES + "." + TraktContract.Episodes.EPISODE,
     };
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_shows_upcoming, container, false);
+    }
 
     @Override
     public String getTitle() {

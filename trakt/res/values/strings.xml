@@ -74,6 +74,15 @@
     <string name="navigation_movies_ratings">Ratings</string>
     <string name="navigation_movies_charts">Charts</string>
 
+    <string name="show_upcoming_empty">No upcoming episodes. Use the search button to find some new shows to watch.</string>
+    <string name="show_watched_empty">No watched shows. Find any shows you\'ve watched by using the search button.</string>
+    <string name="show_collection_empty">Your collection is empty. Find your shows by using the search button.</string>
+    <string name="show_watchlist_empty">Add shows to the watchlist that you\'d like to watch, but just haven\'t had the time for.</string>
+    <string name="episode_Watchlist_empty">Add episodes to the watchlist that you\'d like to watch, but just haven\'t had the time for.</string>
+    <string name="movie_watched_empty">Find movies you\'ve watched by using the search button.</string>
+    <string name="movie_collection_empty">Your collection is empty. Find movies by using the search button.</string>
+    <string name="movie_Watchlist_empty">Add movies to the watchlist that you\'d like to watch, but just haven\'t had the time for.</string>
+
     <string name="episode_x">Episode %d</string>
     <plurals name="x_unwatched">
         <item quantity="zero">All episodes watched</item>

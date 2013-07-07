@@ -35,7 +35,7 @@ public abstract class AbsAdapterFragment extends BaseFragment {
 
     private Context mAppContext;
 
-    private String mEmptyText = "";
+    private String mEmptyText;
 
     protected boolean mAttachLongClickListener;
 
@@ -65,7 +65,7 @@ public abstract class AbsAdapterFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         Views.inject(this, view);
 
-        mEmpty.setText(mEmptyText);
+        if (mEmptyText != null) mEmpty.setText(mEmptyText);
 
         mAdapterView.setOnItemClickListener(mOnClickListener);
         if (mAttachLongClickListener) mAdapterView.setOnItemLongClickListener(mOnLongClickListener);

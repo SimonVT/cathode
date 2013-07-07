@@ -55,18 +55,12 @@ public abstract class ShowsFragment extends AbsAdapterFragment implements Loader
 
         setHasOptionsMenu(true);
 
-        setEmptyText("Loading..."); // TODO: Tell user to add show
         getLoaderManager().initLoader(getLoaderId(), null, this);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_shows, container, false);
     }
 
     @Override

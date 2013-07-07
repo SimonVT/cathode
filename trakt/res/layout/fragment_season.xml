@@ -63,18 +63,7 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp" />
 
-            <ListView
-                android:id="@android:id/list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:divider="@null"
-                android:dividerHeight="4.0dp"
-                android:drawSelectorOnTop="true"
-                android:paddingTop="4dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:clipToPadding="false"
-                android:scrollbarStyle="outsideOverlay" />
+            <include layout="@layout/list_default" />
         </FrameLayout>
 
         <include layout="@layout/fragment_list_progressbar" />

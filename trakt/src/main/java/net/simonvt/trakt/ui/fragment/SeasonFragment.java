@@ -104,7 +104,6 @@ public class SeasonFragment extends AbsAdapterFragment {
 
         mEpisodeAdapter = new SeasonAdapter(getActivity(), mType);
         setAdapter(mEpisodeAdapter);
-        setEmptyText("No episodes"); // TODO
 
         getLoaderManager().initLoader(LOADER_EPISODES, null, mEpisodesLoader);
 

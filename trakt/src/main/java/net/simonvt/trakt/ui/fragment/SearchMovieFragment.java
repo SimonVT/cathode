@@ -109,7 +109,7 @@ public class SearchMovieFragment extends AbsAdapterFragment implements LoaderMan
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_movies, container, false);
+        return inflater.inflate(R.layout.fragment_movies_watched, container, false);
     }
 
     @Override

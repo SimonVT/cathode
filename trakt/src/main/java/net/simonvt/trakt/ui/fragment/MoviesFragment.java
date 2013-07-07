@@ -8,7 +8,6 @@ import net.simonvt.trakt.sync.TraktTaskQueue;
 import net.simonvt.trakt.sync.task.SyncTask;
 import net.simonvt.trakt.ui.MoviesNavigationListener;
 import net.simonvt.trakt.ui.adapter.MoviesAdapter;
-import net.simonvt.trakt.util.LogWrapper;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -22,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.SearchView;
 
 import javax.inject.Inject;
 
@@ -53,11 +51,6 @@ public abstract class MoviesFragment extends AbsAdapterFragment implements Loade
         setHasOptionsMenu(true);
 
         getLoaderManager().initLoader(getLoaderId(), null, this);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_movies, container, false);
     }
 
     @Override

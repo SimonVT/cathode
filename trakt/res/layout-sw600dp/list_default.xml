@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/list"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:divider="@null"
+    android:dividerHeight="4.0dp"
+    android:drawSelectorOnTop="true"
+    android:numColumns="@integer/showsColumns"
+    android:paddingTop="4dp"
+    android:paddingLeft="32dp"
+    android:paddingRight="32dp"
+    android:horizontalSpacing="8dp"
+    android:verticalSpacing="8dp"
+    android:clipToPadding="false"
+    android:scrollbarStyle="outsideOverlay" />
