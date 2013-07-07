@@ -24,3 +24,5 @@ trakt/*
 !trakt/pom.xml
 
 trakt/res/values/secrets.xml
+
+.DS_store
