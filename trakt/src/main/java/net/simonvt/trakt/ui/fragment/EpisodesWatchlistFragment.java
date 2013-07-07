@@ -14,6 +14,9 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -41,12 +44,30 @@ public class EpisodesWatchlistFragment extends AbsAdapterFragment implements Loa
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
+        setHasOptionsMenu(true);
         getLoaderManager().initLoader(LOADER_WATCHLIST, null, this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_episodes_watchlist, container, false);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.search, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_search:
+                mNavigationListener.onStartShowSearch();
+                return true;
+
+            default:
+                return false;
+        }
     }
 
     @Override

@@ -120,7 +120,7 @@ public class SearchMovieFragment extends AbsAdapterFragment implements LoaderMan
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.fragment_search_movie, menu);
+        inflater.inflate(R.menu.search, menu);
     }
 
     @Override
