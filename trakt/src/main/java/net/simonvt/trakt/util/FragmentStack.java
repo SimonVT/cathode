@@ -239,7 +239,7 @@ public final class FragmentStack<T extends Fragment> {
     }
 
     private void dispatchOnStackChangedEvent() {
-        if (mCallback != null) {
+        if (mCallback != null && mStack.size() > 0) {
             mCallback.onStackChanged(mStack.size(), mStack.peekLast());
         }
     }
