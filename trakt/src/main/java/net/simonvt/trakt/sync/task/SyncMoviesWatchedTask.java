@@ -3,6 +3,7 @@ package net.simonvt.trakt.sync.task;
 import retrofit.RetrofitError;
 
 import net.simonvt.trakt.api.entity.Movie;
+import net.simonvt.trakt.api.enumeration.DetailLevel;
 import net.simonvt.trakt.api.service.UserService;
 import net.simonvt.trakt.provider.MovieWrapper;
 import net.simonvt.trakt.provider.TraktContract;
@@ -15,11 +16,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class SyncMoviesWatchlistTask extends TraktTask {
+public class SyncMoviesWatchedTask extends TraktTask {
 
-    private static final String TAG = "SyncMoviesWatchlistTask";
+    private static final String TAG = "SyncMoviesCollectionTask";
 
-    @Inject UserService mUserService;
+    @Inject transient UserService mUserService;
 
     @Override
     protected void doTask() {
@@ -28,30 +29,30 @@ public class SyncMoviesWatchlistTask extends TraktTask {
         try {
             Cursor c = mService.getContentResolver().query(TraktContract.Movies.CONTENT_URI, new String[] {
                     TraktContract.Movies._ID,
-            }, TraktContract.Movies.IN_WATCHLIST, null, null);
+            }, TraktContract.Movies.IN_COLLECTION, null, null);
 
-            List<Long> movieIds = new ArrayList<Long>();
+            List<Long> movieIds = new ArrayList<Long>(c.getCount());
 
             while (c.moveToNext()) {
-                movieIds.add(c.getLong(c.getColumnIndex(TraktContract.Movies._ID)));
+                movieIds.add(c.getLong(0));
             }
 
-            List<Movie> movies = mUserService.watchlistMovies();
+            List<Movie> movies = mUserService.moviesWatched(DetailLevel.MIN);
 
             for (Movie movie : movies) {
-                final long tmdbId = movie.getTmdbId();
+                final Long tmdbId = movie.getTmdbId();
                 final long movieId = MovieWrapper.getMovieId(mService.getContentResolver(), tmdbId);
 
                 if (movieId == -1) {
                     queueTask(new SyncMovieTask(tmdbId));
                 } else {
-                    MovieWrapper.setIsInWatchlist(mService.getContentResolver(), movieId, true);
+                    MovieWrapper.setIsInCollection(mService.getContentResolver(), movieId, true);
                     movieIds.remove(movieId);
                 }
             }
 
             for (Long movieId : movieIds) {
-                MovieWrapper.setIsInWatchlist(mService.getContentResolver(), movieId, false);
+                MovieWrapper.setIsInCollection(mService.getContentResolver(), movieId, false);
             }
 
             postOnSuccess();

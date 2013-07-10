@@ -27,14 +27,14 @@ public class ActivityItem {
 
         private String full;
 
-        @SerializedName("short") private String _short;
+        @SerializedName("short") private String elapsedShort;
 
         public String getFull() {
             return full;
         }
 
         public String getShort() {
-            return _short;
+            return elapsedShort;
         }
     }
 

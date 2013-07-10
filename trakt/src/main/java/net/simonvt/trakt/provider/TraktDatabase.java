@@ -17,7 +17,6 @@ import net.simonvt.trakt.provider.TraktContract.ShowGenres;
 import net.simonvt.trakt.provider.TraktContract.ShowTopWatchers;
 import net.simonvt.trakt.provider.TraktContract.TopEpisodeColumns;
 import net.simonvt.trakt.provider.TraktContract.TopWatcherColumns;
-import net.simonvt.trakt.provider.TraktContract.UserActivity;
 import net.simonvt.trakt.util.DateUtils;
 
 import android.content.Context;
@@ -50,8 +49,9 @@ public class TraktDatabase extends SQLiteOpenHelper {
         String SHOW_GENRES = "showGenres";
         String SEASONS = "seasons";
         String EPISODES = "episodes";
-        String EPISODES_WITH_SHOW_TITLE = EPISODES + " JOIN " + SHOWS + " AS shows ON " + SHOWS + "." + TraktContract.Shows._ID
-                + "=" + EPISODES + "." + TraktContract.Episodes.SHOW_ID;
+        String EPISODES_WITH_SHOW_TITLE =
+                EPISODES + " JOIN " + SHOWS + " AS shows ON " + SHOWS + "." + TraktContract.Shows._ID
+                        + "=" + EPISODES + "." + TraktContract.Episodes.SHOW_ID;
         String MOVIES = "movies";
         String MOVIE_GENRES = "movieGenres";
         String MOVIE_TOP_WATCHERS = "movieTopWatchers";
@@ -59,7 +59,6 @@ public class TraktDatabase extends SQLiteOpenHelper {
         String MOVIE_DIRECTORS = "movieDirectors";
         String MOVIE_WRITERS = "movieWriters";
         String MOVIE_PRODUCERS = "movieProducers";
-        String USER_ACTIVITY = "userActivity";
     }
 
     interface References {
@@ -272,20 +271,6 @@ public class TraktDatabase extends SQLiteOpenHelper {
                 + MovieProducers.NAME + " TEXT NOT NULL,"
                 + MovieProducers.EXECUTIVE + " INTEGER NOT NULL,"
                 + MovieProducers.HEADSHOT + " TEXT)");
-
-        db.execSQL("CREATE TABLE " + Tables.USER_ACTIVITY + " ("
-                + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + UserActivity.ALL + " INTEGER NOT NULL,"
-                + UserActivity.EPISODE_WATCHED + " INTEGER NOT NULL,"
-                + UserActivity.EPISODE_SCROBBLE + " INTEGER NOT NULL,"
-                + UserActivity.EPISODE_SEEN + " INTEGER NOT NULL,"
-                + UserActivity.EPISODE_CHECKIN + " INTEGER NOT NULL,"
-                + UserActivity.EPISODE_COLLECTION + " INTEGER NOT NULL,"
-                + UserActivity.MOVIE_WATCHED + " INTEGER NOT NULL,"
-                + UserActivity.MOVIE_SCROBBLE + " INTEGER NOT NULL,"
-                + UserActivity.MOVIE_SEEN + " INTEGER NOT NULL,"
-                + UserActivity.MOVIE_CHECKIN + " INTEGER NOT NULL,"
-                + UserActivity.MOVIE_COLLECTION + " INTEGER NOT NULL)");
     }
 
     @Override

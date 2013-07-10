@@ -40,13 +40,17 @@ public class SyncShowsCollectionTask extends TraktTask {
 
             Cursor c = mService.getContentResolver().query(TraktContract.Episodes.CONTENT_URI, new String[] {
                     TraktContract.Episodes._ID,
-            }, TraktContract.Episodes.IN_COLLECTION, null, null);
+                    TraktContract.Episodes.SHOW_ID,
+                    TraktContract.Episodes.SEASON_ID,
+            }, TraktContract.Episodes.IN_COLLECTION + "=1", null, null);
 
-            final int episodeIdIndex = c.getColumnIndex(TraktContract.Episodes._ID);
-
+            List<Long> updateSeasons = new ArrayList<Long>();
+            List<Long> updateShows = new ArrayList<Long>();
             List<Long> episodeIds = new ArrayList<Long>(c.getCount());
             while (c.moveToNext()) {
-                episodeIds.add(c.getLong(episodeIdIndex));
+                episodeIds.add(c.getLong(0));
+                updateShows.add(c.getLong(1));
+                updateSeasons.add(c.getLong(2));
             }
 
             ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
@@ -94,6 +98,13 @@ public class SyncShowsCollectionTask extends TraktTask {
                         TraktContract.Episodes.buildFromId(episodeId));
                 builder.withValue(TraktContract.Episodes.IN_COLLECTION, false);
                 ops.add(builder.build());
+            }
+
+            for (long seasonId : updateSeasons) {
+                queueTask(new UpdateSeasonCountTask(seasonId));
+            }
+            for (long showId : updateShows) {
+                queueTask(new UpdateShowCountTask(showId));
             }
 
             resolver.applyBatch(TraktProvider.AUTHORITY, ops);

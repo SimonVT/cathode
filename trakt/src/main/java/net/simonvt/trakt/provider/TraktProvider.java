@@ -644,6 +644,9 @@ public class TraktProvider extends ContentProvider {
                         getContext().getContentResolver().notifyChange(Episodes.buildFromId(id), null);
                         getContext().getContentResolver().notifyChange(Episodes.buildFromShowId(showId), null);
                         getContext().getContentResolver().notifyChange(Episodes.buildFromSeasonId(seasonId), null);
+                        getContext().getContentResolver().notifyChange(Shows.buildShowUri(showId), null);
+                        getContext().getContentResolver().notifyChange(Seasons.buildFromId(seasonId), null);
+                        getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(seasonId), null);
                     }
                     c.close();
                 }
@@ -660,6 +663,9 @@ public class TraktProvider extends ContentProvider {
                     getContext().getContentResolver().notifyChange(Episodes.buildFromId(id), null);
                     getContext().getContentResolver().notifyChange(Episodes.buildFromShowId(showId), null);
                     getContext().getContentResolver().notifyChange(Episodes.buildFromSeasonId(seasonId), null);
+                    getContext().getContentResolver().notifyChange(Shows.buildShowUri(showId), null);
+                    getContext().getContentResolver().notifyChange(Seasons.buildFromId(seasonId), null);
+                    getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(seasonId), null);
                 }
                 return count;
             }
@@ -681,6 +687,9 @@ public class TraktProvider extends ContentProvider {
                         getContext().getContentResolver().notifyChange(Episodes.buildFromId(id), null);
                         getContext().getContentResolver().notifyChange(Episodes.buildFromShowId(showId), null);
                         getContext().getContentResolver().notifyChange(Episodes.buildFromSeasonId(seasonId), null);
+                        getContext().getContentResolver().notifyChange(Shows.buildShowUri(showId), null);
+                        getContext().getContentResolver().notifyChange(Seasons.buildFromId(seasonId), null);
+                        getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(seasonId), null);
                     }
                     c.close();
                 }
@@ -704,6 +713,9 @@ public class TraktProvider extends ContentProvider {
                         getContext().getContentResolver().notifyChange(Episodes.buildFromId(id), null);
                         getContext().getContentResolver().notifyChange(Episodes.buildFromShowId(showId), null);
                         getContext().getContentResolver().notifyChange(Episodes.buildFromSeasonId(seasonId), null);
+                        getContext().getContentResolver().notifyChange(Shows.buildShowUri(showId), null);
+                        getContext().getContentResolver().notifyChange(Seasons.buildFromId(seasonId), null);
+                        getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(seasonId), null);
                     }
                     c.close();
                 }

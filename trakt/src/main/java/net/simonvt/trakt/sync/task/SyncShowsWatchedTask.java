@@ -25,9 +25,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class SyncWatchedStatusTask extends TraktTask {
+public class SyncShowsWatchedTask extends TraktTask {
 
-    private static final String TAG = "SyncWatchedStatusTask";
+    private static final String TAG = "SyncShowsWatchedTask";
 
     @Inject transient UserService mUserService;
 

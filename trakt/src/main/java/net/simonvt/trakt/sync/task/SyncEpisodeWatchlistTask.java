@@ -6,7 +6,9 @@ import net.simonvt.trakt.api.entity.Episode;
 import net.simonvt.trakt.api.entity.TvShow;
 import net.simonvt.trakt.api.service.UserService;
 import net.simonvt.trakt.provider.EpisodeWrapper;
+import net.simonvt.trakt.provider.ShowWrapper;
 import net.simonvt.trakt.provider.TraktContract;
+import net.simonvt.trakt.provider.TraktDatabase;
 import net.simonvt.trakt.util.LogWrapper;
 
 import android.database.Cursor;
@@ -16,9 +18,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class SyncEpisodeWatchlist extends TraktTask {
+public class SyncEpisodeWatchlistTask extends TraktTask {
 
-    private static final String TAG = "SyncEpisodeWatchlist";
+    private static final String TAG = "SyncEpisodeWatchlistTask";
 
     @Inject transient UserService mUserService;
 
@@ -27,11 +29,9 @@ public class SyncEpisodeWatchlist extends TraktTask {
         LogWrapper.v(TAG, "[doTask]");
 
         try {
-            List<TvShow> shows = mUserService.watchlistEpisodes();
-
-            Cursor c = mService.getContentResolver().query(TraktContract.Episodes.CONTENT_URI, new String[] {
-                    TraktContract.Episodes._ID,
-            }, TraktContract.Episodes.IN_WATCHLIST + "=1", null, null);
+            Cursor c = mService.getContentResolver().query(TraktContract.Episodes.WATCHLIST_URI, new String[] {
+                    TraktDatabase.Tables.EPISODES + "." + TraktContract.Episodes._ID,
+            }, null, null, null);
 
             List<Long> episodeIds = new ArrayList<Long>();
 
@@ -39,19 +39,21 @@ public class SyncEpisodeWatchlist extends TraktTask {
                 episodeIds.add(c.getLong(c.getColumnIndex(TraktContract.Episodes._ID)));
             }
 
+            List<TvShow> shows = mUserService.watchlistEpisodes();
+
             for (TvShow show : shows) {
                 final int tvdbId = show.getTvdbId();
+                final long showId = ShowWrapper.getShowId(mService.getContentResolver(), tvdbId);
 
-                // TODO: queueTask(new SyncShowTask(tvdbId));
-
-                List<Episode> episodes = show.getEpisodes();
-
-                for (Episode episode : episodes) {
-                    final long episodeId = EpisodeWrapper.getEpisodeId(mService.getContentResolver(), episode);
-                    if (episodeId != -1) {
+                if (showId != -1) {
+                    List<Episode> episodes = show.getEpisodes();
+                    for (Episode episode : episodes) {
+                        final long episodeId = EpisodeWrapper.getEpisodeId(mService.getContentResolver(), episode);
                         EpisodeWrapper.setIsInWatchlist(mService.getContentResolver(), episodeId, true);
                         episodeIds.remove(episodeId);
                     }
+                } else {
+                    queueTask(new SyncShowTask(tvdbId));
                 }
             }
 
@@ -63,6 +65,7 @@ public class SyncEpisodeWatchlist extends TraktTask {
 
         } catch (RetrofitError e) {
             postOnFailure();
+            e.printStackTrace();
         }
     }
 }

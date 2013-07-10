@@ -29,7 +29,7 @@ public class SyncShowsWatchlistTask extends TraktTask {
         try {
             Cursor c = mService.getContentResolver().query(TraktContract.Shows.SHOWS_WATCHLIST, new String[] {
                     TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows._ID,
-            }, TraktContract.Episodes.IN_WATCHLIST, null, null);
+            }, null, null, null);
 
             List<Long> showIds = new ArrayList<Long>();
 

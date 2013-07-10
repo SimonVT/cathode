@@ -244,7 +244,6 @@ public final class ShowWrapper {
         cv.put(SeasonColumns.IN_COLLECTION_COUNT, inCollectionCount);
 
         resolver.update(Shows.buildShowUri(showId), cv, null, null);
-        resolver.notifyChange(Shows.CONTENT_URI, null);
 
         c.close();
     }

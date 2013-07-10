@@ -156,7 +156,6 @@ public final class SeasonWrapper {
         cv.put(TraktContract.SeasonColumns.IN_COLLECTION_COUNT, inCollectionCount);
 
         resolver.update(TraktContract.Seasons.buildFromId(seasonId), cv, null, null);
-        resolver.notifyChange(TraktContract.Seasons.CONTENT_URI, null);
 
         c.close();
     }

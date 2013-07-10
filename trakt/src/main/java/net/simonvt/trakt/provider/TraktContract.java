@@ -154,23 +154,6 @@ public final class TraktContract {
         String BANNER = "banner";
     }
 
-    interface UserActivityColumns {
-
-        String ALL = "allActivity";
-
-        String EPISODE_WATCHED = "episodeWatched";
-        String EPISODE_SCROBBLE = "episodeScrobble";
-        String EPISODE_SEEN = "episodeSeen";
-        String EPISODE_CHECKIN = "episodeCheckin";
-        String EPISODE_COLLECTION = "episodeCollection";
-
-        String MOVIE_WATCHED = "movieWatched";
-        String MOVIE_SCROBBLE = "movieScrobble";
-        String MOVIE_SEEN = "movieSeen";
-        String MOVIE_CHECKIN = "movieCheckin";
-        String MOVIE_COLLECTION = "movieCollection";
-    }
-
     public static final String PATH_WATCHLIST = "watchlist";
 
     public static final String PATH_SHOWS = "shows";
@@ -479,10 +462,5 @@ public final class TraktContract {
         public static String getMovieId(Uri uri) {
             return uri.getPathSegments().get(2);
         }
-    }
-
-    public static class UserActivity implements UserActivityColumns, BaseColumns {
-
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_ACTIVITY).build();
     }
 }

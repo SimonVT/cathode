@@ -34,19 +34,21 @@ import net.simonvt.trakt.sync.task.MovieWatchlistTask;
 import net.simonvt.trakt.sync.task.ShowRateTask;
 import net.simonvt.trakt.sync.task.ShowWatchlistTask;
 import net.simonvt.trakt.sync.task.SyncEpisodeTask;
-import net.simonvt.trakt.sync.task.SyncEpisodeWatchlist;
+import net.simonvt.trakt.sync.task.SyncEpisodeWatchlistTask;
 import net.simonvt.trakt.sync.task.SyncMovieTask;
+import net.simonvt.trakt.sync.task.SyncMoviesCollectionTask;
 import net.simonvt.trakt.sync.task.SyncMoviesTask;
+import net.simonvt.trakt.sync.task.SyncMoviesWatchedTask;
 import net.simonvt.trakt.sync.task.SyncMoviesWatchlistTask;
 import net.simonvt.trakt.sync.task.SyncSeasonTask;
 import net.simonvt.trakt.sync.task.SyncShowTask;
 import net.simonvt.trakt.sync.task.SyncShowsCollectionTask;
 import net.simonvt.trakt.sync.task.SyncShowsTask;
+import net.simonvt.trakt.sync.task.SyncShowsWatchedTask;
 import net.simonvt.trakt.sync.task.SyncShowsWatchlistTask;
 import net.simonvt.trakt.sync.task.SyncTask;
 import net.simonvt.trakt.sync.task.SyncUpdatedMovies;
 import net.simonvt.trakt.sync.task.SyncUpdatedShows;
-import net.simonvt.trakt.sync.task.SyncWatchedStatusTask;
 import net.simonvt.trakt.sync.task.TraktTask;
 import net.simonvt.trakt.sync.task.UpdateSeasonCountTask;
 import net.simonvt.trakt.sync.task.UpdateShowCountTask;
@@ -180,15 +182,17 @@ public class TraktApp extends Application {
                     ShowWatchlistTask.class,
                     SyncShowsCollectionTask.class,
                     SyncEpisodeTask.class,
-                    SyncEpisodeWatchlist.class,
+                    SyncEpisodeWatchlistTask.class,
                     SyncMovieTask.class,
                     SyncMoviesTask.class,
+                    SyncMoviesCollectionTask.class,
+                    SyncMoviesWatchedTask.class,
                     SyncMoviesWatchlistTask.class,
                     SyncSeasonTask.class,
                     SyncShowTask.class,
                     SyncShowsTask.class,
                     SyncShowsWatchlistTask.class,
-                    SyncWatchedStatusTask.class,
+                    SyncShowsWatchedTask.class,
                     SyncUpdatedMovies.class,
                     SyncUpdatedShows.class,
                     UpdateSeasonCountTask.class,

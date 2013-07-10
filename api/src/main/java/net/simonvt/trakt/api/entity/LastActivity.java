@@ -14,6 +14,16 @@ public class LastActivity {
 
         private Long collection;
 
+        private Long rating;
+
+        private Long watchlist;
+
+        private Long comment;
+
+        private Long review;
+
+        private Long shout;
+
         public Long getWatched() {
             return watched;
         }
@@ -33,11 +43,33 @@ public class LastActivity {
         public Long getCollection() {
             return collection;
         }
+
+        public Long getRating() {
+            return rating;
+        }
+
+        public Long getWatchlist() {
+            return watchlist;
+        }
+
+        public Long getComment() {
+            return comment;
+        }
+
+        public Long getReview() {
+            return review;
+        }
+
+        public Long getShout() {
+            return shout;
+        }
     }
 
     private Long all;
 
     private ActivityItem movie;
+
+    private ActivityItem show;
 
     private ActivityItem episode;
 
@@ -47,6 +79,10 @@ public class LastActivity {
 
     public ActivityItem getMovie() {
         return movie;
+    }
+
+    public ActivityItem getShow() {
+        return show;
     }
 
     public ActivityItem getEpisode() {
