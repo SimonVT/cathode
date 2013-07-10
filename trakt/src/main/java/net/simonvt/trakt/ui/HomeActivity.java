@@ -15,7 +15,6 @@ import net.simonvt.trakt.ui.fragment.NavigationFragment;
 import net.simonvt.trakt.util.DateUtils;
 import net.simonvt.trakt.util.LogWrapper;
 
-import android.app.ActionBar;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;

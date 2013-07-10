@@ -9,7 +9,6 @@ import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
 import net.simonvt.trakt.scheduler.ShowTaskScheduler;
 import net.simonvt.trakt.ui.LibraryType;
-import net.simonvt.trakt.util.ApiUtils;
 import net.simonvt.trakt.util.DateUtils;
 import net.simonvt.trakt.util.LogWrapper;
 import net.simonvt.trakt.widget.OverflowView;

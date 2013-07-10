@@ -1,16 +1,17 @@
 package net.simonvt.trakt.settings;
 
 import net.simonvt.trakt.api.entity.LastActivity;
-import net.simonvt.trakt.settings.Settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.preference.PreferenceManager;
 
-public class ActivityWrapper {
+public final class ActivityWrapper {
 
     private static final String TAG = "ActivityWrapper";
+
+    private ActivityWrapper() {
+    }
 
     public static boolean episodeWatchedNeedsUpdate(Context context, long lastUpdated) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);

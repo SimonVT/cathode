@@ -3,14 +3,12 @@ package net.simonvt.trakt.sync.task;
 import retrofit.RetrofitError;
 
 import net.simonvt.trakt.api.entity.Movie;
-import net.simonvt.trakt.api.entity.TvShow;
 import net.simonvt.trakt.api.enumeration.DetailLevel;
 import net.simonvt.trakt.api.service.UserService;
 import net.simonvt.trakt.provider.MovieWrapper;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.util.LogWrapper;
 
-import android.content.ContentResolver;
 import android.database.Cursor;
 
 import java.util.ArrayList;
