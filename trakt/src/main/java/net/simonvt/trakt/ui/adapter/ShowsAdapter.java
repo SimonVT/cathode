@@ -149,7 +149,7 @@ public class ShowsAdapter extends CursorAdapter {
                     break;
 
                 case COLLECTION:
-                    vh.mOverflow.addItem(R.id.action_collection_add, R.string.action_collection_add_all);
+                    vh.mOverflow.addItem(R.id.action_collection_add, R.string.action_collect_next);
                     break;
             }
         }

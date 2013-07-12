@@ -97,7 +97,7 @@ public abstract class ShowsFragment extends AbsAdapterFragment implements Loader
     protected void onItemClick(AdapterView l, View v, int position, long id) {
         Cursor c = (Cursor) getAdapter().getItem(position);
         mNavigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(TraktContract.Shows.TITLE)),
-                LibraryType.WATCHED);
+                getLibraryType());
     }
 
     private void setCursor(Cursor cursor) {
