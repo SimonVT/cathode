@@ -549,7 +549,10 @@ public class TraktProvider extends ContentProvider {
 
             case SHOWS_ID: {
                 final String showId = Shows.getShowId(uri);
-                final int count = builder.table(Tables.SHOWS).where(Shows._ID + "=?", showId).update(db, values);
+                final int count = builder.table(Tables.SHOWS)
+                        .where(Shows._ID + "=?", showId)
+                        .where(where, whereArgs)
+                        .update(db, values);
                 if (count > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
                 }
@@ -560,6 +563,7 @@ public class TraktProvider extends ContentProvider {
                 final int count = builder
                         .table(Tables.SHOW_TOP_WATCHERS)
                         .where(Shows._ID + "=?", showId)
+                        .where(where, whereArgs)
                         .update(db, values);
 
                 if (count > 0) {
@@ -569,7 +573,9 @@ public class TraktProvider extends ContentProvider {
             }
             case SHOW_TOP_EPISODES: {
                 final String showId = TopEpisodes.getShowId(uri);
-                final int count = builder.table(Tables.SHOW_TOP_EPISODES).where(Shows._ID + "=?", showId)
+                final int count = builder.table(Tables.SHOW_TOP_EPISODES)
+                        .where(Shows._ID + "=?", showId)
+                        .where(where, whereArgs)
                         .update(db, values);
 
                 if (count > 0) {
@@ -579,7 +585,9 @@ public class TraktProvider extends ContentProvider {
             }
             case SHOW_ACTORS: {
                 final String showId = ShowActor.getShowId(uri);
-                final int count = builder.table(Tables.SHOW_ACTORS).where(Shows._ID + "=?", showId)
+                final int count = builder.table(Tables.SHOW_ACTORS)
+                        .where(Shows._ID + "=?", showId)
+                        .where(where, whereArgs)
                         .update(db, values);
 
                 if (count > 0) {
@@ -589,7 +597,9 @@ public class TraktProvider extends ContentProvider {
             }
             case SHOW_GENRES: {
                 final String showId = ShowGenres.getShowId(uri);
-                final int count = builder.table(Tables.SHOW_GENRES).where(Shows._ID + "=?", showId)
+                final int count = builder.table(Tables.SHOW_GENRES)
+                        .where(Shows._ID + "=?", showId)
+                        .where(where, whereArgs)
                         .update(db, values);
 
                 if (count > 0) {
@@ -620,7 +630,10 @@ public class TraktProvider extends ContentProvider {
             }
             case SEASON_ID: {
                 final String seasonId = Seasons.getSeasonId(uri);
-                final int count = builder.table(Tables.SEASONS).where(Seasons._ID + "=?", seasonId).update(db, values);
+                final int count = builder.table(Tables.SEASONS)
+                        .where(Seasons._ID + "=?", seasonId)
+                        .where(where, whereArgs)
+                        .update(db, values);
                 if (count > 0) {
                     final long showId =
                             SeasonWrapper.getShowId(getContext().getContentResolver(), Long.valueOf(seasonId));
@@ -654,8 +667,10 @@ public class TraktProvider extends ContentProvider {
             }
             case EPISODE_ID: {
                 final String episodeId = Episodes.getEpisodeId(uri);
-                final int count =
-                        builder.table(Tables.EPISODES).where(Episodes._ID + "=?", episodeId).update(db, values);
+                final int count = builder.table(Tables.EPISODES)
+                        .where(Episodes._ID + "=?", episodeId)
+                        .where(where, whereArgs)
+                        .update(db, values);
                 if (count > 0) {
                     final long id = Long.valueOf(episodeId);
                     final long showId = EpisodeWrapper.getShowId(getContext().getContentResolver(), id);
@@ -673,6 +688,7 @@ public class TraktProvider extends ContentProvider {
                 final String showIdStr = Episodes.getShowId(uri);
                 final int count = builder.table(Tables.EPISODES)
                         .where(Episodes.SHOW_ID + "=?", showIdStr)
+                        .where(where, whereArgs)
                         .update(db, values);
                 if (count > 0) {
                     Cursor c = builder.query(db, new String[] {
@@ -699,6 +715,7 @@ public class TraktProvider extends ContentProvider {
                 final String seasonIdStr = Episodes.getSeasonId(uri);
                 final int count = builder.table(Tables.EPISODES)
                         .where(Episodes.SEASON_ID + "=?", seasonIdStr)
+                        .where(where, whereArgs)
                         .update(db, values);
                 if (count > 0) {
                     Cursor c = builder.query(db, new String[] {
@@ -737,7 +754,10 @@ public class TraktProvider extends ContentProvider {
             }
             case MOVIE_ID: {
                 final String movieId = Movies.getMovieId(uri);
-                final int count = builder.table(Tables.MOVIES).where(Movies._ID + "=?", movieId).update(db, values);
+                final int count = builder.table(Tables.MOVIES)
+                        .where(Movies._ID + "=?", movieId)
+                        .where(where, whereArgs)
+                        .update(db, values);
                 if (count > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
                 }
@@ -747,6 +767,7 @@ public class TraktProvider extends ContentProvider {
                 final String movieId = MovieGenres.getMovieId(uri);
                 final int count = builder.table(Tables.MOVIE_GENRES)
                         .where(MovieGenres.MOVIE_ID + "=?", movieId)
+                        .where(where, whereArgs)
                         .update(db, values);
                 if (count > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
@@ -757,6 +778,7 @@ public class TraktProvider extends ContentProvider {
                 final String movieId = MovieTopWatchers.getMovieId(uri);
                 final int count = builder.table(Tables.MOVIE_TOP_WATCHERS)
                         .where(MovieTopWatchers.MOVIE_ID + "=?", movieId)
+                        .where(where, whereArgs)
                         .update(db, values);
                 if (count > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
@@ -767,6 +789,7 @@ public class TraktProvider extends ContentProvider {
                 final String movieId = MovieActors.getMovieId(uri);
                 final int count = builder.table(Tables.MOVIE_ACTORS)
                         .where(MovieActors.MOVIE_ID + "=?", movieId)
+                        .where(where, whereArgs)
                         .update(db, values);
                 if (count > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
@@ -777,6 +800,7 @@ public class TraktProvider extends ContentProvider {
                 final String movieId = MovieDirectors.getMovieId(uri);
                 final int count = builder.table(Tables.MOVIE_DIRECTORS)
                         .where(MovieDirectors.MOVIE_ID + "=?", movieId)
+                        .where(where, whereArgs)
                         .update(db, values);
                 if (count > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
@@ -787,6 +811,7 @@ public class TraktProvider extends ContentProvider {
                 final String movieId = MovieWriters.getMovieId(uri);
                 final int count = builder.table(Tables.MOVIE_WRITERS)
                         .where(MovieWriters.MOVIE_ID + "=?", movieId)
+                        .where(where, whereArgs)
                         .update(db, values);
                 if (count > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
@@ -797,6 +822,7 @@ public class TraktProvider extends ContentProvider {
                 final String movieId = MovieProducers.getMovieId(uri);
                 final int count = builder.table(Tables.MOVIE_PRODUCERS)
                         .where(MovieProducers.MOVIE_ID + "=?", movieId)
+                        .where(where, whereArgs)
                         .update(db, values);
                 if (count > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
