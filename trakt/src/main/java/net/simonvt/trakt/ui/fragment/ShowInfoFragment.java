@@ -12,9 +12,9 @@ import net.simonvt.trakt.provider.CollectLoader;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.provider.TraktContract.Shows;
 import net.simonvt.trakt.provider.WatchedLoader;
+import net.simonvt.trakt.remote.TraktTaskQueue;
 import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
 import net.simonvt.trakt.scheduler.ShowTaskScheduler;
-import net.simonvt.trakt.remote.TraktTaskQueue;
 import net.simonvt.trakt.ui.LibraryType;
 import net.simonvt.trakt.ui.ShowsNavigationListener;
 import net.simonvt.trakt.ui.adapter.SeasonsAdapter;
@@ -313,9 +313,9 @@ public class ShowInfoFragment extends BaseFragment {
                 @Override
                 public void onActionSelected(int action) {
                     switch (action) {
-                        case R.id.action_watched:
+                        case R.id.action_collection_add:
                             if (mToCollectId != -1) {
-                                mEpisodeScheduler.setWatched(mToCollectId, true);
+                                mEpisodeScheduler.setIsInCollection(mToCollectId, true);
                             }
                             break;
                     }
@@ -346,9 +346,9 @@ public class ShowInfoFragment extends BaseFragment {
                 @Override
                 public void onActionSelected(int action) {
                     switch (action) {
-                        case R.id.action_watched:
+                        case R.id.action_collection_add:
                             if (mLastCollectedId != -1) {
-                                mEpisodeScheduler.setWatched(mLastCollectedId, true);
+                                mEpisodeScheduler.setIsInCollection(mLastCollectedId, true);
                             }
                             break;
                     }
