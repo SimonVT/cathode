@@ -186,6 +186,23 @@ public final class ShowWrapper {
         return showId;
     }
 
+    public static void setWatched(ContentResolver resolver, int tvdbId, boolean watched) {
+        setWatched(resolver, getShowId(resolver, tvdbId), watched);
+    }
+
+    public static void setWatched(ContentResolver resolver, long showId, boolean watched) {
+        ContentValues cv = new ContentValues();
+        cv.put(TraktContract.Episodes.WATCHED, watched);
+
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT-8:00"));
+        final long currentTimeSeconds = cal.getTimeInMillis() / 1000L;
+
+        resolver.update(TraktContract.Episodes.buildFromShowId(showId), cv,
+                TraktContract.EpisodeColumns.FIRST_AIRED + "<?", new String[] {
+                String.valueOf(currentTimeSeconds),
+        });
+    }
+
     public static void setIsInWatchlist(ContentResolver resolver, int tvdbId, boolean inWatchlist) {
         setIsInWatchlist(resolver, getShowId(resolver, tvdbId), inWatchlist);
     }

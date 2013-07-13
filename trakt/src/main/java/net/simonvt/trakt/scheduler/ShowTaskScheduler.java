@@ -8,6 +8,7 @@ import net.simonvt.trakt.remote.action.EpisodeCollectionTask;
 import net.simonvt.trakt.remote.action.EpisodeWatchedTask;
 import net.simonvt.trakt.remote.action.ShowCollectionTask;
 import net.simonvt.trakt.remote.action.ShowRateTask;
+import net.simonvt.trakt.remote.action.ShowWatchedTask;
 import net.simonvt.trakt.remote.action.ShowWatchlistTask;
 import net.simonvt.trakt.remote.sync.SyncShowTask;
 
@@ -94,6 +95,36 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
                 c.close();
             }
 
+        });
+    }
+
+    public void setWatched(final long showId, final boolean watched) {
+        execute(new Runnable() {
+            @Override
+            public void run() {
+                Cursor c = mContext.getContentResolver().query(TraktContract.Shows.buildShowUri(showId), new String[] {
+                        TraktContract.Shows.TVDB_ID,
+                }, null, null, null);
+
+                if (c.moveToFirst()) {
+                    final int tvdbId = c.getInt(c.getColumnIndex(TraktContract.Shows.TVDB_ID));
+                    ShowWrapper.setWatched(mContext.getContentResolver(), showId, watched);
+                    mQueue.add(new ShowWatchedTask(tvdbId, watched));
+
+                    Cursor seasons = mContext.getContentResolver()
+                            .query(TraktContract.Seasons.buildFromShowId(showId), new String[] {
+                                    TraktContract.Seasons._ID,
+                            }, null, null, null);
+
+                    while (seasons.moveToNext()) {
+                        SeasonWrapper.updateSeasonCounts(mContext.getContentResolver(), seasons.getLong(0));
+                    }
+
+                    ShowWrapper.updateShowCounts(mContext.getContentResolver(), showId);
+                }
+
+                c.close();
+            }
         });
     }
 

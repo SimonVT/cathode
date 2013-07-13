@@ -128,6 +128,14 @@ public class ShowsAdapter extends CursorAdapter {
                         LogWrapper.v(TAG, "Watched item: " + id);
                         break;
 
+                    case R.id.action_watched_all:
+                        mShowScheduler.setWatched(id, true);
+                        break;
+
+                    case R.id.action_unwatch_all:
+                        mShowScheduler.setWatched(id, false);
+                        break;
+
                     case R.id.action_collection_add:
                         mShowScheduler.collectedNext(id);
                         LogWrapper.v(TAG, "Watched item: " + id);
@@ -156,6 +164,12 @@ public class ShowsAdapter extends CursorAdapter {
                     if (episodeTitle != null) {
                         vh.mOverflow.addItem(R.id.action_watched, R.string.action_watched_next);
                     }
+                    if (showTypeCount < showAiredCount) {
+                        vh.mOverflow.addItem(R.id.action_watched_all, R.string.action_watched_all);
+                    }
+                }
+                if (showTypeCount > 0) {
+                    vh.mOverflow.addItem(R.id.action_unwatch_all, R.string.action_unwatch_all);
                 }
                 break;
 
