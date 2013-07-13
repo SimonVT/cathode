@@ -16,8 +16,8 @@ import net.simonvt.trakt.api.service.AccountService;
 import net.simonvt.trakt.event.LoginEvent;
 import net.simonvt.trakt.event.MessageEvent;
 import net.simonvt.trakt.settings.Settings;
-import net.simonvt.trakt.sync.TraktTaskQueue;
-import net.simonvt.trakt.sync.task.SyncTask;
+import net.simonvt.trakt.remote.TraktTaskQueue;
+import net.simonvt.trakt.remote.sync.SyncTask;
 import net.simonvt.trakt.util.ApiUtils;
 import net.simonvt.trakt.util.LogWrapper;
 

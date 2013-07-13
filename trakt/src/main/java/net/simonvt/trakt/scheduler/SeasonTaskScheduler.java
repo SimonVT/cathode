@@ -2,7 +2,7 @@ package net.simonvt.trakt.scheduler;
 
 import net.simonvt.trakt.provider.ShowWrapper;
 import net.simonvt.trakt.provider.TraktContract;
-import net.simonvt.trakt.sync.task.EpisodeCollectionTask;
+import net.simonvt.trakt.remote.action.EpisodeCollectionTask;
 
 import android.content.Context;
 import android.database.Cursor;

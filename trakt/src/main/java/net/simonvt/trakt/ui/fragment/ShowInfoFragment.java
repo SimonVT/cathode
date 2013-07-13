@@ -14,7 +14,7 @@ import net.simonvt.trakt.provider.TraktContract.Shows;
 import net.simonvt.trakt.provider.WatchedLoader;
 import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
 import net.simonvt.trakt.scheduler.ShowTaskScheduler;
-import net.simonvt.trakt.sync.TraktTaskQueue;
+import net.simonvt.trakt.remote.TraktTaskQueue;
 import net.simonvt.trakt.ui.LibraryType;
 import net.simonvt.trakt.ui.ShowsNavigationListener;
 import net.simonvt.trakt.ui.adapter.SeasonsAdapter;

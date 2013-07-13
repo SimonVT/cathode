@@ -37,10 +37,10 @@
             android:authorities="net.simonvt.trakt.provider.TraktProvider" />
 
         <!-- Receivers -->
-        <receiver android:name="net.simonvt.trakt.sync.TaskServiceReceiver" />
+        <receiver android:name="net.simonvt.trakt.remote.TaskServiceReceiver" />
 
         <!-- Services -->
-        <service android:name="net.simonvt.trakt.sync.TraktTaskService" />
+        <service android:name="net.simonvt.trakt.remote.TraktTaskService" />
 
     </application>
 

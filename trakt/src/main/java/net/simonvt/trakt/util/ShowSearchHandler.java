@@ -11,8 +11,8 @@ import net.simonvt.trakt.api.service.SearchService;
 import net.simonvt.trakt.event.SearchFailureEvent;
 import net.simonvt.trakt.event.ShowSearchResult;
 import net.simonvt.trakt.provider.ShowWrapper;
-import net.simonvt.trakt.sync.TraktTaskQueue;
-import net.simonvt.trakt.sync.task.SyncShowTask;
+import net.simonvt.trakt.remote.TraktTaskQueue;
+import net.simonvt.trakt.remote.sync.SyncShowTask;
 
 import android.content.Context;
 import android.os.Handler;

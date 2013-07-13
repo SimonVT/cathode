@@ -3,12 +3,12 @@ package net.simonvt.trakt.scheduler;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.provider.ShowWrapper;
 import net.simonvt.trakt.provider.TraktContract;
-import net.simonvt.trakt.sync.task.EpisodeCollectionTask;
-import net.simonvt.trakt.sync.task.EpisodeWatchedTask;
-import net.simonvt.trakt.sync.task.ShowCollectionTask;
-import net.simonvt.trakt.sync.task.ShowRateTask;
-import net.simonvt.trakt.sync.task.ShowWatchlistTask;
-import net.simonvt.trakt.sync.task.SyncShowTask;
+import net.simonvt.trakt.remote.action.EpisodeCollectionTask;
+import net.simonvt.trakt.remote.action.EpisodeWatchedTask;
+import net.simonvt.trakt.remote.action.ShowCollectionTask;
+import net.simonvt.trakt.remote.action.ShowRateTask;
+import net.simonvt.trakt.remote.action.ShowWatchlistTask;
+import net.simonvt.trakt.remote.sync.SyncShowTask;
 
 import android.content.ContentValues;
 import android.content.Context;

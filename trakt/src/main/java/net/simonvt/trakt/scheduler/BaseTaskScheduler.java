@@ -1,9 +1,9 @@
 package net.simonvt.trakt.scheduler;
 
 import net.simonvt.trakt.TraktApp;
-import net.simonvt.trakt.sync.PriorityTraktTaskQueue;
-import net.simonvt.trakt.sync.TraktTaskQueue;
-import net.simonvt.trakt.sync.task.TraktTask;
+import net.simonvt.trakt.remote.PriorityTraktTaskQueue;
+import net.simonvt.trakt.remote.TraktTaskQueue;
+import net.simonvt.trakt.remote.TraktTask;
 
 import android.content.Context;
 import android.os.Handler;

@@ -3,9 +3,9 @@ package net.simonvt.trakt.ui.fragment;
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.provider.TraktContract;
-import net.simonvt.trakt.sync.PriorityTraktTaskQueue;
-import net.simonvt.trakt.sync.TraktTaskQueue;
-import net.simonvt.trakt.sync.task.SyncTask;
+import net.simonvt.trakt.remote.PriorityTraktTaskQueue;
+import net.simonvt.trakt.remote.TraktTaskQueue;
+import net.simonvt.trakt.remote.sync.SyncTask;
 import net.simonvt.trakt.ui.MoviesNavigationListener;
 import net.simonvt.trakt.ui.adapter.MoviesAdapter;
 

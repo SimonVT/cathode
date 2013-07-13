@@ -2,10 +2,10 @@ package net.simonvt.trakt.scheduler;
 
 import net.simonvt.trakt.provider.MovieWrapper;
 import net.simonvt.trakt.provider.TraktContract;
-import net.simonvt.trakt.sync.task.MovieCollectionTask;
-import net.simonvt.trakt.sync.task.MovieRateTask;
-import net.simonvt.trakt.sync.task.MovieWatchedTask;
-import net.simonvt.trakt.sync.task.MovieWatchlistTask;
+import net.simonvt.trakt.remote.action.MovieCollectionTask;
+import net.simonvt.trakt.remote.action.MovieRateTask;
+import net.simonvt.trakt.remote.action.MovieWatchedTask;
+import net.simonvt.trakt.remote.action.MovieWatchlistTask;
 
 import android.content.ContentValues;
 import android.content.Context;
