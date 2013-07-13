@@ -35,8 +35,9 @@
     <string name="action_unwatched">Unwatched</string>
     <string name="action_collection_add">Add to collection</string>
     <string name="action_collect_next">Collect next</string>
-    <string name="action_collection_add_all">Add all episodes</string>
+    <string name="action_collection_add_all">Collect all</string>
     <string name="action_collection_remove">Remove from collection</string>
+    <string name="action_collection_remove_all">Uncollect all</string>
     <string name="action_watchlist_add">Add to watchlist</string>
     <string name="action_watchlist_remove">Remove from watchlist</string>
     <string name="action_search">Search</string>

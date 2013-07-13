@@ -1,6 +1,7 @@
 package net.simonvt.trakt.scheduler;
 
 import net.simonvt.trakt.TraktApp;
+import net.simonvt.trakt.provider.SeasonWrapper;
 import net.simonvt.trakt.provider.ShowWrapper;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.remote.action.EpisodeCollectionTask;
@@ -127,6 +128,17 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
                     final int tvdbId = c.getInt(c.getColumnIndex(TraktContract.Shows.TVDB_ID));
                     ShowWrapper.setIsInCollection(mContext.getContentResolver(), showId, inCollection);
                     mQueue.add(new ShowCollectionTask(tvdbId, inCollection));
+
+                    Cursor seasons = mContext.getContentResolver()
+                            .query(TraktContract.Seasons.buildFromShowId(showId), new String[] {
+                                    TraktContract.Seasons._ID,
+                            }, null, null, null);
+
+                    while (seasons.moveToNext()) {
+                        SeasonWrapper.updateSeasonCounts(mContext.getContentResolver(), seasons.getLong(0));
+                    }
+
+                    ShowWrapper.updateShowCounts(mContext.getContentResolver(), showId);
                 }
 
                 c.close();

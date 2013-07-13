@@ -11,7 +11,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 public final class ShowWrapper {
 
@@ -203,7 +205,13 @@ public final class ShowWrapper {
         ContentValues cv = new ContentValues();
         cv.put(TraktContract.Episodes.IN_COLLECTION, inCollection);
 
-        resolver.update(TraktContract.Episodes.buildFromShowId(showId), cv, null, null);
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT-8:00"));
+        final long currentTimeSeconds = cal.getTimeInMillis() / 1000L;
+
+        resolver.update(TraktContract.Episodes.buildFromShowId(showId), cv,
+                TraktContract.EpisodeColumns.FIRST_AIRED + "<?", new String[] {
+                String.valueOf(currentTimeSeconds),
+        });
     }
 
     public static void updateShowCounts(ContentResolver resolver, int tvdbId) {

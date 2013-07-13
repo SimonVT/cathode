@@ -132,26 +132,44 @@ public class ShowsAdapter extends CursorAdapter {
                         mShowScheduler.collectedNext(id);
                         LogWrapper.v(TAG, "Watched item: " + id);
                         break;
+
+                    case R.id.action_collection_add_all:
+                        mShowScheduler.setIsInCollection(id, true);
+                        break;
+
+                    case R.id.action_collection_remove_all:
+                        mShowScheduler.setIsInCollection(id, false);
+                        break;
                 }
             }
         });
 
         vh.mOverflow.removeItems();
-        if (showAiredCount - showTypeCount > 0) {
-            switch (mLibraryType) {
-                case WATCHLIST:
+        switch (mLibraryType) {
+            case WATCHLIST:
+                if (showAiredCount - showTypeCount > 0) {
                     vh.mOverflow.addItem(R.id.action_watchlist_remove, R.string.action_watchlist_remove);
+                }
 
-                case WATCHED:
+            case WATCHED:
+                if (showAiredCount - showTypeCount > 0) {
                     if (episodeTitle != null) {
                         vh.mOverflow.addItem(R.id.action_watched, R.string.action_watched_next);
                     }
-                    break;
+                }
+                break;
 
-                case COLLECTION:
+            case COLLECTION:
+                if (showAiredCount - showTypeCount > 0) {
                     vh.mOverflow.addItem(R.id.action_collection_add, R.string.action_collect_next);
-                    break;
-            }
+                    if (showTypeCount < showAiredCount) {
+                        vh.mOverflow.addItem(R.id.action_collection_add_all, R.string.action_collection_add_all);
+                    }
+                }
+                if (showTypeCount > 0) {
+                    vh.mOverflow.addItem(R.id.action_collection_remove_all, R.string.action_collection_remove_all);
+                }
+                break;
         }
 
         vh.mPoster.setImage(showPosterUrl);

@@ -14,6 +14,7 @@ import net.simonvt.trakt.api.ApiKey;
 import net.simonvt.trakt.api.ResponseParser;
 import net.simonvt.trakt.api.TraktModule;
 import net.simonvt.trakt.api.UserCredentials;
+import net.simonvt.trakt.remote.action.ShowCollectionTask;
 import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
 import net.simonvt.trakt.scheduler.MovieTaskScheduler;
 import net.simonvt.trakt.scheduler.SeasonTaskScheduler;
@@ -179,6 +180,7 @@ public class TraktApp extends Application {
                     MovieWatchedTask.class,
                     MovieWatchlistTask.class,
                     ShowRateTask.class,
+                    ShowCollectionTask.class,
                     ShowWatchlistTask.class,
                     SyncShowsCollectionTask.class,
                     SyncEpisodeTask.class,
