@@ -35,6 +35,7 @@
         <tape.version>1.1.0</tape.version>
         <okhttp.version>1.0.2</okhttp.version>
         <retrofit.version>1.1.1</retrofit.version>
+        <dashclock.version>2.0</dashclock.version>
 
         <junit.version>4.11</junit.version>
         <commons-lang.version>2.6</commons-lang.version>
@@ -104,6 +105,12 @@
               <groupId>com.squareup.retrofit</groupId>
               <artifactId>retrofit</artifactId>
               <version>${retrofit.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.android.apps.dashclock</groupId>
+                <artifactId>dashclock-api</artifactId>
+                <version>${dashclock.version}</version>
             </dependency>
 
             <dependency>

@@ -42,6 +42,18 @@
         <!-- Services -->
         <service android:name="net.simonvt.trakt.remote.TraktTaskService" />
 
+        <service android:name="net.simonvt.trakt.service.DashClockService"
+            android:icon="@drawable/ic_action_search"
+            android:label="@string/dashclock_title"
+            android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
+            <intent-filter>
+                <action android:name="com.google.android.apps.dashclock.Extension" />
+            </intent-filter>
+            <meta-data android:name="protocolVersion" android:value="2" />
+            <meta-data android:name="worldReadable" android:value="true" />
+            <meta-data android:name="description" android:value="@string/dashclock_description" />
+        </service>
+
     </application>
 
 </manifest>

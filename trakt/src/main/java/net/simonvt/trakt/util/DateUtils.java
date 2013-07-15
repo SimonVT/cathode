@@ -6,6 +6,7 @@ import android.content.Context;
 
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public final class DateUtils {
 
@@ -32,6 +33,11 @@ public final class DateUtils {
 
     public static long currentTimeSeconds() {
         return System.currentTimeMillis() / 1000L;
+    }
+
+    public static long getServerTime() {
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT-8:00"));
+        return cal.getTimeInMillis() / 1000L;
     }
 
     // TODO: Check that this actually works.. It returns a date string, but no idea if it's correctly converted to the

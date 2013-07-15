@@ -73,6 +73,11 @@
             <groupId>com.squareup.okhttp</groupId>
             <artifactId>okhttp</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.android.apps.dashclock</groupId>
+            <artifactId>dashclock-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

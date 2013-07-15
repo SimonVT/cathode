@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="dashclock_title">@string/app_name</string>
+    <string name="dashclock_description">Display the next upcoming episode</string>
 
     <string name="username">Username</string>
     <string name="password">Password</string>
