@@ -150,39 +150,6 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
     }
 
     /**
-     * Notify trakt that user has started watching a show.
-     *
-     * @param episodeId The database id of the episode.
-     */
-    public void watching(final long episodeId) {
-        // TODO
-    }
-
-    /**
-     * Notify trakt that user has stopped watching a show.
-     *
-     * @param episodeId The database id of the episode.
-     */
-    public void cancelWatching(final long episodeId) {
-        // TODO
-    }
-
-    /**
-     * Notify trakt that a user has finished watching a show. This commits the show to the users profile.
-     * You should use {@link #watching(long)} prior to calling this method.
-     *
-     * @param episodeId The database id of the episode.
-     */
-    public void scrobble(final long episodeId) {
-        execute(new Runnable() {
-            @Override
-            public void run() {
-                // TODO
-            }
-        });
-    }
-
-    /**
      * Rate an episode on trakt. Depending on the user settings, this will also send out social updates to facebook,
      * twitter, and tumblr.
      *
