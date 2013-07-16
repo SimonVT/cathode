@@ -13,11 +13,9 @@ public class DashClockService extends DashClockExtension {
     @Override
     protected void onUpdateData(int reason) {
 
-        final long currentTime = DateUtils.getServerTime();
-
         Cursor c = getContentResolver().query(TraktContract.Episodes.CONTENT_URI, null,
                 TraktContract.Episodes.FIRST_AIRED + ">? AND " + TraktContract.Episodes.WATCHED + "=0", new String[] {
-                String.valueOf(currentTime),
+                String.valueOf(System.currentTimeMillis()),
         }, TraktContract.Episodes.FIRST_AIRED + " ASC LIMIT 1");
 
         if (c.moveToFirst()) {
@@ -27,7 +25,7 @@ public class DashClockService extends DashClockExtension {
             final long showId = c.getLong(c.getColumnIndex(TraktContract.Episodes.SHOW_ID));
             final long firstAired = c.getLong(c.getColumnIndex(TraktContract.Episodes.FIRST_AIRED));
 
-            final String date = DateUtils.secondsToDate(this, firstAired);
+            final String date = DateUtils.millisToString(this, firstAired, false);
 
             Cursor show = getContentResolver().query(TraktContract.Shows.buildShowUri(showId), null, null, null, null);
             if (!show.moveToFirst()) return; // Wat

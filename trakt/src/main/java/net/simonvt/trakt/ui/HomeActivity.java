@@ -8,12 +8,10 @@ import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.event.AuthFailedEvent;
 import net.simonvt.trakt.event.LoginEvent;
 import net.simonvt.trakt.event.MessageEvent;
-import net.simonvt.trakt.settings.Settings;
 import net.simonvt.trakt.remote.TraktTaskQueue;
 import net.simonvt.trakt.remote.sync.SyncTask;
+import net.simonvt.trakt.settings.Settings;
 import net.simonvt.trakt.ui.fragment.NavigationFragment;
-import net.simonvt.trakt.util.DateUtils;
-import net.simonvt.trakt.util.LogWrapper;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -65,14 +63,7 @@ public class HomeActivity extends BaseActivity
             mActiveController = mLoginController;
 
         } else {
-            final long lastUpdated = settings.getLong(Settings.SHOWS_LAST_UPDATED, 0);
-            final long currentTimeSeconds = DateUtils.currentTimeSeconds();
-            if (currentTimeSeconds >= lastUpdated + 6L * DateUtils.HOUR_IN_SECONDS) {
-                LogWrapper.i(TAG, "Queueing SyncTask");
-                settings.edit().putLong(Settings.SHOWS_LAST_UPDATED, currentTimeSeconds).apply();
-                mQueue.add(new SyncTask());
-            }
-
+            mQueue.add(new SyncTask());
             mActiveController = mUiController;
         }
 

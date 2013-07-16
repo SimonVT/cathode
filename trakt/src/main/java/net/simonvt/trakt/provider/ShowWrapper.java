@@ -4,6 +4,7 @@ import net.simonvt.trakt.api.entity.TvShow;
 import net.simonvt.trakt.provider.TraktContract.SeasonColumns;
 import net.simonvt.trakt.provider.TraktContract.ShowColumns;
 import net.simonvt.trakt.provider.TraktContract.Shows;
+import net.simonvt.trakt.util.DateUtils;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -195,11 +196,11 @@ public final class ShowWrapper {
         cv.put(TraktContract.Episodes.WATCHED, watched);
 
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT-8:00"));
-        final long currentTimeSeconds = cal.getTimeInMillis() / 1000L;
+        final long millis = cal.getTimeInMillis();
 
         resolver.update(TraktContract.Episodes.buildFromShowId(showId), cv,
                 TraktContract.EpisodeColumns.FIRST_AIRED + "<?", new String[] {
-                String.valueOf(currentTimeSeconds),
+                String.valueOf(millis),
         });
     }
 
@@ -223,11 +224,11 @@ public final class ShowWrapper {
         cv.put(TraktContract.Episodes.IN_COLLECTION, inCollection);
 
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT-8:00"));
-        final long currentTimeSeconds = cal.getTimeInMillis() / 1000L;
+        final long millis = cal.getTimeInMillis();
 
         resolver.update(TraktContract.Episodes.buildFromShowId(showId), cv,
                 TraktContract.EpisodeColumns.FIRST_AIRED + "<?", new String[] {
-                String.valueOf(currentTimeSeconds),
+                String.valueOf(millis),
         });
     }
 
@@ -279,7 +280,9 @@ public final class ShowWrapper {
         cv.put(Shows.TITLE, show.getTitle());
         cv.put(Shows.YEAR, show.getYear());
         cv.put(Shows.URL, show.getUrl());
-        if (show.getFirstAired() != 0) cv.put(Shows.FIRST_AIRED, show.getFirstAired());
+        if (show.getFirstAiredIso() != null) {
+            cv.put(Shows.FIRST_AIRED, DateUtils.getMillis(show.getFirstAiredIso()));
+        }
         cv.put(Shows.COUNTRY, show.getCountry());
         cv.put(Shows.OVERVIEW, show.getOverview());
         cv.put(Shows.RUNTIME, show.getRuntime());

@@ -3,10 +3,13 @@ package net.simonvt.trakt.util;
 import net.simonvt.trakt.R;
 
 import android.content.Context;
+import android.text.format.DateFormat;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
-import java.util.TimeZone;
 
 public final class DateUtils {
 
@@ -31,28 +34,27 @@ public final class DateUtils {
     private DateUtils() {
     }
 
-    public static long currentTimeSeconds() {
-        return System.currentTimeMillis() / 1000L;
+    public static long getMillis(String iso) {
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+            Date date = formatter.parse(iso);
+            return date.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return 0L;
     }
 
-    public static long getServerTime() {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT-8:00"));
-        return cal.getTimeInMillis() / 1000L;
-    }
-
-    // TODO: Check that this actually works.. It returns a date string, but no idea if it's correctly converted to the
-    //       users timezone.. It probably isn't.
-    public static String secondsToDate(Context context, long seconds) {
-        long millis = seconds * android.text.format.DateUtils.SECOND_IN_MILLIS;
-
+    /**
+     * Formats milliseconds (UTC) as a String.
+     */
+    public static String millisToString(Context context, long millis, boolean extended) {
         if (millis < android.text.format.DateUtils.YEAR_IN_MILLIS) {
             return context.getResources().getString(R.string.airdate_unknown);
         }
 
-        // Trakt timestamps are in PST (-8) .. Correct!
-        millis += 8 * HOUR_IN_MILLIS;
-
-        final Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
 
         final long rightNow = cal.getTimeInMillis();
 
@@ -62,22 +64,22 @@ public final class DateUtils {
 
         if (rightNow > millis && rightNow < millis + 1 * HOUR_IN_MILLIS) {
             final long minutes = (rightNow - millis) / MINUTE_IN_MILLIS;
-            return context.getString(R.string.in_minutes, minutes);
+            return context.getString(R.string.minutes_ago, minutes);
         }
 
         if (rightNow < millis && rightNow > millis - 1 * HOUR_IN_MILLIS) {
             final long minutes = (millis - rightNow) / MINUTE_IN_MILLIS;
-            return context.getString(R.string.minutes_ago, minutes);
+            return context.getString(R.string.in_minutes, minutes);
         }
 
         if (rightNow > millis && rightNow <= millis + 24 * HOUR_IN_MILLIS) {
             final long hours = (rightNow - millis) / HOUR_IN_MILLIS;
-            return context.getString(R.string.in_hours, hours);
+            return context.getString(R.string.hours_ago, hours);
         }
 
         if (rightNow < millis && rightNow >= millis - 24 * HOUR_IN_MILLIS) {
             final long hours = (millis - rightNow) / HOUR_IN_MILLIS;
-            return context.getString(R.string.hours_ago, hours);
+            return context.getString(R.string.in_hours, hours);
         }
 
         final int year = cal.get(Calendar.YEAR);
@@ -89,8 +91,32 @@ public final class DateUtils {
         StringBuilder sb = new StringBuilder();
 
         sb.append(month).append(" ").append(day);
+
         if (millisYear != year) {
             sb.append(", ").append(millisYear);
+        } else if (extended && millis > rightNow - 24 * HOUR_IN_MILLIS) {
+            final boolean twentyFourHourFormat = DateFormat.is24HourFormat(context);
+
+            sb.append(" ");
+
+            if (twentyFourHourFormat) {
+                sb.append(cal.get(Calendar.HOUR_OF_DAY));
+            } else {
+                sb.append(cal.get(Calendar.HOUR));
+            }
+
+            sb.append(":").append(String.format("%02d", cal.get(Calendar.MINUTE)));
+
+            if (!twentyFourHourFormat) {
+                sb.append(" ");
+                final int ampm = cal.get(Calendar.AM_PM);
+                if (ampm == Calendar.AM) {
+                    sb.append("am");
+                } else {
+                    sb.append("pm");
+                }
+            }
+
         }
 
         return sb.toString();

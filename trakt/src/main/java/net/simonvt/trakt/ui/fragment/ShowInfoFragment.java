@@ -450,7 +450,7 @@ public class ShowInfoFragment extends BaseFragment {
             mToWatchHolder.mEpisodeTitle.setText(cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.TITLE)));
 
             final long airTime = cursor.getLong(cursor.getColumnIndex(TraktContract.Episodes.FIRST_AIRED));
-            final String airTimeStr = DateUtils.secondsToDate(getActivity(), airTime);
+            final String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
             mToWatchHolder.mEpisodeAirTime.setText(airTimeStr);
 
             final int season = cursor.getInt(cursor.getColumnIndex(TraktContract.Episodes.SEASON));
@@ -475,7 +475,7 @@ public class ShowInfoFragment extends BaseFragment {
                         .setText(cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.TITLE)));
 
                 final long airTime = cursor.getLong(cursor.getColumnIndex(TraktContract.Episodes.FIRST_AIRED));
-                final String airTimeStr = DateUtils.secondsToDate(getActivity(), airTime);
+                final String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
                 mLastWatchedHolder.mEpisodeAirTime.setText(airTimeStr);
 
                 final int season = cursor.getInt(cursor.getColumnIndex(TraktContract.Episodes.SEASON));
@@ -508,7 +508,7 @@ public class ShowInfoFragment extends BaseFragment {
                     .setText(cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.TITLE)));
 
             final long airTime = cursor.getLong(cursor.getColumnIndex(TraktContract.Episodes.FIRST_AIRED));
-            final String airTimeStr = DateUtils.secondsToDate(getActivity(), airTime);
+            final String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
             mToCollectHolder.mEpisodeAirTime.setText(airTimeStr);
 
             final int season = cursor.getInt(cursor.getColumnIndex(TraktContract.Episodes.SEASON));
@@ -533,7 +533,7 @@ public class ShowInfoFragment extends BaseFragment {
                         .setText(cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.TITLE)));
 
                 final long airTime = cursor.getLong(cursor.getColumnIndex(TraktContract.Episodes.FIRST_AIRED));
-                final String airTimeStr = DateUtils.secondsToDate(getActivity(), airTime);
+                final String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
                 mLastCollectedHolder.mEpisodeAirTime.setText(airTimeStr);
 
                 final int season = cursor.getInt(cursor.getColumnIndex(TraktContract.Episodes.SEASON));

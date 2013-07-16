@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 import java.util.Calendar;
-import java.util.TimeZone;
 
 public final class SeasonWrapper {
 
@@ -131,9 +130,8 @@ public final class SeasonWrapper {
         final int watchedIndex = c.getColumnIndex(TraktContract.EpisodeColumns.WATCHED);
         final int inCollectionIndex = c.getColumnIndex(TraktContract.EpisodeColumns.IN_COLLECTION);
 
-        // TODO: Possibly get server timezone from trakt api
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT-8:00"));
-        final long currentTimeSeconds = cal.getTimeInMillis() / 1000L;
+        Calendar cal = Calendar.getInstance();
+        final long millis = cal.getTimeInMillis();
 
         while (c.moveToNext()) {
             final long firstAired = c.getLong(firstAiredIndex);
@@ -141,7 +139,7 @@ public final class SeasonWrapper {
             // Unaired
             if (firstAired > 1 * DateUtils.YEAR_IN_SECONDS) {
                 airdateCount++;
-                if (firstAired <= currentTimeSeconds) {
+                if (firstAired <= millis) {
                     airedCount++;
                 }
             }

@@ -71,7 +71,7 @@ public class SeasonAdapter extends CursorAdapter {
 
         vh.mTitle.setText(title);
 
-        vh.mFirstAired.setText(DateUtils.secondsToDate(context, firstAired));
+        vh.mFirstAired.setText(DateUtils.millisToString(context, firstAired, true));
         vh.mNumber.setText(String.valueOf(episode));
 
         vh.mScreen.setImage(screen);

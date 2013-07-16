@@ -183,8 +183,8 @@ public class EpisodeFragment extends BaseFragment {
             mTitle.setText(cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.TITLE)));
             mOverview.setText(cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.OVERVIEW)));
             mScreen.setImage(cursor.getString(cursor.getColumnIndex(TraktContract.Episodes.SCREEN)));
-            mFirstAired.setText(DateUtils.secondsToDate(getActivity(),
-                    cursor.getLong(cursor.getColumnIndex(TraktContract.Episodes.FIRST_AIRED))));
+            mFirstAired.setText(DateUtils.millisToString(getActivity(),
+                    cursor.getLong(cursor.getColumnIndex(TraktContract.Episodes.FIRST_AIRED)), true));
 
             mWatched = cursor.getInt(cursor.getColumnIndex(TraktContract.Episodes.WATCHED)) == 1;
             mCollected = cursor.getInt(cursor.getColumnIndex(TraktContract.Episodes.IN_COLLECTION)) == 1;

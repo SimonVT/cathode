@@ -101,7 +101,7 @@ public class ShowsAdapter extends CursorAdapter {
         } else {
             episodeText = "Next: " + episodeSeasonNumber + "x" + episodeNumber + " " + episodeTitle;
             vh.mFirstAired.setVisibility(View.VISIBLE);
-            vh.mFirstAired.setText(DateUtils.secondsToDate(mContext, episodeFirstAired));
+            vh.mFirstAired.setText(DateUtils.millisToString(mContext, episodeFirstAired, false));
         }
         vh.mNextEpisode.setText(episodeText);
         vh.mNextEpisode.setEnabled(episodeTitle != null);

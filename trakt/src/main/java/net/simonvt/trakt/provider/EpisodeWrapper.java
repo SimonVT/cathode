@@ -3,6 +3,7 @@ package net.simonvt.trakt.provider;
 import net.simonvt.trakt.api.entity.Episode;
 import net.simonvt.trakt.provider.TraktContract.EpisodeColumns;
 import net.simonvt.trakt.provider.TraktContract.Episodes;
+import net.simonvt.trakt.util.DateUtils;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -265,7 +266,9 @@ public final class EpisodeWrapper {
         cv.put(EpisodeColumns.TITLE, episode.getTitle());
         cv.put(EpisodeColumns.OVERVIEW, episode.getOverview());
         cv.put(EpisodeColumns.URL, episode.getUrl());
-        if (episode.getFirstAired() != 0) cv.put(EpisodeColumns.FIRST_AIRED, episode.getFirstAired());
+        if (episode.getFirstAiredIso() != null) {
+            cv.put(EpisodeColumns.FIRST_AIRED, DateUtils.getMillis(episode.getFirstAiredIso()));
+        }
         if (episode.getImages() != null) {
             cv.put(Episodes.POSTER, episode.getImages().getPoster());
             cv.put(Episodes.FANART, episode.getImages().getFanart());

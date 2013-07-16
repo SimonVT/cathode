@@ -26,6 +26,10 @@ public class TvShow {
 
     private Long firstAired;
 
+    private String firstAiredIso;
+
+    private Long firstAiredUtc;
+
     private String country;
 
     private String overview;
@@ -90,6 +94,14 @@ public class TvShow {
 
     public Long getFirstAired() {
         return firstAired;
+    }
+
+    public String getFirstAiredIso() {
+        return firstAiredIso;
+    }
+
+    public Long getFirstAiredUtc() {
+        return firstAiredUtc;
     }
 
     public String getCountry() {

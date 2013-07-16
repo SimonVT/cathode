@@ -35,12 +35,12 @@ public class TraktDatabase extends SQLiteOpenHelper {
 
         String SHOWS_WITH_UNWATCHED = SHOWS + " LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
                 + " episodes WHERE episodes.watched=0 AND episodes.showId=shows._id AND episodes.season<>0"
-                + " AND episodes.episodeFirstAired>" + DateUtils.YEAR_IN_SECONDS // TODO: Find better solution
+                + " AND episodes.episodeFirstAired>" + DateUtils.YEAR_IN_MILLIS // TODO: Find better solution
                 + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
 
         String SHOWS_WITH_UNCOLLECTED = SHOWS + " LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
                 + " episodes WHERE episodes.inCollection=0 AND episodes.showId=shows._id AND episodes.season<>0"
-                + " AND episodes.episodeFirstAired>" + DateUtils.YEAR_IN_SECONDS // TODO: Find better solution
+                + " AND episodes.episodeFirstAired>" + DateUtils.YEAR_IN_MILLIS // TODO: Find better solution
                 + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
 
         String SHOW_TOP_WATCHERS = "showTopWatchers";

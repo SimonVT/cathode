@@ -14,6 +14,10 @@ public class Episode {
 
     private Long firstAired;
 
+    private String firstAiredIso;
+
+    private Long firstAiredUtc;
+
     private String url;
 
     private String screen;
@@ -54,6 +58,14 @@ public class Episode {
 
     public Long getFirstAired() {
         return firstAired;
+    }
+
+    public String getFirstAiredIso() {
+        return firstAiredIso;
+    }
+
+    public Long getFirstAiredUtc() {
+        return firstAiredUtc;
     }
 
     public String getUrl() {

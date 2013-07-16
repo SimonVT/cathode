@@ -58,7 +58,7 @@ public class EpisodeWatchlistAdapter extends CursorAdapter {
 
         vh.mScreen.setImage(posterUrl);
         vh.mTitle.setText(title);
-        vh.mFirstAired.setText(DateUtils.secondsToDate(context, firstAired));
+        vh.mFirstAired.setText(DateUtils.millisToString(context, firstAired, false));
         vh.mEpisode.setText(season + "x" + episode);
         vh.mOverflow.setListener(new OverflowView.OverflowActionListener() {
             @Override
