@@ -12,6 +12,15 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+
     <application
         android:name="net.simonvt.trakt.TraktApp"
         android:label="@string/app_name"
@@ -34,7 +43,8 @@
         <!-- Providers -->
         <provider
             android:name="net.simonvt.trakt.provider.TraktProvider"
-            android:authorities="net.simonvt.trakt.provider.TraktProvider" />
+            android:authorities="net.simonvt.trakt.provider.TraktProvider"
+            android:exported="true" />
 
         <!-- Receivers -->
         <receiver android:name="net.simonvt.trakt.remote.TaskServiceReceiver" />
@@ -52,6 +62,27 @@
             <meta-data android:name="protocolVersion" android:value="2" />
             <meta-data android:name="worldReadable" android:value="true" />
             <meta-data android:name="description" android:value="@string/dashclock_description" />
+        </service>
+
+        <service
+            android:name="net.simonvt.trakt.service.AuthenticatorService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <service
+            android:name="net.simonvt.trakt.service.CalendarService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter"
+                android:resource="@xml/calendar_syncadapter" />
         </service>
 
     </application>

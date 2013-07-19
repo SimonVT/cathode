@@ -15,9 +15,9 @@ import net.simonvt.trakt.api.entity.TraktResponse;
 import net.simonvt.trakt.api.service.AccountService;
 import net.simonvt.trakt.event.LoginEvent;
 import net.simonvt.trakt.event.MessageEvent;
-import net.simonvt.trakt.settings.Settings;
 import net.simonvt.trakt.remote.TraktTaskQueue;
 import net.simonvt.trakt.remote.sync.SyncTask;
+import net.simonvt.trakt.settings.Settings;
 import net.simonvt.trakt.util.ApiUtils;
 import net.simonvt.trakt.util.LogWrapper;
 
@@ -146,8 +146,6 @@ public class LoginFragment extends BaseFragment {
 
         @Override
         protected void onPostExecute(Boolean success) {
-            mLogin.setEnabled(true);
-
             if (success) {
                 mBus.post(new MessageEvent(R.string.login_success));
 
@@ -165,7 +163,10 @@ public class LoginFragment extends BaseFragment {
 
                 mBus.post(new LoginEvent(mUsername, mPassword));
 
+                TraktApp.setupAccount(mAppContext);
+
             } else {
+                mLogin.setEnabled(true);
                 mBus.post(new MessageEvent(R.string.create_user_failed));
             }
         }
@@ -201,8 +202,6 @@ public class LoginFragment extends BaseFragment {
 
         @Override
         protected void onPostExecute(Boolean success) {
-            mLogin.setEnabled(true);
-
             if (success) {
                 mBus.post(new MessageEvent(R.string.login_success));
 
@@ -220,7 +219,10 @@ public class LoginFragment extends BaseFragment {
 
                 mBus.post(new LoginEvent(mUsername, mPassword));
 
+                TraktApp.setupAccount(mAppContext);
+
             } else {
+                mLogin.setEnabled(true);
                 mCredentials.setCredentials(null, null);
                 mBus.post(new MessageEvent(R.string.wrong_password));
             }

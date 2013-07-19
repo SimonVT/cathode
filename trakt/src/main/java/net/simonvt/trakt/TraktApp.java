@@ -14,14 +14,8 @@ import net.simonvt.trakt.api.ApiKey;
 import net.simonvt.trakt.api.ResponseParser;
 import net.simonvt.trakt.api.TraktModule;
 import net.simonvt.trakt.api.UserCredentials;
-import net.simonvt.trakt.remote.action.ShowCollectionTask;
-import net.simonvt.trakt.remote.action.ShowWatchedTask;
-import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
-import net.simonvt.trakt.scheduler.MovieTaskScheduler;
-import net.simonvt.trakt.scheduler.SeasonTaskScheduler;
-import net.simonvt.trakt.scheduler.ShowTaskScheduler;
-import net.simonvt.trakt.settings.Settings;
 import net.simonvt.trakt.remote.PriorityTraktTaskQueue;
+import net.simonvt.trakt.remote.TraktTask;
 import net.simonvt.trakt.remote.TraktTaskQueue;
 import net.simonvt.trakt.remote.TraktTaskSerializer;
 import net.simonvt.trakt.remote.TraktTaskService;
@@ -33,7 +27,9 @@ import net.simonvt.trakt.remote.action.MovieCollectionTask;
 import net.simonvt.trakt.remote.action.MovieRateTask;
 import net.simonvt.trakt.remote.action.MovieWatchedTask;
 import net.simonvt.trakt.remote.action.MovieWatchlistTask;
+import net.simonvt.trakt.remote.action.ShowCollectionTask;
 import net.simonvt.trakt.remote.action.ShowRateTask;
+import net.simonvt.trakt.remote.action.ShowWatchedTask;
 import net.simonvt.trakt.remote.action.ShowWatchlistTask;
 import net.simonvt.trakt.remote.sync.SyncEpisodeTask;
 import net.simonvt.trakt.remote.sync.SyncEpisodeWatchlistTask;
@@ -51,9 +47,13 @@ import net.simonvt.trakt.remote.sync.SyncShowsWatchlistTask;
 import net.simonvt.trakt.remote.sync.SyncTask;
 import net.simonvt.trakt.remote.sync.SyncUpdatedMovies;
 import net.simonvt.trakt.remote.sync.SyncUpdatedShows;
-import net.simonvt.trakt.remote.TraktTask;
 import net.simonvt.trakt.remote.sync.UpdateSeasonCountTask;
 import net.simonvt.trakt.remote.sync.UpdateShowCountTask;
+import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
+import net.simonvt.trakt.scheduler.MovieTaskScheduler;
+import net.simonvt.trakt.scheduler.SeasonTaskScheduler;
+import net.simonvt.trakt.scheduler.ShowTaskScheduler;
+import net.simonvt.trakt.settings.Settings;
 import net.simonvt.trakt.ui.HomeActivity;
 import net.simonvt.trakt.ui.PhoneController;
 import net.simonvt.trakt.ui.adapter.EpisodeWatchlistAdapter;
@@ -86,10 +86,14 @@ import net.simonvt.trakt.util.ShowSearchHandler;
 import net.simonvt.trakt.widget.PhoneEpisodeView;
 import net.simonvt.trakt.widget.RemoteImageView;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Application;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.provider.CalendarContract;
 
 import javax.inject.Singleton;
 
@@ -102,7 +106,6 @@ public class TraktApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         mObjectGraph = ObjectGraph.create(new AppModule(this));
         mObjectGraph.plus(new TraktModule());
     }
@@ -113,6 +116,27 @@ public class TraktApp extends Application {
 
     public static void inject(Context context, Object object) {
         ((TraktApp) context.getApplicationContext()).mObjectGraph.inject(object);
+    }
+
+    public static Account getAccount(Context context) {
+        return new Account(context.getString(R.string.accountName), context.getString(R.string.accountType));
+    }
+
+    public static void setupAccount(Context context) {
+        AccountManager manager = AccountManager.get(context);
+        Account account = getAccount(context);
+        manager.addAccountExplicitly(account, null, null);
+
+        ContentResolver.setIsSyncable(account, CalendarContract.AUTHORITY, 1);
+        ContentResolver.setSyncAutomatically(account, CalendarContract.AUTHORITY, true);
+    }
+
+    public static void removeAccount(Context context) {
+        AccountManager am = AccountManager.get(context);
+        Account[] accounts = am.getAccountsByType(context.getString(R.string.accountType));
+        for (Account account : accounts) {
+            am.removeAccount(account, null, null);
+        }
     }
 
     @Module(
