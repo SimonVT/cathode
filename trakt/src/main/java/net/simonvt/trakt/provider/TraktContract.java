@@ -344,6 +344,8 @@ public final class TraktContract {
 
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.simonvt.trakt.movie";
 
+        public static final String DEFAULT_STORT = TraktDatabase.Tables.MOVIES + "." + TITLE + " ASC";
+
         public static Uri buildMovieUri(long movieId) {
             return CONTENT_URI.buildUpon().appendPath(String.valueOf(movieId)).build();
         }

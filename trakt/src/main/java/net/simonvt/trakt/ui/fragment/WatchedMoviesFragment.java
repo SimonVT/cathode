@@ -29,7 +29,7 @@ public class WatchedMoviesFragment extends MoviesFragment {
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         CursorLoader loader = new CursorLoader(getActivity(), TraktContract.Movies.CONTENT_URI, null,
-                TraktContract.Movies.WATCHED, null, null);
+                TraktContract.Movies.WATCHED, null, TraktContract.Movies.DEFAULT_STORT);
         loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
         return loader;
     }
