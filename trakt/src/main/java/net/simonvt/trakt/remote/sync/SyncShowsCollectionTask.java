@@ -39,7 +39,7 @@ public class SyncShowsCollectionTask extends TraktTask {
             ContentResolver resolver = mService.getContentResolver();
             List<TvShow> shows = mUserService.libraryShowsCollection(DetailLevel.MIN);
 
-            Cursor c = mService.getContentResolver().query(TraktContract.Episodes.CONTENT_URI, new String[] {
+            Cursor c = resolver.query(TraktContract.Episodes.CONTENT_URI, new String[] {
                     TraktContract.Episodes._ID,
                     TraktContract.Episodes.SHOW_ID,
                     TraktContract.Episodes.SEASON_ID,
@@ -53,6 +53,7 @@ public class SyncShowsCollectionTask extends TraktTask {
                 updateShows.add(c.getLong(1));
                 updateSeasons.add(c.getLong(2));
             }
+            c.close();
 
             ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 

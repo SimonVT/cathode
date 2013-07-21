@@ -119,6 +119,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
                     while (seasons.moveToNext()) {
                         SeasonWrapper.updateSeasonCounts(mContext.getContentResolver(), seasons.getLong(0));
                     }
+                    seasons.close();
 
                     ShowWrapper.updateShowCounts(mContext.getContentResolver(), showId);
                 }
@@ -168,6 +169,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
                     while (seasons.moveToNext()) {
                         SeasonWrapper.updateSeasonCounts(mContext.getContentResolver(), seasons.getLong(0));
                     }
+                    seasons.close();
 
                     ShowWrapper.updateShowCounts(mContext.getContentResolver(), showId);
                 }

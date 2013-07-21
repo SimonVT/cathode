@@ -28,8 +28,12 @@ public class DashClockService extends DashClockExtension {
             final String date = DateUtils.millisToString(this, firstAired, false);
 
             Cursor show = getContentResolver().query(TraktContract.Shows.buildShowUri(showId), null, null, null, null);
-            if (!show.moveToFirst()) return; // Wat
+            if (!show.moveToFirst()) {
+                show.close();
+                return; // Wat
+            }
             final String showTitle = show.getString(show.getColumnIndex(TraktContract.Shows.TITLE));
+            show.close();
 
             ExtensionData data = new ExtensionData()
                     .visible(true)
@@ -41,5 +45,6 @@ public class DashClockService extends DashClockExtension {
         } else {
             publishUpdate(new ExtensionData().visible(false));
         }
+        c.close();
     }
 }

@@ -117,10 +117,6 @@ public final class ShowWrapper {
         return id;
     }
 
-    public static void remove(ContentResolver resolver, int tvbdId) {
-        // TODO:
-    }
-
     public static boolean exists(ContentResolver resolver, int tvdbId) {
         Cursor c = null;
         try {
@@ -319,22 +315,6 @@ public final class ShowWrapper {
         }
 
         return cv;
-    }
-
-    public static void library(ContentResolver contentResolver, long showId) {
-        // TODO:
-    }
-
-    public static void unlibrary(ContentResolver contentResolver, long showId) {
-        // TODO:
-    }
-
-    public static void unwatchlist(ContentResolver contentResolver, long showId) {
-        // TODO:
-    }
-
-    public static void watchlist(ContentResolver contentResolver, long showId) {
-        // TODO:
     }
 
     public static long getLastUpdated(ContentResolver resolver) {

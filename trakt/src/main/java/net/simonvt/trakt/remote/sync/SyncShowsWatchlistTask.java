@@ -37,6 +37,7 @@ public class SyncShowsWatchlistTask extends TraktTask {
             while (c.moveToNext()) {
                 showIds.add(c.getLong(c.getColumnIndex(TraktContract.Shows._ID)));
             }
+            c.close();
 
             List<TvShow> shows = mUserService.watchlistShows();
 

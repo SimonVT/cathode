@@ -44,6 +44,8 @@ public class ShowWatchedTask extends TraktTask {
                 while (c.moveToNext()) {
                     queuePriorityTask(new EpisodeWatchedTask(mTvdbId, c.getInt(0), c.getInt(0), false));
                 }
+
+                c.close();
             }
 
             postOnSuccess();

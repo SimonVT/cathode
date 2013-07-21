@@ -36,6 +36,7 @@ public class SyncMoviesWatchlistTask extends TraktTask {
             while (c.moveToNext()) {
                 movieIds.add(c.getLong(c.getColumnIndex(TraktContract.Movies._ID)));
             }
+            c.close();
 
             List<Movie> movies = mUserService.watchlistMovies();
 

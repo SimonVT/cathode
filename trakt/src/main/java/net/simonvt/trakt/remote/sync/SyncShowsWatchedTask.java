@@ -41,7 +41,7 @@ public class SyncShowsWatchedTask extends TraktTask {
             ContentResolver resolver = mService.getContentResolver();
             List<TvShow> shows = mUserService.libraryShowsWatched(DetailLevel.MIN);
 
-            Cursor c = mService.getContentResolver().query(TraktContract.Episodes.CONTENT_URI, new String[] {
+            Cursor c = resolver.query(TraktContract.Episodes.CONTENT_URI, new String[] {
                     TraktContract.Episodes._ID,
             }, TraktContract.Episodes.WATCHED, null, null);
 
@@ -51,6 +51,7 @@ public class SyncShowsWatchedTask extends TraktTask {
             while (c.moveToNext()) {
                 episodeIds.add(c.getLong(episodeIdIndex));
             }
+            c.close();
 
             ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 

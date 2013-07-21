@@ -71,6 +71,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
         while (c.moveToNext()) {
             events.put(c.getLong(c.getColumnIndex(CalendarContract.Events.SYNC_DATA1)), new Event(c));
         }
+        c.close();
 
         final long time = System.currentTimeMillis();
 
@@ -135,6 +136,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
                 ops.add(op);
             }
         }
+        episodes.close();
 
         for (int i = 0, size = events.size(); i < size; i++) {
             Event event = events.valueAt(i);
@@ -156,43 +158,48 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private long getCalendar(Account account) {
-        Uri calenderUri = CalendarContract.Calendars.CONTENT_URI.buildUpon()
-                .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, account.name)
-                .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, account.type)
-                .build();
-        Cursor c = mContext.getContentResolver().query(calenderUri, new String[] {
-                BaseColumns._ID,
-        }, null, null, null);
-        if (c.moveToNext()) {
-            return c.getLong(0);
-        } else {
-            ArrayList<ContentProviderOperation> operationList = new ArrayList<ContentProviderOperation>();
+        Cursor c = null;
+        try {
+            Uri calenderUri = CalendarContract.Calendars.CONTENT_URI.buildUpon()
+                    .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, account.name)
+                    .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, account.type)
+                    .build();
+            c = mContext.getContentResolver().query(calenderUri, new String[] {
+                    BaseColumns._ID,
+            }, null, null, null);
+            if (c.moveToNext()) {
+                return c.getLong(0);
+            } else {
+                ArrayList<ContentProviderOperation> operationList = new ArrayList<ContentProviderOperation>();
 
-            ContentProviderOperation.Builder builder = ContentProviderOperation.newInsert(
-                    CalendarContract.Calendars.CONTENT_URI.buildUpon()
-                            .appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER, "true")
-                            .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, account.name)
-                            .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, account.type)
-                            .build()
-            );
-            builder.withValue(CalendarContract.Calendars.ACCOUNT_NAME, account.name);
-            builder.withValue(CalendarContract.Calendars.ACCOUNT_TYPE, account.type);
-            builder.withValue(CalendarContract.Calendars.NAME, mContext.getString(R.string.app_name));
-            builder.withValue(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
-                    mContext.getString(R.string.calendarName));
-            builder.withValue(CalendarContract.Calendars.CALENDAR_COLOR, 0xD51007);
-            builder.withValue(CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL,
-                    CalendarContract.Calendars.CAL_ACCESS_READ);
-            builder.withValue(CalendarContract.Calendars.OWNER_ACCOUNT, account.name);
-            builder.withValue(CalendarContract.Calendars.SYNC_EVENTS, 1);
-            operationList.add(builder.build());
-            try {
-                mContext.getContentResolver().applyBatch(CalendarContract.AUTHORITY, operationList);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return -1L;
+                ContentProviderOperation.Builder builder = ContentProviderOperation.newInsert(
+                        CalendarContract.Calendars.CONTENT_URI.buildUpon()
+                                .appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER, "true")
+                                .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, account.name)
+                                .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, account.type)
+                                .build()
+                );
+                builder.withValue(CalendarContract.Calendars.ACCOUNT_NAME, account.name);
+                builder.withValue(CalendarContract.Calendars.ACCOUNT_TYPE, account.type);
+                builder.withValue(CalendarContract.Calendars.NAME, mContext.getString(R.string.app_name));
+                builder.withValue(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
+                        mContext.getString(R.string.calendarName));
+                builder.withValue(CalendarContract.Calendars.CALENDAR_COLOR, 0xD51007);
+                builder.withValue(CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL,
+                        CalendarContract.Calendars.CAL_ACCESS_READ);
+                builder.withValue(CalendarContract.Calendars.OWNER_ACCOUNT, account.name);
+                builder.withValue(CalendarContract.Calendars.SYNC_EVENTS, 1);
+                operationList.add(builder.build());
+                try {
+                    mContext.getContentResolver().applyBatch(CalendarContract.AUTHORITY, operationList);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return -1L;
+                }
+                return getCalendar(account);
             }
-            return getCalendar(account);
+        } finally {
+            if (c != null) c.close();
         }
     }
 }

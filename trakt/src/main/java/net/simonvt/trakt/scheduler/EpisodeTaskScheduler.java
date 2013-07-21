@@ -39,6 +39,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
                 final int tvdbId = ShowWrapper.getTvdbId(mContext.getContentResolver(), showId);
                 final int season = c.getInt(c.getColumnIndex(TraktContract.Episodes.SEASON));
                 final int number = c.getInt(c.getColumnIndex(TraktContract.Episodes.EPISODE));
+                c.close();
 
                 postTask(new SyncEpisodeTask(tvdbId, season, number));
             }
@@ -64,6 +65,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
                 final int tvdbId = ShowWrapper.getTvdbId(mContext.getContentResolver(), showId);
                 final int season = c.getInt(c.getColumnIndex(TraktContract.Episodes.SEASON));
                 final int number = c.getInt(c.getColumnIndex(TraktContract.Episodes.EPISODE));
+                c.close();
 
                 EpisodeWrapper.setWatched(mContext.getContentResolver(), episodeId, watched);
 
@@ -90,6 +92,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
                 final int tvdbId = ShowWrapper.getTvdbId(mContext.getContentResolver(), showId);
                 final int season = c.getInt(c.getColumnIndex(TraktContract.Episodes.SEASON));
                 final int number = c.getInt(c.getColumnIndex(TraktContract.Episodes.EPISODE));
+                c.close();
 
                 EpisodeWrapper.setInCollection(mContext.getContentResolver(), episodeId, inCollection);
 
@@ -111,6 +114,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
                 final int tvdbId = ShowWrapper.getTvdbId(mContext.getContentResolver(), showId);
                 final int season = c.getInt(c.getColumnIndex(TraktContract.Episodes.SEASON));
                 final int number = c.getInt(c.getColumnIndex(TraktContract.Episodes.EPISODE));
+                c.close();
 
                 EpisodeWrapper.setIsInWatchlist(mContext.getContentResolver(), episodeId, inWatchlist);
 
@@ -173,8 +177,8 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
 
                     mQueue.add(new EpisodeRateTask(tvdbId, episode, rating));
                 }
+                c.close();
             }
         });
-        // TODO:
     }
 }

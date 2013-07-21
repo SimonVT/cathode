@@ -37,6 +37,7 @@ public class SyncMoviesCollectionTask extends TraktTask {
             while (c.moveToNext()) {
                 movieIds.add(c.getLong(0));
             }
+            c.close();
 
             List<Movie> movies = mUserService.moviesCollection(DetailLevel.MIN);
 
