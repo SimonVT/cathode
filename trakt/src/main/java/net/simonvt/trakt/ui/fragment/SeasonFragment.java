@@ -24,7 +24,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.TextView;
 
 import javax.inject.Inject;
 
@@ -62,9 +61,7 @@ public class SeasonFragment extends AbsAdapterFragment {
 
     private Handler mHandler = new Handler();
 
-    @InjectView(R.id.title) TextView mShowTitle;
     @InjectView(R.id.banner) RemoteImageView mShowBanner;
-    @InjectView(R.id.season) TextView mSeason;
 
     public static Bundle getArgs(long showId, long seasonId, String showTitle, int seasonNumber, LibraryType type) {
         Bundle args = new Bundle();
@@ -121,7 +118,6 @@ public class SeasonFragment extends AbsAdapterFragment {
                     mBannerUrl = cursor.getString(cursor.getColumnIndex(TraktContract.Shows.BANNER));
                     cursor.close();
 
-                    if (mShowTitle != null) mShowTitle.setText(mTitle);
                     if (mShowBanner != null) mShowBanner.setImage(mBannerUrl);
 
                     cursorLoader.stopLoading();
@@ -141,16 +137,6 @@ public class SeasonFragment extends AbsAdapterFragment {
 
                     if (c.moveToFirst()) {
                         mSeasonNumber = c.getInt(c.getColumnIndex(TraktContract.Seasons.SEASON));
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (isAdded() && mSeason != null) {
-                                    mSeason.setText(getResources().getQuantityString(R.plurals.season_x, mSeasonNumber,
-                                            mSeasonNumber));
-                                    mSeason.setVisibility(View.VISIBLE);
-                                }
-                            }
-                        });
                     }
                 }
             }).start();
@@ -185,16 +171,7 @@ public class SeasonFragment extends AbsAdapterFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (mShowTitle != null) {
-            mShowTitle.setText(mTitle);
-            mShowBanner.setImage(mBannerUrl);
-            if (mSeasonNumber != -1) {
-                mSeason.setText(getResources().getQuantityString(R.plurals.season_x, mSeasonNumber, mSeasonNumber));
-                mSeason.setVisibility(View.VISIBLE);
-            } else {
-                mSeason.setVisibility(View.GONE);
-            }
-        }
+        mShowBanner.setImage(mBannerUrl);
     }
 
     @Override

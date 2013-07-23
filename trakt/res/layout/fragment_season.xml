@@ -5,45 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <net.simonvt.trakt.widget.RemoteImageView
+        android:id="@+id/banner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/header_bg">
-
-        <net.simonvt.trakt.widget.RemoteImageView
-            android:id="@+id/banner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:dominantMeasurement="width"
-            app:aspectRatio="0.1846" />
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="@android:drawable/screen_background_dark_transparent"
-            android:gravity="center_vertical"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:text="American Dad"
-            android:textColor="?android:attr/textColorPrimaryInverse" />
-
-        <TextView
-            android:id="@+id/season"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:text="Season 1"
-            android:textColor="?android:attr/textColorPrimaryInverse" />
-
-    </FrameLayout>
+        android:background="@drawable/header_bg"
+        app:dominantMeasurement="width"
+        app:aspectRatio="0.1846" />
 
     <FrameLayout
         android:layout_width="match_parent"
