@@ -17,6 +17,19 @@
         <item name="android:lineSpacingExtra">2dp</item>
     </style>
 
+    <style name="Widget.Person">
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="Widget.Job">
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:fontFamily">sans-light</item>
+        <item name="android:textColor">#FF777777</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
     <style name="Widget.CheckMark">
         <item name="android:gravity">center_vertical</item>
         <item name="android:textAllCaps">true</item>

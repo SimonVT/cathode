@@ -25,6 +25,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -40,11 +41,11 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
     private static final String DIALOG_RATING = "net.simonvt.trakt.ui.fragment.MovieFragment.ratingDialog";
 
     private static final int LOADER_MOVIE = 400;
+    private static final int LOADER_ACTORS = 401;
 
     @Inject MovieTaskScheduler mMovieScheduler;
     @Inject Bus mBus;
 
-    @InjectView(R.id.title) TextView mTitle;
     @InjectView(R.id.year) TextView mYear;
     @InjectView(R.id.banner) RemoteImageView mBanner;
     @InjectView(R.id.overview) TextView mOverview;
@@ -53,6 +54,9 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
     @InjectView(R.id.inWatchlist) TextView mWatchlist;
     @InjectView(R.id.ratingContainer) View mRatingContainer;
     @InjectView(R.id.rating) RatingBar mRating;
+
+    @InjectView(R.id.actorsParent) LinearLayout mActorsParent;
+    @InjectView(R.id.actors) LinearLayout mActors;
 
     private long mMovieId;
 
@@ -111,11 +115,13 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
         });
 
         getLoaderManager().initLoader(LOADER_MOVIE, null, this);
+        getLoaderManager().initLoader(LOADER_ACTORS, null, mActorsLoader);
     }
 
     @Override
     public void onDestroyView() {
         getLoaderManager().destroyLoader(LOADER_MOVIE);
+        getLoaderManager().destroyLoader(LOADER_ACTORS);
         super.onDestroyView();
     }
 
@@ -198,8 +204,7 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
         mCollection.setVisibility(mCollected ? View.VISIBLE : View.GONE);
         mWatchlist.setVisibility(mInWatchlist ? View.VISIBLE : View.GONE);
 
-        mTitle.setText(title);
-        mYear.setText(String.valueOf(year));
+        if (mYear != null) mYear.setText(String.valueOf(year));
         mOverview.setText(overview);
 
         getActivity().invalidateOptionsMenu();
@@ -221,4 +226,42 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
     }
+
+    private void updateActors(Cursor c) {
+        mActorsParent.setVisibility(c.getCount() > 0 ? View.VISIBLE : View.GONE);
+        mActors.removeAllViews();
+
+        while (c.moveToNext()) {
+            View v = LayoutInflater.from(getActivity()).inflate(R.layout.person, mActors, false);
+
+            RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
+            headshot.setImage(c.getString(c.getColumnIndex(TraktContract.MovieActors.HEADSHOT)));
+            TextView name = (TextView) v.findViewById(R.id.name);
+            name.setText(c.getString(c.getColumnIndex(TraktContract.MovieActors.NAME)));
+            TextView character = (TextView) v.findViewById(R.id.job);
+            character.setText(c.getString(c.getColumnIndex(TraktContract.MovieActors.CHARACTER)));
+
+            mActors.addView(v);
+        }
+    }
+
+    private LoaderManager.LoaderCallbacks<Cursor> mActorsLoader = new LoaderManager.LoaderCallbacks<Cursor>() {
+        @Override
+        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+            CursorLoader loader =
+                    new CursorLoader(getActivity(), TraktContract.MovieActors.buildFromMovieId(mMovieId), null, null,
+                            null, null);
+            loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
+            return loader;
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+            updateActors(cursor);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        }
+    };
 }

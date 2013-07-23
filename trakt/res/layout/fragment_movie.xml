@@ -26,25 +26,17 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:background="@android:drawable/screen_background_dark_transparent"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp">
 
                 <TextView
-                    android:id="@+id/title"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:singleLine="true"
-                    android:textColor="?android:attr/textColorPrimaryInverse"
-                    android:text="Iron Man 3" />
-
-                <TextView
                     android:id="@+id/year"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="right"
                     android:textColor="?android:attr/textColorPrimaryInverse"
                     android:text="2010" />
             </LinearLayout>
@@ -141,5 +133,35 @@
                     style="@style/Widget.CheckMark" />
             </LinearLayout>
         </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/actorsParent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/actorsTitle"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Actors"
+                style="@style/Widget.InfoTitle" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/actors"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_marginBottom="6dp">
+
+                    <include layout="@layout/person" />
+                </LinearLayout>
+            </HorizontalScrollView>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>
