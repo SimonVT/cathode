@@ -1,8 +1,10 @@
 package net.simonvt.trakt.provider;
 
+import net.simonvt.trakt.api.entity.Images;
 import net.simonvt.trakt.api.entity.Movie;
 import net.simonvt.trakt.api.entity.Person;
 import net.simonvt.trakt.provider.TraktContract.Movies;
+import net.simonvt.trakt.util.ApiUtils;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -136,7 +138,9 @@ public final class MovieWrapper {
             ContentValues cv = new ContentValues();
             cv.put(TraktContract.MovieDirectors.MOVIE_ID, movieId);
             cv.put(TraktContract.MovieDirectors.NAME, person.getName());
-            cv.put(TraktContract.MovieDirectors.HEADSHOT, person.getImages().getHeadshot());
+            if (!ApiUtils.isPlaceholder(person.getImages().getHeadshot())) {
+                cv.put(TraktContract.MovieDirectors.HEADSHOT, person.getImages().getHeadshot());
+            }
 
             resolver.insert(TraktContract.MovieDirectors.buildFromMovieId(movieId), cv);
         }
@@ -147,7 +151,9 @@ public final class MovieWrapper {
             ContentValues cv = new ContentValues();
             cv.put(TraktContract.MovieWriters.MOVIE_ID, movieId);
             cv.put(TraktContract.MovieWriters.NAME, person.getName());
-            cv.put(TraktContract.MovieWriters.HEADSHOT, person.getImages().getHeadshot());
+            if (!ApiUtils.isPlaceholder(person.getImages().getHeadshot())) {
+                cv.put(TraktContract.MovieWriters.HEADSHOT, person.getImages().getHeadshot());
+            }
             cv.put(TraktContract.MovieWriters.JOB, person.getJob());
 
             resolver.insert(TraktContract.MovieWriters.buildFromMovieId(movieId), cv);
@@ -159,7 +165,9 @@ public final class MovieWrapper {
             ContentValues cv = new ContentValues();
             cv.put(TraktContract.MovieProducers.MOVIE_ID, movieId);
             cv.put(TraktContract.MovieProducers.NAME, person.getName());
-            cv.put(TraktContract.MovieProducers.HEADSHOT, person.getImages().getHeadshot());
+            if (!ApiUtils.isPlaceholder(person.getImages().getHeadshot())) {
+                cv.put(TraktContract.MovieProducers.HEADSHOT, person.getImages().getHeadshot());
+            }
             cv.put(TraktContract.MovieProducers.EXECUTIVE, person.isExecutive());
 
             resolver.insert(TraktContract.MovieProducers.buildFromMovieId(movieId), cv);
@@ -171,7 +179,9 @@ public final class MovieWrapper {
             ContentValues cv = new ContentValues();
             cv.put(TraktContract.MovieActors.MOVIE_ID, movieId);
             cv.put(TraktContract.MovieActors.NAME, person.getName());
-            cv.put(TraktContract.MovieActors.HEADSHOT, person.getImages().getHeadshot());
+            if (!ApiUtils.isPlaceholder(person.getImages().getHeadshot())) {
+                cv.put(TraktContract.MovieActors.HEADSHOT, person.getImages().getHeadshot());
+            }
             cv.put(TraktContract.MovieActors.CHARACTER, person.getCharacter());
 
             resolver.insert(TraktContract.MovieActors.buildFromMovieId(movieId), cv);
@@ -195,8 +205,9 @@ public final class MovieWrapper {
         cv.put(Movies.RT_ID, movie.getRtId());
         cv.put(Movies.LAST_UPDATED, movie.getLastUpdated());
         if (movie.getImages() != null) {
-            cv.put(Movies.POSTER, movie.getImages().getPoster());
-            cv.put(Movies.FANART, movie.getImages().getFanart());
+            Images images = movie.getImages();
+            if (!ApiUtils.isPlaceholder(images.getPoster())) cv.put(Movies.POSTER, images.getPoster());
+            if (!ApiUtils.isPlaceholder(images.getFanart())) cv.put(Movies.FANART, images.getFanart());
         }
         if (movie.getRatings() != null) {
             cv.put(Movies.RATING_PERCENTAGE, movie.getRatings().getPercentage());

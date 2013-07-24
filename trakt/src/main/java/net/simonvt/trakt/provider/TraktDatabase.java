@@ -94,7 +94,6 @@ public class TraktDatabase extends SQLiteOpenHelper {
                 + ShowColumns.LAST_UPDATED + " INTEGER DEFAULT 0,"
                 + ImageColumns.POSTER + " TEXT,"
                 + ImageColumns.FANART + " TEXT,"
-                + ImageColumns.HEADSHOT + " TEXT,"
                 + ImageColumns.SCREEN + " TEXT,"
                 + ImageColumns.BANNER + " TEXT,"
                 + ShowColumns.RATING_PERCENTAGE + " INTEGER DEFAULT 0,"
@@ -164,7 +163,6 @@ public class TraktDatabase extends SQLiteOpenHelper {
                 + SeasonColumns.IN_WATCHLIST_COUNT + " INTEGER DEFAULT 0,"
                 + ImageColumns.POSTER + " TEXT,"
                 + ImageColumns.FANART + " TEXT,"
-                + ImageColumns.HEADSHOT + " TEXT,"
                 + ImageColumns.SCREEN + " TEXT,"
                 + ImageColumns.BANNER + " TEXT)");
 
@@ -180,7 +178,6 @@ public class TraktDatabase extends SQLiteOpenHelper {
                 + EpisodeColumns.FIRST_AIRED + " INTEGER,"
                 + ImageColumns.POSTER + " TEXT,"
                 + ImageColumns.FANART + " TEXT,"
-                + ImageColumns.HEADSHOT + " TEXT,"
                 + ImageColumns.SCREEN + " TEXT,"
                 + ImageColumns.BANNER + " TEXT,"
                 + EpisodeColumns.RATING_PERCENTAGE + " INTEGER DEFAULT 0,"

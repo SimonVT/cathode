@@ -1,6 +1,8 @@
 package net.simonvt.trakt.provider;
 
+import net.simonvt.trakt.api.entity.Images;
 import net.simonvt.trakt.api.entity.Season;
+import net.simonvt.trakt.util.ApiUtils;
 import net.simonvt.trakt.util.DateUtils;
 
 import android.content.ContentResolver;
@@ -102,10 +104,10 @@ public final class SeasonWrapper {
         cv.put(TraktContract.SeasonColumns.EPISODES, season.getEpisodes().getCount());
         cv.put(TraktContract.SeasonColumns.URL, season.getUrl());
         if (season.getImages() != null) {
-            cv.put(TraktContract.Shows.POSTER, season.getImages().getPoster());
-            cv.put(TraktContract.Shows.FANART, season.getImages().getFanart());
-            cv.put(TraktContract.Shows.HEADSHOT, season.getImages().getHeadshot());
-            cv.put(TraktContract.Shows.SCREEN, season.getImages().getScreen());
+            Images images = season.getImages();
+            if (!ApiUtils.isPlaceholder(images.getPoster())) cv.put(TraktContract.Shows.POSTER, images.getPoster());
+            if (!ApiUtils.isPlaceholder(images.getFanart())) cv.put(TraktContract.Shows.FANART, images.getFanart());
+            if (!ApiUtils.isPlaceholder(images.getScreen())) cv.put(TraktContract.Shows.SCREEN, images.getScreen());
         }
 
         return cv;

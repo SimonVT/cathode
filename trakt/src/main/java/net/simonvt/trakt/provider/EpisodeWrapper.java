@@ -1,8 +1,10 @@
 package net.simonvt.trakt.provider;
 
 import net.simonvt.trakt.api.entity.Episode;
+import net.simonvt.trakt.api.entity.Images;
 import net.simonvt.trakt.provider.TraktContract.EpisodeColumns;
 import net.simonvt.trakt.provider.TraktContract.Episodes;
+import net.simonvt.trakt.util.ApiUtils;
 import net.simonvt.trakt.util.DateUtils;
 
 import android.content.ContentResolver;
@@ -270,11 +272,11 @@ public final class EpisodeWrapper {
             cv.put(EpisodeColumns.FIRST_AIRED, DateUtils.getMillis(episode.getFirstAiredIso()));
         }
         if (episode.getImages() != null) {
-            cv.put(Episodes.POSTER, episode.getImages().getPoster());
-            cv.put(Episodes.FANART, episode.getImages().getFanart());
-            cv.put(Episodes.HEADSHOT, episode.getImages().getHeadshot());
-            cv.put(Episodes.SCREEN, episode.getImages().getScreen());
-            cv.put(Episodes.BANNER, episode.getImages().getBanner());
+            Images images = episode.getImages();
+            if (!ApiUtils.isPlaceholder(images.getPoster())) cv.put(Episodes.POSTER, images.getPoster());
+            if (!ApiUtils.isPlaceholder(images.getFanart())) cv.put(Episodes.FANART, images.getFanart());
+            if (!ApiUtils.isPlaceholder(images.getScreen())) cv.put(Episodes.SCREEN, images.getScreen());
+            if (!ApiUtils.isPlaceholder(images.getBanner())) cv.put(Episodes.BANNER, images.getBanner());
         }
         if (episode.getRatings() != null) {
             cv.put(EpisodeColumns.RATING_PERCENTAGE, episode.getRatings().getPercentage());

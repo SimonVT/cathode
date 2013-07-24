@@ -1,9 +1,11 @@
 package net.simonvt.trakt.provider;
 
+import net.simonvt.trakt.api.entity.Images;
 import net.simonvt.trakt.api.entity.TvShow;
 import net.simonvt.trakt.provider.TraktContract.SeasonColumns;
 import net.simonvt.trakt.provider.TraktContract.ShowColumns;
 import net.simonvt.trakt.provider.TraktContract.Shows;
+import net.simonvt.trakt.util.ApiUtils;
 import net.simonvt.trakt.util.DateUtils;
 
 import android.content.ContentResolver;
@@ -291,11 +293,11 @@ public final class ShowWrapper {
         cv.put(Shows.TVRAGE_ID, show.getTvrageId());
         if (show.getLastUpdated() != null) cv.put(Shows.LAST_UPDATED, show.getLastUpdated());
         if (show.getImages() != null) {
-            cv.put(Shows.POSTER, show.getImages().getPoster());
-            cv.put(Shows.FANART, show.getImages().getFanart());
-            cv.put(Shows.HEADSHOT, show.getImages().getHeadshot());
-            cv.put(Shows.SCREEN, show.getImages().getScreen());
-            cv.put(Shows.BANNER, show.getImages().getBanner());
+            Images images = show.getImages();
+            if (!ApiUtils.isPlaceholder(images.getPoster())) cv.put(Shows.POSTER, images.getPoster());
+            if (!ApiUtils.isPlaceholder(images.getPoster())) cv.put(Shows.FANART, images.getFanart());
+            if (!ApiUtils.isPlaceholder(images.getPoster())) cv.put(Shows.SCREEN, images.getScreen());
+            if (!ApiUtils.isPlaceholder(images.getPoster())) cv.put(Shows.BANNER, images.getBanner());
         }
         if (show.getRatings() != null) {
             cv.put(Shows.RATING_PERCENTAGE, show.getRatings().getPercentage());
