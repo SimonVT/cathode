@@ -73,7 +73,6 @@ import net.simonvt.trakt.ui.fragment.MovieWatchlistFragment;
 import net.simonvt.trakt.ui.fragment.SearchMovieFragment;
 import net.simonvt.trakt.ui.fragment.SearchShowFragment;
 import net.simonvt.trakt.ui.fragment.SeasonFragment;
-import net.simonvt.trakt.ui.fragment.SeasonsFragment;
 import net.simonvt.trakt.ui.fragment.ShowInfoFragment;
 import net.simonvt.trakt.ui.fragment.ShowsCollectionFragment;
 import net.simonvt.trakt.ui.fragment.ShowsWatchlistFragment;
@@ -168,7 +167,6 @@ public class TraktApp extends Application {
                     MovieWatchlistFragment.class,
                     SearchMovieFragment.class,
                     SeasonFragment.class,
-                    SeasonsFragment.class,
                     ShowInfoFragment.class,
                     ShowsCollectionFragment.class,
                     ShowsWatchlistFragment.class,

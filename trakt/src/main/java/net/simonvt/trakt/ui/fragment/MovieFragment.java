@@ -31,7 +31,7 @@ import android.widget.TextView;
 
 import javax.inject.Inject;
 
-public class MovieFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MovieFragment extends ProgressFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "MovieFragment";
 
@@ -120,8 +120,10 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
 
     @Override
     public void onDestroyView() {
-        getLoaderManager().destroyLoader(LOADER_MOVIE);
-        getLoaderManager().destroyLoader(LOADER_ACTORS);
+        if (getActivity().isFinishing() || isRemoving()) {
+            getLoaderManager().destroyLoader(LOADER_MOVIE);
+            getLoaderManager().destroyLoader(LOADER_ACTORS);
+        }
         super.onDestroyView();
     }
 
@@ -207,6 +209,7 @@ public class MovieFragment extends BaseFragment implements LoaderManager.LoaderC
         if (mYear != null) mYear.setText(String.valueOf(year));
         mOverview.setText(overview);
 
+        setContentVisible(true);
         getActivity().invalidateOptionsMenu();
     }
 

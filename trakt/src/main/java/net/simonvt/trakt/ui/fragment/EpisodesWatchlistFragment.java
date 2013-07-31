@@ -72,7 +72,9 @@ public class EpisodesWatchlistFragment extends AbsAdapterFragment implements Loa
 
     @Override
     public void onDestroy() {
-        getLoaderManager().destroyLoader(LOADER_WATCHLIST);
+        if (getActivity().isFinishing() || isRemoving()) {
+            getLoaderManager().destroyLoader(LOADER_WATCHLIST);
+        }
         super.onDestroy();
     }
 

@@ -8,6 +8,7 @@ import net.simonvt.trakt.R;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -71,17 +72,25 @@ public abstract class AbsAdapterFragment extends BaseFragment {
         if (mAttachLongClickListener) mAdapterView.setOnItemLongClickListener(mOnLongClickListener);
         mAdapterView.setEmptyView(mEmpty);
 
-        if (mAdapter == null) {
-            mListContainer.setVisibility(View.GONE);
-            mProgressContainer.setVisibility(View.VISIBLE);
-            mCurrentState = STATE_PROGRESS_VISIBLE;
-        } else {
-            mAdapterView.setAdapter(mAdapter);
-            mCurrentState = STATE_LIST_VISIBLE;
-            mListContainer.setVisibility(View.VISIBLE);
-            mProgressContainer.setVisibility(View.GONE);
-        }
+        view.getViewTreeObserver().addOnGlobalLayoutListener(mLayoutListener);
     }
+
+    ViewTreeObserver.OnGlobalLayoutListener mLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            getView().getViewTreeObserver().removeOnGlobalLayoutListener(mLayoutListener);
+            if (mAdapter == null) {
+                mListContainer.setVisibility(View.GONE);
+                mProgressContainer.setVisibility(View.VISIBLE);
+                mCurrentState = STATE_PROGRESS_VISIBLE;
+            } else {
+                mAdapterView.setAdapter(mAdapter);
+                mCurrentState = STATE_LIST_VISIBLE;
+                mListContainer.setVisibility(View.VISIBLE);
+                mProgressContainer.setVisibility(View.GONE);
+            }
+        }
+    };
 
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {

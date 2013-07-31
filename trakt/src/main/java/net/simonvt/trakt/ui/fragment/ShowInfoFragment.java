@@ -45,7 +45,7 @@ import android.widget.TextView;
 
 import javax.inject.Inject;
 
-public class ShowInfoFragment extends BaseFragment {
+public class ShowInfoFragment extends ProgressFragment {
 
     private static final String TAG = "ShowInfoFragment";
 
@@ -380,13 +380,15 @@ public class ShowInfoFragment extends BaseFragment {
     }
 
     @Override
-    public void onDestroyView() {
-        getLoaderManager().destroyLoader(LOADER_SHOW);
-        getLoaderManager().destroyLoader(LOADER_GENRES);
-        getLoaderManager().destroyLoader(LOADER_WATCH);
-        getLoaderManager().destroyLoader(LOADER_COLLECT);
-        getLoaderManager().destroyLoader(LOADER_SEASONS);
-        super.onDestroyView();
+    public void onDestroy() {
+        if (getActivity().isFinishing() || isRemoving()) {
+            getLoaderManager().destroyLoader(LOADER_SHOW);
+            getLoaderManager().destroyLoader(LOADER_GENRES);
+            getLoaderManager().destroyLoader(LOADER_WATCH);
+            getLoaderManager().destroyLoader(LOADER_COLLECT);
+            getLoaderManager().destroyLoader(LOADER_SEASONS);
+        }
+        super.onDestroy();
     }
 
     private void updateShowView(final Cursor cursor) {
@@ -426,6 +428,8 @@ public class ShowInfoFragment extends BaseFragment {
         mCertification.setText(certification);
         // mRating.setText(String.valueOf(rating));
         mOverview.setText(overview);
+
+        setContentVisible(true);
     }
 
     private void updateGenreViews(final Cursor cursor) {

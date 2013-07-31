@@ -176,7 +176,9 @@ public class SeasonFragment extends AbsAdapterFragment {
 
     @Override
     public void onDestroy() {
-        getLoaderManager().destroyLoader(LOADER_EPISODES);
+        if (getActivity().isFinishing() || isRemoving()) {
+            getLoaderManager().destroyLoader(LOADER_EPISODES);
+        }
         super.onDestroy();
     }
 

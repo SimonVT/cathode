@@ -53,7 +53,9 @@ public abstract class MoviesFragment extends AbsAdapterFragment implements Loade
 
     @Override
     public void onDestroy() {
-        getLoaderManager().destroyLoader(getLoaderId());
+        if (getActivity().isFinishing() || isRemoving()) {
+            getLoaderManager().destroyLoader(getLoaderId());
+        }
         super.onDestroy();
     }
 

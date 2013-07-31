@@ -68,8 +68,15 @@ public abstract class ShowsFragment extends AbsAdapterFragment implements Loader
 
     @Override
     public void onDestroy() {
-        getLoaderManager().destroyLoader(getLoaderId());
+        if (getActivity().isFinishing() || isRemoving()) {
+            getLoaderManager().destroyLoader(getLoaderId());
+        }
         super.onDestroy();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
     }
 
     @Override

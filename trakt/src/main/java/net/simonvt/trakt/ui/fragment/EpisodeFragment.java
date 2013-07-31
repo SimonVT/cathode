@@ -28,7 +28,7 @@ import android.widget.TextView;
 
 import javax.inject.Inject;
 
-public class EpisodeFragment extends BaseFragment {
+public class EpisodeFragment extends ProgressFragment {
 
     private static final String TAG = "EpisodeFragment";
 
@@ -119,7 +119,9 @@ public class EpisodeFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
-        getLoaderManager().destroyLoader(LOADER_EPISODE);
+        if (getActivity().isFinishing() || isRemoving()) {
+            getLoaderManager().destroyLoader(LOADER_EPISODE);
+        }
         super.onDestroy();
     }
 
@@ -199,6 +201,7 @@ public class EpisodeFragment extends BaseFragment {
             mRating.setRating(mCurrentRating);
             mAllRatings.setText(ratingAll + "%");
 
+            setContentVisible(true);
             getActivity().invalidateOptionsMenu();
         }
     }
