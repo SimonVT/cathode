@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <net.simonvt.trakt.widget.ObservableScrollView
         android:id="@id/contentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -149,7 +149,7 @@
                 </HorizontalScrollView>
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+    </net.simonvt.trakt.widget.ObservableScrollView>
 
     <include layout="@layout/fragment_list_progressbar" />
 </FrameLayout>

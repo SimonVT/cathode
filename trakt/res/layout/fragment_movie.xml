@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <net.simonvt.trakt.widget.ObservableScrollView
         android:id="@id/contentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -22,9 +22,8 @@
                     android:id="@+id/banner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/header_bg"
                     app:dominantMeasurement="width"
-                    app:aspectRatio="0.25" />
+                    app:aspectRatio="0.5625" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -49,7 +48,8 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@drawable/header_bg_top">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -169,7 +169,7 @@
                 </HorizontalScrollView>
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+    </net.simonvt.trakt.widget.ObservableScrollView>
 
     <include layout="@layout/fragment_list_progressbar" />
 </FrameLayout>

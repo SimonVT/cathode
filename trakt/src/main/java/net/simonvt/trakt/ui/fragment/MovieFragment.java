@@ -11,9 +11,12 @@ import net.simonvt.trakt.event.OnTitleChangedEvent;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.scheduler.MovieTaskScheduler;
 import net.simonvt.trakt.ui.dialog.RatingDialog;
+import net.simonvt.trakt.widget.ObservableScrollView;
 import net.simonvt.trakt.widget.RemoteImageView;
 
+import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -25,6 +28,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -45,6 +49,8 @@ public class MovieFragment extends ProgressFragment implements LoaderManager.Loa
 
     @Inject MovieTaskScheduler mMovieScheduler;
     @Inject Bus mBus;
+
+    @InjectView(R.id.contentContainer) ObservableScrollView mScrollView;
 
     @InjectView(R.id.year) TextView mYear;
     @InjectView(R.id.banner) RemoteImageView mBanner;
@@ -72,6 +78,8 @@ public class MovieFragment extends ProgressFragment implements LoaderManager.Loa
 
     private boolean mInWatchlist;
 
+    private boolean mIsTablet;
+
     public static Bundle getArgs(long movieId, String movieTitle) {
         Bundle args = new Bundle();
         args.putLong(ARG_ID, movieId);
@@ -83,6 +91,8 @@ public class MovieFragment extends ProgressFragment implements LoaderManager.Loa
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         TraktApp.inject(getActivity(), this);
+
+        mIsTablet = getResources().getBoolean(R.bool.isTablet);
 
         setHasOptionsMenu(true);
 
@@ -114,8 +124,30 @@ public class MovieFragment extends ProgressFragment implements LoaderManager.Loa
             }
         });
 
+        if (!mIsTablet) {
+            final Rect clipBounds = new Rect();
+            mScrollView.setListener(new ObservableScrollView.ScrollListener() {
+                @Override
+                public void onScrollChanged(int l, int t) {
+                    final int offset = (int) (t / 2.0f);
+                    mBanner.setTranslationY(offset);
+                }
+            });
+        }
+
         getLoaderManager().initLoader(LOADER_MOVIE, null, this);
         getLoaderManager().initLoader(LOADER_ACTORS, null, mActorsLoader);
+
+        if (!mIsTablet && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    getView().getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                    mScrollView.setScrollY(mBanner.getHeight() / 2);
+                }
+            });
+        }
     }
 
     @Override
@@ -233,6 +265,8 @@ public class MovieFragment extends ProgressFragment implements LoaderManager.Loa
     private void updateActors(Cursor c) {
         mActorsParent.setVisibility(c.getCount() > 0 ? View.VISIBLE : View.GONE);
         mActors.removeAllViews();
+
+        c.moveToPosition(-1);
 
         while (c.moveToNext()) {
             View v = LayoutInflater.from(getActivity()).inflate(R.layout.person, mActors, false);

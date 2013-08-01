@@ -436,6 +436,8 @@ public class ShowInfoFragment extends ProgressFragment {
         StringBuilder sb = new StringBuilder();
         final int genreColumnIndex = cursor.getColumnIndex(TraktContract.ShowGenres.GENRE);
 
+        cursor.moveToPosition(-1);
+
         while (cursor.moveToNext()) {
             sb.append(cursor.getString(genreColumnIndex));
             if (!cursor.isLast()) sb.append(", ");
