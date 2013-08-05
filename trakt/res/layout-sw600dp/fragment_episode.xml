@@ -1,78 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="16dp">
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
 
-    <net.simonvt.trakt.widget.ObservableScrollView
-        android:id="@id/contentContainer"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:minHeight="64dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:singleLine="true"
+            style="?android:attr/windowTitleStyle" />
+
+        <net.simonvt.trakt.widget.OverflowView
+            android:id="@+id/overflow"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_menu_moreoverflow_normal_holo_light"
+            android:gravity="center"
+            style="@android:style/Widget.Holo.Light.ActionButton" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/titleDivider"
+        android:layout_width="match_parent"
+        android:layout_height="2dip"
+        android:background="@android:color/holo_blue_light" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingBottom="8dp">
+
+        <net.simonvt.trakt.widget.ObservableScrollView
+            android:id="@id/contentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <net.simonvt.trakt.widget.RemoteImageView
-                    android:id="@+id/screen"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:dominantMeasurement="width"
-                    app:aspectRatio="0.5625" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:background="@android:drawable/screen_background_dark_transparent"
-                    android:orientation="vertical"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp">
-
-                    <TextView
-                        android:id="@+id/firstAired"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="right"
-                        android:textColor="?android:attr/textColorPrimaryInverse"
-                        android:text="2010" />
-                </LinearLayout>
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/header_bg_top">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="vertical">
 
                     <include
                         layout="@layout/info_rating"
                         android:layout_marginLeft="6dp"
-                        android:layout_marginTop="4dp" />
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="8dp" />
 
                     <TextView
-                        android:id="@+id/title"
-                        android:layout_width="match_parent"
+                        android:id="@+id/firstAired"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
                         android:layout_marginRight="8dp"
                         android:layout_marginBottom="4dp"
-                        android:layout_marginTop="8dp"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:fontFamily="sans-light"
-                        android:text="This is a show name" />
+                        android:text="OCT 20, 2011" />
+
+                    <net.simonvt.trakt.widget.RemoteImageView
+                        android:id="@+id/screen"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:background="@drawable/header_bg"
+                        app:dominantMeasurement="width"
+                        app:aspectRatio="0.5625" />
 
                     <TextView
                         android:id="@+id/overview"
@@ -126,8 +136,8 @@
                         style="@style/Widget.CheckMark" />
                 </LinearLayout>
             </FrameLayout>
-        </LinearLayout>
-    </net.simonvt.trakt.widget.ObservableScrollView>
+        </net.simonvt.trakt.widget.ObservableScrollView>
 
-    <include layout="@layout/fragment_list_progressbar" />
-</FrameLayout>
+        <include layout="@layout/fragment_list_progressbar" />
+    </FrameLayout>
+</LinearLayout>

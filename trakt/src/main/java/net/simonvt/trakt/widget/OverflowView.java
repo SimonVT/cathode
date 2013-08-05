@@ -86,7 +86,7 @@ public class OverflowView extends ImageView {
         if (!isInEditMode()) {
             setWillNotDraw(true);
         }
-        setImageResource(R.drawable.item_overflow);
+        if (getDrawable() == null) setImageResource(R.drawable.item_overflow);
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

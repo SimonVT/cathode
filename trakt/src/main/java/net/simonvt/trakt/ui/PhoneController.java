@@ -7,7 +7,6 @@ import net.simonvt.menudrawer.MenuDrawer;
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.event.OnTitleChangedEvent;
-import net.simonvt.trakt.ui.fragment.BaseFragment;
 import net.simonvt.trakt.ui.fragment.EpisodeFragment;
 import net.simonvt.trakt.ui.fragment.EpisodesWatchlistFragment;
 import net.simonvt.trakt.ui.fragment.MovieCollectionFragment;
@@ -28,6 +27,7 @@ import net.simonvt.trakt.util.LogWrapper;
 
 import android.app.ActionBar;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.SearchView;
@@ -46,7 +46,7 @@ public class PhoneController extends UiController {
 
     @Inject Bus mBus;
 
-    private FragmentStack<BaseFragment> mStack;
+    private FragmentStack mStack;
 
     private MenuDrawer mMenuDrawer;
 
@@ -54,6 +54,8 @@ public class PhoneController extends UiController {
 
     private int mSearchType;
     private SearchView mSearchView;
+
+    private boolean mIsTablet;
 
     public static PhoneController newInstance(HomeActivity activity) {
         return new PhoneController(activity);
@@ -67,6 +69,8 @@ public class PhoneController extends UiController {
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
+        mIsTablet = mActivity.getResources().getBoolean(R.bool.isTablet);
+
         mMenuDrawer = MenuDrawer.attach(mActivity, MenuDrawer.Type.OVERLAY);
         mMenuDrawer.setSlideDrawable(R.drawable.ic_drawer);
         mMenuDrawer.setContentView(R.layout.activity_home);
@@ -84,19 +88,21 @@ public class PhoneController extends UiController {
         }
 
         mStack = FragmentStack.forContainer(mActivity, R.id.content,
-                new FragmentStack.Callback<BaseFragment>() {
+                new FragmentStack.Callback() {
                     @Override
-                    public void onStackChanged(int stackSize, BaseFragment topFragment) {
+                    public void onStackChanged(int stackSize, Fragment topFragment) {
                         LogWrapper.v(TAG, "[onStackChanged] " + topFragment.getTag());
+                        FragmentContract fragment = (FragmentContract) topFragment;
+
                         mMenuDrawer.setDrawerIndicatorEnabled(stackSize <= 1);
                         if (!mMenuDrawer.isMenuVisible()) {
-                            String title = topFragment.getTitle();
+                            String title = fragment.getTitle();
                             if (title != null) {
                                 mActivity.getActionBar().setTitle(title);
                             } else {
                                 mActivity.getActionBar().setTitle(R.string.app_name);
                             }
-                            mActivity.getActionBar().setSubtitle(topFragment.getSubtitle());
+                            mActivity.getActionBar().setSubtitle(fragment.getSubtitle());
                         }
                         if (mSearchView != null) {
                             if (!FRAGMENT_SEARCH_MOVIE.equals(topFragment.getTag())
@@ -116,13 +122,14 @@ public class PhoneController extends UiController {
                 switch (newState) {
                     case MenuDrawer.STATE_CLOSED:
                         if (!mStack.commit()) {
-                            String title = mStack.getTopFragment().getTitle();
+                            String title = ((FragmentContract) mStack.getTopFragment()).getTitle();
                             if (title != null) {
                                 mActivity.getActionBar().setTitle(title);
                             } else {
                                 mActivity.getActionBar().setTitle(R.string.app_name);
                             }
-                            mActivity.getActionBar().setSubtitle(mStack.getTopFragment().getSubtitle());
+                            mActivity.getActionBar()
+                                    .setSubtitle(((FragmentContract) mStack.getTopFragment()).getSubtitle());
                         }
 
                         if (mSearchView != null) {
@@ -159,13 +166,13 @@ public class PhoneController extends UiController {
     @Subscribe
     public void onTitleChanged(OnTitleChangedEvent event) {
         if (!mMenuDrawer.isMenuVisible()) {
-            String title = mStack.getTopFragment().getTitle();
+            String title = ((FragmentContract) mStack.getTopFragment()).getTitle();
             if (title != null) {
                 mActivity.getActionBar().setTitle(title);
             } else {
                 mActivity.getActionBar().setTitle(R.string.app_name);
             }
-            mActivity.getActionBar().setSubtitle(mStack.getTopFragment().getSubtitle());
+            mActivity.getActionBar().setSubtitle(((FragmentContract) mStack.getTopFragment()).getSubtitle());
         }
     }
 
@@ -353,8 +360,15 @@ public class PhoneController extends UiController {
 
     @Override
     public void onDisplayEpisode(long episodeId, String showTitle) {
-        mStack.addFragment(EpisodeFragment.class, FRAGMENT_EPISODE, EpisodeFragment.getArgs(episodeId, showTitle));
-        mStack.commit();
+        Bundle args = EpisodeFragment.getArgs(episodeId, showTitle);
+        if (mIsTablet) {
+            EpisodeFragment f =
+                    (EpisodeFragment) Fragment.instantiate(mActivity, EpisodeFragment.class.getName(), args);
+            f.show(mActivity.getSupportFragmentManager(), FRAGMENT_EPISODE);
+        } else {
+            mStack.addFragment(EpisodeFragment.class, FRAGMENT_EPISODE, EpisodeFragment.getArgs(episodeId, showTitle));
+            mStack.commit();
+        }
     }
 
     @Override

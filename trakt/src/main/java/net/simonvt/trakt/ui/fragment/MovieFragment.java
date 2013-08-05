@@ -16,7 +16,6 @@ import net.simonvt.trakt.widget.RemoteImageView;
 
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -125,7 +124,6 @@ public class MovieFragment extends ProgressFragment implements LoaderManager.Loa
         });
 
         if (!mIsTablet) {
-            final Rect clipBounds = new Rect();
             mScrollView.setListener(new ObservableScrollView.ScrollListener() {
                 @Override
                 public void onScrollChanged(int l, int t) {

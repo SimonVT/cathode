@@ -14,24 +14,22 @@ import java.util.LinkedList;
 
 /**
  * A class that manages a stack of {@link Fragment}s in a single container.
- *
- * @param <T> Can be used to define a base fragment subclass.
  */
-public final class FragmentStack<T extends Fragment> {
+public final class FragmentStack {
 
-    public interface Callback<F extends Fragment> {
+    public interface Callback {
 
-        void onStackChanged(int stackSize, F topFragment);
+        void onStackChanged(int stackSize, Fragment topFragment);
     }
 
-    public static <T extends Fragment> FragmentStack<T> forContainer(FragmentActivity activity, int containerId,
-            Callback<T> callback) {
-        return new FragmentStack<T>(activity, containerId, callback);
+    public static FragmentStack forContainer(FragmentActivity activity, int containerId,
+            Callback callback) {
+        return new FragmentStack(activity, containerId, callback);
     }
 
     private static final String STATE_STACK = "net.simonvt.trakt.util.FragmentStack.stack";
 
-    private LinkedList<T> mStack = new LinkedList<T>();
+    private LinkedList<Fragment> mStack = new LinkedList<Fragment>();
 
     private Activity mActivity;
 
@@ -40,7 +38,7 @@ public final class FragmentStack<T extends Fragment> {
 
     private int mContainerId;
 
-    private Callback<T> mCallback;
+    private Callback mCallback;
 
     private Handler mHandler;
 
@@ -66,7 +64,7 @@ public final class FragmentStack<T extends Fragment> {
         }
     };
 
-    private FragmentStack(FragmentActivity activity, int containerId, Callback<T> callback) {
+    private FragmentStack(FragmentActivity activity, int containerId, Callback callback) {
         mActivity = activity;
         mFragmentManager = activity.getSupportFragmentManager();
         mContainerId = containerId;
@@ -76,7 +74,7 @@ public final class FragmentStack<T extends Fragment> {
     }
 
     public void attach() {
-        T f = mStack.peekLast();
+        Fragment f = mStack.peekLast();
         if (f != null) {
             attachFragment(f, f.getTag());
             mFragmentTransaction.commit();
@@ -84,7 +82,7 @@ public final class FragmentStack<T extends Fragment> {
     }
 
     public void detach() {
-        T f = mStack.peekLast();
+        Fragment f = mStack.peekLast();
         if (f != null) {
             detachFragment(f);
             mFragmentTransaction.commit();
@@ -98,7 +96,7 @@ public final class FragmentStack<T extends Fragment> {
         String[] stackTags = new String[stackSize];
 
         int i = 0;
-        for (T f : mStack) {
+        for (Fragment f : mStack) {
             stackTags[i++] = f.getTag();
         }
 
@@ -108,7 +106,7 @@ public final class FragmentStack<T extends Fragment> {
     public void onRestoreInstanceState(Bundle state) {
         String[] stackTags = state.getStringArray(STATE_STACK);
         for (String tag : stackTags) {
-            T f = (T) mFragmentManager.findFragmentByTag(tag);
+            Fragment f = mFragmentManager.findFragmentByTag(tag);
             mStack.add(f);
         }
         dispatchOnStackChangedEvent();
@@ -118,11 +116,12 @@ public final class FragmentStack<T extends Fragment> {
         return mStack.size();
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getFragment(String tag) {
         return (T) mFragmentManager.findFragmentByTag(tag);
     }
 
-    public T getTopFragment() {
+    public Fragment getTopFragment() {
         return mStack.peekLast();
     }
 
@@ -145,9 +144,9 @@ public final class FragmentStack<T extends Fragment> {
             return;
         }
 
-        T f = (T) mFragmentManager.findFragmentByTag(tag);
+        Fragment f = mFragmentManager.findFragmentByTag(tag);
         if (f == null) {
-            f = (T) Fragment.instantiate(mActivity, fragment.getName(), args);
+            f = Fragment.instantiate(mActivity, fragment.getName(), args);
         }
 
         ensureTransaction();
@@ -172,10 +171,10 @@ public final class FragmentStack<T extends Fragment> {
         mFragmentTransaction.setCustomAnimations(mEnterAnimation, mExitAnimation);
         detachTop();
 
-        T f = (T) mFragmentManager.findFragmentByTag(tag);
+        Fragment f = mFragmentManager.findFragmentByTag(tag);
 
         if (f == null) {
-            f = (T) Fragment.instantiate(mActivity, fragment.getName(), args);
+            f = Fragment.instantiate(mActivity, fragment.getName(), args);
         }
 
         attachFragment(f, tag);
@@ -183,7 +182,7 @@ public final class FragmentStack<T extends Fragment> {
     }
 
     private void detachTop() {
-        T f = mStack.peekLast();
+        Fragment f = mStack.peekLast();
         detachFragment(f);
     }
 
