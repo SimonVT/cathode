@@ -1,7 +1,6 @@
 package net.simonvt.trakt.ui.fragment;
 
 import butterknife.InjectView;
-import butterknife.Views;
 
 import net.simonvt.trakt.R;
 
@@ -64,8 +63,6 @@ public abstract class AbsAdapterFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Views.inject(this, view);
-
         if (mEmptyText != null) mEmpty.setText(mEmptyText);
 
         mAdapterView.setOnItemClickListener(mOnClickListener);
@@ -187,16 +184,6 @@ public abstract class AbsAdapterFragment extends BaseFragment {
                 }
             });
         }
-    }
-
-    @Override
-    public void onDestroyView() {
-        mProgressContainer = null;
-        mListContainer = null;
-        mEmpty = null;
-        mAdapterView = null;
-
-        super.onDestroyView();
     }
 
     private final AdapterView.OnItemClickListener mOnClickListener = new AdapterView.OnItemClickListener() {

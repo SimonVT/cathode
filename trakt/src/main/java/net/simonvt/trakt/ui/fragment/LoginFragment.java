@@ -1,7 +1,6 @@
 package net.simonvt.trakt.ui.fragment;
 
 import butterknife.InjectView;
-import butterknife.Views;
 import retrofit.RetrofitError;
 
 import com.squareup.otto.Bus;
@@ -73,8 +72,6 @@ public class LoginFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Views.inject(this, view);
-
         mLogin.setOnClickListener(mOnLoginListener);
         mUsernameInput.addTextChangedListener(mTextChanged);
         mPasswordInput.addTextChangedListener(mTextChanged);
@@ -86,14 +83,6 @@ public class LoginFragment extends BaseFragment {
         });
 
         mLogin.setEnabled(mUsernameInput.length() > 0 && mPasswordInput.length() > 0);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        mUsernameInput = null;
-        mPasswordInput = null;
     }
 
     @Override

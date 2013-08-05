@@ -222,6 +222,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
     @Override
     public void onDestroyView() {
+        Views.reset(this);
         super.onDestroyView();
     }
 

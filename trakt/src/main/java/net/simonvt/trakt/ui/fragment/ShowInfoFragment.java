@@ -207,8 +207,6 @@ public class ShowInfoFragment extends ProgressFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Views.inject(this, view);
-
         mSeasons.setAdapter(mSeasonsAdapter);
         mSeasons.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

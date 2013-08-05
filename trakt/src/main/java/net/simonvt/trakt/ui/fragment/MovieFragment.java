@@ -1,7 +1,6 @@
 package net.simonvt.trakt.ui.fragment;
 
 import butterknife.InjectView;
-import butterknife.Views;
 
 import com.squareup.otto.Bus;
 
@@ -113,8 +112,6 @@ public class MovieFragment extends ProgressFragment implements LoaderManager.Loa
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Views.inject(this, view);
-
         mRatingContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
