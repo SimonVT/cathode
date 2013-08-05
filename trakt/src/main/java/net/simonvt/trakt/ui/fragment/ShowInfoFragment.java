@@ -200,6 +200,17 @@ public class ShowInfoFragment extends ProgressFragment {
     }
 
     @Override
+    public boolean onBackPressed() {
+        final int state = mHiddenPaneLayout.getState();
+        if (state == HiddenPaneLayout.STATE_OPEN || state == HiddenPaneLayout.STATE_OPENING) {
+            mHiddenPaneLayout.close();
+            return true;
+        }
+
+        return super.onBackPressed();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_show_info, container, false);
     }

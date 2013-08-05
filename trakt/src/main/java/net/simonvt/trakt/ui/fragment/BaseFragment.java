@@ -31,4 +31,9 @@ public abstract class BaseFragment extends Fragment implements FragmentContract 
     public String getSubtitle() {
         return null;
     }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
 }

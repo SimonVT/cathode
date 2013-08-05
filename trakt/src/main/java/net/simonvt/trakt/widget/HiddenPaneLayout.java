@@ -130,6 +130,10 @@ public class HiddenPaneLayout extends ViewGroup {
         animateOffsetTo(0, 0, animate);
     }
 
+    public int getState() {
+        return mState;
+    }
+
     @Override
     public void addView(View child, int index, LayoutParams params) {
         super.addView(child, index, params);

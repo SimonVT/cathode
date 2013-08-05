@@ -192,6 +192,11 @@ public class PhoneController extends UiController {
             return true;
         }
 
+        final FragmentContract topFragment = (FragmentContract) mStack.getTopFragment();
+        if (topFragment != null && topFragment.onBackPressed()) {
+            return true;
+        }
+
         if (mStack.popStack(true)) {
             return true;
         }
