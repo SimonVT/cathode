@@ -1,37 +1,34 @@
 package net.simonvt.trakt.remote.action;
 
-import retrofit.RetrofitError;
-
+import javax.inject.Inject;
 import net.simonvt.trakt.api.body.RateBody;
 import net.simonvt.trakt.api.service.RateService;
 import net.simonvt.trakt.remote.TraktTask;
-
-import javax.inject.Inject;
+import retrofit.RetrofitError;
 
 public class ShowRateTask extends TraktTask {
 
-    private static final String TAG = "MovieRateTask";
+  private static final String TAG = "MovieRateTask";
 
-    @Inject transient RateService mRateService;
+  @Inject transient RateService rateService;
 
-    private long mTvdbId;
+  private long tvdbId;
 
-    private int mRating;
+  private int rating;
 
-    public ShowRateTask(long tvdbId, int rating) {
-        mTvdbId = tvdbId;
-        mRating = rating;
+  public ShowRateTask(long tvdbId, int rating) {
+    this.tvdbId = tvdbId;
+    this.rating = rating;
+  }
+
+  @Override
+  protected void doTask() {
+    try {
+      rateService.rateShow(new RateBody.Builder().tvdbId(tvdbId).rating(rating).build());
+      postOnSuccess();
+    } catch (RetrofitError e) {
+      e.printStackTrace();
+      postOnFailure();
     }
-
-    @Override
-    protected void doTask() {
-        try {
-            mRateService.rateShow(new RateBody.Builder().tvdbId(mTvdbId).rating(mRating).build());
-            postOnSuccess();
-
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            postOnFailure();
-        }
-    }
+  }
 }

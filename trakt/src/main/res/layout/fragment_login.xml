@@ -4,52 +4,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <net.simonvt.trakt.widget.MaxSizeLinearLayout
+  <net.simonvt.trakt.widget.MaxSizeLinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_gravity="center_horizontal"
+      android:orientation="vertical"
+      android:gravity="center"
+      app:maxWidth="460dp"
+      android:paddingLeft="16dp"
+      android:paddingRight="16dp">
+
+    <EditText
+        android:id="@+id/username"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:orientation="vertical"
-        android:gravity="center"
-        app:maxWidth="460dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:inputType="textNoSuggestions"
+        android:hint="@string/username"/>
 
-        <EditText
-            android:id="@+id/username"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:inputType="textNoSuggestions"
-            android:hint="@string/username" />
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:inputType="textPassword"
+        android:hint="@string/password"/>
 
-        <EditText
-            android:id="@+id/password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:inputType="textPassword"
-            android:hint="@string/password" />
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:enabled="false"
+        android:inputType="textEmailAddress"
+        android:hint="@string/email"/>
 
-        <EditText
-            android:id="@+id/email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:enabled="false"
-            android:inputType="textEmailAddress"
-            android:hint="@string/email" />
+    <CheckBox
+        android:id="@+id/createNew"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/login_create_new"/>
 
-        <CheckBox
-            android:id="@+id/createNew"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="@string/login_create_new" />
-
-        <Button
-            android:id="@+id/login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/login" />
-    </net.simonvt.trakt.widget.MaxSizeLinearLayout>
+    <Button
+        android:id="@+id/login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login"/>
+  </net.simonvt.trakt.widget.MaxSizeLinearLayout>
 </FrameLayout>

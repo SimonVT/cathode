@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="RemoteImageView">
-        <attr name="dominantMeasurement" format="enum">
-            <enum name="height" value="0" />
-            <enum name="width" value="1" />
-        </attr>
+  <declare-styleable name="RemoteImageView">
+    <attr name="dominantMeasurement" format="enum">
+      <enum name="height" value="0"/>
+      <enum name="width" value="1"/>
+    </attr>
 
-        <attr name="aspectRatio" format="float" />
+    <attr name="aspectRatio" format="float"/>
 
-        <attr name="placeholder" format="reference" />
-    </declare-styleable>
+    <attr name="placeholder" format="reference"/>
+  </declare-styleable>
 
-    <declare-styleable name="MaxSizeLinearLayout">
-        <attr name="maxWidth" format="dimension" />
-        <attr name="maxHeight" format="dimension" />
-    </declare-styleable>
+  <declare-styleable name="MaxSizeLinearLayout">
+    <attr name="maxWidth" format="dimension"/>
+    <attr name="maxHeight" format="dimension"/>
+  </declare-styleable>
 
 </resources>

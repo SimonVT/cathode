@@ -1,11 +1,5 @@
 package net.simonvt.trakt.ui.dialog;
 
-import net.simonvt.trakt.R;
-import net.simonvt.trakt.TraktApp;
-import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
-import net.simonvt.trakt.scheduler.MovieTaskScheduler;
-import net.simonvt.trakt.scheduler.ShowTaskScheduler;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -15,100 +9,104 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
 import javax.inject.Inject;
+import net.simonvt.trakt.R;
+import net.simonvt.trakt.TraktApp;
+import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
+import net.simonvt.trakt.scheduler.MovieTaskScheduler;
+import net.simonvt.trakt.scheduler.ShowTaskScheduler;
 
 public class RatingDialog extends DialogFragment {
 
-    public enum Type {
-        SHOW,
-        EPISODE,
-        MOVIE,
-    }
+  public enum Type {
+    SHOW,
+    EPISODE,
+    MOVIE,
+  }
 
-    private static final String TAG = "RatingDialog";
+  private static final String TAG = "RatingDialog";
 
-    private static final String ARG_TYPE = "net.simonvt.trakt.ui.dialog.RatingDialog.type";
-    private static final String ARG_ID = "net.simonvt.trakt.ui.dialog.RatingDialog.id";
-    private static final String ARG_RATING = "net.simonvt.trakt.ui.dialog.RatingDialog.rating";
+  private static final String ARG_TYPE = "net.simonvt.trakt.ui.dialog.RatingDialog.type";
+  private static final String ARG_ID = "net.simonvt.trakt.ui.dialog.RatingDialog.id";
+  private static final String ARG_RATING = "net.simonvt.trakt.ui.dialog.RatingDialog.rating";
 
-    @Inject ShowTaskScheduler mShowScheduler;
+  @Inject ShowTaskScheduler showScheduler;
 
-    @Inject EpisodeTaskScheduler mEpisodeScheduler;
+  @Inject EpisodeTaskScheduler episodeScheduler;
 
-    @Inject MovieTaskScheduler mMovieScheduler;
+  @Inject MovieTaskScheduler movieScheduler;
 
-    private Type mType;
+  private Type type;
 
-    private long mId;
+  private long id;
 
-    private int mRating;
+  private int rating;
 
-    private String[] mRatingText;
+  private String[] ratingText;
 
-    public static RatingDialog newInstance(Type type, long id, int rating) {
-        RatingDialog dialog = new RatingDialog();
+  public static RatingDialog newInstance(Type type, long id, int rating) {
+    RatingDialog dialog = new RatingDialog();
 
-        Bundle args = new Bundle();
-        args.putSerializable(ARG_TYPE, type);
-        args.putLong(ARG_ID, id);
-        args.putInt(ARG_RATING, rating);
-        dialog.setArguments(args);
+    Bundle args = new Bundle();
+    args.putSerializable(ARG_TYPE, type);
+    args.putLong(ARG_ID, id);
+    args.putInt(ARG_RATING, rating);
+    dialog.setArguments(args);
 
-        return dialog;
-    }
+    return dialog;
+  }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        TraktApp.inject(getActivity(), this);
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    TraktApp.inject(getActivity(), this);
 
-        Bundle args = getArguments();
-        mType = (Type) args.getSerializable(ARG_TYPE);
-        mId = args.getLong(ARG_ID);
-        mRating = args.getInt(ARG_RATING);
+    Bundle args = getArguments();
+    type = (Type) args.getSerializable(ARG_TYPE);
+    id = args.getLong(ARG_ID);
+    rating = args.getInt(ARG_RATING);
 
-        mRatingText = getResources().getStringArray(R.array.ratings);
-    }
+    ratingText = getResources().getStringArray(R.array.ratings);
+  }
 
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+  @Override
+  public Dialog onCreateDialog(Bundle savedInstanceState) {
+    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_rating, null);
-        final int rating = getArguments().getInt(ARG_RATING);
-        final TextView ratingText = (TextView) v.findViewById(R.id.ratingText);
-        ratingText.setText(mRatingText[mRating]);
-        final RatingBar ratingBar = (RatingBar) v.findViewById(R.id.rating);
-        ratingBar.setRating(rating);
-        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-                mRating = (int) v;
-                ratingText.setText(mRatingText[(int) v]);
-            }
-        });
+    View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_rating, null);
+    final int rating = getArguments().getInt(ARG_RATING);
+    final TextView ratingText = (TextView) v.findViewById(R.id.ratingText);
+    ratingText.setText(this.ratingText[this.rating]);
+    final RatingBar ratingBar = (RatingBar) v.findViewById(R.id.rating);
+    ratingBar.setRating(rating);
+    ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+      @Override
+      public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+        RatingDialog.this.rating = (int) v;
+        ratingText.setText(RatingDialog.this.ratingText[(int) v]);
+      }
+    });
 
-        builder.setView(v);
-        builder.setPositiveButton(R.string.action_rate, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                switch (mType) {
-                    case SHOW:
-                        mShowScheduler.rate(mId, (int) ratingBar.getRating());
-                        break;
+    builder.setView(v);
+    builder.setPositiveButton(R.string.action_rate, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialogInterface, int i) {
+        switch (type) {
+          case SHOW:
+            showScheduler.rate(id, (int) ratingBar.getRating());
+            break;
 
-                    case EPISODE:
-                        mEpisodeScheduler.rate(mId, (int) ratingBar.getRating());
-                        break;
+          case EPISODE:
+            episodeScheduler.rate(id, (int) ratingBar.getRating());
+            break;
 
-                    case MOVIE:
-                        mMovieScheduler.rate(mId, (int) ratingBar.getRating());
-                        break;
-                }
-            }
-        });
+          case MOVIE:
+            movieScheduler.rate(id, (int) ratingBar.getRating());
+            break;
+        }
+      }
+    });
 
-        return builder.create();
-    }
+    return builder.create();
+  }
 }

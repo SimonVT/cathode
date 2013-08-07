@@ -6,138 +6,138 @@
     android:orientation="vertical"
     android:fitsSystemWindows="true">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:minHeight="64dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:singleLine="true"
-            style="?android:attr/windowTitleStyle" />
-
-        <net.simonvt.trakt.widget.OverflowView
-            android:id="@+id/overflow"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_menu_moreoverflow_normal_holo_light"
-            android:gravity="center"
-            style="@android:style/Widget.Holo.Light.ActionButton" />
-    </LinearLayout>
-
-    <View
-        android:id="@+id/titleDivider"
-        android:layout_width="match_parent"
-        android:layout_height="2dip"
-        android:background="@android:color/holo_blue_light" />
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingBottom="8dp">
+        android:gravity="center_vertical"
+        android:minHeight="64dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:singleLine="true"
+        style="?android:attr/windowTitleStyle"/>
 
-        <net.simonvt.trakt.widget.ObservableScrollView
-            android:id="@id/contentContainer"
+    <net.simonvt.trakt.widget.OverflowView
+        android:id="@+id/overflow"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_menu_moreoverflow_normal_holo_light"
+        android:gravity="center"
+        style="@android:style/Widget.Holo.Light.ActionButton"/>
+  </LinearLayout>
+
+  <View
+      android:id="@+id/titleDivider"
+      android:layout_width="match_parent"
+      android:layout_height="2dip"
+      android:background="@android:color/holo_blue_light"/>
+
+  <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1"
+      android:paddingBottom="8dp">
+
+    <net.simonvt.trakt.widget.ObservableScrollView
+        android:id="@id/contentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+      <FrameLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+          <include
+              layout="@layout/info_rating"
+              android:layout_marginLeft="6dp"
+              android:layout_marginTop="4dp"
+              android:layout_marginBottom="8dp"/>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+          <TextView
+              android:id="@+id/firstAired"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="8dp"
+              android:layout_marginRight="8dp"
+              android:layout_marginBottom="4dp"
+              android:fontFamily="sans-light"
+              android:text="OCT 20, 2011"/>
 
-                    <include
-                        layout="@layout/info_rating"
-                        android:layout_marginLeft="6dp"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="8dp" />
+          <net.simonvt.trakt.widget.RemoteImageView
+              android:id="@+id/screen"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="8dp"
+              android:layout_marginRight="8dp"
+              android:background="@drawable/header_bg"
+              app:dominantMeasurement="width"
+              app:aspectRatio="0.5625"/>
 
-                    <TextView
-                        android:id="@+id/firstAired"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:layout_marginBottom="4dp"
-                        android:fontFamily="sans-light"
-                        android:text="OCT 20, 2011" />
+          <TextView
+              android:id="@+id/overview"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="8dp"
+              android:layout_marginRight="8dp"
+              android:layout_marginTop="8dp"
+              android:text="Text goes here"
+              style="@style/Widget.InfoText"/>
+        </LinearLayout>
 
-                    <net.simonvt.trakt.widget.RemoteImageView
-                        android:id="@+id/screen"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:background="@drawable/header_bg"
-                        app:dominantMeasurement="width"
-                        app:aspectRatio="0.5625" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:orientation="vertical"
+            android:gravity="right">
 
-                    <TextView
-                        android:id="@+id/overview"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:layout_marginTop="8dp"
-                        android:text="Text goes here"
-                        style="@style/Widget.InfoText" />
-                </LinearLayout>
+          <TextView
+              android:id="@+id/isWatched"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="4dp"
+              android:layout_marginRight="8dp"
+              android:drawableRight="@drawable/ic_checkmark_watched"
+              android:text="@string/checkmark_watched"
+              android:textColor="@color/watchedColor"
+              style="@style/Widget.CheckMark"/>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:orientation="vertical"
-                    android:gravity="right">
+          <TextView
+              android:id="@+id/inCollection"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="4dp"
+              android:layout_marginRight="8dp"
+              android:drawableRight="@drawable/ic_checkmark_collection"
+              android:text="@string/checkmark_collection"
+              android:textColor="@color/collectedColor"
+              style="@style/Widget.CheckMark"/>
 
-                    <TextView
-                        android:id="@+id/isWatched"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginRight="8dp"
-                        android:drawableRight="@drawable/ic_checkmark_watched"
-                        android:text="@string/checkmark_watched"
-                        android:textColor="@color/watchedColor"
-                        style="@style/Widget.CheckMark" />
+          <TextView
+              android:id="@+id/inWatchlist"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="4dp"
+              android:layout_marginRight="8dp"
+              android:drawableRight="@drawable/ic_checkmark_watchlist"
+              android:text="@string/checkmark_watchlist"
+              android:textColor="@color/watchlistColor"
+              style="@style/Widget.CheckMark"/>
+        </LinearLayout>
+      </FrameLayout>
+    </net.simonvt.trakt.widget.ObservableScrollView>
 
-                    <TextView
-                        android:id="@+id/inCollection"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginRight="8dp"
-                        android:drawableRight="@drawable/ic_checkmark_collection"
-                        android:text="@string/checkmark_collection"
-                        android:textColor="@color/collectedColor"
-                        style="@style/Widget.CheckMark" />
-
-                    <TextView
-                        android:id="@+id/inWatchlist"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginRight="8dp"
-                        android:drawableRight="@drawable/ic_checkmark_watchlist"
-                        android:text="@string/checkmark_watchlist"
-                        android:textColor="@color/watchlistColor"
-                        style="@style/Widget.CheckMark" />
-                </LinearLayout>
-            </FrameLayout>
-        </net.simonvt.trakt.widget.ObservableScrollView>
-
-        <include layout="@layout/fragment_list_progressbar" />
-    </FrameLayout>
+    <include layout="@layout/fragment_list_progressbar"/>
+  </FrameLayout>
 </LinearLayout>

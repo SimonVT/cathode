@@ -3,4 +3,4 @@
     android:accountType="@string/accountType"
     android:icon="@drawable/ic_launcher"
     android:smallIcon="@drawable/ic_launcher"
-    android:label="@string/accountName" />
+    android:label="@string/accountName"/>

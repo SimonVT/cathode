@@ -1,13 +1,13 @@
 <resources>
 
-    <color name="drawerBackground">#FFD5D5D5</color>
-    <color name="contentBackground">#FFE5E5E5</color>
+  <color name="drawerBackground">#FFD5D5D5</color>
+  <color name="contentBackground">#FFE5E5E5</color>
 
-    <color name="watchedColor">@android:color/holo_blue_dark</color>
-    <color name="collectedColor">@android:color/holo_orange_dark</color>
-    <color name="watchlistColor">@android:color/holo_red_dark</color>
-    <color name="defaultColor">#FF7E7E7E</color>
+  <color name="watchedColor">@android:color/holo_blue_dark</color>
+  <color name="collectedColor">@android:color/holo_orange_dark</color>
+  <color name="watchlistColor">@android:color/holo_red_dark</color>
+  <color name="defaultColor">#FF7E7E7E</color>
 
-    <color name="placeholderBackground">#FF1C1C1E</color>
+  <color name="placeholderBackground">#FF1C1C1E</color>
 
 </resources>

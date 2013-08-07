@@ -3,21 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/listContainer"
+  <FrameLayout
+      android:id="@+id/listContainer"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+
+    <TextView
+        android:id="@android:id/empty"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"/>
 
-        <TextView
-            android:id="@android:id/empty"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp" />
+    <include layout="@layout/list_default"/>
+  </FrameLayout>
 
-        <include layout="@layout/list_default" />
-    </FrameLayout>
-
-    <include layout="@layout/fragment_list_progressbar" />
+  <include layout="@layout/fragment_list_progressbar"/>
 </FrameLayout>

@@ -1,74 +1,71 @@
 package net.simonvt.trakt.remote;
 
+import android.os.Handler;
+import android.os.Looper;
 import com.squareup.tape.Task;
-
+import javax.inject.Inject;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.util.LogWrapper;
 
-import android.os.Handler;
-import android.os.Looper;
-
-import javax.inject.Inject;
-
 public abstract class TraktTask implements Task<TraktTaskService> {
 
-    private static final String TAG = "TraktTask";
+  private static final String TAG = "TraktTask";
 
-    private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
+  private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
-    @Inject protected transient TraktTaskQueue mQueue;
+  @Inject protected transient TraktTaskQueue queue;
 
-    @Inject protected transient PriorityTraktTaskQueue mPriorityQueue;
+  @Inject protected transient PriorityTraktTaskQueue priorityQueue;
 
-    protected transient TraktTaskService mService;
+  protected transient TraktTaskService service;
 
-    @Override
-    public final void execute(final TraktTaskService service) {
-        TraktApp.inject(service, this);
-        mService = service;
+  @Override
+  public final void execute(final TraktTaskService service) {
+    TraktApp.inject(service, this);
+    this.service = service;
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                doTask();
-            }
-        }).start();
-    }
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        doTask();
+      }
+    }).start();
+  }
 
-    protected abstract void doTask();
+  protected abstract void doTask();
 
-    protected void queueTask(final TraktTask task) {
-        LogWrapper.v(TAG, "Queueing task: " + task.getClass().getSimpleName());
-        mQueue.add(task);
-    }
+  protected void queueTask(final TraktTask task) {
+    LogWrapper.v(TAG, "Queueing task: " + task.getClass().getSimpleName());
+    queue.add(task);
+  }
 
-    protected void queuePriorityTask(final TraktTask task) {
-        LogWrapper.v(TAG, "Queueing priority task: " + task.getClass().getSimpleName());
-        mPriorityQueue.add(task);
-    }
+  protected void queuePriorityTask(final TraktTask task) {
+    LogWrapper.v(TAG, "Queueing priority task: " + task.getClass().getSimpleName());
+    priorityQueue.add(task);
+  }
 
-    protected void postOnSuccess() {
-        MAIN_HANDLER.post(new Runnable() {
-            @Override
-            public void run() {
-                mService.onSuccess();
-            }
-        });
-    }
+  protected void postOnSuccess() {
+    MAIN_HANDLER.post(new Runnable() {
+      @Override
+      public void run() {
+        service.onSuccess();
+      }
+    });
+  }
 
-    protected void postOnFailure() {
-        MAIN_HANDLER.post(new Runnable() {
-            @Override
-            public void run() {
-                mService.onFailure();
-            }
-        });
-    }
+  protected void postOnFailure() {
+    MAIN_HANDLER.post(new Runnable() {
+      @Override
+      public void run() {
+        service.onFailure();
+      }
+    });
+  }
 
-    public interface TaskCallback {
+  public interface TaskCallback {
 
-        void onSuccess();
+    void onSuccess();
 
-        void onFailure();
-    }
+    void onFailure();
+  }
 }

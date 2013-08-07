@@ -1,14 +1,14 @@
 <resources>
 
-    <style name="BaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <item name="menuDrawerStyle">@style/Menu.Drawer</item>
-        <item name="messageBarContainerStyle">@style/MessageBar.Container</item>
-        <item name="messageBarTextStyle">@style/MessageBar.Message</item>
-        <item name="messageBarButtonStyle">@style/MessageBar.Button</item>
-    </style>
+  <style name="BaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+    <item name="menuDrawerStyle">@style/Menu.Drawer</item>
+    <item name="messageBarContainerStyle">@style/MessageBar.Container</item>
+    <item name="messageBarTextStyle">@style/MessageBar.Message</item>
+    <item name="messageBarButtonStyle">@style/MessageBar.Button</item>
+  </style>
 
-    <style name="Theme" parent="BaseTheme">
-        <item name="android:windowBackground">@color/contentBackground</item>
-    </style>
+  <style name="Theme" parent="BaseTheme">
+    <item name="android:windowBackground">@color/contentBackground</item>
+  </style>
 
 </resources>

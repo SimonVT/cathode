@@ -1,35 +1,35 @@
 apply plugin: 'android'
 
 dependencies {
-    compile project(':trakt-api')
-    compile parent.ext.libraries.menudrawer
-    compile parent.ext.libraries.messagebar
+  compile project(':trakt-api')
+  compile parent.ext.libraries.menudrawer
+  compile parent.ext.libraries.messagebar
 
-    compile parent.ext.libraries.gson
+  compile parent.ext.libraries.gson
 
-    compile parent.ext.libraries.supportv4
+  compile parent.ext.libraries.supportv4
 
-    compile parent.ext.libraries.otto
-    compile parent.ext.libraries.dagger
-    compile parent.ext.libraries.okhttp
-    compile parent.ext.libraries.picasso
-    compile parent.ext.libraries.retrofit
-    compile parent.ext.libraries.tape
+  compile parent.ext.libraries.otto
+  compile parent.ext.libraries.dagger
+  compile parent.ext.libraries.okhttp
+  compile parent.ext.libraries.picasso
+  compile parent.ext.libraries.retrofit
+  compile parent.ext.libraries.tape
 
-    compile parent.ext.libraries.butterknife
+  compile parent.ext.libraries.butterknife
 
-    compile parent.ext.libraries.dashclockApi
+  compile parent.ext.libraries.dashclockApi
 }
 
 android {
-    compileSdkVersion 18
-    buildToolsVersion "18.0"
+  compileSdkVersion 18
+  buildToolsVersion "18.0"
 
-    defaultConfig {
-        minSdkVersion = parent.ext.minSdkVersion
-        targetSdkVersion = parent.ext.targetSdkVersion
+  defaultConfig {
+    minSdkVersion = parent.ext.minSdkVersion
+    targetSdkVersion = parent.ext.targetSdkVersion
 
-        versionCode = parent.ext.versionCode;
-        versionName = parent.ext.versionName
-    }
+    versionCode = parent.ext.versionCode;
+    versionName = parent.ext.versionName
+  }
 }

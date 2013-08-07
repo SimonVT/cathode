@@ -1,7 +1,7 @@
 package net.simonvt.trakt.remote.sync;
 
-import retrofit.RetrofitError;
-
+import android.content.ContentResolver;
+import javax.inject.Inject;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.api.ResponseParser;
 import net.simonvt.trakt.api.entity.Episode;
@@ -11,60 +11,57 @@ import net.simonvt.trakt.provider.EpisodeWrapper;
 import net.simonvt.trakt.provider.ShowWrapper;
 import net.simonvt.trakt.remote.TraktTask;
 import net.simonvt.trakt.util.LogWrapper;
-
-import android.content.ContentResolver;
-
-import javax.inject.Inject;
+import retrofit.RetrofitError;
 
 public class SyncEpisodeTask extends TraktTask {
 
-    private static final String TAG = "SyncEpisodeTask";
+  private static final String TAG = "SyncEpisodeTask";
 
-    @Inject transient ShowService mShowService;
+  @Inject transient ShowService showService;
 
-    private final int mTvdbId;
+  private final int tvdbId;
 
-    private final int mSeason;
+  private final int season;
 
-    private final int mEpisode;
+  private final int episode;
 
-    public SyncEpisodeTask(int tvdbId, int season, int episode) {
-        mTvdbId = tvdbId;
-        mSeason = season;
-        mEpisode = episode;
-    }
+  public SyncEpisodeTask(int tvdbId, int season, int episode) {
+    this.tvdbId = tvdbId;
+    this.season = season;
+    this.episode = episode;
+  }
 
-    @Override
-    protected void doTask() {
-        LogWrapper.v(TAG, "[doTask]");
+  @Override
+  protected void doTask() {
+    LogWrapper.v(TAG, "[doTask]");
 
-        try {
-            LogWrapper.v(TAG, "Syncing episode: " + mTvdbId + "-" + mSeason + "-" + mEpisode);
+    try {
+      LogWrapper.v(TAG, "Syncing episode: " + tvdbId + "-" + season + "-" + episode);
 
-            Episode episode = mShowService.episodeSummary(mTvdbId, mSeason, mEpisode).getEpisode();
+      Episode episode = showService.episodeSummary(tvdbId, season, this.episode).getEpisode();
 
-            final ContentResolver resolver = mService.getContentResolver();
-            final long showId = ShowWrapper.getShowId(resolver, mTvdbId);
-            final long seasonId = ShowWrapper.getSeasonId(resolver, showId, mSeason);
+      final ContentResolver resolver = service.getContentResolver();
+      final long showId = ShowWrapper.getShowId(resolver, tvdbId);
+      final long seasonId = ShowWrapper.getSeasonId(resolver, showId, season);
 
-            EpisodeWrapper.updateOrInsertEpisode(mService.getContentResolver(), episode, showId, seasonId);
+      EpisodeWrapper.updateOrInsertEpisode(service.getContentResolver(), episode, showId,
+          seasonId);
 
-            postOnSuccess();
-
-        } catch (RetrofitError e) {
-            final int statusCode = e.getResponse().getStatus();
-            LogWrapper.e(TAG, "URL: " + e.getUrl() + " - Status code: " + statusCode, e);
-            if (statusCode == 400) {
-                ResponseParser parser = new ResponseParser();
-                TraktApp.inject(mService, parser);
-                TraktResponse response = parser.tryParse(e);
-                if (response != null && "episode not found".equals(response.getError())) {
-                    postOnSuccess();
-                    return;
-                }
-            }
+      postOnSuccess();
+    } catch (RetrofitError e) {
+      final int statusCode = e.getResponse().getStatus();
+      LogWrapper.e(TAG, "URL: " + e.getUrl() + " - Status code: " + statusCode, e);
+      if (statusCode == 400) {
+        ResponseParser parser = new ResponseParser();
+        TraktApp.inject(service, parser);
+        TraktResponse response = parser.tryParse(e);
+        if (response != null && "episode not found".equals(response.getError())) {
+          postOnSuccess();
+          return;
         }
-
-        postOnFailure();
+      }
     }
+
+    postOnFailure();
+  }
 }

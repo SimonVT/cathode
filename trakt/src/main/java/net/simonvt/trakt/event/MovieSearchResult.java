@@ -4,13 +4,13 @@ import java.util.List;
 
 public class MovieSearchResult {
 
-    private List<Long> mMovieIds;
+  private List<Long> movieIds;
 
-    public MovieSearchResult(List<Long> movieIds) {
-        mMovieIds = movieIds;
-    }
+  public MovieSearchResult(List<Long> movieIds) {
+    this.movieIds = movieIds;
+  }
 
-    public List<Long> getMovieIds() {
-        return mMovieIds;
-    }
+  public List<Long> getMovieIds() {
+    return movieIds;
+  }
 }

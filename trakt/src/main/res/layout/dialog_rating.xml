@@ -5,18 +5,18 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <RatingBar
-        android:id="@+id/rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minHeight="32dp"
-        android:maxHeight="32dp"
-        android:progressDrawable="@drawable/ratingbar"
-        style="@style/Widget.RatingBar" />
+  <RatingBar
+      android:id="@+id/rating"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:minHeight="32dp"
+      android:maxHeight="32dp"
+      android:progressDrawable="@drawable/ratingbar"
+      style="@style/Widget.RatingBar"/>
 
-    <TextView
-        android:id="@+id/ratingText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Weak sauce :(" />
+  <TextView
+      android:id="@+id/ratingText"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Weak sauce :("/>
 </LinearLayout>

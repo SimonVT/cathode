@@ -1,10 +1,14 @@
 package net.simonvt.trakt.util;
 
-import retrofit.RetrofitError;
-
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.TextUtils;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
-
+import java.util.ArrayList;
+import java.util.List;
+import javax.inject.Inject;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.api.entity.TvShow;
 import net.simonvt.trakt.api.service.SearchService;
@@ -13,129 +17,120 @@ import net.simonvt.trakt.event.ShowSearchResult;
 import net.simonvt.trakt.provider.ShowWrapper;
 import net.simonvt.trakt.remote.TraktTaskQueue;
 import net.simonvt.trakt.remote.sync.SyncShowTask;
-
-import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
-import android.text.TextUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
+import retrofit.RetrofitError;
 
 public class ShowSearchHandler {
 
-    private static final String TAG = "ShowSearchHandler";
+  private static final String TAG = "ShowSearchHandler";
 
-    private Context mContext;
+  private Context context;
 
-    private Bus mBus;
+  private Bus bus;
 
-    private List<Long> mShowIds;
+  private List<Long> showIds;
 
-    private SearchThread mThread;
+  private SearchThread thread;
 
-    public ShowSearchHandler(Context context, Bus bus) {
-        mContext = context;
-        mBus = bus;
-        bus.register(this);
+  public ShowSearchHandler(Context context, Bus bus) {
+    this.context = context;
+    this.bus = bus;
+    bus.register(this);
+  }
+
+  @Produce
+  public ShowSearchResult produceSearchResult() {
+    if (showIds != null) {
+      return new ShowSearchResult(showIds);
     }
 
-    @Produce
-    public ShowSearchResult produceSearchResult() {
-        if (mShowIds != null) {
-            return new ShowSearchResult(mShowIds);
+    return null;
+  }
+
+  public boolean isSearching() {
+    return thread != null;
+  }
+
+  public void deliverResult(List<Long> showIds) {
+    LogWrapper.v(TAG, "[deliverResult]");
+    this.showIds = showIds;
+    bus.post(new ShowSearchResult(showIds));
+  }
+
+  public void deliverFailure() {
+    LogWrapper.v(TAG, "[deliverFailure]");
+    bus.post(new SearchFailureEvent(SearchFailureEvent.Type.SHOW));
+  }
+
+  public void search(final String query) {
+    LogWrapper.v(TAG, "[search] Query: " + query);
+    showIds = null;
+
+    if (thread != null) {
+      thread.unregister();
+    }
+    thread = new SearchThread(context, query);
+    thread.start();
+  }
+
+  public static final class SearchThread extends Thread {
+
+    private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
+
+    @Inject ShowSearchHandler handler;
+
+    @Inject SearchService searchService;
+
+    @Inject TraktTaskQueue queue;
+
+    private Context context;
+
+    private String query;
+
+    private SearchThread(Context context, String query) {
+      this.context = context;
+      this.query = query;
+
+      TraktApp.inject(context, this);
+    }
+
+    public void unregister() {
+      handler = null;
+    }
+
+    @Override
+    public void run() {
+      try {
+        List<TvShow> shows = searchService.shows(query);
+
+        final List<Long> showIds = new ArrayList<Long>(shows.size());
+
+        for (TvShow show : shows) {
+          if (!TextUtils.isEmpty(show.getTitle())) {
+            final boolean exists =
+                ShowWrapper.exists(context.getContentResolver(), show.getTvdbId());
+
+            final long showId = ShowWrapper.updateOrInsertShow(context.getContentResolver(), show);
+            showIds.add(showId);
+
+            if (!exists) queue.add(new SyncShowTask(show.getTvdbId()));
+          }
         }
 
-        return null;
+        MAIN_HANDLER.post(new Runnable() {
+          @Override
+          public void run() {
+            if (handler != null) handler.deliverResult(showIds);
+          }
+        });
+      } catch (RetrofitError e) {
+        e.printStackTrace();
+        MAIN_HANDLER.post(new Runnable() {
+          @Override
+          public void run() {
+            if (handler != null) handler.deliverFailure();
+          }
+        });
+      }
     }
-
-    public boolean isSearching() {
-        return mThread != null;
-    }
-
-    public void deliverResult(List<Long> showIds) {
-        LogWrapper.v(TAG, "[deliverResult]");
-        mShowIds = showIds;
-        mBus.post(new ShowSearchResult(showIds));
-    }
-
-    public void deliverFailure() {
-        LogWrapper.v(TAG, "[deliverFailure]");
-        mBus.post(new SearchFailureEvent(SearchFailureEvent.Type.SHOW));
-    }
-
-    public void search(final String query) {
-        LogWrapper.v(TAG, "[search] Query: " + query);
-        mShowIds = null;
-
-        if (mThread != null) {
-            mThread.unregister();
-        }
-        mThread = new SearchThread(mContext, query);
-        mThread.start();
-
-    }
-
-    public static final class SearchThread extends Thread {
-
-        private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
-
-        @Inject ShowSearchHandler mHandler;
-
-        @Inject SearchService mSearchService;
-
-        @Inject TraktTaskQueue mQueue;
-
-        private Context mContext;
-
-        private String mQuery;
-
-        private SearchThread(Context context, String query) {
-            mContext = context;
-            mQuery = query;
-
-            TraktApp.inject(context, this);
-        }
-
-        public void unregister() {
-            mHandler = null;
-        }
-
-        @Override
-        public void run() {
-            try {
-                List<TvShow> shows = mSearchService.shows(mQuery);
-
-                final List<Long> showIds = new ArrayList<Long>(shows.size());
-
-                for (TvShow show : shows) {
-                    if (!TextUtils.isEmpty(show.getTitle())) {
-                        final boolean exists = ShowWrapper.exists(mContext.getContentResolver(), show.getTvdbId());
-
-                        final long showId = ShowWrapper.updateOrInsertShow(mContext.getContentResolver(), show);
-                        showIds.add(showId);
-
-                        if (!exists) mQueue.add(new SyncShowTask(show.getTvdbId()));
-                    }
-                }
-
-                MAIN_HANDLER.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mHandler != null) mHandler.deliverResult(showIds);
-                    }
-                });
-            } catch (RetrofitError e) {
-                e.printStackTrace();
-                MAIN_HANDLER.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mHandler != null) mHandler.deliverFailure();
-                    }
-                });
-            }
-        }
-    }
+  }
 }

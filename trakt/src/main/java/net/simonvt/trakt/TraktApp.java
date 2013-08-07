@@ -1,15 +1,22 @@
 package net.simonvt.trakt;
 
-import dagger.Module;
-import dagger.ObjectGraph;
-import dagger.Provides;
-
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.app.Application;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.provider.CalendarContract;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
 import com.squareup.tape.ObjectQueue;
-
+import dagger.Module;
+import dagger.ObjectGraph;
+import dagger.Provides;
+import javax.inject.Singleton;
 import net.simonvt.trakt.api.ApiKey;
 import net.simonvt.trakt.api.ResponseParser;
 import net.simonvt.trakt.api.TraktModule;
@@ -85,272 +92,194 @@ import net.simonvt.trakt.util.ShowSearchHandler;
 import net.simonvt.trakt.widget.PhoneEpisodeView;
 import net.simonvt.trakt.widget.RemoteImageView;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.app.Application;
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.provider.CalendarContract;
-
-import javax.inject.Singleton;
-
 public class TraktApp extends Application {
 
-    public static final boolean DEBUG = BuildConfig.DEBUG;
+  public static final boolean DEBUG = BuildConfig.DEBUG;
 
-    private ObjectGraph mObjectGraph;
+  private ObjectGraph objectGraph;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        mObjectGraph = ObjectGraph.create(new AppModule(this));
-        mObjectGraph.plus(new TraktModule());
+  @Override
+  public void onCreate() {
+    super.onCreate();
+    objectGraph = ObjectGraph.create(new AppModule(this));
+    objectGraph.plus(new TraktModule());
+  }
+
+  public static void inject(Context context) {
+    ((TraktApp) context.getApplicationContext()).objectGraph.inject(context);
+  }
+
+  public static void inject(Context context, Object object) {
+    ((TraktApp) context.getApplicationContext()).objectGraph.inject(object);
+  }
+
+  public static Account getAccount(Context context) {
+    return new Account(context.getString(R.string.accountName),
+        context.getString(R.string.accountType));
+  }
+
+  public static void setupAccount(Context context) {
+    AccountManager manager = AccountManager.get(context);
+    Account account = getAccount(context);
+    manager.addAccountExplicitly(account, null, null);
+
+    ContentResolver.setIsSyncable(account, CalendarContract.AUTHORITY, 1);
+    ContentResolver.setSyncAutomatically(account, CalendarContract.AUTHORITY, true);
+  }
+
+  public static void removeAccount(Context context) {
+    AccountManager am = AccountManager.get(context);
+    Account[] accounts = am.getAccountsByType(context.getString(R.string.accountType));
+    for (Account account : accounts) {
+      am.removeAccount(account, null, null);
+    }
+  }
+
+  @Module(
+      includes = {
+          TraktModule.class
+      },
+
+      injects = {
+          // Task queues
+          PriorityTraktTaskQueue.class, TraktTaskQueue.class,
+
+          // Task schedulers
+          EpisodeTaskScheduler.class, MovieTaskScheduler.class, SeasonTaskScheduler.class,
+          ShowTaskScheduler.class,
+
+          // Activities
+          HomeActivity.class,
+
+          // Fragments
+          SearchShowFragment.class, EpisodeFragment.class, EpisodesWatchlistFragment.class,
+          LoginFragment.class, MovieCollectionFragment.class, MovieFragment.class,
+          MovieWatchlistFragment.class, SearchMovieFragment.class, SeasonFragment.class,
+          ShowInfoFragment.class, ShowsCollectionFragment.class, ShowsWatchlistFragment.class,
+          UpcomingShowsFragment.class, WatchedMoviesFragment.class, WatchedShowsFragment.class,
+
+          // Dialogs
+          RatingDialog.class,
+
+          // ListAdapters
+          EpisodeWatchlistAdapter.class, SeasonAdapter.class, SeasonsAdapter.class,
+          ShowsAdapter.class, ShowSearchAdapter.class, MoviesAdapter.class,
+          MovieSearchAdapter.class,
+
+          // Views
+          PhoneEpisodeView.class, RemoteImageView.class,
+
+          // Services
+          TraktTaskService.class,
+
+          // Tasks
+          EpisodeCollectionTask.class, EpisodeRateTask.class, EpisodeWatchedTask.class,
+          EpisodeWatchlistTask.class, MovieCollectionTask.class, MovieRateTask.class,
+          MovieWatchedTask.class, MovieWatchlistTask.class, ShowRateTask.class,
+          ShowCollectionTask.class, ShowWatchlistTask.class, SyncShowsCollectionTask.class,
+          SyncEpisodeTask.class, SyncEpisodeWatchlistTask.class, SyncMovieTask.class,
+          SyncMoviesTask.class, SyncMoviesCollectionTask.class, SyncMoviesWatchedTask.class,
+          SyncMoviesWatchlistTask.class, SyncSeasonTask.class, SyncShowTask.class,
+          SyncShowsTask.class, SyncShowsWatchlistTask.class, SyncShowsWatchedTask.class,
+          ShowWatchedTask.class, SyncUpdatedMovies.class, SyncUpdatedShows.class,
+          UpdateSeasonCountTask.class, UpdateShowCountTask.class, SyncTask.class,
+
+          // Misc
+          PhoneController.class, ResponseParser.class, ShowSearchHandler.class,
+          ShowSearchHandler.SearchThread.class, MovieSearchHandler.class,
+          MovieSearchHandler.SearchThread.class
+      })
+  static class AppModule {
+
+    private final Context appContext;
+
+    AppModule(Context appContext) {
+      this.appContext = appContext;
     }
 
-    public static void inject(Context context) {
-        ((TraktApp) context.getApplicationContext()).mObjectGraph.inject(context);
+    @Provides @Singleton TraktTaskQueue provideTaskQueue(Gson gson) {
+      TraktTaskQueue queue = TraktTaskQueue.create(appContext, gson);
+      if (DEBUG) {
+        queue.setListener(new ObjectQueue.Listener<TraktTask>() {
+          @Override
+          public void onAdd(ObjectQueue<TraktTask> queue, TraktTask entry) {
+            LogWrapper.i("TraktTaskQueue", "Queue size: " + queue.size());
+          }
+
+          @Override
+          public void onRemove(ObjectQueue<TraktTask> queue) {
+            LogWrapper.i("TraktTaskQueue", "Queue size: " + queue.size());
+          }
+        });
+      }
+      return queue;
     }
 
-    public static void inject(Context context, Object object) {
-        ((TraktApp) context.getApplicationContext()).mObjectGraph.inject(object);
+    @Provides @Singleton PriorityTraktTaskQueue providePriorityTaskQueue(Gson gson) {
+      PriorityTraktTaskQueue queue = PriorityTraktTaskQueue.create(appContext, gson);
+      if (DEBUG) {
+        queue.setListener(new ObjectQueue.Listener<TraktTask>() {
+          @Override
+          public void onAdd(ObjectQueue<TraktTask> queue, TraktTask entry) {
+            LogWrapper.i("PriorityTraktTaskQueue", "Queue size: " + queue.size());
+          }
+
+          @Override
+          public void onRemove(ObjectQueue<TraktTask> queue) {
+            LogWrapper.i("PriorityTraktTaskQueue", "Queue size: " + queue.size());
+          }
+        });
+      }
+      return queue;
     }
 
-    public static Account getAccount(Context context) {
-        return new Account(context.getString(R.string.accountName), context.getString(R.string.accountType));
+    @Provides @Singleton ShowSearchHandler provideShowSearchHandler(Bus bus) {
+      return new ShowSearchHandler(appContext, bus);
     }
 
-    public static void setupAccount(Context context) {
-        AccountManager manager = AccountManager.get(context);
-        Account account = getAccount(context);
-        manager.addAccountExplicitly(account, null, null);
-
-        ContentResolver.setIsSyncable(account, CalendarContract.AUTHORITY, 1);
-        ContentResolver.setSyncAutomatically(account, CalendarContract.AUTHORITY, true);
+    @Provides @Singleton MovieSearchHandler provideMovieSearchHandler(Bus bus) {
+      return new MovieSearchHandler(appContext, bus);
     }
 
-    public static void removeAccount(Context context) {
-        AccountManager am = AccountManager.get(context);
-        Account[] accounts = am.getAccountsByType(context.getString(R.string.accountType));
-        for (Account account : accounts) {
-            am.removeAccount(account, null, null);
-        }
+    @Provides @ApiKey String provideApiKey() {
+      return appContext.getString(R.string.apikey);
     }
 
-    @Module(
-            includes = {
-                    TraktModule.class
-            },
-
-            injects = {
-                    // Task queues
-                    PriorityTraktTaskQueue.class,
-                    TraktTaskQueue.class,
-
-                    // Task schedulers
-                    EpisodeTaskScheduler.class,
-                    MovieTaskScheduler.class,
-                    SeasonTaskScheduler.class,
-                    ShowTaskScheduler.class,
-
-                    // Activities
-                    HomeActivity.class,
-
-                    // Fragments
-                    SearchShowFragment.class,
-                    EpisodeFragment.class,
-                    EpisodesWatchlistFragment.class,
-                    LoginFragment.class,
-                    MovieCollectionFragment.class,
-                    MovieFragment.class,
-                    MovieWatchlistFragment.class,
-                    SearchMovieFragment.class,
-                    SeasonFragment.class,
-                    ShowInfoFragment.class,
-                    ShowsCollectionFragment.class,
-                    ShowsWatchlistFragment.class,
-                    UpcomingShowsFragment.class,
-                    WatchedMoviesFragment.class,
-                    WatchedShowsFragment.class,
-
-                    // Dialogs
-                    RatingDialog.class,
-
-                    // ListAdapters
-                    EpisodeWatchlistAdapter.class,
-                    SeasonAdapter.class,
-                    SeasonsAdapter.class,
-                    ShowsAdapter.class,
-                    ShowSearchAdapter.class,
-                    MoviesAdapter.class,
-                    MovieSearchAdapter.class,
-
-                    // Views
-                    PhoneEpisodeView.class,
-                    RemoteImageView.class,
-
-                    // Services
-                    TraktTaskService.class,
-
-                    // Tasks
-                    EpisodeCollectionTask.class,
-                    EpisodeRateTask.class,
-                    EpisodeWatchedTask.class,
-                    EpisodeWatchlistTask.class,
-                    MovieCollectionTask.class,
-                    MovieRateTask.class,
-                    MovieWatchedTask.class,
-                    MovieWatchlistTask.class,
-                    ShowRateTask.class,
-                    ShowCollectionTask.class,
-                    ShowWatchlistTask.class,
-                    SyncShowsCollectionTask.class,
-                    SyncEpisodeTask.class,
-                    SyncEpisodeWatchlistTask.class,
-                    SyncMovieTask.class,
-                    SyncMoviesTask.class,
-                    SyncMoviesCollectionTask.class,
-                    SyncMoviesWatchedTask.class,
-                    SyncMoviesWatchlistTask.class,
-                    SyncSeasonTask.class,
-                    SyncShowTask.class,
-                    SyncShowsTask.class,
-                    SyncShowsWatchlistTask.class,
-                    SyncShowsWatchedTask.class,
-                    ShowWatchedTask.class,
-                    SyncUpdatedMovies.class,
-                    SyncUpdatedShows.class,
-                    UpdateSeasonCountTask.class,
-                    UpdateShowCountTask.class,
-                    SyncTask.class,
-
-                    // Misc
-                    PhoneController.class,
-                    ResponseParser.class,
-                    ShowSearchHandler.class,
-                    ShowSearchHandler.SearchThread.class,
-                    MovieSearchHandler.class,
-                    MovieSearchHandler.SearchThread.class
-            }
-    )
-    static class AppModule {
-
-        private final Context mAppContext;
-
-        AppModule(Context appContext) {
-            this.mAppContext = appContext;
-        }
-
-        @Provides
-        @Singleton
-        TraktTaskQueue provideTaskQueue(Gson gson) {
-            TraktTaskQueue queue = TraktTaskQueue.create(mAppContext, gson);
-            if (DEBUG) {
-                queue.setListener(new ObjectQueue.Listener<TraktTask>() {
-                    @Override
-                    public void onAdd(ObjectQueue<TraktTask> queue, TraktTask entry) {
-                        LogWrapper.i("TraktTaskQueue", "Queue size: " + queue.size());
-                    }
-
-                    @Override
-                    public void onRemove(ObjectQueue<TraktTask> queue) {
-                        LogWrapper.i("TraktTaskQueue", "Queue size: " + queue.size());
-                    }
-                });
-            }
-            return queue;
-        }
-
-        @Provides
-        @Singleton
-        PriorityTraktTaskQueue providePriorityTaskQueue(Gson gson) {
-            PriorityTraktTaskQueue queue = PriorityTraktTaskQueue.create(mAppContext, gson);
-            if (DEBUG) {
-                queue.setListener(new ObjectQueue.Listener<TraktTask>() {
-                    @Override
-                    public void onAdd(ObjectQueue<TraktTask> queue, TraktTask entry) {
-                        LogWrapper.i("PriorityTraktTaskQueue", "Queue size: " + queue.size());
-                    }
-
-                    @Override
-                    public void onRemove(ObjectQueue<TraktTask> queue) {
-                        LogWrapper.i("PriorityTraktTaskQueue", "Queue size: " + queue.size());
-                    }
-                });
-            }
-            return queue;
-        }
-
-        @Provides
-        @Singleton
-        ShowSearchHandler provideShowSearchHandler(Bus bus) {
-            return new ShowSearchHandler(mAppContext, bus);
-        }
-
-        @Provides
-        @Singleton
-        MovieSearchHandler provideMovieSearchHandler(Bus bus) {
-            return new MovieSearchHandler(mAppContext, bus);
-        }
-
-        @Provides
-        @ApiKey
-        String provideApiKey() {
-            return mAppContext.getString(R.string.apikey);
-        }
-
-        @Provides
-        @Singleton
-        Picasso providePicasso() {
-            return new Picasso.Builder(mAppContext).build();
-        }
-
-        @Provides
-        @Singleton
-        Bus provideBus() {
-            return new Bus();
-        }
-
-        @Provides
-        @Singleton
-        Gson provideGson() {
-            GsonBuilder builder = new GsonBuilder();
-            builder.registerTypeAdapter(TraktTask.class, new TraktTaskSerializer());
-            return builder.create();
-        }
-
-        @Provides
-        @Singleton
-        EpisodeTaskScheduler provideEpisodeScheduler() {
-            return new EpisodeTaskScheduler(mAppContext);
-        }
-
-        @Provides
-        @Singleton
-        SeasonTaskScheduler provideSeasonScheduler() {
-            return new SeasonTaskScheduler(mAppContext);
-        }
-
-        @Provides
-        @Singleton
-        ShowTaskScheduler provideShowScheduler() {
-            return new ShowTaskScheduler(mAppContext);
-        }
-
-        @Provides
-        @Singleton
-        MovieTaskScheduler provideMovieScheduler() {
-            return new MovieTaskScheduler(mAppContext);
-        }
-
-        @Provides
-        @Singleton
-        UserCredentials provideCredentials() {
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mAppContext);
-            final String username = settings.getString(Settings.USERNAME, null);
-            final String password = settings.getString(Settings.PASSWORD, null);
-            return new UserCredentials(username, password);
-        }
+    @Provides @Singleton Picasso providePicasso() {
+      return new Picasso.Builder(appContext).build();
     }
+
+    @Provides @Singleton Bus provideBus() {
+      return new Bus();
+    }
+
+    @Provides @Singleton Gson provideGson() {
+      GsonBuilder builder = new GsonBuilder();
+      builder.registerTypeAdapter(TraktTask.class, new TraktTaskSerializer());
+      return builder.create();
+    }
+
+    @Provides @Singleton EpisodeTaskScheduler provideEpisodeScheduler() {
+      return new EpisodeTaskScheduler(appContext);
+    }
+
+    @Provides @Singleton SeasonTaskScheduler provideSeasonScheduler() {
+      return new SeasonTaskScheduler(appContext);
+    }
+
+    @Provides @Singleton ShowTaskScheduler provideShowScheduler() {
+      return new ShowTaskScheduler(appContext);
+    }
+
+    @Provides @Singleton MovieTaskScheduler provideMovieScheduler() {
+      return new MovieTaskScheduler(appContext);
+    }
+
+    @Provides @Singleton UserCredentials provideCredentials() {
+      SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(appContext);
+      final String username = settings.getString(Settings.USERNAME, null);
+      final String password = settings.getString(Settings.PASSWORD, null);
+      return new UserCredentials(username, password);
+    }
+  }
 }

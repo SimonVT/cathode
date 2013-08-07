@@ -27,7 +27,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,141 +39,135 @@ import java.util.Map;
  */
 public class SelectionBuilder {
 
-    private static final String TAG = "SelectionBuilder";
-    private static final boolean LOGV = false;
+  private static final String TAG = "SelectionBuilder";
+  private static final boolean LOGV = false;
 
-    private String mTable = null;
-    private Map<String, String> mProjectionMap = new HashMap<String, String>();
-    private StringBuilder mSelection = new StringBuilder();
-    private ArrayList<String> mSelectionArgs = new ArrayList<String>();
+  private String table = null;
+  private Map<String, String> projectionMap = new HashMap<String, String>();
+  private StringBuilder selection = new StringBuilder();
+  private ArrayList<String> selectionArgs = new ArrayList<String>();
 
-    /**
-     * Reset any internal state, allowing this builder to be recycled.
-     */
-    public SelectionBuilder reset() {
-        mTable = null;
-        mSelection.setLength(0);
-        mSelectionArgs.clear();
-        return this;
+  /** Reset any internal state, allowing this builder to be recycled. */
+  public SelectionBuilder reset() {
+    table = null;
+    selection.setLength(0);
+    selectionArgs.clear();
+    return this;
+  }
+
+  /**
+   * Append the given selection clause to the internal state. Each clause is
+   * surrounded with parenthesis and combined using {@code AND}.
+   */
+  public SelectionBuilder where(String selection, String... selectionArgs) {
+    if (TextUtils.isEmpty(selection)) {
+      if (selectionArgs != null && selectionArgs.length > 0) {
+        throw new IllegalArgumentException("Valid selection required when including arguments=");
+      }
+
+      // Shortcut when clause is empty
+      return this;
     }
 
-    /**
-     * Append the given selection clause to the internal state. Each clause is
-     * surrounded with parenthesis and combined using {@code AND}.
-     */
-    public SelectionBuilder where(String selection, String... selectionArgs) {
-        if (TextUtils.isEmpty(selection)) {
-            if (selectionArgs != null && selectionArgs.length > 0) {
-                throw new IllegalArgumentException(
-                        "Valid selection required when including arguments=");
-            }
-
-            // Shortcut when clause is empty
-            return this;
-        }
-
-        if (mSelection.length() > 0) {
-            mSelection.append(" AND ");
-        }
-
-        mSelection.append("(").append(selection).append(")");
-        if (selectionArgs != null) {
-            for (String arg : selectionArgs) {
-                mSelectionArgs.add(arg);
-            }
-        }
-
-        return this;
+    if (this.selection.length() > 0) {
+      this.selection.append(" AND ");
     }
 
-    public SelectionBuilder table(String table) {
-        mTable = table;
-        return this;
+    this.selection.append("(").append(selection).append(")");
+    if (selectionArgs != null) {
+      for (String arg : selectionArgs) {
+        this.selectionArgs.add(arg);
+      }
     }
 
-    private void assertTable() {
-        if (mTable == null) {
-            throw new IllegalStateException("Table not specified");
-        }
-    }
+    return this;
+  }
 
-    public SelectionBuilder mapToTable(String column, String table) {
-        mProjectionMap.put(column, table + "." + column);
-        return this;
-    }
+  public SelectionBuilder table(String table) {
+    this.table = table;
+    return this;
+  }
 
-    public SelectionBuilder map(String fromColumn, String toClause) {
-        mProjectionMap.put(fromColumn, toClause + " AS " + fromColumn);
-        return this;
+  private void assertTable() {
+    if (table == null) {
+      throw new IllegalStateException("Table not specified");
     }
+  }
 
-    /**
-     * Return selection string for current internal state.
-     *
-     * @see #getSelectionArgs()
-     */
-    public String getSelection() {
-        return mSelection.toString();
-    }
+  public SelectionBuilder mapToTable(String column, String table) {
+    projectionMap.put(column, table + "." + column);
+    return this;
+  }
 
-    /**
-     * Return selection arguments for current internal state.
-     *
-     * @see #getSelection()
-     */
-    public String[] getSelectionArgs() {
-        return mSelectionArgs.toArray(new String[mSelectionArgs.size()]);
-    }
+  public SelectionBuilder map(String fromColumn, String toClause) {
+    projectionMap.put(fromColumn, toClause + " AS " + fromColumn);
+    return this;
+  }
 
-    private void mapColumns(String[] columns) {
-        for (int i = 0; i < columns.length; i++) {
-            final String target = mProjectionMap.get(columns[i]);
-            if (target != null) {
-                columns[i] = target;
-            }
-        }
-    }
+  /**
+   * Return selection string for current internal state.
+   *
+   * @see #getSelectionArgs()
+   */
+  public String getSelection() {
+    return selection.toString();
+  }
 
-    @Override
-    public String toString() {
-        return "SelectionBuilder[table=" + mTable + ", selection=" + getSelection()
-                + ", selectionArgs=" + Arrays.toString(getSelectionArgs()) + "]";
-    }
+  /**
+   * Return selection arguments for current internal state.
+   *
+   * @see #getSelection()
+   */
+  public String[] getSelectionArgs() {
+    return selectionArgs.toArray(new String[selectionArgs.size()]);
+  }
 
-    /**
-     * Execute query using the current internal state as {@code WHERE} clause.
-     */
-    public Cursor query(SQLiteDatabase db, String[] columns, String orderBy) {
-        return query(db, columns, null, null, orderBy, null);
+  private void mapColumns(String[] columns) {
+    for (int i = 0; i < columns.length; i++) {
+      final String target = projectionMap.get(columns[i]);
+      if (target != null) {
+        columns[i] = target;
+      }
     }
+  }
 
-    /**
-     * Execute query using the current internal state as {@code WHERE} clause.
-     */
-    public Cursor query(SQLiteDatabase db, String[] columns, String groupBy,
-            String having, String orderBy, String limit) {
-        assertTable();
-        if (columns != null) mapColumns(columns);
-        if (LOGV) Log.v(TAG, "query(columns=" + Arrays.toString(columns) + ") " + this);
-        return db.query(mTable, columns, getSelection(), getSelectionArgs(), groupBy, having,
-                orderBy, limit);
-    }
+  @Override
+  public String toString() {
+    return "SelectionBuilder[table="
+        + table
+        + ", selection="
+        + getSelection()
+        + ", selectionArgs="
+        + Arrays.toString(getSelectionArgs())
+        + "]";
+  }
 
-    /**
-     * Execute update using the current internal state as {@code WHERE} clause.
-     */
-    public int update(SQLiteDatabase db, ContentValues values) {
-        assertTable();
-        if (LOGV) Log.v(TAG, "update() " + this);
-        return db.update(mTable, values, getSelection(), getSelectionArgs());
-    }
+  /** Execute query using the current internal state as {@code WHERE} clause. */
+  public Cursor query(SQLiteDatabase db, String[] columns, String orderBy) {
+    return query(db, columns, null, null, orderBy, null);
+  }
 
-    /**
-     * Execute delete using the current internal state as {@code WHERE} clause.
-     */
-    public int delete(SQLiteDatabase db) {
-        assertTable();
-        if (LOGV) Log.v(TAG, "delete() " + this);
-        return db.delete(mTable, getSelection(), getSelectionArgs());
-    }
+  /** Execute query using the current internal state as {@code WHERE} clause. */
+  public Cursor query(SQLiteDatabase db, String[] columns, String groupBy, String having,
+      String orderBy, String limit) {
+    assertTable();
+    if (columns != null) mapColumns(columns);
+    if (LOGV) Log.v(TAG, "query(columns=" + Arrays.toString(columns) + ") " + this);
+    return db.query(table, columns, getSelection(), getSelectionArgs(), groupBy, having, orderBy,
+        limit);
+  }
+
+  /** Execute update using the current internal state as {@code WHERE} clause. */
+  public int update(SQLiteDatabase db, ContentValues values) {
+    assertTable();
+    if (LOGV) Log.v(TAG, "update() " + this);
+    return db.update(table, values, getSelection(), getSelectionArgs());
+  }
+
+  /** Execute delete using the current internal state as {@code WHERE} clause. */
+  public int delete(SQLiteDatabase db) {
+    assertTable();
+    if (LOGV) Log.v(TAG, "delete() " + this);
+    return db.delete(table, getSelection(), getSelectionArgs());
+  }
 }

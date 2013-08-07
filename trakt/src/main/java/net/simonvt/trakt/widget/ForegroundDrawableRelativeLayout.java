@@ -11,125 +11,124 @@ import android.widget.RelativeLayout;
 
 public class ForegroundDrawableRelativeLayout extends RelativeLayout {
 
-    private static final int[] ATTRS = new int[] {
-            android.R.attr.foreground,
-    };
+  private static final int[] ATTRS = new int[] {
+      android.R.attr.foreground,
+  };
 
-    private static final int INDEX_FOREGROUND = 0;
+  private static final int INDEX_FOREGROUND = 0;
 
-    private Drawable mForeground;
-    private boolean mForegroundBoundsChanged;
+  private Drawable foreground;
+  private boolean foregroundBoundsChanged;
 
-    public ForegroundDrawableRelativeLayout(Context context) {
-        super(context);
+  public ForegroundDrawableRelativeLayout(Context context) {
+    super(context);
+  }
+
+  public ForegroundDrawableRelativeLayout(Context context, AttributeSet attrs) {
+    super(context, attrs);
+    init(context, attrs);
+  }
+
+  public ForegroundDrawableRelativeLayout(Context context, AttributeSet attrs, int defStyle) {
+    super(context, attrs, defStyle);
+    init(context, attrs);
+  }
+
+  private void init(Context context, AttributeSet attrs) {
+
+    TypedArray a = context.obtainStyledAttributes(attrs, ATTRS, 0, 0);
+
+    final Drawable d = a.getDrawable(INDEX_FOREGROUND);
+    if (d != null) {
+      setForeground(d);
     }
 
-    public ForegroundDrawableRelativeLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context, attrs);
-    }
+    a.recycle();
+  }
 
-    public ForegroundDrawableRelativeLayout(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init(context, attrs);
-    }
+  public void setForeground(Drawable drawable) {
+    if (foreground != drawable) {
+      if (foreground != null) {
+        foreground.setCallback(null);
+        unscheduleDrawable(foreground);
+      }
 
-    private void init(Context context, AttributeSet attrs) {
+      foreground = drawable;
 
-        TypedArray a = context.obtainStyledAttributes(attrs, ATTRS, 0, 0);
-
-        final Drawable d = a.getDrawable(INDEX_FOREGROUND);
-        if (d != null) {
-            setForeground(d);
+      if (drawable != null) {
+        setWillNotDraw(false);
+        drawable.setCallback(this);
+        if (drawable.isStateful()) {
+          drawable.setState(getDrawableState());
         }
-
-        a.recycle();
+      } else {
+        setWillNotDraw(true);
+      }
+      requestLayout();
+      invalidate();
     }
+  }
 
-    public void setForeground(Drawable drawable) {
-        if (mForeground != drawable) {
-            if (mForeground != null) {
-                mForeground.setCallback(null);
-                unscheduleDrawable(mForeground);
-            }
+  @Override
+  protected boolean verifyDrawable(Drawable who) {
+    return super.verifyDrawable(who) || (who == foreground);
+  }
 
-            mForeground = drawable;
+  @Override
+  public void jumpDrawablesToCurrentState() {
+    super.jumpDrawablesToCurrentState();
+    if (foreground != null) foreground.jumpToCurrentState();
+  }
 
-            if (drawable != null) {
-                setWillNotDraw(false);
-                drawable.setCallback(this);
-                if (drawable.isStateful()) {
-                    drawable.setState(getDrawableState());
-                }
-            } else {
-                setWillNotDraw(true);
-            }
-            requestLayout();
-            invalidate();
-        }
+  @Override
+  protected void drawableStateChanged() {
+    super.drawableStateChanged();
+    if (foreground != null && foreground.isStateful()) {
+      foreground.setState(getDrawableState());
     }
+  }
 
-    @Override
-    protected boolean verifyDrawable(Drawable who) {
-        return super.verifyDrawable(who) || (who == mForeground);
+  @Override
+  protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+    super.onSizeChanged(w, h, oldw, oldh);
+    foregroundBoundsChanged = true;
+  }
+
+  @Override
+  public void draw(Canvas canvas) {
+    super.draw(canvas);
+
+    if (foreground != null) {
+      final Drawable foreground = this.foreground;
+
+      if (foregroundBoundsChanged) {
+        foregroundBoundsChanged = false;
+        foreground.setBounds(0, 0, getWidth(), getHeight());
+      }
+
+      foreground.draw(canvas);
     }
+  }
 
-    @Override
-    public void jumpDrawablesToCurrentState() {
-        super.jumpDrawablesToCurrentState();
-        if (mForeground != null) mForeground.jumpToCurrentState();
+  @Override
+  public boolean gatherTransparentRegion(Region region) {
+    boolean opaque = super.gatherTransparentRegion(region);
+    if (region != null && foreground != null) {
+      applyDrawableToTransparentRegion(foreground, region);
     }
+    return opaque;
+  }
 
-    @Override
-    protected void drawableStateChanged() {
-        super.drawableStateChanged();
-        if (mForeground != null && mForeground.isStateful()) {
-            mForeground.setState(getDrawableState());
-        }
+  public void applyDrawableToTransparentRegion(Drawable dr, Region region) {
+    final Region r = dr.getTransparentRegion();
+    final Rect db = dr.getBounds();
+    if (r != null) {
+      final int[] location = new int[2];
+      getLocationInWindow(location);
+      r.translate(location[0], location[1]);
+      region.op(r, Region.Op.INTERSECT);
+    } else {
+      region.op(db, Region.Op.DIFFERENCE);
     }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        mForegroundBoundsChanged = true;
-    }
-
-    @Override
-    public void draw(Canvas canvas) {
-        super.draw(canvas);
-
-        if (mForeground != null) {
-            final Drawable foreground = mForeground;
-
-            if (mForegroundBoundsChanged) {
-                mForegroundBoundsChanged = false;
-                foreground.setBounds(0, 0, getWidth(), getHeight());
-            }
-
-            foreground.draw(canvas);
-        }
-    }
-
-
-    @Override
-    public boolean gatherTransparentRegion(Region region) {
-        boolean opaque = super.gatherTransparentRegion(region);
-        if (region != null && mForeground != null) {
-            applyDrawableToTransparentRegion(mForeground, region);
-        }
-        return opaque;
-    }
-
-    public void applyDrawableToTransparentRegion(Drawable dr, Region region) {
-        final Region r = dr.getTransparentRegion();
-        final Rect db = dr.getBounds();
-        if (r != null) {
-            final int[] location = new int[2];
-            getLocationInWindow(location);
-            r.translate(location[0], location[1]);
-            region.op(r, Region.Op.INTERSECT);
-        } else {
-            region.op(db, Region.Op.DIFFERENCE);
-        }
-    }
+  }
 }

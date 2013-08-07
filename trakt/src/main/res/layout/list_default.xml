@@ -10,4 +10,4 @@
     android:paddingLeft="8dp"
     android:paddingRight="8dp"
     android:clipToPadding="false"
-    android:scrollbarStyle="outsideOverlay" />
+    android:scrollbarStyle="outsideOverlay"/>

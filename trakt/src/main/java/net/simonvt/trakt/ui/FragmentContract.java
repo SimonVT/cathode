@@ -2,9 +2,9 @@ package net.simonvt.trakt.ui;
 
 public interface FragmentContract {
 
-    String getTitle();
+  String getTitle();
 
-    String getSubtitle();
+  String getSubtitle();
 
-    boolean onBackPressed();
+  boolean onBackPressed();
 }

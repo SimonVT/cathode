@@ -1,5 +1,5 @@
 <resources>
 
-    <dimen name="showItemMinHeight">72dp</dimen>
+  <dimen name="showItemMinHeight">72dp</dimen>
 
 </resources>

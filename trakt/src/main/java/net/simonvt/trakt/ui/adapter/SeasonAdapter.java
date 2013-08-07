@@ -1,8 +1,15 @@
 package net.simonvt.trakt.ui.adapter;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CursorAdapter;
+import android.widget.TextView;
 import butterknife.InjectView;
 import butterknife.Views;
-
+import javax.inject.Inject;
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.provider.TraktContract;
@@ -13,161 +20,156 @@ import net.simonvt.trakt.widget.CheckMark;
 import net.simonvt.trakt.widget.OverflowView;
 import net.simonvt.trakt.widget.RemoteImageView;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CursorAdapter;
-import android.widget.TextView;
-
-import javax.inject.Inject;
-
 public class SeasonAdapter extends CursorAdapter {
 
-    private static final String TAG = "SeasonAdapter";
+  private static final String TAG = "SeasonAdapter";
 
-    @Inject EpisodeTaskScheduler mEpisodeScheduler;
+  @Inject EpisodeTaskScheduler episodeScheduler;
 
-    private LibraryType mType;
+  private LibraryType type;
 
-    public SeasonAdapter(Context context, LibraryType type) {
-        super(context, null, 0);
-        mType = type;
-        TraktApp.inject(context, this);
+  public SeasonAdapter(Context context, LibraryType type) {
+    super(context, null, 0);
+    this.type = type;
+    TraktApp.inject(context, this);
+  }
+
+  @Override
+  public void changeCursor(Cursor cursor) {
+    super.changeCursor(cursor);
+  }
+
+  @Override
+  public View newView(Context context, Cursor cursor, ViewGroup parent) {
+    View v = LayoutInflater.from(context).inflate(R.layout.list_row_episode, parent, false);
+
+    ViewHolder vh = new ViewHolder(v);
+    vh.checkbox.setType(type);
+    v.setTag(vh);
+
+    return v;
+  }
+
+  @Override
+  public void bindView(View view, Context context, Cursor cursor) {
+    final long id = cursor.getLong(cursor.getColumnIndexOrThrow(TraktContract.Episodes._ID));
+    final String title =
+        cursor.getString(cursor.getColumnIndexOrThrow(TraktContract.Episodes.TITLE));
+    final int season = cursor.getInt(cursor.getColumnIndexOrThrow(TraktContract.Episodes.SEASON));
+    final int episode = cursor.getInt(cursor.getColumnIndexOrThrow(TraktContract.Episodes.EPISODE));
+    final boolean watched =
+        cursor.getInt(cursor.getColumnIndexOrThrow(TraktContract.Episodes.WATCHED)) == 1;
+    final boolean inCollection =
+        cursor.getInt(cursor.getColumnIndexOrThrow(TraktContract.Episodes.IN_COLLECTION)) == 1;
+    final boolean inWatchlist =
+        cursor.getInt(cursor.getColumnIndexOrThrow(TraktContract.Episodes.IN_WATCHLIST)) == 1;
+    final long firstAired =
+        cursor.getLong(cursor.getColumnIndexOrThrow(TraktContract.Episodes.FIRST_AIRED));
+    final String screen =
+        cursor.getString(cursor.getColumnIndexOrThrow(TraktContract.Episodes.SCREEN));
+
+    final ViewHolder vh = (ViewHolder) view.getTag();
+
+    vh.title.setText(title);
+
+    vh.firstAired.setText(DateUtils.millisToString(context, firstAired, true));
+    vh.number.setText(String.valueOf(episode));
+
+    vh.screen.setImage(screen);
+
+    if (type == LibraryType.COLLECTION) {
+      vh.checkbox.setVisibility(inCollection ? View.VISIBLE : View.INVISIBLE);
+    } else {
+      vh.checkbox.setVisibility(watched ? View.VISIBLE : View.INVISIBLE);
     }
 
-    @Override
-    public void changeCursor(Cursor cursor) {
-        super.changeCursor(cursor);
-    }
+    updateOverflowMenu(vh.overflow, watched, inCollection, inWatchlist);
 
-    @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        View v = LayoutInflater.from(context).inflate(R.layout.list_row_episode, parent, false);
+    vh.overflow.setListener(new OverflowView.OverflowActionListener() {
+      @Override
+      public void onPopupShown() {
+      }
 
-        ViewHolder vh = new ViewHolder(v);
-        vh.mCheckbox.setType(mType);
-        v.setTag(vh);
+      @Override
+      public void onPopupDismissed() {
+      }
 
-        return v;
-    }
+      @Override
+      public void onActionSelected(int action) {
+        switch (action) {
+          case R.id.action_watched:
+            updateOverflowMenu(vh.overflow, true, inCollection, inWatchlist);
+            episodeScheduler.setWatched(id, true);
+            if (type == LibraryType.WATCHED) vh.checkbox.setVisibility(View.VISIBLE);
+            break;
 
-    @Override
-    public void bindView(View view, Context context, Cursor cursor) {
-        final long id = cursor.getLong(cursor.getColumnIndexOrThrow(TraktContract.Episodes._ID));
-        final String title = cursor.getString(cursor.getColumnIndexOrThrow(TraktContract.Episodes.TITLE));
-        final int season = cursor.getInt(cursor.getColumnIndexOrThrow(TraktContract.Episodes.SEASON));
-        final int episode = cursor.getInt(cursor.getColumnIndexOrThrow(TraktContract.Episodes.EPISODE));
-        final boolean watched = cursor.getInt(cursor.getColumnIndexOrThrow(TraktContract.Episodes.WATCHED)) == 1;
-        final boolean inCollection =
-                cursor.getInt(cursor.getColumnIndexOrThrow(TraktContract.Episodes.IN_COLLECTION)) == 1;
-        final boolean inWatchlist =
-                cursor.getInt(cursor.getColumnIndexOrThrow(TraktContract.Episodes.IN_WATCHLIST)) == 1;
-        final long firstAired = cursor.getLong(cursor.getColumnIndexOrThrow(TraktContract.Episodes.FIRST_AIRED));
-        final String screen = cursor.getString(cursor.getColumnIndexOrThrow(TraktContract.Episodes.SCREEN));
+          case R.id.action_unwatched:
+            updateOverflowMenu(vh.overflow, false, inCollection, inWatchlist);
+            episodeScheduler.setWatched(id, false);
+            if (type == LibraryType.WATCHED) vh.checkbox.setVisibility(View.INVISIBLE);
+            break;
 
-        final ViewHolder vh = (ViewHolder) view.getTag();
+          case R.id.action_collection_add:
+            updateOverflowMenu(vh.overflow, watched, true, inWatchlist);
+            episodeScheduler.setIsInCollection(id, true);
+            if (type == LibraryType.COLLECTION) vh.checkbox.setVisibility(View.VISIBLE);
+            break;
 
-        vh.mTitle.setText(title);
+          case R.id.action_collection_remove:
+            updateOverflowMenu(vh.overflow, watched, false, inWatchlist);
+            episodeScheduler.setIsInCollection(id, false);
+            if (type == LibraryType.COLLECTION) vh.checkbox.setVisibility(View.INVISIBLE);
+            break;
 
-        vh.mFirstAired.setText(DateUtils.millisToString(context, firstAired, true));
-        vh.mNumber.setText(String.valueOf(episode));
+          case R.id.action_watchlist_add:
+            updateOverflowMenu(vh.overflow, watched, inCollection, true);
+            episodeScheduler.setIsInWatchlist(id, true);
+            break;
 
-        vh.mScreen.setImage(screen);
-
-        if (mType == LibraryType.COLLECTION) {
-            vh.mCheckbox.setVisibility(inCollection ? View.VISIBLE : View.INVISIBLE);
-        } else {
-            vh.mCheckbox.setVisibility(watched ? View.VISIBLE : View.INVISIBLE);
+          case R.id.action_watchlist_remove:
+            updateOverflowMenu(vh.overflow, watched, inCollection, false);
+            episodeScheduler.setIsInWatchlist(id, false);
+            break;
         }
+      }
+    });
+  }
 
-        updateOverflowMenu(vh.mOverflow, watched, inCollection, inWatchlist);
-
-        vh.mOverflow.setListener(new OverflowView.OverflowActionListener() {
-            @Override
-            public void onPopupShown() {
-            }
-
-            @Override
-            public void onPopupDismissed() {
-            }
-
-            @Override
-            public void onActionSelected(int action) {
-                switch (action) {
-                    case R.id.action_watched:
-                        updateOverflowMenu(vh.mOverflow, true, inCollection, inWatchlist);
-                        mEpisodeScheduler.setWatched(id, true);
-                        if (mType == LibraryType.WATCHED) vh.mCheckbox.setVisibility(View.VISIBLE);
-                        break;
-
-                    case R.id.action_unwatched:
-                        updateOverflowMenu(vh.mOverflow, false, inCollection, inWatchlist);
-                        mEpisodeScheduler.setWatched(id, false);
-                        if (mType == LibraryType.WATCHED) vh.mCheckbox.setVisibility(View.INVISIBLE);
-                        break;
-
-                    case R.id.action_collection_add:
-                        updateOverflowMenu(vh.mOverflow, watched, true, inWatchlist);
-                        mEpisodeScheduler.setIsInCollection(id, true);
-                        if (mType == LibraryType.COLLECTION) vh.mCheckbox.setVisibility(View.VISIBLE);
-                        break;
-
-                    case R.id.action_collection_remove:
-                        updateOverflowMenu(vh.mOverflow, watched, false, inWatchlist);
-                        mEpisodeScheduler.setIsInCollection(id, false);
-                        if (mType == LibraryType.COLLECTION) vh.mCheckbox.setVisibility(View.INVISIBLE);
-                        break;
-
-                    case R.id.action_watchlist_add:
-                        updateOverflowMenu(vh.mOverflow, watched, inCollection, true);
-                        mEpisodeScheduler.setIsInWatchlist(id, true);
-                        break;
-
-                    case R.id.action_watchlist_remove:
-                        updateOverflowMenu(vh.mOverflow, watched, inCollection, false);
-                        mEpisodeScheduler.setIsInWatchlist(id, false);
-                        break;
-                }
-            }
-        });
+  private void updateOverflowMenu(OverflowView overflow, boolean watched, boolean inCollection,
+      boolean inWatchlist) {
+    overflow.removeItems();
+    if (watched) {
+      overflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
+    } else {
+      overflow.addItem(R.id.action_watched, R.string.action_watched);
     }
 
-    private void updateOverflowMenu(OverflowView overflow, boolean watched, boolean inCollection, boolean inWatchlist) {
-        overflow.removeItems();
-        if (watched) {
-            overflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
-        } else {
-            overflow.addItem(R.id.action_watched, R.string.action_watched);
-        }
-
-        if (inCollection) {
-            overflow.addItem(R.id.action_collection_remove, R.string.action_collection_remove);
-        } else {
-            overflow.addItem(R.id.action_collection_add, R.string.action_collection_add);
-        }
-
-        if (inWatchlist) {
-            overflow.addItem(R.id.action_watchlist_remove, R.string.action_watchlist_remove);
-        } else if (!watched) {
-            overflow.addItem(R.id.action_watchlist_add, R.string.action_watchlist_add);
-        }
+    if (inCollection) {
+      overflow.addItem(R.id.action_collection_remove, R.string.action_collection_remove);
+    } else {
+      overflow.addItem(R.id.action_collection_add, R.string.action_collection_add);
     }
 
-    static class ViewHolder {
-
-        @InjectView(R.id.screen) RemoteImageView mScreen;
-
-        @InjectView(R.id.infoParent) ViewGroup mInfoParent;
-        @InjectView(R.id.title) TextView mTitle;
-        @InjectView(R.id.firstAired) TextView mFirstAired;
-        @InjectView(R.id.episode) TextView mNumber;
-        @InjectView(R.id.overflow) OverflowView mOverflow;
-        @InjectView(R.id.checkbox) CheckMark mCheckbox;
-
-        ViewHolder(View v) {
-            Views.inject(this, v);
-        }
+    if (inWatchlist) {
+      overflow.addItem(R.id.action_watchlist_remove, R.string.action_watchlist_remove);
+    } else if (!watched) {
+      overflow.addItem(R.id.action_watchlist_add, R.string.action_watchlist_add);
     }
+  }
+
+  static class ViewHolder {
+
+    @InjectView(R.id.screen) RemoteImageView screen;
+
+    @InjectView(R.id.infoParent) ViewGroup infoParent;
+    @InjectView(R.id.title) TextView title;
+    @InjectView(R.id.firstAired) TextView firstAired;
+    @InjectView(R.id.episode) TextView number;
+    @InjectView(R.id.overflow) OverflowView overflow;
+    @InjectView(R.id.checkbox) CheckMark checkbox;
+
+    ViewHolder(View v) {
+      Views.inject(this, v);
+    }
+  }
 }

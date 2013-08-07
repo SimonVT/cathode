@@ -6,18 +6,18 @@ import net.simonvt.trakt.util.LogWrapper;
 
 public class UpdateSeasonCountTask extends TraktTask {
 
-    private static final String TAG = "UpdateSeasonCountTask";
+  private static final String TAG = "UpdateSeasonCountTask";
 
-    private long mSeasonId;
+  private long seasonId;
 
-    public UpdateSeasonCountTask(long seasonId) {
-        mSeasonId = seasonId;
-    }
+  public UpdateSeasonCountTask(long seasonId) {
+    this.seasonId = seasonId;
+  }
 
-    @Override
-    protected void doTask() {
-        LogWrapper.v(TAG, "[doTask]");
-        SeasonWrapper.updateSeasonCounts(mService.getContentResolver(), mSeasonId);
-        postOnSuccess();
-    }
+  @Override
+  protected void doTask() {
+    LogWrapper.v(TAG, "[doTask]");
+    SeasonWrapper.updateSeasonCounts(service.getContentResolver(), seasonId);
+    postOnSuccess();
+  }
 }

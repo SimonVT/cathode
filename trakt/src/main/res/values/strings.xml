@@ -1,125 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dashclock_title">@string/app_name</string>
-    <string name="dashclock_description">Display the next upcoming episode</string>
+  <string name="dashclock_title">@string/app_name</string>
+  <string name="dashclock_description">Display the next upcoming episode</string>
 
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="email">E-mail</string>
-    <string name="login">Login</string>
+  <string name="username">Username</string>
+  <string name="password">Password</string>
+  <string name="email">E-mail</string>
+  <string name="login">Login</string>
 
-    <string name="retry">Retry</string>
+  <string name="retry">Retry</string>
 
-    <string name="now">Now</string>
-    <string name="in_minutes">In %d minutes</string>
-    <string name="minutes_ago">%d minutes ago</string>
-    <string name="in_hours">In %d hours</string>
-    <string name="hours_ago">%d hours ago</string>
+  <string name="now">Now</string>
+  <string name="in_minutes">In %d minutes</string>
+  <string name="minutes_ago">%d minutes ago</string>
+  <string name="in_hours">In %d hours</string>
+  <string name="hours_ago">%d hours ago</string>
 
-    <string name="watched">Watched</string>
+  <string name="watched">Watched</string>
 
-    <string name="airdate_unknown">Unknown airdate</string>
+  <string name="airdate_unknown">Unknown airdate</string>
 
-    <string name="title_shows_watched">Watched shows</string>
-    <string name="title_shows_upcoming">Upcoming shows</string>
-    <string name="title_shows_collection">Show collection</string>
-    <string name="title_shows_watchlist">Show watchlist</string>
+  <string name="title_shows_watched">Watched shows</string>
+  <string name="title_shows_upcoming">Upcoming shows</string>
+  <string name="title_shows_collection">Show collection</string>
+  <string name="title_shows_watchlist">Show watchlist</string>
 
-    <string name="title_movies_watched">Watched movies</string>
-    <string name="title_movies_upcoming">Upcoming movies</string>
-    <string name="title_movies_collection">Movie collection</string>
-    <string name="title_movies_watchlist">Movie watchlist</string>
+  <string name="title_movies_watched">Watched movies</string>
+  <string name="title_movies_upcoming">Upcoming movies</string>
+  <string name="title_movies_collection">Movie collection</string>
+  <string name="title_movies_watchlist">Movie watchlist</string>
 
-    <string name="action_refresh">Refresh</string>
-    <string name="action_sort_by">Sort by</string>
-    <string name="action_watched">Watched</string>
-    <string name="action_watched_all">Watched all</string>
-    <string name="action_watched_next">Watched next</string>
-    <string name="action_unwatched">Unwatched</string>
-    <string name="action_unwatch_all">Unwatch all</string>
-    <string name="action_collection_add">Add to collection</string>
-    <string name="action_collect_next">Collect next</string>
-    <string name="action_collection_add_all">Collect all</string>
-    <string name="action_collection_remove">Remove from collection</string>
-    <string name="action_collection_remove_all">Uncollect all</string>
-    <string name="action_watchlist_add">Add to watchlist</string>
-    <string name="action_watchlist_remove">Remove from watchlist</string>
-    <string name="action_search">Search</string>
-    <string name="action_rate">Rate</string>
+  <string name="action_refresh">Refresh</string>
+  <string name="action_sort_by">Sort by</string>
+  <string name="action_watched">Watched</string>
+  <string name="action_watched_all">Watched all</string>
+  <string name="action_watched_next">Watched next</string>
+  <string name="action_unwatched">Unwatched</string>
+  <string name="action_unwatch_all">Unwatch all</string>
+  <string name="action_collection_add">Add to collection</string>
+  <string name="action_collect_next">Collect next</string>
+  <string name="action_collection_add_all">Collect all</string>
+  <string name="action_collection_remove">Remove from collection</string>
+  <string name="action_collection_remove_all">Uncollect all</string>
+  <string name="action_watchlist_add">Add to watchlist</string>
+  <string name="action_watchlist_remove">Remove from watchlist</string>
+  <string name="action_search">Search</string>
+  <string name="action_rate">Rate</string>
 
-    <string name="checkmark_watched">Watched</string>
-    <string name="checkmark_collection">In collection</string>
-    <string name="checkmark_watchlist">In watchlist</string>
+  <string name="checkmark_watched">Watched</string>
+  <string name="checkmark_collection">In collection</string>
+  <string name="checkmark_watchlist">In watchlist</string>
 
-    <string name="no_results">No results for query \'%s\'</string>
-    <string name="search_failure">Search failed</string>
+  <string name="no_results">No results for query \'%s\'</string>
+  <string name="search_failure">Search failed</string>
 
-    <string name="full_sync_warning">Performing a complete sync with Trakt, this might take a while..</string>
+  <string name="full_sync_warning">Performing a complete sync with Trakt, this might take a
+    while..
+  </string>
 
-    <!-- Login fragment -->
-    <string name="login_sign_in">Sign in to Trakt</string>
-    <string name="login_create_new">Check to create a Trakt account</string>
-    <string name="login_verify_fail">Unable to verify login with Trakt</string>
-    <string name="create_user_failed">Creating user failed</string>
-    <string name="wrong_password">Wrong username or password</string>
-    <string name="login_success">Successfully logged in</string>
+  <!-- Login fragment -->
+  <string name="login_sign_in">Sign in to Trakt</string>
+  <string name="login_create_new">Check to create a Trakt account</string>
+  <string name="login_verify_fail">Unable to verify login with Trakt</string>
+  <string name="create_user_failed">Creating user failed</string>
+  <string name="wrong_password">Wrong username or password</string>
+  <string name="login_success">Successfully logged in</string>
 
-    <!-- Navigation fragment -->
-    <string name="navigation_title_shows">Shows</string>
-    <string name="navigation_shows_upcoming">Upcoming</string>
-    <string name="navigation_shows_watched">Watched</string>
-    <string name="navigation_shows_collection">Collection</string>
-    <string name="navigation_shows_watchlist">Show watchlist</string>
-    <string name="navigation_episodes_watchlist">Episode watchlist</string>
-    <string name="navigation_shows_ratings">Ratings</string>
-    <string name="navigation_shows_charts">Charts</string>
-    <string name="navigation_title_movies">Movies</string>
-    <string name="navigation_movies_watched">Watched</string>
-    <string name="navigation_movies_collection">Collection</string>
-    <string name="navigation_movies_watchlist">Watchlist</string>
-    <string name="navigation_movies_ratings">Ratings</string>
-    <string name="navigation_movies_charts">Charts</string>
+  <!-- Navigation fragment -->
+  <string name="navigation_title_shows">Shows</string>
+  <string name="navigation_shows_upcoming">Upcoming</string>
+  <string name="navigation_shows_watched">Watched</string>
+  <string name="navigation_shows_collection">Collection</string>
+  <string name="navigation_shows_watchlist">Show watchlist</string>
+  <string name="navigation_episodes_watchlist">Episode watchlist</string>
+  <string name="navigation_shows_ratings">Ratings</string>
+  <string name="navigation_shows_charts">Charts</string>
+  <string name="navigation_title_movies">Movies</string>
+  <string name="navigation_movies_watched">Watched</string>
+  <string name="navigation_movies_collection">Collection</string>
+  <string name="navigation_movies_watchlist">Watchlist</string>
+  <string name="navigation_movies_ratings">Ratings</string>
+  <string name="navigation_movies_charts">Charts</string>
 
-    <string name="show_upcoming_empty">No upcoming episodes. Use the search button to find some new shows to watch.</string>
-    <string name="show_watched_empty">No watched shows. Find any shows you\'ve watched by using the search button.</string>
-    <string name="show_collection_empty">Your collection is empty. Find your shows by using the search button.</string>
-    <string name="show_watchlist_empty">Add shows to the watchlist that you\'d like to watch, but just haven\'t had the time for.</string>
-    <string name="episode_Watchlist_empty">Add episodes to the watchlist that you\'d like to watch, but just haven\'t had the time for.</string>
-    <string name="movie_watched_empty">Find movies you\'ve watched by using the search button.</string>
-    <string name="movie_collection_empty">Your collection is empty. Find movies by using the search button.</string>
-    <string name="movie_Watchlist_empty">Add movies to the watchlist that you\'d like to watch, but just haven\'t had the time for.</string>
+  <string name="show_upcoming_empty">No upcoming episodes. Use the search button to find some new
+    shows to watch.
+  </string>
+  <string name="show_watched_empty">No watched shows. Find any shows you\'ve watched by using the
+    search button.
+  </string>
+  <string name="show_collection_empty">Your collection is empty. Find your shows by using the search
+    button.
+  </string>
+  <string name="show_watchlist_empty">Add shows to the watchlist that you\'d like to watch, but just
+    haven\'t had the time for.
+  </string>
+  <string name="episode_Watchlist_empty">Add episodes to the watchlist that you\'d like to watch,
+    but just haven\'t had the time for.
+  </string>
+  <string name="movie_watched_empty">Find movies you\'ve watched by using the search button.
+  </string>
+  <string name="movie_collection_empty">Your collection is empty. Find movies by using the search
+    button.
+  </string>
+  <string name="movie_Watchlist_empty">Add movies to the watchlist that you\'d like to watch, but
+    just haven\'t had the time for.
+  </string>
 
-    <string name="episode_x">Episode %d</string>
-    <plurals name="x_unwatched">
-        <item quantity="zero">All episodes watched</item>
-        <item quantity="other">%d unwatched episodes</item>
-    </plurals>
-    <plurals name="x_uncollected">
-        <item quantity="zero">All episodes collected</item>
-        <item quantity="other">%d episodes not collected</item>
-    </plurals>
-    <string name="x_unaired">%d unaired</string>
+  <string name="episode_x">Episode %d</string>
+  <plurals name="x_unwatched">
+    <item quantity="zero">All episodes watched</item>
+    <item quantity="other">%d unwatched episodes</item>
+  </plurals>
+  <plurals name="x_uncollected">
+    <item quantity="zero">All episodes collected</item>
+    <item quantity="other">%d episodes not collected</item>
+  </plurals>
+  <string name="x_unaired">%d unaired</string>
 
-    <string name="season_x">Season %d</string>
-    <string name="season_special">Special</string>
+  <string name="season_x">Season %d</string>
+  <string name="season_special">Special</string>
 
-    <plurals name="season_x">
-        <item quantity="zero">Special</item>
-        <item quantity="other">Season %d</item>
-    </plurals>
+  <plurals name="season_x">
+    <item quantity="zero">Special</item>
+    <item quantity="other">Season %d</item>
+  </plurals>
 
-    <string-array name="ratings">
-        <item>Unrated</item>
-        <item>Weak sauce :(</item>
-        <item>Terrible</item>
-        <item>Bad</item>
-        <item>Poor</item>
-        <item>Meh</item>
-        <item>Fair</item>
-        <item>Good</item>
-        <item>Great</item>
-        <item>Superb</item>
-        <item>Totally ninja!</item>
-    </string-array>
+  <string-array name="ratings">
+    <item>Unrated</item>
+    <item>Weak sauce :(</item>
+    <item>Terrible</item>
+    <item>Bad</item>
+    <item>Poor</item>
+    <item>Meh</item>
+    <item>Fair</item>
+    <item>Good</item>
+    <item>Great</item>
+    <item>Superb</item>
+    <item>Totally ninja!</item>
+  </string-array>
 
 </resources>

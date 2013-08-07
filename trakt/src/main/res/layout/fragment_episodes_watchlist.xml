@@ -3,24 +3,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/listContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+  <FrameLayout
+      android:id="@+id/listContainer"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
 
-        <TextView
-            android:id="@android:id/empty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:drawableTop="@drawable/ic_action_search_light"
-            android:text="@string/episode_Watchlist_empty" />
+    <TextView
+        android:id="@android:id/empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:drawableTop="@drawable/ic_action_search_light"
+        android:text="@string/episode_Watchlist_empty"/>
 
-        <include layout="@layout/list_default" />
-    </FrameLayout>
+    <include layout="@layout/list_default"/>
+  </FrameLayout>
 
-    <include layout="@layout/fragment_list_progressbar" />
+  <include layout="@layout/fragment_list_progressbar"/>
 </FrameLayout>

@@ -1,52 +1,50 @@
 package net.simonvt.trakt.remote.action;
 
-import retrofit.RetrofitError;
-
+import javax.inject.Inject;
 import net.simonvt.trakt.api.body.MoviesBody;
 import net.simonvt.trakt.api.entity.TraktResponse;
 import net.simonvt.trakt.api.service.MovieService;
 import net.simonvt.trakt.provider.MovieWrapper;
 import net.simonvt.trakt.remote.TraktTask;
 import net.simonvt.trakt.util.LogWrapper;
-
-import javax.inject.Inject;
+import retrofit.RetrofitError;
 
 public class MovieCollectionTask extends TraktTask {
 
-    private static final String TAG = "MovieCollectionTask";
+  private static final String TAG = "MovieCollectionTask";
 
-    @Inject transient MovieService mMovieService;
+  @Inject transient MovieService movieService;
 
-    private final long mTmdbID;
+  private final long tmdbId;
 
-    private final boolean mWatched;
+  private final boolean watched;
 
-    public MovieCollectionTask(long tmdbId, boolean watched) {
-        if (tmdbId == 0) {
-            // TODO
-            throw new IllegalArgumentException("tvdb is 0");
-        }
-        mTmdbID = tmdbId;
-        mWatched = watched;
+  public MovieCollectionTask(long tmdbId, boolean watched) {
+    if (tmdbId == 0) {
+      // TODO
+      throw new IllegalArgumentException("tvdb is 0");
     }
+    this.tmdbId = tmdbId;
+    this.watched = watched;
+  }
 
-    @Override
-    protected void doTask() {
-        LogWrapper.v(TAG, "[doTask]");
+  @Override
+  protected void doTask() {
+    LogWrapper.v(TAG, "[doTask]");
 
-        try {
-            if (mWatched) {
-                TraktResponse response = mMovieService.library(new MoviesBody(mTmdbID));
-            } else {
-                TraktResponse response = mMovieService.unlibrary(new MoviesBody(mTmdbID));
-            }
+    try {
+      if (watched) {
+        TraktResponse response = movieService.library(new MoviesBody(tmdbId));
+      } else {
+        TraktResponse response = movieService.unlibrary(new MoviesBody(tmdbId));
+      }
 
-            MovieWrapper.setIsInCollection(mService.getContentResolver(), mTmdbID, mWatched);
+      MovieWrapper.setIsInCollection(service.getContentResolver(), tmdbId, watched);
 
-            postOnSuccess();
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            postOnFailure();
-        }
+      postOnSuccess();
+    } catch (RetrofitError e) {
+      e.printStackTrace();
+      postOnFailure();
     }
+  }
 }

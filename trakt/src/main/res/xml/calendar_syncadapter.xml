@@ -2,4 +2,4 @@
 <sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
     android:contentAuthority="com.android.calendar"
     android:accountType="@string/accountType"
-    android:supportsUploading="false" />
+    android:supportsUploading="false"/>

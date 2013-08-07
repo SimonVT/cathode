@@ -1,41 +1,38 @@
 package net.simonvt.trakt.remote.sync;
 
-import retrofit.RetrofitError;
-
+import javax.inject.Inject;
 import net.simonvt.trakt.api.entity.Movie;
 import net.simonvt.trakt.api.enumeration.DetailLevel;
 import net.simonvt.trakt.api.service.MovieService;
 import net.simonvt.trakt.provider.MovieWrapper;
 import net.simonvt.trakt.remote.TraktTask;
 import net.simonvt.trakt.util.LogWrapper;
-
-import javax.inject.Inject;
+import retrofit.RetrofitError;
 
 public class SyncMovieTask extends TraktTask {
 
-    private static final String TAG = "SyncMovieTask";
+  private static final String TAG = "SyncMovieTask";
 
-    @Inject MovieService mMovieService;
+  @Inject MovieService movieService;
 
-    private long mTmdbId;
+  private long tmdbId;
 
-    public SyncMovieTask(long tmdbId) {
-        mTmdbId = tmdbId;
+  public SyncMovieTask(long tmdbId) {
+    this.tmdbId = tmdbId;
+  }
+
+  @Override
+  protected void doTask() {
+    LogWrapper.v(TAG, "[doTask]");
+
+    try {
+      Movie movie = movieService.summary(tmdbId, DetailLevel.EXTENDED);
+      MovieWrapper.updateOrInsertMovie(service.getContentResolver(), movie);
+
+      postOnSuccess();
+    } catch (RetrofitError e) {
+      e.printStackTrace();
+      postOnFailure();
     }
-
-    @Override
-    protected void doTask() {
-        LogWrapper.v(TAG, "[doTask]");
-
-        try {
-            Movie movie = mMovieService.summary(mTmdbId, DetailLevel.EXTENDED);
-            MovieWrapper.updateOrInsertMovie(mService.getContentResolver(), movie);
-
-            postOnSuccess();
-
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            postOnFailure();
-        }
-    }
+  }
 }

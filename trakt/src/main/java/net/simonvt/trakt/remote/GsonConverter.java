@@ -2,7 +2,6 @@ package net.simonvt.trakt.remote;
 
 import com.google.gson.Gson;
 import com.squareup.tape.FileObjectQueue;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,26 +12,26 @@ import java.io.Writer;
 
 public class GsonConverter<T> implements FileObjectQueue.Converter<T> {
 
-    private final Gson mGson;
+  private final Gson gson;
 
-    private final Class<T> mType;
+  private final Class<T> type;
 
-    public GsonConverter(Gson gson, Class<T> type) {
-        this.mGson = gson;
-        this.mType = type;
-    }
+  public GsonConverter(Gson gson, Class<T> type) {
+    this.gson = gson;
+    this.type = type;
+  }
 
-    @Override
-    public T from(byte[] bytes) {
-        Reader reader = new InputStreamReader(new ByteArrayInputStream(bytes));
-        return mGson.fromJson(reader, mType);
-    }
+  @Override
+  public T from(byte[] bytes) {
+    Reader reader = new InputStreamReader(new ByteArrayInputStream(bytes));
+    return gson.fromJson(reader, type);
+  }
 
-    @Override
-    public void toStream(T object, OutputStream bytes) throws IOException {
-        Writer writer = new OutputStreamWriter(bytes);
-        mGson.toJson(object, mType, writer);
-        writer.flush();
-        writer.close();
-    }
+  @Override
+  public void toStream(T object, OutputStream bytes) throws IOException {
+    Writer writer = new OutputStreamWriter(bytes);
+    gson.toJson(object, type, writer);
+    writer.flush();
+    writer.close();
+  }
 }

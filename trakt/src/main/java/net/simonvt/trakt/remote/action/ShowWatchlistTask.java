@@ -1,42 +1,39 @@
 package net.simonvt.trakt.remote.action;
 
-import retrofit.RetrofitError;
-
+import javax.inject.Inject;
 import net.simonvt.trakt.api.body.ShowsBody;
 import net.simonvt.trakt.api.service.ShowService;
 import net.simonvt.trakt.remote.TraktTask;
-
-import javax.inject.Inject;
+import retrofit.RetrofitError;
 
 public class ShowWatchlistTask extends TraktTask {
 
-    private static final String TAG = "ShowWatchlistTask";
+  private static final String TAG = "ShowWatchlistTask";
 
-    @Inject ShowService mShowService;
+  @Inject ShowService showService;
 
-    private int mTvdbId;
+  private int tvdbId;
 
-    private boolean mInWatchlist;
+  private boolean inWatchlist;
 
-    public ShowWatchlistTask(int tvdbId, boolean inWatchlist) {
-        mTvdbId = tvdbId;
-        mInWatchlist = inWatchlist;
+  public ShowWatchlistTask(int tvdbId, boolean inWatchlist) {
+    this.tvdbId = tvdbId;
+    this.inWatchlist = inWatchlist;
+  }
+
+  @Override
+  protected void doTask() {
+    try {
+      if (inWatchlist) {
+        showService.watchlist(new ShowsBody(tvdbId));
+      } else {
+        showService.unwatchlist(new ShowsBody(tvdbId));
+      }
+
+      postOnSuccess();
+    } catch (RetrofitError e) {
+      e.printStackTrace();
+      postOnFailure();
     }
-
-    @Override
-    protected void doTask() {
-        try {
-            if (mInWatchlist) {
-                mShowService.watchlist(new ShowsBody(mTvdbId));
-            } else {
-                mShowService.unwatchlist(new ShowsBody(mTvdbId));
-            }
-
-            postOnSuccess();
-
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            postOnFailure();
-        }
-    }
+  }
 }

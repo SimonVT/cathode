@@ -1,97 +1,97 @@
 <resources>
 
-    <style name="Widget" parent="android:Widget.Holo" />
+  <style name="Widget" parent="android:Widget.Holo"/>
 
-    <style name="Widget.InfoTitle">
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-        <item name="android:textStyle">italic</item>
-        <item name="android:fontFamily">sans-serif-light</item>
-        <item name="android:layout_marginBottom">4dp</item>
-        <item name="android:padding">8dp</item>
-    </style>
+  <style name="Widget.InfoTitle">
+    <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+    <item name="android:textStyle">italic</item>
+    <item name="android:fontFamily">sans-serif-light</item>
+    <item name="android:layout_marginBottom">4dp</item>
+    <item name="android:padding">8dp</item>
+  </style>
 
-    <style name="Widget.InfoText">
-        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-        <item name="android:fontFamily">sans-light</item>
-        <item name="android:textColor">#FF777777</item>
-        <item name="android:lineSpacingExtra">2dp</item>
-    </style>
+  <style name="Widget.InfoText">
+    <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+    <item name="android:fontFamily">sans-light</item>
+    <item name="android:textColor">#FF777777</item>
+    <item name="android:lineSpacingExtra">2dp</item>
+  </style>
 
-    <style name="Widget.Person">
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-        <item name="android:fontFamily">sans-serif-light</item>
-        <item name="android:singleLine">true</item>
-    </style>
+  <style name="Widget.Person">
+    <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+    <item name="android:fontFamily">sans-serif-light</item>
+    <item name="android:singleLine">true</item>
+  </style>
 
-    <style name="Widget.Job">
-        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-        <item name="android:fontFamily">sans-light</item>
-        <item name="android:textColor">#FF777777</item>
-        <item name="android:singleLine">true</item>
-    </style>
+  <style name="Widget.Job">
+    <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+    <item name="android:fontFamily">sans-light</item>
+    <item name="android:textColor">#FF777777</item>
+    <item name="android:singleLine">true</item>
+  </style>
 
-    <style name="Widget.CheckMark">
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-        <item name="android:textSize">10sp</item>
-        <item name="android:drawablePadding">4dp</item>
-    </style>
+  <style name="Widget.CheckMark">
+    <item name="android:gravity">center_vertical</item>
+    <item name="android:textAllCaps">true</item>
+    <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+    <item name="android:textSize">10sp</item>
+    <item name="android:drawablePadding">4dp</item>
+  </style>
 
-    <style name="Widget.RatingBarIndicator">
-        <item name="android:background">@null</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:button">@null</item>
-        <item name="android:maxHeight">24dp</item>
-        <item name="android:progressDrawable">@drawable/ratingbar</item>
-        <item name="android:minHeight">24dp</item>
-        <item name="android:thumb">@null</item>
-        <item name="android:numStars">10</item>
-        <item name="android:stepSize">1.0</item>
-        <item name="android:isIndicator">true</item>
-    </style>
+  <style name="Widget.RatingBarIndicator">
+    <item name="android:background">@null</item>
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:button">@null</item>
+    <item name="android:maxHeight">24dp</item>
+    <item name="android:progressDrawable">@drawable/ratingbar</item>
+    <item name="android:minHeight">24dp</item>
+    <item name="android:thumb">@null</item>
+    <item name="android:numStars">10</item>
+    <item name="android:stepSize">1.0</item>
+    <item name="android:isIndicator">true</item>
+  </style>
 
-    <style name="Widget.RatingBar" parent="@android:style/Widget.Holo.Light.RatingBar">
-        <item name="android:isIndicator">false</item>
-        <item name="android:numStars">10</item>
-        <item name="android:stepSize">1.0</item>
-    </style>
+  <style name="Widget.RatingBar" parent="@android:style/Widget.Holo.Light.RatingBar">
+    <item name="android:isIndicator">false</item>
+    <item name="android:numStars">10</item>
+    <item name="android:stepSize">1.0</item>
+  </style>
 
-    <style name="Menu" />
+  <style name="Menu"/>
 
-    <style name="Menu.Drawer" parent="Widget.MenuDrawer">
-        <item name="mdMenuBackground">@color/drawerBackground</item>
-        <!--item name="mdContentBackground">@color/contentBackground</item-->
-        <item name="mdActiveIndicator">@drawable/menu_arrow</item>
-        <item name="mdMenuSize">260dp</item>
-    </style>
+  <style name="Menu.Drawer" parent="Widget.MenuDrawer">
+    <item name="mdMenuBackground">@color/drawerBackground</item>
+    <!--item name="mdContentBackground">@color/contentBackground</item-->
+    <item name="mdActiveIndicator">@drawable/menu_arrow</item>
+    <item name="mdMenuSize">260dp</item>
+  </style>
 
-    <style name="Menu.Category">
-        <item name="android:textColor">?android:attr/textColorSecondary</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:background">@drawable/list_section_divider_holo_light</item>
+  <style name="Menu.Category">
+    <item name="android:textColor">?android:attr/textColorSecondary</item>
+    <item name="android:textSize">14sp</item>
+    <item name="android:textAllCaps">true</item>
+    <item name="android:background">@drawable/list_section_divider_holo_light</item>
 
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingLeft">16dp</item>
+    <item name="android:gravity">center_vertical</item>
+    <item name="android:paddingLeft">16dp</item>
 
-        <item name="android:singleLine">true</item>
-        <item name="android:ellipsize">end</item>
-    </style>
+    <item name="android:singleLine">true</item>
+    <item name="android:ellipsize">end</item>
+  </style>
 
-    <style name="Menu.Item">
-        <item name="android:background">?android:attr/activatedBackgroundIndicator</item>
-        <item name="android:textAppearance">?android:attr/textAppearance</item>
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:minHeight">?android:attr/listPreferredItemHeightSmall</item>
-        <item name="android:paddingLeft">32dp</item>
-        <item name="android:paddingRight">32dp</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:drawablePadding">16dp</item>
-        <item name="android:gravity">center_vertical</item>
-    </style>
+  <style name="Menu.Item">
+    <item name="android:background">?android:attr/activatedBackgroundIndicator</item>
+    <item name="android:textAppearance">?android:attr/textAppearance</item>
+    <item name="android:textColor">?android:attr/textColorPrimary</item>
+    <item name="android:textSize">18sp</item>
+    <item name="android:minHeight">?android:attr/listPreferredItemHeightSmall</item>
+    <item name="android:paddingLeft">32dp</item>
+    <item name="android:paddingRight">32dp</item>
+    <item name="android:paddingTop">8dp</item>
+    <item name="android:paddingBottom">8dp</item>
+    <item name="android:drawablePadding">16dp</item>
+    <item name="android:gravity">center_vertical</item>
+  </style>
 
 </resources>

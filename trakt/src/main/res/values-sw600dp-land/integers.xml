@@ -1,9 +1,9 @@
 <resources>
 
-    <integer name="showsColumns">4</integer>
+  <integer name="showsColumns">4</integer>
 
-    <integer name="episodesColumns">4</integer>
+  <integer name="episodesColumns">4</integer>
 
-    <integer name="movieColumns">4</integer>
+  <integer name="movieColumns">4</integer>
 
 </resources>

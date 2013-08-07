@@ -1,7 +1,7 @@
 package net.simonvt.trakt.remote.sync;
 
-import retrofit.RetrofitError;
-
+import java.util.List;
+import javax.inject.Inject;
 import net.simonvt.trakt.api.entity.Episode;
 import net.simonvt.trakt.api.entity.Season;
 import net.simonvt.trakt.api.entity.TvShow;
@@ -12,46 +12,44 @@ import net.simonvt.trakt.provider.SeasonWrapper;
 import net.simonvt.trakt.provider.ShowWrapper;
 import net.simonvt.trakt.remote.TraktTask;
 import net.simonvt.trakt.util.LogWrapper;
-
-import java.util.List;
-
-import javax.inject.Inject;
+import retrofit.RetrofitError;
 
 public class SyncShowTask extends TraktTask {
 
-    private static final String TAG = "SyncShowTask";
+  private static final String TAG = "SyncShowTask";
 
-    @Inject transient ShowService mShowService;
+  @Inject transient ShowService showService;
 
-    private final int mTvdbId;
+  private final int tvdbId;
 
-    public SyncShowTask(int tvdbId) {
-        mTvdbId = tvdbId;
-    }
+  public SyncShowTask(int tvdbId) {
+    this.tvdbId = tvdbId;
+  }
 
-    @Override
-    protected void doTask() {
-        LogWrapper.v(TAG, "[doTask]");
+  @Override
+  protected void doTask() {
+    LogWrapper.v(TAG, "[doTask]");
 
-        try {
-            TvShow show = mShowService.summary(mTvdbId, DetailLevel.EXTENDED);
-            final long showId = ShowWrapper.updateOrInsertShow(mService.getContentResolver(), show);
+    try {
+      TvShow show = showService.summary(tvdbId, DetailLevel.EXTENDED);
+      final long showId = ShowWrapper.updateOrInsertShow(service.getContentResolver(), show);
 
-            List<Season> seasons = show.getSeasons();
+      List<Season> seasons = show.getSeasons();
 
-            for (Season season : seasons) {
-                final long seasonId = SeasonWrapper.updateOrInsertSeason(mService.getContentResolver(), season, showId);
-                List<Episode> episodes = season.getEpisodes().getEpisodes();
-                for (Episode episode : episodes) {
-                    EpisodeWrapper.updateOrInsertEpisode(mService.getContentResolver(), episode, showId, seasonId);
-                }
-            }
-
-            postOnSuccess();
-
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            postOnFailure();
+      for (Season season : seasons) {
+        final long seasonId =
+            SeasonWrapper.updateOrInsertSeason(service.getContentResolver(), season, showId);
+        List<Episode> episodes = season.getEpisodes().getEpisodes();
+        for (Episode episode : episodes) {
+          EpisodeWrapper.updateOrInsertEpisode(service.getContentResolver(), episode, showId,
+              seasonId);
         }
+      }
+
+      postOnSuccess();
+    } catch (RetrofitError e) {
+      e.printStackTrace();
+      postOnFailure();
     }
+  }
 }

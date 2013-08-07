@@ -6,17 +6,17 @@ import android.os.IBinder;
 
 public class CalendarService extends Service {
 
-    private static CalendarSyncAdapter sSyncAdapter;
+  private static CalendarSyncAdapter sSyncAdapter;
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return getSyncAdapter().getSyncAdapterBinder();
-    }
+  @Override
+  public IBinder onBind(Intent intent) {
+    return getSyncAdapter().getSyncAdapterBinder();
+  }
 
-    private CalendarSyncAdapter getSyncAdapter() {
-        if (sSyncAdapter == null) {
-            sSyncAdapter = new CalendarSyncAdapter(getApplicationContext());
-        }
-        return sSyncAdapter;
+  private CalendarSyncAdapter getSyncAdapter() {
+    if (sSyncAdapter == null) {
+      sSyncAdapter = new CalendarSyncAdapter(getApplicationContext());
     }
+    return sSyncAdapter;
+  }
 }

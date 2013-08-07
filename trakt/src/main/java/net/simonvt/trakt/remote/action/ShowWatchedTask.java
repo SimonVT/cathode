@@ -1,58 +1,53 @@
 package net.simonvt.trakt.remote.action;
 
-import retrofit.RetrofitError;
-
+import android.database.Cursor;
+import javax.inject.Inject;
 import net.simonvt.trakt.api.body.ShowBody;
 import net.simonvt.trakt.api.service.ShowService;
 import net.simonvt.trakt.provider.ShowWrapper;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.remote.TraktTask;
-
-import android.database.Cursor;
-
-import javax.inject.Inject;
+import retrofit.RetrofitError;
 
 public class ShowWatchedTask extends TraktTask {
 
-    private static final String TAG = "ShowWatchedTask";
+  private static final String TAG = "ShowWatchedTask";
 
-    @Inject ShowService mShowService;
+  @Inject ShowService showService;
 
-    private int mTvdbId;
+  private int tvdbId;
 
-    private boolean mWatched;
+  private boolean watched;
 
-    public ShowWatchedTask(int tvdbId, boolean watched) {
-        mTvdbId = tvdbId;
-        mWatched = watched;
-    }
+  public ShowWatchedTask(int tvdbId, boolean watched) {
+    this.tvdbId = tvdbId;
+    this.watched = watched;
+  }
 
-    @Override
-    protected void doTask() {
-        try {
-            if (mWatched) {
-                mShowService.seen(new ShowBody(mTvdbId));
-            } else {
-                // Trakt doesn't expose an unseen api..
-                final long showId = ShowWrapper.getShowId(mService.getContentResolver(), mTvdbId);
-                Cursor c = mService.getContentResolver()
-                        .query(TraktContract.Episodes.buildFromShowId(showId), new String[] {
-                                TraktContract.Episodes.SEASON,
-                                TraktContract.Episodes.EPISODE,
-                        }, null, null, null);
+  @Override
+  protected void doTask() {
+    try {
+      if (watched) {
+        showService.seen(new ShowBody(tvdbId));
+      } else {
+        // Trakt doesn't expose an unseen api..
+        final long showId = ShowWrapper.getShowId(service.getContentResolver(), tvdbId);
+        Cursor c = service.getContentResolver()
+            .query(TraktContract.Episodes.buildFromShowId(showId), new String[] {
+                TraktContract.Episodes.SEASON, TraktContract.Episodes.EPISODE,
+            }, null, null, null);
 
-                while (c.moveToNext()) {
-                    queuePriorityTask(new EpisodeWatchedTask(mTvdbId, c.getInt(0), c.getInt(0), false));
-                }
-
-                c.close();
-            }
-
-            postOnSuccess();
-
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            postOnFailure();
+        while (c.moveToNext()) {
+          queuePriorityTask(new EpisodeWatchedTask(tvdbId, c.getInt(0), c.getInt(0), false));
         }
+
+        c.close();
+      }
+
+      postOnSuccess();
+    } catch (RetrofitError e) {
+      e.printStackTrace();
+      postOnFailure();
     }
+  }
 }

@@ -2,13 +2,13 @@ package net.simonvt.trakt.event;
 
 public class MessageEvent {
 
-    private int mMessageRes;
+  private int messageRes;
 
-    public MessageEvent(int messageRes) {
-        mMessageRes = messageRes;
-    }
+  public MessageEvent(int messageRes) {
+    this.messageRes = messageRes;
+  }
 
-    public int getMessageRes() {
-        return mMessageRes;
-    }
+  public int getMessageRes() {
+    return messageRes;
+  }
 }

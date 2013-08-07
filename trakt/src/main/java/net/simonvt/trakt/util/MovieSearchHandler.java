@@ -1,10 +1,14 @@
 package net.simonvt.trakt.util;
 
-import retrofit.RetrofitError;
-
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.TextUtils;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
-
+import java.util.ArrayList;
+import java.util.List;
+import javax.inject.Inject;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.api.entity.Movie;
 import net.simonvt.trakt.api.service.SearchService;
@@ -13,126 +17,118 @@ import net.simonvt.trakt.event.SearchFailureEvent;
 import net.simonvt.trakt.provider.MovieWrapper;
 import net.simonvt.trakt.remote.TraktTaskQueue;
 import net.simonvt.trakt.remote.sync.SyncMovieTask;
-
-import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
-import android.text.TextUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
+import retrofit.RetrofitError;
 
 public class MovieSearchHandler {
 
-    private static final String TAG = "MovieSearchHandler";
+  private static final String TAG = "MovieSearchHandler";
 
-    private Context mContext;
+  private Context context;
 
-    private Bus mBus;
+  private Bus bus;
 
-    private List<Long> mMovieIds;
+  private List<Long> movieIds;
 
-    private SearchThread mThread;
+  private SearchThread thread;
 
-    public MovieSearchHandler(Context context, Bus bus) {
-        mContext = context;
-        mBus = bus;
-        bus.register(this);
+  public MovieSearchHandler(Context context, Bus bus) {
+    this.context = context;
+    this.bus = bus;
+    bus.register(this);
+  }
+
+  @Produce
+  public MovieSearchResult produceSearchResult() {
+    if (movieIds != null) {
+      return new MovieSearchResult(movieIds);
     }
 
-    @Produce
-    public MovieSearchResult produceSearchResult() {
-        if (mMovieIds != null) {
-            return new MovieSearchResult(mMovieIds);
+    return null;
+  }
+
+  public boolean isSearching() {
+    return thread != null;
+  }
+
+  public void deliverResult(List<Long> movieIds) {
+    this.movieIds = movieIds;
+    bus.post(new MovieSearchResult(movieIds));
+  }
+
+  public void deliverFailure() {
+    bus.post(new SearchFailureEvent(SearchFailureEvent.Type.MOVIE));
+  }
+
+  public void search(final String query) {
+    movieIds = null;
+
+    if (thread != null) {
+      thread.unregister();
+    }
+    thread = new SearchThread(context, query);
+    thread.start();
+  }
+
+  public static final class SearchThread extends Thread {
+
+    private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
+
+    @Inject MovieSearchHandler handler;
+
+    @Inject SearchService searchService;
+
+    @Inject TraktTaskQueue queue;
+
+    private Context context;
+
+    private String query;
+
+    private SearchThread(Context context, String query) {
+      this.context = context;
+      this.query = query;
+
+      TraktApp.inject(context, this);
+    }
+
+    public void unregister() {
+      handler = null;
+    }
+
+    @Override
+    public void run() {
+      try {
+        List<Movie> movies = searchService.movies(query);
+
+        final List<Long> movieIds = new ArrayList<Long>(movies.size());
+
+        for (Movie movie : movies) {
+          if (!TextUtils.isEmpty(movie.getTitle())) {
+            final boolean exists =
+                MovieWrapper.exists(context.getContentResolver(), movie.getTmdbId());
+
+            final long movieId =
+                MovieWrapper.updateOrInsertMovie(context.getContentResolver(), movie);
+            movieIds.add(movieId);
+
+            if (!exists) queue.add(new SyncMovieTask(movie.getTmdbId()));
+          }
         }
 
-        return null;
+        MAIN_HANDLER.post(new Runnable() {
+          @Override
+          public void run() {
+            if (handler != null) handler.deliverResult(movieIds);
+          }
+        });
+      } catch (RetrofitError e) {
+        e.printStackTrace();
+        MAIN_HANDLER.post(new Runnable() {
+          @Override
+          public void run() {
+            if (handler != null) handler.deliverFailure();
+          }
+        });
+      }
     }
-
-    public boolean isSearching() {
-        return mThread != null;
-    }
-
-    public void deliverResult(List<Long> movieIds) {
-        mMovieIds = movieIds;
-        mBus.post(new MovieSearchResult(movieIds));
-    }
-
-    public void deliverFailure() {
-        mBus.post(new SearchFailureEvent(SearchFailureEvent.Type.MOVIE));
-    }
-
-    public void search(final String query) {
-        mMovieIds = null;
-
-        if (mThread != null) {
-            mThread.unregister();
-        }
-        mThread = new SearchThread(mContext, query);
-        mThread.start();
-
-    }
-
-    public static final class SearchThread extends Thread {
-
-        private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
-
-        @Inject MovieSearchHandler mHandler;
-
-        @Inject SearchService mSearchService;
-
-        @Inject TraktTaskQueue mQueue;
-
-        private Context mContext;
-
-        private String mQuery;
-
-        private SearchThread(Context context, String query) {
-            mContext = context;
-            mQuery = query;
-
-            TraktApp.inject(context, this);
-        }
-
-        public void unregister() {
-            mHandler = null;
-        }
-
-        @Override
-        public void run() {
-            try {
-                List<Movie> movies = mSearchService.movies(mQuery);
-
-                final List<Long> movieIds = new ArrayList<Long>(movies.size());
-
-                for (Movie movie : movies) {
-                    if (!TextUtils.isEmpty(movie.getTitle())) {
-                        final boolean exists = MovieWrapper.exists(mContext.getContentResolver(), movie.getTmdbId());
-
-                        final long movieId = MovieWrapper.updateOrInsertMovie(mContext.getContentResolver(), movie);
-                        movieIds.add(movieId);
-
-                        if (!exists) mQueue.add(new SyncMovieTask(movie.getTmdbId()));
-                    }
-                }
-
-                MAIN_HANDLER.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mHandler != null) mHandler.deliverResult(movieIds);
-                    }
-                });
-            } catch (RetrofitError e) {
-                e.printStackTrace();
-                MAIN_HANDLER.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mHandler != null) mHandler.deliverFailure();
-                    }
-                });
-            }
-        }
-    }
+  }
 }

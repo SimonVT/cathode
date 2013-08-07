@@ -1,10 +1,21 @@
 package net.simonvt.trakt.ui.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import butterknife.InjectView;
-import retrofit.RetrofitError;
-
 import com.squareup.otto.Bus;
-
+import javax.inject.Inject;
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.api.ResponseParser;
@@ -19,202 +30,197 @@ import net.simonvt.trakt.remote.sync.SyncTask;
 import net.simonvt.trakt.settings.Settings;
 import net.simonvt.trakt.util.ApiUtils;
 import net.simonvt.trakt.util.LogWrapper;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-
-import javax.inject.Inject;
+import retrofit.RetrofitError;
 
 public class LoginFragment extends BaseFragment {
 
-    private static final String TAG = "LoginFragment";
+  private static final String TAG = "LoginFragment";
 
-    @Inject AccountService mAccountService;
-    @Inject UserCredentials mCredentials;
-    @Inject TraktTaskQueue mQueue;
-    @Inject Bus mBus;
+  @Inject AccountService accountService;
+  @Inject UserCredentials credentials;
+  @Inject TraktTaskQueue queue;
+  @Inject Bus bus;
 
-    @InjectView(R.id.username) EditText mUsernameInput;
-    @InjectView(R.id.password) EditText mPasswordInput;
-    @InjectView(R.id.email) EditText mEmailInput;
-    @InjectView(R.id.createNew) CheckBox mCreateNew;
-    @InjectView(R.id.login) Button mLogin;
+  @InjectView(R.id.username) EditText usernameInput;
+  @InjectView(R.id.password) EditText passwordInput;
+  @InjectView(R.id.email) EditText emailInput;
+  @InjectView(R.id.createNew) CheckBox createNew;
+  @InjectView(R.id.login) Button login;
 
-    private String mUsername;
-    private String mPassword;
-    private String mEmail;
+  private String username;
+  private String password;
+  private String email;
 
-    private Context mAppContext;
+  private Context appContext;
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    TraktApp.inject(getActivity(), this);
+    appContext = getActivity().getApplicationContext();
+  }
+
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.fragment_login, container, false);
+  }
+
+  @Override
+  public void onViewCreated(View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    login.setOnClickListener(onLoginListener);
+    usernameInput.addTextChangedListener(textChanged);
+    passwordInput.addTextChangedListener(textChanged);
+    createNew.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        emailInput.setEnabled(((CheckBox) view).isChecked());
+      }
+    });
+
+    login.setEnabled(usernameInput.length() > 0 && passwordInput.length() > 0);
+  }
+
+  @Override
+  public String getTitle() {
+    return getResources().getString(R.string.login);
+  }
+
+  private View.OnClickListener onLoginListener = new View.OnClickListener() {
+    @Override
+    public void onClick(View view) {
+      username = usernameInput.getText().toString();
+      password = passwordInput.getText().toString();
+      email = emailInput.getText().toString();
+      final boolean createNewUser = createNew.isChecked();
+
+      login.setEnabled(false);
+      if (createNewUser) {
+        new CreateAccountAsync().execute();
+      } else {
+        new LoginAsync(username, password).execute();
+      }
+    }
+  };
+
+  private TextWatcher textChanged = new TextWatcher() {
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        TraktApp.inject(getActivity(), this);
-        mAppContext = getActivity().getApplicationContext();
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_login, container, false);
+    public void afterTextChanged(Editable s) {
+      login.setEnabled(usernameInput.length() > 0 && passwordInput.length() > 0);
+    }
+  };
+
+  private final class CreateAccountAsync extends AsyncTask<Void, Void, Boolean> {
+
+    @Override
+    protected Boolean doInBackground(Void... voids) {
+      TraktResponse r = accountService.create(new CreateAccountBody(username, password, email));
+      LogWrapper.d(TAG, "Error: "
+          + r.getError()
+          + " - Status: "
+          + r.getStatus()
+          + " - Message: "
+          + r.getMessage());
+
+      return r.getError() == null;
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mLogin.setOnClickListener(mOnLoginListener);
-        mUsernameInput.addTextChangedListener(mTextChanged);
-        mPasswordInput.addTextChangedListener(mTextChanged);
-        mCreateNew.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mEmailInput.setEnabled(((CheckBox) view).isChecked());
-            }
-        });
+    protected void onPostExecute(Boolean success) {
+      if (success) {
+        bus.post(new MessageEvent(R.string.login_success));
 
-        mLogin.setEnabled(mUsernameInput.length() > 0 && mPasswordInput.length() > 0);
+        final String username = LoginFragment.this.username;
+        final String password = ApiUtils.getSha(LoginFragment.this.password);
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(appContext);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(Settings.USERNAME, username);
+        editor.putString(Settings.PASSWORD, password);
+        editor.apply();
+
+        credentials.setCredentials(username, password);
+        queue.add(new SyncTask());
+
+        bus.post(new LoginEvent(LoginFragment.this.username, LoginFragment.this.password));
+
+        TraktApp.setupAccount(appContext);
+      } else {
+        login.setEnabled(true);
+        bus.post(new MessageEvent(R.string.create_user_failed));
+      }
+    }
+  }
+
+  private final class LoginAsync extends AsyncTask<Void, Void, Boolean> {
+
+    private LoginAsync(String username, String password) {
+      credentials.setCredentials(username, ApiUtils.getSha(password));
     }
 
     @Override
-    public String getTitle() {
-        return getResources().getString(R.string.login);
+    protected Boolean doInBackground(Void... voids) {
+      try {
+        TraktResponse r = accountService.test();
+        LogWrapper.d(TAG, "Error: "
+            + r.getError()
+            + " - Status: "
+            + r.getStatus()
+            + " - Message: "
+            + r.getMessage());
+
+        return r.getError() == null;
+      } catch (RetrofitError e) {
+        ResponseParser parser = new ResponseParser();
+        TraktApp.inject(appContext, parser);
+        TraktResponse r = parser.tryParse(e);
+        if (r != null) {
+          LogWrapper.d(TAG, "Error: "
+              + r.getError()
+              + " - Status: "
+              + r.getStatus()
+              + " - Message: "
+              + r.getMessage());
+        }
+      }
+
+      return false;
     }
 
-    private View.OnClickListener mOnLoginListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            mUsername = mUsernameInput.getText().toString();
-            mPassword = mPasswordInput.getText().toString();
-            mEmail = mEmailInput.getText().toString();
-            final boolean createNewUser = mCreateNew.isChecked();
+    @Override
+    protected void onPostExecute(Boolean success) {
+      if (success) {
+        bus.post(new MessageEvent(R.string.login_success));
 
-            mLogin.setEnabled(false);
-            if (createNewUser) {
-                new CreateAccountAsync().execute();
-            } else {
-                new LoginAsync(mUsername, mPassword).execute();
-            }
-        }
-    };
+        final String username = LoginFragment.this.username;
+        final String password = ApiUtils.getSha(LoginFragment.this.password);
 
-    private TextWatcher mTextChanged = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(appContext);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(Settings.USERNAME, username);
+        editor.putString(Settings.PASSWORD, password);
+        editor.apply();
 
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-        }
+        credentials.setCredentials(username, password);
+        queue.add(new SyncTask());
 
-        @Override
-        public void afterTextChanged(Editable s) {
-            mLogin.setEnabled(mUsernameInput.length() > 0 && mPasswordInput.length() > 0);
-        }
-    };
+        bus.post(new LoginEvent(LoginFragment.this.username, LoginFragment.this.password));
 
-    private final class CreateAccountAsync extends AsyncTask<Void, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            TraktResponse r = mAccountService.create(new CreateAccountBody(mUsername, mPassword, mEmail));
-            LogWrapper.d(TAG,
-                    "Error: " + r.getError() + " - Status: " + r.getStatus() + " - Message: " + r.getMessage());
-
-            return r.getError() == null;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            if (success) {
-                mBus.post(new MessageEvent(R.string.login_success));
-
-                final String username = mUsername;
-                final String password = ApiUtils.getSha(mPassword);
-
-                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mAppContext);
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putString(Settings.USERNAME, username);
-                editor.putString(Settings.PASSWORD, password);
-                editor.apply();
-
-                mCredentials.setCredentials(username, password);
-                mQueue.add(new SyncTask());
-
-                mBus.post(new LoginEvent(mUsername, mPassword));
-
-                TraktApp.setupAccount(mAppContext);
-
-            } else {
-                mLogin.setEnabled(true);
-                mBus.post(new MessageEvent(R.string.create_user_failed));
-            }
-        }
+        TraktApp.setupAccount(appContext);
+      } else {
+        login.setEnabled(true);
+        credentials.setCredentials(null, null);
+        bus.post(new MessageEvent(R.string.wrong_password));
+      }
     }
-
-    private final class LoginAsync extends AsyncTask<Void, Void, Boolean> {
-
-        private LoginAsync(String username, String password) {
-            mCredentials.setCredentials(username, ApiUtils.getSha(password));
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            try {
-                TraktResponse r = mAccountService.test();
-                LogWrapper.d(TAG,
-                        "Error: " + r.getError() + " - Status: " + r.getStatus() + " - Message: " + r.getMessage());
-
-                return r.getError() == null;
-
-            } catch (RetrofitError e) {
-                ResponseParser parser = new ResponseParser();
-                TraktApp.inject(mAppContext, parser);
-                TraktResponse r = parser.tryParse(e);
-                if (r != null) {
-                    LogWrapper.d(TAG,
-                            "Error: " + r.getError() + " - Status: " + r.getStatus() + " - Message: " + r.getMessage());
-                }
-            }
-
-            return false;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            if (success) {
-                mBus.post(new MessageEvent(R.string.login_success));
-
-                final String username = mUsername;
-                final String password = ApiUtils.getSha(mPassword);
-
-                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mAppContext);
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putString(Settings.USERNAME, username);
-                editor.putString(Settings.PASSWORD, password);
-                editor.apply();
-
-                mCredentials.setCredentials(username, password);
-                mQueue.add(new SyncTask());
-
-                mBus.post(new LoginEvent(mUsername, mPassword));
-
-                TraktApp.setupAccount(mAppContext);
-
-            } else {
-                mLogin.setEnabled(true);
-                mCredentials.setCredentials(null, null);
-                mBus.post(new MessageEvent(R.string.wrong_password));
-            }
-        }
-    }
+  }
 }

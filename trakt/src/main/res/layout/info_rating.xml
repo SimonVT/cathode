@@ -6,17 +6,17 @@
     android:background="?android:attr/selectableItemBackground"
     android:orientation="horizontal">
 
-    <RatingBar
-        android:id="@+id/rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="4dp"
-        style="@style/Widget.RatingBarIndicator" />
+  <RatingBar
+      android:id="@+id/rating"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginRight="4dp"
+      style="@style/Widget.RatingBarIndicator"/>
 
-    <TextView
-        android:id="@+id/allRatings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:text="95%" />
+  <TextView
+      android:id="@+id/allRatings"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:text="95%"/>
 </LinearLayout>
