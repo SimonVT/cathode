@@ -2,27 +2,25 @@
 
 !.gitignore
 !checkstyle.xml
-!pom.xml
 !init.py
+!build.gradle
+!settings.gradle
 
 !api/
 api/*
 
 !api/src/
 
-!api/AndroidManifest.xml
-!api/pom.xml
+!api/build.gradle
 
 !trakt/
 trakt/*
 
 !trakt/libs/
-!trakt/res/
 !trakt/src/
 
-!trakt/AndroidManifest.xml
-!trakt/pom.xml
+!trakt/build.gradle
 
-trakt/res/values/secrets.xml
+trakt/src/main/res/values/secrets.xml
 
 .DS_store
