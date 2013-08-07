@@ -1,0 +1,22 @@
+apply plugin: 'android-library'
+
+dependencies {
+  compile parent.ext.libraries.gson
+
+  compile parent.ext.libraries.dagger
+  compile parent.ext.libraries.okhttp
+  compile parent.ext.libraries.retrofit
+}
+
+android {
+  compileSdkVersion 18
+  buildToolsVersion "18.0.0"
+
+  defaultConfig {
+    minSdkVersion = parent.ext.minSdkVersion
+    targetSdkVersion = parent.ext.targetSdkVersion
+
+    versionCode = parent.ext.versionCode;
+    versionName = parent.ext.versionName
+  }
+}

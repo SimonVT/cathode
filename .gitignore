@@ -6,12 +6,12 @@
 !build.gradle
 !settings.gradle
 
-!api/
-api/*
+!trakt-api/
+trakt-api/*
 
-!api/src/
+!trakt-api/src/
 
-!api/build.gradle
+!trakt-api/build.gradle
 
 !trakt/
 trakt/*
