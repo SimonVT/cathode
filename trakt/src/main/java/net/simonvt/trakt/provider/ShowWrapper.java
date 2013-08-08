@@ -21,8 +21,7 @@ public final class ShowWrapper {
   private static final String TAG = "ShowWrapper";
 
   private static final String[] SEASON_PROJECTION = new String[] {
-      SeasonColumns.AIRDATE_COUNT, SeasonColumns.UNAIRED_COUNT, SeasonColumns.WATCHED_COUNT,
-      SeasonColumns.AIRED_COUNT, SeasonColumns.IN_COLLECTION_COUNT,
+      SeasonColumns.AIRDATE_COUNT, SeasonColumns.WATCHED_COUNT, SeasonColumns.IN_COLLECTION_COUNT,
   };
 
   private ShowWrapper() {
@@ -237,29 +236,21 @@ public final class ShowWrapper {
     }, null);
 
     int airdateCount = 0;
-    int unairedCount = 0;
     int watchedCount = 0;
-    int airedCount = 0;
     int inCollectionCount = 0;
 
     final int airdateIndex = c.getColumnIndex(ShowColumns.AIRDATE_COUNT);
-    final int airedIndex = c.getColumnIndex(ShowColumns.AIRED_COUNT);
-    final int unairedIndex = c.getColumnIndex(ShowColumns.UNAIRED_COUNT);
     final int watchedIndex = c.getColumnIndex(ShowColumns.WATCHED_COUNT);
     final int inCollectionIndex = c.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT);
 
     while (c.moveToNext()) {
       airdateCount += c.getInt(airdateIndex);
-      airedCount += c.getInt(airedIndex);
-      unairedCount += c.getInt(unairedIndex);
       watchedCount += c.getInt(watchedIndex);
       inCollectionCount += c.getInt(inCollectionIndex);
     }
 
     ContentValues cv = new ContentValues();
     cv.put(SeasonColumns.AIRDATE_COUNT, airdateCount);
-    cv.put(SeasonColumns.AIRED_COUNT, airedCount);
-    cv.put(SeasonColumns.UNAIRED_COUNT, unairedCount);
     cv.put(SeasonColumns.WATCHED_COUNT, watchedCount);
     cv.put(SeasonColumns.IN_COLLECTION_COUNT, inCollectionCount);
 

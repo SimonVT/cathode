@@ -22,7 +22,7 @@ public class UpcomingShowsFragment extends ShowsFragment {
       TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows.TITLE,
       TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows.POSTER,
       TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows.AIRDATE_COUNT,
-      TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows.UNAIRED_COUNT,
+      TraktContract.Shows.UNAIRED_COUNT,
       TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows.WATCHED_COUNT,
       TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows.STATUS,
       TraktDatabase.Tables.EPISODES + "." + TraktContract.Episodes.TITLE,

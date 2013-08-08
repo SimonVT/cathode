@@ -650,7 +650,7 @@ public class ShowInfoFragment extends ProgressFragment {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
           CursorLoader cl =
-              new CursorLoader(getActivity(), TraktContract.Seasons.buildFromShowId(showId), null,
+              new CursorLoader(getActivity(), TraktContract.Seasons.buildFromShowId(showId), SeasonsAdapter.PROJECTION,
                   null, null, TraktContract.Seasons.DEFAULT_SORT);
           cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
           return cl;

@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import java.util.Calendar;
 import net.simonvt.trakt.api.entity.Images;
 import net.simonvt.trakt.api.entity.Season;
 import net.simonvt.trakt.util.ApiUtils;
@@ -130,7 +129,6 @@ public final class SeasonWrapper {
             null, null, null);
 
     int airdateCount = 0;
-    int airedCount = 0;
     int watchedCount = 0;
     int inCollectionCount = 0;
 
@@ -138,26 +136,18 @@ public final class SeasonWrapper {
     final int watchedIndex = c.getColumnIndex(TraktContract.EpisodeColumns.WATCHED);
     final int inCollectionIndex = c.getColumnIndex(TraktContract.EpisodeColumns.IN_COLLECTION);
 
-    Calendar cal = Calendar.getInstance();
-    final long millis = cal.getTimeInMillis();
-
     while (c.moveToNext()) {
       final long firstAired = c.getLong(firstAiredIndex);
       if (c.getInt(watchedIndex) > 0) watchedCount++;
       // Unaired
       if (firstAired > 1 * DateUtils.YEAR_IN_SECONDS) {
         airdateCount++;
-        if (firstAired <= millis) {
-          airedCount++;
-        }
       }
       if (c.getInt(inCollectionIndex) > 0) inCollectionCount++;
     }
 
     ContentValues cv = new ContentValues();
     cv.put(TraktContract.SeasonColumns.AIRDATE_COUNT, airdateCount);
-    cv.put(TraktContract.SeasonColumns.AIRED_COUNT, airedCount);
-    cv.put(TraktContract.SeasonColumns.UNAIRED_COUNT, airdateCount - airedCount);
     cv.put(TraktContract.SeasonColumns.WATCHED_COUNT, watchedCount);
     cv.put(TraktContract.SeasonColumns.IN_COLLECTION_COUNT, inCollectionCount);
 

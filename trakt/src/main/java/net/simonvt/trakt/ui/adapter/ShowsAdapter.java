@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.provider.TraktContract;
+import net.simonvt.trakt.provider.TraktDatabase;
 import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
 import net.simonvt.trakt.scheduler.ShowTaskScheduler;
 import net.simonvt.trakt.ui.LibraryType;
@@ -26,6 +27,20 @@ import net.simonvt.trakt.widget.RemoteImageView;
 public class ShowsAdapter extends CursorAdapter {
 
   private static final String TAG = "ShowsAdapter";
+
+  public static final String[] PROJECTION = new String[] {
+      TraktDatabase.Tables.SHOWS + "." + BaseColumns._ID,
+      TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows.TITLE,
+      TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows.POSTER,
+      TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows.AIRDATE_COUNT,
+      TraktContract.Shows.UNAIRED_COUNT,
+      TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows.WATCHED_COUNT,
+      TraktDatabase.Tables.SHOWS + "." + TraktContract.Shows.STATUS,
+      TraktDatabase.Tables.EPISODES + "." + TraktContract.Episodes.TITLE,
+      TraktDatabase.Tables.EPISODES + "." + TraktContract.Episodes.FIRST_AIRED,
+      TraktDatabase.Tables.EPISODES + "." + TraktContract.Episodes.SEASON,
+      TraktDatabase.Tables.EPISODES + "." + TraktContract.Episodes.EPISODE,
+  };
 
   @Inject EpisodeTaskScheduler scheduler;
 
@@ -181,8 +196,7 @@ public class ShowsAdapter extends CursorAdapter {
         if (showAiredCount - showTypeCount > 0) {
           vh.overflow.addItem(R.id.action_collection_add, R.string.action_collect_next);
           if (showTypeCount < showAiredCount) {
-            vh.overflow
-                .addItem(R.id.action_collection_add_all, R.string.action_collection_add_all);
+            vh.overflow.addItem(R.id.action_collection_add_all, R.string.action_collection_add_all);
           }
         }
         if (showTypeCount > 0) {

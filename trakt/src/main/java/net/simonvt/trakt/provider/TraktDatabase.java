@@ -154,11 +154,7 @@ public class TraktDatabase extends SQLiteOpenHelper {
         + " INTEGER DEFAULT 0,"
         + ShowColumns.WATCHED_COUNT
         + " INTEGER DEFAULT 0,"
-        + ShowColumns.UNAIRED_COUNT
-        + " INTEGER DEFAULT 0,"
         + ShowColumns.AIRDATE_COUNT
-        + " INTEGER DEFAULT 0,"
-        + ShowColumns.AIRED_COUNT
         + " INTEGER DEFAULT 0,"
         + ShowColumns.IN_WATCHLIST_COUNT
         + " INTEGER DEFAULT 0,"
@@ -264,11 +260,7 @@ public class TraktDatabase extends SQLiteOpenHelper {
         + " TEXT,"
         + SeasonColumns.WATCHED_COUNT
         + " INTEGER DEFAULT 0,"
-        + SeasonColumns.UNAIRED_COUNT
-        + " INTEGER DEFAULT 0,"
         + SeasonColumns.AIRDATE_COUNT
-        + " INTEGER DEFAULT 0,"
-        + SeasonColumns.AIRED_COUNT
         + " INTEGER DEFAULT 0,"
         + SeasonColumns.IN_COLLECTION_COUNT
         + " INTEGER DEFAULT 0,"

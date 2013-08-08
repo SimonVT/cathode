@@ -139,32 +139,54 @@ public class TraktProvider extends ContentProvider {
     return true;
   }
 
+  private SelectionBuilder getBuilder() {
+    return new SelectionBuilder();
+  }
+
+  private SelectionBuilder getShowsBuilder() {
+    SelectionBuilder builder = new SelectionBuilder();
+    builder.map(TraktContract.ShowColumns.AIRED_COUNT, Shows.getAiredQuery());
+    builder.map(TraktContract.ShowColumns.UNAIRED_COUNT, Shows.getUnairedQuery());
+    builder.map(Tables.SHOWS + "." + TraktContract.ShowColumns.AIRED_COUNT, Shows.getAiredQuery());
+    builder.map(Tables.SHOWS + "." + TraktContract.ShowColumns.UNAIRED_COUNT,
+        Shows.getUnairedQuery());
+    return builder;
+  }
+
+  private SelectionBuilder getSeasonBuilder() {
+    SelectionBuilder builder = new SelectionBuilder();
+    builder.map(TraktContract.SeasonColumns.AIRED_COUNT, Seasons.getAiredQuery());
+    builder.map(TraktContract.SeasonColumns.UNAIRED_COUNT, Seasons.getUnairedQuery());
+    builder.map(Tables.SEASONS + "." + TraktContract.SeasonColumns.AIRED_COUNT,
+        Seasons.getAiredQuery());
+    builder.map(Tables.SEASONS + "." + TraktContract.SeasonColumns.UNAIRED_COUNT,
+        Seasons.getUnairedQuery());
+    return builder;
+  }
+
   @Override
   public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
       String sortOrder) {
     final SQLiteDatabase db = database.getReadableDatabase();
-    final SelectionBuilder builder = new SelectionBuilder();
     final int match = URI_MATCHER.match(uri);
     switch (match) {
       case SHOWS: {
-        Cursor c = builder.table(Tables.SHOWS)
+        Cursor c = getShowsBuilder().table(Tables.SHOWS)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
         c.setNotificationUri(getContext().getContentResolver(), Shows.CONTENT_URI);
         return c;
       }
       case SHOWS_WITHNEXT: {
-        Cursor c = builder.table(Tables.SHOWS_WITH_UNWATCHED)
+        Cursor c = getShowsBuilder().table(Tables.SHOWS_WITH_UNWATCHED)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
         c.setNotificationUri(getContext().getContentResolver(), Shows.CONTENT_URI);
         return c;
       }
       case SHOWS_WITHNEXT_IGNOREWATCHED: {
-        Cursor c = builder.table(Tables.SHOWS_WITH_UNWATCHED)
-            .where(TraktContract.ShowColumns.WATCHED_COUNT
-                + "<"
-                + TraktContract.ShowColumns.AIRED_COUNT, null)
+        Cursor c = getShowsBuilder().table(Tables.SHOWS_WITH_UNWATCHED)
+            .where(TraktContract.ShowColumns.WATCHED_COUNT + "<" + Shows.getAiredQuery(), null)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
         c.setNotificationUri(getContext().getContentResolver(), Shows.CONTENT_URI);
@@ -172,7 +194,7 @@ public class TraktProvider extends ContentProvider {
       }
       case SHOWS_ID: {
         final String showId = Shows.getShowId(uri);
-        Cursor c = builder.table(Tables.SHOWS)
+        Cursor c = getShowsBuilder().table(Tables.SHOWS)
             .where(Shows._ID + "=?", showId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -181,7 +203,7 @@ public class TraktProvider extends ContentProvider {
       }
       case SHOW_TOP_WATCHERS: {
         final String showId = ShowTopWatchers.getShowId(uri);
-        Cursor c = builder.table(Tables.SHOW_TOP_WATCHERS)
+        Cursor c = getBuilder().table(Tables.SHOW_TOP_WATCHERS)
             .where(Shows._ID + "=?", showId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -190,7 +212,7 @@ public class TraktProvider extends ContentProvider {
       }
       case SHOW_TOP_EPISODES: {
         final String showId = TopEpisodes.getShowId(uri);
-        Cursor c = builder.table(Tables.SHOW_TOP_EPISODES)
+        Cursor c = getBuilder().table(Tables.SHOW_TOP_EPISODES)
             .where(Shows._ID + "=?", showId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -199,7 +221,7 @@ public class TraktProvider extends ContentProvider {
       }
       case SHOW_ACTORS: {
         final String showId = ShowActor.getShowId(uri);
-        Cursor c = builder.table(Tables.SHOW_ACTORS)
+        Cursor c = getBuilder().table(Tables.SHOW_ACTORS)
             .where(Shows._ID + "=?", showId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -208,7 +230,7 @@ public class TraktProvider extends ContentProvider {
       }
       case SHOW_GENRES: {
         final String showId = ShowGenres.getShowId(uri);
-        Cursor c = builder.table(Tables.SHOW_GENRES)
+        Cursor c = getBuilder().table(Tables.SHOW_GENRES)
             .where(Shows._ID + "=?", showId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -216,7 +238,7 @@ public class TraktProvider extends ContentProvider {
         return c;
       }
       case SHOWS_WATCHLIST: {
-        Cursor c = builder.table(Tables.SHOWS_WITH_UNWATCHED)
+        Cursor c = getShowsBuilder().table(Tables.SHOWS_WITH_UNWATCHED)
             .where(Shows.IN_WATCHLIST + "=1")
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -224,7 +246,7 @@ public class TraktProvider extends ContentProvider {
         return c;
       }
       case SHOWS_COLLECTION: {
-        Cursor c = builder.table(Tables.SHOWS_WITH_UNCOLLECTED)
+        Cursor c = getShowsBuilder().table(Tables.SHOWS_WITH_UNCOLLECTED)
             .where(Shows.IN_COLLECTION_COUNT + ">0")
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -232,7 +254,7 @@ public class TraktProvider extends ContentProvider {
         return c;
       }
       case SHOWS_WATCHED: {
-        Cursor c = builder.table(Tables.SHOWS_WITH_UNWATCHED)
+        Cursor c = getShowsBuilder().table(Tables.SHOWS_WITH_UNWATCHED)
             .where(Shows.WATCHED_COUNT + ">0")
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -240,7 +262,7 @@ public class TraktProvider extends ContentProvider {
         return c;
       }
       case SEASONS: {
-        Cursor c = builder.table(Tables.SEASONS)
+        Cursor c = getSeasonBuilder().table(Tables.SEASONS)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
         c.setNotificationUri(getContext().getContentResolver(), Seasons.CONTENT_URI);
@@ -248,7 +270,7 @@ public class TraktProvider extends ContentProvider {
       }
       case SEASON_ID: {
         final String seasonId = Seasons.getSeasonId(uri);
-        Cursor c = builder.table(Tables.SEASONS)
+        Cursor c = getSeasonBuilder().table(Tables.SEASONS)
             .where(Seasons._ID + "=?", seasonId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -257,7 +279,7 @@ public class TraktProvider extends ContentProvider {
       }
       case SEASONS_OFSHOW: {
         final String showId = Seasons.getShowId(uri);
-        Cursor c = builder.table(Tables.SEASONS)
+        Cursor c = getSeasonBuilder().table(Tables.SEASONS)
             .where(Seasons.SHOW_ID + "=?", showId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -265,7 +287,7 @@ public class TraktProvider extends ContentProvider {
         return c;
       }
       case EPISODES: {
-        Cursor c = builder.table(Tables.EPISODES)
+        Cursor c = getBuilder().table(Tables.EPISODES)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
         c.setNotificationUri(getContext().getContentResolver(), Episodes.CONTENT_URI);
@@ -273,7 +295,7 @@ public class TraktProvider extends ContentProvider {
       }
       case EPISODE_ID: {
         final String episodeId = Episodes.getEpisodeId(uri);
-        Cursor c = builder.table(Tables.EPISODES)
+        Cursor c = getBuilder().table(Tables.EPISODES)
             .where(Episodes._ID + "=?", episodeId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -282,7 +304,7 @@ public class TraktProvider extends ContentProvider {
       }
       case EPISODES_FROMSHOW: {
         final String showId = Episodes.getShowId(uri);
-        Cursor c = builder.table(Tables.EPISODES)
+        Cursor c = getBuilder().table(Tables.EPISODES)
             .where(Episodes.SHOW_ID + "=?", showId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -291,7 +313,7 @@ public class TraktProvider extends ContentProvider {
       }
       case EPISODES_FROMSEASON: {
         final String seasonId = Episodes.getSeasonId(uri);
-        Cursor c = builder.table(Tables.EPISODES)
+        Cursor c = getBuilder().table(Tables.EPISODES)
             .where(Episodes.SEASON_ID + "=?", seasonId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -299,14 +321,14 @@ public class TraktProvider extends ContentProvider {
         return c;
       }
       case EPISODES_WATCHLIST: {
-        Cursor c = builder.table(Tables.EPISODES_WITH_SHOW_TITLE)
+        Cursor c = getBuilder().table(Tables.EPISODES_WITH_SHOW_TITLE)
             .where(Episodes.IN_WATCHLIST + "=1")
             .query(db, projection, sortOrder);
         c.setNotificationUri(getContext().getContentResolver(), Episodes.CONTENT_URI);
         return c;
       }
       case MOVIES: {
-        Cursor c = builder.table(Tables.MOVIES)
+        Cursor c = getBuilder().table(Tables.MOVIES)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
         c.setNotificationUri(getContext().getContentResolver(), Movies.CONTENT_URI);
@@ -314,7 +336,7 @@ public class TraktProvider extends ContentProvider {
       }
       case MOVIE_ID: {
         final String movieId = Movies.getMovieId(uri);
-        Cursor c = builder.table(Tables.MOVIES)
+        Cursor c = getBuilder().table(Tables.MOVIES)
             .where(Movies._ID + "=?", movieId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -323,7 +345,7 @@ public class TraktProvider extends ContentProvider {
       }
       case MOVIE_GENRES: {
         final String movieId = MovieGenres.getMovieId(uri);
-        Cursor c = builder.table(Tables.MOVIE_GENRES)
+        Cursor c = getBuilder().table(Tables.MOVIE_GENRES)
             .where(MovieGenres.MOVIE_ID + "=?", movieId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -332,7 +354,7 @@ public class TraktProvider extends ContentProvider {
       }
       case MOVIE_TOP_WATCHERS: {
         final String movieId = MovieTopWatchers.getMovieId(uri);
-        Cursor c = builder.table(Tables.MOVIE_TOP_WATCHERS)
+        Cursor c = getBuilder().table(Tables.MOVIE_TOP_WATCHERS)
             .where(MovieTopWatchers.MOVIE_ID + "=?", movieId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -341,7 +363,7 @@ public class TraktProvider extends ContentProvider {
       }
       case MOVIE_ACTORS: {
         final String movieId = MovieActors.getMovieId(uri);
-        Cursor c = builder.table(Tables.MOVIE_ACTORS)
+        Cursor c = getBuilder().table(Tables.MOVIE_ACTORS)
             .where(MovieActors.MOVIE_ID + "=?", movieId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -350,7 +372,7 @@ public class TraktProvider extends ContentProvider {
       }
       case MOVIE_DIRECTORS: {
         final String movieId = MovieDirectors.getMovieId(uri);
-        Cursor c = builder.table(Tables.MOVIE_DIRECTORS)
+        Cursor c = getBuilder().table(Tables.MOVIE_DIRECTORS)
             .where(MovieDirectors.MOVIE_ID + "=?", movieId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -359,7 +381,7 @@ public class TraktProvider extends ContentProvider {
       }
       case MOVIE_WRITERS: {
         final String movieId = MovieWriters.getMovieId(uri);
-        Cursor c = builder.table(Tables.MOVIE_WRITERS)
+        Cursor c = getBuilder().table(Tables.MOVIE_WRITERS)
             .where(MovieWriters.MOVIE_ID + "=?", movieId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -368,7 +390,7 @@ public class TraktProvider extends ContentProvider {
       }
       case MOVIE_PRODUCERS: {
         final String movieId = MovieProducers.getMovieId(uri);
-        Cursor c = builder.table(Tables.MOVIE_PRODUCERS)
+        Cursor c = getBuilder().table(Tables.MOVIE_PRODUCERS)
             .where(MovieProducers.MOVIE_ID + "=?", movieId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -871,9 +893,7 @@ public class TraktProvider extends ContentProvider {
       }
       case SHOWS_WITHNEXT_IGNOREWATCHED: {
         return builder.table(Tables.SHOWS_WITH_UNWATCHED)
-            .where(TraktContract.ShowColumns.WATCHED_COUNT
-                + "<"
-                + TraktContract.ShowColumns.AIRED_COUNT, null);
+            .where(TraktContract.ShowColumns.WATCHED_COUNT + "<" + Shows.getAiredQuery(), null);
       }
       case SHOWS_ID: {
         final String showId = Shows.getShowId(uri);

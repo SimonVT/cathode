@@ -2,6 +2,8 @@ package net.simonvt.trakt.provider;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
+import java.util.Calendar;
+import net.simonvt.trakt.util.DateUtils;
 
 public final class TraktContract {
 
@@ -40,12 +42,13 @@ public final class TraktContract {
     String RATING = "rating";
     String IN_WATCHLIST = "showInWatchlist";
     String WATCHED_COUNT = "watchedCount";
-    String UNAIRED_COUNT = "unairedCount";
     String AIRDATE_COUNT = "airdateCount";
-    String AIRED_COUNT = "airedCount";
     String STATUS = "status";
     String IN_COLLECTION_COUNT = "inCollectionCount";
     String IN_WATCHLIST_COUNT = "inWatchlistCount";
+
+    String AIRED_COUNT = "airedCount";
+    String UNAIRED_COUNT = "unairedCount";
   }
 
   interface TopWatcherColumns {
@@ -88,11 +91,12 @@ public final class TraktContract {
     String EPISODES = "episodes";
     String URL = "url";
     String WATCHED_COUNT = "watchedCount";
-    String UNAIRED_COUNT = "unairedCount";
     String AIRDATE_COUNT = "airdateCount";
-    String AIRED_COUNT = "airedCount";
     String IN_COLLECTION_COUNT = "inCollectionCount";
     String IN_WATCHLIST_COUNT = "inWatchlistCount";
+
+    String AIRED_COUNT = "airedCount";
+    String UNAIRED_COUNT = "unairedCount";
   }
 
   interface EpisodeColumns {
@@ -216,6 +220,66 @@ public final class TraktContract {
     public static String getShowId(Uri uri) {
       return uri.getPathSegments().get(2);
     }
+
+    public static String getAiredQuery() {
+      Calendar cal = Calendar.getInstance();
+      final long currentTime = cal.getTimeInMillis();
+      return "(SELECT COUNT(*) FROM "
+          + TraktDatabase.Tables.EPISODES
+          + " WHERE "
+          + TraktDatabase.Tables.EPISODES
+          + "."
+          + EpisodeColumns.SHOW_ID
+          + "="
+          + TraktDatabase.Tables.SHOWS
+          + "."
+          + BaseColumns._ID
+          + " AND "
+          + TraktDatabase.Tables.EPISODES
+          + "."
+          + EpisodeColumns.FIRST_AIRED
+          + "<="
+          + currentTime
+          + " AND "
+          + TraktDatabase.Tables.EPISODES
+          + "."
+          + EpisodeColumns.FIRST_AIRED
+          + ">"
+          + DateUtils.YEAR_IN_MILLIS
+          + " AND "
+          + TraktDatabase.Tables.EPISODES
+          + "."
+          + EpisodeColumns.SEASON
+          + ">0"
+          + ")";
+    }
+
+    public static String getUnairedQuery() {
+      Calendar cal = Calendar.getInstance();
+      final long currentTime = cal.getTimeInMillis();
+      return "(SELECT COUNT(*) FROM "
+          + TraktDatabase.Tables.EPISODES
+          + " WHERE "
+          + TraktDatabase.Tables.EPISODES
+          + "."
+          + EpisodeColumns.SHOW_ID
+          + "="
+          + TraktDatabase.Tables.SHOWS
+          + "."
+          + BaseColumns._ID
+          + " AND "
+          + TraktDatabase.Tables.EPISODES
+          + "."
+          + EpisodeColumns.FIRST_AIRED
+          + ">"
+          + currentTime
+          + " AND "
+          + TraktDatabase.Tables.EPISODES
+          + "."
+          + EpisodeColumns.SEASON
+          + ">0"
+          + ")";
+    }
   }
 
   public static class ShowTopWatchers implements TopWatcherColumns, BaseColumns {
@@ -335,6 +399,66 @@ public final class TraktContract {
 
     public static String getShowId(Uri uri) {
       return uri.getPathSegments().get(2);
+    }
+
+    public static String getAiredQuery() {
+      Calendar cal = Calendar.getInstance();
+      final long currentTime = cal.getTimeInMillis();
+      return "(SELECT COUNT(*) FROM "
+          + TraktDatabase.Tables.EPISODES
+          + " WHERE "
+          + TraktDatabase.Tables.EPISODES
+          + "."
+          + EpisodeColumns.SEASON_ID
+          + "="
+          + TraktDatabase.Tables.SEASONS
+          + "."
+          + BaseColumns._ID
+          + " AND "
+          + TraktDatabase.Tables.EPISODES
+          + "."
+          + EpisodeColumns.FIRST_AIRED
+          + "<="
+          + currentTime
+          + " AND "
+          + TraktDatabase.Tables.EPISODES
+          + "."
+          + EpisodeColumns.FIRST_AIRED
+          + ">"
+          + DateUtils.YEAR_IN_MILLIS
+          + " AND "
+          + TraktDatabase.Tables.EPISODES
+          + "."
+          + EpisodeColumns.SEASON
+          + ">0"
+          + ")";
+    }
+
+    public static String getUnairedQuery() {
+      Calendar cal = Calendar.getInstance();
+      final long currentTime = cal.getTimeInMillis();
+      return "(SELECT COUNT(*) FROM "
+          + TraktDatabase.Tables.EPISODES
+          + " WHERE "
+          + TraktDatabase.Tables.EPISODES
+          + "."
+          + EpisodeColumns.SEASON_ID
+          + "="
+          + TraktDatabase.Tables.SEASONS
+          + "."
+          + BaseColumns._ID
+          + " AND "
+          + TraktDatabase.Tables.EPISODES
+          + "."
+          + EpisodeColumns.FIRST_AIRED
+          + ">"
+          + currentTime
+          + " AND "
+          + TraktDatabase.Tables.EPISODES
+          + "."
+          + EpisodeColumns.SEASON
+          + ">0"
+          + ")";
     }
   }
 

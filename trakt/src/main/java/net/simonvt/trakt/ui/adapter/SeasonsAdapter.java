@@ -26,6 +26,13 @@ import net.simonvt.trakt.widget.OverflowView;
 
 public class SeasonsAdapter extends CursorAdapter {
 
+  public static final String[] PROJECTION = new String[] {
+      TraktContract.Seasons._ID, TraktContract.Seasons.AIRDATE_COUNT,
+      TraktContract.Seasons.UNAIRED_COUNT, TraktContract.Seasons.WATCHED_COUNT,
+      TraktContract.Seasons.IN_COLLECTION_COUNT, TraktContract.Seasons.SEASON,
+      TraktContract.Seasons.WATCHED_COUNT,
+  };
+
   @Inject SeasonTaskScheduler seasonScheduler;
 
   private Resources resources;
