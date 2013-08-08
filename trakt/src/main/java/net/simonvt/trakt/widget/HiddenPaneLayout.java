@@ -322,7 +322,7 @@ public class HiddenPaneLayout extends ViewGroup {
   }
 
   protected void animateOffsetTo(final int position, int duration) {
-    if (position < Math.abs(offsetPixels)) {
+    if (position < offsetPixels) {
       setState(STATE_OPENING);
     } else {
       setState(STATE_CLOSING);
