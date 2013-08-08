@@ -54,8 +54,6 @@ import net.simonvt.trakt.remote.sync.SyncShowsWatchlistTask;
 import net.simonvt.trakt.remote.sync.SyncTask;
 import net.simonvt.trakt.remote.sync.SyncUpdatedMovies;
 import net.simonvt.trakt.remote.sync.SyncUpdatedShows;
-import net.simonvt.trakt.remote.sync.UpdateSeasonCountTask;
-import net.simonvt.trakt.remote.sync.UpdateShowCountTask;
 import net.simonvt.trakt.scheduler.EpisodeTaskScheduler;
 import net.simonvt.trakt.scheduler.MovieTaskScheduler;
 import net.simonvt.trakt.scheduler.SeasonTaskScheduler;
@@ -182,7 +180,7 @@ public class TraktApp extends Application {
           SyncMoviesWatchlistTask.class, SyncSeasonTask.class, SyncShowTask.class,
           SyncShowsTask.class, SyncShowsWatchlistTask.class, SyncShowsWatchedTask.class,
           ShowWatchedTask.class, SyncUpdatedMovies.class, SyncUpdatedShows.class,
-          UpdateSeasonCountTask.class, UpdateShowCountTask.class, SyncTask.class,
+          SyncTask.class,
 
           // Misc
           PhoneController.class, ResponseParser.class, ShowSearchHandler.class,

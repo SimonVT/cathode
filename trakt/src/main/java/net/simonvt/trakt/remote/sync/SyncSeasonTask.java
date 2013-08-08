@@ -14,7 +14,6 @@ import net.simonvt.trakt.api.entity.Episode;
 import net.simonvt.trakt.api.entity.TraktResponse;
 import net.simonvt.trakt.api.service.ShowService;
 import net.simonvt.trakt.provider.EpisodeWrapper;
-import net.simonvt.trakt.provider.SeasonWrapper;
 import net.simonvt.trakt.provider.ShowWrapper;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.provider.TraktProvider;
@@ -95,9 +94,6 @@ public class SyncSeasonTask extends TraktTask {
       }
 
       resolver.applyBatch(TraktProvider.AUTHORITY, ops);
-
-      SeasonWrapper.updateSeasonCounts(resolver, tvdbId, season);
-      ShowWrapper.updateShowCounts(resolver, tvdbId);
 
       postOnSuccess();
     } catch (RetrofitError e) {

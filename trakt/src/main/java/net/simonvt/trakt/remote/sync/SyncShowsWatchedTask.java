@@ -14,7 +14,6 @@ import net.simonvt.trakt.api.entity.TvShow;
 import net.simonvt.trakt.api.enumeration.DetailLevel;
 import net.simonvt.trakt.api.service.UserService;
 import net.simonvt.trakt.provider.EpisodeWrapper;
-import net.simonvt.trakt.provider.SeasonWrapper;
 import net.simonvt.trakt.provider.ShowWrapper;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.provider.TraktProvider;
@@ -80,13 +79,6 @@ public class SyncShowsWatchedTask extends TraktTask {
               }
             }
           }
-
-          for (Season season : show.getSeasons()) {
-            final long seasonId = SeasonWrapper.getSeasonId(service.getContentResolver(), tvdbId,
-                season.getSeason());
-            queueTask(new UpdateSeasonCountTask(seasonId));
-          }
-          queueTask(new UpdateShowCountTask(showId));
         }
       }
 

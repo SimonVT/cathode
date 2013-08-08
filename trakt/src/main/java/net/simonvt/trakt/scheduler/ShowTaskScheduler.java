@@ -109,18 +109,6 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
           final int tvdbId = c.getInt(c.getColumnIndex(TraktContract.Shows.TVDB_ID));
           ShowWrapper.setWatched(context.getContentResolver(), showId, watched);
           queue.add(new ShowWatchedTask(tvdbId, watched));
-
-          Cursor seasons = context.getContentResolver()
-              .query(TraktContract.Seasons.buildFromShowId(showId), new String[] {
-                  TraktContract.Seasons._ID,
-              }, null, null, null);
-
-          while (seasons.moveToNext()) {
-            SeasonWrapper.updateSeasonCounts(context.getContentResolver(), seasons.getLong(0));
-          }
-          seasons.close();
-
-          ShowWrapper.updateShowCounts(context.getContentResolver(), showId);
         }
 
         c.close();
@@ -161,18 +149,6 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
           final int tvdbId = c.getInt(c.getColumnIndex(TraktContract.Shows.TVDB_ID));
           ShowWrapper.setIsInCollection(context.getContentResolver(), showId, inCollection);
           queue.add(new ShowCollectionTask(tvdbId, inCollection));
-
-          Cursor seasons = context.getContentResolver()
-              .query(TraktContract.Seasons.buildFromShowId(showId), new String[] {
-                  TraktContract.Seasons._ID,
-              }, null, null, null);
-
-          while (seasons.moveToNext()) {
-            SeasonWrapper.updateSeasonCounts(context.getContentResolver(), seasons.getLong(0));
-          }
-          seasons.close();
-
-          ShowWrapper.updateShowCounts(context.getContentResolver(), showId);
         }
 
         c.close();

@@ -92,8 +92,6 @@ public final class EpisodeWrapper {
     if (c.moveToFirst()) {
       final long showId = c.getLong(c.getColumnIndex(Episodes.SHOW_ID));
       final long seasonId = c.getLong(c.getColumnIndex(Episodes.SEASON_ID));
-      SeasonWrapper.updateSeasonCounts(resolver, seasonId);
-      ShowWrapper.updateShowCounts(resolver, showId);
     }
 
     c.close();
@@ -107,9 +105,6 @@ public final class EpisodeWrapper {
     cv.put(EpisodeColumns.SEASON_ID, seasonId);
 
     Uri uri = resolver.insert(Episodes.CONTENT_URI, cv);
-
-    SeasonWrapper.updateSeasonCounts(resolver, seasonId);
-    ShowWrapper.updateShowCounts(resolver, showId);
 
     return Long.valueOf(Episodes.getEpisodeId(uri));
   }
@@ -188,9 +183,6 @@ public final class EpisodeWrapper {
     if (c.moveToFirst()) {
       final long showId = c.getLong(c.getColumnIndex(Episodes.SHOW_ID));
       final long seasonId = c.getLong(c.getColumnIndex(Episodes.SEASON_ID));
-
-      SeasonWrapper.updateSeasonCounts(resolver, seasonId);
-      ShowWrapper.updateShowCounts(resolver, showId);
     }
 
     c.close();
@@ -224,9 +216,6 @@ public final class EpisodeWrapper {
     if (c.moveToFirst()) {
       final long showId = c.getLong(c.getColumnIndex(Episodes.SHOW_ID));
       final long seasonId = c.getLong(c.getColumnIndex(Episodes.SEASON_ID));
-
-      SeasonWrapper.updateSeasonCounts(resolver, seasonId);
-      ShowWrapper.updateShowCounts(resolver, showId);
     }
 
     c.close();

@@ -13,7 +13,6 @@ import net.simonvt.trakt.api.entity.TvShow;
 import net.simonvt.trakt.api.enumeration.DetailLevel;
 import net.simonvt.trakt.api.service.UserService;
 import net.simonvt.trakt.provider.EpisodeWrapper;
-import net.simonvt.trakt.provider.SeasonWrapper;
 import net.simonvt.trakt.provider.ShowWrapper;
 import net.simonvt.trakt.provider.TraktContract;
 import net.simonvt.trakt.provider.TraktProvider;
@@ -40,13 +39,9 @@ public class SyncShowsCollectionTask extends TraktTask {
           TraktContract.Episodes.SEASON_ID,
       }, TraktContract.Episodes.IN_COLLECTION + "=1", null, null);
 
-      List<Long> updateSeasons = new ArrayList<Long>();
-      List<Long> updateShows = new ArrayList<Long>();
       List<Long> episodeIds = new ArrayList<Long>(c.getCount());
       while (c.moveToNext()) {
         episodeIds.add(c.getLong(0));
-        updateShows.add(c.getLong(1));
-        updateSeasons.add(c.getLong(2));
       }
       c.close();
 
@@ -79,12 +74,6 @@ public class SyncShowsCollectionTask extends TraktTask {
               }
             }
           }
-
-          for (Season season : show.getSeasons()) {
-            final long seasonId = SeasonWrapper.getSeasonId(resolver, tvdbId, season.getSeason());
-            queueTask(new UpdateSeasonCountTask(seasonId));
-          }
-          queueTask(new UpdateShowCountTask(showId));
         }
       }
 
@@ -93,13 +82,6 @@ public class SyncShowsCollectionTask extends TraktTask {
             ContentProviderOperation.newUpdate(TraktContract.Episodes.buildFromId(episodeId));
         builder.withValue(TraktContract.Episodes.IN_COLLECTION, false);
         ops.add(builder.build());
-      }
-
-      for (long seasonId : updateSeasons) {
-        queueTask(new UpdateSeasonCountTask(seasonId));
-      }
-      for (long showId : updateShows) {
-        queueTask(new UpdateShowCountTask(showId));
       }
 
       resolver.applyBatch(TraktProvider.AUTHORITY, ops);

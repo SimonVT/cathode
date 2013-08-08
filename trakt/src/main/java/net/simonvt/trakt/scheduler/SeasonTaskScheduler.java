@@ -48,11 +48,6 @@ public class SeasonTaskScheduler extends BaseTaskScheduler {
         }
 
         c.close();
-
-        final long showId = SeasonWrapper.getShowId(context.getContentResolver(), seasonId);
-
-        SeasonWrapper.updateSeasonCounts(context.getContentResolver(), seasonId);
-        ShowWrapper.updateShowCounts(context.getContentResolver(), showId);
       }
     });
   }
@@ -86,11 +81,6 @@ public class SeasonTaskScheduler extends BaseTaskScheduler {
         }
 
         c.close();
-
-        final long showId = SeasonWrapper.getShowId(context.getContentResolver(), seasonId);
-
-        SeasonWrapper.updateSeasonCounts(context.getContentResolver(), seasonId);
-        ShowWrapper.updateShowCounts(context.getContentResolver(), showId);
       }
     });
   }

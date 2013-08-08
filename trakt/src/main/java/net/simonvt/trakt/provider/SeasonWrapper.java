@@ -8,7 +8,6 @@ import android.provider.BaseColumns;
 import net.simonvt.trakt.api.entity.Images;
 import net.simonvt.trakt.api.entity.Season;
 import net.simonvt.trakt.util.ApiUtils;
-import net.simonvt.trakt.util.DateUtils;
 
 public final class SeasonWrapper {
 
@@ -112,47 +111,5 @@ public final class SeasonWrapper {
     }
 
     return cv;
-  }
-
-  private static final String[] EPISODES_PROJECTION = new String[] {
-      TraktContract.EpisodeColumns.FIRST_AIRED, TraktContract.EpisodeColumns.WATCHED,
-      TraktContract.EpisodeColumns.IN_COLLECTION, TraktContract.EpisodeColumns.IN_WATCHLIST,
-  };
-
-  public static void updateSeasonCounts(ContentResolver resolver, int showTvdbId, int season) {
-    updateSeasonCounts(resolver, getSeasonId(resolver, showTvdbId, season));
-  }
-
-  public static void updateSeasonCounts(ContentResolver resolver, long seasonId) {
-    Cursor c =
-        resolver.query(TraktContract.Episodes.buildFromSeasonId(seasonId), EPISODES_PROJECTION,
-            null, null, null);
-
-    int airdateCount = 0;
-    int watchedCount = 0;
-    int inCollectionCount = 0;
-
-    final int firstAiredIndex = c.getColumnIndex(TraktContract.EpisodeColumns.FIRST_AIRED);
-    final int watchedIndex = c.getColumnIndex(TraktContract.EpisodeColumns.WATCHED);
-    final int inCollectionIndex = c.getColumnIndex(TraktContract.EpisodeColumns.IN_COLLECTION);
-
-    while (c.moveToNext()) {
-      final long firstAired = c.getLong(firstAiredIndex);
-      if (c.getInt(watchedIndex) > 0) watchedCount++;
-      // Unaired
-      if (firstAired > 1 * DateUtils.YEAR_IN_SECONDS) {
-        airdateCount++;
-      }
-      if (c.getInt(inCollectionIndex) > 0) inCollectionCount++;
-    }
-
-    ContentValues cv = new ContentValues();
-    cv.put(TraktContract.SeasonColumns.AIRDATE_COUNT, airdateCount);
-    cv.put(TraktContract.SeasonColumns.WATCHED_COUNT, watchedCount);
-    cv.put(TraktContract.SeasonColumns.IN_COLLECTION_COUNT, inCollectionCount);
-
-    resolver.update(TraktContract.Seasons.buildFromId(seasonId), cv, null, null);
-
-    c.close();
   }
 }

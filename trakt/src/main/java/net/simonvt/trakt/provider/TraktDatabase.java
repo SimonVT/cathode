@@ -81,6 +81,69 @@ public class TraktDatabase extends SQLiteOpenHelper {
     String MOVIE_ID = "REFERENCES " + Tables.MOVIES + "(" + BaseColumns._ID + ")";
   }
 
+  interface Trigger {
+    String SEASONS_UPDATE_WATCHED = "UPDATE " + Tables.SEASONS + " SET "
+        + SeasonColumns.WATCHED_COUNT + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE "
+        + Tables.EPISODES + "." + EpisodeColumns.SEASON_ID
+        + "=NEW." + EpisodeColumns.SEASON_ID
+        + " AND " + Tables.EPISODES + "." + EpisodeColumns.WATCHED
+        + "=1 AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)"
+        + " WHERE " + Tables.SEASONS + "." + BaseColumns._ID + "=NEW." + EpisodeColumns.SEASON_ID
+        + ";";
+
+    String SEASONS_UPDATE_AIRDATE = "UPDATE " + Tables.SEASONS + " SET "
+        + SeasonColumns.AIRDATE_COUNT + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE "
+        + Tables.EPISODES + "." + EpisodeColumns.SEASON_ID
+        + "=NEW." + EpisodeColumns.SEASON_ID
+        + " AND " + Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED
+        + ">" + DateUtils.YEAR_IN_MILLIS
+        + " AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)"
+        + " WHERE " + Tables.SEASONS + "." + BaseColumns._ID + "=NEW." + EpisodeColumns.SEASON_ID
+        + ";";
+
+    String SHOWS_UPDATE_WATCHED = "UPDATE " + Tables.SHOWS + " SET "
+        + ShowColumns.WATCHED_COUNT + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE "
+        + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID
+        + "=NEW." + EpisodeColumns.SHOW_ID
+        + " AND " + Tables.EPISODES + "." + EpisodeColumns.WATCHED
+        + "=1 AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)"
+        + " WHERE " + Tables.SHOWS + "." + BaseColumns._ID + "=NEW." + EpisodeColumns.SHOW_ID
+        + ";";
+
+    String SHOWS_UPDATE_AIRDATE = "UPDATE " + Tables.SHOWS + " SET "
+        + ShowColumns.AIRDATE_COUNT + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE "
+        + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID
+        + "=NEW." + EpisodeColumns.SHOW_ID
+        + " AND " + Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED
+        + ">" + DateUtils.YEAR_IN_MILLIS
+        + " AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)"
+        + " WHERE " + Tables.SHOWS + "." + BaseColumns._ID + "=NEW." + EpisodeColumns.SHOW_ID
+        + ";";
+
+    String EPISODE_UPDATE_AIRED = "CREATE TRIGGER episodeUpdateAired AFTER UPDATE OF "
+        + EpisodeColumns.FIRST_AIRED
+        + " ON " + Tables.EPISODES + " BEGIN "
+        + SEASONS_UPDATE_AIRDATE
+        + SHOWS_UPDATE_AIRDATE
+        + " END;";
+
+    String EPISODE_UPDATE_WATCHED = "CREATE TRIGGER episodeUpdateWatched AFTER UPDATE OF "
+        + EpisodeColumns.WATCHED
+        + " ON " + Tables.EPISODES + " BEGIN "
+        + SEASONS_UPDATE_WATCHED
+        + SHOWS_UPDATE_WATCHED
+        + " END;";
+
+    String EPISODE_INSERT = "CREATE TRIGGER episodeInsert AFTER INSERT ON " + Tables.EPISODES
+        + " BEGIN "
+        + SEASONS_UPDATE_WATCHED
+        + SEASONS_UPDATE_AIRDATE
+        + SHOWS_UPDATE_WATCHED
+        + SHOWS_UPDATE_AIRDATE
+        + " END;";
+
+  }
+
   public TraktDatabase(Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
   }
@@ -496,6 +559,10 @@ public class TraktDatabase extends SQLiteOpenHelper {
         + " INTEGER NOT NULL,"
         + MovieProducers.HEADSHOT
         + " TEXT)");
+
+    db.execSQL(Trigger.EPISODE_INSERT);
+    db.execSQL(Trigger.EPISODE_UPDATE_AIRED);
+    db.execSQL(Trigger.EPISODE_UPDATE_WATCHED);
   }
 
   @Override

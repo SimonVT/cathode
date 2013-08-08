@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.TimeZone;
 import net.simonvt.trakt.api.entity.Images;
 import net.simonvt.trakt.api.entity.TvShow;
-import net.simonvt.trakt.provider.TraktContract.SeasonColumns;
 import net.simonvt.trakt.provider.TraktContract.ShowColumns;
 import net.simonvt.trakt.provider.TraktContract.Shows;
 import net.simonvt.trakt.util.ApiUtils;
@@ -19,10 +18,6 @@ import net.simonvt.trakt.util.DateUtils;
 public final class ShowWrapper {
 
   private static final String TAG = "ShowWrapper";
-
-  private static final String[] SEASON_PROJECTION = new String[] {
-      SeasonColumns.AIRDATE_COUNT, SeasonColumns.WATCHED_COUNT, SeasonColumns.IN_COLLECTION_COUNT,
-  };
 
   private ShowWrapper() {
   }
@@ -223,40 +218,6 @@ public final class ShowWrapper {
         TraktContract.EpisodeColumns.FIRST_AIRED + "<?", new String[] {
         String.valueOf(millis),
     });
-  }
-
-  public static void updateShowCounts(ContentResolver resolver, int tvdbId) {
-    updateShowCounts(resolver, getShowId(resolver, tvdbId));
-  }
-
-  public static void updateShowCounts(ContentResolver resolver, long showId) {
-    Cursor c = resolver.query(TraktContract.Seasons.CONTENT_URI, SEASON_PROJECTION,
-        SeasonColumns.SHOW_ID + "=? AND " + SeasonColumns.SEASON + ">0", new String[] {
-        String.valueOf(showId),
-    }, null);
-
-    int airdateCount = 0;
-    int watchedCount = 0;
-    int inCollectionCount = 0;
-
-    final int airdateIndex = c.getColumnIndex(ShowColumns.AIRDATE_COUNT);
-    final int watchedIndex = c.getColumnIndex(ShowColumns.WATCHED_COUNT);
-    final int inCollectionIndex = c.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT);
-
-    while (c.moveToNext()) {
-      airdateCount += c.getInt(airdateIndex);
-      watchedCount += c.getInt(watchedIndex);
-      inCollectionCount += c.getInt(inCollectionIndex);
-    }
-
-    ContentValues cv = new ContentValues();
-    cv.put(SeasonColumns.AIRDATE_COUNT, airdateCount);
-    cv.put(SeasonColumns.WATCHED_COUNT, watchedCount);
-    cv.put(SeasonColumns.IN_COLLECTION_COUNT, inCollectionCount);
-
-    resolver.update(Shows.buildShowUri(showId), cv, null, null);
-
-    c.close();
   }
 
   private static ContentValues getShowCVs(TvShow show) {
