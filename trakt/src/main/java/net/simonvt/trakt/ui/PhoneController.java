@@ -1,10 +1,12 @@
 package net.simonvt.trakt.ui;
 
 import android.app.ActionBar;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -340,6 +342,8 @@ public class PhoneController extends UiController {
             f.query(query);
           }
         }
+
+        searchView.clearFocus();
 
         return true;
       }
