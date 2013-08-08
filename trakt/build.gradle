@@ -32,4 +32,27 @@ android {
     versionCode = parent.ext.versionCode;
     versionName = parent.ext.versionName
   }
+
+  signingConfigs {
+    release
+  }
+
+  buildTypes {
+    release {
+      signingConfig signingConfigs.release
+    }
+  }
+}
+
+if (project.hasProperty('traktStoreFile')) {
+  android.signingConfigs.release.storeFile = file(traktStoreFile)
+}
+if (project.hasProperty('traktStorePassword')) {
+  android.signingConfigs.release.storePassword = traktStorePassword
+}
+if (project.hasProperty('traktKeyPassword')) {
+  android.signingConfigs.release.keyPassword = traktKeyPassword
+}
+if (project.hasProperty('traktKeyAlias')) {
+  android.signingConfigs.release.keyAlias = traktKeyAlias
 }
