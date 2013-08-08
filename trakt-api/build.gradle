@@ -9,8 +9,8 @@ dependencies {
 }
 
 android {
-  compileSdkVersion 18
-  buildToolsVersion "18.0.0"
+  compileSdkVersion parent.ext.compileSdkVersion
+  buildToolsVersion parent.ext.buildToolsVersion
 
   defaultConfig {
     minSdkVersion = parent.ext.minSdkVersion
