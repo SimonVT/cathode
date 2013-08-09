@@ -10,8 +10,8 @@
 
   <string name="retry">Retry</string>
 
-  <string name="initial_sync">Performing initial sync</string>
-  <string name="initial_sync_desc">Fetching movies and shows…</string>
+  <string name="initial_sync">Fetching movies and shows</string>
+  <string name="initial_sync_desc">This might take a while…</string>
 
   <string name="lost_connection">Synchronization failed.</string>
   <string name="retry_in">Synchronization failed. Retrying in %d minutes.</string>
