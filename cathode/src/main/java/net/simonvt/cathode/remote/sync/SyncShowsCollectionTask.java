@@ -26,6 +26,15 @@ public class SyncShowsCollectionTask extends TraktTask {
 
   @Inject transient UserService userService;
 
+  private void addOp(ArrayList<ContentProviderOperation> ops, ContentProviderOperation op)
+      throws RemoteException, OperationApplicationException {
+    ops.add(op);
+    if (ops.size() >= 50) {
+      service.getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
+      ops.clear();
+    }
+  }
+
   @Override
   protected void doTask() {
     LogWrapper.v(TAG, "[doTask]");
@@ -68,7 +77,7 @@ public class SyncShowsCollectionTask extends TraktTask {
                 ContentProviderOperation.Builder builder = ContentProviderOperation.newUpdate(
                     CathodeContract.Episodes.buildFromId(episodeId));
                 builder.withValue(CathodeContract.Episodes.IN_COLLECTION, true);
-                ops.add(builder.build());
+                addOp(ops, builder.build());
               } else {
                 queueTask(new SyncEpisodeTask(tvdbId, number, episodeNumber));
               }
@@ -81,7 +90,7 @@ public class SyncShowsCollectionTask extends TraktTask {
         ContentProviderOperation.Builder builder =
             ContentProviderOperation.newUpdate(CathodeContract.Episodes.buildFromId(episodeId));
         builder.withValue(CathodeContract.Episodes.IN_COLLECTION, false);
-        ops.add(builder.build());
+        addOp(ops, builder.build());
       }
 
       resolver.applyBatch(CathodeProvider.AUTHORITY, ops);

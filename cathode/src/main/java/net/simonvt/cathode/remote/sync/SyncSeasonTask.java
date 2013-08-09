@@ -36,6 +36,15 @@ public class SyncSeasonTask extends TraktTask {
     this.season = season;
   }
 
+  private void addOp(ArrayList<ContentProviderOperation> ops, ContentProviderOperation op)
+      throws RemoteException, OperationApplicationException {
+    ops.add(op);
+    if (ops.size() >= 50) {
+      service.getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
+      ops.clear();
+    }
+  }
+
   @Override
   protected void doTask() {
     LogWrapper.v(TAG, "[doTask]");
@@ -89,7 +98,7 @@ public class SyncSeasonTask extends TraktTask {
           cv.put(CathodeContract.Episodes.SEASON_ID, seasonId);
           builder.withValues(cv);
 
-          ops.add(builder.build());
+          addOp(ops, builder.build());
         }
       }
 
