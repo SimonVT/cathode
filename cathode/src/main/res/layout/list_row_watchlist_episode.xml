@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/card_bg"
+    android:minHeight="64dp">
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="64dp"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+    <net.simonvt.cathode.widget.RemoteImageView
+        android:id="@+id/screen"
+        android:layout_width="wrap_content"
+        android:layout_marginRight="8dp"
+        android:layout_height="64dp"
+        app:aspectRatio="0.68"
+        app:dominantMeasurement="height"/>
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="16dp"
+        android:gravity="center_vertical">
+
+      <TextView
+          android:id="@+id/title"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_toRightOf="@id/screen"
+          android:textAppearance="?android:attr/textAppearanceMedium"
+          android:textSize="16sp"
+          android:text="This is an episode title"/>
+
+      <TextView
+          android:id="@+id/firstAired"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_below="@id/title"
+          android:layout_toRightOf="@id/screen"
+          android:text="Jan 17, 2013"/>
+
+      <TextView
+          android:id="@+id/episode"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_below="@id/title"
+          android:layout_alignParentRight="true"
+          android:text="1x20"/>
+    </RelativeLayout>
+  </LinearLayout>
+
+  <net.simonvt.cathode.widget.OverflowView
+      android:id="@+id/overflow"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="right"/>
+</FrameLayout>

@@ -1,0 +1,11 @@
+<resources>
+
+  <string name="app_name">Cathode</string>
+
+  <string name="accountName">Cathode</string>
+
+  <string name="accountType">net.simonvt.cathode.account</string>
+
+  <string name="calendarName">Upcoming episodes</string>
+
+</resources>

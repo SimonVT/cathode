@@ -13,14 +13,14 @@ trakt-api/*
 
 !trakt-api/build.gradle
 
-!trakt/
-trakt/*
+!cathode/
+cathode/*
 
-!trakt/libs/
-!trakt/src/
+!cathode/libs/
+!cathode/src/
 
-!trakt/build.gradle
+!cathode/build.gradle
 
-trakt/src/main/res/values/secrets.xml
+cathode/src/main/res/values/secrets.xml
 
 .DS_store

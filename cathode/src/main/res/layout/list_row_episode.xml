@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<net.simonvt.cathode.widget.PhoneEpisodeView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/card_bg"
+    android:minHeight="64dp"
+    android:orientation="horizontal">
+
+  <net.simonvt.cathode.widget.RemoteImageView
+      android:id="@+id/screen"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginRight="8dp"
+      app:aspectRatio="0.68"/>
+
+  <RelativeLayout
+      android:id="@+id/infoParent"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:paddingRight="16dp">
+
+    <TextView
+        android:id="@+id/episode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:textSize="30sp"
+        android:textColor="@android:color/darker_gray"
+        android:text="1"/>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/episode"
+        android:layout_marginBottom="4dp"
+        android:layout_marginRight="8dp"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="16sp"
+        android:text="This is a very long episode title"/>
+
+    <TextView
+        android:id="@+id/firstAired"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:layout_below="@id/title"
+        android:text="Sep 15, 2012"/>
+  </RelativeLayout>
+
+  <net.simonvt.cathode.widget.OverflowView
+      android:id="@+id/overflow"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"/>
+
+  <net.simonvt.cathode.widget.CheckMark
+      android:id="@+id/checkbox"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="2dp"
+      android:layout_marginRight="2dp"
+      style="@style/Widget.CheckMark"/>
+</net.simonvt.cathode.widget.PhoneEpisodeView>

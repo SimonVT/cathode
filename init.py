@@ -1,6 +1,6 @@
 import sys
 
-path = './trakt/src/main/res/values/secrets.xml'
+path = './cathode/src/main/res/values/secrets.xml'
 file = open(path, 'w');
 file.write('<?xml version="1.0" encoding="utf-8"?>\n')
 file.write('<resources>\n')

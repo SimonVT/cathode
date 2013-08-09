@@ -1,0 +1,58 @@
+apply plugin: 'android'
+
+dependencies {
+  compile project(':trakt-api')
+  compile parent.ext.libraries.menudrawer
+  compile parent.ext.libraries.messagebar
+
+  compile parent.ext.libraries.gson
+
+  compile parent.ext.libraries.supportv4
+
+  compile parent.ext.libraries.otto
+  compile parent.ext.libraries.dagger
+  compile parent.ext.libraries.okhttp
+  compile parent.ext.libraries.picasso
+  compile parent.ext.libraries.retrofit
+  compile parent.ext.libraries.tape
+
+  compile parent.ext.libraries.butterknife
+
+  compile parent.ext.libraries.dashclockApi
+}
+
+android {
+  compileSdkVersion parent.ext.compileSdkVersion
+  buildToolsVersion parent.ext.buildToolsVersion
+
+  defaultConfig {
+    minSdkVersion = parent.ext.minSdkVersion
+    targetSdkVersion = parent.ext.targetSdkVersion
+
+    versionCode = parent.ext.versionCode;
+    versionName = parent.ext.versionName
+  }
+
+  signingConfigs {
+    release
+  }
+
+  buildTypes {
+    release {
+      signingConfig signingConfigs.release
+    }
+  }
+}
+
+if (project.hasProperty('cathodeStoreFile')) {
+  android.signingConfigs.release.storeFile = file(cathodeStoreFile)
+}
+if (project.hasProperty('cathodeStorePassword')) {
+  android.signingConfigs.release.storePassword = cathodeStorePassword
+}
+if (project.hasProperty('cathodeKeyPassword')) {
+  android.signingConfigs.release.keyPassword = cathodeKeyPassword
+}
+if (project.hasProperty('cathodeKeyAlias')) {
+  android.signingConfigs.release.keyAlias = cathodeKeyAlias
+}
