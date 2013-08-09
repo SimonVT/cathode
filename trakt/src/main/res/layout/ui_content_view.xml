@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+  <net.simonvt.menudrawer.OverlayDrawer
+      android:id="@+id/drawer"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"/>
+
+  <ProgressBar
+      android:id="@+id/progress_top"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="-8dp"
+      android:indeterminate="true"
+      style="@android:style/Widget.Holo.ProgressBar.Horizontal"/>
+</FrameLayout>

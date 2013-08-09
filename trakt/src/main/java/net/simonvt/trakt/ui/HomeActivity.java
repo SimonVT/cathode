@@ -8,6 +8,7 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import javax.inject.Inject;
 import net.simonvt.messagebar.MessageBar;
+import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.event.AuthFailedEvent;
 import net.simonvt.trakt.event.LoginEvent;
@@ -43,6 +44,8 @@ public class HomeActivity extends BaseActivity
   protected void onCreate(Bundle state) {
     super.onCreate(state);
     TraktApp.inject(this);
+
+    setContentView(R.layout.ui_content_view);
 
     messageBar = new MessageBar(this);
 

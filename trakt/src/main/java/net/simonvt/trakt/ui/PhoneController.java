@@ -5,9 +5,15 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
+import butterknife.InjectView;
+import butterknife.Views;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import javax.inject.Inject;
@@ -15,6 +21,7 @@ import net.simonvt.menudrawer.MenuDrawer;
 import net.simonvt.trakt.R;
 import net.simonvt.trakt.TraktApp;
 import net.simonvt.trakt.event.OnTitleChangedEvent;
+import net.simonvt.trakt.event.SyncEvent;
 import net.simonvt.trakt.ui.fragment.EpisodeFragment;
 import net.simonvt.trakt.ui.fragment.EpisodesWatchlistFragment;
 import net.simonvt.trakt.ui.fragment.MovieCollectionFragment;
@@ -48,7 +55,10 @@ public class PhoneController extends UiController {
 
   private FragmentStack stack;
 
-  private MenuDrawer menuDrawer;
+  @InjectView(R.id.drawer) MenuDrawer menuDrawer;
+
+  @InjectView(R.id.progress_top) ProgressBar progressTop;
+  private ViewPropertyAnimator progressAnimator;
 
   private NavigationFragment navigation;
 
@@ -71,7 +81,11 @@ public class PhoneController extends UiController {
     super.onCreate(state);
     isTablet = activity.getResources().getBoolean(R.bool.isTablet);
 
-    menuDrawer = MenuDrawer.attach(activity, MenuDrawer.Type.OVERLAY);
+    Views.inject(this, activity);
+
+    progressTop.setVisibility(View.GONE);
+
+    menuDrawer.setupUpIndicator(activity);
     menuDrawer.setSlideDrawable(R.drawable.ic_drawer);
     menuDrawer.setContentView(R.layout.activity_home);
     menuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_NONE);
@@ -236,6 +250,26 @@ public class PhoneController extends UiController {
   public void onDetach() {
     bus.unregister(this);
     super.onDetach();
+  }
+
+  @Subscribe
+  public void onSyncEvent(SyncEvent event) {
+    final int progressVisibility = progressTop.getVisibility();
+    progressAnimator = progressTop.animate();
+    if (event.isSyncing()) {
+      if (progressVisibility == View.GONE) {
+        progressTop.setAlpha(0.0f);
+        progressTop.setVisibility(View.VISIBLE);
+      }
+
+      progressAnimator.alpha(1.0f);
+    } else {
+      progressAnimator.alpha(0.0f).withEndAction(new Runnable() {
+        @Override public void run() {
+          progressTop.setVisibility(View.GONE);
+        }
+      });
+    }
   }
 
   @Override
