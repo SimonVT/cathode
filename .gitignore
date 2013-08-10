@@ -5,6 +5,10 @@
 !init.py
 !build.gradle
 !settings.gradle
+!gradlew
+!gradlew.bat
+
+!gradle/
 
 !trakt-api/
 trakt-api/*
