@@ -168,7 +168,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
 
   @Override
   public void onFailure() {
-    LogWrapper.i(TAG, "[onFailure] Scheduling restart in 10 minutes");
+    LogWrapper.i(TAG, "[onFailure] Scheduling restart");
     running = false;
 
     Intent intent = new Intent(this, TaskServiceReceiver.class);
