@@ -7,7 +7,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 import net.simonvt.cathode.R;
 
 /** A class that manages a stack of {@link Fragment}s in a single container. */
@@ -26,6 +28,7 @@ public final class FragmentStack {
   private static final String STATE_STACK = "net.simonvt.cathode.util.FragmentStack.stack";
 
   private LinkedList<Fragment> stack = new LinkedList<Fragment>();
+  private Set<String> topLevelTags = new HashSet<String>();
 
   private Activity activity;
 
@@ -81,8 +84,26 @@ public final class FragmentStack {
     Fragment f = stack.peekLast();
     if (f != null) {
       detachFragment(f);
-      fragmentTransaction.commit();
+      commit();
     }
+  }
+
+  public void destroy() {
+    ensureTransaction();
+    fragmentTransaction.setCustomAnimations(enterAnimation, exitAnimation);
+
+    final Fragment topFragment = stack.peekFirst();
+    for (Fragment f : stack) {
+      if (f != topFragment) removeFragment(f);
+    }
+    stack.clear();
+
+    for (String tag : topLevelTags) {
+      removeFragment(fragmentManager.findFragmentByTag(tag));
+    }
+
+    fragmentTransaction.commit();
+    fragmentTransaction = null;
   }
 
   public void onSaveInstanceState(Bundle outState) {
@@ -150,6 +171,8 @@ public final class FragmentStack {
     clearStack();
     attachFragment(f, tag);
     stack.add(f);
+
+    topLevelTags.add(tag);
   }
 
   public void addFragment(Class fragment, String tag) {
@@ -305,6 +328,7 @@ public final class FragmentStack {
     if (fragmentTransaction != null && !fragmentTransaction.isEmpty()) {
       handler.removeCallbacks(execPendingTransactions);
       fragmentTransaction.commit();
+      fragmentTransaction = null;
       boolean result = fragmentManager.executePendingTransactions();
       if (result) {
         dispatchOnStackChangedEvent();

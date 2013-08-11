@@ -57,7 +57,7 @@ public class UiController implements ShowsNavigationListener, MoviesNavigationLi
     attached = false;
   }
 
-  public void onDestroy() {
+  public void onDestroy(boolean completely) {
     LogWrapper.v(TAG, "[onDestroy]");
   }
 

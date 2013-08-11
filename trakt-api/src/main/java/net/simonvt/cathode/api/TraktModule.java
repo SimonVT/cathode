@@ -44,6 +44,7 @@ import net.simonvt.cathode.api.service.ServerService;
 import net.simonvt.cathode.api.service.ShowService;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.api.service.UserService;
+import retrofit.ErrorHandler;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 
@@ -53,10 +54,11 @@ public class TraktModule {
   private static final String API_URL = "http://api.trakt.tv";
 
   @Provides @Singleton @Trakt
-  RestAdapter provideRestAdapter(@Trakt Gson gson, TraktInterceptor interceptor) {
+  RestAdapter provideRestAdapter(@Trakt Gson gson, TraktInterceptor interceptor, ErrorHandler errorHandler) {
     return new RestAdapter.Builder().setServer(API_URL)
         .setConverter(new GsonConverter(gson))
         .setRequestInterceptor(interceptor)
+        .setErrorHandler(errorHandler)
         .build();
   }
 

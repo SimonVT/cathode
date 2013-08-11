@@ -16,6 +16,9 @@
   <string name="lost_connection">Synchronization failed.</string>
   <string name="retry_in">Synchronization failed. Retrying in %d minutes.</string>
 
+  <string name="auth_failed">Trakt login failed</string>
+  <string name="auth_failed_desc">Please enter password for user %s</string>
+
   <string name="now">Now</string>
   <string name="in_minutes">In %d minutes</string>
   <string name="minutes_ago">%d minutes ago</string>

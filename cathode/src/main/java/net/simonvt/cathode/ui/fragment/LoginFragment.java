@@ -71,6 +71,8 @@ public class LoginFragment extends BaseFragment {
     super.onViewCreated(view, savedInstanceState);
     login.setOnClickListener(onLoginListener);
     usernameInput.addTextChangedListener(textChanged);
+    usernameInput.setText(PreferenceManager.getDefaultSharedPreferences(getActivity())
+        .getString(Settings.USERNAME, null));
     passwordInput.addTextChangedListener(textChanged);
     createNew.setOnClickListener(new View.OnClickListener() {
       @Override

@@ -3,24 +3,31 @@ package net.simonvt.cathode;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 import com.squareup.tape.ObjectQueue;
 import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.simonvt.cathode.api.ApiKey;
 import net.simonvt.cathode.api.ResponseParser;
 import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.api.UserCredentials;
+import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.remote.PriorityTraktTaskQueue;
 import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.remote.TraktTaskQueue;
@@ -89,18 +96,55 @@ import net.simonvt.cathode.util.MovieSearchHandler;
 import net.simonvt.cathode.util.ShowSearchHandler;
 import net.simonvt.cathode.widget.PhoneEpisodeView;
 import net.simonvt.cathode.widget.RemoteImageView;
+import retrofit.ErrorHandler;
+import retrofit.RetrofitError;
 
 public class CathodeApp extends Application {
 
+  private static final String TAG = "CathodeApp";
+
   public static final boolean DEBUG = BuildConfig.DEBUG;
 
+  private static final int AUTH_NOTIFICATION = 2;
+
   private ObjectGraph objectGraph;
+
+  @Inject Bus bus;
 
   @Override
   public void onCreate() {
     super.onCreate();
     objectGraph = ObjectGraph.create(new AppModule(this));
     objectGraph.plus(new TraktModule());
+
+    objectGraph.inject(this);
+
+    bus.register(this);
+  }
+
+  @Subscribe public void onAuthFailure(AuthFailedEvent event) {
+    LogWrapper.v(TAG, "[onAuthFailure]");
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+    final String username = settings.getString(Settings.USERNAME, null);
+    //settings.edit().remove(Settings.PASSWORD).apply();
+
+    Intent intent = new Intent(this, HomeActivity.class);
+    intent.setAction(HomeActivity.ACTION_LOGIN);
+    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+    PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
+
+    Notification.Builder builder = new Notification.Builder(this) //
+        .setSmallIcon(R.drawable.ic_noti_error)
+        .setTicker(this.getString(R.string.auth_failed))
+        .setContentTitle(this.getString(R.string.auth_failed))
+        .setContentText(this.getString(R.string.auth_failed_desc, username))
+        .setContentIntent(pi)
+        .setPriority(Notification.PRIORITY_HIGH);
+
+    NotificationManager nm = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
+    nm.notify(AUTH_NOTIFICATION, builder.build());
   }
 
   public static void inject(Context context) {
@@ -139,6 +183,8 @@ public class CathodeApp extends Application {
       },
 
       injects = {
+          CathodeApp.class,
+
           // Task queues
           PriorityTraktTaskQueue.class, TraktTaskQueue.class,
 
@@ -179,8 +225,7 @@ public class CathodeApp extends Application {
           SyncMoviesTask.class, SyncMoviesCollectionTask.class, SyncMoviesWatchedTask.class,
           SyncMoviesWatchlistTask.class, SyncSeasonTask.class, SyncShowTask.class,
           SyncShowsTask.class, SyncShowsWatchlistTask.class, SyncShowsWatchedTask.class,
-          ShowWatchedTask.class, SyncUpdatedMovies.class, SyncUpdatedShows.class,
-          SyncTask.class,
+          ShowWatchedTask.class, SyncUpdatedMovies.class, SyncUpdatedShows.class, SyncTask.class,
 
           // Misc
           PhoneController.class, ResponseParser.class, ShowSearchHandler.class,
@@ -241,6 +286,19 @@ public class CathodeApp extends Application {
 
     @Provides @ApiKey String provideApiKey() {
       return appContext.getString(R.string.apikey);
+    }
+
+    @Provides @Singleton ErrorHandler provideErrorHandler(final Bus bus) {
+      return new ErrorHandler() {
+        @Override public Throwable handleError(RetrofitError error) {
+          final int statusCode = error.getResponse().getStatus();
+          if (statusCode == 401) {
+            bus.post(new AuthFailedEvent());
+          }
+
+          return error;
+        }
+      };
     }
 
     @Provides @Singleton Picasso providePicasso() {

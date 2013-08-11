@@ -7,7 +7,9 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
@@ -16,10 +18,14 @@ import com.squareup.otto.Produce;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.api.entity.TraktResponse;
+import net.simonvt.cathode.api.service.AccountService;
+import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.SyncEvent;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.util.LogWrapper;
+import retrofit.RetrofitError;
 
 public class TraktTaskService extends Service implements TraktTask.TaskCallback {
 
@@ -34,8 +40,12 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
 
   private static volatile PowerManager.WakeLock sWakeLock = null;
 
+  private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
+
   @Inject PriorityTraktTaskQueue priorityQueue;
   @Inject TraktTaskQueue queue;
+
+  @Inject AccountService accountService;
 
   @Inject Bus bus;
 
@@ -96,10 +106,44 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
           .setContentTitle(getString(R.string.initial_sync))
           .setContentText(getString(R.string.initial_sync_desc))
           .setContentIntent(clickPi)
+          .setPriority(Notification.PRIORITY_LOW)
           .setProgress(0, 0, true)
           .setOngoing(true);
       startForeground(NOTIFICATION_ID, builder.build());
     }
+
+    // Check authentication before executing tasks
+    running = true;
+    new Thread(new Runnable() {
+      @Override public void run() {
+        try {
+          TraktResponse response = accountService.test();
+          if ("failed authentication".equals(response.getError())) {
+            MAIN_HANDLER.post(new Runnable() {
+              @Override public void run() {
+                bus.post(new AuthFailedEvent());
+                running = false;
+                stopSelf();
+              }
+            });
+          } else {
+            LogWrapper.v(TAG, "[Auth Check] " + response.getMessage());
+            MAIN_HANDLER.post(new Runnable() {
+              @Override public void run() {
+                running = false;
+                executeNext();
+              }
+            });
+          }
+        } catch (RetrofitError error) {
+          MAIN_HANDLER.post(new Runnable() {
+            @Override public void run() {
+              onFailure();
+            }
+          });
+        }
+      }
+    }).start();
   }
 
   @Override

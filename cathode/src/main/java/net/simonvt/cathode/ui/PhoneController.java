@@ -15,7 +15,6 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
-import net.simonvt.menudrawer.MenuDrawer;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.event.SyncEvent;
@@ -36,12 +35,14 @@ import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
 import net.simonvt.cathode.util.FragmentStack;
 import net.simonvt.cathode.util.LogWrapper;
+import net.simonvt.menudrawer.MenuDrawer;
 
 public class PhoneController extends UiController {
 
   private static final String TAG = "PhoneController";
 
-  private static final String STATE_SEARCH_TYPE = "net.simonvt.cathode.ui.PhoneController.searchType";
+  private static final String STATE_SEARCH_TYPE =
+      "net.simonvt.cathode.ui.PhoneController.searchType";
   private static final String STATE_SEARCH_QUERY =
       "net.simonvt.cathode.ui.PhoneController.searchQuery";
 
@@ -246,7 +247,15 @@ public class PhoneController extends UiController {
   @Override
   public void onDetach() {
     bus.unregister(this);
+    stack.detach();
     super.onDetach();
+  }
+
+  @Override public void onDestroy(boolean completely) {
+    if (completely) {
+      stack.destroy();
+    }
+    super.onDestroy(completely);
   }
 
   @Subscribe

@@ -38,7 +38,7 @@ public class LoginController extends UiController {
     activity.getActionBar().setHomeButtonEnabled(false);
 
     FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
-    transaction.setCustomAnimations(R.anim.fade_out_back, R.anim.fade_in_front);
+    transaction.setCustomAnimations(R.anim.fade_in_front, R.anim.fade_out_back);
 
     if (loginFragment.isDetached()) {
       transaction.attach(loginFragment);
@@ -50,12 +50,12 @@ public class LoginController extends UiController {
   }
 
   @Override
-  public void onDestroy() {
-    super.onDestroy();
+  public void onDestroy(boolean completely) {
+    super.onDestroy(completely);
     FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
     transaction.setCustomAnimations(R.anim.fade_out_front, R.anim.fade_in_back);
 
-    if (loginFragment.isAdded() && !loginFragment.isDetached()) {
+    if (loginFragment.isAdded()) {
       transaction.remove(loginFragment);
     }
 
