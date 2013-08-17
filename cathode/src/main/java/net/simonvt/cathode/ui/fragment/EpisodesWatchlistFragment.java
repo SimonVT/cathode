@@ -56,7 +56,7 @@ public class EpisodesWatchlistFragment extends AbsAdapterFragment
 
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    inflater.inflate(R.menu.search, menu);
+    inflater.inflate(R.menu.fragment_watchlist_episode, menu);
   }
 
   @Override

@@ -3,7 +3,6 @@ package net.simonvt.cathode.ui;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import com.squareup.otto.Bus;
@@ -12,10 +11,12 @@ import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.LoginEvent;
+import net.simonvt.cathode.event.LogoutEvent;
 import net.simonvt.cathode.event.MessageEvent;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import net.simonvt.cathode.ui.fragment.NavigationFragment;
 import net.simonvt.messagebar.MessageBar;
 
@@ -31,6 +32,7 @@ public class HomeActivity extends BaseActivity
       "net.simonvt.cathode.ui.HomeActivity.uiController";
 
   public static final String ACTION_LOGIN = "net.simonvt.cathode.intent.action.LOGIN";
+  public static final String DIALOG_LOGOUT = "net.simonvt.cathode.ui.HomeActivity.logoutDialog";
 
   @Inject TraktTaskQueue queue;
 
@@ -50,11 +52,6 @@ public class HomeActivity extends BaseActivity
     setContentView(R.layout.ui_content_view);
 
     messageBar = new MessageBar(this);
-    messageBar.setOnClickListener(new MessageBar.OnMessageClickListener() {
-      @Override public void onMessageClick(Parcelable parcelable) {
-
-      }
-    });
 
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
     final String username = settings.getString(Settings.USERNAME, null);
@@ -132,6 +129,10 @@ public class HomeActivity extends BaseActivity
       case android.R.id.home:
         activeController.onHomeClicked();
         return true;
+
+      case R.id.menu_logout:
+        new LogoutDialog().show(getSupportFragmentManager(), DIALOG_LOGOUT);
+        return true;
     }
 
     return super.onOptionsItemSelected(item);
@@ -157,6 +158,18 @@ public class HomeActivity extends BaseActivity
     uiController.onCreate(null);
     uiController.onAttach();
     activeController = uiController;
+  }
+
+  @Subscribe public void onLogout(LogoutEvent event) {
+    if (uiController != null) {
+      uiController.onDestroy(true);
+      uiController = null;
+
+      loginController = LoginController.newInstance(this);
+      loginController.onCreate(null);
+      loginController.onAttach();
+      activeController = loginController;
+    }
   }
 
   ///////////////////////////////////////////////////////////////////////////

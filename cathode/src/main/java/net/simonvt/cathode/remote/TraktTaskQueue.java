@@ -8,6 +8,7 @@ import com.squareup.tape.ObjectQueue;
 import com.squareup.tape.TaskQueue;
 import java.io.File;
 import java.io.IOException;
+import net.simonvt.cathode.util.LogWrapper;
 
 public final class TraktTaskQueue extends TaskQueue<TraktTask> {
 
@@ -54,6 +55,14 @@ public final class TraktTaskQueue extends TaskQueue<TraktTask> {
   public void remove() {
     synchronized (this) {
       super.remove();
+    }
+  }
+
+  public void clear() {
+    synchronized (this) {
+      while (peek() != null) {
+        remove();
+      }
     }
   }
 

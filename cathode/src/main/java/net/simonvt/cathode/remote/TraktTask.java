@@ -19,6 +19,8 @@ public abstract class TraktTask implements Task<TraktTaskService> {
 
   protected transient TraktTaskService service;
 
+  private transient boolean canceled;
+
   @Override
   public final void execute(final TraktTaskService service) {
     CathodeApp.inject(service, this);
@@ -34,14 +36,24 @@ public abstract class TraktTask implements Task<TraktTaskService> {
 
   protected abstract void doTask();
 
+  public void cancel() {
+    synchronized (this) {
+      canceled = true;
+    }
+  }
+
   protected void queueTask(final TraktTask task) {
     LogWrapper.v(TAG, "Queueing task: " + task.getClass().getSimpleName());
-    queue.add(task);
+    synchronized (this) {
+      if (!canceled) queue.add(task);
+    }
   }
 
   protected void queuePriorityTask(final TraktTask task) {
     LogWrapper.v(TAG, "Queueing priority task: " + task.getClass().getSimpleName());
-    priorityQueue.add(task);
+    synchronized (this) {
+      if (!canceled) priorityQueue.add(task);
+    }
   }
 
   protected void postOnSuccess() {

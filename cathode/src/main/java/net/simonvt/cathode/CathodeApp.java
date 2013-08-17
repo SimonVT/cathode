@@ -10,6 +10,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
 import com.google.gson.Gson;
@@ -75,6 +77,7 @@ import net.simonvt.cathode.ui.adapter.SeasonAdapter;
 import net.simonvt.cathode.ui.adapter.SeasonsAdapter;
 import net.simonvt.cathode.ui.adapter.ShowSearchAdapter;
 import net.simonvt.cathode.ui.adapter.ShowsAdapter;
+import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.fragment.EpisodeFragment;
 import net.simonvt.cathode.ui.fragment.EpisodesWatchlistFragment;
@@ -98,6 +101,7 @@ import net.simonvt.cathode.widget.PhoneEpisodeView;
 import net.simonvt.cathode.widget.RemoteImageView;
 import retrofit.ErrorHandler;
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class CathodeApp extends Application {
 
@@ -106,6 +110,8 @@ public class CathodeApp extends Application {
   public static final boolean DEBUG = BuildConfig.DEBUG;
 
   private static final int AUTH_NOTIFICATION = 2;
+
+  private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
   private ObjectGraph objectGraph;
 
@@ -126,7 +132,8 @@ public class CathodeApp extends Application {
     LogWrapper.v(TAG, "[onAuthFailure]");
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
     final String username = settings.getString(Settings.USERNAME, null);
-    //settings.edit().remove(Settings.PASSWORD).apply();
+    final String password = settings.getString(Settings.PASSWORD, null);
+    if (password == null) return; // User has logged out, ignore.
 
     Intent intent = new Intent(this, HomeActivity.class);
     intent.setAction(HomeActivity.ACTION_LOGIN);
@@ -197,10 +204,11 @@ public class CathodeApp extends Application {
 
           // Fragments
           SearchShowFragment.class, EpisodeFragment.class, EpisodesWatchlistFragment.class,
-          LoginFragment.class, MovieCollectionFragment.class, MovieFragment.class,
-          MovieWatchlistFragment.class, SearchMovieFragment.class, SeasonFragment.class,
-          ShowInfoFragment.class, ShowsCollectionFragment.class, ShowsWatchlistFragment.class,
-          UpcomingShowsFragment.class, WatchedMoviesFragment.class, WatchedShowsFragment.class,
+          LoginFragment.class, LogoutDialog.class, MovieCollectionFragment.class,
+          MovieFragment.class, MovieWatchlistFragment.class, SearchMovieFragment.class,
+          SeasonFragment.class, ShowInfoFragment.class, ShowsCollectionFragment.class,
+          ShowsWatchlistFragment.class, UpcomingShowsFragment.class, WatchedMoviesFragment.class,
+          WatchedShowsFragment.class,
 
           // Dialogs
           RatingDialog.class,
@@ -291,9 +299,16 @@ public class CathodeApp extends Application {
     @Provides @Singleton ErrorHandler provideErrorHandler(final Bus bus) {
       return new ErrorHandler() {
         @Override public Throwable handleError(RetrofitError error) {
-          final int statusCode = error.getResponse().getStatus();
-          if (statusCode == 401) {
-            bus.post(new AuthFailedEvent());
+          Response response = error.getResponse();
+          if (response != null) {
+            final int statusCode = response.getStatus();
+            if (statusCode == 401) {
+              MAIN_HANDLER.post(new Runnable() {
+                @Override public void run() {
+                  bus.post(new AuthFailedEvent());
+                }
+              });
+            }
           }
 
           return error;

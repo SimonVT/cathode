@@ -5,6 +5,8 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -22,6 +24,7 @@ import net.simonvt.cathode.api.entity.TraktResponse;
 import net.simonvt.cathode.api.service.AccountService;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.SyncEvent;
+import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.util.LogWrapper;
@@ -33,6 +36,8 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
   private static final String WAKELOCK_TAG = "net.simonvt.cathode.sync.TraktTaskService";
 
   private static final String RETRY_DELAY = "net.simonvt.cathode.sync.TraktTaskService.retryDelay";
+
+  public static final String ACTION_LOGOUT = "net.simonvt.cathode.sync.TraktTaskService.LOGOUT";
 
   private static int MAX_RETRY_DELAY = 60;
 
@@ -56,6 +61,8 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
   private int retryDelay = -1;
 
   private boolean displayNotification;
+
+  private boolean logout;
 
   private static PowerManager.WakeLock getLock(Context context) {
     if (sWakeLock == null) {
@@ -111,47 +118,70 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
           .setOngoing(true);
       startForeground(NOTIFICATION_ID, builder.build());
     }
-
-    // Check authentication before executing tasks
-    running = true;
-    new Thread(new Runnable() {
-      @Override public void run() {
-        try {
-          TraktResponse response = accountService.test();
-          if ("failed authentication".equals(response.getError())) {
-            MAIN_HANDLER.post(new Runnable() {
-              @Override public void run() {
-                bus.post(new AuthFailedEvent());
-                running = false;
-                stopSelf();
-              }
-            });
-          } else {
-            LogWrapper.v(TAG, "[Auth Check] " + response.getMessage());
-            MAIN_HANDLER.post(new Runnable() {
-              @Override public void run() {
-                running = false;
-                executeNext();
-              }
-            });
-          }
-        } catch (RetrofitError error) {
-          MAIN_HANDLER.post(new Runnable() {
-            @Override public void run() {
-              onFailure();
-            }
-          });
-        }
-      }
-    }).start();
   }
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
     if (retryDelay == -1) {
-      retryDelay = intent.getIntExtra(RETRY_DELAY, 1);
+      if (intent != null) {
+        retryDelay = intent.getIntExtra(RETRY_DELAY, 1);
+      } else {
+        retryDelay = 1;
+      }
     }
-    executeNext();
+    String action = intent.getAction();
+    if (ACTION_LOGOUT.equals(action)) {
+      TraktTask priorityTask = priorityQueue.peek();
+      TraktTask task = queue.peek();
+      if (priorityTask != null) priorityTask.cancel();
+      if (task != null) task.cancel();
+
+      priorityQueue.clear();
+      queue.clear();
+
+      if (running) {
+        logout = true;
+      } else {
+        clearUserData();
+      }
+    } else if (!running) {
+      // Check authentication before executing tasks
+      running = true;
+      new Thread(new Runnable() {
+        @Override public void run() {
+          try {
+            LogWrapper.v(TAG, "Checking authentication");
+            TraktResponse response = accountService.test();
+
+            if ("failed authentication".equals(response.getError())) {
+              MAIN_HANDLER.post(new Runnable() {
+                @Override public void run() {
+                  LogWrapper.v(TAG, "Authentication failed");
+                  bus.post(new AuthFailedEvent());
+                  running = false;
+                  stopSelf();
+                }
+              });
+            } else {
+              LogWrapper.v(TAG, "[Auth Check] " + response.getMessage());
+              MAIN_HANDLER.post(new Runnable() {
+                @Override public void run() {
+                  running = false;
+                  executeNext();
+                }
+              });
+            }
+          } catch (RetrofitError error) {
+            MAIN_HANDLER.post(new Runnable() {
+              @Override public void run() {
+                onFailure();
+              }
+            });
+          }
+        }
+      }).start();
+    }
+
     return START_STICKY;
   }
 
@@ -161,6 +191,51 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     bus.post(new SyncEvent(false));
     releaseLock(this);
     super.onDestroy();
+  }
+
+  private void clearUserData() {
+    running = true;
+    new Thread(new Runnable() {
+      @Override public void run() {
+        ContentResolver resolver = getContentResolver();
+        ContentValues cv;
+
+        cv = new ContentValues();
+        cv.put(CathodeContract.Shows.WATCHED_COUNT, 0);
+        cv.put(CathodeContract.Shows.AIRDATE_COUNT, 0);
+        cv.put(CathodeContract.Shows.IN_COLLECTION_COUNT, 0);
+        cv.put(CathodeContract.Shows.IN_WATCHLIST_COUNT, 0);
+        cv.put(CathodeContract.Shows.IN_WATCHLIST, false);
+        resolver.update(CathodeContract.Shows.CONTENT_URI, cv, null, null);
+
+        cv = new ContentValues();
+        cv.put(CathodeContract.Seasons.WATCHED_COUNT, 0);
+        cv.put(CathodeContract.Seasons.AIRDATE_COUNT, 0);
+        cv.put(CathodeContract.Seasons.IN_COLLECTION_COUNT, 0);
+        cv.put(CathodeContract.Seasons.IN_WATCHLIST_COUNT, 0);
+        resolver.update(CathodeContract.Seasons.CONTENT_URI, cv, null, null);
+
+        cv = new ContentValues();
+        cv.put(CathodeContract.Episodes.WATCHED, 0);
+        cv.put(CathodeContract.Episodes.PLAYS, 0);
+        cv.put(CathodeContract.Episodes.IN_WATCHLIST, 0);
+        cv.put(CathodeContract.Episodes.IN_COLLECTION, 0);
+        resolver.update(CathodeContract.Episodes.CONTENT_URI, cv, null, null);
+
+        cv = new ContentValues();
+        cv.put(CathodeContract.Movies.WATCHED, 0);
+        cv.put(CathodeContract.Movies.IN_COLLECTION, 0);
+        cv.put(CathodeContract.Movies.IN_WATCHLIST, 0);
+        resolver.update(CathodeContract.Movies.CONTENT_URI, cv, null, null);
+
+        MAIN_HANDLER.post(new Runnable() {
+          @Override public void run() {
+            running = false;
+            executeNext();
+          }
+        });
+      }
+    }).start();
   }
 
   @Produce
@@ -201,19 +276,32 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
   @Override
   public void onSuccess() {
     running = false;
-    if (executingPriorityTask) {
-      executingPriorityTask = false;
-      priorityQueue.remove();
+
+    if (!logout) {
+      if (executingPriorityTask) {
+        executingPriorityTask = false;
+        priorityQueue.remove();
+      } else {
+        queue.remove();
+      }
+
+      executeNext();
     } else {
-      queue.remove();
+      logout = false;
+      clearUserData();
     }
-    executeNext();
   }
 
   @Override
   public void onFailure() {
     LogWrapper.i(TAG, "[onFailure] Scheduling restart");
     running = false;
+
+    if (logout) {
+      logout = false;
+      clearUserData();
+      return;
+    }
 
     Intent intent = new Intent(this, TaskServiceReceiver.class);
     final int nextDelay = Math.min(retryDelay * 2, MAX_RETRY_DELAY);
@@ -225,8 +313,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     final long runAt = retryDelay * DateUtils.MINUTE_IN_MILLIS;
     am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, runAt, pi);
 
-    stopForeground(true);
-
+    // A logout might have caused the failure. Just in case, don't show the notification.
     if (displayNotification) {
       Intent clickIntent = new Intent(this, HomeActivity.class);
       PendingIntent clickPi = PendingIntent.getActivity(this, 0, clickIntent, 0);

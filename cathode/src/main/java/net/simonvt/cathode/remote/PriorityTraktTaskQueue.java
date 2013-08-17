@@ -57,6 +57,14 @@ public final class PriorityTraktTaskQueue extends TaskQueue<TraktTask> {
     }
   }
 
+  public void clear() {
+    synchronized (this) {
+      while (peek() != null) {
+        remove();
+      }
+    }
+  }
+
   public static PriorityTraktTaskQueue create(Context context, Gson gson) {
     FileObjectQueue.Converter<TraktTask> converter =
         new GsonConverter<TraktTask>(gson, TraktTask.class);

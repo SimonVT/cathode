@@ -96,4 +96,40 @@ public final class ActivityWrapper {
 
     editor.commit();
   }
+
+  public static void clear(Context context) {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences.Editor editor = settings.edit();
+
+    editor.remove(Settings.ALL);
+    editor.remove(Settings.EPISODE_WATCHED);
+    editor.remove(Settings.EPISODE_SCROBBLE);
+    editor.remove(Settings.EPISODE_SEEN);
+    editor.remove(Settings.EPISODE_CHECKIN);
+    editor.remove(Settings.EPISODE_COLLECTION);
+    editor.remove(Settings.EPISODE_RATING);
+    editor.remove(Settings.EPISODE_WATCHLIST);
+    editor.remove(Settings.EPISODE_COMMENT);
+    editor.remove(Settings.EPISODE_REVIEW);
+    editor.remove(Settings.EPISODE_SHOUT);
+
+    editor.remove(Settings.SHOW_RATING);
+    editor.remove(Settings.SHOW_WATCHLIST);
+    editor.remove(Settings.SHOW_COMMENT);
+    editor.remove(Settings.SHOW_REVIEW);
+    editor.remove(Settings.SHOW_SHOUT);
+
+    editor.remove(Settings.MOVIE_WATCHED);
+    editor.remove(Settings.MOVIE_SCROBBLE);
+    editor.remove(Settings.MOVIE_SEEN);
+    editor.remove(Settings.MOVIE_CHECKIN);
+    editor.remove(Settings.MOVIE_COLLECTION);
+    editor.remove(Settings.MOVIE_RATING);
+    editor.remove(Settings.MOVIE_WATCHLIST);
+    editor.remove(Settings.MOVIE_COMMENT);
+    editor.remove(Settings.MOVIE_REVIEW);
+    editor.remove(Settings.MOVIE_SHOUT);
+
+    editor.commit();
+  }
 }
