@@ -34,7 +34,7 @@ public class MovieCollectionFragment extends MoviesFragment {
   @Override
   public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
     CursorLoader loader = new CursorLoader(getActivity(), CathodeContract.Movies.CONTENT_URI, null,
-        CathodeContract.Movies.IN_COLLECTION, null, CathodeContract.Movies.DEFAULT_STORT);
+        CathodeContract.Movies.IN_COLLECTION, null, CathodeContract.Movies.DEFAULT_SORT);
     loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return loader;
   }

@@ -522,7 +522,7 @@ public final class CathodeContract {
 
     public static final Uri TRENDING = CONTENT_URI.buildUpon().appendPath(PATH_TRENDING).build();
 
-    public static final String DEFAULT_STORT = CathodeDatabase.Tables.MOVIES + "." + TITLE + " ASC";
+    public static final String DEFAULT_SORT = CathodeDatabase.Tables.MOVIES + "." + TITLE + " ASC";
 
     public static Uri buildMovieUri(long movieId) {
       return CONTENT_URI.buildUpon().appendPath(PATH_WITHID).appendPath(String.valueOf(movieId)).build();
