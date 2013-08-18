@@ -46,6 +46,7 @@ public final class CathodeContract {
     String STATUS = "status";
     String IN_COLLECTION_COUNT = "inCollectionCount";
     String IN_WATCHLIST_COUNT = "inWatchlistCount";
+    String TRENDING_INDEX = "trendingIndex";
 
     String AIRED_COUNT = "airedCount";
     String UNAIRED_COUNT = "unairedCount";
@@ -147,6 +148,7 @@ public final class CathodeContract {
     String IN_COLLECTION = "inCollection";
     String IN_WATCHLIST = "inWatchlist";
     String LAST_UPDATED = "lastUpdated";
+    String TRENDING_INDEX = "trendingIndex";
   }
 
   interface ImageColumns {
@@ -159,6 +161,7 @@ public final class CathodeContract {
   }
 
   public static final String PATH_WATCHLIST = "watchlist";
+  public static final String PATH_TRENDING = "trending";
 
   public static final String PATH_SHOWS = "shows";
   public static final String PATH_WITHNEXT = "withNext";
@@ -209,6 +212,8 @@ public final class CathodeContract {
 
     public static final Uri SHOWS_WITHNEXT_IGNOREWATCHED =
         SHOWS_WITHNEXT.buildUpon().appendPath(PATH_IGNOREWATCHED).build();
+
+    public static final Uri SHOWS_TRENDING = CONTENT_URI.buildUpon().appendPath(PATH_TRENDING).build();
 
     public static Uri buildShowUri(long showId) {
       return CONTENT_URI.buildUpon()
@@ -515,14 +520,16 @@ public final class CathodeContract {
 
     public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.simonvt.cathode.movie";
 
+    public static final Uri TRENDING = CONTENT_URI.buildUpon().appendPath(PATH_TRENDING).build();
+
     public static final String DEFAULT_STORT = CathodeDatabase.Tables.MOVIES + "." + TITLE + " ASC";
 
     public static Uri buildMovieUri(long movieId) {
-      return CONTENT_URI.buildUpon().appendPath(String.valueOf(movieId)).build();
+      return CONTENT_URI.buildUpon().appendPath(PATH_WITHID).appendPath(String.valueOf(movieId)).build();
     }
 
     public static String getMovieId(Uri uri) {
-      return uri.getPathSegments().get(1);
+      return uri.getPathSegments().get(2);
     }
   }
 

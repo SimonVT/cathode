@@ -16,6 +16,8 @@ public class UiController implements ShowsNavigationListener, MoviesNavigationLi
       "net.simonvt.cathode.ui.HomeActivity.upcomingShowsFragment";
   static final String FRAGMENT_SHOWS_COLLECTION =
       "net.simonvt.cathode.ui.HomeActivity.collectionShowsFragment";
+  static final String FRAGMENT_SHOWS_TRENDING =
+      "net.simonvt.cathode.ui.HomeActivity.trendingShowsFragment";
   static final String FRAGMENT_SHOW = "net.simonvt.cathode.ui.HomeActivity.showFragment";
   static final String FRAGMENT_SEASONS = "net.simonvt.cathode.ui.HomeActivity.seasonsFragment";
   static final String FRAGMENT_SEASON = "net.simonvt.cathode.ui.HomeActivity.seasonFragment";
@@ -31,6 +33,8 @@ public class UiController implements ShowsNavigationListener, MoviesNavigationLi
       "net.simonvt.cathode.ui.HomeActivity.moviesCollectionFragment";
   static final String FRAGMENT_MOVIES_WATCHLIST =
       "net.simonvt.cathode.ui.HomeActivity.moviesWatchlistFragment";
+  static final String FRAGMENT_MOVIES_TRENDING =
+      "net.simonvt.cathode.ui.HomeActivity.moviesTrendingFragment";
   static final String FRAGMENT_SEARCH_MOVIE =
       "net.simonvt.cathode.ui.HomeActivity.searchMovieFragment";
   static final String FRAGMENT_MOVIE = "net.simonvt.cathode.ui.HomeActivity.movieFragment";

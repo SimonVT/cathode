@@ -7,16 +7,14 @@
   <item name="menu_shows_watched" type="id"/>
   <item name="menu_shows_collection" type="id"/>
   <item name="menu_shows_watchlist" type="id"/>
-  <item name="menu_shows_ratings" type="id"/>
-  <item name="menu_shows_charts" type="id"/>
+  <item name="menu_shows_trending" type="id"/>
 
   <item name="menu_episodes_watchlist" type="id"/>
 
   <item name="menu_movies_watched" type="id"/>
   <item name="menu_movies_collection" type="id"/>
   <item name="menu_movies_watchlist" type="id"/>
-  <item name="menu_movies_ratings" type="id"/>
-  <item name="menu_movies_charts" type="id"/>
+  <item name="menu_movies_trending" type="id"/>
 
   <item name="action_watched" type="id"/>
   <item name="action_watched_all" type="id"/>

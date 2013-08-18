@@ -46,6 +46,7 @@ public class CathodeProvider extends ContentProvider {
   private static final int SHOWS_WATCHLIST = 108;
   private static final int SHOWS_COLLECTION = 109;
   private static final int SHOWS_WATCHED = 110;
+  private static final int SHOWS_TRENDING = 111;
 
   private static final int SEASONS = 200;
   private static final int SEASON_ID = 201;
@@ -66,6 +67,7 @@ public class CathodeProvider extends ContentProvider {
   private static final int MOVIE_DIRECTORS = 405;
   private static final int MOVIE_WRITERS = 406;
   private static final int MOVIE_PRODUCERS = 407;
+  private static final int MOVIE_TRENDING = 408;
 
   private CathodeDatabase database;
 
@@ -73,8 +75,8 @@ public class CathodeProvider extends ContentProvider {
 
   static {
     URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SHOWS, SHOWS);
-    URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SHOWS + "/" + CathodeContract.PATH_WITHID + "/*",
-        SHOWS_ID);
+    URI_MATCHER.addURI(AUTHORITY,
+        CathodeContract.PATH_SHOWS + "/" + CathodeContract.PATH_WITHID + "/*", SHOWS_ID);
     URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SHOWS + "/" + CathodeContract.PATH_WITHNEXT,
         SHOWS_WITHNEXT);
     URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SHOWS
@@ -94,10 +96,12 @@ public class CathodeProvider extends ContentProvider {
         CathodeContract.PATH_GENRES + "/" + CathodeContract.PATH_FROMSHOW + "/*", SHOW_GENRES);
     URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SHOWS + "/" + CathodeContract.PATH_WATCHLIST,
         SHOWS_WATCHLIST);
-    URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SHOWS + "/" + CathodeContract.PATH_COLLECTION,
-        SHOWS_COLLECTION);
+    URI_MATCHER.addURI(AUTHORITY,
+        CathodeContract.PATH_SHOWS + "/" + CathodeContract.PATH_COLLECTION, SHOWS_COLLECTION);
     URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SHOWS + "/" + CathodeContract.PATH_WATCHED,
         SHOWS_WATCHED);
+    URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SHOWS + "/" + CathodeContract.PATH_TRENDING,
+        SHOWS_TRENDING);
 
     URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SEASONS, SEASONS);
     URI_MATCHER.addURI(AUTHORITY,
@@ -109,15 +113,17 @@ public class CathodeProvider extends ContentProvider {
     URI_MATCHER.addURI(AUTHORITY,
         CathodeContract.PATH_EPISODES + "/" + CathodeContract.PATH_WITHID + "/*", EPISODE_ID);
     URI_MATCHER.addURI(AUTHORITY,
-        CathodeContract.PATH_EPISODES + "/" + CathodeContract.PATH_FROMSHOW + "/*", EPISODES_FROMSHOW);
+        CathodeContract.PATH_EPISODES + "/" + CathodeContract.PATH_FROMSHOW + "/*",
+        EPISODES_FROMSHOW);
     URI_MATCHER.addURI(AUTHORITY,
         CathodeContract.PATH_EPISODES + "/" + CathodeContract.PATH_FROMSEASON + "/*",
         EPISODES_FROMSEASON);
-    URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_EPISODES + "/" + CathodeContract.PATH_WATCHLIST,
-        EPISODES_WATCHLIST);
+    URI_MATCHER.addURI(AUTHORITY,
+        CathodeContract.PATH_EPISODES + "/" + CathodeContract.PATH_WATCHLIST, EPISODES_WATCHLIST);
 
     URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_MOVIES, MOVIES);
-    URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_MOVIES + "/*", MOVIE_ID);
+    URI_MATCHER.addURI(AUTHORITY,
+        CathodeContract.PATH_MOVIES + "/" + CathodeContract.PATH_WITHID + "/*", MOVIE_ID);
     URI_MATCHER.addURI(AUTHORITY,
         CathodeContract.PATH_GENRES + "/" + CathodeContract.PATH_FROMMOVIE + "/*", MOVIE_GENRES);
     URI_MATCHER.addURI(AUTHORITY,
@@ -126,11 +132,15 @@ public class CathodeProvider extends ContentProvider {
     URI_MATCHER.addURI(AUTHORITY,
         CathodeContract.PATH_ACTORS + "/" + CathodeContract.PATH_FROMMOVIE + "/*", MOVIE_ACTORS);
     URI_MATCHER.addURI(AUTHORITY,
-        CathodeContract.PATH_DIRECTORS + "/" + CathodeContract.PATH_FROMMOVIE + "/*", MOVIE_DIRECTORS);
+        CathodeContract.PATH_DIRECTORS + "/" + CathodeContract.PATH_FROMMOVIE + "/*",
+        MOVIE_DIRECTORS);
     URI_MATCHER.addURI(AUTHORITY,
         CathodeContract.PATH_WRITERS + "/" + CathodeContract.PATH_FROMMOVIE + "/*", MOVIE_WRITERS);
     URI_MATCHER.addURI(AUTHORITY,
-        CathodeContract.PATH_PRODUCERS + "/" + CathodeContract.PATH_FROMMOVIE + "/*", MOVIE_PRODUCERS);
+        CathodeContract.PATH_PRODUCERS + "/" + CathodeContract.PATH_FROMMOVIE + "/*",
+        MOVIE_PRODUCERS);
+    URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_MOVIES + "/" + CathodeContract.PATH_TRENDING,
+        MOVIE_TRENDING);
   }
 
   @Override
@@ -147,7 +157,8 @@ public class CathodeProvider extends ContentProvider {
     SelectionBuilder builder = new SelectionBuilder();
     builder.map(CathodeContract.ShowColumns.AIRED_COUNT, Shows.getAiredQuery());
     builder.map(CathodeContract.ShowColumns.UNAIRED_COUNT, Shows.getUnairedQuery());
-    builder.map(Tables.SHOWS + "." + CathodeContract.ShowColumns.AIRED_COUNT, Shows.getAiredQuery());
+    builder.map(Tables.SHOWS + "." + CathodeContract.ShowColumns.AIRED_COUNT,
+        Shows.getAiredQuery());
     builder.map(Tables.SHOWS + "." + CathodeContract.ShowColumns.UNAIRED_COUNT,
         Shows.getUnairedQuery());
     return builder;
@@ -261,6 +272,14 @@ public class CathodeProvider extends ContentProvider {
         c.setNotificationUri(getContext().getContentResolver(), Shows.CONTENT_URI);
         return c;
       }
+      case SHOWS_TRENDING: {
+        Cursor c = getShowsBuilder().table(Tables.SHOWS_WITH_UNWATCHED)
+            .where(CathodeContract.ShowColumns.TRENDING_INDEX + ">-1")
+            .where(selection, selectionArgs)
+            .query(db, projection, CathodeContract.ShowColumns.TRENDING_INDEX + " ASC");
+        c.setNotificationUri(getContext().getContentResolver(), Shows.CONTENT_URI);
+        return c;
+      }
       case SEASONS: {
         Cursor c = getSeasonBuilder().table(Tables.SEASONS)
             .where(selection, selectionArgs)
@@ -341,6 +360,14 @@ public class CathodeProvider extends ContentProvider {
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
         c.setNotificationUri(getContext().getContentResolver(), uri);
+        return c;
+      }
+      case MOVIE_TRENDING: {
+        Cursor c = getBuilder().table(Tables.MOVIES)
+            .where(CathodeContract.MovieColumns.TRENDING_INDEX + ">-1")
+            .where(selection, selectionArgs)
+            .query(db, projection, CathodeContract.MovieColumns.TRENDING_INDEX + " ASC");
+        c.setNotificationUri(getContext().getContentResolver(), Movies.CONTENT_URI);
         return c;
       }
       case MOVIE_GENRES: {
@@ -511,7 +538,7 @@ public class CathodeProvider extends ContentProvider {
       case MOVIES: {
         final long movieId = db.insertOrThrow(Tables.MOVIES, null, values);
         getContext().getContentResolver().notifyChange(Movies.buildMovieUri(movieId), null);
-        return ContentUris.withAppendedId(Movies.CONTENT_URI, movieId);
+        return Movies.buildMovieUri(movieId);
       }
       case MOVIE_GENRES: {
         final long rowId = db.insertOrThrow(Tables.MOVIE_GENRES, null, values);

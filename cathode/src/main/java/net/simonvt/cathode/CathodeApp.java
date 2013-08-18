@@ -61,6 +61,8 @@ import net.simonvt.cathode.remote.sync.SyncShowsTask;
 import net.simonvt.cathode.remote.sync.SyncShowsWatchedTask;
 import net.simonvt.cathode.remote.sync.SyncShowsWatchlistTask;
 import net.simonvt.cathode.remote.sync.SyncTask;
+import net.simonvt.cathode.remote.sync.SyncTrendingMoviesTask;
+import net.simonvt.cathode.remote.sync.SyncTrendingShowsTask;
 import net.simonvt.cathode.remote.sync.SyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.SyncUpdatedShows;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
@@ -91,6 +93,8 @@ import net.simonvt.cathode.ui.fragment.SeasonFragment;
 import net.simonvt.cathode.ui.fragment.ShowInfoFragment;
 import net.simonvt.cathode.ui.fragment.ShowsCollectionFragment;
 import net.simonvt.cathode.ui.fragment.ShowsWatchlistFragment;
+import net.simonvt.cathode.ui.fragment.TrendingMoviesFragment;
+import net.simonvt.cathode.ui.fragment.TrendingShowsFragment;
 import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
@@ -207,8 +211,8 @@ public class CathodeApp extends Application {
           LoginFragment.class, LogoutDialog.class, MovieCollectionFragment.class,
           MovieFragment.class, MovieWatchlistFragment.class, SearchMovieFragment.class,
           SeasonFragment.class, ShowInfoFragment.class, ShowsCollectionFragment.class,
-          ShowsWatchlistFragment.class, UpcomingShowsFragment.class, WatchedMoviesFragment.class,
-          WatchedShowsFragment.class,
+          ShowsWatchlistFragment.class, TrendingShowsFragment.class, TrendingMoviesFragment.class,
+          UpcomingShowsFragment.class, WatchedMoviesFragment.class, WatchedShowsFragment.class,
 
           // Dialogs
           RatingDialog.class,
@@ -232,8 +236,9 @@ public class CathodeApp extends Application {
           SyncEpisodeTask.class, SyncEpisodeWatchlistTask.class, SyncMovieTask.class,
           SyncMoviesTask.class, SyncMoviesCollectionTask.class, SyncMoviesWatchedTask.class,
           SyncMoviesWatchlistTask.class, SyncSeasonTask.class, SyncShowTask.class,
-          SyncShowsTask.class, SyncShowsWatchlistTask.class, SyncShowsWatchedTask.class,
-          ShowWatchedTask.class, SyncUpdatedMovies.class, SyncUpdatedShows.class, SyncTask.class,
+          SyncShowsTask.class, SyncTrendingMoviesTask.class, SyncTrendingShowsTask.class,
+          SyncShowsWatchlistTask.class, SyncShowsWatchedTask.class, ShowWatchedTask.class,
+          SyncUpdatedMovies.class, SyncUpdatedShows.class, SyncTask.class,
 
           // Misc
           PhoneController.class, ResponseParser.class, ShowSearchHandler.class,

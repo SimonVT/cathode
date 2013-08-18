@@ -30,6 +30,8 @@ import net.simonvt.cathode.ui.fragment.SeasonFragment;
 import net.simonvt.cathode.ui.fragment.ShowInfoFragment;
 import net.simonvt.cathode.ui.fragment.ShowsCollectionFragment;
 import net.simonvt.cathode.ui.fragment.ShowsWatchlistFragment;
+import net.simonvt.cathode.ui.fragment.TrendingMoviesFragment;
+import net.simonvt.cathode.ui.fragment.TrendingShowsFragment;
 import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
@@ -318,8 +320,9 @@ public class PhoneController extends UiController {
         stack.setTopFragment(EpisodesWatchlistFragment.class, FRAGMENT_EPISODES_WATCHLIST);
         break;
 
-      // case R.id.menu_shows_ratings:
-      // case R.id.menu_shows_charts:
+      case R.id.menu_shows_trending:
+        stack.setTopFragment(TrendingShowsFragment.class, FRAGMENT_SHOWS_TRENDING);
+        break;
 
       case R.id.menu_movies_watched:
         stack.setTopFragment(WatchedMoviesFragment.class, FRAGMENT_MOVIES_WATCHED);
@@ -333,8 +336,9 @@ public class PhoneController extends UiController {
         stack.setTopFragment(MovieWatchlistFragment.class, FRAGMENT_MOVIES_WATCHLIST);
         break;
 
-      // case R.id.menu_movies_ratings:
-      // case R.id.menu_movies_charts:
+      case R.id.menu_movies_trending:
+        stack.setTopFragment(TrendingMoviesFragment.class, FRAGMENT_MOVIES_TRENDING);
+        break;
     }
 
     menuDrawer.closeMenu();

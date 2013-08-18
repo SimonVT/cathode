@@ -35,8 +35,7 @@ public class NavigationFragment extends AbsAdapterFragment {
     menuItems.add(new MenuItem(R.id.menu_shows_watchlist, R.string.navigation_shows_watchlist, 0));
     menuItems.add(
         new MenuItem(R.id.menu_episodes_watchlist, R.string.navigation_episodes_watchlist, 0));
-    // menuItems.add(new MenuItem(R.id.menu_shows_ratings, R.string.navigation_shows_ratings, 0));
-    // menuItems.add(new MenuItem(R.id.menu_shows_charts, R.string.navigation_shows_charts, 0));
+    menuItems.add(new MenuItem(R.id.menu_shows_trending, R.string.navigation_shows_trending, 0));
 
     menuItems.add(new NavigationItem(R.string.navigation_title_movies));
     menuItems.add(new MenuItem(R.id.menu_movies_watched, R.string.navigation_movies_watched, 0));
@@ -44,8 +43,7 @@ public class NavigationFragment extends AbsAdapterFragment {
         new MenuItem(R.id.menu_movies_collection, R.string.navigation_movies_collection, 0));
     menuItems.add(
         new MenuItem(R.id.menu_movies_watchlist, R.string.navigation_movies_watchlist, 0));
-    // menuItems.add(new MenuItem(R.id.menu_movies_ratings, R.string.navigation_movies_ratings, 0));
-    // menuItems.add(new MenuItem(R.id.menu_movies_charts, R.string.navigation_movies_charts, 0));
+    menuItems.add(new MenuItem(R.id.menu_movies_trending, R.string.navigation_movies_trending, 0));
   }
 
   private OnMenuClickListener listener;

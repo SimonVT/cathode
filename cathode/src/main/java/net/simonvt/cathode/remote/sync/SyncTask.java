@@ -64,6 +64,12 @@ public class SyncTask extends TraktTask {
 
       ActivityWrapper.update(service, lastActivity);
 
+      if (ActivityWrapper.trendingNeedsUpdate(service)) {
+        ActivityWrapper.updateTrending(service);
+        queueTask(new SyncTrendingShowsTask());
+        queueTask(new SyncTrendingMoviesTask());
+      }
+
       postOnSuccess();
     } catch (RetrofitError e) {
       e.printStackTrace();

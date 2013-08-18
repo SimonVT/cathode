@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import net.simonvt.cathode.api.entity.LastActivity;
+import net.simonvt.cathode.util.DateUtils;
 
 public final class ActivityWrapper {
 
@@ -61,6 +62,13 @@ public final class ActivityWrapper {
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
+  public static boolean trendingNeedsUpdate(Context context) {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+
+    final long lastActivity = settings.getLong(Settings.TRENDING, -1);
+    return System.currentTimeMillis() > lastActivity + 1 * DateUtils.HOUR_IN_MILLIS;
+  }
+
   public static void update(Context context, LastActivity lastActivity) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
     SharedPreferences.Editor editor = settings.edit();
@@ -95,6 +103,16 @@ public final class ActivityWrapper {
     editor.putLong(Settings.MOVIE_SHOUT, lastActivity.getMovie().getShout());
 
     editor.commit();
+  }
+
+  public static void updateTrending(Context context) {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences.Editor editor = settings.edit();
+    final long currentTimeMillis = System.currentTimeMillis();
+
+    editor.putLong(Settings.TRENDING, currentTimeMillis);
+
+    editor.apply();
   }
 
   public static void clear(Context context) {

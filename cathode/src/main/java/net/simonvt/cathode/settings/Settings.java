@@ -41,5 +41,7 @@ public class Settings extends PreferenceActivity {
   public static final String MOVIE_REVIEW = "movieReview";
   public static final String MOVIE_SHOUT = "movieShout";
 
+  public static final String TRENDING = "trending";
+
   public static final String INITIAL_SYNC = "initial Sync";
 }

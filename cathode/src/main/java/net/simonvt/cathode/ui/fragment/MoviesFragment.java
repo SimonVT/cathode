@@ -19,6 +19,7 @@ import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
+import net.simonvt.cathode.util.LogWrapper;
 
 public abstract class MoviesFragment extends AbsAdapterFragment
     implements LoaderManager.LoaderCallbacks<Cursor> {

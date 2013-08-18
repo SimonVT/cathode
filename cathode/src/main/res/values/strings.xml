@@ -38,11 +38,12 @@
   <string name="title_shows_upcoming">Upcoming shows</string>
   <string name="title_shows_collection">Show collection</string>
   <string name="title_shows_watchlist">Show watchlist</string>
+  <string name="title_shows_trending">Trending shows</string>
 
   <string name="title_movies_watched">Watched movies</string>
-  <string name="title_movies_upcoming">Upcoming movies</string>
   <string name="title_movies_collection">Movie collection</string>
   <string name="title_movies_watchlist">Movie watchlist</string>
+  <string name="title_movies_trending">Trending movies</string>
 
   <string name="action_refresh">Refresh</string>
   <string name="action_sort_by">Sort by</string>
@@ -73,6 +74,9 @@
     while..
   </string>
 
+  <string name="shows_loading_trending">Trending shows are loading…</string>
+  <string name="movies_loading_trending">Trending movies are loading…</string>
+
   <!-- Login fragment -->
   <string name="login_sign_in">Sign in to Trakt</string>
   <string name="login_create_new">Check to create a Trakt account</string>
@@ -88,14 +92,13 @@
   <string name="navigation_shows_collection">Collection</string>
   <string name="navigation_shows_watchlist">Show watchlist</string>
   <string name="navigation_episodes_watchlist">Episode watchlist</string>
-  <string name="navigation_shows_ratings">Ratings</string>
-  <string name="navigation_shows_charts">Charts</string>
+  <string name="navigation_shows_trending">Trending</string>
+
   <string name="navigation_title_movies">Movies</string>
   <string name="navigation_movies_watched">Watched</string>
   <string name="navigation_movies_collection">Collection</string>
   <string name="navigation_movies_watchlist">Watchlist</string>
-  <string name="navigation_movies_ratings">Ratings</string>
-  <string name="navigation_movies_charts">Charts</string>
+  <string name="navigation_movies_trending">Trending</string>
 
   <string name="show_upcoming_empty">No upcoming episodes. Use the search button to find some new
     shows to watch.
