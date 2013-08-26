@@ -128,6 +128,8 @@ public class PhoneController extends UiController {
         topFragment.setMenuVisibility(searchView == null);
       }
     });
+    stack.setDefaultAnimation(R.anim.fade_in_front, R.anim.fade_out_back, R.anim.fade_in_back,
+        R.anim.fade_out_front);
 
     menuDrawer.setOnDrawerStateChangeListener(new MenuDrawer.OnDrawerStateChangeListener() {
       @Override
@@ -135,25 +137,24 @@ public class PhoneController extends UiController {
         switch (newState) {
           case MenuDrawer.STATE_CLOSED:
             if (!stack.commit()) {
-              String title = ((FragmentContract) stack.getTopFragment()).getTitle();
+              String title = ((FragmentContract) stack.peek()).getTitle();
               if (title != null) {
                 activity.getActionBar().setTitle(title);
               } else {
                 activity.getActionBar().setTitle(R.string.app_name);
               }
-              activity.getActionBar()
-                  .setSubtitle(((FragmentContract) stack.getTopFragment()).getSubtitle());
+              activity.getActionBar().setSubtitle(((FragmentContract) stack.peek()).getSubtitle());
             }
 
             if (searchView != null) {
               activity.getActionBar().setDisplayShowCustomEnabled(true);
             } else {
-              stack.getTopFragment().setMenuVisibility(true);
+              stack.peek().setMenuVisibility(true);
             }
             break;
 
           default:
-            stack.getTopFragment().setMenuVisibility(false);
+            stack.peek().setMenuVisibility(false);
             activity.getActionBar().setDisplayShowCustomEnabled(false);
             activity.getActionBar().setTitle(R.string.app_name);
             break;
@@ -166,7 +167,7 @@ public class PhoneController extends UiController {
     });
 
     if (state != null) {
-      stack.onRestoreInstanceState(state);
+      stack.restoreState(state);
       CharSequence query = state.getCharSequence(STATE_SEARCH_QUERY);
       if (query != null) {
         searchType = state.getInt(STATE_SEARCH_TYPE);
@@ -179,14 +180,13 @@ public class PhoneController extends UiController {
   @Subscribe
   public void onTitleChanged(OnTitleChangedEvent event) {
     if (!menuDrawer.isMenuVisible()) {
-      String title = ((FragmentContract) stack.getTopFragment()).getTitle();
+      String title = ((FragmentContract) stack.peek()).getTitle();
       if (title != null) {
         activity.getActionBar().setTitle(title);
       } else {
         activity.getActionBar().setTitle(R.string.app_name);
       }
-      activity.getActionBar()
-          .setSubtitle(((FragmentContract) stack.getTopFragment()).getSubtitle());
+      activity.getActionBar().setSubtitle(((FragmentContract) stack.peek()).getSubtitle());
     }
   }
 
@@ -201,17 +201,17 @@ public class PhoneController extends UiController {
     if (searchView != null) {
       activity.getActionBar().setDisplayShowCustomEnabled(false);
       activity.getActionBar().setCustomView(null);
-      stack.getTopFragment().setMenuVisibility(true);
+      stack.peek().setMenuVisibility(true);
       searchView = null;
       return true;
     }
 
-    final FragmentContract topFragment = (FragmentContract) stack.getTopFragment();
+    final FragmentContract topFragment = (FragmentContract) stack.peek();
     if (topFragment != null && topFragment.onBackPressed()) {
       return true;
     }
 
-    if (stack.popStack(true)) {
+    if (stack.pop(true)) {
       return true;
     }
 
@@ -221,7 +221,7 @@ public class PhoneController extends UiController {
   @Override
   public Bundle onSaveInstanceState() {
     Bundle state = new Bundle();
-    stack.onSaveInstanceState(state);
+    stack.saveState(state);
     if (searchView != null) {
       state.putInt(STATE_SEARCH_TYPE, searchType);
       state.putCharSequence(STATE_SEARCH_QUERY, searchView.getQuery());
@@ -233,13 +233,13 @@ public class PhoneController extends UiController {
   public void onAttach() {
     super.onAttach();
     menuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_BEZEL);
-    menuDrawer.setDrawerIndicatorEnabled(stack.getStackSize() == 1);
+    menuDrawer.setDrawerIndicatorEnabled(stack.size() == 1);
 
     activity.getActionBar().setHomeButtonEnabled(true);
     activity.getActionBar().setDisplayHomeAsUpEnabled(true);
 
-    if (stack.getStackSize() == 0) {
-      stack.setTopFragment(UpcomingShowsFragment.class, FRAGMENT_SHOWS_UPCOMING);
+    if (stack.size() == 0) {
+      stack.replace(UpcomingShowsFragment.class, FRAGMENT_SHOWS_UPCOMING);
       stack.commit();
     }
 
@@ -249,7 +249,6 @@ public class PhoneController extends UiController {
   @Override
   public void onDetach() {
     bus.unregister(this);
-    stack.detach();
     super.onDetach();
   }
 
@@ -290,9 +289,9 @@ public class PhoneController extends UiController {
     } else if (searchView != null) {
       activity.getActionBar().setDisplayShowCustomEnabled(false);
       activity.getActionBar().setCustomView(null);
-      stack.getTopFragment().setMenuVisibility(true);
+      stack.peek().setMenuVisibility(true);
       searchView = null;
-    } else if (!stack.popStack(drawerState == MenuDrawer.STATE_CLOSED)) {
+    } else if (!stack.pop(drawerState == MenuDrawer.STATE_CLOSED)) {
       menuDrawer.toggleMenu();
     }
   }
@@ -301,43 +300,43 @@ public class PhoneController extends UiController {
   public void onMenuItemClicked(int id) {
     switch (id) {
       case R.id.menu_shows_upcoming:
-        stack.setTopFragment(UpcomingShowsFragment.class, FRAGMENT_SHOWS_UPCOMING);
+        stack.replace(UpcomingShowsFragment.class, FRAGMENT_SHOWS_UPCOMING);
         break;
 
       case R.id.menu_shows_watched:
-        stack.setTopFragment(WatchedShowsFragment.class, FRAGMENT_SHOWS);
+        stack.replace(WatchedShowsFragment.class, FRAGMENT_SHOWS);
         break;
 
       case R.id.menu_shows_collection:
-        stack.setTopFragment(ShowsCollectionFragment.class, FRAGMENT_SHOWS_COLLECTION);
+        stack.replace(ShowsCollectionFragment.class, FRAGMENT_SHOWS_COLLECTION);
         break;
 
       case R.id.menu_shows_watchlist:
-        stack.setTopFragment(ShowsWatchlistFragment.class, FRAGMENT_SHOWS_WATCHLIST);
+        stack.replace(ShowsWatchlistFragment.class, FRAGMENT_SHOWS_WATCHLIST);
         break;
 
       case R.id.menu_episodes_watchlist:
-        stack.setTopFragment(EpisodesWatchlistFragment.class, FRAGMENT_EPISODES_WATCHLIST);
+        stack.replace(EpisodesWatchlistFragment.class, FRAGMENT_EPISODES_WATCHLIST);
         break;
 
       case R.id.menu_shows_trending:
-        stack.setTopFragment(TrendingShowsFragment.class, FRAGMENT_SHOWS_TRENDING);
+        stack.replace(TrendingShowsFragment.class, FRAGMENT_SHOWS_TRENDING);
         break;
 
       case R.id.menu_movies_watched:
-        stack.setTopFragment(WatchedMoviesFragment.class, FRAGMENT_MOVIES_WATCHED);
+        stack.replace(WatchedMoviesFragment.class, FRAGMENT_MOVIES_WATCHED);
         break;
 
       case R.id.menu_movies_collection:
-        stack.setTopFragment(MovieCollectionFragment.class, FRAGMENT_MOVIES_COLLECTION);
+        stack.replace(MovieCollectionFragment.class, FRAGMENT_MOVIES_COLLECTION);
         break;
 
       case R.id.menu_movies_watchlist:
-        stack.setTopFragment(MovieWatchlistFragment.class, FRAGMENT_MOVIES_WATCHLIST);
+        stack.replace(MovieWatchlistFragment.class, FRAGMENT_MOVIES_WATCHLIST);
         break;
 
       case R.id.menu_movies_trending:
-        stack.setTopFragment(TrendingMoviesFragment.class, FRAGMENT_MOVIES_TRENDING);
+        stack.replace(TrendingMoviesFragment.class, FRAGMENT_MOVIES_TRENDING);
         break;
     }
 
@@ -353,13 +352,13 @@ public class PhoneController extends UiController {
     activity.getActionBar()
         .setCustomView(searchView, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT));
-    stack.getTopFragment().setMenuVisibility(false);
+    stack.peek().setMenuVisibility(false);
     menuDrawer.setDrawerIndicatorEnabled(false);
     searchView.setOnCloseListener(new SearchView.OnCloseListener() {
       @Override
       public boolean onClose() {
         searchView = null;
-        stack.getTopFragment().setMenuVisibility(true);
+        stack.peek().setMenuVisibility(true);
         return true;
       }
     });
@@ -368,18 +367,20 @@ public class PhoneController extends UiController {
       public boolean onQueryTextSubmit(String query) {
         LogWrapper.v(TAG, "[onQueryTextSubmit] Query: " + query);
         if (PhoneController.this.searchType == SEARCH_TYPE_MOVIE) {
-          SearchMovieFragment f = stack.getFragment(FRAGMENT_SEARCH_MOVIE);
+          SearchMovieFragment f = (SearchMovieFragment) activity.getSupportFragmentManager()
+              .findFragmentByTag(FRAGMENT_SEARCH_MOVIE);
           if (f == null) {
-            stack.addFragment(SearchMovieFragment.class, FRAGMENT_SEARCH_MOVIE,
+            stack.push(SearchMovieFragment.class, FRAGMENT_SEARCH_MOVIE,
                 SearchMovieFragment.getArgs(query));
             stack.commit();
           } else {
             f.query(query);
           }
         } else {
-          SearchShowFragment f = stack.getFragment(FRAGMENT_SEARCH_SHOW);
+          SearchShowFragment f = (SearchShowFragment) activity.getSupportFragmentManager()
+              .findFragmentByTag(FRAGMENT_SEARCH_SHOW);
           if (f == null) {
-            stack.addFragment(SearchShowFragment.class, FRAGMENT_SEARCH_SHOW,
+            stack.push(SearchShowFragment.class, FRAGMENT_SEARCH_SHOW,
                 SearchShowFragment.getArgs(query));
             stack.commit();
           } else {
@@ -405,7 +406,7 @@ public class PhoneController extends UiController {
 
   @Override
   public void onDisplayShow(long showId, String title, LibraryType type) {
-    stack.addFragment(ShowInfoFragment.class, FRAGMENT_SHOW,
+    stack.push(ShowInfoFragment.class, FRAGMENT_SHOW,
         ShowInfoFragment.getArgs(showId, title, type));
     stack.commit();
   }
@@ -418,7 +419,7 @@ public class PhoneController extends UiController {
           (EpisodeFragment) Fragment.instantiate(activity, EpisodeFragment.class.getName(), args);
       f.show(activity.getSupportFragmentManager(), FRAGMENT_EPISODE);
     } else {
-      stack.addFragment(EpisodeFragment.class, FRAGMENT_EPISODE,
+      stack.push(EpisodeFragment.class, FRAGMENT_EPISODE,
           EpisodeFragment.getArgs(episodeId, showTitle));
       stack.commit();
     }
@@ -427,7 +428,7 @@ public class PhoneController extends UiController {
   @Override
   public void onDisplaySeason(long showId, long seasonId, String showTitle, int seasonNumber,
       LibraryType type) {
-    stack.addFragment(SeasonFragment.class, FRAGMENT_SEASON,
+    stack.push(SeasonFragment.class, FRAGMENT_SEASON,
         SeasonFragment.getArgs(showId, seasonId, showTitle, seasonNumber, type));
     stack.commit();
   }
@@ -440,7 +441,7 @@ public class PhoneController extends UiController {
 
   @Override
   public void onDisplayMovie(long movieId, String title) {
-    stack.addFragment(MovieFragment.class, FRAGMENT_MOVIE, MovieFragment.getArgs(movieId, title));
+    stack.push(MovieFragment.class, FRAGMENT_MOVIE, MovieFragment.getArgs(movieId, title));
     stack.commit();
   }
 

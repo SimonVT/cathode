@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentTransaction;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
-import net.simonvt.cathode.R;
 
 /** A class that manages a stack of {@link Fragment}s in a single container. */
 public final class FragmentStack {
@@ -20,12 +19,13 @@ public final class FragmentStack {
     void onStackChanged(int stackSize, Fragment topFragment);
   }
 
+  /** Create an instance for a specific container. */
   public static FragmentStack forContainer(FragmentActivity activity, int containerId,
       Callback callback) {
     return new FragmentStack(activity, containerId, callback);
   }
 
-  private static final String STATE_STACK = "net.simonvt.cathode.util.FragmentStack.stack";
+  private static final String STATE_STACK = "net.simonvt.util.FragmentStack.stack";
 
   private LinkedList<Fragment> stack = new LinkedList<Fragment>();
   private Set<String> topLevelTags = new HashSet<String>();
@@ -41,18 +41,14 @@ public final class FragmentStack {
 
   private Handler handler;
 
-  private int enterAnimation = R.anim.fade_in_front;
+  private int enterAnimation;
+  private int exitAnimation;
+  private int popStackEnterAnimation;
+  private int popStackExitAnimation;
 
-  private int exitAnimation = R.anim.fade_out_back;
-
-  private int popStackEnterAnimation = R.anim.fade_in_back;
-
-  private int popStackExitAnimation = R.anim.fade_out_front;
-
-  private Runnable execPendingTransactions = new Runnable() {
+  private final Runnable execPendingTransactions = new Runnable() {
     @Override
     public void run() {
-      LogWrapper.d("FragmentStack", "Executing pending transactions");
       if (fragmentTransaction != null) {
         fragmentTransaction.commit();
         fragmentManager.executePendingTransactions();
@@ -72,22 +68,7 @@ public final class FragmentStack {
     handler = new Handler();
   }
 
-  public void attach() {
-    Fragment f = stack.peekLast();
-    if (f != null) {
-      attachFragment(f, f.getTag());
-      fragmentTransaction.commit();
-    }
-  }
-
-  public void detach() {
-    Fragment f = stack.peekLast();
-    if (f != null) {
-      detachFragment(f);
-      commit();
-    }
-  }
-
+  /** Removes all added fragments and clears the stack. */
   public void destroy() {
     ensureTransaction();
     fragmentTransaction.setCustomAnimations(enterAnimation, exitAnimation);
@@ -106,7 +87,7 @@ public final class FragmentStack {
     fragmentTransaction = null;
   }
 
-  public void onSaveInstanceState(Bundle outState) {
+  public void saveState(Bundle outState) {
     executePendingTransactions();
 
     final int stackSize = stack.size();
@@ -120,7 +101,7 @@ public final class FragmentStack {
     outState.putStringArray(STATE_STACK, stackTags);
   }
 
-  public void onRestoreInstanceState(Bundle state) {
+  public void restoreState(Bundle state) {
     String[] stackTags = state.getStringArray(STATE_STACK);
     for (String tag : stackTags) {
       Fragment f = fragmentManager.findFragmentByTag(tag);
@@ -129,34 +110,35 @@ public final class FragmentStack {
     dispatchOnStackChangedEvent();
   }
 
-  public int getStackSize() {
+  public int size() {
     return stack.size();
   }
 
-  @SuppressWarnings("unchecked")
-  public <T> T getFragment(String tag) {
-    return (T) fragmentManager.findFragmentByTag(tag);
-  }
-
-  public Fragment getTopFragment() {
+  public Fragment peek() {
     return stack.peekLast();
   }
 
-  public void setTopFragment(Class fragment, String tag) {
-    setTopFragment(fragment, tag, null);
+  /** Replaces the entire stack with this fragment. */
+  public void replace(Class fragment, String tag) {
+    replace(fragment, tag, null);
   }
 
   /**
-   * Clears the stack and displays the fragment.
+   * Replaces the entire stack with this fragment.
    *
-   * @param fragment The fragment to display.
-   * @param tag The tag of the fragment.
+   * @param args Arguments to be set on the fragment using {@link Fragment#setArguments(android.os.Bundle)}.
    */
-  public void setTopFragment(Class fragment, String tag, Bundle args) {
+  public void replace(Class fragment, String tag, Bundle args) {
     Fragment first = stack.peekFirst();
     if (first != null && tag.equals(first.getTag())) {
-      while (stack.size() > 1) {
-        popStack();
+      if (stack.size() > 1) {
+        ensureTransaction();
+        fragmentTransaction.setCustomAnimations(popStackEnterAnimation, popStackExitAnimation);
+        while (stack.size() > 1) {
+          removeFragment(stack.pollLast());
+        }
+
+        attachFragment(stack.peek(), tag);
       }
       return;
     }
@@ -168,24 +150,19 @@ public final class FragmentStack {
 
     ensureTransaction();
     fragmentTransaction.setCustomAnimations(enterAnimation, exitAnimation);
-    clearStack();
+    clear();
     attachFragment(f, tag);
     stack.add(f);
 
     topLevelTags.add(tag);
   }
 
-  public void addFragment(Class fragment, String tag) {
-    addFragment(fragment, tag, null);
+  public void push(Class fragment, String tag) {
+    push(fragment, tag, null);
   }
 
-  /**
-   * Adds a new fragment to the stack and displays it.
-   *
-   * @param fragment The fragment to display.
-   * @param tag The tag of the fragment.
-   */
-  public void addFragment(Class fragment, String tag, Bundle args) {
+  /** Adds a new fragment to the stack and displays it. */
+  public void push(Class fragment, String tag, Bundle args) {
     ensureTransaction();
     fragmentTransaction.setCustomAnimations(enterAnimation, exitAnimation);
     detachTop();
@@ -200,11 +177,6 @@ public final class FragmentStack {
     stack.add(f);
   }
 
-  private void detachTop() {
-    Fragment f = stack.peekLast();
-    detachFragment(f);
-  }
-
   /**
    * Removes the fragment at the top of the stack and displays the previous one. This will not do
    * anything if there is
@@ -212,8 +184,8 @@ public final class FragmentStack {
    *
    * @return Whether a transaction has been enqueued.
    */
-  public boolean popStack() {
-    return popStack(false);
+  public boolean pop() {
+    return pop(false);
   }
 
   /**
@@ -224,8 +196,7 @@ public final class FragmentStack {
    * @param commit Whether the transaction should be committed.
    * @return Whether a transaction has been enqueued.
    */
-  public boolean popStack(boolean commit) {
-    LogWrapper.d("FragmentStack", "Stack size: " + stack.size());
+  public boolean pop(boolean commit) {
     if (stack.size() > 1) {
       ensureTransaction();
       fragmentTransaction.setCustomAnimations(popStackEnterAnimation, popStackExitAnimation);
@@ -241,12 +212,12 @@ public final class FragmentStack {
     return false;
   }
 
-  /**
-   * Removes all fragment in the stack. The fragment at the base of the stack will stay added to
-   * the
-   * {@link FragmentManager}, but its view will be detached.
-   */
-  private void clearStack() {
+  private void detachTop() {
+    Fragment f = stack.peekLast();
+    detachFragment(f);
+  }
+
+  private void clear() {
     Fragment first = stack.peekFirst();
     for (Fragment f : stack) {
       if (f == first) {
@@ -299,14 +270,11 @@ public final class FragmentStack {
     }
   }
 
-  public void setAnimation(int enter, int exit) {
-    ensureTransaction();
-    fragmentTransaction.setCustomAnimations(enter, exit);
-  }
-
-  public void setAnimation(int enter, int exit, int popEnter, int popExit) {
-    ensureTransaction();
-    fragmentTransaction.setCustomAnimations(enter, exit, popEnter, popExit);
+  public void setDefaultAnimation(int enter, int exit, int popEnter, int popExit) {
+    enterAnimation = enter;
+    exitAnimation = exit;
+    popStackEnterAnimation = popEnter;
+    popStackExitAnimation = popExit;
   }
 
   /**
