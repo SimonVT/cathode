@@ -2,6 +2,7 @@ package net.simonvt.cathode.ui.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.provider.BaseColumns;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,20 +14,32 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.CathodeDatabase;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.widget.IndicatorView;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
-public class ShowSearchAdapter extends CursorAdapter {
+public class ShowDescriptionAdapter extends CursorAdapter {
 
-  private static final String TAG = "ShowSearchAdapter";
+  private static final String TAG = "ShowDescriptionAdapter";
+
+  public static final String[] PROJECTION = new String[] {
+      CathodeDatabase.Tables.SHOWS + "." + BaseColumns._ID,
+      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.TITLE,
+      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.OVERVIEW,
+      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.POSTER,
+      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.TVDB_ID,
+      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.WATCHED_COUNT,
+      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.IN_COLLECTION_COUNT,
+      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.IN_WATCHLIST,
+  };
 
   @Inject ShowTaskScheduler showScheduler;
 
   private Context context;
 
-  public ShowSearchAdapter(Context context) {
+  public ShowDescriptionAdapter(Context context) {
     super(context, null, 0);
     this.context = context;
     CathodeApp.inject(context, this);

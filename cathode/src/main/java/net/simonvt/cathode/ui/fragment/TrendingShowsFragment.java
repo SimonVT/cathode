@@ -1,48 +1,92 @@
 package net.simonvt.cathode.ui.fragment;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.adapter.ShowsAdapter;
+import net.simonvt.cathode.ui.ShowsNavigationListener;
+import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
 
-public class TrendingShowsFragment extends ShowsFragment {
+public class TrendingShowsFragment extends AbsAdapterFragment
+    implements LoaderManager.LoaderCallbacks<Cursor> {
 
-  @Override public String getTitle() {
-    return getResources().getString(R.string.title_shows_trending);
+  private static final String TAG = "TrendingShowsFragment";
+
+  private static final int LOADER_TRENDING = 601;
+
+  private ShowDescriptionAdapter showsAdapter;
+
+  private ShowsNavigationListener navigationListener;
+
+  @Override
+  public void onAttach(Activity activity) {
+    super.onAttach(activity);
+    try {
+      navigationListener = (ShowsNavigationListener) activity;
+    } catch (ClassCastException e) {
+      throw new ClassCastException(activity.toString() + " must implement ShowsNavigationListener");
+    }
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+  @Override
+  public void onCreate(Bundle state) {
+    super.onCreate(state);
+    CathodeApp.inject(getActivity(), this);
+
+    setHasOptionsMenu(true);
+
+    getLoaderManager().initLoader(LOADER_TRENDING, null, this);
+  }
+
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_list_cards, container, false);
+    return inflater.inflate(R.layout.fragment_shows_watched, container, false);
   }
 
-  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-    setEmptyText(R.string.shows_loading_trending);
+  @Override
+  protected void onItemClick(AdapterView l, View v, int position, long id) {
+    Cursor c = (Cursor) getAdapter().getItem(position);
+    navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(CathodeContract.Shows.TITLE)),
+        LibraryType.WATCHED);
   }
 
-  @Override protected LibraryType getLibraryType() {
-    return LibraryType.WATCHED;
-  }
+  private void setCursor(Cursor cursor) {
+    if (showsAdapter == null) {
+      showsAdapter = new ShowDescriptionAdapter(getActivity());
+      setAdapter(showsAdapter);
+    }
 
-  protected int getLoaderId() {
-    return 105;
+    showsAdapter.changeCursor(cursor);
   }
 
   @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
     final Uri contentUri = CathodeContract.Shows.SHOWS_TRENDING;
     CursorLoader cl =
-        new CursorLoader(getActivity(), contentUri, ShowsAdapter.PROJECTION, null, null, null);
+        new CursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION, null, null,
+            null);
     cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return cl;
+  }
+
+  @Override
+  public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    setCursor(data);
+  }
+
+  @Override
+  public void onLoaderReset(Loader<Cursor> loader) {
   }
 }

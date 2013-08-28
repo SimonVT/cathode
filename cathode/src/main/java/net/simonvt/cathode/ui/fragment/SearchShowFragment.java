@@ -3,7 +3,6 @@ package net.simonvt.cathode.ui.fragment;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -24,10 +23,9 @@ import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.event.SearchFailureEvent;
 import net.simonvt.cathode.event.ShowSearchResult;
 import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeDatabase;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
-import net.simonvt.cathode.ui.adapter.ShowSearchAdapter;
+import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
 import net.simonvt.cathode.util.ShowSearchHandler;
 
 public class SearchShowFragment extends AbsAdapterFragment
@@ -45,7 +43,7 @@ public class SearchShowFragment extends AbsAdapterFragment
 
   @Inject Bus bus;
 
-  private ShowSearchAdapter showsAdapter;
+  private ShowDescriptionAdapter showsAdapter;
 
   private List<Long> searchShowIds;
 
@@ -157,23 +155,12 @@ public class SearchShowFragment extends AbsAdapterFragment
 
   private void setCursor(Cursor cursor) {
     if (showsAdapter == null) {
-      showsAdapter = new ShowSearchAdapter(getActivity());
+      showsAdapter = new ShowDescriptionAdapter(getActivity());
       setAdapter(showsAdapter);
     }
 
     showsAdapter.changeCursor(cursor);
   }
-
-  protected static final String[] PROJECTION = new String[] {
-      CathodeDatabase.Tables.SHOWS + "." + BaseColumns._ID,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.TITLE,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.OVERVIEW,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.POSTER,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.TVDB_ID,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.WATCHED_COUNT,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.IN_COLLECTION_COUNT,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.IN_WATCHLIST,
-  };
 
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -191,9 +178,8 @@ public class SearchShowFragment extends AbsAdapterFragment
     }
     where.append(")");
 
-    CursorLoader loader =
-        new CursorLoader(getActivity(), CathodeContract.Shows.CONTENT_URI, PROJECTION,
-            where.toString(), ids, null);
+    CursorLoader loader = new CursorLoader(getActivity(), CathodeContract.Shows.CONTENT_URI,
+        ShowDescriptionAdapter.PROJECTION, where.toString(), ids, null);
 
     return loader;
   }
