@@ -244,7 +244,7 @@ public final class CathodeContract {
           + "."
           + EpisodeColumns.FIRST_AIRED
           + "<="
-          + currentTime
+          + (currentTime + DateUtils.DAY_IN_MILLIS)
           + " AND "
           + CathodeDatabase.Tables.EPISODES
           + "."
