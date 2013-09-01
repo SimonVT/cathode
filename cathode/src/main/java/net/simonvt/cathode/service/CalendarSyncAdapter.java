@@ -72,73 +72,89 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
 
     final long time = System.currentTimeMillis();
 
-    Cursor episodes =
-        context.getContentResolver().query(CathodeContract.Episodes.CONTENT_URI, new String[] {
-            CathodeContract.Episodes._ID, CathodeContract.Episodes.SHOW_ID,
-            CathodeContract.Episodes.TITLE, CathodeContract.Episodes.SEASON,
-            CathodeContract.Episodes.EPISODE, CathodeContract.Episodes.FIRST_AIRED,
-        }, CathodeContract.Episodes.FIRST_AIRED + ">?", new String[] {
-            String.valueOf(time - 30 * DateUtils.DAY_IN_MILLIS),
-        }, null);
-
     ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 
-    while (episodes.moveToNext()) {
-      final long id = episodes.getLong(episodes.getColumnIndex(CathodeContract.Episodes._ID));
-      final long showId = episodes.getLong(episodes.getColumnIndex(CathodeContract.Episodes.SHOW_ID));
-      final String title =
-          episodes.getString(episodes.getColumnIndex(CathodeContract.Episodes.TITLE));
-      final int season = episodes.getInt(episodes.getColumnIndex(CathodeContract.Episodes.SEASON));
-      final int episode = episodes.getInt(episodes.getColumnIndex(CathodeContract.Episodes.EPISODE));
-      final long firstAired =
-          episodes.getLong(episodes.getColumnIndex(CathodeContract.Episodes.FIRST_AIRED));
+    Cursor shows =
+        context.getContentResolver().query(CathodeContract.Shows.CONTENT_URI, new String[] {
+            CathodeContract.Shows._ID,
+        }, CathodeContract.Shows.WATCHED_COUNT
+            + ">0 OR "
+            + CathodeContract.Shows.IN_WATCHLIST_COUNT
+            + ">0", null, null);
 
-      Cursor show = context.getContentResolver()
-          .query(CathodeContract.Shows.buildShowUri(showId), new String[] {
-              CathodeContract.Shows.TITLE, CathodeContract.Shows.RUNTIME,
-          }, null, null, null);
-      show.moveToFirst();
+    while (shows.moveToNext()) {
+      Cursor episodes =
+          context.getContentResolver().query(CathodeContract.Episodes.CONTENT_URI, new String[] {
+              CathodeContract.Episodes._ID, CathodeContract.Episodes.SHOW_ID,
+              CathodeContract.Episodes.TITLE, CathodeContract.Episodes.SEASON,
+              CathodeContract.Episodes.EPISODE, CathodeContract.Episodes.FIRST_AIRED,
+          }, CathodeContract.Episodes.SHOW_ID
+              + "=? AND "
+              + CathodeContract.Episodes.FIRST_AIRED
+              + ">?", new String[] {
+              String.valueOf(shows.getLong(0)), String.valueOf(time - 30 * DateUtils.DAY_IN_MILLIS),
+          }, null);
 
-      final String showTitle = show.getString(show.getColumnIndex(CathodeContract.Shows.TITLE));
-      final long runtime = show.getLong(show.getColumnIndex(CathodeContract.Shows.RUNTIME));
+      while (episodes.moveToNext()) {
+        final long id = episodes.getLong(episodes.getColumnIndex(CathodeContract.Episodes._ID));
+        final long showId =
+            episodes.getLong(episodes.getColumnIndex(CathodeContract.Episodes.SHOW_ID));
+        final String title =
+            episodes.getString(episodes.getColumnIndex(CathodeContract.Episodes.TITLE));
+        final int season =
+            episodes.getInt(episodes.getColumnIndex(CathodeContract.Episodes.SEASON));
+        final int episode =
+            episodes.getInt(episodes.getColumnIndex(CathodeContract.Episodes.EPISODE));
+        final long firstAired =
+            episodes.getLong(episodes.getColumnIndex(CathodeContract.Episodes.FIRST_AIRED));
 
-      String eventTitle = showTitle + " - " + season + "x" + episode + " " + title;
+        Cursor show = context.getContentResolver()
+            .query(CathodeContract.Shows.buildShowUri(showId), new String[] {
+                CathodeContract.Shows.TITLE, CathodeContract.Shows.RUNTIME,
+            }, null, null, null);
+        show.moveToFirst();
 
-      Event event = events.get(id);
-      if (event != null) {
-        ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(CalendarContract.Events.CONTENT_URI)
-                .withValue(CalendarContract.Events.DTSTART, firstAired)
-                .withValue(CalendarContract.Events.DTEND,
-                    firstAired + runtime * DateUtils.MINUTE_IN_MILLIS)
-                .withValue(CalendarContract.Events.TITLE, eventTitle)
-                .withSelection(CalendarContract.Events._ID + "=?", new String[] {
-                    String.valueOf(event.id),
-                })
-                .build();
-        ops.add(op);
-        events.remove(id);
-      } else {
-        ContentProviderOperation op = ContentProviderOperation.newInsert(CalendarContract.Events
-            .CONTENT_URI
-            .buildUpon()
-            .appendQueryParameter(ContactsContract.CALLER_IS_SYNCADAPTER, "true")
-            .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME,
-                context.getString(R.string.accountName))
-            .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE,
-                context.getString(R.string.accountType))
-            .build())
-            .withValue(CalendarContract.Events.DTSTART, firstAired)
-            .withValue(CalendarContract.Events.DTEND,
-                firstAired + runtime * DateUtils.MINUTE_IN_MILLIS)
-            .withValue(CalendarContract.Events.TITLE, eventTitle)
-            .withValue(CalendarContract.Events.SYNC_DATA1, id)
-            .withValue(CalendarContract.Events.CALENDAR_ID, calendarId)
-            .build();
-        ops.add(op);
+        final String showTitle = show.getString(show.getColumnIndex(CathodeContract.Shows.TITLE));
+        final long runtime = show.getLong(show.getColumnIndex(CathodeContract.Shows.RUNTIME));
+
+        String eventTitle = showTitle + " - " + season + "x" + episode + " " + title;
+
+        Event event = events.get(id);
+        if (event != null) {
+          ContentProviderOperation op =
+              ContentProviderOperation.newUpdate(CalendarContract.Events.CONTENT_URI)
+                  .withValue(CalendarContract.Events.DTSTART, firstAired)
+                  .withValue(CalendarContract.Events.DTEND,
+                      firstAired + runtime * DateUtils.MINUTE_IN_MILLIS)
+                  .withValue(CalendarContract.Events.TITLE, eventTitle)
+                  .withSelection(CalendarContract.Events._ID + "=?", new String[] {
+                      String.valueOf(event.id),
+                  })
+                  .build();
+          ops.add(op);
+          events.remove(id);
+        } else {
+          ContentProviderOperation op = ContentProviderOperation.newInsert(CalendarContract.Events
+              .CONTENT_URI
+              .buildUpon()
+              .appendQueryParameter(ContactsContract.CALLER_IS_SYNCADAPTER, "true")
+              .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME,
+                  context.getString(R.string.accountName))
+              .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE,
+                  context.getString(R.string.accountType))
+              .build())
+              .withValue(CalendarContract.Events.DTSTART, firstAired)
+              .withValue(CalendarContract.Events.DTEND,
+                  firstAired + runtime * DateUtils.MINUTE_IN_MILLIS)
+              .withValue(CalendarContract.Events.TITLE, eventTitle)
+              .withValue(CalendarContract.Events.SYNC_DATA1, id)
+              .withValue(CalendarContract.Events.CALENDAR_ID, calendarId)
+              .build();
+          ops.add(op);
+        }
       }
+      episodes.close();
     }
-    episodes.close();
 
     for (int i = 0, size = events.size(); i < size; i++) {
       Event event = events.valueAt(i);
