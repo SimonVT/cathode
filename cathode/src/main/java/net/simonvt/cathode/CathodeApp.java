@@ -10,6 +10,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
@@ -179,7 +180,7 @@ public class CathodeApp extends Application {
 
     ContentResolver.setIsSyncable(account, CalendarContract.AUTHORITY, 1);
     ContentResolver.setSyncAutomatically(account, CalendarContract.AUTHORITY, true);
-    ContentResolver.addPeriodicSync(account, CalendarContract.AUTHORITY, null,
+    ContentResolver.addPeriodicSync(account, CalendarContract.AUTHORITY, new Bundle(),
         12 * DateUtils.HOUR_IN_MILLIS);
   }
 
