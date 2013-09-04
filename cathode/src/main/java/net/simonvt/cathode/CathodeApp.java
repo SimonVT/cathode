@@ -181,7 +181,7 @@ public class CathodeApp extends Application {
     ContentResolver.setIsSyncable(account, CalendarContract.AUTHORITY, 1);
     ContentResolver.setSyncAutomatically(account, CalendarContract.AUTHORITY, true);
     ContentResolver.addPeriodicSync(account, CalendarContract.AUTHORITY, new Bundle(),
-        12 * DateUtils.HOUR_IN_MILLIS);
+        12 * DateUtils.HOUR_IN_SECONDS);
   }
 
   public static void removeAccount(Context context) {
