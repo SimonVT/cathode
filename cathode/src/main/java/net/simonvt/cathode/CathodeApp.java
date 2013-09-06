@@ -70,6 +70,7 @@ import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
+import net.simonvt.cathode.service.AccountAuthenticator;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.PhoneController;
@@ -174,6 +175,7 @@ public class CathodeApp extends Application {
   }
 
   public static void setupAccount(Context context) {
+    AccountAuthenticator.allowRemove = false;
     AccountManager manager = AccountManager.get(context);
     Account account = getAccount(context);
     manager.addAccountExplicitly(account, null, null);
@@ -185,9 +187,11 @@ public class CathodeApp extends Application {
   }
 
   public static void removeAccount(Context context) {
+    AccountAuthenticator.allowRemove = true;
     AccountManager am = AccountManager.get(context);
     Account[] accounts = am.getAccountsByType(context.getString(R.string.accountType));
     for (Account account : accounts) {
+      ContentResolver.removePeriodicSync(account, CalendarContract.AUTHORITY, new Bundle());
       am.removeAccount(account, null, null);
     }
   }

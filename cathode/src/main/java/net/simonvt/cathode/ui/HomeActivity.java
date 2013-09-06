@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import javax.inject.Inject;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.LoginEvent;
@@ -169,6 +170,8 @@ public class HomeActivity extends BaseActivity
       loginController.onCreate(null);
       loginController.onAttach();
       activeController = loginController;
+
+      CathodeApp.removeAccount(this);
     }
   }
 

@@ -11,6 +11,8 @@ import net.simonvt.cathode.R;
 
 public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
+  public static boolean allowRemove;
+
   private Context context;
 
   public AccountAuthenticator(Context context) {
@@ -69,7 +71,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
   public Bundle getAccountRemovalAllowed(AccountAuthenticatorResponse response, Account account)
       throws NetworkErrorException {
     final Bundle result = new Bundle();
-    result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, false);
+    result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, allowRemove);
     return result;
   }
 }
