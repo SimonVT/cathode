@@ -1,5 +1,7 @@
 package net.simonvt.cathode.remote;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -9,11 +11,13 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import android.provider.CalendarContract;
 import android.text.format.DateUtils;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
@@ -202,7 +206,6 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
 
         cv = new ContentValues();
         cv.put(CathodeContract.Shows.WATCHED_COUNT, 0);
-        cv.put(CathodeContract.Shows.AIRDATE_COUNT, 0);
         cv.put(CathodeContract.Shows.IN_COLLECTION_COUNT, 0);
         cv.put(CathodeContract.Shows.IN_WATCHLIST_COUNT, 0);
         cv.put(CathodeContract.Shows.IN_WATCHLIST, false);
@@ -210,7 +213,6 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
 
         cv = new ContentValues();
         cv.put(CathodeContract.Seasons.WATCHED_COUNT, 0);
-        cv.put(CathodeContract.Seasons.AIRDATE_COUNT, 0);
         cv.put(CathodeContract.Seasons.IN_COLLECTION_COUNT, 0);
         cv.put(CathodeContract.Seasons.IN_WATCHLIST_COUNT, 0);
         resolver.update(CathodeContract.Seasons.CONTENT_URI, cv, null, null);
@@ -266,6 +268,15 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
               .edit()
               .putBoolean(Settings.INITIAL_SYNC, false)
               .apply();
+
+          Bundle extras = new Bundle();
+          extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+          extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+          AccountManager am = AccountManager.get(this);
+          Account[] accounts = am.getAccountsByType(getString(R.string.accountType));
+          for (Account account : accounts) {
+            ContentResolver.requestSync(account, CalendarContract.AUTHORITY, extras);
+          }
         }
 
         stopSelf(); // No more tasks are present. Stop.
