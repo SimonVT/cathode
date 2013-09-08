@@ -8,4 +8,6 @@
 
   <string name="calendarName">Upcoming episodes</string>
 
+  <string name="sourceUrl">https://github.com/SimonVT/cathode</string>
+
 </resources>

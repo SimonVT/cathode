@@ -11,6 +11,13 @@
   <string name="retry">Retry</string>
   <string name="cancel">Cancel</string>
 
+  <string name="action_about">About</string>
+
+  <string name="licenses">Open Source Licenses</string>
+  <string name="source_code">Source code</string>
+  <string name="version_x">Version %s</string>
+  <string name="version_unknown">Unknown version</string>
+
   <string name="initial_sync">Fetching movies and shows</string>
   <string name="initial_sync_desc">This might take a while…</string>
 
