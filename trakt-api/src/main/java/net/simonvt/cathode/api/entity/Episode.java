@@ -32,6 +32,8 @@ public class Episode {
 
   private Boolean inWatchlist;
 
+  private Boolean inCollection;
+
   private String rating;
 
   private Integer ratingAdvanced;
@@ -94,6 +96,10 @@ public class Episode {
 
   public Boolean isInWatchlist() {
     return inWatchlist;
+  }
+
+  public Boolean isInCollection() {
+    return inCollection;
   }
 
   public String getRating() {

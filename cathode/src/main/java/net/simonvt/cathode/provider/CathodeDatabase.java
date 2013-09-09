@@ -83,6 +83,15 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + " WHERE " + Tables.SEASONS + "." + BaseColumns._ID + "=NEW." + EpisodeColumns.SEASON_ID
         + ";";
 
+    String SEASONS_UPDATE_COLLECTED = "UPDATE " + Tables.SEASONS + " SET "
+        + SeasonColumns.IN_COLLECTION_COUNT + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE "
+        + Tables.EPISODES + "." + EpisodeColumns.SEASON_ID
+        + "=NEW." + EpisodeColumns.SEASON_ID
+        + " AND " + Tables.EPISODES + "." + EpisodeColumns.IN_COLLECTION
+        + "=1 AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)"
+        + " WHERE " + Tables.SEASONS + "." + BaseColumns._ID + "=NEW." + EpisodeColumns.SEASON_ID
+        + ";";
+
     String SEASONS_UPDATE_AIRDATE = "UPDATE " + Tables.SEASONS + " SET "
         + SeasonColumns.AIRDATE_COUNT + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE "
         + Tables.EPISODES + "." + EpisodeColumns.SEASON_ID
@@ -98,6 +107,15 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID
         + "=NEW." + EpisodeColumns.SHOW_ID
         + " AND " + Tables.EPISODES + "." + EpisodeColumns.WATCHED
+        + "=1 AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)"
+        + " WHERE " + Tables.SHOWS + "." + BaseColumns._ID + "=NEW." + EpisodeColumns.SHOW_ID
+        + ";";
+
+    String SHOWS_UPDATE_COLLECTED = "UPDATE " + Tables.SHOWS + " SET "
+        + ShowColumns.IN_COLLECTION_COUNT + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE "
+        + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID
+        + "=NEW." + EpisodeColumns.SHOW_ID
+        + " AND " + Tables.EPISODES + "." + EpisodeColumns.IN_COLLECTION
         + "=1 AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)"
         + " WHERE " + Tables.SHOWS + "." + BaseColumns._ID + "=NEW." + EpisodeColumns.SHOW_ID
         + ";";
@@ -126,12 +144,21 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + SHOWS_UPDATE_WATCHED
         + " END;";
 
+    String EPISODE_UPDATE_COLLECTED = "CREATE TRIGGER episodeUpdateCollected AFTER UPDATE OF "
+        + EpisodeColumns.IN_COLLECTION
+        + " ON " + Tables.EPISODES + " BEGIN "
+        + SEASONS_UPDATE_COLLECTED
+        + SHOWS_UPDATE_COLLECTED
+        + " END;";
+
     String EPISODE_INSERT = "CREATE TRIGGER episodeInsert AFTER INSERT ON " + Tables.EPISODES
         + " BEGIN "
         + SEASONS_UPDATE_WATCHED
         + SEASONS_UPDATE_AIRDATE
+        + SEASONS_UPDATE_COLLECTED
         + SHOWS_UPDATE_WATCHED
         + SHOWS_UPDATE_AIRDATE
+        + SHOWS_UPDATE_COLLECTED
         + " END;";
 
   }
@@ -340,6 +367,7 @@ public class CathodeDatabase extends SQLiteOpenHelper {
     db.execSQL(Trigger.EPISODE_INSERT);
     db.execSQL(Trigger.EPISODE_UPDATE_AIRED);
     db.execSQL(Trigger.EPISODE_UPDATE_WATCHED);
+    db.execSQL(Trigger.EPISODE_UPDATE_COLLECTED);
   }
 
   @Override

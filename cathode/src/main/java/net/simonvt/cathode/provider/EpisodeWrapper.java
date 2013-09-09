@@ -280,6 +280,9 @@ public final class EpisodeWrapper {
     if (episode.isInWatchlist() != null) {
       cv.put(EpisodeColumns.IN_WATCHLIST, episode.isInWatchlist());
     }
+    if (episode.isInCollection() != null) {
+      cv.put(EpisodeColumns.IN_COLLECTION, episode.isInCollection());
+    }
 
     return cv;
   }

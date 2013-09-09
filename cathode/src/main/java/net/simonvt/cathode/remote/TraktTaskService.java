@@ -133,7 +133,8 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
         retryDelay = 1;
       }
     }
-    String action = intent.getAction();
+    String action = null;
+    if (intent != null) action = intent.getAction();
     if (ACTION_LOGOUT.equals(action)) {
       TraktTask priorityTask = priorityQueue.peek();
       TraktTask task = queue.peek();

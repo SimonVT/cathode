@@ -35,6 +35,7 @@ public class ShowsAdapter extends CursorAdapter {
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.AIRDATE_COUNT,
       CathodeContract.Shows.UNAIRED_COUNT,
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.WATCHED_COUNT,
+      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.IN_COLLECTION_COUNT,
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.STATUS,
       CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.TITLE,
       CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.FIRST_AIRED,
