@@ -9,12 +9,18 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.remote.TraktTaskQueue;
+import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
@@ -29,6 +35,8 @@ public class TrendingShowsFragment extends AbsAdapterFragment
   private ShowDescriptionAdapter showsAdapter;
 
   private ShowsNavigationListener navigationListener;
+
+  @Inject TraktTaskQueue queue;
 
   @Override
   public void onAttach(Activity activity) {
@@ -54,6 +62,26 @@ public class TrendingShowsFragment extends AbsAdapterFragment
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     return inflater.inflate(R.layout.fragment_shows_watched, container, false);
+  }
+
+  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    inflater.inflate(R.menu.fragment_shows, menu);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.menu_refresh:
+        queue.add(new SyncTask());
+        return true;
+
+      case R.id.menu_search:
+        navigationListener.onStartShowSearch();
+        return true;
+
+      default:
+        return super.onOptionsItemSelected(item);
+    }
   }
 
   @Override
