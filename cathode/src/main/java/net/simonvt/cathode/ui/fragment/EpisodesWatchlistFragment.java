@@ -48,6 +48,10 @@ public class EpisodesWatchlistFragment extends AbsAdapterFragment
     getLoaderManager().initLoader(LOADER_WATCHLIST, null, this);
   }
 
+  @Override public String getTitle() {
+    return getResources().getString(R.string.title_shows_episode_watchlist);
+  }
+
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {

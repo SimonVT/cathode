@@ -15,6 +15,10 @@ public class WatchedMoviesFragment extends MoviesFragment {
 
   private static final String TAG = "WatchedMoviesFragment";
 
+  @Override public String getTitle() {
+    return getResources().getString(R.string.title_movies_watched);
+  }
+
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {

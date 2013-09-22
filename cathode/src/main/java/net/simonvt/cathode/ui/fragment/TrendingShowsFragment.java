@@ -58,6 +58,10 @@ public class TrendingShowsFragment extends AbsAdapterFragment
     getLoaderManager().initLoader(LOADER_TRENDING, null, this);
   }
 
+  @Override public String getTitle() {
+    return getResources().getString(R.string.title_shows_trending);
+  }
+
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
