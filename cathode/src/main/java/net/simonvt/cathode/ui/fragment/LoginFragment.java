@@ -8,6 +8,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -33,6 +34,9 @@ public class LoginFragment extends BaseFragment {
 
   private static final String TAG = "LoginFragment";
 
+  private static final String STATE_CREATE_NEW_ENABLED =
+      "net.simonvt.cathode.ui.fragment.LoginFragment.createNewEnabled";
+
   @Inject AccountService accountService;
   @Inject UserCredentials credentials;
   @Inject TraktTaskQueue queue;
@@ -50,11 +54,20 @@ public class LoginFragment extends BaseFragment {
 
   private Context appContext;
 
+  private boolean createNewEnabled;
+
   @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  public void onCreate(Bundle state) {
+    super.onCreate(state);
     CathodeApp.inject(getActivity(), this);
     appContext = getActivity().getApplicationContext();
+
+    if (state != null) createNewEnabled = state.getBoolean(STATE_CREATE_NEW_ENABLED);
+  }
+
+  @Override public void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putBoolean(STATE_CREATE_NEW_ENABLED, createNewEnabled);
   }
 
   @Override
@@ -72,14 +85,25 @@ public class LoginFragment extends BaseFragment {
       usernameInput.setText(CathodeApp.getAccount(getActivity()).name);
     }
     passwordInput.addTextChangedListener(textChanged);
+    passwordInput.setImeOptions(
+        createNewEnabled ? EditorInfo.IME_ACTION_NEXT : EditorInfo.IME_ACTION_DONE);
+    emailInput.setEnabled(createNewEnabled);
+
     createNew.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        emailInput.setEnabled(((CheckBox) view).isChecked());
+        final boolean isEnabled = ((CheckBox) view).isChecked();
+        createNewEnabled = isEnabled;
+        emailInput.setEnabled(isEnabled);
+
+        passwordInput.setImeOptions(
+            isEnabled ? EditorInfo.IME_ACTION_NEXT : EditorInfo.IME_ACTION_DONE);
+        login.setText(isEnabled ? R.string.create_account : R.string.login);
       }
     });
 
     login.setEnabled(usernameInput.length() > 0 && passwordInput.length() > 0);
+    login.setText(createNewEnabled ? R.string.create_account : R.string.login);
   }
 
   @Override
