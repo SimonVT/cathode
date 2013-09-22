@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
 import android.text.format.DateUtils;
@@ -322,7 +323,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, 0);
 
     AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-    final long runAt = retryDelay * DateUtils.MINUTE_IN_MILLIS;
+    final long runAt = SystemClock.elapsedRealtime() + retryDelay * DateUtils.MINUTE_IN_MILLIS;
     am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, runAt, pi);
 
     // A logout might have caused the failure. Just in case, don't show the notification.

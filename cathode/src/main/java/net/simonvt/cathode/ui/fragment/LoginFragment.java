@@ -1,10 +1,8 @@
 package net.simonvt.cathode.ui.fragment;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -27,7 +25,6 @@ import net.simonvt.cathode.event.LoginEvent;
 import net.simonvt.cathode.event.MessageEvent;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
-import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.util.ApiUtils;
 import net.simonvt.cathode.util.LogWrapper;
 import retrofit.RetrofitError;
@@ -71,8 +68,9 @@ public class LoginFragment extends BaseFragment {
     super.onViewCreated(view, savedInstanceState);
     login.setOnClickListener(onLoginListener);
     usernameInput.addTextChangedListener(textChanged);
-    usernameInput.setText(PreferenceManager.getDefaultSharedPreferences(getActivity())
-        .getString(Settings.USERNAME, null));
+    if (CathodeApp.accountExists(getActivity())) {
+      usernameInput.setText(CathodeApp.getAccount(getActivity()).name);
+    }
     passwordInput.addTextChangedListener(textChanged);
     createNew.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -142,20 +140,14 @@ public class LoginFragment extends BaseFragment {
         bus.post(new MessageEvent(R.string.login_success));
 
         final String username = LoginFragment.this.username;
-        final String password = ApiUtils.getSha(LoginFragment.this.password);
-
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(appContext);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString(Settings.USERNAME, username);
-        editor.putString(Settings.PASSWORD, password);
-        editor.apply();
+        final String password = LoginFragment.this.password;
 
         credentials.setCredentials(username, password);
         queue.add(new SyncTask());
 
         bus.post(new LoginEvent(LoginFragment.this.username, LoginFragment.this.password));
 
-        CathodeApp.setupAccount(appContext);
+        CathodeApp.setupAccount(appContext, username, password);
       } else {
         login.setEnabled(true);
         bus.post(new MessageEvent(R.string.create_user_failed));
@@ -204,20 +196,14 @@ public class LoginFragment extends BaseFragment {
         bus.post(new MessageEvent(R.string.login_success));
 
         final String username = LoginFragment.this.username;
-        final String password = ApiUtils.getSha(LoginFragment.this.password);
+        final String password = LoginFragment.this.password;
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(appContext);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString(Settings.USERNAME, username);
-        editor.putString(Settings.PASSWORD, password);
-        editor.apply();
-
-        credentials.setCredentials(username, password);
+        credentials.setCredentials(username, ApiUtils.getSha(password));
         queue.add(new SyncTask());
 
         bus.post(new LoginEvent(LoginFragment.this.username, LoginFragment.this.password));
 
-        CathodeApp.setupAccount(appContext);
+        CathodeApp.setupAccount(appContext, username, password);
       } else {
         login.setEnabled(true);
         credentials.setCredentials(null, null);

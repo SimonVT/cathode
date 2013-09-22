@@ -32,10 +32,6 @@ public class LogoutDialog extends DialogFragment {
             CathodeApp.inject(context, LogoutDialog.this);
 
             credentials.setCredentials(null, null);
-            PreferenceManager.getDefaultSharedPreferences(getActivity())
-                .edit()
-                .remove(Settings.PASSWORD)
-                .apply();
             ActivityWrapper.clear(context);
 
             Intent intent = new Intent(context, TraktTaskService.class);

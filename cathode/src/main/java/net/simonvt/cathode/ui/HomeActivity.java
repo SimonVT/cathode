@@ -54,11 +54,7 @@ public class HomeActivity extends BaseActivity
 
     messageBar = new MessageBar(this);
 
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-    final String username = settings.getString(Settings.USERNAME, null);
-    final String password = settings.getString(Settings.PASSWORD, null);
-
-    if ((username == null || password == null) || isLoginAction(getIntent())) {
+    if (!CathodeApp.accountExists(this) || isLoginAction(getIntent())) {
       Bundle loginState = state != null ? state.getBundle(STATE_LOGIN_CONTROLLER) : null;
       loginController = LoginController.newInstance(this);
       loginController.onCreate(loginState);

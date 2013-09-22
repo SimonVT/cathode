@@ -100,6 +100,7 @@ import net.simonvt.cathode.ui.fragment.TrendingShowsFragment;
 import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
+import net.simonvt.cathode.util.ApiUtils;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.LogWrapper;
 import net.simonvt.cathode.util.MovieSearchHandler;
@@ -137,10 +138,9 @@ public class CathodeApp extends Application {
 
   @Subscribe public void onAuthFailure(AuthFailedEvent event) {
     LogWrapper.v(TAG, "[onAuthFailure]");
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-    final String username = settings.getString(Settings.USERNAME, null);
-    final String password = settings.getString(Settings.PASSWORD, null);
-    if (password == null) return; // User has logged out, ignore.
+    if (!accountExists(this)) return; // User has logged out, ignore.
+
+    Account account = getAccount(this);
 
     Intent intent = new Intent(this, HomeActivity.class);
     intent.setAction(HomeActivity.ACTION_LOGIN);
@@ -153,7 +153,7 @@ public class CathodeApp extends Application {
         .setSmallIcon(R.drawable.ic_noti_error)
         .setTicker(this.getString(R.string.auth_failed))
         .setContentTitle(this.getString(R.string.auth_failed))
-        .setContentText(this.getString(R.string.auth_failed_desc, username))
+        .setContentText(this.getString(R.string.auth_failed_desc, account.name))
         .setContentIntent(pi)
         .setPriority(Notification.PRIORITY_HIGH);
 
@@ -169,16 +169,28 @@ public class CathodeApp extends Application {
     ((CathodeApp) context.getApplicationContext()).objectGraph.inject(object);
   }
 
-  public static Account getAccount(Context context) {
-    return new Account(context.getString(R.string.accountName),
-        context.getString(R.string.accountType));
+  public static boolean accountExists(Context context) {
+    AccountManager am = AccountManager.get(context);
+    Account[] accounts = am.getAccountsByType(context.getString(R.string.accountType));
+
+    return accounts.length > 0;
   }
 
-  public static void setupAccount(Context context) {
+  public static Account getAccount(Context context) {
+    AccountManager accountManager = AccountManager.get(context);
+    Account[] accounts = accountManager.getAccountsByType(context.getString(R.string.accountType));
+    return accounts.length > 0 ? accounts[0] : null;
+  }
+
+  public static void setupAccount(Context context, String username, String password) {
+    removeAccount(context);
+
     AccountAuthenticator.allowRemove = false;
     AccountManager manager = AccountManager.get(context);
-    Account account = getAccount(context);
-    manager.addAccountExplicitly(account, null, null);
+
+    Account account = new Account(username, context.getString(R.string.accountType));
+
+    manager.addAccountExplicitly(account, ApiUtils.getSha(password), null);
 
     ContentResolver.setIsSyncable(account, CalendarContract.AUTHORITY, 1);
     ContentResolver.setSyncAutomatically(account, CalendarContract.AUTHORITY, true);
@@ -361,9 +373,17 @@ public class CathodeApp extends Application {
 
     @Provides @Singleton UserCredentials provideCredentials() {
       SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(appContext);
-      final String username = settings.getString(Settings.USERNAME, null);
-      final String password = settings.getString(Settings.PASSWORD, null);
-      return new UserCredentials(username, password);
+
+      String name = null;
+      String password = null;
+
+      if (accountExists(appContext)) {
+        Account account = getAccount(appContext);
+        name = account.name;
+        password = AccountManager.get(appContext).getPassword(account);
+      }
+
+      return new UserCredentials(name, password);
     }
   }
 }
