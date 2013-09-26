@@ -269,6 +269,8 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + EpisodeColumns.TITLE + " TEXT NOT NULL,"
         + EpisodeColumns.OVERVIEW + " TEXT,"
         + EpisodeColumns.URL + " TEXT,"
+        + EpisodeColumns.TVDB_ID + " INTEGER,"
+        + EpisodeColumns.IMDB_ID + " STRING,"
         + EpisodeColumns.FIRST_AIRED + " INTEGER,"
         + ImageColumns.POSTER + " TEXT,"
         + ImageColumns.FANART + " TEXT,"

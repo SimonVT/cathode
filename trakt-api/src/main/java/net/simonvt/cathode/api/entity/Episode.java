@@ -8,6 +8,8 @@ public class Episode {
 
   private Integer tvdbId;
 
+  private String imdbId;
+
   private String title;
 
   private String overview;
@@ -48,6 +50,10 @@ public class Episode {
 
   public Integer getTvdbId() {
     return tvdbId;
+  }
+
+  public String getImdbId() {
+    return imdbId;
   }
 
   public String getTitle() {

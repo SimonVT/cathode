@@ -109,6 +109,8 @@ public final class CathodeContract {
     String TITLE = "episodeTitle";
     String OVERVIEW = "overview";
     String URL = "url";
+    String TVDB_ID = "tvdbId";
+    String IMDB_ID = "imdbId";
     String FIRST_AIRED = "episodeFirstAired";
     String RATING_PERCENTAGE = "ratingPercentage";
     String RATING_VOTES = "ratingVotes";

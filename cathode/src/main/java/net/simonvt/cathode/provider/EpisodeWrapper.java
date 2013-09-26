@@ -258,6 +258,8 @@ public final class EpisodeWrapper {
     cv.put(EpisodeColumns.TITLE, episode.getTitle());
     cv.put(EpisodeColumns.OVERVIEW, episode.getOverview());
     cv.put(EpisodeColumns.URL, episode.getUrl());
+    cv.put(EpisodeColumns.TVDB_ID, episode.getTvdbId());
+    cv.put(EpisodeColumns.IMDB_ID, episode.getImdbId());
     if (episode.getFirstAiredIso() != null) {
       cv.put(EpisodeColumns.FIRST_AIRED, DateUtils.getMillis(episode.getFirstAiredIso()));
     }
