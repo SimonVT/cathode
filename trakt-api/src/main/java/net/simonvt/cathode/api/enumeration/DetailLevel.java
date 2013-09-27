@@ -8,15 +8,15 @@ public enum DetailLevel {
   NORMAL(""),
   MIN("min");
 
-  private String mValue;
+  private String value;
 
   DetailLevel(String value) {
-    mValue = value;
+    this.value = value;
   }
 
   @Override
   public String toString() {
-    return mValue;
+    return value;
   }
 
   private static final Map<String, DetailLevel> STRING_MAPPING = new HashMap<String, DetailLevel>();
