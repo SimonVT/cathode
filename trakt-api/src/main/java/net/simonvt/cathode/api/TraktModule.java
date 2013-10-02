@@ -23,6 +23,7 @@ import javax.inject.Singleton;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.entity.ProgressItem;
 import net.simonvt.cathode.api.entity.Season;
+import net.simonvt.cathode.api.enumeration.CommentType;
 import net.simonvt.cathode.api.enumeration.DayOfWeek;
 import net.simonvt.cathode.api.enumeration.Gender;
 import net.simonvt.cathode.api.enumeration.ListItemType;
@@ -185,16 +186,25 @@ public class TraktModule {
         return DayOfWeek.fromValue(json.getAsString());
       }
     });
+
     builder.registerTypeAdapter(ListPrivacy.class, new JsonDeserializer<ListPrivacy>() {
       @Override public ListPrivacy deserialize(JsonElement json, Type type,
           JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         return ListPrivacy.fromValue(json.getAsString());
       }
     });
+
     builder.registerTypeAdapter(ListItemType.class, new JsonDeserializer<ListItemType>() {
       @Override public ListItemType deserialize(JsonElement json, Type type,
           JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         return ListItemType.fromValue(json.getAsString());
+      }
+    });
+
+    builder.registerTypeAdapter(CommentType.class, new JsonDeserializer<CommentType>() {
+      @Override public CommentType deserialize(JsonElement json, Type type,
+          JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+        return CommentType.fromValue(json.getAsString());
       }
     });
 

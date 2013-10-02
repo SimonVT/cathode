@@ -2,7 +2,7 @@ package net.simonvt.cathode.remote.action;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.ShowEpisodeBody;
-import net.simonvt.cathode.api.entity.TraktResponse;
+import net.simonvt.cathode.api.entity.Response;
 import net.simonvt.cathode.api.service.ShowService;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.remote.TraktTask;
@@ -36,10 +36,10 @@ public class EpisodeWatchlistTask extends TraktTask {
 
     try {
       if (inWatchlist) {
-        TraktResponse response =
+        Response response =
             showService.episodeWatchlist(new ShowEpisodeBody(tvdbId, season, episode));
       } else {
-        TraktResponse response =
+        Response response =
             showService.episodeUnwatchlist(new ShowEpisodeBody(tvdbId, season, episode));
       }
 

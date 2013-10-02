@@ -20,7 +20,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.ResponseParser;
 import net.simonvt.cathode.api.UserCredentials;
 import net.simonvt.cathode.api.body.CreateAccountBody;
-import net.simonvt.cathode.api.entity.TraktResponse;
+import net.simonvt.cathode.api.entity.Response;
 import net.simonvt.cathode.api.service.AccountService;
 import net.simonvt.cathode.event.LoginEvent;
 import net.simonvt.cathode.event.MessageEvent;
@@ -147,7 +147,7 @@ public class LoginFragment extends BaseFragment {
 
     @Override
     protected Boolean doInBackground(Void... voids) {
-      TraktResponse r = accountService.create(new CreateAccountBody(username, password, email));
+      Response r = accountService.create(new CreateAccountBody(username, password, email));
       LogWrapper.d(TAG, "Error: "
           + r.getError()
           + " - Status: "
@@ -188,7 +188,7 @@ public class LoginFragment extends BaseFragment {
     @Override
     protected Boolean doInBackground(Void... voids) {
       try {
-        TraktResponse r = accountService.test();
+        Response r = accountService.test();
         LogWrapper.d(TAG, "Error: "
             + r.getError()
             + " - Status: "
@@ -200,7 +200,7 @@ public class LoginFragment extends BaseFragment {
       } catch (RetrofitError e) {
         ResponseParser parser = new ResponseParser();
         CathodeApp.inject(appContext, parser);
-        TraktResponse r = parser.tryParse(e);
+        Response r = parser.tryParse(e);
         if (r != null) {
           LogWrapper.d(TAG, "Error: "
               + r.getError()

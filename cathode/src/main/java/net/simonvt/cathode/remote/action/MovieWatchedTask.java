@@ -2,7 +2,7 @@ package net.simonvt.cathode.remote.action;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.MoviesBody;
-import net.simonvt.cathode.api.entity.TraktResponse;
+import net.simonvt.cathode.api.entity.Response;
 import net.simonvt.cathode.api.service.MovieService;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.TraktTask;
@@ -34,9 +34,9 @@ public class MovieWatchedTask extends TraktTask {
 
     try {
       if (watched) {
-        TraktResponse response = movieService.seen(new MoviesBody(tmdbId));
+        Response response = movieService.seen(new MoviesBody(tmdbId));
       } else {
-        TraktResponse response = movieService.unseen(new MoviesBody(tmdbId));
+        Response response = movieService.unseen(new MoviesBody(tmdbId));
       }
 
       MovieWrapper.setWatched(service.getContentResolver(), tmdbId, watched);

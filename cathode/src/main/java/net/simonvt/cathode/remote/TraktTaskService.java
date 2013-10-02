@@ -25,7 +25,7 @@ import com.squareup.otto.Produce;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.api.entity.TraktResponse;
+import net.simonvt.cathode.api.entity.Response;
 import net.simonvt.cathode.api.service.AccountService;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.SyncEvent;
@@ -157,7 +157,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
         @Override public void run() {
           try {
             LogWrapper.v(TAG, "Checking authentication");
-            TraktResponse response = accountService.test();
+            Response response = accountService.test();
 
             if ("failed authentication".equals(response.getError())) {
               MAIN_HANDLER.post(new Runnable() {

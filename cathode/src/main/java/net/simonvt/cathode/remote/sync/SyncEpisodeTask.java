@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.api.ResponseParser;
 import net.simonvt.cathode.api.entity.Episode;
-import net.simonvt.cathode.api.entity.TraktResponse;
+import net.simonvt.cathode.api.entity.Response;
 import net.simonvt.cathode.api.service.ShowService;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
@@ -54,7 +54,7 @@ public class SyncEpisodeTask extends TraktTask {
       if (statusCode == 400) {
         ResponseParser parser = new ResponseParser();
         CathodeApp.inject(service, parser);
-        TraktResponse response = parser.tryParse(e);
+        Response response = parser.tryParse(e);
         if (response != null && "episode not found".equals(response.getError())) {
           postOnSuccess();
           return;

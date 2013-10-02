@@ -2,7 +2,7 @@ package net.simonvt.cathode.api.entity;
 
 import net.simonvt.cathode.api.enumeration.Status;
 
-public class TraktResponse {
+public class Response {
 
   private Status status;
 
