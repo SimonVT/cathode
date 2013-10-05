@@ -25,6 +25,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.widget.ObservableScrollView;
 import net.simonvt.cathode.widget.RemoteImageView;
@@ -39,9 +40,6 @@ public class MovieFragment extends ProgressFragment
 
   private static final String DIALOG_RATING =
       "net.simonvt.cathode.ui.fragment.MovieFragment.ratingDialog";
-
-  private static final int LOADER_MOVIE = 400;
-  private static final int LOADER_ACTORS = 401;
 
   @Inject MovieTaskScheduler movieScheduler;
   @Inject Bus bus;
@@ -129,8 +127,8 @@ public class MovieFragment extends ProgressFragment
       });
     }
 
-    getLoaderManager().initLoader(LOADER_MOVIE, null, this);
-    getLoaderManager().initLoader(LOADER_ACTORS, null, actorsLoader);
+    getLoaderManager().initLoader(BaseActivity.LOADER_MOVIE, null, this);
+    getLoaderManager().initLoader(BaseActivity.LOADER_MOVIE_ACTORS, null, actorsLoader);
 
     if (!isTablet
         && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -149,8 +147,8 @@ public class MovieFragment extends ProgressFragment
   @Override
   public void onDestroyView() {
     if (getActivity().isFinishing() || isRemoving()) {
-      getLoaderManager().destroyLoader(LOADER_MOVIE);
-      getLoaderManager().destroyLoader(LOADER_ACTORS);
+      getLoaderManager().destroyLoader(BaseActivity.LOADER_MOVIE);
+      getLoaderManager().destroyLoader(BaseActivity.LOADER_MOVIE_ACTORS);
     }
     super.onDestroyView();
   }

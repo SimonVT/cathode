@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.ui.BaseActivity;
 
 public class MovieCollectionFragment extends MoviesFragment {
 
@@ -28,7 +29,7 @@ public class MovieCollectionFragment extends MoviesFragment {
 
   @Override
   protected int getLoaderId() {
-    return 202;
+    return BaseActivity.LOADER_MOVIES_COLLECTION;
   }
 
   @Override

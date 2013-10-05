@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.provider.CathodeDatabase;
+import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 
 public class UpcomingShowsFragment extends ShowsFragment {
@@ -49,7 +50,7 @@ public class UpcomingShowsFragment extends ShowsFragment {
 
   @Override
   protected int getLoaderId() {
-    return 101;
+    return BaseActivity.LOADER_SHOWS_UPCOMING;
   }
 
   @Override

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.adapter.ShowsAdapter;
 
@@ -34,7 +35,7 @@ public class ShowsWatchlistFragment extends ShowsFragment {
 
   @Override
   protected int getLoaderId() {
-    return 102;
+    return BaseActivity.LOADER_SHOWS_WATCHLIST;
   }
 
   @Override

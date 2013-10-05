@@ -21,6 +21,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
+import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
@@ -29,8 +30,6 @@ public class TrendingShowsFragment extends AbsAdapterFragment
     implements LoaderManager.LoaderCallbacks<Cursor> {
 
   private static final String TAG = "TrendingShowsFragment";
-
-  private static final int LOADER_TRENDING = 601;
 
   private ShowDescriptionAdapter showsAdapter;
 
@@ -55,7 +54,7 @@ public class TrendingShowsFragment extends AbsAdapterFragment
 
     setHasOptionsMenu(true);
 
-    getLoaderManager().initLoader(LOADER_TRENDING, null, this);
+    getLoaderManager().initLoader(BaseActivity.LOADER_SHOWS_TRENDING, null, this);
   }
 
   @Override public String getTitle() {

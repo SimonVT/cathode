@@ -16,6 +16,31 @@ public abstract class BaseActivity extends FragmentActivity {
 
   private static final String DIALOG_ABOUT = "net.simonvt.cathode.ui.BaseActivity.aboutDialog";
 
+  public static final int LOADER_SHOWS_UPCOMING = 100;
+  public static final int LOADER_SHOWS_WATCHED = 101;
+  public static final int LOADER_SHOWS_COLLECTION = 102;
+  public static final int LOADER_SHOWS_WATCHLIST = 103;
+  public static final int LOADER_EPISODES_WATCHLIST = 104;
+  public static final int LOADER_SHOWS_TRENDING = 105;
+  public static final int LOADER_MOVIES_WATCHED = 200;
+  public static final int LOADER_MOVIES_COLLECTION = 201;
+  public static final int LOADER_MOVIES_WATCHLIST = 202;
+  public static final int LOADER_MOVIES_TRENDING = 203;
+
+  public static final int LOADER_SHOW = 300;
+  public static final int LOADER_SHOW_WATCH = 301;
+  public static final int LOADER_SHOW_COLLECT = 302;
+  public static final int LOADER_SHOW_GENRES = 303;
+  public static final int LOADER_SHOW_SEASONS = 304;
+
+  public static final int LOADER_MOVIE = 400;
+  public static final int LOADER_MOVIE_ACTORS = 401;
+
+  public static final int LOADER_SEASON = 500;
+  public static final int LOADER_SEARCH_SHOWS = 600;
+  public static final int LOADER_SEARCH_MOVIES = 700;
+  public static final int LOADER_EPISODE = 800;
+
   @Inject Bus bus;
 
   @Override protected void onCreate(Bundle savedInstanceState) {

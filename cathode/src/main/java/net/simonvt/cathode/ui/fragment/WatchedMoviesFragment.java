@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.ui.BaseActivity;
 
 public class WatchedMoviesFragment extends MoviesFragment {
 
@@ -27,7 +28,7 @@ public class WatchedMoviesFragment extends MoviesFragment {
 
   @Override
   protected int getLoaderId() {
-    return 201;
+    return BaseActivity.LOADER_MOVIES_WATCHED;
   }
 
   @Override

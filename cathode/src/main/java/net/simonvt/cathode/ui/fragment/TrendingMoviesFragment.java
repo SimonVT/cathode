@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.ui.BaseActivity;
 
 public class TrendingMoviesFragment extends MoviesFragment {
 
@@ -28,7 +29,7 @@ public class TrendingMoviesFragment extends MoviesFragment {
   }
 
   @Override protected int getLoaderId() {
-    return 215;
+    return BaseActivity.LOADER_MOVIES_TRENDING;
   }
 
   @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {

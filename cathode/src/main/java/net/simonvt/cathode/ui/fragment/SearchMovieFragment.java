@@ -24,6 +24,7 @@ import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.event.SearchFailureEvent;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.provider.CathodeDatabase;
+import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.adapter.MovieSearchAdapter;
 import net.simonvt.cathode.util.MovieSearchHandler;
@@ -36,8 +37,6 @@ public class SearchMovieFragment extends AbsAdapterFragment
   private static final String ARGS_QUERY = "net.simonvt.cathode.ui.SearchMovieFragment.query";
 
   private static final String STATE_QUERY = "net.simonvt.cathode.ui.SearchMovieFragment.query";
-
-  private static final int LOADER_SEARCH = 300;
 
   @Inject MovieSearchHandler searchHandler;
 
@@ -151,7 +150,7 @@ public class SearchMovieFragment extends AbsAdapterFragment
   @Subscribe
   public void onSearchEvent(MovieSearchResult result) {
     searchMovieIds = result.getMovieIds();
-    getLoaderManager().restartLoader(LOADER_SEARCH, null, this);
+    getLoaderManager().restartLoader(BaseActivity.LOADER_SEARCH_MOVIES, null, this);
     setEmptyText(R.string.no_results, query);
   }
 

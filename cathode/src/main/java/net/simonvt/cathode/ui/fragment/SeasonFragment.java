@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.SeasonAdapter;
@@ -38,8 +39,6 @@ public class SeasonFragment extends AbsAdapterFragment {
 
   private static final String STATE_SHOW_BANNER =
       "net.simonvt.cathode.ui.fragment.SeasonFragment.showBanner";
-
-  private static final int LOADER_EPISODES = 30;
 
   private long showId;
 
@@ -103,7 +102,7 @@ public class SeasonFragment extends AbsAdapterFragment {
     episodeAdapter = new SeasonAdapter(getActivity(), type);
     setAdapter(episodeAdapter);
 
-    getLoaderManager().initLoader(LOADER_EPISODES, null, episodesLoader);
+    getLoaderManager().initLoader(BaseActivity.LOADER_SEASON, null, episodesLoader);
 
     if (title == null) {
       CursorLoader loader =
@@ -178,7 +177,7 @@ public class SeasonFragment extends AbsAdapterFragment {
   @Override
   public void onDestroy() {
     if (getActivity().isFinishing() || isRemoving()) {
-      getLoaderManager().destroyLoader(LOADER_EPISODES);
+      getLoaderManager().destroyLoader(BaseActivity.LOADER_SEASON);
     }
     super.onDestroy();
   }

@@ -32,6 +32,7 @@ import net.simonvt.cathode.provider.WatchedLoader;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
+import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.SeasonsAdapter;
@@ -51,12 +52,6 @@ public class ShowInfoFragment extends ProgressFragment {
 
   private static final String DIALOG_RATING =
       "net.simonvt.cathode.ui.fragment.ShowInfoFragment.ratingDialog";
-
-  private static final int LOADER_SHOW = 10;
-  private static final int LOADER_GENRES = 11;
-  private static final int LOADER_WATCH = 12;
-  private static final int LOADER_COLLECT = 13;
-  private static final int LOADER_SEASONS = 14;
 
   private static final String[] SHOW_PROJECTION = new String[] {
       Shows.TITLE, Shows.YEAR, Shows.AIR_TIME, Shows.AIR_DAY, Shows.NETWORK, Shows.CERTIFICATION,
@@ -355,11 +350,11 @@ public class ShowInfoFragment extends ProgressFragment {
       });
     }
 
-    getLoaderManager().initLoader(LOADER_SHOW, null, loaderCallbacks);
-    getLoaderManager().initLoader(LOADER_GENRES, null, genreCallbacks);
-    getLoaderManager().initLoader(LOADER_WATCH, null, episodeWatchCallbacks);
-    getLoaderManager().initLoader(LOADER_COLLECT, null, episodeCollectCallbacks);
-    getLoaderManager().initLoader(LOADER_SEASONS, null, seasonsLoader);
+    getLoaderManager().initLoader(BaseActivity.LOADER_SHOW, null, showCallbacks);
+    getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_GENRES, null, genreCallbacks);
+    getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_WATCH, null, episodeWatchCallbacks);
+    getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_COLLECT, null, episodeCollectCallbacks);
+    getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_SEASONS, null, seasonsLoader);
   }
 
   @Override
@@ -381,11 +376,11 @@ public class ShowInfoFragment extends ProgressFragment {
   @Override
   public void onDestroy() {
     if (getActivity().isFinishing() || isRemoving()) {
-      getLoaderManager().destroyLoader(LOADER_SHOW);
-      getLoaderManager().destroyLoader(LOADER_GENRES);
-      getLoaderManager().destroyLoader(LOADER_WATCH);
-      getLoaderManager().destroyLoader(LOADER_COLLECT);
-      getLoaderManager().destroyLoader(LOADER_SEASONS);
+      getLoaderManager().destroyLoader(BaseActivity.LOADER_SHOW);
+      getLoaderManager().destroyLoader(BaseActivity.LOADER_SHOW_GENRES);
+      getLoaderManager().destroyLoader(BaseActivity.LOADER_SHOW_WATCH);
+      getLoaderManager().destroyLoader(BaseActivity.LOADER_SHOW_COLLECT);
+      getLoaderManager().destroyLoader(BaseActivity.LOADER_SHOW_SEASONS);
     }
     super.onDestroy();
   }
@@ -569,7 +564,7 @@ public class ShowInfoFragment extends ProgressFragment {
     }
   }
 
-  private LoaderManager.LoaderCallbacks<Cursor> loaderCallbacks =
+  private LoaderManager.LoaderCallbacks<Cursor> showCallbacks =
       new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {

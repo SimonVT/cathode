@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.provider.CathodeDatabase;
+import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.EpisodeWatchlistAdapter;
 
@@ -24,8 +25,6 @@ public class EpisodesWatchlistFragment extends AbsAdapterFragment
     implements LoaderManager.LoaderCallbacks<Cursor> {
 
   private static final String TAG = "EpisodesWatchlistFragment";
-
-  private static final int LOADER_WATCHLIST = 40;
 
   private EpisodeWatchlistAdapter adapter;
 
@@ -45,7 +44,7 @@ public class EpisodesWatchlistFragment extends AbsAdapterFragment
   public void onCreate(Bundle state) {
     super.onCreate(state);
     setHasOptionsMenu(true);
-    getLoaderManager().initLoader(LOADER_WATCHLIST, null, this);
+    getLoaderManager().initLoader(BaseActivity.LOADER_EPISODES_WATCHLIST, null, this);
   }
 
   @Override public String getTitle() {
@@ -78,7 +77,7 @@ public class EpisodesWatchlistFragment extends AbsAdapterFragment
   @Override
   public void onDestroy() {
     if (getActivity().isFinishing() || isRemoving()) {
-      getLoaderManager().destroyLoader(LOADER_WATCHLIST);
+      getLoaderManager().destroyLoader(BaseActivity.LOADER_EPISODES_WATCHLIST);
     }
     super.onDestroy();
   }

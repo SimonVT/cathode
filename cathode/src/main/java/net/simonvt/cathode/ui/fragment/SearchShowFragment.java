@@ -23,6 +23,7 @@ import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.event.SearchFailureEvent;
 import net.simonvt.cathode.event.ShowSearchResult;
 import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
@@ -36,8 +37,6 @@ public class SearchShowFragment extends AbsAdapterFragment
   private static final String ARGS_QUERY = "net.simonvt.cathode.ui.SearchShowFragment.query";
 
   private static final String STATE_QUERY = "net.simonvt.cathode.ui.SearchShowFragment.query";
-
-  private static final int LOADER_SEARCH = 200;
 
   @Inject ShowSearchHandler searchHandler;
 
@@ -141,7 +140,7 @@ public class SearchShowFragment extends AbsAdapterFragment
   @Subscribe
   public void onSearchEvent(ShowSearchResult result) {
     searchShowIds = result.getShowIds();
-    getLoaderManager().restartLoader(LOADER_SEARCH, null, this);
+    getLoaderManager().restartLoader(BaseActivity.LOADER_SEARCH_SHOWS, null, this);
     setEmptyText(R.string.no_results, query);
   }
 

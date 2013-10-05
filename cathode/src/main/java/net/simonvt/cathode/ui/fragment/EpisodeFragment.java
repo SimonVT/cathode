@@ -25,6 +25,7 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
+import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.FragmentContract;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.util.DateUtils;
@@ -43,8 +44,6 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   private static final String DIALOG_RATING =
       "net.simonvt.cathode.ui.fragment.EpisodeFragment.ratingDialog";
-
-  private static final int LOADER_EPISODE = 30;
 
   private static final int STATE_NONE = -1;
   private static final int STATE_PROGRESS_VISIBLE = 0;
@@ -111,7 +110,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     Bundle args = getArguments();
     episodeId = args.getLong(ARG_EPISODEID);
     showTitle = args.getString(ARG_SHOW_TITLE);
-    getLoaderManager().initLoader(LOADER_EPISODE, null, episodeCallbacks);
+    getLoaderManager().initLoader(BaseActivity.LOADER_EPISODE, null, episodeCallbacks);
 
     setHasOptionsMenu(true);
 
@@ -237,7 +236,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   @Override
   public void onDestroy() {
     if (getActivity().isFinishing() || isRemoving()) {
-      getLoaderManager().destroyLoader(LOADER_EPISODE);
+      getLoaderManager().destroyLoader(BaseActivity.LOADER_EPISODE);
     }
     super.onDestroy();
   }
