@@ -72,12 +72,12 @@ public class SyncShowsCollectionTask extends TraktTask {
               final long episodeId =
                   EpisodeWrapper.getEpisodeId(resolver, showId, number, episodeNumber);
               if (episodeId != -1) {
-                episodeIds.remove(episodeId);
-
-                ContentProviderOperation.Builder builder = ContentProviderOperation.newUpdate(
-                    CathodeContract.Episodes.buildFromId(episodeId));
-                builder.withValue(CathodeContract.Episodes.IN_COLLECTION, true);
-                addOp(ops, builder.build());
+                if (!episodeIds.remove(episodeId)) {
+                  ContentProviderOperation.Builder builder = ContentProviderOperation.newUpdate(
+                      CathodeContract.Episodes.buildFromId(episodeId));
+                  builder.withValue(CathodeContract.Episodes.IN_COLLECTION, true);
+                  addOp(ops, builder.build());
+                }
               } else {
                 queueTask(new SyncEpisodeTask(tvdbId, number, episodeNumber));
               }

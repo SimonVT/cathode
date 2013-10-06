@@ -43,8 +43,9 @@ public class SyncShowsWatchlistTask extends TraktTask {
         final long showId = ShowWrapper.getShowId(service.getContentResolver(), tvdbId);
 
         if (showId != -1) {
-          ShowWrapper.setIsInWatchlist(service.getContentResolver(), tvdbId, true);
-          showIds.remove(showId);
+          if (!showIds.remove(showId)) {
+            ShowWrapper.setIsInWatchlist(service.getContentResolver(), tvdbId, true);
+          }
         } else {
           queueTask(new SyncShowTask(tvdbId));
         }

@@ -44,8 +44,9 @@ public class SyncMoviesWatchlistTask extends TraktTask {
         if (movieId == -1) {
           queueTask(new SyncMovieTask(tmdbId));
         } else {
-          MovieWrapper.setIsInWatchlist(service.getContentResolver(), movieId, true);
-          movieIds.remove(movieId);
+          if (!movieIds.remove(movieId)) {
+            MovieWrapper.setIsInWatchlist(service.getContentResolver(), movieId, true);
+          }
         }
       }
 

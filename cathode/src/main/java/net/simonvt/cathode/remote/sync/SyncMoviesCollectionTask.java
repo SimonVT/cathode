@@ -45,8 +45,9 @@ public class SyncMoviesCollectionTask extends TraktTask {
         if (movieId == -1) {
           queueTask(new SyncMovieTask(tmdbId));
         } else {
-          MovieWrapper.setIsInCollection(service.getContentResolver(), movieId, true);
-          movieIds.remove(movieId);
+          if (!movieIds.remove(movieId)) {
+            MovieWrapper.setIsInCollection(service.getContentResolver(), movieId, true);
+          }
         }
       }
 

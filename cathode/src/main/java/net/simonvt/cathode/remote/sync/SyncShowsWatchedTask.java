@@ -75,14 +75,14 @@ public class SyncShowsWatchedTask extends TraktTask {
               final long episodeId =
                   EpisodeWrapper.getEpisodeId(resolver, showId, number, episodeNumber);
               if (episodeId != -1) {
-                episodeIds.remove(episodeId);
-
-                ContentProviderOperation.Builder builder = ContentProviderOperation.newUpdate(
-                    CathodeContract.Episodes.buildFromId(episodeId));
-                ContentValues cv = new ContentValues();
-                cv.put(CathodeContract.Episodes.WATCHED, true);
-                builder.withValues(cv);
-                addOp(ops, builder.build());
+                if (!episodeIds.remove(episodeId)) {
+                  ContentProviderOperation.Builder builder = ContentProviderOperation.newUpdate(
+                      CathodeContract.Episodes.buildFromId(episodeId));
+                  ContentValues cv = new ContentValues();
+                  cv.put(CathodeContract.Episodes.WATCHED, true);
+                  builder.withValues(cv);
+                  addOp(ops, builder.build());
+                }
               } else {
                 queueTask(new SyncEpisodeTask(tvdbId, number, episodeNumber));
               }

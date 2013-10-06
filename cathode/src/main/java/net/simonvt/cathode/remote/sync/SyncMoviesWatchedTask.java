@@ -27,7 +27,7 @@ public class SyncMoviesWatchedTask extends TraktTask {
       Cursor c =
           service.getContentResolver().query(CathodeContract.Movies.CONTENT_URI, new String[] {
               CathodeContract.Movies._ID,
-          }, CathodeContract.Movies.IN_COLLECTION, null, null);
+          }, CathodeContract.Movies.WATCHED, null, null);
 
       List<Long> movieIds = new ArrayList<Long>(c.getCount());
 
@@ -45,13 +45,14 @@ public class SyncMoviesWatchedTask extends TraktTask {
         if (movieId == -1) {
           queueTask(new SyncMovieTask(tmdbId));
         } else {
-          MovieWrapper.setIsInCollection(service.getContentResolver(), movieId, true);
-          movieIds.remove(movieId);
+          if (!movieIds.remove(movieId)) {
+            MovieWrapper.setWatched(service.getContentResolver(), movieId, true);
+          }
         }
       }
 
       for (Long movieId : movieIds) {
-        MovieWrapper.setIsInCollection(service.getContentResolver(), movieId, false);
+        MovieWrapper.setWatched(service.getContentResolver(), movieId, false);
       }
 
       postOnSuccess();
