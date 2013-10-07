@@ -151,10 +151,12 @@ public class PhoneController extends UiController {
             } else {
               stack.peek().setMenuVisibility(true);
             }
+            activity.setMenuVisibility(true);
             break;
 
           default:
             stack.peek().setMenuVisibility(false);
+            activity.setMenuVisibility(false);
             activity.getActionBar().setDisplayShowCustomEnabled(false);
             activity.getActionBar().setTitle(R.string.app_name);
             break;

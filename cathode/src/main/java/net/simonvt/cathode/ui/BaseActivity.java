@@ -43,19 +43,36 @@ public abstract class BaseActivity extends FragmentActivity {
 
   @Inject Bus bus;
 
+  private boolean menuVisible;
+
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     CathodeApp.inject(this);
   }
 
-  @Override public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.activity_base, menu);
+  public void setMenuVisibility(boolean visible) {
+    if (visible != menuVisible) {
+      menuVisible = visible;
+      invalidateOptionsMenu();
+    }
+  }
 
-    if (BuildConfig.DEBUG) {
-      menu.add(0, 1, 0, "AuthFailedEvent");
+  public boolean isMenuVisible() {
+    return menuVisible;
+  }
+
+  @Override public boolean onCreateOptionsMenu(Menu menu) {
+    if (menuVisible) {
+      getMenuInflater().inflate(R.menu.activity_base, menu);
+
+      if (BuildConfig.DEBUG) {
+        menu.add(0, 1, 0, "AuthFailedEvent");
+      }
+
+      return true;
     }
 
-    return true;
+    return false;
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
