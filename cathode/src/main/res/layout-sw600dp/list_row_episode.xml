@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/card_bg"
@@ -37,7 +38,7 @@
         android:singleLine="true"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="16sp"
-        android:text="Some Random Episode That is really long"/>
+        tools:text="Some Random Episode That is really long"/>
 
     <TextView
         android:id="@+id/firstAired"
@@ -47,7 +48,7 @@
         android:layout_below="@id/title"
         android:textColor="?android:attr/textColorSecondary"
         android:textSize="14sp"
-        android:text="OCT 20, 2010 (MON)"/>
+        tools:text="OCT 20, 2010 (MON)"/>
 
     <TextView
         android:id="@+id/episode"
@@ -60,7 +61,7 @@
         android:layout_alignBaseline="@id/title"
         android:textSize="14sp"
         android:textColor="?android:attr/textColorHint"
-        android:text="S10E20"/>
+        tools:text="S10E20"/>
 
     <net.simonvt.cathode.widget.OverflowView
         android:id="@+id/overflow"

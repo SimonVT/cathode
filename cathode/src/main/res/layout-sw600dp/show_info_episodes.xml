@@ -12,7 +12,7 @@
       android:id="@+id/watchTitle"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="To watch"
+      android:text="@string/to_watch"
       style="@style/Widget.InfoTitle"/>
 
   <LinearLayout
@@ -44,7 +44,7 @@
       android:id="@+id/collectTitle"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="To collect"
+      android:text="@string/to_collect"
       style="@style/Widget.InfoTitle"/>
 
   <LinearLayout

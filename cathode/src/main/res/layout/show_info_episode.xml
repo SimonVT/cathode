@@ -2,6 +2,7 @@
 <net.simonvt.cathode.widget.ForegroundDrawableRelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/episodeContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -31,7 +32,7 @@
       android:fontFamily="sans-serif-light"
       android:textColor="?android:attr/textColorPrimary"
       android:textSize="16sp"
-      android:text="Some Random Episode"/>
+      tools:text="Some Random Episode"/>
 
   <TextView
       android:id="@+id/episodeAirTime"
@@ -41,7 +42,7 @@
       android:layout_below="@id/episodeTitle"
       android:textColor="?android:attr/textColorSecondary"
       android:textSize="14sp"
-      android:text="OCT 20, 2010 (MON)"/>
+      tools:text="OCT 20, 2010 (MON)"/>
 
   <TextView
       android:id="@+id/episodeEpisode"
@@ -52,7 +53,7 @@
       android:layout_alignParentRight="true"
       android:textSize="14sp"
       android:textColor="?android:attr/textColorHint"
-      android:text="S10E20"/>
+      tools:text="S10E20"/>
 
   <net.simonvt.cathode.widget.OverflowView
       android:id="@+id/episodeOverflow"

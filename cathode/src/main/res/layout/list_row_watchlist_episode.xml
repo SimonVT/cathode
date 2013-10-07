@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/card_bg"
@@ -33,18 +34,16 @@
           android:id="@+id/title"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_toRightOf="@id/screen"
           android:textAppearance="?android:attr/textAppearanceMedium"
           android:textSize="16sp"
-          android:text="This is an episode title"/>
+          tools:text="This is an episode title"/>
 
       <TextView
           android:id="@+id/firstAired"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_below="@id/title"
-          android:layout_toRightOf="@id/screen"
-          android:text="Jan 17, 2013"/>
+          tools:text="Jan 17, 2013"/>
 
       <TextView
           android:id="@+id/episode"
@@ -52,7 +51,7 @@
           android:layout_height="wrap_content"
           android:layout_below="@id/title"
           android:layout_alignParentRight="true"
-          android:text="1x20"/>
+          tools:text="1x20"/>
     </RelativeLayout>
   </LinearLayout>
 

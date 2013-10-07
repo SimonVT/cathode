@@ -22,7 +22,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="To watch"
+        android:text="@string/to_watch"
         style="@style/Widget.InfoTitle"/>
 
     <TextView
@@ -30,7 +30,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="To collect"
+        android:text="@string/to_collect"
         style="@style/Widget.InfoTitle"/>
   </LinearLayout>
 

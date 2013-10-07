@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <net.simonvt.cathode.widget.HiddenPaneLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/hiddenPaneLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -37,7 +38,7 @@
                 android:id="@+id/overviewTitle"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Overview"
+                android:text="@string/overview"
                 style="@style/Widget.InfoTitle"/>
 
             <TextView
@@ -46,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:text="From the delightfully twisted creative minds behind Family Guy comes American Dad, the animated tour de force featuring CIA operative Stan Smith, his outrageous family, and Roger, the alcoholic extra-terrestrial who lives with them! Whether it's rigging elections, erasing memories, chasing sleazy strip clubs, or staging bum fights, it's all in a day's work for Stan."
+                tools:text="From the delightfully twisted creative minds behind Family Guy comes American Dad, the animated tour de force featuring CIA operative Stan Smith, his outrageous family, and Roger, the alcoholic extra-terrestrial who lives with them! Whether it's rigging elections, erasing memories, chasing sleazy strip clubs, or staging bum fights, it's all in a day's work for Stan."
                 style="@style/Widget.InfoText"/>
 
             <View
@@ -59,7 +60,7 @@
                 android:id="@+id/genresTitle"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Genres"
+                android:text="@string/genres"
                 style="@style/Widget.InfoTitle"/>
 
             <TextView
@@ -68,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:text="Animation, Comedy"
+                tools:text="Animation, Comedy"
                 style="@style/Widget.InfoText"/>
 
             <View

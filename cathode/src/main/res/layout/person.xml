@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="150dp"
     android:layout_height="wrap_content"
     android:layout_marginLeft="4dp"
@@ -18,14 +19,14 @@
       android:id="@+id/name"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="Some Guy"
+      tools:text="Some Guy"
       style="@style/Widget.Person"/>
 
   <TextView
       android:id="@+id/job"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="Actor"
+      tools:text="Actor"
       style="@style/Widget.Job"/>
 
 </LinearLayout>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/header_bg"
@@ -30,14 +31,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Sunday 10:00pm, AMC"
-        android:textColor="?android:attr/textColorPrimaryInverse"/>
+        android:textColor="?android:attr/textColorPrimaryInverse"
+        tools:text="Sunday 10:00pm, AMC"/>
 
     <TextView
         android:id="@+id/certification"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TV-MA"
-        android:textColor="?android:attr/textColorPrimaryInverse"/>
+        android:textColor="?android:attr/textColorPrimaryInverse"
+        tools:text="TV-MA"/>
   </LinearLayout>
 </FrameLayout>

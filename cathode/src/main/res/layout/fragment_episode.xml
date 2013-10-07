@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="16dp">
@@ -43,7 +44,7 @@
               android:layout_height="wrap_content"
               android:layout_gravity="right"
               android:textColor="?android:attr/textColorPrimaryInverse"
-              android:text="2010"/>
+              tools:text="2010"/>
         </LinearLayout>
       </FrameLayout>
 
@@ -72,7 +73,7 @@
               android:layout_marginTop="8dp"
               android:textAppearance="?android:attr/textAppearanceMedium"
               android:fontFamily="sans-light"
-              android:text="This is a show name"/>
+              tools:text="This is a show name"/>
 
           <TextView
               android:id="@+id/overview"
@@ -81,7 +82,7 @@
               android:layout_marginLeft="8dp"
               android:layout_marginRight="8dp"
               android:layout_marginTop="8dp"
-              android:text="Text goes here"
+              tools:text="Text goes here"
               style="@style/Widget.InfoText"/>
         </LinearLayout>
 
