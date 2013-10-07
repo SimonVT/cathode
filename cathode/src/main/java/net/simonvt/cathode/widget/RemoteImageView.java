@@ -116,8 +116,7 @@ public class RemoteImageView extends View implements Target {
     }
   }
 
-  @Override
-  public void onSuccess(Bitmap bitmap) {
+  @Override public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom loadedFrom) {
     image = bitmap;
     animating = true;
     startTimeMillis = 0;
@@ -125,9 +124,11 @@ public class RemoteImageView extends View implements Target {
     invalidate();
   }
 
-  @Override
-  public void onError() {
-    LogWrapper.d(TAG, "[onError]");
+  @Override public void onBitmapFailed(Drawable drawable) {
+    LogWrapper.d(TAG, "[onBitmapFailed]");
+  }
+
+  @Override public void onPrepareLoad(Drawable drawable) {
   }
 
   @Override
