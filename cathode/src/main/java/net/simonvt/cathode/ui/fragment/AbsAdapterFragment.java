@@ -66,6 +66,7 @@ public abstract class AbsAdapterFragment extends BaseFragment {
     adapterView.setOnItemClickListener(onClickListener);
     if (attachLongClickListener) adapterView.setOnItemLongClickListener(onLongClickListener);
     adapterView.setEmptyView(empty);
+    if (adapter != null) adapterView.setAdapter(adapter);
 
     view.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
   }
@@ -80,7 +81,6 @@ public abstract class AbsAdapterFragment extends BaseFragment {
             progressContainer.setVisibility(View.VISIBLE);
             currentState = STATE_PROGRESS_VISIBLE;
           } else {
-            adapterView.setAdapter(adapter);
             currentState = STATE_LIST_VISIBLE;
             listContainer.setVisibility(View.VISIBLE);
             progressContainer.setVisibility(View.GONE);
