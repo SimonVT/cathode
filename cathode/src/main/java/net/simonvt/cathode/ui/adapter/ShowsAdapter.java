@@ -32,8 +32,7 @@ public class ShowsAdapter extends CursorAdapter {
       CathodeDatabase.Tables.SHOWS + "." + BaseColumns._ID,
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.TITLE,
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.POSTER,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.AIRDATE_COUNT,
-      CathodeContract.Shows.UNAIRED_COUNT,
+      CathodeContract.Shows.AIRED_COUNT,
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.WATCHED_COUNT,
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.IN_COLLECTION_COUNT,
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.STATUS,
@@ -78,10 +77,8 @@ public class ShowsAdapter extends CursorAdapter {
     final String showTitle = cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.TITLE));
     final String showStatus = cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.STATUS));
 
-    final int showAirdateCount =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.AIRDATE_COUNT));
-    final int showUnairedCount =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.UNAIRED_COUNT));
+    final int showAiredCount =
+        cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.AIRED_COUNT));
     int showTypeCount = 0;
     switch (libraryType) {
       case WATCHED:
@@ -94,8 +91,6 @@ public class ShowsAdapter extends CursorAdapter {
             cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.IN_COLLECTION_COUNT));
         break;
     }
-
-    final int showAiredCount = showAirdateCount - showUnairedCount;
 
     final String episodeTitle =
         cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE));
