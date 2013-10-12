@@ -16,8 +16,6 @@ public class SyncTask extends TraktTask {
 
   @Override
   protected void doTask() {
-    LogWrapper.v(TAG, "[doTask]");
-
     try {
       queueTask(new SyncUpdatedShows());
       queueTask(new SyncUpdatedMovies());

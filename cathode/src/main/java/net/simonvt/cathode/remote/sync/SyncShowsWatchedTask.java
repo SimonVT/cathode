@@ -38,8 +38,6 @@ public class SyncShowsWatchedTask extends TraktTask {
 
   @Override
   protected void doTask() {
-    LogWrapper.v(TAG, "[doTask]");
-
     try {
       LogWrapper.i(TAG, "Sync watched status");
       ContentResolver resolver = service.getContentResolver();

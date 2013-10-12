@@ -17,8 +17,6 @@ public class SyncMoviesTask extends TraktTask {
 
   @Override
   protected void doTask() {
-    LogWrapper.v(TAG, "[doTask]");
-
     try {
       List<Movie> movies = userService.moviesAll(DetailLevel.MIN);
       for (Movie movie : movies) {

@@ -37,8 +37,6 @@ public class SyncShowsCollectionTask extends TraktTask {
 
   @Override
   protected void doTask() {
-    LogWrapper.v(TAG, "[doTask]");
-
     try {
       ContentResolver resolver = service.getContentResolver();
       List<TvShow> shows = userService.libraryShowsCollection(DetailLevel.MIN);

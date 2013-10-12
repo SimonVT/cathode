@@ -29,6 +29,7 @@ public abstract class TraktTask implements Task<TraktTaskService> {
     new Thread(new Runnable() {
       @Override
       public void run() {
+        LogWrapper.v(TraktTask.this.getClass().getSimpleName(), "[doTask]");
         doTask();
       }
     }).start();

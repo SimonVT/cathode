@@ -23,8 +23,6 @@ public class SyncEpisodeWatchlistTask extends TraktTask {
 
   @Override
   protected void doTask() {
-    LogWrapper.v(TAG, "[doTask]");
-
     try {
       Cursor c =
           service.getContentResolver().query(CathodeContract.Episodes.WATCHLIST_URI, new String[] {

@@ -21,8 +21,6 @@ public class SyncMoviesWatchedTask extends TraktTask {
 
   @Override
   protected void doTask() {
-    LogWrapper.v(TAG, "[doTask]");
-
     try {
       Cursor c =
           service.getContentResolver().query(CathodeContract.Movies.CONTENT_URI, new String[] {

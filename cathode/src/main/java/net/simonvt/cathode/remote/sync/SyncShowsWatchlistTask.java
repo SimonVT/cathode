@@ -21,8 +21,6 @@ public class SyncShowsWatchlistTask extends TraktTask {
 
   @Override
   protected void doTask() {
-    LogWrapper.v(TAG, "[doTask]");
-
     try {
       Cursor c =
           service.getContentResolver().query(CathodeContract.Shows.SHOWS_WATCHLIST, new String[] {

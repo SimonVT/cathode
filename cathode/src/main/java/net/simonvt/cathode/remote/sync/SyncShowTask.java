@@ -28,8 +28,6 @@ public class SyncShowTask extends TraktTask {
 
   @Override
   protected void doTask() {
-    LogWrapper.v(TAG, "[doTask]");
-
     try {
       TvShow show = showService.summary(tvdbId, DetailLevel.EXTENDED);
       final long showId = ShowWrapper.updateOrInsertShow(service.getContentResolver(), show);

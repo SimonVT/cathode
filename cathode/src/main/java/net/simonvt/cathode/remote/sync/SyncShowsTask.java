@@ -18,8 +18,6 @@ public class SyncShowsTask extends TraktTask {
 
   @Override
   protected void doTask() {
-    LogWrapper.v(TAG, "[doTask]");
-
     try {
       List<TvShow> shows = userService.libraryShowsAll(DetailLevel.MIN);
 

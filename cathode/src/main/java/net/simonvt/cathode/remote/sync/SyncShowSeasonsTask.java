@@ -24,8 +24,6 @@ public class SyncShowSeasonsTask extends TraktTask {
 
   @Override
   protected void doTask() {
-    LogWrapper.v(TAG, "[doTask]");
-
     try {
       final long showId = ShowWrapper.getShowId(service.getContentResolver(), tvdbId);
 
