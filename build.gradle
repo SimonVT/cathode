@@ -46,6 +46,6 @@ ext.libraries = [
     retrofit: 'com.squareup.retrofit:retrofit:1.2.2',
     tape: 'com.squareup:tape:1.1.0',
 
-    butterknife: 'com.jakewharton:butterknife:2.0.1',
+    butterknife: 'com.jakewharton:butterknife:3.0.0',
 
     dashclockApi: 'com.google.android.apps.dashclock:dashclock-api:2.0.0']

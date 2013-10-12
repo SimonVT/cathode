@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import butterknife.InjectView;
+import butterknife.Optional;
 import butterknife.Views;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
@@ -78,7 +79,6 @@ public class ShowInfoFragment extends ProgressFragment {
   @InjectView(R.id.seasons) ListView seasons;
   private SeasonsAdapter seasonsAdapter;
 
-  @InjectView(R.id.title) TextView title;
   @InjectView(R.id.ratingContainer) View ratingContainer;
   @InjectView(R.id.rating) RatingBar rating;
   @InjectView(R.id.allRatings) TextView allRatings;
@@ -92,7 +92,6 @@ public class ShowInfoFragment extends ProgressFragment {
   @InjectView(R.id.inCollection) TextView collection;
   @InjectView(R.id.inWatchlist) TextView watchlist;
 
-  @InjectView(R.id.episodesTitle) View episodesTitle;
   @InjectView(R.id.episodes) LinearLayout episodes;
 
   @InjectView(R.id.watchTitle) View watchTitle;
@@ -102,7 +101,7 @@ public class ShowInfoFragment extends ProgressFragment {
   private EpisodeHolder toWatchHolder;
   private long toWatchId = -1;
 
-  @InjectView(R.id.lastWatched) View lastWatched;
+  @InjectView(R.id.lastWatched) @Optional View lastWatched;
   private EpisodeHolder lastWatchedHolder;
   private long lastWatchedId = -1;
 
@@ -110,13 +109,12 @@ public class ShowInfoFragment extends ProgressFragment {
   private EpisodeHolder toCollectHolder;
   private long toCollectId = -1;
 
-  @InjectView(R.id.lastCollected) View lastCollected;
+  @InjectView(R.id.lastCollected) @Optional View lastCollected;
   private EpisodeHolder lastCollectedHolder;
   private long lastCollectedId = -1;
 
   static class EpisodeHolder {
 
-    @InjectView(R.id.episode) TextView episode;
     @InjectView(R.id.episodeBanner) RemoteImageView episodeBanner;
     @InjectView(R.id.episodeTitle) TextView episodeTitle;
     @InjectView(R.id.episodeAirTime) TextView episodeAirTime;
@@ -216,37 +214,35 @@ public class ShowInfoFragment extends ProgressFragment {
       }
     });
 
-    if (toWatch != null) {
-      toWatchHolder = new EpisodeHolder(toWatch);
-      toWatch.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-          if (toWatchId != -1) navigationCallbacks.onDisplayEpisode(toWatchId, showTitle);
-        }
-      });
+    toWatchHolder = new EpisodeHolder(toWatch);
+    toWatch.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        if (toWatchId != -1) navigationCallbacks.onDisplayEpisode(toWatchId, showTitle);
+      }
+    });
 
-      toWatchHolder.episodeOverflow.addItem(R.id.action_watched, R.string.action_watched);
-      toWatchHolder.episodeOverflow.setListener(new OverflowView.OverflowActionListener() {
-        @Override
-        public void onPopupShown() {
-        }
+    toWatchHolder.episodeOverflow.addItem(R.id.action_watched, R.string.action_watched);
+    toWatchHolder.episodeOverflow.setListener(new OverflowView.OverflowActionListener() {
+      @Override
+      public void onPopupShown() {
+      }
 
-        @Override
-        public void onPopupDismissed() {
-        }
+      @Override
+      public void onPopupDismissed() {
+      }
 
-        @Override
-        public void onActionSelected(int action) {
-          switch (action) {
-            case R.id.action_watched:
-              if (toWatchId != -1) {
-                episodeScheduler.setWatched(toWatchId, true);
-              }
-              break;
-          }
+      @Override
+      public void onActionSelected(int action) {
+        switch (action) {
+          case R.id.action_watched:
+            if (toWatchId != -1) {
+              episodeScheduler.setWatched(toWatchId, true);
+            }
+            break;
         }
-      });
-    }
+      }
+    });
 
     if (lastWatched != null) {
       lastWatchedHolder = new EpisodeHolder(lastWatched);
@@ -282,38 +278,36 @@ public class ShowInfoFragment extends ProgressFragment {
       });
     }
 
-    if (toCollect != null) {
-      toCollectHolder = new EpisodeHolder(toCollect);
-      toCollect.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-          if (toCollectId != -1) navigationCallbacks.onDisplayEpisode(toCollectId, showTitle);
-        }
-      });
+    toCollectHolder = new EpisodeHolder(toCollect);
+    toCollect.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        if (toCollectId != -1) navigationCallbacks.onDisplayEpisode(toCollectId, showTitle);
+      }
+    });
 
-      toCollectHolder.episodeOverflow
-          .addItem(R.id.action_collection_add, R.string.action_collection_add);
-      toCollectHolder.episodeOverflow.setListener(new OverflowView.OverflowActionListener() {
-        @Override
-        public void onPopupShown() {
-        }
+    toCollectHolder.episodeOverflow
+        .addItem(R.id.action_collection_add, R.string.action_collection_add);
+    toCollectHolder.episodeOverflow.setListener(new OverflowView.OverflowActionListener() {
+      @Override
+      public void onPopupShown() {
+      }
 
-        @Override
-        public void onPopupDismissed() {
-        }
+      @Override
+      public void onPopupDismissed() {
+      }
 
-        @Override
-        public void onActionSelected(int action) {
-          switch (action) {
-            case R.id.action_collection_add:
-              if (toCollectId != -1) {
-                episodeScheduler.setIsInCollection(toCollectId, true);
-              }
-              break;
-          }
+      @Override
+      public void onActionSelected(int action) {
+        switch (action) {
+          case R.id.action_collection_add:
+            if (toCollectId != -1) {
+              episodeScheduler.setIsInCollection(toCollectId, true);
+            }
+            break;
         }
-      });
-    }
+      }
+    });
 
     if (lastCollected != null) {
       lastCollectedHolder = new EpisodeHolder(lastCollected);
@@ -416,11 +410,8 @@ public class ShowInfoFragment extends ProgressFragment {
     collection.setVisibility(inCollectionCount > 0 ? View.VISIBLE : View.GONE);
     watchlist.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
 
-    // title.setText(title);
-    // year.setText(String.valueOf(year));
     this.airTime.setText(airDay + " " + airTime + ", " + network);
     this.certification.setText(certification);
-    // rating.setText(String.valueOf(rating));
     this.overview.setText(overview);
 
     setContentVisible(true);

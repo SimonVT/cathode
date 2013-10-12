@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import butterknife.InjectView;
+import butterknife.Optional;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -46,7 +47,7 @@ public class MovieFragment extends ProgressFragment
 
   @InjectView(R.id.contentContainer) ObservableScrollView scrollView;
 
-  @InjectView(R.id.year) TextView year;
+  @InjectView(R.id.year) @Optional TextView year;
   @InjectView(R.id.banner) RemoteImageView banner;
   @InjectView(R.id.overview) TextView overview;
   @InjectView(R.id.isWatched) TextView isWatched;

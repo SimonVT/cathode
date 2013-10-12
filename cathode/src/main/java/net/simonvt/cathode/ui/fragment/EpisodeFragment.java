@@ -19,6 +19,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import butterknife.InjectView;
+import butterknife.Optional;
 import butterknife.Views;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -70,7 +71,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   @InjectView(R.id.progressContainer) View progress;
 
-  @InjectView(R.id.overflow) OverflowView overflow;
+  @InjectView(R.id.overflow) @Optional OverflowView overflow;
 
   private boolean animating;
 
