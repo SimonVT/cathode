@@ -171,9 +171,7 @@ public class ShowsAdapter extends CursorAdapter {
     vh.overflow.removeItems();
     switch (libraryType) {
       case WATCHLIST:
-        if (showAiredCount - showTypeCount > 0) {
-          vh.overflow.addItem(R.id.action_watchlist_remove, R.string.action_watchlist_remove);
-        }
+        vh.overflow.addItem(R.id.action_watchlist_remove, R.string.action_watchlist_remove);
 
       case WATCHED:
         if (showAiredCount - showTypeCount > 0) {
