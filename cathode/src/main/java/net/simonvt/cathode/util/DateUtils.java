@@ -44,6 +44,66 @@ public final class DateUtils {
     return 0L;
   }
 
+  /**
+   * Calculate time until the timestamp string returned by
+   * {@link #millisToString(android.content.Context, long, boolean)} should be updated.
+   */
+  public static long timeUntilUpdate(long millis) {
+    Calendar rightNow = Calendar.getInstance();
+    final long rightNowMillis = rightNow.getTimeInMillis();
+
+    Calendar nextYear = Calendar.getInstance();
+    final int year = rightNow.get(Calendar.YEAR);
+    nextYear.set(year + 1, Calendar.JANUARY, 1, 0, 0, 0);
+    final long nextYearMillis = nextYear.getTimeInMillis();
+
+    // If show aired more than 24 hours ago, update next year
+    if (millis < rightNowMillis - 24 * HOUR_IN_MILLIS) {
+      return nextYearMillis - rightNowMillis;
+    }
+
+    // If millis is next year
+    if (millis > nextYearMillis) {
+      if (millis - 24 * HOUR_IN_MILLIS < nextYearMillis) {
+        return millis - 24 * HOUR_IN_MILLIS - rightNowMillis;
+      } else {
+        return nextYearMillis - rightNowMillis;
+      }
+    }
+
+    // If millis is in more than 24 hours
+    if (millis > rightNowMillis + 24 * HOUR_IN_MILLIS) {
+      return millis - 24 * HOUR_IN_MILLIS - rightNowMillis;
+    }
+
+    // If millis is within next hour
+    if (millis <= rightNowMillis + HOUR_IN_MILLIS && millis >= rightNowMillis) {
+      final long nextMin = millis % MINUTE_IN_MILLIS;
+      return nextMin > 0 ? nextMin : MINUTE_IN_MILLIS;
+    }
+
+    // If millis was within last hour
+    if (millis < rightNowMillis && millis >= rightNowMillis - HOUR_IN_MILLIS) {
+      final long lastMin = millis % MINUTE_IN_MILLIS;
+      return lastMin > 0 ? MINUTE_IN_MILLIS - lastMin : MINUTE_IN_MILLIS;
+    }
+
+    // If millis is within next 24 hours
+    if (millis > rightNowMillis && millis <= rightNowMillis + 24 * HOUR_IN_MILLIS) {
+      final long nextHour = millis % HOUR_IN_MILLIS;
+      return nextHour > 0 ? nextHour : HOUR_IN_MILLIS;
+    }
+
+    // If millis was within last 24 hours
+    if (millis < rightNowMillis && millis >= rightNowMillis - 24 * HOUR_IN_MILLIS) {
+      final long lastHour = millis % HOUR_IN_MILLIS;
+      return lastHour > 0 ? HOUR_IN_MILLIS - lastHour : HOUR_IN_MILLIS;
+    }
+
+    throw new RuntimeException(
+        "Unable to get update time for millis " + millis + " at time " + rightNowMillis);
+  }
+
   /** Formats milliseconds (UTC) as a String. */
   public static String millisToString(Context context, long millis, boolean extended) {
     if (millis < android.text.format.DateUtils.YEAR_IN_MILLIS) {

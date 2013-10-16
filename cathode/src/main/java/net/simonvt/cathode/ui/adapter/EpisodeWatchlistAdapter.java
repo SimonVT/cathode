@@ -17,6 +17,7 @@ import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
+import net.simonvt.cathode.widget.TimeStamp;
 
 public class EpisodeWatchlistAdapter extends CursorAdapter {
 
@@ -59,7 +60,7 @@ public class EpisodeWatchlistAdapter extends CursorAdapter {
 
     vh.screen.setImage(posterUrl);
     vh.title.setText(title);
-    vh.firstAired.setText(DateUtils.millisToString(context, firstAired, false));
+    vh.firstAired.setTimeInMillis(firstAired);
     vh.episode.setText(season + "x" + episode);
     vh.overflow.setListener(new OverflowView.OverflowActionListener() {
       @Override
@@ -90,7 +91,7 @@ public class EpisodeWatchlistAdapter extends CursorAdapter {
 
     @InjectView(R.id.screen) RemoteImageView screen;
     @InjectView(R.id.title) TextView title;
-    @InjectView(R.id.firstAired) TextView firstAired;
+    @InjectView(R.id.firstAired) TimeStamp firstAired;
     @InjectView(R.id.episode) TextView episode;
     @InjectView(R.id.overflow) OverflowView overflow;
 

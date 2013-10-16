@@ -38,7 +38,7 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp">
 
-          <TextView
+          <net.simonvt.cathode.widget.TimeStamp
               android:id="@+id/firstAired"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"

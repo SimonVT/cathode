@@ -19,6 +19,7 @@ import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.widget.CheckMark;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
+import net.simonvt.cathode.widget.TimeStamp;
 
 public class SeasonAdapter extends CursorAdapter {
 
@@ -72,7 +73,8 @@ public class SeasonAdapter extends CursorAdapter {
 
     vh.title.setText(title);
 
-    vh.firstAired.setText(DateUtils.millisToString(context, firstAired, true));
+    vh.firstAired.setTimeInMillis(firstAired);
+    vh.firstAired.setExtended(true);
     vh.number.setText(String.valueOf(episode));
 
     vh.screen.setImage(screen);
@@ -163,7 +165,7 @@ public class SeasonAdapter extends CursorAdapter {
 
     @InjectView(R.id.infoParent) ViewGroup infoParent;
     @InjectView(R.id.title) TextView title;
-    @InjectView(R.id.firstAired) TextView firstAired;
+    @InjectView(R.id.firstAired) TimeStamp firstAired;
     @InjectView(R.id.episode) TextView number;
     @InjectView(R.id.overflow) OverflowView overflow;
     @InjectView(R.id.checkbox) CheckMark checkbox;

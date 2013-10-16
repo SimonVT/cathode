@@ -23,6 +23,7 @@ import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.LogWrapper;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
+import net.simonvt.cathode.widget.TimeStamp;
 
 public class ShowsAdapter extends CursorAdapter {
 
@@ -116,7 +117,7 @@ public class ShowsAdapter extends CursorAdapter {
     } else {
       episodeText = "Next: " + episodeSeasonNumber + "x" + episodeNumber + " " + episodeTitle;
       vh.firstAired.setVisibility(View.VISIBLE);
-      vh.firstAired.setText(DateUtils.millisToString(mContext, episodeFirstAired, false));
+      vh.firstAired.setTimeInMillis(episodeFirstAired);
     }
     vh.nextEpisode.setText(episodeText);
     vh.nextEpisode.setEnabled(episodeTitle != null);
@@ -212,7 +213,7 @@ public class ShowsAdapter extends CursorAdapter {
     @InjectView(R.id.watched) TextView watched;
     @InjectView(R.id.progress) ProgressBar progressBar;
     @InjectView(R.id.nextEpisode) TextView nextEpisode;
-    @InjectView(R.id.firstAired) TextView firstAired;
+    @InjectView(R.id.firstAired) TimeStamp firstAired;
     @InjectView(R.id.overflow) OverflowView overflow;
     @InjectView(R.id.poster) RemoteImageView poster;
 
