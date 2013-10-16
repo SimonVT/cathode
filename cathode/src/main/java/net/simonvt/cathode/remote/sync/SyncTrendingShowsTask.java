@@ -40,7 +40,7 @@ public class SyncTrendingShowsTask extends TraktTask {
         ops.add(op);
       }
 
-      for (int i = 0, count = Math.min(shows.size(), 50); i < count; i++) {
+      for (int i = 0, count = Math.min(shows.size(), 25); i < count; i++) {
         TvShow show = shows.get(i);
         long showId = ShowWrapper.getShowId(resolver, show);
         if (showId == -1L) {

@@ -41,7 +41,7 @@ public class SyncTrendingMoviesTask extends TraktTask {
         ops.add(op);
       }
 
-      for (int i = 0, count = Math.min(movies.size(), 50); i < count; i++) {
+      for (int i = 0, count = Math.min(movies.size(), 25); i < count; i++) {
         Movie movie = movies.get(i);
         long movieId = MovieWrapper.getMovieId(resolver, movie.getTmdbId());
         if (movieId == -1L) {
