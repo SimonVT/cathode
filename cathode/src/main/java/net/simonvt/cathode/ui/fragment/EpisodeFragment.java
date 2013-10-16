@@ -21,9 +21,11 @@ import android.widget.TextView;
 import butterknife.InjectView;
 import butterknife.Optional;
 import butterknife.Views;
+import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.ui.BaseActivity;
@@ -53,6 +55,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   private long episodeId;
 
   @Inject EpisodeTaskScheduler episodeScheduler;
+  @Inject Bus bus;
 
   @InjectView(R.id.title) TextView title;
   @InjectView(R.id.screen) RemoteImageView screen;
@@ -81,6 +84,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   private int pendingStateChange = STATE_NONE;
 
   private String showTitle;
+  private int season = -1;
 
   private int currentRating;
 
@@ -127,7 +131,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   @Override
   public String getSubtitle() {
-    return null;
+    return season == -1 ? null : getString(R.string.season_x, season);
   }
 
   @Override
@@ -410,6 +414,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       screen.setImage(cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.SCREEN)));
       firstAired.setText(DateUtils.millisToString(getActivity(),
           cursor.getLong(cursor.getColumnIndex(CathodeContract.Episodes.FIRST_AIRED)), true));
+      season = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.SEASON));
 
       watched = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.WATCHED)) == 1;
       collected = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.IN_COLLECTION)) == 1;
@@ -426,6 +431,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       allRatings.setText(ratingAll + "%");
 
       setContentVisible(true);
+      bus.post(new OnTitleChangedEvent());
       getActivity().invalidateOptionsMenu();
 
       if (getShowsDialog()) populateOverflow();
@@ -433,10 +439,11 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   }
 
   private static final String[] EPISODE_PROJECTION = new String[] {
-      CathodeContract.Episodes.TITLE, CathodeContract.Episodes.SCREEN, CathodeContract.Episodes.OVERVIEW,
-      CathodeContract.Episodes.FIRST_AIRED, CathodeContract.Episodes.WATCHED,
-      CathodeContract.Episodes.IN_COLLECTION, CathodeContract.Episodes.IN_WATCHLIST,
-      CathodeContract.Episodes.RATING, CathodeContract.Episodes.RATING_PERCENTAGE,
+      CathodeContract.Episodes.TITLE, CathodeContract.Episodes.SCREEN,
+      CathodeContract.Episodes.OVERVIEW, CathodeContract.Episodes.FIRST_AIRED,
+      CathodeContract.Episodes.WATCHED, CathodeContract.Episodes.IN_COLLECTION,
+      CathodeContract.Episodes.IN_WATCHLIST, CathodeContract.Episodes.RATING,
+      CathodeContract.Episodes.RATING_PERCENTAGE, CathodeContract.Episodes.SEASON
   };
 
   private LoaderManager.LoaderCallbacks<Cursor> episodeCallbacks =
