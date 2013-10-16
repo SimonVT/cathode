@@ -45,7 +45,8 @@ public class SeasonAdapter extends CursorAdapter {
     View v = LayoutInflater.from(context).inflate(R.layout.list_row_episode, parent, false);
 
     ViewHolder vh = new ViewHolder(v);
-    vh.checkbox.setType(type);
+    vh.checkbox
+        .setType(type == LibraryType.COLLECTION ? LibraryType.COLLECTION : LibraryType.WATCHED);
     v.setTag(vh);
 
     return v;
