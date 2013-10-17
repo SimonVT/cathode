@@ -102,6 +102,7 @@ import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
 import net.simonvt.cathode.util.ApiUtils;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.util.ErrorReporting;
 import net.simonvt.cathode.util.LogWrapper;
 import net.simonvt.cathode.util.MovieSearchHandler;
 import net.simonvt.cathode.util.ShowSearchHandler;
@@ -128,6 +129,8 @@ public class CathodeApp extends Application {
   @Override
   public void onCreate() {
     super.onCreate();
+    ErrorReporting.init(this);
+
     objectGraph = ObjectGraph.create(new AppModule(this));
     objectGraph.plus(new TraktModule());
 

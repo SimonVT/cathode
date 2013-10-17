@@ -1,4 +1,5 @@
 apply plugin: 'android'
+apply plugin: 'crashlytics'
 
 dependencies {
   compile project(':trakt-api')
@@ -19,6 +20,8 @@ dependencies {
   compile parent.ext.libraries.butterknife
 
   compile parent.ext.libraries.dashclockApi
+
+  compile parent.ext.libraries.crashlytics
 }
 
 android {
