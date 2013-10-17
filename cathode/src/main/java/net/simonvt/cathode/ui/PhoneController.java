@@ -27,7 +27,7 @@ import net.simonvt.cathode.ui.fragment.NavigationFragment;
 import net.simonvt.cathode.ui.fragment.SearchMovieFragment;
 import net.simonvt.cathode.ui.fragment.SearchShowFragment;
 import net.simonvt.cathode.ui.fragment.SeasonFragment;
-import net.simonvt.cathode.ui.fragment.ShowInfoFragment;
+import net.simonvt.cathode.ui.fragment.ShowFragment;
 import net.simonvt.cathode.ui.fragment.ShowsCollectionFragment;
 import net.simonvt.cathode.ui.fragment.ShowsWatchlistFragment;
 import net.simonvt.cathode.ui.fragment.TrendingMoviesFragment;
@@ -411,8 +411,8 @@ public class PhoneController extends UiController {
 
   @Override
   public void onDisplayShow(long showId, String title, LibraryType type) {
-    stack.push(ShowInfoFragment.class, FRAGMENT_SHOW,
-        ShowInfoFragment.getArgs(showId, title, type));
+    stack.push(ShowFragment.class, FRAGMENT_SHOW,
+        ShowFragment.getArgs(showId, title, type));
     stack.commit();
   }
 

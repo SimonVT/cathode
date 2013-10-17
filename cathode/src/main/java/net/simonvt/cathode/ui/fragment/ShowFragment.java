@@ -43,16 +43,16 @@ import net.simonvt.cathode.widget.HiddenPaneLayout;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
-public class ShowInfoFragment extends ProgressFragment {
+public class ShowFragment extends ProgressFragment {
 
-  private static final String TAG = "ShowInfoFragment";
+  private static final String TAG = "ShowFragment";
 
-  private static final String ARG_SHOWID = "net.simonvt.cathode.ui.fragment.ShowInfoFragment.showId";
-  private static final String ARG_TITLE = "net.simonvt.cathode.ui.fragment.ShowInfoFragment.title";
-  private static final String ARG_TYPE = "net.simonvt.cathode.ui.fragment.ShowInfoFragment.type";
+  private static final String ARG_SHOWID = "net.simonvt.cathode.ui.fragment.ShowFragment.showId";
+  private static final String ARG_TITLE = "net.simonvt.cathode.ui.fragment.ShowFragment.title";
+  private static final String ARG_TYPE = "net.simonvt.cathode.ui.fragment.ShowFragment.type";
 
   private static final String DIALOG_RATING =
-      "net.simonvt.cathode.ui.fragment.ShowInfoFragment.ratingDialog";
+      "net.simonvt.cathode.ui.fragment.ShowFragment.ratingDialog";
 
   private static final String[] SHOW_PROJECTION = new String[] {
       Shows.TITLE, Shows.YEAR, Shows.AIR_TIME, Shows.AIR_DAY, Shows.NETWORK, Shows.CERTIFICATION,

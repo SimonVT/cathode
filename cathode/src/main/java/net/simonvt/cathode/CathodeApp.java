@@ -71,7 +71,6 @@ import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.service.AccountAuthenticator;
-import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.PhoneController;
 import net.simonvt.cathode.ui.adapter.EpisodeWatchlistAdapter;
@@ -92,7 +91,7 @@ import net.simonvt.cathode.ui.fragment.MovieWatchlistFragment;
 import net.simonvt.cathode.ui.fragment.SearchMovieFragment;
 import net.simonvt.cathode.ui.fragment.SearchShowFragment;
 import net.simonvt.cathode.ui.fragment.SeasonFragment;
-import net.simonvt.cathode.ui.fragment.ShowInfoFragment;
+import net.simonvt.cathode.ui.fragment.ShowFragment;
 import net.simonvt.cathode.ui.fragment.ShowsCollectionFragment;
 import net.simonvt.cathode.ui.fragment.ShowsWatchlistFragment;
 import net.simonvt.cathode.ui.fragment.TrendingMoviesFragment;
@@ -233,7 +232,7 @@ public class CathodeApp extends Application {
           SearchShowFragment.class, EpisodeFragment.class, EpisodesWatchlistFragment.class,
           LoginFragment.class, LogoutDialog.class, MovieCollectionFragment.class,
           MovieFragment.class, MovieWatchlistFragment.class, SearchMovieFragment.class,
-          SeasonFragment.class, ShowInfoFragment.class, ShowsCollectionFragment.class,
+          SeasonFragment.class, ShowFragment.class, ShowsCollectionFragment.class,
           ShowsWatchlistFragment.class, TrendingShowsFragment.class, TrendingMoviesFragment.class,
           UpcomingShowsFragment.class, WatchedMoviesFragment.class, WatchedShowsFragment.class,
 
