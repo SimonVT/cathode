@@ -182,13 +182,16 @@ public class PhoneController extends UiController {
   @Subscribe
   public void onTitleChanged(OnTitleChangedEvent event) {
     if (!menuDrawer.isMenuVisible()) {
-      String title = ((FragmentContract) stack.peek()).getTitle();
-      if (title != null) {
-        activity.getActionBar().setTitle(title);
-      } else {
-        activity.getActionBar().setTitle(R.string.app_name);
+      Fragment f = stack.peek();
+      if (!f.isDetached()) {
+        String title = ((FragmentContract) f).getTitle();
+        if (title != null) {
+          activity.getActionBar().setTitle(title);
+        } else {
+          activity.getActionBar().setTitle(R.string.app_name);
+        }
+        activity.getActionBar().setSubtitle(((FragmentContract) f).getSubtitle());
       }
-      activity.getActionBar().setSubtitle(((FragmentContract) stack.peek()).getSubtitle());
     }
   }
 
