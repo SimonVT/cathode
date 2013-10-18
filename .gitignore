@@ -26,5 +26,6 @@ cathode/*
 !cathode/build.gradle
 
 cathode/src/main/res/values/secrets.xml
+cathode/src/main/res/values/com_crashlytics_export_strings.xml
 
 .DS_store
