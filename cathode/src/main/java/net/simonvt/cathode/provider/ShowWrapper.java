@@ -263,6 +263,7 @@ public final class ShowWrapper {
     if (show.getRatingAdvanced() != null) {
       cv.put(Shows.RATING, show.getRatingAdvanced());
     }
+    if (show.isInWatchlist() != null) cv.put(Shows.IN_WATCHLIST, show.isInWatchlist());
 
     return cv;
   }

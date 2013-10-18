@@ -59,6 +59,8 @@ public class TvShow {
 
   private List<Episode> episodes;
 
+  private Boolean inWatchlist;
+
   public String getTitle() {
     return title;
   }
@@ -161,5 +163,9 @@ public class TvShow {
 
   public List<Episode> getEpisodes() {
     return episodes;
+  }
+
+  public Boolean isInWatchlist() {
+    return inWatchlist;
   }
 }
