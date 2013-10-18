@@ -16,7 +16,7 @@ public class SyncMoviesWatchlistTask extends TraktTask {
 
   private static final String TAG = "SyncMoviesWatchlistTask";
 
-  @Inject UserService userService;
+  @Inject transient UserService userService;
 
   @Override
   protected void doTask() {

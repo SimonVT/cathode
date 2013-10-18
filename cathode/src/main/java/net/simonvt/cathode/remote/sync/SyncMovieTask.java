@@ -13,7 +13,7 @@ public class SyncMovieTask extends TraktTask {
 
   private static final String TAG = "SyncMovieTask";
 
-  @Inject MovieService movieService;
+  @Inject transient MovieService movieService;
 
   private long tmdbId;
 

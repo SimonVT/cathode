@@ -20,7 +20,7 @@ import retrofit.RetrofitError;
 
 public class SyncTrendingMoviesTask extends TraktTask {
 
-  @Inject MoviesService moviesService;
+  @Inject transient MoviesService moviesService;
 
   @Override protected void doTask() {
     try {

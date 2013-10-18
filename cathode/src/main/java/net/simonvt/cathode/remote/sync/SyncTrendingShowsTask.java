@@ -19,7 +19,7 @@ import retrofit.RetrofitError;
 
 public class SyncTrendingShowsTask extends TraktTask {
 
-  @Inject ShowsService showsService;
+  @Inject transient ShowsService showsService;
 
   @Override protected void doTask() {
     try {

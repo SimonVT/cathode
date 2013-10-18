@@ -10,7 +10,7 @@ public class ShowWatchlistTask extends TraktTask {
 
   private static final String TAG = "ShowWatchlistTask";
 
-  @Inject ShowService showService;
+  @Inject transient ShowService showService;
 
   private int tvdbId;
 
