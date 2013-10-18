@@ -8,6 +8,7 @@
   <item name="menu_shows_collection" type="id"/>
   <item name="menu_shows_watchlist" type="id"/>
   <item name="menu_shows_trending" type="id"/>
+  <item name="menu_shows_recommendations" type="id"/>
 
   <item name="menu_episodes_watchlist" type="id"/>
 
@@ -15,6 +16,7 @@
   <item name="menu_movies_collection" type="id"/>
   <item name="menu_movies_watchlist" type="id"/>
   <item name="menu_movies_trending" type="id"/>
+  <item name="menu_movies_recommendations" type="id"/>
 
   <item name="action_watched" type="id"/>
   <item name="action_watched_all" type="id"/>
@@ -27,6 +29,7 @@
   <item name="action_collection_remove_all" type="id"/>
   <item name="action_watchlist_add" type="id"/>
   <item name="action_watchlist_remove" type="id"/>
+  <item name="action_dismiss" type="id"/>
 
   <item name="front" type="id"/>
   <item name="back" type="id"/>

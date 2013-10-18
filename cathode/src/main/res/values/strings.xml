@@ -54,11 +54,13 @@
   <string name="title_shows_watchlist">Show watchlist</string>
   <string name="title_shows_episode_watchlist">Episode watchlist</string>
   <string name="title_shows_trending">Trending shows</string>
+  <string name="title_shows_recommendations">Show recommendations</string>
 
   <string name="title_movies_watched">Watched movies</string>
   <string name="title_movies_collection">Movie collection</string>
   <string name="title_movies_watchlist">Movie watchlist</string>
   <string name="title_movies_trending">Trending movies</string>
+  <string name="title_movies_recommendations">Movie recommendations</string>
 
   <string name="action_refresh">Refresh</string>
   <string name="action_sort_by">Sort by</string>
@@ -77,6 +79,7 @@
   <string name="action_search">Search</string>
   <string name="action_rate">Rate</string>
   <string name="action_logout">Logout</string>
+  <string name="action_recommendation_dismiss">Dismiss recommendation</string>
 
   <string name="checkmark_watched">Watched</string>
   <string name="checkmark_collection">In collection</string>
@@ -108,12 +111,14 @@
   <string name="navigation_shows_watchlist">Show watchlist</string>
   <string name="navigation_episodes_watchlist">Episode watchlist</string>
   <string name="navigation_shows_trending">Trending</string>
+  <string name="navigation_shows_recommendations">Recommendations</string>
 
   <string name="navigation_title_movies">Movies</string>
   <string name="navigation_movies_watched">Watched</string>
   <string name="navigation_movies_collection">Collection</string>
   <string name="navigation_movies_watchlist">Watchlist</string>
   <string name="navigation_movies_trending">Trending</string>
+  <string name="navigation_movies_recommendations">Recommendations</string>
 
   <string name="show_upcoming_empty">No upcoming episodes. Use the search button to find some new
     shows to watch.

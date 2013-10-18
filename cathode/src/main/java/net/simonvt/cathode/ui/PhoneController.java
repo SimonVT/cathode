@@ -22,12 +22,14 @@ import net.simonvt.cathode.ui.fragment.EpisodeFragment;
 import net.simonvt.cathode.ui.fragment.EpisodesWatchlistFragment;
 import net.simonvt.cathode.ui.fragment.MovieCollectionFragment;
 import net.simonvt.cathode.ui.fragment.MovieFragment;
+import net.simonvt.cathode.ui.fragment.MovieRecommendationsFragment;
 import net.simonvt.cathode.ui.fragment.MovieWatchlistFragment;
 import net.simonvt.cathode.ui.fragment.NavigationFragment;
 import net.simonvt.cathode.ui.fragment.SearchMovieFragment;
 import net.simonvt.cathode.ui.fragment.SearchShowFragment;
 import net.simonvt.cathode.ui.fragment.SeasonFragment;
 import net.simonvt.cathode.ui.fragment.ShowFragment;
+import net.simonvt.cathode.ui.fragment.ShowRecommendationsFragment;
 import net.simonvt.cathode.ui.fragment.ShowsCollectionFragment;
 import net.simonvt.cathode.ui.fragment.ShowsWatchlistFragment;
 import net.simonvt.cathode.ui.fragment.TrendingMoviesFragment;
@@ -328,6 +330,10 @@ public class PhoneController extends UiController {
         stack.replace(TrendingShowsFragment.class, FRAGMENT_SHOWS_TRENDING);
         break;
 
+      case R.id.menu_shows_recommendations:
+        stack.replace(ShowRecommendationsFragment.class, FRAGMENT_SHOWS_RECOMMENDATIONS);
+        break;
+
       case R.id.menu_movies_watched:
         stack.replace(WatchedMoviesFragment.class, FRAGMENT_MOVIES_WATCHED);
         break;
@@ -343,6 +349,13 @@ public class PhoneController extends UiController {
       case R.id.menu_movies_trending:
         stack.replace(TrendingMoviesFragment.class, FRAGMENT_MOVIES_TRENDING);
         break;
+
+      case R.id.menu_movies_recommendations:
+        stack.replace(MovieRecommendationsFragment.class, FRAGMENT_MOVIES_RECOMMENDATIONS);
+        break;
+
+      default:
+        throw new IllegalArgumentException("Unknown id " + id);
     }
 
     menuDrawer.closeMenu();

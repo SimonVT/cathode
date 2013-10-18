@@ -47,6 +47,7 @@ public class CathodeProvider extends ContentProvider {
   private static final int SHOWS_COLLECTION = 109;
   private static final int SHOWS_WATCHED = 110;
   private static final int SHOWS_TRENDING = 111;
+  private static final int SHOWS_RECOMMENDED = 112;
 
   private static final int SEASONS = 200;
   private static final int SEASON_ID = 201;
@@ -68,6 +69,7 @@ public class CathodeProvider extends ContentProvider {
   private static final int MOVIE_WRITERS = 406;
   private static final int MOVIE_PRODUCERS = 407;
   private static final int MOVIE_TRENDING = 408;
+  private static final int MOVIE_RECOMMENDED = 409;
 
   private CathodeDatabase database;
 
@@ -102,6 +104,8 @@ public class CathodeProvider extends ContentProvider {
         SHOWS_WATCHED);
     URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SHOWS + "/" + CathodeContract.PATH_TRENDING,
         SHOWS_TRENDING);
+    URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SHOWS + "/"
+        + CathodeContract.PATH_RECOMMENDED, SHOWS_RECOMMENDED);
 
     URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SEASONS, SEASONS);
     URI_MATCHER.addURI(AUTHORITY,
@@ -141,6 +145,8 @@ public class CathodeProvider extends ContentProvider {
         MOVIE_PRODUCERS);
     URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_MOVIES + "/" + CathodeContract.PATH_TRENDING,
         MOVIE_TRENDING);
+    URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_MOVIES + "/"
+        + CathodeContract.PATH_RECOMMENDED, MOVIE_RECOMMENDED);
   }
 
   @Override
@@ -280,6 +286,14 @@ public class CathodeProvider extends ContentProvider {
         c.setNotificationUri(getContext().getContentResolver(), Shows.CONTENT_URI);
         return c;
       }
+      case SHOWS_RECOMMENDED: {
+        Cursor c = getShowsBuilder().table(Tables.SHOWS_WITH_UNWATCHED)
+            .where(CathodeContract.ShowColumns.RECOMMENDATION_INDEX + ">-1")
+            .where(selection, selectionArgs)
+            .query(db, projection, CathodeContract.ShowColumns.RECOMMENDATION_INDEX + " ASC");
+        c.setNotificationUri(getContext().getContentResolver(), Shows.CONTENT_URI);
+        return c;
+      }
       case SEASONS: {
         Cursor c = getSeasonBuilder().table(Tables.SEASONS)
             .where(selection, selectionArgs)
@@ -370,6 +384,14 @@ public class CathodeProvider extends ContentProvider {
         c.setNotificationUri(getContext().getContentResolver(), Movies.CONTENT_URI);
         return c;
       }
+      case MOVIE_RECOMMENDED: {
+        Cursor c = getBuilder().table(Tables.MOVIES)
+            .where(CathodeContract.MovieColumns.RECOMMENDATION_INDEX + ">-1")
+            .where(selection, selectionArgs)
+            .query(db, projection, CathodeContract.MovieColumns.RECOMMENDATION_INDEX + " ASC");
+        c.setNotificationUri(getContext().getContentResolver(), Movies.CONTENT_URI);
+        return c;
+      }
       case MOVIE_GENRES: {
         final String movieId = MovieGenres.getMovieId(uri);
         Cursor c = getBuilder().table(Tables.MOVIE_GENRES)
@@ -450,6 +472,8 @@ public class CathodeProvider extends ContentProvider {
       case SHOWS_WATCHLIST:
       case SHOWS_COLLECTION:
       case SHOWS_WATCHED:
+      case SHOWS_TRENDING:
+      case SHOWS_RECOMMENDED:
         return Shows.CONTENT_TYPE;
       case SHOW_TOP_WATCHERS:
         return ShowTopWatchers.CONTENT_TYPE;
@@ -468,6 +492,8 @@ public class CathodeProvider extends ContentProvider {
       case EPISODES_FROMSEASON:
         return Episodes.CONTENT_TYPE;
       case MOVIES:
+      case MOVIE_TRENDING:
+      case MOVIE_RECOMMENDED:
       case MOVIE_ID:
         return Movies.CONTENT_TYPE;
       case MOVIE_GENRES:

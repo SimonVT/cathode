@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,7 +20,6 @@ import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
-import net.simonvt.cathode.util.LogWrapper;
 
 public abstract class MoviesFragment extends AbsAdapterFragment
     implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -88,11 +88,15 @@ public abstract class MoviesFragment extends AbsAdapterFragment
         c.getString(c.getColumnIndex(CathodeContract.Movies.TITLE)));
   }
 
+  protected CursorAdapter getAdapter(Cursor cursor) {
+    return new MoviesAdapter(getActivity(), cursor);
+  }
+
   void setCursor(Cursor cursor) {
     if (getAdapter() == null) {
-      setAdapter(new MoviesAdapter(getActivity(), cursor));
+      setAdapter(getAdapter(cursor));
     } else {
-      ((MoviesAdapter) getAdapter()).changeCursor(cursor);
+      ((CursorAdapter) getAdapter()).changeCursor(cursor);
     }
   }
 

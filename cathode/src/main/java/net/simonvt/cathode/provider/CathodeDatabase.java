@@ -207,7 +207,8 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + ShowColumns.AIRDATE_COUNT + " INTEGER DEFAULT 0,"
         + ShowColumns.IN_WATCHLIST_COUNT + " INTEGER DEFAULT 0,"
         + ShowColumns.IN_COLLECTION_COUNT + " INTEGER DEFAULT 0,"
-        + ShowColumns.TRENDING_INDEX + " INTEGER DEFAULT -1)");
+        + ShowColumns.TRENDING_INDEX + " INTEGER DEFAULT -1,"
+        + ShowColumns.RECOMMENDATION_INDEX + " INTEGER DEFAULT -1)");
 
     db.execSQL("CREATE TABLE " + Tables.SHOW_TOP_WATCHERS + " ("
         + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -317,7 +318,8 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + MovieColumns.WATCHED + " INTEGER DEFAULT 0,"
         + MovieColumns.IN_WATCHLIST + " INTEGER DEFAULT 0,"
         + MovieColumns.IN_COLLECTION + " INTEGER DEFAULT 0,"
-        + MovieColumns.TRENDING_INDEX + " INTEGER DEFAULT -1)");
+        + MovieColumns.TRENDING_INDEX + " INTEGER DEFAULT -1,"
+        + MovieColumns.RECOMMENDATION_INDEX + " INTEGER DEFAULT -1)");
 
     db.execSQL("CREATE TABLE " + Tables.MOVIE_GENRES + " ("
         + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"

@@ -22,10 +22,13 @@ public abstract class BaseActivity extends FragmentActivity {
   public static final int LOADER_SHOWS_WATCHLIST = 103;
   public static final int LOADER_EPISODES_WATCHLIST = 104;
   public static final int LOADER_SHOWS_TRENDING = 105;
+  public static final int LOADER_SHOWS_RECOMMENDATIONS = 106;
+
   public static final int LOADER_MOVIES_WATCHED = 200;
   public static final int LOADER_MOVIES_COLLECTION = 201;
   public static final int LOADER_MOVIES_WATCHLIST = 202;
   public static final int LOADER_MOVIES_TRENDING = 203;
+  public static final int LOADER_MOVIES_RECOMMENDATIONS = 204;
 
   public static final int LOADER_SHOW = 300;
   public static final int LOADER_SHOW_WATCH = 301;

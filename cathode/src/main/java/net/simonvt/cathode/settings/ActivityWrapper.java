@@ -66,7 +66,14 @@ public final class ActivityWrapper {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 
     final long lastActivity = settings.getLong(Settings.TRENDING, -1);
-    return System.currentTimeMillis() > lastActivity + 1 * DateUtils.HOUR_IN_MILLIS;
+    return System.currentTimeMillis() > lastActivity + 3 * DateUtils.HOUR_IN_MILLIS;
+  }
+
+  public static boolean recommendationsNeedsUpdate(Context context) {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+
+    final long lastActivity = settings.getLong(Settings.RECOMMENDATIONS, -1);
+    return System.currentTimeMillis() > lastActivity + 3 * DateUtils.HOUR_IN_MILLIS;
   }
 
   public static void update(Context context, LastActivity lastActivity) {
@@ -106,13 +113,19 @@ public final class ActivityWrapper {
   }
 
   public static void updateTrending(Context context) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-    SharedPreferences.Editor editor = settings.edit();
     final long currentTimeMillis = System.currentTimeMillis();
+    PreferenceManager.getDefaultSharedPreferences(context)
+        .edit()
+        .putLong(Settings.TRENDING, currentTimeMillis)
+        .apply();
+  }
 
-    editor.putLong(Settings.TRENDING, currentTimeMillis);
-
-    editor.apply();
+  public static void updateRecommendations(Context context) {
+    final long currentTimeMillis = System.currentTimeMillis();
+    PreferenceManager.getDefaultSharedPreferences(context)
+        .edit()
+        .putLong(Settings.TRENDING, currentTimeMillis)
+        .apply();
   }
 
   public static void clear(Context context) {

@@ -36,6 +36,8 @@ public class NavigationFragment extends AbsAdapterFragment {
     menuItems.add(
         new MenuItem(R.id.menu_episodes_watchlist, R.string.navigation_episodes_watchlist, 0));
     menuItems.add(new MenuItem(R.id.menu_shows_trending, R.string.navigation_shows_trending, 0));
+    menuItems.add(new MenuItem(R.id.menu_shows_recommendations,
+        R.string.navigation_shows_recommendations, 0));
 
     menuItems.add(new NavigationItem(R.string.navigation_title_movies));
     menuItems.add(new MenuItem(R.id.menu_movies_watched, R.string.navigation_movies_watched, 0));
@@ -44,6 +46,8 @@ public class NavigationFragment extends AbsAdapterFragment {
     menuItems.add(
         new MenuItem(R.id.menu_movies_watchlist, R.string.navigation_movies_watchlist, 0));
     menuItems.add(new MenuItem(R.id.menu_movies_trending, R.string.navigation_movies_trending, 0));
+    menuItems.add(new MenuItem(R.id.menu_movies_recommendations,
+        R.string.navigation_movies_recommendations, 0));
   }
 
   private OnMenuClickListener listener;

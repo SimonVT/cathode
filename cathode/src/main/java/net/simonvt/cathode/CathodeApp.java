@@ -36,6 +36,8 @@ import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.TraktTaskSerializer;
 import net.simonvt.cathode.remote.TraktTaskService;
+import net.simonvt.cathode.remote.action.DismissMovieRecommendation;
+import net.simonvt.cathode.remote.action.DismissShowRecommendation;
 import net.simonvt.cathode.remote.action.EpisodeCollectionTask;
 import net.simonvt.cathode.remote.action.EpisodeRateTask;
 import net.simonvt.cathode.remote.action.EpisodeWatchedTask;
@@ -50,12 +52,14 @@ import net.simonvt.cathode.remote.action.ShowWatchedTask;
 import net.simonvt.cathode.remote.action.ShowWatchlistTask;
 import net.simonvt.cathode.remote.sync.SyncEpisodeTask;
 import net.simonvt.cathode.remote.sync.SyncEpisodeWatchlistTask;
+import net.simonvt.cathode.remote.sync.SyncMovieRecommendations;
 import net.simonvt.cathode.remote.sync.SyncMovieTask;
 import net.simonvt.cathode.remote.sync.SyncMoviesCollectionTask;
 import net.simonvt.cathode.remote.sync.SyncMoviesTask;
 import net.simonvt.cathode.remote.sync.SyncMoviesWatchedTask;
 import net.simonvt.cathode.remote.sync.SyncMoviesWatchlistTask;
 import net.simonvt.cathode.remote.sync.SyncSeasonTask;
+import net.simonvt.cathode.remote.sync.SyncShowRecommendations;
 import net.simonvt.cathode.remote.sync.SyncShowTask;
 import net.simonvt.cathode.remote.sync.SyncShowsCollectionTask;
 import net.simonvt.cathode.remote.sync.SyncShowsTask;
@@ -74,11 +78,13 @@ import net.simonvt.cathode.service.AccountAuthenticator;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.PhoneController;
 import net.simonvt.cathode.ui.adapter.EpisodeWatchlistAdapter;
+import net.simonvt.cathode.ui.adapter.MovieRecommendationsAdapter;
 import net.simonvt.cathode.ui.adapter.MovieSearchAdapter;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
 import net.simonvt.cathode.ui.adapter.SeasonAdapter;
 import net.simonvt.cathode.ui.adapter.SeasonsAdapter;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
+import net.simonvt.cathode.ui.adapter.ShowRecommendationsAdapter;
 import net.simonvt.cathode.ui.adapter.ShowsAdapter;
 import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
@@ -87,11 +93,13 @@ import net.simonvt.cathode.ui.fragment.EpisodesWatchlistFragment;
 import net.simonvt.cathode.ui.fragment.LoginFragment;
 import net.simonvt.cathode.ui.fragment.MovieCollectionFragment;
 import net.simonvt.cathode.ui.fragment.MovieFragment;
+import net.simonvt.cathode.ui.fragment.MovieRecommendationsFragment;
 import net.simonvt.cathode.ui.fragment.MovieWatchlistFragment;
 import net.simonvt.cathode.ui.fragment.SearchMovieFragment;
 import net.simonvt.cathode.ui.fragment.SearchShowFragment;
 import net.simonvt.cathode.ui.fragment.SeasonFragment;
 import net.simonvt.cathode.ui.fragment.ShowFragment;
+import net.simonvt.cathode.ui.fragment.ShowRecommendationsFragment;
 import net.simonvt.cathode.ui.fragment.ShowsCollectionFragment;
 import net.simonvt.cathode.ui.fragment.ShowsWatchlistFragment;
 import net.simonvt.cathode.ui.fragment.TrendingMoviesFragment;
@@ -231,8 +239,9 @@ public class CathodeApp extends Application {
           // Fragments
           SearchShowFragment.class, EpisodeFragment.class, EpisodesWatchlistFragment.class,
           LoginFragment.class, LogoutDialog.class, MovieCollectionFragment.class,
-          MovieFragment.class, MovieWatchlistFragment.class, SearchMovieFragment.class,
-          SeasonFragment.class, ShowFragment.class, ShowsCollectionFragment.class,
+          MovieFragment.class, MovieRecommendationsFragment.class, MovieWatchlistFragment.class,
+          SearchMovieFragment.class, SeasonFragment.class, ShowFragment.class,
+          ShowsCollectionFragment.class, ShowRecommendationsFragment.class,
           ShowsWatchlistFragment.class, TrendingShowsFragment.class, TrendingMoviesFragment.class,
           UpcomingShowsFragment.class, WatchedMoviesFragment.class, WatchedShowsFragment.class,
 
@@ -242,7 +251,8 @@ public class CathodeApp extends Application {
           // ListAdapters
           EpisodeWatchlistAdapter.class, SeasonAdapter.class, SeasonsAdapter.class,
           ShowsAdapter.class, ShowDescriptionAdapter.class, MoviesAdapter.class,
-          MovieSearchAdapter.class,
+          MovieSearchAdapter.class, ShowRecommendationsAdapter.class,
+          MovieRecommendationsAdapter.class,
 
           // Views
           PhoneEpisodeView.class, RemoteImageView.class,
@@ -251,16 +261,18 @@ public class CathodeApp extends Application {
           TraktTaskService.class,
 
           // Tasks
+          DismissMovieRecommendation.class, DismissShowRecommendation.class,
           EpisodeCollectionTask.class, EpisodeRateTask.class, EpisodeWatchedTask.class,
           EpisodeWatchlistTask.class, MovieCollectionTask.class, MovieRateTask.class,
           MovieWatchedTask.class, MovieWatchlistTask.class, ShowRateTask.class,
           ShowCollectionTask.class, ShowWatchlistTask.class, SyncShowsCollectionTask.class,
           SyncEpisodeTask.class, SyncEpisodeWatchlistTask.class, SyncMovieTask.class,
-          SyncMoviesTask.class, SyncMoviesCollectionTask.class, SyncMoviesWatchedTask.class,
-          SyncMoviesWatchlistTask.class, SyncSeasonTask.class, SyncShowTask.class,
-          SyncShowsTask.class, SyncTrendingMoviesTask.class, SyncTrendingShowsTask.class,
-          SyncShowsWatchlistTask.class, SyncShowsWatchedTask.class, ShowWatchedTask.class,
-          SyncUpdatedMovies.class, SyncUpdatedShows.class, SyncTask.class,
+          SyncMovieRecommendations.class, SyncMoviesTask.class, SyncMoviesCollectionTask.class,
+          SyncMoviesWatchedTask.class, SyncMoviesWatchlistTask.class, SyncSeasonTask.class,
+          SyncShowTask.class, SyncShowRecommendations.class, SyncShowsTask.class,
+          SyncTrendingMoviesTask.class, SyncTrendingShowsTask.class, SyncShowsWatchlistTask.class,
+          SyncShowsWatchedTask.class, ShowWatchedTask.class, SyncUpdatedMovies.class,
+          SyncUpdatedShows.class, SyncTask.class,
 
           // Misc
           PhoneController.class, ResponseParser.class, ShowSearchHandler.class,

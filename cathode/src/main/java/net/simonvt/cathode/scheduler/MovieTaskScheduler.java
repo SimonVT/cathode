@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.remote.action.DismissMovieRecommendation;
 import net.simonvt.cathode.remote.action.MovieCollectionTask;
 import net.simonvt.cathode.remote.action.MovieRateTask;
 import net.simonvt.cathode.remote.action.MovieWatchedTask;
@@ -114,6 +115,19 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
    */
   public static void scrobble(Context context, long movieId) {
     // TODO:
+  }
+
+  public void dismissRecommendation(final long movieId) {
+    execute(new Runnable() {
+      @Override public void run() {
+        final long tmdbId = MovieWrapper.getTmdbId(context.getContentResolver(), movieId);
+        ContentValues cv = new ContentValues();
+        cv.put(CathodeContract.Movies.RECOMMENDATION_INDEX, -1);
+        context.getContentResolver()
+            .update(CathodeContract.Movies.buildMovieUri(movieId), cv, null, null);
+        queue.add(new DismissMovieRecommendation(tmdbId));
+      }
+    });
   }
 
   /**

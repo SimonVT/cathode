@@ -68,6 +68,12 @@ public class SyncTask extends TraktTask {
         queueTask(new SyncTrendingMoviesTask());
       }
 
+      if (ActivityWrapper.recommendationsNeedsUpdate(service)) {
+        ActivityWrapper.updateRecommendations(service);
+        queueTask(new SyncShowRecommendations());
+        queueTask(new SyncMovieRecommendations());
+      }
+
       postOnSuccess();
     } catch (RetrofitError e) {
       e.printStackTrace();

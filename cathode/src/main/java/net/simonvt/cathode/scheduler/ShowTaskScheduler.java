@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.remote.action.DismissShowRecommendation;
 import net.simonvt.cathode.remote.action.EpisodeCollectionTask;
 import net.simonvt.cathode.remote.action.EpisodeWatchedTask;
 import net.simonvt.cathode.remote.action.ShowCollectionTask;
@@ -151,6 +152,21 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         }
 
         c.close();
+      }
+    });
+  }
+
+  public void dismissRecommendation(final long showId) {
+    execute(new Runnable() {
+      @Override public void run() {
+        final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
+
+        ContentValues cv = new ContentValues();
+        cv.put(CathodeContract.Shows.RECOMMENDATION_INDEX, -1);
+        context.getContentResolver()
+            .update(CathodeContract.Shows.buildShowUri(showId), cv, null, null);
+
+        queue.add(new DismissShowRecommendation(tvdbId));
       }
     });
   }

@@ -47,6 +47,7 @@ public final class CathodeContract {
     String IN_COLLECTION_COUNT = "inCollectionCount";
     String IN_WATCHLIST_COUNT = "inWatchlistCount";
     String TRENDING_INDEX = "trendingIndex";
+    String RECOMMENDATION_INDEX = "recommendationIndex";
 
     String AIRED_COUNT = "airedCount";
     String UNAIRED_COUNT = "unairedCount";
@@ -151,6 +152,7 @@ public final class CathodeContract {
     String IN_WATCHLIST = "inWatchlist";
     String LAST_UPDATED = "lastUpdated";
     String TRENDING_INDEX = "trendingIndex";
+    String RECOMMENDATION_INDEX = "recommendationIndex";
   }
 
   interface ImageColumns {
@@ -164,6 +166,7 @@ public final class CathodeContract {
 
   public static final String PATH_WATCHLIST = "watchlist";
   public static final String PATH_TRENDING = "trending";
+  public static final String PATH_RECOMMENDED = "recommended";
 
   public static final String PATH_SHOWS = "shows";
   public static final String PATH_WITHNEXT = "withNext";
@@ -215,7 +218,11 @@ public final class CathodeContract {
     public static final Uri SHOWS_WITHNEXT_IGNOREWATCHED =
         SHOWS_WITHNEXT.buildUpon().appendPath(PATH_IGNOREWATCHED).build();
 
-    public static final Uri SHOWS_TRENDING = CONTENT_URI.buildUpon().appendPath(PATH_TRENDING).build();
+    public static final Uri SHOWS_TRENDING =
+        CONTENT_URI.buildUpon().appendPath(PATH_TRENDING).build();
+
+    public static final Uri SHOWS_RECOMMENDED =
+        CONTENT_URI.buildUpon().appendPath(PATH_RECOMMENDED).build();
 
     public static Uri buildShowUri(long showId) {
       return CONTENT_URI.buildUpon()
@@ -523,6 +530,9 @@ public final class CathodeContract {
     public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.simonvt.cathode.movie";
 
     public static final Uri TRENDING = CONTENT_URI.buildUpon().appendPath(PATH_TRENDING).build();
+
+    public static final Uri RECOMMENDED =
+        CONTENT_URI.buildUpon().appendPath(PATH_RECOMMENDED).build();
 
     public static final String DEFAULT_SORT = CathodeDatabase.Tables.MOVIES + "." + TITLE + " ASC";
 
