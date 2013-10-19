@@ -40,8 +40,9 @@ public class MoviesAdapter extends CursorAdapter {
     ViewHolder vh = (ViewHolder) view.getTag();
 
     final long id = cursor.getLong(cursor.getColumnIndex(CathodeContract.Movies._ID));
-    final boolean watched = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.WATCHED)) == 1;
-    final boolean inCollection =
+    final boolean watched =
+        cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.WATCHED)) == 1;
+    final boolean collected =
         cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.IN_COLLECTION)) == 1;
     final boolean inWatchlist =
         cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.IN_WATCHLIST)) == 1;
@@ -51,21 +52,7 @@ public class MoviesAdapter extends CursorAdapter {
     vh.overview.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.OVERVIEW)));
 
     vh.overflow.removeItems();
-    if (watched) {
-      vh.overflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
-    } else if (inWatchlist) {
-      vh.overflow.addItem(R.id.action_watched, R.string.action_watched);
-      vh.overflow.addItem(R.id.action_watchlist_remove, R.string.action_watchlist_remove);
-    } else {
-      vh.overflow.addItem(R.id.action_watched, R.string.action_watched);
-      vh.overflow.addItem(R.id.action_watchlist_add, R.string.action_watchlist_add);
-    }
-
-    if (inCollection) {
-      vh.overflow.addItem(R.id.action_collection_remove, R.string.action_collection_remove);
-    } else {
-      vh.overflow.addItem(R.id.action_collection_add, R.string.action_collection_add);
-    }
+    setupOverflowItems(vh.overflow, watched, collected, inWatchlist);
 
     vh.overflow.setListener(new OverflowView.OverflowActionListener() {
       @Override
@@ -78,33 +65,56 @@ public class MoviesAdapter extends CursorAdapter {
 
       @Override
       public void onActionSelected(int action) {
-        switch (action) {
-          case R.id.action_watched:
-            movieScheduler.setWatched(id, true);
-            break;
-
-          case R.id.action_unwatched:
-            movieScheduler.setWatched(id, false);
-            break;
-
-          case R.id.action_watchlist_add:
-            movieScheduler.setIsInWatchlist(id, true);
-            break;
-
-          case R.id.action_watchlist_remove:
-            movieScheduler.setIsInWatchlist(id, false);
-            break;
-
-          case R.id.action_collection_add:
-            movieScheduler.setIsInCollection(id, true);
-            break;
-
-          case R.id.action_collection_remove:
-            movieScheduler.setIsInCollection(id, false);
-            break;
-        }
+        onOverflowActionSelected(id, action);
       }
     });
+  }
+
+  protected void setupOverflowItems(OverflowView overflow, boolean watched, boolean collected,
+      boolean inWatchlist) {
+    if (watched) {
+      overflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
+    } else if (inWatchlist) {
+      overflow.addItem(R.id.action_watched, R.string.action_watched);
+      overflow.addItem(R.id.action_watchlist_remove, R.string.action_watchlist_remove);
+    } else {
+      overflow.addItem(R.id.action_watched, R.string.action_watched);
+      overflow.addItem(R.id.action_watchlist_add, R.string.action_watchlist_add);
+    }
+
+    if (collected) {
+      overflow.addItem(R.id.action_collection_remove, R.string.action_collection_remove);
+    } else {
+      overflow.addItem(R.id.action_collection_add, R.string.action_collection_add);
+    }
+  }
+
+  protected void onOverflowActionSelected(long id, int action) {
+    switch (action) {
+      case R.id.action_watched:
+        movieScheduler.setWatched(id, true);
+        break;
+
+      case R.id.action_unwatched:
+        movieScheduler.setWatched(id, false);
+        break;
+
+      case R.id.action_watchlist_add:
+        movieScheduler.setIsInWatchlist(id, true);
+        break;
+
+      case R.id.action_watchlist_remove:
+        movieScheduler.setIsInWatchlist(id, false);
+        break;
+
+      case R.id.action_collection_add:
+        movieScheduler.setIsInCollection(id, true);
+        break;
+
+      case R.id.action_collection_remove:
+        movieScheduler.setIsInCollection(id, false);
+        break;
+    }
   }
 
   static class ViewHolder {

@@ -85,7 +85,7 @@ import net.simonvt.cathode.ui.adapter.SeasonAdapter;
 import net.simonvt.cathode.ui.adapter.SeasonsAdapter;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
 import net.simonvt.cathode.ui.adapter.ShowRecommendationsAdapter;
-import net.simonvt.cathode.ui.adapter.ShowsAdapter;
+import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
 import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.fragment.EpisodeFragment;
@@ -250,9 +250,9 @@ public class CathodeApp extends Application {
 
           // ListAdapters
           EpisodeWatchlistAdapter.class, SeasonAdapter.class, SeasonsAdapter.class,
-          ShowsAdapter.class, ShowDescriptionAdapter.class, MoviesAdapter.class,
-          MovieSearchAdapter.class, ShowRecommendationsAdapter.class,
-          MovieRecommendationsAdapter.class,
+          ShowDescriptionAdapter.class, MoviesAdapter.class, MovieSearchAdapter.class,
+          ShowRecommendationsAdapter.class, MovieRecommendationsAdapter.class,
+          ShowsWithNextAdapter.class,
 
           // Views
           PhoneEpisodeView.class, RemoteImageView.class,

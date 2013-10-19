@@ -13,7 +13,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.adapter.ShowsAdapter;
+import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
 
 public class ShowsWatchlistFragment extends ShowsFragment {
 
@@ -42,7 +42,7 @@ public class ShowsWatchlistFragment extends ShowsFragment {
   public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
     final Uri contentUri = CathodeContract.Shows.SHOWS_WATCHLIST;
     CursorLoader cl =
-        new CursorLoader(getActivity(), contentUri, ShowsAdapter.PROJECTION, null, null,
+        new CursorLoader(getActivity(), contentUri, ShowsWithNextAdapter.PROJECTION, null, null,
             CathodeContract.Shows.DEFAULT_SORT);
     cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return cl;

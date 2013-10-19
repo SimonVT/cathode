@@ -19,7 +19,7 @@ import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
-import net.simonvt.cathode.ui.adapter.ShowsAdapter;
+import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
 import net.simonvt.cathode.util.LogWrapper;
 
 public abstract class ShowsFragment extends AbsAdapterFragment
@@ -31,7 +31,7 @@ public abstract class ShowsFragment extends AbsAdapterFragment
 
   @Inject TraktTaskQueue queue;
 
-  private ShowsAdapter showsAdapter;
+  private ShowsWithNextAdapter showsAdapter;
 
   private ShowsNavigationListener navigationListener;
 
@@ -108,7 +108,7 @@ public abstract class ShowsFragment extends AbsAdapterFragment
 
   private void setCursor(Cursor cursor) {
     if (showsAdapter == null) {
-      showsAdapter = new ShowsAdapter(getActivity(), cursor, getLibraryType());
+      showsAdapter = new ShowsWithNextAdapter(getActivity(), cursor, getLibraryType());
       setAdapter(showsAdapter);
       return;
     }

@@ -37,11 +37,8 @@ public class ShowDescriptionAdapter extends CursorAdapter {
 
   @Inject ShowTaskScheduler showScheduler;
 
-  private Context context;
-
   public ShowDescriptionAdapter(Context context) {
     super(context, null, 0);
-    this.context = context;
     CathodeApp.inject(context, this);
   }
 
@@ -73,11 +70,7 @@ public class ShowDescriptionAdapter extends CursorAdapter {
     vh.overview.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.OVERVIEW)));
 
     vh.overflow.removeItems();
-    if (inWatchlist) {
-      vh.overflow.addItem(R.id.action_watchlist_remove, R.string.action_watchlist_remove);
-    } else {
-      vh.overflow.addItem(R.id.action_watchlist_add, R.string.action_watchlist_add);
-    }
+    setupOverflowItems(vh.overflow, inWatchlist);
 
     vh.overflow.setListener(new OverflowView.OverflowActionListener() {
       @Override
@@ -90,17 +83,29 @@ public class ShowDescriptionAdapter extends CursorAdapter {
 
       @Override
       public void onActionSelected(int action) {
-        switch (action) {
-          case R.id.action_watchlist_add:
-            showScheduler.setIsInWatchlist(id, true);
-            break;
-
-          case R.id.action_watchlist_remove:
-            showScheduler.setIsInWatchlist(id, false);
-            break;
-        }
+        onOverflowActionSelected(id, action);
       }
     });
+  }
+
+  protected void setupOverflowItems(OverflowView overflow, boolean inWatchlist) {
+    if (inWatchlist) {
+      overflow.addItem(R.id.action_watchlist_remove, R.string.action_watchlist_remove);
+    } else {
+      overflow.addItem(R.id.action_watchlist_add, R.string.action_watchlist_add);
+    }
+  }
+
+  protected void onOverflowActionSelected(long id, int action) {
+    switch (action) {
+      case R.id.action_watchlist_add:
+        showScheduler.setIsInWatchlist(id, true);
+        break;
+
+      case R.id.action_watchlist_remove:
+        showScheduler.setIsInWatchlist(id, false);
+        break;
+    }
   }
 
   static class ViewHolder {

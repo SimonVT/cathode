@@ -3,7 +3,6 @@ package net.simonvt.cathode.ui.fragment;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
@@ -12,10 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeDatabase;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.adapter.ShowsAdapter;
+import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
 
 public class UpcomingShowsFragment extends ShowsFragment {
 
@@ -43,7 +41,7 @@ public class UpcomingShowsFragment extends ShowsFragment {
   @Override
   public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
     final Uri contentUri = CathodeContract.Shows.SHOWS_WITHNEXT_IGNOREWATCHED;
-    CursorLoader cl = new CursorLoader(getActivity(), contentUri, ShowsAdapter.PROJECTION,
+    CursorLoader cl = new CursorLoader(getActivity(), contentUri, ShowsWithNextAdapter.PROJECTION,
         CathodeContract.Shows.WATCHED_COUNT + ">0", null, CathodeContract.Shows.DEFAULT_SORT);
     cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return cl;

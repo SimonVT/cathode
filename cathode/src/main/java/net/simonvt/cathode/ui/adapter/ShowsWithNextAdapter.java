@@ -19,13 +19,15 @@ import net.simonvt.cathode.provider.CathodeDatabase;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.LogWrapper;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.cathode.widget.TimeStamp;
 
-public class ShowsAdapter extends CursorAdapter {
+/**
+ * A show adapter that displays the next episode as well
+ */
+public class ShowsWithNextAdapter extends CursorAdapter {
 
   private static final String TAG = "ShowsAdapter";
 
@@ -43,17 +45,15 @@ public class ShowsAdapter extends CursorAdapter {
       CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.EPISODE,
   };
 
-  @Inject EpisodeTaskScheduler scheduler;
-
   @Inject ShowTaskScheduler showScheduler;
 
   private final LibraryType libraryType;
 
-  public ShowsAdapter(Context context, LibraryType libraryType) {
+  public ShowsWithNextAdapter(Context context, LibraryType libraryType) {
     this(context, null, libraryType);
   }
 
-  public ShowsAdapter(Context context, Cursor cursor, LibraryType libraryType) {
+  public ShowsWithNextAdapter(Context context, Cursor cursor, LibraryType libraryType) {
     super(context, cursor, 0);
     CathodeApp.inject(context, this);
     this.libraryType = libraryType;
@@ -169,39 +169,44 @@ public class ShowsAdapter extends CursorAdapter {
     });
 
     vh.overflow.removeItems();
+    setupOverflowItems(vh.overflow, showTypeCount, showAiredCount, episodeTitle != null);
+
+    vh.poster.setImage(showPosterUrl);
+  }
+
+  protected void setupOverflowItems(OverflowView overflow, int typeCount, int airedCount,
+      boolean hasNext) {
     switch (libraryType) {
       case WATCHLIST:
-        vh.overflow.addItem(R.id.action_watchlist_remove, R.string.action_watchlist_remove);
+        overflow.addItem(R.id.action_watchlist_remove, R.string.action_watchlist_remove);
 
       case WATCHED:
-        if (showAiredCount - showTypeCount > 0) {
-          if (episodeTitle != null) {
-            vh.overflow.addItem(R.id.action_watched, R.string.action_watched_next);
+        if (airedCount - typeCount > 0) {
+          if (hasNext) {
+            overflow.addItem(R.id.action_watched, R.string.action_watched_next);
           }
-          if (showTypeCount < showAiredCount) {
-            vh.overflow.addItem(R.id.action_watched_all, R.string.action_watched_all);
+          if (typeCount < airedCount) {
+            overflow.addItem(R.id.action_watched_all, R.string.action_watched_all);
           }
         }
-        if (showTypeCount > 0) {
-          vh.overflow.addItem(R.id.action_unwatch_all, R.string.action_unwatch_all);
+        if (typeCount > 0) {
+          overflow.addItem(R.id.action_unwatch_all, R.string.action_unwatch_all);
         }
         break;
 
       case COLLECTION:
-        if (showAiredCount - showTypeCount > 0) {
-          vh.overflow.addItem(R.id.action_collection_add, R.string.action_collect_next);
-          if (showTypeCount < showAiredCount) {
-            vh.overflow.addItem(R.id.action_collection_add_all, R.string.action_collection_add_all);
+        if (airedCount - typeCount > 0) {
+          overflow.addItem(R.id.action_collection_add, R.string.action_collect_next);
+          if (typeCount < airedCount) {
+            overflow.addItem(R.id.action_collection_add_all, R.string.action_collection_add_all);
           }
         }
-        if (showTypeCount > 0) {
-          vh.overflow
+        if (typeCount > 0) {
+          overflow
               .addItem(R.id.action_collection_remove_all, R.string.action_collection_remove_all);
         }
         break;
     }
-
-    vh.poster.setImage(showPosterUrl);
   }
 
   public static class ViewHolder {
