@@ -12,7 +12,6 @@ import net.simonvt.cathode.provider.CathodeDatabase;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import net.simonvt.cathode.util.LogWrapper;
 import retrofit.RetrofitError;
 
 public class SyncEpisodeWatchlistTask extends TraktTask {

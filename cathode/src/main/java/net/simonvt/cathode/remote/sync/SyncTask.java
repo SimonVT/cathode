@@ -5,7 +5,6 @@ import net.simonvt.cathode.api.entity.LastActivity;
 import net.simonvt.cathode.api.service.UserService;
 import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.settings.ActivityWrapper;
-import net.simonvt.cathode.util.LogWrapper;
 import retrofit.RetrofitError;
 
 public class SyncTask extends TraktTask {

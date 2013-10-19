@@ -44,9 +44,9 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
 
   public static final String ACTION_LOGOUT = "net.simonvt.cathode.sync.TraktTaskService.LOGOUT";
 
-  private static int MAX_RETRY_DELAY = 60;
+  private static final int MAX_RETRY_DELAY = 60;
 
-  private static int NOTIFICATION_ID = 42;
+  private static final int NOTIFICATION_ID = 42;
 
   private static volatile PowerManager.WakeLock sWakeLock = null;
 

@@ -27,8 +27,8 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CollectLoader;
 import net.simonvt.cathode.provider.CathodeContract.Shows;
+import net.simonvt.cathode.provider.CollectLoader;
 import net.simonvt.cathode.provider.WatchedLoader;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
@@ -636,8 +636,8 @@ public class ShowFragment extends ProgressFragment {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
           CursorLoader cl =
-              new CursorLoader(getActivity(), CathodeContract.Seasons.buildFromShowId(showId), SeasonsAdapter.PROJECTION,
-                  null, null, CathodeContract.Seasons.DEFAULT_SORT);
+              new CursorLoader(getActivity(), CathodeContract.Seasons.buildFromShowId(showId),
+                  SeasonsAdapter.PROJECTION, null, null, CathodeContract.Seasons.DEFAULT_SORT);
           cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
           return cl;
         }

@@ -15,7 +15,6 @@ import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.provider.CathodeProvider;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import net.simonvt.cathode.remote.TraktTaskQueue;
 import retrofit.RetrofitError;
 
 public class SyncMovieRecommendations extends TraktTask {
@@ -27,7 +26,7 @@ public class SyncMovieRecommendations extends TraktTask {
       ContentResolver resolver = service.getContentResolver();
 
       List<Long> movieIds = new ArrayList<Long>();
-      Cursor c = resolver.query(CathodeContract.Movies.RECOMMENDED, null, null ,null, null);
+      Cursor c = resolver.query(CathodeContract.Movies.RECOMMENDED, null, null, null, null);
       while (c.moveToNext()) {
         movieIds.add(c.getLong(c.getColumnIndex(CathodeContract.Movies._ID)));
       }

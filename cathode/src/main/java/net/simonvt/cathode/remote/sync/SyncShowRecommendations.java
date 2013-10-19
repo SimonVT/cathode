@@ -2,7 +2,6 @@ package net.simonvt.cathode.remote.sync;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.os.RemoteException;
@@ -11,7 +10,6 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.TvShow;
 import net.simonvt.cathode.api.service.RecommendationsService;
-import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.provider.CathodeProvider;
 import net.simonvt.cathode.provider.ShowWrapper;

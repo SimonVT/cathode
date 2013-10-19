@@ -8,7 +8,6 @@ import com.squareup.tape.ObjectQueue;
 import com.squareup.tape.TaskQueue;
 import java.io.File;
 import java.io.IOException;
-import net.simonvt.cathode.util.LogWrapper;
 
 public final class TraktTaskQueue extends TaskQueue<TraktTask> {
 

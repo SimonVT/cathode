@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
@@ -16,7 +15,6 @@ import net.simonvt.cathode.api.UserCredentials;
 import net.simonvt.cathode.event.LogoutEvent;
 import net.simonvt.cathode.remote.TraktTaskService;
 import net.simonvt.cathode.settings.ActivityWrapper;
-import net.simonvt.cathode.settings.Settings;
 
 public class LogoutDialog extends DialogFragment {
 

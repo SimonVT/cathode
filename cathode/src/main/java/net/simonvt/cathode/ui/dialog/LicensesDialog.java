@@ -21,7 +21,7 @@ public class LicensesDialog extends DialogFragment {
     return builder.create();
   }
 
-  private static class License {
+  private static final class License {
     int library;
 
     int license;
@@ -32,7 +32,7 @@ public class LicensesDialog extends DialogFragment {
     }
   }
 
-  private class LicenseAdapter extends BaseAdapter {
+  private final class LicenseAdapter extends BaseAdapter {
 
     List<License> licenses = new ArrayList<License>();
 

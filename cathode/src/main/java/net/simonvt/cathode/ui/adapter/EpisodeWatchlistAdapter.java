@@ -14,7 +14,6 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
-import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.cathode.widget.TimeStamp;
@@ -56,7 +55,8 @@ public class EpisodeWatchlistAdapter extends CursorAdapter {
     final long firstAired =
         cursor.getLong(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.FIRST_AIRED));
     final int season = cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.SEASON));
-    final int episode = cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.EPISODE));
+    final int episode =
+        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.EPISODE));
 
     vh.screen.setImage(posterUrl);
     vh.title.setText(title);

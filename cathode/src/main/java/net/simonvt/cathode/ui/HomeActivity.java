@@ -1,9 +1,7 @@
 package net.simonvt.cathode.ui;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -16,7 +14,6 @@ import net.simonvt.cathode.event.LogoutEvent;
 import net.simonvt.cathode.event.MessageEvent;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
-import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import net.simonvt.cathode.ui.fragment.NavigationFragment;
 import net.simonvt.messagebar.MessageBar;

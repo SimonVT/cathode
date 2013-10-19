@@ -15,7 +15,6 @@ import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.provider.CathodeProvider;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import net.simonvt.cathode.util.LogWrapper;
 import retrofit.RetrofitError;
 
 public class SyncTrendingMoviesTask extends TraktTask {

@@ -11,7 +11,6 @@ import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import net.simonvt.cathode.util.LogWrapper;
 import retrofit.RetrofitError;
 
 public class SyncShowTask extends TraktTask {

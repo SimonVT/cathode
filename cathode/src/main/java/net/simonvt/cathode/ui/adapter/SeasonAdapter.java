@@ -15,7 +15,6 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.widget.CheckMark;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
@@ -58,7 +57,8 @@ public class SeasonAdapter extends CursorAdapter {
     final String title =
         cursor.getString(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.TITLE));
     final int season = cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.SEASON));
-    final int episode = cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.EPISODE));
+    final int episode =
+        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.EPISODE));
     final boolean watched =
         cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.WATCHED)) == 1;
     final boolean inCollection =

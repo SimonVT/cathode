@@ -6,7 +6,6 @@ import net.simonvt.cathode.api.enumeration.DetailLevel;
 import net.simonvt.cathode.api.service.MovieService;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import net.simonvt.cathode.util.LogWrapper;
 import retrofit.RetrofitError;
 
 public class SyncMovieTask extends TraktTask {
