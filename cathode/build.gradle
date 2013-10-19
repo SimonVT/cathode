@@ -1,5 +1,6 @@
 apply plugin: 'android'
 apply plugin: 'crashlytics'
+apply plugin: 'checkstyle'
 
 dependencies {
   compile project(':trakt-api')
@@ -45,6 +46,15 @@ android {
       signingConfig signingConfigs.release
     }
   }
+}
+
+task checkstyle(type: Checkstyle) {
+  configFile = file('../checkstyle.xml')
+  source 'src/main/java'
+  include '**/*.java'
+  exclude '**/gen/**'
+
+  classpath = files()
 }
 
 if (project.hasProperty('cathodeStoreFile')) {

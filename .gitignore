@@ -1,7 +1,6 @@
 /*
 
 !.gitignore
-!checkstyle.xml
 !init.py
 !build.gradle
 !settings.gradle
@@ -9,6 +8,8 @@
 !gradlew.bat
 
 !gradle/
+
+!config/
 
 !trakt-api/
 trakt-api/*
