@@ -154,8 +154,9 @@ public class SearchShowFragment extends AbsAdapterFragment
 
   private void setCursor(Cursor cursor) {
     if (showsAdapter == null) {
-      showsAdapter = new ShowDescriptionAdapter(getActivity());
+      showsAdapter = new ShowDescriptionAdapter(getActivity(), cursor);
       setAdapter(showsAdapter);
+      return;
     }
 
     showsAdapter.changeCursor(cursor);

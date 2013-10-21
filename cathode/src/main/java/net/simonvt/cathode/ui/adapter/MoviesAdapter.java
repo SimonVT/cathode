@@ -36,7 +36,7 @@ public class MoviesAdapter extends CursorAdapter {
   }
 
   @Override
-  public void bindView(View view, Context context, Cursor cursor) {
+  public void bindView(final View view, final Context context, final Cursor cursor) {
     ViewHolder vh = (ViewHolder) view.getTag();
 
     final long id = cursor.getLong(cursor.getColumnIndex(CathodeContract.Movies._ID));
@@ -65,7 +65,7 @@ public class MoviesAdapter extends CursorAdapter {
 
       @Override
       public void onActionSelected(int action) {
-        onOverflowActionSelected(id, action);
+        onOverflowActionSelected(view, id, action, cursor.getPosition());
       }
     });
   }
@@ -89,7 +89,7 @@ public class MoviesAdapter extends CursorAdapter {
     }
   }
 
-  protected void onOverflowActionSelected(long id, int action) {
+  protected void onOverflowActionSelected(View view, long id, int action, int position) {
     switch (action) {
       case R.id.action_watched:
         movieScheduler.setWatched(id, true);

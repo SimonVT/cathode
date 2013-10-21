@@ -2,13 +2,21 @@ package net.simonvt.cathode.ui.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.view.View;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.widget.OverflowView;
 
 public class MovieRecommendationsAdapter extends MoviesAdapter {
 
-  public MovieRecommendationsAdapter(Context context, Cursor c) {
+  public interface DismissListener {
+    void onDismissItem(View view, int position);
+  }
+
+  private DismissListener listener;
+
+  public MovieRecommendationsAdapter(Context context, Cursor c, DismissListener listener) {
     super(context, c);
+    this.listener = listener;
   }
 
   @Override
@@ -18,14 +26,15 @@ public class MovieRecommendationsAdapter extends MoviesAdapter {
     super.setupOverflowItems(overflow, watched, collected, inWatchlist);
   }
 
-  @Override protected void onOverflowActionSelected(long id, int action) {
+  @Override protected void onOverflowActionSelected(View view, long id, int action, int position) {
     switch (action) {
       case R.id.action_dismiss:
-        movieScheduler.dismissRecommendation(id);
+        // TODO: movieScheduler.dismissRecommendation(id);
+        listener.onDismissItem(view, position);
         break;
 
       default:
-        super.onOverflowActionSelected(id, action);
+        super.onOverflowActionSelected(view, id, action, position);
         break;
     }
   }

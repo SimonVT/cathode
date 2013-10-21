@@ -37,8 +37,8 @@ public class ShowDescriptionAdapter extends CursorAdapter {
 
   @Inject ShowTaskScheduler showScheduler;
 
-  public ShowDescriptionAdapter(Context context) {
-    super(context, null, 0);
+  public ShowDescriptionAdapter(Context context, Cursor cursor) {
+    super(context, cursor, 0);
     CathodeApp.inject(context, this);
   }
 
@@ -50,7 +50,7 @@ public class ShowDescriptionAdapter extends CursorAdapter {
   }
 
   @Override
-  public void bindView(View view, Context context, Cursor cursor) {
+  public void bindView(final View view, Context context, final Cursor cursor) {
     ViewHolder vh = (ViewHolder) view.getTag();
 
     final long id = cursor.getLong(cursor.getColumnIndex(CathodeContract.Shows._ID));
@@ -83,7 +83,7 @@ public class ShowDescriptionAdapter extends CursorAdapter {
 
       @Override
       public void onActionSelected(int action) {
-        onOverflowActionSelected(id, action);
+        onOverflowActionSelected(view, id, action, cursor.getPosition());
       }
     });
   }
@@ -96,7 +96,7 @@ public class ShowDescriptionAdapter extends CursorAdapter {
     }
   }
 
-  protected void onOverflowActionSelected(long id, int action) {
+  protected void onOverflowActionSelected(View view, long id, int action, int position) {
     switch (action) {
       case R.id.action_watchlist_add:
         showScheduler.setIsInWatchlist(id, true);
