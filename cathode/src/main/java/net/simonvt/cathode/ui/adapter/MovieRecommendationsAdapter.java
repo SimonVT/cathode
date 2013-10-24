@@ -29,7 +29,7 @@ public class MovieRecommendationsAdapter extends MoviesAdapter {
   @Override protected void onOverflowActionSelected(View view, long id, int action, int position) {
     switch (action) {
       case R.id.action_dismiss:
-        // TODO: movieScheduler.dismissRecommendation(id);
+        movieScheduler.dismissRecommendation(id);
         listener.onDismissItem(view, position);
         break;
 

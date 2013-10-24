@@ -27,7 +27,7 @@ public class ShowRecommendationsAdapter extends ShowDescriptionAdapter {
   protected void onOverflowActionSelected(View view, long id, int action, int position) {
     switch (action) {
       case R.id.action_dismiss:
-        // TODO: showScheduler.dismissRecommendation(id);
+        showScheduler.dismissRecommendation(id);
         listener.onDismissItem(view, position);
         break;
 
