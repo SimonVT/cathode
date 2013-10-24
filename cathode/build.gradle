@@ -48,13 +48,21 @@ android {
   }
 }
 
-task checkstyle(type: Checkstyle) {
-  configFile = file('../checkstyle.xml')
-  source 'src/main/java'
-  include '**/*.java'
-  exclude '**/gen/**'
+checkstyle {
+  configFile project.file('../config/checkstyle/checkstyle.xml')
+  showViolations true
+}
 
-  classpath = files()
+android.applicationVariants.all { variant ->
+  def name = variant.buildType.name
+
+  def checkstyle = project.tasks.create "checkstyle${name.capitalize()}", Checkstyle
+  checkstyle.dependsOn variant.javaCompile
+  checkstyle.source variant.javaCompile.source
+  checkstyle.classpath = project.fileTree(variant.javaCompile.destinationDir)
+  checkstyle.exclude('**/BuildConfig.java')
+  checkstyle.exclude('**/R.java')
+  project.tasks.getByName("check").dependsOn checkstyle
 }
 
 if (project.hasProperty('cathodeStoreFile')) {

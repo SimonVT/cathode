@@ -1,4 +1,5 @@
 apply plugin: 'android-library'
+apply plugin: 'checkstyle'
 
 dependencies {
   compile parent.ext.libraries.gson
@@ -19,4 +20,21 @@ android {
     versionCode = parent.ext.versionCode;
     versionName = parent.ext.versionName
   }
+}
+
+checkstyle {
+  configFile project.file('../config/checkstyle/checkstyle.xml')
+  showViolations true
+}
+
+android.libraryVariants.all { variant ->
+  def name = variant.buildType.name
+
+  def checkstyle = project.tasks.create "checkstyle${name.capitalize()}", Checkstyle
+  checkstyle.dependsOn variant.javaCompile
+  checkstyle.source variant.javaCompile.source
+  checkstyle.classpath = project.fileTree(variant.javaCompile.destinationDir)
+  checkstyle.exclude('**/BuildConfig.java')
+  checkstyle.exclude('**/R.java')
+  project.tasks.getByName("check").dependsOn checkstyle
 }
