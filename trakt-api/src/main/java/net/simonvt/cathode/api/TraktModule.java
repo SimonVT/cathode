@@ -21,7 +21,6 @@ import java.lang.reflect.Type;
 import java.util.List;
 import javax.inject.Singleton;
 import net.simonvt.cathode.api.entity.Episode;
-import net.simonvt.cathode.api.entity.ProgressItem;
 import net.simonvt.cathode.api.entity.Season;
 import net.simonvt.cathode.api.enumeration.CommentType;
 import net.simonvt.cathode.api.enumeration.DayOfWeek;
@@ -58,7 +57,8 @@ public class TraktModule {
   private static final String API_URL = "http://api.trakt.tv";
 
   @Provides @Singleton @Trakt
-  RestAdapter provideRestAdapter(@Trakt Gson gson, TraktInterceptor interceptor, ErrorHandler errorHandler) {
+  RestAdapter provideRestAdapter(@Trakt Gson gson, TraktInterceptor interceptor,
+      ErrorHandler errorHandler) {
     return new RestAdapter.Builder().setServer(API_URL)
         .setConverter(new GsonConverter(gson))
         .setRequestInterceptor(interceptor)
@@ -252,13 +252,11 @@ public class TraktModule {
 
   public static class IntTypeAdapter extends TypeAdapter<Number> {
 
-    @Override
-    public void write(JsonWriter out, Number value) throws IOException {
+    @Override public void write(JsonWriter out, Number value) throws IOException {
       out.value(value);
     }
 
-    @Override
-    public Number read(JsonReader in) throws IOException {
+    @Override public Number read(JsonReader in) throws IOException {
       if (in.peek() == JsonToken.NULL) {
         in.nextNull();
         return null;

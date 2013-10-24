@@ -3,7 +3,6 @@ package net.simonvt.cathode.api.service;
 import java.util.List;
 import net.simonvt.cathode.api.entity.TvShow;
 import net.simonvt.cathode.api.entity.UpdatedShows;
-import retrofit.RetrofitError;
 import retrofit.http.GET;
 import retrofit.http.Path;
 
