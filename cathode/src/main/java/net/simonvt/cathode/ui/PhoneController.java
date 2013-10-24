@@ -185,7 +185,7 @@ public class PhoneController extends UiController {
   public void onTitleChanged(OnTitleChangedEvent event) {
     if (!menuDrawer.isMenuVisible()) {
       Fragment f = stack.peek();
-      if (!f.isDetached()) {
+      if (f.isAdded() && !f.isDetached()) {
         String title = ((FragmentContract) f).getTitle();
         if (title != null) {
           activity.getActionBar().setTitle(title);
