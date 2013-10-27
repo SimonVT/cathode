@@ -103,9 +103,13 @@ public class ShowDescriptionAdapter extends CursorAdapter {
         break;
 
       case R.id.action_watchlist_remove:
-        showScheduler.setIsInWatchlist(id, false);
+        onWatchlistRemove(view, position, id);
         break;
     }
+  }
+
+  protected void onWatchlistRemove(View view, int position, long id) {
+    //showScheduler.setIsInWatchlist(id, false);
   }
 
   static class ViewHolder {

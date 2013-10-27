@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,22 +17,16 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
-import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
-import net.simonvt.cathode.util.LogWrapper;
 
-public abstract class ShowsFragment extends AbsAdapterFragment
-    implements LoaderManager.LoaderCallbacks<Cursor> {
-
-  private static final String TAG = "ShowsFragment";
-
-  @Inject EpisodeTaskScheduler episodeScheduler;
+public abstract class ShowsFragment<D extends Cursor> extends AbsAdapterFragment
+    implements LoaderManager.LoaderCallbacks<D> {
 
   @Inject TraktTaskQueue queue;
 
-  private ShowsWithNextAdapter showsAdapter;
+  protected CursorAdapter showsAdapter;
 
   private ShowsNavigationListener navigationListener;
 
@@ -106,7 +101,7 @@ public abstract class ShowsFragment extends AbsAdapterFragment
         getLibraryType());
   }
 
-  private void setCursor(Cursor cursor) {
+  protected void setCursor(Cursor cursor) {
     if (showsAdapter == null) {
       showsAdapter = new ShowsWithNextAdapter(getActivity(), cursor, getLibraryType());
       setAdapter(showsAdapter);
@@ -120,14 +115,11 @@ public abstract class ShowsFragment extends AbsAdapterFragment
 
   protected abstract int getLoaderId();
 
-  @Override
-  public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-    LogWrapper.d(TAG, "[onLoadFinished]");
+  @Override public void onLoadFinished(Loader<D> cursorLoader, D cursor) {
     setCursor(cursor);
   }
 
-  @Override
-  public void onLoaderReset(Loader<Cursor> cursorLoader) {
+  @Override public void onLoaderReset(Loader<D> cursorLoader) {
     showsAdapter.changeCursor(null);
   }
 }
