@@ -20,6 +20,8 @@ import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
+import net.simonvt.cathode.widget.AdapterViewAnimator;
+import net.simonvt.cathode.widget.DefaultAdapterAnimator;
 
 public abstract class MoviesFragment extends AbsAdapterFragment
     implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -96,7 +98,10 @@ public abstract class MoviesFragment extends AbsAdapterFragment
     if (getAdapter() == null) {
       setAdapter(getAdapter(cursor));
     } else {
+      AdapterViewAnimator animator =
+          new AdapterViewAnimator(adapterView, new DefaultAdapterAnimator());
       ((CursorAdapter) getAdapter()).changeCursor(cursor);
+      animator.animate();
     }
   }
 

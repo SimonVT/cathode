@@ -3,18 +3,30 @@ package net.simonvt.cathode.database;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.content.AsyncTaskLoader;
 
 public class MutableCursorLoader extends AsyncTaskLoader<MutableCursor> {
   final ForceLoadContentObserver observer;
 
-  Uri uri;
-  String[] projection;
-  String selection;
-  String[] selectionArgs;
-  String sortOrder;
+  private Uri uri;
+  private String[] projection;
+  private String selection;
+  private String[] selectionArgs;
+  private String sortOrder;
 
-  MutableCursor cursor;
+  private MutableCursor cursor;
+
+  private long waitUntil;
+
+  private Handler handler = new Handler(Looper.getMainLooper());
+
+  private Runnable postResult = new Runnable() {
+    @Override public void run() {
+      deliverResult(cursor);
+    }
+  };
 
   public MutableCursorLoader(Context context, Uri uri, String[] projection, String selection,
       String[] selectionArgs, String sortOrder) {
@@ -33,11 +45,15 @@ public class MutableCursorLoader extends AsyncTaskLoader<MutableCursor> {
         .query(uri, projection, selection, selectionArgs, sortOrder);
     MutableCursor result = null;
     if (cursor != null) {
-      result = new MutableCursor(cursor);
+      result = new MutableCursor(getContext(), cursor);
       cursor.close();
       result.registerContentObserver(observer);
     }
     return result;
+  }
+
+  public void throttle(long ms) {
+    waitUntil = System.currentTimeMillis() + ms;
   }
 
   @Override
@@ -47,6 +63,13 @@ public class MutableCursorLoader extends AsyncTaskLoader<MutableCursor> {
     }
 
     this.cursor = cursor;
+    handler.removeCallbacks(postResult);
+
+    final long now = System.currentTimeMillis();
+    if (now < waitUntil) {
+      handler.postDelayed(postResult, waitUntil - now + 250);
+      return;
+    }
 
     if (isStarted()) {
       super.deliverResult(cursor);

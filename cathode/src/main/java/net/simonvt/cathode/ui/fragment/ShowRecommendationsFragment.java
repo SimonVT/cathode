@@ -29,7 +29,9 @@ import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
 import net.simonvt.cathode.ui.adapter.ShowRecommendationsAdapter;
+import net.simonvt.cathode.widget.AdapterViewAnimator;
 import net.simonvt.cathode.widget.AnimatorHelper;
+import net.simonvt.cathode.widget.DefaultAdapterAnimator;
 
 public class ShowRecommendationsFragment extends AbsAdapterFragment
     implements LoaderManager.LoaderCallbacks<MutableCursor>,
@@ -46,9 +48,6 @@ public class ShowRecommendationsFragment extends AbsAdapterFragment
   private boolean isTablet;
 
   private MutableCursor cursor;
-  private MutableCursor newCursor;
-
-  private boolean removing;
 
   @Override
   public void onAttach(Activity activity) {
@@ -114,42 +113,25 @@ public class ShowRecommendationsFragment extends AbsAdapterFragment
   }
 
   @Override public void onDismissItem(final View view, final int position) {
-    removing = true;
+    Loader loader = getLoaderManager().getLoader(BaseActivity.LOADER_SHOWS_RECOMMENDATIONS);
+    MutableCursorLoader cursorLoader = (MutableCursorLoader) loader;
+    cursorLoader.throttle(2000);
 
     if (isTablet) {
-          AnimatorHelper.removeView((GridView) getAdapterView(), view,
-              new AnimatorHelper.Callback() {
-                @Override public void removeItem(int position) {
-                  cursor.remove(position);
-                }
-
-                @Override public void onAnimationEnd() {
-                  if (newCursor != null) {
-                    cursor = newCursor;
-                    newCursor = null;
-                    showsAdapter.changeCursor(cursor);
-                  }
-                  removing = false;
-                }
-              });
+      AnimatorHelper.removeView((GridView) getAdapterView(), view, animatorCallback);
     } else {
-              AnimatorHelper.removeView((ListView) getAdapterView(), view,
-                  new AnimatorHelper.Callback() {
-                    @Override public void removeItem(int position) {
-                      cursor.remove(position);
-                    }
-
-                    @Override public void onAnimationEnd() {
-                      if (newCursor != null) {
-                        cursor = newCursor;
-                        newCursor = null;
-                        showsAdapter.changeCursor(cursor);
-                      }
-                      removing = false;
-                    }
-                  });
+      AnimatorHelper.removeView((ListView) getAdapterView(), view, animatorCallback);
     }
   }
+
+  private AnimatorHelper.Callback animatorCallback = new AnimatorHelper.Callback() {
+    @Override public void removeItem(int position) {
+      cursor.remove(position);
+    }
+
+    @Override public void onAnimationEnd() {
+    }
+  };
 
   private void setCursor(Cursor c) {
     MutableCursor cursor = (MutableCursor) c;
@@ -160,12 +142,10 @@ public class ShowRecommendationsFragment extends AbsAdapterFragment
       return;
     }
 
-    if (!removing) {
-      this.cursor = cursor;
-      showsAdapter.changeCursor(cursor);
-    } else {
-      this.newCursor = cursor;
-    }
+    AdapterViewAnimator animator =
+        new AdapterViewAnimator(adapterView, new DefaultAdapterAnimator());
+    showsAdapter.changeCursor(cursor);
+    animator.animate();
   }
 
   @Override public Loader<MutableCursor> onCreateLoader(int i, Bundle bundle) {

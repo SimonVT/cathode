@@ -25,6 +25,8 @@ import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
+import net.simonvt.cathode.widget.AdapterViewAnimator;
+import net.simonvt.cathode.widget.DefaultAdapterAnimator;
 
 public class TrendingShowsFragment extends AbsAdapterFragment
     implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -101,7 +103,10 @@ public class TrendingShowsFragment extends AbsAdapterFragment
       return;
     }
 
+    AdapterViewAnimator animator =
+        new AdapterViewAnimator(adapterView, new DefaultAdapterAnimator());
     showsAdapter.changeCursor(cursor);
+    animator.animate();
   }
 
   @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {

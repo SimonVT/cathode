@@ -19,7 +19,9 @@ import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
 import net.simonvt.cathode.ui.adapter.ShowWatchlistAdapter;
+import net.simonvt.cathode.widget.AdapterViewAnimator;
 import net.simonvt.cathode.widget.AnimatorHelper;
+import net.simonvt.cathode.widget.DefaultAdapterAnimator;
 
 public class ShowsWatchlistFragment extends ShowsFragment<MutableCursor>
     implements ShowWatchlistAdapter.RemoveListener {
@@ -90,7 +92,11 @@ public class ShowsWatchlistFragment extends ShowsFragment<MutableCursor>
 
     if (!removing) {
       this.cursor = cursor;
+
+      AdapterViewAnimator animator =
+          new AdapterViewAnimator(adapterView, new DefaultAdapterAnimator());
       ((CursorAdapter) getAdapter()).changeCursor(cursor);
+      animator.animate();
     } else {
       this.newCursor = cursor;
     }

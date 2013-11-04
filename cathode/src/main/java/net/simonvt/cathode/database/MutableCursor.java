@@ -17,9 +17,11 @@
 
 package net.simonvt.cathode.database;
 
+import android.content.Context;
 import android.database.AbstractCursor;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
+import android.net.Uri;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +48,7 @@ public class MutableCursor extends AbstractCursor {
   /**
    * Constructs a MutableCursor from the data in source.
    */
-  public MutableCursor(Cursor source) {
+  public MutableCursor(Context context, Cursor source) {
     this.columnNames = source.getColumnNames();
     this.columnCount = this.columnNames.length;
 
@@ -74,6 +76,11 @@ public class MutableCursor extends AbstractCursor {
         }
       }
       add(data);
+    }
+
+    Uri uri = DatabaseUtils.getNotificationUri(source);
+    if (uri != null) {
+      setNotificationUri(context.getContentResolver(), uri);
     }
   }
 

@@ -26,13 +26,13 @@ import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.adapter.MovieRecommendationsAdapter;
+import net.simonvt.cathode.widget.AdapterViewAnimator;
 import net.simonvt.cathode.widget.AnimatorHelper;
+import net.simonvt.cathode.widget.DefaultAdapterAnimator;
 
 public class MovieRecommendationsFragment extends AbsAdapterFragment
     implements LoaderManager.LoaderCallbacks<MutableCursor>,
     MovieRecommendationsAdapter.DismissListener {
-
-  private static final int REMOVE_DURATION = 250;
 
   @Inject TraktTaskQueue queue;
 
@@ -43,9 +43,6 @@ public class MovieRecommendationsFragment extends AbsAdapterFragment
   private MovieRecommendationsAdapter movieAdapter;
 
   private MutableCursor cursor;
-  private MutableCursor newCursor;
-
-  private boolean removing;
 
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
@@ -114,7 +111,9 @@ public class MovieRecommendationsFragment extends AbsAdapterFragment
   }
 
   @Override public void onDismissItem(final View view, final int position) {
-    removing = true;
+    Loader loader = getLoaderManager().getLoader(BaseActivity.LOADER_MOVIES_RECOMMENDATIONS);
+    MutableCursorLoader cursorLoader = (MutableCursorLoader) loader;
+    cursorLoader.throttle(2000);
 
     if (isTablet) {
       AnimatorHelper.removeView((GridView) getAdapterView(), view, animatorCallback);
@@ -129,12 +128,6 @@ public class MovieRecommendationsFragment extends AbsAdapterFragment
     }
 
     @Override public void onAnimationEnd() {
-      if (newCursor != null) {
-        cursor = newCursor;
-        newCursor = null;
-        movieAdapter.changeCursor(cursor);
-      }
-      removing = false;
     }
   };
 
@@ -146,12 +139,10 @@ public class MovieRecommendationsFragment extends AbsAdapterFragment
       return;
     }
 
-    if (!removing) {
-      this.cursor = c;
-      movieAdapter.changeCursor(c);
-    } else {
-      this.newCursor = c;
-    }
+    AdapterViewAnimator animator =
+        new AdapterViewAnimator(adapterView, new DefaultAdapterAnimator());
+    movieAdapter.changeCursor(c);
+    animator.animate();
   }
 
   @Override public Loader<MutableCursor> onCreateLoader(int i, Bundle bundle) {

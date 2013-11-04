@@ -20,6 +20,8 @@ import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
+import net.simonvt.cathode.widget.AdapterViewAnimator;
+import net.simonvt.cathode.widget.DefaultAdapterAnimator;
 
 public abstract class ShowsFragment<D extends Cursor> extends AbsAdapterFragment
     implements LoaderManager.LoaderCallbacks<D> {
@@ -108,7 +110,10 @@ public abstract class ShowsFragment<D extends Cursor> extends AbsAdapterFragment
       return;
     }
 
+    AdapterViewAnimator animator =
+        new AdapterViewAnimator(adapterView, new DefaultAdapterAnimator());
     showsAdapter.changeCursor(cursor);
+    animator.animate();
   }
 
   protected abstract LibraryType getLibraryType();

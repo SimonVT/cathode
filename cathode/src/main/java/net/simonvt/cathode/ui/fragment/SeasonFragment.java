@@ -22,6 +22,8 @@ import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.SeasonAdapter;
+import net.simonvt.cathode.widget.AdapterViewAnimator;
+import net.simonvt.cathode.widget.DefaultAdapterAnimator;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public class SeasonFragment extends AbsAdapterFragment {
@@ -200,7 +202,11 @@ public class SeasonFragment extends AbsAdapterFragment {
 
         @Override
         public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
+
+          AdapterViewAnimator animator =
+              new AdapterViewAnimator(adapterView, new DefaultAdapterAnimator());
           episodeAdapter.changeCursor(data);
+          animator.animate();
         }
 
         @Override
