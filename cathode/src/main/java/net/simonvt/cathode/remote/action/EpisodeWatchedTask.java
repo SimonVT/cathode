@@ -36,8 +36,6 @@ public class EpisodeWatchedTask extends TraktTask {
 
   @Override
   protected void doTask() {
-    LogWrapper.v(TAG, "[doTask]");
-
     try {
       if (watched) {
         Response response =

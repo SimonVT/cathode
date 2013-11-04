@@ -38,7 +38,9 @@ public class ShowWatchedTask extends TraktTask {
             }, null, null, null);
 
         while (c.moveToNext()) {
-          queuePriorityTask(new EpisodeWatchedTask(tvdbId, c.getInt(0), c.getInt(0), false));
+          queuePriorityTask(new EpisodeWatchedTask(tvdbId,
+              c.getInt(c.getColumnIndex(CathodeContract.Episodes.SEASON)),
+              c.getInt(c.getColumnIndex(CathodeContract.Episodes.EPISODE)), false));
         }
 
         c.close();
