@@ -560,7 +560,7 @@ public class ShowFragment extends ProgressFragment {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
           CursorLoader cl =
-              new CursorLoader(getActivity(), Shows.buildShowUri(showId), SHOW_PROJECTION, null,
+              new CursorLoader(getActivity(), Shows.buildFromId(showId), SHOW_PROJECTION, null,
                   null, null);
           cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
           return cl;

@@ -45,7 +45,7 @@ public class SyncShowRecommendations extends TraktTask {
         showIds.remove(showId);
 
         ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(CathodeContract.Shows.buildShowUri(showId))
+            ContentProviderOperation.newUpdate(CathodeContract.Shows.buildFromId(showId))
                 .withValue(CathodeContract.Shows.RECOMMENDATION_INDEX, index)
                 .build();
         ops.add(op);
@@ -53,7 +53,7 @@ public class SyncShowRecommendations extends TraktTask {
 
       for (Long id : showIds) {
         ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(CathodeContract.Shows.buildShowUri(id))
+            ContentProviderOperation.newUpdate(CathodeContract.Shows.buildFromId(id))
                 .withValue(CathodeContract.Shows.RECOMMENDATION_INDEX, -1)
                 .build();
         ops.add(op);

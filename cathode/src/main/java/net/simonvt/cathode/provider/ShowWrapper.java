@@ -23,7 +23,7 @@ public final class ShowWrapper {
   }
 
   public static int getTvdbId(ContentResolver resolver, long showId) {
-    Cursor c = resolver.query(Shows.buildShowUri(showId), new String[] {
+    Cursor c = resolver.query(Shows.buildFromId(showId), new String[] {
         ShowColumns.TVDB_ID,
     }, null, null, null);
 
@@ -160,7 +160,7 @@ public final class ShowWrapper {
   public static void updateShow(ContentResolver resolver, TvShow show) {
     final long id = getShowId(resolver, show);
     ContentValues cv = getShowCVs(show);
-    resolver.update(Shows.buildShowUri(id), cv, null, null);
+    resolver.update(Shows.buildFromId(id), cv, null, null);
   }
 
   public static long insertShow(ContentResolver resolver, TvShow show) {
@@ -199,7 +199,7 @@ public final class ShowWrapper {
     ContentValues cv = new ContentValues();
     cv.put(Shows.IN_WATCHLIST, inWatchlist);
 
-    resolver.update(Shows.buildShowUri(showId), cv, null, null);
+    resolver.update(Shows.buildFromId(showId), cv, null, null);
   }
 
   public static void setIsInCollection(ContentResolver resolver, int tvdbId, boolean inCollection) {

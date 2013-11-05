@@ -243,7 +243,7 @@ public class MovieFragment extends ProgressFragment
   @Override
   public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
     CursorLoader loader =
-        new CursorLoader(getActivity(), CathodeContract.Movies.buildMovieUri(movieId), null, null,
+        new CursorLoader(getActivity(), CathodeContract.Movies.buildFromId(movieId), null, null,
             null, null);
     loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return loader;

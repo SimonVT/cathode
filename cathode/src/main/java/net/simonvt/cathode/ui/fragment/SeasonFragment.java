@@ -108,7 +108,7 @@ public class SeasonFragment extends AbsAdapterFragment {
 
     if (title == null) {
       CursorLoader loader =
-          new CursorLoader(getActivity(), CathodeContract.Shows.buildShowUri(showId), new String[] {
+          new CursorLoader(getActivity(), CathodeContract.Shows.buildFromId(showId), new String[] {
               CathodeContract.Shows.TITLE, CathodeContract.Shows.BANNER,
           }, null, null, null);
       loader.registerListener(0, new Loader.OnLoadCompleteListener<Cursor>() {

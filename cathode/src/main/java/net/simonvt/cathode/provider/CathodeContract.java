@@ -224,7 +224,7 @@ public final class CathodeContract {
     public static final Uri SHOWS_RECOMMENDED =
         CONTENT_URI.buildUpon().appendPath(PATH_RECOMMENDED).build();
 
-    public static Uri buildShowUri(long showId) {
+    public static Uri buildFromId(long showId) {
       return CONTENT_URI.buildUpon()
           .appendPath(PATH_WITHID)
           .appendPath(String.valueOf(showId))
@@ -536,7 +536,7 @@ public final class CathodeContract {
 
     public static final String DEFAULT_SORT = CathodeDatabase.Tables.MOVIES + "." + TITLE + " ASC";
 
-    public static Uri buildMovieUri(long movieId) {
+    public static Uri buildFromId(long movieId) {
       return CONTENT_URI.buildUpon().appendPath(PATH_WITHID).appendPath(String.valueOf(movieId)).build();
     }
 

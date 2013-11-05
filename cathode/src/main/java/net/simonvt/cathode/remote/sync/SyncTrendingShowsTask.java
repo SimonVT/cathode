@@ -34,7 +34,7 @@ public class SyncTrendingShowsTask extends TraktTask {
         ContentValues cv = new ContentValues();
         cv.put(CathodeContract.Shows.TRENDING_INDEX, -1);
         ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(CathodeContract.Shows.buildShowUri(showId))
+            ContentProviderOperation.newUpdate(CathodeContract.Shows.buildFromId(showId))
                 .withValues(cv)
                 .build();
         ops.add(op);
@@ -51,7 +51,7 @@ public class SyncTrendingShowsTask extends TraktTask {
         ContentValues cv = new ContentValues();
         cv.put(CathodeContract.Shows.TRENDING_INDEX, i);
         ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(CathodeContract.Shows.buildShowUri(showId))
+            ContentProviderOperation.newUpdate(CathodeContract.Shows.buildFromId(showId))
                 .withValues(cv)
                 .build();
         ops.add(op);

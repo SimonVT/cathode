@@ -124,7 +124,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         ContentValues cv = new ContentValues();
         cv.put(CathodeContract.Movies.RECOMMENDATION_INDEX, -1);
         context.getContentResolver()
-            .update(CathodeContract.Movies.buildMovieUri(movieId), cv, null, null);
+            .update(CathodeContract.Movies.buildFromId(movieId), cv, null, null);
         queue.add(new DismissMovieRecommendation(tmdbId));
       }
     });
@@ -147,7 +147,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         ContentValues cv = new ContentValues();
         cv.put(CathodeContract.Movies.RATING, rating);
         context.getContentResolver()
-            .update(CathodeContract.Movies.buildMovieUri(movieId), cv, null, null);
+            .update(CathodeContract.Movies.buildFromId(movieId), cv, null, null);
 
         queue.add(new MovieRateTask(tmdbId, rating));
       }

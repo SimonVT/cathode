@@ -20,7 +20,7 @@ public final class MovieWrapper {
   }
 
   public static long getTmdbId(ContentResolver resolver, long movieId) {
-    Cursor c = resolver.query(Movies.buildMovieUri(movieId), new String[] {
+    Cursor c = resolver.query(Movies.buildFromId(movieId), new String[] {
         CathodeContract.MovieColumns.TMDB_ID,
     }, null, null, null);
 
@@ -100,7 +100,7 @@ public final class MovieWrapper {
   public static void updateMovie(ContentResolver resolver, Movie movie) {
     final long movieId = getMovieId(resolver, movie.getTmdbId());
     ContentValues cv = getContentValues(movie);
-    resolver.update(Movies.buildMovieUri(movieId), cv, null, null);
+    resolver.update(Movies.buildFromId(movieId), cv, null, null);
 
     if (movie.getGenres() != null) insertGenres(resolver, movieId, movie.getGenres());
     if (movie.getPeople() != null) insertPeople(resolver, movieId, movie.getPeople());
@@ -237,19 +237,19 @@ public final class MovieWrapper {
   public static void setWatched(ContentResolver resolver, long movieId, boolean isWatched) {
     ContentValues cv = new ContentValues();
     cv.put(Movies.WATCHED, isWatched);
-    resolver.update(Movies.buildMovieUri(movieId), cv, null, null);
+    resolver.update(Movies.buildFromId(movieId), cv, null, null);
   }
 
   public static void setIsInCollection(ContentResolver resolver, long movieId,
       boolean inCollection) {
     ContentValues cv = new ContentValues();
     cv.put(Movies.IN_COLLECTION, inCollection);
-    resolver.update(Movies.buildMovieUri(movieId), cv, null, null);
+    resolver.update(Movies.buildFromId(movieId), cv, null, null);
   }
 
   public static void setIsInWatchlist(ContentResolver resolver, long movieId, boolean inWatchlist) {
     ContentValues cv = new ContentValues();
     cv.put(Movies.IN_WATCHLIST, inWatchlist);
-    resolver.update(Movies.buildMovieUri(movieId), cv, null, null);
+    resolver.update(Movies.buildFromId(movieId), cv, null, null);
   }
 }

@@ -101,7 +101,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
       @Override
       public void run() {
         Cursor c = context.getContentResolver()
-            .query(CathodeContract.Shows.buildShowUri(showId), new String[] {
+            .query(CathodeContract.Shows.buildFromId(showId), new String[] {
                 CathodeContract.Shows.TVDB_ID,
             }, null, null, null);
 
@@ -121,7 +121,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
       @Override
       public void run() {
         Cursor c = context.getContentResolver()
-            .query(CathodeContract.Shows.buildShowUri(showId), new String[] {
+            .query(CathodeContract.Shows.buildFromId(showId), new String[] {
                 CathodeContract.Shows.TVDB_ID,
             }, null, null, null);
 
@@ -141,7 +141,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
       @Override
       public void run() {
         Cursor c = context.getContentResolver()
-            .query(CathodeContract.Shows.buildShowUri(showId), new String[] {
+            .query(CathodeContract.Shows.buildFromId(showId), new String[] {
                 CathodeContract.Shows.TVDB_ID,
             }, null, null, null);
 
@@ -164,7 +164,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         ContentValues cv = new ContentValues();
         cv.put(CathodeContract.Shows.RECOMMENDATION_INDEX, -1);
         context.getContentResolver()
-            .update(CathodeContract.Shows.buildShowUri(showId), cv, null, null);
+            .update(CathodeContract.Shows.buildFromId(showId), cv, null, null);
 
         queue.add(new DismissShowRecommendation(tvdbId));
       }
@@ -188,7 +188,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         ContentValues cv = new ContentValues();
         cv.put(CathodeContract.Shows.RATING, rating);
         context.getContentResolver()
-            .update(CathodeContract.Shows.buildShowUri(showId), cv, null, null);
+            .update(CathodeContract.Shows.buildFromId(showId), cv, null, null);
 
         queue.add(new ShowRateTask(tvdbId, rating));
       }

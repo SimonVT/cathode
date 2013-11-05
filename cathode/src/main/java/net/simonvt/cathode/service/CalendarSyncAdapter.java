@@ -109,7 +109,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
             episodes.getLong(episodes.getColumnIndex(CathodeContract.Episodes.FIRST_AIRED));
 
         Cursor show = context.getContentResolver()
-            .query(CathodeContract.Shows.buildShowUri(showId), new String[] {
+            .query(CathodeContract.Shows.buildFromId(showId), new String[] {
                 CathodeContract.Shows.TITLE, CathodeContract.Shows.RUNTIME,
             }, null, null, null);
         show.moveToFirst();

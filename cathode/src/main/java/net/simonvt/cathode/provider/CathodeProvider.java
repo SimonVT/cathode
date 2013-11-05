@@ -519,8 +519,8 @@ public class CathodeProvider extends ContentProvider {
     switch (URI_MATCHER.match(uri)) {
       case SHOWS: {
         final long showId = db.insertOrThrow(Tables.SHOWS, null, values);
-        getContext().getContentResolver().notifyChange(Shows.buildShowUri(showId), null);
-        return Shows.buildShowUri(showId);
+        getContext().getContentResolver().notifyChange(Shows.buildFromId(showId), null);
+        return Shows.buildFromId(showId);
       }
       case SHOW_TOP_WATCHERS: {
         final long rowId = db.insertOrThrow(Tables.SHOW_TOP_WATCHERS, null, values);
@@ -551,20 +551,26 @@ public class CathodeProvider extends ContentProvider {
         final long seasonId = db.insertOrThrow(Tables.SEASONS, null, values);
         final long showId = values.getAsLong(CathodeContract.SeasonColumns.SHOW_ID);
         getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(showId), null);
+        getContext().getContentResolver().notifyChange(Shows.buildFromId(showId), null);
         return Seasons.buildFromId(seasonId);
       }
       case EPISODES: {
         final long episodeId = db.insertOrThrow(Tables.EPISODES, null, values);
         final long showId = values.getAsLong(CathodeContract.EpisodeColumns.SHOW_ID);
         final long seasonId = values.getAsLong(CathodeContract.EpisodeColumns.SEASON_ID);
+        getContext().getContentResolver().notifyChange(Episodes.buildFromId(episodeId), null);
         getContext().getContentResolver().notifyChange(Episodes.buildFromShowId(showId), null);
-        getContext().getContentResolver().notifyChange(Episodes.buildFromSeasonId(seasonId), null);
+        getContext().getContentResolver()
+            .notifyChange(Episodes.buildFromSeasonId(seasonId), null);
+        getContext().getContentResolver().notifyChange(Shows.buildFromId(showId), null);
+        getContext().getContentResolver().notifyChange(Seasons.buildFromId(seasonId), null);
+        getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(showId), null);
         return Episodes.buildFromId(episodeId);
       }
       case MOVIES: {
         final long movieId = db.insertOrThrow(Tables.MOVIES, null, values);
-        getContext().getContentResolver().notifyChange(Movies.buildMovieUri(movieId), null);
-        return Movies.buildMovieUri(movieId);
+        getContext().getContentResolver().notifyChange(Movies.buildFromId(movieId), null);
+        return Movies.buildFromId(movieId);
       }
       case MOVIE_GENRES: {
         final long rowId = db.insertOrThrow(Tables.MOVIE_GENRES, null, values);
@@ -635,7 +641,7 @@ public class CathodeProvider extends ContentProvider {
           }, where, whereArgs, null, null, null);
           while (c.moveToNext()) {
             final long id = c.getLong(0);
-            getContext().getContentResolver().notifyChange(Shows.buildShowUri(id), null);
+            getContext().getContentResolver().notifyChange(Shows.buildFromId(id), null);
           }
           c.close();
         }
@@ -749,9 +755,9 @@ public class CathodeProvider extends ContentProvider {
             getContext().getContentResolver().notifyChange(Episodes.buildFromShowId(showId), null);
             getContext().getContentResolver()
                 .notifyChange(Episodes.buildFromSeasonId(seasonId), null);
-            getContext().getContentResolver().notifyChange(Shows.buildShowUri(showId), null);
+            getContext().getContentResolver().notifyChange(Shows.buildFromId(showId), null);
             getContext().getContentResolver().notifyChange(Seasons.buildFromId(seasonId), null);
-            getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(seasonId), null);
+            getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(showId), null);
           }
           c.close();
         }
@@ -771,9 +777,9 @@ public class CathodeProvider extends ContentProvider {
           getContext().getContentResolver().notifyChange(Episodes.buildFromShowId(showId), null);
           getContext().getContentResolver()
               .notifyChange(Episodes.buildFromSeasonId(seasonId), null);
-          getContext().getContentResolver().notifyChange(Shows.buildShowUri(showId), null);
+          getContext().getContentResolver().notifyChange(Shows.buildFromId(showId), null);
           getContext().getContentResolver().notifyChange(Seasons.buildFromId(seasonId), null);
-          getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(seasonId), null);
+          getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(showId), null);
         }
         return count;
       }
@@ -795,9 +801,9 @@ public class CathodeProvider extends ContentProvider {
             getContext().getContentResolver().notifyChange(Episodes.buildFromShowId(showId), null);
             getContext().getContentResolver()
                 .notifyChange(Episodes.buildFromSeasonId(seasonId), null);
-            getContext().getContentResolver().notifyChange(Shows.buildShowUri(showId), null);
+            getContext().getContentResolver().notifyChange(Shows.buildFromId(showId), null);
             getContext().getContentResolver().notifyChange(Seasons.buildFromId(seasonId), null);
-            getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(seasonId), null);
+            getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(showId), null);
           }
           c.close();
         }
@@ -821,9 +827,9 @@ public class CathodeProvider extends ContentProvider {
             getContext().getContentResolver().notifyChange(Episodes.buildFromShowId(showId), null);
             getContext().getContentResolver()
                 .notifyChange(Episodes.buildFromSeasonId(seasonId), null);
-            getContext().getContentResolver().notifyChange(Shows.buildShowUri(showId), null);
+            getContext().getContentResolver().notifyChange(Shows.buildFromId(showId), null);
             getContext().getContentResolver().notifyChange(Seasons.buildFromId(seasonId), null);
-            getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(seasonId), null);
+            getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(showId), null);
           }
           c.close();
         }
@@ -837,7 +843,7 @@ public class CathodeProvider extends ContentProvider {
           }, where, whereArgs, null, null, null);
           while (c.moveToNext()) {
             final long id = c.getLong(0);
-            getContext().getContentResolver().notifyChange(Movies.buildMovieUri(id), null);
+            getContext().getContentResolver().notifyChange(Movies.buildFromId(id), null);
           }
           c.close();
         }

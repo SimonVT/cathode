@@ -47,7 +47,7 @@ public class SyncMovieRecommendations extends TraktTask {
         ContentValues cv = new ContentValues();
         cv.put(CathodeContract.Movies.RECOMMENDATION_INDEX, index);
         ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(CathodeContract.Movies.buildMovieUri(id))
+            ContentProviderOperation.newUpdate(CathodeContract.Movies.buildFromId(id))
                 .withValues(cv)
                 .build();
         ops.add(op);
@@ -55,7 +55,7 @@ public class SyncMovieRecommendations extends TraktTask {
 
       for (Long id : movieIds) {
         ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(CathodeContract.Movies.buildMovieUri(id))
+            ContentProviderOperation.newUpdate(CathodeContract.Movies.buildFromId(id))
                 .withValue(CathodeContract.Movies.RECOMMENDATION_INDEX, -1)
                 .build();
         ops.add(op);

@@ -34,7 +34,7 @@ public class SyncTrendingMoviesTask extends TraktTask {
         ContentValues cv = new ContentValues();
         cv.put(CathodeContract.Movies.TRENDING_INDEX, -1);
         ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(CathodeContract.Movies.buildMovieUri(movieId))
+            ContentProviderOperation.newUpdate(CathodeContract.Movies.buildFromId(movieId))
                 .withValues(cv)
                 .build();
         ops.add(op);
@@ -51,7 +51,7 @@ public class SyncTrendingMoviesTask extends TraktTask {
         ContentValues cv = new ContentValues();
         cv.put(CathodeContract.Movies.TRENDING_INDEX, i);
         ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(CathodeContract.Movies.buildMovieUri(movieId))
+            ContentProviderOperation.newUpdate(CathodeContract.Movies.buildFromId(movieId))
                 .withValues(cv)
                 .build();
         ops.add(op);

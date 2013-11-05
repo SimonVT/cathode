@@ -38,7 +38,7 @@ public class DashClockService extends DashClockExtension {
       final String date = DateUtils.millisToString(this, firstAired, false);
 
       Cursor show =
-          getContentResolver().query(CathodeContract.Shows.buildShowUri(showId), null, null, null,
+          getContentResolver().query(CathodeContract.Shows.buildFromId(showId), null, null, null,
               null);
       if (!show.moveToFirst()) {
         show.close();
