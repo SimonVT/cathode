@@ -77,6 +77,7 @@ public class ShowFragment extends ProgressFragment {
   @InjectView(R.id.hiddenPaneLayout) HiddenPaneLayout hiddenPaneLayout;
 
   @InjectView(R.id.seasons) ListView seasons;
+  @InjectView(R.id.seasonsEmpty) View seasonsEmpty;
   private SeasonsAdapter seasonsAdapter;
 
   @InjectView(R.id.ratingContainer) View ratingContainer;
@@ -196,6 +197,7 @@ public class ShowFragment extends ProgressFragment {
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    seasons.setEmptyView(seasonsEmpty);
     seasons.setAdapter(seasonsAdapter);
     seasons.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override

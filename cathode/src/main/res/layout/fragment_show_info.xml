@@ -130,8 +130,20 @@
     </FrameLayout>
   </LinearLayout>
 
-  <ListView
-      android:id="@+id/seasons"
+  <FrameLayout
       android:layout_height="match_parent"
-      android:layout_width="260dp"/>
+      android:layout_width="260dp">
+
+    <ListView
+        android:id="@+id/seasons"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"/>
+
+    <ProgressBar
+        android:id="@+id/seasonsEmpty"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+  </FrameLayout>
 </net.simonvt.cathode.widget.HiddenPaneLayout>
