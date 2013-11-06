@@ -1,6 +1,7 @@
 package net.simonvt.cathode.api.entity;
 
 import java.util.List;
+import net.simonvt.cathode.api.enumeration.Rating;
 
 public class Movie {
 
@@ -77,7 +78,7 @@ public class Movie {
 
   private Integer plays;
 
-  private Boolean rating;
+  private Rating rating;
 
   private Integer ratingAdvanced;
 
@@ -179,7 +180,7 @@ public class Movie {
     return plays;
   }
 
-  public Boolean getRating() {
+  public Rating getRating() {
     return rating;
   }
 

@@ -9,6 +9,7 @@ import java.util.List;
 import net.simonvt.cathode.api.entity.Images;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.entity.Person;
+import net.simonvt.cathode.api.entity.UserProfile;
 import net.simonvt.cathode.provider.CathodeContract.Movies;
 import net.simonvt.cathode.util.ApiUtils;
 
@@ -104,6 +105,9 @@ public final class MovieWrapper {
 
     if (movie.getGenres() != null) insertGenres(resolver, movieId, movie.getGenres());
     if (movie.getPeople() != null) insertPeople(resolver, movieId, movie.getPeople());
+    if (movie.getTopWatchers() != null) {
+      insertTopWatchers(resolver, movieId, movie.getTopWatchers());
+    }
   }
 
   public static long insertMovie(ContentResolver resolver, Movie movie) {
@@ -114,11 +118,16 @@ public final class MovieWrapper {
 
     if (movie.getGenres() != null) insertGenres(resolver, movieId, movie.getGenres());
     if (movie.getPeople() != null) insertPeople(resolver, movieId, movie.getPeople());
+    if (movie.getTopWatchers() != null) {
+      insertTopWatchers(resolver, movieId, movie.getTopWatchers());
+    }
 
     return movieId;
   }
 
   public static void insertGenres(ContentResolver resolver, long movieId, List<String> genres) {
+    resolver.delete(CathodeContract.MovieGenres.buildFromMovieId(movieId), null, null);
+
     for (String genre : genres) {
       ContentValues cv = new ContentValues();
 
@@ -126,6 +135,29 @@ public final class MovieWrapper {
       cv.put(CathodeContract.MovieGenres.GENRE, genre);
 
       resolver.insert(CathodeContract.MovieGenres.buildFromMovieId(movieId), cv);
+    }
+  }
+
+  public static void insertTopWatchers(ContentResolver resolver, long movieId,
+      List<UserProfile> topWatchers) {
+    resolver.delete(CathodeContract.MovieTopWatchers.buildFromMovieId(movieId), null, null);
+
+    for (UserProfile profile : topWatchers) {
+      ContentValues cv = new ContentValues();
+
+      cv.put(CathodeContract.TopWatcherColumns.PLAYS, profile.getPlays());
+      cv.put(CathodeContract.TopWatcherColumns.USERNAME, profile.getUsername());
+      cv.put(CathodeContract.TopWatcherColumns.PROTECTED, profile.isProtected());
+      cv.put(CathodeContract.TopWatcherColumns.FULL_NAME, profile.getFullName());
+      cv.put(CathodeContract.TopWatcherColumns.GENDER, profile.getGender().toString());
+      cv.put(CathodeContract.TopWatcherColumns.AGE, profile.getAge());
+      cv.put(CathodeContract.TopWatcherColumns.LOCATION, profile.getLocation());
+      cv.put(CathodeContract.TopWatcherColumns.ABOUT, profile.getAbout());
+      cv.put(CathodeContract.TopWatcherColumns.JOINED, profile.getJoined());
+      cv.put(CathodeContract.TopWatcherColumns.AVATAR, profile.getAvatar());
+      cv.put(CathodeContract.TopWatcherColumns.URL, profile.getUrl());
+
+      resolver.insert(CathodeContract.MovieTopWatchers.buildFromMovieId(movieId), cv);
     }
   }
 
@@ -219,15 +251,9 @@ public final class MovieWrapper {
       cv.put(Movies.SCROBBLES, movie.getStats().getScrobbles());
       cv.put(Movies.CHECKINS, movie.getStats().getCheckins());
     }
-
-    // TODO: Top watchers
-
     if (movie.isWatched() != null) cv.put(Movies.WATCHED, movie.isWatched());
-
     cv.put(Movies.PLAYS, movie.getPlays());
-
-    // TODO: rating
-    // TODO: ratingAdvanced
+    if (movie.getRatingAdvanced() != null) cv.put(Movies.RATING, movie.getRatingAdvanced());
     cv.put(Movies.IN_WATCHLIST, movie.isInWatchlist());
     cv.put(Movies.IN_COLLECTION, movie.isInCollection());
 

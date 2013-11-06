@@ -7,10 +7,10 @@ public enum Gender {
   MALE("male"),
   FEMALE("female");
 
-  private String mGender;
+  private String gender;
 
   Gender(String gender) {
-    mGender = gender;
+    this.gender = gender;
   }
 
   private static final Map<String, Gender> STRING_MAPPING = new HashMap<String, Gender>();
@@ -27,6 +27,6 @@ public enum Gender {
 
   @Override
   public String toString() {
-    return mGender;
+    return gender;
   }
 }

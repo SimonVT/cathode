@@ -297,6 +297,8 @@ public class UserProfile {
 
   private List<ActivityItem> watched;
 
+  private Integer plays;
+
   public String getUsername() {
     return username;
   }
@@ -351,5 +353,9 @@ public class UserProfile {
 
   public List<ActivityItem> getWatched() {
     return watched;
+  }
+
+  public Integer getPlays() {
+    return plays;
   }
 }

@@ -38,6 +38,8 @@ public final class ShowWrapper {
   }
 
   public static void insertShowGenres(ContentResolver resolver, long showId, List<String> genres) {
+    resolver.delete(CathodeContract.ShowGenres.buildFromShowId(showId), null, null);
+
     for (String genre : genres) {
       ContentValues cv = new ContentValues();
 
@@ -161,6 +163,8 @@ public final class ShowWrapper {
     final long id = getShowId(resolver, show);
     ContentValues cv = getShowCVs(show);
     resolver.update(Shows.buildFromId(id), cv, null, null);
+
+    if (show.getGenres() != null) insertShowGenres(resolver, id, show.getGenres());
   }
 
   public static long insertShow(ContentResolver resolver, TvShow show) {
@@ -169,7 +173,7 @@ public final class ShowWrapper {
     Uri uri = resolver.insert(Shows.CONTENT_URI, cv);
     final long showId = Long.valueOf(Shows.getShowId(uri));
 
-    insertShowGenres(resolver, showId, show.getGenres());
+    if (show.getGenres() != null) insertShowGenres(resolver, showId, show.getGenres());
 
     return showId;
   }
