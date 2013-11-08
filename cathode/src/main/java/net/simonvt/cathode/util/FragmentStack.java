@@ -47,8 +47,7 @@ public final class FragmentStack {
   private int popStackExitAnimation;
 
   private final Runnable execPendingTransactions = new Runnable() {
-    @Override
-    public void run() {
+    @Override public void run() {
       if (fragmentTransaction != null) {
         fragmentTransaction.commit();
         fragmentManager.executePendingTransactions();
@@ -101,8 +100,8 @@ public final class FragmentStack {
     outState.putStringArray(STATE_STACK, stackTags);
   }
 
-  public void restoreState(Bundle state) {
-    String[] stackTags = state.getStringArray(STATE_STACK);
+  public void restoreState(Bundle inState) {
+    String[] stackTags = inState.getStringArray(STATE_STACK);
     for (String tag : stackTags) {
       Fragment f = fragmentManager.findFragmentByTag(tag);
       stack.add(f);

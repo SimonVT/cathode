@@ -18,15 +18,13 @@ public class MovieSearchAdapter extends MoviesAdapter {
     CathodeApp.inject(context, this);
   }
 
-  @Override
-  public View newView(Context context, Cursor cursor, ViewGroup parent) {
+  @Override public View newView(Context context, Cursor cursor, ViewGroup parent) {
     View v = LayoutInflater.from(context).inflate(R.layout.list_row_search_movie, parent, false);
     v.setTag(new ViewHolder(v));
     return v;
   }
 
-  @Override
-  public void bindView(View view, Context context, Cursor cursor) {
+  @Override public void bindView(View view, Context context, Cursor cursor) {
     super.bindView(view, context, cursor);
     ViewHolder vh = (ViewHolder) view.getTag();
 

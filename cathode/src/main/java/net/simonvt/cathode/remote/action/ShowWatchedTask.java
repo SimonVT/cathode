@@ -24,8 +24,7 @@ public class ShowWatchedTask extends TraktTask {
     this.watched = watched;
   }
 
-  @Override
-  protected void doTask() {
+  @Override protected void doTask() {
     try {
       if (watched) {
         showService.seen(new ShowBody(tvdbId));

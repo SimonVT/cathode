@@ -37,8 +37,7 @@ public class ShowSearchHandler {
     bus.register(this);
   }
 
-  @Produce
-  public ShowSearchResult produceSearchResult() {
+  @Produce public ShowSearchResult produceSearchResult() {
     if (showIds != null) {
       return new ShowSearchResult(showIds);
     }
@@ -97,8 +96,7 @@ public class ShowSearchHandler {
       handler = null;
     }
 
-    @Override
-    public void run() {
+    @Override public void run() {
       try {
         List<TvShow> shows = searchService.shows(query);
 
@@ -117,16 +115,14 @@ public class ShowSearchHandler {
         }
 
         MAIN_HANDLER.post(new Runnable() {
-          @Override
-          public void run() {
+          @Override public void run() {
             if (handler != null) handler.deliverResult(showIds);
           }
         });
       } catch (RetrofitError e) {
         e.printStackTrace();
         MAIN_HANDLER.post(new Runnable() {
-          @Override
-          public void run() {
+          @Override public void run() {
             if (handler != null) handler.deliverFailure();
           }
         });

@@ -134,8 +134,7 @@ public class CathodeApp extends Application {
 
   @Inject Bus bus;
 
-  @Override
-  public void onCreate() {
+  @Override public void onCreate() {
     super.onCreate();
     ErrorReporting.init(this);
 
@@ -292,13 +291,11 @@ public class CathodeApp extends Application {
       TraktTaskQueue queue = TraktTaskQueue.create(appContext, gson);
       if (DEBUG) {
         queue.setListener(new ObjectQueue.Listener<TraktTask>() {
-          @Override
-          public void onAdd(ObjectQueue<TraktTask> queue, TraktTask entry) {
+          @Override public void onAdd(ObjectQueue<TraktTask> queue, TraktTask entry) {
             LogWrapper.i("TraktTaskQueue", "Queue size: " + queue.size());
           }
 
-          @Override
-          public void onRemove(ObjectQueue<TraktTask> queue) {
+          @Override public void onRemove(ObjectQueue<TraktTask> queue) {
             LogWrapper.i("TraktTaskQueue", "Queue size: " + queue.size());
           }
         });
@@ -310,13 +307,11 @@ public class CathodeApp extends Application {
       PriorityTraktTaskQueue queue = PriorityTraktTaskQueue.create(appContext, gson);
       if (DEBUG) {
         queue.setListener(new ObjectQueue.Listener<TraktTask>() {
-          @Override
-          public void onAdd(ObjectQueue<TraktTask> queue, TraktTask entry) {
+          @Override public void onAdd(ObjectQueue<TraktTask> queue, TraktTask entry) {
             LogWrapper.i("PriorityTraktTaskQueue", "Queue size: " + queue.size());
           }
 
-          @Override
-          public void onRemove(ObjectQueue<TraktTask> queue) {
+          @Override public void onRemove(ObjectQueue<TraktTask> queue) {
             LogWrapper.i("PriorityTraktTaskQueue", "Queue size: " + queue.size());
           }
         });

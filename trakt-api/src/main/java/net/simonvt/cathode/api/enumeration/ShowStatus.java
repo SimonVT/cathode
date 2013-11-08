@@ -7,15 +7,14 @@ public enum ShowStatus {
   CONTINUING("Continuing"),
   ENDED("Ended");
 
-  private String mStatus;
+  private String status;
 
   ShowStatus(String status) {
-    mStatus = status;
+    this.status = status;
   }
 
-  @Override
-  public String toString() {
-    return mStatus;
+  @Override public String toString() {
+    return status;
   }
 
   private static final Map<String, ShowStatus> STRING_MAPPING = new HashMap<String, ShowStatus>();

@@ -50,8 +50,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
     this.context = context;
   }
 
-  @Override
-  public void onPerformSync(Account account, Bundle extras, String authority,
+  @Override public void onPerformSync(Account account, Bundle extras, String authority,
       ContentProviderClient provider, SyncResult syncResult) {
     LogWrapper.v(TAG, "[onPerformSync]");
     final long calendarId = getCalendar(account);

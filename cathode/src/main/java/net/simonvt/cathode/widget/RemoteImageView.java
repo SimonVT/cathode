@@ -131,8 +131,7 @@ public class RemoteImageView extends View implements Target {
   @Override public void onPrepareLoad(Drawable drawable) {
   }
 
-  @Override
-  protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+  @Override protected void onSizeChanged(int w, int h, int oldw, int oldh) {
     super.onSizeChanged(w, h, oldw, oldh);
 
     if (imageUrl != null
@@ -142,8 +141,7 @@ public class RemoteImageView extends View implements Target {
     }
   }
 
-  @Override
-  protected void onDraw(Canvas canvas) {
+  @Override protected void onDraw(Canvas canvas) {
     final int width = getWidth();
     final int height = getHeight();
 
@@ -194,8 +192,7 @@ public class RemoteImageView extends View implements Target {
     invalidate();
   }
 
-  @Override
-  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+  @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
     final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 
@@ -225,8 +222,7 @@ public class RemoteImageView extends View implements Target {
     }
   }
 
-  @Override
-  protected Parcelable onSaveInstanceState() {
+  @Override protected Parcelable onSaveInstanceState() {
     Parcelable superState = super.onSaveInstanceState();
     SavedState state = new SavedState(superState);
 
@@ -235,8 +231,7 @@ public class RemoteImageView extends View implements Target {
     return state;
   }
 
-  @Override
-  protected void onRestoreInstanceState(Parcelable state) {
+  @Override protected void onRestoreInstanceState(Parcelable state) {
     SavedState savedState = (SavedState) state;
     super.onRestoreInstanceState(savedState.getSuperState());
 
@@ -256,21 +251,18 @@ public class RemoteImageView extends View implements Target {
       imageUrl = in.readString();
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    @Override public void writeToParcel(Parcel dest, int flags) {
       super.writeToParcel(dest, flags);
       dest.writeString(imageUrl);
     }
 
     @SuppressWarnings("UnusedDeclaration")
     public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
-      @Override
-      public SavedState createFromParcel(Parcel in) {
+      @Override public SavedState createFromParcel(Parcel in) {
         return new SavedState(in);
       }
 
-      @Override
-      public SavedState[] newArray(int size) {
+      @Override public SavedState[] newArray(int size) {
         return new SavedState[size];
       }
     };

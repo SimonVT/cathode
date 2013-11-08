@@ -17,19 +17,15 @@ import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
 
 public class WatchedShowsFragment extends ShowsFragment {
 
-  @Override
-  public String getTitle() {
+  @Override public String getTitle() {
     return getResources().getString(R.string.title_shows_watched);
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_shows_watched, container, false);
   }
 
-  @Override
-  protected LibraryType getLibraryType() {
+  @Override protected LibraryType getLibraryType() {
     return LibraryType.WATCHED;
   }
 
@@ -37,8 +33,7 @@ public class WatchedShowsFragment extends ShowsFragment {
     return BaseActivity.LOADER_SHOWS_WATCHED;
   }
 
-  @Override
-  public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+  @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
     final Uri contentUri = CathodeContract.Shows.SHOWS_WATCHED;
     CursorLoader cl =
         new CursorLoader(getActivity(), contentUri, ShowsWithNextAdapter.PROJECTION, null, null,

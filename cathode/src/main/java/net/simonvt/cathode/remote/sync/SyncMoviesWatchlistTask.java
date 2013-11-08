@@ -17,8 +17,7 @@ public class SyncMoviesWatchlistTask extends TraktTask {
 
   @Inject transient UserService userService;
 
-  @Override
-  protected void doTask() {
+  @Override protected void doTask() {
     try {
       Cursor c =
           service.getContentResolver().query(CathodeContract.Movies.CONTENT_URI, new String[] {

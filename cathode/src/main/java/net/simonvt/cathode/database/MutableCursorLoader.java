@@ -39,8 +39,7 @@ public class MutableCursorLoader extends AsyncTaskLoader<MutableCursor> {
     this.sortOrder = sortOrder;
   }
 
-  @Override
-  public MutableCursor loadInBackground() {
+  @Override public MutableCursor loadInBackground() {
     Cursor cursor = getContext().getContentResolver()
         .query(uri, projection, selection, selectionArgs, sortOrder);
     MutableCursor result = null;
@@ -56,8 +55,7 @@ public class MutableCursorLoader extends AsyncTaskLoader<MutableCursor> {
     waitUntil = System.currentTimeMillis() + ms;
   }
 
-  @Override
-  public void deliverResult(MutableCursor cursor) {
+  @Override public void deliverResult(MutableCursor cursor) {
     if (isReset()) {
       return;
     }
@@ -76,8 +74,7 @@ public class MutableCursorLoader extends AsyncTaskLoader<MutableCursor> {
     }
   }
 
-  @Override
-  protected void onStartLoading() {
+  @Override protected void onStartLoading() {
     if (cursor != null) {
       deliverResult(cursor);
     }
@@ -86,13 +83,11 @@ public class MutableCursorLoader extends AsyncTaskLoader<MutableCursor> {
     }
   }
 
-  @Override
-  protected void onStopLoading() {
+  @Override protected void onStopLoading() {
     cancelLoad();
   }
 
-  @Override
-  protected void onReset() {
+  @Override protected void onReset() {
     super.onReset();
     onStopLoading();
     cursor = null;

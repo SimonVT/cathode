@@ -28,8 +28,7 @@ public class MovieWatchlistTask extends TraktTask {
     this.watched = watched;
   }
 
-  @Override
-  protected void doTask() {
+  @Override protected void doTask() {
     LogWrapper.v(TAG, "[doTask]");
 
     try {

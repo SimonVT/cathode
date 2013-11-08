@@ -25,8 +25,7 @@ public class SyncShowTask extends TraktTask {
     this.tvdbId = tvdbId;
   }
 
-  @Override
-  protected void doTask() {
+  @Override protected void doTask() {
     try {
       TvShow show = showService.summary(tvdbId, DetailLevel.EXTENDED);
       final long showId = ShowWrapper.updateOrInsertShow(service.getContentResolver(), show);

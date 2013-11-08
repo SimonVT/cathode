@@ -30,8 +30,7 @@ public class EpisodeCollectionTask extends TraktTask {
     this.inCollection = inCollection;
   }
 
-  @Override
-  protected void doTask() {
+  @Override protected void doTask() {
     LogWrapper.v(TAG, "[doTask]");
 
     try {

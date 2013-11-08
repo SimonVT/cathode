@@ -36,8 +36,9 @@ public class NavigationFragment extends AbsAdapterFragment {
     menuItems.add(
         new MenuItem(R.id.menu_episodes_watchlist, R.string.navigation_episodes_watchlist, 0));
     menuItems.add(new MenuItem(R.id.menu_shows_trending, R.string.navigation_shows_trending, 0));
-    menuItems.add(new MenuItem(R.id.menu_shows_recommendations,
-        R.string.navigation_shows_recommendations, 0));
+    menuItems.add(
+        new MenuItem(R.id.menu_shows_recommendations, R.string.navigation_shows_recommendations,
+            0));
 
     menuItems.add(new NavigationItem(R.string.navigation_title_movies));
     menuItems.add(new MenuItem(R.id.menu_movies_watched, R.string.navigation_movies_watched, 0));
@@ -46,52 +47,46 @@ public class NavigationFragment extends AbsAdapterFragment {
     menuItems.add(
         new MenuItem(R.id.menu_movies_watchlist, R.string.navigation_movies_watchlist, 0));
     menuItems.add(new MenuItem(R.id.menu_movies_trending, R.string.navigation_movies_trending, 0));
-    menuItems.add(new MenuItem(R.id.menu_movies_recommendations,
-        R.string.navigation_movies_recommendations, 0));
+    menuItems.add(
+        new MenuItem(R.id.menu_movies_recommendations, R.string.navigation_movies_recommendations,
+            0));
   }
 
   private OnMenuClickListener listener;
 
   private int selectedPosition = 1;
 
-  @Override
-  public void onAttach(Activity activity) {
+  @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     listener = (OnMenuClickListener) activity;
   }
 
-  @Override
-  public void onCreate(Bundle state) {
-    super.onCreate(state);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
 
-    if (state != null) {
-      selectedPosition = state.getInt(STATE_SELECTED_ID);
+    if (inState != null) {
+      selectedPosition = inState.getInt(STATE_SELECTED_ID);
     }
 
     setAdapter(new NavigationAdapter(getActivity(), menuItems));
   }
 
-  @Override
-  public void onSaveInstanceState(Bundle outState) {
+  @Override public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
     outState.putInt(STATE_SELECTED_ID, selectedPosition);
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_navigation, container, false);
   }
 
-  @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
     getAdapterView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
     getAdapterView().setItemChecked(selectedPosition, true);
   }
 
-  @Override
-  protected void onItemClick(AdapterView l, View v, int position, long id) {
+  @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
     NavigationItem item = (NavigationItem) getAdapter().getItem(position);
     listener.onMenuItemClicked(item.id);
 
@@ -128,8 +123,7 @@ public class NavigationFragment extends AbsAdapterFragment {
       this.iconRes = iconRes;
     }
 
-    @Override
-    protected boolean isCategory() {
+    @Override protected boolean isCategory() {
       return false;
     }
   }
@@ -147,43 +141,35 @@ public class NavigationFragment extends AbsAdapterFragment {
       this.items = items;
     }
 
-    @Override
-    public int getCount() {
+    @Override public int getCount() {
       return items.size();
     }
 
-    @Override
-    public Object getItem(int position) {
+    @Override public Object getItem(int position) {
       return items.get(position);
     }
 
-    @Override
-    public long getItemId(int position) {
+    @Override public long getItemId(int position) {
       return position;
     }
 
-    @Override
-    public boolean areAllItemsEnabled() {
+    @Override public boolean areAllItemsEnabled() {
       return false;
     }
 
-    @Override
-    public boolean isEnabled(int position) {
+    @Override public boolean isEnabled(int position) {
       return getItem(position) instanceof MenuItem;
     }
 
-    @Override
-    public int getItemViewType(int position) {
+    @Override public int getItemViewType(int position) {
       return (getItem(position) instanceof MenuItem) ? TYPE_ITEM : TYPE_CATEGORY;
     }
 
-    @Override
-    public int getViewTypeCount() {
+    @Override public int getViewTypeCount() {
       return 2;
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    @Override public View getView(int position, View convertView, ViewGroup parent) {
       TextView v = (TextView) convertView;
       NavigationItem item = (NavigationItem) getItem(position);
 

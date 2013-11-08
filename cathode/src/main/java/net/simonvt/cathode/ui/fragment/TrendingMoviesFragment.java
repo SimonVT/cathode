@@ -18,13 +18,12 @@ public class TrendingMoviesFragment extends MoviesFragment {
     return getResources().getString(R.string.title_movies_trending);
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_list_cards, container, false);
   }
 
-  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
     setEmptyText(R.string.movies_loading_trending);
   }
 

@@ -16,24 +16,19 @@ public class MovieWatchlistFragment extends MoviesFragment {
 
   private static final String TAG = "WatchedMoviesFragment";
 
-  @Override
-  public String getTitle() {
+  @Override public String getTitle() {
     return getResources().getString(R.string.title_movies_watchlist);
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_movies_watchlist, container, false);
   }
 
-  @Override
-  protected int getLoaderId() {
+  @Override protected int getLoaderId() {
     return BaseActivity.LOADER_MOVIES_WATCHLIST;
   }
 
-  @Override
-  public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+  @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
     CursorLoader loader = new CursorLoader(getActivity(), CathodeContract.Movies.CONTENT_URI, null,
         CathodeContract.Movies.IN_WATCHLIST, null, CathodeContract.Movies.DEFAULT_SORT);
     loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);

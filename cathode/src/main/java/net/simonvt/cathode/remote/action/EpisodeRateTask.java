@@ -24,8 +24,7 @@ public class EpisodeRateTask extends TraktTask {
     this.rating = rating;
   }
 
-  @Override
-  protected void doTask() {
+  @Override protected void doTask() {
     try {
       rateService.rateEpisode(
           new RateBody.Builder().tvdbId(tvdbId).episode(episode).rating(rating).build());

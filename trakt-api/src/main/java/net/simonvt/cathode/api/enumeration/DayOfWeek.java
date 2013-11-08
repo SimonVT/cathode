@@ -13,15 +13,14 @@ public enum DayOfWeek {
   FRIDAY("Friday"),
   SATURDAY("Saturday");
 
-  private final String mValue;
+  private final String value;
 
   private DayOfWeek(String value) {
-    mValue = value;
+    this.value = value;
   }
 
-  @Override
-  public String toString() {
-    return mValue;
+  @Override public String toString() {
+    return value;
   }
 
   private static final Map<String, DayOfWeek> STRING_MAPPING = new HashMap<String, DayOfWeek>();

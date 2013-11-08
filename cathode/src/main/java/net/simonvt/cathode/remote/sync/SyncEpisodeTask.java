@@ -31,8 +31,7 @@ public class SyncEpisodeTask extends TraktTask {
     this.episode = episode;
   }
 
-  @Override
-  protected void doTask() {
+  @Override protected void doTask() {
     try {
       LogWrapper.v(TAG, "Syncing episode: " + tvdbId + "-" + season + "-" + episode);
 

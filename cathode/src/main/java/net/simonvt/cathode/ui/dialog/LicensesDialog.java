@@ -14,7 +14,7 @@ import net.simonvt.cathode.R;
 
 public class LicensesDialog extends DialogFragment {
 
-  @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+  @Override public Dialog onCreateDialog(Bundle inState) {
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()) //
         .setTitle(R.string.licenses).setAdapter(new LicenseAdapter(), null);
 

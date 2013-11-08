@@ -21,14 +21,12 @@ public abstract class TraktTask implements Task<TraktTaskService> {
 
   private transient boolean canceled;
 
-  @Override
-  public final void execute(final TraktTaskService service) {
+  @Override public final void execute(final TraktTaskService service) {
     CathodeApp.inject(service, this);
     this.service = service;
 
     new Thread(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         LogWrapper.v(TraktTask.this.getClass().getSimpleName(), "[doTask]");
         doTask();
       }
@@ -59,8 +57,7 @@ public abstract class TraktTask implements Task<TraktTaskService> {
 
   protected void postOnSuccess() {
     MAIN_HANDLER.post(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         service.onSuccess();
       }
     });
@@ -68,8 +65,7 @@ public abstract class TraktTask implements Task<TraktTaskService> {
 
   protected void postOnFailure() {
     MAIN_HANDLER.post(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         service.onFailure();
       }
     });

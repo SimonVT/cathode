@@ -167,8 +167,7 @@ public class CathodeDatabase extends SQLiteOpenHelper {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
   }
 
-  @Override
-  public void onCreate(SQLiteDatabase db) {
+  @Override public void onCreate(SQLiteDatabase db) {
     db.execSQL("CREATE TABLE "
         + Tables.SHOWS
         + " ("
@@ -374,7 +373,6 @@ public class CathodeDatabase extends SQLiteOpenHelper {
     db.execSQL(Trigger.EPISODE_UPDATE_COLLECTED);
   }
 
-  @Override
-  public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+  @Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
   }
 }

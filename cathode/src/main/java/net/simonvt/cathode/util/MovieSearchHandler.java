@@ -37,8 +37,7 @@ public class MovieSearchHandler {
     bus.register(this);
   }
 
-  @Produce
-  public MovieSearchResult produceSearchResult() {
+  @Produce public MovieSearchResult produceSearchResult() {
     if (movieIds != null) {
       return new MovieSearchResult(movieIds);
     }
@@ -94,8 +93,7 @@ public class MovieSearchHandler {
       handler = null;
     }
 
-    @Override
-    public void run() {
+    @Override public void run() {
       try {
         List<Movie> movies = searchService.movies(query);
 
@@ -115,16 +113,14 @@ public class MovieSearchHandler {
         }
 
         MAIN_HANDLER.post(new Runnable() {
-          @Override
-          public void run() {
+          @Override public void run() {
             if (handler != null) handler.deliverResult(movieIds);
           }
         });
       } catch (RetrofitError e) {
         e.printStackTrace();
         MAIN_HANDLER.post(new Runnable() {
-          @Override
-          public void run() {
+          @Override public void run() {
             if (handler != null) handler.deliverFailure();
           }
         });

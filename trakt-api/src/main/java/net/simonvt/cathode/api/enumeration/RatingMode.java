@@ -7,10 +7,10 @@ public enum RatingMode {
   SIMPLE("simple"),
   ADVANCED("advanced");
 
-  private String mMode;
+  private String mode;
 
   RatingMode(String mode) {
-    mMode = mode;
+    this.mode = mode;
   }
 
   private static final Map<String, RatingMode> STRING_MAPPING = new HashMap<String, RatingMode>();
@@ -25,8 +25,7 @@ public enum RatingMode {
     return STRING_MAPPING.get(value.toUpperCase());
   }
 
-  @Override
-  public String toString() {
-    return mMode;
+  @Override public String toString() {
+    return mode;
   }
 }

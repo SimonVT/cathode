@@ -12,7 +12,7 @@ public class ResponseParser {
 
   private static final String TAG = "ResponseParser";
 
-  @Inject @Trakt Gson mGson;
+  @Inject @Trakt Gson gson;
 
   /**
    * Attempts to parse a RetrofitError into a {@link net.simonvt.cathode.api.entity.Response}.
@@ -23,7 +23,7 @@ public class ResponseParser {
   public Response tryParse(RetrofitError e) {
     try {
       InputStream is = e.getResponse().getBody().in();
-      return mGson.fromJson(new JsonReader(new InputStreamReader(is)), Response.class);
+      return gson.fromJson(new JsonReader(new InputStreamReader(is)), Response.class);
     } catch (Throwable t) {
       // Ignore
     }

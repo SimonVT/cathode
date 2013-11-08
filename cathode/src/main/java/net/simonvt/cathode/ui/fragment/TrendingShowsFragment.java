@@ -39,8 +39,7 @@ public class TrendingShowsFragment extends AbsAdapterFragment
 
   @Inject TraktTaskQueue queue;
 
-  @Override
-  public void onAttach(Activity activity) {
+  @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
       navigationListener = (ShowsNavigationListener) activity;
@@ -49,9 +48,8 @@ public class TrendingShowsFragment extends AbsAdapterFragment
     }
   }
 
-  @Override
-  public void onCreate(Bundle state) {
-    super.onCreate(state);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
 
     setHasOptionsMenu(true);
@@ -63,9 +61,7 @@ public class TrendingShowsFragment extends AbsAdapterFragment
     return getResources().getString(R.string.title_shows_trending);
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_shows_watched, container, false);
   }
 
@@ -73,8 +69,7 @@ public class TrendingShowsFragment extends AbsAdapterFragment
     inflater.inflate(R.menu.fragment_shows, menu);
   }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_refresh:
         queue.add(new SyncTask());
@@ -89,8 +84,7 @@ public class TrendingShowsFragment extends AbsAdapterFragment
     }
   }
 
-  @Override
-  protected void onItemClick(AdapterView l, View v, int position, long id) {
+  @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
     Cursor c = (Cursor) getAdapter().getItem(position);
     navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(CathodeContract.Shows.TITLE)),
         LibraryType.WATCHED);
@@ -118,12 +112,10 @@ public class TrendingShowsFragment extends AbsAdapterFragment
     return cl;
   }
 
-  @Override
-  public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+  @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
     setCursor(data);
   }
 
-  @Override
-  public void onLoaderReset(Loader<Cursor> loader) {
+  @Override public void onLoaderReset(Loader<Cursor> loader) {
   }
 }

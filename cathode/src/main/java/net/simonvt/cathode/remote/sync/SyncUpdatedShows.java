@@ -21,8 +21,7 @@ public class SyncUpdatedShows extends TraktTask {
 
   @Inject transient ServerService serverService;
 
-  @Override
-  protected void doTask() {
+  @Override protected void doTask() {
     try {
       SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(service);
       final long showsLastUpdated = settings.getLong(Settings.SHOWS_LAST_UPDATED, 0);

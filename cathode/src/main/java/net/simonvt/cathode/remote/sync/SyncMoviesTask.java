@@ -14,8 +14,7 @@ public class SyncMoviesTask extends TraktTask {
 
   @Inject transient UserService userService;
 
-  @Override
-  protected void doTask() {
+  @Override protected void doTask() {
     try {
       List<Movie> movies = userService.moviesAll(DetailLevel.MIN);
       for (Movie movie : movies) {

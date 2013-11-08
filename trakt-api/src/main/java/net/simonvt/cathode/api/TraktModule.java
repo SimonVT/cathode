@@ -181,8 +181,8 @@ public class TraktModule {
 
     builder.registerTypeAdapter(DayOfWeek.class, new JsonDeserializer<DayOfWeek>() {
       @Override
-      public DayOfWeek deserialize(JsonElement json, Type type,
-          JsonDeserializationContext context) throws JsonParseException {
+      public DayOfWeek deserialize(JsonElement json, Type type, JsonDeserializationContext context)
+          throws JsonParseException {
         return DayOfWeek.fromValue(json.getAsString());
       }
     });

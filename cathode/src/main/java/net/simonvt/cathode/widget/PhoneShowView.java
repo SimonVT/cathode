@@ -35,14 +35,12 @@ public class PhoneShowView extends ViewGroup {
     minHeight = getResources().getDimensionPixelSize(R.dimen.showItemMinHeight);
   }
 
-  @Override
-  protected void onFinishInflate() {
+  @Override protected void onFinishInflate() {
     super.onFinishInflate();
     Views.inject(this);
   }
 
-  @Override
-  protected void onLayout(boolean changed, int l, int t, int r, int b) {
+  @Override protected void onLayout(boolean changed, int l, int t, int r, int b) {
     final int paddingLeft = getPaddingLeft();
     final int paddingTop = getPaddingTop();
 
@@ -73,8 +71,7 @@ public class PhoneShowView extends ViewGroup {
         overflowTop + overflowHeight);
   }
 
-  @Override
-  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+  @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     final int mode = MeasureSpec.getMode(widthMeasureSpec);
     if (mode != MeasureSpec.EXACTLY) {
       throw new RuntimeException("PhoneShowView width must measure as EXACTLY.");
@@ -124,23 +121,19 @@ public class PhoneShowView extends ViewGroup {
     measureChild(overflow, widthMeasureSpec, heightMeasureSpec);
   }
 
-  @Override
-  public LayoutParams generateLayoutParams(AttributeSet attrs) {
+  @Override public LayoutParams generateLayoutParams(AttributeSet attrs) {
     return new LayoutParams(getContext(), attrs);
   }
 
-  @Override
-  protected LayoutParams generateDefaultLayoutParams() {
+  @Override protected LayoutParams generateDefaultLayoutParams() {
     return new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
   }
 
-  @Override
-  protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
+  @Override protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
     return new LayoutParams(p);
   }
 
-  @Override
-  protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
+  @Override protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
     return p instanceof LayoutParams;
   }
 

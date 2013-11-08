@@ -7,33 +7,33 @@ public class UserCredentials {
     void onCredentialsChanged(String username, String password);
   }
 
-  private String mUsername;
+  private String username;
 
-  private String mPassword;
+  private String password;
 
-  OnCredentialsChangedListener mListener;
+  OnCredentialsChangedListener listener;
 
   public UserCredentials(String username, String password) {
-    mUsername = username;
-    mPassword = password;
+    this.username = username;
+    this.password = password;
   }
 
   void setListener(OnCredentialsChangedListener listener) {
-    mListener = listener;
+    this.listener = listener;
   }
 
   public void setCredentials(String username, String password) {
-    mUsername = username;
-    mPassword = password;
+    this.username = username;
+    this.password = password;
 
-    if (mListener != null) mListener.onCredentialsChanged(username, password);
+    if (listener != null) listener.onCredentialsChanged(username, password);
   }
 
   public String getUsername() {
-    return mUsername;
+    return username;
   }
 
   public String getPassword() {
-    return mPassword;
+    return password;
   }
 }

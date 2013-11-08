@@ -32,8 +32,7 @@ public abstract class ShowsFragment<D extends Cursor> extends AbsAdapterFragment
 
   private ShowsNavigationListener navigationListener;
 
-  @Override
-  public void onAttach(Activity activity) {
+  @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
       navigationListener = (ShowsNavigationListener) activity;
@@ -42,8 +41,7 @@ public abstract class ShowsFragment<D extends Cursor> extends AbsAdapterFragment
     }
   }
 
-  @Override
-  public void onCreate(Bundle inState) {
+  @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
 
@@ -52,36 +50,30 @@ public abstract class ShowsFragment<D extends Cursor> extends AbsAdapterFragment
     getLoaderManager().initLoader(getLoaderId(), null, this);
   }
 
-  @Override
-  public void onSaveInstanceState(Bundle outState) {
+  @Override public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
   }
 
-  @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
   }
 
-  @Override
-  public void onDestroy() {
+  @Override public void onDestroy() {
     if (getActivity().isFinishing() || isRemoving()) {
       getLoaderManager().destroyLoader(getLoaderId());
     }
     super.onDestroy();
   }
 
-  @Override
-  public void onDetach() {
+  @Override public void onDetach() {
     super.onDetach();
   }
 
-  @Override
-  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     inflater.inflate(R.menu.fragment_shows, menu);
   }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_refresh:
         queue.add(new SyncTask());
@@ -96,8 +88,7 @@ public abstract class ShowsFragment<D extends Cursor> extends AbsAdapterFragment
     }
   }
 
-  @Override
-  protected void onItemClick(AdapterView l, View v, int position, long id) {
+  @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
     Cursor c = (Cursor) getAdapter().getItem(position);
     navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(CathodeContract.Shows.TITLE)),
         getLibraryType());

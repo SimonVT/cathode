@@ -69,33 +69,28 @@ public class ForegroundDrawableRelativeLayout extends RelativeLayout {
     }
   }
 
-  @Override
-  protected boolean verifyDrawable(Drawable who) {
+  @Override protected boolean verifyDrawable(Drawable who) {
     return super.verifyDrawable(who) || (who == foreground);
   }
 
-  @Override
-  public void jumpDrawablesToCurrentState() {
+  @Override public void jumpDrawablesToCurrentState() {
     super.jumpDrawablesToCurrentState();
     if (foreground != null) foreground.jumpToCurrentState();
   }
 
-  @Override
-  protected void drawableStateChanged() {
+  @Override protected void drawableStateChanged() {
     super.drawableStateChanged();
     if (foreground != null && foreground.isStateful()) {
       foreground.setState(getDrawableState());
     }
   }
 
-  @Override
-  protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+  @Override protected void onSizeChanged(int w, int h, int oldw, int oldh) {
     super.onSizeChanged(w, h, oldw, oldh);
     foregroundBoundsChanged = true;
   }
 
-  @Override
-  public void draw(Canvas canvas) {
+  @Override public void draw(Canvas canvas) {
     super.draw(canvas);
 
     if (foreground != null) {
@@ -110,8 +105,7 @@ public class ForegroundDrawableRelativeLayout extends RelativeLayout {
     }
   }
 
-  @Override
-  public boolean gatherTransparentRegion(Region region) {
+  @Override public boolean gatherTransparentRegion(Region region) {
     boolean opaque = super.gatherTransparentRegion(region);
     if (region != null && foreground != null) {
       applyDrawableToTransparentRegion(foreground, region);

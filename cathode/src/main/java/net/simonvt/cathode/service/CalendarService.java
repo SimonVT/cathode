@@ -8,8 +8,7 @@ public class CalendarService extends Service {
 
   private static CalendarSyncAdapter sSyncAdapter;
 
-  @Override
-  public IBinder onBind(Intent intent) {
+  @Override public IBinder onBind(Intent intent) {
     return getSyncAdapter().getSyncAdapterBinder();
   }
 

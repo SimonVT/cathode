@@ -105,9 +105,8 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     return args;
   }
 
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
 
     isTablet = getResources().getBoolean(R.bool.isTablet);
@@ -124,37 +123,30 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     }
   }
 
-  @Override
-  public String getTitle() {
+  @Override public String getTitle() {
     return showTitle;
   }
 
-  @Override
-  public String getSubtitle() {
+  @Override public String getSubtitle() {
     return season == -1 ? null : getString(R.string.season_x, season);
   }
 
-  @Override
-  public boolean onBackPressed() {
+  @Override public boolean onBackPressed() {
     return false;
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_episode, container, false);
   }
 
-  @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
     Views.inject(this, view);
 
     wait = true;
     view.getViewTreeObserver()
         .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
+          @Override public void onGlobalLayout() {
             getView().getViewTreeObserver().removeOnGlobalLayoutListener(this);
             wait = false;
 
@@ -177,8 +169,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
         });
 
     ratingContainer.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
+      @Override public void onClick(View view) {
         RatingDialog.newInstance(RatingDialog.Type.EPISODE, episodeId, currentRating)
             .show(getFragmentManager(), DIALOG_RATING);
       }
@@ -186,8 +177,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
     if (!isTablet) {
       content.setListener(new ObservableScrollView.ScrollListener() {
-        @Override
-        public void onScrollChanged(int l, int t) {
+        @Override public void onScrollChanged(int l, int t) {
           final int offset = (int) (t / 2.0f);
           screen.setTranslationY(offset);
         }
@@ -196,16 +186,13 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
     if (overflow != null) {
       overflow.setListener(new OverflowView.OverflowActionListener() {
-        @Override
-        public void onPopupShown() {
+        @Override public void onPopupShown() {
         }
 
-        @Override
-        public void onPopupDismissed() {
+        @Override public void onPopupDismissed() {
         }
 
-        @Override
-        public void onActionSelected(int action) {
+        @Override public void onActionSelected(int action) {
           onActionSelected(action);
         }
       });
@@ -232,22 +219,19 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     }
   }
 
-  @Override
-  public void onDestroyView() {
+  @Override public void onDestroyView() {
     Views.reset(this);
     super.onDestroyView();
   }
 
-  @Override
-  public void onDestroy() {
+  @Override public void onDestroy() {
     if (getActivity().isFinishing() || isRemoving()) {
       getLoaderManager().destroyLoader(BaseActivity.LOADER_EPISODE);
     }
     super.onDestroy();
   }
 
-  @Override
-  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     if (loaded) {
       if (watched) {
         menu.add(0, R.id.action_unwatched, 1, R.string.action_unwatched);
@@ -268,8 +252,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     }
   }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
     return onActionSelected(item.getItemId());
   }
 
@@ -303,19 +286,16 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     return false;
   }
 
-  @Override
-  public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+  @Override public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
     Animation animation = null;
     if (nextAnim != 0) {
       animation = AnimationUtils.loadAnimation(getActivity(), nextAnim);
       animation.setAnimationListener(new Animation.AnimationListener() {
-        @Override
-        public void onAnimationStart(Animation animation) {
+        @Override public void onAnimationStart(Animation animation) {
           animating = true;
         }
 
-        @Override
-        public void onAnimationEnd(Animation animation) {
+        @Override public void onAnimationEnd(Animation animation) {
           animating = false;
           if (pendingStateChange != STATE_NONE) {
             changeState(pendingStateChange, true);
@@ -323,8 +303,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
           }
         }
 
-        @Override
-        public void onAnimationRepeat(Animation animation) {
+        @Override public void onAnimationRepeat(Animation animation) {
         }
       });
     }
@@ -379,8 +358,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
         progress.animate().alpha(0.0f);
         if (content.getAlpha() == 1.0f) content.setAlpha(0.0f);
         content.animate().alpha(1.0f).withEndAction(new Runnable() {
-          @Override
-          public void run() {
+          @Override public void run() {
             if (progress == null) {
               // In case fragment is removed before animation is done
               return;
@@ -392,8 +370,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
         if (progress.getAlpha() == 1.0f) progress.setAlpha(0.0f);
         progress.animate().alpha(1.0f);
         content.animate().alpha(0.0f).withEndAction(new Runnable() {
-          @Override
-          public void run() {
+          @Override public void run() {
             if (progress == null) {
               // In case fragment is removed before animation is done
               return;
@@ -418,7 +395,8 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
       watched = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.WATCHED)) == 1;
       collected = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.IN_COLLECTION)) == 1;
-      inWatchlist = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.IN_WATCHLIST)) == 1;
+      inWatchlist =
+          cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.IN_WATCHLIST)) == 1;
 
       watchedView.setVisibility(watched ? View.VISIBLE : View.GONE);
       inCollectionView.setVisibility(collected ? View.VISIBLE : View.GONE);
@@ -448,8 +426,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   private LoaderManager.LoaderCallbacks<Cursor> episodeCallbacks =
       new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
           CursorLoader cl =
               new CursorLoader(getActivity(), CathodeContract.Episodes.buildFromId(episodeId),
                   EPISODE_PROJECTION, null, null, null);
@@ -457,13 +434,11 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
           return cl;
         }
 
-        @Override
-        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
+        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
           updateEpisodeViews(data);
         }
 
-        @Override
-        public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
         }
       };
 }

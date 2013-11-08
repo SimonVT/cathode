@@ -30,8 +30,7 @@ public class EpisodeWatchlistTask extends TraktTask {
     this.inWatchlist = inWatchlist;
   }
 
-  @Override
-  protected void doTask() {
+  @Override protected void doTask() {
     LogWrapper.v(TAG, "[doTask]");
 
     try {

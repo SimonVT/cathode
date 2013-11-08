@@ -56,9 +56,8 @@ public class RatingDialog extends DialogFragment {
     return dialog;
   }
 
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
 
     Bundle args = getArguments();
@@ -69,8 +68,7 @@ public class RatingDialog extends DialogFragment {
     ratingText = getResources().getStringArray(R.array.ratings);
   }
 
-  @Override
-  public Dialog onCreateDialog(Bundle savedInstanceState) {
+  @Override public Dialog onCreateDialog(Bundle inState) {
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
     View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_rating, null);
@@ -80,8 +78,7 @@ public class RatingDialog extends DialogFragment {
     final RatingBar ratingBar = (RatingBar) v.findViewById(R.id.rating);
     ratingBar.setRating(rating);
     ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-      @Override
-      public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+      @Override public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
         RatingDialog.this.rating = (int) v;
         ratingText.setText(RatingDialog.this.ratingText[(int) v]);
       }
@@ -89,8 +86,7 @@ public class RatingDialog extends DialogFragment {
 
     builder.setView(v);
     builder.setPositiveButton(R.string.action_rate, new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialogInterface, int i) {
+      @Override public void onClick(DialogInterface dialogInterface, int i) {
         switch (type) {
           case SHOW:
             showScheduler.rate(id, (int) ratingBar.getRating());

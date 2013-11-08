@@ -29,8 +29,7 @@ public class EpisodeWatchlistAdapter extends CursorAdapter {
     CathodeApp.inject(context, this);
   }
 
-  @Override
-  public View newView(Context context, Cursor cursor, ViewGroup parent) {
+  @Override public View newView(Context context, Cursor cursor, ViewGroup parent) {
     View v =
         LayoutInflater.from(context).inflate(R.layout.list_row_watchlist_episode, parent, false);
 
@@ -43,8 +42,7 @@ public class EpisodeWatchlistAdapter extends CursorAdapter {
     return v;
   }
 
-  @Override
-  public void bindView(View view, Context context, Cursor cursor) {
+  @Override public void bindView(View view, Context context, Cursor cursor) {
     ViewHolder vh = (ViewHolder) view.getTag();
 
     final long id = cursor.getLong(cursor.getColumnIndex(CathodeContract.Episodes._ID));
@@ -63,16 +61,13 @@ public class EpisodeWatchlistAdapter extends CursorAdapter {
     vh.firstAired.setTimeInMillis(firstAired);
     vh.episode.setText(season + "x" + episode);
     vh.overflow.setListener(new OverflowView.OverflowActionListener() {
-      @Override
-      public void onPopupShown() {
+      @Override public void onPopupShown() {
       }
 
-      @Override
-      public void onPopupDismissed() {
+      @Override public void onPopupDismissed() {
       }
 
-      @Override
-      public void onActionSelected(int action) {
+      @Override public void onActionSelected(int action) {
 
         switch (action) {
           case R.id.action_watched:

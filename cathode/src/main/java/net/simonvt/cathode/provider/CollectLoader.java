@@ -22,8 +22,7 @@ public class CollectLoader extends AsyncTaskLoader<Cursor> {
     this.observer = new ForceLoadContentObserver();
   }
 
-  @Override
-  public Cursor loadInBackground() {
+  @Override public Cursor loadInBackground() {
     Cursor toCollect = getContext().getContentResolver()
         .query(CathodeContract.Episodes.buildFromShowId(showId), null,
             CathodeContract.Episodes.IN_COLLECTION
@@ -56,8 +55,7 @@ public class CollectLoader extends AsyncTaskLoader<Cursor> {
     });
   }
 
-  @Override
-  protected void onStartLoading() {
+  @Override protected void onStartLoading() {
     if (cursor != null) {
       deliverResult(cursor);
     }
@@ -66,21 +64,18 @@ public class CollectLoader extends AsyncTaskLoader<Cursor> {
     }
   }
 
-  @Override
-  protected void onStopLoading() {
+  @Override protected void onStopLoading() {
     // Attempt to cancel the current load task if possible.
     cancelLoad();
   }
 
-  @Override
-  public void onCanceled(Cursor cursor) {
+  @Override public void onCanceled(Cursor cursor) {
     if (cursor != null && !cursor.isClosed()) {
       cursor.close();
     }
   }
 
-  @Override
-  protected void onReset() {
+  @Override protected void onReset() {
     super.onReset();
 
     // Ensure the loader is stopped

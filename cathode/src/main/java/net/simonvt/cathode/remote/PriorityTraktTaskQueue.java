@@ -28,30 +28,26 @@ public final class PriorityTraktTaskQueue extends TaskQueue<TraktTask> {
     context.startService(new Intent(context, TraktTaskService.class));
   }
 
-  @Override
-  public void add(TraktTask entry) {
+  @Override public void add(TraktTask entry) {
     synchronized (this) {
       super.add(entry);
       startService();
     }
   }
 
-  @Override
-  public TraktTask peek() {
+  @Override public TraktTask peek() {
     synchronized (this) {
       return super.peek();
     }
   }
 
-  @Override
-  public int size() {
+  @Override public int size() {
     synchronized (this) {
       return super.size();
     }
   }
 
-  @Override
-  public void remove() {
+  @Override public void remove() {
     synchronized (this) {
       super.remove();
     }

@@ -82,9 +82,8 @@ public class MovieFragment extends ProgressFragment
     return args;
   }
 
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
 
     isTablet = getResources().getBoolean(R.bool.isTablet);
@@ -96,23 +95,18 @@ public class MovieFragment extends ProgressFragment
     movieTitle = args.getString(ARG_TITLE);
   }
 
-  @Override
-  public String getTitle() {
+  @Override public String getTitle() {
     return movieTitle == null ? "" : movieTitle;
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_movie, container, false);
   }
 
-  @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
     ratingContainer.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
+      @Override public void onClick(View view) {
         RatingDialog.newInstance(RatingDialog.Type.MOVIE, movieId, currentRating)
             .show(getFragmentManager(), DIALOG_RATING);
       }
@@ -120,8 +114,7 @@ public class MovieFragment extends ProgressFragment
 
     if (!isTablet) {
       scrollView.setListener(new ObservableScrollView.ScrollListener() {
-        @Override
-        public void onScrollChanged(int l, int t) {
+        @Override public void onScrollChanged(int l, int t) {
           final int offset = (int) (t / 2.0f);
           banner.setTranslationY(offset);
         }
@@ -135,8 +128,7 @@ public class MovieFragment extends ProgressFragment
         && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
       view.getViewTreeObserver()
           .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
+            @Override public void onGlobalLayout() {
               getView().getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
               scrollView.setScrollY(banner.getHeight() / 2);
@@ -145,8 +137,7 @@ public class MovieFragment extends ProgressFragment
     }
   }
 
-  @Override
-  public void onDestroyView() {
+  @Override public void onDestroyView() {
     if (getActivity().isFinishing() || isRemoving()) {
       getLoaderManager().destroyLoader(BaseActivity.LOADER_MOVIE);
       getLoaderManager().destroyLoader(BaseActivity.LOADER_MOVIE_ACTORS);
@@ -154,8 +145,7 @@ public class MovieFragment extends ProgressFragment
     super.onDestroyView();
   }
 
-  @Override
-  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     if (loaded) {
       if (watched) {
         menu.add(0, R.id.action_unwatched, 1, R.string.action_unwatched);
@@ -176,8 +166,7 @@ public class MovieFragment extends ProgressFragment
     }
   }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.action_watched:
         movieScheduler.setWatched(movieId, true);
@@ -224,7 +213,8 @@ public class MovieFragment extends ProgressFragment
     currentRating = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.RATING));
     rating.setRating(currentRating);
 
-    final String overview = cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.OVERVIEW));
+    final String overview =
+        cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.OVERVIEW));
     watched = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.WATCHED)) == 1;
     collected = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.IN_COLLECTION)) == 1;
     inWatchlist = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.IN_WATCHLIST)) == 1;
@@ -240,8 +230,7 @@ public class MovieFragment extends ProgressFragment
     getActivity().invalidateOptionsMenu();
   }
 
-  @Override
-  public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+  @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
     CursorLoader loader =
         new CursorLoader(getActivity(), CathodeContract.Movies.buildFromId(movieId), null, null,
             null, null);
@@ -249,13 +238,11 @@ public class MovieFragment extends ProgressFragment
     return loader;
   }
 
-  @Override
-  public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+  @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
     updateView(cursor);
   }
 
-  @Override
-  public void onLoaderReset(Loader<Cursor> cursorLoader) {
+  @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
   }
 
   private void updateActors(Cursor c) {
@@ -280,8 +267,7 @@ public class MovieFragment extends ProgressFragment
 
   private LoaderManager.LoaderCallbacks<Cursor> actorsLoader =
       new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override
-        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
           CursorLoader loader =
               new CursorLoader(getActivity(), CathodeContract.MovieActors.buildFromMovieId(movieId),
                   null, null, null, null);
@@ -289,13 +275,11 @@ public class MovieFragment extends ProgressFragment
           return loader;
         }
 
-        @Override
-        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
           updateActors(cursor);
         }
 
-        @Override
-        public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
         }
       };
 }

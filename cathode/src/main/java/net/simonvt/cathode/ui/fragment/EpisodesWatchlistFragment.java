@@ -30,8 +30,7 @@ public class EpisodesWatchlistFragment extends AbsAdapterFragment
 
   private ShowsNavigationListener navigationListener;
 
-  @Override
-  public void onAttach(Activity activity) {
+  @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
       navigationListener = (ShowsNavigationListener) activity;
@@ -40,9 +39,8 @@ public class EpisodesWatchlistFragment extends AbsAdapterFragment
     }
   }
 
-  @Override
-  public void onCreate(Bundle state) {
-    super.onCreate(state);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
     setHasOptionsMenu(true);
     getLoaderManager().initLoader(BaseActivity.LOADER_EPISODES_WATCHLIST, null, this);
   }
@@ -51,19 +49,15 @@ public class EpisodesWatchlistFragment extends AbsAdapterFragment
     return getResources().getString(R.string.title_shows_episode_watchlist);
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_episodes_watchlist, container, false);
   }
 
-  @Override
-  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     inflater.inflate(R.menu.fragment_watchlist_episode, menu);
   }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_search:
         navigationListener.onStartShowSearch();
@@ -74,16 +68,14 @@ public class EpisodesWatchlistFragment extends AbsAdapterFragment
     }
   }
 
-  @Override
-  public void onDestroy() {
+  @Override public void onDestroy() {
     if (getActivity().isFinishing() || isRemoving()) {
       getLoaderManager().destroyLoader(BaseActivity.LOADER_EPISODES_WATCHLIST);
     }
     super.onDestroy();
   }
 
-  @Override
-  protected void onItemClick(AdapterView l, View v, int position, long id) {
+  @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
     Cursor c = (Cursor) adapter.getItem(position);
     navigationListener.onDisplayEpisode(id,
         c.getString(c.getColumnIndex(CathodeContract.Shows.TITLE)));
@@ -99,8 +91,7 @@ public class EpisodesWatchlistFragment extends AbsAdapterFragment
     adapter.changeCursor(cursor);
   }
 
-  @Override
-  public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+  @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
     CursorLoader loader =
         new CursorLoader(getActivity(), CathodeContract.Episodes.WATCHLIST_URI, new String[] {
             CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes._ID,
@@ -115,13 +106,11 @@ public class EpisodesWatchlistFragment extends AbsAdapterFragment
     return loader;
   }
 
-  @Override
-  public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+  @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
     setCursor(cursor);
   }
 
-  @Override
-  public void onLoaderReset(Loader<Cursor> cursorLoader) {
+  @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
     setCursor(null);
   }
 }

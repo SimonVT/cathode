@@ -131,8 +131,7 @@ public class SelectionBuilder {
     }
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return "SelectionBuilder[table="
         + table
         + ", selection="

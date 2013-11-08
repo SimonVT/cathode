@@ -28,8 +28,7 @@ public class EpisodeWatchedTask extends TraktTask {
     this.watched = watched;
   }
 
-  @Override
-  protected void doTask() {
+  @Override protected void doTask() {
     try {
       if (watched) {
         Response response = showService.episodeSeen(new ShowEpisodeBody(tvdbId, season, episode));

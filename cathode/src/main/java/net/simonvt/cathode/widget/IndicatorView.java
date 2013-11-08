@@ -66,8 +66,7 @@ public class IndicatorView extends View {
     this.inWatchlist = inWatchlist;
   }
 
-  @Override
-  protected void onDraw(Canvas canvas) {
+  @Override protected void onDraw(Canvas canvas) {
     final int width = getWidth();
     final int height = getHeight();
 

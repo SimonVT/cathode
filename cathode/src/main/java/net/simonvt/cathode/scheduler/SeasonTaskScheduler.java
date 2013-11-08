@@ -19,8 +19,7 @@ public class SeasonTaskScheduler extends BaseTaskScheduler {
 
   public void setWatched(final long seasonId, final boolean watched) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         Cursor c = context.getContentResolver()
             .query(CathodeContract.Episodes.buildFromSeasonId(seasonId), new String[] {
                 CathodeContract.Episodes._ID, CathodeContract.Episodes.WATCHED,
@@ -52,8 +51,7 @@ public class SeasonTaskScheduler extends BaseTaskScheduler {
 
   public void setInCollection(final long seasonId, final boolean inCollection) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         Cursor c = context.getContentResolver()
             .query(CathodeContract.Episodes.buildFromSeasonId(seasonId), new String[] {
                 CathodeContract.Episodes._ID, CathodeContract.Episodes.IN_COLLECTION,

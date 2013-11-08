@@ -54,8 +54,8 @@ public class MovieRecommendationsFragment extends AbsAdapterFragment
     }
   }
 
-  @Override public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
     setHasOptionsMenu(true);
 
@@ -68,13 +68,12 @@ public class MovieRecommendationsFragment extends AbsAdapterFragment
     return getResources().getString(R.string.title_movies_recommendations);
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_list_cards, container, false);
   }
 
-  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
     setEmptyText(R.string.movies_loading_trending);
   }
 

@@ -32,8 +32,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
    */
   public void sync(final long showId) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
         postTask(new SyncShowTask(tvdbId));
       }
@@ -42,8 +41,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
 
   public void watchedNext(final long showId) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         Cursor c = context.getContentResolver()
             .query(CathodeContract.Episodes.buildFromShowId(showId), new String[] {
                 CathodeContract.Episodes._ID, CathodeContract.Episodes.SEASON,
@@ -70,8 +68,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
 
   public void collectedNext(final long showId) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         Cursor c = context.getContentResolver()
             .query(CathodeContract.Episodes.buildFromShowId(showId), new String[] {
                 CathodeContract.Episodes._ID, CathodeContract.Episodes.SEASON,
@@ -98,8 +95,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
 
   public void setWatched(final long showId, final boolean watched) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         Cursor c = context.getContentResolver()
             .query(CathodeContract.Shows.buildFromId(showId), new String[] {
                 CathodeContract.Shows.TVDB_ID,
@@ -118,8 +114,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
 
   public void setIsInWatchlist(final long showId, final boolean inWatchlist) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         Cursor c = context.getContentResolver()
             .query(CathodeContract.Shows.buildFromId(showId), new String[] {
                 CathodeContract.Shows.TVDB_ID,
@@ -138,8 +133,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
 
   public void setIsInCollection(final long showId, final boolean inCollection) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         Cursor c = context.getContentResolver()
             .query(CathodeContract.Shows.buildFromId(showId), new String[] {
                 CathodeContract.Shows.TVDB_ID,
@@ -181,8 +175,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
    */
   public void rate(final long showId, final int rating) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         final long tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
 
         ContentValues cv = new ContentValues();

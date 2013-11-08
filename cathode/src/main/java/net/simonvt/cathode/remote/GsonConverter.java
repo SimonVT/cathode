@@ -21,14 +21,12 @@ public class GsonConverter<T> implements FileObjectQueue.Converter<T> {
     this.type = type;
   }
 
-  @Override
-  public T from(byte[] bytes) {
+  @Override public T from(byte[] bytes) {
     Reader reader = new InputStreamReader(new ByteArrayInputStream(bytes));
     return gson.fromJson(reader, type);
   }
 
-  @Override
-  public void toStream(T object, OutputStream bytes) throws IOException {
+  @Override public void toStream(T object, OutputStream bytes) throws IOException {
     Writer writer = new OutputStreamWriter(bytes);
     gson.toJson(object, type, writer);
     writer.flush();

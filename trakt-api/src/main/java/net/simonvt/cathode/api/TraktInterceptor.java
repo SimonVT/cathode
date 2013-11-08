@@ -8,14 +8,13 @@ public class TraktInterceptor implements RequestInterceptor {
 
   private static final String HEADER_AUTHORIZATION = "Authorization";
 
-  private String mAuth = null;
+  private String auth = null;
 
-  private final String mApiKey;
+  private final String apiKey;
 
-  private UserCredentials mCredentials;
+  private UserCredentials credentials;
 
-  @Inject
-  public TraktInterceptor(@ApiKey String apiKey, UserCredentials credentials) {
+  @Inject public TraktInterceptor(@ApiKey String apiKey, UserCredentials credentials) {
     if (apiKey == null) {
       throw new IllegalArgumentException("apiKey must not be null");
     }
@@ -23,11 +22,10 @@ public class TraktInterceptor implements RequestInterceptor {
       throw new IllegalArgumentException("credentials must not be null");
     }
 
-    mApiKey = apiKey;
-    mCredentials = credentials;
+    this.apiKey = apiKey;
+    this.credentials = credentials;
     credentials.setListener(new UserCredentials.OnCredentialsChangedListener() {
-      @Override
-      public void onCredentialsChanged(String username, String password) {
+      @Override public void onCredentialsChanged(String username, String password) {
         setCredentials(username, password);
       }
     });
@@ -35,17 +33,16 @@ public class TraktInterceptor implements RequestInterceptor {
   }
 
   private void setCredentials(String user, String pass) {
-    mAuth = "Basic " + base64encode(user + ":" + pass);
+    auth = "Basic " + base64encode(user + ":" + pass);
   }
 
-  @Override
-  public void intercept(RequestFacade requestFacade) {
-    if (mAuth != null) {
-      requestFacade.addHeader(HEADER_AUTHORIZATION, mAuth);
+  @Override public void intercept(RequestFacade requestFacade) {
+    if (auth != null) {
+      requestFacade.addHeader(HEADER_AUTHORIZATION, auth);
     }
 
-    requestFacade.addPathParam("apikey", mApiKey);
-    requestFacade.addPathParam("username", mCredentials.getUsername());
+    requestFacade.addPathParam("apikey", apiKey);
+    requestFacade.addPathParam("username", credentials.getUsername());
   }
 
   private String base64encode(String source) {

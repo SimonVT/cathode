@@ -56,13 +56,12 @@ public class LoginFragment extends BaseFragment {
 
   private boolean createNewEnabled;
 
-  @Override
-  public void onCreate(Bundle state) {
-    super.onCreate(state);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
     appContext = getActivity().getApplicationContext();
 
-    if (state != null) createNewEnabled = state.getBoolean(STATE_CREATE_NEW_ENABLED);
+    if (inState != null) createNewEnabled = inState.getBoolean(STATE_CREATE_NEW_ENABLED);
   }
 
   @Override public void onSaveInstanceState(Bundle outState) {
@@ -70,15 +69,12 @@ public class LoginFragment extends BaseFragment {
     outState.putBoolean(STATE_CREATE_NEW_ENABLED, createNewEnabled);
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_login, container, false);
   }
 
-  @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
     login.setOnClickListener(onLoginListener);
     usernameInput.addTextChangedListener(textChanged);
     if (CathodeApp.accountExists(getActivity())) {
@@ -90,8 +86,7 @@ public class LoginFragment extends BaseFragment {
     emailInput.setEnabled(createNewEnabled);
 
     createNew.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
+      @Override public void onClick(View view) {
         final boolean isEnabled = ((CheckBox) view).isChecked();
         createNewEnabled = isEnabled;
         emailInput.setEnabled(isEnabled);
@@ -106,14 +101,12 @@ public class LoginFragment extends BaseFragment {
     login.setText(createNewEnabled ? R.string.create_account : R.string.login);
   }
 
-  @Override
-  public String getTitle() {
+  @Override public String getTitle() {
     return getResources().getString(R.string.login);
   }
 
   private View.OnClickListener onLoginListener = new View.OnClickListener() {
-    @Override
-    public void onClick(View view) {
+    @Override public void onClick(View view) {
       username = usernameInput.getText().toString();
       password = passwordInput.getText().toString();
       email = emailInput.getText().toString();
@@ -129,24 +122,20 @@ public class LoginFragment extends BaseFragment {
   };
 
   private TextWatcher textChanged = new TextWatcher() {
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
     }
 
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
+    @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
     }
 
-    @Override
-    public void afterTextChanged(Editable s) {
+    @Override public void afterTextChanged(Editable s) {
       login.setEnabled(usernameInput.length() > 0 && passwordInput.length() > 0);
     }
   };
 
   private final class CreateAccountAsync extends AsyncTask<Void, Void, Boolean> {
 
-    @Override
-    protected Boolean doInBackground(Void... voids) {
+    @Override protected Boolean doInBackground(Void... voids) {
       Response r = accountService.create(new CreateAccountBody(username, password, email));
       LogWrapper.d(TAG, "Error: "
           + r.getError()
@@ -158,8 +147,7 @@ public class LoginFragment extends BaseFragment {
       return r.getError() == null;
     }
 
-    @Override
-    protected void onPostExecute(Boolean success) {
+    @Override protected void onPostExecute(Boolean success) {
       if (success) {
         bus.post(new MessageEvent(R.string.login_success));
 
@@ -185,8 +173,7 @@ public class LoginFragment extends BaseFragment {
       credentials.setCredentials(username, ApiUtils.getSha(password));
     }
 
-    @Override
-    protected Boolean doInBackground(Void... voids) {
+    @Override protected Boolean doInBackground(Void... voids) {
       try {
         Response r = accountService.test();
         LogWrapper.d(TAG, "Error: "
@@ -214,8 +201,7 @@ public class LoginFragment extends BaseFragment {
       return false;
     }
 
-    @Override
-    protected void onPostExecute(Boolean success) {
+    @Override protected void onPostExecute(Boolean success) {
       if (success) {
         bus.post(new MessageEvent(R.string.login_success));
 

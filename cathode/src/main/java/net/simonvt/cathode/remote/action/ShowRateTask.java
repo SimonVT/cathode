@@ -21,8 +21,7 @@ public class ShowRateTask extends TraktTask {
     this.rating = rating;
   }
 
-  @Override
-  protected void doTask() {
+  @Override protected void doTask() {
     try {
       rateService.rateShow(new RateBody.Builder().tvdbId(tvdbId).rating(rating).build());
       postOnSuccess();

@@ -22,13 +22,12 @@ public class AboutDialog extends DialogFragment {
   @InjectView(R.id.licenses) View licenses;
   @InjectView(R.id.sourceCode) View sourceCode;
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.dialog_about, container, false);
   }
 
-  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
     Views.inject(this, view);
     getDialog().setTitle(R.string.app_name);
 

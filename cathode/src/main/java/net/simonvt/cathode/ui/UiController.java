@@ -10,7 +10,8 @@ public class UiController implements ShowsNavigationListener, MoviesNavigationLi
   private static final String TAG = "UiController";
 
   static final String FRAGMENT_LOGIN = "net.simonvt.cathode.ui.HomeActivity.loginFragment";
-  static final String FRAGMENT_NAVIGATION = "net.simonvt.cathode.ui.HomeActivity.navigationFragment";
+  static final String FRAGMENT_NAVIGATION =
+      "net.simonvt.cathode.ui.HomeActivity.navigationFragment";
   static final String FRAGMENT_SHOWS = "net.simonvt.cathode.ui.HomeActivity.showsFragment";
   static final String FRAGMENT_SHOWS_UPCOMING =
       "net.simonvt.cathode.ui.HomeActivity.upcomingShowsFragment";
@@ -28,7 +29,8 @@ public class UiController implements ShowsNavigationListener, MoviesNavigationLi
       "net.simonvt.cathode.ui.HomeActivity.showsWatchlistFragment";
   static final String FRAGMENT_EPISODES_WATCHLIST =
       "net.simonvt.cathode.ui.HomeActivity.episodesWatchlistFragment";
-  static final String FRAGMENT_SEARCH_SHOW = "net.simonvt.cathode.ui.HomeActivity.searchShowFragment";
+  static final String FRAGMENT_SEARCH_SHOW =
+      "net.simonvt.cathode.ui.HomeActivity.searchShowFragment";
   static final String FRAGMENT_MOVIES_WATCHED =
       "net.simonvt.cathode.ui.HomeActivity.moviesWatchedFragment";
   static final String FRAGMENT_MOVIES_COLLECTION =
@@ -51,7 +53,7 @@ public class UiController implements ShowsNavigationListener, MoviesNavigationLi
     this.activity = activity;
   }
 
-  public void onCreate(Bundle state) {
+  public void onCreate(Bundle inState) {
     LogWrapper.v(TAG, "[onCreate]");
   }
 
@@ -81,23 +83,19 @@ public class UiController implements ShowsNavigationListener, MoviesNavigationLi
     LogWrapper.v(TAG, "[onHomeClicked]");
   }
 
-  @Override
-  public void onMenuItemClicked(int id) {
+  @Override public void onMenuItemClicked(int id) {
     LogWrapper.v(TAG, "[onMenuItemClicked]");
   }
 
-  @Override
-  public void onDisplayMovie(long movieId, String title) {
+  @Override public void onDisplayMovie(long movieId, String title) {
     LogWrapper.v(TAG, "[onDisplayMovie]");
   }
 
-  @Override
-  public void onStartMovieSearch() {
+  @Override public void onStartMovieSearch() {
     LogWrapper.v(TAG, "[onStartMovieSearch]");
   }
 
-  @Override
-  public void onDisplayShow(long showId, String title, LibraryType type) {
+  @Override public void onDisplayShow(long showId, String title, LibraryType type) {
     LogWrapper.v(TAG, "[onDisplayShow]");
   }
 
@@ -107,13 +105,11 @@ public class UiController implements ShowsNavigationListener, MoviesNavigationLi
     LogWrapper.v(TAG, "[onDisplaySeason]");
   }
 
-  @Override
-  public void onDisplayEpisode(long episodeId, String showTitle) {
+  @Override public void onDisplayEpisode(long episodeId, String showTitle) {
     LogWrapper.v(TAG, "[onDisplayEpisode]");
   }
 
-  @Override
-  public void onStartShowSearch() {
+  @Override public void onStartShowSearch() {
     LogWrapper.v(TAG, "[onStartShowSearch]");
   }
 }

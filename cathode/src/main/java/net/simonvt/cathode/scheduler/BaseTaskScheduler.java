@@ -15,8 +15,7 @@ import net.simonvt.cathode.remote.TraktTaskQueue;
 public class BaseTaskScheduler {
 
   private static final Executor EXECUTOR = new Executor() {
-    @Override
-    public void execute(Runnable r) {
+    @Override public void execute(Runnable r) {
       new Thread(r).start();
     }
   };
@@ -36,8 +35,7 @@ public class BaseTaskScheduler {
 
   protected final void postTask(final TraktTask task) {
     MAIN_HANDLER.post(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         queue.add(task);
       }
     });
@@ -45,8 +43,7 @@ public class BaseTaskScheduler {
 
   protected final void postPriorityTask(final TraktTask task) {
     MAIN_HANDLER.post(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         priorityQueue.add(task);
       }
     });
@@ -65,7 +62,7 @@ public class BaseTaskScheduler {
 
     public synchronized void execute(final Runnable r) {
       tasks.offer(new Runnable() {
-        public void run() {
+        @Override public void run() {
           try {
             r.run();
           } finally {

@@ -27,8 +27,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
    */
   public void sync(final long episodeId) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         Cursor c = EpisodeWrapper.query(context.getContentResolver(), episodeId,
             CathodeContract.Episodes.SHOW_ID, CathodeContract.Episodes.SEASON,
             CathodeContract.Episodes.EPISODE);
@@ -52,8 +51,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
    */
   public void setWatched(final long episodeId, final boolean watched) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         Cursor c = EpisodeWrapper.query(context.getContentResolver(), episodeId,
             CathodeContract.Episodes.SHOW_ID, CathodeContract.Episodes.SEASON,
             CathodeContract.Episodes.EPISODE);
@@ -78,8 +76,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
    */
   public void setIsInCollection(final long episodeId, final boolean inCollection) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         Cursor c = EpisodeWrapper.query(context.getContentResolver(), episodeId,
             CathodeContract.Episodes.SHOW_ID, CathodeContract.Episodes.SEASON,
             CathodeContract.Episodes.EPISODE);
@@ -99,8 +96,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
 
   public void setIsInWatchlist(final long episodeId, final boolean inWatchlist) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         Cursor c = EpisodeWrapper.query(context.getContentResolver(), episodeId,
             CathodeContract.Episodes.SHOW_ID, CathodeContract.Episodes.SEASON,
             CathodeContract.Episodes.EPISODE);
@@ -129,8 +125,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
    */
   public void checkin(final long episodeId) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         // TODO
       }
     });
@@ -143,8 +138,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
    */
   public void cancelCheckin(final long episodeId) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         // TODO
       }
     });
@@ -160,8 +154,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
    */
   public void rate(final long episodeId, final int rating) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         final long tvdbId = EpisodeWrapper.getShowTvdbId(context.getContentResolver(), episodeId);
         Cursor c = EpisodeWrapper.query(context.getContentResolver(), episodeId,
             CathodeContract.Episodes.EPISODE);

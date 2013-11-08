@@ -104,8 +104,8 @@ public class CathodeProvider extends ContentProvider {
         SHOWS_WATCHED);
     URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SHOWS + "/" + CathodeContract.PATH_TRENDING,
         SHOWS_TRENDING);
-    URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SHOWS + "/"
-        + CathodeContract.PATH_RECOMMENDED, SHOWS_RECOMMENDED);
+    URI_MATCHER.addURI(AUTHORITY,
+        CathodeContract.PATH_SHOWS + "/" + CathodeContract.PATH_RECOMMENDED, SHOWS_RECOMMENDED);
 
     URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SEASONS, SEASONS);
     URI_MATCHER.addURI(AUTHORITY,
@@ -145,12 +145,11 @@ public class CathodeProvider extends ContentProvider {
         MOVIE_PRODUCERS);
     URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_MOVIES + "/" + CathodeContract.PATH_TRENDING,
         MOVIE_TRENDING);
-    URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_MOVIES + "/"
-        + CathodeContract.PATH_RECOMMENDED, MOVIE_RECOMMENDED);
+    URI_MATCHER.addURI(AUTHORITY,
+        CathodeContract.PATH_MOVIES + "/" + CathodeContract.PATH_RECOMMENDED, MOVIE_RECOMMENDED);
   }
 
-  @Override
-  public boolean onCreate() {
+  @Override public boolean onCreate() {
     database = new CathodeDatabase(getContext());
     return true;
   }
@@ -452,18 +451,16 @@ public class CathodeProvider extends ContentProvider {
     }
   }
 
-  @Override
-  public ContentProviderResult[] applyBatch(ArrayList<ContentProviderOperation> operations)
+  @Override public ContentProviderResult[] applyBatch(ArrayList<ContentProviderOperation> ops)
       throws OperationApplicationException {
     database.getWritableDatabase().beginTransaction();
-    ContentProviderResult[] results = super.applyBatch(operations);
+    ContentProviderResult[] results = super.applyBatch(ops);
     database.getWritableDatabase().setTransactionSuccessful();
     database.getWritableDatabase().endTransaction();
     return results;
   }
 
-  @Override
-  public String getType(Uri uri) {
+  @Override public String getType(Uri uri) {
     switch (URI_MATCHER.match(uri)) {
       case SHOWS:
       case SHOWS_ID:
@@ -513,8 +510,7 @@ public class CathodeProvider extends ContentProvider {
     }
   }
 
-  @Override
-  public Uri insert(Uri uri, ContentValues values) {
+  @Override public Uri insert(Uri uri, ContentValues values) {
     final SQLiteDatabase db = database.getWritableDatabase();
     switch (URI_MATCHER.match(uri)) {
       case SHOWS: {
@@ -560,8 +556,7 @@ public class CathodeProvider extends ContentProvider {
         final long seasonId = values.getAsLong(CathodeContract.EpisodeColumns.SEASON_ID);
         getContext().getContentResolver().notifyChange(Episodes.buildFromId(episodeId), null);
         getContext().getContentResolver().notifyChange(Episodes.buildFromShowId(showId), null);
-        getContext().getContentResolver()
-            .notifyChange(Episodes.buildFromSeasonId(seasonId), null);
+        getContext().getContentResolver().notifyChange(Episodes.buildFromSeasonId(seasonId), null);
         getContext().getContentResolver().notifyChange(Shows.buildFromId(showId), null);
         getContext().getContentResolver().notifyChange(Seasons.buildFromId(seasonId), null);
         getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(showId), null);
@@ -617,8 +612,7 @@ public class CathodeProvider extends ContentProvider {
     }
   }
 
-  @Override
-  public int delete(Uri uri, String where, String[] whereArgs) {
+  @Override public int delete(Uri uri, String where, String[] whereArgs) {
     final SQLiteDatabase db = database.getWritableDatabase();
     final SelectionBuilder builder = buildSimpleSelection(uri);
     int count = builder.where(where, whereArgs).delete(db);
@@ -626,8 +620,7 @@ public class CathodeProvider extends ContentProvider {
     return count;
   }
 
-  @Override
-  public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
+  @Override public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
     final SQLiteDatabase db = database.getWritableDatabase();
 
     final SelectionBuilder builder = new SelectionBuilder();

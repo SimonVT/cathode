@@ -36,8 +36,7 @@ public class MaxSizeLinearLayout extends LinearLayout {
     a.recycle();
   }
 
-  @Override
-  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+  @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
     int widthSize = MeasureSpec.getSize(widthMeasureSpec);
 

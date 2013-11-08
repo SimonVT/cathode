@@ -34,13 +34,11 @@ public class SeasonAdapter extends CursorAdapter {
     CathodeApp.inject(context, this);
   }
 
-  @Override
-  public void changeCursor(Cursor cursor) {
+  @Override public void changeCursor(Cursor cursor) {
     super.changeCursor(cursor);
   }
 
-  @Override
-  public View newView(Context context, Cursor cursor, ViewGroup parent) {
+  @Override public View newView(Context context, Cursor cursor, ViewGroup parent) {
     View v = LayoutInflater.from(context).inflate(R.layout.list_row_episode, parent, false);
 
     ViewHolder vh = new ViewHolder(v);
@@ -51,8 +49,7 @@ public class SeasonAdapter extends CursorAdapter {
     return v;
   }
 
-  @Override
-  public void bindView(View view, Context context, Cursor cursor) {
+  @Override public void bindView(View view, Context context, Cursor cursor) {
     final long id = cursor.getLong(cursor.getColumnIndexOrThrow(CathodeContract.Episodes._ID));
     final String title =
         cursor.getString(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.TITLE));
@@ -89,16 +86,13 @@ public class SeasonAdapter extends CursorAdapter {
     updateOverflowMenu(vh.overflow, watched, inCollection, inWatchlist);
 
     vh.overflow.setListener(new OverflowView.OverflowActionListener() {
-      @Override
-      public void onPopupShown() {
+      @Override public void onPopupShown() {
       }
 
-      @Override
-      public void onPopupDismissed() {
+      @Override public void onPopupDismissed() {
       }
 
-      @Override
-      public void onActionSelected(int action) {
+      @Override public void onActionSelected(int action) {
         switch (action) {
           case R.id.action_watched:
             updateOverflowMenu(vh.overflow, true, inCollection, inWatchlist);

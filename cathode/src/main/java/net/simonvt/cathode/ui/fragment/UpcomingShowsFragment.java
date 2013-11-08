@@ -17,29 +17,23 @@ import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
 
 public class UpcomingShowsFragment extends ShowsFragment {
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_shows_upcoming, container, false);
   }
 
-  @Override
-  public String getTitle() {
+  @Override public String getTitle() {
     return getResources().getString(R.string.title_shows_upcoming);
   }
 
-  @Override
-  protected LibraryType getLibraryType() {
+  @Override protected LibraryType getLibraryType() {
     return LibraryType.WATCHED;
   }
 
-  @Override
-  protected int getLoaderId() {
+  @Override protected int getLoaderId() {
     return BaseActivity.LOADER_SHOWS_UPCOMING;
   }
 
-  @Override
-  public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+  @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
     final Uri contentUri = CathodeContract.Shows.SHOWS_WITHNEXT_IGNOREWATCHED;
     CursorLoader cl = new CursorLoader(getActivity(), contentUri, ShowsWithNextAdapter.PROJECTION,
         CathodeContract.Shows.WATCHED_COUNT + ">0", null, CathodeContract.Shows.DEFAULT_SORT);

@@ -25,13 +25,11 @@ public class LoginController extends UiController {
     }
   }
 
-  @Override
-  public void onCreate(Bundle state) {
-    super.onCreate(state);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
   }
 
-  @Override
-  public void onAttach() {
+  @Override public void onAttach() {
     super.onAttach();
 
     activity.getActionBar().setDisplayHomeAsUpEnabled(false);
@@ -49,8 +47,7 @@ public class LoginController extends UiController {
     transaction.commit();
   }
 
-  @Override
-  public void onDestroy(boolean completely) {
+  @Override public void onDestroy(boolean completely) {
     super.onDestroy(completely);
     FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
     transaction.setCustomAnimations(R.anim.fade_out_front, R.anim.fade_in_back);

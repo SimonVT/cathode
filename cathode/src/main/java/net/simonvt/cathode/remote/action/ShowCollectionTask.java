@@ -21,8 +21,7 @@ public class ShowCollectionTask extends TraktTask {
     this.inWatchlist = inWatchlist;
   }
 
-  @Override
-  protected void doTask() {
+  @Override protected void doTask() {
     try {
       if (inWatchlist) {
         showService.library(new ShowBody(tvdbId));

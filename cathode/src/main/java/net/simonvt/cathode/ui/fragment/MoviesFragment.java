@@ -34,8 +34,7 @@ public abstract class MoviesFragment extends AbsAdapterFragment
 
   private MoviesNavigationListener navigationListener;
 
-  @Override
-  public void onAttach(Activity activity) {
+  @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
       navigationListener = (MoviesNavigationListener) activity;
@@ -45,31 +44,27 @@ public abstract class MoviesFragment extends AbsAdapterFragment
     }
   }
 
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
     setHasOptionsMenu(true);
 
     getLoaderManager().initLoader(getLoaderId(), null, this);
   }
 
-  @Override
-  public void onDestroy() {
+  @Override public void onDestroy() {
     if (getActivity().isFinishing() || isRemoving()) {
       getLoaderManager().destroyLoader(getLoaderId());
     }
     super.onDestroy();
   }
 
-  @Override
-  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     super.onCreateOptionsMenu(menu, inflater);
     inflater.inflate(R.menu.fragment_movies, menu);
   }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_refresh:
         queue.add(new SyncTask());
@@ -83,8 +78,7 @@ public abstract class MoviesFragment extends AbsAdapterFragment
     return super.onOptionsItemSelected(item);
   }
 
-  @Override
-  protected void onItemClick(AdapterView l, View v, int position, long id) {
+  @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
     Cursor c = (Cursor) getAdapter().getItem(position);
     navigationListener.onDisplayMovie(id,
         c.getString(c.getColumnIndex(CathodeContract.Movies.TITLE)));
@@ -107,13 +101,11 @@ public abstract class MoviesFragment extends AbsAdapterFragment
 
   protected abstract int getLoaderId();
 
-  @Override
-  public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+  @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
     setCursor(data);
   }
 
-  @Override
-  public void onLoaderReset(Loader<Cursor> loader) {
+  @Override public void onLoaderReset(Loader<Cursor> loader) {
     setAdapter(null);
   }
 }

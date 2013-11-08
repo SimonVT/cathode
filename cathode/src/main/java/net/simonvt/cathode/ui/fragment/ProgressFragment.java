@@ -30,15 +30,13 @@ public abstract class ProgressFragment extends BaseFragment {
   private int currentState = STATE_PROGRESS_VISIBLE;
   private int pendingStateChange = STATE_NONE;
 
-  @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
 
     wait = true;
     view.getViewTreeObserver()
         .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
+          @Override public void onGlobalLayout() {
             LogWrapper.v(TAG, "[onGlobalLayout] State: " + currentState);
             getView().getViewTreeObserver().removeOnGlobalLayoutListener(this);
             wait = false;
@@ -56,19 +54,16 @@ public abstract class ProgressFragment extends BaseFragment {
         });
   }
 
-  @Override
-  public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+  @Override public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
     Animation animation = null;
     if (nextAnim != 0) {
       animation = AnimationUtils.loadAnimation(getActivity(), nextAnim);
       animation.setAnimationListener(new Animation.AnimationListener() {
-        @Override
-        public void onAnimationStart(Animation animation) {
+        @Override public void onAnimationStart(Animation animation) {
           animating = true;
         }
 
-        @Override
-        public void onAnimationEnd(Animation animation) {
+        @Override public void onAnimationEnd(Animation animation) {
           animating = false;
           if (pendingStateChange != STATE_NONE) {
             changeState(pendingStateChange, true);
@@ -76,8 +71,7 @@ public abstract class ProgressFragment extends BaseFragment {
           }
         }
 
-        @Override
-        public void onAnimationRepeat(Animation animation) {
+        @Override public void onAnimationRepeat(Animation animation) {
         }
       });
     }
@@ -133,8 +127,7 @@ public abstract class ProgressFragment extends BaseFragment {
         progress.animate().alpha(0.0f);
         if (content.getAlpha() == 1.0f) content.setAlpha(0.0f);
         content.animate().alpha(1.0f).withEndAction(new Runnable() {
-          @Override
-          public void run() {
+          @Override public void run() {
             if (progress == null) {
               // In case fragment is removed before animation is done
               return;
@@ -147,8 +140,7 @@ public abstract class ProgressFragment extends BaseFragment {
         if (progress.getAlpha() == 1.0f) progress.setAlpha(0.0f);
         progress.animate().alpha(1.0f);
         content.animate().alpha(0.0f).withEndAction(new Runnable() {
-          @Override
-          public void run() {
+          @Override public void run() {
             if (progress == null) {
               // In case fragment is removed before animation is done
               return;

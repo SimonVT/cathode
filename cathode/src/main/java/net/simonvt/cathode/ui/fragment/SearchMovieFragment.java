@@ -56,8 +56,7 @@ public class SearchMovieFragment extends AbsAdapterFragment
     return args;
   }
 
-  @Override
-  public void onAttach(Activity activity) {
+  @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
       navigationListener = (MoviesNavigationListener) activity;
@@ -67,17 +66,16 @@ public class SearchMovieFragment extends AbsAdapterFragment
     }
   }
 
-  @Override
-  public void onCreate(Bundle state) {
-    super.onCreate(state);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
 
-    if (state == null) {
+    if (inState == null) {
       Bundle args = getArguments();
       query = args.getString(ARGS_QUERY);
       searchHandler.search(query);
     } else {
-      query = state.getString(STATE_QUERY);
+      query = inState.getString(STATE_QUERY);
       if (searchMovieIds == null && !searchHandler.isSearching()) {
         searchHandler.search(query);
       }
@@ -87,41 +85,33 @@ public class SearchMovieFragment extends AbsAdapterFragment
     setHasOptionsMenu(true);
   }
 
-  @Override
-  public String getTitle() {
+  @Override public String getTitle() {
     return query;
   }
 
-  @Override
-  public String getSubtitle() {
+  @Override public String getSubtitle() {
     return searchMovieIds != null ? searchMovieIds.size() + "results" : null;
   }
 
-  @Override
-  public void onSaveInstanceState(Bundle outState) {
+  @Override public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
     outState.putString(STATE_QUERY, query);
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_movies_watched, container, false);
   }
 
-  @Override
-  public void onDestroy() {
+  @Override public void onDestroy() {
     bus.unregister(this);
     super.onDestroy();
   }
 
-  @Override
-  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     inflater.inflate(R.menu.search, menu);
   }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_search:
         navigationListener.onStartMovieSearch();
@@ -140,22 +130,19 @@ public class SearchMovieFragment extends AbsAdapterFragment
     bus.post(new OnTitleChangedEvent());
   }
 
-  @Override
-  protected void onItemClick(AdapterView l, View v, int position, long id) {
+  @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
     Cursor c = (Cursor) getAdapter().getItem(position);
     navigationListener.onDisplayMovie(id,
         c.getString(c.getColumnIndex(CathodeContract.Movies.TITLE)));
   }
 
-  @Subscribe
-  public void onSearchEvent(MovieSearchResult result) {
+  @Subscribe public void onSearchEvent(MovieSearchResult result) {
     searchMovieIds = result.getMovieIds();
     getLoaderManager().restartLoader(BaseActivity.LOADER_SEARCH_MOVIES, null, this);
     setEmptyText(R.string.no_results, query);
   }
 
-  @Subscribe
-  public void onSearchFailure(SearchFailureEvent event) {
+  @Subscribe public void onSearchFailure(SearchFailureEvent event) {
     if (event.getType() == SearchFailureEvent.Type.MOVIE) {
       setCursor(null);
       setEmptyText(R.string.search_failure, query);
@@ -182,8 +169,7 @@ public class SearchMovieFragment extends AbsAdapterFragment
       CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.IN_WATCHLIST,
   };
 
-  @Override
-  public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+  @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
     StringBuilder where = new StringBuilder();
     where.append(CathodeContract.Movies._ID).append(" in (");
     final int showCount = searchMovieIds.size();
@@ -205,12 +191,10 @@ public class SearchMovieFragment extends AbsAdapterFragment
     return loader;
   }
 
-  @Override
-  public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+  @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
     setCursor(data);
   }
 
-  @Override
-  public void onLoaderReset(Loader<Cursor> loader) {
+  @Override public void onLoaderReset(Loader<Cursor> loader) {
   }
 }

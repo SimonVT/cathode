@@ -17,29 +17,23 @@ import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
 
 public class ShowsCollectionFragment extends ShowsFragment {
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_shows_collection, container, false);
   }
 
-  @Override
-  public String getTitle() {
+  @Override public String getTitle() {
     return getResources().getString(R.string.title_shows_collection);
   }
 
-  @Override
-  protected LibraryType getLibraryType() {
+  @Override protected LibraryType getLibraryType() {
     return LibraryType.COLLECTION;
   }
 
-  @Override
-  protected int getLoaderId() {
+  @Override protected int getLoaderId() {
     return BaseActivity.LOADER_SHOWS_COLLECTION;
   }
 
-  @Override
-  public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+  @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
     final Uri contentUri = CathodeContract.Shows.SHOWS_COLLECTION;
     CursorLoader cl =
         new CursorLoader(getActivity(), contentUri, ShowsWithNextAdapter.PROJECTION, null, null,

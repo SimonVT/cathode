@@ -147,8 +147,7 @@ public class ShowFragment extends ProgressFragment {
     return args;
   }
 
-  @Override
-  public void onAttach(Activity activity) {
+  @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
       navigationCallbacks = (ShowsNavigationListener) activity;
@@ -157,9 +156,8 @@ public class ShowFragment extends ProgressFragment {
     }
   }
 
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
 
     setHasOptionsMenu(true);
@@ -172,13 +170,11 @@ public class ShowFragment extends ProgressFragment {
     seasonsAdapter = new SeasonsAdapter(getActivity(), type);
   }
 
-  @Override
-  public String getTitle() {
+  @Override public String getTitle() {
     return showTitle == null ? "" : showTitle;
   }
 
-  @Override
-  public boolean onBackPressed() {
+  @Override public boolean onBackPressed() {
     final int state = hiddenPaneLayout.getState();
     if (state == HiddenPaneLayout.STATE_OPEN || state == HiddenPaneLayout.STATE_OPENING) {
       hiddenPaneLayout.close();
@@ -188,15 +184,12 @@ public class ShowFragment extends ProgressFragment {
     return super.onBackPressed();
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_show_info, container, false);
   }
 
-  @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
     seasons.setEmptyView(seasonsEmpty);
     seasons.setAdapter(seasonsAdapter);
     seasons.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -209,8 +202,7 @@ public class ShowFragment extends ProgressFragment {
     });
 
     ratingContainer.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
+      @Override public void onClick(View view) {
         RatingDialog.newInstance(RatingDialog.Type.SHOW, showId, currentRating)
             .show(getFragmentManager(), DIALOG_RATING);
       }
@@ -218,24 +210,20 @@ public class ShowFragment extends ProgressFragment {
 
     toWatchHolder = new EpisodeHolder(toWatch);
     toWatch.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
+      @Override public void onClick(View view) {
         if (toWatchId != -1) navigationCallbacks.onDisplayEpisode(toWatchId, showTitle);
       }
     });
 
     toWatchHolder.episodeOverflow.addItem(R.id.action_watched, R.string.action_watched);
     toWatchHolder.episodeOverflow.setListener(new OverflowView.OverflowActionListener() {
-      @Override
-      public void onPopupShown() {
+      @Override public void onPopupShown() {
       }
 
-      @Override
-      public void onPopupDismissed() {
+      @Override public void onPopupDismissed() {
       }
 
-      @Override
-      public void onActionSelected(int action) {
+      @Override public void onActionSelected(int action) {
         switch (action) {
           case R.id.action_watched:
             if (toWatchId != -1) {
@@ -249,8 +237,7 @@ public class ShowFragment extends ProgressFragment {
     if (lastWatched != null) {
       lastWatchedHolder = new EpisodeHolder(lastWatched);
       lastWatched.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
+        @Override public void onClick(View view) {
           if (lastWatchedId != -1) {
             navigationCallbacks.onDisplayEpisode(lastWatchedId, showTitle);
           }
@@ -259,16 +246,13 @@ public class ShowFragment extends ProgressFragment {
 
       lastWatchedHolder.episodeOverflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
       lastWatchedHolder.episodeOverflow.setListener(new OverflowView.OverflowActionListener() {
-        @Override
-        public void onPopupShown() {
+        @Override public void onPopupShown() {
         }
 
-        @Override
-        public void onPopupDismissed() {
+        @Override public void onPopupDismissed() {
         }
 
-        @Override
-        public void onActionSelected(int action) {
+        @Override public void onActionSelected(int action) {
           switch (action) {
             case R.id.action_watched:
               if (lastWatchedId != -1) {
@@ -282,8 +266,7 @@ public class ShowFragment extends ProgressFragment {
 
     toCollectHolder = new EpisodeHolder(toCollect);
     toCollect.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
+      @Override public void onClick(View view) {
         if (toCollectId != -1) navigationCallbacks.onDisplayEpisode(toCollectId, showTitle);
       }
     });
@@ -291,16 +274,13 @@ public class ShowFragment extends ProgressFragment {
     toCollectHolder.episodeOverflow
         .addItem(R.id.action_collection_add, R.string.action_collection_add);
     toCollectHolder.episodeOverflow.setListener(new OverflowView.OverflowActionListener() {
-      @Override
-      public void onPopupShown() {
+      @Override public void onPopupShown() {
       }
 
-      @Override
-      public void onPopupDismissed() {
+      @Override public void onPopupDismissed() {
       }
 
-      @Override
-      public void onActionSelected(int action) {
+      @Override public void onActionSelected(int action) {
         switch (action) {
           case R.id.action_collection_add:
             if (toCollectId != -1) {
@@ -314,8 +294,7 @@ public class ShowFragment extends ProgressFragment {
     if (lastCollected != null) {
       lastCollectedHolder = new EpisodeHolder(lastCollected);
       lastCollected.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
+        @Override public void onClick(View view) {
           if (lastCollectedId != -1) {
             navigationCallbacks.onDisplayEpisode(lastCollectedId, showTitle);
           }
@@ -325,16 +304,13 @@ public class ShowFragment extends ProgressFragment {
       lastCollectedHolder.episodeOverflow
           .addItem(R.id.action_collection_remove, R.string.action_collection_remove);
       lastCollectedHolder.episodeOverflow.setListener(new OverflowView.OverflowActionListener() {
-        @Override
-        public void onPopupShown() {
+        @Override public void onPopupShown() {
         }
 
-        @Override
-        public void onPopupDismissed() {
+        @Override public void onPopupDismissed() {
         }
 
-        @Override
-        public void onActionSelected(int action) {
+        @Override public void onActionSelected(int action) {
           switch (action) {
             case R.id.action_collection_add:
               if (lastCollectedId != -1) {
@@ -353,13 +329,11 @@ public class ShowFragment extends ProgressFragment {
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_SEASONS, null, seasonsLoader);
   }
 
-  @Override
-  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     inflater.inflate(R.menu.fragment_show_info, menu);
   }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_seasons:
         hiddenPaneLayout.toggle();
@@ -369,8 +343,7 @@ public class ShowFragment extends ProgressFragment {
     return false;
   }
 
-  @Override
-  public void onDestroy() {
+  @Override public void onDestroy() {
     if (getActivity().isFinishing() || isRemoving()) {
       getLoaderManager().destroyLoader(BaseActivity.LOADER_SHOW);
       getLoaderManager().destroyLoader(BaseActivity.LOADER_SHOW_GENRES);
@@ -559,8 +532,7 @@ public class ShowFragment extends ProgressFragment {
 
   private LoaderManager.LoaderCallbacks<Cursor> showCallbacks =
       new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
           CursorLoader cl =
               new CursorLoader(getActivity(), Shows.buildFromId(showId), SHOW_PROJECTION, null,
                   null, null);
@@ -568,20 +540,17 @@ public class ShowFragment extends ProgressFragment {
           return cl;
         }
 
-        @Override
-        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
+        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
           updateShowView(data);
         }
 
-        @Override
-        public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
         }
       };
 
   private LoaderManager.LoaderCallbacks<Cursor> genreCallbacks =
       new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
           CursorLoader cl =
               new CursorLoader(getActivity(), CathodeContract.ShowGenres.buildFromShowId(showId),
                   GENRES_PROJECTION, null, null, CathodeContract.ShowGenres.DEFAULT_SORT);
@@ -589,54 +558,45 @@ public class ShowFragment extends ProgressFragment {
           return cl;
         }
 
-        @Override
-        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
+        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
           updateGenreViews(data);
         }
 
-        @Override
-        public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
         }
       };
 
   private LoaderManager.LoaderCallbacks<Cursor> episodeWatchCallbacks =
       new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override
-        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
           return new WatchedLoader(getActivity(), showId);
         }
 
-        @Override
-        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
           updateEpisodeWatchViews(cursor);
         }
 
-        @Override
-        public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
         }
       };
 
   private LoaderManager.LoaderCallbacks<Cursor> episodeCollectCallbacks =
       new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override
-        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
           return new CollectLoader(getActivity(), showId);
         }
 
-        @Override
-        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
           updateEpisodeCollectViews(cursor);
         }
 
-        @Override
-        public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
         }
       };
 
   private LoaderManager.LoaderCallbacks<Cursor> seasonsLoader =
       new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
           CursorLoader cl =
               new CursorLoader(getActivity(), CathodeContract.Seasons.buildFromShowId(showId),
                   SeasonsAdapter.PROJECTION, null, null, CathodeContract.Seasons.DEFAULT_SORT);
@@ -644,13 +604,11 @@ public class ShowFragment extends ProgressFragment {
           return cl;
         }
 
-        @Override
-        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
+        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
           seasonsAdapter.changeCursor(data);
         }
 
-        @Override
-        public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
           seasonsAdapter.changeCursor(null);
         }
       };

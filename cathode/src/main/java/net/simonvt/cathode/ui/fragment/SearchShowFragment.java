@@ -56,8 +56,7 @@ public class SearchShowFragment extends AbsAdapterFragment
     return args;
   }
 
-  @Override
-  public void onAttach(Activity activity) {
+  @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
       navigationListener = (ShowsNavigationListener) activity;
@@ -66,19 +65,18 @@ public class SearchShowFragment extends AbsAdapterFragment
     }
   }
 
-  @Override
-  public void onCreate(Bundle state) {
-    super.onCreate(state);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
 
     bus.register(this);
 
-    if (state == null) {
+    if (inState == null) {
       Bundle args = getArguments();
       query = args.getString(ARGS_QUERY);
       searchHandler.search(query);
     } else {
-      query = state.getString(STATE_QUERY);
+      query = inState.getString(STATE_QUERY);
       if (searchShowIds == null && !searchHandler.isSearching()) {
         searchHandler.search(query);
       }
@@ -87,31 +85,25 @@ public class SearchShowFragment extends AbsAdapterFragment
     setHasOptionsMenu(true);
   }
 
-  @Override
-  public void onSaveInstanceState(Bundle outState) {
+  @Override public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
     outState.putString(STATE_QUERY, query);
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_shows_watched, container, false);
   }
 
-  @Override
-  public void onDestroy() {
+  @Override public void onDestroy() {
     bus.unregister(this);
     super.onDestroy();
   }
 
-  @Override
-  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     inflater.inflate(R.menu.fragment_add_show, menu);
   }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_search:
         navigationListener.onStartShowSearch();
@@ -130,22 +122,19 @@ public class SearchShowFragment extends AbsAdapterFragment
     bus.post(new OnTitleChangedEvent());
   }
 
-  @Override
-  protected void onItemClick(AdapterView l, View v, int position, long id) {
+  @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
     Cursor c = (Cursor) getAdapter().getItem(position);
     navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(CathodeContract.Shows.TITLE)),
         LibraryType.WATCHED);
   }
 
-  @Subscribe
-  public void onSearchEvent(ShowSearchResult result) {
+  @Subscribe public void onSearchEvent(ShowSearchResult result) {
     searchShowIds = result.getShowIds();
     getLoaderManager().restartLoader(BaseActivity.LOADER_SEARCH_SHOWS, null, this);
     setEmptyText(R.string.no_results, query);
   }
 
-  @Subscribe
-  public void onSearchFailure(SearchFailureEvent event) {
+  @Subscribe public void onSearchFailure(SearchFailureEvent event) {
     if (event.getType() == SearchFailureEvent.Type.SHOW) {
       setCursor(null);
       setEmptyText(R.string.search_failure, query);
@@ -162,8 +151,7 @@ public class SearchShowFragment extends AbsAdapterFragment
     showsAdapter.changeCursor(cursor);
   }
 
-  @Override
-  public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+  @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
     StringBuilder where = new StringBuilder();
     where.append(CathodeContract.Shows._ID).append(" in (");
     final int showCount = searchShowIds.size();
@@ -184,12 +172,10 @@ public class SearchShowFragment extends AbsAdapterFragment
     return loader;
   }
 
-  @Override
-  public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+  @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
     setCursor(data);
   }
 
-  @Override
-  public void onLoaderReset(Loader<Cursor> loader) {
+  @Override public void onLoaderReset(Loader<Cursor> loader) {
   }
 }

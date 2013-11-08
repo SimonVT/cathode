@@ -59,8 +59,7 @@ public class OverflowView extends ImageView {
     init(context);
   }
 
-  @Override
-  protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+  @Override protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
     super.onLayout(changed, left, top, right, bottom);
 
     final int height = bottom - top;
@@ -85,8 +84,7 @@ public class OverflowView extends ImageView {
     }
     if (getDrawable() == null) setImageResource(R.drawable.item_overflow);
     setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
+      @Override public void onClick(View v) {
         PopupMenu popupMenu = new PopupMenu(context, OverflowView.this);
 
         for (OverflowItem item : items) {
@@ -94,16 +92,14 @@ public class OverflowView extends ImageView {
         }
 
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-          @Override
-          public boolean onMenuItemClick(MenuItem item) {
+          @Override public boolean onMenuItemClick(MenuItem item) {
             if (listener != null) listener.onActionSelected(item.getItemId());
             return true;
           }
         });
 
         popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
-          @Override
-          public void onDismiss(PopupMenu menu) {
+          @Override public void onDismiss(PopupMenu menu) {
             if (listener != null) listener.onPopupDismissed();
           }
         });

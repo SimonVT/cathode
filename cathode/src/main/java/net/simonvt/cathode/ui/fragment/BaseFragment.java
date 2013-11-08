@@ -8,30 +8,25 @@ import net.simonvt.cathode.ui.FragmentContract;
 
 public abstract class BaseFragment extends Fragment implements FragmentContract {
 
-  @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
     Views.inject(this, view);
   }
 
-  @Override
-  public void onDestroyView() {
+  @Override public void onDestroyView() {
     Views.reset(this);
     super.onDestroyView();
   }
 
-  @Override
-  public String getTitle() {
+  @Override public String getTitle() {
     return null;
   }
 
-  @Override
-  public String getSubtitle() {
+  @Override public String getSubtitle() {
     return null;
   }
 
-  @Override
-  public boolean onBackPressed() {
+  @Override public boolean onBackPressed() {
     return false;
   }
 }

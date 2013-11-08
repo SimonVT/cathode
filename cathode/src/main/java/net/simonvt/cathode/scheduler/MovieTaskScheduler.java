@@ -24,8 +24,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
    */
   public void setWatched(final long movieId, final boolean watched) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         final long tmdbId = MovieWrapper.getTmdbId(context.getContentResolver(), movieId);
 
         MovieWrapper.setWatched(context.getContentResolver(), movieId, watched);
@@ -38,8 +37,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
 
   public void setIsInWatchlist(final long movieId, final boolean inWatchlist) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         final long tmdbId = MovieWrapper.getTmdbId(context.getContentResolver(), movieId);
 
         MovieWrapper.setIsInWatchlist(context.getContentResolver(), movieId, inWatchlist);
@@ -51,8 +49,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
 
   public void setIsInCollection(final long movieId, final boolean inCollection) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         final long tmdbId = MovieWrapper.getTmdbId(context.getContentResolver(), movieId);
 
         MovieWrapper.setIsInCollection(context.getContentResolver(), movieId, inCollection);
@@ -140,8 +137,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
    */
   public void rate(final long movieId, final int rating) {
     execute(new Runnable() {
-      @Override
-      public void run() {
+      @Override public void run() {
         final long tmdbId = MovieWrapper.getTmdbId(context.getContentResolver(), movieId);
 
         ContentValues cv = new ContentValues();

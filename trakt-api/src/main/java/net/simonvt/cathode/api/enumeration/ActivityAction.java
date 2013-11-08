@@ -17,15 +17,14 @@ public enum ActivityAction {
   CREATED("created"),
   ITEM_ADDED("item_added");
 
-  private final String mValue;
+  private final String value;
 
   private ActivityAction(String value) {
-    mValue = value;
+    this.value = value;
   }
 
-  @Override
-  public String toString() {
-    return mValue;
+  @Override public String toString() {
+    return value;
   }
 
   private static final Map<String, ActivityAction> STRING_MAPPING =

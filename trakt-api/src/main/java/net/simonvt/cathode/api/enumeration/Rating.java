@@ -8,15 +8,14 @@ public enum Rating {
   HATE("hate"),
   FALSE("false");
 
-  private final String mValue;
+  private final String value;
 
   private Rating(String value) {
-    mValue = value;
+    this.value = value;
   }
 
-  @Override
-  public String toString() {
-    return mValue;
+  @Override public String toString() {
+    return value;
   }
 
   private static final Map<String, Rating> STRING_MAPPING = new HashMap<String, Rating>();

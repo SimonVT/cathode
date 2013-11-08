@@ -78,9 +78,8 @@ public class PhoneController extends UiController {
     CathodeApp.inject(activity, this);
   }
 
-  @Override
-  public void onCreate(Bundle state) {
-    super.onCreate(state);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
     isTablet = activity.getResources().getBoolean(R.bool.isTablet);
 
     Views.inject(this, activity);
@@ -104,8 +103,7 @@ public class PhoneController extends UiController {
     }
 
     stack = FragmentStack.forContainer(activity, R.id.content, new FragmentStack.Callback() {
-      @Override
-      public void onStackChanged(int stackSize, Fragment topFragment) {
+      @Override public void onStackChanged(int stackSize, Fragment topFragment) {
         LogWrapper.v(TAG, "[onStackChanged] " + topFragment.getTag());
         FragmentContract fragment = (FragmentContract) topFragment;
 
@@ -134,8 +132,7 @@ public class PhoneController extends UiController {
         R.anim.fade_out_front);
 
     menuDrawer.setOnDrawerStateChangeListener(new MenuDrawer.OnDrawerStateChangeListener() {
-      @Override
-      public void onDrawerStateChange(int oldState, int newState) {
+      @Override public void onDrawerStateChange(int oldState, int newState) {
         switch (newState) {
           case MenuDrawer.STATE_CLOSED:
             if (!stack.commit()) {
@@ -165,24 +162,22 @@ public class PhoneController extends UiController {
         }
       }
 
-      @Override
-      public void onDrawerSlide(float openRatio, int offsetPixels) {
+      @Override public void onDrawerSlide(float openRatio, int offsetPixels) {
       }
     });
 
-    if (state != null) {
-      stack.restoreState(state);
-      CharSequence query = state.getCharSequence(STATE_SEARCH_QUERY);
+    if (inState != null) {
+      stack.restoreState(inState);
+      CharSequence query = inState.getCharSequence(STATE_SEARCH_QUERY);
       if (query != null) {
-        searchType = state.getInt(STATE_SEARCH_TYPE);
+        searchType = inState.getInt(STATE_SEARCH_TYPE);
         createSearchView(searchType);
         searchView.setQuery(query, false);
       }
     }
   }
 
-  @Subscribe
-  public void onTitleChanged(OnTitleChangedEvent event) {
+  @Subscribe public void onTitleChanged(OnTitleChangedEvent event) {
     if (!menuDrawer.isMenuVisible()) {
       Fragment f = stack.peek();
       if (f.isAdded() && !f.isDetached()) {
@@ -197,8 +192,7 @@ public class PhoneController extends UiController {
     }
   }
 
-  @Override
-  public boolean onBackClicked() {
+  @Override public boolean onBackClicked() {
     final int drawerState = menuDrawer.getDrawerState();
     if (drawerState == MenuDrawer.STATE_OPEN || drawerState == MenuDrawer.STATE_OPENING) {
       menuDrawer.closeMenu();
@@ -225,19 +219,17 @@ public class PhoneController extends UiController {
     return false;
   }
 
-  @Override
-  public Bundle onSaveInstanceState() {
-    Bundle state = new Bundle();
-    stack.saveState(state);
+  @Override public Bundle onSaveInstanceState() {
+    Bundle outState = new Bundle();
+    stack.saveState(outState);
     if (searchView != null) {
-      state.putInt(STATE_SEARCH_TYPE, searchType);
-      state.putCharSequence(STATE_SEARCH_QUERY, searchView.getQuery());
+      outState.putInt(STATE_SEARCH_TYPE, searchType);
+      outState.putCharSequence(STATE_SEARCH_QUERY, searchView.getQuery());
     }
-    return state;
+    return outState;
   }
 
-  @Override
-  public void onAttach() {
+  @Override public void onAttach() {
     super.onAttach();
     menuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_BEZEL);
     menuDrawer.setDrawerIndicatorEnabled(stack.size() == 1);
@@ -253,8 +245,7 @@ public class PhoneController extends UiController {
     bus.register(this);
   }
 
-  @Override
-  public void onDetach() {
+  @Override public void onDetach() {
     bus.unregister(this);
     super.onDetach();
   }
@@ -266,8 +257,7 @@ public class PhoneController extends UiController {
     super.onDestroy(completely);
   }
 
-  @Subscribe
-  public void onSyncEvent(SyncEvent event) {
+  @Subscribe public void onSyncEvent(SyncEvent event) {
     final int progressVisibility = progressTop.getVisibility();
     progressAnimator = progressTop.animate();
     if (event.isSyncing()) {
@@ -286,8 +276,7 @@ public class PhoneController extends UiController {
     }
   }
 
-  @Override
-  public void onHomeClicked() {
+  @Override public void onHomeClicked() {
     super.onHomeClicked();
 
     final int drawerState = menuDrawer.getDrawerState();
@@ -303,8 +292,7 @@ public class PhoneController extends UiController {
     }
   }
 
-  @Override
-  public void onMenuItemClicked(int id) {
+  @Override public void onMenuItemClicked(int id) {
     switch (id) {
       case R.id.menu_shows_upcoming:
         stack.replace(UpcomingShowsFragment.class, FRAGMENT_SHOWS_UPCOMING);
@@ -373,16 +361,14 @@ public class PhoneController extends UiController {
     stack.peek().setMenuVisibility(false);
     menuDrawer.setDrawerIndicatorEnabled(false);
     searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-      @Override
-      public boolean onClose() {
+      @Override public boolean onClose() {
         searchView = null;
         stack.peek().setMenuVisibility(true);
         return true;
       }
     });
     searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-      @Override
-      public boolean onQueryTextSubmit(String query) {
+      @Override public boolean onQueryTextSubmit(String query) {
         LogWrapper.v(TAG, "[onQueryTextSubmit] Query: " + query);
         if (PhoneController.this.searchType == SEARCH_TYPE_MOVIE) {
           SearchMovieFragment f = (SearchMovieFragment) activity.getSupportFragmentManager()
@@ -411,8 +397,7 @@ public class PhoneController extends UiController {
         return true;
       }
 
-      @Override
-      public boolean onQueryTextChange(String newText) {
+      @Override public boolean onQueryTextChange(String newText) {
         return false;
       }
     });
@@ -422,15 +407,12 @@ public class PhoneController extends UiController {
   // Navigation callbacks
   ///////////////////////////////////////////////////////////////////////////
 
-  @Override
-  public void onDisplayShow(long showId, String title, LibraryType type) {
-    stack.push(ShowFragment.class, FRAGMENT_SHOW,
-        ShowFragment.getArgs(showId, title, type));
+  @Override public void onDisplayShow(long showId, String title, LibraryType type) {
+    stack.push(ShowFragment.class, FRAGMENT_SHOW, ShowFragment.getArgs(showId, title, type));
     stack.commit();
   }
 
-  @Override
-  public void onDisplayEpisode(long episodeId, String showTitle) {
+  @Override public void onDisplayEpisode(long episodeId, String showTitle) {
     Bundle args = EpisodeFragment.getArgs(episodeId, showTitle);
     if (isTablet) {
       EpisodeFragment f =
@@ -451,20 +433,17 @@ public class PhoneController extends UiController {
     stack.commit();
   }
 
-  @Override
-  public void onStartShowSearch() {
+  @Override public void onStartShowSearch() {
     super.onStartShowSearch();
     createSearchView(SEARCH_TYPE_SHOW);
   }
 
-  @Override
-  public void onDisplayMovie(long movieId, String title) {
+  @Override public void onDisplayMovie(long movieId, String title) {
     stack.push(MovieFragment.class, FRAGMENT_MOVIE, MovieFragment.getArgs(movieId, title));
     stack.commit();
   }
 
-  @Override
-  public void onStartMovieSearch() {
+  @Override public void onStartMovieSearch() {
     super.onStartMovieSearch();
     createSearchView(SEARCH_TYPE_MOVIE);
   }

@@ -15,8 +15,7 @@ public class SyncShowsTask extends TraktTask {
 
   @Inject transient UserService userService;
 
-  @Override
-  protected void doTask() {
+  @Override protected void doTask() {
     try {
       List<TvShow> shows = userService.libraryShowsAll(DetailLevel.MIN);
 

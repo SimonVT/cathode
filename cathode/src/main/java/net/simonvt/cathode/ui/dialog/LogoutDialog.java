@@ -21,7 +21,7 @@ public class LogoutDialog extends DialogFragment {
   @Inject UserCredentials credentials;
   @Inject Bus bus;
 
-  @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+  @Override public Dialog onCreateDialog(Bundle inState) {
     return new AlertDialog.Builder(getActivity()).setTitle(R.string.logout_title)
         .setMessage(R.string.logout_message)
         .setPositiveButton(R.string.logout_button, new DialogInterface.OnClickListener() {

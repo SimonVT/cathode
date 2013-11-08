@@ -13,8 +13,7 @@ public class SyncTask extends TraktTask {
 
   @Inject transient UserService userService;
 
-  @Override
-  protected void doTask() {
+  @Override protected void doTask() {
     try {
       queueTask(new SyncUpdatedShows());
       queueTask(new SyncUpdatedMovies());

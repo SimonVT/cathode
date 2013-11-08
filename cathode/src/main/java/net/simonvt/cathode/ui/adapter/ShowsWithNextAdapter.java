@@ -58,8 +58,7 @@ public class ShowsWithNextAdapter extends CursorAdapter {
     this.libraryType = libraryType;
   }
 
-  @Override
-  public View newView(Context context, Cursor cursor, ViewGroup parent) {
+  @Override public View newView(Context context, Cursor cursor, ViewGroup parent) {
     View v = LayoutInflater.from(context).inflate(R.layout.list_row_show, parent, false);
 
     ViewHolder vh = new ViewHolder(v);
@@ -68,8 +67,7 @@ public class ShowsWithNextAdapter extends CursorAdapter {
     return v;
   }
 
-  @Override
-  public void bindView(View view, Context context, Cursor cursor) {
+  @Override public void bindView(View view, Context context, Cursor cursor) {
     final long id = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
 
     final String showPosterUrl =
@@ -98,7 +96,8 @@ public class ShowsWithNextAdapter extends CursorAdapter {
         cursor.getLong(cursor.getColumnIndex(CathodeContract.Episodes.FIRST_AIRED));
     final int episodeSeasonNumber =
         cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.SEASON));
-    final int episodeNumber = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.EPISODE));
+    final int episodeNumber =
+        cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.EPISODE));
 
     ViewHolder vh = (ViewHolder) view.getTag();
 
@@ -123,16 +122,13 @@ public class ShowsWithNextAdapter extends CursorAdapter {
 
     vh.overflow.setVisibility(showAiredCount > 0 ? View.VISIBLE : View.INVISIBLE);
     vh.overflow.setListener(new OverflowView.OverflowActionListener() {
-      @Override
-      public void onPopupShown() {
+      @Override public void onPopupShown() {
       }
 
-      @Override
-      public void onPopupDismissed() {
+      @Override public void onPopupDismissed() {
       }
 
-      @Override
-      public void onActionSelected(int action) {
+      @Override public void onActionSelected(int action) {
         switch (action) {
           case R.id.action_watchlist_remove:
             showScheduler.setIsInWatchlist(id, false);
@@ -201,8 +197,8 @@ public class ShowsWithNextAdapter extends CursorAdapter {
           }
         }
         if (typeCount > 0) {
-          overflow
-              .addItem(R.id.action_collection_remove_all, R.string.action_collection_remove_all);
+          overflow.addItem(R.id.action_collection_remove_all,
+              R.string.action_collection_remove_all);
         }
         break;
     }

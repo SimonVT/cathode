@@ -42,25 +42,22 @@ public abstract class AbsAdapterFragment extends BaseFragment {
   private int currentState = STATE_PROGRESS_VISIBLE;
   private int pendingStateChange = STATE_NONE;
 
-  @Override
-  public void onCreate(Bundle state) {
-    super.onCreate(state);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
     appContext = getActivity().getApplicationContext();
 
-    if (state != null) {
-      emptyText = state.getString(SAVED_EMPTY_TEXT);
+    if (inState != null) {
+      emptyText = inState.getString(SAVED_EMPTY_TEXT);
     }
   }
 
-  @Override
-  public void onSaveInstanceState(Bundle outState) {
+  @Override public void onSaveInstanceState(Bundle outState) {
     outState.putString(SAVED_EMPTY_TEXT, emptyText);
     super.onSaveInstanceState(outState);
   }
 
-  @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
     if (emptyText != null) empty.setText(emptyText);
 
     adapterView.setOnItemClickListener(onClickListener);
@@ -73,8 +70,7 @@ public abstract class AbsAdapterFragment extends BaseFragment {
 
   ViewTreeObserver.OnGlobalLayoutListener layoutListener =
       new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
+        @Override public void onGlobalLayout() {
           getView().getViewTreeObserver().removeOnGlobalLayoutListener(layoutListener);
           if (adapter == null) {
             listContainer.setVisibility(View.GONE);
@@ -88,19 +84,16 @@ public abstract class AbsAdapterFragment extends BaseFragment {
         }
       };
 
-  @Override
-  public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+  @Override public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
     Animation animation = null;
     if (nextAnim != 0) {
       animation = AnimationUtils.loadAnimation(getActivity(), nextAnim);
       animation.setAnimationListener(new Animation.AnimationListener() {
-        @Override
-        public void onAnimationStart(Animation animation) {
+        @Override public void onAnimationStart(Animation animation) {
           animating = true;
         }
 
-        @Override
-        public void onAnimationEnd(Animation animation) {
+        @Override public void onAnimationEnd(Animation animation) {
           animating = false;
           if (pendingStateChange != STATE_NONE) {
             changeState(pendingStateChange, true);
@@ -108,8 +101,7 @@ public abstract class AbsAdapterFragment extends BaseFragment {
           }
         }
 
-        @Override
-        public void onAnimationRepeat(Animation animation) {
+        @Override public void onAnimationRepeat(Animation animation) {
         }
       });
     }
@@ -148,12 +140,10 @@ public abstract class AbsAdapterFragment extends BaseFragment {
       final Animation fadeOut = new AlphaAnimation(1.0f, 0.0f);
       fadeOut.setDuration(ANIMATION_DURATION);
       fadeOut.setAnimationListener(new Animation.AnimationListener() {
-        @Override
-        public void onAnimationStart(Animation animation) {
+        @Override public void onAnimationStart(Animation animation) {
         }
 
-        @Override
-        public void onAnimationEnd(Animation animation) {
+        @Override public void onAnimationEnd(Animation animation) {
           if (progressContainer == null) {
             // In case fragment is removed before animation is done
             return;
@@ -168,14 +158,12 @@ public abstract class AbsAdapterFragment extends BaseFragment {
           }
         }
 
-        @Override
-        public void onAnimationRepeat(Animation animation) {
+        @Override public void onAnimationRepeat(Animation animation) {
         }
       });
 
       getView().postOnAnimation(new Runnable() {
-        @Override
-        public void run() {
+        @Override public void run() {
           if (listContainer != null) {
             listContainer.startAnimation(newState == STATE_LIST_VISIBLE ? fadeIn : fadeOut);
             progressContainer.startAnimation(newState == STATE_LIST_VISIBLE ? fadeOut : fadeIn);
@@ -187,7 +175,7 @@ public abstract class AbsAdapterFragment extends BaseFragment {
 
   private final AdapterView.OnItemClickListener onClickListener =
       new AdapterView.OnItemClickListener() {
-        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+        @Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
           AbsAdapterFragment.this.onItemClick(parent, v, position, id);
         }
       };

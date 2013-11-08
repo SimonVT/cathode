@@ -92,7 +92,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     }
   }
 
-  public void onCreate() {
+  @Override public void onCreate() {
     super.onCreate();
     acquireLock(this);
     CathodeApp.inject(this);
@@ -125,8 +125,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     }
   }
 
-  @Override
-  public int onStartCommand(Intent intent, int flags, int startId) {
+  @Override public int onStartCommand(Intent intent, int flags, int startId) {
     if (retryDelay == -1) {
       if (intent != null) {
         retryDelay = intent.getIntExtra(RETRY_DELAY, 1);
@@ -191,8 +190,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     return START_STICKY;
   }
 
-  @Override
-  public void onDestroy() {
+  @Override public void onDestroy() {
     bus.unregister(this);
     bus.post(new SyncEvent(false));
     releaseLock(this);
@@ -242,8 +240,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     }).start();
   }
 
-  @Produce
-  public SyncEvent produceSyncEvent() {
+  @Produce public SyncEvent produceSyncEvent() {
     return new SyncEvent(true);
   }
 
@@ -286,8 +283,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     }
   }
 
-  @Override
-  public void onSuccess() {
+  @Override public void onSuccess() {
     running = false;
 
     if (!logout) {
@@ -305,8 +301,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     }
   }
 
-  @Override
-  public void onFailure() {
+  @Override public void onFailure() {
     LogWrapper.i(TAG, "[onFailure] Scheduling restart");
     running = false;
 
@@ -345,8 +340,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     stopSelf();
   }
 
-  @Override
-  public IBinder onBind(Intent intent) {
+  @Override public IBinder onBind(Intent intent) {
     return null;
   }
 }

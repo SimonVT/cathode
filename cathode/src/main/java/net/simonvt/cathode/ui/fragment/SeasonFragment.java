@@ -75,8 +75,7 @@ public class SeasonFragment extends AbsAdapterFragment {
     return args;
   }
 
-  @Override
-  public void onAttach(Activity activity) {
+  @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
       navigationCallbacks = (ShowsNavigationListener) activity;
@@ -85,9 +84,8 @@ public class SeasonFragment extends AbsAdapterFragment {
     }
   }
 
-  @Override
-  public void onCreate(Bundle state) {
-    super.onCreate(state);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
 
     Bundle args = getArguments();
@@ -97,8 +95,8 @@ public class SeasonFragment extends AbsAdapterFragment {
     seasonNumber = args.getInt(ARG_SEASON_NUMBER);
     type = (LibraryType) args.getSerializable(ARG_TYPE);
 
-    if (state != null) {
-      bannerUrl = state.getString(STATE_SHOW_BANNER);
+    if (inState != null) {
+      bannerUrl = inState.getString(STATE_SHOW_BANNER);
     }
 
     episodeAdapter = new SeasonAdapter(getActivity(), type);
@@ -112,8 +110,7 @@ public class SeasonFragment extends AbsAdapterFragment {
               CathodeContract.Shows.TITLE, CathodeContract.Shows.BANNER,
           }, null, null, null);
       loader.registerListener(0, new Loader.OnLoadCompleteListener<Cursor>() {
-        @Override
-        public void onLoadComplete(Loader<Cursor> cursorLoader, Cursor cursor) {
+        @Override public void onLoadComplete(Loader<Cursor> cursorLoader, Cursor cursor) {
           cursor.moveToFirst();
           title = cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.TITLE));
           bannerUrl = cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.BANNER));
@@ -129,8 +126,7 @@ public class SeasonFragment extends AbsAdapterFragment {
 
     if (seasonNumber == -1) {
       new Thread(new Runnable() {
-        @Override
-        public void run() {
+        @Override public void run() {
           Cursor c = getActivity().getContentResolver()
               .query(CathodeContract.Seasons.buildFromShowId(showId), new String[] {
                   CathodeContract.Seasons.SEASON,
@@ -144,13 +140,11 @@ public class SeasonFragment extends AbsAdapterFragment {
     }
   }
 
-  @Override
-  public String getTitle() {
+  @Override public String getTitle() {
     return title;
   }
 
-  @Override
-  public String getSubtitle() {
+  @Override public String getSubtitle() {
     if (seasonNumber == 0) {
       return getResources().getString(R.string.season_special);
     } else {
@@ -158,41 +152,34 @@ public class SeasonFragment extends AbsAdapterFragment {
     }
   }
 
-  @Override
-  public void onSaveInstanceState(Bundle outState) {
+  @Override public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
     outState.putString(STATE_SHOW_BANNER, bannerUrl);
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_season, container, false);
   }
 
-  @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
     showBanner.setImage(bannerUrl);
   }
 
-  @Override
-  public void onDestroy() {
+  @Override public void onDestroy() {
     if (getActivity().isFinishing() || isRemoving()) {
       getLoaderManager().destroyLoader(BaseActivity.LOADER_SEASON);
     }
     super.onDestroy();
   }
 
-  @Override
-  protected void onItemClick(AdapterView l, View v, int position, long id) {
+  @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
     navigationCallbacks.onDisplayEpisode(id, title);
   }
 
   private LoaderManager.LoaderCallbacks<Cursor> episodesLoader =
       new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
           CursorLoader cl =
               new CursorLoader(getActivity(), CathodeContract.Episodes.buildFromSeasonId(seasonId),
                   null, null, null, CathodeContract.Episodes.EPISODE + " ASC");
@@ -200,8 +187,7 @@ public class SeasonFragment extends AbsAdapterFragment {
           return cl;
         }
 
-        @Override
-        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
+        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
 
           AdapterViewAnimator animator =
               new AdapterViewAnimator(adapterView, new DefaultAdapterAnimator());
@@ -209,8 +195,7 @@ public class SeasonFragment extends AbsAdapterFragment {
           animator.animate();
         }
 
-        @Override
-        public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
           episodeAdapter.changeCursor(null);
         }
       };

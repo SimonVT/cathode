@@ -25,8 +25,7 @@ public enum Gender {
     return STRING_MAPPING.get(value.toUpperCase());
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return gender;
   }
 }

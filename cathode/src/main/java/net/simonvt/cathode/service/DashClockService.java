@@ -9,8 +9,7 @@ import net.simonvt.cathode.util.DateUtils;
 
 public class DashClockService extends DashClockExtension {
 
-  @Override
-  protected void onUpdateData(int reason) {
+  @Override protected void onUpdateData(int reason) {
     Cursor c = getContentResolver().query(CathodeContract.Episodes.CONTENT_URI, null,
         CathodeContract.Episodes.FIRST_AIRED + ">? AND "
         + CathodeContract.Episodes.WATCHED + "=0"

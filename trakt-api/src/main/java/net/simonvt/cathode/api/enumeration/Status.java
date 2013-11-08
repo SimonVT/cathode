@@ -7,10 +7,10 @@ public enum Status {
   SUCCESS("success"),
   FAILURE("failure");
 
-  private final String mValue;
+  private final String value;
 
   private Status(String value) {
-    this.mValue = value;
+    this.value = value;
   }
 
   private static final Map<String, Status> STRING_MAPPING = new HashMap<String, Status>();
@@ -25,8 +25,7 @@ public enum Status {
     return STRING_MAPPING.get(value.toUpperCase());
   }
 
-  @Override
-  public String toString() {
-    return mValue;
+  @Override public String toString() {
+    return value;
   }
 }

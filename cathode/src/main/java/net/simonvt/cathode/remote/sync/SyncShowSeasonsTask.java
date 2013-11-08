@@ -22,8 +22,7 @@ public class SyncShowSeasonsTask extends TraktTask {
     this.tvdbId = tvdbId;
   }
 
-  @Override
-  protected void doTask() {
+  @Override protected void doTask() {
     try {
       final long showId = ShowWrapper.getShowId(service.getContentResolver(), tvdbId);
 

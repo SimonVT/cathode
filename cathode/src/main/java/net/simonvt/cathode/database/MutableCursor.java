@@ -141,71 +141,61 @@ public class MutableCursor extends AbstractCursor {
     data.remove(position);
   }
 
-  @Override
-  public int getCount() {
+  @Override public int getCount() {
     return data.size();
   }
 
-  @Override
-  public String[] getColumnNames() {
+  @Override public String[] getColumnNames() {
     return columnNames;
   }
 
-  @Override
-  public String getString(int column) {
+  @Override public String getString(int column) {
     Object value = get(column);
     if (value == null) return null;
     return value.toString();
   }
 
-  @Override
-  public short getShort(int column) {
+  @Override public short getShort(int column) {
     Object value = get(column);
     if (value == null) return 0;
     if (value instanceof Number) return ((Number) value).shortValue();
     return Short.parseShort(value.toString());
   }
 
-  @Override
-  public int getInt(int column) {
+  @Override public int getInt(int column) {
     Object value = get(column);
     if (value == null) return 0;
     if (value instanceof Number) return ((Number) value).intValue();
     return Integer.parseInt(value.toString());
   }
 
-  @Override
-  public long getLong(int column) {
+  @Override public long getLong(int column) {
     Object value = get(column);
     if (value == null) return 0;
     if (value instanceof Number) return ((Number) value).longValue();
     return Long.parseLong(value.toString());
   }
 
-  @Override
-  public float getFloat(int column) {
+  @Override public float getFloat(int column) {
     Object value = get(column);
     if (value == null) return 0.0f;
     if (value instanceof Number) return ((Number) value).floatValue();
     return Float.parseFloat(value.toString());
   }
 
-  @Override
-  public double getDouble(int column) {
+  @Override public double getDouble(int column) {
     Object value = get(column);
     if (value == null) return 0.0d;
     if (value instanceof Number) return ((Number) value).doubleValue();
     return Double.parseDouble(value.toString());
   }
 
-  @Override
-  public byte[] getBlob(int column) {
+  @Override public byte[] getBlob(int column) {
     Object value = get(column);
     return (byte[]) value;
   }
 
-  @Override
-  public int getType(int column) {
+  @Override public int getType(int column) {
     return getTypeOfObject(get(column));
   }
 
@@ -226,8 +216,7 @@ public class MutableCursor extends AbstractCursor {
     }
   }
 
-  @Override
-  public boolean isNull(int column) {
+  @Override public boolean isNull(int column) {
     return get(column) == null;
   }
 }

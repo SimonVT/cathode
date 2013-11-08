@@ -42,13 +42,11 @@ public class ShowsWatchlistFragment extends ShowsFragment<MutableCursor>
     return getResources().getString(R.string.title_shows_watchlist);
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_shows_watchlist, container, false);
   }
 
-  @Override
-  protected LibraryType getLibraryType() {
+  @Override protected LibraryType getLibraryType() {
     return LibraryType.WATCHLIST;
   }
 

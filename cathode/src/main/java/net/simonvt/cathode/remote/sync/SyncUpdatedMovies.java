@@ -17,8 +17,7 @@ public class SyncUpdatedMovies extends TraktTask {
 
   @Inject transient MoviesService moviesService;
 
-  @Override
-  protected void doTask() {
+  @Override protected void doTask() {
     try {
       SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(service);
       final long moviesLastUpdated = settings.getLong(Settings.MOVIES_LAST_UPDATED, 0);

@@ -48,8 +48,8 @@ public abstract class BaseActivity extends FragmentActivity {
 
   private boolean menuVisible;
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override protected void onCreate(Bundle inState) {
+    super.onCreate(inState);
     CathodeApp.inject(this);
   }
 

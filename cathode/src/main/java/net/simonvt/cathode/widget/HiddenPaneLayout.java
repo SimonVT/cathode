@@ -133,8 +133,7 @@ public class HiddenPaneLayout extends ViewGroup {
     return state;
   }
 
-  @Override
-  public void addView(View child, int index, LayoutParams params) {
+  @Override public void addView(View child, int index, LayoutParams params) {
     super.addView(child, index, params);
     if (contentPane == null) {
       contentPane = child;
@@ -145,8 +144,7 @@ public class HiddenPaneLayout extends ViewGroup {
     }
   }
 
-  @Override
-  protected void dispatchDraw(Canvas canvas) {
+  @Override protected void dispatchDraw(Canvas canvas) {
     super.dispatchDraw(canvas);
     final int width = getWidth();
     final int height = getHeight();
@@ -156,8 +154,7 @@ public class HiddenPaneLayout extends ViewGroup {
     dropShadow.draw(canvas);
   }
 
-  @Override
-  protected void onLayout(boolean changed, int l, int t, int r, int b) {
+  @Override protected void onLayout(boolean changed, int l, int t, int r, int b) {
     final int width = r - l;
     final int height = b - t;
 
@@ -169,8 +166,7 @@ public class HiddenPaneLayout extends ViewGroup {
     hiddenPane.layout(width, 0, width + hiddenPaneWidth, height);
   }
 
-  @Override
-  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+  @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
     final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 
@@ -332,23 +328,19 @@ public class HiddenPaneLayout extends ViewGroup {
     animator.setInterpolator(SMOOTH_INTERPOLATOR);
     animator.setDuration(duration);
     animator.addListener(new Animator.AnimatorListener() {
-      @Override
-      public void onAnimationStart(Animator animator) {
+      @Override public void onAnimationStart(Animator animator) {
         startLayerTranslation();
       }
 
-      @Override
-      public void onAnimationEnd(Animator animator) {
+      @Override public void onAnimationEnd(Animator animator) {
         stopLayerTranslation();
         setState(position == 0 ? STATE_CLOSED : STATE_OPEN);
       }
 
-      @Override
-      public void onAnimationCancel(Animator animator) {
+      @Override public void onAnimationCancel(Animator animator) {
       }
 
-      @Override
-      public void onAnimationRepeat(Animator animator) {
+      @Override public void onAnimationRepeat(Animator animator) {
       }
     });
     animator.start();
@@ -483,8 +475,7 @@ public class HiddenPaneLayout extends ViewGroup {
     return isDragging;
   }
 
-  @Override
-  public boolean onTouchEvent(MotionEvent ev) {
+  @Override public boolean onTouchEvent(MotionEvent ev) {
     final int action = ev.getAction() & MotionEvent.ACTION_MASK;
 
     if (action == MotionEvent.ACTION_DOWN && offsetPixels == 0.0f) {
@@ -592,8 +583,7 @@ public class HiddenPaneLayout extends ViewGroup {
     }
   }
 
-  @Override
-  protected Parcelable onSaveInstanceState() {
+  @Override protected Parcelable onSaveInstanceState() {
     Parcelable superState = super.onSaveInstanceState();
     SavedState state = new SavedState(superState);
 
@@ -601,8 +591,7 @@ public class HiddenPaneLayout extends ViewGroup {
     return state;
   }
 
-  @Override
-  protected void onRestoreInstanceState(Parcelable state) {
+  @Override protected void onRestoreInstanceState(Parcelable state) {
     SavedState savedState = (SavedState) state;
     super.onRestoreInstanceState(savedState.getSuperState());
 
@@ -625,21 +614,18 @@ public class HiddenPaneLayout extends ViewGroup {
       open = in.readInt() == 1;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    @Override public void writeToParcel(Parcel dest, int flags) {
       super.writeToParcel(dest, flags);
       dest.writeInt(open ? 1 : 0);
     }
 
     @SuppressWarnings("UnusedDeclaration")
     public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
-      @Override
-      public SavedState createFromParcel(Parcel in) {
+      @Override public SavedState createFromParcel(Parcel in) {
         return new SavedState(in);
       }
 
-      @Override
-      public SavedState[] newArray(int size) {
+      @Override public SavedState[] newArray(int size) {
         return new SavedState[size];
       }
     };

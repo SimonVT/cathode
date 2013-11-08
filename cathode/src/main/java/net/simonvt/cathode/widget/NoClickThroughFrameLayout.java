@@ -23,8 +23,7 @@ public class NoClickThroughFrameLayout extends FrameLayout {
     super(context, attrs, defStyle);
   }
 
-  @Override
-  public boolean onTouchEvent(MotionEvent event) {
+  @Override public boolean onTouchEvent(MotionEvent event) {
     return true;
   }
 }

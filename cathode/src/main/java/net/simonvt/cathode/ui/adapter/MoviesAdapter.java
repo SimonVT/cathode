@@ -28,15 +28,13 @@ public class MoviesAdapter extends CursorAdapter {
     CathodeApp.inject(context, this);
   }
 
-  @Override
-  public View newView(Context context, Cursor cursor, ViewGroup parent) {
+  @Override public View newView(Context context, Cursor cursor, ViewGroup parent) {
     View v = LayoutInflater.from(mContext).inflate(R.layout.list_row_movie, parent, false);
     v.setTag(new ViewHolder(v));
     return v;
   }
 
-  @Override
-  public void bindView(final View view, final Context context, final Cursor cursor) {
+  @Override public void bindView(final View view, final Context context, final Cursor cursor) {
     ViewHolder vh = (ViewHolder) view.getTag();
 
     final long id = cursor.getLong(cursor.getColumnIndex(CathodeContract.Movies._ID));
@@ -55,16 +53,13 @@ public class MoviesAdapter extends CursorAdapter {
     setupOverflowItems(vh.overflow, watched, collected, inWatchlist);
 
     vh.overflow.setListener(new OverflowView.OverflowActionListener() {
-      @Override
-      public void onPopupShown() {
+      @Override public void onPopupShown() {
       }
 
-      @Override
-      public void onPopupDismissed() {
+      @Override public void onPopupDismissed() {
       }
 
-      @Override
-      public void onActionSelected(int action) {
+      @Override public void onActionSelected(int action) {
         onOverflowActionSelected(view, id, action, cursor.getPosition());
       }
     });

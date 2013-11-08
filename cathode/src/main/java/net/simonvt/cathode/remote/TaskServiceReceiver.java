@@ -9,8 +9,7 @@ public class TaskServiceReceiver extends BroadcastReceiver {
 
   private static final String TAG = "TaskServiceReceiver";
 
-  @Override
-  public void onReceive(Context context, Intent intent) {
+  @Override public void onReceive(Context context, Intent intent) {
     LogWrapper.v(TAG, "[onReceive] " + intent);
     TraktTaskService.acquireLock(context);
     context.startService(new Intent(context, TraktTaskService.class));

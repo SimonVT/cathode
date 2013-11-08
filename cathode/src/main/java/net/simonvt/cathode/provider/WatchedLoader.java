@@ -22,18 +22,18 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
     this.observer = new ForceLoadContentObserver();
   }
 
-  @Override
-  public Cursor loadInBackground() {
+  @Override public Cursor loadInBackground() {
 
     Cursor toWatch = getContext().getContentResolver()
-        .query(CathodeContract.Episodes.buildFromShowId(showId), null, CathodeContract.Episodes.WATCHED
-            + "=0 AND "
-            + CathodeContract.Episodes.FIRST_AIRED
-            + ">"
-            + DateUtils.YEAR_IN_SECONDS
-            + " AND "
-            + CathodeContract.Episodes.SEASON
-            + ">0", null, CathodeContract.Episodes.SEASON
+        .query(CathodeContract.Episodes.buildFromShowId(showId), null,
+            CathodeContract.Episodes.WATCHED
+                + "=0 AND "
+                + CathodeContract.Episodes.FIRST_AIRED
+                + ">"
+                + DateUtils.YEAR_IN_SECONDS
+                + " AND "
+                + CathodeContract.Episodes.SEASON
+                + ">0", null, CathodeContract.Episodes.SEASON
             + " ASC, "
             + CathodeContract.Episodes.EPISODE
             + " ASC LIMIT 1");
@@ -56,8 +56,7 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
     });
   }
 
-  @Override
-  protected void onStartLoading() {
+  @Override protected void onStartLoading() {
     if (cursor != null) {
       deliverResult(cursor);
     }
@@ -66,21 +65,18 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
     }
   }
 
-  @Override
-  protected void onStopLoading() {
+  @Override protected void onStopLoading() {
     // Attempt to cancel the current load task if possible.
     cancelLoad();
   }
 
-  @Override
-  public void onCanceled(Cursor cursor) {
+  @Override public void onCanceled(Cursor cursor) {
     if (cursor != null && !cursor.isClosed()) {
       cursor.close();
     }
   }
 
-  @Override
-  protected void onReset() {
+  @Override protected void onReset() {
     super.onReset();
 
     // Ensure the loader is stopped

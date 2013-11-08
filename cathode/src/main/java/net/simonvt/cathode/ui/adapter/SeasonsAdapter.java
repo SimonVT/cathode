@@ -46,8 +46,7 @@ public class SeasonsAdapter extends CursorAdapter {
     this.type = type;
   }
 
-  @Override
-  public View newView(Context context, Cursor cursor, ViewGroup parent) {
+  @Override public View newView(Context context, Cursor cursor, ViewGroup parent) {
     View v = LayoutInflater.from(context).inflate(R.layout.list_row_season, parent, false);
 
     ViewHolder vh = new ViewHolder(v);
@@ -111,8 +110,7 @@ public class SeasonsAdapter extends CursorAdapter {
     vh.summary.setText(unwatched);
   }
 
-  @Override
-  public void bindView(View view, Context context, Cursor cursor) {
+  @Override public void bindView(View view, Context context, Cursor cursor) {
     ViewHolder vh = (ViewHolder) view.getTag();
 
     final int seasonId = cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Seasons._ID));
@@ -155,16 +153,13 @@ public class SeasonsAdapter extends CursorAdapter {
 
     vh.title.setText(resources.getQuantityString(R.plurals.season_x, seasonNumber, seasonNumber));
     vh.overflow.setListener(new OverflowView.OverflowActionListener() {
-      @Override
-      public void onPopupShown() {
+      @Override public void onPopupShown() {
       }
 
-      @Override
-      public void onPopupDismissed() {
+      @Override public void onPopupDismissed() {
       }
 
-      @Override
-      public void onActionSelected(int action) {
+      @Override public void onActionSelected(int action) {
         switch (action) {
           case R.id.action_watched:
             seasonScheduler.setWatched(seasonId, true);

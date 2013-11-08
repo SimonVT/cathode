@@ -49,8 +49,7 @@ public class ShowRecommendationsFragment extends AbsAdapterFragment
 
   private MutableCursor cursor;
 
-  @Override
-  public void onAttach(Activity activity) {
+  @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
       navigationListener = (ShowsNavigationListener) activity;
@@ -59,9 +58,8 @@ public class ShowRecommendationsFragment extends AbsAdapterFragment
     }
   }
 
-  @Override
-  public void onCreate(Bundle state) {
-    super.onCreate(state);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
 
     setHasOptionsMenu(true);
@@ -75,22 +73,19 @@ public class ShowRecommendationsFragment extends AbsAdapterFragment
     return getResources().getString(R.string.title_shows_recommendations);
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_shows_watched, container, false);
   }
 
-  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
   }
 
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     inflater.inflate(R.menu.fragment_shows, menu);
   }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_refresh:
         queue.add(new SyncTask());
@@ -105,8 +100,7 @@ public class ShowRecommendationsFragment extends AbsAdapterFragment
     }
   }
 
-  @Override
-  protected void onItemClick(AdapterView l, View v, int position, long id) {
+  @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
     Cursor c = (Cursor) getAdapter().getItem(position);
     navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(CathodeContract.Shows.TITLE)),
         LibraryType.WATCHED);
@@ -157,12 +151,10 @@ public class ShowRecommendationsFragment extends AbsAdapterFragment
     return cl;
   }
 
-  @Override
-  public void onLoadFinished(Loader<MutableCursor> loader, MutableCursor data) {
+  @Override public void onLoadFinished(Loader<MutableCursor> loader, MutableCursor data) {
     setCursor(data);
   }
 
-  @Override
-  public void onLoaderReset(Loader<MutableCursor> loader) {
+  @Override public void onLoaderReset(Loader<MutableCursor> loader) {
   }
 }

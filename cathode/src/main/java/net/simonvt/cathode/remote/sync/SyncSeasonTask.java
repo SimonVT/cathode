@@ -45,8 +45,7 @@ public class SyncSeasonTask extends TraktTask {
     }
   }
 
-  @Override
-  protected void doTask() {
+  @Override protected void doTask() {
     try {
       LogWrapper.v(TAG, "Syncing season " + season + " of show " + tvdbId);
 

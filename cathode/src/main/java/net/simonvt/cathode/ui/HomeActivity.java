@@ -44,15 +44,14 @@ public class HomeActivity extends BaseActivity
 
   private UiController activeController;
 
-  @Override
-  protected void onCreate(Bundle state) {
-    super.onCreate(state);
+  @Override protected void onCreate(Bundle inState) {
+    super.onCreate(inState);
     setContentView(R.layout.ui_content_view);
 
     messageBar = new MessageBar(this);
 
     if (!CathodeApp.accountExists(this) || isLoginAction(getIntent())) {
-      Bundle loginState = state != null ? state.getBundle(STATE_LOGIN_CONTROLLER) : null;
+      Bundle loginState = inState != null ? inState.getBundle(STATE_LOGIN_CONTROLLER) : null;
       loginController = LoginController.newInstance(this);
       loginController.onCreate(loginState);
 
@@ -60,7 +59,7 @@ public class HomeActivity extends BaseActivity
     } else {
       queue.add(new SyncTask());
 
-      Bundle uiState = state != null ? state.getBundle(STATE_UICONTROLLER) : null;
+      Bundle uiState = inState != null ? inState.getBundle(STATE_UICONTROLLER) : null;
       uiController = PhoneController.newInstance(this);
       uiController.onCreate(uiState);
       activeController = uiController;
@@ -87,8 +86,7 @@ public class HomeActivity extends BaseActivity
     return ACTION_LOGIN.equals(intent.getAction());
   }
 
-  @Override
-  protected void onSaveInstanceState(Bundle outState) {
+  @Override protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
     if (loginController != null) {
       outState.putBundle(STATE_LOGIN_CONTROLLER, loginController.onSaveInstanceState());
@@ -98,27 +96,23 @@ public class HomeActivity extends BaseActivity
     }
   }
 
-  @Override
-  protected void onResume() {
+  @Override protected void onResume() {
     super.onResume();
     bus.register(this);
   }
 
-  @Override
-  protected void onPause() {
+  @Override protected void onPause() {
     bus.unregister(this);
     super.onPause();
   }
 
-  @Override
-  public void onBackPressed() {
+  @Override public void onBackPressed() {
     if (!activeController.onBackClicked()) {
       super.onBackPressed();
     }
   }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case android.R.id.home:
         activeController.onHomeClicked();
@@ -132,8 +126,7 @@ public class HomeActivity extends BaseActivity
     return super.onOptionsItemSelected(item);
   }
 
-  @Override
-  public void onMenuItemClicked(int id) {
+  @Override public void onMenuItemClicked(int id) {
     activeController.onMenuItemClicked(id);
   }
 
@@ -172,13 +165,11 @@ public class HomeActivity extends BaseActivity
   // Navigation callbacks
   ///////////////////////////////////////////////////////////////////////////
 
-  @Override
-  public void onDisplayShow(long showId, String title, LibraryType type) {
+  @Override public void onDisplayShow(long showId, String title, LibraryType type) {
     activeController.onDisplayShow(showId, title, type);
   }
 
-  @Override
-  public void onDisplayEpisode(long episodeId, String showTitle) {
+  @Override public void onDisplayEpisode(long episodeId, String showTitle) {
     activeController.onDisplayEpisode(episodeId, showTitle);
   }
 
@@ -188,18 +179,15 @@ public class HomeActivity extends BaseActivity
     activeController.onDisplaySeason(showId, seasonId, showTitle, seasonNumber, type);
   }
 
-  @Override
-  public void onStartShowSearch() {
+  @Override public void onStartShowSearch() {
     activeController.onStartShowSearch();
   }
 
-  @Override
-  public void onDisplayMovie(long movieId, String title) {
+  @Override public void onDisplayMovie(long movieId, String title) {
     activeController.onDisplayMovie(movieId, title);
   }
 
-  @Override
-  public void onStartMovieSearch() {
+  @Override public void onStartMovieSearch() {
     activeController.onStartMovieSearch();
   }
 }

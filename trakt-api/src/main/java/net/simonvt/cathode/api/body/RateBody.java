@@ -16,30 +16,30 @@ public class RateBody {
 
   public static class Builder {
 
-    RateBody mBody = new RateBody();
+    RateBody body = new RateBody();
 
     public Builder tvdbId(Long tvdbId) {
-      mBody.tvdbId = tvdbId;
+      body.tvdbId = tvdbId;
       return this;
     }
 
     public Builder tmdbId(Long tmdbId) {
-      mBody.tmdbId = tmdbId;
+      body.tmdbId = tmdbId;
       return this;
     }
 
     public Builder episode(int episode) {
-      mBody.episode = episode;
+      body.episode = episode;
       return this;
     }
 
     public Builder rating(int rating) {
-      mBody.rating = rating;
+      body.rating = rating;
       return this;
     }
 
     public RateBody build() {
-      return mBody;
+      return body;
     }
   }
 }
