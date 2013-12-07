@@ -2,6 +2,10 @@
 
   <style name="Widget" parent="android:Widget.Holo"/>
 
+  <style name="Widget.ActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
+    <item name="android:icon">@drawable/ic_action_icon</item>
+  </style>
+
   <style name="Widget.InfoTitle">
     <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
     <item name="android:textStyle">italic</item>

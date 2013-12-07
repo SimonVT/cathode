@@ -113,7 +113,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
       PendingIntent clickPi = PendingIntent.getActivity(this, 0, clickIntent, 0);
 
       Notification.Builder builder = new Notification.Builder(this) //
-          .setSmallIcon(R.drawable.ic_launcher)
+          .setSmallIcon(R.drawable.ic_notification)
           .setTicker(getString(R.string.initial_sync))
           .setContentTitle(getString(R.string.initial_sync))
           .setContentText(getString(R.string.initial_sync_desc))
@@ -327,7 +327,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
       PendingIntent clickPi = PendingIntent.getActivity(this, 0, clickIntent, 0);
 
       Notification.Builder builder = new Notification.Builder(this) //
-          .setSmallIcon(R.drawable.ic_launcher)
+          .setSmallIcon(R.drawable.ic_notification)
           .setTicker(getString(R.string.lost_connection))
           .setContentTitle(getString(R.string.retry_in, retryDelay))
           .setContentIntent(clickPi)

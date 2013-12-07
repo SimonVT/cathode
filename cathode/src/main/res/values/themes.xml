@@ -9,6 +9,7 @@
 
   <style name="Theme" parent="BaseTheme">
     <item name="android:windowBackground">@color/contentBackground</item>
+    <item name="android:actionBarStyle">@style/Widget.ActionBar</item>
   </style>
 
 </resources>
