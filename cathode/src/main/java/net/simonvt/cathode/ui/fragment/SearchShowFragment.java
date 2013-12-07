@@ -114,6 +114,10 @@ public class SearchShowFragment extends AbsAdapterFragment
     }
   }
 
+  @Override public String getTitle() {
+    return query;
+  }
+
   public void query(String query) {
     this.query = query;
     searchHandler.search(query);

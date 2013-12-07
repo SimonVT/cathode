@@ -2,4 +2,6 @@
 
   <dimen name="showItemMinHeight">72dp</dimen>
 
+  <dimen name="searchViewMaxWidth">0dp</dimen>
+
 </resources>

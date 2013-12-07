@@ -72,6 +72,7 @@ import net.simonvt.cathode.remote.sync.SyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.SyncUpdatedShows;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.scheduler.SearchTaskScheduler;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.service.AccountAuthenticator;
@@ -231,7 +232,7 @@ public class CathodeApp extends Application {
 
           // Task schedulers
           EpisodeTaskScheduler.class, MovieTaskScheduler.class, SeasonTaskScheduler.class,
-          ShowTaskScheduler.class,
+          ShowTaskScheduler.class, SearchTaskScheduler.class,
 
           // Activities
           HomeActivity.class,
@@ -379,6 +380,10 @@ public class CathodeApp extends Application {
 
     @Provides @Singleton MovieTaskScheduler provideMovieScheduler() {
       return new MovieTaskScheduler(appContext);
+    }
+
+    @Provides @Singleton SearchTaskScheduler provideSearchScheduler() {
+      return new SearchTaskScheduler(appContext);
     }
 
     @Provides @Singleton UserCredentials provideCredentials() {

@@ -164,6 +164,11 @@ public final class CathodeContract {
     String BANNER = "banner";
   }
 
+  interface SearchSuggestionsColumns {
+    String QUERY = "query";
+    String COUNT = "queryCount";
+  }
+
   public static final String PATH_WATCHLIST = "watchlist";
   public static final String PATH_TRENDING = "trending";
   public static final String PATH_RECOMMENDED = "recommended";
@@ -190,6 +195,9 @@ public final class CathodeContract {
   public static final String PATH_DIRECTORS = "directors";
   public static final String PATH_PRODUCERS = "producers";
   public static final String PATH_WRITERS = "writers";
+
+  public static final String PATH_SEARCH_SUGGESTIONS_SHOW = "showSuggestions";
+  public static final String PATH_SEARCH_SUGGESTIONS_MOVIE = "showSuggestions";
 
   private static final String PATH_ACTIVITY = "userActivity";
 
@@ -343,7 +351,8 @@ public final class CathodeContract {
     public static final Uri CONTENT_URI =
         BASE_CONTENT_URI.buildUpon().appendPath(PATH_ACTORS).build();
 
-    public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.simonvt.cathode.showActor";
+    public static final String CONTENT_TYPE =
+        "vnd.android.cursor.dir/vnd.simonvt.cathode.showActor";
 
     public static final String SHOW_ID = "showId";
 
@@ -364,7 +373,8 @@ public final class CathodeContract {
     public static final Uri CONTENT_URI =
         BASE_CONTENT_URI.buildUpon().appendPath(PATH_GENRES).build();
 
-    public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.simonvt.cathode.showGenre";
+    public static final String CONTENT_TYPE =
+        "vnd.android.cursor.dir/vnd.simonvt.cathode.showGenre";
 
     public static final String SHOW_ID = "showId";
     public static final String GENRE = "genre";
@@ -537,7 +547,10 @@ public final class CathodeContract {
     public static final String DEFAULT_SORT = CathodeDatabase.Tables.MOVIES + "." + TITLE + " ASC";
 
     public static Uri buildFromId(long movieId) {
-      return CONTENT_URI.buildUpon().appendPath(PATH_WITHID).appendPath(String.valueOf(movieId)).build();
+      return CONTENT_URI.buildUpon()
+          .appendPath(PATH_WITHID)
+          .appendPath(String.valueOf(movieId))
+          .build();
     }
 
     public static String getMovieId(Uri uri) {
@@ -550,7 +563,8 @@ public final class CathodeContract {
     public static final Uri CONTENT_URI =
         BASE_CONTENT_URI.buildUpon().appendPath(PATH_GENRES).build();
 
-    public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.simonvt.cathode.movieGenre";
+    public static final String CONTENT_TYPE =
+        "vnd.android.cursor.dir/vnd.simonvt.cathode.movieGenre";
 
     public static final String MOVIE_ID = "movieId";
     public static final String GENRE = "genre";
@@ -594,7 +608,8 @@ public final class CathodeContract {
     public static final Uri CONTENT_URI =
         BASE_CONTENT_URI.buildUpon().appendPath(PATH_ACTORS).build();
 
-    public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.simonvt.cathode.movieActor";
+    public static final String CONTENT_TYPE =
+        "vnd.android.cursor.dir/vnd.simonvt.cathode.movieActor";
 
     public static final String MOVIE_ID = "movieId";
 
@@ -682,5 +697,18 @@ public final class CathodeContract {
     public static String getMovieId(Uri uri) {
       return uri.getPathSegments().get(2);
     }
+  }
+
+  public static class SearchSuggestions implements SearchSuggestionsColumns, BaseColumns {
+
+    public static final Uri SHOW_URI =
+        BASE_CONTENT_URI.buildUpon().appendPath(PATH_SEARCH_SUGGESTIONS_SHOW).build();
+    public static final Uri MOVIE_URI =
+        BASE_CONTENT_URI.buildUpon().appendPath(PATH_SEARCH_SUGGESTIONS_MOVIE).build();
+
+    public static final String SHOW_TYPE =
+        "vnd.android.cursor.dir/vnd.simonvt.cathode.showSearchSuggestions";
+    public static final String MOVIE_TYPE =
+        "vnd.android.cursor.dir/vnd.simonvt.cathode.movieSearchSuggestions";
   }
 }

@@ -64,6 +64,9 @@ public class CathodeDatabase extends SQLiteOpenHelper {
     String MOVIE_DIRECTORS = "movieDirectors";
     String MOVIE_WRITERS = "movieWriters";
     String MOVIE_PRODUCERS = "movieProducers";
+
+    String SHOW_SEARCH_SUGGESTIONS = "showSearchSuggestions";
+    String MOVIE_SEARCH_SUGGESTIONS = "movieSearchSuggestions";
   }
 
   interface References {
@@ -160,7 +163,6 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + SHOWS_UPDATE_AIRDATE
         + SHOWS_UPDATE_COLLECTED
         + " END;";
-
   }
 
   public CathodeDatabase(Context context) {
@@ -334,7 +336,7 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + TopWatcherColumns.FULL_NAME + " TEXT,"
         + TopWatcherColumns.GENDER + " TEXT,"
         + TopWatcherColumns.AGE + " INTEGER,"
-        + TopWatcherColumns.LOCATION + "TEXT,"
+        + TopWatcherColumns.LOCATION + " TEXT,"
         + TopWatcherColumns.ABOUT + " TEXT,"
         + TopWatcherColumns.JOINED + " INTEGER DEFAULT 0,"
         + TopWatcherColumns.AVATAR + " TEXT,"
@@ -366,6 +368,16 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + MovieProducers.NAME + " TEXT NOT NULL,"
         + MovieProducers.EXECUTIVE + " INTEGER NOT NULL,"
         + MovieProducers.HEADSHOT + " TEXT)");
+
+    db.execSQL("CREATE TABLE " + Tables.SHOW_SEARCH_SUGGESTIONS + " ("
+        + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+        + CathodeContract.SearchSuggestionsColumns.QUERY + " TEXT NOT NULL,"
+        + CathodeContract.SearchSuggestionsColumns.COUNT + " INTEGER DEFAULT 0)");
+
+    db.execSQL("CREATE TABLE " + Tables.MOVIE_SEARCH_SUGGESTIONS + " ("
+        + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+        + CathodeContract.SearchSuggestionsColumns.QUERY + " TEXT NOT NULL,"
+        + CathodeContract.SearchSuggestionsColumns.COUNT + " INTEGER DEFAULT 0)");
 
     db.execSQL(Trigger.EPISODE_INSERT);
     db.execSQL(Trigger.EPISODE_UPDATE_AIRED);

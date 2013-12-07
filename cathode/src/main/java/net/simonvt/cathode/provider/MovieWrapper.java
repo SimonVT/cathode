@@ -145,11 +145,13 @@ public final class MovieWrapper {
     for (UserProfile profile : topWatchers) {
       ContentValues cv = new ContentValues();
 
+      cv.put(CathodeContract.MovieTopWatchers.MOVIE_ID, movieId);
       cv.put(CathodeContract.TopWatcherColumns.PLAYS, profile.getPlays());
       cv.put(CathodeContract.TopWatcherColumns.USERNAME, profile.getUsername());
       cv.put(CathodeContract.TopWatcherColumns.PROTECTED, profile.isProtected());
       cv.put(CathodeContract.TopWatcherColumns.FULL_NAME, profile.getFullName());
-      cv.put(CathodeContract.TopWatcherColumns.GENDER, profile.getGender().toString());
+      cv.put(CathodeContract.TopWatcherColumns.GENDER,
+          profile.getGender() != null ? profile.getGender().toString() : null);
       cv.put(CathodeContract.TopWatcherColumns.AGE, profile.getAge());
       cv.put(CathodeContract.TopWatcherColumns.LOCATION, profile.getLocation());
       cv.put(CathodeContract.TopWatcherColumns.ABOUT, profile.getAbout());

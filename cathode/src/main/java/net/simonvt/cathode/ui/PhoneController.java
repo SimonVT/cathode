@@ -1,14 +1,15 @@
 package net.simonvt.cathode.ui;
 
 import android.app.ActionBar;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
 import butterknife.InjectView;
 import butterknife.Views;
 import com.squareup.otto.Bus;
@@ -18,6 +19,10 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.event.SyncEvent;
+import net.simonvt.cathode.scheduler.SearchTaskScheduler;
+import net.simonvt.cathode.ui.adapter.MovieSuggestionAdapter;
+import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
+import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.fragment.EpisodeFragment;
 import net.simonvt.cathode.ui.fragment.EpisodesWatchlistFragment;
 import net.simonvt.cathode.ui.fragment.MovieCollectionFragment;
@@ -39,6 +44,7 @@ import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
 import net.simonvt.cathode.util.FragmentStack;
 import net.simonvt.cathode.util.LogWrapper;
+import net.simonvt.cathode.widget.SearchView;
 import net.simonvt.menudrawer.MenuDrawer;
 
 public class PhoneController extends UiController {
@@ -54,6 +60,7 @@ public class PhoneController extends UiController {
   private static final int SEARCH_TYPE_MOVIE = 2;
 
   @Inject Bus bus;
+  @Inject SearchTaskScheduler searchScheduler;
 
   private FragmentStack stack;
 
@@ -109,20 +116,12 @@ public class PhoneController extends UiController {
 
         menuDrawer.setDrawerIndicatorEnabled(stackSize <= 1);
         if (!menuDrawer.isMenuVisible()) {
-          String title = fragment.getTitle();
-          if (title != null) {
-            activity.getActionBar().setTitle(title);
-          } else {
-            activity.getActionBar().setTitle(R.string.app_name);
-          }
-          activity.getActionBar().setSubtitle(fragment.getSubtitle());
+          updateTitle();
         }
         if (searchView != null) {
           if (!FRAGMENT_SEARCH_MOVIE.equals(topFragment.getTag()) && !FRAGMENT_SEARCH_SHOW.equals(
               topFragment.getTag())) {
-            activity.getActionBar().setDisplayShowCustomEnabled(false);
-            activity.getActionBar().setCustomView(null);
-            searchView = null;
+            destroySearchView();
           }
         }
         topFragment.setMenuVisibility(searchView == null);
@@ -136,27 +135,31 @@ public class PhoneController extends UiController {
         switch (newState) {
           case MenuDrawer.STATE_CLOSED:
             if (!stack.commit()) {
-              String title = ((FragmentContract) stack.peek()).getTitle();
-              if (title != null) {
-                activity.getActionBar().setTitle(title);
-              } else {
-                activity.getActionBar().setTitle(R.string.app_name);
-              }
-              activity.getActionBar().setSubtitle(((FragmentContract) stack.peek()).getSubtitle());
+              updateTitle();
             }
 
             if (searchView != null) {
               activity.getActionBar().setDisplayShowCustomEnabled(true);
+              activity.getActionBar().setDisplayShowTitleEnabled(false);
+              searchView.requestFocus();
             } else {
               stack.peek().setMenuVisibility(true);
             }
             activity.setMenuVisibility(true);
             break;
 
+          case MenuDrawer.STATE_OPEN:
+            InputMethodManager imm =
+                (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+              imm.hideSoftInputFromWindow(menuDrawer.getWindowToken(), 0);
+            }
+
           default:
             stack.peek().setMenuVisibility(false);
             activity.setMenuVisibility(false);
             activity.getActionBar().setDisplayShowCustomEnabled(false);
+            activity.getActionBar().setDisplayShowTitleEnabled(true);
             activity.getActionBar().setTitle(R.string.app_name);
             break;
         }
@@ -171,24 +174,32 @@ public class PhoneController extends UiController {
       CharSequence query = inState.getCharSequence(STATE_SEARCH_QUERY);
       if (query != null) {
         searchType = inState.getInt(STATE_SEARCH_TYPE);
-        createSearchView(searchType);
-        searchView.setQuery(query, false);
+        if (searchType == SEARCH_TYPE_SHOW) {
+          onStartShowSearch();
+        } else {
+          onStartMovieSearch();
+        }
+        searchView.setQuery(query);
       }
     }
   }
 
   @Subscribe public void onTitleChanged(OnTitleChangedEvent event) {
     if (!menuDrawer.isMenuVisible()) {
-      Fragment f = stack.peek();
-      if (f.isAdded() && !f.isDetached()) {
-        String title = ((FragmentContract) f).getTitle();
-        if (title != null) {
-          activity.getActionBar().setTitle(title);
-        } else {
-          activity.getActionBar().setTitle(R.string.app_name);
-        }
-        activity.getActionBar().setSubtitle(((FragmentContract) f).getSubtitle());
+      updateTitle();
+    }
+  }
+
+  private void updateTitle() {
+    Fragment f = stack.peek();
+    if (f.isAdded() && !f.isDetached()) {
+      String title = ((FragmentContract) f).getTitle();
+      if (title != null) {
+        activity.getActionBar().setTitle(title);
+      } else {
+        activity.getActionBar().setTitle(R.string.app_name);
       }
+      activity.getActionBar().setSubtitle(((FragmentContract) f).getSubtitle());
     }
   }
 
@@ -200,10 +211,7 @@ public class PhoneController extends UiController {
     }
 
     if (searchView != null) {
-      activity.getActionBar().setDisplayShowCustomEnabled(false);
-      activity.getActionBar().setCustomView(null);
-      stack.peek().setMenuVisibility(true);
-      searchView = null;
+      destroySearchView();
       return true;
     }
 
@@ -283,10 +291,7 @@ public class PhoneController extends UiController {
     if (drawerState == MenuDrawer.STATE_OPEN || drawerState == MenuDrawer.STATE_OPENING) {
       menuDrawer.closeMenu();
     } else if (searchView != null) {
-      activity.getActionBar().setDisplayShowCustomEnabled(false);
-      activity.getActionBar().setCustomView(null);
-      stack.peek().setMenuVisibility(true);
-      searchView = null;
+      destroySearchView();
     } else if (!stack.pop(drawerState == MenuDrawer.STATE_CLOSED)) {
       menuDrawer.toggleMenu();
     }
@@ -346,29 +351,27 @@ public class PhoneController extends UiController {
         throw new IllegalArgumentException("Unknown id " + id);
     }
 
+    if (searchView != null) destroySearchView();
+
     menuDrawer.closeMenu();
   }
 
   private void createSearchView(int searchType) {
     this.searchType = searchType;
     searchView = (SearchView) LayoutInflater.from(activity.getActionBar().getThemedContext())
-        .inflate(R.layout.search, null);
-    searchView.onActionViewExpanded();
+        .inflate(R.layout.search_view, null);
     activity.getActionBar().setDisplayShowCustomEnabled(true);
     activity.getActionBar()
         .setCustomView(searchView, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT));
+    activity.getActionBar().setDisplayShowTitleEnabled(false);
     stack.peek().setMenuVisibility(false);
     menuDrawer.setDrawerIndicatorEnabled(false);
-    searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-      @Override public boolean onClose() {
-        searchView = null;
-        stack.peek().setMenuVisibility(true);
-        return true;
+    searchView.setListener(new SearchView.SearchViewListener() {
+      @Override public void onTextChanged(String newText) {
       }
-    });
-    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-      @Override public boolean onQueryTextSubmit(String query) {
+
+      @Override public void onSubmit(String query) {
         LogWrapper.v(TAG, "[onQueryTextSubmit] Query: " + query);
         if (PhoneController.this.searchType == SEARCH_TYPE_MOVIE) {
           SearchMovieFragment f = (SearchMovieFragment) activity.getSupportFragmentManager()
@@ -376,31 +379,77 @@ public class PhoneController extends UiController {
           if (f == null) {
             stack.push(SearchMovieFragment.class, FRAGMENT_SEARCH_MOVIE,
                 SearchMovieFragment.getArgs(query));
-            stack.commit();
+            stack.executePendingTransactions();
           } else {
             f.query(query);
           }
+
+          searchScheduler.insertMovieQuery(query);
         } else {
           SearchShowFragment f = (SearchShowFragment) activity.getSupportFragmentManager()
               .findFragmentByTag(FRAGMENT_SEARCH_SHOW);
           if (f == null) {
             stack.push(SearchShowFragment.class, FRAGMENT_SEARCH_SHOW,
                 SearchShowFragment.getArgs(query));
-            stack.commit();
+            stack.executePendingTransactions();
           } else {
             f.query(query);
           }
+
+          searchScheduler.insertShowQuery(query);
         }
 
-        searchView.clearFocus();
-
-        return true;
+        destroySearchView();
       }
 
-      @Override public boolean onQueryTextChange(String newText) {
-        return false;
+      @Override public void onSuggestionSelected(Object suggestion) {
+        SuggestionsAdapter.Suggestion item = (SuggestionsAdapter.Suggestion) suggestion;
+        if (PhoneController.this.searchType == SEARCH_TYPE_MOVIE) {
+          if (item.getId() != null) {
+            onDisplayMovie(item.getId(), item.getTitle());
+          } else {
+            SearchMovieFragment f = (SearchMovieFragment) activity.getSupportFragmentManager()
+                .findFragmentByTag(FRAGMENT_SEARCH_MOVIE);
+            if (f == null) {
+              stack.push(SearchMovieFragment.class, FRAGMENT_SEARCH_MOVIE,
+                  SearchMovieFragment.getArgs(item.getTitle()));
+              stack.executePendingTransactions();
+            } else {
+              f.query(item.getTitle());
+            }
+          }
+        } else {
+          if (item.getId() != null) {
+            onDisplayShow(item.getId(), item.getTitle(), LibraryType.WATCHED);
+          } else {
+            SearchShowFragment f = (SearchShowFragment) activity.getSupportFragmentManager()
+                .findFragmentByTag(FRAGMENT_SEARCH_SHOW);
+            if (f == null) {
+              stack.push(SearchShowFragment.class, FRAGMENT_SEARCH_SHOW,
+                  SearchShowFragment.getArgs(item.getTitle()));
+              stack.executePendingTransactions();
+            } else {
+              f.query(item.getTitle());
+            }
+          }
+        }
+
+        destroySearchView();
       }
     });
+  }
+
+  private void destroySearchView() {
+    searchView.clearFocus();
+    searchView = null;
+    activity.getActionBar().setCustomView(null);
+    activity.getActionBar().setDisplayShowCustomEnabled(false);
+    activity.getActionBar().setDisplayShowTitleEnabled(true);
+    if (stack.size() <= 1) {
+      menuDrawer.setDrawerIndicatorEnabled(true);
+    }
+    stack.peek().setMenuVisibility(true);
+    updateTitle();
   }
 
   ///////////////////////////////////////////////////////////////////////////
@@ -436,6 +485,7 @@ public class PhoneController extends UiController {
   @Override public void onStartShowSearch() {
     super.onStartShowSearch();
     createSearchView(SEARCH_TYPE_SHOW);
+    searchView.setAdapter(new ShowSuggestionAdapter(activity.getActionBar().getThemedContext()));
   }
 
   @Override public void onDisplayMovie(long movieId, String title) {
@@ -446,5 +496,6 @@ public class PhoneController extends UiController {
   @Override public void onStartMovieSearch() {
     super.onStartMovieSearch();
     createSearchView(SEARCH_TYPE_MOVIE);
+    searchView.setAdapter(new MovieSuggestionAdapter(activity.getActionBar().getThemedContext()));
   }
 }

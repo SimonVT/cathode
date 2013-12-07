@@ -20,6 +20,7 @@ import net.simonvt.cathode.provider.CathodeContract.MovieProducers;
 import net.simonvt.cathode.provider.CathodeContract.MovieTopWatchers;
 import net.simonvt.cathode.provider.CathodeContract.MovieWriters;
 import net.simonvt.cathode.provider.CathodeContract.Movies;
+import net.simonvt.cathode.provider.CathodeContract.SearchSuggestions;
 import net.simonvt.cathode.provider.CathodeContract.Seasons;
 import net.simonvt.cathode.provider.CathodeContract.ShowActor;
 import net.simonvt.cathode.provider.CathodeContract.ShowGenres;
@@ -70,6 +71,9 @@ public class CathodeProvider extends ContentProvider {
   private static final int MOVIE_PRODUCERS = 407;
   private static final int MOVIE_TRENDING = 408;
   private static final int MOVIE_RECOMMENDED = 409;
+
+  private static final int SHOW_SEARCH = 500;
+  private static final int MOVIE_SEARCH = 501;
 
   private CathodeDatabase database;
 
@@ -131,7 +135,7 @@ public class CathodeProvider extends ContentProvider {
     URI_MATCHER.addURI(AUTHORITY,
         CathodeContract.PATH_GENRES + "/" + CathodeContract.PATH_FROMMOVIE + "/*", MOVIE_GENRES);
     URI_MATCHER.addURI(AUTHORITY,
-        CathodeContract.PATH_TOPWATCHERS + "/" + CathodeContract.PATH_MOVIES + "/*",
+        CathodeContract.PATH_TOPWATCHERS + "/" + CathodeContract.PATH_FROMMOVIE + "/*",
         MOVIE_TOP_WATCHERS);
     URI_MATCHER.addURI(AUTHORITY,
         CathodeContract.PATH_ACTORS + "/" + CathodeContract.PATH_FROMMOVIE + "/*", MOVIE_ACTORS);
@@ -147,6 +151,8 @@ public class CathodeProvider extends ContentProvider {
         MOVIE_TRENDING);
     URI_MATCHER.addURI(AUTHORITY,
         CathodeContract.PATH_MOVIES + "/" + CathodeContract.PATH_RECOMMENDED, MOVIE_RECOMMENDED);
+    URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SEARCH_SUGGESTIONS_SHOW, SHOW_SEARCH);
+    URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SEARCH_SUGGESTIONS_MOVIE, MOVIE_SEARCH);
   }
 
   @Override public boolean onCreate() {
@@ -445,6 +451,20 @@ public class CathodeProvider extends ContentProvider {
         c.setNotificationUri(getContext().getContentResolver(), uri);
         return c;
       }
+      case SHOW_SEARCH: {
+        Cursor c = getBuilder().table(Tables.SHOW_SEARCH_SUGGESTIONS)
+            .where(selection, selectionArgs)
+            .query(db, projection, sortOrder);
+        c.setNotificationUri(getContext().getContentResolver(), uri);
+        return c;
+      }
+      case MOVIE_SEARCH: {
+        Cursor c = getBuilder().table(Tables.MOVIE_SEARCH_SUGGESTIONS)
+            .where(selection, selectionArgs)
+            .query(db, projection, sortOrder);
+        c.setNotificationUri(getContext().getContentResolver(), uri);
+        return c;
+      }
       default: {
         throw new UnsupportedOperationException("Unknown uri: " + uri);
       }
@@ -505,6 +525,10 @@ public class CathodeProvider extends ContentProvider {
         return MovieWriters.CONTENT_TYPE;
       case MOVIE_PRODUCERS:
         return MovieProducers.CONTENT_TYPE;
+      case SHOW_SEARCH:
+        return SearchSuggestions.SHOW_TYPE;
+      case MOVIE_SEARCH:
+        return SearchSuggestions.MOVIE_TYPE;
       default:
         throw new IllegalArgumentException("Unknown URI " + uri);
     }
@@ -606,6 +630,14 @@ public class CathodeProvider extends ContentProvider {
         getContext().getContentResolver()
             .notifyChange(MovieProducers.buildFromMovieId(movieId), null);
         return ContentUris.withAppendedId(MovieProducers.CONTENT_URI, rowId);
+      }
+      case SHOW_SEARCH: {
+        final long rowId = db.insertOrThrow(Tables.SHOW_SEARCH_SUGGESTIONS, null, values);
+        return ContentUris.withAppendedId(SearchSuggestions.SHOW_URI, rowId);
+      }
+      case MOVIE_SEARCH: {
+        final long rowId = db.insertOrThrow(Tables.MOVIE_SEARCH_SUGGESTIONS, null, values);
+        return ContentUris.withAppendedId(SearchSuggestions.MOVIE_URI, rowId);
       }
       default:
         throw new UnsupportedOperationException("Unknown uri: " + uri);
