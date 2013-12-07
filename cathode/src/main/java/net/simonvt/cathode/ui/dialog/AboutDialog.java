@@ -9,8 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.Views;
 import net.simonvt.cathode.R;
 
 public class AboutDialog extends DialogFragment {
@@ -28,7 +28,7 @@ public class AboutDialog extends DialogFragment {
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-    Views.inject(this, view);
+    ButterKnife.inject(this, view);
     getDialog().setTitle(R.string.app_name);
 
     String versionName;
@@ -55,7 +55,7 @@ public class AboutDialog extends DialogFragment {
   }
 
   @Override public void onDestroyView() {
-    Views.reset(this);
+    ButterKnife.reset(this);
     super.onDestroyView();
   }
 }

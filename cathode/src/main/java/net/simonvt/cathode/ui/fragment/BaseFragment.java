@@ -3,18 +3,18 @@ package net.simonvt.cathode.ui.fragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
-import butterknife.Views;
+import butterknife.ButterKnife;
 import net.simonvt.cathode.ui.FragmentContract;
 
 public abstract class BaseFragment extends Fragment implements FragmentContract {
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-    Views.inject(this, view);
+    ButterKnife.inject(this, view);
   }
 
   @Override public void onDestroyView() {
-    Views.reset(this);
+    ButterKnife.reset(this);
     super.onDestroyView();
   }
 

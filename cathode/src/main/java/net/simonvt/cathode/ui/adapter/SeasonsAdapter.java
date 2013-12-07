@@ -14,8 +14,8 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.Views;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -189,7 +189,7 @@ public class SeasonsAdapter extends CursorAdapter {
     @InjectView(R.id.overflow) OverflowView overflow;
 
     ViewHolder(View v) {
-      Views.inject(this, v);
+      ButterKnife.inject(this, v);
       overflow.addItem(R.id.action_watched, R.string.action_watched);
       overflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
     }

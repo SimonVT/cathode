@@ -3,8 +3,8 @@ package net.simonvt.cathode.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
+import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.Views;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 
@@ -42,7 +42,7 @@ public class PhoneEpisodeView extends ViewGroup {
 
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
-    Views.inject(this);
+    ButterKnife.inject(this);
   }
 
   @Override protected void onLayout(boolean changed, int l, int t, int r, int b) {

@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
+import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.Views;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -166,7 +166,7 @@ public class SeasonAdapter extends CursorAdapter {
     @InjectView(R.id.checkbox) CheckMark checkbox;
 
     ViewHolder(View v) {
-      Views.inject(this, v);
+      ButterKnife.inject(this, v);
     }
   }
 }

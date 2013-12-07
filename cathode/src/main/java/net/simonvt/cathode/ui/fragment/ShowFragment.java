@@ -18,9 +18,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.Optional;
-import butterknife.Views;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -123,7 +123,7 @@ public class ShowFragment extends ProgressFragment {
     @InjectView(R.id.episodeOverflow) OverflowView episodeOverflow;
 
     public EpisodeHolder(View v) {
-      Views.inject(this, v);
+      ButterKnife.inject(this, v);
     }
   }
 

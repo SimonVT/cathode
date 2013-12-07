@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
+import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.Views;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import javax.inject.Inject;
@@ -89,7 +89,7 @@ public class PhoneController extends UiController {
     super.onCreate(inState);
     isTablet = activity.getResources().getBoolean(R.bool.isTablet);
 
-    Views.inject(this, activity);
+    ButterKnife.inject(this, activity);
 
     progressTop.setVisibility(View.GONE);
 

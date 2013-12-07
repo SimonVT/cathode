@@ -4,8 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.Views;
 import net.simonvt.cathode.R;
 
 public class PhoneShowView extends ViewGroup {
@@ -37,7 +37,7 @@ public class PhoneShowView extends ViewGroup {
 
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
-    Views.inject(this);
+    ButterKnife.inject(this);
   }
 
   @Override protected void onLayout(boolean changed, int l, int t, int r, int b) {

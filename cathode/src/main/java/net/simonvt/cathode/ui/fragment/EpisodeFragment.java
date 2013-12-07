@@ -18,9 +18,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.Optional;
-import butterknife.Views;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -141,7 +141,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-    Views.inject(this, view);
+    ButterKnife.inject(this, view);
 
     wait = true;
     view.getViewTreeObserver()
@@ -220,7 +220,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   }
 
   @Override public void onDestroyView() {
-    Views.reset(this);
+    ButterKnife.reset(this);
     super.onDestroyView();
   }
 
