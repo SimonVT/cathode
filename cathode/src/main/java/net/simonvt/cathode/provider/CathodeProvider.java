@@ -253,7 +253,7 @@ public class CathodeProvider extends ContentProvider {
       case SHOW_GENRES: {
         final String showId = ShowGenres.getShowId(uri);
         Cursor c = getBuilder().table(Tables.SHOW_GENRES)
-            .where(Shows._ID + "=?", showId)
+            .where(ShowGenres.SHOW_ID + "=?", showId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
         c.setNotificationUri(getContext().getContentResolver(), uri);
@@ -723,7 +723,7 @@ public class CathodeProvider extends ContentProvider {
       case SHOW_GENRES: {
         final String showId = ShowGenres.getShowId(uri);
         final int count = builder.table(Tables.SHOW_GENRES)
-            .where(Shows._ID + "=?", showId)
+            .where(ShowGenres.SHOW_ID + "=?", showId)
             .where(where, whereArgs)
             .update(db, values);
 
@@ -997,7 +997,7 @@ public class CathodeProvider extends ContentProvider {
       }
       case SHOW_GENRES: {
         final String showId = ShowGenres.getShowId(uri);
-        return builder.table(Tables.SHOW_GENRES).where(Shows._ID + "=?", showId);
+        return builder.table(Tables.SHOW_GENRES).where(ShowGenres.SHOW_ID + "=?", showId);
       }
       case SHOWS_WATCHLIST: {
         return builder.table(Tables.SHOWS_WITH_UNWATCHED).where(Shows.IN_WATCHLIST + "=1");

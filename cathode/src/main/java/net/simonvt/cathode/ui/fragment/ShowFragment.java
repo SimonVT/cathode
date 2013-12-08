@@ -87,6 +87,8 @@ public class ShowFragment extends ProgressFragment {
   @InjectView(R.id.airtime) TextView airTime;
   @InjectView(R.id.certification) TextView certification;
   @InjectView(R.id.banner) RemoteImageView banner;
+  @InjectView(R.id.genresDivider) View genresDivider;
+  @InjectView(R.id.genresTitle) View genresTitle;
   @InjectView(R.id.genres) TextView genres;
   @InjectView(R.id.overview) TextView overview;
   @InjectView(R.id.isWatched) TextView watched;
@@ -393,17 +395,26 @@ public class ShowFragment extends ProgressFragment {
   }
 
   private void updateGenreViews(final Cursor cursor) {
-    StringBuilder sb = new StringBuilder();
-    final int genreColumnIndex = cursor.getColumnIndex(CathodeContract.ShowGenres.GENRE);
+    if (cursor.getCount() > 0) {
+      StringBuilder sb = new StringBuilder();
+      final int genreColumnIndex = cursor.getColumnIndex(CathodeContract.ShowGenres.GENRE);
 
-    cursor.moveToPosition(-1);
+      cursor.moveToPosition(-1);
 
-    while (cursor.moveToNext()) {
-      sb.append(cursor.getString(genreColumnIndex));
-      if (!cursor.isLast()) sb.append(", ");
+      while (cursor.moveToNext()) {
+        sb.append(cursor.getString(genreColumnIndex));
+        if (!cursor.isLast()) sb.append(", ");
+      }
+
+      genres.setText(sb.toString());
+      genresDivider.setVisibility(View.VISIBLE);
+      genresTitle.setVisibility(View.VISIBLE);
+      genres.setVisibility(View.VISIBLE);
+    } else {
+      genresDivider.setVisibility(View.GONE);
+      genresTitle.setVisibility(View.GONE);
+      genres.setVisibility(View.GONE);
     }
-
-    genres.setText(sb.toString());
   }
 
   private void updateEpisodeWatchViews(Cursor cursor) {
