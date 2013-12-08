@@ -4,7 +4,7 @@
   <item
       android:id="@+id/menu_seasons"
       android:icon="@drawable/ic_action_list"
-      android:title="Seasons"
+      android:title="@string/seasons"
       android:showAsAction="ifRoom"/>
 
 </menu>

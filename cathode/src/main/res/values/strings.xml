@@ -157,6 +157,7 @@
 
   <string name="season_x">Season %d</string>
   <string name="season_special">Special</string>
+  <string name="seasons">Seasons</string>
 
   <plurals name="season_x">
     <item quantity="zero">Special</item>

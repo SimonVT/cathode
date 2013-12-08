@@ -3,8 +3,6 @@
 
   <item android:state_pressed="true"
       android:drawable="@drawable/list_selector_background_transition_light"/>
-  <item android:state_pressed="true"
-      android:drawable="@drawable/list_selector_background_transition_light"/>>
   <item android:drawable="@color/aboutButtonBackground"/>
 
 </selector>
