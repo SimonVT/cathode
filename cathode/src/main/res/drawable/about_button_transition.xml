@@ -15,6 +15,5 @@
 -->
 
 <transition xmlns:android="http://schemas.android.com/apk/res/android">
-  <item android:drawable="@drawable/list_selector_background_pressed_light"/>
-  <item android:drawable="@drawable/list_selector_background_longpress_light"/>
+  <item android:drawable="@color/aboutPressedBackground"/>
 </transition>

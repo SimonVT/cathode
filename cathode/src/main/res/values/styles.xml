@@ -67,7 +67,6 @@
   <style name="Menu.Drawer" parent="Widget.MenuDrawer">
     <item name="mdMenuBackground">@color/drawerBackground</item>
     <item name="mdContentBackground">@color/transparent</item>
-    <item name="mdActiveIndicator">@drawable/menu_arrow</item>
     <item name="mdMenuSize">260dp</item>
   </style>
 
