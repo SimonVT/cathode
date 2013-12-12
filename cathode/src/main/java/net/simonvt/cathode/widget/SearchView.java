@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ImageSpan;
 import android.util.AttributeSet;
@@ -147,7 +148,7 @@ public class SearchView extends LinearLayout {
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
       if (listener != null) listener.onTextChanged(s.toString());
 
-      clearView.setVisibility(count > 0 ? VISIBLE : INVISIBLE);
+      clearView.setVisibility(TextUtils.isEmpty(inputView.getText()) ? INVISIBLE : VISIBLE);
     }
 
     @Override public void afterTextChanged(Editable s) {
