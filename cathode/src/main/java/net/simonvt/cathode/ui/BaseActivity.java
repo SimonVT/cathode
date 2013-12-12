@@ -46,7 +46,7 @@ public abstract class BaseActivity extends FragmentActivity {
 
   @Inject Bus bus;
 
-  private boolean menuVisible;
+  private boolean menuVisible = true;
 
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
