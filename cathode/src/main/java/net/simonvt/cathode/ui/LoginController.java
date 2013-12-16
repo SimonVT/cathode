@@ -2,14 +2,19 @@ package net.simonvt.cathode.ui;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.ui.fragment.LoginFragment;
+import net.simonvt.menudrawer.MenuDrawer;
 
 public class LoginController extends UiController {
 
   private static final String TAG = "LoginController";
 
   private LoginFragment loginFragment;
+
+  @InjectView(R.id.drawer) MenuDrawer menuDrawer;
 
   public static LoginController newInstance(HomeActivity activity) {
     return new LoginController(activity);
@@ -27,10 +32,13 @@ public class LoginController extends UiController {
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
+
+    ButterKnife.inject(this, activity);
   }
 
   @Override public void onAttach() {
     super.onAttach();
+    menuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_NONE);
 
     activity.getActionBar().setDisplayHomeAsUpEnabled(false);
     activity.getActionBar().setHomeButtonEnabled(false);
