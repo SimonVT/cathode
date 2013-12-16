@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import butterknife.InjectView;
+import butterknife.Optional;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -62,7 +63,7 @@ public class SeasonFragment extends AbsAdapterFragment {
 
   private Handler handler = new Handler();
 
-  @InjectView(R.id.banner) RemoteImageView showBanner;
+  @InjectView(R.id.banner) @Optional RemoteImageView showBanner;
 
   public static Bundle getArgs(long showId, long seasonId, String showTitle, int seasonNumber,
       LibraryType type) {
@@ -163,7 +164,7 @@ public class SeasonFragment extends AbsAdapterFragment {
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-    showBanner.setImage(bannerUrl);
+    if (showBanner != null) showBanner.setImage(bannerUrl);
   }
 
   @Override public void onDestroy() {

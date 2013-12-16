@@ -158,7 +158,6 @@ public class SeasonAdapter extends CursorAdapter {
 
     @InjectView(R.id.screen) RemoteImageView screen;
 
-    @InjectView(R.id.infoParent) ViewGroup infoParent;
     @InjectView(R.id.title) TextView title;
     @InjectView(R.id.firstAired) TimeStamp firstAired;
     @InjectView(R.id.episode) TextView number;
