@@ -8,7 +8,7 @@ import java.util.Queue;
 import java.util.concurrent.Executor;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
-import net.simonvt.cathode.remote.PriorityTraktTaskQueue;
+import net.simonvt.cathode.remote.PriorityQueue;
 import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 
@@ -24,7 +24,7 @@ public class BaseTaskScheduler {
 
   @Inject TraktTaskQueue queue;
 
-  @Inject PriorityTraktTaskQueue priorityQueue;
+  @Inject @PriorityQueue TraktTaskQueue priorityQueue;
 
   protected Context context;
 

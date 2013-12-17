@@ -15,7 +15,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.remote.PriorityTraktTaskQueue;
+import net.simonvt.cathode.remote.PriorityQueue;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
@@ -30,7 +30,7 @@ public abstract class MoviesFragment extends AbsAdapterFragment
 
   @Inject TraktTaskQueue queue;
 
-  @Inject PriorityTraktTaskQueue priorityQueue;
+  @Inject @PriorityQueue TraktTaskQueue priorityQueue;
 
   private MoviesNavigationListener navigationListener;
 

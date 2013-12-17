@@ -15,7 +15,7 @@ public abstract class TraktTask implements Task<TraktTaskService> {
 
   @Inject protected transient TraktTaskQueue queue;
 
-  @Inject protected transient PriorityTraktTaskQueue priorityQueue;
+  @Inject @PriorityQueue protected transient TraktTaskQueue priorityQueue;
 
   protected transient TraktTaskService service;
 

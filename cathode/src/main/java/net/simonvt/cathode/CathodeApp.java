@@ -31,7 +31,7 @@ import net.simonvt.cathode.api.ResponseParser;
 import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.api.UserCredentials;
 import net.simonvt.cathode.event.AuthFailedEvent;
-import net.simonvt.cathode.remote.PriorityTraktTaskQueue;
+import net.simonvt.cathode.remote.PriorityQueue;
 import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.TraktTaskSerializer;
@@ -227,8 +227,8 @@ public class CathodeApp extends Application {
       injects = {
           CathodeApp.class,
 
-          // Task queues
-          PriorityTraktTaskQueue.class, TraktTaskQueue.class,
+          // Task queue
+          TraktTaskQueue.class,
 
           // Task schedulers
           EpisodeTaskScheduler.class, MovieTaskScheduler.class, SeasonTaskScheduler.class,
@@ -289,7 +289,7 @@ public class CathodeApp extends Application {
     }
 
     @Provides @Singleton TraktTaskQueue provideTaskQueue(Gson gson) {
-      TraktTaskQueue queue = TraktTaskQueue.create(appContext, gson);
+      TraktTaskQueue queue = TraktTaskQueue.create(appContext, gson, "taskQueue");
       if (DEBUG) {
         queue.setListener(new ObjectQueue.Listener<TraktTask>() {
           @Override public void onAdd(ObjectQueue<TraktTask> queue, TraktTask entry) {
@@ -304,8 +304,8 @@ public class CathodeApp extends Application {
       return queue;
     }
 
-    @Provides @Singleton PriorityTraktTaskQueue providePriorityTaskQueue(Gson gson) {
-      PriorityTraktTaskQueue queue = PriorityTraktTaskQueue.create(appContext, gson);
+    @Provides @Singleton @PriorityQueue TraktTaskQueue providePriorityTaskQueue(Gson gson) {
+      TraktTaskQueue queue = TraktTaskQueue.create(appContext, gson, "priorityTaskQueue");
       if (DEBUG) {
         queue.setListener(new ObjectQueue.Listener<TraktTask>() {
           @Override public void onAdd(ObjectQueue<TraktTask> queue, TraktTask entry) {

@@ -11,8 +11,6 @@ import java.io.IOException;
 
 public final class TraktTaskQueue extends TaskQueue<TraktTask> {
 
-  private static final String TAG = "TraktTaskQueue";
-
   private final Context context;
 
   private TraktTaskQueue(ObjectQueue<TraktTask> delegate, Context context) {
@@ -61,10 +59,10 @@ public final class TraktTaskQueue extends TaskQueue<TraktTask> {
     }
   }
 
-  public static TraktTaskQueue create(Context context, Gson gson) {
+  public static TraktTaskQueue create(Context context, Gson gson, String tag) {
     FileObjectQueue.Converter<TraktTask> converter =
         new GsonConverter<TraktTask>(gson, TraktTask.class);
-    File queueFile = new File(context.getFilesDir(), TAG);
+    File queueFile = new File(context.getFilesDir(), tag);
     FileObjectQueue<TraktTask> delegate;
     try {
       delegate = new FileObjectQueue<TraktTask>(queueFile, converter);
