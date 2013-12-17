@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import net.simonvt.cathode.provider.CathodeContract.ActorColumns;
 import net.simonvt.cathode.provider.CathodeContract.EpisodeColumns;
-import net.simonvt.cathode.provider.CathodeContract.ImageColumns;
 import net.simonvt.cathode.provider.CathodeContract.MovieActors;
 import net.simonvt.cathode.provider.CathodeContract.MovieColumns;
 import net.simonvt.cathode.provider.CathodeContract.MovieDirectors;
@@ -190,10 +189,9 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + ShowColumns.TVDB_ID + " TEXT,"
         + ShowColumns.TVRAGE_ID + " TEXT,"
         + ShowColumns.LAST_UPDATED + " INTEGER DEFAULT 0,"
-        + ImageColumns.POSTER + " TEXT,"
-        + ImageColumns.FANART + " TEXT,"
-        + ImageColumns.SCREEN + " TEXT,"
-        + ImageColumns.BANNER + " TEXT,"
+        + ShowColumns.POSTER + " TEXT,"
+        + ShowColumns.FANART + " TEXT,"
+        + ShowColumns.BANNER + " TEXT,"
         + ShowColumns.RATING_PERCENTAGE + " INTEGER DEFAULT 0,"
         + ShowColumns.RATING_VOTES + " INTEGER DEFAULT 0,"
         + ShowColumns.RATING_LOVED + " INTEGER DEFAULT 0,"
@@ -257,10 +255,7 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + SeasonColumns.AIRDATE_COUNT + " INTEGER DEFAULT 0,"
         + SeasonColumns.IN_COLLECTION_COUNT + " INTEGER DEFAULT 0,"
         + SeasonColumns.IN_WATCHLIST_COUNT + " INTEGER DEFAULT 0,"
-        + ImageColumns.POSTER + " TEXT,"
-        + ImageColumns.FANART + " TEXT,"
-        + ImageColumns.SCREEN + " TEXT,"
-        + ImageColumns.BANNER + " TEXT)");
+        + SeasonColumns.POSTER + " TEXT)");
 
     db.execSQL("CREATE TABLE " + Tables.EPISODES + " ("
         + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -274,10 +269,7 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + EpisodeColumns.TVDB_ID + " INTEGER,"
         + EpisodeColumns.IMDB_ID + " STRING,"
         + EpisodeColumns.FIRST_AIRED + " INTEGER,"
-        + ImageColumns.POSTER + " TEXT,"
-        + ImageColumns.FANART + " TEXT,"
-        + ImageColumns.SCREEN + " TEXT,"
-        + ImageColumns.BANNER + " TEXT,"
+        + EpisodeColumns.SCREEN + " TEXT,"
         + EpisodeColumns.RATING_PERCENTAGE + " INTEGER DEFAULT 0,"
         + EpisodeColumns.RATING_VOTES + " INTEGER DEFAULT 0,"
         + EpisodeColumns.RATING_LOVED + " INTEGER DEFAULT 0,"
@@ -302,10 +294,8 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + MovieColumns.IMDB_ID + " TEXT,"
         + MovieColumns.TMDB_ID + " INTEGER,"
         + MovieColumns.RT_ID + " INTEGER DEFAULT 0,"
-        + ImageColumns.POSTER + " TEXT,"
-        + ImageColumns.FANART + " TEXT,"
-        + ImageColumns.SCREEN + " TEXT,"
-        + ImageColumns.BANNER + " TEXT,"
+        + MovieColumns.POSTER + " TEXT,"
+        + MovieColumns.FANART + " TEXT,"
         + MovieColumns.RATING_PERCENTAGE + " INTEGER,"
         + MovieColumns.RATING_VOTES + " INTEGER DEFAULT 0,"
         + MovieColumns.RATING_LOVED + " INTEGER DEFAULT 0,"

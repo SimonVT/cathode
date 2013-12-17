@@ -265,10 +265,7 @@ public final class EpisodeWrapper {
     }
     if (episode.getImages() != null) {
       Images images = episode.getImages();
-      if (!ApiUtils.isPlaceholder(images.getPoster())) cv.put(Episodes.POSTER, images.getPoster());
-      if (!ApiUtils.isPlaceholder(images.getFanart())) cv.put(Episodes.FANART, images.getFanart());
       if (!ApiUtils.isPlaceholder(images.getScreen())) cv.put(Episodes.SCREEN, images.getScreen());
-      if (!ApiUtils.isPlaceholder(images.getBanner())) cv.put(Episodes.BANNER, images.getBanner());
     }
     if (episode.getRatings() != null) {
       cv.put(EpisodeColumns.RATING_PERCENTAGE, episode.getRatings().getPercentage());

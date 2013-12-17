@@ -31,6 +31,9 @@ public final class CathodeContract {
     String TVDB_ID = "tvdbId";
     String TVRAGE_ID = "tvrageId";
     String LAST_UPDATED = "lastUpdated";
+    String POSTER = "poster";
+    String FANART = "fanart";
+    String BANNER = "banner";
     String RATING_PERCENTAGE = "ratingPercentage";
     String RATING_VOTES = "ratingVotes";
     String RATING_LOVED = "ratingLoved";
@@ -99,6 +102,8 @@ public final class CathodeContract {
 
     String AIRED_COUNT = "airedCount";
     String UNAIRED_COUNT = "unairedCount";
+
+    String POSTER = "poster";
   }
 
   interface EpisodeColumns {
@@ -113,6 +118,7 @@ public final class CathodeContract {
     String TVDB_ID = "tvdbId";
     String IMDB_ID = "imdbId";
     String FIRST_AIRED = "episodeFirstAired";
+    String SCREEN = "screen";
     String RATING_PERCENTAGE = "ratingPercentage";
     String RATING_VOTES = "ratingVotes";
     String RATING_LOVED = "ratingLoved";
@@ -138,6 +144,8 @@ public final class CathodeContract {
     String IMDB_ID = "imdbId";
     String TMDB_ID = "tmdbId";
     String RT_ID = "rtId";
+    String POSTER = "poster";
+    String FANART = "fanart";
     String RATING_PERCENTAGE = "ratingPercentage";
     String RATING_VOTES = "ratingVotes";
     String RATING_LOVED = "ratingLoved";
@@ -153,15 +161,6 @@ public final class CathodeContract {
     String LAST_UPDATED = "lastUpdated";
     String TRENDING_INDEX = "trendingIndex";
     String RECOMMENDATION_INDEX = "recommendationIndex";
-  }
-
-  interface ImageColumns {
-
-    String POSTER = "poster";
-    String FANART = "fanart";
-    String HEADSHOT = "headshot";
-    String SCREEN = "screen";
-    String BANNER = "banner";
   }
 
   interface SearchSuggestionsColumns {
@@ -201,7 +200,7 @@ public final class CathodeContract {
 
   private static final String PATH_ACTIVITY = "userActivity";
 
-  public static class Shows implements ShowColumns, ImageColumns, BaseColumns {
+  public static class Shows implements ShowColumns, BaseColumns {
 
     public static final Uri CONTENT_URI =
         BASE_CONTENT_URI.buildUpon().appendPath(PATH_SHOWS).build();
@@ -393,7 +392,7 @@ public final class CathodeContract {
     }
   }
 
-  public static class Seasons implements SeasonColumns, ImageColumns, BaseColumns {
+  public static class Seasons implements SeasonColumns, BaseColumns {
 
     public static final Uri CONTENT_URI =
         BASE_CONTENT_URI.buildUpon().appendPath(PATH_SEASONS).build();
@@ -486,7 +485,7 @@ public final class CathodeContract {
     }
   }
 
-  public static class Episodes implements EpisodeColumns, ImageColumns, BaseColumns {
+  public static class Episodes implements EpisodeColumns, BaseColumns {
 
     public static final Uri CONTENT_URI =
         BASE_CONTENT_URI.buildUpon().appendPath(PATH_EPISODES).build();
@@ -532,7 +531,7 @@ public final class CathodeContract {
     }
   }
 
-  public static class Movies implements MovieColumns, ImageColumns, BaseColumns {
+  public static class Movies implements MovieColumns, BaseColumns {
 
     public static final Uri CONTENT_URI =
         BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIES).build();

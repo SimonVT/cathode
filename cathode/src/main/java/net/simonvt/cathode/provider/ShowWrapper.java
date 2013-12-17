@@ -247,9 +247,8 @@ public final class ShowWrapper {
     if (show.getImages() != null) {
       Images images = show.getImages();
       if (!ApiUtils.isPlaceholder(images.getPoster())) cv.put(Shows.POSTER, images.getPoster());
-      if (!ApiUtils.isPlaceholder(images.getPoster())) cv.put(Shows.FANART, images.getFanart());
-      if (!ApiUtils.isPlaceholder(images.getPoster())) cv.put(Shows.SCREEN, images.getScreen());
-      if (!ApiUtils.isPlaceholder(images.getPoster())) cv.put(Shows.BANNER, images.getBanner());
+      if (!ApiUtils.isPlaceholder(images.getFanart())) cv.put(Shows.FANART, images.getFanart());
+      if (!ApiUtils.isPlaceholder(images.getBanner())) cv.put(Shows.BANNER, images.getBanner());
     }
     if (show.getRatings() != null) {
       cv.put(Shows.RATING_PERCENTAGE, show.getRatings().getPercentage());

@@ -100,13 +100,7 @@ public final class SeasonWrapper {
     if (season.getImages() != null) {
       Images images = season.getImages();
       if (!ApiUtils.isPlaceholder(images.getPoster())) {
-        cv.put(CathodeContract.Shows.POSTER, images.getPoster());
-      }
-      if (!ApiUtils.isPlaceholder(images.getFanart())) {
-        cv.put(CathodeContract.Shows.FANART, images.getFanart());
-      }
-      if (!ApiUtils.isPlaceholder(images.getScreen())) {
-        cv.put(CathodeContract.Shows.SCREEN, images.getScreen());
+        cv.put(CathodeContract.SeasonColumns.POSTER, images.getPoster());
       }
     }
 
