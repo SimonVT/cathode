@@ -46,6 +46,10 @@ android {
       signingConfig signingConfigs.release
     }
   }
+
+  packagingOptions {
+    exclude 'META-INF/services/javax.annotation.processing.Processor'
+  }
 }
 
 checkstyle {
