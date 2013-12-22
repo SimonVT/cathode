@@ -6,6 +6,7 @@
 !settings.gradle
 !gradlew
 !gradlew.bat
+!README.md
 
 !art/
 !gradle/
