@@ -72,6 +72,7 @@ public class SeasonsAdapter extends CursorAdapter {
     });
     ColorStateList primaryColor = a.getColorStateList(0);
     ColorStateList secondaryColor = a.getColorStateList(1);
+    a.recycle();
 
     final String unwatched = resources.getQuantityString(R.plurals.x_unwatched, toWatch, toWatch);
     String unaired;
