@@ -13,7 +13,8 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       app:dominantMeasurement="width"
-      app:aspectRatio="1.47"/>
+      app:aspectRatio="1.47"
+      app:placeholder="@drawable/placeholder_person"/>
 
   <TextView
       android:id="@+id/name"
