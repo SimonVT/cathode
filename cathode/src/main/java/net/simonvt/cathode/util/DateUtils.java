@@ -11,8 +11,6 @@ import net.simonvt.cathode.R;
 
 public final class DateUtils {
 
-  private static final String TAG = "DateUtils";
-
   public static final long MINUTE_IN_SECONDS = 60;
 
   public static final long HOUR_IN_SECONDS = 60 * MINUTE_IN_SECONDS;
@@ -34,7 +32,7 @@ public final class DateUtils {
 
   public static long getMillis(String iso) {
     try {
-      SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+      SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
       Date date = formatter.parse(iso);
       return date.getTime();
     } catch (ParseException e) {
