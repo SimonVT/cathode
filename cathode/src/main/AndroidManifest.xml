@@ -19,7 +19,8 @@
       android:name=".CathodeApp"
       android:label="@string/app_name"
       android:icon="@drawable/ic_launcher"
-      android:theme="@style/Theme">
+      android:theme="@style/Theme"
+      android:allowBackup="true">
 
     <!-- Activities -->
     <activity
