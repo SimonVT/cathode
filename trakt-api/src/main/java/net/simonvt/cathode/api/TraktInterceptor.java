@@ -42,7 +42,8 @@ public class TraktInterceptor implements RequestInterceptor {
     }
 
     requestFacade.addPathParam("apikey", apiKey);
-    requestFacade.addPathParam("username", credentials.getUsername());
+    String username = credentials.getUsername();
+    requestFacade.addPathParam("username", username != null ? username : "");
   }
 
   private String base64encode(String source) {
