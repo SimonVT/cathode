@@ -57,6 +57,9 @@ public class SyncTrendingShowsTask extends TraktTask {
 
       for (int i = 0, count = Math.min(shows.size(), 25); i < count; i++) {
         TvShow show = shows.get(i);
+        if (show.getTvdbId() == null) {
+          continue;
+        }
         long showId = ShowWrapper.getShowId(resolver, show);
         if (showId == -1L) {
           queueTask(new SyncShowTask(show.getTvdbId()));

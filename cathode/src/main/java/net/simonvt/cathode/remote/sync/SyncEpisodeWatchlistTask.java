@@ -52,6 +52,9 @@ public class SyncEpisodeWatchlistTask extends TraktTask {
       List<TvShow> shows = userService.watchlistEpisodes();
 
       for (TvShow show : shows) {
+        if (show.getTvdbId() == null) {
+          continue;
+        }
         final int tvdbId = show.getTvdbId();
         final long showId = ShowWrapper.getShowId(service.getContentResolver(), tvdbId);
 

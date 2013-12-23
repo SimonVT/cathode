@@ -68,6 +68,9 @@ public class SyncShowsCollectionTask extends TraktTask {
       ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 
       for (TvShow show : shows) {
+        if (show.getTvdbId() == null) {
+          continue;
+        }
         final int tvdbId = show.getTvdbId();
         final long showId = ShowWrapper.getShowId(resolver, tvdbId);
 

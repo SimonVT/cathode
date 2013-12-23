@@ -35,6 +35,9 @@ public class SyncShowsTask extends TraktTask {
       List<TvShow> shows = userService.libraryShowsAll(DetailLevel.MIN);
 
       for (TvShow show : shows) {
+        if (show.getTvdbId() == null) {
+          continue;
+        }
         final Integer tvdbId = show.getTvdbId();
         if (!ShowWrapper.exists(service.getContentResolver(), tvdbId)) {
           queueTask(new SyncShowTask(tvdbId));

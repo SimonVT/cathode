@@ -49,6 +49,9 @@ public class SyncMoviesWatchlistTask extends TraktTask {
       List<Movie> movies = userService.watchlistMovies();
 
       for (Movie movie : movies) {
+        if (movie.getTmdbId() == null) {
+          continue;
+        }
         final long tmdbId = movie.getTmdbId();
         final long movieId = MovieWrapper.getMovieId(service.getContentResolver(), tmdbId);
 

@@ -33,6 +33,9 @@ public class SyncMoviesTask extends TraktTask {
     try {
       List<Movie> movies = userService.moviesAll(DetailLevel.MIN);
       for (Movie movie : movies) {
+        if (movie.getTmdbId() == null) {
+          continue;
+        }
         final long tmdbId = movie.getTmdbId();
         queueTask(new SyncMovieTask(tmdbId));
       }

@@ -50,7 +50,10 @@ public class SyncMoviesCollectionTask extends TraktTask {
       List<Movie> movies = userService.moviesCollection(DetailLevel.MIN);
 
       for (Movie movie : movies) {
-        final Long tmdbId = movie.getTmdbId();
+        if (movie.getTmdbId() == null) {
+          continue;
+        }
+        final long tmdbId = movie.getTmdbId();
         final long movieId = MovieWrapper.getMovieId(service.getContentResolver(), tmdbId);
 
         if (movieId == -1) {

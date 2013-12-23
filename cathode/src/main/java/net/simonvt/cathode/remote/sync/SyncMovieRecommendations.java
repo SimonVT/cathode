@@ -51,6 +51,9 @@ public class SyncMovieRecommendations extends TraktTask {
       List<Movie> recommendations = recommendationsService.movies();
       for (int index = 0; index < Math.min(recommendations.size(), 25); index++) {
         Movie movie = recommendations.get(index);
+        if (movie.getTmdbId() == null) {
+          continue;
+        }
         long id = MovieWrapper.getMovieId(resolver, movie.getTmdbId());
         if (id == -1L) {
           queueTask(new SyncMovieTask(movie.getTmdbId()));

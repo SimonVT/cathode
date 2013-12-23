@@ -51,6 +51,9 @@ public class SyncShowRecommendations extends TraktTask {
 
       for (int index = 0, count = Math.min(shows.size(), 25); index < count; index++) {
         TvShow show = shows.get(index);
+        if (show.getTvdbId() == null) {
+          continue;
+        }
         long showId = ShowWrapper.getShowId(resolver, show);
         if (showId == -1L) {
           queueTask(new SyncShowTask(show.getTvdbId()));
