@@ -208,7 +208,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
         }
 
         @Override public void onActionSelected(int action) {
-          onActionSelected(action);
+          EpisodeFragment.this.onActionSelected(action);
         }
       });
     }
