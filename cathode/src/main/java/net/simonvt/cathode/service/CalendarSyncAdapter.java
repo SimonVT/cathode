@@ -29,6 +29,7 @@ import android.os.RemoteException;
 import android.provider.BaseColumns;
 import android.provider.CalendarContract;
 import android.provider.ContactsContract;
+import android.text.format.Time;
 import android.util.LongSparseArray;
 import java.util.ArrayList;
 import net.simonvt.cathode.R;
@@ -58,6 +59,8 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
     }
   }
 
+  private static final long INVALID_ID = -1L;
+
   private Context context;
 
   public CalendarSyncAdapter(Context context) {
@@ -69,6 +72,9 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
       ContentProviderClient provider, SyncResult syncResult) {
     LogWrapper.v(TAG, "[onPerformSync]");
     final long calendarId = getCalendar(account);
+    if (calendarId == INVALID_ID) {
+      return;
+    }
 
     Cursor c =
         context.getContentResolver().query(CalendarContract.Events.CONTENT_URI, new String[] {
@@ -131,6 +137,8 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
         final String showTitle = show.getString(show.getColumnIndex(CathodeContract.Shows.TITLE));
         final long runtime = show.getLong(show.getColumnIndex(CathodeContract.Shows.RUNTIME));
 
+        show.close();
+
         String eventTitle = showTitle + " - " + season + "x" + episode + " " + title;
 
         Event event = events.get(id);
@@ -140,6 +148,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
                   .withValue(CalendarContract.Events.DTSTART, firstAired)
                   .withValue(CalendarContract.Events.DTEND,
                       firstAired + runtime * DateUtils.MINUTE_IN_MILLIS)
+                  .withValue(CalendarContract.Events.EVENT_TIMEZONE, Time.TIMEZONE_UTC)
                   .withValue(CalendarContract.Events.TITLE, eventTitle)
                   .withSelection(CalendarContract.Events._ID + "=?", new String[] {
                       String.valueOf(event.id),
@@ -160,6 +169,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
               .withValue(CalendarContract.Events.DTSTART, firstAired)
               .withValue(CalendarContract.Events.DTEND,
                   firstAired + runtime * DateUtils.MINUTE_IN_MILLIS)
+              .withValue(CalendarContract.Events.EVENT_TIMEZONE, Time.TIMEZONE_UTC)
               .withValue(CalendarContract.Events.TITLE, eventTitle)
               .withValue(CalendarContract.Events.SYNC_DATA1, id)
               .withValue(CalendarContract.Events.CALENDAR_ID, calendarId)
@@ -191,6 +201,10 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
   }
 
   private long getCalendar(Account account) {
+    return getCalendar(account, true);
+  }
+
+  private long getCalendar(Account account, boolean recall) {
     Cursor c = null;
     try {
       Uri calenderUri = CalendarContract.Calendars
@@ -205,6 +219,10 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
       if (c.moveToNext()) {
         return c.getLong(0);
       } else {
+        if (!recall) {
+          return INVALID_ID;
+        }
+
         ArrayList<ContentProviderOperation> operationList =
             new ArrayList<ContentProviderOperation>();
 
@@ -231,9 +249,9 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
           context.getContentResolver().applyBatch(CalendarContract.AUTHORITY, operationList);
         } catch (Exception e) {
           e.printStackTrace();
-          return -1L;
+          return INVALID_ID;
         }
-        return getCalendar(account);
+        return getCalendar(account, false);
       }
     } finally {
       if (c != null) c.close();
