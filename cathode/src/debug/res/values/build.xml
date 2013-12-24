@@ -14,10 +14,16 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-  <application>
-    <meta-data
-        android:name="com.crashlytics.ApiKey"
-        android:value="0000000000000000000000000000000000000000"/>
-  </application>
-</manifest>
+<resources>
+
+  <string name="app_name">C</string>
+
+  <string name="accountName">C</string>
+
+  <string name="accountType">net.simonvt.cathode.debug.account</string>
+
+  <string name="calendarName">Upcoming episodes (Debug)</string>
+
+  <string name="authority_provider">net.simonvt.cathode.debug.provider.CathodeProvider</string>
+
+</resources>

@@ -28,6 +28,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import java.util.ArrayList;
 import javax.inject.Inject;
+import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.provider.CathodeContract.Episodes;
 import net.simonvt.cathode.provider.CathodeContract.MovieActors;
 import net.simonvt.cathode.provider.CathodeContract.MovieDirectors;
@@ -50,7 +51,7 @@ public class CathodeProvider extends ContentProvider {
 
   private static final String TAG = "CathodeProvider";
 
-  public static final String AUTHORITY = "net.simonvt.cathode.provider.CathodeProvider";
+  public static final String AUTHORITY = BuildConfig.PROVIDER_AUTHORITY;
 
   private static final int SHOWS = 100;
   private static final int SHOWS_ID = 101;

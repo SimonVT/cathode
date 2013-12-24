@@ -31,6 +31,8 @@ android {
   buildToolsVersion parent.ext.buildToolsVersion
 
   defaultConfig {
+    packageName 'net.simonvt.cathode'
+
     minSdkVersion = parent.ext.minSdkVersion
     targetSdkVersion = parent.ext.targetSdkVersion
 
@@ -43,7 +45,12 @@ android {
   }
 
   buildTypes {
+    debug {
+      buildConfigField "String", "PROVIDER_AUTHORITY", "\"net.simonvt.cathode.debug.provider.CathodeProvider\""
+      packageNameSuffix ".debug"
+    }
     release {
+      buildConfigField "String", "PROVIDER_AUTHORITY", "\"net.simonvt.cathode.provider.CathodeProvider\""
       signingConfig signingConfigs.release
     }
   }
