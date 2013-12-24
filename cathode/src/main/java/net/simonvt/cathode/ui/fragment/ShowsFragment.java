@@ -109,9 +109,13 @@ public abstract class ShowsFragment<D extends Cursor> extends AbsAdapterFragment
         getLibraryType());
   }
 
+  protected CursorAdapter getAdapter(Cursor cursor) {
+    return new ShowsWithNextAdapter(getActivity(), cursor, getLibraryType());
+  }
+
   protected void setCursor(Cursor cursor) {
     if (showsAdapter == null) {
-      showsAdapter = new ShowsWithNextAdapter(getActivity(), cursor, getLibraryType());
+      showsAdapter = getAdapter(cursor);
       setAdapter(showsAdapter);
       return;
     }

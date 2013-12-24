@@ -69,6 +69,8 @@ public final class CathodeContract {
 
     String AIRED_COUNT = "airedCount";
     String UNAIRED_COUNT = "unairedCount";
+
+    String HIDDEN = "hidden";
   }
 
   interface TopWatcherColumns {
@@ -199,6 +201,7 @@ public final class CathodeContract {
   public static final String PATH_WITHID = "withId";
   public static final String PATH_COLLECTION = "inCollection";
   public static final String PATH_WATCHED = "watched";
+  public static final String PATH_UPCOMING = "upcoming";
 
   public static final String PATH_MOVIES = "movies";
   public static final String PATH_FROMMOVIE = "fromMovie";
@@ -237,8 +240,8 @@ public final class CathodeContract {
     public static final Uri SHOWS_WATCHLIST =
         CONTENT_URI.buildUpon().appendEncodedPath(PATH_WATCHLIST).build();
 
-    public static final Uri SHOWS_WITHNEXT_IGNOREWATCHED =
-        SHOWS_WITHNEXT.buildUpon().appendPath(PATH_IGNOREWATCHED).build();
+    public static final Uri SHOWS_UPCOMING =
+        CONTENT_URI.buildUpon().appendPath(PATH_UPCOMING).build();
 
     public static final Uri SHOWS_TRENDING =
         CONTENT_URI.buildUpon().appendPath(PATH_TRENDING).build();

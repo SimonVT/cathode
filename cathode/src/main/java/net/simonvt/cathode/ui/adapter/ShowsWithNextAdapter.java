@@ -53,6 +53,7 @@ public class ShowsWithNextAdapter extends CursorAdapter {
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.WATCHED_COUNT,
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.IN_COLLECTION_COUNT,
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.STATUS,
+      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.HIDDEN,
       CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.TITLE,
       CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.FIRST_AIRED,
       CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.SEASON,
@@ -89,6 +90,8 @@ public class ShowsWithNextAdapter extends CursorAdapter {
         cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.POSTER));
     final String showTitle = cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.TITLE));
     final String showStatus = cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.STATUS));
+    final boolean isHidden =
+        cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.HIDDEN)) == 1;
 
     final int showAiredCount =
         cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.AIRED_COUNT));
@@ -174,18 +177,26 @@ public class ShowsWithNextAdapter extends CursorAdapter {
           case R.id.action_collection_remove_all:
             showScheduler.setIsInCollection(id, false);
             break;
+
+          case R.id.action_hide:
+            showScheduler.setIsHidden(id, true);
+            break;
+
+          case R.id.action_unhide:
+            showScheduler.setIsHidden(id, false);
+            break;
         }
       }
     });
 
     vh.overflow.removeItems();
-    setupOverflowItems(vh.overflow, showTypeCount, showAiredCount, episodeTitle != null);
+    setupOverflowItems(vh.overflow, showTypeCount, showAiredCount, episodeTitle != null, isHidden);
 
     vh.poster.setImage(showPosterUrl);
   }
 
   protected void setupOverflowItems(OverflowView overflow, int typeCount, int airedCount,
-      boolean hasNext) {
+      boolean hasNext, boolean isHidden) {
     switch (libraryType) {
       case WATCHLIST:
         overflow.addItem(R.id.action_watchlist_remove, R.string.action_watchlist_remove);

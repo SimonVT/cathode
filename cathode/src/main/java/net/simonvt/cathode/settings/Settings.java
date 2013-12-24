@@ -19,6 +19,8 @@ import android.preference.PreferenceActivity;
 
 public class Settings extends PreferenceActivity {
 
+  public static final String SHOW_HIDDEN = "showHidden";
+
   public static final String SHOWS_LAST_UPDATED = "showsLastUpdated";
 
   public static final String MOVIES_LAST_UPDATED = "showsLastUpdated";

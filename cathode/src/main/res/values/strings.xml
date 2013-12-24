@@ -95,6 +95,9 @@
   <string name="action_rate">Rate</string>
   <string name="action_logout">Logout</string>
   <string name="action_recommendation_dismiss">Dismiss recommendation</string>
+  <string name="action_hide">Hide</string>
+  <string name="action_unhide">Unhide</string>
+  <string name="action_show_hidden">Display hidden</string>
 
   <string name="checkmark_watched">Watched</string>
   <string name="checkmark_collection">In collection</string>

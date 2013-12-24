@@ -239,6 +239,13 @@ public final class ShowWrapper {
     });
   }
 
+  public static void setIsHidden(ContentResolver resolver, long showId, boolean isHidden) {
+    ContentValues cv = new ContentValues();
+    cv.put(Shows.HIDDEN, isHidden);
+
+    resolver.update(Shows.buildFromId(showId), cv, null, null);
+  }
+
   private static ContentValues getShowCVs(TvShow show) {
     ContentValues cv = new ContentValues();
 

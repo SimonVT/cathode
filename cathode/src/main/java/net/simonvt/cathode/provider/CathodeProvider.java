@@ -58,7 +58,7 @@ public class CathodeProvider extends ContentProvider {
   private static final int SHOW_ACTORS = 104;
   private static final int SHOW_GENRES = 105;
   private static final int SHOWS_WITHNEXT = 106;
-  private static final int SHOWS_WITHNEXT_IGNOREWATCHED = 107;
+  private static final int SHOWS_UPCOMING = 107;
   private static final int SHOWS_WATCHLIST = 108;
   private static final int SHOWS_COLLECTION = 109;
   private static final int SHOWS_WATCHED = 110;
@@ -100,11 +100,8 @@ public class CathodeProvider extends ContentProvider {
         CathodeContract.PATH_SHOWS + "/" + CathodeContract.PATH_WITHID + "/*", SHOWS_ID);
     URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SHOWS + "/" + CathodeContract.PATH_WITHNEXT,
         SHOWS_WITHNEXT);
-    URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SHOWS
-        + "/"
-        + CathodeContract.PATH_WITHNEXT
-        + "/"
-        + CathodeContract.PATH_IGNOREWATCHED, SHOWS_WITHNEXT_IGNOREWATCHED);
+    URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SHOWS + "/" + CathodeContract.PATH_UPCOMING,
+        SHOWS_UPCOMING);
     URI_MATCHER.addURI(AUTHORITY,
         CathodeContract.PATH_TOPWATCHERS + "/" + CathodeContract.PATH_FROMSHOW + "/*",
         SHOW_TOP_WATCHERS);
@@ -221,9 +218,10 @@ public class CathodeProvider extends ContentProvider {
         c.setNotificationUri(getContext().getContentResolver(), Shows.CONTENT_URI);
         return c;
       }
-      case SHOWS_WITHNEXT_IGNOREWATCHED: {
+      case SHOWS_UPCOMING: {
         Cursor c = getShowsBuilder().table(Tables.SHOWS_WITH_UNWATCHED)
-            .where(CathodeContract.ShowColumns.WATCHED_COUNT + "<" + Shows.getAiredQuery(), null)
+            .where(CathodeContract.ShowColumns.WATCHED_COUNT + ">0")
+            .where(CathodeContract.ShowColumns.WATCHED_COUNT + "<" + Shows.getAiredQuery())
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
         c.setNotificationUri(getContext().getContentResolver(), Shows.CONTENT_URI);
@@ -500,7 +498,7 @@ public class CathodeProvider extends ContentProvider {
       case SHOWS:
       case SHOWS_ID:
       case SHOWS_WITHNEXT:
-      case SHOWS_WITHNEXT_IGNOREWATCHED:
+      case SHOWS_UPCOMING:
       case SHOWS_WATCHLIST:
       case SHOWS_COLLECTION:
       case SHOWS_WATCHED:
@@ -990,9 +988,10 @@ public class CathodeProvider extends ContentProvider {
       case SHOWS_WITHNEXT: {
         return builder.table(Tables.SHOWS_WITH_UNWATCHED);
       }
-      case SHOWS_WITHNEXT_IGNOREWATCHED: {
+      case SHOWS_UPCOMING: {
         return builder.table(Tables.SHOWS_WITH_UNWATCHED)
-            .where(CathodeContract.ShowColumns.WATCHED_COUNT + "<" + Shows.getAiredQuery(), null);
+            .where(CathodeContract.ShowColumns.WATCHED_COUNT + "<" + Shows.getAiredQuery())
+            .where(CathodeContract.ShowColumns.HIDDEN + "=0");
       }
       case SHOWS_ID: {
         final String showId = Shows.getShowId(uri);

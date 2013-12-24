@@ -40,7 +40,7 @@ import net.simonvt.cathode.util.DateUtils;
 public class CathodeDatabase extends SQLiteOpenHelper {
 
   private static final String DATABASE_NAME = "cathode.db";
-  private static final int DATABASE_VERSION = 1;
+  private static final int DATABASE_VERSION = 2;
 
   public interface Tables {
 
@@ -222,7 +222,8 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + ShowColumns.IN_WATCHLIST_COUNT + " INTEGER DEFAULT 0,"
         + ShowColumns.IN_COLLECTION_COUNT + " INTEGER DEFAULT 0,"
         + ShowColumns.TRENDING_INDEX + " INTEGER DEFAULT -1,"
-        + ShowColumns.RECOMMENDATION_INDEX + " INTEGER DEFAULT -1)");
+        + ShowColumns.RECOMMENDATION_INDEX + " INTEGER DEFAULT -1,"
+        + ShowColumns.HIDDEN + " INTEGER DEFAULT 0)");
 
     db.execSQL("CREATE TABLE " + Tables.SHOW_TOP_WATCHERS + " ("
         + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -391,5 +392,10 @@ public class CathodeDatabase extends SQLiteOpenHelper {
   }
 
   @Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    switch (oldVersion) {
+      case 1:
+        db.execSQL("ALTER TABLE " + Tables.SHOWS
+        + " ADD COLUMN " + ShowColumns.HIDDEN + " INTEGER DEFAULT 0");
+    }
   }
 }

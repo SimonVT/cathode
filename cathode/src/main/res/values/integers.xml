@@ -15,4 +15,6 @@
   -->
 <resources>
 
+  <integer name="order_menu_hidden">450</integer>
+
 </resources>
