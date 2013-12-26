@@ -35,11 +35,9 @@ import java.util.ArrayList;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.util.DateUtils;
-import net.simonvt.cathode.util.LogWrapper;
+import timber.log.Timber;
 
 public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
-
-  private static final String TAG = "CalendarSyncAdapter";
 
   private static class Event {
 
@@ -70,7 +68,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
 
   @Override public void onPerformSync(Account account, Bundle extras, String authority,
       ContentProviderClient provider, SyncResult syncResult) {
-    LogWrapper.v(TAG, "[onPerformSync]");
+    Timber.d("onPerformSync");
     final long calendarId = getCalendar(account);
     if (calendarId == INVALID_ID) {
       return;

@@ -21,7 +21,6 @@ import net.simonvt.cathode.api.entity.Response;
 import net.simonvt.cathode.api.service.MovieService;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import net.simonvt.cathode.util.LogWrapper;
 import retrofit.RetrofitError;
 
 public class MovieWatchedTask extends TraktTask {
@@ -44,8 +43,6 @@ public class MovieWatchedTask extends TraktTask {
   }
 
   @Override protected void doTask() {
-    LogWrapper.v(TAG, "[doTask]");
-
     try {
       if (watched) {
         Response response = movieService.seen(new MoviesBody(tmdbId));

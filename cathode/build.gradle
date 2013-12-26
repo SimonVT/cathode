@@ -19,6 +19,7 @@ dependencies {
   compile parent.ext.libraries.tape
 
   compile parent.ext.libraries.butterknife
+  compile parent.ext.libraries.timber
 
   compile parent.ext.libraries.dashclockApi
 

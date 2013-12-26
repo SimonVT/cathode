@@ -27,12 +27,22 @@ import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.entity.UserProfile;
 import net.simonvt.cathode.provider.CathodeContract.Movies;
 import net.simonvt.cathode.util.ApiUtils;
+import timber.log.Timber;
 
 public final class MovieWrapper {
 
   private static final String TAG = "MovieWrapper";
 
   private MovieWrapper() {
+  }
+
+  private static void log(ContentResolver resolver, long movieId, String message) {
+    final long tmdbId = getTmdbId(resolver, movieId);
+    try {
+      throw new Exception("tmdbId: " + tmdbId + " - " + message);
+    } catch (Exception e) {
+      Timber.e(e, null);
+    }
   }
 
   public static long getTmdbId(ContentResolver resolver, long movieId) {
@@ -182,6 +192,10 @@ public final class MovieWrapper {
     resolver.delete(CathodeContract.MovieDirectors.buildFromMovieId(movieId), null, null);
     List<Person> directors = people.getDirectors();
     for (Person person : directors) {
+      if (person.getName() == null) {
+        log(resolver, movieId, "Director has no name");
+        continue;
+      }
       ContentValues cv = new ContentValues();
       cv.put(CathodeContract.MovieDirectors.MOVIE_ID, movieId);
       cv.put(CathodeContract.MovieDirectors.NAME, person.getName());
@@ -195,6 +209,10 @@ public final class MovieWrapper {
     resolver.delete(CathodeContract.MovieWriters.buildFromMovieId(movieId), null, null);
     List<Person> writers = people.getWriters();
     for (Person person : writers) {
+      if (person.getName() == null) {
+        log(resolver, movieId, "Writer has no name");
+        continue;
+      }
       ContentValues cv = new ContentValues();
       cv.put(CathodeContract.MovieWriters.MOVIE_ID, movieId);
       cv.put(CathodeContract.MovieWriters.NAME, person.getName());
@@ -209,6 +227,10 @@ public final class MovieWrapper {
     resolver.delete(CathodeContract.MovieProducers.buildFromMovieId(movieId), null, null);
     List<Person> producers = people.getProducers();
     for (Person person : producers) {
+      if (person.getName() == null) {
+        log(resolver, movieId, "Producer has no name");
+        continue;
+      }
       ContentValues cv = new ContentValues();
       cv.put(CathodeContract.MovieProducers.MOVIE_ID, movieId);
       cv.put(CathodeContract.MovieProducers.NAME, person.getName());
@@ -223,6 +245,10 @@ public final class MovieWrapper {
     resolver.delete(CathodeContract.MovieActors.buildFromMovieId(movieId), null, null);
     List<Person> actors = people.getActors();
     for (Person person : actors) {
+      if (person.getName() == null) {
+        log(resolver, movieId, "Actor has no name");
+        continue;
+      }
       ContentValues cv = new ContentValues();
       cv.put(CathodeContract.MovieActors.MOVIE_ID, movieId);
       cv.put(CathodeContract.MovieActors.NAME, person.getName());

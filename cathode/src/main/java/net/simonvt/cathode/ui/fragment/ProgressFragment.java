@@ -22,7 +22,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import butterknife.InjectView;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.util.LogWrapper;
 
 public abstract class ProgressFragment extends BaseFragment {
 
@@ -52,7 +51,6 @@ public abstract class ProgressFragment extends BaseFragment {
     view.getViewTreeObserver()
         .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override public void onGlobalLayout() {
-            LogWrapper.v(TAG, "[onGlobalLayout] State: " + currentState);
             getView().getViewTreeObserver().removeOnGlobalLayoutListener(this);
             wait = false;
 
@@ -95,7 +93,6 @@ public abstract class ProgressFragment extends BaseFragment {
   }
 
   protected void setContentVisible(boolean contentVisible) {
-    LogWrapper.v(TAG, "[setContentVisible]");
     if (getView() == null) {
       currentState = contentVisible ? STATE_CONTENT_VISIBLE : STATE_PROGRESS_VISIBLE;
       return;

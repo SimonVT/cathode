@@ -50,6 +50,7 @@ ext.libraries = [
     tape: 'com.squareup:tape:1.1.1',
 
     butterknife: 'com.jakewharton:butterknife:4.0.1',
+    timber: 'com.jakewharton.timber:timber:2.1.0',
 
     dashclockApi: 'com.google.android.apps.dashclock:dashclock-api:2.0.0',
 

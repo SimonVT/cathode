@@ -25,8 +25,8 @@ import net.simonvt.cathode.api.service.ShowService;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import net.simonvt.cathode.util.LogWrapper;
 import retrofit.RetrofitError;
+import timber.log.Timber;
 
 public class SyncEpisodeTask extends TraktTask {
 
@@ -48,7 +48,7 @@ public class SyncEpisodeTask extends TraktTask {
 
   @Override protected void doTask() {
     try {
-      LogWrapper.v(TAG, "Syncing episode: " + tvdbId + "-" + season + "-" + episode);
+      Timber.d("Syncing episode: %d - %d - %d", tvdbId, season, episode);
 
       Episode episode = showService.episodeSummary(tvdbId, season, this.episode).getEpisode();
 
@@ -62,8 +62,9 @@ public class SyncEpisodeTask extends TraktTask {
       postOnSuccess();
     } catch (RetrofitError e) {
       final int statusCode = e.getResponse().getStatus();
-      LogWrapper.e(TAG, "URL: " + e.getUrl() + " - Status code: " + statusCode, e);
       if (statusCode == 400) {
+        Timber.tag(TAG).e(e, "URL: %s", e.getUrl());
+
         ResponseParser parser = new ResponseParser();
         CathodeApp.inject(service, parser);
         Response response = parser.tryParse(e);

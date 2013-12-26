@@ -32,7 +32,6 @@ import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.api.ResponseParser;
 import net.simonvt.cathode.api.UserCredentials;
 import net.simonvt.cathode.api.body.CreateAccountBody;
 import net.simonvt.cathode.api.entity.Response;
@@ -42,7 +41,6 @@ import net.simonvt.cathode.event.MessageEvent;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.util.ApiUtils;
-import net.simonvt.cathode.util.LogWrapper;
 import retrofit.RetrofitError;
 
 public class LoginFragment extends BaseFragment {
@@ -152,12 +150,6 @@ public class LoginFragment extends BaseFragment {
 
     @Override protected Boolean doInBackground(Void... voids) {
       Response r = accountService.create(new CreateAccountBody(username, password, email));
-      LogWrapper.d(TAG, "Error: "
-          + r.getError()
-          + " - Status: "
-          + r.getStatus()
-          + " - Message: "
-          + r.getMessage());
 
       return r.getError() == null;
     }
@@ -191,26 +183,10 @@ public class LoginFragment extends BaseFragment {
     @Override protected Boolean doInBackground(Void... voids) {
       try {
         Response r = accountService.test();
-        LogWrapper.d(TAG, "Error: "
-            + r.getError()
-            + " - Status: "
-            + r.getStatus()
-            + " - Message: "
-            + r.getMessage());
 
         return r.getError() == null;
       } catch (RetrofitError e) {
-        ResponseParser parser = new ResponseParser();
-        CathodeApp.inject(appContext, parser);
-        Response r = parser.tryParse(e);
-        if (r != null) {
-          LogWrapper.d(TAG, "Error: "
-              + r.getError()
-              + " - Status: "
-              + r.getStatus()
-              + " - Message: "
-              + r.getMessage());
-        }
+        e.printStackTrace();
       }
 
       return false;

@@ -18,14 +18,14 @@ package net.simonvt.cathode.remote;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import net.simonvt.cathode.util.LogWrapper;
+import timber.log.Timber;
 
 public class TaskServiceReceiver extends BroadcastReceiver {
 
   private static final String TAG = "TaskServiceReceiver";
 
   @Override public void onReceive(Context context, Intent intent) {
-    LogWrapper.v(TAG, "[onReceive] " + intent);
+    Timber.tag("TaskServiceReceiver").i("Intent: " + intent);
     TraktTaskService.acquireLock(context);
     context.startService(new Intent(context, TraktTaskService.class));
   }

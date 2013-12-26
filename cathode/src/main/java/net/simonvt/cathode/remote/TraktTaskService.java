@@ -47,8 +47,8 @@ import net.simonvt.cathode.event.SyncEvent;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.HomeActivity;
-import net.simonvt.cathode.util.LogWrapper;
 import retrofit.RetrofitError;
+import timber.log.Timber;
 
 public class TraktTaskService extends Service implements TraktTask.TaskCallback {
 
@@ -123,7 +123,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
         PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Settings.INITIAL_SYNC, true);
 
     if (displayNotification) {
-      LogWrapper.v(TAG, "Display notification");
+      Timber.d("Display notification");
       Intent clickIntent = new Intent(this, HomeActivity.class);
       PendingIntent clickPi = PendingIntent.getActivity(this, 0, clickIntent, 0);
 
@@ -170,20 +170,20 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
       new Thread(new Runnable() {
         @Override public void run() {
           try {
-            LogWrapper.v(TAG, "Checking authentication");
+            Timber.d("Checking authentication");
             Response response = accountService.test();
 
             if ("failed authentication".equals(response.getError())) {
               MAIN_HANDLER.post(new Runnable() {
                 @Override public void run() {
-                  LogWrapper.v(TAG, "Authentication failed");
+                  Timber.i("Authentication failed");
                   bus.post(new AuthFailedEvent());
                   running = false;
                   stopSelf();
                 }
               });
             } else {
-              LogWrapper.v(TAG, "[Auth Check] " + response.getMessage());
+              Timber.d("[Auth Check] " + response.getMessage());
               MAIN_HANDLER.post(new Runnable() {
                 @Override public void run() {
                   running = false;
@@ -271,11 +271,11 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     } else {
       TraktTask task = queue.peek();
       if (task != null) {
-        LogWrapper.i(TAG, "Execute next");
+        Timber.d("Executing next");
         running = true;
         task.execute(this);
       } else {
-        LogWrapper.i(TAG, "Service stopping!");
+        Timber.d("Stopping");
 
         if (displayNotification) {
           PreferenceManager.getDefaultSharedPreferences(this)
@@ -317,7 +317,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
   }
 
   @Override public void onFailure() {
-    LogWrapper.i(TAG, "[onFailure] Scheduling restart");
+    Timber.d("Task failed, scheduling restart");
     running = false;
 
     if (logout) {

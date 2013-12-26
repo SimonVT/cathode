@@ -24,7 +24,6 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -276,33 +275,6 @@ public class HiddenPaneLayout extends ViewGroup {
   private void setState(int state) {
     if (state != this.state) {
       this.state = state;
-    }
-  }
-
-  protected void logState(int state) {
-    switch (state) {
-      case STATE_CLOSED:
-        Log.v(TAG, "[State] STATE_CLOSED");
-        break;
-
-      case STATE_CLOSING:
-        Log.v(TAG, "[State] STATE_CLOSING");
-        break;
-
-      case STATE_DRAGGING:
-        Log.v(TAG, "[State] STATE_DRAGGING");
-        break;
-
-      case STATE_OPENING:
-        Log.v(TAG, "[State] STATE_OPENING");
-        break;
-
-      case STATE_OPEN:
-        Log.v(TAG, "[State] STATE_OPEN");
-        break;
-
-      default:
-        Log.v(TAG, "[State] Unknown: " + state);
     }
   }
 

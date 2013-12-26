@@ -58,9 +58,9 @@ import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
 import net.simonvt.cathode.util.FragmentStack;
-import net.simonvt.cathode.util.LogWrapper;
 import net.simonvt.cathode.widget.SearchView;
 import net.simonvt.menudrawer.MenuDrawer;
+import timber.log.Timber;
 
 public class PhoneController extends UiController {
 
@@ -126,7 +126,7 @@ public class PhoneController extends UiController {
 
     stack = FragmentStack.forContainer(activity, R.id.content, new FragmentStack.Callback() {
       @Override public void onStackChanged(int stackSize, Fragment topFragment) {
-        LogWrapper.v(TAG, "[onStackChanged] " + topFragment.getTag());
+        Timber.d("onStackChanged: %s", topFragment.getTag());
         FragmentContract fragment = (FragmentContract) topFragment;
 
         menuDrawer.setDrawerIndicatorEnabled(stackSize <= 1);
@@ -387,7 +387,7 @@ public class PhoneController extends UiController {
       }
 
       @Override public void onSubmit(String query) {
-        LogWrapper.v(TAG, "[onQueryTextSubmit] Query: " + query);
+        Timber.d("[onQueryTextSubmit] Query: %s", query);
         if (PhoneController.this.searchType == SEARCH_TYPE_MOVIE) {
           SearchMovieFragment f = (SearchMovieFragment) activity.getSupportFragmentManager()
               .findFragmentByTag(FRAGMENT_SEARCH_MOVIE);

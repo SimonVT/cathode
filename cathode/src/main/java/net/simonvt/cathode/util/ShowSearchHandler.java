@@ -33,6 +33,7 @@ import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncShowTask;
 import retrofit.RetrofitError;
+import timber.log.Timber;
 
 public class ShowSearchHandler {
 
@@ -65,18 +66,18 @@ public class ShowSearchHandler {
   }
 
   public void deliverResult(List<Long> showIds) {
-    LogWrapper.v(TAG, "[deliverResult]");
+    Timber.d("[deliverResult]");
     this.showIds = showIds;
     bus.post(new ShowSearchResult(showIds));
   }
 
   public void deliverFailure() {
-    LogWrapper.v(TAG, "[deliverFailure]");
+    Timber.d("[deliverFailure]");
     bus.post(new SearchFailureEvent(SearchFailureEvent.Type.SHOW));
   }
 
   public void search(final String query) {
-    LogWrapper.v(TAG, "[search] Query: " + query);
+    Timber.d("[search] Query: " + query);
     showIds = null;
 
     if (thread != null) {

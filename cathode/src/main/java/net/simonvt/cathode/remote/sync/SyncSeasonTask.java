@@ -33,8 +33,8 @@ import net.simonvt.cathode.provider.CathodeProvider;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import net.simonvt.cathode.util.LogWrapper;
 import retrofit.RetrofitError;
+import timber.log.Timber;
 
 public class SyncSeasonTask extends TraktTask {
 
@@ -62,7 +62,7 @@ public class SyncSeasonTask extends TraktTask {
 
   @Override protected void doTask() {
     try {
-      LogWrapper.v(TAG, "Syncing season " + season + " of show " + tvdbId);
+      Timber.d("Syncing season %d of show %d", season, tvdbId);
 
       List<Episode> episodes = showService.season(tvdbId, season);
 
@@ -77,10 +77,10 @@ public class SyncSeasonTask extends TraktTask {
             summary =
                 showService.episodeSummary(tvdbId, season, episode.getNumber()).getEpisode();
           } catch (RetrofitError e) {
-            // TODO: Cleanup in aisle 5
             final int statusCode = e.getResponse().getStatus();
-            LogWrapper.e(TAG, "URL: " + e.getUrl() + " - Status code: " + statusCode, e);
             if (statusCode == 400) {
+              Timber.tag(TAG).e(e, "URL: %s", e.getUrl());
+
               ResponseParser parser = new ResponseParser();
               CathodeApp.inject(service, parser);
               Response response = parser.tryParse(e);
@@ -118,14 +118,12 @@ public class SyncSeasonTask extends TraktTask {
 
       postOnSuccess();
     } catch (RetrofitError e) {
-      e.printStackTrace();
-      LogWrapper.d(TAG, "[RetrofitError] " + e.getUrl());
       postOnFailure();
     } catch (RemoteException e) {
-      e.printStackTrace();
+      Timber.e(e, null);
       postOnFailure();
     } catch (OperationApplicationException e) {
-      e.printStackTrace();
+      Timber.e(e, null);
       postOnFailure();
     }
   }

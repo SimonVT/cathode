@@ -17,7 +17,7 @@ package net.simonvt.cathode.ui;
 
 import android.os.Bundle;
 import net.simonvt.cathode.ui.fragment.NavigationFragment;
-import net.simonvt.cathode.util.LogWrapper;
+import timber.log.Timber;
 
 public class UiController implements ShowsNavigationListener, MoviesNavigationListener,
     NavigationFragment.OnMenuClickListener {
@@ -69,21 +69,21 @@ public class UiController implements ShowsNavigationListener, MoviesNavigationLi
   }
 
   public void onCreate(Bundle inState) {
-    LogWrapper.v(TAG, "[onCreate]");
+    Timber.d("[onCreate]");
   }
 
   public void onAttach() {
-    LogWrapper.v(TAG, "[onAttach]");
+    Timber.d("[onAttach]");
     attached = true;
   }
 
   public void onDetach() {
-    LogWrapper.v(TAG, "[onDetach]");
+    Timber.d("[onDetach]");
     attached = false;
   }
 
   public void onDestroy(boolean completely) {
-    LogWrapper.v(TAG, "[onDestroy]");
+    Timber.d("[onDestroy]");
   }
 
   public Bundle onSaveInstanceState() {
@@ -95,36 +95,36 @@ public class UiController implements ShowsNavigationListener, MoviesNavigationLi
   }
 
   public void onHomeClicked() {
-    LogWrapper.v(TAG, "[onHomeClicked]");
+    Timber.d("[onHomeClicked]");
   }
 
   @Override public void onMenuItemClicked(int id) {
-    LogWrapper.v(TAG, "[onMenuItemClicked]");
+    Timber.d("[onMenuItemClicked]");
   }
 
   @Override public void onDisplayMovie(long movieId, String title) {
-    LogWrapper.v(TAG, "[onDisplayMovie]");
+    Timber.d("[onDisplayMovie]");
   }
 
   @Override public void onStartMovieSearch() {
-    LogWrapper.v(TAG, "[onStartMovieSearch]");
+    Timber.d("[onStartMovieSearch]");
   }
 
   @Override public void onDisplayShow(long showId, String title, LibraryType type) {
-    LogWrapper.v(TAG, "[onDisplayShow]");
+    Timber.d("[onDisplayShow]");
   }
 
   @Override
   public void onDisplaySeason(long showId, long seasonId, String showTitle, int seasonNumber,
       LibraryType type) {
-    LogWrapper.v(TAG, "[onDisplaySeason]");
+    Timber.d("[onDisplaySeason]");
   }
 
   @Override public void onDisplayEpisode(long episodeId, String showTitle) {
-    LogWrapper.v(TAG, "[onDisplayEpisode]");
+    Timber.d("[onDisplayEpisode]");
   }
 
   @Override public void onStartShowSearch() {
-    LogWrapper.v(TAG, "[onStartShowSearch]");
+    Timber.d("[onStartShowSearch]");
   }
 }

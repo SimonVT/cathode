@@ -31,7 +31,7 @@ import com.squareup.picasso.Target;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.util.LogWrapper;
+import timber.log.Timber;
 
 /**
  * Simple View used to display an image from a remote source. An URL to an image is passed to
@@ -140,7 +140,7 @@ public class RemoteImageView extends View implements Target {
   }
 
   @Override public void onBitmapFailed(Drawable drawable) {
-    LogWrapper.d(TAG, "[onBitmapFailed]");
+    Timber.d("onBitmapFailed");
   }
 
   @Override public void onPrepareLoad(Drawable drawable) {

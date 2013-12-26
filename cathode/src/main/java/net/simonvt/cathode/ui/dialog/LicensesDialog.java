@@ -61,6 +61,7 @@ public class LicensesDialog extends DialogFragment {
       licenses.add(new License(R.string.license_picasso, R.string.license_picasso_text));
       licenses.add(new License(R.string.license_retrofit, R.string.license_retrofit_text));
       licenses.add(new License(R.string.license_tape, R.string.license_tape_text));
+      licenses.add(new License(R.string.license_timber, R.string.license_timber_text));
     }
 
     @Override public int getCount() {

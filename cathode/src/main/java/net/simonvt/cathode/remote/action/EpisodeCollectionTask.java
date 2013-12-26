@@ -21,7 +21,6 @@ import net.simonvt.cathode.api.entity.Response;
 import net.simonvt.cathode.api.service.ShowService;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import net.simonvt.cathode.util.LogWrapper;
 import retrofit.RetrofitError;
 
 public class EpisodeCollectionTask extends TraktTask {
@@ -46,8 +45,6 @@ public class EpisodeCollectionTask extends TraktTask {
   }
 
   @Override protected void doTask() {
-    LogWrapper.v(TAG, "[doTask]");
-
     try {
       if (inCollection) {
         Response response =

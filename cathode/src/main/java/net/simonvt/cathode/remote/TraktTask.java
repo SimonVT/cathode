@@ -20,7 +20,7 @@ import android.os.Looper;
 import com.squareup.tape.Task;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
-import net.simonvt.cathode.util.LogWrapper;
+import timber.log.Timber;
 
 public abstract class TraktTask implements Task<TraktTaskService> {
 
@@ -42,7 +42,7 @@ public abstract class TraktTask implements Task<TraktTaskService> {
 
     new Thread(new Runnable() {
       @Override public void run() {
-        LogWrapper.v(TraktTask.this.getClass().getSimpleName(), "[doTask]");
+        Timber.d("doTask");
         doTask();
       }
     }).start();
@@ -57,14 +57,14 @@ public abstract class TraktTask implements Task<TraktTaskService> {
   }
 
   protected void queueTask(final TraktTask task) {
-    LogWrapper.v(TAG, "Queueing task: " + task.getClass().getSimpleName());
+    Timber.d("Queueing task: " + task.getClass().getSimpleName());
     synchronized (this) {
       if (!canceled) queue.add(task);
     }
   }
 
   protected void queuePriorityTask(final TraktTask task) {
-    LogWrapper.v(TAG, "Queueing priority task: " + task.getClass().getSimpleName());
+    Timber.d("Queueing priority task: " + task.getClass().getSimpleName());
     synchronized (this) {
       if (!canceled) priorityQueue.add(task);
     }

@@ -33,7 +33,6 @@ import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.provider.CathodeDatabase;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.util.LogWrapper;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.cathode.widget.TimeStamp;
@@ -154,7 +153,6 @@ public class ShowsWithNextAdapter extends CursorAdapter {
 
           case R.id.action_watched:
             showScheduler.watchedNext(id);
-            LogWrapper.v(TAG, "Watched item: " + id);
             break;
 
           case R.id.action_watched_all:
@@ -167,7 +165,6 @@ public class ShowsWithNextAdapter extends CursorAdapter {
 
           case R.id.action_collection_add:
             showScheduler.collectedNext(id);
-            LogWrapper.v(TAG, "Watched item: " + id);
             break;
 
           case R.id.action_collection_add_all:

@@ -29,12 +29,22 @@ import net.simonvt.cathode.provider.CathodeContract.ShowColumns;
 import net.simonvt.cathode.provider.CathodeContract.Shows;
 import net.simonvt.cathode.util.ApiUtils;
 import net.simonvt.cathode.util.DateUtils;
+import timber.log.Timber;
 
 public final class ShowWrapper {
 
   private static final String TAG = "ShowWrapper";
 
   private ShowWrapper() {
+  }
+
+  private static void log(ContentResolver resolver, long showId, String message) {
+    final int tvdbId = getTvdbId(resolver, showId);
+    try {
+      throw new Exception("tvdbId: " + tvdbId + " - " + message);
+    } catch (Exception e) {
+      Timber.e(e, null);
+    }
   }
 
   public static int getTvdbId(ContentResolver resolver, long showId) {

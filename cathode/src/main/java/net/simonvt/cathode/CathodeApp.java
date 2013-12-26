@@ -30,6 +30,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.otto.Bus;
@@ -127,8 +128,6 @@ import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
 import net.simonvt.cathode.util.ApiUtils;
 import net.simonvt.cathode.util.DateUtils;
-import net.simonvt.cathode.util.ErrorReporting;
-import net.simonvt.cathode.util.LogWrapper;
 import net.simonvt.cathode.util.MovieSearchHandler;
 import net.simonvt.cathode.util.ShowSearchHandler;
 import net.simonvt.cathode.widget.PhoneEpisodeView;
@@ -136,6 +135,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
 import retrofit.ErrorHandler;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import timber.log.Timber;
 
 public class CathodeApp extends Application {
 
@@ -153,7 +153,12 @@ public class CathodeApp extends Application {
 
   @Override public void onCreate() {
     super.onCreate();
-    ErrorReporting.init(this);
+    if (BuildConfig.DEBUG) {
+      Timber.plant(new Timber.DebugTree());
+    } else {
+      Crashlytics.start(this);
+      Timber.plant(new CrashlyticsTree());
+    }
 
     objectGraph = ObjectGraph.create(new AppModule(this));
     objectGraph.plus(new TraktModule());
@@ -164,7 +169,7 @@ public class CathodeApp extends Application {
   }
 
   @Subscribe public void onAuthFailure(AuthFailedEvent event) {
-    LogWrapper.v(TAG, "[onAuthFailure]");
+    Timber.tag(TAG).i("onAuthFailure");
     if (!accountExists(this)) return; // User has logged out, ignore.
 
     Account account = getAccount(this);
@@ -309,11 +314,11 @@ public class CathodeApp extends Application {
       if (DEBUG) {
         queue.setListener(new ObjectQueue.Listener<TraktTask>() {
           @Override public void onAdd(ObjectQueue<TraktTask> queue, TraktTask entry) {
-            LogWrapper.i("TraktTaskQueue", "Queue size: " + queue.size());
+            Timber.tag("TraktQueue").d("Queue size: %d", queue.size());
           }
 
           @Override public void onRemove(ObjectQueue<TraktTask> queue) {
-            LogWrapper.i("TraktTaskQueue", "Queue size: " + queue.size());
+            Timber.tag("TraktQueue").d("Queue size: %d", queue.size());
           }
         });
       }
@@ -325,11 +330,11 @@ public class CathodeApp extends Application {
       if (DEBUG) {
         queue.setListener(new ObjectQueue.Listener<TraktTask>() {
           @Override public void onAdd(ObjectQueue<TraktTask> queue, TraktTask entry) {
-            LogWrapper.i("PriorityTraktTaskQueue", "Queue size: " + queue.size());
+            Timber.tag("PriorityQueue").d("Queue size: %d", queue.size());
           }
 
           @Override public void onRemove(ObjectQueue<TraktTask> queue) {
-            LogWrapper.i("PriorityTraktTaskQueue", "Queue size: " + queue.size());
+            Timber.tag("PriorityQueue").d("Queue size: %d", queue.size());
           }
         });
       }

@@ -33,7 +33,6 @@ import net.simonvt.cathode.provider.CathodeProvider;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import net.simonvt.cathode.util.LogWrapper;
 import retrofit.RetrofitError;
 
 public class SyncShowsWatchedTask extends TraktTask {
@@ -53,7 +52,6 @@ public class SyncShowsWatchedTask extends TraktTask {
 
   @Override protected void doTask() {
     try {
-      LogWrapper.i(TAG, "Sync watched status");
       ContentResolver resolver = service.getContentResolver();
       List<TvShow> shows = userService.libraryShowsWatched(DetailLevel.MIN);
 

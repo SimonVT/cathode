@@ -22,8 +22,8 @@ import net.simonvt.cathode.api.service.ShowService;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import net.simonvt.cathode.util.LogWrapper;
 import retrofit.RetrofitError;
+import timber.log.Timber;
 
 public class SyncShowSeasonsTask extends TraktTask {
 
@@ -44,7 +44,7 @@ public class SyncShowSeasonsTask extends TraktTask {
       List<Season> seasons = showService.seasons(tvdbId);
 
       for (Season season : seasons) {
-        LogWrapper.v(TAG, "Scheduling sync for season " + season.getSeason() + " of " + tvdbId);
+        Timber.d("Scheduling sync for season %d of show %d", season.getSeason(), tvdbId);
         SeasonWrapper.updateOrInsertSeason(service.getContentResolver(), season, showId);
         queueTask(new SyncSeasonTask(tvdbId, season.getSeason()));
       }
