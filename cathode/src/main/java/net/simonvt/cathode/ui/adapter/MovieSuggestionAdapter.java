@@ -74,6 +74,7 @@ public class MovieSuggestionAdapter extends SuggestionsAdapter {
       while (previousQueries.moveToNext()) {
         queries.add(new Suggestion(previousQueries.getString(queryIndex), null));
       }
+      previousQueries.close();
 
       Cursor allMovies =
           context.getContentResolver().query(CathodeContract.Movies.CONTENT_URI, new String[] {
@@ -90,6 +91,7 @@ public class MovieSuggestionAdapter extends SuggestionsAdapter {
       while (allMovies.moveToNext()) {
         movies.add(new Suggestion(allMovies.getString(titleIndex), allMovies.getLong(idIndex)));
       }
+      allMovies.close();
 
       return new Results(queries, movies);
     }

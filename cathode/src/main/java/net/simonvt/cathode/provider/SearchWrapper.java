@@ -34,6 +34,7 @@ public final class SearchWrapper {
       cv.put(CathodeContract.SearchSuggestions.QUERY, query);
       resolver.insert(CathodeContract.SearchSuggestions.SHOW_URI, cv);
     }
+    c.close();
   }
 
   public static void insertMovieQuery(ContentResolver resolver, String query) {
@@ -46,5 +47,6 @@ public final class SearchWrapper {
       cv.put(CathodeContract.SearchSuggestions.QUERY, query);
       resolver.insert(CathodeContract.SearchSuggestions.MOVIE_URI, cv);
     }
+    c.close();
   }
 }

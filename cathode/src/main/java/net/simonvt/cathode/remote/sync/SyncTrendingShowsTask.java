@@ -54,6 +54,7 @@ public class SyncTrendingShowsTask extends TraktTask {
                 .build();
         ops.add(op);
       }
+      c.close();
 
       for (int i = 0, count = Math.min(shows.size(), 25); i < count; i++) {
         TvShow show = shows.get(i);

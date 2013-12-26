@@ -54,6 +54,7 @@ public class SyncTrendingMoviesTask extends TraktTask {
                 .build();
         ops.add(op);
       }
+      c.close();
 
       for (int i = 0, count = Math.min(movies.size(), 25); i < count; i++) {
         Movie movie = movies.get(i);

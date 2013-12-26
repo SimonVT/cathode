@@ -74,6 +74,7 @@ public class ShowSuggestionAdapter extends SuggestionsAdapter {
       while (previousQueries.moveToNext()) {
         queries.add(new Suggestion(previousQueries.getString(queryIndex), null));
       }
+      previousQueries.close();
 
       Cursor allShows =
           context.getContentResolver().query(CathodeContract.Shows.CONTENT_URI, new String[] {
@@ -90,6 +91,7 @@ public class ShowSuggestionAdapter extends SuggestionsAdapter {
       while (allShows.moveToNext()) {
         shows.add(new Suggestion(allShows.getString(titleIndex), allShows.getLong(idIndex)));
       }
+      allShows.close();
 
       return new Results(queries, shows);
     }

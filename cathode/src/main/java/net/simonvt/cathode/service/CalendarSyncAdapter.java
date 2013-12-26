@@ -177,6 +177,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
       }
       episodes.close();
     }
+    shows.close();
 
     for (int i = 0, size = events.size(); i < size; i++) {
       Event event = events.valueAt(i);

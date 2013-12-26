@@ -151,6 +151,7 @@ public class SeasonFragment extends AbsAdapterFragment {
           if (c.moveToFirst()) {
             seasonNumber = c.getInt(c.getColumnIndex(CathodeContract.Seasons.SEASON));
           }
+          c.close();
         }
       }).start();
     }
