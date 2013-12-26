@@ -299,7 +299,8 @@ public class CathodeApp extends Application {
           // Misc
           PhoneController.class, ResponseParser.class, ShowSearchHandler.class,
           ShowSearchHandler.SearchThread.class, MovieSearchHandler.class,
-          MovieSearchHandler.SearchThread.class
+          MovieSearchHandler.SearchThread.class, LoginFragment.CreateAccountAsync.class,
+          LoginFragment.LoginAsync.class
       })
   static class AppModule {
 

@@ -15,25 +15,21 @@
  */
 package net.simonvt.cathode.event;
 
-public class MessageEvent {
+public class LoginSuccessEvent {
 
-  private int messageRes;
+  String username;
+  String password;
 
-  private String message;
-
-  public MessageEvent(int messageRes) {
-    this.messageRes = messageRes;
+  public LoginSuccessEvent(String username, String password) {
+    this.username = username;
+    this.password = password;
   }
 
-  public MessageEvent(String message) {
-    this.message = message;
+  public String getUsername() {
+    return username;
   }
 
-  public int getMessageRes() {
-    return messageRes;
-  }
-
-  public String getMessage() {
-    return message;
+  public String getPassword() {
+    return password;
   }
 }

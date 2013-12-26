@@ -146,7 +146,11 @@ public class HomeActivity extends BaseActivity
   }
 
   @Subscribe public void onShowMessage(MessageEvent event) {
-    messageBar.show(getString(event.getMessageRes()));
+    if (event.getMessage() != null) {
+      messageBar.show(event.getMessage());
+    } else {
+      messageBar.show(getString(event.getMessageRes()));
+    }
   }
 
   @Subscribe public void onAuthFailed(AuthFailedEvent event) {

@@ -29,6 +29,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import butterknife.InjectView;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Produce;
+import com.squareup.otto.Subscribe;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -36,21 +38,24 @@ import net.simonvt.cathode.api.UserCredentials;
 import net.simonvt.cathode.api.body.CreateAccountBody;
 import net.simonvt.cathode.api.entity.Response;
 import net.simonvt.cathode.api.service.AccountService;
+import net.simonvt.cathode.event.CreateUserFailedEvent;
 import net.simonvt.cathode.event.LoginEvent;
+import net.simonvt.cathode.event.LoginFailedEvent;
+import net.simonvt.cathode.event.LoginSuccessEvent;
+import net.simonvt.cathode.event.LoginTaskExecuting;
 import net.simonvt.cathode.event.MessageEvent;
+import net.simonvt.cathode.event.UserCreatedEvent;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.util.ApiUtils;
 import retrofit.RetrofitError;
+import timber.log.Timber;
 
 public class LoginFragment extends BaseFragment {
-
-  private static final String TAG = "LoginFragment";
 
   private static final String STATE_CREATE_NEW_ENABLED =
       "net.simonvt.cathode.ui.fragment.LoginFragment.createNewEnabled";
 
-  @Inject AccountService accountService;
   @Inject UserCredentials credentials;
   @Inject TraktTaskQueue queue;
   @Inject Bus bus;
@@ -61,18 +66,17 @@ public class LoginFragment extends BaseFragment {
   @InjectView(R.id.createNew) CheckBox createNew;
   @InjectView(R.id.login) Button login;
 
-  private String username;
-  private String password;
-  private String email;
-
   private Context appContext;
 
   private boolean createNewEnabled;
+
+  private boolean isTaskRunning = false;
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
     appContext = getActivity().getApplicationContext();
+    bus.register(this);
 
     if (inState != null) createNewEnabled = inState.getBoolean(STATE_CREATE_NEW_ENABLED);
   }
@@ -110,26 +114,32 @@ public class LoginFragment extends BaseFragment {
       }
     });
 
-    login.setEnabled(usernameInput.length() > 0 && passwordInput.length() > 0);
     login.setText(createNewEnabled ? R.string.create_account : R.string.login);
+    updateUiEnabled();
   }
 
   @Override public String getTitle() {
     return getResources().getString(R.string.login);
   }
 
+  @Override public void onDestroy() {
+    bus.unregister(this);
+    super.onDestroy();
+  }
+
   private View.OnClickListener onLoginListener = new View.OnClickListener() {
     @Override public void onClick(View view) {
-      username = usernameInput.getText().toString();
-      password = passwordInput.getText().toString();
-      email = emailInput.getText().toString();
+      String username = usernameInput.getText().toString();
+      String password = passwordInput.getText().toString();
+      String email = emailInput.getText().toString();
       final boolean createNewUser = createNew.isChecked();
 
-      login.setEnabled(false);
+      isTaskRunning = true;
+      updateUiEnabled();
       if (createNewUser) {
-        new CreateAccountAsync().execute();
+        new CreateAccountAsync(getActivity(), username, password, email).execute();
       } else {
-        new LoginAsync(username, password).execute();
+        new LoginAsync(getActivity(), username, password).execute();
       }
     }
   };
@@ -142,42 +152,139 @@ public class LoginFragment extends BaseFragment {
     }
 
     @Override public void afterTextChanged(Editable s) {
-      login.setEnabled(usernameInput.length() > 0 && passwordInput.length() > 0);
+      updateUiEnabled();
     }
   };
 
-  private final class CreateAccountAsync extends AsyncTask<Void, Void, Boolean> {
+  @Subscribe public void onLoginTaskExecuting(LoginTaskExecuting event) {
+    isTaskRunning = true;
+    updateUiEnabled();
+  }
 
-    @Override protected Boolean doInBackground(Void... voids) {
-      Response r = accountService.create(new CreateAccountBody(username, password, email));
-
-      return r.getError() == null;
-    }
-
-    @Override protected void onPostExecute(Boolean success) {
-      if (success) {
-        bus.post(new MessageEvent(R.string.login_success));
-
-        final String username = LoginFragment.this.username;
-        final String password = LoginFragment.this.password;
-
-        credentials.setCredentials(username, password);
-        queue.add(new SyncTask());
-
-        bus.post(new LoginEvent(LoginFragment.this.username, LoginFragment.this.password));
-
-        CathodeApp.setupAccount(appContext, username, password);
-      } else {
-        login.setEnabled(true);
-        bus.post(new MessageEvent(R.string.create_user_failed));
-      }
+  private void updateUiEnabled() {
+    if (login != null) {
+      login.setEnabled(!isTaskRunning && usernameInput.length() > 0 && passwordInput.length() > 0);
     }
   }
 
-  private final class LoginAsync extends AsyncTask<Void, Void, Boolean> {
+  @Subscribe public void onCreateUsedFailed(CreateUserFailedEvent event) {
+    isTaskRunning = false;
+    updateUiEnabled();
+    if (event.getError() != null) {
+      bus.post(new MessageEvent(event.getError()));
+    } else {
+      bus.post(new MessageEvent(R.string.create_user_failed));
+    }
+  }
 
-    private LoginAsync(String username, String password) {
+  @Subscribe public void onUserCreated(UserCreatedEvent event) {
+    isTaskRunning = false;
+    updateUiEnabled();
+    bus.post(new MessageEvent(R.string.login_success));
+
+    final String username = event.getUsername();
+    final String password = event.getPassword();
+
+    credentials.setCredentials(username, ApiUtils.getSha(password));
+    queue.add(new SyncTask());
+
+    bus.post(new LoginEvent(username, password));
+
+    CathodeApp.setupAccount(appContext, username, password);
+  }
+
+  @Subscribe public void onLoginFailed(LoginFailedEvent event) {
+    isTaskRunning = false;
+    updateUiEnabled();
+    credentials.setCredentials(null, null);
+    bus.post(new MessageEvent(R.string.wrong_password));
+  }
+
+  @Subscribe public void onLoginSuccess(LoginSuccessEvent event) {
+    isTaskRunning = false;
+    updateUiEnabled();
+    bus.post(new MessageEvent(R.string.login_success));
+
+    final String username = event.getUsername();
+    final String password = event.getPassword();
+
+    credentials.setCredentials(username, ApiUtils.getSha(password));
+    queue.add(new SyncTask());
+
+    bus.post(new LoginEvent(username, password));
+
+    CathodeApp.setupAccount(appContext, username, password);
+  }
+
+  public static final class CreateAccountAsync extends AsyncTask<Void, Void, Response> {
+
+    @Inject AccountService accountService;
+
+    @Inject Bus bus;
+
+    private String username;
+    private String password;
+    private String email;
+
+    private CreateAccountAsync(Context context, String username, String password, String email) {
+      CathodeApp.inject(context, this);
+      this.username = username;
+      this.password = password;
+      this.email = email;
+      bus.register(this);
+    }
+
+    @Produce public LoginTaskExecuting produceTaskExecutingEvent() {
+      return new LoginTaskExecuting();
+    }
+
+    @Override protected Response doInBackground(Void... voids) {
+      try {
+        Response r = accountService.create(new CreateAccountBody(username, password, email));
+
+        return r;
+      } catch (RetrofitError e) {
+        e.printStackTrace();
+      }
+
+      return null;
+    }
+
+    @Override protected void onPostExecute(Response response) {
+      if (response != null && response.getError() == null) {
+        bus.post(new UserCreatedEvent(username, password, email));
+      } else {
+        String error = null;
+        if (response != null) {
+          error = response.getError();
+        }
+        bus.post(new CreateUserFailedEvent(username, password, email, error));
+      }
+      bus.unregister(this);
+    }
+  }
+
+  public static final class LoginAsync extends AsyncTask<Void, Void, Boolean> {
+
+    @Inject AccountService accountService;
+
+    @Inject UserCredentials credentials;
+
+    @Inject Bus bus;
+
+    private String username;
+    private String password;
+
+    private LoginAsync(Context context, String username, String password) {
+      CathodeApp.inject(context, this);
+      this.username = username;
+      this.password = password;
       credentials.setCredentials(username, ApiUtils.getSha(password));
+      bus.register(this);
+    }
+
+    @Produce public LoginTaskExecuting produceTaskExecutingEvent() {
+      return new LoginTaskExecuting();
     }
 
     @Override protected Boolean doInBackground(Void... voids) {
@@ -194,22 +301,11 @@ public class LoginFragment extends BaseFragment {
 
     @Override protected void onPostExecute(Boolean success) {
       if (success) {
-        bus.post(new MessageEvent(R.string.login_success));
-
-        final String username = LoginFragment.this.username;
-        final String password = LoginFragment.this.password;
-
-        credentials.setCredentials(username, ApiUtils.getSha(password));
-        queue.add(new SyncTask());
-
-        bus.post(new LoginEvent(LoginFragment.this.username, LoginFragment.this.password));
-
-        CathodeApp.setupAccount(appContext, username, password);
+        bus.post(new LoginSuccessEvent(username, password));
       } else {
-        login.setEnabled(true);
-        credentials.setCredentials(null, null);
-        bus.post(new MessageEvent(R.string.wrong_password));
+        bus.post(new LoginFailedEvent(username, password));
       }
+      bus.unregister(this);
     }
   }
 }

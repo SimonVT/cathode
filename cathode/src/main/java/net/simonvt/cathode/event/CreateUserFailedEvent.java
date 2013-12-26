@@ -15,25 +15,33 @@
  */
 package net.simonvt.cathode.event;
 
-public class MessageEvent {
+public class CreateUserFailedEvent {
 
-  private int messageRes;
+  String username;
+  String password;
+  String email;
+  String error;
 
-  private String message;
-
-  public MessageEvent(int messageRes) {
-    this.messageRes = messageRes;
+  public CreateUserFailedEvent(String username, String password, String email, String error) {
+    this.username = username;
+    this.password = password;
+    this.email = email;
+    this.error = error;
   }
 
-  public MessageEvent(String message) {
-    this.message = message;
+  public String getUsername() {
+    return username;
   }
 
-  public int getMessageRes() {
-    return messageRes;
+  public String getPassword() {
+    return password;
   }
 
-  public String getMessage() {
-    return message;
+  public String getEmail() {
+    return email;
+  }
+
+  public String getError() {
+    return error;
   }
 }

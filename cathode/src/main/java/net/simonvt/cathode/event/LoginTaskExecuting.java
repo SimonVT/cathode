@@ -15,25 +15,8 @@
  */
 package net.simonvt.cathode.event;
 
-public class MessageEvent {
+public class LoginTaskExecuting {
 
-  private int messageRes;
-
-  private String message;
-
-  public MessageEvent(int messageRes) {
-    this.messageRes = messageRes;
-  }
-
-  public MessageEvent(String message) {
-    this.message = message;
-  }
-
-  public int getMessageRes() {
-    return messageRes;
-  }
-
-  public String getMessage() {
-    return message;
+  public LoginTaskExecuting() {
   }
 }
