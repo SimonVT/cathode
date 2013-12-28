@@ -95,7 +95,7 @@ public class UpcomingShowsFragment extends ShowsFragment<MutableCursor>
   @Override public void onRemove(View view, int position) {
     Loader loader = getLoaderManager().getLoader(getLoaderId());
     MutableCursorLoader cursorLoader = (MutableCursorLoader) loader;
-    cursorLoader.throttle(10000);
+    cursorLoader.throttle(2000);
 
     if (isTablet) {
       AnimatorHelper.removeView((GridView) getAdapterView(), view, animatorCallback);
