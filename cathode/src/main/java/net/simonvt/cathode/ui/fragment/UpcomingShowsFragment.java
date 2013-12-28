@@ -20,7 +20,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.text.format.DateUtils;
@@ -30,27 +29,36 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
+import android.widget.ListView;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.database.MutableCursor;
+import net.simonvt.cathode.database.MutableCursorLoader;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
 import net.simonvt.cathode.ui.adapter.UpcomingAdapter;
+import net.simonvt.cathode.widget.AnimatorHelper;
 
-public class UpcomingShowsFragment extends ShowsFragment<Cursor> {
-
-  private static final String DIALOG_HIDDEN =
-      "net.simonvt.cathode.ui.fragment.UpcomingShowsFragment.hiddenShowsDialog";
+public class UpcomingShowsFragment extends ShowsFragment<MutableCursor>
+    implements UpcomingAdapter.OnRemoveListener {
 
   private SharedPreferences settings;
 
   private boolean showHidden;
 
+  private boolean isTablet;
+
+  private MutableCursor cursor;
+
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     showHidden = settings.getBoolean(Settings.SHOW_HIDDEN, false);
+
+    isTablet = getResources().getBoolean(R.bool.isTablet);
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
@@ -84,8 +92,29 @@ public class UpcomingShowsFragment extends ShowsFragment<Cursor> {
     }
   }
 
+  @Override public void onRemove(View view, int position) {
+    Loader loader = getLoaderManager().getLoader(getLoaderId());
+    MutableCursorLoader cursorLoader = (MutableCursorLoader) loader;
+    cursorLoader.throttle(10000);
+
+    if (isTablet) {
+      AnimatorHelper.removeView((GridView) getAdapterView(), view, animatorCallback);
+    } else {
+      AnimatorHelper.removeView((ListView) getAdapterView(), view, animatorCallback);
+    }
+  }
+
+  private AnimatorHelper.Callback animatorCallback = new AnimatorHelper.Callback() {
+    @Override public void removeItem(int position) {
+      cursor.remove(position);
+    }
+
+    @Override public void onAnimationEnd() {
+    }
+  };
+
   @Override protected CursorAdapter getAdapter(Cursor cursor) {
-    return new UpcomingAdapter(getActivity(), cursor);
+    return new UpcomingAdapter(getActivity(), cursor, this);
   }
 
   @Override protected LibraryType getLibraryType() {
@@ -96,15 +125,20 @@ public class UpcomingShowsFragment extends ShowsFragment<Cursor> {
     return BaseActivity.LOADER_SHOWS_UPCOMING;
   }
 
-  @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+  @Override protected void setCursor(Cursor cursor) {
+    this.cursor = (MutableCursor) cursor;
+    super.setCursor(cursor);
+  }
+
+  @Override public Loader<MutableCursor> onCreateLoader(int i, Bundle bundle) {
     final Uri contentUri = CathodeContract.Shows.SHOWS_UPCOMING;
     String where = null;
     if (!showHidden) {
       where = CathodeContract.Shows.HIDDEN + "=0";
     }
-    CursorLoader cl =
-        new CursorLoader(getActivity(), contentUri, ShowsWithNextAdapter.PROJECTION, where, null,
-            CathodeContract.Shows.DEFAULT_SORT);
+    MutableCursorLoader cl =
+        new MutableCursorLoader(getActivity(), contentUri, ShowsWithNextAdapter.PROJECTION, where,
+            null, CathodeContract.Shows.DEFAULT_SORT);
     cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return cl;
   }

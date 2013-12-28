@@ -82,8 +82,9 @@ public class ShowsWithNextAdapter extends CursorAdapter {
     return v;
   }
 
-  @Override public void bindView(View view, Context context, Cursor cursor) {
+  @Override public void bindView(final View view, Context context, Cursor cursor) {
     final long id = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
+    final int position = cursor.getPosition();
 
     final String showPosterUrl =
         cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.POSTER));
@@ -94,18 +95,19 @@ public class ShowsWithNextAdapter extends CursorAdapter {
 
     final int showAiredCount =
         cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.AIRED_COUNT));
-    int showTypeCount = 0;
+    int count = 0;
     switch (libraryType) {
       case WATCHED:
       case WATCHLIST:
-        showTypeCount = cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.WATCHED_COUNT));
+        count = cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.WATCHED_COUNT));
         break;
 
       case COLLECTION:
-        showTypeCount =
+        count =
             cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.IN_COLLECTION_COUNT));
         break;
     }
+    final int showTypeCount = count;
 
     final String episodeTitle =
         cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE));
@@ -152,7 +154,7 @@ public class ShowsWithNextAdapter extends CursorAdapter {
             break;
 
           case R.id.action_watched:
-            showScheduler.watchedNext(id);
+            onWatchNext(view, position, id, showTypeCount, showAiredCount);
             break;
 
           case R.id.action_watched_all:
@@ -190,6 +192,10 @@ public class ShowsWithNextAdapter extends CursorAdapter {
     setupOverflowItems(vh.overflow, showTypeCount, showAiredCount, episodeTitle != null, isHidden);
 
     vh.poster.setImage(showPosterUrl);
+  }
+
+  protected void onWatchNext(View view, int position, long showId, int watchedCount, int airedCount) {
+    showScheduler.watchedNext(showId);
   }
 
   protected void setupOverflowItems(OverflowView overflow, int typeCount, int airedCount,

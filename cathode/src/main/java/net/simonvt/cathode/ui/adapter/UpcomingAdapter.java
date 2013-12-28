@@ -17,14 +17,22 @@ package net.simonvt.cathode.ui.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.view.View;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.widget.OverflowView;
 
 public class UpcomingAdapter extends ShowsWithNextAdapter {
 
-  public UpcomingAdapter(Context context, Cursor cursor) {
+  public interface OnRemoveListener {
+    void onRemove(View view, int position);
+  }
+
+  private OnRemoveListener listener;
+
+  public UpcomingAdapter(Context context, Cursor cursor, OnRemoveListener listener) {
     super(context, cursor, LibraryType.WATCHED);
+    this.listener = listener;
   }
 
   protected void setupOverflowItems(OverflowView overflow, int typeCount, int airedCount,
@@ -36,5 +44,13 @@ public class UpcomingAdapter extends ShowsWithNextAdapter {
     } else {
       overflow.addItem(R.id.action_hide, R.string.action_hide);
     }
+  }
+
+  @Override protected void onWatchNext(View view, int position, long showId, int watchedCount,
+      int airedCount) {
+    if (watchedCount + 1 >= airedCount) {
+      listener.onRemove(view, position);
+    }
+    super.onWatchNext(view, position, showId, watchedCount, airedCount);
   }
 }
