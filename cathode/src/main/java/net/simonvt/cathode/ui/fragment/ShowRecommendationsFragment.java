@@ -143,9 +143,8 @@ public class ShowRecommendationsFragment extends AbsAdapterFragment
   };
 
   private void setCursor(Cursor c) {
-    MutableCursor cursor = (MutableCursor) c;
+    cursor = (MutableCursor) c;
     if (showsAdapter == null) {
-      this.cursor = cursor;
       showsAdapter = new ShowRecommendationsAdapter(getActivity(), cursor, this);
       setAdapter(showsAdapter);
       return;

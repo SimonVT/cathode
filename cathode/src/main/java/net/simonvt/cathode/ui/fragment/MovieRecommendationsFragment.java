@@ -146,8 +146,8 @@ public class MovieRecommendationsFragment extends AbsAdapterFragment
   };
 
   protected void setCursor(MutableCursor c) {
+    this.cursor = c;
     if (movieAdapter == null) {
-      this.cursor = c;
       movieAdapter = new MovieRecommendationsAdapter(getActivity(), c, this);
       setAdapter(movieAdapter);
       return;
