@@ -658,10 +658,119 @@ public class CathodeProvider extends ContentProvider {
   }
 
   @Override public int delete(Uri uri, String where, String[] whereArgs) {
+    final SelectionBuilder builder = new SelectionBuilder();
+    final int match = URI_MATCHER.match(uri);
+    switch (match) {
+      case SHOWS: {
+        builder.table(Tables.SHOWS);
+        break;
+      }
+      case SHOWS_ID: {
+        final String showId = Shows.getShowId(uri);
+        builder.table(Tables.SHOWS).where(Shows._ID + "=?", showId);
+        break;
+      }
+      case SHOW_TOP_WATCHERS: {
+        final String showId = ShowTopWatchers.getShowId(uri);
+        builder.table(Tables.SHOW_TOP_WATCHERS).where(Shows._ID + "=?", showId);
+        break;
+      }
+      case SHOW_TOP_EPISODES: {
+        final String showId = TopEpisodes.getShowId(uri);
+        builder.table(Tables.SHOW_TOP_EPISODES).where(Shows._ID + "=?", showId);
+        break;
+      }
+      case SHOW_ACTORS: {
+        final String showId = ShowActor.getShowId(uri);
+        builder.table(Tables.SHOW_ACTORS).where(Shows._ID + "=?", showId);
+        break;
+      }
+      case SHOW_GENRES: {
+        final String showId = ShowGenres.getShowId(uri);
+        builder.table(Tables.SHOW_GENRES).where(ShowGenres.SHOW_ID + "=?", showId);
+        break;
+      }
+      case SEASONS: {
+        builder.table(Tables.SEASONS);
+        break;
+      }
+      case SEASON_ID: {
+        final String seasonId = Seasons.getSeasonId(uri);
+        builder.table(Tables.SEASONS).where(Seasons._ID + "=?", seasonId);
+        break;
+      }
+      case SEASONS_OFSHOW: {
+        final String showId = Seasons.getShowId(uri);
+        builder.table(Tables.SEASONS).where(Seasons.SHOW_ID + "=?", showId);
+        break;
+      }
+      case EPISODES: {
+        builder.table(Tables.EPISODES);
+        break;
+      }
+      case EPISODE_ID: {
+        final String episodeId = Episodes.getEpisodeId(uri);
+        builder.table(Tables.EPISODES).where(Episodes._ID + "=?", episodeId);
+        break;
+      }
+      case EPISODES_FROMSHOW: {
+        final String showId = Episodes.getShowId(uri);
+        builder.table(Tables.EPISODES).where(Episodes.SHOW_ID + "=?", showId);
+        break;
+      }
+      case EPISODES_FROMSEASON: {
+        final String seasonId = Episodes.getSeasonId(uri);
+        builder.table(Tables.EPISODES).where(Episodes.SEASON_ID + "=?", seasonId);
+        break;
+      }
+      case MOVIES: {
+        builder.table(Tables.MOVIES);
+        break;
+      }
+      case MOVIE_ID: {
+        final String movieId = Movies.getMovieId(uri);
+        builder.table(Tables.MOVIES).where(Movies._ID + "=?", movieId);
+        break;
+      }
+      case MOVIE_GENRES: {
+        final String movieId = MovieGenres.getMovieId(uri);
+        builder.table(Tables.MOVIE_GENRES).where(MovieGenres.MOVIE_ID + "=?", movieId);
+        break;
+      }
+      case MOVIE_TOP_WATCHERS: {
+        final String movieId = MovieTopWatchers.getMovieId(uri);
+        builder.table(Tables.MOVIE_TOP_WATCHERS).where(MovieTopWatchers.MOVIE_ID + "=?", movieId);
+        break;
+      }
+      case MOVIE_ACTORS: {
+        final String movieId = MovieActors.getMovieId(uri);
+        builder.table(Tables.MOVIE_ACTORS).where(MovieActors.MOVIE_ID + "=?", movieId);
+        break;
+      }
+      case MOVIE_DIRECTORS: {
+        final String movieId = MovieDirectors.getMovieId(uri);
+        builder.table(Tables.MOVIE_DIRECTORS).where(MovieDirectors.MOVIE_ID + "=?", movieId);
+        break;
+      }
+      case MOVIE_WRITERS: {
+        final String movieId = MovieWriters.getMovieId(uri);
+        builder.table(Tables.MOVIE_WRITERS).where(MovieWriters.MOVIE_ID + "=?", movieId);
+        break;
+      }
+      case MOVIE_PRODUCERS: {
+        final String movieId = MovieProducers.getMovieId(uri);
+        builder.table(Tables.MOVIE_PRODUCERS).where(MovieProducers.MOVIE_ID + "=?", movieId);
+        break;
+      }
+      default: {
+        throw new UnsupportedOperationException("Unknown uri: " + uri);
+      }
+    }
+
     final SQLiteDatabase db = database.getWritableDatabase();
-    final SelectionBuilder builder = buildSimpleSelection(uri);
     int count = builder.where(where, whereArgs).delete(db);
     getContext().getContentResolver().notifyChange(getBaseUri(uri), null);
+
     return count;
   }
 
@@ -976,113 +1085,5 @@ public class CathodeProvider extends ContentProvider {
         .buildUpon()
         .appendPath(uri.getPathSegments().get(0))
         .build();
-  }
-
-  private SelectionBuilder buildSimpleSelection(Uri uri) {
-    final SelectionBuilder builder = new SelectionBuilder();
-    final int match = URI_MATCHER.match(uri);
-    switch (match) {
-      case SHOWS: {
-        return builder.table(Tables.SHOWS);
-      }
-      case SHOWS_WITHNEXT: {
-        return builder.table(Tables.SHOWS_WITH_UNWATCHED);
-      }
-      case SHOWS_UPCOMING: {
-        return builder.table(Tables.SHOWS_WITH_UNWATCHED)
-            .where(CathodeContract.ShowColumns.WATCHED_COUNT + "<" + Shows.getAiredQuery())
-            .where(CathodeContract.ShowColumns.HIDDEN + "=0");
-      }
-      case SHOWS_ID: {
-        final String showId = Shows.getShowId(uri);
-        return builder.table(Tables.SHOWS).where(Shows._ID + "=?", showId);
-      }
-      case SHOW_TOP_WATCHERS: {
-        final String showId = ShowTopWatchers.getShowId(uri);
-        return builder.table(Tables.SHOW_TOP_WATCHERS).where(Shows._ID + "=?", showId);
-      }
-      case SHOW_TOP_EPISODES: {
-        final String showId = TopEpisodes.getShowId(uri);
-        return builder.table(Tables.SHOW_TOP_EPISODES).where(Shows._ID + "=?", showId);
-      }
-      case SHOW_ACTORS: {
-        final String showId = ShowActor.getShowId(uri);
-        return builder.table(Tables.SHOW_ACTORS).where(Shows._ID + "=?", showId);
-      }
-      case SHOW_GENRES: {
-        final String showId = ShowGenres.getShowId(uri);
-        return builder.table(Tables.SHOW_GENRES).where(ShowGenres.SHOW_ID + "=?", showId);
-      }
-      case SHOWS_WATCHLIST: {
-        return builder.table(Tables.SHOWS_WITH_UNWATCHED).where(Shows.IN_WATCHLIST + "=1");
-      }
-      case SHOWS_COLLECTION: {
-        return builder.table(Tables.SHOWS_WITH_UNCOLLECTED).where(Shows.IN_COLLECTION_COUNT + ">0");
-      }
-      case SHOWS_WATCHED: {
-        return builder.table(Tables.SHOWS_WITH_UNWATCHED).where(Shows.WATCHED_COUNT + ">0");
-      }
-      case SEASONS: {
-        return builder.table(Tables.SEASONS);
-      }
-      case SEASON_ID: {
-        final String seasonId = Seasons.getSeasonId(uri);
-        return builder.table(Tables.SEASONS).where(Seasons._ID + "=?", seasonId);
-      }
-      case SEASONS_OFSHOW: {
-        final String showId = Seasons.getShowId(uri);
-        return builder.table(Tables.SEASONS).where(Seasons.SHOW_ID + "=?", showId);
-      }
-      case EPISODES: {
-        return builder.table(Tables.EPISODES);
-      }
-      case EPISODE_ID: {
-        final String episodeId = Episodes.getEpisodeId(uri);
-        return builder.table(Tables.EPISODES).where(Episodes._ID + "=?", episodeId);
-      }
-      case EPISODES_FROMSHOW: {
-        final String showId = Episodes.getShowId(uri);
-        return builder.table(Tables.EPISODES).where(Episodes.SHOW_ID + "=?", showId);
-      }
-      case EPISODES_FROMSEASON: {
-        final String seasonId = Episodes.getSeasonId(uri);
-        return builder.table(Tables.EPISODES).where(Episodes.SEASON_ID + "=?", seasonId);
-      }
-      case MOVIES: {
-        return builder.table(Tables.MOVIES);
-      }
-      case MOVIE_ID: {
-        final String movieId = Movies.getMovieId(uri);
-        return builder.table(Tables.MOVIES).where(Movies._ID + "=?", movieId);
-      }
-      case MOVIE_GENRES: {
-        final String movieId = MovieGenres.getMovieId(uri);
-        return builder.table(Tables.MOVIE_GENRES).where(MovieGenres.MOVIE_ID + "=?", movieId);
-      }
-      case MOVIE_TOP_WATCHERS: {
-        final String movieId = MovieTopWatchers.getMovieId(uri);
-        return builder.table(Tables.MOVIE_TOP_WATCHERS)
-            .where(MovieTopWatchers.MOVIE_ID + "=?", movieId);
-      }
-      case MOVIE_ACTORS: {
-        final String movieId = MovieActors.getMovieId(uri);
-        return builder.table(Tables.MOVIE_ACTORS).where(MovieActors.MOVIE_ID + "=?", movieId);
-      }
-      case MOVIE_DIRECTORS: {
-        final String movieId = MovieDirectors.getMovieId(uri);
-        return builder.table(Tables.MOVIE_DIRECTORS).where(MovieDirectors.MOVIE_ID + "=?", movieId);
-      }
-      case MOVIE_WRITERS: {
-        final String movieId = MovieWriters.getMovieId(uri);
-        return builder.table(Tables.MOVIE_WRITERS).where(MovieWriters.MOVIE_ID + "=?", movieId);
-      }
-      case MOVIE_PRODUCERS: {
-        final String movieId = MovieProducers.getMovieId(uri);
-        return builder.table(Tables.MOVIE_PRODUCERS).where(MovieProducers.MOVIE_ID + "=?", movieId);
-      }
-      default: {
-        throw new UnsupportedOperationException("Unknown uri: " + uri);
-      }
-    }
   }
 }
