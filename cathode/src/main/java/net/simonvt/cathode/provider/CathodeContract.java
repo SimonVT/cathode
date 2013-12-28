@@ -66,11 +66,11 @@ public final class CathodeContract {
     String IN_WATCHLIST_COUNT = "inWatchlistCount";
     String TRENDING_INDEX = "trendingIndex";
     String RECOMMENDATION_INDEX = "recommendationIndex";
+    String HIDDEN = "hidden";
 
+    // Don't create a columns in database
     String AIRED_COUNT = "airedCount";
     String UNAIRED_COUNT = "unairedCount";
-
-    String HIDDEN = "hidden";
   }
 
   interface TopWatcherColumns {
