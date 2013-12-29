@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
 
 public class AboutDialog extends DialogFragment {
@@ -46,14 +47,7 @@ public class AboutDialog extends DialogFragment {
     ButterKnife.inject(this, view);
     getDialog().setTitle(R.string.app_name);
 
-    String versionName;
-    try {
-      versionName = getActivity().getPackageManager()
-          .getPackageInfo(getActivity().getPackageName(), 0).versionName;
-      version.setText(getString(R.string.version_x, versionName));
-    } catch (PackageManager.NameNotFoundException e) {
-      version.setText(R.string.version_unknown);
-    }
+    version.setText(getString(R.string.version_x, BuildConfig.VERSION_NAME));
 
     licenses.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
