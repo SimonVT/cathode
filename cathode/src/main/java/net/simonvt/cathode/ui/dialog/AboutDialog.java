@@ -60,11 +60,11 @@ public class AboutDialog extends DialogFragment {
   }
 
   @OnClick({
-      R.id.logo, R.id.gplus, R.id.github, R.id.source
+      R.id.version, R.id.gplus, R.id.github, R.id.source
   })
   public void openUrl(View v) {
     switch (v.getId()) {
-      case R.id.logo:
+      case R.id.version:
         openUrl("https://play.google.com/store/apps/details?id=net.simonvt.cathode");
         break;
       case R.id.gplus:
