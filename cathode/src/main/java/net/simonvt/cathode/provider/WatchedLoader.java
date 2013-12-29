@@ -71,6 +71,25 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
     });
   }
 
+  @Override public void deliverResult(Cursor cursor) {
+    if (isReset()) {
+      if (cursor != null) {
+        cursor.close();
+      }
+      return;
+    }
+    Cursor oldCursor = this.cursor;
+    this.cursor = cursor;
+
+    if (isStarted()) {
+      super.deliverResult(cursor);
+    }
+
+    if (oldCursor != null && oldCursor != cursor && !oldCursor.isClosed()) {
+      oldCursor.close();
+    }
+  }
+
   @Override protected void onStartLoading() {
     if (cursor != null) {
       deliverResult(cursor);
