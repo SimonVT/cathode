@@ -16,7 +16,6 @@
 package net.simonvt.cathode.ui.dialog;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -26,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
 
@@ -35,36 +35,57 @@ public class AboutDialog extends DialogFragment {
       "net.simonvt.cathode.ui.dialog.AboutDialog.licenses";
 
   @InjectView(R.id.version) TextView version;
-  @InjectView(R.id.licenses) View licenses;
-  @InjectView(R.id.sourceCode) View sourceCode;
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setStyle(STYLE_NO_TITLE, getTheme());
+  }
+
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
     return inflater.inflate(R.layout.dialog_about, container, false);
   }
 
-  @Override public void onViewCreated(View view, Bundle inState) {
-    super.onViewCreated(view, inState);
+  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
     ButterKnife.inject(this, view);
-    getDialog().setTitle(R.string.app_name);
+    version.setText(BuildConfig.VERSION_NAME);
+  }
 
-    version.setText(getString(R.string.version_x, BuildConfig.VERSION_NAME));
+  @OnClick(R.id.licenses)
+  public void showLicenses() {
+    new LicensesDialog().show(getFragmentManager(), DIALOG_LICENSES);
+  }
 
-    licenses.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        new LicensesDialog().show(getFragmentManager(), DIALOG_LICENSES);
-      }
-    });
-    sourceCode.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        Uri uri = Uri.parse(getString(R.string.sourceUrl));
-        Intent i = new Intent(Intent.ACTION_VIEW, uri);
-        startActivity(i);
-      }
-    });
+  @OnClick({
+      R.id.logo, R.id.gplus, R.id.github, R.id.source
+  })
+  public void openUrl(View v) {
+    switch (v.getId()) {
+      case R.id.logo:
+        openUrl("https://play.google.com/store/apps/details?id=net.simonvt.cathode");
+        break;
+      case R.id.gplus:
+        openUrl("https://plus.google.com/+SimonVigTherkildsen/posts");
+        break;
+      case R.id.github:
+        openUrl("https://github.com/SimonVT");
+        break;
+      case R.id.source:
+        openUrl("https://github.com/SimonVT/cathode");
+        break;
+    }
   }
 
   @Override public void onDestroyView() {
     ButterKnife.reset(this);
     super.onDestroyView();
+  }
+
+  private void openUrl(String url) {
+    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+    startActivity(intent);
   }
 }
