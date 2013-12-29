@@ -89,8 +89,6 @@ public class HomeActivity extends BaseActivity
 
       activeController = loginController;
     } else {
-      queue.add(new SyncUserActivityTask());
-
       Bundle uiState = inState != null ? inState.getBundle(STATE_UICONTROLLER) : null;
       uiController = PhoneController.newInstance(this);
       uiController.onCreate(uiState);
@@ -141,10 +139,10 @@ public class HomeActivity extends BaseActivity
 
     if (uiController != null) {
       if (lastSync + SYNC_DELAY < System.currentTimeMillis()) {
-        queue.add(new SyncUserActivityTask());
+        syncRunnable.run();
+      } else {
+        syncHandler.postDelayed(syncRunnable, SYNC_DELAY);
       }
-
-      syncHandler.postDelayed(syncRunnable, SYNC_DELAY);
     }
   }
 
