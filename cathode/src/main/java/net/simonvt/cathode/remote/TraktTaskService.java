@@ -23,7 +23,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -44,7 +43,7 @@ import net.simonvt.cathode.api.entity.Response;
 import net.simonvt.cathode.api.service.AccountService;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.SyncEvent;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.CathodeDatabase;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.HomeActivity;
 import retrofit.RetrofitError;
@@ -216,34 +215,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     running = true;
     new Thread(new Runnable() {
       @Override public void run() {
-        ContentResolver resolver = getContentResolver();
-        ContentValues cv;
-
-        cv = new ContentValues();
-        cv.put(CathodeContract.Shows.WATCHED_COUNT, 0);
-        cv.put(CathodeContract.Shows.IN_COLLECTION_COUNT, 0);
-        cv.put(CathodeContract.Shows.IN_WATCHLIST_COUNT, 0);
-        cv.put(CathodeContract.Shows.IN_WATCHLIST, false);
-        resolver.update(CathodeContract.Shows.CONTENT_URI, cv, null, null);
-
-        cv = new ContentValues();
-        cv.put(CathodeContract.Seasons.WATCHED_COUNT, 0);
-        cv.put(CathodeContract.Seasons.IN_COLLECTION_COUNT, 0);
-        cv.put(CathodeContract.Seasons.IN_WATCHLIST_COUNT, 0);
-        resolver.update(CathodeContract.Seasons.CONTENT_URI, cv, null, null);
-
-        cv = new ContentValues();
-        cv.put(CathodeContract.Episodes.WATCHED, 0);
-        cv.put(CathodeContract.Episodes.PLAYS, 0);
-        cv.put(CathodeContract.Episodes.IN_WATCHLIST, 0);
-        cv.put(CathodeContract.Episodes.IN_COLLECTION, 0);
-        resolver.update(CathodeContract.Episodes.CONTENT_URI, cv, null, null);
-
-        cv = new ContentValues();
-        cv.put(CathodeContract.Movies.WATCHED, 0);
-        cv.put(CathodeContract.Movies.IN_COLLECTION, 0);
-        cv.put(CathodeContract.Movies.IN_WATCHLIST, 0);
-        resolver.update(CathodeContract.Movies.CONTENT_URI, cv, null, null);
+        CathodeDatabase.getInstance(TraktTaskService.this).clearUserData();
 
         MAIN_HANDLER.post(new Runnable() {
           @Override public void run() {

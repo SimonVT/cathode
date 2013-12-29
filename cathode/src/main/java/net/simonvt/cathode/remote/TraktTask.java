@@ -42,7 +42,7 @@ public abstract class TraktTask implements Task<TraktTaskService> {
 
     new Thread(new Runnable() {
       @Override public void run() {
-        Timber.d("doTask");
+        Timber.tag(TraktTask.this.getClass().getSimpleName()).d("doTask");
         doTask();
       }
     }).start();
@@ -56,21 +56,21 @@ public abstract class TraktTask implements Task<TraktTaskService> {
     }
   }
 
-  protected void queueTask(final TraktTask task) {
+  protected final void queueTask(final TraktTask task) {
     Timber.d("Queueing task: " + task.getClass().getSimpleName());
     synchronized (this) {
       if (!canceled) queue.add(task);
     }
   }
 
-  protected void queuePriorityTask(final TraktTask task) {
+  protected final void queuePriorityTask(final TraktTask task) {
     Timber.d("Queueing priority task: " + task.getClass().getSimpleName());
     synchronized (this) {
       if (!canceled) priorityQueue.add(task);
     }
   }
 
-  protected void postOnSuccess() {
+  protected final void postOnSuccess() {
     MAIN_HANDLER.post(new Runnable() {
       @Override public void run() {
         service.onSuccess();

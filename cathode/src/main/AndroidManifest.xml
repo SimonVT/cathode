@@ -87,6 +87,16 @@
     </service>
 
     <service
+        android:name="net.simonvt.cathode.service.SyncAdapterService"
+        android:exported="true">
+      <intent-filter>
+        <action android:name="android.content.SyncAdapter"/>
+      </intent-filter>
+      <meta-data android:name="android.content.SyncAdapter"
+          android:resource="@xml/syncadapter"/>
+    </service>
+
+    <service
         android:name="net.simonvt.cathode.service.CalendarService"
         android:exported="true">
       <intent-filter>

@@ -17,6 +17,7 @@ package net.simonvt.cathode.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.MenuItem;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -28,9 +29,10 @@ import net.simonvt.cathode.event.LoginEvent;
 import net.simonvt.cathode.event.LogoutEvent;
 import net.simonvt.cathode.event.MessageEvent;
 import net.simonvt.cathode.remote.TraktTaskQueue;
-import net.simonvt.cathode.remote.sync.SyncTask;
+import net.simonvt.cathode.remote.sync.SyncUserActivityTask;
 import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import net.simonvt.cathode.ui.fragment.NavigationFragment;
+import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.messagebar.MessageBar;
 
 public class HomeActivity extends BaseActivity
@@ -43,9 +45,12 @@ public class HomeActivity extends BaseActivity
       "net.simonvt.cathode.ui.HomeActivity.loginController";
   private static final String STATE_UICONTROLLER =
       "net.simonvt.cathode.ui.HomeActivity.uiController";
+  private static final String STATE_LAST_SYNC = "net.simonvt.cathode.ui.HomeActivity.lastSync";
 
   public static final String ACTION_LOGIN = "net.simonvt.cathode.intent.action.LOGIN";
   public static final String DIALOG_LOGOUT = "net.simonvt.cathode.ui.HomeActivity.logoutDialog";
+
+  private static final long SYNC_DELAY = 15 * DateUtils.MINUTE_IN_MILLIS;
 
   @Inject TraktTaskQueue queue;
 
@@ -58,6 +63,18 @@ public class HomeActivity extends BaseActivity
   private UiController uiController;
 
   private UiController activeController;
+
+  private long lastSync;
+
+  private Handler syncHandler;
+
+  private Runnable syncRunnable = new Runnable() {
+    @Override public void run() {
+      queue.add(new SyncUserActivityTask());
+      lastSync = System.currentTimeMillis();
+      syncHandler.postDelayed(this, SYNC_DELAY);
+    }
+  };
 
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
@@ -72,7 +89,7 @@ public class HomeActivity extends BaseActivity
 
       activeController = loginController;
     } else {
-      queue.add(new SyncTask());
+      queue.add(new SyncUserActivityTask());
 
       Bundle uiState = inState != null ? inState.getBundle(STATE_UICONTROLLER) : null;
       uiController = PhoneController.newInstance(this);
@@ -81,6 +98,12 @@ public class HomeActivity extends BaseActivity
     }
 
     activeController.onAttach();
+
+    syncHandler = new Handler();
+
+    if (inState != null) {
+      lastSync = inState.getLong(STATE_LAST_SYNC);
+    }
   }
 
   @Override protected void onNewIntent(Intent intent) {
@@ -109,14 +132,24 @@ public class HomeActivity extends BaseActivity
     if (uiController != null) {
       outState.putBundle(STATE_UICONTROLLER, uiController.onSaveInstanceState());
     }
+    outState.putLong(STATE_LAST_SYNC, lastSync);
   }
 
   @Override protected void onResume() {
     super.onResume();
     bus.register(this);
+
+    if (uiController != null) {
+      if (lastSync + SYNC_DELAY < System.currentTimeMillis()) {
+        queue.add(new SyncUserActivityTask());
+      }
+
+      syncHandler.postDelayed(syncRunnable, SYNC_DELAY);
+    }
   }
 
   @Override protected void onPause() {
+    syncHandler.removeCallbacks(syncRunnable);
     bus.unregister(this);
     super.onPause();
   }
@@ -175,6 +208,8 @@ public class HomeActivity extends BaseActivity
       loginController.onCreate(null);
       loginController.onAttach();
       activeController = loginController;
+
+      syncHandler.removeCallbacks(syncRunnable);
 
       CathodeApp.removeAccount(this);
     }

@@ -17,6 +17,7 @@ package net.simonvt.cathode.remote;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Looper;
 import com.google.gson.Gson;
 import com.squareup.tape.FileObjectQueue;
 import com.squareup.tape.ObjectQueue;
@@ -41,7 +42,19 @@ public final class TraktTaskQueue extends TaskQueue<TraktTask> {
     context.startService(new Intent(context, TraktTaskService.class));
   }
 
-  @Override public void add(TraktTask entry) {
+  @Override public void add(final TraktTask entry) {
+    if (Looper.myLooper() == Looper.getMainLooper()) {
+      new Thread(new Runnable() {
+        @Override public void run() {
+          addInternal(entry);
+        }
+      }).start();
+    } else {
+      addInternal(entry);
+    }
+  }
+
+  private void addInternal(TraktTask entry) {
     synchronized (this) {
       super.add(entry);
       startService();

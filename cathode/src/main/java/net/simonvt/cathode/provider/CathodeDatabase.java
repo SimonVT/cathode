@@ -15,6 +15,7 @@
  */
 package net.simonvt.cathode.provider;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -91,6 +92,11 @@ public class CathodeDatabase extends SQLiteOpenHelper {
   }
 
   interface Trigger {
+    String EPISODE_UPDATE_AIRED_NAME = "episodeUpdateAired";
+    String EPISODE_UPDATE_WATCHED_NAME = "episodeUpdateWatched";
+    String EPISODE_UPDATE_COLLECTED_NAME = "episodeUpdateCollected";
+    String EPISODE_INSERT_NAME = "episodeInsert";
+
     String SEASONS_UPDATE_WATCHED = "UPDATE " + Tables.SEASONS + " SET "
         + SeasonColumns.WATCHED_COUNT + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE "
         + Tables.EPISODES + "." + EpisodeColumns.SEASON_ID
@@ -147,28 +153,32 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + " WHERE " + Tables.SHOWS + "." + BaseColumns._ID + "=NEW." + EpisodeColumns.SHOW_ID
         + ";";
 
-    String EPISODE_UPDATE_AIRED = "CREATE TRIGGER episodeUpdateAired AFTER UPDATE OF "
+    String EPISODE_UPDATE_AIRED = "CREATE TRIGGER " + EPISODE_UPDATE_AIRED_NAME
+        + " AFTER UPDATE OF "
         + EpisodeColumns.FIRST_AIRED
         + " ON " + Tables.EPISODES + " BEGIN "
         + SEASONS_UPDATE_AIRDATE
         + SHOWS_UPDATE_AIRDATE
         + " END;";
 
-    String EPISODE_UPDATE_WATCHED = "CREATE TRIGGER episodeUpdateWatched AFTER UPDATE OF "
+    String EPISODE_UPDATE_WATCHED = "CREATE TRIGGER " + EPISODE_UPDATE_WATCHED_NAME
+        + " AFTER UPDATE OF "
         + EpisodeColumns.WATCHED
         + " ON " + Tables.EPISODES + " BEGIN "
         + SEASONS_UPDATE_WATCHED
         + SHOWS_UPDATE_WATCHED
         + " END;";
 
-    String EPISODE_UPDATE_COLLECTED = "CREATE TRIGGER episodeUpdateCollected AFTER UPDATE OF "
+    String EPISODE_UPDATE_COLLECTED = "CREATE TRIGGER " + EPISODE_UPDATE_COLLECTED_NAME
+        + " AFTER UPDATE OF "
         + EpisodeColumns.IN_COLLECTION
         + " ON " + Tables.EPISODES + " BEGIN "
         + SEASONS_UPDATE_COLLECTED
         + SHOWS_UPDATE_COLLECTED
         + " END;";
 
-    String EPISODE_INSERT = "CREATE TRIGGER episodeInsert AFTER INSERT ON " + Tables.EPISODES
+    String EPISODE_INSERT = "CREATE TRIGGER " + EPISODE_INSERT_NAME
+        + " AFTER INSERT ON " + Tables.EPISODES
         + " BEGIN "
         + SEASONS_UPDATE_WATCHED
         + SEASONS_UPDATE_AIRDATE
@@ -179,7 +189,21 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + " END;";
   }
 
-  public CathodeDatabase(Context context) {
+  private static volatile CathodeDatabase instance;
+
+  public static CathodeDatabase getInstance(Context context) {
+    if (instance == null) {
+      synchronized (CathodeDatabase.class) {
+        if (instance == null) {
+          instance = new CathodeDatabase(context);
+        }
+      }
+    }
+
+    return instance;
+  }
+
+  private CathodeDatabase(Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
   }
 
@@ -385,10 +409,7 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + CathodeContract.SearchSuggestionsColumns.QUERY + " TEXT NOT NULL,"
         + CathodeContract.SearchSuggestionsColumns.COUNT + " INTEGER DEFAULT 0)");
 
-    db.execSQL(Trigger.EPISODE_INSERT);
-    db.execSQL(Trigger.EPISODE_UPDATE_AIRED);
-    db.execSQL(Trigger.EPISODE_UPDATE_WATCHED);
-    db.execSQL(Trigger.EPISODE_UPDATE_COLLECTED);
+    createTriggers(db);
   }
 
   @Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -397,5 +418,59 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         db.execSQL("ALTER TABLE " + Tables.SHOWS
         + " ADD COLUMN " + ShowColumns.HIDDEN + " INTEGER DEFAULT 0");
     }
+  }
+
+  private void createTriggers(SQLiteDatabase db) {
+    db.execSQL(Trigger.EPISODE_INSERT);
+    db.execSQL(Trigger.EPISODE_UPDATE_AIRED);
+    db.execSQL(Trigger.EPISODE_UPDATE_WATCHED);
+    db.execSQL(Trigger.EPISODE_UPDATE_COLLECTED);
+  }
+
+  private void dropTriggers(SQLiteDatabase db) {
+    db.execSQL("DROP TRIGGER " + Trigger.EPISODE_UPDATE_AIRED_NAME);
+    db.execSQL("DROP TRIGGER " + Trigger.EPISODE_UPDATE_WATCHED_NAME);
+    db.execSQL("DROP TRIGGER " + Trigger.EPISODE_UPDATE_COLLECTED_NAME);
+    db.execSQL("DROP TRIGGER " + Trigger.EPISODE_INSERT_NAME);
+  }
+
+  public void clearUserData() {
+    SQLiteDatabase db = getWritableDatabase();
+    db.beginTransaction();
+    dropTriggers(db);
+
+    ContentValues cv;
+
+    cv = new ContentValues();
+    cv.put(CathodeContract.Shows.WATCHED_COUNT, 0);
+    cv.put(CathodeContract.Shows.IN_COLLECTION_COUNT, 0);
+    cv.put(CathodeContract.Shows.IN_WATCHLIST_COUNT, 0);
+    cv.put(CathodeContract.Shows.IN_WATCHLIST, false);
+    cv.put(CathodeContract.Shows.HIDDEN, false);
+    db.update(Tables.SHOWS, cv, null, null);
+
+    cv = new ContentValues();
+    cv.put(CathodeContract.Seasons.WATCHED_COUNT, 0);
+    cv.put(CathodeContract.Seasons.IN_COLLECTION_COUNT, 0);
+    cv.put(CathodeContract.Seasons.IN_WATCHLIST_COUNT, 0);
+    db.update(Tables.SEASONS, cv, null, null);
+
+    cv = new ContentValues();
+    cv.put(CathodeContract.Episodes.WATCHED, 0);
+    cv.put(CathodeContract.Episodes.PLAYS, 0);
+    cv.put(CathodeContract.Episodes.IN_WATCHLIST, 0);
+    cv.put(CathodeContract.Episodes.IN_COLLECTION, 0);
+    db.update(Tables.EPISODES, cv, null, null);
+
+    cv = new ContentValues();
+    cv.put(CathodeContract.Movies.WATCHED, 0);
+    cv.put(CathodeContract.Movies.IN_COLLECTION, 0);
+    cv.put(CathodeContract.Movies.IN_WATCHLIST, 0);
+    db.update(Tables.MOVIES, cv, null, null);
+
+    createTriggers(db);
+
+    db.setTransactionSuccessful();
+    db.endTransaction();
   }
 }

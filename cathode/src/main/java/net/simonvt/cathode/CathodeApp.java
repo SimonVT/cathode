@@ -47,6 +47,7 @@ import net.simonvt.cathode.api.ResponseParser;
 import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.api.UserCredentials;
 import net.simonvt.cathode.event.AuthFailedEvent;
+import net.simonvt.cathode.provider.CathodeProvider;
 import net.simonvt.cathode.remote.PriorityQueue;
 import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.remote.TraktTaskQueue;
@@ -86,12 +87,15 @@ import net.simonvt.cathode.remote.sync.SyncTrendingMoviesTask;
 import net.simonvt.cathode.remote.sync.SyncTrendingShowsTask;
 import net.simonvt.cathode.remote.sync.SyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.SyncUpdatedShows;
+import net.simonvt.cathode.remote.sync.SyncUserActivityTask;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.SearchTaskScheduler;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.service.AccountAuthenticator;
+import net.simonvt.cathode.service.CathodeSyncAdapter;
+import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.PhoneController;
 import net.simonvt.cathode.ui.adapter.EpisodeWatchlistAdapter;
@@ -166,6 +170,25 @@ public class CathodeApp extends Application {
     objectGraph.inject(this);
 
     bus.register(this);
+
+    upgrade();
+  }
+
+  private void upgrade() {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+    final int currentVersion = settings.getInt(Settings.VERSION_CODE, 0);
+    switch (currentVersion) {
+      case 0:
+        Account account = getAccount(this);
+        if (account != null) {
+          ContentResolver.setIsSyncable(account, CathodeProvider.AUTHORITY, 1);
+          ContentResolver.setSyncAutomatically(account, CathodeProvider.AUTHORITY, true);
+          ContentResolver.addPeriodicSync(account, CathodeProvider.AUTHORITY, new Bundle(),
+              12 * DateUtils.HOUR_IN_SECONDS);
+        }
+    }
+
+    settings.edit().putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE).apply();
   }
 
   @Subscribe public void onAuthFailure(AuthFailedEvent event) {
@@ -224,6 +247,11 @@ public class CathodeApp extends Application {
 
     manager.addAccountExplicitly(account, ApiUtils.getSha(password), null);
 
+    ContentResolver.setIsSyncable(account, CathodeProvider.AUTHORITY, 1);
+    ContentResolver.setSyncAutomatically(account, CathodeProvider.AUTHORITY, true);
+    ContentResolver.addPeriodicSync(account, CathodeProvider.AUTHORITY, new Bundle(),
+        12 * DateUtils.HOUR_IN_SECONDS);
+
     ContentResolver.setIsSyncable(account, CalendarContract.AUTHORITY, 1);
     ContentResolver.setSyncAutomatically(account, CalendarContract.AUTHORITY, true);
     ContentResolver.addPeriodicSync(account, CalendarContract.AUTHORITY, new Bundle(),
@@ -235,6 +263,7 @@ public class CathodeApp extends Application {
     AccountManager am = AccountManager.get(context);
     Account[] accounts = am.getAccountsByType(context.getString(R.string.accountType));
     for (Account account : accounts) {
+      ContentResolver.removePeriodicSync(account, CathodeProvider.AUTHORITY, new Bundle());
       ContentResolver.removePeriodicSync(account, CalendarContract.AUTHORITY, new Bundle());
       am.removeAccount(account, null, null);
     }
@@ -280,7 +309,7 @@ public class CathodeApp extends Application {
           PhoneEpisodeView.class, RemoteImageView.class,
 
           // Services
-          TraktTaskService.class,
+          TraktTaskService.class, CathodeSyncAdapter.class,
 
           // Tasks
           DismissMovieRecommendation.class, DismissShowRecommendation.class,
@@ -294,7 +323,7 @@ public class CathodeApp extends Application {
           SyncShowTask.class, SyncShowRecommendations.class, SyncShowsTask.class,
           SyncTrendingMoviesTask.class, SyncTrendingShowsTask.class, SyncShowsWatchlistTask.class,
           SyncShowsWatchedTask.class, ShowWatchedTask.class, SyncUpdatedMovies.class,
-          SyncUpdatedShows.class, SyncTask.class,
+          SyncUpdatedShows.class, SyncTask.class, SyncUserActivityTask.class,
 
           // Misc
           PhoneController.class, ResponseParser.class, ShowSearchHandler.class,

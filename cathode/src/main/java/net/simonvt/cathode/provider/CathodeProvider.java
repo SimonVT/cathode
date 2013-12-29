@@ -27,6 +27,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import java.util.ArrayList;
+import javax.inject.Inject;
 import net.simonvt.cathode.provider.CathodeContract.Episodes;
 import net.simonvt.cathode.provider.CathodeContract.MovieActors;
 import net.simonvt.cathode.provider.CathodeContract.MovieDirectors;
@@ -89,8 +90,6 @@ public class CathodeProvider extends ContentProvider {
 
   private static final int SHOW_SEARCH = 500;
   private static final int MOVIE_SEARCH = 501;
-
-  private CathodeDatabase database;
 
   private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -167,8 +166,10 @@ public class CathodeProvider extends ContentProvider {
     URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SEARCH_SUGGESTIONS_MOVIE, MOVIE_SEARCH);
   }
 
+  @Inject CathodeDatabase database;
+
   @Override public boolean onCreate() {
-    database = new CathodeDatabase(getContext());
+    database = CathodeDatabase.getInstance(getContext());
     return true;
   }
 
