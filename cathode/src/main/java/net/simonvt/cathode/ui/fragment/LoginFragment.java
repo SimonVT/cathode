@@ -49,7 +49,6 @@ import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.util.ApiUtils;
 import retrofit.RetrofitError;
-import timber.log.Timber;
 
 public class LoginFragment extends BaseFragment {
 
