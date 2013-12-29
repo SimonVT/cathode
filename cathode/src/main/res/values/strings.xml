@@ -29,6 +29,7 @@
 
   <string name="action_about">About</string>
 
+  <string name="developer">Developer</string>
   <string name="licenses">Open Source Licenses</string>
   <string name="source_code">Source Code</string>
   <string name="other">Other</string>
