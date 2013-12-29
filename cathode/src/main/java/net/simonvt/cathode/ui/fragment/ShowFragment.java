@@ -360,17 +360,6 @@ public class ShowFragment extends ProgressFragment {
     return false;
   }
 
-  @Override public void onDestroy() {
-    if (getActivity().isFinishing() || isRemoving()) {
-      getLoaderManager().destroyLoader(BaseActivity.LOADER_SHOW);
-      getLoaderManager().destroyLoader(BaseActivity.LOADER_SHOW_GENRES);
-      getLoaderManager().destroyLoader(BaseActivity.LOADER_SHOW_WATCH);
-      getLoaderManager().destroyLoader(BaseActivity.LOADER_SHOW_COLLECT);
-      getLoaderManager().destroyLoader(BaseActivity.LOADER_SHOW_SEASONS);
-    }
-    super.onDestroy();
-  }
-
   private void updateShowView(final Cursor cursor) {
     if (cursor == null || !cursor.moveToFirst()) return;
 

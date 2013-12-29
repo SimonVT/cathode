@@ -83,13 +83,6 @@ public class EpisodesWatchlistFragment extends AbsAdapterFragment
     }
   }
 
-  @Override public void onDestroy() {
-    if (getActivity().isFinishing() || isRemoving()) {
-      getLoaderManager().destroyLoader(BaseActivity.LOADER_EPISODES_WATCHLIST);
-    }
-    super.onDestroy();
-  }
-
   @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
     Cursor c = (Cursor) adapter.getItem(position);
     navigationListener.onDisplayEpisode(id,

@@ -152,14 +152,6 @@ public class MovieFragment extends ProgressFragment
     }
   }
 
-  @Override public void onDestroyView() {
-    if (getActivity().isFinishing() || isRemoving()) {
-      getLoaderManager().destroyLoader(BaseActivity.LOADER_MOVIE);
-      getLoaderManager().destroyLoader(BaseActivity.LOADER_MOVIE_ACTORS);
-    }
-    super.onDestroyView();
-  }
-
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     if (loaded) {
       if (watched) {

@@ -67,13 +67,6 @@ public abstract class MoviesFragment extends AbsAdapterFragment
     getLoaderManager().initLoader(getLoaderId(), null, this);
   }
 
-  @Override public void onDestroy() {
-    if (getActivity().isFinishing() || isRemoving()) {
-      getLoaderManager().destroyLoader(getLoaderId());
-    }
-    super.onDestroy();
-  }
-
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     super.onCreateOptionsMenu(menu, inflater);
     inflater.inflate(R.menu.fragment_movies, menu);

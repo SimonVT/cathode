@@ -73,13 +73,6 @@ public abstract class ShowsFragment<D extends Cursor> extends AbsAdapterFragment
     super.onViewCreated(view, inState);
   }
 
-  @Override public void onDestroy() {
-    if (getActivity().isFinishing() || isRemoving()) {
-      getLoaderManager().destroyLoader(getLoaderId());
-    }
-    super.onDestroy();
-  }
-
   @Override public void onDetach() {
     super.onDetach();
   }

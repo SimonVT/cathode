@@ -92,13 +92,6 @@ public class MovieRecommendationsFragment extends AbsAdapterFragment
     setEmptyText(R.string.movies_loading_trending);
   }
 
-  @Override public void onDestroy() {
-    if (getActivity().isFinishing() || isRemoving()) {
-      getLoaderManager().destroyLoader(BaseActivity.LOADER_MOVIES_RECOMMENDATIONS);
-    }
-    super.onDestroy();
-  }
-
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     super.onCreateOptionsMenu(menu, inflater);
     inflater.inflate(R.menu.fragment_movies, menu);

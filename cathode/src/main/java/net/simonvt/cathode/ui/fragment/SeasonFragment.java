@@ -183,13 +183,6 @@ public class SeasonFragment extends AbsAdapterFragment {
     if (showBanner != null) showBanner.setImage(bannerUrl);
   }
 
-  @Override public void onDestroy() {
-    if (getActivity().isFinishing() || isRemoving()) {
-      getLoaderManager().destroyLoader(BaseActivity.LOADER_SEASON);
-    }
-    super.onDestroy();
-  }
-
   @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
     navigationCallbacks.onDisplayEpisode(id, title);
   }
