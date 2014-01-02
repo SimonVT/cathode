@@ -24,8 +24,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import timber.log.Timber;
 
-public class GsonConverter<T> implements FileObjectQueue.Converter<T> {
+public class GsonConverter<T extends TraktTask> implements FileObjectQueue.Converter<T> {
 
   private final Gson gson;
 
@@ -37,8 +38,15 @@ public class GsonConverter<T> implements FileObjectQueue.Converter<T> {
   }
 
   @Override public T from(byte[] bytes) {
-    Reader reader = new InputStreamReader(new ByteArrayInputStream(bytes));
-    return gson.fromJson(reader, type);
+    try {
+      Reader reader = new InputStreamReader(new ByteArrayInputStream(bytes));
+      return gson.fromJson(reader, type);
+    } catch (Throwable e) {
+      Timber.i(new String(bytes));
+      Timber.e(e, null);
+    }
+
+    return (T) new DeserializationFailedTask();
   }
 
   @Override public void toStream(T object, OutputStream bytes) throws IOException {

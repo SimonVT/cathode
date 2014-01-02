@@ -48,6 +48,7 @@ import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.api.UserCredentials;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.provider.CathodeProvider;
+import net.simonvt.cathode.remote.DeserializationFailedTask;
 import net.simonvt.cathode.remote.PriorityQueue;
 import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.remote.TraktTaskQueue;
@@ -324,6 +325,7 @@ public class CathodeApp extends Application {
           SyncTrendingMoviesTask.class, SyncTrendingShowsTask.class, SyncShowsWatchlistTask.class,
           SyncShowsWatchedTask.class, ShowWatchedTask.class, SyncUpdatedMovies.class,
           SyncUpdatedShows.class, SyncTask.class, SyncUserActivityTask.class,
+          DeserializationFailedTask.class,
 
           // Misc
           PhoneController.class, ResponseParser.class, ShowSearchHandler.class,
