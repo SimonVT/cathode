@@ -16,9 +16,8 @@
   -->
 <resources>
 
-  <dimen name="searchViewMaxWidth">320dp</dimen>
-
-  <dimen name="showPosterWidth">128dp</dimen>
-  <dimen name="showHeaderLeftMargin">152dp</dimen>
+  <dimen name="showContentPadding">16dp</dimen>
+  <dimen name="showPosterLeftMargin">24dp</dimen>
+  <dimen name="showHeaderLeftMargin">160dp</dimen>
 
 </resources>

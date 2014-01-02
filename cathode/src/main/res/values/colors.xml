@@ -28,5 +28,10 @@
 
   <color name="aboutButtonBackground">#FFDDDDDD</color>
   <color name="aboutPressedBackground">#200099CC</color>
+  
+  <color name="circleProgressColor">@android:color/holo_orange_dark</color>
+  <color name="circleProgressBackgroundColor">#808C8C8C</color>
+
+  <color name="showHeaderBackground">#FFFFFFFF</color>
 
 </resources>

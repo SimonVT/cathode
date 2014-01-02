@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2013 Simon Vig Therkildsen
+  ~ Copyright (C) 2014 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@
   -->
 <resources>
 
-  <dimen name="searchViewMaxWidth">320dp</dimen>
-
-  <dimen name="showPosterWidth">128dp</dimen>
-  <dimen name="showHeaderLeftMargin">152dp</dimen>
+  <dimen name="showContentPadding">16dp</dimen>
+  <dimen name="showPosterWidth">180dp</dimen>
+  <dimen name="showPosterLeftMargin">24dp</dimen>
+  <dimen name="showPosterTranslationY">36dp</dimen>
+  <dimen name="showHeaderLeftMargin">220dp</dimen>
 
 </resources>

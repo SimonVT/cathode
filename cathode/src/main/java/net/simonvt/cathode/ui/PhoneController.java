@@ -269,7 +269,6 @@ public class PhoneController extends UiController {
   }
 
   @Override public void onDetach() {
-    bus.unregister(this);
     super.onDetach();
   }
 
@@ -277,6 +276,7 @@ public class PhoneController extends UiController {
     if (completely) {
       stack.destroy();
     }
+    bus.unregister(this);
     super.onDestroy(completely);
   }
 

@@ -15,13 +15,26 @@
   ~ limitations under the License.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/episodes"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="32dp"
-    android:layout_marginRight="32dp"
     android:orientation="vertical"
-    android:visibility="gone">
+    android:paddingLeft="@dimen/showContentPadding"
+    android:paddingRight="@dimen/showContentPadding"
+    android:visibility="gone"
+    tools:visibility="visible">
+
+  <View
+      android:id="@+id/watchDivider"
+      android:layout_width="match_parent"
+      android:layout_height="1dp"
+      android:layout_marginTop="12dp"
+      android:paddingLeft="@dimen/showContentPadding"
+      android:paddingRight="@dimen/showContentPadding"
+      android:visibility="gone"
+      tools:visibility="visible"
+      android:background="#FFC3C3C3"/>
 
   <TextView
       android:id="@+id/watchTitle"
@@ -43,6 +56,7 @@
         android:layout_weight="1"
         android:layout_marginRight="8dp"
         android:visibility="gone"
+        tools:visibility="visible"
         layout="@layout/show_info_episode"/>
 
     <include
@@ -52,8 +66,20 @@
         android:layout_weight="1"
         android:layout_marginRight="8dp"
         android:visibility="gone"
+        tools:visibility="visible"
         layout="@layout/show_info_episode"/>
   </LinearLayout>
+
+  <View
+      android:id="@+id/collectDivider"
+      android:layout_width="match_parent"
+      android:layout_height="1dp"
+      android:layout_marginTop="12dp"
+      android:paddingLeft="@dimen/showContentPadding"
+      android:paddingRight="@dimen/showContentPadding"
+      android:visibility="gone"
+      tools:visibility="visible"
+      android:background="#FFC3C3C3"/>
 
   <TextView
       android:id="@+id/collectTitle"
@@ -75,6 +101,7 @@
         android:layout_weight="1"
         android:layout_marginRight="8dp"
         android:visibility="gone"
+        tools:visibility="visible"
         layout="@layout/show_info_episode"/>
 
     <include
@@ -83,6 +110,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:visibility="gone"
+        tools:visibility="visible"
         layout="@layout/show_info_episode"/>
   </LinearLayout>
 </LinearLayout>

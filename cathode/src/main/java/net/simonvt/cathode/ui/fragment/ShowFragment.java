@@ -31,7 +31,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -45,18 +44,19 @@ import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.provider.CathodeContract.Shows;
 import net.simonvt.cathode.provider.CollectLoader;
 import net.simonvt.cathode.provider.WatchedLoader;
-import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
-import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.SeasonsAdapter;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.HiddenPaneLayout;
+import net.simonvt.cathode.widget.ObservableScrollView;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
+import timber.log.Timber;
 
 public class ShowFragment extends ProgressFragment {
 
@@ -71,8 +71,8 @@ public class ShowFragment extends ProgressFragment {
 
   private static final String[] SHOW_PROJECTION = new String[] {
       Shows.TITLE, Shows.YEAR, Shows.AIR_TIME, Shows.AIR_DAY, Shows.NETWORK, Shows.CERTIFICATION,
-      Shows.BANNER, Shows.RATING_PERCENTAGE, Shows.RATING, Shows.OVERVIEW, Shows.IN_WATCHLIST,
-      Shows.IN_COLLECTION_COUNT, Shows.WATCHED_COUNT,
+      Shows.POSTER, Shows.FANART, Shows.RATING_PERCENTAGE, Shows.RATING, Shows.OVERVIEW,
+      Shows.IN_WATCHLIST, Shows.IN_COLLECTION_COUNT, Shows.WATCHED_COUNT,
   };
 
   private static final String[] EPISODE_PROJECTION = new String[] {
@@ -95,13 +95,13 @@ public class ShowFragment extends ProgressFragment {
   @InjectView(R.id.seasonsEmpty) View seasonsEmpty;
   private SeasonsAdapter seasonsAdapter;
 
-  @InjectView(R.id.ratingContainer) View ratingContainer;
-  @InjectView(R.id.rating) RatingBar rating;
-  @InjectView(R.id.allRatings) TextView allRatings;
-  //@InjectView(R.id.year) TextView year;
+  @InjectView(R.id.scrollView) ObservableScrollView scrollView;
+
+  @InjectView(R.id.rating) CircularProgressIndicator rating;
   @InjectView(R.id.airtime) TextView airTime;
   @InjectView(R.id.certification) TextView certification;
-  @InjectView(R.id.banner) RemoteImageView banner;
+  @InjectView(R.id.poster) RemoteImageView poster;
+  @InjectView(R.id.fanart) RemoteImageView fanart;
   @InjectView(R.id.genresDivider) View genresDivider;
   @InjectView(R.id.genresTitle) View genresTitle;
   @InjectView(R.id.genres) TextView genres;
@@ -114,6 +114,9 @@ public class ShowFragment extends ProgressFragment {
 
   @InjectView(R.id.watchTitle) View watchTitle;
   @InjectView(R.id.collectTitle) View collectTitle;
+
+  @InjectView(R.id.watchDivider) View watchDivider;
+  @InjectView(R.id.collectDivider) @Optional View collectDivider;
 
   @InjectView(R.id.toWatch) View toWatch;
   private EpisodeHolder toWatchHolder;
@@ -144,9 +147,7 @@ public class ShowFragment extends ProgressFragment {
     }
   }
 
-  @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;
-  @Inject TraktTaskQueue queue;
 
   @Inject Bus bus;
 
@@ -175,6 +176,7 @@ public class ShowFragment extends ProgressFragment {
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
+    Timber.d("ShowFragment#onCreate");
     CathodeApp.inject(getActivity(), this);
 
     setHasOptionsMenu(true);
@@ -202,7 +204,7 @@ public class ShowFragment extends ProgressFragment {
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
-    return inflater.inflate(R.layout.fragment_show_info, container, false);
+    return inflater.inflate(R.layout.fragment_show, container, false);
   }
 
   @Override public void onViewCreated(View view, Bundle inState) {
@@ -218,7 +220,14 @@ public class ShowFragment extends ProgressFragment {
       }
     });
 
-    ratingContainer.setOnClickListener(new View.OnClickListener() {
+    scrollView.setListener(new ObservableScrollView.ScrollListener() {
+      @Override public void onScrollChanged(int l, int t) {
+        final int offset = (int) (t / 2.0f);
+        fanart.setTranslationY(offset);
+      }
+    });
+
+    rating.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         RatingDialog.newInstance(RatingDialog.Type.SHOW, showId, currentRating)
             .show(getFragmentManager(), DIALOG_RATING);
@@ -368,14 +377,17 @@ public class ShowFragment extends ProgressFragment {
       showTitle = title;
       bus.post(new OnTitleChangedEvent());
     }
-    final int year = cursor.getInt(cursor.getColumnIndex(Shows.YEAR));
     final String airTime = cursor.getString(cursor.getColumnIndex(Shows.AIR_TIME));
     final String airDay = cursor.getString(cursor.getColumnIndex(Shows.AIR_DAY));
     final String network = cursor.getString(cursor.getColumnIndex(Shows.NETWORK));
     final String certification = cursor.getString(cursor.getColumnIndex(Shows.CERTIFICATION));
-    final String bannerUrl = cursor.getString(cursor.getColumnIndex(Shows.BANNER));
-    if (bannerUrl != null) {
-      banner.setImage(bannerUrl);
+    final String posterUrl = cursor.getString(cursor.getColumnIndex(Shows.POSTER));
+    if (posterUrl != null) {
+      poster.setImage(posterUrl);
+    }
+    final String fanartUrl = cursor.getString(cursor.getColumnIndex(Shows.FANART));
+    if (fanartUrl != null) {
+      fanart.setImage(fanartUrl);
     }
     currentRating = cursor.getInt(cursor.getColumnIndex(Shows.RATING));
     final int ratingAll = cursor.getInt(cursor.getColumnIndex(Shows.RATING_PERCENTAGE));
@@ -384,8 +396,7 @@ public class ShowFragment extends ProgressFragment {
     final int inCollectionCount = cursor.getInt(cursor.getColumnIndex(Shows.IN_COLLECTION_COUNT));
     final int watchedCount = cursor.getInt(cursor.getColumnIndex(Shows.WATCHED_COUNT));
 
-    rating.setProgress(currentRating);
-    allRatings.setText(ratingAll + "%");
+    rating.setValue(ratingAll);
 
     watched.setVisibility(watchedCount > 0 ? View.VISIBLE : View.GONE);
     collection.setVisibility(inCollectionCount > 0 ? View.VISIBLE : View.GONE);
@@ -425,6 +436,7 @@ public class ShowFragment extends ProgressFragment {
     if (cursor.moveToFirst()) {
       toWatch.setVisibility(View.VISIBLE);
       watchTitle.setVisibility(View.VISIBLE);
+      watchDivider.setVisibility(View.VISIBLE);
 
       toWatchId = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
 
@@ -446,6 +458,7 @@ public class ShowFragment extends ProgressFragment {
     } else {
       toWatch.setVisibility(View.GONE);
       watchTitle.setVisibility(View.GONE);
+      watchDivider.setVisibility(View.GONE);
       toWatchId = -1;
     }
 
@@ -471,7 +484,7 @@ public class ShowFragment extends ProgressFragment {
             cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.SCREEN));
         lastWatchedHolder.episodeBanner.setImage(bannerUrl);
       } else {
-        lastWatched.setVisibility(View.INVISIBLE);
+        lastWatched.setVisibility(toWatchId == -1 ? View.GONE : View.INVISIBLE);
         lastWatchedId = -1;
       }
     }
@@ -484,7 +497,14 @@ public class ShowFragment extends ProgressFragment {
   }
 
   private void updateEpisodeCollectViews(Cursor cursor) {
+    boolean showWatchDivider = false;
+    boolean showCollectDivider = false;
     if (cursor.moveToFirst()) {
+      if (collectDivider != null) {
+        showCollectDivider = true;
+      } else {
+        showWatchDivider = true;
+      }
       toCollect.setVisibility(View.VISIBLE);
       collectTitle.setVisibility(View.VISIBLE);
 
@@ -542,6 +562,13 @@ public class ShowFragment extends ProgressFragment {
       episodes.setVisibility(View.GONE);
     } else {
       episodes.setVisibility(View.VISIBLE);
+    }
+
+    if (toWatchId == -1 && lastWatchedId == -1) {
+      watchDivider.setVisibility(showWatchDivider ? View.VISIBLE : View.GONE);
+    }
+    if (collectDivider != null) {
+      collectDivider.setVisibility(showCollectDivider ? View.VISIBLE : View.GONE);
     }
   }
 

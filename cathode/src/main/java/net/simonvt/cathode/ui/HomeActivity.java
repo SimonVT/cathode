@@ -152,6 +152,11 @@ public class HomeActivity extends BaseActivity
     super.onPause();
   }
 
+  @Override protected void onDestroy() {
+    uiController.onDestroy(false);
+    super.onDestroy();
+  }
+
   @Override public void onBackPressed() {
     if (!activeController.onBackClicked()) {
       super.onBackPressed();

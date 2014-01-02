@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2013 Simon Vig Therkildsen
+  ~ Copyright (C) 2014 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,15 +16,31 @@
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/episodes"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:visibility="gone"
-    tools:visibility="visible">
+    android:paddingTop="@dimen/showPosterTranslationY">
+
+  <TextView
+      android:id="@+id/overviewTitle"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:paddingLeft="@dimen/showContentPadding"
+      android:paddingRight="@dimen/showContentPadding"
+      android:text="@string/overview"
+      style="@style/Widget.InfoTitle"/>
+
+  <TextView
+      android:id="@+id/overview"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingLeft="@dimen/showContentPadding"
+      android:paddingRight="@dimen/showContentPadding"
+      tools:text="From the delightfully twisted creative minds behind Family Guy comes American Dad, the animated tour de force featuring CIA operative Stan Smith, his outrageous family, and Roger, the alcoholic extra-terrestrial who lives with them! Whether it's rigging elections, erasing memories, chasing sleazy strip clubs, or staging bum fights, it's all in a day's work for Stan."
+      style="@style/Widget.InfoText"/>
 
   <View
-      android:id="@+id/watchDivider"
+      android:id="@+id/genresDivider"
       android:layout_width="match_parent"
       android:layout_height="1dp"
       android:layout_marginTop="12dp"
@@ -35,52 +51,26 @@
       android:background="#FFC3C3C3"/>
 
   <TextView
-      android:id="@+id/watchTitle"
-      android:layout_width="match_parent"
+      android:id="@+id/genresTitle"
+      android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:paddingLeft="@dimen/showContentPadding"
       android:paddingRight="@dimen/showContentPadding"
-      android:text="@string/to_watch"
+      android:text="@string/genres"
+      android:visibility="gone"
+      tools:visibility="visible"
       style="@style/Widget.InfoTitle"/>
-
-  <include
-      android:id="@+id/toWatch"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginBottom="8dp"
-      android:paddingLeft="@dimen/showContentPadding"
-      android:paddingRight="@dimen/showContentPadding"
-      android:visibility="gone"
-      tools:visibility="visible"
-      layout="@layout/show_info_episode"/>
-
-  <View
-      android:id="@+id/collectDivider"
-      android:layout_width="match_parent"
-      android:layout_height="1dp"
-      android:layout_marginTop="12dp"
-      android:paddingLeft="@dimen/showContentPadding"
-      android:paddingRight="@dimen/showContentPadding"
-      android:visibility="gone"
-      tools:visibility="visible"
-      android:background="#FFC3C3C3"/>
 
   <TextView
-      android:id="@+id/collectTitle"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:paddingLeft="@dimen/showContentPadding"
-      android:paddingRight="@dimen/showContentPadding"
-      android:text="@string/to_collect"
-      style="@style/Widget.InfoTitle"/>
-
-  <include
-      android:id="@+id/toCollect"
+      android:id="@+id/genres"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:paddingLeft="@dimen/showContentPadding"
       android:paddingRight="@dimen/showContentPadding"
       android:visibility="gone"
       tools:visibility="visible"
-      layout="@layout/show_info_episode"/>
+      tools:text="Animation, Comedy"
+      style="@style/Widget.InfoText"/>
+
+  <include layout="@layout/show_info_episodes"/>
 </LinearLayout>

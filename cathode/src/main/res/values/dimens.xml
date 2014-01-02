@@ -19,4 +19,10 @@
 
   <dimen name="searchViewMaxWidth">0dp</dimen>
 
+  <dimen name="showContentPadding">8dp</dimen>
+  <dimen name="showPosterWidth">96dp</dimen>
+  <dimen name="showPosterTranslationY">18dp</dimen>
+  <dimen name="showPosterLeftMargin">16dp</dimen>
+  <dimen name="showHeaderLeftMargin">120dp</dimen>
+
 </resources>

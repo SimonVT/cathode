@@ -26,7 +26,8 @@
     <item name="android:textStyle">italic</item>
     <item name="android:fontFamily">sans-serif-light</item>
     <item name="android:layout_marginBottom">4dp</item>
-    <item name="android:padding">8dp</item>
+    <item name="android:paddingTop">8dp</item>
+    <item name="android:paddingBottom">8dp</item>
   </style>
 
   <style name="Widget.InfoText">
@@ -110,6 +111,16 @@
     <item name="android:paddingBottom">8dp</item>
     <item name="android:drawablePadding">16dp</item>
     <item name="android:gravity">center_vertical</item>
+  </style>
+
+  <style name="Widget.CirculatProgressIndicator">
+    <item name="textMargin">20dp</item>
+    <item name="textColor">@android:color/holo_green_dark</item>
+    <item name="textSize">12sp</item>
+    <item name="circleStrokeWidth">2dp</item>
+    <item name="maxValue">100</item>
+    <item name="circleColor">@color/circleProgressColor</item>
+    <item name="circleBackgroundColor">@color/circleProgressBackgroundColor</item>
   </style>
 
 </resources>

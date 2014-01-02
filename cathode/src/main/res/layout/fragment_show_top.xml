@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2013 Simon Vig Therkildsen
+  ~ Copyright (C) 2014 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -14,46 +14,42 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/header_bg"
-    android:orientation="vertical">
-
-  <net.simonvt.cathode.widget.RemoteImageView
-      android:id="@+id/banner"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      app:dominantMeasurement="width"
-      app:aspectRatio="0.5627"/>
+    android:minHeight="60dp"
+    android:paddingLeft="@dimen/showHeaderLeftMargin"
+    android:background="@drawable/show_header">
 
   <LinearLayout
-      android:id="@+id/airtimeContainer"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_gravity="bottom"
-      android:gravity="center_vertical"
-      android:paddingTop="4dp"
-      android:paddingBottom="4dp"
-      android:paddingLeft="16dp"
-      android:paddingRight="16dp"
-      android:background="@android:drawable/screen_background_dark_transparent">
+      android:layout_gravity="center_vertical"
+      android:orientation="vertical">
 
     <TextView
         android:id="@+id/airtime"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textColor="?android:attr/textColorPrimaryInverse"
+        android:textColor="?android:attr/textColorPrimary"
         tools:text="Sunday 10:00pm, AMC"/>
 
     <TextView
         android:id="@+id/certification"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?android:attr/textColorPrimaryInverse"
+        android:textColor="?android:attr/textColorPrimary"
         tools:text="TV-MA"/>
   </LinearLayout>
+
+  <net.simonvt.cathode.widget.CircularProgressIndicator
+      android:id="@+id/rating"
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:layout_gravity="center_vertical|right"
+      android:background="?android:attr/selectableItemBackground"
+      app:circleBackgroundColor="@color/circleProgressBackgroundColor"/>
 </FrameLayout>
