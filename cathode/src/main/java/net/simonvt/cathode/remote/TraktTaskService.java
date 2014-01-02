@@ -150,6 +150,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     String action = null;
     if (intent != null) action = intent.getAction();
     if (ACTION_LOGOUT.equals(action)) {
+      Timber.tag(TAG).i("Logging out");
       TraktTask priorityTask = priorityQueue.peek();
       TraktTask task = queue.peek();
       if (priorityTask != null) priorityTask.cancel();
