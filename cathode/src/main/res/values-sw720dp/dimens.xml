@@ -16,10 +16,10 @@
   -->
 <resources>
 
-  <dimen name="showContentPadding">16dp</dimen>
-  <dimen name="showPosterWidth">180dp</dimen>
-  <dimen name="showPosterLeftMargin">24dp</dimen>
-  <dimen name="showPosterTranslationY">36dp</dimen>
-  <dimen name="showHeaderLeftMargin">220dp</dimen>
+  <dimen name="detailContentPadding">16dp</dimen>
+  <dimen name="detailPosterWidth">180dp</dimen>
+  <dimen name="detailPosterLeftMargin">24dp</dimen>
+  <dimen name="detailPosterTranslationY">36dp</dimen>
+  <dimen name="detailHeaderLeftMargin">220dp</dimen>
 
 </resources>

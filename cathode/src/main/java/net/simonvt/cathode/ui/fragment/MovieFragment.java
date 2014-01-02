@@ -15,7 +15,6 @@
  */
 package net.simonvt.cathode.ui.fragment;
 
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -28,12 +27,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import butterknife.InjectView;
-import butterknife.Optional;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -43,6 +39,7 @@ import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
+import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.ObservableScrollView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
@@ -60,16 +57,17 @@ public class MovieFragment extends ProgressFragment
   @Inject MovieTaskScheduler movieScheduler;
   @Inject Bus bus;
 
-  @InjectView(R.id.contentContainer) ObservableScrollView scrollView;
+  @InjectView(R.id.scrollView) ObservableScrollView scrollView;
 
-  @InjectView(R.id.year) @Optional TextView year;
-  @InjectView(R.id.banner) RemoteImageView banner;
+  @InjectView(R.id.year) TextView year;
+  @InjectView(R.id.certification) TextView certification;
+  @InjectView(R.id.fanart) RemoteImageView fanart;
+  @InjectView(R.id.poster) RemoteImageView poster;
   @InjectView(R.id.overview) TextView overview;
   @InjectView(R.id.isWatched) TextView isWatched;
   @InjectView(R.id.inCollection) TextView collection;
   @InjectView(R.id.inWatchlist) TextView watchlist;
-  @InjectView(R.id.ratingContainer) View ratingContainer;
-  @InjectView(R.id.rating) RatingBar rating;
+  @InjectView(R.id.rating) CircularProgressIndicator rating;
 
   @InjectView(R.id.actorsParent) LinearLayout actorsParent;
   @InjectView(R.id.actors) LinearLayout actors;
@@ -88,8 +86,6 @@ public class MovieFragment extends ProgressFragment
 
   private boolean inWatchlist;
 
-  private boolean isTablet;
-
   public static Bundle getArgs(long movieId, String movieTitle) {
     Bundle args = new Bundle();
     args.putLong(ARG_ID, movieId);
@@ -100,8 +96,6 @@ public class MovieFragment extends ProgressFragment
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
-
-    isTablet = getResources().getBoolean(R.bool.isTablet);
 
     setHasOptionsMenu(true);
 
@@ -120,36 +114,22 @@ public class MovieFragment extends ProgressFragment
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-    ratingContainer.setOnClickListener(new View.OnClickListener() {
+    rating.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         RatingDialog.newInstance(RatingDialog.Type.MOVIE, movieId, currentRating)
             .show(getFragmentManager(), DIALOG_RATING);
       }
     });
 
-    if (!isTablet) {
-      scrollView.setListener(new ObservableScrollView.ScrollListener() {
-        @Override public void onScrollChanged(int l, int t) {
-          final int offset = (int) (t / 2.0f);
-          banner.setTranslationY(offset);
-        }
-      });
-    }
+    scrollView.setListener(new ObservableScrollView.ScrollListener() {
+      @Override public void onScrollChanged(int l, int t) {
+        final int offset = (int) (t / 2.0f);
+        fanart.setTranslationY(offset);
+      }
+    });
 
     getLoaderManager().initLoader(BaseActivity.LOADER_MOVIE, null, this);
     getLoaderManager().initLoader(BaseActivity.LOADER_MOVIE_ACTORS, null, actorsLoader);
-
-    if (!isTablet
-        && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-      view.getViewTreeObserver()
-          .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override public void onGlobalLayout() {
-              getView().getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
-              scrollView.setScrollY(banner.getHeight() / 2);
-            }
-          });
-    }
   }
 
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -213,12 +193,18 @@ public class MovieFragment extends ProgressFragment
       bus.post(new OnTitleChangedEvent());
     }
     final int year = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.YEAR));
-    final String fanart = cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.FANART));
-    if (fanart != null) {
-      banner.setImage(fanart);
-    }
+    final String certification =
+        cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.CERTIFICATION));
+
+    final String fanartUrl = cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.FANART));
+    fanart.setImage(fanartUrl);
+    final String posterUrl = cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.POSTER));
+    poster.setImage(posterUrl);
+
     currentRating = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.RATING));
-    rating.setRating(currentRating);
+    final int ratingAll =
+        cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.RATING_PERCENTAGE));
+    rating.setValue(ratingAll);
 
     final String overview =
         cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.OVERVIEW));
@@ -230,7 +216,8 @@ public class MovieFragment extends ProgressFragment
     collection.setVisibility(collected ? View.VISIBLE : View.GONE);
     watchlist.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
 
-    if (this.year != null) this.year.setText(String.valueOf(year));
+    this.year.setText(String.valueOf(year));
+    this.certification.setText(certification);
     this.overview.setText(overview);
 
     setContentVisible(true);

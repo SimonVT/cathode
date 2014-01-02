@@ -16,8 +16,8 @@
   -->
 <resources>
 
-  <dimen name="showContentPadding">32dp</dimen>
-  <dimen name="showPosterLeftMargin">40dp</dimen>
-  <dimen name="showHeaderLeftMargin">236dp</dimen>
+  <dimen name="detailContentPadding">32dp</dimen>
+  <dimen name="detailPosterLeftMargin">40dp</dimen>
+  <dimen name="detailHeaderLeftMargin">236dp</dimen>
 
 </resources>

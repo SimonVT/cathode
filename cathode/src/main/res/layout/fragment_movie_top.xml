@@ -31,11 +31,11 @@
       android:orientation="vertical">
 
     <TextView
-        android:id="@+id/airtime"
+        android:id="@+id/year"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="?android:attr/textColorPrimary"
-        tools:text="Sunday 10:00pm, AMC"/>
+        tools:text="2013"/>
 
     <TextView
         android:id="@+id/certification"

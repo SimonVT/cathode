@@ -80,7 +80,7 @@
 
               <include layout="@layout/fragment_show_content"/>
 
-              <include layout="@layout/show_checkmarks"/>
+              <include layout="@layout/checkmarks"/>
             </FrameLayout>
           </LinearLayout>
         </FrameLayout>
@@ -89,14 +89,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/fanartContainer"
-            android:translationY="@dimen/showPosterTranslationY">
+            android:translationY="@dimen/detailPosterTranslationY">
 
           <!-- Size breaks on certain devices unless wrapped in FrameLayout -->
           <net.simonvt.cathode.widget.RemoteImageView
               android:id="@+id/poster"
-              android:layout_width="@dimen/showPosterWidth"
+              android:layout_width="@dimen/detailPosterWidth"
               android:layout_height="wrap_content"
-              android:layout_marginLeft="@dimen/showPosterLeftMargin"
+              android:layout_marginLeft="@dimen/detailPosterLeftMargin"
               android:background="#FF8C8C8C"
               android:padding="2dp"
               app:dominantMeasurement="width"

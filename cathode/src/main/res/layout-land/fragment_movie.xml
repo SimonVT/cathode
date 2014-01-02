@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2013 Simon Vig Therkildsen
+  ~ Copyright (C) 2014 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 <net.simonvt.cathode.widget.HiddenPaneLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/hiddenPaneLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -37,7 +36,7 @@
           android:orientation="vertical"
           android:paddingBottom="16dp">
 
-        <FrameLayout
+        <net.simonvt.cathode.widget.HalfScreenHeightFrameLayout
             android:id="@+id/fanartContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -46,21 +45,22 @@
               android:id="@+id/fanart"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:layout_gravity="center"
               app:dominantMeasurement="width"
               app:aspectRatio="0.5627"/>
-        </FrameLayout>
 
-        <include
-            layout="@layout/fragment_show_top"
-            android:id="@+id/topBarContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/fanartContainer"/>
+          <include
+              layout="@layout/fragment_movie_top"
+              android:id="@+id/topBarContainer"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_gravity="bottom"/>
+        </net.simonvt.cathode.widget.HalfScreenHeightFrameLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/topBarContainer">
+            android:layout_below="@id/fanartContainer">
 
           <include
               layout="@layout/fragment_list_progressbar"
@@ -78,7 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-              <include layout="@layout/fragment_show_content"/>
+              <include layout="@layout/fragment_movie_content"/>
 
               <include layout="@layout/checkmarks"/>
             </FrameLayout>
@@ -88,7 +88,7 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/topBarContainer"
+            android:layout_alignBottom="@id/fanartContainer"
             android:translationY="@dimen/detailPosterTranslationY">
 
           <!-- Size breaks on certain devices unless wrapped in FrameLayout -->
