@@ -64,8 +64,6 @@ public class SyncEpisodeTask extends TraktTask {
       if (r != null) {
         final int statusCode = r.getStatus();
         if (statusCode == 400) {
-          Timber.tag(TAG).e(e, "URL: %s", e.getUrl());
-
           ResponseParser parser = new ResponseParser();
           CathodeApp.inject(service, parser);
           Response response = parser.tryParse(e);
