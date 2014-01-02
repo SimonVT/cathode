@@ -25,13 +25,11 @@ import retrofit.RetrofitError;
 
 public class MovieCollectionTask extends TraktTask {
 
-  private static final String TAG = "MovieCollectionTask";
-
   @Inject transient MovieService movieService;
 
-  private final long tmdbId;
+  private long tmdbId;
 
-  private final boolean watched;
+  private boolean watched;
 
   public MovieCollectionTask(long tmdbId, boolean watched) {
     if (tmdbId == 0) {

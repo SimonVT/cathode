@@ -27,13 +27,13 @@ public class EpisodeWatchedTask extends TraktTask {
 
   @Inject transient ShowService showService;
 
-  private final int tvdbId;
+  private int tvdbId;
 
-  private final int season;
+  private int season;
 
-  private final int episode;
+  private int episode;
 
-  private final boolean watched;
+  private boolean watched;
 
   public EpisodeWatchedTask(int tvdbId, int season, int episode, boolean watched) {
     if (tvdbId == 0) throw new IllegalArgumentException("tvdb is 0");

@@ -26,8 +26,6 @@ import retrofit.RetrofitError;
 
 public class ShowWatchedTask extends TraktTask {
 
-  private static final String TAG = "ShowWatchedTask";
-
   @Inject transient ShowService showService;
 
   private int tvdbId;

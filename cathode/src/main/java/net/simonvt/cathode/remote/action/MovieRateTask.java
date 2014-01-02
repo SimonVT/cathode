@@ -23,8 +23,6 @@ import retrofit.RetrofitError;
 
 public class MovieRateTask extends TraktTask {
 
-  private static final String TAG = "MovieRateTask";
-
   @Inject transient RateService rateService;
 
   private long tmdbId;

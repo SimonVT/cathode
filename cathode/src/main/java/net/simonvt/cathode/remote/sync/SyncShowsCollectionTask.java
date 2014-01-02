@@ -36,8 +36,6 @@ import retrofit.RetrofitError;
 
 public class SyncShowsCollectionTask extends TraktTask {
 
-  private static final String TAG = "SyncShowsCollectionTask";
-
   @Inject transient UserService userService;
 
   private void addOp(ArrayList<ContentProviderOperation> ops, ContentProviderOperation op)

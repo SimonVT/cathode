@@ -29,8 +29,6 @@ import retrofit.RetrofitError;
 
 public class SyncMoviesWatchedTask extends TraktTask {
 
-  private static final String TAG = "SyncMoviesCollectionTask";
-
   @Inject transient UserService userService;
 
   @Override protected void doTask() {

@@ -28,8 +28,6 @@ import retrofit.RetrofitError;
 
 public class SyncUpdatedMovies extends TraktTask {
 
-  private static final String TAG = "SyncUpdatedMovies";
-
   @Inject transient MoviesService moviesService;
 
   @Override protected void doTask() {

@@ -25,8 +25,6 @@ import retrofit.RetrofitError;
 
 public class SyncMovieTask extends TraktTask {
 
-  private static final String TAG = "SyncMovieTask";
-
   @Inject transient MovieService movieService;
 
   private long tmdbId;

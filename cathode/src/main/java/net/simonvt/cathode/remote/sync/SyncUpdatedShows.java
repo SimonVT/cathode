@@ -30,8 +30,6 @@ import retrofit.RetrofitError;
 
 public class SyncUpdatedShows extends TraktTask {
 
-  private static final String TAG = "SyncUpdatedShows";
-
   @Inject transient ShowsService showsService;
 
   @Inject transient ServerService serverService;

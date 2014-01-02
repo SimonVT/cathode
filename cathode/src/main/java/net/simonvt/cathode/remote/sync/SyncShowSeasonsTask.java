@@ -27,8 +27,6 @@ import timber.log.Timber;
 
 public class SyncShowSeasonsTask extends TraktTask {
 
-  private static final String TAG = "SyncShowSeasonsTask";
-
   @Inject transient ShowService showService;
 
   private int tvdbId;

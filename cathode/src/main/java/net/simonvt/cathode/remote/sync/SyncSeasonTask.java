@@ -42,9 +42,9 @@ public class SyncSeasonTask extends TraktTask {
 
   @Inject transient ShowService showService;
 
-  private final int tvdbId;
+  private int tvdbId;
 
-  private final int season;
+  private int season;
 
   public SyncSeasonTask(int tvdbId, int season) {
     this.tvdbId = tvdbId;
@@ -74,8 +74,7 @@ public class SyncSeasonTask extends TraktTask {
         if (!(episode.getSeason() == 0 && episode.getNumber() == 0)) {
           Episode summary;
           try {
-            summary =
-                showService.episodeSummary(tvdbId, season, episode.getNumber()).getEpisode();
+            summary = showService.episodeSummary(tvdbId, season, episode.getNumber()).getEpisode();
           } catch (RetrofitError e) {
             final int statusCode = e.getResponse().getStatus();
             if (statusCode == 400) {

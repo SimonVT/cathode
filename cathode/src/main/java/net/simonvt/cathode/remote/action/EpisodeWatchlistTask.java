@@ -25,17 +25,15 @@ import retrofit.RetrofitError;
 
 public class EpisodeWatchlistTask extends TraktTask {
 
-  private static final String TAG = "EpisodeWatchlistTask";
-
   @Inject transient ShowService showService;
 
-  private final int tvdbId;
+  private int tvdbId;
 
-  private final int season;
+  private int season;
 
-  private final int episode;
+  private int episode;
 
-  private final boolean inWatchlist;
+  private boolean inWatchlist;
 
   public EpisodeWatchlistTask(int tvdbId, int season, int episode, boolean inWatchlist) {
     this.tvdbId = tvdbId;

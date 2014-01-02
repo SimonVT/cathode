@@ -34,11 +34,11 @@ public class SyncEpisodeTask extends TraktTask {
 
   @Inject transient ShowService showService;
 
-  private final int tvdbId;
+  private int tvdbId;
 
-  private final int season;
+  private int season;
 
-  private final int episode;
+  private int episode;
 
   public SyncEpisodeTask(int tvdbId, int season, int episode) {
     this.tvdbId = tvdbId;

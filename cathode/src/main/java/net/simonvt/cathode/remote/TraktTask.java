@@ -24,8 +24,6 @@ import timber.log.Timber;
 
 public abstract class TraktTask implements Task<TraktTaskService> {
 
-  private static final String TAG = "TraktTask";
-
   private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
   @Inject protected transient TraktTaskQueue queue;
