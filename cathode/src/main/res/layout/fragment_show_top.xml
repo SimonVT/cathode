@@ -22,7 +22,7 @@
     android:layout_height="wrap_content"
     android:minHeight="60dp"
     android:paddingLeft="@dimen/detailHeaderLeftMargin"
-    android:background="@drawable/show_header">
+    android:background="@drawable/detail_header">
 
   <LinearLayout
       android:layout_width="match_parent"
