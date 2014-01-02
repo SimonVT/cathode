@@ -26,7 +26,6 @@ import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import retrofit.RetrofitError;
 
 public class SyncShowTask extends TraktTask {
 
@@ -39,26 +38,21 @@ public class SyncShowTask extends TraktTask {
   }
 
   @Override protected void doTask() {
-    try {
-      TvShow show = showService.summary(tvdbId, DetailLevel.EXTENDED);
-      final long showId = ShowWrapper.updateOrInsertShow(service.getContentResolver(), show);
+    TvShow show = showService.summary(tvdbId, DetailLevel.EXTENDED);
+    final long showId = ShowWrapper.updateOrInsertShow(service.getContentResolver(), show);
 
-      List<Season> seasons = show.getSeasons();
+    List<Season> seasons = show.getSeasons();
 
-      for (Season season : seasons) {
-        final long seasonId =
-            SeasonWrapper.updateOrInsertSeason(service.getContentResolver(), season, showId);
-        List<Episode> episodes = season.getEpisodes().getEpisodes();
-        for (Episode episode : episodes) {
-          EpisodeWrapper.updateOrInsertEpisode(service.getContentResolver(), episode, showId,
-              seasonId);
-        }
+    for (Season season : seasons) {
+      final long seasonId =
+          SeasonWrapper.updateOrInsertSeason(service.getContentResolver(), season, showId);
+      List<Episode> episodes = season.getEpisodes().getEpisodes();
+      for (Episode episode : episodes) {
+        EpisodeWrapper.updateOrInsertEpisode(service.getContentResolver(), episode, showId,
+            seasonId);
       }
-
-      postOnSuccess();
-    } catch (RetrofitError e) {
-      e.printStackTrace();
-      postOnFailure();
     }
+
+    postOnSuccess();
   }
 }

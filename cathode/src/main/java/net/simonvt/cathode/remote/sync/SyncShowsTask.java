@@ -22,30 +22,24 @@ import net.simonvt.cathode.api.enumeration.DetailLevel;
 import net.simonvt.cathode.api.service.UserService;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import retrofit.RetrofitError;
 
 public class SyncShowsTask extends TraktTask {
 
   @Inject transient UserService userService;
 
   @Override protected void doTask() {
-    try {
-      List<TvShow> shows = userService.libraryShowsAll(DetailLevel.MIN);
+    List<TvShow> shows = userService.libraryShowsAll(DetailLevel.MIN);
 
-      for (TvShow show : shows) {
-        if (show.getTvdbId() == null) {
-          continue;
-        }
-        final Integer tvdbId = show.getTvdbId();
-        if (!ShowWrapper.exists(service.getContentResolver(), tvdbId)) {
-          queueTask(new SyncShowTask(tvdbId));
-        }
+    for (TvShow show : shows) {
+      if (show.getTvdbId() == null) {
+        continue;
       }
-
-      postOnSuccess();
-    } catch (RetrofitError e) {
-      e.printStackTrace();
-      postOnFailure();
+      final Integer tvdbId = show.getTvdbId();
+      if (!ShowWrapper.exists(service.getContentResolver(), tvdbId)) {
+        queueTask(new SyncShowTask(tvdbId));
+      }
     }
+
+    postOnSuccess();
   }
 }

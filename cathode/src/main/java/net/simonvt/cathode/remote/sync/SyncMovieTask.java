@@ -21,7 +21,6 @@ import net.simonvt.cathode.api.enumeration.DetailLevel;
 import net.simonvt.cathode.api.service.MovieService;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import retrofit.RetrofitError;
 
 public class SyncMovieTask extends TraktTask {
 
@@ -34,14 +33,8 @@ public class SyncMovieTask extends TraktTask {
   }
 
   @Override protected void doTask() {
-    try {
-      Movie movie = movieService.summary(tmdbId, DetailLevel.EXTENDED);
-      MovieWrapper.updateOrInsertMovie(service.getContentResolver(), movie);
-
-      postOnSuccess();
-    } catch (RetrofitError e) {
-      e.printStackTrace();
-      postOnFailure();
-    }
+    Movie movie = movieService.summary(tmdbId, DetailLevel.EXTENDED);
+    MovieWrapper.updateOrInsertMovie(service.getContentResolver(), movie);
+    postOnSuccess();
   }
 }

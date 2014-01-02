@@ -21,7 +21,6 @@ import net.simonvt.cathode.api.entity.Response;
 import net.simonvt.cathode.api.service.ShowService;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import retrofit.RetrofitError;
 
 public class EpisodeWatchlistTask extends TraktTask {
 
@@ -43,22 +42,16 @@ public class EpisodeWatchlistTask extends TraktTask {
   }
 
   @Override protected void doTask() {
-    try {
-      if (inWatchlist) {
-        Response response =
-            showService.episodeWatchlist(new ShowEpisodeBody(tvdbId, season, episode));
-      } else {
-        Response response =
-            showService.episodeUnwatchlist(new ShowEpisodeBody(tvdbId, season, episode));
-      }
-
-      EpisodeWrapper.setIsInWatchlist(service.getContentResolver(), tvdbId, season, episode,
-          inWatchlist);
-
-      postOnSuccess();
-    } catch (RetrofitError e) {
-      e.printStackTrace();
-      postOnFailure();
+    if (inWatchlist) {
+      Response response =
+          showService.episodeWatchlist(new ShowEpisodeBody(tvdbId, season, episode));
+    } else {
+      Response response =
+          showService.episodeUnwatchlist(new ShowEpisodeBody(tvdbId, season, episode));
     }
+
+    EpisodeWrapper.setIsInWatchlist(service.getContentResolver(), tvdbId, season, episode,
+        inWatchlist);
+    postOnSuccess();
   }
 }

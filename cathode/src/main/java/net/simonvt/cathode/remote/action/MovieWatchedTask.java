@@ -21,7 +21,6 @@ import net.simonvt.cathode.api.entity.Response;
 import net.simonvt.cathode.api.service.MovieService;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import retrofit.RetrofitError;
 
 public class MovieWatchedTask extends TraktTask {
 
@@ -32,28 +31,18 @@ public class MovieWatchedTask extends TraktTask {
   private boolean watched;
 
   public MovieWatchedTask(long tmdbId, boolean watched) {
-    if (tmdbId == 0) {
-      // TODO
-      throw new IllegalArgumentException("tvdb is 0");
-    }
     this.tmdbId = tmdbId;
     this.watched = watched;
   }
 
   @Override protected void doTask() {
-    try {
-      if (watched) {
-        Response response = movieService.seen(new MoviesBody(tmdbId));
-      } else {
-        Response response = movieService.unseen(new MoviesBody(tmdbId));
-      }
-
-      MovieWrapper.setWatched(service.getContentResolver(), tmdbId, watched);
-
-      postOnSuccess();
-    } catch (RetrofitError e) {
-      e.printStackTrace();
-      postOnFailure();
+    if (watched) {
+      Response response = movieService.seen(new MoviesBody(tmdbId));
+    } else {
+      Response response = movieService.unseen(new MoviesBody(tmdbId));
     }
+
+    MovieWrapper.setWatched(service.getContentResolver(), tmdbId, watched);
+    postOnSuccess();
   }
 }

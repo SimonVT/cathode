@@ -22,7 +22,6 @@ import net.simonvt.cathode.api.service.ShowService;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import retrofit.RetrofitError;
 import timber.log.Timber;
 
 public class SyncShowSeasonsTask extends TraktTask {
@@ -36,21 +35,16 @@ public class SyncShowSeasonsTask extends TraktTask {
   }
 
   @Override protected void doTask() {
-    try {
-      final long showId = ShowWrapper.getShowId(service.getContentResolver(), tvdbId);
+    final long showId = ShowWrapper.getShowId(service.getContentResolver(), tvdbId);
 
-      List<Season> seasons = showService.seasons(tvdbId);
+    List<Season> seasons = showService.seasons(tvdbId);
 
-      for (Season season : seasons) {
-        Timber.d("Scheduling sync for season %d of show %d", season.getSeason(), tvdbId);
-        SeasonWrapper.updateOrInsertSeason(service.getContentResolver(), season, showId);
-        queueTask(new SyncSeasonTask(tvdbId, season.getSeason()));
-      }
-
-      postOnSuccess();
-    } catch (RetrofitError e) {
-      e.printStackTrace();
-      postOnFailure();
+    for (Season season : seasons) {
+      Timber.d("Scheduling sync for season %d of show %d", season.getSeason(), tvdbId);
+      SeasonWrapper.updateOrInsertSeason(service.getContentResolver(), season, showId);
+      queueTask(new SyncSeasonTask(tvdbId, season.getSeason()));
     }
+
+    postOnSuccess();
   }
 }

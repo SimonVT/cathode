@@ -54,7 +54,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
   private static final String TAG = "TraktTaskService";
   private static final String WAKELOCK_TAG = "net.simonvt.cathode.sync.TraktTaskService";
 
-  private static final String RETRY_DELAY = "net.simonvt.cathode.sync.TraktTaskService.retryDelay";
+  static final String RETRY_DELAY = "net.simonvt.cathode.sync.TraktTaskService.retryDelay";
 
   public static final String ACTION_LOGOUT = "net.simonvt.cathode.sync.TraktTaskService.LOGOUT";
 
@@ -142,9 +142,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
     if (retryDelay == -1) {
       if (intent != null) {
-        retryDelay = intent.getIntExtra(RETRY_DELAY, 1);
-      } else {
-        retryDelay = 1;
+        retryDelay = intent.getIntExtra(RETRY_DELAY, -1);
       }
     }
     String action = null;
@@ -301,10 +299,12 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     }
 
     Intent intent = new Intent(this, TaskServiceReceiver.class);
+    final int retryDelay = Math.max(1, this.retryDelay);
     final int nextDelay = Math.min(retryDelay * 2, MAX_RETRY_DELAY);
     intent.putExtra(RETRY_DELAY, nextDelay);
 
-    PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, 0);
+    PendingIntent pi =
+        PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
     AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
     final long runAt = SystemClock.elapsedRealtime() + retryDelay * DateUtils.MINUTE_IN_MILLIS;

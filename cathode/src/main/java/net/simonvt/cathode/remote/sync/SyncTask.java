@@ -19,35 +19,29 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.service.UserService;
 import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.settings.ActivityWrapper;
-import retrofit.RetrofitError;
 
 public class SyncTask extends TraktTask {
 
   @Inject transient UserService userService;
 
   @Override protected void doTask() {
-    try {
-      queueTask(new SyncUpdatedShows());
-      queueTask(new SyncUpdatedMovies());
+    queueTask(new SyncUpdatedShows());
+    queueTask(new SyncUpdatedMovies());
 
-      queueTask(new SyncUserActivityTask());
+    queueTask(new SyncUserActivityTask());
 
-      if (ActivityWrapper.trendingNeedsUpdate(service)) {
-        ActivityWrapper.updateTrending(service);
-        queueTask(new SyncTrendingShowsTask());
-        queueTask(new SyncTrendingMoviesTask());
-      }
-
-      if (ActivityWrapper.recommendationsNeedsUpdate(service)) {
-        ActivityWrapper.updateRecommendations(service);
-        queueTask(new SyncShowRecommendations());
-        queueTask(new SyncMovieRecommendations());
-      }
-
-      postOnSuccess();
-    } catch (RetrofitError e) {
-      e.printStackTrace();
-      postOnFailure();
+    if (ActivityWrapper.trendingNeedsUpdate(service)) {
+      ActivityWrapper.updateTrending(service);
+      queueTask(new SyncTrendingShowsTask());
+      queueTask(new SyncTrendingMoviesTask());
     }
+
+    if (ActivityWrapper.recommendationsNeedsUpdate(service)) {
+      ActivityWrapper.updateRecommendations(service);
+      queueTask(new SyncShowRecommendations());
+      queueTask(new SyncMovieRecommendations());
+    }
+
+    postOnSuccess();
   }
 }

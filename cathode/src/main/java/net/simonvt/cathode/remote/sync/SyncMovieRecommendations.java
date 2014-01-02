@@ -30,7 +30,6 @@ import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.provider.CathodeProvider;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import retrofit.RetrofitError;
 
 public class SyncMovieRecommendations extends TraktTask {
 
@@ -81,9 +80,6 @@ public class SyncMovieRecommendations extends TraktTask {
 
       resolver.applyBatch(CathodeProvider.AUTHORITY, ops);
       postOnSuccess();
-    } catch (RetrofitError e) {
-      e.printStackTrace();
-      postOnFailure();
     } catch (RemoteException e) {
       e.printStackTrace();
       postOnFailure();

@@ -20,6 +20,9 @@ import android.os.Looper;
 import com.squareup.tape.Task;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.util.HttpUtils;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 import timber.log.Timber;
 
 public abstract class TraktTask implements Task<TraktTaskService> {
@@ -40,13 +43,37 @@ public abstract class TraktTask implements Task<TraktTaskService> {
 
     new Thread(new Runnable() {
       @Override public void run() {
-        Timber.tag(TraktTask.this.getClass().getSimpleName()).d("doTask");
-        doTask();
+        try {
+          Timber.tag(TraktTask.this.getClass().getSimpleName()).d("doTask");
+          doTask();
+        } catch (RetrofitError e) {
+          e.printStackTrace();
+          logError(e);
+          postOnFailure();
+        }
       }
     }).start();
   }
 
   protected abstract void doTask();
+
+  protected void logError(RetrofitError e) {
+    try {
+      String url = e.getUrl();
+      Response response = e.getResponse();
+      if (response != null) {
+        int statusCode = response.getStatus();
+        String body = HttpUtils.streamToString(response.getBody().in());
+        Timber.i("URL: %s", url);
+        Timber.i("Status code: %d", statusCode);
+        Timber.i("Body:");
+        Timber.i(body);
+        Timber.e(e, null);
+      }
+    } catch (Throwable t) {
+      // Ignore
+    }
+  }
 
   public void cancel() {
     synchronized (this) {

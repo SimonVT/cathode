@@ -116,8 +116,6 @@ public class SyncSeasonTask extends TraktTask {
       resolver.applyBatch(CathodeProvider.AUTHORITY, ops);
 
       postOnSuccess();
-    } catch (RetrofitError e) {
-      postOnFailure();
     } catch (RemoteException e) {
       Timber.e(e, null);
       postOnFailure();

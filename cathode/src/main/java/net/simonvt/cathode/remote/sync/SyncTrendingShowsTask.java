@@ -30,7 +30,7 @@ import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.provider.CathodeProvider;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import retrofit.RetrofitError;
+import timber.log.Timber;
 
 public class SyncTrendingShowsTask extends TraktTask {
 
@@ -78,14 +78,11 @@ public class SyncTrendingShowsTask extends TraktTask {
 
       resolver.applyBatch(CathodeProvider.AUTHORITY, ops);
       postOnSuccess();
-    } catch (RetrofitError error) {
-      error.printStackTrace();
-      postOnFailure();
     } catch (RemoteException e) {
-      e.printStackTrace();
+      Timber.e(e, null);
       postOnFailure();
     } catch (OperationApplicationException e) {
-      e.printStackTrace();
+      Timber.e(e, null);
       postOnFailure();
     }
   }

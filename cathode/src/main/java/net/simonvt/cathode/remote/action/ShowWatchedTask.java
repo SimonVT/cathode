@@ -22,7 +22,6 @@ import net.simonvt.cathode.api.service.ShowService;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import retrofit.RetrofitError;
 
 public class ShowWatchedTask extends TraktTask {
 
@@ -38,30 +37,25 @@ public class ShowWatchedTask extends TraktTask {
   }
 
   @Override protected void doTask() {
-    try {
-      if (watched) {
-        showService.seen(new ShowBody(tvdbId));
-      } else {
-        // Trakt doesn't expose an unseen api..
-        final long showId = ShowWrapper.getShowId(service.getContentResolver(), tvdbId);
-        Cursor c = service.getContentResolver()
-            .query(CathodeContract.Episodes.buildFromShowId(showId), new String[] {
-                CathodeContract.Episodes.SEASON, CathodeContract.Episodes.EPISODE,
-            }, null, null, null);
+    if (watched) {
+      showService.seen(new ShowBody(tvdbId));
+    } else {
+      // Trakt doesn't expose an unseen api..
+      final long showId = ShowWrapper.getShowId(service.getContentResolver(), tvdbId);
+      Cursor c = service.getContentResolver()
+          .query(CathodeContract.Episodes.buildFromShowId(showId), new String[] {
+              CathodeContract.Episodes.SEASON, CathodeContract.Episodes.EPISODE,
+          }, null, null, null);
 
-        while (c.moveToNext()) {
-          queuePriorityTask(new EpisodeWatchedTask(tvdbId,
-              c.getInt(c.getColumnIndex(CathodeContract.Episodes.SEASON)),
-              c.getInt(c.getColumnIndex(CathodeContract.Episodes.EPISODE)), false));
-        }
-
-        c.close();
+      while (c.moveToNext()) {
+        queuePriorityTask(new EpisodeWatchedTask(tvdbId,
+            c.getInt(c.getColumnIndex(CathodeContract.Episodes.SEASON)),
+            c.getInt(c.getColumnIndex(CathodeContract.Episodes.EPISODE)), false));
       }
 
-      postOnSuccess();
-    } catch (RetrofitError e) {
-      e.printStackTrace();
-      postOnFailure();
+      c.close();
     }
+
+    postOnSuccess();
   }
 }

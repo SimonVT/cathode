@@ -21,7 +21,6 @@ import net.simonvt.cathode.api.entity.Response;
 import net.simonvt.cathode.api.service.ShowService;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.remote.TraktTask;
-import retrofit.RetrofitError;
 
 public class EpisodeCollectionTask extends TraktTask {
 
@@ -43,22 +42,15 @@ public class EpisodeCollectionTask extends TraktTask {
   }
 
   @Override protected void doTask() {
-    try {
-      if (inCollection) {
-        Response response =
-            showService.episodeLibrary(new ShowEpisodeBody(tvdbId, season, episode));
-      } else {
-        Response response =
-            showService.episodeUnlibrary(new ShowEpisodeBody(tvdbId, season, episode));
-      }
-
-      EpisodeWrapper.setInCollection(service.getContentResolver(), tvdbId, season, episode,
-          inCollection);
-
-      postOnSuccess();
-    } catch (RetrofitError e) {
-      e.printStackTrace();
-      postOnFailure();
+    if (inCollection) {
+      Response response = showService.episodeLibrary(new ShowEpisodeBody(tvdbId, season, episode));
+    } else {
+      Response response =
+          showService.episodeUnlibrary(new ShowEpisodeBody(tvdbId, season, episode));
     }
+
+    EpisodeWrapper.setInCollection(service.getContentResolver(), tvdbId, season, episode,
+        inCollection);
+    postOnSuccess();
   }
 }

@@ -21,27 +21,21 @@ import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.enumeration.DetailLevel;
 import net.simonvt.cathode.api.service.UserService;
 import net.simonvt.cathode.remote.TraktTask;
-import retrofit.RetrofitError;
 
 public class SyncMoviesTask extends TraktTask {
 
   @Inject transient UserService userService;
 
   @Override protected void doTask() {
-    try {
-      List<Movie> movies = userService.moviesAll(DetailLevel.MIN);
-      for (Movie movie : movies) {
-        if (movie.getTmdbId() == null) {
-          continue;
-        }
-        final long tmdbId = movie.getTmdbId();
-        queueTask(new SyncMovieTask(tmdbId));
+    List<Movie> movies = userService.moviesAll(DetailLevel.MIN);
+    for (Movie movie : movies) {
+      if (movie.getTmdbId() == null) {
+        continue;
       }
-
-      postOnSuccess();
-    } catch (RetrofitError e) {
-      e.printStackTrace();
-      postOnFailure();
+      final long tmdbId = movie.getTmdbId();
+      queueTask(new SyncMovieTask(tmdbId));
     }
+
+    postOnSuccess();
   }
 }

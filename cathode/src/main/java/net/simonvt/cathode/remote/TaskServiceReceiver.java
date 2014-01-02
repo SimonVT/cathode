@@ -25,8 +25,13 @@ public class TaskServiceReceiver extends BroadcastReceiver {
   private static final String TAG = "TaskServiceReceiver";
 
   @Override public void onReceive(Context context, Intent intent) {
-    Timber.tag("TaskServiceReceiver").i("Intent: " + intent);
+    Timber.tag(TAG).i("Intent: " + intent);
     TraktTaskService.acquireLock(context);
-    context.startService(new Intent(context, TraktTaskService.class));
+
+    final int retryDelay = intent.getIntExtra(TraktTaskService.RETRY_DELAY, 1);
+
+    Intent i = new Intent(context, TraktTaskService.class);
+    i.putExtra(TraktTaskService.RETRY_DELAY, retryDelay);
+    context.startService(i);
   }
 }
