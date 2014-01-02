@@ -34,7 +34,7 @@
         android:drawableTop="@drawable/ic_action_search_light"
         android:text="@string/movie_Watchlist_empty"/>
 
-    <include layout="@layout/list_default"/>
+    <include layout="@layout/list_movies"/>
   </FrameLayout>
 
   <include layout="@layout/fragment_list_progressbar"/>

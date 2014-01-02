@@ -14,25 +14,18 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/list"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-  <FrameLayout
-      android:id="@+id/listContainer"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent">
-
-    <TextView
-        android:id="@android:id/empty"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"/>
-
-    <include layout="@layout/list_season"/>
-  </FrameLayout>
-
-  <include layout="@layout/fragment_list_progressbar"/>
-</FrameLayout>
+    android:layout_height="match_parent"
+    android:divider="@null"
+    android:dividerHeight="4.0dp"
+    android:drawSelectorOnTop="true"
+    android:numColumns="@integer/movieColumns"
+    android:paddingTop="4dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:horizontalSpacing="8dp"
+    android:verticalSpacing="8dp"
+    android:clipToPadding="false"
+    android:scrollbarStyle="outsideOverlay"/>
