@@ -284,6 +284,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
 
       executeNext();
     } else {
+      executingPriorityTask = false;
       logout = false;
       clearUserData();
     }
