@@ -27,6 +27,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import net.simonvt.cathode.R;
+import timber.log.Timber;
 
 public class CircularProgressIndicator extends View {
 
@@ -167,17 +168,21 @@ public class CircularProgressIndicator extends View {
     if (width == -1) {
       width = (int) (c + textMargin + strokeWidth + 2 * minPadding);
       height = width;
+    } else {
+      width = Math.max(width, height);
+      height = width;
     }
 
     final int halfStrokeWidth = strokeWidth / 2;
     final int circleSize = (int) (c + textMargin + halfStrokeWidth);
     final int halfCircleSize = circleSize / 2;
-    final int halfSize = width / 2;
+    final int halfWidth = width / 2;
+    final int halfHeight = height / 2;
 
-    circleBounds.left = halfSize - halfCircleSize;
-    circleBounds.top = halfSize - halfCircleSize;
-    circleBounds.right = halfSize + halfCircleSize;
-    circleBounds.bottom = halfSize + halfCircleSize;
+    circleBounds.left = halfWidth - halfCircleSize;
+    circleBounds.top = halfHeight - halfCircleSize;
+    circleBounds.right = halfWidth + halfCircleSize;
+    circleBounds.bottom = halfHeight + halfCircleSize;
 
     setMeasuredDimension(width, height);
   }

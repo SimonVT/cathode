@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2013 Simon Vig Therkildsen
+  ~ Copyright (C) 2014 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-      <FrameLayout
+      <net.simonvt.cathode.widget.HalfScreenHeightFrameLayout
           android:id="@+id/fanartContainer"
           android:layout_width="match_parent"
           android:layout_height="wrap_content">
@@ -39,11 +39,16 @@
             android:id="@+id/fanart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             app:dominantMeasurement="width"
             app:aspectRatio="0.5627"/>
-      </FrameLayout>
 
-      <include layout="@layout/fragment_episode_top"/>
+        <include
+            layout="@layout/fragment_episode_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"/>
+      </net.simonvt.cathode.widget.HalfScreenHeightFrameLayout>
 
       <FrameLayout
           android:layout_width="match_parent"

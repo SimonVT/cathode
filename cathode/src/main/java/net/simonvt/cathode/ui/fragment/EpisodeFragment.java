@@ -31,7 +31,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -47,6 +46,7 @@ import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.FragmentContract;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.ObservableScrollView;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
@@ -73,13 +73,11 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   @Inject Bus bus;
 
   @InjectView(R.id.title) TextView title;
-  @InjectView(R.id.screen) RemoteImageView screen;
+  @InjectView(R.id.fanart) RemoteImageView fanart;
   @InjectView(R.id.overview) TextView overview;
   @InjectView(R.id.firstAired) TextView firstAired;
 
-  @InjectView(R.id.ratingContainer) View ratingContainer;
-  @InjectView(R.id.rating) RatingBar rating;
-  @InjectView(R.id.allRatings) TextView allRatings;
+  @InjectView(R.id.rating) CircularProgressIndicator rating;
 
   @InjectView(R.id.isWatched) View watchedView;
   @InjectView(R.id.inCollection) View inCollectionView;
@@ -178,12 +176,12 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
             if (!isTablet
                 && getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_LANDSCAPE) {
-              content.setScrollY(screen.getHeight() / 2);
+              content.setScrollY(fanart.getHeight() / 2);
             }
           }
         });
 
-    ratingContainer.setOnClickListener(new View.OnClickListener() {
+    rating.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         RatingDialog.newInstance(RatingDialog.Type.EPISODE, episodeId, currentRating)
             .show(getFragmentManager(), DIALOG_RATING);
@@ -194,7 +192,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       content.setListener(new ObservableScrollView.ScrollListener() {
         @Override public void onScrollChanged(int l, int t) {
           final int offset = (int) (t / 2.0f);
-          screen.setTranslationY(offset);
+          fanart.setTranslationY(offset);
         }
       });
     }
@@ -403,7 +401,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
       title.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE)));
       overview.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.OVERVIEW)));
-      screen.setImage(cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.SCREEN)));
+      fanart.setImage(cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.SCREEN)));
       firstAired.setText(DateUtils.millisToString(getActivity(),
           cursor.getLong(cursor.getColumnIndex(CathodeContract.Episodes.FIRST_AIRED)), true));
       season = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.SEASON));
@@ -420,8 +418,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       currentRating = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.RATING));
       final int ratingAll =
           cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.RATING_PERCENTAGE));
-      rating.setRating(currentRating);
-      allRatings.setText(ratingAll + "%");
+      rating.setValue(ratingAll);
 
       setContentVisible(true);
       bus.post(new OnTitleChangedEvent());
