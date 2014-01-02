@@ -56,21 +56,23 @@ public class SyncEpisodeTask extends TraktTask {
       final long showId = ShowWrapper.getShowId(resolver, tvdbId);
       final long seasonId = ShowWrapper.getSeasonId(resolver, showId, season);
 
-      EpisodeWrapper.updateOrInsertEpisode(service.getContentResolver(), episode, showId,
-          seasonId);
+      EpisodeWrapper.updateOrInsertEpisode(service.getContentResolver(), episode, showId, seasonId);
 
       postOnSuccess();
     } catch (RetrofitError e) {
-      final int statusCode = e.getResponse().getStatus();
-      if (statusCode == 400) {
-        Timber.tag(TAG).e(e, "URL: %s", e.getUrl());
+      retrofit.client.Response r = e.getResponse();
+      if (r != null) {
+        final int statusCode = r.getStatus();
+        if (statusCode == 400) {
+          Timber.tag(TAG).e(e, "URL: %s", e.getUrl());
 
-        ResponseParser parser = new ResponseParser();
-        CathodeApp.inject(service, parser);
-        Response response = parser.tryParse(e);
-        if (response != null && "episode not found".equals(response.getError())) {
-          postOnSuccess();
-          return;
+          ResponseParser parser = new ResponseParser();
+          CathodeApp.inject(service, parser);
+          Response response = parser.tryParse(e);
+          if (response != null && "episode not found".equals(response.getError())) {
+            postOnSuccess();
+            return;
+          }
         }
       }
       postOnFailure();
