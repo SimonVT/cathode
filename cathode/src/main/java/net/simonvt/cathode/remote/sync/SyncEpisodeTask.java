@@ -73,8 +73,7 @@ public class SyncEpisodeTask extends TraktTask {
           return;
         }
       }
+      postOnFailure();
     }
-
-    postOnFailure();
   }
 }
