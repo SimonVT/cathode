@@ -18,7 +18,6 @@ package net.simonvt.cathode.ui.fragment;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -27,10 +26,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import butterknife.InjectView;
-import butterknife.Optional;
-import com.squareup.otto.Bus;
-import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
@@ -40,7 +35,6 @@ import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.SeasonAdapter;
 import net.simonvt.cathode.widget.AdapterViewAnimator;
 import net.simonvt.cathode.widget.DefaultAdapterAnimator;
-import net.simonvt.cathode.widget.RemoteImageView;
 
 public class SeasonFragment extends AbsAdapterFragment {
 
@@ -55,9 +49,6 @@ public class SeasonFragment extends AbsAdapterFragment {
       "net.simonvt.cathode.ui.fragment.SeasonFragment.seasonNumber";
   private static final String ARG_TYPE = "net.simonvt.cathode.ui.fragment.SeasonFragment.type";
 
-  private static final String STATE_SHOW_BANNER =
-      "net.simonvt.cathode.ui.fragment.SeasonFragment.showBanner";
-
   private long showId;
 
   private long seasonId;
@@ -66,19 +57,11 @@ public class SeasonFragment extends AbsAdapterFragment {
 
   private String title;
 
-  private String bannerUrl;
-
   private int seasonNumber = -1;
 
   private SeasonAdapter episodeAdapter;
 
   private ShowsNavigationListener navigationCallbacks;
-
-  @Inject Bus bus;
-
-  private Handler handler = new Handler();
-
-  @InjectView(R.id.banner) @Optional RemoteImageView showBanner;
 
   public static Bundle getArgs(long showId, long seasonId, String showTitle, int seasonNumber,
       LibraryType type) {
@@ -111,10 +94,6 @@ public class SeasonFragment extends AbsAdapterFragment {
     seasonNumber = args.getInt(ARG_SEASON_NUMBER);
     type = (LibraryType) args.getSerializable(ARG_TYPE);
 
-    if (inState != null) {
-      bannerUrl = inState.getString(STATE_SHOW_BANNER);
-    }
-
     episodeAdapter = new SeasonAdapter(getActivity(), type);
     setAdapter(episodeAdapter);
 
@@ -123,16 +102,12 @@ public class SeasonFragment extends AbsAdapterFragment {
     if (title == null) {
       CursorLoader loader =
           new CursorLoader(getActivity(), CathodeContract.Shows.buildFromId(showId), new String[] {
-              CathodeContract.Shows.TITLE, CathodeContract.Shows.BANNER,
+              CathodeContract.Shows.TITLE,
           }, null, null, null);
       loader.registerListener(0, new Loader.OnLoadCompleteListener<Cursor>() {
         @Override public void onLoadComplete(Loader<Cursor> cursorLoader, Cursor cursor) {
           cursor.moveToFirst();
           title = cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.TITLE));
-          bannerUrl = cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.BANNER));
-          cursor.close();
-
-          if (showBanner != null) showBanner.setImage(bannerUrl);
 
           cursorLoader.stopLoading();
         }
@@ -169,18 +144,8 @@ public class SeasonFragment extends AbsAdapterFragment {
     }
   }
 
-  @Override public void onSaveInstanceState(Bundle outState) {
-    super.onSaveInstanceState(outState);
-    outState.putString(STATE_SHOW_BANNER, bannerUrl);
-  }
-
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_season, container, false);
-  }
-
-  @Override public void onViewCreated(View view, Bundle inState) {
-    super.onViewCreated(view, inState);
-    if (showBanner != null) showBanner.setImage(bannerUrl);
   }
 
   @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
