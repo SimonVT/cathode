@@ -16,15 +16,23 @@
 package net.simonvt.cathode.widget;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.widget.TextView;
+import java.lang.ref.WeakReference;
 import net.simonvt.cathode.util.DateUtils;
 
 public class TimeStamp extends TextView {
 
+  private static final int MSG_UPDATE = 1;
+
   private long timeInMillis;
 
   private boolean extended;
+
+  private TimeStampHandler handler = new TimeStampHandler();
 
   public TimeStamp(Context context) {
     super(context);
@@ -41,31 +49,54 @@ public class TimeStamp extends TextView {
   public void setTimeInMillis(long timeInMillis) {
     this.timeInMillis = timeInMillis;
 
-    removeCallbacks(updater);
-    updater.run();
+    updateTimestamp();
   }
 
   public void setExtended(boolean extended) {
     this.extended = extended;
   }
 
-  private final Runnable updater = new Runnable() {
-    @Override public void run() {
-      final String timeStamp = DateUtils.millisToString(getContext(), timeInMillis, extended);
-      setText(timeStamp);
+  private void updateTimestamp() {
+    final String timeStamp = DateUtils.millisToString(getContext(), timeInMillis, extended);
+    setText(timeStamp);
 
-      final long nextUpdate = DateUtils.timeUntilUpdate(timeInMillis);
-      postDelayed(this, nextUpdate);
-    }
-  };
+    long nextUpdate = DateUtils.timeUntilUpdate(timeInMillis);
+    nextUpdate = Math.min(nextUpdate, 1 * DateUtils.HOUR_IN_MILLIS);
+    handler.removeMessages(MSG_UPDATE);
+
+    Message m = handler.obtainMessage(MSG_UPDATE);
+    m.what = MSG_UPDATE;
+    m.obj = new WeakReference<TimeStamp>(this);
+    handler.sendMessageDelayed(m, nextUpdate);
+  }
 
   @Override protected void onAttachedToWindow() {
     super.onAttachedToWindow();
-    if (timeInMillis > 0) updater.run();
+    if (timeInMillis > 0) {
+      updateTimestamp();
+    }
   }
 
   @Override protected void onDetachedFromWindow() {
+    handler.removeMessages(MSG_UPDATE);
     super.onDetachedFromWindow();
-    removeCallbacks(updater);
+  }
+
+  private static class TimeStampHandler extends Handler {
+    public TimeStampHandler() {
+      super(Looper.getMainLooper());
+    }
+
+    @Override public void handleMessage(Message msg) {
+      switch (msg.what) {
+        case MSG_UPDATE:
+          WeakReference<TimeStamp> ref = (WeakReference<TimeStamp>) msg.obj;
+          TimeStamp ts = ref.get();
+          if (ts != null) {
+            ts.updateTimestamp();
+          }
+          break;
+      }
+    }
   }
 }
