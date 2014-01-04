@@ -153,7 +153,9 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override protected void onDestroy() {
-    uiController.onDestroy(false);
+    if (uiController != null) {
+      uiController.onDestroy(false);
+    }
     super.onDestroy();
   }
 
