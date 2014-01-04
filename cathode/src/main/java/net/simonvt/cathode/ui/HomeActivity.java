@@ -84,18 +84,14 @@ public class HomeActivity extends BaseActivity
 
     if (!CathodeApp.accountExists(this) || isLoginAction(getIntent())) {
       Bundle loginState = inState != null ? inState.getBundle(STATE_LOGIN_CONTROLLER) : null;
-      loginController = LoginController.newInstance(this);
-      loginController.onCreate(loginState);
+      loginController = LoginController.newInstance(this, loginState);
 
       activeController = loginController;
     } else {
       Bundle uiState = inState != null ? inState.getBundle(STATE_UICONTROLLER) : null;
-      uiController = PhoneController.newInstance(this);
-      uiController.onCreate(uiState);
+      uiController = PhoneController.newInstance(this, uiState);
       activeController = uiController;
     }
-
-    activeController.onAttach();
 
     syncHandler = new Handler();
 
@@ -107,12 +103,10 @@ public class HomeActivity extends BaseActivity
   @Override protected void onNewIntent(Intent intent) {
     if (isLoginAction(intent)) {
       if (uiController != null) {
-        uiController.onDestroy(true);
+        uiController.destroy(true);
         uiController = null;
 
         loginController = LoginController.newInstance(this);
-        loginController.onCreate(null);
-        loginController.onAttach();
         activeController = loginController;
       }
     }
@@ -154,7 +148,7 @@ public class HomeActivity extends BaseActivity
 
   @Override protected void onDestroy() {
     if (uiController != null) {
-      uiController.onDestroy(false);
+      uiController.destroy(false);
     }
     super.onDestroy();
   }
@@ -195,23 +189,19 @@ public class HomeActivity extends BaseActivity
   }
 
   @Subscribe public void onLogin(LoginEvent event) {
-    loginController.onDestroy(true);
+    loginController.destroy(true);
     loginController = null;
 
     uiController = PhoneController.newInstance(this);
-    uiController.onCreate(null);
-    uiController.onAttach();
     activeController = uiController;
   }
 
   @Subscribe public void onLogout(LogoutEvent event) {
     if (uiController != null) {
-      uiController.onDestroy(true);
+      uiController.destroy(true);
       uiController = null;
 
       loginController = LoginController.newInstance(this);
-      loginController.onCreate(null);
-      loginController.onAttach();
       activeController = loginController;
 
       syncHandler.removeCallbacks(syncRunnable);

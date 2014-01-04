@@ -92,19 +92,19 @@ public class PhoneController extends UiController {
   private boolean isTablet;
 
   public static PhoneController newInstance(HomeActivity activity) {
-    return new PhoneController(activity);
+    return newInstance(activity, null);
   }
 
-  PhoneController(HomeActivity activity) {
-    super(activity);
+  public static PhoneController newInstance(HomeActivity activity, Bundle inState) {
+    return new PhoneController(activity, inState);
+  }
+
+  PhoneController(final HomeActivity activity, Bundle inState) {
+    super(activity, inState);
     CathodeApp.inject(activity, this);
-  }
-
-  @Override public void onCreate(Bundle inState) {
-    super.onCreate(inState);
-    isTablet = activity.getResources().getBoolean(R.bool.isTablet);
-
     ButterKnife.inject(this, activity);
+
+    isTablet = activity.getResources().getBoolean(R.bool.isTablet);
 
     progressTop.setVisibility(View.GONE);
 
@@ -127,8 +127,6 @@ public class PhoneController extends UiController {
     stack = FragmentStack.forContainer(activity, R.id.content, new FragmentStack.Callback() {
       @Override public void onStackChanged(int stackSize, Fragment topFragment) {
         Timber.d("onStackChanged: %s", topFragment.getTag());
-        FragmentContract fragment = (FragmentContract) topFragment;
-
         menuDrawer.setDrawerIndicatorEnabled(stackSize <= 1);
         if (!menuDrawer.isMenuVisible()) {
           updateTitle();
@@ -197,6 +195,19 @@ public class PhoneController extends UiController {
         searchView.setQuery(query);
       }
     }
+
+    menuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_BEZEL);
+    menuDrawer.setDrawerIndicatorEnabled(stack.size() == 1);
+
+    activity.getActionBar().setHomeButtonEnabled(true);
+    activity.getActionBar().setDisplayHomeAsUpEnabled(true);
+
+    if (stack.size() == 0) {
+      stack.replace(UpcomingShowsFragment.class, FRAGMENT_SHOWS_UPCOMING);
+      stack.commit();
+    }
+
+    bus.register(this);
   }
 
   @Subscribe public void onTitleChanged(OnTitleChangedEvent event) {
@@ -252,32 +263,12 @@ public class PhoneController extends UiController {
     return outState;
   }
 
-  @Override public void onAttach() {
-    super.onAttach();
-    menuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_BEZEL);
-    menuDrawer.setDrawerIndicatorEnabled(stack.size() == 1);
-
-    activity.getActionBar().setHomeButtonEnabled(true);
-    activity.getActionBar().setDisplayHomeAsUpEnabled(true);
-
-    if (stack.size() == 0) {
-      stack.replace(UpcomingShowsFragment.class, FRAGMENT_SHOWS_UPCOMING);
-      stack.commit();
-    }
-
-    bus.register(this);
-  }
-
-  @Override public void onDetach() {
-    super.onDetach();
-  }
-
-  @Override public void onDestroy(boolean completely) {
+  @Override public void destroy(boolean completely) {
     if (completely) {
       stack.destroy();
     }
     bus.unregister(this);
-    super.onDestroy(completely);
+    super.destroy(completely);
   }
 
   @Subscribe public void onSyncEvent(SyncEvent event) {

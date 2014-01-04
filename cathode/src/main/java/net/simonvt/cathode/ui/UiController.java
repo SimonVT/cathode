@@ -37,7 +37,6 @@ public class UiController implements ShowsNavigationListener, MoviesNavigationLi
   static final String FRAGMENT_SHOWS_RECOMMENDATIONS =
       "net.simonvt.cathode.ui.HomeActivity.showRecommendationsFragment";
   static final String FRAGMENT_SHOW = "net.simonvt.cathode.ui.HomeActivity.showFragment";
-  static final String FRAGMENT_SEASONS = "net.simonvt.cathode.ui.HomeActivity.seasonsFragment";
   static final String FRAGMENT_SEASON = "net.simonvt.cathode.ui.HomeActivity.seasonFragment";
   static final String FRAGMENT_EPISODE = "net.simonvt.cathode.ui.HomeActivity.episodeFragment";
   static final String FRAGMENT_SHOWS_WATCHLIST =
@@ -62,28 +61,12 @@ public class UiController implements ShowsNavigationListener, MoviesNavigationLi
 
   protected HomeActivity activity;
 
-  protected boolean attached;
-
-  UiController(HomeActivity activity) {
+  public UiController(HomeActivity activity, Bundle inState) {
     this.activity = activity;
   }
 
-  public void onCreate(Bundle inState) {
-    Timber.d("[onCreate]");
-  }
-
-  public void onAttach() {
-    Timber.d("[onAttach]");
-    attached = true;
-  }
-
-  public void onDetach() {
-    Timber.d("[onDetach]");
-    attached = false;
-  }
-
-  public void onDestroy(boolean completely) {
-    Timber.d("[onDestroy]");
+  public void destroy(boolean completely) {
+    Timber.d("[destroy]");
   }
 
   public Bundle onSaveInstanceState() {

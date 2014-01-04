@@ -25,34 +25,29 @@ import net.simonvt.menudrawer.MenuDrawer;
 
 public class LoginController extends UiController {
 
-  private static final String TAG = "LoginController";
-
   private LoginFragment loginFragment;
 
   @InjectView(R.id.drawer) MenuDrawer menuDrawer;
 
   public static LoginController newInstance(HomeActivity activity) {
-    return new LoginController(activity);
+    return newInstance(activity, null);
   }
 
-  public LoginController(HomeActivity activity) {
-    super(activity);
+  public static LoginController newInstance(HomeActivity activity, Bundle inState) {
+    return new LoginController(activity, inState);
+  }
+
+  public LoginController(HomeActivity activity, Bundle inState) {
+    super(activity, inState);
     loginFragment =
         (LoginFragment) activity.getSupportFragmentManager().findFragmentByTag(FRAGMENT_LOGIN);
 
     if (loginFragment == null) {
       loginFragment = new LoginFragment();
     }
-  }
-
-  @Override public void onCreate(Bundle inState) {
-    super.onCreate(inState);
 
     ButterKnife.inject(this, activity);
-  }
 
-  @Override public void onAttach() {
-    super.onAttach();
     menuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_NONE);
 
     activity.getActionBar().setDisplayHomeAsUpEnabled(false);
@@ -70,15 +65,13 @@ public class LoginController extends UiController {
     transaction.commit();
   }
 
-  @Override public void onDestroy(boolean completely) {
-    super.onDestroy(completely);
-    FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
-    transaction.setCustomAnimations(R.anim.fade_out_front, R.anim.fade_in_back);
-
+  @Override public void destroy(boolean completely) {
     if (loginFragment.isAdded()) {
+      FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
+      transaction.setCustomAnimations(R.anim.fade_out_front, R.anim.fade_in_back);
       transaction.remove(loginFragment);
+      transaction.commit();
     }
-
-    transaction.commit();
+    super.destroy(completely);
   }
 }
