@@ -19,6 +19,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewPropertyAnimator;
+import android.widget.ProgressBar;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import javax.inject.Inject;
@@ -28,6 +33,7 @@ import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.LoginEvent;
 import net.simonvt.cathode.event.LogoutEvent;
 import net.simonvt.cathode.event.MessageEvent;
+import net.simonvt.cathode.event.SyncEvent;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncUserActivityTask;
 import net.simonvt.cathode.ui.dialog.LogoutDialog;
@@ -58,6 +64,9 @@ public class HomeActivity extends BaseActivity
 
   protected MessageBar messageBar;
 
+  @InjectView(R.id.progress_top) ProgressBar progressTop;
+  private ViewPropertyAnimator progressAnimator;
+
   private LoginController loginController;
 
   private UiController uiController;
@@ -79,6 +88,9 @@ public class HomeActivity extends BaseActivity
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
     setContentView(R.layout.ui_content_view);
+
+    ButterKnife.inject(this);
+    bus.register(this);
 
     messageBar = new MessageBar(this);
 
@@ -150,6 +162,7 @@ public class HomeActivity extends BaseActivity
     if (uiController != null) {
       uiController.destroy(false);
     }
+    bus.unregister(this);
     super.onDestroy();
   }
 
@@ -175,6 +188,25 @@ public class HomeActivity extends BaseActivity
 
   @Override public void onMenuItemClicked(int id) {
     activeController.onMenuItemClicked(id);
+  }
+
+  @Subscribe public void onSyncEvent(SyncEvent event) {
+    final int progressVisibility = progressTop.getVisibility();
+    progressAnimator = progressTop.animate();
+    if (event.isSyncing()) {
+      if (progressVisibility == View.GONE) {
+        progressTop.setAlpha(0.0f);
+        progressTop.setVisibility(View.VISIBLE);
+      }
+
+      progressAnimator.alpha(1.0f);
+    } else {
+      progressAnimator.alpha(0.0f).withEndAction(new Runnable() {
+        @Override public void run() {
+          progressTop.setVisibility(View.GONE);
+        }
+      });
+    }
   }
 
   @Subscribe public void onShowMessage(MessageEvent event) {

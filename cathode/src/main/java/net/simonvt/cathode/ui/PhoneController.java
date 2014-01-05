@@ -81,9 +81,6 @@ public class PhoneController extends UiController {
 
   @InjectView(R.id.drawer) MenuDrawer menuDrawer;
 
-  @InjectView(R.id.progress_top) ProgressBar progressTop;
-  private ViewPropertyAnimator progressAnimator;
-
   private NavigationFragment navigation;
 
   private int searchType;
@@ -105,8 +102,6 @@ public class PhoneController extends UiController {
     ButterKnife.inject(this, activity);
 
     isTablet = activity.getResources().getBoolean(R.bool.isTablet);
-
-    progressTop.setVisibility(View.GONE);
 
     menuDrawer.setupUpIndicator(activity);
     menuDrawer.setSlideDrawable(R.drawable.ic_drawer);
@@ -269,25 +264,6 @@ public class PhoneController extends UiController {
     }
     bus.unregister(this);
     super.destroy(completely);
-  }
-
-  @Subscribe public void onSyncEvent(SyncEvent event) {
-    final int progressVisibility = progressTop.getVisibility();
-    progressAnimator = progressTop.animate();
-    if (event.isSyncing()) {
-      if (progressVisibility == View.GONE) {
-        progressTop.setAlpha(0.0f);
-        progressTop.setVisibility(View.VISIBLE);
-      }
-
-      progressAnimator.alpha(1.0f);
-    } else {
-      progressAnimator.alpha(0.0f).withEndAction(new Runnable() {
-        @Override public void run() {
-          progressTop.setVisibility(View.GONE);
-        }
-      });
-    }
   }
 
   @Override public void onHomeClicked() {

@@ -27,6 +27,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -73,7 +74,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
 
   @Inject Bus bus;
 
-  private boolean running;
+  private volatile boolean running;
 
   private boolean executingPriorityTask;
 
@@ -81,7 +82,11 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
 
   private boolean displayNotification;
 
-  private boolean logout;
+  private volatile boolean logout;
+
+  private HandlerThread thread;
+
+  private Handler handler;
 
   private static PowerManager.WakeLock getLock(Context context) {
     if (sWakeLock == null) {
@@ -112,11 +117,11 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     CathodeApp.inject(this);
     bus.register(this);
 
-    Intent intent = new Intent(this, TaskServiceReceiver.class);
-    PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, 0);
+    thread = new HandlerThread("TaskQueue");
+    thread.start();
+    handler = new Handler(thread.getLooper());
 
-    AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-    am.cancel(pi);
+    cancelAlarm();
 
     displayNotification =
         PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Settings.INITIAL_SYNC, true);
@@ -149,81 +154,92 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     if (intent != null) action = intent.getAction();
     if (ACTION_LOGOUT.equals(action)) {
       Timber.tag(TAG).i("Logging out");
-      TraktTask priorityTask = priorityQueue.peek();
-      TraktTask task = queue.peek();
-      if (priorityTask != null) priorityTask.cancel();
-      if (task != null) task.cancel();
-
-      priorityQueue.clear();
-      queue.clear();
-
-      if (running) {
-        logout = true;
-      } else {
-        clearUserData();
-      }
+      logout();
     } else if (!running) {
       // Check authentication before executing tasks
-      running = true;
-      new Thread(new Runnable() {
-        @Override public void run() {
-          try {
-            Timber.d("Checking authentication");
-            Response response = accountService.test();
-
-            if ("failed authentication".equals(response.getError())) {
-              MAIN_HANDLER.post(new Runnable() {
-                @Override public void run() {
-                  Timber.i("Authentication failed");
-                  bus.post(new AuthFailedEvent());
-                  running = false;
-                  stopSelf();
-                }
-              });
-            } else {
-              Timber.d("[Auth Check] " + response.getMessage());
-              MAIN_HANDLER.post(new Runnable() {
-                @Override public void run() {
-                  running = false;
-                  executeNext();
-                }
-              });
-            }
-          } catch (RetrofitError error) {
-            MAIN_HANDLER.post(new Runnable() {
-              @Override public void run() {
-                onFailure();
-              }
-            });
-          }
-        }
-      }).start();
+      checkAuth();
     }
 
     return START_STICKY;
   }
 
   @Override public void onDestroy() {
+    Timber.d("onDestroy");
+    thread.quit();
     bus.unregister(this);
     bus.post(new SyncEvent(false));
     releaseLock(this);
     super.onDestroy();
   }
 
-  private void clearUserData() {
+  private void checkAuth() {
     running = true;
     new Thread(new Runnable() {
       @Override public void run() {
+        try {
+          Timber.d("Checking authentication");
+          Response response = accountService.test();
+
+          if ("failed authentication".equals(response.getError())) {
+            MAIN_HANDLER.post(new Runnable() {
+              @Override public void run() {
+                Timber.i("Authentication failed");
+                bus.post(new AuthFailedEvent());
+                running = false;
+                stopSelf();
+              }
+            });
+          } else {
+            Timber.d("[Auth Check] " + response.getMessage());
+            MAIN_HANDLER.post(new Runnable() {
+              @Override public void run() {
+                running = false;
+                executeNext();
+              }
+            });
+          }
+        } catch (RetrofitError error) {
+          MAIN_HANDLER.post(new Runnable() {
+            @Override public void run() {
+              onFailure();
+            }
+          });
+        }
+      }
+    }).start();
+  }
+
+  private void logout() {
+    logout = true;
+
+    TraktTask priorityTask = priorityQueue.peek();
+    TraktTask task = queue.peek();
+    if (priorityTask != null) priorityTask.cancel();
+    if (task != null) task.cancel();
+
+    handler.post(new Runnable() {
+      @Override public void run() {
+        priorityQueue.clear();
+        queue.clear();
         CathodeDatabase.getInstance(TraktTaskService.this).clearUserData();
 
         MAIN_HANDLER.post(new Runnable() {
           @Override public void run() {
+            logout = false;
             running = false;
-            executeNext();
+            executingPriorityTask = false;
+            TraktTask task = getNextTask();
+            if (task != null) {
+              running = true;
+              handler.post(new TaskRunnable(task, TraktTaskService.this));
+            } else {
+              Timber.d("Stopping from logout");
+              stopSelf();
+            }
           }
         });
       }
-    }).start();
+    });
   }
 
   @Produce public SyncEvent produceSyncEvent() {
@@ -233,46 +249,64 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
   private void executeNext() {
     if (running) return; // Only one task at a time.
 
-    TraktTask priorityTask = priorityQueue.peek();
+    running = true;
 
-    if (priorityTask != null) {
-      running = true;
-      executingPriorityTask = true;
-      priorityTask.execute(this);
+    TraktTask task = getNextTask();
+
+    if (task != null) {
+      handler.post(new TaskRunnable(task, this));
     } else {
-      TraktTask task = queue.peek();
-      if (task != null) {
-        Timber.d("Executing next");
-        running = true;
-        task.execute(this);
-      } else {
-        Timber.d("Stopping");
+      if (displayNotification) {
+        PreferenceManager.getDefaultSharedPreferences(this)
+            .edit()
+            .putBoolean(Settings.INITIAL_SYNC, false)
+            .apply();
 
-        if (displayNotification) {
-          PreferenceManager.getDefaultSharedPreferences(this)
-              .edit()
-              .putBoolean(Settings.INITIAL_SYNC, false)
-              .apply();
-
-          Bundle extras = new Bundle();
-          extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-          extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-          AccountManager am = AccountManager.get(this);
-          Account[] accounts = am.getAccountsByType(getString(R.string.accountType));
-          for (Account account : accounts) {
-            ContentResolver.requestSync(account, CalendarContract.AUTHORITY, extras);
-          }
+        Bundle extras = new Bundle();
+        extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        AccountManager am = AccountManager.get(this);
+        Account[] accounts = am.getAccountsByType(getString(R.string.accountType));
+        for (Account account : accounts) {
+          ContentResolver.requestSync(account, CalendarContract.AUTHORITY, extras);
         }
-
-        stopSelf(); // No more tasks are present. Stop.
       }
+
+      stopSelf();
+    }
+  }
+
+  private TraktTask getNextTask() {
+    TraktTask task = priorityQueue.peek();
+    if (task != null) {
+      executingPriorityTask = true;
+    } else {
+      task = queue.peek();
+    }
+
+    return task;
+  }
+
+  private static class TaskRunnable implements Runnable {
+
+    private TraktTask task;
+
+    private TraktTaskService service;
+
+    private TaskRunnable(TraktTask task, TraktTaskService service) {
+      this.task = task;
+      this.service = service;
+    }
+
+    @Override public void run() {
+      task.execute(service);
     }
   }
 
   @Override public void onSuccess() {
-    running = false;
-
     if (!logout) {
+      running = false;
+
       if (executingPriorityTask) {
         executingPriorityTask = false;
         priorityQueue.remove();
@@ -281,23 +315,33 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
       }
 
       executeNext();
-    } else {
-      executingPriorityTask = false;
-      logout = false;
-      clearUserData();
     }
   }
 
   @Override public void onFailure() {
-    Timber.d("Task failed, scheduling restart");
-    running = false;
+    if (!logout) {
+      Timber.d("Task failed, scheduling restart");
+      running = false;
 
-    if (logout) {
-      logout = false;
-      clearUserData();
-      return;
+      scheduleAlarm();
+
+      if (displayNotification) {
+        showSyncFailNotification();
+      }
+
+      stopSelf();
     }
+  }
 
+  private void cancelAlarm() {
+    Intent intent = new Intent(this, TaskServiceReceiver.class);
+    PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+    AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+    am.cancel(pi);
+  }
+
+  private void scheduleAlarm() {
     Intent intent = new Intent(this, TaskServiceReceiver.class);
     final int retryDelay = Math.max(1, this.retryDelay);
     final int nextDelay = Math.min(retryDelay * 2, MAX_RETRY_DELAY);
@@ -309,24 +353,21 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
     final long runAt = SystemClock.elapsedRealtime() + retryDelay * DateUtils.MINUTE_IN_MILLIS;
     am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, runAt, pi);
+  }
 
-    // A logout might have caused the failure. Just in case, don't show the notification.
-    if (displayNotification) {
-      Intent clickIntent = new Intent(this, HomeActivity.class);
-      PendingIntent clickPi = PendingIntent.getActivity(this, 0, clickIntent, 0);
+  private void showSyncFailNotification() {
+    Intent clickIntent = new Intent(this, HomeActivity.class);
+    PendingIntent clickPi = PendingIntent.getActivity(this, 0, clickIntent, 0);
 
-      Notification.Builder builder = new Notification.Builder(this) //
-          .setSmallIcon(R.drawable.ic_notification)
-          .setTicker(getString(R.string.lost_connection))
-          .setContentTitle(getString(R.string.retry_in, retryDelay))
-          .setContentIntent(clickPi)
-          .setAutoCancel(true);
+    Notification.Builder builder = new Notification.Builder(this) //
+        .setSmallIcon(R.drawable.ic_notification)
+        .setTicker(getString(R.string.lost_connection))
+        .setContentTitle(getString(R.string.retry_in, retryDelay))
+        .setContentIntent(clickPi)
+        .setAutoCancel(true);
 
-      NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-      nm.notify(NOTIFICATION_ID, builder.build());
-    }
-
-    stopSelf();
+    NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+    nm.notify(NOTIFICATION_ID, builder.build());
   }
 
   @Override public IBinder onBind(Intent intent) {

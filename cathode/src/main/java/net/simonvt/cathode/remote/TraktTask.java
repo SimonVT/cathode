@@ -29,30 +29,26 @@ public abstract class TraktTask implements Task<TraktTaskService> {
 
   private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
-  @Inject protected transient TraktTaskQueue queue;
+  @Inject transient TraktTaskQueue queue;
 
-  @Inject @PriorityQueue protected transient TraktTaskQueue priorityQueue;
+  @Inject @PriorityQueue transient TraktTaskQueue priorityQueue;
 
   protected transient TraktTaskService service;
 
-  private transient boolean canceled;
+  private transient volatile boolean canceled;
 
   @Override public final void execute(final TraktTaskService service) {
     CathodeApp.inject(service, this);
     this.service = service;
 
-    new Thread(new Runnable() {
-      @Override public void run() {
-        try {
-          Timber.tag(TraktTask.this.getClass().getSimpleName()).d("doTask");
-          doTask();
-        } catch (RetrofitError e) {
-          e.printStackTrace();
-          logError(e);
-          postOnFailure();
-        }
-      }
-    }).start();
+    try {
+      Timber.tag(TraktTask.this.getClass().getSimpleName()).d("doTask");
+      doTask();
+    } catch (RetrofitError e) {
+      e.printStackTrace();
+      logError(e);
+      postOnFailure();
+    }
   }
 
   protected abstract void doTask();
@@ -96,19 +92,27 @@ public abstract class TraktTask implements Task<TraktTaskService> {
   }
 
   protected final void postOnSuccess() {
-    MAIN_HANDLER.post(new Runnable() {
-      @Override public void run() {
-        service.onSuccess();
+    synchronized (this) {
+      if (!canceled) {
+        MAIN_HANDLER.post(new Runnable() {
+          @Override public void run() {
+            service.onSuccess();
+          }
+        });
       }
-    });
+    }
   }
 
   protected void postOnFailure() {
-    MAIN_HANDLER.post(new Runnable() {
-      @Override public void run() {
-        service.onFailure();
+    synchronized (this) {
+      if (!canceled) {
+        MAIN_HANDLER.post(new Runnable() {
+          @Override public void run() {
+            service.onFailure();
+          }
+        });
       }
-    });
+    }
   }
 
   public interface TaskCallback {

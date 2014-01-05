@@ -15,19 +15,17 @@
  */
 package net.simonvt.cathode.remote;
 
-import javax.inject.Inject;
 import net.simonvt.cathode.remote.sync.SyncTask;
 
 /**
- * Once in a while the json in the file backing the task queue is malformed. If this happens, return
+ * Once in a while the json in the file backing the task queue is malformed. If this happens,
+ * return
  * this task.
  */
 public class DeserializationFailedTask extends TraktTask {
 
-  @Inject transient TraktTaskQueue queue;
-
   @Override protected void doTask() {
-    queue.add(new SyncTask());
+    queueTask(new SyncTask());
     postOnSuccess();
   }
 }
