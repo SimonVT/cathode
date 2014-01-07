@@ -90,7 +90,6 @@ public class HomeActivity extends BaseActivity
     setContentView(R.layout.ui_content_view);
 
     ButterKnife.inject(this);
-    bus.register(this);
 
     messageBar = new MessageBar(this);
 
@@ -162,7 +161,6 @@ public class HomeActivity extends BaseActivity
     if (uiController != null) {
       uiController.destroy(false);
     }
-    bus.unregister(this);
     super.onDestroy();
   }
 
