@@ -1,6 +1,8 @@
 package net.simonvt.cathode.api.service;
 
+import net.simonvt.cathode.api.body.CheckinBody;
 import net.simonvt.cathode.api.body.MoviesBody;
+import net.simonvt.cathode.api.entity.CheckinResponse;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.entity.Response;
 import net.simonvt.cathode.api.enumeration.DetailLevel;
@@ -15,13 +17,8 @@ public interface MovieService {
 
   @GET("/movie/cancelwatching/{apikey}") Response cancelWatching();
 
-  //    movie/cancelcheckin
-  //            POSTDEV
-  //    movie/cancelwatching
-  //            POSTDEV
-  //    movie/checkin
-  //            POSTDEV
-  //    movie/comments
+  @POST("/movie/checkin/{apikey}") CheckinResponse checkin(@Body CheckinBody body);
+
   //            GET
   //    movie/scrobble
   //            POSTDEV

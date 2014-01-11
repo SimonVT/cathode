@@ -67,8 +67,8 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
 
   private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
-  @Inject TraktTaskQueue priorityQueue;
-  @Inject @PriorityQueue TraktTaskQueue queue;
+  @Inject TraktTaskQueue queue;
+  @Inject @PriorityQueue TraktTaskQueue priorityQueue;
 
   @Inject AccountService accountService;
 

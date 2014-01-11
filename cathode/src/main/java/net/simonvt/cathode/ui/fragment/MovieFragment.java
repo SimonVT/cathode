@@ -86,6 +86,8 @@ public class MovieFragment extends ProgressFragment
 
   private boolean inWatchlist;
 
+  private boolean watching;
+
   public static Bundle getArgs(long movieId, String movieTitle) {
     Bundle args = new Bundle();
     args.putLong(ARG_ID, movieId);
@@ -134,21 +136,27 @@ public class MovieFragment extends ProgressFragment
 
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     if (loaded) {
-      if (watched) {
-        menu.add(0, R.id.action_unwatched, 1, R.string.action_unwatched);
+      if (watching) {
+        menu.add(0, R.id.action_checkin_cancel, 1, R.string.action_checkin_cancel);
       } else {
-        menu.add(0, R.id.action_watched, 2, R.string.action_watched);
+        menu.add(0, R.id.action_checkin, 2, R.string.action_checkin);
+      }
+
+      if (watched) {
+        menu.add(0, R.id.action_unwatched, 3, R.string.action_unwatched);
+      } else {
+        menu.add(0, R.id.action_watched, 4, R.string.action_watched);
         if (inWatchlist) {
-          menu.add(0, R.id.action_watchlist_remove, 5, R.string.action_watchlist_remove);
+          menu.add(0, R.id.action_watchlist_remove, 7, R.string.action_watchlist_remove);
         } else {
-          menu.add(0, R.id.action_watchlist_add, 6, R.string.action_watchlist_add);
+          menu.add(0, R.id.action_watchlist_add, 8, R.string.action_watchlist_add);
         }
       }
 
       if (collected) {
-        menu.add(0, R.id.action_collection_remove, 3, R.string.action_collection_remove);
+        menu.add(0, R.id.action_collection_remove, 5, R.string.action_collection_remove);
       } else {
-        menu.add(0, R.id.action_collection_add, 4, R.string.action_collection_add);
+        menu.add(0, R.id.action_collection_add, 6, R.string.action_collection_add);
       }
     }
   }
@@ -161,6 +169,14 @@ public class MovieFragment extends ProgressFragment
 
       case R.id.action_unwatched:
         movieScheduler.setWatched(movieId, false);
+        return true;
+
+      case R.id.action_checkin:
+        movieScheduler.checkin(movieId);
+        return true;
+
+      case R.id.action_checkin_cancel:
+        movieScheduler.cancelCheckin();
         return true;
 
       case R.id.action_watchlist_add:
@@ -211,6 +227,7 @@ public class MovieFragment extends ProgressFragment
     watched = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.WATCHED)) == 1;
     collected = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.IN_COLLECTION)) == 1;
     inWatchlist = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.IN_WATCHLIST)) == 1;
+    watching = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.WATCHING)) == 1;
 
     isWatched.setVisibility(watched ? View.VISIBLE : View.GONE);
     collection.setVisibility(collected ? View.VISIBLE : View.GONE);

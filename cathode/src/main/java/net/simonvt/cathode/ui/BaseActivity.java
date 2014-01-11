@@ -59,6 +59,9 @@ public abstract class BaseActivity extends FragmentActivity {
   public static final int LOADER_SEARCH_MOVIES = 700;
   public static final int LOADER_EPISODE = 800;
 
+  public static final int LOADER_SHOW_WATCHING = 900;
+  public static final int LOADER_MOVIE_WATCHING = 901;
+
   @Inject Bus bus;
 
   private boolean menuVisible = true;

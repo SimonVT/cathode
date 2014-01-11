@@ -20,8 +20,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.List;
 import javax.inject.Singleton;
+import net.simonvt.cathode.api.entity.ActivityItem;
+import net.simonvt.cathode.api.entity.ActivityItemImpl;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.entity.Season;
+import net.simonvt.cathode.api.enumeration.ActivityAction;
+import net.simonvt.cathode.api.enumeration.ActivityType;
 import net.simonvt.cathode.api.enumeration.CommentType;
 import net.simonvt.cathode.api.enumeration.DayOfWeek;
 import net.simonvt.cathode.api.enumeration.Gender;
@@ -208,6 +212,20 @@ public class TraktModule {
       }
     });
 
+    builder.registerTypeAdapter(ActivityType.class, new JsonDeserializer<ActivityType>() {
+      @Override public ActivityType deserialize(JsonElement json, Type type,
+          JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+        return ActivityType.fromValue(json.getAsString());
+      }
+    });
+
+    builder.registerTypeAdapter(ActivityAction.class, new JsonDeserializer<ActivityAction>() {
+      @Override public ActivityAction deserialize(JsonElement json, Type type,
+          JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+        return ActivityAction.fromValue(json.getAsString());
+      }
+    });
+
     builder.registerTypeAdapter(Season.Episodes.class, new JsonDeserializer<Season.Episodes>() {
       @Override
       public Season.Episodes deserialize(JsonElement json, Type typeOfT,
@@ -244,6 +262,21 @@ public class TraktModule {
           throw new JsonParseException(e);
         }
         return episodes;
+      }
+    });
+
+    builder.registerTypeAdapter(ActivityItem.class, new JsonDeserializer<ActivityItem>() {
+      @Override public ActivityItem deserialize(JsonElement json, Type type,
+          JsonDeserializationContext context) throws JsonParseException {
+        // https://groups.google.com/d/topic/traktapi/GQlT9HfAEjw/discussion
+        if (json.isJsonArray()) {
+          if (json.getAsJsonArray().size() != 0) {
+            throw new JsonParseException("\"watched\" field returned a non-empty array.");
+          }
+          return null;
+        }
+
+        return context.deserialize(json, ActivityItemImpl.class);
       }
     });
 

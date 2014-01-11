@@ -41,7 +41,7 @@ import net.simonvt.cathode.util.DateUtils;
 public class CathodeDatabase extends SQLiteOpenHelper {
 
   private static final String DATABASE_NAME = "cathode.db";
-  private static final int DATABASE_VERSION = 2;
+  private static final int DATABASE_VERSION = 3;
 
   public interface Tables {
 
@@ -61,6 +61,13 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + " AND episodes.episodeFirstAired>"
         + DateUtils.YEAR_IN_MILLIS
         // TODO: Find better solution
+        + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
+
+    String SHOWS_WITH_WATCHING = SHOWS
+        + " LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
+        + " episodes WHERE episodes.watching=1 AND episodes.showId=shows._id"
+        + " AND episodes.episodeFirstAired>"
+        + DateUtils.YEAR_IN_MILLIS
         + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
 
     String SHOW_TOP_WATCHERS = "showTopWatchers";
@@ -318,7 +325,8 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + EpisodeColumns.PLAYS + " INTEGER DEFAULT 0,"
         + EpisodeColumns.RATING + " TEXT,"
         + EpisodeColumns.IN_WATCHLIST + " INTEGER DEFAULT 0,"
-        + EpisodeColumns.IN_COLLECTION + " INTEGER DEFAULT 0)");
+        + EpisodeColumns.IN_COLLECTION + " INTEGER DEFAULT 0,"
+        + EpisodeColumns.WATCHING + " INTEGER DEFAULT 0)");
 
     db.execSQL("CREATE TABLE " + Tables.MOVIES + " ("
         + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -350,7 +358,8 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + MovieColumns.IN_WATCHLIST + " INTEGER DEFAULT 0,"
         + MovieColumns.IN_COLLECTION + " INTEGER DEFAULT 0,"
         + MovieColumns.TRENDING_INDEX + " INTEGER DEFAULT -1,"
-        + MovieColumns.RECOMMENDATION_INDEX + " INTEGER DEFAULT -1)");
+        + MovieColumns.RECOMMENDATION_INDEX + " INTEGER DEFAULT -1,"
+        + MovieColumns.WATCHING + " INTEGER DEFAULT 0)");
 
     db.execSQL("CREATE TABLE " + Tables.MOVIE_GENRES + " ("
         + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -416,7 +425,12 @@ public class CathodeDatabase extends SQLiteOpenHelper {
     switch (oldVersion) {
       case 1:
         db.execSQL("ALTER TABLE " + Tables.SHOWS
-        + " ADD COLUMN " + ShowColumns.HIDDEN + " INTEGER DEFAULT 0");
+            + " ADD COLUMN " + ShowColumns.HIDDEN + " INTEGER DEFAULT 0");
+      case 2:
+        db.execSQL("ALTER TABLE " + Tables.EPISODES
+            + " ADD COLUMN " + EpisodeColumns.WATCHING + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + Tables.MOVIES
+            + " ADD COLUMN " + MovieColumns.WATCHING + " INTEGER DEFAULT 0");
     }
   }
 

@@ -36,8 +36,8 @@ public class UpcomingAdapter extends ShowsWithNextAdapter {
   }
 
   protected void setupOverflowItems(OverflowView overflow, int typeCount, int airedCount,
-      boolean hasNext, boolean isHidden) {
-    super.setupOverflowItems(overflow, typeCount, airedCount, hasNext, isHidden);
+      boolean hasNext, boolean isHidden, boolean watching) {
+    super.setupOverflowItems(overflow, typeCount, airedCount, hasNext, isHidden, watching);
 
     if (isHidden) {
       overflow.addItem(R.id.action_unhide, R.string.action_unhide);

@@ -17,13 +17,17 @@ package net.simonvt.cathode.scheduler;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.remote.action.CancelMovieCheckinTask;
+import net.simonvt.cathode.remote.action.CheckInMovieTask;
 import net.simonvt.cathode.remote.action.DismissMovieRecommendation;
 import net.simonvt.cathode.remote.action.MovieCollectionTask;
 import net.simonvt.cathode.remote.action.MovieRateTask;
 import net.simonvt.cathode.remote.action.MovieWatchedTask;
 import net.simonvt.cathode.remote.action.MovieWatchlistTask;
+import net.simonvt.cathode.remote.sync.SyncMovieTask;
 
 public class MovieTaskScheduler extends BaseTaskScheduler {
 
@@ -80,53 +84,47 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
    * watched status once
    * the duration has elapsed.
    *
-   * @param context The Context this method is called from.
    * @param movieId The database id of the movie.
    */
-  public static void checkin(Context context, long movieId) {
-    // TODO:
+  public void checkin(final long movieId) {
+    execute(new Runnable() {
+      @Override public void run() {
+        Cursor c = context.getContentResolver()
+            .query(CathodeContract.Movies.MOVIE_WATCHING, null, null, null, null);
+
+        if (c.getCount() == 0) {
+          ContentValues cv = new ContentValues();
+          cv.put(CathodeContract.Movies.WATCHING, true);
+          context.getContentResolver()
+              .update(CathodeContract.Movies.buildFromId(movieId), cv, null, null);
+
+          final long tmdbId = MovieWrapper.getTmdbId(context.getContentResolver(), movieId);
+          postPriorityTask(new CheckInMovieTask(tmdbId));
+        }
+      }
+    });
   }
 
   /**
    * Notify trakt that user wants to cancel their current check in.
-   *
-   * @param context The Context this method is called from.
-   * @param movieId The database id of the movie.
    */
-  public static void cancelCheckin(Context context, long movieId) {
-    // TODO:
-  }
+  public void cancelCheckin() {
+    execute(new Runnable() {
+      @Override public void run() {
+        Cursor c = context.getContentResolver()
+            .query(CathodeContract.Movies.MOVIE_WATCHING, null, null, null, null);
+        c.moveToFirst();
+        final long tmdbId = c.getLong(c.getColumnIndex(CathodeContract.Movies.TMDB_ID));
+        c.close();
 
-  /**
-   * Notify trakt that user has started watching a movie.
-   *
-   * @param context The Context this method is called from.
-   * @param movieId The database id of the movie.
-   */
-  public static void watching(Context context, long movieId) {
-    // TODO:
-  }
+        ContentValues cv = new ContentValues();
+        cv.put(CathodeContract.Movies.WATCHING, false);
+        context.getContentResolver().update(CathodeContract.Movies.MOVIE_WATCHING, cv, null, null);
 
-  /**
-   * Notify trakt that user has stopped watching a movie.
-   *
-   * @param context The Context this method is called from.
-   * @param movieId The database id of the movie.
-   */
-  public static void cancelWatching(Context context, long movieId) {
-    // TODO:
-  }
-
-  /**
-   * Notify trakt that a user has finished watching a movie. This commits the movie to the users
-   * profile.
-   * Use {@link #watching(android.content.Context, long)} prior to calling this method.
-   *
-   * @param context The Context this method is called from.
-   * @param movieId The database id of the movie.
-   */
-  public static void scrobble(Context context, long movieId) {
-    // TODO:
+        postPriorityTask(new CancelMovieCheckinTask());
+        postTask(new SyncMovieTask(tmdbId));
+      }
+    });
   }
 
   public void dismissRecommendation(final long movieId) {

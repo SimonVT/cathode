@@ -71,6 +71,7 @@ public final class CathodeContract {
     // Don't create a columns in database
     String AIRED_COUNT = "airedCount";
     String UNAIRED_COUNT = "unairedCount";
+    String WATCHING = "watchingShow";
   }
 
   interface TopWatcherColumns {
@@ -145,6 +146,7 @@ public final class CathodeContract {
     String RATING = "rating";
     String IN_WATCHLIST = "inWatchlist";
     String IN_COLLECTION = "inCollection";
+    String WATCHING = "watching";
   }
 
   interface MovieColumns {
@@ -178,6 +180,7 @@ public final class CathodeContract {
     String LAST_UPDATED = "lastUpdated";
     String TRENDING_INDEX = "trendingIndex";
     String RECOMMENDATION_INDEX = "recommendationIndex";
+    String WATCHING = "watching";
   }
 
   interface SearchSuggestionsColumns {
@@ -202,6 +205,7 @@ public final class CathodeContract {
   public static final String PATH_COLLECTION = "inCollection";
   public static final String PATH_WATCHED = "watched";
   public static final String PATH_UPCOMING = "upcoming";
+  public static final String PATH_WATCHING = "watching";
 
   public static final String PATH_MOVIES = "movies";
   public static final String PATH_FROMMOVIE = "fromMovie";
@@ -248,6 +252,9 @@ public final class CathodeContract {
 
     public static final Uri SHOWS_RECOMMENDED =
         CONTENT_URI.buildUpon().appendPath(PATH_RECOMMENDED).build();
+
+    public static final Uri SHOW_WATCHING =
+        CONTENT_URI.buildUpon().appendPath(PATH_WATCHING).build();
 
     public static Uri buildFromId(long showId) {
       return CONTENT_URI.buildUpon()
@@ -318,6 +325,24 @@ public final class CathodeContract {
           + EpisodeColumns.SEASON
           + ">0"
           + ")";
+    }
+
+    public static String getWatchingQuery() {
+      return "(SELECT COUNT(*) FROM "
+          + CathodeDatabase.Tables.EPISODES
+          + " WHERE "
+          + CathodeDatabase.Tables.EPISODES
+          + "."
+          + EpisodeColumns.SHOW_ID
+          + "="
+          + CathodeDatabase.Tables.SHOWS
+          + "."
+          + BaseColumns._ID
+          + " AND "
+          + CathodeDatabase.Tables.EPISODES
+          + "."
+          + EpisodeColumns.WATCHING
+          + "=1)";
     }
   }
 
@@ -553,6 +578,9 @@ public final class CathodeContract {
 
     public static final Uri CONTENT_URI =
         BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIES).build();
+
+    public static final Uri MOVIE_WATCHING =
+        CONTENT_URI.buildUpon().appendPath(PATH_WATCHING).build();
 
     public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.simonvt.cathode.movie";
 

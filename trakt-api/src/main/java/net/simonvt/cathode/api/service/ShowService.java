@@ -25,9 +25,9 @@ import retrofit.http.Path;
 
 public interface ShowService {
 
-  @GET("/show/cancelcheckin/{apikey}") Response cancelCheckin(@Path("apikey") String apiKey);
+  @GET("/show/cancelcheckin/{apikey}") Response cancelCheckin();
 
-  @GET("/show/cancelwatching/{apikey}") Response cancelWatching(@Path("apikey") String apiKey);
+  @GET("/show/cancelwatching/{apikey}") Response cancelWatching();
 
   @POST("/show/checkin/{apikey}") CheckinResponse checkin(@Body CheckinBody checkinBody);
 

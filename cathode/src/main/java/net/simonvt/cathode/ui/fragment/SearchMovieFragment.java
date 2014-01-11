@@ -182,6 +182,7 @@ public class SearchMovieFragment extends AbsAdapterFragment
       CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.WATCHED,
       CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.IN_COLLECTION,
       CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.IN_WATCHLIST,
+      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.WATCHING,
   };
 
   @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {

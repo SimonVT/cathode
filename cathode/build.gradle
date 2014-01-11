@@ -31,8 +31,6 @@ android {
   buildToolsVersion parent.ext.buildToolsVersion
 
   defaultConfig {
-    packageName 'net.simonvt.cathode'
-
     minSdkVersion = parent.ext.minSdkVersion
     targetSdkVersion = parent.ext.targetSdkVersion
 

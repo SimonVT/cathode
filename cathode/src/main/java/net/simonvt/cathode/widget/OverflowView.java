@@ -85,8 +85,8 @@ public class OverflowView extends ImageView {
           getResources().getDisplayMetrics());
 
       overflowRect.left = right - width - extraDim;
-      overflowRect.top = top;
-      overflowRect.right = right;
+      overflowRect.top = top - extraDim;
+      overflowRect.right = right + extraDim;
       overflowRect.bottom = bottom + extraDim;
       overflowDelegate = new TouchDelegate(overflowRect, this);
       ((ViewGroup) getParent()).setTouchDelegate(overflowDelegate);

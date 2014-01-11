@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.remote.action.CancelShowCheckinTask;
 import net.simonvt.cathode.remote.action.DismissShowRecommendation;
 import net.simonvt.cathode.remote.action.EpisodeCollectionTask;
 import net.simonvt.cathode.remote.action.EpisodeWatchedTask;
@@ -77,6 +78,55 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         }
 
         c.close();
+      }
+    });
+  }
+
+  public void checkinNext(final long showId) {
+    execute(new Runnable() {
+      @Override public void run() {
+        Cursor c = context.getContentResolver()
+            .query(CathodeContract.Episodes.buildFromShowId(showId), new String[] {
+                CathodeContract.Episodes._ID, CathodeContract.Episodes.SEASON,
+                CathodeContract.Episodes.EPISODE,
+            }, "watched=0 AND season<>0", null, CathodeContract.Episodes.SEASON
+                + " ASC, "
+                + CathodeContract.Episodes.EPISODE
+                + " ASC LIMIT 1");
+
+        if (c.moveToNext()) {
+          final long episodeId = c.getLong(c.getColumnIndexOrThrow(CathodeContract.Episodes._ID));
+          episodeScheduler.checkin(episodeId);
+        }
+
+        c.close();
+      }
+    });
+  }
+
+  public void cancelCheckin() {
+    execute(new Runnable() {
+      @Override public void run() {
+        Cursor c = context.getContentResolver()
+            .query(CathodeContract.Episodes.CONTENT_URI, null,
+                CathodeContract.Episodes.WATCHING + "=1", null, null);
+        int tvdbId = -1;
+        if (c.moveToNext()) {
+          final long showId = c.getLong(c.getColumnIndex(CathodeContract.Episodes.SHOW_ID));
+          tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
+        }
+        c.close();
+
+        ContentValues cv = new ContentValues();
+        cv.put(CathodeContract.Episodes.WATCHING, false);
+        context.getContentResolver()
+            .update(CathodeContract.Episodes.CONTENT_URI, cv,
+                CathodeContract.Episodes.WATCHING + "=1", null);
+
+        postPriorityTask(new CancelShowCheckinTask());
+        if (tvdbId != -1) {
+          postTask(new SyncShowTask(tvdbId));
+        }
       }
     });
   }

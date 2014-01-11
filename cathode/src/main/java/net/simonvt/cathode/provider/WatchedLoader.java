@@ -23,8 +23,6 @@ import net.simonvt.cathode.util.DateUtils;
 
 public class WatchedLoader extends AsyncTaskLoader<Cursor> {
 
-  private static final String TAG = "WatchedLoader";
-
   final ForceLoadContentObserver observer;
 
   private long showId;
@@ -38,20 +36,33 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
   }
 
   @Override public Cursor loadInBackground() {
+    Cursor show = getContext().getContentResolver()
+        .query(CathodeContract.Shows.buildFromId(showId), new String[] {
+            CathodeContract.Shows.WATCHING,
+        }, null, null, null);
+    show.moveToFirst();
+    final boolean watching = show.getInt(0) == 1;
 
-    Cursor toWatch = getContext().getContentResolver()
-        .query(CathodeContract.Episodes.buildFromShowId(showId), null,
-            CathodeContract.Episodes.WATCHED
-                + "=0 AND "
-                + CathodeContract.Episodes.FIRST_AIRED
-                + ">"
-                + DateUtils.YEAR_IN_SECONDS
-                + " AND "
-                + CathodeContract.Episodes.SEASON
-                + ">0", null, CathodeContract.Episodes.SEASON
-            + " ASC, "
-            + CathodeContract.Episodes.EPISODE
-            + " ASC LIMIT 1");
+    Cursor toWatch;
+    if (watching) {
+      toWatch = getContext().getContentResolver()
+          .query(CathodeContract.Episodes.buildFromShowId(showId), null,
+              CathodeContract.Episodes.WATCHING + "=1", null, null);
+    } else {
+      toWatch = getContext().getContentResolver()
+          .query(CathodeContract.Episodes.buildFromShowId(showId), null,
+              CathodeContract.Episodes.WATCHED
+                  + "=0 AND "
+                  + CathodeContract.Episodes.FIRST_AIRED
+                  + ">"
+                  + DateUtils.YEAR_IN_SECONDS
+                  + " AND "
+                  + CathodeContract.Episodes.SEASON
+                  + ">0", null, CathodeContract.Episodes.SEASON
+              + " ASC, "
+              + CathodeContract.Episodes.EPISODE
+              + " ASC LIMIT 1");
+    }
     toWatch.registerContentObserver(observer);
     if (toWatch.getCount() == 0) {
       return toWatch;

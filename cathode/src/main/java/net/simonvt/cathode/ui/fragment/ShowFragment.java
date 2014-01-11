@@ -45,6 +45,7 @@ import net.simonvt.cathode.provider.CathodeContract.Shows;
 import net.simonvt.cathode.provider.CollectLoader;
 import net.simonvt.cathode.provider.WatchedLoader;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
+import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
@@ -147,6 +148,7 @@ public class ShowFragment extends ProgressFragment {
     }
   }
 
+  @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;
 
   @Inject Bus bus;
@@ -241,7 +243,6 @@ public class ShowFragment extends ProgressFragment {
       }
     });
 
-    toWatchHolder.episodeOverflow.addItem(R.id.action_watched, R.string.action_watched);
     toWatchHolder.episodeOverflow.setListener(new OverflowView.OverflowActionListener() {
       @Override public void onPopupShown() {
       }
@@ -251,9 +252,14 @@ public class ShowFragment extends ProgressFragment {
 
       @Override public void onActionSelected(int action) {
         switch (action) {
-          case R.id.action_watched:
+          case R.id.action_checkin:
             if (toWatchId != -1) {
-              episodeScheduler.setWatched(toWatchId, true);
+              episodeScheduler.checkin(toWatchId);
+            }
+            break;
+          case R.id.action_checkin_cancel:
+            if (toWatchId != -1) {
+              showScheduler.cancelCheckin();
             }
             break;
         }
@@ -280,9 +286,9 @@ public class ShowFragment extends ProgressFragment {
 
         @Override public void onActionSelected(int action) {
           switch (action) {
-            case R.id.action_watched:
+            case R.id.action_unwatched:
               if (lastWatchedId != -1) {
-                episodeScheduler.setWatched(lastWatchedId, true);
+                episodeScheduler.setWatched(lastWatchedId, false);
               }
               break;
           }
@@ -445,8 +451,6 @@ public class ShowFragment extends ProgressFragment {
 
       final long airTime =
           cursor.getLong(cursor.getColumnIndex(CathodeContract.Episodes.FIRST_AIRED));
-      final String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
-      toWatchHolder.episodeAirTime.setText(airTimeStr);
 
       final int season = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.SEASON));
       final int episode = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.EPISODE));
@@ -455,6 +459,21 @@ public class ShowFragment extends ProgressFragment {
       final String bannerUrl =
           cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.SCREEN));
       toWatchHolder.episodeBanner.setImage(bannerUrl);
+
+      String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
+
+      final boolean watching =
+          cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.WATCHING)) == 1;
+      toWatchHolder.episodeOverflow.removeItems();
+      if (watching) {
+        toWatchHolder.episodeOverflow.addItem(R.id.action_checkin_cancel,
+            R.string.action_checkin_cancel);
+        airTimeStr = getResources().getString(R.string.show_watching);
+      } else {
+        toWatchHolder.episodeOverflow.addItem(R.id.action_checkin, R.string.action_watched);
+      }
+
+      toWatchHolder.episodeAirTime.setText(airTimeStr);
     } else {
       toWatch.setVisibility(View.GONE);
       watchTitle.setVisibility(View.GONE);

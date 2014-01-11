@@ -21,6 +21,7 @@ import android.database.Cursor;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.remote.action.CheckInEpisodeTask;
 import net.simonvt.cathode.remote.action.EpisodeCollectionTask;
 import net.simonvt.cathode.remote.action.EpisodeRateTask;
 import net.simonvt.cathode.remote.action.EpisodeWatchedTask;
@@ -84,6 +85,37 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
     });
   }
 
+  public void checkin(final long episodeId) {
+    execute(new Runnable() {
+      @Override public void run() {
+        Cursor c = context.getContentResolver().query(CathodeContract.Episodes.CONTENT_URI, null,
+            CathodeContract.Episodes.WATCHING + "=1", null, null);
+
+        if (c.getCount() == 0) {
+          Cursor episode = EpisodeWrapper.query(context.getContentResolver(), episodeId,
+              CathodeContract.Episodes.SHOW_ID, CathodeContract.Episodes.SEASON,
+              CathodeContract.Episodes.EPISODE);
+          episode.moveToFirst();
+          final long showId =
+              episode.getLong(episode.getColumnIndex(CathodeContract.Episodes.SHOW_ID));
+          final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
+          final int season =
+              episode.getInt(episode.getColumnIndex(CathodeContract.Episodes.SEASON));
+          final int number =
+              episode.getInt(episode.getColumnIndex(CathodeContract.Episodes.EPISODE));
+          episode.close();
+
+          ContentValues cv = new ContentValues();
+          cv.put(CathodeContract.Episodes.WATCHING, true);
+          context.getContentResolver()
+              .update(CathodeContract.Episodes.buildFromId(episodeId), cv, null, null);
+
+          postPriorityTask(new CheckInEpisodeTask(tvdbId, season, number));
+        }
+      }
+    });
+  }
+
   /**
    * Add episodes to user library collection.
    *
@@ -125,36 +157,6 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
         EpisodeWrapper.setIsInWatchlist(context.getContentResolver(), episodeId, inWatchlist);
 
         postPriorityTask(new EpisodeWatchlistTask(tvdbId, season, number, inWatchlist));
-      }
-    });
-  }
-
-  /**
-   * Check into a show on trakt. Think of this method as in between a seen and a scrobble. After
-   * checking in,
-   * the trakt will automatically display it as watching then switch over to watched status once
-   * the duration
-   * has elapsed.
-   *
-   * @param episodeId The database id of the episode.
-   */
-  public void checkin(final long episodeId) {
-    execute(new Runnable() {
-      @Override public void run() {
-        // TODO
-      }
-    });
-  }
-
-  /**
-   * Notify trakt that user wants to cancel their current check in.
-   *
-   * @param episodeId The database id of the episode.
-   */
-  public void cancelCheckin(final long episodeId) {
-    execute(new Runnable() {
-      @Override public void run() {
-        // TODO
       }
     });
   }

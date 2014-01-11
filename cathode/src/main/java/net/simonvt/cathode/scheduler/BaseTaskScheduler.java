@@ -49,19 +49,11 @@ public class BaseTaskScheduler {
   }
 
   protected final void postTask(final TraktTask task) {
-    MAIN_HANDLER.post(new Runnable() {
-      @Override public void run() {
-        queue.add(task);
-      }
-    });
+    queue.add(task);
   }
 
   protected final void postPriorityTask(final TraktTask task) {
-    MAIN_HANDLER.post(new Runnable() {
-      @Override public void run() {
-        priorityQueue.add(task);
-      }
-    });
+    priorityQueue.add(task);
   }
 
   protected void execute(Runnable r) {

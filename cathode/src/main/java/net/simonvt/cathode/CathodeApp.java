@@ -54,6 +54,10 @@ import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.TraktTaskSerializer;
 import net.simonvt.cathode.remote.TraktTaskService;
+import net.simonvt.cathode.remote.action.CancelMovieCheckinTask;
+import net.simonvt.cathode.remote.action.CancelShowCheckinTask;
+import net.simonvt.cathode.remote.action.CheckInEpisodeTask;
+import net.simonvt.cathode.remote.action.CheckInMovieTask;
 import net.simonvt.cathode.remote.action.DismissMovieRecommendation;
 import net.simonvt.cathode.remote.action.DismissShowRecommendation;
 import net.simonvt.cathode.remote.action.EpisodeCollectionTask;
@@ -89,6 +93,7 @@ import net.simonvt.cathode.remote.sync.SyncTrendingShowsTask;
 import net.simonvt.cathode.remote.sync.SyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.SyncUpdatedShows;
 import net.simonvt.cathode.remote.sync.SyncUserActivityTask;
+import net.simonvt.cathode.remote.sync.SyncWatchingTask;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.SearchTaskScheduler;
@@ -327,7 +332,8 @@ public class CathodeApp extends Application {
           SyncTrendingMoviesTask.class, SyncTrendingShowsTask.class, SyncShowsWatchlistTask.class,
           SyncShowsWatchedTask.class, ShowWatchedTask.class, SyncUpdatedMovies.class,
           SyncUpdatedShows.class, SyncTask.class, SyncUserActivityTask.class,
-          DeserializationFailedTask.class,
+          DeserializationFailedTask.class, SyncWatchingTask.class, CheckInEpisodeTask.class,
+          CancelShowCheckinTask.class, CheckInMovieTask.class, CancelMovieCheckinTask.class,
 
           // Misc
           PhoneController.class, ResponseParser.class, ShowSearchHandler.class,

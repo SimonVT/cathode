@@ -16,6 +16,8 @@ public class CheckinBody {
 
   @SerializedName("tvdb_id") Integer tvdbId;
 
+  @SerializedName("tmdb_id") Long tmdbId;
+
   String title;
 
   Integer year;
@@ -42,6 +44,12 @@ public class CheckinBody {
   public static CheckinBody tvdbId(int tvdbId) {
     CheckinBody cb = new CheckinBody();
     cb.tvdbId = tvdbId;
+    return cb;
+  }
+
+  public static CheckinBody tmdbId(long tmdbId) {
+    CheckinBody cb = new CheckinBody();
+    cb.tmdbId = tmdbId;
     return cb;
   }
 

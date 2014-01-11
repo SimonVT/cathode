@@ -16,12 +16,18 @@
 package net.simonvt.cathode.ui;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import com.squareup.otto.Bus;
@@ -34,11 +40,17 @@ import net.simonvt.cathode.event.LoginEvent;
 import net.simonvt.cathode.event.LogoutEvent;
 import net.simonvt.cathode.event.MessageEvent;
 import net.simonvt.cathode.event.SyncEvent;
+import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncUserActivityTask;
+import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import net.simonvt.cathode.ui.fragment.NavigationFragment;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.widget.BottomViewLayout;
+import net.simonvt.cathode.widget.OverflowView;
+import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.messagebar.MessageBar;
 
 public class HomeActivity extends BaseActivity
@@ -62,10 +74,15 @@ public class HomeActivity extends BaseActivity
 
   @Inject Bus bus;
 
+  @Inject ShowTaskScheduler showScheduler;
+  @Inject MovieTaskScheduler movieScheduler;
+
   protected MessageBar messageBar;
 
   @InjectView(R.id.progress_top) ProgressBar progressTop;
   private ViewPropertyAnimator progressAnimator;
+
+  @InjectView(R.id.bottomLayout) BottomViewLayout bottomLayout;
 
   private LoginController loginController;
 
@@ -85,6 +102,10 @@ public class HomeActivity extends BaseActivity
     }
   };
 
+  private Cursor watchingShow;
+
+  private Cursor watchingMovie;
+
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
     setContentView(R.layout.ui_content_view);
@@ -102,6 +123,9 @@ public class HomeActivity extends BaseActivity
       Bundle uiState = inState != null ? inState.getBundle(STATE_UICONTROLLER) : null;
       uiController = PhoneController.newInstance(this, uiState);
       activeController = uiController;
+
+      getSupportLoaderManager().initLoader(LOADER_SHOW_WATCHING, null, watchingShowCallback);
+      getSupportLoaderManager().initLoader(LOADER_MOVIE_WATCHING, null, watchingMovieCallback);
     }
 
     syncHandler = new Handler();
@@ -183,6 +207,119 @@ public class HomeActivity extends BaseActivity
 
     return super.onOptionsItemSelected(item);
   }
+
+  private void updateWatching() {
+    if (watchingShow != null && watchingShow.moveToFirst()) {
+      View watching = LayoutInflater.from(this).inflate(R.layout.watching_show, null);
+      final String show =
+          watchingShow.getString(watchingShow.getColumnIndex(CathodeContract.Shows.TITLE));
+      final String poster =
+          watchingShow.getString(watchingShow.getColumnIndex(CathodeContract.Shows.POSTER));
+      final String episode =
+          watchingShow.getString(watchingShow.getColumnIndex(CathodeContract.Episodes.TITLE));
+      final int season = watchingShow.getInt(
+          watchingShow.getColumnIndex(CathodeContract.Episodes.SEASON));
+      final int episodeNumber = watchingShow.getInt(
+          watchingShow.getColumnIndex(CathodeContract.Episodes.EPISODE));
+
+      ((TextView) watching.findViewById(R.id.show)).setText(show);
+      ((RemoteImageView) watching.findViewById(R.id.poster)).setImage(poster);
+      ((TextView) watching.findViewById(R.id.episode)).setText(
+          getString(R.string.episode, season, episodeNumber, episode));
+      OverflowView overflow = (OverflowView) watching.findViewById(R.id.overflow);
+      overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
+      overflow.setListener(new OverflowView.OverflowActionListener() {
+        @Override public void onPopupShown() {
+        }
+
+        @Override public void onPopupDismissed() {
+        }
+
+        @Override public void onActionSelected(int action) {
+          switch (action) {
+            case R.id.action_checkin_cancel:
+              showScheduler.cancelCheckin();
+              break;
+          }
+        }
+      });
+
+      bottomLayout.setBottomView(watching);
+    } else if (watchingMovie != null && watchingMovie.moveToFirst()) {
+      View watching = LayoutInflater.from(this).inflate(R.layout.watching_movie, null);
+      final String movie =
+          watchingMovie.getString(watchingMovie.getColumnIndex(CathodeContract.Movies.TITLE));
+      final String poster =
+          watchingMovie.getString(watchingMovie.getColumnIndex(CathodeContract.Movies.POSTER));
+      final String year =
+          watchingMovie.getString(watchingMovie.getColumnIndex(CathodeContract.Movies.YEAR));
+
+      ((TextView) watching.findViewById(R.id.movie)).setText(movie);
+      ((RemoteImageView) watching.findViewById(R.id.poster)).setImage(poster);
+      ((TextView) watching.findViewById(R.id.year)).setText(year);
+      OverflowView overflow = (OverflowView) watching.findViewById(R.id.overflow);
+      overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
+      overflow.setListener(new OverflowView.OverflowActionListener() {
+        @Override public void onPopupShown() {
+        }
+
+        @Override public void onPopupDismissed() {
+        }
+
+        @Override public void onActionSelected(int action) {
+          switch (action) {
+            case R.id.action_checkin_cancel:
+              movieScheduler.cancelCheckin();
+              break;
+          }
+        }
+      });
+
+      bottomLayout.setBottomView(watching);
+    } else {
+      bottomLayout.setBottomView(null);
+    }
+  }
+
+  private LoaderManager.LoaderCallbacks<Cursor> watchingShowCallback =
+      new LoaderManager.LoaderCallbacks<Cursor>() {
+        @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+          CursorLoader loader =
+              new CursorLoader(HomeActivity.this, CathodeContract.Shows.SHOW_WATCHING, null, null,
+                  null, null);
+          loader.setUpdateThrottle(2000);
+          return loader;
+        }
+
+        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+          watchingShow = cursor;
+          updateWatching();
+        }
+
+        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
+          watchingShow = null;
+        }
+      };
+
+  private LoaderManager.LoaderCallbacks<Cursor> watchingMovieCallback =
+      new LoaderManager.LoaderCallbacks<Cursor>() {
+        @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+          CursorLoader loader =
+              new CursorLoader(HomeActivity.this, CathodeContract.Movies.MOVIE_WATCHING, null, null,
+                  null, null);
+          loader.setUpdateThrottle(2000);
+          return loader;
+        }
+
+        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+          watchingMovie = cursor;
+          updateWatching();
+        }
+
+        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
+          watchingMovie = null;
+        }
+      };
 
   @Override public void onMenuItemClicked(int id) {
     activeController.onMenuItemClicked(id);

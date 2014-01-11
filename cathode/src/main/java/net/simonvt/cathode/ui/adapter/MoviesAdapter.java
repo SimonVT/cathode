@@ -59,13 +59,15 @@ public class MoviesAdapter extends CursorAdapter {
         cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.IN_COLLECTION)) == 1;
     final boolean inWatchlist =
         cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.IN_WATCHLIST)) == 1;
+    final boolean watching =
+        cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.WATCHING)) == 1;
 
     vh.poster.setImage(cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.POSTER)));
     vh.title.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.TITLE)));
     vh.overview.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.OVERVIEW)));
 
     vh.overflow.removeItems();
-    setupOverflowItems(vh.overflow, watched, collected, inWatchlist);
+    setupOverflowItems(vh.overflow, watched, collected, inWatchlist, watching);
 
     vh.overflow.setListener(new OverflowView.OverflowActionListener() {
       @Override public void onPopupShown() {
@@ -81,14 +83,16 @@ public class MoviesAdapter extends CursorAdapter {
   }
 
   protected void setupOverflowItems(OverflowView overflow, boolean watched, boolean collected,
-      boolean inWatchlist) {
-    if (watched) {
+      boolean inWatchlist, boolean watching) {
+    if (watching) {
+      overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
+    } else if (watched) {
       overflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
     } else if (inWatchlist) {
-      overflow.addItem(R.id.action_watched, R.string.action_watched);
+      overflow.addItem(R.id.action_checkin, R.string.action_checkin);
       overflow.addItem(R.id.action_watchlist_remove, R.string.action_watchlist_remove);
     } else {
-      overflow.addItem(R.id.action_watched, R.string.action_watched);
+      overflow.addItem(R.id.action_checkin, R.string.action_checkin);
       overflow.addItem(R.id.action_watchlist_add, R.string.action_watchlist_add);
     }
 
@@ -107,6 +111,14 @@ public class MoviesAdapter extends CursorAdapter {
 
       case R.id.action_unwatched:
         movieScheduler.setWatched(id, false);
+        break;
+
+      case R.id.action_checkin:
+        movieScheduler.checkin(id);
+        break;
+
+      case R.id.action_checkin_cancel:
+        movieScheduler.cancelCheckin();
         break;
 
       case R.id.action_watchlist_add:

@@ -29,6 +29,7 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
+import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.widget.CheckMark;
 import net.simonvt.cathode.widget.OverflowView;
@@ -39,6 +40,7 @@ public class SeasonAdapter extends CursorAdapter {
 
   private static final String TAG = "SeasonAdapter";
 
+  @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;
 
   private LibraryType type;
@@ -77,6 +79,8 @@ public class SeasonAdapter extends CursorAdapter {
         cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.IN_COLLECTION)) == 1;
     final boolean inWatchlist =
         cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.IN_WATCHLIST)) == 1;
+    final boolean watching =
+        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.WATCHING)) == 1;
     final long firstAired =
         cursor.getLong(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.FIRST_AIRED));
     final String screen =
@@ -98,7 +102,7 @@ public class SeasonAdapter extends CursorAdapter {
       vh.checkbox.setVisibility(watched ? View.VISIBLE : View.INVISIBLE);
     }
 
-    updateOverflowMenu(vh.overflow, watched, inCollection, inWatchlist);
+    updateOverflowMenu(vh.overflow, watched, inCollection, inWatchlist, watching);
 
     vh.overflow.setListener(new OverflowView.OverflowActionListener() {
       @Override public void onPopupShown() {
@@ -110,36 +114,44 @@ public class SeasonAdapter extends CursorAdapter {
       @Override public void onActionSelected(int action) {
         switch (action) {
           case R.id.action_watched:
-            updateOverflowMenu(vh.overflow, true, inCollection, inWatchlist);
+            updateOverflowMenu(vh.overflow, true, inCollection, inWatchlist, watching);
             episodeScheduler.setWatched(id, true);
             if (type == LibraryType.WATCHED) vh.checkbox.setVisibility(View.VISIBLE);
             break;
 
           case R.id.action_unwatched:
-            updateOverflowMenu(vh.overflow, false, inCollection, inWatchlist);
+            updateOverflowMenu(vh.overflow, false, inCollection, inWatchlist, watching);
             episodeScheduler.setWatched(id, false);
             if (type == LibraryType.WATCHED) vh.checkbox.setVisibility(View.INVISIBLE);
             break;
 
+          case R.id.action_checkin:
+            episodeScheduler.checkin(id);
+            break;
+
+          case R.id.action_checkin_cancel:
+            showScheduler.cancelCheckin();
+            break;
+
           case R.id.action_collection_add:
-            updateOverflowMenu(vh.overflow, watched, true, inWatchlist);
+            updateOverflowMenu(vh.overflow, watched, true, inWatchlist, watching);
             episodeScheduler.setIsInCollection(id, true);
             if (type == LibraryType.COLLECTION) vh.checkbox.setVisibility(View.VISIBLE);
             break;
 
           case R.id.action_collection_remove:
-            updateOverflowMenu(vh.overflow, watched, false, inWatchlist);
+            updateOverflowMenu(vh.overflow, watched, false, inWatchlist, watching);
             episodeScheduler.setIsInCollection(id, false);
             if (type == LibraryType.COLLECTION) vh.checkbox.setVisibility(View.INVISIBLE);
             break;
 
           case R.id.action_watchlist_add:
-            updateOverflowMenu(vh.overflow, watched, inCollection, true);
+            updateOverflowMenu(vh.overflow, watched, inCollection, true, watching);
             episodeScheduler.setIsInWatchlist(id, true);
             break;
 
           case R.id.action_watchlist_remove:
-            updateOverflowMenu(vh.overflow, watched, inCollection, false);
+            updateOverflowMenu(vh.overflow, watched, inCollection, false, watching);
             episodeScheduler.setIsInWatchlist(id, false);
             break;
         }
@@ -148,8 +160,13 @@ public class SeasonAdapter extends CursorAdapter {
   }
 
   private void updateOverflowMenu(OverflowView overflow, boolean watched, boolean inCollection,
-      boolean inWatchlist) {
+      boolean inWatchlist, boolean watching) {
     overflow.removeItems();
+    if (watching) {
+      overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
+    } else {
+      overflow.addItem(R.id.action_checkin, R.string.action_checkin);
+    }
     if (watched) {
       overflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
     } else {

@@ -66,6 +66,7 @@ public class CathodeProvider extends ContentProvider {
   private static final int SHOWS_WATCHED = 110;
   private static final int SHOWS_TRENDING = 111;
   private static final int SHOWS_RECOMMENDED = 112;
+  private static final int SHOW_WATCHING = 113;
 
   private static final int SEASONS = 200;
   private static final int SEASON_ID = 201;
@@ -78,19 +79,20 @@ public class CathodeProvider extends ContentProvider {
   private static final int EPISODES_WATCHLIST = 304;
 
   private static final int MOVIES = 400;
-  private static final int MOVIE_ID = 401;
+  private static final int MOVIE_WATCHING = 401;
 
-  private static final int MOVIE_GENRES = 402;
-  private static final int MOVIE_TOP_WATCHERS = 403;
-  private static final int MOVIE_ACTORS = 404;
-  private static final int MOVIE_DIRECTORS = 405;
-  private static final int MOVIE_WRITERS = 406;
-  private static final int MOVIE_PRODUCERS = 407;
-  private static final int MOVIE_TRENDING = 408;
-  private static final int MOVIE_RECOMMENDED = 409;
+  private static final int MOVIE_ID = 501;
+  private static final int MOVIE_GENRES = 502;
+  private static final int MOVIE_TOP_WATCHERS = 503;
+  private static final int MOVIE_ACTORS = 504;
+  private static final int MOVIE_DIRECTORS = 505;
+  private static final int MOVIE_WRITERS = 506;
+  private static final int MOVIE_PRODUCERS = 507;
+  private static final int MOVIE_TRENDING = 508;
+  private static final int MOVIE_RECOMMENDED = 509;
 
-  private static final int SHOW_SEARCH = 500;
-  private static final int MOVIE_SEARCH = 501;
+  private static final int SHOW_SEARCH = 600;
+  private static final int MOVIE_SEARCH = 601;
 
   private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -122,6 +124,8 @@ public class CathodeProvider extends ContentProvider {
         SHOWS_TRENDING);
     URI_MATCHER.addURI(AUTHORITY,
         CathodeContract.PATH_SHOWS + "/" + CathodeContract.PATH_RECOMMENDED, SHOWS_RECOMMENDED);
+    URI_MATCHER.addURI(AUTHORITY,
+        CathodeContract.PATH_SHOWS + "/" + CathodeContract.PATH_WATCHING, SHOW_WATCHING);
 
     URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SEASONS, SEASONS);
     URI_MATCHER.addURI(AUTHORITY,
@@ -163,6 +167,8 @@ public class CathodeProvider extends ContentProvider {
         MOVIE_TRENDING);
     URI_MATCHER.addURI(AUTHORITY,
         CathodeContract.PATH_MOVIES + "/" + CathodeContract.PATH_RECOMMENDED, MOVIE_RECOMMENDED);
+    URI_MATCHER.addURI(AUTHORITY,
+        CathodeContract.PATH_MOVIES + "/" + CathodeContract.PATH_WATCHING, MOVIE_WATCHING);
     URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SEARCH_SUGGESTIONS_SHOW, SHOW_SEARCH);
     URI_MATCHER.addURI(AUTHORITY, CathodeContract.PATH_SEARCH_SUGGESTIONS_MOVIE, MOVIE_SEARCH);
   }
@@ -182,10 +188,13 @@ public class CathodeProvider extends ContentProvider {
     SelectionBuilder builder = new SelectionBuilder();
     builder.map(CathodeContract.ShowColumns.AIRED_COUNT, Shows.getAiredQuery());
     builder.map(CathodeContract.ShowColumns.UNAIRED_COUNT, Shows.getUnairedQuery());
+    builder.map(CathodeContract.ShowColumns.WATCHING, Shows.getWatchingQuery());
     builder.map(Tables.SHOWS + "." + CathodeContract.ShowColumns.AIRED_COUNT,
         Shows.getAiredQuery());
     builder.map(Tables.SHOWS + "." + CathodeContract.ShowColumns.UNAIRED_COUNT,
         Shows.getUnairedQuery());
+    builder.map(Tables.SHOWS + "." + CathodeContract.ShowColumns.WATCHING,
+        Shows.getWatchingQuery());
     return builder;
   }
 
@@ -314,6 +323,14 @@ public class CathodeProvider extends ContentProvider {
         c.setNotificationUri(getContext().getContentResolver(), Shows.CONTENT_URI);
         return c;
       }
+      case SHOW_WATCHING: {
+        Cursor c = getSeasonBuilder().table(Tables.SHOWS_WITH_WATCHING)
+            .where(Shows.getWatchingQuery() + ">0")
+            .where(selection, selectionArgs)
+            .query(db, projection, null);
+        c.setNotificationUri(getContext().getContentResolver(), Episodes.CONTENT_URI);
+        return c;
+      }
       case SEASONS: {
         Cursor c = getSeasonBuilder().table(Tables.SEASONS)
             .where(selection, selectionArgs)
@@ -412,6 +429,14 @@ public class CathodeProvider extends ContentProvider {
         c.setNotificationUri(getContext().getContentResolver(), Movies.CONTENT_URI);
         return c;
       }
+      case MOVIE_WATCHING: {
+        Cursor c = getBuilder().table(Tables.MOVIES)
+            .where(CathodeContract.MovieColumns.WATCHING + "=1")
+            .where(selection, selectionArgs)
+            .query(db, projection, null);
+        c.setNotificationUri(getContext().getContentResolver(), Movies.CONTENT_URI);
+        return c;
+      }
       case MOVIE_GENRES: {
         final String movieId = MovieGenres.getMovieId(uri);
         Cursor c = getBuilder().table(Tables.MOVIE_GENRES)
@@ -506,6 +531,7 @@ public class CathodeProvider extends ContentProvider {
       case SHOWS_WATCHED:
       case SHOWS_TRENDING:
       case SHOWS_RECOMMENDED:
+      case SHOW_WATCHING:
         return Shows.CONTENT_TYPE;
       case SHOW_TOP_WATCHERS:
         return ShowTopWatchers.CONTENT_TYPE;
@@ -526,6 +552,7 @@ public class CathodeProvider extends ContentProvider {
       case MOVIES:
       case MOVIE_TRENDING:
       case MOVIE_RECOMMENDED:
+      case MOVIE_WATCHING:
       case MOVIE_ID:
         return Movies.CONTENT_TYPE;
       case MOVIE_GENRES:
@@ -891,11 +918,13 @@ public class CathodeProvider extends ContentProvider {
         return count;
       }
       case EPISODES: {
+        Cursor c = db.query(Tables.EPISODES, new String[] {
+            BaseColumns._ID, Episodes.SHOW_ID, Episodes.SEASON_ID,
+        }, where, whereArgs, null, null, null);
+        c.getCount(); // Make sure the cursor is filled
+
         final int count = builder.table(Tables.EPISODES).where(where, whereArgs).update(db, values);
         if (count > 0) {
-          Cursor c = db.query(Tables.EPISODES, new String[] {
-              BaseColumns._ID, Episodes.SHOW_ID, Episodes.SEASON_ID,
-          }, where, whereArgs, null, null, null);
           while (c.moveToNext()) {
             final long id = c.getLong(0);
             final long showId = c.getLong(1);
@@ -908,8 +937,9 @@ public class CathodeProvider extends ContentProvider {
             getContext().getContentResolver().notifyChange(Seasons.buildFromId(seasonId), null);
             getContext().getContentResolver().notifyChange(Seasons.buildFromShowId(showId), null);
           }
-          c.close();
         }
+        c.close();
+
         return count;
       }
       case EPISODE_ID: {
@@ -1002,6 +1032,16 @@ public class CathodeProvider extends ContentProvider {
         final String movieId = Movies.getMovieId(uri);
         final int count = builder.table(Tables.MOVIES)
             .where(Movies._ID + "=?", movieId)
+            .where(where, whereArgs)
+            .update(db, values);
+        if (count > 0) {
+          getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return count;
+      }
+      case MOVIE_WATCHING: {
+        final int count = builder.table(Tables.MOVIES)
+            .where(Movies.WATCHING + "=1")
             .where(where, whereArgs)
             .update(db, values);
         if (count > 0) {

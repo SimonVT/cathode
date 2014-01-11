@@ -5,7 +5,7 @@ import net.simonvt.cathode.api.enumeration.ActivityAction;
 import net.simonvt.cathode.api.enumeration.ActivityType;
 import net.simonvt.cathode.api.enumeration.Rating;
 
-public class ActivityItem {
+public abstract class ActivityItem {
 
   public class When {
 
@@ -91,7 +91,7 @@ public class ActivityItem {
     return episode;
   }
 
-  public Movie getOvie() {
+  public Movie getMovie() {
     return movie;
   }
 

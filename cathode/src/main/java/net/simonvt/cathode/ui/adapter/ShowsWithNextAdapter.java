@@ -53,6 +53,7 @@ public class ShowsWithNextAdapter extends CursorAdapter {
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.IN_COLLECTION_COUNT,
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.STATUS,
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.HIDDEN,
+      CathodeContract.Shows.WATCHING,
       CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.TITLE,
       CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.FIRST_AIRED,
       CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.SEASON,
@@ -92,6 +93,8 @@ public class ShowsWithNextAdapter extends CursorAdapter {
     final String showStatus = cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.STATUS));
     final boolean isHidden =
         cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.HIDDEN)) == 1;
+    final boolean watching =
+        cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.WATCHING)) == 1;
 
     final int showAiredCount =
         cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.AIRED_COUNT));
@@ -103,8 +106,7 @@ public class ShowsWithNextAdapter extends CursorAdapter {
         break;
 
       case COLLECTION:
-        count =
-            cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.IN_COLLECTION_COUNT));
+        count = cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.IN_COLLECTION_COUNT));
         break;
     }
     final int showTypeCount = count;
@@ -132,7 +134,12 @@ public class ShowsWithNextAdapter extends CursorAdapter {
       episodeText = showStatus;
       vh.firstAired.setVisibility(View.GONE);
     } else {
-      episodeText = "Next: " + episodeSeasonNumber + "x" + episodeNumber + " " + episodeTitle;
+      if (watching) {
+        episodeText = context.getString(R.string.show_watching);
+      } else {
+        episodeText = context.getString(R.string.episode_next, episodeSeasonNumber, episodeNumber,
+            episodeTitle);
+      }
       vh.firstAired.setVisibility(View.VISIBLE);
       vh.firstAired.setTimeInMillis(episodeFirstAired);
     }
@@ -165,6 +172,14 @@ public class ShowsWithNextAdapter extends CursorAdapter {
             showScheduler.setWatched(id, false);
             break;
 
+          case R.id.action_checkin:
+            showScheduler.checkinNext(id);
+            break;
+
+          case R.id.action_checkin_cancel:
+            showScheduler.cancelCheckin();
+            break;
+
           case R.id.action_collection_add:
             showScheduler.collectedNext(id);
             break;
@@ -189,45 +204,36 @@ public class ShowsWithNextAdapter extends CursorAdapter {
     });
 
     vh.overflow.removeItems();
-    setupOverflowItems(vh.overflow, showTypeCount, showAiredCount, episodeTitle != null, isHidden);
+    setupOverflowItems(vh.overflow, showTypeCount, showAiredCount, episodeTitle != null, isHidden,
+        watching);
 
     vh.poster.setImage(showPosterUrl);
   }
 
-  protected void onWatchNext(View view, int position, long showId, int watchedCount, int airedCount) {
+  protected void onWatchNext(View view, int position, long showId, int watchedCount,
+      int airedCount) {
     showScheduler.watchedNext(showId);
   }
 
   protected void setupOverflowItems(OverflowView overflow, int typeCount, int airedCount,
-      boolean hasNext, boolean isHidden) {
+      boolean hasNext, boolean isHidden, boolean watching) {
     switch (libraryType) {
       case WATCHLIST:
         overflow.addItem(R.id.action_watchlist_remove, R.string.action_watchlist_remove);
 
       case WATCHED:
         if (airedCount - typeCount > 0) {
-          if (hasNext) {
-            overflow.addItem(R.id.action_watched, R.string.action_watched_next);
+          if (!watching && hasNext) {
+            overflow.addItem(R.id.action_checkin, R.string.action_checkin);
+          } else if (watching) {
+            overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
           }
-          if (typeCount < airedCount) {
-            overflow.addItem(R.id.action_watched_all, R.string.action_watched_all);
-          }
-        }
-        if (typeCount > 0) {
-          overflow.addItem(R.id.action_unwatch_all, R.string.action_unwatch_all);
         }
         break;
 
       case COLLECTION:
         if (airedCount - typeCount > 0) {
           overflow.addItem(R.id.action_collection_add, R.string.action_collect_next);
-          if (typeCount < airedCount) {
-            overflow.addItem(R.id.action_collection_add_all, R.string.action_collection_add_all);
-          }
-        }
-        if (typeCount > 0) {
-          overflow.addItem(R.id.action_collection_remove_all,
-              R.string.action_collection_remove_all);
         }
         break;
     }

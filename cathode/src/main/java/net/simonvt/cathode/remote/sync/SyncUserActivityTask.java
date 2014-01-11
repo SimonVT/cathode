@@ -68,6 +68,8 @@ public class SyncUserActivityTask extends TraktTask {
 
     ActivityWrapper.update(service, lastActivity);
 
+    queueTask(new SyncWatchingTask());
+
     postOnSuccess();
   }
 }

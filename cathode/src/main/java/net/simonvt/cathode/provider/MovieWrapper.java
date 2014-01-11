@@ -60,6 +60,10 @@ public final class MovieWrapper {
     return tmdbId;
   }
 
+  public static long getMovieId(ContentResolver resolver, Movie movie) {
+    return getMovieId(resolver, movie.getTmdbId());
+  }
+
   public static long getMovieId(ContentResolver resolver, long tmdbId) {
     Cursor c = resolver.query(Movies.CONTENT_URI, new String[] {
         BaseColumns._ID,
