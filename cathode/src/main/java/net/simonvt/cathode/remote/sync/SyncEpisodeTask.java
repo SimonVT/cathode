@@ -60,7 +60,6 @@ public class SyncEpisodeTask extends TraktTask {
 
       postOnSuccess();
     } catch (RetrofitError e) {
-      logError(e);
       retrofit.client.Response r = e.getResponse();
       if (r != null) {
         final int statusCode = r.getStatus();
@@ -74,6 +73,7 @@ public class SyncEpisodeTask extends TraktTask {
           }
         }
       }
+      logError(e);
       postOnFailure();
     }
   }

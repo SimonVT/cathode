@@ -61,12 +61,14 @@ public abstract class TraktTask implements Task<TraktTaskService> {
       Response response = e.getResponse();
       if (response != null) {
         int statusCode = response.getStatus();
-        String body = HttpUtils.streamToString(response.getBody().in());
-        Timber.i("URL: %s", url);
-        Timber.i("Status code: %d", statusCode);
-        Timber.i("Body:");
-        Timber.i(body);
-        Timber.e(e, null);
+        if (statusCode < 500) { // Skip server errors
+          String body = HttpUtils.streamToString(response.getBody().in());
+          Timber.i("URL: %s", url);
+          Timber.i("Status code: %d", statusCode);
+          Timber.i("Body:");
+          Timber.i(body);
+          Timber.e(e, null);
+        }
       }
     } catch (Throwable t) {
       // Ignore
