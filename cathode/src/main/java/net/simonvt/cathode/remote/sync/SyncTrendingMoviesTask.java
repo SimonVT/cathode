@@ -38,7 +38,7 @@ public class SyncTrendingMoviesTask extends TraktTask {
 
   @Override protected void doTask() {
     try {
-      ContentResolver resolver = service.getContentResolver();
+      ContentResolver resolver = getContentResolver();
 
       List<Movie> movies = moviesService.trending();
 

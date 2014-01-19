@@ -35,13 +35,13 @@ public class SyncShowSeasonsTask extends TraktTask {
   }
 
   @Override protected void doTask() {
-    final long showId = ShowWrapper.getShowId(service.getContentResolver(), tvdbId);
+    final long showId = ShowWrapper.getShowId(getContentResolver(), tvdbId);
 
     List<Season> seasons = showService.seasons(tvdbId);
 
     for (Season season : seasons) {
       Timber.d("Scheduling sync for season %d of show %d", season.getSeason(), tvdbId);
-      SeasonWrapper.updateOrInsertSeason(service.getContentResolver(), season, showId);
+      SeasonWrapper.updateOrInsertSeason(getContentResolver(), season, showId);
       queueTask(new SyncSeasonTask(tvdbId, season.getSeason()));
     }
 

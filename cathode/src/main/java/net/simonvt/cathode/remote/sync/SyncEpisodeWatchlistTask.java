@@ -34,7 +34,7 @@ public class SyncEpisodeWatchlistTask extends TraktTask {
 
   @Override protected void doTask() {
     Cursor c =
-        service.getContentResolver().query(CathodeContract.Episodes.WATCHLIST_URI, new String[] {
+        getContentResolver().query(CathodeContract.Episodes.WATCHLIST_URI, new String[] {
             CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes._ID,
         }, null, null, null);
 
@@ -52,13 +52,13 @@ public class SyncEpisodeWatchlistTask extends TraktTask {
         continue;
       }
       final int tvdbId = show.getTvdbId();
-      final long showId = ShowWrapper.getShowId(service.getContentResolver(), tvdbId);
+      final long showId = ShowWrapper.getShowId(getContentResolver(), tvdbId);
 
       if (showId != -1) {
         List<Episode> episodes = show.getEpisodes();
         for (Episode episode : episodes) {
-          final long episodeId = EpisodeWrapper.getEpisodeId(service.getContentResolver(), episode);
-          EpisodeWrapper.setIsInWatchlist(service.getContentResolver(), episodeId, true);
+          final long episodeId = EpisodeWrapper.getEpisodeId(getContentResolver(), episode);
+          EpisodeWrapper.setIsInWatchlist(getContentResolver(), episodeId, true);
           episodeIds.remove(episodeId);
         }
       } else {
@@ -67,7 +67,7 @@ public class SyncEpisodeWatchlistTask extends TraktTask {
     }
 
     for (Long episodeId : episodeIds) {
-      EpisodeWrapper.setIsInWatchlist(service.getContentResolver(), episodeId, false);
+      EpisodeWrapper.setIsInWatchlist(getContentResolver(), episodeId, false);
     }
 
     postOnSuccess();

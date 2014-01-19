@@ -42,7 +42,7 @@ public class MovieWatchedTask extends TraktTask {
       Response response = movieService.unseen(new MoviesBody(tmdbId));
     }
 
-    MovieWrapper.setWatched(service.getContentResolver(), tmdbId, watched);
+    MovieWrapper.setWatched(getContentResolver(), tmdbId, watched);
     postOnSuccess();
   }
 }

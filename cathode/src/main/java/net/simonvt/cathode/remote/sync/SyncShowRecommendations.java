@@ -37,7 +37,7 @@ public class SyncShowRecommendations extends TraktTask {
 
   @Override protected void doTask() {
     try {
-      ContentResolver resolver = service.getContentResolver();
+      ContentResolver resolver = getContentResolver();
 
       List<TvShow> shows = recommendationsService.shows();
       List<Long> showIds = new ArrayList<Long>();

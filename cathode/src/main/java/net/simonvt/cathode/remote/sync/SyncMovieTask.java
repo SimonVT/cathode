@@ -34,7 +34,7 @@ public class SyncMovieTask extends TraktTask {
 
   @Override protected void doTask() {
     Movie movie = movieService.summary(tmdbId, DetailLevel.EXTENDED);
-    MovieWrapper.updateOrInsertMovie(service.getContentResolver(), movie);
+    MovieWrapper.updateOrInsertMovie(getContentResolver(), movie);
     postOnSuccess();
   }
 }

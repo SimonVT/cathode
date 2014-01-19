@@ -41,8 +41,8 @@ public class ShowWatchedTask extends TraktTask {
       showService.seen(new ShowBody(tvdbId));
     } else {
       // Trakt doesn't expose an unseen api..
-      final long showId = ShowWrapper.getShowId(service.getContentResolver(), tvdbId);
-      Cursor c = service.getContentResolver()
+      final long showId = ShowWrapper.getShowId(getContentResolver(), tvdbId);
+      Cursor c = getContentResolver()
           .query(CathodeContract.Episodes.buildFromShowId(showId), new String[] {
               CathodeContract.Episodes.SEASON, CathodeContract.Episodes.EPISODE,
           }, null, null, null);

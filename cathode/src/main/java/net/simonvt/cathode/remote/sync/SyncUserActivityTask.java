@@ -38,35 +38,35 @@ public class SyncUserActivityTask extends TraktTask {
     long movieLastCollected = lastActivity.getMovie().getCollection();
     long movieLastWatchlist = lastActivity.getMovie().getWatchlist();
 
-    if (ActivityWrapper.episodeWatchedNeedsUpdate(service, episodeLastWatched)) {
+    if (ActivityWrapper.episodeWatchedNeedsUpdate(getContext(), episodeLastWatched)) {
       queueTask(new SyncShowsWatchedTask());
     }
 
-    if (ActivityWrapper.episodeCollectedNeedsUpdate(service, episodeLastCollected)) {
+    if (ActivityWrapper.episodeCollectedNeedsUpdate(getContext(), episodeLastCollected)) {
       queueTask(new SyncShowsCollectionTask());
     }
 
-    if (ActivityWrapper.episodeWatchlistNeedsUpdate(service, episodeLastWatchlist)) {
+    if (ActivityWrapper.episodeWatchlistNeedsUpdate(getContext(), episodeLastWatchlist)) {
       queueTask(new SyncEpisodeWatchlistTask());
     }
 
-    if (ActivityWrapper.showWatchlistNeedsUpdate(service, showLastWatchlist)) {
+    if (ActivityWrapper.showWatchlistNeedsUpdate(getContext(), showLastWatchlist)) {
       queueTask(new SyncShowsWatchlistTask());
     }
 
-    if (ActivityWrapper.movieWatchedNeedsUpdate(service, movieLastWatched)) {
+    if (ActivityWrapper.movieWatchedNeedsUpdate(getContext(), movieLastWatched)) {
       queueTask(new SyncMoviesWatchedTask());
     }
 
-    if (ActivityWrapper.movieCollectedNeedsUpdate(service, movieLastCollected)) {
+    if (ActivityWrapper.movieCollectedNeedsUpdate(getContext(), movieLastCollected)) {
       queueTask(new SyncMoviesCollectionTask());
     }
 
-    if (ActivityWrapper.movieWatchlistNeedsUpdate(service, movieLastWatchlist)) {
+    if (ActivityWrapper.movieWatchlistNeedsUpdate(getContext(), movieLastWatchlist)) {
       queueTask(new SyncMoviesWatchlistTask());
     }
 
-    ActivityWrapper.update(service, lastActivity);
+    ActivityWrapper.update(getContext(), lastActivity);
 
     queueTask(new SyncWatchingTask());
 

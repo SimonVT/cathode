@@ -15,6 +15,8 @@
  */
 package net.simonvt.cathode.remote;
 
+import android.content.ContentResolver;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import com.squareup.tape.Task;
@@ -33,7 +35,7 @@ public abstract class TraktTask implements Task<TraktTaskService> {
 
   @Inject @PriorityQueue transient TraktTaskQueue priorityQueue;
 
-  protected transient TraktTaskService service;
+  private transient TraktTaskService service;
 
   private transient volatile boolean canceled;
 
@@ -75,6 +77,14 @@ public abstract class TraktTask implements Task<TraktTaskService> {
     synchronized (this) {
       canceled = true;
     }
+  }
+
+  protected Context getContext() {
+    return service;
+  }
+
+  protected ContentResolver getContentResolver() {
+    return service.getContentResolver();
   }
 
   protected final void queueTask(final TraktTask task) {

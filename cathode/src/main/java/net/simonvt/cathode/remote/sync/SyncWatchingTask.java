@@ -41,7 +41,7 @@ public class SyncWatchingTask extends TraktTask {
   @Inject transient UserService userService;
 
   @Override protected void doTask() {
-    ContentResolver resolver = service.getContentResolver();
+    ContentResolver resolver = getContentResolver();
 
     ActivityItem activity = userService.watching();
 

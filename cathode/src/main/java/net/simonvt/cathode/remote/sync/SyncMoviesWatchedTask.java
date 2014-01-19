@@ -31,7 +31,7 @@ public class SyncMoviesWatchedTask extends TraktTask {
   @Inject transient UserService userService;
 
   @Override protected void doTask() {
-    Cursor c = service.getContentResolver().query(CathodeContract.Movies.CONTENT_URI, new String[] {
+    Cursor c = getContentResolver().query(CathodeContract.Movies.CONTENT_URI, new String[] {
         CathodeContract.Movies._ID,
     }, CathodeContract.Movies.WATCHED, null, null);
 
@@ -49,19 +49,19 @@ public class SyncMoviesWatchedTask extends TraktTask {
         continue;
       }
       final long tmdbId = movie.getTmdbId();
-      final long movieId = MovieWrapper.getMovieId(service.getContentResolver(), tmdbId);
+      final long movieId = MovieWrapper.getMovieId(getContentResolver(), tmdbId);
 
       if (movieId == -1) {
         queueTask(new SyncMovieTask(tmdbId));
       } else {
         if (!movieIds.remove(movieId)) {
-          MovieWrapper.setWatched(service.getContentResolver(), movieId, true);
+          MovieWrapper.setWatched(getContentResolver(), movieId, true);
         }
       }
     }
 
     for (Long movieId : movieIds) {
-      MovieWrapper.setWatched(service.getContentResolver(), movieId, false);
+      MovieWrapper.setWatched(getContentResolver(), movieId, false);
     }
 
     postOnSuccess();

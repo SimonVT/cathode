@@ -42,7 +42,7 @@ public class MovieCollectionTask extends TraktTask {
       Response response = movieService.unlibrary(new MoviesBody(tmdbId));
     }
 
-    MovieWrapper.setIsInCollection(service.getContentResolver(), tmdbId, watched);
+    MovieWrapper.setIsInCollection(getContentResolver(), tmdbId, watched);
     postOnSuccess();
   }
 }

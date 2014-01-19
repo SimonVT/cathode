@@ -49,7 +49,7 @@ public class EpisodeWatchedTask extends TraktTask {
       Response response = showService.episodeUnseen(new ShowEpisodeBody(tvdbId, season, episode));
     }
 
-    EpisodeWrapper.setWatched(service.getContentResolver(), tvdbId, season, episode, watched);
+    EpisodeWrapper.setWatched(getContentResolver(), tvdbId, season, episode, watched);
     postOnSuccess();
   }
 }

@@ -49,7 +49,7 @@ public class EpisodeCollectionTask extends TraktTask {
           showService.episodeUnlibrary(new ShowEpisodeBody(tvdbId, season, episode));
     }
 
-    EpisodeWrapper.setInCollection(service.getContentResolver(), tvdbId, season, episode,
+    EpisodeWrapper.setInCollection(getContentResolver(), tvdbId, season, episode,
         inCollection);
     postOnSuccess();
   }

@@ -32,7 +32,7 @@ public class SyncShowsWatchlistTask extends TraktTask {
 
   @Override protected void doTask() {
     Cursor c =
-        service.getContentResolver().query(CathodeContract.Shows.SHOWS_WATCHLIST, new String[] {
+        getContentResolver().query(CathodeContract.Shows.SHOWS_WATCHLIST, new String[] {
             CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows._ID,
         }, null, null, null);
 
@@ -50,11 +50,11 @@ public class SyncShowsWatchlistTask extends TraktTask {
         continue;
       }
       final int tvdbId = show.getTvdbId();
-      final long showId = ShowWrapper.getShowId(service.getContentResolver(), tvdbId);
+      final long showId = ShowWrapper.getShowId(getContentResolver(), tvdbId);
 
       if (showId != -1L) {
         if (!showIds.remove(showId)) {
-          ShowWrapper.setIsInWatchlist(service.getContentResolver(), tvdbId, true);
+          ShowWrapper.setIsInWatchlist(getContentResolver(), tvdbId, true);
         }
       } else {
         queueTask(new SyncShowTask(tvdbId));
@@ -62,7 +62,7 @@ public class SyncShowsWatchlistTask extends TraktTask {
     }
 
     for (Long showId : showIds) {
-      ShowWrapper.setIsInWatchlist(service.getContentResolver(), showId, false);
+      ShowWrapper.setIsInWatchlist(getContentResolver(), showId, false);
     }
 
     postOnSuccess();

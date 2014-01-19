@@ -30,7 +30,7 @@ public class SyncUpdatedMovies extends TraktTask {
   @Inject transient MoviesService moviesService;
 
   @Override protected void doTask() {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(service);
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
     final long moviesLastUpdated = settings.getLong(Settings.MOVIES_LAST_UPDATED, 0);
 
     UpdatedMovies updatedMovies = moviesService.updated(moviesLastUpdated);
@@ -38,9 +38,9 @@ public class SyncUpdatedMovies extends TraktTask {
     List<UpdatedMovies.MovieTimestamp> timestamps = updatedMovies.getMovies();
     for (UpdatedMovies.MovieTimestamp timestamp : timestamps) {
       final int tmdbId = timestamp.getTmdbId();
-      final boolean exists = MovieWrapper.exists(service.getContentResolver(), tmdbId);
+      final boolean exists = MovieWrapper.exists(getContentResolver(), tmdbId);
       if (exists) {
-        final boolean needsUpdate = MovieWrapper.needsUpdate(service.getContentResolver(), tmdbId,
+        final boolean needsUpdate = MovieWrapper.needsUpdate(getContentResolver(), tmdbId,
             timestamp.getLastUpdated());
         if (needsUpdate) {
           queueTask(new SyncMovieTask(tmdbId));

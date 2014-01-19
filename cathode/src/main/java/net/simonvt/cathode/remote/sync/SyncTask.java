@@ -30,14 +30,14 @@ public class SyncTask extends TraktTask {
 
     queueTask(new SyncUserActivityTask());
 
-    if (ActivityWrapper.trendingNeedsUpdate(service)) {
-      ActivityWrapper.updateTrending(service);
+    if (ActivityWrapper.trendingNeedsUpdate(getContext())) {
+      ActivityWrapper.updateTrending(getContext());
       queueTask(new SyncTrendingShowsTask());
       queueTask(new SyncTrendingMoviesTask());
     }
 
-    if (ActivityWrapper.recommendationsNeedsUpdate(service)) {
-      ActivityWrapper.updateRecommendations(service);
+    if (ActivityWrapper.recommendationsNeedsUpdate(getContext())) {
+      ActivityWrapper.updateRecommendations(getContext());
       queueTask(new SyncShowRecommendations());
       queueTask(new SyncMovieRecommendations());
     }

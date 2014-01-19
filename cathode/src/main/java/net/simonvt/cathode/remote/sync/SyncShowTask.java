@@ -39,16 +39,16 @@ public class SyncShowTask extends TraktTask {
 
   @Override protected void doTask() {
     TvShow show = showService.summary(tvdbId, DetailLevel.EXTENDED);
-    final long showId = ShowWrapper.updateOrInsertShow(service.getContentResolver(), show);
+    final long showId = ShowWrapper.updateOrInsertShow(getContentResolver(), show);
 
     List<Season> seasons = show.getSeasons();
 
     for (Season season : seasons) {
       final long seasonId =
-          SeasonWrapper.updateOrInsertSeason(service.getContentResolver(), season, showId);
+          SeasonWrapper.updateOrInsertSeason(getContentResolver(), season, showId);
       List<Episode> episodes = season.getEpisodes().getEpisodes();
       for (Episode episode : episodes) {
-        EpisodeWrapper.updateOrInsertEpisode(service.getContentResolver(), episode, showId,
+        EpisodeWrapper.updateOrInsertEpisode(getContentResolver(), episode, showId,
             seasonId);
       }
     }

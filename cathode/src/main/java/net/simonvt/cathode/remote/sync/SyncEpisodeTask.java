@@ -52,11 +52,11 @@ public class SyncEpisodeTask extends TraktTask {
 
       Episode episode = showService.episodeSummary(tvdbId, season, this.episode).getEpisode();
 
-      final ContentResolver resolver = service.getContentResolver();
+      final ContentResolver resolver = getContentResolver();
       final long showId = ShowWrapper.getShowId(resolver, tvdbId);
       final long seasonId = ShowWrapper.getSeasonId(resolver, showId, season);
 
-      EpisodeWrapper.updateOrInsertEpisode(service.getContentResolver(), episode, showId, seasonId);
+      EpisodeWrapper.updateOrInsertEpisode(getContentResolver(), episode, showId, seasonId);
 
       postOnSuccess();
     } catch (RetrofitError e) {
@@ -66,7 +66,7 @@ public class SyncEpisodeTask extends TraktTask {
         final int statusCode = r.getStatus();
         if (statusCode == 400) {
           ResponseParser parser = new ResponseParser();
-          CathodeApp.inject(service, parser);
+          CathodeApp.inject(getContext(), parser);
           Response response = parser.tryParse(e);
           if (response != null && "episode not found".equals(response.getError())) {
             postOnSuccess();

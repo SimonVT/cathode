@@ -42,14 +42,14 @@ public class SyncShowsCollectionTask extends TraktTask {
       throws RemoteException, OperationApplicationException {
     ops.add(op);
     if (ops.size() >= 50) {
-      service.getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
+      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
       ops.clear();
     }
   }
 
   @Override protected void doTask() {
     try {
-      ContentResolver resolver = service.getContentResolver();
+      ContentResolver resolver = getContentResolver();
       List<TvShow> shows = userService.libraryShowsCollection(DetailLevel.MIN);
 
       Cursor c = resolver.query(CathodeContract.Episodes.CONTENT_URI, new String[] {

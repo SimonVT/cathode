@@ -37,7 +37,7 @@ public class SyncMovieRecommendations extends TraktTask {
 
   @Override protected void doTask() {
     try {
-      ContentResolver resolver = service.getContentResolver();
+      ContentResolver resolver = getContentResolver();
 
       List<Long> movieIds = new ArrayList<Long>();
       Cursor c = resolver.query(CathodeContract.Movies.RECOMMENDED, null, null, null, null);

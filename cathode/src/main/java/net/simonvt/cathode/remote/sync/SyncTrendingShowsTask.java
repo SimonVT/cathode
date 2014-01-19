@@ -38,7 +38,7 @@ public class SyncTrendingShowsTask extends TraktTask {
 
   @Override protected void doTask() {
     try {
-      ContentResolver resolver = service.getContentResolver();
+      ContentResolver resolver = getContentResolver();
 
       List<TvShow> shows = showsService.trending();
 

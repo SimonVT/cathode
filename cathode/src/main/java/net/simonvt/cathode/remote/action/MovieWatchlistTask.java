@@ -42,7 +42,7 @@ public class MovieWatchlistTask extends TraktTask {
       Response response = movieService.unwatchlist(new MoviesBody(tmdbId));
     }
 
-    MovieWrapper.setIsInWatchlist(service.getContentResolver(), tmdbId, watched);
+    MovieWrapper.setIsInWatchlist(getContentResolver(), tmdbId, watched);
     postOnSuccess();
   }
 }

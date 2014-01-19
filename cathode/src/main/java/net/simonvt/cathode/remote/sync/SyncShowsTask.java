@@ -35,7 +35,7 @@ public class SyncShowsTask extends TraktTask {
         continue;
       }
       final Integer tvdbId = show.getTvdbId();
-      if (!ShowWrapper.exists(service.getContentResolver(), tvdbId)) {
+      if (!ShowWrapper.exists(getContentResolver(), tvdbId)) {
         queueTask(new SyncShowTask(tvdbId));
       }
     }

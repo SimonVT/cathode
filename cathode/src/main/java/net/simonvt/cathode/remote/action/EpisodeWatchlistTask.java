@@ -50,7 +50,7 @@ public class EpisodeWatchlistTask extends TraktTask {
           showService.episodeUnwatchlist(new ShowEpisodeBody(tvdbId, season, episode));
     }
 
-    EpisodeWrapper.setIsInWatchlist(service.getContentResolver(), tvdbId, season, episode,
+    EpisodeWrapper.setIsInWatchlist(getContentResolver(), tvdbId, season, episode,
         inWatchlist);
     postOnSuccess();
   }

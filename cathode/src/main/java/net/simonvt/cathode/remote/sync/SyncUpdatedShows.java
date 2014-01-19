@@ -30,7 +30,7 @@ public class SyncUpdatedShows extends TraktTask {
   @Inject transient ShowsService showsService;
 
   @Override protected void doTask() {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(service);
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
     final long showsLastUpdated = settings.getLong(Settings.SHOWS_LAST_UPDATED, 0);
 
     UpdatedShows updatedShows = showsService.updated(showsLastUpdated);
@@ -39,9 +39,9 @@ public class SyncUpdatedShows extends TraktTask {
     List<UpdatedShows.ShowTimestamp> timestamps = updatedShows.getShows();
     for (UpdatedShows.ShowTimestamp timestamp : timestamps) {
       final int tvdbId = timestamp.getTvdbId();
-      final boolean exists = ShowWrapper.exists(service.getContentResolver(), tvdbId);
+      final boolean exists = ShowWrapper.exists(getContentResolver(), tvdbId);
       if (exists) {
-        final boolean needsUpdate = ShowWrapper.needsUpdate(service.getContentResolver(), tvdbId,
+        final boolean needsUpdate = ShowWrapper.needsUpdate(getContentResolver(), tvdbId,
             timestamp.getLastUpdated());
         if (needsUpdate) {
           queueTask(new SyncShowTask(tvdbId));

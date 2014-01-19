@@ -55,7 +55,7 @@ public class SyncSeasonTask extends TraktTask {
       throws RemoteException, OperationApplicationException {
     ops.add(op);
     if (ops.size() >= 50) {
-      service.getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
+      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
       ops.clear();
     }
   }
@@ -68,7 +68,7 @@ public class SyncSeasonTask extends TraktTask {
 
       ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 
-      final ContentResolver resolver = service.getContentResolver();
+      final ContentResolver resolver = getContentResolver();
 
       for (Episode episode : episodes) {
         if (!(episode.getSeason() == 0 && episode.getNumber() == 0)) {
@@ -81,7 +81,7 @@ public class SyncSeasonTask extends TraktTask {
               Timber.tag(TAG).e(e, "URL: %s", e.getUrl());
 
               ResponseParser parser = new ResponseParser();
-              CathodeApp.inject(service, parser);
+              CathodeApp.inject(getContext(), parser);
               Response response = parser.tryParse(e);
               if (response != null && "episode not found".equals(response.getError())) {
                 postOnSuccess();
