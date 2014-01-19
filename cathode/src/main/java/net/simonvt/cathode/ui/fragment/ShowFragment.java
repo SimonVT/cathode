@@ -470,7 +470,7 @@ public class ShowFragment extends ProgressFragment {
             R.string.action_checkin_cancel);
         airTimeStr = getResources().getString(R.string.show_watching);
       } else {
-        toWatchHolder.episodeOverflow.addItem(R.id.action_checkin, R.string.action_watched);
+        toWatchHolder.episodeOverflow.addItem(R.id.action_checkin, R.string.action_checkin);
       }
 
       toWatchHolder.episodeAirTime.setText(airTimeStr);
