@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum ListItemType {
-  Movie("movie"),
-  TvShow("show"),
-  TvShowSeason("season"),
-  TvShowEpisode("episode");
+  MOVIE("movie"),
+  SHOW("show"),
+  SEASON("season"),
+  EPISODE("episode");
 
   private final String value;
 

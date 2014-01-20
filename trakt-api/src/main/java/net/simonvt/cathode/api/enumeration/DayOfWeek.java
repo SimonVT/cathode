@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum DayOfWeek {
-
   SUNDAY("Sunday"),
   MONDAY("Monday"),
   TUESDAY("Tuesday"),

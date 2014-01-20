@@ -12,6 +12,16 @@ public class Person {
 
   private Boolean executive;
 
+  private String url;
+
+  private String biography;
+
+  private String birthday;
+
+  private String birthplace;
+
+  private Integer tmdbId;
+
   public String getName() {
     return name;
   }
@@ -30,5 +40,25 @@ public class Person {
 
   public Boolean isExecutive() {
     return executive;
+  }
+
+  public String getUrl() {
+    return url;
+  }
+
+  public String getBiography() {
+    return biography;
+  }
+
+  public String getBirthday() {
+    return birthday;
+  }
+
+  public String getBirthplace() {
+    return birthplace;
+  }
+
+  public Integer getTmdbId() {
+    return tmdbId;
   }
 }

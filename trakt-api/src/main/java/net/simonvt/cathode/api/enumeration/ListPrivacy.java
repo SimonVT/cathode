@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum ListPrivacy {
-  Public("public"),
-  Friends("friends"),
-  Private("private");
+  PUBLIC("public"),
+  FRIENDS("friends"),
+  PRIVATE("private");
 
   private final String value;
 

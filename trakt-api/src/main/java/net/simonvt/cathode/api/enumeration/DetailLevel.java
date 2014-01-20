@@ -5,6 +5,7 @@ import java.util.Map;
 
 public enum DetailLevel {
   EXTENDED("true"),
+  FULL("full"),
   NORMAL(""),
   MIN("min");
 

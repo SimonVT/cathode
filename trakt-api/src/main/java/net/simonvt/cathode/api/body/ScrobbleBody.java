@@ -16,6 +16,8 @@ public class ScrobbleBody {
 
   @SerializedName("tvdb_id") Integer tvdbId;
 
+  @SerializedName("tmdb_id") Long tmdbId;
+
   String title;
 
   Integer year;
@@ -44,6 +46,12 @@ public class ScrobbleBody {
   public static ScrobbleBody tvdbId(int tvdbId) {
     ScrobbleBody cb = new ScrobbleBody();
     cb.tvdbId = tvdbId;
+    return cb;
+  }
+
+  public static ScrobbleBody tmdbId(Long tmdbId) {
+    ScrobbleBody cb = new ScrobbleBody();
+    cb.tmdbId = tmdbId;
     return cb;
   }
 

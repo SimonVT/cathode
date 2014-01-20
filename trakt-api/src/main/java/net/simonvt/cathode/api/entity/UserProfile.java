@@ -256,7 +256,7 @@ public class UserProfile {
       return watched;
     }
 
-    public Movie getOvie() {
+    public Movie getMovie() {
       return movie;
     }
 
@@ -298,6 +298,8 @@ public class UserProfile {
   private List<ActivityItem> watched;
 
   private Integer plays;
+
+  private Integer requested;
 
   public String getUsername() {
     return username;
@@ -357,5 +359,9 @@ public class UserProfile {
 
   public Integer getPlays() {
     return plays;
+  }
+
+  public Integer getRequested() {
+    return requested;
   }
 }

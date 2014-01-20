@@ -7,18 +7,15 @@ import retrofit.http.POST;
 
 public interface RateService {
 
-  @POST("/rate/episode/{apikey}") Response rateEpisode(@Body RateBody rateBody);
+  @POST("/rate/episode/{apikey}") Response episode(@Body RateBody rateBody);
 
-  //    rate/episodes
-  //            POST
+  @POST("/rate/episodes/{apikey}") Response episodes(@Body RateBody rateBody);
 
-  @POST("/rate/movie/{apikey}") Response rateMovie(@Body RateBody rateBody);
+  @POST("/rate/movie/{apikey}") Response movie(@Body RateBody rateBody);
 
-  //    rate/movies
-  //            POST
+  @POST("/rate/movies/{apikey}") Response movies(@Body RateBody rateBody);
 
-  @POST("/rate/show/{apikey}") Response rateShow(@Body RateBody rateBody);
+  @POST("/rate/show/{apikey}") Response show(@Body RateBody rateBody);
 
-  //    rate/shows
-  //            POST
+  @POST("/rate/shows/{apikey}") Response shows(@Body RateBody rateBody);
 }
