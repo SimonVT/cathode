@@ -172,19 +172,20 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
   public void rate(final long episodeId, final int rating) {
     execute(new Runnable() {
       @Override public void run() {
-        final long tvdbId = EpisodeWrapper.getShowTvdbId(context.getContentResolver(), episodeId);
+        final int tvdbId = EpisodeWrapper.getShowTvdbId(context.getContentResolver(), episodeId);
         Cursor c = EpisodeWrapper.query(context.getContentResolver(), episodeId,
-            CathodeContract.Episodes.EPISODE);
+            CathodeContract.Episodes.EPISODE, CathodeContract.Episodes.SEASON);
 
         if (c.moveToFirst()) {
           final int episode = c.getInt(c.getColumnIndex(CathodeContract.Episodes.EPISODE));
+          final int season = c.getInt(c.getColumnIndex(CathodeContract.Episodes.SEASON));
 
           ContentValues cv = new ContentValues();
           cv.put(CathodeContract.Episodes.RATING, rating);
           context.getContentResolver()
               .update(CathodeContract.Episodes.buildFromId(episodeId), cv, null, null);
 
-          queue.add(new EpisodeRateTask(tvdbId, episode, rating));
+          queue.add(new EpisodeRateTask(tvdbId, season, episode, rating));
         }
         c.close();
       }

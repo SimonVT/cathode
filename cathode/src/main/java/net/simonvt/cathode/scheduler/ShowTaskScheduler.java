@@ -249,7 +249,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
   public void rate(final long showId, final int rating) {
     execute(new Runnable() {
       @Override public void run() {
-        final long tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
+        final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
 
         ContentValues cv = new ContentValues();
         cv.put(CathodeContract.Shows.RATING, rating);

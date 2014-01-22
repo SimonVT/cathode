@@ -24,21 +24,23 @@ public class EpisodeRateTask extends TraktTask {
 
   @Inject transient RateService rateService;
 
-  private long tvdbId;
+  private int tvdbId;
+
+  private int season;
 
   private int episode;
 
   private int rating;
 
-  public EpisodeRateTask(long tvdbId, int episode, int rating) {
+  public EpisodeRateTask(int tvdbId, int season, int episode, int rating) {
     this.tvdbId = tvdbId;
+    this.season = season;
     this.episode = episode;
     this.rating = rating;
   }
 
   @Override protected void doTask() {
-    rateService.rateEpisode(
-        new RateBody.Builder().tvdbId(tvdbId).episode(episode).rating(rating).build());
+    rateService.episode(new RateBody().episode(tvdbId, season, episode, rating));
     postOnSuccess();
   }
 }

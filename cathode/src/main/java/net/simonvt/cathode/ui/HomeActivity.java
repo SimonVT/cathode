@@ -42,6 +42,7 @@ import net.simonvt.cathode.event.MessageEvent;
 import net.simonvt.cathode.event.SyncEvent;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.remote.TraktTaskQueue;
+import net.simonvt.cathode.remote.sync.SyncActivityStreamTask;
 import net.simonvt.cathode.remote.sync.SyncUserActivityTask;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
@@ -96,7 +97,7 @@ public class HomeActivity extends BaseActivity
 
   private Runnable syncRunnable = new Runnable() {
     @Override public void run() {
-      queue.add(new SyncUserActivityTask());
+      queue.add(new SyncActivityStreamTask());
       lastSync = System.currentTimeMillis();
       syncHandler.postDelayed(this, SYNC_DELAY);
     }

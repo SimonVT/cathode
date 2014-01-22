@@ -24,17 +24,17 @@ public class ShowRateTask extends TraktTask {
 
   @Inject transient RateService rateService;
 
-  private long tvdbId;
+  private int tvdbId;
 
   private int rating;
 
-  public ShowRateTask(long tvdbId, int rating) {
+  public ShowRateTask(int tvdbId, int rating) {
     this.tvdbId = tvdbId;
     this.rating = rating;
   }
 
   @Override protected void doTask() {
-    rateService.rateShow(new RateBody.Builder().tvdbId(tvdbId).rating(rating).build());
+    rateService.show(new RateBody().show(tvdbId, rating));
     postOnSuccess();
   }
 }

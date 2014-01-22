@@ -4,12 +4,12 @@ import java.util.List;
 
 public class Activity {
 
-  private Timestamp timestamp;
+  private Timestamp timestamps;
 
   private List<ActivityItem> activity;
 
-  public Timestamp getTimestamp() {
-    return timestamp;
+  public Timestamp getTimestamps() {
+    return timestamps;
   }
 
   public List<ActivityItem> getActivity() {

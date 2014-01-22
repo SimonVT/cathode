@@ -7,7 +7,9 @@ public enum DetailLevel {
   EXTENDED("true"),
   FULL("full"),
   NORMAL(""),
-  MIN("min");
+  MIN("min"),
+  ACTIVITY_MIN("1"),
+  ACTIVITY_MAX("0");
 
   private String value;
 

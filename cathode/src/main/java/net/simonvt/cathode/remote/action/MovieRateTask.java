@@ -34,7 +34,7 @@ public class MovieRateTask extends TraktTask {
   }
 
   @Override protected void doTask() {
-    rateService.rateMovie(new RateBody.Builder().tmdbId(tmdbId).rating(rating).build());
+    rateService.movie(new RateBody().movie(tmdbId, rating));
     postOnSuccess();
   }
 }

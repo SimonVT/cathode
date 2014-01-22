@@ -18,6 +18,7 @@ package net.simonvt.cathode.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import java.util.Calendar;
 import net.simonvt.cathode.api.entity.LastActivity;
 import net.simonvt.cathode.util.DateUtils;
 
@@ -26,6 +27,16 @@ public final class ActivityWrapper {
   private static final String TAG = "ActivityWrapper";
 
   private ActivityWrapper() {
+  }
+
+  public static void updateLastActivityStreamSync(Context context, long lastSync) {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    settings.edit().putLong(Settings.ACTIVITY_STREAM_SYNC, lastSync).apply();
+  }
+
+  public static long lastActivityStreamSync(Context context) {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    return settings.getLong(Settings.ACTIVITY_STREAM_SYNC, -1);
   }
 
   public static boolean episodeWatchedNeedsUpdate(Context context, long lastUpdated) {

@@ -1,8 +1,12 @@
 package net.simonvt.cathode.api.service;
 
 import net.simonvt.cathode.api.entity.Activity;
+import net.simonvt.cathode.api.enumeration.ActivityAction;
+import net.simonvt.cathode.api.enumeration.ActivityType;
+import net.simonvt.cathode.api.enumeration.DetailLevel;
 import retrofit.http.GET;
 import retrofit.http.Path;
+import retrofit.http.Query;
 
 public interface ActivityService {
 
@@ -95,19 +99,22 @@ public interface ActivityService {
   Activity shows(@Path("title") String title, @Path("actions") String actions,
       @Path("startTs") long startTs, @Path("endTs") long endTs);
 
-  @GET("/activity/user.json/{apikey}/{username}") Activity user();
+  @GET("/activity/user.json/{apikey}/{username}")
+  Activity user(@Query("min") DetailLevel detailLevel);
 
   @GET("/activity/user.json/{apikey}/{username}/{types}")
-  Activity user(@Path("types") String types);
+  Activity user(@Path("types") ActivityType types, @Query("min") DetailLevel detailLevel);
 
   @GET("/activity/user.json/{apikey}/{username}/{types}/{actions}")
-  Activity user(@Path("types") String types, @Path("actions") String actions);
+  Activity user(@Path("types") ActivityType types, @Path("actions") Object actions,
+      @Query("min") DetailLevel detailLevel);
 
   @GET("/activity/user.json/{apikey}/{username}/{types}/{actions}/{startTs}")
-  Activity user(@Path("types") String types, @Path("actions") String actions,
-      @Path("startTs") long startTs);
+  Activity user(@Path("types") ActivityType types, @Path("actions") Object actions,
+      @Path("startTs") long startTs, @Query("min") DetailLevel detailLevel);
 
   @GET("/activity/user.json/{apikey}/{username}/{types}/{actions}/{startTs}/{endTs}")
-  Activity user(@Path("types") String types, @Path("actions") String actions,
-      @Path("startTs") long startTs, @Path("endTs") long endTs);
+  Activity user(@Path("types") ActivityType types, @Path("actions") Object actions,
+      @Path("startTs") long startTs, @Path("endTs") long endTs,
+      @Query("min") DetailLevel detailLevel);
 }

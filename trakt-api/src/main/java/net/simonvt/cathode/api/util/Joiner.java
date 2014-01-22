@@ -15,21 +15,32 @@
  */
 package net.simonvt.cathode.api.util;
 
-public class CommaDelimitedBuilder {
+public class Joiner {
 
-  private StringBuilder builder;
+  private String separator;
 
-  public CommaDelimitedBuilder append(String item) {
-    if (builder == null) {
-      builder = new StringBuilder();
-    } else {
-      builder.append(",");
-    }
-    builder.append(item);
-    return this;
+  private Joiner(String separator) {
+    this.separator = separator;
   }
 
-  public String build() {
-    return builder.toString();
+  public static Joiner on(String separator) {
+    return new Joiner(separator);
+  }
+
+  public String join(Object... objects) {
+    StringBuilder sb = new StringBuilder();
+    boolean first = true;
+
+    for (Object o : objects) {
+      if (!first) {
+        sb.append(separator);
+      } else {
+        first = false;
+      }
+
+      sb.append(o.toString());
+    }
+
+    return sb.toString();
   }
 }

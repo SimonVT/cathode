@@ -325,4 +325,10 @@ public final class MovieWrapper {
     cv.put(Movies.IN_WATCHLIST, inWatchlist);
     resolver.update(Movies.buildFromId(movieId), cv, null, null);
   }
+
+  public static void setRating(ContentResolver resolver, long movieId, int rating) {
+    ContentValues cv = new ContentValues();
+    cv.put(Movies.RATING, rating);
+    resolver.update(Movies.buildFromId(movieId), cv, null, null);
+  }
 }

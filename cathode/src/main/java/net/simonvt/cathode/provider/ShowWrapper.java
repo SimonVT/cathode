@@ -317,4 +317,10 @@ public final class ShowWrapper {
 
     return lastUpdated;
   }
+
+  public static void setRating(ContentResolver resolver, long showId, int rating) {
+    ContentValues cv = new ContentValues();
+    cv.put(Shows.RATING, rating);
+    resolver.update(Shows.buildFromId(showId), cv, null, null);
+  }
 }
