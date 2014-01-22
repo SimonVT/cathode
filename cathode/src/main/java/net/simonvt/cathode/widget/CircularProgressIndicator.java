@@ -27,7 +27,6 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import net.simonvt.cathode.R;
-import timber.log.Timber;
 
 public class CircularProgressIndicator extends View {
 

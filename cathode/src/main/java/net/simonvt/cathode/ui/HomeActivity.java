@@ -46,7 +46,6 @@ import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncActivityStreamTask;
 import net.simonvt.cathode.remote.sync.SyncTask;
-import net.simonvt.cathode.remote.sync.SyncUserActivityTask;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.settings.Settings;

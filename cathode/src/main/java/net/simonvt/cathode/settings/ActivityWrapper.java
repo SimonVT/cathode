@@ -18,7 +18,6 @@ package net.simonvt.cathode.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import java.util.Calendar;
 import net.simonvt.cathode.api.entity.LastActivity;
 import net.simonvt.cathode.util.DateUtils;
 

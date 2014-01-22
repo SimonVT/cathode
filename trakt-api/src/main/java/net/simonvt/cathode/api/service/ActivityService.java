@@ -1,7 +1,6 @@
 package net.simonvt.cathode.api.service;
 
 import net.simonvt.cathode.api.entity.Activity;
-import net.simonvt.cathode.api.enumeration.ActivityAction;
 import net.simonvt.cathode.api.enumeration.ActivityType;
 import net.simonvt.cathode.api.enumeration.DetailLevel;
 import retrofit.http.GET;
