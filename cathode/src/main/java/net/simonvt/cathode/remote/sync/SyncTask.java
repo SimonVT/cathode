@@ -15,10 +15,13 @@
  */
 package net.simonvt.cathode.remote.sync;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.service.UserService;
 import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.settings.ActivityWrapper;
+import net.simonvt.cathode.settings.Settings;
 
 public class SyncTask extends TraktTask {
 
@@ -43,6 +46,10 @@ public class SyncTask extends TraktTask {
       queueTask(new SyncShowRecommendations());
       queueTask(new SyncMovieRecommendations());
     }
+
+    final long currentTime = System.currentTimeMillis();
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+    settings.edit().putLong(Settings.FULL_SYNC, currentTime).apply();
 
     postOnSuccess();
   }

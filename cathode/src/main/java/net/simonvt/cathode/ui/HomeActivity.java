@@ -16,9 +16,11 @@
 package net.simonvt.cathode.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -43,9 +45,11 @@ import net.simonvt.cathode.event.SyncEvent;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncActivityStreamTask;
+import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.remote.sync.SyncUserActivityTask;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
+import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import net.simonvt.cathode.ui.fragment.NavigationFragment;
 import net.simonvt.cathode.util.DateUtils;
@@ -97,7 +101,14 @@ public class HomeActivity extends BaseActivity
 
   private Runnable syncRunnable = new Runnable() {
     @Override public void run() {
-      queue.add(new SyncActivityStreamTask());
+      SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(HomeActivity.this);
+      final long lastFullSync = settings.getLong(Settings.FULL_SYNC, 0);
+      final long currentTime = System.currentTimeMillis();
+      if (lastFullSync + 24 * DateUtils.DAY_IN_MILLIS < currentTime) {
+        queue.add(new SyncTask());
+      } else {
+        queue.add(new SyncActivityStreamTask());
+      }
       lastSync = System.currentTimeMillis();
       syncHandler.postDelayed(this, SYNC_DELAY);
     }
