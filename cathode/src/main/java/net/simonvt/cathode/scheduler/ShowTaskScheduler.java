@@ -50,7 +50,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
     execute(new Runnable() {
       @Override public void run() {
         final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
-        postTask(new SyncShowTask(tvdbId));
+        queueTask(new SyncShowTask(tvdbId));
       }
     });
   }
@@ -74,7 +74,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
           final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
           final int season = c.getInt(c.getColumnIndexOrThrow(CathodeContract.Episodes.SEASON));
           final int number = c.getInt(c.getColumnIndexOrThrow(CathodeContract.Episodes.EPISODE));
-          postPriorityTask(new EpisodeWatchedTask(tvdbId, season, number, true));
+          queuePriorityTask(new EpisodeWatchedTask(tvdbId, season, number, true));
         }
 
         c.close();
@@ -123,9 +123,9 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
             .update(CathodeContract.Episodes.CONTENT_URI, cv,
                 CathodeContract.Episodes.WATCHING + "=1", null);
 
-        postPriorityTask(new CancelShowCheckinTask());
+        queuePriorityTask(new CancelShowCheckinTask());
         if (tvdbId != -1) {
-          postTask(new SyncShowTask(tvdbId));
+          queueTask(new SyncShowTask(tvdbId));
         }
       }
     });
@@ -150,7 +150,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
           final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
           final int season = c.getInt(c.getColumnIndexOrThrow(CathodeContract.Episodes.SEASON));
           final int number = c.getInt(c.getColumnIndexOrThrow(CathodeContract.Episodes.EPISODE));
-          postPriorityTask(new EpisodeCollectionTask(tvdbId, season, number, true));
+          queuePriorityTask(new EpisodeCollectionTask(tvdbId, season, number, true));
         }
 
         c.close();

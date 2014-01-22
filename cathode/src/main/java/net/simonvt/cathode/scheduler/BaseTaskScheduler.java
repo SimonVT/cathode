@@ -48,11 +48,11 @@ public class BaseTaskScheduler {
     this.context = context;
   }
 
-  protected final void postTask(final TraktTask task) {
+  protected final void queueTask(final TraktTask task) {
     queue.add(task);
   }
 
-  protected final void postPriorityTask(final TraktTask task) {
+  protected final void queuePriorityTask(final TraktTask task) {
     priorityQueue.add(task);
   }
 

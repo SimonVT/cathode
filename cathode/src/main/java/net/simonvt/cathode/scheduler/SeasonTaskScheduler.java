@@ -55,7 +55,7 @@ public class SeasonTaskScheduler extends BaseTaskScheduler {
           final int tvdbId = EpisodeWrapper.getShowTvdbId(context.getContentResolver(), episodeId);
 
           if (watched != episodeWatched) {
-            postPriorityTask(new EpisodeWatchedTask(tvdbId, season, episode, watched));
+            queuePriorityTask(new EpisodeWatchedTask(tvdbId, season, episode, watched));
           }
         }
 
@@ -87,7 +87,7 @@ public class SeasonTaskScheduler extends BaseTaskScheduler {
           final int tvdbId = EpisodeWrapper.getShowTvdbId(context.getContentResolver(), episodeId);
 
           if (inCollection != episodeInCollection) {
-            postPriorityTask(new EpisodeCollectionTask(tvdbId, season, episode, inCollection));
+            queuePriorityTask(new EpisodeCollectionTask(tvdbId, season, episode, inCollection));
           }
         }
 

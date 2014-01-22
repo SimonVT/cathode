@@ -49,7 +49,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         MovieWrapper.setWatched(context.getContentResolver(), movieId, watched);
         if (watched) MovieWrapper.setIsInWatchlist(context.getContentResolver(), movieId, false);
 
-        postPriorityTask(new MovieWatchedTask(tmdbId, watched));
+        queuePriorityTask(new MovieWatchedTask(tmdbId, watched));
       }
     });
   }
@@ -61,7 +61,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
 
         MovieWrapper.setIsInWatchlist(context.getContentResolver(), movieId, inWatchlist);
 
-        postPriorityTask(new MovieWatchlistTask(tmdbId, inWatchlist));
+        queuePriorityTask(new MovieWatchlistTask(tmdbId, inWatchlist));
       }
     });
   }
@@ -73,7 +73,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
 
         MovieWrapper.setIsInCollection(context.getContentResolver(), movieId, inCollection);
 
-        postPriorityTask(new MovieCollectionTask(tmdbId, inCollection));
+        queuePriorityTask(new MovieCollectionTask(tmdbId, inCollection));
       }
     });
   }
@@ -99,7 +99,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
               .update(CathodeContract.Movies.buildFromId(movieId), cv, null, null);
 
           final long tmdbId = MovieWrapper.getTmdbId(context.getContentResolver(), movieId);
-          postPriorityTask(new CheckInMovieTask(tmdbId));
+          queuePriorityTask(new CheckInMovieTask(tmdbId));
         }
       }
     });
@@ -121,8 +121,8 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         cv.put(CathodeContract.Movies.WATCHING, false);
         context.getContentResolver().update(CathodeContract.Movies.MOVIE_WATCHING, cv, null, null);
 
-        postPriorityTask(new CancelMovieCheckinTask());
-        postTask(new SyncMovieTask(tmdbId));
+        queuePriorityTask(new CancelMovieCheckinTask());
+        queueTask(new SyncMovieTask(tmdbId));
       }
     });
   }

@@ -54,7 +54,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
         final int number = c.getInt(c.getColumnIndex(CathodeContract.Episodes.EPISODE));
         c.close();
 
-        postTask(new SyncEpisodeTask(tvdbId, season, number));
+        queueTask(new SyncEpisodeTask(tvdbId, season, number));
       }
     });
   }
@@ -80,7 +80,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
 
         EpisodeWrapper.setWatched(context.getContentResolver(), episodeId, watched);
 
-        postPriorityTask(new EpisodeWatchedTask(tvdbId, season, number, watched));
+        queuePriorityTask(new EpisodeWatchedTask(tvdbId, season, number, watched));
       }
     });
   }
@@ -110,7 +110,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
           context.getContentResolver()
               .update(CathodeContract.Episodes.buildFromId(episodeId), cv, null, null);
 
-          postPriorityTask(new CheckInEpisodeTask(tvdbId, season, number));
+          queuePriorityTask(new CheckInEpisodeTask(tvdbId, season, number));
         }
       }
     });
@@ -136,7 +136,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
 
         EpisodeWrapper.setInCollection(context.getContentResolver(), episodeId, inCollection);
 
-        postPriorityTask(new EpisodeCollectionTask(tvdbId, season, number, inCollection));
+        queuePriorityTask(new EpisodeCollectionTask(tvdbId, season, number, inCollection));
       }
     });
   }
@@ -156,7 +156,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
 
         EpisodeWrapper.setIsInWatchlist(context.getContentResolver(), episodeId, inWatchlist);
 
-        postPriorityTask(new EpisodeWatchlistTask(tvdbId, season, number, inWatchlist));
+        queuePriorityTask(new EpisodeWatchlistTask(tvdbId, season, number, inWatchlist));
       }
     });
   }
