@@ -1,6 +1,7 @@
 /*
 
 !.gitignore
+!.travis.yml
 !init.py
 !build.gradle
 !settings.gradle
