@@ -68,6 +68,13 @@ public abstract class TraktTask implements Task<TraktTaskService> {
           Timber.i("Body:");
           Timber.i(body);
           Timber.e(e, null);
+        } else {
+          String body = HttpUtils.streamToString(response.getBody().in());
+          Timber.d("URL: %s", url);
+          Timber.d("Status code: %d", statusCode);
+          Timber.d("Body:");
+          Timber.d(body);
+          Timber.d(e, null);
         }
       }
     } catch (Throwable t) {
