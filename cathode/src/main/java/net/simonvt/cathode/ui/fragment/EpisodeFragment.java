@@ -42,6 +42,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
+import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.FragmentContract;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
@@ -69,6 +70,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   private long episodeId;
 
+  @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;
   @Inject Bus bus;
 
@@ -108,6 +110,8 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   private boolean collected;
 
   private boolean inWatchlist;
+
+  private boolean watching;
 
   private boolean isTablet;
 
@@ -214,6 +218,12 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   private void populateOverflow() {
     overflow.setVisibility(View.VISIBLE);
+    if (watching) {
+      overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
+    } else {
+      overflow.addItem(R.id.action_checkin, R.string.action_checkin_cancel);
+    }
+
     if (watched) {
       overflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
     } else {
@@ -246,10 +256,16 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     if (loaded) {
-      if (watched) {
-        menu.add(0, R.id.action_unwatched, 1, R.string.action_unwatched);
+      if (watching) {
+        menu.add(0, R.id.action_checkin_cancel, 1, R.string.action_checkin_cancel);
       } else {
-        menu.add(0, R.id.action_watched, 2, R.string.action_watched);
+        menu.add(0, R.id.action_checkin, 2, R.string.action_checkin);
+      }
+
+      if (watched) {
+        menu.add(0, R.id.action_unwatched, 3, R.string.action_unwatched);
+      } else {
+        menu.add(0, R.id.action_watched, 4, R.string.action_watched);
         if (inWatchlist) {
           menu.add(0, R.id.action_watchlist_remove, 5, R.string.action_watchlist_remove);
         } else {
@@ -258,9 +274,9 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       }
 
       if (collected) {
-        menu.add(0, R.id.action_collection_remove, 3, R.string.action_collection_remove);
+        menu.add(0, R.id.action_collection_remove, 7, R.string.action_collection_remove);
       } else {
-        menu.add(0, R.id.action_collection_add, 4, R.string.action_collection_add);
+        menu.add(0, R.id.action_collection_add, 8, R.string.action_collection_add);
       }
     }
   }
@@ -277,6 +293,14 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
       case R.id.action_unwatched:
         episodeScheduler.setWatched(episodeId, false);
+        return true;
+
+      case R.id.action_checkin:
+        episodeScheduler.checkin(episodeId);
+        return true;
+
+      case R.id.action_checkin_cancel:
+        showScheduler.cancelCheckin();
         return true;
 
       case R.id.action_collection_add:
@@ -410,6 +434,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       collected = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.IN_COLLECTION)) == 1;
       inWatchlist =
           cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.IN_WATCHLIST)) == 1;
+      watching = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.WATCHING)) == 1;
 
       watchedView.setVisibility(watched ? View.VISIBLE : View.GONE);
       inCollectionView.setVisibility(collected ? View.VISIBLE : View.GONE);
@@ -432,8 +457,9 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       CathodeContract.Episodes.TITLE, CathodeContract.Episodes.SCREEN,
       CathodeContract.Episodes.OVERVIEW, CathodeContract.Episodes.FIRST_AIRED,
       CathodeContract.Episodes.WATCHED, CathodeContract.Episodes.IN_COLLECTION,
-      CathodeContract.Episodes.IN_WATCHLIST, CathodeContract.Episodes.RATING,
-      CathodeContract.Episodes.RATING_PERCENTAGE, CathodeContract.Episodes.SEASON
+      CathodeContract.Episodes.IN_WATCHLIST, CathodeContract.Episodes.WATCHING,
+      CathodeContract.Episodes.RATING, CathodeContract.Episodes.RATING_PERCENTAGE,
+      CathodeContract.Episodes.SEASON
   };
 
   private LoaderManager.LoaderCallbacks<Cursor> episodeCallbacks =
