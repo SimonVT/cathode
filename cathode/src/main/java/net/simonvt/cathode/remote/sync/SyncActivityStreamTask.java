@@ -21,6 +21,7 @@ import net.simonvt.cathode.api.entity.Activity;
 import net.simonvt.cathode.api.entity.ActivityItem;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.entity.ServerTime;
+import net.simonvt.cathode.api.entity.TvShow;
 import net.simonvt.cathode.api.enumeration.ActivityAction;
 import net.simonvt.cathode.api.enumeration.ActivityType;
 import net.simonvt.cathode.api.enumeration.DetailLevel;
@@ -63,17 +64,30 @@ public class SyncActivityStreamTask extends TraktTask {
           // sync all the things.
           switch (type) {
             case SHOW:
-              queueTask(new SyncShowTask(item.getShow().getTvdbId()));
+              if (item.getShow() != null) {
+                queueTask(new SyncShowTask(item.getShow().getTvdbId()));
+              }
               break;
 
             case EPISODE:
-              Episode episode = item.getEpisode();
-              queueTask(new SyncEpisodeTask(item.getShow().getTvdbId(), episode.getSeason(),
-                  episode.getNumber()));
+              TvShow show = item.getShow();
+              if (item.getEpisode() != null) {
+                Episode episode = item.getEpisode();
+                queueTask(new SyncEpisodeTask(show.getTvdbId(), episode.getSeason(),
+                    episode.getNumber()));
+              } else if (item.getEpisodes() != null) {
+                List<Episode> episodes = item.getEpisodes();
+                for (Episode episode : episodes) {
+                  queueTask(new SyncEpisodeTask(show.getTvdbId(), episode.getSeason(),
+                      episode.getNumber()));
+                }
+              }
               break;
 
             case MOVIE:
-              queueTask(new SyncMovieTask(item.getMovie().getTmdbId()));
+              if (item.getMovie() != null) {
+                queueTask(new SyncMovieTask(item.getMovie().getTmdbId()));
+              }
               break;
           }
         }

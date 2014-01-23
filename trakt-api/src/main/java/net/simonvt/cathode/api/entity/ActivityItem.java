@@ -53,6 +53,8 @@ public abstract class ActivityItem {
 
   private Episode episode;
 
+  private java.util.List<Episode> episodes;
+
   private Movie movie;
 
   private Rating rating;
@@ -89,6 +91,10 @@ public abstract class ActivityItem {
 
   public Episode getEpisode() {
     return episode;
+  }
+
+  public java.util.List<Episode> getEpisodes() {
+    return episodes;
   }
 
   public Movie getMovie() {
