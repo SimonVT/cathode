@@ -65,7 +65,8 @@ public class CathodeDatabase extends SQLiteOpenHelper {
 
     String SHOWS_WITH_WATCHING = SHOWS
         + " LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
-        + " episodes WHERE episodes.watching=1 AND episodes.showId=shows._id"
+        + " episodes WHERE (episodes.watching=1 OR episodes.checkedIn=1)"
+        + " AND episodes.showId=shows._id"
         + " AND episodes.episodeFirstAired>"
         + DateUtils.YEAR_IN_MILLIS
         + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
@@ -326,7 +327,8 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + EpisodeColumns.RATING + " TEXT,"
         + EpisodeColumns.IN_WATCHLIST + " INTEGER DEFAULT 0,"
         + EpisodeColumns.IN_COLLECTION + " INTEGER DEFAULT 0,"
-        + EpisodeColumns.WATCHING + " INTEGER DEFAULT 0)");
+        + EpisodeColumns.WATCHING + " INTEGER DEFAULT 0,"
+        + EpisodeColumns.CHECKED_IN + " INTEGER DEFAULT 0)");
 
     db.execSQL("CREATE TABLE " + Tables.MOVIES + " ("
         + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -359,7 +361,8 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + MovieColumns.IN_COLLECTION + " INTEGER DEFAULT 0,"
         + MovieColumns.TRENDING_INDEX + " INTEGER DEFAULT -1,"
         + MovieColumns.RECOMMENDATION_INDEX + " INTEGER DEFAULT -1,"
-        + MovieColumns.WATCHING + " INTEGER DEFAULT 0)");
+        + MovieColumns.WATCHING + " INTEGER DEFAULT 0,"
+        + MovieColumns.CHECKED_IN + " INTEGER DEFAULT 0)");
 
     db.execSQL("CREATE TABLE " + Tables.MOVIE_GENRES + " ("
         + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -429,8 +432,12 @@ public class CathodeDatabase extends SQLiteOpenHelper {
       case 2:
         db.execSQL("ALTER TABLE " + Tables.EPISODES
             + " ADD COLUMN " + EpisodeColumns.WATCHING + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + Tables.EPISODES
+            + " ADD COLUMN " + EpisodeColumns.CHECKED_IN + " INTEGER DEFAULT 0");
         db.execSQL("ALTER TABLE " + Tables.MOVIES
             + " ADD COLUMN " + MovieColumns.WATCHING + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + Tables.MOVIES
+            + " ADD COLUMN " + MovieColumns.CHECKED_IN + " INTEGER DEFAULT 0");
     }
   }
 

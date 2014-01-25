@@ -88,6 +88,8 @@ public class MovieFragment extends ProgressFragment
 
   private boolean watching;
 
+  private boolean checkedIn;
+
   public static Bundle getArgs(long movieId, String movieTitle) {
     Bundle args = new Bundle();
     args.putLong(ARG_ID, movieId);
@@ -136,9 +138,9 @@ public class MovieFragment extends ProgressFragment
 
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     if (loaded) {
-      if (watching) {
+      if (checkedIn) {
         menu.add(0, R.id.action_checkin_cancel, 1, R.string.action_checkin_cancel);
-      } else {
+      } else if (!watching) {
         menu.add(0, R.id.action_checkin, 2, R.string.action_checkin);
       }
 
@@ -228,6 +230,7 @@ public class MovieFragment extends ProgressFragment
     collected = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.IN_COLLECTION)) == 1;
     inWatchlist = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.IN_WATCHLIST)) == 1;
     watching = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.WATCHING)) == 1;
+    checkedIn = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.CHECKED_IN)) == 1;
 
     isWatched.setVisibility(watched ? View.VISIBLE : View.GONE);
     collection.setVisibility(collected ? View.VISIBLE : View.GONE);

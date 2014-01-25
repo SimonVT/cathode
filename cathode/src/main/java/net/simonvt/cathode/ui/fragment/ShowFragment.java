@@ -464,12 +464,15 @@ public class ShowFragment extends ProgressFragment {
 
       final boolean watching =
           cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.WATCHING)) == 1;
+      final boolean checkedIn =
+          cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.CHECKED_IN)) == 1;
+
       toWatchHolder.episodeOverflow.removeItems();
-      if (watching) {
+      if (checkedIn) {
         toWatchHolder.episodeOverflow.addItem(R.id.action_checkin_cancel,
             R.string.action_checkin_cancel);
         airTimeStr = getResources().getString(R.string.show_watching);
-      } else {
+      } else if (!watching) {
         toWatchHolder.episodeOverflow.addItem(R.id.action_checkin, R.string.action_checkin);
       }
 

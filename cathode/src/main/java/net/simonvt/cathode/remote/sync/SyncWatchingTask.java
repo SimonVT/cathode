@@ -47,15 +47,15 @@ public class SyncWatchingTask extends TraktTask {
 
     ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 
-    ContentProviderOperation op = ContentProviderOperation.newUpdate(Episodes.CONTENT_URI)
-        .withSelection(Episodes.WATCHING + "=1", null)
+    ContentProviderOperation op = ContentProviderOperation.newUpdate(Episodes.EPISODE_WATCHING)
         .withValue(Episodes.WATCHING, false)
+        .withValue(Episodes.CHECKED_IN, false)
         .build();
     ops.add(op);
 
-    op = ContentProviderOperation.newUpdate(Movies.CONTENT_URI)
-        .withSelection(Movies.WATCHING + "=1", null)
+    op = ContentProviderOperation.newUpdate(Movies.MOVIE_WATCHING)
         .withValue(Movies.WATCHING, false)
+        .withValue(Movies.CHECKED_IN, false)
         .build();
     ops.add(op);
 
@@ -64,30 +64,43 @@ public class SyncWatchingTask extends TraktTask {
       ActivityAction action = activity.getAction();
 
       if (type == ActivityType.EPISODE) {
-        switch (action) {
-          case CHECKIN:
-          case WATCHING:
-            Episode episode = activity.getEpisode();
-            final long episodeId = EpisodeWrapper.getEpisodeId(resolver, episode);
-            op = ContentProviderOperation.newUpdate(Episodes.buildFromId(episodeId))
-                .withValue(Episodes.WATCHING, true)
-                .build();
-            ops.add(op);
-            break;
-        }
-      } else if (type == ActivityType.MOVIE) {
+        Episode episode = activity.getEpisode();
+        final long episodeId = EpisodeWrapper.getEpisodeId(resolver, episode);
 
         switch (action) {
           case CHECKIN:
+            op = ContentProviderOperation.newUpdate(Episodes.buildFromId(episodeId))
+                .withValue(Episodes.CHECKED_IN, true)
+                .build();
+            break;
+
           case WATCHING:
-            Movie movie = activity.getMovie();
-            final long movieId = MovieWrapper.getMovieId(resolver, movie);
+            op = ContentProviderOperation.newUpdate(Episodes.buildFromId(episodeId))
+                .withValue(Episodes.WATCHING, true)
+                .build();
+            break;
+        }
+
+        ops.add(op);
+      } else if (type == ActivityType.MOVIE) {
+        Movie movie = activity.getMovie();
+        final long movieId = MovieWrapper.getMovieId(resolver, movie);
+
+        switch (action) {
+          case CHECKIN:
+            op = ContentProviderOperation.newUpdate(Movies.buildFromId(movieId))
+                .withValue(Movies.CHECKED_IN, true)
+                .build();
+            break;
+
+          case WATCHING:
             op = ContentProviderOperation.newUpdate(Movies.buildFromId(movieId))
                 .withValue(Movies.WATCHING, true)
                 .build();
-            ops.add(op);
             break;
         }
+
+        ops.add(op);
       }
     }
 

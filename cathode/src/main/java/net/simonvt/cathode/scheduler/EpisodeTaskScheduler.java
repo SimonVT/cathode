@@ -89,7 +89,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
     execute(new Runnable() {
       @Override public void run() {
         Cursor c = context.getContentResolver().query(CathodeContract.Episodes.CONTENT_URI, null,
-            CathodeContract.Episodes.WATCHING + "=1", null, null);
+            CathodeContract.Episodes.CHECKED_IN + "=1", null, null);
 
         if (c.getCount() == 0) {
           Cursor episode = EpisodeWrapper.query(context.getContentResolver(), episodeId,
@@ -106,7 +106,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
           episode.close();
 
           ContentValues cv = new ContentValues();
-          cv.put(CathodeContract.Episodes.WATCHING, true);
+          cv.put(CathodeContract.Episodes.CHECKED_IN, true);
           context.getContentResolver()
               .update(CathodeContract.Episodes.buildFromId(episodeId), cv, null, null);
 

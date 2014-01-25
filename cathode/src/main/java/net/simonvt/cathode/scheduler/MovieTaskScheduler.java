@@ -94,7 +94,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
 
         if (c.getCount() == 0) {
           ContentValues cv = new ContentValues();
-          cv.put(CathodeContract.Movies.WATCHING, true);
+          cv.put(CathodeContract.Movies.CHECKED_IN, true);
           context.getContentResolver()
               .update(CathodeContract.Movies.buildFromId(movieId), cv, null, null);
 
@@ -118,7 +118,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         c.close();
 
         ContentValues cv = new ContentValues();
-        cv.put(CathodeContract.Movies.WATCHING, false);
+        cv.put(CathodeContract.Movies.CHECKED_IN, false);
         context.getContentResolver().update(CathodeContract.Movies.MOVIE_WATCHING, cv, null, null);
 
         queuePriorityTask(new CancelMovieCheckinTask());

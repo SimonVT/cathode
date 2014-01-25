@@ -113,6 +113,8 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   private boolean watching;
 
+  private boolean checkedIn;
+
   private boolean isTablet;
 
   public static Bundle getArgs(long episodeId, String showTitle) {
@@ -218,9 +220,9 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   private void populateOverflow() {
     overflow.setVisibility(View.VISIBLE);
-    if (watching) {
+    if (checkedIn) {
       overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
-    } else {
+    } else if (!watching) {
       overflow.addItem(R.id.action_checkin, R.string.action_checkin_cancel);
     }
 
@@ -256,9 +258,9 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     if (loaded) {
-      if (watching) {
+      if (checkedIn) {
         menu.add(0, R.id.action_checkin_cancel, 1, R.string.action_checkin_cancel);
-      } else {
+      } else if (!watching) {
         menu.add(0, R.id.action_checkin, 2, R.string.action_checkin);
       }
 
@@ -435,6 +437,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       inWatchlist =
           cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.IN_WATCHLIST)) == 1;
       watching = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.WATCHING)) == 1;
+      checkedIn = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.CHECKED_IN)) == 1;
 
       watchedView.setVisibility(watched ? View.VISIBLE : View.GONE);
       inCollectionView.setVisibility(collected ? View.VISIBLE : View.GONE);
@@ -458,8 +461,8 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       CathodeContract.Episodes.OVERVIEW, CathodeContract.Episodes.FIRST_AIRED,
       CathodeContract.Episodes.WATCHED, CathodeContract.Episodes.IN_COLLECTION,
       CathodeContract.Episodes.IN_WATCHLIST, CathodeContract.Episodes.WATCHING,
-      CathodeContract.Episodes.RATING, CathodeContract.Episodes.RATING_PERCENTAGE,
-      CathodeContract.Episodes.SEASON
+      CathodeContract.Episodes.CHECKED_IN, CathodeContract.Episodes.RATING,
+      CathodeContract.Episodes.RATING_PERCENTAGE, CathodeContract.Episodes.SEASON,
   };
 
   private LoaderManager.LoaderCallbacks<Cursor> episodeCallbacks =

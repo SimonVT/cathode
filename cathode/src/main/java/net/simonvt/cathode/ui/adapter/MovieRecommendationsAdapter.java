@@ -36,9 +36,9 @@ public class MovieRecommendationsAdapter extends MoviesAdapter {
 
   @Override
   protected void setupOverflowItems(OverflowView overflow, boolean watched, boolean collected,
-      boolean inWatchlist, boolean watching) {
+      boolean inWatchlist, boolean watching, boolean checkedIn) {
     overflow.addItem(R.id.action_dismiss, R.string.action_recommendation_dismiss);
-    super.setupOverflowItems(overflow, watched, collected, inWatchlist, watching);
+    super.setupOverflowItems(overflow, watched, collected, inWatchlist, watching, checkedIn);
   }
 
   @Override protected void onOverflowActionSelected(View view, long id, int action, int position) {

@@ -109,7 +109,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
       @Override public void run() {
         Cursor c = context.getContentResolver()
             .query(CathodeContract.Episodes.CONTENT_URI, null,
-                CathodeContract.Episodes.WATCHING + "=1", null, null);
+                CathodeContract.Episodes.CHECKED_IN + "=1", null, null);
         int tvdbId = -1;
         if (c.moveToNext()) {
           final long showId = c.getLong(c.getColumnIndex(CathodeContract.Episodes.SHOW_ID));
@@ -118,10 +118,9 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         c.close();
 
         ContentValues cv = new ContentValues();
-        cv.put(CathodeContract.Episodes.WATCHING, false);
+        cv.put(CathodeContract.Episodes.CHECKED_IN, false);
         context.getContentResolver()
-            .update(CathodeContract.Episodes.CONTENT_URI, cv,
-                CathodeContract.Episodes.WATCHING + "=1", null);
+            .update(CathodeContract.Episodes.EPISODE_WATCHING, cv, null, null);
 
         queuePriorityTask(new CancelShowCheckinTask());
         if (tvdbId != -1) {

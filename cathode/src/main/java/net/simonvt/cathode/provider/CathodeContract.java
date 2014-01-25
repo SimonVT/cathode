@@ -147,6 +147,7 @@ public final class CathodeContract {
     String IN_WATCHLIST = "inWatchlist";
     String IN_COLLECTION = "inCollection";
     String WATCHING = "watching";
+    String CHECKED_IN = "checkedIn";
   }
 
   interface MovieColumns {
@@ -181,6 +182,7 @@ public final class CathodeContract {
     String TRENDING_INDEX = "trendingIndex";
     String RECOMMENDATION_INDEX = "recommendationIndex";
     String WATCHING = "watching";
+    String CHECKED_IN = "checkedIn";
   }
 
   interface SearchSuggestionsColumns {
@@ -338,11 +340,15 @@ public final class CathodeContract {
           + CathodeDatabase.Tables.SHOWS
           + "."
           + BaseColumns._ID
-          + " AND "
+          + " AND ("
           + CathodeDatabase.Tables.EPISODES
           + "."
           + EpisodeColumns.WATCHING
-          + "=1)";
+          + "=1 OR "
+          + CathodeDatabase.Tables.EPISODES
+          + "."
+          + EpisodeColumns.CHECKED_IN
+          + "=1))";
     }
   }
 
@@ -535,6 +541,9 @@ public final class CathodeContract {
 
     public static final Uri WATCHLIST_URI =
         CONTENT_URI.buildUpon().appendPath(PATH_WATCHLIST).build();
+
+    public static final Uri EPISODE_WATCHING =
+        CONTENT_URI.buildUpon().appendPath(PATH_WATCHING).build();
 
     public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.simonvt.cathode.episode";
 

@@ -232,13 +232,16 @@ public class HomeActivity extends BaseActivity
           watchingShow.getColumnIndex(CathodeContract.Episodes.SEASON));
       final int episodeNumber = watchingShow.getInt(
           watchingShow.getColumnIndex(CathodeContract.Episodes.EPISODE));
+      final boolean checkedIn =
+          watchingShow.getInt(watchingShow.getColumnIndex(CathodeContract.Episodes.CHECKED_IN))
+              == 1;
 
       ((TextView) watching.findViewById(R.id.show)).setText(show);
       ((RemoteImageView) watching.findViewById(R.id.poster)).setImage(poster);
       ((TextView) watching.findViewById(R.id.episode)).setText(
           getString(R.string.episode, season, episodeNumber, episode));
       OverflowView overflow = (OverflowView) watching.findViewById(R.id.overflow);
-      overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
+      if (checkedIn) overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
       overflow.setListener(new OverflowView.OverflowActionListener() {
         @Override public void onPopupShown() {
         }
@@ -264,12 +267,15 @@ public class HomeActivity extends BaseActivity
           watchingMovie.getString(watchingMovie.getColumnIndex(CathodeContract.Movies.POSTER));
       final String year =
           watchingMovie.getString(watchingMovie.getColumnIndex(CathodeContract.Movies.YEAR));
+      final boolean checkedIn =
+          watchingMovie.getInt(watchingMovie.getColumnIndex(CathodeContract.Movies.CHECKED_IN))
+              == 1;
 
       ((TextView) watching.findViewById(R.id.movie)).setText(movie);
       ((RemoteImageView) watching.findViewById(R.id.poster)).setImage(poster);
       ((TextView) watching.findViewById(R.id.year)).setText(year);
       OverflowView overflow = (OverflowView) watching.findViewById(R.id.overflow);
-      overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
+      if (checkedIn) overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
       overflow.setListener(new OverflowView.OverflowActionListener() {
         @Override public void onPopupShown() {
         }
