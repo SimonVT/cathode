@@ -38,7 +38,6 @@ import net.simonvt.cathode.event.MovieSearchResult;
 import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.event.SearchFailureEvent;
 import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeDatabase;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.adapter.MovieSearchAdapter;
@@ -173,17 +172,6 @@ public class SearchMovieFragment extends AbsAdapterFragment
     movieAdapter.changeCursor(cursor);
   }
 
-  protected static final String[] PROJECTION = new String[] {
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies._ID,
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.TITLE,
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.OVERVIEW,
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.POSTER,
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.TMDB_ID,
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.WATCHED,
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.IN_COLLECTION,
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.IN_WATCHLIST,
-  };
-
   @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
     StringBuilder where = new StringBuilder();
     where.append(CathodeContract.Movies._ID).append(" in (");
@@ -199,10 +187,9 @@ public class SearchMovieFragment extends AbsAdapterFragment
     }
     where.append(")");
 
-    CursorLoader loader =
-        new CursorLoader(getActivity(), CathodeContract.Movies.CONTENT_URI, PROJECTION,
-            where.toString(), ids, null);
-
+    CursorLoader loader = new CursorLoader(getActivity(), CathodeContract.Movies.CONTENT_URI,
+        MovieSearchAdapter.PROJECTION, where.toString(), ids, null);
+    loader.setUpdateThrottle(2000);
     return loader;
   }
 

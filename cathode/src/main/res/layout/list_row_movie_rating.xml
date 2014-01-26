@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2013 Simon Vig Therkildsen
+  ~ Copyright (C) 2014 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -29,16 +29,10 @@
       app:dominantMeasurement="height"
       app:aspectRatio="0.68"/>
 
-  <net.simonvt.cathode.widget.IndicatorView
-      android:id="@+id/indicator"
-      android:layout_width="3dp"
-      android:layout_height="match_parent"
-      android:layout_toRightOf="@id/poster"/>
-
   <LinearLayout
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_toRightOf="@id/indicator"
+      android:layout_toRightOf="@id/poster"
       android:layout_toLeftOf="@id/rating"
       android:layout_centerVertical="true"
       android:layout_marginLeft="4dp"

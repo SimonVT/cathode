@@ -113,9 +113,9 @@
     <item name="android:gravity">center_vertical</item>
   </style>
 
-  <style name="Widget.CirculatProgressIndicator">
+  <style name="Widget.CircularProgressIndicator">
     <item name="textMargin">20dp</item>
-    <item name="textColor">@android:color/holo_green_dark</item>
+    <item name="textColor">?android:attr/textColorPrimary</item>
     <item name="textSize">12sp</item>
     <item name="circleStrokeWidth">2dp</item>
     <item name="maxValue">100</item>

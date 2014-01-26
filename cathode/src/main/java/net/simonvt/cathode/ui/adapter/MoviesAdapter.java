@@ -24,11 +24,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.Optional;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
@@ -38,13 +40,21 @@ public class MoviesAdapter extends CursorAdapter {
 
   @Inject MovieTaskScheduler movieScheduler;
 
+  private int rowLayout;
+
   public MoviesAdapter(Context context, Cursor c) {
-    super(context, c, 0);
+    this(context, c, R.layout.list_row_movie);
     CathodeApp.inject(context, this);
   }
 
+  public MoviesAdapter(Context context, Cursor c, int rowLayout) {
+    super(context, c, 0);
+    CathodeApp.inject(context, this);
+    this.rowLayout = rowLayout;
+  }
+
   @Override public View newView(Context context, Cursor cursor, ViewGroup parent) {
-    View v = LayoutInflater.from(mContext).inflate(R.layout.list_row_movie, parent, false);
+    View v = LayoutInflater.from(mContext).inflate(rowLayout, parent, false);
     v.setTag(new ViewHolder(v));
     return v;
   }
@@ -67,6 +77,12 @@ public class MoviesAdapter extends CursorAdapter {
     vh.poster.setImage(cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.POSTER)));
     vh.title.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.TITLE)));
     vh.overview.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.OVERVIEW)));
+
+    if (vh.rating != null) {
+      final int rating = cursor.getInt(cursor.getColumnIndex(
+          CathodeContract.Movies.RATING_PERCENTAGE));
+      vh.rating.setValue(rating);
+    }
 
     vh.overflow.removeItems();
     setupOverflowItems(vh.overflow, watched, collected, inWatchlist, watching, checkedIn);
@@ -147,6 +163,7 @@ public class MoviesAdapter extends CursorAdapter {
     @InjectView(R.id.title) TextView title;
     @InjectView(R.id.overview) TextView overview;
     @InjectView(R.id.overflow) OverflowView overflow;
+    @InjectView(R.id.rating) @Optional CircularProgressIndicator rating;
 
     ViewHolder(View v) {
       ButterKnife.inject(this, v);

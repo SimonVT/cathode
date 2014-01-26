@@ -30,7 +30,7 @@ public class MovieRecommendationsAdapter extends MoviesAdapter {
   private DismissListener listener;
 
   public MovieRecommendationsAdapter(Context context, Cursor c, DismissListener listener) {
-    super(context, c);
+    super(context, c, R.layout.list_row_movie_rating);
     this.listener = listener;
   }
 

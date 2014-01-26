@@ -32,10 +32,13 @@
     <attr name="maxHeight" format="dimension"/>
   </declare-styleable>
 
+  <attr name="circularProgressIndicatorStyle" format="reference"/>
+
   <declare-styleable name="CircularProgressIndicator">
     <attr name="textMargin" format="dimension"/>
     <attr name="textColor" format="color"/>
     <attr name="textSize" format="dimension"/>
+    <attr name="textBackgroundColor" format="color"/>
     <attr name="circleStrokeWidth" format="dimension"/>
     <attr name="maxValue" format="integer"/>
     <attr name="circleColor" format="color"/>

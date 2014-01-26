@@ -40,6 +40,8 @@ public class CircularProgressIndicator extends View {
 
   private int textColor;
 
+  private int textBackgroundColor;
+
   private final Paint textPaint = new Paint();
 
   private final Rect textBounds = new Rect();
@@ -71,7 +73,8 @@ public class CircularProgressIndicator extends View {
   public CircularProgressIndicator(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
 
-    TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CircularProgressIndicator);
+    TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CircularProgressIndicator,
+        R.attr.circularProgressIndicatorStyle, R.style.Widget_CircularProgressIndicator);
 
     final Resources res = getResources();
     final DisplayMetrics dm = res.getDisplayMetrics();
@@ -85,6 +88,8 @@ public class CircularProgressIndicator extends View {
 
     final int defTextSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, dm);
     textSize = a.getDimensionPixelSize(R.styleable.CircularProgressIndicator_textSize, defTextSize);
+
+    textBackgroundColor = a.getColor(R.styleable.CircularProgressIndicator_textBackgroundColor, 0);
 
     final int defStrokeWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, dm);
     strokeWidth = a.getDimensionPixelSize(R.styleable.CircularProgressIndicator_circleStrokeWidth,
@@ -107,7 +112,6 @@ public class CircularProgressIndicator extends View {
     textPaint.setColor(textColor);
 
     circlePaint.setAntiAlias(true);
-    circlePaint.setStyle(Paint.Style.STROKE);
     circlePaint.setStrokeWidth(strokeWidth);
 
     setValue(0);
@@ -125,6 +129,11 @@ public class CircularProgressIndicator extends View {
     final int width = getWidth();
     final int height = getHeight();
 
+    circlePaint.setColor(textBackgroundColor);
+    circlePaint.setStyle(Paint.Style.FILL);
+    canvas.drawArc(circleBounds, 0, 360, false, circlePaint);
+
+    circlePaint.setStyle(Paint.Style.STROKE);
     circlePaint.setColor(circleBackgroundColor);
     canvas.drawArc(circleBounds, 0, 360, false, circlePaint);
 

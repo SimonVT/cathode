@@ -17,9 +17,12 @@
 
   <style name="BaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">
     <item name="menuDrawerStyle">@style/Menu.Drawer</item>
+
     <item name="messageBarContainerStyle">@style/MessageBar.Container</item>
     <item name="messageBarTextStyle">@style/MessageBar.Message</item>
     <item name="messageBarButtonStyle">@style/MessageBar.Button</item>
+
+    <item name="circularProgressIndicatorStyle">@style/Widget.CircularProgressIndicator</item>
   </style>
 
   <style name="Theme" parent="BaseTheme">

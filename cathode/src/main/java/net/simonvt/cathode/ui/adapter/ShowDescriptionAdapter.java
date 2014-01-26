@@ -31,6 +31,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.provider.CathodeDatabase;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
+import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.IndicatorView;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
@@ -48,6 +49,7 @@ public class ShowDescriptionAdapter extends CursorAdapter {
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.WATCHED_COUNT,
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.IN_COLLECTION_COUNT,
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.IN_WATCHLIST,
+      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.RATING_PERCENTAGE,
   };
 
   @Inject ShowTaskScheduler showScheduler;
@@ -58,7 +60,7 @@ public class ShowDescriptionAdapter extends CursorAdapter {
   }
 
   @Override public View newView(Context context, Cursor cursor, ViewGroup parent) {
-    View v = LayoutInflater.from(context).inflate(R.layout.list_row_search_show, parent, false);
+    View v = LayoutInflater.from(context).inflate(R.layout.list_row_show_description, parent, false);
     v.setTag(new ViewHolder(v));
     return v;
   }
@@ -73,6 +75,8 @@ public class ShowDescriptionAdapter extends CursorAdapter {
         cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.IN_COLLECTION_COUNT)) > 1;
     final boolean inWatchlist =
         cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.IN_WATCHLIST)) == 1;
+    final int rating =
+        cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.RATING_PERCENTAGE));
 
     vh.indicator.setWatched(watched);
     vh.indicator.setCollected(inCollection);
@@ -81,6 +85,8 @@ public class ShowDescriptionAdapter extends CursorAdapter {
     vh.poster.setImage(cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.POSTER)));
     vh.title.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.TITLE)));
     vh.overview.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.OVERVIEW)));
+
+    vh.rating.setValue(rating);
 
     vh.overflow.removeItems();
     setupOverflowItems(vh.overflow, inWatchlist);
@@ -129,6 +135,7 @@ public class ShowDescriptionAdapter extends CursorAdapter {
     @InjectView(R.id.title) TextView title;
     @InjectView(R.id.overview) TextView overview;
     @InjectView(R.id.overflow) OverflowView overflow;
+    @InjectView(R.id.rating) CircularProgressIndicator rating;
 
     ViewHolder(View v) {
       ButterKnife.inject(this, v);

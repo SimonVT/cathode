@@ -19,6 +19,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import android.view.ViewGroup;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.ui.BaseActivity;
+import net.simonvt.cathode.ui.adapter.MoviesAdapter;
 
 public class TrendingMoviesFragment extends MoviesFragment {
 
@@ -40,6 +42,10 @@ public class TrendingMoviesFragment extends MoviesFragment {
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
     setEmptyText(R.string.movies_loading_trending);
+  }
+
+  @Override protected CursorAdapter getAdapter(Cursor cursor) {
+    return new MoviesAdapter(getActivity(), cursor, R.layout.list_row_movie_rating);
   }
 
   @Override protected int getLoaderId() {

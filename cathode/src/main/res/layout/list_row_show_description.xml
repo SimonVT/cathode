@@ -40,9 +40,9 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_toRightOf="@id/indicator"
+      android:layout_toLeftOf="@id/rating"
       android:layout_centerVertical="true"
       android:layout_marginLeft="4dp"
-      android:layout_marginRight="16dp"
       android:paddingBottom="2dp"
       android:orientation="vertical">
 
@@ -65,6 +65,16 @@
         android:textSize="12sp"
         tools:text="This is a description of the show. It can be long. And multiline. Lots of lots of lines. Even more lines"/>
   </LinearLayout>
+
+  <net.simonvt.cathode.widget.CircularProgressIndicator
+      android:id="@+id/rating"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentRight="true"
+      android:layout_centerVertical="true"
+      android:layout_marginRight="4dp"
+      android:layout_marginLeft="4dp"
+      app:textMargin="10dp"/>
 
   <net.simonvt.cathode.widget.OverflowView
       android:id="@+id/overflow"
