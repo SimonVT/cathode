@@ -165,6 +165,7 @@ public class PhoneController extends UiController {
             activity.getActionBar().setDisplayShowCustomEnabled(false);
             activity.getActionBar().setDisplayShowTitleEnabled(true);
             activity.getActionBar().setTitle(R.string.app_name);
+            activity.getActionBar().setSubtitle(null);
             break;
         }
       }
