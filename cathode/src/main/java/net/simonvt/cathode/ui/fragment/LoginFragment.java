@@ -19,6 +19,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -93,6 +95,15 @@ public class LoginFragment extends BaseFragment {
     super.onViewCreated(view, inState);
     login.setOnClickListener(onLoginListener);
     usernameInput.addTextChangedListener(textChanged);
+    usernameInput.setFilters(new InputFilter[] {
+        new InputFilter() {
+          @Override
+          public CharSequence filter(CharSequence source, int start, int end, Spanned dest,
+              int dstart, int dend) {
+            return source.toString().replace(" ", "");
+          }
+        },
+    });
     if (CathodeApp.accountExists(getActivity())) {
       usernameInput.setText(CathodeApp.getAccount(getActivity()).name);
     }
