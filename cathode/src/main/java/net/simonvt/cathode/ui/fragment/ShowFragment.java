@@ -262,6 +262,11 @@ public class ShowFragment extends ProgressFragment {
               showScheduler.cancelCheckin();
             }
             break;
+          case R.id.action_watched:
+            if (toWatchId != -1) {
+              episodeScheduler.setWatched(toWatchId, true);
+            }
+            break;
         }
       }
     });
@@ -474,6 +479,7 @@ public class ShowFragment extends ProgressFragment {
         airTimeStr = getResources().getString(R.string.show_watching);
       } else if (!watching) {
         toWatchHolder.episodeOverflow.addItem(R.id.action_checkin, R.string.action_checkin);
+        toWatchHolder.episodeOverflow.addItem(R.id.action_watched, R.string.action_watched);
       }
 
       toWatchHolder.episodeAirTime.setText(airTimeStr);
