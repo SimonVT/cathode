@@ -133,6 +133,11 @@ public class SearchShowFragment extends AbsAdapterFragment
     return query;
   }
 
+  @Override public String getSubtitle() {
+    return searchShowIds != null ? getResources().getString(R.string.x_results,
+        searchShowIds.size()) : null;
+  }
+
   public void query(String query) {
     this.query = query;
     searchHandler.search(query);
@@ -151,12 +156,14 @@ public class SearchShowFragment extends AbsAdapterFragment
     searchShowIds = result.getShowIds();
     getLoaderManager().restartLoader(BaseActivity.LOADER_SEARCH_SHOWS, null, this);
     setEmptyText(R.string.no_results, query);
+    bus.post(new OnTitleChangedEvent());
   }
 
   @Subscribe public void onSearchFailure(SearchFailureEvent event) {
     if (event.getType() == SearchFailureEvent.Type.SHOW) {
       setCursor(null);
       setEmptyText(R.string.search_failure, query);
+      bus.post(new OnTitleChangedEvent());
     }
   }
 

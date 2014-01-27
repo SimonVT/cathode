@@ -107,6 +107,7 @@
 
   <string name="no_results">No results for query \'%s\'</string>
   <string name="search_failure">Search failed</string>
+  <string name="x_results">%1$d results</string>
 
   <string name="episode">%1$dx%2$d %3$s</string>
   <string name="episode_next">Next: %1$dx%2$d %3$s</string>

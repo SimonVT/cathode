@@ -104,7 +104,8 @@ public class SearchMovieFragment extends AbsAdapterFragment
   }
 
   @Override public String getSubtitle() {
-    return searchMovieIds != null ? searchMovieIds.size() + "results" : null;
+    return searchMovieIds != null ? getResources().getString(R.string.x_results,
+        searchMovieIds.size()) : null;
   }
 
   @Override public void onSaveInstanceState(Bundle outState) {
@@ -154,12 +155,14 @@ public class SearchMovieFragment extends AbsAdapterFragment
     searchMovieIds = result.getMovieIds();
     getLoaderManager().restartLoader(BaseActivity.LOADER_SEARCH_MOVIES, null, this);
     setEmptyText(R.string.no_results, query);
+    bus.post(new OnTitleChangedEvent());
   }
 
   @Subscribe public void onSearchFailure(SearchFailureEvent event) {
     if (event.getType() == SearchFailureEvent.Type.MOVIE) {
       setCursor(null);
       setEmptyText(R.string.search_failure, query);
+      bus.post(new OnTitleChangedEvent());
     }
   }
 
