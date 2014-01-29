@@ -62,15 +62,12 @@ public class SyncEpisodeTask extends TraktTask {
     } catch (RetrofitError e) {
       retrofit.client.Response r = e.getResponse();
       if (r != null) {
-        final int statusCode = r.getStatus();
-        if (statusCode == 400) {
-          ResponseParser parser = new ResponseParser();
-          CathodeApp.inject(getContext(), parser);
-          Response response = parser.tryParse(e);
-          if (response != null && "episode not found".equals(response.getError())) {
-            postOnSuccess();
-            return;
-          }
+        ResponseParser parser = new ResponseParser();
+        CathodeApp.inject(getContext(), parser);
+        Response response = parser.tryParse(e);
+        if (response != null && "episode not found".equals(response.getError())) {
+          postOnSuccess();
+          return;
         }
       }
       logError(e);

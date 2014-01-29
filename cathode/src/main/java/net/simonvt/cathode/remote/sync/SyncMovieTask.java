@@ -16,11 +16,15 @@
 package net.simonvt.cathode.remote.sync;
 
 import javax.inject.Inject;
+import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.api.ResponseParser;
 import net.simonvt.cathode.api.entity.Movie;
+import net.simonvt.cathode.api.entity.Response;
 import net.simonvt.cathode.api.enumeration.DetailLevel;
 import net.simonvt.cathode.api.service.MovieService;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.TraktTask;
+import retrofit.RetrofitError;
 
 public class SyncMovieTask extends TraktTask {
 
@@ -33,8 +37,23 @@ public class SyncMovieTask extends TraktTask {
   }
 
   @Override protected void doTask() {
-    Movie movie = movieService.summary(tmdbId, DetailLevel.EXTENDED);
-    MovieWrapper.updateOrInsertMovie(getContentResolver(), movie);
-    postOnSuccess();
+    try {
+      Movie movie = movieService.summary(tmdbId, DetailLevel.EXTENDED);
+      MovieWrapper.updateOrInsertMovie(getContentResolver(), movie);
+      postOnSuccess();
+    } catch (RetrofitError e) {
+      retrofit.client.Response r = e.getResponse();
+      if (r != null) {
+        ResponseParser parser = new ResponseParser();
+        CathodeApp.inject(getContext(), parser);
+        Response response = parser.tryParse(e);
+        if (response != null && "movie not found".equals(response.getError())) {
+          postOnSuccess();
+          return;
+        }
+      }
+      logError(e);
+      postOnFailure();
+    }
   }
 }
