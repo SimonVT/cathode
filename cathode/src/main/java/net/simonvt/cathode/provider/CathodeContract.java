@@ -258,6 +258,33 @@ public final class CathodeContract {
     public static final Uri SHOW_WATCHING =
         CONTENT_URI.buildUpon().appendPath(PATH_WATCHING).build();
 
+    public static final String SORT_TITLE =
+        CathodeDatabase.Tables.SHOWS + "." + ShowColumns.TITLE + " ASC";
+
+    public static final String SORT_NEXT_EPISODE = CathodeDatabase.Tables.EPISODES
+        + "."
+        + EpisodeColumns.FIRST_AIRED
+        + " ASC,"
+        + CathodeDatabase.Tables.SHOWS
+        + "."
+        + ShowColumns.TITLE
+        + " DESC";
+
+    public static final String SORT_RATING = CathodeDatabase.Tables.SHOWS
+        + "."
+        + ShowColumns.RATING_PERCENTAGE
+        + " DESC,"
+        + CathodeDatabase.Tables.SHOWS
+        + "."
+        + ShowColumns.TITLE
+        + " ASC";
+
+    public static final String SORT_VIEWERS =
+        CathodeDatabase.Tables.SHOWS + "." + ShowColumns.TRENDING_INDEX + " ASC";
+
+    public static final String SORT_RECOMMENDED =
+        CathodeDatabase.Tables.SHOWS + "." + ShowColumns.RECOMMENDATION_INDEX + " ASC";
+
     public static Uri buildFromId(long showId) {
       return CONTENT_URI.buildUpon()
           .appendPath(PATH_WITHID)
@@ -599,6 +626,24 @@ public final class CathodeContract {
         CONTENT_URI.buildUpon().appendPath(PATH_RECOMMENDED).build();
 
     public static final String DEFAULT_SORT = CathodeDatabase.Tables.MOVIES + "." + TITLE + " ASC";
+
+    public static final String SORT_TITLE =
+        CathodeDatabase.Tables.MOVIES + "." + MovieColumns.TITLE + " ASC";
+
+    public static final String SORT_RATING = CathodeDatabase.Tables.MOVIES
+        + "."
+        + MovieColumns.RATING_PERCENTAGE
+        + " DESC,"
+        + CathodeDatabase.Tables.MOVIES
+        + "."
+        + MovieColumns.TITLE
+        + " ASC";
+
+    public static final String SORT_VIEWERS =
+        CathodeDatabase.Tables.MOVIES + "." + MovieColumns.TRENDING_INDEX + " ASC";
+
+    public static final String SORT_RECOMMENDED =
+        CathodeDatabase.Tables.MOVIES + "." + MovieColumns.RECOMMENDATION_INDEX + " ASC";
 
     public static Uri buildFromId(long movieId) {
       return CONTENT_URI.buildUpon()

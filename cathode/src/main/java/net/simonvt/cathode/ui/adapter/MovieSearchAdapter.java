@@ -43,8 +43,8 @@ public class MovieSearchAdapter extends MoviesAdapter {
       CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.CHECKED_IN,
   };
 
-  public MovieSearchAdapter(Context context) {
-    super(context, null);
+  public MovieSearchAdapter(Context context, Cursor cursor) {
+    super(context, cursor);
     CathodeApp.inject(context, this);
   }
 

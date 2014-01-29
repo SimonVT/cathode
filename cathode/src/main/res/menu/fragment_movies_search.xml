@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2013 Simon Vig Therkildsen
   ~
@@ -13,6 +14,18 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<resources>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-</resources>
+  <item
+      android:id="@+id/menu_search"
+      android:showAsAction="always"
+      android:icon="@drawable/ic_action_search"
+      android:title="@string/action_search"/>
+
+  <item
+      android:id="@+id/sort_by"
+      android:showAsAction="ifRoom|withText"
+      android:icon="@drawable/ic_action_sort"
+      android:orderInCategory="30"
+      android:title="@string/action_sort_by"/>
+</menu>

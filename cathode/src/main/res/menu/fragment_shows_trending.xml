@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2013 Simon Vig Therkildsen
+  ~ Copyright (C) 2014 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
   <item
-      android:id="@+id/menu_search"
-      android:showAsAction="always"
-      android:icon="@drawable/ic_action_search"
-      android:title="@string/action_search"/>
-
+      android:id="@+id/sort_by"
+      android:showAsAction="always|withText"
+      android:icon="@drawable/ic_action_sort"
+      android:orderInCategory="30"
+      android:title="@string/action_sort_by" />
 </menu>

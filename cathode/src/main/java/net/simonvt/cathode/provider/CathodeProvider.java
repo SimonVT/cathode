@@ -312,18 +312,24 @@ public class CathodeProvider extends ContentProvider {
         return c;
       }
       case SHOWS_TRENDING: {
+        if (sortOrder == null) {
+          sortOrder = CathodeContract.ShowColumns.TRENDING_INDEX + " ASC";
+        }
         Cursor c = getShowsBuilder().table(Tables.SHOWS_WITH_UNWATCHED)
             .where(CathodeContract.ShowColumns.TRENDING_INDEX + ">-1")
             .where(selection, selectionArgs)
-            .query(db, projection, CathodeContract.ShowColumns.TRENDING_INDEX + " ASC");
+            .query(db, projection, sortOrder);
         c.setNotificationUri(getContext().getContentResolver(), Shows.CONTENT_URI);
         return c;
       }
       case SHOWS_RECOMMENDED: {
+        if (sortOrder == null) {
+          sortOrder = CathodeContract.ShowColumns.RECOMMENDATION_INDEX + " ASC";
+        }
         Cursor c = getShowsBuilder().table(Tables.SHOWS_WITH_UNWATCHED)
             .where(CathodeContract.ShowColumns.RECOMMENDATION_INDEX + ">-1")
             .where(selection, selectionArgs)
-            .query(db, projection, CathodeContract.ShowColumns.RECOMMENDATION_INDEX + " ASC");
+            .query(db, projection, sortOrder);
         c.setNotificationUri(getContext().getContentResolver(), Shows.CONTENT_URI);
         return c;
       }
@@ -425,18 +431,24 @@ public class CathodeProvider extends ContentProvider {
         return c;
       }
       case MOVIE_TRENDING: {
+        if (sortOrder == null) {
+          sortOrder = MovieColumns.TRENDING_INDEX + " ASC";
+        }
         Cursor c = getBuilder().table(Tables.MOVIES)
             .where(MovieColumns.TRENDING_INDEX + ">-1")
             .where(selection, selectionArgs)
-            .query(db, projection, MovieColumns.TRENDING_INDEX + " ASC");
+            .query(db, projection, sortOrder);
         c.setNotificationUri(getContext().getContentResolver(), Movies.CONTENT_URI);
         return c;
       }
       case MOVIE_RECOMMENDED: {
+        if (sortOrder == null) {
+          sortOrder = MovieColumns.RECOMMENDATION_INDEX + " ASC";
+        }
         Cursor c = getBuilder().table(Tables.MOVIES)
             .where(MovieColumns.RECOMMENDATION_INDEX + ">-1")
             .where(selection, selectionArgs)
-            .query(db, projection, MovieColumns.RECOMMENDATION_INDEX + " ASC");
+            .query(db, projection, sortOrder);
         c.setNotificationUri(getContext().getContentResolver(), Movies.CONTENT_URI);
         return c;
       }

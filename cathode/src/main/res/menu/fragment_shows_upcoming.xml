@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2013 Simon Vig Therkildsen
+  ~ Copyright (C) 2014 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -13,6 +14,19 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<resources>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-</resources>
+  <item
+      android:id="@+id/sort_by"
+      android:showAsAction="ifRoom|withText"
+      android:icon="@drawable/ic_action_sort"
+      android:orderInCategory="30"
+      android:title="@string/action_sort_by"/>
+
+  <item
+      android:id="@+id/menu_hidden"
+      android:showAsAction="never"
+      android:orderInCategory="450"
+      android:checkable="true"
+      android:title="@string/action_show_hidden"/>
+</menu>

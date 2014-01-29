@@ -77,6 +77,12 @@
   <string name="title_movies_trending">Trending movies</string>
   <string name="title_movies_recommendations">Movie recommendations</string>
 
+  <string name="sort_title">Title</string>
+  <string name="sort_next_episode">Next episode</string>
+  <string name="sort_rating">Rating</string>
+  <string name="sort_relevance">Relevance</string>
+  <string name="sort_viewers">Viewers</string>
+
   <string name="action_refresh">Refresh</string>
   <string name="action_sort_by">Sort by</string>
   <string name="action_watched">Watched</string>

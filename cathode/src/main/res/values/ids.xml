@@ -35,6 +35,12 @@
 
   <item name="menu_hidden" type="id"/>
 
+  <item name="sort_title" type="id"/>
+  <item name="sort_next_episode" type="id"/>
+  <item name="sort_rating" type="id"/>
+  <item name="sort_relevance" type="id"/>
+  <item name="sort_viewers" type="id"/>
+
   <item name="action_watched" type="id"/>
   <item name="action_watched_all" type="id"/>
   <item name="action_checkin" type="id"/>
