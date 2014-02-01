@@ -15,6 +15,8 @@
  */
 package net.simonvt.cathode.remote.sync;
 
+import android.database.Cursor;
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -25,6 +27,8 @@ import net.simonvt.cathode.api.entity.Season;
 import net.simonvt.cathode.api.entity.TvShow;
 import net.simonvt.cathode.api.enumeration.DetailLevel;
 import net.simonvt.cathode.api.service.ShowService;
+import net.simonvt.cathode.provider.CathodeContract.Episodes;
+import net.simonvt.cathode.provider.CathodeContract.Seasons;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
@@ -46,14 +50,41 @@ public class SyncShowTask extends TraktTask {
       TvShow show = showService.summary(tvdbId, DetailLevel.EXTENDED);
       final long showId = ShowWrapper.updateOrInsertShow(getContentResolver(), show);
 
-      List<Season> seasons = show.getSeasons();
+      List<Long> episodeIds = new ArrayList<Long>();
+      List<Long> seasonIds = new ArrayList<Long>();
 
+      List<Season> seasons = show.getSeasons();
       for (Season season : seasons) {
         final long seasonId =
             SeasonWrapper.updateOrInsertSeason(getContentResolver(), season, showId);
+        seasonIds.add(seasonId);
+
         List<Episode> episodes = season.getEpisodes().getEpisodes();
         for (Episode episode : episodes) {
-          EpisodeWrapper.updateOrInsertEpisode(getContentResolver(), episode, showId, seasonId);
+          final long episodeId =
+              EpisodeWrapper.updateOrInsertEpisode(getContentResolver(), episode, showId, seasonId);
+          episodeIds.add(episodeId);
+        }
+      }
+
+      Cursor allEpisodes =
+          getContentResolver().query(Episodes.buildFromShowId(showId), new String[] {
+              Episodes._ID,
+          }, null, null, null);
+      while (allEpisodes.moveToNext()) {
+        final long episodeId = allEpisodes.getLong(allEpisodes.getColumnIndex(Episodes._ID));
+        if (!episodeIds.contains(episodeId)) {
+          getContentResolver().delete(Episodes.buildFromId(episodeId), null, null);
+        }
+      }
+
+      Cursor allSeasons = getContentResolver().query(Seasons.buildFromShowId(showId), new String[] {
+          Seasons._ID,
+      }, null, null, null);
+      while (allSeasons.moveToNext()) {
+        final long seasonId = allSeasons.getLong(allSeasons.getColumnIndex(Seasons._ID));
+        if (!seasonIds.contains(seasonId)) {
+          getContentResolver().delete(Seasons.buildFromId(seasonId), null, null);
         }
       }
 
