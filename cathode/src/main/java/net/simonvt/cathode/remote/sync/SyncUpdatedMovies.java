@@ -19,8 +19,10 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import java.util.List;
 import javax.inject.Inject;
+import net.simonvt.cathode.api.entity.ServerTime;
 import net.simonvt.cathode.api.entity.UpdatedMovies;
 import net.simonvt.cathode.api.service.MoviesService;
+import net.simonvt.cathode.api.service.ServerService;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.settings.Settings;
@@ -28,29 +30,36 @@ import net.simonvt.cathode.settings.Settings;
 public class SyncUpdatedMovies extends TraktTask {
 
   @Inject transient MoviesService moviesService;
+  @Inject transient ServerService serverService;
 
   @Override protected void doTask() {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-    final long moviesLastUpdated = settings.getLong(Settings.MOVIES_LAST_UPDATED, 0);
+    final long lastUpdated = settings.getLong(Settings.MOVIES_LAST_UPDATED, 0);
+    long currentTime;
 
-    UpdatedMovies updatedMovies = moviesService.updated(moviesLastUpdated);
+    if (lastUpdated == 0) {
+      ServerTime time = serverService.time();
+      currentTime = time.getTimestamp();
+    } else {
+      UpdatedMovies updatedMovies = moviesService.updated(lastUpdated);
 
-    List<UpdatedMovies.MovieTimestamp> timestamps = updatedMovies.getMovies();
-    for (UpdatedMovies.MovieTimestamp timestamp : timestamps) {
-      final int tmdbId = timestamp.getTmdbId();
-      final boolean exists = MovieWrapper.exists(getContentResolver(), tmdbId);
-      if (exists) {
-        final boolean needsUpdate = MovieWrapper.needsUpdate(getContentResolver(), tmdbId,
-            timestamp.getLastUpdated());
-        if (needsUpdate) {
-          queueTask(new SyncMovieTask(tmdbId));
+      List<UpdatedMovies.MovieTimestamp> timestamps = updatedMovies.getMovies();
+      for (UpdatedMovies.MovieTimestamp timestamp : timestamps) {
+        final int tmdbId = timestamp.getTmdbId();
+        final boolean exists = MovieWrapper.exists(getContentResolver(), tmdbId);
+        if (exists) {
+          final boolean needsUpdate =
+              MovieWrapper.needsUpdate(getContentResolver(), tmdbId, timestamp.getLastUpdated());
+          if (needsUpdate) {
+            queueTask(new SyncMovieTask(tmdbId));
+          }
         }
       }
+
+      currentTime = updatedMovies.getTimestamps().getCurrent();
     }
 
-    settings.edit()
-        .putLong(Settings.MOVIES_LAST_UPDATED, updatedMovies.getTimestamps().getCurrent())
-        .apply();
+    settings.edit().putLong(Settings.MOVIES_LAST_UPDATED, currentTime).apply();
 
     postOnSuccess();
   }
