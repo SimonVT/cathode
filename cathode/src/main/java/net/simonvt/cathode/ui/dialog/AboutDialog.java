@@ -65,16 +65,16 @@ public class AboutDialog extends DialogFragment {
   public void openUrl(View v) {
     switch (v.getId()) {
       case R.id.version:
-        openUrl("https://play.google.com/store/apps/details?id=net.simonvt.cathode");
+        openUrl(getString(R.string.play_store_url));
         break;
       case R.id.gplus:
-        openUrl("https://plus.google.com/+SimonVigTherkildsen/posts");
+        openUrl(getString(R.string.dev_gplus));
         break;
       case R.id.github:
-        openUrl("https://github.com/SimonVT");
+        openUrl(getString(R.string.dev_github));
         break;
       case R.id.source:
-        openUrl("https://github.com/SimonVT/cathode");
+        openUrl(getString(R.string.source_url));
         break;
     }
   }
