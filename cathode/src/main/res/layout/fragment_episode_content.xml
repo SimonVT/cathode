@@ -21,6 +21,7 @@
     android:paddingLeft="@dimen/detailContentPadding"
     android:paddingTop="18dp"
     android:paddingRight="@dimen/detailContentPadding"
+    android:paddingBottom="@dimen/detailContentPaddingBottom"
     android:orientation="vertical">
 
   <TextView

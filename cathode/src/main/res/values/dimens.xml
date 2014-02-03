@@ -20,6 +20,7 @@
   <dimen name="searchViewMaxWidth">0dp</dimen>
 
   <dimen name="detailContentPadding">8dp</dimen>
+  <dimen name="detailContentPaddingBottom">8dp</dimen>
   <dimen name="detailPosterWidth">96dp</dimen>
   <dimen name="detailPosterTranslationY">18dp</dimen>
   <dimen name="detailPosterLeftMargin">16dp</dimen>
