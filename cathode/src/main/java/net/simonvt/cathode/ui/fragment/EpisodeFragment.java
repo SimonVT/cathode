@@ -259,9 +259,15 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     if (loaded) {
       if (checkedIn) {
-        menu.add(0, R.id.action_checkin_cancel, 1, R.string.action_checkin_cancel);
+        menu.add(0, R.id.action_checkin_cancel, 1, R.string.action_checkin_cancel)
+            .setIcon(R.drawable.ic_action_cancel)
+            .setShowAsActionFlags(
+                MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
       } else if (!watching) {
-        menu.add(0, R.id.action_checkin, 2, R.string.action_checkin);
+        menu.add(0, R.id.action_checkin, 2, R.string.action_checkin)
+            .setIcon(R.drawable.ic_action_checkin)
+            .setShowAsActionFlags(
+                MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
       }
 
       if (watched) {
