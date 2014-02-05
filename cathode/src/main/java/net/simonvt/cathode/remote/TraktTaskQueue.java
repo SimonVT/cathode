@@ -17,13 +17,12 @@ package net.simonvt.cathode.remote;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Looper;
 import com.google.gson.Gson;
 import com.squareup.tape.FileObjectQueue;
 import com.squareup.tape.ObjectQueue;
-import com.squareup.tape.TaskQueue;
 import java.io.File;
 import java.io.IOException;
+import net.simonvt.cathode.queue.TaskQueue;
 
 public final class TraktTaskQueue extends TaskQueue<TraktTask> {
 
@@ -42,48 +41,10 @@ public final class TraktTaskQueue extends TaskQueue<TraktTask> {
     context.startService(new Intent(context, TraktTaskService.class));
   }
 
-  @Override public void add(final TraktTask entry) {
-    if (Looper.myLooper() == Looper.getMainLooper()) {
-      new Thread(new Runnable() {
-        @Override public void run() {
-          addInternal(entry);
-        }
-      }).start();
-    } else {
-      addInternal(entry);
-    }
-  }
-
-  private void addInternal(TraktTask entry) {
+  protected void addInternal(TraktTask entry) {
     synchronized (this) {
-      super.add(entry);
+      super.addInternal(entry);
       startService();
-    }
-  }
-
-  @Override public TraktTask peek() {
-    synchronized (this) {
-      return super.peek();
-    }
-  }
-
-  @Override public int size() {
-    synchronized (this) {
-      return super.size();
-    }
-  }
-
-  @Override public void remove() {
-    synchronized (this) {
-      super.remove();
-    }
-  }
-
-  public void clear() {
-    synchronized (this) {
-      while (peek() != null) {
-        remove();
-      }
     }
   }
 

@@ -19,15 +19,23 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import com.squareup.tape.Task;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.queue.Task;
+import net.simonvt.cathode.remote.TraktTask.TaskCallback;
 import net.simonvt.cathode.util.HttpUtils;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import timber.log.Timber;
 
-public abstract class TraktTask implements Task<TraktTaskService> {
+public abstract class TraktTask extends Task<TaskCallback> {
+
+  public interface TaskCallback {
+
+    void onSuccess();
+
+    void onFailure();
+  }
 
   private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
@@ -35,13 +43,12 @@ public abstract class TraktTask implements Task<TraktTaskService> {
 
   @Inject @PriorityQueue transient TraktTaskQueue priorityQueue;
 
-  private transient TraktTaskService service;
-
   private transient volatile boolean canceled;
 
-  @Override public final void execute(final TraktTaskService service) {
-    CathodeApp.inject(service, this);
-    this.service = service;
+  @Override public void execute(Context context, TaskCallback callback) {
+    super.execute(context, callback);
+
+    CathodeApp.inject(context, this);
 
     try {
       Timber.tag(TraktTask.this.getClass().getSimpleName()).d("doTask");
@@ -89,11 +96,11 @@ public abstract class TraktTask implements Task<TraktTaskService> {
   }
 
   protected Context getContext() {
-    return service;
+    return context;
   }
 
   protected ContentResolver getContentResolver() {
-    return service.getContentResolver();
+    return context.getContentResolver();
   }
 
   protected final void queueTask(final TraktTask task) {
@@ -112,10 +119,10 @@ public abstract class TraktTask implements Task<TraktTaskService> {
 
   protected final void postOnSuccess() {
     synchronized (this) {
-      if (!canceled) {
+      if (!canceled && callback != null) {
         MAIN_HANDLER.post(new Runnable() {
           @Override public void run() {
-            service.onSuccess();
+            callback.onSuccess();
           }
         });
       }
@@ -124,20 +131,13 @@ public abstract class TraktTask implements Task<TraktTaskService> {
 
   protected void postOnFailure() {
     synchronized (this) {
-      if (!canceled) {
+      if (!canceled && callback != null) {
         MAIN_HANDLER.post(new Runnable() {
           @Override public void run() {
-            service.onFailure();
+            callback.onFailure();
           }
         });
       }
     }
-  }
-
-  public interface TaskCallback {
-
-    void onSuccess();
-
-    void onFailure();
   }
 }

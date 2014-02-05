@@ -299,7 +299,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     }
 
     @Override public void run() {
-      task.execute(service);
+      task.execute(service, service);
     }
   }
 
