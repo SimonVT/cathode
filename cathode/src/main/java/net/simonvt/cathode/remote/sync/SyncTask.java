@@ -33,7 +33,13 @@ public class SyncTask extends TraktTask {
     queueTask(new SyncUpdatedShows());
     queueTask(new SyncUpdatedMovies());
 
-    queueTask(new SyncUserActivityTask());
+    /**
+     * The trending tasks adds shows and movies but doesn't do a complete sync of them. Because they
+     * then exist, the tasks in SyncUserActivity will sync the individual episodes instead of the
+     * entire show/movie. By allowing these tasks to execute before the trending shows tasks,
+     * a full sync is scheduled. This only really matters for the first sync.
+     */
+    new SyncUserActivityTask().execute(context, null);
 
     if (ActivityWrapper.trendingNeedsUpdate(getContext())) {
       ActivityWrapper.updateTrending(getContext());
