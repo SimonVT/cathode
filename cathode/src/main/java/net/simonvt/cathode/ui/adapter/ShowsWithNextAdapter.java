@@ -225,6 +225,7 @@ public class ShowsWithNextAdapter extends CursorAdapter {
         if (airedCount - typeCount > 0) {
           if (!watching && hasNext) {
             overflow.addItem(R.id.action_checkin, R.string.action_checkin);
+            overflow.addItem(R.id.action_watched, R.string.action_watched);
           } else if (watching) {
             overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
           }
