@@ -19,6 +19,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.CathodeContract.Movies;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.action.CancelMovieCheckinTask;
 import net.simonvt.cathode.remote.action.CheckInMovieTask;
@@ -112,7 +113,9 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
     execute(new Runnable() {
       @Override public void run() {
         Cursor c = context.getContentResolver()
-            .query(CathodeContract.Movies.MOVIE_WATCHING, null, null, null, null);
+            .query(CathodeContract.Movies.MOVIE_WATCHING, new String[] {
+                Movies.TMDB_ID,
+            }, null, null, null);
         c.moveToFirst();
         final long tmdbId = c.getLong(c.getColumnIndex(CathodeContract.Movies.TMDB_ID));
         c.close();
