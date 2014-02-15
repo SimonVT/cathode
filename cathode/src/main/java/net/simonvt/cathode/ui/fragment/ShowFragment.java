@@ -366,6 +366,11 @@ public class ShowFragment extends ProgressFragment {
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_SEASONS, null, seasonsLoader);
   }
 
+  @Override public void onDestroyView() {
+    scrollView.setListener(null);
+    super.onDestroyView();
+  }
+
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     inflater.inflate(R.menu.fragment_show_info, menu);
   }
