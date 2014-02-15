@@ -16,6 +16,7 @@
 package net.simonvt.cathode.ui.dialog;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -86,6 +87,9 @@ public class AboutDialog extends DialogFragment {
 
   private void openUrl(String url) {
     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-    startActivity(intent);
+    PackageManager pm = getActivity().getPackageManager();
+    if (pm.resolveActivity(intent, 0) != null) {
+      startActivity(intent);
+    }
   }
 }
