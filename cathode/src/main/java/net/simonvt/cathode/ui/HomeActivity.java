@@ -163,7 +163,6 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {
-    super.onSaveInstanceState(outState);
     if (loginController != null) {
       outState.putBundle(STATE_LOGIN_CONTROLLER, loginController.onSaveInstanceState());
     }
@@ -171,6 +170,7 @@ public class HomeActivity extends BaseActivity
       outState.putBundle(STATE_UICONTROLLER, uiController.onSaveInstanceState());
     }
     outState.putLong(STATE_LAST_SYNC, lastSync);
+    super.onSaveInstanceState(outState);
   }
 
   @Override protected void onResume() {
