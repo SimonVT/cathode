@@ -180,7 +180,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
           Timber.d("Checking authentication");
           Response response = accountService.test();
 
-          if ("failed authentication".equals(response.getError())) {
+          if (response == null || "failed authentication".equals(response.getError())) {
             MAIN_HANDLER.post(new Runnable() {
               @Override public void run() {
                 Timber.i("Authentication failed");
