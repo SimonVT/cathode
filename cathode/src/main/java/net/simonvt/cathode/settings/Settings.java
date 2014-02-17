@@ -30,6 +30,7 @@ public class Settings extends PreferenceActivity {
   public static final String ACTIVITY_STREAM_SYNC = "activityStreamSync";
   public static final String FULL_SYNC = "fullSync";
 
+  // For saving timestamps returned by user/lastactivity
   public static final String ALL = "allActivity";
 
   public static final String EPISODE_WATCHED = "episodeWatched";
@@ -60,11 +61,14 @@ public class Settings extends PreferenceActivity {
   public static final String MOVIE_REVIEW = "movieReview";
   public static final String MOVIE_SHOUT = "movieShout";
 
+  // Last trending and recommendations sync
   public static final String TRENDING = "trending";
   public static final String RECOMMENDATIONS = "recommendations";
 
+  // Whether the initial sync has been performed
   public static final String INITIAL_SYNC = "initial Sync";
 
+  // Sorting options
   public static final String SORT_SHOW_UPCOMING = "sortShowUpcoming";
   public static final String SORT_SHOW_SEARCH = "sortShowSearch";
   public static final String SORT_SHOW_TRENDING = "sortShowTrending";
@@ -73,4 +77,35 @@ public class Settings extends PreferenceActivity {
   public static final String SORT_MOVIE_SEARCH = "sortMovieSearch";
   public static final String SORT_MOVIE_TRENDING = "sortMovieTrending";
   public static final String SORT_MOVIE_RECOMMENDED = "sortMovieRecommended";
+
+  // User settings returned by account/settings
+  public static final String PROFILE_FULL_NAME = "profileFullName";
+  public static final String PROFILE_GENDER = "profileGender";
+  public static final String PROFILE_AGE = "profileAge";
+  public static final String PROFILE_LOCATION = "profileLocation";
+  public static final String PROFILE_ABOUT = "profileAbout";
+  public static final String PROFILE_JOINED = "profileJoined";
+  public static final String PROFILE_LAST_LOGIN = "profileLastLogin";
+  public static final String PROFILE_AVATAR = "profileAvatar";
+  public static final String PROFILE_URL = "profileUrl";
+  public static final String PROFILE_VIP = "profileVip";
+
+  public static final String PROFILE_TIMEZONE = "profileTimezone";
+  public static final String PROFILE_USE_24_HOUR = "profileUse24hour";
+
+  public static final String PROFILE_PROTECTED = "profileProtected";
+
+  public static final String PROFILE_RATING_MODE = "profileRatingMode";
+
+  public static final String PROFILE_SHOUTS_SHOW_BADGES = "profileShowBadges";
+  public static final String PROFILE_SHOUTS_SHOW_SPOILERS = "profileShowSpoilers";
+
+  public static final String PROFILE_CONNECTION_FACEBOOK = "profileConnectionFacebook";
+  public static final String PROFILE_CONNECTION_TWITTER = "profileConnectionTwitter";
+  public static final String PROFILE_CONNECTION_TUMBLR = "profileConnectionTumblr";
+  public static final String PROFILE_CONNECTION_PATH = "profileConnectionPath";
+  public static final String PROFILE_CONNECTION_PROWL = "profileConnectionProwl";
+
+  public static final String PROFILE_SHARING_TEXT_WATCHING = "profileSharingTextWatching";
+  public static final String PROFILE_SHARING_TEXT_WATCHED = "profileSharingTextWatched";
 }

@@ -28,6 +28,7 @@ public class SyncTask extends TraktTask {
   @Inject transient UserService userService;
 
   @Override protected void doTask() {
+    queueTask(new SyncUserSettingsTask());
     queueTask(new SyncActivityStreamTask());
 
     queueTask(new SyncUpdatedShows());

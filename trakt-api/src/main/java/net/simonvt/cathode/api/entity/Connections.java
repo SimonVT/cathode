@@ -2,143 +2,42 @@ package net.simonvt.cathode.api.entity;
 
 public class Connections {
 
-  private Facebook facebook;
+  public static class SocialNetwork {
 
-  private Twitter twitter;
+    private Boolean connected;
 
-  private Tumblr tumblr;
+    public Boolean isConnected() {
+      return connected;
+    }
+  }
 
-  public Facebook getFacebook() {
+  private SocialNetwork facebook;
+
+  private SocialNetwork twitter;
+
+  private SocialNetwork tumblr;
+
+  private SocialNetwork path;
+
+  private SocialNetwork prowl;
+
+  public SocialNetwork getFacebook() {
     return facebook;
   }
 
-  public Twitter getTwitter() {
+  public SocialNetwork getTwitter() {
     return twitter;
   }
 
-  public Tumblr getTumblr() {
+  public SocialNetwork getTumblr() {
     return tumblr;
   }
 
-  public static class Facebook {
-
-    private Boolean connected;
-    private Boolean timelineEnabled;
-    private Boolean shareScrobblesStart;
-    private Boolean shareScrobblesEnd;
-    private Boolean shareTv;
-    private Boolean shareMovies;
-    private Boolean shareRatings;
-    private Boolean shareCheckins;
-
-    public Boolean isConnected() {
-      return connected;
-    }
-
-    public Boolean isTimelineEnabled() {
-      return timelineEnabled;
-    }
-
-    public Boolean isShareScrobblesStart() {
-      return shareScrobblesStart;
-    }
-
-    public Boolean isShareScrobblesEnd() {
-      return shareScrobblesEnd;
-    }
-
-    public Boolean isShareTv() {
-      return shareTv;
-    }
-
-    public Boolean isShareMovies() {
-      return shareMovies;
-    }
-
-    public Boolean isShareRatings() {
-      return shareRatings;
-    }
-
-    public Boolean isShareCheckins() {
-      return shareCheckins;
-    }
+  public SocialNetwork getPath() {
+    return path;
   }
 
-  public static class Twitter {
-
-    private Boolean connected;
-    private Boolean shareScrobblesStart;
-    private Boolean shareScrobblesEnd;
-    private Boolean shareTv;
-    private Boolean shareMovies;
-    private Boolean shareRatings;
-    private Boolean shareCheckins;
-
-    public Boolean isConnected() {
-      return connected;
-    }
-
-    public Boolean isShareScrobblesStart() {
-      return shareScrobblesStart;
-    }
-
-    public Boolean isShareScrobblesEnd() {
-      return shareScrobblesEnd;
-    }
-
-    public Boolean isShareTv() {
-      return shareTv;
-    }
-
-    public Boolean isShareMovies() {
-      return shareMovies;
-    }
-
-    public Boolean isShareRatings() {
-      return shareRatings;
-    }
-
-    public Boolean isShareCheckins() {
-      return shareCheckins;
-    }
-  }
-
-  public static class Tumblr {
-
-    private Boolean connected;
-    private Boolean shareScrobblesStart;
-    private Boolean shareScrobblesEnd;
-    private Boolean shareTv;
-    private Boolean shareMovies;
-    private Boolean shareRatings;
-    private Boolean shareCheckins;
-
-    public Boolean isConnected() {
-      return connected;
-    }
-
-    public Boolean isShareScrobblesStart() {
-      return shareScrobblesStart;
-    }
-
-    public Boolean isShareScrobblesEnd() {
-      return shareScrobblesEnd;
-    }
-
-    public Boolean isShareTv() {
-      return shareTv;
-    }
-
-    public Boolean isShareMovies() {
-      return shareMovies;
-    }
-
-    public Boolean isShareRatings() {
-      return shareRatings;
-    }
-
-    public Boolean isShareCheckins() {
-      return shareCheckins;
-    }
+  public SocialNetwork getProwl() {
+    return prowl;
   }
 }
