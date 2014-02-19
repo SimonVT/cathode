@@ -52,43 +52,52 @@ public class SyncActivityStreamTask extends TraktTask {
       Activity activity =
           activityService.user(ActivityType.ALL, actions, lastSync, DetailLevel.ACTIVITY_MIN);
 
-      List<ActivityItem> items = activity.getActivity();
+      if (activity.getActivity() != null) {
+        List<ActivityItem> items = activity.getActivity();
 
-      if (items.size() >= 100) {
-        queueTask(new SyncUserActivityTask());
-      } else {
-        for (ActivityItem item : items) {
-          ActivityType type = item.getType();
+        if (items.size() >= 100) {
+          queueTask(new SyncUserActivityTask());
+        } else {
+          for (ActivityItem item : items) {
+            ActivityType type = item.getType();
 
-          // Don't trust the activity API, it doesn't show 'un' events. If something happened,
-          // sync all the things.
-          switch (type) {
-            case SHOW:
-              if (item.getShow() != null) {
-                queueTask(new SyncShowTask(item.getShow().getTvdbId()));
-              }
-              break;
+            // Don't trust the activity API, it doesn't show 'un' events. If something happened,
+            // sync all the things.
+            switch (type) {
+              case SHOW:
+                if (item.getShow() != null) {
+                  queueTask(new SyncShowTask(item.getShow().getTvdbId()));
+                }
+                break;
 
-            case EPISODE:
-              TvShow show = item.getShow();
-              if (item.getEpisode() != null) {
-                Episode episode = item.getEpisode();
-                queueTask(new SyncEpisodeTask(show.getTvdbId(), episode.getSeason(),
-                    episode.getNumber()));
-              } else if (item.getEpisodes() != null) {
-                List<Episode> episodes = item.getEpisodes();
-                for (Episode episode : episodes) {
+              case EPISODE:
+                TvShow show = item.getShow();
+                if (item.getEpisode() != null) {
+                  Episode episode = item.getEpisode();
                   queueTask(new SyncEpisodeTask(show.getTvdbId(), episode.getSeason(),
                       episode.getNumber()));
+                } else if (item.getEpisodes() != null) {
+                  List<Episode> episodes = item.getEpisodes();
+                  for (Episode episode : episodes) {
+                    queueTask(new SyncEpisodeTask(show.getTvdbId(), episode.getSeason(),
+                        episode.getNumber()));
+                  }
                 }
-              }
-              break;
+                break;
 
-            case MOVIE:
-              if (item.getMovie() != null) {
-                queueTask(new SyncMovieTask(item.getMovie().getTmdbId()));
-              }
-              break;
+              case MOVIE:
+                if (item.getMovie() != null) {
+                  queueTask(new SyncMovieTask(item.getMovie().getTmdbId()));
+                }
+                break;
+            }
+
+            switch (item.getAction()) {
+              case CHECKIN:
+              case WATCHING:
+                queueTask(new SyncWatchingTask());
+                break;
+            }
           }
         }
       }

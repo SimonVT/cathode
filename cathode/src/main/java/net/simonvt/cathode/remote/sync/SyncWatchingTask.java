@@ -18,8 +18,10 @@ package net.simonvt.cathode.remote.sync;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.OperationApplicationException;
+import android.database.Cursor;
 import android.os.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.ActivityItem;
 import net.simonvt.cathode.api.entity.Episode;
@@ -27,6 +29,7 @@ import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.enumeration.ActivityAction;
 import net.simonvt.cathode.api.enumeration.ActivityType;
 import net.simonvt.cathode.api.service.UserService;
+import net.simonvt.cathode.provider.CathodeDatabase.Tables;
 import net.simonvt.cathode.provider.CathodeProvider;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.MovieWrapper;
@@ -47,17 +50,30 @@ public class SyncWatchingTask extends TraktTask {
 
     ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 
-    ContentProviderOperation op = ContentProviderOperation.newUpdate(Episodes.EPISODE_WATCHING)
-        .withValue(Episodes.WATCHING, false)
-        .withValue(Episodes.CHECKED_IN, false)
-        .build();
-    ops.add(op);
+    Cursor episodeWatchingCursor =
+        getContentResolver().query(Episodes.EPISODE_WATCHING, new String[] {
+            Tables.EPISODES + "." + Episodes._ID,
+        }, null, null, null);
 
-    op = ContentProviderOperation.newUpdate(Movies.MOVIE_WATCHING)
-        .withValue(Movies.WATCHING, false)
-        .withValue(Movies.CHECKED_IN, false)
-        .build();
-    ops.add(op);
+    List<Long> episodeWatching = new ArrayList<Long>();
+    while (episodeWatchingCursor.moveToNext()) {
+      episodeWatching.add(
+          episodeWatchingCursor.getLong(episodeWatchingCursor.getColumnIndex(Episodes._ID)));
+    }
+    episodeWatchingCursor.close();
+
+    Cursor movieWatchingCursor = getContentResolver().query(Movies.MOVIE_WATCHING, new String[] {
+        Movies._ID,
+    }, null, null, null);
+
+    List<Long> movieWatching = new ArrayList<Long>();
+    while (movieWatchingCursor.moveToNext()) {
+      movieWatching.add(
+          movieWatchingCursor.getLong(movieWatchingCursor.getColumnIndex(Movies._ID)));
+    }
+    movieWatchingCursor.close();
+
+    ContentProviderOperation op = null;
 
     if (activity != null) {
       ActivityType type = activity.getType();
@@ -65,7 +81,8 @@ public class SyncWatchingTask extends TraktTask {
 
       if (type == ActivityType.EPISODE) {
         Episode episode = activity.getEpisode();
-        final long episodeId = EpisodeWrapper.getEpisodeId(resolver, episode);
+        final Long episodeId = EpisodeWrapper.getEpisodeId(resolver, episode);
+        episodeWatching.remove(episodeId);
 
         switch (action) {
           case CHECKIN:
@@ -84,7 +101,8 @@ public class SyncWatchingTask extends TraktTask {
         ops.add(op);
       } else if (type == ActivityType.MOVIE) {
         Movie movie = activity.getMovie();
-        final long movieId = MovieWrapper.getMovieId(resolver, movie);
+        final Long movieId = MovieWrapper.getMovieId(resolver, movie);
+        movieWatching.remove(movieId);
 
         switch (action) {
           case CHECKIN:
@@ -102,6 +120,28 @@ public class SyncWatchingTask extends TraktTask {
 
         ops.add(op);
       }
+    }
+
+    for (Long episodeId : episodeWatching) {
+      final int showTvdbId = EpisodeWrapper.getShowTvdbId(getContentResolver(), episodeId);
+      queueTask(new SyncShowTask(showTvdbId));
+
+      op = ContentProviderOperation.newUpdate(Episodes.buildFromId(episodeId))
+          .withValue(Episodes.CHECKED_IN, false)
+          .withValue(Episodes.WATCHING, false)
+          .build();
+      ops.add(op);
+    }
+
+    for (Long movieId : movieWatching) {
+      final long tmdbId = MovieWrapper.getTmdbId(getContentResolver(), movieId);
+      queueTask(new SyncMovieTask(tmdbId));
+
+      op = ContentProviderOperation.newUpdate(Movies.buildFromId(movieId))
+          .withValue(Movies.CHECKED_IN, false)
+          .withValue(Movies.WATCHING, false)
+          .build();
+      ops.add(op);
     }
 
     try {
