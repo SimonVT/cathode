@@ -1,7 +1,5 @@
 package net.simonvt.cathode.api.entity;
 
-import net.simonvt.cathode.api.enumeration.Status;
-
 public class UserSettings extends Response {
 
   private Profile profile;
