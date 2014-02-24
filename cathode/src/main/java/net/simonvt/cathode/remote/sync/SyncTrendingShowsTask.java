@@ -79,10 +79,10 @@ public class SyncTrendingShowsTask extends TraktTask {
       resolver.applyBatch(CathodeProvider.AUTHORITY, ops);
       postOnSuccess();
     } catch (RemoteException e) {
-      Timber.e(e, null);
+      Timber.e(e, "SyncTrendingShowsTask failed");
       postOnFailure();
     } catch (OperationApplicationException e) {
-      Timber.e(e, null);
+      Timber.e(e, "SyncTrendingShowsTask failed");
       postOnFailure();
     }
   }

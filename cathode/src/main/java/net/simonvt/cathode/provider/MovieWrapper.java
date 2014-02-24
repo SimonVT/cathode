@@ -41,7 +41,7 @@ public final class MovieWrapper {
     try {
       throw new Exception("tmdbId: " + tmdbId + " - " + message);
     } catch (Exception e) {
-      Timber.e(e, null);
+      Timber.e(e, "tmdbId: " + tmdbId + " - " + message);
     }
   }
 

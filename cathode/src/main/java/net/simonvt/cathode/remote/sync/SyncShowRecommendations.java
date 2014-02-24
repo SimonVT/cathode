@@ -80,10 +80,10 @@ public class SyncShowRecommendations extends TraktTask {
       resolver.applyBatch(CathodeProvider.AUTHORITY, ops);
       postOnSuccess();
     } catch (RemoteException e) {
-      Timber.e(e, null);
+      Timber.e(e, "SyncShowRecommendationsTask failed");
       postOnFailure();
     } catch (OperationApplicationException e) {
-      Timber.e(e, null);
+      Timber.e(e, "SyncShowRecommendationsTask failed");
       postOnFailure();
     }
   }

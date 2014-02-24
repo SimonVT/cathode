@@ -74,7 +74,7 @@ public abstract class TraktTask extends Task<TaskCallback> {
           Timber.i("Status code: %d", statusCode);
           Timber.i("Body:");
           Timber.i(body);
-          Timber.e(e, null);
+          Timber.e(e, "Request error");
         } else {
           String body = HttpUtils.streamToString(response.getBody().in());
           Timber.d("URL: %s", url);

@@ -109,10 +109,10 @@ public class SyncShowsCollectionTask extends TraktTask {
 
       postOnSuccess();
     } catch (RemoteException e) {
-      Timber.e(e, null);
+      Timber.e(e, "SyncShowsCollectionTask failed");
       postOnFailure();
     } catch (OperationApplicationException e) {
-      Timber.e(e, null);
+      Timber.e(e, "SyncShowsCollectionTask failed");
       postOnFailure();
     }
   }

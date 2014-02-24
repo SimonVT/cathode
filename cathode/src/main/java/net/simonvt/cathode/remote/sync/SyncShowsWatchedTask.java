@@ -115,10 +115,10 @@ public class SyncShowsWatchedTask extends TraktTask {
 
       postOnSuccess();
     } catch (RemoteException e) {
-      Timber.e(e, null);
+      Timber.e(e, "SyncShowsWatchedTask failed");
       postOnFailure();
     } catch (OperationApplicationException e) {
-      Timber.e(e, null);
+      Timber.e(e, "SyncShowsWatchedTask failed");
       postOnFailure();
     }
   }

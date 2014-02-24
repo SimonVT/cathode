@@ -42,8 +42,7 @@ public class GsonConverter<T extends TraktTask> implements FileObjectQueue.Conve
       Reader reader = new InputStreamReader(new ByteArrayInputStream(bytes));
       return gson.fromJson(reader, type);
     } catch (Throwable e) {
-      Timber.i(new String(bytes));
-      Timber.e(e, null);
+      Timber.e(e, new String(bytes));
     }
 
     return (T) new DeserializationFailedTask();

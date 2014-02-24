@@ -43,7 +43,7 @@ public final class ShowWrapper {
     try {
       throw new Exception("tvdbId: " + tvdbId + " - " + message);
     } catch (Exception e) {
-      Timber.e(e, null);
+      Timber.e(e, "tvdbId: " + tvdbId + " - " + message);
     }
   }
 

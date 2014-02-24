@@ -117,10 +117,10 @@ public class SyncSeasonTask extends TraktTask {
 
       postOnSuccess();
     } catch (RemoteException e) {
-      Timber.e(e, null);
+      Timber.e(e, "SyncSeasonTask failed");
       postOnFailure();
     } catch (OperationApplicationException e) {
-      Timber.e(e, null);
+      Timber.e(e, "SyncSeasonTask failed");
       postOnFailure();
     }
   }

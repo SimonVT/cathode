@@ -147,9 +147,9 @@ public class SyncWatchingTask extends TraktTask {
     try {
       resolver.applyBatch(CathodeProvider.AUTHORITY, ops);
     } catch (RemoteException e) {
-      Timber.e(e, null);
+      Timber.e(e, "SyncWatchingTask failed");
     } catch (OperationApplicationException e) {
-      Timber.e(e, null);
+      Timber.e(e, "SyncWatchingTask failed");
     }
 
     postOnSuccess();
