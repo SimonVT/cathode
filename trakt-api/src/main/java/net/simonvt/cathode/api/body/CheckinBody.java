@@ -12,6 +12,8 @@ public class CheckinBody {
     Boolean tumblr;
 
     Boolean path;
+
+    Boolean prowl;
   }
 
   @SerializedName("tvdb_id") Integer tvdbId;
@@ -111,6 +113,12 @@ public class CheckinBody {
   public CheckinBody path(boolean share) {
     if (this.share == null) this.share = new Share();
     this.share.path = share;
+    return this;
+  }
+
+  public CheckinBody prowl(boolean share) {
+    if (this.share == null) this.share = new Share();
+    this.share.prowl = share;
     return this;
   }
 

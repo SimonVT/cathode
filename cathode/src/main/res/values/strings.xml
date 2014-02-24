@@ -47,6 +47,16 @@
   <string name="logout_message">Are you sure you want to log out?</string>
   <string name="logout_button">Log out</string>
 
+  <string name="checkin_message_title">Check in message</string>
+  <string name="checkin_message_default">I\'m watching [item]</string>
+
+  <string name="share_to">Share to</string>
+  <string name="facebook">Facebook</string>
+  <string name="twitter">Twitter</string>
+  <string name="tumblr">Tumblr</string>
+  <string name="path">Path</string>
+  <string name="prowl">Prowl</string>
+
   <string name="now">Now</string>
   <string name="in_minutes">In %d minutes</string>
   <string name="minutes_ago">%d minutes ago</string>

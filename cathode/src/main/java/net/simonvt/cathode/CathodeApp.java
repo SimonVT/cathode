@@ -117,6 +117,7 @@ import net.simonvt.cathode.ui.adapter.ShowRecommendationsAdapter;
 import net.simonvt.cathode.ui.adapter.ShowWatchlistAdapter;
 import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
 import net.simonvt.cathode.ui.adapter.UpcomingAdapter;
+import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.fragment.EpisodeFragment;
@@ -307,7 +308,7 @@ public class CathodeApp extends Application {
           UpcomingShowsFragment.class, WatchedMoviesFragment.class, WatchedShowsFragment.class,
 
           // Dialogs
-          RatingDialog.class,
+          RatingDialog.class, CheckInDialog.class, CheckInDialog.Injections.class,
 
           // ListAdapters
           EpisodeWatchlistAdapter.class, SeasonAdapter.class, SeasonsAdapter.class,

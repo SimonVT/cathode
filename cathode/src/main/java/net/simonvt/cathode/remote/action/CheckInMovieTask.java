@@ -26,12 +26,39 @@ public class CheckInMovieTask extends TraktTask {
 
   long tmdbId;
 
-  public CheckInMovieTask(long tmdbId) {
+  String message;
+
+  boolean facebook;
+
+  boolean twitter;
+
+  boolean tumblr;
+
+  boolean path;
+
+  boolean prowl;
+
+  public CheckInMovieTask(long tmdbId, String message, boolean facebook, boolean twitter,
+      boolean tumblr, boolean path, boolean prowl) {
     this.tmdbId = tmdbId;
+    this.message = message;
+    this.facebook = facebook;
+    this.twitter = twitter;
+    this.tumblr = tumblr;
+    this.path = path;
+    this.prowl = prowl;
   }
 
   @Override protected void doTask() {
-    movieService.checkin(CheckinBody.tmdbId(tmdbId));
+    CheckinBody body = CheckinBody.tmdbId(tmdbId)
+        .message(message)
+        .facebook(facebook)
+        .twitter(twitter)
+        .tumblr(tumblr)
+        .path(path)
+        .prowl(prowl);
+
+    movieService.checkin(body);
     postOnSuccess();
   }
 }

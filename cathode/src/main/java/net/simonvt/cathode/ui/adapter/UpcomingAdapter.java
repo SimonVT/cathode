@@ -15,8 +15,8 @@
  */
 package net.simonvt.cathode.ui.adapter;
 
-import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.ui.LibraryType;
@@ -30,8 +30,8 @@ public class UpcomingAdapter extends ShowsWithNextAdapter {
 
   private OnRemoveListener listener;
 
-  public UpcomingAdapter(Context context, Cursor cursor, OnRemoveListener listener) {
-    super(context, cursor, LibraryType.WATCHED);
+  public UpcomingAdapter(FragmentActivity activity, Cursor cursor, OnRemoveListener listener) {
+    super(activity, cursor, LibraryType.WATCHED);
     this.listener = listener;
   }
 

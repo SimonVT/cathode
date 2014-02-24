@@ -30,14 +30,43 @@ public class CheckInEpisodeTask extends TraktTask {
 
   private int episode;
 
-  public CheckInEpisodeTask(int tvdbId, int season, int episode) {
+  String message;
+
+  boolean facebook;
+
+  boolean twitter;
+
+  boolean tumblr;
+
+  boolean path;
+
+  boolean prowl;
+
+  public CheckInEpisodeTask(int tvdbId, int season, int episode, String message, boolean facebook,
+      boolean twitter, boolean tumblr, boolean path, boolean prowl) {
     this.tvdbId = tvdbId;
     this.season = season;
     this.episode = episode;
+    this.message = message;
+    this.facebook = facebook;
+    this.twitter = twitter;
+    this.tumblr = tumblr;
+    this.path = path;
+    this.prowl = prowl;
   }
 
   @Override protected void doTask() {
-    showService.checkin(CheckinBody.tvdbId(tvdbId).season(season).episode(episode));
+    CheckinBody body = CheckinBody.tvdbId(tvdbId)
+        .season(season)
+        .episode(episode)
+        .message(message)
+        .facebook(facebook)
+        .twitter(twitter)
+        .tumblr(tumblr)
+        .path(path)
+        .prowl(prowl);
+
+    showService.checkin(body);
     postOnSuccess();
   }
 }

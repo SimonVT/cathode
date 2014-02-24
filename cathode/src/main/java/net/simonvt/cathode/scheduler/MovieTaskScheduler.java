@@ -87,7 +87,8 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
    *
    * @param movieId The database id of the movie.
    */
-  public void checkin(final long movieId) {
+  public void checkin(final long movieId, final String message, final boolean facebook,
+      final boolean twitter, final boolean tumblr, final boolean path, final boolean prowl) {
     execute(new Runnable() {
       @Override public void run() {
         Cursor c = context.getContentResolver()
@@ -100,7 +101,8 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
               .update(CathodeContract.Movies.buildFromId(movieId), cv, null, null);
 
           final long tmdbId = MovieWrapper.getTmdbId(context.getContentResolver(), movieId);
-          queuePriorityTask(new CheckInMovieTask(tmdbId));
+          queuePriorityTask(
+              new CheckInMovieTask(tmdbId, message, facebook, twitter, tumblr, path, prowl));
         }
       }
     });
@@ -112,8 +114,8 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
   public void cancelCheckin() {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c = context.getContentResolver()
-            .query(CathodeContract.Movies.MOVIE_WATCHING, new String[] {
+        Cursor c =
+            context.getContentResolver().query(CathodeContract.Movies.MOVIE_WATCHING, new String[] {
                 Movies.TMDB_ID,
             }, null, null, null);
         c.moveToFirst();

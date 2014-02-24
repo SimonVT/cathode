@@ -38,6 +38,8 @@ import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.ui.BaseActivity;
+import net.simonvt.cathode.ui.dialog.CheckInDialog;
+import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.ObservableScrollView;
@@ -180,7 +182,7 @@ public class MovieFragment extends ProgressFragment
         return true;
 
       case R.id.action_checkin:
-        movieScheduler.checkin(movieId);
+        CheckInDialog.showDialogIfNecessary(getActivity(), Type.MOVIE, movieTitle, movieId);
         return true;
 
       case R.id.action_checkin_cancel:

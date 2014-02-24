@@ -18,6 +18,7 @@ package net.simonvt.cathode.ui.adapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.BaseColumns;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,8 @@ import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.provider.CathodeDatabase;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
+import net.simonvt.cathode.ui.dialog.CheckInDialog;
+import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.cathode.widget.TimeStamp;
@@ -42,7 +45,7 @@ import net.simonvt.cathode.widget.TimeStamp;
  */
 public class ShowsWithNextAdapter extends CursorAdapter {
 
-  private static final String TAG = "ShowsAdapter";
+  private static final String COLUMN_EPISODE_ID = "episodeId";
 
   public static final String[] PROJECTION = new String[] {
       CathodeDatabase.Tables.SHOWS + "." + BaseColumns._ID,
@@ -54,6 +57,8 @@ public class ShowsWithNextAdapter extends CursorAdapter {
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.STATUS,
       CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.HIDDEN,
       CathodeContract.Shows.WATCHING,
+      CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes._ID
+          + " AS " + COLUMN_EPISODE_ID,
       CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.TITLE,
       CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.FIRST_AIRED,
       CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.SEASON,
@@ -62,15 +67,18 @@ public class ShowsWithNextAdapter extends CursorAdapter {
 
   @Inject ShowTaskScheduler showScheduler;
 
+  private FragmentActivity activity;
+
   private final LibraryType libraryType;
 
-  public ShowsWithNextAdapter(Context context, LibraryType libraryType) {
-    this(context, null, libraryType);
+  public ShowsWithNextAdapter(FragmentActivity activity, LibraryType libraryType) {
+    this(activity, null, libraryType);
   }
 
-  public ShowsWithNextAdapter(Context context, Cursor cursor, LibraryType libraryType) {
-    super(context, cursor, 0);
-    CathodeApp.inject(context, this);
+  public ShowsWithNextAdapter(FragmentActivity activity, Cursor cursor, LibraryType libraryType) {
+    super(activity, cursor, 0);
+    CathodeApp.inject(activity, this);
+    this.activity = activity;
     this.libraryType = libraryType;
   }
 
@@ -111,6 +119,7 @@ public class ShowsWithNextAdapter extends CursorAdapter {
     }
     final int showTypeCount = count;
 
+    final long episodeId = cursor.getLong(cursor.getColumnIndex(COLUMN_EPISODE_ID));
     final String episodeTitle =
         cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE));
     final long episodeFirstAired =
@@ -173,7 +182,7 @@ public class ShowsWithNextAdapter extends CursorAdapter {
             break;
 
           case R.id.action_checkin:
-            showScheduler.checkinNext(id);
+            CheckInDialog.showDialogIfNecessary(activity, Type.SHOW, episodeTitle, episodeId);
             break;
 
           case R.id.action_checkin_cancel:

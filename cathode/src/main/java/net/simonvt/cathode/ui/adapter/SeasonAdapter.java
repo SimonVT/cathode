@@ -17,6 +17,7 @@ package net.simonvt.cathode.ui.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,8 @@ import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
+import net.simonvt.cathode.ui.dialog.CheckInDialog;
+import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.widget.CheckMark;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
@@ -38,17 +41,18 @@ import net.simonvt.cathode.widget.TimeStamp;
 
 public class SeasonAdapter extends CursorAdapter {
 
-  private static final String TAG = "SeasonAdapter";
-
   @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;
 
+  private FragmentActivity activity;
+
   private LibraryType type;
 
-  public SeasonAdapter(Context context, LibraryType type) {
-    super(context, null, 0);
+  public SeasonAdapter(FragmentActivity activity, LibraryType type) {
+    super(activity, null, 0);
+    CathodeApp.inject(activity, this);
+    this.activity = activity;
     this.type = type;
-    CathodeApp.inject(context, this);
   }
 
   @Override public void changeCursor(Cursor cursor) {
@@ -59,8 +63,8 @@ public class SeasonAdapter extends CursorAdapter {
     View v = LayoutInflater.from(context).inflate(R.layout.list_row_episode, parent, false);
 
     ViewHolder vh = new ViewHolder(v);
-    vh.checkbox
-        .setType(type == LibraryType.COLLECTION ? LibraryType.COLLECTION : LibraryType.WATCHED);
+    vh.checkbox.setType(
+        type == LibraryType.COLLECTION ? LibraryType.COLLECTION : LibraryType.WATCHED);
     v.setTag(vh);
 
     return v;
@@ -128,7 +132,7 @@ public class SeasonAdapter extends CursorAdapter {
             break;
 
           case R.id.action_checkin:
-            episodeScheduler.checkin(id);
+            CheckInDialog.showDialogIfNecessary(activity, Type.SHOW, title, id);
             break;
 
           case R.id.action_checkin_cancel:

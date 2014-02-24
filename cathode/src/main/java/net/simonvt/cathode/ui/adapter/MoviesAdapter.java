@@ -17,6 +17,7 @@ package net.simonvt.cathode.ui.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,26 +31,28 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.CathodeContract;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.ui.dialog.CheckInDialog;
+import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public class MoviesAdapter extends CursorAdapter {
-
-  private static final String TAG = "MoviesAdapter";
-
   @Inject MovieTaskScheduler movieScheduler;
+
+  private FragmentActivity activity;
 
   private int rowLayout;
 
-  public MoviesAdapter(Context context, Cursor c) {
-    this(context, c, R.layout.list_row_movie);
-    CathodeApp.inject(context, this);
+  public MoviesAdapter(FragmentActivity activity, Cursor c) {
+    this(activity, c, R.layout.list_row_movie);
+    CathodeApp.inject(activity, this);
   }
 
-  public MoviesAdapter(Context context, Cursor c, int rowLayout) {
-    super(context, c, 0);
-    CathodeApp.inject(context, this);
+  public MoviesAdapter(FragmentActivity activity, Cursor c, int rowLayout) {
+    super(activity, c, 0);
+    CathodeApp.inject(activity, this);
+    this.activity = activity;
     this.rowLayout = rowLayout;
   }
 
@@ -61,8 +64,10 @@ public class MoviesAdapter extends CursorAdapter {
 
   @Override public void bindView(final View view, final Context context, final Cursor cursor) {
     ViewHolder vh = (ViewHolder) view.getTag();
+    final int position = cursor.getPosition();
 
     final long id = cursor.getLong(cursor.getColumnIndex(CathodeContract.Movies._ID));
+    final String title = cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.TITLE));
     final boolean watched =
         cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.WATCHED)) == 1;
     final boolean collected =
@@ -75,12 +80,12 @@ public class MoviesAdapter extends CursorAdapter {
         cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.CHECKED_IN)) == 1;
 
     vh.poster.setImage(cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.POSTER)));
-    vh.title.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.TITLE)));
+    vh.title.setText(title);
     vh.overview.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.OVERVIEW)));
 
     if (vh.rating != null) {
-      final int rating = cursor.getInt(cursor.getColumnIndex(
-          CathodeContract.Movies.RATING_PERCENTAGE));
+      final int rating =
+          cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.RATING_PERCENTAGE));
       vh.rating.setValue(rating);
     }
 
@@ -95,7 +100,7 @@ public class MoviesAdapter extends CursorAdapter {
       }
 
       @Override public void onActionSelected(int action) {
-        onOverflowActionSelected(view, id, action, cursor.getPosition());
+        onOverflowActionSelected(view, id, action, position, title);
       }
     });
   }
@@ -121,7 +126,8 @@ public class MoviesAdapter extends CursorAdapter {
     }
   }
 
-  protected void onOverflowActionSelected(View view, long id, int action, int position) {
+  protected void onOverflowActionSelected(View view, long id, int action, int position,
+      String title) {
     switch (action) {
       case R.id.action_watched:
         movieScheduler.setWatched(id, true);
@@ -132,7 +138,7 @@ public class MoviesAdapter extends CursorAdapter {
         break;
 
       case R.id.action_checkin:
-        movieScheduler.checkin(id);
+        CheckInDialog.showDialogIfNecessary(activity, Type.MOVIE, title, id);
         break;
 
       case R.id.action_checkin_cancel:

@@ -15,8 +15,8 @@
  */
 package net.simonvt.cathode.ui.adapter;
 
-import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.widget.OverflowView;
@@ -29,8 +29,9 @@ public class MovieRecommendationsAdapter extends MoviesAdapter {
 
   private DismissListener listener;
 
-  public MovieRecommendationsAdapter(Context context, Cursor c, DismissListener listener) {
-    super(context, c, R.layout.list_row_movie_rating);
+  public MovieRecommendationsAdapter(FragmentActivity activity, Cursor c,
+      DismissListener listener) {
+    super(activity, c, R.layout.list_row_movie_rating);
     this.listener = listener;
   }
 
@@ -41,7 +42,8 @@ public class MovieRecommendationsAdapter extends MoviesAdapter {
     super.setupOverflowItems(overflow, watched, collected, inWatchlist, watching, checkedIn);
   }
 
-  @Override protected void onOverflowActionSelected(View view, long id, int action, int position) {
+  @Override protected void onOverflowActionSelected(View view, long id, int action, int position,
+      String title) {
     switch (action) {
       case R.id.action_dismiss:
         movieScheduler.dismissRecommendation(id);
@@ -49,7 +51,7 @@ public class MovieRecommendationsAdapter extends MoviesAdapter {
         break;
 
       default:
-        super.onOverflowActionSelected(view, id, action, position);
+        super.onOverflowActionSelected(view, id, action, position, title);
         break;
     }
   }

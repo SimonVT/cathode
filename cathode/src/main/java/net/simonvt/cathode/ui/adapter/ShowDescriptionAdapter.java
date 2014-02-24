@@ -67,6 +67,7 @@ public class ShowDescriptionAdapter extends CursorAdapter {
 
   @Override public void bindView(final View view, Context context, final Cursor cursor) {
     ViewHolder vh = (ViewHolder) view.getTag();
+    final int position = cursor.getPosition();
 
     final long id = cursor.getLong(cursor.getColumnIndex(CathodeContract.Shows._ID));
     final boolean watched =
@@ -99,7 +100,7 @@ public class ShowDescriptionAdapter extends CursorAdapter {
       }
 
       @Override public void onActionSelected(int action) {
-        onOverflowActionSelected(view, id, action, cursor.getPosition());
+        onOverflowActionSelected(view, id, action, position);
       }
     });
   }

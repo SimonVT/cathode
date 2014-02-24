@@ -17,6 +17,7 @@ package net.simonvt.cathode.ui.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,9 +44,9 @@ public class MovieSearchAdapter extends MoviesAdapter {
       CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.CHECKED_IN,
   };
 
-  public MovieSearchAdapter(Context context, Cursor cursor) {
-    super(context, cursor);
-    CathodeApp.inject(context, this);
+  public MovieSearchAdapter(FragmentActivity activity, Cursor cursor) {
+    super(activity, cursor);
+    CathodeApp.inject(activity, this);
   }
 
   @Override public View newView(Context context, Cursor cursor, ViewGroup parent) {

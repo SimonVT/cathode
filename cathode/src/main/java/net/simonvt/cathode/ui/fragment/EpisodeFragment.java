@@ -45,6 +45,8 @@ import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.FragmentContract;
+import net.simonvt.cathode.ui.dialog.CheckInDialog;
+import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
@@ -67,8 +69,6 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   private static final int STATE_NONE = -1;
   private static final int STATE_PROGRESS_VISIBLE = 0;
   private static final int STATE_CONTENT_VISIBLE = 1;
-
-  private long episodeId;
 
   @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;
@@ -97,6 +97,10 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   private int currentState = STATE_PROGRESS_VISIBLE;
   private int pendingStateChange = STATE_NONE;
+
+  private long episodeId;
+
+  private String episodeTitle;
 
   private String showTitle;
   private int season = -1;
@@ -304,7 +308,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
         return true;
 
       case R.id.action_checkin:
-        episodeScheduler.checkin(episodeId);
+        CheckInDialog.showDialogIfNecessary(getActivity(), Type.SHOW, episodeTitle, episodeId);
         return true;
 
       case R.id.action_checkin_cancel:
@@ -431,7 +435,8 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     if (cursor.moveToFirst()) {
       loaded = true;
 
-      title.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE)));
+      episodeTitle = cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE));
+      title.setText(episodeTitle);
       overview.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.OVERVIEW)));
       fanart.setImage(cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.SCREEN)));
       firstAired.setText(DateUtils.millisToString(getActivity(),

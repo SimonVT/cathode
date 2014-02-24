@@ -85,11 +85,13 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
     });
   }
 
-  public void checkin(final long episodeId) {
+  public void checkin(final long episodeId, final String message, final boolean facebook,
+      final boolean twitter, final boolean tumblr, final boolean path, final boolean prowl) {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c = context.getContentResolver().query(CathodeContract.Episodes.CONTENT_URI, null,
-            CathodeContract.Episodes.CHECKED_IN + "=1", null, null);
+        Cursor c = context.getContentResolver()
+            .query(CathodeContract.Episodes.CONTENT_URI, null,
+                CathodeContract.Episodes.CHECKED_IN + "=1", null, null);
 
         if (c.getCount() == 0) {
           Cursor episode = EpisodeWrapper.query(context.getContentResolver(), episodeId,
@@ -110,7 +112,9 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
           context.getContentResolver()
               .update(CathodeContract.Episodes.buildFromId(episodeId), cv, null, null);
 
-          queuePriorityTask(new CheckInEpisodeTask(tvdbId, season, number));
+          queuePriorityTask(
+              new CheckInEpisodeTask(tvdbId, season, number, message, facebook, twitter, tumblr,
+                  path, prowl));
         }
       }
     });

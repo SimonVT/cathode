@@ -50,6 +50,8 @@ import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.SeasonsAdapter;
+import net.simonvt.cathode.ui.dialog.CheckInDialog;
+import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
@@ -122,6 +124,7 @@ public class ShowFragment extends ProgressFragment {
   @InjectView(R.id.toWatch) View toWatch;
   private EpisodeHolder toWatchHolder;
   private long toWatchId = -1;
+  private String toWatchTitle;
 
   @InjectView(R.id.lastWatched) @Optional View lastWatched;
   private EpisodeHolder lastWatchedHolder;
@@ -254,7 +257,8 @@ public class ShowFragment extends ProgressFragment {
         switch (action) {
           case R.id.action_checkin:
             if (toWatchId != -1) {
-              episodeScheduler.checkin(toWatchId);
+              CheckInDialog.showDialogIfNecessary(getActivity(), Type.SHOW, toWatchTitle,
+                  toWatchId);
             }
             break;
           case R.id.action_checkin_cancel:
@@ -308,8 +312,8 @@ public class ShowFragment extends ProgressFragment {
       }
     });
 
-    toCollectHolder.episodeOverflow
-        .addItem(R.id.action_collection_add, R.string.action_collection_add);
+    toCollectHolder.episodeOverflow.addItem(R.id.action_collection_add,
+        R.string.action_collection_add);
     toCollectHolder.episodeOverflow.setListener(new OverflowView.OverflowActionListener() {
       @Override public void onPopupShown() {
       }
@@ -338,8 +342,8 @@ public class ShowFragment extends ProgressFragment {
         }
       });
 
-      lastCollectedHolder.episodeOverflow
-          .addItem(R.id.action_collection_remove, R.string.action_collection_remove);
+      lastCollectedHolder.episodeOverflow.addItem(R.id.action_collection_remove,
+          R.string.action_collection_remove);
       lastCollectedHolder.episodeOverflow.setListener(new OverflowView.OverflowActionListener() {
         @Override public void onPopupShown() {
         }
@@ -455,9 +459,9 @@ public class ShowFragment extends ProgressFragment {
       watchDivider.setVisibility(View.VISIBLE);
 
       toWatchId = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
+      toWatchTitle = cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE));
 
-      toWatchHolder.episodeTitle
-          .setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE)));
+      toWatchHolder.episodeTitle.setText(toWatchTitle);
 
       final long airTime =
           cursor.getLong(cursor.getColumnIndex(CathodeContract.Episodes.FIRST_AIRED));
@@ -501,8 +505,8 @@ public class ShowFragment extends ProgressFragment {
 
         lastWatchedId = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
 
-        lastWatchedHolder.episodeTitle
-            .setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE)));
+        lastWatchedHolder.episodeTitle.setText(
+            cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE)));
 
         final long airTime =
             cursor.getLong(cursor.getColumnIndex(CathodeContract.Episodes.FIRST_AIRED));
@@ -543,8 +547,8 @@ public class ShowFragment extends ProgressFragment {
 
       toCollectId = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
 
-      toCollectHolder.episodeTitle
-          .setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE)));
+      toCollectHolder.episodeTitle.setText(
+          cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE)));
 
       final long airTime =
           cursor.getLong(cursor.getColumnIndex(CathodeContract.Episodes.FIRST_AIRED));
@@ -570,8 +574,8 @@ public class ShowFragment extends ProgressFragment {
 
         lastCollectedId = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
 
-        lastCollectedHolder.episodeTitle
-            .setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE)));
+        lastCollectedHolder.episodeTitle.setText(
+            cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE)));
 
         final long airTime =
             cursor.getLong(cursor.getColumnIndex(CathodeContract.Episodes.FIRST_AIRED));

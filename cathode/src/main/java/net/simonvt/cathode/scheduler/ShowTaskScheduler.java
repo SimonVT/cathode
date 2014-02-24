@@ -82,27 +82,27 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
     });
   }
 
-  public void checkinNext(final long showId) {
-    execute(new Runnable() {
-      @Override public void run() {
-        Cursor c = context.getContentResolver()
-            .query(CathodeContract.Episodes.buildFromShowId(showId), new String[] {
-                CathodeContract.Episodes._ID, CathodeContract.Episodes.SEASON,
-                CathodeContract.Episodes.EPISODE,
-            }, "watched=0 AND season<>0", null, CathodeContract.Episodes.SEASON
-                + " ASC, "
-                + CathodeContract.Episodes.EPISODE
-                + " ASC LIMIT 1");
-
-        if (c.moveToNext()) {
-          final long episodeId = c.getLong(c.getColumnIndexOrThrow(CathodeContract.Episodes._ID));
-          episodeScheduler.checkin(episodeId);
-        }
-
-        c.close();
-      }
-    });
-  }
+  //public void checkinNext(final long showId) {
+  //  execute(new Runnable() {
+  //    @Override public void run() {
+  //      Cursor c = context.getContentResolver()
+  //          .query(CathodeContract.Episodes.buildFromShowId(showId), new String[] {
+  //              CathodeContract.Episodes._ID, CathodeContract.Episodes.SEASON,
+  //              CathodeContract.Episodes.EPISODE,
+  //          }, "watched=0 AND season<>0", null, CathodeContract.Episodes.SEASON
+  //              + " ASC, "
+  //              + CathodeContract.Episodes.EPISODE
+  //              + " ASC LIMIT 1");
+  //
+  //      if (c.moveToNext()) {
+  //        final long episodeId = c.getLong(c.getColumnIndexOrThrow(CathodeContract.Episodes._ID));
+  //        episodeScheduler.checkin(episodeId);
+  //      }
+  //
+  //      c.close();
+  //    }
+  //  });
+  //}
 
   public void cancelCheckin() {
     execute(new Runnable() {
