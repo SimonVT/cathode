@@ -95,10 +95,13 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
     Cursor shows =
         context.getContentResolver().query(CathodeContract.Shows.CONTENT_URI, new String[] {
             CathodeContract.Shows._ID,
-        }, CathodeContract.Shows.WATCHED_COUNT
+        }, "(" + CathodeContract.Shows.WATCHED_COUNT
             + ">0 OR "
             + CathodeContract.Shows.IN_WATCHLIST_COUNT
-            + ">0", null, null);
+            + ">0 OR "
+            + CathodeContract.Shows.IN_COLLECTION_COUNT
+            + ">0"
+            + ") AND " + CathodeContract.Shows.HIDDEN + "=0", null, null);
 
     while (shows.moveToNext()) {
       Cursor episodes =
