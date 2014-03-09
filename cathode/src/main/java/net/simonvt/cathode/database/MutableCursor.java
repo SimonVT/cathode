@@ -115,6 +115,10 @@ public class MutableCursor extends AbstractCursor {
     data.add(columnValues);
   }
 
+  public Object[] get() {
+    return data.get(mPos);
+  }
+
   /**
    * Adds a new row to the end with the given column values. Not safe
    * for concurrent use.

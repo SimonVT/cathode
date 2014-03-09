@@ -35,4 +35,6 @@
 
   <color name="showHeaderBackground">#FFFFFFFF</color>
 
+  <color name="titleTextColor">#FFFF7F2A</color>
+
 </resources>

@@ -87,6 +87,9 @@
   <string name="title_movies_trending">Trending movies</string>
   <string name="title_movies_recommendations">Movie recommendations</string>
 
+  <string name="header_aired">Aired</string>
+  <string name="header_upcoming">Upcoming</string>
+
   <string name="sort_title">Title</string>
   <string name="sort_next_episode">Next episode</string>
   <string name="sort_rating">Rating</string>
@@ -116,6 +119,8 @@
   <string name="action_hide">Hide</string>
   <string name="action_unhide">Unhide</string>
   <string name="action_show_hidden">Display hidden</string>
+  <string name="action_show_hide_upcoming">Hide from upcoming</string>
+  <string name="action_show_show_upcoming">Unhide from upcoming</string>
 
   <string name="checkmark_watched">Watched</string>
   <string name="checkmark_collection">In collection</string>
@@ -127,6 +132,7 @@
 
   <string name="episode">%1$dx%2$d %3$s</string>
   <string name="episode_next">Next: %1$dx%2$d %3$s</string>
+  <string name="upcoming_episode_next">%1$dx%2$d %3$s</string>
   <string name="show_watching">Watching</string>
 
   <string name="full_sync_warning">Performing a complete sync with Trakt, this might take a

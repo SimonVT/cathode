@@ -24,6 +24,8 @@
   <item name="menu_shows_watchlist" type="id"/>
   <item name="menu_shows_trending" type="id"/>
   <item name="menu_shows_recommendations" type="id"/>
+  <item name="menu_show_hide_upcoming" type="id"/>
+  <item name="menu_show_show_upcoming" type="id"/>
 
   <item name="menu_episodes_watchlist" type="id"/>
 

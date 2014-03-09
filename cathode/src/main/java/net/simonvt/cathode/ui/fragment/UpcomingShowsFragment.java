@@ -15,13 +15,14 @@
  */
 package net.simonvt.cathode.ui.fragment;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.CursorAdapter;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,25 +30,31 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
-import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import javax.inject.Inject;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.MutableCursor;
 import net.simonvt.cathode.database.MutableCursorLoader;
 import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.CathodeContract.Episodes;
+import net.simonvt.cathode.remote.TraktTaskQueue;
+import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
+import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.UpcomingAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.widget.AnimatorHelper;
+import net.simonvt.cathode.widget.StaggeredGridAnimator;
+import net.simonvt.cathode.widget.StaggeredGridView;
 
-public class UpcomingShowsFragment extends ShowsFragment<MutableCursor>
-    implements UpcomingAdapter.OnRemoveListener, ListDialog.Callback {
+public class UpcomingShowsFragment extends StaggeredGridFragment
+    implements UpcomingAdapter.OnRemoveListener, ListDialog.Callback,
+    LoaderCallbacks<MutableCursor> {
 
   private enum SortBy {
     TITLE("title", CathodeContract.Shows.SORT_TITLE),
@@ -90,24 +97,41 @@ public class UpcomingShowsFragment extends ShowsFragment<MutableCursor>
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.fragment.UpcomingShowsFragment.sortDialog";
 
+  @Inject TraktTaskQueue queue;
+
   private SharedPreferences settings;
 
   private boolean showHidden;
 
   private boolean isTablet;
 
-  private MutableCursor cursor;
-
   private SortBy sortBy;
 
+  private ShowsNavigationListener navigationListener;
+
+  @Override public void onAttach(Activity activity) {
+    super.onAttach(activity);
+    try {
+      navigationListener = (ShowsNavigationListener) activity;
+    } catch (ClassCastException e) {
+      throw new ClassCastException(activity.toString() + " must implement ShowsNavigationListener");
+    }
+  }
+
   @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
+    CathodeApp.inject(getActivity(), this);
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     sortBy =
         SortBy.fromValue(settings.getString(Settings.SORT_SHOW_UPCOMING, SortBy.TITLE.getKey()));
-    super.onCreate(inState);
+
     showHidden = settings.getBoolean(Settings.SHOW_HIDDEN, false);
 
     isTablet = getResources().getBoolean(R.bool.isTablet);
+
+    setHasOptionsMenu(true);
+
+    getLoaderManager().initLoader(BaseActivity.LOADER_SHOWS_UPCOMING, null, this);
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
@@ -116,6 +140,12 @@ public class UpcomingShowsFragment extends ShowsFragment<MutableCursor>
 
   @Override public String getTitle() {
     return getResources().getString(R.string.title_shows_upcoming);
+  }
+
+  @Override protected void onItemClick(StaggeredGridView parent, View v, int position, long id) {
+    Cursor c = (Cursor) getAdapter().getItem(position);
+    navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(CathodeContract.Shows.TITLE)),
+        LibraryType.WATCHED);
   }
 
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -129,7 +159,7 @@ public class UpcomingShowsFragment extends ShowsFragment<MutableCursor>
       case R.id.menu_hidden:
         showHidden = !showHidden;
         settings.edit().putBoolean(Settings.SHOW_HIDDEN, showHidden).apply();
-        getLoaderManager().restartLoader(getLoaderId(), null, this);
+        getLoaderManager().restartLoader(BaseActivity.LOADER_SHOWS_UPCOMING, null, this);
         item.setChecked(showHidden);
         return true;
 
@@ -139,6 +169,14 @@ public class UpcomingShowsFragment extends ShowsFragment<MutableCursor>
         items.add(new ListDialog.Item(R.id.sort_next_episode, R.string.sort_next_episode));
         ListDialog.newInstance(R.string.action_sort_by, items, this)
             .show(getFragmentManager(), DIALOG_SORT);
+        return true;
+
+      case R.id.menu_refresh:
+        queue.add(new SyncTask());
+        return true;
+
+      case R.id.menu_search:
+        navigationListener.onStartShowSearch();
         return true;
 
       default:
@@ -165,56 +203,73 @@ public class UpcomingShowsFragment extends ShowsFragment<MutableCursor>
   }
 
   @Override public void onRemove(View view, int position) {
-    Loader loader = getLoaderManager().getLoader(getLoaderId());
+    Loader loader = getLoaderManager().getLoader(BaseActivity.LOADER_SHOWS_UPCOMING);
     MutableCursorLoader cursorLoader = (MutableCursorLoader) loader;
     cursorLoader.throttle(2000);
-
-    if (isTablet) {
-      AnimatorHelper.removeView((GridView) getAdapterView(), view, animatorCallback);
-    } else {
-      AnimatorHelper.removeView((ListView) getAdapterView(), view, animatorCallback);
-    }
+    AnimatorHelper.removeView(getGridView(), view, animatorCallback);
   }
 
   private AnimatorHelper.Callback animatorCallback = new AnimatorHelper.Callback() {
     @Override public void removeItem(int position) {
-      cursor.remove(position);
+      int correctedPosition = ((UpcomingAdapter) getAdapter()).getCorrectedPosition(position);
+      if (correctedPosition != -1) {
+        MutableCursor cursor = (MutableCursor) getAdapter().getItem(position);
+        cursor.remove(correctedPosition);
+      }
     }
 
     @Override public void onAnimationEnd() {
     }
   };
 
-  @Override protected CursorAdapter getAdapter(Cursor cursor) {
-    return new UpcomingAdapter(getActivity(), cursor, this);
+  protected void setCursor(MutableCursor cursor) {
+    UpcomingAdapter adapter = (UpcomingAdapter) getAdapter();
+    if (adapter == null) {
+      adapter = new UpcomingAdapter(getActivity(), this);
+      setAdapter(adapter);
+    }
+
+    final long currentTime = System.currentTimeMillis();
+
+    MutableCursor airedCursor = new MutableCursor(cursor.getColumnNames());
+    MutableCursor unairedCursor = new MutableCursor(cursor.getColumnNames());
+
+    final int airedIndex = cursor.getColumnIndex(Episodes.FIRST_AIRED);
+
+    cursor.moveToPosition(-1);
+    while (cursor.moveToNext()) {
+      Object[] data = cursor.get();
+      final long firstAired = cursor.getLong(airedIndex);
+      if (firstAired <= currentTime) {
+        airedCursor.add(data);
+      } else {
+        unairedCursor.add(data);
+      }
+    }
+
+    StaggeredGridAnimator animator = new StaggeredGridAnimator(getGridView());
+    adapter.changeCursors(airedCursor, unairedCursor);
+    animator.animate();
   }
 
-  @Override protected LibraryType getLibraryType() {
-    return LibraryType.WATCHED;
-  }
-
-  @Override protected int getLoaderId() {
-    return BaseActivity.LOADER_SHOWS_UPCOMING;
-  }
-
-  @Override protected void setCursor(Cursor cursor) {
-    this.cursor = (MutableCursor) cursor;
-    super.setCursor(cursor);
-  }
-
-  @Override public Loader<MutableCursor> onCreateLoader(int i, Bundle bundle) {
+  @Override public Loader<MutableCursor> onCreateLoader(int id, Bundle args) {
     final Uri contentUri = CathodeContract.Shows.SHOWS_UPCOMING;
     String where = null;
     if (!showHidden) {
       where = CathodeContract.Shows.HIDDEN + "=0";
     }
     MutableCursorLoader cl =
-        new MutableCursorLoader(getActivity(), contentUri, ShowsWithNextAdapter.PROJECTION, where,
-            null, sortBy.getSortOrder());
+        new MutableCursorLoader(getActivity(), contentUri, UpcomingAdapter.PROJECTION, where, null,
+            sortBy.getSortOrder());
     cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return cl;
   }
 
-  @Override public void onLoaderReset(Loader cursorLoader) {
+  @Override public void onLoadFinished(Loader<MutableCursor> loader, MutableCursor data) {
+    setCursor(data);
+  }
+
+  @Override public void onLoaderReset(Loader<MutableCursor> loader) {
+
   }
 }

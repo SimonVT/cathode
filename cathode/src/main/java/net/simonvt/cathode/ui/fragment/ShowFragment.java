@@ -75,7 +75,7 @@ public class ShowFragment extends ProgressFragment {
   private static final String[] SHOW_PROJECTION = new String[] {
       Shows.TITLE, Shows.YEAR, Shows.AIR_TIME, Shows.AIR_DAY, Shows.NETWORK, Shows.CERTIFICATION,
       Shows.POSTER, Shows.FANART, Shows.RATING_PERCENTAGE, Shows.RATING, Shows.OVERVIEW,
-      Shows.IN_WATCHLIST, Shows.IN_COLLECTION_COUNT, Shows.WATCHED_COUNT,
+      Shows.IN_WATCHLIST, Shows.IN_COLLECTION_COUNT, Shows.WATCHED_COUNT, Shows.HIDDEN,
   };
 
   private static final String[] EPISODE_PROJECTION = new String[] {
@@ -159,6 +159,8 @@ public class ShowFragment extends ProgressFragment {
   private String showTitle;
 
   private int currentRating;
+
+  private boolean isHidden;
 
   private LibraryType type;
 
@@ -376,13 +378,26 @@ public class ShowFragment extends ProgressFragment {
   }
 
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    inflater.inflate(R.menu.fragment_show_info, menu);
+    inflater.inflate(R.menu.fragment_show, menu);
+    if (isHidden) {
+      menu.add(0, R.id.menu_show_show_upcoming, 400, R.string.action_show_show_upcoming);
+    } else {
+      menu.add(0, R.id.menu_show_hide_upcoming, 400, R.string.action_show_hide_upcoming);
+    }
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_seasons:
         hiddenPaneLayout.toggle();
+        return true;
+
+      case R.id.menu_show_hide_upcoming:
+        showScheduler.setIsHidden(showId, true);
+        return true;
+
+      case R.id.menu_show_show_upcoming:
+        showScheduler.setIsHidden(showId, false);
         return true;
     }
 
@@ -415,6 +430,7 @@ public class ShowFragment extends ProgressFragment {
     final boolean inWatchlist = cursor.getInt(cursor.getColumnIndex(Shows.IN_WATCHLIST)) == 1;
     final int inCollectionCount = cursor.getInt(cursor.getColumnIndex(Shows.IN_COLLECTION_COUNT));
     final int watchedCount = cursor.getInt(cursor.getColumnIndex(Shows.WATCHED_COUNT));
+    isHidden = cursor.getInt(cursor.getColumnIndex(Shows.HIDDEN)) == 1;
 
     rating.setValue(ratingAll);
 
@@ -427,6 +443,9 @@ public class ShowFragment extends ProgressFragment {
     this.overview.setText(overview);
 
     setContentVisible(true);
+    if (getActivity() != null) {
+      getActivity().supportInvalidateOptionsMenu();
+    }
   }
 
   private void updateGenreViews(final Cursor cursor) {

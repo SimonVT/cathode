@@ -159,9 +159,13 @@ public final class DateUtils {
     final int day = cal.get(Calendar.DAY_OF_MONTH);
     StringBuilder sb = new StringBuilder();
 
-    sb.append(month).append(" ").append(day);
+    if (millisYear >= year || extended) {
+      sb.append(month).append(" ").append(day);
+    }
 
-    if (millisYear != year) {
+    if (millisYear < year && !extended) {
+      sb.append(millisYear);
+    } else if (millisYear != year && extended) {
       sb.append(", ").append(millisYear);
     } else if (extended && millis > rightNow - 24 * HOUR_IN_MILLIS) {
       final boolean twentyFourHourFormat = DateFormat.is24HourFormat(context);

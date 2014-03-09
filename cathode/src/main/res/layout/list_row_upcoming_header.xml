@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2013 Simon Vig Therkildsen
+  ~ Copyright (C) 2014 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -13,12 +14,11 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<resources>
 
-  <integer name="showsColumns">1</integer>
-
-  <integer name="episodesColumns">1</integer>
-
-  <integer name="movieColumns">1</integer>
-
-</resources>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_span="99"
+    style="@style/Widget.UpcomingHeader"
+    tools:text="Aired"/>

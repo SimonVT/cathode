@@ -45,4 +45,10 @@
     <attr name="circleBackgroundColor" format="color"/>
   </declare-styleable>
 
+  <declare-styleable name="StaggeredGridView">
+    <attr name="android:numColumns"/>
+    <attr name="itemMargin" format="dimension"/>
+    <attr name="android:listChoiceBackgroundIndicator"/>
+  </declare-styleable>
+
 </resources>
