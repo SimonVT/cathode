@@ -116,6 +116,7 @@ public class StaggeredGridView extends ViewGroup {
   private int maximumVelocity;
   private int flingVelocity;
   private float lastTouchY;
+  private float lastTouchX;
   private float touchRemainderY;
   private int activePointerId;
 
@@ -139,6 +140,8 @@ public class StaggeredGridView extends ViewGroup {
   private Rect selectorRect = new Rect();
 
   private int motionPosition;
+
+  private long motionId;
 
   private Runnable pendingTapCheck;
 
@@ -180,6 +183,7 @@ public class StaggeredGridView extends ViewGroup {
       }
       invalidate();
       motionPosition = INVALID_POSITION;
+      motionId = -1L;
     }
   }
 
@@ -399,7 +403,7 @@ public class StaggeredGridView extends ViewGroup {
   protected int computeVerticalScrollExtent() {
     int extent = 0;
 
-    if (colCount == 1) {
+    if (colCount == 1 && getChildCount() > 0) {
       // ListView behavior
       final int count = getChildCount();
       extent = count * 100;
@@ -470,6 +474,7 @@ public class StaggeredGridView extends ViewGroup {
         velocityTracker.clear();
         scroller.abortAnimation();
         lastTouchY = ev.getY();
+        lastTouchX = ev.getX();
         activePointerId = ev.getPointerId(0);
         touchRemainderY = 0;
         if (touchMode == TOUCH_MODE_FLINGING) {
@@ -508,20 +513,25 @@ public class StaggeredGridView extends ViewGroup {
     velocityTracker.addMovement(ev);
     final int action = ev.getAction() & MotionEvent.ACTION_MASK;
     switch (action) {
-      case MotionEvent.ACTION_DOWN:
+      case MotionEvent.ACTION_DOWN: {
         velocityTracker.clear();
         scroller.abortAnimation();
         lastTouchY = ev.getY();
+        lastTouchX = ev.getX();
         final int x = (int) ev.getX();
         activePointerId = ev.getPointerId(0);
         touchRemainderY = 0;
         motionPosition = getPositionAt(x, (int) lastTouchY);
+        if (hasStableIds) {
+          motionId = ((LayoutParams) getChildAt(motionPosition).getLayoutParams()).id;
+        }
         if (motionPosition != INVALID_POSITION && adapter != null && adapter.isEnabled(
             motionPosition)) {
           pendingTapCheck = new TapCheck();
           postDelayed(pendingTapCheck, ViewConfiguration.getTapTimeout());
         }
         break;
+      }
 
       case MotionEvent.ACTION_MOVE: {
         final int index = ev.findPointerIndex(activePointerId);
@@ -533,6 +543,7 @@ public class StaggeredGridView extends ViewGroup {
           return false;
         }
         final float y = ev.getY(index);
+        final float x = ev.getX(index);
         final float dy = y - lastTouchY + touchRemainderY;
         final int deltaY = (int) dy;
         touchRemainderY = dy - deltaY;
@@ -556,9 +567,11 @@ public class StaggeredGridView extends ViewGroup {
             setPressed(false);
             selector.setState(StateSet.NOTHING);
             motionPosition = INVALID_POSITION;
+            motionId = -1L;
           }
 
           lastTouchY = y;
+          lastTouchX = x;
 
           if (!trackMotionScroll(deltaY, true)) {
             // Break fling velocity if we impacted an edge.
@@ -570,7 +583,16 @@ public class StaggeredGridView extends ViewGroup {
 
       case MotionEvent.ACTION_CANCEL:
         touchMode = TOUCH_MODE_IDLE;
+
+        if (motionPosition != INVALID_POSITION) {
+          View child = getChildAt(motionPosition);
+          child.setPressed(false);
+
+          setPressed(false);
+        }
+
         motionPosition = INVALID_POSITION;
+        motionId = -1L;
 
         if (pendingTapCheck != null) {
           removeCallbacks(pendingTapCheck);
@@ -600,6 +622,7 @@ public class StaggeredGridView extends ViewGroup {
               postDelayed(tapReset, ViewConfiguration.getPressedStateDuration());
             } else {
               motionPosition = INVALID_POSITION;
+              motionId = -1L;
             }
           }
           touchMode = TOUCH_MODE_IDLE;
@@ -932,6 +955,54 @@ public class StaggeredGridView extends ViewGroup {
     fillUp(firstPosition - 1, 0);
     correctTooLow();
     populating = false;
+
+    if (dataChanged && hasStableIds && motionPosition != INVALID_POSITION) {
+      // Match up motion position
+      View motionTarget = null;
+
+      final int childCount = getChildCount();
+      for (int i = 0; i < childCount; i++) {
+        final View child = getChildAt(i);
+        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+        if (lp.id == motionId) {
+          motionPosition = lp.position;
+          motionTarget = child;
+        }
+        child.setPressed(false);
+      }
+
+      if (motionTarget != null) {
+        // Abort click if view has moved outside pointer
+        if (motionTarget.getTop() <= lastTouchY
+            && motionTarget.getBottom() >= lastTouchY
+            && motionTarget.getLeft() <= lastTouchX
+            && motionTarget.getRight() >= lastTouchX) {
+          Rect padding = new Rect();
+          selector.getPadding(padding);
+          selectorRect.set(motionTarget.getLeft() - padding.left,
+              motionTarget.getTop() - padding.top, motionTarget.getRight() + padding.right,
+              motionTarget.getBottom() + padding.bottom);
+          setPressed(true);
+          motionTarget.setPressed(true);
+          selector.setState(getDrawableState());
+          invalidate();
+        } else {
+          motionTarget.setPressed(false);
+          setPressed(false);
+          selectorRect.setEmpty();
+          invalidate();
+          motionPosition = INVALID_POSITION;
+          motionId = -1L;
+        }
+      } else {
+        motionPosition = INVALID_POSITION;
+        motionId = -1L;
+        setPressed(false);
+        selectorRect.setEmpty();
+        invalidate();
+      }
+    }
+
     dataChanged = false;
   }
 
