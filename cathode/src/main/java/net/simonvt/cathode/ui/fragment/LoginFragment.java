@@ -100,14 +100,14 @@ public class LoginFragment extends BaseFragment {
     usernameInput.addTextChangedListener(textChanged);
     usernameInput.setFilters(new InputFilter[] {
         new InputFilter() {
-          private static final String allowed = "_-.";
+          private static final String ALLOWED = "_-.";
 
           public boolean isAllowed(char c) {
-            // Allow [a-zA-Z0-9@.]
+            // Allow [a-zA-Z0-9] and ALLOWED
             if ('0' <= c && c <= '9') return true;
             if ('a' <= c && c <= 'z') return true;
             if ('A' <= c && c <= 'Z') return true;
-            if (allowed.indexOf(c) != -1) return true;
+            if (ALLOWED.indexOf(c) != -1) return true;
             return false;
           }
 

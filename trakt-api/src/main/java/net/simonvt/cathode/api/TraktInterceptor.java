@@ -1,7 +1,6 @@
 package net.simonvt.cathode.api;
 
 import android.util.Base64;
-import android.util.Log;
 import javax.inject.Inject;
 import retrofit.RequestInterceptor;
 
