@@ -42,6 +42,7 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
         }, null, null, null);
     show.moveToFirst();
     final boolean watching = show.getInt(0) == 1;
+    show.close();
 
     Cursor toWatch;
     if (watching) {

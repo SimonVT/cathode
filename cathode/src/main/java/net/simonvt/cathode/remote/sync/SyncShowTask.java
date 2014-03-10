@@ -77,6 +77,7 @@ public class SyncShowTask extends TraktTask {
           getContentResolver().delete(Episodes.buildFromId(episodeId), null, null);
         }
       }
+      allEpisodes.close();
 
       Cursor allSeasons = getContentResolver().query(Seasons.buildFromShowId(showId), new String[] {
           Seasons._ID,
@@ -87,6 +88,7 @@ public class SyncShowTask extends TraktTask {
           getContentResolver().delete(Seasons.buildFromId(seasonId), null, null);
         }
       }
+      allSeasons.close();
 
       postOnSuccess();
     } catch (RetrofitError e) {
