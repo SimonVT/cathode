@@ -105,9 +105,6 @@ public class ShowFragment extends ProgressFragment {
   @InjectView(R.id.certification) TextView certification;
   @InjectView(R.id.poster) RemoteImageView poster;
   @InjectView(R.id.fanart) RemoteImageView fanart;
-  @InjectView(R.id.genresDivider) View genresDivider;
-  @InjectView(R.id.genresTitle) View genresTitle;
-  @InjectView(R.id.genres) TextView genres;
   @InjectView(R.id.overview) TextView overview;
   @InjectView(R.id.isWatched) TextView watched;
   @InjectView(R.id.inCollection) TextView collection;
@@ -117,9 +114,6 @@ public class ShowFragment extends ProgressFragment {
 
   @InjectView(R.id.watchTitle) View watchTitle;
   @InjectView(R.id.collectTitle) View collectTitle;
-
-  @InjectView(R.id.watchDivider) View watchDivider;
-  @InjectView(R.id.collectDivider) @Optional View collectDivider;
 
   @InjectView(R.id.toWatch) View toWatch;
   private EpisodeHolder toWatchHolder;
@@ -157,6 +151,10 @@ public class ShowFragment extends ProgressFragment {
   @Inject Bus bus;
 
   private String showTitle;
+
+  private String genres;
+
+  private boolean inWatchlist;
 
   private int currentRating;
 
@@ -198,6 +196,10 @@ public class ShowFragment extends ProgressFragment {
 
   @Override public String getTitle() {
     return showTitle == null ? "" : showTitle;
+  }
+
+  @Override public String getSubtitle() {
+    return genres;
   }
 
   @Override public boolean onBackPressed() {
@@ -379,6 +381,13 @@ public class ShowFragment extends ProgressFragment {
 
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     inflater.inflate(R.menu.fragment_show, menu);
+
+    if (inWatchlist) {
+      menu.add(0, R.id.action_watchlist_remove, 300, R.string.action_watchlist_remove);
+    } else {
+      menu.add(0, R.id.action_watchlist_add, 300, R.string.action_watchlist_add);
+    }
+
     if (isHidden) {
       menu.add(0, R.id.menu_show_show_upcoming, 400, R.string.action_show_show_upcoming);
     } else {
@@ -398,6 +407,14 @@ public class ShowFragment extends ProgressFragment {
 
       case R.id.menu_show_show_upcoming:
         showScheduler.setIsHidden(showId, false);
+        return true;
+
+      case R.id.action_watchlist_remove:
+        showScheduler.setIsInWatchlist(showId, false);
+        return true;
+
+      case R.id.action_watchlist_add:
+        showScheduler.setIsInWatchlist(showId, true);
         return true;
     }
 
@@ -427,7 +444,7 @@ public class ShowFragment extends ProgressFragment {
     currentRating = cursor.getInt(cursor.getColumnIndex(Shows.RATING));
     final int ratingAll = cursor.getInt(cursor.getColumnIndex(Shows.RATING_PERCENTAGE));
     final String overview = cursor.getString(cursor.getColumnIndex(Shows.OVERVIEW));
-    final boolean inWatchlist = cursor.getInt(cursor.getColumnIndex(Shows.IN_WATCHLIST)) == 1;
+    inWatchlist = cursor.getInt(cursor.getColumnIndex(Shows.IN_WATCHLIST)) == 1;
     final int inCollectionCount = cursor.getInt(cursor.getColumnIndex(Shows.IN_COLLECTION_COUNT));
     final int watchedCount = cursor.getInt(cursor.getColumnIndex(Shows.WATCHED_COUNT));
     isHidden = cursor.getInt(cursor.getColumnIndex(Shows.HIDDEN)) == 1;
@@ -460,22 +477,18 @@ public class ShowFragment extends ProgressFragment {
         if (!cursor.isLast()) sb.append(", ");
       }
 
-      genres.setText(sb.toString());
-      genresDivider.setVisibility(View.VISIBLE);
-      genresTitle.setVisibility(View.VISIBLE);
-      genres.setVisibility(View.VISIBLE);
+      genres = sb.toString();
     } else {
-      genresDivider.setVisibility(View.GONE);
-      genresTitle.setVisibility(View.GONE);
-      genres.setVisibility(View.GONE);
+      genres = null;
     }
+
+    bus.post(new OnTitleChangedEvent());
   }
 
   private void updateEpisodeWatchViews(Cursor cursor) {
     if (cursor.moveToFirst()) {
       toWatch.setVisibility(View.VISIBLE);
       watchTitle.setVisibility(View.VISIBLE);
-      watchDivider.setVisibility(View.VISIBLE);
 
       toWatchId = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
       toWatchTitle = cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE));
@@ -514,7 +527,6 @@ public class ShowFragment extends ProgressFragment {
     } else {
       toWatch.setVisibility(View.GONE);
       watchTitle.setVisibility(View.GONE);
-      watchDivider.setVisibility(View.GONE);
       toWatchId = -1;
     }
 
@@ -553,14 +565,7 @@ public class ShowFragment extends ProgressFragment {
   }
 
   private void updateEpisodeCollectViews(Cursor cursor) {
-    boolean showWatchDivider = false;
-    boolean showCollectDivider = false;
     if (cursor.moveToFirst()) {
-      if (collectDivider != null) {
-        showCollectDivider = true;
-      } else {
-        showWatchDivider = true;
-      }
       toCollect.setVisibility(View.VISIBLE);
       collectTitle.setVisibility(View.VISIBLE);
 
@@ -618,13 +623,6 @@ public class ShowFragment extends ProgressFragment {
       episodes.setVisibility(View.GONE);
     } else {
       episodes.setVisibility(View.VISIBLE);
-    }
-
-    if (toWatchId == -1 && lastWatchedId == -1) {
-      watchDivider.setVisibility(showWatchDivider ? View.VISIBLE : View.GONE);
-    }
-    if (collectDivider != null) {
-      collectDivider.setVisibility(showCollectDivider ? View.VISIBLE : View.GONE);
     }
   }
 

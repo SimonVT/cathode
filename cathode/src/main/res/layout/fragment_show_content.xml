@@ -23,7 +23,7 @@
 
   <TextView
       android:id="@+id/overviewTitle"
-      android:layout_width="fill_parent"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:paddingLeft="@dimen/detailContentPadding"
       android:paddingRight="@dimen/detailContentPadding"
@@ -37,39 +37,6 @@
       android:paddingLeft="@dimen/detailContentPadding"
       android:paddingRight="@dimen/detailContentPadding"
       tools:text="From the delightfully twisted creative minds behind Family Guy comes American Dad, the animated tour de force featuring CIA operative Stan Smith, his outrageous family, and Roger, the alcoholic extra-terrestrial who lives with them! Whether it's rigging elections, erasing memories, chasing sleazy strip clubs, or staging bum fights, it's all in a day's work for Stan."
-      style="@style/Widget.InfoText"/>
-
-  <View
-      android:id="@+id/genresDivider"
-      android:layout_width="match_parent"
-      android:layout_height="1dp"
-      android:layout_marginTop="12dp"
-      android:paddingLeft="@dimen/detailContentPadding"
-      android:paddingRight="@dimen/detailContentPadding"
-      android:visibility="gone"
-      tools:visibility="visible"
-      android:background="#FFC3C3C3"/>
-
-  <TextView
-      android:id="@+id/genresTitle"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:paddingLeft="@dimen/detailContentPadding"
-      android:paddingRight="@dimen/detailContentPadding"
-      android:text="@string/genres"
-      android:visibility="gone"
-      tools:visibility="visible"
-      style="@style/Widget.InfoTitle"/>
-
-  <TextView
-      android:id="@+id/genres"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:paddingLeft="@dimen/detailContentPadding"
-      android:paddingRight="@dimen/detailContentPadding"
-      android:visibility="gone"
-      tools:visibility="visible"
-      tools:text="Animation, Comedy"
       style="@style/Widget.InfoText"/>
 
   <include layout="@layout/show_info_episodes"/>

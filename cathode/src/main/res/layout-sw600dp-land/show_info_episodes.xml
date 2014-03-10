@@ -25,17 +25,6 @@
     android:visibility="gone"
     tools:visibility="visible">
 
-  <View
-      android:id="@+id/watchDivider"
-      android:layout_width="match_parent"
-      android:layout_height="1dp"
-      android:layout_marginTop="12dp"
-      android:paddingLeft="@dimen/detailContentPadding"
-      android:paddingRight="@dimen/detailContentPadding"
-      android:visibility="gone"
-      tools:visibility="visible"
-      android:background="#FFC3C3C3"/>
-
   <LinearLayout
       android:id="@+id/episodesTitle"
       android:layout_width="match_parent"

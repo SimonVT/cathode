@@ -23,11 +23,12 @@
 
   <style name="Widget.InfoTitle">
     <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-    <item name="android:textStyle">italic</item>
-    <item name="android:fontFamily">sans-serif-light</item>
-    <item name="android:layout_marginBottom">4dp</item>
+    <!--item name="android:textStyle">italic</item>
+    <item name="android:fontFamily">sans-serif-light</item-->
+    <item name="android:layout_marginTop">4dp</item>
     <item name="android:paddingTop">8dp</item>
     <item name="android:paddingBottom">8dp</item>
+    <item name="android:textColor">@color/titleTextColor</item>
   </style>
 
   <style name="Widget.InfoText">
