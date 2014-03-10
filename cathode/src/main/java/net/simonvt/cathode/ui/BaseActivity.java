@@ -50,6 +50,7 @@ public abstract class BaseActivity extends FragmentActivity {
   public static final int LOADER_SHOW_COLLECT = 302;
   public static final int LOADER_SHOW_GENRES = 303;
   public static final int LOADER_SHOW_SEASONS = 304;
+  public static final int LOADER_SHOW_ACTORS = 305;
 
   public static final int LOADER_MOVIE = 400;
   public static final int LOADER_MOVIE_ACTORS = 401;

@@ -110,6 +110,10 @@ public class ShowFragment extends ProgressFragment {
   @InjectView(R.id.inCollection) TextView collection;
   @InjectView(R.id.inWatchlist) TextView watchlist;
 
+  @InjectView(R.id.actorsTitle) View actorsTitle;
+  @InjectView(R.id.actorsParent) View actorsParent;
+  @InjectView(R.id.actors) LinearLayout actors;
+
   @InjectView(R.id.episodes) LinearLayout episodes;
 
   @InjectView(R.id.watchTitle) View watchTitle;
@@ -375,6 +379,7 @@ public class ShowFragment extends ProgressFragment {
 
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOW, null, showCallbacks);
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_GENRES, null, genreCallbacks);
+    getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_ACTORS, null, actorsCallback);
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_WATCH, null, episodeWatchCallbacks);
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_COLLECT, null, episodeCollectCallbacks);
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_SEASONS, null, seasonsLoader);
@@ -489,6 +494,29 @@ public class ShowFragment extends ProgressFragment {
     }
 
     bus.post(new OnTitleChangedEvent());
+  }
+
+  private void updateActorViews(Cursor c) {
+    actors.removeAllViews();
+    final int count = c.getCount();
+    Timber.d("Actor count: %d", count);
+    final int visibility = count > 0 ? View.VISIBLE : View.GONE;
+    actorsTitle.setVisibility(visibility);
+    actorsParent.setVisibility(visibility);
+
+    c.moveToPosition(-1);
+    while (c.moveToNext()) {
+      View v = LayoutInflater.from(getActivity()).inflate(R.layout.person, actors, false);
+
+      RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
+      headshot.setImage(c.getString(c.getColumnIndex(CathodeContract.MovieActors.HEADSHOT)));
+      TextView name = (TextView) v.findViewById(R.id.name);
+      name.setText(c.getString(c.getColumnIndex(CathodeContract.MovieActors.NAME)));
+      TextView character = (TextView) v.findViewById(R.id.job);
+      character.setText(c.getString(c.getColumnIndex(CathodeContract.MovieActors.CHARACTER)));
+
+      actors.addView(v);
+    }
   }
 
   private void updateEpisodeWatchViews(Cursor cursor) {
@@ -667,6 +695,23 @@ public class ShowFragment extends ProgressFragment {
         @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
         }
       };
+
+  private LoaderManager.LoaderCallbacks<Cursor> actorsCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
+    @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+      CursorLoader cl =
+          new CursorLoader(getActivity(), CathodeContract.ShowActor.buildFromShowId(showId), null,
+              null, null, null);
+      cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
+      return cl;
+    }
+
+    @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+      updateActorViews(data);
+    }
+
+    @Override public void onLoaderReset(Loader<Cursor> loader) {
+    }
+  };
 
   private LoaderManager.LoaderCallbacks<Cursor> episodeWatchCallbacks =
       new LoaderManager.LoaderCallbacks<Cursor>() {

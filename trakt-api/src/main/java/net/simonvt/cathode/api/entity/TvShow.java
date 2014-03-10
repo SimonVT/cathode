@@ -7,6 +7,15 @@ import net.simonvt.cathode.api.enumeration.ShowStatus;
 
 public class TvShow {
 
+  public static class People {
+
+    private List<Person> actors;
+
+    public List<Person> getActors() {
+      return actors;
+    }
+  }
+
   private String title;
 
   private Integer year;
@@ -60,6 +69,8 @@ public class TvShow {
   private List<Episode> episodes;
 
   private Boolean inWatchlist;
+
+  private People people;
 
   public String getTitle() {
     return title;
@@ -167,5 +178,9 @@ public class TvShow {
 
   public Boolean isInWatchlist() {
     return inWatchlist;
+  }
+
+  public People getPeople() {
+    return people;
   }
 }

@@ -197,6 +197,16 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + " END;";
   }
 
+  interface CreateTable {
+
+    String SHOW_ACTORS = "CREATE TABLE " + Tables.SHOW_ACTORS + " ("
+        + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+        + ShowActor.SHOW_ID + " INTEGER " + References.SHOW_ID + ","
+        + ActorColumns.NAME + " TEXT NOT NULL,"
+        + ActorColumns.CHARACTER + " TEXT,"
+        + ActorColumns.HEADSHOT + " TEXT)";
+  }
+
   private static volatile CathodeDatabase instance;
 
   public static CathodeDatabase getInstance(Context context) {
@@ -283,11 +293,7 @@ public class CathodeDatabase extends SQLiteOpenHelper {
         + TopEpisodeColumns.URL + " TEXT,"
         + TopEpisodeColumns.FIRST_AIRED + " INTEGER DEFAULT 0)");
 
-    db.execSQL("CREATE TABLE " + Tables.SHOW_ACTORS + " ("
-        + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-        + ShowActor.SHOW_ID + " INTEGER " + References.SHOW_ID + ","
-        + ActorColumns.NAME + " TEXT NOT NULL,"
-        + ActorColumns.CHARACTER + " TEXT)");
+    db.execSQL(CreateTable.SHOW_ACTORS);
 
     db.execSQL("CREATE TABLE " + Tables.SHOW_GENRES + " ("
         + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -442,6 +448,9 @@ public class CathodeDatabase extends SQLiteOpenHelper {
       case 3:
         db.execSQL("ALTER TABLE " + Tables.SHOWS
             + " ADD COLUMN " + ShowColumns.FULL_SYNC_REQUESTED + " INTEGER DEFAULT 0");
+      case 4:
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.SHOW_ACTORS);
+        db.execSQL(CreateTable.SHOW_ACTORS);
     }
   }
 

@@ -24,7 +24,10 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 import net.simonvt.cathode.api.entity.Images;
+import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.entity.TvShow;
+import net.simonvt.cathode.api.entity.TvShow.People;
+import net.simonvt.cathode.provider.CathodeContract.ShowActor;
 import net.simonvt.cathode.provider.CathodeContract.ShowColumns;
 import net.simonvt.cathode.provider.CathodeContract.Shows;
 import net.simonvt.cathode.util.ApiUtils;
@@ -208,6 +211,8 @@ public final class ShowWrapper {
     resolver.update(Shows.buildFromId(id), cv, null, null);
 
     if (show.getGenres() != null) insertShowGenres(resolver, id, show.getGenres());
+    if (show.getPeople() != null) insertPeople(resolver, id, show.getPeople());
+
   }
 
   public static long insertShow(ContentResolver resolver, TvShow show) {
@@ -217,8 +222,30 @@ public final class ShowWrapper {
     final long showId = Long.valueOf(Shows.getShowId(uri));
 
     if (show.getGenres() != null) insertShowGenres(resolver, showId, show.getGenres());
+    if (show.getPeople() != null) insertPeople(resolver, showId, show.getPeople());
 
     return showId;
+  }
+
+  private static void insertPeople(ContentResolver resolver, long showId, People people) {
+    resolver.delete(ShowActor.buildFromShowId(showId), null, null);
+    List<Person> actors = people.getActors();
+    for (Person actor : actors) {
+      String name = actor.getName();
+      if (name == null) {
+        continue;
+      }
+
+      ContentValues cv = new ContentValues();
+      cv.put(ShowActor.SHOW_ID, showId);
+      cv.put(ShowActor.NAME, actor.getName());
+      cv.put(ShowActor.CHARACTER, actor.getCharacter());
+      if (actor.getImages() != null && !ApiUtils.isPlaceholder(actor.getImages().getHeadshot())) {
+        cv.put(ShowActor.HEADSHOT, actor.getImages().getHeadshot());
+      }
+
+      resolver.insert(ShowActor.buildFromShowId(showId), cv);
+    }
   }
 
   public static void setWatched(ContentResolver resolver, int tvdbId, boolean watched) {

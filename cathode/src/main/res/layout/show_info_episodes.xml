@@ -27,8 +27,6 @@
       android:id="@+id/watchTitle"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:paddingLeft="@dimen/detailContentPadding"
-      android:paddingRight="@dimen/detailContentPadding"
       android:text="@string/to_watch"
       style="@style/Widget.InfoTitle"/>
 
@@ -37,8 +35,6 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginBottom="8dp"
-      android:paddingLeft="@dimen/detailContentPadding"
-      android:paddingRight="@dimen/detailContentPadding"
       android:visibility="gone"
       tools:visibility="visible"
       layout="@layout/show_info_episode"/>
@@ -47,8 +43,6 @@
       android:id="@+id/collectTitle"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:paddingLeft="@dimen/detailContentPadding"
-      android:paddingRight="@dimen/detailContentPadding"
       android:text="@string/to_collect"
       style="@style/Widget.InfoTitle"/>
 
@@ -56,8 +50,6 @@
       android:id="@+id/toCollect"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:paddingLeft="@dimen/detailContentPadding"
-      android:paddingRight="@dimen/detailContentPadding"
       android:visibility="gone"
       tools:visibility="visible"
       layout="@layout/show_info_episode"/>

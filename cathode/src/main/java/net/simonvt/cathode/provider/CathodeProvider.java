@@ -275,7 +275,7 @@ public class CathodeProvider extends ContentProvider {
       case SHOW_ACTORS: {
         final String showId = ShowActor.getShowId(uri);
         Cursor c = getBuilder().table(Tables.SHOW_ACTORS)
-            .where(Shows._ID + "=?", showId)
+            .where(ShowActor.SHOW_ID + "=?", showId)
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
         c.setNotificationUri(getContext().getContentResolver(), uri);
