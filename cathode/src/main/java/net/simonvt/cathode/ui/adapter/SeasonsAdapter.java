@@ -77,7 +77,8 @@ public class SeasonsAdapter extends CursorAdapter {
         cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Seasons.UNAIRED_COUNT));
     final int watchedCount =
         cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Seasons.WATCHED_COUNT));
-    final int toWatch = airdateCount - unairedCount - watchedCount;
+    int toWatch = airdateCount - unairedCount - watchedCount;
+    toWatch = Math.max(toWatch, 0); // TODO: Query watched, aired, episodes instead
 
     vh.progress.setMax(airdateCount);
     vh.progress.setProgress(watchedCount);
@@ -89,7 +90,12 @@ public class SeasonsAdapter extends CursorAdapter {
     ColorStateList secondaryColor = a.getColorStateList(1);
     a.recycle();
 
-    final String unwatched = resources.getQuantityString(R.plurals.x_unwatched, toWatch, toWatch);
+    String unwatched;
+    if (toWatch == 0) {
+      unwatched = resources.getString(R.string.all_watched);
+    } else {
+      unwatched = resources.getString(R.string.x_unwatched, toWatch);
+    }
     String unaired;
     if (unairedCount > 0) {
       unaired = resources.getString(R.string.x_unaired, unairedCount);
@@ -116,14 +122,19 @@ public class SeasonsAdapter extends CursorAdapter {
         cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Seasons.UNAIRED_COUNT));
     final int collectedCount =
         cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Seasons.IN_COLLECTION_COUNT));
-    final int toCollect = airdateCount - unairedCount - collectedCount;
+    int toCollect = airdateCount - unairedCount - collectedCount;
+    toCollect = Math.max(toCollect, 0); // TODO: Query collected, aired, episodes instead
 
     vh.progress.setMax(airdateCount);
     vh.progress.setProgress(collectedCount);
 
-    final String unwatched =
-        resources.getQuantityString(R.plurals.x_uncollected, toCollect, toCollect);
-    vh.summary.setText(unwatched);
+    String uncollected;
+    if (toCollect == 0) {
+      uncollected = resources.getString(R.string.all_collected);
+    } else {
+      uncollected = resources.getString(R.string.x_uncollected, toCollect);
+    }
+    vh.summary.setText(uncollected);
   }
 
   @Override public void bindView(View view, Context context, Cursor cursor) {
