@@ -522,13 +522,13 @@ public class StaggeredGridView extends ViewGroup {
         activePointerId = ev.getPointerId(0);
         touchRemainderY = 0;
         motionPosition = getPositionAt(x, (int) lastTouchY);
-        if (hasStableIds) {
-          motionId = ((LayoutParams) getChildAt(motionPosition).getLayoutParams()).id;
-        }
         if (motionPosition != INVALID_POSITION && adapter != null && adapter.isEnabled(
             motionPosition)) {
           pendingTapCheck = new TapCheck();
           postDelayed(pendingTapCheck, ViewConfiguration.getTapTimeout());
+          if (hasStableIds) {
+            motionId = ((LayoutParams) getChildAt(motionPosition - firstPosition).getLayoutParams()).id;
+          }
         }
         break;
       }
@@ -585,7 +585,7 @@ public class StaggeredGridView extends ViewGroup {
         touchMode = TOUCH_MODE_IDLE;
 
         if (motionPosition != INVALID_POSITION) {
-          View child = getChildAt(motionPosition);
+          View child = getChildAt(motionPosition - firstPosition);
           child.setPressed(false);
 
           setPressed(false);
@@ -593,6 +593,7 @@ public class StaggeredGridView extends ViewGroup {
 
         motionPosition = INVALID_POSITION;
         motionId = -1L;
+        selectorRect.setEmpty();
 
         if (pendingTapCheck != null) {
           removeCallbacks(pendingTapCheck);
@@ -614,6 +615,24 @@ public class StaggeredGridView extends ViewGroup {
           scroller.fling(0, 0, 0, (int) velocity, 0, 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
           lastTouchY = 0;
           postInvalidateOnAnimation();
+
+          if (motionPosition != INVALID_POSITION) {
+            View child = getChildAt(motionPosition - firstPosition);
+            if (child != null) {
+              child.setPressed(false);
+            }
+
+            setPressed(false);
+
+            motionPosition = INVALID_POSITION;
+            motionId = -1L;
+            selectorRect.setEmpty();
+
+            if (pendingTapCheck != null) {
+              removeCallbacks(pendingTapCheck);
+              pendingTapCheck = null;
+            }
+          }
         } else {
           if (touchMode != TOUCH_MODE_DRAGGING && motionPosition != INVALID_POSITION) {
             if (adapter != null && adapter.isEnabled(motionPosition)) {
@@ -2025,7 +2044,7 @@ public class StaggeredGridView extends ViewGroup {
         final View child = getChildAt(i);
         LayoutParams lp = (LayoutParams) child.getLayoutParams();
         removeViewAt(i);
-        layoutRecords.removeAt(lp.position);
+        layoutRecords.remove(lp.position);
         recycler.addScrap(child);
       }
 
