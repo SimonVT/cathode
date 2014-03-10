@@ -187,19 +187,9 @@ public class CathodeApp extends Application {
 
   private void upgrade() {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-    final int currentVersion = settings.getInt(Settings.VERSION_CODE, 0);
+    final int currentVersion = settings.getInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE);
     if (currentVersion != BuildConfig.VERSION_CODE) {
       switch (currentVersion) {
-        case 0: {
-          Account account = getAccount(this);
-          if (account != null) {
-            ContentResolver.setIsSyncable(account, CathodeProvider.AUTHORITY, 1);
-            ContentResolver.setSyncAutomatically(account, CathodeProvider.AUTHORITY, true);
-            ContentResolver.addPeriodicSync(account, CathodeProvider.AUTHORITY, new Bundle(),
-                12 * DateUtils.HOUR_IN_SECONDS);
-          }
-        }
-
         case 9: {
           // Try to prune users with invalid usernames (e.g. spaces)
           Account account = getAccount(this);
