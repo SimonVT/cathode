@@ -16,7 +16,7 @@
 <resources>
   <color name="transparent">#00000000</color>
 
-  <color name="drawerBackground">#FFD5D5D5</color>
+  <color name="drawerBackground">#FFFFFFFF</color>
   <color name="contentBackground">#FFE5E5E5</color>
 
   <color name="watchedColor">@android:color/holo_blue_dark</color>
@@ -36,5 +36,8 @@
   <color name="showHeaderBackground">#FFFFFFFF</color>
 
   <color name="titleTextColor">#FFFF7F2A</color>
+  <color name="navigationIndicatorColor">@color/titleTextColor</color>
+
+  <color name="activatedItemBackground">#33FF7F2A</color>
 
 </resources>
