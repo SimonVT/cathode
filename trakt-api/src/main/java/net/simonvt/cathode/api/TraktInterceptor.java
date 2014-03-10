@@ -1,6 +1,7 @@
 package net.simonvt.cathode.api;
 
 import android.util.Base64;
+import android.util.Log;
 import javax.inject.Inject;
 import retrofit.RequestInterceptor;
 
@@ -47,6 +48,6 @@ public class TraktInterceptor implements RequestInterceptor {
   }
 
   private String base64encode(String source) {
-    return new String(Base64.encode(source.getBytes(), Base64.DEFAULT));
+    return new String(Base64.encode(source.getBytes(), Base64.NO_WRAP));
   }
 }

@@ -46,6 +46,7 @@ import net.simonvt.cathode.api.ApiKey;
 import net.simonvt.cathode.api.ResponseParser;
 import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.api.UserCredentials;
+import net.simonvt.cathode.api.util.TraktUtils;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.provider.CathodeProvider;
 import net.simonvt.cathode.remote.DeserializationFailedTask;
@@ -103,6 +104,7 @@ import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.service.AccountAuthenticator;
 import net.simonvt.cathode.service.CathodeSyncAdapter;
+import net.simonvt.cathode.settings.ActivityWrapper;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.PhoneController;
@@ -173,14 +175,14 @@ public class CathodeApp extends Application {
       Timber.plant(new CrashlyticsTree());
     }
 
+    upgrade();
+
     objectGraph = ObjectGraph.create(new AppModule(this));
     objectGraph.plus(new TraktModule());
 
     objectGraph.inject(this);
 
     bus.register(this);
-
-    upgrade();
   }
 
   private void upgrade() {
@@ -188,7 +190,7 @@ public class CathodeApp extends Application {
     final int currentVersion = settings.getInt(Settings.VERSION_CODE, 0);
     if (currentVersion != BuildConfig.VERSION_CODE) {
       switch (currentVersion) {
-        case 0:
+        case 0: {
           Account account = getAccount(this);
           if (account != null) {
             ContentResolver.setIsSyncable(account, CathodeProvider.AUTHORITY, 1);
@@ -196,6 +198,38 @@ public class CathodeApp extends Application {
             ContentResolver.addPeriodicSync(account, CathodeProvider.AUTHORITY, new Bundle(),
                 12 * DateUtils.HOUR_IN_SECONDS);
           }
+        }
+
+        case 9: {
+          // Try to prune users with invalid usernames (e.g. spaces)
+          Account account = getAccount(this);
+          if (account != null) {
+            String accountName = account.name;
+            String trimmedName = accountName.trim();
+            if (!accountName.equals(trimmedName)) {
+              final boolean validUsername = TraktUtils.isValidUsername(trimmedName);
+              if (validUsername) {
+                String password = AccountManager.get(this).getPassword(account);
+                removeAccount(this);
+                setupAccountWithSha(this, trimmedName, password);
+              } else {
+                removeAccount(this);
+                ActivityWrapper.clear(this);
+
+                Intent intent = new Intent(this, TraktTaskService.class);
+                intent.setAction(TraktTaskService.ACTION_LOGOUT);
+                this.startService(intent);
+              }
+            } else if (!TraktUtils.isValidUsername(accountName)) {
+              removeAccount(this);
+              ActivityWrapper.clear(this);
+
+              Intent intent = new Intent(this, TraktTaskService.class);
+              intent.setAction(TraktTaskService.ACTION_LOGOUT);
+              this.startService(intent);
+            }
+          }
+        }
       }
 
       settings.edit().putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE).apply();
@@ -249,6 +283,10 @@ public class CathodeApp extends Application {
   }
 
   public static void setupAccount(Context context, String username, String password) {
+    setupAccountWithSha(context, username, ApiUtils.getSha(password));
+  }
+
+  public static void setupAccountWithSha(Context context, String username, String shaPassword) {
     removeAccount(context);
 
     AccountAuthenticator.allowRemove = false;
@@ -256,7 +294,7 @@ public class CathodeApp extends Application {
 
     Account account = new Account(username, context.getString(R.string.accountType));
 
-    manager.addAccountExplicitly(account, ApiUtils.getSha(password), null);
+    manager.addAccountExplicitly(account, shaPassword, null);
 
     ContentResolver.setIsSyncable(account, CathodeProvider.AUTHORITY, 1);
     ContentResolver.setSyncAutomatically(account, CathodeProvider.AUTHORITY, true);

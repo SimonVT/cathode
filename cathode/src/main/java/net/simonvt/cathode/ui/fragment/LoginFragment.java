@@ -15,11 +15,13 @@
  */
 package net.simonvt.cathode.ui.fragment;
 
+import android.accounts.Account;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -40,6 +42,7 @@ import net.simonvt.cathode.api.UserCredentials;
 import net.simonvt.cathode.api.body.CreateAccountBody;
 import net.simonvt.cathode.api.entity.Response;
 import net.simonvt.cathode.api.service.AccountService;
+import net.simonvt.cathode.api.util.TraktUtils;
 import net.simonvt.cathode.event.CreateUserFailedEvent;
 import net.simonvt.cathode.event.LoginEvent;
 import net.simonvt.cathode.event.LoginFailedEvent;
@@ -97,10 +100,38 @@ public class LoginFragment extends BaseFragment {
     usernameInput.addTextChangedListener(textChanged);
     usernameInput.setFilters(new InputFilter[] {
         new InputFilter() {
+          private static final String allowed = "_-.";
+
+          public boolean isAllowed(char c) {
+            // Allow [a-zA-Z0-9@.]
+            if ('0' <= c && c <= '9') return true;
+            if ('a' <= c && c <= 'z') return true;
+            if ('A' <= c && c <= 'Z') return true;
+            if (allowed.indexOf(c) != -1) return true;
+            return false;
+          }
+
           @Override
           public CharSequence filter(CharSequence source, int start, int end, Spanned dest,
               int dstart, int dend) {
-            return source.toString().replace(" ", "");
+            SpannableStringBuilder modification = null;
+            int modoff = 0;
+
+            for (int i = start; i < end; i++) {
+              char c = source.charAt(i);
+              if (isAllowed(c)) {
+                modoff++;
+              } else {
+                if (modification == null) {
+                  modification = new SpannableStringBuilder(source, start, end);
+                  modoff = i - start;
+                }
+
+                modification.delete(modoff, modoff + 1);
+              }
+            }
+
+            return modification;
           }
         },
     });
@@ -173,7 +204,8 @@ public class LoginFragment extends BaseFragment {
 
   private void updateUiEnabled() {
     if (login != null) {
-      login.setEnabled(!isTaskRunning && usernameInput.length() > 0 && passwordInput.length() > 0);
+      login.setEnabled(!isTaskRunning && usernameInput.length() > 0 && TraktUtils.isValidUsername(
+          usernameInput.getText().toString()) && passwordInput.length() > 0);
     }
   }
 
@@ -196,11 +228,11 @@ public class LoginFragment extends BaseFragment {
     final String password = event.getPassword();
 
     credentials.setCredentials(username, ApiUtils.getSha(password));
+    CathodeApp.setupAccount(appContext, username, password);
+    Account account = CathodeApp.getAccount(appContext);
     queue.add(new SyncTask());
 
     bus.post(new LoginEvent(username, password));
-
-    CathodeApp.setupAccount(appContext, username, password);
   }
 
   @Subscribe public void onLoginFailed(LoginFailedEvent event) {
@@ -250,7 +282,8 @@ public class LoginFragment extends BaseFragment {
 
     @Override protected Response doInBackground(Void... voids) {
       try {
-        Response r = accountService.create(new CreateAccountBody(username, password, email));
+        Response r = accountService.create(
+            new CreateAccountBody(username, ApiUtils.getSha(password), email));
 
         return r;
       } catch (RetrofitError e) {
@@ -303,7 +336,7 @@ public class LoginFragment extends BaseFragment {
 
         return r.getError() == null;
       } catch (RetrofitError e) {
-        e.printStackTrace();
+        // Ignore
       }
 
       return false;
