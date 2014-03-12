@@ -14,84 +14,66 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/card_bg"
-    android:foreground="?android:attr/selectableItemBackground">
+    android:orientation="vertical">
 
-  <RelativeLayout
-      android:id="@+id/episodeContainer"
+  <net.simonvt.cathode.widget.RemoteImageView
+      android:id="@+id/screen"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginLeft="8dp"
-      android:layout_marginRight="8dp"
-      android:layout_marginBottom="4dp">
+      android:background="@drawable/header_bg"
+      app:dominantMeasurement="width"
+      app:aspectRatio="0.5625"/>
 
-    <net.simonvt.cathode.widget.RemoteImageView
-        android:id="@+id/screen"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/header_bg"
-        app:dominantMeasurement="width"
-        app:aspectRatio="0.5625"/>
-
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/screen"
-        android:layout_toLeftOf="@id/episode"
-        android:fontFamily="sans-serif-light"
-        android:singleLine="true"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="16sp"
-        tools:text="Some Random Episode That is really long"/>
-
-    <net.simonvt.cathode.widget.TimeStamp
-        android:id="@+id/firstAired"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_below="@id/title"
-        android:textColor="?android:attr/textColorSecondary"
-        android:textSize="14sp"
-        tools:text="OCT 20, 2010 (MON)"/>
-
-    <TextView
-        android:id="@+id/episode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="8dp"
-        android:layout_below="@id/screen"
-        android:layout_alignParentRight="true"
-        android:layout_alignBaseline="@id/title"
-        android:textSize="14sp"
-        android:textColor="?android:attr/textColorHint"
-        tools:text="S10E20"/>
-
-    <net.simonvt.cathode.widget.OverflowView
-        android:id="@+id/overflow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"/>
-  </RelativeLayout>
-
-  <net.simonvt.cathode.widget.CheckMark
-      android:id="@+id/checkbox"
-      android:layout_width="wrap_content"
+  <LinearLayout
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="4dp"
-      android:layout_marginRight="2dp"
-      android:layout_gravity="right|bottom"
-      style="@style/Widget.CheckMark"/>
-</FrameLayout>
+      android:layout_below="@id/screen"
+      android:gravity="center_vertical">
 
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+      <TextView
+          android:id="@+id/title"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="16dp"
+          android:fontFamily="sans-serif-light"
+          android:singleLine="true"
+          android:textColor="?android:attr/textColorPrimary"
+          android:textSize="16sp"
+          tools:text="Some Random Episode That is really long"/>
+
+      <net.simonvt.cathode.widget.TimeStamp
+          android:id="@+id/firstAired"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="16dp"
+          android:textColor="?android:attr/textColorSecondary"
+          android:textSize="14sp"
+          tools:text="OCT 20, 2010 (MON)"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:textSize="30sp"
+        tools:textColor="@color/episode_number_watched"
+        tools:text="1"/>
+  </LinearLayout>
+</LinearLayout>

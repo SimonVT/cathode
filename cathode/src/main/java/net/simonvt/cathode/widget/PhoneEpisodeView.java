@@ -18,6 +18,7 @@ package net.simonvt.cathode.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import net.simonvt.cathode.CathodeApp;
@@ -27,11 +28,13 @@ public class PhoneEpisodeView extends ViewGroup {
 
   private static final float SCREEN_RATIO = 680.f / 1000.f;
 
-  @InjectView(R.id.screen) RemoteImageView screen;
+  @InjectView(R.id.screen) RemoteImageView poster;
 
-  @InjectView(R.id.infoParent) ViewGroup infoParent;
-  @InjectView(R.id.overflow) OverflowView overflow;
-  @InjectView(R.id.checkbox) CheckMark checkbox;
+  @InjectView(R.id.number) TextView number;
+
+  @InjectView(R.id.title) TextView title;
+
+  @InjectView(R.id.firstAired) TimeStamp firstAired;
 
   private int minHeight;
 
@@ -64,29 +67,47 @@ public class PhoneEpisodeView extends ViewGroup {
     final int width = r - l;
     final int height = b - t;
 
-    final LayoutParams posterLp = (LayoutParams) screen.getLayoutParams();
-    final int posterWidth = screen.getMeasuredWidth();
-    screen.layout(posterLp.leftMargin, posterLp.topMargin, posterWidth + posterLp.leftMargin,
-        height - posterLp.bottomMargin);
-
-    final LayoutParams infoParentLp = (LayoutParams) infoParent.getLayoutParams();
-    final int infoParentHeight = infoParent.getMeasuredHeight();
-    final int infoParentTop =
-        (height - infoParentHeight) / 2 + getPaddingTop() + infoParentLp.topMargin;
-    final int infoParentBottom = infoParentTop + infoParentHeight;
+    final int paddingLeft = getPaddingLeft();
+    final int paddingTop = getPaddingTop();
     final int paddingRight = getPaddingRight();
-    final int infoParentLeft =
-        posterLp.leftMargin + posterWidth + posterLp.rightMargin + infoParentLp.leftMargin;
-    final int infoParentRight = width - getPaddingRight() - infoParentLp.rightMargin;
-    infoParent.layout(infoParentLeft, infoParentTop, infoParentRight, infoParentBottom);
+    final int paddingBottom = getPaddingBottom();
 
-    overflow.layout(width - overflow.getMeasuredWidth(), 0, width, overflow.getMeasuredHeight());
+    LayoutParams posterLp = (LayoutParams) poster.getLayoutParams();
+    LayoutParams numberLp = (LayoutParams) number.getLayoutParams();
+    LayoutParams titleLp = (LayoutParams) title.getLayoutParams();
+    LayoutParams firstAiredLp = (LayoutParams) firstAired.getLayoutParams();
 
-    LayoutParams watchedParams = (LayoutParams) checkbox.getLayoutParams();
-    final int watchedRight = width - watchedParams.rightMargin - getPaddingRight();
-    final int watchedBottom = height - watchedParams.bottomMargin - getPaddingBottom();
-    checkbox.layout(watchedRight - checkbox.getMeasuredWidth(),
-        watchedBottom - checkbox.getMeasuredHeight(), watchedRight, watchedBottom);
+    final int posterLeft = paddingLeft + posterLp.leftMargin;
+    final int posterRight = posterLeft + poster.getMeasuredWidth();
+    final int posterTop = paddingTop + posterLp.topMargin;
+    final int posterBottom = posterTop + poster.getMeasuredHeight();
+    poster.layout(posterLeft, posterTop, posterRight, posterBottom);
+
+    final int numberRight = width - paddingRight - numberLp.rightMargin;
+    final int numberLeft = numberRight - number.getMeasuredWidth();
+    final int numberTop = paddingTop + numberLp.topMargin;
+    final int numberBottom = numberTop + number.getMeasuredHeight();
+    number.layout(numberLeft, numberTop, numberRight, numberBottom);
+
+    final int infoHeight = titleLp.topMargin
+        + title.getMeasuredHeight()
+        + titleLp.bottomMargin
+        + firstAiredLp.topMargin
+        + firstAired.getMeasuredHeight()
+        + firstAiredLp.bottomMargin;
+    final int infoOffset = (height - paddingTop - paddingBottom - infoHeight) / 2;
+
+    final int titleLeft = posterRight + posterLp.rightMargin + titleLp.leftMargin;
+    final int titleRight = titleLeft + title.getMeasuredWidth();
+    final int titleTop = paddingTop + infoOffset + titleLp.topMargin;
+    final int titleBottom = titleTop + title.getMeasuredHeight();
+    title.layout(titleLeft, titleTop, titleRight, titleBottom);
+
+    final int firstAiredTop = titleBottom + titleLp.bottomMargin + firstAiredLp.topMargin;
+    final int firstAiredBottom = firstAiredTop + firstAired.getMeasuredHeight();
+    final int firstAiredLeft = posterRight + posterLp.rightMargin + firstAiredLp.leftMargin;
+    final int firstAiredRight = firstAiredLeft + firstAired.getMeasuredWidth();
+    firstAired.layout(firstAiredLeft, firstAiredTop, firstAiredRight, firstAiredBottom);
   }
 
   @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -95,44 +116,67 @@ public class PhoneEpisodeView extends ViewGroup {
       throw new RuntimeException("PhoneShowView width must measure as EXACTLY.");
     }
 
-    LayoutParams posterLp = (LayoutParams) screen.getLayoutParams();
-    LayoutParams infoParentLp = (LayoutParams) infoParent.getLayoutParams();
+    final int width = MeasureSpec.getSize(widthMeasureSpec);
 
-    // Measure the height of show and next episode info
-    measureChild(infoParent, widthMeasureSpec, heightMeasureSpec);
-    final int infoParentHeight =
-        infoParent.getMeasuredHeight() + infoParentLp.topMargin + infoParentLp.bottomMargin;
+    LayoutParams posterLp = (LayoutParams) poster.getLayoutParams();
+    LayoutParams numberLp = (LayoutParams) number.getLayoutParams();
+    LayoutParams titleLp = (LayoutParams) title.getLayoutParams();
+    LayoutParams firstAiredLp = (LayoutParams) firstAired.getLayoutParams();
 
-    final int viewWidth = MeasureSpec.getSize(widthMeasureSpec);
-    final int viewHeight =
-        Math.max(infoParentHeight + getPaddingTop() + getPaddingBottom(), minHeight);
+    // Get width of number
+    measureChild(number, widthMeasureSpec, heightMeasureSpec);
+    final int numberWidth = number.getMeasuredWidth();
 
-    int posterHeight = viewHeight - posterLp.topMargin - posterLp.bottomMargin;
-    int posterWidth = (int) (viewHeight * SCREEN_RATIO);
-    final int posterWidthMeasureSpec =
-        MeasureSpec.makeMeasureSpec(posterWidth, MeasureSpec.EXACTLY);
-    final int posterHeightMeasureSpec =
-        MeasureSpec.makeMeasureSpec(posterHeight, MeasureSpec.EXACTLY);
-    screen.measure(posterWidthMeasureSpec, posterHeightMeasureSpec);
+    // Get height of title and timestamp
+    measureChild(title, widthMeasureSpec, heightMeasureSpec);
+    measureChild(firstAired, widthMeasureSpec, heightMeasureSpec);
 
-    final int infoParentWidth = viewWidth
-        - posterWidth
-        - posterLp.leftMargin
-        - posterLp.rightMargin
-        - infoParentLp.leftMargin
-        - infoParentLp.rightMargin
+    int height = getPaddingTop()
+        + titleLp.topMargin
+        + title.getMeasuredHeight()
+        + titleLp.bottomMargin
+        + firstAiredLp.topMargin
+        + firstAired.getMeasuredHeight()
+        + firstAiredLp.bottomMargin
+        + getPaddingBottom();
+    height = Math.max(height, minHeight);
+
+    // Measure poster
+    final int posterWidthMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
+    final int posterHeightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+    poster.measure(posterWidthMeasureSpec, posterHeightMeasureSpec);
+    final int posterWidth = poster.getMeasuredWidth();
+
+    // Measure number number
+    final int numberWidthMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
+    final int numberHeightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+    number.measure(posterWidthMeasureSpec, posterHeightMeasureSpec);
+
+    // Measure title and timestamp
+    final int leftoverWidth = width
         - getPaddingLeft()
+        - posterLp.leftMargin
+        - posterWidth
+        - posterLp.rightMargin
+        - numberLp.leftMargin
+        - numberWidth
+        - numberLp.rightMargin
         - getPaddingRight();
-    final int infoParentWidthMeasureSpec =
-        MeasureSpec.makeMeasureSpec(infoParentWidth, MeasureSpec.EXACTLY);
-    final int infoParentHeightMeasureSpec =
-        MeasureSpec.makeMeasureSpec(ViewGroup.LayoutParams.WRAP_CONTENT, MeasureSpec.UNSPECIFIED);
-    infoParent.measure(infoParentWidthMeasureSpec, infoParentHeightMeasureSpec);
 
-    measureChild(overflow, widthMeasureSpec, heightMeasureSpec);
-    measureChild(checkbox, widthMeasureSpec, heightMeasureSpec);
+    final int titleMaxWidth = leftoverWidth - titleLp.leftMargin - titleLp.rightMargin;
+    final int titleWidthMeasureSpec =
+        MeasureSpec.makeMeasureSpec(titleMaxWidth, MeasureSpec.AT_MOST);
+    final int titleHeightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
+    title.measure(titleWidthMeasureSpec, titleHeightMeasureSpec);
 
-    setMeasuredDimension(viewWidth, viewHeight);
+    final int firstAiredMaxWidth =
+        leftoverWidth - firstAiredLp.leftMargin - firstAiredLp.rightMargin;
+    final int firstAiredWidthMeasureSpec =
+        MeasureSpec.makeMeasureSpec(firstAiredMaxWidth, MeasureSpec.AT_MOST);
+    final int firstAiredHeightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
+    title.measure(titleWidthMeasureSpec, titleHeightMeasureSpec);
+
+    setMeasuredDimension(width, height);
   }
 
   @Override public LayoutParams generateLayoutParams(AttributeSet attrs) {
