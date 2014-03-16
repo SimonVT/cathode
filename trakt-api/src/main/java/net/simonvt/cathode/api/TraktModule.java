@@ -63,7 +63,8 @@ public class TraktModule {
   @Provides @Singleton @Trakt
   RestAdapter provideRestAdapter(@Trakt Gson gson, TraktInterceptor interceptor,
       ErrorHandler errorHandler) {
-    return new RestAdapter.Builder().setServer(API_URL)
+    return new RestAdapter.Builder() //
+        .setEndpoint(API_URL)
         .setConverter(new GsonConverter(gson))
         .setRequestInterceptor(interceptor)
         .setErrorHandler(errorHandler)
