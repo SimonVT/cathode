@@ -118,16 +118,19 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
             context.getContentResolver().query(CathodeContract.Movies.MOVIE_WATCHING, new String[] {
                 Movies.TMDB_ID,
             }, null, null, null);
-        c.moveToFirst();
-        final long tmdbId = c.getLong(c.getColumnIndex(CathodeContract.Movies.TMDB_ID));
+
+        if (c.moveToFirst()) {
+          final long tmdbId = c.getLong(c.getColumnIndex(CathodeContract.Movies.TMDB_ID));
+
+          ContentValues cv = new ContentValues();
+          cv.put(CathodeContract.Movies.CHECKED_IN, false);
+          context.getContentResolver().update(CathodeContract.Movies.MOVIE_WATCHING, cv, null, null);
+
+          queuePriorityTask(new CancelMovieCheckinTask());
+          queueTask(new SyncMovieTask(tmdbId));
+        }
+
         c.close();
-
-        ContentValues cv = new ContentValues();
-        cv.put(CathodeContract.Movies.CHECKED_IN, false);
-        context.getContentResolver().update(CathodeContract.Movies.MOVIE_WATCHING, cv, null, null);
-
-        queuePriorityTask(new CancelMovieCheckinTask());
-        queueTask(new SyncMovieTask(tmdbId));
       }
     });
   }
