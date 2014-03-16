@@ -278,7 +278,7 @@ public final class FragmentStack {
   }
 
   private void removeFragment(Fragment fragment) {
-    if (fragment != null && fragment.isAdded()) {
+    if (fragment != null && (fragment.isAdded() || fragment.isDetached())) {
       ensureTransaction();
       fragmentTransaction.remove(fragment);
     }
