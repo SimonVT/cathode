@@ -23,6 +23,7 @@ import com.squareup.tape.ObjectQueue;
 import java.io.File;
 import java.io.IOException;
 import net.simonvt.cathode.queue.TaskQueue;
+import timber.log.Timber;
 
 public final class TraktTaskQueue extends TaskQueue<TraktTask> {
 
@@ -56,7 +57,13 @@ public final class TraktTaskQueue extends TaskQueue<TraktTask> {
     try {
       delegate = new FileObjectQueue<TraktTask>(queueFile, converter);
     } catch (IOException e) {
-      throw new RuntimeException("Unable to create file queue.", e);
+      Timber.e(e, "Unable to create file queue");
+      queueFile.delete();
+      try {
+        delegate = new FileObjectQueue<TraktTask>(queueFile, converter);
+      } catch (Throwable t) {
+        throw new RuntimeException("Unable to create file queue.", e);
+      }
     }
     return new TraktTaskQueue(delegate, context);
   }
