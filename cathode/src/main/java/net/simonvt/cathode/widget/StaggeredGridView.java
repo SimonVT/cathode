@@ -527,7 +527,8 @@ public class StaggeredGridView extends ViewGroup {
           pendingTapCheck = new TapCheck();
           postDelayed(pendingTapCheck, ViewConfiguration.getTapTimeout());
           if (hasStableIds) {
-            motionId = ((LayoutParams) getChildAt(motionPosition - firstPosition).getLayoutParams()).id;
+            motionId =
+                ((LayoutParams) getChildAt(motionPosition - firstPosition).getLayoutParams()).id;
           }
         }
         break;
@@ -927,6 +928,17 @@ public class StaggeredGridView extends ViewGroup {
   @Override
   protected void onLayout(boolean changed, int l, int t, int r, int b) {
     inLayout = true;
+
+    if (dataChanged) {
+      for (int i = getChildCount() - 1; i >= 1; i--) {
+        final View child = getChildAt(i);
+        LayoutParams lp = (LayoutParams) child.getLayoutParams();
+        removeViewInLayout(child);
+        layoutRecords.remove(lp.position);
+        recycler.addScrap(child);
+      }
+    }
+
     populate();
     inLayout = false;
     forcePopulateOnLayout = false;
@@ -939,6 +951,19 @@ public class StaggeredGridView extends ViewGroup {
 
   private void populate() {
     if (getWidth() == 0 || getHeight() == 0) {
+      return;
+    }
+
+    if (itemCount == 0) {
+      removeAllViewsInLayout();
+      layoutRecords.clear();
+      if (itemTops != null) {
+        Arrays.fill(itemTops, 0);
+      }
+      if (itemBottoms != null) {
+        Arrays.fill(itemBottoms, 0);
+      }
+      dataChanged = false;
       return;
     }
 
@@ -1697,6 +1722,10 @@ public class StaggeredGridView extends ViewGroup {
     if (empty) {
       setVisibility(GONE);
       emptyView.setVisibility(VISIBLE);
+
+      if (dataChanged) {
+        onLayout(false, getLeft(), getTop(), getRight(), getBottom());
+      }
     } else {
       setVisibility(VISIBLE);
       emptyView.setVisibility(GONE);
@@ -2038,14 +2067,6 @@ public class StaggeredGridView extends ViewGroup {
       // TODO: Handle based on ID instead of position
       if (firstPosition >= itemCount) {
         firstPosition = Math.max(Math.min(firstPosition, itemCount - 1), 0);
-      }
-
-      for (int i = getChildCount() - 1; i >= 1; i--) {
-        final View child = getChildAt(i);
-        LayoutParams lp = (LayoutParams) child.getLayoutParams();
-        removeViewAt(i);
-        layoutRecords.remove(lp.position);
-        recycler.addScrap(child);
       }
 
       requestLayout();
