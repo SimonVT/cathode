@@ -210,12 +210,16 @@ public class ShowWatchlistAdapter extends BaseAdapter {
   }
 
   @Override public int getViewTypeCount() {
-    return 2;
+    return 3;
   }
 
   @Override public int getItemViewType(int position) {
     if (position == showHeaderPosition || position == episodeHeaderPosition) {
       return 0;
+    }
+
+    if (showCursorCount == 0 || position > showCursorCount) {
+      return 2;
     }
 
     return 1;
