@@ -19,7 +19,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
@@ -150,15 +149,8 @@ public abstract class AbsAdapterFragment extends BaseFragment {
       listContainer.setVisibility(View.VISIBLE);
       progressContainer.setVisibility(View.VISIBLE);
 
-      final Animation fadeIn = new AlphaAnimation(0.0f, 1.0f);
-      fadeIn.setDuration(ANIMATION_DURATION);
-      final Animation fadeOut = new AlphaAnimation(1.0f, 0.0f);
-      fadeOut.setDuration(ANIMATION_DURATION);
-      fadeOut.setAnimationListener(new Animation.AnimationListener() {
-        @Override public void onAnimationStart(Animation animation) {
-        }
-
-        @Override public void onAnimationEnd(Animation animation) {
+      final Runnable onAnimationEnd = new Runnable() {
+        @Override public void run() {
           if (progressContainer == null) {
             // In case fragment is removed before animation is done
             return;
@@ -171,20 +163,18 @@ public abstract class AbsAdapterFragment extends BaseFragment {
               adapterView.setAdapter(null);
             }
           }
+          progressContainer.setAlpha(1.0f);
+          listContainer.setAlpha(1.0f);
         }
+      };
 
-        @Override public void onAnimationRepeat(Animation animation) {
-        }
-      });
-
-      getView().postOnAnimation(new Runnable() {
-        @Override public void run() {
-          if (listContainer != null) {
-            listContainer.startAnimation(newState == STATE_LIST_VISIBLE ? fadeIn : fadeOut);
-            progressContainer.startAnimation(newState == STATE_LIST_VISIBLE ? fadeOut : fadeIn);
-          }
-        }
-      });
+      if (newState == STATE_LIST_VISIBLE) {
+        listContainer.animate().alpha(1.0f).withEndAction(onAnimationEnd);
+        progressContainer.animate().alpha(0.0f);
+      } else {
+        listContainer.animate().alpha(0.0f).withEndAction(onAnimationEnd);
+        progressContainer.animate().alpha(1.0f);
+      }
     }
   }
 

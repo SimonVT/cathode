@@ -142,8 +142,6 @@ public class SearchShowFragment extends AbsAdapterFragment
     sortBy =
         SortBy.fromValue(settings.getString(Settings.SORT_SHOW_SEARCH, SortBy.RELEVANCE.getKey()));
 
-    bus.register(this);
-
     if (inState == null) {
       Bundle args = getArguments();
       query = args.getString(ARGS_QUERY);
@@ -154,6 +152,8 @@ public class SearchShowFragment extends AbsAdapterFragment
         searchHandler.search(query);
       }
     }
+
+    bus.register(this);
 
     setHasOptionsMenu(true);
   }
@@ -229,9 +229,14 @@ public class SearchShowFragment extends AbsAdapterFragment
 
   public void query(String query) {
     this.query = query;
+    if (showsAdapter != null) {
+      showsAdapter.changeCursor(null);
+      showsAdapter = null;
+      setAdapter(null);
+      searchShowIds = null;
+    }
+    getLoaderManager().destroyLoader(BaseActivity.LOADER_SEARCH_SHOWS);
     searchHandler.search(query);
-    showsAdapter = null;
-    setAdapter(null);
     bus.post(new OnTitleChangedEvent());
   }
 
@@ -243,7 +248,7 @@ public class SearchShowFragment extends AbsAdapterFragment
 
   @Subscribe public void onSearchEvent(ShowSearchResult result) {
     searchShowIds = result.getShowIds();
-    getLoaderManager().restartLoader(BaseActivity.LOADER_SEARCH_SHOWS, null, this);
+    getLoaderManager().initLoader(BaseActivity.LOADER_SEARCH_SHOWS, null, this);
     setEmptyText(R.string.no_results, query);
     bus.post(new OnTitleChangedEvent());
   }

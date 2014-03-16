@@ -227,9 +227,14 @@ public class SearchMovieFragment extends AbsAdapterFragment
 
   public void query(String query) {
     this.query = query;
+    if (movieAdapter != null) {
+      movieAdapter.changeCursor(null);
+      movieAdapter = null;
+      setAdapter(null);
+      searchMovieIds = null;
+    }
+    getLoaderManager().destroyLoader(BaseActivity.LOADER_SEARCH_MOVIES);
     searchHandler.search(query);
-    movieAdapter = null;
-    setAdapter(null);
     bus.post(new OnTitleChangedEvent());
   }
 
@@ -241,7 +246,7 @@ public class SearchMovieFragment extends AbsAdapterFragment
 
   @Subscribe public void onSearchEvent(MovieSearchResult result) {
     searchMovieIds = result.getMovieIds();
-    getLoaderManager().restartLoader(BaseActivity.LOADER_SEARCH_MOVIES, null, this);
+    getLoaderManager().initLoader(BaseActivity.LOADER_SEARCH_MOVIES, null, this);
     setEmptyText(R.string.no_results, query);
     bus.post(new OnTitleChangedEvent());
   }
