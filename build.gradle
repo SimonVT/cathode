@@ -31,7 +31,6 @@ ext {
 
   versionCode = versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
   versionName = versionMajor + "." + versionMinor + "." + versionPatch
-  versionNameBeta = versionMajor + "." + versionMinor + "." + versionPatch + "-BETA" + versionBuild
 
   minSdkVersion = 16
   targetSdkVersion = 19
