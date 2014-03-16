@@ -344,6 +344,7 @@ public class ShowWatchlistAdapter extends BaseAdapter {
         vh.title.setText(title);
         vh.firstAired.setTimeInMillis(firstAired);
         vh.episode.setText(season + "x" + episode);
+        final View view = v;
         vh.overflow.setListener(new OverflowView.OverflowActionListener() {
           @Override public void onPopupShown() {
           }
@@ -359,6 +360,7 @@ public class ShowWatchlistAdapter extends BaseAdapter {
                 break;
 
               case R.id.action_watchlist_remove:
+                listener.onRemoveItem(view, position);
                 episodeScheduler.setIsInWatchlist(id, false);
                 break;
             }
