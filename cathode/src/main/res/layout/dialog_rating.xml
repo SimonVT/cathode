@@ -27,6 +27,7 @@
       android:layout_height="wrap_content"
       android:minHeight="32dp"
       android:maxHeight="32dp"
+      android:paddingTop="8dp"
       android:progressDrawable="@drawable/ratingbar"
       style="@style/Widget.RatingBar"/>
 
@@ -34,5 +35,6 @@
       android:id="@+id/ratingText"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:paddingBottom="8dp"
       tools:text="Weak sauce :("/>
 </LinearLayout>
