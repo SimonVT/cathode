@@ -48,8 +48,6 @@ public class NavigationFragment extends AbsAdapterFragment {
     menuItems.add(
         new MenuItem(R.id.menu_shows_collection, R.string.navigation_shows_collection, 0));
     menuItems.add(new MenuItem(R.id.menu_shows_watchlist, R.string.navigation_shows_watchlist, 0));
-    menuItems.add(
-        new MenuItem(R.id.menu_episodes_watchlist, R.string.navigation_episodes_watchlist, 0));
     menuItems.add(new MenuItem(R.id.menu_shows_trending, R.string.navigation_shows_trending, 0));
     menuItems.add(
         new MenuItem(R.id.menu_shows_recommendations, R.string.navigation_shows_recommendations,

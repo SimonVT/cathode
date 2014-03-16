@@ -41,8 +41,6 @@ public class UiController implements ShowsNavigationListener, MoviesNavigationLi
   static final String FRAGMENT_EPISODE = "net.simonvt.cathode.ui.HomeActivity.episodeFragment";
   static final String FRAGMENT_SHOWS_WATCHLIST =
       "net.simonvt.cathode.ui.HomeActivity.showsWatchlistFragment";
-  static final String FRAGMENT_EPISODES_WATCHLIST =
-      "net.simonvt.cathode.ui.HomeActivity.episodesWatchlistFragment";
   static final String FRAGMENT_SEARCH_SHOW =
       "net.simonvt.cathode.ui.HomeActivity.searchShowFragment";
   static final String FRAGMENT_MOVIES_WATCHED =

@@ -15,42 +15,60 @@
  */
 package net.simonvt.cathode.ui.fragment;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.CursorAdapter;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
-import android.widget.ListView;
+import javax.inject.Inject;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.MutableCursor;
 import net.simonvt.cathode.database.MutableCursorLoader;
 import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.remote.TraktTaskQueue;
+import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.ui.BaseActivity;
+import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
+import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowWatchlistAdapter;
-import net.simonvt.cathode.widget.AdapterViewAnimator;
 import net.simonvt.cathode.widget.AnimatorHelper;
-import net.simonvt.cathode.widget.DefaultAdapterAnimator;
+import net.simonvt.cathode.widget.StaggeredGridAnimator;
+import net.simonvt.cathode.widget.StaggeredGridView;
 
-public class ShowsWatchlistFragment extends ShowsFragment<MutableCursor>
+public class ShowsWatchlistFragment extends StaggeredGridFragment
     implements ShowWatchlistAdapter.RemoveListener {
 
-  private boolean isTablet;
+  @Inject TraktTaskQueue queue;
 
-  private MutableCursor cursor;
-  private MutableCursor newCursor;
+  private ShowsNavigationListener navigationListener;
 
-  private boolean removing;
+  @Override public void onAttach(Activity activity) {
+    super.onAttach(activity);
+    try {
+      navigationListener = (ShowsNavigationListener) activity;
+    } catch (ClassCastException e) {
+      throw new ClassCastException(activity.toString() + " must implement ShowsNavigationListener");
+    }
+  }
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    isTablet = getResources().getBoolean(R.bool.isTablet);
+    CathodeApp.inject(getActivity(), this);
+
+    setHasOptionsMenu(true);
+
+    getLoaderManager().initLoader(HomeActivity.LOADER_SHOWS_WATCHLIST, null, showsCallback);
+    getLoaderManager().initLoader(HomeActivity.LOADER_EPISODES_WATCHLIST, null, episodeCallback);
   }
 
   @Override public String getTitle() {
@@ -61,66 +79,113 @@ public class ShowsWatchlistFragment extends ShowsFragment<MutableCursor>
     return inflater.inflate(R.layout.fragment_shows_watchlist, container, false);
   }
 
-  @Override protected LibraryType getLibraryType() {
-    return LibraryType.WATCHLIST;
+  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    inflater.inflate(R.menu.fragment_shows, menu);
   }
 
-  @Override protected int getLoaderId() {
-    return BaseActivity.LOADER_SHOWS_WATCHLIST;
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.menu_refresh:
+        queue.add(new SyncTask());
+        return true;
+
+      case R.id.menu_search:
+        navigationListener.onStartShowSearch();
+        return true;
+
+      default:
+        return super.onOptionsItemSelected(item);
+    }
+  }
+
+  @Override protected void onItemClick(StaggeredGridView parent, View v, int position, long id) {
+    if (((ShowWatchlistAdapter) getAdapter()).isShow(position)) {
+      Cursor c = (Cursor) getAdapter().getItem(position);
+      navigationListener.onDisplayShow(id,
+          c.getString(c.getColumnIndex(CathodeContract.Shows.TITLE)), LibraryType.WATCHED);
+    } else {
+      Cursor c = (Cursor) getAdapter().getItem(position);
+      navigationListener.onDisplayEpisode(id,
+          c.getString(c.getColumnIndex(CathodeContract.Shows.TITLE)));
+    }
   }
 
   @Override public void onRemoveItem(View view, int position) {
-    removing = true;
-
-    if (isTablet) {
-      AnimatorHelper.removeView((GridView) getAdapterView(), view, animatorCallback);
-    } else {
-      AnimatorHelper.removeView((ListView) getAdapterView(), view, animatorCallback);
-    }
+    AnimatorHelper.removeView(getGridView(), view, animatorCallback);
   }
 
   private AnimatorHelper.Callback animatorCallback = new AnimatorHelper.Callback() {
     @Override public void removeItem(int position) {
-      cursor.remove(position);
+      ShowWatchlistAdapter adapter = (ShowWatchlistAdapter) getAdapter();
+      MutableCursor cursor = (MutableCursor) adapter.getItem(position);
+      final int correctedPosition = adapter.getCorrectedPosition(position);
+      cursor.remove(correctedPosition);
     }
 
     @Override public void onAnimationEnd() {
-      if (newCursor != null) {
-        cursor = newCursor;
-        newCursor = null;
-        ((CursorAdapter) getAdapter()).changeCursor(cursor);
-      }
-      removing = false;
     }
   };
 
-  @Override protected void setCursor(Cursor c) {
-    MutableCursor cursor = (MutableCursor) c;
+  private void ensureAdapter() {
     if (getAdapter() == null) {
-      this.cursor = cursor;
-      showsAdapter = new ShowWatchlistAdapter(getActivity(), cursor, this);
-      setAdapter(showsAdapter);
-      return;
-    }
-
-    if (!removing) {
-      this.cursor = cursor;
-
-      AdapterViewAnimator animator =
-          new AdapterViewAnimator(adapterView, new DefaultAdapterAnimator());
-      ((CursorAdapter) getAdapter()).changeCursor(cursor);
-      animator.animate();
-    } else {
-      this.newCursor = cursor;
+      setAdapter(new ShowWatchlistAdapter(getActivity(), this));
     }
   }
 
-  @Override public Loader<MutableCursor> onCreateLoader(int i, Bundle bundle) {
-    final Uri contentUri = CathodeContract.Shows.SHOWS_WATCHLIST;
-    MutableCursorLoader cl =
-        new MutableCursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION, null,
-            null, CathodeContract.Shows.DEFAULT_SORT);
-    cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-    return cl;
+  private void setShowCursor(Cursor cursor) {
+    ensureAdapter();
+    Loader l = getLoaderManager().getLoader(BaseActivity.LOADER_EPISODES_WATCHLIST);
+    MutableCursorLoader loader = (MutableCursorLoader) l;
+    loader.throttle(2000);
+    StaggeredGridAnimator animator = new StaggeredGridAnimator(getGridView());
+    ((ShowWatchlistAdapter) getAdapter()).changeShowCursor(cursor);
+    animator.animate();
   }
+
+  private void setEpisodeCursor(Cursor cursor) {
+    ensureAdapter();
+    Loader l = getLoaderManager().getLoader(BaseActivity.LOADER_SHOWS_WATCHLIST);
+    MutableCursorLoader loader = (MutableCursorLoader) l;
+    loader.throttle(2000);
+    StaggeredGridAnimator animator = new StaggeredGridAnimator(getGridView());
+    ((ShowWatchlistAdapter) getAdapter()).changeEpisodeCursor(cursor);
+    animator.animate();
+  }
+
+  private LoaderManager.LoaderCallbacks<MutableCursor> showsCallback =
+      new LoaderManager.LoaderCallbacks<MutableCursor>() {
+        @Override public Loader<MutableCursor> onCreateLoader(int id, Bundle args) {
+          final Uri contentUri = CathodeContract.Shows.SHOWS_WATCHLIST;
+          MutableCursorLoader loader = new MutableCursorLoader(getActivity(), contentUri,
+              ShowWatchlistAdapter.PROJECTION_SHOW, null, null, CathodeContract.Shows.DEFAULT_SORT);
+          loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
+          return loader;
+        }
+
+        @Override public void onLoadFinished(Loader<MutableCursor> loader, MutableCursor data) {
+          setShowCursor(data);
+        }
+
+        @Override public void onLoaderReset(Loader<MutableCursor> loader) {
+        }
+      };
+
+  private LoaderManager.LoaderCallbacks<MutableCursor> episodeCallback =
+      new LoaderManager.LoaderCallbacks<MutableCursor>() {
+        @Override public Loader<MutableCursor> onCreateLoader(int id, Bundle args) {
+          MutableCursorLoader loader =
+              new MutableCursorLoader(getActivity(), CathodeContract.Episodes.WATCHLIST_URI,
+                  ShowWatchlistAdapter.PROJECTION_EPISODE, null, null,
+                  CathodeContract.Episodes.SHOW_ID + " ASC");
+          loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
+          return loader;
+        }
+
+        @Override public void onLoadFinished(Loader<MutableCursor> loader, MutableCursor data) {
+          setEpisodeCursor(data);
+        }
+
+        @Override public void onLoaderReset(Loader<MutableCursor> loader) {
+        }
+      };
 }

@@ -108,7 +108,6 @@ import net.simonvt.cathode.settings.ActivityWrapper;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.PhoneController;
-import net.simonvt.cathode.ui.adapter.EpisodeWatchlistAdapter;
 import net.simonvt.cathode.ui.adapter.MovieRecommendationsAdapter;
 import net.simonvt.cathode.ui.adapter.MovieSearchAdapter;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
@@ -123,7 +122,6 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.fragment.EpisodeFragment;
-import net.simonvt.cathode.ui.fragment.EpisodesWatchlistFragment;
 import net.simonvt.cathode.ui.fragment.LoginFragment;
 import net.simonvt.cathode.ui.fragment.MovieCollectionFragment;
 import net.simonvt.cathode.ui.fragment.MovieFragment;
@@ -327,11 +325,10 @@ public class CathodeApp extends Application {
           HomeActivity.class,
 
           // Fragments
-          SearchShowFragment.class, EpisodeFragment.class, EpisodesWatchlistFragment.class,
-          LoginFragment.class, LogoutDialog.class, MovieCollectionFragment.class,
-          MovieFragment.class, MovieRecommendationsFragment.class, MovieWatchlistFragment.class,
-          SearchMovieFragment.class, SeasonFragment.class, ShowFragment.class,
-          ShowsCollectionFragment.class, ShowRecommendationsFragment.class,
+          SearchShowFragment.class, EpisodeFragment.class, LoginFragment.class, LogoutDialog.class,
+          MovieCollectionFragment.class, MovieFragment.class, MovieRecommendationsFragment.class,
+          MovieWatchlistFragment.class, SearchMovieFragment.class, SeasonFragment.class,
+          ShowFragment.class, ShowsCollectionFragment.class, ShowRecommendationsFragment.class,
           ShowsWatchlistFragment.class, TrendingShowsFragment.class, TrendingMoviesFragment.class,
           UpcomingShowsFragment.class, WatchedMoviesFragment.class, WatchedShowsFragment.class,
 
@@ -339,10 +336,10 @@ public class CathodeApp extends Application {
           RatingDialog.class, CheckInDialog.class, CheckInDialog.Injections.class,
 
           // ListAdapters
-          EpisodeWatchlistAdapter.class, SeasonAdapter.class, SeasonsAdapter.class,
-          ShowDescriptionAdapter.class, MoviesAdapter.class, MovieSearchAdapter.class,
-          ShowRecommendationsAdapter.class, MovieRecommendationsAdapter.class,
-          ShowsWithNextAdapter.class, ShowWatchlistAdapter.class, UpcomingAdapter.class,
+          SeasonAdapter.class, SeasonsAdapter.class, ShowDescriptionAdapter.class,
+          MoviesAdapter.class, MovieSearchAdapter.class, ShowRecommendationsAdapter.class,
+          MovieRecommendationsAdapter.class, ShowsWithNextAdapter.class, ShowWatchlistAdapter.class,
+          UpcomingAdapter.class,
 
           // Views
           PhoneEpisodeView.class, RemoteImageView.class,

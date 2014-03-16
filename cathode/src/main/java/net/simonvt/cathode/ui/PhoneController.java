@@ -35,7 +35,6 @@ import net.simonvt.cathode.ui.adapter.MovieSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.fragment.EpisodeFragment;
-import net.simonvt.cathode.ui.fragment.EpisodesWatchlistFragment;
 import net.simonvt.cathode.ui.fragment.MovieCollectionFragment;
 import net.simonvt.cathode.ui.fragment.MovieFragment;
 import net.simonvt.cathode.ui.fragment.MovieRecommendationsFragment;
@@ -292,10 +291,6 @@ public class PhoneController extends UiController {
 
       case R.id.menu_shows_watchlist:
         stack.replace(ShowsWatchlistFragment.class, FRAGMENT_SHOWS_WATCHLIST);
-        break;
-
-      case R.id.menu_episodes_watchlist:
-        stack.replace(EpisodesWatchlistFragment.class, FRAGMENT_EPISODES_WATCHLIST);
         break;
 
       case R.id.menu_shows_trending:
