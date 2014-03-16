@@ -925,18 +925,43 @@ public class StaggeredGridView extends ViewGroup {
     }
   }
 
+  private void handleDataChanged() {
+    if (itemCount == 0) {
+      removeAllViewsInLayout();
+      layoutRecords.clear();
+      if (itemTops != null) {
+        Arrays.fill(itemTops, 0);
+      }
+      if (itemBottoms != null) {
+        Arrays.fill(itemBottoms, 0);
+      }
+
+      clearChildViews();
+
+      dataChanged = false;
+    }
+  }
+
+  private void clearChildViews() {
+    for (int i = getChildCount() - 1; i >= 1; i--) {
+      final View child = getChildAt(i);
+      LayoutParams lp = (LayoutParams) child.getLayoutParams();
+      if (inLayout) {
+        removeViewInLayout(child);
+      } else {
+        removeView(child);
+      }
+      layoutRecords.remove(lp.position);
+      recycler.addScrap(child);
+    }
+  }
+
   @Override
   protected void onLayout(boolean changed, int l, int t, int r, int b) {
     inLayout = true;
 
     if (dataChanged) {
-      for (int i = getChildCount() - 1; i >= 1; i--) {
-        final View child = getChildAt(i);
-        LayoutParams lp = (LayoutParams) child.getLayoutParams();
-        removeViewInLayout(child);
-        layoutRecords.remove(lp.position);
-        recycler.addScrap(child);
-      }
+      clearChildViews();
     }
 
     populate();
@@ -950,19 +975,7 @@ public class StaggeredGridView extends ViewGroup {
   }
 
   private void populate() {
-    if (getWidth() == 0 || getHeight() == 0) {
-      return;
-    }
-
-    if (itemCount == 0) {
-      removeAllViewsInLayout();
-      layoutRecords.clear();
-      if (itemTops != null) {
-        Arrays.fill(itemTops, 0);
-      }
-      if (itemBottoms != null) {
-        Arrays.fill(itemBottoms, 0);
-      }
+    if (getWidth() == 0 || getHeight() == 0 || itemCount == 0) {
       dataChanged = false;
       return;
     }
@@ -1724,7 +1737,7 @@ public class StaggeredGridView extends ViewGroup {
       emptyView.setVisibility(VISIBLE);
 
       if (dataChanged) {
-        onLayout(false, getLeft(), getTop(), getRight(), getBottom());
+        handleDataChanged();
       }
     } else {
       setVisibility(VISIBLE);
