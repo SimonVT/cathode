@@ -110,7 +110,18 @@ public class ShowsWatchlistFragment extends StaggeredGridFragment
     }
   }
 
+  private void throttleLoaders() {
+    Loader l = getLoaderManager().getLoader(BaseActivity.LOADER_EPISODES_WATCHLIST);
+    MutableCursorLoader loader = (MutableCursorLoader) l;
+    loader.throttle(2000);
+
+    l = getLoaderManager().getLoader(BaseActivity.LOADER_SHOWS_WATCHLIST);
+    loader = (MutableCursorLoader) l;
+    loader.throttle(2000);
+  }
+
   @Override public void onRemoveItem(View view, int position) {
+    throttleLoaders();
     AnimatorHelper.removeView(getGridView(), view, animatorCallback);
   }
 
@@ -134,9 +145,7 @@ public class ShowsWatchlistFragment extends StaggeredGridFragment
 
   private void setShowCursor(Cursor cursor) {
     ensureAdapter();
-    Loader l = getLoaderManager().getLoader(BaseActivity.LOADER_EPISODES_WATCHLIST);
-    MutableCursorLoader loader = (MutableCursorLoader) l;
-    loader.throttle(2000);
+    throttleLoaders();
     StaggeredGridAnimator animator = new StaggeredGridAnimator(getGridView());
     ((ShowWatchlistAdapter) getAdapter()).changeShowCursor(cursor);
     animator.animate();
@@ -144,9 +153,7 @@ public class ShowsWatchlistFragment extends StaggeredGridFragment
 
   private void setEpisodeCursor(Cursor cursor) {
     ensureAdapter();
-    Loader l = getLoaderManager().getLoader(BaseActivity.LOADER_SHOWS_WATCHLIST);
-    MutableCursorLoader loader = (MutableCursorLoader) l;
-    loader.throttle(2000);
+    throttleLoaders();
     StaggeredGridAnimator animator = new StaggeredGridAnimator(getGridView());
     ((ShowWatchlistAdapter) getAdapter()).changeEpisodeCursor(cursor);
     animator.animate();
