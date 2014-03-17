@@ -17,27 +17,24 @@ package net.simonvt.cathode.ui;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+import android.view.ViewGroup;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.ui.fragment.LoginFragment;
-import net.simonvt.menudrawer.MenuDrawer;
 
 public class LoginController extends UiController {
 
   private LoginFragment loginFragment;
 
-  @InjectView(R.id.drawer) MenuDrawer menuDrawer;
-
-  public static LoginController newInstance(HomeActivity activity) {
-    return newInstance(activity, null);
+  public static LoginController newInstance(HomeActivity activity, ViewGroup parent) {
+    return newInstance(activity, parent, null);
   }
 
-  public static LoginController newInstance(HomeActivity activity, Bundle inState) {
-    return new LoginController(activity, inState);
+  public static LoginController newInstance(HomeActivity activity, ViewGroup parent,
+      Bundle inState) {
+    return new LoginController(activity, parent, inState);
   }
 
-  public LoginController(HomeActivity activity, Bundle inState) {
+  public LoginController(HomeActivity activity, ViewGroup parent, Bundle inState) {
     super(activity, inState);
     loginFragment =
         (LoginFragment) activity.getSupportFragmentManager().findFragmentByTag(FRAGMENT_LOGIN);
@@ -46,10 +43,7 @@ public class LoginController extends UiController {
       loginFragment = new LoginFragment();
     }
 
-    ButterKnife.inject(this, activity);
-
-    menuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_NONE);
-
+    activity.getActionBar().setTitle(R.string.app_name);
     activity.getActionBar().setDisplayHomeAsUpEnabled(false);
     activity.getActionBar().setHomeButtonEnabled(false);
 
@@ -59,16 +53,16 @@ public class LoginController extends UiController {
     if (loginFragment.isDetached()) {
       transaction.attach(loginFragment);
     } else if (!loginFragment.isAdded()) {
-      transaction.add(android.R.id.content, loginFragment, FRAGMENT_LOGIN);
+      transaction.add(parent.getId(), loginFragment, FRAGMENT_LOGIN);
     }
 
     transaction.commit();
   }
 
   @Override public void destroy(boolean completely) {
-    if (loginFragment.isAdded()) {
+    if (completely) {
       FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
-      transaction.setCustomAnimations(R.anim.fade_out_front, R.anim.fade_in_back);
+      transaction.setCustomAnimations(R.anim.fade_in_front, R.anim.fade_out_back);
       transaction.remove(loginFragment);
       transaction.commit();
     }

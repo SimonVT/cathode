@@ -17,11 +17,17 @@ package net.simonvt.cathode.ui;
 
 import android.app.ActionBar;
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import com.squareup.otto.Bus;
@@ -30,7 +36,10 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.OnTitleChangedEvent;
+import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.SearchTaskScheduler;
+import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.adapter.MovieSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
@@ -53,6 +62,9 @@ import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
 import net.simonvt.cathode.util.FragmentStack;
+import net.simonvt.cathode.widget.BottomViewLayout;
+import net.simonvt.cathode.widget.OverflowView;
+import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.cathode.widget.SearchView;
 import net.simonvt.menudrawer.MenuDrawer;
 import timber.log.Timber;
@@ -72,9 +84,14 @@ public class PhoneController extends UiController {
   @Inject Bus bus;
   @Inject SearchTaskScheduler searchScheduler;
 
+  @Inject ShowTaskScheduler showScheduler;
+  @Inject MovieTaskScheduler movieScheduler;
+
   private FragmentStack stack;
 
   @InjectView(R.id.drawer) MenuDrawer menuDrawer;
+
+  @InjectView(R.id.mdContent) BottomViewLayout bottomLayout;
 
   private NavigationFragment navigation;
 
@@ -83,24 +100,29 @@ public class PhoneController extends UiController {
 
   private boolean isTablet;
 
-  public static PhoneController newInstance(HomeActivity activity) {
-    return newInstance(activity, null);
+  private Cursor watchingShow;
+
+  private Cursor watchingMovie;
+
+  public static PhoneController create(HomeActivity activity, ViewGroup parent) {
+    return create(activity, parent, null);
   }
 
-  public static PhoneController newInstance(HomeActivity activity, Bundle inState) {
-    return new PhoneController(activity, inState);
+  public static PhoneController create(HomeActivity activity, ViewGroup parent, Bundle inState) {
+    return new PhoneController(activity, parent, inState);
   }
 
-  PhoneController(final HomeActivity activity, Bundle inState) {
+  PhoneController(final HomeActivity activity, ViewGroup parent, Bundle inState) {
     super(activity, inState);
     CathodeApp.inject(activity, this);
+
+    LayoutInflater.from(activity).inflate(R.layout.controller_phone, parent);
     ButterKnife.inject(this, activity);
 
     isTablet = activity.getResources().getBoolean(R.bool.isTablet);
 
     menuDrawer.setupUpIndicator(activity);
     menuDrawer.setSlideDrawable(R.drawable.ic_drawer);
-    menuDrawer.setContentView(R.layout.activity_home);
     menuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_NONE);
 
     navigation = (NavigationFragment) activity.getSupportFragmentManager()
@@ -114,22 +136,23 @@ public class PhoneController extends UiController {
           .commit();
     }
 
-    stack = FragmentStack.forContainer(activity, R.id.content, new FragmentStack.Callback() {
-      @Override public void onStackChanged(int stackSize, Fragment topFragment) {
-        Timber.d("onStackChanged: %s", topFragment.getTag());
-        menuDrawer.setDrawerIndicatorEnabled(stackSize <= 1);
-        if (!menuDrawer.isMenuVisible()) {
-          updateTitle();
-        }
-        if (searchView != null) {
-          if (!FRAGMENT_SEARCH_MOVIE.equals(topFragment.getTag()) && !FRAGMENT_SEARCH_SHOW.equals(
-              topFragment.getTag())) {
-            destroySearchView();
+    stack = FragmentStack.forContainer(activity, R.id.mdContent, new FragmentStack.Callback() {
+          @Override public void onStackChanged(int stackSize, Fragment topFragment) {
+            Timber.d("onStackChanged: %s", topFragment.getTag());
+            menuDrawer.setDrawerIndicatorEnabled(stackSize <= 1);
+            if (!menuDrawer.isMenuVisible()) {
+              updateTitle();
+            }
+            if (searchView != null) {
+              if (!FRAGMENT_SEARCH_MOVIE.equals(topFragment.getTag())
+                  && !FRAGMENT_SEARCH_SHOW.equals(topFragment.getTag())) {
+                destroySearchView();
+              }
+            }
+            topFragment.setMenuVisibility(searchView == null);
           }
         }
-        topFragment.setMenuVisibility(searchView == null);
-      }
-    });
+    );
     stack.setDefaultAnimation(R.anim.fade_in_front, R.anim.fade_out_back, R.anim.fade_in_back,
         R.anim.fade_out_front);
 
@@ -198,6 +221,11 @@ public class PhoneController extends UiController {
       stack.commit();
     }
 
+    activity.getSupportLoaderManager()
+        .initLoader(BaseActivity.LOADER_SHOW_WATCHING, null, watchingShowCallback);
+    activity.getSupportLoaderManager()
+        .initLoader(BaseActivity.LOADER_MOVIE_WATCHING, null, watchingMovieCallback);
+
     bus.register(this);
   }
 
@@ -257,6 +285,9 @@ public class PhoneController extends UiController {
   @Override public void destroy(boolean completely) {
     if (completely) {
       stack.destroy();
+      activity.getSupportLoaderManager().destroyLoader(BaseActivity.LOADER_SHOW_WATCHING);
+      activity.getSupportLoaderManager().destroyLoader(BaseActivity.LOADER_MOVIE_WATCHING);
+      activity.getSupportFragmentManager().beginTransaction().remove(navigation).commit();
     }
     bus.unregister(this);
     super.destroy(completely);
@@ -425,6 +456,129 @@ public class PhoneController extends UiController {
     stack.peek().setMenuVisibility(true);
     updateTitle();
   }
+
+  ///////////////////////////////////////////////////////////////////////////
+  // Watching view
+  ///////////////////////////////////////////////////////////////////////////
+
+  private void updateWatching() {
+    if (watchingShow != null && watchingShow.moveToFirst()) {
+      View watching = LayoutInflater.from(activity).inflate(R.layout.watching_show, null);
+      final String show =
+          watchingShow.getString(watchingShow.getColumnIndex(CathodeContract.Shows.TITLE));
+      final String poster =
+          watchingShow.getString(watchingShow.getColumnIndex(CathodeContract.Shows.POSTER));
+      final String episode =
+          watchingShow.getString(watchingShow.getColumnIndex(CathodeContract.Episodes.TITLE));
+      final int season =
+          watchingShow.getInt(watchingShow.getColumnIndex(CathodeContract.Episodes.SEASON));
+      final int episodeNumber =
+          watchingShow.getInt(watchingShow.getColumnIndex(CathodeContract.Episodes.EPISODE));
+      final boolean checkedIn =
+          watchingShow.getInt(watchingShow.getColumnIndex(CathodeContract.Episodes.CHECKED_IN))
+              == 1;
+
+      ((TextView) watching.findViewById(R.id.show)).setText(show);
+      ((RemoteImageView) watching.findViewById(R.id.poster)).setImage(poster);
+      ((TextView) watching.findViewById(R.id.episode)).setText(
+          activity.getString(R.string.episode, season, episodeNumber, episode));
+      OverflowView overflow = (OverflowView) watching.findViewById(R.id.overflow);
+      if (checkedIn) overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
+      overflow.setListener(new OverflowView.OverflowActionListener() {
+        @Override public void onPopupShown() {
+        }
+
+        @Override public void onPopupDismissed() {
+        }
+
+        @Override public void onActionSelected(int action) {
+          switch (action) {
+            case R.id.action_checkin_cancel:
+              showScheduler.cancelCheckin();
+              break;
+          }
+        }
+      });
+
+      bottomLayout.setBottomView(watching);
+    } else if (watchingMovie != null && watchingMovie.moveToFirst()) {
+      View watching = LayoutInflater.from(activity).inflate(R.layout.watching_movie, null);
+      final String movie =
+          watchingMovie.getString(watchingMovie.getColumnIndex(CathodeContract.Movies.TITLE));
+      final String poster =
+          watchingMovie.getString(watchingMovie.getColumnIndex(CathodeContract.Movies.POSTER));
+      final String year =
+          watchingMovie.getString(watchingMovie.getColumnIndex(CathodeContract.Movies.YEAR));
+      final boolean checkedIn =
+          watchingMovie.getInt(watchingMovie.getColumnIndex(CathodeContract.Movies.CHECKED_IN))
+              == 1;
+
+      ((TextView) watching.findViewById(R.id.movie)).setText(movie);
+      ((RemoteImageView) watching.findViewById(R.id.poster)).setImage(poster);
+      ((TextView) watching.findViewById(R.id.year)).setText(year);
+      OverflowView overflow = (OverflowView) watching.findViewById(R.id.overflow);
+      if (checkedIn) overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
+      overflow.setListener(new OverflowView.OverflowActionListener() {
+        @Override public void onPopupShown() {
+        }
+
+        @Override public void onPopupDismissed() {
+        }
+
+        @Override public void onActionSelected(int action) {
+          switch (action) {
+            case R.id.action_checkin_cancel:
+              movieScheduler.cancelCheckin();
+              break;
+          }
+        }
+      });
+
+      bottomLayout.setBottomView(watching);
+    } else {
+      bottomLayout.setBottomView(null);
+    }
+  }
+
+  private LoaderManager.LoaderCallbacks<Cursor> watchingShowCallback =
+      new LoaderManager.LoaderCallbacks<Cursor>() {
+        @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+          CursorLoader loader =
+              new CursorLoader(activity, CathodeContract.Shows.SHOW_WATCHING, null, null, null,
+                  null);
+          loader.setUpdateThrottle(2000);
+          return loader;
+        }
+
+        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+          watchingShow = cursor;
+          updateWatching();
+        }
+
+        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
+          watchingShow = null;
+        }
+      };
+
+  private LoaderManager.LoaderCallbacks<Cursor> watchingMovieCallback =
+      new LoaderManager.LoaderCallbacks<Cursor>() {
+        @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+          CursorLoader loader =
+              new CursorLoader(activity, CathodeContract.Movies.MOVIE_WATCHING, null, null, null,
+                  null);
+          loader.setUpdateThrottle(2000);
+          return loader;
+        }
+
+        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+          watchingMovie = cursor;
+          updateWatching();
+        }
+
+        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
+          watchingMovie = null;
+        }
+      };
 
   ///////////////////////////////////////////////////////////////////////////
   // Navigation callbacks

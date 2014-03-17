@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2013 Simon Vig Therkildsen
+  ~ Copyright (C) 2014 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -14,28 +14,14 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<net.simonvt.cathode.widget.BottomViewLayout
+<net.simonvt.menudrawer.OverlayDrawer
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/bottomLayout"
+    android:id="@+id/drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-  <FrameLayout
+  <net.simonvt.cathode.widget.BottomViewLayout
+      android:id="@id/mdContent"
       android:layout_width="match_parent"
-      android:layout_height="match_parent">
-
-    <net.simonvt.menudrawer.OverlayDrawer
-        android:id="@+id/drawer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <ProgressBar
-        android:id="@+id/progress_top"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="-8dp"
-        android:indeterminate="true"
-        android:visibility="gone"
-        style="@android:style/Widget.Holo.ProgressBar.Horizontal"/>
-  </FrameLayout>
-</net.simonvt.cathode.widget.BottomViewLayout>
+      android:layout_height="match_parent"/>
+</net.simonvt.menudrawer.OverlayDrawer>

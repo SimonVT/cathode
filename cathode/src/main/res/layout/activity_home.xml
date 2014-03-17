@@ -16,6 +16,23 @@
   -->
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+    android:layout_height="match_parent">
+
+  <FrameLayout
+      android:id="@+id/content"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"/>
+
+  <ProgressBar
+      android:id="@+id/progress_top"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="-8dp"
+      android:indeterminate="true"
+      android:visibility="gone"
+      tools:visibility="visible"
+      style="@android:style/Widget.Holo.ProgressBar.Horizontal"
+      tools:ignore="MissingPrefix"/>
+</FrameLayout>
