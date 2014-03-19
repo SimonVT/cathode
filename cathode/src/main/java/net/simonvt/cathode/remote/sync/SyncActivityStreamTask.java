@@ -29,7 +29,7 @@ import net.simonvt.cathode.api.service.ActivityService;
 import net.simonvt.cathode.api.service.ServerService;
 import net.simonvt.cathode.api.util.Joiner;
 import net.simonvt.cathode.remote.TraktTask;
-import net.simonvt.cathode.settings.ActivityWrapper;
+import net.simonvt.cathode.settings.TraktTimestamps;
 
 public class SyncActivityStreamTask extends TraktTask {
 
@@ -38,11 +38,11 @@ public class SyncActivityStreamTask extends TraktTask {
   @Inject transient ServerService serverService;
 
   @Override protected void doTask() {
-    final long lastSync = ActivityWrapper.lastActivityStreamSync(getContext());
+    final long lastSync = TraktTimestamps.lastActivityStreamSync(getContext());
 
     if (lastSync == -1L) {
       ServerTime time = serverService.time();
-      ActivityWrapper.updateLastActivityStreamSync(getContext(), time.getTimestamp());
+      TraktTimestamps.updateLastActivityStreamSync(getContext(), time.getTimestamp());
       queueTask(new SyncUserActivityTask());
     } else {
       // ActivityAction#ALL is broken, trakt only shows watchlist actions
@@ -102,7 +102,7 @@ public class SyncActivityStreamTask extends TraktTask {
         }
       }
 
-      ActivityWrapper.updateLastActivityStreamSync(getContext(),
+      TraktTimestamps.updateLastActivityStreamSync(getContext(),
           activity.getTimestamps().getCurrent());
     }
 

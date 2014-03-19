@@ -73,6 +73,7 @@ import net.simonvt.cathode.remote.action.ShowCollectionTask;
 import net.simonvt.cathode.remote.action.ShowRateTask;
 import net.simonvt.cathode.remote.action.ShowWatchedTask;
 import net.simonvt.cathode.remote.action.ShowWatchlistTask;
+import net.simonvt.cathode.remote.sync.PurgeTask;
 import net.simonvt.cathode.remote.sync.SyncActivityStreamTask;
 import net.simonvt.cathode.remote.sync.SyncEpisodeTask;
 import net.simonvt.cathode.remote.sync.SyncEpisodeWatchlistTask;
@@ -104,7 +105,7 @@ import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.service.AccountAuthenticator;
 import net.simonvt.cathode.service.CathodeSyncAdapter;
-import net.simonvt.cathode.settings.ActivityWrapper;
+import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.PhoneController;
@@ -202,7 +203,7 @@ public class CathodeApp extends Application {
                 setupAccountWithSha(this, trimmedName, password);
               } else {
                 removeAccount(this);
-                ActivityWrapper.clear(this);
+                TraktTimestamps.clear(this);
 
                 Intent intent = new Intent(this, TraktTaskService.class);
                 intent.setAction(TraktTaskService.ACTION_LOGOUT);
@@ -210,7 +211,7 @@ public class CathodeApp extends Application {
               }
             } else if (!TraktUtils.isValidUsername(accountName)) {
               removeAccount(this);
-              ActivityWrapper.clear(this);
+              TraktTimestamps.clear(this);
 
               Intent intent = new Intent(this, TraktTaskService.class);
               intent.setAction(TraktTaskService.ACTION_LOGOUT);
@@ -362,7 +363,7 @@ public class CathodeApp extends Application {
           SyncUpdatedShows.class, SyncTask.class, SyncUserActivityTask.class,
           DeserializationFailedTask.class, SyncWatchingTask.class, CheckInEpisodeTask.class,
           CancelShowCheckinTask.class, CheckInMovieTask.class, CancelMovieCheckinTask.class,
-          SyncActivityStreamTask.class, SyncUserSettingsTask.class,
+          SyncActivityStreamTask.class, SyncUserSettingsTask.class, PurgeTask.class,
 
           // Misc
           PhoneController.class, ResponseParser.class, ShowSearchHandler.class,

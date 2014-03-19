@@ -44,15 +44,11 @@ public class SyncTrendingShowsTask extends TraktTask {
 
       ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
       Cursor c = resolver.query(CathodeContract.Shows.SHOWS_TRENDING, null, null, null, null);
+
+      List<Long> showIds = new ArrayList<Long>();
       while (c.moveToNext()) {
         final long showId = c.getLong(c.getColumnIndex(CathodeContract.Shows._ID));
-        ContentValues cv = new ContentValues();
-        cv.put(CathodeContract.Shows.TRENDING_INDEX, -1);
-        ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(CathodeContract.Shows.buildFromId(showId))
-                .withValues(cv)
-                .build();
-        ops.add(op);
+        showIds.add(showId);
       }
       c.close();
 
@@ -73,6 +69,16 @@ public class SyncTrendingShowsTask extends TraktTask {
             ContentProviderOperation.newUpdate(CathodeContract.Shows.buildFromId(showId))
                 .withValues(cv)
                 .build();
+        ops.add(op);
+
+        showIds.remove(showId);
+      }
+
+      for (Long showId : showIds) {
+        ContentProviderOperation op = ContentProviderOperation.newUpdate(
+            CathodeContract.Shows.buildFromId(showId))
+            .withValue(CathodeContract.Shows.TRENDING_INDEX, -1)
+            .build();
         ops.add(op);
       }
 

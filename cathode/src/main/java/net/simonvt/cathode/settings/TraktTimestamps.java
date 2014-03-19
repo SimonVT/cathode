@@ -21,11 +21,11 @@ import android.preference.PreferenceManager;
 import net.simonvt.cathode.api.entity.LastActivity;
 import net.simonvt.cathode.util.DateUtils;
 
-public final class ActivityWrapper {
+public final class TraktTimestamps {
 
-  private static final String TAG = "ActivityWrapper";
+  private static final String TAG = "TraktTimestamps";
 
-  private ActivityWrapper() {
+  private TraktTimestamps() {
   }
 
   public static void updateLastActivityStreamSync(Context context, long lastSync) {
@@ -101,6 +101,24 @@ public final class ActivityWrapper {
     return System.currentTimeMillis() > lastActivity + 3 * DateUtils.HOUR_IN_MILLIS;
   }
 
+  public static boolean shouldPurge(Context context) {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+
+    final long lastPurge = settings.getLong(Settings.LAST_PURGE, 0);
+    if (lastPurge == 0) {
+      return true;
+    }
+
+    final boolean shouldPurge =
+        System.currentTimeMillis() > lastPurge + 7 * DateUtils.DAY_IN_MILLIS;
+
+    if (shouldPurge) {
+      settings.edit().putLong(Settings.LAST_PURGE, System.currentTimeMillis()).apply();
+    }
+
+    return shouldPurge;
+  }
+
   public static void update(Context context, LastActivity lastActivity) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
     SharedPreferences.Editor editor = settings.edit();
@@ -149,7 +167,7 @@ public final class ActivityWrapper {
     final long currentTimeMillis = System.currentTimeMillis();
     PreferenceManager.getDefaultSharedPreferences(context)
         .edit()
-        .putLong(Settings.TRENDING, currentTimeMillis)
+        .putLong(Settings.RECOMMENDATIONS, currentTimeMillis)
         .apply();
   }
 

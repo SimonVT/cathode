@@ -19,7 +19,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.LastActivity;
 import net.simonvt.cathode.api.service.UserService;
 import net.simonvt.cathode.remote.TraktTask;
-import net.simonvt.cathode.settings.ActivityWrapper;
+import net.simonvt.cathode.settings.TraktTimestamps;
 
 public class SyncUserActivityTask extends TraktTask {
 
@@ -38,35 +38,35 @@ public class SyncUserActivityTask extends TraktTask {
     long movieLastCollected = lastActivity.getMovie().getCollection();
     long movieLastWatchlist = lastActivity.getMovie().getWatchlist();
 
-    if (ActivityWrapper.episodeWatchedNeedsUpdate(getContext(), episodeLastWatched)) {
+    if (TraktTimestamps.episodeWatchedNeedsUpdate(getContext(), episodeLastWatched)) {
       queueTask(new SyncShowsWatchedTask());
     }
 
-    if (ActivityWrapper.episodeCollectedNeedsUpdate(getContext(), episodeLastCollected)) {
+    if (TraktTimestamps.episodeCollectedNeedsUpdate(getContext(), episodeLastCollected)) {
       queueTask(new SyncShowsCollectionTask());
     }
 
-    if (ActivityWrapper.episodeWatchlistNeedsUpdate(getContext(), episodeLastWatchlist)) {
+    if (TraktTimestamps.episodeWatchlistNeedsUpdate(getContext(), episodeLastWatchlist)) {
       queueTask(new SyncEpisodeWatchlistTask());
     }
 
-    if (ActivityWrapper.showWatchlistNeedsUpdate(getContext(), showLastWatchlist)) {
+    if (TraktTimestamps.showWatchlistNeedsUpdate(getContext(), showLastWatchlist)) {
       queueTask(new SyncShowsWatchlistTask());
     }
 
-    if (ActivityWrapper.movieWatchedNeedsUpdate(getContext(), movieLastWatched)) {
+    if (TraktTimestamps.movieWatchedNeedsUpdate(getContext(), movieLastWatched)) {
       queueTask(new SyncMoviesWatchedTask());
     }
 
-    if (ActivityWrapper.movieCollectedNeedsUpdate(getContext(), movieLastCollected)) {
+    if (TraktTimestamps.movieCollectedNeedsUpdate(getContext(), movieLastCollected)) {
       queueTask(new SyncMoviesCollectionTask());
     }
 
-    if (ActivityWrapper.movieWatchlistNeedsUpdate(getContext(), movieLastWatchlist)) {
+    if (TraktTimestamps.movieWatchlistNeedsUpdate(getContext(), movieLastWatchlist)) {
       queueTask(new SyncMoviesWatchlistTask());
     }
 
-    ActivityWrapper.update(getContext(), lastActivity);
+    TraktTimestamps.update(getContext(), lastActivity);
 
     queueTask(new SyncWatchingTask());
 

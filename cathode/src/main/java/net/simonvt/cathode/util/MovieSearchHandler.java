@@ -42,7 +42,7 @@ public class MovieSearchHandler {
 
   private Bus bus;
 
-  private List<Long> movieIds;
+  public static List<Long> movieIds;
 
   private SearchThread thread;
 
@@ -65,7 +65,7 @@ public class MovieSearchHandler {
   }
 
   public void deliverResult(List<Long> movieIds) {
-    this.movieIds = movieIds;
+    MovieSearchHandler.movieIds = movieIds;
     bus.post(new MovieSearchResult(movieIds));
   }
 

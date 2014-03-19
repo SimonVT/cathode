@@ -29,7 +29,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.UserCredentials;
 import net.simonvt.cathode.event.LogoutEvent;
 import net.simonvt.cathode.remote.TraktTaskService;
-import net.simonvt.cathode.settings.ActivityWrapper;
+import net.simonvt.cathode.settings.TraktTimestamps;
 
 public class LogoutDialog extends DialogFragment {
 
@@ -45,7 +45,7 @@ public class LogoutDialog extends DialogFragment {
             CathodeApp.inject(context, LogoutDialog.this);
 
             credentials.setCredentials(null, null);
-            ActivityWrapper.clear(context);
+            TraktTimestamps.clear(context);
 
             Intent intent = new Intent(context, TraktTaskService.class);
             intent.setAction(TraktTaskService.ACTION_LOGOUT);

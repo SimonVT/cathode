@@ -20,14 +20,18 @@ import android.preference.PreferenceManager;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.service.UserService;
 import net.simonvt.cathode.remote.TraktTask;
-import net.simonvt.cathode.settings.ActivityWrapper;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.TraktTimestamps;
 
 public class SyncTask extends TraktTask {
 
   @Inject transient UserService userService;
 
   @Override protected void doTask() {
+    if (TraktTimestamps.shouldPurge(getContext())) {
+      queueTask(new PurgeTask());
+    }
+
     queueTask(new SyncUserSettingsTask());
     queueTask(new SyncActivityStreamTask());
 
@@ -42,14 +46,14 @@ public class SyncTask extends TraktTask {
      */
     new SyncUserActivityTask().execute(context, null);
 
-    if (ActivityWrapper.trendingNeedsUpdate(getContext())) {
-      ActivityWrapper.updateTrending(getContext());
+    if (TraktTimestamps.trendingNeedsUpdate(getContext())) {
+      TraktTimestamps.updateTrending(getContext());
       queueTask(new SyncTrendingShowsTask());
       queueTask(new SyncTrendingMoviesTask());
     }
 
-    if (ActivityWrapper.recommendationsNeedsUpdate(getContext())) {
-      ActivityWrapper.updateRecommendations(getContext());
+    if (TraktTimestamps.recommendationsNeedsUpdate(getContext())) {
+      TraktTimestamps.updateRecommendations(getContext());
       queueTask(new SyncShowRecommendations());
       queueTask(new SyncMovieRecommendations());
     }

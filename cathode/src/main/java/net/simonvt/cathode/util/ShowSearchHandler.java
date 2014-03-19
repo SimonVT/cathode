@@ -43,7 +43,7 @@ public class ShowSearchHandler {
 
   private Bus bus;
 
-  private List<Long> showIds;
+  public static List<Long> showIds;
 
   private SearchThread thread;
 
@@ -67,7 +67,7 @@ public class ShowSearchHandler {
 
   public void deliverResult(List<Long> showIds) {
     Timber.d("[deliverResult]");
-    this.showIds = showIds;
+    ShowSearchHandler.showIds = showIds;
     bus.post(new ShowSearchResult(showIds));
   }
 

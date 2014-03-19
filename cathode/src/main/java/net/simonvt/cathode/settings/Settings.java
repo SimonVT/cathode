@@ -30,6 +30,8 @@ public class Settings extends PreferenceActivity {
   public static final String ACTIVITY_STREAM_SYNC = "activityStreamSync";
   public static final String FULL_SYNC = "fullSync";
 
+  public static final String LAST_PURGE = "lastPurge";
+
   // For saving timestamps returned by user/lastactivity
   public static final String ALL = "allActivity";
 

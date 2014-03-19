@@ -315,7 +315,7 @@ public class CathodeProvider extends ContentProvider {
         if (sortOrder == null) {
           sortOrder = CathodeContract.ShowColumns.TRENDING_INDEX + " ASC";
         }
-        Cursor c = getShowsBuilder().table(Tables.SHOWS_WITH_UNWATCHED)
+        Cursor c = getShowsBuilder().table(Tables.SHOWS)
             .where(CathodeContract.ShowColumns.TRENDING_INDEX + ">-1")
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
@@ -326,7 +326,7 @@ public class CathodeProvider extends ContentProvider {
         if (sortOrder == null) {
           sortOrder = CathodeContract.ShowColumns.RECOMMENDATION_INDEX + " ASC";
         }
-        Cursor c = getShowsBuilder().table(Tables.SHOWS_WITH_UNWATCHED)
+        Cursor c = getShowsBuilder().table(Tables.SHOWS)
             .where(CathodeContract.ShowColumns.RECOMMENDATION_INDEX + ">-1")
             .where(selection, selectionArgs)
             .query(db, projection, sortOrder);
