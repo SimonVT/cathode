@@ -78,8 +78,8 @@ public final class ShowWrapper {
   public static long getShowId(ContentResolver resolver, TvShow show) {
     Cursor c = resolver.query(Shows.CONTENT_URI, new String[] {
         BaseColumns._ID,
-    }, Shows.URL + "=?", new String[] {
-        show.getUrl(),
+    }, Shows.TVDB_ID + "=?", new String[] {
+        String.valueOf(show.getTvdbId()),
     }, null);
 
     long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(BaseColumns._ID));

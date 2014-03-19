@@ -39,8 +39,8 @@ public final class EpisodeWrapper {
   public static long getEpisodeId(ContentResolver resolver, Episode episode) {
     Cursor c = resolver.query(Episodes.CONTENT_URI, new String[] {
         BaseColumns._ID,
-    }, Episodes.URL + "=?", new String[] {
-        episode.getUrl(),
+    }, Episodes.TVDB_ID + "=?", new String[] {
+        String.valueOf(episode.getTvdbId()),
     }, null);
 
     long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(BaseColumns._ID));
