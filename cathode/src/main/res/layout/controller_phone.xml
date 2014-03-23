@@ -23,5 +23,11 @@
   <net.simonvt.cathode.widget.BottomViewLayout
       android:id="@id/mdContent"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"/>
+      android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/controller_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+  </net.simonvt.cathode.widget.BottomViewLayout>
 </net.simonvt.menudrawer.OverlayDrawer>

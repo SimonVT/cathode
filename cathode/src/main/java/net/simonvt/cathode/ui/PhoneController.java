@@ -136,7 +136,7 @@ public class PhoneController extends UiController {
           .commit();
     }
 
-    stack = FragmentStack.forContainer(activity, R.id.mdContent, new FragmentStack.Callback() {
+    stack = FragmentStack.forContainer(activity, R.id.controller_content, new FragmentStack.Callback() {
           @Override public void onStackChanged(int stackSize, Fragment topFragment) {
             Timber.d("onStackChanged: %s", topFragment.getTag());
             menuDrawer.setDrawerIndicatorEnabled(stackSize <= 1);
