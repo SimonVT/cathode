@@ -229,6 +229,12 @@ public class ShowFragment extends ProgressFragment {
       }
     });
 
+    seasonsEmpty.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        showScheduler.sync(showId);
+      }
+    });
+
     scrollView.setListener(new ObservableScrollView.ScrollListener() {
       @Override public void onScrollChanged(int l, int t) {
         final int offset = (int) (t / 2.0f);

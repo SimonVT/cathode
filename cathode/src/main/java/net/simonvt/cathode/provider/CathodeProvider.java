@@ -193,12 +193,15 @@ public class CathodeProvider extends ContentProvider {
     builder.map(CathodeContract.ShowColumns.AIRED_COUNT, Shows.getAiredQuery());
     builder.map(CathodeContract.ShowColumns.UNAIRED_COUNT, Shows.getUnairedQuery());
     builder.map(CathodeContract.ShowColumns.WATCHING, Shows.getWatchingQuery());
+    builder.map(CathodeContract.ShowColumns.EPISODE_COUNT, Shows.getEpisodeCountQuery());
     builder.map(Tables.SHOWS + "." + CathodeContract.ShowColumns.AIRED_COUNT,
         Shows.getAiredQuery());
     builder.map(Tables.SHOWS + "." + CathodeContract.ShowColumns.UNAIRED_COUNT,
         Shows.getUnairedQuery());
     builder.map(Tables.SHOWS + "." + CathodeContract.ShowColumns.WATCHING,
         Shows.getWatchingQuery());
+    builder.map(Tables.SHOWS + "." + CathodeContract.ShowColumns.EPISODE_COUNT,
+        Shows.getEpisodeCountQuery());
     return builder;
   }
 

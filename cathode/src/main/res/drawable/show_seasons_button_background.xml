@@ -16,7 +16,7 @@
   -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <item android:state_pressed="true" android:drawable="@drawable/about_button_transition"/>
+  <item android:state_pressed="true" android:drawable="@drawable/show_seasons_button_transition"/>
   <item android:drawable="@color/aboutButtonBackground"/>
 
 </selector>

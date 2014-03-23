@@ -41,6 +41,7 @@ public class SyncShowRecommendations extends TraktTask {
 
       List<TvShow> shows = recommendationsService.shows();
       List<Long> showIds = new ArrayList<Long>();
+      List<Integer> showSummaries = new ArrayList<Integer>();
 
       ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
       Cursor c = resolver.query(CathodeContract.Shows.SHOWS_RECOMMENDED, null, null, null, null);
@@ -56,7 +57,6 @@ public class SyncShowRecommendations extends TraktTask {
         }
         long showId = ShowWrapper.getShowId(resolver, show);
         if (showId == -1L) {
-          queueTask(new SyncShowTask(show.getTvdbId()));
           showId = ShowWrapper.insertShow(resolver, show);
         }
 

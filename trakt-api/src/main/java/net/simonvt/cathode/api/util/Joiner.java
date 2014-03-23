@@ -15,6 +15,8 @@
  */
 package net.simonvt.cathode.api.util;
 
+import java.util.List;
+
 public class Joiner {
 
   private String separator;
@@ -28,6 +30,23 @@ public class Joiner {
   }
 
   public String join(Object... objects) {
+    StringBuilder sb = new StringBuilder();
+    boolean first = true;
+
+    for (Object o : objects) {
+      if (!first) {
+        sb.append(separator);
+      } else {
+        first = false;
+      }
+
+      sb.append(o.toString());
+    }
+
+    return sb.toString();
+  }
+
+  public String join(List<Object> objects) {
     StringBuilder sb = new StringBuilder();
     boolean first = true;
 

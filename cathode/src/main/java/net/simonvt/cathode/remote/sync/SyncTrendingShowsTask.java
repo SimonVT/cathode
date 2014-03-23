@@ -59,7 +59,6 @@ public class SyncTrendingShowsTask extends TraktTask {
         }
         long showId = ShowWrapper.getShowId(resolver, show);
         if (showId == -1L) {
-          queueTask(new SyncShowTask(show.getTvdbId()));
           showId = ShowWrapper.insertShow(resolver, show);
         }
 
@@ -75,10 +74,10 @@ public class SyncTrendingShowsTask extends TraktTask {
       }
 
       for (Long showId : showIds) {
-        ContentProviderOperation op = ContentProviderOperation.newUpdate(
-            CathodeContract.Shows.buildFromId(showId))
-            .withValue(CathodeContract.Shows.TRENDING_INDEX, -1)
-            .build();
+        ContentProviderOperation op =
+            ContentProviderOperation.newUpdate(CathodeContract.Shows.buildFromId(showId))
+                .withValue(CathodeContract.Shows.TRENDING_INDEX, -1)
+                .build();
         ops.add(op);
       }
 

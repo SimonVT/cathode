@@ -17,6 +17,7 @@ package net.simonvt.cathode.remote.sync;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.ServerTime;
@@ -35,6 +36,9 @@ public class SyncUpdatedShows extends TraktTask {
   @Override protected void doTask() {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
     final long lastUpdated = settings.getLong(Settings.SHOWS_LAST_UPDATED, 0);
+
+    List<Integer> showSummaries = new ArrayList<Integer>();
+
     long currentTime;
 
     if (lastUpdated == 0) {
@@ -52,9 +56,18 @@ public class SyncUpdatedShows extends TraktTask {
           final boolean needsUpdate =
               ShowWrapper.needsUpdate(getContentResolver(), tvdbId, timestamp.getLastUpdated());
           if (needsUpdate) {
-            queueTask(new SyncShowTask(tvdbId));
+            final long id = ShowWrapper.getShowId(getContentResolver(), tvdbId);
+            if (ShowWrapper.shouldSyncFully(getContentResolver(), id)) {
+              queueTask(new SyncShowTask(tvdbId));
+            } else {
+              showSummaries.add(tvdbId);
+            }
           }
         }
+      }
+
+      if (showSummaries.size() > 0) {
+        queueTask(new SyncShowSummariesTask(showSummaries));
       }
     }
 

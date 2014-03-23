@@ -49,6 +49,10 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
   public void sync(final long showId) {
     execute(new Runnable() {
       @Override public void run() {
+        ContentValues cv = new ContentValues();
+        cv.put(CathodeContract.Shows.FULL_SYNC_REQUESTED, System.currentTimeMillis());
+        context.getContentResolver()
+            .update(CathodeContract.Shows.buildFromId(showId), cv, null, null);
         final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
         queueTask(new SyncShowTask(tvdbId));
       }
@@ -178,13 +182,18 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
       @Override public void run() {
         Cursor c = context.getContentResolver()
             .query(CathodeContract.Shows.buildFromId(showId), new String[] {
-                CathodeContract.Shows.TVDB_ID,
+                CathodeContract.Shows.TVDB_ID, CathodeContract.Shows.EPISODE_COUNT,
             }, null, null, null);
 
         if (c.moveToFirst()) {
           final int tvdbId = c.getInt(c.getColumnIndex(CathodeContract.Shows.TVDB_ID));
           ShowWrapper.setIsInWatchlist(context.getContentResolver(), showId, inWatchlist);
           queue.add(new ShowWatchlistTask(tvdbId, inWatchlist));
+
+          final int episodeCount = c.getInt(c.getColumnIndex(CathodeContract.Shows.EPISODE_COUNT));
+          if (episodeCount == 0) {
+            queueTask(new SyncShowTask(tvdbId));
+          }
         }
 
         c.close();

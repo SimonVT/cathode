@@ -23,9 +23,19 @@ import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.provider.CathodeContract.Episodes;
+import net.simonvt.cathode.provider.CathodeContract.MovieActors;
+import net.simonvt.cathode.provider.CathodeContract.MovieDirectors;
+import net.simonvt.cathode.provider.CathodeContract.MovieGenres;
+import net.simonvt.cathode.provider.CathodeContract.MovieProducers;
+import net.simonvt.cathode.provider.CathodeContract.MovieTopWatchers;
+import net.simonvt.cathode.provider.CathodeContract.MovieWriters;
 import net.simonvt.cathode.provider.CathodeContract.Movies;
 import net.simonvt.cathode.provider.CathodeContract.Seasons;
+import net.simonvt.cathode.provider.CathodeContract.ShowActor;
+import net.simonvt.cathode.provider.CathodeContract.ShowGenres;
+import net.simonvt.cathode.provider.CathodeContract.ShowTopWatchers;
 import net.simonvt.cathode.provider.CathodeContract.Shows;
+import net.simonvt.cathode.provider.CathodeContract.TopEpisodes;
 import net.simonvt.cathode.provider.CathodeProvider;
 import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.util.MovieSearchHandler;
@@ -77,6 +87,14 @@ public class PurgeTask extends TraktTask {
       ops.add(op);
       op = ContentProviderOperation.newDelete(Seasons.buildFromShowId(id)).build();
       ops.add(op);
+      op = ContentProviderOperation.newDelete(ShowTopWatchers.buildFromShowId(id)).build();
+      ops.add(op);
+      op = ContentProviderOperation.newDelete(TopEpisodes.buildFromShowId(id)).build();
+      ops.add(op);
+      op = ContentProviderOperation.newDelete(ShowActor.buildFromShowId(id)).build();
+      ops.add(op);
+      op = ContentProviderOperation.newDelete(ShowGenres.buildFromShowId(id)).build();
+      ops.add(op);
       op = ContentProviderOperation.newDelete(Shows.buildFromId(id)).build();
       ops.add(op);
     }
@@ -125,6 +143,18 @@ public class PurgeTask extends TraktTask {
     for (Long id : movieIds) {
       ContentProviderOperation op =
           ContentProviderOperation.newDelete(Movies.buildFromId(id)).build();
+      ops.add(op);
+      op = ContentProviderOperation.newDelete(MovieGenres.buildFromMovieId(id)).build();
+      ops.add(op);
+      op = ContentProviderOperation.newDelete(MovieTopWatchers.buildFromMovieId(id)).build();
+      ops.add(op);
+      op = ContentProviderOperation.newDelete(MovieActors.buildFromMovieId(id)).build();
+      ops.add(op);
+      op = ContentProviderOperation.newDelete(MovieDirectors.buildFromMovieId(id)).build();
+      ops.add(op);
+      op = ContentProviderOperation.newDelete(MovieWriters.buildFromMovieId(id)).build();
+      ops.add(op);
+      op = ContentProviderOperation.newDelete(MovieProducers.buildFromMovieId(id)).build();
       ops.add(op);
     }
 

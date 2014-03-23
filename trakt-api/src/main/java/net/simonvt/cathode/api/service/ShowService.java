@@ -80,7 +80,8 @@ public interface ShowService {
   TvShow summary(@Path("tvdbid") int tvdbId, @Path("detail_level") DetailLevel detailLevel);
 
   @GET("/show/summary.json/{apikey}/{tvdbids}/{detail_level}")
-  TvShow summaries(@Path("tvdbids") String tvdbIds, @Path("detail_level") DetailLevel detailLevel);
+  List<TvShow> summaries(@Path("tvdbids") String tvdbIds,
+      @Path("detail_level") DetailLevel detailLevel);
 
   @POST("/show/unlibrary/{apikey}") Response unlibrary(@Body ShowBody shows);
 

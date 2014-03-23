@@ -67,11 +67,13 @@ public final class CathodeContract {
     String TRENDING_INDEX = "trendingIndex";
     String RECOMMENDATION_INDEX = "recommendationIndex";
     String HIDDEN = "hidden";
+    String FULL_SYNC_REQUESTED = "fullSyncRequested";
 
     // Don't create a columns in database
     String AIRED_COUNT = "airedCount";
     String UNAIRED_COUNT = "unairedCount";
     String WATCHING = "watchingShow";
+    String EPISODE_COUNT = "episodeCount";
   }
 
   interface TopWatcherColumns {
@@ -376,6 +378,20 @@ public final class CathodeContract {
           + "."
           + EpisodeColumns.CHECKED_IN
           + "=1))";
+    }
+
+    public static String getEpisodeCountQuery() {
+      return "(SELECT COUNT(*) FROM "
+          + CathodeDatabase.Tables.EPISODES
+          + " WHERE "
+          + CathodeDatabase.Tables.EPISODES
+          + "."
+          + EpisodeColumns.SHOW_ID
+          + "="
+          + CathodeDatabase.Tables.SHOWS
+          + "."
+          + BaseColumns._ID
+          + ")";
     }
   }
 
