@@ -120,13 +120,8 @@ public class ShowSearchHandler {
 
         for (TvShow show : shows) {
           if (!TextUtils.isEmpty(show.getTitle())) {
-            final boolean exists =
-                ShowWrapper.exists(context.getContentResolver(), show.getTvdbId());
-
             final long showId = ShowWrapper.updateOrInsertShow(context.getContentResolver(), show);
             showIds.add(showId);
-
-            if (!exists) queue.add(new SyncShowTask(show.getTvdbId()));
           }
         }
 
