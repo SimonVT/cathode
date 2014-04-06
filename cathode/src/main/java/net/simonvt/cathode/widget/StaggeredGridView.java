@@ -24,6 +24,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v4.util.SparseArrayCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.LongSparseArray;
@@ -198,6 +199,20 @@ public class StaggeredGridView extends ViewGroup {
     }
   }
 
+  private static final class LayoutRecord {
+
+    public int column;
+    public int[] topMargin;
+
+    private LayoutRecord(int column, int span) {
+      this.column = column;
+      topMargin = new int[span];
+    }
+  }
+
+  private final SparseArrayCompat<LayoutRecord> layoutRecords =
+      new SparseArrayCompat<LayoutRecord>();
+
   public StaggeredGridView(Context context) {
     this(context, null);
   }
@@ -253,6 +268,7 @@ public class StaggeredGridView extends ViewGroup {
     final boolean dataChanged = colCount != this.colCount;
     this.colCount = colCountSetting = colCount;
     if (dataChanged) {
+      layoutRecords.clear();
       requestLayout();
     }
   }
@@ -709,11 +725,16 @@ public class StaggeredGridView extends ViewGroup {
         final LayoutParams lp = (LayoutParams) child.getLayoutParams();
         final int top = child.getTop();
         final int bottom = child.getBottom();
+        LayoutRecord rec = layoutRecords.get(lp.position);
 
         final int colEnd = lp.column + Math.min(colCount, lp.span);
         for (int col = lp.column; col < colEnd; col++) {
-          if (top < itemTops[col]) {
-            itemTops[col] = top;
+          int itemTop = top;
+          if (rec != null) {
+            itemTop -= rec.topMargin[col - lp.column];
+          }
+          if (itemTop < itemTops[col]) {
+            itemTops[col] = itemTop;
           }
           if (bottom > itemBottoms[col]) {
             itemBottoms[col] = bottom;
@@ -949,9 +970,19 @@ public class StaggeredGridView extends ViewGroup {
     while (position < itemCount && itemBottoms[nextCol] < height + overhang) {
       View child = makeAndAddView(position);
       LayoutParams lp = (LayoutParams) child.getLayoutParams();
-
       final int span = Math.min(lp.span, colCount);
-      final int startColumn = getNextColumnDown(span);
+
+      LayoutRecord rec = layoutRecords.get(position);
+
+      int startColumn;
+      if (rec != null) {
+        startColumn = rec.column;
+      } else {
+        startColumn = getNextColumnDown(span);
+
+        rec = new LayoutRecord(startColumn, span);
+        layoutRecords.put(position, rec);
+      }
       int startFrom = Integer.MIN_VALUE;
       for (int i = startColumn; i < startColumn + span; i++) {
         final int bottom = itemBottoms[i];
@@ -969,6 +1000,9 @@ public class StaggeredGridView extends ViewGroup {
       child.layout(left, top, right, bottom);
 
       for (int i = startColumn; i < startColumn + span; i++) {
+        final int oldBottom = itemBottoms[i];
+        rec.topMargin[i - startColumn] = top - verticalItemMargin - oldBottom;
+
         itemBottoms[i] = bottom;
       }
 
@@ -995,9 +1029,18 @@ public class StaggeredGridView extends ViewGroup {
     while (position >= 0 && itemTops[nextCol] > 0 - overhang) {
       View child = makeAndAddView(position);
       LayoutParams lp = (LayoutParams) child.getLayoutParams();
-
       final int span = Math.min(lp.span, colCount);
-      final int startColumn = getNextColumnUp(span);
+
+      int startColumn;
+      LayoutRecord rec = layoutRecords.get(position);
+      if (rec != null) {
+        startColumn = rec.column;
+      } else {
+        startColumn = getNextColumnUp(span);
+        rec = new LayoutRecord(startColumn, span);
+        layoutRecords.put(position, rec);
+      }
+
       int startFrom = Integer.MAX_VALUE;
       for (int i = startColumn; i < startColumn + span; i++) {
         final int top = itemTops[i];
@@ -1015,7 +1058,11 @@ public class StaggeredGridView extends ViewGroup {
       child.layout(left, top, right, bottom);
 
       for (int i = startColumn; i < startColumn + span; i++) {
-        itemTops[i] = top;
+        int topOffset = 0;
+        if (rec != null) {
+          topOffset = rec.topMargin[i - startColumn];
+        }
+        itemTops[i] = top - topOffset;
       }
 
       nextCol = getNextColumnUp();
@@ -1324,6 +1371,8 @@ public class StaggeredGridView extends ViewGroup {
 
     // Clear recycler because there could be different view types now
     recycler.clear();
+
+    layoutRecords.clear();
   }
 
   /**
@@ -1687,6 +1736,8 @@ public class StaggeredGridView extends ViewGroup {
     public void onChanged() {
       dataChanged = true;
       itemCount = adapter.getCount();
+
+      layoutRecords.clear();
 
       // TODO: Consider matching these back up if we have stable IDs.
       recycler.clearTransientViews();
