@@ -458,6 +458,15 @@ public class StaggeredGridView extends ViewGroup {
     final int action = ev.getAction() & MotionEvent.ACTION_MASK;
     switch (action) {
       case MotionEvent.ACTION_DOWN: {
+        if (tapReset != null) {
+          removeCallbacks(tapReset);
+          tapReset = null;
+        }
+        if (pendingTapCheck != null) {
+          removeCallbacks(pendingTapCheck);
+          pendingTapCheck = null;
+        }
+
         velocityTracker.clear();
         scroller.abortAnimation();
         lastTouchY = ev.getY();
@@ -543,6 +552,10 @@ public class StaggeredGridView extends ViewGroup {
         if (pendingTapCheck != null) {
           removeCallbacks(pendingTapCheck);
           pendingTapCheck = null;
+        }
+        if (tapReset != null) {
+          removeCallbacks(tapReset);
+          tapReset = null;
         }
         break;
 
@@ -960,6 +973,8 @@ public class StaggeredGridView extends ViewGroup {
     adjustViewsDown();
     fillUp(firstPosition - 1, 0);
     correctTooLow();
+
+    dataChanged = false;
   }
 
   private int fillDown(int fromPosition, int overhang) {
