@@ -859,7 +859,7 @@ public class StaggeredGridView extends ViewGroup {
     setMeasuredDimension(widthSize, heightSize);
 
     colWidth =
-        (getWidth() - getPaddingLeft() - getPaddingRight() - verticalItemMargin * (colCount - 1))
+        (widthSize - getPaddingLeft() - getPaddingRight() - verticalItemMargin * (colCount - 1))
             / colCount;
 
     if (colCountSetting == COLUMN_COUNT_AUTO) {
