@@ -31,7 +31,6 @@ import net.simonvt.cathode.event.SearchFailureEvent;
 import net.simonvt.cathode.event.ShowSearchResult;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTaskQueue;
-import net.simonvt.cathode.remote.sync.SyncShowTask;
 import retrofit.RetrofitError;
 import timber.log.Timber;
 
