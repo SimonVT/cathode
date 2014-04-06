@@ -46,7 +46,8 @@
         android:numColumns="@integer/showsColumns"
         android:scrollbars="vertical"
         android:scrollbarStyle="outsideOverlay"
-        app:itemMargin="4.0dp"/>
+        app:verticalItemMargin="4dp"
+        app:horizontalItemMargin="4dp"/>
   </FrameLayout>
 
   <include layout="@layout/fragment_list_progressbar"/>

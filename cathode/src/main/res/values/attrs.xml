@@ -47,7 +47,8 @@
 
   <declare-styleable name="StaggeredGridView">
     <attr name="android:numColumns"/>
-    <attr name="itemMargin" format="dimension"/>
+    <attr name="verticalItemMargin" format="dimension"/>
+    <attr name="horizontalItemMargin" format="dimension"/>
     <attr name="android:listChoiceBackgroundIndicator"/>
   </declare-styleable>
 
