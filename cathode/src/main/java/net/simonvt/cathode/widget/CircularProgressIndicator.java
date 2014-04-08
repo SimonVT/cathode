@@ -36,6 +36,8 @@ public class CircularProgressIndicator extends View {
 
   private int value;
 
+  private String valueString;
+
   private int textSize;
 
   private int textColor;
@@ -45,6 +47,8 @@ public class CircularProgressIndicator extends View {
   private final Paint textPaint = new Paint();
 
   private final Rect textBounds = new Rect();
+
+  private float textWidth;
 
   private final Rect tempBounds = new Rect();
 
@@ -119,8 +123,9 @@ public class CircularProgressIndicator extends View {
 
   public void setValue(int value) {
     this.value = value;
-    String s = String.valueOf(value);
-    textPaint.getTextBounds(s, 0, s.length(), textBounds);
+    valueString = String.valueOf(value);
+    textPaint.getTextBounds(valueString, 0, valueString.length(), textBounds);
+    textWidth = textPaint.measureText(valueString);
     invalidate();
     requestLayout();
   }
@@ -141,8 +146,8 @@ public class CircularProgressIndicator extends View {
     final int endAngle = (int) (360.0f / maxValue * value);
     canvas.drawArc(circleBounds, -90, endAngle, false, circlePaint);
 
-    final float textX = width / 2 - textBounds.width() / 2;
-    final float textY = height / 2 + (-textPaint.ascent()) / 2;
+    final float textX = width / 2 - textWidth / 2;
+    final float textY = height / 2 + textBounds.height() / 2;
     canvas.drawText(String.valueOf(value), textX, textY, textPaint);
   }
 
