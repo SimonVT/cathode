@@ -174,22 +174,17 @@ public final class ShowWrapper {
 
   public static boolean shouldSyncFully(ContentResolver resolver, long id) {
     Cursor c = resolver.query(Shows.buildFromId(id), new String[] {
-        Shows.IN_WATCHLIST, Shows.TRENDING_INDEX, Shows.RECOMMENDATION_INDEX,
-        Shows.FULL_SYNC_REQUESTED, Shows.EPISODE_COUNT,
+        Shows.IN_WATCHLIST, Shows.FULL_SYNC_REQUESTED, Shows.EPISODE_COUNT,
+        Shows.IN_COLLECTION_COUNT,
     }, null, null, null);
 
     if (c.moveToFirst()) {
       final boolean inWatchlist = c.getInt(c.getColumnIndex(Shows.IN_WATCHLIST)) == 1;
-      final int trendingIndex = c.getInt(c.getColumnIndex(Shows.TRENDING_INDEX));
-      final int recommendedIndex = c.getInt(c.getColumnIndex(Shows.RECOMMENDATION_INDEX));
       final long fullSyncRequested = c.getLong(c.getColumnIndex(Shows.FULL_SYNC_REQUESTED));
-      final int episodeCount = c.getInt(c.getColumnIndex(Shows.EPISODE_COUNT));
+      final int watchedCount = c.getInt(c.getColumnIndex(Shows.WATCHED_COUNT));
+      final int collectionCount = c.getInt(c.getColumnIndex(Shows.IN_COLLECTION_COUNT));
 
-      return inWatchlist
-          || trendingIndex > -1
-          || recommendedIndex > -1
-          || fullSyncRequested + 7 * DateUtils.DAY_IN_MILLIS < System.currentTimeMillis()
-          || episodeCount > 0;
+      return inWatchlist || watchedCount > 0 || collectionCount > 0 || fullSyncRequested > 0;
     }
 
     return false;
