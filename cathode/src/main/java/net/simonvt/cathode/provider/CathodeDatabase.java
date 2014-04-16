@@ -41,7 +41,7 @@ import net.simonvt.cathode.util.DateUtils;
 public class CathodeDatabase extends SQLiteOpenHelper {
 
   private static final String DATABASE_NAME = "cathode.db";
-  private static final int DATABASE_VERSION = 4;
+  private static final int DATABASE_VERSION = 5;
 
   public interface Tables {
 
