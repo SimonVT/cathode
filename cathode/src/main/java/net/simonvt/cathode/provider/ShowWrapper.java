@@ -177,8 +177,8 @@ public final class ShowWrapper {
 
   public static boolean shouldSyncFully(ContentResolver resolver, long id) {
     Cursor c = resolver.query(Shows.buildFromId(id), new String[] {
-        Shows.IN_WATCHLIST, Shows.FULL_SYNC_REQUESTED, Shows.EPISODE_COUNT,
-        Shows.IN_COLLECTION_COUNT,
+        Shows.IN_WATCHLIST, Shows.FULL_SYNC_REQUESTED, Shows.IN_COLLECTION_COUNT,
+        Shows.WATCHED_COUNT,
     }, null, null, null);
 
     if (c.moveToFirst()) {
