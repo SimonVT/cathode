@@ -84,6 +84,12 @@ public final class FragmentStack {
 
   /** Removes all added fragments and clears the stack. */
   public void destroy() {
+    if (fragmentTransaction != null && !fragmentTransaction.isEmpty()) {
+      handler.removeCallbacks(execPendingTransactions);
+      fragmentManager.executePendingTransactions();
+      fragmentTransaction = null;
+    }
+
     ensureTransaction();
     fragmentTransaction.setCustomAnimations(enterAnimation, exitAnimation);
 
