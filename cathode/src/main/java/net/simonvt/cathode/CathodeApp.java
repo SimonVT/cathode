@@ -85,6 +85,7 @@ import net.simonvt.cathode.remote.sync.SyncMoviesWatchedTask;
 import net.simonvt.cathode.remote.sync.SyncMoviesWatchlistTask;
 import net.simonvt.cathode.remote.sync.SyncSeasonTask;
 import net.simonvt.cathode.remote.sync.SyncShowRecommendations;
+import net.simonvt.cathode.remote.sync.SyncShowSummariesTask;
 import net.simonvt.cathode.remote.sync.SyncShowTask;
 import net.simonvt.cathode.remote.sync.SyncShowsCollectionTask;
 import net.simonvt.cathode.remote.sync.SyncShowsTask;
@@ -364,6 +365,7 @@ public class CathodeApp extends Application {
           DeserializationFailedTask.class, SyncWatchingTask.class, CheckInEpisodeTask.class,
           CancelShowCheckinTask.class, CheckInMovieTask.class, CancelMovieCheckinTask.class,
           SyncActivityStreamTask.class, SyncUserSettingsTask.class, PurgeTask.class,
+          SyncShowSummariesTask.class,
 
           // Misc
           PhoneController.class, ResponseParser.class, ShowSearchHandler.class,
