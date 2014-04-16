@@ -82,7 +82,7 @@ public class HomeActivity extends BaseActivity
 
   private long lastSync;
 
-  private Handler syncHandler;
+  private Handler handler;
 
   private Runnable syncRunnable = new Runnable() {
     @Override public void run() {
@@ -95,7 +95,7 @@ public class HomeActivity extends BaseActivity
         queue.add(new SyncActivityStreamTask());
       }
       lastSync = System.currentTimeMillis();
-      syncHandler.postDelayed(this, SYNC_DELAY);
+      handler.postDelayed(this, SYNC_DELAY);
     }
   };
 
@@ -118,7 +118,7 @@ public class HomeActivity extends BaseActivity
       activeController = uiController;
     }
 
-    syncHandler = new Handler();
+    handler = new Handler();
 
     if (inState != null) {
       lastSync = inState.getLong(STATE_LAST_SYNC);
@@ -128,13 +128,17 @@ public class HomeActivity extends BaseActivity
   @Override protected void onNewIntent(Intent intent) {
     if (isLoginAction(intent)) {
       if (uiController != null) {
-        uiController.destroy(true);
-        uiController = null;
+        handler.post(new Runnable() {
+          @Override public void run() {
+            uiController.destroy(true);
+            uiController = null;
 
-        content.removeAllViews();
+            content.removeAllViews();
 
-        loginController = LoginController.newInstance(this, content);
-        activeController = loginController;
+            loginController = LoginController.newInstance(HomeActivity.this, content);
+            activeController = loginController;
+          }
+        });
       }
     }
   }
@@ -162,13 +166,13 @@ public class HomeActivity extends BaseActivity
       if (lastSync + SYNC_DELAY < System.currentTimeMillis()) {
         syncRunnable.run();
       } else {
-        syncHandler.postDelayed(syncRunnable, SYNC_DELAY);
+        handler.postDelayed(syncRunnable, SYNC_DELAY);
       }
     }
   }
 
   @Override protected void onPause() {
-    syncHandler.removeCallbacks(syncRunnable);
+    handler.removeCallbacks(syncRunnable);
     bus.unregister(this);
     super.onPause();
   }
@@ -254,7 +258,7 @@ public class HomeActivity extends BaseActivity
       loginController = LoginController.newInstance(this, content);
       activeController = loginController;
 
-      syncHandler.removeCallbacks(syncRunnable);
+      handler.removeCallbacks(syncRunnable);
 
       CathodeApp.removeAccount(this);
     }
