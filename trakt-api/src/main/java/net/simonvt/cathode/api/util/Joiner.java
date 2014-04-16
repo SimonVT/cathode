@@ -46,7 +46,7 @@ public class Joiner {
     return sb.toString();
   }
 
-  public String join(List<Object> objects) {
+  public String join(List<?> objects) {
     StringBuilder sb = new StringBuilder();
     boolean first = true;
 
