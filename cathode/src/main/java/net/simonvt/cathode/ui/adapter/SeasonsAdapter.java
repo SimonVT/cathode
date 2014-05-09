@@ -34,7 +34,7 @@ import butterknife.InjectView;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.widget.OverflowView;
@@ -42,10 +42,9 @@ import net.simonvt.cathode.widget.OverflowView;
 public class SeasonsAdapter extends CursorAdapter {
 
   public static final String[] PROJECTION = new String[] {
-      CathodeContract.Seasons._ID, CathodeContract.Seasons.AIRDATE_COUNT,
-      CathodeContract.Seasons.UNAIRED_COUNT, CathodeContract.Seasons.WATCHED_COUNT,
-      CathodeContract.Seasons.IN_COLLECTION_COUNT, CathodeContract.Seasons.SEASON,
-      CathodeContract.Seasons.WATCHED_COUNT,
+      SeasonColumns.ID, SeasonColumns.AIRDATE_COUNT, SeasonColumns.UNAIRED_COUNT,
+      SeasonColumns.WATCHED_COUNT, SeasonColumns.IN_COLLECTION_COUNT, SeasonColumns.SEASON,
+      SeasonColumns.WATCHED_COUNT,
   };
 
   @Inject SeasonTaskScheduler seasonScheduler;
@@ -72,11 +71,11 @@ public class SeasonsAdapter extends CursorAdapter {
 
   private void bindWatched(Context context, ViewHolder vh, Cursor cursor) {
     final int airdateCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Seasons.AIRDATE_COUNT));
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.AIRDATE_COUNT));
     final int unairedCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Seasons.UNAIRED_COUNT));
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.UNAIRED_COUNT));
     final int watchedCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Seasons.WATCHED_COUNT));
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.WATCHED_COUNT));
     int toWatch = airdateCount - unairedCount - watchedCount;
     toWatch = Math.max(toWatch, 0); // TODO: Query watched, aired, episodes instead
 
@@ -117,11 +116,11 @@ public class SeasonsAdapter extends CursorAdapter {
 
   private void bindCollection(Context context, ViewHolder vh, Cursor cursor) {
     final int airdateCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Seasons.AIRDATE_COUNT));
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.AIRDATE_COUNT));
     final int unairedCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Seasons.UNAIRED_COUNT));
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.UNAIRED_COUNT));
     final int collectedCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Seasons.IN_COLLECTION_COUNT));
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.IN_COLLECTION_COUNT));
     int toCollect = airdateCount - unairedCount - collectedCount;
     toCollect = Math.max(toCollect, 0); // TODO: Query collected, aired, episodes instead
 
@@ -140,18 +139,17 @@ public class SeasonsAdapter extends CursorAdapter {
   @Override public void bindView(View view, Context context, Cursor cursor) {
     ViewHolder vh = (ViewHolder) view.getTag();
 
-    final int seasonId = cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Seasons._ID));
-    final int seasonNumber =
-        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Seasons.SEASON));
+    final int seasonId = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.ID));
+    final int seasonNumber = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.SEASON));
     final int airdateCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Seasons.AIRDATE_COUNT));
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.AIRDATE_COUNT));
     final int unairedCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Seasons.UNAIRED_COUNT));
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.UNAIRED_COUNT));
     final int airedCount = airdateCount - unairedCount;
     final int collectedCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Seasons.IN_COLLECTION_COUNT));
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.IN_COLLECTION_COUNT));
     final int watchedCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Seasons.WATCHED_COUNT));
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.WATCHED_COUNT));
 
     switch (type) {
       case WATCHLIST:

@@ -19,9 +19,10 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.BaseColumns;
 import net.simonvt.cathode.api.entity.Images;
 import net.simonvt.cathode.api.entity.Season;
+import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.util.ApiUtils;
 
 public final class SeasonWrapper {
@@ -36,14 +37,14 @@ public final class SeasonWrapper {
   public static long getSeasonId(ContentResolver resolver, long showId, int season) {
     Cursor c = null;
     try {
-      c = resolver.query(CathodeContract.Seasons.CONTENT_URI, new String[] {
-          BaseColumns._ID,
-      }, CathodeContract.Seasons.SHOW_ID + "=? AND " + CathodeContract.Seasons.SEASON + "=?",
-          new String[] {
+      c = resolver.query(Seasons.SEASONS, new String[] {
+              SeasonColumns.ID,
+          }, SeasonColumns.SHOW_ID + "=? AND " + SeasonColumns.SEASON + "=?", new String[] {
               String.valueOf(showId), String.valueOf(season),
-          }, null);
+          }, null
+      );
 
-      return !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(BaseColumns._ID));
+      return !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(SeasonColumns.ID));
     } finally {
       if (c != null) c.close();
     }
@@ -52,13 +53,13 @@ public final class SeasonWrapper {
   public static long getSeasonId(ContentResolver resolver, Season season) {
     Cursor c = null;
     try {
-      c = resolver.query(CathodeContract.Seasons.CONTENT_URI, new String[] {
-          BaseColumns._ID,
-      }, CathodeContract.Seasons.URL + "=?", new String[] {
+      c = resolver.query(Seasons.SEASONS, new String[] {
+          SeasonColumns.ID,
+      }, SeasonColumns.URL + "=?", new String[] {
           season.getUrl(),
       }, null);
 
-      return !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(BaseColumns._ID));
+      return !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(SeasonColumns.ID));
     } finally {
       if (c != null) c.close();
     }
@@ -67,8 +68,8 @@ public final class SeasonWrapper {
   public static long getShowId(ContentResolver resolver, long seasonId) {
     Cursor c = null;
     try {
-      c = resolver.query(CathodeContract.Seasons.buildFromId(seasonId), new String[] {
-          CathodeContract.Seasons.SHOW_ID,
+      c = resolver.query(Seasons.withId(seasonId), new String[] {
+          SeasonColumns.SHOW_ID,
       }, null, null, null);
 
       if (c.moveToFirst()) {
@@ -95,27 +96,27 @@ public final class SeasonWrapper {
 
   public static void updateSeason(ContentResolver resolver, long seasonId, Season season) {
     ContentValues cv = getSeasonCVs(season);
-    resolver.update(CathodeContract.Seasons.buildFromId(seasonId), cv, null, null);
+    resolver.update(Seasons.withId(seasonId), cv, null, null);
   }
 
   public static long insertSeason(ContentResolver resolver, long showId, Season season) {
     ContentValues cv = getSeasonCVs(season);
-    cv.put(CathodeContract.SeasonColumns.SHOW_ID, showId);
+    cv.put(SeasonColumns.SHOW_ID, showId);
 
-    Uri uri = resolver.insert(CathodeContract.Seasons.CONTENT_URI, cv);
-    return Long.valueOf(CathodeContract.Seasons.getSeasonId(uri));
+    Uri uri = resolver.insert(Seasons.SEASONS, cv);
+    return Long.valueOf(Seasons.getId(uri));
   }
 
   private static ContentValues getSeasonCVs(Season season) {
     ContentValues cv = new ContentValues();
 
-    cv.put(CathodeContract.SeasonColumns.SEASON, season.getSeason());
-    cv.put(CathodeContract.SeasonColumns.EPISODES, season.getEpisodes().getCount());
-    cv.put(CathodeContract.SeasonColumns.URL, season.getUrl());
+    cv.put(SeasonColumns.SEASON, season.getSeason());
+    cv.put(SeasonColumns.EPISODES, season.getEpisodes().getCount());
+    cv.put(SeasonColumns.URL, season.getUrl());
     if (season.getImages() != null) {
       Images images = season.getImages();
       if (!ApiUtils.isPlaceholder(images.getPoster())) {
-        cv.put(CathodeContract.SeasonColumns.POSTER, images.getPoster());
+        cv.put(SeasonColumns.POSTER, images.getPoster());
       }
     }
 

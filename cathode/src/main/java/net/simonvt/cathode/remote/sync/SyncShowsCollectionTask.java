@@ -23,12 +23,13 @@ import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.Season;
 import net.simonvt.cathode.api.entity.TvShow;
 import net.simonvt.cathode.api.enumeration.DetailLevel;
 import net.simonvt.cathode.api.service.UserService;
-import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeProvider;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
@@ -42,7 +43,7 @@ public class SyncShowsCollectionTask extends TraktTask {
       throws RemoteException, OperationApplicationException {
     ops.add(op);
     if (ops.size() >= 50) {
-      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
+      getContentResolver().applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
       ops.clear();
     }
   }
@@ -52,10 +53,9 @@ public class SyncShowsCollectionTask extends TraktTask {
       ContentResolver resolver = getContentResolver();
       List<TvShow> shows = userService.libraryShowsCollection(DetailLevel.MIN);
 
-      Cursor c = resolver.query(CathodeContract.Episodes.CONTENT_URI, new String[] {
-          CathodeContract.Episodes._ID, CathodeContract.Episodes.SHOW_ID,
-          CathodeContract.Episodes.SEASON_ID,
-      }, CathodeContract.Episodes.IN_COLLECTION + "=1", null, null);
+      Cursor c = resolver.query(Episodes.EPISODES, new String[] {
+          EpisodeColumns.ID, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON_ID,
+      }, EpisodeColumns.IN_COLLECTION + "=1", null, null);
 
       List<Long> episodeIds = new ArrayList<Long>(c.getCount());
       while (c.moveToNext()) {
@@ -85,9 +85,9 @@ public class SyncShowsCollectionTask extends TraktTask {
                   EpisodeWrapper.getEpisodeId(resolver, showId, number, episodeNumber);
               if (episodeId != -1) {
                 if (!episodeIds.remove(episodeId)) {
-                  ContentProviderOperation.Builder builder = ContentProviderOperation.newUpdate(
-                      CathodeContract.Episodes.buildFromId(episodeId));
-                  builder.withValue(CathodeContract.Episodes.IN_COLLECTION, true);
+                  ContentProviderOperation.Builder builder =
+                      ContentProviderOperation.newUpdate(Episodes.withId(episodeId));
+                  builder.withValue(EpisodeColumns.IN_COLLECTION, true);
                   addOp(ops, builder.build());
                 }
               } else {
@@ -100,12 +100,12 @@ public class SyncShowsCollectionTask extends TraktTask {
 
       for (long episodeId : episodeIds) {
         ContentProviderOperation.Builder builder =
-            ContentProviderOperation.newUpdate(CathodeContract.Episodes.buildFromId(episodeId));
-        builder.withValue(CathodeContract.Episodes.IN_COLLECTION, false);
+            ContentProviderOperation.newUpdate(Episodes.withId(episodeId));
+        builder.withValue(EpisodeColumns.IN_COLLECTION, false);
         addOp(ops, builder.build());
       }
 
-      resolver.applyBatch(CathodeProvider.AUTHORITY, ops);
+      resolver.applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
 
       postOnSuccess();
     } catch (RemoteException e) {

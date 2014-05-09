@@ -27,9 +27,11 @@ import net.simonvt.cathode.api.entity.Season;
 import net.simonvt.cathode.api.entity.TvShow;
 import net.simonvt.cathode.api.enumeration.DetailLevel;
 import net.simonvt.cathode.api.service.ShowService;
-import net.simonvt.cathode.provider.CathodeContract.Episodes;
-import net.simonvt.cathode.provider.CathodeContract.Seasons;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.EpisodeWrapper;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
@@ -67,25 +69,24 @@ public class SyncShowTask extends TraktTask {
         }
       }
 
-      Cursor allEpisodes =
-          getContentResolver().query(Episodes.buildFromShowId(showId), new String[] {
-              Episodes._ID,
-          }, null, null, null);
+      Cursor allEpisodes = getContentResolver().query(Episodes.fromShow(showId), new String[] {
+          EpisodeColumns.ID,
+      }, null, null, null);
       while (allEpisodes.moveToNext()) {
-        final long episodeId = allEpisodes.getLong(allEpisodes.getColumnIndex(Episodes._ID));
+        final long episodeId = allEpisodes.getLong(allEpisodes.getColumnIndex(EpisodeColumns.ID));
         if (!episodeIds.contains(episodeId)) {
-          getContentResolver().delete(Episodes.buildFromId(episodeId), null, null);
+          getContentResolver().delete(Episodes.withId(episodeId), null, null);
         }
       }
       allEpisodes.close();
 
-      Cursor allSeasons = getContentResolver().query(Seasons.buildFromShowId(showId), new String[] {
-          Seasons._ID,
+      Cursor allSeasons = getContentResolver().query(Seasons.fromShow(showId), new String[] {
+          SeasonColumns.ID,
       }, null, null, null);
       while (allSeasons.moveToNext()) {
-        final long seasonId = allSeasons.getLong(allSeasons.getColumnIndex(Seasons._ID));
+        final long seasonId = allSeasons.getLong(allSeasons.getColumnIndex(SeasonColumns.ID));
         if (!seasonIds.contains(seasonId)) {
-          getContentResolver().delete(Seasons.buildFromId(seasonId), null, null);
+          getContentResolver().delete(Seasons.withId(seasonId), null, null);
         }
       }
       allSeasons.close();

@@ -29,7 +29,7 @@ import android.widget.AdapterView;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.remote.PriorityQueue;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
@@ -89,7 +89,7 @@ public abstract class MoviesFragment extends AbsAdapterFragment
   @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
     Cursor c = (Cursor) getAdapter().getItem(position);
     navigationListener.onDisplayMovie(id,
-        c.getString(c.getColumnIndex(CathodeContract.Movies.TITLE)));
+        c.getString(c.getColumnIndex(MovieColumns.TITLE)));
   }
 
   protected CursorAdapter getAdapter(Cursor cursor) {

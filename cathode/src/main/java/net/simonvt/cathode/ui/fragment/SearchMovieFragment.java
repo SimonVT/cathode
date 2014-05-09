@@ -42,7 +42,8 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.MovieSearchResult;
 import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.event.SearchFailureEvent;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
@@ -56,8 +57,8 @@ public class SearchMovieFragment extends AbsAdapterFragment
     implements LoaderManager.LoaderCallbacks<Cursor>, ListDialog.Callback {
 
   private enum SortBy {
-    TITLE("title", CathodeContract.Movies.SORT_TITLE),
-    RATING("rating", CathodeContract.Movies.SORT_RATING),
+    TITLE("title", Movies.SORT_TITLE),
+    RATING("rating", Movies.SORT_RATING),
     RELEVANCE("relevance", null);
 
     private String key;
@@ -240,8 +241,7 @@ public class SearchMovieFragment extends AbsAdapterFragment
 
   @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
     Cursor c = (Cursor) getAdapter().getItem(position);
-    navigationListener.onDisplayMovie(id,
-        c.getString(c.getColumnIndex(CathodeContract.Movies.TITLE)));
+    navigationListener.onDisplayMovie(id, c.getString(c.getColumnIndex(MovieColumns.TITLE)));
   }
 
   @Subscribe public void onSearchEvent(MovieSearchResult result) {
@@ -274,7 +274,7 @@ public class SearchMovieFragment extends AbsAdapterFragment
 
   @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
     StringBuilder where = new StringBuilder();
-    where.append(CathodeContract.Movies._ID).append(" in (");
+    where.append(MovieColumns.ID).append(" in (");
     final int showCount = searchMovieIds.size();
     String[] ids = new String[showCount];
     for (int i = 0; i < showCount; i++) {
@@ -287,8 +287,9 @@ public class SearchMovieFragment extends AbsAdapterFragment
     }
     where.append(")");
 
-    CursorLoader loader = new CursorLoader(getActivity(), CathodeContract.Movies.CONTENT_URI,
-        MovieSearchAdapter.PROJECTION, where.toString(), ids, sortBy.getSortOrder());
+    CursorLoader loader =
+        new CursorLoader(getActivity(), Movies.MOVIES, MovieSearchAdapter.PROJECTION,
+            where.toString(), ids, sortBy.getSortOrder());
     loader.setUpdateThrottle(2000);
     return loader;
   }

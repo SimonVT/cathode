@@ -22,7 +22,6 @@ allprojects {
   }
 }
 
-
 ext {
   versionMajor = 1
   versionMinor = 3
@@ -42,6 +41,8 @@ ext {
 ext.libraries = [
     menudrawer: 'net.simonvt.menudrawer:menudrawer:3.0.6',
     messagebar: 'net.simonvt.messagebar:messagebar:1.0.2',
+    schematic: 'net.simonvt.schematic:schematic:0.5.1',
+    schematiccompiler: 'net.simonvt.schematic:schematic-compiler:0.5.1',
 
     gson: 'com.google.code.gson:gson:2.2.4',
 

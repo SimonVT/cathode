@@ -23,13 +23,14 @@ import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.api.ResponseParser;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.entity.Response;
 import net.simonvt.cathode.api.service.ShowService;
-import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeProvider;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
@@ -55,7 +56,7 @@ public class SyncSeasonTask extends TraktTask {
       throws RemoteException, OperationApplicationException {
     ops.add(op);
     if (ops.size() >= 50) {
-      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
+      getContentResolver().applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
       ops.clear();
     }
   }
@@ -99,21 +100,21 @@ public class SyncSeasonTask extends TraktTask {
 
           ContentProviderOperation.Builder builder;
           if (exists) {
-            builder = ContentProviderOperation.newUpdate(CathodeContract.Episodes.buildFromId(id));
+            builder = ContentProviderOperation.newUpdate(Episodes.withId(id));
           } else {
-            builder = ContentProviderOperation.newInsert(CathodeContract.Episodes.CONTENT_URI);
+            builder = ContentProviderOperation.newInsert(Episodes.EPISODES);
           }
 
           ContentValues cv = EpisodeWrapper.getEpisodeCVs(summary);
-          cv.put(CathodeContract.Episodes.SHOW_ID, showId);
-          cv.put(CathodeContract.Episodes.SEASON_ID, seasonId);
+          cv.put(EpisodeColumns.SHOW_ID, showId);
+          cv.put(EpisodeColumns.SEASON_ID, seasonId);
           builder.withValues(cv);
 
           addOp(ops, builder.build());
         }
       }
 
-      resolver.applyBatch(CathodeProvider.AUTHORITY, ops);
+      resolver.applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
 
       postOnSuccess();
     } catch (RemoteException e) {

@@ -19,7 +19,8 @@ import android.database.Cursor;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.ShowBody;
 import net.simonvt.cathode.api.service.ShowService;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
 
@@ -42,15 +43,14 @@ public class ShowWatchedTask extends TraktTask {
     } else {
       // Trakt doesn't expose an unseen api..
       final long showId = ShowWrapper.getShowId(getContentResolver(), tvdbId);
-      Cursor c = getContentResolver()
-          .query(CathodeContract.Episodes.buildFromShowId(showId), new String[] {
-              CathodeContract.Episodes.SEASON, CathodeContract.Episodes.EPISODE,
-          }, null, null, null);
+      Cursor c = getContentResolver().query(Episodes.fromShow(showId), new String[] {
+          EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
+      }, null, null, null);
 
       while (c.moveToNext()) {
-        queuePriorityTask(new EpisodeWatchedTask(tvdbId,
-            c.getInt(c.getColumnIndex(CathodeContract.Episodes.SEASON)),
-            c.getInt(c.getColumnIndex(CathodeContract.Episodes.EPISODE)), false));
+        queuePriorityTask(
+            new EpisodeWatchedTask(tvdbId, c.getInt(c.getColumnIndex(EpisodeColumns.SEASON)),
+                c.getInt(c.getColumnIndex(EpisodeColumns.EPISODE)), false));
       }
 
       c.close();

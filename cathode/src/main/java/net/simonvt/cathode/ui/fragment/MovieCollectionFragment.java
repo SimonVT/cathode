@@ -24,7 +24,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.ui.BaseActivity;
 
 public class MovieCollectionFragment extends MoviesFragment {
@@ -44,8 +45,9 @@ public class MovieCollectionFragment extends MoviesFragment {
   }
 
   @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-    CursorLoader loader = new CursorLoader(getActivity(), CathodeContract.Movies.CONTENT_URI, null,
-        CathodeContract.Movies.IN_COLLECTION, null, CathodeContract.Movies.DEFAULT_SORT);
+    CursorLoader loader =
+        new CursorLoader(getActivity(), Movies.MOVIES, null, MovieColumns.IN_COLLECTION, null,
+            Movies.DEFAULT_SORT);
     loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return loader;
   }

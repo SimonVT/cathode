@@ -19,6 +19,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.MergeCursor;
 import android.support.v4.content.AsyncTaskLoader;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.util.DateUtils;
 
 public class WatchedLoader extends AsyncTaskLoader<Cursor> {
@@ -36,10 +40,9 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
   }
 
   @Override public Cursor loadInBackground() {
-    Cursor show = getContext().getContentResolver()
-        .query(CathodeContract.Shows.buildFromId(showId), new String[] {
-            CathodeContract.Shows.WATCHING,
-        }, null, null, null);
+    Cursor show = getContext().getContentResolver().query(Shows.withId(showId), new String[] {
+        ShowColumns.WATCHING,
+    }, null, null, null);
     show.moveToFirst();
     final boolean watching = show.getInt(0) == 1;
     show.close();
@@ -47,22 +50,19 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
     Cursor toWatch;
     if (watching) {
       toWatch = getContext().getContentResolver()
-          .query(CathodeContract.Episodes.buildFromShowId(showId), null,
-              CathodeContract.Episodes.WATCHING + "=1", null, null);
+          .query(Episodes.fromShow(showId), null, EpisodeColumns.WATCHING + "=1", null, null);
     } else {
       toWatch = getContext().getContentResolver()
-          .query(CathodeContract.Episodes.buildFromShowId(showId), null,
-              CathodeContract.Episodes.WATCHED
+          .query(Episodes.fromShow(showId), null, EpisodeColumns.WATCHED
                   + "=0 AND "
-                  + CathodeContract.Episodes.FIRST_AIRED
+                  + EpisodeColumns.FIRST_AIRED
                   + ">"
                   + DateUtils.YEAR_IN_SECONDS
                   + " AND "
-                  + CathodeContract.Episodes.SEASON
-                  + ">0", null, CathodeContract.Episodes.SEASON
-              + " ASC, "
-              + CathodeContract.Episodes.EPISODE
-              + " ASC LIMIT 1");
+                  + EpisodeColumns.SEASON
+                  + ">0", null,
+              EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1"
+          );
     }
     toWatch.registerContentObserver(observer);
     if (toWatch.getCount() == 0) {
@@ -70,11 +70,9 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
     }
 
     Cursor lastWatched = getContext().getContentResolver()
-        .query(CathodeContract.Episodes.buildFromShowId(showId), null,
-            CathodeContract.Episodes.WATCHED + "=1", null, CathodeContract.Episodes.SEASON
-            + " DESC, "
-            + CathodeContract.Episodes.EPISODE
-            + " DESC LIMIT 1");
+        .query(Episodes.fromShow(showId), null, EpisodeColumns.WATCHED + "=1", null,
+            EpisodeColumns.SEASON + " DESC, " + EpisodeColumns.EPISODE + " DESC LIMIT 1"
+        );
     lastWatched.registerContentObserver(observer);
     lastWatched.getCount();
 

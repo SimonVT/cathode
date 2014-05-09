@@ -19,6 +19,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.MergeCursor;
 import android.support.v4.content.AsyncTaskLoader;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.util.DateUtils;
 
 public class CollectLoader extends AsyncTaskLoader<Cursor> {
@@ -39,29 +41,25 @@ public class CollectLoader extends AsyncTaskLoader<Cursor> {
 
   @Override public Cursor loadInBackground() {
     Cursor toCollect = getContext().getContentResolver()
-        .query(CathodeContract.Episodes.buildFromShowId(showId), null,
-            CathodeContract.Episodes.IN_COLLECTION
+        .query(Episodes.fromShow(showId), null, EpisodeColumns.IN_COLLECTION
                 + "=0 AND "
-                + CathodeContract.Episodes.FIRST_AIRED
+                + EpisodeColumns.FIRST_AIRED
                 + ">"
                 + DateUtils.YEAR_IN_SECONDS
                 + " AND "
-                + CathodeContract.Episodes.SEASON
-                + ">0", null, CathodeContract.Episodes.SEASON
-            + " ASC, "
-            + CathodeContract.Episodes.EPISODE
-            + " ASC LIMIT 1");
+                + EpisodeColumns.SEASON
+                + ">0", null,
+            EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1"
+        );
     toCollect.registerContentObserver(observer);
     if (toCollect.getCount() == 0) {
       return toCollect;
     }
 
     Cursor lastCollected = getContext().getContentResolver()
-        .query(CathodeContract.Episodes.buildFromShowId(showId), null,
-            CathodeContract.Episodes.IN_COLLECTION + "=1", null, CathodeContract.Episodes.SEASON
-            + " DESC, "
-            + CathodeContract.Episodes.EPISODE
-            + " DESC LIMIT 1");
+        .query(Episodes.fromShow(showId), null, EpisodeColumns.IN_COLLECTION + "=1", null,
+            EpisodeColumns.SEASON + " DESC, " + EpisodeColumns.EPISODE + " DESC LIMIT 1"
+        );
     lastCollected.registerContentObserver(observer);
     lastCollected.getCount();
 

@@ -22,21 +22,23 @@ import android.database.Cursor;
 import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-import net.simonvt.cathode.provider.CathodeContract.Episodes;
-import net.simonvt.cathode.provider.CathodeContract.MovieActors;
-import net.simonvt.cathode.provider.CathodeContract.MovieDirectors;
-import net.simonvt.cathode.provider.CathodeContract.MovieGenres;
-import net.simonvt.cathode.provider.CathodeContract.MovieProducers;
-import net.simonvt.cathode.provider.CathodeContract.MovieTopWatchers;
-import net.simonvt.cathode.provider.CathodeContract.MovieWriters;
-import net.simonvt.cathode.provider.CathodeContract.Movies;
-import net.simonvt.cathode.provider.CathodeContract.Seasons;
-import net.simonvt.cathode.provider.CathodeContract.ShowActor;
-import net.simonvt.cathode.provider.CathodeContract.ShowGenres;
-import net.simonvt.cathode.provider.CathodeContract.ShowTopWatchers;
-import net.simonvt.cathode.provider.CathodeContract.Shows;
-import net.simonvt.cathode.provider.CathodeContract.TopEpisodes;
-import net.simonvt.cathode.provider.CathodeProvider;
+import net.simonvt.cathode.BuildConfig;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.MovieActors;
+import net.simonvt.cathode.provider.ProviderSchematic.MovieDirectors;
+import net.simonvt.cathode.provider.ProviderSchematic.MovieGenres;
+import net.simonvt.cathode.provider.ProviderSchematic.MovieProducers;
+import net.simonvt.cathode.provider.ProviderSchematic.MovieTopWatchers;
+import net.simonvt.cathode.provider.ProviderSchematic.MovieWriters;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
+import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
+import net.simonvt.cathode.provider.ProviderSchematic.ShowActors;
+import net.simonvt.cathode.provider.ProviderSchematic.ShowGenres;
+import net.simonvt.cathode.provider.ProviderSchematic.ShowTopEpisodes;
+import net.simonvt.cathode.provider.ProviderSchematic.ShowTopWatchers;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.util.MovieSearchHandler;
 import net.simonvt.cathode.util.ShowSearchHandler;
@@ -46,29 +48,29 @@ public class PurgeTask extends TraktTask {
 
   @Override protected void doTask() {
 
-    String showsWhere = Shows.WATCHED_COUNT
+    String showsWhere = ShowColumns.WATCHED_COUNT
         + "=0 AND "
-        + Shows.IN_COLLECTION_COUNT
+        + ShowColumns.IN_COLLECTION_COUNT
         + "=0 AND "
-        + Shows.IN_WATCHLIST_COUNT
+        + ShowColumns.IN_WATCHLIST_COUNT
         + "=0 AND "
-        + Shows.IN_WATCHLIST
+        + ShowColumns.IN_WATCHLIST
         + "=0 AND "
         + Shows.getWatchingQuery()
         + "=0 AND "
-        + Shows.RECOMMENDATION_INDEX
+        + ShowColumns.RECOMMENDATION_INDEX
         + "=-1 AND "
-        + Shows.TRENDING_INDEX
+        + ShowColumns.TRENDING_INDEX
         + "=-1";
 
-    Cursor shows = getContentResolver().query(Shows.CONTENT_URI, new String[] {
-        Shows._ID, Shows.TITLE,
+    Cursor shows = getContentResolver().query(Shows.SHOWS, new String[] {
+        ShowColumns.ID, ShowColumns.TITLE,
     }, showsWhere, null, null);
 
     List<Long> showIds = new ArrayList<Long>();
     while (shows.moveToNext()) {
-      final long id = shows.getLong(shows.getColumnIndex(Shows._ID));
-      final String title = shows.getString(shows.getColumnIndex(Shows.TITLE));
+      final long id = shows.getLong(shows.getColumnIndex(ShowColumns.ID));
+      final String title = shows.getString(shows.getColumnIndex(ShowColumns.TITLE));
       Timber.d("Purging " + title);
       showIds.add(id);
     }
@@ -83,51 +85,51 @@ public class PurgeTask extends TraktTask {
     ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
     for (Long id : showIds) {
       ContentProviderOperation op =
-          ContentProviderOperation.newDelete(Episodes.buildFromShowId(id)).build();
+          ContentProviderOperation.newDelete(Episodes.fromShow(id)).build();
       ops.add(op);
-      op = ContentProviderOperation.newDelete(Seasons.buildFromShowId(id)).build();
+      op = ContentProviderOperation.newDelete(Seasons.fromShow(id)).build();
       ops.add(op);
-      op = ContentProviderOperation.newDelete(ShowTopWatchers.buildFromShowId(id)).build();
+      op = ContentProviderOperation.newDelete(ShowTopWatchers.fromShow(id)).build();
       ops.add(op);
-      op = ContentProviderOperation.newDelete(TopEpisodes.buildFromShowId(id)).build();
+      op = ContentProviderOperation.newDelete(ShowTopEpisodes.fromShow(id)).build();
       ops.add(op);
-      op = ContentProviderOperation.newDelete(ShowActor.buildFromShowId(id)).build();
+      op = ContentProviderOperation.newDelete(ShowActors.fromShow(id)).build();
       ops.add(op);
-      op = ContentProviderOperation.newDelete(ShowGenres.buildFromShowId(id)).build();
+      op = ContentProviderOperation.newDelete(ShowGenres.fromShow(id)).build();
       ops.add(op);
-      op = ContentProviderOperation.newDelete(Shows.buildFromId(id)).build();
+      op = ContentProviderOperation.newDelete(Shows.withId(id)).build();
       ops.add(op);
     }
 
     try {
-      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
+      getContentResolver().applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
     } catch (RemoteException e) {
       Timber.e(e, "Batch delete failed");
     } catch (OperationApplicationException e) {
       Timber.e(e, "Batch delete failed");
     }
 
-    String moviesWhere = Movies.WATCHED
+    String moviesWhere = MovieColumns.WATCHED
         + "=0 AND "
-        + Movies.IN_COLLECTION
+        + MovieColumns.IN_COLLECTION
         + "=0 AND "
-        + Movies.IN_WATCHLIST
+        + MovieColumns.IN_WATCHLIST
         + "=0 AND "
-        + Movies.WATCHING
+        + MovieColumns.WATCHING
         + "=0 AND "
-        + Movies.RECOMMENDATION_INDEX
+        + MovieColumns.RECOMMENDATION_INDEX
         + "=-1 AND "
-        + Movies.TRENDING_INDEX
+        + MovieColumns.TRENDING_INDEX
         + "=-1";
 
-    Cursor movies = getContentResolver().query(Movies.CONTENT_URI, new String[] {
-        Movies._ID, Movies.TITLE,
+    Cursor movies = getContentResolver().query(Movies.MOVIES, new String[] {
+        MovieColumns.ID, MovieColumns.TITLE,
     }, moviesWhere, null, null);
 
     List<Long> movieIds = new ArrayList<Long>();
     while (movies.moveToNext()) {
-      final long id = movies.getLong(movies.getColumnIndex(Movies._ID));
-      final String title = movies.getString(movies.getColumnIndex(Movies.TITLE));
+      final long id = movies.getLong(movies.getColumnIndex(MovieColumns.ID));
+      final String title = movies.getString(movies.getColumnIndex(MovieColumns.TITLE));
       Timber.d("Purging " + title);
       movieIds.add(id);
     }
@@ -141,25 +143,24 @@ public class PurgeTask extends TraktTask {
 
     ops = new ArrayList<ContentProviderOperation>();
     for (Long id : movieIds) {
-      ContentProviderOperation op =
-          ContentProviderOperation.newDelete(Movies.buildFromId(id)).build();
+      ContentProviderOperation op = ContentProviderOperation.newDelete(Movies.withId(id)).build();
       ops.add(op);
-      op = ContentProviderOperation.newDelete(MovieGenres.buildFromMovieId(id)).build();
+      op = ContentProviderOperation.newDelete(MovieGenres.fromMovie(id)).build();
       ops.add(op);
-      op = ContentProviderOperation.newDelete(MovieTopWatchers.buildFromMovieId(id)).build();
+      op = ContentProviderOperation.newDelete(MovieTopWatchers.fromMovie(id)).build();
       ops.add(op);
-      op = ContentProviderOperation.newDelete(MovieActors.buildFromMovieId(id)).build();
+      op = ContentProviderOperation.newDelete(MovieActors.fromMovie(id)).build();
       ops.add(op);
-      op = ContentProviderOperation.newDelete(MovieDirectors.buildFromMovieId(id)).build();
+      op = ContentProviderOperation.newDelete(MovieDirectors.fromMovie(id)).build();
       ops.add(op);
-      op = ContentProviderOperation.newDelete(MovieWriters.buildFromMovieId(id)).build();
+      op = ContentProviderOperation.newDelete(MovieWriters.fromMovie(id)).build();
       ops.add(op);
-      op = ContentProviderOperation.newDelete(MovieProducers.buildFromMovieId(id)).build();
+      op = ContentProviderOperation.newDelete(MovieProducers.fromMovie(id)).build();
       ops.add(op);
     }
 
     try {
-      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
+      getContentResolver().applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
     } catch (RemoteException e) {
       Timber.e(e, "Batch delete failed");
     } catch (OperationApplicationException e) {

@@ -22,7 +22,8 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.enumeration.DetailLevel;
 import net.simonvt.cathode.api.service.UserService;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.TraktTask;
 
@@ -31,9 +32,9 @@ public class SyncMoviesWatchedTask extends TraktTask {
   @Inject transient UserService userService;
 
   @Override protected void doTask() {
-    Cursor c = getContentResolver().query(CathodeContract.Movies.CONTENT_URI, new String[] {
-        CathodeContract.Movies._ID,
-    }, CathodeContract.Movies.WATCHED, null, null);
+    Cursor c = getContentResolver().query(Movies.MOVIES, new String[] {
+        MovieColumns.ID,
+    }, MovieColumns.WATCHED, null, null);
 
     List<Long> movieIds = new ArrayList<Long>(c.getCount());
 

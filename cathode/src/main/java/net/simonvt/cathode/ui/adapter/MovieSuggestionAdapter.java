@@ -21,7 +21,10 @@ import android.os.AsyncTask;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.DatabaseContract.MovieSearchSuggestionsColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.MovieSearchSuggestions;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 
 public class MovieSuggestionAdapter extends SuggestionsAdapter {
 
@@ -65,10 +68,10 @@ public class MovieSuggestionAdapter extends SuggestionsAdapter {
 
     @Override protected Results doInBackground(Void... params) {
       Cursor previousQueries = context.getContentResolver()
-          .query(CathodeContract.SearchSuggestions.MOVIE_URI, null, null, null, null);
+          .query(MovieSearchSuggestions.MOVIE_SUGGESTIONS, null, null, null, null);
 
       final int queryIndex =
-          previousQueries.getColumnIndex(CathodeContract.SearchSuggestions.QUERY);
+          previousQueries.getColumnIndex(MovieSearchSuggestionsColumns.QUERY);
 
       List<Suggestion> queries = new ArrayList<Suggestion>();
       while (previousQueries.moveToNext()) {
@@ -77,15 +80,15 @@ public class MovieSuggestionAdapter extends SuggestionsAdapter {
       previousQueries.close();
 
       Cursor allMovies =
-          context.getContentResolver().query(CathodeContract.Movies.CONTENT_URI, new String[] {
-              CathodeContract.Movies._ID, CathodeContract.Movies.TITLE,
-          }, CathodeContract.Movies.IN_COLLECTION
+          context.getContentResolver().query(Movies.MOVIES, new String[] {
+              MovieColumns.ID, MovieColumns.TITLE,
+          }, MovieColumns.IN_COLLECTION
               + "=1 OR "
-              + CathodeContract.Movies.WATCHED
+              + MovieColumns.WATCHED
               + "=1", null, null);
 
-      final int titleIndex = allMovies.getColumnIndex(CathodeContract.Movies.TITLE);
-      final int idIndex = allMovies.getColumnIndex(CathodeContract.Movies._ID);
+      final int titleIndex = allMovies.getColumnIndex(MovieColumns.TITLE);
+      final int idIndex = allMovies.getColumnIndex(MovieColumns.ID);
 
       List<Suggestion> movies = new ArrayList<Suggestion>();
       while (allMovies.moveToNext()) {

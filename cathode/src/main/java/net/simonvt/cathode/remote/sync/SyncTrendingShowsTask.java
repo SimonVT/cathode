@@ -24,10 +24,11 @@ import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.TvShow;
 import net.simonvt.cathode.api.service.ShowsService;
-import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeProvider;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
 import timber.log.Timber;
@@ -43,11 +44,11 @@ public class SyncTrendingShowsTask extends TraktTask {
       List<TvShow> shows = showsService.trending();
 
       ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
-      Cursor c = resolver.query(CathodeContract.Shows.SHOWS_TRENDING, null, null, null, null);
+      Cursor c = resolver.query(Shows.SHOWS_TRENDING, null, null, null, null);
 
       List<Long> showIds = new ArrayList<Long>();
       while (c.moveToNext()) {
-        final long showId = c.getLong(c.getColumnIndex(CathodeContract.Shows._ID));
+        final long showId = c.getLong(c.getColumnIndex(ShowColumns.ID));
         showIds.add(showId);
       }
       c.close();
@@ -63,25 +64,22 @@ public class SyncTrendingShowsTask extends TraktTask {
         }
 
         ContentValues cv = new ContentValues();
-        cv.put(CathodeContract.Shows.TRENDING_INDEX, i);
+        cv.put(ShowColumns.TRENDING_INDEX, i);
         ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(CathodeContract.Shows.buildFromId(showId))
-                .withValues(cv)
-                .build();
+            ContentProviderOperation.newUpdate(Shows.withId(showId)).withValues(cv).build();
         ops.add(op);
 
         showIds.remove(showId);
       }
 
       for (Long showId : showIds) {
-        ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(CathodeContract.Shows.buildFromId(showId))
-                .withValue(CathodeContract.Shows.TRENDING_INDEX, -1)
-                .build();
+        ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(showId))
+            .withValue(ShowColumns.TRENDING_INDEX, -1)
+            .build();
         ops.add(op);
       }
 
-      resolver.applyBatch(CathodeProvider.AUTHORITY, ops);
+      resolver.applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
       postOnSuccess();
     } catch (RemoteException e) {
       Timber.e(e, "SyncTrendingShowsTask failed");

@@ -41,7 +41,8 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.MutableCursor;
 import net.simonvt.cathode.database.MutableCursorLoader;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.settings.Settings;
@@ -60,8 +61,8 @@ public class ShowRecommendationsFragment extends AbsAdapterFragment
     ShowRecommendationsAdapter.DismissListener, ListDialog.Callback {
 
   private enum SortBy {
-    RELEVANCE("relevance", CathodeContract.Shows.SORT_RECOMMENDED),
-    RATING("rating", CathodeContract.Shows.SORT_RATING);
+    RELEVANCE("relevance", Shows.SORT_RECOMMENDED),
+    RATING("rating", Shows.SORT_RATING);
 
     private String key;
 
@@ -182,7 +183,9 @@ public class ShowRecommendationsFragment extends AbsAdapterFragment
     switch (id) {
       case R.id.sort_relevance:
         sortBy = SortBy.RELEVANCE;
-        settings.edit().putString(Settings.SORT_SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey()).apply();
+        settings.edit()
+            .putString(Settings.SORT_SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey())
+            .apply();
         getLoaderManager().restartLoader(BaseActivity.LOADER_SHOWS_RECOMMENDATIONS, null, this);
         break;
 
@@ -196,7 +199,7 @@ public class ShowRecommendationsFragment extends AbsAdapterFragment
 
   @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
     Cursor c = (Cursor) getAdapter().getItem(position);
-    navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(CathodeContract.Shows.TITLE)),
+    navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)),
         LibraryType.WATCHED);
   }
 
@@ -236,7 +239,7 @@ public class ShowRecommendationsFragment extends AbsAdapterFragment
   }
 
   @Override public Loader<MutableCursor> onCreateLoader(int i, Bundle bundle) {
-    final Uri contentUri = CathodeContract.Shows.SHOWS_RECOMMENDED;
+    final Uri contentUri = Shows.SHOWS_RECOMMENDED;
     MutableCursorLoader cl =
         new MutableCursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION, null,
             null, sortBy.getSortOrder());

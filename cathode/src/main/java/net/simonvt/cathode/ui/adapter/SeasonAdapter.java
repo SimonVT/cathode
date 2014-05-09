@@ -30,7 +30,7 @@ import butterknife.InjectView;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
@@ -69,26 +69,23 @@ public class SeasonAdapter extends CursorAdapter {
   }
 
   @Override public void bindView(View view, Context context, Cursor cursor) {
-    final long id = cursor.getLong(cursor.getColumnIndexOrThrow(CathodeContract.Episodes._ID));
-    final String title =
-        cursor.getString(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.TITLE));
-    final int season = cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.SEASON));
-    final int episode =
-        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.EPISODE));
+    final long id = cursor.getLong(cursor.getColumnIndexOrThrow(EpisodeColumns.ID));
+    final String title = cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.TITLE));
+    final int season = cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.SEASON));
+    final int episode = cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.EPISODE));
     final boolean watched =
-        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.WATCHED)) == 1;
+        cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.WATCHED)) == 1;
     final boolean inCollection =
-        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.IN_COLLECTION)) == 1;
+        cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.IN_COLLECTION)) == 1;
     final boolean inWatchlist =
-        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.IN_WATCHLIST)) == 1;
+        cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.IN_WATCHLIST)) == 1;
     final boolean watching =
-        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.WATCHING)) == 1;
+        cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.WATCHING)) == 1;
     final boolean checkedIn =
-        cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.CHECKED_IN)) == 1;
+        cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.CHECKED_IN)) == 1;
     final long firstAired =
-        cursor.getLong(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.FIRST_AIRED));
-    final String screen =
-        cursor.getString(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.SCREEN));
+        cursor.getLong(cursor.getColumnIndexOrThrow(EpisodeColumns.FIRST_AIRED));
+    final String screen = cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.SCREEN));
 
     final ViewHolder vh = (ViewHolder) view.getTag();
 

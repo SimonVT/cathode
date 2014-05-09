@@ -21,8 +21,9 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.TvShow;
 import net.simonvt.cathode.api.service.UserService;
-import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeDatabase;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.DatabaseSchematic;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
 
@@ -31,15 +32,14 @@ public class SyncShowsWatchlistTask extends TraktTask {
   @Inject transient UserService userService;
 
   @Override protected void doTask() {
-    Cursor c =
-        getContentResolver().query(CathodeContract.Shows.SHOWS_WATCHLIST, new String[] {
-            CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows._ID,
-        }, null, null, null);
+    Cursor c = getContentResolver().query(Shows.SHOWS_WATCHLIST, new String[] {
+        DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
+    }, null, null, null);
 
     List<Long> showIds = new ArrayList<Long>();
 
     while (c.moveToNext()) {
-      showIds.add(c.getLong(c.getColumnIndex(CathodeContract.Shows._ID)));
+      showIds.add(c.getLong(c.getColumnIndex(ShowColumns.ID)));
     }
     c.close();
 

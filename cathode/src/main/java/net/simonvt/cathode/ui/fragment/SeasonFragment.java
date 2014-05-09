@@ -28,7 +28,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
@@ -100,14 +105,13 @@ public class SeasonFragment extends AbsAdapterFragment {
     getLoaderManager().initLoader(BaseActivity.LOADER_SEASON, null, episodesLoader);
 
     if (title == null) {
-      CursorLoader loader =
-          new CursorLoader(getActivity(), CathodeContract.Shows.buildFromId(showId), new String[] {
-              CathodeContract.Shows.TITLE,
-          }, null, null, null);
+      CursorLoader loader = new CursorLoader(getActivity(), Shows.withId(showId), new String[] {
+          ShowColumns.TITLE,
+      }, null, null, null);
       loader.registerListener(0, new Loader.OnLoadCompleteListener<Cursor>() {
         @Override public void onLoadComplete(Loader<Cursor> cursorLoader, Cursor cursor) {
           cursor.moveToFirst();
-          title = cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.TITLE));
+          title = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
 
           cursorLoader.stopLoading();
         }
@@ -118,13 +122,13 @@ public class SeasonFragment extends AbsAdapterFragment {
     if (seasonNumber == -1) {
       new Thread(new Runnable() {
         @Override public void run() {
-          Cursor c = getActivity().getContentResolver()
-              .query(CathodeContract.Seasons.buildFromShowId(showId), new String[] {
-                  CathodeContract.Seasons.SEASON,
+          Cursor c =
+              getActivity().getContentResolver().query(Seasons.fromShow(showId), new String[] {
+                  SeasonColumns.SEASON,
               }, null, null, null);
 
           if (c.moveToFirst()) {
-            seasonNumber = c.getInt(c.getColumnIndex(CathodeContract.Seasons.SEASON));
+            seasonNumber = c.getInt(c.getColumnIndex(SeasonColumns.SEASON));
           }
           c.close();
         }
@@ -156,8 +160,8 @@ public class SeasonFragment extends AbsAdapterFragment {
       new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
           CursorLoader cl =
-              new CursorLoader(getActivity(), CathodeContract.Episodes.buildFromSeasonId(seasonId),
-                  null, null, null, CathodeContract.Episodes.EPISODE + " ASC");
+              new CursorLoader(getActivity(), Episodes.fromSeason(seasonId), null, null, null,
+                  EpisodeColumns.EPISODE + " ASC");
           cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
           return cl;
         }

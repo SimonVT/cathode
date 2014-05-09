@@ -53,7 +53,7 @@
 
     <!-- Providers -->
     <provider
-        android:name="net.simonvt.cathode.provider.CathodeProvider"
+        android:name="net.simonvt.cathode.provider.generated.CathodeProvider"
         android:authorities="@string/authority_provider"
         android:exported="true"/>
 

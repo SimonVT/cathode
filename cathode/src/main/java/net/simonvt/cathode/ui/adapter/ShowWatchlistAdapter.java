@@ -28,8 +28,9 @@ import butterknife.InjectView;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeDatabase;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
@@ -47,25 +48,25 @@ public class ShowWatchlistAdapter extends BaseAdapter {
   }
 
   public static final String[] PROJECTION_SHOW = new String[] {
-      CathodeDatabase.Tables.SHOWS + "." + BaseColumns._ID,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.TITLE,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.OVERVIEW,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.POSTER,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.TVDB_ID,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.WATCHED_COUNT,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.IN_COLLECTION_COUNT,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.IN_WATCHLIST,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.RATING_PERCENTAGE,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.OVERVIEW,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.POSTER,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TVDB_ID,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.RATING_PERCENTAGE,
   };
 
   public static final String[] PROJECTION_EPISODE = new String[] {
-      CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes._ID,
-      CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.SCREEN,
-      CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.TITLE,
-      CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.FIRST_AIRED,
-      CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.SEASON,
-      CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.EPISODE,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.TITLE,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.ID,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SCREEN,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.TITLE,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SEASON,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.EPISODE,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
   };
 
   private static final int NO_POSITION = -1;
@@ -289,24 +290,24 @@ public class ShowWatchlistAdapter extends BaseAdapter {
 
         ShowViewHolder vh = (ShowViewHolder) v.getTag();
 
-        final long id = cursor.getLong(cursor.getColumnIndex(CathodeContract.Shows._ID));
+        final long id = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
         final boolean watched =
-            cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.WATCHED_COUNT)) > 0;
+            cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHED_COUNT)) > 0;
         final boolean inCollection =
-            cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.IN_COLLECTION_COUNT)) > 1;
+            cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT)) > 1;
         final boolean inWatchlist =
-            cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.IN_WATCHLIST)) == 1;
+            cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
         final int rating =
-            cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.RATING_PERCENTAGE));
+            cursor.getInt(cursor.getColumnIndex(ShowColumns.RATING_PERCENTAGE));
 
         vh.indicator.setWatched(watched);
         vh.indicator.setCollected(inCollection);
         vh.indicator.setInWatchlist(inWatchlist);
 
-        vh.poster.setImage(cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.POSTER)));
-        vh.title.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.TITLE)));
+        vh.poster.setImage(cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER)));
+        vh.title.setText(cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE)));
         vh.overview.setText(
-            cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.OVERVIEW)));
+            cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW)));
 
         vh.rating.setValue(rating);
 
@@ -340,17 +341,17 @@ public class ShowWatchlistAdapter extends BaseAdapter {
 
         EpisodeViewHolder vh = (EpisodeViewHolder) v.getTag();
 
-        final long id = cursor.getLong(cursor.getColumnIndex(CathodeContract.Episodes._ID));
+        final long id = cursor.getLong(cursor.getColumnIndex(EpisodeColumns.ID));
         final String posterUrl =
-            cursor.getString(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.SCREEN));
+            cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.SCREEN));
         final String title =
-            cursor.getString(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.TITLE));
+            cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.TITLE));
         final long firstAired =
-            cursor.getLong(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.FIRST_AIRED));
+            cursor.getLong(cursor.getColumnIndexOrThrow(EpisodeColumns.FIRST_AIRED));
         final int season =
-            cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.SEASON));
+            cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.SEASON));
         final int episode =
-            cursor.getInt(cursor.getColumnIndexOrThrow(CathodeContract.Episodes.EPISODE));
+            cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.EPISODE));
 
         vh.screen.setImage(posterUrl);
         vh.title.setText(title);

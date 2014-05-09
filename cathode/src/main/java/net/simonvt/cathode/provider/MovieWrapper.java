@@ -19,13 +19,25 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.BaseColumns;
 import java.util.List;
 import net.simonvt.cathode.api.entity.Images;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.entity.UserProfile;
-import net.simonvt.cathode.provider.CathodeContract.Movies;
+import net.simonvt.cathode.provider.DatabaseContract.MovieActorColumns;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.DatabaseContract.MovieDirectoryColumns;
+import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
+import net.simonvt.cathode.provider.DatabaseContract.MovieProducerColumns;
+import net.simonvt.cathode.provider.DatabaseContract.MovieTopWatcherColumns;
+import net.simonvt.cathode.provider.DatabaseContract.MovieWriterColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.MovieActors;
+import net.simonvt.cathode.provider.ProviderSchematic.MovieDirectors;
+import net.simonvt.cathode.provider.ProviderSchematic.MovieGenres;
+import net.simonvt.cathode.provider.ProviderSchematic.MovieProducers;
+import net.simonvt.cathode.provider.ProviderSchematic.MovieTopWatchers;
+import net.simonvt.cathode.provider.ProviderSchematic.MovieWriters;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.util.ApiUtils;
 import timber.log.Timber;
 
@@ -46,13 +58,13 @@ public final class MovieWrapper {
   }
 
   public static long getTmdbId(ContentResolver resolver, long movieId) {
-    Cursor c = resolver.query(Movies.buildFromId(movieId), new String[] {
-        CathodeContract.MovieColumns.TMDB_ID,
+    Cursor c = resolver.query(Movies.withId(movieId), new String[] {
+        MovieColumns.TMDB_ID,
     }, null, null, null);
 
     int tmdbId = -1;
     if (c.moveToFirst()) {
-      tmdbId = c.getInt(c.getColumnIndex(CathodeContract.MovieColumns.TMDB_ID));
+      tmdbId = c.getInt(c.getColumnIndex(MovieColumns.TMDB_ID));
     }
 
     c.close();
@@ -65,13 +77,13 @@ public final class MovieWrapper {
   }
 
   public static long getMovieId(ContentResolver resolver, long tmdbId) {
-    Cursor c = resolver.query(Movies.CONTENT_URI, new String[] {
-        BaseColumns._ID,
-    }, Movies.TMDB_ID + "=?", new String[] {
+    Cursor c = resolver.query(Movies.MOVIES, new String[] {
+        MovieColumns.ID,
+    }, MovieColumns.TMDB_ID + "=?", new String[] {
         String.valueOf(tmdbId),
     }, null);
 
-    long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(BaseColumns._ID));
+    long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(MovieColumns.ID));
 
     c.close();
 
@@ -81,9 +93,9 @@ public final class MovieWrapper {
   public static boolean exists(ContentResolver resolver, long tmdbId) {
     Cursor c = null;
     try {
-      c = resolver.query(Movies.CONTENT_URI, new String[] {
-          Movies._ID,
-      }, Movies.TMDB_ID + "=?", new String[] {
+      c = resolver.query(Movies.MOVIES, new String[] {
+          MovieColumns.ID,
+      }, MovieColumns.TMDB_ID + "=?", new String[] {
           String.valueOf(tmdbId),
       }, null);
 
@@ -98,15 +110,15 @@ public final class MovieWrapper {
 
     Cursor c = null;
     try {
-      c = resolver.query(Movies.CONTENT_URI, new String[] {
-          Movies.LAST_UPDATED,
-      }, Movies.TMDB_ID + "=?", new String[] {
+      c = resolver.query(Movies.MOVIES, new String[] {
+          MovieColumns.LAST_UPDATED,
+      }, MovieColumns.TMDB_ID + "=?", new String[] {
           String.valueOf(tmdbId),
       }, null);
 
       boolean exists = c.moveToFirst();
       if (exists) {
-        return lastUpdated > c.getLong(c.getColumnIndex(Movies.LAST_UPDATED));
+        return lastUpdated > c.getLong(c.getColumnIndex(MovieColumns.LAST_UPDATED));
       }
 
       return false;
@@ -130,7 +142,7 @@ public final class MovieWrapper {
   public static void updateMovie(ContentResolver resolver, Movie movie) {
     final long movieId = getMovieId(resolver, movie.getTmdbId());
     ContentValues cv = getContentValues(movie);
-    resolver.update(Movies.buildFromId(movieId), cv, null, null);
+    resolver.update(Movies.withId(movieId), cv, null, null);
 
     if (movie.getGenres() != null) insertGenres(resolver, movieId, movie.getGenres());
     if (movie.getPeople() != null) insertPeople(resolver, movieId, movie.getPeople());
@@ -142,8 +154,8 @@ public final class MovieWrapper {
   public static long insertMovie(ContentResolver resolver, Movie movie) {
     ContentValues cv = getContentValues(movie);
 
-    Uri uri = resolver.insert(Movies.CONTENT_URI, cv);
-    final long movieId = Long.valueOf(Movies.getMovieId(uri));
+    Uri uri = resolver.insert(Movies.MOVIES, cv);
+    final long movieId = Long.valueOf(Movies.getId(uri));
 
     if (movie.getGenres() != null) insertGenres(resolver, movieId, movie.getGenres());
     if (movie.getPeople() != null) insertPeople(resolver, movieId, movie.getPeople());
@@ -155,45 +167,45 @@ public final class MovieWrapper {
   }
 
   public static void insertGenres(ContentResolver resolver, long movieId, List<String> genres) {
-    resolver.delete(CathodeContract.MovieGenres.buildFromMovieId(movieId), null, null);
+    resolver.delete(MovieGenres.fromMovie(movieId), null, null);
 
     for (String genre : genres) {
       ContentValues cv = new ContentValues();
 
-      cv.put(CathodeContract.MovieGenres.MOVIE_ID, movieId);
-      cv.put(CathodeContract.MovieGenres.GENRE, genre);
+      cv.put(MovieGenreColumns.MOVIE_ID, movieId);
+      cv.put(MovieGenreColumns.GENRE, genre);
 
-      resolver.insert(CathodeContract.MovieGenres.buildFromMovieId(movieId), cv);
+      resolver.insert(MovieGenres.fromMovie(movieId), cv);
     }
   }
 
   public static void insertTopWatchers(ContentResolver resolver, long movieId,
       List<UserProfile> topWatchers) {
-    resolver.delete(CathodeContract.MovieTopWatchers.buildFromMovieId(movieId), null, null);
+    resolver.delete(MovieTopWatchers.fromMovie(movieId), null, null);
 
     for (UserProfile profile : topWatchers) {
       ContentValues cv = new ContentValues();
 
-      cv.put(CathodeContract.MovieTopWatchers.MOVIE_ID, movieId);
-      cv.put(CathodeContract.TopWatcherColumns.PLAYS, profile.getPlays());
-      cv.put(CathodeContract.TopWatcherColumns.USERNAME, profile.getUsername());
-      cv.put(CathodeContract.TopWatcherColumns.PROTECTED, profile.isProtected());
-      cv.put(CathodeContract.TopWatcherColumns.FULL_NAME, profile.getFullName());
-      cv.put(CathodeContract.TopWatcherColumns.GENDER,
+      cv.put(MovieTopWatcherColumns.MOVIE_ID, movieId);
+      cv.put(MovieTopWatcherColumns.PLAYS, profile.getPlays());
+      cv.put(MovieTopWatcherColumns.USERNAME, profile.getUsername());
+      cv.put(MovieTopWatcherColumns.PROTECTED, profile.isProtected());
+      cv.put(MovieTopWatcherColumns.FULL_NAME, profile.getFullName());
+      cv.put(MovieTopWatcherColumns.GENDER,
           profile.getGender() != null ? profile.getGender().toString() : null);
-      cv.put(CathodeContract.TopWatcherColumns.AGE, profile.getAge());
-      cv.put(CathodeContract.TopWatcherColumns.LOCATION, profile.getLocation());
-      cv.put(CathodeContract.TopWatcherColumns.ABOUT, profile.getAbout());
-      cv.put(CathodeContract.TopWatcherColumns.JOINED, profile.getJoined());
-      cv.put(CathodeContract.TopWatcherColumns.AVATAR, profile.getAvatar());
-      cv.put(CathodeContract.TopWatcherColumns.URL, profile.getUrl());
+      cv.put(MovieTopWatcherColumns.AGE, profile.getAge());
+      cv.put(MovieTopWatcherColumns.LOCATION, profile.getLocation());
+      cv.put(MovieTopWatcherColumns.ABOUT, profile.getAbout());
+      cv.put(MovieTopWatcherColumns.JOINED, profile.getJoined());
+      cv.put(MovieTopWatcherColumns.AVATAR, profile.getAvatar());
+      cv.put(MovieTopWatcherColumns.URL, profile.getUrl());
 
-      resolver.insert(CathodeContract.MovieTopWatchers.buildFromMovieId(movieId), cv);
+      resolver.insert(MovieTopWatchers.fromMovie(movieId), cv);
     }
   }
 
   private static void insertPeople(ContentResolver resolver, long movieId, Movie.People people) {
-    resolver.delete(CathodeContract.MovieDirectors.buildFromMovieId(movieId), null, null);
+    resolver.delete(MovieDirectors.fromMovie(movieId), null, null);
     List<Person> directors = people.getDirectors();
     for (Person person : directors) {
       if (person.getName() == null) {
@@ -201,16 +213,16 @@ public final class MovieWrapper {
         continue;
       }
       ContentValues cv = new ContentValues();
-      cv.put(CathodeContract.MovieDirectors.MOVIE_ID, movieId);
-      cv.put(CathodeContract.MovieDirectors.NAME, person.getName());
+      cv.put(MovieDirectoryColumns.MOVIE_ID, movieId);
+      cv.put(MovieDirectoryColumns.NAME, person.getName());
       if (!ApiUtils.isPlaceholder(person.getImages().getHeadshot())) {
-        cv.put(CathodeContract.MovieDirectors.HEADSHOT, person.getImages().getHeadshot());
+        cv.put(MovieDirectoryColumns.HEADSHOT, person.getImages().getHeadshot());
       }
 
-      resolver.insert(CathodeContract.MovieDirectors.buildFromMovieId(movieId), cv);
+      resolver.insert(MovieDirectors.fromMovie(movieId), cv);
     }
 
-    resolver.delete(CathodeContract.MovieWriters.buildFromMovieId(movieId), null, null);
+    resolver.delete(MovieWriters.fromMovie(movieId), null, null);
     List<Person> writers = people.getWriters();
     for (Person person : writers) {
       if (person.getName() == null) {
@@ -218,17 +230,17 @@ public final class MovieWrapper {
         continue;
       }
       ContentValues cv = new ContentValues();
-      cv.put(CathodeContract.MovieWriters.MOVIE_ID, movieId);
-      cv.put(CathodeContract.MovieWriters.NAME, person.getName());
+      cv.put(MovieWriterColumns.MOVIE_ID, movieId);
+      cv.put(MovieWriterColumns.NAME, person.getName());
       if (!ApiUtils.isPlaceholder(person.getImages().getHeadshot())) {
-        cv.put(CathodeContract.MovieWriters.HEADSHOT, person.getImages().getHeadshot());
+        cv.put(MovieWriterColumns.HEADSHOT, person.getImages().getHeadshot());
       }
-      cv.put(CathodeContract.MovieWriters.JOB, person.getJob());
+      cv.put(MovieWriterColumns.JOB, person.getJob());
 
-      resolver.insert(CathodeContract.MovieWriters.buildFromMovieId(movieId), cv);
+      resolver.insert(MovieWriters.fromMovie(movieId), cv);
     }
 
-    resolver.delete(CathodeContract.MovieProducers.buildFromMovieId(movieId), null, null);
+    resolver.delete(MovieProducers.fromMovie(movieId), null, null);
     List<Person> producers = people.getProducers();
     for (Person person : producers) {
       if (person.getName() == null) {
@@ -236,17 +248,17 @@ public final class MovieWrapper {
         continue;
       }
       ContentValues cv = new ContentValues();
-      cv.put(CathodeContract.MovieProducers.MOVIE_ID, movieId);
-      cv.put(CathodeContract.MovieProducers.NAME, person.getName());
+      cv.put(MovieProducerColumns.MOVIE_ID, movieId);
+      cv.put(MovieProducerColumns.NAME, person.getName());
       if (!ApiUtils.isPlaceholder(person.getImages().getHeadshot())) {
-        cv.put(CathodeContract.MovieProducers.HEADSHOT, person.getImages().getHeadshot());
+        cv.put(MovieProducerColumns.HEADSHOT, person.getImages().getHeadshot());
       }
-      cv.put(CathodeContract.MovieProducers.EXECUTIVE, person.isExecutive());
+      cv.put(MovieProducerColumns.EXECUTIVE, person.isExecutive());
 
-      resolver.insert(CathodeContract.MovieProducers.buildFromMovieId(movieId), cv);
+      resolver.insert(MovieProducers.fromMovie(movieId), cv);
     }
 
-    resolver.delete(CathodeContract.MovieActors.buildFromMovieId(movieId), null, null);
+    resolver.delete(MovieActors.fromMovie(movieId), null, null);
     List<Person> actors = people.getActors();
     for (Person person : actors) {
       if (person.getName() == null) {
@@ -254,81 +266,85 @@ public final class MovieWrapper {
         continue;
       }
       ContentValues cv = new ContentValues();
-      cv.put(CathodeContract.MovieActors.MOVIE_ID, movieId);
-      cv.put(CathodeContract.MovieActors.NAME, person.getName());
+      cv.put(MovieActorColumns.MOVIE_ID, movieId);
+      cv.put(MovieActorColumns.NAME, person.getName());
       if (!ApiUtils.isPlaceholder(person.getImages().getHeadshot())) {
-        cv.put(CathodeContract.MovieActors.HEADSHOT, person.getImages().getHeadshot());
+        cv.put(MovieActorColumns.HEADSHOT, person.getImages().getHeadshot());
       }
-      cv.put(CathodeContract.MovieActors.CHARACTER, person.getCharacter());
+      cv.put(MovieActorColumns.CHARACTER, person.getCharacter());
 
-      resolver.insert(CathodeContract.MovieActors.buildFromMovieId(movieId), cv);
+      resolver.insert(MovieActors.fromMovie(movieId), cv);
     }
   }
 
   private static ContentValues getContentValues(Movie movie) {
     ContentValues cv = new ContentValues();
 
-    cv.put(Movies.TITLE, movie.getTitle());
-    cv.put(Movies.YEAR, movie.getYear());
-    cv.put(Movies.RELEASED, movie.getReleased());
-    cv.put(Movies.URL, movie.getUrl());
-    cv.put(Movies.TRAILER, movie.getTrailer());
-    cv.put(Movies.RUNTIME, movie.getRuntime());
-    cv.put(Movies.TAGLINE, movie.getTagline());
-    cv.put(Movies.OVERVIEW, movie.getOverview());
-    cv.put(Movies.CERTIFICATION, movie.getCertification());
-    cv.put(Movies.IMDB_ID, movie.getImdbId());
-    cv.put(Movies.TMDB_ID, movie.getTmdbId());
-    cv.put(Movies.RT_ID, movie.getRtId());
-    cv.put(Movies.LAST_UPDATED, movie.getLastUpdated());
+    cv.put(MovieColumns.TITLE, movie.getTitle());
+    cv.put(MovieColumns.YEAR, movie.getYear());
+    cv.put(MovieColumns.RELEASED, movie.getReleased());
+    cv.put(MovieColumns.URL, movie.getUrl());
+    cv.put(MovieColumns.TRAILER, movie.getTrailer());
+    cv.put(MovieColumns.RUNTIME, movie.getRuntime());
+    cv.put(MovieColumns.TAGLINE, movie.getTagline());
+    cv.put(MovieColumns.OVERVIEW, movie.getOverview());
+    cv.put(MovieColumns.CERTIFICATION, movie.getCertification());
+    cv.put(MovieColumns.IMDB_ID, movie.getImdbId());
+    cv.put(MovieColumns.TMDB_ID, movie.getTmdbId());
+    cv.put(MovieColumns.RT_ID, movie.getRtId());
+    cv.put(MovieColumns.LAST_UPDATED, movie.getLastUpdated());
     if (movie.getImages() != null) {
       Images images = movie.getImages();
-      if (!ApiUtils.isPlaceholder(images.getPoster())) cv.put(Movies.POSTER, images.getPoster());
-      if (!ApiUtils.isPlaceholder(images.getFanart())) cv.put(Movies.FANART, images.getFanart());
+      if (!ApiUtils.isPlaceholder(images.getPoster())) {
+        cv.put(MovieColumns.POSTER, images.getPoster());
+      }
+      if (!ApiUtils.isPlaceholder(images.getFanart())) {
+        cv.put(MovieColumns.FANART, images.getFanart());
+      }
     }
     if (movie.getRatings() != null) {
-      cv.put(Movies.RATING_PERCENTAGE, movie.getRatings().getPercentage());
-      cv.put(Movies.RATING_VOTES, movie.getRatings().getVotes());
-      cv.put(Movies.RATING_LOVED, movie.getRatings().getLoved());
-      cv.put(Movies.RATING_HATED, movie.getRatings().getHated());
+      cv.put(MovieColumns.RATING_PERCENTAGE, movie.getRatings().getPercentage());
+      cv.put(MovieColumns.RATING_VOTES, movie.getRatings().getVotes());
+      cv.put(MovieColumns.RATING_LOVED, movie.getRatings().getLoved());
+      cv.put(MovieColumns.RATING_HATED, movie.getRatings().getHated());
     }
     if (movie.getStats() != null) {
-      cv.put(Movies.WATCHERS, movie.getStats().getWatchers());
-      cv.put(Movies.PLAYS, movie.getStats().getPlays());
-      cv.put(Movies.SCROBBLES, movie.getStats().getScrobbles());
-      cv.put(Movies.CHECKINS, movie.getStats().getCheckins());
+      cv.put(MovieColumns.WATCHERS, movie.getStats().getWatchers());
+      cv.put(MovieColumns.PLAYS, movie.getStats().getPlays());
+      cv.put(MovieColumns.SCROBBLES, movie.getStats().getScrobbles());
+      cv.put(MovieColumns.CHECKINS, movie.getStats().getCheckins());
     }
-    if (movie.isWatched() != null) cv.put(Movies.WATCHED, movie.isWatched());
-    cv.put(Movies.PLAYS, movie.getPlays());
-    if (movie.getRatingAdvanced() != null) cv.put(Movies.RATING, movie.getRatingAdvanced());
-    cv.put(Movies.IN_WATCHLIST, movie.isInWatchlist());
-    cv.put(Movies.IN_COLLECTION, movie.isInCollection());
+    if (movie.isWatched() != null) cv.put(MovieColumns.WATCHED, movie.isWatched());
+    cv.put(MovieColumns.PLAYS, movie.getPlays());
+    if (movie.getRatingAdvanced() != null) cv.put(MovieColumns.RATING, movie.getRatingAdvanced());
+    cv.put(MovieColumns.IN_WATCHLIST, movie.isInWatchlist());
+    cv.put(MovieColumns.IN_COLLECTION, movie.isInCollection());
 
     return cv;
   }
 
   public static void setWatched(ContentResolver resolver, long movieId, boolean isWatched) {
     ContentValues cv = new ContentValues();
-    cv.put(Movies.WATCHED, isWatched);
-    resolver.update(Movies.buildFromId(movieId), cv, null, null);
+    cv.put(MovieColumns.WATCHED, isWatched);
+    resolver.update(Movies.withId(movieId), cv, null, null);
   }
 
   public static void setIsInCollection(ContentResolver resolver, long movieId,
       boolean inCollection) {
     ContentValues cv = new ContentValues();
-    cv.put(Movies.IN_COLLECTION, inCollection);
-    resolver.update(Movies.buildFromId(movieId), cv, null, null);
+    cv.put(MovieColumns.IN_COLLECTION, inCollection);
+    resolver.update(Movies.withId(movieId), cv, null, null);
   }
 
   public static void setIsInWatchlist(ContentResolver resolver, long movieId, boolean inWatchlist) {
     ContentValues cv = new ContentValues();
-    cv.put(Movies.IN_WATCHLIST, inWatchlist);
-    resolver.update(Movies.buildFromId(movieId), cv, null, null);
+    cv.put(MovieColumns.IN_WATCHLIST, inWatchlist);
+    resolver.update(Movies.withId(movieId), cv, null, null);
   }
 
   public static void setRating(ContentResolver resolver, long movieId, int rating) {
     ContentValues cv = new ContentValues();
-    cv.put(Movies.RATING, rating);
-    resolver.update(Movies.buildFromId(movieId), cv, null, null);
+    cv.put(MovieColumns.RATING, rating);
+    resolver.update(Movies.withId(movieId), cv, null, null);
   }
 }

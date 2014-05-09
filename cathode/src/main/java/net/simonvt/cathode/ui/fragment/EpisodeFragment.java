@@ -40,7 +40,8 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.OnTitleChangedEvent;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.BaseActivity;
@@ -435,28 +436,26 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     if (cursor.moveToFirst()) {
       loaded = true;
 
-      episodeTitle = cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE));
+      episodeTitle = cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
       title.setText(episodeTitle);
-      overview.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.OVERVIEW)));
-      fanart.setImage(cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.SCREEN)));
+      overview.setText(cursor.getString(cursor.getColumnIndex(EpisodeColumns.OVERVIEW)));
+      fanart.setImage(cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREEN)));
       firstAired.setText(DateUtils.millisToString(getActivity(),
-          cursor.getLong(cursor.getColumnIndex(CathodeContract.Episodes.FIRST_AIRED)), true));
-      season = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.SEASON));
+          cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED)), true));
+      season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
 
-      watched = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.WATCHED)) == 1;
-      collected = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.IN_COLLECTION)) == 1;
-      inWatchlist =
-          cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.IN_WATCHLIST)) == 1;
-      watching = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.WATCHING)) == 1;
-      checkedIn = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.CHECKED_IN)) == 1;
+      watched = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.WATCHED)) == 1;
+      collected = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.IN_COLLECTION)) == 1;
+      inWatchlist = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.IN_WATCHLIST)) == 1;
+      watching = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.WATCHING)) == 1;
+      checkedIn = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.CHECKED_IN)) == 1;
 
       watchedView.setVisibility(watched ? View.VISIBLE : View.GONE);
       inCollectionView.setVisibility(collected ? View.VISIBLE : View.GONE);
       inWatchlistView.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
 
-      currentRating = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.RATING));
-      final int ratingAll =
-          cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.RATING_PERCENTAGE));
+      currentRating = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.RATING));
+      final int ratingAll = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.RATING_PERCENTAGE));
       rating.setValue(ratingAll);
 
       setContentVisible(true);
@@ -468,20 +467,18 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   }
 
   private static final String[] EPISODE_PROJECTION = new String[] {
-      CathodeContract.Episodes.TITLE, CathodeContract.Episodes.SCREEN,
-      CathodeContract.Episodes.OVERVIEW, CathodeContract.Episodes.FIRST_AIRED,
-      CathodeContract.Episodes.WATCHED, CathodeContract.Episodes.IN_COLLECTION,
-      CathodeContract.Episodes.IN_WATCHLIST, CathodeContract.Episodes.WATCHING,
-      CathodeContract.Episodes.CHECKED_IN, CathodeContract.Episodes.RATING,
-      CathodeContract.Episodes.RATING_PERCENTAGE, CathodeContract.Episodes.SEASON,
+      EpisodeColumns.TITLE, EpisodeColumns.SCREEN, EpisodeColumns.OVERVIEW,
+      EpisodeColumns.FIRST_AIRED, EpisodeColumns.WATCHED, EpisodeColumns.IN_COLLECTION,
+      EpisodeColumns.IN_WATCHLIST, EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN,
+      EpisodeColumns.RATING, EpisodeColumns.RATING_PERCENTAGE, EpisodeColumns.SEASON,
   };
 
   private LoaderManager.LoaderCallbacks<Cursor> episodeCallbacks =
       new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
           CursorLoader cl =
-              new CursorLoader(getActivity(), CathodeContract.Episodes.buildFromId(episodeId),
-                  EPISODE_PROJECTION, null, null, null);
+              new CursorLoader(getActivity(), Episodes.withId(episodeId), EPISODE_PROJECTION, null,
+                  null, null);
           cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
           return cl;
         }

@@ -18,7 +18,6 @@ package net.simonvt.cathode.ui.fragment;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -40,9 +39,16 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.OnTitleChangedEvent;
-import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeContract.Shows;
 import net.simonvt.cathode.provider.CollectLoader;
+import net.simonvt.cathode.provider.DatabaseContract;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowActorColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
+import net.simonvt.cathode.provider.ProviderSchematic.ShowActors;
+import net.simonvt.cathode.provider.ProviderSchematic.ShowGenres;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.WatchedLoader;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
@@ -73,19 +79,20 @@ public class ShowFragment extends ProgressFragment {
       "net.simonvt.cathode.ui.fragment.ShowFragment.ratingDialog";
 
   private static final String[] SHOW_PROJECTION = new String[] {
-      Shows.TITLE, Shows.YEAR, Shows.AIR_TIME, Shows.AIR_DAY, Shows.NETWORK, Shows.CERTIFICATION,
-      Shows.POSTER, Shows.FANART, Shows.RATING_PERCENTAGE, Shows.RATING, Shows.OVERVIEW,
-      Shows.IN_WATCHLIST, Shows.IN_COLLECTION_COUNT, Shows.WATCHED_COUNT, Shows.HIDDEN,
+      ShowColumns.TITLE, ShowColumns.YEAR, ShowColumns.AIR_TIME, ShowColumns.AIR_DAY,
+      ShowColumns.NETWORK, ShowColumns.CERTIFICATION, ShowColumns.POSTER, ShowColumns.FANART,
+      ShowColumns.RATING_PERCENTAGE, ShowColumns.RATING, ShowColumns.OVERVIEW,
+      ShowColumns.IN_WATCHLIST, ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT,
+      ShowColumns.HIDDEN,
   };
 
   private static final String[] EPISODE_PROJECTION = new String[] {
-      BaseColumns._ID, CathodeContract.Episodes.TITLE, CathodeContract.Episodes.SCREEN,
-      CathodeContract.Episodes.FIRST_AIRED, CathodeContract.Episodes.SEASON,
-      CathodeContract.Episodes.EPISODE,
+      EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.SCREEN, EpisodeColumns.FIRST_AIRED,
+      EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
   };
 
   private static final String[] GENRES_PROJECTION = new String[] {
-      CathodeContract.ShowGenres.GENRE,
+      ShowGenreColumns.GENRE,
   };
 
   private ShowsNavigationListener navigationCallbacks;
@@ -231,7 +238,7 @@ public class ShowFragment extends ProgressFragment {
       public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         Cursor c = (Cursor) seasonsAdapter.getItem(position);
         navigationCallbacks.onDisplaySeason(showId, id, showTitle,
-            c.getInt(c.getColumnIndex(CathodeContract.Seasons.SEASON)), type);
+            c.getInt(c.getColumnIndex(DatabaseContract.SeasonColumns.SEASON)), type);
       }
     });
 
@@ -437,30 +444,31 @@ public class ShowFragment extends ProgressFragment {
   private void updateShowView(final Cursor cursor) {
     if (cursor == null || !cursor.moveToFirst()) return;
 
-    String title = cursor.getString(cursor.getColumnIndex(Shows.TITLE));
+    String title = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
     if (!title.equals(showTitle)) {
       showTitle = title;
       bus.post(new OnTitleChangedEvent());
     }
-    final String airTime = cursor.getString(cursor.getColumnIndex(Shows.AIR_TIME));
-    final String airDay = cursor.getString(cursor.getColumnIndex(Shows.AIR_DAY));
-    final String network = cursor.getString(cursor.getColumnIndex(Shows.NETWORK));
-    final String certification = cursor.getString(cursor.getColumnIndex(Shows.CERTIFICATION));
-    final String posterUrl = cursor.getString(cursor.getColumnIndex(Shows.POSTER));
+    final String airTime = cursor.getString(cursor.getColumnIndex(ShowColumns.AIR_TIME));
+    final String airDay = cursor.getString(cursor.getColumnIndex(ShowColumns.AIR_DAY));
+    final String network = cursor.getString(cursor.getColumnIndex(ShowColumns.NETWORK));
+    final String certification = cursor.getString(cursor.getColumnIndex(ShowColumns.CERTIFICATION));
+    final String posterUrl = cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER));
     if (posterUrl != null) {
       poster.setImage(posterUrl);
     }
-    final String fanartUrl = cursor.getString(cursor.getColumnIndex(Shows.FANART));
+    final String fanartUrl = cursor.getString(cursor.getColumnIndex(ShowColumns.FANART));
     if (fanartUrl != null) {
       fanart.setImage(fanartUrl);
     }
-    currentRating = cursor.getInt(cursor.getColumnIndex(Shows.RATING));
-    final int ratingAll = cursor.getInt(cursor.getColumnIndex(Shows.RATING_PERCENTAGE));
-    final String overview = cursor.getString(cursor.getColumnIndex(Shows.OVERVIEW));
-    inWatchlist = cursor.getInt(cursor.getColumnIndex(Shows.IN_WATCHLIST)) == 1;
-    final int inCollectionCount = cursor.getInt(cursor.getColumnIndex(Shows.IN_COLLECTION_COUNT));
-    final int watchedCount = cursor.getInt(cursor.getColumnIndex(Shows.WATCHED_COUNT));
-    isHidden = cursor.getInt(cursor.getColumnIndex(Shows.HIDDEN)) == 1;
+    currentRating = cursor.getInt(cursor.getColumnIndex(ShowColumns.RATING));
+    final int ratingAll = cursor.getInt(cursor.getColumnIndex(ShowColumns.RATING_PERCENTAGE));
+    final String overview = cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW));
+    inWatchlist = cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
+    final int inCollectionCount =
+        cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT));
+    final int watchedCount = cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHED_COUNT));
+    isHidden = cursor.getInt(cursor.getColumnIndex(ShowColumns.HIDDEN)) == 1;
 
     rating.setValue(ratingAll);
 
@@ -481,7 +489,7 @@ public class ShowFragment extends ProgressFragment {
   private void updateGenreViews(final Cursor cursor) {
     if (cursor.getCount() > 0) {
       StringBuilder sb = new StringBuilder();
-      final int genreColumnIndex = cursor.getColumnIndex(CathodeContract.ShowGenres.GENRE);
+      final int genreColumnIndex = cursor.getColumnIndex(ShowGenreColumns.GENRE);
 
       cursor.moveToPosition(-1);
 
@@ -511,11 +519,11 @@ public class ShowFragment extends ProgressFragment {
       View v = LayoutInflater.from(getActivity()).inflate(R.layout.person, actors, false);
 
       RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
-      headshot.setImage(c.getString(c.getColumnIndex(CathodeContract.MovieActors.HEADSHOT)));
+      headshot.setImage(c.getString(c.getColumnIndex(ShowActorColumns.HEADSHOT)));
       TextView name = (TextView) v.findViewById(R.id.name);
-      name.setText(c.getString(c.getColumnIndex(CathodeContract.MovieActors.NAME)));
+      name.setText(c.getString(c.getColumnIndex(ShowActorColumns.NAME)));
       TextView character = (TextView) v.findViewById(R.id.job);
-      character.setText(c.getString(c.getColumnIndex(CathodeContract.MovieActors.CHARACTER)));
+      character.setText(c.getString(c.getColumnIndex(ShowActorColumns.CHARACTER)));
 
       actors.addView(v);
     }
@@ -526,28 +534,25 @@ public class ShowFragment extends ProgressFragment {
       toWatch.setVisibility(View.VISIBLE);
       watchTitle.setVisibility(View.VISIBLE);
 
-      toWatchId = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
-      toWatchTitle = cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE));
+      toWatchId = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
+      toWatchTitle = cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
 
       toWatchHolder.episodeTitle.setText(toWatchTitle);
 
-      final long airTime =
-          cursor.getLong(cursor.getColumnIndex(CathodeContract.Episodes.FIRST_AIRED));
+      final long airTime = cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED));
 
-      final int season = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.SEASON));
-      final int episode = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.EPISODE));
+      final int season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
+      final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
       toWatchHolder.episodeEpisode.setText("S" + season + "E" + episode);
 
-      final String bannerUrl =
-          cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.SCREEN));
+      final String bannerUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREEN));
       toWatchHolder.episodeBanner.setImage(bannerUrl);
 
       String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
 
-      final boolean watching =
-          cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.WATCHING)) == 1;
+      final boolean watching = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.WATCHING)) == 1;
       final boolean checkedIn =
-          cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.CHECKED_IN)) == 1;
+          cursor.getInt(cursor.getColumnIndex(EpisodeColumns.CHECKED_IN)) == 1;
 
       toWatchHolder.episodeOverflow.removeItems();
       if (checkedIn) {
@@ -570,22 +575,20 @@ public class ShowFragment extends ProgressFragment {
       if (cursor.moveToNext()) {
         lastWatched.setVisibility(View.VISIBLE);
 
-        lastWatchedId = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
+        lastWatchedId = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
 
         lastWatchedHolder.episodeTitle.setText(
-            cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE)));
+            cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE)));
 
-        final long airTime =
-            cursor.getLong(cursor.getColumnIndex(CathodeContract.Episodes.FIRST_AIRED));
+        final long airTime = cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED));
         final String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
         lastWatchedHolder.episodeAirTime.setText(airTimeStr);
 
-        final int season = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.SEASON));
-        final int episode = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.EPISODE));
+        final int season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
+        final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
         lastWatchedHolder.episodeEpisode.setText("S" + season + "E" + episode);
 
-        final String bannerUrl =
-            cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.SCREEN));
+        final String bannerUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREEN));
         lastWatchedHolder.episodeBanner.setImage(bannerUrl);
       } else {
         lastWatched.setVisibility(toWatchId == -1 ? View.GONE : View.INVISIBLE);
@@ -605,22 +608,20 @@ public class ShowFragment extends ProgressFragment {
       toCollect.setVisibility(View.VISIBLE);
       collectTitle.setVisibility(View.VISIBLE);
 
-      toCollectId = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
+      toCollectId = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
 
       toCollectHolder.episodeTitle.setText(
-          cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE)));
+          cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE)));
 
-      final long airTime =
-          cursor.getLong(cursor.getColumnIndex(CathodeContract.Episodes.FIRST_AIRED));
+      final long airTime = cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED));
       final String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
       toCollectHolder.episodeAirTime.setText(airTimeStr);
 
-      final int season = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.SEASON));
-      final int episode = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.EPISODE));
+      final int season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
+      final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
       toCollectHolder.episodeEpisode.setText("S" + season + "E" + episode);
 
-      final String bannerUrl =
-          cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.SCREEN));
+      final String bannerUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREEN));
       toCollectHolder.episodeBanner.setImage(bannerUrl);
     } else {
       toCollect.setVisibility(View.GONE);
@@ -632,22 +633,20 @@ public class ShowFragment extends ProgressFragment {
       if (cursor.moveToNext()) {
         lastCollected.setVisibility(View.VISIBLE);
 
-        lastCollectedId = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
+        lastCollectedId = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
 
         lastCollectedHolder.episodeTitle.setText(
-            cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE)));
+            cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE)));
 
-        final long airTime =
-            cursor.getLong(cursor.getColumnIndex(CathodeContract.Episodes.FIRST_AIRED));
+        final long airTime = cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED));
         final String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
         lastCollectedHolder.episodeAirTime.setText(airTimeStr);
 
-        final int season = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.SEASON));
-        final int episode = cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.EPISODE));
+        final int season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
+        final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
         lastCollectedHolder.episodeEpisode.setText("S" + season + "E" + episode);
 
-        final String bannerUrl =
-            cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.SCREEN));
+        final String bannerUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREEN));
         lastCollectedHolder.episodeBanner.setImage(bannerUrl);
       } else {
         lastCollectedId = -1;
@@ -666,8 +665,8 @@ public class ShowFragment extends ProgressFragment {
       new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
           CursorLoader cl =
-              new CursorLoader(getActivity(), Shows.buildFromId(showId), SHOW_PROJECTION, null,
-                  null, null);
+              new CursorLoader(getActivity(), Shows.withId(showId), SHOW_PROJECTION, null, null,
+                  null);
           cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
           return cl;
         }
@@ -684,8 +683,8 @@ public class ShowFragment extends ProgressFragment {
       new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
           CursorLoader cl =
-              new CursorLoader(getActivity(), CathodeContract.ShowGenres.buildFromShowId(showId),
-                  GENRES_PROJECTION, null, null, CathodeContract.ShowGenres.DEFAULT_SORT);
+              new CursorLoader(getActivity(), ShowGenres.fromShow(showId), GENRES_PROJECTION, null,
+                  null, ShowGenres.DEFAULT_SORT);
           cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
           return cl;
         }
@@ -698,22 +697,22 @@ public class ShowFragment extends ProgressFragment {
         }
       };
 
-  private LoaderManager.LoaderCallbacks<Cursor> actorsCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
-    @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-      CursorLoader cl =
-          new CursorLoader(getActivity(), CathodeContract.ShowActor.buildFromShowId(showId), null,
-              null, null, null);
-      cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
-      return cl;
-    }
+  private LoaderManager.LoaderCallbacks<Cursor> actorsCallback =
+      new LoaderManager.LoaderCallbacks<Cursor>() {
+        @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+          CursorLoader cl =
+              new CursorLoader(getActivity(), ShowActors.fromShow(showId), null, null, null, null);
+          cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
+          return cl;
+        }
 
-    @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-      updateActorViews(data);
-    }
+        @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+          updateActorViews(data);
+        }
 
-    @Override public void onLoaderReset(Loader<Cursor> loader) {
-    }
-  };
+        @Override public void onLoaderReset(Loader<Cursor> loader) {
+        }
+      };
 
   private LoaderManager.LoaderCallbacks<Cursor> episodeWatchCallbacks =
       new LoaderManager.LoaderCallbacks<Cursor>() {
@@ -747,8 +746,8 @@ public class ShowFragment extends ProgressFragment {
       new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
           CursorLoader cl =
-              new CursorLoader(getActivity(), CathodeContract.Seasons.buildFromShowId(showId),
-                  SeasonsAdapter.PROJECTION, null, null, CathodeContract.Seasons.DEFAULT_SORT);
+              new CursorLoader(getActivity(), Seasons.fromShow(showId), SeasonsAdapter.PROJECTION,
+                  null, null, Seasons.DEFAULT_SORT);
           cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
           return cl;
         }

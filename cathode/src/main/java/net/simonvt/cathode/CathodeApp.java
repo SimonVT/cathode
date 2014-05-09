@@ -48,7 +48,6 @@ import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.api.UserCredentials;
 import net.simonvt.cathode.api.util.TraktUtils;
 import net.simonvt.cathode.event.AuthFailedEvent;
-import net.simonvt.cathode.provider.CathodeProvider;
 import net.simonvt.cathode.remote.DeserializationFailedTask;
 import net.simonvt.cathode.remote.PriorityQueue;
 import net.simonvt.cathode.remote.TraktTask;
@@ -286,9 +285,9 @@ public class CathodeApp extends Application {
 
     manager.addAccountExplicitly(account, shaPassword, null);
 
-    ContentResolver.setIsSyncable(account, CathodeProvider.AUTHORITY, 1);
-    ContentResolver.setSyncAutomatically(account, CathodeProvider.AUTHORITY, true);
-    ContentResolver.addPeriodicSync(account, CathodeProvider.AUTHORITY, new Bundle(),
+    ContentResolver.setIsSyncable(account, BuildConfig.PROVIDER_AUTHORITY, 1);
+    ContentResolver.setSyncAutomatically(account, BuildConfig.PROVIDER_AUTHORITY, true);
+    ContentResolver.addPeriodicSync(account, BuildConfig.PROVIDER_AUTHORITY, new Bundle(),
         12 * DateUtils.HOUR_IN_SECONDS);
 
     ContentResolver.setIsSyncable(account, CalendarContract.AUTHORITY, 1);
@@ -302,7 +301,7 @@ public class CathodeApp extends Application {
     AccountManager am = AccountManager.get(context);
     Account[] accounts = am.getAccountsByType(context.getString(R.string.accountType));
     for (Account account : accounts) {
-      ContentResolver.removePeriodicSync(account, CathodeProvider.AUTHORITY, new Bundle());
+      ContentResolver.removePeriodicSync(account, BuildConfig.PROVIDER_AUTHORITY, new Bundle());
       ContentResolver.removePeriodicSync(account, CalendarContract.AUTHORITY, new Bundle());
       am.removeAccount(account, null, null);
     }

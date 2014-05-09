@@ -18,8 +18,8 @@ package net.simonvt.cathode.scheduler;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeContract.Movies;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.action.CancelMovieCheckinTask;
 import net.simonvt.cathode.remote.action.CheckInMovieTask;
@@ -91,14 +91,12 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
       final boolean twitter, final boolean tumblr, final boolean path, final boolean prowl) {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c = context.getContentResolver()
-            .query(CathodeContract.Movies.MOVIE_WATCHING, null, null, null, null);
+        Cursor c = context.getContentResolver().query(Movies.WATCHING, null, null, null, null);
 
         if (c.getCount() == 0) {
           ContentValues cv = new ContentValues();
-          cv.put(CathodeContract.Movies.CHECKED_IN, true);
-          context.getContentResolver()
-              .update(CathodeContract.Movies.buildFromId(movieId), cv, null, null);
+          cv.put(MovieColumns.CHECKED_IN, true);
+          context.getContentResolver().update(Movies.withId(movieId), cv, null, null);
 
           final long tmdbId = MovieWrapper.getTmdbId(context.getContentResolver(), movieId);
           queuePriorityTask(
@@ -114,17 +112,16 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
   public void cancelCheckin() {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c =
-            context.getContentResolver().query(CathodeContract.Movies.MOVIE_WATCHING, new String[] {
-                Movies.TMDB_ID,
-            }, null, null, null);
+        Cursor c = context.getContentResolver().query(Movies.WATCHING, new String[] {
+            MovieColumns.TMDB_ID,
+        }, null, null, null);
 
         if (c.moveToFirst()) {
-          final long tmdbId = c.getLong(c.getColumnIndex(CathodeContract.Movies.TMDB_ID));
+          final long tmdbId = c.getLong(c.getColumnIndex(MovieColumns.TMDB_ID));
 
           ContentValues cv = new ContentValues();
-          cv.put(CathodeContract.Movies.CHECKED_IN, false);
-          context.getContentResolver().update(CathodeContract.Movies.MOVIE_WATCHING, cv, null, null);
+          cv.put(MovieColumns.CHECKED_IN, false);
+          context.getContentResolver().update(Movies.WATCHING, cv, null, null);
 
           queuePriorityTask(new CancelMovieCheckinTask());
           queueTask(new SyncMovieTask(tmdbId));
@@ -140,9 +137,8 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
       @Override public void run() {
         final long tmdbId = MovieWrapper.getTmdbId(context.getContentResolver(), movieId);
         ContentValues cv = new ContentValues();
-        cv.put(CathodeContract.Movies.RECOMMENDATION_INDEX, -1);
-        context.getContentResolver()
-            .update(CathodeContract.Movies.buildFromId(movieId), cv, null, null);
+        cv.put(MovieColumns.RECOMMENDATION_INDEX, -1);
+        context.getContentResolver().update(Movies.withId(movieId), cv, null, null);
         queue.add(new DismissMovieRecommendation(tmdbId));
       }
     });
@@ -162,9 +158,8 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         final long tmdbId = MovieWrapper.getTmdbId(context.getContentResolver(), movieId);
 
         ContentValues cv = new ContentValues();
-        cv.put(CathodeContract.Movies.RATING, rating);
-        context.getContentResolver()
-            .update(CathodeContract.Movies.buildFromId(movieId), cv, null, null);
+        cv.put(MovieColumns.RATING, rating);
+        context.getContentResolver().update(Movies.withId(movieId), cv, null, null);
 
         queue.add(new MovieRateTask(tmdbId, rating));
       }

@@ -24,24 +24,24 @@ import android.view.ViewGroup;
 import butterknife.InjectView;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeDatabase;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.widget.IndicatorView;
 
 public class MovieSearchAdapter extends MoviesAdapter {
 
   public static final String[] PROJECTION = new String[] {
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies._ID,
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.TITLE,
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.OVERVIEW,
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.POSTER,
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.TMDB_ID,
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.WATCHED,
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.IN_COLLECTION,
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.IN_WATCHLIST,
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.RATING_PERCENTAGE,
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.WATCHING,
-      CathodeDatabase.Tables.MOVIES + "." + CathodeContract.Movies.CHECKED_IN,
+      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.ID,
+      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.TITLE,
+      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.OVERVIEW,
+      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.POSTER,
+      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.TMDB_ID,
+      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.WATCHED,
+      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.IN_COLLECTION,
+      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.IN_WATCHLIST,
+      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.RATING_PERCENTAGE,
+      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.WATCHING,
+      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.CHECKED_IN,
   };
 
   public MovieSearchAdapter(FragmentActivity activity, Cursor cursor) {
@@ -59,12 +59,11 @@ public class MovieSearchAdapter extends MoviesAdapter {
     super.bindView(view, context, cursor);
     ViewHolder vh = (ViewHolder) view.getTag();
 
-    final boolean watched =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.WATCHED)) == 1;
+    final boolean watched = cursor.getInt(cursor.getColumnIndex(MovieColumns.WATCHED)) == 1;
     final boolean inCollection =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.IN_COLLECTION)) == 1;
+        cursor.getInt(cursor.getColumnIndex(MovieColumns.IN_COLLECTION)) == 1;
     final boolean inWatchlist =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.IN_WATCHLIST)) == 1;
+        cursor.getInt(cursor.getColumnIndex(MovieColumns.IN_WATCHLIST)) == 1;
 
     vh.indicator.setWatched(watched);
     vh.indicator.setCollected(inCollection);

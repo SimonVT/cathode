@@ -20,7 +20,10 @@ import android.content.Context;
 import android.database.Cursor;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.action.CancelShowCheckinTask;
 import net.simonvt.cathode.remote.action.DismissShowRecommendation;
@@ -50,9 +53,8 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
     execute(new Runnable() {
       @Override public void run() {
         ContentValues cv = new ContentValues();
-        cv.put(CathodeContract.Shows.FULL_SYNC_REQUESTED, System.currentTimeMillis());
-        context.getContentResolver()
-            .update(CathodeContract.Shows.buildFromId(showId), cv, null, null);
+        cv.put(ShowColumns.FULL_SYNC_REQUESTED, System.currentTimeMillis());
+        context.getContentResolver().update(Shows.withId(showId), cv, null, null);
         final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
         queueTask(new SyncShowTask(tvdbId));
       }
@@ -62,22 +64,19 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
   public void watchedNext(final long showId) {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c = context.getContentResolver()
-            .query(CathodeContract.Episodes.buildFromShowId(showId), new String[] {
-                CathodeContract.Episodes._ID, CathodeContract.Episodes.SEASON,
-                CathodeContract.Episodes.EPISODE,
-            }, "watched=0 AND season<>0", null, CathodeContract.Episodes.SEASON
-                + " ASC, "
-                + CathodeContract.Episodes.EPISODE
-                + " ASC LIMIT 1");
+        Cursor c = context.getContentResolver().query(Episodes.fromShow(showId), new String[] {
+                EpisodeColumns.ID, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
+            }, "watched=0 AND season<>0", null,
+            EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1"
+        );
 
         if (c.moveToNext()) {
-          final long episodeId = c.getLong(c.getColumnIndexOrThrow(CathodeContract.Episodes._ID));
+          final long episodeId = c.getLong(c.getColumnIndexOrThrow(EpisodeColumns.ID));
           episodeScheduler.setWatched(episodeId, true);
 
           final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
-          final int season = c.getInt(c.getColumnIndexOrThrow(CathodeContract.Episodes.SEASON));
-          final int number = c.getInt(c.getColumnIndexOrThrow(CathodeContract.Episodes.EPISODE));
+          final int season = c.getInt(c.getColumnIndexOrThrow(EpisodeColumns.SEASON));
+          final int number = c.getInt(c.getColumnIndexOrThrow(EpisodeColumns.EPISODE));
           queuePriorityTask(new EpisodeWatchedTask(tvdbId, season, number, true));
         }
 
@@ -90,16 +89,16 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
   //  execute(new Runnable() {
   //    @Override public void run() {
   //      Cursor c = context.getContentResolver()
-  //          .query(CathodeContract.Episodes.buildFromShowId(showId), new String[] {
-  //              CathodeContract.Episodes._ID, CathodeContract.Episodes.SEASON,
-  //              CathodeContract.Episodes.EPISODE,
-  //          }, "watched=0 AND season<>0", null, CathodeContract.Episodes.SEASON
+  //          .query(CathodeContract.EpisodeColumns.buildFromShowId(showId), new String[] {
+  //              CathodeContract.EpisodeColumns.ID, CathodeContract.EpisodeColumns.SEASON,
+  //              CathodeContract.EpisodeColumns.EPISODE,
+  //          }, "watched=0 AND season<>0", null, CathodeContract.EpisodeColumns.SEASON
   //              + " ASC, "
-  //              + CathodeContract.Episodes.EPISODE
+  //              + CathodeContract.EpisodeColumns.EPISODE
   //              + " ASC LIMIT 1");
   //
   //      if (c.moveToNext()) {
-  //        final long episodeId = c.getLong(c.getColumnIndexOrThrow(CathodeContract.Episodes._ID));
+  //        final long episodeId = c.getLong(c.getColumnIndexOrThrow(CathodeContract.EpisodeColumns.ID));
   //        episodeScheduler.checkin(episodeId);
   //      }
   //
@@ -112,16 +111,14 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
     execute(new Runnable() {
       @Override public void run() {
         Cursor c = context.getContentResolver()
-            .query(CathodeContract.Episodes.CONTENT_URI, null,
-                CathodeContract.Episodes.CHECKED_IN + "=1", null, null);
+            .query(Episodes.EPISODES, null, EpisodeColumns.CHECKED_IN + "=1", null, null);
         if (c.moveToNext()) {
-          final long showId = c.getLong(c.getColumnIndex(CathodeContract.Episodes.SHOW_ID));
+          final long showId = c.getLong(c.getColumnIndex(EpisodeColumns.SHOW_ID));
           final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
 
           ContentValues cv = new ContentValues();
-          cv.put(CathodeContract.Episodes.CHECKED_IN, false);
-          context.getContentResolver()
-              .update(CathodeContract.Episodes.EPISODE_WATCHING, cv, null, null);
+          cv.put(EpisodeColumns.CHECKED_IN, false);
+          context.getContentResolver().update(Episodes.EPISODE_WATCHING, cv, null, null);
 
           queuePriorityTask(new CancelShowCheckinTask());
           queueTask(new SyncShowTask(tvdbId));
@@ -134,22 +131,19 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
   public void collectedNext(final long showId) {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c = context.getContentResolver()
-            .query(CathodeContract.Episodes.buildFromShowId(showId), new String[] {
-                CathodeContract.Episodes._ID, CathodeContract.Episodes.SEASON,
-                CathodeContract.Episodes.EPISODE,
-            }, "inCollection=0 AND season<>0", null, CathodeContract.Episodes.SEASON
-                + " ASC, "
-                + CathodeContract.Episodes.EPISODE
-                + " ASC LIMIT 1");
+        Cursor c = context.getContentResolver().query(Episodes.fromShow(showId), new String[] {
+                EpisodeColumns.ID, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
+            }, "inCollection=0 AND season<>0", null,
+            EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1"
+        );
 
         if (c.moveToNext()) {
-          final long episodeId = c.getLong(c.getColumnIndexOrThrow(CathodeContract.Episodes._ID));
+          final long episodeId = c.getLong(c.getColumnIndexOrThrow(EpisodeColumns.ID));
           episodeScheduler.setIsInCollection(episodeId, true);
 
           final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
-          final int season = c.getInt(c.getColumnIndexOrThrow(CathodeContract.Episodes.SEASON));
-          final int number = c.getInt(c.getColumnIndexOrThrow(CathodeContract.Episodes.EPISODE));
+          final int season = c.getInt(c.getColumnIndexOrThrow(EpisodeColumns.SEASON));
+          final int number = c.getInt(c.getColumnIndexOrThrow(EpisodeColumns.EPISODE));
           queuePriorityTask(new EpisodeCollectionTask(tvdbId, season, number, true));
         }
 
@@ -161,13 +155,12 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
   public void setWatched(final long showId, final boolean watched) {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c = context.getContentResolver()
-            .query(CathodeContract.Shows.buildFromId(showId), new String[] {
-                CathodeContract.Shows.TVDB_ID,
-            }, null, null, null);
+        Cursor c = context.getContentResolver().query(Shows.withId(showId), new String[] {
+            ShowColumns.TVDB_ID,
+        }, null, null, null);
 
         if (c.moveToFirst()) {
-          final int tvdbId = c.getInt(c.getColumnIndex(CathodeContract.Shows.TVDB_ID));
+          final int tvdbId = c.getInt(c.getColumnIndex(ShowColumns.TVDB_ID));
           ShowWrapper.setWatched(context.getContentResolver(), showId, watched);
           queue.add(new ShowWatchedTask(tvdbId, watched));
         }
@@ -180,17 +173,16 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
   public void setIsInWatchlist(final long showId, final boolean inWatchlist) {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c = context.getContentResolver()
-            .query(CathodeContract.Shows.buildFromId(showId), new String[] {
-                CathodeContract.Shows.TVDB_ID, CathodeContract.Shows.EPISODE_COUNT,
-            }, null, null, null);
+        Cursor c = context.getContentResolver().query(Shows.withId(showId), new String[] {
+            ShowColumns.TVDB_ID, ShowColumns.EPISODE_COUNT,
+        }, null, null, null);
 
         if (c.moveToFirst()) {
-          final int tvdbId = c.getInt(c.getColumnIndex(CathodeContract.Shows.TVDB_ID));
+          final int tvdbId = c.getInt(c.getColumnIndex(ShowColumns.TVDB_ID));
           ShowWrapper.setIsInWatchlist(context.getContentResolver(), showId, inWatchlist);
           queue.add(new ShowWatchlistTask(tvdbId, inWatchlist));
 
-          final int episodeCount = c.getInt(c.getColumnIndex(CathodeContract.Shows.EPISODE_COUNT));
+          final int episodeCount = c.getInt(c.getColumnIndex(ShowColumns.EPISODE_COUNT));
           if (episodeCount == 0) {
             queueTask(new SyncShowTask(tvdbId));
           }
@@ -204,13 +196,12 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
   public void setIsInCollection(final long showId, final boolean inCollection) {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c = context.getContentResolver()
-            .query(CathodeContract.Shows.buildFromId(showId), new String[] {
-                CathodeContract.Shows.TVDB_ID,
-            }, null, null, null);
+        Cursor c = context.getContentResolver().query(Shows.withId(showId), new String[] {
+            ShowColumns.TVDB_ID,
+        }, null, null, null);
 
         if (c.moveToFirst()) {
-          final int tvdbId = c.getInt(c.getColumnIndex(CathodeContract.Shows.TVDB_ID));
+          final int tvdbId = c.getInt(c.getColumnIndex(ShowColumns.TVDB_ID));
           ShowWrapper.setIsInCollection(context.getContentResolver(), showId, inCollection);
           queue.add(new ShowCollectionTask(tvdbId, inCollection));
         }
@@ -234,9 +225,8 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
 
         ContentValues cv = new ContentValues();
-        cv.put(CathodeContract.Shows.RECOMMENDATION_INDEX, -1);
-        context.getContentResolver()
-            .update(CathodeContract.Shows.buildFromId(showId), cv, null, null);
+        cv.put(ShowColumns.RECOMMENDATION_INDEX, -1);
+        context.getContentResolver().update(Shows.withId(showId), cv, null, null);
 
         queue.add(new DismissShowRecommendation(tvdbId));
       }
@@ -257,9 +247,8 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
 
         ContentValues cv = new ContentValues();
-        cv.put(CathodeContract.Shows.RATING, rating);
-        context.getContentResolver()
-            .update(CathodeContract.Shows.buildFromId(showId), cv, null, null);
+        cv.put(ShowColumns.RATING, rating);
+        context.getContentResolver().update(Shows.withId(showId), cv, null, null);
 
         queue.add(new ShowRateTask(tvdbId, rating));
       }

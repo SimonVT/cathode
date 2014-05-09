@@ -22,8 +22,9 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.entity.TvShow;
 import net.simonvt.cathode.api.service.UserService;
-import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeDatabase;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseSchematic;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
@@ -33,15 +34,14 @@ public class SyncEpisodeWatchlistTask extends TraktTask {
   @Inject transient UserService userService;
 
   @Override protected void doTask() {
-    Cursor c =
-        getContentResolver().query(CathodeContract.Episodes.WATCHLIST_URI, new String[] {
-            CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes._ID,
-        }, null, null, null);
+    Cursor c = getContentResolver().query(Episodes.EPISODES_IN_WATCHLIST, new String[] {
+        DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.ID,
+    }, null, null, null);
 
     List<Long> episodeIds = new ArrayList<Long>();
 
     while (c.moveToNext()) {
-      episodeIds.add(c.getLong(c.getColumnIndex(CathodeContract.Episodes._ID)));
+      episodeIds.add(c.getLong(c.getColumnIndex(EpisodeColumns.ID)));
     }
     c.close();
 

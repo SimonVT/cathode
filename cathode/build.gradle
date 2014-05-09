@@ -1,11 +1,24 @@
 apply plugin: 'android'
 apply plugin: 'crashlytics'
 apply plugin: 'checkstyle'
+apply plugin: 'android-apt'
+
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath 'com.neenbedankt.gradle.plugins:android-apt:1.2'
+  }
+}
 
 dependencies {
   compile project(':trakt-api')
   compile parent.ext.libraries.menudrawer
   compile parent.ext.libraries.messagebar
+  compile parent.ext.libraries.schematic
+  apt parent.ext.libraries.schematiccompiler
 
   compile parent.ext.libraries.gson
 
@@ -55,6 +68,12 @@ android {
 
   packagingOptions {
     exclude 'META-INF/services/javax.annotation.processing.Processor'
+  }
+}
+
+apt {
+  arguments {
+    schematicOutPackage 'net.simonvt.cathode.provider.generated'
   }
 }
 

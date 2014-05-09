@@ -29,7 +29,7 @@ import butterknife.Optional;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
@@ -38,6 +38,7 @@ import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public class MoviesAdapter extends CursorAdapter {
+
   @Inject MovieTaskScheduler movieScheduler;
 
   private FragmentActivity activity;
@@ -66,26 +67,21 @@ public class MoviesAdapter extends CursorAdapter {
     ViewHolder vh = (ViewHolder) view.getTag();
     final int position = cursor.getPosition();
 
-    final long id = cursor.getLong(cursor.getColumnIndex(CathodeContract.Movies._ID));
-    final String title = cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.TITLE));
-    final boolean watched =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.WATCHED)) == 1;
-    final boolean collected =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.IN_COLLECTION)) == 1;
+    final long id = cursor.getLong(cursor.getColumnIndex(MovieColumns.ID));
+    final String title = cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE));
+    final boolean watched = cursor.getInt(cursor.getColumnIndex(MovieColumns.WATCHED)) == 1;
+    final boolean collected = cursor.getInt(cursor.getColumnIndex(MovieColumns.IN_COLLECTION)) == 1;
     final boolean inWatchlist =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.IN_WATCHLIST)) == 1;
-    final boolean watching =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.WATCHING)) == 1;
-    final boolean checkedIn =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.CHECKED_IN)) == 1;
+        cursor.getInt(cursor.getColumnIndex(MovieColumns.IN_WATCHLIST)) == 1;
+    final boolean watching = cursor.getInt(cursor.getColumnIndex(MovieColumns.WATCHING)) == 1;
+    final boolean checkedIn = cursor.getInt(cursor.getColumnIndex(MovieColumns.CHECKED_IN)) == 1;
 
-    vh.poster.setImage(cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.POSTER)));
+    vh.poster.setImage(cursor.getString(cursor.getColumnIndex(MovieColumns.POSTER)));
     vh.title.setText(title);
-    vh.overview.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.OVERVIEW)));
+    vh.overview.setText(cursor.getString(cursor.getColumnIndex(MovieColumns.OVERVIEW)));
 
     if (vh.rating != null) {
-      final int rating =
-          cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.RATING_PERCENTAGE));
+      final int rating = cursor.getInt(cursor.getColumnIndex(MovieColumns.RATING_PERCENTAGE));
       vh.rating.setValue(rating);
     }
 

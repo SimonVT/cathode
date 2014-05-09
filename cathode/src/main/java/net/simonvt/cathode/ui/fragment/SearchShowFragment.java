@@ -43,7 +43,8 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.event.SearchFailureEvent;
 import net.simonvt.cathode.event.ShowSearchResult;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
@@ -58,8 +59,8 @@ public class SearchShowFragment extends AbsAdapterFragment
     implements LoaderManager.LoaderCallbacks<Cursor>, ListDialog.Callback {
 
   private enum SortBy {
-    TITLE("title", CathodeContract.Shows.SORT_TITLE),
-    RATING("rating", CathodeContract.Shows.SORT_RATING),
+    TITLE("title", Shows.SORT_TITLE),
+    RATING("rating", Shows.SORT_RATING),
     RELEVANCE("relevance", null);
 
     private String key;
@@ -242,7 +243,7 @@ public class SearchShowFragment extends AbsAdapterFragment
 
   @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
     Cursor c = (Cursor) getAdapter().getItem(position);
-    navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(CathodeContract.Shows.TITLE)),
+    navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)),
         LibraryType.WATCHED);
   }
 
@@ -276,7 +277,7 @@ public class SearchShowFragment extends AbsAdapterFragment
 
   @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
     StringBuilder where = new StringBuilder();
-    where.append(CathodeContract.Shows._ID).append(" in (");
+    where.append(ShowColumns.ID).append(" in (");
     final int showCount = searchShowIds.size();
     String[] ids = new String[showCount];
     for (int i = 0; i < showCount; i++) {
@@ -289,8 +290,9 @@ public class SearchShowFragment extends AbsAdapterFragment
     }
     where.append(")");
 
-    CursorLoader loader = new CursorLoader(getActivity(), CathodeContract.Shows.CONTENT_URI,
-        ShowDescriptionAdapter.PROJECTION, where.toString(), ids, sortBy.getSortOrder());
+    CursorLoader loader =
+        new CursorLoader(getActivity(), Shows.SHOWS, ShowDescriptionAdapter.PROJECTION,
+            where.toString(), ids, sortBy.getSortOrder());
     loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return loader;
   }

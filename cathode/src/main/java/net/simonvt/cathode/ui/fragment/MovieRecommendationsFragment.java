@@ -40,7 +40,8 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.MutableCursor;
 import net.simonvt.cathode.database.MutableCursorLoader;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.settings.Settings;
@@ -57,8 +58,8 @@ public class MovieRecommendationsFragment extends AbsAdapterFragment
     MovieRecommendationsAdapter.DismissListener, ListDialog.Callback {
 
   private enum SortBy {
-    RELEVANCE("relevance", CathodeContract.Movies.SORT_RECOMMENDED),
-    RATING("rating", CathodeContract.Movies.SORT_RATING);
+    RELEVANCE("relevance", Movies.SORT_RECOMMENDED),
+    RATING("rating", Movies.SORT_RATING);
 
     private String key;
 
@@ -182,7 +183,9 @@ public class MovieRecommendationsFragment extends AbsAdapterFragment
     switch (id) {
       case R.id.sort_relevance:
         sortBy = SortBy.RELEVANCE;
-        settings.edit().putString(Settings.SORT_MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey()).apply();
+        settings.edit()
+            .putString(Settings.SORT_MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey())
+            .apply();
         getLoaderManager().restartLoader(BaseActivity.LOADER_MOVIES_RECOMMENDATIONS, null, this);
         break;
 
@@ -196,8 +199,7 @@ public class MovieRecommendationsFragment extends AbsAdapterFragment
 
   @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
     Cursor c = (Cursor) getAdapter().getItem(position);
-    navigationListener.onDisplayMovie(id,
-        c.getString(c.getColumnIndex(CathodeContract.Movies.TITLE)));
+    navigationListener.onDisplayMovie(id, c.getString(c.getColumnIndex(MovieColumns.TITLE)));
   }
 
   @Override public void onDismissItem(final View view, final int position) {
@@ -237,7 +239,7 @@ public class MovieRecommendationsFragment extends AbsAdapterFragment
 
   @Override public Loader<MutableCursor> onCreateLoader(int i, Bundle bundle) {
     MutableCursorLoader loader =
-        new MutableCursorLoader(getActivity(), CathodeContract.Movies.RECOMMENDED, null, null, null,
+        new MutableCursorLoader(getActivity(), Movies.RECOMMENDED, null, null, null,
             sortBy.getSortOrder());
     loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return loader;

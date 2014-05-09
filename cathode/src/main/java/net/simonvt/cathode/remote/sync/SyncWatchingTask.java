@@ -23,6 +23,7 @@ import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.ActivityItem;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.entity.Movie;
@@ -30,16 +31,16 @@ import net.simonvt.cathode.api.entity.TvShow;
 import net.simonvt.cathode.api.enumeration.ActivityAction;
 import net.simonvt.cathode.api.enumeration.ActivityType;
 import net.simonvt.cathode.api.service.UserService;
-import net.simonvt.cathode.provider.CathodeDatabase.Tables;
-import net.simonvt.cathode.provider.CathodeProvider;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
 import timber.log.Timber;
-
-import static net.simonvt.cathode.provider.CathodeContract.Episodes;
-import static net.simonvt.cathode.provider.CathodeContract.Movies;
 
 public class SyncWatchingTask extends TraktTask {
 
@@ -54,24 +55,24 @@ public class SyncWatchingTask extends TraktTask {
 
     Cursor episodeWatchingCursor =
         getContentResolver().query(Episodes.EPISODE_WATCHING, new String[] {
-            Tables.EPISODES + "." + Episodes._ID,
+            Tables.EPISODES + "." + EpisodeColumns.ID,
         }, null, null, null);
 
     List<Long> episodeWatching = new ArrayList<Long>();
     while (episodeWatchingCursor.moveToNext()) {
       episodeWatching.add(
-          episodeWatchingCursor.getLong(episodeWatchingCursor.getColumnIndex(Episodes._ID)));
+          episodeWatchingCursor.getLong(episodeWatchingCursor.getColumnIndex(EpisodeColumns.ID)));
     }
     episodeWatchingCursor.close();
 
-    Cursor movieWatchingCursor = getContentResolver().query(Movies.MOVIE_WATCHING, new String[] {
-        Movies._ID,
+    Cursor movieWatchingCursor = getContentResolver().query(Movies.WATCHING, new String[] {
+        MovieColumns.ID,
     }, null, null, null);
 
     List<Long> movieWatching = new ArrayList<Long>();
     while (movieWatchingCursor.moveToNext()) {
       movieWatching.add(
-          movieWatchingCursor.getLong(movieWatchingCursor.getColumnIndex(Movies._ID)));
+          movieWatchingCursor.getLong(movieWatchingCursor.getColumnIndex(MovieColumns.ID)));
     }
     movieWatchingCursor.close();
 
@@ -99,14 +100,14 @@ public class SyncWatchingTask extends TraktTask {
 
         switch (action) {
           case CHECKIN:
-            op = ContentProviderOperation.newUpdate(Episodes.buildFromId(episodeId))
-                .withValue(Episodes.CHECKED_IN, true)
+            op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
+                .withValue(EpisodeColumns.CHECKED_IN, true)
                 .build();
             break;
 
           case WATCHING:
-            op = ContentProviderOperation.newUpdate(Episodes.buildFromId(episodeId))
-                .withValue(Episodes.WATCHING, true)
+            op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
+                .withValue(EpisodeColumns.WATCHING, true)
                 .build();
             break;
         }
@@ -124,14 +125,14 @@ public class SyncWatchingTask extends TraktTask {
 
         switch (action) {
           case CHECKIN:
-            op = ContentProviderOperation.newUpdate(Movies.buildFromId(movieId))
-                .withValue(Movies.CHECKED_IN, true)
+            op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
+                .withValue(MovieColumns.CHECKED_IN, true)
                 .build();
             break;
 
           case WATCHING:
-            op = ContentProviderOperation.newUpdate(Movies.buildFromId(movieId))
-                .withValue(Movies.WATCHING, true)
+            op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
+                .withValue(MovieColumns.WATCHING, true)
                 .build();
             break;
         }
@@ -144,9 +145,9 @@ public class SyncWatchingTask extends TraktTask {
       final int showTvdbId = EpisodeWrapper.getShowTvdbId(getContentResolver(), episodeId);
       queueTask(new SyncShowTask(showTvdbId));
 
-      op = ContentProviderOperation.newUpdate(Episodes.buildFromId(episodeId))
-          .withValue(Episodes.CHECKED_IN, false)
-          .withValue(Episodes.WATCHING, false)
+      op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
+          .withValue(EpisodeColumns.CHECKED_IN, false)
+          .withValue(EpisodeColumns.WATCHING, false)
           .build();
       ops.add(op);
     }
@@ -155,15 +156,15 @@ public class SyncWatchingTask extends TraktTask {
       final long tmdbId = MovieWrapper.getTmdbId(getContentResolver(), movieId);
       queueTask(new SyncMovieTask(tmdbId));
 
-      op = ContentProviderOperation.newUpdate(Movies.buildFromId(movieId))
-          .withValue(Movies.CHECKED_IN, false)
-          .withValue(Movies.WATCHING, false)
+      op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
+          .withValue(MovieColumns.CHECKED_IN, false)
+          .withValue(MovieColumns.WATCHING, false)
           .build();
       ops.add(op);
     }
 
     try {
-      resolver.applyBatch(CathodeProvider.AUTHORITY, ops);
+      resolver.applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
     } catch (RemoteException e) {
       Timber.e(e, "SyncWatchingTask failed");
     } catch (OperationApplicationException e) {

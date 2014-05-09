@@ -19,11 +19,10 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.BaseColumns;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.entity.Images;
-import net.simonvt.cathode.provider.CathodeContract.EpisodeColumns;
-import net.simonvt.cathode.provider.CathodeContract.Episodes;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.util.ApiUtils;
 import net.simonvt.cathode.util.DateUtils;
 
@@ -33,32 +32,32 @@ public final class EpisodeWrapper {
   }
 
   public static Cursor query(ContentResolver resolver, long id, String... columns) {
-    return resolver.query(Episodes.buildFromId(id), columns, null, null, null);
+    return resolver.query(Episodes.withId(id), columns, null, null, null);
   }
 
   public static long getEpisodeId(ContentResolver resolver, Episode episode) {
     long id = -1L;
     if (episode.getTvdbId() != null) {
-      Cursor c = resolver.query(Episodes.CONTENT_URI, new String[] {
-          BaseColumns._ID,
-      }, Episodes.TVDB_ID + "=?", new String[] {
+      Cursor c = resolver.query(Episodes.EPISODES, new String[] {
+          EpisodeColumns.ID,
+      }, EpisodeColumns.TVDB_ID + "=?", new String[] {
           String.valueOf(episode.getTvdbId()),
       }, null);
 
       if (c.moveToFirst()) {
-        id = c.getLong(c.getColumnIndex(BaseColumns._ID));
+        id = c.getLong(c.getColumnIndex(EpisodeColumns.ID));
       }
 
       c.close();
     } else {
-      Cursor c = resolver.query(Episodes.CONTENT_URI, new String[] {
-          BaseColumns._ID,
-      }, Episodes.URL + "=?", new String[] {
+      Cursor c = resolver.query(Episodes.EPISODES, new String[] {
+          EpisodeColumns.ID,
+      }, EpisodeColumns.URL + "=?", new String[] {
           String.valueOf(episode.getUrl()),
       }, null);
 
       if (c.moveToFirst()) {
-        id = c.getLong(c.getColumnIndex(BaseColumns._ID));
+        id = c.getLong(c.getColumnIndex(EpisodeColumns.ID));
       }
 
       c.close();
@@ -69,14 +68,19 @@ public final class EpisodeWrapper {
 
   public static long getEpisodeId(ContentResolver resolver, long showId, int seasonNumber,
       int episodeNumber) {
-    Cursor c = resolver.query(Episodes.CONTENT_URI, new String[] {
-        BaseColumns._ID,
-    }, Episodes.SHOW_ID + "=? AND " + Episodes.SEASON + "=? AND " + Episodes.EPISODE + "=?",
-        new String[] {
+    Cursor c = resolver.query(Episodes.EPISODES, new String[] {
+            EpisodeColumns.ID,
+        }, EpisodeColumns.SHOW_ID
+            + "=? AND "
+            + EpisodeColumns.SEASON
+            + "=? AND "
+            + EpisodeColumns.EPISODE
+            + "=?", new String[] {
             String.valueOf(showId), String.valueOf(seasonNumber), String.valueOf(episodeNumber),
-        }, null);
+        }, null
+    );
 
-    long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(BaseColumns._ID));
+    long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(EpisodeColumns.ID));
 
     c.close();
 
@@ -84,9 +88,9 @@ public final class EpisodeWrapper {
   }
 
   public static int getShowTvdbId(ContentResolver resolver, long episodeId) {
-    Cursor c = resolver.query(Episodes.CONTENT_URI, new String[] {
-        Episodes.SHOW_ID,
-    }, BaseColumns._ID + "=?", new String[] {
+    Cursor c = resolver.query(Episodes.EPISODES, new String[] {
+        EpisodeColumns.SHOW_ID,
+    }, EpisodeColumns.ID + "=?", new String[] {
         String.valueOf(episodeId),
     }, null);
 
@@ -115,18 +119,7 @@ public final class EpisodeWrapper {
 
   public static void updateEpisode(ContentResolver resolver, long episodeId, Episode episode) {
     ContentValues cv = getEpisodeCVs(episode);
-    resolver.update(Episodes.buildFromId(episodeId), cv, null, null);
-
-    Cursor c = resolver.query(Episodes.buildFromId(episodeId), new String[] {
-        Episodes.SHOW_ID, Episodes.SEASON_ID,
-    }, null, null, null);
-
-    if (c.moveToFirst()) {
-      final long showId = c.getLong(c.getColumnIndex(Episodes.SHOW_ID));
-      final long seasonId = c.getLong(c.getColumnIndex(Episodes.SEASON_ID));
-    }
-
-    c.close();
+    resolver.update(Episodes.withId(episodeId), cv, null, null);
   }
 
   public static long insertEpisodes(ContentResolver resolver, long showId, long seasonId,
@@ -136,9 +129,9 @@ public final class EpisodeWrapper {
     cv.put(EpisodeColumns.SHOW_ID, showId);
     cv.put(EpisodeColumns.SEASON_ID, seasonId);
 
-    Uri uri = resolver.insert(Episodes.CONTENT_URI, cv);
+    Uri uri = resolver.insert(Episodes.EPISODES, cv);
 
-    return Long.valueOf(Episodes.getEpisodeId(uri));
+    return Long.valueOf(Episodes.getId(uri));
   }
 
   public static void episodeUpdateWatched(ContentResolver resolver, long episodeId,
@@ -147,11 +140,11 @@ public final class EpisodeWrapper {
 
     cv.put(EpisodeColumns.WATCHED, watched);
 
-    resolver.update(Episodes.buildFromId(episodeId), cv, null, null);
+    resolver.update(Episodes.withId(episodeId), cv, null, null);
   }
 
   public static long getShowId(ContentResolver resolver, long episodeId) {
-    Cursor c = resolver.query(Episodes.buildFromId(episodeId), new String[] {
+    Cursor c = resolver.query(Episodes.withId(episodeId), new String[] {
         EpisodeColumns.SHOW_ID,
     }, null, null, null);
 
@@ -166,7 +159,7 @@ public final class EpisodeWrapper {
   }
 
   public static long getSeasonId(ContentResolver resolver, long episodeId) {
-    Cursor c = resolver.query(Episodes.buildFromId(episodeId), new String[] {
+    Cursor c = resolver.query(Episodes.withId(episodeId), new String[] {
         EpisodeColumns.SEASON_ID,
     }, null, null, null);
 
@@ -181,7 +174,7 @@ public final class EpisodeWrapper {
   }
 
   public static int getSeason(ContentResolver resolver, long episodeId) {
-    Cursor c = resolver.query(Episodes.buildFromId(episodeId), new String[] {
+    Cursor c = resolver.query(Episodes.withId(episodeId), new String[] {
         EpisodeColumns.SEASON,
     }, null, null, null);
 
@@ -206,25 +199,14 @@ public final class EpisodeWrapper {
     ContentValues cv = new ContentValues();
     cv.put(EpisodeColumns.WATCHED, watched);
 
-    resolver.update(Episodes.buildFromId(episodeId), cv, null, null);
-
-    Cursor c = resolver.query(Episodes.buildFromId(episodeId), new String[] {
-        Episodes.SHOW_ID, Episodes.SEASON_ID,
-    }, null, null, null);
-
-    if (c.moveToFirst()) {
-      final long showId = c.getLong(c.getColumnIndex(Episodes.SHOW_ID));
-      final long seasonId = c.getLong(c.getColumnIndex(Episodes.SEASON_ID));
-    }
-
-    c.close();
+    resolver.update(Episodes.withId(episodeId), cv, null, null);
   }
 
   public static void unseen(ContentResolver resolver, long episodeId) {
     ContentValues cv = new ContentValues();
     cv.put(EpisodeColumns.WATCHED, false);
 
-    resolver.update(Episodes.buildFromId(episodeId), cv, null, null);
+    resolver.update(Episodes.withId(episodeId), cv, null, null);
   }
 
   public static void setInCollection(ContentResolver resolver, int tvdbId, int season, int episode,
@@ -239,18 +221,7 @@ public final class EpisodeWrapper {
     ContentValues cv = new ContentValues();
     cv.put(EpisodeColumns.IN_COLLECTION, inCollection);
 
-    resolver.update(Episodes.buildFromId(episodeId), cv, null, null);
-
-    Cursor c = resolver.query(Episodes.buildFromId(episodeId), new String[] {
-        Episodes.SHOW_ID, Episodes.SEASON_ID,
-    }, null, null, null);
-
-    if (c.moveToFirst()) {
-      final long showId = c.getLong(c.getColumnIndex(Episodes.SHOW_ID));
-      final long seasonId = c.getLong(c.getColumnIndex(Episodes.SEASON_ID));
-    }
-
-    c.close();
+    resolver.update(Episodes.withId(episodeId), cv, null, null);
   }
 
   public static void setIsInWatchlist(ContentResolver resolver, int tvdbId, int season, int episode,
@@ -265,7 +236,7 @@ public final class EpisodeWrapper {
     ContentValues cv = new ContentValues();
     cv.put(EpisodeColumns.IN_WATCHLIST, inWatchlist);
 
-    resolver.update(Episodes.buildFromId(episodeId), cv, null, null);
+    resolver.update(Episodes.withId(episodeId), cv, null, null);
   }
 
   public static void setRating(ContentResolver resolver, Integer tvdbId, Integer season,
@@ -279,7 +250,7 @@ public final class EpisodeWrapper {
     ContentValues cv = new ContentValues();
     cv.put(EpisodeColumns.RATING, ratingAdvanced);
 
-    resolver.update(Episodes.buildFromId(episodeId), cv, null, null);
+    resolver.update(Episodes.withId(episodeId), cv, null, null);
   }
 
   public static ContentValues getEpisodeCVs(Episode episode) {
@@ -297,7 +268,9 @@ public final class EpisodeWrapper {
     }
     if (episode.getImages() != null) {
       Images images = episode.getImages();
-      if (!ApiUtils.isPlaceholder(images.getScreen())) cv.put(Episodes.SCREEN, images.getScreen());
+      if (!ApiUtils.isPlaceholder(images.getScreen())) {
+        cv.put(EpisodeColumns.SCREEN, images.getScreen());
+      }
     }
     if (episode.getRatings() != null) {
       cv.put(EpisodeColumns.RATING_PERCENTAGE, episode.getRatings().getPercentage());

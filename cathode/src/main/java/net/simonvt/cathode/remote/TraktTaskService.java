@@ -44,7 +44,7 @@ import net.simonvt.cathode.api.entity.Response;
 import net.simonvt.cathode.api.service.AccountService;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.SyncEvent;
-import net.simonvt.cathode.provider.CathodeDatabase;
+import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.HomeActivity;
 import retrofit.RetrofitError;
@@ -221,7 +221,7 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
       @Override public void run() {
         priorityQueue.clear();
         queue.clear();
-        CathodeDatabase.getInstance(TraktTaskService.this).clearUserData();
+        DatabaseSchematic.clearUserData(TraktTaskService.this);
 
         MAIN_HANDLER.post(new Runnable() {
           @Override public void run() {

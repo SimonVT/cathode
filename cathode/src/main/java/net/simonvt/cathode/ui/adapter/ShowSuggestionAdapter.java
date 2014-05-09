@@ -21,7 +21,10 @@ import android.os.AsyncTask;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowSearchSuggestionsColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.ShowSearchSuggestions;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 
 public class ShowSuggestionAdapter extends SuggestionsAdapter {
 
@@ -65,10 +68,9 @@ public class ShowSuggestionAdapter extends SuggestionsAdapter {
 
     @Override protected Results doInBackground(Void... params) {
       Cursor previousQueries = context.getContentResolver()
-          .query(CathodeContract.SearchSuggestions.SHOW_URI, null, null, null, null);
+          .query(ShowSearchSuggestions.SHOW_SUGGESTIONS, null, null, null, null);
 
-      final int queryIndex =
-          previousQueries.getColumnIndex(CathodeContract.SearchSuggestions.QUERY);
+      final int queryIndex = previousQueries.getColumnIndex(ShowSearchSuggestionsColumns.QUERY);
 
       List<Suggestion> queries = new ArrayList<Suggestion>();
       while (previousQueries.moveToNext()) {
@@ -76,16 +78,12 @@ public class ShowSuggestionAdapter extends SuggestionsAdapter {
       }
       previousQueries.close();
 
-      Cursor allShows =
-          context.getContentResolver().query(CathodeContract.Shows.CONTENT_URI, new String[] {
-              CathodeContract.Shows._ID, CathodeContract.Shows.TITLE,
-          }, CathodeContract.Shows.IN_COLLECTION_COUNT
-              + ">0 OR "
-              + CathodeContract.Shows.WATCHED_COUNT
-              + ">0", null, null);
+      Cursor allShows = context.getContentResolver().query(Shows.SHOWS, new String[] {
+          ShowColumns.ID, ShowColumns.TITLE,
+      }, ShowColumns.IN_COLLECTION_COUNT + ">0 OR " + ShowColumns.WATCHED_COUNT + ">0", null, null);
 
-      final int titleIndex = allShows.getColumnIndex(CathodeContract.Shows.TITLE);
-      final int idIndex = allShows.getColumnIndex(CathodeContract.Shows._ID);
+      final int titleIndex = allShows.getColumnIndex(ShowColumns.TITLE);
+      final int idIndex = allShows.getColumnIndex(ShowColumns.ID);
 
       List<Suggestion> shows = new ArrayList<Suggestion>();
       while (allShows.moveToNext()) {

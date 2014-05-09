@@ -25,7 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
@@ -49,10 +49,10 @@ public class WatchedShowsFragment extends ShowsFragment {
   }
 
   @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-    final Uri contentUri = CathodeContract.Shows.SHOWS_WATCHED;
+    final Uri contentUri = Shows.SHOWS_WATCHED;
     CursorLoader cl =
         new CursorLoader(getActivity(), contentUri, ShowsWithNextAdapter.PROJECTION, null, null,
-            CathodeContract.Shows.DEFAULT_SORT);
+            Shows.DEFAULT_SORT);
     cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return cl;
   }

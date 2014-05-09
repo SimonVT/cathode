@@ -38,7 +38,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.settings.Settings;
@@ -54,8 +55,8 @@ public class TrendingShowsFragment extends AbsAdapterFragment
     implements LoaderManager.LoaderCallbacks<Cursor>, ListDialog.Callback {
 
   private enum SortBy {
-    VIEWERS("viewers", CathodeContract.Shows.SORT_VIEWERS),
-    RATING("rating", CathodeContract.Shows.SORT_RATING);
+    VIEWERS("viewers", Shows.SORT_VIEWERS),
+    RATING("rating", Shows.SORT_RATING);
 
     private String key;
 
@@ -180,7 +181,7 @@ public class TrendingShowsFragment extends AbsAdapterFragment
 
   @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
     Cursor c = (Cursor) getAdapter().getItem(position);
-    navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(CathodeContract.Shows.TITLE)),
+    navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)),
         LibraryType.WATCHED);
   }
 
@@ -198,7 +199,7 @@ public class TrendingShowsFragment extends AbsAdapterFragment
   }
 
   @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-    final Uri contentUri = CathodeContract.Shows.SHOWS_TRENDING;
+    final Uri contentUri = Shows.SHOWS_TRENDING;
     CursorLoader cl =
         new CursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION, null, null,
             sortBy.getSortOrder());

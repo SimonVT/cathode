@@ -33,7 +33,10 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.MutableCursor;
 import net.simonvt.cathode.database.MutableCursorLoader;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.ui.BaseActivity;
@@ -101,12 +104,11 @@ public class ShowsWatchlistFragment extends StaggeredGridFragment
   @Override protected void onItemClick(StaggeredGridView parent, View v, int position, long id) {
     if (((ShowWatchlistAdapter) getAdapter()).isShow(position)) {
       Cursor c = (Cursor) getAdapter().getItem(position);
-      navigationListener.onDisplayShow(id,
-          c.getString(c.getColumnIndex(CathodeContract.Shows.TITLE)), LibraryType.WATCHED);
+      navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)),
+          LibraryType.WATCHED);
     } else {
       Cursor c = (Cursor) getAdapter().getItem(position);
-      navigationListener.onDisplayEpisode(id,
-          c.getString(c.getColumnIndex(CathodeContract.Shows.TITLE)));
+      navigationListener.onDisplayEpisode(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)));
     }
   }
 
@@ -162,9 +164,9 @@ public class ShowsWatchlistFragment extends StaggeredGridFragment
   private LoaderManager.LoaderCallbacks<MutableCursor> showsCallback =
       new LoaderManager.LoaderCallbacks<MutableCursor>() {
         @Override public Loader<MutableCursor> onCreateLoader(int id, Bundle args) {
-          final Uri contentUri = CathodeContract.Shows.SHOWS_WATCHLIST;
+          final Uri contentUri = Shows.SHOWS_WATCHLIST;
           MutableCursorLoader loader = new MutableCursorLoader(getActivity(), contentUri,
-              ShowWatchlistAdapter.PROJECTION_SHOW, null, null, CathodeContract.Shows.DEFAULT_SORT);
+              ShowWatchlistAdapter.PROJECTION_SHOW, null, null, Shows.DEFAULT_SORT);
           loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
           return loader;
         }
@@ -181,9 +183,9 @@ public class ShowsWatchlistFragment extends StaggeredGridFragment
       new LoaderManager.LoaderCallbacks<MutableCursor>() {
         @Override public Loader<MutableCursor> onCreateLoader(int id, Bundle args) {
           MutableCursorLoader loader =
-              new MutableCursorLoader(getActivity(), CathodeContract.Episodes.WATCHLIST_URI,
+              new MutableCursorLoader(getActivity(), Episodes.EPISODES_IN_WATCHLIST,
                   ShowWatchlistAdapter.PROJECTION_EPISODE, null, null,
-                  CathodeContract.Episodes.SHOW_ID + " ASC");
+                  EpisodeColumns.SHOW_ID + " ASC");
           loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
           return loader;
         }

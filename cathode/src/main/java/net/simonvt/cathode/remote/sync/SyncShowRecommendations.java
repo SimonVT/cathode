@@ -23,10 +23,11 @@ import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.TvShow;
 import net.simonvt.cathode.api.service.RecommendationsService;
-import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeProvider;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
 import timber.log.Timber;
@@ -44,9 +45,9 @@ public class SyncShowRecommendations extends TraktTask {
       List<Integer> showSummaries = new ArrayList<Integer>();
 
       ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
-      Cursor c = resolver.query(CathodeContract.Shows.SHOWS_RECOMMENDED, null, null, null, null);
+      Cursor c = resolver.query(Shows.SHOWS_RECOMMENDED, null, null, null, null);
       while (c.moveToNext()) {
-        showIds.add(c.getLong(c.getColumnIndex(CathodeContract.Shows._ID)));
+        showIds.add(c.getLong(c.getColumnIndex(ShowColumns.ID)));
       }
       c.close();
 
@@ -62,22 +63,20 @@ public class SyncShowRecommendations extends TraktTask {
 
         showIds.remove(showId);
 
-        ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(CathodeContract.Shows.buildFromId(showId))
-                .withValue(CathodeContract.Shows.RECOMMENDATION_INDEX, index)
-                .build();
+        ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(showId))
+            .withValue(ShowColumns.RECOMMENDATION_INDEX, index)
+            .build();
         ops.add(op);
       }
 
       for (Long id : showIds) {
-        ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(CathodeContract.Shows.buildFromId(id))
-                .withValue(CathodeContract.Shows.RECOMMENDATION_INDEX, -1)
-                .build();
+        ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(id))
+            .withValue(ShowColumns.RECOMMENDATION_INDEX, -1)
+            .build();
         ops.add(op);
       }
 
-      resolver.applyBatch(CathodeProvider.AUTHORITY, ops);
+      resolver.applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
       postOnSuccess();
     } catch (RemoteException e) {
       Timber.e(e, "SyncShowRecommendationsTask failed");

@@ -19,7 +19,6 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.BaseColumns;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
@@ -27,9 +26,16 @@ import net.simonvt.cathode.api.entity.Images;
 import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.entity.TvShow;
 import net.simonvt.cathode.api.entity.TvShow.People;
-import net.simonvt.cathode.provider.CathodeContract.ShowActor;
-import net.simonvt.cathode.provider.CathodeContract.ShowColumns;
-import net.simonvt.cathode.provider.CathodeContract.Shows;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowActorColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
+import net.simonvt.cathode.provider.ProviderSchematic.ShowActors;
+import net.simonvt.cathode.provider.ProviderSchematic.ShowGenres;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.util.ApiUtils;
 import net.simonvt.cathode.util.DateUtils;
 import timber.log.Timber;
@@ -51,7 +57,7 @@ public final class ShowWrapper {
   }
 
   public static int getTvdbId(ContentResolver resolver, long showId) {
-    Cursor c = resolver.query(Shows.buildFromId(showId), new String[] {
+    Cursor c = resolver.query(Shows.withId(showId), new String[] {
         ShowColumns.TVDB_ID,
     }, null, null, null);
 
@@ -66,26 +72,26 @@ public final class ShowWrapper {
   }
 
   public static void insertShowGenres(ContentResolver resolver, long showId, List<String> genres) {
-    resolver.delete(CathodeContract.ShowGenres.buildFromShowId(showId), null, null);
+    resolver.delete(ShowGenres.fromShow(showId), null, null);
 
     for (String genre : genres) {
       ContentValues cv = new ContentValues();
 
-      cv.put(CathodeContract.ShowGenres.SHOW_ID, showId);
-      cv.put(CathodeContract.ShowGenres.GENRE, genre);
+      cv.put(ShowGenreColumns.SHOW_ID, showId);
+      cv.put(ShowGenreColumns.GENRE, genre);
 
-      resolver.insert(CathodeContract.ShowGenres.buildFromShowId(showId), cv);
+      resolver.insert(ShowGenres.fromShow(showId), cv);
     }
   }
 
   public static long getShowId(ContentResolver resolver, TvShow show) {
-    Cursor c = resolver.query(Shows.CONTENT_URI, new String[] {
-        BaseColumns._ID,
-    }, Shows.TVDB_ID + "=?", new String[] {
+    Cursor c = resolver.query(Shows.SHOWS, new String[] {
+        ShowColumns.ID,
+    }, ShowColumns.TVDB_ID + "=?", new String[] {
         String.valueOf(show.getTvdbId()),
     }, null);
 
-    long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(BaseColumns._ID));
+    long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(ShowColumns.ID));
 
     c.close();
 
@@ -93,13 +99,13 @@ public final class ShowWrapper {
   }
 
   public static long getShowId(ContentResolver resolver, int tvdbId) {
-    Cursor c = resolver.query(Shows.CONTENT_URI, new String[] {
-        BaseColumns._ID,
-    }, Shows.TVDB_ID + "=?", new String[] {
+    Cursor c = resolver.query(Shows.SHOWS, new String[] {
+        ShowColumns.ID,
+    }, ShowColumns.TVDB_ID + "=?", new String[] {
         String.valueOf(tvdbId),
     }, null);
 
-    long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(BaseColumns._ID));
+    long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(ShowColumns.ID));
 
     c.close();
 
@@ -107,9 +113,9 @@ public final class ShowWrapper {
   }
 
   public static String getShowName(ContentResolver resolver, long showId) {
-    Cursor c = resolver.query(Shows.CONTENT_URI, new String[] {
+    Cursor c = resolver.query(Shows.SHOWS, new String[] {
         ShowColumns.TITLE,
-    }, BaseColumns._ID + "=?", new String[] {
+    }, ShowColumns.ID + "=?", new String[] {
         String.valueOf(showId),
     }, null);
 
@@ -124,14 +130,14 @@ public final class ShowWrapper {
   }
 
   public static long getSeasonId(ContentResolver resolver, long showId, int seasonNumber) {
-    Cursor c = resolver.query(CathodeContract.Seasons.CONTENT_URI, new String[] {
-        BaseColumns._ID,
-    }, CathodeContract.Seasons.SHOW_ID + "=? AND " + CathodeContract.Seasons.SEASON + "=?",
-        new String[] {
+    Cursor c = resolver.query(Seasons.SEASONS, new String[] {
+            SeasonColumns.ID,
+        }, SeasonColumns.SHOW_ID + "=? AND " + SeasonColumns.SEASON + "=?", new String[] {
             String.valueOf(showId), String.valueOf(seasonNumber),
-        }, null);
+        }, null
+    );
 
-    long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(BaseColumns._ID));
+    long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(SeasonColumns.ID));
 
     c.close();
 
@@ -141,9 +147,9 @@ public final class ShowWrapper {
   public static boolean exists(ContentResolver resolver, int tvdbId) {
     Cursor c = null;
     try {
-      c = resolver.query(Shows.CONTENT_URI, new String[] {
-          Shows.LAST_UPDATED,
-      }, Shows.TVDB_ID + "=?", new String[] {
+      c = resolver.query(Shows.SHOWS, new String[] {
+          ShowColumns.LAST_UPDATED,
+      }, ShowColumns.TVDB_ID + "=?", new String[] {
           String.valueOf(tvdbId),
       }, null);
 
@@ -158,15 +164,15 @@ public final class ShowWrapper {
 
     Cursor c = null;
     try {
-      c = resolver.query(Shows.CONTENT_URI, new String[] {
-          Shows.LAST_UPDATED,
-      }, Shows.TVDB_ID + "=?", new String[] {
+      c = resolver.query(Shows.SHOWS, new String[] {
+          ShowColumns.LAST_UPDATED,
+      }, ShowColumns.TVDB_ID + "=?", new String[] {
           String.valueOf(tvdbId),
       }, null);
 
       boolean exists = c.moveToFirst();
       if (exists) {
-        return lastUpdated > c.getLong(c.getColumnIndex(Shows.LAST_UPDATED));
+        return lastUpdated > c.getLong(c.getColumnIndex(ShowColumns.LAST_UPDATED));
       }
 
       return true;
@@ -176,16 +182,16 @@ public final class ShowWrapper {
   }
 
   public static boolean shouldSyncFully(ContentResolver resolver, long id) {
-    Cursor c = resolver.query(Shows.buildFromId(id), new String[] {
-        Shows.IN_WATCHLIST, Shows.FULL_SYNC_REQUESTED, Shows.IN_COLLECTION_COUNT,
-        Shows.WATCHED_COUNT,
+    Cursor c = resolver.query(Shows.withId(id), new String[] {
+        ShowColumns.IN_WATCHLIST, ShowColumns.FULL_SYNC_REQUESTED, ShowColumns.IN_COLLECTION_COUNT,
+        ShowColumns.WATCHED_COUNT,
     }, null, null, null);
 
     if (c.moveToFirst()) {
-      final boolean inWatchlist = c.getInt(c.getColumnIndex(Shows.IN_WATCHLIST)) == 1;
-      final long fullSyncRequested = c.getLong(c.getColumnIndex(Shows.FULL_SYNC_REQUESTED));
-      final int watchedCount = c.getInt(c.getColumnIndex(Shows.WATCHED_COUNT));
-      final int collectionCount = c.getInt(c.getColumnIndex(Shows.IN_COLLECTION_COUNT));
+      final boolean inWatchlist = c.getInt(c.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
+      final long fullSyncRequested = c.getLong(c.getColumnIndex(ShowColumns.FULL_SYNC_REQUESTED));
+      final int watchedCount = c.getInt(c.getColumnIndex(ShowColumns.WATCHED_COUNT));
+      final int collectionCount = c.getInt(c.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT));
 
       return inWatchlist || watchedCount > 0 || collectionCount > 0 || fullSyncRequested > 0;
     }
@@ -208,17 +214,16 @@ public final class ShowWrapper {
   public static void updateShow(ContentResolver resolver, TvShow show) {
     final long id = getShowId(resolver, show);
     ContentValues cv = getShowCVs(show);
-    resolver.update(Shows.buildFromId(id), cv, null, null);
+    resolver.update(Shows.withId(id), cv, null, null);
 
     if (show.getGenres() != null) insertShowGenres(resolver, id, show.getGenres());
     if (show.getPeople() != null) insertPeople(resolver, id, show.getPeople());
-
   }
 
   public static long insertShow(ContentResolver resolver, TvShow show) {
     ContentValues cv = getShowCVs(show);
 
-    Uri uri = resolver.insert(Shows.CONTENT_URI, cv);
+    Uri uri = resolver.insert(Shows.SHOWS, cv);
     final long showId = Long.valueOf(Shows.getShowId(uri));
 
     if (show.getGenres() != null) insertShowGenres(resolver, showId, show.getGenres());
@@ -228,7 +233,7 @@ public final class ShowWrapper {
   }
 
   private static void insertPeople(ContentResolver resolver, long showId, People people) {
-    resolver.delete(ShowActor.buildFromShowId(showId), null, null);
+    resolver.delete(ShowActors.fromShow(showId), null, null);
     List<Person> actors = people.getActors();
     for (Person actor : actors) {
       String name = actor.getName();
@@ -237,14 +242,14 @@ public final class ShowWrapper {
       }
 
       ContentValues cv = new ContentValues();
-      cv.put(ShowActor.SHOW_ID, showId);
-      cv.put(ShowActor.NAME, actor.getName());
-      cv.put(ShowActor.CHARACTER, actor.getCharacter());
+      cv.put(ShowActorColumns.SHOW_ID, showId);
+      cv.put(ShowActorColumns.NAME, actor.getName());
+      cv.put(ShowActorColumns.CHARACTER, actor.getCharacter());
       if (actor.getImages() != null && !ApiUtils.isPlaceholder(actor.getImages().getHeadshot())) {
-        cv.put(ShowActor.HEADSHOT, actor.getImages().getHeadshot());
+        cv.put(ShowActorColumns.HEADSHOT, actor.getImages().getHeadshot());
       }
 
-      resolver.insert(ShowActor.buildFromShowId(showId), cv);
+      resolver.insert(ShowActors.fromShow(showId), cv);
     }
   }
 
@@ -254,15 +259,15 @@ public final class ShowWrapper {
 
   public static void setWatched(ContentResolver resolver, long showId, boolean watched) {
     ContentValues cv = new ContentValues();
-    cv.put(CathodeContract.Episodes.WATCHED, watched);
+    cv.put(EpisodeColumns.WATCHED, watched);
 
     Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT-8:00"));
     final long millis = cal.getTimeInMillis();
 
-    resolver.update(CathodeContract.Episodes.buildFromShowId(showId), cv,
-        CathodeContract.EpisodeColumns.FIRST_AIRED + "<?", new String[] {
-        String.valueOf(millis),
-    });
+    resolver.update(Episodes.fromShow(showId), cv, EpisodeColumns.FIRST_AIRED + "<?", new String[] {
+            String.valueOf(millis),
+        }
+    );
   }
 
   public static void setIsInWatchlist(ContentResolver resolver, int tvdbId, boolean inWatchlist) {
@@ -271,9 +276,9 @@ public final class ShowWrapper {
 
   public static void setIsInWatchlist(ContentResolver resolver, long showId, boolean inWatchlist) {
     ContentValues cv = new ContentValues();
-    cv.put(Shows.IN_WATCHLIST, inWatchlist);
+    cv.put(ShowColumns.IN_WATCHLIST, inWatchlist);
 
-    resolver.update(Shows.buildFromId(showId), cv, null, null);
+    resolver.update(Shows.withId(showId), cv, null, null);
   }
 
   public static void setIsInCollection(ContentResolver resolver, int tvdbId, boolean inCollection) {
@@ -283,73 +288,79 @@ public final class ShowWrapper {
   public static void setIsInCollection(ContentResolver resolver, long showId,
       boolean inCollection) {
     ContentValues cv = new ContentValues();
-    cv.put(CathodeContract.Episodes.IN_COLLECTION, inCollection);
+    cv.put(EpisodeColumns.IN_COLLECTION, inCollection);
 
     Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT-8:00"));
     final long millis = cal.getTimeInMillis();
 
-    resolver.update(CathodeContract.Episodes.buildFromShowId(showId), cv,
-        CathodeContract.EpisodeColumns.FIRST_AIRED + "<?", new String[] {
-        String.valueOf(millis),
-    });
+    resolver.update(Episodes.fromShow(showId), cv, EpisodeColumns.FIRST_AIRED + "<?", new String[] {
+            String.valueOf(millis),
+        }
+    );
   }
 
   public static void setIsHidden(ContentResolver resolver, long showId, boolean isHidden) {
     ContentValues cv = new ContentValues();
-    cv.put(Shows.HIDDEN, isHidden);
+    cv.put(ShowColumns.HIDDEN, isHidden);
 
-    resolver.update(Shows.buildFromId(showId), cv, null, null);
+    resolver.update(Shows.withId(showId), cv, null, null);
   }
 
   private static ContentValues getShowCVs(TvShow show) {
     ContentValues cv = new ContentValues();
 
-    cv.put(Shows.TITLE, show.getTitle());
-    cv.put(Shows.YEAR, show.getYear());
-    cv.put(Shows.URL, show.getUrl());
+    cv.put(ShowColumns.TITLE, show.getTitle());
+    cv.put(ShowColumns.YEAR, show.getYear());
+    cv.put(ShowColumns.URL, show.getUrl());
     if (show.getFirstAiredIso() != null) {
-      cv.put(Shows.FIRST_AIRED, DateUtils.getMillis(show.getFirstAiredIso()));
+      cv.put(ShowColumns.FIRST_AIRED, DateUtils.getMillis(show.getFirstAiredIso()));
     }
-    cv.put(Shows.COUNTRY, show.getCountry());
-    cv.put(Shows.OVERVIEW, show.getOverview());
-    cv.put(Shows.RUNTIME, show.getRuntime());
-    if (show.getNetwork() != null) cv.put(Shows.NETWORK, show.getNetwork());
-    if (show.getAirDay() != null) cv.put(Shows.AIR_DAY, show.getAirDay().toString());
-    if (show.getAirTime() != null) cv.put(Shows.AIR_TIME, show.getAirTime());
-    if (show.getCertification() != null) cv.put(Shows.CERTIFICATION, show.getCertification());
-    cv.put(Shows.IMDB_ID, show.getImdbId());
-    cv.put(Shows.TVDB_ID, show.getTvdbId());
-    cv.put(Shows.TVRAGE_ID, show.getTvrageId());
-    if (show.getLastUpdated() != null) cv.put(Shows.LAST_UPDATED, show.getLastUpdated());
+    cv.put(ShowColumns.COUNTRY, show.getCountry());
+    cv.put(ShowColumns.OVERVIEW, show.getOverview());
+    cv.put(ShowColumns.RUNTIME, show.getRuntime());
+    if (show.getNetwork() != null) cv.put(ShowColumns.NETWORK, show.getNetwork());
+    if (show.getAirDay() != null) cv.put(ShowColumns.AIR_DAY, show.getAirDay().toString());
+    if (show.getAirTime() != null) cv.put(ShowColumns.AIR_TIME, show.getAirTime());
+    if (show.getCertification() != null) cv.put(ShowColumns.CERTIFICATION, show.getCertification());
+    cv.put(ShowColumns.IMDB_ID, show.getImdbId());
+    cv.put(ShowColumns.TVDB_ID, show.getTvdbId());
+    cv.put(ShowColumns.TVRAGE_ID, show.getTvrageId());
+    if (show.getLastUpdated() != null) cv.put(ShowColumns.LAST_UPDATED, show.getLastUpdated());
     if (show.getImages() != null) {
       Images images = show.getImages();
-      if (!ApiUtils.isPlaceholder(images.getPoster())) cv.put(Shows.POSTER, images.getPoster());
-      if (!ApiUtils.isPlaceholder(images.getFanart())) cv.put(Shows.FANART, images.getFanart());
-      if (!ApiUtils.isPlaceholder(images.getBanner())) cv.put(Shows.BANNER, images.getBanner());
+      if (!ApiUtils.isPlaceholder(images.getPoster())) {
+        cv.put(ShowColumns.POSTER, images.getPoster());
+      }
+      if (!ApiUtils.isPlaceholder(images.getFanart())) {
+        cv.put(ShowColumns.FANART, images.getFanart());
+      }
+      if (!ApiUtils.isPlaceholder(images.getBanner())) {
+        cv.put(ShowColumns.BANNER, images.getBanner());
+      }
     }
     if (show.getRatings() != null) {
-      cv.put(Shows.RATING_PERCENTAGE, show.getRatings().getPercentage());
-      cv.put(Shows.RATING_VOTES, show.getRatings().getVotes());
-      cv.put(Shows.RATING_LOVED, show.getRatings().getLoved());
-      cv.put(Shows.RATING_HATED, show.getRatings().getHated());
+      cv.put(ShowColumns.RATING_PERCENTAGE, show.getRatings().getPercentage());
+      cv.put(ShowColumns.RATING_VOTES, show.getRatings().getVotes());
+      cv.put(ShowColumns.RATING_LOVED, show.getRatings().getLoved());
+      cv.put(ShowColumns.RATING_HATED, show.getRatings().getHated());
     }
     if (show.getStats() != null) {
-      cv.put(Shows.WATCHERS, show.getStats().getWatchers());
-      cv.put(Shows.PLAYS, show.getStats().getPlays());
-      cv.put(Shows.SCROBBLES, show.getStats().getScrobbles());
-      cv.put(Shows.CHECKINS, show.getStats().getCheckins());
+      cv.put(ShowColumns.WATCHERS, show.getStats().getWatchers());
+      cv.put(ShowColumns.PLAYS, show.getStats().getPlays());
+      cv.put(ShowColumns.SCROBBLES, show.getStats().getScrobbles());
+      cv.put(ShowColumns.CHECKINS, show.getStats().getCheckins());
     }
-    if (show.getStatus() != null) cv.put(Shows.STATUS, show.getStatus().toString());
+    if (show.getStatus() != null) cv.put(ShowColumns.STATUS, show.getStatus().toString());
     if (show.getRatingAdvanced() != null) {
-      cv.put(Shows.RATING, show.getRatingAdvanced());
+      cv.put(ShowColumns.RATING, show.getRatingAdvanced());
     }
-    if (show.isInWatchlist() != null) cv.put(Shows.IN_WATCHLIST, show.isInWatchlist());
+    if (show.isInWatchlist() != null) cv.put(ShowColumns.IN_WATCHLIST, show.isInWatchlist());
 
     return cv;
   }
 
   public static long getLastUpdated(ContentResolver resolver) {
-    Cursor c = resolver.query(Shows.CONTENT_URI, new String[] {
+    Cursor c = resolver.query(Shows.SHOWS, new String[] {
         ShowColumns.LAST_UPDATED,
     }, null, null, ShowColumns.LAST_UPDATED + " DESC LIMIT 1");
 
@@ -365,7 +376,7 @@ public final class ShowWrapper {
 
   public static void setRating(ContentResolver resolver, long showId, int rating) {
     ContentValues cv = new ContentValues();
-    cv.put(Shows.RATING, rating);
-    resolver.update(Shows.buildFromId(showId), cv, null, null);
+    cv.put(ShowColumns.RATING, rating);
+    resolver.update(Shows.withId(showId), cv, null, null);
   }
 }

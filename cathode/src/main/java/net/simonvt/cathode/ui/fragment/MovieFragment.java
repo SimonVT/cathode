@@ -35,7 +35,10 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.OnTitleChangedEvent;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.MovieActorColumns;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.MovieActors;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
@@ -213,32 +216,30 @@ public class MovieFragment extends ProgressFragment
     if (cursor == null || !cursor.moveToFirst()) return;
     loaded = true;
 
-    final String title = cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.TITLE));
+    final String title = cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE));
     if (!title.equals(movieTitle)) {
       movieTitle = title;
       bus.post(new OnTitleChangedEvent());
     }
-    final int year = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.YEAR));
+    final int year = cursor.getInt(cursor.getColumnIndex(MovieColumns.YEAR));
     final String certification =
-        cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.CERTIFICATION));
+        cursor.getString(cursor.getColumnIndex(MovieColumns.CERTIFICATION));
 
-    final String fanartUrl = cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.FANART));
+    final String fanartUrl = cursor.getString(cursor.getColumnIndex(MovieColumns.FANART));
     fanart.setImage(fanartUrl);
-    final String posterUrl = cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.POSTER));
+    final String posterUrl = cursor.getString(cursor.getColumnIndex(MovieColumns.POSTER));
     poster.setImage(posterUrl);
 
-    currentRating = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.RATING));
-    final int ratingAll =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.RATING_PERCENTAGE));
+    currentRating = cursor.getInt(cursor.getColumnIndex(MovieColumns.RATING));
+    final int ratingAll = cursor.getInt(cursor.getColumnIndex(MovieColumns.RATING_PERCENTAGE));
     rating.setValue(ratingAll);
 
-    final String overview =
-        cursor.getString(cursor.getColumnIndex(CathodeContract.Movies.OVERVIEW));
-    watched = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.WATCHED)) == 1;
-    collected = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.IN_COLLECTION)) == 1;
-    inWatchlist = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.IN_WATCHLIST)) == 1;
-    watching = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.WATCHING)) == 1;
-    checkedIn = cursor.getInt(cursor.getColumnIndex(CathodeContract.Movies.CHECKED_IN)) == 1;
+    final String overview = cursor.getString(cursor.getColumnIndex(MovieColumns.OVERVIEW));
+    watched = cursor.getInt(cursor.getColumnIndex(MovieColumns.WATCHED)) == 1;
+    collected = cursor.getInt(cursor.getColumnIndex(MovieColumns.IN_COLLECTION)) == 1;
+    inWatchlist = cursor.getInt(cursor.getColumnIndex(MovieColumns.IN_WATCHLIST)) == 1;
+    watching = cursor.getInt(cursor.getColumnIndex(MovieColumns.WATCHING)) == 1;
+    checkedIn = cursor.getInt(cursor.getColumnIndex(MovieColumns.CHECKED_IN)) == 1;
 
     isWatched.setVisibility(watched ? View.VISIBLE : View.GONE);
     collection.setVisibility(collected ? View.VISIBLE : View.GONE);
@@ -254,8 +255,7 @@ public class MovieFragment extends ProgressFragment
 
   @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
     CursorLoader loader =
-        new CursorLoader(getActivity(), CathodeContract.Movies.buildFromId(movieId), null, null,
-            null, null);
+        new CursorLoader(getActivity(), Movies.withId(movieId), null, null, null, null);
     loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return loader;
   }
@@ -277,11 +277,11 @@ public class MovieFragment extends ProgressFragment
       View v = LayoutInflater.from(getActivity()).inflate(R.layout.person, actors, false);
 
       RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
-      headshot.setImage(c.getString(c.getColumnIndex(CathodeContract.MovieActors.HEADSHOT)));
+      headshot.setImage(c.getString(c.getColumnIndex(MovieActorColumns.HEADSHOT)));
       TextView name = (TextView) v.findViewById(R.id.name);
-      name.setText(c.getString(c.getColumnIndex(CathodeContract.MovieActors.NAME)));
+      name.setText(c.getString(c.getColumnIndex(MovieActorColumns.NAME)));
       TextView character = (TextView) v.findViewById(R.id.job);
-      character.setText(c.getString(c.getColumnIndex(CathodeContract.MovieActors.CHARACTER)));
+      character.setText(c.getString(c.getColumnIndex(MovieActorColumns.CHARACTER)));
 
       actors.addView(v);
     }
@@ -291,8 +291,8 @@ public class MovieFragment extends ProgressFragment
       new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
           CursorLoader loader =
-              new CursorLoader(getActivity(), CathodeContract.MovieActors.buildFromMovieId(movieId),
-                  null, null, null, null);
+              new CursorLoader(getActivity(), MovieActors.fromMovie(movieId), null, null, null,
+                  null);
           loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
           return loader;
         }

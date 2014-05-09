@@ -17,7 +17,6 @@ package net.simonvt.cathode.ui.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.provider.BaseColumns;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,8 +27,8 @@ import butterknife.InjectView;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeDatabase;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.IndicatorView;
@@ -41,15 +40,15 @@ public class ShowDescriptionAdapter extends CursorAdapter {
   private static final String TAG = "ShowDescriptionAdapter";
 
   public static final String[] PROJECTION = new String[] {
-      CathodeDatabase.Tables.SHOWS + "." + BaseColumns._ID,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.TITLE,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.OVERVIEW,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.POSTER,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.TVDB_ID,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.WATCHED_COUNT,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.IN_COLLECTION_COUNT,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.IN_WATCHLIST,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.RATING_PERCENTAGE,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.OVERVIEW,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.POSTER,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TVDB_ID,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.RATING_PERCENTAGE,
   };
 
   @Inject ShowTaskScheduler showScheduler;
@@ -69,23 +68,23 @@ public class ShowDescriptionAdapter extends CursorAdapter {
     ViewHolder vh = (ViewHolder) view.getTag();
     final int position = cursor.getPosition();
 
-    final long id = cursor.getLong(cursor.getColumnIndex(CathodeContract.Shows._ID));
+    final long id = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
     final boolean watched =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.WATCHED_COUNT)) > 0;
+        cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHED_COUNT)) > 0;
     final boolean inCollection =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.IN_COLLECTION_COUNT)) > 1;
+        cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT)) > 1;
     final boolean inWatchlist =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.IN_WATCHLIST)) == 1;
+        cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
     final int rating =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.RATING_PERCENTAGE));
+        cursor.getInt(cursor.getColumnIndex(ShowColumns.RATING_PERCENTAGE));
 
     vh.indicator.setWatched(watched);
     vh.indicator.setCollected(inCollection);
     vh.indicator.setInWatchlist(inWatchlist);
 
-    vh.poster.setImage(cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.POSTER)));
-    vh.title.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.TITLE)));
-    vh.overview.setText(cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.OVERVIEW)));
+    vh.poster.setImage(cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER)));
+    vh.title.setText(cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE)));
+    vh.overview.setText(cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW)));
 
     vh.rating.setValue(rating);
 

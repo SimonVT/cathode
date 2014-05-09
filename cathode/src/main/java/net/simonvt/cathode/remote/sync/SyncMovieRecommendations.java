@@ -24,10 +24,11 @@ import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.service.RecommendationsService;
-import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeProvider;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.TraktTask;
 
@@ -40,9 +41,9 @@ public class SyncMovieRecommendations extends TraktTask {
       ContentResolver resolver = getContentResolver();
 
       List<Long> movieIds = new ArrayList<Long>();
-      Cursor c = resolver.query(CathodeContract.Movies.RECOMMENDED, null, null, null, null);
+      Cursor c = resolver.query(Movies.RECOMMENDED, null, null, null, null);
       while (c.moveToNext()) {
-        movieIds.add(c.getLong(c.getColumnIndex(CathodeContract.Movies._ID)));
+        movieIds.add(c.getLong(c.getColumnIndex(MovieColumns.ID)));
       }
       c.close();
 
@@ -62,23 +63,20 @@ public class SyncMovieRecommendations extends TraktTask {
         movieIds.remove(id);
 
         ContentValues cv = new ContentValues();
-        cv.put(CathodeContract.Movies.RECOMMENDATION_INDEX, index);
+        cv.put(MovieColumns.RECOMMENDATION_INDEX, index);
         ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(CathodeContract.Movies.buildFromId(id))
-                .withValues(cv)
-                .build();
+            ContentProviderOperation.newUpdate(Movies.withId(id)).withValues(cv).build();
         ops.add(op);
       }
 
       for (Long id : movieIds) {
-        ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(CathodeContract.Movies.buildFromId(id))
-                .withValue(CathodeContract.Movies.RECOMMENDATION_INDEX, -1)
-                .build();
+        ContentProviderOperation op = ContentProviderOperation.newUpdate(Movies.withId(id))
+            .withValue(MovieColumns.RECOMMENDATION_INDEX, -1)
+            .build();
         ops.add(op);
       }
 
-      resolver.applyBatch(CathodeProvider.AUTHORITY, ops);
+      resolver.applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
       postOnSuccess();
     } catch (RemoteException e) {
       e.printStackTrace();

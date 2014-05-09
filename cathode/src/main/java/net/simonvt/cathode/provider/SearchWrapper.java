@@ -18,6 +18,10 @@ package net.simonvt.cathode.provider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
+import net.simonvt.cathode.provider.DatabaseContract.MovieSearchSuggestionsColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowSearchSuggestionsColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.MovieSearchSuggestions;
+import net.simonvt.cathode.provider.ProviderSchematic.ShowSearchSuggestions;
 
 public final class SearchWrapper {
 
@@ -25,27 +29,29 @@ public final class SearchWrapper {
   }
 
   public static void insertShowQuery(ContentResolver resolver, String query) {
-    Cursor c = resolver.query(CathodeContract.SearchSuggestions.SHOW_URI, null,
-        CathodeContract.SearchSuggestions.QUERY + "=?", new String[] {
-        query,
-    }, null);
+    Cursor c = resolver.query(ShowSearchSuggestions.SHOW_SUGGESTIONS, null,
+        ShowSearchSuggestionsColumns.QUERY + "=?", new String[] {
+            query,
+        }, null
+    );
     if (c.getCount() == 0) {
       ContentValues cv = new ContentValues();
-      cv.put(CathodeContract.SearchSuggestions.QUERY, query);
-      resolver.insert(CathodeContract.SearchSuggestions.SHOW_URI, cv);
+      cv.put(ShowSearchSuggestionsColumns.QUERY, query);
+      resolver.insert(ShowSearchSuggestions.SHOW_SUGGESTIONS, cv);
     }
     c.close();
   }
 
   public static void insertMovieQuery(ContentResolver resolver, String query) {
-    Cursor c = resolver.query(CathodeContract.SearchSuggestions.MOVIE_URI, null,
-        CathodeContract.SearchSuggestions.QUERY + "=?", new String[] {
-        query,
-    }, null);
+    Cursor c = resolver.query(MovieSearchSuggestions.MOVIE_SUGGESTIONS, null,
+        MovieSearchSuggestionsColumns.QUERY + "=?", new String[] {
+            query,
+        }, null
+    );
     if (c.getCount() == 0) {
       ContentValues cv = new ContentValues();
-      cv.put(CathodeContract.SearchSuggestions.QUERY, query);
-      resolver.insert(CathodeContract.SearchSuggestions.MOVIE_URI, cv);
+      cv.put(MovieSearchSuggestionsColumns.QUERY, query);
+      resolver.insert(MovieSearchSuggestions.MOVIE_SUGGESTIONS, cv);
     }
     c.close();
   }

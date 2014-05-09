@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
@@ -42,8 +42,8 @@ import net.simonvt.cathode.ui.dialog.ListDialog;
 public class TrendingMoviesFragment extends MoviesFragment implements ListDialog.Callback {
 
   private enum SortBy {
-    VIEWERS("viewers", CathodeContract.Movies.SORT_VIEWERS),
-    RATING("rating", CathodeContract.Movies.SORT_RATING);
+    VIEWERS("viewers", Movies.SORT_VIEWERS),
+    RATING("rating", Movies.SORT_RATING);
 
     private String key;
 
@@ -152,7 +152,7 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
 
   @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
     CursorLoader loader =
-        new CursorLoader(getActivity(), CathodeContract.Movies.TRENDING, null, null, null, sortBy.getSortOrder());
+        new CursorLoader(getActivity(), Movies.TRENDING, null, null, null, sortBy.getSortOrder());
     loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return loader;
   }

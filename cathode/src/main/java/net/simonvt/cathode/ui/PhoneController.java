@@ -36,7 +36,11 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.OnTitleChangedEvent;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.SearchTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
@@ -136,23 +140,24 @@ public class PhoneController extends UiController {
           .commit();
     }
 
-    stack = FragmentStack.forContainer(activity, R.id.controller_content, new FragmentStack.Callback() {
-          @Override public void onStackChanged(int stackSize, Fragment topFragment) {
-            Timber.d("onStackChanged: %s", topFragment.getTag());
-            menuDrawer.setDrawerIndicatorEnabled(stackSize <= 1);
-            if (!menuDrawer.isMenuVisible()) {
-              updateTitle();
-            }
-            if (searchView != null) {
-              if (!FRAGMENT_SEARCH_MOVIE.equals(topFragment.getTag())
-                  && !FRAGMENT_SEARCH_SHOW.equals(topFragment.getTag())) {
-                destroySearchView();
+    stack =
+        FragmentStack.forContainer(activity, R.id.controller_content, new FragmentStack.Callback() {
+              @Override public void onStackChanged(int stackSize, Fragment topFragment) {
+                Timber.d("onStackChanged: %s", topFragment.getTag());
+                menuDrawer.setDrawerIndicatorEnabled(stackSize <= 1);
+                if (!menuDrawer.isMenuVisible()) {
+                  updateTitle();
+                }
+                if (searchView != null) {
+                  if (!FRAGMENT_SEARCH_MOVIE.equals(topFragment.getTag())
+                      && !FRAGMENT_SEARCH_SHOW.equals(topFragment.getTag())) {
+                    destroySearchView();
+                  }
+                }
+                topFragment.setMenuVisibility(searchView == null);
               }
             }
-            topFragment.setMenuVisibility(searchView == null);
-          }
-        }
-    );
+        );
     stack.setDefaultAnimation(R.anim.fade_in_front, R.anim.fade_out_back, R.anim.fade_in_back,
         R.anim.fade_out_front);
 
@@ -464,19 +469,15 @@ public class PhoneController extends UiController {
   private void updateWatching() {
     if (watchingShow != null && watchingShow.moveToFirst()) {
       View watching = LayoutInflater.from(activity).inflate(R.layout.watching_show, null);
-      final String show =
-          watchingShow.getString(watchingShow.getColumnIndex(CathodeContract.Shows.TITLE));
-      final String poster =
-          watchingShow.getString(watchingShow.getColumnIndex(CathodeContract.Shows.POSTER));
+      final String show = watchingShow.getString(watchingShow.getColumnIndex(ShowColumns.TITLE));
+      final String poster = watchingShow.getString(watchingShow.getColumnIndex(ShowColumns.POSTER));
       final String episode =
-          watchingShow.getString(watchingShow.getColumnIndex(CathodeContract.Episodes.TITLE));
-      final int season =
-          watchingShow.getInt(watchingShow.getColumnIndex(CathodeContract.Episodes.SEASON));
+          watchingShow.getString(watchingShow.getColumnIndex(EpisodeColumns.TITLE));
+      final int season = watchingShow.getInt(watchingShow.getColumnIndex(EpisodeColumns.SEASON));
       final int episodeNumber =
-          watchingShow.getInt(watchingShow.getColumnIndex(CathodeContract.Episodes.EPISODE));
+          watchingShow.getInt(watchingShow.getColumnIndex(EpisodeColumns.EPISODE));
       final boolean checkedIn =
-          watchingShow.getInt(watchingShow.getColumnIndex(CathodeContract.Episodes.CHECKED_IN))
-              == 1;
+          watchingShow.getInt(watchingShow.getColumnIndex(EpisodeColumns.CHECKED_IN)) == 1;
 
       ((TextView) watching.findViewById(R.id.show)).setText(show);
       ((RemoteImageView) watching.findViewById(R.id.poster)).setImage(poster);
@@ -504,14 +505,12 @@ public class PhoneController extends UiController {
     } else if (watchingMovie != null && watchingMovie.moveToFirst()) {
       View watching = LayoutInflater.from(activity).inflate(R.layout.watching_movie, null);
       final String movie =
-          watchingMovie.getString(watchingMovie.getColumnIndex(CathodeContract.Movies.TITLE));
+          watchingMovie.getString(watchingMovie.getColumnIndex(MovieColumns.TITLE));
       final String poster =
-          watchingMovie.getString(watchingMovie.getColumnIndex(CathodeContract.Movies.POSTER));
-      final String year =
-          watchingMovie.getString(watchingMovie.getColumnIndex(CathodeContract.Movies.YEAR));
+          watchingMovie.getString(watchingMovie.getColumnIndex(MovieColumns.POSTER));
+      final String year = watchingMovie.getString(watchingMovie.getColumnIndex(MovieColumns.YEAR));
       final boolean checkedIn =
-          watchingMovie.getInt(watchingMovie.getColumnIndex(CathodeContract.Movies.CHECKED_IN))
-              == 1;
+          watchingMovie.getInt(watchingMovie.getColumnIndex(MovieColumns.CHECKED_IN)) == 1;
 
       ((TextView) watching.findViewById(R.id.movie)).setText(movie);
       ((RemoteImageView) watching.findViewById(R.id.poster)).setImage(poster);
@@ -544,8 +543,7 @@ public class PhoneController extends UiController {
       new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
           CursorLoader loader =
-              new CursorLoader(activity, CathodeContract.Shows.SHOW_WATCHING, null, null, null,
-                  null);
+              new CursorLoader(activity, Shows.SHOW_WATCHING, null, null, null, null);
           loader.setUpdateThrottle(2000);
           return loader;
         }
@@ -563,9 +561,7 @@ public class PhoneController extends UiController {
   private LoaderManager.LoaderCallbacks<Cursor> watchingMovieCallback =
       new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-          CursorLoader loader =
-              new CursorLoader(activity, CathodeContract.Movies.MOVIE_WATCHING, null, null, null,
-                  null);
+          CursorLoader loader = new CursorLoader(activity, Movies.WATCHING, null, null, null, null);
           loader.setUpdateThrottle(2000);
           return loader;
         }

@@ -21,7 +21,8 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.service.UserService;
-import net.simonvt.cathode.provider.CathodeContract;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.TraktTask;
 
@@ -30,14 +31,14 @@ public class SyncMoviesWatchlistTask extends TraktTask {
   @Inject transient UserService userService;
 
   @Override protected void doTask() {
-    Cursor c = getContentResolver().query(CathodeContract.Movies.CONTENT_URI, new String[] {
-        CathodeContract.Movies._ID,
-    }, CathodeContract.Movies.IN_WATCHLIST, null, null);
+    Cursor c = getContentResolver().query(Movies.MOVIES, new String[] {
+        MovieColumns.ID,
+    }, MovieColumns.IN_WATCHLIST, null, null);
 
     List<Long> movieIds = new ArrayList<Long>();
 
     while (c.moveToNext()) {
-      movieIds.add(c.getLong(c.getColumnIndex(CathodeContract.Movies._ID)));
+      movieIds.add(c.getLong(c.getColumnIndex(MovieColumns.ID)));
     }
     c.close();
 

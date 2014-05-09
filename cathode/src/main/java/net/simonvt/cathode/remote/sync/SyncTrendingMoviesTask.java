@@ -24,10 +24,11 @@ import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.service.MoviesService;
-import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeProvider;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.TraktTask;
 import timber.log.Timber;
@@ -43,15 +44,13 @@ public class SyncTrendingMoviesTask extends TraktTask {
       List<Movie> movies = moviesService.trending();
 
       ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
-      Cursor c = resolver.query(CathodeContract.Movies.TRENDING, null, null, null, null);
+      Cursor c = resolver.query(Movies.TRENDING, null, null, null, null);
       while (c.moveToNext()) {
-        final long movieId = c.getLong(c.getColumnIndex(CathodeContract.Movies._ID));
+        final long movieId = c.getLong(c.getColumnIndex(MovieColumns.ID));
         ContentValues cv = new ContentValues();
-        cv.put(CathodeContract.Movies.TRENDING_INDEX, -1);
+        cv.put(MovieColumns.TRENDING_INDEX, -1);
         ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(CathodeContract.Movies.buildFromId(movieId))
-                .withValues(cv)
-                .build();
+            ContentProviderOperation.newUpdate(Movies.withId(movieId)).withValues(cv).build();
         ops.add(op);
       }
       c.close();
@@ -68,15 +67,13 @@ public class SyncTrendingMoviesTask extends TraktTask {
         }
 
         ContentValues cv = new ContentValues();
-        cv.put(CathodeContract.Movies.TRENDING_INDEX, i);
+        cv.put(MovieColumns.TRENDING_INDEX, i);
         ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(CathodeContract.Movies.buildFromId(movieId))
-                .withValues(cv)
-                .build();
+            ContentProviderOperation.newUpdate(Movies.withId(movieId)).withValues(cv).build();
         ops.add(op);
       }
 
-      resolver.applyBatch(CathodeProvider.AUTHORITY, ops);
+      resolver.applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
       postOnSuccess();
     } catch (RemoteException e) {
       Timber.e(e, "SyncTrendingMoviesTask failed");

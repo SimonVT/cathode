@@ -17,7 +17,6 @@ package net.simonvt.cathode.ui.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.provider.BaseColumns;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
@@ -30,8 +29,9 @@ import butterknife.InjectView;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeDatabase;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
@@ -48,21 +48,21 @@ public class ShowsWithNextAdapter extends CursorAdapter {
   private static final String COLUMN_EPISODE_ID = "episodeId";
 
   public static final String[] PROJECTION = new String[] {
-      CathodeDatabase.Tables.SHOWS + "." + BaseColumns._ID,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.TITLE,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.POSTER,
-      CathodeContract.Shows.AIRED_COUNT,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.WATCHED_COUNT,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.IN_COLLECTION_COUNT,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.STATUS,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.HIDDEN,
-      CathodeContract.Shows.WATCHING,
-      CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes._ID
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.POSTER,
+      ShowColumns.AIRED_COUNT,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.STATUS,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.HIDDEN,
+      ShowColumns.WATCHING,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.ID
           + " AS " + COLUMN_EPISODE_ID,
-      CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.TITLE,
-      CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.FIRST_AIRED,
-      CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.SEASON,
-      CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.EPISODE,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.TITLE,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SEASON,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.EPISODE,
   };
 
   @Inject ShowTaskScheduler showScheduler;
@@ -92,42 +92,42 @@ public class ShowsWithNextAdapter extends CursorAdapter {
   }
 
   @Override public void bindView(final View view, Context context, Cursor cursor) {
-    final long id = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
+    final long id = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
     final int position = cursor.getPosition();
 
     final String showPosterUrl =
-        cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.POSTER));
-    final String showTitle = cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.TITLE));
-    final String showStatus = cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.STATUS));
+        cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER));
+    final String showTitle = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
+    final String showStatus = cursor.getString(cursor.getColumnIndex(ShowColumns.STATUS));
     final boolean isHidden =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.HIDDEN)) == 1;
+        cursor.getInt(cursor.getColumnIndex(ShowColumns.HIDDEN)) == 1;
     final boolean watching =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.WATCHING)) == 1;
+        cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHING)) == 1;
 
     final int showAiredCount =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.AIRED_COUNT));
+        cursor.getInt(cursor.getColumnIndex(ShowColumns.AIRED_COUNT));
     int count = 0;
     switch (libraryType) {
       case WATCHED:
       case WATCHLIST:
-        count = cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.WATCHED_COUNT));
+        count = cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHED_COUNT));
         break;
 
       case COLLECTION:
-        count = cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.IN_COLLECTION_COUNT));
+        count = cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT));
         break;
     }
     final int showTypeCount = count;
 
     final long episodeId = cursor.getLong(cursor.getColumnIndex(COLUMN_EPISODE_ID));
     final String episodeTitle =
-        cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE));
+        cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
     final long episodeFirstAired =
-        cursor.getLong(cursor.getColumnIndex(CathodeContract.Episodes.FIRST_AIRED));
+        cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED));
     final int episodeSeasonNumber =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.SEASON));
+        cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
     final int episodeNumber =
-        cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.EPISODE));
+        cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
 
     ViewHolder vh = (ViewHolder) view.getTag();
 

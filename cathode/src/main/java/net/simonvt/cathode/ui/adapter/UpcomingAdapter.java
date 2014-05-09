@@ -16,7 +16,6 @@
 package net.simonvt.cathode.ui.adapter;
 
 import android.database.Cursor;
-import android.provider.BaseColumns;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,8 +27,9 @@ import butterknife.InjectView;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeDatabase;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
@@ -44,21 +44,21 @@ public class UpcomingAdapter extends BaseAdapter {
   private static final String COLUMN_EPISODE_ID = "episodeId";
 
   public static final String[] PROJECTION = new String[] {
-      CathodeDatabase.Tables.SHOWS + "." + BaseColumns._ID,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.TITLE,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.POSTER,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.STATUS,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.HIDDEN,
-      CathodeContract.Shows.AIRED_COUNT,
-      CathodeDatabase.Tables.SHOWS + "." + CathodeContract.Shows.WATCHED_COUNT,
-      CathodeContract.Shows.WATCHING, CathodeDatabase.Tables.EPISODES
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.POSTER,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.STATUS,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.HIDDEN,
+      ShowColumns.AIRED_COUNT,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
+      ShowColumns.WATCHING, DatabaseSchematic.Tables.EPISODES
       + "."
-      + CathodeContract.Episodes._ID
+      + EpisodeColumns.ID
       + " AS "
-      + COLUMN_EPISODE_ID, CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.TITLE,
-      CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.FIRST_AIRED,
-      CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.SEASON,
-      CathodeDatabase.Tables.EPISODES + "." + CathodeContract.Episodes.EPISODE,
+      + COLUMN_EPISODE_ID, DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.TITLE,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SEASON,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.EPISODE,
   };
 
   public interface OnRemoveListener {
@@ -217,7 +217,7 @@ public class UpcomingAdapter extends BaseAdapter {
       return UNAIRED_HEADER_ID;
     }
     Cursor c = getItem(position);
-    return c.getLong(c.getColumnIndex(BaseColumns._ID));
+    return c.getLong(c.getColumnIndex(ShowColumns.ID));
   }
 
   @Override public boolean areAllItemsEnabled() {
@@ -253,30 +253,30 @@ public class UpcomingAdapter extends BaseAdapter {
 
       ViewHolder vh = (ViewHolder) v.getTag();
 
-      final long id = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
+      final long id = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
 
       final String showPosterUrl =
-          cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.POSTER));
-      final String showTitle = cursor.getString(cursor.getColumnIndex(CathodeContract.Shows.TITLE));
+          cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER));
+      final String showTitle = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
       final boolean isHidden =
-          cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.HIDDEN)) == 1;
+          cursor.getInt(cursor.getColumnIndex(ShowColumns.HIDDEN)) == 1;
       final boolean watching =
-          cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.WATCHING)) == 1;
+          cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHING)) == 1;
 
       final int airedCount =
-          cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.AIRED_COUNT));
+          cursor.getInt(cursor.getColumnIndex(ShowColumns.AIRED_COUNT));
       final int watchedCount =
-          cursor.getInt(cursor.getColumnIndex(CathodeContract.Shows.WATCHED_COUNT));
+          cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHED_COUNT));
 
       final long episodeId = cursor.getLong(cursor.getColumnIndex(COLUMN_EPISODE_ID));
       final String episodeTitle =
-          cursor.getString(cursor.getColumnIndex(CathodeContract.Episodes.TITLE));
+          cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
       final long episodeFirstAired =
-          cursor.getLong(cursor.getColumnIndex(CathodeContract.Episodes.FIRST_AIRED));
+          cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED));
       final int episodeSeasonNumber =
-          cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.SEASON));
+          cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
       final int episodeNumber =
-          cursor.getInt(cursor.getColumnIndex(CathodeContract.Episodes.EPISODE));
+          cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
 
       vh.title.setText(showTitle);
       vh.poster.setImage(showPosterUrl);

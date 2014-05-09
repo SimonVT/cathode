@@ -38,8 +38,9 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.MutableCursor;
 import net.simonvt.cathode.database.MutableCursorLoader;
-import net.simonvt.cathode.provider.CathodeContract;
-import net.simonvt.cathode.provider.CathodeContract.Episodes;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.settings.Settings;
@@ -57,8 +58,8 @@ public class UpcomingShowsFragment extends StaggeredGridFragment
     LoaderCallbacks<MutableCursor> {
 
   private enum SortBy {
-    TITLE("title", CathodeContract.Shows.SORT_TITLE),
-    NEXT_EPISODE("nextEpisode", CathodeContract.Shows.SORT_NEXT_EPISODE);
+    TITLE("title", Shows.SORT_TITLE),
+    NEXT_EPISODE("nextEpisode", Shows.SORT_NEXT_EPISODE);
 
     private String key;
 
@@ -144,7 +145,7 @@ public class UpcomingShowsFragment extends StaggeredGridFragment
 
   @Override protected void onItemClick(StaggeredGridView parent, View v, int position, long id) {
     Cursor c = (Cursor) getAdapter().getItem(position);
-    navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(CathodeContract.Shows.TITLE)),
+    navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)),
         LibraryType.WATCHED);
   }
 
@@ -234,7 +235,7 @@ public class UpcomingShowsFragment extends StaggeredGridFragment
     MutableCursor airedCursor = new MutableCursor(cursor.getColumnNames());
     MutableCursor unairedCursor = new MutableCursor(cursor.getColumnNames());
 
-    final int airedIndex = cursor.getColumnIndex(Episodes.FIRST_AIRED);
+    final int airedIndex = cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED);
 
     cursor.moveToPosition(-1);
     while (cursor.moveToNext()) {
@@ -253,10 +254,10 @@ public class UpcomingShowsFragment extends StaggeredGridFragment
   }
 
   @Override public Loader<MutableCursor> onCreateLoader(int id, Bundle args) {
-    final Uri contentUri = CathodeContract.Shows.SHOWS_UPCOMING;
+    final Uri contentUri = Shows.SHOWS_UPCOMING;
     String where = null;
     if (!showHidden) {
-      where = CathodeContract.Shows.HIDDEN + "=0";
+      where = ShowColumns.HIDDEN + "=0";
     }
     MutableCursorLoader cl =
         new MutableCursorLoader(getActivity(), contentUri, UpcomingAdapter.PROJECTION, where, null,
