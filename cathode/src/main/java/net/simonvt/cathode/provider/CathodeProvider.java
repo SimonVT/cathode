@@ -731,17 +731,17 @@ public class CathodeProvider extends ContentProvider {
       }
       case SHOW_TOP_WATCHERS: {
         final String showId = ShowTopWatchers.getShowId(uri);
-        builder.table(Tables.SHOW_TOP_WATCHERS).where(Shows._ID + "=?", showId);
+        builder.table(Tables.SHOW_TOP_WATCHERS).where(ShowTopWatchers.SHOW_ID + "=?", showId);
         break;
       }
       case SHOW_TOP_EPISODES: {
         final String showId = TopEpisodes.getShowId(uri);
-        builder.table(Tables.SHOW_TOP_EPISODES).where(Shows._ID + "=?", showId);
+        builder.table(Tables.SHOW_TOP_EPISODES).where(TopEpisodes.SHOW_ID + "=?", showId);
         break;
       }
       case SHOW_ACTORS: {
         final String showId = ShowActor.getShowId(uri);
-        builder.table(Tables.SHOW_ACTORS).where(Shows._ID + "=?", showId);
+        builder.table(Tables.SHOW_ACTORS).where(ShowActor.SHOW_ID + "=?", showId);
         break;
       }
       case SHOW_GENRES: {
@@ -868,7 +868,7 @@ public class CathodeProvider extends ContentProvider {
       case SHOW_TOP_WATCHERS: {
         final String showId = ShowTopWatchers.getShowId(uri);
         final int count = builder.table(Tables.SHOW_TOP_WATCHERS)
-            .where(Shows._ID + "=?", showId)
+            .where(ShowTopWatchers.SHOW_ID + "=?", showId)
             .where(where, whereArgs)
             .update(db, values);
 
@@ -880,7 +880,7 @@ public class CathodeProvider extends ContentProvider {
       case SHOW_TOP_EPISODES: {
         final String showId = TopEpisodes.getShowId(uri);
         final int count = builder.table(Tables.SHOW_TOP_EPISODES)
-            .where(Shows._ID + "=?", showId)
+            .where(TopEpisodes.SHOW_ID + "=?", showId)
             .where(where, whereArgs)
             .update(db, values);
 
@@ -892,7 +892,7 @@ public class CathodeProvider extends ContentProvider {
       case SHOW_ACTORS: {
         final String showId = ShowActor.getShowId(uri);
         final int count = builder.table(Tables.SHOW_ACTORS)
-            .where(Shows._ID + "=?", showId)
+            .where(ShowActor.SHOW_ID + "=?", showId)
             .where(where, whereArgs)
             .update(db, values);
 
