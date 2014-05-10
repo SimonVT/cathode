@@ -147,13 +147,11 @@ public class ShowWatchlistAdapter extends BaseAdapter {
   @Override public int getCount() {
     int count = 0;
 
-    final int airedCount = showCursor != null ? showCursor.getCount() : 0;
-    if (airedCount > 0) {
-      count += airedCount + 1;
+    if (showCursorCount > 0) {
+      count += showCursorCount + 1;
     }
-    final int unairedCount = episodeCursor != null ? episodeCursor.getCount() : 0;
-    if (unairedCount > 0) {
-      count += unairedCount + 1;
+    if (episodeCursorCount > 0) {
+      count += episodeCursorCount + 1;
     }
 
     return count;
