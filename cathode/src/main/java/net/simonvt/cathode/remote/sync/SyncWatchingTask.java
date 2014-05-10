@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.ActivityItem;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.entity.Movie;
+import net.simonvt.cathode.api.entity.TvShow;
 import net.simonvt.cathode.api.enumeration.ActivityAction;
 import net.simonvt.cathode.api.enumeration.ActivityType;
 import net.simonvt.cathode.api.service.UserService;
@@ -33,6 +34,7 @@ import net.simonvt.cathode.provider.CathodeDatabase.Tables;
 import net.simonvt.cathode.provider.CathodeProvider;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
 import timber.log.Timber;
 
@@ -80,8 +82,19 @@ public class SyncWatchingTask extends TraktTask {
       ActivityAction action = activity.getAction();
 
       if (type == ActivityType.EPISODE) {
+        TvShow show = activity.getShow();
+        final long showId = ShowWrapper.getShowId(getContentResolver(), show);
+
         Episode episode = activity.getEpisode();
-        final Long episodeId = EpisodeWrapper.getEpisodeId(resolver, episode);
+        final long episodeId = EpisodeWrapper.getEpisodeId(resolver, episode);
+
+        if (showId == -1L || episodeId == -1L) {
+          queueTask(new SyncShowTask(show.getTvdbId()));
+          queueTask(new SyncWatchingTask());
+          postOnSuccess();
+          return;
+        }
+
         episodeWatching.remove(episodeId);
 
         switch (action) {
@@ -101,7 +114,12 @@ public class SyncWatchingTask extends TraktTask {
         ops.add(op);
       } else if (type == ActivityType.MOVIE) {
         Movie movie = activity.getMovie();
-        final Long movieId = MovieWrapper.getMovieId(resolver, movie);
+        long movieId = MovieWrapper.getMovieId(resolver, movie);
+        if (movieId == -1L) {
+          movieId = MovieWrapper.updateOrInsertMovie(getContentResolver(), movie);
+          queueTask(new SyncMovieTask(movie.getTmdbId()));
+        }
+
         movieWatching.remove(movieId);
 
         switch (action) {

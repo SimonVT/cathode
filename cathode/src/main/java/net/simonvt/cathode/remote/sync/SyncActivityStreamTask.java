@@ -28,6 +28,7 @@ import net.simonvt.cathode.api.enumeration.DetailLevel;
 import net.simonvt.cathode.api.service.ActivityService;
 import net.simonvt.cathode.api.service.ServerService;
 import net.simonvt.cathode.api.util.Joiner;
+import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.settings.TraktTimestamps;
 
@@ -72,15 +73,17 @@ public class SyncActivityStreamTask extends TraktTask {
 
               case EPISODE:
                 TvShow show = item.getShow();
-                if (item.getEpisode() != null) {
-                  Episode episode = item.getEpisode();
-                  queueTask(new SyncEpisodeTask(show.getTvdbId(), episode.getSeason(),
-                      episode.getNumber()));
-                } else if (item.getEpisodes() != null) {
-                  List<Episode> episodes = item.getEpisodes();
-                  for (Episode episode : episodes) {
-                    queueTask(new SyncEpisodeTask(show.getTvdbId(), episode.getSeason(),
-                        episode.getNumber()));
+                if (!ShowWrapper.exists(getContentResolver(), show.getTvdbId())) {
+                  queueTask(new SyncShowTask(show.getTvdbId()));
+                } else {
+                  if (item.getEpisode() != null) {
+                    Episode episode = item.getEpisode();
+                    queueTask(new SyncEpisodeTask(show.getTvdbId(), episode.getSeason(), episode.getNumber()));
+                  } else if (item.getEpisodes() != null) {
+                    List<Episode> episodes = item.getEpisodes();
+                    for (Episode episode : episodes) {
+                      queueTask(new SyncEpisodeTask(show.getTvdbId(), episode.getSeason(), episode.getNumber()));
+                    }
                   }
                 }
                 break;
