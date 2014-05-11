@@ -37,6 +37,7 @@ import net.simonvt.cathode.widget.IndicatorView;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.cathode.widget.TimeStamp;
+import timber.log.Timber;
 
 public class ShowWatchlistAdapter extends BaseAdapter {
 
@@ -235,6 +236,19 @@ public class ShowWatchlistAdapter extends BaseAdapter {
       return EPISODE_HEADER_ID;
     }
     Cursor c = getItem(position);
+
+    if (c.getPosition() < 0) {
+      // TODO: Remove eventually
+      Timber.i("Position: " + position);
+      Timber.i("Cursor position: " + c.getPosition());
+      Timber.i("Show header position: " + showHeaderPosition);
+      Timber.i("Show count: " + showCursorCount);
+      Timber.i("Episode header position: " + episodeHeaderPosition);
+      Timber.i("Episode count: " + episodeCursorCount);
+      Timber.e(new RuntimeException("Cursor position is less than 0"),
+          "Cursor position is less than 0");
+    }
+
     return c.getLong(c.getColumnIndex(BaseColumns._ID));
   }
 
