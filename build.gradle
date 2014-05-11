@@ -26,8 +26,8 @@ allprojects {
 ext {
   versionMajor = 1
   versionMinor = 3
-  versionPatch = 2
-  versionBuild = 1
+  versionPatch = 3
+  versionBuild = 0
 
   versionCode = versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
   versionName = versionMajor + "." + versionMinor + "." + versionPatch
