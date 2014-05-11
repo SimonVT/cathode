@@ -207,10 +207,12 @@ public class ShowFragment extends ProgressFragment {
   }
 
   @Override public boolean onBackPressed() {
-    final int state = hiddenPaneLayout.getState();
-    if (state == HiddenPaneLayout.STATE_OPEN || state == HiddenPaneLayout.STATE_OPENING) {
-      hiddenPaneLayout.close();
-      return true;
+    if (hiddenPaneLayout != null) {
+      final int state = hiddenPaneLayout.getState();
+      if (state == HiddenPaneLayout.STATE_OPEN || state == HiddenPaneLayout.STATE_OPENING) {
+        hiddenPaneLayout.close();
+        return true;
+      }
     }
 
     return super.onBackPressed();
