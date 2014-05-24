@@ -3,16 +3,6 @@ apply plugin: 'crashlytics'
 apply plugin: 'checkstyle'
 apply plugin: 'android-apt'
 
-buildscript {
-  repositories {
-    mavenCentral()
-  }
-
-  dependencies {
-    classpath 'com.neenbedankt.gradle.plugins:android-apt:1.2'
-  }
-}
-
 dependencies {
   compile project(':trakt-api')
   compile parent.ext.libraries.menudrawer
@@ -26,6 +16,7 @@ dependencies {
 
   compile parent.ext.libraries.otto
   compile parent.ext.libraries.dagger
+  apt parent.ext.libraries.daggerCompiler
   compile parent.ext.libraries.okhttp
   compile parent.ext.libraries.picasso
   compile parent.ext.libraries.retrofit
