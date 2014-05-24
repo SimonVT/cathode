@@ -15,8 +15,6 @@
  */
 package net.simonvt.cathode.widget;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.LongSparseArray;
@@ -201,34 +199,5 @@ public final class StaggeredGridAnimator {
         return true;
       }
     });
-  }
-
-  public class ViewCopy extends View {
-
-    private Bitmap viewCopy;
-
-    public ViewCopy(View view) {
-      super(view.getContext());
-      copyView(view);
-      measure(MeasureSpec.makeMeasureSpec(view.getWidth(), MeasureSpec.EXACTLY),
-          MeasureSpec.makeMeasureSpec(view.getHeight(), MeasureSpec.EXACTLY));
-      layout(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
-    }
-
-    private void copyView(View view) {
-      Bitmap b = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-      Canvas c = new Canvas(b);
-      view.draw(c);
-      viewCopy = b;
-    }
-
-    @Override protected void onDraw(Canvas canvas) {
-      canvas.drawBitmap(viewCopy, 0.0f, 0.0f, null);
-    }
-
-    @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-      setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec),
-          MeasureSpec.getSize(heightMeasureSpec));
-    }
   }
 }
