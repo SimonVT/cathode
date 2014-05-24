@@ -84,6 +84,8 @@ public class HomeActivity extends BaseActivity
 
   private Handler handler;
 
+  private Runnable displayLogin;
+
   private Runnable syncRunnable = new Runnable() {
     @Override public void run() {
       SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(HomeActivity.this);
@@ -128,7 +130,7 @@ public class HomeActivity extends BaseActivity
   @Override protected void onNewIntent(Intent intent) {
     if (isLoginAction(intent)) {
       if (uiController != null) {
-        handler.post(new Runnable() {
+        displayLogin = new Runnable() {
           @Override public void run() {
             uiController.destroy(true);
             uiController = null;
@@ -137,8 +139,11 @@ public class HomeActivity extends BaseActivity
 
             loginController = LoginController.newInstance(HomeActivity.this, content);
             activeController = loginController;
+            displayLogin = null;
           }
-        });
+        };
+
+        handler.post(displayLogin);
       }
     }
   }
@@ -178,6 +183,10 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override protected void onDestroy() {
+    if (displayLogin != null) {
+      handler.removeCallbacks(displayLogin);
+      displayLogin.run();
+    }
     if (uiController != null) {
       uiController.destroy(false);
     }
