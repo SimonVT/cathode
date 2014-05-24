@@ -84,35 +84,37 @@ public class SyncWatchingTask extends TraktTask {
 
       if (type == ActivityType.EPISODE) {
         TvShow show = activity.getShow();
-        final long showId = ShowWrapper.getShowId(getContentResolver(), show);
+        if (show != null) {
+          final long showId = ShowWrapper.getShowId(getContentResolver(), show);
 
-        Episode episode = activity.getEpisode();
-        final long episodeId = EpisodeWrapper.getEpisodeId(resolver, episode);
+          Episode episode = activity.getEpisode();
+          final long episodeId = EpisodeWrapper.getEpisodeId(resolver, episode);
 
-        if (showId == -1L || episodeId == -1L) {
-          queueTask(new SyncShowTask(show.getTvdbId()));
-          queueTask(new SyncWatchingTask());
-          postOnSuccess();
-          return;
+          if (showId == -1L || episodeId == -1L) {
+            queueTask(new SyncShowTask(show.getTvdbId()));
+            queueTask(new SyncWatchingTask());
+            postOnSuccess();
+            return;
+          }
+
+          episodeWatching.remove(episodeId);
+
+          switch (action) {
+            case CHECKIN:
+              op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
+                  .withValue(EpisodeColumns.CHECKED_IN, true)
+                  .build();
+              break;
+
+            case WATCHING:
+              op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
+                  .withValue(EpisodeColumns.WATCHING, true)
+                  .build();
+              break;
+          }
+
+          ops.add(op);
         }
-
-        episodeWatching.remove(episodeId);
-
-        switch (action) {
-          case CHECKIN:
-            op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
-                .withValue(EpisodeColumns.CHECKED_IN, true)
-                .build();
-            break;
-
-          case WATCHING:
-            op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
-                .withValue(EpisodeColumns.WATCHING, true)
-                .build();
-            break;
-        }
-
-        ops.add(op);
       } else if (type == ActivityType.MOVIE) {
         Movie movie = activity.getMovie();
         long movieId = MovieWrapper.getMovieId(resolver, movie);
