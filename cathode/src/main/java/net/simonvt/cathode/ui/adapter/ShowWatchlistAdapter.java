@@ -17,6 +17,7 @@ package net.simonvt.cathode.ui.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.provider.BaseColumns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -238,19 +239,22 @@ public class ShowWatchlistAdapter extends BaseAdapter {
     }
     Cursor c = getItem(position);
 
-    if (c.getPosition() < 0) {
+    try {
+      return c.getLong(c.getColumnIndex(BaseColumns._ID));
+    } catch (CursorIndexOutOfBoundsException e) {
       // TODO: Remove eventually
       Timber.i("Position: " + position);
       Timber.i("Cursor position: " + c.getPosition());
+      Timber.i("Cursor count: " + c.getCount());
       Timber.i("Show header position: " + showHeaderPosition);
       Timber.i("Show count: " + showCursorCount);
       Timber.i("Episode header position: " + episodeHeaderPosition);
       Timber.i("Episode count: " + episodeCursorCount);
-      Timber.e(new RuntimeException("Cursor position is less than 0"),
-          "Cursor position is less than 0");
-    }
+      Timber.e(new RuntimeException("Cursor position out of bounds"),
+          "Cursor position is out of bounds");
 
-    return c.getLong(c.getColumnIndex(BaseColumns._ID));
+      return -1L;
+    }
   }
 
   @Override public boolean areAllItemsEnabled() {
