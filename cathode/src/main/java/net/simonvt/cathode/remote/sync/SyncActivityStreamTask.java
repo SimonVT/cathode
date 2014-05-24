@@ -73,16 +73,18 @@ public class SyncActivityStreamTask extends TraktTask {
 
               case EPISODE:
                 TvShow show = item.getShow();
-                if (!ShowWrapper.exists(getContentResolver(), show.getTvdbId())) {
-                  queueTask(new SyncShowTask(show.getTvdbId()));
-                } else {
-                  if (item.getEpisode() != null) {
-                    Episode episode = item.getEpisode();
-                    queueTask(new SyncEpisodeTask(show.getTvdbId(), episode.getSeason(), episode.getNumber()));
-                  } else if (item.getEpisodes() != null) {
-                    List<Episode> episodes = item.getEpisodes();
-                    for (Episode episode : episodes) {
+                if (show != null) {
+                  if (!ShowWrapper.exists(getContentResolver(), show.getTvdbId())) {
+                    queueTask(new SyncShowTask(show.getTvdbId()));
+                  } else {
+                    if (item.getEpisode() != null) {
+                      Episode episode = item.getEpisode();
                       queueTask(new SyncEpisodeTask(show.getTvdbId(), episode.getSeason(), episode.getNumber()));
+                    } else if (item.getEpisodes() != null) {
+                      List<Episode> episodes = item.getEpisodes();
+                      for (Episode episode : episodes) {
+                        queueTask(new SyncEpisodeTask(show.getTvdbId(), episode.getSeason(), episode.getNumber()));
+                      }
                     }
                   }
                 }
