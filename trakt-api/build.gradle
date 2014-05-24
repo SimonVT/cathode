@@ -3,12 +3,12 @@ apply plugin: 'checkstyle'
 apply plugin: 'android-apt'
 
 dependencies {
-  compile parent.ext.libraries.gson
+  compile libraries.gson
 
-  compile parent.ext.libraries.dagger
-  apt parent.ext.libraries.daggerCompiler
-  compile parent.ext.libraries.okhttp
-  compile parent.ext.libraries.retrofit
+  compile libraries.dagger
+  apt libraries.daggerCompiler
+  compile libraries.okhttp
+  compile libraries.retrofit
 }
 
 android {

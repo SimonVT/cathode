@@ -5,29 +5,29 @@ apply plugin: 'android-apt'
 
 dependencies {
   compile project(':trakt-api')
-  compile parent.ext.libraries.menudrawer
-  compile parent.ext.libraries.messagebar
-  compile parent.ext.libraries.schematic
-  apt parent.ext.libraries.schematiccompiler
+  compile libraries.menudrawer
+  compile libraries.messagebar
+  compile libraries.schematic
+  apt libraries.schematicCompiler
 
-  compile parent.ext.libraries.gson
+  compile libraries.gson
 
-  compile parent.ext.libraries.supportv4
+  compile libraries.supportv4
 
-  compile parent.ext.libraries.otto
-  compile parent.ext.libraries.dagger
-  apt parent.ext.libraries.daggerCompiler
-  compile parent.ext.libraries.okhttp
-  compile parent.ext.libraries.picasso
-  compile parent.ext.libraries.retrofit
-  compile parent.ext.libraries.tape
+  compile libraries.otto
+  compile libraries.dagger
+  apt libraries.daggerCompiler
+  compile libraries.okhttp
+  compile libraries.picasso
+  compile libraries.retrofit
+  compile libraries.tape
 
-  compile parent.ext.libraries.butterknife
-  compile parent.ext.libraries.timber
+  compile libraries.butterknife
+  compile libraries.timber
 
-  compile parent.ext.libraries.dashclockApi
+  compile libraries.dashclockApi
 
-  compile parent.ext.libraries.crashlytics
+  compile libraries.crashlytics
 }
 
 android {
