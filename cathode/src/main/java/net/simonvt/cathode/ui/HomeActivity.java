@@ -248,8 +248,10 @@ public class HomeActivity extends BaseActivity
   }
 
   @Subscribe public void onLogin(LoginEvent event) {
-    loginController.destroy(true);
-    loginController = null;
+    if (loginController != null) {
+      loginController.destroy(true);
+      loginController = null;
+    }
 
     content.removeAllViews();
 
