@@ -61,6 +61,27 @@ public final class DatabaseSchematic {
         // TODO: Find better solution
         + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
 
+    String SHOWS_UPCOMING = "LEFT OUTER JOIN "
+        + TABLE_EPISODES
+        + " ON "
+        + TABLE_EPISODES
+        + "."
+        + EpisodeColumns.ID
+        + "="
+        + "("
+        + "SELECT _id "
+        + "FROM episodes "
+        + "JOIN ("
+        + "SELECT season, episode "
+        + "FROM episodes "
+        + "WHERE watched=1 AND showId=shows._id "
+        + "ORDER BY season DESC, episode DESC LIMIT 1"
+        + ") AS ep2 "
+        + "WHERE episodes.watched=0 AND episodes.showId=shows._id AND (episodes.season>ep2.season "
+        + "OR (episodes.season=ep2.season AND episodes.episode>ep2.episode)) "
+        + "ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1"
+        + ")";
+
     String SHOWS_UNCOLLECTED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
         + " episodes WHERE episodes.inCollection=0 AND episodes.showId=shows._id"
         + " AND episodes.season<>0"

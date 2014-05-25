@@ -152,10 +152,12 @@ public final class ProviderSchematic {
       map.put(ShowColumns.UNAIRED_COUNT, getUnairedQuery());
       map.put(ShowColumns.WATCHING, getWatchingQuery());
       map.put(ShowColumns.EPISODE_COUNT, getEpisodeCountQuery());
+      map.put(ShowColumns.AIRED_AFTER_WATCHED, getAiredAfterWatched());
       map.put(Tables.SHOWS + "." + ShowColumns.AIRED_COUNT, getAiredQuery());
       map.put(Tables.SHOWS + "." + ShowColumns.UNAIRED_COUNT, getUnairedQuery());
       map.put(Tables.SHOWS + "." + ShowColumns.WATCHING, getWatchingQuery());
       map.put(Tables.SHOWS + "." + ShowColumns.EPISODE_COUNT, getEpisodeCountQuery());
+      map.put(Tables.SHOWS + "." + ShowColumns.AIRED_AFTER_WATCHED, getAiredAfterWatched());
 
       return map;
     }
@@ -207,13 +209,13 @@ public final class ProviderSchematic {
     @ContentUri(
         path = Path.SHOWS + "/" + Path.UPCOMING,
         type = Type.SHOW,
-        join = Joins.SHOWS_UNWATCHED)
+        join = Joins.SHOWS_UPCOMING)
     public static final Uri SHOWS_UPCOMING = buildUri(Path.SHOWS, Path.UPCOMING);
 
     @Where(path = Path.SHOWS + "/" + Path.UPCOMING)
     public static String[] upcomingWhere() {
       return new String[] {
-          ShowColumns.WATCHED_COUNT + ">0", ShowColumns.WATCHED_COUNT + "<" + getAiredQuery(),
+          ShowColumns.WATCHED_COUNT + ">0", getAiredAfterWatched() + ">0",
       };
     }
 
@@ -274,8 +276,7 @@ public final class ProviderSchematic {
         DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.RECOMMENDATION_INDEX + " ASC";
 
     public static String getAiredQuery() {
-      Calendar cal = Calendar.getInstance();
-      final long currentTime = cal.getTimeInMillis();
+      final long currentTime = System.currentTimeMillis();
       return "(SELECT COUNT(*) FROM "
           + DatabaseSchematic.TABLE_EPISODES
           + " WHERE "
@@ -306,9 +307,26 @@ public final class ProviderSchematic {
           + ")";
     }
 
+    public static String getAiredAfterWatched() {
+      final long currentTime = System.currentTimeMillis();
+      return "(SELECT COUNT(*) FROM episodes "
+          + "JOIN ("
+          + "SELECT season, episode "
+          + "FROM episodes "
+          + "WHERE watched=1 AND showId=shows._id "
+          + "ORDER BY season DESC, episode DESC LIMIT 1"
+          + ") AS ep2 "
+          + "WHERE episodes.showId=shows._id AND episodes.season>0 "
+          + "AND (episodes.season>ep2.season OR (episodes.season=ep2.season AND episodes.episode>ep2.episode)) "
+          + "AND episodes.episodeFirstAired<="
+          + (currentTime + DateUtils.DAY_IN_MILLIS)
+          + " AND episodes.episodeFirstAired>"
+          + DateUtils.YEAR_IN_MILLIS
+          + ")";
+    }
+
     public static String getUnairedQuery() {
-      Calendar cal = Calendar.getInstance();
-      final long currentTime = cal.getTimeInMillis();
+      final long currentTime = System.currentTimeMillis();
       return "(SELECT COUNT(*) FROM "
           + DatabaseSchematic.TABLE_EPISODES
           + " WHERE "

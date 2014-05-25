@@ -77,6 +77,7 @@ public final class DatabaseContract {
     String UNAIRED_COUNT = "unairedCount";
     String WATCHING = "watchingShow";
     String EPISODE_COUNT = "episodeCount";
+    String AIRED_AFTER_WATCHED = "airedAfterWatched";
   }
 
   public interface ShowTopWatcherColumns {

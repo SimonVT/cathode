@@ -47,32 +47,53 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
     final boolean watching = show.getInt(0) == 1;
     show.close();
 
+    Cursor lastWatched = null;
+    if (!watching) {
+      lastWatched = getContext().getContentResolver()
+          .query(Episodes.fromShow(showId), null, EpisodeColumns.WATCHED + "=1", null,
+              EpisodeColumns.SEASON + " DESC, " + EpisodeColumns.EPISODE + " DESC LIMIT 1");
+    }
+
     Cursor toWatch;
     if (watching) {
       toWatch = getContext().getContentResolver()
           .query(Episodes.fromShow(showId), null, EpisodeColumns.WATCHING + "=1", null, null);
     } else {
+      long lastWatchedSeason = 0;
+      long lastWatchedEpisode = -1;
+      if (lastWatched.moveToFirst()) {
+        lastWatchedSeason = lastWatched.getInt(lastWatched.getColumnIndex(EpisodeColumns.SEASON));
+        lastWatchedEpisode = lastWatched.getInt(lastWatched.getColumnIndex(EpisodeColumns.EPISODE));
+      }
+
       toWatch = getContext().getContentResolver()
           .query(Episodes.fromShow(showId), null, EpisodeColumns.WATCHED
                   + "=0 AND "
                   + EpisodeColumns.FIRST_AIRED
                   + ">"
                   + DateUtils.YEAR_IN_SECONDS
-                  + " AND "
+                  + " AND ("
                   + EpisodeColumns.SEASON
-                  + ">0", null,
+                  + ">"
+                  + lastWatchedSeason
+                  + " OR ("
+                  + EpisodeColumns.SEASON
+                  + "="
+                  + lastWatchedSeason
+                  + " AND "
+                  + EpisodeColumns.EPISODE
+                  + ">"
+                  + lastWatchedEpisode
+                  + "))", null,
               EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1"
           );
     }
     toWatch.registerContentObserver(observer);
     if (toWatch.getCount() == 0) {
+      lastWatched.close();
       return toWatch;
     }
 
-    Cursor lastWatched = getContext().getContentResolver()
-        .query(Episodes.fromShow(showId), null, EpisodeColumns.WATCHED + "=1", null,
-            EpisodeColumns.SEASON + " DESC, " + EpisodeColumns.EPISODE + " DESC LIMIT 1"
-        );
     lastWatched.registerContentObserver(observer);
     lastWatched.getCount();
 
