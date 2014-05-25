@@ -235,7 +235,8 @@ public final class ProviderSchematic {
 
     @ContentUri(
         path = Path.SHOWS + "/" + Path.WATCHING,
-        type = Type.SHOW)
+        type = Type.SHOW,
+        join = Joins.SHOWS_WITH_WATCHING)
     public static final Uri SHOW_WATCHING = buildUri(Path.SHOWS, Path.WATCHING);
 
     @Where(path = Path.SHOWS + "/" + Path.WATCHING)
