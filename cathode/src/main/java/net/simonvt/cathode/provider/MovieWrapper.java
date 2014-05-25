@@ -39,22 +39,12 @@ import net.simonvt.cathode.provider.ProviderSchematic.MovieTopWatchers;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieWriters;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.util.ApiUtils;
-import timber.log.Timber;
 
 public final class MovieWrapper {
 
   private static final String TAG = "MovieWrapper";
 
   private MovieWrapper() {
-  }
-
-  private static void log(ContentResolver resolver, long movieId, String message) {
-    final long tmdbId = getTmdbId(resolver, movieId);
-    try {
-      throw new Exception("tmdbId: " + tmdbId + " - " + message);
-    } catch (Exception e) {
-      Timber.e(e, "tmdbId: " + tmdbId + " - " + message);
-    }
   }
 
   public static long getTmdbId(ContentResolver resolver, long movieId) {
@@ -209,7 +199,6 @@ public final class MovieWrapper {
     List<Person> directors = people.getDirectors();
     for (Person person : directors) {
       if (person.getName() == null) {
-        log(resolver, movieId, "Director has no name");
         continue;
       }
       ContentValues cv = new ContentValues();
@@ -226,7 +215,6 @@ public final class MovieWrapper {
     List<Person> writers = people.getWriters();
     for (Person person : writers) {
       if (person.getName() == null) {
-        log(resolver, movieId, "Writer has no name");
         continue;
       }
       ContentValues cv = new ContentValues();
@@ -244,7 +232,6 @@ public final class MovieWrapper {
     List<Person> producers = people.getProducers();
     for (Person person : producers) {
       if (person.getName() == null) {
-        log(resolver, movieId, "Producer has no name");
         continue;
       }
       ContentValues cv = new ContentValues();
@@ -262,7 +249,6 @@ public final class MovieWrapper {
     List<Person> actors = people.getActors();
     for (Person person : actors) {
       if (person.getName() == null) {
-        log(resolver, movieId, "Actor has no name");
         continue;
       }
       ContentValues cv = new ContentValues();
