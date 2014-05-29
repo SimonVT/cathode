@@ -106,6 +106,13 @@ public final class EpisodeWrapper {
 
   public static long updateOrInsertEpisode(ContentResolver resolver, Episode episode, long showId,
       long seasonId) {
+    if (showId < 0L) {
+      throw new IllegalArgumentException("Invalid show id: " + showId);
+    }
+    if (seasonId < 0L) {
+      throw new IllegalArgumentException("Invalid season id: " + seasonId);
+    }
+
     long episodeId = getEpisodeId(resolver, episode);
 
     if (episodeId == -1L) {
