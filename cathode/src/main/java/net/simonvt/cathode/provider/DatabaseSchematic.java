@@ -17,8 +17,10 @@ package net.simonvt.cathode.provider;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import net.simonvt.cathode.database.DatabaseUtils;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieActorColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -51,7 +53,7 @@ public final class DatabaseSchematic {
 
   static final String DATABASE_NAME = "CathodeDatabase";
 
-  static final int DATABASE_VERSION = 5;
+  static final int DATABASE_VERSION = 6;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -453,6 +455,29 @@ public final class DatabaseSchematic {
       case 4:
         db.execSQL("DROP TABLE IF EXISTS " + Tables.SHOW_ACTORS);
         db.execSQL(CathodeDatabase.TABLE_SHOW_ACTORS);
+      case 5:
+        db.execSQL("ALTER TABLE "
+            + Tables.SHOWS
+            + " ADD COLUMN "
+            + ShowColumns.TITLE_NO_ARTICLE
+            + " TEXT");
+
+        Cursor shows = db.query(Tables.SHOWS, new String[] {
+            ShowColumns.ID, ShowColumns.TITLE
+        }, null, null, null, null, null);
+        while (shows.moveToNext()) {
+          final long showId = shows.getLong(shows.getColumnIndex(ShowColumns.ID));
+          final String showTitle = shows.getString(shows.getColumnIndex(ShowColumns.TITLE));
+
+          final String titleNoArticle = DatabaseUtils.removeLeadingArticle(showTitle);
+
+          ContentValues cv = new ContentValues();
+          cv.put(ShowColumns.TITLE_NO_ARTICLE, titleNoArticle);
+          db.update(Tables.SHOWS, cv, ShowColumns.ID + "=?", new String[] {
+              String.valueOf(showId),
+          });
+        }
+        shows.close();
     }
   }
 

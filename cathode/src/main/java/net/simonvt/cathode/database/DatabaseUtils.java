@@ -20,6 +20,7 @@ import android.database.Cursor;
 import android.database.CursorWrapper;
 import android.net.Uri;
 import android.os.Build;
+import android.text.TextUtils;
 
 public final class DatabaseUtils {
 
@@ -45,5 +46,27 @@ public final class DatabaseUtils {
     }
 
     return null;
+  }
+
+  public static String removeLeadingArticle(String string) {
+    if (TextUtils.isEmpty(string)) {
+      return string;
+    }
+
+    final long length = string.length();
+
+    if (length > 4 && (string.startsWith("The ") || string.startsWith("the "))) {
+      return string.substring(4);
+    }
+
+    if (length > 3 && (string.startsWith("An ") || string.startsWith("an "))) {
+      return string.substring(4);
+    }
+
+    if (length > 2 && (string.startsWith("A ") || string.startsWith("a "))) {
+      return string.substring(4);
+    }
+
+    return string;
   }
 }

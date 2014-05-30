@@ -35,6 +35,7 @@ public final class DatabaseContract {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
     @DataType(TEXT) @NotNull String TITLE = "showTitle";
+    @DataType(TEXT) @NotNull String TITLE_NO_ARTICLE = "showTitleNoArticle";
     @DataType(INTEGER) String YEAR = "year";
     @DataType(TEXT) String URL = "url";
     @DataType(INTEGER) String FIRST_AIRED = "firstAired";

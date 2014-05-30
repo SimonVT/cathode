@@ -26,6 +26,7 @@ import net.simonvt.cathode.api.entity.Images;
 import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.entity.TvShow;
 import net.simonvt.cathode.api.entity.TvShow.People;
+import net.simonvt.cathode.database.DatabaseUtils;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowActorColumns;
@@ -310,6 +311,7 @@ public final class ShowWrapper {
     ContentValues cv = new ContentValues();
 
     cv.put(ShowColumns.TITLE, show.getTitle());
+    cv.put(ShowColumns.TITLE_NO_ARTICLE, DatabaseUtils.removeLeadingArticle(show.getTitle()));
     cv.put(ShowColumns.YEAR, show.getYear());
     cv.put(ShowColumns.URL, show.getUrl());
     if (show.getFirstAiredIso() != null) {

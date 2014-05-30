@@ -246,11 +246,10 @@ public final class ProviderSchematic {
       };
     }
 
-    public static final String DEFAULT_SORT =
-        DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE + " ASC";
-
     public static final String SORT_TITLE =
-        DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE + " ASC";
+        DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE_NO_ARTICLE + " ASC";
+
+    public static final String DEFAULT_SORT = SORT_TITLE;
 
     public static final String SORT_NEXT_EPISODE = DatabaseSchematic.Tables.EPISODES
         + "."
