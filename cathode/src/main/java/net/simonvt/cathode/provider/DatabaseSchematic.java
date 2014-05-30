@@ -53,7 +53,7 @@ public final class DatabaseSchematic {
 
   static final String DATABASE_NAME = "CathodeDatabase";
 
-  static final int DATABASE_VERSION = 6;
+  static final int DATABASE_VERSION = 7;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -478,6 +478,49 @@ public final class DatabaseSchematic {
           });
         }
         shows.close();
+
+      case 6:
+        Cursor episodes = db.query(Tables.EPISODES, new String[] {
+            EpisodeColumns.ID, EpisodeColumns.SHOW_ID,
+        }, null, null, null, null, null);
+        while (episodes.moveToNext()) {
+          final long episodeId = episodes.getLong(episodes.getColumnIndex(EpisodeColumns.ID));
+          final long showId = episodes.getLong(episodes.getColumnIndex(EpisodeColumns.SHOW_ID));
+
+          Cursor show = db.query(Tables.SHOWS, new String[] {
+              ShowColumns.ID
+          }, ShowColumns.ID + "=?", new String[] {
+              String.valueOf(showId),
+          }, null, null, null);
+          if (!show.moveToFirst()) {
+            db.delete(Tables.EPISODES, EpisodeColumns.ID + "=?", new String[] {
+                String.valueOf(episodeId),
+            });
+          }
+          show.close();
+        }
+        episodes.close();
+
+        Cursor seasons = db.query(Tables.SEASONS, new String[] {
+            SeasonColumns.ID, SeasonColumns.SHOW_ID,
+        }, null, null, null, null, null);
+        while (seasons.moveToNext()) {
+          final long seasonId = seasons.getLong(seasons.getColumnIndex(SeasonColumns.ID));
+          final long showId = seasons.getLong(seasons.getColumnIndex(SeasonColumns.SHOW_ID));
+
+          Cursor show = db.query(Tables.SHOWS, new String[] {
+              ShowColumns.ID
+          }, ShowColumns.ID + "=?", new String[] {
+              String.valueOf(showId),
+          }, null, null, null);
+          if (!show.moveToFirst()) {
+            db.delete(Tables.SEASONS, SeasonColumns.ID + "=?", new String[] {
+                String.valueOf(seasonId),
+            });
+          }
+          show.close();
+        }
+        seasons.close();
     }
   }
 
