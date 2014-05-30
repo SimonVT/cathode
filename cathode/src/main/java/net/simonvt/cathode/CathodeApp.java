@@ -186,7 +186,13 @@ public class CathodeApp extends Application {
 
   private void upgrade() {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-    final int currentVersion = settings.getInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE);
+    final int currentVersion = settings.getInt(Settings.VERSION_CODE, -1);
+
+    if (currentVersion == -1) {
+      settings.edit().putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE).apply();
+      return;
+    }
+
     if (currentVersion != BuildConfig.VERSION_CODE) {
       switch (currentVersion) {
         case 9: {
