@@ -83,6 +83,10 @@ public final class SeasonWrapper {
   }
 
   public static long updateOrInsertSeason(ContentResolver resolver, Season season, long showId) {
+    if (showId < 0L) {
+      throw new IllegalArgumentException("Invalid show id: " + showId);
+    }
+
     long seasonId = getSeasonId(resolver, season);
 
     if (seasonId == -1) {
