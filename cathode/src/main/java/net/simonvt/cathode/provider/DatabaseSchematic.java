@@ -53,7 +53,7 @@ public final class DatabaseSchematic {
 
   static final String DATABASE_NAME = "CathodeDatabase";
 
-  static final int DATABASE_VERSION = 7;
+  static final int DATABASE_VERSION = 8;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -419,13 +419,14 @@ public final class DatabaseSchematic {
 
   @OnUpgrade public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     switch (oldVersion) {
-      case 1:
+      case 1: {
         db.execSQL("ALTER TABLE "
             + Tables.SHOWS
             + " ADD COLUMN "
             + ShowColumns.HIDDEN
             + " INTEGER DEFAULT 0");
-      case 2:
+      }
+      case 2: {
         db.execSQL("ALTER TABLE "
             + Tables.EPISODES
             + " ADD COLUMN "
@@ -446,16 +447,19 @@ public final class DatabaseSchematic {
             + " ADD COLUMN "
             + MovieColumns.CHECKED_IN
             + " INTEGER DEFAULT 0");
-      case 3:
+      }
+      case 3: {
         db.execSQL("ALTER TABLE "
             + Tables.SHOWS
             + " ADD COLUMN "
             + ShowColumns.FULL_SYNC_REQUESTED
             + " INTEGER DEFAULT 0");
-      case 4:
+      }
+      case 4: {
         db.execSQL("DROP TABLE IF EXISTS " + Tables.SHOW_ACTORS);
         db.execSQL(CathodeDatabase.TABLE_SHOW_ACTORS);
-      case 5:
+      }
+      case 5: {
         db.execSQL("ALTER TABLE "
             + Tables.SHOWS
             + " ADD COLUMN "
@@ -478,8 +482,8 @@ public final class DatabaseSchematic {
           });
         }
         shows.close();
-
-      case 6:
+      }
+      case 6: {
         Cursor episodes = db.query(Tables.EPISODES, new String[] {
             EpisodeColumns.ID, EpisodeColumns.SHOW_ID,
         }, null, null, null, null, null);
@@ -521,6 +525,30 @@ public final class DatabaseSchematic {
           show.close();
         }
         seasons.close();
+      }
+      case 7: {
+        db.execSQL("ALTER TABLE "
+            + Tables.MOVIES
+            + " ADD COLUMN "
+            + MovieColumns.TITLE_NO_ARTICLE
+            + " TEXT");
+
+        Cursor movies = db.query(Tables.MOVIES, new String[] {
+            MovieColumns.ID, MovieColumns.TITLE,
+        }, null, null, null, null, null);
+        while (movies.moveToNext()) {
+          final long movieId = movies.getLong(movies.getColumnIndex(MovieColumns.ID));
+          final String movieTitle = movies.getString(movies.getColumnIndex(MovieColumns.TITLE));
+          final String titleNoArticle = DatabaseUtils.removeLeadingArticle(movieTitle);
+
+          ContentValues cv = new ContentValues();
+          cv.put(MovieColumns.TITLE_NO_ARTICLE, titleNoArticle);
+
+          db.update(Tables.MOVIES, cv, MovieColumns.ID + "=?", new String[] {
+              String.valueOf(movieId),
+          });
+        }
+      }
     }
   }
 

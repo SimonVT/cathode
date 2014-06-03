@@ -24,6 +24,7 @@ import net.simonvt.cathode.api.entity.Images;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.entity.UserProfile;
+import net.simonvt.cathode.database.DatabaseUtils;
 import net.simonvt.cathode.provider.DatabaseContract.MovieActorColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieDirectoryColumns;
@@ -267,6 +268,7 @@ public final class MovieWrapper {
     ContentValues cv = new ContentValues();
 
     cv.put(MovieColumns.TITLE, movie.getTitle());
+    cv.put(MovieColumns.TITLE_NO_ARTICLE, DatabaseUtils.removeLeadingArticle(movie.getTitle()));
     cv.put(MovieColumns.YEAR, movie.getYear());
     cv.put(MovieColumns.RELEASED, movie.getReleased());
     cv.put(MovieColumns.URL, movie.getUrl());

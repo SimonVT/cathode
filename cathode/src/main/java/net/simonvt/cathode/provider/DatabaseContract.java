@@ -184,6 +184,7 @@ public final class DatabaseContract {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
     @DataType(TEXT) @NotNull String TITLE = "title";
+    @DataType(TEXT) @NotNull String TITLE_NO_ARTICLE = "titleNoArticle";
     @DataType(INTEGER) String YEAR = "year";
     @DataType(INTEGER) String RELEASED = "released";
     @DataType(TEXT) String URL = "url";

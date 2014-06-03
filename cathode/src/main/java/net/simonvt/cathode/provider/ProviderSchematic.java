@@ -826,11 +826,10 @@ public final class ProviderSchematic {
         defaultSort = MovieColumns.RECOMMENDATION_INDEX + " ASC")
     public static final Uri RECOMMENDED = buildUri(Path.MOVIES, Path.RECOMMENDED);
 
-    public static final String DEFAULT_SORT =
-        DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.TITLE + " ASC";
-
     public static final String SORT_TITLE =
-        DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.TITLE + " ASC";
+        DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.TITLE_NO_ARTICLE + " ASC";
+
+    public static final String DEFAULT_SORT = SORT_TITLE;
 
     public static final String SORT_RATING = DatabaseSchematic.Tables.MOVIES
         + "."
@@ -838,7 +837,7 @@ public final class ProviderSchematic {
         + " DESC,"
         + DatabaseSchematic.Tables.MOVIES
         + "."
-        + MovieColumns.TITLE
+        + MovieColumns.TITLE_NO_ARTICLE
         + " ASC";
 
     public static final String SORT_VIEWERS =
