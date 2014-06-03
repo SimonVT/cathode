@@ -154,15 +154,17 @@ public class StaggeredGridView extends ViewGroup {
     @Override public void run() {
       if (touchMode == TOUCH_MODE_IDLE) {
         final View child = getChildAt(motionPosition - firstPosition);
-        child.getPaddingTop();
-        Rect padding = new Rect();
-        selector.getPadding(padding);
-        selectorRect.set(child.getLeft() - padding.left, child.getTop() - padding.top,
-            child.getRight() + padding.right, child.getBottom() + padding.bottom);
-        setPressed(true);
-        child.setPressed(true);
-        selector.setState(getDrawableState());
-        invalidate();
+        if (child != null) {
+          child.getPaddingTop();
+          Rect padding = new Rect();
+          selector.getPadding(padding);
+          selectorRect.set(child.getLeft() - padding.left, child.getTop() - padding.top,
+              child.getRight() + padding.right, child.getBottom() + padding.bottom);
+          setPressed(true);
+          child.setPressed(true);
+          selector.setState(getDrawableState());
+          invalidate();
+        }
       }
 
       pendingTapCheck = null;
