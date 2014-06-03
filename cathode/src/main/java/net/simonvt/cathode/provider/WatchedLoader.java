@@ -89,7 +89,7 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
           );
     }
     toWatch.registerContentObserver(observer);
-    if (toWatch.getCount() == 0) {
+    if (toWatch.getCount() == 0 || watching) {
       if (!watching) {
         lastWatched.close();
       }
