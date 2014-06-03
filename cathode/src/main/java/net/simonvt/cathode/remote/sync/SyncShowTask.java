@@ -86,6 +86,7 @@ public class SyncShowTask extends TraktTask {
       while (allSeasons.moveToNext()) {
         final long seasonId = allSeasons.getLong(allSeasons.getColumnIndex(SeasonColumns.ID));
         if (!seasonIds.contains(seasonId)) {
+          getContentResolver().delete(Episodes.fromSeason(seasonId), null, null);
           getContentResolver().delete(Seasons.withId(seasonId), null, null);
         }
       }

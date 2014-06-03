@@ -53,7 +53,7 @@ public final class DatabaseSchematic {
 
   static final String DATABASE_NAME = "CathodeDatabase";
 
-  static final int DATABASE_VERSION = 8;
+  static final int DATABASE_VERSION = 9;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -548,6 +548,28 @@ public final class DatabaseSchematic {
               String.valueOf(movieId),
           });
         }
+      }
+      case 8: {
+        Cursor episodes = db.query(Tables.EPISODES, new String[] {
+            EpisodeColumns.ID, EpisodeColumns.SEASON_ID,
+        }, null, null, null, null, null);
+        while (episodes.moveToNext()) {
+          final long episodeId = episodes.getLong(episodes.getColumnIndex(EpisodeColumns.ID));
+          final long seasonId = episodes.getLong(episodes.getColumnIndex(EpisodeColumns.SEASON_ID));
+
+          Cursor season = db.query(Tables.SEASONS, new String[] {
+              SeasonColumns.ID
+          }, SeasonColumns.ID + "=?", new String[] {
+              String.valueOf(seasonId),
+          }, null, null, null);
+          if (!season.moveToFirst()) {
+            db.delete(Tables.EPISODES, EpisodeColumns.ID + "=?", new String[] {
+                String.valueOf(episodeId),
+            });
+          }
+          season.close();
+        }
+        episodes.close();
       }
     }
   }
