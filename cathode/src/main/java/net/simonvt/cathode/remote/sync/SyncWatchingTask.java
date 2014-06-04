@@ -38,6 +38,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
 import timber.log.Timber;
@@ -90,7 +91,10 @@ public class SyncWatchingTask extends TraktTask {
           Episode episode = activity.getEpisode();
           final long episodeId = EpisodeWrapper.getEpisodeId(resolver, episode);
 
-          if (showId == -1L || episodeId == -1L) {
+          final long seasonId = SeasonWrapper.getSeasonId(getContentResolver(), show.getTvdbId(),
+              episode.getSeason());
+
+          if (showId == -1L || episodeId == -1L || seasonId == -1L) {
             queueTask(new SyncShowTask(show.getTvdbId()));
             queueTask(new SyncWatchingTask());
             postOnSuccess();
