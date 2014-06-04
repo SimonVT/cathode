@@ -60,11 +60,11 @@ public final class DatabaseUtils {
     }
 
     if (length > 3 && (string.startsWith("An ") || string.startsWith("an "))) {
-      return string.substring(4);
+      return string.substring(3);
     }
 
     if (length > 2 && (string.startsWith("A ") || string.startsWith("a "))) {
-      return string.substring(4);
+      return string.substring(2);
     }
 
     return string;

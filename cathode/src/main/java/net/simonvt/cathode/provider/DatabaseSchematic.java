@@ -53,7 +53,7 @@ public final class DatabaseSchematic {
 
   static final String DATABASE_NAME = "CathodeDatabase";
 
-  static final int DATABASE_VERSION = 9;
+  static final int DATABASE_VERSION = 10;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -570,6 +570,40 @@ public final class DatabaseSchematic {
           season.close();
         }
         episodes.close();
+      }
+      case 9: {
+        Cursor shows = db.query(Tables.SHOWS, new String[] {
+            ShowColumns.ID, ShowColumns.TITLE
+        }, null, null, null, null, null);
+        while (shows.moveToNext()) {
+          final long showId = shows.getLong(shows.getColumnIndex(ShowColumns.ID));
+          final String showTitle = shows.getString(shows.getColumnIndex(ShowColumns.TITLE));
+
+          final String titleNoArticle = DatabaseUtils.removeLeadingArticle(showTitle);
+
+          ContentValues cv = new ContentValues();
+          cv.put(ShowColumns.TITLE_NO_ARTICLE, titleNoArticle);
+          db.update(Tables.SHOWS, cv, ShowColumns.ID + "=?", new String[] {
+              String.valueOf(showId),
+          });
+        }
+        shows.close();
+
+        Cursor movies = db.query(Tables.MOVIES, new String[] {
+            MovieColumns.ID, MovieColumns.TITLE,
+        }, null, null, null, null, null);
+        while (movies.moveToNext()) {
+          final long movieId = movies.getLong(movies.getColumnIndex(MovieColumns.ID));
+          final String movieTitle = movies.getString(movies.getColumnIndex(MovieColumns.TITLE));
+          final String titleNoArticle = DatabaseUtils.removeLeadingArticle(movieTitle);
+
+          ContentValues cv = new ContentValues();
+          cv.put(MovieColumns.TITLE_NO_ARTICLE, titleNoArticle);
+
+          db.update(Tables.MOVIES, cv, MovieColumns.ID + "=?", new String[] {
+              String.valueOf(movieId),
+          });
+        }
       }
     }
   }
