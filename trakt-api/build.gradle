@@ -8,6 +8,7 @@ dependencies {
   compile libraries.dagger
   apt libraries.daggerCompiler
   compile libraries.okhttp
+  compile libraries.okhttpUrlConnection
   compile libraries.retrofit
 }
 
@@ -16,8 +17,8 @@ android {
   buildToolsVersion parent.ext.buildToolsVersion
 
   defaultConfig {
-    minSdkVersion = parent.ext.minSdkVersion
-    targetSdkVersion = parent.ext.targetSdkVersion
+    minSdkVersion parent.ext.minSdkVersion
+    targetSdkVersion parent.ext.targetSdkVersion
 
     versionCode = parent.ext.versionCode;
     versionName = parent.ext.versionName

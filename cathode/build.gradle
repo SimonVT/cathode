@@ -18,6 +18,7 @@ dependencies {
   compile libraries.dagger
   apt libraries.daggerCompiler
   compile libraries.okhttp
+  compile libraries.okhttpUrlConnection
   compile libraries.picasso
   compile libraries.retrofit
   compile libraries.tape
@@ -35,8 +36,8 @@ android {
   buildToolsVersion parent.ext.buildToolsVersion
 
   defaultConfig {
-    minSdkVersion = parent.ext.minSdkVersion
-    targetSdkVersion = parent.ext.targetSdkVersion
+    minSdkVersion parent.ext.minSdkVersion
+    targetSdkVersion parent.ext.targetSdkVersion
 
     versionCode = parent.ext.versionCode;
     versionName = parent.ext.versionName
@@ -49,7 +50,7 @@ android {
   buildTypes {
     debug {
       buildConfigField "String", "PROVIDER_AUTHORITY", "\"net.simonvt.cathode.debug.provider.CathodeProvider\""
-      packageNameSuffix ".debug"
+      applicationIdSuffix ".debug"
     }
     release {
       buildConfigField "String", "PROVIDER_AUTHORITY", "\"net.simonvt.cathode.provider.CathodeProvider\""
