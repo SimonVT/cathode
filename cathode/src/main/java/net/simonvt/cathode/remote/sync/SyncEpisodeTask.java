@@ -56,6 +56,12 @@ public class SyncEpisodeTask extends TraktTask {
       final long showId = ShowWrapper.getShowId(resolver, tvdbId);
       final long seasonId = ShowWrapper.getSeasonId(resolver, showId, season);
 
+      if (showId == -1L || seasonId == -1L) {
+        queueTask(new SyncShowTask(tvdbId));
+        postOnSuccess();
+        return;
+      }
+
       EpisodeWrapper.updateOrInsertEpisode(getContentResolver(), episode, showId, seasonId);
 
       postOnSuccess();
