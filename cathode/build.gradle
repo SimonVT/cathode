@@ -32,6 +32,8 @@ dependencies {
 }
 
 android {
+  useOldManifestMerger true
+
   compileSdkVersion parent.ext.compileSdkVersion
   buildToolsVersion parent.ext.buildToolsVersion
 
