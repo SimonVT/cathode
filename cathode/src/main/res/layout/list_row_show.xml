@@ -14,84 +14,90 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<net.simonvt.cathode.widget.PhoneShowView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@id/front"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/card_bg">
+    app:cardCornerRadius="@dimen/cardCornerRadius">
 
-  <net.simonvt.cathode.widget.RemoteImageView
-      android:id="@+id/poster"
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent"
-      app:dominantMeasurement="height"
-      app:aspectRatio="0.68"/>
+  <net.simonvt.cathode.widget.PhoneShowView
+      android:id="@id/front"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
 
-  <LinearLayout
-      android:id="@+id/infoParent"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginLeft="8dp"
-      android:layout_marginRight="16dp"
-      android:orientation="vertical"
-      android:gravity="center_vertical">
+    <net.simonvt.cathode.widget.RemoteImageView
+        android:id="@+id/poster"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:dominantMeasurement="height"
+        app:aspectRatio="0.68"/>
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:id="@+id/infoParent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
 
-      <TextView
-          android:id="@+id/title"
-          android:layout_width="0dp"
+      <LinearLayout
+          android:layout_width="fill_parent"
           android:layout_height="wrap_content"
-          android:layout_weight="1"
-          android:singleLine="true"
-          android:textAppearance="?android:attr/textAppearanceMedium"
-          tools:text="Title"/>
+          android:orientation="horizontal">
 
-      <TextView
-          android:id="@+id/watched"
-          android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            tools:text="Title"/>
+
+        <TextView
+            android:id="@+id/watched"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="23/87"/>
+      </LinearLayout>
+
+      <ProgressBar
+          android:id="@+id/progress"
+          android:layout_width="fill_parent"
           android:layout_height="wrap_content"
-          tools:text="23/87"/>
+          android:minHeight="8dp"
+          android:maxHeight="8dp"
+          style="?android:attr/progressBarStyleHorizontal"/>
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/nextEpisode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:singleLine="true"
+            tools:text="Next episode: 1x07 Awesome new episode"/>
+
+        <net.simonvt.cathode.widget.TimeStamp
+            android:id="@+id/firstAired"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:singleLine="true"
+            tools:text="May 20."/>
+      </LinearLayout>
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="8dp"
-        android:maxHeight="8dp"
-        style="?android:attr/progressBarStyleHorizontal"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-      <TextView
-          android:id="@+id/nextEpisode"
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"
-          android:singleLine="true"
-          tools:text="Next episode: 1x07 Awesome new episode"/>
-
-      <net.simonvt.cathode.widget.TimeStamp
-          android:id="@+id/firstAired"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="8dp"
-          android:singleLine="true"
-          tools:text="May 20."/>
-    </LinearLayout>
-  </LinearLayout>
-
-  <net.simonvt.cathode.widget.OverflowView
-      android:id="@+id/overflow"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"/>
-</net.simonvt.cathode.widget.PhoneShowView>
+    <net.simonvt.cathode.widget.OverflowView
+        android:id="@+id/overflow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+  </net.simonvt.cathode.widget.PhoneShowView>
+</android.support.v7.widget.CardView>

@@ -15,81 +15,89 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@id/front"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@drawable/card_bg"
-    android:gravity="center_vertical"
+    app:cardCornerRadius="@dimen/cardCornerRadius"
     tools:layout_width="250dp">
 
-  <net.simonvt.cathode.widget.RemoteImageView
-      android:id="@+id/poster"
+  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      android:id="@id/front"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      app:dominantMeasurement="width"
-      app:aspectRatio="1.4705"/>
+      android:orientation="vertical"
+      android:gravity="center_vertical">
 
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="horizontal">
+    <net.simonvt.cathode.widget.RemoteImageView
+        android:id="@+id/poster"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:dominantMeasurement="width"
+        app:aspectRatio="1.4705"/>
 
     <LinearLayout
-        android:id="@+id/infoParent"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="8dp"
-        android:orientation="vertical"
-        android:gravity="center_vertical">
-
-      <TextView
-          android:id="@+id/title"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="4dp"
-          android:singleLine="true"
-          android:textAppearance="?android:attr/textAppearanceMedium"
-          android:textColor="?android:attr/textColorSecondary"
-          tools:text="Title"/>
+        android:orientation="horizontal">
 
       <LinearLayout
-          android:layout_width="match_parent"
+          android:id="@+id/infoParent"
+          android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:orientation="horizontal">
+          android:layout_weight="1"
+          android:layout_marginLeft="8dp"
+          android:layout_marginTop="4dp"
+          android:layout_marginBottom="8dp"
+          android:orientation="vertical"
+          android:gravity="center_vertical">
 
         <TextView
-            android:id="@+id/nextEpisode"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:singleLine="true"
-            android:textColor="?android:attr/textColorHint"
-            tools:text="1x07 Awesome new episode"/>
-
-        <net.simonvt.cathode.widget.TimeStamp
-            android:id="@+id/firstAired"
+            android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="4dp"
             android:singleLine="true"
-            android:textColor="?android:attr/textColorHint"
-            tools:text="May 20."/>
-      </LinearLayout>
-    </LinearLayout>
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?android:attr/textColorSecondary"
+            tools:text="Title"/>
 
-    <net.simonvt.cathode.widget.OverflowView
-        android:id="@+id/check_in"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:paddingRight="8dp"
-        android:paddingLeft="8dp"
-        android:src="@drawable/ic_action_checkin_light"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+          <TextView
+              android:id="@+id/nextEpisode"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:singleLine="true"
+              android:textColor="?android:attr/textColorHint"
+              tools:text="1x07 Awesome new episode"/>
+
+          <net.simonvt.cathode.widget.TimeStamp
+              android:id="@+id/firstAired"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="8dp"
+              android:singleLine="true"
+              android:textColor="?android:attr/textColorHint"
+              tools:text="May 20."/>
+        </LinearLayout>
+      </LinearLayout>
+
+      <net.simonvt.cathode.widget.OverflowView
+          android:id="@+id/check_in"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:paddingRight="8dp"
+          android:paddingLeft="8dp"
+          android:src="@drawable/ic_action_checkin_light"/>
+    </LinearLayout>
   </LinearLayout>
-</LinearLayout>
+</android.support.v7.widget.CardView>

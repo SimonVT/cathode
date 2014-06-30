@@ -14,66 +14,74 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<net.simonvt.cathode.widget.ForegroundDrawableRelativeLayout
+<android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/episodeContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="8dp"
-    android:layout_marginRight="8dp"
-    android:layout_marginBottom="16dp"
-    android:background="@drawable/card_bg"
-    android:foreground="?android:attr/selectableItemBackground">
+    app:cardCornerRadius="@dimen/cardCornerRadius">
 
-  <net.simonvt.cathode.widget.RemoteImageView
-      android:id="@+id/episodeBanner"
+  <net.simonvt.cathode.widget.ForegroundDrawableRelativeLayout
+      xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginTop="8dp"
-      android:layout_marginLeft="16dp"
-      android:layout_marginRight="16dp"
-      android:background="@drawable/header_bg"
-      app:dominantMeasurement="width"
-      app:aspectRatio="0.5625"/>
+      android:layout_marginLeft="8dp"
+      android:layout_marginRight="8dp"
+      android:layout_marginBottom="16dp"
+      android:foreground="?android:attr/selectableItemBackground">
 
-  <TextView
-      android:id="@+id/episodeTitle"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginLeft="16dp"
-      android:layout_below="@id/episodeBanner"
-      android:fontFamily="sans-serif-light"
-      android:textColor="?android:attr/textColorPrimary"
-      android:textSize="16sp"
-      tools:text="Some Random Episode"/>
+    <net.simonvt.cathode.widget.RemoteImageView
+        android:id="@+id/episodeBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/header_bg"
+        app:dominantMeasurement="width"
+        app:aspectRatio="0.5625"/>
 
-  <TextView
-      android:id="@+id/episodeAirTime"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginLeft="16dp"
-      android:layout_below="@id/episodeTitle"
-      android:textColor="?android:attr/textColorSecondary"
-      android:textSize="14sp"
-      tools:text="OCT 20, 2010 (MON)"/>
+    <TextView
+        android:id="@+id/episodeTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_below="@id/episodeBanner"
+        android:fontFamily="sans-serif-light"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="16sp"
+        tools:text="Some Random Episode"/>
 
-  <TextView
-      android:id="@+id/episodeEpisode"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginRight="16dp"
-      android:layout_below="@id/episodeTitle"
-      android:layout_alignParentRight="true"
-      android:textSize="14sp"
-      android:textColor="?android:attr/textColorHint"
-      tools:text="S10E20"/>
+    <TextView
+        android:id="@+id/episodeAirTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_below="@id/episodeTitle"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="14sp"
+        tools:text="OCT 20, 2010 (MON)"/>
 
-  <net.simonvt.cathode.widget.OverflowView
-      android:id="@+id/episodeOverflow"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignParentRight="true"/>
-</net.simonvt.cathode.widget.ForegroundDrawableRelativeLayout>
+    <TextView
+        android:id="@+id/episodeEpisode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:layout_below="@id/episodeTitle"
+        android:layout_alignParentRight="true"
+        android:textSize="14sp"
+        android:textColor="?android:attr/textColorHint"
+        tools:text="S10E20"/>
+
+    <net.simonvt.cathode.widget.OverflowView
+        android:id="@+id/episodeOverflow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"/>
+  </net.simonvt.cathode.widget.ForegroundDrawableRelativeLayout>
+</android.support.v7.widget.CardView>
 

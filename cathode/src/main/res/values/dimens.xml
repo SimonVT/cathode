@@ -15,6 +15,8 @@
   -->
 <resources>
 
+  <dimen name="cardCornerRadius">4dp</dimen>
+
   <dimen name="showItemMinHeight">72dp</dimen>
 
   <dimen name="searchViewMaxWidth">0dp</dimen>
