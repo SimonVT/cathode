@@ -7,9 +7,9 @@ dependencies {
 
   compile libraries.dagger
   apt libraries.daggerCompiler
+  compile libraries.retrofit
   compile libraries.okhttp
   compile libraries.okhttpUrlConnection
-  compile libraries.retrofit
 }
 
 android {

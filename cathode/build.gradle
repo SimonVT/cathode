@@ -13,15 +13,17 @@ dependencies {
   compile libraries.gson
 
   compile libraries.supportv4
+  compile libraries.cardView
+  compile libraries.recyclerView
 
   compile libraries.otto
   compile libraries.dagger
   apt libraries.daggerCompiler
-  compile libraries.okhttp
-  compile libraries.okhttpUrlConnection
   compile libraries.picasso
   compile libraries.retrofit
   compile libraries.tape
+  compile libraries.okhttp
+  compile libraries.okhttpUrlConnection
 
   compile libraries.butterknife
   compile libraries.timber
