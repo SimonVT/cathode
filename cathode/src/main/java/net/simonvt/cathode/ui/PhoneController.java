@@ -18,6 +18,7 @@ package net.simonvt.cathode.ui;
 import android.app.ActionBar;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -108,6 +109,9 @@ public class PhoneController extends UiController {
 
   private Cursor watchingMovie;
 
+  //private static final boolean IS_MATERIAL = Build.VERSION.SDK_INT >= Build.VERSION_CODES.L;
+  private static final boolean IS_MATERIAL = Build.VERSION.SDK_INT >= 20;
+
   public static PhoneController create(HomeActivity activity, ViewGroup parent) {
     return create(activity, parent, null);
   }
@@ -125,8 +129,10 @@ public class PhoneController extends UiController {
 
     isTablet = activity.getResources().getBoolean(R.bool.isTablet);
 
-    menuDrawer.setupUpIndicator(activity);
-    menuDrawer.setSlideDrawable(R.drawable.ic_drawer);
+    if (!IS_MATERIAL) {
+      menuDrawer.setupUpIndicator(activity);
+      menuDrawer.setSlideDrawable(R.drawable.ic_drawer);
+    }
     menuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_NONE);
 
     navigation = (NavigationFragment) activity.getSupportFragmentManager()
@@ -144,7 +150,15 @@ public class PhoneController extends UiController {
         FragmentStack.forContainer(activity, R.id.controller_content, new FragmentStack.Callback() {
               @Override public void onStackChanged(int stackSize, Fragment topFragment) {
                 Timber.d("onStackChanged: %s", topFragment.getTag());
-                menuDrawer.setDrawerIndicatorEnabled(stackSize <= 1);
+                if (IS_MATERIAL) {
+                  if (stackSize <= 1) {
+                    activity.getActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_drawer);
+                  } else {
+                    activity.getActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_back_material);
+                  }
+                } else {
+                  menuDrawer.setDrawerIndicatorEnabled(stackSize <= 1);
+                }
                 if (!menuDrawer.isMenuVisible()) {
                   updateTitle();
                 }
@@ -216,7 +230,16 @@ public class PhoneController extends UiController {
     }
 
     menuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_BEZEL);
-    menuDrawer.setDrawerIndicatorEnabled(stack.size() == 1);
+
+    if (IS_MATERIAL) {
+      if (stack.size() <= 1) {
+        activity.getActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_drawer);
+      } else {
+        activity.getActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_back_material);
+      }
+    } else {
+      menuDrawer.setDrawerIndicatorEnabled(stack.size() <= 1);
+    }
 
     activity.getActionBar().setHomeButtonEnabled(true);
     activity.getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -455,8 +478,16 @@ public class PhoneController extends UiController {
     activity.getActionBar().setCustomView(null);
     activity.getActionBar().setDisplayShowCustomEnabled(false);
     activity.getActionBar().setDisplayShowTitleEnabled(true);
-    if (stack.size() <= 1) {
-      menuDrawer.setDrawerIndicatorEnabled(true);
+    if (IS_MATERIAL) {
+      if (stack.size() <= 1) {
+        activity.getActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_drawer);
+      } else {
+        activity.getActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_back_material);
+      }
+    } else {
+      if (stack.size() <= 1) {
+        menuDrawer.setDrawerIndicatorEnabled(true);
+      }
     }
     stack.peek().setMenuVisibility(true);
     updateTitle();

@@ -18,6 +18,8 @@
   <color name="lighter_gray">#FFDDDDDD</color>
   <color name="darker_gray">#FFAAAAAA</color>
 
+  <color name="actionBarBackground">#FF004358</color>
+
   <color name="drawerBackground">#FFFFFFFF</color>
   <color name="contentBackground">#FFE5E5E5</color>
 
@@ -41,5 +43,10 @@
   <color name="navigationIndicatorColor">@color/titleTextColor</color>
 
   <color name="activatedItemBackground">#33FF7F2A</color>
+
+  <color name="colorPrimary">#FFFF7F2A</color>
+  <color name="colorPrimaryDark">#ff9b5024</color>
+  <color name="colorAccent">#FF2AFFEA</color>
+
 
 </resources>
