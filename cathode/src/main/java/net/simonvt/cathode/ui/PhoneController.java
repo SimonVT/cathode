@@ -170,8 +170,7 @@ public class PhoneController extends UiController {
                 }
                 topFragment.setMenuVisibility(searchView == null);
               }
-            }
-        );
+            });
     stack.setDefaultAnimation(R.anim.fade_in_front, R.anim.fade_out_back, R.anim.fade_in_back,
         R.anim.fade_out_front);
 
@@ -399,7 +398,11 @@ public class PhoneController extends UiController {
             ViewGroup.LayoutParams.MATCH_PARENT));
     activity.getActionBar().setDisplayShowTitleEnabled(false);
     stack.peek().setMenuVisibility(false);
-    menuDrawer.setDrawerIndicatorEnabled(false);
+    if (IS_MATERIAL) {
+      activity.getActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_back_material);
+    } else {
+      menuDrawer.setDrawerIndicatorEnabled(false);
+    }
     searchView.setListener(new SearchView.SearchViewListener() {
       @Override public void onTextChanged(String newText) {
       }
