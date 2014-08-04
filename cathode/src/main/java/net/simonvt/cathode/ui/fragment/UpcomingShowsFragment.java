@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -50,12 +51,12 @@ import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.UpcomingAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.widget.AnimatorHelper;
-import net.simonvt.cathode.widget.StaggeredGridAnimator;
-import net.simonvt.cathode.widget.StaggeredGridView;
+import net.simonvt.cathode.widget.HeaderGridLayoutManager;
+import net.simonvt.cathode.widget.ScalingItemAnimator;
 
-public class UpcomingShowsFragment extends StaggeredGridFragment
+public class UpcomingShowsFragment extends RecyclerViewFragment<RecyclerView.ViewHolder>
     implements UpcomingAdapter.OnRemoveListener, ListDialog.Callback,
-    LoaderCallbacks<MutableCursor> {
+    LoaderCallbacks<MutableCursor>, UpcomingAdapter.OnItemClickListener {
 
   private enum SortBy {
     TITLE("title", Shows.SORT_TITLE),
@@ -139,12 +140,21 @@ public class UpcomingShowsFragment extends StaggeredGridFragment
     return inflater.inflate(R.layout.fragment_shows_upcoming, container, false);
   }
 
+  @Override protected RecyclerView.LayoutManager getLayoutManager() {
+    final int columnCount = getResources().getInteger(R.integer.showsColumns);
+    return new HeaderGridLayoutManager(getActivity(), columnCount);
+  }
+
+  @Override protected RecyclerView.ItemAnimator getItemAnimator() {
+    return new ScalingItemAnimator();
+  }
+
   @Override public String getTitle() {
     return getResources().getString(R.string.title_shows_upcoming);
   }
 
-  @Override protected void onItemClick(StaggeredGridView parent, View v, int position, long id) {
-    Cursor c = (Cursor) getAdapter().getItem(position);
+  @Override public void onShowClicked(View v, int position, long id) {
+    Cursor c = ((UpcomingAdapter) getAdapter()).getCursor(position);
     navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)),
         LibraryType.WATCHED);
   }
@@ -207,14 +217,18 @@ public class UpcomingShowsFragment extends StaggeredGridFragment
     Loader loader = getLoaderManager().getLoader(BaseActivity.LOADER_SHOWS_UPCOMING);
     MutableCursorLoader cursorLoader = (MutableCursorLoader) loader;
     cursorLoader.throttle(2000);
-    AnimatorHelper.removeView(getGridView(), view, animatorCallback);
+    //AnimatorHelper.removeView(getRecyclerView(), view, animatorCallback);
+
+    MutableCursor cursor = (MutableCursor) ((UpcomingAdapter) getAdapter()).getCursor(position);
+    cursor.remove(cursor.getPosition());
+    ((UpcomingAdapter) getAdapter()).notifyChanged();
   }
 
   private AnimatorHelper.Callback animatorCallback = new AnimatorHelper.Callback() {
     @Override public void removeItem(int position) {
-      int correctedPosition = ((UpcomingAdapter) getAdapter()).getCorrectedPosition(position);
+      int correctedPosition = ((UpcomingAdapter) getAdapter()).getCursorPosition(position);
       if (correctedPosition != -1) {
-        MutableCursor cursor = (MutableCursor) getAdapter().getItem(position);
+        MutableCursor cursor = (MutableCursor) ((UpcomingAdapter) getAdapter()).getCursor(position);
         cursor.remove(correctedPosition);
       }
     }
@@ -226,7 +240,9 @@ public class UpcomingShowsFragment extends StaggeredGridFragment
   protected void setCursor(MutableCursor cursor) {
     UpcomingAdapter adapter = (UpcomingAdapter) getAdapter();
     if (adapter == null) {
-      adapter = new UpcomingAdapter(getActivity(), this);
+      adapter = new UpcomingAdapter(getActivity(), this, this);
+      adapter.addHeader(R.string.header_aired);
+      adapter.addHeader(R.string.header_upcoming);
       setAdapter(adapter);
     }
 
@@ -248,9 +264,10 @@ public class UpcomingShowsFragment extends StaggeredGridFragment
       }
     }
 
-    StaggeredGridAnimator animator = new StaggeredGridAnimator(getGridView());
-    adapter.changeCursors(airedCursor, unairedCursor);
-    animator.animate();
+    // TODO: StaggeredGridAnimator animator = new StaggeredGridAnimator(getGridView());
+    adapter.updateCursorForHeader(R.string.header_aired, airedCursor);
+    adapter.updateCursorForHeader(R.string.header_upcoming, unairedCursor);
+    //animator.animate();
   }
 
   @Override public Loader<MutableCursor> onCreateLoader(int id, Bundle args) {

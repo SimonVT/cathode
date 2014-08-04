@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,12 +45,11 @@ import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowWatchlistAdapter;
-import net.simonvt.cathode.widget.AnimatorHelper;
-import net.simonvt.cathode.widget.StaggeredGridAnimator;
-import net.simonvt.cathode.widget.StaggeredGridView;
+import net.simonvt.cathode.widget.HeaderGridLayoutManager;
+import net.simonvt.cathode.widget.ScalingItemAnimator;
 
-public class ShowsWatchlistFragment extends StaggeredGridFragment
-    implements ShowWatchlistAdapter.RemoveListener {
+public class ShowsWatchlistFragment extends RecyclerViewFragment<RecyclerView.ViewHolder>
+    implements ShowWatchlistAdapter.RemoveListener, ShowWatchlistAdapter.OnItemClickListener {
 
   @Inject TraktTaskQueue queue;
 
@@ -78,6 +78,15 @@ public class ShowsWatchlistFragment extends StaggeredGridFragment
     return getResources().getString(R.string.title_shows_watchlist);
   }
 
+  @Override protected RecyclerView.LayoutManager getLayoutManager() {
+    final int columnCount = getResources().getInteger(R.integer.showsColumns);
+    return new HeaderGridLayoutManager(getActivity(), columnCount);
+  }
+
+  @Override protected RecyclerView.ItemAnimator getItemAnimator() {
+    return new ScalingItemAnimator();
+  }
+
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_shows_watchlist, container, false);
   }
@@ -101,15 +110,15 @@ public class ShowsWatchlistFragment extends StaggeredGridFragment
     }
   }
 
-  @Override protected void onItemClick(StaggeredGridView parent, View v, int position, long id) {
-    if (((ShowWatchlistAdapter) getAdapter()).isShow(position)) {
-      Cursor c = (Cursor) getAdapter().getItem(position);
-      navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)),
-          LibraryType.WATCHED);
-    } else {
-      Cursor c = (Cursor) getAdapter().getItem(position);
-      navigationListener.onDisplayEpisode(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)));
-    }
+  @Override public void onShowClicked(int position, long id) {
+    Cursor c = ((ShowWatchlistAdapter) getAdapter()).getCursor(position);
+    navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)),
+        LibraryType.WATCHED);
+  }
+
+  @Override public void onEpisodeClicked(int position, long id) {
+    Cursor c = ((ShowWatchlistAdapter) getAdapter()).getCursor(position);
+    navigationListener.onDisplayEpisode(id, c.getString(c.getColumnIndex(EpisodeColumns.TITLE)));
   }
 
   private void throttleLoaders() {
@@ -124,41 +133,33 @@ public class ShowsWatchlistFragment extends StaggeredGridFragment
 
   @Override public void onRemoveItem(View view, int position) {
     throttleLoaders();
-    AnimatorHelper.removeView(getGridView(), view, animatorCallback);
+    ShowWatchlistAdapter adapter = (ShowWatchlistAdapter) getAdapter();
+    MutableCursor cursor =
+        (MutableCursor) (((ShowWatchlistAdapter) getAdapter()).getCursor(position));
+    final int correctedPosition = adapter.getCursorPosition(position);
+    cursor.remove(correctedPosition);
+    ((ShowWatchlistAdapter) getAdapter()).notifyChanged();
   }
-
-  private AnimatorHelper.Callback animatorCallback = new AnimatorHelper.Callback() {
-    @Override public void removeItem(int position) {
-      ShowWatchlistAdapter adapter = (ShowWatchlistAdapter) getAdapter();
-      MutableCursor cursor = (MutableCursor) adapter.getItem(position);
-      final int correctedPosition = adapter.getCorrectedPosition(position);
-      cursor.remove(correctedPosition);
-    }
-
-    @Override public void onAnimationEnd() {
-    }
-  };
 
   private void ensureAdapter() {
     if (getAdapter() == null) {
-      setAdapter(new ShowWatchlistAdapter(getActivity(), this));
+      ShowWatchlistAdapter adapter = new ShowWatchlistAdapter(getActivity(), this, this);
+      adapter.addHeader(R.string.header_shows);
+      adapter.addHeader(R.string.header_episodes);
+      setAdapter(adapter);
     }
   }
 
   private void setShowCursor(Cursor cursor) {
     ensureAdapter();
     throttleLoaders();
-    StaggeredGridAnimator animator = new StaggeredGridAnimator(getGridView());
-    ((ShowWatchlistAdapter) getAdapter()).changeShowCursor(cursor);
-    animator.animate();
+    ((ShowWatchlistAdapter) getAdapter()).updateCursorForHeader(R.string.header_shows, cursor);
   }
 
   private void setEpisodeCursor(Cursor cursor) {
     ensureAdapter();
     throttleLoaders();
-    StaggeredGridAnimator animator = new StaggeredGridAnimator(getGridView());
-    ((ShowWatchlistAdapter) getAdapter()).changeEpisodeCursor(cursor);
-    animator.animate();
+    ((ShowWatchlistAdapter) getAdapter()).updateCursorForHeader(R.string.header_episodes, cursor);
   }
 
   private LoaderManager.LoaderCallbacks<MutableCursor> showsCallback =

@@ -21,6 +21,7 @@
     android:id="@id/front"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="@dimen/cardCornerRadius"
     tools:layout_width="300dp">
 

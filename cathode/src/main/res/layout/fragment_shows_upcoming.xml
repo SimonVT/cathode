@@ -35,19 +35,18 @@
         android:drawableTop="@drawable/ic_action_search_light"
         android:text="@string/show_upcoming_empty"/>
 
-    <net.simonvt.cathode.widget.StaggeredGridView
+    <android.support.v7.widget.RecyclerView
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:drawSelectorOnTop="true"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:clipToPadding="false"
         android:numColumns="@integer/showsColumns"
         android:scrollbars="vertical"
         android:scrollbarStyle="outsideOverlay"
-        app:verticalItemMargin="4dp"
-        app:horizontalItemMargin="4dp"/>
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="4dp"
+        android:clipToPadding="false"/>
   </FrameLayout>
 
   <include layout="@layout/fragment_list_progressbar"/>
