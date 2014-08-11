@@ -75,6 +75,8 @@ public class PurgeTask extends TraktTask {
       showIds.add(id);
     }
 
+    shows.close();
+
     List<Long> showSearchIds = ShowSearchHandler.showIds;
     if (showSearchIds != null) {
       for (Long id : showSearchIds) {
@@ -133,6 +135,8 @@ public class PurgeTask extends TraktTask {
       Timber.d("Purging " + title);
       movieIds.add(id);
     }
+
+    movies.close();
 
     List<Long> movieSearchIds = MovieSearchHandler.movieIds;
     if (movieSearchIds != null) {

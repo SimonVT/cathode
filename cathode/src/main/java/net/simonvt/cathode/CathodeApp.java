@@ -28,6 +28,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
 import com.crashlytics.android.Crashlytics;
@@ -105,8 +106,8 @@ import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.service.AccountAuthenticator;
 import net.simonvt.cathode.service.CathodeSyncAdapter;
-import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.PhoneController;
 import net.simonvt.cathode.ui.adapter.MovieRecommendationsAdapter;
@@ -169,6 +170,10 @@ public class CathodeApp extends Application {
     super.onCreate();
     if (BuildConfig.DEBUG) {
       Timber.plant(new Timber.DebugTree());
+
+      StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build());
+      StrictMode.setThreadPolicy(
+          new StrictMode.ThreadPolicy.Builder().detectAll().permitDiskReads().penaltyLog().build());
     } else {
       Crashlytics.start(this);
       Timber.plant(new CrashlyticsTree());
