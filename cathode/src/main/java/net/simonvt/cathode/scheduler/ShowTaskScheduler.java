@@ -20,20 +20,18 @@ import android.content.Context;
 import android.database.Cursor;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowWrapper;
-import net.simonvt.cathode.remote.action.CancelShowCheckinTask;
-import net.simonvt.cathode.remote.action.DismissShowRecommendation;
-import net.simonvt.cathode.remote.action.EpisodeCollectionTask;
-import net.simonvt.cathode.remote.action.EpisodeWatchedTask;
-import net.simonvt.cathode.remote.action.ShowCollectionTask;
-import net.simonvt.cathode.remote.action.ShowRateTask;
-import net.simonvt.cathode.remote.action.ShowWatchedTask;
-import net.simonvt.cathode.remote.action.ShowWatchlistTask;
-import net.simonvt.cathode.remote.sync.SyncShowTask;
+import net.simonvt.cathode.remote.action.CancelCheckin;
+import net.simonvt.cathode.remote.action.shows.DismissShowRecommendation;
+import net.simonvt.cathode.remote.action.shows.ShowRateTask;
+import net.simonvt.cathode.remote.action.shows.ShowWatchedTask;
+import net.simonvt.cathode.remote.action.shows.ShowWatchlistTask;
+import net.simonvt.cathode.remote.sync.shows.SyncShowTask;
 
 public class ShowTaskScheduler extends BaseTaskScheduler {
 
@@ -55,8 +53,8 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         ContentValues cv = new ContentValues();
         cv.put(ShowColumns.FULL_SYNC_REQUESTED, System.currentTimeMillis());
         context.getContentResolver().update(Shows.withId(showId), cv, null, null);
-        final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
-        queueTask(new SyncShowTask(tvdbId));
+        final long traktId = ShowWrapper.getTraktId(context.getContentResolver(), showId);
+        queueTask(new SyncShowTask(traktId));
       }
     });
   }
@@ -67,17 +65,11 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         Cursor c = context.getContentResolver().query(Episodes.fromShow(showId), new String[] {
                 EpisodeColumns.ID, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
             }, "watched=0 AND season<>0", null,
-            EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1"
-        );
+            EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1");
 
         if (c.moveToNext()) {
           final long episodeId = c.getLong(c.getColumnIndexOrThrow(EpisodeColumns.ID));
           episodeScheduler.setWatched(episodeId, true);
-
-          final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
-          final int season = c.getInt(c.getColumnIndexOrThrow(EpisodeColumns.SEASON));
-          final int number = c.getInt(c.getColumnIndexOrThrow(EpisodeColumns.EPISODE));
-          queuePriorityTask(new EpisodeWatchedTask(tvdbId, season, number, true));
         }
 
         c.close();
@@ -113,15 +105,11 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         Cursor c = context.getContentResolver()
             .query(Episodes.EPISODES, null, EpisodeColumns.CHECKED_IN + "=1", null, null);
         if (c.moveToNext()) {
-          final long showId = c.getLong(c.getColumnIndex(EpisodeColumns.SHOW_ID));
-          final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
-
           ContentValues cv = new ContentValues();
           cv.put(EpisodeColumns.CHECKED_IN, false);
           context.getContentResolver().update(Episodes.EPISODE_WATCHING, cv, null, null);
 
-          queuePriorityTask(new CancelShowCheckinTask());
-          queueTask(new SyncShowTask(tvdbId));
+          queuePriorityTask(new CancelCheckin());
         }
         c.close();
       }
@@ -134,17 +122,11 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         Cursor c = context.getContentResolver().query(Episodes.fromShow(showId), new String[] {
                 EpisodeColumns.ID, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
             }, "inCollection=0 AND season<>0", null,
-            EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1"
-        );
+            EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1");
 
         if (c.moveToNext()) {
           final long episodeId = c.getLong(c.getColumnIndexOrThrow(EpisodeColumns.ID));
           episodeScheduler.setIsInCollection(episodeId, true);
-
-          final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
-          final int season = c.getInt(c.getColumnIndexOrThrow(EpisodeColumns.SEASON));
-          final int number = c.getInt(c.getColumnIndexOrThrow(EpisodeColumns.EPISODE));
-          queuePriorityTask(new EpisodeCollectionTask(tvdbId, season, number, true));
         }
 
         c.close();
@@ -174,36 +156,26 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
     execute(new Runnable() {
       @Override public void run() {
         Cursor c = context.getContentResolver().query(Shows.withId(showId), new String[] {
-            ShowColumns.TVDB_ID, ShowColumns.EPISODE_COUNT,
+            ShowColumns.TRAKT_ID, ShowColumns.EPISODE_COUNT,
         }, null, null, null);
 
         if (c.moveToFirst()) {
-          final int tvdbId = c.getInt(c.getColumnIndex(ShowColumns.TVDB_ID));
-          ShowWrapper.setIsInWatchlist(context.getContentResolver(), showId, inWatchlist);
-          queue.add(new ShowWatchlistTask(tvdbId, inWatchlist));
+          String listedAt = null;
+          long listedAtMillis = 0L;
+          if (inWatchlist) {
+            listedAt = TimeUtils.getIsoTime();
+            listedAtMillis = TimeUtils.getMillis(listedAt);
+          }
+
+          final long traktId = c.getLong(c.getColumnIndex(ShowColumns.TRAKT_ID));
+          ShowWrapper.setIsInWatchlist(context.getContentResolver(), showId, inWatchlist,
+              listedAtMillis);
+          queue.add(new ShowWatchlistTask(traktId, inWatchlist, listedAt));
 
           final int episodeCount = c.getInt(c.getColumnIndex(ShowColumns.EPISODE_COUNT));
           if (episodeCount == 0) {
-            queueTask(new SyncShowTask(tvdbId));
+            queueTask(new SyncShowTask(traktId));
           }
-        }
-
-        c.close();
-      }
-    });
-  }
-
-  public void setIsInCollection(final long showId, final boolean inCollection) {
-    execute(new Runnable() {
-      @Override public void run() {
-        Cursor c = context.getContentResolver().query(Shows.withId(showId), new String[] {
-            ShowColumns.TVDB_ID,
-        }, null, null, null);
-
-        if (c.moveToFirst()) {
-          final int tvdbId = c.getInt(c.getColumnIndex(ShowColumns.TVDB_ID));
-          ShowWrapper.setIsInCollection(context.getContentResolver(), showId, inCollection);
-          queue.add(new ShowCollectionTask(tvdbId, inCollection));
         }
 
         c.close();
@@ -222,13 +194,13 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
   public void dismissRecommendation(final long showId) {
     execute(new Runnable() {
       @Override public void run() {
-        final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
+        final long traktId = ShowWrapper.getTraktId(context.getContentResolver(), showId);
 
         ContentValues cv = new ContentValues();
         cv.put(ShowColumns.RECOMMENDATION_INDEX, -1);
         context.getContentResolver().update(Shows.withId(showId), cv, null, null);
 
-        queue.add(new DismissShowRecommendation(tvdbId));
+        queue.add(new DismissShowRecommendation(traktId));
       }
     });
   }
@@ -244,15 +216,18 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
   public void rate(final long showId, final int rating) {
     execute(new Runnable() {
       @Override public void run() {
-        final int tvdbId = ShowWrapper.getTvdbId(context.getContentResolver(), showId);
+        String ratedAt = TimeUtils.getIsoTime();
+        long ratedAtMillis = TimeUtils.getMillis(ratedAt);
+
+        final long traktId = ShowWrapper.getTraktId(context.getContentResolver(), showId);
 
         ContentValues cv = new ContentValues();
         cv.put(ShowColumns.RATING, rating);
+        cv.put(ShowColumns.RATED_AT, ratedAtMillis);
         context.getContentResolver().update(Shows.withId(showId), cv, null, null);
 
-        queue.add(new ShowRateTask(tvdbId, rating));
+        queue.add(new ShowRateTask(traktId, rating, ratedAt));
       }
     });
-    // TODO:
   }
 }

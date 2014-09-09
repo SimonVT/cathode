@@ -15,119 +15,15 @@
  */
 package net.simonvt.cathode.remote.sync;
 
-import java.util.List;
-import javax.inject.Inject;
-import net.simonvt.cathode.api.entity.Activity;
-import net.simonvt.cathode.api.entity.ActivityItem;
-import net.simonvt.cathode.api.entity.Episode;
-import net.simonvt.cathode.api.entity.ServerTime;
-import net.simonvt.cathode.api.entity.TvShow;
-import net.simonvt.cathode.api.enumeration.ActivityAction;
-import net.simonvt.cathode.api.enumeration.ActivityType;
-import net.simonvt.cathode.api.enumeration.DetailLevel;
-import net.simonvt.cathode.api.service.ActivityService;
-import net.simonvt.cathode.api.service.ServerService;
-import net.simonvt.cathode.api.util.Joiner;
-import net.simonvt.cathode.provider.SeasonWrapper;
-import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.settings.TraktTimestamps;
 
 public class SyncActivityStreamTask extends TraktTask {
 
-  @Inject transient ActivityService activityService;
-
-  @Inject transient ServerService serverService;
-
   @Override protected void doTask() {
     final long lastSync = TraktTimestamps.lastActivityStreamSync(getContext());
 
-    if (lastSync == -1L) {
-      ServerTime time = serverService.time();
-      TraktTimestamps.updateLastActivityStreamSync(getContext(), time.getTimestamp());
-      queueTask(new SyncUserActivityTask());
-    } else {
-      // ActivityAction#ALL is broken, trakt only shows watchlist actions
-      final String actions = Joiner.on(",")
-          .join(ActivityAction.CHECKIN, ActivityAction.WATCHING, ActivityAction.SEEN,
-              ActivityAction.COLLECTION, ActivityAction.WATCHLIST, ActivityAction.RATING);
-      Activity activity =
-          activityService.user(ActivityType.ALL, actions, lastSync, DetailLevel.ACTIVITY_MIN);
-
-      if (activity.getActivity() != null) {
-        List<ActivityItem> items = activity.getActivity();
-
-        if (items.size() >= 100) {
-          queueTask(new SyncUserActivityTask());
-        } else {
-          for (ActivityItem item : items) {
-            ActivityType type = item.getType();
-
-            // Don't trust the activity API, it doesn't show 'un' events. If something happened,
-            // sync all the things.
-            switch (type) {
-              case SHOW:
-                if (item.getShow() != null) {
-                  queueTask(new SyncShowTask(item.getShow().getTvdbId()));
-                }
-                break;
-
-              case EPISODE:
-                TvShow show = item.getShow();
-                final int tvdbId = show.getTvdbId();
-                if (show != null) {
-                  if (!ShowWrapper.exists(getContentResolver(), show.getTvdbId())) {
-                    queueTask(new SyncShowTask(show.getTvdbId()));
-                  } else {
-                    if (item.getEpisode() != null) {
-                      Episode episode = item.getEpisode();
-                      final int season = episode.getSeason();
-
-                      final long seasonId =
-                          SeasonWrapper.getSeasonId(getContentResolver(), tvdbId, season);
-                      if (seasonId == -1L) {
-                        queueTask(new SyncSeasonTask(tvdbId, season));
-                      }
-
-                      queueTask(new SyncEpisodeTask(tvdbId, season, episode.getNumber()));
-                    } else if (item.getEpisodes() != null) {
-                      List<Episode> episodes = item.getEpisodes();
-                      for (Episode episode : episodes) {
-                        final int season = episode.getSeason();
-
-                        final long seasonId =
-                            SeasonWrapper.getSeasonId(getContentResolver(), tvdbId, season);
-                        if (seasonId == -1L) {
-                          queueTask(new SyncSeasonTask(tvdbId, season));
-                        }
-
-                        queueTask(new SyncEpisodeTask(tvdbId, season, episode.getNumber()));
-                      }
-                    }
-                  }
-                }
-                break;
-
-              case MOVIE:
-                if (item.getMovie() != null) {
-                  queueTask(new SyncMovieTask(item.getMovie().getTmdbId()));
-                }
-                break;
-            }
-
-            switch (item.getAction()) {
-              case CHECKIN:
-              case WATCHING:
-                queueTask(new SyncWatchingTask());
-                break;
-            }
-          }
-        }
-      }
-
-      TraktTimestamps.updateLastActivityStreamSync(getContext(),
-          activity.getTimestamps().getCurrent());
-    }
+    // TODO: Recent actions by user
 
     queueTask(new SyncWatchingTask());
     postOnSuccess();

@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
+import net.simonvt.cathode.settings.Settings;
 
 public class CathodeSyncAdapter extends AbstractThreadedSyncAdapter {
 
@@ -37,6 +38,8 @@ public class CathodeSyncAdapter extends AbstractThreadedSyncAdapter {
 
   @Override public void onPerformSync(Account account, Bundle extras, String authority,
       ContentProviderClient provider, SyncResult syncResult) {
-    queue.add(new SyncTask());
+    if (Settings.isLoggedIn(getContext())) {
+      queue.add(new SyncTask());
+    }
   }
 }

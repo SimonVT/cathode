@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 apply plugin: 'com.android.application'
 apply plugin: 'crashlytics'
 apply plugin: 'checkstyle'
@@ -43,6 +45,13 @@ android {
 
     versionCode = parent.ext.versionCode;
     versionName = parent.ext.versionName
+
+    buildConfigField "String", "BUILD_TIME", "\"" + buildTime() + "\""
+
+    buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + getPropertiesField('trakt.clientId') + "\""
+    buildConfigField "String", "TRAKT_SECRET", "\"" + getPropertiesField('trakt.secret') + "\""
+    buildConfigField "String", "TRAKT_REDIRECT_URL",
+        "\"" + getPropertiesField('trakt.redirectUrl') + "\""
   }
 
   signingConfigs {
@@ -51,11 +60,13 @@ android {
 
   buildTypes {
     debug {
-      buildConfigField "String", "PROVIDER_AUTHORITY", "\"net.simonvt.cathode.debug.provider.CathodeProvider\""
+      buildConfigField "String", "PROVIDER_AUTHORITY",
+          "\"net.simonvt.cathode.debug.provider.CathodeProvider\""
       applicationIdSuffix ".debug"
     }
     release {
-      buildConfigField "String", "PROVIDER_AUTHORITY", "\"net.simonvt.cathode.provider.CathodeProvider\""
+      buildConfigField "String", "PROVIDER_AUTHORITY",
+          "\"net.simonvt.cathode.provider.CathodeProvider\""
       signingConfig signingConfigs.release
     }
   }
@@ -63,6 +74,12 @@ android {
   packagingOptions {
     exclude 'META-INF/services/javax.annotation.processing.Processor'
   }
+}
+
+def buildTime() {
+  def date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
+  date.setTimeZone(TimeZone.getTimeZone("UTC"))
+  return date.format(new Date())
 }
 
 apt {

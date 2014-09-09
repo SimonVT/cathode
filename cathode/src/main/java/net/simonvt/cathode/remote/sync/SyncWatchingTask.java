@@ -18,39 +18,41 @@ package net.simonvt.cathode.remote.sync;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.OperationApplicationException;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
-import net.simonvt.cathode.api.entity.ActivityItem;
-import net.simonvt.cathode.api.entity.Episode;
-import net.simonvt.cathode.api.entity.Movie;
-import net.simonvt.cathode.api.entity.TvShow;
-import net.simonvt.cathode.api.enumeration.ActivityAction;
-import net.simonvt.cathode.api.enumeration.ActivityType;
-import net.simonvt.cathode.api.service.UserService;
+import net.simonvt.cathode.api.entity.Watching;
+import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
-import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
+import net.simonvt.cathode.remote.sync.movies.SyncMovieTask;
+import net.simonvt.cathode.remote.sync.shows.SyncEpisodeTask;
+import net.simonvt.cathode.remote.sync.shows.SyncShowCast;
+import net.simonvt.cathode.remote.sync.shows.SyncShowTask;
+import net.simonvt.cathode.settings.Settings;
 import timber.log.Timber;
 
 public class SyncWatchingTask extends TraktTask {
 
-  @Inject transient UserService userService;
+  @Inject transient UsersService usersService;
 
   @Override protected void doTask() {
+    // TODO: Tell the difference between scrobbles and checkins
     ContentResolver resolver = getContentResolver();
-
-    ActivityItem activity = userService.watching();
 
     ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 
@@ -79,78 +81,75 @@ public class SyncWatchingTask extends TraktTask {
 
     ContentProviderOperation op = null;
 
-    if (activity != null) {
-      ActivityType type = activity.getType();
-      ActivityAction action = activity.getAction();
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+    String username = settings.getString(Settings.PROFILE_USERNAME, null);
 
-      if (type == ActivityType.EPISODE) {
-        TvShow show = activity.getShow();
-        if (show != null) {
-          final long showId = ShowWrapper.getShowId(getContentResolver(), show);
+    if (TextUtils.isEmpty(username)) {
+      queueTask(new SyncUserSettingsTask());
+      queueTask(new SyncWatchingTask());
+      postOnSuccess();
+      return;
+    }
 
-          Episode episode = activity.getEpisode();
-          final long episodeId = EpisodeWrapper.getEpisodeId(resolver, episode);
+    Watching watching = usersService.watching(username);
 
-          final long seasonId = SeasonWrapper.getSeasonId(getContentResolver(), show.getTvdbId(),
-              episode.getSeason());
+    if (watching.getType() != null) {
+      switch (watching.getType()) {
+        case EPISODE:
+          final long showTraktId = watching.getShow().getIds().getTrakt();
 
-          if (showId == -1L || episodeId == -1L || seasonId == -1L) {
-            queueTask(new SyncShowTask(show.getTvdbId()));
-            queueTask(new SyncWatchingTask());
-            postOnSuccess();
-            return;
+          boolean didShowExist = true;
+          long showId = ShowWrapper.getShowId(getContentResolver(), showTraktId);
+          if (showId == -1L) {
+            didShowExist = false;
+            showId = ShowWrapper.createShow(getContentResolver(), showTraktId);
+            queueTask(new SyncShowCast(showTraktId));
           }
 
-          episodeWatching.remove(episodeId);
-
-          switch (action) {
-            case CHECKIN:
-              op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
-                  .withValue(EpisodeColumns.CHECKED_IN, true)
-                  .build();
-              break;
-
-            case WATCHING:
-              op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
-                  .withValue(EpisodeColumns.WATCHING, true)
-                  .build();
-              break;
+          final int seasonNumber = watching.getEpisode().getSeason();
+          boolean didSeasonExist = true;
+          long seasonId = SeasonWrapper.getSeasonId(getContentResolver(), showId, seasonNumber);
+          if (seasonId == -1L) {
+            didSeasonExist = false;
+            if (didShowExist) {
+              queueTask(new SyncShowTask(showTraktId));
+            }
           }
 
+          final int episodeNumber = watching.getEpisode().getNumber();
+          long episodeId = EpisodeWrapper.getEpisodeId(getContentResolver(), showId, seasonNumber,
+              episodeNumber);
+          if (episodeId == -1L) {
+            episodeId =
+                EpisodeWrapper.createEpisode(getContentResolver(), showId, seasonId, episodeNumber);
+            if (didSeasonExist) {
+              queueTask(new SyncEpisodeTask(showTraktId, seasonNumber, episodeNumber));
+            }
+          }
+
+          op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
+              .withValue(EpisodeColumns.CHECKED_IN, true)
+              .build();
           ops.add(op);
-        }
-      } else if (type == ActivityType.MOVIE) {
-        Movie movie = activity.getMovie();
-        long movieId = MovieWrapper.getMovieId(resolver, movie);
-        if (movieId == -1L) {
-          movieId = MovieWrapper.updateOrInsertMovie(getContentResolver(), movie);
-          queueTask(new SyncMovieTask(movie.getTmdbId()));
-        }
+          break;
 
-        movieWatching.remove(movieId);
+        case MOVIE:
+          final long movieTraktId = watching.getMovie().getIds().getTrakt();
+          long movieId = MovieWrapper.getMovieId(getContentResolver(), movieTraktId);
+          if (movieId == -1L) {
+            movieId = MovieWrapper.createMovie(getContentResolver(), movieTraktId);
+            queueTask(new SyncMovieTask(movieTraktId));
+          }
 
-        switch (action) {
-          case CHECKIN:
-            op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
-                .withValue(MovieColumns.CHECKED_IN, true)
-                .build();
-            break;
-
-          case WATCHING:
-            op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
-                .withValue(MovieColumns.WATCHING, true)
-                .build();
-            break;
-        }
-
-        ops.add(op);
+          op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
+              .withValue(MovieColumns.CHECKED_IN, true)
+              .build();
+          ops.add(op);
+          break;
       }
     }
 
     for (Long episodeId : episodeWatching) {
-      final int showTvdbId = EpisodeWrapper.getShowTvdbId(getContentResolver(), episodeId);
-      queueTask(new SyncShowTask(showTvdbId));
-
       op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
           .withValue(EpisodeColumns.CHECKED_IN, false)
           .withValue(EpisodeColumns.WATCHING, false)
@@ -159,9 +158,6 @@ public class SyncWatchingTask extends TraktTask {
     }
 
     for (Long movieId : movieWatching) {
-      final long tmdbId = MovieWrapper.getTmdbId(getContentResolver(), movieId);
-      queueTask(new SyncMovieTask(tmdbId));
-
       op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
           .withValue(MovieColumns.CHECKED_IN, false)
           .withValue(MovieColumns.WATCHING, false)

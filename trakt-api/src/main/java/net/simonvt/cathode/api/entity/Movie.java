@@ -1,90 +1,54 @@
+/*
+ * Copyright (C) 2014 Simon Vig Therkildsen
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package net.simonvt.cathode.api.entity;
 
 import java.util.List;
-import net.simonvt.cathode.api.enumeration.Rating;
 
 public class Movie {
 
-  public static class People {
+  String title;
 
-    private List<Person> directors;
+  Integer year;
 
-    private List<Person> writers;
+  Ids ids;
 
-    private List<Person> producers;
+  String tagline;
 
-    private List<Person> actors;
+  String overview;
 
-    public List<Person> getDirectors() {
-      return directors;
-    }
+  String released;
 
-    public List<Person> getWriters() {
-      return writers;
-    }
+  Integer runtime;
 
-    public List<Person> getProducers() {
-      return producers;
-    }
+  String updatedAt;
 
-    public List<Person> getActors() {
-      return actors;
-    }
-  }
+  String trailer;
 
-  private String title;
+  String homepage;
 
-  private Integer year;
+  Float rating;
 
-  private Long released;
+  String language;
 
-  private String url;
+  List<String> availableTranslations;
 
-  private String trailer;
+  Images images;
 
-  private Integer runtime;
-
-  private String tagline;
-
-  private String overview;
-
-  private String certification;
-
-  private String imdbId;
-
-  private Long tmdbId;
-
-  private Long rtId;
-
-  private long lastUpdated;
-
-  private String poster;
-
-  private Images images;
-
-  private List<UserProfile> topWatchers;
-
-  private Ratings ratings;
-
-  private Stats stats;
-
-  private People people;
-
-  private List<String> genres;
-
-  private Boolean watched;
-
-  private Boolean unseen;
-
-  private Integer plays;
-
-  private Rating rating;
-
-  private Integer ratingAdvanced;
-
-  private Boolean inWatchlist;
-
-  private Boolean inCollection;
+  List<String> genres;
 
   public String getTitle() {
     return title;
@@ -94,20 +58,8 @@ public class Movie {
     return year;
   }
 
-  public Long getReleased() {
-    return released;
-  }
-
-  public String getUrl() {
-    return url;
-  }
-
-  public String getTrailer() {
-    return trailer;
-  }
-
-  public Integer getRuntime() {
-    return runtime;
+  public Ids getIds() {
+    return ids;
   }
 
   public String getTagline() {
@@ -118,81 +70,43 @@ public class Movie {
     return overview;
   }
 
-  public String getCertification() {
-    return certification;
+  public String getReleased() {
+    return released;
   }
 
-  public String getImdbId() {
-    return imdbId;
+  public Integer getRuntime() {
+    return runtime;
   }
 
-  public Long getTmdbId() {
-    return tmdbId;
+  public String getUpdatedAt() {
+    return updatedAt;
   }
 
-  public Long getRtId() {
-    return rtId;
+  public String getTrailer() {
+    return trailer;
   }
 
-  public long getLastUpdated() {
-    return lastUpdated;
+  public String getHomepage() {
+    return homepage;
   }
 
-  public String getPoster() {
-    return poster;
+  public Float getRating() {
+    return rating;
+  }
+
+  public String getLanguage() {
+    return language;
+  }
+
+  public List<String> getAvailableTranslations() {
+    return availableTranslations;
   }
 
   public Images getImages() {
     return images;
   }
 
-  public List<UserProfile> getTopWatchers() {
-    return topWatchers;
-  }
-
-  public Ratings getRatings() {
-    return ratings;
-  }
-
-  public Stats getStats() {
-    return stats;
-  }
-
-  public People getPeople() {
-    return people;
-  }
-
   public List<String> getGenres() {
     return genres;
-  }
-
-  public Boolean isWatched() {
-    if (watched != null) {
-      return watched;
-    } else if (unseen != null) {
-      return !unseen;
-    }
-
-    return null;
-  }
-
-  public Integer getPlays() {
-    return plays;
-  }
-
-  public Rating getRating() {
-    return rating;
-  }
-
-  public Integer getRatingAdvanced() {
-    return ratingAdvanced;
-  }
-
-  public Boolean isInWatchlist() {
-    return inWatchlist;
-  }
-
-  public Boolean isInCollection() {
-    return inCollection;
   }
 }

@@ -1,45 +1,63 @@
+/*
+ * Copyright (C) 2014 Simon Vig Therkildsen
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package net.simonvt.cathode.api.entity;
 
 import net.simonvt.cathode.api.enumeration.Gender;
 
 public class Profile {
 
-  private String username;
+  String username;
 
-  private String fullName;
+  Boolean isPrivate;
 
-  private Gender gender;
+  String name;
 
-  private Integer age;
+  Boolean vip;
 
-  private String location;
+  IsoTime joinedAt;
 
-  private String about;
+  String location;
 
-  private Long joined;
+  String about;
 
-  private Long lastLogin;
+  Gender gender;
 
-  private String avatar;
+  Integer age;
 
-  private String url;
-
-  private Boolean vip;
+  Images images;
 
   public String getUsername() {
     return username;
   }
 
-  public String getFullName() {
-    return fullName;
+  public Boolean isPrivate() {
+    return isPrivate;
   }
 
-  public Gender getGender() {
-    return gender;
+  public String getName() {
+    return name;
   }
 
-  public Integer getAge() {
-    return age;
+  public Boolean isVip() {
+    return vip;
+  }
+
+  public IsoTime getJoinedAt() {
+    return joinedAt;
   }
 
   public String getLocation() {
@@ -50,23 +68,15 @@ public class Profile {
     return about;
   }
 
-  public Long getJoined() {
-    return joined;
+  public Gender getGender() {
+    return gender;
   }
 
-  public Long getLastLogin() {
-    return lastLogin;
+  public Integer getAge() {
+    return age;
   }
 
-  public String getAvatar() {
-    return avatar;
-  }
-
-  public String getUrl() {
-    return url;
-  }
-
-  public Boolean isVip() {
-    return vip;
+  public Images getImages() {
+    return images;
   }
 }

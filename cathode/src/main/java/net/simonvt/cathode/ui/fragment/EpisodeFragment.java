@@ -455,7 +455,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       inWatchlistView.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
 
       currentRating = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.RATING));
-      final int ratingAll = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.RATING_PERCENTAGE));
+      final int ratingAll = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.RATING));
       rating.setValue(ratingAll);
 
       setContentVisible(true);
@@ -470,7 +470,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       EpisodeColumns.TITLE, EpisodeColumns.SCREEN, EpisodeColumns.OVERVIEW,
       EpisodeColumns.FIRST_AIRED, EpisodeColumns.WATCHED, EpisodeColumns.IN_COLLECTION,
       EpisodeColumns.IN_WATCHLIST, EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN,
-      EpisodeColumns.RATING, EpisodeColumns.RATING_PERCENTAGE, EpisodeColumns.SEASON,
+      EpisodeColumns.USER_RATING, EpisodeColumns.RATING, EpisodeColumns.SEASON,
   };
 
   private LoaderManager.LoaderCallbacks<Cursor> episodeCallbacks =

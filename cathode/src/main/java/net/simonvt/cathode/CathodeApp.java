@@ -44,10 +44,8 @@ import dagger.Provides;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.simonvt.cathode.api.ApiKey;
-import net.simonvt.cathode.api.ResponseParser;
 import net.simonvt.cathode.api.TraktModule;
-import net.simonvt.cathode.api.UserCredentials;
-import net.simonvt.cathode.api.util.TraktUtils;
+import net.simonvt.cathode.api.UserToken;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.remote.DeserializationFailedTask;
 import net.simonvt.cathode.remote.PriorityQueue;
@@ -55,50 +53,56 @@ import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.TraktTaskSerializer;
 import net.simonvt.cathode.remote.TraktTaskService;
-import net.simonvt.cathode.remote.action.CancelMovieCheckinTask;
-import net.simonvt.cathode.remote.action.CancelShowCheckinTask;
-import net.simonvt.cathode.remote.action.CheckInEpisodeTask;
-import net.simonvt.cathode.remote.action.CheckInMovieTask;
-import net.simonvt.cathode.remote.action.DismissMovieRecommendation;
-import net.simonvt.cathode.remote.action.DismissShowRecommendation;
-import net.simonvt.cathode.remote.action.EpisodeCollectionTask;
-import net.simonvt.cathode.remote.action.EpisodeRateTask;
-import net.simonvt.cathode.remote.action.EpisodeWatchedTask;
-import net.simonvt.cathode.remote.action.EpisodeWatchlistTask;
-import net.simonvt.cathode.remote.action.MovieCollectionTask;
-import net.simonvt.cathode.remote.action.MovieRateTask;
-import net.simonvt.cathode.remote.action.MovieWatchedTask;
-import net.simonvt.cathode.remote.action.MovieWatchlistTask;
-import net.simonvt.cathode.remote.action.ShowCollectionTask;
-import net.simonvt.cathode.remote.action.ShowRateTask;
-import net.simonvt.cathode.remote.action.ShowWatchedTask;
-import net.simonvt.cathode.remote.action.ShowWatchlistTask;
+import net.simonvt.cathode.remote.action.CancelCheckin;
+import net.simonvt.cathode.remote.action.movies.CheckInMovieTask;
+import net.simonvt.cathode.remote.action.movies.DismissMovieRecommendation;
+import net.simonvt.cathode.remote.action.movies.MovieCollectionTask;
+import net.simonvt.cathode.remote.action.movies.MovieRateTask;
+import net.simonvt.cathode.remote.action.movies.MovieWatchedTask;
+import net.simonvt.cathode.remote.action.movies.MovieWatchlistTask;
+import net.simonvt.cathode.remote.action.shows.CheckInEpisodeTask;
+import net.simonvt.cathode.remote.action.shows.DismissShowRecommendation;
+import net.simonvt.cathode.remote.action.shows.EpisodeCollectionTask;
+import net.simonvt.cathode.remote.action.shows.EpisodeRateTask;
+import net.simonvt.cathode.remote.action.shows.EpisodeWatchedTask;
+import net.simonvt.cathode.remote.action.shows.EpisodeWatchlistTask;
+import net.simonvt.cathode.remote.action.shows.SeasonCollectionTask;
+import net.simonvt.cathode.remote.action.shows.SeasonWatchedTask;
+import net.simonvt.cathode.remote.action.shows.ShowRateTask;
+import net.simonvt.cathode.remote.action.shows.ShowWatchedTask;
+import net.simonvt.cathode.remote.action.shows.ShowWatchlistTask;
 import net.simonvt.cathode.remote.sync.PurgeTask;
 import net.simonvt.cathode.remote.sync.SyncActivityStreamTask;
-import net.simonvt.cathode.remote.sync.SyncEpisodeTask;
-import net.simonvt.cathode.remote.sync.SyncEpisodeWatchlistTask;
-import net.simonvt.cathode.remote.sync.SyncMovieRecommendations;
-import net.simonvt.cathode.remote.sync.SyncMovieTask;
-import net.simonvt.cathode.remote.sync.SyncMoviesCollectionTask;
-import net.simonvt.cathode.remote.sync.SyncMoviesTask;
-import net.simonvt.cathode.remote.sync.SyncMoviesWatchedTask;
-import net.simonvt.cathode.remote.sync.SyncMoviesWatchlistTask;
-import net.simonvt.cathode.remote.sync.SyncSeasonTask;
-import net.simonvt.cathode.remote.sync.SyncShowRecommendations;
-import net.simonvt.cathode.remote.sync.SyncShowSummariesTask;
-import net.simonvt.cathode.remote.sync.SyncShowTask;
-import net.simonvt.cathode.remote.sync.SyncShowsCollectionTask;
-import net.simonvt.cathode.remote.sync.SyncShowsTask;
-import net.simonvt.cathode.remote.sync.SyncShowsWatchedTask;
-import net.simonvt.cathode.remote.sync.SyncShowsWatchlistTask;
 import net.simonvt.cathode.remote.sync.SyncTask;
-import net.simonvt.cathode.remote.sync.SyncTrendingMoviesTask;
-import net.simonvt.cathode.remote.sync.SyncTrendingShowsTask;
-import net.simonvt.cathode.remote.sync.SyncUpdatedMovies;
-import net.simonvt.cathode.remote.sync.SyncUpdatedShows;
 import net.simonvt.cathode.remote.sync.SyncUserActivityTask;
 import net.simonvt.cathode.remote.sync.SyncUserSettingsTask;
 import net.simonvt.cathode.remote.sync.SyncWatchingTask;
+import net.simonvt.cathode.remote.sync.movies.SyncMovieCrew;
+import net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations;
+import net.simonvt.cathode.remote.sync.movies.SyncMovieTask;
+import net.simonvt.cathode.remote.sync.movies.SyncMoviesCollectionTask;
+import net.simonvt.cathode.remote.sync.movies.SyncMoviesRatings;
+import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchedTask;
+import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchlistTask;
+import net.simonvt.cathode.remote.sync.movies.SyncTrendingMoviesTask;
+import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
+import net.simonvt.cathode.remote.sync.shows.SyncEpisodeTask;
+import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlistTask;
+import net.simonvt.cathode.remote.sync.shows.SyncEpisodesRatings;
+import net.simonvt.cathode.remote.sync.shows.SyncSeasonTask;
+import net.simonvt.cathode.remote.sync.shows.SyncSeasonsRatings;
+import net.simonvt.cathode.remote.sync.shows.SyncSeasonsTask;
+import net.simonvt.cathode.remote.sync.shows.SyncShowCast;
+import net.simonvt.cathode.remote.sync.shows.SyncShowCollectedStatus;
+import net.simonvt.cathode.remote.sync.shows.SyncShowRecommendations;
+import net.simonvt.cathode.remote.sync.shows.SyncShowTask;
+import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
+import net.simonvt.cathode.remote.sync.shows.SyncShowsCollectionTask;
+import net.simonvt.cathode.remote.sync.shows.SyncShowsRatings;
+import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchedTask;
+import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchlistTask;
+import net.simonvt.cathode.remote.sync.shows.SyncTrendingShowsTask;
+import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.SearchTaskScheduler;
@@ -107,7 +111,6 @@ import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.service.AccountAuthenticator;
 import net.simonvt.cathode.service.CathodeSyncAdapter;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.PhoneController;
 import net.simonvt.cathode.ui.adapter.MovieRecommendationsAdapter;
@@ -141,7 +144,6 @@ import net.simonvt.cathode.ui.fragment.TrendingShowsFragment;
 import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
-import net.simonvt.cathode.util.ApiUtils;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.MovieSearchHandler;
 import net.simonvt.cathode.util.ShowSearchHandler;
@@ -181,6 +183,10 @@ public class CathodeApp extends Application {
 
     upgrade();
 
+    if (!accountExists(this)) {
+      setupAccount(this);
+    }
+
     objectGraph = ObjectGraph.create(new AppModule(this));
     objectGraph.plus(new TraktModule());
 
@@ -190,6 +196,7 @@ public class CathodeApp extends Application {
   }
 
   private void upgrade() {
+    // TODO: Delete CathodeDatabase
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
     final int currentVersion = settings.getInt(Settings.VERSION_CODE, -1);
 
@@ -199,37 +206,8 @@ public class CathodeApp extends Application {
     }
 
     if (currentVersion != BuildConfig.VERSION_CODE) {
-      switch (currentVersion) {
-        case 9: {
-          // Try to prune users with invalid usernames (e.g. spaces)
-          Account account = getAccount(this);
-          if (account != null) {
-            String accountName = account.name;
-            String trimmedName = accountName.trim();
-            if (!accountName.equals(trimmedName)) {
-              final boolean validUsername = TraktUtils.isValidUsername(trimmedName);
-              if (validUsername) {
-                String password = AccountManager.get(this).getPassword(account);
-                removeAccount(this);
-                setupAccountWithSha(this, trimmedName, password);
-              } else {
-                removeAccount(this);
-                TraktTimestamps.clear(this);
-
-                Intent intent = new Intent(this, TraktTaskService.class);
-                intent.setAction(TraktTaskService.ACTION_LOGOUT);
-                this.startService(intent);
-              }
-            } else if (!TraktUtils.isValidUsername(accountName)) {
-              removeAccount(this);
-              TraktTimestamps.clear(this);
-
-              Intent intent = new Intent(this, TraktTaskService.class);
-              intent.setAction(TraktTaskService.ACTION_LOGOUT);
-              this.startService(intent);
-            }
-          }
-        }
+      if (currentVersion < 20000) {
+        removeAccount(this);
       }
 
       settings.edit().putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE).apply();
@@ -251,9 +229,9 @@ public class CathodeApp extends Application {
 
     Notification.Builder builder = new Notification.Builder(this) //
         .setSmallIcon(R.drawable.ic_noti_error)
-        .setTicker(this.getString(R.string.auth_failed))
-        .setContentTitle(this.getString(R.string.auth_failed))
-        .setContentText(this.getString(R.string.auth_failed_desc, account.name))
+        .setTicker(getString(R.string.auth_failed))
+        .setContentTitle(getString(R.string.auth_failed))
+        .setContentText(getString(R.string.auth_failed_desc, account.name))
         .setContentIntent(pi)
         .setPriority(Notification.PRIORITY_HIGH);
 
@@ -282,19 +260,16 @@ public class CathodeApp extends Application {
     return accounts.length > 0 ? accounts[0] : null;
   }
 
-  public static void setupAccount(Context context, String username, String password) {
-    setupAccountWithSha(context, username, ApiUtils.getSha(password));
-  }
-
-  public static void setupAccountWithSha(Context context, String username, String shaPassword) {
+  public static void setupAccount(Context context) {
     removeAccount(context);
 
     AccountAuthenticator.allowRemove = false;
     AccountManager manager = AccountManager.get(context);
 
-    Account account = new Account(username, context.getString(R.string.accountType));
+    // TODO: Can I get the username?
+    Account account = new Account("Cathode", context.getString(R.string.accountType));
 
-    manager.addAccountExplicitly(account, shaPassword, null);
+    manager.addAccountExplicitly(account, null, null);
 
     ContentResolver.setIsSyncable(account, BuildConfig.PROVIDER_AUTHORITY, 1);
     ContentResolver.setSyncAutomatically(account, BuildConfig.PROVIDER_AUTHORITY, true);
@@ -360,28 +335,28 @@ public class CathodeApp extends Application {
           TraktTaskService.class, CathodeSyncAdapter.class,
 
           // Tasks
-          DismissMovieRecommendation.class, DismissShowRecommendation.class,
+          DeserializationFailedTask.class, TraktTaskQueue.class, TraktTaskSerializer.class,
+          CancelCheckin.class, CheckInMovieTask.class, DismissMovieRecommendation.class,
+          MovieCollectionTask.class, MovieRateTask.class, MovieWatchedTask.class,
+          MovieWatchlistTask.class, CheckInEpisodeTask.class, DismissShowRecommendation.class,
           EpisodeCollectionTask.class, EpisodeRateTask.class, EpisodeWatchedTask.class,
-          EpisodeWatchlistTask.class, MovieCollectionTask.class, MovieRateTask.class,
-          MovieWatchedTask.class, MovieWatchlistTask.class, ShowRateTask.class,
-          ShowCollectionTask.class, ShowWatchlistTask.class, SyncShowsCollectionTask.class,
-          SyncEpisodeTask.class, SyncEpisodeWatchlistTask.class, SyncMovieTask.class,
-          SyncMovieRecommendations.class, SyncMoviesTask.class, SyncMoviesCollectionTask.class,
-          SyncMoviesWatchedTask.class, SyncMoviesWatchlistTask.class, SyncSeasonTask.class,
-          SyncShowTask.class, SyncShowRecommendations.class, SyncShowsTask.class,
-          SyncTrendingMoviesTask.class, SyncTrendingShowsTask.class, SyncShowsWatchlistTask.class,
-          SyncShowsWatchedTask.class, ShowWatchedTask.class, SyncUpdatedMovies.class,
-          SyncUpdatedShows.class, SyncTask.class, SyncUserActivityTask.class,
-          DeserializationFailedTask.class, SyncWatchingTask.class, CheckInEpisodeTask.class,
-          CancelShowCheckinTask.class, CheckInMovieTask.class, CancelMovieCheckinTask.class,
-          SyncActivityStreamTask.class, SyncUserSettingsTask.class, PurgeTask.class,
-          SyncShowSummariesTask.class,
+          EpisodeWatchlistTask.class, SeasonCollectionTask.class, SeasonWatchedTask.class,
+          ShowRateTask.class, ShowWatchedTask.class, ShowWatchlistTask.class, PurgeTask.class,
+          SyncActivityStreamTask.class, SyncTask.class, SyncUserActivityTask.class,
+          SyncUserSettingsTask.class, SyncWatchingTask.class, SyncMovieCrew.class,
+          SyncMovieRecommendations.class, SyncMoviesCollectionTask.class, SyncMoviesRatings.class,
+          SyncMoviesWatchedTask.class, SyncMoviesWatchlistTask.class, SyncMovieTask.class,
+          SyncTrendingMoviesTask.class, SyncUpdatedMovies.class, SyncEpisodesRatings.class,
+          SyncEpisodeTask.class, SyncEpisodeWatchlistTask.class, SyncSeasonsRatings.class,
+          SyncSeasonsTask.class, SyncSeasonTask.class, SyncShowCast.class,
+          SyncShowCollectedStatus.class, SyncShowRecommendations.class,
+          SyncShowsCollectionTask.class, SyncShowsRatings.class, SyncShowsWatchedTask.class,
+          SyncShowsWatchlistTask.class, SyncShowTask.class, SyncShowWatchedStatus.class,
+          SyncTrendingShowsTask.class, SyncUpdatedShows.class,
 
           // Misc
-          PhoneController.class, ResponseParser.class, ShowSearchHandler.class,
-          ShowSearchHandler.SearchThread.class, MovieSearchHandler.class,
-          MovieSearchHandler.SearchThread.class, LoginFragment.CreateAccountAsync.class,
-          LoginFragment.LoginAsync.class
+          PhoneController.class, ShowSearchHandler.class, ShowSearchHandler.SearchThread.class,
+          MovieSearchHandler.class, MovieSearchHandler.SearchThread.class
       })
   static class AppModule {
 
@@ -429,10 +404,6 @@ public class CathodeApp extends Application {
 
     @Provides @Singleton MovieSearchHandler provideMovieSearchHandler(Bus bus) {
       return new MovieSearchHandler(appContext, bus);
-    }
-
-    @Provides @ApiKey String provideApiKey() {
-      return appContext.getString(R.string.apikey);
     }
 
     @Provides @Singleton ErrorHandler provideErrorHandler(final Bus bus) {
@@ -489,19 +460,16 @@ public class CathodeApp extends Application {
       return new SearchTaskScheduler(appContext);
     }
 
-    @Provides @Singleton UserCredentials provideCredentials() {
+    @Provides @Singleton UserToken provideUserToken() {
       SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(appContext);
 
-      String name = null;
-      String password = null;
+      String token = settings.getString(Settings.TRAKT_TOKEN, null);
 
-      if (accountExists(appContext)) {
-        Account account = getAccount(appContext);
-        name = account.name;
-        password = AccountManager.get(appContext).getPassword(account);
-      }
+      return new UserToken(token);
+    }
 
-      return new UserCredentials(name, password);
+    @Provides @ApiKey String provideClientId() {
+      return BuildConfig.TRAKT_CLIENT_ID;
     }
   }
 }

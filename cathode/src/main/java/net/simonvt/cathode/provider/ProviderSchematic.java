@@ -26,19 +26,14 @@ import java.util.Map;
 import java.util.Set;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.MovieActorColumns;
+import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.DatabaseContract.MovieDirectoryColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
-import net.simonvt.cathode.provider.DatabaseContract.MovieProducerColumns;
-import net.simonvt.cathode.provider.DatabaseContract.MovieTopWatcherColumns;
-import net.simonvt.cathode.provider.DatabaseContract.MovieWriterColumns;
+import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowActorColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowCharacterColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowTopWatcherColumns;
-import net.simonvt.cathode.provider.DatabaseContract.TopEpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Joins;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.util.DateUtils;
@@ -75,9 +70,7 @@ public final class ProviderSchematic {
   interface Type {
     String SHOW = "vnd.android.cursor.dir/vnd.simonvt.cathode.show";
     String SHOW_ID = "vnd.android.cursor.item/vnd.simonvt.cathode.show";
-    String SHOW_TOP_WATCHER = "vnd.android.cursor.dir/vnd.simonvt.cathode.showTopWatcher";
-    String SHOW_TOP_EPISODE = "vnd.android.cursor.dir/vnd.simonvt.cathode.showTopEpisode";
-    String SHOW_ACTOR = "vnd.android.cursor.dir/vnd.simonvt.cathode.showActor";
+    String SHOW_CHARACTERS = "vnd.android.cursor.dir/vnd.simonvt.cathode.showCharacters";
     String SHOW_GENRE = "vnd.android.cursor.dir/vnd.simonvt.cathode.showGenre";
     String SEASON = "vnd.android.cursor.dir/vnd.simonvt.cathode.season";
     String SEASON_ID = "vnd.android.cursor.item/vnd.simonvt.cathode.season";
@@ -87,14 +80,14 @@ public final class ProviderSchematic {
     String MOVIE = "vnd.android.cursor.dir/vnd.simonvt.cathode.movie";
     String MOVIE_ID = "vnd.android.cursor.item/vnd.simonvt.cathode.movie";
     String MOVIE_GENRE = "vnd.android.cursor.dir/vnd.simonvt.cathode.movieGenre";
-    String MOVIE_TOP_WATCHER = "vnd.android.cursor.dir/vnd.simonvt.cathode.movieTopWatcher";
-    String MOVIE_ACTOR = "vnd.android.cursor.dir/vnd.simonvt.cathode.movieActor";
-    String MOVIE_DIRECTOR = "vnd.android.cursor.dir/vnd.simonvt.cathode.movieDirector";
-    String MOVIE_WRITER = "vnd.android.cursor.dir/vnd.simonvt.cathode.movieWriter";
-    String MOVIE_PRODUCER = "vnd.android.cursor.dir/vnd.simonvt.cathode.movieProducer";
+    String MOVIE_CAST = "vnd.android.cursor.dir/vnd.simonvt.cathode.movieCast";
+    String MOVIE_CREW = "vnd.android.cursor.dir/vnd.simonvt.cathode.movieCrew";
 
     String SHOW_SEARCH = "vnd.android.cursor.dir/vnd.simonvt.cathode.showSearchSuggestions";
     String MOVIE_SEARCH = "vnd.android.cursor.dir/vnd.simonvt.cathode.movieSearchSuggestions";
+
+    String PEOPLE = "vnd.android.cursor.dir/vnd.simonvt.cathode.people";
+    String PERSON = "vnd.android.cursor.item/vnd.simonvt.cathode.person";
   }
 
   interface Path {
@@ -104,16 +97,15 @@ public final class ProviderSchematic {
     String SEASONS = "seasons";
     String EPISODES = "episodes";
     String SHOW_GENRES = "showGenres";
-    String SHOW_ACTORS = "showActors";
-    String SHOW_TOP_EPISODES = "showTopEpisodes";
-    String SHOW_TOP_WATCHERS = "showTopWatchers";
+    String SHOW_CHARACTERS = "showCharacters";
 
     String FROM_SHOW = "fromShow";
     String FROM_SEASON = "fromSeason";
 
     String MOVIES = "movies";
     String MOVIE_GENRES = "movieGenres";
-    String MOVIE_ACTORS = "movieActors";
+    String MOVIE_CAST = "movieCast";
+    String MOVIE_CREW = "movieCrew";
     String MOVIE_DIRECTORY = "movieDirectory";
     String MOVIE_WRITERS = "movieWriters";
     String MOVIE_PRODUCERS = "movieProducers";
@@ -130,6 +122,8 @@ public final class ProviderSchematic {
     String WATCHING = "watching";
 
     String SEARCH_SUGGESTIONS = "searchSuggestions";
+
+    String PEOPLE = "people";
   }
 
   static Uri getBaseUri(Uri uri) {
@@ -182,8 +176,8 @@ public final class ProviderSchematic {
       return buildUri(Path.SHOWS, String.valueOf(id));
     }
 
-    public static String getShowId(Uri uri) {
-      return uri.getPathSegments().get(1);
+    public static long getShowId(Uri uri) {
+      return Long.valueOf(uri.getPathSegments().get(1));
     }
 
     @ContentUri(
@@ -262,7 +256,7 @@ public final class ProviderSchematic {
 
     public static final String SORT_RATING = DatabaseSchematic.Tables.SHOWS
         + "."
-        + ShowColumns.RATING_PERCENTAGE
+        + ShowColumns.RATING
         + " DESC,"
         + DatabaseSchematic.Tables.SHOWS
         + "."
@@ -682,98 +676,33 @@ public final class ProviderSchematic {
     }
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_SHOW_ACTORS)
-  public static class ShowActors {
+  @TableEndpoint(table = DatabaseSchematic.TABLE_SHOW_CHARACTERS)
+  public static class ShowCharacters {
 
     @ContentUri(
-        path = Path.SHOW_ACTORS,
-        type = Type.SHOW_ACTOR)
-    public static final Uri SHOW_ACTORS = buildUri(Path.SHOW_ACTORS);
+        path = Path.SHOW_CHARACTERS,
+        type = Type.SHOW_CHARACTERS)
+    public static final Uri SHOW_CHARACTERS = buildUri(Path.SHOW_CHARACTERS);
 
     @InexactContentUri(
-        path = Path.SHOW_ACTORS + "/" + Path.FROM_SHOW + "/#",
-        type = Type.SHOW_ACTOR,
-        name = "ACTORS_FROMSHOW",
-        whereColumn = ShowActorColumns.SHOW_ID,
+        path = Path.SHOW_CHARACTERS + "/" + Path.FROM_SHOW + "/#",
+        type = Type.SHOW_CHARACTERS,
+        name = "CHARACTERS_FROMSHOW",
+        whereColumn = ShowCharacterColumns.SHOW_ID,
         pathSegment = 2)
     public static Uri fromShow(long showId) {
-      return buildUri(Path.SHOW_ACTORS, Path.FROM_SHOW, String.valueOf(showId));
+      return buildUri(Path.SHOW_CHARACTERS, Path.FROM_SHOW, String.valueOf(showId));
     }
 
-    @InsertUri(paths = Path.SHOW_ACTORS)
+    @InsertUri(paths = Path.SHOW_CHARACTERS)
     public static Uri insertReturnUri(ContentValues cv) {
-      final long showId = cv.getAsLong(ShowActorColumns.SHOW_ID);
+      final long showId = cv.getAsLong(ShowCharacterColumns.SHOW_ID);
       return fromShow(showId);
     }
 
-    @NotifyInsert(paths = Path.SHOW_ACTORS)
+    @NotifyInsert(paths = Path.SHOW_CHARACTERS)
     public static Uri[] notifyInsert(ContentValues cv) {
-      final long showId = cv.getAsLong(ShowActorColumns.SHOW_ID);
-      return new Uri[] {
-          fromShow(showId),
-      };
-    }
-  }
-
-  @TableEndpoint(table = DatabaseSchematic.TABLE_SHOW_TOP_EPISODES)
-  public static class ShowTopEpisodes {
-
-    @ContentUri(
-        path = Path.SHOW_TOP_EPISODES,
-        type = Type.SHOW_TOP_EPISODE)
-    public static final Uri TOP_EPISODES = buildUri(Path.SHOW_TOP_EPISODES);
-
-    @InexactContentUri(
-        path = Path.SHOW_TOP_EPISODES + "/" + Path.FROM_SHOW + "/#",
-        type = Type.SHOW_TOP_EPISODE,
-        name = "TOP_EPSIDES_FROMSHOW",
-        whereColumn = TopEpisodeColumns.SHOW_ID,
-        pathSegment = 2)
-    public static Uri fromShow(long showId) {
-      return buildUri(Path.SHOW_TOP_EPISODES, Path.FROM_SHOW, String.valueOf(showId));
-    }
-
-    @InsertUri(paths = Path.SHOW_TOP_EPISODES)
-    public static Uri insertReturnUri(ContentValues cv) {
-      final long showId = cv.getAsLong(TopEpisodeColumns.SHOW_ID);
-      return fromShow(showId);
-    }
-
-    @NotifyInsert(paths = Path.SHOW_TOP_EPISODES)
-    public static Uri[] notifyInsert(ContentValues cv) {
-      final long showId = cv.getAsLong(TopEpisodeColumns.SHOW_ID);
-      return new Uri[] {
-          fromShow(showId),
-      };
-    }
-  }
-
-  @TableEndpoint(table = DatabaseSchematic.TABLE_SHOW_TOP_WATCHERS)
-  public static class ShowTopWatchers {
-
-    @ContentUri(
-        path = Path.SHOW_TOP_WATCHERS,
-        type = Type.SHOW_TOP_WATCHER)
-    public static final Uri SHOW_TOP_WATCHERS = buildUri(Path.SHOW_TOP_WATCHERS);
-
-    @InexactContentUri(
-        path = Path.SHOW_TOP_WATCHERS + "/" + Path.FROM_SHOW + "/#",
-        type = Type.SHOW_TOP_WATCHER,
-        name = "TOP_WATCHERS_FROMSHOW",
-        whereColumn = ShowTopWatcherColumns.SHOW_ID,
-        pathSegment = 2)
-    public static Uri fromShow(long showId) {
-      return buildUri(Path.SHOW_TOP_WATCHERS, Path.FROM_SHOW, String.valueOf(showId));
-    }
-
-    @InsertUri(paths = Path.SHOW_TOP_WATCHERS) public static Uri insertReturnUri(ContentValues cv) {
-      final long showId = cv.getAsLong(ShowTopWatcherColumns.SHOW_ID);
-      return fromShow(showId);
-    }
-
-    @NotifyInsert(paths = Path.SHOW_TOP_WATCHERS)
-    public static Uri[] notifyInsert(ContentValues cv) {
-      final long showId = cv.getAsLong(ShowTopWatcherColumns.SHOW_ID);
+      final long showId = cv.getAsLong(ShowCharacterColumns.SHOW_ID);
       return new Uri[] {
           fromShow(showId),
       };
@@ -833,7 +762,7 @@ public final class ProviderSchematic {
 
     public static final String SORT_RATING = DatabaseSchematic.Tables.MOVIES
         + "."
-        + MovieColumns.RATING_PERCENTAGE
+        + MovieColumns.RATING
         + " DESC,"
         + DatabaseSchematic.Tables.MOVIES
         + "."
@@ -880,167 +809,68 @@ public final class ProviderSchematic {
     }
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_MOVIE_TOP_WATCHERS)
-  public static class MovieTopWatchers {
+  @TableEndpoint(table = DatabaseSchematic.TABLE_MOVIE_CAST)
+  public static class MovieCast {
 
     @ContentUri(
-        path = Path.MOVIE_TOP_WATCHERS,
-        type = Type.MOVIE_TOP_WATCHER)
-    public static final Uri MOVIE_TOP_WATCHERS = buildUri(Path.MOVIE_TOP_WATCHERS);
+        path = Path.MOVIE_CAST,
+        type = Type.MOVIE_CAST)
+    public static final Uri MOVIE_CAST = buildUri(Path.MOVIE_CAST);
 
     @InexactContentUri(
-        path = Path.MOVIE_TOP_WATCHERS + "/" + Path.FROM_MOVIE + "/#",
-        type = Type.MOVIE_TOP_WATCHER,
-        name = "TOP_WATCHERS_FROMMOVIE",
-        whereColumn = MovieTopWatcherColumns.MOVIE_ID,
+        path = Path.MOVIE_CAST + "/" + Path.FROM_MOVIE + "/#",
+        type = Type.MOVIE_CAST,
+        name = "CAST_FROMMOVIE",
+        whereColumn = MovieCastColumns.MOVIE_ID,
         pathSegment = 2)
     public static Uri fromMovie(long movieId) {
-      return buildUri(Path.MOVIE_TOP_WATCHERS, Path.FROM_MOVIE, String.valueOf(movieId));
+      return buildUri(Path.MOVIE_CAST, Path.FROM_MOVIE, String.valueOf(movieId));
     }
 
-    @NotifyInsert(paths = Path.MOVIE_TOP_WATCHERS)
+    @NotifyInsert(paths = Path.MOVIE_CAST)
     public static Uri[] notifyInsert(ContentValues cv) {
-      final long movieId = cv.getAsLong(MovieTopWatcherColumns.MOVIE_ID);
+      final long movieId = cv.getAsLong(MovieCastColumns.MOVIE_ID);
       return new Uri[] {
           fromMovie(movieId),
       };
     }
 
-    @InsertUri(paths = Path.MOVIE_TOP_WATCHERS)
+    @InsertUri(paths = Path.MOVIE_CAST)
     public static Uri insertUri(ContentValues cv) {
-      final long movieId = cv.getAsLong(MovieTopWatcherColumns.MOVIE_ID);
+      final long movieId = cv.getAsLong(MovieCastColumns.MOVIE_ID);
       return fromMovie(movieId);
     }
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_MOVIE_ACTORS)
-  public static class MovieActors {
+  @TableEndpoint(table = DatabaseSchematic.TABLE_MOVIE_CREW)
+  public static class MovieCrew {
 
     @ContentUri(
-        path = Path.MOVIE_ACTORS,
-        type = Type.MOVIE_ACTOR)
-    public static final Uri MOVIE_ACTORS = buildUri(Path.MOVIE_ACTORS);
+        path = Path.MOVIE_CREW,
+        type = Type.MOVIE_CREW)
+    public static final Uri MOVIE_CREW = buildUri(Path.MOVIE_CREW);
 
     @InexactContentUri(
-        path = Path.MOVIE_ACTORS + "/" + Path.FROM_MOVIE + "/#",
-        type = Type.MOVIE_ACTOR,
-        name = "ACTORS_FROMMOVIE",
-        whereColumn = MovieActorColumns.MOVIE_ID,
+        path = Path.MOVIE_CREW + "/" + Path.FROM_MOVIE + "/#",
+        type = Type.MOVIE_CREW,
+        name = "CREW_FROMMOVIE",
+        whereColumn = MovieCastColumns.MOVIE_ID,
         pathSegment = 2)
     public static Uri fromMovie(long movieId) {
-      return buildUri(Path.MOVIE_ACTORS, Path.FROM_MOVIE, String.valueOf(movieId));
+      return buildUri(Path.MOVIE_CREW, Path.FROM_MOVIE, String.valueOf(movieId));
     }
 
-    @NotifyInsert(paths = Path.MOVIE_ACTORS)
+    @NotifyInsert(paths = Path.MOVIE_CREW)
     public static Uri[] notifyInsert(ContentValues cv) {
-      final long movieId = cv.getAsLong(MovieActorColumns.MOVIE_ID);
+      final long movieId = cv.getAsLong(MovieCastColumns.MOVIE_ID);
       return new Uri[] {
           fromMovie(movieId),
       };
     }
 
-    @InsertUri(paths = Path.MOVIE_ACTORS)
+    @InsertUri(paths = Path.MOVIE_CREW)
     public static Uri insertUri(ContentValues cv) {
-      final long movieId = cv.getAsLong(MovieActorColumns.MOVIE_ID);
-      return fromMovie(movieId);
-    }
-  }
-
-  @TableEndpoint(table = DatabaseSchematic.TABLE_MOVIE_DIRECTORS)
-  public static class MovieDirectors {
-
-    @ContentUri(
-        path = Path.MOVIE_DIRECTORY,
-        type = Type.MOVIE_DIRECTOR)
-    public static final Uri DIRECTORS = buildUri(Path.MOVIE_DIRECTORY);
-
-    @InexactContentUri(
-        path = Path.MOVIE_DIRECTORY + "/" + Path.FROM_MOVIE + "/#",
-        type = Type.MOVIE_DIRECTOR,
-        name = "DIRECTORS_FROMMOVIE",
-        whereColumn = MovieDirectoryColumns.MOVIE_ID,
-        pathSegment = 2)
-    public static Uri fromMovie(long movieId) {
-      return buildUri(Path.MOVIE_DIRECTORY, Path.FROM_MOVIE, String.valueOf(movieId));
-    }
-
-    @NotifyInsert(paths = Path.MOVIE_DIRECTORY)
-    public static Uri[] notifyInsert(ContentValues cv) {
-      final long movieId = cv.getAsLong(MovieDirectoryColumns.MOVIE_ID);
-      return new Uri[] {
-          fromMovie(movieId),
-      };
-    }
-
-    @InsertUri(paths = Path.MOVIE_DIRECTORY)
-    public static Uri insertUri(ContentValues cv) {
-      final long movieId = cv.getAsLong(MovieDirectoryColumns.MOVIE_ID);
-      return fromMovie(movieId);
-    }
-  }
-
-  @TableEndpoint(table = DatabaseSchematic.TABLE_MOVIE_WRITERS)
-  public static class MovieWriters {
-
-    @ContentUri(
-        path = Path.MOVIE_WRITERS,
-        type = Type.MOVIE_WRITER)
-    public static final Uri WRITERS = buildUri(Path.MOVIE_ACTORS);
-
-    @InexactContentUri(
-        path = Path.MOVIE_WRITERS + "/" + Path.FROM_MOVIE + "/#",
-        type = Type.MOVIE_WRITER,
-        name = "WRITERS_FROMMOVIE",
-        whereColumn = MovieWriterColumns.MOVIE_ID,
-        pathSegment = 2)
-    public static Uri fromMovie(long movieId) {
-      return buildUri(Path.MOVIE_WRITERS, Path.FROM_MOVIE, String.valueOf(movieId));
-    }
-
-    @NotifyInsert(paths = Path.MOVIE_WRITERS)
-    public static Uri[] notifyInsert(ContentValues cv) {
-      final long movieId = cv.getAsLong(MovieWriterColumns.MOVIE_ID);
-      return new Uri[] {
-          fromMovie(movieId),
-      };
-    }
-
-    @InsertUri(paths = Path.MOVIE_WRITERS)
-    public static Uri insertUri(ContentValues cv) {
-      final long movieId = cv.getAsLong(MovieWriterColumns.MOVIE_ID);
-      return fromMovie(movieId);
-    }
-  }
-
-  @TableEndpoint(table = DatabaseSchematic.TABLE_MOVIE_PRODUCERS)
-  public static class MovieProducers {
-
-    @ContentUri(
-        path = Path.MOVIE_PRODUCERS,
-        type = Type.MOVIE_PRODUCER)
-    public static final Uri PRODUCERS = buildUri(Path.MOVIE_PRODUCERS);
-
-    @InexactContentUri(
-        path = Path.MOVIE_PRODUCERS + "/" + Path.FROM_MOVIE + "/#",
-        type = Type.MOVIE_PRODUCER,
-        name = "PRODUCERS_FROMMOVIE",
-        whereColumn = MovieProducerColumns.MOVIE_ID,
-        pathSegment = 2)
-    public static Uri fromMovie(long movieId) {
-      return buildUri(Path.MOVIE_PRODUCERS, Path.FROM_MOVIE, String.valueOf(movieId));
-    }
-
-    @NotifyInsert(paths = Path.MOVIE_PRODUCERS)
-    public static Uri[] notifyInsert(ContentValues cv) {
-      final long movieId = cv.getAsLong(MovieProducerColumns.MOVIE_ID);
-      return new Uri[] {
-          fromMovie(movieId),
-      };
-    }
-
-    @InsertUri(paths = Path.MOVIE_PRODUCERS)
-    public static Uri insertUri(ContentValues cv) {
-      final long movieId = cv.getAsLong(MovieProducerColumns.MOVIE_ID);
+      final long movieId = cv.getAsLong(MovieCastColumns.MOVIE_ID);
       return fromMovie(movieId);
     }
   }
@@ -1061,5 +891,28 @@ public final class ProviderSchematic {
         path = Path.SEARCH_SUGGESTIONS + "/" + Path.MOVIES,
         type = Type.MOVIE_SEARCH)
     public static final Uri MOVIE_SUGGESTIONS = buildUri(Path.SEARCH_SUGGESTIONS, Path.MOVIES);
+  }
+
+  @TableEndpoint(table = DatabaseSchematic.TABLE_PEOPLE)
+  public static class People {
+
+    @ContentUri(
+        path = Path.PEOPLE,
+        type = Type.PEOPLE)
+    public static final Uri PEOPLE = buildUri(Path.PEOPLE);
+
+    @InexactContentUri(
+        path = Path.PEOPLE + "/#",
+        type = Type.PERSON,
+        name = "PERSON_ID",
+        whereColumn = PersonColumns.ID,
+        pathSegment = 1)
+    public static Uri withId(long id) {
+      return buildUri(Path.PEOPLE, String.valueOf(id));
+    }
+
+    public static long getId(Uri uri) {
+      return Long.valueOf(uri.getPathSegments().get(1));
+    }
   }
 }

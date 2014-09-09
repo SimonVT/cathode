@@ -193,14 +193,6 @@ public class ShowsWithNextAdapter extends CursorAdapter {
             showScheduler.collectedNext(id);
             break;
 
-          case R.id.action_collection_add_all:
-            showScheduler.setIsInCollection(id, true);
-            break;
-
-          case R.id.action_collection_remove_all:
-            showScheduler.setIsInCollection(id, false);
-            break;
-
           case R.id.action_hide:
             showScheduler.setIsHidden(id, true);
             break;

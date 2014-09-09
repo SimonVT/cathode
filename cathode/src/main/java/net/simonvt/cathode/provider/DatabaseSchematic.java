@@ -17,26 +17,19 @@ package net.simonvt.cathode.provider;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import net.simonvt.cathode.database.DatabaseUtils;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.MovieActorColumns;
+import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.DatabaseContract.MovieDirectoryColumns;
+import net.simonvt.cathode.provider.DatabaseContract.MovieCrewColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
-import net.simonvt.cathode.provider.DatabaseContract.MovieProducerColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieSearchSuggestionsColumns;
-import net.simonvt.cathode.provider.DatabaseContract.MovieTopWatcherColumns;
-import net.simonvt.cathode.provider.DatabaseContract.MovieWriterColumns;
+import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowActorColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowSearchSuggestionsColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowTopWatcherColumns;
-import net.simonvt.cathode.provider.DatabaseContract.TopEpisodeColumns;
 import net.simonvt.cathode.provider.generated.CathodeDatabase;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.schematic.annotation.Database;
@@ -44,16 +37,16 @@ import net.simonvt.schematic.annotation.ExecOnCreate;
 import net.simonvt.schematic.annotation.OnUpgrade;
 import net.simonvt.schematic.annotation.Table;
 
-@Database(className = DatabaseSchematic.DATABASE_NAME, fileName = "cathode.db",
+@Database(className = "CathodeDatabase", fileName = "cathode.db",
     version = DatabaseSchematic.DATABASE_VERSION)
 public final class DatabaseSchematic {
 
   private DatabaseSchematic() {
   }
 
-  static final String DATABASE_NAME = "CathodeDatabase";
+  static final String DATABASE_NAME = "DB1";
 
-  static final int DATABASE_VERSION = 11;
+  static final int DATABASE_VERSION = 12;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -117,20 +110,18 @@ public final class DatabaseSchematic {
   public interface Tables {
 
     String SHOWS = "shows";
-
-    String SHOW_TOP_WATCHERS = "showTopWatchers";
-    String SHOW_TOP_EPISODES = "topEpisodes";
-    String SHOW_ACTORS = "showActors";
     String SHOW_GENRES = "showGenres";
     String SEASONS = "seasons";
     String EPISODES = "episodes";
+    String SHOW_CHARACTERS = "showCharacters";
+
     String MOVIES = "movies";
     String MOVIE_GENRES = "movieGenres";
-    String MOVIE_TOP_WATCHERS = "movieTopWatchers";
-    String MOVIE_ACTORS = "movieActors";
-    String MOVIE_DIRECTORS = "movieDirectors";
-    String MOVIE_WRITERS = "movieWriters";
-    String MOVIE_PRODUCERS = "movieProducers";
+
+    String MOVIE_CAST = "movieCast";
+    String MOVIE_CREW = "movieCrew";
+
+    String PEOPLE = "people";
 
     String SHOW_SEARCH_SUGGESTIONS = "showSearchSuggestions";
     String MOVIE_SEARCH_SUGGESTIONS = "movieSearchSuggestions";
@@ -328,44 +319,33 @@ public final class DatabaseSchematic {
         + ";";
   }
 
-  @Table(ShowColumns.class) public static final String TABLE_SHOWS = "shows";
+  @Table(ShowColumns.class) public static final String TABLE_SHOWS = Tables.SHOWS;
 
-  @Table(ShowTopWatcherColumns.class) public static final String TABLE_SHOW_TOP_WATCHERS =
-      "showTopWatchers";
+  @Table(ShowGenreColumns.class) public static final String TABLE_SHOW_GENRES = Tables.SHOW_GENRES;
 
-  @Table(TopEpisodeColumns.class) public static final String TABLE_SHOW_TOP_EPISODES =
-      "topEpisodes";
+  @Table(SeasonColumns.class) public static final String TABLE_SEASONS = Tables.SEASONS;
 
-  @Table(ShowActorColumns.class) public static final String TABLE_SHOW_ACTORS = "showActors";
+  @Table(EpisodeColumns.class) public static final String TABLE_EPISODES = Tables.EPISODES;
 
-  @Table(ShowGenreColumns.class) public static final String TABLE_SHOW_GENRES = "showGenres";
+  @Table(DatabaseContract.ShowCharacterColumns.class) public static final String
+      TABLE_SHOW_CHARACTERS = Tables.SHOW_CHARACTERS;
 
-  @Table(SeasonColumns.class) public static final String TABLE_SEASONS = "seasons";
+  @Table(MovieColumns.class) public static final String TABLE_MOVIES = Tables.MOVIES;
 
-  @Table(EpisodeColumns.class) public static final String TABLE_EPISODES = "episodes";
+  @Table(MovieGenreColumns.class) public static final String TABLE_MOVIE_GENRES =
+      Tables.MOVIE_GENRES;
 
-  @Table(MovieColumns.class) public static final String TABLE_MOVIES = "movies";
+  @Table(MovieCastColumns.class) public static final String TABLE_MOVIE_CAST = Tables.MOVIE_CAST;
 
-  @Table(MovieGenreColumns.class) public static final String TABLE_MOVIE_GENRES = "movieGenres";
+  @Table(MovieCrewColumns.class) public static final String TABLE_MOVIE_CREW = Tables.MOVIE_CREW;
 
-  @Table(MovieTopWatcherColumns.class) public static final String TABLE_MOVIE_TOP_WATCHERS =
-      "movieTopWatchers";
-
-  @Table(MovieActorColumns.class) public static final String TABLE_MOVIE_ACTORS = "movieActors";
-
-  @Table(MovieDirectoryColumns.class) public static final String TABLE_MOVIE_DIRECTORS =
-      "movieDirectors";
-
-  @Table(MovieWriterColumns.class) public static final String TABLE_MOVIE_WRITERS = "movieWriters";
-
-  @Table(MovieProducerColumns.class) public static final String TABLE_MOVIE_PRODUCERS =
-      "movieProducers";
+  @Table(PersonColumns.class) public static final String TABLE_PEOPLE = Tables.PEOPLE;
 
   @Table(ShowSearchSuggestionsColumns.class) public static final String
-      TABLE_SHOW_SEARCH_SUGGESTIONS = "showSearchSuggestions";
+      TABLE_SHOW_SEARCH_SUGGESTIONS = Tables.SHOW_SEARCH_SUGGESTIONS;
 
   @Table(MovieSearchSuggestionsColumns.class) public static final String
-      TABLE_MOVIE_SEARCH_SUGGESTIONS = "movieSearchSuggestions";
+      TABLE_MOVIE_SEARCH_SUGGESTIONS = Tables.MOVIE_SEARCH_SUGGESTIONS;
 
   @ExecOnCreate
   public static final String TRIGGER_EPISODE_UPDATE_AIRED = "CREATE TRIGGER "
@@ -418,194 +398,8 @@ public final class DatabaseSchematic {
       + " END;";
 
   @OnUpgrade public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    switch (oldVersion) {
-      case 1: {
-        db.execSQL("ALTER TABLE "
-            + Tables.SHOWS
-            + " ADD COLUMN "
-            + ShowColumns.HIDDEN
-            + " INTEGER DEFAULT 0");
-      }
-      case 2: {
-        db.execSQL("ALTER TABLE "
-            + Tables.EPISODES
-            + " ADD COLUMN "
-            + EpisodeColumns.WATCHING
-            + " INTEGER DEFAULT 0");
-        db.execSQL("ALTER TABLE "
-            + Tables.EPISODES
-            + " ADD COLUMN "
-            + EpisodeColumns.CHECKED_IN
-            + " INTEGER DEFAULT 0");
-        db.execSQL("ALTER TABLE "
-            + Tables.MOVIES
-            + " ADD COLUMN "
-            + MovieColumns.WATCHING
-            + " INTEGER DEFAULT 0");
-        db.execSQL("ALTER TABLE "
-            + Tables.MOVIES
-            + " ADD COLUMN "
-            + MovieColumns.CHECKED_IN
-            + " INTEGER DEFAULT 0");
-      }
-      case 3: {
-        db.execSQL("ALTER TABLE "
-            + Tables.SHOWS
-            + " ADD COLUMN "
-            + ShowColumns.FULL_SYNC_REQUESTED
-            + " INTEGER DEFAULT 0");
-      }
-      case 4: {
-        db.execSQL("DROP TABLE IF EXISTS " + Tables.SHOW_ACTORS);
-        db.execSQL(CathodeDatabase.TABLE_SHOW_ACTORS);
-      }
-      case 5: {
-        db.execSQL("ALTER TABLE "
-            + Tables.SHOWS
-            + " ADD COLUMN "
-            + ShowColumns.TITLE_NO_ARTICLE
-            + " TEXT");
+    if (oldVersion < 12) {
 
-        Cursor shows = db.query(Tables.SHOWS, new String[] {
-            ShowColumns.ID, ShowColumns.TITLE
-        }, null, null, null, null, null);
-        while (shows.moveToNext()) {
-          final long showId = shows.getLong(shows.getColumnIndex(ShowColumns.ID));
-          final String showTitle = shows.getString(shows.getColumnIndex(ShowColumns.TITLE));
-
-          final String titleNoArticle = DatabaseUtils.removeLeadingArticle(showTitle);
-
-          ContentValues cv = new ContentValues();
-          cv.put(ShowColumns.TITLE_NO_ARTICLE, titleNoArticle);
-          db.update(Tables.SHOWS, cv, ShowColumns.ID + "=?", new String[] {
-              String.valueOf(showId),
-          });
-        }
-        shows.close();
-      }
-      case 6:
-      case 7: {
-        db.execSQL("ALTER TABLE "
-            + Tables.MOVIES
-            + " ADD COLUMN "
-            + MovieColumns.TITLE_NO_ARTICLE
-            + " TEXT");
-
-        Cursor movies = db.query(Tables.MOVIES, new String[] {
-            MovieColumns.ID, MovieColumns.TITLE,
-        }, null, null, null, null, null);
-        while (movies.moveToNext()) {
-          final long movieId = movies.getLong(movies.getColumnIndex(MovieColumns.ID));
-          final String movieTitle = movies.getString(movies.getColumnIndex(MovieColumns.TITLE));
-          final String titleNoArticle = DatabaseUtils.removeLeadingArticle(movieTitle);
-
-          ContentValues cv = new ContentValues();
-          cv.put(MovieColumns.TITLE_NO_ARTICLE, titleNoArticle);
-
-          db.update(Tables.MOVIES, cv, MovieColumns.ID + "=?", new String[] {
-              String.valueOf(movieId),
-          });
-        }
-      }
-      case 8: {
-        Cursor episodes = db.query(Tables.EPISODES, new String[] {
-            EpisodeColumns.ID, EpisodeColumns.SEASON_ID,
-        }, null, null, null, null, null);
-        while (episodes.moveToNext()) {
-          final long episodeId = episodes.getLong(episodes.getColumnIndex(EpisodeColumns.ID));
-          final long seasonId = episodes.getLong(episodes.getColumnIndex(EpisodeColumns.SEASON_ID));
-
-          Cursor season = db.query(Tables.SEASONS, new String[] {
-              SeasonColumns.ID
-          }, SeasonColumns.ID + "=?", new String[] {
-              String.valueOf(seasonId),
-          }, null, null, null);
-          if (!season.moveToFirst()) {
-            db.delete(Tables.EPISODES, EpisodeColumns.ID + "=?", new String[] {
-                String.valueOf(episodeId),
-            });
-          }
-          season.close();
-        }
-        episodes.close();
-      }
-      case 9: {
-        Cursor shows = db.query(Tables.SHOWS, new String[] {
-            ShowColumns.ID, ShowColumns.TITLE
-        }, null, null, null, null, null);
-        while (shows.moveToNext()) {
-          final long showId = shows.getLong(shows.getColumnIndex(ShowColumns.ID));
-          final String showTitle = shows.getString(shows.getColumnIndex(ShowColumns.TITLE));
-
-          final String titleNoArticle = DatabaseUtils.removeLeadingArticle(showTitle);
-
-          ContentValues cv = new ContentValues();
-          cv.put(ShowColumns.TITLE_NO_ARTICLE, titleNoArticle);
-          db.update(Tables.SHOWS, cv, ShowColumns.ID + "=?", new String[] {
-              String.valueOf(showId),
-          });
-        }
-        shows.close();
-
-        Cursor movies = db.query(Tables.MOVIES, new String[] {
-            MovieColumns.ID, MovieColumns.TITLE,
-        }, null, null, null, null, null);
-        while (movies.moveToNext()) {
-          final long movieId = movies.getLong(movies.getColumnIndex(MovieColumns.ID));
-          final String movieTitle = movies.getString(movies.getColumnIndex(MovieColumns.TITLE));
-          final String titleNoArticle = DatabaseUtils.removeLeadingArticle(movieTitle);
-
-          ContentValues cv = new ContentValues();
-          cv.put(MovieColumns.TITLE_NO_ARTICLE, titleNoArticle);
-
-          db.update(Tables.MOVIES, cv, MovieColumns.ID + "=?", new String[] {
-              String.valueOf(movieId),
-          });
-        }
-      }
-      case 10: {
-        Cursor episodes = db.query(Tables.EPISODES, new String[] {
-            EpisodeColumns.ID, EpisodeColumns.SHOW_ID,
-        }, null, null, null, null, null);
-        while (episodes.moveToNext()) {
-          final long episodeId = episodes.getLong(episodes.getColumnIndex(EpisodeColumns.ID));
-          final long showId = episodes.getLong(episodes.getColumnIndex(EpisodeColumns.SHOW_ID));
-
-          Cursor show = db.query(Tables.SHOWS, new String[] {
-              ShowColumns.ID
-          }, ShowColumns.ID + "=?", new String[] {
-              String.valueOf(showId),
-          }, null, null, null);
-          if (!show.moveToFirst()) {
-            db.delete(Tables.EPISODES, EpisodeColumns.ID + "=?", new String[] {
-                String.valueOf(episodeId),
-            });
-          }
-          show.close();
-        }
-        episodes.close();
-
-        Cursor seasons = db.query(Tables.SEASONS, new String[] {
-            SeasonColumns.ID, SeasonColumns.SHOW_ID,
-        }, null, null, null, null, null);
-        while (seasons.moveToNext()) {
-          final long seasonId = seasons.getLong(seasons.getColumnIndex(SeasonColumns.ID));
-          final long showId = seasons.getLong(seasons.getColumnIndex(SeasonColumns.SHOW_ID));
-
-          Cursor show = db.query(Tables.SHOWS, new String[] {
-              ShowColumns.ID
-          }, ShowColumns.ID + "=?", new String[] {
-              String.valueOf(showId),
-          }, null, null, null);
-          if (!show.moveToFirst()) {
-            db.delete(Tables.SEASONS, SeasonColumns.ID + "=?", new String[] {
-                String.valueOf(seasonId),
-            });
-          }
-          show.close();
-        }
-        seasons.close();
-      }
     }
   }
 

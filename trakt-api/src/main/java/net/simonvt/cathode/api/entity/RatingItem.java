@@ -1,72 +1,56 @@
-package net.simonvt.cathode.api.entity;
+/*
+ * Copyright (C) 2014 Simon Vig Therkildsen
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import net.simonvt.cathode.api.enumeration.Rating;
+package net.simonvt.cathode.api.entity;
 
 public class RatingItem {
 
-  private Long inserted;
+  IsoTime ratedAt;
 
-  private Rating rating;
+  Integer rating;
 
-  private Integer ratingAdvanced;
+  Movie movie;
 
-  private TvShow show;
+  Show show;
 
-  private Episode episode;
+  Season season;
 
-  private String title;
+  Episode episode;
 
-  private Integer year;
-
-  private String imdbId;
-
-  private String tmdbId;
-
-  private Integer tvdbId;
-
-  private Integer tvrageId;
-
-  public Long getInserted() {
-    return inserted;
+  public IsoTime getRatedAt() {
+    return ratedAt;
   }
 
-  public Rating getRating() {
+  public Integer getRating() {
     return rating;
   }
 
-  public Integer getRatingAdvanced() {
-    return ratingAdvanced;
+  public Movie getMovie() {
+    return movie;
   }
 
-  public TvShow getShow() {
+  public Show getShow() {
     return show;
+  }
+
+  public Season getSeason() {
+    return season;
   }
 
   public Episode getEpisode() {
     return episode;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public Integer getYear() {
-    return year;
-  }
-
-  public String getImdbId() {
-    return imdbId;
-  }
-
-  public String getTmdbId() {
-    return tmdbId;
-  }
-
-  public Integer getTvdbId() {
-    return tvdbId;
-  }
-
-  public Integer getTvrageId() {
-    return tvrageId;
   }
 }

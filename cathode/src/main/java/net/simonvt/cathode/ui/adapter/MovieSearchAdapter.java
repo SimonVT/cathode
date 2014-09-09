@@ -39,7 +39,7 @@ public class MovieSearchAdapter extends MoviesAdapter {
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.WATCHED,
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.IN_COLLECTION,
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.IN_WATCHLIST,
-      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.RATING_PERCENTAGE,
+      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.RATING,
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.WATCHING,
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.CHECKED_IN,
   };

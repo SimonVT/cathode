@@ -41,11 +41,22 @@
     <activity
         android:name="net.simonvt.cathode.ui.HomeActivity"
         android:label="@string/app_name"
-        android:launchMode="singleTop">
+        android:launchMode="singleTask">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
         <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+
+        <data
+            android:scheme="cathode"
+            android:host="*"/>
       </intent-filter>
     </activity>
 
@@ -63,16 +74,24 @@
     <!-- Services -->
     <service android:name="net.simonvt.cathode.remote.TraktTaskService"/>
 
-    <service android:name="net.simonvt.cathode.service.DashClockService"
+    <service
+        android:name="net.simonvt.cathode.service.DashClockService"
         android:icon="@drawable/ic_action_search"
         android:label="@string/dashclock_title"
         android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
       <intent-filter>
         <action android:name="com.google.android.apps.dashclock.Extension"/>
       </intent-filter>
-      <meta-data android:name="protocolVersion" android:value="2"/>
-      <meta-data android:name="worldReadable" android:value="true"/>
-      <meta-data android:name="description" android:value="@string/dashclock_description"/>
+
+      <meta-data
+          android:name="protocolVersion"
+          android:value="2"/>
+      <meta-data
+          android:name="worldReadable"
+          android:value="true"/>
+      <meta-data
+          android:name="description"
+          android:value="@string/dashclock_description"/>
     </service>
 
     <service
@@ -92,7 +111,8 @@
       <intent-filter>
         <action android:name="android.content.SyncAdapter"/>
       </intent-filter>
-      <meta-data android:name="android.content.SyncAdapter"
+      <meta-data
+          android:name="android.content.SyncAdapter"
           android:resource="@xml/syncadapter"/>
     </service>
 
@@ -102,7 +122,8 @@
       <intent-filter>
         <action android:name="android.content.SyncAdapter"/>
       </intent-filter>
-      <meta-data android:name="android.content.SyncAdapter"
+      <meta-data
+          android:name="android.content.SyncAdapter"
           android:resource="@xml/calendar_syncadapter"/>
     </service>
 

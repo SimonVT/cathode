@@ -26,12 +26,14 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.api.entity.Movie;
+import net.simonvt.cathode.api.entity.SearchResult;
+import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.SearchService;
 import net.simonvt.cathode.event.MovieSearchResult;
 import net.simonvt.cathode.event.SearchFailureEvent;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.TraktTaskQueue;
-import net.simonvt.cathode.remote.sync.SyncMovieTask;
+import net.simonvt.cathode.remote.sync.movies.SyncMovieTask;
 import retrofit.RetrofitError;
 
 public class MovieSearchHandler {
@@ -110,20 +112,21 @@ public class MovieSearchHandler {
 
     @Override public void run() {
       try {
-        List<Movie> movies = searchService.movies(query);
+        List<SearchResult> results = searchService.query(ItemType.MOVIE, query);
 
-        final List<Long> movieIds = new ArrayList<Long>(movies.size());
+        final List<Long> movieIds = new ArrayList<Long>(results.size());
 
-        for (Movie movie : movies) {
+        for (SearchResult result : results) {
+          Movie movie = result.getMovie();
           if (!TextUtils.isEmpty(movie.getTitle())) {
-            final boolean exists =
-                MovieWrapper.exists(context.getContentResolver(), movie.getTmdbId());
+            final long traktId = movie.getIds().getTrakt();
+            final boolean exists = MovieWrapper.exists(context.getContentResolver(), traktId);
 
             final long movieId =
                 MovieWrapper.updateOrInsertMovie(context.getContentResolver(), movie);
             movieIds.add(movieId);
 
-            if (!exists) queue.add(new SyncMovieTask(movie.getTmdbId()));
+            if (!exists) queue.add(new SyncMovieTask(traktId));
           }
         }
 

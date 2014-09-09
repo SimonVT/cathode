@@ -61,7 +61,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.RATING_PERCENTAGE,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.RATING,
   };
 
   public static final String[] PROJECTION_EPISODE = new String[] {
@@ -149,7 +149,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
           cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT)) > 1;
       final boolean inWatchlist =
           cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
-      final int rating = cursor.getInt(cursor.getColumnIndex(ShowColumns.RATING_PERCENTAGE));
+      final int rating = cursor.getInt(cursor.getColumnIndex(ShowColumns.RATING));
 
       vh.indicator.setWatched(watched);
       vh.indicator.setCollected(inCollection);

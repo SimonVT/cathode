@@ -35,9 +35,8 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.OnTitleChangedEvent;
-import net.simonvt.cathode.provider.DatabaseContract.MovieActorColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.ProviderSchematic.MovieActors;
+import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.ui.BaseActivity;
@@ -222,8 +221,7 @@ public class MovieFragment extends ProgressFragment
       bus.post(new OnTitleChangedEvent());
     }
     final int year = cursor.getInt(cursor.getColumnIndex(MovieColumns.YEAR));
-    final String certification =
-        cursor.getString(cursor.getColumnIndex(MovieColumns.CERTIFICATION));
+    //TODO: final String certification = cursor.getString(cursor.getColumnIndex(MovieColumns.CERTIFICATION));
 
     final String fanartUrl = cursor.getString(cursor.getColumnIndex(MovieColumns.FANART));
     fanart.setImage(fanartUrl);
@@ -231,7 +229,7 @@ public class MovieFragment extends ProgressFragment
     poster.setImage(posterUrl);
 
     currentRating = cursor.getInt(cursor.getColumnIndex(MovieColumns.RATING));
-    final int ratingAll = cursor.getInt(cursor.getColumnIndex(MovieColumns.RATING_PERCENTAGE));
+    final int ratingAll = cursor.getInt(cursor.getColumnIndex(MovieColumns.RATING));
     rating.setValue(ratingAll);
 
     final String overview = cursor.getString(cursor.getColumnIndex(MovieColumns.OVERVIEW));
@@ -246,7 +244,7 @@ public class MovieFragment extends ProgressFragment
     watchlist.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
 
     this.year.setText(String.valueOf(year));
-    this.certification.setText(certification);
+    // TODO: this.certification.setText(certification);
     this.overview.setText(overview);
 
     setContentVisible(true);
@@ -274,14 +272,16 @@ public class MovieFragment extends ProgressFragment
     c.moveToPosition(-1);
 
     while (c.moveToNext()) {
+      if (true) return;
+      // TODO:
       View v = LayoutInflater.from(getActivity()).inflate(R.layout.person, actors, false);
 
-      RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
-      headshot.setImage(c.getString(c.getColumnIndex(MovieActorColumns.HEADSHOT)));
-      TextView name = (TextView) v.findViewById(R.id.name);
-      name.setText(c.getString(c.getColumnIndex(MovieActorColumns.NAME)));
-      TextView character = (TextView) v.findViewById(R.id.job);
-      character.setText(c.getString(c.getColumnIndex(MovieActorColumns.CHARACTER)));
+      //RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
+      //headshot.setImage(c.getString(c.getColumnIndex(MovieActorColumns.HEADSHOT)));
+      //TextView name = (TextView) v.findViewById(R.id.name);
+      //name.setText(c.getString(c.getColumnIndex(MovieActorColumns.NAME)));
+      //TextView character = (TextView) v.findViewById(R.id.job);
+      //character.setText(c.getString(c.getColumnIndex(MovieActorColumns.CHARACTER)));
 
       actors.addView(v);
     }
@@ -291,8 +291,8 @@ public class MovieFragment extends ProgressFragment
       new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
           CursorLoader loader =
-              new CursorLoader(getActivity(), MovieActors.fromMovie(movieId), null, null, null,
-                  null);
+              new CursorLoader(getActivity(), ProviderSchematic.MovieCast.fromMovie(movieId), null,
+                  null, null, null);
           loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
           return loader;
         }

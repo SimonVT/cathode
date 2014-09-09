@@ -45,6 +45,8 @@ public abstract class TraktTask extends Task<TaskCallback> {
 
   private transient volatile boolean canceled;
 
+  private transient boolean postCalled = false;
+
   @Override public void execute(Context context, TaskCallback callback) {
     super.execute(context, callback);
 
@@ -57,6 +59,15 @@ public abstract class TraktTask extends Task<TaskCallback> {
       e.printStackTrace();
       logError(e);
       postOnFailure();
+    }
+    checkPostCalled();
+  }
+
+  private void checkPostCalled() {
+    if (!postCalled && !canceled) {
+      throw new RuntimeException("["
+          + TraktTask.this.getClass().getSimpleName()
+          + "] postOnSuccess or postOnFailure must be called before doTask returns");
     }
   }
 
@@ -119,6 +130,7 @@ public abstract class TraktTask extends Task<TaskCallback> {
 
   protected final void postOnSuccess() {
     synchronized (this) {
+      postCalled = true;
       if (!canceled && callback != null) {
         MAIN_HANDLER.post(new Runnable() {
           @Override public void run() {
@@ -131,6 +143,7 @@ public abstract class TraktTask extends Task<TaskCallback> {
 
   protected void postOnFailure() {
     synchronized (this) {
+      postCalled = true;
       if (!canceled && callback != null) {
         MAIN_HANDLER.post(new Runnable() {
           @Override public void run() {

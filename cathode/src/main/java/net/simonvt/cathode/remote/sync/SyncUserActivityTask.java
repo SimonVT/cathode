@@ -17,26 +17,46 @@ package net.simonvt.cathode.remote.sync;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.LastActivity;
-import net.simonvt.cathode.api.service.UserService;
+import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.remote.TraktTask;
+import net.simonvt.cathode.remote.sync.movies.SyncMoviesCollectionTask;
+import net.simonvt.cathode.remote.sync.movies.SyncMoviesRatings;
+import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchedTask;
+import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchlistTask;
+import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlistTask;
+import net.simonvt.cathode.remote.sync.shows.SyncEpisodesRatings;
+import net.simonvt.cathode.remote.sync.shows.SyncSeasonsRatings;
+import net.simonvt.cathode.remote.sync.shows.SyncShowsCollectionTask;
+import net.simonvt.cathode.remote.sync.shows.SyncShowsRatings;
+import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchedTask;
+import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchlistTask;
 import net.simonvt.cathode.settings.TraktTimestamps;
 
 public class SyncUserActivityTask extends TraktTask {
 
-  @Inject transient UserService userService;
+  @Inject transient SyncService syncService;
 
   @Override protected void doTask() {
-    LastActivity lastActivity = userService.lastActivity();
+    LastActivity lastActivity = syncService.lastActivity();
 
-    long episodeLastWatched = lastActivity.getEpisode().getWatched();
-    long episodeLastCollected = lastActivity.getEpisode().getCollection();
-    long episodeLastWatchlist = lastActivity.getEpisode().getWatchlist();
+    final long showLastWatchlist = lastActivity.getShows().getWatchlistedAt().getTimeInMillis();
+    final long showLastRating = lastActivity.getShows().getRatedAt().getTimeInMillis();
+    final long showLastComment = lastActivity.getShows().getCommentedAt().getTimeInMillis();
 
-    long showLastWatchlist = lastActivity.getShow().getWatchlist();
+    final long seasonLastRating = lastActivity.getSeasons().getRatedAt().getTimeInMillis();
+    final long seasonLastComment = lastActivity.getSeasons().getCommentedAt().getTimeInMillis();
 
-    long movieLastWatched = lastActivity.getMovie().getWatched();
-    long movieLastCollected = lastActivity.getMovie().getCollection();
-    long movieLastWatchlist = lastActivity.getMovie().getWatchlist();
+    final long episodeLastWatched = lastActivity.getEpisodes().getWatchedAt().getTimeInMillis();
+    final long episodeLastCollected = lastActivity.getEpisodes().getCollectedAt().getTimeInMillis();
+    final long episodeLastWatchlist = lastActivity.getEpisodes().getWatchlistedAt().getTimeInMillis();
+    final long episodeLastRating = lastActivity.getEpisodes().getRatedAt().getTimeInMillis();
+    final long episodeLastComment = lastActivity.getEpisodes().getCommentedAt().getTimeInMillis();
+
+    final long movieLastWatched = lastActivity.getMovies().getWatchedAt().getTimeInMillis();
+    final long movieLastCollected = lastActivity.getMovies().getCollectedAt().getTimeInMillis();
+    final long movieLastWatchlist = lastActivity.getMovies().getWatchlistedAt().getTimeInMillis();
+    final long movieLastRating = lastActivity.getMovies().getRatedAt().getTimeInMillis();
+    final long movieLastComment = lastActivity.getMovies().getCommentedAt().getTimeInMillis();
 
     if (TraktTimestamps.episodeWatchedNeedsUpdate(getContext(), episodeLastWatched)) {
       queueTask(new SyncShowsWatchedTask());
@@ -50,8 +70,32 @@ public class SyncUserActivityTask extends TraktTask {
       queueTask(new SyncEpisodeWatchlistTask());
     }
 
+    if (TraktTimestamps.episodeRatingsNeedsUpdate(getContext(), episodeLastRating)) {
+      queueTask(new SyncEpisodesRatings());
+    }
+
+    if (TraktTimestamps.episodeCommentsNeedsUpdate(getContext(), episodeLastComment)) {
+      // TODO: Handle comments eventually
+    }
+
+    if (TraktTimestamps.seasonRatingsNeedsUpdate(getContext(), seasonLastRating)) {
+      queueTask(new SyncSeasonsRatings());
+    }
+
+    if (TraktTimestamps.seasonCommentsNeedsUpdate(getContext(), seasonLastComment)) {
+      // TODO: Handle comments eventually
+    }
+
     if (TraktTimestamps.showWatchlistNeedsUpdate(getContext(), showLastWatchlist)) {
       queueTask(new SyncShowsWatchlistTask());
+    }
+
+    if (TraktTimestamps.showRatingsNeedsUpdate(getContext(), showLastRating)) {
+      queueTask(new SyncShowsRatings());
+    }
+
+    if (TraktTimestamps.showCommentsNeedsUpdate(getContext(), showLastComment)) {
+      // TODO: Handle comments eventually
     }
 
     if (TraktTimestamps.movieWatchedNeedsUpdate(getContext(), movieLastWatched)) {
@@ -66,9 +110,17 @@ public class SyncUserActivityTask extends TraktTask {
       queueTask(new SyncMoviesWatchlistTask());
     }
 
-    TraktTimestamps.update(getContext(), lastActivity);
+    if (TraktTimestamps.movieRatingsNeedsUpdate(getContext(), movieLastRating)) {
+      queueTask(new SyncMoviesRatings());
+    }
+
+    if (TraktTimestamps.movieCommentsNeedsUpdate(getContext(), movieLastComment)) {
+      // TODO: Handle comments eventually
+    }
 
     queueTask(new SyncWatchingTask());
+
+    TraktTimestamps.update(getContext(), lastActivity);
 
     postOnSuccess();
   }

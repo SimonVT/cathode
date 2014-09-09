@@ -48,7 +48,7 @@ public class ShowDescriptionAdapter extends CursorAdapter {
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.RATING_PERCENTAGE,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.RATING,
   };
 
   @Inject ShowTaskScheduler showScheduler;
@@ -76,7 +76,7 @@ public class ShowDescriptionAdapter extends CursorAdapter {
     final boolean inWatchlist =
         cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
     final int rating =
-        cursor.getInt(cursor.getColumnIndex(ShowColumns.RATING_PERCENTAGE));
+        cursor.getInt(cursor.getColumnIndex(ShowColumns.RATING));
 
     vh.indicator.setWatched(watched);
     vh.indicator.setCollected(inCollection);

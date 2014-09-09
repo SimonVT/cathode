@@ -15,19 +15,14 @@
  */
 package net.simonvt.cathode.scheduler;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import javax.inject.Inject;
-import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.cathode.provider.EpisodeWrapper;
-import net.simonvt.cathode.remote.action.EpisodeCollectionTask;
-import net.simonvt.cathode.remote.action.EpisodeWatchedTask;
+import net.simonvt.cathode.api.util.TimeUtils;
+import net.simonvt.cathode.provider.SeasonWrapper;
+import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.remote.action.shows.SeasonCollectionTask;
+import net.simonvt.cathode.remote.action.shows.SeasonWatchedTask;
 
 public class SeasonTaskScheduler extends BaseTaskScheduler {
-
-  @Inject EpisodeTaskScheduler episodeScheduler;
 
   public SeasonTaskScheduler(Context context) {
     super(context);
@@ -36,28 +31,21 @@ public class SeasonTaskScheduler extends BaseTaskScheduler {
   public void setWatched(final long seasonId, final boolean watched) {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c = context.getContentResolver().query(Episodes.fromSeason(seasonId), new String[] {
-            EpisodeColumns.ID, EpisodeColumns.WATCHED, EpisodeColumns.SEASON,
-            EpisodeColumns.EPISODE,
-        }, null, null, null);
-
-        ContentValues cv = new ContentValues();
-        cv.put(EpisodeColumns.WATCHED, watched);
-        context.getContentResolver().update(Episodes.fromSeason(seasonId), cv, null, null);
-
-        while (c.moveToNext()) {
-          final long episodeId = c.getLong(c.getColumnIndex(EpisodeColumns.ID));
-          final boolean episodeWatched = c.getLong(c.getColumnIndex(EpisodeColumns.WATCHED)) != 0;
-          final int season = c.getInt(c.getColumnIndex(EpisodeColumns.SEASON));
-          final int episode = c.getInt(c.getColumnIndex(EpisodeColumns.EPISODE));
-          final int tvdbId = EpisodeWrapper.getShowTvdbId(context.getContentResolver(), episodeId);
-
-          if (watched != episodeWatched) {
-            queuePriorityTask(new EpisodeWatchedTask(tvdbId, season, episode, watched));
-          }
+        String watchedAt = null;
+        long watchedAtMillis = 0L;
+        if (watched) {
+          watchedAt = TimeUtils.getIsoTime();
+          watchedAtMillis = TimeUtils.getMillis(watchedAt);
         }
 
-        c.close();
+        final long showId = SeasonWrapper.getShowId(context.getContentResolver(), seasonId);
+        final long traktId = ShowWrapper.getTraktId(context.getContentResolver(), showId);
+        final int seasonNumber =
+            SeasonWrapper.getSeasonNumber(context.getContentResolver(), seasonId);
+
+        queuePriorityTask(new SeasonWatchedTask(traktId, seasonNumber, watched, watchedAt));
+        SeasonWrapper.setWatched(context.getContentResolver(), showId, seasonId, watched,
+            watchedAtMillis);
       }
     });
   }
@@ -65,29 +53,22 @@ public class SeasonTaskScheduler extends BaseTaskScheduler {
   public void setInCollection(final long seasonId, final boolean inCollection) {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c = context.getContentResolver().query(Episodes.fromSeason(seasonId), new String[] {
-            EpisodeColumns.ID, EpisodeColumns.IN_COLLECTION, EpisodeColumns.SEASON,
-            EpisodeColumns.EPISODE,
-        }, null, null, null);
-
-        ContentValues cv = new ContentValues();
-        cv.put(EpisodeColumns.IN_COLLECTION, inCollection);
-        context.getContentResolver().update(Episodes.fromSeason(seasonId), cv, null, null);
-
-        while (c.moveToNext()) {
-          final long episodeId = c.getLong(c.getColumnIndex(EpisodeColumns.ID));
-          final boolean episodeInCollection =
-              c.getLong(c.getColumnIndex(EpisodeColumns.IN_COLLECTION)) != 0;
-          final int season = c.getInt(c.getColumnIndex(EpisodeColumns.SEASON));
-          final int episode = c.getInt(c.getColumnIndex(EpisodeColumns.EPISODE));
-          final int tvdbId = EpisodeWrapper.getShowTvdbId(context.getContentResolver(), episodeId);
-
-          if (inCollection != episodeInCollection) {
-            queuePriorityTask(new EpisodeCollectionTask(tvdbId, season, episode, inCollection));
-          }
+        String collectedAt = null;
+        long collectedAtMillis = 0L;
+        if (inCollection) {
+          collectedAt = TimeUtils.getIsoTime();
+          collectedAtMillis = TimeUtils.getMillis(collectedAt);
         }
 
-        c.close();
+        final long showId = SeasonWrapper.getShowId(context.getContentResolver(), seasonId);
+        final long traktId = ShowWrapper.getTraktId(context.getContentResolver(), showId);
+        final int seasonNumber =
+            SeasonWrapper.getSeasonNumber(context.getContentResolver(), seasonId);
+
+        queuePriorityTask(
+            new SeasonCollectionTask(traktId, seasonNumber, inCollection, collectedAt));
+        SeasonWrapper.setIsInCollection(context.getContentResolver(), seasonId, inCollection,
+            collectedAtMillis);
       }
     });
   }

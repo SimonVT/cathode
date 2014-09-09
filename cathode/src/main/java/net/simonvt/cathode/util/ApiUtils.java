@@ -55,15 +55,4 @@ public final class ApiUtils {
     }
     return out;
   }
-
-  public static boolean isPlaceholder(String url) {
-    boolean isPlaceholder = false;
-
-    isPlaceholder |= "http://slurm.trakt.us/images/avatar-large.jpg".equals(url);
-    isPlaceholder |= "http://slurm.trakt.us/images/fanart-dark.jpg".equals(url);
-    isPlaceholder |= "http://slurm.trakt.us/images/episode-dark.jpg".equals(url);
-    isPlaceholder |= "http://slurm.trakt.us/images/poster-dark.jpg".equals(url);
-
-    return isPlaceholder;
-  }
 }

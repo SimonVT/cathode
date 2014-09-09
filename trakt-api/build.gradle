@@ -5,6 +5,8 @@ apply plugin: 'android-apt'
 dependencies {
   compile parent.libraries.gson
 
+  compile parent.libraries.timber
+
   compile parent.libraries.dagger
   apt parent.libraries.daggerCompiler
   compile parent.libraries.retrofit

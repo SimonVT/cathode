@@ -15,9 +15,21 @@
  */
 package net.simonvt.cathode.settings;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
+import net.simonvt.cathode.api.entity.Account;
+import net.simonvt.cathode.api.entity.Connections;
+import net.simonvt.cathode.api.entity.Images;
+import net.simonvt.cathode.api.entity.Profile;
+import net.simonvt.cathode.api.entity.SharingText;
+import net.simonvt.cathode.api.entity.UserSettings;
 
 public class Settings extends PreferenceActivity {
+
+  public static final String TRAKT_LOGGED_IN = "traktLoggedIn";
+  public static final String TRAKT_TOKEN = "traktToken";
 
   public static final String SHOW_HIDDEN = "showHidden";
 
@@ -32,36 +44,25 @@ public class Settings extends PreferenceActivity {
 
   public static final String LAST_PURGE = "lastPurge";
 
-  // For saving timestamps returned by user/lastactivity
-  public static final String ALL = "allActivity";
+  // For saving timestamps returned by sync/lastactivity
+  public static final String SHOW_RATING = "showRating";
+  public static final String SHOW_WATCHLIST = "showWatchlist";
+  public static final String SHOW_COMMENT = "showComment";
+
+  public static final String SEASON_RATING = "seasonRating";
+  public static final String SEASON_COMMENT = "seasonComment";
 
   public static final String EPISODE_WATCHED = "episodeWatched";
-  public static final String EPISODE_SCROBBLE = "episodeScrobble";
-  public static final String EPISODE_SEEN = "episodeSeen";
-  public static final String EPISODE_CHECKIN = "episodeCheckin";
   public static final String EPISODE_COLLECTION = "episodeCollection";
   public static final String EPISODE_RATING = "episodeRating";
   public static final String EPISODE_WATCHLIST = "episodeWatchlist";
   public static final String EPISODE_COMMENT = "episodeComment";
-  public static final String EPISODE_REVIEW = "episodeReview";
-  public static final String EPISODE_SHOUT = "episodeShout";
-
-  public static final String SHOW_RATING = "showRating";
-  public static final String SHOW_WATCHLIST = "showWatchlist";
-  public static final String SHOW_COMMENT = "showComment";
-  public static final String SHOW_REVIEW = "showReview";
-  public static final String SHOW_SHOUT = "showShout";
 
   public static final String MOVIE_WATCHED = "movieWatched";
-  public static final String MOVIE_SCROBBLE = "movieScrobble";
-  public static final String MOVIE_SEEN = "movieSeen";
-  public static final String MOVIE_CHECKIN = "movieCheckin";
   public static final String MOVIE_COLLECTION = "movieCollection";
   public static final String MOVIE_RATING = "movieRating";
   public static final String MOVIE_WATCHLIST = "movieWatchlist";
   public static final String MOVIE_COMMENT = "movieComment";
-  public static final String MOVIE_REVIEW = "movieReview";
-  public static final String MOVIE_SHOUT = "movieShout";
 
   // Last trending and recommendations sync
   public static final String TRENDING = "trending";
@@ -81,33 +82,128 @@ public class Settings extends PreferenceActivity {
   public static final String SORT_MOVIE_RECOMMENDED = "sortMovieRecommended";
 
   // User settings returned by account/settings
+  public static final String PROFILE_USERNAME = "profileUsername";
   public static final String PROFILE_FULL_NAME = "profileFullName";
   public static final String PROFILE_GENDER = "profileGender";
   public static final String PROFILE_AGE = "profileAge";
   public static final String PROFILE_LOCATION = "profileLocation";
   public static final String PROFILE_ABOUT = "profileAbout";
   public static final String PROFILE_JOINED = "profileJoined";
-  public static final String PROFILE_LAST_LOGIN = "profileLastLogin";
   public static final String PROFILE_AVATAR = "profileAvatar";
-  public static final String PROFILE_URL = "profileUrl";
+  public static final String PROFILE_PRIVATE = "profilePrivate";
   public static final String PROFILE_VIP = "profileVip";
 
   public static final String PROFILE_TIMEZONE = "profileTimezone";
-  public static final String PROFILE_USE_24_HOUR = "profileUse24hour";
-
-  public static final String PROFILE_PROTECTED = "profileProtected";
-
-  public static final String PROFILE_RATING_MODE = "profileRatingMode";
-
-  public static final String PROFILE_SHOUTS_SHOW_BADGES = "profileShowBadges";
-  public static final String PROFILE_SHOUTS_SHOW_SPOILERS = "profileShowSpoilers";
+  public static final String PROFILE_COVER_IMAGE = "profileCoverImage";
 
   public static final String PROFILE_CONNECTION_FACEBOOK = "profileConnectionFacebook";
   public static final String PROFILE_CONNECTION_TWITTER = "profileConnectionTwitter";
   public static final String PROFILE_CONNECTION_TUMBLR = "profileConnectionTumblr";
-  public static final String PROFILE_CONNECTION_PATH = "profileConnectionPath";
-  public static final String PROFILE_CONNECTION_PROWL = "profileConnectionProwl";
 
   public static final String PROFILE_SHARING_TEXT_WATCHING = "profileSharingTextWatching";
   public static final String PROFILE_SHARING_TEXT_WATCHED = "profileSharingTextWatched";
+
+  public static boolean isLoggedIn(Context context) {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    return settings.getBoolean(TRAKT_LOGGED_IN, false);
+  }
+
+  public static void updateProfile(Context context, UserSettings userSettings) {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences.Editor editor = settings.edit();
+
+    Profile profile = userSettings.getUser();
+    if (profile != null) {
+      putString(editor, Settings.PROFILE_FULL_NAME, profile.getName());
+      putString(editor, Settings.PROFILE_GENDER, profile.getGender());
+      putInt(editor, Settings.PROFILE_AGE, profile.getAge());
+      putString(editor, Settings.PROFILE_LOCATION, profile.getLocation());
+      putString(editor, Settings.PROFILE_ABOUT, profile.getAbout());
+      putLong(editor, Settings.PROFILE_JOINED, profile.getJoinedAt().getTimeInMillis());
+
+      putBoolean(editor, Settings.PROFILE_PRIVATE, profile.isPrivate());
+      putBoolean(editor, Settings.PROFILE_VIP, profile.isVip());
+
+      Images images = profile.getImages();
+      putString(editor, Settings.PROFILE_AVATAR, images.getAvatar().getFull());
+    }
+
+    Account account = userSettings.getAccount();
+    if (account != null) {
+      putString(editor, Settings.PROFILE_TIMEZONE, account.getTimezone());
+      putString(editor, Settings.PROFILE_COVER_IMAGE, account.getCoverImage());
+    }
+
+    Connections connection = userSettings.getConnections();
+    if (connection != null) {
+      putBoolean(editor, Settings.PROFILE_CONNECTION_FACEBOOK, connection.getFacebook());
+      putBoolean(editor, Settings.PROFILE_CONNECTION_TWITTER, connection.getTwitter());
+      putBoolean(editor, Settings.PROFILE_CONNECTION_TUMBLR, connection.getTumblr());
+    }
+
+    SharingText sharingText = userSettings.getSharingText();
+    if (sharingText != null) {
+      putString(editor, Settings.PROFILE_SHARING_TEXT_WATCHING, sharingText.getWatching());
+      putString(editor, Settings.PROFILE_SHARING_TEXT_WATCHED, sharingText.getWatched());
+    }
+
+    editor.commit();
+  }
+
+  private static void putString(SharedPreferences.Editor editor, String key, Object value) {
+    if (value != null) {
+      editor.putString(key, value.toString());
+    } else {
+      editor.remove(key);
+    }
+  }
+
+  private static void putInt(SharedPreferences.Editor editor, String key, Integer value) {
+    if (value != null) {
+      editor.putInt(key, value);
+    } else {
+      editor.remove(key);
+    }
+  }
+
+  private static void putLong(SharedPreferences.Editor editor, String key, Long value) {
+    if (value != null) {
+      editor.putLong(key, value);
+    } else {
+      editor.remove(key);
+    }
+  }
+
+  private static void putBoolean(SharedPreferences.Editor editor, String key, Boolean value) {
+    if (value != null) {
+      editor.putBoolean(key, value);
+    } else {
+      editor.remove(key);
+    }
+  }
+
+  public static void clearProfile(Context context) {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences.Editor editor = settings.edit();
+
+    editor.remove(PROFILE_USERNAME);
+    editor.remove(PROFILE_FULL_NAME);
+    editor.remove(PROFILE_GENDER);
+    editor.remove(PROFILE_AGE);
+    editor.remove(PROFILE_LOCATION);
+    editor.remove(PROFILE_ABOUT);
+    editor.remove(PROFILE_JOINED);
+    editor.remove(PROFILE_AVATAR);
+    editor.remove(PROFILE_PRIVATE);
+    editor.remove(PROFILE_VIP);
+    editor.remove(PROFILE_TIMEZONE);
+    editor.remove(PROFILE_COVER_IMAGE);
+    editor.remove(PROFILE_CONNECTION_FACEBOOK);
+    editor.remove(PROFILE_CONNECTION_TWITTER);
+    editor.remove(PROFILE_CONNECTION_TUMBLR);
+    editor.remove(PROFILE_SHARING_TEXT_WATCHING);
+    editor.remove(PROFILE_SHARING_TEXT_WATCHED);
+
+    editor.apply();
+  }
 }

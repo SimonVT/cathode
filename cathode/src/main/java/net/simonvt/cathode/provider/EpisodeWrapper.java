@@ -22,9 +22,9 @@ import android.net.Uri;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.entity.Images;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.cathode.util.ApiUtils;
-import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 
 public final class EpisodeWrapper {
 
@@ -35,50 +35,18 @@ public final class EpisodeWrapper {
     return resolver.query(Episodes.withId(id), columns, null, null, null);
   }
 
-  public static long getEpisodeId(ContentResolver resolver, Episode episode) {
-    long id = -1L;
-    if (episode.getTvdbId() != null) {
-      Cursor c = resolver.query(Episodes.EPISODES, new String[] {
-          EpisodeColumns.ID,
-      }, EpisodeColumns.TVDB_ID + "=?", new String[] {
-          String.valueOf(episode.getTvdbId()),
-      }, null);
-
-      if (c.moveToFirst()) {
-        id = c.getLong(c.getColumnIndex(EpisodeColumns.ID));
-      }
-
-      c.close();
-    } else {
-      Cursor c = resolver.query(Episodes.EPISODES, new String[] {
-          EpisodeColumns.ID,
-      }, EpisodeColumns.URL + "=?", new String[] {
-          String.valueOf(episode.getUrl()),
-      }, null);
-
-      if (c.moveToFirst()) {
-        id = c.getLong(c.getColumnIndex(EpisodeColumns.ID));
-      }
-
-      c.close();
-    }
-
-    return id;
-  }
-
   public static long getEpisodeId(ContentResolver resolver, long showId, int seasonNumber,
       int episodeNumber) {
     Cursor c = resolver.query(Episodes.EPISODES, new String[] {
-            EpisodeColumns.ID,
-        }, EpisodeColumns.SHOW_ID
-            + "=? AND "
-            + EpisodeColumns.SEASON
-            + "=? AND "
-            + EpisodeColumns.EPISODE
-            + "=?", new String[] {
-            String.valueOf(showId), String.valueOf(seasonNumber), String.valueOf(episodeNumber),
-        }, null
-    );
+        EpisodeColumns.ID,
+    }, EpisodeColumns.SHOW_ID
+        + "=? AND "
+        + EpisodeColumns.SEASON
+        + "=? AND "
+        + EpisodeColumns.EPISODE
+        + "=?", new String[] {
+        String.valueOf(showId), String.valueOf(seasonNumber), String.valueOf(episodeNumber),
+    }, null);
 
     long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(EpisodeColumns.ID));
 
@@ -87,7 +55,7 @@ public final class EpisodeWrapper {
     return id;
   }
 
-  public static int getShowTvdbId(ContentResolver resolver, long episodeId) {
+  public static long getShowTraktId(ContentResolver resolver, long episodeId) {
     Cursor c = resolver.query(Episodes.EPISODES, new String[] {
         EpisodeColumns.SHOW_ID,
     }, EpisodeColumns.ID + "=?", new String[] {
@@ -96,12 +64,26 @@ public final class EpisodeWrapper {
 
     if (c.moveToFirst()) {
       long showId = c.getLong(c.getColumnIndex(EpisodeColumns.SHOW_ID));
-      return ShowWrapper.getTvdbId(resolver, showId);
+      return ShowWrapper.getTraktId(resolver, showId);
     }
 
     c.close();
 
-    return -1;
+    return -1L;
+  }
+
+  public static long createEpisode(ContentResolver resolver, long showId, long seasonId,
+      int number) {
+    final int seasonNumber = SeasonWrapper.getSeasonNumber(resolver, seasonId);
+
+    ContentValues cv = new ContentValues();
+    cv.put(EpisodeColumns.SHOW_ID, showId);
+    cv.put(EpisodeColumns.SEASON_ID, seasonId);
+    cv.put(EpisodeColumns.SEASON, seasonNumber);
+    cv.put(EpisodeColumns.EPISODE, number);
+    cv.put(EpisodeColumns.NEEDS_SYNC, 1);
+
+    return Episodes.getId(resolver.insert(Episodes.EPISODES, cv));
   }
 
   public static long updateOrInsertEpisode(ContentResolver resolver, Episode episode, long showId,
@@ -113,7 +95,7 @@ public final class EpisodeWrapper {
       throw new IllegalArgumentException("Invalid season id: " + seasonId);
     }
 
-    long episodeId = getEpisodeId(resolver, episode);
+    long episodeId = getEpisodeId(resolver, showId, episode.getSeason(), episode.getNumber());
 
     if (episodeId == -1L) {
       episodeId = insertEpisodes(resolver, showId, seasonId, episode);
@@ -138,7 +120,7 @@ public final class EpisodeWrapper {
 
     Uri uri = resolver.insert(Episodes.EPISODES, cv);
 
-    return Long.valueOf(Episodes.getId(uri));
+    return Episodes.getId(uri);
   }
 
   public static void episodeUpdateWatched(ContentResolver resolver, long episodeId,
@@ -195,60 +177,69 @@ public final class EpisodeWrapper {
     return season;
   }
 
-  public static void setWatched(ContentResolver resolver, int tvdbId, int season, int episode,
-      boolean watched) {
-    final long showId = ShowWrapper.getShowId(resolver, tvdbId);
+  public static void setWatched(ContentResolver resolver, long traktId, int season, int episode,
+      boolean watched, long watchedAt) {
+    final long showId = ShowWrapper.getShowId(resolver, traktId);
     final long episodeId = EpisodeWrapper.getEpisodeId(resolver, showId, season, episode);
-    setWatched(resolver, episodeId, watched);
+    setWatched(resolver, showId, episodeId, watched, watchedAt);
   }
 
-  public static void setWatched(ContentResolver resolver, long episodeId, boolean watched) {
+  public static void setWatched(ContentResolver resolver, long showId, long episodeId,
+      boolean watched, long watchedAt) {
     ContentValues cv = new ContentValues();
     cv.put(EpisodeColumns.WATCHED, watched);
-
     resolver.update(Episodes.withId(episodeId), cv, null, null);
+
+    if (watched) {
+      Cursor c = resolver.query(Shows.withId(showId), new String[] {
+          ShowColumns.LAST_WATCHED_AT,
+      }, null, null, null);
+      c.moveToFirst();
+      final long lastWatched = c.getLong(c.getColumnIndex(ShowColumns.LAST_WATCHED_AT));
+      c.close();
+      if (watchedAt > lastWatched) {
+        cv = new ContentValues();
+        cv.put(ShowColumns.LAST_WATCHED_AT, watchedAt);
+        resolver.update(Shows.withId(showId), cv, null, null);
+      }
+    }
   }
 
-  public static void unseen(ContentResolver resolver, long episodeId) {
-    ContentValues cv = new ContentValues();
-    cv.put(EpisodeColumns.WATCHED, false);
-
-    resolver.update(Episodes.withId(episodeId), cv, null, null);
+  public static void setInCollection(ContentResolver resolver, long traktId, int season,
+      int episode, boolean inCollection, long collectedAt) {
+    final long showId = ShowWrapper.getShowId(resolver, traktId);
+    final long episodeId = getEpisodeId(resolver, showId, season, episode);
+    setInCollection(resolver, episodeId, inCollection, collectedAt);
   }
 
-  public static void setInCollection(ContentResolver resolver, int tvdbId, int season, int episode,
-      boolean inCollection) {
-    final long showId = ShowWrapper.getShowId(resolver, tvdbId);
-    final long episodeId = EpisodeWrapper.getEpisodeId(resolver, showId, season, episode);
-    setInCollection(resolver, episodeId, inCollection);
-  }
-
-  public static void setInCollection(ContentResolver resolver, long episodeId,
-      boolean inCollection) {
+  public static void setInCollection(ContentResolver resolver, long episodeId, boolean inCollection,
+      long collectedAt) {
     ContentValues cv = new ContentValues();
     cv.put(EpisodeColumns.IN_COLLECTION, inCollection);
+    cv.put(EpisodeColumns.COLLECTED_AT, collectedAt);
 
     resolver.update(Episodes.withId(episodeId), cv, null, null);
   }
 
-  public static void setIsInWatchlist(ContentResolver resolver, int tvdbId, int season, int episode,
-      boolean inWatchlist) {
-    final long showId = ShowWrapper.getShowId(resolver, tvdbId);
+  public static void setIsInWatchlist(ContentResolver resolver, long traktId, int season,
+      int episode, boolean inWatchlist, long listedAt) {
+    final long showId = ShowWrapper.getShowId(resolver, traktId);
     final long episodeId = EpisodeWrapper.getEpisodeId(resolver, showId, season, episode);
-    setIsInWatchlist(resolver, episodeId, inWatchlist);
+    setIsInWatchlist(resolver, episodeId, inWatchlist, listedAt);
   }
 
-  public static void setIsInWatchlist(ContentResolver resolver, long episodeId,
-      boolean inWatchlist) {
+  public static void setIsInWatchlist(ContentResolver resolver, long episodeId, boolean inWatchlist,
+      long listedAt) {
     ContentValues cv = new ContentValues();
     cv.put(EpisodeColumns.IN_WATCHLIST, inWatchlist);
+    cv.put(EpisodeColumns.LISTED_AT, listedAt);
 
     resolver.update(Episodes.withId(episodeId), cv, null, null);
   }
 
-  public static void setRating(ContentResolver resolver, Integer tvdbId, Integer season,
+  public static void setRating(ContentResolver resolver, long traktId, Integer season,
       Integer episode, Integer ratingAdvanced) {
-    final long showId = ShowWrapper.getShowId(resolver, tvdbId);
+    final long showId = ShowWrapper.getShowId(resolver, traktId);
     final long episodeId = EpisodeWrapper.getEpisodeId(resolver, showId, season, episode);
     setRating(resolver, episodeId, ratingAdvanced);
   }
@@ -263,36 +254,34 @@ public final class EpisodeWrapper {
   public static ContentValues getEpisodeCVs(Episode episode) {
     ContentValues cv = new ContentValues();
 
+    cv.put(EpisodeColumns.NEEDS_SYNC, 0);
+
     cv.put(EpisodeColumns.SEASON, episode.getSeason());
     cv.put(EpisodeColumns.EPISODE, episode.getNumber());
-    cv.put(EpisodeColumns.TITLE, episode.getTitle());
-    cv.put(EpisodeColumns.OVERVIEW, episode.getOverview());
-    cv.put(EpisodeColumns.URL, episode.getUrl());
-    cv.put(EpisodeColumns.TVDB_ID, episode.getTvdbId());
-    cv.put(EpisodeColumns.IMDB_ID, episode.getImdbId());
-    if (episode.getFirstAiredIso() != null) {
-      cv.put(EpisodeColumns.FIRST_AIRED, DateUtils.getMillis(episode.getFirstAiredIso()));
+    cv.put(EpisodeColumns.NUMBER_ABS, episode.getNumberAbs());
+
+    if (episode.getTitle() != null) cv.put(EpisodeColumns.TITLE, episode.getTitle());
+    if (episode.getOverview() != null) cv.put(EpisodeColumns.OVERVIEW, episode.getOverview());
+
+    if (episode.getFirstAired() != null) {
+      cv.put(EpisodeColumns.FIRST_AIRED, episode.getFirstAired().getTimeInMillis());
     }
+    if (episode.getUpdatedAt() != null) {
+      cv.put(EpisodeColumns.UPDATED_AT, episode.getUpdatedAt().getTimeInMillis());
+    }
+
+    cv.put(EpisodeColumns.TRAKT_ID, episode.getIds().getTrakt());
+    cv.put(EpisodeColumns.IMDB_ID, episode.getIds().getImdb());
+    cv.put(EpisodeColumns.TVDB_ID, episode.getIds().getTvdb());
+    cv.put(EpisodeColumns.TMDB_ID, episode.getIds().getTmdb());
+    cv.put(EpisodeColumns.TVRAGE_ID, episode.getIds().getTvrage());
+
     if (episode.getImages() != null) {
+      // TODO: What images do I actually have?
       Images images = episode.getImages();
-      if (!ApiUtils.isPlaceholder(images.getScreen())) {
-        cv.put(EpisodeColumns.SCREEN, images.getScreen());
+      if (images.getFanart() != null) {
+        cv.put(EpisodeColumns.FANART, images.getFanart().getFull());
       }
-    }
-    if (episode.getRatings() != null) {
-      cv.put(EpisodeColumns.RATING_PERCENTAGE, episode.getRatings().getPercentage());
-      cv.put(EpisodeColumns.RATING_VOTES, episode.getRatings().getVotes());
-      cv.put(EpisodeColumns.RATING_LOVED, episode.getRatings().getLoved());
-      cv.put(EpisodeColumns.RATING_HATED, episode.getRatings().getHated());
-    }
-    if (episode.isWatched() != null) cv.put(EpisodeColumns.WATCHED, episode.isWatched());
-    if (episode.getPlays() != null) cv.put(EpisodeColumns.PLAYS, episode.getPlays());
-    if (episode.getRating() != null) cv.put(EpisodeColumns.RATING, episode.getRating());
-    if (episode.isInWatchlist() != null) {
-      cv.put(EpisodeColumns.IN_WATCHLIST, episode.isInWatchlist());
-    }
-    if (episode.isInCollection() != null) {
-      cv.put(EpisodeColumns.IN_COLLECTION, episode.isInCollection());
     }
 
     return cv;

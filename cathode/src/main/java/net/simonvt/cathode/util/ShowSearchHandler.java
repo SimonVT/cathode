@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
-import net.simonvt.cathode.api.entity.TvShow;
+import net.simonvt.cathode.api.entity.SearchResult;
+import net.simonvt.cathode.api.entity.Show;
+import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.SearchService;
 import net.simonvt.cathode.event.SearchFailureEvent;
 import net.simonvt.cathode.event.ShowSearchResult;
@@ -35,8 +37,6 @@ import retrofit.RetrofitError;
 import timber.log.Timber;
 
 public class ShowSearchHandler {
-
-  private static final String TAG = "ShowSearchHandler";
 
   private Context context;
 
@@ -113,11 +113,12 @@ public class ShowSearchHandler {
 
     @Override public void run() {
       try {
-        List<TvShow> shows = searchService.shows(query);
+        List<SearchResult> results = searchService.query(ItemType.SHOW, query);
 
-        final List<Long> showIds = new ArrayList<Long>(shows.size());
+        final List<Long> showIds = new ArrayList<Long>(results.size());
 
-        for (TvShow show : shows) {
+        for (SearchResult result : results) {
+          Show show = result.getShow();
           if (!TextUtils.isEmpty(show.getTitle())) {
             final long showId = ShowWrapper.updateOrInsertShow(context.getContentResolver(), show);
             showIds.add(showId);

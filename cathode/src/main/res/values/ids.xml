@@ -49,9 +49,7 @@
   <item name="action_unwatch_all" type="id"/>
   <item name="action_refresh" type="id"/>
   <item name="action_collection_add" type="id"/>
-  <item name="action_collection_add_all" type="id"/>
   <item name="action_collection_remove" type="id"/>
-  <item name="action_collection_remove_all" type="id"/>
   <item name="action_watchlist_add" type="id"/>
   <item name="action_watchlist_remove" type="id"/>
   <item name="action_dismiss" type="id"/>

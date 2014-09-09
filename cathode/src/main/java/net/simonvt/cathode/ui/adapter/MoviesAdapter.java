@@ -81,7 +81,7 @@ public class MoviesAdapter extends CursorAdapter {
     vh.overview.setText(cursor.getString(cursor.getColumnIndex(MovieColumns.OVERVIEW)));
 
     if (vh.rating != null) {
-      final int rating = cursor.getInt(cursor.getColumnIndex(MovieColumns.RATING_PERCENTAGE));
+      final int rating = cursor.getInt(cursor.getColumnIndex(MovieColumns.RATING));
       vh.rating.setValue(rating);
     }
 

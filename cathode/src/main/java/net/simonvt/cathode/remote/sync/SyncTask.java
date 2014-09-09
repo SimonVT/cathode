@@ -17,15 +17,17 @@ package net.simonvt.cathode.remote.sync;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import javax.inject.Inject;
-import net.simonvt.cathode.api.service.UserService;
 import net.simonvt.cathode.remote.TraktTask;
+import net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations;
+import net.simonvt.cathode.remote.sync.movies.SyncTrendingMoviesTask;
+import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
+import net.simonvt.cathode.remote.sync.shows.SyncShowRecommendations;
+import net.simonvt.cathode.remote.sync.shows.SyncTrendingShowsTask;
+import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.TraktTimestamps;
 
 public class SyncTask extends TraktTask {
-
-  @Inject transient UserService userService;
 
   @Override protected void doTask() {
     if (TraktTimestamps.shouldPurge(getContext())) {

@@ -42,11 +42,10 @@ import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.provider.CollectLoader;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowActorColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
+import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
-import net.simonvt.cathode.provider.ProviderSchematic.ShowActors;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowGenres;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.WatchedLoader;
@@ -81,13 +80,13 @@ public class ShowFragment extends ProgressFragment {
   private static final String[] SHOW_PROJECTION = new String[] {
       ShowColumns.TITLE, ShowColumns.YEAR, ShowColumns.AIR_TIME, ShowColumns.AIR_DAY,
       ShowColumns.NETWORK, ShowColumns.CERTIFICATION, ShowColumns.POSTER, ShowColumns.FANART,
-      ShowColumns.RATING_PERCENTAGE, ShowColumns.RATING, ShowColumns.OVERVIEW,
+      ShowColumns.RATING, ShowColumns.RATING, ShowColumns.OVERVIEW,
       ShowColumns.IN_WATCHLIST, ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT,
       ShowColumns.HIDDEN,
   };
 
   private static final String[] EPISODE_PROJECTION = new String[] {
-      EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.SCREEN, EpisodeColumns.FIRST_AIRED,
+      EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.FANART, EpisodeColumns.FIRST_AIRED,
       EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
   };
 
@@ -388,7 +387,7 @@ public class ShowFragment extends ProgressFragment {
 
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOW, null, showCallbacks);
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_GENRES, null, genreCallbacks);
-    getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_ACTORS, null, actorsCallback);
+    getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_ACTORS, null, charactersCallback);
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_WATCH, null, episodeWatchCallbacks);
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_COLLECT, null, episodeCollectCallbacks);
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_SEASONS, null, seasonsLoader);
@@ -462,7 +461,7 @@ public class ShowFragment extends ProgressFragment {
       fanart.setImage(fanartUrl);
     }
     currentRating = cursor.getInt(cursor.getColumnIndex(ShowColumns.RATING));
-    final int ratingAll = cursor.getInt(cursor.getColumnIndex(ShowColumns.RATING_PERCENTAGE));
+    final int ratingAll = cursor.getInt(cursor.getColumnIndex(ShowColumns.RATING));
     final String overview = cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW));
     inWatchlist = cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
     final int inCollectionCount =
@@ -516,14 +515,16 @@ public class ShowFragment extends ProgressFragment {
 
     c.moveToPosition(-1);
     while (c.moveToNext()) {
+      if (true) return;
+      // TODO: Load characters
       View v = LayoutInflater.from(getActivity()).inflate(R.layout.person, actors, false);
 
-      RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
-      headshot.setImage(c.getString(c.getColumnIndex(ShowActorColumns.HEADSHOT)));
-      TextView name = (TextView) v.findViewById(R.id.name);
-      name.setText(c.getString(c.getColumnIndex(ShowActorColumns.NAME)));
-      TextView character = (TextView) v.findViewById(R.id.job);
-      character.setText(c.getString(c.getColumnIndex(ShowActorColumns.CHARACTER)));
+      //RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
+      //headshot.setImage(c.getString(c.getColumnIndex(ShowActorColumns.HEADSHOT)));
+      //TextView name = (TextView) v.findViewById(R.id.name);
+      //name.setText(c.getString(c.getColumnIndex(ShowActorColumns.NAME)));
+      //TextView character = (TextView) v.findViewById(R.id.job);
+      //character.setText(c.getString(c.getColumnIndex(ShowActorColumns.CHARACTER)));
 
       actors.addView(v);
     }
@@ -545,7 +546,7 @@ public class ShowFragment extends ProgressFragment {
       final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
       toWatchHolder.episodeEpisode.setText("S" + season + "E" + episode);
 
-      final String bannerUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREEN));
+      final String bannerUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.FANART));
       toWatchHolder.episodeBanner.setImage(bannerUrl);
 
       String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
@@ -588,7 +589,7 @@ public class ShowFragment extends ProgressFragment {
         final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
         lastWatchedHolder.episodeEpisode.setText("S" + season + "E" + episode);
 
-        final String bannerUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREEN));
+        final String bannerUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.FANART));
         lastWatchedHolder.episodeBanner.setImage(bannerUrl);
       } else {
         lastWatched.setVisibility(toWatchId == -1 ? View.GONE : View.INVISIBLE);
@@ -621,7 +622,7 @@ public class ShowFragment extends ProgressFragment {
       final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
       toCollectHolder.episodeEpisode.setText("S" + season + "E" + episode);
 
-      final String bannerUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREEN));
+      final String bannerUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.FANART));
       toCollectHolder.episodeBanner.setImage(bannerUrl);
     } else {
       toCollect.setVisibility(View.GONE);
@@ -646,7 +647,8 @@ public class ShowFragment extends ProgressFragment {
         final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
         lastCollectedHolder.episodeEpisode.setText("S" + season + "E" + episode);
 
-        final String bannerUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREEN));
+        // TODO: Fanart? Is SCREEN missing?
+        final String bannerUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.FANART));
         lastCollectedHolder.episodeBanner.setImage(bannerUrl);
       } else {
         lastCollectedId = -1;
@@ -697,11 +699,12 @@ public class ShowFragment extends ProgressFragment {
         }
       };
 
-  private LoaderManager.LoaderCallbacks<Cursor> actorsCallback =
+  private LoaderManager.LoaderCallbacks<Cursor> charactersCallback =
       new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
           CursorLoader cl =
-              new CursorLoader(getActivity(), ShowActors.fromShow(showId), null, null, null, null);
+              new CursorLoader(getActivity(), ProviderSchematic.ShowCharacters.fromShow(showId),
+                  null, null, null, null);
           cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
           return cl;
         }

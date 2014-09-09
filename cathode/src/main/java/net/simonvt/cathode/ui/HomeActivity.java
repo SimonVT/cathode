@@ -17,6 +17,7 @@ package net.simonvt.cathode.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -33,18 +34,19 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.AuthFailedEvent;
-import net.simonvt.cathode.event.LoginEvent;
 import net.simonvt.cathode.event.LogoutEvent;
 import net.simonvt.cathode.event.MessageEvent;
 import net.simonvt.cathode.event.SyncEvent;
 import net.simonvt.cathode.remote.TraktTaskQueue;
-import net.simonvt.cathode.remote.sync.SyncActivityStreamTask;
+import net.simonvt.cathode.remote.TraktTaskService;
 import net.simonvt.cathode.remote.sync.SyncTask;
+import net.simonvt.cathode.remote.sync.SyncUserActivityTask;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import net.simonvt.cathode.ui.fragment.NavigationFragment;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.messagebar.MessageBar;
+import timber.log.Timber;
 
 public class HomeActivity extends BaseActivity
     implements NavigationFragment.OnMenuClickListener, ShowsNavigationListener,
@@ -60,6 +62,10 @@ public class HomeActivity extends BaseActivity
 
   public static final String ACTION_LOGIN = "net.simonvt.cathode.intent.action.LOGIN";
   public static final String DIALOG_LOGOUT = "net.simonvt.cathode.ui.HomeActivity.logoutDialog";
+
+  private static final String HOST_OAUTH = "oauth";
+  private static final String PATH_AUTHORIZE = "authorize";
+  private static final String QUERY_CODE = "code";
 
   private static final long SYNC_DELAY = 15 * DateUtils.MINUTE_IN_MILLIS;
 
@@ -94,7 +100,8 @@ public class HomeActivity extends BaseActivity
       if (lastFullSync + 24 * DateUtils.DAY_IN_MILLIS < currentTime) {
         queue.add(new SyncTask());
       } else {
-        queue.add(new SyncActivityStreamTask());
+        // TODO: queue.add(new SyncActivityStreamTask());
+        queue.add(new SyncUserActivityTask());
       }
       lastSync = System.currentTimeMillis();
       handler.postDelayed(this, SYNC_DELAY);
@@ -103,13 +110,14 @@ public class HomeActivity extends BaseActivity
 
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
+    Timber.d("onCreate");
     setContentView(R.layout.activity_home);
 
     ButterKnife.inject(this);
 
     messageBar = new MessageBar(this);
 
-    if (!CathodeApp.accountExists(this) || isLoginAction(getIntent())) {
+    if (!Settings.isLoggedIn(this) || isLoginAction(getIntent())) {
       Bundle loginState = inState != null ? inState.getBundle(STATE_LOGIN_CONTROLLER) : null;
       loginController = LoginController.newInstance(this, content, loginState);
 
@@ -145,11 +153,55 @@ public class HomeActivity extends BaseActivity
 
         handler.post(displayLogin);
       }
+    } else {
+      Timber.d("New intent: " + intent.toString());
+      Uri uri = intent.getData();
+      if (uri != null) {
+        String host = uri.getHost();
+        if (HOST_OAUTH.equals(host)) {
+          String path = uri.getPathSegments().get(0);
+          if (PATH_AUTHORIZE.equals(path)) {
+            String code = uri.getQueryParameter("code");
+            Timber.d("We got a code! " + code);
+
+            Intent i = new Intent(this, TraktTaskService.class);
+            i.setAction(TraktTaskService.ACTION_GET_TOKEN);
+            i.putExtra(TraktTaskService.EXTRA_CODE, code);
+            startService(i);
+
+            queue.add(new SyncTask());
+
+            PreferenceManager.getDefaultSharedPreferences(HomeActivity.this) //
+                .edit() //
+                .putBoolean(Settings.TRAKT_LOGGED_IN, true) //
+                .apply();
+
+            handler.post(new Runnable() {
+              @Override public void run() {
+                if (loginController != null) {
+                  loginController.destroy(true);
+                  loginController = null;
+                }
+
+                if (uiController == null) {
+                  content.removeAllViews();
+
+                  uiController = PhoneController.create(HomeActivity.this, content);
+                  activeController = uiController;
+                }
+              }
+            });
+          }
+        }
+      }
     }
   }
 
   private boolean isLoginAction(Intent intent) {
     return ACTION_LOGIN.equals(intent.getAction());
+  }
+
+  @Subscribe public void onAuthFailed(AuthFailedEvent event) {
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {
@@ -242,21 +294,6 @@ public class HomeActivity extends BaseActivity
     } else {
       messageBar.show(getString(event.getMessageRes()));
     }
-  }
-
-  @Subscribe public void onAuthFailed(AuthFailedEvent event) {
-  }
-
-  @Subscribe public void onLogin(LoginEvent event) {
-    if (loginController != null) {
-      loginController.destroy(true);
-      loginController = null;
-    }
-
-    content.removeAllViews();
-
-    uiController = PhoneController.create(this, content);
-    activeController = uiController;
   }
 
   @Subscribe public void onLogout(LogoutEvent event) {

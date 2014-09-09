@@ -69,18 +69,16 @@ public class CheckInDialog extends DialogFragment {
     final boolean facebookShare = settings.getBoolean(Settings.PROFILE_CONNECTION_FACEBOOK, false);
     final boolean twitterShare = settings.getBoolean(Settings.PROFILE_CONNECTION_TWITTER, false);
     final boolean tumblrShare = settings.getBoolean(Settings.PROFILE_CONNECTION_TUMBLR, false);
-    final boolean pathShare = settings.getBoolean(Settings.PROFILE_CONNECTION_PATH, false);
-    final boolean prowlShare = settings.getBoolean(Settings.PROFILE_CONNECTION_PROWL, false);
 
-    if (facebookShare || twitterShare || tumblrShare || pathShare || prowlShare) {
+    if (facebookShare || twitterShare || tumblrShare) {
       newInstance(type, title, id).show(activity.getSupportFragmentManager(), DIALOG_TAG);
     } else {
       Injections injections = new Injections(activity);
 
       if (type == Type.SHOW) {
-        injections.episodeScheduler.checkin(id, null, false, false, false, false, false);
+        injections.episodeScheduler.checkin(id, null, false, false, false);
       } else {
-        injections.movieScheduler.checkin(id, null, false, false, false, false, false);
+        injections.movieScheduler.checkin(id, null, false, false, false);
       }
     }
   }
@@ -118,22 +116,16 @@ public class CheckInDialog extends DialogFragment {
     final CheckBox facebook = (CheckBox) view.findViewById(R.id.facebook);
     final CheckBox twitter = (CheckBox) view.findViewById(R.id.twitter);
     final CheckBox tumblr = (CheckBox) view.findViewById(R.id.tumblr);
-    final CheckBox path = (CheckBox) view.findViewById(R.id.path);
-    final CheckBox prowl = (CheckBox) view.findViewById(R.id.prowl);
 
     title.setText(titleArg);
     final boolean facebookShare = settings.getBoolean(Settings.PROFILE_CONNECTION_FACEBOOK, false);
     final boolean twitterShare = settings.getBoolean(Settings.PROFILE_CONNECTION_TWITTER, false);
     final boolean tumblrShare = settings.getBoolean(Settings.PROFILE_CONNECTION_TUMBLR, false);
-    final boolean pathShare = settings.getBoolean(Settings.PROFILE_CONNECTION_PATH, false);
-    final boolean prowlShare = settings.getBoolean(Settings.PROFILE_CONNECTION_PROWL, false);
     facebook.setVisibility(facebookShare ? View.VISIBLE : View.GONE);
     twitter.setVisibility(twitterShare ? View.VISIBLE : View.GONE);
     tumblr.setVisibility(tumblrShare ? View.VISIBLE : View.GONE);
-    path.setVisibility(pathShare ? View.VISIBLE : View.GONE);
-    prowl.setVisibility(prowlShare ? View.VISIBLE : View.GONE);
 
-    if (facebookShare || twitterShare || tumblrShare || pathShare || prowlShare) {
+    if (facebookShare || twitterShare || tumblrShare) {
       view.findViewById(R.id.message_title).setVisibility(View.VISIBLE);
       message.setVisibility(View.VISIBLE);
       view.findViewById(R.id.share_title).setVisibility(View.VISIBLE);
@@ -153,25 +145,19 @@ public class CheckInDialog extends DialogFragment {
         final boolean facebookShare = facebook.isChecked();
         final boolean twitterShare = twitter.isChecked();
         final boolean tumblrShare = tumblr.isChecked();
-        final boolean pathShare = path.isChecked();
-        final boolean prowlShare = prowl.isChecked();
         final String shareMessage = message.getText().toString();
 
         settings.edit()
             .putBoolean(Settings.PROFILE_CONNECTION_FACEBOOK, facebookShare)
             .putBoolean(Settings.PROFILE_CONNECTION_TWITTER, twitterShare)
             .putBoolean(Settings.PROFILE_CONNECTION_TUMBLR, tumblrShare)
-            .putBoolean(Settings.PROFILE_CONNECTION_PATH, pathShare)
-            .putBoolean(Settings.PROFILE_CONNECTION_PROWL, prowlShare)
             .putString(Settings.PROFILE_SHARING_TEXT_WATCHING, shareMessage)
             .apply();
 
         if (type == Type.SHOW) {
-          episodeScheduler.checkin(id, shareMessage, facebookShare, twitterShare, tumblrShare,
-              pathShare, prowlShare);
+          episodeScheduler.checkin(id, shareMessage, facebookShare, twitterShare, tumblrShare);
         } else {
-          movieScheduler.checkin(id, shareMessage, facebookShare, twitterShare, tumblrShare,
-              pathShare, prowlShare);
+          movieScheduler.checkin(id, shareMessage, facebookShare, twitterShare, tumblrShare);
         }
       }
     });

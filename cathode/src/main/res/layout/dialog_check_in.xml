@@ -65,16 +65,4 @@
       android:layout_height="wrap_content"
       android:text="@string/tumblr"/>
 
-  <CheckBox
-      android:id="@+id/path"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="@string/path"/>
-
-  <CheckBox
-      android:id="@+id/prowl"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="@string/prowl"/>
-
 </LinearLayout>

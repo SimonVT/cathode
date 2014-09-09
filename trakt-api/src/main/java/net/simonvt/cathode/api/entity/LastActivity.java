@@ -1,91 +1,77 @@
+/*
+ * Copyright (C) 2014 Simon Vig Therkildsen
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package net.simonvt.cathode.api.entity;
 
 public class LastActivity {
 
   public static class ActivityItem {
 
-    private Long watched;
+    private IsoTime watchedAt;
 
-    private Long scrobble;
+    private IsoTime collectedAt;
 
-    private Long seen;
+    private IsoTime ratedAt;
 
-    private Long checkin;
+    private IsoTime watchlistedAt;
 
-    private Long collection;
+    private IsoTime commentedAt;
 
-    private Long rating;
-
-    private Long watchlist;
-
-    private Long comment;
-
-    private Long review;
-
-    private Long shout;
-
-    public Long getWatched() {
-      return watched;
+    public IsoTime getWatchedAt() {
+      return watchedAt;
     }
 
-    public Long getScrobble() {
-      return scrobble;
+    public IsoTime getCollectedAt() {
+      return collectedAt;
     }
 
-    public Long getSeen() {
-      return seen;
+    public IsoTime getRatedAt() {
+      return ratedAt;
     }
 
-    public Long getCheckin() {
-      return checkin;
+    public IsoTime getWatchlistedAt() {
+      return watchlistedAt;
     }
 
-    public Long getCollection() {
-      return collection;
-    }
-
-    public Long getRating() {
-      return rating;
-    }
-
-    public Long getWatchlist() {
-      return watchlist;
-    }
-
-    public Long getComment() {
-      return comment;
-    }
-
-    public Long getReview() {
-      return review;
-    }
-
-    public Long getShout() {
-      return shout;
+    public IsoTime getCommentedAt() {
+      return commentedAt;
     }
   }
 
-  private Long all;
+  private ActivityItem movies;
 
-  private ActivityItem movie;
+  private ActivityItem shows;
 
-  private ActivityItem show;
+  private ActivityItem seasons;
 
-  private ActivityItem episode;
+  private ActivityItem episodes;
 
-  public Long getAll() {
-    return all;
+  public ActivityItem getMovies() {
+    return movies;
   }
 
-  public ActivityItem getMovie() {
-    return movie;
+  public ActivityItem getShows() {
+    return shows;
   }
 
-  public ActivityItem getShow() {
-    return show;
+  public ActivityItem getSeasons() {
+    return seasons;
   }
 
-  public ActivityItem getEpisode() {
-    return episode;
+  public ActivityItem getEpisodes() {
+    return episodes;
   }
 }
