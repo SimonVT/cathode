@@ -1,41 +1,39 @@
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 apply plugin: 'crashlytics'
 apply plugin: 'checkstyle'
 apply plugin: 'android-apt'
 
 dependencies {
   compile project(':trakt-api')
-  compile libraries.menudrawer
-  compile libraries.messagebar
-  compile libraries.schematic
-  apt libraries.schematicCompiler
+  compile parent.libraries.menudrawer
+  compile parent.libraries.messagebar
+  compile parent.libraries.schematic
+  apt parent.libraries.schematicCompiler
 
-  compile libraries.gson
+  compile parent.libraries.gson
 
-  compile libraries.supportv4
-  compile libraries.cardView
-  compile libraries.recyclerView
+  compile parent.libraries.supportv4
+  compile parent.libraries.cardView
+  compile parent.libraries.recyclerView
 
-  compile libraries.otto
-  compile libraries.dagger
-  apt libraries.daggerCompiler
-  compile libraries.picasso
-  compile libraries.retrofit
-  compile libraries.tape
-  compile libraries.okhttp
-  compile libraries.okhttpUrlConnection
+  compile parent.libraries.otto
+  compile parent.libraries.dagger
+  apt parent.libraries.daggerCompiler
+  compile parent.libraries.picasso
+  compile parent.libraries.retrofit
+  compile parent.libraries.tape
+  compile parent.libraries.okhttp
+  compile parent.libraries.okhttpUrlConnection
 
-  compile libraries.butterknife
-  compile libraries.timber
+  compile parent.libraries.butterknife
+  compile parent.libraries.timber
 
-  compile libraries.dashclockApi
+  compile parent.libraries.dashclockApi
 
-  compile libraries.crashlytics
+  compile parent.libraries.crashlytics
 }
 
 android {
-  useOldManifestMerger true
-
   compileSdkVersion parent.ext.compileSdkVersion
   buildToolsVersion parent.ext.buildToolsVersion
 

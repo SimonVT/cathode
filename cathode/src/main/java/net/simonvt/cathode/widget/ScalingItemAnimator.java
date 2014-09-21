@@ -17,9 +17,11 @@
 package net.simonvt.cathode.widget;
 
 import android.support.v4.view.ViewPropertyAnimatorCompat;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 public class ScalingItemAnimator extends ExtensibleItemAnimator {
+
   @Override public void beforeAddAnimation(View view) {
     view.setAlpha(0.0f);
     view.setScaleX(0.5f);
@@ -74,5 +76,10 @@ public class ScalingItemAnimator extends ExtensibleItemAnimator {
   @Override public void onResetMoveAnimation(View view) {
     view.setTranslationX(0.0f);
     view.setTranslationY(0.0f);
+  }
+
+  @Override public boolean animateChange(RecyclerView.ViewHolder oldHolder, RecyclerView.ViewHolder newHolder, int fromLeft, int fromTop, int toLeft, int toTop) {
+    // TODO:
+    return false;
   }
 }
