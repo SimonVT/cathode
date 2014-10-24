@@ -25,13 +25,10 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,13 +43,13 @@ import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
+import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
-import net.simonvt.cathode.widget.AdapterViewAnimator;
-import net.simonvt.cathode.widget.DefaultAdapterAnimator;
 
-public class TrendingShowsFragment extends AbsAdapterFragment
-    implements LoaderManager.LoaderCallbacks<Cursor>, ListDialog.Callback {
+public class TrendingShowsFragment
+    extends GridRecyclerViewFragment<ShowDescriptionAdapter.ViewHolder>
+    implements LoaderManager.LoaderCallbacks<Cursor>, ListDialog.Callback, ShowClickListener {
 
   private enum SortBy {
     VIEWERS("viewers", Shows.SORT_VIEWERS),
@@ -105,6 +102,10 @@ public class TrendingShowsFragment extends AbsAdapterFragment
 
   private SortBy sortBy;
 
+  private Cursor cursor;
+
+  private int columnCount;
+
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
@@ -125,14 +126,16 @@ public class TrendingShowsFragment extends AbsAdapterFragment
     setHasOptionsMenu(true);
 
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOWS_TRENDING, null, this);
+
+    columnCount = getResources().getInteger(R.integer.showsColumns);
   }
 
   @Override public String getTitle() {
     return getResources().getString(R.string.title_shows_trending);
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
-    return inflater.inflate(R.layout.fragment_shows_watched, container, false);
+  @Override protected int getColumnCount() {
+    return columnCount;
   }
 
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -179,23 +182,21 @@ public class TrendingShowsFragment extends AbsAdapterFragment
     }
   }
 
-  @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
-    Cursor c = (Cursor) getAdapter().getItem(position);
-    navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)),
+  @Override public void onShowClick(View view, int position, long id) {
+    navigationListener.onDisplayShow(id, cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE)),
         LibraryType.WATCHED);
   }
 
   private void setCursor(Cursor cursor) {
+    this.cursor = cursor;
+
     if (showsAdapter == null) {
-      showsAdapter = new ShowDescriptionAdapter(getActivity(), cursor);
+      showsAdapter = new ShowDescriptionAdapter(getActivity(), this, cursor);
       setAdapter(showsAdapter);
       return;
     }
 
-    AdapterViewAnimator animator =
-        new AdapterViewAnimator(adapterView, new DefaultAdapterAnimator());
     showsAdapter.changeCursor(cursor);
-    animator.animate();
   }
 
   @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {

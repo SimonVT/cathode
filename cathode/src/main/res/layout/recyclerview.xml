@@ -14,18 +14,18 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.v7.widget.RecyclerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:divider="@null"
-    android:dividerHeight="4.0dp"
     android:drawSelectorOnTop="true"
-    android:numColumns="@integer/movieColumns"
+    android:numColumns="@integer/showsColumns"
+    android:scrollbars="vertical"
+    android:scrollbarStyle="outsideOverlay"
+    android:paddingLeft="8dp"
     android:paddingTop="4dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:horizontalSpacing="8dp"
-    android:verticalSpacing="8dp"
-    android:clipToPadding="false"
-    android:scrollbarStyle="outsideOverlay"/>
+    android:paddingRight="8dp"
+    android:paddingBottom="4dp"
+    android:clipToPadding="false"/>

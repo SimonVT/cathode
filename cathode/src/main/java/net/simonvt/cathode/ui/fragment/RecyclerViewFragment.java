@@ -19,7 +19,9 @@ package net.simonvt.cathode.ui.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -68,18 +70,27 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
     super.onSaveInstanceState(outState);
   }
 
-  protected abstract RecyclerView.LayoutManager getLayoutManager();
-
   protected RecyclerView.ItemAnimator getItemAnimator() {
     return null;
+  }
+
+  protected void addItemDecorations(RecyclerView recyclerView) {
+  }
+
+  protected abstract RecyclerView.LayoutManager getLayoutManager();
+
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+    return inflater.inflate(R.layout.fragment_recyclerview, container, false);
   }
 
   public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
     recyclerView.setLayoutManager(getLayoutManager());
-    if (getItemAnimator() != null) {
-      recyclerView.setItemAnimator(getItemAnimator());
+    RecyclerView.ItemAnimator itemAnimator = getItemAnimator();
+    if (itemAnimator != null) {
+      recyclerView.setItemAnimator(itemAnimator);
     }
+    addItemDecorations(recyclerView);
 
     if (emptyText != null) {
       empty.setText(emptyText);
@@ -96,6 +107,10 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
     if (adapter != null) recyclerView.setAdapter(adapter);
 
     view.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
+  }
+
+  @Override public void onDestroyView() {
+    super.onDestroyView();
   }
 
   ViewTreeObserver.OnGlobalLayoutListener layoutListener =
@@ -237,6 +252,9 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
   }
 
   private void showEmptyView(boolean show) {
+    if (empty == null) {
+      return;
+    }
     if (show && empty.getVisibility() == View.GONE) {
       empty.setAlpha(0.0f);
       empty.animate().alpha(1.0f).withStartAction(new Runnable() {

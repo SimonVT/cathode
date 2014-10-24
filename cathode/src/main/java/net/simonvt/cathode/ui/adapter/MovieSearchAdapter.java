@@ -15,7 +15,6 @@
  */
 package net.simonvt.cathode.ui.adapter;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
@@ -27,8 +26,9 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.widget.IndicatorView;
+import net.simonvt.cathode.widget.OverflowView;
 
-public class MovieSearchAdapter extends MoviesAdapter {
+public class MovieSearchAdapter extends BaseMoviesAdapter<MovieSearchAdapter.ViewHolder> {
 
   public static final String[] PROJECTION = new String[] {
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.ID,
@@ -44,20 +44,40 @@ public class MovieSearchAdapter extends MoviesAdapter {
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.CHECKED_IN,
   };
 
-  public MovieSearchAdapter(FragmentActivity activity, Cursor cursor) {
-    super(activity, cursor);
+  public MovieSearchAdapter(FragmentActivity activity, MovieClickListener listener, Cursor cursor) {
+    super(activity, listener, cursor);
     CathodeApp.inject(activity, this);
   }
 
-  @Override public View newView(Context context, Cursor cursor, ViewGroup parent) {
-    View v = LayoutInflater.from(context).inflate(R.layout.list_row_search_movie, parent, false);
-    v.setTag(new ViewHolder(v));
-    return v;
+  @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    View v =
+        LayoutInflater.from(getContext()).inflate(R.layout.list_row_search_movie, parent, false);
+    final ViewHolder holder = new ViewHolder(v);
+
+    v.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        listener.onMovieClicked(holder.itemView, holder.getPosition(), holder.getItemId());
+      }
+    });
+
+    holder.overflow.setListener(new OverflowView.OverflowActionListener() {
+      @Override public void onPopupShown() {
+      }
+
+      @Override public void onPopupDismissed() {
+      }
+
+      @Override public void onActionSelected(int action) {
+        onOverflowActionSelected(holder.itemView, holder.getItemId(), action, holder.getPosition(),
+            holder.title.getText().toString());
+      }
+    });
+
+    return holder;
   }
 
-  @Override public void bindView(View view, Context context, Cursor cursor) {
-    super.bindView(view, context, cursor);
-    ViewHolder vh = (ViewHolder) view.getTag();
+  @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
+    super.onBindViewHolder(holder, cursor, position);
 
     final boolean watched = cursor.getInt(cursor.getColumnIndex(MovieColumns.WATCHED)) == 1;
     final boolean inCollection =
@@ -65,12 +85,12 @@ public class MovieSearchAdapter extends MoviesAdapter {
     final boolean inWatchlist =
         cursor.getInt(cursor.getColumnIndex(MovieColumns.IN_WATCHLIST)) == 1;
 
-    vh.indicator.setWatched(watched);
-    vh.indicator.setCollected(inCollection);
-    vh.indicator.setInWatchlist(inWatchlist);
+    holder.indicator.setWatched(watched);
+    holder.indicator.setCollected(inCollection);
+    holder.indicator.setInWatchlist(inWatchlist);
   }
 
-  static class ViewHolder extends MoviesAdapter.ViewHolder {
+  public static class ViewHolder extends BaseMoviesAdapter.ViewHolder {
 
     @InjectView(R.id.indicator) IndicatorView indicator;
 

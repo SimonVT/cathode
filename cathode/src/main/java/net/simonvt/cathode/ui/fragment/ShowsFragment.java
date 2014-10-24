@@ -20,12 +20,10 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.CursorAdapter;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -34,18 +32,23 @@ import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
+import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
+import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
-import net.simonvt.cathode.widget.AdapterViewAnimator;
-import net.simonvt.cathode.widget.DefaultAdapterAnimator;
 
-public abstract class ShowsFragment<D extends Cursor> extends AbsAdapterFragment
-    implements LoaderManager.LoaderCallbacks<D> {
+public abstract class ShowsFragment<D extends Cursor>
+    extends GridRecyclerViewFragment<ShowsWithNextAdapter.ViewHolder>
+    implements LoaderManager.LoaderCallbacks<D>, ShowClickListener {
 
   @Inject TraktTaskQueue queue;
 
-  protected CursorAdapter showsAdapter;
+  protected RecyclerCursorAdapter showsAdapter;
 
   private ShowsNavigationListener navigationListener;
+
+  private Cursor cursor;
+
+  private int columnCount;
 
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
@@ -63,10 +66,16 @@ public abstract class ShowsFragment<D extends Cursor> extends AbsAdapterFragment
     setHasOptionsMenu(true);
 
     getLoaderManager().initLoader(getLoaderId(), null, this);
+
+    columnCount = getResources().getInteger(R.integer.showsColumns);
   }
 
   @Override public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
+  }
+
+  @Override protected int getColumnCount() {
+    return columnCount;
   }
 
   @Override public void onViewCreated(View view, Bundle inState) {
@@ -96,27 +105,25 @@ public abstract class ShowsFragment<D extends Cursor> extends AbsAdapterFragment
     }
   }
 
-  @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
-    Cursor c = (Cursor) getAdapter().getItem(position);
-    navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)),
+  @Override public void onShowClick(View view, int position, long id) {
+    navigationListener.onDisplayShow(id, cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE)),
         getLibraryType());
   }
 
-  protected CursorAdapter getAdapter(Cursor cursor) {
-    return new ShowsWithNextAdapter(getActivity(), cursor, getLibraryType());
+  protected ShowsWithNextAdapter getAdapter(Cursor cursor) {
+    return new ShowsWithNextAdapter(getActivity(), this, cursor, getLibraryType());
   }
 
   protected void setCursor(Cursor cursor) {
+    this.cursor = cursor;
+
     if (showsAdapter == null) {
       showsAdapter = getAdapter(cursor);
       setAdapter(showsAdapter);
       return;
     }
 
-    AdapterViewAnimator animator =
-        new AdapterViewAnimator(adapterView, new DefaultAdapterAnimator());
     showsAdapter.changeCursor(cursor);
-    animator.animate();
   }
 
   protected abstract LibraryType getLibraryType();

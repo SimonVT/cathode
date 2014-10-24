@@ -28,4 +28,7 @@
   <dimen name="detailPosterLeftMargin">16dp</dimen>
   <dimen name="detailHeaderLeftMargin">120dp</dimen>
 
+  <dimen name="recyclerViewVerticalSpacing">4dp</dimen>
+  <dimen name="recyclerViewHorizontalSpacing">4dp</dimen>
+
 </resources>

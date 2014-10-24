@@ -15,15 +15,14 @@
  */
 package net.simonvt.cathode.ui.adapter;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
 import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -37,7 +36,12 @@ import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.cathode.widget.TimeStamp;
 
-public class SeasonAdapter extends CursorAdapter {
+public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolder> {
+
+  public interface EpisodeClickListener {
+
+    void onEpisodeClick(View view, int position, long id);
+  }
 
   @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;
@@ -47,28 +51,45 @@ public class SeasonAdapter extends CursorAdapter {
 
   private LibraryType type;
 
-  public SeasonAdapter(FragmentActivity activity, LibraryType type) {
-    super(activity, null, 0);
+  private EpisodeClickListener clickListener;
+
+  public SeasonAdapter(FragmentActivity activity, EpisodeClickListener clickListener, Cursor cursor,
+      LibraryType type) {
+    super(activity, cursor);
     CathodeApp.inject(activity, this);
     this.activity = activity;
+    this.clickListener = clickListener;
     this.type = type;
     resources = activity.getResources();
   }
 
-  @Override public void changeCursor(Cursor cursor) {
-    super.changeCursor(cursor);
+  @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    View v = LayoutInflater.from(getContext()).inflate(R.layout.list_row_episode, parent, false);
+
+    final ViewHolder holder = new ViewHolder(v);
+
+    v.setOnClickListener(new OnClickListener() {
+      @Override public void onClick(View v) {
+        clickListener.onEpisodeClick(holder.itemView, holder.getPosition(), holder.getItemId());
+      }
+    });
+
+    holder.number.setOnClickListener(new OnClickListener() {
+      @Override public void onClick(View v) {
+        final boolean activated = holder.number.isActivated();
+        holder.number.setActivated(!activated);
+        if (type == LibraryType.COLLECTION) {
+          episodeScheduler.setIsInCollection(holder.getItemId(), !activated);
+        } else {
+          episodeScheduler.setWatched(holder.getItemId(), !activated);
+        }
+      }
+    });
+
+    return holder;
   }
 
-  @Override public View newView(Context context, Cursor cursor, ViewGroup parent) {
-    View v = LayoutInflater.from(context).inflate(R.layout.list_row_episode, parent, false);
-
-    ViewHolder vh = new ViewHolder(v);
-    v.setTag(vh);
-
-    return v;
-  }
-
-  @Override public void bindView(View view, Context context, Cursor cursor) {
+  @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
     final long id = cursor.getLong(cursor.getColumnIndexOrThrow(EpisodeColumns.ID));
     final String title = cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.TITLE));
     final int season = cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.SEASON));
@@ -87,37 +108,24 @@ public class SeasonAdapter extends CursorAdapter {
         cursor.getLong(cursor.getColumnIndexOrThrow(EpisodeColumns.FIRST_AIRED));
     final String screen = cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.SCREEN));
 
-    final ViewHolder vh = (ViewHolder) view.getTag();
+    holder.screen.setImage(screen);
 
-    vh.screen.setImage(screen);
+    holder.title.setText(title);
 
-    vh.title.setText(title);
+    holder.firstAired.setTimeInMillis(firstAired);
+    holder.firstAired.setExtended(true);
 
-    vh.firstAired.setTimeInMillis(firstAired);
-    vh.firstAired.setExtended(true);
-
-    vh.number.setText(String.valueOf(episode));
+    holder.number.setText(String.valueOf(episode));
     if (type == LibraryType.COLLECTION) {
-      vh.number.setTextColor(resources.getColorStateList(R.color.episode_number_collected));
-      vh.number.setActivated(inCollection);
+      holder.number.setTextColor(resources.getColorStateList(R.color.episode_number_collected));
+      holder.number.setActivated(inCollection);
     } else {
-      vh.number.setTextColor(resources.getColorStateList(R.color.episode_number_watched));
-      vh.number.setActivated(watched);
+      holder.number.setTextColor(resources.getColorStateList(R.color.episode_number_watched));
+      holder.number.setActivated(watched);
     }
-    vh.number.setOnClickListener(new OnClickListener() {
-      @Override public void onClick(View v) {
-        final boolean activated = vh.number.isActivated();
-        vh.number.setActivated(!activated);
-        if (type == LibraryType.COLLECTION) {
-          episodeScheduler.setIsInCollection(id, !activated);
-        } else {
-          episodeScheduler.setWatched(id, !activated);
-        }
-      }
-    });
   }
 
-  static class ViewHolder {
+  public static class ViewHolder extends RecyclerView.ViewHolder {
 
     @InjectView(R.id.screen) RemoteImageView screen;
 
@@ -126,6 +134,7 @@ public class SeasonAdapter extends CursorAdapter {
     @InjectView(R.id.number) TextView number;
 
     ViewHolder(View v) {
+      super(v);
       ButterKnife.inject(this, v);
     }
   }

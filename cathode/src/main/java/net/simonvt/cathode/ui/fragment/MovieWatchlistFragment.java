@@ -20,9 +20,6 @@ import android.os.Bundle;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
@@ -32,12 +29,13 @@ public class MovieWatchlistFragment extends MoviesFragment {
 
   private static final String TAG = "WatchedMoviesFragment";
 
-  @Override public String getTitle() {
-    return getResources().getString(R.string.title_movies_watchlist);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
+    setEmptyText(R.string.empty_movie_watchlist);
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
-    return inflater.inflate(R.layout.fragment_movies_watchlist, container, false);
+  @Override public String getTitle() {
+    return getResources().getString(R.string.title_movies_watchlist);
   }
 
   @Override protected int getLoaderId() {

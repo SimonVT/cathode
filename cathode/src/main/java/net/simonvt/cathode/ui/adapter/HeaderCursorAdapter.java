@@ -18,11 +18,11 @@ package net.simonvt.cathode.ui.adapter;
 
 import android.database.Cursor;
 import android.provider.BaseColumns;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
-import net.simonvt.cathode.widget.HeaderGridLayoutManager;
 
 public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
     extends RecyclerView.Adapter<T> {
@@ -54,6 +54,13 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
     void setCursor(Cursor cursor) {
       this.cursor = cursor;
       updateSize();
+    }
+  }
+
+  public static class SpanLookup extends GridLayoutManager.SpanSizeLookup {
+
+    @Override public int getSpanSize(int i) {
+      return 0;
     }
   }
 
@@ -238,7 +245,7 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
 
   @Override public final int getItemViewType(int position) {
     if (headerPositions.contains(position)) {
-      return HeaderGridLayoutManager.TYPE_HEADER;
+      return HeaderSpanLookup.TYPE_HEADER;
     }
 
     return getItemViewType(getHeader(position).header, getCursor(position));
@@ -247,7 +254,7 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
   protected abstract int getItemViewType(int headerRes, Cursor cursor);
 
   @Override public final T onCreateViewHolder(ViewGroup parent, int viewType) {
-    if (viewType == HeaderGridLayoutManager.TYPE_HEADER) {
+    if (viewType == HeaderSpanLookup.TYPE_HEADER) {
       return onCreateHeaderHolder(parent);
     } else {
       return onCreateItemHolder(parent, viewType);
@@ -259,7 +266,7 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
   protected abstract T onCreateHeaderHolder(ViewGroup parent);
 
   @Override public final void onBindViewHolder(T holder, int position) {
-    if (holder.getItemViewType() == HeaderGridLayoutManager.TYPE_HEADER) {
+    if (holder.getItemViewType() == HeaderSpanLookup.TYPE_HEADER) {
       onBindHeader(holder, getHeader(position).header);
     } else {
       onBindViewHolder(holder, getCursor(position), position);

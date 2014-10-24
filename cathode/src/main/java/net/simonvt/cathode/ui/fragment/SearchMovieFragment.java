@@ -23,13 +23,10 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
@@ -47,14 +44,14 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
+import net.simonvt.cathode.ui.adapter.BaseMoviesAdapter;
 import net.simonvt.cathode.ui.adapter.MovieSearchAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.util.MovieSearchHandler;
-import net.simonvt.cathode.widget.AdapterViewAnimator;
-import net.simonvt.cathode.widget.DefaultAdapterAnimator;
 
-public class SearchMovieFragment extends AbsAdapterFragment
-    implements LoaderManager.LoaderCallbacks<Cursor>, ListDialog.Callback {
+public class SearchMovieFragment extends GridRecyclerViewFragment<MovieSearchAdapter.ViewHolder>
+    implements LoaderManager.LoaderCallbacks<Cursor>, ListDialog.Callback,
+    BaseMoviesAdapter.MovieClickListener {
 
   private enum SortBy {
     TITLE("title", Movies.SORT_TITLE),
@@ -118,6 +115,10 @@ public class SearchMovieFragment extends AbsAdapterFragment
 
   private SortBy sortBy;
 
+  private int columnCount;
+
+  private Cursor cursor;
+
   public static Bundle getArgs(String query) {
     Bundle args = new Bundle();
     args.putString(ARGS_QUERY, query);
@@ -155,6 +156,8 @@ public class SearchMovieFragment extends AbsAdapterFragment
 
     bus.register(this);
     setHasOptionsMenu(true);
+
+    columnCount = getResources().getInteger(R.integer.movieColumns);
   }
 
   @Override public String getTitle() {
@@ -171,8 +174,8 @@ public class SearchMovieFragment extends AbsAdapterFragment
     outState.putString(STATE_QUERY, query);
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
-    return inflater.inflate(R.layout.fragment_movies_watched, container, false);
+  @Override protected int getColumnCount() {
+    return columnCount;
   }
 
   @Override public void onDestroy() {
@@ -239,9 +242,9 @@ public class SearchMovieFragment extends AbsAdapterFragment
     bus.post(new OnTitleChangedEvent());
   }
 
-  @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
-    Cursor c = (Cursor) getAdapter().getItem(position);
-    navigationListener.onDisplayMovie(id, c.getString(c.getColumnIndex(MovieColumns.TITLE)));
+  @Override public void onMovieClicked(View v, int position, long id) {
+    navigationListener.onDisplayMovie(id,
+        cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE)));
   }
 
   @Subscribe public void onSearchEvent(MovieSearchResult result) {
@@ -260,16 +263,15 @@ public class SearchMovieFragment extends AbsAdapterFragment
   }
 
   private void setCursor(Cursor cursor) {
+    this.cursor = cursor;
+
     if (movieAdapter == null) {
-      movieAdapter = new MovieSearchAdapter(getActivity(), cursor);
+      movieAdapter = new MovieSearchAdapter(getActivity(), this, cursor);
       setAdapter(movieAdapter);
       return;
     }
 
-    AdapterViewAnimator animator =
-        new AdapterViewAnimator(adapterView, new DefaultAdapterAnimator());
     movieAdapter.changeCursor(cursor);
-    animator.animate();
   }
 
   @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {

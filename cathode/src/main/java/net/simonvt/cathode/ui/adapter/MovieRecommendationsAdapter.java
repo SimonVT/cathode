@@ -27,12 +27,12 @@ public class MovieRecommendationsAdapter extends MoviesAdapter {
     void onDismissItem(View view, int position);
   }
 
-  private DismissListener listener;
+  private DismissListener dismissListener;
 
-  public MovieRecommendationsAdapter(FragmentActivity activity, Cursor c,
-      DismissListener listener) {
-    super(activity, c, R.layout.list_row_movie_rating);
-    this.listener = listener;
+  public MovieRecommendationsAdapter(FragmentActivity activity, MovieClickListener clickListener,
+      Cursor c, DismissListener dismissListener) {
+    super(activity, clickListener, c, R.layout.list_row_movie_rating);
+    this.dismissListener = dismissListener;
   }
 
   @Override
@@ -47,7 +47,7 @@ public class MovieRecommendationsAdapter extends MoviesAdapter {
     switch (action) {
       case R.id.action_dismiss:
         movieScheduler.dismissRecommendation(id);
-        listener.onDismissItem(view, position);
+        dismissListener.onDismissItem(view, position);
         break;
 
       default:

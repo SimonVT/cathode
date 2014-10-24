@@ -41,6 +41,7 @@ public abstract class RecyclerCursorAdapter<T extends RecyclerView.ViewHolder>
   protected RecyclerCursorAdapter(Context context, Cursor cursor) {
     this.context = context;
     changeCursor(cursor);
+    setHasStableIds(true);
   }
 
   protected Context getContext() {
@@ -57,6 +58,10 @@ public abstract class RecyclerCursorAdapter<T extends RecyclerView.ViewHolder>
   }
 
   public void changeCursor(Cursor cursor) {
+    if (cursor == this.cursor) {
+      return;
+    }
+
     if (this.cursor != null) {
       this.cursor.close();
     }
@@ -118,7 +123,8 @@ public abstract class RecyclerCursorAdapter<T extends RecyclerView.ViewHolder>
   }
 
   @Override public long getItemId(int position) {
-    return getCursor(position).getInt(idIndex);
+    long id = getCursor(position).getLong(idIndex);
+    return id;
   }
 
   @Override public final void onBindViewHolder(T holder, int position) {

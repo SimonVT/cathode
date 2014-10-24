@@ -22,10 +22,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -38,10 +35,9 @@ import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.SeasonAdapter;
-import net.simonvt.cathode.widget.AdapterViewAnimator;
-import net.simonvt.cathode.widget.DefaultAdapterAnimator;
 
-public class SeasonFragment extends AbsAdapterFragment {
+public class SeasonFragment extends GridRecyclerViewFragment<SeasonAdapter.ViewHolder>
+    implements SeasonAdapter.EpisodeClickListener {
 
   private static final String TAG = "SeasonFragment";
 
@@ -67,6 +63,8 @@ public class SeasonFragment extends AbsAdapterFragment {
   private SeasonAdapter episodeAdapter;
 
   private ShowsNavigationListener navigationCallbacks;
+
+  private int columnCount;
 
   public static Bundle getArgs(long showId, long seasonId, String showTitle, int seasonNumber,
       LibraryType type) {
@@ -98,9 +96,6 @@ public class SeasonFragment extends AbsAdapterFragment {
     title = args.getString(ARG_SHOW_TITLE);
     seasonNumber = args.getInt(ARG_SEASON_NUMBER);
     type = (LibraryType) args.getSerializable(ARG_TYPE);
-
-    episodeAdapter = new SeasonAdapter(getActivity(), type);
-    setAdapter(episodeAdapter);
 
     getLoaderManager().initLoader(BaseActivity.LOADER_SEASON, null, episodesLoader);
 
@@ -134,6 +129,8 @@ public class SeasonFragment extends AbsAdapterFragment {
         }
       }).start();
     }
+
+    columnCount = getResources().getInteger(R.integer.episodesColumns);
   }
 
   @Override public String getTitle() {
@@ -148,12 +145,22 @@ public class SeasonFragment extends AbsAdapterFragment {
     }
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
-    return inflater.inflate(R.layout.fragment_season, container, false);
+  @Override protected int getColumnCount() {
+    return columnCount;
   }
 
-  @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
+  @Override public void onEpisodeClick(View view, int position, long id) {
     navigationCallbacks.onDisplayEpisode(id, title);
+  }
+
+  private void setCursor(Cursor cursor) {
+    if (episodeAdapter == null) {
+      episodeAdapter = new SeasonAdapter(getActivity(), this, cursor, type);
+      setAdapter(episodeAdapter);
+      return;
+    }
+
+    episodeAdapter.changeCursor(cursor);
   }
 
   private LoaderManager.LoaderCallbacks<Cursor> episodesLoader =
@@ -167,15 +174,11 @@ public class SeasonFragment extends AbsAdapterFragment {
         }
 
         @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
-
-          AdapterViewAnimator animator =
-              new AdapterViewAnimator(adapterView, new DefaultAdapterAnimator());
-          episodeAdapter.changeCursor(data);
-          animator.animate();
+          setCursor(data);
         }
 
         @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
-          episodeAdapter.changeCursor(null);
+          setCursor(null);
         }
       };
 }

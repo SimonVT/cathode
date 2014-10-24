@@ -54,7 +54,7 @@ public class SyncMoviesCollectionTask extends TraktTask {
 
       if (movieId == -1) {
         queueTask(new SyncMovieTask(traktId));
-        movieId = MovieWrapper.updateOrInsertMovie(getContentResolver(), movie);
+        movieId = MovieWrapper.createMovie(getContentResolver(), traktId);
       }
 
       Long lastListedAt = ids.get(movieId);

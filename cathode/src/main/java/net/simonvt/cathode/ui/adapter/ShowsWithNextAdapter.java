@@ -15,10 +15,9 @@
  */
 package net.simonvt.cathode.ui.adapter;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.widget.CursorAdapter;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,22 +42,19 @@ import net.simonvt.cathode.widget.TimeStamp;
 /**
  * A show adapter that displays the next episode as well.
  */
-public class ShowsWithNextAdapter extends CursorAdapter {
+public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAdapter.ViewHolder> {
 
   private static final String COLUMN_EPISODE_ID = "episodeId";
 
   public static final String[] PROJECTION = new String[] {
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.POSTER,
-      ShowColumns.AIRED_COUNT,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.POSTER, ShowColumns.AIRED_COUNT,
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.STATUS,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.HIDDEN,
-      ShowColumns.WATCHING,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.ID
-          + " AS " + COLUMN_EPISODE_ID,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.HIDDEN, ShowColumns.WATCHING,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.ID + " AS " + COLUMN_EPISODE_ID,
       DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.TITLE,
       DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
       DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SEASON,
@@ -71,41 +67,94 @@ public class ShowsWithNextAdapter extends CursorAdapter {
 
   private final LibraryType libraryType;
 
-  public ShowsWithNextAdapter(FragmentActivity activity, LibraryType libraryType) {
-    this(activity, null, libraryType);
+  protected ShowClickListener clickListener;
+
+  public ShowsWithNextAdapter(FragmentActivity activity, ShowClickListener clickListener,
+      LibraryType libraryType) {
+    this(activity, clickListener, null, libraryType);
   }
 
-  public ShowsWithNextAdapter(FragmentActivity activity, Cursor cursor, LibraryType libraryType) {
-    super(activity, cursor, 0);
+  public ShowsWithNextAdapter(FragmentActivity activity, ShowClickListener clickListener,
+      Cursor cursor, LibraryType libraryType) {
+    super(activity, cursor);
     CathodeApp.inject(activity, this);
     this.activity = activity;
+    this.clickListener = clickListener;
     this.libraryType = libraryType;
   }
 
-  @Override public View newView(Context context, Cursor cursor, ViewGroup parent) {
-    View v = LayoutInflater.from(context).inflate(R.layout.list_row_show, parent, false);
+  @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    View v = LayoutInflater.from(getContext()).inflate(R.layout.list_row_show, parent, false);
 
-    ViewHolder vh = new ViewHolder(v);
-    v.setTag(vh);
+    final ViewHolder holder = new ViewHolder(v);
 
-    return v;
+    v.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        clickListener.onShowClick(holder.itemView, holder.getPosition(), holder.getItemId());
+      }
+    });
+
+    holder.overflow.setListener(new OverflowView.OverflowActionListener() {
+      @Override public void onPopupShown() {
+      }
+
+      @Override public void onPopupDismissed() {
+      }
+
+      @Override public void onActionSelected(int action) {
+        switch (action) {
+          case R.id.action_watchlist_remove:
+            showScheduler.setIsInWatchlist(holder.getItemId(), false);
+            break;
+
+          case R.id.action_watched:
+            onWatchNext(holder.itemView, holder.getPosition(), holder.getItemId(),
+                holder.showTypeCount, holder.showAiredCount);
+            break;
+
+          case R.id.action_watched_all:
+            showScheduler.setWatched(holder.getItemId(), true);
+            break;
+
+          case R.id.action_unwatch_all:
+            showScheduler.setWatched(holder.getItemId(), false);
+            break;
+
+          case R.id.action_checkin:
+            CheckInDialog.showDialogIfNecessary(activity, Type.SHOW, holder.episodeTitle,
+                holder.episodeId);
+            break;
+
+          case R.id.action_checkin_cancel:
+            showScheduler.cancelCheckin();
+            break;
+
+          case R.id.action_collection_add:
+            showScheduler.collectedNext(holder.getItemId());
+            break;
+
+          case R.id.action_hide:
+            showScheduler.setIsHidden(holder.getItemId(), true);
+            break;
+
+          case R.id.action_unhide:
+            showScheduler.setIsHidden(holder.getItemId(), false);
+            break;
+        }
+      }
+    });
+
+    return holder;
   }
 
-  @Override public void bindView(final View view, Context context, Cursor cursor) {
-    final long id = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
-    final int position = cursor.getPosition();
-
-    final String showPosterUrl =
-        cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER));
+  @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
+    final String showPosterUrl = cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER));
     final String showTitle = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
     final String showStatus = cursor.getString(cursor.getColumnIndex(ShowColumns.STATUS));
-    final boolean isHidden =
-        cursor.getInt(cursor.getColumnIndex(ShowColumns.HIDDEN)) == 1;
-    final boolean watching =
-        cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHING)) == 1;
+    final boolean isHidden = cursor.getInt(cursor.getColumnIndex(ShowColumns.HIDDEN)) == 1;
+    final boolean watching = cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHING)) == 1;
 
-    final int showAiredCount =
-        cursor.getInt(cursor.getColumnIndex(ShowColumns.AIRED_COUNT));
+    final int showAiredCount = cursor.getInt(cursor.getColumnIndex(ShowColumns.AIRED_COUNT));
     int count = 0;
     switch (libraryType) {
       case WATCHED:
@@ -120,95 +169,49 @@ public class ShowsWithNextAdapter extends CursorAdapter {
     final int showTypeCount = count;
 
     final long episodeId = cursor.getLong(cursor.getColumnIndex(COLUMN_EPISODE_ID));
-    final String episodeTitle =
-        cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
+    final String episodeTitle = cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
     final long episodeFirstAired =
         cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED));
-    final int episodeSeasonNumber =
-        cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
-    final int episodeNumber =
-        cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
+    final int episodeSeasonNumber = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
+    final int episodeNumber = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
 
-    ViewHolder vh = (ViewHolder) view.getTag();
+    holder.title.setText(showTitle);
 
-    vh.title.setText(showTitle);
+    holder.progressBar.setMax(showAiredCount);
+    holder.progressBar.setProgress(showTypeCount);
 
-    vh.progressBar.setMax(showAiredCount);
-    vh.progressBar.setProgress(showTypeCount);
-
-    vh.watched.setText(showTypeCount + "/" + showAiredCount);
+    holder.watched.setText(showTypeCount + "/" + showAiredCount);
 
     String episodeText;
     if (episodeTitle == null) {
       episodeText = showStatus;
-      vh.firstAired.setVisibility(View.GONE);
+      holder.firstAired.setVisibility(View.GONE);
     } else {
       if (watching) {
-        episodeText = context.getString(R.string.show_watching);
+        episodeText = getContext().getString(R.string.show_watching);
       } else {
-        episodeText = context.getString(R.string.episode_next, episodeSeasonNumber, episodeNumber,
-            episodeTitle);
+        episodeText =
+            getContext().getString(R.string.episode_next, episodeSeasonNumber, episodeNumber,
+                episodeTitle);
       }
-      vh.firstAired.setVisibility(View.VISIBLE);
-      vh.firstAired.setTimeInMillis(episodeFirstAired);
+      holder.firstAired.setVisibility(View.VISIBLE);
+      holder.firstAired.setTimeInMillis(episodeFirstAired);
     }
-    vh.nextEpisode.setText(episodeText);
-    vh.nextEpisode.setEnabled(episodeTitle != null);
+    holder.nextEpisode.setText(episodeText);
+    holder.nextEpisode.setEnabled(episodeTitle != null);
 
-    vh.overflow.setVisibility(showAiredCount > 0 ? View.VISIBLE : View.INVISIBLE);
-    vh.overflow.setListener(new OverflowView.OverflowActionListener() {
-      @Override public void onPopupShown() {
-      }
+    holder.overflow.setVisibility(showAiredCount > 0 ? View.VISIBLE : View.INVISIBLE);
 
-      @Override public void onPopupDismissed() {
-      }
+    holder.overflow.removeItems();
+    setupOverflowItems(holder.overflow, showTypeCount, showAiredCount, episodeTitle != null,
+        isHidden, watching);
 
-      @Override public void onActionSelected(int action) {
-        switch (action) {
-          case R.id.action_watchlist_remove:
-            showScheduler.setIsInWatchlist(id, false);
-            break;
+    holder.poster.setImage(showPosterUrl);
 
-          case R.id.action_watched:
-            onWatchNext(view, position, id, showTypeCount, showAiredCount);
-            break;
-
-          case R.id.action_watched_all:
-            showScheduler.setWatched(id, true);
-            break;
-
-          case R.id.action_unwatch_all:
-            showScheduler.setWatched(id, false);
-            break;
-
-          case R.id.action_checkin:
-            CheckInDialog.showDialogIfNecessary(activity, Type.SHOW, episodeTitle, episodeId);
-            break;
-
-          case R.id.action_checkin_cancel:
-            showScheduler.cancelCheckin();
-            break;
-
-          case R.id.action_collection_add:
-            showScheduler.collectedNext(id);
-            break;
-
-          case R.id.action_hide:
-            showScheduler.setIsHidden(id, true);
-            break;
-
-          case R.id.action_unhide:
-            showScheduler.setIsHidden(id, false);
-            break;
-        }
-      }
-    });
-
-    vh.overflow.removeItems();
-    setupOverflowItems(vh.overflow, showTypeCount, showAiredCount, episodeTitle != null, isHidden,
-        watching);
-
-    vh.poster.setImage(showPosterUrl);
+    holder.showTypeCount = showTypeCount;
+    holder.showAiredCount = showAiredCount;
+    holder.episodeTitle = episodeTitle;
+    holder.episodeId = episodeId;
   }
 
   protected void onWatchNext(View view, int position, long showId, int watchedCount,
@@ -241,7 +244,7 @@ public class ShowsWithNextAdapter extends CursorAdapter {
     }
   }
 
-  public static class ViewHolder {
+  public static class ViewHolder extends RecyclerView.ViewHolder {
 
     @InjectView(R.id.infoParent) View infoParent;
     @InjectView(R.id.title) TextView title;
@@ -252,7 +255,13 @@ public class ShowsWithNextAdapter extends CursorAdapter {
     @InjectView(R.id.overflow) OverflowView overflow;
     @InjectView(R.id.poster) RemoteImageView poster;
 
+    public int showTypeCount;
+    public int showAiredCount;
+    public String episodeTitle;
+    public long episodeId;
+
     ViewHolder(View v) {
+      super(v);
       ButterKnife.inject(this, v);
     }
   }

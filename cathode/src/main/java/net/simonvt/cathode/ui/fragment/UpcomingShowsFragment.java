@@ -23,14 +23,13 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,13 +47,12 @@ import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
+import net.simonvt.cathode.ui.adapter.HeaderSpanLookup;
 import net.simonvt.cathode.ui.adapter.UpcomingAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.widget.AnimatorHelper;
-import net.simonvt.cathode.widget.HeaderGridLayoutManager;
-import net.simonvt.cathode.widget.ScalingItemAnimator;
 
-public class UpcomingShowsFragment extends RecyclerViewFragment<RecyclerView.ViewHolder>
+public class UpcomingShowsFragment extends GridRecyclerViewFragment<RecyclerView.ViewHolder>
     implements UpcomingAdapter.OnRemoveListener, ListDialog.Callback,
     LoaderCallbacks<MutableCursor>, UpcomingAdapter.OnItemClickListener {
 
@@ -105,11 +103,15 @@ public class UpcomingShowsFragment extends RecyclerViewFragment<RecyclerView.Vie
 
   private boolean showHidden;
 
-  private boolean isTablet;
-
   private SortBy sortBy;
 
   private ShowsNavigationListener navigationListener;
+
+  private int columnCount;
+
+  private UpcomingAdapter adapter;
+
+  private HeaderSpanLookup headerSpanLookup;
 
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
@@ -129,24 +131,21 @@ public class UpcomingShowsFragment extends RecyclerViewFragment<RecyclerView.Vie
 
     showHidden = settings.getBoolean(Settings.SHOW_HIDDEN, false);
 
-    isTablet = getResources().getBoolean(R.bool.isTablet);
-
     setHasOptionsMenu(true);
 
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOWS_UPCOMING, null, this);
+
+    setEmptyText(R.string.empty_show_upcoming);
+
+    columnCount = getResources().getInteger(R.integer.showsColumns);
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
-    return inflater.inflate(R.layout.fragment_shows_upcoming, container, false);
+  @Override protected int getColumnCount() {
+    return columnCount;
   }
 
-  @Override protected RecyclerView.LayoutManager getLayoutManager() {
-    final int columnCount = getResources().getInteger(R.integer.showsColumns);
-    return new HeaderGridLayoutManager(getActivity(), columnCount);
-  }
-
-  @Override protected RecyclerView.ItemAnimator getItemAnimator() {
-    return new ScalingItemAnimator();
+  @Override protected GridLayoutManager.SpanSizeLookup getSpanSizeLookup() {
+    return new HeaderSpanLookup(ensureAdapter(), columnCount);
   }
 
   @Override public String getTitle() {
@@ -237,12 +236,20 @@ public class UpcomingShowsFragment extends RecyclerViewFragment<RecyclerView.Vie
     }
   };
 
-  protected void setCursor(MutableCursor cursor) {
-    UpcomingAdapter adapter = (UpcomingAdapter) getAdapter();
+  private UpcomingAdapter ensureAdapter() {
     if (adapter == null) {
       adapter = new UpcomingAdapter(getActivity(), this, this);
       adapter.addHeader(R.string.header_aired);
       adapter.addHeader(R.string.header_upcoming);
+    }
+
+    return adapter;
+  }
+
+  protected void setCursor(MutableCursor cursor) {
+    UpcomingAdapter adapter = (UpcomingAdapter) getAdapter();
+    if (adapter == null) {
+      adapter = ensureAdapter();
       setAdapter(adapter);
     }
 

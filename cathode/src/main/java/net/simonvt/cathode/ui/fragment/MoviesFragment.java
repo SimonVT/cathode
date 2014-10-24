@@ -20,12 +20,11 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.CursorAdapter;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -35,19 +34,20 @@ import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
-import net.simonvt.cathode.widget.AdapterViewAnimator;
-import net.simonvt.cathode.widget.DefaultAdapterAnimator;
+import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 
-public abstract class MoviesFragment extends AbsAdapterFragment
-    implements LoaderManager.LoaderCallbacks<Cursor> {
-
-  private static final String TAG = "MoviesFragment";
+public abstract class MoviesFragment extends GridRecyclerViewFragment<MoviesAdapter.ViewHolder>
+    implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.MovieClickListener {
 
   @Inject TraktTaskQueue queue;
 
   @Inject @PriorityQueue TraktTaskQueue priorityQueue;
 
   private MoviesNavigationListener navigationListener;
+
+  private Cursor cursor;
+
+  private int columnCount;
 
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
@@ -65,6 +65,8 @@ public abstract class MoviesFragment extends AbsAdapterFragment
     setHasOptionsMenu(true);
 
     getLoaderManager().initLoader(getLoaderId(), null, this);
+
+    columnCount = getResources().getInteger(R.integer.movieColumns);
   }
 
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -86,24 +88,25 @@ public abstract class MoviesFragment extends AbsAdapterFragment
     return super.onOptionsItemSelected(item);
   }
 
-  @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
-    Cursor c = (Cursor) getAdapter().getItem(position);
-    navigationListener.onDisplayMovie(id,
-        c.getString(c.getColumnIndex(MovieColumns.TITLE)));
+  @Override protected int getColumnCount() {
+    return columnCount;
   }
 
-  protected CursorAdapter getAdapter(Cursor cursor) {
-    return new MoviesAdapter(getActivity(), cursor);
+  @Override public void onMovieClicked(View v, int position, long id) {
+    navigationListener.onDisplayMovie(id,
+        cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE)));
+  }
+
+  protected RecyclerView.Adapter<MoviesAdapter.ViewHolder> getAdapter(Cursor cursor) {
+    return new MoviesAdapter(getActivity(), this, cursor);
   }
 
   void setCursor(Cursor cursor) {
+    this.cursor = cursor;
     if (getAdapter() == null) {
       setAdapter(getAdapter(cursor));
     } else {
-      AdapterViewAnimator animator =
-          new AdapterViewAnimator(adapterView, new DefaultAdapterAnimator());
-      ((CursorAdapter) getAdapter()).changeCursor(cursor);
-      animator.animate();
+      ((RecyclerCursorAdapter) getAdapter()).changeCursor(cursor);
     }
   }
 

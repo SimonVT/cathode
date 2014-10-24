@@ -21,9 +21,6 @@ import android.os.Bundle;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.ui.BaseActivity;
@@ -32,9 +29,11 @@ import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
 
 public class ShowsCollectionFragment extends ShowsFragment {
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
-    return inflater.inflate(R.layout.fragment_shows_collection, container, false);
+  @Override public void onCreate(Bundle inState) {
+    super.onCreate(inState);
+    setEmptyText(R.string.empty_show_collection);
   }
+
 
   @Override public String getTitle() {
     return getResources().getString(R.string.title_shows_collection);

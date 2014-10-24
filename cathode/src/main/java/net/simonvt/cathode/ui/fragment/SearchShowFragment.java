@@ -24,13 +24,10 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
@@ -49,14 +46,13 @@ import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
+import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.util.ShowSearchHandler;
-import net.simonvt.cathode.widget.AdapterViewAnimator;
-import net.simonvt.cathode.widget.DefaultAdapterAnimator;
 
-public class SearchShowFragment extends AbsAdapterFragment
-    implements LoaderManager.LoaderCallbacks<Cursor>, ListDialog.Callback {
+public class SearchShowFragment extends GridRecyclerViewFragment<ShowDescriptionAdapter.ViewHolder>
+    implements LoaderManager.LoaderCallbacks<Cursor>, ListDialog.Callback, ShowClickListener {
 
   private enum SortBy {
     TITLE("title", Shows.SORT_TITLE),
@@ -120,6 +116,10 @@ public class SearchShowFragment extends AbsAdapterFragment
 
   private SortBy sortBy;
 
+  private int columnCount;
+
+  private Cursor cursor;
+
   public static Bundle getArgs(String query) {
     Bundle args = new Bundle();
     args.putString(ARGS_QUERY, query);
@@ -157,6 +157,8 @@ public class SearchShowFragment extends AbsAdapterFragment
     bus.register(this);
 
     setHasOptionsMenu(true);
+
+    columnCount = getResources().getInteger(R.integer.showsColumns);
   }
 
   @Override public void onSaveInstanceState(Bundle outState) {
@@ -164,8 +166,8 @@ public class SearchShowFragment extends AbsAdapterFragment
     outState.putString(STATE_QUERY, query);
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
-    return inflater.inflate(R.layout.fragment_shows_watched, container, false);
+  @Override protected int getColumnCount() {
+    return columnCount;
   }
 
   @Override public void onDestroy() {
@@ -241,9 +243,8 @@ public class SearchShowFragment extends AbsAdapterFragment
     bus.post(new OnTitleChangedEvent());
   }
 
-  @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
-    Cursor c = (Cursor) getAdapter().getItem(position);
-    navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)),
+  @Override public void onShowClick(View view, int position, long id) {
+    navigationListener.onDisplayShow(id, cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE)),
         LibraryType.WATCHED);
   }
 
@@ -263,16 +264,14 @@ public class SearchShowFragment extends AbsAdapterFragment
   }
 
   private void setCursor(Cursor cursor) {
+    this.cursor = cursor;
     if (showsAdapter == null) {
-      showsAdapter = new ShowDescriptionAdapter(getActivity(), cursor);
+      showsAdapter = new ShowDescriptionAdapter(getActivity(), this, cursor);
       setAdapter(showsAdapter);
       return;
     }
 
-    AdapterViewAnimator animator =
-        new AdapterViewAnimator(adapterView, new DefaultAdapterAnimator());
     showsAdapter.changeCursor(cursor);
-    animator.animate();
   }
 
   @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {

@@ -21,15 +21,15 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -63,6 +63,7 @@ import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.HiddenPaneLayout;
 import net.simonvt.cathode.widget.ObservableScrollView;
 import net.simonvt.cathode.widget.OverflowView;
+import net.simonvt.cathode.widget.RecyclerViewManager;
 import net.simonvt.cathode.widget.RemoteImageView;
 import timber.log.Timber;
 
@@ -80,9 +81,8 @@ public class ShowFragment extends ProgressFragment {
   private static final String[] SHOW_PROJECTION = new String[] {
       ShowColumns.TITLE, ShowColumns.YEAR, ShowColumns.AIR_TIME, ShowColumns.AIR_DAY,
       ShowColumns.NETWORK, ShowColumns.CERTIFICATION, ShowColumns.POSTER, ShowColumns.FANART,
-      ShowColumns.RATING, ShowColumns.RATING, ShowColumns.OVERVIEW,
-      ShowColumns.IN_WATCHLIST, ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT,
-      ShowColumns.HIDDEN,
+      ShowColumns.RATING, ShowColumns.RATING, ShowColumns.OVERVIEW, ShowColumns.IN_WATCHLIST,
+      ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT, ShowColumns.HIDDEN,
   };
 
   private static final String[] EPISODE_PROJECTION = new String[] {
@@ -100,9 +100,10 @@ public class ShowFragment extends ProgressFragment {
 
   @InjectView(R.id.hiddenPaneLayout) HiddenPaneLayout hiddenPaneLayout;
 
-  @InjectView(R.id.seasons) ListView seasons;
+  @InjectView(R.id.seasons) RecyclerView seasons;
   @InjectView(R.id.seasonsEmpty) View seasonsEmpty;
   private SeasonsAdapter seasonsAdapter;
+  private Cursor seasonsCursor;
 
   @InjectView(R.id.scrollView) ObservableScrollView scrollView;
 
@@ -172,6 +173,8 @@ public class ShowFragment extends ProgressFragment {
 
   private LibraryType type;
 
+  RecyclerViewManager seasonsManager;
+
   public static Bundle getArgs(long showId, String title, LibraryType type) {
     Bundle args = new Bundle();
     args.putLong(ARG_SHOWID, showId);
@@ -201,7 +204,12 @@ public class ShowFragment extends ProgressFragment {
     showTitle = args.getString(ARG_TITLE);
     type = (LibraryType) args.getSerializable(ARG_TYPE);
 
-    seasonsAdapter = new SeasonsAdapter(getActivity(), type);
+    seasonsAdapter = new SeasonsAdapter(getActivity(), new SeasonsAdapter.SeasonClickListener() {
+      @Override public void onSeasonClick(View view, int position, long id) {
+        navigationCallbacks.onDisplaySeason(showId, id, showTitle, seasonsCursor.getInt(
+            seasonsCursor.getColumnIndex(DatabaseContract.SeasonColumns.SEASON)), type);
+      }
+    }, type);
   }
 
   @Override public String getTitle() {
@@ -230,16 +238,10 @@ public class ShowFragment extends ProgressFragment {
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-    seasons.setEmptyView(seasonsEmpty);
+    seasonsManager =
+        new RecyclerViewManager(seasons, new LinearLayoutManager(getActivity()), seasonsEmpty);
+    seasonsManager.setAdapter(seasonsAdapter);
     seasons.setAdapter(seasonsAdapter);
-    seasons.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-      @Override
-      public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        Cursor c = (Cursor) seasonsAdapter.getItem(position);
-        navigationCallbacks.onDisplaySeason(showId, id, showTitle,
-            c.getInt(c.getColumnIndex(DatabaseContract.SeasonColumns.SEASON)), type);
-      }
-    });
 
     seasonsEmpty.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
@@ -756,10 +758,12 @@ public class ShowFragment extends ProgressFragment {
         }
 
         @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
+          seasonsCursor = data;
           seasonsAdapter.changeCursor(data);
         }
 
         @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
+          seasonsCursor = null;
           seasonsAdapter.changeCursor(null);
         }
       };

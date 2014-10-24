@@ -168,27 +168,24 @@
   <string name="navigation_movies_trending">Trending</string>
   <string name="navigation_movies_recommendations">Recommendations</string>
 
-  <string name="show_upcoming_empty">No upcoming episodes. Use the search button to find some new
+  <string name="empty_show_upcoming">No upcoming episodes. Use the search button to find some new
     shows to watch.
   </string>
-  <string name="show_watched_empty">No watched shows. Find any shows you\'ve watched by using the
+  <string name="empty_show_watched">No watched shows. Find any shows you\'ve watched by using the
     search button.
   </string>
-  <string name="show_collection_empty">Your collection is empty. Find your shows by using the search
+  <string name="empty_show_collection">Your collection is empty. Find your shows by using the search
     button.
   </string>
-  <string name="show_watchlist_empty">Add shows to the watchlist that you\'d like to watch, but just
+  <string name="empty_show_watchlist">Add shows to the watchlist that you\'d like to watch, but just
     haven\'t had the time for.
   </string>
-  <string name="episode_Watchlist_empty">Add episodes to the watchlist that you\'d like to watch,
-    but just haven\'t had the time for.
+  <string name="empty_movie_watched">Find movies you\'ve watched by using the search button.
   </string>
-  <string name="movie_watched_empty">Find movies you\'ve watched by using the search button.
-  </string>
-  <string name="movie_collection_empty">Your collection is empty. Find movies by using the search
+  <string name="empty_movie_collection">Your collection is empty. Find movies by using the search
     button.
   </string>
-  <string name="movie_Watchlist_empty">Add movies to the watchlist that you\'d like to watch, but
+  <string name="empty_movie_watchlist">Add movies to the watchlist that you\'d like to watch, but
     just haven\'t had the time for.
   </string>
 

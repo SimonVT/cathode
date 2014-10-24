@@ -24,15 +24,10 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,16 +44,15 @@ import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
+import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
 import net.simonvt.cathode.ui.adapter.ShowRecommendationsAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
-import net.simonvt.cathode.widget.AdapterViewAnimator;
-import net.simonvt.cathode.widget.AnimatorHelper;
-import net.simonvt.cathode.widget.DefaultAdapterAnimator;
 
-public class ShowRecommendationsFragment extends AbsAdapterFragment
+public class ShowRecommendationsFragment
+    extends GridRecyclerViewFragment<ShowDescriptionAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<MutableCursor>,
-    ShowRecommendationsAdapter.DismissListener, ListDialog.Callback {
+    ShowRecommendationsAdapter.DismissListener, ListDialog.Callback, ShowClickListener {
 
   private enum SortBy {
     RELEVANCE("relevance", Shows.SORT_RECOMMENDED),
@@ -115,6 +109,8 @@ public class ShowRecommendationsFragment extends AbsAdapterFragment
 
   private SortBy sortBy;
 
+  private int columnCount;
+
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
@@ -137,14 +133,16 @@ public class ShowRecommendationsFragment extends AbsAdapterFragment
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOWS_RECOMMENDATIONS, null, this);
 
     isTablet = getResources().getBoolean(R.bool.isTablet);
+
+    columnCount = getResources().getInteger(R.integer.showsColumns);
   }
 
   @Override public String getTitle() {
     return getResources().getString(R.string.title_shows_recommendations);
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
-    return inflater.inflate(R.layout.fragment_shows_watched, container, false);
+  @Override protected int getColumnCount() {
+    return columnCount;
   }
 
   @Override public void onViewCreated(View view, Bundle inState) {
@@ -197,9 +195,8 @@ public class ShowRecommendationsFragment extends AbsAdapterFragment
     }
   }
 
-  @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
-    Cursor c = (Cursor) getAdapter().getItem(position);
-    navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)),
+  @Override public void onShowClick(View view, int position, long id) {
+    navigationListener.onDisplayShow(id, cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE)),
         LibraryType.WATCHED);
   }
 
@@ -208,34 +205,20 @@ public class ShowRecommendationsFragment extends AbsAdapterFragment
     MutableCursorLoader cursorLoader = (MutableCursorLoader) loader;
     cursorLoader.throttle(2000);
 
-    if (isTablet) {
-      AnimatorHelper.removeView((GridView) getAdapterView(), view, animatorCallback);
-    } else {
-      AnimatorHelper.removeView((ListView) getAdapterView(), view, animatorCallback);
-    }
+    cursor.remove(position);
+    showsAdapter.notifyDataSetChanged();
   }
-
-  private AnimatorHelper.Callback animatorCallback = new AnimatorHelper.Callback() {
-    @Override public void removeItem(int position) {
-      cursor.remove(position);
-    }
-
-    @Override public void onAnimationEnd() {
-    }
-  };
 
   private void setCursor(Cursor c) {
     cursor = (MutableCursor) c;
+
     if (showsAdapter == null) {
-      showsAdapter = new ShowRecommendationsAdapter(getActivity(), cursor, this);
+      showsAdapter = new ShowRecommendationsAdapter(getActivity(), this, cursor, this);
       setAdapter(showsAdapter);
       return;
     }
 
-    AdapterViewAnimator animator =
-        new AdapterViewAnimator(adapterView, new DefaultAdapterAnimator());
     showsAdapter.changeCursor(cursor);
-    animator.animate();
   }
 
   @Override public Loader<MutableCursor> onCreateLoader(int i, Bundle bundle) {

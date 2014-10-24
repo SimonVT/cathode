@@ -17,7 +17,7 @@ package net.simonvt.cathode.ui.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v4.widget.CursorAdapter;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +35,8 @@ import net.simonvt.cathode.widget.IndicatorView;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
-public class ShowDescriptionAdapter extends CursorAdapter {
+public class ShowDescriptionAdapter
+    extends RecyclerCursorAdapter<ShowDescriptionAdapter.ViewHolder> {
 
   private static final String TAG = "ShowDescriptionAdapter";
 
@@ -53,45 +54,26 @@ public class ShowDescriptionAdapter extends CursorAdapter {
 
   @Inject ShowTaskScheduler showScheduler;
 
-  public ShowDescriptionAdapter(Context context, Cursor cursor) {
-    super(context, cursor, 0);
+  private ShowClickListener listener;
+
+  public ShowDescriptionAdapter(Context context, ShowClickListener listener, Cursor cursor) {
+    super(context, cursor);
     CathodeApp.inject(context, this);
+    this.listener = listener;
   }
 
-  @Override public View newView(Context context, Cursor cursor, ViewGroup parent) {
-    View v = LayoutInflater.from(context).inflate(R.layout.list_row_show_description, parent, false);
-    v.setTag(new ViewHolder(v));
-    return v;
-  }
+  @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    View v = LayoutInflater.from(getContext())
+        .inflate(R.layout.list_row_show_description, parent, false);
+    final ViewHolder holder = new ViewHolder(v);
 
-  @Override public void bindView(final View view, Context context, final Cursor cursor) {
-    ViewHolder vh = (ViewHolder) view.getTag();
-    final int position = cursor.getPosition();
+    v.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        listener.onShowClick(v, holder.getPosition(), holder.getItemId());
+      }
+    });
 
-    final long id = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
-    final boolean watched =
-        cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHED_COUNT)) > 0;
-    final boolean inCollection =
-        cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT)) > 1;
-    final boolean inWatchlist =
-        cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
-    final int rating =
-        cursor.getInt(cursor.getColumnIndex(ShowColumns.RATING));
-
-    vh.indicator.setWatched(watched);
-    vh.indicator.setCollected(inCollection);
-    vh.indicator.setInWatchlist(inWatchlist);
-
-    vh.poster.setImage(cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER)));
-    vh.title.setText(cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE)));
-    vh.overview.setText(cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW)));
-
-    vh.rating.setValue(rating);
-
-    vh.overflow.removeItems();
-    setupOverflowItems(vh.overflow, inWatchlist);
-
-    vh.overflow.setListener(new OverflowView.OverflowActionListener() {
+    holder.overflow.setListener(new OverflowView.OverflowActionListener() {
       @Override public void onPopupShown() {
       }
 
@@ -99,9 +81,33 @@ public class ShowDescriptionAdapter extends CursorAdapter {
       }
 
       @Override public void onActionSelected(int action) {
-        onOverflowActionSelected(view, id, action, position);
+        onOverflowActionSelected(holder.itemView, holder.getItemId(), action, holder.getPosition());
       }
     });
+
+    return holder;
+  }
+
+  @Override protected void onBindViewHolder(final ViewHolder holder, Cursor cursor, int position) {
+    final long id = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
+    final boolean watched = cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHED_COUNT)) > 0;
+    final boolean inCollection =
+        cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT)) > 1;
+    final boolean inWatchlist = cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
+    final int rating = cursor.getInt(cursor.getColumnIndex(ShowColumns.RATING));
+
+    holder.indicator.setWatched(watched);
+    holder.indicator.setCollected(inCollection);
+    holder.indicator.setInWatchlist(inWatchlist);
+
+    holder.poster.setImage(cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER)));
+    holder.title.setText(cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE)));
+    holder.overview.setText(cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW)));
+
+    holder.rating.setValue(rating);
+
+    holder.overflow.removeItems();
+    setupOverflowItems(holder.overflow, inWatchlist);
   }
 
   protected void setupOverflowItems(OverflowView overflow, boolean inWatchlist) {
@@ -128,7 +134,7 @@ public class ShowDescriptionAdapter extends CursorAdapter {
     showScheduler.setIsInWatchlist(id, false);
   }
 
-  static class ViewHolder {
+  public static class ViewHolder extends RecyclerView.ViewHolder {
 
     @InjectView(R.id.poster) RemoteImageView poster;
     @InjectView(R.id.indicator) IndicatorView indicator;
@@ -138,6 +144,7 @@ public class ShowDescriptionAdapter extends CursorAdapter {
     @InjectView(R.id.rating) CircularProgressIndicator rating;
 
     ViewHolder(View v) {
+      super(v);
       ButterKnife.inject(this, v);
     }
   }

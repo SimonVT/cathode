@@ -20,13 +20,13 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.database.Cursor;
+import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.TextAppearanceSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import butterknife.ButterKnife;
@@ -39,7 +39,12 @@ import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.widget.OverflowView;
 
-public class SeasonsAdapter extends CursorAdapter {
+public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHolder> {
+
+  public interface SeasonClickListener {
+
+    void onSeasonClick(View view, int position, long id);
+  }
 
   public static final String[] PROJECTION = new String[] {
       SeasonColumns.ID, SeasonColumns.AIRDATE_COUNT, SeasonColumns.UNAIRED_COUNT,
@@ -51,25 +56,102 @@ public class SeasonsAdapter extends CursorAdapter {
 
   private Resources resources;
 
+  private SeasonClickListener clickListener;
+
   private LibraryType type;
 
-  public SeasonsAdapter(Context context, LibraryType type) {
-    super(context, null, 0);
+  public SeasonsAdapter(Context context, SeasonClickListener clickListener, LibraryType type) {
+    super(context, null);
     CathodeApp.inject(context, this);
     resources = context.getResources();
+    this.clickListener = clickListener;
     this.type = type;
   }
 
-  @Override public View newView(Context context, Cursor cursor, ViewGroup parent) {
-    View v = LayoutInflater.from(context).inflate(R.layout.list_row_season, parent, false);
+  @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewGroup) {
+    View v = LayoutInflater.from(getContext()).inflate(R.layout.list_row_season, parent, false);
 
-    ViewHolder vh = new ViewHolder(v);
-    v.setTag(vh);
+    final ViewHolder holder = new ViewHolder(v);
 
-    return v;
+    v.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        clickListener.onSeasonClick(holder.itemView, holder.getPosition(), holder.getItemId());
+      }
+    });
+
+    return holder;
   }
 
-  private void bindWatched(Context context, ViewHolder vh, Cursor cursor) {
+  @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
+    final int seasonId = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.ID));
+    final int seasonNumber = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.SEASON));
+    final int airdateCount =
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.AIRDATE_COUNT));
+    final int unairedCount =
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.UNAIRED_COUNT));
+    final int airedCount = airdateCount - unairedCount;
+    final int collectedCount =
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.IN_COLLECTION_COUNT));
+    final int watchedCount =
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.WATCHED_COUNT));
+
+    switch (type) {
+      case WATCHLIST:
+      case WATCHED:
+        bindWatched(getContext(), holder, cursor);
+        break;
+
+      case COLLECTION:
+        bindCollection(getContext(), holder, cursor);
+        break;
+    }
+
+    holder.overflow.removeItems();
+    if (airedCount - watchedCount > 0) {
+      holder.overflow.addItem(R.id.action_watched, R.string.action_watched);
+    }
+    if (watchedCount > 0) {
+      holder.overflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
+    }
+    if (airedCount - collectedCount > 0) {
+      holder.overflow.addItem(R.id.action_collection_add, R.string.action_collection_add);
+    }
+    if (collectedCount > 0) {
+      holder.overflow.addItem(R.id.action_collection_remove, R.string.action_collection_remove);
+    }
+
+    holder.title.setText(
+        resources.getQuantityString(R.plurals.season_x, seasonNumber, seasonNumber));
+    holder.overflow.setListener(new OverflowView.OverflowActionListener() {
+      @Override public void onPopupShown() {
+      }
+
+      @Override public void onPopupDismissed() {
+      }
+
+      @Override public void onActionSelected(int action) {
+        switch (action) {
+          case R.id.action_watched:
+            seasonScheduler.setWatched(seasonId, true);
+            break;
+
+          case R.id.action_unwatched:
+            seasonScheduler.setWatched(seasonId, false);
+            break;
+
+          case R.id.action_collection_add:
+            seasonScheduler.setInCollection(seasonId, true);
+            break;
+
+          case R.id.action_collection_remove:
+            seasonScheduler.setInCollection(seasonId, false);
+            break;
+        }
+      }
+    });
+  }
+
+  private void bindWatched(Context context, ViewHolder holder, Cursor cursor) {
     final int airdateCount =
         cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.AIRDATE_COUNT));
     final int unairedCount =
@@ -79,8 +161,8 @@ public class SeasonsAdapter extends CursorAdapter {
     int toWatch = airdateCount - unairedCount - watchedCount;
     toWatch = Math.max(toWatch, 0); // TODO: Query watched, aired, episodes instead
 
-    vh.progress.setMax(airdateCount);
-    vh.progress.setProgress(watchedCount);
+    holder.progress.setMax(airdateCount);
+    holder.progress.setProgress(watchedCount);
 
     TypedArray a = context.obtainStyledAttributes(new int[] {
         android.R.attr.textColorPrimary, android.R.attr.textColorSecondary,
@@ -111,10 +193,10 @@ public class SeasonsAdapter extends CursorAdapter {
           unwatched.length() + unaired.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
-    vh.summary.setText(ssb.toString());
+    holder.summary.setText(ssb.toString());
   }
 
-  private void bindCollection(Context context, ViewHolder vh, Cursor cursor) {
+  private void bindCollection(Context context, ViewHolder holder, Cursor cursor) {
     final int airdateCount =
         cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.AIRDATE_COUNT));
     final int unairedCount =
@@ -124,8 +206,8 @@ public class SeasonsAdapter extends CursorAdapter {
     int toCollect = airdateCount - unairedCount - collectedCount;
     toCollect = Math.max(toCollect, 0); // TODO: Query collected, aired, episodes instead
 
-    vh.progress.setMax(airdateCount);
-    vh.progress.setProgress(collectedCount);
+    holder.progress.setMax(airdateCount);
+    holder.progress.setProgress(collectedCount);
 
     String uncollected;
     if (toCollect == 0) {
@@ -133,80 +215,10 @@ public class SeasonsAdapter extends CursorAdapter {
     } else {
       uncollected = resources.getString(R.string.x_uncollected, toCollect);
     }
-    vh.summary.setText(uncollected);
+    holder.summary.setText(uncollected);
   }
 
-  @Override public void bindView(View view, Context context, Cursor cursor) {
-    ViewHolder vh = (ViewHolder) view.getTag();
-
-    final int seasonId = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.ID));
-    final int seasonNumber = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.SEASON));
-    final int airdateCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.AIRDATE_COUNT));
-    final int unairedCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.UNAIRED_COUNT));
-    final int airedCount = airdateCount - unairedCount;
-    final int collectedCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.IN_COLLECTION_COUNT));
-    final int watchedCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.WATCHED_COUNT));
-
-    switch (type) {
-      case WATCHLIST:
-      case WATCHED:
-        bindWatched(context, vh, cursor);
-        break;
-
-      case COLLECTION:
-        bindCollection(context, vh, cursor);
-        break;
-    }
-
-    vh.overflow.removeItems();
-    if (airedCount - watchedCount > 0) {
-      vh.overflow.addItem(R.id.action_watched, R.string.action_watched);
-    }
-    if (watchedCount > 0) {
-      vh.overflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
-    }
-    if (airedCount - collectedCount > 0) {
-      vh.overflow.addItem(R.id.action_collection_add, R.string.action_collection_add);
-    }
-    if (collectedCount > 0) {
-      vh.overflow.addItem(R.id.action_collection_remove, R.string.action_collection_remove);
-    }
-
-    vh.title.setText(resources.getQuantityString(R.plurals.season_x, seasonNumber, seasonNumber));
-    vh.overflow.setListener(new OverflowView.OverflowActionListener() {
-      @Override public void onPopupShown() {
-      }
-
-      @Override public void onPopupDismissed() {
-      }
-
-      @Override public void onActionSelected(int action) {
-        switch (action) {
-          case R.id.action_watched:
-            seasonScheduler.setWatched(seasonId, true);
-            break;
-
-          case R.id.action_unwatched:
-            seasonScheduler.setWatched(seasonId, false);
-            break;
-
-          case R.id.action_collection_add:
-            seasonScheduler.setInCollection(seasonId, true);
-            break;
-
-          case R.id.action_collection_remove:
-            seasonScheduler.setInCollection(seasonId, false);
-            break;
-        }
-      }
-    });
-  }
-
-  static class ViewHolder {
+  static class ViewHolder extends RecyclerView.ViewHolder {
 
     @InjectView(R.id.title) TextView title;
     @InjectView(R.id.progress) ProgressBar progress;
@@ -214,6 +226,7 @@ public class SeasonsAdapter extends CursorAdapter {
     @InjectView(R.id.overflow) OverflowView overflow;
 
     ViewHolder(View v) {
+      super(v);
       ButterKnife.inject(this, v);
       overflow.addItem(R.id.action_watched, R.string.action_watched);
       overflow.addItem(R.id.action_unwatched, R.string.action_unwatched);

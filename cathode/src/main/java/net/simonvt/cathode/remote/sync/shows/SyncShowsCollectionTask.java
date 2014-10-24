@@ -64,7 +64,7 @@ public class SyncShowsCollectionTask extends TraktTask {
 
         boolean didShowExist = true;
         long showId = ShowWrapper.getShowId(resolver, traktId);
-        if (ShowWrapper.exists(resolver, traktId)) {
+        if (showId == -1L) {
           didShowExist = false;
           showId = ShowWrapper.createShow(resolver, traktId);
           queueTask(new SyncShowTask(traktId));

@@ -80,6 +80,7 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
 
   public UpcomingAdapter(FragmentActivity activity, OnItemClickListener onItemClickListener,
       OnRemoveListener onRemoveListener) {
+    super();
     this.activity = activity;
     this.onItemClickListener = onItemClickListener;
     this.onRemoveListener = onRemoveListener;

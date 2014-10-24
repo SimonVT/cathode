@@ -19,7 +19,7 @@
     android:layout_height="match_parent"
     android:layout_width="260dp">
 
-  <ListView
+  <android.support.v7.widget.RecyclerView
       android:id="@+id/seasons"
       android:layout_height="match_parent"
       android:layout_width="match_parent"

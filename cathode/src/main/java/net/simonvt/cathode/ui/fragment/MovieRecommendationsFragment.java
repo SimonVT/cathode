@@ -17,21 +17,15 @@ package net.simonvt.cathode.ui.fragment;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,13 +42,11 @@ import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.adapter.MovieRecommendationsAdapter;
+import net.simonvt.cathode.ui.adapter.MoviesAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
-import net.simonvt.cathode.widget.AdapterViewAnimator;
-import net.simonvt.cathode.widget.AnimatorHelper;
-import net.simonvt.cathode.widget.DefaultAdapterAnimator;
 
-public class MovieRecommendationsFragment extends AbsAdapterFragment
-    implements LoaderManager.LoaderCallbacks<MutableCursor>,
+public class MovieRecommendationsFragment extends GridRecyclerViewFragment<MoviesAdapter.ViewHolder>
+    implements LoaderManager.LoaderCallbacks<MutableCursor>, MoviesAdapter.MovieClickListener,
     MovieRecommendationsAdapter.DismissListener, ListDialog.Callback {
 
   private enum SortBy {
@@ -102,8 +94,6 @@ public class MovieRecommendationsFragment extends AbsAdapterFragment
 
   private MoviesNavigationListener navigationListener;
 
-  private boolean isTablet;
-
   private MovieRecommendationsAdapter movieAdapter;
 
   private MutableCursor cursor;
@@ -111,6 +101,8 @@ public class MovieRecommendationsFragment extends AbsAdapterFragment
   private SharedPreferences settings;
 
   private SortBy sortBy;
+
+  private int columnCount;
 
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
@@ -134,15 +126,15 @@ public class MovieRecommendationsFragment extends AbsAdapterFragment
 
     getLoaderManager().initLoader(BaseActivity.LOADER_MOVIES_RECOMMENDATIONS, null, this);
 
-    isTablet = getResources().getBoolean(R.bool.isTablet);
+    columnCount = getResources().getInteger(R.integer.movieColumns);
+  }
+
+  @Override protected int getColumnCount() {
+    return columnCount;
   }
 
   @Override public String getTitle() {
     return getResources().getString(R.string.title_movies_recommendations);
-  }
-
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
-    return inflater.inflate(R.layout.fragment_list_cards, container, false);
   }
 
   @Override public void onViewCreated(View view, Bundle inState) {
@@ -197,9 +189,9 @@ public class MovieRecommendationsFragment extends AbsAdapterFragment
     }
   }
 
-  @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
-    Cursor c = (Cursor) getAdapter().getItem(position);
-    navigationListener.onDisplayMovie(id, c.getString(c.getColumnIndex(MovieColumns.TITLE)));
+  @Override public void onMovieClicked(View view, int position, long movieId) {
+    navigationListener.onDisplayMovie(movieId,
+        cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE)));
   }
 
   @Override public void onDismissItem(final View view, final int position) {
@@ -207,34 +199,19 @@ public class MovieRecommendationsFragment extends AbsAdapterFragment
     MutableCursorLoader cursorLoader = (MutableCursorLoader) loader;
     cursorLoader.throttle(2000);
 
-    if (isTablet) {
-      AnimatorHelper.removeView((GridView) getAdapterView(), view, animatorCallback);
-    } else {
-      AnimatorHelper.removeView((ListView) getAdapterView(), view, animatorCallback);
-    }
+    cursor.remove(position);
+    movieAdapter.notifyDataSetChanged();
   }
-
-  private AnimatorHelper.Callback animatorCallback = new AnimatorHelper.Callback() {
-    @Override public void removeItem(int position) {
-      cursor.remove(position);
-    }
-
-    @Override public void onAnimationEnd() {
-    }
-  };
 
   protected void setCursor(MutableCursor c) {
     this.cursor = c;
     if (movieAdapter == null) {
-      movieAdapter = new MovieRecommendationsAdapter(getActivity(), c, this);
+      movieAdapter = new MovieRecommendationsAdapter(getActivity(), this, c, this);
       setAdapter(movieAdapter);
       return;
     }
 
-    AdapterViewAnimator animator =
-        new AdapterViewAnimator(adapterView, new DefaultAdapterAnimator());
     movieAdapter.changeCursor(c);
-    animator.animate();
   }
 
   @Override public Loader<MutableCursor> onCreateLoader(int i, Bundle bundle) {

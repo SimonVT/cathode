@@ -21,14 +21,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.CursorAdapter;
+import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -97,10 +95,6 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
     return getResources().getString(R.string.title_movies_trending);
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
-    return inflater.inflate(R.layout.fragment_list_cards, container, false);
-  }
-
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
     setEmptyText(R.string.movies_loading_trending);
@@ -142,8 +136,8 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
     }
   }
 
-  @Override protected CursorAdapter getAdapter(Cursor cursor) {
-    return new MoviesAdapter(getActivity(), cursor, R.layout.list_row_movie_rating);
+  protected RecyclerView.Adapter<MoviesAdapter.ViewHolder> getAdapter(Cursor cursor) {
+    return new MoviesAdapter(getActivity(), this, cursor, R.layout.list_row_movie_rating);
   }
 
   @Override protected int getLoaderId() {

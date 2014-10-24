@@ -29,8 +29,9 @@ public class ShowRecommendationsAdapter extends ShowDescriptionAdapter {
 
   private DismissListener listener;
 
-  public ShowRecommendationsAdapter(Context context, Cursor cursor, DismissListener listener) {
-    super(context, cursor);
+  public ShowRecommendationsAdapter(Context context, ShowClickListener clickListener, Cursor cursor,
+      DismissListener listener) {
+    super(context, clickListener, cursor);
     this.listener = listener;
   }
 

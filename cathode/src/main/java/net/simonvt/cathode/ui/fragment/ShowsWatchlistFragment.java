@@ -21,14 +21,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -44,16 +43,19 @@ import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
+import net.simonvt.cathode.ui.adapter.HeaderSpanLookup;
 import net.simonvt.cathode.ui.adapter.ShowWatchlistAdapter;
-import net.simonvt.cathode.widget.HeaderGridLayoutManager;
-import net.simonvt.cathode.widget.ScalingItemAnimator;
 
-public class ShowsWatchlistFragment extends RecyclerViewFragment<RecyclerView.ViewHolder>
+public class ShowsWatchlistFragment extends GridRecyclerViewFragment<RecyclerView.ViewHolder>
     implements ShowWatchlistAdapter.RemoveListener, ShowWatchlistAdapter.OnItemClickListener {
 
   @Inject TraktTaskQueue queue;
 
   private ShowsNavigationListener navigationListener;
+
+  private int columnCount;
+
+  private ShowWatchlistAdapter adapter;
 
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
@@ -72,23 +74,22 @@ public class ShowsWatchlistFragment extends RecyclerViewFragment<RecyclerView.Vi
 
     getLoaderManager().initLoader(HomeActivity.LOADER_SHOWS_WATCHLIST, null, showsCallback);
     getLoaderManager().initLoader(HomeActivity.LOADER_EPISODES_WATCHLIST, null, episodeCallback);
+
+    columnCount = getResources().getInteger(R.integer.showsColumns);
+
+    setEmptyText(R.string.empty_show_watchlist);
   }
 
   @Override public String getTitle() {
     return getResources().getString(R.string.title_shows_watchlist);
   }
 
-  @Override protected RecyclerView.LayoutManager getLayoutManager() {
-    final int columnCount = getResources().getInteger(R.integer.showsColumns);
-    return new HeaderGridLayoutManager(getActivity(), columnCount);
+  @Override protected int getColumnCount() {
+    return columnCount;
   }
 
-  @Override protected RecyclerView.ItemAnimator getItemAnimator() {
-    return new ScalingItemAnimator();
-  }
-
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
-    return inflater.inflate(R.layout.fragment_shows_watchlist, container, false);
+  @Override protected GridLayoutManager.SpanSizeLookup getSpanSizeLookup() {
+    return new HeaderSpanLookup(ensureAdapter(), columnCount);
   }
 
   @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -141,23 +142,30 @@ public class ShowsWatchlistFragment extends RecyclerViewFragment<RecyclerView.Vi
     ((ShowWatchlistAdapter) getAdapter()).notifyChanged();
   }
 
-  private void ensureAdapter() {
-    if (getAdapter() == null) {
-      ShowWatchlistAdapter adapter = new ShowWatchlistAdapter(getActivity(), this, this);
+  private ShowWatchlistAdapter ensureAdapter() {
+    if (adapter == null) {
+      adapter = new ShowWatchlistAdapter(getActivity(), this, this);
       adapter.addHeader(R.string.header_shows);
       adapter.addHeader(R.string.header_episodes);
-      setAdapter(adapter);
     }
+
+    return adapter;
   }
 
   private void setShowCursor(Cursor cursor) {
-    ensureAdapter();
+    if (getAdapter() == null) {
+      setAdapter(ensureAdapter());
+    }
+
     throttleLoaders();
     ((ShowWatchlistAdapter) getAdapter()).updateCursorForHeader(R.string.header_shows, cursor);
   }
 
   private void setEpisodeCursor(Cursor cursor) {
-    ensureAdapter();
+    if (getAdapter() == null) {
+      setAdapter(ensureAdapter());
+    }
+
     throttleLoaders();
     ((ShowWatchlistAdapter) getAdapter()).updateCursorForHeader(R.string.header_episodes, cursor);
   }
