@@ -22,8 +22,6 @@ import timber.log.Timber;
 public class UiController implements ShowsNavigationListener, MoviesNavigationListener,
     NavigationFragment.OnMenuClickListener {
 
-  private static final String TAG = "UiController";
-
   static final String FRAGMENT_LOGIN = "net.simonvt.cathode.ui.HomeActivity.loginFragment";
   static final String FRAGMENT_NAVIGATION =
       "net.simonvt.cathode.ui.HomeActivity.navigationFragment";

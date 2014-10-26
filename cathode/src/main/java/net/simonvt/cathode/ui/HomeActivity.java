@@ -52,8 +52,6 @@ public class HomeActivity extends BaseActivity
     implements NavigationFragment.OnMenuClickListener, ShowsNavigationListener,
     MoviesNavigationListener {
 
-  private static final String TAG = "HomeActivity";
-
   private static final String STATE_LOGIN_CONTROLLER =
       "net.simonvt.cathode.ui.HomeActivity.loginController";
   private static final String STATE_UICONTROLLER =

@@ -39,8 +39,6 @@ import net.simonvt.cathode.ui.adapter.SeasonAdapter;
 public class SeasonFragment extends GridRecyclerViewFragment<SeasonAdapter.ViewHolder>
     implements SeasonAdapter.EpisodeClickListener {
 
-  private static final String TAG = "SeasonFragment";
-
   private static final String ARG_SHOW_ID = "net.simonvt.cathode.ui.fragment.SeasonFragment.showId";
   private static final String ARG_SEASONID =
       "net.simonvt.cathode.ui.fragment.SeasonFragment.seasonId";

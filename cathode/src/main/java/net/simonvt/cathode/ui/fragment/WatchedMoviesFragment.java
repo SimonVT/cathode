@@ -27,8 +27,6 @@ import net.simonvt.cathode.ui.BaseActivity;
 
 public class WatchedMoviesFragment extends MoviesFragment {
 
-  private static final String TAG = "WatchedMoviesFragment";
-
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
     setEmptyText(R.string.empty_movie_watched);

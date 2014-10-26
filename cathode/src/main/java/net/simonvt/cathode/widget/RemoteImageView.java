@@ -46,8 +46,6 @@ import timber.log.Timber;
  */
 public class RemoteImageView extends View implements Target {
 
-  private static final String TAG = "RemoteImageView";
-
   private static final float ANIMATION_DURATION = 300.0f;
 
   private static final int MEASUREMENT_HEIGHT = 0;

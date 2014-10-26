@@ -22,8 +22,6 @@ public class SearchFailureEvent {
     MOVIE,
   }
 
-  private static final String TAG = "SearchFailureEvent";
-
   private Type type;
 
   public SearchFailureEvent(Type type) {

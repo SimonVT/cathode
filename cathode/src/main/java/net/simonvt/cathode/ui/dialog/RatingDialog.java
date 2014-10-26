@@ -39,8 +39,6 @@ public class RatingDialog extends DialogFragment {
     MOVIE,
   }
 
-  private static final String TAG = "RatingDialog";
-
   private static final String ARG_TYPE = "net.simonvt.cathode.ui.dialog.RatingDialog.type";
   private static final String ARG_ID = "net.simonvt.cathode.ui.dialog.RatingDialog.id";
   private static final String ARG_RATING = "net.simonvt.cathode.ui.dialog.RatingDialog.rating";

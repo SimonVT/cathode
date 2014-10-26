@@ -69,8 +69,6 @@ import timber.log.Timber;
 
 public class ShowFragment extends ProgressFragment {
 
-  private static final String TAG = "ShowFragment";
-
   private static final String ARG_SHOWID = "net.simonvt.cathode.ui.fragment.ShowFragment.showId";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.fragment.ShowFragment.title";
   private static final String ARG_TYPE = "net.simonvt.cathode.ui.fragment.ShowFragment.type";

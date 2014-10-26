@@ -38,8 +38,6 @@ import retrofit.RetrofitError;
 
 public class MovieSearchHandler {
 
-  private static final String TAG = "MovieSearchHandler";
-
   private Context context;
 
   private Bus bus;

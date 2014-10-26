@@ -24,8 +24,6 @@ import net.simonvt.cathode.R;
 
 public class IndicatorView extends View {
 
-  private static final String TAG = "IndicatorView";
-
   private boolean watched;
 
   private boolean collected;

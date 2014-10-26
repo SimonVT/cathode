@@ -25,8 +25,6 @@ import net.simonvt.cathode.util.DateUtils;
 
 public class CollectLoader extends AsyncTaskLoader<Cursor> {
 
-  private static final String TAG = "CollectLoader";
-
   final ForceLoadContentObserver observer;
 
   private long showId;

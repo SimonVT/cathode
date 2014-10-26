@@ -76,8 +76,6 @@ import timber.log.Timber;
 
 public class PhoneController extends UiController {
 
-  private static final String TAG = "PhoneController";
-
   private static final String STATE_SEARCH_TYPE =
       "net.simonvt.cathode.ui.PhoneController.searchType";
   private static final String STATE_SEARCH_QUERY =

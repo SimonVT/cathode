@@ -23,8 +23,6 @@ import net.simonvt.cathode.util.DateUtils;
 
 public final class TraktTimestamps {
 
-  private static final String TAG = "TraktTimestamps";
-
   private TraktTimestamps() {
   }
 

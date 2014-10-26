@@ -32,8 +32,6 @@ import net.simonvt.cathode.remote.sync.shows.SyncEpisodeTask;
 
 public class EpisodeTaskScheduler extends BaseTaskScheduler {
 
-  private static final String TAG = "EpisodeTaskScheduler";
-
   public EpisodeTaskScheduler(Context context) {
     super(context);
   }

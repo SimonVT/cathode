@@ -38,8 +38,6 @@ import net.simonvt.cathode.widget.RemoteImageView;
 public class ShowDescriptionAdapter
     extends RecyclerCursorAdapter<ShowDescriptionAdapter.ViewHolder> {
 
-  private static final String TAG = "ShowDescriptionAdapter";
-
   public static final String[] PROJECTION = new String[] {
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,

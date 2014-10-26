@@ -50,8 +50,6 @@ import net.simonvt.cathode.widget.RemoteImageView;
 public class MovieFragment extends ProgressFragment
     implements LoaderManager.LoaderCallbacks<Cursor> {
 
-  private static final String TAG = "MovieFragment";
-
   private static final String ARG_ID = "net.simonvt.cathode.ui.fragment.MovieFragment.id";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.fragment.MovieFragment.title";
 

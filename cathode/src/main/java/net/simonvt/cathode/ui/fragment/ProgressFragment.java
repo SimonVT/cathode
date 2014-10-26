@@ -25,8 +25,6 @@ import net.simonvt.cathode.R;
 
 public abstract class ProgressFragment extends BaseFragment {
 
-  private static final String TAG = "ProgressFragment";
-
   private static final int STATE_NONE = -1;
   private static final int STATE_PROGRESS_VISIBLE = 0;
   private static final int STATE_CONTENT_VISIBLE = 1;

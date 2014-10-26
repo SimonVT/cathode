@@ -32,8 +32,6 @@ import android.view.ViewGroup;
 
 public class HiddenPaneLayout extends ViewGroup {
 
-  private static final String TAG = "HiddenPaneLayout";
-
   private static final int INVALID_POINTER = -1;
 
   private static final int CLOSE_ENOUGH = 3;
