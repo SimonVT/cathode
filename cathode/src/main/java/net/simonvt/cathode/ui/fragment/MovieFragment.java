@@ -35,7 +35,10 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.OnTitleChangedEvent;
+import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
+import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
@@ -46,6 +49,7 @@ import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.ObservableScrollView;
 import net.simonvt.cathode.widget.RemoteImageView;
+import timber.log.Timber;
 
 public class MovieFragment extends ProgressFragment
     implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -270,27 +274,32 @@ public class MovieFragment extends ProgressFragment
     c.moveToPosition(-1);
 
     while (c.moveToNext()) {
-      if (true) return;
-      // TODO:
       View v = LayoutInflater.from(getActivity()).inflate(R.layout.person, actors, false);
 
-      //RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
-      //headshot.setImage(c.getString(c.getColumnIndex(MovieActorColumns.HEADSHOT)));
-      //TextView name = (TextView) v.findViewById(R.id.name);
-      //name.setText(c.getString(c.getColumnIndex(MovieActorColumns.NAME)));
-      //TextView character = (TextView) v.findViewById(R.id.job);
-      //character.setText(c.getString(c.getColumnIndex(MovieActorColumns.CHARACTER)));
+      RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
+      headshot.setImage(c.getString(c.getColumnIndex(PersonColumns.HEADSHOT)));
+      TextView name = (TextView) v.findViewById(R.id.name);
+      name.setText(c.getString(c.getColumnIndex(PersonColumns.NAME)));
+      TextView character = (TextView) v.findViewById(R.id.job);
+      character.setText(c.getString(c.getColumnIndex(MovieCastColumns.CHARACTER)));
 
       actors.addView(v);
     }
   }
 
+  private static final String[] CAST_PROJECTION = new String[] {
+      Tables.MOVIE_CAST + "." + MovieCastColumns.ID,
+      Tables.MOVIE_CAST + "." + MovieCastColumns.PERSON_ID,
+      Tables.PEOPLE + "." + PersonColumns.NAME,
+      Tables.PEOPLE + "." + PersonColumns.HEADSHOT,
+  };
+
   private LoaderManager.LoaderCallbacks<Cursor> actorsLoader =
       new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
           CursorLoader loader =
-              new CursorLoader(getActivity(), ProviderSchematic.MovieCast.fromMovie(movieId), null,
-                  null, null, null);
+              new CursorLoader(getActivity(), ProviderSchematic.MovieCast.fromMovie(movieId),
+                  CAST_PROJECTION, null, null, null);
           loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
           return loader;
         }

@@ -93,6 +93,19 @@ public final class DatabaseSchematic {
             + DateUtils.YEAR_IN_MILLIS
             + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
 
+    String MOVIE_CAST_PERSON = "JOIN "
+        + Tables.PEOPLE
+        + " AS "
+        + Tables.PEOPLE
+        + " ON "
+        + Tables.PEOPLE
+        + "."
+        + PersonColumns.ID
+        + "="
+        + Tables.MOVIE_CAST
+        + "."
+        + MovieCastColumns.PERSON_ID;
+
     String EPISODES_WITH_SHOW_TITLE = "JOIN "
         + Tables.SHOWS
         + " AS "

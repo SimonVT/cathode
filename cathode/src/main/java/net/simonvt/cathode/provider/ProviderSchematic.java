@@ -822,7 +822,8 @@ public final class ProviderSchematic {
         type = Type.MOVIE_CAST,
         name = "CAST_FROMMOVIE",
         whereColumn = MovieCastColumns.MOVIE_ID,
-        pathSegment = 2)
+        pathSegment = 2,
+        join = Joins.MOVIE_CAST_PERSON)
     public static Uri fromMovie(long movieId) {
       return buildUri(Path.MOVIE_CAST, Path.FROM_MOVIE, String.valueOf(movieId));
     }
