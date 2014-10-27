@@ -27,6 +27,7 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieSearchSuggestionsColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowCharacterColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowSearchSuggestionsColumns;
@@ -105,6 +106,19 @@ public final class DatabaseSchematic {
         + Tables.MOVIE_CAST
         + "."
         + MovieCastColumns.PERSON_ID;
+
+    String SHOW_CAST_PERSON = "JOIN "
+        + Tables.PEOPLE
+        + " AS "
+        + Tables.PEOPLE
+        + " ON "
+        + Tables.PEOPLE
+        + "."
+        + PersonColumns.ID
+        + "="
+        + Tables.SHOW_CHARACTERS
+        + "."
+        + ShowCharacterColumns.PERSON_ID;
 
     String EPISODES_WITH_SHOW_TITLE = "JOIN "
         + Tables.SHOWS
@@ -340,8 +354,8 @@ public final class DatabaseSchematic {
 
   @Table(EpisodeColumns.class) public static final String TABLE_EPISODES = Tables.EPISODES;
 
-  @Table(DatabaseContract.ShowCharacterColumns.class) public static final String
-      TABLE_SHOW_CHARACTERS = Tables.SHOW_CHARACTERS;
+  @Table(ShowCharacterColumns.class) public static final String TABLE_SHOW_CHARACTERS =
+      Tables.SHOW_CHARACTERS;
 
   @Table(MovieColumns.class) public static final String TABLE_MOVIES = Tables.MOVIES;
 

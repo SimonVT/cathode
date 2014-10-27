@@ -681,7 +681,8 @@ public final class ProviderSchematic {
 
     @ContentUri(
         path = Path.SHOW_CHARACTERS,
-        type = Type.SHOW_CHARACTERS)
+        type = Type.SHOW_CHARACTERS,
+        join = Joins.SHOW_CAST_PERSON)
     public static final Uri SHOW_CHARACTERS = buildUri(Path.SHOW_CHARACTERS);
 
     @InexactContentUri(
@@ -689,7 +690,8 @@ public final class ProviderSchematic {
         type = Type.SHOW_CHARACTERS,
         name = "CHARACTERS_FROMSHOW",
         whereColumn = ShowCharacterColumns.SHOW_ID,
-        pathSegment = 2)
+        pathSegment = 2,
+        join = Joins.SHOW_CAST_PERSON)
     public static Uri fromShow(long showId) {
       return buildUri(Path.SHOW_CHARACTERS, Path.FROM_SHOW, String.valueOf(showId));
     }

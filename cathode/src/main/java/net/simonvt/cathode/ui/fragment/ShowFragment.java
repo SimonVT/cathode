@@ -42,8 +42,11 @@ import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.provider.CollectLoader;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowCharacterColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
+import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowGenres;
@@ -515,16 +518,14 @@ public class ShowFragment extends ProgressFragment {
 
     c.moveToPosition(-1);
     while (c.moveToNext()) {
-      if (true) return;
-      // TODO: Load characters
       View v = LayoutInflater.from(getActivity()).inflate(R.layout.person, actors, false);
 
-      //RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
-      //headshot.setImage(c.getString(c.getColumnIndex(ShowActorColumns.HEADSHOT)));
-      //TextView name = (TextView) v.findViewById(R.id.name);
-      //name.setText(c.getString(c.getColumnIndex(ShowActorColumns.NAME)));
-      //TextView character = (TextView) v.findViewById(R.id.job);
-      //character.setText(c.getString(c.getColumnIndex(ShowActorColumns.CHARACTER)));
+      RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
+      headshot.setImage(c.getString(c.getColumnIndex(PersonColumns.HEADSHOT)));
+      TextView name = (TextView) v.findViewById(R.id.name);
+      name.setText(c.getString(c.getColumnIndex(PersonColumns.NAME)));
+      TextView character = (TextView) v.findViewById(R.id.job);
+      character.setText(c.getString(c.getColumnIndex(ShowCharacterColumns.CHARACTER)));
 
       actors.addView(v);
     }
@@ -699,12 +700,19 @@ public class ShowFragment extends ProgressFragment {
         }
       };
 
+  private static final String[] CHARACTERS_PROJECTION = new String[] {
+      Tables.SHOW_CHARACTERS + "." + ShowCharacterColumns.ID,
+      Tables.SHOW_CHARACTERS + "." + ShowCharacterColumns.CHARACTER,
+      Tables.PEOPLE + "." + PersonColumns.NAME,
+      Tables.PEOPLE + "." + PersonColumns.HEADSHOT,
+  };
+
   private LoaderManager.LoaderCallbacks<Cursor> charactersCallback =
       new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
           CursorLoader cl =
               new CursorLoader(getActivity(), ProviderSchematic.ShowCharacters.fromShow(showId),
-                  null, null, null, null);
+                  CHARACTERS_PROJECTION, null, null, null);
           cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
           return cl;
         }
