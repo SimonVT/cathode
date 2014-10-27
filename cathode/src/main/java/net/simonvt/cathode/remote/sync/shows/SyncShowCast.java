@@ -24,6 +24,7 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.CastMember;
 import net.simonvt.cathode.api.entity.People;
+import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.PersonWrapper;
@@ -31,6 +32,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.ShowCharacters;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.TraktTask;
+import net.simonvt.cathode.remote.sync.SyncPersonTask;
 import timber.log.Timber;
 
 public class SyncShowCast extends TraktTask {
@@ -53,8 +55,14 @@ public class SyncShowCast extends TraktTask {
     ops.add(ContentProviderOperation.newDelete(ShowCharacters.fromShow(showId)).build());
 
     for (CastMember character : characters) {
-      final long personId =
-          PersonWrapper.updateOrInsert(getContentResolver(), character.getPerson());
+      Person person = character.getPerson();
+      final long personTraktId = person.getIds().getTrakt();
+      long personId = PersonWrapper.getId(getContentResolver(), personTraktId);
+      if (personId == -1L) {
+        personId = PersonWrapper.createPerson(getContentResolver(), personTraktId);
+        queueTask(new SyncPersonTask(personTraktId));
+      }
+
       ContentProviderOperation op =
           ContentProviderOperation.newInsert(ShowCharacters.SHOW_CHARACTERS)
               .withValue(DatabaseContract.ShowCharacterColumns.SHOW_ID, showId)

@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.CastMember;
 import net.simonvt.cathode.api.entity.CrewMember;
 import net.simonvt.cathode.api.entity.People;
+import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.service.MoviesService;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCrewColumns;
@@ -34,6 +35,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.MovieCast;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieCrew;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.TraktTask;
+import net.simonvt.cathode.remote.sync.SyncPersonTask;
 import timber.log.Timber;
 
 public class SyncMovieCrew extends TraktTask {
@@ -60,8 +62,14 @@ public class SyncMovieCrew extends TraktTask {
     ops.add(op);
 
     for (CastMember castMember : people.getCast()) {
-      final long personId =
-          PersonWrapper.updateOrInsert(getContentResolver(), castMember.getPerson());
+      Person person = castMember.getPerson();
+      final long personTraktId = person.getIds().getTrakt();
+      long personId = PersonWrapper.getId(getContentResolver(), personTraktId);
+      if (personId == -1L) {
+        personId = PersonWrapper.createPerson(getContentResolver(), personTraktId);
+        queueTask(new SyncPersonTask(personTraktId));
+      }
+
       op = ContentProviderOperation.newInsert(MovieCast.MOVIE_CAST)
           .withValue(MovieCastColumns.MOVIE_ID, movieId)
           .withValue(MovieCastColumns.PERSON_ID, personId)
@@ -98,8 +106,14 @@ public class SyncMovieCrew extends TraktTask {
       return;
     }
     for (CrewMember crewMember : crew) {
-      final long personId =
-          PersonWrapper.updateOrInsert(getContentResolver(), crewMember.getPerson());
+      Person person = crewMember.getPerson();
+      final long personTraktId = person.getIds().getTrakt();
+      long personId = PersonWrapper.getId(getContentResolver(), personTraktId);
+      if (personId == -1L) {
+        personId = PersonWrapper.createPerson(getContentResolver(), personTraktId);
+        queueTask(new SyncPersonTask(personTraktId));
+      }
+
       ContentProviderOperation op = ContentProviderOperation.newInsert(MovieCrew.MOVIE_CREW)
           .withValue(MovieCrewColumns.MOVIE_ID, movieId)
           .withValue(MovieCrewColumns.PERSON_ID, personId)

@@ -19,6 +19,7 @@ package net.simonvt.cathode.provider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
+import net.simonvt.cathode.api.entity.Images;
 import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.People;
@@ -40,6 +41,13 @@ public final class PersonWrapper {
     c.close();
 
     return id;
+  }
+
+  public static long createPerson(ContentResolver resolver, long traktId) {
+    ContentValues values = new ContentValues();
+    values.put(PersonColumns.TRAKT_ID, traktId);
+
+    return People.getId(resolver.insert(People.PEOPLE, values));
   }
 
   public static long updateOrInsert(ContentResolver resolver, Person person) {
@@ -64,6 +72,18 @@ public final class PersonWrapper {
     cv.put(PersonColumns.IMDB_ID, person.getIds().getImdb());
     cv.put(PersonColumns.TMDB_ID, person.getIds().getTmdb());
     cv.put(PersonColumns.TVRAGE_ID, person.getIds().getTvrage());
+
+    Images images = person.getImages();
+    if (images != null && images.getHeadshot() != null) {
+      cv.put(PersonColumns.HEADSHOT, images.getHeadshot().getFull());
+    } else {
+      cv.putNull(PersonColumns.HEADSHOT);
+    }
+
+    cv.put(PersonColumns.BIOGRAPHY, person.getBiography());
+    cv.put(PersonColumns.DEATH, person.getDeath().getTime());
+    cv.put(PersonColumns.BIRTHPLACE, person.getBirthplace());
+    cv.put(PersonColumns.HOMEPAGE, person.getHomepage());
 
     return cv;
   }

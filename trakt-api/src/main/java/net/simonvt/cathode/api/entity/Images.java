@@ -53,6 +53,8 @@ public class Images {
 
   ImageType avatar;
 
+  ImageType headshot;
+
   public ImageType getFanart() {
     return fanart;
   }
@@ -79,5 +81,9 @@ public class Images {
 
   public ImageType getAvatar() {
     return avatar;
+  }
+
+  public ImageType getHeadshot() {
+    return headshot;
   }
 }

@@ -26,6 +26,7 @@ import net.simonvt.cathode.api.service.AuthorizationService;
 import net.simonvt.cathode.api.service.CheckinService;
 import net.simonvt.cathode.api.service.EpisodeService;
 import net.simonvt.cathode.api.service.MoviesService;
+import net.simonvt.cathode.api.service.PeopleService;
 import net.simonvt.cathode.api.service.RecommendationsService;
 import net.simonvt.cathode.api.service.SearchService;
 import net.simonvt.cathode.api.service.SeasonService;
@@ -68,6 +69,10 @@ public class TraktModule {
 
   @Provides @Singleton MoviesService provideMoviesService(@Trakt RestAdapter adapter) {
     return adapter.create(MoviesService.class);
+  }
+
+  @Provides @Singleton PeopleService providePeopleService(@Trakt RestAdapter adapter) {
+    return adapter.create(PeopleService.class);
   }
 
   @Provides @Singleton RecommendationsService provideRecommendationsService(

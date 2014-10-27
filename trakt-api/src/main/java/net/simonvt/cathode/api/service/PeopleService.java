@@ -14,49 +14,16 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.api.entity;
+package net.simonvt.cathode.api.service;
 
-public class Person {
+import net.simonvt.cathode.api.entity.Person;
+import net.simonvt.cathode.api.enumeration.Extended;
+import retrofit.http.GET;
+import retrofit.http.Path;
+import retrofit.http.Query;
 
-  String name;
+public interface PeopleService {
 
-  Ids ids;
-
-  Images images;
-
-  String biography;
-
-  IsoTime death;
-
-  String birthplace;
-
-  String homepage;
-
-  public String getName() {
-    return name;
-  }
-
-  public Ids getIds() {
-    return ids;
-  }
-
-  public Images getImages() {
-    return images;
-  }
-
-  public String getBiography() {
-    return biography;
-  }
-
-  public IsoTime getDeath() {
-    return death;
-  }
-
-  public String getBirthplace() {
-    return birthplace;
-  }
-
-  public String getHomepage() {
-    return homepage;
-  }
+  @GET("/people/{id}") Person summary(@Path("id") long traktId,
+      @Query("extended") Extended extended);
 }

@@ -283,6 +283,11 @@ public final class DatabaseContract {
     @DataType(INTEGER) String IMDB_ID = "imdbId";
     @DataType(INTEGER) String TMDB_ID = "tmdbId";
     @DataType(INTEGER) String TVRAGE_ID = "tvrageId";
+    @DataType(TEXT) String HEADSHOT = "headshot";
+    @DataType(TEXT) String BIOGRAPHY = "biography";
+    @DataType(TEXT) String DEATH = "death";
+    @DataType(TEXT) String BIRTHPLACE = "birthplace";
+    @DataType(TEXT) String HOMEPAGE = "homepage";
   }
 
   public interface ShowSearchSuggestionsColumns {
