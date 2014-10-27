@@ -49,7 +49,6 @@ import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.ObservableScrollView;
 import net.simonvt.cathode.widget.RemoteImageView;
-import timber.log.Timber;
 
 public class MovieFragment extends ProgressFragment
     implements LoaderManager.LoaderCallbacks<Cursor> {
