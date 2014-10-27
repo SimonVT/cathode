@@ -290,6 +290,7 @@ public class MovieFragment extends ProgressFragment
   private static final String[] CAST_PROJECTION = new String[] {
       Tables.MOVIE_CAST + "." + MovieCastColumns.ID,
       Tables.MOVIE_CAST + "." + MovieCastColumns.PERSON_ID,
+      Tables.MOVIE_CAST + "." + MovieCastColumns.CHARACTER,
       Tables.PEOPLE + "." + PersonColumns.NAME,
       Tables.PEOPLE + "." + PersonColumns.HEADSHOT,
   };
