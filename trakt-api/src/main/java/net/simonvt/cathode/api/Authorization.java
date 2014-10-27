@@ -16,9 +16,12 @@
 
 package net.simonvt.cathode.api;
 
-public class Authorization {
+public final class Authorization {
 
   public static final String AUTHORIZATION_URL = "http://api.v2.trakt.tv/oauth/authorize";
+
+  private Authorization() {
+  }
 
   // TODO: Pass some secret as state?
   public static String getOAuthUri(String applicationId, String redirectUri) {

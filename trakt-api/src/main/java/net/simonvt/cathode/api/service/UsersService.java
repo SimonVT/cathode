@@ -24,12 +24,17 @@ import retrofit.http.Path;
 public interface UsersService {
 
   /**
-   * TODO:
+   * <b>OAuth Required</b>
+   * <p>
+   * Get the user's settings so you can align your app's experience with what they're used to on
+   * the trakt website.
    */
   @GET("/users/settings") UserSettings getUserSettings();
 
   /**
-   * TODO:
+   * <b>OAuth Optional</b>
+   * <p>
+   * Returns all movies or shows a user has watched sorted by most plays.
    */
   @GET("/users/{username}/watching") Watching watching(@Path("username") String username);
 }
