@@ -93,59 +93,61 @@ public class SyncWatchingTask extends TraktTask {
 
     Watching watching = usersService.watching(username);
 
-    if (watching.getType() != null) {
-      switch (watching.getType()) {
-        case EPISODE:
-          final long showTraktId = watching.getShow().getIds().getTrakt();
+    if (watching != null) {
+      if (watching.getType() != null) {
+        switch (watching.getType()) {
+          case EPISODE:
+            final long showTraktId = watching.getShow().getIds().getTrakt();
 
-          boolean didShowExist = true;
-          long showId = ShowWrapper.getShowId(getContentResolver(), showTraktId);
-          if (showId == -1L) {
-            didShowExist = false;
-            showId = ShowWrapper.createShow(getContentResolver(), showTraktId);
-            queueTask(new SyncShowCast(showTraktId));
-          }
-
-          final int seasonNumber = watching.getEpisode().getSeason();
-          boolean didSeasonExist = true;
-          long seasonId = SeasonWrapper.getSeasonId(getContentResolver(), showId, seasonNumber);
-          if (seasonId == -1L) {
-            didSeasonExist = false;
-            if (didShowExist) {
-              queueTask(new SyncShowTask(showTraktId));
+            boolean didShowExist = true;
+            long showId = ShowWrapper.getShowId(getContentResolver(), showTraktId);
+            if (showId == -1L) {
+              didShowExist = false;
+              showId = ShowWrapper.createShow(getContentResolver(), showTraktId);
+              queueTask(new SyncShowCast(showTraktId));
             }
-          }
 
-          final int episodeNumber = watching.getEpisode().getNumber();
-          long episodeId = EpisodeWrapper.getEpisodeId(getContentResolver(), showId, seasonNumber,
-              episodeNumber);
-          if (episodeId == -1L) {
-            episodeId =
-                EpisodeWrapper.createEpisode(getContentResolver(), showId, seasonId, episodeNumber);
-            if (didSeasonExist) {
-              queueTask(new SyncEpisodeTask(showTraktId, seasonNumber, episodeNumber));
+            final int seasonNumber = watching.getEpisode().getSeason();
+            boolean didSeasonExist = true;
+            long seasonId = SeasonWrapper.getSeasonId(getContentResolver(), showId, seasonNumber);
+            if (seasonId == -1L) {
+              didSeasonExist = false;
+              if (didShowExist) {
+                queueTask(new SyncShowTask(showTraktId));
+              }
             }
-          }
 
-          op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
-              .withValue(EpisodeColumns.CHECKED_IN, true)
-              .build();
-          ops.add(op);
-          break;
+            final int episodeNumber = watching.getEpisode().getNumber();
+            long episodeId = EpisodeWrapper.getEpisodeId(getContentResolver(), showId, seasonNumber,
+                episodeNumber);
+            if (episodeId == -1L) {
+              episodeId =
+                  EpisodeWrapper.createEpisode(getContentResolver(), showId, seasonId, episodeNumber);
+              if (didSeasonExist) {
+                queueTask(new SyncEpisodeTask(showTraktId, seasonNumber, episodeNumber));
+              }
+            }
 
-        case MOVIE:
-          final long movieTraktId = watching.getMovie().getIds().getTrakt();
-          long movieId = MovieWrapper.getMovieId(getContentResolver(), movieTraktId);
-          if (movieId == -1L) {
-            movieId = MovieWrapper.createMovie(getContentResolver(), movieTraktId);
-            queueTask(new SyncMovieTask(movieTraktId));
-          }
+            op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
+                .withValue(EpisodeColumns.CHECKED_IN, true)
+                .build();
+            ops.add(op);
+            break;
 
-          op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
-              .withValue(MovieColumns.CHECKED_IN, true)
-              .build();
-          ops.add(op);
-          break;
+          case MOVIE:
+            final long movieTraktId = watching.getMovie().getIds().getTrakt();
+            long movieId = MovieWrapper.getMovieId(getContentResolver(), movieTraktId);
+            if (movieId == -1L) {
+              movieId = MovieWrapper.createMovie(getContentResolver(), movieTraktId);
+              queueTask(new SyncMovieTask(movieTraktId));
+            }
+
+            op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
+                .withValue(MovieColumns.CHECKED_IN, true)
+                .build();
+            ops.add(op);
+            break;
+        }
       }
     }
 
