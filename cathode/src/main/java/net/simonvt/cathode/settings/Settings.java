@@ -114,6 +114,7 @@ public class Settings extends PreferenceActivity {
 
     Profile profile = userSettings.getUser();
     if (profile != null) {
+      putString(editor, Settings.PROFILE_USERNAME, profile.getUsername());
       putString(editor, Settings.PROFILE_FULL_NAME, profile.getName());
       putString(editor, Settings.PROFILE_GENDER, profile.getGender());
       putInt(editor, Settings.PROFILE_AGE, profile.getAge());
