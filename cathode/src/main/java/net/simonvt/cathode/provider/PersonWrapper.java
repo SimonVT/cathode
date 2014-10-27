@@ -20,6 +20,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import net.simonvt.cathode.api.entity.Images;
+import net.simonvt.cathode.api.entity.IsoTime;
 import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.People;
@@ -81,7 +82,12 @@ public final class PersonWrapper {
     }
 
     cv.put(PersonColumns.BIOGRAPHY, person.getBiography());
-    cv.put(PersonColumns.DEATH, person.getDeath().getTime());
+    IsoTime death = person.getDeath();
+    if (death != null) {
+      cv.put(PersonColumns.DEATH, death.getTime());
+    } else {
+      cv.putNull(PersonColumns.DEATH);
+    }
     cv.put(PersonColumns.BIRTHPLACE, person.getBirthplace());
     cv.put(PersonColumns.HOMEPAGE, person.getHomepage());
 

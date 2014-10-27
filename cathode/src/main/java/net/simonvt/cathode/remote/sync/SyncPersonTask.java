@@ -35,7 +35,7 @@ public class SyncPersonTask extends TraktTask {
 
   @Override protected void doTask() {
     Person person = peopleService.summary(traktId, Extended.FULL_IMAGES);
-
     PersonWrapper.updateOrInsert(getContentResolver(), person);
+    postOnSuccess();
   }
 }

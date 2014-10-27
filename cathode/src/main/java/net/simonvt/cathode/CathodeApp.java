@@ -73,6 +73,7 @@ import net.simonvt.cathode.remote.action.shows.ShowWatchedTask;
 import net.simonvt.cathode.remote.action.shows.ShowWatchlistTask;
 import net.simonvt.cathode.remote.sync.PurgeTask;
 import net.simonvt.cathode.remote.sync.SyncActivityStreamTask;
+import net.simonvt.cathode.remote.sync.SyncPersonTask;
 import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.remote.sync.SyncUserActivityTask;
 import net.simonvt.cathode.remote.sync.SyncUserSettingsTask;
@@ -352,7 +353,7 @@ public class CathodeApp extends Application {
           SyncShowCollectedStatus.class, SyncShowRecommendations.class,
           SyncShowsCollectionTask.class, SyncShowsRatings.class, SyncShowsWatchedTask.class,
           SyncShowsWatchlistTask.class, SyncShowTask.class, SyncShowWatchedStatus.class,
-          SyncTrendingShowsTask.class, SyncUpdatedShows.class,
+          SyncTrendingShowsTask.class, SyncUpdatedShows.class, SyncPersonTask.class,
 
           // Misc
           PhoneController.class, ShowSearchHandler.class, ShowSearchHandler.SearchThread.class,
