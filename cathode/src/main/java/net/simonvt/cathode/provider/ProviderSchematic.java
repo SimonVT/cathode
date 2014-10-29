@@ -187,20 +187,23 @@ public final class ProviderSchematic {
         path = Path.SHOWS + "/" + Path.WATCHED,
         type = Type.SHOW,
         join = Joins.SHOWS_UNWATCHED,
-        where = ShowColumns.WATCHED_COUNT + ">0")
+        where = ShowColumns.WATCHED_COUNT + ">0 AND "
+            + Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0")
     public static final Uri SHOWS_WATCHED = buildUri(Path.SHOWS, Path.WATCHED);
 
     @ContentUri(
         path = Path.SHOWS + "/" + Path.COLLECTED,
         type = Type.SHOW,
         join = Joins.SHOWS_UNCOLLECTED,
-        where = ShowColumns.IN_COLLECTION_COUNT + ">0")
+        where = ShowColumns.IN_COLLECTION_COUNT + ">0 AND "
+            + Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0")
     public static final Uri SHOWS_COLLECTION = buildUri(Path.SHOWS, Path.COLLECTED);
 
     @ContentUri(
         path = Path.SHOWS + "/" + Path.WATCHLIST,
         type = Type.SHOW,
-        where = ShowColumns.IN_WATCHLIST + "=1")
+        where = ShowColumns.IN_WATCHLIST + "=1 AND "
+            + Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0")
     public static final Uri SHOWS_WATCHLIST = buildUri(Path.SHOWS, Path.WATCHLIST);
 
     @ContentUri(
@@ -213,6 +216,7 @@ public final class ProviderSchematic {
     public static String[] upcomingWhere() {
       return new String[] {
           ShowColumns.WATCHED_COUNT + ">0", getAiredAfterWatched() + ">0",
+          Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0"
       };
     }
 
@@ -239,7 +243,7 @@ public final class ProviderSchematic {
     @Where(path = Path.SHOWS + "/" + Path.WATCHING)
     public static String[] watchingWhere() {
       return new String[] {
-          getWatchingQuery() + ">0",
+          getWatchingQuery() + ">0", Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0"
       };
     }
 
@@ -372,15 +376,20 @@ public final class ProviderSchematic {
 
     public static String getEpisodeCountQuery() {
       return "(SELECT COUNT(*) FROM "
-          + DatabaseSchematic.Tables.EPISODES
+          + Tables.EPISODES
           + " WHERE "
-          + DatabaseSchematic.Tables.EPISODES
+          + Tables.EPISODES
           + "."
           + EpisodeColumns.SHOW_ID
           + "="
           + DatabaseSchematic.TABLE_SHOWS
           + "."
           + ShowColumns.ID
+          + " AND "
+          + Tables.EPISODES
+          + "."
+          + EpisodeColumns.NEEDS_SYNC
+          + "=0"
           + ")";
     }
   }
@@ -393,8 +402,10 @@ public final class ProviderSchematic {
 
       map.put(SeasonColumns.AIRED_COUNT, getAiredQuery());
       map.put(SeasonColumns.UNAIRED_COUNT, getUnairedQuery());
+      map.put(SeasonColumns.EPISODE_COUNT, getEpisodeCountQuery());
       map.put(Tables.SEASONS + "." + SeasonColumns.AIRED_COUNT, getAiredQuery());
       map.put(Tables.SEASONS + "." + SeasonColumns.UNAIRED_COUNT, getUnairedQuery());
+      map.put(Tables.SEASONS + "." + SeasonColumns.EPISODE_COUNT, getEpisodeCountQuery());
 
       return map;
     }
@@ -426,6 +437,13 @@ public final class ProviderSchematic {
         pathSegment = 2)
     public static Uri fromShow(long showId) {
       return buildUri(Path.SEASONS, Path.FROM_SHOW, String.valueOf(showId));
+    }
+
+    @Where(path = Path.SEASONS + "/" + Path.FROM_SHOW + "/#")
+    public static String[] fromShowWhere() {
+      return new String[] {
+          getEpisodeCountQuery() + ">0",
+      };
     }
 
     public static final String DEFAULT_SORT =
@@ -472,24 +490,28 @@ public final class ProviderSchematic {
     }
 
     public static String getAiredQuery() {
-      Calendar cal = Calendar.getInstance();
-      final long currentTime = cal.getTimeInMillis();
+      final long currentTime = System.currentTimeMillis();
       return "(SELECT COUNT(*) FROM "
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
           + " WHERE "
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
           + "."
           + EpisodeColumns.SEASON_ID
           + "="
-          + DatabaseSchematic.TABLE_SEASONS
+          + Tables.SEASONS
           + "."
           + SeasonColumns.ID
           + " AND "
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
           + "."
           + EpisodeColumns.FIRST_AIRED
           + "<="
           + currentTime
+          + " AND "
+          + Tables.EPISODES
+          + "."
+          + EpisodeColumns.NEEDS_SYNC
+          + "=0"
           + " AND "
           + DatabaseSchematic.TABLE_EPISODES
           + "."
@@ -508,26 +530,50 @@ public final class ProviderSchematic {
       Calendar cal = Calendar.getInstance();
       final long currentTime = cal.getTimeInMillis();
       return "(SELECT COUNT(*) FROM "
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
           + " WHERE "
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
           + "."
           + EpisodeColumns.SEASON_ID
           + "="
-          + DatabaseSchematic.TABLE_SEASONS
+          + Tables.SEASONS
           + "."
           + SeasonColumns.ID
           + " AND "
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
           + "."
           + EpisodeColumns.FIRST_AIRED
           + ">"
           + currentTime
           + " AND "
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
+          + "."
+          + EpisodeColumns.NEEDS_SYNC
+          + "=0"
+          + " AND "
+          + Tables.EPISODES
           + "."
           + EpisodeColumns.SEASON
           + ">0"
+          + ")";
+    }
+
+    public static String getEpisodeCountQuery() {
+      return "(SELECT COUNT(*) FROM "
+          + Tables.EPISODES
+          + " WHERE "
+          + Tables.EPISODES
+          + "."
+          + EpisodeColumns.SEASON_ID
+          + "="
+          + Tables.SEASONS
+          + "."
+          + SeasonColumns.ID
+          + " AND "
+          + Tables.EPISODES
+          + "."
+          + EpisodeColumns.NEEDS_SYNC
+          + "=0"
           + ")";
     }
   }

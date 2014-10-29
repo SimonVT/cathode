@@ -144,6 +144,7 @@ public final class DatabaseContract {
 
     String AIRED_COUNT = "airedCount";
     String UNAIRED_COUNT = "unairedCount";
+    String EPISODE_COUNT = "episodeCount";
   }
 
   public interface EpisodeColumns {

@@ -106,13 +106,17 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
         + ">0"
         + ") AND "
         + ShowColumns.HIDDEN
+        + "=0"
+        + " AND "
+        + ShowColumns.NEEDS_SYNC
         + "=0", null, null);
 
     while (shows.moveToNext()) {
       Cursor episodes = context.getContentResolver().query(Episodes.EPISODES, new String[] {
           EpisodeColumns.ID, EpisodeColumns.SHOW_ID, EpisodeColumns.TITLE, EpisodeColumns.SEASON,
           EpisodeColumns.EPISODE, EpisodeColumns.FIRST_AIRED,
-      }, EpisodeColumns.SHOW_ID + "=? AND " + EpisodeColumns.FIRST_AIRED + ">?", new String[] {
+      }, EpisodeColumns.SHOW_ID + "=? AND " + EpisodeColumns.FIRST_AIRED + ">? AND "
+          + EpisodeColumns.NEEDS_SYNC + "=0", new String[] {
           String.valueOf(shows.getLong(0)), String.valueOf(time - 30 * DateUtils.DAY_IN_MILLIS),
       }, null);
 

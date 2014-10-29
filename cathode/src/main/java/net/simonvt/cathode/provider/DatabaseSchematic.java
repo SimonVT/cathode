@@ -52,6 +52,7 @@ public final class DatabaseSchematic {
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
         + " episodes WHERE episodes.watched=0 AND episodes.showId=shows._id AND episodes.season<>0"
+        + " AND episodes.needsSync=0"
         + " AND episodes.episodeFirstAired>"
         + DateUtils.YEAR_IN_MILLIS
         // TODO: Find better solution
@@ -73,7 +74,9 @@ public final class DatabaseSchematic {
         + "WHERE watched=1 AND showId=shows._id "
         + "ORDER BY season DESC, episode DESC LIMIT 1"
         + ") AS ep2 "
-        + "WHERE episodes.watched=0 AND episodes.showId=shows._id AND (episodes.season>ep2.season "
+        + "WHERE episodes.watched=0 AND episodes.showId=shows._id"
+        + " AND episodes.needsSync=0"
+        + " AND (episodes.season>ep2.season "
         + "OR (episodes.season=ep2.season AND episodes.episode>ep2.episode)) "
         + "ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1"
         + ")";
@@ -81,15 +84,18 @@ public final class DatabaseSchematic {
     String SHOWS_UNCOLLECTED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
         + " episodes WHERE episodes.inCollection=0 AND episodes.showId=shows._id"
         + " AND episodes.season<>0"
+        + " AND episodes.needsSync=0"
+        // TODO: Find better solution
         + " AND episodes.episodeFirstAired>"
         + DateUtils.YEAR_IN_MILLIS
-        // TODO: Find better solution
+        + " AND episodes.needsSync=0"
         + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
 
     String SHOWS_WITH_WATCHING =
         "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
             + " episodes WHERE (episodes.watching=1 OR episodes.checkedIn=1)"
             + " AND episodes.showId=shows._id"
+            + " AND episodes.needsSync=0"
             + " AND episodes.episodeFirstAired>"
             + DateUtils.YEAR_IN_MILLIS
             + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
@@ -183,7 +189,9 @@ public final class DatabaseSchematic {
         + Tables.EPISODES
         + "."
         + EpisodeColumns.WATCHED
-        + "=1 AND "
+        + "=1"
+        + " AND episodes.needsSync=0"
+        + " AND "
         + Tables.EPISODES
         + "."
         + EpisodeColumns.SEASON
@@ -212,7 +220,9 @@ public final class DatabaseSchematic {
         + Tables.EPISODES
         + "."
         + EpisodeColumns.IN_COLLECTION
-        + "=1 AND "
+        + "=1"
+        + " AND episodes.needsSync=0"
+        + " AND "
         + Tables.EPISODES
         + "."
         + EpisodeColumns.SEASON
@@ -243,6 +253,7 @@ public final class DatabaseSchematic {
         + EpisodeColumns.FIRST_AIRED
         + ">"
         + DateUtils.YEAR_IN_MILLIS
+        + " AND episodes.needsSync=0"
         + " AND "
         + Tables.EPISODES
         + "."
@@ -272,7 +283,9 @@ public final class DatabaseSchematic {
         + Tables.EPISODES
         + "."
         + EpisodeColumns.WATCHED
-        + "=1 AND "
+        + "=1"
+        + " AND episodes.needsSync=0"
+        + " AND "
         + Tables.EPISODES
         + "."
         + EpisodeColumns.SEASON
@@ -301,7 +314,9 @@ public final class DatabaseSchematic {
         + Tables.EPISODES
         + "."
         + EpisodeColumns.IN_COLLECTION
-        + "=1 AND "
+        + "=1"
+        + " AND episodes.needsSync=0"
+        + " AND "
         + Tables.EPISODES
         + "."
         + EpisodeColumns.SEASON
@@ -332,6 +347,7 @@ public final class DatabaseSchematic {
         + EpisodeColumns.FIRST_AIRED
         + ">"
         + DateUtils.YEAR_IN_MILLIS
+        + " AND episodes.needsSync=0"
         + " AND "
         + Tables.EPISODES
         + "."

@@ -35,6 +35,7 @@ import net.simonvt.cathode.database.MutableCursor;
 import net.simonvt.cathode.database.MutableCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.TraktTaskQueue;
@@ -193,7 +194,8 @@ public class ShowsWatchlistFragment extends GridRecyclerViewFragment<RecyclerVie
         @Override public Loader<MutableCursor> onCreateLoader(int id, Bundle args) {
           MutableCursorLoader loader =
               new MutableCursorLoader(getActivity(), Episodes.EPISODES_IN_WATCHLIST,
-                  ShowWatchlistAdapter.PROJECTION_EPISODE, null, null,
+                  ShowWatchlistAdapter.PROJECTION_EPISODE,
+                  Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC + "=0", null,
                   EpisodeColumns.SHOW_ID + " ASC");
           loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
           return loader;

@@ -116,7 +116,7 @@ public class SeasonFragment extends GridRecyclerViewFragment<SeasonAdapter.ViewH
       new Thread(new Runnable() {
         @Override public void run() {
           Cursor c =
-              getActivity().getContentResolver().query(Seasons.fromShow(showId), new String[] {
+              getActivity().getContentResolver().query(Seasons.withId(seasonId), new String[] {
                   SeasonColumns.SEASON,
               }, null, null, null);
 
@@ -164,9 +164,8 @@ public class SeasonFragment extends GridRecyclerViewFragment<SeasonAdapter.ViewH
   private LoaderManager.LoaderCallbacks<Cursor> episodesLoader =
       new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-          CursorLoader cl =
-              new CursorLoader(getActivity(), Episodes.fromSeason(seasonId), null, null, null,
-                  EpisodeColumns.EPISODE + " ASC");
+          CursorLoader cl = new CursorLoader(getActivity(), Episodes.fromSeason(seasonId), null,
+              EpisodeColumns.NEEDS_SYNC + "=0", null, EpisodeColumns.EPISODE + " ASC");
           cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
           return cl;
         }

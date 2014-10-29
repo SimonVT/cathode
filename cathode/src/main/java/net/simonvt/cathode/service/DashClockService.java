@@ -20,7 +20,7 @@ import com.google.android.apps.dashclock.api.DashClockExtension;
 import com.google.android.apps.dashclock.api.ExtensionData;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic;
+import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.util.DateUtils;
@@ -31,15 +31,18 @@ public class DashClockService extends DashClockExtension {
     Cursor c = getContentResolver().query(Episodes.EPISODES, null,
         EpisodeColumns.FIRST_AIRED + ">? AND "
         + EpisodeColumns.WATCHED + "=0"
-        + " AND ((SELECT " + DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT
-        + " FROM " + DatabaseSchematic.Tables.SHOWS + " WHERE "
-        + DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID + "="
-        + DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SHOW_ID
+        + " AND "
+        + EpisodeColumns.NEEDS_SYNC
+        + "=0"
+        + " AND ((SELECT " + Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT
+        + " FROM " + Tables.SHOWS + " WHERE "
+        + Tables.SHOWS + "." + ShowColumns.ID + "="
+        + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID
         + ")>0 OR " + EpisodeColumns.IN_WATCHLIST + "=1 OR "
-        + "(SELECT " + DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST
-        + " FROM " + DatabaseSchematic.Tables.SHOWS + " WHERE "
-        + DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID + "="
-        + DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SHOW_ID
+        + "(SELECT " + Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST
+        + " FROM " + Tables.SHOWS + " WHERE "
+        + Tables.SHOWS + "." + ShowColumns.ID + "="
+        + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID
         + ")=1)",
         new String[] {
             String.valueOf(System.currentTimeMillis()),

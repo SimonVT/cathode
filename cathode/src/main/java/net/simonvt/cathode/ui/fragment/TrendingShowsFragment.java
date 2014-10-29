@@ -201,9 +201,8 @@ public class TrendingShowsFragment
 
   @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
     final Uri contentUri = Shows.SHOWS_TRENDING;
-    CursorLoader cl =
-        new CursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION, null, null,
-            sortBy.getSortOrder());
+    CursorLoader cl = new CursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION,
+        ShowColumns.NEEDS_SYNC + "=0", null, sortBy.getSortOrder());
     cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return cl;
   }

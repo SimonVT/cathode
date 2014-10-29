@@ -33,9 +33,9 @@ public class SyncShowsWatchlistTask extends TraktTask {
   @Inject transient SyncService syncService;
 
   @Override protected void doTask() {
-    Cursor c = getContentResolver().query(Shows.SHOWS_WATCHLIST, new String[] {
+    Cursor c = getContentResolver().query(Shows.SHOWS, new String[] {
         DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
-    }, null, null, null);
+    }, ShowColumns.IN_WATCHLIST + "=0", null, null);
 
     List<Long> showIds = new ArrayList<Long>();
 
