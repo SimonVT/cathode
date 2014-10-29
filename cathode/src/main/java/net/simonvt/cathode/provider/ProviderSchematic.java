@@ -19,12 +19,15 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.simonvt.cathode.BuildConfig;
+import net.simonvt.cathode.api.util.Joiner;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -916,6 +919,55 @@ public final class ProviderSchematic {
 
     public static long getId(Uri uri) {
       return Long.valueOf(uri.getPathSegments().get(1));
+    }
+
+    @NotifyUpdate(paths = {
+        Path.PEOPLE, Path.PEOPLE + "/#"
+    })
+    public static Uri[] notifyUpdate(Context context, Uri uri, String where, String[] whereArgs) {
+      Set<Uri> uris = new HashSet<Uri>();
+
+      Cursor people = context.getContentResolver().query(uri, new String[] {
+          PersonColumns.ID,
+      }, where, whereArgs, null);
+
+      List<Long> peopleIds = new ArrayList<Long>();
+      while (people.moveToNext()) {
+        final long personId = people.getLong(people.getColumnIndex(PersonColumns.ID));
+        peopleIds.add(personId);
+      }
+
+      people.close();
+
+      String joined = Joiner.on(", ").join(peopleIds);
+
+      Cursor c = context.getContentResolver().query(ShowCharacters.SHOW_CHARACTERS, new String[] {
+          ShowCharacterColumns.SHOW_ID,
+      }, ShowCharacterColumns.PERSON_ID + " IN (?)", new String[] {
+          joined
+      }, null);
+
+      while (c.moveToNext()) {
+        final long showId = c.getLong(c.getColumnIndex(ShowCharacterColumns.SHOW_ID));
+
+        uris.add(ShowCharacters.fromShow(showId));
+      }
+      c.close();
+
+      c = context.getContentResolver().query(MovieCast.MOVIE_CAST, new String[] {
+          MovieCastColumns.MOVIE_ID,
+      }, MovieCastColumns.PERSON_ID + " IN (?)", new String[] {
+          joined
+      }, null);
+
+      while (c.moveToNext()) {
+        final long showId = c.getLong(c.getColumnIndex(MovieCastColumns.MOVIE_ID));
+
+        uris.add(MovieCast.fromMovie(showId));
+      }
+      c.close();
+
+      return uris.toArray(new Uri[uris.size()]);
     }
   }
 }

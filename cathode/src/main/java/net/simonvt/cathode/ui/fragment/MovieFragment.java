@@ -299,7 +299,8 @@ public class MovieFragment extends ProgressFragment
         @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
           CursorLoader loader =
               new CursorLoader(getActivity(), ProviderSchematic.MovieCast.fromMovie(movieId),
-                  CAST_PROJECTION, null, null, null);
+                  CAST_PROJECTION, Tables.PEOPLE + "." + PersonColumns.NEEDS_SYNC + "=0", null,
+                  null);
           loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
           return loader;
         }

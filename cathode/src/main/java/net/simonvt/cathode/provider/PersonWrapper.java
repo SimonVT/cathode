@@ -47,6 +47,7 @@ public final class PersonWrapper {
   public static long createPerson(ContentResolver resolver, long traktId) {
     ContentValues values = new ContentValues();
     values.put(PersonColumns.TRAKT_ID, traktId);
+    values.put(PersonColumns.NEEDS_SYNC, true);
 
     return People.getId(resolver.insert(People.PEOPLE, values));
   }
@@ -90,6 +91,8 @@ public final class PersonWrapper {
     }
     cv.put(PersonColumns.BIRTHPLACE, person.getBirthplace());
     cv.put(PersonColumns.HOMEPAGE, person.getHomepage());
+
+    cv.put(PersonColumns.NEEDS_SYNC, false);
 
     return cv;
   }

@@ -288,6 +288,8 @@ public final class DatabaseContract {
     @DataType(TEXT) String DEATH = "death";
     @DataType(TEXT) String BIRTHPLACE = "birthplace";
     @DataType(TEXT) String HOMEPAGE = "homepage";
+
+    @DataType(INTEGER) String NEEDS_SYNC = "needsSync";
   }
 
   public interface ShowSearchSuggestionsColumns {

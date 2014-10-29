@@ -712,7 +712,8 @@ public class ShowFragment extends ProgressFragment {
         @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
           CursorLoader cl =
               new CursorLoader(getActivity(), ProviderSchematic.ShowCharacters.fromShow(showId),
-                  CHARACTERS_PROJECTION, null, null, null);
+                  CHARACTERS_PROJECTION, Tables.PEOPLE + "." + PersonColumns.NEEDS_SYNC + "=0",
+                  null, null);
           cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
           return cl;
         }
