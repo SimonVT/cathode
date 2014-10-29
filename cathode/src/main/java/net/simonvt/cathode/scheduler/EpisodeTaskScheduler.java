@@ -20,8 +20,10 @@ import android.content.Context;
 import android.database.Cursor;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.action.shows.CheckInEpisodeTask;
 import net.simonvt.cathode.remote.action.shows.EpisodeCollectionTask;
@@ -29,6 +31,7 @@ import net.simonvt.cathode.remote.action.shows.EpisodeRateTask;
 import net.simonvt.cathode.remote.action.shows.EpisodeWatchedTask;
 import net.simonvt.cathode.remote.action.shows.EpisodeWatchlistTask;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodeTask;
+import net.simonvt.cathode.util.DateUtils;
 
 public class EpisodeTaskScheduler extends BaseTaskScheduler {
 
@@ -107,12 +110,25 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
           final long traktId = episode.getLong(episode.getColumnIndex(EpisodeColumns.TRAKT_ID));
           episode.close();
 
+          final long showId = EpisodeWrapper.getShowId(context.getContentResolver(), episodeId);
+
+          Cursor show = context.getContentResolver().query(Shows.withId(showId), new String[] {
+              ShowColumns.RUNTIME,
+          }, null, null, null);
+
+          show.moveToFirst();
+          final int runtime = show.getInt(show.getColumnIndex(ShowColumns.RUNTIME));
+
+          final long startedAt = System.currentTimeMillis();
+          final long expiresAt = startedAt + runtime * DateUtils.MINUTE_IN_MILLIS;
+
           ContentValues cv = new ContentValues();
           cv.put(EpisodeColumns.CHECKED_IN, true);
+          cv.put(EpisodeColumns.STARTED_AT, startedAt);
+          cv.put(EpisodeColumns.EXPIRES_AT, expiresAt);
           context.getContentResolver().update(Episodes.withId(episodeId), cv, null, null);
 
-          queuePriorityTask(
-              new CheckInEpisodeTask(traktId, message, facebook, twitter, tumblr));
+          queuePriorityTask(new CheckInEpisodeTask(traktId, message, facebook, twitter, tumblr));
         }
       }
     });

@@ -28,6 +28,7 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.Watching;
+import net.simonvt.cathode.api.enumeration.Action;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -121,16 +122,30 @@ public class SyncWatchingTask extends TraktTask {
             long episodeId = EpisodeWrapper.getEpisodeId(getContentResolver(), showId, seasonNumber,
                 episodeNumber);
             if (episodeId == -1L) {
-              episodeId =
-                  EpisodeWrapper.createEpisode(getContentResolver(), showId, seasonId, episodeNumber);
+              episodeId = EpisodeWrapper.createEpisode(getContentResolver(), showId, seasonId,
+                  episodeNumber);
               if (didSeasonExist) {
                 queueTask(new SyncEpisodeTask(showTraktId, seasonNumber, episodeNumber));
               }
             }
 
-            op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
-                .withValue(EpisodeColumns.CHECKED_IN, true)
-                .build();
+            episodeWatching.remove(episodeId);
+
+            if (watching.getAction() == Action.CHECKIN) {
+              op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
+                  .withValue(EpisodeColumns.CHECKED_IN, true)
+                  .withValue(EpisodeColumns.WATCHING, false)
+                  .withValue(EpisodeColumns.STARTED_AT, watching.getStartedAt().getTimeInMillis())
+                  .withValue(EpisodeColumns.EXPIRES_AT, watching.getExpiresAt().getTimeInMillis())
+                  .build();
+            } else {
+              op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
+                  .withValue(EpisodeColumns.CHECKED_IN, false)
+                  .withValue(EpisodeColumns.WATCHING, true)
+                  .withValue(EpisodeColumns.STARTED_AT, watching.getStartedAt().getTimeInMillis())
+                  .withValue(EpisodeColumns.EXPIRES_AT, watching.getExpiresAt().getTimeInMillis())
+                  .build();
+            }
             ops.add(op);
             break;
 
@@ -142,9 +157,23 @@ public class SyncWatchingTask extends TraktTask {
               queueTask(new SyncMovieTask(movieTraktId));
             }
 
-            op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
-                .withValue(MovieColumns.CHECKED_IN, true)
-                .build();
+            movieWatching.remove(movieId);
+
+            if (watching.getAction() == Action.CHECKIN) {
+              op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
+                  .withValue(MovieColumns.CHECKED_IN, true)
+                  .withValue(MovieColumns.WATCHING, false)
+                  .withValue(MovieColumns.STARTED_AT, watching.getStartedAt().getTimeInMillis())
+                  .withValue(MovieColumns.EXPIRES_AT, watching.getExpiresAt().getTimeInMillis())
+                  .build();
+            } else {
+              op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
+                  .withValue(MovieColumns.CHECKED_IN, false)
+                  .withValue(MovieColumns.WATCHING, true)
+                  .withValue(MovieColumns.STARTED_AT, watching.getStartedAt().getTimeInMillis())
+                  .withValue(MovieColumns.EXPIRES_AT, watching.getExpiresAt().getTimeInMillis())
+                  .build();
+            }
             ops.add(op);
             break;
         }

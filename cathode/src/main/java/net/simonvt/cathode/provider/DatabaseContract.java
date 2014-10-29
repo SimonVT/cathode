@@ -191,6 +191,8 @@ public final class DatabaseContract {
 
     @DataType(INTEGER) @DefaultValue("0") String WATCHING = "watching";
     @DataType(INTEGER) @DefaultValue("0") String CHECKED_IN = "checkedIn";
+    @DataType(INTEGER) @DefaultValue("0") String STARTED_AT = "startedAt";
+    @DataType(INTEGER) @DefaultValue("0") String EXPIRES_AT = "expiresAt";
 
     @DataType(INTEGER) @DefaultValue("0") String NEEDS_SYNC = "needsSync";
   }
@@ -240,6 +242,8 @@ public final class DatabaseContract {
 
     @DataType(INTEGER) @DefaultValue("0") String WATCHING = "watching";
     @DataType(INTEGER) @DefaultValue("0") String CHECKED_IN = "checkedIn";
+    @DataType(INTEGER) @DefaultValue("0") String STARTED_AT = "startedAt";
+    @DataType(INTEGER) @DefaultValue("0") String EXPIRES_AT = "expiresAt";
 
     @DataType(INTEGER) @DefaultValue("0") String NEEDS_SYNC = "needsSync";
   }

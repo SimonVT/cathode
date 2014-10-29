@@ -16,11 +16,16 @@
 
 package net.simonvt.cathode.api.entity;
 
+import net.simonvt.cathode.api.enumeration.Action;
 import net.simonvt.cathode.api.enumeration.ItemType;
 
 public class Watching {
 
   IsoTime expiresAt;
+
+  IsoTime startedAt;
+
+  Action action;
 
   ItemType type;
 
@@ -32,6 +37,14 @@ public class Watching {
 
   public IsoTime getExpiresAt() {
     return expiresAt;
+  }
+
+  public IsoTime getStartedAt() {
+    return startedAt;
+  }
+
+  public Action getAction() {
+    return action;
   }
 
   public ItemType getType() {

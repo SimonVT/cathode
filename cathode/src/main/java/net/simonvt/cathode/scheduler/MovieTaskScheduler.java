@@ -29,6 +29,7 @@ import net.simonvt.cathode.remote.action.movies.MovieCollectionTask;
 import net.simonvt.cathode.remote.action.movies.MovieRateTask;
 import net.simonvt.cathode.remote.action.movies.MovieWatchedTask;
 import net.simonvt.cathode.remote.action.movies.MovieWatchlistTask;
+import net.simonvt.cathode.util.DateUtils;
 
 public class MovieTaskScheduler extends BaseTaskScheduler {
 
@@ -115,8 +116,15 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         Cursor c = context.getContentResolver().query(Movies.WATCHING, null, null, null, null);
 
         if (c.getCount() == 0) {
+          final int runtime = c.getInt(c.getColumnIndex(MovieColumns.RUNTIME));
+
+          final long startedAt = System.currentTimeMillis();
+          final long expiresAt = startedAt + runtime * DateUtils.MINUTE_IN_MILLIS;
+
           ContentValues cv = new ContentValues();
           cv.put(MovieColumns.CHECKED_IN, true);
+          cv.put(MovieColumns.STARTED_AT, startedAt);
+          cv.put(MovieColumns.EXPIRES_AT, expiresAt);
           context.getContentResolver().update(Movies.withId(movieId), cv, null, null);
 
           final long traktId = MovieWrapper.getTraktId(context.getContentResolver(), movieId);
