@@ -592,7 +592,9 @@ public class PhoneController extends UiController {
   private LoaderManager.LoaderCallbacks<Cursor> watchingMovieCallback =
       new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-          CursorLoader loader = new CursorLoader(activity, Movies.WATCHING, null, null, null, null);
+          CursorLoader loader =
+              new CursorLoader(activity, Movies.WATCHING, null, MovieColumns.NEEDS_SYNC + "=0",
+                  null, null);
           loader.setUpdateThrottle(2000);
           return loader;
         }

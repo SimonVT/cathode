@@ -215,9 +215,8 @@ public class MovieRecommendationsFragment extends GridRecyclerViewFragment<Movie
   }
 
   @Override public Loader<MutableCursor> onCreateLoader(int i, Bundle bundle) {
-    MutableCursorLoader loader =
-        new MutableCursorLoader(getActivity(), Movies.RECOMMENDED, null, null, null,
-            sortBy.getSortOrder());
+    MutableCursorLoader loader = new MutableCursorLoader(getActivity(), Movies.RECOMMENDED, null,
+        MovieColumns.NEEDS_SYNC + "=0", null, sortBy.getSortOrder());
     loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return loader;
   }

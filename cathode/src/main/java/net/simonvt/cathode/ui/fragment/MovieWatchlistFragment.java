@@ -41,9 +41,9 @@ public class MovieWatchlistFragment extends MoviesFragment {
   }
 
   @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-    CursorLoader loader =
-        new CursorLoader(getActivity(), Movies.MOVIES, null, MovieColumns.IN_WATCHLIST, null,
-            Movies.DEFAULT_SORT);
+    CursorLoader loader = new CursorLoader(getActivity(), Movies.MOVIES, null,
+        MovieColumns.IN_WATCHLIST + "=1 AND " + MovieColumns.NEEDS_SYNC + "=0", null,
+        Movies.DEFAULT_SORT);
     loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return loader;
   }
