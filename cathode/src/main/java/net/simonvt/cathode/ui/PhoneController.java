@@ -107,8 +107,7 @@ public class PhoneController extends UiController {
 
   private Cursor watchingMovie;
 
-  //private static final boolean IS_MATERIAL = Build.VERSION.SDK_INT >= Build.VERSION_CODES.L;
-  private static final boolean IS_MATERIAL = Build.VERSION.SDK_INT >= 20;
+  private static final boolean IS_MATERIAL = Build.VERSION.SDK_INT >= Build.VERSION_CODES.L;
 
   public static PhoneController create(HomeActivity activity, ViewGroup parent) {
     return create(activity, parent, null);
