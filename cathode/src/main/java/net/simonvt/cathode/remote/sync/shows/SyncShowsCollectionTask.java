@@ -29,8 +29,10 @@ import net.simonvt.cathode.api.entity.CollectionItem;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
@@ -69,6 +71,10 @@ public class SyncShowsCollectionTask extends TraktTask {
           showId = ShowWrapper.createShow(resolver, traktId);
           queueTask(new SyncShowTask(traktId));
         }
+
+        ops.add(ContentProviderOperation.newUpdate(Shows.withId(showId))
+            .withValue(ShowColumns.LAST_COLLECTED_AT, item.getLastCollectedAt().getTimeInMillis())
+            .build());
 
         List<CollectionItem.Season> seasons = item.getSeasons();
         for (CollectionItem.Season season : seasons) {

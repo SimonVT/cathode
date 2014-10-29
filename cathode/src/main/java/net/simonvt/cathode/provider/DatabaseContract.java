@@ -77,6 +77,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String IN_WATCHLIST = "showInWatchlist";
     @DataType(INTEGER) @DefaultValue("0") String LISTED_AT = "watchlistListedAt";
     @DataType(INTEGER) @DefaultValue("0") String LAST_WATCHED_AT = "lastWatchedAt";
+    @DataType(INTEGER) @DefaultValue("0") String LAST_COLLECTED_AT = "lastCollectedAt";
 
     @DataType(INTEGER) @DefaultValue("0") String WATCHED_COUNT = "watchedCount";
     @DataType(INTEGER) @DefaultValue("0") String AIRDATE_COUNT = "airdateCount";
