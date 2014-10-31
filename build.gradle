@@ -5,7 +5,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:0.13.+'
+    classpath 'com.android.tools.build:gradle:0.14.+'
     classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
     classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
   }
@@ -31,7 +31,7 @@ ext {
   targetSdkVersion = 21
 
   compileSdkVersion = 21
-  buildToolsVersion = '21.0.2'
+  buildToolsVersion = '21.1.0'
 }
 
 ext.libraries = [
