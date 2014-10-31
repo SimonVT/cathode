@@ -21,9 +21,9 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import java.util.ArrayList;
@@ -42,10 +42,13 @@ import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.adapter.MovieRecommendationsAdapter;
+import net.simonvt.cathode.ui.adapter.MovieSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
+import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
+import net.simonvt.cathode.widget.SearchView;
 
-public class MovieRecommendationsFragment extends GridRecyclerViewFragment<MoviesAdapter.ViewHolder>
+public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<MutableCursor>, MoviesAdapter.MovieClickListener,
     MovieRecommendationsAdapter.DismissListener, ListDialog.Callback {
 
@@ -122,40 +125,58 @@ public class MovieRecommendationsFragment extends GridRecyclerViewFragment<Movie
     sortBy = SortBy.fromValue(
         settings.getString(Settings.SORT_SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey()));
 
-    setHasOptionsMenu(true);
-
     getLoaderManager().initLoader(BaseActivity.LOADER_MOVIES_RECOMMENDATIONS, null, this);
 
     columnCount = getResources().getInteger(R.integer.movieColumns);
+
+    setTitle(R.string.title_movies_recommendations);
+    setEmptyText(R.string.movies_loading_trending);
   }
 
   @Override protected int getColumnCount() {
     return columnCount;
   }
 
-  @Override public String getTitle() {
-    return getResources().getString(R.string.title_movies_recommendations);
+  @Override public boolean displaysMenuIcon() {
+    return true;
   }
 
-  @Override public void onViewCreated(View view, Bundle inState) {
-    super.onViewCreated(view, inState);
-    setEmptyText(R.string.movies_loading_trending);
+  @Override public void createMenu(Toolbar toolbar) {
+    super.createMenu(toolbar);
+    toolbar.inflateMenu(R.menu.fragment_movies);
+    toolbar.inflateMenu(R.menu.fragment_movies_recommended);
+
+    final MenuItem searchItem = toolbar.getMenu().findItem(R.id.menu_search);
+    SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+    searchView.setAdapter(new MovieSuggestionAdapter(searchView.getContext()));
+
+    searchView.setListener(new SearchView.SearchViewListener() {
+      @Override public void onTextChanged(String newText) {
+      }
+
+      @Override public void onSubmit(String query) {
+        navigationListener.searchMovie(query);
+
+        MenuItemCompat.collapseActionView(searchItem);
+      }
+
+      @Override public void onSuggestionSelected(Object suggestion) {
+        SuggestionsAdapter.Suggestion item = (SuggestionsAdapter.Suggestion) suggestion;
+        if (item.getId() != null) {
+          navigationListener.onDisplayMovie(item.getId(), item.getTitle());
+        } else {
+          navigationListener.searchMovie(item.getTitle());
+        }
+
+        MenuItemCompat.collapseActionView(searchItem);
+      }
+    });
   }
 
-  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    super.onCreateOptionsMenu(menu, inflater);
-    inflater.inflate(R.menu.fragment_movies, menu);
-    inflater.inflate(R.menu.fragment_movies_recommended, menu);
-  }
-
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_refresh:
         queue.add(new SyncTask());
-        return true;
-
-      case R.id.menu_search:
-        navigationListener.onStartMovieSearch();
         return true;
 
       case R.id.sort_by:
@@ -167,7 +188,7 @@ public class MovieRecommendationsFragment extends GridRecyclerViewFragment<Movie
         return true;
 
       default:
-        return super.onOptionsItemSelected(item);
+        return super.onMenuItemClick(item);
     }
   }
 

@@ -16,10 +16,6 @@
   -->
 <resources>
 
-  <style name="Widget.ActionBar" parent="android:Widget.Material.ActionBar.Solid">
-    <item name="android:background">@color/actionBarBackground</item>
-  </style>
-
   <style name="Menu.Item">
     <item name="android:background">?android:attr/activatedBackgroundIndicator</item>
     <item name="android:textAppearance">?android:attr/textAppearance</item>

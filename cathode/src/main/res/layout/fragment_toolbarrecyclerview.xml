@@ -14,23 +14,16 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-  <item
-      android:id="@+id/menu_search"
-      android:icon="@drawable/ic_action_search"
-      android:title="@string/action_search"
-      app:showAsAction="always|collapseActionView"/>
+  <include layout="@layout/toolbar"/>
 
-  <item
-      android:id="@+id/menu_refresh"
-      android:icon="@drawable/ic_action_refresh"
-      android:title="@string/action_refresh"
-      app:showAsAction="never"/>
-
-  <item
-      android:id="@+id/menu_logout"
-      android:title="@string/action_logout"
-      app:showAsAction="never"/>
-</menu>
+  <include
+      layout="@layout/fragment_recyclerview"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1"/>
+</LinearLayout>

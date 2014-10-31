@@ -20,9 +20,9 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import javax.inject.Inject;
@@ -33,10 +33,13 @@ import net.simonvt.cathode.remote.PriorityQueue;
 import net.simonvt.cathode.remote.TraktTaskQueue;
 import net.simonvt.cathode.remote.sync.SyncTask;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
+import net.simonvt.cathode.ui.adapter.MovieSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
+import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
+import net.simonvt.cathode.widget.SearchView;
 
-public abstract class MoviesFragment extends GridRecyclerViewFragment<MoviesAdapter.ViewHolder>
+public abstract class MoviesFragment extends ToolbarGridFragment<MoviesAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.MovieClickListener {
 
   @Inject TraktTaskQueue queue;
@@ -62,30 +65,56 @@ public abstract class MoviesFragment extends GridRecyclerViewFragment<MoviesAdap
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
-    setHasOptionsMenu(true);
 
     getLoaderManager().initLoader(getLoaderId(), null, this);
 
     columnCount = getResources().getInteger(R.integer.movieColumns);
   }
 
-  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    super.onCreateOptionsMenu(menu, inflater);
-    inflater.inflate(R.menu.fragment_movies, menu);
+  @Override public boolean displaysMenuIcon() {
+    return true;
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public void createMenu(Toolbar toolbar) {
+    super.createMenu(toolbar);
+    toolbar.inflateMenu(R.menu.fragment_movies);
+
+    final MenuItem searchItem = toolbar.getMenu().findItem(R.id.menu_search);
+    SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+    searchView.setAdapter(new MovieSuggestionAdapter(searchView.getContext()));
+
+    searchView.setListener(new SearchView.SearchViewListener() {
+      @Override public void onTextChanged(String newText) {
+      }
+
+      @Override public void onSubmit(String query) {
+        navigationListener.searchMovie(query);
+
+        MenuItemCompat.collapseActionView(searchItem);
+      }
+
+      @Override public void onSuggestionSelected(Object suggestion) {
+        SuggestionsAdapter.Suggestion item = (SuggestionsAdapter.Suggestion) suggestion;
+        if (item.getId() != null) {
+          navigationListener.onDisplayMovie(item.getId(), item.getTitle());
+        } else {
+          navigationListener.searchMovie(item.getTitle());
+        }
+
+        MenuItemCompat.collapseActionView(searchItem);
+      }
+    });
+  }
+
+  @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_refresh:
         queue.add(new SyncTask());
         return true;
 
-      case R.id.menu_search:
-        navigationListener.onStartMovieSearch();
-        return true;
+      default:
+        return super.onMenuItemClick(item);
     }
-
-    return super.onOptionsItemSelected(item);
   }
 
   @Override protected int getColumnCount() {

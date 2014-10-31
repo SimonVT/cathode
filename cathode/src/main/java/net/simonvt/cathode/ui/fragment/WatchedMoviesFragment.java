@@ -30,10 +30,7 @@ public class WatchedMoviesFragment extends MoviesFragment {
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
     setEmptyText(R.string.empty_movie_watched);
-  }
-
-  @Override public String getTitle() {
-    return getResources().getString(R.string.title_movies_watched);
+    setTitle(R.string.title_movies_watched);
   }
 
   @Override protected int getLoaderId() {

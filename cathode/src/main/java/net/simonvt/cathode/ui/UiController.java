@@ -85,10 +85,6 @@ public class UiController implements ShowsNavigationListener, MoviesNavigationLi
     Timber.d("[onDisplayMovie]");
   }
 
-  @Override public void onStartMovieSearch() {
-    Timber.d("[onStartMovieSearch]");
-  }
-
   @Override public void onDisplayShow(long showId, String title, LibraryType type) {
     Timber.d("[onDisplayShow]");
   }
@@ -103,7 +99,11 @@ public class UiController implements ShowsNavigationListener, MoviesNavigationLi
     Timber.d("[onDisplayEpisode]");
   }
 
-  @Override public void onStartShowSearch() {
-    Timber.d("[onStartShowSearch]");
+  @Override public void searchShow(String query) {
+    Timber.d("[searchShow]");
+  }
+
+  @Override public void searchMovie(String query) {
+    Timber.d("[searchMovie]");
   }
 }

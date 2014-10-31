@@ -15,15 +15,16 @@
  */
 package net.simonvt.cathode.ui.fragment;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +35,6 @@ import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
@@ -43,6 +43,7 @@ import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.ui.BaseActivity;
+import net.simonvt.cathode.ui.NavigationClickListener;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
@@ -95,6 +96,8 @@ public class MovieFragment extends ProgressFragment
 
   private boolean checkedIn;
 
+  private NavigationClickListener navigationListener;
+
   public static Bundle getArgs(long movieId, String movieTitle) {
     Bundle args = new Bundle();
     args.putLong(ARG_ID, movieId);
@@ -102,19 +105,24 @@ public class MovieFragment extends ProgressFragment
     return args;
   }
 
+  @Override public void onAttach(Activity activity) {
+    super.onAttach(activity);
+    try {
+      navigationListener = (NavigationClickListener) activity;
+    } catch (ClassCastException e) {
+      throw new ClassCastException(activity.toString() + " must implement NavigationClickListener");
+    }
+  }
+
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
 
-    setHasOptionsMenu(true);
-
     Bundle args = getArguments();
     movieId = args.getLong(ARG_ID);
     movieTitle = args.getString(ARG_TITLE);
-  }
 
-  @Override public String getTitle() {
-    return movieTitle == null ? "" : movieTitle;
+    setTitle(movieTitle);
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
@@ -123,6 +131,7 @@ public class MovieFragment extends ProgressFragment
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
+
     rating.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         RatingDialog.newInstance(RatingDialog.Type.MOVIE, movieId, currentRating)
@@ -141,7 +150,10 @@ public class MovieFragment extends ProgressFragment
     getLoaderManager().initLoader(BaseActivity.LOADER_MOVIE_ACTORS, null, actorsLoader);
   }
 
-  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+  @Override public void createMenu(Toolbar toolbar) {
+    super.createMenu(toolbar);
+    Menu menu = toolbar.getMenu();
+
     if (loaded) {
       if (checkedIn) {
         menu.add(0, R.id.action_checkin_cancel, 1, R.string.action_checkin_cancel)
@@ -174,7 +186,7 @@ public class MovieFragment extends ProgressFragment
     }
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.action_watched:
         movieScheduler.setWatched(movieId, true);
@@ -209,7 +221,7 @@ public class MovieFragment extends ProgressFragment
         return true;
     }
 
-    return false;
+    return super.onMenuItemClick(item);
   }
 
   private void updateView(final Cursor cursor) {
@@ -219,7 +231,7 @@ public class MovieFragment extends ProgressFragment
     final String title = cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE));
     if (!title.equals(movieTitle)) {
       movieTitle = title;
-      bus.post(new OnTitleChangedEvent());
+      setTitle(movieTitle);
     }
     final int year = cursor.getInt(cursor.getColumnIndex(MovieColumns.YEAR));
     //TODO: final String certification = cursor.getString(cursor.getColumnIndex(MovieColumns.CERTIFICATION));
@@ -249,7 +261,7 @@ public class MovieFragment extends ProgressFragment
     this.overview.setText(overview);
 
     setContentVisible(true);
-    getActivity().invalidateOptionsMenu();
+    invalidateMenu();
   }
 
   @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
@@ -290,8 +302,7 @@ public class MovieFragment extends ProgressFragment
       Tables.MOVIE_CAST + "." + MovieCastColumns.ID,
       Tables.MOVIE_CAST + "." + MovieCastColumns.PERSON_ID,
       Tables.MOVIE_CAST + "." + MovieCastColumns.CHARACTER,
-      Tables.PEOPLE + "." + PersonColumns.NAME,
-      Tables.PEOPLE + "." + PersonColumns.HEADSHOT,
+      Tables.PEOPLE + "." + PersonColumns.NAME, Tables.PEOPLE + "." + PersonColumns.HEADSHOT,
   };
 
   private LoaderManager.LoaderCallbacks<Cursor> actorsLoader =

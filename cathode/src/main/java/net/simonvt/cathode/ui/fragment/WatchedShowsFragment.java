@@ -32,10 +32,7 @@ public class WatchedShowsFragment extends ShowsFragment {
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
     setEmptyText(R.string.empty_show_watched);
-  }
-
-  @Override public String getTitle() {
-    return getResources().getString(R.string.title_shows_watched);
+    setTitle(R.string.title_shows_watched);
   }
 
   @Override protected LibraryType getLibraryType() {

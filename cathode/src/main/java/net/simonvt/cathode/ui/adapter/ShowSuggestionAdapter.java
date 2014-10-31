@@ -25,6 +25,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowSearchSuggestionsColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowSearchSuggestions;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import timber.log.Timber;
 
 public class ShowSuggestionAdapter extends SuggestionsAdapter {
 
@@ -81,6 +82,7 @@ public class ShowSuggestionAdapter extends SuggestionsAdapter {
       Cursor allShows = context.getContentResolver().query(Shows.SHOWS, new String[] {
           ShowColumns.ID, ShowColumns.TITLE,
       }, ShowColumns.NEEDS_SYNC
+          + "=0"
           + " AND ("
           + ShowColumns.IN_COLLECTION_COUNT
           + ">0 OR "

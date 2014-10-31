@@ -20,8 +20,8 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import javax.inject.Inject;
@@ -34,10 +34,14 @@ import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.adapter.ShowClickListener;
+import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
+import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
+import net.simonvt.cathode.widget.SearchView;
+import timber.log.Timber;
 
 public abstract class ShowsFragment<D extends Cursor>
-    extends GridRecyclerViewFragment<ShowsWithNextAdapter.ViewHolder>
+    extends ToolbarGridFragment<ShowsWithNextAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<D>, ShowClickListener {
 
   @Inject TraktTaskQueue queue;
@@ -63,45 +67,59 @@ public abstract class ShowsFragment<D extends Cursor>
     super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
 
-    setHasOptionsMenu(true);
-
     getLoaderManager().initLoader(getLoaderId(), null, this);
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
   }
 
-  @Override public void onSaveInstanceState(Bundle outState) {
-    super.onSaveInstanceState(outState);
+  @Override public boolean displaysMenuIcon() {
+    return true;
   }
 
   @Override protected int getColumnCount() {
     return columnCount;
   }
 
-  @Override public void onViewCreated(View view, Bundle inState) {
-    super.onViewCreated(view, inState);
+  @Override public void createMenu(Toolbar toolbar) {
+    super.createMenu(toolbar);
+    toolbar.inflateMenu(R.menu.fragment_shows);
+
+    final MenuItem searchItem = toolbar.getMenu().findItem(R.id.menu_search);
+    SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+    searchView.setAdapter(new ShowSuggestionAdapter(searchView.getContext()));
+
+    searchView.setListener(new SearchView.SearchViewListener() {
+      @Override public void onTextChanged(String newText) {
+      }
+
+      @Override public void onSubmit(String query) {
+        Timber.d("[onQueryTextSubmit] Query: %s", query);
+        navigationListener.searchShow(query);
+
+        MenuItemCompat.collapseActionView(searchItem);
+      }
+
+      @Override public void onSuggestionSelected(Object suggestion) {
+        SuggestionsAdapter.Suggestion item = (SuggestionsAdapter.Suggestion) suggestion;
+        if (item.getId() != null) {
+          navigationListener.onDisplayShow(item.getId(), item.getTitle(), LibraryType.WATCHED);
+        } else {
+          navigationListener.searchShow(item.getTitle());
+        }
+
+        MenuItemCompat.collapseActionView(searchItem);
+      }
+    });
   }
 
-  @Override public void onDetach() {
-    super.onDetach();
-  }
-
-  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    inflater.inflate(R.menu.fragment_shows, menu);
-  }
-
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_refresh:
         queue.add(new SyncTask());
         return true;
 
-      case R.id.menu_search:
-        navigationListener.onStartShowSearch();
-        return true;
-
       default:
-        return false;
+        return super.onMenuItemClick(item);
     }
   }
 

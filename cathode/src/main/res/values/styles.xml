@@ -17,9 +17,8 @@
 
   <style name="Widget" parent="android:Widget.Holo"/>
 
-  <style name="Widget.ActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
+  <style name="Toolbar">
     <item name="android:background">@color/actionBarBackground</item>
-    <item name="android:icon">@drawable/ic_action_icon</item>
   </style>
 
   <style name="Widget.InfoTitle">

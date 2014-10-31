@@ -36,7 +36,7 @@ import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.SeasonAdapter;
 
-public class SeasonFragment extends GridRecyclerViewFragment<SeasonAdapter.ViewHolder>
+public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder>
     implements SeasonAdapter.EpisodeClickListener {
 
   private static final String ARG_SHOW_ID = "net.simonvt.cathode.ui.fragment.SeasonFragment.showId";
@@ -60,7 +60,7 @@ public class SeasonFragment extends GridRecyclerViewFragment<SeasonAdapter.ViewH
 
   private SeasonAdapter episodeAdapter;
 
-  private ShowsNavigationListener navigationCallbacks;
+  private ShowsNavigationListener navigationListener;
 
   private int columnCount;
 
@@ -78,7 +78,7 @@ public class SeasonFragment extends GridRecyclerViewFragment<SeasonAdapter.ViewH
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
-      navigationCallbacks = (ShowsNavigationListener) activity;
+      navigationListener = (ShowsNavigationListener) activity;
     } catch (ClassCastException e) {
       throw new ClassCastException(activity.toString() + " must implement ShowsNavigationListener");
     }
@@ -95,6 +95,9 @@ public class SeasonFragment extends GridRecyclerViewFragment<SeasonAdapter.ViewH
     seasonNumber = args.getInt(ARG_SEASON_NUMBER);
     type = (LibraryType) args.getSerializable(ARG_TYPE);
 
+    setTitle(title);
+    updateSubtitle();
+
     getLoaderManager().initLoader(BaseActivity.LOADER_SEASON, null, episodesLoader);
 
     if (title == null) {
@@ -105,6 +108,7 @@ public class SeasonFragment extends GridRecyclerViewFragment<SeasonAdapter.ViewH
         @Override public void onLoadComplete(Loader<Cursor> cursorLoader, Cursor cursor) {
           cursor.moveToFirst();
           title = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
+          setTitle(title);
 
           cursorLoader.stopLoading();
         }
@@ -122,6 +126,7 @@ public class SeasonFragment extends GridRecyclerViewFragment<SeasonAdapter.ViewH
 
           if (c.moveToFirst()) {
             seasonNumber = c.getInt(c.getColumnIndex(SeasonColumns.SEASON));
+            updateSubtitle();
           }
           c.close();
         }
@@ -131,11 +136,7 @@ public class SeasonFragment extends GridRecyclerViewFragment<SeasonAdapter.ViewH
     columnCount = getResources().getInteger(R.integer.episodesColumns);
   }
 
-  @Override public String getTitle() {
-    return title;
-  }
-
-  @Override public String getSubtitle() {
+  public String updateSubtitle() {
     if (seasonNumber == 0) {
       return getResources().getString(R.string.season_special);
     } else {
@@ -147,8 +148,23 @@ public class SeasonFragment extends GridRecyclerViewFragment<SeasonAdapter.ViewH
     return columnCount;
   }
 
+  @Override public boolean displaysMenuIcon() {
+    return false;
+  }
+
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
+    toolbar.setNavigationOnClickListener(navigationClickListener);
+  }
+
+  private View.OnClickListener navigationClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      navigationListener.onHomeClicked();
+    }
+  };
+
   @Override public void onEpisodeClick(View view, int position, long id) {
-    navigationCallbacks.onDisplayEpisode(id, title);
+    navigationListener.onDisplayEpisode(id, title);
   }
 
   private void setCursor(Cursor cursor) {

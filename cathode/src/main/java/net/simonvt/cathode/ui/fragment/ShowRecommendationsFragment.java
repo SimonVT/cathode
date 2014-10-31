@@ -23,9 +23,9 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import java.util.ArrayList;
@@ -47,10 +47,13 @@ import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
 import net.simonvt.cathode.ui.adapter.ShowRecommendationsAdapter;
+import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
+import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
+import net.simonvt.cathode.widget.SearchView;
 
 public class ShowRecommendationsFragment
-    extends GridRecyclerViewFragment<ShowDescriptionAdapter.ViewHolder>
+    extends ToolbarGridFragment<ShowDescriptionAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<MutableCursor>,
     ShowRecommendationsAdapter.DismissListener, ListDialog.Callback, ShowClickListener {
 
@@ -128,40 +131,70 @@ public class ShowRecommendationsFragment
     sortBy = SortBy.fromValue(
         settings.getString(Settings.SORT_SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey()));
 
-    setHasOptionsMenu(true);
-
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOWS_RECOMMENDATIONS, null, this);
 
     isTablet = getResources().getBoolean(R.bool.isTablet);
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
-  }
 
-  @Override public String getTitle() {
-    return getResources().getString(R.string.title_shows_recommendations);
+    setTitle(R.string.title_shows_recommendations);
   }
 
   @Override protected int getColumnCount() {
     return columnCount;
   }
 
+  @Override public boolean displaysMenuIcon() {
+    return true;
+  }
+
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
+    toolbar.setNavigationOnClickListener(navigationClickListener);
   }
 
-  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    inflater.inflate(R.menu.fragment_shows, menu);
-    inflater.inflate(R.menu.fragment_shows_recommended, menu);
+  private View.OnClickListener navigationClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      navigationListener.onHomeClicked();
+    }
+  };
+
+  @Override public void createMenu(Toolbar toolbar) {
+    super.createMenu(toolbar);
+    toolbar.inflateMenu(R.menu.fragment_shows);
+    toolbar.inflateMenu(R.menu.fragment_shows_recommended);
+
+    final MenuItem searchItem = toolbar.getMenu().findItem(R.id.menu_search);
+    SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+    searchView.setAdapter(new ShowSuggestionAdapter(searchView.getContext()));
+
+    searchView.setListener(new SearchView.SearchViewListener() {
+      @Override public void onTextChanged(String newText) {
+      }
+
+      @Override public void onSubmit(String query) {
+        navigationListener.searchShow(query);
+
+        MenuItemCompat.collapseActionView(searchItem);
+      }
+
+      @Override public void onSuggestionSelected(Object suggestion) {
+        SuggestionsAdapter.Suggestion item = (SuggestionsAdapter.Suggestion) suggestion;
+        if (item.getId() != null) {
+          navigationListener.onDisplayShow(item.getId(), item.getTitle(), LibraryType.WATCHED);
+        } else {
+          navigationListener.searchShow(item.getTitle());
+        }
+
+        MenuItemCompat.collapseActionView(searchItem);
+      }
+    });
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_refresh:
         queue.add(new SyncTask());
-        return true;
-
-      case R.id.menu_search:
-        navigationListener.onStartShowSearch();
         return true;
 
       case R.id.sort_by:
@@ -173,7 +206,7 @@ public class ShowRecommendationsFragment
         return true;
 
       default:
-        return super.onOptionsItemSelected(item);
+        return super.onMenuItemClick(item);
     }
   }
 

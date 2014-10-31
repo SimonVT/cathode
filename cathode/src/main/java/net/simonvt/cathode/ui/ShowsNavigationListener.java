@@ -15,7 +15,7 @@
  */
 package net.simonvt.cathode.ui;
 
-public interface ShowsNavigationListener {
+public interface ShowsNavigationListener extends NavigationClickListener {
 
   void onDisplayShow(long showId, String title, LibraryType type);
 
@@ -24,5 +24,5 @@ public interface ShowsNavigationListener {
 
   void onDisplayEpisode(long episodeId, String showTitle);
 
-  void onStartShowSearch();
+  void searchShow(String query);
 }

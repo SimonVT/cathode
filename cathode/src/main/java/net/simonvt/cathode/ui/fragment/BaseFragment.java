@@ -15,17 +15,92 @@
  */
 package net.simonvt.cathode.ui.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.Optional;
+import net.simonvt.cathode.R;
 import net.simonvt.cathode.ui.FragmentContract;
+import net.simonvt.cathode.ui.NavigationClickListener;
+import net.simonvt.cathode.widget.ToolbarHelper;
 
-public abstract class BaseFragment extends Fragment implements FragmentContract {
+public abstract class BaseFragment extends Fragment
+    implements FragmentContract, Toolbar.OnMenuItemClickListener {
+
+  @InjectView(R.id.toolbar) @Optional Toolbar toolbar;
+
+  private ToolbarHelper toolbarHelper;
+
+  private NavigationClickListener navigationListener;
+
+  private CharSequence title;
+
+  private CharSequence subtitle;
+
+  @Override public void onAttach(Activity activity) {
+    super.onAttach(activity);
+    if (activity instanceof NavigationClickListener) {
+      navigationListener = (NavigationClickListener) activity;
+    }
+  }
+
+  public Toolbar getToolbar() {
+    return toolbar;
+  }
+
+  public ToolbarHelper getToolbarHelper() {
+    return toolbarHelper;
+  }
+
+  public void setTitle(int titleRes) {
+    setTitle(getResources().getString(titleRes));
+  }
+
+  public void setTitle(CharSequence title) {
+    this.title = title;
+    if (toolbar != null) {
+      toolbar.setTitle(title);
+    }
+  }
+
+  public void setSubtitle(CharSequence subtitle) {
+    this.subtitle = subtitle;
+    if (toolbar != null) {
+      toolbar.setSubtitle(subtitle);
+    }
+  }
+
+  public boolean displaysMenuIcon() {
+    return false;
+  }
+
+  public void invalidateMenu() {
+    if (toolbar != null) {
+      toolbar.getMenu().clear();
+      createMenu();
+    }
+  }
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
     ButterKnife.inject(this, view);
+    if (toolbar != null) {
+      toolbar.setOnMenuItemClickListener(this);
+      toolbarHelper = new ToolbarHelper(this, toolbar, displaysMenuIcon());
+      createMenu();
+
+      if (navigationListener != null) {
+        toolbar.setNavigationOnClickListener(navigationClickListener);
+      }
+
+      toolbar.setTitle(title);
+      toolbar.setSubtitle(subtitle);
+    }
   }
 
   @Override public void onDestroyView() {
@@ -33,12 +108,22 @@ public abstract class BaseFragment extends Fragment implements FragmentContract 
     super.onDestroyView();
   }
 
-  @Override public String getTitle() {
-    return null;
+  private View.OnClickListener navigationClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      navigationListener.onHomeClicked();
+    }
+  };
+
+  private void createMenu() {
+    createMenu(toolbar);
   }
 
-  @Override public String getSubtitle() {
-    return null;
+  public void createMenu(Toolbar toolbar) {
+    toolbarHelper.createMenu();
+  }
+
+  @Override public boolean onMenuItemClick(MenuItem item) {
+    return toolbarHelper.onMenuItemClick(item);
   }
 
   @Override public boolean onBackPressed() {

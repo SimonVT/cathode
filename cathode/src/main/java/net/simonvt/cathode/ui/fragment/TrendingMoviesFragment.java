@@ -22,9 +22,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import java.util.ArrayList;
@@ -90,10 +89,8 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
     sortBy =
         SortBy.fromValue(settings.getString(Settings.SORT_SHOW_TRENDING, SortBy.VIEWERS.getKey()));
     super.onCreate(inState);
-  }
 
-  @Override public String getTitle() {
-    return getResources().getString(R.string.title_movies_trending);
+    setTitle(R.string.title_movies_trending);
   }
 
   @Override public void onViewCreated(View view, Bundle inState) {
@@ -101,12 +98,12 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
     setEmptyText(R.string.movies_loading_trending);
   }
 
-  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    super.onCreateOptionsMenu(menu, inflater);
-    inflater.inflate(R.menu.fragment_movies_trending, menu);
+  @Override public void createMenu(Toolbar toolbar) {
+    super.createMenu(toolbar);
+    toolbar.inflateMenu(R.menu.fragment_movies_trending);
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.sort_by:
         ArrayList<ListDialog.Item> items = new ArrayList<ListDialog.Item>();
@@ -117,7 +114,7 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
         return true;
 
       default:
-        return super.onOptionsItemSelected(item);
+        return super.onMenuItemClick(item);
     }
   }
 

@@ -42,7 +42,18 @@
             app:aspectRatio="0.5627"/>
       </FrameLayout>
 
-      <include layout="@layout/fragment_episode_top"/>
+      <android.support.v7.widget.Toolbar
+          android:id="@+id/toolbar"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="@drawable/detail_header"
+          android:elevation="2dp"
+          app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+          app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+          style="@style/Toolbar">
+
+        <include layout="@layout/fragment_episode_top"/>
+      </android.support.v7.widget.Toolbar>
 
       <FrameLayout
           android:layout_width="match_parent"

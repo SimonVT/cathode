@@ -14,12 +14,13 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <item
       android:id="@+id/sort_by"
-      android:showAsAction="ifRoom|withText"
       android:icon="@drawable/ic_action_sort"
       android:orderInCategory="30"
-      android:title="@string/action_sort_by"/>
+      android:title="@string/action_sort_by"
+      app:showAsAction="ifRoom|withText"/>
 </menu>

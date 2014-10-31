@@ -14,7 +14,7 @@ dependencies {
 
   compile parent.libraries.gson
 
-  compile parent.libraries.supportv4
+  compile parent.libraries.appcompat
   compile parent.libraries.cardView
   compile parent.libraries.recyclerView
 

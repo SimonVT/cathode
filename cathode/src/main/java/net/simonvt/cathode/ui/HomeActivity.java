@@ -314,6 +314,10 @@ public class HomeActivity extends BaseActivity
   // Navigation callbacks
   ///////////////////////////////////////////////////////////////////////////
 
+  @Override public void onHomeClicked() {
+    activeController.onHomeClicked();
+  }
+
   @Override public void onDisplayShow(long showId, String title, LibraryType type) {
     activeController.onDisplayShow(showId, title, type);
   }
@@ -328,15 +332,15 @@ public class HomeActivity extends BaseActivity
     activeController.onDisplaySeason(showId, seasonId, showTitle, seasonNumber, type);
   }
 
-  @Override public void onStartShowSearch() {
-    activeController.onStartShowSearch();
+  @Override public void searchShow(String query) {
+    activeController.searchShow(query);
   }
 
   @Override public void onDisplayMovie(long movieId, String title) {
     activeController.onDisplayMovie(movieId, title);
   }
 
-  @Override public void onStartMovieSearch() {
-    activeController.onStartMovieSearch();
+  @Override public void searchMovie(String query) {
+    activeController.searchMovie(query);
   }
 }

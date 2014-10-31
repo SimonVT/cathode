@@ -21,89 +21,98 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-  <FrameLayout
+  <LinearLayout
       android:layout_width="match_parent"
-      android:layout_height="match_parent">
+      android:layout_height="match_parent"
+      android:orientation="vertical">
 
-    <net.simonvt.cathode.widget.ObservableScrollView
-        android:id="@+id/scrollView"
+    <include layout="@layout/toolbar"/>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-      <RelativeLayout
+      <net.simonvt.cathode.widget.ObservableScrollView
+          android:id="@+id/scrollView"
           android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="vertical"
-          android:paddingBottom="16dp">
+          android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/fanartContainer"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
 
-          <net.simonvt.cathode.widget.RemoteImageView
-              android:id="@+id/fanart"
+          <FrameLayout
+              android:id="@+id/fanartContainer"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              app:dominantMeasurement="width"
-              app:aspectRatio="0.5627"/>
-        </FrameLayout>
+              android:layout_height="wrap_content">
 
-        <include
-            layout="@layout/fragment_show_top"
-            android:id="@+id/topBarContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/fanartContainer"/>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/topBarContainer">
+            <net.simonvt.cathode.widget.RemoteImageView
+                android:id="@+id/fanart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:dominantMeasurement="width"
+                app:aspectRatio="0.5627"/>
+          </FrameLayout>
 
           <include
-              layout="@layout/fragment_list_progressbar"
+              layout="@layout/fragment_show_top"
+              android:id="@+id/topBarContainer"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginTop="48dp"/>
+              android:layout_below="@id/fanartContainer"/>
 
-          <LinearLayout
-              android:id="@+id/contentContainer"
+          <FrameLayout
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:orientation="vertical">
+              android:layout_below="@+id/topBarContainer">
 
-            <FrameLayout
+            <include
+                layout="@layout/fragment_list_progressbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"/>
 
-              <include layout="@layout/fragment_show_content"/>
+            <LinearLayout
+                android:id="@+id/contentContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-              <include layout="@layout/checkmarks"/>
-            </FrameLayout>
-          </LinearLayout>
-        </FrameLayout>
+              <FrameLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content">
 
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/topBarContainer"
-            android:translationY="@dimen/detailPosterTranslationY">
+                <include layout="@layout/fragment_show_content"/>
 
-          <!-- Size breaks on certain devices unless wrapped in FrameLayout -->
-          <net.simonvt.cathode.widget.RemoteImageView
-              android:id="@+id/poster"
-              android:layout_width="@dimen/detailPosterWidth"
+                <include layout="@layout/checkmarks"/>
+              </FrameLayout>
+            </LinearLayout>
+          </FrameLayout>
+
+          <FrameLayout
+              android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_marginLeft="@dimen/detailPosterLeftMargin"
-              android:background="#FF8C8C8C"
-              android:padding="2dp"
-              app:dominantMeasurement="width"
-              app:aspectRatio="1.47"/>
-        </FrameLayout>
-      </RelativeLayout>
-    </net.simonvt.cathode.widget.ObservableScrollView>
-  </FrameLayout>
+              android:layout_alignBottom="@id/topBarContainer"
+              android:translationY="@dimen/detailPosterTranslationY">
+
+            <!-- Size breaks on certain devices unless wrapped in FrameLayout -->
+            <net.simonvt.cathode.widget.RemoteImageView
+                android:id="@+id/poster"
+                android:layout_width="@dimen/detailPosterWidth"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/detailPosterLeftMargin"
+                android:background="#FF8C8C8C"
+                android:padding="2dp"
+                app:dominantMeasurement="width"
+                app:aspectRatio="1.47"/>
+          </FrameLayout>
+        </RelativeLayout>
+      </net.simonvt.cathode.widget.ObservableScrollView>
+    </FrameLayout>
+  </LinearLayout>
 
   <include layout="@layout/fragment_show_seasons"/>
 </net.simonvt.cathode.widget.HiddenPaneLayout>

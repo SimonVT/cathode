@@ -43,10 +43,6 @@ public class LoginController extends UiController {
       loginFragment = new LoginFragment();
     }
 
-    activity.getActionBar().setTitle(R.string.app_name);
-    activity.getActionBar().setDisplayHomeAsUpEnabled(false);
-    activity.getActionBar().setHomeButtonEnabled(false);
-
     FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
     transaction.setCustomAnimations(R.anim.fade_in_front, R.anim.fade_out_back);
 

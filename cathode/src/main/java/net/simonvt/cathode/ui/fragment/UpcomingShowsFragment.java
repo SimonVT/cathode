@@ -23,11 +23,11 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import java.util.ArrayList;
@@ -48,11 +48,14 @@ import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.HeaderSpanLookup;
+import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
+import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.adapter.UpcomingAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.widget.AnimatorHelper;
+import net.simonvt.cathode.widget.SearchView;
 
-public class UpcomingShowsFragment extends GridRecyclerViewFragment<RecyclerView.ViewHolder>
+public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
     implements UpcomingAdapter.OnRemoveListener, ListDialog.Callback,
     LoaderCallbacks<MutableCursor>, UpcomingAdapter.OnItemClickListener {
 
@@ -111,8 +114,6 @@ public class UpcomingShowsFragment extends GridRecyclerViewFragment<RecyclerView
 
   private UpcomingAdapter adapter;
 
-  private HeaderSpanLookup headerSpanLookup;
-
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
@@ -131,13 +132,13 @@ public class UpcomingShowsFragment extends GridRecyclerViewFragment<RecyclerView
 
     showHidden = settings.getBoolean(Settings.SHOW_HIDDEN, false);
 
-    setHasOptionsMenu(true);
-
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOWS_UPCOMING, null, this);
 
     setEmptyText(R.string.empty_show_upcoming);
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
+
+    setTitle(R.string.title_shows_upcoming);
   }
 
   @Override protected int getColumnCount() {
@@ -148,28 +149,49 @@ public class UpcomingShowsFragment extends GridRecyclerViewFragment<RecyclerView
     return new HeaderSpanLookup(ensureAdapter(), columnCount);
   }
 
-  @Override public String getTitle() {
-    return getResources().getString(R.string.title_shows_upcoming);
+  @Override public boolean displaysMenuIcon() {
+    return true;
   }
 
-  @Override public void onShowClicked(View v, int position, long id) {
-    Cursor c = ((UpcomingAdapter) getAdapter()).getCursor(position);
-    navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)),
-        LibraryType.WATCHED);
+  @Override public void createMenu(Toolbar toolbar) {
+    super.createMenu(toolbar);
+    toolbar.inflateMenu(R.menu.fragment_shows_upcoming);
+    toolbar.getMenu().findItem(R.id.menu_hidden).setChecked(showHidden);
+
+    final MenuItem searchItem = toolbar.getMenu().findItem(R.id.menu_search);
+    SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+    searchView.setAdapter(new ShowSuggestionAdapter(searchView.getContext()));
+
+    searchView.setListener(new SearchView.SearchViewListener() {
+      @Override public void onTextChanged(String newText) {
+      }
+
+      @Override public void onSubmit(String query) {
+        navigationListener.searchShow(query);
+
+        MenuItemCompat.collapseActionView(searchItem);
+      }
+
+      @Override public void onSuggestionSelected(Object suggestion) {
+        SuggestionsAdapter.Suggestion item = (SuggestionsAdapter.Suggestion) suggestion;
+        if (item.getId() != null) {
+          navigationListener.onDisplayShow(item.getId(), item.getTitle(), LibraryType.WATCHED);
+        } else {
+          navigationListener.searchShow(item.getTitle());
+        }
+
+        MenuItemCompat.collapseActionView(searchItem);
+      }
+    });
   }
 
-  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    super.onCreateOptionsMenu(menu, inflater);
-    inflater.inflate(R.menu.fragment_shows_upcoming, menu);
-    menu.findItem(R.id.menu_hidden).setChecked(showHidden);
-  }
-
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_hidden:
         showHidden = !showHidden;
         settings.edit().putBoolean(Settings.SHOW_HIDDEN, showHidden).apply();
-        getLoaderManager().restartLoader(BaseActivity.LOADER_SHOWS_UPCOMING, null, this);
+        getLoaderManager().restartLoader(BaseActivity.LOADER_SHOWS_UPCOMING, null,
+            UpcomingShowsFragment.this);
         item.setChecked(showHidden);
         return true;
 
@@ -177,7 +199,7 @@ public class UpcomingShowsFragment extends GridRecyclerViewFragment<RecyclerView
         ArrayList<ListDialog.Item> items = new ArrayList<ListDialog.Item>();
         items.add(new ListDialog.Item(R.id.sort_title, R.string.sort_title));
         items.add(new ListDialog.Item(R.id.sort_next_episode, R.string.sort_next_episode));
-        ListDialog.newInstance(R.string.action_sort_by, items, this)
+        ListDialog.newInstance(R.string.action_sort_by, items, UpcomingShowsFragment.this)
             .show(getFragmentManager(), DIALOG_SORT);
         return true;
 
@@ -185,13 +207,15 @@ public class UpcomingShowsFragment extends GridRecyclerViewFragment<RecyclerView
         queue.add(new SyncTask());
         return true;
 
-      case R.id.menu_search:
-        navigationListener.onStartShowSearch();
-        return true;
-
       default:
-        return super.onOptionsItemSelected(item);
+        return super.onMenuItemClick(item);
     }
+  }
+
+  @Override public void onShowClicked(View v, int position, long id) {
+    Cursor c = ((UpcomingAdapter) getAdapter()).getCursor(position);
+    navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)),
+        LibraryType.WATCHED);
   }
 
   @Override public void onItemSelected(int id) {

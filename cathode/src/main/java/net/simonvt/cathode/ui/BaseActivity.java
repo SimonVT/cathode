@@ -16,20 +16,14 @@
 package net.simonvt.cathode.ui;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.app.ActionBarActivity;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
-import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.CathodeApp;
-import net.simonvt.cathode.R;
-import net.simonvt.cathode.event.AuthFailedEvent;
-import net.simonvt.cathode.ui.dialog.AboutDialog;
 
-public abstract class BaseActivity extends FragmentActivity {
+public abstract class BaseActivity extends ActionBarActivity {
 
-  private static final String DIALOG_ABOUT = "net.simonvt.cathode.ui.BaseActivity.aboutDialog";
+  public static final String DIALOG_ABOUT = "net.simonvt.cathode.ui.BaseActivity.aboutDialog";
 
   public static final int LOADER_SHOWS_UPCOMING = 100;
   public static final int LOADER_SHOWS_WATCHED = 101;
@@ -65,49 +59,8 @@ public abstract class BaseActivity extends FragmentActivity {
 
   @Inject Bus bus;
 
-  private boolean menuVisible = true;
-
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
     CathodeApp.inject(this);
-  }
-
-  public void setMenuVisibility(boolean visible) {
-    if (visible != menuVisible) {
-      menuVisible = visible;
-      invalidateOptionsMenu();
-    }
-  }
-
-  public boolean isMenuVisible() {
-    return menuVisible;
-  }
-
-  @Override public boolean onCreateOptionsMenu(Menu menu) {
-    if (menuVisible) {
-      getMenuInflater().inflate(R.menu.activity_base, menu);
-
-      if (BuildConfig.DEBUG) {
-        menu.add(0, 1, 0, "AuthFailedEvent");
-      }
-
-      return true;
-    }
-
-    return false;
-  }
-
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case R.id.menu_about:
-        new AboutDialog().show(getSupportFragmentManager(), DIALOG_ABOUT);
-        return true;
-
-      case 1:
-        bus.post(new AuthFailedEvent());
-        return true;
-    }
-
-    return super.onOptionsItemSelected(item);
   }
 }

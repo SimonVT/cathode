@@ -23,9 +23,9 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +38,6 @@ import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.provider.CollectLoader;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -198,8 +197,6 @@ public class ShowFragment extends ProgressFragment {
     Timber.d("ShowFragment#onCreate");
     CathodeApp.inject(getActivity(), this);
 
-    setHasOptionsMenu(true);
-
     Bundle args = getArguments();
     showId = args.getLong(ARG_SHOWID);
     showTitle = args.getString(ARG_TITLE);
@@ -213,11 +210,18 @@ public class ShowFragment extends ProgressFragment {
     }, type);
   }
 
-  @Override public String getTitle() {
+  private void updateTitle() {
+    if (toolbar != null) {
+      toolbar.setTitle(getTitle());
+      toolbar.setSubtitle(getSubtitle());
+    }
+  }
+
+  public String getTitle() {
     return showTitle == null ? "" : showTitle;
   }
 
-  @Override public String getSubtitle() {
+  public String getSubtitle() {
     return genres;
   }
 
@@ -396,13 +400,10 @@ public class ShowFragment extends ProgressFragment {
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_SEASONS, null, seasonsLoader);
   }
 
-  @Override public void onDestroyView() {
-    scrollView.setListener(null);
-    super.onDestroyView();
-  }
-
-  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    inflater.inflate(R.menu.fragment_show, menu);
+  @Override public void createMenu(Toolbar toolbar) {
+    super.createMenu(toolbar);
+    Menu menu = toolbar.getMenu();
+    toolbar.inflateMenu(R.menu.fragment_show);
 
     if (inWatchlist) {
       menu.add(0, R.id.action_watchlist_remove, 300, R.string.action_watchlist_remove);
@@ -417,7 +418,7 @@ public class ShowFragment extends ProgressFragment {
     }
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_seasons:
         hiddenPaneLayout.toggle();
@@ -440,7 +441,12 @@ public class ShowFragment extends ProgressFragment {
         return true;
     }
 
-    return false;
+    return super.onMenuItemClick(item);
+  }
+
+  @Override public void onDestroyView() {
+    scrollView.setListener(null);
+    super.onDestroyView();
   }
 
   private void updateShowView(final Cursor cursor) {
@@ -449,7 +455,7 @@ public class ShowFragment extends ProgressFragment {
     String title = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
     if (!title.equals(showTitle)) {
       showTitle = title;
-      bus.post(new OnTitleChangedEvent());
+      updateTitle();
     }
     final String airTime = cursor.getString(cursor.getColumnIndex(ShowColumns.AIR_TIME));
     final String airDay = cursor.getString(cursor.getColumnIndex(ShowColumns.AIR_DAY));
@@ -483,9 +489,7 @@ public class ShowFragment extends ProgressFragment {
     this.overview.setText(overview);
 
     setContentVisible(true);
-    if (getActivity() != null) {
-      getActivity().supportInvalidateOptionsMenu();
-    }
+    invalidateMenu();
   }
 
   private void updateGenreViews(final Cursor cursor) {
@@ -505,7 +509,7 @@ public class ShowFragment extends ProgressFragment {
       genres = null;
     }
 
-    bus.post(new OnTitleChangedEvent());
+    updateTitle();
   }
 
   private void updateActorViews(Cursor c) {
@@ -703,8 +707,7 @@ public class ShowFragment extends ProgressFragment {
   private static final String[] CHARACTERS_PROJECTION = new String[] {
       Tables.SHOW_CHARACTERS + "." + ShowCharacterColumns.ID,
       Tables.SHOW_CHARACTERS + "." + ShowCharacterColumns.CHARACTER,
-      Tables.PEOPLE + "." + PersonColumns.NAME,
-      Tables.PEOPLE + "." + PersonColumns.HEADSHOT,
+      Tables.PEOPLE + "." + PersonColumns.NAME, Tables.PEOPLE + "." + PersonColumns.HEADSHOT,
   };
 
   private LoaderManager.LoaderCallbacks<Cursor> charactersCallback =

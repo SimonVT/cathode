@@ -30,10 +30,7 @@ public class MovieWatchlistFragment extends MoviesFragment {
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
     setEmptyText(R.string.empty_movie_watchlist);
-  }
-
-  @Override public String getTitle() {
-    return getResources().getString(R.string.title_movies_watchlist);
+    setTitle(R.string.title_movies_watchlist);
   }
 
   @Override protected int getLoaderId() {

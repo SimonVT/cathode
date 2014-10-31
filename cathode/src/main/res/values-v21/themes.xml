@@ -16,31 +16,7 @@
   -->
 <resources>
 
-  <style name="BaseTheme" parent="android:Theme.Material.Light.DarkActionBar">
-    <!-- The primary branding color for the app. By default, this is the color applied to the
-         action bar background. -->
-    <item name="android:colorPrimary">@color/colorPrimary</item>
-
-    <!-- Dark variant of the primary branding color. By default, this is the color applied to
-         the status bar (via statusBarColor) and navigation bar (via navigationBarColor). -->
-    <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
-
-    <!-- Bright complement to the primary branding color. By default, this is the color applied
-         to framework controls (via colorControlActivated). -->
-    <item name="android:colorAccent">@color/colorAccent</item>
-
-    <!-- The color applied to framework controls in their normal state. -->
-    <item name="android:colorControlNormal">#FFFF0000</item>
-
-    <!-- The color applied to framework controls in their activated (ex. checked) state. -->
-    <item name="android:colorControlActivated">#33FF7F2A</item>
-
-    <!-- The color applied to framework control highlights (ex. ripples, list selectors). -->
-    <item name="android:colorControlHighlight">#66FF7F2A</item>
-
-    <!-- The color applied to framework buttons in their normal state. -->
-    <item name="android:colorButtonNormal">#FF00FFFF</item>
-
+  <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
     <item name="android:statusBarColor">#FF002537</item>
   </style>
 

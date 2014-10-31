@@ -15,7 +15,6 @@
  */
 package net.simonvt.cathode.ui.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,29 +23,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import butterknife.InjectView;
-import com.squareup.otto.Bus;
-import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
-import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.Authorization;
 
 public class LoginFragment extends BaseFragment {
 
-  @Inject Bus bus;
-
   @InjectView(R.id.login) Button login;
-
-  private Context appContext;
-
-  private boolean createNewEnabled;
-
-  @Override public void onCreate(Bundle inState) {
-    super.onCreate(inState);
-    CathodeApp.inject(getActivity(), this);
-    appContext = getActivity().getApplicationContext();
-    bus.register(this);
-  }
 
   @Override public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
@@ -66,14 +49,5 @@ public class LoginFragment extends BaseFragment {
         startActivity(authorize);
       }
     });
-  }
-
-  @Override public String getTitle() {
-    return getResources().getString(R.string.login);
-  }
-
-  @Override public void onDestroy() {
-    bus.unregister(this);
-    super.onDestroy();
   }
 }

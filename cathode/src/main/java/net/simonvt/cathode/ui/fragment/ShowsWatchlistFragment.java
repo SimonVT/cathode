@@ -21,11 +21,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import javax.inject.Inject;
@@ -45,9 +45,12 @@ import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.HeaderSpanLookup;
+import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.ShowWatchlistAdapter;
+import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
+import net.simonvt.cathode.widget.SearchView;
 
-public class ShowsWatchlistFragment extends GridRecyclerViewFragment<RecyclerView.ViewHolder>
+public class ShowsWatchlistFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
     implements ShowWatchlistAdapter.RemoveListener, ShowWatchlistAdapter.OnItemClickListener {
 
   @Inject TraktTaskQueue queue;
@@ -71,18 +74,17 @@ public class ShowsWatchlistFragment extends GridRecyclerViewFragment<RecyclerVie
     super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
 
-    setHasOptionsMenu(true);
-
     getLoaderManager().initLoader(HomeActivity.LOADER_SHOWS_WATCHLIST, null, showsCallback);
     getLoaderManager().initLoader(HomeActivity.LOADER_EPISODES_WATCHLIST, null, episodeCallback);
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
 
     setEmptyText(R.string.empty_show_watchlist);
+    setTitle(R.string.title_shows_watchlist);
   }
 
-  @Override public String getTitle() {
-    return getResources().getString(R.string.title_shows_watchlist);
+  @Override public boolean displaysMenuIcon() {
+    return true;
   }
 
   @Override protected int getColumnCount() {
@@ -93,22 +95,56 @@ public class ShowsWatchlistFragment extends GridRecyclerViewFragment<RecyclerVie
     return new HeaderSpanLookup(ensureAdapter(), columnCount);
   }
 
-  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    inflater.inflate(R.menu.fragment_shows, menu);
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
+    toolbar.setNavigationOnClickListener(navigationClickListener);
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
+  private View.OnClickListener navigationClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      navigationListener.onHomeClicked();
+    }
+  };
+
+  @Override public void createMenu(Toolbar toolbar) {
+    super.createMenu(toolbar);
+    toolbar.inflateMenu(R.menu.fragment_shows);
+
+    final MenuItem searchItem = toolbar.getMenu().findItem(R.id.menu_search);
+    SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+    searchView.setAdapter(new ShowSuggestionAdapter(searchView.getContext()));
+
+    searchView.setListener(new SearchView.SearchViewListener() {
+      @Override public void onTextChanged(String newText) {
+      }
+
+      @Override public void onSubmit(String query) {
+        navigationListener.searchShow(query);
+
+        MenuItemCompat.collapseActionView(searchItem);
+      }
+
+      @Override public void onSuggestionSelected(Object suggestion) {
+        SuggestionsAdapter.Suggestion item = (SuggestionsAdapter.Suggestion) suggestion;
+        if (item.getId() != null) {
+          navigationListener.onDisplayShow(item.getId(), item.getTitle(), LibraryType.WATCHED);
+        } else {
+          navigationListener.searchShow(item.getTitle());
+        }
+
+        MenuItemCompat.collapseActionView(searchItem);
+      }
+    });
+  }
+
+  @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_refresh:
         queue.add(new SyncTask());
         return true;
 
-      case R.id.menu_search:
-        navigationListener.onStartShowSearch();
-        return true;
-
       default:
-        return super.onOptionsItemSelected(item);
+        return super.onMenuItemClick(item);
     }
   }
 

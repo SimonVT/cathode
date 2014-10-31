@@ -40,6 +40,7 @@ import net.simonvt.cathode.R;
 public class SearchView extends LinearLayout {
 
   public interface SearchViewListener {
+
     void onTextChanged(String newText);
 
     void onSubmit(String query);
@@ -162,7 +163,6 @@ public class SearchView extends LinearLayout {
 
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
       if (listener != null) listener.onTextChanged(s.toString());
-
       clearView.setVisibility(TextUtils.isEmpty(inputView.getText()) ? INVISIBLE : VISIBLE);
     }
 
@@ -182,18 +182,38 @@ public class SearchView extends LinearLayout {
     return inputView.getText();
   }
 
-  @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    if (maxWidth > 0) {
-      int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-      int width = MeasureSpec.getSize(widthMeasureSpec);
-      if (widthMode == MeasureSpec.UNSPECIFIED) {
-        width = maxWidth;
-      } else {
-        width = Math.min(width, maxWidth);
-      }
-      widthMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
-    }
+  private int getPreferredWidth() {
+    return getContext().getResources()
+        .getDimensionPixelSize(
+            android.support.v7.appcompat.R.dimen.abc_search_view_preferred_width);
+  }
 
-    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+  @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+
+    int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+    int width = MeasureSpec.getSize(widthMeasureSpec);
+
+    switch (widthMode) {
+      case MeasureSpec.AT_MOST:
+        // If there is an upper limit, don't exceed maximum width (explicit or implicit)
+        if (maxWidth > 0) {
+          width = Math.min(maxWidth, width);
+        } else {
+          width = Math.min(getPreferredWidth(), width);
+        }
+        break;
+      case MeasureSpec.EXACTLY:
+        // If an exact width is specified, still don't exceed any specified maximum width
+        if (maxWidth > 0) {
+          width = Math.min(maxWidth, width);
+        }
+        break;
+      case MeasureSpec.UNSPECIFIED:
+        // Use maximum width, if specified, else preferred width
+        width = maxWidth > 0 ? maxWidth : getPreferredWidth();
+        break;
+    }
+    widthMode = MeasureSpec.EXACTLY;
+    super.onMeasure(MeasureSpec.makeMeasureSpec(width, widthMode), heightMeasureSpec);
   }
 }

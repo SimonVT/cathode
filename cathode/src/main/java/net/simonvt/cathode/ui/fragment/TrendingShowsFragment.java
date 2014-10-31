@@ -24,9 +24,9 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import java.util.ArrayList;
@@ -45,10 +45,12 @@ import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
+import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
+import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
+import net.simonvt.cathode.widget.SearchView;
 
-public class TrendingShowsFragment
-    extends GridRecyclerViewFragment<ShowDescriptionAdapter.ViewHolder>
+public class TrendingShowsFragment extends ToolbarGridFragment<ShowDescriptionAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<Cursor>, ListDialog.Callback, ShowClickListener {
 
   private enum SortBy {
@@ -123,34 +125,56 @@ public class TrendingShowsFragment
     sortBy =
         SortBy.fromValue(settings.getString(Settings.SORT_SHOW_TRENDING, SortBy.VIEWERS.getKey()));
 
-    setHasOptionsMenu(true);
-
     getLoaderManager().initLoader(BaseActivity.LOADER_SHOWS_TRENDING, null, this);
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
-  }
-
-  @Override public String getTitle() {
-    return getResources().getString(R.string.title_shows_trending);
+    setTitle(R.string.title_shows_trending);
   }
 
   @Override protected int getColumnCount() {
     return columnCount;
   }
 
-  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    inflater.inflate(R.menu.fragment_shows, menu);
-    inflater.inflate(R.menu.fragment_shows_trending, menu);
+  @Override public boolean displaysMenuIcon() {
+    return true;
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public void createMenu(Toolbar toolbar) {
+    super.createMenu(toolbar);
+    toolbar.inflateMenu(R.menu.fragment_shows);
+    toolbar.inflateMenu(R.menu.fragment_shows_trending);
+
+    final MenuItem searchItem = toolbar.getMenu().findItem(R.id.menu_search);
+    SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+    searchView.setAdapter(new ShowSuggestionAdapter(searchView.getContext()));
+
+    searchView.setListener(new SearchView.SearchViewListener() {
+      @Override public void onTextChanged(String newText) {
+      }
+
+      @Override public void onSubmit(String query) {
+        navigationListener.searchShow(query);
+
+        MenuItemCompat.collapseActionView(searchItem);
+      }
+
+      @Override public void onSuggestionSelected(Object suggestion) {
+        SuggestionsAdapter.Suggestion item = (SuggestionsAdapter.Suggestion) suggestion;
+        if (item.getId() != null) {
+          navigationListener.onDisplayShow(item.getId(), item.getTitle(), LibraryType.WATCHED);
+        } else {
+          navigationListener.searchShow(item.getTitle());
+        }
+
+        MenuItemCompat.collapseActionView(searchItem);
+      }
+    });
+  }
+
+  @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_refresh:
         queue.add(new SyncTask());
-        return true;
-
-      case R.id.menu_search:
-        navigationListener.onStartShowSearch();
         return true;
 
       case R.id.sort_by:
@@ -162,7 +186,7 @@ public class TrendingShowsFragment
         return true;
 
       default:
-        return super.onOptionsItemSelected(item);
+        return super.onMenuItemClick(item);
     }
   }
 

@@ -15,6 +15,7 @@
  */
 package net.simonvt.cathode.ui.fragment;
 
+import android.app.Activity;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -22,9 +23,9 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,25 +35,24 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.Optional;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.FragmentContract;
+import net.simonvt.cathode.ui.NavigationClickListener;
+import net.simonvt.cathode.ui.dialog.AboutDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.ObservableScrollView;
-import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public class EpisodeFragment extends DialogFragment implements FragmentContract {
@@ -73,6 +73,8 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   @Inject EpisodeTaskScheduler episodeScheduler;
   @Inject Bus bus;
 
+  @InjectView(R.id.toolbar) Toolbar toolbar;
+
   @InjectView(R.id.title) TextView title;
   @InjectView(R.id.fanart) RemoteImageView fanart;
   @InjectView(R.id.overview) TextView overview;
@@ -87,8 +89,6 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   @InjectView(R.id.contentContainer) ObservableScrollView content;
 
   @InjectView(R.id.progressContainer) View progress;
-
-  @InjectView(R.id.overflow) @Optional OverflowView overflow;
 
   private boolean animating;
 
@@ -120,11 +120,22 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   private boolean isTablet;
 
+  private NavigationClickListener navigationListener;
+
   public static Bundle getArgs(long episodeId, String showTitle) {
     Bundle args = new Bundle();
     args.putLong(ARG_EPISODEID, episodeId);
     args.putString(ARG_SHOW_TITLE, showTitle);
     return args;
+  }
+
+  @Override public void onAttach(Activity activity) {
+    super.onAttach(activity);
+    try {
+      navigationListener = (NavigationClickListener) activity;
+    } catch (ClassCastException e) {
+      throw new ClassCastException(activity.toString() + " must implement NavigationClickListener");
+    }
   }
 
   @Override public void onCreate(Bundle inState) {
@@ -138,18 +149,23 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     showTitle = args.getString(ARG_SHOW_TITLE);
     getLoaderManager().initLoader(BaseActivity.LOADER_EPISODE, null, episodeCallbacks);
 
-    setHasOptionsMenu(true);
-
     if (getShowsDialog()) {
       setStyle(DialogFragment.STYLE_NO_TITLE, 0);
     }
   }
 
-  @Override public String getTitle() {
+  private void updateTitle() {
+    if (toolbar != null && !isTablet) {
+      toolbar.setTitle(getTitle());
+      toolbar.setSubtitle(getSubtitle());
+    }
+  }
+
+  public String getTitle() {
     return showTitle;
   }
 
-  @Override public String getSubtitle() {
+  public String getSubtitle() {
     return season == -1 ? null : getString(R.string.season_x, season);
   }
 
@@ -164,6 +180,15 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
     ButterKnife.inject(this, view);
+
+    if (!isTablet) {
+      toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+    }
+
+    toolbar.setNavigationOnClickListener(navigationClickListener);
+    createMenu(toolbar);
+    toolbar.setOnMenuItemClickListener(menuClickListener);
+    updateTitle();
 
     wait = true;
     view.getViewTreeObserver()
@@ -205,47 +230,13 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
         }
       });
     }
-
-    if (overflow != null) {
-      overflow.setListener(new OverflowView.OverflowActionListener() {
-        @Override public void onPopupShown() {
-        }
-
-        @Override public void onPopupDismissed() {
-        }
-
-        @Override public void onActionSelected(int action) {
-          EpisodeFragment.this.onActionSelected(action);
-        }
-      });
-    }
   }
 
-  private void populateOverflow() {
-    overflow.setVisibility(View.VISIBLE);
-    if (checkedIn) {
-      overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
-    } else if (!watching) {
-      overflow.addItem(R.id.action_checkin, R.string.action_checkin_cancel);
+  private View.OnClickListener navigationClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      navigationListener.onHomeClicked();
     }
-
-    if (watched) {
-      overflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
-    } else {
-      overflow.addItem(R.id.action_watched, R.string.action_watched);
-      if (inWatchlist) {
-        overflow.addItem(R.id.action_watchlist_remove, R.string.action_watchlist_remove);
-      } else {
-        overflow.addItem(R.id.action_watchlist_add, R.string.action_watchlist_add);
-      }
-    }
-
-    if (collected) {
-      overflow.addItem(R.id.action_collection_remove, R.string.action_collection_remove);
-    } else {
-      overflow.addItem(R.id.action_collection_add, R.string.action_collection_add);
-    }
-  }
+  };
 
   @Override public void onDestroyView() {
     ButterKnife.reset(this);
@@ -259,18 +250,23 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     super.onDestroy();
   }
 
-  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+  private void createMenu(Toolbar toolbar) {
+    Menu menu = toolbar.getMenu();
+    menu.clear();
+
+    toolbar.inflateMenu(R.menu.activity_base);
+
     if (loaded) {
       if (checkedIn) {
         menu.add(0, R.id.action_checkin_cancel, 1, R.string.action_checkin_cancel)
             .setIcon(R.drawable.ic_action_cancel)
             .setShowAsActionFlags(
-                MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+                isTablet ? MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_ALWAYS);
       } else if (!watching) {
         menu.add(0, R.id.action_checkin, 2, R.string.action_checkin)
             .setIcon(R.drawable.ic_action_checkin)
             .setShowAsActionFlags(
-                MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+                isTablet ? MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_ALWAYS);
       }
 
       if (watched) {
@@ -292,47 +288,51 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     }
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-    return onActionSelected(item.getItemId());
-  }
+  private Toolbar.OnMenuItemClickListener menuClickListener =
+      new Toolbar.OnMenuItemClickListener() {
+        @Override public boolean onMenuItemClick(MenuItem item) {
+          switch (item.getItemId()) {
+            case R.id.action_watched:
+              episodeScheduler.setWatched(episodeId, true);
+              return true;
 
-  private boolean onActionSelected(int action) {
-    switch (action) {
-      case R.id.action_watched:
-        episodeScheduler.setWatched(episodeId, true);
-        return true;
+            case R.id.action_unwatched:
+              episodeScheduler.setWatched(episodeId, false);
+              return true;
 
-      case R.id.action_unwatched:
-        episodeScheduler.setWatched(episodeId, false);
-        return true;
+            case R.id.action_checkin:
+              CheckInDialog.showDialogIfNecessary(getActivity(), Type.SHOW, episodeTitle,
+                  episodeId);
+              return true;
 
-      case R.id.action_checkin:
-        CheckInDialog.showDialogIfNecessary(getActivity(), Type.SHOW, episodeTitle, episodeId);
-        return true;
+            case R.id.action_checkin_cancel:
+              showScheduler.cancelCheckin();
+              return true;
 
-      case R.id.action_checkin_cancel:
-        showScheduler.cancelCheckin();
-        return true;
+            case R.id.action_collection_add:
+              episodeScheduler.setIsInCollection(episodeId, true);
+              return true;
 
-      case R.id.action_collection_add:
-        episodeScheduler.setIsInCollection(episodeId, true);
-        return true;
+            case R.id.action_collection_remove:
+              episodeScheduler.setIsInCollection(episodeId, false);
+              return true;
 
-      case R.id.action_collection_remove:
-        episodeScheduler.setIsInCollection(episodeId, false);
-        return true;
+            case R.id.action_watchlist_add:
+              episodeScheduler.setIsInWatchlist(episodeId, true);
+              return true;
 
-      case R.id.action_watchlist_add:
-        episodeScheduler.setIsInWatchlist(episodeId, true);
-        return true;
+            case R.id.action_watchlist_remove:
+              episodeScheduler.setIsInWatchlist(episodeId, false);
+              return true;
 
-      case R.id.action_watchlist_remove:
-        episodeScheduler.setIsInWatchlist(episodeId, false);
-        return true;
-    }
+            case R.id.menu_about:
+              new AboutDialog().show(getFragmentManager(), BaseActivity.DIALOG_ABOUT);
+              return true;
+          }
 
-    return false;
-  }
+          return false;
+        }
+      };
 
   @Override public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
     Animation animation = null;
@@ -457,10 +457,9 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       rating.setValue(ratingAll);
 
       setContentVisible(true);
-      bus.post(new OnTitleChangedEvent());
-      getActivity().invalidateOptionsMenu();
 
-      if (getShowsDialog()) populateOverflow();
+      createMenu(toolbar);
+      updateTitle();
     }
   }
 

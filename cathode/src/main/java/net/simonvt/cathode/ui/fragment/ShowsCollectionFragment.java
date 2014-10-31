@@ -32,11 +32,7 @@ public class ShowsCollectionFragment extends ShowsFragment {
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
     setEmptyText(R.string.empty_show_collection);
-  }
-
-
-  @Override public String getTitle() {
-    return getResources().getString(R.string.title_shows_collection);
+    setTitle(R.string.title_shows_collection);
   }
 
   @Override protected LibraryType getLibraryType() {

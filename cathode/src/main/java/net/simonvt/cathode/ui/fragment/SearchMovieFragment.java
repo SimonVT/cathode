@@ -23,8 +23,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import com.squareup.otto.Bus;
@@ -37,7 +37,6 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.MovieSearchResult;
-import net.simonvt.cathode.event.OnTitleChangedEvent;
 import net.simonvt.cathode.event.SearchFailureEvent;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
@@ -46,10 +45,13 @@ import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.adapter.BaseMoviesAdapter;
 import net.simonvt.cathode.ui.adapter.MovieSearchAdapter;
+import net.simonvt.cathode.ui.adapter.MovieSuggestionAdapter;
+import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.util.MovieSearchHandler;
+import net.simonvt.cathode.widget.SearchView;
 
-public class SearchMovieFragment extends GridRecyclerViewFragment<MovieSearchAdapter.ViewHolder>
+public class SearchMovieFragment extends ToolbarGridFragment<MovieSearchAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<Cursor>, ListDialog.Callback,
     BaseMoviesAdapter.MovieClickListener {
 
@@ -155,18 +157,19 @@ public class SearchMovieFragment extends GridRecyclerViewFragment<MovieSearchAda
     }
 
     bus.register(this);
-    setHasOptionsMenu(true);
 
     columnCount = getResources().getInteger(R.integer.movieColumns);
+
+    setTitle(query);
+    updateSubtitle();
   }
 
-  @Override public String getTitle() {
-    return query;
-  }
-
-  @Override public String getSubtitle() {
-    return searchMovieIds != null ? getResources().getString(R.string.x_results,
-        searchMovieIds.size()) : null;
+  private void updateSubtitle() {
+    if (searchMovieIds != null) {
+      setSubtitle(getResources().getString(R.string.x_results, searchMovieIds.size()));
+    } else {
+      setSubtitle(null);
+    }
   }
 
   @Override public void onSaveInstanceState(Bundle outState) {
@@ -178,21 +181,48 @@ public class SearchMovieFragment extends GridRecyclerViewFragment<MovieSearchAda
     return columnCount;
   }
 
+  @Override public boolean displaysMenuIcon() {
+    return false;
+  }
+
   @Override public void onDestroy() {
     bus.unregister(this);
     super.onDestroy();
   }
 
-  @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    inflater.inflate(R.menu.fragment_movies_search, menu);
+  @Override public void createMenu(Toolbar toolbar) {
+    super.createMenu(toolbar);
+    toolbar.inflateMenu(R.menu.fragment_movies_search);
+
+    final MenuItem searchItem = toolbar.getMenu().findItem(R.id.menu_search);
+    SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+    searchView.setAdapter(new MovieSuggestionAdapter(searchView.getContext()));
+
+    searchView.setListener(new SearchView.SearchViewListener() {
+      @Override public void onTextChanged(String newText) {
+      }
+
+      @Override public void onSubmit(String query) {
+        navigationListener.searchMovie(query);
+
+        MenuItemCompat.collapseActionView(searchItem);
+      }
+
+      @Override public void onSuggestionSelected(Object suggestion) {
+        SuggestionsAdapter.Suggestion item = (SuggestionsAdapter.Suggestion) suggestion;
+        if (item.getId() != null) {
+          navigationListener.onDisplayMovie(item.getId(), item.getTitle());
+        } else {
+          navigationListener.searchMovie(item.getTitle());
+        }
+
+        MenuItemCompat.collapseActionView(searchItem);
+      }
+    });
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
-      case R.id.menu_search:
-        navigationListener.onStartMovieSearch();
-        return true;
-
       case R.id.sort_by:
         ArrayList<ListDialog.Item> items = new ArrayList<ListDialog.Item>();
         items.add(new ListDialog.Item(R.id.sort_relevance, R.string.sort_relevance));
@@ -239,7 +269,8 @@ public class SearchMovieFragment extends GridRecyclerViewFragment<MovieSearchAda
     }
     getLoaderManager().destroyLoader(BaseActivity.LOADER_SEARCH_MOVIES);
     searchHandler.search(query);
-    bus.post(new OnTitleChangedEvent());
+
+    setTitle(query);
   }
 
   @Override public void onMovieClicked(View v, int position, long id) {
@@ -251,14 +282,13 @@ public class SearchMovieFragment extends GridRecyclerViewFragment<MovieSearchAda
     searchMovieIds = result.getMovieIds();
     getLoaderManager().initLoader(BaseActivity.LOADER_SEARCH_MOVIES, null, this);
     setEmptyText(R.string.no_results, query);
-    bus.post(new OnTitleChangedEvent());
+    updateSubtitle();
   }
 
   @Subscribe public void onSearchFailure(SearchFailureEvent event) {
     if (event.getType() == SearchFailureEvent.Type.MOVIE) {
       setCursor(null);
       setEmptyText(R.string.search_failure, query);
-      bus.post(new OnTitleChangedEvent());
     }
   }
 
