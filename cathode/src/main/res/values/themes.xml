@@ -42,8 +42,6 @@
     <!-- The color applied to framework buttons in their normal state. -->
     <item name="colorButtonNormal">#FF00FFFF</item>
 
-    <item name="menuDrawerStyle">@style/Menu.Drawer</item>
-
     <item name="messageBarContainerStyle">@style/MessageBar.Container</item>
     <item name="messageBarTextStyle">@style/MessageBar.Message</item>
     <item name="messageBarButtonStyle">@style/MessageBar.Button</item>

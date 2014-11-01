@@ -22,6 +22,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +64,6 @@ import net.simonvt.cathode.util.FragmentStack;
 import net.simonvt.cathode.widget.BottomViewLayout;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
-import net.simonvt.menudrawer.MenuDrawer;
 import timber.log.Timber;
 
 public class PhoneController extends UiController {
@@ -75,9 +76,10 @@ public class PhoneController extends UiController {
 
   private FragmentStack stack;
 
-  @InjectView(R.id.drawer) MenuDrawer menuDrawer;
+  @InjectView(R.id.drawer) DrawerLayout drawer;
+  private int drawerState = DrawerLayout.STATE_IDLE;
 
-  @InjectView(R.id.mdContent) BottomViewLayout bottomLayout;
+  @InjectView(R.id.bottomViewLayout) BottomViewLayout bottomLayout;
 
   private NavigationFragment navigation;
 
@@ -106,31 +108,24 @@ public class PhoneController extends UiController {
 
     isTablet = activity.getResources().getBoolean(R.bool.isTablet);
 
-    if (!IS_MATERIAL) {
-      menuDrawer.setupUpIndicator(activity);
-      menuDrawer.setSlideDrawable(R.drawable.ic_drawer);
-    }
-    menuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_NONE);
+    drawer.setDrawerListener(new DrawerLayout.DrawerListener() {
+      @Override public void onDrawerSlide(View drawerView, float slideOffset) {
+      }
 
-    menuDrawer.setOnDrawerStateChangeListener(new MenuDrawer.OnDrawerStateChangeListener() {
-      @Override public void onDrawerStateChange(int oldState, int newState) {
+      @Override public void onDrawerOpened(View drawerView) {
+      }
+
+      @Override public void onDrawerClosed(View drawerView) {
         stack.commit();
       }
 
-      @Override public void onDrawerSlide(float openRatio, int offsetPixels) {
+      @Override public void onDrawerStateChanged(int newState) {
+        drawerState = newState;
       }
     });
 
     navigation = (NavigationFragment) activity.getSupportFragmentManager()
         .findFragmentByTag(FRAGMENT_NAVIGATION);
-
-    if (navigation == null) {
-      navigation = new NavigationFragment();
-      activity.getSupportFragmentManager()
-          .beginTransaction()
-          .add(menuDrawer.getMenuContainer().getId(), navigation, FRAGMENT_NAVIGATION)
-          .commit();
-    }
 
     stack =
         FragmentStack.forContainer(activity, R.id.controller_content, new FragmentStack.Callback() {
@@ -144,8 +139,6 @@ public class PhoneController extends UiController {
     if (inState != null) {
       stack.restoreState(inState);
     }
-
-    menuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_BEZEL);
 
     if (stack.size() == 0) {
       stack.replace(UpcomingShowsFragment.class, FRAGMENT_SHOWS_UPCOMING);
@@ -161,9 +154,8 @@ public class PhoneController extends UiController {
   }
 
   @Override public boolean onBackClicked() {
-    final int drawerState = menuDrawer.getDrawerState();
-    if (drawerState == MenuDrawer.STATE_OPEN || drawerState == MenuDrawer.STATE_OPENING) {
-      menuDrawer.closeMenu();
+    if (drawer.isDrawerVisible(Gravity.LEFT)) {
+      drawer.closeDrawer(Gravity.LEFT);
       return true;
     }
 
@@ -199,9 +191,16 @@ public class PhoneController extends UiController {
   @Override public void onHomeClicked() {
     super.onHomeClicked();
 
-    final int drawerState = menuDrawer.getDrawerState();
-    if (!stack.pop(drawerState == MenuDrawer.STATE_CLOSED)) {
-      menuDrawer.toggleMenu();
+    final boolean drawerVisible = drawer.isDrawerVisible(Gravity.LEFT);
+    if (stack.size() == 1) {
+      drawer.openDrawer(Gravity.LEFT);
+      return;
+    }
+
+    if (!stack.pop(!drawerVisible)) {
+      if (drawerVisible) {
+        drawer.closeDrawer(Gravity.LEFT);
+      }
     }
   }
 
@@ -255,7 +254,7 @@ public class PhoneController extends UiController {
         throw new IllegalArgumentException("Unknown id " + id);
     }
 
-    menuDrawer.closeMenu();
+    drawer.closeDrawer(Gravity.LEFT);
   }
 
   ///////////////////////////////////////////////////////////////////////////

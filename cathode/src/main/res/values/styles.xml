@@ -81,12 +81,6 @@
 
   <style name="Menu"/>
 
-  <style name="Menu.Drawer" parent="Widget.MenuDrawer">
-    <item name="mdMenuBackground">@color/drawerBackground</item>
-    <item name="mdContentBackground">@color/transparent</item>
-    <item name="mdMenuSize">260dp</item>
-  </style>
-
   <style name="Menu.Category">
     <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
     <item name="android:textColor">@color/titleTextColor</item>

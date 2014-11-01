@@ -205,8 +205,6 @@ public class NavigationFragment extends AbsAdapterFragment {
         v.setCompoundDrawablesWithIntrinsicBounds(menuItem.iconRes, 0, 0, 0);
       }
 
-      v.setTag(R.id.mdActiveViewPosition, position);
-
       return v;
     }
   }
