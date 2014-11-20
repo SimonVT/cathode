@@ -25,12 +25,7 @@ import java.util.List;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.ProviderSchematic;
-import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.cathode.provider.ProviderSchematic.MovieGenres;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
-import net.simonvt.cathode.provider.ProviderSchematic.ShowGenres;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.util.MovieSearchHandler;
@@ -79,14 +74,7 @@ public class PurgeTask extends TraktTask {
 
     ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
     for (Long id : showIds) {
-      ContentProviderOperation op =
-          ContentProviderOperation.newDelete(Episodes.fromShow(id)).build();
-      ops.add(op);
-      op = ContentProviderOperation.newDelete(Seasons.fromShow(id)).build();
-      ops.add(op);
-      op = ContentProviderOperation.newDelete(ShowGenres.fromShow(id)).build();
-      ops.add(op);
-      op = ContentProviderOperation.newDelete(Shows.withId(id)).build();
+      ContentProviderOperation op = ContentProviderOperation.newDelete(Shows.withId(id)).build();
       ops.add(op);
     }
 
@@ -135,10 +123,6 @@ public class PurgeTask extends TraktTask {
     ops = new ArrayList<ContentProviderOperation>();
     for (Long id : movieIds) {
       ContentProviderOperation op = ContentProviderOperation.newDelete(Movies.withId(id)).build();
-      ops.add(op);
-      op = ContentProviderOperation.newDelete(MovieGenres.fromMovie(id)).build();
-      ops.add(op);
-      op = ContentProviderOperation.newDelete(ProviderSchematic.MovieCast.fromMovie(id)).build();
       ops.add(op);
     }
 

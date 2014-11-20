@@ -172,6 +172,9 @@ public final class DatabaseSchematic {
     String EPISODE_UPDATE_WATCHED_NAME = "episodeUpdateWatched";
     String EPISODE_UPDATE_COLLECTED_NAME = "episodeUpdateCollected";
     String EPISODE_INSERT_NAME = "episodeInsert";
+    String SHOW_DELETE_NAME = "showDelete";
+    String SEASON_DELETE_NAME = "seasonDelete";
+    String MOVIE_DELETE_NAME = "movieDelete";
 
     String SEASONS_UPDATE_WATCHED = "UPDATE "
         + Tables.SEASONS
@@ -360,6 +363,86 @@ public final class DatabaseSchematic {
         + "=NEW."
         + EpisodeColumns.SHOW_ID
         + ";";
+
+    String SHOW_DELETE_SEASONS = "DELETE FROM "
+        + Tables.SEASONS
+        + " WHERE "
+        + Tables.SEASONS
+        + "."
+        + SeasonColumns.SHOW_ID
+        + "=OLD."
+        + ShowColumns.ID
+        + ";";
+
+    String SHOW_DELETE_EPISODES = "DELETE FROM "
+        + Tables.EPISODES
+        + " WHERE "
+        + Tables.EPISODES
+        + "."
+        + EpisodeColumns.SHOW_ID
+        + "=OLD."
+        + SeasonColumns.ID
+        + ";";
+
+    String SHOW_DELETE_GENRES = "DELETE FROM "
+        + Tables.SHOW_GENRES
+        + " WHERE "
+        + Tables.SHOW_GENRES
+        + "."
+        + ShowGenreColumns.SHOW_ID
+        + "=OLD."
+        + ShowColumns.ID
+        + ";";
+
+    String SHOW_DELETE_CHARACTERS = "DELETE FROM "
+        + Tables.SHOW_CHARACTERS
+        + " WHERE "
+        + Tables.SHOW_CHARACTERS
+        + "."
+        + ShowCharacterColumns.SHOW_ID
+        + "=OLD."
+        + ShowColumns.ID
+        + ";";
+
+    String SEASON_DELETE_EPISODES = "DELETE FROM "
+        + Tables.EPISODES
+        + " WHERE "
+        + Tables.EPISODES
+        + "."
+        + EpisodeColumns.SEASON_ID
+        + "=OLD."
+        + SeasonColumns.ID
+        + ";";
+
+    String MOVIE_DELETE_GENRES = "DELETE FROM "
+        + Tables.MOVIE_GENRES
+        + " WHERE "
+        + Tables.MOVIE_GENRES
+        + "."
+        + MovieGenreColumns.MOVIE_ID
+        + "=OLD."
+        + MovieColumns.ID
+        + ";";
+
+    String MOVIE_DELETE_CAST = "DELETE FROM "
+        + Tables.MOVIE_CAST
+        + " WHERE "
+        + Tables.MOVIE_CAST
+        + "."
+        + MovieCastColumns.MOVIE_ID
+        + "=OLD."
+        + MovieColumns.ID
+        + ";";
+
+    String MOVIE_DELETE_CREW = "DELETE FROM "
+        + Tables.MOVIE_CREW
+        + " WHERE "
+        + Tables.MOVIE_CREW
+        + "."
+        + MovieCrewColumns.MOVIE_ID
+        + "=OLD."
+        + MovieColumns.ID
+        + ";";
   }
 
   @Table(ShowColumns.class) public static final String TABLE_SHOWS = Tables.SHOWS;
@@ -438,6 +521,34 @@ public final class DatabaseSchematic {
       + Trigger.SHOWS_UPDATE_WATCHED
       + Trigger.SHOWS_UPDATE_AIRDATE
       + Trigger.SHOWS_UPDATE_COLLECTED
+      + " END;";
+
+  @ExecOnCreate public static final String TRIGGER_SHOW_DELETE = "CREATE TRIGGER "
+      + Trigger.SHOW_DELETE_NAME
+      + " AFTER DELETE ON "
+      + Tables.SHOWS
+      + " BEGIN "
+      + Trigger.SHOW_DELETE_SEASONS
+      + Trigger.SHOW_DELETE_GENRES
+      + Trigger.SHOW_DELETE_CHARACTERS
+      + " END;";
+
+  @ExecOnCreate public static final String TRIGGER_SEASON_DELETE = "CREATE TRIGGER "
+      + Trigger.SEASON_DELETE_NAME
+      + " AFTER DELETE ON "
+      + Tables.SEASONS
+      + " BEGIN "
+      + Trigger.SEASON_DELETE_EPISODES
+      + " END";
+
+  @ExecOnCreate public static final String TRIGGER_MOVIE_DELETE = "CREATE TRIGGER "
+      + Trigger.MOVIE_DELETE_NAME
+      + " AFTER DELETE ON "
+      + Tables.MOVIES
+      + " BEGIN "
+      + Trigger.MOVIE_DELETE_GENRES
+      + Trigger.MOVIE_DELETE_CAST
+      + Trigger.MOVIE_DELETE_CREW
       + " END;";
 
   @OnUpgrade public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

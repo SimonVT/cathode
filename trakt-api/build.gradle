@@ -25,6 +25,10 @@ android {
     versionCode = parent.ext.versionCode;
     versionName = parent.ext.versionName
   }
+
+  lintOptions {
+    abortOnError false
+  }
 }
 
 checkstyle {

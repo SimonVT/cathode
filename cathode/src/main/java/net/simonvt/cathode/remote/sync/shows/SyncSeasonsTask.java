@@ -24,7 +24,6 @@ import net.simonvt.cathode.api.entity.Season;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.SeasonService;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
-import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
@@ -67,7 +66,6 @@ public class SyncSeasonsTask extends TraktTask {
     }
 
     for (Long seasonId : seasonIds) {
-      getContentResolver().delete(Episodes.fromSeason(seasonId), null, null);
       getContentResolver().delete(Seasons.withId(seasonId), null, null);
     }
   }
