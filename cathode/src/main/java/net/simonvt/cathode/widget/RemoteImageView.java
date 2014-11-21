@@ -21,13 +21,19 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewOutlineProvider;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Target;
+import com.squareup.picasso.Transformation;
+import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -67,10 +73,17 @@ public class RemoteImageView extends View implements Target {
   private Paint paint = new Paint();
 
   private String imageUrl;
+  private int imageResource;
 
   private float aspectRatio = 0.0f;
 
   private int dominantMeasurement = MEASUREMENT_HEIGHT;
+
+  private List<Transformation> transformations = new ArrayList<>();
+
+  private int resizeInsetX;
+
+  private int resizeInsetY;
 
   public RemoteImageView(Context context) {
     this(context, null);
@@ -97,12 +110,48 @@ public class RemoteImageView extends View implements Target {
         a.getInt(R.styleable.RemoteImageView_dominantMeasurement, MEASUREMENT_HEIGHT);
 
     a.recycle();
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      setOutlineProvider(ViewOutlineProvider.PADDED_BOUNDS);
+    }
+  }
+
+  public void addTransformation(Transformation transformation) {
+    transformations.add(transformation);
+  }
+
+  public void removeTransformation(Transformation transformation) {
+    transformations.remove(transformation);
+  }
+
+  public void setResizeInsets(int x, int y) {
+    resizeInsetX = x;
+    resizeInsetY = y;
   }
 
   public void setImage(String imageUrl) {
     picasso.cancelRequest(this);
 
     this.imageUrl = imageUrl;
+    this.imageResource = 0;
+    image = null;
+    alpha = 0;
+    startTimeMillis = 0;
+    animating = false;
+
+    if (getWidth() - getPaddingLeft() - getPaddingRight() > 0
+        && getHeight() - getPaddingTop() - getPaddingBottom() > 0) {
+      loadBitmap();
+    }
+
+    invalidate();
+  }
+
+  public void setImage(int imageResource) {
+    picasso.cancelRequest(this);
+
+    this.imageUrl = null;
+    this.imageResource = imageResource;
     image = null;
     alpha = 0;
     startTimeMillis = 0;
@@ -121,7 +170,22 @@ public class RemoteImageView extends View implements Target {
     image = null;
     final int width = getWidth() - getPaddingLeft() - getPaddingRight();
     final int height = getHeight() - getPaddingTop() - getPaddingBottom();
-    picasso.load(imageUrl).resize(width, height).centerCrop().into(this);
+
+    RequestCreator creator = null;
+    if (imageUrl != null) {
+      creator = picasso.load(imageUrl);
+    } else if (imageResource > 0) {
+      creator = picasso.load(imageResource);
+    }
+
+    if (creator != null) {
+      creator.resize(width - resizeInsetX, height - resizeInsetY).centerCrop();
+      for (Transformation transformation : transformations) {
+        creator.transform(transformation);
+      }
+      creator.into(this);
+    }
+
     if (image != null) {
       animating = false;
       startTimeMillis = 0;
@@ -147,22 +211,20 @@ public class RemoteImageView extends View implements Target {
   @Override protected void onSizeChanged(int w, int h, int oldw, int oldh) {
     super.onSizeChanged(w, h, oldw, oldh);
 
-    if (imageUrl != null
+    if ((imageUrl != null || imageResource > 0)
         && w - getPaddingLeft() - getPaddingRight() > 0
         && h - getPaddingTop() - getPaddingBottom() > 0) {
       loadBitmap();
     }
   }
 
-  @Override protected void onDraw(Canvas canvas) {
-    final int width = getWidth();
-    final int height = getHeight();
+  public int getAnimationAlpha() {
+    return alpha;
+  }
 
+  @Override protected void onDraw(Canvas canvas) {
     if (image == null) {
-      placeHolder.setBounds(getPaddingLeft(), getPaddingTop(), width - getPaddingRight(),
-          height - getPaddingBottom());
-      placeHolder.setAlpha(0xFF);
-      placeHolder.draw(canvas);
+      drawPlaceholder(canvas, placeHolder, 255);
       return;
     }
 
@@ -183,20 +245,34 @@ public class RemoteImageView extends View implements Target {
     }
 
     if (done) {
-      canvas.drawBitmap(image, getPaddingLeft(), getPaddingTop(), null);
+      drawBitmap(canvas, image, alpha);
     } else {
-      placeHolder.setBounds(getPaddingLeft(), getPaddingTop(), width - getPaddingRight(),
-          height - getPaddingBottom());
-      placeHolder.setAlpha(0xFF - alpha);
-      placeHolder.draw(canvas);
+      drawPlaceholder(canvas, placeHolder, 0xFF - alpha);
 
       if (alpha > 0) {
-        paint.setAlpha(alpha);
-        canvas.drawBitmap(image, getPaddingLeft(), getPaddingTop(), paint);
+        drawBitmap(canvas, image, alpha);
       }
 
       invalidate();
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        invalidateOutline();
+      }
     }
+  }
+
+  protected void drawPlaceholder(Canvas canvas, Drawable placeholder, int alpha) {
+    final int width = getWidth();
+    final int height = getHeight();
+    placeHolder.setBounds(getPaddingLeft(), getPaddingTop(), width - getPaddingRight(),
+        height - getPaddingBottom());
+    placeholder.setAlpha(alpha);
+    placeholder.setAlpha(alpha);
+    placeholder.draw(canvas);
+  }
+
+  protected void drawBitmap(Canvas canvas, Bitmap bitmap, int alpha) {
+    paint.setAlpha(alpha);
+    canvas.drawBitmap(bitmap, getPaddingLeft(), getPaddingTop(), paint);
   }
 
   public void setAspectRatio(float aspectRatio) {
@@ -240,6 +316,7 @@ public class RemoteImageView extends View implements Target {
     SavedState state = new SavedState(superState);
 
     state.imageUrl = imageUrl;
+    state.imageResource = imageResource;
 
     return state;
   }
@@ -255,6 +332,8 @@ public class RemoteImageView extends View implements Target {
 
     String imageUrl;
 
+    int imageResource;
+
     public SavedState(Parcelable superState) {
       super(superState);
     }
@@ -262,11 +341,13 @@ public class RemoteImageView extends View implements Target {
     public SavedState(Parcel in) {
       super(in);
       imageUrl = in.readString();
+      imageResource = in.readInt();
     }
 
     @Override public void writeToParcel(Parcel dest, int flags) {
       super.writeToParcel(dest, flags);
       dest.writeString(imageUrl);
+      dest.writeInt(imageResource);
     }
 
     @SuppressWarnings("UnusedDeclaration")

@@ -48,5 +48,6 @@
   <color name="colorPrimaryDark">#ff9b5024</color>
   <color name="colorAccent">#FF2AFFEA</color>
 
+  <color name="profilePlaceholder">#FF1C1C1E</color>
 
 </resources>

@@ -14,31 +14,40 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/drawerBackground">
+    android:orientation="vertical">
 
   <FrameLayout
-      android:id="@+id/listContainer"
       android:layout_width="match_parent"
-      android:layout_height="match_parent">
+      android:layout_height="0dp"
+      android:layout_weight="1"
+      android:background="@color/drawerBackground">
 
-    <TextView
-        android:id="@android:id/empty"
+    <FrameLayout
+        android:id="@+id/listContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"/>
+        android:layout_height="match_parent">
 
-    <ListView
-        android:id="@android:id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:scrollbarStyle="outsideOverlay"/>
+      <TextView
+          android:id="@android:id/empty"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:gravity="center"
+          android:paddingLeft="16dp"
+          android:paddingRight="16dp"/>
+
+      <ListView
+          android:id="@android:id/list"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:clipToPadding="false"
+          android:scrollbarStyle="outsideOverlay"
+          android:dividerHeight="0dp"
+          android:divider="@null"/>
+    </FrameLayout>
+
+    <include layout="@layout/fragment_list_progressbar"/>
   </FrameLayout>
-
-  <include layout="@layout/fragment_list_progressbar"/>
-</FrameLayout>
+</LinearLayout>

@@ -83,22 +83,20 @@
 
   <style name="Menu.Category">
     <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-    <item name="android:textColor">@color/titleTextColor</item>
+    <item name="android:textColor">?android:attr/textColorSecondary</item>
 
     <item name="android:paddingLeft">16dp</item>
     <item name="android:paddingTop">8dp</item>
     <item name="android:paddingBottom">4dp</item>
 
-    <item name="android:textAllCaps">true</item>
+    <item name="android:textAllCaps">true</item>w
     <item name="android:singleLine">true</item>
     <item name="android:ellipsize">end</item>
   </style>
 
-  <style name="Menu.Item">
-    <item name="android:background">@drawable/navigation_indicator</item>
-    <item name="android:textAppearance">?android:attr/textAppearance</item>
-    <item name="android:textColor">?android:attr/textColorPrimary</item>
-    <item name="android:textSize">18sp</item>
+  <style name="Menu.ItemBase">
+    <item name="android:textSize">16sp</item>
+    <item name="android:textColor">@color/menu_item</item>
     <item name="android:minHeight">?android:attr/listPreferredItemHeightSmall</item>
     <item name="android:paddingLeft">32dp</item>
     <item name="android:paddingRight">32dp</item>
@@ -106,6 +104,10 @@
     <item name="android:paddingBottom">8dp</item>
     <item name="android:drawablePadding">16dp</item>
     <item name="android:gravity">center_vertical</item>
+  </style>
+
+  <style name="Menu.Item" parent="Menu.ItemBase">
+    <item name="android:background">@drawable/navigation_indicator</item>
   </style>
 
   <style name="Widget.CircularProgressIndicator">

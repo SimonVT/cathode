@@ -14,10 +14,8 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<resources>
 
-  <style name="Menu.Item" parent="Menu.ItemBase">
-    <item name="android:background">?android:attr/activatedBackgroundIndicator</item>
-  </style>
-
-</resources>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:state_activated="true" android:color="@color/titleTextColor"/>
+  <item android:color="#FF000000"/>
+</selector>

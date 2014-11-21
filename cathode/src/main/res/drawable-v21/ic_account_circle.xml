@@ -14,10 +14,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<resources>
-
-  <style name="Menu.Item" parent="Menu.ItemBase">
-    <item name="android:background">?android:attr/activatedBackgroundIndicator</item>
-  </style>
-
-</resources>
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+    android:src="@drawable/ic_account_circle_mask"
+    android:autoMirrored="true"
+    android:tint="@color/profilePlaceholder"/>

@@ -17,10 +17,15 @@ package net.simonvt.cathode.ui.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Outline;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -28,6 +33,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.ui.compat.CircularShadowTransformation;
+import net.simonvt.cathode.widget.RemoteImageView;
+import net.simonvt.cathode.widget.RoundTransformation;
 
 public class NavigationFragment extends AbsAdapterFragment {
 
@@ -42,7 +51,7 @@ public class NavigationFragment extends AbsAdapterFragment {
   private List<NavigationItem> menuItems = new ArrayList<NavigationItem>();
 
   {
-    menuItems.add(new NavigationItem(R.string.navigation_title_shows));
+    // menuItems.add(new NavigationItem(R.string.navigation_title_shows));
     menuItems.add(new MenuItem(R.id.menu_shows_upcoming, R.string.navigation_shows_upcoming, 0));
     menuItems.add(new MenuItem(R.id.menu_shows_watched, R.string.navigation_shows_watched, 0));
     menuItems.add(
@@ -69,6 +78,10 @@ public class NavigationFragment extends AbsAdapterFragment {
 
   private int selectedPosition = 1;
 
+  private SharedPreferences settings;
+
+  private NavigationAdapter adapter;
+
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     listener = (OnMenuClickListener) activity;
@@ -81,8 +94,37 @@ public class NavigationFragment extends AbsAdapterFragment {
       selectedPosition = inState.getInt(STATE_SELECTED_ID);
     }
 
-    setAdapter(new NavigationAdapter(getActivity(), menuItems));
+    settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+    settings.registerOnSharedPreferenceChangeListener(settingsListener);
+    String username = settings.getString(Settings.PROFILE_USERNAME, null);
+    String avatar = settings.getString(Settings.PROFILE_AVATAR, null);
+
+    adapter = new NavigationAdapter(getActivity(), menuItems);
+    adapter.setUsername(username);
+    adapter.setAvatar(avatar);
+    setAdapter(adapter);
   }
+
+  private SharedPreferences.OnSharedPreferenceChangeListener settingsListener =
+      new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+            String key) {
+          if (Settings.PROFILE_AVATAR.equals(key)) {
+            String avatar = settings.getString(Settings.PROFILE_AVATAR, null);
+
+            if (getAdapterView() != null) {
+              final int firstPos = getAdapterView().getFirstVisiblePosition();
+              if (firstPos == 0) {
+                ((RemoteImageView) getAdapterView().getChildAt(0)
+                    .getTag(R.id.profileIcon)).setImage(avatar);
+              }
+            }
+          }
+          if (Settings.PROFILE_USERNAME.equals(key)) {
+
+          }
+        }
+      };
 
   @Override public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
@@ -97,6 +139,11 @@ public class NavigationFragment extends AbsAdapterFragment {
     super.onViewCreated(view, inState);
     getAdapterView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
     getAdapterView().setItemChecked(selectedPosition, true);
+  }
+
+  @Override public void onDestroy() {
+    settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
+    super.onDestroy();
   }
 
   @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
@@ -143,23 +190,35 @@ public class NavigationFragment extends AbsAdapterFragment {
 
   private class NavigationAdapter extends BaseAdapter {
 
-    private static final int TYPE_CATEGORY = 0;
-    private static final int TYPE_ITEM = 1;
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_CATEGORY = 1;
+    private static final int TYPE_ITEM = 2;
 
     private Context context;
     private List<NavigationItem> items;
+
+    private String username;
+    private String avatar;
 
     NavigationAdapter(Context context, List<NavigationItem> items) {
       this.context = context;
       this.items = items;
     }
 
-    @Override public int getCount() {
-      return items.size();
+    public void setUsername(String username) {
+      this.username = username;
     }
 
-    @Override public Object getItem(int position) {
-      return items.get(position);
+    public void setAvatar(String avatar) {
+      this.avatar = avatar;
+    }
+
+    @Override public int getCount() {
+      return 1 + items.size();
+    }
+
+    @Override public NavigationItem getItem(int position) {
+      return items.get(position - 1);
     }
 
     @Override public long getItemId(int position) {
@@ -171,41 +230,95 @@ public class NavigationFragment extends AbsAdapterFragment {
     }
 
     @Override public boolean isEnabled(int position) {
+      if (position == 0) {
+        return false;
+      }
+
       return getItem(position) instanceof MenuItem;
     }
 
     @Override public int getItemViewType(int position) {
+      if (position == 0) {
+        return TYPE_HEADER;
+      }
+
       return (getItem(position) instanceof MenuItem) ? TYPE_ITEM : TYPE_CATEGORY;
     }
 
     @Override public int getViewTypeCount() {
-      return 2;
+      return 3;
     }
 
     @Override public View getView(int position, View convertView, ViewGroup parent) {
-      TextView v = (TextView) convertView;
-      NavigationItem item = (NavigationItem) getItem(position);
+      View v = convertView;
+
+      if (position == 0) {
+        if (v == null) {
+          v = LayoutInflater.from(context)
+              .inflate(R.layout.fragment_navigation_header, parent, false);
+          RemoteImageView headerBackground =
+              (RemoteImageView) v.findViewById(R.id.headerBackground);
+          headerBackground.setImage(R.drawable.drawer_header_background);
+
+          v.setTag(R.id.username, v.findViewById(R.id.username));
+          final RemoteImageView profileIcon = (RemoteImageView) v.findViewById(R.id.profileIcon);
+
+          profileIcon.addTransformation(new RoundTransformation());
+
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            profileIcon.setOutlineProvider(new ViewOutlineProvider() {
+              @Override public void getOutline(View view, Outline outline) {
+                final int width = view.getWidth();
+                final int height = view.getHeight();
+                float radius = Math.min(width / 2, height / 2);
+                outline.setRoundRect(view.getPaddingLeft(), view.getPaddingRight(),
+                    width - view.getPaddingRight(), height - view.getPaddingBottom(), radius);
+                outline.setAlpha(profileIcon.getAnimationAlpha() / 255.0F);
+              }
+            });
+          } else {
+            final int dropShadowSize =
+                (int) parent.getResources().getDimension(R.dimen.profileIconDropShadow);
+            profileIcon.setResizeInsets(2 * dropShadowSize, 3 * dropShadowSize);
+            profileIcon.addTransformation(new CircularShadowTransformation(dropShadowSize));
+          }
+
+          v.setTag(R.id.profileIcon, profileIcon);
+        }
+
+        TextView username = (TextView) v.getTag(R.id.username);
+        username.setText(this.username);
+
+        RemoteImageView profileIcon = (RemoteImageView) v.getTag(R.id.profileIcon);
+        profileIcon.setImage(avatar);
+
+        return v;
+      }
+
+      TextView tv = (TextView) v;
+
+      NavigationItem item = getItem(position);
 
       if (item.isCategory()) {
-        if (v == null) {
-          v = (TextView) LayoutInflater.from(context)
+        if (tv == null) {
+          tv = (TextView) LayoutInflater.from(context)
               .inflate(R.layout.menu_home_category, parent, false);
         }
 
-        v.setText(item.title);
+        tv.setText(item.title);
       } else {
-        if (v == null) {
-          v = (TextView) LayoutInflater.from(context)
+        if (tv == null) {
+          tv = (TextView) LayoutInflater.from(context)
               .inflate(R.layout.menu_home_item, parent, false);
         }
 
         MenuItem menuItem = (MenuItem) item;
 
-        v.setText(menuItem.title);
-        v.setCompoundDrawablesWithIntrinsicBounds(menuItem.iconRes, 0, 0, 0);
+        tv.setText(menuItem.title);
+        tv.setCompoundDrawablesWithIntrinsicBounds(menuItem.iconRes, 0, 0, 0);
       }
 
-      return v;
+      return tv;
     }
   }
 }

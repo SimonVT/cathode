@@ -31,4 +31,6 @@
   <dimen name="recyclerViewVerticalSpacing">4dp</dimen>
   <dimen name="recyclerViewHorizontalSpacing">4dp</dimen>
 
+  <dimen name="profileIconDropShadow">2dp</dimen>
+
 </resources>
