@@ -118,6 +118,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
 
           show.moveToFirst();
           final int runtime = show.getInt(show.getColumnIndex(ShowColumns.RUNTIME));
+          show.close();
 
           final long startedAt = System.currentTimeMillis();
           final long expiresAt = startedAt + runtime * DateUtils.MINUTE_IN_MILLIS;
