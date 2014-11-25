@@ -25,7 +25,6 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowSearchSuggestionsColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowSearchSuggestions;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import timber.log.Timber;
 
 public class ShowSuggestionAdapter extends SuggestionsAdapter {
 
