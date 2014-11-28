@@ -5,7 +5,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:0.14.+'
+    classpath 'com.android.tools.build:gradle:1.0.+'
     classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
     classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
   }
@@ -35,7 +35,6 @@ ext {
 }
 
 ext.libraries = [
-  androidGradle: 'com.android.tools.build:gradle:0.14.+',
   androidApt: 'com.neenbedankt.gradle.plugins:android-apt:1.4',
 
   junit: 'junit:junit:4.11',
