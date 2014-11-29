@@ -27,7 +27,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import com.squareup.otto.Bus;
@@ -61,10 +60,10 @@ import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
 import net.simonvt.cathode.util.FragmentStack;
-import net.simonvt.cathode.widget.BottomViewLayout;
-import net.simonvt.cathode.widget.OverflowView;
-import net.simonvt.cathode.widget.RemoteImageView;
+import net.simonvt.cathode.widget.WatchingView;
 import timber.log.Timber;
+
+import static net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 
 public class PhoneController extends UiController {
 
@@ -79,7 +78,8 @@ public class PhoneController extends UiController {
   @InjectView(R.id.drawer) DrawerLayout drawer;
   private int drawerState = DrawerLayout.STATE_IDLE;
 
-  @InjectView(R.id.bottomViewLayout) BottomViewLayout bottomLayout;
+  @InjectView(R.id.watching_parent) ViewGroup watchingParent;
+  @InjectView(R.id.watchingView) WatchingView watchingView;
 
   private NavigationFragment navigation;
 
@@ -89,7 +89,7 @@ public class PhoneController extends UiController {
 
   private Cursor watchingMovie;
 
-  private static final boolean IS_MATERIAL = Build.VERSION.SDK_INT >= Build.VERSION_CODES.L;
+  private static final boolean IS_MATERIAL = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
 
   public static PhoneController create(HomeActivity activity, ViewGroup parent) {
     return create(activity, parent, null);
@@ -105,6 +105,41 @@ public class PhoneController extends UiController {
 
     LayoutInflater.from(activity).inflate(R.layout.controller_phone, parent);
     ButterKnife.inject(this, activity);
+    watchingView.setWatchingViewListener(new WatchingView.WatchingViewListener() {
+      @Override public void onExpand(View view) {
+        Timber.d("onExpand");
+        watchingParent.setOnClickListener(new View.OnClickListener() {
+          @Override public void onClick(View v) {
+            watchingView.collapse();
+          }
+        });
+      }
+
+      @Override public void onCollapse(View view) {
+        Timber.d("onCollapse");
+        watchingParent.setOnClickListener(null);
+        watchingParent.setClickable(false);
+      }
+
+      @Override public void onEpisodeClicked(View view, long episodeId, String showTitle) {
+        watchingView.collapse();
+
+        Fragment top = stack.peek();
+        if (top instanceof EpisodeFragment) {
+          EpisodeFragment f = (EpisodeFragment) top;
+          if (episodeId == f.getEpisodeId()) {
+            return;
+          }
+        }
+
+        onDisplayEpisode(episodeId, showTitle);
+      }
+
+      @Override public void onMovieClicked(View view, long movieId, String movieTitle) {
+        watchingView.collapse();
+        onDisplayMovie(movieId, movieTitle);
+      }
+    });
 
     isTablet = activity.getResources().getBoolean(R.bool.isTablet);
 
@@ -263,82 +298,60 @@ public class PhoneController extends UiController {
 
   private void updateWatching() {
     if (watchingShow != null && watchingShow.moveToFirst()) {
-      View watching = LayoutInflater.from(activity).inflate(R.layout.watching_show, null);
+      final long showId = watchingShow.getLong(watchingShow.getColumnIndex(ShowColumns.ID));
       final String show = watchingShow.getString(watchingShow.getColumnIndex(ShowColumns.TITLE));
       final String poster = watchingShow.getString(watchingShow.getColumnIndex(ShowColumns.POSTER));
       final String episode =
           watchingShow.getString(watchingShow.getColumnIndex(EpisodeColumns.TITLE));
       final int season = watchingShow.getInt(watchingShow.getColumnIndex(EpisodeColumns.SEASON));
+
+      final long episodeId = watchingShow.getLong(watchingShow.getColumnIndex("episodeId"));
+      final String episodeTitle =
+          watchingShow.getString(watchingShow.getColumnIndex(EpisodeColumns.TITLE));
       final int episodeNumber =
           watchingShow.getInt(watchingShow.getColumnIndex(EpisodeColumns.EPISODE));
       final boolean checkedIn =
           watchingShow.getInt(watchingShow.getColumnIndex(EpisodeColumns.CHECKED_IN)) == 1;
+      final long startTime =
+          watchingShow.getLong(watchingShow.getColumnIndex(EpisodeColumns.STARTED_AT));
+      final long endTime =
+          watchingShow.getLong(watchingShow.getColumnIndex(EpisodeColumns.EXPIRES_AT));
 
-      ((TextView) watching.findViewById(R.id.show)).setText(show);
-      ((RemoteImageView) watching.findViewById(R.id.poster)).setImage(poster);
-      ((TextView) watching.findViewById(R.id.episode)).setText(
-          activity.getString(R.string.episode, season, episodeNumber, episode));
-      OverflowView overflow = (OverflowView) watching.findViewById(R.id.overflow);
-      if (checkedIn) overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
-      overflow.setListener(new OverflowView.OverflowActionListener() {
-        @Override public void onPopupShown() {
-        }
-
-        @Override public void onPopupDismissed() {
-        }
-
-        @Override public void onActionSelected(int action) {
-          switch (action) {
-            case R.id.action_checkin_cancel:
-              showScheduler.cancelCheckin();
-              break;
-          }
-        }
-      });
-
-      bottomLayout.setBottomView(watching);
+      watchingView.watchingShow(showId, show, episodeId, episodeTitle, poster, startTime, endTime);
     } else if (watchingMovie != null && watchingMovie.moveToFirst()) {
-      View watching = LayoutInflater.from(activity).inflate(R.layout.watching_movie, null);
+      final long id = watchingMovie.getLong(watchingMovie.getColumnIndex(MovieColumns.ID));
       final String movie =
           watchingMovie.getString(watchingMovie.getColumnIndex(MovieColumns.TITLE));
       final String poster =
           watchingMovie.getString(watchingMovie.getColumnIndex(MovieColumns.POSTER));
-      final String year = watchingMovie.getString(watchingMovie.getColumnIndex(MovieColumns.YEAR));
-      final boolean checkedIn =
-          watchingMovie.getInt(watchingMovie.getColumnIndex(MovieColumns.CHECKED_IN)) == 1;
+      final long startTime =
+          watchingShow.getLong(watchingShow.getColumnIndex(MovieColumns.STARTED_AT));
+      final long endTime =
+          watchingShow.getLong(watchingShow.getColumnIndex(MovieColumns.EXPIRES_AT));
 
-      ((TextView) watching.findViewById(R.id.movie)).setText(movie);
-      ((RemoteImageView) watching.findViewById(R.id.poster)).setImage(poster);
-      ((TextView) watching.findViewById(R.id.year)).setText(year);
-      OverflowView overflow = (OverflowView) watching.findViewById(R.id.overflow);
-      if (checkedIn) overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
-      overflow.setListener(new OverflowView.OverflowActionListener() {
-        @Override public void onPopupShown() {
-        }
-
-        @Override public void onPopupDismissed() {
-        }
-
-        @Override public void onActionSelected(int action) {
-          switch (action) {
-            case R.id.action_checkin_cancel:
-              movieScheduler.cancelCheckin();
-              break;
-          }
-        }
-      });
-
-      bottomLayout.setBottomView(watching);
+      watchingView.watchingMovie(id, movie, poster, startTime, endTime);
     } else {
-      bottomLayout.setBottomView(null);
+      watchingView.clearWatching();
     }
   }
+
+  private static final String[] SHOW_WATCHING_PROJECTION = new String[] {
+      Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.SHOWS + "." + ShowColumns.POSTER,
+      Tables.EPISODES + "." + EpisodeColumns.ID + " AS episodeId",
+      Tables.EPISODES + "." + EpisodeColumns.TITLE, Tables.EPISODES + "." + EpisodeColumns.SEASON,
+      Tables.EPISODES + "." + EpisodeColumns.EPISODE,
+      Tables.EPISODES + "." + EpisodeColumns.CHECKED_IN,
+      Tables.EPISODES + "." + EpisodeColumns.STARTED_AT,
+      Tables.EPISODES + "." + EpisodeColumns.EXPIRES_AT,
+  };
 
   private LoaderManager.LoaderCallbacks<Cursor> watchingShowCallback =
       new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
           CursorLoader loader =
-              new CursorLoader(activity, Shows.SHOW_WATCHING, null, null, null, null);
+              new CursorLoader(activity, Shows.SHOW_WATCHING, SHOW_WATCHING_PROJECTION, null, null,
+                  null);
           loader.setUpdateThrottle(2000);
           return loader;
         }

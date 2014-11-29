@@ -161,6 +161,10 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     }
   }
 
+  public long getEpisodeId() {
+    return episodeId;
+  }
+
   public String getTitle() {
     return showTitle;
   }
