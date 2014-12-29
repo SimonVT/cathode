@@ -52,7 +52,6 @@ public class SyncWatchingTask extends TraktTask {
   @Inject transient UsersService usersService;
 
   @Override protected void doTask() {
-    // TODO: Tell the difference between scrobbles and checkins
     ContentResolver resolver = getContentResolver();
 
     ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
