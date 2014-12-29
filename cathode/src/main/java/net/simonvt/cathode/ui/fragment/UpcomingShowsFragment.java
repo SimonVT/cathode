@@ -295,10 +295,8 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
       }
     }
 
-    // TODO: StaggeredGridAnimator animator = new StaggeredGridAnimator(getGridView());
     adapter.updateCursorForHeader(R.string.header_aired, airedCursor);
     adapter.updateCursorForHeader(R.string.header_upcoming, unairedCursor);
-    //animator.animate();
   }
 
   @Override public Loader<MutableCursor> onCreateLoader(int id, Bundle args) {
