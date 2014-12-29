@@ -37,6 +37,7 @@ import net.simonvt.schematic.annotation.Database;
 import net.simonvt.schematic.annotation.ExecOnCreate;
 import net.simonvt.schematic.annotation.OnUpgrade;
 import net.simonvt.schematic.annotation.Table;
+import timber.log.Timber;
 
 @Database(className = "CathodeDatabase", fileName = "cathode.db",
     version = DatabaseSchematic.DATABASE_VERSION)
@@ -44,8 +45,6 @@ public final class DatabaseSchematic {
 
   private DatabaseSchematic() {
   }
-
-  static final String DATABASE_NAME = "DB1";
 
   static final int DATABASE_VERSION = 12;
 
@@ -551,9 +550,31 @@ public final class DatabaseSchematic {
       + Trigger.MOVIE_DELETE_CREW
       + " END;";
 
-  @OnUpgrade public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+  @OnUpgrade public static void onUpgrade(Context context, SQLiteDatabase db, int oldVersion, int newVersion) {
     if (oldVersion < 12) {
+      db.execSQL("DROP TABLE IF EXISTS shows");
+      db.execSQL("DROP TABLE IF EXISTS showTopWatchers");
+      db.execSQL("DROP TABLE IF EXISTS topEpisodes");
+      db.execSQL("DROP TABLE IF EXISTS showActors");
+      db.execSQL("DROP TABLE IF EXISTS showGenres");
+      db.execSQL("DROP TABLE IF EXISTS seasons");
+      db.execSQL("DROP TABLE IF EXISTS episodes");
+      db.execSQL("DROP TABLE IF EXISTS movies");
+      db.execSQL("DROP TABLE IF EXISTS movieGenres");
+      db.execSQL("DROP TABLE IF EXISTS movieTopWatchers");
+      db.execSQL("DROP TABLE IF EXISTS movieActors");
+      db.execSQL("DROP TABLE IF EXISTS movieDirectors");
+      db.execSQL("DROP TABLE IF EXISTS movieWriters");
+      db.execSQL("DROP TABLE IF EXISTS movieProducers");
+      db.execSQL("DROP TABLE IF EXISTS showSearchSuggestions");
+      db.execSQL("DROP TABLE IF EXISTS movieSearchSuggestions");
 
+      db.execSQL("DROP TRIGGER IF EXISTS episodeInsert");
+      db.execSQL("DROP TRIGGER IF EXISTS episodeUpdateAired");
+      db.execSQL("DROP TRIGGER IF EXISTS episodeUpdateWatched");
+      db.execSQL("DROP TRIGGER IF EXISTS episodeUpdateCollected");
+
+      CathodeDatabase.getInstance(context).onCreate(db);
     }
   }
 

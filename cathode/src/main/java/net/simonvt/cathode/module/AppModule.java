@@ -206,7 +206,7 @@ public class AppModule {
   }
 
   @Provides @Singleton TraktTaskQueue provideTaskQueue(Gson gson) {
-    TraktTaskQueue queue = TraktTaskQueue.create(app, gson, "taskQueue");
+    TraktTaskQueue queue = TraktTaskQueue.create(app, gson, "taskQueue2");
     if (BuildConfig.DEBUG) {
       queue.setListener(new ObjectQueue.Listener<TraktTask>() {
         @Override public void onAdd(ObjectQueue<TraktTask> queue, TraktTask entry) {
@@ -222,7 +222,7 @@ public class AppModule {
   }
 
   @Provides @Singleton @PriorityQueue TraktTaskQueue providePriorityTaskQueue(Gson gson) {
-    TraktTaskQueue queue = TraktTaskQueue.create(app, gson, "priorityTaskQueue");
+    TraktTaskQueue queue = TraktTaskQueue.create(app, gson, "priorityTaskQueue2");
     if (BuildConfig.DEBUG) {
       queue.setListener(new ObjectQueue.Listener<TraktTask>() {
         @Override public void onAdd(ObjectQueue<TraktTask> queue, TraktTask entry) {
