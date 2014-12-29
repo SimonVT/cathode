@@ -50,6 +50,8 @@ public class Movie {
 
   List<String> genres;
 
+  String certification;
+
   public String getTitle() {
     return title;
   }
@@ -108,5 +110,9 @@ public class Movie {
 
   public List<String> getGenres() {
     return genres;
+  }
+
+  public String getCertification() {
+    return certification;
   }
 }

@@ -209,7 +209,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) String RUNTIME = "runtime";
     @DataType(TEXT) String TAGLINE = "tagline";
     @DataType(TEXT) String OVERVIEW = "overview";
-    // TODO: @DataType(TEXT) String CERTIFICATION = "certification";
+    @DataType(TEXT) String CERTIFICATION = "certification";
     @DataType(TEXT) String LANGUAGE = "language";
     @DataType(TEXT) String HOMEPAGE = "homepage";
 

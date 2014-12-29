@@ -234,7 +234,7 @@ public class MovieFragment extends ProgressFragment
       setTitle(movieTitle);
     }
     final int year = cursor.getInt(cursor.getColumnIndex(MovieColumns.YEAR));
-    //TODO: final String certification = cursor.getString(cursor.getColumnIndex(MovieColumns.CERTIFICATION));
+    final String certification = cursor.getString(cursor.getColumnIndex(MovieColumns.CERTIFICATION));
 
     final String fanartUrl = cursor.getString(cursor.getColumnIndex(MovieColumns.FANART));
     fanart.setImage(fanartUrl);
@@ -257,7 +257,7 @@ public class MovieFragment extends ProgressFragment
     watchlist.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
 
     this.year.setText(String.valueOf(year));
-    // TODO: this.certification.setText(certification);
+    this.certification.setText(certification);
     this.overview.setText(overview);
 
     setContentVisible(true);

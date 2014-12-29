@@ -215,6 +215,10 @@ public final class MovieWrapper {
       if (images.getThumb() != null) cv.put(MovieColumns.THUMB, images.getThumb().getFull());
     }
 
+    if (movie.getCertification() != null) {
+      cv.put(MovieColumns.CERTIFICATION, movie.getCertification());
+    }
+
     return cv;
   }
 
