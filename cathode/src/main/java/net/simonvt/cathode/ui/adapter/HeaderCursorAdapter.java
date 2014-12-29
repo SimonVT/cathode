@@ -91,7 +91,6 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
   }
 
   public void notifyChanged() {
-    // TODO: Figure out what items were removed, which were added and the rest were changed
     itemCount = 0;
 
     headerPositions.clear();
