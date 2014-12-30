@@ -19,7 +19,7 @@
     android:id="@+id/watchingView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="bottom"
+    android:layout_gravity="bottom|right"
     android:layout_marginBottom="32dp"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
@@ -27,10 +27,11 @@
 
   <net.simonvt.cathode.widget.RemoteImageView
       android:id="@+id/poster"
-      android:layout_width="48dp"
+      android:layout_width="@dimen/watchingPosterWidth"
       android:layout_height="wrap_content"
       app:aspectRatio="1.47"
-      app:dominantMeasurement="width"/>
+      app:dominantMeasurement="width"
+      app:placeholder="@drawable/placeholder_watching"/>
 
   <LinearLayout
       android:id="@+id/infoParent"

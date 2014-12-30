@@ -34,5 +34,6 @@
   <dimen name="profileIconDropShadow">2dp</dimen>
 
   <dimen name="watchingElevation">5dp</dimen>
+  <dimen name="watchingPosterWidth">48dp</dimen>
 
 </resources>

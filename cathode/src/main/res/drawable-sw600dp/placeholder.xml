@@ -14,17 +14,18 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<resources>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <dimen name="searchViewMaxWidth">320dp</dimen>
+  <item>
+    <shape android:shape="rectangle">
+      <solid android:color="@color/placeholderBackground"/>
+    </shape>
+  </item>
 
-  <dimen name="detailContentPaddingBottom">16dp</dimen>
-  <dimen name="detailPosterWidth">128dp</dimen>
-  <dimen name="detailHeaderLeftMargin">152dp</dimen>
+  <item>
+    <bitmap
+        android:src="@drawable/placeholder_tv_large"
+        android:gravity="center"/>
+  </item>
 
-  <dimen name="recyclerViewVerticalSpacing">8dp</dimen>
-  <dimen name="recyclerViewHorizontalSpacing">8dp</dimen>
-
-  <dimen name="watchingPosterWidth">72dp</dimen>
-
-</resources>
+</layer-list>

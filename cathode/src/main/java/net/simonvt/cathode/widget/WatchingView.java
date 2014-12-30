@@ -68,6 +68,8 @@ public class WatchingView extends ViewGroup {
   private static final int ANIMATION_DURATION =
       Math.max(EXPAND_DURATION + EXPAND_DURATION_OFFSET, RADIUS_DURATION + RADIUS_DURATION_OFFSET);
 
+  private int maxWidth;
+
   private boolean isExpanded;
 
   private float animationProgress;
@@ -95,7 +97,6 @@ public class WatchingView extends ViewGroup {
   @InjectView(R.id.subtitle) TextView subtitleView;
 
   private static final boolean IS_LOLLIPOP = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
-  //private static final boolean IS_LOLLIPOP = false;
 
   private WatchingViewListener watchingViewListener;
 
@@ -149,8 +150,25 @@ public class WatchingView extends ViewGroup {
     diameter = expandedDiameter;
 
     if (IS_LOLLIPOP) {
-      setOutlineProvider(outlineProvider);
+      setOutlineProvider(new ViewOutlineProvider() {
+        @Override public void getOutline(View view, Outline outline) {
+          Rect outlineRect = new Rect();
+          outlineRect.left = (int) (getPaddingLeft() + posterView.getTranslationX());
+          outlineRect.top = getPaddingTop() + topBottomOffset;
+          outlineRect.right = getWidth() - getPaddingRight();
+          outlineRect.bottom = getHeight() - getPaddingBottom() - topBottomOffset;
+          outline.setRoundRect(outlineRect, diameter / 2);
+        }
+      });
       setClipToOutline(true);
+    }
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+      setLayerType(LAYER_TYPE_SOFTWARE, null);
+    }
+
+    if (getResources().getBoolean(R.bool.isTablet)) {
+      maxWidth = ViewUtils.dpToPx(context, 400);
     }
 
     animationProgress = 1.0f;
@@ -385,8 +403,10 @@ public class WatchingView extends ViewGroup {
 
   @Override protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
-    canvas.drawRect(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(),
-        getHeight() - getPaddingBottom(), backgroundPaint);
+    if (IS_LOLLIPOP) {
+      canvas.drawRect(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(),
+          getHeight() - getPaddingBottom(), backgroundPaint);
+    }
   }
 
   @Override protected void dispatchDraw(Canvas canvas) {
@@ -442,25 +462,14 @@ public class WatchingView extends ViewGroup {
       final int save = canvas.save();
       canvas.clipPath(clipPath);
 
-      //paint.setColor(0xFF00FF00);
-      //canvas.drawRect(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(),
-      //    getHeight() - getPaddingBottom(), paint);
+      canvas.drawRect(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(),
+          getHeight() - getPaddingBottom(), backgroundPaint);
+
       super.dispatchDraw(canvas);
 
       canvas.restoreToCount(save);
     }
   }
-
-  private ViewOutlineProvider outlineProvider = new ViewOutlineProvider() {
-    @Override public void getOutline(View view, Outline outline) {
-      Rect outlineRect = new Rect();
-      outlineRect.left = (int) (getPaddingLeft() + posterView.getTranslationX());
-      outlineRect.top = getPaddingTop() + topBottomOffset;
-      outlineRect.right = getWidth() - getPaddingRight();
-      outlineRect.bottom = getHeight() - getPaddingBottom() - topBottomOffset;
-      outline.setRoundRect(outlineRect, diameter / 2);
-    }
-  };
 
   @Override protected void onLayout(boolean changed, int l, int t, int r, int b) {
     final int height = b - t;
@@ -496,7 +505,10 @@ public class WatchingView extends ViewGroup {
       throw new IllegalStateException("Must measure with an exact width");
     }
 
-    final int width = MeasureSpec.getSize(widthMeasureSpec);
+    int width = MeasureSpec.getSize(widthMeasureSpec);
+    if (maxWidth > 0) {
+      width = Math.min(width, maxWidth);
+    }
 
     measureChild(posterView, widthMeasureSpec, heightMeasureSpec);
     LayoutParams posterParams = (LayoutParams) posterView.getLayoutParams();
