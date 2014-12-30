@@ -87,7 +87,6 @@ public class CathodeApp extends Application {
   }
 
   private void upgrade() {
-    // TODO: Delete CathodeDatabase
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
     final int currentVersion = settings.getInt(Settings.VERSION_CODE, -1);
 
