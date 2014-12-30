@@ -194,7 +194,7 @@ public class ShowsWatchlistFragment extends ToolbarGridFragment<RecyclerView.Vie
       setAdapter(ensureAdapter());
     }
 
-    throttleLoaders();
+    //throttleLoaders();
     ((ShowWatchlistAdapter) getAdapter()).updateCursorForHeader(R.string.header_shows, cursor);
   }
 
@@ -203,7 +203,7 @@ public class ShowsWatchlistFragment extends ToolbarGridFragment<RecyclerView.Vie
       setAdapter(ensureAdapter());
     }
 
-    throttleLoaders();
+    //throttleLoaders();
     ((ShowWatchlistAdapter) getAdapter()).updateCursorForHeader(R.string.header_episodes, cursor);
   }
 
