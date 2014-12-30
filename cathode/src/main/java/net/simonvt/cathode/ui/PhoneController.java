@@ -106,7 +106,7 @@ public class PhoneController extends UiController {
     LayoutInflater.from(activity).inflate(R.layout.controller_phone, parent);
     ButterKnife.inject(this, activity);
     watchingView.setWatchingViewListener(new WatchingView.WatchingViewListener() {
-      @Override public void onExpand(View view) {
+      @Override public void onExpand(WatchingView view) {
         Timber.d("onExpand");
         watchingParent.setOnClickListener(new View.OnClickListener() {
           @Override public void onClick(View v) {
@@ -115,13 +115,13 @@ public class PhoneController extends UiController {
         });
       }
 
-      @Override public void onCollapse(View view) {
+      @Override public void onCollapse(WatchingView view) {
         Timber.d("onCollapse");
         watchingParent.setOnClickListener(null);
         watchingParent.setClickable(false);
       }
 
-      @Override public void onEpisodeClicked(View view, long episodeId, String showTitle) {
+      @Override public void onEpisodeClicked(WatchingView view, long episodeId, String showTitle) {
         watchingView.collapse();
 
         Fragment top = stack.peek();
@@ -135,9 +135,17 @@ public class PhoneController extends UiController {
         onDisplayEpisode(episodeId, showTitle);
       }
 
-      @Override public void onMovieClicked(View view, long movieId, String movieTitle) {
+      @Override public void onMovieClicked(WatchingView view, long movieId, String movieTitle) {
         watchingView.collapse();
         onDisplayMovie(movieId, movieTitle);
+      }
+
+      @Override public void onAnimatingIn(WatchingView view) {
+      }
+
+      @Override public void onAnimatingOut(WatchingView view) {
+        watchingParent.setOnClickListener(null);
+        watchingParent.setClickable(false);
       }
     });
 

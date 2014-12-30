@@ -41,13 +41,17 @@ public class WatchingView extends ViewGroup {
 
   public interface WatchingViewListener {
 
-    void onExpand(View view);
+    void onExpand(WatchingView view);
 
-    void onCollapse(View view);
+    void onCollapse(WatchingView view);
 
-    void onEpisodeClicked(View view, long episodeId, String showTitle);
+    void onEpisodeClicked(WatchingView view, long episodeId, String showTitle);
 
-    void onMovieClicked(View view, long movieId, String movieTitle);
+    void onMovieClicked(WatchingView view, long movieId, String movieTitle);
+
+    void onAnimatingIn(WatchingView view);
+
+    void onAnimatingOut(WatchingView view);
   }
 
   public static enum Type {
@@ -217,6 +221,9 @@ public class WatchingView extends ViewGroup {
   }
 
   private void animateIn() {
+    if (watchingViewListener != null) {
+      watchingViewListener.onAnimatingIn(this);
+    }
     animate().alpha(1.0f).withStartAction(new Runnable() {
       @Override public void run() {
         if (getVisibility() == GONE) {
@@ -228,10 +235,14 @@ public class WatchingView extends ViewGroup {
   }
 
   private void animateOut() {
+    if (watchingViewListener != null) {
+      watchingViewListener.onAnimatingOut(this);
+    }
     if (getVisibility() != GONE) {
       animate().alpha(0.0f).withEndAction(new Runnable() {
         @Override public void run() {
           setVisibility(GONE);
+          collapse();
         }
       });
     }
