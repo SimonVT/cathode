@@ -208,6 +208,13 @@ public final class SeasonWrapper {
       cv.put(SeasonColumns.THUMB, images.getThumb().getFull());
     }
 
+    if (season.getRating() != null) {
+      cv.put(SeasonColumns.RATING, season.getRating());
+    }
+    if (season.getVotes() != null) {
+      cv.put(SeasonColumns.VOTES, season.getVotes());
+    }
+
     return cv;
   }
 }

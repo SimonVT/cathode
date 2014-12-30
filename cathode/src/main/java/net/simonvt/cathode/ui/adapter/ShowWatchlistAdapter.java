@@ -149,7 +149,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
           cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT)) > 1;
       final boolean inWatchlist =
           cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
-      final int rating = cursor.getInt(cursor.getColumnIndex(ShowColumns.RATING));
+      final float rating = cursor.getFloat(cursor.getColumnIndex(ShowColumns.RATING));
 
       vh.indicator.setWatched(watched);
       vh.indicator.setCollected(inCollection);

@@ -14,37 +14,12 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.api.entity;
+package net.simonvt.cathode.remote.sync.shows;
 
-public class Season {
+import net.simonvt.cathode.remote.TraktTask;
 
-  Integer number;
+public class SyncSeasonRating extends TraktTask {
+  @Override protected void doTask() {
 
-  Ids ids;
-
-  Images images;
-
-  Float rating;
-
-  Integer votes;
-
-  public Integer getNumber() {
-    return number;
-  }
-
-  public Ids getIds() {
-    return ids;
-  }
-
-  public Images getImages() {
-    return images;
-  }
-
-  public Float getRating() {
-    return rating;
-  }
-
-  public Integer getVotes() {
-    return votes;
   }
 }

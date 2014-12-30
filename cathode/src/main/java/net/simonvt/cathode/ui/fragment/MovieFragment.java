@@ -241,8 +241,8 @@ public class MovieFragment extends ProgressFragment
     final String posterUrl = cursor.getString(cursor.getColumnIndex(MovieColumns.POSTER));
     poster.setImage(posterUrl);
 
-    currentRating = cursor.getInt(cursor.getColumnIndex(MovieColumns.RATING));
-    final int ratingAll = cursor.getInt(cursor.getColumnIndex(MovieColumns.RATING));
+    currentRating = cursor.getInt(cursor.getColumnIndex(MovieColumns.USER_RATING));
+    final float ratingAll = cursor.getFloat(cursor.getColumnIndex(MovieColumns.RATING));
     rating.setValue(ratingAll);
 
     final String overview = cursor.getString(cursor.getColumnIndex(MovieColumns.OVERVIEW));

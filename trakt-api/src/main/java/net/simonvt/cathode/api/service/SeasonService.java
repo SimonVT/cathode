@@ -18,6 +18,7 @@ package net.simonvt.cathode.api.service;
 
 import java.util.List;
 import net.simonvt.cathode.api.entity.Episode;
+import net.simonvt.cathode.api.entity.Rating;
 import net.simonvt.cathode.api.entity.Season;
 import net.simonvt.cathode.api.enumeration.Extended;
 import retrofit.http.GET;
@@ -40,5 +41,8 @@ public interface SeasonService {
    * @param id Show trakt ID
    */
   @GET("/shows/{id}/seasons/{season}") List<Episode> getSeason(@Path("id") long id,
+      @Path("season") int season);
+
+  @GET("/shows/{id[/seasons/{season[/ratings") Rating getRatings(@Path("id") long id,
       @Path("season") int season);
 }

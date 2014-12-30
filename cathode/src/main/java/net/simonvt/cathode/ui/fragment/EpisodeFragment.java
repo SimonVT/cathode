@@ -456,8 +456,8 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       inCollectionView.setVisibility(collected ? View.VISIBLE : View.GONE);
       inWatchlistView.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
 
-      currentRating = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.RATING));
-      final int ratingAll = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.RATING));
+      currentRating = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.USER_RATING));
+      final float ratingAll = cursor.getFloat(cursor.getColumnIndex(EpisodeColumns.RATING));
       rating.setValue(ratingAll);
 
       setContentVisible(true);

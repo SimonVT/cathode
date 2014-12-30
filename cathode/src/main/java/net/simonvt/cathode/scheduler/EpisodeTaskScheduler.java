@@ -221,11 +221,11 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
           final int season = c.getInt(c.getColumnIndex(EpisodeColumns.SEASON));
 
           ContentValues cv = new ContentValues();
-          cv.put(EpisodeColumns.RATING, rating);
+          cv.put(EpisodeColumns.USER_RATING, rating);
           cv.put(EpisodeColumns.RATED_AT, ratedAtMillis);
           context.getContentResolver().update(Episodes.withId(episodeId), cv, null, null);
 
-          queue.add(new EpisodeRateTask(traktId, season, episode, rating, ratedAt));
+          priorityQueue.add(new EpisodeRateTask(traktId, season, episode, rating, ratedAt));
         }
         c.close();
       }

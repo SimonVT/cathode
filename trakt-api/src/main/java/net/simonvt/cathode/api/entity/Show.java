@@ -51,6 +51,8 @@ public class Show {
 
   Float rating;
 
+  Integer votes;
+
   String language;
 
   List<String> availableTranslations;
@@ -117,6 +119,10 @@ public class Show {
 
   public Float getRating() {
     return rating;
+  }
+
+  public Integer getVotes() {
+    return votes;
   }
 
   public String getLanguage() {

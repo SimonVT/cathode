@@ -186,11 +186,11 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         final long traktId = MovieWrapper.getTraktId(context.getContentResolver(), movieId);
 
         ContentValues cv = new ContentValues();
-        cv.put(MovieColumns.RATING, rating);
+        cv.put(MovieColumns.USER_RATING, rating);
         cv.put(MovieColumns.RATED_AT, ratedAtMillis);
         context.getContentResolver().update(Movies.withId(movieId), cv, null, null);
 
-        queue.add(new MovieRateTask(traktId, rating, ratedAt));
+        priorityQueue.add(new MovieRateTask(traktId, rating, ratedAt));
       }
     });
   }

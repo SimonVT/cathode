@@ -81,7 +81,7 @@ public class ShowFragment extends ProgressFragment {
   private static final String[] SHOW_PROJECTION = new String[] {
       ShowColumns.TITLE, ShowColumns.YEAR, ShowColumns.AIR_TIME, ShowColumns.AIR_DAY,
       ShowColumns.NETWORK, ShowColumns.CERTIFICATION, ShowColumns.POSTER, ShowColumns.FANART,
-      ShowColumns.RATING, ShowColumns.RATING, ShowColumns.OVERVIEW, ShowColumns.IN_WATCHLIST,
+      ShowColumns.USER_RATING, ShowColumns.RATING, ShowColumns.OVERVIEW, ShowColumns.IN_WATCHLIST,
       ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT, ShowColumns.HIDDEN,
   };
 
@@ -469,8 +469,6 @@ public class ShowFragment extends ProgressFragment {
     if (fanartUrl != null) {
       fanart.setImage(fanartUrl);
     }
-    currentRating = cursor.getInt(cursor.getColumnIndex(ShowColumns.RATING));
-    final int ratingAll = cursor.getInt(cursor.getColumnIndex(ShowColumns.RATING));
     final String overview = cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW));
     inWatchlist = cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
     final int inCollectionCount =
@@ -478,6 +476,8 @@ public class ShowFragment extends ProgressFragment {
     final int watchedCount = cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHED_COUNT));
     isHidden = cursor.getInt(cursor.getColumnIndex(ShowColumns.HIDDEN)) == 1;
 
+    currentRating = cursor.getInt(cursor.getColumnIndex(ShowColumns.USER_RATING));
+    final float ratingAll = cursor.getFloat(cursor.getColumnIndex(ShowColumns.RATING));
     rating.setValue(ratingAll);
 
     watched.setVisibility(watchedCount > 0 ? View.VISIBLE : View.GONE);

@@ -62,7 +62,7 @@ public class SyncShowTask extends TraktTask {
       return;
     }
 
-    List<Season> seasons = seasonService.getSummary(traktId, Extended.IMAGES);
+    List<Season> seasons = seasonService.getSummary(traktId, Extended.FULL_IMAGES);
 
     List<TraktTask> pendingTasks = new ArrayList<TraktTask>();
     List<Long> episodeIds = new ArrayList<Long>();

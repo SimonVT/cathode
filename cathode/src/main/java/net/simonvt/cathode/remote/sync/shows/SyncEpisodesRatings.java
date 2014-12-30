@@ -25,7 +25,6 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.RatingItem;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
@@ -91,16 +90,16 @@ public class SyncEpisodesRatings extends TraktTask {
       episodeIds.remove(seasonId);
 
       ContentProviderOperation op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
-          .withValue(SeasonColumns.USER_RATING, rating.getRating())
-          .withValue(SeasonColumns.RATED_AT, rating.getRatedAt().getTimeInMillis())
+          .withValue(EpisodeColumns.USER_RATING, rating.getRating())
+          .withValue(EpisodeColumns.RATED_AT, rating.getRatedAt().getTimeInMillis())
           .build();
       ops.add(op);
     }
 
     for (Long episodeId : episodeIds) {
       ContentProviderOperation op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
-          .withValue(SeasonColumns.USER_RATING, 0)
-          .withValue(SeasonColumns.RATED_AT, 0)
+          .withValue(EpisodeColumns.USER_RATING, 0)
+          .withValue(EpisodeColumns.RATED_AT, 0)
           .build();
       ops.add(op);
     }

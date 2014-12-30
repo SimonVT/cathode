@@ -83,13 +83,13 @@ public class Rating {
     }
   }
 
-  Integer rating;
+  Float rating;
 
   Integer votes;
 
   Distribution distribution;
 
-  public Integer getRating() {
+  public Float getRating() {
     return rating;
   }
 

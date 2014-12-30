@@ -16,6 +16,8 @@
 
 package net.simonvt.cathode.api.entity;
 
+import java.util.List;
+
 public class Episode {
 
   Integer season;
@@ -35,6 +37,12 @@ public class Episode {
   IsoTime firstAired;
 
   IsoTime updatedAt;
+
+  Float rating;
+
+  Integer votes;
+
+  List<String> availableTranslations;
 
   public Integer getSeason() {
     return season;
@@ -70,5 +78,17 @@ public class Episode {
 
   public IsoTime getUpdatedAt() {
     return updatedAt;
+  }
+
+  public Float getRating() {
+    return rating;
+  }
+
+  public Integer getVotes() {
+    return votes;
+  }
+
+  public List<String> getAvailableTranslations() {
+    return availableTranslations;
   }
 }

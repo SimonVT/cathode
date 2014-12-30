@@ -68,7 +68,9 @@ public final class DatabaseContract {
 
     @DataType(INTEGER) @DefaultValue("0") String USER_RATING = "userRating";
     @DataType(INTEGER) @DefaultValue("0") String RATED_AT = "ratedAt";
+
     @DataType(INTEGER) @DefaultValue("0") String RATING = "rating";
+    @DataType(INTEGER) @DefaultValue("0") String VOTES = "votes";
 
     @DataType(INTEGER) @DefaultValue("0") String WATCHERS = "watchers";
     @DataType(INTEGER) @DefaultValue("0") String PLAYS = "plays";
@@ -134,7 +136,9 @@ public final class DatabaseContract {
 
     @DataType(INTEGER) @DefaultValue("0") String USER_RATING = "userRating";
     @DataType(INTEGER) @DefaultValue("0") String RATED_AT = "ratedAt";
+
     @DataType(INTEGER) @DefaultValue("0") String RATING = "rating";
+    @DataType(INTEGER) @DefaultValue("0") String VOTES = "votes";
 
     @DataType(INTEGER) @DefaultValue("0") String WATCHED_COUNT = "watchedCount";
     @DataType(INTEGER) @DefaultValue("0") String AIRDATE_COUNT = "airdateCount";
@@ -179,8 +183,9 @@ public final class DatabaseContract {
 
     @DataType(INTEGER) @DefaultValue("0") String USER_RATING = "userRating";
     @DataType(INTEGER) @DefaultValue("0") String RATED_AT = "ratedAt";
-    // TODO: Check where all ratings are used, maybe it's user rating instead?
+
     @DataType(INTEGER) @DefaultValue("0") String RATING = "rating";
+    @DataType(INTEGER) @DefaultValue("0") String VOTES = "votes";
 
     @DataType(INTEGER) @DefaultValue("0") String PLAYS = "plays";
 
@@ -227,7 +232,9 @@ public final class DatabaseContract {
 
     @DataType(INTEGER) @DefaultValue("0") String USER_RATING = "userRating";
     @DataType(INTEGER) @DefaultValue("0") String RATED_AT = "ratedAt";
+
     @DataType(INTEGER) @DefaultValue("0") String RATING = "rating";
+    @DataType(INTEGER) @DefaultValue("0") String VOTES = "votes";
 
     @DataType(INTEGER) @DefaultValue("0") String WATCHED = "watched";
     @DataType(INTEGER) @DefaultValue("0") String IN_COLLECTION = "inCollection";

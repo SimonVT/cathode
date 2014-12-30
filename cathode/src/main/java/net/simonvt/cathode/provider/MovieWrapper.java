@@ -219,6 +219,13 @@ public final class MovieWrapper {
       cv.put(MovieColumns.CERTIFICATION, movie.getCertification());
     }
 
+    if (movie.getRating() != null) {
+      cv.put(MovieColumns.RATING, movie.getRating());
+    }
+    if (movie.getVotes() != null) {
+      cv.put(MovieColumns.VOTES, movie.getVotes());
+    }
+
     return cv;
   }
 
@@ -251,12 +258,6 @@ public final class MovieWrapper {
     ContentValues cv = new ContentValues();
     cv.put(MovieColumns.IN_WATCHLIST, inWatchlist);
     cv.put(MovieColumns.LISTED_AT, listedAt);
-    resolver.update(Movies.withId(movieId), cv, null, null);
-  }
-
-  public static void setRating(ContentResolver resolver, long movieId, int rating) {
-    ContentValues cv = new ContentValues();
-    cv.put(MovieColumns.RATING, rating);
     resolver.update(Movies.withId(movieId), cv, null, null);
   }
 }

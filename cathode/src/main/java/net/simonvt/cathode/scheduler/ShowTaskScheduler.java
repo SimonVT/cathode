@@ -222,11 +222,11 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         final long traktId = ShowWrapper.getTraktId(context.getContentResolver(), showId);
 
         ContentValues cv = new ContentValues();
-        cv.put(ShowColumns.RATING, rating);
+        cv.put(ShowColumns.USER_RATING, rating);
         cv.put(ShowColumns.RATED_AT, ratedAtMillis);
         context.getContentResolver().update(Shows.withId(showId), cv, null, null);
 
-        queue.add(new ShowRateTask(traktId, rating, ratedAt));
+        priorityQueue.add(new ShowRateTask(traktId, rating, ratedAt));
       }
     });
   }

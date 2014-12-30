@@ -30,11 +30,11 @@ import net.simonvt.cathode.R;
 
 public class CircularProgressIndicator extends View {
 
-  private int minValue;
+  private float minValue;
 
-  private int maxValue;
+  private float maxValue;
 
-  private int value;
+  private float value;
 
   private String valueString;
 
@@ -99,7 +99,7 @@ public class CircularProgressIndicator extends View {
     strokeWidth = a.getDimensionPixelSize(R.styleable.CircularProgressIndicator_circleStrokeWidth,
         defStrokeWidth);
 
-    maxValue = a.getInteger(R.styleable.CircularProgressIndicator_maxValue, 100);
+    maxValue = a.getFloat(R.styleable.CircularProgressIndicator_maxValue, 10.0f);
 
     final int defCircleColor = res.getColor(android.R.color.holo_green_dark);
     circleColor = a.getColor(R.styleable.CircularProgressIndicator_circleColor, defCircleColor);
@@ -118,12 +118,12 @@ public class CircularProgressIndicator extends View {
     circlePaint.setAntiAlias(true);
     circlePaint.setStrokeWidth(strokeWidth);
 
-    setValue(0);
+    setValue(0.0f);
   }
 
-  public void setValue(int value) {
+  public void setValue(float value) {
     this.value = value;
-    valueString = String.valueOf(value);
+    valueString = String.format("%.1f", value);
     textPaint.getTextBounds(valueString, 0, valueString.length(), textBounds);
     textWidth = textPaint.measureText(valueString);
     invalidate();

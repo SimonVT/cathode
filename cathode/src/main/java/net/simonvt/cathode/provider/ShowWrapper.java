@@ -295,6 +295,13 @@ public final class ShowWrapper {
       if (images.getThumb() != null) cv.put(ShowColumns.THUMB, images.getThumb().getFull());
     }
 
+    if (show.getRating() != null) {
+      cv.put(ShowColumns.RATING, show.getRating());
+    }
+    if (show.getVotes() != null) {
+      cv.put(ShowColumns.VOTES, show.getVotes());
+    }
+
     return cv;
   }
 
@@ -311,11 +318,5 @@ public final class ShowWrapper {
     c.close();
 
     return lastUpdated;
-  }
-
-  public static void setRating(ContentResolver resolver, long showId, int rating) {
-    ContentValues cv = new ContentValues();
-    cv.put(ShowColumns.RATING, rating);
-    resolver.update(Shows.withId(showId), cv, null, null);
   }
 }

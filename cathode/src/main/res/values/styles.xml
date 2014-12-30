@@ -115,7 +115,6 @@
     <item name="textColor">?android:attr/textColorPrimary</item>
     <item name="textSize">12sp</item>
     <item name="circleStrokeWidth">2dp</item>
-    <item name="maxValue">100</item>
     <item name="circleColor">@color/circleProgressColor</item>
     <item name="circleBackgroundColor">@color/circleProgressBackgroundColor</item>
   </style>

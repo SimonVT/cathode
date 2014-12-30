@@ -69,7 +69,7 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
     holder.overview.setText(cursor.getString(cursor.getColumnIndex(MovieColumns.OVERVIEW)));
 
     if (holder.rating != null) {
-      final int rating = cursor.getInt(cursor.getColumnIndex(MovieColumns.RATING));
+      final float rating = cursor.getFloat(cursor.getColumnIndex(MovieColumns.RATING));
       holder.rating.setValue(rating);
     }
 

@@ -46,7 +46,7 @@ public class SyncSeasonsTask extends TraktTask {
       return;
     }
 
-    List<Season> seasons = seasonService.getSummary(traktId, Extended.IMAGES);
+    List<Season> seasons = seasonService.getSummary(traktId, Extended.FULL_IMAGES);
 
     List<Long> seasonIds = new ArrayList<Long>();
     Cursor currentSeasons = getContentResolver().query(Seasons.fromShow(showId), new String[] {

@@ -40,7 +40,7 @@
     <attr name="textSize" format="dimension"/>
     <attr name="textBackgroundColor" format="color"/>
     <attr name="circleStrokeWidth" format="dimension"/>
-    <attr name="maxValue" format="integer"/>
+    <attr name="maxValue" format="float"/>
     <attr name="circleColor" format="color"/>
     <attr name="circleBackgroundColor" format="color"/>
   </declare-styleable>

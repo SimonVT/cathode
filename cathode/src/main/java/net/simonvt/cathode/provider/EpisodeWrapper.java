@@ -237,20 +237,6 @@ public final class EpisodeWrapper {
     resolver.update(Episodes.withId(episodeId), cv, null, null);
   }
 
-  public static void setRating(ContentResolver resolver, long traktId, Integer season,
-      Integer episode, Integer ratingAdvanced) {
-    final long showId = ShowWrapper.getShowId(resolver, traktId);
-    final long episodeId = EpisodeWrapper.getEpisodeId(resolver, showId, season, episode);
-    setRating(resolver, episodeId, ratingAdvanced);
-  }
-
-  public static void setRating(ContentResolver resolver, long episodeId, int ratingAdvanced) {
-    ContentValues cv = new ContentValues();
-    cv.put(EpisodeColumns.RATING, ratingAdvanced);
-
-    resolver.update(Episodes.withId(episodeId), cv, null, null);
-  }
-
   public static ContentValues getEpisodeCVs(Episode episode) {
     ContentValues cv = new ContentValues();
 
@@ -282,6 +268,13 @@ public final class EpisodeWrapper {
       if (images.getFanart() != null) {
         cv.put(EpisodeColumns.FANART, images.getFanart().getFull());
       }
+    }
+
+    if (episode.getRating() != null) {
+      cv.put(EpisodeColumns.RATING, episode.getRating());
+    }
+    if (episode.getVotes() != null) {
+      cv.put(EpisodeColumns.VOTES, episode.getVotes());
     }
 
     return cv;
