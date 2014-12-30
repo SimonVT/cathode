@@ -24,7 +24,8 @@
 
   <FrameLayout
       android:layout_width="match_parent"
-      android:layout_height="match_parent">
+      android:layout_height="0dp"
+      android:layout_weight="1">
 
     <net.simonvt.cathode.widget.ObservableScrollView
         android:id="@id/contentContainer"
@@ -51,8 +52,7 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/detail_header">
+            android:layout_height="wrap_content">
 
           <include layout="@layout/fragment_episode_top"/>
         </FrameLayout>
