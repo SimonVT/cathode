@@ -18,7 +18,7 @@ package net.simonvt.cathode.api;
 
 public final class Authorization {
 
-  public static final String AUTHORIZATION_URL = "http://api.v2.trakt.tv/oauth/authorize";
+  public static final String AUTHORIZATION_URL = TraktModule.API_URL + "/oauth/authorize";
 
   private Authorization() {
   }
