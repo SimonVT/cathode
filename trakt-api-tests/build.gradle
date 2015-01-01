@@ -1,0 +1,39 @@
+import static com.android.builder.core.BuilderConstants.DEBUG
+
+apply plugin: 'java'
+apply plugin: 'checkstyle'
+
+targetCompatibility = JavaVersion.VERSION_1_7
+sourceCompatibility = JavaVersion.VERSION_1_7
+
+compileJava.options.encoding = 'UTF-8'
+
+evaluationDependsOn(':cathode')
+
+def app = project(':cathode')
+def appBuild = app.android.applicationVariants.findAll { it.buildType.name == DEBUG }.first()
+
+// In order to resolve direct or transitive dependencies in SDK m2's copy the app's repositories.
+repositories.addAll(app.repositories)
+
+dependencies {
+  testCompile parent.libraries.junit
+  testCompile parent.libraries.robolectric
+  testCompile parent.libraries.mockito
+  testCompile parent.libraries.assertj
+
+  // The transitive dependencies from our tested build type.
+  testCompile appBuild.javaCompile.classpath
+  // The source files from our tested build type.
+  testCompile app
+  // The compiled class files from our tested build type.
+  testCompile appBuild.javaCompile.outputs.files
+
+  // The Android API jar.
+  testCompile files(app.android.bootClasspath)
+}
+
+checkstyle {
+  configFile project.file('../config/checkstyle/checkstyle.xml')
+  showViolations true
+}

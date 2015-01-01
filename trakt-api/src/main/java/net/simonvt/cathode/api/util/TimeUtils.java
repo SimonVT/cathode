@@ -16,12 +16,9 @@
 
 package net.simonvt.cathode.api.util;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 public final class TimeUtils {
 
@@ -30,22 +27,16 @@ public final class TimeUtils {
 
   public static long getMillis(String iso) {
     if (iso != null) {
-      try {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-        Date date = formatter.parse(iso);
-        return date.getTime();
-      } catch (ParseException e) {
-        e.printStackTrace();
-      }
+      DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+      return fmt.parseDateTime(iso).getMillis();
     }
 
     return 0L;
   }
 
   public static String getIsoTime() {
-    TimeZone tz = TimeZone.getTimeZone("UTC");
-    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    df.setTimeZone(tz);
-    return df.format(new Date());
+    DateTime dt = new DateTime();
+    DateTimeFormatter fmt = ISODateTimeFormat.dateTime().withZoneUTC();
+    return fmt.print(dt);
   }
 }

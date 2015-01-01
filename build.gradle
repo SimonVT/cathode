@@ -67,7 +67,9 @@ ext.libraries = [
 
   dashclockApi: 'com.google.android.apps.dashclock:dashclock-api:2.0.0',
 
-  crashlytics: 'com.crashlytics.android:crashlytics:1.+'
+  crashlytics: 'com.crashlytics.android:crashlytics:1.+',
+
+  jodaTime: 'joda-time:joda-time:2.6'
 ]
 
 def getPropertiesField(String field) {

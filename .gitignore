@@ -38,4 +38,9 @@ cathode-tests/*
 !cathode-tests/src/
 !cathode-tests/build.gradle
 
+!trakt-api-tests/
+trakt-api-tests/*
+!trakt-api-tests/src/
+!trakt-api-tests/build.gradle
+
 .DS_store

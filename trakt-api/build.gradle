@@ -12,6 +12,8 @@ dependencies {
   compile parent.libraries.retrofit
   compile parent.libraries.okhttp
   compile parent.libraries.okhttpUrlConnection
+
+  compile parent.libraries.jodaTime
 }
 
 android {

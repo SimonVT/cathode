@@ -1,1 +1,1 @@
-include 'cathode', 'cathode-tests', 'trakt-api'
+include 'cathode', 'cathode-tests', 'trakt-api', 'trakt-api-tests'
