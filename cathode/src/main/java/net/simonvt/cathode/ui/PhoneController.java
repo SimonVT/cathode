@@ -25,6 +25,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.ButterKnife;
@@ -108,17 +109,21 @@ public class PhoneController extends UiController {
     watchingView.setWatchingViewListener(new WatchingView.WatchingViewListener() {
       @Override public void onExpand(WatchingView view) {
         Timber.d("onExpand");
-        watchingParent.setOnClickListener(new View.OnClickListener() {
-          @Override public void onClick(View v) {
-            watchingView.collapse();
+        watchingParent.setOnTouchListener(new View.OnTouchListener() {
+          @Override public boolean onTouch(View v, MotionEvent event) {
+            final int action = event.getActionMasked();
+            if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+              watchingView.collapse();
+            }
+
+            return true;
           }
         });
       }
 
       @Override public void onCollapse(WatchingView view) {
         Timber.d("onCollapse");
-        watchingParent.setOnClickListener(null);
-        watchingParent.setClickable(false);
+        watchingParent.setOnTouchListener(null);
       }
 
       @Override public void onEpisodeClicked(WatchingView view, long episodeId, String showTitle) {
@@ -144,8 +149,7 @@ public class PhoneController extends UiController {
       }
 
       @Override public void onAnimatingOut(WatchingView view) {
-        watchingParent.setOnClickListener(null);
-        watchingParent.setClickable(false);
+        watchingParent.setOnTouchListener(null);
       }
     });
 
@@ -197,6 +201,11 @@ public class PhoneController extends UiController {
   }
 
   @Override public boolean onBackClicked() {
+    if (watchingView.isExpanded()) {
+      watchingView.collapse();
+      return true;
+    }
+
     if (drawer.isDrawerVisible(Gravity.LEFT)) {
       drawer.closeDrawer(Gravity.LEFT);
       return true;
