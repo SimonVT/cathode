@@ -20,7 +20,6 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import net.simonvt.cathode.api.entity.Images;
-import net.simonvt.cathode.api.entity.IsoTime;
 import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.People;
@@ -83,9 +82,13 @@ public final class PersonWrapper {
     }
 
     cv.put(PersonColumns.BIOGRAPHY, person.getBiography());
-    IsoTime death = person.getDeath();
-    if (death != null) {
-      cv.put(PersonColumns.DEATH, death.getTime());
+    if (person.getBirthday() != null) {
+      cv.put(PersonColumns.BIRTHDAY, person.getBirthday());
+    } else {
+      cv.putNull(PersonColumns.BIRTHDAY);
+    }
+    if (person.getDeath() != null) {
+      cv.put(PersonColumns.DEATH, person.getDeath());
     } else {
       cv.putNull(PersonColumns.DEATH);
     }

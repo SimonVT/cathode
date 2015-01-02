@@ -26,7 +26,9 @@ public class Person {
 
   String biography;
 
-  IsoTime death;
+  String birthday;
+
+  String death;
 
   String birthplace;
 
@@ -48,7 +50,11 @@ public class Person {
     return biography;
   }
 
-  public IsoTime getDeath() {
+  public String getBirthday() {
+    return birthday;
+  }
+
+  public String getDeath() {
     return death;
   }
 
