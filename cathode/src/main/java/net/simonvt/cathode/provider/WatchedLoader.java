@@ -31,12 +31,15 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
 
   private long showId;
 
+  private String[] projection;
+
   Cursor cursor;
 
-  public WatchedLoader(Context context, long showId) {
+  public WatchedLoader(Context context, long showId, String[] projection) {
     super(context);
     this.showId = showId;
     this.observer = new ForceLoadContentObserver();
+    this.projection = projection;
   }
 
   @Override public Cursor loadInBackground() {
@@ -50,14 +53,14 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
     Cursor lastWatched = null;
     if (!watching) {
       lastWatched = getContext().getContentResolver()
-          .query(Episodes.fromShow(showId), null, EpisodeColumns.WATCHED + "=1", null,
+          .query(Episodes.fromShow(showId), projection, EpisodeColumns.WATCHED + "=1", null,
               EpisodeColumns.SEASON + " DESC, " + EpisodeColumns.EPISODE + " DESC LIMIT 1");
     }
 
     Cursor toWatch;
     if (watching) {
       toWatch = getContext().getContentResolver()
-          .query(Episodes.fromShow(showId), null, EpisodeColumns.WATCHING + "=1", null, null);
+          .query(Episodes.fromShow(showId), projection, EpisodeColumns.WATCHING + "=1", null, null);
     } else {
       long lastWatchedSeason = 0;
       long lastWatchedEpisode = -1;
@@ -85,8 +88,7 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
                   + ">"
                   + lastWatchedEpisode
                   + "))", null,
-              EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1"
-          );
+              EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1");
     }
     toWatch.registerContentObserver(observer);
     if (toWatch.getCount() == 0 || watching) {

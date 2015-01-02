@@ -86,7 +86,7 @@ public class ShowFragment extends ProgressFragment {
   };
 
   private static final String[] EPISODE_PROJECTION = new String[] {
-      EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.FANART, EpisodeColumns.FIRST_AIRED,
+      EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.SCREENSHOT, EpisodeColumns.FIRST_AIRED,
       EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
   };
 
@@ -145,7 +145,7 @@ public class ShowFragment extends ProgressFragment {
 
   static class EpisodeHolder {
 
-    @InjectView(R.id.episodeBanner) RemoteImageView episodeBanner;
+    @InjectView(R.id.episodeScreenshot) RemoteImageView episodeScreenshot;
     @InjectView(R.id.episodeTitle) TextView episodeTitle;
     @InjectView(R.id.episodeAirTime) TextView episodeAirTime;
     @InjectView(R.id.episodeEpisode) TextView episodeEpisode;
@@ -551,8 +551,8 @@ public class ShowFragment extends ProgressFragment {
       final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
       toWatchHolder.episodeEpisode.setText("S" + season + "E" + episode);
 
-      final String bannerUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.FANART));
-      toWatchHolder.episodeBanner.setImage(bannerUrl);
+      final String screenshotUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
+      toWatchHolder.episodeScreenshot.setImage(screenshotUrl);
 
       String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
 
@@ -594,8 +594,8 @@ public class ShowFragment extends ProgressFragment {
         final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
         lastWatchedHolder.episodeEpisode.setText("S" + season + "E" + episode);
 
-        final String bannerUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.FANART));
-        lastWatchedHolder.episodeBanner.setImage(bannerUrl);
+        final String screenshotUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
+        lastWatchedHolder.episodeScreenshot.setImage(screenshotUrl);
       } else {
         lastWatched.setVisibility(toWatchId == -1 ? View.GONE : View.INVISIBLE);
         lastWatchedId = -1;
@@ -627,8 +627,8 @@ public class ShowFragment extends ProgressFragment {
       final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
       toCollectHolder.episodeEpisode.setText("S" + season + "E" + episode);
 
-      final String bannerUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.FANART));
-      toCollectHolder.episodeBanner.setImage(bannerUrl);
+      final String screenshotUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
+      toCollectHolder.episodeScreenshot.setImage(screenshotUrl);
     } else {
       toCollect.setVisibility(View.GONE);
       collectTitle.setVisibility(View.GONE);
@@ -653,8 +653,8 @@ public class ShowFragment extends ProgressFragment {
         lastCollectedHolder.episodeEpisode.setText("S" + season + "E" + episode);
 
         // TODO: Fanart? Is SCREEN missing?
-        final String bannerUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.FANART));
-        lastCollectedHolder.episodeBanner.setImage(bannerUrl);
+        final String screenshotUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
+        lastCollectedHolder.episodeScreenshot.setImage(screenshotUrl);
       } else {
         lastCollectedId = -1;
         lastCollected.setVisibility(View.INVISIBLE);
@@ -732,7 +732,7 @@ public class ShowFragment extends ProgressFragment {
   private LoaderManager.LoaderCallbacks<Cursor> episodeWatchCallbacks =
       new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-          return new WatchedLoader(getActivity(), showId);
+          return new WatchedLoader(getActivity(), showId, EPISODE_PROJECTION);
         }
 
         @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
@@ -746,7 +746,7 @@ public class ShowFragment extends ProgressFragment {
   private LoaderManager.LoaderCallbacks<Cursor> episodeCollectCallbacks =
       new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-          return new CollectLoader(getActivity(), showId);
+          return new CollectLoader(getActivity(), showId, EPISODE_PROJECTION);
         }
 
         @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {

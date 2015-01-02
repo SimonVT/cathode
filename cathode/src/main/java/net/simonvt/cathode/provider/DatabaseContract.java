@@ -174,9 +174,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) String TMDB_ID = "tmdbId";
     @DataType(INTEGER) String TVRAGE_ID = "tvrageId";
 
-    @DataType(TEXT) String SCREEN = "screen"; // TODO: DOes this exist?
-    @DataType(TEXT) String FANART = "fanart";
-    @DataType(TEXT) String BANNER = "banner"; // TODO:
+    @DataType(TEXT) String SCREENSHOT = "screenshot";
 
     @DataType(INTEGER) String FIRST_AIRED = "episodeFirstAired";
     @DataType(INTEGER) String UPDATED_AT = "updatedAt";

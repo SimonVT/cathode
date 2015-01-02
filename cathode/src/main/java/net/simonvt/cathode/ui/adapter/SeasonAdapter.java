@@ -106,7 +106,7 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
         cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.CHECKED_IN)) == 1;
     final long firstAired =
         cursor.getLong(cursor.getColumnIndexOrThrow(EpisodeColumns.FIRST_AIRED));
-    final String screen = cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.SCREEN));
+    final String screen = cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.SCREENSHOT));
 
     holder.screen.setImage(screen);
 

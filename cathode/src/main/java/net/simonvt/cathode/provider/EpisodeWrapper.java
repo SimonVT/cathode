@@ -263,10 +263,9 @@ public final class EpisodeWrapper {
     cv.put(EpisodeColumns.TVRAGE_ID, episode.getIds().getTvrage());
 
     if (episode.getImages() != null) {
-      // TODO: What images do I actually have?
       Images images = episode.getImages();
-      if (images.getFanart() != null) {
-        cv.put(EpisodeColumns.FANART, images.getFanart().getFull());
+      if (images.getScreenshot() != null) {
+        cv.put(EpisodeColumns.SCREENSHOT, images.getScreenshot().getFull());
       }
     }
 

@@ -55,6 +55,8 @@ public class Images {
 
   ImageType headshot;
 
+  ImageType screenshot;
+
   public ImageType getFanart() {
     return fanart;
   }
@@ -85,5 +87,9 @@ public class Images {
 
   public ImageType getHeadshot() {
     return headshot;
+  }
+
+  public ImageType getScreenshot() {
+    return screenshot;
   }
 }

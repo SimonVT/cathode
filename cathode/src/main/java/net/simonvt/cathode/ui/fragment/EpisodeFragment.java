@@ -76,7 +76,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   @InjectView(R.id.toolbar) Toolbar toolbar;
 
   @InjectView(R.id.title) TextView title;
-  @InjectView(R.id.fanart) RemoteImageView fanart;
+  @InjectView(R.id.screenshot) RemoteImageView screenshot;
   @InjectView(R.id.overview) TextView overview;
   @InjectView(R.id.firstAired) TextView firstAired;
 
@@ -214,7 +214,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
             if (!isTablet
                 && getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_LANDSCAPE) {
-              content.setScrollY(fanart.getHeight() / 2);
+              content.setScrollY(screenshot.getHeight() / 2);
             }
           }
         });
@@ -230,7 +230,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       content.setListener(new ObservableScrollView.ScrollListener() {
         @Override public void onScrollChanged(int l, int t) {
           final int offset = (int) (t / 2.0f);
-          fanart.setTranslationY(offset);
+          screenshot.setTranslationY(offset);
         }
       });
     }
@@ -441,7 +441,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       episodeTitle = cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
       title.setText(episodeTitle);
       overview.setText(cursor.getString(cursor.getColumnIndex(EpisodeColumns.OVERVIEW)));
-      fanart.setImage(cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREEN)));
+      screenshot.setImage(cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT)));
       firstAired.setText(DateUtils.millisToString(getActivity(),
           cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED)), true));
       season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
@@ -468,7 +468,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   }
 
   private static final String[] EPISODE_PROJECTION = new String[] {
-      EpisodeColumns.TITLE, EpisodeColumns.SCREEN, EpisodeColumns.OVERVIEW,
+      EpisodeColumns.TITLE, EpisodeColumns.SCREENSHOT, EpisodeColumns.OVERVIEW,
       EpisodeColumns.FIRST_AIRED, EpisodeColumns.WATCHED, EpisodeColumns.IN_COLLECTION,
       EpisodeColumns.IN_WATCHLIST, EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN,
       EpisodeColumns.USER_RATING, EpisodeColumns.RATING, EpisodeColumns.SEASON,

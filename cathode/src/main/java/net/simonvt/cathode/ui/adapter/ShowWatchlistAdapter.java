@@ -66,7 +66,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
 
   public static final String[] PROJECTION_EPISODE = new String[] {
       DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.ID,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SCREEN,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SCREENSHOT,
       DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.TITLE,
       DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
       DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SEASON,
@@ -181,15 +181,15 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
       EpisodeViewHolder vh = (EpisodeViewHolder) holder;
 
       final long id = cursor.getLong(cursor.getColumnIndex(EpisodeColumns.ID));
-      final String posterUrl =
-          cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.SCREEN));
+      final String screenshotUrl =
+          cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.SCREENSHOT));
       final String title = cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.TITLE));
       final long firstAired =
           cursor.getLong(cursor.getColumnIndexOrThrow(EpisodeColumns.FIRST_AIRED));
       final int season = cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.SEASON));
       final int episode = cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.EPISODE));
 
-      vh.screen.setImage(posterUrl);
+      vh.screen.setImage(screenshotUrl);
       vh.title.setText(title);
       vh.firstAired.setTimeInMillis(firstAired);
       vh.episode.setText(season + "x" + episode);

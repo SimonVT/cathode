@@ -29,17 +29,20 @@ public class CollectLoader extends AsyncTaskLoader<Cursor> {
 
   private long showId;
 
+  private String[] projection;
+
   Cursor cursor;
 
-  public CollectLoader(Context context, long showId) {
+  public CollectLoader(Context context, long showId, String[] projection) {
     super(context);
     this.showId = showId;
+    this.projection = projection;
     this.observer = new ForceLoadContentObserver();
   }
 
   @Override public Cursor loadInBackground() {
     Cursor toCollect = getContext().getContentResolver()
-        .query(Episodes.fromShow(showId), null, EpisodeColumns.IN_COLLECTION
+        .query(Episodes.fromShow(showId), projection, EpisodeColumns.IN_COLLECTION
                 + "=0 AND "
                 + EpisodeColumns.FIRST_AIRED
                 + ">"
@@ -47,17 +50,15 @@ public class CollectLoader extends AsyncTaskLoader<Cursor> {
                 + " AND "
                 + EpisodeColumns.SEASON
                 + ">0", null,
-            EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1"
-        );
+            EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1");
     toCollect.registerContentObserver(observer);
     if (toCollect.getCount() == 0) {
       return toCollect;
     }
 
     Cursor lastCollected = getContext().getContentResolver()
-        .query(Episodes.fromShow(showId), null, EpisodeColumns.IN_COLLECTION + "=1", null,
-            EpisodeColumns.SEASON + " DESC, " + EpisodeColumns.EPISODE + " DESC LIMIT 1"
-        );
+        .query(Episodes.fromShow(showId), projection, EpisodeColumns.IN_COLLECTION + "=1", null,
+            EpisodeColumns.SEASON + " DESC, " + EpisodeColumns.EPISODE + " DESC LIMIT 1");
     lastCollected.registerContentObserver(observer);
     lastCollected.getCount();
 

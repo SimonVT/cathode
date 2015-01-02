@@ -27,7 +27,7 @@
     android:background="?android:attr/selectableItemBackground">
 
   <net.simonvt.cathode.widget.RemoteImageView
-      android:id="@+id/episodeBanner"
+      android:id="@+id/episodeScreenshot"
       android:layout_width="wrap_content"
       android:layout_height="64dp"
       app:dominantMeasurement="height"
