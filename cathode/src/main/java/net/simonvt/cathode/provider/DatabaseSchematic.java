@@ -37,7 +37,6 @@ import net.simonvt.schematic.annotation.Database;
 import net.simonvt.schematic.annotation.ExecOnCreate;
 import net.simonvt.schematic.annotation.OnUpgrade;
 import net.simonvt.schematic.annotation.Table;
-import timber.log.Timber;
 
 @Database(className = "CathodeDatabase", fileName = "cathode.db",
     version = DatabaseSchematic.DATABASE_VERSION)
@@ -550,7 +549,8 @@ public final class DatabaseSchematic {
       + Trigger.MOVIE_DELETE_CREW
       + " END;";
 
-  @OnUpgrade public static void onUpgrade(Context context, SQLiteDatabase db, int oldVersion, int newVersion) {
+  @OnUpgrade public static void onUpgrade(Context context, SQLiteDatabase db, int oldVersion,
+      int newVersion) {
     if (oldVersion < 12) {
       db.execSQL("DROP TABLE IF EXISTS shows");
       db.execSQL("DROP TABLE IF EXISTS showTopWatchers");
