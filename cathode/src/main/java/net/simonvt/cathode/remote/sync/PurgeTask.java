@@ -35,6 +35,11 @@ import timber.log.Timber;
 public class PurgeTask extends TraktTask {
 
   @Override protected void doTask() {
+    if (true) {
+      // TODO: Halt on purging until priorities on tasks are supported.
+      //       Purging needs to happen last.
+      return;
+    }
 
     String showsWhere = ShowColumns.WATCHED_COUNT
         + "=0 AND "
