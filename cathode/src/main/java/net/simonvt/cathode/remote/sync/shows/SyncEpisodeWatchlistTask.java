@@ -78,7 +78,8 @@ public class SyncEpisodeWatchlistTask extends TraktTask {
       long episodeId =
           EpisodeWrapper.getEpisodeId(getContentResolver(), showId, seasonNumber, episodeNumber);
       if (episodeId == -1L) {
-        EpisodeWrapper.createEpisode(getContentResolver(), showId, seasonId, episodeNumber);
+        episodeId =
+            EpisodeWrapper.createEpisode(getContentResolver(), showId, seasonId, episodeNumber);
         if (didShowExist && didSeasonExist) {
           queueTask(new SyncEpisodeTask(showTraktId, seasonNumber, episodeNumber));
         }
