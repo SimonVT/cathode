@@ -150,7 +150,7 @@ public final class MovieWrapper {
     Uri uri = resolver.insert(Movies.MOVIES, cv);
     final long movieId = Movies.getId(uri);
 
-    insertGenres(resolver, movieId, movie.getGenres());
+    if (movie.getGenres() != null) insertGenres(resolver, movieId, movie.getGenres());
 
     return movieId;
   }
