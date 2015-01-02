@@ -38,6 +38,7 @@ public class PurgeTask extends TraktTask {
     if (true) {
       // TODO: Halt on purging until priorities on tasks are supported.
       //       Purging needs to happen last.
+      postOnSuccess();
       return;
     }
 
