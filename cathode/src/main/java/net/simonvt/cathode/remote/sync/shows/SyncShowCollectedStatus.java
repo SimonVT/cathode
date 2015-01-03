@@ -17,6 +17,7 @@
 package net.simonvt.cathode.remote.sync.shows;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
 import android.content.OperationApplicationException;
 import android.os.RemoteException;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic;
+import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
 import timber.log.Timber;
@@ -43,12 +45,17 @@ public class SyncShowCollectedStatus extends TraktTask {
   }
 
   @Override protected void doTask() {
-    if (traktId == 225) {
-      postOnSuccess();
-      return;
-    }
+    ContentResolver resolver = getContentResolver();
+
     ShowProgress progress = showsService.getCollectionProgress(traktId);
-    final long showId = ShowWrapper.getShowId(getContentResolver(), traktId);
+
+    boolean didShowExist = true;
+    long showId = ShowWrapper.getShowId(resolver, traktId);
+    if (showId == -1L) {
+      didShowExist = false;
+      showId = ShowWrapper.createShow(resolver, traktId);
+      queueTask(new SyncShowTask(traktId));
+    }
 
     List<ShowProgress.Season> seasons = progress.getSeasons();
 
@@ -57,11 +64,30 @@ public class SyncShowCollectedStatus extends TraktTask {
     for (ShowProgress.Season season : seasons) {
       final int seasonNumber = season.getNumber();
 
+      boolean didSeasonExist = true;
+      long seasonId = SeasonWrapper.getSeasonId(resolver, showId, seasonNumber);
+      if (seasonId == -1L) {
+        didSeasonExist = false;
+        seasonId = SeasonWrapper.createSeason(resolver, showId, seasonNumber);
+        if (didShowExist) {
+          queueTask(new SyncSeasonTask(traktId, seasonNumber));
+        }
+      }
+
       List<ShowProgress.Episode> episodes = season.getEpisodes();
       for (ShowProgress.Episode episode : episodes) {
-        final long episodeId =
-            EpisodeWrapper.getEpisodeId(getContentResolver(), showId, seasonNumber,
-                episode.getNumber());
+        final int episodeNumber = episode.getNumber();
+
+        long episodeId =
+            EpisodeWrapper.getEpisodeId(getContentResolver(), showId, seasonNumber, episodeNumber);
+
+        if (episodeId == -1L) {
+          episodeId = EpisodeWrapper.createEpisode(resolver, showId, seasonId, episodeNumber);
+          if (didSeasonExist) {
+            queueTask(new SyncEpisodeTask(traktId, seasonNumber, episodeNumber));
+          }
+        }
+
         ContentProviderOperation.Builder builder =
             ContentProviderOperation.newUpdate(ProviderSchematic.Episodes.withId(episodeId));
         builder.withValue(DatabaseContract.EpisodeColumns.IN_COLLECTION, episode.getCompleted());
