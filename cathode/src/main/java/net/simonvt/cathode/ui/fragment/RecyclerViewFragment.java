@@ -255,6 +255,10 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
     if (empty == null) {
       return;
     }
+
+    final View empty = this.empty;
+    final View recyclerView = this.recyclerView;
+
     if (show && empty.getVisibility() == View.GONE) {
       empty.setAlpha(0.0f);
       empty.animate().alpha(1.0f).withStartAction(new Runnable() {
