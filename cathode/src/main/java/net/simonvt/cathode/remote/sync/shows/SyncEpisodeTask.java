@@ -23,6 +23,8 @@ import net.simonvt.cathode.api.service.EpisodeService;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.TraktTask;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 import timber.log.Timber;
 
 public class SyncEpisodeTask extends TraktTask {
@@ -44,20 +46,30 @@ public class SyncEpisodeTask extends TraktTask {
   @Override protected void doTask() {
     Timber.d("Syncing episode: %d - %d - %d", traktId, season, episode);
 
-    Episode summary = episodeService.getSummary(traktId, season, episode, Extended.FULL_IMAGES);
+    try {
+      Episode summary = episodeService.getSummary(traktId, season, episode, Extended.FULL_IMAGES);
 
-    final ContentResolver resolver = getContentResolver();
-    final long showId = ShowWrapper.getShowId(resolver, traktId);
-    final long seasonId = ShowWrapper.getSeasonId(resolver, showId, season);
+      final ContentResolver resolver = getContentResolver();
+      final long showId = ShowWrapper.getShowId(resolver, traktId);
+      final long seasonId = ShowWrapper.getSeasonId(resolver, showId, season);
 
-    if (showId == -1L || seasonId == -1L) {
-      queueTask(new SyncShowTask(traktId));
+      if (showId == -1L || seasonId == -1L) {
+        queueTask(new SyncShowTask(traktId));
+        postOnSuccess();
+        return;
+      }
+
+      EpisodeWrapper.updateOrInsertEpisode(getContentResolver(), summary, showId, seasonId);
+
       postOnSuccess();
-      return;
+    } catch (RetrofitError e) {
+      Response response = e.getResponse();
+      if (response != null && response.getStatus() == 404) {
+        // Episode no longer exists
+        postOnSuccess();
+      } else {
+        postOnFailure();
+      }
     }
-
-    EpisodeWrapper.updateOrInsertEpisode(getContentResolver(), summary, showId, seasonId);
-
-    postOnSuccess();
   }
 }
