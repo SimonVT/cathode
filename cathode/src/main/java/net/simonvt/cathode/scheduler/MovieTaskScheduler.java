@@ -116,7 +116,14 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         Cursor c = context.getContentResolver().query(Movies.WATCHING, null, null, null, null);
 
         if (c.getCount() == 0) {
-          final int runtime = c.getInt(c.getColumnIndex(MovieColumns.RUNTIME));
+          c.close();
+
+          Cursor movie = context.getContentResolver().query(Movies.withId(movieId), new String[] {
+              MovieColumns.ID, MovieColumns.RUNTIME,
+          }, null, null, null);
+          movie.moveToFirst();
+          final int runtime = movie.getInt(movie.getColumnIndex(MovieColumns.RUNTIME));
+          movie.close();
 
           final long startedAt = System.currentTimeMillis();
           final long expiresAt = startedAt + runtime * DateUtils.MINUTE_IN_MILLIS;
