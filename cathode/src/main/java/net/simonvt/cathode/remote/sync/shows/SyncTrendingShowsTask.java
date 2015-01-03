@@ -57,10 +57,12 @@ public class SyncTrendingShowsTask extends TraktTask {
       for (int i = 0, count = Math.min(shows.size(), 25); i < count; i++) {
         TrendingItem item = shows.get(i);
         Show show = item.getShow();
+        final long traktId = show.getIds().getTrakt();
 
-        long showId = ShowWrapper.getShowId(resolver, show);
+        long showId = ShowWrapper.getShowId(resolver, traktId);
         if (showId == -1L) {
-          showId = ShowWrapper.insertShow(resolver, show);
+          showId = ShowWrapper.createShow(resolver, traktId);
+          queueTask(new SyncShowTask(traktId, false));
         }
 
         ContentValues cv = new ContentValues();

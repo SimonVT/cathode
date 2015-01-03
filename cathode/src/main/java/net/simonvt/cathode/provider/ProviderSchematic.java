@@ -223,14 +223,20 @@ public final class ProviderSchematic {
     @ContentUri(
         path = Path.SHOWS + "/" + Path.TRENDING,
         type = Type.SHOW,
-        where = ShowColumns.TRENDING_INDEX + ">=0",
+        where = {
+            ShowColumns.TRENDING_INDEX + ">=0",
+            Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0"
+        },
         defaultSort = ShowColumns.TRENDING_INDEX + " ASC")
     public static final Uri SHOWS_TRENDING = buildUri(Path.SHOWS, Path.TRENDING);
 
     @ContentUri(
         path = Path.SHOWS + "/" + Path.RECOMMENDED,
         type = Type.SHOW,
-        where = ShowColumns.RECOMMENDATION_INDEX + ">=0",
+        where = {
+            ShowColumns.RECOMMENDATION_INDEX + ">=0",
+            Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0"
+        },
         defaultSort = ShowColumns.RECOMMENDATION_INDEX + " ASC")
     public static final Uri SHOWS_RECOMMENDED = buildUri(Path.SHOWS, Path.RECOMMENDED);
 
@@ -795,14 +801,20 @@ public final class ProviderSchematic {
     @ContentUri(
         path = Path.MOVIES + "/" + Path.TRENDING,
         type = Type.MOVIE,
-        where = MovieColumns.TRENDING_INDEX + ">=0",
+        where = {
+            MovieColumns.TRENDING_INDEX + ">=0",
+            MovieColumns.NEEDS_SYNC + "=0"
+        },
         defaultSort = MovieColumns.TRENDING_INDEX + " ASC")
     public static final Uri TRENDING = buildUri(Path.MOVIES, Path.TRENDING);
 
     @ContentUri(
         path = Path.MOVIES + "/" + Path.RECOMMENDED,
         type = Type.MOVIE,
-        where = MovieColumns.RECOMMENDATION_INDEX + ">=0",
+        where = {
+            MovieColumns.RECOMMENDATION_INDEX + ">=0",
+            MovieColumns.NEEDS_SYNC + "=0"
+        },
         defaultSort = MovieColumns.RECOMMENDATION_INDEX + " ASC")
     public static final Uri RECOMMENDED = buildUri(Path.MOVIES, Path.RECOMMENDED);
 

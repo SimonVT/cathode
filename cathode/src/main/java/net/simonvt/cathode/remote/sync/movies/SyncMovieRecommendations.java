@@ -55,8 +55,8 @@ public class SyncMovieRecommendations extends TraktTask {
 
         long id = MovieWrapper.getMovieId(resolver, traktId);
         if (id == -1L) {
+          id = MovieWrapper.createMovie(resolver, traktId);
           queueTask(new SyncMovieTask(traktId));
-          id = MovieWrapper.insertMovie(resolver, movie);
         }
 
         movieIds.remove(id);

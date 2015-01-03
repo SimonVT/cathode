@@ -52,10 +52,11 @@ public class SyncShowRecommendations extends TraktTask {
 
       for (int index = 0, count = Math.min(shows.size(), 25); index < count; index++) {
         Show show = shows.get(index);
+        final long traktId = show.getIds().getTrakt();
 
-        long showId = ShowWrapper.getShowId(resolver, show);
+        long showId = ShowWrapper.getShowId(resolver, traktId);
         if (showId == -1L) {
-          showId = ShowWrapper.insertShow(resolver, show);
+          showId = ShowWrapper.createShow(resolver, traktId);
           queueTask(new SyncShowTask(show.getIds().getTrakt(), false));
         }
 
