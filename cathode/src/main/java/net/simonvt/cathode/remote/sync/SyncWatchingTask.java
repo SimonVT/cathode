@@ -112,6 +112,7 @@ public class SyncWatchingTask extends TraktTask {
             long seasonId = SeasonWrapper.getSeasonId(getContentResolver(), showId, seasonNumber);
             if (seasonId == -1L) {
               didSeasonExist = false;
+              seasonId = SeasonWrapper.createSeason(getContentResolver(), showId, seasonNumber);
               if (didShowExist) {
                 queueTask(new SyncShowTask(showTraktId));
               }
