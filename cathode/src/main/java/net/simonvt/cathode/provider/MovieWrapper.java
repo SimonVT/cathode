@@ -103,8 +103,8 @@ public final class MovieWrapper {
 
       boolean exists = c.moveToFirst();
       if (exists) {
-        return TimeUtils.getMillis(lastUpdated) > TimeUtils.getMillis(
-            c.getString(c.getColumnIndex(MovieColumns.LAST_UPDATED)));
+        return TimeUtils.getMillis(lastUpdated) > c.getLong(
+            c.getColumnIndex(MovieColumns.LAST_UPDATED));
       }
 
       return false;
