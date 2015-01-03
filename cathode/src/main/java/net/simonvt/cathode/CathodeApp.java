@@ -39,6 +39,9 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.module.AppModule;
+import net.simonvt.cathode.remote.PriorityQueue;
+import net.simonvt.cathode.remote.TraktTaskQueue;
+import net.simonvt.cathode.remote.sync.SyncUserSettingsTask;
 import net.simonvt.cathode.service.AccountAuthenticator;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.HomeActivity;
@@ -98,6 +101,26 @@ public class CathodeApp extends Application {
     if (currentVersion != BuildConfig.VERSION_CODE) {
       if (currentVersion < 20000) {
         removeAccount(this);
+      }
+      if (currentVersion < 20002) {
+        final boolean loggedIn = settings.getBoolean(Settings.TRAKT_LOGGED_IN, false);
+        final String token = settings.getString(Settings.TRAKT_TOKEN, null);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.clear();
+        editor.apply();
+
+        editor = settings.edit();
+        editor.putString(Settings.TRAKT_TOKEN, token);
+        editor.putBoolean(Settings.TRAKT_LOGGED_IN, loggedIn);
+        editor.apply();
+
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+          @Override public void run() {
+            TraktTaskQueue queue = objectGraph.get(TraktTaskQueue.class);
+            queue.add(new SyncUserSettingsTask());
+          }
+        });
       }
 
       settings.edit().putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE).apply();
