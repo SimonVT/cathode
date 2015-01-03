@@ -30,7 +30,11 @@ public class RoundTransformation implements Transformation {
     final int width = source.getWidth();
     final int height = source.getHeight();
 
-    Bitmap roundBitmap = Bitmap.createBitmap(width, height, source.getConfig());
+    Bitmap.Config config = source.getConfig();
+    if (config == null) {
+      config = Bitmap.Config.ARGB_8888;
+    }
+    Bitmap roundBitmap = Bitmap.createBitmap(width, height, config);
     Canvas canvas = new Canvas(roundBitmap);
 
     BitmapShader shader = new BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
