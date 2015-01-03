@@ -29,17 +29,26 @@ import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
-import net.simonvt.cathode.remote.TraktTask;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import timber.log.Timber;
 
 import static net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import static net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 
-public class SyncEpisodesRatings extends TraktTask {
+public class SyncEpisodesRatings extends Job {
 
   @Inject transient SyncService syncService;
 
-  @Override protected void doTask() {
+  @Override public String key() {
+    return "SyncEpisodeRatings";
+  }
+
+  @Override public int getPriority() {
+    return PRIORITY_2;
+  }
+
+  @Override public void perform() {
     List<RatingItem> ratings = syncService.getEpisodeRatings();
 
     Cursor episodes = getContentResolver().query(Episodes.EPISODES, new String[] {
@@ -64,7 +73,7 @@ public class SyncEpisodesRatings extends TraktTask {
       if (showId == -1L) {
         didShowExist = false;
         showId = ShowWrapper.createShow(getContentResolver(), showTraktId);
-        queueTask(new SyncShowTask(showTraktId));
+        queue(new SyncShow(showTraktId));
       }
 
       boolean didSeasonExist = true;
@@ -73,7 +82,7 @@ public class SyncEpisodesRatings extends TraktTask {
         didSeasonExist = false;
         seasonId = SeasonWrapper.createSeason(getContentResolver(), showId, seasonNumber);
         if (didShowExist) {
-          queueTask(new SyncSeasonTask(showTraktId, seasonNumber));
+          queue(new SyncSeason(showTraktId, seasonNumber));
         }
       }
 
@@ -83,7 +92,7 @@ public class SyncEpisodesRatings extends TraktTask {
         episodeId =
             EpisodeWrapper.createEpisode(getContentResolver(), showId, seasonId, episodeNumber);
         if (didSeasonExist) {
-          queueTask(new SyncEpisodeTask(showTraktId, seasonNumber, episodeNumber));
+          queue(new SyncEpisode(showTraktId, seasonNumber, episodeNumber));
         }
       }
 
@@ -106,13 +115,12 @@ public class SyncEpisodesRatings extends TraktTask {
 
     try {
       getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
-      postOnSuccess();
     } catch (RemoteException e) {
       Timber.e(e, "Unable to sync season ratings");
-      postOnFailure();
+      throw new JobFailedException(e);
     } catch (OperationApplicationException e) {
       Timber.e(e, "Unable to sync season ratings");
-      postOnFailure();
+      throw new JobFailedException(e);
     }
   }
 }

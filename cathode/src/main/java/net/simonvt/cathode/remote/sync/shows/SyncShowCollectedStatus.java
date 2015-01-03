@@ -31,10 +31,11 @@ import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
-import net.simonvt.cathode.remote.TraktTask;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import timber.log.Timber;
 
-public class SyncShowCollectedStatus extends TraktTask {
+public class SyncShowCollectedStatus extends Job {
 
   @Inject transient ShowsService showsService;
 
@@ -44,7 +45,15 @@ public class SyncShowCollectedStatus extends TraktTask {
     this.traktId = traktId;
   }
 
-  @Override protected void doTask() {
+  @Override public String key() {
+    return "SyncShowCollectedStatus" + "&traktId=" + traktId;
+  }
+
+  @Override public int getPriority() {
+    return PRIORITY_4;
+  }
+
+  @Override public void perform() {
     ContentResolver resolver = getContentResolver();
 
     ShowProgress progress = showsService.getCollectionProgress(traktId);
@@ -54,7 +63,7 @@ public class SyncShowCollectedStatus extends TraktTask {
     if (showId == -1L) {
       didShowExist = false;
       showId = ShowWrapper.createShow(resolver, traktId);
-      queueTask(new SyncShowTask(traktId));
+      queue(new SyncShow(traktId));
     }
 
     List<ShowProgress.Season> seasons = progress.getSeasons();
@@ -70,7 +79,7 @@ public class SyncShowCollectedStatus extends TraktTask {
         didSeasonExist = false;
         seasonId = SeasonWrapper.createSeason(resolver, showId, seasonNumber);
         if (didShowExist) {
-          queueTask(new SyncSeasonTask(traktId, seasonNumber));
+          queue(new SyncSeason(traktId, seasonNumber));
         }
       }
 
@@ -84,7 +93,7 @@ public class SyncShowCollectedStatus extends TraktTask {
         if (episodeId == -1L) {
           episodeId = EpisodeWrapper.createEpisode(resolver, showId, seasonId, episodeNumber);
           if (didSeasonExist) {
-            queueTask(new SyncEpisodeTask(traktId, seasonNumber, episodeNumber));
+            queue(new SyncEpisode(traktId, seasonNumber, episodeNumber));
           }
         }
 
@@ -98,13 +107,11 @@ public class SyncShowCollectedStatus extends TraktTask {
     try {
       getContentResolver().applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
     } catch (RemoteException e) {
-      e.printStackTrace();
       Timber.e(e, "SyncShowWatchedStatus failed");
+      throw new JobFailedException(e);
     } catch (OperationApplicationException e) {
-      e.printStackTrace();
       Timber.e(e, "SyncShowWatchedStatus failed");
+      throw new JobFailedException(e);
     }
-
-    postOnSuccess();
   }
 }

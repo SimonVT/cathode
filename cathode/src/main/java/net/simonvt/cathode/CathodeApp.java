@@ -39,11 +39,13 @@ import dagger.ObjectGraph;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.event.AuthFailedEvent;
+import net.simonvt.cathode.event.LogoutEvent;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.module.AppModule;
-import net.simonvt.cathode.remote.TraktTaskQueue;
-import net.simonvt.cathode.remote.sync.SyncTask;
-import net.simonvt.cathode.remote.sync.SyncUserActivityTask;
-import net.simonvt.cathode.remote.sync.SyncUserSettingsTask;
+import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.LogoutJob;
+import net.simonvt.cathode.remote.sync.SyncJob;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.service.AccountAuthenticator;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.HomeActivity;
@@ -67,7 +69,7 @@ public class CathodeApp extends Application {
 
   @Inject Bus bus;
 
-  @Inject TraktTaskQueue queue;
+  @Inject JobManager jobManager;
 
   private int homeActivityResumedCount;
   private long lastSync;
@@ -122,10 +124,10 @@ public class CathodeApp extends Application {
       final long lastFullSync = settings.getLong(Settings.FULL_SYNC, 0);
       final long currentTime = System.currentTimeMillis();
       if (lastFullSync + 24 * DateUtils.DAY_IN_MILLIS < currentTime) {
-        queue.add(new SyncTask());
+        jobManager.addJob(new SyncJob());
       } else {
-        // TODO: queue.add(new SyncActivityStreamTask());
-        queue.add(new SyncUserActivityTask());
+        // TODO: jobManager.addJob(new SyncActivityStreamTask());
+        jobManager.addJob(new SyncUserActivity());
       }
       lastSync = System.currentTimeMillis();
       MAIN_HANDLER.postDelayed(this, SYNC_DELAY);
@@ -184,17 +186,9 @@ public class CathodeApp extends Application {
         editor.putString(Settings.TRAKT_TOKEN, token);
         editor.putBoolean(Settings.TRAKT_LOGGED_IN, loggedIn);
         editor.apply();
-
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-          @Override public void run() {
-            if (loggedIn) {
-              TraktTaskQueue queue = objectGraph.get(TraktTaskQueue.class);
-              queue.clear();
-              queue.add(new SyncUserSettingsTask());
-            }
-          }
-        });
+      }
+      if (currentVersion < 20401) {
+        jobManager.addJob(new SyncJob());
       }
 
       settings.edit().putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE).apply();
@@ -226,6 +220,11 @@ public class CathodeApp extends Application {
 
     NotificationManager nm = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
     nm.notify(AUTH_NOTIFICATION, builder.build());
+  }
+
+  @Subscribe public void onLogout(LogoutEvent event) {
+    jobManager.addJob(new LogoutJob());
+    jobManager.removeJobsWithFlag(Flags.REQUIRES_AUTH);
   }
 
   public static void inject(Context context) {

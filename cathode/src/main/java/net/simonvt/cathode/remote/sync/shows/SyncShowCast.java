@@ -31,11 +31,12 @@ import net.simonvt.cathode.provider.PersonWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCharacters;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
-import net.simonvt.cathode.remote.TraktTask;
-import net.simonvt.cathode.remote.sync.SyncPersonTask;
+import net.simonvt.cathode.remote.sync.SyncPerson;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import timber.log.Timber;
 
-public class SyncShowCast extends TraktTask {
+public class SyncShowCast extends Job {
 
   @Inject transient ShowsService showsService;
 
@@ -45,7 +46,15 @@ public class SyncShowCast extends TraktTask {
     this.traktId = traktId;
   }
 
-  @Override protected void doTask() {
+  @Override public String key() {
+    return "SyncShowCast" + "&traktId=" + traktId;
+  }
+
+  @Override public int getPriority() {
+    return PRIORITY_1;
+  }
+
+  @Override public void perform() {
     People people = showsService.getPeople(traktId);
     List<CastMember> characters = people.getCast();
 
@@ -60,7 +69,7 @@ public class SyncShowCast extends TraktTask {
       long personId = PersonWrapper.getId(getContentResolver(), personTraktId);
       if (personId == -1L) {
         personId = PersonWrapper.createPerson(getContentResolver(), personTraktId);
-        queueTask(new SyncPersonTask(personTraktId));
+        queue(new SyncPerson(personTraktId));
       }
 
       ContentProviderOperation op =
@@ -74,13 +83,12 @@ public class SyncShowCast extends TraktTask {
 
     try {
       getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
-      postOnSuccess();
     } catch (RemoteException e) {
       Timber.e(e, "Updating show characters failed");
-      postOnFailure();
+      throw new JobFailedException(e);
     } catch (OperationApplicationException e) {
       Timber.e(e, "Updating show characters failed");
-      postOnFailure();
+      throw new JobFailedException(e);
     }
   }
 }

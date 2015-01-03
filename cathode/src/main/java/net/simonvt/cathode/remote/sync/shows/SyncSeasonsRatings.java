@@ -30,14 +30,23 @@ import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
-import net.simonvt.cathode.remote.TraktTask;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import timber.log.Timber;
 
-public class SyncSeasonsRatings extends TraktTask {
+public class SyncSeasonsRatings extends Job {
 
   @Inject transient SyncService syncService;
 
-  @Override protected void doTask() {
+  @Override public String key() {
+    return "SyncSeasonsRatings";
+  }
+
+  @Override public int getPriority() {
+    return PRIORITY_2;
+  }
+
+  @Override public void perform() {
     List<RatingItem> ratings = syncService.getSeasonRatings();
 
     Cursor seasons = getContentResolver().query(Seasons.SEASONS, new String[] {
@@ -61,14 +70,14 @@ public class SyncSeasonsRatings extends TraktTask {
       if (showId == -1L) {
         didShowExist = false;
         showId = ShowWrapper.createShow(getContentResolver(), showTraktId);
-        queueTask(new SyncShowTask(showTraktId));
+        queue(new SyncShow(showTraktId));
       }
 
       long seasonId = SeasonWrapper.getSeasonId(getContentResolver(), showId, seasonNumber);
       if (seasonId == -1L) {
         seasonId = SeasonWrapper.createSeason(getContentResolver(), showId, seasonNumber);
         if (didShowExist) {
-          queueTask(new SyncSeasonTask(showTraktId, seasonNumber));
+          queue(new SyncSeason(showTraktId, seasonNumber));
         }
       }
 
@@ -91,13 +100,12 @@ public class SyncSeasonsRatings extends TraktTask {
 
     try {
       getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
-      postOnSuccess();
     } catch (RemoteException e) {
       Timber.e(e, "Unable to sync season ratings");
-      postOnFailure();
+      throw new JobFailedException(e);
     } catch (OperationApplicationException e) {
       Timber.e(e, "Unable to sync season ratings");
-      postOnFailure();
+      throw new JobFailedException(e);
     }
   }
 }

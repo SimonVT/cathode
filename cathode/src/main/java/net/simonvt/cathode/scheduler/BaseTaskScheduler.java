@@ -23,9 +23,8 @@ import java.util.Queue;
 import java.util.concurrent.Executor;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
-import net.simonvt.cathode.remote.PriorityQueue;
-import net.simonvt.cathode.remote.TraktTask;
-import net.simonvt.cathode.remote.TraktTaskQueue;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobManager;
 
 public class BaseTaskScheduler {
 
@@ -37,9 +36,7 @@ public class BaseTaskScheduler {
 
   private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
-  @Inject TraktTaskQueue queue;
-
-  @Inject @PriorityQueue TraktTaskQueue priorityQueue;
+  @Inject JobManager jobManager;
 
   protected Context context;
 
@@ -48,12 +45,8 @@ public class BaseTaskScheduler {
     this.context = context;
   }
 
-  protected final void queueTask(final TraktTask task) {
-    queue.add(task);
-  }
-
-  protected final void queuePriorityTask(final TraktTask task) {
-    priorityQueue.add(task);
+  protected final void queue(final Job task) {
+    jobManager.addJob(task);
   }
 
   protected void execute(Runnable r) {

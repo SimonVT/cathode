@@ -70,10 +70,10 @@
         android:exported="true"/>
 
     <!-- Receivers -->
-    <receiver android:name="net.simonvt.cathode.remote.TaskServiceReceiver"/>
+    <receiver android:name=".jobqueue.JobReceiver"/>
 
     <!-- Services -->
-    <service android:name="net.simonvt.cathode.remote.TraktTaskService"/>
+    <service android:name=".jobqueue.JobService"/>
 
     <service
         android:name="net.simonvt.cathode.service.DashClockService"

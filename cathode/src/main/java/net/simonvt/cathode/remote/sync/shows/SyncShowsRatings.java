@@ -29,14 +29,23 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
-import net.simonvt.cathode.remote.TraktTask;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import timber.log.Timber;
 
-public class SyncShowsRatings extends TraktTask {
+public class SyncShowsRatings extends Job {
 
   @Inject transient SyncService syncService;
 
-  @Override protected void doTask() {
+  @Override public String key() {
+    return "SyncShowsRatings";
+  }
+
+  @Override public int getPriority() {
+    return PRIORITY_2;
+  }
+
+  @Override public void perform() {
     List<RatingItem> ratings = syncService.getShowRatings();
 
     Cursor shows = getContentResolver().query(Shows.SHOWS, new String[] {
@@ -56,7 +65,7 @@ public class SyncShowsRatings extends TraktTask {
       long showId = ShowWrapper.getShowId(getContentResolver(), traktId);
       if (showId == -1L) {
         showId = ShowWrapper.createShow(getContentResolver(), traktId);
-        queueTask(new SyncShowTask(traktId));
+        queue(new SyncShow(traktId));
       }
 
       showIds.remove(showId);
@@ -78,13 +87,12 @@ public class SyncShowsRatings extends TraktTask {
 
     try {
       getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
-      postOnSuccess();
     } catch (RemoteException e) {
       Timber.e(e, "Unable to sync show ratings");
-      postOnFailure();
+      throw new JobFailedException(e);
     } catch (OperationApplicationException e) {
       Timber.e(e, "Unable to sync show ratings");
-      postOnFailure();
+      throw new JobFailedException(e);
     }
   }
 }

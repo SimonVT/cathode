@@ -30,13 +30,23 @@ import net.simonvt.cathode.api.service.RecommendationsService;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.remote.TraktTask;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobFailedException;
+import timber.log.Timber;
 
-public class SyncMovieRecommendations extends TraktTask {
+public class SyncMovieRecommendations extends Job {
 
   @Inject transient RecommendationsService recommendationsService;
 
-  @Override protected void doTask() {
+  @Override public String key() {
+    return "SyncMovieRecommendations";
+  }
+
+  @Override public int getPriority() {
+    return PRIORITY_2;
+  }
+
+  @Override public void perform() {
     try {
       ContentResolver resolver = getContentResolver();
 
@@ -56,7 +66,7 @@ public class SyncMovieRecommendations extends TraktTask {
         long id = MovieWrapper.getMovieId(resolver, traktId);
         if (id == -1L) {
           id = MovieWrapper.createMovie(resolver, traktId);
-          queueTask(new SyncMovieTask(traktId));
+          queue(new SyncMovie(traktId));
         }
 
         movieIds.remove(id);
@@ -76,13 +86,12 @@ public class SyncMovieRecommendations extends TraktTask {
       }
 
       resolver.applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
-      postOnSuccess();
     } catch (RemoteException e) {
-      e.printStackTrace();
-      postOnFailure();
+      Timber.e(e, "Unable to update recommendations");
+      throw new JobFailedException(e);
     } catch (OperationApplicationException e) {
-      e.printStackTrace();
-      postOnFailure();
+      Timber.e(e, "Unable to update recommendations");
+      throw new JobFailedException(e);
     }
   }
 }

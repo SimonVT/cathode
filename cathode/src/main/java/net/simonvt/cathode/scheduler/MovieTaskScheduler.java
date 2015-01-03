@@ -23,12 +23,12 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.action.CancelCheckin;
-import net.simonvt.cathode.remote.action.movies.CheckInMovieTask;
+import net.simonvt.cathode.remote.action.movies.CheckInMovie;
+import net.simonvt.cathode.remote.action.movies.CollectMovie;
 import net.simonvt.cathode.remote.action.movies.DismissMovieRecommendation;
-import net.simonvt.cathode.remote.action.movies.MovieCollectionTask;
-import net.simonvt.cathode.remote.action.movies.MovieRateTask;
-import net.simonvt.cathode.remote.action.movies.MovieWatchedTask;
-import net.simonvt.cathode.remote.action.movies.MovieWatchlistTask;
+import net.simonvt.cathode.remote.action.movies.RateMovie;
+import net.simonvt.cathode.remote.action.movies.WatchedMovie;
+import net.simonvt.cathode.remote.action.movies.WatchlistMovie;
 import net.simonvt.cathode.util.DateUtils;
 
 public class MovieTaskScheduler extends BaseTaskScheduler {
@@ -57,7 +57,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
 
         MovieWrapper.setWatched(context.getContentResolver(), movieId, watched, watchedAtMillis);
 
-        queuePriorityTask(new MovieWatchedTask(traktId, watched, watchedAt));
+        queue(new WatchedMovie(traktId, watched, watchedAt));
       }
     });
   }
@@ -77,7 +77,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         MovieWrapper.setIsInWatchlist(context.getContentResolver(), movieId, inWatchlist,
             listedAtMillis);
 
-        queuePriorityTask(new MovieWatchlistTask(traktId, inWatchlist, listedAt));
+        queue(new WatchlistMovie(traktId, inWatchlist, listedAt));
       }
     });
   }
@@ -96,7 +96,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
 
         MovieWrapper.setIsInCollection(context.getContentResolver(), movieId, inCollection,
             collectedAtMillis);
-        queuePriorityTask(new MovieCollectionTask(traktId, inCollection, collectedAt));
+        queue(new CollectMovie(traktId, inCollection, collectedAt));
       }
     });
   }
@@ -135,7 +135,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
           context.getContentResolver().update(Movies.withId(movieId), cv, null, null);
 
           final long traktId = MovieWrapper.getTraktId(context.getContentResolver(), movieId);
-          queuePriorityTask(new CheckInMovieTask(traktId, message, facebook, twitter, tumblr));
+          queue(new CheckInMovie(traktId, message, facebook, twitter, tumblr));
         }
       }
     });
@@ -156,7 +156,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
           cv.put(MovieColumns.CHECKED_IN, false);
           context.getContentResolver().update(Movies.WATCHING, cv, null, null);
 
-          queuePriorityTask(new CancelCheckin());
+          queue(new CancelCheckin());
         }
 
         c.close();
@@ -171,7 +171,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         ContentValues cv = new ContentValues();
         cv.put(MovieColumns.RECOMMENDATION_INDEX, -1);
         context.getContentResolver().update(Movies.withId(movieId), cv, null, null);
-        queue.add(new DismissMovieRecommendation(traktId));
+        queue(new DismissMovieRecommendation(traktId));
       }
     });
   }
@@ -197,7 +197,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         cv.put(MovieColumns.RATED_AT, ratedAtMillis);
         context.getContentResolver().update(Movies.withId(movieId), cv, null, null);
 
-        priorityQueue.add(new MovieRateTask(traktId, rating, ratedAt));
+        queue(new RateMovie(traktId, rating, ratedAt));
       }
     });
   }

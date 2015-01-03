@@ -32,7 +32,6 @@ import net.simonvt.cathode.api.service.SearchService;
 import net.simonvt.cathode.event.SearchFailureEvent;
 import net.simonvt.cathode.event.ShowSearchResult;
 import net.simonvt.cathode.provider.ShowWrapper;
-import net.simonvt.cathode.remote.TraktTaskQueue;
 import retrofit.RetrofitError;
 import timber.log.Timber;
 
@@ -93,8 +92,6 @@ public class ShowSearchHandler {
     @Inject ShowSearchHandler handler;
 
     @Inject SearchService searchService;
-
-    @Inject TraktTaskQueue queue;
 
     private Context context;
 

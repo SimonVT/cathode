@@ -36,8 +36,7 @@ import net.simonvt.cathode.database.MutableCursor;
 import net.simonvt.cathode.database.MutableCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.remote.TraktTaskQueue;
-import net.simonvt.cathode.remote.sync.SyncTask;
+import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
@@ -47,6 +46,7 @@ import net.simonvt.cathode.ui.adapter.MoviesAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.widget.SearchView;
+import net.simonvt.cathode.jobqueue.JobManager;
 
 public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<MutableCursor>, MoviesAdapter.MovieClickListener,
@@ -93,7 +93,7 @@ public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdap
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.fragment.RecommendedMoviesFragment.sortDialog";
 
-  @Inject TraktTaskQueue queue;
+  @Inject JobManager jobManager;
 
   private MoviesNavigationListener navigationListener;
 
@@ -176,7 +176,7 @@ public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdap
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_refresh:
-        queue.add(new SyncTask());
+        jobManager.addJob(new SyncJob());
         return true;
 
       case R.id.sort_by:

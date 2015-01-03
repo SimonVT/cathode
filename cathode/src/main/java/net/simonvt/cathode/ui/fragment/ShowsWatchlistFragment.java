@@ -38,8 +38,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.remote.TraktTaskQueue;
-import net.simonvt.cathode.remote.sync.SyncTask;
+import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.LibraryType;
@@ -49,11 +48,12 @@ import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.ShowWatchlistAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.widget.SearchView;
+import net.simonvt.cathode.jobqueue.JobManager;
 
 public class ShowsWatchlistFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
     implements ShowWatchlistAdapter.RemoveListener, ShowWatchlistAdapter.OnItemClickListener {
 
-  @Inject TraktTaskQueue queue;
+  @Inject JobManager jobManager;
 
   private ShowsNavigationListener navigationListener;
 
@@ -140,7 +140,7 @@ public class ShowsWatchlistFragment extends ToolbarGridFragment<RecyclerView.Vie
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_refresh:
-        queue.add(new SyncTask());
+        jobManager.addJob(new SyncJob());
         return true;
 
       default:

@@ -24,14 +24,22 @@ import net.simonvt.cathode.api.entity.UpdatedItem;
 import net.simonvt.cathode.api.service.MoviesService;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.provider.MovieWrapper;
-import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.jobqueue.Job;
 
-public class SyncUpdatedMovies extends TraktTask {
+public class SyncUpdatedMovies extends Job {
 
   @Inject transient MoviesService moviesService;
 
-  @Override protected void doTask() {
+  @Override public String key() {
+    return "SyncUpdatedMovies";
+  }
+
+  @Override public int getPriority() {
+    return PRIORITY_2;
+  }
+
+  @Override public void perform() {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
 
     final String lastUpdated = settings.getString(Settings.MOVIES_LAST_UPDATED, null);
@@ -49,14 +57,12 @@ public class SyncUpdatedMovies extends TraktTask {
           final boolean needsUpdate =
               MovieWrapper.needsUpdate(getContentResolver(), traktId, updatedAt);
           if (needsUpdate) {
-            queueTask(new SyncMovieTask(traktId));
+            queue(new SyncMovie(traktId));
           }
         }
       }
     }
 
     settings.edit().putString(Settings.MOVIES_LAST_UPDATED, currentTime).apply();
-
-    postOnSuccess();
   }
 }

@@ -16,10 +16,19 @@
 
 package net.simonvt.cathode.remote.sync.shows;
 
-import net.simonvt.cathode.remote.TraktTask;
+import net.simonvt.cathode.jobqueue.Job;
 
-public class SyncSeasonRating extends TraktTask {
-  @Override protected void doTask() {
+public class SyncSeasonRating extends Job {
+
+  @Override public String key() {
+    return "SyncSeasonRating";
+  }
+
+  @Override public int getPriority() {
+    return PRIORITY_2;
+  }
+
+  @Override public void perform() {
 
   }
 }

@@ -25,14 +25,22 @@ import net.simonvt.cathode.api.entity.UpdatedItem;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.provider.ShowWrapper;
-import net.simonvt.cathode.remote.TraktTask;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.jobqueue.Job;
 
-public class SyncUpdatedShows extends TraktTask {
+public class SyncUpdatedShows extends Job {
 
   @Inject transient ShowsService showsService;
 
-  @Override protected void doTask() {
+  @Override public String key() {
+    return "SyncUpdatedShows";
+  }
+
+  @Override public int getPriority() {
+    return PRIORITY_2;
+  }
+
+  @Override public void perform() {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
     String lastUpdated = settings.getString(Settings.SHOWS_LAST_UPDATED, null);
 
@@ -55,7 +63,7 @@ public class SyncUpdatedShows extends TraktTask {
           if (needsUpdate) {
             final long id = ShowWrapper.getShowId(getContentResolver(), traktId);
             if (ShowWrapper.shouldSyncFully(getContentResolver(), id)) {
-              queueTask(new SyncShowTask(traktId));
+              queue(new SyncShow(traktId));
             } else {
               showSummaries.add(traktId);
             }
@@ -65,12 +73,11 @@ public class SyncUpdatedShows extends TraktTask {
 
       if (showSummaries.size() > 0) {
         for (Long traktId : showSummaries) {
-          queueTask(new SyncShowTask(traktId, false));
+          queue(new SyncShow(traktId, false));
         }
       }
     }
 
     settings.edit().putString(Settings.SHOWS_LAST_UPDATED, currentTime).apply();
-    postOnSuccess();
   }
 }

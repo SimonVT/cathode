@@ -29,10 +29,11 @@ import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ShowWrapper;
-import net.simonvt.cathode.remote.TraktTask;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import timber.log.Timber;
 
-public class SyncShowWatchedStatus extends TraktTask {
+public class SyncShowWatchedStatus extends Job {
 
   @Inject transient ShowsService showsService;
 
@@ -42,11 +43,15 @@ public class SyncShowWatchedStatus extends TraktTask {
     this.traktId = traktId;
   }
 
-  @Override protected void doTask() {
-    if (traktId == 225) {
-      postOnSuccess();
-      return;
-    }
+  @Override public String key() {
+    return "SyncShowWatchedStatus" + "&traktId=" + traktId;
+  }
+
+  @Override public int getPriority() {
+    return PRIORITY_4;
+  }
+
+  @Override public void perform() {
     ShowProgress progress = showsService.getWatchedProgress(traktId);
     final long showId = ShowWrapper.getShowId(getContentResolver(), traktId);
 
@@ -72,13 +77,11 @@ public class SyncShowWatchedStatus extends TraktTask {
     try {
       getContentResolver().applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
     } catch (RemoteException e) {
-      e.printStackTrace();
       Timber.e(e, "SyncShowWatchedStatus failed");
+      throw new JobFailedException(e);
     } catch (OperationApplicationException e) {
-      e.printStackTrace();
       Timber.e(e, "SyncShowWatchedStatus failed");
+      throw new JobFailedException(e);
     }
-
-    postOnSuccess();
   }
 }

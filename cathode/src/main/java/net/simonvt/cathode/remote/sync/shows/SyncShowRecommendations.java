@@ -29,14 +29,23 @@ import net.simonvt.cathode.api.service.RecommendationsService;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowWrapper;
-import net.simonvt.cathode.remote.TraktTask;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import timber.log.Timber;
 
-public class SyncShowRecommendations extends TraktTask {
+public class SyncShowRecommendations extends Job {
 
   @Inject transient RecommendationsService recommendationsService;
 
-  @Override protected void doTask() {
+  @Override public String key() {
+    return "SyncShowRecommendations";
+  }
+
+  @Override public int getPriority() {
+    return PRIORITY_2;
+  }
+
+  @Override public void perform() {
     try {
       ContentResolver resolver = getContentResolver();
 
@@ -57,7 +66,7 @@ public class SyncShowRecommendations extends TraktTask {
         long showId = ShowWrapper.getShowId(resolver, traktId);
         if (showId == -1L) {
           showId = ShowWrapper.createShow(resolver, traktId);
-          queueTask(new SyncShowTask(show.getIds().getTrakt(), false));
+          queue(new SyncShow(show.getIds().getTrakt(), false));
         }
 
         showIds.remove(showId);
@@ -76,14 +85,12 @@ public class SyncShowRecommendations extends TraktTask {
       }
 
       resolver.applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
-
-      postOnSuccess();
     } catch (RemoteException e) {
       Timber.e(e, "SyncShowRecommendationsTask failed");
-      postOnFailure();
+      throw new JobFailedException(e);
     } catch (OperationApplicationException e) {
       Timber.e(e, "SyncShowRecommendationsTask failed");
-      postOnFailure();
+      throw new JobFailedException(e);
     }
   }
 }

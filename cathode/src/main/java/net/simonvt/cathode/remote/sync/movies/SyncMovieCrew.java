@@ -34,11 +34,12 @@ import net.simonvt.cathode.provider.PersonWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieCast;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieCrew;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
-import net.simonvt.cathode.remote.TraktTask;
-import net.simonvt.cathode.remote.sync.SyncPersonTask;
+import net.simonvt.cathode.remote.sync.SyncPerson;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import timber.log.Timber;
 
-public class SyncMovieCrew extends TraktTask {
+public class SyncMovieCrew extends Job {
 
   @Inject transient MoviesService moviesService;
 
@@ -48,7 +49,15 @@ public class SyncMovieCrew extends TraktTask {
     this.traktId = traktId;
   }
 
-  @Override protected void doTask() {
+  @Override public String key() {
+    return "SyncMovieCrew" + "&traktId=" + traktId;
+  }
+
+  @Override public int getPriority() {
+    return PRIORITY_1;
+  }
+
+  @Override public void perform() {
     People people = moviesService.getPeople(traktId);
 
     final long movieId = MovieWrapper.getMovieId(getContentResolver(), traktId);
@@ -67,7 +76,7 @@ public class SyncMovieCrew extends TraktTask {
       long personId = PersonWrapper.getId(getContentResolver(), personTraktId);
       if (personId == -1L) {
         personId = PersonWrapper.createPerson(getContentResolver(), personTraktId);
-        queueTask(new SyncPersonTask(personTraktId));
+        queue(new SyncPerson(personTraktId));
       }
 
       op = ContentProviderOperation.newInsert(MovieCast.MOVIE_CAST)
@@ -90,13 +99,12 @@ public class SyncMovieCrew extends TraktTask {
 
     try {
       getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
-      postOnSuccess();
     } catch (RemoteException e) {
       Timber.e(e, "Updating movie crew failed");
-      postOnFailure();
+      throw new JobFailedException(e);
     } catch (OperationApplicationException e) {
       Timber.e(e, "Updating movie crew failed");
-      postOnFailure();
+      throw new JobFailedException(e);
     }
   }
 
@@ -111,7 +119,7 @@ public class SyncMovieCrew extends TraktTask {
       long personId = PersonWrapper.getId(getContentResolver(), personTraktId);
       if (personId == -1L) {
         personId = PersonWrapper.createPerson(getContentResolver(), personTraktId);
-        queueTask(new SyncPersonTask(personTraktId));
+        queue(new SyncPerson(personTraktId));
       }
 
       ContentProviderOperation op = ContentProviderOperation.newInsert(MovieCrew.MOVIE_CREW)

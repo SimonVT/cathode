@@ -17,20 +17,33 @@ package net.simonvt.cathode.remote.action.shows;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.service.RecommendationsService;
-import net.simonvt.cathode.remote.TraktTask;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.Flags;
 
-public class DismissShowRecommendation extends TraktTask {
+public class DismissShowRecommendation extends Job {
 
   @Inject transient RecommendationsService recommendationsService;
 
   private long traktId;
 
   public DismissShowRecommendation(long traktId) {
+    super(Flags.REQUIRES_AUTH);
     this.traktId = traktId;
   }
 
-  @Override protected void doTask() {
+  @Override public String key() {
+    return "DismissShowRecommendation" + "&traktId=" + traktId;
+  }
+
+  @Override public int getPriority() {
+    return PRIORITY_5;
+  }
+
+  @Override public boolean requiresWakelock() {
+    return true;
+  }
+
+  @Override public void perform() {
     recommendationsService.dismissShow(traktId);
-    postOnSuccess();
   }
 }

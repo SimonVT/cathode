@@ -29,22 +29,19 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.remote.PriorityQueue;
-import net.simonvt.cathode.remote.TraktTaskQueue;
-import net.simonvt.cathode.remote.sync.SyncTask;
+import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.adapter.MovieSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.widget.SearchView;
+import net.simonvt.cathode.jobqueue.JobManager;
 
 public abstract class MoviesFragment extends ToolbarGridFragment<MoviesAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.MovieClickListener {
 
-  @Inject TraktTaskQueue queue;
-
-  @Inject @PriorityQueue TraktTaskQueue priorityQueue;
+  @Inject JobManager jobManager;
 
   private MoviesNavigationListener navigationListener;
 
@@ -109,7 +106,7 @@ public abstract class MoviesFragment extends ToolbarGridFragment<MoviesAdapter.V
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_refresh:
-        queue.add(new SyncTask());
+        jobManager.addJob(new SyncJob());
         return true;
 
       default:

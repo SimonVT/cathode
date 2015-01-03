@@ -43,8 +43,7 @@ import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.remote.TraktTaskQueue;
-import net.simonvt.cathode.remote.sync.SyncTask;
+import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
@@ -56,6 +55,7 @@ import net.simonvt.cathode.ui.adapter.UpcomingAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.widget.AnimatorHelper;
 import net.simonvt.cathode.widget.SearchView;
+import net.simonvt.cathode.jobqueue.JobManager;
 
 public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
     implements UpcomingAdapter.OnRemoveListener, ListDialog.Callback,
@@ -102,7 +102,7 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.fragment.UpcomingShowsFragment.sortDialog";
 
-  @Inject TraktTaskQueue queue;
+  @Inject JobManager jobManager;
 
   private SharedPreferences settings;
 
@@ -214,7 +214,7 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
         return true;
 
       case R.id.menu_refresh:
-        queue.add(new SyncTask());
+        jobManager.addJob(new SyncJob());
         return true;
 
       default:

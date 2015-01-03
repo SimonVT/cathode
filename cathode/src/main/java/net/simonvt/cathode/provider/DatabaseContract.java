@@ -76,8 +76,10 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String PLAYS = "plays";
     @DataType(INTEGER) @DefaultValue("0") String SCROBBLES = "scrobbles";
     @DataType(INTEGER) @DefaultValue("0") String CHECKINS = "checkins";
+
     @DataType(INTEGER) @DefaultValue("0") String IN_WATCHLIST = "showInWatchlist";
     @DataType(INTEGER) @DefaultValue("0") String LISTED_AT = "watchlistListedAt";
+
     @DataType(INTEGER) @DefaultValue("0") String LAST_WATCHED_AT = "lastWatchedAt";
     @DataType(INTEGER) @DefaultValue("0") String LAST_COLLECTED_AT = "lastCollectedAt";
 

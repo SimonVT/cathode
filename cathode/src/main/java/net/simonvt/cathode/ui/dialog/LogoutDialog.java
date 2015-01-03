@@ -19,7 +19,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -28,7 +27,6 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.LogoutEvent;
-import net.simonvt.cathode.remote.TraktTaskService;
 import net.simonvt.cathode.settings.Settings;
 
 public class LogoutDialog extends DialogFragment {
@@ -47,10 +45,6 @@ public class LogoutDialog extends DialogFragment {
                 .edit() //
                 .putBoolean(Settings.TRAKT_LOGGED_IN, false) //
                 .apply();
-
-            Intent intent = new Intent(context, TraktTaskService.class);
-            intent.setAction(TraktTaskService.ACTION_LOGOUT);
-            context.startService(intent);
 
             bus.post(new LogoutEvent());
           }

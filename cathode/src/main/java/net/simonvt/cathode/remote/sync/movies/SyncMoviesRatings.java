@@ -29,14 +29,23 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
-import net.simonvt.cathode.remote.TraktTask;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import timber.log.Timber;
 
-public class SyncMoviesRatings extends TraktTask {
+public class SyncMoviesRatings extends Job {
 
   @Inject transient SyncService syncService;
 
-  @Override protected void doTask() {
+  @Override public String key() {
+    return "SyncMoviesRatings";
+  }
+
+  @Override public int getPriority() {
+    return PRIORITY_2;
+  }
+
+  @Override public void perform() {
     List<RatingItem> ratings = syncService.getMovieRatings();
 
     Cursor movies = getContentResolver().query(Movies.MOVIES, new String[] {
@@ -56,7 +65,7 @@ public class SyncMoviesRatings extends TraktTask {
       long movieId = MovieWrapper.getMovieId(getContentResolver(), traktId);
       if (movieId == -1L) {
         movieId = MovieWrapper.createMovie(getContentResolver(), traktId);
-        queueTask(new SyncMovieTask(traktId));
+        queue(new SyncMovie(traktId));
       }
 
       movieIds.remove(movieId);
@@ -78,13 +87,12 @@ public class SyncMoviesRatings extends TraktTask {
 
     try {
       getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
-      postOnSuccess();
     } catch (RemoteException e) {
       Timber.e(e, "Unable to sync movie ratings");
-      postOnFailure();
+      throw new JobFailedException(e);
     } catch (OperationApplicationException e) {
       Timber.e(e, "Unable to sync movie ratings");
-      postOnFailure();
+      throw new JobFailedException(e);
     }
   }
 }

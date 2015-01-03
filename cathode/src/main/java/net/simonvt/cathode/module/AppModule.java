@@ -16,73 +16,64 @@
 
 package net.simonvt.cathode.module;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import android.content.Context;
 import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
-import com.squareup.tape.ObjectQueue;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
-import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.CathodeApp;
-import net.simonvt.cathode.remote.DeserializationFailedTask;
-import net.simonvt.cathode.remote.PriorityQueue;
-import net.simonvt.cathode.remote.TraktTask;
-import net.simonvt.cathode.remote.TraktTaskQueue;
-import net.simonvt.cathode.remote.TraktTaskSerializer;
-import net.simonvt.cathode.remote.TraktTaskService;
 import net.simonvt.cathode.remote.action.CancelCheckin;
-import net.simonvt.cathode.remote.action.movies.CheckInMovieTask;
+import net.simonvt.cathode.remote.action.movies.CheckInMovie;
+import net.simonvt.cathode.remote.action.movies.CollectMovie;
 import net.simonvt.cathode.remote.action.movies.DismissMovieRecommendation;
-import net.simonvt.cathode.remote.action.movies.MovieCollectionTask;
-import net.simonvt.cathode.remote.action.movies.MovieRateTask;
-import net.simonvt.cathode.remote.action.movies.MovieWatchedTask;
-import net.simonvt.cathode.remote.action.movies.MovieWatchlistTask;
-import net.simonvt.cathode.remote.action.shows.CheckInEpisodeTask;
+import net.simonvt.cathode.remote.action.movies.RateMovie;
+import net.simonvt.cathode.remote.action.movies.WatchedMovie;
+import net.simonvt.cathode.remote.action.movies.WatchlistMovie;
+import net.simonvt.cathode.remote.action.shows.CheckInEpisode;
+import net.simonvt.cathode.remote.action.shows.CollectEpisode;
+import net.simonvt.cathode.remote.action.shows.CollectSeason;
 import net.simonvt.cathode.remote.action.shows.DismissShowRecommendation;
-import net.simonvt.cathode.remote.action.shows.EpisodeCollectionTask;
-import net.simonvt.cathode.remote.action.shows.EpisodeRateTask;
-import net.simonvt.cathode.remote.action.shows.EpisodeWatchedTask;
-import net.simonvt.cathode.remote.action.shows.EpisodeWatchlistTask;
-import net.simonvt.cathode.remote.action.shows.SeasonCollectionTask;
-import net.simonvt.cathode.remote.action.shows.SeasonWatchedTask;
-import net.simonvt.cathode.remote.action.shows.ShowRateTask;
-import net.simonvt.cathode.remote.action.shows.ShowWatchedTask;
-import net.simonvt.cathode.remote.action.shows.ShowWatchlistTask;
-import net.simonvt.cathode.remote.sync.PurgeTask;
-import net.simonvt.cathode.remote.sync.SyncActivityStreamTask;
-import net.simonvt.cathode.remote.sync.SyncPersonTask;
-import net.simonvt.cathode.remote.sync.SyncTask;
-import net.simonvt.cathode.remote.sync.SyncUserActivityTask;
-import net.simonvt.cathode.remote.sync.SyncUserSettingsTask;
-import net.simonvt.cathode.remote.sync.SyncWatchingTask;
+import net.simonvt.cathode.remote.action.shows.RateEpisode;
+import net.simonvt.cathode.remote.action.shows.RateShow;
+import net.simonvt.cathode.remote.action.shows.WatchedEpisode;
+import net.simonvt.cathode.remote.action.shows.WatchedSeason;
+import net.simonvt.cathode.remote.action.shows.WatchedShow;
+import net.simonvt.cathode.remote.action.shows.WatchlistEpisode;
+import net.simonvt.cathode.remote.action.shows.WatchlistShow;
+import net.simonvt.cathode.remote.sync.PurgeDatabase;
+import net.simonvt.cathode.remote.sync.SyncActivityStream;
+import net.simonvt.cathode.remote.sync.SyncJob;
+import net.simonvt.cathode.remote.sync.SyncPerson;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
+import net.simonvt.cathode.remote.sync.SyncUserSettings;
+import net.simonvt.cathode.remote.sync.SyncWatching;
+import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieCrew;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations;
-import net.simonvt.cathode.remote.sync.movies.SyncMovieTask;
-import net.simonvt.cathode.remote.sync.movies.SyncMoviesCollectionTask;
+import net.simonvt.cathode.remote.sync.movies.SyncMoviesCollection;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesRatings;
-import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchedTask;
-import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchlistTask;
-import net.simonvt.cathode.remote.sync.movies.SyncTrendingMoviesTask;
+import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchlist;
+import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
-import net.simonvt.cathode.remote.sync.shows.SyncEpisodeTask;
-import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlistTask;
+import net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies;
+import net.simonvt.cathode.remote.sync.shows.SyncEpisode;
+import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodesRatings;
-import net.simonvt.cathode.remote.sync.shows.SyncSeasonTask;
+import net.simonvt.cathode.remote.sync.shows.SyncSeason;
+import net.simonvt.cathode.remote.sync.shows.SyncSeasons;
 import net.simonvt.cathode.remote.sync.shows.SyncSeasonsRatings;
-import net.simonvt.cathode.remote.sync.shows.SyncSeasonsTask;
+import net.simonvt.cathode.remote.sync.shows.SyncShow;
 import net.simonvt.cathode.remote.sync.shows.SyncShowCast;
 import net.simonvt.cathode.remote.sync.shows.SyncShowCollectedStatus;
 import net.simonvt.cathode.remote.sync.shows.SyncShowRecommendations;
-import net.simonvt.cathode.remote.sync.shows.SyncShowTask;
 import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
-import net.simonvt.cathode.remote.sync.shows.SyncShowsCollectionTask;
+import net.simonvt.cathode.remote.sync.shows.SyncShowsCollection;
 import net.simonvt.cathode.remote.sync.shows.SyncShowsRatings;
-import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchedTask;
-import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchlistTask;
-import net.simonvt.cathode.remote.sync.shows.SyncTrendingShowsTask;
+import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchlist;
+import net.simonvt.cathode.remote.sync.shows.SyncTrendingShows;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
+import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.SearchTaskScheduler;
@@ -125,18 +116,18 @@ import net.simonvt.cathode.util.MovieSearchHandler;
 import net.simonvt.cathode.util.ShowSearchHandler;
 import net.simonvt.cathode.widget.PhoneEpisodeView;
 import net.simonvt.cathode.widget.RemoteImageView;
-import timber.log.Timber;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobInjector;
+import net.simonvt.cathode.jobqueue.JobModule;
+import net.simonvt.cathode.jobqueue.JobService;
 
 @Module(
     includes = {
-        ApiModule.class, SchedulerModule.class
+        ApiModule.class, SchedulerModule.class, JobModule.class
     },
 
     injects = {
         CathodeApp.class,
-
-        // Task queue
-        TraktTaskQueue.class,
 
         // Task schedulers
         EpisodeTaskScheduler.class, MovieTaskScheduler.class, SeasonTaskScheduler.class,
@@ -166,27 +157,25 @@ import timber.log.Timber;
         PhoneEpisodeView.class, RemoteImageView.class,
 
         // Services
-        TraktTaskService.class, CathodeSyncAdapter.class,
+        JobService.class, CathodeSyncAdapter.class,
 
         // Tasks
-        DeserializationFailedTask.class, TraktTaskQueue.class, TraktTaskSerializer.class,
-        CancelCheckin.class, CheckInMovieTask.class, DismissMovieRecommendation.class,
-        MovieCollectionTask.class, MovieRateTask.class, MovieWatchedTask.class,
-        MovieWatchlistTask.class, CheckInEpisodeTask.class, DismissShowRecommendation.class,
-        EpisodeCollectionTask.class, EpisodeRateTask.class, EpisodeWatchedTask.class,
-        EpisodeWatchlistTask.class, SeasonCollectionTask.class, SeasonWatchedTask.class,
-        ShowRateTask.class, ShowWatchedTask.class, ShowWatchlistTask.class, PurgeTask.class,
-        SyncActivityStreamTask.class, SyncTask.class, SyncUserActivityTask.class,
-        SyncUserSettingsTask.class, SyncWatchingTask.class, SyncMovieCrew.class,
-        SyncMovieRecommendations.class, SyncMoviesCollectionTask.class, SyncMoviesRatings.class,
-        SyncMoviesWatchedTask.class, SyncMoviesWatchlistTask.class, SyncMovieTask.class,
-        SyncTrendingMoviesTask.class, SyncUpdatedMovies.class, SyncEpisodesRatings.class,
-        SyncEpisodeTask.class, SyncEpisodeWatchlistTask.class, SyncSeasonsRatings.class,
-        SyncSeasonsTask.class, SyncSeasonTask.class, SyncShowCast.class,
-        SyncShowCollectedStatus.class, SyncShowRecommendations.class, SyncShowsCollectionTask.class,
-        SyncShowsRatings.class, SyncShowsWatchedTask.class, SyncShowsWatchlistTask.class,
-        SyncShowTask.class, SyncShowWatchedStatus.class, SyncTrendingShowsTask.class,
-        SyncUpdatedShows.class, SyncPersonTask.class,
+        CancelCheckin.class, CheckInMovie.class, DismissMovieRecommendation.class,
+        CollectMovie.class, RateMovie.class, WatchedMovie.class, WatchlistMovie.class,
+        CheckInEpisode.class, DismissShowRecommendation.class, CollectEpisode.class,
+        RateEpisode.class, WatchedEpisode.class, WatchlistEpisode.class, CollectSeason.class,
+        WatchedSeason.class, RateShow.class, WatchedShow.class, WatchlistShow.class,
+        PurgeDatabase.class, SyncActivityStream.class, SyncJob.class, SyncUserActivity.class,
+        SyncUserSettings.class, SyncWatching.class, SyncMovieCrew.class,
+        SyncMovieRecommendations.class, SyncMoviesCollection.class, SyncMoviesRatings.class,
+        SyncWatchedMovies.class, SyncMoviesWatchlist.class, SyncMovie.class,
+        SyncTrendingMovies.class, SyncUpdatedMovies.class, SyncEpisodesRatings.class,
+        SyncEpisode.class, SyncEpisodeWatchlist.class, SyncSeasonsRatings.class, SyncSeasons.class,
+        SyncSeason.class, SyncShowCast.class, SyncShowCollectedStatus.class,
+        SyncShowRecommendations.class, SyncShowsCollection.class, SyncShowsRatings.class,
+        SyncWatchedShows.class, SyncShowsWatchlist.class, SyncShow.class,
+        SyncShowWatchedStatus.class, SyncTrendingShows.class, SyncUpdatedShows.class,
+        SyncPerson.class,
 
         // Misc
         ShowSearchHandler.class, ShowSearchHandler.SearchThread.class, MovieSearchHandler.class,
@@ -204,36 +193,16 @@ public class AppModule {
     return app;
   }
 
-  @Provides @Singleton TraktTaskQueue provideTaskQueue(Gson gson) {
-    TraktTaskQueue queue = TraktTaskQueue.create(app, gson, "taskQueue2");
-    if (BuildConfig.DEBUG) {
-      queue.setListener(new ObjectQueue.Listener<TraktTask>() {
-        @Override public void onAdd(ObjectQueue<TraktTask> queue, TraktTask entry) {
-          Timber.tag("TraktQueue").d("Queue size: %d", queue.size());
-        }
-
-        @Override public void onRemove(ObjectQueue<TraktTask> queue) {
-          Timber.tag("TraktQueue").d("Queue size: %d", queue.size());
-        }
-      });
-    }
-    return queue;
+  @Provides Context provideContext() {
+    return app;
   }
 
-  @Provides @Singleton @PriorityQueue TraktTaskQueue providePriorityTaskQueue(Gson gson) {
-    TraktTaskQueue queue = TraktTaskQueue.create(app, gson, "priorityTaskQueue2");
-    if (BuildConfig.DEBUG) {
-      queue.setListener(new ObjectQueue.Listener<TraktTask>() {
-        @Override public void onAdd(ObjectQueue<TraktTask> queue, TraktTask entry) {
-          Timber.tag("PriorityQueue").d("Queue size: %d", queue.size());
-        }
-
-        @Override public void onRemove(ObjectQueue<TraktTask> queue) {
-          Timber.tag("PriorityQueue").d("Queue size: %d", queue.size());
-        }
-      });
-    }
-    return queue;
+  @Provides @Singleton JobInjector provideJobInjector(final Context context) {
+    return new JobInjector() {
+      @Override public void injectInto(Job job) {
+        CathodeApp.inject(context, job);
+      }
+    };
   }
 
   @Provides @Singleton ShowSearchHandler provideShowSearchHandler(Bus bus) {
@@ -250,11 +219,5 @@ public class AppModule {
 
   @Provides @Singleton Bus provideBus() {
     return new Bus();
-  }
-
-  @Provides @Singleton Gson provideGson() {
-    GsonBuilder builder = new GsonBuilder();
-    builder.registerTypeAdapter(TraktTask.class, new TraktTaskSerializer());
-    return builder.create();
   }
 }

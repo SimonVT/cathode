@@ -18,14 +18,30 @@ package net.simonvt.cathode.remote.action;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.service.CheckinService;
-import net.simonvt.cathode.remote.TraktTask;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.Flags;
 
-public class CancelCheckin extends TraktTask {
+public class CancelCheckin extends Job {
 
   @Inject transient CheckinService checkinService;
 
-  @Override protected void doTask() {
+  public CancelCheckin() {
+    super(Flags.REQUIRES_AUTH);
+  }
+
+  @Override public String key() {
+    return "CancelCheckin";
+  }
+
+  @Override public int getPriority() {
+    return PRIORITY_5;
+  }
+
+  @Override public boolean requiresWakelock() {
+    return true;
+  }
+
+  @Override public void perform() {
     checkinService.deleteCheckin();
-    postOnSuccess();
   }
 }

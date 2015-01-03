@@ -23,13 +23,13 @@ import android.content.SyncResult;
 import android.os.Bundle;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
-import net.simonvt.cathode.remote.TraktTaskQueue;
-import net.simonvt.cathode.remote.sync.SyncTask;
+import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.jobqueue.JobManager;
 
 public class CathodeSyncAdapter extends AbstractThreadedSyncAdapter {
 
-  @Inject TraktTaskQueue queue;
+  @Inject JobManager jobManager;
 
   public CathodeSyncAdapter(Context context) {
     super(context, true);
@@ -39,7 +39,7 @@ public class CathodeSyncAdapter extends AbstractThreadedSyncAdapter {
   @Override public void onPerformSync(Account account, Bundle extras, String authority,
       ContentProviderClient provider, SyncResult syncResult) {
     if (Settings.isLoggedIn(getContext())) {
-      queue.add(new SyncTask());
+      jobManager.addJob(new SyncJob());
     }
   }
 }

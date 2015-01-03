@@ -38,8 +38,7 @@ import net.simonvt.cathode.database.MutableCursor;
 import net.simonvt.cathode.database.MutableCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.remote.TraktTaskQueue;
-import net.simonvt.cathode.remote.sync.SyncTask;
+import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
@@ -51,6 +50,7 @@ import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.widget.SearchView;
+import net.simonvt.cathode.jobqueue.JobManager;
 
 public class ShowRecommendationsFragment
     extends ToolbarGridFragment<ShowDescriptionAdapter.ViewHolder>
@@ -102,7 +102,7 @@ public class ShowRecommendationsFragment
 
   private ShowsNavigationListener navigationListener;
 
-  @Inject TraktTaskQueue queue;
+  @Inject JobManager jobManager;
 
   private boolean isTablet;
 
@@ -194,7 +194,7 @@ public class ShowRecommendationsFragment
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_refresh:
-        queue.add(new SyncTask());
+        jobManager.addJob(new SyncJob());
         return true;
 
       case R.id.sort_by:

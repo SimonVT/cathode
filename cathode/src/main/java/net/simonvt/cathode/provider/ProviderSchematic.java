@@ -52,7 +52,9 @@ import net.simonvt.schematic.annotation.NotifyUpdate;
 import net.simonvt.schematic.annotation.TableEndpoint;
 import net.simonvt.schematic.annotation.Where;
 
-@ContentProvider(name = "CathodeProvider", authority = BuildConfig.PROVIDER_AUTHORITY,
+@ContentProvider(name = "CathodeProvider",
+    packageName = "net.simonvt.cathode.provider.generated",
+    authority = BuildConfig.PROVIDER_AUTHORITY,
     database = DatabaseSchematic.class)
 public final class ProviderSchematic {
 

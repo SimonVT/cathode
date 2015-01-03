@@ -28,8 +28,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.remote.TraktTaskQueue;
-import net.simonvt.cathode.remote.sync.SyncTask;
+import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
@@ -38,13 +37,14 @@ import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.widget.SearchView;
+import net.simonvt.cathode.jobqueue.JobManager;
 import timber.log.Timber;
 
 public abstract class ShowsFragment<D extends Cursor>
     extends ToolbarGridFragment<ShowsWithNextAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<D>, ShowClickListener {
 
-  @Inject TraktTaskQueue queue;
+  @Inject JobManager jobManager;
 
   protected RecyclerCursorAdapter showsAdapter;
 
@@ -115,7 +115,7 @@ public abstract class ShowsFragment<D extends Cursor>
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_refresh:
-        queue.add(new SyncTask());
+        jobManager.addJob(new SyncJob());
         return true;
 
       default:

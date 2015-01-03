@@ -45,8 +45,8 @@ ext.libraries = [
 
 
   messagebar: 'net.simonvt.messagebar:messagebar:1.0.2',
-  schematic: 'net.simonvt.schematic:schematic:0.5.3',
-  schematicCompiler: 'net.simonvt.schematic:schematic-compiler:0.5.3',
+  schematic: 'net.simonvt.schematic:schematic:0.6.0',
+  schematicCompiler: 'net.simonvt.schematic:schematic-compiler:0.6.0',
 
   gson: 'com.google.code.gson:gson:2.3.1',
 

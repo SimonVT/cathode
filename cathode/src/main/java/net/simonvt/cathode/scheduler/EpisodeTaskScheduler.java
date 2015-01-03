@@ -25,12 +25,12 @@ import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowWrapper;
-import net.simonvt.cathode.remote.action.shows.CheckInEpisodeTask;
-import net.simonvt.cathode.remote.action.shows.EpisodeCollectionTask;
-import net.simonvt.cathode.remote.action.shows.EpisodeRateTask;
-import net.simonvt.cathode.remote.action.shows.EpisodeWatchedTask;
-import net.simonvt.cathode.remote.action.shows.EpisodeWatchlistTask;
-import net.simonvt.cathode.remote.sync.shows.SyncEpisodeTask;
+import net.simonvt.cathode.remote.action.shows.CheckInEpisode;
+import net.simonvt.cathode.remote.action.shows.CollectEpisode;
+import net.simonvt.cathode.remote.action.shows.RateEpisode;
+import net.simonvt.cathode.remote.action.shows.WatchedEpisode;
+import net.simonvt.cathode.remote.action.shows.WatchlistEpisode;
+import net.simonvt.cathode.remote.sync.shows.SyncEpisode;
 import net.simonvt.cathode.util.DateUtils;
 
 public class EpisodeTaskScheduler extends BaseTaskScheduler {
@@ -57,7 +57,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
         final int number = c.getInt(c.getColumnIndex(EpisodeColumns.EPISODE));
         c.close();
 
-        queueTask(new SyncEpisodeTask(traktId, season, number));
+        queue(new SyncEpisode(traktId, season, number));
       }
     });
   }
@@ -91,7 +91,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
         EpisodeWrapper.setWatched(context.getContentResolver(), showId, episodeId, watched,
             watchedAtMillis);
 
-        queuePriorityTask(new EpisodeWatchedTask(traktId, season, number, watched, watchedAt));
+        queue(new WatchedEpisode(traktId, season, number, watched, watchedAt));
       }
     });
   }
@@ -129,7 +129,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
           cv.put(EpisodeColumns.EXPIRES_AT, expiresAt);
           context.getContentResolver().update(Episodes.withId(episodeId), cv, null, null);
 
-          queuePriorityTask(new CheckInEpisodeTask(traktId, message, facebook, twitter, tumblr));
+          queue(new CheckInEpisode(traktId, message, facebook, twitter, tumblr));
         }
       }
     });
@@ -163,8 +163,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
         EpisodeWrapper.setInCollection(context.getContentResolver(), episodeId, inCollection,
             collectedAtMillis);
 
-        queuePriorityTask(
-            new EpisodeCollectionTask(traktId, season, number, inCollection, collectedAt));
+        queue(new CollectEpisode(traktId, season, number, inCollection, collectedAt));
       }
     });
   }
@@ -192,7 +191,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
         EpisodeWrapper.setIsInWatchlist(context.getContentResolver(), episodeId, inWatchlist,
             listeddAtMillis);
 
-        queuePriorityTask(new EpisodeWatchlistTask(traktId, season, number, inWatchlist, listedAt));
+        queue(new WatchlistEpisode(traktId, season, number, inWatchlist, listedAt));
       }
     });
   }
@@ -225,7 +224,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
           cv.put(EpisodeColumns.RATED_AT, ratedAtMillis);
           context.getContentResolver().update(Episodes.withId(episodeId), cv, null, null);
 
-          priorityQueue.add(new EpisodeRateTask(traktId, season, episode, rating, ratedAt));
+          queue(new RateEpisode(traktId, season, episode, rating, ratedAt));
         }
         c.close();
       }

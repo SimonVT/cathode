@@ -32,8 +32,8 @@ import net.simonvt.cathode.api.service.SearchService;
 import net.simonvt.cathode.event.MovieSearchResult;
 import net.simonvt.cathode.event.SearchFailureEvent;
 import net.simonvt.cathode.provider.MovieWrapper;
-import net.simonvt.cathode.remote.TraktTaskQueue;
-import net.simonvt.cathode.remote.sync.movies.SyncMovieTask;
+import net.simonvt.cathode.remote.sync.movies.SyncMovie;
+import net.simonvt.cathode.jobqueue.JobManager;
 import retrofit.RetrofitError;
 
 public class MovieSearchHandler {
@@ -91,7 +91,7 @@ public class MovieSearchHandler {
 
     @Inject SearchService searchService;
 
-    @Inject TraktTaskQueue queue;
+    @Inject JobManager jobManager;
 
     private Context context;
 
@@ -124,7 +124,7 @@ public class MovieSearchHandler {
                 MovieWrapper.updateOrInsertMovie(context.getContentResolver(), movie);
             movieIds.add(movieId);
 
-            if (!exists) queue.add(new SyncMovieTask(traktId));
+            if (!exists) jobManager.addJob(new SyncMovie(traktId));
           }
         }
 

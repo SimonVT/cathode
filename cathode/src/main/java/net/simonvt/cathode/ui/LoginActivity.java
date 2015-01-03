@@ -42,9 +42,9 @@ import net.simonvt.cathode.api.enumeration.GrantType;
 import net.simonvt.cathode.api.service.AuthorizationService;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.event.MessageEvent;
-import net.simonvt.cathode.remote.TraktTaskQueue;
-import net.simonvt.cathode.remote.sync.SyncTask;
+import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.jobqueue.JobManager;
 import retrofit.RetrofitError;
 import timber.log.Timber;
 
@@ -54,7 +54,7 @@ public class LoginActivity extends Activity {
 
   static final int REQUEST_OAUTH = 1;
 
-  @Inject TraktTaskQueue queue;
+  @Inject JobManager jobManager;
 
   @Inject Bus bus;
 
@@ -125,7 +125,7 @@ public class LoginActivity extends Activity {
     startActivity(home);
     finish();
 
-    queue.add(new SyncTask());
+    jobManager.addJob(new SyncJob());
   }
 
   @Subscribe public void onFetchingTokenFailedEvent(FetchingTokenFailedEvent event) {

@@ -19,8 +19,8 @@ import android.content.Context;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
-import net.simonvt.cathode.remote.action.shows.SeasonCollectionTask;
-import net.simonvt.cathode.remote.action.shows.SeasonWatchedTask;
+import net.simonvt.cathode.remote.action.shows.CollectSeason;
+import net.simonvt.cathode.remote.action.shows.WatchedSeason;
 
 public class SeasonTaskScheduler extends BaseTaskScheduler {
 
@@ -43,7 +43,7 @@ public class SeasonTaskScheduler extends BaseTaskScheduler {
         final int seasonNumber =
             SeasonWrapper.getSeasonNumber(context.getContentResolver(), seasonId);
 
-        queuePriorityTask(new SeasonWatchedTask(traktId, seasonNumber, watched, watchedAt));
+        queue(new WatchedSeason(traktId, seasonNumber, watched, watchedAt));
         SeasonWrapper.setWatched(context.getContentResolver(), showId, seasonId, watched,
             watchedAtMillis);
       }
@@ -65,8 +65,7 @@ public class SeasonTaskScheduler extends BaseTaskScheduler {
         final int seasonNumber =
             SeasonWrapper.getSeasonNumber(context.getContentResolver(), seasonId);
 
-        queuePriorityTask(
-            new SeasonCollectionTask(traktId, seasonNumber, inCollection, collectedAt));
+        queue(new CollectSeason(traktId, seasonNumber, inCollection, collectedAt));
         SeasonWrapper.setIsInCollection(context.getContentResolver(), seasonId, inCollection,
             collectedAtMillis);
       }

@@ -38,7 +38,9 @@ import net.simonvt.schematic.annotation.ExecOnCreate;
 import net.simonvt.schematic.annotation.OnUpgrade;
 import net.simonvt.schematic.annotation.Table;
 
-@Database(className = "CathodeDatabase", fileName = "cathode.db",
+@Database(className = "CathodeDatabase",
+    packageName = "net.simonvt.cathode.provider.generated",
+    fileName = "cathode.db",
     version = DatabaseSchematic.DATABASE_VERSION)
 public final class DatabaseSchematic {
 

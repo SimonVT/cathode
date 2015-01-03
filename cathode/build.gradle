@@ -85,12 +85,6 @@ def buildTime() {
   return date.format(new Date())
 }
 
-apt {
-  arguments {
-    schematicOutPackage 'net.simonvt.cathode.provider.generated'
-  }
-}
-
 checkstyle {
   configFile project.file('../config/checkstyle/checkstyle.xml')
   showViolations true

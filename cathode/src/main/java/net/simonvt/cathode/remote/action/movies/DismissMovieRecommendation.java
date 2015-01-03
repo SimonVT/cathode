@@ -17,20 +17,33 @@ package net.simonvt.cathode.remote.action.movies;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.service.RecommendationsService;
-import net.simonvt.cathode.remote.TraktTask;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.Flags;
 
-public class DismissMovieRecommendation extends TraktTask {
+public class DismissMovieRecommendation extends Job {
 
   @Inject transient RecommendationsService recommendationsService;
 
   private long traktId;
 
   public DismissMovieRecommendation(long traktId) {
+    super(Flags.REQUIRES_AUTH);
     this.traktId = traktId;
   }
 
-  @Override protected void doTask() {
+  @Override public String key() {
+    return "DismissShowRecommendation" + "&traktId=" + traktId;
+  }
+
+  @Override public int getPriority() {
+    return PRIORITY_5;
+  }
+
+  @Override public boolean requiresWakelock() {
+    return true;
+  }
+
+  @Override public void perform() {
     recommendationsService.dismissMovie(traktId);
-    postOnSuccess();
   }
 }
