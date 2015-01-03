@@ -29,15 +29,10 @@
       app:maxWidth="460dp"
       android:padding="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="You need to log in"/>
-
     <Button
         android:id="@+id/login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Click to log in"/>
+        android:text="@string/login_sign_in"/>
   </net.simonvt.cathode.widget.MaxSizeLinearLayout>
 </ScrollView>

@@ -18,12 +18,6 @@
   <string name="dashclock_title">@string/app_name</string>
   <string name="dashclock_description">Display the next upcoming episode</string>
 
-  <string name="username">Username</string>
-  <string name="password">Password</string>
-  <string name="email">E-mail</string>
-  <string name="login">Login</string>
-  <string name="create_account">Create account</string>
-
   <string name="retry">Retry</string>
   <string name="cancel">Cancel</string>
 
@@ -146,11 +140,6 @@
 
   <!-- Login fragment -->
   <string name="login_sign_in">Sign in to Trakt</string>
-  <string name="login_create_new">Check to create a Trakt account</string>
-  <string name="login_verify_fail">Unable to verify login with Trakt</string>
-  <string name="create_user_failed">Creating user failed</string>
-  <string name="wrong_password">Wrong username or password</string>
-  <string name="login_success">Successfully logged in</string>
 
   <!-- Navigation fragment -->
   <string name="navigation_title_shows">Shows</string>
