@@ -39,8 +39,8 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.module.AppModule;
-import net.simonvt.cathode.remote.PriorityQueue;
 import net.simonvt.cathode.remote.TraktTaskQueue;
+import net.simonvt.cathode.remote.TraktTaskService;
 import net.simonvt.cathode.remote.sync.SyncUserSettingsTask;
 import net.simonvt.cathode.service.AccountAuthenticator;
 import net.simonvt.cathode.settings.Settings;
@@ -103,8 +103,8 @@ public class CathodeApp extends Application {
         removeAccount(this);
       }
       if (currentVersion < 20002) {
-        final boolean loggedIn = settings.getBoolean(Settings.TRAKT_LOGGED_IN, false);
-        final String token = settings.getString(Settings.TRAKT_TOKEN, null);
+        String token = settings.getString(Settings.TRAKT_TOKEN, null);
+        final boolean loggedIn = token != null;
         SharedPreferences.Editor editor = settings.edit();
         editor.clear();
         editor.apply();
@@ -117,8 +117,11 @@ public class CathodeApp extends Application {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
           @Override public void run() {
-            TraktTaskQueue queue = objectGraph.get(TraktTaskQueue.class);
-            queue.add(new SyncUserSettingsTask());
+            if (loggedIn) {
+              TraktTaskQueue queue = objectGraph.get(TraktTaskQueue.class);
+              queue.clear();
+              queue.add(new SyncUserSettingsTask());
+            }
           }
         });
       }
