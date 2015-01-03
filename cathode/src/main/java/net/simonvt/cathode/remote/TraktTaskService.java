@@ -225,11 +225,15 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
             }
           });
         } catch (RetrofitError e) {
-          RequestError error = (RequestError) e.getBodyAs(RequestError.class);
-          if (error != null) {
-            Timber.d(e, "Error: " + error.getError() + " - " + error.getErrorDescription());
-          } else {
-            Timber.d(e, "Request failed");
+          try {
+            RequestError error = (RequestError) e.getBodyAs(RequestError.class);
+            if (error != null) {
+              Timber.d(e, "Error: " + error.getError() + " - " + error.getErrorDescription());
+            } else {
+              Timber.d(e, "Request failed");
+            }
+          } catch (Throwable t) {
+            // No body, ignore
           }
 
           MAIN_HANDLER.post(new Runnable() {
