@@ -25,7 +25,7 @@ public class CathodeDatabaseTest {
     ContentValues seasonCV = new ContentValues();
     seasonCV.put(SeasonColumns.SEASON, 1);
 
-    final long seasonId = db.insert(Tables.SEASONS, null, seasonCV);
+    final long seasonId = db.insertOrThrow(Tables.SEASONS, null, seasonCV);
 
     Cursor seasons = db.query(Tables.SEASONS, null, null, null, null, null, null);
     assertThat(seasons.getCount()).isEqualTo(1);
@@ -45,6 +45,8 @@ public class CathodeDatabaseTest {
 
     episodes = db.query(Tables.EPISODES, null, null, null, null, null, null);
     assertThat(episodes.getCount()).isEqualTo(0);
+
+    db.close();
   }
 
   @Test public void testShowDeleteTrigger() throws Exception {
@@ -82,5 +84,7 @@ public class CathodeDatabaseTest {
 
     episodes = db.query(Tables.EPISODES, null, null, null, null, null, null);
     assertThat(episodes.getCount()).isEqualTo(0);
+
+    db.close();
   }
 }

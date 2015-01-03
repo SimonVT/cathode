@@ -17,8 +17,6 @@ package net.simonvt.cathode.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import com.squareup.otto.Bus;
-import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 
 public abstract class BaseHomeActivity extends ActionBarActivity {

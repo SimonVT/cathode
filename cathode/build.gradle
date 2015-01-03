@@ -114,3 +114,12 @@ if (project.hasProperty('cathodeKeyPassword')) {
 if (project.hasProperty('cathodeKeyAlias')) {
   android.signingConfigs.release.keyAlias = cathodeKeyAlias
 }
+
+def ci = System.getenv('CI')
+if (ci != null && ci == 'travis') {
+  printf 'Running on Travis-CI'
+  android.signingConfigs.release.storeFile = android.signingConfigs.debug.storeFile
+  android.signingConfigs.release.storePassword = android.signingConfigs.debug.storePassword
+  android.signingConfigs.release.keyPassword = android.signingConfigs.debug.keyPassword
+  android.signingConfigs.release.keyAlias = android.signingConfigs.debug.keyAlias
+}
