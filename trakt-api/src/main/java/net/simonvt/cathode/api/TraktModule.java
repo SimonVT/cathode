@@ -51,7 +51,6 @@ public class TraktModule {
         .setConverter(new GsonConverter(gson))
         .setRequestInterceptor(interceptor)
         .setErrorHandler(errorHandler)
-        .setLogLevel(RestAdapter.LogLevel.FULL)
         .build();
   }
 
