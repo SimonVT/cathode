@@ -65,6 +65,9 @@ public class UiController implements ShowsNavigationListener, MoviesNavigationLi
     Timber.d("[destroy]");
   }
 
+  public void onPause() {
+  }
+
   public Bundle onSaveInstanceState() {
     return null;
   }

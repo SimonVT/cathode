@@ -223,6 +223,11 @@ public class PhoneController extends UiController {
     return false;
   }
 
+  @Override public void onPause() {
+    super.onPause();
+    stack.executePendingTransactions();
+  }
+
   @Override public Bundle onSaveInstanceState() {
     Bundle outState = new Bundle();
     stack.saveState(outState);

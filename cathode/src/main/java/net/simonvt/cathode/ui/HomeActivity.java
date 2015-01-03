@@ -229,6 +229,7 @@ public class HomeActivity extends BaseActivity
   @Override protected void onPause() {
     handler.removeCallbacks(syncRunnable);
     bus.unregister(this);
+    activeController.onPause();
     super.onPause();
   }
 
