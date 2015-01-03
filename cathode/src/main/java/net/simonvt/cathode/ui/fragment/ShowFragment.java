@@ -24,6 +24,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -453,7 +454,7 @@ public class ShowFragment extends ProgressFragment {
     if (cursor == null || !cursor.moveToFirst()) return;
 
     String title = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
-    if (!title.equals(showTitle)) {
+    if (!TextUtils.equals(title, showTitle)) {
       showTitle = title;
       updateTitle();
     }
