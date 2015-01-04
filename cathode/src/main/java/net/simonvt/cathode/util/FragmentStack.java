@@ -107,7 +107,7 @@ public final class FragmentStack {
     fragmentTransaction = null;
   }
 
-  public void saveState(Bundle outState) {
+  public Bundle saveState() {
     executePendingTransactions();
 
     final int stackSize = stack.size();
@@ -118,7 +118,9 @@ public final class FragmentStack {
       stackTags[i++] = f.getTag();
     }
 
+    Bundle outState = new Bundle();
     outState.putStringArray(STATE_STACK, stackTags);
+    return outState;
   }
 
   public void restoreState(Bundle inState) {

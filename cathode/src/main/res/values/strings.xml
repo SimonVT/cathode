@@ -34,8 +34,8 @@
   <string name="lost_connection">Synchronization failed.</string>
   <string name="retry_in">Synchronization failed. Retrying in %d minutes.</string>
 
-  <string name="auth_failed">Trakt login failed</string>
-  <string name="auth_failed_desc">Please enter password for user %s</string>
+  <string name="auth_failed">Trakt authorization failed</string>
+  <string name="auth_failed_desc">Touch to re-authorize with Trakt</string>
 
   <string name="logout_title">Log out</string>
   <string name="logout_message">Are you sure you want to log out?</string>
@@ -138,8 +138,11 @@
   <string name="shows_loading_trending">Trending shows are loading…</string>
   <string name="movies_loading_trending">Trending movies are loading…</string>
 
-  <!-- Login fragment -->
+  <!-- Login activity -->
   <string name="login_sign_in">Sign in to Trakt</string>
+  <string name="login_title">@string/login_sign_in</string>
+  <string name="login_failed">Logging in failed. Please try again.</string>
+  <string name="logging_in">Logging in…</string>
 
   <!-- Navigation fragment -->
   <string name="navigation_title_shows">Shows</string>

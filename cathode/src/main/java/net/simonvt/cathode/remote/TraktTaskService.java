@@ -25,7 +25,6 @@ import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -39,23 +38,14 @@ import android.text.format.DateUtils;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
 import javax.inject.Inject;
-import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.UserToken;
-import net.simonvt.cathode.api.entity.AccessToken;
-import net.simonvt.cathode.api.entity.RequestError;
-import net.simonvt.cathode.api.entity.TokenRequest;
-import net.simonvt.cathode.api.entity.UserSettings;
-import net.simonvt.cathode.api.enumeration.GrantType;
-import net.simonvt.cathode.api.service.AuthorizationService;
-import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.event.SyncEvent;
 import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.HomeActivity;
-import retrofit.RetrofitError;
 import timber.log.Timber;
 
 public class TraktTaskService extends Service implements TraktTask.TaskCallback {
@@ -67,10 +57,6 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
 
   public static final String ACTION_LOGOUT = "net.simonvt.cathode.sync.TraktTaskService.LOGOUT";
 
-  public static final String ACTION_GET_TOKEN =
-      "net.simonvt.cathode.sync.TraktTaskService.GET_TOKEN";
-  public static final String EXTRA_CODE = "net.simonvt.cathode.sync.TraktTaskService.CODE";
-
   private static final int MAX_RETRY_DELAY = 60;
 
   private static final int NOTIFICATION_ID = 42;
@@ -81,9 +67,6 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
 
   @Inject TraktTaskQueue queue;
   @Inject @PriorityQueue TraktTaskQueue priorityQueue;
-
-  @Inject AuthorizationService authorizationService;
-  @Inject UsersService usersService;
 
   @Inject UserToken userToken;
 
@@ -170,9 +153,6 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     if (ACTION_LOGOUT.equals(action)) {
       Timber.tag(TAG).i("Logging out");
       logout();
-    } else if (ACTION_GET_TOKEN.equals(action)) {
-      String code = intent.getStringExtra(EXTRA_CODE);
-      getToken(code);
     } else {
       executeNext();
     }
@@ -187,65 +167,6 @@ public class TraktTaskService extends Service implements TraktTask.TaskCallback 
     bus.post(new SyncEvent(false));
     releaseLock(this);
     super.onDestroy();
-  }
-
-  private void getToken(final String code) {
-    running = true;
-
-    new Thread(new Runnable() {
-      @Override public void run() {
-        try {
-          final AccessToken token = authorizationService.getToken(
-              new TokenRequest(code, BuildConfig.TRAKT_CLIENT_ID, BuildConfig.TRAKT_SECRET,
-                  BuildConfig.TRAKT_REDIRECT_URL, GrantType.AUTHORIZATION_CODE));
-
-          final String accessToken = token.getAccessToken();
-
-          final SharedPreferences settings =
-              PreferenceManager.getDefaultSharedPreferences(TraktTaskService.this);
-          settings.edit().putString(Settings.TRAKT_TOKEN, accessToken).apply();
-
-          userToken.setToken(accessToken);
-
-          final UserSettings userSettings = usersService.getUserSettings();
-
-          MAIN_HANDLER.post(new Runnable() {
-            @Override public void run() {
-              final String oldUsername = settings.getString(Settings.PROFILE_USERNAME, null);
-              final String newUsername = userSettings.getUser().getUsername();
-              if (newUsername != null && !newUsername.equals(oldUsername)) {
-                Settings.clearProfile(TraktTaskService.this);
-                // TODO: Clear oauth tasks
-              }
-
-              Settings.updateProfile(TraktTaskService.this, userSettings);
-
-              running = false;
-              executeNext();
-            }
-          });
-        } catch (RetrofitError e) {
-          try {
-            RequestError error = (RequestError) e.getBodyAs(RequestError.class);
-            if (error != null) {
-              Timber.d(e, "Error: " + error.getError() + " - " + error.getErrorDescription());
-            } else {
-              Timber.d(e, "Request failed");
-            }
-          } catch (Throwable t) {
-            // No body, ignore
-          }
-
-          MAIN_HANDLER.post(new Runnable() {
-            @Override public void run() {
-              // TODO: Retry later
-              running = false;
-              stopSelf();
-            }
-          });
-        }
-      }
-    }).start();
   }
 
   private void logout() {

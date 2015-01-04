@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2014 Simon Vig Therkildsen
+  ~ Copyright (C) 2015 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -14,29 +14,30 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/drawer"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+  <include layout="@layout/toolbar"/>
 
   <FrameLayout
       android:layout_width="match_parent"
-      android:layout_height="match_parent">
+      android:layout_height="0dp"
+      android:layout_weight="1">
 
-    <FrameLayout
-        android:id="@+id/controller_content"
+    <WebView
+        android:id="@+id/webview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <FrameLayout
-        android:id="@+id/watching_parent"
+    <ProgressBar
+        android:id="@+id/progress_top"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-      <include layout="@layout/view_watching"/>
-    </FrameLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-8dp"
+        android:indeterminate="true"
+        android:max="100"
+        style="@android:style/Widget.Holo.ProgressBar.Horizontal"/>
   </FrameLayout>
-
-  <include layout="@layout/drawer"/>
-</android.support.v4.widget.DrawerLayout>
+</LinearLayout>

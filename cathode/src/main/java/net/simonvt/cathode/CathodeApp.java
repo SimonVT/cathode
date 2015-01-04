@@ -17,6 +17,7 @@ package net.simonvt.cathode;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -40,11 +41,13 @@ import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.module.AppModule;
 import net.simonvt.cathode.remote.TraktTaskQueue;
-import net.simonvt.cathode.remote.TraktTaskService;
+import net.simonvt.cathode.remote.sync.SyncTask;
+import net.simonvt.cathode.remote.sync.SyncUserActivityTask;
 import net.simonvt.cathode.remote.sync.SyncUserSettingsTask;
 import net.simonvt.cathode.service.AccountAuthenticator;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.HomeActivity;
+import net.simonvt.cathode.ui.LoginActivity;
 import net.simonvt.cathode.util.DateUtils;
 import timber.log.Timber;
 
@@ -58,9 +61,16 @@ public class CathodeApp extends Application {
 
   private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
+  private static final long SYNC_DELAY = 15 * DateUtils.MINUTE_IN_MILLIS;
+
   private ObjectGraph objectGraph;
 
   @Inject Bus bus;
+
+  @Inject TraktTaskQueue queue;
+
+  private int homeActivityResumedCount;
+  private long lastSync;
 
   @Override public void onCreate() {
     super.onCreate();
@@ -87,6 +97,67 @@ public class CathodeApp extends Application {
     objectGraph.inject(this);
 
     bus.register(this);
+
+    // TODO: Perform periodic sync when Activities are resumed
+    registerActivityLifecycleCallbacks(new SimpleActivityLifecycleCallbacks() {
+
+      @Override public void onActivityResumed(Activity activity) {
+        if (activity instanceof HomeActivity) {
+          homeResumed();
+        }
+      }
+
+      @Override public void onActivityPaused(Activity activity) {
+        if (activity instanceof HomeActivity) {
+          homePaused();
+        }
+      }
+    });
+  }
+
+  private Runnable syncRunnable = new Runnable() {
+    @Override public void run() {
+      Timber.d("Performing periodic sync");
+      SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(CathodeApp.this);
+      final long lastFullSync = settings.getLong(Settings.FULL_SYNC, 0);
+      final long currentTime = System.currentTimeMillis();
+      if (lastFullSync + 24 * DateUtils.DAY_IN_MILLIS < currentTime) {
+        queue.add(new SyncTask());
+      } else {
+        // TODO: queue.add(new SyncActivityStreamTask());
+        queue.add(new SyncUserActivityTask());
+      }
+      lastSync = System.currentTimeMillis();
+      MAIN_HANDLER.postDelayed(this, SYNC_DELAY);
+    }
+  };
+
+  private void homeResumed() {
+    if (homeActivityResumedCount > 0) {
+      final String message = "More than one HomeActivity resumed: " + homeActivityResumedCount;
+      Timber.e(new Exception(message), message);
+    }
+
+    homeActivityResumedCount++;
+
+    if (homeActivityResumedCount == 1) {
+      Timber.d("Starting periodic sync");
+      final long currentTime = System.currentTimeMillis();
+      if (lastSync + SYNC_DELAY < currentTime) {
+        syncRunnable.run();
+      } else {
+        final long delay = Math.max(SYNC_DELAY - (currentTime - lastSync), 0);
+        MAIN_HANDLER.postDelayed(syncRunnable, delay);
+      }
+    }
+  }
+
+  private void homePaused() {
+    homeActivityResumedCount--;
+    if (homeActivityResumedCount == 0) {
+      Timber.d("Pausing periodic sync");
+      MAIN_HANDLER.removeCallbacks(syncRunnable);
+    }
   }
 
   private void upgrade() {
@@ -134,12 +205,13 @@ public class CathodeApp extends Application {
     Timber.tag(TAG).i("onAuthFailure");
     if (!accountExists(this)) return; // User has logged out, ignore.
 
-    Account account = getAccount(this);
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+    settings.edit().putBoolean(Settings.TRAKT_LOGGED_IN, false).apply();
 
-    Intent intent = new Intent(this, HomeActivity.class);
+    Intent intent = new Intent(this, LoginActivity.class);
     intent.setAction(HomeActivity.ACTION_LOGIN);
-    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
     PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
 
@@ -147,9 +219,10 @@ public class CathodeApp extends Application {
         .setSmallIcon(R.drawable.ic_noti_error)
         .setTicker(getString(R.string.auth_failed))
         .setContentTitle(getString(R.string.auth_failed))
-        .setContentText(getString(R.string.auth_failed_desc, account.name))
+        .setContentText(getString(R.string.auth_failed_desc))
         .setContentIntent(pi)
-        .setPriority(Notification.PRIORITY_HIGH);
+        .setPriority(Notification.PRIORITY_HIGH)
+        .setAutoCancel(true);
 
     NotificationManager nm = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
     nm.notify(AUTH_NOTIFICATION, builder.build());

@@ -90,7 +90,7 @@ import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.service.CathodeSyncAdapter;
 import net.simonvt.cathode.ui.HomeActivity;
-import net.simonvt.cathode.ui.PhoneController;
+import net.simonvt.cathode.ui.LoginActivity;
 import net.simonvt.cathode.ui.adapter.MovieRecommendationsAdapter;
 import net.simonvt.cathode.ui.adapter.MovieSearchAdapter;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
@@ -105,7 +105,6 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.fragment.EpisodeFragment;
-import net.simonvt.cathode.ui.fragment.LoginFragment;
 import net.simonvt.cathode.ui.fragment.MovieCollectionFragment;
 import net.simonvt.cathode.ui.fragment.MovieFragment;
 import net.simonvt.cathode.ui.fragment.MovieRecommendationsFragment;
@@ -144,10 +143,10 @@ import timber.log.Timber;
         ShowTaskScheduler.class, SearchTaskScheduler.class,
 
         // Activities
-        HomeActivity.class,
+        HomeActivity.class, LoginActivity.class, LoginActivity.TokenTask.class,
 
         // Fragments
-        SearchShowFragment.class, EpisodeFragment.class, LoginFragment.class, LogoutDialog.class,
+        SearchShowFragment.class, EpisodeFragment.class, LogoutDialog.class,
         MovieCollectionFragment.class, MovieFragment.class, MovieRecommendationsFragment.class,
         MovieWatchlistFragment.class, SearchMovieFragment.class, SeasonFragment.class,
         ShowFragment.class, ShowsCollectionFragment.class, ShowRecommendationsFragment.class,
@@ -190,8 +189,8 @@ import timber.log.Timber;
         SyncUpdatedShows.class, SyncPersonTask.class,
 
         // Misc
-        PhoneController.class, ShowSearchHandler.class, ShowSearchHandler.SearchThread.class,
-        MovieSearchHandler.class, MovieSearchHandler.SearchThread.class
+        ShowSearchHandler.class, ShowSearchHandler.SearchThread.class, MovieSearchHandler.class,
+        MovieSearchHandler.SearchThread.class
     })
 public class AppModule {
 

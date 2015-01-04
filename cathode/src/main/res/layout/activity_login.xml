@@ -14,16 +14,19 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:layout_gravity="center"
+    android:gravity="center">
 
   <net.simonvt.cathode.widget.MaxSizeLinearLayout
+      android:id="@+id/buttonContainer"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_gravity="center_horizontal"
+      android:layout_gravity="center"
       android:orientation="vertical"
       android:gravity="center"
       app:maxWidth="460dp"
@@ -35,4 +38,25 @@
         android:layout_height="wrap_content"
         android:text="@string/login_sign_in"/>
   </net.simonvt.cathode.widget.MaxSizeLinearLayout>
-</ScrollView>
+
+  <LinearLayout
+      android:id="@+id/progressContainer"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:gravity="center"
+      android:orientation="vertical"
+      android:visibility="gone"
+      tools:visibility="visible">
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/progressBarStyle"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/logging_in"/>
+  </LinearLayout>
+</FrameLayout>

@@ -30,6 +30,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
+import com.squareup.otto.Bus;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +39,7 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.MutableCursor;
 import net.simonvt.cathode.database.MutableCursorLoader;
+import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
@@ -158,6 +160,8 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
     toolbar.inflateMenu(R.menu.fragment_shows_upcoming);
     toolbar.getMenu().findItem(R.id.menu_hidden).setChecked(showHidden);
 
+    toolbar.getMenu().add(10, 10, 10, "WAT");
+
     final MenuItem searchItem = toolbar.getMenu().findItem(R.id.menu_search);
     SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
     searchView.setAdapter(new ShowSuggestionAdapter(searchView.getContext()));
@@ -185,8 +189,14 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
     });
   }
 
+  @Inject Bus bus;
+
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
+      case 10:
+        bus.post(new AuthFailedEvent());
+        return true;
+
       case R.id.menu_hidden:
         showHidden = !showHidden;
         settings.edit().putBoolean(Settings.SHOW_HIDDEN, showHidden).apply();

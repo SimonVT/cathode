@@ -20,10 +20,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-  <FrameLayout
-      android:id="@+id/content"
+  <android.support.v4.widget.DrawerLayout
+      android:id="@+id/drawer"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"/>
+      android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+      <FrameLayout
+          android:id="@+id/content"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"/>
+
+      <FrameLayout
+          android:id="@+id/watching_parent"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+        <include layout="@layout/view_watching"/>
+      </FrameLayout>
+    </FrameLayout>
+
+    <include layout="@layout/drawer"/>
+  </android.support.v4.widget.DrawerLayout>
 
   <ProgressBar
       android:id="@+id/progress_top"
