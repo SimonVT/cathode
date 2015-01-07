@@ -148,7 +148,7 @@ public class CircularProgressIndicator extends View {
 
     final float textX = width / 2 - textWidth / 2;
     final float textY = height / 2 + textBounds.height() / 2;
-    canvas.drawText(String.valueOf(value), textX, textY, textPaint);
+    canvas.drawText(valueString, textX, textY, textPaint);
   }
 
   @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
