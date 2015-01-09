@@ -92,19 +92,23 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
     }
     addItemDecorations(recyclerView);
 
-    if (emptyText != null) {
-      empty.setText(emptyText);
+    if (empty != null) {
+      if (emptyText != null) {
+        empty.setText(emptyText);
+      }
+
+      if (adapter != null && adapter.getItemCount() > 0) {
+        empty.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
+      } else {
+        empty.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+      }
     }
 
-    if (adapter != null && adapter.getItemCount() > 0) {
-      empty.setVisibility(View.GONE);
-      recyclerView.setVisibility(View.VISIBLE);
-    } else {
-      empty.setVisibility(View.VISIBLE);
-      recyclerView.setVisibility(View.GONE);
+    if (adapter != null) {
+      recyclerView.setAdapter(adapter);
     }
-
-    if (adapter != null) recyclerView.setAdapter(adapter);
 
     view.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
   }
@@ -238,12 +242,14 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
         }
 
         adapter.registerAdapterDataObserver(adapterObserver);
-        if (adapter.getItemCount() > 0) {
-          empty.setVisibility(View.GONE);
-          recyclerView.setVisibility(View.VISIBLE);
-        } else {
-          empty.setVisibility(View.VISIBLE);
-          recyclerView.setVisibility(View.GONE);
+        if (empty != null) {
+          if (adapter.getItemCount() > 0) {
+            empty.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+          } else {
+            empty.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+          }
         }
       } else if (recyclerView != null) {
         changeState(STATE_PROGRESS_VISIBLE, true);
