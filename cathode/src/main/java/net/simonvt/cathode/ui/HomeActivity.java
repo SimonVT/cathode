@@ -510,10 +510,10 @@ public class HomeActivity extends BaseActivity
           watchingMovie.getColumnIndex(DatabaseContract.MovieColumns.TITLE));
       final String poster = watchingMovie.getString(
           watchingMovie.getColumnIndex(DatabaseContract.MovieColumns.POSTER));
-      final long startTime = watchingShow.getLong(
-          watchingShow.getColumnIndex(DatabaseContract.MovieColumns.STARTED_AT));
-      final long endTime = watchingShow.getLong(
-          watchingShow.getColumnIndex(DatabaseContract.MovieColumns.EXPIRES_AT));
+      final long startTime = watchingMovie.getLong(
+          watchingMovie.getColumnIndex(DatabaseContract.MovieColumns.STARTED_AT));
+      final long endTime = watchingMovie.getLong(
+          watchingMovie.getColumnIndex(DatabaseContract.MovieColumns.EXPIRES_AT));
 
       watchingView.watchingMovie(id, movie, poster, startTime, endTime);
     } else {
