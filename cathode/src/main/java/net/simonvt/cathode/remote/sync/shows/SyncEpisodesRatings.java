@@ -40,7 +40,7 @@ public class SyncEpisodesRatings extends TraktTask {
   @Inject transient SyncService syncService;
 
   @Override protected void doTask() {
-    List<RatingItem> ratings = syncService.getSeasonRatings();
+    List<RatingItem> ratings = syncService.getEpisodeRatings();
 
     Cursor episodes = getContentResolver().query(Episodes.EPISODES, new String[] {
         EpisodeColumns.ID,
