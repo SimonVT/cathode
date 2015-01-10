@@ -87,8 +87,9 @@ public class ShowFragment extends ProgressFragment {
   };
 
   private static final String[] EPISODE_PROJECTION = new String[] {
-      EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.SCREENSHOT, EpisodeColumns.FIRST_AIRED,
-      EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
+      EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.SCREENSHOT,
+      EpisodeColumns.FIRST_AIRED, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
+      EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN,
   };
 
   private static final String[] GENRES_PROJECTION = new String[] {
@@ -552,7 +553,8 @@ public class ShowFragment extends ProgressFragment {
       final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
       toWatchHolder.episodeEpisode.setText("S" + season + "E" + episode);
 
-      final String screenshotUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
+      final String screenshotUrl =
+          cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
       toWatchHolder.episodeScreenshot.setImage(screenshotUrl);
 
       String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
@@ -595,7 +597,8 @@ public class ShowFragment extends ProgressFragment {
         final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
         lastWatchedHolder.episodeEpisode.setText("S" + season + "E" + episode);
 
-        final String screenshotUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
+        final String screenshotUrl =
+            cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
         lastWatchedHolder.episodeScreenshot.setImage(screenshotUrl);
       } else {
         lastWatched.setVisibility(toWatchId == -1 ? View.GONE : View.INVISIBLE);
@@ -628,7 +631,8 @@ public class ShowFragment extends ProgressFragment {
       final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
       toCollectHolder.episodeEpisode.setText("S" + season + "E" + episode);
 
-      final String screenshotUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
+      final String screenshotUrl =
+          cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
       toCollectHolder.episodeScreenshot.setImage(screenshotUrl);
     } else {
       toCollect.setVisibility(View.GONE);
@@ -654,7 +658,8 @@ public class ShowFragment extends ProgressFragment {
         lastCollectedHolder.episodeEpisode.setText("S" + season + "E" + episode);
 
         // TODO: Fanart? Is SCREEN missing?
-        final String screenshotUrl = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
+        final String screenshotUrl =
+            cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
         lastCollectedHolder.episodeScreenshot.setImage(screenshotUrl);
       } else {
         lastCollectedId = -1;

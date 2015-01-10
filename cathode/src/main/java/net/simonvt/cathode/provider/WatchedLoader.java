@@ -70,7 +70,7 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
       }
 
       toWatch = getContext().getContentResolver()
-          .query(Episodes.fromShow(showId), null, EpisodeColumns.WATCHED
+          .query(Episodes.fromShow(showId), projection, EpisodeColumns.WATCHED
                   + "=0 AND "
                   + EpisodeColumns.FIRST_AIRED
                   + ">"
