@@ -89,27 +89,28 @@ public abstract class RecyclerCursorAdapter<T extends RecyclerView.ViewHolder>
       notifyItemRangeInserted(0, itemCount);
     } else {
       final int oldItemCount = oldItemIds.size();
+      final int newItemCount = newItemIds.size();
 
-      for (int i = 0; i < itemCount; i++) {
-        final long id = newItemIds.get(i);
-        final int oldPosition = oldItemIds.indexOf(id);
+      for (int i = oldItemCount - 1; i >= 0; i--) {
+        final long newPos = newItemIds.indexOf(oldItemIds.get(i));
+        if (newPos == -1) {
+          notifyItemRemoved(i);
+          oldItemIds.remove(i);
+        }
+      }
 
-        if (oldPosition < 0) {
-          notifyItemInserted(i);
-          oldItemIds.add(i, -1L);
-        } else {
-          if (i > oldPosition) {
-            throw new RuntimeException(
-                "Something is wrong, old position should always be >= current position");
-          }
-
-          final int removeCount = oldPosition - i;
-          if (removeCount > 0) {
-            notifyItemRangeRemoved(i, removeCount);
-            for (int j = i + removeCount - 1; j >= i; j--) {
-              oldItemIds.remove(j);
-            }
-          }
+      for (int newPos = 0; newPos < newItemCount; newPos++) {
+        final long id = newItemIds.get(newPos);
+        final int oldPos = oldItemIds.indexOf(id);
+        if (oldPos == -1) {
+          notifyItemInserted(newPos);
+          oldItemIds.add(newPos, Long.MIN_VALUE);
+        } else if (newPos == oldPos) {
+          notifyItemChanged(newPos);
+        } else if (newPos != oldPos) {
+          notifyItemMoved(oldPos, newPos);
+          oldItemIds.remove(oldPos);
+          oldItemIds.add(newPos, Long.MIN_VALUE);
         }
       }
 
