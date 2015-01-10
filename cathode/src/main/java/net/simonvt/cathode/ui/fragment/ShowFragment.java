@@ -486,7 +486,19 @@ public class ShowFragment extends ProgressFragment {
     collection.setVisibility(inCollectionCount > 0 ? View.VISIBLE : View.GONE);
     watchlist.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
 
-    this.airTime.setText(airDay + " " + airTime + ", " + network);
+    String airTimeString = null;
+    if (airDay != null && airTime != null) {
+      airTimeString = airDay + " " + airTime;
+    }
+    if (network != null) {
+      if (airTimeString != null) {
+        airTimeString += ", " + network;
+      } else {
+        airTimeString = network;
+      }
+    }
+
+    this.airTime.setText(airTimeString);
     this.certification.setText(certification);
     this.overview.setText(overview);
 
