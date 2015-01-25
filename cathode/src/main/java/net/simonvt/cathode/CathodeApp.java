@@ -48,6 +48,7 @@ import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.service.AccountAuthenticator;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.LoginActivity;
 import net.simonvt.cathode.util.DateUtils;
@@ -185,6 +186,9 @@ public class CathodeApp extends Application {
         editor.putString(Settings.TRAKT_TOKEN, token);
         editor.putBoolean(Settings.TRAKT_LOGGED_IN, loggedIn);
         editor.apply();
+      }
+      if (currentVersion < 20501) {
+        TraktTimestamps.clear(this);
       }
 
       MAIN_HANDLER.post(new Runnable() {
