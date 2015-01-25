@@ -147,6 +147,8 @@ public class HomeActivity extends BaseActivity
     navigation =
         (NavigationFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_NAVIGATION);
 
+    watchingView.setWatchingViewListener(watchingListener);
+
     stack = FragmentStack.forContainer(this, R.id.content, new FragmentStack.Callback() {
       @Override public void onStackChanged(int stackSize, Fragment topFragment) {
         Timber.d("onStackChanged: %s", topFragment.getTag());
