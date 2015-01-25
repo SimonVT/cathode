@@ -29,13 +29,14 @@ public class TimeUtilsTest {
   @Test public void testDateParsing() throws Exception {
     final long dateMillis = 1000000000000L;
 
-    String date = "2001-09-08T18:46:40.000-07:00";
-    long millis = TimeUtils.getMillis(date);
-    assertThat(millis).isEqualTo(dateMillis);
+    final String[] dates = new String[] {
+        "2001-09-08T18:46:40.000-07:00", "2001-09-09T01:46:40.000Z", "2001-09-09T01:46:40Z",
+    };
 
-    date = "2001-09-09T01:46:40.000Z";
-    millis = TimeUtils.getMillis(date);
-    assertThat(millis).isEqualTo(dateMillis);
+    for (String date : dates) {
+      long millis = TimeUtils.getMillis(date);
+      assertThat(millis).isEqualTo(dateMillis);
+    }
   }
 
   @Test public void testIsoTime() throws Exception {

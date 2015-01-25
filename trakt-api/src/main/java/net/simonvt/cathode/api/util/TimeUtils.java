@@ -27,7 +27,15 @@ public final class TimeUtils {
 
   public static long getMillis(String iso) {
     if (iso != null) {
-      DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+      final int length = iso.length();
+      DateTimeFormatter fmt;
+
+      if (length <= 20) {
+        fmt = ISODateTimeFormat.dateTimeNoMillis();
+      } else {
+        fmt = ISODateTimeFormat.dateTime();
+      }
+
       return fmt.parseDateTime(iso).getMillis();
     }
 
