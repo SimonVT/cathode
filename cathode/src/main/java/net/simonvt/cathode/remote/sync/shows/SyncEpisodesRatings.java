@@ -91,8 +91,8 @@ public class SyncEpisodesRatings extends Job {
       if (episodeId == -1L) {
         episodeId =
             EpisodeWrapper.createEpisode(getContentResolver(), showId, seasonId, episodeNumber);
-        if (didSeasonExist) {
-          queue(new SyncEpisode(showTraktId, seasonNumber, episodeNumber));
+        if (didShowExist && didSeasonExist) {
+          queue(new SyncSeason(showTraktId, seasonNumber));
         }
       }
 

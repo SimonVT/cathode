@@ -20,13 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Episode;
+import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.SeasonService;
+import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
-import net.simonvt.cathode.jobqueue.Job;
 import timber.log.Timber;
 
 public class SyncSeason extends Job {
@@ -49,7 +50,7 @@ public class SyncSeason extends Job {
   @Override public void perform() {
     Timber.d("Syncing season %d of show %d", season, traktId);
 
-    List<Episode> episodes = seasonService.getSeason(traktId, season);
+    List<Episode> episodes = seasonService.getSeason(traktId, season, Extended.FULL_IMAGES);
 
     long showId = ShowWrapper.getShowId(getContentResolver(), traktId);
     if (showId == -1L) {
@@ -73,11 +74,9 @@ public class SyncSeason extends Job {
     c.close();
 
     for (Episode episode : episodes) {
-      final int episodeNumber = episode.getNumber();
       final long episodeId =
-          EpisodeWrapper.getEpisodeId(getContentResolver(), showId, season, episodeNumber);
+          EpisodeWrapper.updateOrInsertEpisode(getContentResolver(), episode, showId, seasonId);
       episodeIds.remove(episodeId);
-      queue(new SyncEpisode(traktId, season, episodeNumber));
     }
 
     for (Long episodeId : episodeIds) {

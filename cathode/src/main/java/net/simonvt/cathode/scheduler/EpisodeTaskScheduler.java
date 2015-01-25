@@ -30,36 +30,12 @@ import net.simonvt.cathode.remote.action.shows.CollectEpisode;
 import net.simonvt.cathode.remote.action.shows.RateEpisode;
 import net.simonvt.cathode.remote.action.shows.WatchedEpisode;
 import net.simonvt.cathode.remote.action.shows.WatchlistEpisode;
-import net.simonvt.cathode.remote.sync.shows.SyncEpisode;
 import net.simonvt.cathode.util.DateUtils;
 
 public class EpisodeTaskScheduler extends BaseTaskScheduler {
 
   public EpisodeTaskScheduler(Context context) {
     super(context);
-  }
-
-  /**
-   * Sync data for episode with Trakt.
-   *
-   * @param episodeId The database id of the episode.
-   */
-  public void sync(final long episodeId) {
-    execute(new Runnable() {
-      @Override public void run() {
-        Cursor c =
-            EpisodeWrapper.query(context.getContentResolver(), episodeId, EpisodeColumns.SHOW_ID,
-                EpisodeColumns.SEASON, EpisodeColumns.EPISODE);
-        c.moveToFirst();
-        final long showId = c.getLong(c.getColumnIndex(EpisodeColumns.SHOW_ID));
-        final long traktId = ShowWrapper.getTraktId(context.getContentResolver(), showId);
-        final int season = c.getInt(c.getColumnIndex(EpisodeColumns.SEASON));
-        final int number = c.getInt(c.getColumnIndex(EpisodeColumns.EPISODE));
-        c.close();
-
-        queue(new SyncEpisode(traktId, season, number));
-      }
-    });
   }
 
   /**

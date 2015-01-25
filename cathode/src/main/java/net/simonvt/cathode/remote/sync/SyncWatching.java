@@ -43,7 +43,7 @@ import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
-import net.simonvt.cathode.remote.sync.shows.SyncEpisode;
+import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
 import net.simonvt.cathode.remote.sync.shows.SyncShowCast;
 import net.simonvt.cathode.settings.Settings;
@@ -137,8 +137,8 @@ public class SyncWatching extends Job {
             if (episodeId == -1L) {
               episodeId = EpisodeWrapper.createEpisode(getContentResolver(), showId, seasonId,
                   episodeNumber);
-              if (didSeasonExist) {
-                queue(new SyncEpisode(showTraktId, seasonNumber, episodeNumber));
+              if (didShowExist && didSeasonExist) {
+                queue(new SyncSeason(showTraktId, seasonNumber));
               }
             }
 

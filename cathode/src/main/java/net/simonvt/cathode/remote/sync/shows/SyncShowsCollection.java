@@ -107,8 +107,8 @@ public class SyncShowsCollection extends Job {
 
             if (episodeId == -1L) {
               episodeId = EpisodeWrapper.createEpisode(resolver, showId, seasonId, episodeNumber);
-              if (didSeasonExist) {
-                queue(new SyncEpisode(traktId, seasonNumber, episodeNumber));
+              if (didShowExist && didSeasonExist) {
+                queue(new SyncSeason(traktId, seasonNumber));
               }
             }
 

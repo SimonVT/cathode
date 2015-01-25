@@ -41,7 +41,7 @@ public interface SeasonService {
    * @param id Show trakt ID
    */
   @GET("/shows/{id}/seasons/{season}") List<Episode> getSeason(@Path("id") long id,
-      @Path("season") int season);
+      @Path("season") int season, @Query("extended") Extended extended);
 
   @GET("/shows/{id[/seasons/{season[/ratings") Rating getRatings(@Path("id") long id,
       @Path("season") int season);

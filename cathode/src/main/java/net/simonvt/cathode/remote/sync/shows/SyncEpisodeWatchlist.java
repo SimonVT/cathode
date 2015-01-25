@@ -89,7 +89,7 @@ public class SyncEpisodeWatchlist extends Job {
         episodeId =
             EpisodeWrapper.createEpisode(getContentResolver(), showId, seasonId, episodeNumber);
         if (didShowExist && didSeasonExist) {
-          queue(new SyncEpisode(showTraktId, seasonNumber, episodeNumber));
+          queue(new SyncSeason(showTraktId, seasonNumber));
         }
       }
 
