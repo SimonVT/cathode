@@ -18,5 +18,5 @@ package net.simonvt.cathode.remote;
 
 public interface Flags {
 
-  static final int REQUIRES_AUTH = 1;
+  int REQUIRES_AUTH = 1;
 }
