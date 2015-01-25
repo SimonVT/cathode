@@ -100,7 +100,6 @@ public class CathodeApp extends Application {
 
     bus.register(this);
 
-    // TODO: Perform periodic sync when Activities are resumed
     registerActivityLifecycleCallbacks(new SimpleActivityLifecycleCallbacks() {
 
       @Override public void onActivityResumed(Activity activity) {
@@ -187,9 +186,12 @@ public class CathodeApp extends Application {
         editor.putBoolean(Settings.TRAKT_LOGGED_IN, loggedIn);
         editor.apply();
       }
-      if (currentVersion < 20401) {
-        jobManager.addJob(new SyncJob());
-      }
+
+      MAIN_HANDLER.post(new Runnable() {
+        @Override public void run() {
+          jobManager.addJob(new SyncJob());
+        }
+      });
 
       settings.edit().putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE).apply();
     }
