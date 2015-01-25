@@ -37,6 +37,10 @@
       android:theme="@style/Theme"
       android:allowBackup="true">
 
+    <meta-data
+        android:name="com.crashlytics.ApiKey"
+        android:value="0000000000000000000000000000000000000000"/>
+
     <!-- Activities -->
     <activity
         android:name="net.simonvt.cathode.ui.HomeActivity"
