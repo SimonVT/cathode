@@ -32,11 +32,31 @@
       app:maxWidth="460dp"
       android:padding="16dp">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp"
+        android:gravity="center_horizontal"
+        android:text="@string/login_description"/>
+
     <Button
         android:id="@+id/login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/login_sign_in"/>
+
+    <TextView
+        android:id="@+id/error_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="16dp"
+        android:visibility="gone"
+        android:textColor="@android:color/holo_red_dark"
+        android:gravity="center"
+        tools:visibility="visible"
+        tools:text="@string/login_failed"/>
   </net.simonvt.cathode.widget.MaxSizeLinearLayout>
 
   <LinearLayout

@@ -26,14 +26,17 @@ import dagger.Provides;
 import javax.inject.Singleton;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.ApiKey;
 import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.api.UserToken;
 import net.simonvt.cathode.event.AuthFailedEvent;
+import net.simonvt.cathode.event.RequestFailedEvent;
 import net.simonvt.cathode.settings.Settings;
 import retrofit.ErrorHandler;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import timber.log.Timber;
 
 @Module(
     complete = false,
@@ -53,16 +56,40 @@ public class ApiModule {
   @Provides @Singleton ErrorHandler provideErrorHandler(final Bus bus) {
     return new ErrorHandler() {
       @Override public Throwable handleError(RetrofitError error) {
-        Response response = error.getResponse();
-        if (response != null) {
-          final int statusCode = response.getStatus();
-          if (statusCode == 401) {
-            MAIN_HANDLER.post(new Runnable() {
-              @Override public void run() {
-                bus.post(new AuthFailedEvent());
+        switch (error.getKind()) {
+          case HTTP:
+            Response response = error.getResponse();
+            if (response != null) {
+              final int statusCode = response.getStatus();
+              if (statusCode == 401) {
+                MAIN_HANDLER.post(new Runnable() {
+                  @Override public void run() {
+                    bus.post(new AuthFailedEvent());
+                  }
+                });
+              } else if (statusCode >= 500 && statusCode < 600) {
+                MAIN_HANDLER.post(new Runnable() {
+                  @Override public void run() {
+                    bus.post(new RequestFailedEvent(R.string.error_5xx));
+                  }
+                });
+              } else {
+                MAIN_HANDLER.post(new Runnable() {
+                  @Override public void run() {
+                    bus.post(new RequestFailedEvent(R.string.error_unknown));
+                  }
+                });
               }
-            });
-          }
+            }
+            break;
+
+          case CONVERSION:
+          case UNEXPECTED:
+            Timber.e(error, "Request failed");
+            break;
+
+          case NETWORK:
+            break;
         }
 
         return error;

@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import com.squareup.otto.Bus;
@@ -41,11 +42,11 @@ import net.simonvt.cathode.api.entity.UserSettings;
 import net.simonvt.cathode.api.enumeration.GrantType;
 import net.simonvt.cathode.api.service.AuthorizationService;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.event.MessageEvent;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.jobqueue.JobManager;
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 import timber.log.Timber;
 
 public class LoginActivity extends Activity {
@@ -59,6 +60,7 @@ public class LoginActivity extends Activity {
   @Inject Bus bus;
 
   @InjectView(R.id.buttonContainer) View buttonContainer;
+  @InjectView(R.id.error_message) TextView errorMessage;
   @InjectView(R.id.login) Button login;
 
   @InjectView(R.id.progressContainer) View progressContainer;
@@ -76,6 +78,7 @@ public class LoginActivity extends Activity {
       @Override public void onClick(View view) {
         Intent authorize = new Intent(LoginActivity.this, OauthWebViewActivity.class);
         startActivityForResult(authorize, REQUEST_OAUTH);
+        errorMessage.setVisibility(View.GONE);
       }
     });
   }
@@ -129,10 +132,30 @@ public class LoginActivity extends Activity {
   }
 
   @Subscribe public void onFetchingTokenFailedEvent(FetchingTokenFailedEvent event) {
-    bus.post(new MessageEvent(R.string.login_failed));
+    errorMessage.setVisibility(View.VISIBLE);
+    errorMessage.setText(event.getError());
   }
 
-  public static class TokenTask extends AsyncTask<String, Void, String> {
+  private static class Result {
+
+    boolean success;
+
+    String token;
+
+    int errorMessage;
+
+    private Result(String token) {
+      this.token = token;
+      this.success = true;
+    }
+
+    public Result(int errorMessage) {
+      this.errorMessage = errorMessage;
+      this.success = false;
+    }
+  }
+
+  public static class TokenTask extends AsyncTask<String, Void, Result> {
 
     @Inject AuthorizationService authorizationService;
     @Inject UsersService usersService;
@@ -151,7 +174,7 @@ public class LoginActivity extends Activity {
       return new FetchingTokenEvent(true);
     }
 
-    @Override protected String doInBackground(String... params) {
+    @Override protected Result doInBackground(String... params) {
       String code = params[0];
 
       try {
@@ -170,21 +193,35 @@ public class LoginActivity extends Activity {
         Settings.clearProfile(context);
         Settings.updateProfile(context, userSettings);
 
-        return accessToken;
+        return new Result(accessToken);
       } catch (RetrofitError e) {
-        Timber.e(e, "Unable to get token");
-      }
+        switch (e.getKind()) {
+          case NETWORK:
+            return new Result(R.string.error_network);
+          case HTTP:
+            Response response = e.getResponse();
+            if (response != null) {
+              int status = response.getStatus();
+              if (status >= 500 && status < 600) {
+                return new Result(R.string.error_5xx);
+              }
+            }
+          case CONVERSION:
+          case UNEXPECTED:
+        }
 
-      return null;
+        Timber.e(e, "Unable to get token");
+        return new Result(R.string.login_error_unknown);
+      }
     }
 
-    @Override protected void onPostExecute(String token) {
+    @Override protected void onPostExecute(Result result) {
       bus.unregister(this);
 
-      if (token != null) {
-        bus.post(new TokenFetchedEvent(token));
+      if (result.success) {
+        bus.post(new TokenFetchedEvent(result.token));
       } else {
-        bus.post(new FetchingTokenFailedEvent());
+        bus.post(new FetchingTokenFailedEvent(result.errorMessage));
       }
 
       bus.post(new FetchingTokenEvent(false));
@@ -218,5 +255,15 @@ public class LoginActivity extends Activity {
   }
 
   public static class FetchingTokenFailedEvent {
+
+    private int error;
+
+    public FetchingTokenFailedEvent(int error) {
+      this.error = error;
+    }
+
+    public int getError() {
+      return error;
+    }
   }
 }

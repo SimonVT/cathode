@@ -37,6 +37,10 @@
   <string name="auth_failed">Trakt authorization failed</string>
   <string name="auth_failed_desc">Touch to re-authorize with Trakt</string>
 
+  <string name="error_unknown">Sync failed, retrying…</string>
+  <string name="error_network">Unable to connect to Trakt, retrying…</string>
+  <string name="error_5xx">Encountered a Trakt server error, retrying…</string>
+
   <string name="logout_title">Log out</string>
   <string name="logout_message">Are you sure you want to log out?</string>
   <string name="logout_button">Log out</string>
@@ -139,10 +143,12 @@
   <string name="movies_loading_trending">Trending movies are loading…</string>
 
   <!-- Login activity -->
-  <string name="login_sign_in">Sign in to Trakt</string>
+  <string name="login_sign_in">Sign in</string>
   <string name="login_title">@string/login_sign_in</string>
-  <string name="login_failed">Logging in failed. Please try again.</string>
+  <string name="login_failed">Login in failed. Please try again.</string>
   <string name="logging_in">Logging in…</string>
+  <string name="login_description">Sign in to through the Trakt website and give Cathode access to your account</string>
+  <string name="login_error_unknown">Unable to fetch token, please try again</string>
 
   <!-- Navigation fragment -->
   <string name="navigation_title_shows">Shows</string>

@@ -70,7 +70,6 @@ public class JobService extends Service {
           job.perform();
           jobFinished(job);
         } catch (Throwable t) {
-          Timber.e(t, "Failed to execute job");
           jobFailed(job);
           break;
         }

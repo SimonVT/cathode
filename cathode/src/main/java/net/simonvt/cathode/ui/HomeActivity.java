@@ -41,6 +41,7 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.LogoutEvent;
 import net.simonvt.cathode.event.MessageEvent;
+import net.simonvt.cathode.event.RequestFailedEvent;
 import net.simonvt.cathode.jobqueue.SyncEvent;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseSchematic;
@@ -66,6 +67,7 @@ import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
 import net.simonvt.cathode.util.FragmentStack;
+import net.simonvt.cathode.widget.Crouton;
 import net.simonvt.cathode.widget.WatchingView;
 import net.simonvt.cathode.widget.WatchingView.WatchingViewListener;
 import net.simonvt.messagebar.MessageBar;
@@ -118,6 +120,8 @@ public class HomeActivity extends BaseActivity
 
   @InjectView(R.id.progress_top) ProgressBar progressTop;
   private ViewPropertyAnimator progressAnimator;
+
+  @InjectView(R.id.crouton) Crouton crouton;
 
   private FragmentStack stack;
 
@@ -389,6 +393,11 @@ public class HomeActivity extends BaseActivity
     } else {
       messageBar.show(getString(event.getMessageRes()));
     }
+  }
+
+  @Subscribe public void onRequestFailedEvent(RequestFailedEvent event) {
+    crouton.show(getString(event.getErrorMessage()),
+        getResources().getColor(android.R.color.holo_red_dark));
   }
 
   @Subscribe public void onLogout(LogoutEvent event) {

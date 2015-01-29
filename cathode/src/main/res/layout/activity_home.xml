@@ -41,6 +41,13 @@
 
         <include layout="@layout/view_watching"/>
       </FrameLayout>
+
+      <net.simonvt.cathode.widget.Crouton
+          android:id="@+id/crouton"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_gravity="bottom"
+          style="@style/Crouton"/>
     </FrameLayout>
 
     <include layout="@layout/drawer"/>
