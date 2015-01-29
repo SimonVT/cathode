@@ -31,6 +31,7 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
+import retrofit.RetrofitError;
 import timber.log.Timber;
 
 public class JobService extends Service {
@@ -70,6 +71,9 @@ public class JobService extends Service {
           job.perform();
           jobFinished(job);
         } catch (Throwable t) {
+          if (!(t instanceof RetrofitError)) {
+            Timber.e(t, "Unable to execute job");
+          }
           jobFailed(job);
           break;
         }

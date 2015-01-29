@@ -65,7 +65,11 @@ public final class ShowWrapper {
         String.valueOf(traktId),
     }, null);
 
-    long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(ShowColumns.ID));
+    long id = -1L;
+
+    if (c.moveToFirst()) {
+      id = c.getLong(c.getColumnIndex(ShowColumns.ID));
+    }
 
     c.close();
 
