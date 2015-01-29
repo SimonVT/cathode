@@ -29,9 +29,10 @@ import net.simonvt.cathode.R;
 
 public class Crouton extends TextView {
 
-  private static final String STATE_MESSAGES = "net.simonvt.messagebar.MessageBar.messages";
+  private static final String STATE_MESSAGES = "net.simonvt.messagebar.Crouton.messages";
   private static final String STATE_CURRENT_MESSAGE =
-      "net.simonvt.messagebar.MessageBar.currentMessage";
+      "net.simonvt.messagebar.Crouton.currentMessage";
+  public static final String STATE_SUPER = "net.simonvt.cathode.widget.Crouton.superState";
 
   private static final int ANIMATION_DURATION = 600;
 
@@ -153,6 +154,9 @@ public class Crouton extends TextView {
   };
 
   public void onRestoreInstanceState(Bundle state) {
+    Parcelable superState = state.getParcelable(STATE_SUPER);
+    super.onRestoreInstanceState(superState);
+
     Message currentMessage = state.getParcelable(STATE_CURRENT_MESSAGE);
     if (currentMessage != null) {
       show(currentMessage, true);
@@ -166,6 +170,8 @@ public class Crouton extends TextView {
   public Bundle onSaveInstanceState() {
     Bundle b = new Bundle();
 
+    Parcelable superState = super.onSaveInstanceState();
+    b.putParcelable(STATE_SUPER, superState);
     b.putParcelable(STATE_CURRENT_MESSAGE, currentMessage);
 
     final int count = messages.size();

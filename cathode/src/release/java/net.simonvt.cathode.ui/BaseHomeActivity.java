@@ -21,11 +21,7 @@ import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 
-public abstract class BaseActivity extends ActionBarActivity {
-
-  public static final String DIALOG_ABOUT = "net.simonvt.cathode.ui.BaseActivity.aboutDialog";
-
-  @Inject Bus bus;
+public abstract class BaseHomeActivity extends ActionBarActivity {
 
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);

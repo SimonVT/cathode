@@ -20,7 +20,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.ui.BaseActivity;
+import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.dialog.AboutDialog;
 
 public class ToolbarHelper {
@@ -43,7 +43,7 @@ public class ToolbarHelper {
   public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_about:
-        new AboutDialog().show(fragment.getFragmentManager(), BaseActivity.DIALOG_ABOUT);
+        new AboutDialog().show(fragment.getFragmentManager(), HomeActivity.DIALOG_ABOUT);
         return true;
     }
 

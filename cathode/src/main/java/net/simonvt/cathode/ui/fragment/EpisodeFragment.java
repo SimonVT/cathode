@@ -43,8 +43,8 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
-import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.FragmentContract;
+import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.NavigationClickListener;
 import net.simonvt.cathode.ui.dialog.AboutDialog;
@@ -331,7 +331,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
               return true;
 
             case R.id.menu_about:
-              new AboutDialog().show(getFragmentManager(), BaseActivity.DIALOG_ABOUT);
+              new AboutDialog().show(getFragmentManager(), HomeActivity.DIALOG_ABOUT);
               return true;
           }
 

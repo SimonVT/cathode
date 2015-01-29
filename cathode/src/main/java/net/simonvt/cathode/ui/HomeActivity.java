@@ -73,10 +73,11 @@ import net.simonvt.cathode.widget.WatchingView.WatchingViewListener;
 import net.simonvt.messagebar.MessageBar;
 import timber.log.Timber;
 
-public class HomeActivity extends BaseActivity
+public class HomeActivity extends BaseHomeActivity
     implements NavigationFragment.OnMenuClickListener, ShowsNavigationListener,
     MoviesNavigationListener {
 
+  public static final String DIALOG_ABOUT = "net.simonvt.cathode.ui.BaseActivity.aboutDialog";
   static final String FRAGMENT_NAVIGATION =
       "net.simonvt.cathode.ui.HomeActivity.navigationFragment";
   static final String FRAGMENT_SHOWS = "net.simonvt.cathode.ui.HomeActivity.showsFragment";
