@@ -33,7 +33,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.ui.BaseActivity;
+import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 
@@ -123,13 +123,13 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
       case R.id.sort_viewers:
         sortBy = SortBy.VIEWERS;
         settings.edit().putString(Settings.SORT_MOVIE_TRENDING, SortBy.VIEWERS.getKey()).apply();
-        getLoaderManager().restartLoader(BaseActivity.LOADER_MOVIES_TRENDING, null, this);
+        getLoaderManager().restartLoader(Loaders.LOADER_MOVIES_TRENDING, null, this);
         break;
 
       case R.id.sort_rating:
         sortBy = SortBy.RATING;
         settings.edit().putString(Settings.SORT_MOVIE_TRENDING, SortBy.RATING.getKey()).apply();
-        getLoaderManager().restartLoader(BaseActivity.LOADER_MOVIES_TRENDING, null, this);
+        getLoaderManager().restartLoader(Loaders.LOADER_MOVIES_TRENDING, null, this);
         break;
     }
   }
@@ -139,7 +139,7 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
   }
 
   @Override protected int getLoaderId() {
-    return BaseActivity.LOADER_MOVIES_TRENDING;
+    return Loaders.LOADER_MOVIES_TRENDING;
   }
 
   @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {

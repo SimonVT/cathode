@@ -31,8 +31,8 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
+import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.SeasonAdapter;
 
@@ -98,7 +98,7 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
     setTitle(title);
     updateSubtitle();
 
-    getLoaderManager().initLoader(BaseActivity.LOADER_SEASON, null, episodesLoader);
+    getLoaderManager().initLoader(Loaders.LOADER_SEASON, null, episodesLoader);
 
     if (title == null) {
       CursorLoader loader = new CursorLoader(getActivity(), Shows.withId(showId), new String[] {

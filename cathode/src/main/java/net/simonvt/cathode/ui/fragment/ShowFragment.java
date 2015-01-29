@@ -54,8 +54,8 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.WatchedLoader;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
-import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
+import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.SeasonsAdapter;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
@@ -394,12 +394,12 @@ public class ShowFragment extends ProgressFragment {
       });
     }
 
-    getLoaderManager().initLoader(BaseActivity.LOADER_SHOW, null, showCallbacks);
-    getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_GENRES, null, genreCallbacks);
-    getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_ACTORS, null, charactersCallback);
-    getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_WATCH, null, episodeWatchCallbacks);
-    getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_COLLECT, null, episodeCollectCallbacks);
-    getLoaderManager().initLoader(BaseActivity.LOADER_SHOW_SEASONS, null, seasonsLoader);
+    getLoaderManager().initLoader(Loaders.LOADER_SHOW, null, showCallbacks);
+    getLoaderManager().initLoader(Loaders.LOADER_SHOW_GENRES, null, genreCallbacks);
+    getLoaderManager().initLoader(Loaders.LOADER_SHOW_ACTORS, null, charactersCallback);
+    getLoaderManager().initLoader(Loaders.LOADER_SHOW_WATCH, null, episodeWatchCallbacks);
+    getLoaderManager().initLoader(Loaders.LOADER_SHOW_COLLECT, null, episodeCollectCallbacks);
+    getLoaderManager().initLoader(Loaders.LOADER_SHOW_SEASONS, null, seasonsLoader);
   }
 
   @Override public void createMenu(Toolbar toolbar) {

@@ -39,8 +39,8 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
+import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
@@ -125,7 +125,7 @@ public class TrendingShowsFragment extends ToolbarGridFragment<ShowDescriptionAd
     sortBy =
         SortBy.fromValue(settings.getString(Settings.SORT_SHOW_TRENDING, SortBy.VIEWERS.getKey()));
 
-    getLoaderManager().initLoader(BaseActivity.LOADER_SHOWS_TRENDING, null, this);
+    getLoaderManager().initLoader(Loaders.LOADER_SHOWS_TRENDING, null, this);
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
     setTitle(R.string.title_shows_trending);
@@ -195,13 +195,13 @@ public class TrendingShowsFragment extends ToolbarGridFragment<ShowDescriptionAd
       case R.id.sort_viewers:
         sortBy = SortBy.VIEWERS;
         settings.edit().putString(Settings.SORT_SHOW_TRENDING, SortBy.VIEWERS.getKey()).apply();
-        getLoaderManager().restartLoader(BaseActivity.LOADER_SHOWS_TRENDING, null, this);
+        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_TRENDING, null, this);
         break;
 
       case R.id.sort_rating:
         sortBy = SortBy.RATING;
         settings.edit().putString(Settings.SORT_SHOW_TRENDING, SortBy.RATING.getKey()).apply();
-        getLoaderManager().restartLoader(BaseActivity.LOADER_SHOWS_TRENDING, null, this);
+        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_TRENDING, null, this);
         break;
     }
   }

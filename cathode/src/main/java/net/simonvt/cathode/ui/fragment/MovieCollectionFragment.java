@@ -23,7 +23,7 @@ import android.text.format.DateUtils;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.ui.BaseActivity;
+import net.simonvt.cathode.ui.Loaders;
 
 public class MovieCollectionFragment extends MoviesFragment {
 
@@ -34,7 +34,7 @@ public class MovieCollectionFragment extends MoviesFragment {
   }
 
   @Override protected int getLoaderId() {
-    return BaseActivity.LOADER_MOVIES_COLLECTION;
+    return Loaders.LOADER_MOVIES_COLLECTION;
   }
 
   @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {

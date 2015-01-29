@@ -42,7 +42,7 @@ import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
-import net.simonvt.cathode.ui.BaseActivity;
+import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.NavigationClickListener;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
@@ -146,8 +146,8 @@ public class MovieFragment extends ProgressFragment
       }
     });
 
-    getLoaderManager().initLoader(BaseActivity.LOADER_MOVIE, null, this);
-    getLoaderManager().initLoader(BaseActivity.LOADER_MOVIE_ACTORS, null, actorsLoader);
+    getLoaderManager().initLoader(Loaders.LOADER_MOVIE, null, this);
+    getLoaderManager().initLoader(Loaders.LOADER_MOVIE_ACTORS, null, actorsLoader);
   }
 
   @Override public void createMenu(Toolbar toolbar) {

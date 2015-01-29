@@ -39,15 +39,13 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.MutableCursor;
 import net.simonvt.cathode.database.MutableCursorLoader;
-import net.simonvt.cathode.event.AuthFailedEvent;
-import net.simonvt.cathode.event.RequestFailedEvent;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
+import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.HeaderSpanLookup;
 import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
@@ -135,7 +133,7 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
 
     showHidden = settings.getBoolean(Settings.SHOW_HIDDEN, false);
 
-    getLoaderManager().initLoader(BaseActivity.LOADER_SHOWS_UPCOMING, null, this);
+    getLoaderManager().initLoader(Loaders.LOADER_SHOWS_UPCOMING, null, this);
 
     setEmptyText(R.string.empty_show_upcoming);
 
@@ -195,7 +193,7 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
       case R.id.menu_hidden:
         showHidden = !showHidden;
         settings.edit().putBoolean(Settings.SHOW_HIDDEN, showHidden).apply();
-        getLoaderManager().restartLoader(BaseActivity.LOADER_SHOWS_UPCOMING, null,
+        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_UPCOMING, null,
             UpcomingShowsFragment.this);
         item.setChecked(showHidden);
         return true;
@@ -228,7 +226,7 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
       case R.id.sort_title:
         sortBy = SortBy.TITLE;
         settings.edit().putString(Settings.SORT_SHOW_UPCOMING, SortBy.TITLE.getKey()).apply();
-        getLoaderManager().restartLoader(BaseActivity.LOADER_SHOWS_UPCOMING, null, this);
+        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_UPCOMING, null, this);
         break;
 
       case R.id.sort_next_episode:
@@ -236,13 +234,13 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
         settings.edit()
             .putString(Settings.SORT_SHOW_UPCOMING, SortBy.NEXT_EPISODE.getKey())
             .apply();
-        getLoaderManager().restartLoader(BaseActivity.LOADER_SHOWS_UPCOMING, null, this);
+        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_UPCOMING, null, this);
         break;
     }
   }
 
   @Override public void onRemove(View view, int position) {
-    Loader loader = getLoaderManager().getLoader(BaseActivity.LOADER_SHOWS_UPCOMING);
+    Loader loader = getLoaderManager().getLoader(Loaders.LOADER_SHOWS_UPCOMING);
     MutableCursorLoader cursorLoader = (MutableCursorLoader) loader;
     cursorLoader.throttle(2000);
     //AnimatorHelper.removeView(getRecyclerView(), view, animatorCallback);

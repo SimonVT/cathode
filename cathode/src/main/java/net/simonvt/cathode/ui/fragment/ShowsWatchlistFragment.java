@@ -39,9 +39,8 @@ import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.SyncJob;
-import net.simonvt.cathode.ui.BaseActivity;
-import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.LibraryType;
+import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.HeaderSpanLookup;
 import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
@@ -74,8 +73,8 @@ public class ShowsWatchlistFragment extends ToolbarGridFragment<RecyclerView.Vie
     super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
 
-    getLoaderManager().initLoader(HomeActivity.LOADER_SHOWS_WATCHLIST, null, showsCallback);
-    getLoaderManager().initLoader(HomeActivity.LOADER_EPISODES_WATCHLIST, null, episodeCallback);
+    getLoaderManager().initLoader(Loaders.LOADER_SHOWS_WATCHLIST, null, showsCallback);
+    getLoaderManager().initLoader(Loaders.LOADER_EPISODES_WATCHLIST, null, episodeCallback);
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
 
@@ -160,11 +159,11 @@ public class ShowsWatchlistFragment extends ToolbarGridFragment<RecyclerView.Vie
   }
 
   private void throttleLoaders() {
-    Loader l = getLoaderManager().getLoader(BaseActivity.LOADER_EPISODES_WATCHLIST);
+    Loader l = getLoaderManager().getLoader(Loaders.LOADER_EPISODES_WATCHLIST);
     MutableCursorLoader loader = (MutableCursorLoader) l;
     loader.throttle(2000);
 
-    l = getLoaderManager().getLoader(BaseActivity.LOADER_SHOWS_WATCHLIST);
+    l = getLoaderManager().getLoader(Loaders.LOADER_SHOWS_WATCHLIST);
     loader = (MutableCursorLoader) l;
     loader.throttle(2000);
   }

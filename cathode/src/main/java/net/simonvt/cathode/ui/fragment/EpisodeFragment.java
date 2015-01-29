@@ -45,6 +45,7 @@ import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.FragmentContract;
+import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.NavigationClickListener;
 import net.simonvt.cathode.ui.dialog.AboutDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
@@ -147,7 +148,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     Bundle args = getArguments();
     episodeId = args.getLong(ARG_EPISODEID);
     showTitle = args.getString(ARG_SHOW_TITLE);
-    getLoaderManager().initLoader(BaseActivity.LOADER_EPISODE, null, episodeCallbacks);
+    getLoaderManager().initLoader(Loaders.LOADER_EPISODE, null, episodeCallbacks);
 
     if (getShowsDialog()) {
       setStyle(DialogFragment.STYLE_NO_TITLE, 0);
@@ -249,7 +250,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   @Override public void onDestroy() {
     if (getActivity().isFinishing() || isRemoving()) {
-      getLoaderManager().destroyLoader(BaseActivity.LOADER_EPISODE);
+      getLoaderManager().destroyLoader(Loaders.LOADER_EPISODE);
     }
     super.onDestroy();
   }

@@ -40,8 +40,8 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
+import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
@@ -131,7 +131,7 @@ public class ShowRecommendationsFragment
     sortBy = SortBy.fromValue(
         settings.getString(Settings.SORT_SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey()));
 
-    getLoaderManager().initLoader(BaseActivity.LOADER_SHOWS_RECOMMENDATIONS, null, this);
+    getLoaderManager().initLoader(Loaders.LOADER_SHOWS_RECOMMENDATIONS, null, this);
 
     isTablet = getResources().getBoolean(R.bool.isTablet);
 
@@ -217,13 +217,13 @@ public class ShowRecommendationsFragment
         settings.edit()
             .putString(Settings.SORT_SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey())
             .apply();
-        getLoaderManager().restartLoader(BaseActivity.LOADER_SHOWS_RECOMMENDATIONS, null, this);
+        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_RECOMMENDATIONS, null, this);
         break;
 
       case R.id.sort_rating:
         sortBy = SortBy.RATING;
         settings.edit().putString(Settings.SORT_SHOW_RECOMMENDED, SortBy.RATING.getKey()).apply();
-        getLoaderManager().restartLoader(BaseActivity.LOADER_SHOWS_RECOMMENDATIONS, null, this);
+        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_RECOMMENDATIONS, null, this);
         break;
     }
   }
@@ -234,7 +234,7 @@ public class ShowRecommendationsFragment
   }
 
   @Override public void onDismissItem(final View view, final int position) {
-    Loader loader = getLoaderManager().getLoader(BaseActivity.LOADER_SHOWS_RECOMMENDATIONS);
+    Loader loader = getLoaderManager().getLoader(Loaders.LOADER_SHOWS_RECOMMENDATIONS);
     MutableCursorLoader cursorLoader = (MutableCursorLoader) loader;
     cursorLoader.throttle(2000);
 

@@ -168,9 +168,9 @@ public class HomeActivity extends BaseActivity
       stack.commit();
     }
 
-    getSupportLoaderManager().initLoader(BaseActivity.LOADER_SHOW_WATCHING, null,
+    getSupportLoaderManager().initLoader(Loaders.LOADER_SHOW_WATCHING, null,
         watchingShowCallback);
-    getSupportLoaderManager().initLoader(BaseActivity.LOADER_MOVIE_WATCHING, null,
+    getSupportLoaderManager().initLoader(Loaders.LOADER_MOVIE_WATCHING, null,
         watchingMovieCallback);
 
     messageBar = new MessageBar(this);

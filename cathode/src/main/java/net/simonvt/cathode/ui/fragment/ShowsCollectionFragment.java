@@ -23,8 +23,8 @@ import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
+import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
 
 public class ShowsCollectionFragment extends ShowsFragment {
@@ -40,7 +40,7 @@ public class ShowsCollectionFragment extends ShowsFragment {
   }
 
   @Override protected int getLoaderId() {
-    return BaseActivity.LOADER_SHOWS_COLLECTION;
+    return Loaders.LOADER_SHOWS_COLLECTION;
   }
 
   @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {

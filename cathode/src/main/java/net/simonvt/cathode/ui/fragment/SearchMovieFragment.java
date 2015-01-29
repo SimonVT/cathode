@@ -41,7 +41,7 @@ import net.simonvt.cathode.event.SearchFailureEvent;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.ui.BaseActivity;
+import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.adapter.BaseMoviesAdapter;
 import net.simonvt.cathode.ui.adapter.MovieSearchAdapter;
@@ -242,19 +242,19 @@ public class SearchMovieFragment extends ToolbarGridFragment<MovieSearchAdapter.
       case R.id.sort_relevance:
         sortBy = SortBy.RELEVANCE;
         settings.edit().putString(Settings.SORT_MOVIE_SEARCH, SortBy.RELEVANCE.getKey()).apply();
-        getLoaderManager().restartLoader(BaseActivity.LOADER_SEARCH_MOVIES, null, this);
+        getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_MOVIES, null, this);
         break;
 
       case R.id.sort_rating:
         sortBy = SortBy.RATING;
         settings.edit().putString(Settings.SORT_MOVIE_SEARCH, SortBy.RATING.getKey()).apply();
-        getLoaderManager().restartLoader(BaseActivity.LOADER_SEARCH_MOVIES, null, this);
+        getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_MOVIES, null, this);
         break;
 
       case R.id.sort_title:
         sortBy = SortBy.TITLE;
         settings.edit().putString(Settings.SORT_MOVIE_SEARCH, SortBy.TITLE.getKey()).apply();
-        getLoaderManager().restartLoader(BaseActivity.LOADER_SEARCH_MOVIES, null, this);
+        getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_MOVIES, null, this);
         break;
     }
   }
@@ -267,7 +267,7 @@ public class SearchMovieFragment extends ToolbarGridFragment<MovieSearchAdapter.
       setAdapter(null);
       searchMovieIds = null;
     }
-    getLoaderManager().destroyLoader(BaseActivity.LOADER_SEARCH_MOVIES);
+    getLoaderManager().destroyLoader(Loaders.LOADER_SEARCH_MOVIES);
     searchHandler.search(query);
 
     setTitle(query);
@@ -280,7 +280,7 @@ public class SearchMovieFragment extends ToolbarGridFragment<MovieSearchAdapter.
 
   @Subscribe public void onSearchEvent(MovieSearchResult result) {
     searchMovieIds = result.getMovieIds();
-    getLoaderManager().initLoader(BaseActivity.LOADER_SEARCH_MOVIES, null, this);
+    getLoaderManager().initLoader(Loaders.LOADER_SEARCH_MOVIES, null, this);
     setEmptyText(R.string.no_results, query);
     updateSubtitle();
   }

@@ -42,8 +42,8 @@ import net.simonvt.cathode.event.ShowSearchResult;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
+import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
@@ -230,19 +230,19 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
       case R.id.sort_relevance:
         sortBy = SortBy.RELEVANCE;
         settings.edit().putString(Settings.SORT_SHOW_SEARCH, SortBy.RELEVANCE.getKey()).apply();
-        getLoaderManager().restartLoader(BaseActivity.LOADER_SEARCH_SHOWS, null, this);
+        getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_SHOWS, null, this);
         break;
 
       case R.id.sort_rating:
         sortBy = SortBy.RATING;
         settings.edit().putString(Settings.SORT_SHOW_SEARCH, SortBy.RATING.getKey()).apply();
-        getLoaderManager().restartLoader(BaseActivity.LOADER_SEARCH_SHOWS, null, this);
+        getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_SHOWS, null, this);
         break;
 
       case R.id.sort_title:
         sortBy = SortBy.TITLE;
         settings.edit().putString(Settings.SORT_SHOW_SEARCH, SortBy.TITLE.getKey()).apply();
-        getLoaderManager().restartLoader(BaseActivity.LOADER_SEARCH_SHOWS, null, this);
+        getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_SHOWS, null, this);
         break;
     }
   }
@@ -264,7 +264,7 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
       setAdapter(null);
       searchShowIds = null;
     }
-    getLoaderManager().destroyLoader(BaseActivity.LOADER_SEARCH_SHOWS);
+    getLoaderManager().destroyLoader(Loaders.LOADER_SEARCH_SHOWS);
     searchHandler.search(query);
   }
 
@@ -275,7 +275,7 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
 
   @Subscribe public void onSearchEvent(ShowSearchResult result) {
     searchShowIds = result.getShowIds();
-    getLoaderManager().initLoader(BaseActivity.LOADER_SEARCH_SHOWS, null, this);
+    getLoaderManager().initLoader(Loaders.LOADER_SEARCH_SHOWS, null, this);
     setEmptyText(R.string.no_results, query);
     updateSubtitle();
   }
