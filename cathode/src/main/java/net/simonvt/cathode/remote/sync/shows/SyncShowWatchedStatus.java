@@ -25,12 +25,13 @@ import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.ShowProgress;
 import net.simonvt.cathode.api.service.ShowsService;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic;
+import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
-import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobFailedException;
 import timber.log.Timber;
 
 public class SyncShowWatchedStatus extends Job {
@@ -53,7 +54,11 @@ public class SyncShowWatchedStatus extends Job {
 
   @Override public void perform() {
     ShowProgress progress = showsService.getWatchedProgress(traktId);
-    final long showId = ShowWrapper.getShowId(getContentResolver(), traktId);
+    long showId = ShowWrapper.getShowId(getContentResolver(), traktId);
+    if (showId == -1L) {
+      showId = ShowWrapper.createShow(getContentResolver(), traktId);
+      queue(new SyncShow(traktId));
+    }
 
     List<ShowProgress.Season> seasons = progress.getSeasons();
 
@@ -64,9 +69,21 @@ public class SyncShowWatchedStatus extends Job {
 
       List<ShowProgress.Episode> episodes = season.getEpisodes();
       for (ShowProgress.Episode episode : episodes) {
-        final long episodeId =
-            EpisodeWrapper.getEpisodeId(getContentResolver(), showId, seasonNumber,
-                episode.getNumber());
+        final int episodeNumber = episode.getNumber();
+        long episodeId =
+            EpisodeWrapper.getEpisodeId(getContentResolver(), showId, seasonNumber, episodeNumber);
+
+        if (episodeId == -1L) {
+          long seasonId = SeasonWrapper.getSeasonId(getContentResolver(), showId, seasonNumber);
+          if (seasonId == -1L) {
+            seasonId = SeasonWrapper.createSeason(getContentResolver(), showId, seasonNumber);
+          }
+
+          episodeId =
+              EpisodeWrapper.createEpisode(getContentResolver(), showId, seasonId, episodeNumber);
+          queue(new SyncSeason(traktId, seasonNumber));
+        }
+
         ContentProviderOperation.Builder builder =
             ContentProviderOperation.newUpdate(ProviderSchematic.Episodes.withId(episodeId));
         builder.withValue(DatabaseContract.EpisodeColumns.WATCHED, episode.getCompleted());
