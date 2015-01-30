@@ -230,19 +230,25 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
       case R.id.sort_relevance:
         sortBy = SortBy.RELEVANCE;
         settings.edit().putString(Settings.SORT_SHOW_SEARCH, SortBy.RELEVANCE.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_SHOWS, null, this);
+        if (getLoaderManager().getLoader(Loaders.LOADER_SEARCH_SHOWS) != null) {
+          getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_SHOWS, null, this);
+        }
         break;
 
       case R.id.sort_rating:
         sortBy = SortBy.RATING;
         settings.edit().putString(Settings.SORT_SHOW_SEARCH, SortBy.RATING.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_SHOWS, null, this);
+        if (getLoaderManager().getLoader(Loaders.LOADER_SEARCH_SHOWS) != null) {
+          getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_SHOWS, null, this);
+        }
         break;
 
       case R.id.sort_title:
         sortBy = SortBy.TITLE;
         settings.edit().putString(Settings.SORT_SHOW_SEARCH, SortBy.TITLE.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_SHOWS, null, this);
+        if (getLoaderManager().getLoader(Loaders.LOADER_SEARCH_SHOWS) != null) {
+          getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_SHOWS, null, this);
+        }
         break;
     }
   }
