@@ -120,7 +120,6 @@ public class HomeActivity extends BaseHomeActivity
   protected MessageBar messageBar;
 
   @InjectView(R.id.progress_top) ProgressBar progressTop;
-  private ViewPropertyAnimator progressAnimator;
 
   @InjectView(R.id.crouton) Crouton crouton;
 
@@ -371,7 +370,7 @@ public class HomeActivity extends BaseHomeActivity
 
   @Subscribe public void onSyncEvent(SyncEvent event) {
     final int progressVisibility = progressTop.getVisibility();
-    progressAnimator = progressTop.animate();
+    ViewPropertyAnimator progressAnimator = progressTop.animate();
     if (event.isSyncing()) {
       if (progressVisibility == View.GONE) {
         progressTop.setAlpha(0.0f);
