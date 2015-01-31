@@ -138,6 +138,7 @@ public class ShowRecommendationsFragment
     columnCount = getResources().getInteger(R.integer.showsColumns);
 
     setTitle(R.string.title_shows_recommendations);
+    setEmptyText(R.string.recommendations_empty);
   }
 
   @Override protected int getColumnCount() {

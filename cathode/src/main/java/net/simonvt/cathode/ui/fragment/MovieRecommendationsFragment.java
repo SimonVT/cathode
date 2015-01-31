@@ -130,7 +130,7 @@ public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdap
     columnCount = getResources().getInteger(R.integer.movieColumns);
 
     setTitle(R.string.title_movies_recommendations);
-    setEmptyText(R.string.movies_loading_trending);
+    setEmptyText(R.string.recommendations_empty);
   }
 
   @Override protected int getColumnCount() {

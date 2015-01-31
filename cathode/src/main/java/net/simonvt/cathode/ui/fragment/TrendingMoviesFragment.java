@@ -91,11 +91,11 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
     super.onCreate(inState);
 
     setTitle(R.string.title_movies_trending);
+    setEmptyText(R.string.movies_loading_trending);
   }
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-    setEmptyText(R.string.movies_loading_trending);
   }
 
   @Override public void createMenu(Toolbar toolbar) {

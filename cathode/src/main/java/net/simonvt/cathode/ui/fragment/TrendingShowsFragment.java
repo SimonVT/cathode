@@ -129,6 +129,7 @@ public class TrendingShowsFragment extends ToolbarGridFragment<ShowDescriptionAd
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
     setTitle(R.string.title_shows_trending);
+    setEmptyText(R.string.shows_loading_trending);
   }
 
   @Override protected int getColumnCount() {

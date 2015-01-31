@@ -200,6 +200,7 @@
   <string name="show_not_synced">If a show has no watched episodes, is not in the collection or is
     not in the watchlist it will not be synced automatically</string>
   <string name="show_perform_sync">Perform sync</string>
+  <string name="recommendations_empty">There are currently no recommendations</string>
 
   <plurals name="season_x">
     <item quantity="zero">Special</item>
