@@ -58,6 +58,8 @@ public class ApiModule {
       @Override public Throwable handleError(RetrofitError error) {
         switch (error.getKind()) {
           case HTTP:
+            Timber.d(error, "Request failed");
+
             Response response = error.getResponse();
             if (response != null) {
               final int statusCode = response.getStatus();
@@ -89,6 +91,7 @@ public class ApiModule {
             break;
 
           case NETWORK:
+            Timber.d(error, "Request failed");
             break;
         }
 
