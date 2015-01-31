@@ -127,7 +127,7 @@
   <string name="checkmark_watchlist">In watchlist</string>
 
   <string name="no_results">No results for query \'%s\'</string>
-  <string name="search_failure">Search failed</string>
+  <string name="search_failure">Querying \'%s\' failed\nClick to retry</string>
   <string name="x_results">%1$d results</string>
 
   <string name="episode">%1$dx%2$d %3$s</string>

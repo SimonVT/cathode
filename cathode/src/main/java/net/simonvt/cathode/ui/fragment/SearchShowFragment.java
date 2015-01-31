@@ -26,8 +26,10 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
@@ -173,6 +175,10 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
     return columnCount;
   }
 
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+    return inflater.inflate(R.layout.fragment_search, container, false);
+  }
+
   @Override public void onDestroy() {
     bus.unregister(this);
     super.onDestroy();
@@ -283,6 +289,8 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
     searchShowIds = result.getShowIds();
     getLoaderManager().initLoader(Loaders.LOADER_SEARCH_SHOWS, null, this);
     setEmptyText(R.string.no_results, query);
+    empty.setOnClickListener(null);
+    empty.setClickable(false);
     updateSubtitle();
   }
 
@@ -290,6 +298,11 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
     if (event.getType() == SearchFailureEvent.Type.SHOW) {
       setCursor(null);
       setEmptyText(R.string.search_failure, query);
+      empty.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          query(query);
+        }
+      });
     }
   }
 
