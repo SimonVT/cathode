@@ -23,6 +23,7 @@ import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
 import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.remote.action.CancelCheckin;
 import net.simonvt.cathode.remote.action.movies.CheckInMovie;
 import net.simonvt.cathode.remote.action.movies.CollectMovie;
@@ -123,7 +124,7 @@ import net.simonvt.cathode.jobqueue.JobService;
 
 @Module(
     includes = {
-        ApiModule.class, SchedulerModule.class, JobModule.class
+        ApiModule.class, SchedulerModule.class, JobModule.class, TraktModule.class
     },
 
     injects = {

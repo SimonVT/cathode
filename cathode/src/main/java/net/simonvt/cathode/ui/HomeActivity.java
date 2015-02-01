@@ -73,7 +73,7 @@ import net.simonvt.cathode.widget.WatchingView.WatchingViewListener;
 import net.simonvt.messagebar.MessageBar;
 import timber.log.Timber;
 
-public class HomeActivity extends BaseHomeActivity
+public class HomeActivity extends BaseActivity
     implements NavigationFragment.OnMenuClickListener, ShowsNavigationListener,
     MoviesNavigationListener {
 

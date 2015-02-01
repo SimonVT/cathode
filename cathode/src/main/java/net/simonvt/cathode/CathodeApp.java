@@ -37,11 +37,9 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import dagger.ObjectGraph;
 import javax.inject.Inject;
-import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.LogoutEvent;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.module.AppModule;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.LogoutJob;
 import net.simonvt.cathode.remote.sync.SyncJob;
@@ -94,8 +92,7 @@ public class CathodeApp extends Application {
       setupAccount(this);
     }
 
-    objectGraph = ObjectGraph.create(new AppModule(this));
-    objectGraph.plus(new TraktModule());
+    objectGraph = ObjectGraph.create(Modules.list(this));
 
     objectGraph.inject(this);
 

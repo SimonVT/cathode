@@ -49,7 +49,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import timber.log.Timber;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends BaseActivity {
 
   static final String QUERY_CODE = "code";
 

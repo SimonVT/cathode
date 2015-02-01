@@ -30,8 +30,5 @@
       android:layout_width="280dp"
       android:layout_height="match_parent"
       android:layout_gravity="end"
-      android:background="#FF222222">
-
-    <include layout="@layout/debug_drawer"/>
-  </ScrollView>
+      android:background="#FF222222"/>
 </android.support.v4.widget.DrawerLayout>

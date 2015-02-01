@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
   ~ Copyright (C) 2015 Simon Vig Therkildsen
   ~
@@ -15,38 +16,61 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingTop="16dp"
-    android:paddingBottom="16dp">
+    android:layout_height="wrap_content"
+    android:columnCount="2"
+    tools:background="#FF222222">
 
   <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
       android:text="Crouton"
       style="@style/DebugDrawerTitle"/>
 
   <TextView
-      android:id="@+id/requestFailedEvent"
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent"
+      android:id="@+id/debug_requestFailedEvent"
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
       android:textAllCaps="false"
       android:text="RequestFailedEvent"
       style="@style/DebugDrawerItem"/>
 
   <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
       android:text="Authorization"
       style="@style/DebugDrawerTitle"/>
 
   <TextView
-      android:id="@+id/authFailedEvent"
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent"
+      android:id="@+id/debug_authFailedEvent"
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
       android:textAllCaps="false"
       android:text="AuthFailedEvent"
       style="@style/DebugDrawerItem"/>
-</LinearLayout>
+
+  <TextView
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
+      android:text="Retrofit"
+      style="@style/DebugDrawerTitle"/>
+
+  <TextView
+      android:layout_gravity="start|center_vertical"
+      android:text="Response code"
+      style="@style/DebugSpinnerLabelStyle"
+      />
+
+  <Spinner
+      android:id="@+id/debug_networkStatusCode"
+      android:layout_width="0dp"
+      android:layout_gravity="start|center_vertical|fill_horizontal"/>
+</GridLayout>

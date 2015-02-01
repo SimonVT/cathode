@@ -37,6 +37,8 @@ import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.api.util.TimeUtils;
 import retrofit.ErrorHandler;
 import retrofit.RestAdapter;
+import retrofit.client.Client;
+import retrofit.client.OkClient;
 import retrofit.converter.GsonConverter;
 
 @Module(library = true, complete = false)
@@ -44,14 +46,19 @@ public class TraktModule {
 
   static final String API_URL = "https://api.trakt.tv";
 
-  @Provides @Singleton @Trakt RestAdapter provideRestAdapter(@Trakt Gson gson,
+  @Provides @Singleton @Trakt RestAdapter provideRestAdapter(@Trakt Client client, @Trakt Gson gson,
       TraktInterceptor interceptor, ErrorHandler errorHandler) {
     return new RestAdapter.Builder() //
         .setEndpoint(API_URL)
+        .setClient(client)
         .setConverter(new GsonConverter(gson))
         .setRequestInterceptor(interceptor)
         .setErrorHandler(errorHandler)
         .build();
+  }
+
+  @Provides @Singleton @Trakt Client provideClient() {
+    return new OkClient();
   }
 
   @Provides @Singleton AuthorizationService provideAuthorizationService(
