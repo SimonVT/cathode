@@ -21,6 +21,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -57,6 +58,8 @@ public class JobService extends Service {
   private class JobThread extends Thread {
 
     @Override public void run() {
+      boolean failed = false;
+
       while (jobManager.hasJobs()) {
         Job job = jobManager.nextJob();
 
@@ -71,26 +74,31 @@ public class JobService extends Service {
           job.perform();
           jobFinished(job);
         } catch (Throwable t) {
+          failed = true;
+
           if (!(t instanceof RetrofitError)) {
             Timber.e(t, "Unable to execute job");
           }
+
           jobFailed(job);
           break;
         }
       }
 
-      MAIN_HANDLER.post(new Runnable() {
-        @Override public void run() {
-          jobThread = null;
-          if (jobManager.hasJobs()) {
-            Timber.d("Re-starting JobThread");
-            startJobThread();
-          } else {
-            Timber.d("Stopping service");
-            stopSelf();
+      if (!failed) {
+        MAIN_HANDLER.post(new Runnable() {
+          @Override public void run() {
+            jobThread = null;
+            if (jobManager.hasJobs()) {
+              Timber.d("Re-starting JobThread");
+              startJobThread();
+            } else {
+              Timber.d("Stopping service");
+              stopSelf();
+            }
           }
-        }
-      });
+        });
+      }
     }
   }
 
@@ -102,7 +110,7 @@ public class JobService extends Service {
 
   private Runnable scheduleAlarm = new Runnable() {
     @Override public void run() {
-      Intent intent = new Intent(JobService.this, JobService.class);
+      Intent intent = new Intent(JobService.this, JobReceiver.class);
       final int retryDelay = Math.max(1, JobService.this.retryDelay);
       final int nextDelay = Math.min(retryDelay * 2, MAX_RETRY_DELAY);
       intent.putExtra(RETRY_DELAY, nextDelay);
@@ -112,7 +120,11 @@ public class JobService extends Service {
 
       AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
       final long runAt = SystemClock.elapsedRealtime() + retryDelay * DateUtils.MINUTE_IN_MILLIS;
-      am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, runAt, pi);
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && retryDelay < 10) {
+        am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, runAt, pi);
+      } else {
+        am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, runAt, pi);
+      }
 
       Timber.d("Scheduling alarm in " + retryDelay + " minutes");
     }

@@ -142,6 +142,7 @@ public final class JobManager {
   private synchronized void startService() {
     MAIN_HANDLER.post(new Runnable() {
       @Override public void run() {
+        Timber.d("Starting JobService");
         Intent intent = new Intent(context, JobService.class);
         context.startService(intent);
       }
