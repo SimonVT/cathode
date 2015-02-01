@@ -19,7 +19,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import net.simonvt.cathode.CathodeApp;
 
-public abstract class BaseHomeActivity extends ActionBarActivity {
+public abstract class BaseActivity extends ActionBarActivity {
 
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
