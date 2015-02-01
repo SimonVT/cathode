@@ -16,7 +16,6 @@
 
 package net.simonvt.cathode.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -203,7 +202,7 @@ public class LoginActivity extends BaseActivity {
             if (response != null) {
               int status = response.getStatus();
               if (status >= 500 && status < 600) {
-                return new Result(R.string.error_5xx);
+                return new Result(R.string.login_error_5xx);
               }
             }
           case CONVERSION:
