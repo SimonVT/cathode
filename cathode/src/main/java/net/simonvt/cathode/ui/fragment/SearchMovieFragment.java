@@ -158,8 +158,6 @@ public class SearchMovieFragment extends ToolbarGridFragment<MovieSearchAdapter.
       }
     }
 
-    bus.register(this);
-
     columnCount = getResources().getInteger(R.integer.movieColumns);
 
     setTitle(query);
@@ -191,9 +189,14 @@ public class SearchMovieFragment extends ToolbarGridFragment<MovieSearchAdapter.
     return inflater.inflate(R.layout.fragment_search, container, false);
   }
 
-  @Override public void onDestroy() {
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
+    bus.register(this);
+  }
+
+  @Override public void onDestroyView() {
     bus.unregister(this);
-    super.onDestroy();
+    super.onDestroyView();
   }
 
   @Override public void createMenu(Toolbar toolbar) {

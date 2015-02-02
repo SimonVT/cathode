@@ -158,8 +158,6 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
       }
     }
 
-    bus.register(this);
-
     columnCount = getResources().getInteger(R.integer.showsColumns);
 
     setTitle(query);
@@ -179,9 +177,14 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
     return inflater.inflate(R.layout.fragment_search, container, false);
   }
 
-  @Override public void onDestroy() {
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
+    bus.register(this);
+  }
+
+  @Override public void onDestroyView() {
     bus.unregister(this);
-    super.onDestroy();
+    super.onDestroyView();
   }
 
   @Override public void createMenu(Toolbar toolbar) {
