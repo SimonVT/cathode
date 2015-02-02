@@ -153,14 +153,16 @@ public class Crouton extends TextView {
     }
   };
 
-  public void onRestoreInstanceState(Bundle state) {
-    Parcelable superState = state.getParcelable(STATE_SUPER);
+  @Override public void onRestoreInstanceState(Parcelable state) {
+    Bundle viewState = (Bundle) state;
+
+    Parcelable superState = viewState.getParcelable(STATE_SUPER);
     super.onRestoreInstanceState(superState);
 
-    Message currentMessage = state.getParcelable(STATE_CURRENT_MESSAGE);
+    Message currentMessage = viewState.getParcelable(STATE_CURRENT_MESSAGE);
     if (currentMessage != null) {
       show(currentMessage, true);
-      Parcelable[] messages = state.getParcelableArray(STATE_MESSAGES);
+      Parcelable[] messages = viewState.getParcelableArray(STATE_MESSAGES);
       for (Parcelable p : messages) {
         this.messages.add((Message) p);
       }
