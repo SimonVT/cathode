@@ -32,6 +32,11 @@ dependencies {
   compile parent.libraries.dashclockApi
 
   compile parent.libraries.crashlytics
+
+  testCompile parent.libraries.junit
+  testCompile parent.libraries.robolectric
+  testCompile parent.libraries.mockito
+  testCompile parent.libraries.assertj
 }
 
 android {

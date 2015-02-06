@@ -20,4 +20,4 @@ install:
 
 script:
   - ./gradlew checkDebug
-  - ./gradlew check
+  - ./gradlew test

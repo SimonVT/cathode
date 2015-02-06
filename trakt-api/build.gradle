@@ -14,6 +14,9 @@ dependencies {
   compile parent.libraries.okhttpUrlConnection
 
   compile parent.libraries.jodaTime
+
+  testCompile parent.libraries.junit
+  testCompile parent.libraries.assertj
 }
 
 android {
