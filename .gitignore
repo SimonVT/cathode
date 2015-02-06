@@ -1,46 +1,14 @@
-/*
+# Gradle
+.gradle
+local.properties
+build
 
-!.gitignore
-!.travis.yml
-!init.py
-!build.gradle
-!settings.gradle
-!gradlew
-!gradlew.bat
-!README.md
-!LICENSE
+# IntelliJ IDEA
+.idea
+*.iml
 
-!art/
-!gradle/
-!config/
-
-!trakt-api/
-trakt-api/*
-
-!trakt-api/src/
-
-!trakt-api/build.gradle
-
-!cathode/
-cathode/*
-
-!cathode/libs/
-!cathode/src/
-
-!cathode/build.gradle
+.DS_Store
 
 cathode/src/main/res/values/com_crashlytics_export_strings.xml
 
 cathode/src/release/AndroidManifest.xml
-
-!cathode-tests/
-cathode-tests/*
-!cathode-tests/src/
-!cathode-tests/build.gradle
-
-!trakt-api-tests/
-trakt-api-tests/*
-!trakt-api-tests/src/
-!trakt-api-tests/build.gradle
-
-.DS_store
