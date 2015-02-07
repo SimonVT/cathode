@@ -44,7 +44,8 @@ import retrofit.converter.GsonConverter;
 @Module(library = true, complete = false)
 public class TraktModule {
 
-  static final String API_URL = "https://api.trakt.tv";
+  //static final String API_URL = "https://api.trakt.tv";
+  static final String API_URL = "https://api-v2launch.trakt.tv";
 
   @Provides @Singleton @Trakt RestAdapter provideRestAdapter(@Trakt Client client, @Trakt Gson gson,
       TraktInterceptor interceptor, ErrorHandler errorHandler) {
