@@ -16,22 +16,32 @@
 
 package net.simonvt.cathode.jobqueue;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
+import android.provider.CalendarContract;
 import android.text.format.DateUtils;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.R;
+import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.ui.HomeActivity;
 import retrofit.RetrofitError;
 import timber.log.Timber;
 
@@ -41,7 +51,9 @@ public class JobService extends Service {
 
   static final String RETRY_DELAY = "net.simonvt.cathode.sync.TraktTaskService.retryDelay";
 
-  private static final int MAX_RETRY_DELAY = 60;
+  private static final int MAX_RETRY_DELAY = 60; // In minutes
+
+  private static final int NOTIFICATION_ID = 42;
 
   private static volatile PowerManager.WakeLock sWakeLock = null;
 
@@ -52,6 +64,8 @@ public class JobService extends Service {
   @Inject Bus bus;
 
   private int retryDelay = -1;
+
+  private boolean displayNotification;
 
   private volatile JobThread jobThread;
 
@@ -172,6 +186,26 @@ public class JobService extends Service {
     startJobThread();
 
     bus.register(this);
+
+    displayNotification =
+        PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Settings.INITIAL_SYNC, true);
+
+    if (displayNotification) {
+      Timber.d("Displaying initial sync notification");
+      Intent clickIntent = new Intent(this, HomeActivity.class);
+      PendingIntent clickPi = PendingIntent.getActivity(this, 0, clickIntent, 0);
+
+      Notification.Builder builder = new Notification.Builder(this) //
+          .setSmallIcon(R.drawable.ic_notification)
+          .setTicker(getString(R.string.initial_sync))
+          .setContentTitle(getString(R.string.initial_sync))
+          .setContentText(getString(R.string.initial_sync_desc))
+          .setContentIntent(clickPi)
+          .setPriority(Notification.PRIORITY_LOW)
+          .setProgress(0, 0, true)
+          .setOngoing(true);
+      startForeground(NOTIFICATION_ID, builder.build());
+    }
   }
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
@@ -223,6 +257,22 @@ public class JobService extends Service {
   @Override public void onDestroy() {
     bus.unregister(this);
     bus.post(new SyncEvent(false));
+
+    if (displayNotification && !jobManager.hasJobs()) {
+      PreferenceManager.getDefaultSharedPreferences(this)
+          .edit()
+          .putBoolean(Settings.INITIAL_SYNC, false)
+          .apply();
+
+      Bundle extras = new Bundle();
+      extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+      extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+      AccountManager am = AccountManager.get(this);
+      Account[] accounts = am.getAccountsByType(getString(R.string.accountType));
+      for (Account account : accounts) {
+        ContentResolver.requestSync(account, CalendarContract.AUTHORITY, extras);
+      }
+    }
 
     releaseLock(this);
 

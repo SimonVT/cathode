@@ -121,6 +121,7 @@ public class LoginActivity extends BaseActivity {
         .edit() //
         .putBoolean(Settings.TRAKT_LOGGED_IN, true) //
         .putString(Settings.TRAKT_TOKEN, event.getToken()) //
+        .putBoolean(Settings.INITIAL_SYNC, true) //
         .apply();
 
     Intent home = new Intent(this, HomeActivity.class);
