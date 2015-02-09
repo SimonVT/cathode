@@ -197,7 +197,7 @@ public class LoginActivity extends BaseActivity {
       } catch (RetrofitError e) {
         switch (e.getKind()) {
           case NETWORK:
-            return new Result(R.string.error_network);
+            return new Result(R.string.login_error_network);
           case HTTP:
             Response response = e.getResponse();
             if (response != null) {
