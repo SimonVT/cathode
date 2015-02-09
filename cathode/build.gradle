@@ -67,6 +67,8 @@ android {
       buildConfigField "String", "PROVIDER_AUTHORITY",
           "\"net.simonvt.cathode.debug.provider.CathodeProvider\""
       applicationIdSuffix ".debug"
+
+      ext.enableCrashlytics = false
     }
     release {
       buildConfigField "String", "PROVIDER_AUTHORITY",
