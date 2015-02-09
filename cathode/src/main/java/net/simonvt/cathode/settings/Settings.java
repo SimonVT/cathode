@@ -76,6 +76,7 @@ public class Settings extends PreferenceActivity {
   public static final String SORT_SHOW_SEARCH = "sortShowSearch";
   public static final String SORT_SHOW_TRENDING = "sortShowTrending";
   public static final String SORT_SHOW_RECOMMENDED = "sortShowRecommended";
+  public static final String SORT_SHOW_WATCHED = "sortShowWatched";
 
   public static final String SORT_MOVIE_SEARCH = "sortMovieSearch";
   public static final String SORT_MOVIE_TRENDING = "sortMovieTrending";

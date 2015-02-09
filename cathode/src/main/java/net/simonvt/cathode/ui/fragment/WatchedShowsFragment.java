@@ -15,24 +15,117 @@
  */
 package net.simonvt.cathode.ui.fragment;
 
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
+import android.view.MenuItem;
+import android.view.View;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
+import net.simonvt.cathode.ui.dialog.ListDialog;
 
-public class WatchedShowsFragment extends ShowsFragment {
+public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Callback {
+
+  private enum SortBy {
+    TITLE("title", Shows.SORT_TITLE),
+    WATCHED("watched", Shows.SORT_WATCHED);
+
+    private String key;
+
+    private String sortOrder;
+
+    SortBy(String key, String sortOrder) {
+      this.key = key;
+      this.sortOrder = sortOrder;
+    }
+
+    public String getKey() {
+      return key;
+    }
+
+    public String getSortOrder() {
+      return sortOrder;
+    }
+
+    @Override public String toString() {
+      return key;
+    }
+
+    private static final Map<String, SortBy> STRING_MAPPING = new HashMap<String, SortBy>();
+
+    static {
+      for (SortBy via : SortBy.values()) {
+        STRING_MAPPING.put(via.toString().toUpperCase(), via);
+      }
+    }
+
+    public static SortBy fromValue(String value) {
+      return STRING_MAPPING.get(value.toUpperCase());
+    }
+  }
+
+  private static final String DIALOG_SORT =
+      "net.simonvt.cathode.ui.fragment.WatchedShowsFragment.sortDialog";
+
+  private SharedPreferences settings;
+
+  private SortBy sortBy;
 
   @Override public void onCreate(Bundle inState) {
+    settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+    sortBy =
+        SortBy.fromValue(settings.getString(Settings.SORT_SHOW_WATCHED, SortBy.TITLE.getKey()));
+
     super.onCreate(inState);
+
     setEmptyText(R.string.empty_show_watched);
     setTitle(R.string.title_shows_watched);
+  }
+
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
+    toolbar.inflateMenu(R.menu.fragment_shows_watched);
+  }
+
+  @Override public boolean onMenuItemClick(MenuItem item) {
+    if (item.getItemId() == R.id.menu_sort) {
+      ArrayList<ListDialog.Item> items = new ArrayList<ListDialog.Item>();
+      items.add(new ListDialog.Item(R.id.sort_title, R.string.sort_title));
+      items.add(new ListDialog.Item(R.id.sort_watched, R.string.sort_watched));
+      ListDialog.newInstance(R.string.action_sort_by, items, this)
+          .show(getFragmentManager(), DIALOG_SORT);
+      return true;
+    }
+
+    return super.onMenuItemClick(item);
+  }
+
+  @Override public void onItemSelected(int id) {
+    switch (id) {
+      case R.id.sort_title:
+        sortBy = SortBy.TITLE;
+        settings.edit().putString(Settings.SORT_SHOW_RECOMMENDED, SortBy.TITLE.getKey()).apply();
+        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_WATCHED, null, this);
+        break;
+
+      case R.id.sort_watched:
+        sortBy = SortBy.WATCHED;
+        settings.edit().putString(Settings.SORT_SHOW_RECOMMENDED, SortBy.WATCHED.getKey()).apply();
+        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_WATCHED, null, this);
+        break;
+    }
   }
 
   @Override protected LibraryType getLibraryType() {
@@ -47,7 +140,7 @@ public class WatchedShowsFragment extends ShowsFragment {
     final Uri contentUri = Shows.SHOWS_WATCHED;
     CursorLoader cl =
         new CursorLoader(getActivity(), contentUri, ShowsWithNextAdapter.PROJECTION, null, null,
-            Shows.DEFAULT_SORT);
+            sortBy.getSortOrder());
     cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return cl;
   }

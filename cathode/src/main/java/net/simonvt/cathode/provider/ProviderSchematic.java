@@ -284,6 +284,9 @@ public final class ProviderSchematic {
     public static final String SORT_RECOMMENDED =
         DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.RECOMMENDATION_INDEX + " ASC";
 
+    public static final String SORT_WATCHED =
+        Tables.SHOWS + "." + ShowColumns.LAST_WATCHED_AT + " DESC";
+
     public static String getAiredQuery() {
       final long currentTime = System.currentTimeMillis();
       return "(SELECT COUNT(*) FROM "

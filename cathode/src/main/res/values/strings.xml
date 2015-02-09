@@ -98,6 +98,7 @@
   <string name="sort_rating">Rating</string>
   <string name="sort_relevance">Relevance</string>
   <string name="sort_viewers">Viewers</string>
+  <string name="sort_watched">Last watched</string>
 
   <string name="action_refresh">Refresh</string>
   <string name="action_sort_by">Sort by</string>
