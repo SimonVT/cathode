@@ -842,6 +842,9 @@ public final class ProviderSchematic {
 
     public static final String SORT_RECOMMENDED =
         DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.RECOMMENDATION_INDEX + " ASC";
+
+    public static final String SORT_WATCHED =
+        DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.WATCHED_AT + " DESC";
   }
 
   @TableEndpoint(table = DatabaseSchematic.TABLE_MOVIE_GENRES)
