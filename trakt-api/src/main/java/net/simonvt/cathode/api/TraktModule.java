@@ -19,9 +19,11 @@ import java.lang.reflect.Type;
 import javax.inject.Singleton;
 import net.simonvt.cathode.api.entity.IsoTime;
 import net.simonvt.cathode.api.enumeration.Action;
+import net.simonvt.cathode.api.enumeration.Gender;
 import net.simonvt.cathode.api.enumeration.GrantType;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.enumeration.Scope;
+import net.simonvt.cathode.api.enumeration.ShowStatus;
 import net.simonvt.cathode.api.enumeration.TokenType;
 import net.simonvt.cathode.api.service.AuthorizationService;
 import net.simonvt.cathode.api.service.CheckinService;
@@ -160,6 +162,20 @@ public class TraktModule {
       @Override public Action deserialize(JsonElement jsonElement, Type type,
           JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         return Action.fromValue(jsonElement.getAsString());
+      }
+    });
+
+    builder.registerTypeAdapter(ShowStatus.class, new JsonDeserializer<ShowStatus>() {
+      @Override public ShowStatus deserialize(JsonElement jsonElement, Type type,
+          JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+        return ShowStatus.fromValue(jsonElement.getAsString());
+      }
+    });
+
+    builder.registerTypeAdapter(Gender.class, new JsonDeserializer<Gender>() {
+      @Override public Gender deserialize(JsonElement jsonElement, Type type,
+          JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+        return Gender.fromValue(jsonElement.getAsString());
       }
     });
 

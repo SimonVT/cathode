@@ -198,7 +198,6 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
       holder.firstAired.setTimeInMillis(episodeFirstAired);
     }
     holder.nextEpisode.setText(episodeText);
-    holder.nextEpisode.setEnabled(episodeTitle != null);
 
     holder.overflow.setVisibility(showAiredCount > 0 ? View.VISIBLE : View.INVISIBLE);
 
