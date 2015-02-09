@@ -32,14 +32,17 @@
   <string name="initial_sync_desc">This might take a while…</string>
 
   <string name="lost_connection">Synchronization failed.</string>
-  <string name="retry_in">Synchronization failed. Retrying in %d minutes.</string>
+  <string name="retry_in">Retrying in %d minutes.</string>
 
   <string name="auth_failed">Trakt authorization failed</string>
   <string name="auth_failed_desc">Touch to re-authorize with Trakt</string>
 
   <string name="error_unknown">Sync failed, retrying…</string>
+  <string name="error_unknown_retry_in">Sync failed, retrying in %d minutes</string>
   <string name="error_network">Unable to connect to Trakt, retrying…</string>
-  <string name="error_5xx">Encountered a Trakt server error, retrying…</string>
+  <string name="error_network_retry_in">Unable to connect to Trakt, retrying in %d minutes</string>
+  <string name="error_5xx">Trakt appears to be having some issues, retrying…</string>
+  <string name="error_5xx_retry_in">Trakt appears to be having some issues, retrying in %d minutes</string>
 
   <string name="logout_title">Log out</string>
   <string name="logout_message">Are you sure you want to log out?</string>

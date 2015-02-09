@@ -20,6 +20,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentResolver;
@@ -28,6 +29,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -53,7 +55,8 @@ public class JobService extends Service {
 
   private static final int MAX_RETRY_DELAY = 60; // In minutes
 
-  private static final int NOTIFICATION_ID = 42;
+  private static final int NOTIFICATION_FOREGROUND = 42;
+  private static final int NOTIFICATION_FAILURE = 43;
 
   private static volatile PowerManager.WakeLock sWakeLock = null;
 
@@ -63,86 +66,15 @@ public class JobService extends Service {
 
   @Inject Bus bus;
 
-  private int retryDelay = -1;
+  private volatile int retryDelay = -1;
 
   private boolean displayNotification;
 
-  private volatile JobThread jobThread;
+  private Handler handler;
 
-  private class JobThread extends Thread {
+  private Looper looper;
 
-    @Override public void run() {
-      boolean failed = false;
-
-      while (jobManager.hasJobs()) {
-        Job job = jobManager.nextJob();
-
-        if (job.requiresWakelock()) {
-          acquireLock(JobService.this);
-        } else {
-          releaseLock(JobService.this);
-        }
-
-        try {
-          Timber.d("Executing job: " + job.getClass().getSimpleName());
-          job.perform();
-          jobFinished(job);
-        } catch (Throwable t) {
-          failed = true;
-
-          if (!(t instanceof RetrofitError)) {
-            Timber.e(t, "Unable to execute job");
-          }
-
-          jobFailed(job);
-          break;
-        }
-      }
-
-      if (!failed) {
-        MAIN_HANDLER.post(new Runnable() {
-          @Override public void run() {
-            jobThread = null;
-            if (jobManager.hasJobs()) {
-              Timber.d("Re-starting JobThread");
-              startJobThread();
-            } else {
-              Timber.d("Stopping service");
-              stopSelf();
-            }
-          }
-        });
-      }
-    }
-  }
-
-  private Runnable stopSelf = new Runnable() {
-    @Override public void run() {
-      stopSelf();
-    }
-  };
-
-  private Runnable scheduleAlarm = new Runnable() {
-    @Override public void run() {
-      Intent intent = new Intent(JobService.this, JobReceiver.class);
-      final int retryDelay = Math.max(1, JobService.this.retryDelay);
-      final int nextDelay = Math.min(retryDelay * 2, MAX_RETRY_DELAY);
-      intent.putExtra(RETRY_DELAY, nextDelay);
-
-      PendingIntent pi =
-          PendingIntent.getBroadcast(JobService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-      AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-      final long runAt = SystemClock.elapsedRealtime() + retryDelay * DateUtils.MINUTE_IN_MILLIS;
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && retryDelay < 10) {
-        am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, runAt, pi);
-      } else {
-        am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, runAt, pi);
-      }
-
-      Timber.d("Scheduling alarm in " + retryDelay + " minutes");
-    }
-  };
+  private boolean running;
 
   private static PowerManager.WakeLock getLock(Context context) {
     if (sWakeLock == null) {
@@ -183,7 +115,11 @@ public class JobService extends Service {
 
     cancelAlarm();
 
-    startJobThread();
+    HandlerThread thread = new HandlerThread("JobService");
+    thread.start();
+
+    looper = thread.getLooper();
+    handler = new Handler(looper);
 
     bus.register(this);
 
@@ -204,7 +140,39 @@ public class JobService extends Service {
           .setPriority(Notification.PRIORITY_LOW)
           .setProgress(0, 0, true)
           .setOngoing(true);
-      startForeground(NOTIFICATION_ID, builder.build());
+      startForeground(NOTIFICATION_FOREGROUND, builder.build());
+    }
+
+    NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+    nm.cancel(NOTIFICATION_FAILURE);
+  }
+
+  private class JobRunnable implements Runnable {
+
+    private Job job;
+
+    private JobRunnable(Job job) {
+      this.job = job;
+    }
+
+    @Override public void run() {
+      if (job.requiresWakelock()) {
+        acquireLock(JobService.this);
+      } else {
+        releaseLock(JobService.this);
+      }
+
+      try {
+        Timber.d("Executing job: " + job.getClass().getSimpleName());
+        job.perform();
+        jobFinished(job);
+      } catch (Throwable t) {
+        if (!(t instanceof RetrofitError)) {
+          Timber.e(t, "Unable to execute job");
+        }
+
+        jobFailed(job);
+      }
     }
   }
 
@@ -218,36 +186,55 @@ public class JobService extends Service {
       }
     }
 
-    MAIN_HANDLER.removeCallbacks(stopSelf);
-
-    if (jobThread == null) {
-      startJobThread();
-    }
+    executeNext();
 
     return START_STICKY;
   }
 
-  private void startJobThread() {
-    jobThread = new JobThread();
-    jobThread.start();
-  }
-
-  private void cancelAlarm() {
-    Intent intent = new Intent(this, JobService.class);
-    PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, 0);
-
-    AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-    am.cancel(pi);
-  }
-
   void jobFinished(Job job) {
+    retryDelay = -1;
     jobManager.jobDone(job);
+
+    if (!jobManager.hasJobs()) {
+      stopSelf();
+    }
+
+    MAIN_HANDLER.post(new Runnable() {
+      @Override public void run() {
+        running = false;
+        executeNext();
+      }
+    });
+  }
+
+  private void executeNext() {
+    Timber.d("[executeNext]");
+    if (running) {
+      Timber.d("[executeNext] already running");
+      return;
+    }
+
+    running = true;
+
+    Job nextJob = jobManager.nextJob();
+    if (nextJob != null) {
+      handler.post(new JobRunnable(nextJob));
+    } else {
+      running = false;
+      stopSelf();
+    }
   }
 
   void jobFailed(Job job) {
     jobManager.jobFailed(job);
-    MAIN_HANDLER.post(scheduleAlarm);
-    MAIN_HANDLER.post(stopSelf);
+
+    MAIN_HANDLER.post(new Runnable() {
+      @Override public void run() {
+        running = false;
+        scheduleAlarm();
+        stopSelf();
+      }
+    });
   }
 
   @Produce public SyncEvent provideRunningEvent() {
@@ -257,6 +244,8 @@ public class JobService extends Service {
   @Override public void onDestroy() {
     bus.unregister(this);
     bus.post(new SyncEvent(false));
+
+    looper.quit();
 
     if (displayNotification && !jobManager.hasJobs()) {
       PreferenceManager.getDefaultSharedPreferences(this)
@@ -282,5 +271,48 @@ public class JobService extends Service {
 
   @Override public IBinder onBind(Intent intent) {
     return null;
+  }
+
+  private void cancelAlarm() {
+    Intent intent = new Intent(this, JobService.class);
+    PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+    AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+    am.cancel(pi);
+  }
+
+  private void scheduleAlarm() {
+    Intent intent = new Intent(JobService.this, JobReceiver.class);
+    final int retryDelay = Math.max(1, JobService.this.retryDelay);
+    final int nextDelay = Math.min(retryDelay * 2, MAX_RETRY_DELAY);
+    intent.putExtra(RETRY_DELAY, nextDelay);
+
+    PendingIntent pi =
+        PendingIntent.getBroadcast(JobService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+    AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+    final long runAt = SystemClock.elapsedRealtime() + retryDelay * DateUtils.MINUTE_IN_MILLIS;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && retryDelay < 10) {
+      am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, runAt, pi);
+    } else {
+      am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, runAt, pi);
+    }
+
+    if (displayNotification) {
+      Intent clickIntent = new Intent(JobService.this, HomeActivity.class);
+      PendingIntent clickPi = PendingIntent.getActivity(JobService.this, 0, clickIntent, 0);
+
+      Notification.Builder builder = new Notification.Builder(JobService.this) //
+          .setSmallIcon(R.drawable.ic_notification)
+          .setTicker(getString(R.string.lost_connection))
+          .setContentTitle(getString(R.string.lost_connection))
+          .setContentText(getString(R.string.retry_in, retryDelay))
+          .setContentIntent(clickPi);
+
+      NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+      nm.notify(NOTIFICATION_FAILURE, builder.build());
+    }
+
+    Timber.d("Scheduling alarm in " + retryDelay + " minutes");
   }
 }
