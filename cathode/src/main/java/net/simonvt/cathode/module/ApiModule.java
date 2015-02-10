@@ -72,13 +72,13 @@ public class ApiModule {
               } else if (statusCode >= 500 && statusCode < 600) {
                 MAIN_HANDLER.post(new Runnable() {
                   @Override public void run() {
-                    bus.post(new RequestFailedEvent(R.string.error_5xx));
+                    bus.post(new RequestFailedEvent(R.string.error_5xx_retrying));
                   }
                 });
               } else {
                 MAIN_HANDLER.post(new Runnable() {
                   @Override public void run() {
-                    bus.post(new RequestFailedEvent(R.string.error_unknown));
+                    bus.post(new RequestFailedEvent(R.string.error_unknown_retrying));
                   }
                 });
               }
@@ -91,7 +91,13 @@ public class ApiModule {
             break;
 
           case NETWORK:
-            Timber.d(error, "Request failed");
+            Timber.e(error, "Request failed");
+
+            MAIN_HANDLER.post(new Runnable() {
+              @Override public void run() {
+                bus.post(new RequestFailedEvent(R.string.error_network_retrying));
+              }
+            });
             break;
         }
 

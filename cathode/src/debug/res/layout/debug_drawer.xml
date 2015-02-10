@@ -73,4 +73,20 @@
       android:id="@+id/debug_networkStatusCode"
       android:layout_width="0dp"
       android:layout_gravity="start|center_vertical|fill_horizontal"/>
+
+  <TextView
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
+      android:text="Synchronization"
+      style="@style/DebugDrawerTitle"/>
+
+  <TextView
+      android:id="@+id/debug_initialSync"
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
+      android:textAllCaps="false"
+      android:text="Perform initial sync"
+      style="@style/DebugDrawerItem"/>
 </GridLayout>

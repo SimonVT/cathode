@@ -16,7 +16,9 @@
 package net.simonvt.cathode.ui;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.view.ContextThemeWrapper;
@@ -35,6 +37,8 @@ import net.simonvt.cathode.IntPreference;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.RequestFailedEvent;
+import net.simonvt.cathode.jobqueue.JobManager;
+import net.simonvt.cathode.remote.InitialSyncJob;
 
 public abstract class BaseActivity extends ActionBarActivity {
 
@@ -42,12 +46,16 @@ public abstract class BaseActivity extends ActionBarActivity {
 
   private final DebugInjects injects = new DebugInjects();
 
+  private SharedPreferences settings;
+
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
     CathodeApp.inject(this);
     CathodeApp.inject(this, injects);
 
     super.setContentView(R.layout.debug_home);
+
+    settings = PreferenceManager.getDefaultSharedPreferences(this);
 
     Context drawerContext = new ContextThemeWrapper(this, R.style.Theme_AppCompat);
     LayoutInflater.from(drawerContext)
@@ -57,7 +65,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 
     debugViews.requestFailedEvent.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        injects.bus.post(new RequestFailedEvent(R.string.error_unknown));
+        injects.bus.post(new RequestFailedEvent(R.string.error_unknown_retrying));
         debugViews.drawerLayout.closeDrawers();
       }
     });
@@ -85,6 +93,12 @@ public abstract class BaseActivity extends ActionBarActivity {
     });
     debugViews.httpStatusCode.setSelection(
         httpStatusCodeAdapter.getPositionForValue(injects.httpStatusCodePreference.get()));
+
+    debugViews.initialSync.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        injects.jobManager.addJob(new InitialSyncJob());
+      }
+    });
   }
 
   @Override public void setContentView(int layoutResID) {
@@ -97,6 +111,8 @@ public abstract class BaseActivity extends ActionBarActivity {
     @Inject Bus bus;
 
     @Inject @HttpStatusCode IntPreference httpStatusCodePreference;
+
+    @Inject JobManager jobManager;
   }
 
   static class DebugViews {
@@ -112,5 +128,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     @InjectView(R.id.debug_networkStatusCode) Spinner httpStatusCode;
 
     @InjectView(R.id.debug_drawer) ViewGroup drawerContent;
+
+    @InjectView(R.id.debug_initialSync) View initialSync;
   }
 }

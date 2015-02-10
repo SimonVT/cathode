@@ -25,6 +25,7 @@ import net.simonvt.cathode.HttpStatusCode;
 import net.simonvt.cathode.IntPreference;
 import net.simonvt.cathode.api.DebugClient;
 import net.simonvt.cathode.api.Trakt;
+import net.simonvt.cathode.remote.InitialSyncJob;
 import net.simonvt.cathode.ui.BaseActivity;
 import retrofit.client.Client;
 
@@ -32,7 +33,7 @@ import retrofit.client.Client;
     addsTo = AppModule.class,
     overrides = true,
     injects = {
-        BaseActivity.DebugInjects.class
+        BaseActivity.DebugInjects.class, InitialSyncJob.class
     })
 public class DebugModule {
 

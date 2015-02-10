@@ -33,6 +33,10 @@ final class SerialExecutor {
     serialExecutor.execute(r);
   }
 
+  public void clear() {
+    serialExecutor.clear();
+  }
+
   private final SerialExecutorImpl serialExecutor = new SerialExecutorImpl();
 
   private static class SerialExecutorImpl implements Executor {
@@ -66,6 +70,10 @@ final class SerialExecutor {
       if ((active = tasks.poll()) != null) {
         executor.execute(active);
       }
+    }
+
+    public void clear() {
+      tasks.clear();
     }
   }
 }

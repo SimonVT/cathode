@@ -166,6 +166,14 @@ public final class JobManager {
       jobs.remove(job);
       Timber.d("Finished job " + job.getClass().getSimpleName() + ", " + jobs.size() + " left");
     }
+    removeJobFromDatabase(job);
+  }
+
+  void jobFailed(Job job) {
+    Timber.d("Job failed: " + job.getClass().getSimpleName());
+  }
+
+  private void removeJobFromDatabase(final Job job) {
     serialExecutor.execute(new Runnable() {
       @Override public void run() {
         SQLiteDatabase db = database.getWritableDatabase();
@@ -175,10 +183,6 @@ public final class JobManager {
             });
       }
     });
-  }
-
-  void jobFailed(Job job) {
-    Timber.d("Job failed: " + job.getClass().getSimpleName());
   }
 
   boolean hasJobs() {
@@ -208,8 +212,23 @@ public final class JobManager {
             if (job.hasFlag(flag)) {
               Timber.d("Removing job: " + job.key());
               jobs.remove(i);
+              removeJobFromDatabase(job);
             }
           }
+        }
+      }
+    });
+  }
+
+  public void clear() {
+    serialExecutor.clear();
+    serialExecutor.execute(new Runnable() {
+      @Override public void run() {
+        synchronized (jobs) {
+          jobs.clear();
+
+          SQLiteDatabase db = database.getWritableDatabase();
+          db.delete(Tables.JOBS, null, null);
         }
       }
     });

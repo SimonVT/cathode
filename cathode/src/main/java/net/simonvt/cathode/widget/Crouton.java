@@ -69,7 +69,7 @@ public class Crouton extends TextView {
   private void init(Context context) {
     if (isInEditMode()) {
       setBackgroundColor(getResources().getColor(android.R.color.holo_red_dark));
-      setText(R.string.error_unknown);
+      setText(R.string.error_unknown_retrying);
     }
   }
 

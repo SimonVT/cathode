@@ -45,6 +45,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.HomeActivity;
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 import timber.log.Timber;
 
 public class JobService extends Service {
@@ -171,7 +172,7 @@ public class JobService extends Service {
           Timber.e(t, "Unable to execute job");
         }
 
-        jobFailed(job);
+        jobFailed(job, t);
       }
     }
   }
@@ -192,7 +193,7 @@ public class JobService extends Service {
   }
 
   void jobFinished(Job job) {
-    retryDelay = -1;
+    retryDelay = 1;
     jobManager.jobDone(job);
 
     if (!jobManager.hasJobs()) {
@@ -225,16 +226,75 @@ public class JobService extends Service {
     }
   }
 
-  void jobFailed(Job job) {
+  void jobFailed(Job job, final Throwable t) {
     jobManager.jobFailed(job);
 
     MAIN_HANDLER.post(new Runnable() {
       @Override public void run() {
         running = false;
+
+        if (displayNotification) {
+          handleError(t);
+        }
+
         scheduleAlarm();
         stopSelf();
       }
     });
+  }
+
+  public void handleError(Throwable t) {
+    int retryDelay = Math.max(1, this.retryDelay);
+
+    Intent clickIntent = new Intent(JobService.this, HomeActivity.class);
+    PendingIntent clickPi = PendingIntent.getActivity(JobService.this, 0, clickIntent, 0);
+
+    Notification.Builder builder = new Notification.Builder(JobService.this) //
+        .setSmallIcon(R.drawable.ic_notification)
+        .setTicker(getString(R.string.lost_connection))
+        .setContentTitle(getString(R.string.lost_connection, retryDelay))
+        .setContentIntent(clickPi);
+
+    String contentText = null;
+
+    if (t instanceof RetrofitError) {
+      RetrofitError error = (RetrofitError) t;
+      switch (error.getKind()) {
+        case HTTP:
+          Response response = error.getResponse();
+          if (response != null) {
+            final int statusCode = response.getStatus();
+            if (statusCode == 401) {
+              // Notification is created elsewhere
+              return;
+            } else if (statusCode >= 500 && statusCode < 600) {
+              contentText = getString(R.string.error_5xx_retry_in, retryDelay);
+            } else {
+              contentText = getString(R.string.error_unknown_retry_in, retryDelay);
+            }
+          } else {
+            contentText = getString(R.string.error_unknown_retry_in, retryDelay);
+          }
+          break;
+
+        case CONVERSION:
+        case UNEXPECTED:
+          contentText = getString(R.string.error_unknown_retry_in, retryDelay);
+          break;
+
+        case NETWORK:
+          contentText = getString(R.string.error_unknown_retry_in, retryDelay);
+          break;
+      }
+    } else {
+      contentText = getString(R.string.error_unknown_retry_in, retryDelay);
+    }
+
+    builder.setContentText(contentText)
+        .setStyle(new Notification.BigTextStyle().bigText(contentText));
+
+    NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+    nm.notify(NOTIFICATION_FAILURE, builder.build());
   }
 
   @Produce public SyncEvent provideRunningEvent() {
@@ -283,7 +343,7 @@ public class JobService extends Service {
 
   private void scheduleAlarm() {
     Intent intent = new Intent(JobService.this, JobReceiver.class);
-    final int retryDelay = Math.max(1, JobService.this.retryDelay);
+    final int retryDelay = Math.max(1, this.retryDelay);
     final int nextDelay = Math.min(retryDelay * 2, MAX_RETRY_DELAY);
     intent.putExtra(RETRY_DELAY, nextDelay);
 
@@ -296,21 +356,6 @@ public class JobService extends Service {
       am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, runAt, pi);
     } else {
       am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, runAt, pi);
-    }
-
-    if (displayNotification) {
-      Intent clickIntent = new Intent(JobService.this, HomeActivity.class);
-      PendingIntent clickPi = PendingIntent.getActivity(JobService.this, 0, clickIntent, 0);
-
-      Notification.Builder builder = new Notification.Builder(JobService.this) //
-          .setSmallIcon(R.drawable.ic_notification)
-          .setTicker(getString(R.string.lost_connection))
-          .setContentTitle(getString(R.string.lost_connection))
-          .setContentText(getString(R.string.retry_in, retryDelay))
-          .setContentIntent(clickPi);
-
-      NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-      nm.notify(NOTIFICATION_FAILURE, builder.build());
     }
 
     Timber.d("Scheduling alarm in " + retryDelay + " minutes");
