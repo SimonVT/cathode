@@ -188,8 +188,12 @@ public class CathodeApp extends Application {
       if (currentVersion < 20501) {
         TraktTimestamps.clear(this);
       }
-      if (currentVersion < 20101) {
-        jobManager.addJob(new ForceUpdateJob());
+      if (currentVersion < 21001) {
+        MAIN_HANDLER.post(new Runnable() {
+          @Override public void run() {
+            jobManager.addJob(new ForceUpdateJob());
+          }
+        });
       }
 
       MAIN_HANDLER.post(new Runnable() {
