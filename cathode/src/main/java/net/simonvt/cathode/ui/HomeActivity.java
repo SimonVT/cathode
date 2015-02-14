@@ -151,6 +151,20 @@ public class HomeActivity extends BaseActivity
     navigation =
         (NavigationFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_NAVIGATION);
 
+    watchingParent.setOnTouchListener(new View.OnTouchListener() {
+      @Override public boolean onTouch(View v, MotionEvent event) {
+        if (watchingView.isExpanded()) {
+          final int action = event.getActionMasked();
+          if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+            watchingView.collapse();
+          }
+
+          return true;
+        }
+
+        return false;
+      }
+    });
     watchingView.setWatchingViewListener(watchingListener);
 
     stack = FragmentStack.forContainer(this, R.id.content, new FragmentStack.Callback() {
@@ -324,21 +338,10 @@ public class HomeActivity extends BaseActivity
   private WatchingViewListener watchingListener = new WatchingViewListener() {
     @Override public void onExpand(WatchingView view) {
       Timber.d("onExpand");
-      watchingParent.setOnTouchListener(new View.OnTouchListener() {
-        @Override public boolean onTouch(View v, MotionEvent event) {
-          final int action = event.getActionMasked();
-          if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-            watchingView.collapse();
-          }
-
-          return true;
-        }
-      });
     }
 
     @Override public void onCollapse(WatchingView view) {
       Timber.d("onCollapse");
-      watchingParent.setOnTouchListener(null);
     }
 
     @Override public void onEpisodeClicked(WatchingView view, long episodeId, String showTitle) {

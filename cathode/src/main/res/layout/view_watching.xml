@@ -16,6 +16,7 @@
   -->
 <net.simonvt.cathode.widget.WatchingView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/watchingView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -49,13 +50,22 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:singleLine="true"
-        android:text="TITLE"/>
+        tools:text="Title"/>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="8dp"
+        android:maxHeight="8dp"
+        android:progressBackgroundTint="@color/lighter_gray"
+        style="?android:attr/progressBarStyleHorizontal"/>
 
     <TextView
         android:id="@+id/subtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:singleLine="true"
-        android:text="SUBTITLE"/>
+        tools:text="Subtitle"/>
   </LinearLayout>
 </net.simonvt.cathode.widget.WatchingView>

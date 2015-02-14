@@ -25,17 +25,20 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Build;
+import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.util.ViewUtils;
+import timber.log.Timber;
 
 public class WatchingView extends ViewGroup {
 
@@ -94,6 +97,8 @@ public class WatchingView extends ViewGroup {
 
   @InjectView(R.id.title) TextView titleView;
 
+  @InjectView(R.id.progress) ProgressBar progress;
+
   @InjectView(R.id.subtitle) TextView subtitleView;
 
   private static final boolean IS_LOLLIPOP = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
@@ -119,6 +124,16 @@ public class WatchingView extends ViewGroup {
   private long startTime;
 
   private long endTime;
+
+  private Handler handler;
+
+  private Runnable updateProgress = new Runnable() {
+    @Override public void run() {
+      Timber.d("Updating watched progress");
+      progress.setProgress((int) (System.currentTimeMillis() - startTime));
+      handler.postDelayed(this, 30*1000L);
+    }
+  };
 
   public WatchingView(Context context) {
     super(context);
@@ -173,6 +188,8 @@ public class WatchingView extends ViewGroup {
 
     animationProgress = 1.0f;
     setVisibility(GONE);
+
+    handler = new Handler();
   }
 
   public void setWatchingViewListener(WatchingViewListener watchingViewListener) {
@@ -196,6 +213,8 @@ public class WatchingView extends ViewGroup {
     titleView.setText(showTitle);
     subtitleView.setVisibility(VISIBLE);
     subtitleView.setText(episodeTitle);
+    progress.setMax((int) (endTime - startTime));
+    progress.setProgress((int) (System.currentTimeMillis() - startTime));
 
     animateIn();
   }
@@ -285,6 +304,8 @@ public class WatchingView extends ViewGroup {
   private void setIsExpanded(boolean isExpanded) {
     this.isExpanded = isExpanded;
 
+    handler.removeCallbacks(updateProgress);
+
     if (isExpanded) {
       setOnClickListener(expandedClickListener);
       posterView.setOnClickListener(null);
@@ -292,6 +313,8 @@ public class WatchingView extends ViewGroup {
       if (watchingViewListener != null) {
         watchingViewListener.onExpand(this);
       }
+
+      updateProgress.run();
     } else {
       setOnClickListener(null);
       setClickable(false);
@@ -346,6 +369,20 @@ public class WatchingView extends ViewGroup {
     ButterKnife.inject(this);
 
     setIsExpanded(isExpanded);
+  }
+
+  @Override protected void onAttachedToWindow() {
+    super.onAttachedToWindow();
+
+    if (isExpanded) {
+      handler.removeCallbacks(updateProgress);
+      handler.post(updateProgress);
+    }
+  }
+
+  @Override protected void onDetachedFromWindow() {
+    handler.removeCallbacks(updateProgress);
+    super.onDetachedFromWindow();
   }
 
   private void expandAnimation(float progress) {
