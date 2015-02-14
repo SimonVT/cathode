@@ -127,21 +127,28 @@ public final class ShowWrapper {
   }
 
   public static boolean shouldSyncFully(ContentResolver resolver, long id) {
-    Cursor c = resolver.query(Shows.withId(id), new String[] {
-        ShowColumns.IN_WATCHLIST, ShowColumns.FULL_SYNC_REQUESTED, ShowColumns.IN_COLLECTION_COUNT,
-        ShowColumns.WATCHED_COUNT,
-    }, null, null, null);
+    Cursor c = null;
+    try {
+      c = resolver.query(Shows.withId(id), new String[] {
+          ShowColumns.IN_WATCHLIST, ShowColumns.FULL_SYNC_REQUESTED,
+          ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT,
+      }, null, null, null);
 
-    if (c.moveToFirst()) {
-      final boolean inWatchlist = c.getInt(c.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
-      final long fullSyncRequested = c.getLong(c.getColumnIndex(ShowColumns.FULL_SYNC_REQUESTED));
-      final int watchedCount = c.getInt(c.getColumnIndex(ShowColumns.WATCHED_COUNT));
-      final int collectionCount = c.getInt(c.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT));
+      if (c.moveToFirst()) {
+        final boolean inWatchlist = c.getInt(c.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
+        final long fullSyncRequested = c.getLong(c.getColumnIndex(ShowColumns.FULL_SYNC_REQUESTED));
+        final int watchedCount = c.getInt(c.getColumnIndex(ShowColumns.WATCHED_COUNT));
+        final int collectionCount = c.getInt(c.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT));
 
-      return inWatchlist || watchedCount > 0 || collectionCount > 0 || fullSyncRequested > 0;
+        return inWatchlist || watchedCount > 0 || collectionCount > 0 || fullSyncRequested > 0;
+      }
+
+      return false;
+    } finally {
+      if (c != null) {
+        c.close();
+      }
     }
-
-    return false;
   }
 
   public static long createShow(ContentResolver resolver, long traktId) {

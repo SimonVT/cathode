@@ -19,10 +19,10 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations;
 import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
-import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
+import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncShowRecommendations;
 import net.simonvt.cathode.remote.sync.shows.SyncTrendingShows;
-import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
+import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.jobqueue.Job;
@@ -45,8 +45,8 @@ public class SyncJob extends Job {
     queue(new SyncUserSettings());
     queue(new SyncActivityStream());
 
-    queue(new SyncUpdatedShows());
-    queue(new SyncUpdatedMovies());
+    queue(new StartSyncUpdatedShows());
+    queue(new StartSyncUpdatedMovies());
 
     queue(new SyncUserActivity());
 

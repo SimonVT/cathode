@@ -18,6 +18,7 @@ package net.simonvt.cathode.module;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
+import com.squareup.okhttp.OkHttpClient;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
@@ -43,8 +44,9 @@ public class DebugModule {
     this.context = context;
   }
 
-  @Provides @Singleton @Trakt Client provideClient(@HttpStatusCode IntPreference httpStatusCode) {
-    return new DebugClient(httpStatusCode);
+  @Provides @Singleton @Trakt Client provideClient(@Trakt OkHttpClient client,
+      @HttpStatusCode IntPreference httpStatusCode) {
+    return new DebugClient(client, httpStatusCode);
   }
 
   @Provides @Singleton @HttpStatusCode IntPreference provideHttpStatusCodePreference() {

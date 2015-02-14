@@ -41,6 +41,7 @@ import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.LogoutEvent;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.LogoutJob;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
@@ -186,6 +187,9 @@ public class CathodeApp extends Application {
       }
       if (currentVersion < 20501) {
         TraktTimestamps.clear(this);
+      }
+      if (currentVersion < 20101) {
+        jobManager.addJob(new ForceUpdateJob());
       }
 
       MAIN_HANDLER.post(new Runnable() {

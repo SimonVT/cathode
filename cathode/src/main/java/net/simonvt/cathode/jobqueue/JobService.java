@@ -198,14 +198,14 @@ public class JobService extends Service {
 
     if (!jobManager.hasJobs()) {
       stopSelf();
+    } else {
+      MAIN_HANDLER.post(new Runnable() {
+        @Override public void run() {
+          running = false;
+          executeNext();
+        }
+      });
     }
-
-    MAIN_HANDLER.post(new Runnable() {
-      @Override public void run() {
-        running = false;
-        executeNext();
-      }
-    });
   }
 
   private void executeNext() {

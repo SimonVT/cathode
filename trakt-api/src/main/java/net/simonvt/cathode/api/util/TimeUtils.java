@@ -47,4 +47,10 @@ public final class TimeUtils {
     DateTimeFormatter fmt = ISODateTimeFormat.dateTime().withZoneUTC();
     return fmt.print(dt);
   }
+
+  public static String getIsoTime(long millis) {
+    DateTime dt = new DateTime(millis);
+    DateTimeFormatter fmt = ISODateTimeFormat.dateTime().withZoneUTC();
+    return fmt.print(dt);
+  }
 }

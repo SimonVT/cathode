@@ -16,6 +16,7 @@
 
 package net.simonvt.cathode.api;
 
+import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
 import java.util.ArrayList;
 import net.simonvt.cathode.IntPreference;
@@ -31,10 +32,10 @@ public class DebugClient implements Client {
 
   private IntPreference httpStatusCode;
 
-  public DebugClient(IntPreference httpStatusCode) {
+  public DebugClient(OkHttpClient client, IntPreference httpStatusCode) {
     this.httpStatusCode = httpStatusCode;
 
-    okClient = new OkClient();
+    okClient = new OkClient(client);
   }
 
   @Override public Response execute(Request request) throws IOException {

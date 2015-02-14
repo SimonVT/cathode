@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Simon Vig Therkildsen
+ * Copyright (C) 2015 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,24 +15,32 @@
  */
 package net.simonvt.cathode.remote.sync.movies;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.entity.UpdatedItem;
 import net.simonvt.cathode.api.service.MoviesService;
-import net.simonvt.cathode.api.util.TimeUtils;
-import net.simonvt.cathode.provider.MovieWrapper;
-import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.provider.MovieWrapper;
 
 public class SyncUpdatedMovies extends Job {
 
+  private static final int LIMIT = 100;
+
   @Inject transient MoviesService moviesService;
 
+  private String updatedSince;
+
+  private int page;
+
+  public SyncUpdatedMovies(String updatedSince, int page) {
+    super();
+    this.updatedSince = updatedSince;
+    this.page = page;
+  }
+
   @Override public String key() {
-    return "SyncUpdatedMovies";
+    return "SyncUpdatedMovies" + "&updatedSince=" + updatedSince + "&page=" + page;
   }
 
   @Override public int getPriority() {
@@ -40,29 +48,25 @@ public class SyncUpdatedMovies extends Job {
   }
 
   @Override public void perform() {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+    List<UpdatedItem> updated = moviesService.updated(updatedSince, page, LIMIT);
 
-    final String lastUpdated = settings.getString(Settings.MOVIES_LAST_UPDATED, null);
-    String currentTime = TimeUtils.getIsoTime();
+    for (UpdatedItem item : updated) {
+      final String updatedAt = item.getUpdatedAt();
+      final Movie movie = item.getMovie();
+      final long traktId = movie.getIds().getTrakt();
 
-    if (lastUpdated != null) {
-      List<UpdatedItem> updated = moviesService.updated(lastUpdated);
-      for (UpdatedItem item : updated) {
-        final String updatedAt = item.getUpdatedAt();
-        final Movie movie = item.getMovie();
-        final long traktId = movie.getIds().getTrakt();
-
-        final boolean exists = MovieWrapper.exists(getContentResolver(), traktId);
-        if (exists) {
-          final boolean needsUpdate =
-              MovieWrapper.needsUpdate(getContentResolver(), traktId, updatedAt);
-          if (needsUpdate) {
-            queue(new SyncMovie(traktId));
-          }
+      final boolean exists = MovieWrapper.exists(getContentResolver(), traktId);
+      if (exists) {
+        final boolean needsUpdate =
+            MovieWrapper.needsUpdate(getContentResolver(), traktId, updatedAt);
+        if (needsUpdate) {
+          queue(new SyncMovie(traktId));
         }
       }
     }
 
-    settings.edit().putString(Settings.MOVIES_LAST_UPDATED, currentTime).apply();
+    if (updated.size() >= LIMIT) {
+      queue(new SyncUpdatedMovies(updatedSince, page + 1));
+    }
   }
 }

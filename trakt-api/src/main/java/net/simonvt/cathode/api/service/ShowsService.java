@@ -49,7 +49,7 @@ public interface ShowsService {
    * @param startDate Updated since this date. Example: 2014-09-22.
    */
   @GET("/shows/updates/{start_date}") List<UpdatedItem> getUpdatedShows(
-      @Path("start_date") String startDate);
+      @Path("start_date") String startDate, @Query("page") int page, @Query("limit") int limit);
 
   /**
    * Returns a single shows's details.

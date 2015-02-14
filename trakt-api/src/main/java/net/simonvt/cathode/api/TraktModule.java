@@ -1,5 +1,6 @@
 package net.simonvt.cathode.api;
 
+import android.content.Context;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,10 +13,15 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+import com.squareup.okhttp.Cache;
+import com.squareup.okhttp.Interceptor;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Response;
 import dagger.Module;
 import dagger.Provides;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Singleton;
 import net.simonvt.cathode.api.entity.IsoTime;
 import net.simonvt.cathode.api.enumeration.Action;
@@ -60,8 +66,15 @@ public class TraktModule {
         .build();
   }
 
-  @Provides @Singleton @Trakt Client provideClient() {
-    return new OkClient();
+  @Provides @Singleton @Trakt OkHttpClient provideOkHttpClient(Context context) {
+    OkHttpClient client = new OkHttpClient();
+    client.setConnectTimeout(15, TimeUnit.SECONDS);
+    client.setReadTimeout(20, TimeUnit.SECONDS);
+    return client;
+  }
+
+  @Provides @Singleton @Trakt Client provideClient(@Trakt OkHttpClient client) {
+    return new OkClient(client);
   }
 
   @Provides @Singleton AuthorizationService provideAuthorizationService(

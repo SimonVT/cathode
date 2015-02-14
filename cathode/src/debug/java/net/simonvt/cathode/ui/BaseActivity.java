@@ -35,10 +35,15 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.HttpStatusCode;
 import net.simonvt.cathode.IntPreference;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.RequestFailedEvent;
 import net.simonvt.cathode.jobqueue.JobManager;
+import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.InitialSyncJob;
+import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
+import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
+import net.simonvt.cathode.settings.Settings;
 
 public abstract class BaseActivity extends ActionBarActivity {
 
@@ -99,6 +104,24 @@ public abstract class BaseActivity extends ActionBarActivity {
         injects.jobManager.addJob(new InitialSyncJob());
       }
     });
+
+    debugViews.forceUpdate.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        injects.jobManager.addJob(new ForceUpdateJob());
+      }
+    });
+
+    debugViews.updatedLastDay.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        String lastUpdated = TimeUtils.getIsoTime();
+        settings.edit()
+            .putString(Settings.MOVIES_LAST_UPDATED, lastUpdated)
+            .putString(Settings.SHOWS_LAST_UPDATED, lastUpdated)
+            .apply();
+        injects.jobManager.addJob(new StartSyncUpdatedShows());
+        injects.jobManager.addJob(new StartSyncUpdatedMovies());
+      }
+    });
   }
 
   @Override public void setContentView(int layoutResID) {
@@ -130,5 +153,9 @@ public abstract class BaseActivity extends ActionBarActivity {
     @InjectView(R.id.debug_drawer) ViewGroup drawerContent;
 
     @InjectView(R.id.debug_initialSync) View initialSync;
+
+    @InjectView(R.id.debug_forceUpdate) View forceUpdate;
+
+    @InjectView(R.id.debug_updatedLastDay) View updatedLastDay;
   }
 }

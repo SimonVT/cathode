@@ -24,6 +24,11 @@ import dagger.Provides;
 import javax.inject.Singleton;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.api.TraktModule;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobInjector;
+import net.simonvt.cathode.jobqueue.JobModule;
+import net.simonvt.cathode.jobqueue.JobService;
+import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.action.CancelCheckin;
 import net.simonvt.cathode.remote.action.movies.CheckInMovie;
 import net.simonvt.cathode.remote.action.movies.CollectMovie;
@@ -49,6 +54,7 @@ import net.simonvt.cathode.remote.sync.SyncPerson;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.remote.sync.SyncUserSettings;
 import net.simonvt.cathode.remote.sync.SyncWatching;
+import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieCrew;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations;
@@ -58,6 +64,7 @@ import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchlist;
 import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies;
+import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisode;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodesRatings;
@@ -117,10 +124,6 @@ import net.simonvt.cathode.util.MovieSearchHandler;
 import net.simonvt.cathode.util.ShowSearchHandler;
 import net.simonvt.cathode.widget.PhoneEpisodeView;
 import net.simonvt.cathode.widget.RemoteImageView;
-import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobInjector;
-import net.simonvt.cathode.jobqueue.JobModule;
-import net.simonvt.cathode.jobqueue.JobService;
 
 @Module(
     includes = {
@@ -170,13 +173,13 @@ import net.simonvt.cathode.jobqueue.JobService;
         SyncUserSettings.class, SyncWatching.class, SyncMovieCrew.class,
         SyncMovieRecommendations.class, SyncMoviesCollection.class, SyncMoviesRatings.class,
         SyncWatchedMovies.class, SyncMoviesWatchlist.class, SyncMovie.class,
-        SyncTrendingMovies.class, SyncUpdatedMovies.class, SyncEpisodesRatings.class,
+        SyncTrendingMovies.class, StartSyncUpdatedMovies.class, SyncEpisodesRatings.class,
         SyncEpisode.class, SyncEpisodeWatchlist.class, SyncSeasonsRatings.class, SyncSeasons.class,
         SyncSeason.class, SyncShowCast.class, SyncShowCollectedStatus.class,
         SyncShowRecommendations.class, SyncShowsCollection.class, SyncShowsRatings.class,
         SyncWatchedShows.class, SyncShowsWatchlist.class, SyncShow.class,
-        SyncShowWatchedStatus.class, SyncTrendingShows.class, SyncUpdatedShows.class,
-        SyncPerson.class,
+        SyncShowWatchedStatus.class, SyncTrendingShows.class, StartSyncUpdatedShows.class,
+        SyncPerson.class, SyncUpdatedShows.class, SyncUpdatedMovies.class, ForceUpdateJob.class,
 
         // Misc
         ShowSearchHandler.class, ShowSearchHandler.SearchThread.class, MovieSearchHandler.class,

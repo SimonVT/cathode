@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Simon Vig Therkildsen
+ * Copyright (C) 2015 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +15,34 @@
  */
 package net.simonvt.cathode.remote.sync.shows;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.entity.UpdatedItem;
 import net.simonvt.cathode.api.service.ShowsService;
-import net.simonvt.cathode.api.util.TimeUtils;
-import net.simonvt.cathode.provider.ShowWrapper;
-import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.provider.ShowWrapper;
+import timber.log.Timber;
 
 public class SyncUpdatedShows extends Job {
 
+  private static final int LIMIT = 100;
+
   @Inject transient ShowsService showsService;
 
+  private String updatedSince;
+
+  private int page;
+
+  public SyncUpdatedShows(String updatedSince, int page) {
+    super();
+    this.updatedSince = updatedSince;
+    this.page = page;
+  }
+
   @Override public String key() {
-    return "SyncUpdatedShows";
+    return "SyncUpdatedShows" + "&updatedSince=" + updatedSince + "&page=" + page;
   }
 
   @Override public int getPriority() {
@@ -41,43 +50,39 @@ public class SyncUpdatedShows extends Job {
   }
 
   @Override public void perform() {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-    String lastUpdated = settings.getString(Settings.SHOWS_LAST_UPDATED, null);
-
     List<Long> showSummaries = new ArrayList<Long>();
 
-    String currentTime = TimeUtils.getIsoTime();
+    List<UpdatedItem> updated = showsService.getUpdatedShows(updatedSince, page, LIMIT);
 
-    if (lastUpdated != null) {
-      List<UpdatedItem> updated = showsService.getUpdatedShows(lastUpdated);
+    for (UpdatedItem item : updated) {
+      final String updatedAt = item.getUpdatedAt();
 
-      for (UpdatedItem item : updated) {
-        final String updatedAt = item.getUpdatedAt();
-
-        Show show = item.getShow();
-        final long traktId = show.getIds().getTrakt();
-        final boolean exists = ShowWrapper.exists(getContentResolver(), traktId);
-        if (exists) {
-          final boolean needsUpdate =
-              ShowWrapper.needsUpdate(getContentResolver(), traktId, updatedAt);
-          if (needsUpdate) {
-            final long id = ShowWrapper.getShowId(getContentResolver(), traktId);
-            if (ShowWrapper.shouldSyncFully(getContentResolver(), id)) {
-              queue(new SyncShow(traktId));
-            } else {
-              showSummaries.add(traktId);
-            }
+      Show show = item.getShow();
+      final long traktId = show.getIds().getTrakt();
+      final boolean exists = ShowWrapper.exists(getContentResolver(), traktId);
+      if (exists) {
+        final boolean needsUpdate =
+            ShowWrapper.needsUpdate(getContentResolver(), traktId, updatedAt);
+        if (needsUpdate) {
+          Timber.d("Show: " + show.getTitle() + " - last updated: " + updatedAt);
+          final long id = ShowWrapper.getShowId(getContentResolver(), traktId);
+          if (ShowWrapper.shouldSyncFully(getContentResolver(), id)) {
+            queue(new SyncShow(traktId));
+          } else {
+            showSummaries.add(traktId);
           }
-        }
-      }
-
-      if (showSummaries.size() > 0) {
-        for (Long traktId : showSummaries) {
-          queue(new SyncShow(traktId, false));
         }
       }
     }
 
-    settings.edit().putString(Settings.SHOWS_LAST_UPDATED, currentTime).apply();
+    if (showSummaries.size() > 0) {
+      for (Long traktId : showSummaries) {
+        queue(new SyncShow(traktId, false));
+      }
+    }
+
+    if (updated.size() >= LIMIT) {
+      queue(new SyncUpdatedShows(updatedSince, page + 1));
+    }
   }
 }
