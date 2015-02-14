@@ -58,11 +58,11 @@ public class ApiModule {
       @Override public Throwable handleError(RetrofitError error) {
         switch (error.getKind()) {
           case HTTP:
-            Timber.d(error, "Request failed");
-
             Response response = error.getResponse();
             if (response != null) {
               final int statusCode = response.getStatus();
+              Timber.i("Status code: " + statusCode);
+
               if (statusCode == 401) {
                 MAIN_HANDLER.post(new Runnable() {
                   @Override public void run() {
@@ -76,22 +76,30 @@ public class ApiModule {
                   }
                 });
               } else {
+                Timber.e(error, "Kind: HTTP");
                 MAIN_HANDLER.post(new Runnable() {
                   @Override public void run() {
                     bus.post(new RequestFailedEvent(R.string.error_unknown_retrying));
                   }
                 });
               }
+
+              Timber.d(error, "Kind: HTTP");
+            } else {
+              Timber.e(error, "Kind: HTTP");
             }
             break;
 
           case CONVERSION:
+            Timber.e(error, "Kind: CONVERSION");
+            break;
+
           case UNEXPECTED:
-            Timber.e(error, "Request failed");
+            Timber.e(error, "Kind: UNEXPECTED");
             break;
 
           case NETWORK:
-            Timber.e(error, "Request failed");
+            Timber.e(error, "Kind: NETWORK");
 
             MAIN_HANDLER.post(new Runnable() {
               @Override public void run() {
