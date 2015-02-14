@@ -367,7 +367,6 @@ public class HomeActivity extends BaseActivity
     }
 
     @Override public void onAnimatingOut(WatchingView view) {
-      watchingParent.setOnTouchListener(null);
     }
   };
 
