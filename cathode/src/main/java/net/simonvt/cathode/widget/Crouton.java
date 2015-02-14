@@ -42,7 +42,7 @@ public class Crouton extends TextView {
 
   private Message currentMessage;
 
-  private boolean mShowing;
+  private boolean showing;
 
   private Handler handler = new Handler();
 
@@ -79,7 +79,7 @@ public class Crouton extends TextView {
 
   public void show(String message, int backgroundColor) {
     Message m = new Message(message, backgroundColor);
-    if (mShowing) {
+    if (showing) {
       messages.add(m);
     } else {
       show(m);
@@ -91,7 +91,7 @@ public class Crouton extends TextView {
   }
 
   private void show(Message message, boolean immediately) {
-    mShowing = true;
+    showing = true;
 
     setTranslationY(getHeight());
     setBackgroundColor(message.backgroundColor);
@@ -143,6 +143,7 @@ public class Crouton extends TextView {
       animator.translationY(getHeight()).withEndAction(new Runnable() {
         @Override public void run() {
           animator = null;
+          showing = false;
 
           if (hasMessages()) {
             Message message = messages.poll();
