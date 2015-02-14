@@ -131,7 +131,7 @@ public class WatchingView extends ViewGroup {
     @Override public void run() {
       Timber.d("Updating watched progress");
       progress.setProgress((int) (System.currentTimeMillis() - startTime));
-      handler.postDelayed(this, 30*1000L);
+      handler.postDelayed(this, 30 * 1000L);
     }
   };
 
