@@ -23,6 +23,7 @@ import retrofit.client.Response;
 import retrofit.http.DELETE;
 import retrofit.http.GET;
 import retrofit.http.Path;
+import retrofit.http.Query;
 
 public interface RecommendationsService {
 
@@ -33,6 +34,14 @@ public interface RecommendationsService {
    * first.
    */
   @GET("/recommendations/movies") List<Movie> movies();
+
+  /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Personalized movie recommendations for a user. Results returned with the top recommendation
+   * first.
+   */
+  @GET("/recommendations/movies") List<Movie> movies(@Query("limit") int limit);
 
   /**
    * <b>OAuth Required</b>
@@ -50,6 +59,14 @@ public interface RecommendationsService {
    * first.
    */
   @GET("/recommendations/shows") List<Show> shows();
+
+  /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Personalized show recommendations for a user. Results returned with the top recommendation
+   * first.
+   */
+  @GET("/recommendations/shows") List<Show> shows(@Query("limit") int limit);
 
   /**
    * <b>OAuth Required</b>

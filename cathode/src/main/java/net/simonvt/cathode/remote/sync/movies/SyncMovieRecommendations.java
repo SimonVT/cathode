@@ -36,6 +36,8 @@ import timber.log.Timber;
 
 public class SyncMovieRecommendations extends Job {
 
+  private static final int LIMIT = 20;
+
   @Inject transient RecommendationsService recommendationsService;
 
   @Override public String key() {
@@ -58,7 +60,7 @@ public class SyncMovieRecommendations extends Job {
       c.close();
 
       ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
-      List<Movie> recommendations = recommendationsService.movies();
+      List<Movie> recommendations = recommendationsService.movies(LIMIT);
       for (int index = 0; index < Math.min(recommendations.size(), 25); index++) {
         Movie movie = recommendations.get(index);
         final long traktId = movie.getIds().getTrakt();

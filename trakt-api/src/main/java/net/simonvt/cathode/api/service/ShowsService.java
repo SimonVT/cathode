@@ -42,6 +42,11 @@ public interface ShowsService {
   @GET("/shows/trending") List<TrendingItem> getTrendingShows();
 
   /**
+   * Returns all shows being watched right now. Shows with the most users are returned first.
+   */
+  @GET("/shows/trending") List<TrendingItem> getTrendingShows(@Query("limit") int limit);
+
+  /**
    * Returns all shows updated since the specified UTC date. We recommended storing the date you
    * can
    * be efficient using this method moving forward.

@@ -30,6 +30,8 @@ public interface MoviesService {
 
   @GET("/movies/trending") List<TrendingItem> getTrendingMovies();
 
+  @GET("/movies/trending") List<TrendingItem> getTrendingMovies(@Query("limit") int limit);
+
   @GET("/movies/updates/{start_date}") List<UpdatedItem> updated(
       @Path("start_date") String startDate, @Query("page") int page, @Query("limit") int limit);
 

@@ -35,6 +35,8 @@ import timber.log.Timber;
 
 public class SyncShowRecommendations extends Job {
 
+  private static final int LIMIT = 20;
+
   @Inject transient RecommendationsService recommendationsService;
 
   @Override public String key() {
@@ -49,7 +51,7 @@ public class SyncShowRecommendations extends Job {
     try {
       ContentResolver resolver = getContentResolver();
 
-      List<Show> shows = recommendationsService.shows();
+      List<Show> shows = recommendationsService.shows(LIMIT);
       List<Long> showIds = new ArrayList<Long>();
       ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 

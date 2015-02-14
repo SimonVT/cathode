@@ -37,6 +37,8 @@ import timber.log.Timber;
 
 public class SyncTrendingMovies extends Job {
 
+  private static final int LIMIT = 20;
+
   @Inject transient MoviesService moviesService;
 
   @Override public String key() {
@@ -51,7 +53,7 @@ public class SyncTrendingMovies extends Job {
     try {
       ContentResolver resolver = getContentResolver();
 
-      List<TrendingItem> movies = moviesService.getTrendingMovies();
+      List<TrendingItem> movies = moviesService.getTrendingMovies(LIMIT);
 
       ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
       Cursor c = resolver.query(Movies.TRENDING, new String[] {

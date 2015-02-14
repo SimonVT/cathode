@@ -37,6 +37,8 @@ import timber.log.Timber;
 
 public class SyncTrendingShows extends Job {
 
+  private static final int LIMIT = 20;
+
   @Inject transient ShowsService showsService;
 
   @Override public String key() {
@@ -51,7 +53,7 @@ public class SyncTrendingShows extends Job {
     try {
       ContentResolver resolver = getContentResolver();
 
-      List<TrendingItem> shows = showsService.getTrendingShows();
+      List<TrendingItem> shows = showsService.getTrendingShows(LIMIT);
 
       ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
       Cursor c = resolver.query(Shows.SHOWS_TRENDING, null, null, null, null);
