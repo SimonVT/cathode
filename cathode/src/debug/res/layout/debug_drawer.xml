@@ -107,4 +107,45 @@
       android:textAllCaps="false"
       android:text="Sync updated last day"
       style="@style/DebugDrawerItem"/>
+
+  <TextView
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
+      android:text="Job queue"
+      style="@style/DebugDrawerTitle"/>
+
+  <TextView
+      android:layout_width="0dp"
+      android:layout_columnSpan="1"
+      android:layout_gravity="start|fill_horizontal"
+      android:textAllCaps="false"
+      android:text="Queue status"
+      style="@style/DebugDrawerItem"/>
+
+  <TextView
+      android:id="@+id/debug_queueStatus"
+      android:layout_width="0dp"
+      android:layout_columnSpan="1"
+      android:layout_gravity="start|fill_horizontal"
+      android:textAllCaps="false"
+      android:text="Running"
+      style="@style/DebugDrawerValue"/>
+
+  <TextView
+      android:layout_width="0dp"
+      android:layout_columnSpan="1"
+      android:layout_gravity="start|fill_horizontal"
+      android:textAllCaps="false"
+      android:text="Job count"
+      style="@style/DebugDrawerItem"/>
+
+  <TextView
+      android:id="@+id/debug_jobCount"
+      android:layout_width="0dp"
+      android:layout_columnSpan="1"
+      android:layout_gravity="start|fill_horizontal"
+      android:textAllCaps="false"
+      android:text="10"
+      style="@style/DebugDrawerValue"/>
 </GridLayout>

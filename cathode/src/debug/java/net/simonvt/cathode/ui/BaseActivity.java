@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import com.squareup.otto.Bus;
@@ -122,11 +123,38 @@ public abstract class BaseActivity extends ActionBarActivity {
         injects.jobManager.addJob(new StartSyncUpdatedMovies());
       }
     });
+
+    injects.jobManager.setJobListener(new JobManager.JobListener() {
+      @Override public void onStatusChanged(JobManager.QueueStatus queueStatus) {
+        switch (queueStatus) {
+          case DONE:
+            debugViews.queueStatus.setText("Done");
+            break;
+
+          case RUNNING:
+            debugViews.queueStatus.setText("Running");
+            break;
+
+          case FAILED:
+            debugViews.queueStatus.setText("Failed");
+            break;
+        }
+      }
+
+      @Override public void onSizeChanged(int jobCount) {
+        debugViews.jobCount.setText(String.valueOf(jobCount));
+      }
+    });
   }
 
   @Override public void setContentView(int layoutResID) {
     debugViews.container.removeAllViews();
     getLayoutInflater().inflate(layoutResID, debugViews.container);
+  }
+
+  @Override protected void onDestroy() {
+    injects.jobManager.setJobListener(null);
+    super.onDestroy();
   }
 
   public static class DebugInjects {
@@ -157,5 +185,9 @@ public abstract class BaseActivity extends ActionBarActivity {
     @InjectView(R.id.debug_forceUpdate) View forceUpdate;
 
     @InjectView(R.id.debug_updatedLastDay) View updatedLastDay;
+
+    @InjectView(R.id.debug_queueStatus) TextView queueStatus;
+
+    @InjectView(R.id.debug_jobCount) TextView jobCount;
   }
 }
