@@ -99,7 +99,7 @@ public class ApiModule {
             break;
 
           case NETWORK:
-            Timber.e(error, "Kind: NETWORK");
+            Timber.d(error, "Kind: NETWORK");
 
             MAIN_HANDLER.post(new Runnable() {
               @Override public void run() {
