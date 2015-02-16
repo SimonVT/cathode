@@ -16,6 +16,7 @@
 package net.simonvt.cathode.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -40,6 +41,7 @@ import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.RequestFailedEvent;
 import net.simonvt.cathode.jobqueue.JobManager;
+import net.simonvt.cathode.jobqueue.JobService;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.InitialSyncJob;
 import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
@@ -145,6 +147,13 @@ public abstract class BaseActivity extends ActionBarActivity {
         debugViews.jobCount.setText(String.valueOf(jobCount));
       }
     });
+
+    debugViews.startJobService.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        Intent i = new Intent(BaseActivity.this, JobService.class);
+        startService(i);
+      }
+    });
   }
 
   @Override public void setContentView(int layoutResID) {
@@ -189,5 +198,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     @InjectView(R.id.debug_queueStatus) TextView queueStatus;
 
     @InjectView(R.id.debug_jobCount) TextView jobCount;
+
+    @InjectView(R.id.debug_startJobService) TextView startJobService;
   }
 }
