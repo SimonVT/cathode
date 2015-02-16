@@ -800,7 +800,7 @@ public final class ProviderSchematic {
     @ContentUri(
         path = Path.MOVIES + "/" + Path.WATCHING,
         type = Type.MOVIE,
-        where = MovieColumns.WATCHING + "=1")
+        where = MovieColumns.WATCHING + "=1 OR " + MovieColumns.CHECKED_IN + "=1")
     public static final Uri WATCHING = buildUri(Path.MOVIES, Path.WATCHING);
 
     @ContentUri(

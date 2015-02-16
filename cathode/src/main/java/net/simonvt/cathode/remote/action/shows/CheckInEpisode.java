@@ -65,7 +65,8 @@ public class CheckInEpisode extends Job {
         .facebook(facebook) //
         .twitter(twitter) //
         .tumblr(tumblr) //
-        .appVersion(BuildConfig.VERSION_NAME).appDate(BuildConfig.BUILD_TIME);
+        .appVersion(BuildConfig.VERSION_NAME) //
+        .appDate(BuildConfig.BUILD_TIME);
     checkinService.checkin(item);
   }
 }

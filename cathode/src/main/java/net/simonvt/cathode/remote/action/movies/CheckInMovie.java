@@ -16,6 +16,7 @@
 package net.simonvt.cathode.remote.action.movies;
 
 import javax.inject.Inject;
+import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.body.CheckinItem;
 import net.simonvt.cathode.api.service.CheckinService;
 import net.simonvt.cathode.jobqueue.Job;
@@ -59,11 +60,13 @@ public class CheckInMovie extends Job {
 
   @Override public void perform() {
     CheckinItem item = new CheckinItem() //
-        .episode(traktId) //
+        .movie(traktId) //
         .message(message) //
         .facebook(facebook) //
         .twitter(twitter) //
-        .tumblr(tumblr);
+        .tumblr(tumblr) //
+        .appVersion(BuildConfig.VERSION_NAME) //
+        .appDate(BuildConfig.BUILD_TIME);
     checkinService.checkin(item);
   }
 }
