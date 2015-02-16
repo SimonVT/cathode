@@ -73,7 +73,11 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
     }
 
     public static SortBy fromValue(String value) {
-      return STRING_MAPPING.get(value.toUpperCase());
+      SortBy sortBy = STRING_MAPPING.get(value.toUpperCase());
+      if (sortBy == null) {
+        sortBy = VIEWERS;
+      }
+      return sortBy;
     }
   }
 

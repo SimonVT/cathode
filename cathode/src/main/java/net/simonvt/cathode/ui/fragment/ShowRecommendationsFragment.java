@@ -91,7 +91,11 @@ public class ShowRecommendationsFragment
     }
 
     public static SortBy fromValue(String value) {
-      return STRING_MAPPING.get(value.toUpperCase());
+      SortBy sortBy = STRING_MAPPING.get(value.toUpperCase());
+      if (sortBy == null) {
+        sortBy = RELEVANCE;
+      }
+      return sortBy;
     }
   }
 

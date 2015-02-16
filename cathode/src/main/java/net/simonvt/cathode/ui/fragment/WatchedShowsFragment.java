@@ -72,7 +72,11 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
     }
 
     public static SortBy fromValue(String value) {
-      return STRING_MAPPING.get(value.toUpperCase());
+      SortBy sortBy = STRING_MAPPING.get(value.toUpperCase());
+      if (sortBy == null) {
+        sortBy = TITLE;
+      }
+      return sortBy;
     }
   }
 
