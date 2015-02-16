@@ -42,8 +42,20 @@ public class StartSyncUpdatedShows extends Job {
       long millis = TimeUtils.getMillis(lastUpdated);
       millis = millis - 12 * DateUtils.HOUR_IN_MILLIS;
       String updatedSince = TimeUtils.getIsoTime(millis);
-      Timber.d("Last updated: " + lastUpdated + " - updated since: " + updatedSince);
-      queue(new SyncUpdatedShows(updatedSince, 1));
+      Timber.i("Last updated: " + lastUpdated);
+      Timber.i("Millis: " + millis);
+      Timber.i("Updated since: " + updatedSince);
+      if (updatedSince == null) {
+        long currentTimeMillis = System.currentTimeMillis();
+        currentTimeMillis = currentTimeMillis - DateUtils.DAY_IN_MILLIS;
+        updatedSince = TimeUtils.getIsoTime(currentTimeMillis);
+      }
+      if (updatedSince == null) {
+        Timber.e(new Exception("Last sync time failed"), "Last sync time failed");
+        return;
+      } else {
+        queue(new SyncUpdatedShows(updatedSince, 1));
+      }
     }
 
     settings.edit().putString(Settings.SHOWS_LAST_UPDATED, currentTime).apply();
