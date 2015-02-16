@@ -478,6 +478,8 @@ public final class DatabaseSchematic {
       + Trigger.EPISODE_UPDATE_AIRED_NAME
       + " AFTER UPDATE OF "
       + EpisodeColumns.FIRST_AIRED
+      + ","
+      + EpisodeColumns.NEEDS_SYNC
       + " ON "
       + TABLE_EPISODES
       + " BEGIN "
@@ -490,6 +492,8 @@ public final class DatabaseSchematic {
       + Trigger.EPISODE_UPDATE_WATCHED_NAME
       + " AFTER UPDATE OF "
       + EpisodeColumns.WATCHED
+      + ","
+      + EpisodeColumns.NEEDS_SYNC
       + " ON "
       + TABLE_EPISODES
       + " BEGIN "
@@ -502,6 +506,8 @@ public final class DatabaseSchematic {
       + Trigger.EPISODE_UPDATE_COLLECTED_NAME
       + " AFTER UPDATE OF "
       + EpisodeColumns.IN_COLLECTION
+      + ","
+      + EpisodeColumns.NEEDS_SYNC
       + " ON "
       + TABLE_EPISODES
       + " BEGIN "

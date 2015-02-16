@@ -29,6 +29,7 @@ import net.simonvt.cathode.jobqueue.JobInjector;
 import net.simonvt.cathode.jobqueue.JobModule;
 import net.simonvt.cathode.jobqueue.JobService;
 import net.simonvt.cathode.remote.ForceUpdateJob;
+import net.simonvt.cathode.remote.UpdateShowCounts;
 import net.simonvt.cathode.remote.action.CancelCheckin;
 import net.simonvt.cathode.remote.action.movies.CheckInMovie;
 import net.simonvt.cathode.remote.action.movies.CollectMovie;
@@ -180,6 +181,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         SyncWatchedShows.class, SyncShowsWatchlist.class, SyncShow.class,
         SyncShowWatchedStatus.class, SyncTrendingShows.class, StartSyncUpdatedShows.class,
         SyncPerson.class, SyncUpdatedShows.class, SyncUpdatedMovies.class, ForceUpdateJob.class,
+        UpdateShowCounts.class,
 
         // Misc
         ShowSearchHandler.class, ShowSearchHandler.SearchThread.class, MovieSearchHandler.class,

@@ -43,6 +43,7 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.LogoutJob;
+import net.simonvt.cathode.remote.UpdateShowCounts;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.service.AccountAuthenticator;
@@ -192,6 +193,13 @@ public class CathodeApp extends Application {
         MAIN_HANDLER.post(new Runnable() {
           @Override public void run() {
             jobManager.addJob(new ForceUpdateJob());
+          }
+        });
+      }
+      if (currentVersion <= 21001) {
+        MAIN_HANDLER.post(new Runnable() {
+          @Override public void run() {
+            jobManager.addJob(new UpdateShowCounts());
           }
         });
       }
