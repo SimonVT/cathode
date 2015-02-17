@@ -50,6 +50,10 @@ public class SyncUpdatedShows extends Job {
   }
 
   @Override public void perform() {
+    if (updatedSince == null) {
+      return;
+    }
+
     List<Long> showSummaries = new ArrayList<Long>();
 
     List<UpdatedItem> updated = showsService.getUpdatedShows(updatedSince, page, LIMIT);

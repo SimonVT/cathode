@@ -48,6 +48,10 @@ public class SyncUpdatedMovies extends Job {
   }
 
   @Override public void perform() {
+    if (updatedSince == null) {
+      return;
+    }
+
     List<UpdatedItem> updated = moviesService.updated(updatedSince, page, LIMIT);
 
     for (UpdatedItem item : updated) {
