@@ -244,6 +244,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   };
 
   @Override public void onDestroyView() {
+    content.setListener(null);
     ButterKnife.reset(this);
     super.onDestroyView();
   }
