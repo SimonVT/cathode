@@ -69,6 +69,9 @@ public class ApiModule {
                     bus.post(new AuthFailedEvent());
                   }
                 });
+              } else if (statusCode == 404) {
+                // Handled in JobService
+                return error;
               } else if (statusCode >= 500 && statusCode < 600) {
                 MAIN_HANDLER.post(new Runnable() {
                   @Override public void run() {
