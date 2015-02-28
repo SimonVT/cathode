@@ -23,6 +23,8 @@ import android.preference.PreferenceManager;
 import com.squareup.otto.Bus;
 import dagger.Module;
 import dagger.Provides;
+import java.io.IOException;
+import java.util.List;
 import javax.inject.Singleton;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.CathodeApp;
@@ -32,10 +34,14 @@ import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.api.UserToken;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.RequestFailedEvent;
+import net.simonvt.cathode.remote.FourOneTwoException;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.util.HttpUtils;
 import retrofit.ErrorHandler;
 import retrofit.RetrofitError;
+import retrofit.client.Header;
 import retrofit.client.Response;
+import retrofit.mime.TypedInput;
 import timber.log.Timber;
 
 @Module(
@@ -71,6 +77,23 @@ public class ApiModule {
                 });
               } else if (statusCode == 404) {
                 // Handled in JobService
+                return error;
+              } else if (statusCode == 412) {
+                List<Header> headers = response.getHeaders();
+                for (Header header : headers) {
+                  Timber.i(header.toString());
+                }
+
+                TypedInput input = response.getBody();
+                String body = null;
+                try {
+                  body = HttpUtils.streamToString(input.in());
+                } catch (IOException e) {
+                  // Ignore
+                }
+                Timber.i("Body: " + body);
+
+                Timber.e(new FourOneTwoException(error), "Precondition failed");
                 return error;
               } else if (statusCode >= 500 && statusCode < 600) {
                 MAIN_HANDLER.post(new Runnable() {
