@@ -22,7 +22,6 @@ dependencies {
   apt parent.libraries.daggerCompiler
   compile parent.libraries.picasso
   compile parent.libraries.retrofit
-  compile parent.libraries.tape
   compile parent.libraries.okhttp
   compile parent.libraries.okhttpUrlConnection
 
