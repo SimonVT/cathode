@@ -170,6 +170,7 @@ public class JobService extends Service {
         jobFinished(job);
       } catch (Throwable t) {
         if (!(t instanceof RetrofitError)) {
+          Timber.i(job.key());
           Timber.e(t, "Unable to execute job");
         }
 
