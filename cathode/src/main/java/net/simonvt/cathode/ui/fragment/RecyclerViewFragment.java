@@ -22,7 +22,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -111,28 +110,28 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
       recyclerView.setAdapter(adapter);
     }
 
-    view.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
+    view.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+      @Override
+      public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft,
+          int oldTop, int oldRight, int oldBottom) {
+        v.removeOnLayoutChangeListener(this);
+
+        if (adapter == null) {
+          listContainer.setVisibility(View.GONE);
+          progressContainer.setVisibility(View.VISIBLE);
+          currentState = STATE_PROGRESS_VISIBLE;
+        } else {
+          currentState = STATE_CONTENT_VISIBLE;
+          listContainer.setVisibility(View.VISIBLE);
+          progressContainer.setVisibility(View.GONE);
+        }
+      }
+    });
   }
 
   @Override public void onDestroyView() {
     super.onDestroyView();
   }
-
-  ViewTreeObserver.OnGlobalLayoutListener layoutListener =
-      new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override public void onGlobalLayout() {
-          getView().getViewTreeObserver().removeOnGlobalLayoutListener(layoutListener);
-          if (adapter == null) {
-            listContainer.setVisibility(View.GONE);
-            progressContainer.setVisibility(View.VISIBLE);
-            currentState = STATE_PROGRESS_VISIBLE;
-          } else {
-            currentState = STATE_CONTENT_VISIBLE;
-            listContainer.setVisibility(View.VISIBLE);
-            progressContainer.setVisibility(View.GONE);
-          }
-        }
-      };
 
   @Override public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
     Animation animation = null;

@@ -29,7 +29,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
@@ -196,29 +195,31 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     updateTitle();
 
     wait = true;
-    view.getViewTreeObserver()
-        .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override public void onGlobalLayout() {
-            getView().getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            wait = false;
+    view.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+      @Override
+      public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft,
+          int oldTop, int oldRight, int oldBottom) {
+        v.removeOnLayoutChangeListener(this);
 
-            if (currentState == STATE_CONTENT_VISIBLE) {
-              content.setAlpha(1.0f);
-              content.setVisibility(View.VISIBLE);
-              progress.setVisibility(View.GONE);
-            } else {
-              content.setVisibility(View.GONE);
-              progress.setAlpha(1.0f);
-              progress.setVisibility(View.VISIBLE);
-            }
+        wait = false;
 
-            if (!isTablet
-                && getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_LANDSCAPE) {
-              content.setScrollY(screenshot.getHeight() / 2);
-            }
-          }
-        });
+        if (currentState == STATE_CONTENT_VISIBLE) {
+          content.setAlpha(1.0f);
+          content.setVisibility(View.VISIBLE);
+          progress.setVisibility(View.GONE);
+        } else {
+          content.setVisibility(View.GONE);
+          progress.setAlpha(1.0f);
+          progress.setVisibility(View.VISIBLE);
+        }
+
+        if (!isTablet
+            && getResources().getConfiguration().orientation
+            == Configuration.ORIENTATION_LANDSCAPE) {
+          content.setScrollY(screenshot.getHeight() / 2);
+        }
+      }
+    });
 
     rating.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {

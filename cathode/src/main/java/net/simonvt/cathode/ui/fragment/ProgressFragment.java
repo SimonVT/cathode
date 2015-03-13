@@ -17,7 +17,6 @@ package net.simonvt.cathode.ui.fragment;
 
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import butterknife.InjectView;
@@ -46,23 +45,25 @@ public abstract class ProgressFragment extends BaseFragment {
     super.onViewCreated(view, inState);
 
     wait = true;
-    view.getViewTreeObserver()
-        .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override public void onGlobalLayout() {
-            getView().getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            wait = false;
+    view.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+      @Override
+      public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft,
+          int oldTop, int oldRight, int oldBottom) {
+        v.removeOnLayoutChangeListener(this);
 
-            if (currentState == STATE_CONTENT_VISIBLE) {
-              content.setAlpha(1.0f);
-              content.setVisibility(View.VISIBLE);
-              progress.setVisibility(View.GONE);
-            } else {
-              content.setVisibility(View.GONE);
-              progress.setAlpha(1.0f);
-              progress.setVisibility(View.VISIBLE);
-            }
-          }
-        });
+        wait = false;
+
+        if (currentState == STATE_CONTENT_VISIBLE) {
+          content.setAlpha(1.0f);
+          content.setVisibility(View.VISIBLE);
+          progress.setVisibility(View.GONE);
+        } else {
+          content.setVisibility(View.GONE);
+          progress.setAlpha(1.0f);
+          progress.setVisibility(View.VISIBLE);
+        }
+      }
+    });
   }
 
   @Override public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
