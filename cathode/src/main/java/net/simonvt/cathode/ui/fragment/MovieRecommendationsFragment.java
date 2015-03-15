@@ -32,8 +32,9 @@ import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.database.MutableCursor;
-import net.simonvt.cathode.database.MutableCursorLoader;
+import net.simonvt.cathode.database.SimpleCursor;
+import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.SyncJob;
@@ -46,10 +47,9 @@ import net.simonvt.cathode.ui.adapter.MoviesAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.widget.SearchView;
-import net.simonvt.cathode.jobqueue.JobManager;
 
 public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<MutableCursor>, MoviesAdapter.MovieClickListener,
+    implements LoaderManager.LoaderCallbacks<SimpleCursor>, MoviesAdapter.MovieClickListener,
     MovieRecommendationsAdapter.DismissListener, ListDialog.Callback {
 
   private enum SortBy {
@@ -103,7 +103,7 @@ public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdap
 
   private MovieRecommendationsAdapter movieAdapter;
 
-  private MutableCursor cursor;
+  private SimpleCursor cursor;
 
   private SharedPreferences settings;
 
@@ -221,14 +221,14 @@ public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdap
 
   @Override public void onDismissItem(final View view, final int position) {
     Loader loader = getLoaderManager().getLoader(Loaders.LOADER_MOVIES_RECOMMENDATIONS);
-    MutableCursorLoader cursorLoader = (MutableCursorLoader) loader;
+    SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
     cursorLoader.throttle(2000);
 
     cursor.remove(position);
     movieAdapter.notifyDataSetChanged();
   }
 
-  protected void setCursor(MutableCursor c) {
+  protected void setCursor(SimpleCursor c) {
     this.cursor = c;
     if (movieAdapter == null) {
       movieAdapter = new MovieRecommendationsAdapter(getActivity(), this, c, this);
@@ -239,18 +239,18 @@ public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdap
     movieAdapter.changeCursor(c);
   }
 
-  @Override public Loader<MutableCursor> onCreateLoader(int i, Bundle bundle) {
-    MutableCursorLoader loader = new MutableCursorLoader(getActivity(), Movies.RECOMMENDED, null,
+  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
+    SimpleCursorLoader loader = new SimpleCursorLoader(getActivity(), Movies.RECOMMENDED, null,
         MovieColumns.NEEDS_SYNC + "=0", null, sortBy.getSortOrder());
     loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return loader;
   }
 
-  @Override public void onLoadFinished(Loader<MutableCursor> loader, MutableCursor data) {
+  @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
     setCursor(data);
   }
 
-  @Override public void onLoaderReset(Loader<MutableCursor> loader) {
+  @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
     setAdapter(null);
   }
 }

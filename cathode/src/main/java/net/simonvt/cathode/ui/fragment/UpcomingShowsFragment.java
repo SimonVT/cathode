@@ -37,8 +37,9 @@ import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.database.MutableCursor;
-import net.simonvt.cathode.database.MutableCursorLoader;
+import net.simonvt.cathode.database.SimpleCursor;
+import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
@@ -54,11 +55,10 @@ import net.simonvt.cathode.ui.adapter.UpcomingAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.widget.AnimatorHelper;
 import net.simonvt.cathode.widget.SearchView;
-import net.simonvt.cathode.jobqueue.JobManager;
 
 public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
     implements UpcomingAdapter.OnRemoveListener, ListDialog.Callback,
-    LoaderCallbacks<MutableCursor>, UpcomingAdapter.OnItemClickListener {
+    LoaderCallbacks<SimpleCursor>, UpcomingAdapter.OnItemClickListener {
 
   private enum SortBy {
     TITLE("title", Shows.SORT_TITLE),
@@ -245,11 +245,11 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
 
   @Override public void onRemove(View view, int position) {
     Loader loader = getLoaderManager().getLoader(Loaders.LOADER_SHOWS_UPCOMING);
-    MutableCursorLoader cursorLoader = (MutableCursorLoader) loader;
+    SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
     cursorLoader.throttle(2000);
     //AnimatorHelper.removeView(getRecyclerView(), view, animatorCallback);
 
-    MutableCursor cursor = (MutableCursor) ((UpcomingAdapter) getAdapter()).getCursor(position);
+    SimpleCursor cursor = (SimpleCursor) ((UpcomingAdapter) getAdapter()).getCursor(position);
     cursor.remove(cursor.getPosition());
     ((UpcomingAdapter) getAdapter()).notifyChanged();
   }
@@ -258,7 +258,7 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
     @Override public void removeItem(int position) {
       int correctedPosition = ((UpcomingAdapter) getAdapter()).getCursorPosition(position);
       if (correctedPosition != -1) {
-        MutableCursor cursor = (MutableCursor) ((UpcomingAdapter) getAdapter()).getCursor(position);
+        SimpleCursor cursor = (SimpleCursor) ((UpcomingAdapter) getAdapter()).getCursor(position);
         cursor.remove(correctedPosition);
       }
     }
@@ -277,7 +277,7 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
     return adapter;
   }
 
-  protected void setCursor(MutableCursor cursor) {
+  protected void setCursor(SimpleCursor cursor) {
     UpcomingAdapter adapter = (UpcomingAdapter) getAdapter();
     if (adapter == null) {
       adapter = ensureAdapter();
@@ -286,8 +286,8 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
 
     final long currentTime = System.currentTimeMillis();
 
-    MutableCursor airedCursor = new MutableCursor(cursor.getColumnNames());
-    MutableCursor unairedCursor = new MutableCursor(cursor.getColumnNames());
+    SimpleCursor airedCursor = new SimpleCursor(cursor.getColumnNames());
+    SimpleCursor unairedCursor = new SimpleCursor(cursor.getColumnNames());
 
     final int airedIndex = cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED);
 
@@ -306,24 +306,24 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
     adapter.updateCursorForHeader(R.string.header_upcoming, unairedCursor);
   }
 
-  @Override public Loader<MutableCursor> onCreateLoader(int id, Bundle args) {
+  @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
     final Uri contentUri = Shows.SHOWS_UPCOMING;
     String where = null;
     if (!showHidden) {
       where = ShowColumns.HIDDEN + "=0";
     }
-    MutableCursorLoader cl =
-        new MutableCursorLoader(getActivity(), contentUri, UpcomingAdapter.PROJECTION, where, null,
+    SimpleCursorLoader cl =
+        new SimpleCursorLoader(getActivity(), contentUri, UpcomingAdapter.PROJECTION, where, null,
             sortBy.getSortOrder());
     cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return cl;
   }
 
-  @Override public void onLoadFinished(Loader<MutableCursor> loader, MutableCursor data) {
+  @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
     setCursor(data);
   }
 
-  @Override public void onLoaderReset(Loader<MutableCursor> loader) {
+  @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
 
   }
 }

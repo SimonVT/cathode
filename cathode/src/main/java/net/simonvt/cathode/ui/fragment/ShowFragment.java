@@ -19,7 +19,6 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,6 +38,9 @@ import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.database.SimpleCursor;
+import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.database.SimpleMergeCursor;
 import net.simonvt.cathode.provider.CollectLoader;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -686,39 +688,39 @@ public class ShowFragment extends ProgressFragment {
     }
   }
 
-  private LoaderManager.LoaderCallbacks<Cursor> showCallbacks =
-      new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-          CursorLoader cl =
-              new CursorLoader(getActivity(), Shows.withId(showId), SHOW_PROJECTION, null, null,
-                  null);
+  private LoaderManager.LoaderCallbacks<SimpleCursor> showCallbacks =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
+          SimpleCursorLoader cl =
+              new SimpleCursorLoader(getActivity(), Shows.withId(showId), SHOW_PROJECTION, null,
+                  null, null);
           cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
           return cl;
         }
 
-        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
+        @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
           updateShowView(data);
         }
 
-        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
         }
       };
 
-  private LoaderManager.LoaderCallbacks<Cursor> genreCallbacks =
-      new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-          CursorLoader cl =
-              new CursorLoader(getActivity(), ShowGenres.fromShow(showId), GENRES_PROJECTION, null,
-                  null, ShowGenres.DEFAULT_SORT);
+  private LoaderManager.LoaderCallbacks<SimpleCursor> genreCallbacks =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
+          SimpleCursorLoader cl =
+              new SimpleCursorLoader(getActivity(), ShowGenres.fromShow(showId), GENRES_PROJECTION,
+                  null, null, ShowGenres.DEFAULT_SORT);
           cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
           return cl;
         }
 
-        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
+        @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
           updateGenreViews(data);
         }
 
-        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
         }
       };
 
@@ -728,69 +730,69 @@ public class ShowFragment extends ProgressFragment {
       Tables.PEOPLE + "." + PersonColumns.NAME, Tables.PEOPLE + "." + PersonColumns.HEADSHOT,
   };
 
-  private LoaderManager.LoaderCallbacks<Cursor> charactersCallback =
-      new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-          CursorLoader cl =
-              new CursorLoader(getActivity(), ProviderSchematic.ShowCharacters.fromShow(showId),
-                  CHARACTERS_PROJECTION, Tables.PEOPLE + "." + PersonColumns.NEEDS_SYNC + "=0",
-                  null, null);
+  private LoaderManager.LoaderCallbacks<SimpleCursor> charactersCallback =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
+          SimpleCursorLoader cl = new SimpleCursorLoader(getActivity(),
+              ProviderSchematic.ShowCharacters.fromShow(showId), CHARACTERS_PROJECTION,
+              Tables.PEOPLE + "." + PersonColumns.NEEDS_SYNC + "=0", null, null);
           cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
           return cl;
         }
 
-        @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
           updateActorViews(data);
         }
 
-        @Override public void onLoaderReset(Loader<Cursor> loader) {
+        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
         }
       };
 
-  private LoaderManager.LoaderCallbacks<Cursor> episodeWatchCallbacks =
-      new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+  private LoaderManager.LoaderCallbacks<SimpleMergeCursor> episodeWatchCallbacks =
+      new LoaderManager.LoaderCallbacks<SimpleMergeCursor>() {
+        @Override public Loader<SimpleMergeCursor> onCreateLoader(int i, Bundle bundle) {
           return new WatchedLoader(getActivity(), showId, EPISODE_PROJECTION);
         }
 
-        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        @Override public void onLoadFinished(Loader<SimpleMergeCursor> cursorLoader,
+            SimpleMergeCursor cursor) {
           updateEpisodeWatchViews(cursor);
         }
 
-        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        @Override public void onLoaderReset(Loader<SimpleMergeCursor> cursorLoader) {
         }
       };
 
-  private LoaderManager.LoaderCallbacks<Cursor> episodeCollectCallbacks =
-      new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+  private LoaderManager.LoaderCallbacks<SimpleMergeCursor> episodeCollectCallbacks =
+      new LoaderManager.LoaderCallbacks<SimpleMergeCursor>() {
+        @Override public Loader<SimpleMergeCursor> onCreateLoader(int i, Bundle bundle) {
           return new CollectLoader(getActivity(), showId, EPISODE_PROJECTION);
         }
 
-        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        @Override public void onLoadFinished(Loader<SimpleMergeCursor> cursorLoader,
+            SimpleMergeCursor cursor) {
           updateEpisodeCollectViews(cursor);
         }
 
-        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        @Override public void onLoaderReset(Loader<SimpleMergeCursor> cursorLoader) {
         }
       };
 
-  private LoaderManager.LoaderCallbacks<Cursor> seasonsLoader =
-      new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-          CursorLoader cl =
-              new CursorLoader(getActivity(), Seasons.fromShow(showId), SeasonsAdapter.PROJECTION,
-                  null, null, Seasons.DEFAULT_SORT);
+  private LoaderManager.LoaderCallbacks<SimpleCursor> seasonsLoader =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
+          SimpleCursorLoader cl = new SimpleCursorLoader(getActivity(), Seasons.fromShow(showId),
+              SeasonsAdapter.PROJECTION, null, null, Seasons.DEFAULT_SORT);
           cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
           return cl;
         }
 
-        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
+        @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
           seasonsCursor = data;
           seasonsAdapter.changeCursor(data);
         }
 
-        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
           seasonsCursor = null;
           seasonsAdapter.changeCursor(null);
         }

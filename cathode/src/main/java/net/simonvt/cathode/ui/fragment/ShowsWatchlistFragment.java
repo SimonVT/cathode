@@ -31,8 +31,9 @@ import android.view.View;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.database.MutableCursor;
-import net.simonvt.cathode.database.MutableCursorLoader;
+import net.simonvt.cathode.database.SimpleCursor;
+import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
@@ -47,7 +48,6 @@ import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.ShowWatchlistAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.widget.SearchView;
-import net.simonvt.cathode.jobqueue.JobManager;
 
 public class ShowsWatchlistFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
     implements ShowWatchlistAdapter.RemoveListener, ShowWatchlistAdapter.OnItemClickListener {
@@ -160,19 +160,19 @@ public class ShowsWatchlistFragment extends ToolbarGridFragment<RecyclerView.Vie
 
   private void throttleLoaders() {
     Loader l = getLoaderManager().getLoader(Loaders.LOADER_EPISODES_WATCHLIST);
-    MutableCursorLoader loader = (MutableCursorLoader) l;
+    SimpleCursorLoader loader = (SimpleCursorLoader) l;
     loader.throttle(2000);
 
     l = getLoaderManager().getLoader(Loaders.LOADER_SHOWS_WATCHLIST);
-    loader = (MutableCursorLoader) l;
+    loader = (SimpleCursorLoader) l;
     loader.throttle(2000);
   }
 
   @Override public void onRemoveItem(View view, int position) {
     throttleLoaders();
     ShowWatchlistAdapter adapter = (ShowWatchlistAdapter) getAdapter();
-    MutableCursor cursor =
-        (MutableCursor) (((ShowWatchlistAdapter) getAdapter()).getCursor(position));
+    SimpleCursor cursor =
+        (SimpleCursor) (((ShowWatchlistAdapter) getAdapter()).getCursor(position));
     final int correctedPosition = adapter.getCursorPosition(position);
     cursor.remove(correctedPosition);
     ((ShowWatchlistAdapter) getAdapter()).notifyChanged();
@@ -206,29 +206,29 @@ public class ShowsWatchlistFragment extends ToolbarGridFragment<RecyclerView.Vie
     ((ShowWatchlistAdapter) getAdapter()).updateCursorForHeader(R.string.header_episodes, cursor);
   }
 
-  private LoaderManager.LoaderCallbacks<MutableCursor> showsCallback =
-      new LoaderManager.LoaderCallbacks<MutableCursor>() {
-        @Override public Loader<MutableCursor> onCreateLoader(int id, Bundle args) {
+  private LoaderManager.LoaderCallbacks<SimpleCursor> showsCallback =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
           final Uri contentUri = Shows.SHOWS_WATCHLIST;
-          MutableCursorLoader loader = new MutableCursorLoader(getActivity(), contentUri,
+          SimpleCursorLoader loader = new SimpleCursorLoader(getActivity(), contentUri,
               ShowWatchlistAdapter.PROJECTION_SHOW, null, null, Shows.DEFAULT_SORT);
           loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
           return loader;
         }
 
-        @Override public void onLoadFinished(Loader<MutableCursor> loader, MutableCursor data) {
+        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
           setShowCursor(data);
         }
 
-        @Override public void onLoaderReset(Loader<MutableCursor> loader) {
+        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
         }
       };
 
-  private LoaderManager.LoaderCallbacks<MutableCursor> episodeCallback =
-      new LoaderManager.LoaderCallbacks<MutableCursor>() {
-        @Override public Loader<MutableCursor> onCreateLoader(int id, Bundle args) {
-          MutableCursorLoader loader =
-              new MutableCursorLoader(getActivity(), Episodes.EPISODES_IN_WATCHLIST,
+  private LoaderManager.LoaderCallbacks<SimpleCursor> episodeCallback =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
+          SimpleCursorLoader loader =
+              new SimpleCursorLoader(getActivity(), Episodes.EPISODES_IN_WATCHLIST,
                   ShowWatchlistAdapter.PROJECTION_EPISODE,
                   Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC + "=0", null,
                   EpisodeColumns.SHOW_ID + " ASC");
@@ -236,11 +236,11 @@ public class ShowsWatchlistFragment extends ToolbarGridFragment<RecyclerView.Vie
           return loader;
         }
 
-        @Override public void onLoadFinished(Loader<MutableCursor> loader, MutableCursor data) {
+        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
           setEpisodeCursor(data);
         }
 
-        @Override public void onLoaderReset(Loader<MutableCursor> loader) {
+        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
         }
       };
 }

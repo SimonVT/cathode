@@ -22,7 +22,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.Toolbar;
@@ -35,6 +34,9 @@ import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.database.SimpleCursor;
+import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.SyncJob;
@@ -48,10 +50,9 @@ import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.widget.SearchView;
-import net.simonvt.cathode.jobqueue.JobManager;
 
 public class TrendingShowsFragment extends ToolbarGridFragment<ShowDescriptionAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<Cursor>, ListDialog.Callback, ShowClickListener {
+    implements LoaderManager.LoaderCallbacks<SimpleCursor>, ListDialog.Callback, ShowClickListener {
 
   private enum SortBy {
     VIEWERS("viewers", Shows.SORT_VIEWERS),
@@ -228,18 +229,19 @@ public class TrendingShowsFragment extends ToolbarGridFragment<ShowDescriptionAd
     showsAdapter.changeCursor(cursor);
   }
 
-  @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
     final Uri contentUri = Shows.SHOWS_TRENDING;
-    CursorLoader cl = new CursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION,
-        ShowColumns.NEEDS_SYNC + "=0", null, sortBy.getSortOrder());
+    SimpleCursorLoader cl =
+        new SimpleCursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION,
+            ShowColumns.NEEDS_SYNC + "=0", null, sortBy.getSortOrder());
     cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return cl;
   }
 
-  @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+  @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
     setCursor(data);
   }
 
-  @Override public void onLoaderReset(Loader<Cursor> loader) {
+  @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
   }
 }

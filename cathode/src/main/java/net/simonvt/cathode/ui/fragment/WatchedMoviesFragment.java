@@ -16,10 +16,8 @@
 package net.simonvt.cathode.ui.fragment;
 
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
 import android.view.MenuItem;
@@ -28,6 +26,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.database.SimpleCursor;
+import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.settings.Settings;
@@ -134,8 +134,8 @@ public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.
     return Loaders.LOADER_MOVIES_WATCHED;
   }
 
-  @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-    CursorLoader loader = new CursorLoader(getActivity(), Movies.MOVIES, null,
+  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
+    SimpleCursorLoader loader = new SimpleCursorLoader(getActivity(), Movies.MOVIES, null,
         MovieColumns.WATCHED + "=1 AND " + MovieColumns.NEEDS_SYNC + "=0", null,
         sortBy.getSortOrder());
     loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);

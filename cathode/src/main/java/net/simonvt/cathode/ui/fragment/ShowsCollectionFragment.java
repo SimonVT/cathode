@@ -15,13 +15,13 @@
  */
 package net.simonvt.cathode.ui.fragment;
 
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.database.SimpleCursor;
+import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.Loaders;
@@ -43,11 +43,11 @@ public class ShowsCollectionFragment extends ShowsFragment {
     return Loaders.LOADER_SHOWS_COLLECTION;
   }
 
-  @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
     final Uri contentUri = Shows.SHOWS_COLLECTION;
-    CursorLoader cl =
-        new CursorLoader(getActivity(), contentUri, ShowsWithNextAdapter.PROJECTION, null, null,
-            Shows.DEFAULT_SORT);
+    SimpleCursorLoader cl =
+        new SimpleCursorLoader(getActivity(), contentUri, ShowsWithNextAdapter.PROJECTION, null,
+            null, Shows.DEFAULT_SORT);
     cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return cl;
   }

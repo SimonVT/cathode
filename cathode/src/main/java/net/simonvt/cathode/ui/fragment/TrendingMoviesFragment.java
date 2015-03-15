@@ -19,7 +19,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -30,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.database.SimpleCursor;
+import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.settings.Settings;
@@ -146,10 +147,10 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
     return Loaders.LOADER_MOVIES_TRENDING;
   }
 
-  @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-    CursorLoader loader =
-        new CursorLoader(getActivity(), Movies.TRENDING, null, MovieColumns.NEEDS_SYNC + "=0", null,
-            sortBy.getSortOrder());
+  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
+    SimpleCursorLoader loader =
+        new SimpleCursorLoader(getActivity(), Movies.TRENDING, null, MovieColumns.NEEDS_SYNC + "=0",
+            null, sortBy.getSortOrder());
     loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return loader;
   }

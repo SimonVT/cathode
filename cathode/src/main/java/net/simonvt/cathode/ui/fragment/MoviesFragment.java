@@ -28,6 +28,8 @@ import android.view.View;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.database.SimpleCursor;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
@@ -36,10 +38,9 @@ import net.simonvt.cathode.ui.adapter.MoviesAdapter;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.widget.SearchView;
-import net.simonvt.cathode.jobqueue.JobManager;
 
 public abstract class MoviesFragment extends ToolbarGridFragment<MoviesAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.MovieClickListener {
+    implements LoaderManager.LoaderCallbacks<SimpleCursor>, MoviesAdapter.MovieClickListener {
 
   @Inject JobManager jobManager;
 
@@ -138,11 +139,11 @@ public abstract class MoviesFragment extends ToolbarGridFragment<MoviesAdapter.V
 
   protected abstract int getLoaderId();
 
-  @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+  @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
     setCursor(data);
   }
 
-  @Override public void onLoaderReset(Loader<Cursor> loader) {
+  @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
     setAdapter(null);
   }
 }

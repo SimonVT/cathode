@@ -17,32 +17,31 @@ package net.simonvt.cathode.provider;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.MergeCursor;
-import android.support.v4.content.AsyncTaskLoader;
+import android.net.Uri;
+import net.simonvt.cathode.database.DatabaseUtils;
+import net.simonvt.cathode.database.SimpleLoaderBase;
+import net.simonvt.cathode.database.SimpleMergeCursor;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.util.DateUtils;
 
-public class WatchedLoader extends AsyncTaskLoader<Cursor> {
-
-  final ForceLoadContentObserver observer;
+public class WatchedLoader extends SimpleLoaderBase<SimpleMergeCursor> {
 
   private long showId;
 
   private String[] projection;
 
-  Cursor cursor;
-
   public WatchedLoader(Context context, long showId, String[] projection) {
     super(context);
     this.showId = showId;
-    this.observer = new ForceLoadContentObserver();
     this.projection = projection;
   }
 
-  @Override public Cursor loadInBackground() {
+  @Override public SimpleMergeCursor loadInBackground() {
+    clearNotificationUris();
+
     Cursor show = getContext().getContentResolver().query(Shows.withId(showId), new String[] {
         ShowColumns.WATCHING,
     }, null, null, null);
@@ -90,70 +89,20 @@ public class WatchedLoader extends AsyncTaskLoader<Cursor> {
                   + "))", null,
               EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1");
     }
-    toWatch.registerContentObserver(observer);
+
+    Uri notiUri = DatabaseUtils.getNotificationUri(toWatch);
+    addNotificationUri(notiUri);
+
     if (toWatch.getCount() == 0 || watching) {
       if (!watching) {
         lastWatched.close();
       }
-      return toWatch;
+      return new SimpleMergeCursor(toWatch);
     }
 
-    lastWatched.registerContentObserver(observer);
-    lastWatched.getCount();
+    notiUri = DatabaseUtils.getNotificationUri(lastWatched);
+    addNotificationUri(notiUri);
 
-    return new MergeCursor(new Cursor[] {
-        toWatch, lastWatched,
-    });
-  }
-
-  @Override public void deliverResult(Cursor cursor) {
-    if (isReset()) {
-      if (cursor != null) {
-        cursor.close();
-      }
-      return;
-    }
-    Cursor oldCursor = this.cursor;
-    this.cursor = cursor;
-
-    if (isStarted()) {
-      super.deliverResult(cursor);
-    }
-
-    if (oldCursor != null && oldCursor != cursor && !oldCursor.isClosed()) {
-      oldCursor.close();
-    }
-  }
-
-  @Override protected void onStartLoading() {
-    if (cursor != null) {
-      deliverResult(cursor);
-    }
-    if (takeContentChanged() || cursor == null) {
-      forceLoad();
-    }
-  }
-
-  @Override protected void onStopLoading() {
-    // Attempt to cancel the current load task if possible.
-    cancelLoad();
-  }
-
-  @Override public void onCanceled(Cursor cursor) {
-    if (cursor != null && !cursor.isClosed()) {
-      cursor.close();
-    }
-  }
-
-  @Override protected void onReset() {
-    super.onReset();
-
-    // Ensure the loader is stopped
-    onStopLoading();
-
-    if (cursor != null && !cursor.isClosed()) {
-      cursor.close();
-    }
-    cursor = null;
+    return new SimpleMergeCursor(toWatch, lastWatched);
   }
 }

@@ -34,8 +34,9 @@ import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.database.MutableCursor;
-import net.simonvt.cathode.database.MutableCursorLoader;
+import net.simonvt.cathode.database.SimpleCursor;
+import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.SyncJob;
@@ -50,11 +51,10 @@ import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.widget.SearchView;
-import net.simonvt.cathode.jobqueue.JobManager;
 
 public class ShowRecommendationsFragment
     extends ToolbarGridFragment<ShowDescriptionAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<MutableCursor>,
+    implements LoaderManager.LoaderCallbacks<SimpleCursor>,
     ShowRecommendationsAdapter.DismissListener, ListDialog.Callback, ShowClickListener {
 
   private enum SortBy {
@@ -110,7 +110,7 @@ public class ShowRecommendationsFragment
 
   private boolean isTablet;
 
-  private MutableCursor cursor;
+  private SimpleCursor cursor;
 
   private SharedPreferences settings;
 
@@ -240,7 +240,7 @@ public class ShowRecommendationsFragment
 
   @Override public void onDismissItem(final View view, final int position) {
     Loader loader = getLoaderManager().getLoader(Loaders.LOADER_SHOWS_RECOMMENDATIONS);
-    MutableCursorLoader cursorLoader = (MutableCursorLoader) loader;
+    SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
     cursorLoader.throttle(2000);
 
     cursor.remove(position);
@@ -248,7 +248,7 @@ public class ShowRecommendationsFragment
   }
 
   private void setCursor(Cursor c) {
-    cursor = (MutableCursor) c;
+    cursor = (SimpleCursor) c;
 
     if (showsAdapter == null) {
       showsAdapter = new ShowRecommendationsAdapter(getActivity(), this, cursor, this);
@@ -259,19 +259,19 @@ public class ShowRecommendationsFragment
     showsAdapter.changeCursor(cursor);
   }
 
-  @Override public Loader<MutableCursor> onCreateLoader(int i, Bundle bundle) {
+  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
     final Uri contentUri = Shows.SHOWS_RECOMMENDED;
-    MutableCursorLoader cl =
-        new MutableCursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION,
+    SimpleCursorLoader cl =
+        new SimpleCursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION,
             ShowColumns.NEEDS_SYNC, null, sortBy.getSortOrder());
     cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return cl;
   }
 
-  @Override public void onLoadFinished(Loader<MutableCursor> loader, MutableCursor data) {
+  @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
     setCursor(data);
   }
 
-  @Override public void onLoaderReset(Loader<MutableCursor> loader) {
+  @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
   }
 }

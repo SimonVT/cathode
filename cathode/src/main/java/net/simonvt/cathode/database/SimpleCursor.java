@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Simon Vig Therkildsen
+ * Copyright (C) 2015 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,15 @@
 
 package net.simonvt.cathode.database;
 
-import android.content.Context;
-import android.database.AbstractCursor;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
-import android.net.Uri;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A mutable cursor implementation backed by an {@link java.util.ArrayList} of {@code Object}s.
  */
-public class MutableCursor extends AbstractCursor {
+public class SimpleCursor extends AbsSimpleCursor {
 
   private final String[] columnNames;
   private List<Object[]> data = new ArrayList<Object[]>();
@@ -39,15 +36,15 @@ public class MutableCursor extends AbstractCursor {
    * @param columnNames names of the columns, the ordering of which
    * determines column ordering elsewhere in this cursor
    */
-  public MutableCursor(String[] columnNames) {
+  public SimpleCursor(String[] columnNames) {
     this.columnNames = columnNames;
     this.columnCount = columnNames.length;
   }
 
   /**
-   * Constructs a MutableCursor from the data in source.
+   * Constructs a SimpleCursor from the data in source.
    */
-  public MutableCursor(Context context, Cursor source) {
+  public SimpleCursor(Cursor source) {
     this.columnNames = source.getColumnNames();
     this.columnCount = this.columnNames.length;
 
@@ -75,11 +72,6 @@ public class MutableCursor extends AbstractCursor {
         }
       }
       add(data);
-    }
-
-    Uri uri = DatabaseUtils.getNotificationUri(source);
-    if (uri != null) {
-      setNotificationUri(context.getContentResolver(), uri);
     }
   }
 

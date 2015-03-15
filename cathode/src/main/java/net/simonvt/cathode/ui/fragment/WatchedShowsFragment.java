@@ -16,11 +16,9 @@
 package net.simonvt.cathode.ui.fragment;
 
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
 import android.view.MenuItem;
@@ -29,6 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.database.SimpleCursor;
+import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
@@ -140,11 +140,11 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
     return Loaders.LOADER_SHOWS_WATCHED;
   }
 
-  @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
     final Uri contentUri = Shows.SHOWS_WATCHED;
-    CursorLoader cl =
-        new CursorLoader(getActivity(), contentUri, ShowsWithNextAdapter.PROJECTION, null, null,
-            sortBy.getSortOrder());
+    SimpleCursorLoader cl =
+        new SimpleCursorLoader(getActivity(), contentUri, ShowsWithNextAdapter.PROJECTION, null,
+            null, sortBy.getSortOrder());
     cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return cl;
   }

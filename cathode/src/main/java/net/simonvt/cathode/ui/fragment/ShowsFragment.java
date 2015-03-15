@@ -27,6 +27,7 @@ import android.view.View;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.ui.LibraryType;
@@ -37,7 +38,6 @@ import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.widget.SearchView;
-import net.simonvt.cathode.jobqueue.JobManager;
 import timber.log.Timber;
 
 public abstract class ShowsFragment<D extends Cursor>

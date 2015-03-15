@@ -19,7 +19,6 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
@@ -35,6 +34,8 @@ import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.database.SimpleCursor;
+import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
@@ -52,7 +53,7 @@ import net.simonvt.cathode.widget.ObservableScrollView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public class MovieFragment extends ProgressFragment
-    implements LoaderManager.LoaderCallbacks<Cursor> {
+    implements LoaderManager.LoaderCallbacks<SimpleCursor> {
 
   private static final String ARG_ID = "net.simonvt.cathode.ui.fragment.MovieFragment.id";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.fragment.MovieFragment.title";
@@ -234,7 +235,8 @@ public class MovieFragment extends ProgressFragment
       setTitle(movieTitle);
     }
     final int year = cursor.getInt(cursor.getColumnIndex(MovieColumns.YEAR));
-    final String certification = cursor.getString(cursor.getColumnIndex(MovieColumns.CERTIFICATION));
+    final String certification =
+        cursor.getString(cursor.getColumnIndex(MovieColumns.CERTIFICATION));
 
     final String fanartUrl = cursor.getString(cursor.getColumnIndex(MovieColumns.FANART));
     fanart.setImage(fanartUrl);
@@ -264,18 +266,18 @@ public class MovieFragment extends ProgressFragment
     invalidateMenu();
   }
 
-  @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-    CursorLoader loader =
-        new CursorLoader(getActivity(), Movies.withId(movieId), null, null, null, null);
+  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
+    SimpleCursorLoader loader =
+        new SimpleCursorLoader(getActivity(), Movies.withId(movieId), null, null, null, null);
     loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return loader;
   }
 
-  @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+  @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor cursor) {
     updateView(cursor);
   }
 
-  @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
+  @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
   }
 
   private void updateActors(Cursor c) {
@@ -305,22 +307,23 @@ public class MovieFragment extends ProgressFragment
       Tables.PEOPLE + "." + PersonColumns.NAME, Tables.PEOPLE + "." + PersonColumns.HEADSHOT,
   };
 
-  private LoaderManager.LoaderCallbacks<Cursor> actorsLoader =
-      new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-          CursorLoader loader =
-              new CursorLoader(getActivity(), ProviderSchematic.MovieCast.fromMovie(movieId),
+  private LoaderManager.LoaderCallbacks<SimpleCursor> actorsLoader =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
+          SimpleCursorLoader loader =
+              new SimpleCursorLoader(getActivity(), ProviderSchematic.MovieCast.fromMovie(movieId),
                   CAST_PROJECTION, Tables.PEOPLE + "." + PersonColumns.NEEDS_SYNC + "=0", null,
                   null);
           loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
           return loader;
         }
 
-        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader,
+            SimpleCursor cursor) {
           updateActors(cursor);
         }
 
-        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
         }
       };
 }

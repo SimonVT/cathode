@@ -21,7 +21,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.Toolbar;
@@ -39,6 +38,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.database.SimpleCursor;
+import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.event.SearchFailureEvent;
 import net.simonvt.cathode.event.ShowSearchResult;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -56,7 +57,7 @@ import net.simonvt.cathode.util.ShowSearchHandler;
 import net.simonvt.cathode.widget.SearchView;
 
 public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<Cursor>, ListDialog.Callback, ShowClickListener {
+    implements LoaderManager.LoaderCallbacks<SimpleCursor>, ListDialog.Callback, ShowClickListener {
 
   private enum SortBy {
     TITLE("title", Shows.SORT_TITLE),
@@ -320,7 +321,7 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
     showsAdapter.changeCursor(cursor);
   }
 
-  @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+  @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
     StringBuilder where = new StringBuilder();
     where.append(ShowColumns.ID).append(" in (");
     final int showCount = searchShowIds.size();
@@ -335,17 +336,17 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
     }
     where.append(")");
 
-    CursorLoader loader =
-        new CursorLoader(getActivity(), Shows.SHOWS, ShowDescriptionAdapter.PROJECTION,
+    SimpleCursorLoader loader =
+        new SimpleCursorLoader(getActivity(), Shows.SHOWS, ShowDescriptionAdapter.PROJECTION,
             where.toString(), ids, sortBy.getSortOrder());
     loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return loader;
   }
 
-  @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+  @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
     setCursor(data);
   }
 
-  @Override public void onLoaderReset(Loader<Cursor> loader) {
+  @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
   }
 }

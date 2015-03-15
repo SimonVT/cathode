@@ -21,7 +21,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -38,6 +37,8 @@ import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.database.SimpleCursor;
+import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
@@ -477,21 +478,21 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       EpisodeColumns.USER_RATING, EpisodeColumns.RATING, EpisodeColumns.SEASON,
   };
 
-  private LoaderManager.LoaderCallbacks<Cursor> episodeCallbacks =
-      new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-          CursorLoader cl =
-              new CursorLoader(getActivity(), Episodes.withId(episodeId), EPISODE_PROJECTION, null,
-                  null, null);
+  private LoaderManager.LoaderCallbacks<SimpleCursor> episodeCallbacks =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
+          SimpleCursorLoader cl =
+              new SimpleCursorLoader(getActivity(), Episodes.withId(episodeId), EPISODE_PROJECTION,
+                  null, null, null);
           cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
           return cl;
         }
 
-        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
+        @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
           updateEpisodeViews(data);
         }
 
-        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
         }
       };
 }

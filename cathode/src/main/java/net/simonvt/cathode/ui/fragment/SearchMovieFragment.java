@@ -21,7 +21,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.Toolbar;
@@ -38,6 +37,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.database.SimpleCursor;
+import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.event.MovieSearchResult;
 import net.simonvt.cathode.event.SearchFailureEvent;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -54,7 +55,7 @@ import net.simonvt.cathode.util.MovieSearchHandler;
 import net.simonvt.cathode.widget.SearchView;
 
 public class SearchMovieFragment extends ToolbarGridFragment<MovieSearchAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<Cursor>, ListDialog.Callback,
+    implements LoaderManager.LoaderCallbacks<SimpleCursor>, ListDialog.Callback,
     BaseMoviesAdapter.MovieClickListener {
 
   private enum SortBy {
@@ -326,7 +327,7 @@ public class SearchMovieFragment extends ToolbarGridFragment<MovieSearchAdapter.
     movieAdapter.changeCursor(cursor);
   }
 
-  @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+  @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
     StringBuilder where = new StringBuilder();
     where.append(MovieColumns.ID).append(" in (");
     final int showCount = searchMovieIds.size();
@@ -341,17 +342,17 @@ public class SearchMovieFragment extends ToolbarGridFragment<MovieSearchAdapter.
     }
     where.append(")");
 
-    CursorLoader loader =
-        new CursorLoader(getActivity(), Movies.MOVIES, MovieSearchAdapter.PROJECTION,
+    SimpleCursorLoader loader =
+        new SimpleCursorLoader(getActivity(), Movies.MOVIES, MovieSearchAdapter.PROJECTION,
             where.toString(), ids, sortBy.getSortOrder());
     loader.setUpdateThrottle(2000);
     return loader;
   }
 
-  @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+  @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
     setCursor(data);
   }
 
-  @Override public void onLoaderReset(Loader<Cursor> loader) {
+  @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
   }
 }

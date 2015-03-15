@@ -19,12 +19,13 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
 import android.view.View;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.database.SimpleCursor;
+import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -101,11 +102,13 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
     getLoaderManager().initLoader(Loaders.LOADER_SEASON, null, episodesLoader);
 
     if (title == null) {
-      CursorLoader loader = new CursorLoader(getActivity(), Shows.withId(showId), new String[] {
-          ShowColumns.TITLE,
-      }, null, null, null);
-      loader.registerListener(0, new Loader.OnLoadCompleteListener<Cursor>() {
-        @Override public void onLoadComplete(Loader<Cursor> cursorLoader, Cursor cursor) {
+      SimpleCursorLoader loader =
+          new SimpleCursorLoader(getActivity(), Shows.withId(showId), new String[] {
+              ShowColumns.TITLE,
+          }, null, null, null);
+      loader.registerListener(0, new Loader.OnLoadCompleteListener<SimpleCursor>() {
+        @Override public void onLoadComplete(Loader<SimpleCursor> cursorLoader,
+            SimpleCursor cursor) {
           cursor.moveToFirst();
           title = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
           setTitle(title);
@@ -177,20 +180,21 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
     episodeAdapter.changeCursor(cursor);
   }
 
-  private LoaderManager.LoaderCallbacks<Cursor> episodesLoader =
-      new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-          CursorLoader cl = new CursorLoader(getActivity(), Episodes.fromSeason(seasonId), null,
-              EpisodeColumns.NEEDS_SYNC + "=0", null, EpisodeColumns.EPISODE + " ASC");
+  private LoaderManager.LoaderCallbacks<SimpleCursor> episodesLoader =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
+          SimpleCursorLoader cl =
+              new SimpleCursorLoader(getActivity(), Episodes.fromSeason(seasonId), null,
+                  EpisodeColumns.NEEDS_SYNC + "=0", null, EpisodeColumns.EPISODE + " ASC");
           cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
           return cl;
         }
 
-        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
+        @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
           setCursor(data);
         }
 
-        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
           setCursor(null);
         }
       };

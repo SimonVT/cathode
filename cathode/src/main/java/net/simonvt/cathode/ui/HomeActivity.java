@@ -22,7 +22,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
@@ -39,6 +38,8 @@ import com.squareup.otto.Subscribe;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.database.SimpleCursor;
+import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.event.LogoutEvent;
 import net.simonvt.cathode.event.MessageEvent;
 import net.simonvt.cathode.event.RequestFailedEvent;
@@ -182,8 +183,7 @@ public class HomeActivity extends BaseActivity
       stack.commit();
     }
 
-    getSupportLoaderManager().initLoader(Loaders.LOADER_SHOW_WATCHING, null,
-        watchingShowCallback);
+    getSupportLoaderManager().initLoader(Loaders.LOADER_SHOW_WATCHING, null, watchingShowCallback);
     getSupportLoaderManager().initLoader(Loaders.LOADER_MOVIE_WATCHING, null,
         watchingMovieCallback);
 
@@ -550,42 +550,44 @@ public class HomeActivity extends BaseActivity
       DatabaseSchematic.Tables.EPISODES + "." + DatabaseContract.EpisodeColumns.EXPIRES_AT,
   };
 
-  private LoaderManager.LoaderCallbacks<Cursor> watchingShowCallback =
-      new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-          CursorLoader loader =
-              new CursorLoader(HomeActivity.this, ProviderSchematic.Shows.SHOW_WATCHING,
+  private LoaderManager.LoaderCallbacks<SimpleCursor> watchingShowCallback =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
+          SimpleCursorLoader loader =
+              new SimpleCursorLoader(HomeActivity.this, ProviderSchematic.Shows.SHOW_WATCHING,
                   SHOW_WATCHING_PROJECTION, null, null, null);
           loader.setUpdateThrottle(2000);
           return loader;
         }
 
-        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader,
+            SimpleCursor cursor) {
           watchingShow = cursor;
           updateWatching();
         }
 
-        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
           watchingShow = null;
         }
       };
 
-  private LoaderManager.LoaderCallbacks<Cursor> watchingMovieCallback =
-      new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-          CursorLoader loader =
-              new CursorLoader(HomeActivity.this, ProviderSchematic.Movies.WATCHING, null,
+  private LoaderManager.LoaderCallbacks<SimpleCursor> watchingMovieCallback =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
+          SimpleCursorLoader loader =
+              new SimpleCursorLoader(HomeActivity.this, ProviderSchematic.Movies.WATCHING, null,
                   DatabaseContract.MovieColumns.NEEDS_SYNC + "=0", null, null);
           loader.setUpdateThrottle(2000);
           return loader;
         }
 
-        @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader,
+            SimpleCursor cursor) {
           watchingMovie = cursor;
           updateWatching();
         }
 
-        @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
           watchingMovie = null;
         }
       };
