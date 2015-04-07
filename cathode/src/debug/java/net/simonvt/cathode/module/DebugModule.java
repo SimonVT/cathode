@@ -18,17 +18,21 @@ package net.simonvt.cathode.module;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
+import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Response;
 import dagger.Module;
 import dagger.Provides;
+import java.io.IOException;
 import javax.inject.Singleton;
 import net.simonvt.cathode.HttpStatusCode;
 import net.simonvt.cathode.IntPreference;
-import net.simonvt.cathode.api.DebugClient;
 import net.simonvt.cathode.api.Trakt;
 import net.simonvt.cathode.remote.InitialSyncJob;
 import net.simonvt.cathode.ui.BaseActivity;
 import retrofit.client.Client;
+import retrofit.client.OkClient;
+import timber.log.Timber;
 
 @Module(
     addsTo = AppModule.class,
@@ -45,8 +49,20 @@ public class DebugModule {
   }
 
   @Provides @Singleton @Trakt Client provideClient(@Trakt OkHttpClient client,
-      @HttpStatusCode IntPreference httpStatusCode) {
-    return new DebugClient(client, httpStatusCode);
+      @HttpStatusCode final IntPreference httpStatusCode) {
+    client.networkInterceptors().add(new Interceptor() {
+      @Override public Response intercept(Chain chain) throws IOException {
+        final int statusCode = httpStatusCode.get();
+        Response response = chain.proceed(chain.request());
+        if (statusCode != 200) {
+          Timber.d("Rewriting status code: " + statusCode);
+          response = response.newBuilder().code(statusCode).build();
+        }
+        return response;
+      }
+    });
+
+    return new OkClient(client);
   }
 
   @Provides @Singleton @HttpStatusCode IntPreference provideHttpStatusCodePreference() {

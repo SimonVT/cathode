@@ -1,6 +1,6 @@
 package net.simonvt.cathode.api;
 
-import android.content.Context;
+import android.text.format.DateUtils;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -52,6 +52,10 @@ public class TraktModule {
   //static final String API_URL = "https://api.trakt.tv";
   static final String API_URL = "https://api-v2launch.trakt.tv";
 
+  private static final int MAX_RETRIES = 2;
+
+  private static final long RETRY_DELAY = 5 * DateUtils.SECOND_IN_MILLIS;
+
   @Provides @Singleton @Trakt RestAdapter provideRestAdapter(@Trakt Client client, @Trakt Gson gson,
       TraktInterceptor interceptor, ErrorHandler errorHandler) {
     return new RestAdapter.Builder() //
@@ -63,10 +67,13 @@ public class TraktModule {
         .build();
   }
 
-  @Provides @Singleton @Trakt OkHttpClient provideOkHttpClient(Context context) {
+  @Provides @Singleton @Trakt OkHttpClient provideOkHttpClient() {
     OkHttpClient client = new OkHttpClient();
     client.setConnectTimeout(15, TimeUnit.SECONDS);
     client.setReadTimeout(20, TimeUnit.SECONDS);
+
+    client.interceptors().add(new RetryingInterceptor(MAX_RETRIES, RETRY_DELAY));
+
     return client;
   }
 
