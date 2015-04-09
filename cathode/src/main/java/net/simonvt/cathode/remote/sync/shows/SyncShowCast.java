@@ -25,15 +25,15 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.CastMember;
 import net.simonvt.cathode.api.entity.People;
 import net.simonvt.cathode.api.entity.Person;
+import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.ShowsService;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.PersonWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCharacters;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
-import net.simonvt.cathode.remote.sync.SyncPerson;
-import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobFailedException;
 import timber.log.Timber;
 
 public class SyncShowCast extends Job {
@@ -55,7 +55,7 @@ public class SyncShowCast extends Job {
   }
 
   @Override public void perform() {
-    People people = showsService.getPeople(traktId);
+    People people = showsService.getPeople(traktId, Extended.FULL_IMAGES);
     List<CastMember> characters = people.getCast();
 
     final long showId = ShowWrapper.getShowId(getContentResolver(), traktId);
@@ -65,12 +65,7 @@ public class SyncShowCast extends Job {
 
     for (CastMember character : characters) {
       Person person = character.getPerson();
-      final long personTraktId = person.getIds().getTrakt();
-      long personId = PersonWrapper.getId(getContentResolver(), personTraktId);
-      if (personId == -1L) {
-        personId = PersonWrapper.createPerson(getContentResolver(), personTraktId);
-        queue(new SyncPerson(personTraktId));
-      }
+      final long personId = PersonWrapper.updateOrInsert(getContentResolver(), person);
 
       ContentProviderOperation op =
           ContentProviderOperation.newInsert(ShowCharacters.SHOW_CHARACTERS)

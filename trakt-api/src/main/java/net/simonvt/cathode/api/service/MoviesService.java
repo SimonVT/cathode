@@ -38,5 +38,6 @@ public interface MoviesService {
   @GET("/movies/{id}") Movie getSummary(@Path("id") long traktId,
       @Query("extended") Extended extended);
 
-  @GET("/movies/{id}/people") People getPeople(@Path("id") long traktId);
+  @GET("/movies/{id}/people") People getPeople(@Path("id") long traktId,
+      @Query("extended") Extended extended);
 }

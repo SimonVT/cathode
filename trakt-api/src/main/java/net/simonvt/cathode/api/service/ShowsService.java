@@ -97,7 +97,8 @@ public interface ShowsService {
    *
    * @param id Trakt ID
    */
-  @GET("/shows/{id}/people") People getPeople(@Path("id") long id);
+  @GET("/shows/{id}/people") People getPeople(@Path("id") long id,
+      @Query("extended") Extended extended);
 
   /**
    * Returns rating (between 0 and 10) and distribution for a show.
