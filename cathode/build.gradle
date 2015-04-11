@@ -23,7 +23,6 @@ dependencies {
   compile parent.libraries.picasso
   compile parent.libraries.retrofit
   compile parent.libraries.okhttp
-  compile parent.libraries.okhttpUrlConnection
 
   compile parent.libraries.butterknife
   compile parent.libraries.timber

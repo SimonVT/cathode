@@ -11,7 +11,6 @@ dependencies {
   apt parent.libraries.daggerCompiler
   compile parent.libraries.retrofit
   compile parent.libraries.okhttp
-  compile parent.libraries.okhttpUrlConnection
 
   compile parent.libraries.jodaTime
 
