@@ -22,17 +22,23 @@ import javax.inject.Inject;
 
 public abstract class Job {
 
-  public static final int PRIORITY_5 = 5;
+  public static final int PRIORITY_ACTIONS = 10;
 
-  public static final int PRIORITY_4 = 4;
+  public static final int PRIORITY_USER_DATA = 9;
 
-  public static final int PRIORITY_3 = 3;
+  public static final int PRIORITY_SEASONS = 6;
 
-  public static final int PRIORITY_2 = 2;
+  public static final int PRIORITY_SHOWS = 5;
 
-  public static final int PRIORITY_1 = 1;
+  public static final int PRIORITY_MOVIES = 4;
 
-  public static final int PRIORITY_0 = 1;
+  public static final int PRIORITY_RECOMMENDED_TRENDING = 3;
+
+  public static final int PRIORITY_EXTRAS = 2;
+
+  public static final int PRIORITY_UPDATED = 1;
+
+  public static final int PRIORITY_PURGE = 0;
 
   @Inject transient JobManager jobManager;
 
@@ -50,9 +56,7 @@ public abstract class Job {
 
   public abstract String key();
 
-  public int getPriority() {
-    return PRIORITY_3;
-  }
+  public abstract int getPriority();
 
   public abstract void perform();
 

@@ -37,7 +37,7 @@ public class SyncShowsWatchlist extends Job {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_4;
+    return PRIORITY_USER_DATA;
   }
 
   @Override public void perform() {

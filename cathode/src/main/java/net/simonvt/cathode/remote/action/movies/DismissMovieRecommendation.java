@@ -36,7 +36,7 @@ public class DismissMovieRecommendation extends Job {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_5;
+    return PRIORITY_ACTIONS;
   }
 
   @Override public boolean requiresWakelock() {

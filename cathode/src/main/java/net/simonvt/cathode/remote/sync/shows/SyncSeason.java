@@ -47,6 +47,10 @@ public class SyncSeason extends Job {
     return "SyncSeason" + "&traktId=" + traktId + "&season=" + season;
   }
 
+  @Override public int getPriority() {
+    return PRIORITY_SEASONS;
+  }
+
   @Override public void perform() {
     Timber.d("Syncing season %d of show %d", season, traktId);
 

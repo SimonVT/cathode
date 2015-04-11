@@ -26,13 +26,13 @@ import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.ShowProgress;
 import net.simonvt.cathode.api.service.ShowsService;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
-import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobFailedException;
 import timber.log.Timber;
 
 public class SyncShowCollectedStatus extends Job {
@@ -50,7 +50,7 @@ public class SyncShowCollectedStatus extends Job {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_4;
+    return PRIORITY_USER_DATA;
   }
 
   @Override public void perform() {

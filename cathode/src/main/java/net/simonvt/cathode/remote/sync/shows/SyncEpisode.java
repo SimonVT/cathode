@@ -47,6 +47,10 @@ public class SyncEpisode extends Job {
     return "SyncEpisode" + "&traktId=" + traktId + "&season=" + season + "&episode=" + episode;
   }
 
+  @Override public int getPriority() {
+    return PRIORITY_SEASONS;
+  }
+
   @Override public void perform() {
     try {
       Episode summary = episodeService.getSummary(traktId, season, episode, Extended.FULL_IMAGES);

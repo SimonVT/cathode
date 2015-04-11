@@ -42,7 +42,7 @@ public class SyncMoviesRatings extends Job {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_2;
+    return PRIORITY_EXTRAS;
   }
 
   @Override public void perform() {

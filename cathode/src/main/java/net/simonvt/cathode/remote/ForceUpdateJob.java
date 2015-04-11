@@ -32,6 +32,10 @@ public class ForceUpdateJob extends Job {
     return "ForceUpdateJob";
   }
 
+  @Override public int getPriority() {
+    return PRIORITY_ACTIONS;
+  }
+
   @Override public void perform() {
     Cursor shows = getContentResolver().query(Shows.SHOWS, new String[] {
         ShowColumns.ID, ShowColumns.TRAKT_ID,

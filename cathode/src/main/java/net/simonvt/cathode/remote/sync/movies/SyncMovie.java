@@ -36,6 +36,10 @@ public class SyncMovie extends Job {
     return "SyncMovie" + "&traktId=" + traktId;
   }
 
+  @Override public int getPriority() {
+    return PRIORITY_MOVIES;
+  }
+
   @Override public void perform() {
     Movie movie = moviesService.getSummary(traktId, Extended.FULL_IMAGES);
     MovieWrapper.updateOrInsertMovie(getContentResolver(), movie);

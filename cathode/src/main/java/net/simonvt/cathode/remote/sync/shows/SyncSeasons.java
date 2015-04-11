@@ -43,6 +43,10 @@ public class SyncSeasons extends Job {
     return "SyncSeasons" + "&traktId=" + traktId;
   }
 
+  @Override public int getPriority() {
+    return PRIORITY_SEASONS;
+  }
+
   @Override public void perform() {
     final long showId = ShowWrapper.getShowId(getContentResolver(), traktId);
     if (showId == -1L) {

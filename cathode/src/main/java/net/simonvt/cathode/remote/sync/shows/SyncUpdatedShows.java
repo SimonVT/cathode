@@ -46,7 +46,7 @@ public class SyncUpdatedShows extends Job {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_2;
+    return PRIORITY_UPDATED;
   }
 
   @Override public void perform() {

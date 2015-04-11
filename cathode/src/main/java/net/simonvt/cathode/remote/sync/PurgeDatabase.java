@@ -40,7 +40,7 @@ public class PurgeDatabase extends Job {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_0;
+    return PRIORITY_PURGE;
   }
 
   @Override public void perform() {

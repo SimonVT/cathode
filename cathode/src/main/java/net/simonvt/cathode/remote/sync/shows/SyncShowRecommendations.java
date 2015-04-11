@@ -44,7 +44,7 @@ public class SyncShowRecommendations extends Job {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_2;
+    return PRIORITY_RECOMMENDED_TRENDING;
   }
 
   @Override public void perform() {

@@ -45,6 +45,10 @@ public class SyncShow extends Job {
     return "SyncShow" + "&traktId=" + traktId + "&syncAdditionalInfo=" + syncAdditionalInfo;
   }
 
+  @Override public int getPriority() {
+    return PRIORITY_SHOWS;
+  }
+
   @Override public void perform() {
     Show show = showsService.getSummary(traktId, Extended.FULL_IMAGES);
     final long showId = ShowWrapper.updateOrInsertShow(getContentResolver(), show);

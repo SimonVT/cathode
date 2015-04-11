@@ -34,6 +34,10 @@ public class UpdateShowCounts extends Job {
     return "UpdateShowCounts";
   }
 
+  @Override public int getPriority() {
+    return PRIORITY_ACTIONS;
+  }
+
   @Override public void perform() {
     Cursor shows = getContentResolver().query(Shows.SHOWS, new String[] {
         ShowColumns.ID,
