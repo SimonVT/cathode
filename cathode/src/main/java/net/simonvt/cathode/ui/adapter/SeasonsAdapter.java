@@ -82,7 +82,7 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     return holder;
   }
 
-  @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
+  @Override protected void onBindViewHolder(final ViewHolder holder, Cursor cursor, int position) {
     final int seasonId = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.ID));
     final int seasonNumber = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.SEASON));
     final int airdateCount =
@@ -123,13 +123,18 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     holder.title.setText(
         resources.getQuantityString(R.plurals.season_x, seasonNumber, seasonNumber));
     holder.overflow.setListener(new OverflowView.OverflowActionListener() {
+
       @Override public void onPopupShown() {
+        holder.setIsRecyclable(false);
       }
 
       @Override public void onPopupDismissed() {
+        holder.setIsRecyclable(false);
       }
 
       @Override public void onActionSelected(int action) {
+        holder.setIsRecyclable(true);
+
         switch (action) {
           case R.id.action_watched:
             seasonScheduler.setWatched(seasonId, true);

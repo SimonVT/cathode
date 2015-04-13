@@ -43,20 +43,23 @@ public class MoviesAdapter extends BaseMoviesAdapter<BaseMoviesAdapter.ViewHolde
 
     v.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        listener.onMovieClicked(holder.itemView, holder.getPosition(), holder.getItemId());
+        listener.onMovieClicked(holder.itemView, holder.getAdapterPosition(), holder.getItemId());
       }
     });
 
     holder.overflow.setListener(new OverflowView.OverflowActionListener() {
       @Override public void onPopupShown() {
+        holder.setIsRecyclable(false);
       }
 
       @Override public void onPopupDismissed() {
+        holder.setIsRecyclable(false);
       }
 
       @Override public void onActionSelected(int action) {
-        onOverflowActionSelected(holder.itemView, holder.getItemId(), action, holder.getPosition(),
-            holder.title.getText().toString());
+        holder.setIsRecyclable(true);
+        onOverflowActionSelected(holder.itemView, holder.getItemId(), action,
+            holder.getAdapterPosition(), holder.title.getText().toString());
       }
     });
 

@@ -113,7 +113,7 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     vh.header.setText(headerRes);
   }
 
-  @Override protected void onBindViewHolder(RecyclerView.ViewHolder holder, Cursor cursor,
+  @Override protected void onBindViewHolder(final RecyclerView.ViewHolder holder, Cursor cursor,
       final int position) {
     final ItemViewHolder vh = (ItemViewHolder) holder;
 
@@ -163,13 +163,18 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
       vh.checkIn.addItem(R.id.action_watched, R.string.action_watched);
     }
     vh.checkIn.setListener(new OverflowActionListener() {
+
       @Override public void onPopupShown() {
+        holder.setIsRecyclable(false);
       }
 
       @Override public void onPopupDismissed() {
+        holder.setIsRecyclable(false);
       }
 
       @Override public void onActionSelected(int action) {
+        holder.setIsRecyclable(true);
+
         switch (action) {
           case R.id.action_checkin_cancel:
             showScheduler.cancelCheckin();

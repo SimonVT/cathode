@@ -72,14 +72,19 @@ public class ShowDescriptionAdapter
     });
 
     holder.overflow.setListener(new OverflowView.OverflowActionListener() {
+
       @Override public void onPopupShown() {
+        holder.setIsRecyclable(false);
       }
 
       @Override public void onPopupDismissed() {
+        holder.setIsRecyclable(false);
       }
 
       @Override public void onActionSelected(int action) {
-        onOverflowActionSelected(holder.itemView, holder.getItemId(), action, holder.getPosition());
+        holder.setIsRecyclable(true);
+        onOverflowActionSelected(holder.itemView, holder.getItemId(), action,
+            holder.getAdapterPosition());
       }
     });
 

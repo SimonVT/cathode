@@ -138,7 +138,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
     ((HeaderViewHolder) holder).header.setText(headerRes);
   }
 
-  @Override protected void onBindViewHolder(RecyclerView.ViewHolder holder, Cursor cursor,
+  @Override protected void onBindViewHolder(final RecyclerView.ViewHolder holder, Cursor cursor,
       final int position) {
     if (holder.getItemViewType() == TYPE_SHOW) {
       ShowViewHolder vh = (ShowViewHolder) holder;
@@ -163,13 +163,17 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
 
       final View view = holder.itemView;
       vh.overflow.setListener(new OverflowView.OverflowActionListener() {
+
         @Override public void onPopupShown() {
+          holder.setIsRecyclable(false);
         }
 
         @Override public void onPopupDismissed() {
+          holder.setIsRecyclable(false);
         }
 
         @Override public void onActionSelected(int action) {
+          holder.setIsRecyclable(true);
           switch (action) {
             case R.id.action_watchlist_remove:
               onRemoveListener.onRemoveItem(view, position);
@@ -195,13 +199,17 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
       vh.episode.setText(season + "x" + episode);
       final View view = holder.itemView;
       vh.overflow.setListener(new OverflowView.OverflowActionListener() {
+
         @Override public void onPopupShown() {
+          holder.setIsRecyclable(false);
         }
 
         @Override public void onPopupDismissed() {
+          holder.setIsRecyclable(false);
         }
 
         @Override public void onActionSelected(int action) {
+          holder.setIsRecyclable(true);
 
           switch (action) {
             case R.id.action_watched:
