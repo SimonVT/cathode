@@ -17,7 +17,6 @@ package net.simonvt.cathode.util;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -54,41 +53,21 @@ public final class FragmentStack {
 
   private Callback callback;
 
-  private Handler handler;
-
   private int enterAnimation;
   private int exitAnimation;
   private int popStackEnterAnimation;
   private int popStackExitAnimation;
-
-  private final Runnable execPendingTransactions = new Runnable() {
-    @Override public void run() {
-      if (fragmentTransaction != null) {
-        fragmentTransaction.commit();
-        fragmentManager.executePendingTransactions();
-        fragmentTransaction = null;
-
-        dispatchOnStackChangedEvent();
-      }
-    }
-  };
 
   private FragmentStack(FragmentActivity activity, int containerId, Callback callback) {
     this.activity = activity;
     fragmentManager = activity.getSupportFragmentManager();
     this.containerId = containerId;
     this.callback = callback;
-
-    handler = new Handler();
   }
 
   /** Removes all added fragments and clears the stack. */
   public void destroy() {
-    if (fragmentTransaction != null && !fragmentTransaction.isEmpty()) {
-      handler.removeCallbacks(execPendingTransactions);
-      fragmentManager.executePendingTransactions();
-      fragmentTransaction = null;
-    }
+    commit();
 
     ensureTransaction();
     fragmentTransaction.setCustomAnimations(enterAnimation, exitAnimation);
@@ -108,7 +87,7 @@ public final class FragmentStack {
   }
 
   public Bundle saveState() {
-    executePendingTransactions();
+    commit();
 
     final int stackSize = stack.size();
     String[] stackTags = new String[stackSize];
@@ -226,7 +205,9 @@ public final class FragmentStack {
       Fragment f = stack.peekLast();
       attachFragment(f, f.getTag());
 
-      if (commit) commit();
+      if (commit) {
+        commit();
+      }
 
       return true;
     }
@@ -259,8 +240,10 @@ public final class FragmentStack {
   }
 
   private FragmentTransaction ensureTransaction() {
-    if (fragmentTransaction == null) fragmentTransaction = fragmentManager.beginTransaction();
-    handler.removeCallbacks(execPendingTransactions);
+    if (fragmentTransaction == null) {
+      fragmentTransaction = fragmentManager.beginTransaction();
+    }
+
     return fragmentTransaction;
   }
 
@@ -301,31 +284,13 @@ public final class FragmentStack {
 
   /**
    * Commit pending transactions. This will be posted, not executed immediately.
-   *
-   * @return Whether there were any transactions to commit.
    */
-  public boolean commit() {
+  public void commit() {
     if (fragmentTransaction != null && !fragmentTransaction.isEmpty()) {
-      handler.removeCallbacks(execPendingTransactions);
-      handler.post(execPendingTransactions);
-      return true;
-    }
-
-    return false;
-  }
-
-  public boolean executePendingTransactions() {
-    if (fragmentTransaction != null && !fragmentTransaction.isEmpty()) {
-      handler.removeCallbacks(execPendingTransactions);
       fragmentTransaction.commit();
-      fragmentTransaction = null;
-      boolean result = fragmentManager.executePendingTransactions();
-      if (result) {
-        dispatchOnStackChangedEvent();
-        return true;
-      }
     }
 
-    return false;
+    fragmentTransaction = null;
+    fragmentManager.executePendingTransactions();
   }
 }

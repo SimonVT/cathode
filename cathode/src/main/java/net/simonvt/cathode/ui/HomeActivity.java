@@ -236,7 +236,7 @@ public class HomeActivity extends BaseActivity
 
   @Override protected void onPause() {
     bus.unregister(this);
-    stack.executePendingTransactions();
+    stack.commit();
     super.onPause();
   }
 
@@ -462,7 +462,7 @@ public class HomeActivity extends BaseActivity
         (SearchShowFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_SEARCH_SHOW);
     if (f == null) {
       stack.push(SearchShowFragment.class, FRAGMENT_SEARCH_SHOW, SearchShowFragment.getArgs(query));
-      stack.executePendingTransactions();
+      stack.commit();
     } else {
       f.query(query);
     }
@@ -480,7 +480,7 @@ public class HomeActivity extends BaseActivity
     if (f == null) {
       stack.push(SearchMovieFragment.class, FRAGMENT_SEARCH_MOVIE,
           SearchMovieFragment.getArgs(query));
-      stack.executePendingTransactions();
+      stack.commit();
     } else {
       f.query(query);
     }
