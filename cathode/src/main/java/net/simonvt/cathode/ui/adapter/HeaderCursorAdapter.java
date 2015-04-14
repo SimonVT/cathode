@@ -23,6 +23,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
+import timber.log.Timber;
 
 public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
     extends RecyclerView.Adapter<T> {
@@ -197,7 +198,16 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
       offset += header.size;
     }
 
-    throw new RuntimeException("No header found for position " + position);
+    Timber.i("Count: " + getItemCount());
+    Timber.i("Header count: " + headers.size());
+
+    for (Header header : headers) {
+      Timber.i("Header id: " + header.headerId);
+      Timber.i("Header size: " + header.size);
+    }
+
+    throw new RuntimeException(
+        "[" + this.getClass().getName() + "] No header found for position " + position);
   }
 
   public int getCursorPosition(int position) {
