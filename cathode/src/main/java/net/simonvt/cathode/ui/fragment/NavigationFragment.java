@@ -114,7 +114,7 @@ public class NavigationFragment extends AbsAdapterFragment {
 
             if (getAdapterView() != null) {
               final int firstPos = getAdapterView().getFirstVisiblePosition();
-              if (firstPos == 0) {
+              if (firstPos == 0 && getAdapterView().getChildCount() > 0) {
                 ((RemoteImageView) getAdapterView().getChildAt(0)
                     .getTag(R.id.profileIcon)).setImage(avatar);
               }
