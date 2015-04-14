@@ -214,6 +214,11 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
       c = context.getContentResolver().query(calenderUri, new String[] {
           BaseColumns._ID,
       }, null, null, null);
+
+      if (c == null) {
+        return INVALID_ID;
+      }
+
       if (c.moveToNext()) {
         return c.getLong(0);
       } else {
