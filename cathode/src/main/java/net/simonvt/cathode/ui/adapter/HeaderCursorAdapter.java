@@ -230,6 +230,14 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
     }
 
     if (headerPositions.contains(position)) {
+      Timber.i("Count: " + getItemCount());
+      Timber.i("Header count: " + headers.size());
+
+      for (Header header : headers) {
+        Timber.i("Header id: " + header.headerId);
+        Timber.i("Header size: " + header.size);
+      }
+
       throw new RuntimeException("Trying to get cursor for a header position " + position);
     }
 
