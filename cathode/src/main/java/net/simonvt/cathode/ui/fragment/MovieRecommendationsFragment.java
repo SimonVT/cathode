@@ -219,12 +219,12 @@ public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdap
         cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE)));
   }
 
-  @Override public void onDismissItem(final View view, final int position) {
+  @Override public void onDismissItem(final View view, final long id) {
     Loader loader = getLoaderManager().getLoader(Loaders.LOADER_MOVIES_RECOMMENDATIONS);
     SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
     cursorLoader.throttle(2000);
 
-    cursor.remove(position);
+    cursor.remove(id);
     movieAdapter.notifyDataSetChanged();
   }
 

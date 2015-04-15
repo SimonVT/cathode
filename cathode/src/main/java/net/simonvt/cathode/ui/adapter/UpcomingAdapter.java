@@ -65,7 +65,7 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
   private static final int TYPE_ITEM = 0;
 
   public interface OnRemoveListener {
-    void onRemove(View view, int position);
+    void onRemove(View view, int position, long id);
   }
 
   @Inject ShowTaskScheduler showScheduler;
@@ -186,7 +186,7 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
 
           case R.id.action_watched:
             if (watchedCount + 1 >= airedCount) {
-              onRemoveListener.onRemove(vh.itemView, position);
+              onRemoveListener.onRemove(vh.itemView, position, id);
             }
             episodeScheduler.setWatched(episodeId, true);
             break;

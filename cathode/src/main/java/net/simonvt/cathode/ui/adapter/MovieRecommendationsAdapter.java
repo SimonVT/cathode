@@ -24,7 +24,8 @@ import net.simonvt.cathode.widget.OverflowView;
 public class MovieRecommendationsAdapter extends MoviesAdapter {
 
   public interface DismissListener {
-    void onDismissItem(View view, int position);
+
+    void onDismissItem(View view, long id);
   }
 
   private DismissListener dismissListener;
@@ -47,7 +48,7 @@ public class MovieRecommendationsAdapter extends MoviesAdapter {
     switch (action) {
       case R.id.action_dismiss:
         movieScheduler.dismissRecommendation(id);
-        dismissListener.onDismissItem(view, position);
+        dismissListener.onDismissItem(view, id);
         break;
 
       default:

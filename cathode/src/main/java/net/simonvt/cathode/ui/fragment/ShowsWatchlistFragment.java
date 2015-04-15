@@ -168,13 +168,11 @@ public class ShowsWatchlistFragment extends ToolbarGridFragment<RecyclerView.Vie
     loader.throttle(2000);
   }
 
-  @Override public void onRemoveItem(View view, int position) {
+  @Override public void onRemoveItem(View view, int position, long id) {
     throttleLoaders();
-    ShowWatchlistAdapter adapter = (ShowWatchlistAdapter) getAdapter();
     SimpleCursor cursor =
         (SimpleCursor) (((ShowWatchlistAdapter) getAdapter()).getCursor(position));
-    final int correctedPosition = adapter.getCursorPosition(position);
-    cursor.remove(correctedPosition);
+    cursor.remove(id);
     ((ShowWatchlistAdapter) getAdapter()).notifyChanged();
   }
 

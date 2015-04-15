@@ -238,12 +238,12 @@ public class ShowRecommendationsFragment
         LibraryType.WATCHED);
   }
 
-  @Override public void onDismissItem(final View view, final int position) {
+  @Override public void onDismissItem(final View view, final long id) {
     Loader loader = getLoaderManager().getLoader(Loaders.LOADER_SHOWS_RECOMMENDATIONS);
     SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
     cursorLoader.throttle(2000);
 
-    cursor.remove(position);
+    cursor.remove(id);
     showsAdapter.notifyDataSetChanged();
   }
 

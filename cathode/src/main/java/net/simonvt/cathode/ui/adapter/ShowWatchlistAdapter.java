@@ -42,7 +42,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
 
   public interface RemoveListener {
 
-    void onRemoveItem(View view, int position);
+    void onRemoveItem(View view, int position, long id);
   }
 
   public interface OnItemClickListener {
@@ -176,7 +176,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
           holder.setIsRecyclable(true);
           switch (action) {
             case R.id.action_watchlist_remove:
-              onRemoveListener.onRemoveItem(view, position);
+              onRemoveListener.onRemoveItem(view, position, id);
               showScheduler.setIsInWatchlist(id, false);
           }
         }
@@ -217,7 +217,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
               break;
 
             case R.id.action_watchlist_remove:
-              onRemoveListener.onRemoveItem(view, position);
+              onRemoveListener.onRemoveItem(view, position, id);
               episodeScheduler.setIsInWatchlist(id, false);
               break;
           }

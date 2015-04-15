@@ -18,6 +18,7 @@ package net.simonvt.cathode.database;
 
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
+import android.provider.BaseColumns;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,12 +137,35 @@ public class SimpleCursor extends AbsSimpleCursor {
     data.remove(position);
   }
 
+  public void remove(long id) {
+    if (hasColumn(BaseColumns._ID)) {
+      final int idColumn = getColumnIndex(BaseColumns._ID);
+      for (int position = 0; position < getCount(); position++) {
+        final long rowId = getLong(idColumn);
+        if (id == rowId) {
+          data.remove(position);
+          break;
+        }
+      }
+    }
+  }
+
   @Override public int getCount() {
     return data.size();
   }
 
   @Override public String[] getColumnNames() {
     return columnNames;
+  }
+
+  public boolean hasColumn(String column) {
+    for (String col : columnNames) {
+      if (column.equals(col)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   @Override public String getString(int column) {

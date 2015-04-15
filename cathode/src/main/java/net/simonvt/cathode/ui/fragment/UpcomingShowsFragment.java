@@ -53,12 +53,11 @@ import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.adapter.UpcomingAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
-import net.simonvt.cathode.widget.AnimatorHelper;
 import net.simonvt.cathode.widget.SearchView;
 
 public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
-    implements UpcomingAdapter.OnRemoveListener, ListDialog.Callback,
-    LoaderCallbacks<SimpleCursor>, UpcomingAdapter.OnItemClickListener {
+    implements UpcomingAdapter.OnRemoveListener, ListDialog.Callback, LoaderCallbacks<SimpleCursor>,
+    UpcomingAdapter.OnItemClickListener {
 
   private enum SortBy {
     TITLE("title", Shows.SORT_TITLE),
@@ -243,29 +242,15 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
     }
   }
 
-  @Override public void onRemove(View view, int position) {
+  @Override public void onRemove(View view, int position, long id) {
     Loader loader = getLoaderManager().getLoader(Loaders.LOADER_SHOWS_UPCOMING);
     SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
     cursorLoader.throttle(2000);
-    //AnimatorHelper.removeView(getRecyclerView(), view, animatorCallback);
 
     SimpleCursor cursor = (SimpleCursor) ((UpcomingAdapter) getAdapter()).getCursor(position);
-    cursor.remove(cursor.getPosition());
+    cursor.remove(id);
     ((UpcomingAdapter) getAdapter()).notifyChanged();
   }
-
-  private AnimatorHelper.Callback animatorCallback = new AnimatorHelper.Callback() {
-    @Override public void removeItem(int position) {
-      int correctedPosition = ((UpcomingAdapter) getAdapter()).getCursorPosition(position);
-      if (correctedPosition != -1) {
-        SimpleCursor cursor = (SimpleCursor) ((UpcomingAdapter) getAdapter()).getCursor(position);
-        cursor.remove(correctedPosition);
-      }
-    }
-
-    @Override public void onAnimationEnd() {
-    }
-  };
 
   private UpcomingAdapter ensureAdapter() {
     if (adapter == null) {

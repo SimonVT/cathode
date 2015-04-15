@@ -24,7 +24,8 @@ import net.simonvt.cathode.widget.OverflowView;
 public class ShowRecommendationsAdapter extends ShowDescriptionAdapter {
 
   public interface DismissListener {
-    void onDismissItem(View view, int position);
+
+    void onDismissItem(View view, long id);
   }
 
   private DismissListener listener;
@@ -44,7 +45,7 @@ public class ShowRecommendationsAdapter extends ShowDescriptionAdapter {
     switch (action) {
       case R.id.action_dismiss:
         showScheduler.dismissRecommendation(id);
-        listener.onDismissItem(view, position);
+        listener.onDismissItem(view, id);
         break;
 
       default:
