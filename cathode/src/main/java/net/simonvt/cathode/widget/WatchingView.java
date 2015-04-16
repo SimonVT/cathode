@@ -210,6 +210,7 @@ public class WatchingView extends ViewGroup {
     this.startTime = startTime;
     this.endTime = endTime;
 
+    posterView.setImage(poster);
     titleView.setText(showTitle);
     subtitleView.setVisibility(VISIBLE);
     subtitleView.setText(episodeTitle);
@@ -231,6 +232,7 @@ public class WatchingView extends ViewGroup {
     this.startTime = startTime;
     this.endTime = endTime;
 
+    posterView.setImage(poster);
     titleView.setText(movieTitle);
     subtitleView.setVisibility(GONE);
 
