@@ -107,6 +107,8 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
 
           queue(new CheckInEpisode(traktId, message, facebook, twitter, tumblr));
         }
+
+        c.close();
       }
     });
   }
