@@ -21,11 +21,10 @@ allprojects {
 ext {
   enableCrashlytics = false
   versionMajor = 2
-  versionMinor = 1
-  versionPatch = 4
-  versionBuild = 1
+  versionMinor = 2
+  versionPatch = 0
 
-  versionCode = versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
+  versionCode = versionMajor * 10000 + versionMinor * 1000 + versionPatch
   versionName = versionMajor + "." + versionMinor + "." + versionPatch
 
   minSdkVersion = 16
