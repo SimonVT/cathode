@@ -21,6 +21,10 @@ import net.simonvt.cathode.api.body.CheckinItem;
 import net.simonvt.cathode.api.service.CheckinService;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.sync.SyncWatching;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import timber.log.Timber;
 
 public class CheckInMovie extends Job {
 
@@ -59,14 +63,28 @@ public class CheckInMovie extends Job {
   }
 
   @Override public void perform() {
-    CheckinItem item = new CheckinItem() //
-        .movie(traktId) //
-        .message(message) //
-        .facebook(facebook) //
-        .twitter(twitter) //
-        .tumblr(tumblr) //
-        .appVersion(BuildConfig.VERSION_NAME) //
-        .appDate(BuildConfig.BUILD_TIME);
-    checkinService.checkin(item);
+    try {
+      CheckinItem item = new CheckinItem() //
+          .movie(traktId) //
+          .message(message) //
+          .facebook(facebook) //
+          .twitter(twitter) //
+          .tumblr(tumblr) //
+          .appVersion(BuildConfig.VERSION_NAME) //
+          .appDate(BuildConfig.BUILD_TIME);
+      checkinService.checkin(item);
+    } catch (RetrofitError e) {
+      Response response = e.getResponse();
+      if (response != null) {
+        if (response.getStatus() == 409) {
+          Timber.d("409 status, cancel checkin");
+          queue(new SyncWatching());
+          // TODO: Let the user know a checkin is already in progress
+          return;
+        }
+      }
+
+      throw e;
+    }
   }
 }

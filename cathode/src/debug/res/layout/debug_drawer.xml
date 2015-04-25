@@ -109,6 +109,15 @@
       style="@style/DebugDrawerItem"/>
 
   <TextView
+      android:id="@+id/debug_syncWatching"
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
+      android:textAllCaps="false"
+      android:text="Sync watching"
+      style="@style/DebugDrawerItem"/>
+
+  <TextView
       android:layout_width="0dp"
       android:layout_columnSpan="2"
       android:layout_gravity="start|fill_horizontal"

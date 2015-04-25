@@ -30,6 +30,7 @@ import net.simonvt.cathode.remote.action.shows.CollectEpisode;
 import net.simonvt.cathode.remote.action.shows.RateEpisode;
 import net.simonvt.cathode.remote.action.shows.WatchedEpisode;
 import net.simonvt.cathode.remote.action.shows.WatchlistEpisode;
+import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.util.DateUtils;
 
 public class EpisodeTaskScheduler extends BaseTaskScheduler {
@@ -76,10 +77,17 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
       final boolean twitter, final boolean tumblr) {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c = context.getContentResolver()
-            .query(Episodes.EPISODES, null, EpisodeColumns.CHECKED_IN + "=1", null, null);
+        Cursor c = context.getContentResolver().query(Episodes.EPISODE_WATCHING, new String[] {
+            EpisodeColumns.ID, EpisodeColumns.EXPIRES_AT,
+        }, null, null, null);
 
-        if (c.getCount() == 0) {
+        final long currentTime = System.currentTimeMillis();
+        long expires = 0;
+        if (c.moveToFirst()) {
+          expires = c.getLong(c.getColumnIndex(EpisodeColumns.EXPIRES_AT));
+        }
+
+        if (c.getCount() == 0 || (expires >= currentTime && expires > 0)) {
           Cursor episode = EpisodeWrapper.query(context.getContentResolver(), episodeId,
               EpisodeColumns.TRAKT_ID);
           episode.moveToFirst();
@@ -96,7 +104,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
           final int runtime = show.getInt(show.getColumnIndex(ShowColumns.RUNTIME));
           show.close();
 
-          final long startedAt = System.currentTimeMillis();
+          final long startedAt = currentTime;
           final long expiresAt = startedAt + runtime * DateUtils.MINUTE_IN_MILLIS;
 
           ContentValues cv = new ContentValues();
@@ -109,6 +117,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
         }
 
         c.close();
+        queue(new SyncWatching());
       }
     });
   }

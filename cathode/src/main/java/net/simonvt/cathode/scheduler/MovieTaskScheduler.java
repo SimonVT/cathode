@@ -113,11 +113,17 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
       final boolean twitter, final boolean tumblr) {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c = context.getContentResolver().query(Movies.WATCHING, null, null, null, null);
+        Cursor c = context.getContentResolver().query(Movies.WATCHING, new String[] {
+            MovieColumns.ID, MovieColumns.EXPIRES_AT,
+        }, null, null, null);
 
-        if (c.getCount() == 0) {
-          c.close();
+        final long currentTime = System.currentTimeMillis();
+        long expires = 0;
+        if (c.moveToFirst()) {
+          expires = c.getLong(c.getColumnIndex(MovieColumns.EXPIRES_AT));
+        }
 
+        if (c.getCount() == 0 || (expires >= currentTime && expires > 0)) {
           Cursor movie = context.getContentResolver().query(Movies.withId(movieId), new String[] {
               MovieColumns.ID, MovieColumns.RUNTIME,
           }, null, null, null);
@@ -137,6 +143,8 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
           final long traktId = MovieWrapper.getTraktId(context.getContentResolver(), movieId);
           queue(new CheckInMovie(traktId, message, facebook, twitter, tumblr));
         }
+
+        c.close();
       }
     });
   }
