@@ -64,15 +64,16 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.widget.AppBarRelativeLayout;
+import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.HiddenPaneLayout;
-import net.simonvt.cathode.widget.ObservableScrollView;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RecyclerViewManager;
 import net.simonvt.cathode.widget.RemoteImageView;
 import timber.log.Timber;
 
-public class ShowFragment extends ProgressFragment {
+public class ShowFragment extends BaseFragment {
 
   private static final String ARG_SHOWID = "net.simonvt.cathode.ui.fragment.ShowFragment.showId";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.fragment.ShowFragment.title";
@@ -109,26 +110,24 @@ public class ShowFragment extends ProgressFragment {
   private SeasonsAdapter seasonsAdapter;
   private Cursor seasonsCursor;
 
-  @InjectView(R.id.scrollView) ObservableScrollView scrollView;
+  @InjectView(R.id.appBarLayout) AppBarRelativeLayout appBarLayout;
 
   @InjectView(R.id.rating) CircularProgressIndicator rating;
   @InjectView(R.id.airtime) TextView airTime;
   @InjectView(R.id.certification) TextView certification;
-  @InjectView(R.id.poster) RemoteImageView poster;
-  @InjectView(R.id.fanart) RemoteImageView fanart;
+  // TODO: @InjectView(R.id.poster) RemoteImageView poster;
+  @InjectView(R.id.backdrop) RemoteImageView backdrop;
   @InjectView(R.id.overview) TextView overview;
   @InjectView(R.id.isWatched) TextView watched;
   @InjectView(R.id.inCollection) TextView collection;
   @InjectView(R.id.inWatchlist) TextView watchlist;
 
-  @InjectView(R.id.actorsTitle) View actorsTitle;
   @InjectView(R.id.actorsParent) View actorsParent;
+  @InjectView(R.id.actorsHeader) View actorsHeader;
   @InjectView(R.id.actors) LinearLayout actors;
+  @InjectView(R.id.peopleContainer) LinearLayout peopleContainer;
 
   @InjectView(R.id.episodes) LinearLayout episodes;
-
-  @InjectView(R.id.watchTitle) View watchTitle;
-  @InjectView(R.id.collectTitle) View collectTitle;
 
   @InjectView(R.id.toWatch) View toWatch;
   private EpisodeHolder toWatchHolder;
@@ -215,10 +214,12 @@ public class ShowFragment extends ProgressFragment {
   }
 
   private void updateTitle() {
-    if (toolbar != null) {
-      toolbar.setTitle(getTitle());
-      toolbar.setSubtitle(getSubtitle());
-    }
+    //if (toolbar != null) {
+    //  toolbar.setTitle(getTitle());
+    //  toolbar.setSubtitle(getSubtitle());
+    //}
+
+    appBarLayout.setTitle(getTitle());
   }
 
   public String getTitle() {
@@ -258,17 +259,16 @@ public class ShowFragment extends ProgressFragment {
       }
     });
 
-    scrollView.setListener(new ObservableScrollView.ScrollListener() {
-      @Override public void onScrollChanged(int l, int t) {
-        final int offset = (int) (t / 2.0f);
-        fanart.setTranslationY(offset);
-      }
-    });
-
     rating.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         RatingDialog.newInstance(RatingDialog.Type.SHOW, showId, currentRating)
             .show(getFragmentManager(), DIALOG_RATING);
+      }
+    });
+
+    actorsHeader.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        navigationCallbacks.onDisplayShowActors(showId, showTitle);
       }
     });
 
@@ -406,6 +406,7 @@ public class ShowFragment extends ProgressFragment {
 
   @Override public void createMenu(Toolbar toolbar) {
     super.createMenu(toolbar);
+
     Menu menu = toolbar.getMenu();
     toolbar.inflateMenu(R.menu.fragment_show);
 
@@ -449,7 +450,6 @@ public class ShowFragment extends ProgressFragment {
   }
 
   @Override public void onDestroyView() {
-    scrollView.setListener(null);
     super.onDestroyView();
   }
 
@@ -467,11 +467,11 @@ public class ShowFragment extends ProgressFragment {
     final String certification = cursor.getString(cursor.getColumnIndex(ShowColumns.CERTIFICATION));
     final String posterUrl = cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER));
     if (posterUrl != null) {
-      poster.setImage(posterUrl);
+      // TODO: poster.setImage(posterUrl);
     }
     final String fanartUrl = cursor.getString(cursor.getColumnIndex(ShowColumns.FANART));
     if (fanartUrl != null) {
-      fanart.setImage(fanartUrl);
+      backdrop.setImage(fanartUrl);
     }
     final String overview = cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW));
     inWatchlist = cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
@@ -504,7 +504,6 @@ public class ShowFragment extends ProgressFragment {
     this.certification.setText(certification);
     this.overview.setText(overview);
 
-    setContentVisible(true);
     invalidateMenu();
   }
 
@@ -529,32 +528,37 @@ public class ShowFragment extends ProgressFragment {
   }
 
   private void updateActorViews(Cursor c) {
-    actors.removeAllViews();
+    peopleContainer.removeAllViews();
+
     final int count = c.getCount();
-    Timber.d("Actor count: %d", count);
     final int visibility = count > 0 ? View.VISIBLE : View.GONE;
-    actorsTitle.setVisibility(visibility);
     actorsParent.setVisibility(visibility);
 
+    int index = 0;
+
     c.moveToPosition(-1);
-    while (c.moveToNext()) {
-      View v = LayoutInflater.from(getActivity()).inflate(R.layout.person, actors, false);
+    while (c.moveToNext() && index < 3) {
+      View v = LayoutInflater.from(getActivity()).inflate(R.layout.item_person, actors, false);
 
       RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
+      headshot.addTransformation(new CircleTransformation());
       headshot.setImage(c.getString(c.getColumnIndex(PersonColumns.HEADSHOT)));
-      TextView name = (TextView) v.findViewById(R.id.name);
+
+      TextView name = (TextView) v.findViewById(R.id.person_name);
       name.setText(c.getString(c.getColumnIndex(PersonColumns.NAME)));
-      TextView character = (TextView) v.findViewById(R.id.job);
+
+      TextView character = (TextView) v.findViewById(R.id.person_job);
       character.setText(c.getString(c.getColumnIndex(ShowCharacterColumns.CHARACTER)));
 
-      actors.addView(v);
+      peopleContainer.addView(v);
+
+      index++;
     }
   }
 
   private void updateEpisodeWatchViews(Cursor cursor) {
     if (cursor.moveToFirst()) {
       toWatch.setVisibility(View.VISIBLE);
-      watchTitle.setVisibility(View.VISIBLE);
 
       toWatchId = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
       toWatchTitle = cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
@@ -590,7 +594,6 @@ public class ShowFragment extends ProgressFragment {
       toWatchHolder.episodeAirTime.setText(airTimeStr);
     } else {
       toWatch.setVisibility(View.GONE);
-      watchTitle.setVisibility(View.GONE);
       toWatchId = -1;
     }
 
@@ -630,7 +633,6 @@ public class ShowFragment extends ProgressFragment {
   private void updateEpisodeCollectViews(Cursor cursor) {
     if (cursor.moveToFirst()) {
       toCollect.setVisibility(View.VISIBLE);
-      collectTitle.setVisibility(View.VISIBLE);
 
       toCollectId = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
 
@@ -650,7 +652,6 @@ public class ShowFragment extends ProgressFragment {
       toCollectHolder.episodeScreenshot.setImage(screenshotUrl);
     } else {
       toCollect.setVisibility(View.GONE);
-      collectTitle.setVisibility(View.GONE);
       toCollectId = -1;
     }
 

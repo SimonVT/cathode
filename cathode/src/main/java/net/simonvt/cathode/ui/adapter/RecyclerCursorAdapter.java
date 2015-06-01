@@ -34,11 +34,11 @@ public abstract class RecyclerCursorAdapter<T extends RecyclerView.ViewHolder>
 
   private List<Long> itemIds;
 
-  protected RecyclerCursorAdapter(Context context) {
+  public RecyclerCursorAdapter(Context context) {
     this(context, null);
   }
 
-  protected RecyclerCursorAdapter(Context context, Cursor cursor) {
+  public RecyclerCursorAdapter(Context context, Cursor cursor) {
     this.context = context;
     changeCursor(cursor);
     setHasStableIds(true);

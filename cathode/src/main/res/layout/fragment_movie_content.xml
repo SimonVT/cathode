@@ -19,7 +19,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingLeft="@dimen/detailContentPadding"
-    android:paddingTop="@dimen/detailPosterTranslationY"
+    android:paddingTop="@dimen/detailContentPaddingTop"
     android:paddingRight="@dimen/detailContentPadding"
     android:orientation="vertical">
 
@@ -34,34 +34,10 @@
       android:id="@+id/overview"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      tools:text="From the delightfully twisted creative minds behind Family Guy comes American Dad, the animated tour de force featuring CIA operative Stan Smith, his outrageous family, and Roger, the alcoholic extra-terrestrial who lives with them! Whether it's rigging elections, erasing memories, chasing sleazy strip clubs, or staging bum fights, it's all in a day's work for Stan."
+      tools:text="A long description of a show."
       style="@style/Widget.InfoText"/>
 
-
-  <LinearLayout
-      android:id="@+id/actorsParent"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/actorsTitle"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/actors"
-        style="@style/Widget.InfoTitle"/>
-
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-      <LinearLayout
-          android:id="@+id/actors"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="6dp"
-          android:orientation="horizontal">
-      </LinearLayout>
-    </HorizontalScrollView>
-  </LinearLayout>
+  <include
+      layout="@layout/card_actors"
+      android:visibility="gone"/>
 </LinearLayout>

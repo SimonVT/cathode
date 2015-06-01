@@ -18,7 +18,7 @@
   <style name="Widget" parent="android:Widget.Holo"/>
 
   <style name="Toolbar">
-    <item name="android:background">@color/actionBarBackground</item>
+    <item name="android:background">?attr/colorPrimary</item>
   </style>
 
   <style name="Crouton">
@@ -82,7 +82,7 @@
     <item name="android:isIndicator">true</item>
   </style>
 
-  <style name="Widget.RatingBar" parent="@android:style/Widget.Holo.Light.RatingBar">
+  <style name="Widget.RatingBar" parent="@android:style/Widget.Material.Light.RatingBar">
     <item name="android:isIndicator">false</item>
     <item name="android:numStars">10</item>
     <item name="android:stepSize">1.0</item>
@@ -105,7 +105,7 @@
 
   <style name="Menu.ItemBase">
     <item name="android:textSize">16sp</item>
-    <item name="android:textColor">@color/menu_item</item>
+    <item name="android:textColor">?android:attr/textColorPrimary</item>
     <item name="android:minHeight">?android:attr/listPreferredItemHeightSmall</item>
     <item name="android:paddingLeft">32dp</item>
     <item name="android:paddingRight">32dp</item>
@@ -151,6 +151,47 @@
     <item name="android:paddingTop">8dp</item>
     <item name="android:paddingBottom">8dp</item>
     <item name="android:textColor">@color/titleTextColor</item>
+  </style>
+
+  <style name="Card"/>
+
+  <style name="Card.Title">
+    <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+    <item name="android:textColor">@color/titleTextColor</item>
+  </style>
+
+  <style name="Person"/>
+
+  <style name="Person.Name">
+    <item name="android:textColor">?android:attr/textColorPrimary</item>
+  </style>
+
+  <style name="Person.Job">
+    <item name="android:textColor">?android:attr/textColorSecondary</item>
+  </style>
+
+  <style name="AppBarRelativeLayout">
+    <item name="expandedTitleMargin">32dp</item>
+    <item name="expandedTitleTextAppearance">@style/ExpandedTitleTextAppearance</item>
+    <item name="collapsedTitleTextAppearance">@style/CollapsedTitleTextAppearance</item>
+    <item name="contentScrim">?attr/colorPrimary</item>
+    <item name="statusBarScrim">?attr/colorPrimaryDark</item>
+  </style>
+
+  <style name="ExpandedTitleTextAppearance" parent="TextAppearance.AppCompat.Display1">
+    <item name="android:textColor">@android:color/white</item>
+  </style>
+
+  <style name="CollapsedTitleTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+    <item name="android:textColor">@android:color/white</item>
+  </style>
+
+  <style name="TopBarDivider">
+    <item name="android:layout_gravity">top</item>
+  </style>
+
+  <style name="TopBarContent">
+    <item name="android:layout_marginTop">2dp</item>
   </style>
 
 </resources>

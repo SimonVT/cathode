@@ -26,7 +26,6 @@
 
   <item
       android:id="@+id/menu_refresh"
-      android:icon="@drawable/ic_action_refresh"
       android:title="@string/action_refresh"
       app:showAsAction="never"/>
 

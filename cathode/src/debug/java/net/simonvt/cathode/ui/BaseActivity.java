@@ -21,7 +21,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +49,7 @@ import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
 import net.simonvt.cathode.settings.Settings;
 
-public abstract class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
   private final DebugViews debugViews = new DebugViews();
 
@@ -92,8 +92,8 @@ public abstract class BaseActivity extends ActionBarActivity {
     final IntAdapter httpStatusCodeAdapter = new IntAdapter(statusCodes);
     debugViews.httpStatusCode.setAdapter(httpStatusCodeAdapter);
     debugViews.httpStatusCode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-      @Override public void onItemSelected(AdapterView<?> parent, View view, int position,
-          long id) {
+      @Override
+      public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         injects.httpStatusCodePreference.set(httpStatusCodeAdapter.getItem(position));
       }
 

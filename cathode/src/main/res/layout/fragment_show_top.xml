@@ -21,14 +21,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="60dp"
-    android:paddingLeft="@dimen/detailHeaderLeftMargin"
-    android:background="@drawable/detail_header">
+    android:background="@color/showHeaderBackground">
 
   <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_gravity="center_vertical"
-      android:orientation="vertical">
+      android:orientation="vertical"
+      android:paddingLeft="8dp"
+      style="@style/TopBarContent">
 
     <TextView
         android:id="@+id/airtime"
@@ -51,5 +52,12 @@
       android:layout_height="match_parent"
       android:layout_gravity="center_vertical|right"
       android:background="?android:attr/selectableItemBackground"
-      app:circleBackgroundColor="@color/circleProgressBackgroundColor"/>
+      app:circleBackgroundColor="@color/circleProgressBackgroundColor"
+      style="@style/TopBarContent"/>
+
+  <View
+      android:layout_width="match_parent"
+      android:layout_height="2dp"
+      android:background="@color/colorPrimary"
+      style="@style/TopBarDivider"/>
 </FrameLayout>

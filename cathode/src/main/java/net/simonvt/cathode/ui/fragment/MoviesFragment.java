@@ -120,6 +120,7 @@ public abstract class MoviesFragment extends ToolbarGridFragment<MoviesAdapter.V
   }
 
   @Override public void onMovieClicked(View v, int position, long id) {
+    cursor.moveToPosition(position);
     navigationListener.onDisplayMovie(id,
         cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE)));
   }

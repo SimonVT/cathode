@@ -14,7 +14,8 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<FrameLayout
+<net.simonvt.cathode.widget.CatchSystemInsets
+    android:id="@+id/contentFrameLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -64,4 +65,4 @@
       tools:visibility="visible"
       style="@android:style/Widget.Holo.ProgressBar.Horizontal"
       tools:ignore="MissingPrefix"/>
-</FrameLayout>
+</net.simonvt.cathode.widget.CatchSystemInsets>

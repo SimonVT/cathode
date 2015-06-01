@@ -44,4 +44,5 @@ public interface Loaders {
   int LOADER_EPISODE = 800;
   int LOADER_SHOW_WATCHING = 900;
   int LOADER_MOVIE_WATCHING = 901;
+  int LOADER_ACTORS = 902;
 }

@@ -16,7 +16,6 @@
 package net.simonvt.cathode.ui.fragment;
 
 import android.app.Activity;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -28,11 +27,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.Optional;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -52,8 +50,8 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.widget.AppBarRelativeLayout;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
-import net.simonvt.cathode.widget.ObservableScrollView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public class EpisodeFragment extends DialogFragment implements FragmentContract {
@@ -66,18 +64,16 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   private static final String DIALOG_RATING =
       "net.simonvt.cathode.ui.fragment.EpisodeFragment.ratingDialog";
 
-  private static final int STATE_NONE = -1;
-  private static final int STATE_PROGRESS_VISIBLE = 0;
-  private static final int STATE_CONTENT_VISIBLE = 1;
-
   @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;
   @Inject Bus bus;
 
+  @InjectView(R.id.appBarLayout) @Optional AppBarRelativeLayout appBarLayout;
+
   @InjectView(R.id.toolbar) Toolbar toolbar;
 
   @InjectView(R.id.title) TextView title;
-  @InjectView(R.id.screenshot) RemoteImageView screenshot;
+  @InjectView(R.id.backdrop) RemoteImageView backdrop;
   @InjectView(R.id.overview) TextView overview;
   @InjectView(R.id.firstAired) TextView firstAired;
 
@@ -86,17 +82,6 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   @InjectView(R.id.isWatched) View watchedView;
   @InjectView(R.id.inCollection) View inCollectionView;
   @InjectView(R.id.inWatchlist) View inWatchlistView;
-
-  @InjectView(R.id.contentContainer) ObservableScrollView content;
-
-  @InjectView(R.id.progressContainer) View progress;
-
-  private boolean animating;
-
-  private boolean wait;
-
-  private int currentState = STATE_PROGRESS_VISIBLE;
-  private int pendingStateChange = STATE_NONE;
 
   private long episodeId;
 
@@ -156,9 +141,14 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   }
 
   private void updateTitle() {
-    if (toolbar != null && !isTablet) {
-      toolbar.setTitle(getTitle());
-      toolbar.setSubtitle(getSubtitle());
+    if (toolbar != null) {
+      if (isTablet) {
+        toolbar.setTitle(getTitle());
+      }
+    }
+
+    if (appBarLayout != null) {
+      appBarLayout.setTitle(getTitle());
     }
   }
 
@@ -195,48 +185,12 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     toolbar.setOnMenuItemClickListener(menuClickListener);
     updateTitle();
 
-    wait = true;
-    view.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-      @Override
-      public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft,
-          int oldTop, int oldRight, int oldBottom) {
-        v.removeOnLayoutChangeListener(this);
-
-        wait = false;
-
-        if (currentState == STATE_CONTENT_VISIBLE) {
-          content.setAlpha(1.0f);
-          content.setVisibility(View.VISIBLE);
-          progress.setVisibility(View.GONE);
-        } else {
-          content.setVisibility(View.GONE);
-          progress.setAlpha(1.0f);
-          progress.setVisibility(View.VISIBLE);
-        }
-
-        if (!isTablet
-            && getResources().getConfiguration().orientation
-            == Configuration.ORIENTATION_LANDSCAPE) {
-          content.setScrollY(screenshot.getHeight() / 2);
-        }
-      }
-    });
-
     rating.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         RatingDialog.newInstance(RatingDialog.Type.EPISODE, episodeId, currentRating)
             .show(getFragmentManager(), DIALOG_RATING);
       }
     });
-
-    if (!isTablet) {
-      content.setListener(new ObservableScrollView.ScrollListener() {
-        @Override public void onScrollChanged(int l, int t) {
-          final int offset = (int) (t / 2.0f);
-          screenshot.setTranslationY(offset);
-        }
-      });
-    }
   }
 
   private View.OnClickListener navigationClickListener = new View.OnClickListener() {
@@ -246,7 +200,6 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   };
 
   @Override public void onDestroyView() {
-    content.setListener(null);
     ButterKnife.reset(this);
     super.onDestroyView();
   }
@@ -342,102 +295,6 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
         }
       };
 
-  @Override public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
-    Animation animation = null;
-    if (nextAnim != 0) {
-      animation = AnimationUtils.loadAnimation(getActivity(), nextAnim);
-      animation.setAnimationListener(new Animation.AnimationListener() {
-        @Override public void onAnimationStart(Animation animation) {
-          animating = true;
-        }
-
-        @Override public void onAnimationEnd(Animation animation) {
-          animating = false;
-          if (pendingStateChange != STATE_NONE) {
-            changeState(pendingStateChange, true);
-            pendingStateChange = STATE_NONE;
-          }
-        }
-
-        @Override public void onAnimationRepeat(Animation animation) {
-        }
-      });
-    }
-
-    return animation;
-  }
-
-  protected void setContentVisible(boolean contentVisible) {
-    if (getView() == null) {
-      currentState = contentVisible ? STATE_CONTENT_VISIBLE : STATE_PROGRESS_VISIBLE;
-      return;
-    }
-
-    if (contentVisible) {
-      changeState(STATE_CONTENT_VISIBLE, true);
-    } else {
-      changeState(STATE_PROGRESS_VISIBLE, true);
-    }
-  }
-
-  private void changeState(final int newState, final boolean animate) {
-    if (newState == currentState) {
-      return;
-    }
-
-    if (animating) {
-      pendingStateChange = newState;
-      return;
-    }
-
-    currentState = newState;
-
-    if (wait || progress == null) {
-      return;
-    }
-
-    if (newState == STATE_PROGRESS_VISIBLE && content.getVisibility() != View.VISIBLE) {
-      return;
-    }
-
-    if (newState == STATE_CONTENT_VISIBLE && !animate) {
-      content.setVisibility(View.VISIBLE);
-      progress.setVisibility(View.GONE);
-    } else if (newState == STATE_PROGRESS_VISIBLE && !animate) {
-      content.setVisibility(View.GONE);
-      progress.setVisibility(View.VISIBLE);
-    } else {
-      content.setVisibility(View.VISIBLE);
-      progress.setVisibility(View.VISIBLE);
-
-      if (newState == STATE_CONTENT_VISIBLE) {
-        progress.animate().alpha(0.0f);
-        if (content.getAlpha() == 1.0f) content.setAlpha(0.0f);
-        content.animate().alpha(1.0f).withEndAction(new Runnable() {
-          @Override public void run() {
-            if (progress == null) {
-              // In case fragment is removed before animation is done
-              return;
-            }
-            progress.setVisibility(View.GONE);
-          }
-        });
-      } else {
-        if (progress.getAlpha() == 1.0f) progress.setAlpha(0.0f);
-        progress.animate().alpha(1.0f);
-        content.animate().alpha(0.0f).withEndAction(new Runnable() {
-          @Override public void run() {
-            if (progress == null) {
-              // In case fragment is removed before animation is done
-              return;
-            }
-            content.setVisibility(View.GONE);
-          }
-        });
-      }
-    }
-  }
-
   private void updateEpisodeViews(final Cursor cursor) {
     if (cursor.moveToFirst()) {
       loaded = true;
@@ -445,7 +302,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       episodeTitle = cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
       title.setText(episodeTitle);
       overview.setText(cursor.getString(cursor.getColumnIndex(EpisodeColumns.OVERVIEW)));
-      screenshot.setImage(cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT)));
+      backdrop.setImage(cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT)));
       firstAired.setText(DateUtils.millisToString(getActivity(),
           cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED)), true));
       season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
@@ -463,8 +320,6 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       currentRating = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.USER_RATING));
       final float ratingAll = cursor.getFloat(cursor.getColumnIndex(EpisodeColumns.RATING));
       rating.setValue(ratingAll);
-
-      setContentVisible(true);
 
       createMenu(toolbar);
       updateTitle();

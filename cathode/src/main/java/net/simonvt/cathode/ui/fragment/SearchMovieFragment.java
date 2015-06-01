@@ -290,6 +290,7 @@ public class SearchMovieFragment extends ToolbarGridFragment<MovieSearchAdapter.
   }
 
   @Override public void onMovieClicked(View v, int position, long id) {
+    cursor.moveToPosition(position);
     navigationListener.onDisplayMovie(id,
         cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE)));
   }

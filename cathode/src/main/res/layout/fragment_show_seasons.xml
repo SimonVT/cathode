@@ -23,7 +23,8 @@
       android:id="@+id/seasons"
       android:layout_height="match_parent"
       android:layout_width="match_parent"
-      tools:visibility="gone"/>
+      tools:visibility="gone"
+      android:fitsSystemWindows="@bool/drawsBehindStatusBar"/>
 
   <LinearLayout
       android:id="@+id/seasonsEmpty"

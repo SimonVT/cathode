@@ -215,6 +215,7 @@ public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdap
   }
 
   @Override public void onMovieClicked(View view, int position, long movieId) {
+    cursor.moveToPosition(position);
     navigationListener.onDisplayMovie(movieId,
         cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE)));
   }

@@ -17,9 +17,6 @@
 <resources>
 
   <dimen name="detailContentPadding">16dp</dimen>
-  <dimen name="detailPosterWidth">180dp</dimen>
-  <dimen name="detailPosterLeftMargin">24dp</dimen>
-  <dimen name="detailPosterTranslationY">36dp</dimen>
-  <dimen name="detailHeaderLeftMargin">220dp</dimen>
+  <dimen name="detailContentPaddingTop">36dp</dimen>
 
 </resources>

@@ -49,6 +49,7 @@ import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.dialog.LogoutDialog;
+import net.simonvt.cathode.ui.fragment.ActorsFragment;
 import net.simonvt.cathode.ui.fragment.EpisodeFragment;
 import net.simonvt.cathode.ui.fragment.MovieCollectionFragment;
 import net.simonvt.cathode.ui.fragment.MovieFragment;
@@ -110,6 +111,7 @@ public class HomeActivity extends BaseActivity
   static final String FRAGMENT_SEARCH_MOVIE =
       "net.simonvt.cathode.ui.HomeActivity.searchMovieFragment";
   static final String FRAGMENT_MOVIE = "net.simonvt.cathode.ui.HomeActivity.movieFragment";
+  static final String FRAGMENT_ACTORS = "net.simonvt.cathode.ui.HomeActivity.actorsFragment";
 
   private static final String STATE_STACK = "net.simonvt.cathode.ui.HomeActivity.stack";
 
@@ -468,6 +470,11 @@ public class HomeActivity extends BaseActivity
     }
   }
 
+  @Override public void onDisplayShowActors(long showId, String title) {
+    stack.push(ActorsFragment.class, FRAGMENT_ACTORS, ActorsFragment.forShow(showId, title));
+    stack.commit();
+  }
+
   @Override public void onDisplayMovie(long movieId, String title) {
     stack.push(MovieFragment.class, FRAGMENT_MOVIE, MovieFragment.getArgs(movieId, title));
     stack.commit();
@@ -484,6 +491,11 @@ public class HomeActivity extends BaseActivity
     } else {
       f.query(query);
     }
+  }
+
+  @Override public void onDisplayMovieActors(long movieId, String title) {
+    stack.push(ActorsFragment.class, FRAGMENT_ACTORS, ActorsFragment.forMovie(movieId, title));
+    stack.commit();
   }
 
   ///////////////////////////////////////////////////////////////////////////
@@ -560,8 +572,8 @@ public class HomeActivity extends BaseActivity
           return loader;
         }
 
-        @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader,
-            SimpleCursor cursor) {
+        @Override
+        public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor cursor) {
           watchingShow = cursor;
           updateWatching();
         }
@@ -581,8 +593,8 @@ public class HomeActivity extends BaseActivity
           return loader;
         }
 
-        @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader,
-            SimpleCursor cursor) {
+        @Override
+        public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor cursor) {
           watchingMovie = cursor;
           updateWatching();
         }

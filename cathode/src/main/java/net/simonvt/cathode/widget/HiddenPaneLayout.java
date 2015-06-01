@@ -29,6 +29,7 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
 
 public class HiddenPaneLayout extends ViewGroup {
 
@@ -111,6 +112,11 @@ public class HiddenPaneLayout extends ViewGroup {
     dropShadowWidth = dpToPx(6);
 
     setWillNotDraw(false);
+  }
+
+  @Override public WindowInsets onApplyWindowInsets(WindowInsets insets) {
+    hiddenPane.setPadding(0, insets.getSystemWindowInsetTop(), 0, 0);
+    return insets;
   }
 
   protected int dpToPx(int dp) {

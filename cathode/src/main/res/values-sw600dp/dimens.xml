@@ -19,8 +19,6 @@
   <dimen name="searchViewMaxWidth">320dp</dimen>
 
   <dimen name="detailContentPaddingBottom">16dp</dimen>
-  <dimen name="detailPosterWidth">128dp</dimen>
-  <dimen name="detailHeaderLeftMargin">152dp</dimen>
 
   <dimen name="recyclerViewVerticalSpacing">8dp</dimen>
   <dimen name="recyclerViewHorizontalSpacing">8dp</dimen>

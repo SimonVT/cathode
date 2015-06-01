@@ -17,7 +17,12 @@
 <resources>
 
   <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
-    <item name="android:statusBarColor">#FF002537</item>
+    <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    <item name="android:statusBarColor">@android:color/transparent</item>
+  </style>
+
+  <style name="Theme.Oauth">
+    <item name="android:statusBarColor">@color/colorPrimaryDark</item>
   </style>
 
 </resources>

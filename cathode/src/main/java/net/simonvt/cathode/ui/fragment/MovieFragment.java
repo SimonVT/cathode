@@ -44,12 +44,12 @@ import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.ui.Loaders;
-import net.simonvt.cathode.ui.NavigationClickListener;
+import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
+import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
-import net.simonvt.cathode.widget.ObservableScrollView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public class MovieFragment extends ProgressFragment
@@ -64,20 +64,20 @@ public class MovieFragment extends ProgressFragment
   @Inject MovieTaskScheduler movieScheduler;
   @Inject Bus bus;
 
-  @InjectView(R.id.scrollView) ObservableScrollView scrollView;
-
   @InjectView(R.id.year) TextView year;
   @InjectView(R.id.certification) TextView certification;
-  @InjectView(R.id.fanart) RemoteImageView fanart;
-  @InjectView(R.id.poster) RemoteImageView poster;
+  @InjectView(R.id.backdrop) RemoteImageView backdrop;
+  //@InjectView(R.id.poster) RemoteImageView poster;
   @InjectView(R.id.overview) TextView overview;
   @InjectView(R.id.isWatched) TextView isWatched;
   @InjectView(R.id.inCollection) TextView collection;
   @InjectView(R.id.inWatchlist) TextView watchlist;
   @InjectView(R.id.rating) CircularProgressIndicator rating;
 
-  @InjectView(R.id.actorsParent) LinearLayout actorsParent;
+  @InjectView(R.id.actorsParent) View actorsParent;
+  @InjectView(R.id.actorsHeader) View actorsHeader;
   @InjectView(R.id.actors) LinearLayout actors;
+  @InjectView(R.id.peopleContainer) LinearLayout peopleContainer;
 
   private long movieId;
 
@@ -97,7 +97,7 @@ public class MovieFragment extends ProgressFragment
 
   private boolean checkedIn;
 
-  private NavigationClickListener navigationListener;
+  private MoviesNavigationListener navigationListener;
 
   public static Bundle getArgs(long movieId, String movieTitle) {
     Bundle args = new Bundle();
@@ -109,9 +109,10 @@ public class MovieFragment extends ProgressFragment
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
-      navigationListener = (NavigationClickListener) activity;
+      navigationListener = (MoviesNavigationListener) activity;
     } catch (ClassCastException e) {
-      throw new ClassCastException(activity.toString() + " must implement NavigationClickListener");
+      throw new ClassCastException(
+          activity.toString() + " must implement MoviesNavigationListener");
     }
   }
 
@@ -132,7 +133,6 @@ public class MovieFragment extends ProgressFragment
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-
     rating.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         RatingDialog.newInstance(RatingDialog.Type.MOVIE, movieId, currentRating)
@@ -140,10 +140,9 @@ public class MovieFragment extends ProgressFragment
       }
     });
 
-    scrollView.setListener(new ObservableScrollView.ScrollListener() {
-      @Override public void onScrollChanged(int l, int t) {
-        final int offset = (int) (t / 2.0f);
-        fanart.setTranslationY(offset);
+    actorsHeader.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        navigationListener.onDisplayMovieActors(movieId, movieTitle);
       }
     });
 
@@ -239,9 +238,9 @@ public class MovieFragment extends ProgressFragment
         cursor.getString(cursor.getColumnIndex(MovieColumns.CERTIFICATION));
 
     final String fanartUrl = cursor.getString(cursor.getColumnIndex(MovieColumns.FANART));
-    fanart.setImage(fanartUrl);
+    backdrop.setImage(fanartUrl);
     final String posterUrl = cursor.getString(cursor.getColumnIndex(MovieColumns.POSTER));
-    poster.setImage(posterUrl);
+    //poster.setImage(posterUrl);
 
     currentRating = cursor.getInt(cursor.getColumnIndex(MovieColumns.USER_RATING));
     final float ratingAll = cursor.getFloat(cursor.getColumnIndex(MovieColumns.RATING));
@@ -281,22 +280,31 @@ public class MovieFragment extends ProgressFragment
   }
 
   private void updateActors(Cursor c) {
-    actorsParent.setVisibility(c.getCount() > 0 ? View.VISIBLE : View.GONE);
-    actors.removeAllViews();
+    peopleContainer.removeAllViews();
+
+    final int count = c.getCount();
+    final int visibility = count > 0 ? View.VISIBLE : View.GONE;
+    actorsParent.setVisibility(visibility);
+
+    int index = 0;
 
     c.moveToPosition(-1);
-
-    while (c.moveToNext()) {
-      View v = LayoutInflater.from(getActivity()).inflate(R.layout.person, actors, false);
+    while (c.moveToNext() && index < 3) {
+      View v = LayoutInflater.from(getActivity()).inflate(R.layout.item_person, actors, false);
 
       RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
+      headshot.addTransformation(new CircleTransformation());
       headshot.setImage(c.getString(c.getColumnIndex(PersonColumns.HEADSHOT)));
-      TextView name = (TextView) v.findViewById(R.id.name);
+
+      TextView name = (TextView) v.findViewById(R.id.person_name);
       name.setText(c.getString(c.getColumnIndex(PersonColumns.NAME)));
-      TextView character = (TextView) v.findViewById(R.id.job);
+
+      TextView character = (TextView) v.findViewById(R.id.person_job);
       character.setText(c.getString(c.getColumnIndex(MovieCastColumns.CHARACTER)));
 
-      actors.addView(v);
+      peopleContainer.addView(v);
+
+      index++;
     }
   }
 
@@ -318,8 +326,8 @@ public class MovieFragment extends ProgressFragment
           return loader;
         }
 
-        @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader,
-            SimpleCursor cursor) {
+        @Override
+        public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor cursor) {
           updateActors(cursor);
         }
 

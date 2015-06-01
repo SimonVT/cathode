@@ -155,10 +155,10 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
 
     vh.checkIn.removeItems();
     if (watching) {
-      vh.checkIn.setImageResource(R.drawable.ic_action_cancel_light);
+      vh.checkIn.setImageResource(R.drawable.ic_checkin_cancel);
       vh.checkIn.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
     } else {
-      vh.checkIn.setImageResource(R.drawable.ic_action_checkin_light);
+      vh.checkIn.setImageResource(R.drawable.ic_checkin);
       vh.checkIn.addItem(R.id.action_checkin, R.string.action_checkin);
       vh.checkIn.addItem(R.id.action_watched, R.string.action_watched);
     }

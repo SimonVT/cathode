@@ -62,4 +62,6 @@
   <item name="leftSwipe" type="id"/>
   <item name="rightSwipe" type="id"/>
 
+  <item name="appBarContent" type="id"/>
+
 </resources>

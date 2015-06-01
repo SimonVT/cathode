@@ -234,6 +234,7 @@ public class ShowRecommendationsFragment
   }
 
   @Override public void onShowClick(View view, int position, long id) {
+    cursor.moveToPosition(position);
     navigationListener.onDisplayShow(id, cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE)),
         LibraryType.WATCHED);
   }

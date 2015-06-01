@@ -45,4 +45,34 @@
     <attr name="circleBackgroundColor" format="color"/>
   </declare-styleable>
 
+  <declare-styleable name="InsetsFrameLayout">
+    <attr name="insetsColor" format="color"/>
+  </declare-styleable>
+
+  <declare-styleable name="AppBarRelativeLayout">
+    <attr name="expandedTitleMargin"/>
+    <attr name="expandedTitleMarginStart"/>
+    <attr name="expandedTitleMarginEnd"/>
+    <attr name="expandedTitleMarginTop"/>
+    <attr name="expandedTitleMarginBottom"/>
+
+    <attr name="contentScrim"/>
+    <attr name="statusBarScrim"/>
+
+    <attr name="expandedTitleTextAppearance"/>
+    <attr name="collapsedTitleTextAppearance"/>
+
+    <attr name="contentTopViewId" format="reference"/>
+  </declare-styleable>
+
+  <declare-styleable name="AppBar_LayoutParams">
+    <attr name="layout_scrollMode">
+      <enum name="none" value="0"/>
+      <enum name="pin" value="1"/>
+      <enum name="parallex" value="2"/>
+    </attr>
+
+    <attr name="layout_parallexMultiplier" format="float"/>
+  </declare-styleable>
+
 </resources>

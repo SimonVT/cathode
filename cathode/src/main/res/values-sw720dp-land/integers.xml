@@ -21,4 +21,6 @@
 
   <integer name="movieColumns">5</integer>
 
+  <integer name="actorColumns">5</integer>
+
 </resources>

@@ -31,16 +31,16 @@
     <item name="colorAccent">@color/colorAccent</item>
 
     <!-- The color applied to framework controls in their normal state. -->
-    <item name="colorControlNormal">#FFFF0000</item>
+    <!--item name="colorControlNormal">#FFFF0000</item-->
 
     <!-- The color applied to framework controls in their activated (ex. checked) state. -->
-    <item name="colorControlActivated">#33FF7F2A</item>
+    <!--item name="colorControlActivated">#33FF7F2A</item-->
 
     <!-- The color applied to framework control highlights (ex. ripples, list selectors). -->
-    <item name="colorControlHighlight">#66FF7F2A</item>
+    <!--item name="colorControlHighlight">#66FF7F2A</item-->
 
     <!-- The color applied to framework buttons in their normal state. -->
-    <item name="colorButtonNormal">#FF00FFFF</item>
+    <!--item name="colorButtonNormal">#FF00FFFF</item-->
 
     <item name="messageBarContainerStyle">@style/MessageBar.Container</item>
     <item name="messageBarTextStyle">@style/MessageBar.Message</item>
@@ -50,5 +50,7 @@
 
     <item name="android:windowBackground">@color/contentBackground</item>
   </style>
+
+  <style name="Theme.Oauth"/>
 
 </resources>

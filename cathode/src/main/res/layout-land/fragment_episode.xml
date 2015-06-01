@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2014 Simon Vig Therkildsen
+  ~ Copyright (C) 2015 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -14,48 +14,47 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<net.simonvt.cathode.widget.AppBarScrollParent xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-  <include layout="@layout/toolbar"/>
+  <include layout="@layout/appbar_backdrop"/>
 
-  <FrameLayout
+  <net.simonvt.cathode.widget.ObservableNestedScrollView
+      android:id="@+id/scrollView"
       android:layout_width="match_parent"
-      android:layout_height="0dp"
-      android:layout_weight="1">
+      android:layout_height="match_parent"
+      android:fillViewport="true">
 
-    <net.simonvt.cathode.widget.ObservableScrollView
-        android:id="@id/contentContainer"
+    <net.simonvt.cathode.widget.AppBarRelativeLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:fitsSystemWindows="@bool/drawsBehindStatusBar"
+        app:expandedTitleMarginStart="@dimen/appBarTitleMarginStart"
+        app:expandedTitleMarginEnd="@dimen/appBarTitleMarginEnd">
 
       <LinearLayout
+          android:id="@id/appBarContent"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:orientation="vertical">
+          android:layout_marginTop="@dimen/appBarContentOffset"
+          android:layout_marginLeft="@dimen/appBarContentMargin"
+          android:layout_marginRight="@dimen/appBarContentMargin"
+          android:layout_alignParentTop="true"
+          android:layout_alignParentBottom="true"
+          android:orientation="vertical"
+          android:background="@color/contentBackground"
+          android:paddingBottom="16dp">
 
-        <net.simonvt.cathode.widget.HalfScreenHeightFrameLayout
-            android:id="@+id/screenshotContainer"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-          <net.simonvt.cathode.widget.RemoteImageView
-              android:id="@+id/screenshot"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_gravity="center_vertical"
-              app:dominantMeasurement="width"
-              app:aspectRatio="0.5627"/>
-
-          <include
-              layout="@layout/fragment_episode_top"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_gravity="bottom"/>
-        </net.simonvt.cathode.widget.HalfScreenHeightFrameLayout>
+          <include layout="@layout/fragment_episode_top"/>
+        </FrameLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -66,8 +65,8 @@
           <include layout="@layout/checkmarks"/>
         </FrameLayout>
       </LinearLayout>
-    </net.simonvt.cathode.widget.ObservableScrollView>
 
-    <include layout="@layout/fragment_list_progressbar"/>
-  </FrameLayout>
-</LinearLayout>
+      <include layout="@layout/appbar_toolbar"/>
+    </net.simonvt.cathode.widget.AppBarRelativeLayout>
+  </net.simonvt.cathode.widget.ObservableNestedScrollView>
+</net.simonvt.cathode.widget.AppBarScrollParent>

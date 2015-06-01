@@ -22,11 +22,8 @@
   <dimen name="searchViewMaxWidth">0dp</dimen>
 
   <dimen name="detailContentPadding">8dp</dimen>
+  <dimen name="detailContentPaddingTop">18dp</dimen>
   <dimen name="detailContentPaddingBottom">8dp</dimen>
-  <dimen name="detailPosterWidth">96dp</dimen>
-  <dimen name="detailPosterTranslationY">18dp</dimen>
-  <dimen name="detailPosterLeftMargin">16dp</dimen>
-  <dimen name="detailHeaderLeftMargin">120dp</dimen>
 
   <dimen name="recyclerViewVerticalSpacing">4dp</dimen>
   <dimen name="recyclerViewHorizontalSpacing">4dp</dimen>
@@ -35,5 +32,14 @@
 
   <dimen name="watchingElevation">5dp</dimen>
   <dimen name="watchingPosterWidth">48dp</dimen>
+
+  <dimen name="showActorsMargin">@dimen/detailContentPadding</dimen>
+  <dimen name="showActorsCardRadius">2dp</dimen>
+
+  <!-- App bar dimensions -->
+  <dimen name="appBarContentOffset">0dp</dimen>
+  <dimen name="appBarContentMargin">0dp</dimen>
+  <dimen name="appBarTitleMarginStart">48dp</dimen>
+  <dimen name="appBarTitleMarginEnd">32dp</dimen>
 
 </resources>

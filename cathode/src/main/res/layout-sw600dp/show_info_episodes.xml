@@ -19,50 +19,82 @@
     android:id="@+id/episodes"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/detailContentPadding"
+    android:layout_marginRight="@dimen/detailContentPadding"
+    android:layout_marginTop="16dp"
     android:orientation="vertical"
     android:visibility="gone"
     tools:visibility="visible">
 
-  <TextView
-      android:id="@+id/watchTitle"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:text="@string/to_watch"
-      style="@style/Widget.InfoTitle"/>
-
   <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:baselineAligned="false"
-      android:orientation="horizontal">
+      android:orientation="horizontal"
+      android:layout_marginBottom="8dp">
 
-    <include
+    <android.support.v7.widget.CardView
         android:id="@+id/toWatch"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_marginRight="8dp"
-        android:visibility="gone"
-        tools:visibility="visible"
-        layout="@layout/show_info_episode"/>
+        android:foreground="?android:attr/selectableItemBackground">
 
-    <include
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="To watch"
+            style="@style/Card.Title"/>
+
+        <include
+            layout="@layout/show_info_episode"/>
+      </LinearLayout>
+
+      <net.simonvt.cathode.widget.OverflowView
+          android:id="@+id/episodeOverflow"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginRight="8dp"
+          android:layout_gravity="right"/>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
         android:id="@+id/lastWatched"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_marginRight="8dp"
-        android:visibility="gone"
-        tools:visibility="visible"
-        layout="@layout/show_info_episode"/>
-  </LinearLayout>
+        android:foreground="?android:attr/selectableItemBackground">
 
-  <TextView
-      android:id="@+id/collectTitle"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:text="@string/to_collect"
-      style="@style/Widget.InfoTitle"/>
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Last watched"
+            style="@style/Card.Title"/>
+
+        <include
+            layout="@layout/show_info_episode"/>
+      </LinearLayout>
+
+      <net.simonvt.cathode.widget.OverflowView
+          android:id="@+id/episodeOverflow"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginRight="8dp"
+          android:layout_gravity="right"/>
+    </android.support.v7.widget.CardView>
+  </LinearLayout>
 
   <LinearLayout
       android:layout_width="match_parent"
@@ -70,23 +102,67 @@
       android:baselineAligned="false"
       android:orientation="horizontal">
 
-    <include
+    <android.support.v7.widget.CardView
         android:id="@+id/toCollect"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_marginRight="8dp"
-        android:visibility="gone"
-        tools:visibility="visible"
-        layout="@layout/show_info_episode"/>
+        android:foreground="?android:attr/selectableItemBackground">
 
-    <include
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="To collect"
+            style="@style/Card.Title"/>
+
+        <include
+            layout="@layout/show_info_episode"/>
+      </LinearLayout>
+
+      <net.simonvt.cathode.widget.OverflowView
+          android:id="@+id/episodeOverflow"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginRight="8dp"
+          android:layout_gravity="right"/>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
         android:id="@+id/lastCollected"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:visibility="gone"
-        tools:visibility="visible"
-        layout="@layout/show_info_episode"/>
+        android:foreground="?android:attr/selectableItemBackground">
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Last collected"
+            style="@style/Card.Title"/>
+
+        <include
+            layout="@layout/show_info_episode"/>
+      </LinearLayout>
+
+      <net.simonvt.cathode.widget.OverflowView
+          android:id="@+id/episodeOverflow"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginRight="8dp"
+          android:layout_gravity="right"/>
+    </android.support.v7.widget.CardView>
   </LinearLayout>
 </LinearLayout>

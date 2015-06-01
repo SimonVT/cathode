@@ -27,10 +27,13 @@ import butterknife.Optional;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.ui.FragmentContract;
 import net.simonvt.cathode.ui.NavigationClickListener;
+import net.simonvt.cathode.widget.AppBarRelativeLayout;
 import net.simonvt.cathode.widget.ToolbarHelper;
 
 public abstract class BaseFragment extends Fragment
     implements FragmentContract, Toolbar.OnMenuItemClickListener {
+
+  @InjectView(R.id.appBarLayout) @Optional AppBarRelativeLayout appBarLayout;
 
   @InjectView(R.id.toolbar) @Optional Toolbar toolbar;
 
@@ -63,7 +66,9 @@ public abstract class BaseFragment extends Fragment
 
   public void setTitle(CharSequence title) {
     this.title = title;
-    if (toolbar != null) {
+    if (appBarLayout != null) {
+      appBarLayout.setTitle(title);
+    } else if (toolbar != null) {
       toolbar.setTitle(title);
     }
   }
@@ -97,10 +102,10 @@ public abstract class BaseFragment extends Fragment
       if (navigationListener != null) {
         toolbar.setNavigationOnClickListener(navigationClickListener);
       }
-
-      toolbar.setTitle(title);
-      toolbar.setSubtitle(subtitle);
     }
+
+    setTitle(title);
+    setSubtitle(subtitle);
   }
 
   @Override public void onDestroyView() {

@@ -14,11 +14,9 @@
   ~ limitations under the License.
   -->
 <resources>
-  <color name="transparent">#00000000</color>
+
   <color name="lighter_gray">#FFDDDDDD</color>
   <color name="darker_gray">#FFAAAAAA</color>
-
-  <color name="actionBarBackground">#FF004358</color>
 
   <color name="drawerBackground">#FFFFFFFF</color>
   <color name="contentBackground">#FFE5E5E5</color>
@@ -39,14 +37,15 @@
 
   <color name="showHeaderBackground">#FFFFFFFF</color>
 
-  <color name="titleTextColor">#FFFF7F2A</color>
-  <color name="navigationIndicatorColor">@color/titleTextColor</color>
+  <!--color name="titleTextColor">#FFFF7F2A</color-->
+  <color name="titleTextColor">@color/colorPrimary</color>
 
-  <color name="activatedItemBackground">#33FF7F2A</color>
+  <!--color name="activatedItemBackground">#332C3E50</color-->
+  <color name="activatedItemBackground">#332C3E50</color>
 
-  <color name="colorPrimary">#FFFF7F2A</color>
-  <color name="colorPrimaryDark">#ff9b5024</color>
-  <color name="colorAccent">#FF2AFFEA</color>
+  <color name="colorPrimary">#FF34495E</color>
+  <color name="colorPrimaryDark">#FF2C3E50</color>
+  <color name="colorAccent">#FFDFE6ED</color>
 
   <color name="profilePlaceholder">#FF1C1C1E</color>
 

@@ -16,6 +16,7 @@ dependencies {
   compile parent.libraries.appcompat
   compile parent.libraries.cardView
   compile parent.libraries.recyclerView
+  compile parent.libraries.androidDesign
 
   compile parent.libraries.otto
   compile parent.libraries.dagger

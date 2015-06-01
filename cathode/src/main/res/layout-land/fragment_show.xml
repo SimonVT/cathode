@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2013 Simon Vig Therkildsen
+  ~ Copyright (C) 2015 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -19,62 +19,54 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/hiddenPaneLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="@bool/drawsBehindStatusBar"
+    android:background="@android:color/white">
 
-  <LinearLayout
+  <net.simonvt.cathode.widget.AppBarScrollParent
+      android:id="@+id/main_content"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:orientation="vertical">
+      android:layout_height="match_parent">
 
-    <include layout="@layout/toolbar"/>
+    <include layout="@layout/appbar_backdrop"/>
 
-
-    <FrameLayout
+    <net.simonvt.cathode.widget.ObservableNestedScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-      <net.simonvt.cathode.widget.ObservableScrollView
-          android:id="@+id/scrollView"
+      <net.simonvt.cathode.widget.AppBarRelativeLayout
+          android:id="@+id/appBarLayout"
           android:layout_width="match_parent"
-          android:layout_height="match_parent">
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:fitsSystemWindows="@bool/drawsBehindStatusBar"
+          app:expandedTitleMarginStart="@dimen/appBarTitleMarginStart"
+          app:expandedTitleMarginEnd="@dimen/appBarTitleMarginEnd">
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@id/appBarContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/appBarContentOffset"
+            android:layout_marginLeft="@dimen/appBarContentMargin"
+            android:layout_marginRight="@dimen/appBarContentMargin"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
             android:orientation="vertical"
+            android:background="@color/contentBackground"
             android:paddingBottom="16dp">
 
-          <net.simonvt.cathode.widget.HalfScreenHeightFrameLayout
-              android:id="@+id/fanartContainer"
+          <include
+              layout="@layout/fragment_show_top"
+              android:id="@+id/topBarContainer"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
-
-            <net.simonvt.cathode.widget.RemoteImageView
-                android:id="@+id/fanart"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:dominantMeasurement="width"
-                app:aspectRatio="0.5627"/>
-
-            <include
-                layout="@layout/fragment_show_top"
-                android:id="@+id/topBarContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"/>
-          </net.simonvt.cathode.widget.HalfScreenHeightFrameLayout>
+              android:layout_height="wrap_content"/>
 
           <FrameLayout
               android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_below="@id/fanartContainer">
-
-            <include
-                layout="@layout/fragment_list_progressbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"/>
+              android:layout_height="wrap_content">
 
             <LinearLayout
                 android:id="@+id/contentContainer"
@@ -92,28 +84,12 @@
               </FrameLayout>
             </LinearLayout>
           </FrameLayout>
+        </LinearLayout>
 
-          <FrameLayout
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_alignBottom="@id/fanartContainer"
-              android:translationY="@dimen/detailPosterTranslationY">
-
-            <!-- Size breaks on certain devices unless wrapped in FrameLayout -->
-            <net.simonvt.cathode.widget.RemoteImageView
-                android:id="@+id/poster"
-                android:layout_width="@dimen/detailPosterWidth"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/detailPosterLeftMargin"
-                android:background="#FF8C8C8C"
-                android:padding="2dp"
-                app:dominantMeasurement="width"
-                app:aspectRatio="1.47"/>
-          </FrameLayout>
-        </RelativeLayout>
-      </net.simonvt.cathode.widget.ObservableScrollView>
-    </FrameLayout>
-  </LinearLayout>
+        <include layout="@layout/appbar_toolbar"/>
+      </net.simonvt.cathode.widget.AppBarRelativeLayout>
+    </net.simonvt.cathode.widget.ObservableNestedScrollView>
+  </net.simonvt.cathode.widget.AppBarScrollParent>
 
   <include layout="@layout/fragment_show_seasons"/>
 </net.simonvt.cathode.widget.HiddenPaneLayout>

@@ -34,14 +34,17 @@
         android:id="@+id/screen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/header_bg"
         app:dominantMeasurement="width"
         app:aspectRatio="0.5625"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/colorPrimary"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/screen"
         android:gravity="center_vertical">
 
       <LinearLayout
