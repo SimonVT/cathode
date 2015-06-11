@@ -25,25 +25,34 @@
       android:id="@+id/headerBackground"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      app:placeholder="@android:color/transparent"/>
+      app:placeholder="?attr/colorPrimaryDark"/>
 
-  <net.simonvt.cathode.widget.RemoteImageView
-      android:id="@+id/profileIcon"
-      android:layout_width="48dp"
-      android:layout_height="48dp"
-      android:layout_marginLeft="16dp"
-      android:layout_marginTop="32dp"
-      android:elevation="4dp"
-      app:dominantMeasurement="width"
-      app:placeholder="@drawable/ic_account_circle"/>
-
-  <TextView
-      android:id="@+id/username"
+  <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_gravity="bottom"
-      android:layout_marginLeft="16dp"
-      android:layout_marginBottom="8dp"
-      android:textAppearance="?android:attr/textAppearanceLargeInverse"
-      tools:text="Cathode"/>
+      android:orientation="vertical">
+
+    <net.simonvt.cathode.widget.RemoteImageView
+        android:id="@+id/profileIcon"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="32dp"
+        android:elevation="4dp"
+        app:dominantMeasurement="width"
+        app:placeholder="@drawable/ic_account_circle"/>
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="16dp"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceLargeInverse"
+        android:textSize="14sp"
+        android:fontFamily="sans-serif"
+        tools:text="Cathode"/>
+  </LinearLayout>
 </FrameLayout>
