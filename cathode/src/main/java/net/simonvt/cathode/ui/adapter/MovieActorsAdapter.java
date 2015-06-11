@@ -26,20 +26,21 @@ import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic;
+import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public class MovieActorsAdapter extends RecyclerCursorAdapter<MovieActorsAdapter.ViewHolder> {
 
   public static final String[] PROJECTION = new String[] {
-      DatabaseSchematic.Tables.MOVIE_CAST + "." + MovieCastColumns.ID,
-      DatabaseSchematic.Tables.MOVIE_CAST + "." + MovieCastColumns.PERSON_ID,
-      DatabaseSchematic.Tables.MOVIE_CAST + "." + MovieCastColumns.CHARACTER,
-      DatabaseSchematic.Tables.PEOPLE + "." + PersonColumns.NAME,
-      DatabaseSchematic.Tables.PEOPLE + "." + PersonColumns.HEADSHOT,
+      Tables.MOVIE_CAST + "." + MovieCastColumns.ID,
+      Tables.MOVIE_CAST + "." + MovieCastColumns.CHARACTER,
+      Tables.PEOPLE + "." + PersonColumns.NAME,
+      Tables.PEOPLE + "." + PersonColumns.HEADSHOT,
+      Tables.PEOPLE + "." + LastModifiedColumns.LAST_MODIFIED,
   };
 
   public MovieActorsAdapter(Context context) {

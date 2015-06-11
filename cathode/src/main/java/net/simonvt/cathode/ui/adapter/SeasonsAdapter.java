@@ -49,7 +49,7 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
   public static final String[] PROJECTION = new String[] {
       SeasonColumns.ID, SeasonColumns.AIRDATE_COUNT, SeasonColumns.UNAIRED_COUNT,
       SeasonColumns.WATCHED_COUNT, SeasonColumns.IN_COLLECTION_COUNT, SeasonColumns.SEASON,
-      SeasonColumns.WATCHED_COUNT,
+      SeasonColumns.WATCHED_COUNT, SeasonColumns.LAST_MODIFIED,
   };
 
   @Inject SeasonTaskScheduler seasonScheduler;

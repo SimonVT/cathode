@@ -28,7 +28,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic;
+import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.IndicatorView;
@@ -39,15 +39,16 @@ public class ShowDescriptionAdapter
     extends RecyclerCursorAdapter<ShowDescriptionAdapter.ViewHolder> {
 
   public static final String[] PROJECTION = new String[] {
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.OVERVIEW,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.POSTER,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TVDB_ID,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.RATING,
+      Tables.SHOWS + "." + ShowColumns.ID,
+      Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.SHOWS + "." + ShowColumns.OVERVIEW,
+      Tables.SHOWS + "." + ShowColumns.POSTER,
+      Tables.SHOWS + "." + ShowColumns.TVDB_ID,
+      Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
+      Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
+      Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST,
+      Tables.SHOWS + "." + ShowColumns.RATING,
+      Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
   };
 
   @Inject ShowTaskScheduler showScheduler;

@@ -26,19 +26,21 @@ import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCharacterColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic;
+import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public class ShowActorsAdapter extends RecyclerCursorAdapter<ShowActorsAdapter.ViewHolder> {
 
   public static final String[] PROJECTION = new String[] {
-      DatabaseSchematic.Tables.SHOW_CHARACTERS + "." + ShowCharacterColumns.ID,
-      DatabaseSchematic.Tables.SHOW_CHARACTERS + "." + ShowCharacterColumns.CHARACTER,
-      DatabaseSchematic.Tables.PEOPLE + "." + PersonColumns.NAME,
-      DatabaseSchematic.Tables.PEOPLE + "." + PersonColumns.HEADSHOT,
+      Tables.SHOW_CHARACTERS + "." + ShowCharacterColumns.ID,
+      Tables.SHOW_CHARACTERS + "." + ShowCharacterColumns.CHARACTER,
+      Tables.PEOPLE + "." + PersonColumns.NAME,
+      Tables.PEOPLE + "." + PersonColumns.HEADSHOT,
+      Tables.PEOPLE + "." + LastModifiedColumns.LAST_MODIFIED,
   };
 
   public ShowActorsAdapter(Context context) {

@@ -29,8 +29,9 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic;
+import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
@@ -45,20 +46,25 @@ import net.simonvt.cathode.widget.TimeStamp;
 public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAdapter.ViewHolder> {
 
   private static final String COLUMN_EPISODE_ID = "episodeId";
+  private static final String COLUMN_EPISODE_LAST_UPDATED = "episodeLastUpdated";
 
   public static final String[] PROJECTION = new String[] {
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.POSTER, ShowColumns.AIRED_COUNT,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.STATUS,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.HIDDEN, ShowColumns.WATCHING,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.ID + " AS " + COLUMN_EPISODE_ID,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.TITLE,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SEASON,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.EPISODE,
+      Tables.SHOWS + "." + ShowColumns.ID,
+      Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.SHOWS + "." + ShowColumns.POSTER,
+      ShowColumns.AIRED_COUNT,
+      Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
+      Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
+      Tables.SHOWS + "." + ShowColumns.STATUS,
+      Tables.SHOWS + "." + ShowColumns.HIDDEN,
+      ShowColumns.WATCHING,
+      Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
+      Tables.EPISODES + "." + EpisodeColumns.ID + " AS " + COLUMN_EPISODE_ID,
+      Tables.EPISODES + "." + EpisodeColumns.TITLE,
+      Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
+      Tables.EPISODES + "." + EpisodeColumns.SEASON,
+      Tables.EPISODES + "." + EpisodeColumns.EPISODE,
+      Tables.EPISODES + "." + EpisodeColumns.LAST_MODIFIED + " AS " + COLUMN_EPISODE_LAST_UPDATED,
   };
 
   @Inject ShowTaskScheduler showScheduler;
@@ -81,6 +87,17 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
     this.activity = activity;
     this.clickListener = clickListener;
     this.libraryType = libraryType;
+  }
+
+  @Override public long getLastModified(int position) {
+    Cursor cursor = getCursor(position);
+
+    final long showLastModified =
+        cursor.getLong(cursor.getColumnIndexOrThrow(LastModifiedColumns.LAST_MODIFIED));
+    final long episodeLastModified =
+        cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_EPISODE_LAST_UPDATED));
+
+    return showLastModified + episodeLastModified;
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

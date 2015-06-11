@@ -20,11 +20,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.provider.BaseColumns;
 import android.support.v7.widget.RecyclerView;
-import java.util.ArrayList;
-import java.util.List;
+import net.simonvt.cathode.provider.DatabaseContract;
 
-public abstract class RecyclerCursorAdapter<T extends RecyclerView.ViewHolder>
-    extends RecyclerView.Adapter<T> {
+public abstract class RecyclerCursorAdapter<VH extends RecyclerView.ViewHolder>
+    extends BaseAdapter<VH> {
 
   private Context context;
 
@@ -32,7 +31,9 @@ public abstract class RecyclerCursorAdapter<T extends RecyclerView.ViewHolder>
 
   private int idIndex = -1;
 
-  private List<Long> itemIds;
+  private int lastModifiedIndex = -1;
+
+  private AdapterNotifier notifier;
 
   public RecyclerCursorAdapter(Context context) {
     this(context, null);
@@ -40,8 +41,9 @@ public abstract class RecyclerCursorAdapter<T extends RecyclerView.ViewHolder>
 
   public RecyclerCursorAdapter(Context context, Cursor cursor) {
     this.context = context;
-    changeCursor(cursor);
+    notifier = new AdapterNotifier(this);
     setHasStableIds(true);
+    changeCursor(cursor);
   }
 
   protected Context getContext() {
@@ -70,69 +72,29 @@ public abstract class RecyclerCursorAdapter<T extends RecyclerView.ViewHolder>
 
     if (cursor != null) {
       idIndex = cursor.getColumnIndexOrThrow(BaseColumns._ID);
+      lastModifiedIndex =
+          cursor.getColumnIndexOrThrow(DatabaseContract.LastModifiedColumns.LAST_MODIFIED);
     } else {
       idIndex = -1;
+      lastModifiedIndex = -1;
     }
 
-    notifyChanged();
-  }
-
-  public void notifyChanged() {
-    List<Long> oldItemIds = itemIds;
-    final int itemCount = getItemCount();
-    List<Long> newItemIds = new ArrayList<Long>();
-    for (int i = 0; i < itemCount; i++) {
-      newItemIds.add(getItemId(i));
-    }
-
-    if (oldItemIds == null) {
-      notifyItemRangeInserted(0, itemCount);
-    } else {
-      final int oldItemCount = oldItemIds.size();
-      final int newItemCount = newItemIds.size();
-
-      for (int i = oldItemCount - 1; i >= 0; i--) {
-        final long newPos = newItemIds.indexOf(oldItemIds.get(i));
-        if (newPos == -1) {
-          notifyItemRemoved(i);
-          oldItemIds.remove(i);
-        }
-      }
-
-      for (int newPos = 0; newPos < newItemCount; newPos++) {
-        final long id = newItemIds.get(newPos);
-        final int oldPos = oldItemIds.indexOf(id);
-        if (oldPos == -1) {
-          notifyItemInserted(newPos);
-          oldItemIds.add(newPos, Long.MIN_VALUE);
-        } else if (newPos == oldPos) {
-          notifyItemChanged(newPos);
-        } else if (newPos != oldPos) {
-          notifyItemMoved(oldPos, newPos);
-          oldItemIds.remove(oldPos);
-          oldItemIds.add(newPos, Long.MIN_VALUE);
-        }
-      }
-
-      if (oldItemCount > itemCount) {
-        final int removeCount = oldItemCount - itemCount;
-        notifyItemRangeRemoved(itemCount, removeCount);
-      }
-    }
-
-    itemIds = newItemIds;
+    notifier.notifyChanged();
   }
 
   @Override public long getItemId(int position) {
-    long id = getCursor(position).getLong(idIndex);
-    return id;
+    return getCursor(position).getLong(idIndex);
   }
 
-  @Override public final void onBindViewHolder(T holder, int position) {
+  @Override public long getLastModified(int position) {
+    return getCursor(position).getLong(lastModifiedIndex);
+  }
+
+  @Override public final void onBindViewHolder(VH holder, int position) {
     onBindViewHolder(holder, getCursor(position), position);
   }
 
-  protected abstract void onBindViewHolder(T holder, Cursor cursor, int position);
+  protected abstract void onBindViewHolder(VH holder, Cursor cursor, int position);
 
   @Override public int getItemCount() {
     return cursor != null ? cursor.getCount() : 0;

@@ -31,7 +31,12 @@ public final class DatabaseContract {
   private DatabaseContract() {
   }
 
-  public interface ShowColumns {
+  public interface LastModifiedColumns {
+
+    @DataType(INTEGER) @DefaultValue("0") String LAST_MODIFIED = "lastModified";
+  }
+
+  public interface ShowColumns extends LastModifiedColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
     @DataType(TEXT) String TITLE = "showTitle";
@@ -122,7 +127,7 @@ public final class DatabaseContract {
     String PERSON_ID = "personId";
   }
 
-  public interface SeasonColumns {
+  public interface SeasonColumns extends LastModifiedColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
     @DataType(INTEGER) @References(table = DatabaseSchematic.TABLE_SHOWS, column = ShowColumns.ID)
@@ -154,7 +159,7 @@ public final class DatabaseContract {
     String EPISODE_COUNT = "episodeCount";
   }
 
-  public interface EpisodeColumns {
+  public interface EpisodeColumns extends LastModifiedColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
     @DataType(INTEGER) @References(table = DatabaseSchematic.TABLE_SHOWS, column = ShowColumns.ID)
@@ -203,7 +208,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String NEEDS_SYNC = "needsSync";
   }
 
-  public interface MovieColumns {
+  public interface MovieColumns extends LastModifiedColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
     @DataType(TEXT) String TITLE = "title";
@@ -287,7 +292,7 @@ public final class DatabaseContract {
     String PERSON_ID = "personId";
   }
 
-  public interface PersonColumns {
+  public interface PersonColumns extends LastModifiedColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
     @DataType(TEXT) String NAME = "name";

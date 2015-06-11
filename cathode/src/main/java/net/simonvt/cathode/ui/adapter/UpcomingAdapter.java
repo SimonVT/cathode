@@ -28,8 +28,9 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic;
+import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
@@ -47,19 +48,19 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
   }
 
   private static final String COLUMN_EPISODE_ID = "episodeId";
+  private static final String COLUMN_EPISODE_LAST_UPDATED = "episodeLastUpdated";
 
   public static final String[] PROJECTION = new String[] {
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.POSTER,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.STATUS,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.HIDDEN, ShowColumns.AIRED_COUNT,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT, ShowColumns.WATCHING,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.ID + " AS " + COLUMN_EPISODE_ID,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.TITLE,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SEASON,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.EPISODE,
+      Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.SHOWS + "." + ShowColumns.POSTER, Tables.SHOWS + "." + ShowColumns.STATUS,
+      Tables.SHOWS + "." + ShowColumns.HIDDEN, ShowColumns.AIRED_COUNT,
+      Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT, ShowColumns.WATCHING,
+      Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
+      Tables.EPISODES + "." + EpisodeColumns.ID + " AS " + COLUMN_EPISODE_ID,
+      Tables.EPISODES + "." + EpisodeColumns.TITLE,
+      Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
+      Tables.EPISODES + "." + EpisodeColumns.SEASON, Tables.EPISODES + "." + EpisodeColumns.EPISODE,
+      Tables.EPISODES + "." + EpisodeColumns.LAST_MODIFIED + " AS " + COLUMN_EPISODE_LAST_UPDATED,
   };
 
   private static final int TYPE_ITEM = 0;
@@ -88,6 +89,21 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     CathodeApp.inject(activity, this);
 
     setHasStableIds(true);
+  }
+
+  @Override public long getLastModified(int position) {
+    if (!isHeader(position)) {
+      Cursor cursor = getCursor(position);
+
+      final long showLastModified =
+          cursor.getLong(cursor.getColumnIndexOrThrow(LastModifiedColumns.LAST_MODIFIED));
+      final long episodeLastModified =
+          cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_EPISODE_LAST_UPDATED));
+
+      return showLastModified + episodeLastModified;
+    }
+
+    return super.getLastModified(position);
   }
 
   @Override protected RecyclerView.ViewHolder onCreateItemHolder(ViewGroup parent, int viewType) {

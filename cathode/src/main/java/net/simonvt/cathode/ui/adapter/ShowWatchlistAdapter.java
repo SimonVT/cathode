@@ -28,8 +28,9 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic;
+import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
@@ -53,25 +54,27 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
   }
 
   public static final String[] PROJECTION_SHOW = new String[] {
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.OVERVIEW,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.POSTER,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TVDB_ID,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.RATING,
+      Tables.SHOWS + "." + ShowColumns.ID,
+      Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.SHOWS + "." + ShowColumns.OVERVIEW,
+      Tables.SHOWS + "." + ShowColumns.POSTER,
+      Tables.SHOWS + "." + ShowColumns.TVDB_ID,
+      Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
+      Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
+      Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST,
+      Tables.SHOWS + "." + ShowColumns.RATING,
+      Tables.SHOWS + "." + LastModifiedColumns.LAST_MODIFIED,
   };
 
   public static final String[] PROJECTION_EPISODE = new String[] {
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.ID,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SCREENSHOT,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.TITLE,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SEASON,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.EPISODE,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.EPISODES + "." + EpisodeColumns.ID,
+      Tables.EPISODES + "." + EpisodeColumns.SCREENSHOT,
+      Tables.EPISODES + "." + EpisodeColumns.TITLE,
+      Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
+      Tables.EPISODES + "." + EpisodeColumns.SEASON,
+      Tables.EPISODES + "." + EpisodeColumns.EPISODE,
+      Tables.EPISODES + "." + LastModifiedColumns.LAST_MODIFIED,
+      Tables.SHOWS + "." + ShowColumns.TITLE,
   };
 
   private static final int TYPE_SHOW = 0;
@@ -95,6 +98,15 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
     this.onItemClickListener = onItemClickListener;
     this.onRemoveListener = onRemoveListener;
     CathodeApp.inject(context, this);
+  }
+
+  @Override public long getLastModified(int position) {
+    if (!isHeader(position)) {
+      Cursor cursor = getCursor(position);
+      return cursor.getLong(cursor.getColumnIndexOrThrow(LastModifiedColumns.LAST_MODIFIED));
+    }
+
+    return super.getLastModified(position);
   }
 
   @Override protected int getItemViewType(int headerRes, Cursor cursor) {

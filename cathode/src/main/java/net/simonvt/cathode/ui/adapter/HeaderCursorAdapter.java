@@ -20,13 +20,15 @@ import android.database.Cursor;
 import android.provider.BaseColumns;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
+import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import timber.log.Timber;
 
 public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
-    extends RecyclerView.Adapter<T> {
+    extends BaseAdapter<T> {
 
   static class Header {
 
@@ -72,10 +74,13 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
 
   final List<Integer> headerPositions = new ArrayList<Integer>();
 
-  private List<Long> itemIds;
+  private SparseArray<Long> itemIds = new SparseArray<>();
+
+  private AdapterNotifier notifier;
 
   public HeaderCursorAdapter() {
     setHasStableIds(true);
+    notifier = new AdapterNotifier(this);
   }
 
   public void addHeader(int header) {
@@ -92,6 +97,7 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
   }
 
   public void notifyChanged() {
+    itemIds.clear();
     itemCount = 0;
 
     headerPositions.clear();
@@ -105,49 +111,7 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
       }
     }
 
-    List<Long> oldItemIds = itemIds;
-    final int itemCount = getItemCount();
-    List<Long> newItemIds = new ArrayList<Long>();
-    for (int i = 0; i < itemCount; i++) {
-      newItemIds.add(getId(i));
-    }
-
-    if (oldItemIds == null) {
-      notifyItemRangeInserted(0, itemCount);
-    } else {
-      final int oldItemCount = oldItemIds.size();
-      final int newItemCount = newItemIds.size();
-
-      for (int i = oldItemCount - 1; i >= 0; i--) {
-        final long newPos = newItemIds.indexOf(oldItemIds.get(i));
-        if (newPos == -1) {
-          notifyItemRemoved(i);
-          oldItemIds.remove(i);
-        }
-      }
-
-      for (int newPos = 0; newPos < newItemCount; newPos++) {
-        final long id = newItemIds.get(newPos);
-        final int oldPos = oldItemIds.indexOf(id);
-        if (oldPos == -1) {
-          notifyItemInserted(newPos);
-          oldItemIds.add(newPos, Long.MIN_VALUE);
-        } else if (newPos == oldPos) {
-          notifyItemChanged(newPos);
-        } else if (newPos != oldPos) {
-          notifyItemMoved(oldPos, newPos);
-          oldItemIds.remove(oldPos);
-          oldItemIds.add(newPos, Long.MIN_VALUE);
-        }
-      }
-
-      if (oldItemCount > itemCount) {
-        final int removeCount = oldItemCount - itemCount;
-        notifyItemRangeRemoved(itemCount, removeCount);
-      }
-    }
-
-    itemIds = newItemIds;
+    notifier.notifyChanged();
   }
 
   public void updateCursorForHeader(int headerRes, Cursor cursor) {
@@ -184,7 +148,21 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
   }
 
   @Override public long getItemId(int position) {
-    return itemIds.get(position);
+    Long id = itemIds.get(position);
+    if (id == null) {
+      id = getId(position);
+      itemIds.put(position, id);
+    }
+    return id;
+  }
+
+  @Override public long getLastModified(int position) {
+    if (headerPositions.contains(position)) {
+      return 0;
+    }
+
+    Cursor cursor = getCursor(position);
+    return cursor.getLong(cursor.getColumnIndexOrThrow(LastModifiedColumns.LAST_MODIFIED));
   }
 
   public Header getHeader(int position) {
@@ -224,12 +202,16 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
     throw new RuntimeException("No cursor position found for position " + position);
   }
 
+  public boolean isHeader(int position) {
+    return headerPositions.contains(position);
+  }
+
   public Cursor getCursor(int position) {
     if (position >= itemCount) {
       throw new IndexOutOfBoundsException("Invalid index " + position + ", size is " + itemCount);
     }
 
-    if (headerPositions.contains(position)) {
+    if (isHeader(position)) {
       Timber.i("Count: " + getItemCount());
       Timber.i("Header count: " + headers.size());
 
@@ -260,7 +242,7 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
   }
 
   @Override public final int getItemViewType(int position) {
-    if (headerPositions.contains(position)) {
+    if (isHeader(position)) {
       return HeaderSpanLookup.TYPE_HEADER;
     }
 

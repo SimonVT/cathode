@@ -20,6 +20,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCrewColumns;
@@ -47,7 +48,7 @@ public final class DatabaseSchematic {
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 12;
+  static final int DATABASE_VERSION = 13;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -175,6 +176,14 @@ public final class DatabaseSchematic {
     String SHOW_DELETE_NAME = "showDelete";
     String SEASON_DELETE_NAME = "seasonDelete";
     String MOVIE_DELETE_NAME = "movieDelete";
+
+    String SHOW_UPDATE_NAME = "showUpdate";
+    String SEASON_UPDATE_NAME = "seasonUpdate";
+    String EPISODE_UPDATE_NAME = "episodeUpdate";
+
+    String MOVIES_UPDATE_NAME = "moviesUpdate";
+
+    String PEOPLE_UPDATE_NAME = "peopleUpdate";
 
     String SEASONS_UPDATE_WATCHED = "UPDATE "
         + Tables.SEASONS
@@ -443,6 +452,29 @@ public final class DatabaseSchematic {
         + "=OLD."
         + MovieColumns.ID
         + ";";
+
+    String TIME_MILLIS =
+        "(strftime('%s','now') * 1000 + cast(substr(strftime('%f','now'),4,3) AS INTEGER))";
+
+    String SHOW_UPDATE = "UPDATE " + Tables.SHOWS
+        + " SET " + ShowColumns.LAST_MODIFIED + "=" + TIME_MILLIS
+        + " WHERE " + ShowColumns.ID + "=old."   + ShowColumns.ID + ";";
+
+    String SEASON_UPDATE = "UPDATE " + Tables.SEASONS
+        + " SET " + SeasonColumns.LAST_MODIFIED + "=" + TIME_MILLIS
+        + " WHERE " + SeasonColumns.ID + "=old."   + SeasonColumns.ID + ";";
+
+    String EPISODE_UPDATE = "UPDATE " + Tables.EPISODES
+        + " SET " + EpisodeColumns.LAST_MODIFIED + "=" + TIME_MILLIS
+        + " WHERE " + EpisodeColumns.ID + "=old."   + EpisodeColumns.ID + ";";
+
+    String MOVIES_UPDATE = "UPDATE " + Tables.MOVIES
+        + " SET " + MovieColumns.LAST_MODIFIED + "=" + TIME_MILLIS
+        + " WHERE " + MovieColumns.ID + "=old."   + MovieColumns.ID + ";";
+
+    String PEOPLE_UPDATE = "UPDATE " + Tables.PEOPLE
+        + " SET " + PersonColumns.LAST_MODIFIED + "=" + TIME_MILLIS
+        + " WHERE " + PersonColumns.ID + "=old."   + PersonColumns.ID + ";";
   }
 
   @Table(ShowColumns.class) public static final String TABLE_SHOWS = Tables.SHOWS;
@@ -557,6 +589,46 @@ public final class DatabaseSchematic {
       + Trigger.MOVIE_DELETE_CREW
       + " END;";
 
+  @ExecOnCreate public static final String TRIGGER_SHOW_UPDATE = "CREATE TRIGGER "
+      + Trigger.SHOW_UPDATE_NAME
+      + " AFTER UPDATE ON "
+      + Tables.SHOWS
+      + " FOR EACH ROW BEGIN "
+      + Trigger.SHOW_UPDATE
+      + " END";
+
+  @ExecOnCreate public static final String TRIGGER_SEASON_UPDATE = "CREATE TRIGGER "
+      + Trigger.SEASON_UPDATE_NAME
+      + " AFTER UPDATE ON "
+      + Tables.SEASONS
+      + " FOR EACH ROW BEGIN "
+      + Trigger.SEASON_UPDATE
+      + " END";
+
+  @ExecOnCreate public static final String TRIGGER_EPISODE_UPDATE = "CREATE TRIGGER "
+      + Trigger.EPISODE_UPDATE_NAME
+      + " AFTER UPDATE ON "
+      + Tables.EPISODES
+      + " FOR EACH ROW BEGIN "
+      + Trigger.EPISODE_UPDATE
+      + " END";
+
+  @ExecOnCreate public static final String TRIGGER_MOVIES_UPDATE = "CREATE TRIGGER "
+      + Trigger.MOVIES_UPDATE_NAME
+      + " AFTER UPDATE ON "
+      + Tables.MOVIES
+      + " FOR EACH ROW BEGIN "
+      + Trigger.MOVIES_UPDATE
+      + " END";
+
+  @ExecOnCreate public static final String TRIGGER_PEOPLE_UPDATE = "CREATE TRIGGER "
+      + Trigger.PEOPLE_UPDATE_NAME
+      + " AFTER UPDATE ON "
+      + Tables.PEOPLE
+      + " FOR EACH ROW BEGIN "
+      + Trigger.PEOPLE_UPDATE
+      + " END";
+
   @OnUpgrade public static void onUpgrade(Context context, SQLiteDatabase db, int oldVersion,
       int newVersion) {
     if (oldVersion < 12) {
@@ -583,6 +655,33 @@ public final class DatabaseSchematic {
       db.execSQL("DROP TRIGGER IF EXISTS episodeUpdateCollected");
 
       CathodeDatabase.getInstance(context).onCreate(db);
+    }
+
+    if (oldVersion < 13) {
+      db.execSQL("ALTER TABLE " + Tables.SHOWS
+          + " ADD COLUMN " + LastModifiedColumns.LAST_MODIFIED + " INTEGER DEFAULT 0");
+      db.execSQL("ALTER TABLE " + Tables.SEASONS
+          + " ADD COLUMN " + LastModifiedColumns.LAST_MODIFIED + " INTEGER DEFAULT 0");
+      db.execSQL("ALTER TABLE " + Tables.EPISODES
+          + " ADD COLUMN " + LastModifiedColumns.LAST_MODIFIED + " INTEGER DEFAULT 0");
+      db.execSQL("ALTER TABLE " + Tables.SHOW_CHARACTERS
+          + " ADD COLUMN " + LastModifiedColumns.LAST_MODIFIED + " INTEGER DEFAULT 0");
+
+      db.execSQL("ALTER TABLE " + Tables.MOVIES
+          + " ADD COLUMN " + LastModifiedColumns.LAST_MODIFIED + " INTEGER DEFAULT 0");
+      db.execSQL("ALTER TABLE " + Tables.MOVIE_CAST
+          + " ADD COLUMN " + LastModifiedColumns.LAST_MODIFIED + " INTEGER DEFAULT 0");
+      db.execSQL("ALTER TABLE " + Tables.MOVIE_CREW
+          + " ADD COLUMN " + LastModifiedColumns.LAST_MODIFIED + " INTEGER DEFAULT 0");
+
+      db.execSQL("ALTER TABLE " + Tables.PEOPLE
+          + " ADD COLUMN " + LastModifiedColumns.LAST_MODIFIED + " INTEGER DEFAULT 0");
+
+      db.execSQL(TRIGGER_SHOW_UPDATE);
+      db.execSQL(TRIGGER_SEASON_UPDATE);
+      db.execSQL(TRIGGER_EPISODE_UPDATE);
+      db.execSQL(TRIGGER_MOVIES_UPDATE);
+      db.execSQL(TRIGGER_PEOPLE_UPDATE);
     }
   }
 
