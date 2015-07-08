@@ -16,7 +16,9 @@
 
 package net.simonvt.cathode.ui;
 
+import android.Manifest;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -25,7 +27,9 @@ import android.preference.SwitchPreference;
 import android.support.v7.widget.Toolbar;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.settings.Accounts;
+import net.simonvt.cathode.settings.Permissions;
 import net.simonvt.cathode.settings.Settings;
+import timber.log.Timber;
 
 public class SettingsActivity extends BaseActivity {
 
@@ -48,6 +52,8 @@ public class SettingsActivity extends BaseActivity {
 
   public static class SettingsFragment extends PreferenceFragment {
 
+    private static final int PERMISSION_REQUEST_CALENDAR = 11;
+
     SharedPreferences settings;
 
     SwitchPreference syncCalendar;
@@ -64,11 +70,29 @@ public class SettingsActivity extends BaseActivity {
           boolean checked = (boolean) newValue;
           syncCalendar.setChecked(checked);
 
-          Accounts.requestCalendarSync(getActivity());
+          if (checked && !Permissions.hasCalendarPermission(getActivity())) {
+              requestPermissions(new String[] {
+                  Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR,
+              }, PERMISSION_REQUEST_CALENDAR);
+          } else {
+            Accounts.requestCalendarSync(getActivity());
+          }
 
           return true;
         }
       });
+    }
+
+    @Override public void onRequestPermissionsResult(int requestCode, String[] permissions,
+        int[] grantResults) {
+      if (requestCode == PERMISSION_REQUEST_CALENDAR) {
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+          Timber.d("Calendar permission granted");
+          Accounts.requestCalendarSync(getActivity());
+        } else {
+          Timber.d("Calendar permission not granted");
+        }
+      }
     }
   }
 }

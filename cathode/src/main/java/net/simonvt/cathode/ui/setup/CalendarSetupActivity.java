@@ -16,19 +16,24 @@
 
 package net.simonvt.cathode.ui.setup;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.settings.Permissions;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.HomeActivity;
 import timber.log.Timber;
 
 public class CalendarSetupActivity extends BaseActivity {
+
+  private static final int PERMISSION_REQUEST_CALENDAR = 11;
 
   private SharedPreferences settings;
 
@@ -41,7 +46,13 @@ public class CalendarSetupActivity extends BaseActivity {
   }
 
   @OnClick(R.id.yes) void syncCalendar() {
-    doSync();
+    if (!Permissions.hasCalendarPermission(this)) {
+      requestPermissions(new String[] {
+          Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR,
+      }, PERMISSION_REQUEST_CALENDAR);
+    } else {
+      doSync();
+    }
   }
 
   void doSync() {
@@ -64,5 +75,18 @@ public class CalendarSetupActivity extends BaseActivity {
     Intent i = new Intent(this, HomeActivity.class);
     startActivity(i);
     finish();
+  }
+
+  @Override public void onRequestPermissionsResult(int requestCode, String[] permissions,
+      int[] grantResults) {
+    if (requestCode == PERMISSION_REQUEST_CALENDAR) {
+      if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        Timber.d("Calendar permission granted");
+        doSync();
+      } else {
+        Timber.d("Calendar permission not granted");
+        dontSync();
+      }
+    }
   }
 }

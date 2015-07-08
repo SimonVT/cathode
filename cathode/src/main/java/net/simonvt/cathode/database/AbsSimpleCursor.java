@@ -232,6 +232,10 @@ public abstract class AbsSimpleCursor implements Cursor {
     return Bundle.EMPTY;
   }
 
+  @Override public void setExtras(Bundle extras) {
+    throw new RuntimeException("Not supported");
+  }
+
   @Override protected void finalize() {
   }
 }

@@ -39,6 +39,7 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.settings.Permissions;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.util.DateUtils;
 import timber.log.Timber;
@@ -75,6 +76,12 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
   @Override public void onPerformSync(Account account, Bundle extras, String authority,
       ContentProviderClient provider, SyncResult syncResult) {
     Timber.d("onPerformSync");
+
+    if (!Permissions.hasCalendarPermission(context)) {
+      Timber.d("Calendar permission not granted");
+      return;
+    }
+
     final long calendarId = getCalendar(account);
     if (calendarId == INVALID_ID) {
       return;
