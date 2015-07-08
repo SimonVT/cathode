@@ -43,7 +43,9 @@ import net.simonvt.cathode.api.service.AuthorizationService;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncJob;
+import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.ui.setup.CalendarSetupActivity;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import timber.log.Timber;
@@ -117,15 +119,20 @@ public class LoginActivity extends BaseActivity {
   }
 
   @Subscribe public void onTokenFetched(TokenFetchedEvent event) {
-    PreferenceManager.getDefaultSharedPreferences(LoginActivity.this) //
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+    settings //
         .edit() //
         .putBoolean(Settings.TRAKT_LOGGED_IN, true) //
         .putString(Settings.TRAKT_TOKEN, event.getToken()) //
         .putBoolean(Settings.INITIAL_SYNC, true) //
         .apply();
 
-    Intent home = new Intent(this, HomeActivity.class);
-    startActivity(home);
+    final String username = settings.getString(Settings.PROFILE_USERNAME, null);
+
+    Accounts.setupAccount(this, username);
+
+    Intent setup = new Intent(this, CalendarSetupActivity.class);
+    startActivity(setup);
     finish();
 
     jobManager.addJob(new SyncJob());

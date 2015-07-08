@@ -34,11 +34,11 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.provider.CalendarContract;
 import android.text.format.DateUtils;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
 import javax.inject.Inject;
+import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.remote.Flags;
@@ -296,10 +296,11 @@ public class JobService extends Service {
       Bundle extras = new Bundle();
       extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
       extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+
       AccountManager am = AccountManager.get(this);
       Account[] accounts = am.getAccountsByType(getString(R.string.accountType));
       for (Account account : accounts) {
-        ContentResolver.requestSync(account, CalendarContract.AUTHORITY, extras);
+        ContentResolver.requestSync(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, extras);
       }
     }
 

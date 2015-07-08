@@ -21,11 +21,13 @@ import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.OperationApplicationException;
+import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.CalendarContract;
 import android.provider.ContactsContract;
@@ -37,6 +39,7 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.util.DateUtils;
 import timber.log.Timber;
 
@@ -74,6 +77,23 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
     Timber.d("onPerformSync");
     final long calendarId = getCalendar(account);
     if (calendarId == INVALID_ID) {
+      return;
+    }
+
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    final boolean syncCalendar = settings.getBoolean(Settings.CALENDAR_SYNC, false);
+    if (!syncCalendar) {
+      Timber.d("Deleting calendar");
+      context.getContentResolver().delete(CalendarContract.Events.CONTENT_URI,
+          CalendarContract.Events.CALENDAR_ID + "=?", new String[] {
+             String.valueOf(calendarId),
+          });
+
+      Uri calenderUri = CalendarContract.Calendars.CONTENT_URI.buildUpon()
+          .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, account.name)
+          .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, account.type)
+          .build();
+      context.getContentResolver().delete(calenderUri, null, null);
       return;
     }
 

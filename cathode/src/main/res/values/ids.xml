@@ -34,6 +34,7 @@
   <item name="menu_movies_recommendations" type="id"/>
 
   <item name="menu_lists" type="id"/>
+  <item name="menu_settings" type="id"/>
 
   <item name="menu_hidden" type="id"/>
 

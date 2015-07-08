@@ -17,7 +17,6 @@ package net.simonvt.cathode.settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import net.simonvt.cathode.api.entity.Account;
 import net.simonvt.cathode.api.entity.Connections;
@@ -26,10 +25,15 @@ import net.simonvt.cathode.api.entity.Profile;
 import net.simonvt.cathode.api.entity.SharingText;
 import net.simonvt.cathode.api.entity.UserSettings;
 
-public class Settings extends PreferenceActivity {
+public final class Settings {
+
+  private Settings() {
+  }
 
   public static final String TRAKT_LOGGED_IN = "traktLoggedIn";
   public static final String TRAKT_TOKEN = "traktToken";
+
+  public static final String CALENDAR_SYNC = "calendarSync";
 
   public static final String SHOW_HIDDEN = "showHidden";
 
@@ -210,6 +214,35 @@ public class Settings extends PreferenceActivity {
     editor.remove(PROFILE_CONNECTION_TUMBLR);
     editor.remove(PROFILE_SHARING_TEXT_WATCHING);
     editor.remove(PROFILE_SHARING_TEXT_WATCHED);
+
+    editor.apply();
+  }
+
+  public static void clearUserSettings(Context context) {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences.Editor editor = settings.edit();
+
+    editor.remove(TRAKT_LOGGED_IN);
+    editor.remove(TRAKT_TOKEN);
+    editor.remove(CALENDAR_SYNC);
+    editor.remove(SHOW_HIDDEN);
+    editor.remove(ACTIVITY_STREAM_SYNC);
+    editor.remove(FULL_SYNC);
+
+    editor.remove(RECOMMENDATIONS);
+
+    editor.remove(INITIAL_SYNC);
+
+    // Clear sorting options
+    editor.remove(SORT_SHOW_UPCOMING);
+    editor.remove(SORT_SHOW_SEARCH);
+    editor.remove(SORT_SHOW_TRENDING);
+    editor.remove(SORT_SHOW_RECOMMENDED);
+    editor.remove(SORT_SHOW_WATCHED);
+
+    editor.remove(SORT_MOVIE_SEARCH);
+    editor.remove(SORT_MOVIE_TRENDING);
+    editor.remove(SORT_MOVIE_RECOMMENDED);
 
     editor.apply();
   }

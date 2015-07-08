@@ -15,21 +15,16 @@
  */
 package net.simonvt.cathode;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
-import android.provider.CalendarContract;
 import com.crashlytics.android.Crashlytics;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -45,7 +40,7 @@ import net.simonvt.cathode.remote.LogoutJob;
 import net.simonvt.cathode.remote.UpdateShowCounts;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
-import net.simonvt.cathode.service.AccountAuthenticator;
+import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.HomeActivity;
@@ -61,6 +56,8 @@ public class CathodeApp extends Application {
   private static final int AUTH_NOTIFICATION = 2;
 
   private static final long SYNC_DELAY = 15 * DateUtils.MINUTE_IN_MILLIS;
+
+  private SharedPreferences settings;
 
   private ObjectGraph objectGraph;
 
@@ -84,11 +81,9 @@ public class CathodeApp extends Application {
       Timber.plant(new CrashlyticsTree());
     }
 
-    upgrade();
+    settings = PreferenceManager.getDefaultSharedPreferences(this);
 
-    if (!accountExists(this)) {
-      setupAccount(this);
-    }
+    upgrade();
 
     objectGraph = ObjectGraph.create(Modules.list(this));
 
@@ -158,7 +153,6 @@ public class CathodeApp extends Application {
   }
 
   private void upgrade() {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
     final int currentVersion = settings.getInt(Settings.VERSION_CODE, -1);
 
     if (currentVersion == -1) {
@@ -167,20 +161,9 @@ public class CathodeApp extends Application {
     }
 
     if (currentVersion != BuildConfig.VERSION_CODE) {
-      if (currentVersion < 20000) {
-        removeAccount(this);
-      }
       if (currentVersion < 20002) {
-        String token = settings.getString(Settings.TRAKT_TOKEN, null);
-        final boolean loggedIn = token != null;
-        SharedPreferences.Editor editor = settings.edit();
-        editor.clear();
-        editor.apply();
-
-        editor = settings.edit();
-        editor.putString(Settings.TRAKT_TOKEN, token);
-        editor.putBoolean(Settings.TRAKT_LOGGED_IN, loggedIn);
-        editor.apply();
+        Accounts.removeAccount(this);
+        settings.edit().clear().apply();
       }
       if (currentVersion < 20501) {
         TraktTimestamps.clear(this);
@@ -212,7 +195,10 @@ public class CathodeApp extends Application {
 
   @Subscribe public void onAuthFailure(AuthFailedEvent event) {
     Timber.tag(TAG).i("onAuthFailure");
-    if (!accountExists(this)) return; // User has logged out, ignore.
+    if (!Accounts.accountExists(this)) {
+      // TODO: Try and make sure this doesn't happen
+      return; // User has logged out, ignore.
+    }
 
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
     settings.edit().putBoolean(Settings.TRAKT_LOGGED_IN, false).apply();
@@ -238,6 +224,9 @@ public class CathodeApp extends Application {
   }
 
   @Subscribe public void onLogout(LogoutEvent event) {
+    Settings.clearUserSettings(this);
+    TraktTimestamps.clear(this);
+
     jobManager.addJob(new LogoutJob());
     jobManager.removeJobsWithFlag(Flags.REQUIRES_AUTH);
   }
@@ -248,51 +237,5 @@ public class CathodeApp extends Application {
 
   public static void inject(Context context, Object object) {
     ((CathodeApp) context.getApplicationContext()).objectGraph.inject(object);
-  }
-
-  public static boolean accountExists(Context context) {
-    AccountManager am = AccountManager.get(context);
-    Account[] accounts = am.getAccountsByType(context.getString(R.string.accountType));
-
-    return accounts.length > 0;
-  }
-
-  public static Account getAccount(Context context) {
-    AccountManager accountManager = AccountManager.get(context);
-    Account[] accounts = accountManager.getAccountsByType(context.getString(R.string.accountType));
-    return accounts.length > 0 ? accounts[0] : null;
-  }
-
-  public static void setupAccount(Context context) {
-    removeAccount(context);
-
-    AccountAuthenticator.allowRemove = false;
-    AccountManager manager = AccountManager.get(context);
-
-    // TODO: Can I get the username?
-    Account account = new Account("Cathode", context.getString(R.string.accountType));
-
-    manager.addAccountExplicitly(account, null, null);
-
-    ContentResolver.setIsSyncable(account, BuildConfig.PROVIDER_AUTHORITY, 1);
-    ContentResolver.setSyncAutomatically(account, BuildConfig.PROVIDER_AUTHORITY, true);
-    ContentResolver.addPeriodicSync(account, BuildConfig.PROVIDER_AUTHORITY, new Bundle(),
-        12 * DateUtils.HOUR_IN_SECONDS);
-
-    ContentResolver.setIsSyncable(account, CalendarContract.AUTHORITY, 1);
-    ContentResolver.setSyncAutomatically(account, CalendarContract.AUTHORITY, true);
-    ContentResolver.addPeriodicSync(account, CalendarContract.AUTHORITY, new Bundle(),
-        12 * DateUtils.HOUR_IN_SECONDS);
-  }
-
-  public static void removeAccount(Context context) {
-    AccountAuthenticator.allowRemove = true;
-    AccountManager am = AccountManager.get(context);
-    Account[] accounts = am.getAccountsByType(context.getString(R.string.accountType));
-    for (Account account : accounts) {
-      ContentResolver.removePeriodicSync(account, BuildConfig.PROVIDER_AUTHORITY, new Bundle());
-      ContentResolver.removePeriodicSync(account, CalendarContract.AUTHORITY, new Bundle());
-      am.removeAccount(account, null, null);
-    }
   }
 }

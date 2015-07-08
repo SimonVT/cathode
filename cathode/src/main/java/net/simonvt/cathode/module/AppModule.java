@@ -98,6 +98,7 @@ import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.service.CathodeSyncAdapter;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.LoginActivity;
+import net.simonvt.cathode.ui.SettingsActivity;
 import net.simonvt.cathode.ui.adapter.MovieRecommendationsAdapter;
 import net.simonvt.cathode.ui.adapter.MovieSearchAdapter;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
@@ -128,6 +129,7 @@ import net.simonvt.cathode.ui.fragment.TrendingShowsFragment;
 import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
+import net.simonvt.cathode.ui.setup.CalendarSetupActivity;
 import net.simonvt.cathode.util.MovieSearchHandler;
 import net.simonvt.cathode.util.ShowSearchHandler;
 import net.simonvt.cathode.widget.PhoneEpisodeView;
@@ -147,6 +149,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
 
         // Activities
         HomeActivity.class, LoginActivity.class, LoginActivity.TokenTask.class,
+        CalendarSetupActivity.class, SettingsActivity.class,
 
         // Fragments
         SearchShowFragment.class, EpisodeFragment.class, LogoutDialog.class,

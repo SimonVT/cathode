@@ -55,4 +55,20 @@
 
   <style name="Theme.Login"/>
 
+  <style name="SetupTheme" parent="BaseTheme">
+  </style>
+
+  <style name="SettingsTheme" parent="BaseTheme">
+
+    <!-- The primary branding color for the app. By default, this is the color applied to the
+         action bar background. -->
+    <item name="colorPrimary">@color/colorPrimary</item>
+
+    <!-- Dark variant of the primary branding color. By default, this is the color applied to
+         the status bar (via statusBarColor) and navigation bar (via navigationBarColor). -->
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+
+    <item name="android:windowBackground">@color/contentBackground</item>
+  </style>
+
 </resources>

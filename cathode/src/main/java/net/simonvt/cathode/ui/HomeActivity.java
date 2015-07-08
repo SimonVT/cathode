@@ -336,6 +336,11 @@ public class HomeActivity extends BaseActivity
         stack.replace(ListsFragment.class, FRAGMENT_LISTS);
         break;
 
+      case R.id.menu_settings:
+        Intent settings = new Intent(this, SettingsActivity.class);
+        startActivity(settings);
+        break;
+
       default:
         throw new IllegalArgumentException("Unknown id " + id);
     }

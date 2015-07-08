@@ -15,11 +15,16 @@
   ~ limitations under the License.
   -->
 <resources>
+  <string name="sync_shows_movies">Sync shows &amp; movies</string>
+  <string name="sync_calendar">Sync calendar</string>
+
   <string name="dashclock_title">@string/app_name</string>
   <string name="dashclock_description">Display the next upcoming episode</string>
 
   <string name="retry">Retry</string>
   <string name="cancel">Cancel</string>
+  <string name="yes">Yes</string>
+  <string name="no">No</string>
 
   <string name="action_about">About</string>
 
@@ -160,6 +165,12 @@
   <string name="login_error_network">Connection to Trakt timed out, please try again</string>
   <string name="login_error_5xx">Trakt has encountered a server error, please try again</string>
 
+  <!-- Setup activities -->
+  <string name="setup_calendar_text">Would you like upcoming shows to be added to your calendar?</string>
+
+  <!-- Settings -->
+  <string name="preference_calendar">Display upcoming shows in calendar</string>
+
   <!-- Navigation fragment -->
   <string name="navigation_title_shows">Shows</string>
   <string name="navigation_shows_upcoming">Upcoming</string>
@@ -177,6 +188,7 @@
   <string name="navigation_movies_recommendations">Recommendations</string>
 
   <string name="navigation_lists">Lists</string>
+  <string name="navigation_settings">Settings</string>
 
   <string name="empty_show_upcoming">No upcoming episodes. Use the search button to find some new
     shows to watch.

@@ -62,13 +62,26 @@
         android:configChanges="orientation|screenSize"
         android:theme="@style/Theme.Oauth"/>
 
-    <activity android:name="net.simonvt.cathode.settings.Settings"/>
+    <activity
+        android:name="net.simonvt.cathode.ui.setup.CalendarSetupActivity"
+        android:theme="@style/SetupTheme"/>
+
+    <activity
+        android:name="net.simonvt.cathode.ui.SettingsActivity"
+        android:theme="@style/SettingsTheme"/>
 
     <!-- Providers -->
     <provider
         android:name="net.simonvt.cathode.provider.generated.CathodeProvider"
         android:authorities="@string/authority_provider"
-        android:exported="true"/>
+        android:exported="true"
+        android:label="@string/sync_shows_movies"/>
+
+    <provider
+        android:authorities="@string/authority_dummy_calendar"
+        android:name="net.simonvt.cathode.provider.DummyCalendarProvider"
+        android:exported="true"
+        android:label="@string/sync_calendar"/>
 
     <!-- Receivers -->
     <receiver android:name="net.simonvt.cathode.jobqueue.AuthJobReceiver"/>

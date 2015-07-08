@@ -68,6 +68,11 @@ android {
           "\"net.simonvt.cathode.debug.provider.CathodeProvider\""
       resValue "string", "authority_provider", "net.simonvt.cathode.debug.provider.CathodeProvider"
 
+      buildConfigField "String", "AUTHORITY_DUMMY_CALENDAR",
+          "\"net.simonvt.cathode.debug.provider.DummyCalendarProvider\""
+      resValue "string", "authority_dummy_calendar",
+          "net.simonvt.cathode.debug.provider.DummyCalendarProvider"
+
       applicationIdSuffix ".debug"
 
       ext.enableCrashlytics = false
@@ -76,6 +81,11 @@ android {
       buildConfigField "String", "PROVIDER_AUTHORITY",
           "\"net.simonvt.cathode.provider.CathodeProvider\""
       resValue "string", "authority_provider", "net.simonvt.cathode.provider.CathodeProvider"
+
+      buildConfigField "String", "AUTHORITY_DUMMY_CALENDAR",
+          "\"net.simonvt.cathode.debug.provider.DummyCalendarProvider\""
+      resValue "string", "authority_dummy_calendar",
+          "net.simonvt.cathode.provider.DummyCalendarProvider"
 
       signingConfig signingConfigs.release
 

@@ -78,6 +78,10 @@ public class NavigationFragment extends AbsAdapterFragment {
     menuItems.add(new Divider());
 
     menuItems.add(new MenuItem(R.id.menu_lists, R.string.navigation_lists, 0));
+
+    menuItems.add(new Divider());
+
+    menuItems.add(new MenuItem(R.id.menu_settings, R.string.navigation_settings, 0));
   }
 
   private OnMenuClickListener listener;
