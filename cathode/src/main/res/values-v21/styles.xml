@@ -16,8 +16,8 @@
   -->
 <resources>
 
-  <style name="Menu.Item" parent="Menu.ItemBase">
+  <!--style name="Menu.Item" parent="Menu.ItemBase">
     <item name="android:background">?android:attr/activatedBackgroundIndicator</item>
-  </style>
+  </style-->
 
 </resources>

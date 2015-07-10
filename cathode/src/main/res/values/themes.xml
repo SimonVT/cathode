@@ -28,7 +28,7 @@
 
     <!-- Bright complement to the primary branding color. By default, this is the color applied
          to framework controls (via colorControlActivated). -->
-    <item name="colorAccent">@color/colorAccent</item>
+    <!--item name="colorAccent">@color/colorAccent</item-->
 
     <!-- The color applied to framework controls in their normal state. -->
     <!--item name="colorControlNormal">#FFFF0000</item-->
