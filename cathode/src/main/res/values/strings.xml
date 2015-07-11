@@ -102,6 +102,7 @@
   <string name="sort_relevance">Relevance</string>
   <string name="sort_viewers">Viewers</string>
   <string name="sort_watched">Last watched</string>
+  <string name="sort_collected">Last collected</string>
 
   <string name="action_refresh">Refresh</string>
   <string name="action_sort_by">Sort by</string>

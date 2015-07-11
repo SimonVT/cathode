@@ -120,14 +120,14 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
     switch (id) {
       case R.id.sort_title:
         sortBy = SortBy.TITLE;
-        settings.edit().putString(Settings.SORT_SHOW_RECOMMENDED, SortBy.TITLE.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_WATCHED, null, this);
+        settings.edit().putString(Settings.SORT_SHOW_WATCHED, SortBy.TITLE.getKey()).apply();
+        getLoaderManager().restartLoader(getLoaderId(), null, this);
         break;
 
       case R.id.sort_watched:
         sortBy = SortBy.WATCHED;
-        settings.edit().putString(Settings.SORT_SHOW_RECOMMENDED, SortBy.WATCHED.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_WATCHED, null, this);
+        settings.edit().putString(Settings.SORT_SHOW_WATCHED, SortBy.WATCHED.getKey()).apply();
+        getLoaderManager().restartLoader(getLoaderId(), null, this);
         break;
     }
   }

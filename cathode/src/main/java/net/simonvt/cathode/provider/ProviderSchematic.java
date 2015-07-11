@@ -287,6 +287,9 @@ public final class ProviderSchematic {
     public static final String SORT_WATCHED =
         Tables.SHOWS + "." + ShowColumns.LAST_WATCHED_AT + " DESC";
 
+    public static final String SORT_COLLECTED =
+        Tables.SHOWS + "." + ShowColumns.LAST_COLLECTED_AT + " DESC";
+
     public static String getAiredQuery() {
       final long currentTime = System.currentTimeMillis();
       return "(SELECT COUNT(*) FROM "
@@ -845,6 +848,9 @@ public final class ProviderSchematic {
 
     public static final String SORT_WATCHED =
         DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.WATCHED_AT + " DESC";
+
+    public static final String SORT_COLLECTED =
+        DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.COLLECTED_AT + " DESC";
   }
 
   @TableEndpoint(table = DatabaseSchematic.TABLE_MOVIE_GENRES)

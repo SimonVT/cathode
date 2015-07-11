@@ -88,7 +88,7 @@ public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.
   @Override public void onCreate(Bundle inState) {
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     sortBy =
-        SortBy.fromValue(settings.getString(Settings.SORT_SHOW_WATCHED, SortBy.TITLE.getKey()));
+        SortBy.fromValue(settings.getString(Settings.SORT_MOVIE_WATCHED, SortBy.TITLE.getKey()));
 
     super.onCreate(inState);
 
@@ -98,7 +98,7 @@ public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-    toolbar.inflateMenu(R.menu.fragment_shows_watched);
+    toolbar.inflateMenu(R.menu.fragment_movies_watched);
   }
 
   @Override public boolean onMenuItemClick(MenuItem item) {
@@ -118,14 +118,14 @@ public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.
     switch (id) {
       case R.id.sort_title:
         sortBy = SortBy.TITLE;
-        settings.edit().putString(Settings.SORT_SHOW_RECOMMENDED, SortBy.TITLE.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_WATCHED, null, this);
+        settings.edit().putString(Settings.SORT_MOVIE_WATCHED, SortBy.TITLE.getKey()).apply();
+        getLoaderManager().restartLoader(getLoaderId(), null, this);
         break;
 
       case R.id.sort_watched:
         sortBy = SortBy.WATCHED;
-        settings.edit().putString(Settings.SORT_SHOW_RECOMMENDED, SortBy.WATCHED.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_WATCHED, null, this);
+        settings.edit().putString(Settings.SORT_MOVIE_WATCHED, SortBy.WATCHED.getKey()).apply();
+        getLoaderManager().restartLoader(getLoaderId(), null, this);
         break;
     }
   }

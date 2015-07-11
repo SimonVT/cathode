@@ -77,10 +77,13 @@ public class Settings extends PreferenceActivity {
   public static final String SORT_SHOW_TRENDING = "sortShowTrending";
   public static final String SORT_SHOW_RECOMMENDED = "sortShowRecommended";
   public static final String SORT_SHOW_WATCHED = "sortShowWatched";
+  public static final String SORT_SHOW_COLLECTED = "sortShowCollected";
 
   public static final String SORT_MOVIE_SEARCH = "sortMovieSearch";
   public static final String SORT_MOVIE_TRENDING = "sortMovieTrending";
   public static final String SORT_MOVIE_RECOMMENDED = "sortMovieRecommended";
+  public static final String SORT_MOVIE_WATCHED = "sortMovieCollected";
+  public static final String SORT_MOVIE_COLLECTED = "sortMovieCollected";
 
   // User settings returned by account/settings
   public static final String PROFILE_USERNAME = "profileUsername";

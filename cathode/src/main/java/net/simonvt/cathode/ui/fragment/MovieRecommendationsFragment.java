@@ -127,7 +127,7 @@ public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdap
 
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     sortBy = SortBy.fromValue(
-        settings.getString(Settings.SORT_SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey()));
+        settings.getString(Settings.SORT_MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey()));
 
     getLoaderManager().initLoader(Loaders.LOADER_MOVIES_RECOMMENDATIONS, null, this);
 

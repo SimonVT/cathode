@@ -41,6 +41,7 @@
   <item name="sort_relevance" type="id"/>
   <item name="sort_viewers" type="id"/>
   <item name="sort_watched" type="id"/>
+  <item name="sort_collected" type="id"/>
 
   <item name="action_watched" type="id"/>
   <item name="action_watched_all" type="id"/>
