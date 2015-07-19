@@ -238,7 +238,7 @@ public class MovieFragment extends ProgressFragment
         cursor.getString(cursor.getColumnIndex(MovieColumns.CERTIFICATION));
 
     final String fanartUrl = cursor.getString(cursor.getColumnIndex(MovieColumns.FANART));
-    backdrop.setImage(fanartUrl);
+    backdrop.setImage(fanartUrl, true);
     final String posterUrl = cursor.getString(cursor.getColumnIndex(MovieColumns.POSTER));
     //poster.setImage(posterUrl);
 

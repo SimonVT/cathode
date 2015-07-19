@@ -273,7 +273,7 @@ public class NavigationFragment extends AbsAdapterFragment {
                 float radius = Math.min(width / 2, height / 2);
                 outline.setRoundRect(view.getPaddingLeft(), view.getPaddingRight(),
                     width - view.getPaddingRight(), height - view.getPaddingBottom(), radius);
-                outline.setAlpha(profileIcon.getAnimationAlpha() / 255.0F);
+                outline.setAlpha(profileIcon.getFraction());
               }
             });
           } else {

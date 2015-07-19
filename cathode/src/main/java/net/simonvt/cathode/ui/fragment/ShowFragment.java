@@ -471,7 +471,7 @@ public class ShowFragment extends BaseFragment {
     }
     final String fanartUrl = cursor.getString(cursor.getColumnIndex(ShowColumns.FANART));
     if (fanartUrl != null) {
-      backdrop.setImage(fanartUrl);
+      backdrop.setImage(fanartUrl, true);
     }
     final String overview = cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW));
     inWatchlist = cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;

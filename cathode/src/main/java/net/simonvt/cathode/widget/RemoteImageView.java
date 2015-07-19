@@ -19,14 +19,16 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.View;
 import android.view.ViewOutlineProvider;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
@@ -37,6 +39,7 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.widget.animation.MaterialTransition;
 import timber.log.Timber;
 
 /**
@@ -50,13 +53,9 @@ import timber.log.Timber;
  * multiplying the
  * fixed dimension with this value.
  */
-public class RemoteImageView extends View implements Target {
+public class RemoteImageView extends AspectRatioView implements Target {
 
-  private static final float ANIMATION_DURATION = 300.0f;
-
-  private static final int MEASUREMENT_HEIGHT = 0;
-
-  private static final int MEASUREMENT_WIDTH = 1;
+  private static final float ANIMATION_DURATION = 1000.0f;
 
   @Inject Picasso picasso;
 
@@ -68,16 +67,15 @@ public class RemoteImageView extends View implements Target {
 
   private long startTimeMillis;
 
-  private int alpha;
+  private float fraction;
 
   private Paint paint = new Paint();
 
+  private ColorMatrix colorMatrix;
+  private ColorMatrixColorFilter colorMatrixColorFilter;
+
   private String imageUrl;
   private int imageResource;
-
-  private float aspectRatio = 0.0f;
-
-  private int dominantMeasurement = MEASUREMENT_HEIGHT;
 
   private List<Transformation> transformations = new ArrayList<>();
 
@@ -105,19 +103,23 @@ public class RemoteImageView extends View implements Target {
     if (placeHolder == null) {
       placeHolder = getResources().getDrawable(R.drawable.placeholder);
     }
-    aspectRatio = a.getFloat(R.styleable.RemoteImageView_aspectRatio, 0.0f);
-    dominantMeasurement =
-        a.getInt(R.styleable.RemoteImageView_dominantMeasurement, MEASUREMENT_HEIGHT);
 
     a.recycle();
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       setOutlineProvider(ViewOutlineProvider.PADDED_BOUNDS);
     }
+
+    colorMatrix = new ColorMatrix();
+    colorMatrixColorFilter = new ColorMatrixColorFilter(colorMatrix);
   }
 
   public void addTransformation(Transformation transformation) {
     transformations.add(transformation);
+  }
+
+  public void clearTransformations() {
+    transformations.clear();
   }
 
   public void removeTransformation(Transformation transformation) {
@@ -130,18 +132,24 @@ public class RemoteImageView extends View implements Target {
   }
 
   public void setImage(String imageUrl) {
+    setImage(imageUrl, false);
+  }
+
+  public void setImage(String imageUrl, boolean animateIfDifferent) {
     picasso.cancelRequest(this);
+
+    boolean animate = animateIfDifferent && !TextUtils.equals(imageUrl, this.imageUrl);
 
     this.imageUrl = imageUrl;
     this.imageResource = 0;
     image = null;
-    alpha = 0;
+    fraction = 0.0f;
     startTimeMillis = 0;
     animating = false;
 
     if (getWidth() - getPaddingLeft() - getPaddingRight() > 0
         && getHeight() - getPaddingTop() - getPaddingBottom() > 0) {
-      loadBitmap();
+      loadBitmap(animate);
     }
 
     invalidate();
@@ -153,20 +161,20 @@ public class RemoteImageView extends View implements Target {
     this.imageUrl = null;
     this.imageResource = imageResource;
     image = null;
-    alpha = 0;
+    fraction = 0.0f;
     startTimeMillis = 0;
     animating = false;
 
     if (getWidth() - getPaddingLeft() - getPaddingRight() > 0
         && getHeight() - getPaddingTop() - getPaddingBottom() > 0) {
-      loadBitmap();
+      loadBitmap(false);
     }
 
     invalidate();
   }
 
-  private void loadBitmap() {
-    alpha = 0;
+  private void loadBitmap(boolean animate) {
+    fraction = 0.0f;
     image = null;
     final int width = getWidth() - getPaddingLeft() - getPaddingRight();
     final int height = getHeight() - getPaddingTop() - getPaddingBottom();
@@ -186,10 +194,10 @@ public class RemoteImageView extends View implements Target {
       creator.into(this);
     }
 
-    if (image != null) {
+    if (!animate && image != null) {
       animating = false;
       startTimeMillis = 0;
-      alpha = 0xFF;
+      fraction = 1.0f;
     }
   }
 
@@ -197,7 +205,7 @@ public class RemoteImageView extends View implements Target {
     image = bitmap;
     animating = true;
     startTimeMillis = 0;
-    alpha = 0;
+    fraction = 0.0f;
     invalidate();
   }
 
@@ -214,12 +222,12 @@ public class RemoteImageView extends View implements Target {
     if ((imageUrl != null || imageResource > 0)
         && w - getPaddingLeft() - getPaddingRight() > 0
         && h - getPaddingTop() - getPaddingBottom() > 0) {
-      loadBitmap();
+      loadBitmap(false);
     }
   }
 
-  public int getAnimationAlpha() {
-    return alpha;
+  public float getFraction() {
+    return fraction;
   }
 
   @Override protected void onDraw(Canvas canvas) {
@@ -229,28 +237,29 @@ public class RemoteImageView extends View implements Target {
     }
 
     boolean done = true;
+    int alpha = 0;
 
     if (animating) {
       if (startTimeMillis == 0) {
         startTimeMillis = SystemClock.uptimeMillis();
         done = false;
-        alpha = 0;
+        fraction = 0.0f;
       } else {
         float normalized = (SystemClock.uptimeMillis() - startTimeMillis) / ANIMATION_DURATION;
         done = normalized >= 1.0f;
-        normalized = Math.min(normalized, 1.0f);
-        alpha = (int) (0xFF * normalized);
+        fraction = Math.min(normalized, 1.0f);
+        alpha = (int) (0xFF * fraction);
         animating = alpha != 0xFF;
       }
     }
 
     if (done) {
-      drawBitmap(canvas, image, alpha);
+      drawBitmap(canvas, image, !done, fraction);
     } else {
       drawPlaceholder(canvas, placeHolder, 0xFF - alpha);
 
       if (alpha > 0) {
-        drawBitmap(canvas, image, alpha);
+        drawBitmap(canvas, image, !done, fraction);
       }
 
       invalidate();
@@ -270,45 +279,17 @@ public class RemoteImageView extends View implements Target {
     placeholder.draw(canvas);
   }
 
-  protected void drawBitmap(Canvas canvas, Bitmap bitmap, int alpha) {
-    paint.setAlpha(alpha);
-    canvas.drawBitmap(bitmap, getPaddingLeft(), getPaddingTop(), paint);
-  }
-
-  public void setAspectRatio(float aspectRatio) {
-    this.aspectRatio = aspectRatio;
-    requestLayout();
-    invalidate();
-  }
-
-  @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-    final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-
-    int width = MeasureSpec.getSize(widthMeasureSpec);
-    int height = MeasureSpec.getSize(heightMeasureSpec);
-
-    if (widthMode == MeasureSpec.UNSPECIFIED && heightMode == MeasureSpec.UNSPECIFIED) {
-      super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    } else {
-      if (aspectRatio != 0.0f) {
-        switch (dominantMeasurement) {
-          case MEASUREMENT_HEIGHT:
-            width = (int) ((height - getPaddingTop() - getPaddingBottom()) * aspectRatio)
-                + getPaddingLeft()
-                + getPaddingRight();
-            break;
-
-          case MEASUREMENT_WIDTH:
-            height = (int) ((width - getPaddingLeft() - getPaddingRight()) * aspectRatio)
-                + getPaddingTop()
-                + getPaddingBottom();
-            break;
-        }
-      }
-
-      setMeasuredDimension(width, height);
+  protected void drawBitmap(Canvas canvas, Bitmap bitmap, boolean animating, float fraction) {
+    if (animating) {
+      colorMatrix.reset();
+      MaterialTransition.apply(colorMatrix, fraction);
+      colorMatrixColorFilter = new ColorMatrixColorFilter(colorMatrix);
+      paint.setColorFilter(colorMatrixColorFilter);
+    } else if (paint.getColorFilter() != null) {
+      paint.setColorFilter(null);
     }
+
+    canvas.drawBitmap(bitmap, getPaddingLeft(), getPaddingTop(), paint);
   }
 
   @Override protected Parcelable onSaveInstanceState() {
@@ -350,15 +331,15 @@ public class RemoteImageView extends View implements Target {
       dest.writeInt(imageResource);
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
-      @Override public SavedState createFromParcel(Parcel in) {
-        return new SavedState(in);
-      }
+    @SuppressWarnings("UnusedDeclaration") public static final Creator<SavedState> CREATOR =
+        new Creator<SavedState>() {
+          @Override public SavedState createFromParcel(Parcel in) {
+            return new SavedState(in);
+          }
 
-      @Override public SavedState[] newArray(int size) {
-        return new SavedState[size];
-      }
-    };
+          @Override public SavedState[] newArray(int size) {
+            return new SavedState[size];
+          }
+        };
   }
 }

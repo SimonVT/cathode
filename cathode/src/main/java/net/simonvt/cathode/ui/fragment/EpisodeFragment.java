@@ -302,7 +302,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
       episodeTitle = cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
       title.setText(episodeTitle);
       overview.setText(cursor.getString(cursor.getColumnIndex(EpisodeColumns.OVERVIEW)));
-      backdrop.setImage(cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT)));
+      backdrop.setImage(cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT)), true);
       firstAired.setText(DateUtils.millisToString(getActivity(),
           cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED)), true));
       season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));

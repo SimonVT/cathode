@@ -16,14 +16,16 @@
   -->
 <resources>
 
-  <declare-styleable name="RemoteImageView">
+  <declare-styleable name="AspectRatioView">
     <attr name="dominantMeasurement" format="enum">
       <enum name="height" value="0"/>
       <enum name="width" value="1"/>
     </attr>
 
     <attr name="aspectRatio" format="float"/>
+  </declare-styleable>
 
+  <declare-styleable name="RemoteImageView">
     <attr name="placeholder" format="reference"/>
   </declare-styleable>
 
