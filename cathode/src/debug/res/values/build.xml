@@ -24,6 +24,4 @@
 
   <string name="calendarName">Upcoming episodes (Debug)</string>
 
-  <string name="authority_provider">net.simonvt.cathode.debug.provider.CathodeProvider</string>
-
 </resources>
