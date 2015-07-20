@@ -38,7 +38,7 @@
         app:expandedTitleMarginStart="@dimen/appBarTitleMarginStart"
         app:expandedTitleMarginEnd="@dimen/appBarTitleMarginEnd">
 
-      <RelativeLayout
+      <LinearLayout
           android:id="@id/appBarContent"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
@@ -47,6 +47,7 @@
           android:layout_marginRight="@dimen/appBarContentMargin"
           android:layout_alignParentTop="true"
           android:layout_alignParentBottom="true"
+          android:orientation="vertical"
           android:background="@color/contentBackground"
           android:paddingBottom="16dp">
 
@@ -56,34 +57,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <FrameLayout
+        <LinearLayout
+            android:id="@+id/contentContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/topBarContainer">
+            android:orientation="vertical">
 
-          <include
-              layout="@layout/fragment_list_progressbar"
+          <FrameLayout
               android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="48dp"/>
+              android:layout_height="wrap_content">
 
-          <LinearLayout
-              android:id="@+id/contentContainer"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical">
+            <include layout="@layout/fragment_movie_content"/>
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-              <include layout="@layout/fragment_movie_content"/>
-
-              <include layout="@layout/checkmarks"/>
-            </FrameLayout>
-          </LinearLayout>
-        </FrameLayout>
-      </RelativeLayout>
+            <include layout="@layout/checkmarks"/>
+          </FrameLayout>
+        </LinearLayout>
+      </LinearLayout>
 
       <include layout="@layout/appbar_toolbar"/>
     </net.simonvt.cathode.widget.AppBarRelativeLayout>

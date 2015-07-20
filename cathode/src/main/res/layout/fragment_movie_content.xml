@@ -18,14 +18,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:paddingLeft="@dimen/detailContentPadding"
     android:paddingTop="@dimen/detailContentPaddingTop"
-    android:paddingRight="@dimen/detailContentPadding"
-    android:orientation="vertical">
+    android:paddingRight="@dimen/detailContentPadding">
 
   <TextView
       android:id="@+id/overviewTitle"
-      android:layout_width="fill_parent"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:text="@string/overview"
       style="@style/Widget.InfoTitle"/>
@@ -34,7 +34,7 @@
       android:id="@+id/overview"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      tools:text="A long description of a show."
+      tools:text="A long description of a movie."
       style="@style/Widget.InfoText"/>
 
   <include

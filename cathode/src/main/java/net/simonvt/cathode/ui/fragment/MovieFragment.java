@@ -52,7 +52,7 @@ import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.RemoteImageView;
 
-public class MovieFragment extends ProgressFragment
+public class MovieFragment extends BaseFragment
     implements LoaderManager.LoaderCallbacks<SimpleCursor> {
 
   private static final String ARG_ID = "net.simonvt.cathode.ui.fragment.MovieFragment.id";
@@ -261,7 +261,6 @@ public class MovieFragment extends ProgressFragment
     this.certification.setText(certification);
     this.overview.setText(overview);
 
-    setContentVisible(true);
     invalidateMenu();
   }
 

@@ -19,8 +19,7 @@
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="@android:color/white">
+    android:fillViewport="true">
 
   <net.simonvt.cathode.widget.AppBarRelativeLayout
       android:id="@+id/appBarLayout"
@@ -28,53 +27,39 @@
       android:layout_height="wrap_content"
       android:fitsSystemWindows="@bool/drawsBehindStatusBar"
       app:expandedTitleMarginStart="@dimen/appBarTitleMarginStart"
-      app:expandedTitleMarginEnd="@dimen/appBarTitleMarginEnd">
+      app:expandedTitleMarginEnd="@dimen/appBarTitleMarginEnd"
+      app:contentTopViewId="@+id/topBarContainer">
 
     <include layout="@layout/appbar_backdrop"/>
 
-    <RelativeLayout
-        android:id="@id/appBarContent"
+    <include
+        layout="@layout/fragment_movie_top"
+        android:id="@+id/topBarContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/backdrop"
-        android:orientation="vertical"
-        android:paddingBottom="16dp"
-        android:background="@color/contentBackground">
+        android:layout_below="@id/backdrop"/>
 
-      <include
-          layout="@layout/fragment_movie_top"
-          android:id="@+id/topBarContainer"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/topBarContainer">
 
-      <FrameLayout
+      <LinearLayout
+          android:id="@+id/contentContainer"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_below="@+id/topBarContainer">
+          android:orientation="vertical">
 
-        <include
-            layout="@layout/fragment_list_progressbar"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"/>
+            android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:id="@+id/contentContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+          <include layout="@layout/fragment_movie_content"/>
 
-          <FrameLayout
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content">
-
-            <include layout="@layout/fragment_movie_content"/>
-
-            <include layout="@layout/checkmarks"/>
-          </FrameLayout>
-        </LinearLayout>
-      </FrameLayout>
-    </RelativeLayout>
+          <include layout="@layout/checkmarks"/>
+        </FrameLayout>
+      </LinearLayout>
+    </FrameLayout>
 
     <include layout="@layout/appbar_toolbar"/>
   </net.simonvt.cathode.widget.AppBarRelativeLayout>
