@@ -103,7 +103,7 @@ public class AdapterNotifier {
   }
 
   public final void notifyItemChanged(int position) {
-    adapter.notifyItemRangeChanged(position, 1);
+    adapter.notifyItemChanged(position);
   }
 
   public final void notifyItemRangeChanged(int positionStart, int itemCount) {

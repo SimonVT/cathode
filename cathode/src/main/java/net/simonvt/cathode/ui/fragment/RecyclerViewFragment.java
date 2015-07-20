@@ -71,7 +71,10 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
   }
 
   protected RecyclerView.ItemAnimator getItemAnimator() {
-    return new ScalingItemAnimator();
+    RecyclerView.ItemAnimator animator = new ScalingItemAnimator();
+    // See https://code.google.com/p/android/issues/detail?id=159816
+    animator.setSupportsChangeAnimations(false);
+    return animator;
   }
 
   protected void addItemDecorations(RecyclerView recyclerView) {
