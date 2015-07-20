@@ -48,8 +48,7 @@
           android:layout_alignParentTop="true"
           android:layout_alignParentBottom="true"
           android:orientation="vertical"
-          android:background="@color/contentBackground"
-          android:paddingBottom="16dp">
+          android:background="@color/contentBackground">
 
         <include
             layout="@layout/fragment_movie_top"
