@@ -29,8 +29,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -225,14 +225,14 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
 
   static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @InjectView(R.id.title) TextView title;
-    @InjectView(R.id.progress) ProgressBar progress;
-    @InjectView(R.id.summary) TextView summary;
-    @InjectView(R.id.overflow) OverflowView overflow;
+    @Bind(R.id.title) TextView title;
+    @Bind(R.id.progress) ProgressBar progress;
+    @Bind(R.id.summary) TextView summary;
+    @Bind(R.id.overflow) OverflowView overflow;
 
     ViewHolder(View v) {
       super(v);
-      ButterKnife.inject(this, v);
+      ButterKnife.bind(this, v);
       overflow.addItem(R.id.action_watched, R.string.action_watched);
       overflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
     }

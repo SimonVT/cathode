@@ -26,7 +26,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
-import butterknife.InjectView;
+import butterknife.Bind;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.widget.ScalingItemAnimator;
 
@@ -42,10 +42,10 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
 
   private RecyclerView.Adapter<T> adapter;
 
-  @InjectView(R.id.progressContainer) View progressContainer;
-  @InjectView(R.id.listContainer) View listContainer;
-  @InjectView(android.R.id.list) RecyclerView recyclerView;
-  @InjectView(android.R.id.empty) TextView empty;
+  @Bind(R.id.progressContainer) View progressContainer;
+  @Bind(R.id.listContainer) View listContainer;
+  @Bind(android.R.id.list) RecyclerView recyclerView;
+  @Bind(android.R.id.empty) TextView empty;
 
   private Context appContext;
 

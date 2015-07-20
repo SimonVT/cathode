@@ -22,8 +22,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -140,16 +140,16 @@ public class ShowDescriptionAdapter
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @InjectView(R.id.poster) RemoteImageView poster;
-    @InjectView(R.id.indicator) IndicatorView indicator;
-    @InjectView(R.id.title) TextView title;
-    @InjectView(R.id.overview) TextView overview;
-    @InjectView(R.id.overflow) OverflowView overflow;
-    @InjectView(R.id.rating) CircularProgressIndicator rating;
+    @Bind(R.id.poster) RemoteImageView poster;
+    @Bind(R.id.indicator) IndicatorView indicator;
+    @Bind(R.id.title) TextView title;
+    @Bind(R.id.overview) TextView overview;
+    @Bind(R.id.overflow) OverflowView overflow;
+    @Bind(R.id.rating) CircularProgressIndicator rating;
 
     ViewHolder(View v) {
       super(v);
-      ButterKnife.inject(this, v);
+      ButterKnife.bind(this, v);
     }
   }
 }

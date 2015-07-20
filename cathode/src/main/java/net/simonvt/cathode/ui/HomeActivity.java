@@ -31,8 +31,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.widget.ProgressBar;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import javax.inject.Inject;
@@ -122,18 +122,18 @@ public class HomeActivity extends BaseActivity
 
   protected MessageBar messageBar;
 
-  @InjectView(R.id.progress_top) ProgressBar progressTop;
+  @Bind(R.id.progress_top) ProgressBar progressTop;
 
-  @InjectView(R.id.crouton) Crouton crouton;
+  @Bind(R.id.crouton) Crouton crouton;
 
   private FragmentStack stack;
 
-  @InjectView(R.id.drawer) DrawerLayout drawer;
+  @Bind(R.id.drawer) DrawerLayout drawer;
   private int drawerState = DrawerLayout.STATE_IDLE;
   private NavigationFragment navigation;
 
-  @InjectView(R.id.watching_parent) ViewGroup watchingParent;
-  @InjectView(R.id.watchingView) WatchingView watchingView;
+  @Bind(R.id.watching_parent) ViewGroup watchingParent;
+  @Bind(R.id.watchingView) WatchingView watchingView;
 
   private Cursor watchingShow;
   private Cursor watchingMovie;
@@ -147,7 +147,7 @@ public class HomeActivity extends BaseActivity
 
     setContentView(R.layout.activity_home);
 
-    ButterKnife.inject(this);
+    ButterKnife.bind(this);
 
     isTablet = getResources().getBoolean(R.bool.isTablet);
 

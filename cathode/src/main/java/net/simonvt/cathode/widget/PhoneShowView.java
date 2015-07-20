@@ -19,17 +19,17 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import net.simonvt.cathode.R;
 
 public class PhoneShowView extends ViewGroup {
 
   private int minHeight;
 
-  @InjectView(R.id.infoParent) View infoParent;
-  @InjectView(R.id.overflow) OverflowView overflow;
-  @InjectView(R.id.poster) RemoteImageView poster;
+  @Bind(R.id.infoParent) View infoParent;
+  @Bind(R.id.overflow) OverflowView overflow;
+  @Bind(R.id.poster) RemoteImageView poster;
 
   public PhoneShowView(Context context) {
     super(context);
@@ -52,7 +52,7 @@ public class PhoneShowView extends ViewGroup {
 
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
-    ButterKnife.inject(this);
+    ButterKnife.bind(this);
   }
 
   @Override protected void onLayout(boolean changed, int l, int t, int r, int b) {

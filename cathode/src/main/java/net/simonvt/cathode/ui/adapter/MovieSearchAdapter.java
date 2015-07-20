@@ -20,7 +20,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.InjectView;
+import butterknife.Bind;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -96,7 +96,7 @@ public class MovieSearchAdapter extends BaseMoviesAdapter<MovieSearchAdapter.Vie
 
   public static class ViewHolder extends BaseMoviesAdapter.ViewHolder {
 
-    @InjectView(R.id.indicator) IndicatorView indicator;
+    @Bind(R.id.indicator) IndicatorView indicator;
 
     ViewHolder(View v) {
       super(v);

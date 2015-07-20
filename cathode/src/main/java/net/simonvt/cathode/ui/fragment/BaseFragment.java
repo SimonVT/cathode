@@ -17,13 +17,13 @@ package net.simonvt.cathode.ui.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.Optional;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.ui.FragmentContract;
 import net.simonvt.cathode.ui.NavigationClickListener;
@@ -33,9 +33,9 @@ import net.simonvt.cathode.widget.ToolbarHelper;
 public abstract class BaseFragment extends Fragment
     implements FragmentContract, Toolbar.OnMenuItemClickListener {
 
-  @InjectView(R.id.appBarLayout) @Optional AppBarRelativeLayout appBarLayout;
+  @Bind(R.id.appBarLayout) @Nullable AppBarRelativeLayout appBarLayout;
 
-  @InjectView(R.id.toolbar) @Optional Toolbar toolbar;
+  @Bind(R.id.toolbar) @Nullable Toolbar toolbar;
 
   private ToolbarHelper toolbarHelper;
 
@@ -93,7 +93,7 @@ public abstract class BaseFragment extends Fragment
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-    ButterKnife.inject(this, view);
+    ButterKnife.bind(this, view);
     if (toolbar != null) {
       toolbar.setOnMenuItemClickListener(this);
       toolbarHelper = new ToolbarHelper(this, toolbar, displaysMenuIcon());
@@ -109,7 +109,7 @@ public abstract class BaseFragment extends Fragment
   }
 
   @Override public void onDestroyView() {
-    ButterKnife.reset(this);
+    ButterKnife.unbind(this);
     super.onDestroyView();
   }
 

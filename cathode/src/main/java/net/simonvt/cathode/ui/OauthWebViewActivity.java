@@ -27,8 +27,8 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.Authorization;
@@ -36,16 +36,16 @@ import timber.log.Timber;
 
 public class OauthWebViewActivity extends ActionBarActivity {
 
-  @InjectView(R.id.toolbar) Toolbar toolbar;
+  @Bind(R.id.toolbar) Toolbar toolbar;
 
-  @InjectView(R.id.progress_top) ProgressBar progressBar;
+  @Bind(R.id.progress_top) ProgressBar progressBar;
 
-  @InjectView(R.id.webview) WebView webView;
+  @Bind(R.id.webview) WebView webView;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_oauth);
-    ButterKnife.inject(this);
+    ButterKnife.bind(this);
 
     toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
     toolbar.setNavigationOnClickListener(new View.OnClickListener() {

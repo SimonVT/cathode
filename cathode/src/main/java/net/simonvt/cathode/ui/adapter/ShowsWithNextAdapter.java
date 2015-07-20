@@ -23,8 +23,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -267,14 +267,14 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @InjectView(R.id.infoParent) View infoParent;
-    @InjectView(R.id.title) TextView title;
-    @InjectView(R.id.watched) TextView watched;
-    @InjectView(R.id.progress) ProgressBar progressBar;
-    @InjectView(R.id.nextEpisode) TextView nextEpisode;
-    @InjectView(R.id.firstAired) TimeStamp firstAired;
-    @InjectView(R.id.overflow) OverflowView overflow;
-    @InjectView(R.id.poster) RemoteImageView poster;
+    @Bind(R.id.infoParent) View infoParent;
+    @Bind(R.id.title) TextView title;
+    @Bind(R.id.watched) TextView watched;
+    @Bind(R.id.progress) ProgressBar progressBar;
+    @Bind(R.id.nextEpisode) TextView nextEpisode;
+    @Bind(R.id.firstAired) TimeStamp firstAired;
+    @Bind(R.id.overflow) OverflowView overflow;
+    @Bind(R.id.poster) RemoteImageView poster;
 
     public int showTypeCount;
     public int showAiredCount;
@@ -283,7 +283,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
 
     ViewHolder(View v) {
       super(v);
-      ButterKnife.inject(this, v);
+      ButterKnife.bind(this, v);
     }
   }
 }

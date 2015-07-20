@@ -23,8 +23,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
@@ -66,13 +66,13 @@ public class ShowActorsAdapter extends RecyclerCursorAdapter<ShowActorsAdapter.V
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @InjectView(R.id.headshot) RemoteImageView headshot;
-    @InjectView(R.id.person_name) TextView name;
-    @InjectView(R.id.person_job) TextView job;
+    @Bind(R.id.headshot) RemoteImageView headshot;
+    @Bind(R.id.person_name) TextView name;
+    @Bind(R.id.person_job) TextView job;
 
     public ViewHolder(View itemView) {
       super(itemView);
-      ButterKnife.inject(this, itemView);
+      ButterKnife.bind(this, itemView);
     }
   }
 }

@@ -29,7 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import butterknife.InjectView;
+import butterknife.Bind;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -64,20 +64,20 @@ public class MovieFragment extends ProgressFragment
   @Inject MovieTaskScheduler movieScheduler;
   @Inject Bus bus;
 
-  @InjectView(R.id.year) TextView year;
-  @InjectView(R.id.certification) TextView certification;
-  @InjectView(R.id.backdrop) RemoteImageView backdrop;
-  //@InjectView(R.id.poster) RemoteImageView poster;
-  @InjectView(R.id.overview) TextView overview;
-  @InjectView(R.id.isWatched) TextView isWatched;
-  @InjectView(R.id.inCollection) TextView collection;
-  @InjectView(R.id.inWatchlist) TextView watchlist;
-  @InjectView(R.id.rating) CircularProgressIndicator rating;
+  @Bind(R.id.year) TextView year;
+  @Bind(R.id.certification) TextView certification;
+  @Bind(R.id.backdrop) RemoteImageView backdrop;
+  //@Bind(R.id.poster) RemoteImageView poster;
+  @Bind(R.id.overview) TextView overview;
+  @Bind(R.id.isWatched) TextView isWatched;
+  @Bind(R.id.inCollection) TextView collection;
+  @Bind(R.id.inWatchlist) TextView watchlist;
+  @Bind(R.id.rating) CircularProgressIndicator rating;
 
-  @InjectView(R.id.actorsParent) View actorsParent;
-  @InjectView(R.id.actorsHeader) View actorsHeader;
-  @InjectView(R.id.actors) LinearLayout actors;
-  @InjectView(R.id.peopleContainer) LinearLayout peopleContainer;
+  @Bind(R.id.actorsParent) View actorsParent;
+  @Bind(R.id.actorsHeader) View actorsHeader;
+  @Bind(R.id.actors) LinearLayout actors;
+  @Bind(R.id.peopleContainer) LinearLayout peopleContainer;
 
   private long movieId;
 

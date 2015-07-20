@@ -18,6 +18,7 @@ package net.simonvt.cathode.ui.fragment;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,9 +32,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.Optional;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -103,59 +103,59 @@ public class ShowFragment extends BaseFragment {
 
   private long showId;
 
-  @InjectView(R.id.hiddenPaneLayout) HiddenPaneLayout hiddenPaneLayout;
+  @Bind(R.id.hiddenPaneLayout) HiddenPaneLayout hiddenPaneLayout;
 
-  @InjectView(R.id.seasons) RecyclerView seasons;
-  @InjectView(R.id.seasonsEmpty) View seasonsEmpty;
+  @Bind(R.id.seasons) RecyclerView seasons;
+  @Bind(R.id.seasonsEmpty) View seasonsEmpty;
   private SeasonsAdapter seasonsAdapter;
   private Cursor seasonsCursor;
 
-  @InjectView(R.id.appBarLayout) AppBarRelativeLayout appBarLayout;
+  @Bind(R.id.appBarLayout) AppBarRelativeLayout appBarLayout;
 
-  @InjectView(R.id.rating) CircularProgressIndicator rating;
-  @InjectView(R.id.airtime) TextView airTime;
-  @InjectView(R.id.certification) TextView certification;
-  // TODO: @InjectView(R.id.poster) RemoteImageView poster;
-  @InjectView(R.id.backdrop) RemoteImageView backdrop;
-  @InjectView(R.id.overview) TextView overview;
-  @InjectView(R.id.isWatched) TextView watched;
-  @InjectView(R.id.inCollection) TextView collection;
-  @InjectView(R.id.inWatchlist) TextView watchlist;
+  @Bind(R.id.rating) CircularProgressIndicator rating;
+  @Bind(R.id.airtime) TextView airTime;
+  @Bind(R.id.certification) TextView certification;
+  // TODO: @Bind(R.id.poster) RemoteImageView poster;
+  @Bind(R.id.backdrop) RemoteImageView backdrop;
+  @Bind(R.id.overview) TextView overview;
+  @Bind(R.id.isWatched) TextView watched;
+  @Bind(R.id.inCollection) TextView collection;
+  @Bind(R.id.inWatchlist) TextView watchlist;
 
-  @InjectView(R.id.actorsParent) View actorsParent;
-  @InjectView(R.id.actorsHeader) View actorsHeader;
-  @InjectView(R.id.actors) LinearLayout actors;
-  @InjectView(R.id.peopleContainer) LinearLayout peopleContainer;
+  @Bind(R.id.actorsParent) View actorsParent;
+  @Bind(R.id.actorsHeader) View actorsHeader;
+  @Bind(R.id.actors) LinearLayout actors;
+  @Bind(R.id.peopleContainer) LinearLayout peopleContainer;
 
-  @InjectView(R.id.episodes) LinearLayout episodes;
+  @Bind(R.id.episodes) LinearLayout episodes;
 
-  @InjectView(R.id.toWatch) View toWatch;
+  @Bind(R.id.toWatch) View toWatch;
   private EpisodeHolder toWatchHolder;
   private long toWatchId = -1;
   private String toWatchTitle;
 
-  @InjectView(R.id.lastWatched) @Optional View lastWatched;
+  @Bind(R.id.lastWatched) @Nullable View lastWatched;
   private EpisodeHolder lastWatchedHolder;
   private long lastWatchedId = -1;
 
-  @InjectView(R.id.toCollect) View toCollect;
+  @Bind(R.id.toCollect) View toCollect;
   private EpisodeHolder toCollectHolder;
   private long toCollectId = -1;
 
-  @InjectView(R.id.lastCollected) @Optional View lastCollected;
+  @Bind(R.id.lastCollected) @Nullable View lastCollected;
   private EpisodeHolder lastCollectedHolder;
   private long lastCollectedId = -1;
 
   static class EpisodeHolder {
 
-    @InjectView(R.id.episodeScreenshot) RemoteImageView episodeScreenshot;
-    @InjectView(R.id.episodeTitle) TextView episodeTitle;
-    @InjectView(R.id.episodeAirTime) TextView episodeAirTime;
-    @InjectView(R.id.episodeEpisode) TextView episodeEpisode;
-    @InjectView(R.id.episodeOverflow) OverflowView episodeOverflow;
+    @Bind(R.id.episodeScreenshot) RemoteImageView episodeScreenshot;
+    @Bind(R.id.episodeTitle) TextView episodeTitle;
+    @Bind(R.id.episodeAirTime) TextView episodeAirTime;
+    @Bind(R.id.episodeEpisode) TextView episodeEpisode;
+    @Bind(R.id.episodeOverflow) OverflowView episodeOverflow;
 
     public EpisodeHolder(View v) {
-      ButterKnife.inject(this, v);
+      ButterKnife.bind(this, v);
     }
   }
 

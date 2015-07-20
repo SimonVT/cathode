@@ -33,8 +33,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import net.simonvt.cathode.R;
 
 public class SearchView extends LinearLayout {
@@ -48,9 +48,9 @@ public class SearchView extends LinearLayout {
     void onSuggestionSelected(Object suggestion);
   }
 
-  @InjectView(R.id.search_input) AutoCompleteTextView inputView;
+  @Bind(R.id.search_input) AutoCompleteTextView inputView;
 
-  @InjectView(R.id.search_clear) View clearView;
+  @Bind(R.id.search_clear) View clearView;
 
   private SearchViewListener listener;
 
@@ -77,7 +77,7 @@ public class SearchView extends LinearLayout {
 
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
-    ButterKnife.inject(this);
+    ButterKnife.bind(this);
 
     inputView.setOnItemClickListener(suggestionListener);
     inputView.setOnKeyListener(inputKeyListener);

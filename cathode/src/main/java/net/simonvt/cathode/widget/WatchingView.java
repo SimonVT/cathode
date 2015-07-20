@@ -34,8 +34,8 @@ import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.util.ViewUtils;
 import timber.log.Timber;
@@ -91,15 +91,15 @@ public class WatchingView extends ViewGroup {
 
   private Paint backgroundPaint = new Paint();
 
-  @InjectView(R.id.poster) RemoteImageView posterView;
+  @Bind(R.id.poster) RemoteImageView posterView;
 
-  @InjectView(R.id.infoParent) View infoParent;
+  @Bind(R.id.infoParent) View infoParent;
 
-  @InjectView(R.id.title) TextView titleView;
+  @Bind(R.id.title) TextView titleView;
 
-  @InjectView(R.id.progress) ProgressBar progress;
+  @Bind(R.id.progress) ProgressBar progress;
 
-  @InjectView(R.id.subtitle) TextView subtitleView;
+  @Bind(R.id.subtitle) TextView subtitleView;
 
   private static final boolean IS_LOLLIPOP = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
 
@@ -368,7 +368,7 @@ public class WatchingView extends ViewGroup {
 
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
-    ButterKnife.inject(this);
+    ButterKnife.bind(this);
 
     setIsExpanded(isExpanded);
   }

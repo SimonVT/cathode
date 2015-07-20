@@ -16,13 +16,13 @@
 package net.simonvt.cathode.ui.adapter;
 
 import android.database.Cursor;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.Optional;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -137,15 +137,15 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @InjectView(R.id.poster) RemoteImageView poster;
-    @InjectView(R.id.title) TextView title;
-    @InjectView(R.id.overview) TextView overview;
-    @InjectView(R.id.overflow) OverflowView overflow;
-    @InjectView(R.id.rating) @Optional CircularProgressIndicator rating;
+    @Bind(R.id.poster) RemoteImageView poster;
+    @Bind(R.id.title) TextView title;
+    @Bind(R.id.overview) TextView overview;
+    @Bind(R.id.overflow) OverflowView overflow;
+    @Bind(R.id.rating) @Nullable CircularProgressIndicator rating;
 
     ViewHolder(View v) {
       super(v);
-      ButterKnife.inject(this, v);
+      ButterKnife.bind(this, v);
     }
   }
 }

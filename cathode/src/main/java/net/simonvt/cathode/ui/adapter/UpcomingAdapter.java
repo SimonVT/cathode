@@ -22,8 +22,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -227,16 +227,16 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
 
   public static class ItemViewHolder extends RecyclerView.ViewHolder {
 
-    @InjectView(R.id.infoParent) View infoParent;
-    @InjectView(R.id.title) TextView title;
-    @InjectView(R.id.nextEpisode) TextView nextEpisode;
-    @InjectView(R.id.firstAired) TimeStamp firstAired;
-    @InjectView(R.id.check_in) OverflowView checkIn;
-    @InjectView(R.id.poster) RemoteImageView poster;
+    @Bind(R.id.infoParent) View infoParent;
+    @Bind(R.id.title) TextView title;
+    @Bind(R.id.nextEpisode) TextView nextEpisode;
+    @Bind(R.id.firstAired) TimeStamp firstAired;
+    @Bind(R.id.check_in) OverflowView checkIn;
+    @Bind(R.id.poster) RemoteImageView poster;
 
     ItemViewHolder(View v) {
       super(v);
-      ButterKnife.inject(this, v);
+      ButterKnife.bind(this, v);
     }
   }
 }

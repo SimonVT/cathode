@@ -25,8 +25,8 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
@@ -58,11 +58,11 @@ public class LoginActivity extends BaseActivity {
 
   @Inject Bus bus;
 
-  @InjectView(R.id.buttonContainer) View buttonContainer;
-  @InjectView(R.id.error_message) TextView errorMessage;
-  @InjectView(R.id.login) Button login;
+  @Bind(R.id.buttonContainer) View buttonContainer;
+  @Bind(R.id.error_message) TextView errorMessage;
+  @Bind(R.id.login) Button login;
 
-  @InjectView(R.id.progressContainer) View progressContainer;
+  @Bind(R.id.progressContainer) View progressContainer;
 
   private boolean fetchingToken;
 
@@ -71,7 +71,7 @@ public class LoginActivity extends BaseActivity {
     CathodeApp.inject(this);
 
     setContentView(R.layout.activity_login);
-    ButterKnife.inject(this);
+    ButterKnife.bind(this);
 
     login.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {

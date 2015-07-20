@@ -29,8 +29,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -70,7 +70,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     LayoutInflater.from(drawerContext)
         .inflate(R.layout.debug_drawer, (ViewGroup) ButterKnife.findById(this, R.id.debug_drawer));
 
-    ButterKnife.inject(debugViews, this);
+    ButterKnife.bind(debugViews, this);
 
     debugViews.requestFailedEvent.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
@@ -184,30 +184,30 @@ public abstract class BaseActivity extends AppCompatActivity {
 
   static class DebugViews {
 
-    @InjectView(R.id.debug_drawerLayout) DrawerLayout drawerLayout;
+    @Bind(R.id.debug_drawerLayout) DrawerLayout drawerLayout;
 
-    @InjectView(R.id.debug_content) ViewGroup container;
+    @Bind(R.id.debug_content) ViewGroup container;
 
-    @InjectView(R.id.debug_requestFailedEvent) View requestFailedEvent;
+    @Bind(R.id.debug_requestFailedEvent) View requestFailedEvent;
 
-    @InjectView(R.id.debug_authFailedEvent) View authFailedEvent;
+    @Bind(R.id.debug_authFailedEvent) View authFailedEvent;
 
-    @InjectView(R.id.debug_networkStatusCode) Spinner httpStatusCode;
+    @Bind(R.id.debug_networkStatusCode) Spinner httpStatusCode;
 
-    @InjectView(R.id.debug_drawer) ViewGroup drawerContent;
+    @Bind(R.id.debug_drawer) ViewGroup drawerContent;
 
-    @InjectView(R.id.debug_initialSync) View initialSync;
+    @Bind(R.id.debug_initialSync) View initialSync;
 
-    @InjectView(R.id.debug_forceUpdate) View forceUpdate;
+    @Bind(R.id.debug_forceUpdate) View forceUpdate;
 
-    @InjectView(R.id.debug_updatedLastDay) View updatedLastDay;
+    @Bind(R.id.debug_updatedLastDay) View updatedLastDay;
 
-    @InjectView(R.id.debug_syncWatching) View syncWatching;
+    @Bind(R.id.debug_syncWatching) View syncWatching;
 
-    @InjectView(R.id.debug_queueStatus) TextView queueStatus;
+    @Bind(R.id.debug_queueStatus) TextView queueStatus;
 
-    @InjectView(R.id.debug_jobCount) TextView jobCount;
+    @Bind(R.id.debug_jobCount) TextView jobCount;
 
-    @InjectView(R.id.debug_startJobService) TextView startJobService;
+    @Bind(R.id.debug_startJobService) TextView startJobService;
   }
 }

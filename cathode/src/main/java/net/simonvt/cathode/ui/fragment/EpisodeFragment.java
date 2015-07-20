@@ -18,6 +18,7 @@ package net.simonvt.cathode.ui.fragment;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -28,9 +29,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.Optional;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -68,20 +68,20 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   @Inject EpisodeTaskScheduler episodeScheduler;
   @Inject Bus bus;
 
-  @InjectView(R.id.appBarLayout) @Optional AppBarRelativeLayout appBarLayout;
+  @Bind(R.id.appBarLayout) @Nullable AppBarRelativeLayout appBarLayout;
 
-  @InjectView(R.id.toolbar) Toolbar toolbar;
+  @Bind(R.id.toolbar) Toolbar toolbar;
 
-  @InjectView(R.id.title) TextView title;
-  @InjectView(R.id.backdrop) RemoteImageView backdrop;
-  @InjectView(R.id.overview) TextView overview;
-  @InjectView(R.id.firstAired) TextView firstAired;
+  @Bind(R.id.title) TextView title;
+  @Bind(R.id.backdrop) RemoteImageView backdrop;
+  @Bind(R.id.overview) TextView overview;
+  @Bind(R.id.firstAired) TextView firstAired;
 
-  @InjectView(R.id.rating) CircularProgressIndicator rating;
+  @Bind(R.id.rating) CircularProgressIndicator rating;
 
-  @InjectView(R.id.isWatched) View watchedView;
-  @InjectView(R.id.inCollection) View inCollectionView;
-  @InjectView(R.id.inWatchlist) View inWatchlistView;
+  @Bind(R.id.isWatched) View watchedView;
+  @Bind(R.id.inCollection) View inCollectionView;
+  @Bind(R.id.inWatchlist) View inWatchlistView;
 
   private long episodeId;
 
@@ -174,7 +174,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-    ButterKnife.inject(this, view);
+    ButterKnife.bind(this, view);
 
     if (!isTablet) {
       toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
@@ -200,7 +200,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   };
 
   @Override public void onDestroyView() {
-    ButterKnife.reset(this);
+    ButterKnife.unbind(this);
     super.onDestroyView();
   }
 

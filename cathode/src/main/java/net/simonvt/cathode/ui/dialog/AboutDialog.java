@@ -24,8 +24,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
@@ -35,7 +35,7 @@ public class AboutDialog extends DialogFragment {
   private static final String DIALOG_LICENSES =
       "net.simonvt.cathode.ui.dialog.AboutDialog.licenses";
 
-  @InjectView(R.id.version) TextView version;
+  @Bind(R.id.version) TextView version;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -51,7 +51,7 @@ public class AboutDialog extends DialogFragment {
 
   @Override public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    ButterKnife.inject(this, view);
+    ButterKnife.bind(this, view);
     version.setText(BuildConfig.VERSION_NAME);
   }
 
@@ -81,7 +81,7 @@ public class AboutDialog extends DialogFragment {
   }
 
   @Override public void onDestroyView() {
-    ButterKnife.reset(this);
+    ButterKnife.unbind(this);
     super.onDestroyView();
   }
 
