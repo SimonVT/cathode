@@ -110,23 +110,15 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
       recyclerView.setAdapter(adapter);
     }
 
-    view.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-      @Override
-      public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft,
-          int oldTop, int oldRight, int oldBottom) {
-        v.removeOnLayoutChangeListener(this);
-
-        if (adapter == null) {
-          listContainer.setVisibility(View.GONE);
-          progressContainer.setVisibility(View.VISIBLE);
-          currentState = STATE_PROGRESS_VISIBLE;
-        } else {
-          currentState = STATE_CONTENT_VISIBLE;
-          listContainer.setVisibility(View.VISIBLE);
-          progressContainer.setVisibility(View.GONE);
-        }
-      }
-    });
+    if (adapter == null) {
+      listContainer.setVisibility(View.GONE);
+      progressContainer.setVisibility(View.VISIBLE);
+      currentState = STATE_PROGRESS_VISIBLE;
+    } else {
+      currentState = STATE_CONTENT_VISIBLE;
+      listContainer.setVisibility(View.VISIBLE);
+      progressContainer.setVisibility(View.GONE);
+    }
   }
 
   @Override public void onDestroyView() {
