@@ -56,8 +56,6 @@
         android:id="@+id/progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="8dp"
-        android:maxHeight="8dp"
         android:progressBackgroundTint="@color/lighter_gray"
         style="?android:attr/progressBarStyleHorizontal"/>
 

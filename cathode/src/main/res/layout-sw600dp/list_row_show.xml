@@ -70,8 +70,6 @@
           android:id="@+id/progress"
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
-          android:minHeight="8dp"
-          android:maxHeight="8dp"
           style="?android:attr/progressBarStyleHorizontal"/>
 
       <LinearLayout
