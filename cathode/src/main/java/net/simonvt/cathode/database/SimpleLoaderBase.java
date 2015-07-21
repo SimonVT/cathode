@@ -51,21 +51,27 @@ public abstract class SimpleLoaderBase<T extends AbsSimpleCursor> extends AsyncT
   }
 
   public void addNotificationUri(Uri uri) {
-    notificationUris.add(uri);
-    registerUri(uri);
+    synchronized (notificationUris) {
+      notificationUris.add(uri);
+      registerUri(uri);
+    }
   }
 
   public void removeNotificationUri(Uri uri) {
-    unregisterUri(uri);
-    notificationUris.remove(uri);
+    synchronized (notificationUris) {
+      unregisterUri(uri);
+      notificationUris.remove(uri);
+    }
   }
 
   public void clearNotificationUris() {
-    for (Uri uri : notificationUris) {
-      unregisterUri(uri);
-    }
+    synchronized (notificationUris) {
+      for (Uri uri : notificationUris) {
+        unregisterUri(uri);
+      }
 
-    notificationUris.clear();
+      notificationUris.clear();
+    }
   }
 
   private void registerUri(Uri uri) {
@@ -110,10 +116,12 @@ public abstract class SimpleLoaderBase<T extends AbsSimpleCursor> extends AsyncT
       deliverResult(cursor);
     }
 
-    for (Uri uri : notificationUris) {
-      ContentObserver observer = observers.get(uri);
-      getContext().getContentResolver().registerContentObserver(uri, true, observer);
-      Timber.d("Registering observer");
+    synchronized (notificationUris) {
+      for (Uri uri : notificationUris) {
+        ContentObserver observer = observers.get(uri);
+        getContext().getContentResolver().registerContentObserver(uri, true, observer);
+        Timber.d("Registering observer");
+      }
     }
 
     //if (takeContentChanged() || cursor == null) {
@@ -141,13 +149,11 @@ public abstract class SimpleLoaderBase<T extends AbsSimpleCursor> extends AsyncT
       super(new Handler(Looper.getMainLooper()));
     }
 
-    @Override
-    public boolean deliverSelfNotifications() {
+    @Override public boolean deliverSelfNotifications() {
       return true;
     }
 
-    @Override
-    public void onChange(boolean selfChange) {
+    @Override public void onChange(boolean selfChange) {
       onContentChanged();
     }
   }
