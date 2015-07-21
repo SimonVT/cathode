@@ -18,6 +18,7 @@ package net.simonvt.cathode.widget;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.support.v7.view.CollapsibleActionView;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -37,7 +38,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 
-public class SearchView extends LinearLayout {
+public class SearchView extends LinearLayout implements CollapsibleActionView {
 
   public interface SearchViewListener {
 
@@ -82,7 +83,6 @@ public class SearchView extends LinearLayout {
     inputView.setOnItemClickListener(suggestionListener);
     inputView.setOnKeyListener(inputKeyListener);
     inputView.addTextChangedListener(inputListener);
-    inputView.requestFocus();
 
     SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
     ssb.append(getResources().getString(R.string.action_search));
@@ -91,8 +91,6 @@ public class SearchView extends LinearLayout {
     searchIcon.setBounds(0, 0, textSize, textSize);
     ssb.setSpan(new ImageSpan(searchIcon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     inputView.setHint(ssb);
-
-    post(showIme);
 
     clearView.setOnClickListener(clearListener);
     clearView.setVisibility(inputView.getText().toString().isEmpty() ? INVISIBLE : VISIBLE);
@@ -112,19 +110,37 @@ public class SearchView extends LinearLayout {
     super.clearFocus();
     inputView.clearFocus();
 
+    hideIme();
+  }
+
+  @Override public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
+    inputView.requestFocus();
+    showIme();
+    return true;
+  }
+
+  @Override public void onActionViewExpanded() {
+    inputView.requestFocus();
+    showIme();
+  }
+
+  @Override public void onActionViewCollapsed() {
+    hideIme();
+  }
+
+  private void showIme() {
+    post(showIme);
+  }
+
+  private void hideIme() {
     removeCallbacks(showIme);
+
     InputMethodManager imm =
         (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 
     if (imm != null) {
       imm.hideSoftInputFromWindow(getWindowToken(), 0);
     }
-  }
-
-  @Override public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
-    inputView.requestFocus();
-    post(showIme);
-    return true;
   }
 
   public void setListener(SearchViewListener listener) {
