@@ -206,6 +206,16 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
     return headerPositions.contains(position);
   }
 
+  public List<Cursor> getCursors() {
+    List<Cursor> cursors = new ArrayList<>();
+
+    for (Header header : headers) {
+      cursors.add(header.cursor);
+    }
+
+    return cursors;
+  }
+
   public Cursor getCursor(int position) {
     if (position >= itemCount) {
       throw new IndexOutOfBoundsException("Invalid index " + position + ", size is " + itemCount);

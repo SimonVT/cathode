@@ -33,6 +33,7 @@ import android.view.View;
 import com.squareup.otto.Bus;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -247,8 +248,11 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
     SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
     cursorLoader.throttle(2000);
 
-    SimpleCursor cursor = (SimpleCursor) ((UpcomingAdapter) getAdapter()).getCursor(position);
-    cursor.remove(id);
+    List<Cursor> cursors = ((UpcomingAdapter) getAdapter()).getCursors();
+    for (Cursor cursor : cursors) {
+      ((SimpleCursor) cursor).remove(id);
+    }
+
     ((UpcomingAdapter) getAdapter()).notifyChanged();
   }
 
