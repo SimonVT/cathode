@@ -36,7 +36,7 @@ import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.widget.ObservableNestedScrollView.ScrollListener;
+import net.simonvt.cathode.widget.ObservableScrollView.ScrollListener;
 
 public class AppBarRelativeLayout extends RelativeLayout {
 
@@ -168,7 +168,7 @@ public class AppBarRelativeLayout extends RelativeLayout {
   @Override protected void onAttachedToWindow() {
     super.onAttachedToWindow();
 
-    ObservableNestedScrollView parent = (ObservableNestedScrollView) getParent();
+    ObservableScrollView parent = (ObservableScrollView) getParent();
     parent.addListener(scrollListener);
   }
 

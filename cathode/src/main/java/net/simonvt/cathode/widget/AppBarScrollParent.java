@@ -23,11 +23,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.widget.ObservableNestedScrollView.ScrollListener;
+import net.simonvt.cathode.widget.ObservableScrollView.ScrollListener;
 
 public class AppBarScrollParent extends FrameLayout {
 
-  private ObservableNestedScrollView scrollView;
+  private ObservableScrollView scrollView;
 
   public AppBarScrollParent(Context context) {
     super(context);
@@ -51,8 +51,8 @@ public class AppBarScrollParent extends FrameLayout {
 
     for (int i = 0; i < getChildCount(); i++) {
       final View child = getChildAt(i);
-      if (child instanceof ObservableNestedScrollView) {
-        scrollView = (ObservableNestedScrollView) child;
+      if (child instanceof ObservableScrollView) {
+        scrollView = (ObservableScrollView) child;
       }
     }
 

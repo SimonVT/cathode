@@ -21,7 +21,7 @@
 
   <include layout="@layout/appbar_backdrop"/>
 
-  <net.simonvt.cathode.widget.ObservableNestedScrollView
+  <net.simonvt.cathode.widget.ObservableScrollView
       android:id="@+id/scrollView"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
@@ -68,5 +68,5 @@
 
       <include layout="@layout/appbar_toolbar"/>
     </net.simonvt.cathode.widget.AppBarRelativeLayout>
-  </net.simonvt.cathode.widget.ObservableNestedScrollView>
+  </net.simonvt.cathode.widget.ObservableScrollView>
 </net.simonvt.cathode.widget.AppBarScrollParent>

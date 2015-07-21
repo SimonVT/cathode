@@ -17,24 +17,24 @@
 package net.simonvt.cathode.widget;
 
 import android.content.Context;
-import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
+import android.widget.ScrollView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ObservableNestedScrollView extends NestedScrollView {
+public class ObservableScrollView extends ScrollView {
 
   private List<ScrollListener> listeners = new ArrayList<>();
 
-  public ObservableNestedScrollView(Context context) {
+  public ObservableScrollView(Context context) {
     super(context);
   }
 
-  public ObservableNestedScrollView(Context context, AttributeSet attrs) {
+  public ObservableScrollView(Context context, AttributeSet attrs) {
     super(context, attrs);
   }
 
-  public ObservableNestedScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
+  public ObservableScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
   }
 

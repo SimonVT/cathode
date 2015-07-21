@@ -14,7 +14,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<net.simonvt.cathode.widget.ObservableNestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<net.simonvt.cathode.widget.ObservableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
@@ -63,4 +63,4 @@
 
     <include layout="@layout/appbar_toolbar"/>
   </net.simonvt.cathode.widget.AppBarRelativeLayout>
-</net.simonvt.cathode.widget.ObservableNestedScrollView>
+</net.simonvt.cathode.widget.ObservableScrollView>
