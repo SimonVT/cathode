@@ -42,6 +42,7 @@ public class MovieSearchAdapter extends BaseMoviesAdapter<MovieSearchAdapter.Vie
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.RATING,
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.WATCHING,
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.CHECKED_IN,
+      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.LAST_MODIFIED,
   };
 
   public MovieSearchAdapter(FragmentActivity activity, MovieClickListener listener, Cursor cursor) {
