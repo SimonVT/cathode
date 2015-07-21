@@ -47,47 +47,9 @@ public class GridLayoutItemSpacing extends RecyclerView.ItemDecoration {
 
   @Override public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
       RecyclerView.State state) {
-    GridLayoutManager.LayoutParams params = (GridLayoutManager.LayoutParams) view.getLayoutParams();
-    final int position = params.getViewPosition();
-
-    if (columnCount == 1) {
-      if (position == 0) {
-        outRect.top = 0;
-      } else {
-        outRect.top = verticalSpacing;
-      }
-
-      outRect.left = 0;
-      outRect.right = 0;
-      outRect.bottom = 0;
-    } else {
-      GridLayoutManager.SpanSizeLookup spanSizeLookup = layoutManager.getSpanSizeLookup();
-
-      boolean isFirstRow;
-
-      if (position < columnCount) {
-        isFirstRow = spanSizeLookup.getSpanGroupIndex(position, columnCount) == 0;
-      } else {
-        isFirstRow = false;
-      }
-
-      if (isFirstRow) {
-        outRect.top = 0;
-      } else {
-        outRect.top = verticalSpacing;
-      }
-
-      final int index = spanSizeLookup.getSpanIndex(position, columnCount);
-      final int span = spanSizeLookup.getSpanSize(position);
-
-      if (index + span - 1 == columnCount - 1) {
-        outRect.right = 0;
-      } else {
-        outRect.right = verticalSpacing;
-      }
-
-      outRect.left = 0;
-      outRect.bottom = 0;
-    }
+    outRect.top = halfVerticalSpacing;
+    outRect.bottom = halfVerticalSpacing;
+    outRect.left = halfHorizontalSpacing;
+    outRect.right = halfHorizontalSpacing;
   }
 }
