@@ -36,7 +36,7 @@ public class InsetsFrameLayout extends FrameLayout {
 
   private Paint paint = new Paint();
 
-  private int color = 0xFFFF0000;
+  private int color;
 
   public InsetsFrameLayout(Context context, AttributeSet attrs) {
     super(context, attrs);
@@ -47,6 +47,8 @@ public class InsetsFrameLayout extends FrameLayout {
       color = a.getColor(R.styleable.InsetsFrameLayout_insetsColor, 0);
       a.recycle();
 
+      paint.setColor(color);
+
       setClipToPadding(false);
       setWillNotDraw(false);
       setFitsSystemWindows(true);
@@ -55,8 +57,11 @@ public class InsetsFrameLayout extends FrameLayout {
   }
 
   @Override public WindowInsets onApplyWindowInsets(WindowInsets insets) {
-    this.insets = insets;
-    return super.onApplyWindowInsets(insets);
+    this.insets = new WindowInsets(insets);
+
+    setPadding(0, insets.getSystemWindowInsetTop(), 0, 0);
+
+    return insets.consumeSystemWindowInsets();
   }
 
   @Override public void draw(Canvas canvas) {
@@ -67,27 +72,10 @@ public class InsetsFrameLayout extends FrameLayout {
         return;
       }
 
-      final int insetsLeft = insets.getSystemWindowInsetLeft();
       final int insetsTop = insets.getSystemWindowInsetTop();
-      final int insetsRight = insets.getSystemWindowInsetRight();
-      // final int insetsBottom = insets.getSystemWindowInsetBottom();
-      final int insetsBottom = 0;
-
-      paint.setColor(color);
-
       final int width = getWidth();
-      final int height = getHeight();
 
       rect.set(0, 0, width, insetsTop);
-      canvas.drawRect(rect, paint);
-
-      rect.set(0, height - insetsBottom, width, height);
-      canvas.drawRect(rect, paint);
-
-      rect.set(0, insetsTop, insetsLeft, height - insetsBottom);
-      canvas.drawRect(rect, paint);
-
-      rect.set(width - insetsRight, insetsTop, width, height - insetsBottom);
       canvas.drawRect(rect, paint);
     }
   }
