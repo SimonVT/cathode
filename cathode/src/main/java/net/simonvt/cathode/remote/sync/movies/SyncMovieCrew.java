@@ -70,27 +70,32 @@ public class SyncMovieCrew extends Job {
     op = ContentProviderOperation.newDelete(MovieCrew.fromMovie(movieId)).build();
     ops.add(op);
 
-    for (CastMember castMember : people.getCast()) {
-      Person person = castMember.getPerson();
-      final long personId = PersonWrapper.updateOrInsert(getContentResolver(), person);
+    List<CastMember> cast = people.getCast();
+    if (cast != null) {
+      for (CastMember castMember : cast) {
+        Person person = castMember.getPerson();
+        final long personId = PersonWrapper.updateOrInsert(getContentResolver(), person);
 
-      op = ContentProviderOperation.newInsert(MovieCast.MOVIE_CAST)
-          .withValue(MovieCastColumns.MOVIE_ID, movieId)
-          .withValue(MovieCastColumns.PERSON_ID, personId)
-          .withValue(MovieCastColumns.CHARACTER, castMember.getCharacter())
-          .build();
-      ops.add(op);
+        op = ContentProviderOperation.newInsert(MovieCast.MOVIE_CAST)
+            .withValue(MovieCastColumns.MOVIE_ID, movieId)
+            .withValue(MovieCastColumns.PERSON_ID, personId)
+            .withValue(MovieCastColumns.CHARACTER, castMember.getCharacter())
+            .build();
+        ops.add(op);
+      }
     }
 
     People.Crew crew = people.getCrew();
-    insertCrew(ops, movieId, "production", crew.getProduction());
-    insertCrew(ops, movieId, "art", crew.getArt());
-    insertCrew(ops, movieId, "crew", crew.getCrew());
-    insertCrew(ops, movieId, "costume & make-up", crew.getCostumeAndMakeUp());
-    insertCrew(ops, movieId, "directing", crew.getDirecting());
-    insertCrew(ops, movieId, "writing", crew.getWriting());
-    insertCrew(ops, movieId, "sound", crew.getSound());
-    insertCrew(ops, movieId, "camera", crew.getCamera());
+    if (crew != null) {
+      insertCrew(ops, movieId, "production", crew.getProduction());
+      insertCrew(ops, movieId, "art", crew.getArt());
+      insertCrew(ops, movieId, "crew", crew.getCrew());
+      insertCrew(ops, movieId, "costume & make-up", crew.getCostumeAndMakeUp());
+      insertCrew(ops, movieId, "directing", crew.getDirecting());
+      insertCrew(ops, movieId, "writing", crew.getWriting());
+      insertCrew(ops, movieId, "sound", crew.getSound());
+      insertCrew(ops, movieId, "camera", crew.getCamera());
+    }
 
     try {
       getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);

@@ -63,17 +63,18 @@ public class SyncShowCast extends Job {
     ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
     ops.add(ContentProviderOperation.newDelete(ShowCharacters.fromShow(showId)).build());
 
-    for (CastMember character : characters) {
-      Person person = character.getPerson();
-      final long personId = PersonWrapper.updateOrInsert(getContentResolver(), person);
+    if (characters != null) {
+      for (CastMember character : characters) {
+        Person person = character.getPerson();
+        final long personId = PersonWrapper.updateOrInsert(getContentResolver(), person);
 
-      ContentProviderOperation op =
-          ContentProviderOperation.newInsert(ShowCharacters.SHOW_CHARACTERS)
-              .withValue(DatabaseContract.ShowCharacterColumns.SHOW_ID, showId)
-              .withValue(DatabaseContract.ShowCharacterColumns.PERSON_ID, personId)
-              .withValue(DatabaseContract.ShowCharacterColumns.CHARACTER, character.getCharacter())
-              .build();
-      ops.add(op);
+        ContentProviderOperation op = ContentProviderOperation.newInsert(ShowCharacters.SHOW_CHARACTERS)
+            .withValue(DatabaseContract.ShowCharacterColumns.SHOW_ID, showId)
+            .withValue(DatabaseContract.ShowCharacterColumns.PERSON_ID, personId)
+            .withValue(DatabaseContract.ShowCharacterColumns.CHARACTER, character.getCharacter())
+            .build();
+        ops.add(op);
+      }
     }
 
     try {
