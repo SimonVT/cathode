@@ -19,5 +19,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:text="Menu item"
-    style="@style/Menu.Item"/>
+    android:minHeight="?android:attr/listPreferredItemHeightSmall"
+    android:paddingLeft="?attr/listPreferredItemPaddingLeft"
+    android:paddingRight="?attr/listPreferredItemPaddingRight"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:background="@drawable/navigation_indicator"
+    android:gravity="center_vertical"
+    android:textColor="?android:attr/textColorPrimary"
+    tools:text="Menu item"/>

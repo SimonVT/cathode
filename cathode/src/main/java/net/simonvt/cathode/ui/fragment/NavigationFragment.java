@@ -62,7 +62,8 @@ public class NavigationFragment extends AbsAdapterFragment {
         new MenuItem(R.id.menu_shows_recommendations, R.string.navigation_shows_recommendations,
             0));
 
-    menuItems.add(new NavigationItem(R.string.navigation_title_movies));
+    menuItems.add(new Divider());
+    menuItems.add(new CategoryItem(R.string.navigation_title_movies));
     menuItems.add(new MenuItem(R.id.menu_movies_watched, R.string.navigation_movies_watched, 0));
     menuItems.add(
         new MenuItem(R.id.menu_movies_collection, R.string.navigation_movies_collection, 0));
@@ -107,8 +108,8 @@ public class NavigationFragment extends AbsAdapterFragment {
 
   private SharedPreferences.OnSharedPreferenceChangeListener settingsListener =
       new SharedPreferences.OnSharedPreferenceChangeListener() {
-        @Override public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-            String key) {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
           if (Settings.PROFILE_AVATAR.equals(key)) {
             String avatar = settings.getString(Settings.PROFILE_AVATAR, null);
 
@@ -147,44 +148,52 @@ public class NavigationFragment extends AbsAdapterFragment {
   }
 
   @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
-    NavigationItem item = (NavigationItem) getAdapter().getItem(position);
+    MenuItem item = (MenuItem) getAdapter().getItem(position);
     listener.onMenuItemClicked(item.id);
 
     selectedPosition = position;
     getAdapterView().setItemChecked(selectedPosition, true);
   }
 
-  private static class NavigationItem {
+  private abstract static class NavigationItem {
 
-    int id = -1;
+    final int type;
 
-    int title;
-
-    NavigationItem(int title) {
-      this.title = title;
+    NavigationItem(int type) {
+      this.type = type;
     }
+  }
 
-    NavigationItem(int id, int title) {
+  private static class CategoryItem extends NavigationItem {
+
+    final int title;
+
+    CategoryItem(int title) {
+      super(NavigationAdapter.TYPE_CATEGORY);
       this.title = title;
-      this.id = id;
-    }
-
-    protected boolean isCategory() {
-      return true;
     }
   }
 
   private static class MenuItem extends NavigationItem {
 
-    int iconRes;
+    final int id;
+
+    final int iconRes;
+
+    final int title;
 
     MenuItem(int id, int title, int iconRes) {
-      super(id, title);
+      super(NavigationAdapter.TYPE_ITEM);
+      this.id = id;
+      this.title = title;
       this.iconRes = iconRes;
     }
+  }
 
-    @Override protected boolean isCategory() {
-      return false;
+  private static class Divider extends NavigationItem {
+
+    Divider() {
+      super(NavigationAdapter.TYPE_DIVIDER);
     }
   }
 
@@ -193,6 +202,7 @@ public class NavigationFragment extends AbsAdapterFragment {
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_CATEGORY = 1;
     private static final int TYPE_ITEM = 2;
+    private static final int TYPE_DIVIDER = 3;
 
     private Context context;
     private List<NavigationItem> items;
@@ -242,11 +252,11 @@ public class NavigationFragment extends AbsAdapterFragment {
         return TYPE_HEADER;
       }
 
-      return (getItem(position) instanceof MenuItem) ? TYPE_ITEM : TYPE_CATEGORY;
+      return getItem(position).type;
     }
 
     @Override public int getViewTypeCount() {
-      return 3;
+      return 4;
     }
 
     @Override public View getView(int position, View convertView, ViewGroup parent) {
@@ -295,30 +305,30 @@ public class NavigationFragment extends AbsAdapterFragment {
         return v;
       }
 
-      TextView tv = (TextView) v;
-
       NavigationItem item = getItem(position);
 
-      if (item.isCategory()) {
-        if (tv == null) {
-          tv = (TextView) LayoutInflater.from(context)
-              .inflate(R.layout.menu_home_category, parent, false);
+      if (item.type == TYPE_CATEGORY) {
+        if (v == null) {
+          v = LayoutInflater.from(context).inflate(R.layout.navigation_category, parent, false);
         }
 
-        tv.setText(item.title);
-      } else {
-        if (tv == null) {
-          tv = (TextView) LayoutInflater.from(context)
-              .inflate(R.layout.menu_home_item, parent, false);
+        CategoryItem categoryItem = (CategoryItem) item;
+
+        ((TextView) v).setText(categoryItem.title);
+      } else if (item.type == TYPE_ITEM) {
+        if (v == null) {
+          v = LayoutInflater.from(context).inflate(R.layout.navigation_item, parent, false);
         }
 
         MenuItem menuItem = (MenuItem) item;
 
-        tv.setText(menuItem.title);
-        tv.setCompoundDrawablesWithIntrinsicBounds(menuItem.iconRes, 0, 0, 0);
+        ((TextView) v).setText(menuItem.title);
+        ((TextView) v).setCompoundDrawablesWithIntrinsicBounds(menuItem.iconRes, 0, 0, 0);
+      } else {
+        v = LayoutInflater.from(context).inflate(R.layout.navigation_divider, parent, false);
       }
 
-      return tv;
+      return v;
     }
   }
 }
