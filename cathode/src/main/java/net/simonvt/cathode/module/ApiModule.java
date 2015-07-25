@@ -79,6 +79,8 @@ public class ApiModule {
                 // Handled in JobService
                 return error;
               } else if (statusCode == 412) {
+                Timber.i("Url: " + response.getUrl());
+
                 List<Header> headers = response.getHeaders();
                 for (Header header : headers) {
                   Timber.i(header.toString());
@@ -93,7 +95,7 @@ public class ApiModule {
                 }
                 Timber.i("Body: " + body);
 
-                Timber.e(new FourOneTwoException(error), "Precondition failed");
+                Timber.e(new FourOneTwoException(), "Precondition failed");
                 return error;
               } else if (statusCode >= 500 && statusCode < 600) {
                 MAIN_HANDLER.post(new Runnable() {
