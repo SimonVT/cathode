@@ -73,6 +73,7 @@ public class TraktModule {
     client.setReadTimeout(20, TimeUnit.SECONDS);
 
     client.interceptors().add(new RetryingInterceptor(MAX_RETRIES, RETRY_DELAY));
+    client.networkInterceptors().add(new LoggingInterceptor());
 
     return client;
   }

@@ -87,7 +87,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     });
 
     int[] statusCodes = new int[] {
-        200, 401, 404, 502,
+        200, 401, 404, 412, 502,
     };
     final IntAdapter httpStatusCodeAdapter = new IntAdapter(statusCodes);
     debugViews.httpStatusCode.setAdapter(httpStatusCodeAdapter);
