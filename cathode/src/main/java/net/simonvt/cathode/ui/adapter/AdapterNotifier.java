@@ -75,6 +75,13 @@ public class AdapterNotifier {
         }
       }
 
+      // Fill oldItems, in case one is moved to the end of the list later.
+      if (oldItems.size() < newItemCount) {
+        for (int i = oldItems.size(); i < newItemCount; i++) {
+          oldItems.add(new Item(Long.MIN_VALUE, Long.MIN_VALUE));
+        }
+      }
+
       for (int newPos = 0; newPos < newItemCount; newPos++) {
         Item newItem = newItems.get(newPos);
         final int oldPos = indexOf(oldItems, newItem.id);
