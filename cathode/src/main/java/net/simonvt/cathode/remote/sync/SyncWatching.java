@@ -23,6 +23,7 @@ import android.database.Cursor;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -42,11 +43,17 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.FourOneTwoException;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
 import net.simonvt.cathode.remote.sync.shows.SyncShowCast;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.util.HttpUtils;
+import retrofit.RetrofitError;
+import retrofit.client.Header;
+import retrofit.client.Response;
+import retrofit.mime.TypedInput;
 import timber.log.Timber;
 
 public class SyncWatching extends Job {
@@ -104,7 +111,33 @@ public class SyncWatching extends Job {
       return;
     }
 
-    Watching watching = usersService.watching(username);
+    Watching watching = null;
+    try {
+      watching = usersService.watching(username);
+    } catch (RetrofitError error) {
+      Response response = error.getResponse();
+      // Some users get a 412 when requesting watched stuff. Ignore so it doesn't stop the entire
+      // job queue
+      if (response != null && response.getStatus() == 412) {
+        List<Header> headers = response.getHeaders();
+        for (Header header : headers) {
+          Timber.i(header.toString());
+        }
+
+        TypedInput input = response.getBody();
+        String body = null;
+        try {
+          body = HttpUtils.streamToString(input.in());
+        } catch (IOException e) {
+          // Ignore
+        }
+        Timber.i("Body: " + body);
+
+        Timber.e(new FourOneTwoException(), "Precondition failed");
+      } else {
+        throw error;
+      }
+    }
 
     if (watching != null) {
       if (watching.getType() != null) {
