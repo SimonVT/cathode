@@ -136,6 +136,8 @@
   <string name="action_show_hidden">Display hidden</string>
   <string name="action_show_hide_upcoming">Hide from upcoming</string>
   <string name="action_show_show_upcoming">Unhide from upcoming</string>
+  <string name="action_list_create">Create list</string>
+  <string name="action_create">Create</string>
 
   <string name="checkmark_watched">Watched</string>
   <string name="checkmark_collection">In collection</string>
@@ -208,6 +210,13 @@
 
   <string name="startpage_lists">Lists</string>
 
+  <!-- Create list fragment -->
+  <string name="list_create_name">Name</string>
+  <string name="list_create_description">Description</string>
+  <string name="list_create_privacy">Privacy</string>
+  <string name="list_create_allow_comments">Allow comments</string>
+  <string name="list_create_display_numbers">Display numbers</string>
+
   <string name="empty_show_upcoming">No upcoming episodes. Use the search button to find some new
     shows to watch.
   </string>
@@ -262,6 +271,12 @@
     <item>Great</item>
     <item>Superb</item>
     <item>Totally ninja!</item>
+  </string-array>
+
+  <string-array name="list_privacy">
+    <item>Private</item>
+    <item>Friends</item>
+    <item>Public</item>
   </string-array>
 
 </resources>

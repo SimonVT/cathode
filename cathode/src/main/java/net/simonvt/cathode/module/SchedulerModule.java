@@ -21,6 +21,7 @@ import dagger.Provides;
 import javax.inject.Singleton;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
+import net.simonvt.cathode.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.SearchTaskScheduler;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
@@ -49,5 +50,9 @@ public class SchedulerModule {
 
   @Provides @Singleton SearchTaskScheduler provideSearchScheduler(CathodeApp app) {
     return new SearchTaskScheduler(app);
+  }
+
+  @Provides @Singleton ListsTaskScheduler provideListsTaskSheduler(CathodeApp app) {
+    return new ListsTaskScheduler(app);
   }
 }

@@ -17,11 +17,14 @@
 package net.simonvt.cathode.api.service;
 
 import java.util.List;
+import net.simonvt.cathode.api.body.CreateListBody;
 import net.simonvt.cathode.api.entity.CustomList;
 import net.simonvt.cathode.api.entity.ListItem;
 import net.simonvt.cathode.api.entity.UserSettings;
 import net.simonvt.cathode.api.entity.Watching;
+import retrofit.http.Body;
 import retrofit.http.GET;
+import retrofit.http.POST;
 import retrofit.http.Path;
 
 public interface UsersService {
@@ -76,4 +79,7 @@ public interface UsersService {
    */
   @GET("/users/{username}/lists/{id}/items") List<ListItem> listItems(
       @Path("username") String username, @Path("id") long id);
+
+  @POST("/users/{username}/lists") CustomList createList(@Path("username") String username,
+      @Body CreateListBody createList);
 }

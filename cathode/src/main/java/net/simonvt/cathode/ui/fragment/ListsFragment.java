@@ -21,7 +21,9 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
+import android.view.MenuItem;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -32,6 +34,8 @@ import net.simonvt.cathode.ui.adapter.ListsAdapter;
 
 public class ListsFragment extends ToolbarGridFragment<ListsAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<SimpleCursor>, ListsAdapter.OnListClickListener {
+
+  static final String DIALOG_LIST_CREATE = "net.simonvt.cathode.ui.HomeActivity.createListFragment";
 
   private ListNavigationListener listener;
 
@@ -59,6 +63,22 @@ public class ListsFragment extends ToolbarGridFragment<ListsAdapter.ViewHolder>
 
   @Override public boolean displaysMenuIcon() {
     return true;
+  }
+
+  @Override public void createMenu(Toolbar toolbar) {
+    super.createMenu(toolbar);
+    toolbar.inflateMenu(R.menu.fragment_lists);
+  }
+
+  @Override public boolean onMenuItemClick(MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.menu_list_create:
+        CreateListFragment dialog = new CreateListFragment();
+        dialog.show(getFragmentManager(), DIALOG_LIST_CREATE);
+        return true;
+    }
+
+    return super.onMenuItemClick(item);
   }
 
   private void setCursor(Cursor cursor) {

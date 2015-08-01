@@ -19,7 +19,9 @@ package net.simonvt.cathode.provider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.net.Uri;
 import net.simonvt.cathode.api.entity.CustomList;
+import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Lists;
 
@@ -52,6 +54,22 @@ public final class ListWrapper {
     c.close();
 
     return traktId;
+  }
+
+  public static long createList(ContentResolver resolver, String name, String description,
+      Privacy privacy, boolean displayNumbers, boolean allowComments) {
+    ContentValues values = new ContentValues();
+    values.put(ListsColumns.NAME, name);
+    values.put(ListsColumns.DESCRIPTION, description);
+    values.put(ListsColumns.PRIVACY, privacy.toString());
+    values.put(ListsColumns.DISPLAY_NUMBERS, displayNumbers);
+    values.put(ListsColumns.ALLOW_COMMENTS, allowComments);
+    values.put(ListsColumns.TRAKT_ID, -1L);
+
+    Uri uri = resolver.insert(Lists.LISTS, values);
+    final long listId = Lists.getId(uri);
+
+    return listId;
   }
 
   public static long updateOrInsert(ContentResolver resolver, CustomList list) {
