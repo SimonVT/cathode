@@ -79,6 +79,10 @@ public abstract class RecyclerCursorAdapter<VH extends RecyclerView.ViewHolder>
       lastModifiedIndex = -1;
     }
 
+    notifyChanged();
+  }
+
+  public void notifyChanged() {
     notifier.notifyChanged();
   }
 

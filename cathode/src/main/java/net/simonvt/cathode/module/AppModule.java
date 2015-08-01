@@ -37,6 +37,11 @@ import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.UpdateShowCounts;
 import net.simonvt.cathode.remote.action.CancelCheckin;
 import net.simonvt.cathode.remote.action.lists.CreateList;
+import net.simonvt.cathode.remote.action.lists.RemoveEpisode;
+import net.simonvt.cathode.remote.action.lists.RemoveMovie;
+import net.simonvt.cathode.remote.action.lists.RemovePerson;
+import net.simonvt.cathode.remote.action.lists.RemoveSeason;
+import net.simonvt.cathode.remote.action.lists.RemoveShow;
 import net.simonvt.cathode.remote.action.movies.CheckInMovie;
 import net.simonvt.cathode.remote.action.movies.CollectMovie;
 import net.simonvt.cathode.remote.action.movies.DismissMovieRecommendation;
@@ -116,6 +121,7 @@ import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.fragment.CreateListFragment;
 import net.simonvt.cathode.ui.fragment.EpisodeFragment;
+import net.simonvt.cathode.ui.fragment.ListFragment;
 import net.simonvt.cathode.ui.fragment.MovieCollectionFragment;
 import net.simonvt.cathode.ui.fragment.MovieFragment;
 import net.simonvt.cathode.ui.fragment.MovieRecommendationsFragment;
@@ -161,7 +167,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         ShowFragment.class, ShowsCollectionFragment.class, ShowRecommendationsFragment.class,
         ShowsWatchlistFragment.class, TrendingShowsFragment.class, TrendingMoviesFragment.class,
         UpcomingShowsFragment.class, WatchedMoviesFragment.class, WatchedShowsFragment.class,
-        CreateListFragment.class,
+        CreateListFragment.class, ListFragment.class,
 
         // Dialogs
         RatingDialog.class, CheckInDialog.class, CheckInDialog.Injections.class,
@@ -196,6 +202,8 @@ import net.simonvt.cathode.widget.RemoteImageView;
         SyncShowWatchedStatus.class, SyncTrendingShows.class, StartSyncUpdatedShows.class,
         SyncPerson.class, SyncUpdatedShows.class, SyncUpdatedMovies.class, ForceUpdateJob.class,
         UpdateShowCounts.class, SyncLists.class, SyncList.class, CreateList.class,
+        RemoveShow.class, RemoveSeason.class, RemoveEpisode.class, RemoveMovie.class,
+        RemovePerson.class,
 
         // Misc
         ShowSearchHandler.class, ShowSearchHandler.SearchThread.class, MovieSearchHandler.class,

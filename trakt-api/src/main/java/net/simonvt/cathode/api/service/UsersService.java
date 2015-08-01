@@ -18,8 +18,10 @@ package net.simonvt.cathode.api.service;
 
 import java.util.List;
 import net.simonvt.cathode.api.body.CreateListBody;
+import net.simonvt.cathode.api.body.ListItemActionBody;
 import net.simonvt.cathode.api.entity.CustomList;
 import net.simonvt.cathode.api.entity.ListItem;
+import net.simonvt.cathode.api.entity.ListItemActionResponse;
 import net.simonvt.cathode.api.entity.UserSettings;
 import net.simonvt.cathode.api.entity.Watching;
 import retrofit.http.Body;
@@ -82,4 +84,20 @@ public interface UsersService {
 
   @POST("/users/{username}/lists") CustomList createList(@Path("username") String username,
       @Body CreateListBody createList);
+
+  /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Remove one or more items from a custom list.
+   */
+  @POST("/users/{username}/lists/{id}/items/remove") ListItemActionResponse removeItem(
+      @Path("id") long id, @Body ListItemActionBody item);
+
+  /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Remove one or more items from a custom list.
+   */
+  @POST("/users/{username}/lists/{id}/items/remove") ListItemActionResponse removeItem(
+      @Path("username") String username, @Path("id") long id, @Body ListItemActionBody item);
 }

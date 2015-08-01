@@ -36,10 +36,15 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
+import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public class ListAdapter extends RecyclerCursorAdapter<RecyclerView.ViewHolder> {
 
+  public interface OnRemoveItemListener {
+
+    void onRemoveItem(int position, long id);
+  }
   private ShowClickListener showListener;
 
   private SeasonClickListener seasonListener;
@@ -48,20 +53,24 @@ public class ListAdapter extends RecyclerCursorAdapter<RecyclerView.ViewHolder> 
 
   private MovieClickListener movieListener;
 
+  private OnRemoveItemListener removeListener;
+
   public ListAdapter(Context context, ShowClickListener showListener,
       SeasonClickListener seasonListener, EpisodeClickListener episodeListener,
-      MovieClickListener movieListener) {
-    this(context, showListener, seasonListener, episodeListener, movieListener, null);
+      MovieClickListener movieListener, OnRemoveItemListener removeListener) {
+    this(context, showListener, seasonListener, episodeListener, movieListener, removeListener,
+        null);
   }
 
   public ListAdapter(Context context, ShowClickListener showListener,
       SeasonClickListener seasonListener, EpisodeClickListener episodeListener,
-      MovieClickListener movieListener, Cursor cursor) {
+      MovieClickListener movieListener, OnRemoveItemListener removeListener, Cursor cursor) {
     super(context, cursor);
     this.showListener = showListener;
     this.seasonListener = seasonListener;
     this.episodeListener = episodeListener;
     this.movieListener = movieListener;
+    this.removeListener = removeListener;
   }
 
   @Override public int getItemViewType(int position) {
@@ -133,6 +142,27 @@ public class ListAdapter extends RecyclerCursorAdapter<RecyclerView.ViewHolder> 
       holder = new PersonViewHolder(view);
     }
 
+    final ListViewHolder finalHolder = holder;
+    holder.overflow.addItem(R.id.action_list_remove, R.string.action_list_remove);
+    holder.overflow.setListener(new OverflowView.OverflowActionListener() {
+      @Override public void onPopupShown() {
+        finalHolder.setIsRecyclable(false);
+      }
+
+      @Override public void onPopupDismissed() {
+        finalHolder.setIsRecyclable(true);
+      }
+
+      @Override public void onActionSelected(int action) {
+        finalHolder.setIsRecyclable(true);
+        switch (action) {
+          case R.id.action_list_remove:
+            removeListener.onRemoveItem(finalHolder.getAdapterPosition(), finalHolder.getItemId());
+            break;
+        }
+      }
+    });
+
     return holder;
   }
 
@@ -180,6 +210,8 @@ public class ListAdapter extends RecyclerCursorAdapter<RecyclerView.ViewHolder> 
   }
 
   public static class ListViewHolder extends RecyclerView.ViewHolder {
+
+    @Bind(R.id.overflow) OverflowView overflow;
 
     public ListViewHolder(View v) {
       super(v);

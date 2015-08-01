@@ -24,6 +24,8 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.View;
+import javax.inject.Inject;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -36,6 +38,7 @@ import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic;
+import net.simonvt.cathode.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.NavigationListener;
@@ -49,11 +52,14 @@ import net.simonvt.cathode.util.SqlColumn;
 
 public class ListFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
     implements LoaderManager.LoaderCallbacks<SimpleCursor>, ShowClickListener,
-    SeasonClickListener, EpisodeClickListener, MovieClickListener {
+    SeasonClickListener, EpisodeClickListener, MovieClickListener,
+    ListAdapter.OnRemoveItemListener {
 
   private static final String ARG_LIST_ID = "net.simonvt.cathode.ui.fragment.ListFragment.lidtId";
   private static final String ARG_LIST_NAME =
       "net.simonvt.cathode.ui.fragment.ListFragment.listName";
+
+  @Inject ListsTaskScheduler listScheduler;
 
   private NavigationListener navigationListener;
 
@@ -77,6 +83,7 @@ public class ListFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
+    CathodeApp.inject(getActivity(), this);
 
     Bundle args = getArguments();
     listId = args.getLong(ARG_LIST_ID);
@@ -116,9 +123,23 @@ public class ListFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
     navigationListener.onDisplayMovie(id, title);
   }
 
+  @Override public void onRemoveItem(int position, long id) {
+    Loader loader = getLoaderManager().getLoader(Loaders.LOADER_LIST);
+    ((SimpleCursorLoader) loader).throttle(2 * DateUtils.SECOND_IN_MILLIS);
+
+    final SimpleCursor cursor = (SimpleCursor) adapter.getCursor(position);
+
+    final long itemId = cursor.getLong(cursor.getColumnIndex(ListItemColumns.ITEM_ID));
+    final int itemType = cursor.getInt(cursor.getColumnIndex(ListItemColumns.ITEM_TYPE));
+    listScheduler.removeItem(listId, itemType, itemId);
+
+    cursor.remove(id);
+    adapter.notifyChanged();
+  }
+
   private void setCursor(SimpleCursor cursor) {
     if (adapter == null) {
-      adapter = new ListAdapter(getActivity(), this, this, this, this);
+      adapter = new ListAdapter(getActivity(), this, this, this, this, this);
       setAdapter(adapter);
     }
 

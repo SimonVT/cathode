@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!--
   ~ Copyright (C) 2015 Simon Vig Therkildsen
   ~
@@ -34,17 +33,28 @@
         app:dominantMeasurement="width"
         app:aspectRatio="1.4705"/>
 
-    <TextView
-        android:id="@+id/person_name"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="84dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="16dp"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="?android:attr/textColorSecondary"
-        tools:text="A. Person"/>
+        android:minHeight="84dp">
+
+      <TextView
+          android:id="@+id/person_name"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:paddingLeft="8dp"
+          android:paddingRight="16dp"
+          android:paddingTop="4dp"
+          android:paddingBottom="4dp"
+          android:textAppearance="?android:attr/textAppearanceMedium"
+          android:textColor="?android:attr/textColorSecondary"
+          tools:text="A. Person"/>
+
+      <net.simonvt.cathode.widget.OverflowView
+          android:id="@+id/overflow"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="right"/>
+    </FrameLayout>
   </LinearLayout>
 </android.support.v7.widget.CardView>

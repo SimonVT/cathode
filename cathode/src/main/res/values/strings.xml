@@ -138,6 +138,7 @@
   <string name="action_show_show_upcoming">Unhide from upcoming</string>
   <string name="action_list_create">Create list</string>
   <string name="action_create">Create</string>
+  <string name="action_list_remove">Remove from list</string>
 
   <string name="checkmark_watched">Watched</string>
   <string name="checkmark_collection">In collection</string>

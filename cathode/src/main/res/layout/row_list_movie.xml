@@ -63,4 +63,10 @@
           tools:text="This is a description of the show. It can be long. And multiline. Lots of lots of lines. Even more lines"/>
     </LinearLayout>
   </LinearLayout>
+
+  <net.simonvt.cathode.widget.OverflowView
+      android:id="@+id/overflow"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="right"/>
 </android.support.v7.widget.CardView>
