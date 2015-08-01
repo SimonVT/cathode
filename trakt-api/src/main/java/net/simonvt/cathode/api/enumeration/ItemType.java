@@ -20,9 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum ItemType {
-  MOVIE("movie"),
   SHOW("show"),
+  SEASON("season"),
   EPISODE("episode"),
+  MOVIE("movie"),
   PERSON("person"),
   LIST("list");
 

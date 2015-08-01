@@ -30,6 +30,12 @@ public class LastActivity {
 
     private IsoTime commentedAt;
 
+    private IsoTime pausedAt;
+
+    private IsoTime likedAt;
+
+    private IsoTime updatedAt;
+
     public IsoTime getWatchedAt() {
       return watchedAt;
     }
@@ -49,6 +55,18 @@ public class LastActivity {
     public IsoTime getCommentedAt() {
       return commentedAt;
     }
+
+    public IsoTime getPausedAt() {
+      return pausedAt;
+    }
+
+    public IsoTime getLikedAt() {
+      return likedAt;
+    }
+
+    public IsoTime getUpdatedAt() {
+      return updatedAt;
+    }
   }
 
   private ActivityItem movies;
@@ -58,6 +76,10 @@ public class LastActivity {
   private ActivityItem seasons;
 
   private ActivityItem episodes;
+
+  private ActivityItem comments;
+
+  private ActivityItem lists;
 
   public ActivityItem getMovies() {
     return movies;
@@ -73,5 +95,9 @@ public class LastActivity {
 
   public ActivityItem getEpisodes() {
     return episodes;
+  }
+
+  public ActivityItem getLists() {
+    return lists;
   }
 }

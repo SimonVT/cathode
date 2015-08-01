@@ -30,17 +30,13 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
+import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
     extends RecyclerCursorAdapter<T> {
-
-  public interface MovieClickListener {
-
-    void onMovieClicked(View v, int position, long id);
-  }
 
   @Inject MovieTaskScheduler movieScheduler;
 

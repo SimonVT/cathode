@@ -29,6 +29,8 @@ import java.util.Set;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.util.Joiner;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
@@ -93,6 +95,10 @@ public final class ProviderSchematic {
 
     String PEOPLE = "vnd.android.cursor.dir/vnd.simonvt.cathode.people";
     String PERSON = "vnd.android.cursor.item/vnd.simonvt.cathode.person";
+
+    String LISTS = "vnd.android.cursor.dir/vnd.simonvt.cathode.lists";
+    String LIST_ID = "vnd.android.cursor.item/vnd.simonvt.cathode.list";
+    String LIST_ITEMS = "vnd.android.cursor.dir/vnd.simonvt.cathode.listItem";
   }
 
   interface Path {
@@ -129,6 +135,11 @@ public final class ProviderSchematic {
     String SEARCH_SUGGESTIONS = "searchSuggestions";
 
     String PEOPLE = "people";
+
+    String LISTS = "lists";
+    String LIST_ITEMS = "listItems";
+
+    String IN_LIST = "inList";
   }
 
   static Uri getBaseUri(Uri uri) {
@@ -1040,6 +1051,48 @@ public final class ProviderSchematic {
       c.close();
 
       return uris.toArray(new Uri[uris.size()]);
+    }
+  }
+
+  @TableEndpoint(table = DatabaseSchematic.TABLE_LISTS)
+  public static class Lists {
+
+    @ContentUri(
+        path = Path.LISTS,
+        type = Type.LISTS)
+    public static final Uri LISTS = buildUri(Path.LISTS);
+
+    @InexactContentUri(
+        path = Path.LISTS + "/#",
+        type = Type.LIST_ID,
+        name = "LIST_WITHID",
+        whereColumn = ListsColumns.ID,
+        pathSegment = 1)
+    public static Uri withId(long id) {
+      return buildUri(Path.LISTS, String.valueOf(id));
+    }
+
+    public static long getId(Uri uri) {
+      return Long.valueOf(uri.getPathSegments().get(1));
+    }
+  }
+
+  @TableEndpoint(table = DatabaseSchematic.TABLE_LIST_ITEMS) public static class ListItems {
+
+    @ContentUri(
+        path = Path.LIST_ITEMS,
+        type = Type.LIST_ITEMS)
+    public static final Uri LIST_ITEMS = buildUri(Path.LIST_ITEMS);
+
+    @InexactContentUri(
+        path = Path.LIST_ITEMS + "/" + Path.IN_LIST + "/#",
+        type = Type.LIST_ITEMS,
+        name = "LISTITEMS_INLIST",
+        join = Joins.LIST,
+        whereColumn = ListItemColumns.LIST_ID,
+        pathSegment = 2)
+    public static Uri inList(long id) {
+      return buildUri(Path.LIST_ITEMS, Path.IN_LIST, String.valueOf(id));
     }
   }
 }

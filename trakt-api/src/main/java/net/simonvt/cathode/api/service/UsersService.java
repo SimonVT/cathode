@@ -16,6 +16,9 @@
 
 package net.simonvt.cathode.api.service;
 
+import java.util.List;
+import net.simonvt.cathode.api.entity.CustomList;
+import net.simonvt.cathode.api.entity.ListItem;
 import net.simonvt.cathode.api.entity.UserSettings;
 import net.simonvt.cathode.api.entity.Watching;
 import retrofit.http.GET;
@@ -37,4 +40,19 @@ public interface UsersService {
    * Returns all movies or shows a user has watched sorted by most plays.
    */
   @GET("/users/{username}/watching") Watching watching(@Path("username") String username);
+
+  /**
+   * <b>OAuth Optional</b>
+   * <p>
+   * Returns all custom lists for a user.
+   */
+  @GET("/users/{username}/lists") List<CustomList> lists(@Path("username") String username);
+
+  /**
+   * <b>OAuth Optional</b>
+   * <p>
+   * Get all items on a custom list. Items can be movies, shows, seasons, episodes, or people.
+   */
+  @GET("/users/{username}/lists/{id}/items") List<ListItem> listItems(
+      @Path("username") String username, @Path("id") long id);
 }

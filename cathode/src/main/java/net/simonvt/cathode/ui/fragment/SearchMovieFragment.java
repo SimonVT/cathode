@@ -46,17 +46,17 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
-import net.simonvt.cathode.ui.adapter.BaseMoviesAdapter;
 import net.simonvt.cathode.ui.adapter.MovieSearchAdapter;
 import net.simonvt.cathode.ui.adapter.MovieSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
+import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.util.MovieSearchHandler;
 import net.simonvt.cathode.widget.SearchView;
 
 public class SearchMovieFragment extends ToolbarGridFragment<MovieSearchAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<SimpleCursor>, ListDialog.Callback,
-    BaseMoviesAdapter.MovieClickListener {
+    MovieClickListener {
 
   private enum SortBy {
     TITLE("title", Movies.SORT_TITLE),

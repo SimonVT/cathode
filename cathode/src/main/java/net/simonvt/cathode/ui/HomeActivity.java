@@ -51,6 +51,8 @@ import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import net.simonvt.cathode.ui.fragment.ActorsFragment;
 import net.simonvt.cathode.ui.fragment.EpisodeFragment;
+import net.simonvt.cathode.ui.fragment.ListFragment;
+import net.simonvt.cathode.ui.fragment.ListsFragment;
 import net.simonvt.cathode.ui.fragment.MovieCollectionFragment;
 import net.simonvt.cathode.ui.fragment.MovieFragment;
 import net.simonvt.cathode.ui.fragment.MovieRecommendationsFragment;
@@ -76,8 +78,7 @@ import net.simonvt.messagebar.MessageBar;
 import timber.log.Timber;
 
 public class HomeActivity extends BaseActivity
-    implements NavigationFragment.OnMenuClickListener, ShowsNavigationListener,
-    MoviesNavigationListener {
+    implements NavigationFragment.OnMenuClickListener, NavigationListener {
 
   public static final String DIALOG_ABOUT = "net.simonvt.cathode.ui.BaseActivity.aboutDialog";
   static final String FRAGMENT_NAVIGATION =
@@ -112,6 +113,8 @@ public class HomeActivity extends BaseActivity
       "net.simonvt.cathode.ui.HomeActivity.searchMovieFragment";
   static final String FRAGMENT_MOVIE = "net.simonvt.cathode.ui.HomeActivity.movieFragment";
   static final String FRAGMENT_ACTORS = "net.simonvt.cathode.ui.HomeActivity.actorsFragment";
+  static final String FRAGMENT_LISTS = "net.simonvt.cathode.ui.HomeActivity.listsFragment";
+  static final String FRAGMENT_LIST = "net.simonvt.cathode.ui.HomeActivity.listFragment";
 
   private static final String STATE_STACK = "net.simonvt.cathode.ui.HomeActivity.stack";
 
@@ -328,6 +331,10 @@ public class HomeActivity extends BaseActivity
 
       case R.id.menu_movies_recommendations:
         stack.replace(MovieRecommendationsFragment.class, FRAGMENT_MOVIES_RECOMMENDATIONS);
+        break;
+
+      case R.id.menu_lists:
+        stack.replace(ListsFragment.class, FRAGMENT_LISTS);
         break;
 
       default:
@@ -603,4 +610,9 @@ public class HomeActivity extends BaseActivity
           watchingMovie = null;
         }
       };
+
+  @Override public void onShowList(long listId, String listName) {
+    stack.push(ListFragment.class, FRAGMENT_LIST, ListFragment.getArgs(listId, listName));
+    stack.commit();
+  }
 }

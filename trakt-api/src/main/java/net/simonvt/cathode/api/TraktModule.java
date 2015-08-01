@@ -25,6 +25,7 @@ import net.simonvt.cathode.api.enumeration.Action;
 import net.simonvt.cathode.api.enumeration.Gender;
 import net.simonvt.cathode.api.enumeration.GrantType;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.api.enumeration.Scope;
 import net.simonvt.cathode.api.enumeration.ShowStatus;
 import net.simonvt.cathode.api.enumeration.TokenType;
@@ -194,6 +195,13 @@ public class TraktModule {
       @Override public Gender deserialize(JsonElement jsonElement, Type type,
           JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         return Gender.fromValue(jsonElement.getAsString());
+      }
+    });
+
+    builder.registerTypeAdapter(Privacy.class, new JsonDeserializer<Privacy>() {
+      @Override public Privacy deserialize(JsonElement jsonElement, Type type,
+          JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+        return Privacy.fromValue(jsonElement.getAsString());
       }
     });
 

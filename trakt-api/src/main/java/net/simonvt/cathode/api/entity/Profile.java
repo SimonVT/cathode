@@ -28,6 +28,8 @@ public class Profile {
 
   Boolean vip;
 
+  Boolean vipEp;
+
   IsoTime joinedAt;
 
   String location;
@@ -54,6 +56,10 @@ public class Profile {
 
   public Boolean isVip() {
     return vip;
+  }
+
+  public Boolean isVipEP() {
+    return vipEp;
   }
 
   public IsoTime getJoinedAt() {

@@ -23,4 +23,6 @@
 
   <integer name="actorColumns">1</integer>
 
+  <integer name="listColumns">1</integer>
+
 </resources>

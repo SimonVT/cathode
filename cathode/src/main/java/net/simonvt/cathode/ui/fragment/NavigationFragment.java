@@ -63,6 +63,7 @@ public class NavigationFragment extends AbsAdapterFragment {
             0));
 
     menuItems.add(new Divider());
+
     menuItems.add(new CategoryItem(R.string.navigation_title_movies));
     menuItems.add(new MenuItem(R.id.menu_movies_watched, R.string.navigation_movies_watched, 0));
     menuItems.add(
@@ -73,6 +74,10 @@ public class NavigationFragment extends AbsAdapterFragment {
     menuItems.add(
         new MenuItem(R.id.menu_movies_recommendations, R.string.navigation_movies_recommendations,
             0));
+
+    menuItems.add(new Divider());
+
+    menuItems.add(new MenuItem(R.id.menu_lists, R.string.navigation_lists, 0));
   }
 
   private OnMenuClickListener listener;

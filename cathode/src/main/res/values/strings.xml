@@ -176,6 +176,8 @@
   <string name="navigation_movies_trending">Trending</string>
   <string name="navigation_movies_recommendations">Recommendations</string>
 
+  <string name="navigation_lists">Lists</string>
+
   <string name="empty_show_upcoming">No upcoming episodes. Use the search button to find some new
     shows to watch.
   </string>
@@ -196,6 +198,7 @@
   <string name="empty_movie_watchlist">Add movies to the watchlist that you\'d like to watch, but
     just haven\'t had the time for.
   </string>
+  <string name="empty_lists">You currently have no lists.</string>
 
   <string name="episode_x">Episode %d</string>
   <string name="all_watched">All episodes watched</string>

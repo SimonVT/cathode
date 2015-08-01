@@ -43,6 +43,18 @@ public final class PersonWrapper {
     return id;
   }
 
+  public static long getTraktId(ContentResolver resolver, long personId) {
+    Cursor c = resolver.query(People.withId(personId), new String[] {
+        PersonColumns.TRAKT_ID,
+    }, null, null, null);
+
+    long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(PersonColumns.TRAKT_ID));
+
+    c.close();
+
+    return id;
+  }
+
   public static long createPerson(ContentResolver resolver, long traktId) {
     ContentValues values = new ContentValues();
     values.put(PersonColumns.TRAKT_ID, traktId);

@@ -33,6 +33,8 @@
   <item name="menu_movies_trending" type="id"/>
   <item name="menu_movies_recommendations" type="id"/>
 
+  <item name="menu_lists" type="id"/>
+
   <item name="menu_hidden" type="id"/>
 
   <item name="sort_title" type="id"/>

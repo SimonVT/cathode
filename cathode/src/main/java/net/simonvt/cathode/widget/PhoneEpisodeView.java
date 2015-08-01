@@ -34,7 +34,7 @@ public class PhoneEpisodeView extends ViewGroup {
 
   @Bind(R.id.title) TextView title;
 
-  @Bind(R.id.firstAired) TimeStamp firstAired;
+  @Bind(R.id.firstAired) TextView firstAired;
 
   private int minHeight;
 

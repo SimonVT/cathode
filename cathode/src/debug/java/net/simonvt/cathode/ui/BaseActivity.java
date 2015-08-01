@@ -45,6 +45,7 @@ import net.simonvt.cathode.jobqueue.JobService;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.InitialSyncJob;
 import net.simonvt.cathode.remote.sync.SyncWatching;
+import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
 import net.simonvt.cathode.settings.Settings;
@@ -133,6 +134,12 @@ public abstract class BaseActivity extends AppCompatActivity {
       }
     });
 
+    debugViews.syncLists.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        injects.jobManager.addJob(new SyncLists());
+      }
+    });
+
     injects.jobManager.setJobListener(new JobManager.JobListener() {
       @Override public void onStatusChanged(JobManager.QueueStatus queueStatus) {
         switch (queueStatus) {
@@ -203,6 +210,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Bind(R.id.debug_updatedLastDay) View updatedLastDay;
 
     @Bind(R.id.debug_syncWatching) View syncWatching;
+
+    @Bind(R.id.debug_syncLists) View syncLists;
 
     @Bind(R.id.debug_queueStatus) TextView queueStatus;
 

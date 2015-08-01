@@ -20,6 +20,7 @@ import net.simonvt.cathode.api.entity.LastActivity;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesCollection;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesRatings;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchlist;
@@ -71,6 +72,8 @@ public class SyncUserActivity extends Job {
     final long movieLastWatchlist = lastActivity.getMovies().getWatchlistedAt().getTimeInMillis();
     final long movieLastRating = lastActivity.getMovies().getRatedAt().getTimeInMillis();
     final long movieLastComment = lastActivity.getMovies().getCommentedAt().getTimeInMillis();
+
+    final long listLastUpdated = lastActivity.getLists().getUpdatedAt().getTimeInMillis();
 
     if (TraktTimestamps.episodeWatchedNeedsUpdate(getContext(), episodeLastWatched)) {
       queue(new SyncWatchedShows());
@@ -130,6 +133,10 @@ public class SyncUserActivity extends Job {
 
     if (TraktTimestamps.movieCommentsNeedsUpdate(getContext(), movieLastComment)) {
       // TODO: Handle comments eventually
+    }
+
+    if (TraktTimestamps.listNeedsUpdate(getContext(), listLastUpdated)) {
+      queue(new SyncLists());
     }
 
     queue(new SyncWatching());

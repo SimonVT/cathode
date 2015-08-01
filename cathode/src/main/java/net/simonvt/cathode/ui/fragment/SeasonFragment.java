@@ -36,9 +36,10 @@ import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.SeasonAdapter;
+import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 
 public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder>
-    implements SeasonAdapter.EpisodeClickListener {
+    implements EpisodeClickListener {
 
   private static final String ARG_SHOW_ID = "net.simonvt.cathode.ui.fragment.SeasonFragment.showId";
   private static final String ARG_SEASONID =

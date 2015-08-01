@@ -206,6 +206,8 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String EXPIRES_AT = "expiresAt";
 
     @DataType(INTEGER) @DefaultValue("0") String NEEDS_SYNC = "needsSync";
+
+    String SHOW_TITLE = "episodeShowTitle";
   }
 
   public interface MovieColumns extends LastModifiedColumns {
@@ -321,5 +323,47 @@ public final class DatabaseContract {
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
     @DataType(TEXT) @NotNull String QUERY = "query";
     @DataType(INTEGER) @DefaultValue("0") String COUNT = "queryCount";
+  }
+
+  public interface ListsColumns extends LastModifiedColumns {
+
+    @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
+
+    @DataType(TEXT) String NAME = "name";
+    @DataType(TEXT) String DESCRIPTION = "description";
+
+    @DataType(TEXT) String PRIVACY = "privacy";
+    @DataType(INTEGER) String DISPLAY_NUMBERS = "displayNumbers";
+    @DataType(INTEGER) String ALLOW_COMMENTS = "allowComments";
+
+    @DataType(INTEGER) String UPDATED_AT = "updatedAt";
+
+    @DataType(INTEGER) String LIKES = "likes";
+
+    @DataType(TEXT) String SLUG = "slug";
+    @DataType(INTEGER) String TRAKT_ID = "traktId";
+  }
+
+  public interface ListItemColumns extends LastModifiedColumns {
+
+    @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
+    @DataType(INTEGER) @References(table = DatabaseSchematic.TABLE_LISTS, column = ListsColumns.ID)
+    String LIST_ID = "listId";
+    @DataType(INTEGER) String LISTED_AT = "listedAt";
+    @DataType(INTEGER) String ITEM_ID = "itemId";
+    @DataType(INTEGER) String ITEM_TYPE = "itemType";
+
+    String TITLE = "title";
+    String OVERVIEW = "overview";
+    String POSTER = "poster";
+
+    interface Type {
+
+      int SHOW = 1;
+      int SEASON = 2;
+      int EPISODE = 3;
+      int MOVIE = 4;
+      int PERSON = 5;
+    }
   }
 }

@@ -55,6 +55,8 @@ import net.simonvt.cathode.remote.sync.SyncPerson;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.remote.sync.SyncUserSettings;
 import net.simonvt.cathode.remote.sync.SyncWatching;
+import net.simonvt.cathode.remote.sync.lists.SyncList;
+import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieCrew;
@@ -181,7 +183,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         SyncWatchedShows.class, SyncShowsWatchlist.class, SyncShow.class,
         SyncShowWatchedStatus.class, SyncTrendingShows.class, StartSyncUpdatedShows.class,
         SyncPerson.class, SyncUpdatedShows.class, SyncUpdatedMovies.class, ForceUpdateJob.class,
-        UpdateShowCounts.class,
+        UpdateShowCounts.class, SyncLists.class, SyncList.class,
 
         // Misc
         ShowSearchHandler.class, ShowSearchHandler.SearchThread.class, MovieSearchHandler.class,

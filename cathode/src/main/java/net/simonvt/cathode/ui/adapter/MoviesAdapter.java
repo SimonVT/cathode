@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.widget.OverflowView;
 
 public class MoviesAdapter extends BaseMoviesAdapter<BaseMoviesAdapter.ViewHolder> {

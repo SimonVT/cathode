@@ -64,6 +64,8 @@ public class Settings extends PreferenceActivity {
   public static final String MOVIE_WATCHLIST = "movieWatchlist";
   public static final String MOVIE_COMMENT = "movieComment";
 
+  public static final String LIST_UPDATED_AT = "listUpdatedAt";
+
   // Last trending and recommendations sync
   public static final String TRENDING = "trending";
   public static final String RECOMMENDATIONS = "recommendations";

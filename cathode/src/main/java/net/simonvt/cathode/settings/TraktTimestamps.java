@@ -141,6 +141,13 @@ public final class TraktTimestamps {
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
+  public static boolean listNeedsUpdate(Context context, long lastUpdated) {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+
+    long lastActivity = settings.getLong(Settings.LIST_UPDATED_AT, -1);
+    return lastActivity == -1 || lastUpdated > lastActivity;
+  }
+
   public static boolean trendingNeedsUpdate(Context context) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 

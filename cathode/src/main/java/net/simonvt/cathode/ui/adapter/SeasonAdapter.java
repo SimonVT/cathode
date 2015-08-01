@@ -33,15 +33,11 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
+import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.cathode.widget.TimeStamp;
 
 public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolder> {
-
-  public interface EpisodeClickListener {
-
-    void onEpisodeClick(View view, int position, long id);
-  }
 
   @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;

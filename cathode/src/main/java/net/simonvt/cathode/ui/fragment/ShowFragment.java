@@ -63,6 +63,7 @@ import net.simonvt.cathode.ui.adapter.SeasonsAdapter;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
+import net.simonvt.cathode.ui.listener.SeasonClickListener;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.widget.AppBarRelativeLayout;
 import net.simonvt.cathode.widget.CircleTransformation;
@@ -205,7 +206,7 @@ public class ShowFragment extends BaseFragment {
     showTitle = args.getString(ARG_TITLE);
     type = (LibraryType) args.getSerializable(ARG_TYPE);
 
-    seasonsAdapter = new SeasonsAdapter(getActivity(), new SeasonsAdapter.SeasonClickListener() {
+    seasonsAdapter = new SeasonsAdapter(getActivity(), new SeasonClickListener() {
       @Override public void onSeasonClick(View view, int position, long id) {
         navigationCallbacks.onDisplaySeason(showId, id, showTitle, seasonsCursor.getInt(
             seasonsCursor.getColumnIndex(DatabaseContract.SeasonColumns.SEASON)), type);

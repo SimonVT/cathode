@@ -37,14 +37,10 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
+import net.simonvt.cathode.ui.listener.SeasonClickListener;
 import net.simonvt.cathode.widget.OverflowView;
 
 public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHolder> {
-
-  public interface SeasonClickListener {
-
-    void onSeasonClick(View view, int position, long id);
-  }
 
   public static final String[] PROJECTION = new String[] {
       SeasonColumns.ID, SeasonColumns.AIRDATE_COUNT, SeasonColumns.UNAIRED_COUNT,

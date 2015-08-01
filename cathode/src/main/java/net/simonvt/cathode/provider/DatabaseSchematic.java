@@ -21,6 +21,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCrewColumns;
@@ -48,7 +50,7 @@ public final class DatabaseSchematic {
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 13;
+  static final int DATABASE_VERSION = 14;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -139,6 +141,41 @@ public final class DatabaseSchematic {
         + Tables.EPISODES
         + "."
         + EpisodeColumns.SHOW_ID;
+
+    String LIST_SHOWS = "LEFT JOIN " + Tables.SHOWS
+        + " ON " + ListItemColumns.ITEM_TYPE + "=" + ListItemColumns.Type.SHOW
+        +  " AND " + Tables.LIST_ITEMS + "." + ListItemColumns.ITEM_ID
+        + "=" + Tables.SHOWS + "." + ShowColumns.ID;
+
+    String LIST_SEASONS = "LEFT JOIN " + Tables.SEASONS
+        + " ON " + ListItemColumns.ITEM_TYPE + "=" + ListItemColumns.Type.SEASON
+        +  " AND " + Tables.LIST_ITEMS + "." + ListItemColumns.ITEM_ID
+        + "=" + Tables.SEASONS + "." + SeasonColumns.ID;
+
+    String LIST_EPISODES = "LEFT JOIN " + Tables.EPISODES
+        + " ON " + ListItemColumns.ITEM_TYPE + "=" + ListItemColumns.Type.EPISODE
+        +  " AND " + Tables.LIST_ITEMS + "." + ListItemColumns.ITEM_ID
+        + "=" + Tables.EPISODES + "." + EpisodeColumns.ID;
+
+    String LIST_MOVIES = "LEFT JOIN " + Tables.MOVIES
+        + " ON " + ListItemColumns.ITEM_TYPE + "=" + ListItemColumns.Type.MOVIE
+        +  " AND " + Tables.LIST_ITEMS + "." + ListItemColumns.ITEM_ID
+        + "=" + Tables.MOVIES + "." + MovieColumns.ID;
+
+    String LIST_PEOPLE = "LEFT JOIN " + Tables.PEOPLE
+        + " ON " + ListItemColumns.ITEM_TYPE + "=" + ListItemColumns.Type.PERSON
+        +  " AND " + Tables.LIST_ITEMS + "." + ListItemColumns.ITEM_ID
+        + "=" + Tables.PEOPLE + "." + PersonColumns.ID;
+
+    String LIST = LIST_SHOWS
+        + " "
+        + LIST_SEASONS
+        + " "
+        + LIST_EPISODES
+        + " "
+        + LIST_MOVIES
+        + " "
+        + LIST_PEOPLE;
   }
 
   public interface Tables {
@@ -159,6 +196,9 @@ public final class DatabaseSchematic {
 
     String SHOW_SEARCH_SUGGESTIONS = "showSearchSuggestions";
     String MOVIE_SEARCH_SUGGESTIONS = "movieSearchSuggestions";
+
+    String LISTS = "lists";
+    String LIST_ITEMS = "listItems";
   }
 
   interface References {
@@ -184,6 +224,10 @@ public final class DatabaseSchematic {
     String MOVIES_UPDATE_NAME = "moviesUpdate";
 
     String PEOPLE_UPDATE_NAME = "peopleUpdate";
+
+    String LIST_DELETE_NAME = "listDelete";
+    String LIST_UPDATE_NAME = "listUpdate";
+    String LISTITEM_UPDATE_NAME = "listItemUpdate";
 
     String SEASONS_UPDATE_WATCHED = "UPDATE "
         + Tables.SEASONS
@@ -475,6 +519,24 @@ public final class DatabaseSchematic {
     String PEOPLE_UPDATE = "UPDATE " + Tables.PEOPLE
         + " SET " + PersonColumns.LAST_MODIFIED + "=" + TIME_MILLIS
         + " WHERE " + PersonColumns.ID + "=old."   + PersonColumns.ID + ";";
+
+    String LIST_DELETE = "DELETE FROM "
+        + Tables.LIST_ITEMS
+        + " WHERE "
+        + Tables.LIST_ITEMS
+        + "."
+        + ListItemColumns.LIST_ID
+        + "=OLD."
+        + ListsColumns.ID
+        + ";";
+
+    String LISTS_UPDATE = "UPDATE " + Tables.LISTS
+        + " SET " + ListsColumns.LAST_MODIFIED + "=" + TIME_MILLIS
+        + " WHERE " + ListsColumns.ID + "=old."   + ListsColumns.ID + ";";
+
+    String LISTITEM_UPDATE = "UPDATE " + Tables.LIST_ITEMS
+        + " SET " + ListItemColumns.LAST_MODIFIED + "=" + TIME_MILLIS
+        + " WHERE " + ListItemColumns.ID + "=old."   + ListItemColumns.ID + ";";
   }
 
   @Table(ShowColumns.class) public static final String TABLE_SHOWS = Tables.SHOWS;
@@ -504,6 +566,11 @@ public final class DatabaseSchematic {
 
   @Table(MovieSearchSuggestionsColumns.class) public static final String
       TABLE_MOVIE_SEARCH_SUGGESTIONS = Tables.MOVIE_SEARCH_SUGGESTIONS;
+
+  @Table(ListsColumns.class) public static final String TABLE_LISTS = Tables.LISTS;
+
+  @Table(ListItemColumns.class) public static final String TABLE_LIST_ITEMS =
+      Tables.LIST_ITEMS;
 
   @ExecOnCreate
   public static final String TRIGGER_EPISODE_UPDATE_AIRED = "CREATE TRIGGER "
@@ -629,6 +696,30 @@ public final class DatabaseSchematic {
       + Trigger.PEOPLE_UPDATE
       + " END";
 
+  @ExecOnCreate public static final String TRIGGER_LIST_DELETE = "CREATE TRIGGER "
+      + Trigger.LIST_DELETE_NAME
+      + " AFTER DELETE ON "
+      + Tables.LISTS
+      + " BEGIN "
+      + Trigger.LIST_DELETE
+      + " END;";
+
+  @ExecOnCreate public static final String TRIGGER_LIST_UPDATE = "CREATE TRIGGER "
+      + Trigger.LIST_UPDATE_NAME
+      + " AFTER UPDATE ON "
+      + Tables.LISTS
+      + " FOR EACH ROW BEGIN "
+      + Trigger.LISTS_UPDATE
+      + " END";
+
+  @ExecOnCreate public static final String TRIGGER_LISTITEM_UPDATE = "CREATE TRIGGER "
+      + Trigger.LISTITEM_UPDATE_NAME
+      + " AFTER UPDATE ON "
+      + Tables.LIST_ITEMS
+      + " FOR EACH ROW BEGIN "
+      + Trigger.LISTITEM_UPDATE
+      + " END";
+
   @OnUpgrade public static void onUpgrade(Context context, SQLiteDatabase db, int oldVersion,
       int newVersion) {
     if (oldVersion < 12) {
@@ -682,6 +773,14 @@ public final class DatabaseSchematic {
       db.execSQL(TRIGGER_EPISODE_UPDATE);
       db.execSQL(TRIGGER_MOVIES_UPDATE);
       db.execSQL(TRIGGER_PEOPLE_UPDATE);
+    }
+
+    if (oldVersion < 14) {
+      db.execSQL(CathodeDatabase.TABLE_LISTS);
+      db.execSQL(CathodeDatabase.TABLE_LIST_ITEMS);
+      db.execSQL(TRIGGER_LIST_DELETE);
+      db.execSQL(TRIGGER_LIST_UPDATE);
+      db.execSQL(TRIGGER_LISTITEM_UPDATE);
     }
   }
 

@@ -46,10 +46,11 @@ import net.simonvt.cathode.ui.adapter.MovieSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
+import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.widget.SearchView;
 
 public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<SimpleCursor>, MoviesAdapter.MovieClickListener,
+    implements LoaderManager.LoaderCallbacks<SimpleCursor>, MovieClickListener,
     MovieRecommendationsAdapter.DismissListener, ListDialog.Callback {
 
   private enum SortBy {
