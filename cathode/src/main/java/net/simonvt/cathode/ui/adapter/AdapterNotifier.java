@@ -68,7 +68,7 @@ public class AdapterNotifier {
 
       for (int i = oldItemCount - 1; i >= 0; i--) {
         Item item = oldItems.get(i);
-        final int newPos = indexOf(oldItems, item.id);
+        final int newPos = indexOf(newItems, item.id);
         if (newPos == -1) {
           notifyItemRemoved(i);
           oldItems.remove(i);
