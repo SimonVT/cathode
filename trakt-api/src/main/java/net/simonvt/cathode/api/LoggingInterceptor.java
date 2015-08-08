@@ -29,17 +29,23 @@ public class LoggingInterceptor implements Interceptor {
     Request request = chain.request();
     Response response = chain.proceed(request);
 
-    if (response.code() == 412) {
+    final int statusCode = response.code();
+    if (statusCode == 404 || statusCode == 412) {
       Timber.i("Url: %s", request.urlString());
       Headers headers = request.headers();
       for (int i = 0; i < headers.size(); i++) {
         String name = headers.name(i);
-        if (!"Authorization".equals(name)) {
+        if (!TraktInterceptor.HEADER_AUTHORIZATION.equals(name)) {
           Timber.i("%s: %s", name, headers.get(headers.name(i)));
         }
       }
 
-      Timber.e(new TraktException("412 Precondition Failed"), "Precondition failed");
+      if (statusCode == 404) {
+        Timber.e(new FourOhFourException("Status code " + statusCode), "Status code %d",
+            statusCode);
+      } else {
+        Timber.e(new TraktException("Status code " + statusCode), "Status code %d", statusCode);
+      }
     }
 
     return response;

@@ -5,7 +5,7 @@ import retrofit.RequestInterceptor;
 
 public class TraktInterceptor implements RequestInterceptor {
 
-  private static final String HEADER_AUTHORIZATION = "Authorization";
+  public static final String HEADER_AUTHORIZATION = "Authorization";
 
   public static final String HEADER_API_KEY = "trakt-api-key";
 
