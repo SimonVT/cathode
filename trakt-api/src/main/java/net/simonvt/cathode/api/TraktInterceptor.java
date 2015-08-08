@@ -11,6 +11,8 @@ public class TraktInterceptor implements RequestInterceptor {
 
   public static final String HEADER_API_VERSION = "trakt-api-version";
 
+  public static final String PATH_USERNAME = "username";
+
   private String auth = null;
 
   private UserToken token;
@@ -48,5 +50,7 @@ public class TraktInterceptor implements RequestInterceptor {
 
     requestFacade.addHeader(HEADER_API_KEY, apiKey);
     requestFacade.addHeader(HEADER_API_VERSION, "2");
+
+    requestFacade.addPathParam(PATH_USERNAME, "me");
   }
 }

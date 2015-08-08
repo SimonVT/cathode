@@ -18,10 +18,8 @@ package net.simonvt.cathode.remote.sync.lists;
 
 import android.content.ContentProviderOperation;
 import android.content.OperationApplicationException;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.RemoteException;
-import android.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -46,7 +44,6 @@ import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.sync.SyncPerson;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
-import net.simonvt.cathode.settings.Settings;
 import timber.log.Timber;
 
 public class SyncList extends Job {
@@ -91,10 +88,7 @@ public class SyncList extends Job {
   }
 
   @Override public void perform() {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-    String username = settings.getString(Settings.PROFILE_USERNAME, null);
-
-    List<ListItem> items = usersService.listItems(username, traktId);
+    List<ListItem> items = usersService.listItems(traktId);
 
     final long listId = ListWrapper.getId(getContentResolver(), traktId);
     Cursor c = getContentResolver().query(ListItems.inList(listId), new String[] {

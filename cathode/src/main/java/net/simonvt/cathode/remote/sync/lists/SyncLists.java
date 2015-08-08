@@ -16,9 +16,7 @@
 
 package net.simonvt.cathode.remote.sync.lists;
 
-import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -28,7 +26,6 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
 import net.simonvt.cathode.provider.ListWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Lists;
-import net.simonvt.cathode.settings.Settings;
 
 public class SyncLists extends Job {
 
@@ -47,10 +44,7 @@ public class SyncLists extends Job {
   }
 
   @Override public void perform() {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-    String username = settings.getString(Settings.PROFILE_USERNAME, null);
-
-    List<CustomList> lists = usersService.lists(username);
+    List<CustomList> lists = usersService.lists();
 
     List<Long> listIds = new ArrayList<>();
     Cursor listsCursor =

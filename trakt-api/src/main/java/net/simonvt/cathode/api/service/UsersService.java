@@ -35,6 +35,13 @@ public interface UsersService {
   @GET("/users/settings") UserSettings getUserSettings();
 
   /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Returns all movies or shows a user has watched sorted by most plays.
+   */
+  @GET("/users/{username}/watching") Watching watching();
+
+  /**
    * <b>OAuth Optional</b>
    * <p>
    * Returns all movies or shows a user has watched sorted by most plays.
@@ -42,11 +49,25 @@ public interface UsersService {
   @GET("/users/{username}/watching") Watching watching(@Path("username") String username);
 
   /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Returns all custom lists for a user.
+   */
+  @GET("/users/{username}/lists") List<CustomList> lists();
+
+  /**
    * <b>OAuth Optional</b>
    * <p>
    * Returns all custom lists for a user.
    */
   @GET("/users/{username}/lists") List<CustomList> lists(@Path("username") String username);
+
+  /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Get all items on a custom list. Items can be movies, shows, seasons, episodes, or people.
+   */
+  @GET("/users/{username}/lists/{id}/items") List<ListItem> listItems(@Path("id") long id);
 
   /**
    * <b>OAuth Optional</b>

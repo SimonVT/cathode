@@ -18,11 +18,8 @@ package net.simonvt.cathode.remote.sync;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.OperationApplicationException;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.RemoteException;
-import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +45,6 @@ import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
 import net.simonvt.cathode.remote.sync.shows.SyncShowCast;
-import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.util.HttpUtils;
 import retrofit.RetrofitError;
 import retrofit.client.Header;
@@ -102,18 +98,9 @@ public class SyncWatching extends Job {
 
     ContentProviderOperation op = null;
 
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-    String username = settings.getString(Settings.PROFILE_USERNAME, null);
-
-    if (TextUtils.isEmpty(username)) {
-      queue(new SyncUserSettings());
-      queue(new SyncWatching());
-      return;
-    }
-
     Watching watching = null;
     try {
-      watching = usersService.watching(username);
+      watching = usersService.watching();
     } catch (RetrofitError error) {
       Response response = error.getResponse();
       // Some users get a 412 when requesting watched stuff. Ignore so it doesn't stop the entire
