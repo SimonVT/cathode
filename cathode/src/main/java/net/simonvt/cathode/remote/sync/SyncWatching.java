@@ -108,7 +108,7 @@ public class SyncWatching extends Job {
       if (response != null && response.getStatus() == 412) {
         List<Header> headers = response.getHeaders();
         for (Header header : headers) {
-          Timber.i(header.toString());
+          Timber.i("%s", header.toString());
         }
 
         TypedInput input = response.getBody();
@@ -118,7 +118,7 @@ public class SyncWatching extends Job {
         } catch (IOException e) {
           // Ignore
         }
-        Timber.i("Body: " + body);
+        Timber.i("Body: %s", body);
 
         Timber.e(new FourOneTwoException(), "Precondition failed");
       } else {

@@ -176,12 +176,12 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
       offset += header.size;
     }
 
-    Timber.i("Count: " + getItemCount());
-    Timber.i("Header count: " + headers.size());
+    Timber.i("Count: %d", getItemCount());
+    Timber.i("Header count: %d", headers.size());
 
     for (Header header : headers) {
-      Timber.i("Header id: " + header.headerId);
-      Timber.i("Header size: " + header.size);
+      Timber.i("Header id: %d", header.headerId);
+      Timber.i("Header size: %d", header.size);
     }
 
     throw new RuntimeException(
@@ -222,12 +222,12 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
     }
 
     if (isHeader(position)) {
-      Timber.i("Count: " + getItemCount());
-      Timber.i("Header count: " + headers.size());
+      Timber.i("Count: %d", getItemCount());
+      Timber.i("Header count: %d", headers.size());
 
       for (Header header : headers) {
-        Timber.i("Header id: " + header.headerId);
-        Timber.i("Header size: " + header.size);
+        Timber.i("Header id: %d", header.headerId);
+        Timber.i("Header size: %d", header.size);
       }
 
       throw new RuntimeException("Trying to get cursor for a header position " + position);

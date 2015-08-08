@@ -43,7 +43,7 @@ public class StartSyncUpdatedMovies extends Job {
       long millis = TimeUtils.getMillis(lastUpdated);
       millis = millis - 12 * DateUtils.HOUR_IN_MILLIS;
       String updatedSince = TimeUtils.getIsoTime(millis);
-      Timber.d("Last updated: " + lastUpdated + " - updated since: " + updatedSince);
+      Timber.d("Last updated: %s - updated since: %s", lastUpdated, updatedSince);
       queue(new SyncUpdatedMovies(updatedSince, 1));
     }
 

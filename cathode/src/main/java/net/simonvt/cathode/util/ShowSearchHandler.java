@@ -75,7 +75,7 @@ public class ShowSearchHandler {
   }
 
   public void search(final String query) {
-    Timber.d("[search] Query: " + query);
+    Timber.d("[search] Query: %s", query);
     showIds = null;
 
     if (thread != null) {

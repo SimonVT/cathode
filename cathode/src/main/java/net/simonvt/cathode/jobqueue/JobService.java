@@ -165,12 +165,12 @@ public class JobService extends Service {
       }
 
       try {
-        Timber.d("Executing job: " + job.getClass().getSimpleName());
+        Timber.d("Executing job: %s", job.getClass().getSimpleName());
         job.perform();
         jobFinished(job);
       } catch (Throwable t) {
         if (!(t instanceof RetrofitError)) {
-          Timber.i(job.key());
+          Timber.i("%s", job.key());
           Timber.e(t, "Unable to execute job");
         }
 
@@ -259,7 +259,7 @@ public class JobService extends Service {
               // Notification is created elsewhere
               return true;
             } else if (statusCode == 404) {
-              Timber.i(job.key());
+              Timber.i("%s", job.key());
               Timber.e(new FourOhFourException(t), "404");
               jobManager.jobDone(job);
               executeNext();
@@ -367,6 +367,6 @@ public class JobService extends Service {
       am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, runAt, pi);
     }
 
-    Timber.d("Scheduling alarm in " + retryDelay + " minutes");
+    Timber.d("Scheduling alarm in %d minutes", retryDelay);
   }
 }

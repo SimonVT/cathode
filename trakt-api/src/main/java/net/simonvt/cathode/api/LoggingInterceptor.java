@@ -30,12 +30,12 @@ public class LoggingInterceptor implements Interceptor {
     Response response = chain.proceed(request);
 
     if (response.code() == 412) {
-      Timber.i("Url: " + request.urlString());
+      Timber.i("Url: %s", request.urlString());
       Headers headers = request.headers();
       for (int i = 0; i < headers.size(); i++) {
         String name = headers.name(i);
         if (!"Authorization".equals(name)) {
-          Timber.i(name + ": " + headers.get(headers.name(i)));
+          Timber.i("%s: %s", name, headers.get(headers.name(i)));
         }
       }
 

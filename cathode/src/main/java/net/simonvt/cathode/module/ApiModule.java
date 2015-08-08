@@ -67,7 +67,7 @@ public class ApiModule {
             Response response = error.getResponse();
             if (response != null) {
               final int statusCode = response.getStatus();
-              Timber.i("Status code: " + statusCode);
+              Timber.i("Status code: %d", statusCode);
 
               if (statusCode == 401) {
                 MAIN_HANDLER.post(new Runnable() {
@@ -79,11 +79,11 @@ public class ApiModule {
                 // Handled in JobService
                 return error;
               } else if (statusCode == 412) {
-                Timber.i("Url: " + response.getUrl());
+                Timber.i("Url: %s", response.getUrl());
 
                 List<Header> headers = response.getHeaders();
                 for (Header header : headers) {
-                  Timber.i(header.toString());
+                  Timber.i("%s", header.toString());
                 }
 
                 TypedInput input = response.getBody();
@@ -93,7 +93,7 @@ public class ApiModule {
                 } catch (IOException e) {
                   // Ignore
                 }
-                Timber.i("Body: " + body);
+                Timber.i("Body: %s", body);
 
                 Timber.e(new FourOneTwoException(), "Precondition failed");
                 return error;

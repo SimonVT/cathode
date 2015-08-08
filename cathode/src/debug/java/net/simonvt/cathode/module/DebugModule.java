@@ -55,7 +55,7 @@ public class DebugModule {
         final int statusCode = httpStatusCode.get();
         Response response = chain.proceed(chain.request());
         if (statusCode != 200) {
-          Timber.d("Rewriting status code: " + statusCode);
+          Timber.d("Rewriting status code: %d", statusCode);
           response = response.newBuilder().code(statusCode).build();
         }
         return response;

@@ -94,7 +94,7 @@ public class OauthWebViewActivity extends ActionBarActivity {
         Uri uri = Uri.parse(url);
 
         final String code = uri.getQueryParameter(LoginActivity.QUERY_CODE);
-        Timber.d("We got a code! " + code);
+        Timber.d("We got a code! %s", code);
 
         Intent result = new Intent();
         result.putExtra(LoginActivity.QUERY_CODE, code);

@@ -26,7 +26,7 @@ public class JobReceiver extends BroadcastReceiver {
   private static final String TAG = "JobReceiver";
 
   @Override public void onReceive(Context context, Intent intent) {
-    Timber.tag(TAG).i("Intent: " + intent);
+    Timber.tag(TAG).i("Intent: %s", intent.toString());
     JobService.acquireLock(context);
 
     final int retryDelay = intent.getIntExtra(JobService.RETRY_DELAY, 1);

@@ -73,7 +73,7 @@ public class PurgeDatabase extends Job {
     while (shows.moveToNext()) {
       final long id = shows.getLong(shows.getColumnIndex(ShowColumns.ID));
       final String title = shows.getString(shows.getColumnIndex(ShowColumns.TITLE));
-      Timber.d("Purging " + title);
+      Timber.d("Purging %s", title);
       showIds.add(id);
     }
 
@@ -123,7 +123,7 @@ public class PurgeDatabase extends Job {
     while (movies.moveToNext()) {
       final long id = movies.getLong(movies.getColumnIndex(MovieColumns.ID));
       final String title = movies.getString(movies.getColumnIndex(MovieColumns.TITLE));
-      Timber.d("Purging " + title);
+      Timber.d("Purging %s", title);
       movieIds.add(id);
     }
 

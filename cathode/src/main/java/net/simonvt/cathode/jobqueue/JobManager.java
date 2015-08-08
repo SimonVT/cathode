@@ -129,7 +129,7 @@ public final class JobManager {
         startService();
       }
 
-      Timber.d("Loaded " + jobs.size() + " jobs");
+      Timber.d("Loaded %d jobs", jobs.size());
     }
   }
 
@@ -152,20 +152,20 @@ public final class JobManager {
 
     serialExecutor.execute(new Runnable() {
       @Override public void run() {
-        Timber.d("Adding job: " + job.getClass().getSimpleName());
+        Timber.d("Adding job: %s", job.getClass().getSimpleName());
 
         synchronized (jobs) {
           final String key = job.key();
           for (Job existingJob : jobs) {
             if (key.equals(existingJob.key())) {
-              Timber.d("Job " + key + " matched " + existingJob.key());
+              Timber.d("Job %s matched %s", key, existingJob.key());
               return;
             }
           }
 
           addJobInternal(job);
 
-          Timber.d("Added job " + job.getClass().getSimpleName() + ", now there's " + jobs.size());
+          Timber.d("Added job %s, now there's %d", job.getClass().getSimpleName(), jobs.size());
         }
 
         startService();
@@ -220,7 +220,7 @@ public final class JobManager {
   void jobDone(final Job job) {
     synchronized (jobs) {
       jobs.remove(job);
-      Timber.d("Finished job " + job.getClass().getSimpleName() + ", " + jobs.size() + " left");
+      Timber.d("Finished job %s, %d left", job.getClass().getSimpleName(), jobs.size());
       postSizeChanged(jobs.size());
 
       if (jobs.size() == 0) {
@@ -231,7 +231,7 @@ public final class JobManager {
   }
 
   void jobFailed(Job job) {
-    Timber.d("Job failed: " + job.getClass().getSimpleName());
+    Timber.d("Job failed: %s", job.getClass().getSimpleName());
     changeStatus(QueueStatus.FAILED);
   }
 
@@ -274,7 +274,7 @@ public final class JobManager {
           for (int i = jobs.size() - 1; i >= 0; i--) {
             Job job = jobs.get(i);
             if (job.hasFlag(flag)) {
-              Timber.d("Removing job: " + job.key());
+              Timber.d("Removing job: %s", job.key());
               jobs.remove(i);
               removeJobFromDatabase(job);
             }
