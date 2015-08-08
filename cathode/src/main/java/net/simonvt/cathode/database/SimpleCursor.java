@@ -141,7 +141,8 @@ public class SimpleCursor extends AbsSimpleCursor {
     if (hasColumn(BaseColumns._ID)) {
       final int idColumn = getColumnIndex(BaseColumns._ID);
       for (int position = 0; position < getCount(); position++) {
-        final long rowId = getLong(idColumn);
+        Object[] values = data.get(position);
+        final long rowId = Long.valueOf(values[idColumn].toString());
         if (id == rowId) {
           data.remove(position);
           break;
