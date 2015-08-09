@@ -37,6 +37,7 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
@@ -48,6 +49,7 @@ import net.simonvt.cathode.ui.NavigationClickListener;
 import net.simonvt.cathode.ui.dialog.AboutDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
+import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.widget.AppBarRelativeLayout;
@@ -63,6 +65,8 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   private static final String DIALOG_RATING =
       "net.simonvt.cathode.ui.fragment.EpisodeFragment.ratingDialog";
+  private static final String DIALOG_LISTS_ADD =
+      "net.simonvt.cathode.ui.fragment.EpisodeFragment.listsAddDialog";
 
   @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;
@@ -216,6 +220,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     menu.clear();
 
     toolbar.inflateMenu(R.menu.activity_base);
+    toolbar.inflateMenu(R.menu.fragment_episode);
 
     if (loaded) {
       if (checkedIn) {
@@ -262,8 +267,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
               return true;
 
             case R.id.action_checkin:
-              CheckInDialog.showDialogIfNecessary(getActivity(), Type.SHOW, episodeTitle,
-                  episodeId);
+              CheckInDialog.showDialogIfNecessary(getActivity(), Type.SHOW, episodeTitle, episodeId);
               return true;
 
             case R.id.action_checkin_cancel:
@@ -288,6 +292,11 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
             case R.id.menu_about:
               new AboutDialog().show(getFragmentManager(), HomeActivity.DIALOG_ABOUT);
+              return true;
+
+            case R.id.menu_lists_add:
+              ListsDialog.newInstance(DatabaseContract.ListItemColumns.Type.EPISODE, episodeId)
+                  .show(getFragmentManager(), DIALOG_LISTS_ADD);
               return true;
           }
 

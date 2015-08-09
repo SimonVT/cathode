@@ -44,6 +44,7 @@ import net.simonvt.cathode.database.SimpleMergeCursor;
 import net.simonvt.cathode.provider.CollectLoader;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCharacterColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -62,6 +63,7 @@ import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.SeasonsAdapter;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
+import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
 import net.simonvt.cathode.util.DateUtils;
@@ -82,6 +84,8 @@ public class ShowFragment extends BaseFragment {
 
   private static final String DIALOG_RATING =
       "net.simonvt.cathode.ui.fragment.ShowFragment.ratingDialog";
+  private static final String DIALOG_LISTS_ADD =
+      "net.simonvt.cathode.ui.fragment.ShowFragment.listsAddDialog";
 
   private static final String[] SHOW_PROJECTION = new String[] {
       ShowColumns.TITLE, ShowColumns.YEAR, ShowColumns.AIR_TIME, ShowColumns.AIR_DAY,
@@ -444,6 +448,11 @@ public class ShowFragment extends BaseFragment {
 
       case R.id.action_watchlist_add:
         showScheduler.setIsInWatchlist(showId, true);
+        return true;
+
+      case R.id.menu_lists_add:
+        ListsDialog.newInstance(ListItemColumns.Type.SHOW, showId)
+            .show(getFragmentManager(), DIALOG_LISTS_ADD);
         return true;
     }
 

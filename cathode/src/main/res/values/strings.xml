@@ -139,6 +139,7 @@
   <string name="action_list_create">Create list</string>
   <string name="action_create">Create</string>
   <string name="action_list_remove">Remove from list</string>
+  <string name="action_list_add">Add to lists</string>
 
   <string name="checkmark_watched">Watched</string>
   <string name="checkmark_collection">In collection</string>
@@ -217,6 +218,8 @@
   <string name="list_create_privacy">Privacy</string>
   <string name="list_create_allow_comments">Allow comments</string>
   <string name="list_create_display_numbers">Display numbers</string>
+
+  <string name="no_lists">You have no lists</string>
 
   <string name="empty_show_upcoming">No upcoming episodes. Use the search button to find some new
     shows to watch.

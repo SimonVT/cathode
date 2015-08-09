@@ -36,6 +36,11 @@ import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.UpdateShowCounts;
 import net.simonvt.cathode.remote.action.CancelCheckin;
+import net.simonvt.cathode.remote.action.lists.AddEpisode;
+import net.simonvt.cathode.remote.action.lists.AddMovie;
+import net.simonvt.cathode.remote.action.lists.AddPerson;
+import net.simonvt.cathode.remote.action.lists.AddSeason;
+import net.simonvt.cathode.remote.action.lists.AddShow;
 import net.simonvt.cathode.remote.action.lists.CreateList;
 import net.simonvt.cathode.remote.action.lists.RemoveEpisode;
 import net.simonvt.cathode.remote.action.lists.RemoveMovie;
@@ -117,6 +122,7 @@ import net.simonvt.cathode.ui.adapter.ShowWatchlistAdapter;
 import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
 import net.simonvt.cathode.ui.adapter.UpcomingAdapter;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
+import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.fragment.CreateListFragment;
@@ -170,7 +176,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         CreateListFragment.class, ListFragment.class,
 
         // Dialogs
-        RatingDialog.class, CheckInDialog.class, CheckInDialog.Injections.class,
+        RatingDialog.class, CheckInDialog.class, CheckInDialog.Injections.class, ListsDialog.class,
 
         // ListAdapters
         SeasonAdapter.class, SeasonsAdapter.class, ShowDescriptionAdapter.class,
@@ -203,7 +209,8 @@ import net.simonvt.cathode.widget.RemoteImageView;
         SyncPerson.class, SyncUpdatedShows.class, SyncUpdatedMovies.class, ForceUpdateJob.class,
         UpdateShowCounts.class, SyncLists.class, SyncList.class, CreateList.class,
         RemoveShow.class, RemoveSeason.class, RemoveEpisode.class, RemoveMovie.class,
-        RemovePerson.class,
+        RemovePerson.class, AddShow.class, AddSeason.class, AddEpisode.class, AddMovie.class,
+        AddPerson.class,
 
         // Misc
         ShowSearchHandler.class, ShowSearchHandler.SearchThread.class, MovieSearchHandler.class,

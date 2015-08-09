@@ -20,12 +20,15 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
+import android.view.MenuItem;
 import android.view.View;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -36,6 +39,7 @@ import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.SeasonAdapter;
+import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 
 public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder>
@@ -49,6 +53,9 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
   private static final String ARG_SEASON_NUMBER =
       "net.simonvt.cathode.ui.fragment.SeasonFragment.seasonNumber";
   private static final String ARG_TYPE = "net.simonvt.cathode.ui.fragment.SeasonFragment.type";
+
+  private static final String DIALOG_LISTS_ADD =
+      "net.simonvt.cathode.ui.fragment.SeasonFragment.listsAddDialog";
 
   private long showId;
 
@@ -146,6 +153,22 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
     } else {
       return getResources().getString(R.string.season_x, seasonNumber);
     }
+  }
+
+  @Override public void createMenu(Toolbar toolbar) {
+    super.createMenu(toolbar);
+    toolbar.inflateMenu(R.menu.fragment_season);
+  }
+
+  @Override public boolean onMenuItemClick(MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.menu_lists_add:
+        ListsDialog.newInstance(DatabaseContract.ListItemColumns.Type.SEASON, seasonId)
+            .show(getFragmentManager(), DIALOG_LISTS_ADD);
+        return true;
+    }
+
+    return super.onMenuItemClick(item);
   }
 
   @Override protected int getColumnCount() {

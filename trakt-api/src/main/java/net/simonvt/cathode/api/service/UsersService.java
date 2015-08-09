@@ -82,8 +82,28 @@ public interface UsersService {
   @GET("/users/{username}/lists/{id}/items") List<ListItem> listItems(
       @Path("username") String username, @Path("id") long id);
 
+  @POST("/users/{username}/lists") CustomList createList(@Body CreateListBody createList);
+
   @POST("/users/{username}/lists") CustomList createList(@Path("username") String username,
       @Body CreateListBody createList);
+
+  /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Add one or more items to a custom list. Items can be movies, shows, seasons, episodes,
+   * or people.
+   */
+  @POST("/users/{username}/lists/{id}/items") ListItemActionResponse addItems(
+      @Path("id") long id, @Body ListItemActionBody item);
+
+  /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Add one or more items to a custom list. Items can be movies, shows, seasons, episodes,
+   * or people.
+   */
+  @POST("/users/{username}/lists/{id}/items") ListItemActionResponse addItems(
+      @Path("username") String username, @Path("id") long id, @Body ListItemActionBody item);
 
   /**
    * <b>OAuth Required</b>

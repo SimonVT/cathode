@@ -124,7 +124,7 @@ public class ListFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
   }
 
   @Override public void onRemoveItem(int position, long id) {
-    Loader loader = getLoaderManager().getLoader(Loaders.LOADER_LIST);
+    Loader loader = getLoaderManager().getLoader(Loaders.LIST);
     ((SimpleCursorLoader) loader).throttle(2 * DateUtils.SECOND_IN_MILLIS);
 
     final SimpleCursor cursor = (SimpleCursor) adapter.getCursor(position);

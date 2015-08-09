@@ -80,12 +80,24 @@ public class ListItemActionResponse {
     }
   }
 
+  private Items added;
+
   private Items deleted;
+
+  private Items existing;
 
   private NotFound notFound;
 
+  public Items getAdded() {
+    return added;
+  }
+
   public Items getDeleted() {
     return deleted;
+  }
+
+  public Items getExisting() {
+    return existing;
   }
 
   public NotFound getNotFound() {

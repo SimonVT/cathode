@@ -56,4 +56,7 @@ public interface Loaders {
 
   int LISTS = 800;
   int LIST = 801;
+
+  int DIALOG_LISTS = 1002;
+  int DIALOG_LISTS_STATUS = 1003;
 }

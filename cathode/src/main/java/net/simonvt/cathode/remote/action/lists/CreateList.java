@@ -68,9 +68,8 @@ public class CreateList extends Job {
 
   @Override public void perform() {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-    String username = settings.getString(Settings.PROFILE_USERNAME, null);
 
-    CustomList list = usersServie.createList(username, CreateListBody.name(name)
+    CustomList list = usersServie.createList(CreateListBody.name(name)
         .description(description)
         .privacy(privacy)
         .displayNumbers(displayNumbers)

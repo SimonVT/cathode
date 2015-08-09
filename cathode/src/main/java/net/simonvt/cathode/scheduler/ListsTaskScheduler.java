@@ -16,6 +16,7 @@
 
 package net.simonvt.cathode.scheduler;
 
+import android.content.ContentValues;
 import android.content.Context;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.enumeration.Privacy;
@@ -28,6 +29,11 @@ import net.simonvt.cathode.provider.PersonWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.remote.action.lists.AddEpisode;
+import net.simonvt.cathode.remote.action.lists.AddMovie;
+import net.simonvt.cathode.remote.action.lists.AddPerson;
+import net.simonvt.cathode.remote.action.lists.AddSeason;
+import net.simonvt.cathode.remote.action.lists.AddShow;
 import net.simonvt.cathode.remote.action.lists.CreateList;
 import net.simonvt.cathode.remote.action.lists.RemoveEpisode;
 import net.simonvt.cathode.remote.action.lists.RemoveMovie;
@@ -56,20 +62,45 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
     });
   }
 
+  public void addItem(final long listId, final int itemType, final long itemId) {
+    updateListItem(listId, itemType, itemId, true);
+  }
+
   public void removeItem(final long listId, final int itemType, final long itemId) {
+    updateListItem(listId, itemType, itemId, false);
+  }
+
+  private void updateListItem(final long listId, final int itemType, final long itemId,
+      final boolean add) {
     execute(new Runnable() {
       @Override public void run() {
         final long listTraktId = ListWrapper.getTraktId(context.getContentResolver(), listId);
-        context.getContentResolver().delete(ListItems.LIST_ITEMS,
-            ListItemColumns.ITEM_TYPE + "=? AND " + ListItemColumns.ITEM_ID + "=?", new String[] {
-                String.valueOf(itemType), String.valueOf(itemId),
-            });
+        if (add) {
+          ContentValues values = new ContentValues();
+          values.put(ListItemColumns.LIST_ID, listId);
+          values.put(ListItemColumns.LISTED_AT, System.currentTimeMillis());
+          values.put(ListItemColumns.ITEM_ID, itemId);
+          values.put(ListItemColumns.ITEM_TYPE, itemType);
+
+          context.getContentResolver().insert(ListItems.LIST_ITEMS, values);
+        } else {
+          context.getContentResolver()
+              .delete(ListItems.inList(listId),
+                  ListItemColumns.ITEM_TYPE + "=? AND " + ListItemColumns.ITEM_ID + "=?",
+                  new String[] {
+                      String.valueOf(itemType), String.valueOf(itemId),
+                  });
+        }
 
         switch (itemType) {
           case ListItemColumns.Type.SHOW: {
             final long showTraktId = ShowWrapper.getTraktId(context.getContentResolver(), itemId);
 
-            queue(new RemoveShow(listTraktId, showTraktId));
+            if (add) {
+              queue(new AddShow(listTraktId, showTraktId));
+            } else {
+              queue(new RemoveShow(listTraktId, showTraktId));
+            }
             break;
           }
 
@@ -79,27 +110,37 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
             final int seasonNumber =
                 SeasonWrapper.getSeasonNumber(context.getContentResolver(), itemId);
 
-            queue(new RemoveSeason(listTraktId, showTraktId, seasonNumber));
+            if (add) {
+              queue(new AddSeason(listTraktId, showTraktId, seasonNumber));
+            } else {
+              queue(new RemoveSeason(listTraktId, showTraktId, seasonNumber));
+            }
             break;
           }
 
           case ListItemColumns.Type.EPISODE: {
             final long showId = EpisodeWrapper.getShowId(context.getContentResolver(), itemId);
             final long showTraktId = ShowWrapper.getTraktId(context.getContentResolver(), showId);
-            final long seasonId = EpisodeWrapper.getSeason(context.getContentResolver(), itemId);
-            final int seasonNumber =
-                SeasonWrapper.getSeasonNumber(context.getContentResolver(), seasonId);
+            final int seasonNumber =EpisodeWrapper.getSeason(context.getContentResolver(), itemId);
             final int episodeNumber =
                 EpisodeWrapper.getEpisodeNumber(context.getContentResolver(), itemId);
 
-            queue(new RemoveEpisode(listTraktId, showTraktId, seasonNumber, episodeNumber));
+            if (add) {
+              queue(new AddEpisode(listTraktId, showTraktId, seasonNumber, episodeNumber));
+            } else {
+              queue(new RemoveEpisode(listTraktId, showTraktId, seasonNumber, episodeNumber));
+            }
             break;
           }
 
           case ListItemColumns.Type.MOVIE: {
             final long movieTraktId = MovieWrapper.getTraktId(context.getContentResolver(), itemId);
 
-            queue(new RemoveMovie(listTraktId, movieTraktId));
+            if (add) {
+              queue(new AddMovie(listTraktId, movieTraktId));
+            } else {
+              queue(new RemoveMovie(listTraktId, movieTraktId));
+            }
             break;
           }
 
@@ -107,7 +148,11 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
             final long personTraktId =
                 PersonWrapper.getTraktId(context.getContentResolver(), itemId);
 
-            queue(new RemovePerson(listTraktId, personTraktId));
+            if (add) {
+              queue(new AddPerson(listTraktId, personTraktId));
+            } else {
+              queue(new RemovePerson(listTraktId, personTraktId));
+            }
             break;
           }
         }

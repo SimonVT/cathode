@@ -36,6 +36,7 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
@@ -47,6 +48,7 @@ import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
+import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
@@ -60,6 +62,8 @@ public class MovieFragment extends BaseFragment
 
   private static final String DIALOG_RATING =
       "net.simonvt.cathode.ui.fragment.MovieFragment.ratingDialog";
+  private static final String DIALOG_LISTS_ADD =
+      "net.simonvt.cathode.ui.fragment.MovieFragment.listsAddDialog";
 
   @Inject MovieTaskScheduler movieScheduler;
   @Inject Bus bus;
@@ -152,6 +156,8 @@ public class MovieFragment extends BaseFragment
 
   @Override public void createMenu(Toolbar toolbar) {
     super.createMenu(toolbar);
+    toolbar.inflateMenu(R.menu.fragment_movie);
+
     Menu menu = toolbar.getMenu();
 
     if (loaded) {
@@ -218,6 +224,11 @@ public class MovieFragment extends BaseFragment
 
       case R.id.action_collection_remove:
         movieScheduler.setIsInCollection(movieId, false);
+        return true;
+
+      case R.id.menu_lists_add:
+        ListsDialog.newInstance(DatabaseContract.ListItemColumns.Type.MOVIE, movieId)
+            .show(getFragmentManager(), DIALOG_LISTS_ADD);
         return true;
     }
 
