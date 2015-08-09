@@ -46,6 +46,10 @@ public class RateShow extends Job {
     return PRIORITY_ACTIONS;
   }
 
+  @Override public boolean allowDuplicates() {
+    return true;
+  }
+
   @Override public void perform() {
     RateItems items = new RateItems();
     items.show(traktId).rating(rating).ratedAt(ratedAt);

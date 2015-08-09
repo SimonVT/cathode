@@ -37,6 +37,10 @@ public class CancelCheckin extends Job {
     return PRIORITY_ACTIONS;
   }
 
+  @Override public boolean allowDuplicates() {
+    return true;
+  }
+
   @Override public void perform() {
     checkinService.deleteCheckin();
   }

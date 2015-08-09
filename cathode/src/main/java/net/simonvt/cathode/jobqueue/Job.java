@@ -62,6 +62,10 @@ public abstract class Job {
 
   public abstract void perform();
 
+  public boolean allowDuplicates() {
+    return false;
+  }
+
   public int getFlags() {
     return flags;
   }

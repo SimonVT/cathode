@@ -59,6 +59,10 @@ public class WatchedSeason extends Job {
     return PRIORITY_ACTIONS;
   }
 
+  @Override public boolean allowDuplicates() {
+    return true;
+  }
+
   @Override public void perform() {
     if (watched) {
       SyncItems items = new SyncItems();

@@ -62,6 +62,10 @@ public class RateEpisode extends Job {
     return PRIORITY_ACTIONS;
   }
 
+  @Override public boolean allowDuplicates() {
+    return true;
+  }
+
   @Override public void perform() {
     RateItems items = new RateItems();
     items.show(traktId).season(season).episode(episode).rating(rating).ratedAt(ratedAt);

@@ -155,11 +155,13 @@ public final class JobManager {
         postOnJobAdded(job);
 
         synchronized (jobs) {
-          final String key = job.key();
-          for (Job existingJob : jobs) {
-            if (key.equals(existingJob.key())) {
-              Timber.d("Job %s matched %s", key, existingJob.key());
-              return;
+          if (!job.allowDuplicates()) {
+            final String key = job.key();
+            for (Job existingJob : jobs) {
+              if (key.equals(existingJob.key())) {
+                Timber.d("Job %s matched %s", key, existingJob.key());
+                return;
+              }
             }
           }
 
