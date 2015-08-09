@@ -68,7 +68,7 @@ public class SyncUpdatedShows extends Job {
         final boolean needsUpdate =
             ShowWrapper.needsUpdate(getContentResolver(), traktId, updatedAt);
         if (needsUpdate) {
-          Timber.d("Show: %s - last updated: %d", show.getTitle(), updatedAt);
+          Timber.d("Show: %s - last updated: %s", show.getTitle(), updatedAt);
           final long id = ShowWrapper.getShowId(getContentResolver(), traktId);
           if (ShowWrapper.shouldSyncFully(getContentResolver(), id)) {
             queue(new SyncShow(traktId));
