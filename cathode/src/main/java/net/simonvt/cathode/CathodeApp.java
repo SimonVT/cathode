@@ -27,8 +27,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
@@ -52,6 +50,7 @@ import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.LoginActivity;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.util.MainHandler;
 import timber.log.Timber;
 
 public class CathodeApp extends Application {
@@ -61,8 +60,6 @@ public class CathodeApp extends Application {
   public static final boolean DEBUG = BuildConfig.DEBUG;
 
   private static final int AUTH_NOTIFICATION = 2;
-
-  private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
   private static final long SYNC_DELAY = 15 * DateUtils.MINUTE_IN_MILLIS;
 
@@ -129,7 +126,7 @@ public class CathodeApp extends Application {
         jobManager.addJob(new SyncUserActivity());
       }
       lastSync = System.currentTimeMillis();
-      MAIN_HANDLER.postDelayed(this, SYNC_DELAY);
+      MainHandler.postDelayed(this, SYNC_DELAY);
     }
   };
 
@@ -148,7 +145,7 @@ public class CathodeApp extends Application {
         syncRunnable.run();
       } else {
         final long delay = Math.max(SYNC_DELAY - (currentTime - lastSync), 0);
-        MAIN_HANDLER.postDelayed(syncRunnable, delay);
+        MainHandler.postDelayed(syncRunnable, delay);
       }
     }
   }
@@ -157,7 +154,7 @@ public class CathodeApp extends Application {
     homeActivityResumedCount--;
     if (homeActivityResumedCount == 0) {
       Timber.d("Pausing periodic sync");
-      MAIN_HANDLER.removeCallbacks(syncRunnable);
+      MainHandler.removeCallbacks(syncRunnable);
     }
   }
 
@@ -190,21 +187,21 @@ public class CathodeApp extends Application {
         TraktTimestamps.clear(this);
       }
       if (currentVersion < 21001) {
-        MAIN_HANDLER.post(new Runnable() {
+        MainHandler.post(new Runnable() {
           @Override public void run() {
             jobManager.addJob(new ForceUpdateJob());
           }
         });
       }
       if (currentVersion <= 21001) {
-        MAIN_HANDLER.post(new Runnable() {
+        MainHandler.post(new Runnable() {
           @Override public void run() {
             jobManager.addJob(new UpdateShowCounts());
           }
         });
       }
 
-      MAIN_HANDLER.post(new Runnable() {
+      MainHandler.post(new Runnable() {
         @Override public void run() {
           jobManager.addJob(new SyncJob());
         }

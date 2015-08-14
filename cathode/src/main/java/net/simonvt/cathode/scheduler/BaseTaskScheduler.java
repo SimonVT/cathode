@@ -16,8 +16,6 @@
 package net.simonvt.cathode.scheduler;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.Executor;
@@ -33,8 +31,6 @@ public class BaseTaskScheduler {
       new Thread(r).start();
     }
   };
-
-  private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
   @Inject JobManager jobManager;
 

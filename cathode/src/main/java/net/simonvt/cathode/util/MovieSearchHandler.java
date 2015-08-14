@@ -16,8 +16,6 @@
 package net.simonvt.cathode.util;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
@@ -85,8 +83,6 @@ public class MovieSearchHandler {
 
   public static final class SearchThread extends Thread {
 
-    private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
-
     @Inject MovieSearchHandler handler;
 
     @Inject SearchService searchService;
@@ -128,14 +124,14 @@ public class MovieSearchHandler {
           }
         }
 
-        MAIN_HANDLER.post(new Runnable() {
+        MainHandler.post(new Runnable() {
           @Override public void run() {
             if (handler != null) handler.deliverResult(movieIds);
           }
         });
       } catch (RetrofitError e) {
         e.printStackTrace();
-        MAIN_HANDLER.post(new Runnable() {
+        MainHandler.post(new Runnable() {
           @Override public void run() {
             if (handler != null) handler.deliverFailure();
           }

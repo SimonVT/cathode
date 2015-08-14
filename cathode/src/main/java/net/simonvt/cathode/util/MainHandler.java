@@ -26,7 +26,15 @@ public final class MainHandler {
   private MainHandler() {
   }
 
-  public static void post(Runnable runnable) {
-    MAIN_HANDLER.post(runnable);
+  public static void post(Runnable r) {
+    MAIN_HANDLER.post(r);
+  }
+
+  public static void postDelayed(Runnable r, long delayMillis) {
+    MAIN_HANDLER.postDelayed(r, delayMillis);
+  }
+
+  public static void removeCallbacks(Runnable r) {
+    MAIN_HANDLER.removeCallbacks(r);
   }
 }

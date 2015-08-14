@@ -17,8 +17,6 @@
 package net.simonvt.cathode.module;
 
 import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 import com.squareup.otto.Bus;
 import dagger.Module;
@@ -37,6 +35,7 @@ import net.simonvt.cathode.event.RequestFailedEvent;
 import net.simonvt.cathode.remote.FourOneTwoException;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.util.HttpUtils;
+import net.simonvt.cathode.util.MainHandler;
 import retrofit.ErrorHandler;
 import retrofit.RetrofitError;
 import retrofit.client.Header;
@@ -53,8 +52,6 @@ import timber.log.Timber;
     })
 public class ApiModule {
 
-  private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
-
   @Provides @ApiKey String provideClientId() {
     return BuildConfig.TRAKT_CLIENT_ID;
   }
@@ -70,7 +67,7 @@ public class ApiModule {
               Timber.i("Status code: %d", statusCode);
 
               if (statusCode == 401) {
-                MAIN_HANDLER.post(new Runnable() {
+                MainHandler.post(new Runnable() {
                   @Override public void run() {
                     bus.post(new AuthFailedEvent());
                   }
@@ -98,14 +95,14 @@ public class ApiModule {
                 Timber.e(new FourOneTwoException(), "Precondition failed");
                 return error;
               } else if (statusCode >= 500 && statusCode < 600) {
-                MAIN_HANDLER.post(new Runnable() {
+                MainHandler.post(new Runnable() {
                   @Override public void run() {
                     bus.post(new RequestFailedEvent(R.string.error_5xx_retrying));
                   }
                 });
               } else {
                 Timber.e(error, "Kind: HTTP");
-                MAIN_HANDLER.post(new Runnable() {
+                MainHandler.post(new Runnable() {
                   @Override public void run() {
                     bus.post(new RequestFailedEvent(R.string.error_unknown_retrying));
                   }
@@ -129,7 +126,7 @@ public class ApiModule {
           case NETWORK:
             Timber.d(error, "Kind: NETWORK");
 
-            MAIN_HANDLER.post(new Runnable() {
+            MainHandler.post(new Runnable() {
               @Override public void run() {
                 bus.post(new RequestFailedEvent(R.string.error_network_retrying));
               }

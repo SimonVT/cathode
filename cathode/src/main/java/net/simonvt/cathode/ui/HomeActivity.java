@@ -18,8 +18,6 @@ package net.simonvt.cathode.ui;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -71,6 +69,7 @@ import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
 import net.simonvt.cathode.util.FragmentStack;
+import net.simonvt.cathode.util.MainHandler;
 import net.simonvt.cathode.widget.Crouton;
 import net.simonvt.cathode.widget.WatchingView;
 import net.simonvt.cathode.widget.WatchingView.WatchingViewListener;
@@ -217,7 +216,7 @@ public class HomeActivity extends BaseActivity
 
   @Override protected void onNewIntent(Intent intent) {
     if (isLoginAction(intent)) {
-      new Handler(Looper.getMainLooper()).post(new Runnable() {
+      MainHandler.post(new Runnable() {
         @Override public void run() {
           startLoginActivity();
         }
