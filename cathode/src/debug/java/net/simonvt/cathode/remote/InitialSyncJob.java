@@ -40,10 +40,6 @@ public class InitialSyncJob extends Job {
     return 1000;
   }
 
-  @Override public boolean requiresWakelock() {
-    return true;
-  }
-
   @Override public void perform() {
     jobManager.clear();
 

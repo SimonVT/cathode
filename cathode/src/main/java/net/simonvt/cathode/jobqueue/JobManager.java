@@ -18,33 +18,17 @@ package net.simonvt.cathode.jobqueue;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Handler;
-import android.os.Looper;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
+import net.simonvt.cathode.jobqueue.JobDatabase.Tables;
 import net.simonvt.cathode.jobqueue.database.JobDatabase;
-import net.simonvt.cathode.jobqueue.internal.JobColumns;
-import net.simonvt.cathode.jobqueue.internal.JobDatabase.Tables;
+import net.simonvt.cathode.util.MainHandler;
 import timber.log.Timber;
 
 public final class JobManager {
-
-  public enum QueueStatus {
-    DONE,
-    RUNNING,
-    FAILED
-  }
-
-  public interface JobListener {
-
-    void onStatusChanged(QueueStatus queueStatus);
-
-    void onSizeChanged(int jobCount);
-  }
-
-  private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
   private Context context;
 
@@ -58,9 +42,7 @@ public final class JobManager {
 
   private final SerialExecutor serialExecutor;
 
-  private JobListener jobListener;
-
-  private QueueStatus queueStatus = QueueStatus.DONE;
+  private List<WeakReference<JobListener>> jobListeners = new ArrayList<>();
 
   public JobManager(Context context, JobInjector jobInjector) {
     this.context = context.getApplicationContext();
@@ -77,39 +59,70 @@ public final class JobManager {
     });
   }
 
-  public void setJobListener(JobListener jobListener) {
-    this.jobListener = jobListener;
-    if (jobListener != null) {
-      synchronized (jobs) {
-        jobListener.onStatusChanged(queueStatus);
-        jobListener.onSizeChanged(jobs.size());
+  public void addJobListener(JobListener listener) {
+    WeakReference<JobListener> jobListener = new WeakReference<>(listener);
+    jobListeners.add(jobListener);
+  }
+
+  public void removeJobListener(JobListener listener) {
+    for (int i = jobListeners.size() - 1; i >= 0; i--) {
+      WeakReference<JobListener> listenerRef = jobListeners.get(i);
+      JobListener jobListener = listenerRef.get();
+      if (jobListener == null || listener == jobListener) {
+        jobListeners.remove(listenerRef);
       }
     }
   }
 
-  private synchronized void changeStatus(final QueueStatus status) {
-    MAIN_HANDLER.post(new Runnable() {
+  private synchronized void postOnJobsLoaded() {
+    MainHandler.post(new Runnable() {
       @Override public void run() {
-        if (status != queueStatus) {
-          queueStatus = status;
-          if (jobListener != null) {
-            jobListener.onStatusChanged(status);
+        for (int i = jobListeners.size() - 1; i >= 0; i--) {
+          WeakReference<JobListener> listenerRef = jobListeners.get(i);
+          JobListener jobListener = listenerRef.get();
+
+          if (jobListener == null) {
+            jobListeners.remove(listenerRef);
+          } else {
+            jobListener.onJobsLoaded(JobManager.this);
           }
         }
       }
     });
   }
 
-  private synchronized void postSizeChanged(final int size) {
-    if (jobListener != null) {
-      MAIN_HANDLER.post(new Runnable() {
-        @Override public void run() {
-          if (jobListener != null) {
-            jobListener.onSizeChanged(size);
+  private synchronized void postOnJobAdded(final Job job) {
+    MainHandler.post(new Runnable() {
+      @Override public void run() {
+        for (int i = jobListeners.size() - 1; i >= 0; i--) {
+          WeakReference<JobListener> listenerRef = jobListeners.get(i);
+          JobListener jobListener = listenerRef.get();
+
+          if (jobListener == null) {
+            jobListeners.remove(listenerRef);
+          } else {
+            jobListener.onJobAdded(JobManager.this, job);
           }
         }
-      });
-    }
+      }
+    });
+  }
+
+  private synchronized void postOnJobRemoved(final Job job) {
+    MainHandler.post(new Runnable() {
+      @Override public void run() {
+        for (int i = jobListeners.size() - 1; i >= 0; i--) {
+          WeakReference<JobListener> listenerRef = jobListeners.get(i);
+          JobListener jobListener = listenerRef.get();
+
+          if (jobListener == null) {
+            jobListeners.remove(listenerRef);
+          } else {
+            jobListener.onJobRemoved(JobManager.this, job);
+          }
+        }
+      }
+    });
   }
 
   private void loadJobs() {
@@ -125,34 +138,21 @@ public final class JobManager {
 
       c.close();
 
-      if (jobs.size() > 0) {
-        startService();
-      }
+      postOnJobsLoaded();
 
       Timber.d("Loaded %d jobs", jobs.size());
     }
   }
 
   private boolean isMoreImportantThan(Job job1, Job job2) {
-    if (job1.requiresWakelock() && !job2.requiresWakelock()) {
-      return true;
-    }
-
-    if (!job1.requiresWakelock() && job2.requiresWakelock()) {
-      return false;
-    }
-
     return job1.getPriority() > job2.getPriority();
   }
 
   public void addJob(final Job job) {
-    if (job.requiresWakelock()) {
-      JobService.acquireLock(context);
-    }
-
     serialExecutor.execute(new Runnable() {
       @Override public void run() {
-        Timber.d("Adding job: %s", job.getClass().getSimpleName());
+        Timber.d("Adding job: %s", job.key());
+        postOnJobAdded(job);
 
         synchronized (jobs) {
           final String key = job.key();
@@ -164,11 +164,7 @@ public final class JobManager {
           }
 
           addJobInternal(job);
-
-          Timber.d("Added job %s, now there's %d", job.getClass().getSimpleName(), jobs.size());
         }
-
-        startService();
 
         persistJob(job);
       }
@@ -190,19 +186,7 @@ public final class JobManager {
       if (!added) {
         jobs.add(job);
       }
-
-      postSizeChanged(jobs.size());
     }
-  }
-
-  private synchronized void startService() {
-    MAIN_HANDLER.post(new Runnable() {
-      @Override public void run() {
-        Timber.d("Starting JobService");
-        Intent intent = new Intent(context, JobService.class);
-        context.startService(intent);
-      }
-    });
   }
 
   private void persistJob(Job job) {
@@ -213,26 +197,44 @@ public final class JobManager {
     values.put(JobColumns.JOB_NAME, job.getClass().getName());
     values.put(JobColumns.FLAGS, job.getFlags());
 
-    SQLiteDatabase db = this.database.getWritableDatabase();
+    SQLiteDatabase db = database.getWritableDatabase();
     db.insert(Tables.JOBS, null, values);
   }
 
-  void jobDone(final Job job) {
+  public Job checkoutJob(int withFlags, int withoutFlags) {
     synchronized (jobs) {
-      jobs.remove(job);
-      Timber.d("Finished job %s, %d left", job.getClass().getSimpleName(), jobs.size());
-      postSizeChanged(jobs.size());
+      for (Job job : jobs) {
+        if (!job.isCheckedOut()) {
+          if (withFlags != 0 && !job.hasFlags(withFlags)) {
+            continue;
+          }
 
-      if (jobs.size() == 0) {
-        changeStatus(QueueStatus.DONE);
+          if (withoutFlags != 0 && job.hasFlags(withoutFlags)) {
+            continue;
+          }
+
+          job.setCheckedOut(true);
+          jobInjector.injectInto(job);
+          return job;
+        }
       }
+
+      return null;
     }
-    removeJobFromDatabase(job);
   }
 
-  void jobFailed(Job job) {
-    Timber.d("Job failed: %s", job.getClass().getSimpleName());
-    changeStatus(QueueStatus.FAILED);
+  public void checkinJob(Job job) {
+    job.setCheckedOut(false);
+  }
+
+  public void removeJob(final Job job) {
+    synchronized (jobs) {
+      Timber.d("Removing job: " + job.key());
+      jobs.remove(job);
+      postOnJobRemoved(job);
+    }
+
+    removeJobFromDatabase(job);
   }
 
   private void removeJobFromDatabase(final Job job) {
@@ -247,23 +249,21 @@ public final class JobManager {
     });
   }
 
-  boolean hasJobs() {
+  public boolean hasJobs(int withFlags, int withoutFlags) {
     synchronized (jobs) {
-      return jobs.size() > 0;
-    }
-  }
+      for (Job job : jobs) {
+        if (withFlags != 0 && !job.hasFlags(withFlags)) {
+          continue;
+        }
 
-  Job nextJob() {
-    synchronized (jobs) {
-      if (jobs.size() > 0) {
-        Job job = jobs.get(0);
-        jobInjector.injectInto(job);
-        changeStatus(QueueStatus.RUNNING);
-        return job;
+        if (withoutFlags != 0 && job.hasFlags(withoutFlags)) {
+          continue;
+        }
+
+        return true;
       }
 
-      changeStatus(QueueStatus.DONE);
-      return null;
+      return false;
     }
   }
 
@@ -273,8 +273,7 @@ public final class JobManager {
         synchronized (jobs) {
           for (int i = jobs.size() - 1; i >= 0; i--) {
             Job job = jobs.get(i);
-            if (job.hasFlag(flag)) {
-              Timber.d("Removing job: %s", job.key());
+            if (job.hasFlags(flag)) {
               jobs.remove(i);
               removeJobFromDatabase(job);
             }
@@ -282,6 +281,12 @@ public final class JobManager {
         }
       }
     });
+  }
+
+  public int jobCount() {
+    synchronized (jobs) {
+      return jobs.size();
+    }
   }
 
   public void clear() {

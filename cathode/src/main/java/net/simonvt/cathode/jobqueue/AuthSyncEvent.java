@@ -16,23 +16,15 @@
 
 package net.simonvt.cathode.jobqueue;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import net.simonvt.cathode.util.WakeLock;
-import timber.log.Timber;
+public class AuthSyncEvent {
 
-public class JobReceiver extends BroadcastReceiver {
+  boolean syncing;
 
-  private static final String TAG = "JobReceiver";
+  AuthSyncEvent(boolean syncing) {
+    this.syncing = syncing;
+  }
 
-  @Override public void onReceive(Context context, Intent intent) {
-    WakeLock.acquire(context, JobService.WAKELOCK_TAG);
-
-    final int retryDelay = intent.getIntExtra(JobService.RETRY_DELAY, 1);
-
-    Intent i = new Intent(context, JobService.class);
-    i.putExtra(JobService.RETRY_DELAY, retryDelay);
-    context.startService(i);
+  public boolean isSyncing() {
+    return syncing;
   }
 }

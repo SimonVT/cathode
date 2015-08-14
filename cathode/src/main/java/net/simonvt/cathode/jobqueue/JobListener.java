@@ -16,23 +16,11 @@
 
 package net.simonvt.cathode.jobqueue;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import net.simonvt.cathode.util.WakeLock;
-import timber.log.Timber;
+public interface JobListener {
 
-public class JobReceiver extends BroadcastReceiver {
+  void onJobsLoaded(JobManager jobManager);
 
-  private static final String TAG = "JobReceiver";
+  void onJobAdded(JobManager jobManager, Job job);
 
-  @Override public void onReceive(Context context, Intent intent) {
-    WakeLock.acquire(context, JobService.WAKELOCK_TAG);
-
-    final int retryDelay = intent.getIntExtra(JobService.RETRY_DELAY, 1);
-
-    Intent i = new Intent(context, JobService.class);
-    i.putExtra(JobService.RETRY_DELAY, retryDelay);
-    context.startService(i);
-  }
+  void onJobRemoved(JobManager jobManager, Job job);
 }

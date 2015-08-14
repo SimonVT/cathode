@@ -32,6 +32,7 @@ import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.remote.Flags;
 import timber.log.Timber;
 
 public class SyncShowWatchedStatus extends Job {
@@ -41,6 +42,7 @@ public class SyncShowWatchedStatus extends Job {
   private long traktId;
 
   public SyncShowWatchedStatus(long traktId) {
+    super(Flags.REQUIRES_AUTH);
     this.traktId = traktId;
   }
 

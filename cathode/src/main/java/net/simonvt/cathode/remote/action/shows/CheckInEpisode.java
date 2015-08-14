@@ -54,10 +54,6 @@ public class CheckInEpisode extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public boolean requiresWakelock() {
-    return true;
-  }
-
   @Override public void perform() {
     CheckinItem item = new CheckinItem() //
         .episode(traktId) //

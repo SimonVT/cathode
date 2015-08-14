@@ -31,6 +31,7 @@ import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
+import net.simonvt.cathode.remote.Flags;
 import timber.log.Timber;
 
 import static net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -39,6 +40,10 @@ import static net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 public class SyncEpisodesRatings extends Job {
 
   @Inject transient SyncService syncService;
+
+  public SyncEpisodesRatings() {
+    super(Flags.REQUIRES_AUTH);
+  }
 
   @Override public String key() {
     return "SyncEpisodeRatings";

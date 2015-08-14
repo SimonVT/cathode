@@ -52,10 +52,6 @@ public class WatchedShow extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public boolean requiresWakelock() {
-    return true;
-  }
-
   @Override public void perform() {
     SyncItems items = new SyncItems();
     items.show(traktId);

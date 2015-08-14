@@ -32,6 +32,7 @@ import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
+import net.simonvt.cathode.remote.Flags;
 import timber.log.Timber;
 
 public class SyncMovieRecommendations extends Job {
@@ -39,6 +40,10 @@ public class SyncMovieRecommendations extends Job {
   private static final int LIMIT = 20;
 
   @Inject transient RecommendationsService recommendationsService;
+
+  public SyncMovieRecommendations() {
+    super(Flags.REQUIRES_AUTH);
+  }
 
   @Override public String key() {
     return "SyncMovieRecommendations";

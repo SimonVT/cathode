@@ -31,11 +31,16 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
+import net.simonvt.cathode.remote.Flags;
 import timber.log.Timber;
 
 public class SyncMoviesRatings extends Job {
 
   @Inject transient SyncService syncService;
+
+  public SyncMoviesRatings() {
+    super(Flags.REQUIRES_AUTH);
+  }
 
   @Override public String key() {
     return "SyncMoviesRatings";

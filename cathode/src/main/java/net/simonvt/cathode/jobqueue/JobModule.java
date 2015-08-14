@@ -24,7 +24,9 @@ import javax.inject.Singleton;
 @Module(library = true, complete = false)
 public class JobModule {
 
-  @Provides @Singleton JobManager provideJobManager(Context context, JobInjector jobInjector) {
-    return new JobManager(context, jobInjector);
+  @Provides @Singleton JobManager provideJobManager(Context context, JobInjector jobInjector, JobListener jobListener) {
+    JobManager jobManager = new JobManager(context, jobInjector);
+    jobManager.addJobListener(jobListener);
+    return jobManager;
   }
 }

@@ -58,10 +58,6 @@ public class CheckInMovie extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public boolean requiresWakelock() {
-    return true;
-  }
-
   @Override public void perform() {
     try {
       CheckinItem item = new CheckinItem() //

@@ -26,10 +26,15 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.Flags;
 
 public class SyncWatchedMovies extends Job {
 
   @Inject transient SyncService syncService;
+
+  public SyncWatchedMovies() {
+    super(Flags.REQUIRES_AUTH);
+  }
 
   @Override public String key() {
     return "SyncWatchedMovies";

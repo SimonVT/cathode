@@ -138,16 +138,33 @@
       android:layout_columnSpan="1"
       android:layout_gravity="start|fill_horizontal"
       android:textAllCaps="false"
-      android:text="Queue status"
+      android:text="Auth service"
       style="@style/DebugDrawerItem"/>
 
   <TextView
-      android:id="@+id/debug_queueStatus"
+      android:id="@+id/debug_authJobServiceStatus"
       android:layout_width="0dp"
       android:layout_columnSpan="1"
       android:layout_gravity="start|fill_horizontal"
       android:textAllCaps="false"
-      android:text="Running"
+      android:text="Stopped"
+      style="@style/DebugDrawerValue"/>
+
+  <TextView
+      android:layout_width="0dp"
+      android:layout_columnSpan="1"
+      android:layout_gravity="start|fill_horizontal"
+      android:textAllCaps="false"
+      android:text="Job service"
+      style="@style/DebugDrawerItem"/>
+
+  <TextView
+      android:id="@+id/debug_jobServiceStatus"
+      android:layout_width="0dp"
+      android:layout_columnSpan="1"
+      android:layout_gravity="start|fill_horizontal"
+      android:textAllCaps="false"
+      android:text="Stopped"
       style="@style/DebugDrawerValue"/>
 
   <TextView
@@ -164,7 +181,7 @@
       android:layout_columnSpan="1"
       android:layout_gravity="start|fill_horizontal"
       android:textAllCaps="false"
-      android:text="10"
+      tools:text="10"
       style="@style/DebugDrawerValue"/>
 
   <TextView

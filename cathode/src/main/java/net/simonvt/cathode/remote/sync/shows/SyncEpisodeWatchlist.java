@@ -30,10 +30,15 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.Flags;
 
 public class SyncEpisodeWatchlist extends Job {
 
   @Inject transient SyncService syncService;
+
+  public SyncEpisodeWatchlist() {
+    super(Flags.REQUIRES_AUTH);
+  }
 
   @Override public String key() {
     return "SyncEpisodeWatchlist";

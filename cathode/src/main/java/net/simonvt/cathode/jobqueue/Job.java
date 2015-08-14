@@ -46,6 +46,8 @@ public abstract class Job {
 
   private int flags;
 
+  private transient boolean checkedOut;
+
   protected Job() {
     this(0);
   }
@@ -59,10 +61,6 @@ public abstract class Job {
   public abstract int getPriority();
 
   public abstract void perform();
-
-  public boolean requiresWakelock() {
-    return false;
-  }
 
   public int getFlags() {
     return flags;
@@ -92,7 +90,15 @@ public abstract class Job {
     flags &= ~flag;
   }
 
-  public boolean hasFlag(int flag) {
-    return (flags & flag) == flag;
+  public boolean hasFlags(int flags) {
+    return (this.flags & flags) == flags;
+  }
+
+  final void setCheckedOut(boolean checkedOut) {
+    this.checkedOut = checkedOut;
+  }
+
+  final boolean isCheckedOut() {
+    return checkedOut;
   }
 }

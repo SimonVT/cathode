@@ -41,6 +41,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
 import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
+import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncPerson;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
@@ -65,6 +66,7 @@ public class SyncList extends Job {
   private long traktId;
 
   public SyncList(long traktId) {
+    super(Flags.REQUIRES_AUTH);
     this.traktId = traktId;
   }
 

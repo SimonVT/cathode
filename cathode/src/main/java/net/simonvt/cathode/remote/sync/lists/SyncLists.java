@@ -26,6 +26,7 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
 import net.simonvt.cathode.provider.ListWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Lists;
+import net.simonvt.cathode.remote.Flags;
 
 public class SyncLists extends Job {
 
@@ -34,6 +35,10 @@ public class SyncLists extends Job {
   };
 
   @Inject transient UsersService usersService;
+
+  public SyncLists() {
+    super(Flags.REQUIRES_AUTH);
+  }
 
   @Override public String key() {
     return "SyncLists";

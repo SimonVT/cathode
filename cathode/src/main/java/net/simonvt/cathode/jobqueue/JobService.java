@@ -32,7 +32,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.PowerManager;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
@@ -42,6 +41,7 @@ import com.squareup.otto.Produce;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.FourOhFourException;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.HomeActivity;
@@ -51,7 +51,7 @@ import timber.log.Timber;
 
 public class JobService extends Service {
 
-  private static final String WAKELOCK_TAG = "net.simonvt.cathode.sync.TraktTaskService";
+  static final String WAKELOCK_TAG = "net.simonvt.cathode.sync.TraktTaskService";
 
   static final String RETRY_DELAY = "net.simonvt.cathode.sync.TraktTaskService.retryDelay";
 
@@ -59,10 +59,6 @@ public class JobService extends Service {
 
   private static final int NOTIFICATION_FOREGROUND = 42;
   private static final int NOTIFICATION_FAILURE = 43;
-
-  private static volatile PowerManager.WakeLock sWakeLock = null;
-
-  private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
   @Inject JobManager jobManager;
 
@@ -78,42 +74,12 @@ public class JobService extends Service {
 
   private boolean running;
 
-  private static PowerManager.WakeLock getLock(Context context) {
-    if (sWakeLock == null) {
-      PowerManager mgr = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-      sWakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_TAG);
-    }
-
-    return sWakeLock;
-  }
-
-  static boolean hasLock(Context context) {
-    PowerManager.WakeLock lock = getLock(context);
-    return lock.isHeld();
-  }
-
-  static void acquireLock(Context context) {
-    PowerManager.WakeLock lock = getLock(context);
-    if (!lock.isHeld()) {
-      Timber.d("Acquiring wakelock");
-      lock.acquire();
-    }
-  }
-
-  static void releaseLock(Context context) {
-    PowerManager.WakeLock lock = getLock(context);
-    if (lock.isHeld()) {
-      Timber.d("Releasing wakelock");
-      lock.release();
-    }
-  }
+  private JobExecutor executor;
 
   @Override public void onCreate() {
     super.onCreate();
     Timber.d("JobService started");
     CathodeApp.inject(this);
-
-    acquireLock(this);
 
     cancelAlarm();
 
@@ -147,35 +113,11 @@ public class JobService extends Service {
 
     NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     nm.cancel(NOTIFICATION_FAILURE);
-  }
 
-  private class JobRunnable implements Runnable {
-
-    private Job job;
-
-    private JobRunnable(Job job) {
-      this.job = job;
-    }
-
-    @Override public void run() {
-      if (job.requiresWakelock()) {
-        acquireLock(JobService.this);
-      } else {
-        releaseLock(JobService.this);
-      }
-
-      try {
-        Timber.d("Executing job: %s", job.getClass().getSimpleName());
-        job.perform();
-        jobFinished(job);
-      } catch (Throwable t) {
-        if (!(t instanceof RetrofitError)) {
-          Timber.i("%s", job.key());
-          Timber.e(t, "Unable to execute job");
-        }
-
-        jobFailed(job, t);
-      }
+    if (jobManager.hasJobs(0, Flags.REQUIRES_AUTH)) {
+      executor = new JobExecutor(jobManager, executorListener, 3, 0, Flags.REQUIRES_AUTH);
+    } else {
+      stopSelf();
     }
   }
 
@@ -189,59 +131,84 @@ public class JobService extends Service {
       }
     }
 
-    executeNext();
-
     return START_STICKY;
   }
 
-  void jobFinished(Job job) {
-    retryDelay = 1;
-    jobManager.jobDone(job);
+  private JobExecutor.JobExecutorListener executorListener = new JobExecutor.JobExecutorListener() {
+    private String contentText;
 
-    if (!jobManager.hasJobs()) {
-      stopSelf();
-    } else {
-      MAIN_HANDLER.post(new Runnable() {
-        @Override public void run() {
-          running = false;
-          executeNext();
-        }
-      });
-    }
-  }
-
-  private void executeNext() {
-    Timber.d("[executeNext]");
-    if (running) {
-      Timber.d("[executeNext] already running");
-      return;
-    }
-
-    running = true;
-
-    Job nextJob = jobManager.nextJob();
-    if (nextJob != null) {
-      handler.post(new JobRunnable(nextJob));
-    } else {
-      running = false;
+    @Override public void onQueueEmpty() {
+      Timber.d("JobService queue empty");
       stopSelf();
     }
-  }
 
-  void jobFailed(final Job job, final Throwable t) {
-    jobManager.jobFailed(job);
+    @Override public void onQueueFailed() {
+      Timber.d("JobService queue failed");
 
-    MAIN_HANDLER.post(new Runnable() {
-      @Override public void run() {
-        running = false;
+      if (displayNotification && contentText != null) {
+        Intent clickIntent = new Intent(JobService.this, HomeActivity.class);
+        PendingIntent clickPi = PendingIntent.getActivity(JobService.this, 0, clickIntent, 0);
 
-        if (handleError(job, t)) {
-          scheduleAlarm();
-          stopSelf();
+        Notification.Builder builder = new Notification.Builder(JobService.this) //
+            .setSmallIcon(R.drawable.ic_notification)
+            .setTicker(getString(R.string.lost_connection))
+            .setContentTitle(getString(R.string.lost_connection, retryDelay))
+            .setContentIntent(clickPi)
+            .setContentText(contentText)
+            .setStyle(new Notification.BigTextStyle().bigText(contentText));
+
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        nm.notify(NOTIFICATION_FAILURE, builder.build());
+      }
+
+      scheduleAlarm();
+      stopSelf();
+    }
+
+    @Override public boolean ignoreError(Job job, Throwable t) {
+      if (!(t instanceof RetrofitError)) {
+        Timber.i("%s", job.key());
+        Timber.e(t, "Unable to execute job");
+      } else {
+        RetrofitError error = (RetrofitError) t;
+        switch (error.getKind()) {
+          case HTTP:
+            Response response = error.getResponse();
+            if (response != null) {
+              final int statusCode = response.getStatus();
+              if (statusCode == 401) {
+                contentText = null;
+                // Notification is created elsewhere
+                return false;
+              } else if (statusCode == 404) {
+                Timber.i("%s", job.key());
+                Timber.e(new FourOhFourException(t), "404");
+                contentText = null;
+                return true;
+              } else if (statusCode >= 500 && statusCode < 600) {
+                contentText = getString(R.string.error_5xx_retry_in, retryDelay);
+              } else {
+                contentText = getString(R.string.error_unknown_retry_in, retryDelay);
+              }
+            } else {
+              contentText = getString(R.string.error_unknown_retry_in, retryDelay);
+            }
+            break;
+
+          case CONVERSION:
+          case UNEXPECTED:
+            contentText = getString(R.string.error_unknown_retry_in, retryDelay);
+            break;
+
+          case NETWORK:
+            contentText = getString(R.string.error_unknown_retry_in, retryDelay);
+            break;
         }
       }
-    });
-  }
+
+      return false;
+    }
+  };
 
   public boolean handleError(Job job, Throwable t) {
     int retryDelay = Math.max(1, this.retryDelay);
@@ -261,8 +228,8 @@ public class JobService extends Service {
             } else if (statusCode == 404) {
               Timber.i("%s", job.key());
               Timber.e(new FourOhFourException(t), "404");
-              jobManager.jobDone(job);
-              executeNext();
+              //jobManager.jobDone(job);
+              //executeNext();
               return false;
             } else if (statusCode >= 500 && statusCode < 600) {
               contentText = getString(R.string.error_5xx_retry_in, retryDelay);
@@ -311,12 +278,16 @@ public class JobService extends Service {
   }
 
   @Override public void onDestroy() {
+    if (executor != null) {
+      executor.destroy();
+    }
+
     bus.unregister(this);
     bus.post(new SyncEvent(false));
 
     looper.quit();
 
-    if (displayNotification && !jobManager.hasJobs()) {
+    if (displayNotification && !jobManager.hasJobs(0, Flags.REQUIRES_AUTH)) {
       PreferenceManager.getDefaultSharedPreferences(this)
           .edit()
           .putBoolean(Settings.INITIAL_SYNC, false)
@@ -331,8 +302,6 @@ public class JobService extends Service {
         ContentResolver.requestSync(account, CalendarContract.AUTHORITY, extras);
       }
     }
-
-    releaseLock(this);
 
     Timber.d("JobService stopped");
     super.onDestroy();

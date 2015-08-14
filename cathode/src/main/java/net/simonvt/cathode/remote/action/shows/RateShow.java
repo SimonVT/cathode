@@ -46,10 +46,6 @@ public class RateShow extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public boolean requiresWakelock() {
-    return true;
-  }
-
   @Override public void perform() {
     RateItems items = new RateItems();
     items.show(traktId).rating(rating).ratedAt(ratedAt);

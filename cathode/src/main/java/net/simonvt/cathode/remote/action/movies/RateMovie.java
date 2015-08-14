@@ -46,10 +46,6 @@ public class RateMovie extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public boolean requiresWakelock() {
-    return true;
-  }
-
   @Override public void perform() {
     RateItems items = new RateItems();
     items.movie(traktId).rating(rating).ratedAt(ratedAt);

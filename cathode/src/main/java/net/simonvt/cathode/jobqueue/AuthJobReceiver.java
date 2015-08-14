@@ -20,19 +20,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import net.simonvt.cathode.util.WakeLock;
-import timber.log.Timber;
 
-public class JobReceiver extends BroadcastReceiver {
-
-  private static final String TAG = "JobReceiver";
+public class AuthJobReceiver extends BroadcastReceiver {
 
   @Override public void onReceive(Context context, Intent intent) {
-    WakeLock.acquire(context, JobService.WAKELOCK_TAG);
-
-    final int retryDelay = intent.getIntExtra(JobService.RETRY_DELAY, 1);
-
-    Intent i = new Intent(context, JobService.class);
-    i.putExtra(JobService.RETRY_DELAY, retryDelay);
+    WakeLock.acquire(context, AuthJobService.WAKELOCK_TAG);
+    final int retryDelay = intent.getIntExtra(AuthJobService.RETRY_DELAY, 1);
+    Intent i = new Intent(context, AuthJobService.class);
+    i.putExtra(AuthJobService.RETRY_DELAY, retryDelay);
     context.startService(i);
   }
 }

@@ -27,10 +27,15 @@ import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.Flags;
 
 public class SyncShowsWatchlist extends Job {
 
   @Inject transient SyncService syncService;
+
+  public SyncShowsWatchlist() {
+    super(Flags.REQUIRES_AUTH);
+  }
 
   @Override public String key() {
     return "SyncShowsWatchlist";

@@ -37,10 +37,6 @@ public class CancelCheckin extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public boolean requiresWakelock() {
-    return true;
-  }
-
   @Override public void perform() {
     checkinService.deleteCheckin();
   }

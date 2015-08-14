@@ -38,11 +38,16 @@ import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
+import net.simonvt.cathode.remote.Flags;
 import timber.log.Timber;
 
 public class SyncWatchedShows extends Job {
 
   @Inject transient SyncService syncService;
+
+  public SyncWatchedShows() {
+    super(Flags.REQUIRES_AUTH);
+  }
 
   @Override public String key() {
     return "SyncWatchedShows";

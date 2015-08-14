@@ -31,6 +31,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
+import net.simonvt.cathode.remote.Flags;
 import timber.log.Timber;
 
 public class SyncShowRecommendations extends Job {
@@ -38,6 +39,10 @@ public class SyncShowRecommendations extends Job {
   private static final int LIMIT = 20;
 
   @Inject transient RecommendationsService recommendationsService;
+
+  public SyncShowRecommendations() {
+    super(Flags.REQUIRES_AUTH);
+  }
 
   @Override public String key() {
     return "SyncShowRecommendations";

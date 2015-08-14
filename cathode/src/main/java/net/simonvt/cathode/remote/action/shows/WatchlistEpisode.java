@@ -65,10 +65,6 @@ public class WatchlistEpisode extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public boolean requiresWakelock() {
-    return true;
-  }
-
   @Override public void perform() {
     if (inWatchlist) {
       SyncItems items = new SyncItems();

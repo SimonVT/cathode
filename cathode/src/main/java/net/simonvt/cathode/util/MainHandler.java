@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.jobqueue.internal;
+package net.simonvt.cathode.util;
 
-import net.simonvt.schematic.annotation.Database;
-import net.simonvt.schematic.annotation.Table;
+import android.os.Handler;
+import android.os.Looper;
 
-@Database(
-    version = 1,
-    packageName = "net.simonvt.cathode.jobqueue.database"
-)
-public class JobDatabase {
+public final class MainHandler {
 
-  public static class Tables {
+  private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
-    @Table(JobColumns.class) public static final String JOBS = "jobs";
+  private MainHandler() {
+  }
+
+  public static void post(Runnable runnable) {
+    MAIN_HANDLER.post(runnable);
   }
 }

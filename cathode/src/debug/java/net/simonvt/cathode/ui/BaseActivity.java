@@ -32,6 +32,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.HttpStatusCode;
@@ -40,21 +41,30 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.RequestFailedEvent;
+import net.simonvt.cathode.jobqueue.AuthJobService;
+import net.simonvt.cathode.jobqueue.AuthSyncEvent;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobListener;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.jobqueue.JobService;
+import net.simonvt.cathode.jobqueue.SyncEvent;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.InitialSyncJob;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
+import net.simonvt.cathode.remote.sync.shows.SyncEpisode;
 import net.simonvt.cathode.settings.Settings;
+import timber.log.Timber;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
   private final DebugViews debugViews = new DebugViews();
 
   private final DebugInjects injects = new DebugInjects();
+
+  private final DebugSubscribers subscribers = new DebugSubscribers();
 
   private SharedPreferences settings;
 
@@ -72,6 +82,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         .inflate(R.layout.debug_drawer, (ViewGroup) ButterKnife.findById(this, R.id.debug_drawer));
 
     ButterKnife.bind(debugViews, this);
+
+    injects.bus.register(subscribers);
 
     debugViews.requestFailedEvent.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
@@ -140,35 +152,32 @@ public abstract class BaseActivity extends AppCompatActivity {
       }
     });
 
-    injects.jobManager.setJobListener(new JobManager.JobListener() {
-      @Override public void onStatusChanged(JobManager.QueueStatus queueStatus) {
-        switch (queueStatus) {
-          case DONE:
-            debugViews.queueStatus.setText("Done");
-            break;
-
-          case RUNNING:
-            debugViews.queueStatus.setText("Running");
-            break;
-
-          case FAILED:
-            debugViews.queueStatus.setText("Failed");
-            break;
-        }
-      }
-
-      @Override public void onSizeChanged(int jobCount) {
-        debugViews.jobCount.setText(String.valueOf(jobCount));
-      }
-    });
+    injects.jobManager.addJobListener(jobListener);
 
     debugViews.startJobService.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         Intent i = new Intent(BaseActivity.this, JobService.class);
         startService(i);
+
+        i = new Intent(BaseActivity.this, AuthJobService.class);
+        startService(i);
       }
     });
   }
+
+  private JobListener jobListener = new JobListener() {
+    @Override public void onJobsLoaded(JobManager jobManager) {
+      debugViews.jobCount.setText(String.valueOf(jobManager.jobCount()));
+    }
+
+    @Override public void onJobAdded(JobManager jobManager, Job job) {
+      debugViews.jobCount.setText(String.valueOf(jobManager.jobCount()));
+    }
+
+    @Override public void onJobRemoved(JobManager jobManager, Job job) {
+      debugViews.jobCount.setText(String.valueOf(jobManager.jobCount()));
+    }
+  };
 
   @Override public void setContentView(int layoutResID) {
     debugViews.container.removeAllViews();
@@ -176,8 +185,30 @@ public abstract class BaseActivity extends AppCompatActivity {
   }
 
   @Override protected void onDestroy() {
-    injects.jobManager.setJobListener(null);
+    injects.jobManager.removeJobListener(jobListener);
+    injects.bus.unregister(subscribers);
     super.onDestroy();
+  }
+
+  private class DebugSubscribers {
+
+    @Subscribe public void onJobSyncEvent(SyncEvent event) {
+      Timber.d("JobService: " + event.isSyncing());
+      if (event.isSyncing()) {
+        debugViews.jobServiceStatus.setText("Running");
+      } else {
+        debugViews.jobServiceStatus.setText("Stopped");
+      }
+    }
+
+    @Subscribe public void onAuthJobSyncEvent(AuthSyncEvent event) {
+      Timber.d("AuthJobService: " + event.isSyncing());
+      if (event.isSyncing()) {
+        debugViews.authJobServiceStatus.setText("Running");
+      } else {
+        debugViews.authJobServiceStatus.setText("Stopped");
+      }
+    }
   }
 
   public static class DebugInjects {
@@ -213,7 +244,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Bind(R.id.debug_syncLists) View syncLists;
 
-    @Bind(R.id.debug_queueStatus) TextView queueStatus;
+    @Bind(R.id.debug_authJobServiceStatus) TextView authJobServiceStatus;
+
+    @Bind(R.id.debug_jobServiceStatus) TextView jobServiceStatus;
 
     @Bind(R.id.debug_jobCount) TextView jobCount;
 

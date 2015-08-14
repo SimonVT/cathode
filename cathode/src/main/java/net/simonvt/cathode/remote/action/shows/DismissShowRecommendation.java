@@ -39,10 +39,6 @@ public class DismissShowRecommendation extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public boolean requiresWakelock() {
-    return true;
-  }
-
   @Override public void perform() {
     recommendationsService.dismissShow(traktId);
   }

@@ -16,23 +16,17 @@
 
 package net.simonvt.cathode.jobqueue;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import net.simonvt.cathode.util.WakeLock;
-import timber.log.Timber;
+import net.simonvt.schematic.annotation.Database;
+import net.simonvt.schematic.annotation.Table;
 
-public class JobReceiver extends BroadcastReceiver {
+@Database(
+    version = 1,
+    packageName = "net.simonvt.cathode.jobqueue.database"
+)
+public class JobDatabase {
 
-  private static final String TAG = "JobReceiver";
+  public static class Tables {
 
-  @Override public void onReceive(Context context, Intent intent) {
-    WakeLock.acquire(context, JobService.WAKELOCK_TAG);
-
-    final int retryDelay = intent.getIntExtra(JobService.RETRY_DELAY, 1);
-
-    Intent i = new Intent(context, JobService.class);
-    i.putExtra(JobService.RETRY_DELAY, retryDelay);
-    context.startService(i);
+    @Table(JobColumns.class) public static final String JOBS = "jobs";
   }
 }

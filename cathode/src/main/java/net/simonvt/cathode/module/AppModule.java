@@ -17,6 +17,7 @@
 package net.simonvt.cathode.module;
 
 import android.content.Context;
+import android.content.Intent;
 import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
 import dagger.Module;
@@ -24,10 +25,14 @@ import dagger.Provides;
 import javax.inject.Singleton;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.api.TraktModule;
+import net.simonvt.cathode.jobqueue.AuthJobService;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobInjector;
+import net.simonvt.cathode.jobqueue.JobListener;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.jobqueue.JobModule;
 import net.simonvt.cathode.jobqueue.JobService;
+import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.UpdateShowCounts;
 import net.simonvt.cathode.remote.action.CancelCheckin;
@@ -164,7 +169,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         PhoneEpisodeView.class, RemoteImageView.class,
 
         // Services
-        JobService.class, CathodeSyncAdapter.class,
+        JobService.class, CathodeSyncAdapter.class, AuthJobService.class,
 
         // Tasks
         CancelCheckin.class, CheckInMovie.class, DismissMovieRecommendation.class,
@@ -209,6 +214,33 @@ public class AppModule {
     return new JobInjector() {
       @Override public void injectInto(Job job) {
         CathodeApp.inject(context, job);
+      }
+    };
+  }
+
+  @Provides @Singleton JobListener provideJobListener(final Context context) {
+    return new JobListener() {
+      @Override public void onJobsLoaded(JobManager jobManager) {
+        if (jobManager.hasJobs(Flags.REQUIRES_AUTH, 0)) {
+          Intent i = new Intent(context, AuthJobService.class);
+          context.startService(i);
+        } else if (jobManager.hasJobs(0, Flags.REQUIRES_AUTH)) {
+          Intent i = new Intent(context, JobService.class);
+          context.startService(i);
+        }
+      }
+
+      @Override public void onJobAdded(JobManager jobManager, Job job) {
+        if (job.hasFlags(Flags.REQUIRES_AUTH)) {
+          Intent i = new Intent(context, AuthJobService.class);
+          context.startService(i);
+        } else {
+          Intent i = new Intent(context, JobService.class);
+          context.startService(i);
+        }
+      }
+
+      @Override public void onJobRemoved(JobManager jobManager, Job job) {
       }
     };
   }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.jobqueue.internal;
+package net.simonvt.cathode.jobqueue;
 
 import android.provider.BaseColumns;
 import net.simonvt.schematic.annotation.AutoIncrement;

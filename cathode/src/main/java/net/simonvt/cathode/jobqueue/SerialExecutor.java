@@ -20,7 +20,7 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.Executor;
 
-final class SerialExecutor {
+public final class SerialExecutor {
 
   public static SerialExecutor newInstance() {
     return new SerialExecutor();

@@ -65,10 +65,6 @@ public class CollectEpisode extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public boolean requiresWakelock() {
-    return true;
-  }
-
   @Override public void perform() {
     if (inCollection) {
       SyncItems items = new SyncItems();
