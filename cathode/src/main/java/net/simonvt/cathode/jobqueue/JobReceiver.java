@@ -20,11 +20,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import net.simonvt.cathode.util.WakeLock;
-import timber.log.Timber;
 
 public class JobReceiver extends BroadcastReceiver {
-
-  private static final String TAG = "JobReceiver";
 
   @Override public void onReceive(Context context, Intent intent) {
     WakeLock.acquire(context, JobService.WAKELOCK_TAG);
