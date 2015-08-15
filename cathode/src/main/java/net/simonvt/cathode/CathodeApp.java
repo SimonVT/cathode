@@ -34,6 +34,7 @@ import com.crashlytics.android.Crashlytics;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import dagger.ObjectGraph;
+import io.fabric.sdk.android.Fabric;
 import javax.inject.Inject;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.LogoutEvent;
@@ -57,8 +58,6 @@ public class CathodeApp extends Application {
 
   private static final String TAG = "CathodeApp";
 
-  public static final boolean DEBUG = BuildConfig.DEBUG;
-
   private static final int AUTH_NOTIFICATION = 2;
 
   private static final long SYNC_DELAY = 15 * DateUtils.MINUTE_IN_MILLIS;
@@ -81,7 +80,7 @@ public class CathodeApp extends Application {
       StrictMode.setThreadPolicy(
           new StrictMode.ThreadPolicy.Builder().detectAll().permitDiskReads().penaltyLog().build());
     } else {
-      Crashlytics.start(this);
+      Fabric.with(this, new Crashlytics());
       Timber.plant(new CrashlyticsTree());
     }
 

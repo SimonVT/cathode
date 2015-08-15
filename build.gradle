@@ -1,20 +1,20 @@
 buildscript {
   repositories {
     mavenCentral()
-    maven { url 'http://download.crashlytics.com/maven' }
+    maven { url 'https://maven.fabric.io/public' }
   }
 
   dependencies {
     classpath 'com.android.tools.build:gradle:1.2.3'
     classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
-    classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
+    classpath 'io.fabric.tools:gradle:1.+'
   }
 }
 
 allprojects {
   repositories {
     mavenCentral()
-    maven { url 'http://download.crashlytics.com/maven' }
+    maven { url 'https://maven.fabric.io/public' }
   }
 }
 
@@ -65,7 +65,7 @@ ext.libraries = [
 
   dashclockApi: 'com.google.android.apps.dashclock:dashclock-api:2.0.0',
 
-  crashlytics: 'com.crashlytics.android:crashlytics:1.+',
+  crashlytics: 'com.crashlytics.sdk.android:crashlytics:2.5.1@aar',
 
   jodaTime: 'joda-time:joda-time:2.7'
 ]

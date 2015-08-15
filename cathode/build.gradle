@@ -1,7 +1,7 @@
 import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
-apply plugin: 'crashlytics'
+apply plugin: 'io.fabric'
 apply plugin: 'checkstyle'
 apply plugin: 'android-apt'
 
@@ -30,7 +30,9 @@ dependencies {
 
   compile parent.libraries.dashclockApi
 
-  compile parent.libraries.crashlytics
+  compile(parent.libraries.crashlytics) {
+    transitive = true
+  }
 
   testCompile parent.libraries.junit
   testCompile parent.libraries.robolectric
