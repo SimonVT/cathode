@@ -12,3 +12,6 @@ build
 
 # Crashlytics
 crashlytics.properties
+
+# Trakt
+trakt.properties

@@ -70,16 +70,16 @@ ext.libraries = [
   jodaTime: 'joda-time:joda-time:2.7'
 ]
 
-def getPropertiesField(String field) {
+def getProperty(String propertyFile, String field) {
   def rootDir = project.rootDir
-  def localProperties = new File(rootDir, "local.properties")
+  def localProperties = new File(rootDir, propertyFile + ".properties")
   if (localProperties.exists()) {
     Properties properties = new Properties()
     localProperties.withInputStream { instr ->
       properties.load(instr)
     }
-    def clientId = properties.getProperty(field)
-    return clientId
+    def value = properties.getProperty(field)
+    return value
   }
 
   return ""
