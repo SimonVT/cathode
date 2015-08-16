@@ -28,6 +28,24 @@
       android:layout_width="0dp"
       android:layout_columnSpan="2"
       android:layout_gravity="start|fill_horizontal"
+      android:text="App"
+      style="@style/DebugDrawerTitle"/>
+
+  <TextView
+      android:layout_gravity="start|center_vertical"
+      android:text="Start page"
+      style="@style/DebugSpinnerLabelStyle"/>
+
+  <Spinner
+      android:id="@+id/debug_startPage"
+      android:layout_width="0dp"
+      android:layout_gravity="start|center_vertical|fill_horizontal"/>
+
+
+  <TextView
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
       android:text="Crouton"
       style="@style/DebugDrawerTitle"/>
 

@@ -16,8 +16,10 @@
 package net.simonvt.cathode.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -80,40 +82,6 @@ public class HomeActivity extends BaseActivity
     implements NavigationFragment.OnMenuClickListener, NavigationListener {
 
   public static final String DIALOG_ABOUT = "net.simonvt.cathode.ui.BaseActivity.aboutDialog";
-  static final String FRAGMENT_NAVIGATION =
-      "net.simonvt.cathode.ui.HomeActivity.navigationFragment";
-  static final String FRAGMENT_SHOWS = "net.simonvt.cathode.ui.HomeActivity.showsFragment";
-  static final String FRAGMENT_SHOWS_UPCOMING =
-      "net.simonvt.cathode.ui.HomeActivity.upcomingShowsFragment";
-  static final String FRAGMENT_SHOWS_COLLECTION =
-      "net.simonvt.cathode.ui.HomeActivity.collectionShowsFragment";
-  static final String FRAGMENT_SHOWS_TRENDING =
-      "net.simonvt.cathode.ui.HomeActivity.trendingShowsFragment";
-  static final String FRAGMENT_SHOWS_RECOMMENDATIONS =
-      "net.simonvt.cathode.ui.HomeActivity.showRecommendationsFragment";
-  static final String FRAGMENT_SHOW = "net.simonvt.cathode.ui.HomeActivity.showFragment";
-  static final String FRAGMENT_SEASON = "net.simonvt.cathode.ui.HomeActivity.seasonFragment";
-  static final String FRAGMENT_EPISODE = "net.simonvt.cathode.ui.HomeActivity.episodeFragment";
-  static final String FRAGMENT_SHOWS_WATCHLIST =
-      "net.simonvt.cathode.ui.HomeActivity.showsWatchlistFragment";
-  static final String FRAGMENT_SEARCH_SHOW =
-      "net.simonvt.cathode.ui.HomeActivity.searchShowFragment";
-  static final String FRAGMENT_MOVIES_WATCHED =
-      "net.simonvt.cathode.ui.HomeActivity.moviesWatchedFragment";
-  static final String FRAGMENT_MOVIES_COLLECTION =
-      "net.simonvt.cathode.ui.HomeActivity.moviesCollectionFragment";
-  static final String FRAGMENT_MOVIES_WATCHLIST =
-      "net.simonvt.cathode.ui.HomeActivity.moviesWatchlistFragment";
-  static final String FRAGMENT_MOVIES_TRENDING =
-      "net.simonvt.cathode.ui.HomeActivity.moviesTrendingFragment";
-  static final String FRAGMENT_MOVIES_RECOMMENDATIONS =
-      "net.simonvt.cathode.ui.HomeActivity.movieRecommendationsFragment";
-  static final String FRAGMENT_SEARCH_MOVIE =
-      "net.simonvt.cathode.ui.HomeActivity.searchMovieFragment";
-  static final String FRAGMENT_MOVIE = "net.simonvt.cathode.ui.HomeActivity.movieFragment";
-  static final String FRAGMENT_ACTORS = "net.simonvt.cathode.ui.HomeActivity.actorsFragment";
-  static final String FRAGMENT_LISTS = "net.simonvt.cathode.ui.HomeActivity.listsFragment";
-  static final String FRAGMENT_LIST = "net.simonvt.cathode.ui.HomeActivity.listFragment";
 
   private static final String STATE_STACK = "net.simonvt.cathode.ui.HomeActivity.stack";
 
@@ -154,7 +122,8 @@ public class HomeActivity extends BaseActivity
     isTablet = getResources().getBoolean(R.bool.isTablet);
 
     navigation =
-        (NavigationFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_NAVIGATION);
+        (NavigationFragment) getSupportFragmentManager().findFragmentByTag(
+            Fragments.NAVIGATION);
 
     watchingParent.setOnTouchListener(new View.OnTouchListener() {
       @Override public boolean onTouch(View v, MotionEvent event) {
@@ -183,7 +152,10 @@ public class HomeActivity extends BaseActivity
       stack.restoreState(inState.getBundle(STATE_STACK));
     }
     if (stack.size() == 0) {
-      stack.replace(UpcomingShowsFragment.class, FRAGMENT_SHOWS_UPCOMING);
+      SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+      final String startPagePref = settings.getString(Settings.START_PAGE, null);
+      StartPage startPage = StartPage.fromValue(startPagePref, StartPage.SHOWS_UPCOMING);
+      stack.replace(startPage.getPageClass(), startPage.getTag());
       stack.commit();
     }
 
@@ -289,51 +261,51 @@ public class HomeActivity extends BaseActivity
   @Override public void onMenuItemClicked(int id) {
     switch (id) {
       case R.id.menu_shows_upcoming:
-        stack.replace(UpcomingShowsFragment.class, FRAGMENT_SHOWS_UPCOMING);
+        stack.replace(UpcomingShowsFragment.class, Fragments.SHOWS_UPCOMING);
         break;
 
       case R.id.menu_shows_watched:
-        stack.replace(WatchedShowsFragment.class, FRAGMENT_SHOWS);
+        stack.replace(WatchedShowsFragment.class, Fragments.SHOWS_WATCHED);
         break;
 
       case R.id.menu_shows_collection:
-        stack.replace(ShowsCollectionFragment.class, FRAGMENT_SHOWS_COLLECTION);
+        stack.replace(ShowsCollectionFragment.class, Fragments.SHOWS_COLLECTION);
         break;
 
       case R.id.menu_shows_watchlist:
-        stack.replace(ShowsWatchlistFragment.class, FRAGMENT_SHOWS_WATCHLIST);
+        stack.replace(ShowsWatchlistFragment.class, Fragments.SHOWS_WATCHLIST);
         break;
 
       case R.id.menu_shows_trending:
-        stack.replace(TrendingShowsFragment.class, FRAGMENT_SHOWS_TRENDING);
+        stack.replace(TrendingShowsFragment.class, Fragments.SHOWS_TRENDING);
         break;
 
       case R.id.menu_shows_recommendations:
-        stack.replace(ShowRecommendationsFragment.class, FRAGMENT_SHOWS_RECOMMENDATIONS);
+        stack.replace(ShowRecommendationsFragment.class, Fragments.SHOWS_RECOMMENDATIONS);
         break;
 
       case R.id.menu_movies_watched:
-        stack.replace(WatchedMoviesFragment.class, FRAGMENT_MOVIES_WATCHED);
+        stack.replace(WatchedMoviesFragment.class, Fragments.MOVIES_WATCHED);
         break;
 
       case R.id.menu_movies_collection:
-        stack.replace(MovieCollectionFragment.class, FRAGMENT_MOVIES_COLLECTION);
+        stack.replace(MovieCollectionFragment.class, Fragments.MOVIES_COLLECTION);
         break;
 
       case R.id.menu_movies_watchlist:
-        stack.replace(MovieWatchlistFragment.class, FRAGMENT_MOVIES_WATCHLIST);
+        stack.replace(MovieWatchlistFragment.class, Fragments.MOVIES_WATCHLIST);
         break;
 
       case R.id.menu_movies_trending:
-        stack.replace(TrendingMoviesFragment.class, FRAGMENT_MOVIES_TRENDING);
+        stack.replace(TrendingMoviesFragment.class, Fragments.MOVIES_TRENDING);
         break;
 
       case R.id.menu_movies_recommendations:
-        stack.replace(MovieRecommendationsFragment.class, FRAGMENT_MOVIES_RECOMMENDATIONS);
+        stack.replace(MovieRecommendationsFragment.class, Fragments.MOVIES_RECOMMENDATIONS);
         break;
 
       case R.id.menu_lists:
-        stack.replace(ListsFragment.class, FRAGMENT_LISTS);
+        stack.replace(ListsFragment.class, Fragments.LISTS);
         break;
 
       case R.id.menu_settings:
@@ -444,7 +416,7 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override public void onDisplayShow(long showId, String title, LibraryType type) {
-    stack.push(ShowFragment.class, FRAGMENT_SHOW, ShowFragment.getArgs(showId, title, type));
+    stack.push(ShowFragment.class, Fragments.SHOW, ShowFragment.getArgs(showId, title, type));
     stack.commit();
   }
 
@@ -453,9 +425,9 @@ public class HomeActivity extends BaseActivity
     if (isTablet) {
       EpisodeFragment f =
           (EpisodeFragment) Fragment.instantiate(this, EpisodeFragment.class.getName(), args);
-      f.show(getSupportFragmentManager(), FRAGMENT_EPISODE);
+      f.show(getSupportFragmentManager(), Fragments.EPISODE);
     } else {
-      stack.push(EpisodeFragment.class, FRAGMENT_EPISODE,
+      stack.push(EpisodeFragment.class, Fragments.EPISODE,
           EpisodeFragment.getArgs(episodeId, showTitle));
       stack.commit();
     }
@@ -464,7 +436,7 @@ public class HomeActivity extends BaseActivity
   @Override
   public void onDisplaySeason(long showId, long seasonId, String showTitle, int seasonNumber,
       LibraryType type) {
-    stack.push(SeasonFragment.class, FRAGMENT_SEASON,
+    stack.push(SeasonFragment.class, Fragments.SEASON,
         SeasonFragment.getArgs(showId, seasonId, showTitle, seasonNumber, type));
     stack.commit();
   }
@@ -472,9 +444,10 @@ public class HomeActivity extends BaseActivity
   @Override public void searchShow(String query) {
 
     SearchShowFragment f =
-        (SearchShowFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_SEARCH_SHOW);
+        (SearchShowFragment) getSupportFragmentManager().findFragmentByTag(
+            Fragments.SEARCH_SHOW);
     if (f == null) {
-      stack.push(SearchShowFragment.class, FRAGMENT_SEARCH_SHOW, SearchShowFragment.getArgs(query));
+      stack.push(SearchShowFragment.class, Fragments.SEARCH_SHOW, SearchShowFragment.getArgs(query));
       stack.commit();
     } else {
       f.query(query);
@@ -482,21 +455,22 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override public void onDisplayShowActors(long showId, String title) {
-    stack.push(ActorsFragment.class, FRAGMENT_ACTORS, ActorsFragment.forShow(showId, title));
+    stack.push(ActorsFragment.class, Fragments.ACTORS, ActorsFragment.forShow(showId, title));
     stack.commit();
   }
 
   @Override public void onDisplayMovie(long movieId, String title) {
-    stack.push(MovieFragment.class, FRAGMENT_MOVIE, MovieFragment.getArgs(movieId, title));
+    stack.push(MovieFragment.class, Fragments.MOVIE, MovieFragment.getArgs(movieId, title));
     stack.commit();
   }
 
   @Override public void searchMovie(String query) {
 
     SearchMovieFragment f =
-        (SearchMovieFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_SEARCH_MOVIE);
+        (SearchMovieFragment) getSupportFragmentManager().findFragmentByTag(
+            Fragments.SEARCH_MOVIE);
     if (f == null) {
-      stack.push(SearchMovieFragment.class, FRAGMENT_SEARCH_MOVIE,
+      stack.push(SearchMovieFragment.class, Fragments.SEARCH_MOVIE,
           SearchMovieFragment.getArgs(query));
       stack.commit();
     } else {
@@ -505,7 +479,7 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override public void onDisplayMovieActors(long movieId, String title) {
-    stack.push(ActorsFragment.class, FRAGMENT_ACTORS, ActorsFragment.forMovie(movieId, title));
+    stack.push(ActorsFragment.class, Fragments.ACTORS, ActorsFragment.forMovie(movieId, title));
     stack.commit();
   }
 
@@ -616,7 +590,7 @@ public class HomeActivity extends BaseActivity
       };
 
   @Override public void onShowList(long listId, String listName) {
-    stack.push(ListFragment.class, FRAGMENT_LIST, ListFragment.getArgs(listId, listName));
+    stack.push(ListFragment.class, Fragments.LIST, ListFragment.getArgs(listId, listName));
     stack.commit();
   }
 }

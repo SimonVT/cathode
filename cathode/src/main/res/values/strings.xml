@@ -190,6 +190,22 @@
   <string name="navigation_lists">Lists</string>
   <string name="navigation_settings">Settings</string>
 
+  <!-- Startpage -->
+  <string name="startpage_shows_upcoming">Upcoming shows</string>
+  <string name="startpage_shows_watched">Wathched shows</string>
+  <string name="startpage_shows_collected">Collected shows</string>
+  <string name="startpage_shows_watchlist">Show watchlist</string>
+  <string name="startpage_shows_trending">Trending shows</string>
+  <string name="startpage_shows_recommendations">Show recommendations</string>
+
+  <string name="startpage_movies_watched">Watched movies</string>
+  <string name="startpage_movies_collected">Collected movies</string>
+  <string name="startpage_movies_watchlist">Movie watchlist</string>
+  <string name="startpage_movies_trending">Trending movies</string>
+  <string name="startpage_movies_recommendations">Movie recommendations</string>
+
+  <string name="startpage_lists">Lists</string>
+
   <string name="empty_show_upcoming">No upcoming episodes. Use the search button to find some new
     shows to watch.
   </string>

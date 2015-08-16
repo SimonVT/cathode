@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.ui.StartPage;
 import net.simonvt.cathode.ui.compat.CircularShadowTransformation;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.cathode.widget.RoundTransformation;
@@ -102,6 +103,11 @@ public class NavigationFragment extends AbsAdapterFragment {
 
     if (inState != null) {
       selectedPosition = inState.getInt(STATE_SELECTED_ID);
+    } else {
+      SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+      final String startPagePref = settings.getString(Settings.START_PAGE, null);
+      StartPage startPage = StartPage.fromValue(startPagePref, StartPage.SHOWS_UPCOMING);
+      selectedPosition = getPositionForId(startPage.getMenuId());
     }
 
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -113,6 +119,17 @@ public class NavigationFragment extends AbsAdapterFragment {
     adapter.setUsername(username);
     adapter.setAvatar(avatar);
     setAdapter(adapter);
+  }
+
+  private int getPositionForId(int itemId) {
+    for (int i = 0; i < menuItems.size(); i++) {
+      NavigationItem item = menuItems.get(i);
+      if (item instanceof MenuItem && ((MenuItem) item).id == itemId) {
+        return 1 + i;
+      }
+    }
+
+    return 1;
   }
 
   private SharedPreferences.OnSharedPreferenceChangeListener settingsListener =

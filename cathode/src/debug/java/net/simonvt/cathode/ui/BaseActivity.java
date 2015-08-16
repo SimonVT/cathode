@@ -84,6 +84,22 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     injects.bus.register(subscribers);
 
+    final StartPageAdapter startPageAdapter = new StartPageAdapter();
+    debugViews.startPage.setAdapter(startPageAdapter);
+    debugViews.startPage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+      @Override
+      public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        StartPage startPage = startPageAdapter.getItem(position);
+        settings.edit().putString(Settings.START_PAGE, startPage.toString()).apply();
+      }
+
+      @Override public void onNothingSelected(AdapterView<?> parent) {
+      }
+    });
+    StartPage startPage = StartPage.fromValue(settings.getString(Settings.START_PAGE, null),
+        StartPage.SHOWS_UPCOMING);
+    debugViews.startPage.setSelection(startPageAdapter.getPositionForValue(startPage));
+
     debugViews.requestFailedEvent.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         injects.bus.post(new RequestFailedEvent(R.string.error_unknown_retrying));
@@ -224,6 +240,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Bind(R.id.debug_drawerLayout) DrawerLayout drawerLayout;
 
     @Bind(R.id.debug_content) ViewGroup container;
+
+    @Bind(R.id.debug_startPage) Spinner startPage;
 
     @Bind(R.id.debug_requestFailedEvent) View requestFailedEvent;
 

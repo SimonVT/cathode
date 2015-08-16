@@ -32,6 +32,8 @@ public final class Settings {
   public static final String TRAKT_LOGGED_IN = "traktLoggedIn";
   public static final String TRAKT_TOKEN = "traktToken";
 
+  public static final String START_PAGE = "startPage";
+
   // Whether upcoming shows should be added to the calendar
   public static final String CALENDAR_SYNC = "calendarSync";
 
@@ -230,6 +232,9 @@ public final class Settings {
 
     editor.remove(TRAKT_LOGGED_IN);
     editor.remove(TRAKT_TOKEN);
+
+    editor.remove(START_PAGE);
+
     editor.remove(CALENDAR_SYNC);
     editor.remove(SHOW_HIDDEN);
     editor.remove(ACTIVITY_STREAM_SYNC);
