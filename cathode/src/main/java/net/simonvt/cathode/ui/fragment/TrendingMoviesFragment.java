@@ -128,13 +128,13 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
       case R.id.sort_viewers:
         sortBy = SortBy.VIEWERS;
         settings.edit().putString(Settings.Sort.MOVIE_TRENDING, SortBy.VIEWERS.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.LOADER_MOVIES_TRENDING, null, this);
+        getLoaderManager().restartLoader(Loaders.MOVIES_TRENDING, null, this);
         break;
 
       case R.id.sort_rating:
         sortBy = SortBy.RATING;
         settings.edit().putString(Settings.Sort.MOVIE_TRENDING, SortBy.RATING.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.LOADER_MOVIES_TRENDING, null, this);
+        getLoaderManager().restartLoader(Loaders.MOVIES_TRENDING, null, this);
         break;
     }
   }
@@ -144,7 +144,7 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
   }
 
   @Override protected int getLoaderId() {
-    return Loaders.LOADER_MOVIES_TRENDING;
+    return Loaders.MOVIES_TRENDING;
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {

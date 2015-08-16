@@ -146,8 +146,8 @@ public class MovieFragment extends BaseFragment
       }
     });
 
-    getLoaderManager().initLoader(Loaders.LOADER_MOVIE, null, this);
-    getLoaderManager().initLoader(Loaders.LOADER_MOVIE_ACTORS, null, actorsLoader);
+    getLoaderManager().initLoader(Loaders.MOVIE, null, this);
+    getLoaderManager().initLoader(Loaders.MOVIE_ACTORS, null, actorsLoader);
   }
 
   @Override public void createMenu(Toolbar toolbar) {

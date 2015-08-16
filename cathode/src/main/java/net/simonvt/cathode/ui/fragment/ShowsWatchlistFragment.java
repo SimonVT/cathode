@@ -73,8 +73,8 @@ public class ShowsWatchlistFragment extends ToolbarGridFragment<RecyclerView.Vie
     super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
 
-    getLoaderManager().initLoader(Loaders.LOADER_SHOWS_WATCHLIST, null, showsCallback);
-    getLoaderManager().initLoader(Loaders.LOADER_EPISODES_WATCHLIST, null, episodeCallback);
+    getLoaderManager().initLoader(Loaders.SHOWS_WATCHLIST, null, showsCallback);
+    getLoaderManager().initLoader(Loaders.EPISODES_WATCHLIST, null, episodeCallback);
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
 
@@ -159,11 +159,11 @@ public class ShowsWatchlistFragment extends ToolbarGridFragment<RecyclerView.Vie
   }
 
   private void throttleLoaders() {
-    Loader l = getLoaderManager().getLoader(Loaders.LOADER_EPISODES_WATCHLIST);
+    Loader l = getLoaderManager().getLoader(Loaders.EPISODES_WATCHLIST);
     SimpleCursorLoader loader = (SimpleCursorLoader) l;
     loader.throttle(2000);
 
-    l = getLoaderManager().getLoader(Loaders.LOADER_SHOWS_WATCHLIST);
+    l = getLoaderManager().getLoader(Loaders.SHOWS_WATCHLIST);
     loader = (SimpleCursorLoader) l;
     loader.throttle(2000);
   }

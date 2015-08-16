@@ -130,7 +130,7 @@ public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdap
     sortBy = SortBy.fromValue(
         settings.getString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey()));
 
-    getLoaderManager().initLoader(Loaders.LOADER_MOVIES_RECOMMENDATIONS, null, this);
+    getLoaderManager().initLoader(Loaders.MOVIES_RECOMMENDATIONS, null, this);
 
     columnCount = getResources().getInteger(R.integer.movieColumns);
 
@@ -204,13 +204,13 @@ public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdap
         settings.edit()
             .putString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey())
             .apply();
-        getLoaderManager().restartLoader(Loaders.LOADER_MOVIES_RECOMMENDATIONS, null, this);
+        getLoaderManager().restartLoader(Loaders.MOVIES_RECOMMENDATIONS, null, this);
         break;
 
       case R.id.sort_rating:
         sortBy = SortBy.RATING;
         settings.edit().putString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RATING.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.LOADER_MOVIES_RECOMMENDATIONS, null, this);
+        getLoaderManager().restartLoader(Loaders.MOVIES_RECOMMENDATIONS, null, this);
         break;
     }
   }
@@ -222,7 +222,7 @@ public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdap
   }
 
   @Override public void onDismissItem(final View view, final long id) {
-    Loader loader = getLoaderManager().getLoader(Loaders.LOADER_MOVIES_RECOMMENDATIONS);
+    Loader loader = getLoaderManager().getLoader(Loaders.MOVIES_RECOMMENDATIONS);
     SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
     cursorLoader.throttle(2000);
 

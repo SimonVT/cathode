@@ -80,7 +80,7 @@ public class ActorsFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
 
     setTitle(title);
 
-    getLoaderManager().initLoader(Loaders.LOADER_ACTORS, null, this);
+    getLoaderManager().initLoader(Loaders.ACTORS, null, this);
   }
 
   @Override protected int getColumnCount() {

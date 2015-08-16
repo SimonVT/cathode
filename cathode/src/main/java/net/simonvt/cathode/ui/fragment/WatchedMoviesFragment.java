@@ -131,7 +131,7 @@ public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.
   }
 
   @Override protected int getLoaderId() {
-    return Loaders.LOADER_MOVIES_WATCHED;
+    return Loaders.MOVIES_WATCHED;
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {

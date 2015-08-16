@@ -46,7 +46,7 @@ public class ListsFragment extends ToolbarGridFragment<ListsAdapter.ViewHolder>
     super.onCreate(inState);
     setTitle(R.string.navigation_lists);
     setEmptyText(R.string.empty_lists);
-    getLoaderManager().initLoader(Loaders.LOADER_LISTS, null, this);
+    getLoaderManager().initLoader(Loaders.LISTS, null, this);
   }
 
   @Override protected int getColumnCount() {

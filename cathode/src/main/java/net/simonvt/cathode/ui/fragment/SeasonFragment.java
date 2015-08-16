@@ -100,7 +100,7 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
     setTitle(title);
     updateSubtitle();
 
-    getLoaderManager().initLoader(Loaders.LOADER_SEASON, null, episodesLoader);
+    getLoaderManager().initLoader(Loaders.SEASON, null, episodesLoader);
 
     if (title == null) {
       SimpleCursorLoader loader =

@@ -137,7 +137,7 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
 
     showHidden = settings.getBoolean(Settings.SHOW_HIDDEN, false);
 
-    getLoaderManager().initLoader(Loaders.LOADER_SHOWS_UPCOMING, null, this);
+    getLoaderManager().initLoader(Loaders.SHOWS_UPCOMING, null, this);
 
     setEmptyText(R.string.empty_show_upcoming);
 
@@ -197,7 +197,7 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
       case R.id.menu_hidden:
         showHidden = !showHidden;
         settings.edit().putBoolean(Settings.SHOW_HIDDEN, showHidden).apply();
-        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_UPCOMING, null,
+        getLoaderManager().restartLoader(Loaders.SHOWS_UPCOMING, null,
             UpcomingShowsFragment.this);
         item.setChecked(showHidden);
         return true;
@@ -230,7 +230,7 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
       case R.id.sort_title:
         sortBy = SortBy.TITLE;
         settings.edit().putString(Settings.Sort.SHOW_UPCOMING, SortBy.TITLE.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_UPCOMING, null, this);
+        getLoaderManager().restartLoader(Loaders.SHOWS_UPCOMING, null, this);
         break;
 
       case R.id.sort_next_episode:
@@ -238,13 +238,13 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
         settings.edit()
             .putString(Settings.Sort.SHOW_UPCOMING, SortBy.NEXT_EPISODE.getKey())
             .apply();
-        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_UPCOMING, null, this);
+        getLoaderManager().restartLoader(Loaders.SHOWS_UPCOMING, null, this);
         break;
     }
   }
 
   @Override public void onRemove(View view, int position, long id) {
-    Loader loader = getLoaderManager().getLoader(Loaders.LOADER_SHOWS_UPCOMING);
+    Loader loader = getLoaderManager().getLoader(Loaders.SHOWS_UPCOMING);
     SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
     cursorLoader.throttle(2000);
 

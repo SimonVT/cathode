@@ -135,7 +135,7 @@ public class ShowRecommendationsFragment
     sortBy = SortBy.fromValue(
         settings.getString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey()));
 
-    getLoaderManager().initLoader(Loaders.LOADER_SHOWS_RECOMMENDATIONS, null, this);
+    getLoaderManager().initLoader(Loaders.SHOWS_RECOMMENDATIONS, null, this);
 
     isTablet = getResources().getBoolean(R.bool.isTablet);
 
@@ -222,13 +222,13 @@ public class ShowRecommendationsFragment
         settings.edit()
             .putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey())
             .apply();
-        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_RECOMMENDATIONS, null, this);
+        getLoaderManager().restartLoader(Loaders.SHOWS_RECOMMENDATIONS, null, this);
         break;
 
       case R.id.sort_rating:
         sortBy = SortBy.RATING;
         settings.edit().putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RATING.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_RECOMMENDATIONS, null, this);
+        getLoaderManager().restartLoader(Loaders.SHOWS_RECOMMENDATIONS, null, this);
         break;
     }
   }
@@ -240,7 +240,7 @@ public class ShowRecommendationsFragment
   }
 
   @Override public void onDismissItem(final View view, final long id) {
-    Loader loader = getLoaderManager().getLoader(Loaders.LOADER_SHOWS_RECOMMENDATIONS);
+    Loader loader = getLoaderManager().getLoader(Loaders.SHOWS_RECOMMENDATIONS);
     SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
     cursorLoader.throttle(2000);
 

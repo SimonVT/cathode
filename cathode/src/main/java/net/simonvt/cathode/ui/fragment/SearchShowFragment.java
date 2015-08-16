@@ -240,24 +240,24 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
       case R.id.sort_relevance:
         sortBy = SortBy.RELEVANCE;
         settings.edit().putString(Settings.Sort.SHOW_SEARCH, SortBy.RELEVANCE.getKey()).apply();
-        if (getLoaderManager().getLoader(Loaders.LOADER_SEARCH_SHOWS) != null) {
-          getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_SHOWS, null, this);
+        if (getLoaderManager().getLoader(Loaders.SEARCH_SHOWS) != null) {
+          getLoaderManager().restartLoader(Loaders.SEARCH_SHOWS, null, this);
         }
         break;
 
       case R.id.sort_rating:
         sortBy = SortBy.RATING;
         settings.edit().putString(Settings.Sort.SHOW_SEARCH, SortBy.RATING.getKey()).apply();
-        if (getLoaderManager().getLoader(Loaders.LOADER_SEARCH_SHOWS) != null) {
-          getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_SHOWS, null, this);
+        if (getLoaderManager().getLoader(Loaders.SEARCH_SHOWS) != null) {
+          getLoaderManager().restartLoader(Loaders.SEARCH_SHOWS, null, this);
         }
         break;
 
       case R.id.sort_title:
         sortBy = SortBy.TITLE;
         settings.edit().putString(Settings.Sort.SHOW_SEARCH, SortBy.TITLE.getKey()).apply();
-        if (getLoaderManager().getLoader(Loaders.LOADER_SEARCH_SHOWS) != null) {
-          getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_SHOWS, null, this);
+        if (getLoaderManager().getLoader(Loaders.SEARCH_SHOWS) != null) {
+          getLoaderManager().restartLoader(Loaders.SEARCH_SHOWS, null, this);
         }
         break;
     }
@@ -280,7 +280,7 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
       setAdapter(null);
       searchShowIds = null;
     }
-    getLoaderManager().destroyLoader(Loaders.LOADER_SEARCH_SHOWS);
+    getLoaderManager().destroyLoader(Loaders.SEARCH_SHOWS);
     searchHandler.search(query);
   }
 
@@ -292,7 +292,7 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
 
   @Subscribe public void onSearchEvent(ShowSearchResult result) {
     searchShowIds = result.getShowIds();
-    getLoaderManager().initLoader(Loaders.LOADER_SEARCH_SHOWS, null, this);
+    getLoaderManager().initLoader(Loaders.SEARCH_SHOWS, null, this);
     setEmptyText(R.string.no_results, query);
     empty.setOnClickListener(null);
     empty.setClickable(false);

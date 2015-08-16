@@ -85,7 +85,7 @@ public class ListFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
 
     columnCount = getResources().getInteger(R.integer.listColumns);
 
-    getLoaderManager().initLoader(Loaders.LOADER_LIST, null, this);
+    getLoaderManager().initLoader(Loaders.LIST, null, this);
   }
 
   @Override protected int getColumnCount() {

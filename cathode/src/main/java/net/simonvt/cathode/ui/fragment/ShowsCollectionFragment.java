@@ -137,7 +137,7 @@ public class ShowsCollectionFragment extends ShowsFragment implements ListDialog
   }
 
   @Override protected int getLoaderId() {
-    return Loaders.LOADER_SHOWS_COLLECTION;
+    return Loaders.SHOWS_COLLECTION;
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {

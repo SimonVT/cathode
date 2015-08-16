@@ -133,7 +133,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     Bundle args = getArguments();
     episodeId = args.getLong(ARG_EPISODEID);
     showTitle = args.getString(ARG_SHOW_TITLE);
-    getLoaderManager().initLoader(Loaders.LOADER_EPISODE, null, episodeCallbacks);
+    getLoaderManager().initLoader(Loaders.EPISODE, null, episodeCallbacks);
 
     if (getShowsDialog()) {
       setStyle(DialogFragment.STYLE_NO_TITLE, 0);
@@ -206,7 +206,7 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   @Override public void onDestroy() {
     if (getActivity().isFinishing() || isRemoving()) {
-      getLoaderManager().destroyLoader(Loaders.LOADER_EPISODE);
+      getLoaderManager().destroyLoader(Loaders.EPISODE);
     }
     super.onDestroy();
   }

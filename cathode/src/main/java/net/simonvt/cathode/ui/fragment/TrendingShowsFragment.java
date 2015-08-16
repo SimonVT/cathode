@@ -130,7 +130,7 @@ public class TrendingShowsFragment extends ToolbarGridFragment<ShowDescriptionAd
     sortBy =
         SortBy.fromValue(settings.getString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey()));
 
-    getLoaderManager().initLoader(Loaders.LOADER_SHOWS_TRENDING, null, this);
+    getLoaderManager().initLoader(Loaders.SHOWS_TRENDING, null, this);
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
     setTitle(R.string.title_shows_trending);
@@ -201,13 +201,13 @@ public class TrendingShowsFragment extends ToolbarGridFragment<ShowDescriptionAd
       case R.id.sort_viewers:
         sortBy = SortBy.VIEWERS;
         settings.edit().putString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_TRENDING, null, this);
+        getLoaderManager().restartLoader(Loaders.SHOWS_TRENDING, null, this);
         break;
 
       case R.id.sort_rating:
         sortBy = SortBy.RATING;
         settings.edit().putString(Settings.Sort.SHOW_TRENDING, SortBy.RATING.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_TRENDING, null, this);
+        getLoaderManager().restartLoader(Loaders.SHOWS_TRENDING, null, this);
         break;
     }
   }

@@ -131,7 +131,7 @@ public class MovieCollectionFragment extends MoviesFragment implements ListDialo
   }
 
   @Override protected int getLoaderId() {
-    return Loaders.LOADER_MOVIES_COLLECTION;
+    return Loaders.MOVIES_COLLECTION;
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {

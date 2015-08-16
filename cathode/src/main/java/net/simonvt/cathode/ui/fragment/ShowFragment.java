@@ -397,12 +397,12 @@ public class ShowFragment extends BaseFragment {
       });
     }
 
-    getLoaderManager().initLoader(Loaders.LOADER_SHOW, null, showCallbacks);
-    getLoaderManager().initLoader(Loaders.LOADER_SHOW_GENRES, null, genreCallbacks);
-    getLoaderManager().initLoader(Loaders.LOADER_SHOW_ACTORS, null, charactersCallback);
-    getLoaderManager().initLoader(Loaders.LOADER_SHOW_WATCH, null, episodeWatchCallbacks);
-    getLoaderManager().initLoader(Loaders.LOADER_SHOW_COLLECT, null, episodeCollectCallbacks);
-    getLoaderManager().initLoader(Loaders.LOADER_SHOW_SEASONS, null, seasonsLoader);
+    getLoaderManager().initLoader(Loaders.SHOW, null, showCallbacks);
+    getLoaderManager().initLoader(Loaders.SHOW_GENRES, null, genreCallbacks);
+    getLoaderManager().initLoader(Loaders.SHOW_ACTORS, null, charactersCallback);
+    getLoaderManager().initLoader(Loaders.SHOW_WATCH, null, episodeWatchCallbacks);
+    getLoaderManager().initLoader(Loaders.SHOW_COLLECT, null, episodeCollectCallbacks);
+    getLoaderManager().initLoader(Loaders.SHOW_SEASONS, null, seasonsLoader);
   }
 
   @Override public void createMenu(Toolbar toolbar) {

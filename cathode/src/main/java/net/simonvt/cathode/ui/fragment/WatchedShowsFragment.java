@@ -137,7 +137,7 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
   }
 
   protected int getLoaderId() {
-    return Loaders.LOADER_SHOWS_WATCHED;
+    return Loaders.SHOWS_WATCHED;
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {

@@ -34,7 +34,7 @@ public class MovieWatchlistFragment extends MoviesFragment {
   }
 
   @Override protected int getLoaderId() {
-    return Loaders.LOADER_MOVIES_WATCHLIST;
+    return Loaders.MOVIES_WATCHLIST;
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
