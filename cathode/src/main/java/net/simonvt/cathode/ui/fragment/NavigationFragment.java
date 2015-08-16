@@ -148,7 +148,8 @@ public class NavigationFragment extends AbsAdapterFragment {
             }
           }
           if (Settings.Profile.USERNAME.equals(key)) {
-
+            final String username = sharedPreferences.getString(Settings.Profile.USERNAME, null);
+            adapter.setUsername(username);
           }
         }
       };
