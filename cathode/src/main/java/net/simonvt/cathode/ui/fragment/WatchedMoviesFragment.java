@@ -88,7 +88,7 @@ public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.
   @Override public void onCreate(Bundle inState) {
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     sortBy =
-        SortBy.fromValue(settings.getString(Settings.SORT_MOVIE_WATCHED, SortBy.TITLE.getKey()));
+        SortBy.fromValue(settings.getString(Settings.Sort.MOVIE_WATCHED, SortBy.TITLE.getKey()));
 
     super.onCreate(inState);
 
@@ -118,13 +118,13 @@ public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.
     switch (id) {
       case R.id.sort_title:
         sortBy = SortBy.TITLE;
-        settings.edit().putString(Settings.SORT_MOVIE_WATCHED, SortBy.TITLE.getKey()).apply();
+        settings.edit().putString(Settings.Sort.MOVIE_WATCHED, SortBy.TITLE.getKey()).apply();
         getLoaderManager().restartLoader(getLoaderId(), null, this);
         break;
 
       case R.id.sort_watched:
         sortBy = SortBy.WATCHED;
-        settings.edit().putString(Settings.SORT_MOVIE_WATCHED, SortBy.WATCHED.getKey()).apply();
+        settings.edit().putString(Settings.Sort.MOVIE_WATCHED, SortBy.WATCHED.getKey()).apply();
         getLoaderManager().restartLoader(getLoaderId(), null, this);
         break;
     }

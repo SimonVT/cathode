@@ -69,6 +69,6 @@ public class SyncJob extends Job {
 
     final long currentTime = System.currentTimeMillis();
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-    settings.edit().putLong(Settings.FULL_SYNC, currentTime).apply();
+    settings.edit().putLong(Settings.LAST_FULL_SYNC, currentTime).apply();
   }
 }

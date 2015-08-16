@@ -92,7 +92,7 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
   @Override public void onCreate(Bundle inState) {
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     sortBy =
-        SortBy.fromValue(settings.getString(Settings.SORT_SHOW_TRENDING, SortBy.VIEWERS.getKey()));
+        SortBy.fromValue(settings.getString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey()));
     super.onCreate(inState);
 
     setTitle(R.string.title_movies_trending);
@@ -127,13 +127,13 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
     switch (id) {
       case R.id.sort_viewers:
         sortBy = SortBy.VIEWERS;
-        settings.edit().putString(Settings.SORT_MOVIE_TRENDING, SortBy.VIEWERS.getKey()).apply();
+        settings.edit().putString(Settings.Sort.MOVIE_TRENDING, SortBy.VIEWERS.getKey()).apply();
         getLoaderManager().restartLoader(Loaders.LOADER_MOVIES_TRENDING, null, this);
         break;
 
       case R.id.sort_rating:
         sortBy = SortBy.RATING;
-        settings.edit().putString(Settings.SORT_MOVIE_TRENDING, SortBy.RATING.getKey()).apply();
+        settings.edit().putString(Settings.Sort.MOVIE_TRENDING, SortBy.RATING.getKey()).apply();
         getLoaderManager().restartLoader(Loaders.LOADER_MOVIES_TRENDING, null, this);
         break;
     }

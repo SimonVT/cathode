@@ -133,7 +133,7 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
     CathodeApp.inject(getActivity(), this);
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     sortBy =
-        SortBy.fromValue(settings.getString(Settings.SORT_SHOW_UPCOMING, SortBy.TITLE.getKey()));
+        SortBy.fromValue(settings.getString(Settings.Sort.SHOW_UPCOMING, SortBy.TITLE.getKey()));
 
     showHidden = settings.getBoolean(Settings.SHOW_HIDDEN, false);
 
@@ -229,14 +229,14 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
     switch (id) {
       case R.id.sort_title:
         sortBy = SortBy.TITLE;
-        settings.edit().putString(Settings.SORT_SHOW_UPCOMING, SortBy.TITLE.getKey()).apply();
+        settings.edit().putString(Settings.Sort.SHOW_UPCOMING, SortBy.TITLE.getKey()).apply();
         getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_UPCOMING, null, this);
         break;
 
       case R.id.sort_next_episode:
         sortBy = SortBy.NEXT_EPISODE;
         settings.edit()
-            .putString(Settings.SORT_SHOW_UPCOMING, SortBy.NEXT_EPISODE.getKey())
+            .putString(Settings.Sort.SHOW_UPCOMING, SortBy.NEXT_EPISODE.getKey())
             .apply();
         getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_UPCOMING, null, this);
         break;

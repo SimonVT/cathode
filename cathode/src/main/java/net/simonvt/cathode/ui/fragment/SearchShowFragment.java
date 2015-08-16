@@ -146,7 +146,7 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
 
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     sortBy =
-        SortBy.fromValue(settings.getString(Settings.SORT_SHOW_SEARCH, SortBy.RELEVANCE.getKey()));
+        SortBy.fromValue(settings.getString(Settings.Sort.SHOW_SEARCH, SortBy.RELEVANCE.getKey()));
 
     if (inState == null) {
       Bundle args = getArguments();
@@ -239,7 +239,7 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
     switch (id) {
       case R.id.sort_relevance:
         sortBy = SortBy.RELEVANCE;
-        settings.edit().putString(Settings.SORT_SHOW_SEARCH, SortBy.RELEVANCE.getKey()).apply();
+        settings.edit().putString(Settings.Sort.SHOW_SEARCH, SortBy.RELEVANCE.getKey()).apply();
         if (getLoaderManager().getLoader(Loaders.LOADER_SEARCH_SHOWS) != null) {
           getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_SHOWS, null, this);
         }
@@ -247,7 +247,7 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
 
       case R.id.sort_rating:
         sortBy = SortBy.RATING;
-        settings.edit().putString(Settings.SORT_SHOW_SEARCH, SortBy.RATING.getKey()).apply();
+        settings.edit().putString(Settings.Sort.SHOW_SEARCH, SortBy.RATING.getKey()).apply();
         if (getLoaderManager().getLoader(Loaders.LOADER_SEARCH_SHOWS) != null) {
           getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_SHOWS, null, this);
         }
@@ -255,7 +255,7 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
 
       case R.id.sort_title:
         sortBy = SortBy.TITLE;
-        settings.edit().putString(Settings.SORT_SHOW_SEARCH, SortBy.TITLE.getKey()).apply();
+        settings.edit().putString(Settings.Sort.SHOW_SEARCH, SortBy.TITLE.getKey()).apply();
         if (getLoaderManager().getLoader(Loaders.LOADER_SEARCH_SHOWS) != null) {
           getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_SHOWS, null, this);
         }

@@ -133,7 +133,7 @@ public class ShowRecommendationsFragment
 
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     sortBy = SortBy.fromValue(
-        settings.getString(Settings.SORT_SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey()));
+        settings.getString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey()));
 
     getLoaderManager().initLoader(Loaders.LOADER_SHOWS_RECOMMENDATIONS, null, this);
 
@@ -220,14 +220,14 @@ public class ShowRecommendationsFragment
       case R.id.sort_relevance:
         sortBy = SortBy.RELEVANCE;
         settings.edit()
-            .putString(Settings.SORT_SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey())
+            .putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey())
             .apply();
         getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_RECOMMENDATIONS, null, this);
         break;
 
       case R.id.sort_rating:
         sortBy = SortBy.RATING;
-        settings.edit().putString(Settings.SORT_SHOW_RECOMMENDED, SortBy.RATING.getKey()).apply();
+        settings.edit().putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RATING.getKey()).apply();
         getLoaderManager().restartLoader(Loaders.LOADER_SHOWS_RECOMMENDATIONS, null, this);
         break;
     }

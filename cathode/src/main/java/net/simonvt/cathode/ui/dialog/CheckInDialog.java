@@ -66,9 +66,9 @@ public class CheckInDialog extends DialogFragment {
   public static void showDialogIfNecessary(FragmentActivity activity, Type type, String title,
       long id) {
     final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
-    final boolean facebookShare = settings.getBoolean(Settings.PROFILE_CONNECTION_FACEBOOK, false);
-    final boolean twitterShare = settings.getBoolean(Settings.PROFILE_CONNECTION_TWITTER, false);
-    final boolean tumblrShare = settings.getBoolean(Settings.PROFILE_CONNECTION_TUMBLR, false);
+    final boolean facebookShare = settings.getBoolean(Settings.Profile.CONNECTION_FACEBOOK, false);
+    final boolean twitterShare = settings.getBoolean(Settings.Profile.CONNECTION_TWITTER, false);
+    final boolean tumblrShare = settings.getBoolean(Settings.Profile.CONNECTION_TUMBLR, false);
 
     if (facebookShare || twitterShare || tumblrShare) {
       newInstance(type, title, id).show(activity.getSupportFragmentManager(), DIALOG_TAG);
@@ -118,9 +118,9 @@ public class CheckInDialog extends DialogFragment {
     final CheckBox tumblr = (CheckBox) view.findViewById(R.id.tumblr);
 
     title.setText(titleArg);
-    final boolean facebookShare = settings.getBoolean(Settings.PROFILE_CONNECTION_FACEBOOK, false);
-    final boolean twitterShare = settings.getBoolean(Settings.PROFILE_CONNECTION_TWITTER, false);
-    final boolean tumblrShare = settings.getBoolean(Settings.PROFILE_CONNECTION_TUMBLR, false);
+    final boolean facebookShare = settings.getBoolean(Settings.Profile.CONNECTION_FACEBOOK, false);
+    final boolean twitterShare = settings.getBoolean(Settings.Profile.CONNECTION_TWITTER, false);
+    final boolean tumblrShare = settings.getBoolean(Settings.Profile.CONNECTION_TUMBLR, false);
     facebook.setVisibility(facebookShare ? View.VISIBLE : View.GONE);
     twitter.setVisibility(twitterShare ? View.VISIBLE : View.GONE);
     tumblr.setVisibility(tumblrShare ? View.VISIBLE : View.GONE);
@@ -135,7 +135,7 @@ public class CheckInDialog extends DialogFragment {
       view.findViewById(R.id.share_title).setVisibility(View.GONE);
     }
 
-    String shareMessage = settings.getString(Settings.PROFILE_SHARING_TEXT_WATCHING,
+    String shareMessage = settings.getString(Settings.Profile.SHARING_TEXT_WATCHING,
         getString(R.string.checkin_message_default));
     shareMessage = shareMessage.replace("[item]", titleArg);
     message.setText(shareMessage);
@@ -148,10 +148,10 @@ public class CheckInDialog extends DialogFragment {
         final String shareMessage = message.getText().toString();
 
         settings.edit()
-            .putBoolean(Settings.PROFILE_CONNECTION_FACEBOOK, facebookShare)
-            .putBoolean(Settings.PROFILE_CONNECTION_TWITTER, twitterShare)
-            .putBoolean(Settings.PROFILE_CONNECTION_TUMBLR, tumblrShare)
-            .putString(Settings.PROFILE_SHARING_TEXT_WATCHING, shareMessage)
+            .putBoolean(Settings.Profile.CONNECTION_FACEBOOK, facebookShare)
+            .putBoolean(Settings.Profile.CONNECTION_TWITTER, twitterShare)
+            .putBoolean(Settings.Profile.CONNECTION_TUMBLR, tumblrShare)
+            .putString(Settings.Profile.SHARING_TEXT_WATCHING, shareMessage)
             .apply();
 
         if (type == Type.SHOW) {

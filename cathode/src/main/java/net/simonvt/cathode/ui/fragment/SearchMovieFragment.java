@@ -146,7 +146,7 @@ public class SearchMovieFragment extends ToolbarGridFragment<MovieSearchAdapter.
 
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     sortBy =
-        SortBy.fromValue(settings.getString(Settings.SORT_SHOW_SEARCH, SortBy.RELEVANCE.getKey()));
+        SortBy.fromValue(settings.getString(Settings.Sort.SHOW_SEARCH, SortBy.RELEVANCE.getKey()));
 
     if (inState == null) {
       Bundle args = getArguments();
@@ -251,7 +251,7 @@ public class SearchMovieFragment extends ToolbarGridFragment<MovieSearchAdapter.
     switch (id) {
       case R.id.sort_relevance:
         sortBy = SortBy.RELEVANCE;
-        settings.edit().putString(Settings.SORT_MOVIE_SEARCH, SortBy.RELEVANCE.getKey()).apply();
+        settings.edit().putString(Settings.Sort.MOVIE_SEARCH, SortBy.RELEVANCE.getKey()).apply();
         if (getLoaderManager().getLoader(Loaders.LOADER_SEARCH_MOVIES) != null) {
           getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_MOVIES, null, this);
         }
@@ -259,7 +259,7 @@ public class SearchMovieFragment extends ToolbarGridFragment<MovieSearchAdapter.
 
       case R.id.sort_rating:
         sortBy = SortBy.RATING;
-        settings.edit().putString(Settings.SORT_MOVIE_SEARCH, SortBy.RATING.getKey()).apply();
+        settings.edit().putString(Settings.Sort.MOVIE_SEARCH, SortBy.RATING.getKey()).apply();
         if (getLoaderManager().getLoader(Loaders.LOADER_SEARCH_MOVIES) != null) {
           getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_MOVIES, null, this);
         }
@@ -267,7 +267,7 @@ public class SearchMovieFragment extends ToolbarGridFragment<MovieSearchAdapter.
 
       case R.id.sort_title:
         sortBy = SortBy.TITLE;
-        settings.edit().putString(Settings.SORT_MOVIE_SEARCH, SortBy.TITLE.getKey()).apply();
+        settings.edit().putString(Settings.Sort.MOVIE_SEARCH, SortBy.TITLE.getKey()).apply();
         if (getLoaderManager().getLoader(Loaders.LOADER_SEARCH_MOVIES) != null) {
           getLoaderManager().restartLoader(Loaders.LOADER_SEARCH_MOVIES, null, this);
         }

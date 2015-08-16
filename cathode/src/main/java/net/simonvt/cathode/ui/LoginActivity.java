@@ -127,7 +127,7 @@ public class LoginActivity extends BaseActivity {
         .putBoolean(Settings.INITIAL_SYNC, true) //
         .apply();
 
-    final String username = settings.getString(Settings.PROFILE_USERNAME, null);
+    final String username = settings.getString(Settings.Profile.USERNAME, null);
 
     Accounts.setupAccount(this, username);
 

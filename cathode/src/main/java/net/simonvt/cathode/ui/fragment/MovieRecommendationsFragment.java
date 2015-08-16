@@ -128,7 +128,7 @@ public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdap
 
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     sortBy = SortBy.fromValue(
-        settings.getString(Settings.SORT_MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey()));
+        settings.getString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey()));
 
     getLoaderManager().initLoader(Loaders.LOADER_MOVIES_RECOMMENDATIONS, null, this);
 
@@ -202,14 +202,14 @@ public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdap
       case R.id.sort_relevance:
         sortBy = SortBy.RELEVANCE;
         settings.edit()
-            .putString(Settings.SORT_MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey())
+            .putString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey())
             .apply();
         getLoaderManager().restartLoader(Loaders.LOADER_MOVIES_RECOMMENDATIONS, null, this);
         break;
 
       case R.id.sort_rating:
         sortBy = SortBy.RATING;
-        settings.edit().putString(Settings.SORT_MOVIE_RECOMMENDED, SortBy.RATING.getKey()).apply();
+        settings.edit().putString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RATING.getKey()).apply();
         getLoaderManager().restartLoader(Loaders.LOADER_MOVIES_RECOMMENDATIONS, null, this);
         break;
     }

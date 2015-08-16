@@ -106,8 +106,8 @@ public class NavigationFragment extends AbsAdapterFragment {
 
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     settings.registerOnSharedPreferenceChangeListener(settingsListener);
-    String username = settings.getString(Settings.PROFILE_USERNAME, null);
-    String avatar = settings.getString(Settings.PROFILE_AVATAR, null);
+    String username = settings.getString(Settings.Profile.USERNAME, null);
+    String avatar = settings.getString(Settings.Profile.AVATAR, null);
 
     adapter = new NavigationAdapter(getActivity(), menuItems);
     adapter.setUsername(username);
@@ -119,8 +119,8 @@ public class NavigationFragment extends AbsAdapterFragment {
       new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-          if (Settings.PROFILE_AVATAR.equals(key)) {
-            String avatar = settings.getString(Settings.PROFILE_AVATAR, null);
+          if (Settings.Profile.AVATAR.equals(key)) {
+            String avatar = settings.getString(Settings.Profile.AVATAR, null);
 
             if (getAdapterView() != null) {
               final int firstPos = getAdapterView().getFirstVisiblePosition();
@@ -130,7 +130,7 @@ public class NavigationFragment extends AbsAdapterFragment {
               }
             }
           }
-          if (Settings.PROFILE_USERNAME.equals(key)) {
+          if (Settings.Profile.USERNAME.equals(key)) {
 
           }
         }

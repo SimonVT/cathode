@@ -90,7 +90,7 @@ public class ShowsCollectionFragment extends ShowsFragment implements ListDialog
   @Override public void onCreate(Bundle inState) {
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     sortBy =
-        SortBy.fromValue(settings.getString(Settings.SORT_SHOW_COLLECTED, SortBy.TITLE.getKey()));
+        SortBy.fromValue(settings.getString(Settings.Sort.SHOW_COLLECTED, SortBy.TITLE.getKey()));
 
     super.onCreate(inState);
 
@@ -120,13 +120,13 @@ public class ShowsCollectionFragment extends ShowsFragment implements ListDialog
     switch (id) {
       case R.id.sort_title:
         sortBy = SortBy.TITLE;
-        settings.edit().putString(Settings.SORT_SHOW_COLLECTED, SortBy.TITLE.getKey()).apply();
+        settings.edit().putString(Settings.Sort.SHOW_COLLECTED, SortBy.TITLE.getKey()).apply();
         getLoaderManager().restartLoader(getLoaderId(), null, this);
         break;
 
       case R.id.sort_collected:
         sortBy = SortBy.COLLECTED;
-        settings.edit().putString(Settings.SORT_SHOW_COLLECTED, SortBy.COLLECTED.getKey()).apply();
+        settings.edit().putString(Settings.Sort.SHOW_COLLECTED, SortBy.COLLECTED.getKey()).apply();
         getLoaderManager().restartLoader(getLoaderId(), null, this);
         break;
     }

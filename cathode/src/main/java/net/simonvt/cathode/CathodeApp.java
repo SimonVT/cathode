@@ -111,7 +111,7 @@ public class CathodeApp extends Application {
     @Override public void run() {
       Timber.d("Performing periodic sync");
       SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(CathodeApp.this);
-      final long lastFullSync = settings.getLong(Settings.FULL_SYNC, 0);
+      final long lastFullSync = settings.getLong(Settings.LAST_FULL_SYNC, 0);
       final long currentTime = System.currentTimeMillis();
       if (lastFullSync + 24 * DateUtils.DAY_IN_MILLIS < currentTime) {
         jobManager.addJob(new SyncJob());
