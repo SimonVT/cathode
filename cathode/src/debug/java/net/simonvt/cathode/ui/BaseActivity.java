@@ -100,6 +100,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         StartPage.SHOWS_UPCOMING);
     debugViews.startPage.setSelection(startPageAdapter.getPositionForValue(startPage));
 
+    debugViews.recreateActivity.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        recreate();
+      }
+    });
+
     debugViews.requestFailedEvent.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         injects.bus.post(new RequestFailedEvent(R.string.error_unknown_retrying));
@@ -242,6 +248,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Bind(R.id.debug_content) ViewGroup container;
 
     @Bind(R.id.debug_startPage) Spinner startPage;
+
+    @Bind(R.id.debug_recreateActivity) View recreateActivity;
 
     @Bind(R.id.debug_requestFailedEvent) View requestFailedEvent;
 

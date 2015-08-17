@@ -41,6 +41,14 @@
       android:layout_width="0dp"
       android:layout_gravity="start|center_vertical|fill_horizontal"/>
 
+  <TextView
+      android:id="@+id/debug_recreateActivity"
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
+      android:textAllCaps="false"
+      android:text="Recreate activity"
+      style="@style/DebugDrawerItem"/>
 
   <TextView
       android:layout_width="0dp"
