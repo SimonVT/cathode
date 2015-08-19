@@ -96,6 +96,8 @@
   <string name="title_movies_trending">Trending movies</string>
   <string name="title_movies_recommendations">Movie recommendations</string>
 
+  <string name="title_settings">Settings</string>
+
   <string name="header_aired">Aired</string>
   <string name="header_upcoming">Upcoming</string>
   <string name="header_shows">Shows</string>

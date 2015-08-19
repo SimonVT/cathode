@@ -25,6 +25,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Permissions;
@@ -47,7 +48,13 @@ public class SettingsActivity extends BaseActivity {
     }
 
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-    toolbar.setTitle("Settings"); // TODO
+    toolbar.setTitle(R.string.title_settings);
+    toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        finish();
+      }
+    });
   }
 
   public static class SettingsFragment extends PreferenceFragment {
