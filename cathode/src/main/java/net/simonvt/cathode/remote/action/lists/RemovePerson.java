@@ -21,6 +21,8 @@ import net.simonvt.cathode.api.body.ListItemActionBody;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class RemovePerson extends Job {
 
@@ -49,8 +51,16 @@ public class RemovePerson extends Job {
   }
 
   @Override public void perform() {
-    ListItemActionBody body = new ListItemActionBody();
-    body.person(traktId);
-    usersService.removeItem(listId, body);
+    try {
+      ListItemActionBody body = new ListItemActionBody();
+      body.person(traktId);
+      usersService.removeItem(listId, body);
+    } catch (RetrofitError error) {
+      Response response = error.getResponse();
+      // The trakt API has a bug where removing a person returns a 500 status code.
+      if (response == null || response.getStatus() != 500) {
+        throw error;
+      }
+    }
   }
 }
