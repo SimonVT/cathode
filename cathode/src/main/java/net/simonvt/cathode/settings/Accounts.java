@@ -18,19 +18,13 @@ package net.simonvt.cathode.settings;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
-import java.io.IOException;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.service.AccountAuthenticator;
 import net.simonvt.cathode.util.DateUtils;
-import timber.log.Timber;
 
 public final class Accounts {
 

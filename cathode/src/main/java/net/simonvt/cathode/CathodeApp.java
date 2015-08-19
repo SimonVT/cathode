@@ -15,7 +15,6 @@
  */
 package net.simonvt.cathode;
 
-import android.accounts.Account;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
