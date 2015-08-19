@@ -33,7 +33,7 @@ public final class Permissions {
   }
 
   public static boolean hasPermissions(Context context, String[] permissions) {
-    if (VersionCodes.isMNC()) {
+    if (VersionCodes.isAtLeastM()) {
       for (String permission : permissions) {
         if (context.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
           return false;

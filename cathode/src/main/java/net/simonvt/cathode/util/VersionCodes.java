@@ -23,7 +23,7 @@ public final class VersionCodes {
   private VersionCodes() {
   }
 
-  public static boolean isMNC() {
-    return Build.VERSION.SDK_INT >= 22; // TODO
+  public static boolean isAtLeastM() {
+    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
   }
 }
