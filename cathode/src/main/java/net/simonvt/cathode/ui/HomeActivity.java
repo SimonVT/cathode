@@ -258,7 +258,7 @@ public class HomeActivity extends BaseActivity
     return super.onOptionsItemSelected(item);
   }
 
-  @Override public void onMenuItemClicked(int id) {
+  @Override public boolean onMenuItemClicked(int id) {
     switch (id) {
       case R.id.menu_shows_upcoming:
         stack.replace(UpcomingShowsFragment.class, Fragments.SHOWS_UPCOMING);
@@ -311,13 +311,14 @@ public class HomeActivity extends BaseActivity
       case R.id.menu_settings:
         Intent settings = new Intent(this, SettingsActivity.class);
         startActivity(settings);
-        break;
+        return false;
 
       default:
         throw new IllegalArgumentException("Unknown id " + id);
     }
 
     drawer.closeDrawer(Gravity.LEFT);
+    return true;
   }
 
   private WatchingViewListener watchingListener = new WatchingViewListener() {

@@ -46,7 +46,7 @@ public class NavigationFragment extends AbsAdapterFragment {
 
   public interface OnMenuClickListener {
 
-    void onMenuItemClicked(int id);
+    boolean onMenuItemClicked(int id);
   }
 
   private List<NavigationItem> menuItems = new ArrayList<NavigationItem>();
@@ -176,9 +176,11 @@ public class NavigationFragment extends AbsAdapterFragment {
 
   @Override protected void onItemClick(AdapterView l, View v, int position, long id) {
     MenuItem item = (MenuItem) getAdapter().getItem(position);
-    listener.onMenuItemClicked(item.id);
 
-    selectedPosition = position;
+    if (listener.onMenuItemClicked(item.id)) {
+      selectedPosition = position;
+    }
+
     getAdapterView().setItemChecked(selectedPosition, true);
   }
 
