@@ -29,8 +29,8 @@ public class TextHelper {
     textHelper = new CollapsingTextHelper(view);
   }
 
-  public void setExpandedTextVerticalGravity(int expandedTextVerticalGravity) {
-    textHelper.setExpandedTextVerticalGravity(expandedTextVerticalGravity);
+  public void setExpandedTextGravity(int expandedTextVerticalGravity) {
+    textHelper.setExpandedTextGravity(expandedTextVerticalGravity);
   }
 
   public void setTextSizeInterpolator(DecelerateInterpolator textSizeInterpolator) {

@@ -91,7 +91,7 @@ public class AppBarRelativeLayout extends RelativeLayout {
     setWillNotDraw(false);
 
     textHelper = new TextHelper(this);
-    textHelper.setExpandedTextVerticalGravity(Gravity.BOTTOM);
+    textHelper.setExpandedTextGravity(Gravity.LEFT | Gravity.BOTTOM);
     textHelper.setTextSizeInterpolator(new DecelerateInterpolator());
 
     TypedArray a =
