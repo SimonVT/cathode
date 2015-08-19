@@ -22,17 +22,23 @@ import android.accounts.AccountManager;
 import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.os.Bundle;
+import java.util.concurrent.atomic.AtomicInteger;
 import net.simonvt.cathode.R;
+import timber.log.Timber;
 
 public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
-  public static boolean allowRemove;
+  public static AtomicInteger allowRemoveCount = new AtomicInteger();
 
   private Context context;
 
   public AccountAuthenticator(Context context) {
     super(context);
     this.context = context;
+  }
+
+  public static void allowRemove() {
+    allowRemoveCount.addAndGet(1);
   }
 
   @Override
@@ -79,6 +85,15 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
   @Override
   public Bundle getAccountRemovalAllowed(AccountAuthenticatorResponse response, Account account)
       throws NetworkErrorException {
+
+    final int removeCount = allowRemoveCount.get();
+    boolean allowRemove = false;
+    if (removeCount > 0) {
+      allowRemove = true;
+      allowRemoveCount.decrementAndGet();
+    }
+
+    Timber.d("getAccountRemovalAllowed: " + allowRemove);
     final Bundle result = new Bundle();
     result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, allowRemove);
     return result;

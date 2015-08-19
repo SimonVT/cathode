@@ -15,6 +15,7 @@
  */
 package net.simonvt.cathode;
 
+import android.accounts.Account;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
@@ -86,10 +87,18 @@ public class CathodeApp extends Application {
     upgrade();
 
     objectGraph = ObjectGraph.create(Modules.list(this));
-
     objectGraph.inject(this);
 
     bus.register(this);
+
+    final boolean isLoggedIn = settings.getBoolean(Settings.TRAKT_LOGGED_IN, false);
+    final boolean accountExists = Accounts.accountExists(this);
+    if (isLoggedIn && !accountExists) {
+      final String username = settings.getString(Settings.Profile.USERNAME, null);
+      Accounts.setupAccount(this, username);
+    } else if (!isLoggedIn && accountExists) {
+      Accounts.removeAccount(this);
+    }
 
     registerActivityLifecycleCallbacks(new SimpleActivityLifecycleCallbacks() {
 

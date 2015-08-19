@@ -18,13 +18,19 @@ package net.simonvt.cathode.settings;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.AccountManagerCallback;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
+import java.io.IOException;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.service.AccountAuthenticator;
 import net.simonvt.cathode.util.DateUtils;
+import timber.log.Timber;
 
 public final class Accounts {
 
@@ -45,11 +51,8 @@ public final class Accounts {
   }
 
   public static void setupAccount(Context context, String username) {
-    removeAccount(context);
-
     AccountManager manager = AccountManager.get(context);
 
-    // TODO: Can I get the username?
     Account account = new Account(username, context.getString(R.string.accountType));
 
     manager.addAccountExplicitly(account, null, null);
@@ -66,16 +69,15 @@ public final class Accounts {
   }
 
   public static void removeAccount(Context context) {
-    AccountAuthenticator.allowRemove = true;
     AccountManager am = AccountManager.get(context);
     Account[] accounts = am.getAccountsByType(context.getString(R.string.accountType));
     for (Account account : accounts) {
       ContentResolver.removePeriodicSync(account, BuildConfig.PROVIDER_AUTHORITY, new Bundle());
       ContentResolver.removePeriodicSync(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR,
           new Bundle());
+      AccountAuthenticator.allowRemove();
       am.removeAccount(account, null, null);
     }
-    AccountAuthenticator.allowRemove = false;
   }
 
   public static void requestCalendarSync(Context context) {
