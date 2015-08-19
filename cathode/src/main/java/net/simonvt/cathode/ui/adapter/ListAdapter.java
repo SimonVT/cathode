@@ -105,8 +105,9 @@ public class ListAdapter extends RecyclerCursorAdapter<RecyclerView.ViewHolder> 
 
       v.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          seasonListener.onSeasonClick(v, seasonHolder.getAdapterPosition(),
-              seasonHolder.getItemId());
+          Cursor cursor = getCursor(seasonHolder.getAdapterPosition());
+          final long itemId = cursor.getLong(cursor.getColumnIndex(ListItemColumns.ITEM_ID));
+          seasonListener.onSeasonClick(v, seasonHolder.getAdapterPosition(), itemId);
         }
       });
     } else if (viewType == ListItemColumns.Type.EPISODE) {
