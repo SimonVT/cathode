@@ -121,7 +121,7 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
           case ListItemColumns.Type.EPISODE: {
             final long showId = EpisodeWrapper.getShowId(context.getContentResolver(), itemId);
             final long showTraktId = ShowWrapper.getTraktId(context.getContentResolver(), showId);
-            final int seasonNumber =EpisodeWrapper.getSeason(context.getContentResolver(), itemId);
+            final int seasonNumber = EpisodeWrapper.getSeason(context.getContentResolver(), itemId);
             final int episodeNumber =
                 EpisodeWrapper.getEpisodeNumber(context.getContentResolver(), itemId);
 

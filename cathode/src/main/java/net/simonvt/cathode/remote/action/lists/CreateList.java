@@ -29,7 +29,6 @@ import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
 import net.simonvt.cathode.provider.ListWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Lists;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.cathode.settings.Settings;
 
 public class CreateList extends Job {
 
