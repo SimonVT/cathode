@@ -51,8 +51,6 @@ import timber.log.Timber;
 
 public class CathodeApp extends Application {
 
-  private static final String TAG = "CathodeApp";
-
   private static final int AUTH_NOTIFICATION = 2;
 
   private static final long SYNC_DELAY = 15 * DateUtils.MINUTE_IN_MILLIS;
@@ -202,7 +200,7 @@ public class CathodeApp extends Application {
   }
 
   @Subscribe public void onAuthFailure(AuthFailedEvent event) {
-    Timber.tag(TAG).i("onAuthFailure");
+    Timber.i("onAuthFailure");
     if (!Accounts.accountExists(this)) {
       // TODO: Try and make sure this doesn't happen
       return; // User has logged out, ignore.
