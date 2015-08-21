@@ -120,7 +120,6 @@ public class SyncList extends Job {
 
           final int itemPosition = getItemPosition(oldItems, ListItemColumns.Type.SHOW, showId);
           if (itemPosition >= 0) {
-            Timber.d("Item exists at position: %d", itemPosition);
             oldItems.remove(itemPosition);
             continue;
           }
@@ -157,7 +156,6 @@ public class SyncList extends Job {
 
           final int itemPosition = getItemPosition(oldItems, ListItemColumns.Type.SEASON, seasonId);
           if (itemPosition >= 0) {
-            Timber.d("Item exists at position: %d", itemPosition);
             oldItems.remove(itemPosition);
             continue;
           }
@@ -210,7 +208,6 @@ public class SyncList extends Job {
           final int itemPosition =
               getItemPosition(oldItems, ListItemColumns.Type.EPISODE, episodeId);
           if (itemPosition >= 0) {
-            Timber.d("Item exists at position: %d", itemPosition);
             oldItems.remove(itemPosition);
             continue;
           }
@@ -235,7 +232,6 @@ public class SyncList extends Job {
 
           final int itemPosition = getItemPosition(oldItems, ListItemColumns.Type.MOVIE, movieId);
           if (itemPosition >= 0) {
-            Timber.d("Item exists at position: %d", itemPosition);
             oldItems.remove(itemPosition);
             continue;
           }
@@ -260,7 +256,6 @@ public class SyncList extends Job {
 
           final int itemPosition = getItemPosition(oldItems, ListItemColumns.Type.PERSON, personId);
           if (itemPosition >= 0) {
-            Timber.d("Item exists at position: %d", itemPosition);
             oldItems.remove(itemPosition);
             continue;
           }
@@ -278,7 +273,6 @@ public class SyncList extends Job {
     }
 
     for (Item item : oldItems) {
-      Timber.d("Deleting item: %d - %d", item.itemType, item.itemId);
       ContentProviderOperation.Builder opBuilder =
           ContentProviderOperation.newDelete(ListItems.LIST_ITEMS)
               .withSelection(ListItemColumns.ITEM_TYPE + "=? AND " + ListItemColumns.ITEM_ID + "=?",
