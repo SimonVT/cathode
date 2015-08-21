@@ -15,14 +15,17 @@
  */
 package net.simonvt.cathode;
 
+import android.accounts.Account;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import com.crashlytics.android.Crashlytics;
@@ -187,6 +190,16 @@ public class CathodeApp extends Application {
             jobManager.addJob(new UpdateShowCounts());
           }
         });
+      }
+      if (currentVersion <= 31000) {
+        Account account = Accounts.getAccount(this);
+
+        ContentResolver.setIsSyncable(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, 1);
+        ContentResolver.setSyncAutomatically(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, true);
+        ContentResolver.addPeriodicSync(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, new Bundle(),
+            12 * DateUtils.HOUR_IN_SECONDS);
+
+        Accounts.requestCalendarSync(this);
       }
 
       MainHandler.post(new Runnable() {

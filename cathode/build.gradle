@@ -88,7 +88,7 @@ android {
       resValue "string", "authority_provider", "net.simonvt.cathode.provider.CathodeProvider"
 
       buildConfigField "String", "AUTHORITY_DUMMY_CALENDAR",
-          "\"net.simonvt.cathode.debug.provider.DummyCalendarProvider\""
+          "\"net.simonvt.cathode.provider.DummyCalendarProvider\""
       resValue "string", "authority_dummy_calendar",
           "net.simonvt.cathode.provider.DummyCalendarProvider"
 
