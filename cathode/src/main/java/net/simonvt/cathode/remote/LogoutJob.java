@@ -23,6 +23,7 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Lists;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
@@ -104,5 +105,7 @@ public class LogoutJob extends Job {
     values.put(ShowColumns.HIDDEN, false);
 
     getContentResolver().update(Shows.SHOWS, values, null, null);
+
+    getContentResolver().delete(Lists.LISTS, null, null);
   }
 }

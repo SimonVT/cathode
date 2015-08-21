@@ -34,6 +34,7 @@ import net.simonvt.cathode.jobqueue.JobModule;
 import net.simonvt.cathode.jobqueue.JobService;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.ForceUpdateJob;
+import net.simonvt.cathode.remote.LogoutJob;
 import net.simonvt.cathode.remote.UpdateShowCounts;
 import net.simonvt.cathode.remote.action.CancelCheckin;
 import net.simonvt.cathode.remote.action.lists.AddEpisode;
@@ -210,7 +211,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         UpdateShowCounts.class, SyncLists.class, SyncList.class, CreateList.class,
         RemoveShow.class, RemoveSeason.class, RemoveEpisode.class, RemoveMovie.class,
         RemovePerson.class, AddShow.class, AddSeason.class, AddEpisode.class, AddMovie.class,
-        AddPerson.class,
+        AddPerson.class, LogoutJob.class,
 
         // Misc
         ShowSearchHandler.class, ShowSearchHandler.SearchThread.class, MovieSearchHandler.class,

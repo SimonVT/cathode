@@ -242,8 +242,6 @@ public final class Settings {
     editor.remove(TRENDING);
     editor.remove(RECOMMENDATIONS);
 
-    editor.remove(INITIAL_SYNC);
-
     // Clear sorting options
     editor.remove(Sort.SHOW_UPCOMING);
     editor.remove(Sort.SHOW_SEARCH);

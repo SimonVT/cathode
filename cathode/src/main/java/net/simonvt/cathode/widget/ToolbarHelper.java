@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.dialog.AboutDialog;
+import net.simonvt.cathode.ui.dialog.LogoutDialog;
 
 public class ToolbarHelper {
 
@@ -44,6 +45,10 @@ public class ToolbarHelper {
     switch (item.getItemId()) {
       case R.id.menu_about:
         new AboutDialog().show(fragment.getFragmentManager(), HomeActivity.DIALOG_ABOUT);
+        return true;
+
+      case R.id.menu_logout:
+        new LogoutDialog().show(fragment.getFragmentManager(), HomeActivity.DIALOG_LOGOUT);
         return true;
     }
 

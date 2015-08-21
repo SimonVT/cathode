@@ -48,7 +48,6 @@ import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import net.simonvt.cathode.ui.fragment.ActorsFragment;
 import net.simonvt.cathode.ui.fragment.EpisodeFragment;
 import net.simonvt.cathode.ui.fragment.ListFragment;
@@ -248,10 +247,6 @@ public class HomeActivity extends BaseActivity
     switch (item.getItemId()) {
       case android.R.id.home:
         onHomeClicked();
-        return true;
-
-      case R.id.menu_logout:
-        new LogoutDialog().show(getSupportFragmentManager(), DIALOG_LOGOUT);
         return true;
     }
 
