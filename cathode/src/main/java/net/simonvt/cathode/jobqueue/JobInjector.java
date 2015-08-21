@@ -16,7 +16,7 @@
 
 package net.simonvt.cathode.jobqueue;
 
-public abstract class JobInjector {
+public interface JobInjector {
 
-  public abstract void injectInto(Job job);
+  void injectInto(Job job);
 }

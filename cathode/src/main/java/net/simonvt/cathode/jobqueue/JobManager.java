@@ -217,6 +217,9 @@ public final class JobManager {
 
           job.setCheckedOut(true);
           jobInjector.injectInto(job);
+          if (job.context == null) {
+            Timber.i("Injection failed, context is null");
+          }
           return job;
         }
       }

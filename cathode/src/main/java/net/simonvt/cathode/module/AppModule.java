@@ -230,11 +230,7 @@ public class AppModule {
   }
 
   @Provides @Singleton JobInjector provideJobInjector(final Context context) {
-    return new JobInjector() {
-      @Override public void injectInto(Job job) {
-        CathodeApp.inject(context, job);
-      }
-    };
+    return JobInjectorImpl.getInstance(context);
   }
 
   @Provides @Singleton JobListener provideJobListener(final Context context) {
