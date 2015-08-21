@@ -16,6 +16,7 @@
 
 package net.simonvt.cathode.module;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import com.squareup.otto.Bus;
@@ -25,7 +26,6 @@ import java.io.IOException;
 import java.util.List;
 import javax.inject.Singleton;
 import net.simonvt.cathode.BuildConfig;
-import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.ApiKey;
 import net.simonvt.cathode.api.TraktModule;
@@ -139,8 +139,8 @@ public class ApiModule {
     };
   }
 
-  @Provides @Singleton UserToken provideUserToken(CathodeApp app) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(app);
+  @Provides @Singleton UserToken provideUserToken(Context context) {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 
     String token = settings.getString(Settings.TRAKT_TOKEN, null);
 

@@ -219,14 +219,10 @@ import net.simonvt.cathode.widget.RemoteImageView;
     })
 public class AppModule {
 
-  private final CathodeApp app;
+  private final Context app;
 
-  public AppModule(CathodeApp app) {
+  public AppModule(Context app) {
     this.app = app;
-  }
-
-  @Provides CathodeApp provideApp() {
-    return app;
   }
 
   @Provides Context provideContext() {
