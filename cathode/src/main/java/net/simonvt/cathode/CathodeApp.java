@@ -191,7 +191,7 @@ public class CathodeApp extends Application {
           }
         });
       }
-      if (currentVersion <= 31000) {
+      if (currentVersion <= 31001) {
         Account account = Accounts.getAccount(this);
 
         if (account != null) {
