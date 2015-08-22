@@ -108,6 +108,10 @@ public class JobExecutor {
   private void postQueueEmpty() {
     MainHandler.post(new Runnable() {
       @Override public void run() {
+        if (destroyed) {
+          return;
+        }
+
         // Jobs might have been posted since postQueueEmpty was called,
         // can happen if last job in the queue posts additional jobs.
         if (jobManager.hasJobs(withFlags, withoutFlags)) {
