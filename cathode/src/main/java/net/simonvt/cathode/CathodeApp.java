@@ -194,16 +194,19 @@ public class CathodeApp extends Application {
       if (currentVersion <= 31000) {
         Account account = Accounts.getAccount(this);
 
-        ContentResolver.setIsSyncable(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, 1);
-        ContentResolver.setSyncAutomatically(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, true);
-        ContentResolver.addPeriodicSync(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, new Bundle(),
-            12 * DateUtils.HOUR_IN_SECONDS);
+        if (account != null) {
+          ContentResolver.setIsSyncable(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, 1);
+          ContentResolver.setSyncAutomatically(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, true);
+          ContentResolver.addPeriodicSync(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, new Bundle(),
+                  12 * DateUtils.HOUR_IN_SECONDS);
+        }
 
         Accounts.requestCalendarSync(this);
       }
 
       MainHandler.post(new Runnable() {
-        @Override public void run() {
+        @Override
+        public void run() {
           jobManager.addJob(new SyncJob());
         }
       });
