@@ -132,23 +132,23 @@ public final class DateUtils {
     }
 
     if (rightNow > millis && rightNow < millis + 1 * HOUR_IN_MILLIS) {
-      final long minutes = (rightNow - millis) / MINUTE_IN_MILLIS;
-      return context.getString(R.string.minutes_ago, minutes);
+      final int minutes = (int) ((rightNow - millis) / MINUTE_IN_MILLIS);
+      return context.getResources().getQuantityString(R.plurals.minutes_ago, minutes, minutes);
     }
 
     if (rightNow < millis && rightNow > millis - 1 * HOUR_IN_MILLIS) {
-      final long minutes = (millis - rightNow) / MINUTE_IN_MILLIS;
-      return context.getString(R.string.in_minutes, minutes);
+      final int minutes = (int) ((millis - rightNow) / MINUTE_IN_MILLIS);
+      return context.getResources().getQuantityString(R.plurals.in_minutes, minutes, minutes);
     }
 
     if (rightNow > millis && rightNow <= millis + 24 * HOUR_IN_MILLIS) {
-      final long hours = (rightNow - millis) / HOUR_IN_MILLIS;
-      return context.getString(R.string.hours_ago, hours);
+      final int hours = (int) ((rightNow - millis) / HOUR_IN_MILLIS);
+      return context.getResources().getQuantityString(R.plurals.hours_ago, hours, hours);
     }
 
     if (rightNow < millis && rightNow >= millis - 24 * HOUR_IN_MILLIS) {
-      final long hours = (millis - rightNow) / HOUR_IN_MILLIS;
-      return context.getString(R.string.in_hours, hours);
+      final int hours = (int) ((millis - rightNow) / HOUR_IN_MILLIS);
+      return context.getResources().getQuantityString(R.plurals.in_hours, hours, hours);
     }
 
     final int year = cal.get(Calendar.YEAR);

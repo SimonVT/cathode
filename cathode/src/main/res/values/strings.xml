@@ -68,10 +68,22 @@
   <string name="prowl">Prowl</string>
 
   <string name="now">Now</string>
-  <string name="in_minutes">In %d minutes</string>
-  <string name="minutes_ago">%d minutes ago</string>
-  <string name="in_hours">In %d hours</string>
-  <string name="hours_ago">%d hours ago</string>
+  <plurals name="in_minutes">
+    <item quantity="one">In %d minute</item>
+    <item quantity="other">In %d minutes</item>
+  </plurals>
+  <plurals name="minutes_ago">
+    <item quantity="one">%d minute ago</item>
+    <item quantity="other">%d minutes ago</item>
+  </plurals>
+  <plurals name="in_hours">
+    <item quantity="one">In %d hour</item>
+    <item quantity="other">In %d hours</item>
+  </plurals>
+  <plurals name="hours_ago">
+    <item quantity="one">%d hour ago</item>
+    <item quantity="other">%d hours ago</item>
+  </plurals>
 
   <string name="watched">Watched</string>
 
