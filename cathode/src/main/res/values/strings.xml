@@ -58,6 +58,7 @@
 
   <string name="checkin_message_title">Check in message</string>
   <string name="checkin_message_default">I\'m watching [item]</string>
+  <string name="checkin_error">Unable to check in %1$s, already watching something else</string>
 
   <string name="share_to">Share to</string>
   <string name="facebook">Facebook</string>

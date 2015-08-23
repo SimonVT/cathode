@@ -15,16 +15,27 @@
  */
 package net.simonvt.cathode.remote.action.shows;
 
+import android.database.Cursor;
+import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.body.CheckinItem;
 import net.simonvt.cathode.api.service.CheckinService;
+import net.simonvt.cathode.event.CheckInFailedEvent;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.sync.SyncWatching;
+import net.simonvt.cathode.util.MainHandler;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class CheckInEpisode extends Job {
 
   @Inject transient CheckinService checkinService;
+
+  @Inject transient Bus bus;
 
   private long traktId;
 
@@ -55,14 +66,44 @@ public class CheckInEpisode extends Job {
   }
 
   @Override public void perform() {
-    CheckinItem item = new CheckinItem() //
-        .episode(traktId) //
-        .message(message) //
-        .facebook(facebook) //
-        .twitter(twitter) //
-        .tumblr(tumblr) //
-        .appVersion(BuildConfig.VERSION_NAME) //
-        .appDate(BuildConfig.BUILD_TIME);
-    checkinService.checkin(item);
+    try {
+      CheckinItem item = new CheckinItem() //
+          .episode(traktId) //
+          .message(message) //
+          .facebook(facebook) //
+          .twitter(twitter) //
+          .tumblr(tumblr) //
+          .appVersion(BuildConfig.VERSION_NAME) //
+          .appDate(BuildConfig.BUILD_TIME);
+      checkinService.checkin(item);
+    } catch (RetrofitError e) {
+      Response response = e.getResponse();
+      if (response != null) {
+        if (response.getStatus() == 409) {
+          queue(new SyncWatching());
+
+          Cursor c = getContentResolver().query(Episodes.EPISODES, new String[] {
+              EpisodeColumns.TITLE,
+          }, EpisodeColumns.TRAKT_ID + "=?", new String[] {
+              String.valueOf(traktId),
+          }, null);
+
+          if (c.moveToFirst()) {
+            final String title = c.getString(c.getColumnIndex(EpisodeColumns.TITLE));
+
+            MainHandler.post(new Runnable() {
+              @Override public void run() {
+                bus.post(new CheckInFailedEvent(title));
+              }
+            });
+          }
+
+          c.close();
+          return;
+        }
+      }
+
+      throw e;
+    }
   }
 }

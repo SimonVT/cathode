@@ -15,20 +15,28 @@
  */
 package net.simonvt.cathode.remote.action.movies;
 
+import android.database.Cursor;
+import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.body.CheckinItem;
 import net.simonvt.cathode.api.service.CheckinService;
+import net.simonvt.cathode.event.CheckInFailedEvent;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncWatching;
+import net.simonvt.cathode.util.MainHandler;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import timber.log.Timber;
 
 public class CheckInMovie extends Job {
 
   @Inject transient CheckinService checkinService;
+
+  @Inject transient Bus bus;
 
   long traktId;
 
@@ -73,9 +81,22 @@ public class CheckInMovie extends Job {
       Response response = e.getResponse();
       if (response != null) {
         if (response.getStatus() == 409) {
-          Timber.d("409 status, cancel checkin");
           queue(new SyncWatching());
-          // TODO: Let the user know a checkin is already in progress
+
+          final long movieId = MovieWrapper.getMovieId(getContentResolver(), traktId);
+          Cursor c = getContentResolver().query(Movies.withId(movieId), new String[] {
+              MovieColumns.TITLE,
+          }, null, null, null);
+          if (c.moveToFirst()) {
+            final String title = c.getString(c.getColumnIndex(MovieColumns.TITLE));
+
+            MainHandler.post(new Runnable() {
+              @Override public void run() {
+                bus.post(new CheckInFailedEvent(title));
+              }
+            });
+          }
+          c.close();
           return;
         }
       }

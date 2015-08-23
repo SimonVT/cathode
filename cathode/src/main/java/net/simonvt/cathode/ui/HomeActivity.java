@@ -40,6 +40,7 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.event.CheckInFailedEvent;
 import net.simonvt.cathode.event.LogoutEvent;
 import net.simonvt.cathode.event.MessageEvent;
 import net.simonvt.cathode.event.RequestFailedEvent;
@@ -381,6 +382,11 @@ public class HomeActivity extends BaseActivity
 
   @Subscribe public void onRequestFailedEvent(RequestFailedEvent event) {
     crouton.show(getString(event.getErrorMessage()),
+        getResources().getColor(android.R.color.holo_red_dark));
+  }
+
+  @Subscribe public void onCheckInFailedEvent(CheckInFailedEvent event) {
+    crouton.show(getResources().getString(R.string.checkin_error, event.getTitle()),
         getResources().getColor(android.R.color.holo_red_dark));
   }
 

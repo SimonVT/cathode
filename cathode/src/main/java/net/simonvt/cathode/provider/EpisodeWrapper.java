@@ -55,6 +55,20 @@ public final class EpisodeWrapper {
     return id;
   }
 
+  public static long getEpisodeId(ContentResolver resolver, long traktId) {
+    Cursor c = resolver.query(Episodes.EPISODES, new String[] {
+        EpisodeColumns.ID,
+    }, EpisodeColumns.TRAKT_ID + "=?", new String[] {
+        String.valueOf(traktId),
+    }, null);
+
+    long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(EpisodeColumns.ID));
+
+    c.close();
+
+    return id;
+  }
+
   public static int getEpisodeNumber(ContentResolver resolver, long episodeId) {
     Cursor c = resolver.query(Episodes.withId(episodeId), new String[] {
         EpisodeColumns.EPISODE,
