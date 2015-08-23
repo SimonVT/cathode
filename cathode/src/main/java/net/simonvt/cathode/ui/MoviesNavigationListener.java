@@ -17,7 +17,7 @@ package net.simonvt.cathode.ui;
 
 public interface MoviesNavigationListener extends NavigationClickListener {
 
-  void onDisplayMovie(long movieId, String title);
+  void onDisplayMovie(long movieId, String title, String overview);
 
   void searchMovie(String query);
 

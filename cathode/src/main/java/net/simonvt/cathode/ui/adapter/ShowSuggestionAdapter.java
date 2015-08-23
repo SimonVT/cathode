@@ -74,12 +74,12 @@ public class ShowSuggestionAdapter extends SuggestionsAdapter {
 
       List<Suggestion> queries = new ArrayList<Suggestion>();
       while (previousQueries.moveToNext()) {
-        queries.add(new Suggestion(previousQueries.getString(queryIndex), null));
+        queries.add(new Suggestion(previousQueries.getString(queryIndex), null, null));
       }
       previousQueries.close();
 
       Cursor allShows = context.getContentResolver().query(Shows.SHOWS, new String[] {
-          ShowColumns.ID, ShowColumns.TITLE,
+          ShowColumns.ID, ShowColumns.TITLE, ShowColumns.OVERVIEW
       }, ShowColumns.NEEDS_SYNC
           + "=0"
           + " AND ("
@@ -89,11 +89,13 @@ public class ShowSuggestionAdapter extends SuggestionsAdapter {
           + ">0)", null, null);
 
       final int titleIndex = allShows.getColumnIndex(ShowColumns.TITLE);
+      final int overviewIndex = allShows.getColumnIndex(ShowColumns.OVERVIEW);
       final int idIndex = allShows.getColumnIndex(ShowColumns.ID);
 
       List<Suggestion> shows = new ArrayList<Suggestion>();
       while (allShows.moveToNext()) {
-        shows.add(new Suggestion(allShows.getString(titleIndex), allShows.getLong(idIndex)));
+        shows.add(new Suggestion(allShows.getString(titleIndex), allShows.getString(overviewIndex),
+            allShows.getLong(idIndex)));
       }
       allShows.close();
 

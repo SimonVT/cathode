@@ -102,7 +102,8 @@ public class ListFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
   @Override public void onShowClick(View view, int position, long id) {
     Cursor cursor = adapter.getCursor(position);
     final String title = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
-    navigationListener.onDisplayShow(id, title, LibraryType.WATCHED);
+    final String overview = cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW));
+    navigationListener.onDisplayShow(id, title, overview, LibraryType.WATCHED);
   }
 
   @Override public void onSeasonClick(View view, int position, long id) {
@@ -120,7 +121,8 @@ public class ListFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
   @Override public void onMovieClicked(View v, int position, long id) {
     Cursor cursor = adapter.getCursor(position);
     final String title = cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE));
-    navigationListener.onDisplayMovie(id, title);
+    final String overview = cursor.getString(cursor.getColumnIndex(MovieColumns.OVERVIEW));
+    navigationListener.onDisplayMovie(id, title, overview);
   }
 
   @Override public void onRemoveItem(int position, long id) {

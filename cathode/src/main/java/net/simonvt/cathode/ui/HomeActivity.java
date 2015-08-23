@@ -339,9 +339,10 @@ public class HomeActivity extends BaseActivity
       onDisplayEpisode(episodeId, showTitle);
     }
 
-    @Override public void onMovieClicked(WatchingView view, long movieId, String movieTitle) {
+    @Override public void onMovieClicked(WatchingView view, long id, String title,
+        String overview) {
       watchingView.collapse();
-      onDisplayMovie(movieId, movieTitle);
+      onDisplayMovie(id, title, overview);
     }
 
     @Override public void onAnimatingIn(WatchingView view) {
@@ -411,8 +412,9 @@ public class HomeActivity extends BaseActivity
     }
   }
 
-  @Override public void onDisplayShow(long showId, String title, LibraryType type) {
-    stack.push(ShowFragment.class, Fragments.SHOW, ShowFragment.getArgs(showId, title, type));
+  @Override public void onDisplayShow(long showId, String title, String overview, LibraryType type) {
+    stack.push(ShowFragment.class, Fragments.SHOW,
+        ShowFragment.getArgs(showId, title, overview, type));
     stack.commit();
   }
 
@@ -455,8 +457,9 @@ public class HomeActivity extends BaseActivity
     stack.commit();
   }
 
-  @Override public void onDisplayMovie(long movieId, String title) {
-    stack.push(MovieFragment.class, Fragments.MOVIE, MovieFragment.getArgs(movieId, title));
+  @Override public void onDisplayMovie(long movieId, String title, String overview) {
+    stack.push(MovieFragment.class, Fragments.MOVIE, MovieFragment.getArgs(movieId, title,
+        overview));
     stack.commit();
   }
 
@@ -512,8 +515,10 @@ public class HomeActivity extends BaseActivity
     } else if (watchingMovie != null && watchingMovie.moveToFirst()) {
       final long id =
           watchingMovie.getLong(watchingMovie.getColumnIndex(DatabaseContract.MovieColumns.ID));
-      final String movie = watchingMovie.getString(
+      final String title = watchingMovie.getString(
           watchingMovie.getColumnIndex(DatabaseContract.MovieColumns.TITLE));
+      final String overview = watchingMovie.getString(
+          watchingMovie.getColumnIndex(DatabaseContract.MovieColumns.OVERVIEW));
       final String poster = watchingMovie.getString(
           watchingMovie.getColumnIndex(DatabaseContract.MovieColumns.POSTER));
       final long startTime = watchingMovie.getLong(
@@ -521,7 +526,7 @@ public class HomeActivity extends BaseActivity
       final long endTime = watchingMovie.getLong(
           watchingMovie.getColumnIndex(DatabaseContract.MovieColumns.EXPIRES_AT));
 
-      watchingView.watchingMovie(id, movie, poster, startTime, endTime);
+      watchingView.watchingMovie(id, title, overview, poster, startTime, endTime);
     } else {
       watchingView.clearWatching();
     }

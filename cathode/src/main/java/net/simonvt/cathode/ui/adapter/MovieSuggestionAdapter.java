@@ -75,24 +75,27 @@ public class MovieSuggestionAdapter extends SuggestionsAdapter {
 
       List<Suggestion> queries = new ArrayList<Suggestion>();
       while (previousQueries.moveToNext()) {
-        queries.add(new Suggestion(previousQueries.getString(queryIndex), null));
+        queries.add(new Suggestion(previousQueries.getString(queryIndex), null, null));
       }
       previousQueries.close();
 
       Cursor allMovies =
           context.getContentResolver().query(Movies.MOVIES, new String[] {
-              MovieColumns.ID, MovieColumns.TITLE,
+              MovieColumns.ID, MovieColumns.TITLE, MovieColumns.OVERVIEW,
           }, MovieColumns.IN_COLLECTION
               + "=1 OR "
               + MovieColumns.WATCHED
               + "=1", null, null);
 
       final int titleIndex = allMovies.getColumnIndex(MovieColumns.TITLE);
+      final int overviewIndex = allMovies.getColumnIndex(MovieColumns.OVERVIEW);
       final int idIndex = allMovies.getColumnIndex(MovieColumns.ID);
 
       List<Suggestion> movies = new ArrayList<Suggestion>();
       while (allMovies.moveToNext()) {
-        movies.add(new Suggestion(allMovies.getString(titleIndex), allMovies.getLong(idIndex)));
+        movies.add(
+            new Suggestion(allMovies.getString(titleIndex), allMovies.getString(overviewIndex),
+                allMovies.getLong(idIndex)));
       }
       allMovies.close();
 

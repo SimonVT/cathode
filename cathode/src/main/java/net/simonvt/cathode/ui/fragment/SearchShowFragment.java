@@ -209,7 +209,8 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
       @Override public void onSuggestionSelected(Object suggestion) {
         SuggestionsAdapter.Suggestion item = (SuggestionsAdapter.Suggestion) suggestion;
         if (item.getId() != null) {
-          navigationListener.onDisplayShow(item.getId(), item.getTitle(), LibraryType.WATCHED);
+          navigationListener.onDisplayShow(item.getId(), item.getTitle(), item.getOverview(),
+              LibraryType.WATCHED);
         } else {
           navigationListener.searchShow(item.getTitle());
         }
@@ -286,8 +287,9 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
 
   @Override public void onShowClick(View view, int position, long id) {
     cursor.moveToPosition(position);
-    navigationListener.onDisplayShow(id, cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE)),
-        LibraryType.WATCHED);
+    final String title = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
+    final String overview = cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW));
+    navigationListener.onDisplayShow(id, title, overview, LibraryType.WATCHED);
   }
 
   @Subscribe public void onSearchEvent(ShowSearchResult result) {

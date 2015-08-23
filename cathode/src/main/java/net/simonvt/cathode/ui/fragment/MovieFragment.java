@@ -59,6 +59,8 @@ public class MovieFragment extends BaseFragment
 
   private static final String ARG_ID = "net.simonvt.cathode.ui.fragment.MovieFragment.id";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.fragment.MovieFragment.title";
+  private static final String ARG_OVERVIEW =
+      "net.simonvt.cathode.ui.fragment.MovieFragment.overview";
 
   private static final String DIALOG_RATING =
       "net.simonvt.cathode.ui.fragment.MovieFragment.ratingDialog";
@@ -87,6 +89,8 @@ public class MovieFragment extends BaseFragment
 
   private String movieTitle;
 
+  private String movieOverview;
+
   private int currentRating;
 
   private boolean loaded;
@@ -103,10 +107,11 @@ public class MovieFragment extends BaseFragment
 
   private MoviesNavigationListener navigationListener;
 
-  public static Bundle getArgs(long movieId, String movieTitle) {
+  public static Bundle getArgs(long movieId, String movieTitle, String overview) {
     Bundle args = new Bundle();
     args.putLong(ARG_ID, movieId);
     args.putString(ARG_TITLE, movieTitle);
+    args.putString(ARG_OVERVIEW, overview);
     return args;
   }
 
@@ -127,6 +132,7 @@ public class MovieFragment extends BaseFragment
     Bundle args = getArguments();
     movieId = args.getLong(ARG_ID);
     movieTitle = args.getString(ARG_TITLE);
+    movieOverview = args.getString(ARG_OVERVIEW);
 
     setTitle(movieTitle);
   }
@@ -137,6 +143,8 @@ public class MovieFragment extends BaseFragment
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
+    overview.setText(movieOverview);
+
     rating.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         RatingDialog.newInstance(RatingDialog.Type.MOVIE, movieId, currentRating)
@@ -257,7 +265,7 @@ public class MovieFragment extends BaseFragment
     final float ratingAll = cursor.getFloat(cursor.getColumnIndex(MovieColumns.RATING));
     rating.setValue(ratingAll);
 
-    final String overview = cursor.getString(cursor.getColumnIndex(MovieColumns.OVERVIEW));
+    movieOverview = cursor.getString(cursor.getColumnIndex(MovieColumns.OVERVIEW));
     watched = cursor.getInt(cursor.getColumnIndex(MovieColumns.WATCHED)) == 1;
     collected = cursor.getInt(cursor.getColumnIndex(MovieColumns.IN_COLLECTION)) == 1;
     inWatchlist = cursor.getInt(cursor.getColumnIndex(MovieColumns.IN_WATCHLIST)) == 1;
@@ -270,7 +278,7 @@ public class MovieFragment extends BaseFragment
 
     this.year.setText(String.valueOf(year));
     this.certification.setText(certification);
-    this.overview.setText(overview);
+    this.overview.setText(movieOverview);
 
     invalidateMenu();
   }

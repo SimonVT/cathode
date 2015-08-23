@@ -221,7 +221,7 @@ public class SearchMovieFragment extends ToolbarGridFragment<MovieSearchAdapter.
       @Override public void onSuggestionSelected(Object suggestion) {
         SuggestionsAdapter.Suggestion item = (SuggestionsAdapter.Suggestion) suggestion;
         if (item.getId() != null) {
-          navigationListener.onDisplayMovie(item.getId(), item.getTitle());
+          navigationListener.onDisplayMovie(item.getId(), item.getTitle(), item.getOverview());
         } else {
           navigationListener.searchMovie(item.getTitle());
         }
@@ -291,8 +291,9 @@ public class SearchMovieFragment extends ToolbarGridFragment<MovieSearchAdapter.
 
   @Override public void onMovieClicked(View v, int position, long id) {
     cursor.moveToPosition(position);
-    navigationListener.onDisplayMovie(id,
-        cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE)));
+    final String title = cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE));
+    final String overview = cursor.getString(cursor.getColumnIndex(MovieColumns.OVERVIEW));
+    navigationListener.onDisplayMovie(id, title, overview);
   }
 
   @Subscribe public void onSearchEvent(MovieSearchResult result) {

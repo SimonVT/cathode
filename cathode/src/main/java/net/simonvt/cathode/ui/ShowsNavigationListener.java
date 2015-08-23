@@ -17,7 +17,7 @@ package net.simonvt.cathode.ui;
 
 public interface ShowsNavigationListener extends NavigationClickListener {
 
-  void onDisplayShow(long showId, String title, LibraryType type);
+  void onDisplayShow(long showId, String title, String overview, LibraryType type);
 
   void onDisplaySeason(long showId, long seasonId, String showTitle, int seasonNumber,
       LibraryType type);

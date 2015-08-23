@@ -80,6 +80,8 @@ public class ShowFragment extends BaseFragment {
 
   private static final String ARG_SHOWID = "net.simonvt.cathode.ui.fragment.ShowFragment.showId";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.fragment.ShowFragment.title";
+  private static final String ARG_OVERVIEW =
+      "net.simonvt.cathode.ui.fragment.ShowFragment.overview";
   private static final String ARG_TYPE = "net.simonvt.cathode.ui.fragment.ShowFragment.type";
 
   private static final String DIALOG_RATING =
@@ -171,6 +173,8 @@ public class ShowFragment extends BaseFragment {
 
   private String showTitle;
 
+  private String showOverview;
+
   private String genres;
 
   private boolean inWatchlist;
@@ -183,10 +187,11 @@ public class ShowFragment extends BaseFragment {
 
   RecyclerViewManager seasonsManager;
 
-  public static Bundle getArgs(long showId, String title, LibraryType type) {
+  public static Bundle getArgs(long showId, String title, String overview, LibraryType type) {
     Bundle args = new Bundle();
     args.putLong(ARG_SHOWID, showId);
     args.putString(ARG_TITLE, title);
+    args.putString(ARG_OVERVIEW, overview);
     args.putSerializable(ARG_TYPE, type);
     return args;
   }
@@ -208,6 +213,7 @@ public class ShowFragment extends BaseFragment {
     Bundle args = getArguments();
     showId = args.getLong(ARG_SHOWID);
     showTitle = args.getString(ARG_TITLE);
+    showOverview = args.getString(ARG_OVERVIEW);
     type = (LibraryType) args.getSerializable(ARG_TYPE);
 
     seasonsAdapter = new SeasonsAdapter(getActivity(), new SeasonClickListener() {
@@ -219,11 +225,6 @@ public class ShowFragment extends BaseFragment {
   }
 
   private void updateTitle() {
-    //if (toolbar != null) {
-    //  toolbar.setTitle(getTitle());
-    //  toolbar.setSubtitle(getSubtitle());
-    //}
-
     appBarLayout.setTitle(getTitle());
   }
 
@@ -253,6 +254,9 @@ public class ShowFragment extends BaseFragment {
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
+    updateTitle();
+    overview.setText(showOverview);
+
     seasonsManager =
         new RecyclerViewManager(seasons, new LinearLayoutManager(getActivity()), seasonsEmpty);
     seasonsManager.setAdapter(seasonsAdapter);
@@ -483,7 +487,7 @@ public class ShowFragment extends BaseFragment {
     if (fanartUrl != null) {
       backdrop.setImage(fanartUrl, true);
     }
-    final String overview = cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW));
+    showOverview = cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW));
     inWatchlist = cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
     final int inCollectionCount =
         cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT));
@@ -512,7 +516,7 @@ public class ShowFragment extends BaseFragment {
 
     this.airTime.setText(airTimeString);
     this.certification.setText(certification);
-    this.overview.setText(overview);
+    this.overview.setText(showOverview);
 
     invalidateMenu();
   }

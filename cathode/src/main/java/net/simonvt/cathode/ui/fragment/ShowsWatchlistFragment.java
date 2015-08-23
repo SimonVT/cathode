@@ -126,7 +126,8 @@ public class ShowsWatchlistFragment extends ToolbarGridFragment<RecyclerView.Vie
       @Override public void onSuggestionSelected(Object suggestion) {
         SuggestionsAdapter.Suggestion item = (SuggestionsAdapter.Suggestion) suggestion;
         if (item.getId() != null) {
-          navigationListener.onDisplayShow(item.getId(), item.getTitle(), LibraryType.WATCHED);
+          navigationListener.onDisplayShow(item.getId(), item.getTitle(), item.getOverview(),
+              LibraryType.WATCHED);
         } else {
           navigationListener.searchShow(item.getTitle());
         }
@@ -149,8 +150,9 @@ public class ShowsWatchlistFragment extends ToolbarGridFragment<RecyclerView.Vie
 
   @Override public void onShowClicked(int position, long id) {
     Cursor c = ((ShowWatchlistAdapter) getAdapter()).getCursor(position);
-    navigationListener.onDisplayShow(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)),
-        LibraryType.WATCHED);
+    final String title = c.getString(c.getColumnIndex(ShowColumns.TITLE));
+    final String overview = c.getString(c.getColumnIndex(ShowColumns.OVERVIEW));
+    navigationListener.onDisplayShow(id, title, overview, LibraryType.WATCHED);
   }
 
   @Override public void onEpisodeClicked(int position, long id) {

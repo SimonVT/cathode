@@ -51,6 +51,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
   public static final String[] PROJECTION = new String[] {
       Tables.SHOWS + "." + ShowColumns.ID,
       Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.SHOWS + "." + ShowColumns.OVERVIEW,
       Tables.SHOWS + "." + ShowColumns.POSTER,
       ShowColumns.AIRED_COUNT,
       Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,

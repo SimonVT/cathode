@@ -50,7 +50,7 @@ public class WatchingView extends ViewGroup {
 
     void onEpisodeClicked(WatchingView view, long episodeId, String showTitle);
 
-    void onMovieClicked(WatchingView view, long movieId, String movieTitle);
+    void onMovieClicked(WatchingView view, long id, String title, String overview);
 
     void onAnimatingIn(WatchingView view);
 
@@ -118,6 +118,8 @@ public class WatchingView extends ViewGroup {
   private long movieId;
 
   private String movieTitle;
+
+  private String movieOverview;
 
   private String poster;
 
@@ -220,7 +222,7 @@ public class WatchingView extends ViewGroup {
     animateIn();
   }
 
-  public void watchingMovie(long movieId, String movieTitle, String poster, long startTime,
+  public void watchingMovie(long movieId, String movieTitle, String overview, String poster, long startTime,
       long endTime) {
     clearVariables();
 
@@ -228,6 +230,7 @@ public class WatchingView extends ViewGroup {
 
     this.movieId = movieId;
     this.movieTitle = movieTitle;
+    this.movieOverview = overview;
     this.poster = poster;
     this.startTime = startTime;
     this.endTime = endTime;
@@ -292,7 +295,7 @@ public class WatchingView extends ViewGroup {
       if (type == Type.SHOW) {
         watchingViewListener.onEpisodeClicked(WatchingView.this, episodeId, showTitle);
       } else {
-        watchingViewListener.onMovieClicked(WatchingView.this, movieId, movieTitle);
+        watchingViewListener.onMovieClicked(WatchingView.this, movieId, movieTitle, movieOverview);
       }
     }
   };
@@ -621,6 +624,7 @@ public class WatchingView extends ViewGroup {
     state.episodeTitle = episodeTitle;
     state.movieId = movieId;
     state.movieTitle = movieTitle;
+    state.movieOverview = movieOverview;
     state.poster = poster;
     state.startTime = startTime;
     state.endTime = endTime;
@@ -645,8 +649,8 @@ public class WatchingView extends ViewGroup {
       watchingShow(savedState.showId, savedState.showTitle, savedState.episodeId,
           savedState.episodeTitle, savedState.poster, savedState.startTime, savedState.endTime);
     } else if (savedState.type == Type.MOVIE) {
-      watchingMovie(savedState.movieId, savedState.movieTitle, savedState.poster,
-          savedState.startTime, savedState.endTime);
+      watchingMovie(savedState.movieId, savedState.movieTitle, savedState.movieOverview,
+          savedState.poster, savedState.startTime, savedState.endTime);
     }
 
     setIsExpanded(savedState.isExpanded);
@@ -673,6 +677,8 @@ public class WatchingView extends ViewGroup {
 
     private String movieTitle;
 
+    private String movieOverview;
+
     private String poster;
 
     private long startTime;
@@ -694,6 +700,7 @@ public class WatchingView extends ViewGroup {
       episodeTitle = in.readString();
       movieId = in.readLong();
       movieTitle = in.readString();
+      movieOverview = in.readString();
       poster = in.readString();
       startTime = in.readLong();
       endTime = in.readLong();
@@ -709,6 +716,7 @@ public class WatchingView extends ViewGroup {
       dest.writeString(episodeTitle);
       dest.writeLong(movieId);
       dest.writeString(movieTitle);
+      dest.writeString(movieOverview);
       dest.writeString(poster);
       dest.writeLong(startTime);
       dest.writeLong(endTime);

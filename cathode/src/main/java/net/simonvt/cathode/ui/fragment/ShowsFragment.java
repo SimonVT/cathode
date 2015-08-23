@@ -102,7 +102,8 @@ public abstract class ShowsFragment<D extends Cursor>
       @Override public void onSuggestionSelected(Object suggestion) {
         SuggestionsAdapter.Suggestion item = (SuggestionsAdapter.Suggestion) suggestion;
         if (item.getId() != null) {
-          navigationListener.onDisplayShow(item.getId(), item.getTitle(), LibraryType.WATCHED);
+          navigationListener.onDisplayShow(item.getId(), item.getTitle(), item.getOverview(),
+              LibraryType.WATCHED);
         } else {
           navigationListener.searchShow(item.getTitle());
         }
@@ -125,8 +126,9 @@ public abstract class ShowsFragment<D extends Cursor>
 
   @Override public void onShowClick(View view, int position, long id) {
     cursor.moveToPosition(position);
-    navigationListener.onDisplayShow(id, cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE)),
-        getLibraryType());
+    final String title = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
+    final String overview = cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW));
+    navigationListener.onDisplayShow(id, title, overview, getLibraryType());
   }
 
   protected ShowsWithNextAdapter getAdapter(Cursor cursor) {

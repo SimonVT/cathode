@@ -34,15 +34,22 @@ public abstract class SuggestionsAdapter extends BaseAdapter implements Filterab
 
     String title;
 
+    String overview;
+
     Long id;
 
-    Suggestion(String title, Long id) {
+    Suggestion(String title, String overview, Long id) {
       this.title = title;
+      this.overview = overview;
       this.id = id;
     }
 
     public String getTitle() {
       return title;
+    }
+
+    public String getOverview() {
+      return overview;
     }
 
     public Long getId() {

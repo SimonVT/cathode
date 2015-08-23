@@ -95,7 +95,7 @@ public abstract class MoviesFragment extends ToolbarGridFragment<MoviesAdapter.V
       @Override public void onSuggestionSelected(Object suggestion) {
         SuggestionsAdapter.Suggestion item = (SuggestionsAdapter.Suggestion) suggestion;
         if (item.getId() != null) {
-          navigationListener.onDisplayMovie(item.getId(), item.getTitle());
+          navigationListener.onDisplayMovie(item.getId(), item.getTitle(), item.getOverview());
         } else {
           navigationListener.searchMovie(item.getTitle());
         }
@@ -122,8 +122,9 @@ public abstract class MoviesFragment extends ToolbarGridFragment<MoviesAdapter.V
 
   @Override public void onMovieClicked(View v, int position, long id) {
     cursor.moveToPosition(position);
-    navigationListener.onDisplayMovie(id,
-        cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE)));
+    final String title = cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE));
+    final String overview = cursor.getString(cursor.getColumnIndex(MovieColumns.OVERVIEW));
+    navigationListener.onDisplayMovie(id, title, overview);
   }
 
   protected RecyclerView.Adapter<MoviesAdapter.ViewHolder> getAdapter(Cursor cursor) {
