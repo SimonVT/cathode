@@ -36,6 +36,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowSearchSuggestionsColumns;
 import net.simonvt.cathode.provider.generated.CathodeDatabase;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.util.SqlIndex;
 import net.simonvt.schematic.annotation.Database;
 import net.simonvt.schematic.annotation.ExecOnCreate;
 import net.simonvt.schematic.annotation.OnUpgrade;
@@ -50,7 +51,7 @@ public final class DatabaseSchematic {
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 14;
+  static final int DATABASE_VERSION = 15;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -720,6 +721,48 @@ public final class DatabaseSchematic {
       + Trigger.LISTITEM_UPDATE
       + " END";
 
+  @ExecOnCreate public static final String INDEX_CHARACTERS_SHOW_ID =
+      SqlIndex.index("characterShowId")
+          .ifNotExists()
+          .onTable(Tables.SHOW_CHARACTERS)
+          .forColumns(ShowCharacterColumns.SHOW_ID)
+          .build();
+
+  @ExecOnCreate public static final String INDEX_SEASON_SHOW_ID =
+      SqlIndex.index("seasonShowId")
+          .ifNotExists()
+          .onTable(Tables.SEASONS)
+          .forColumns(SeasonColumns.SHOW_ID)
+          .build();
+
+  @ExecOnCreate public static final String INDEX_GENRE_SHOW_ID =
+      SqlIndex.index("genreShowId")
+          .ifNotExists()
+          .onTable(Tables.SHOW_GENRES)
+          .forColumns(ShowGenreColumns.SHOW_ID)
+          .build();
+
+  @ExecOnCreate public static final String INDEX_CAST_MOVIE_ID =
+      SqlIndex.index("castMovieId")
+          .ifNotExists()
+          .onTable(Tables.MOVIE_CAST)
+          .forColumns(MovieCastColumns.MOVIE_ID)
+          .build();
+
+  @ExecOnCreate public static final String INDEX_CREW_MOVIE_ID =
+      SqlIndex.index("crewMovieId")
+          .ifNotExists()
+          .onTable(Tables.MOVIE_CREW)
+          .forColumns(MovieCrewColumns.MOVIE_ID)
+          .build();
+
+  @ExecOnCreate public static final String INDEX_GENRE_MOVIE_ID =
+      SqlIndex.index("genreMovieId")
+          .ifNotExists()
+          .onTable(Tables.MOVIE_GENRES)
+          .forColumns(MovieGenreColumns.MOVIE_ID)
+          .build();
+
   @OnUpgrade public static void onUpgrade(Context context, SQLiteDatabase db, int oldVersion,
       int newVersion) {
     if (oldVersion < 12) {
@@ -781,6 +824,15 @@ public final class DatabaseSchematic {
       db.execSQL(TRIGGER_LIST_DELETE);
       db.execSQL(TRIGGER_LIST_UPDATE);
       db.execSQL(TRIGGER_LISTITEM_UPDATE);
+    }
+
+    if (oldVersion < 15) {
+      db.execSQL(INDEX_SEASON_SHOW_ID);
+      db.execSQL(INDEX_CHARACTERS_SHOW_ID);
+      db.execSQL(INDEX_GENRE_SHOW_ID);
+      db.execSQL(INDEX_CAST_MOVIE_ID);
+      db.execSQL(INDEX_CREW_MOVIE_ID);
+      db.execSQL(INDEX_GENRE_MOVIE_ID);
     }
   }
 
