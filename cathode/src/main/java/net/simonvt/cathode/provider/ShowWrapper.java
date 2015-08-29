@@ -255,13 +255,6 @@ public final class ShowWrapper {
     });
   }
 
-  public static void setIsHidden(ContentResolver resolver, long showId, boolean isHidden) {
-    ContentValues cv = new ContentValues();
-    cv.put(ShowColumns.HIDDEN, isHidden);
-
-    resolver.update(Shows.withId(showId), cv, null, null);
-  }
-
   private static ContentValues getShowCVs(Show show) {
     ContentValues cv = new ContentValues();
 

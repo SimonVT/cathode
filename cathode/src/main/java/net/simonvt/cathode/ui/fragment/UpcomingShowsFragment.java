@@ -109,8 +109,6 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
 
   private SharedPreferences settings;
 
-  private boolean showHidden;
-
   private SortBy sortBy;
 
   private ShowsNavigationListener navigationListener;
@@ -134,8 +132,6 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     sortBy =
         SortBy.fromValue(settings.getString(Settings.Sort.SHOW_UPCOMING, SortBy.TITLE.getKey()));
-
-    showHidden = settings.getBoolean(Settings.SHOW_HIDDEN, false);
 
     getLoaderManager().initLoader(Loaders.SHOWS_UPCOMING, null, this);
 
@@ -161,7 +157,6 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
   @Override public void createMenu(Toolbar toolbar) {
     super.createMenu(toolbar);
     toolbar.inflateMenu(R.menu.fragment_shows_upcoming);
-    toolbar.getMenu().findItem(R.id.menu_hidden).setChecked(showHidden);
 
     final MenuItem searchItem = toolbar.getMenu().findItem(R.id.menu_search);
     SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
@@ -195,14 +190,6 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
 
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
-      case R.id.menu_hidden:
-        showHidden = !showHidden;
-        settings.edit().putBoolean(Settings.SHOW_HIDDEN, showHidden).apply();
-        getLoaderManager().restartLoader(Loaders.SHOWS_UPCOMING, null,
-            UpcomingShowsFragment.this);
-        item.setChecked(showHidden);
-        return true;
-
       case R.id.sort_by:
         ArrayList<ListDialog.Item> items = new ArrayList<ListDialog.Item>();
         items.add(new ListDialog.Item(R.id.sort_title, R.string.sort_title));
@@ -299,12 +286,8 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
 
   @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
     final Uri contentUri = Shows.SHOWS_UPCOMING;
-    String where = null;
-    if (!showHidden) {
-      where = ShowColumns.HIDDEN + "=0";
-    }
     SimpleCursorLoader cl =
-        new SimpleCursorLoader(getActivity(), contentUri, UpcomingAdapter.PROJECTION, where, null,
+        new SimpleCursorLoader(getActivity(), contentUri, UpcomingAdapter.PROJECTION, null, null,
             sortBy.getSortOrder());
     cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return cl;

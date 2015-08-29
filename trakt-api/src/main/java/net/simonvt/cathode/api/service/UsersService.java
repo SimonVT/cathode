@@ -20,14 +20,18 @@ import java.util.List;
 import net.simonvt.cathode.api.body.CreateListBody;
 import net.simonvt.cathode.api.body.ListItemActionBody;
 import net.simonvt.cathode.api.entity.CustomList;
+import net.simonvt.cathode.api.entity.HiddenItem;
 import net.simonvt.cathode.api.entity.ListItem;
 import net.simonvt.cathode.api.entity.ListItemActionResponse;
 import net.simonvt.cathode.api.entity.UserSettings;
 import net.simonvt.cathode.api.entity.Watching;
+import net.simonvt.cathode.api.enumeration.HiddenSection;
+import net.simonvt.cathode.api.enumeration.ItemType;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.POST;
 import retrofit.http.Path;
+import retrofit.http.Query;
 
 public interface UsersService {
 
@@ -38,6 +42,30 @@ public interface UsersService {
    * the trakt website.
    */
   @GET("/users/settings") UserSettings getUserSettings();
+
+  /**
+   * <b>OAuth Required</b>
+   * <b>Pagination</b>
+   * <p>
+   * Get hidden items for a section. This will return an array of standard media objects.
+   * You can optionally limit the type of results to return.
+   */
+  @GET("/users/hidden/{section}") List<HiddenItem> getHiddenItems(
+      @Path("section") HiddenSection section, @Query("page") int page, @Query("limit") int limit);
+
+  /**
+   * <b>OAuth Required</b>
+   * <b>Pagination</b>
+   * <p>
+   * Get hidden items for a section. This will return an array of standard media objects.
+   * You can optionally limit the type of results to return.
+   *
+   * @param type Possible values: {@link ItemType#SHOW}, {@link ItemType#SEASON},
+   * {@link ItemType#MOVIE}
+   */
+  @GET("/users/hidden/{section}") List<HiddenItem> getHiddenItems(
+      @Path("section") HiddenSection section, @Query("type") ItemType type, @Query("page") int page,
+      @Query("limit") int limit);
 
   /**
    * <b>OAuth Required</b>

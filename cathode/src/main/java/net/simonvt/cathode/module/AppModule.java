@@ -88,6 +88,8 @@ import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisode;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodesRatings;
+import net.simonvt.cathode.remote.sync.SyncHiddenItems;
+import net.simonvt.cathode.remote.sync.SyncHiddenSection;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncSeasons;
 import net.simonvt.cathode.remote.sync.shows.SyncSeasonsRatings;
@@ -211,7 +213,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         UpdateShowCounts.class, SyncLists.class, SyncList.class, CreateList.class,
         RemoveShow.class, RemoveSeason.class, RemoveEpisode.class, RemoveMovie.class,
         RemovePerson.class, AddShow.class, AddSeason.class, AddEpisode.class, AddMovie.class,
-        AddPerson.class, LogoutJob.class,
+        AddPerson.class, LogoutJob.class, SyncHiddenItems.class, SyncHiddenSection.class,
 
         // Misc
         ShowSearchHandler.class, ShowSearchHandler.SearchThread.class, MovieSearchHandler.class,

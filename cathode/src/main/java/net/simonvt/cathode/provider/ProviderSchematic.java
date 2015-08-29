@@ -201,7 +201,8 @@ public final class ProviderSchematic {
         type = Type.SHOW,
         join = Joins.SHOWS_UNWATCHED,
         where = ShowColumns.WATCHED_COUNT + ">0 AND "
-            + Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0")
+            + Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0 AND "
+            + Tables.SHOWS + "." + ShowColumns.HIDDEN_WATCHED + "=0")
     public static final Uri SHOWS_WATCHED = buildUri(Path.SHOWS, Path.WATCHED);
 
     @ContentUri(
@@ -209,7 +210,8 @@ public final class ProviderSchematic {
         type = Type.SHOW,
         join = Joins.SHOWS_UNCOLLECTED,
         where = ShowColumns.IN_COLLECTION_COUNT + ">0 AND "
-            + Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0")
+            + Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0 AND "
+            + Tables.SHOWS + "." + ShowColumns.HIDDEN_COLLECTED + "=0")
     public static final Uri SHOWS_COLLECTION = buildUri(Path.SHOWS, Path.COLLECTED);
 
     @ContentUri(
@@ -222,7 +224,9 @@ public final class ProviderSchematic {
     @ContentUri(
         path = Path.SHOWS + "/" + Path.UPCOMING,
         type = Type.SHOW,
-        join = Joins.SHOWS_UPCOMING)
+        join = Joins.SHOWS_UPCOMING,
+        where = ShowColumns.HIDDEN_CALENDAR + "=0"
+    )
     public static final Uri SHOWS_UPCOMING = buildUri(Path.SHOWS, Path.UPCOMING);
 
     @Where(path = Path.SHOWS + "/" + Path.UPCOMING)
@@ -790,12 +794,37 @@ public final class ProviderSchematic {
 
     @ContentUri(
         path = Path.MOVIES,
-        type = Type.MOVIE) @NotificationUri(
+        type = Type.MOVIE)
+    @NotificationUri(
         paths = {
             Path.MOVIES + "/" + Path.WATCHING, Path.MOVIES + "/" + Path.TRENDING,
             Path.MOVIES + "/" + Path.RECOMMENDED
         })
     public static final Uri MOVIES = buildUri(Path.MOVIES);
+
+    @ContentUri(
+        path = Path.MOVIES + "/" + Path.WATCHED,
+        type = Type.MOVIE,
+        where = MovieColumns.WATCHED + "=1 AND " + MovieColumns.HIDDEN_WATCHED + "=0 AND "
+            + MovieColumns.NEEDS_SYNC + "=0"
+    )
+    public static final Uri MOVIES_WATCHED = buildUri(Path.MOVIES);
+
+    @ContentUri(
+        path = Path.MOVIES + "/" + Path.COLLECTED,
+        type = Type.MOVIE,
+        where = MovieColumns.IN_COLLECTION + "=1 AND " + MovieColumns.HIDDEN_COLLECTED + "=0 AND "
+            + MovieColumns.NEEDS_SYNC + "=0"
+    )
+    public static final Uri MOVIES_COLLECTED = buildUri(Path.MOVIES);
+
+    @ContentUri(
+        path = Path.MOVIES + "/" + Path.WATCHLIST,
+        type = Type.MOVIE,
+        where = MovieColumns.IN_WATCHLIST + "=1 AND "
+            + MovieColumns.NEEDS_SYNC + "=0"
+    )
+    public static final Uri MOVIES_WATCHLIST = buildUri(Path.MOVIES);
 
     @InexactContentUri(
         path = Path.MOVIES + "/#",

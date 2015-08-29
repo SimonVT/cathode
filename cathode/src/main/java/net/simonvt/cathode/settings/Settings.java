@@ -46,6 +46,7 @@ public final class Settings {
   // Last trending and recommendations sync
   public static final String TRENDING = "trending";
   public static final String RECOMMENDATIONS = "recommendations";
+  public static final String LAST_SYNC_HIDDEN = "lastSyncHidden";
 
   // Whether the initial sync has been performed
   public static final String INITIAL_SYNC = "initial Sync";

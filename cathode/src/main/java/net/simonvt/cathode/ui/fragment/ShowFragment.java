@@ -93,7 +93,7 @@ public class ShowFragment extends BaseFragment {
       ShowColumns.TITLE, ShowColumns.YEAR, ShowColumns.AIR_TIME, ShowColumns.AIR_DAY,
       ShowColumns.NETWORK, ShowColumns.CERTIFICATION, ShowColumns.POSTER, ShowColumns.FANART,
       ShowColumns.USER_RATING, ShowColumns.RATING, ShowColumns.OVERVIEW, ShowColumns.IN_WATCHLIST,
-      ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT, ShowColumns.HIDDEN,
+      ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT,
   };
 
   private static final String[] EPISODE_PROJECTION = new String[] {
@@ -180,8 +180,6 @@ public class ShowFragment extends BaseFragment {
   private boolean inWatchlist;
 
   private int currentRating;
-
-  private boolean isHidden;
 
   private LibraryType type;
 
@@ -424,26 +422,12 @@ public class ShowFragment extends BaseFragment {
     } else {
       menu.add(0, R.id.action_watchlist_add, 300, R.string.action_watchlist_add);
     }
-
-    if (isHidden) {
-      menu.add(0, R.id.menu_show_show_upcoming, 400, R.string.action_show_show_upcoming);
-    } else {
-      menu.add(0, R.id.menu_show_hide_upcoming, 400, R.string.action_show_hide_upcoming);
-    }
   }
 
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_seasons:
         hiddenPaneLayout.toggle();
-        return true;
-
-      case R.id.menu_show_hide_upcoming:
-        showScheduler.setIsHidden(showId, true);
-        return true;
-
-      case R.id.menu_show_show_upcoming:
-        showScheduler.setIsHidden(showId, false);
         return true;
 
       case R.id.action_watchlist_remove:
@@ -492,7 +476,6 @@ public class ShowFragment extends BaseFragment {
     final int inCollectionCount =
         cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT));
     final int watchedCount = cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHED_COUNT));
-    isHidden = cursor.getInt(cursor.getColumnIndex(ShowColumns.HIDDEN)) == 1;
 
     currentRating = cursor.getInt(cursor.getColumnIndex(ShowColumns.USER_RATING));
     final float ratingAll = cursor.getFloat(cursor.getColumnIndex(ShowColumns.RATING));

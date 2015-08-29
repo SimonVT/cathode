@@ -28,7 +28,6 @@ import java.util.Map;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
-import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.Loaders;
@@ -135,9 +134,8 @@ public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    SimpleCursorLoader loader = new SimpleCursorLoader(getActivity(), Movies.MOVIES, null,
-        MovieColumns.WATCHED + "=1 AND " + MovieColumns.NEEDS_SYNC + "=0", null,
-        sortBy.getSortOrder());
+    SimpleCursorLoader loader = new SimpleCursorLoader(getActivity(), Movies.MOVIES_WATCHED, null,
+        null, null, sortBy.getSortOrder());
     loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return loader;
   }

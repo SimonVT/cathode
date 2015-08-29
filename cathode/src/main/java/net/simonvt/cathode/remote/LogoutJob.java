@@ -61,6 +61,10 @@ public class LogoutJob extends Job {
     values.put(MovieColumns.STARTED_AT, 0);
     values.put(MovieColumns.EXPIRES_AT, 0);
 
+    values.put(MovieColumns.HIDDEN_WATCHED, false);
+    values.put(MovieColumns.HIDDEN_COLLECTED, false);
+    values.put(MovieColumns.HIDDEN_CALENDAR, false);
+
     getContentResolver().update(Movies.MOVIES, values, null, null);
 
     // Clear episode user data
@@ -88,6 +92,9 @@ public class LogoutJob extends Job {
     values = new ContentValues();
     values.put(SeasonColumns.USER_RATING, 0);
     values.put(SeasonColumns.RATED_AT, 0);
+    values.put(SeasonColumns.HIDDEN_WATCHED, false);
+    values.put(SeasonColumns.HIDDEN_COLLECTED, false);
+    values.put(SeasonColumns.HIDDEN_CALENDAR, false);
     getContentResolver().update(Seasons.SEASONS, values, null, null);
 
     // Clear show user data
@@ -102,7 +109,9 @@ public class LogoutJob extends Job {
     values.put(ShowColumns.LAST_WATCHED_AT, 0);
     values.put(ShowColumns.LAST_COLLECTED_AT, 0);
 
-    values.put(ShowColumns.HIDDEN, false);
+    values.put(ShowColumns.HIDDEN_WATCHED, false);
+    values.put(ShowColumns.HIDDEN_COLLECTED, false);
+    values.put(ShowColumns.HIDDEN_CALENDAR, false);
 
     getContentResolver().update(Shows.SHOWS, values, null, null);
 

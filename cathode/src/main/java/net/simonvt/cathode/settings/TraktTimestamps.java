@@ -163,6 +163,13 @@ public final class TraktTimestamps {
     return System.currentTimeMillis() > lastActivity + 3 * DateUtils.HOUR_IN_MILLIS;
   }
 
+  public static boolean hiddenNeedsUpdate(Context context) {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+
+    final long lastActivity = settings.getLong(Settings.LAST_SYNC_HIDDEN, -1);
+    return System.currentTimeMillis() > lastActivity + 3 * DateUtils.HOUR_IN_MILLIS;
+  }
+
   public static boolean shouldPurge(Context context) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 
@@ -235,6 +242,14 @@ public final class TraktTimestamps {
     PreferenceManager.getDefaultSharedPreferences(context)
         .edit()
         .putLong(Settings.RECOMMENDATIONS, currentTimeMillis)
+        .apply();
+  }
+
+  public static void updateHidden(Context context) {
+    final long currentTimeMillis = System.currentTimeMillis();
+    PreferenceManager.getDefaultSharedPreferences(context)
+        .edit()
+        .putLong(Settings.LAST_SYNC_HIDDEN, currentTimeMillis)
         .apply();
   }
 

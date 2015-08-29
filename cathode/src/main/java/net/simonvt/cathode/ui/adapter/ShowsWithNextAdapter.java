@@ -57,7 +57,6 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
       Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
       Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
       Tables.SHOWS + "." + ShowColumns.STATUS,
-      Tables.SHOWS + "." + ShowColumns.HIDDEN,
       ShowColumns.WATCHING,
       Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
       Tables.EPISODES + "." + EpisodeColumns.ID + " AS " + COLUMN_EPISODE_ID,
@@ -155,14 +154,6 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
           case R.id.action_collection_add:
             showScheduler.collectedNext(holder.getItemId());
             break;
-
-          case R.id.action_hide:
-            showScheduler.setIsHidden(holder.getItemId(), true);
-            break;
-
-          case R.id.action_unhide:
-            showScheduler.setIsHidden(holder.getItemId(), false);
-            break;
         }
       }
     });
@@ -174,7 +165,6 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
     final String showPosterUrl = cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER));
     final String showTitle = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
     final String showStatus = cursor.getString(cursor.getColumnIndex(ShowColumns.STATUS));
-    final boolean isHidden = cursor.getInt(cursor.getColumnIndex(ShowColumns.HIDDEN)) == 1;
     final boolean watching = cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHING)) == 1;
 
     final int showAiredCount = cursor.getInt(cursor.getColumnIndex(ShowColumns.AIRED_COUNT));
@@ -226,7 +216,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
 
     holder.overflow.removeItems();
     setupOverflowItems(holder.overflow, showTypeCount, showAiredCount, episodeTitle != null,
-        isHidden, watching);
+        watching);
 
     holder.poster.setImage(showPosterUrl);
 
@@ -242,7 +232,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
   }
 
   protected void setupOverflowItems(OverflowView overflow, int typeCount, int airedCount,
-      boolean hasNext, boolean isHidden, boolean watching) {
+      boolean hasNext, boolean watching) {
     switch (libraryType) {
       case WATCHLIST:
         overflow.addItem(R.id.action_watchlist_remove, R.string.action_watchlist_remove);

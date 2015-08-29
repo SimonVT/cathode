@@ -15,11 +15,10 @@
  */
 package net.simonvt.cathode.provider;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.HiddenColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
@@ -51,7 +50,7 @@ public final class DatabaseSchematic {
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 15;
+  static final int DATABASE_VERSION = 16;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -834,60 +833,34 @@ public final class DatabaseSchematic {
       db.execSQL(INDEX_CREW_MOVIE_ID);
       db.execSQL(INDEX_GENRE_MOVIE_ID);
     }
-  }
 
-  private static void createTriggers(SQLiteDatabase db) {
-    db.execSQL(TRIGGER_EPISODE_INSERT);
-    db.execSQL(TRIGGER_EPISODE_UPDATE_AIRED);
-    db.execSQL(TRIGGER_EPISODE_UPDATE_WATCHED);
-    db.execSQL(TRIGGER_EPISODE_UPDATE_COLLECTED);
-  }
+    if (oldVersion < 16) {
+      db.execSQL("ALTER TABLE " + Tables.SHOWS
+          + " ADD COLUMN " + HiddenColumns.HIDDEN_CALENDAR + " INTEGER DEFAULT 0");
+      db.execSQL("ALTER TABLE " + Tables.SHOWS
+          + " ADD COLUMN " + HiddenColumns.HIDDEN_COLLECTED + " INTEGER DEFAULT 0");
+      db.execSQL("ALTER TABLE " + Tables.SHOWS
+          + " ADD COLUMN " + HiddenColumns.HIDDEN_WATCHED + " INTEGER DEFAULT 0");
+      db.execSQL("ALTER TABLE " + Tables.SHOWS
+          + " ADD COLUMN " + HiddenColumns.HIDDEN_RECOMMENDATIONS + " INTEGER DEFAULT 0");
 
-  private static void dropTriggers(SQLiteDatabase db) {
-    db.execSQL("DROP TRIGGER " + Trigger.EPISODE_UPDATE_AIRED_NAME);
-    db.execSQL("DROP TRIGGER " + Trigger.EPISODE_UPDATE_WATCHED_NAME);
-    db.execSQL("DROP TRIGGER " + Trigger.EPISODE_UPDATE_COLLECTED_NAME);
-    db.execSQL("DROP TRIGGER " + Trigger.EPISODE_INSERT_NAME);
-  }
+      db.execSQL("ALTER TABLE " + Tables.SEASONS
+          + " ADD COLUMN " + HiddenColumns.HIDDEN_CALENDAR + " INTEGER DEFAULT 0");
+      db.execSQL("ALTER TABLE " + Tables.SEASONS
+          + " ADD COLUMN " + HiddenColumns.HIDDEN_COLLECTED + " INTEGER DEFAULT 0");
+      db.execSQL("ALTER TABLE " + Tables.SEASONS
+          + " ADD COLUMN " + HiddenColumns.HIDDEN_WATCHED + " INTEGER DEFAULT 0");
+      db.execSQL("ALTER TABLE " + Tables.SEASONS
+          + " ADD COLUMN " + HiddenColumns.HIDDEN_RECOMMENDATIONS + " INTEGER DEFAULT 0");
 
-  public static void clearUserData(Context context) {
-    SQLiteOpenHelper oh = CathodeDatabase.getInstance(context);
-    SQLiteDatabase db = oh.getWritableDatabase();
-    db.beginTransaction();
-    dropTriggers(db);
-
-    ContentValues cv;
-
-    cv = new ContentValues();
-    cv.put(ShowColumns.WATCHED_COUNT, 0);
-    cv.put(ShowColumns.IN_COLLECTION_COUNT, 0);
-    cv.put(ShowColumns.IN_WATCHLIST_COUNT, 0);
-    cv.put(ShowColumns.IN_WATCHLIST, false);
-    cv.put(ShowColumns.HIDDEN, false);
-    db.update(Tables.SHOWS, cv, null, null);
-
-    cv = new ContentValues();
-    cv.put(SeasonColumns.WATCHED_COUNT, 0);
-    cv.put(SeasonColumns.IN_COLLECTION_COUNT, 0);
-    cv.put(SeasonColumns.IN_WATCHLIST_COUNT, 0);
-    db.update(Tables.SEASONS, cv, null, null);
-
-    cv = new ContentValues();
-    cv.put(EpisodeColumns.WATCHED, 0);
-    cv.put(EpisodeColumns.PLAYS, 0);
-    cv.put(EpisodeColumns.IN_WATCHLIST, 0);
-    cv.put(EpisodeColumns.IN_COLLECTION, 0);
-    db.update(Tables.EPISODES, cv, null, null);
-
-    cv = new ContentValues();
-    cv.put(MovieColumns.WATCHED, 0);
-    cv.put(MovieColumns.IN_COLLECTION, 0);
-    cv.put(MovieColumns.IN_WATCHLIST, 0);
-    db.update(Tables.MOVIES, cv, null, null);
-
-    createTriggers(db);
-
-    db.setTransactionSuccessful();
-    db.endTransaction();
+      db.execSQL("ALTER TABLE " + Tables.MOVIES
+          + " ADD COLUMN " + HiddenColumns.HIDDEN_CALENDAR + " INTEGER DEFAULT 0");
+      db.execSQL("ALTER TABLE " + Tables.MOVIES
+          + " ADD COLUMN " + HiddenColumns.HIDDEN_COLLECTED + " INTEGER DEFAULT 0");
+      db.execSQL("ALTER TABLE " + Tables.MOVIES
+          + " ADD COLUMN " + HiddenColumns.HIDDEN_WATCHED + " INTEGER DEFAULT 0");
+      db.execSQL("ALTER TABLE " + Tables.MOVIES
+          + " ADD COLUMN " + HiddenColumns.HIDDEN_RECOMMENDATIONS + " INTEGER DEFAULT 0");
+    }
   }
 }

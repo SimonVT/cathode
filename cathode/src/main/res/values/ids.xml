@@ -58,8 +58,6 @@
   <item name="action_watchlist_add" type="id"/>
   <item name="action_watchlist_remove" type="id"/>
   <item name="action_dismiss" type="id"/>
-  <item name="action_hide" type="id"/>
-  <item name="action_unhide" type="id"/>
   <item name="action_list_remove" type="id"/>
 
   <item name="front" type="id"/>

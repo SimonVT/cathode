@@ -183,14 +183,6 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
     });
   }
 
-  public void setIsHidden(final long showId, final boolean isHidden) {
-    execute(new Runnable() {
-      @Override public void run() {
-        ShowWrapper.setIsHidden(context.getContentResolver(), showId, isHidden);
-      }
-    });
-  }
-
   public void dismissRecommendation(final long showId) {
     execute(new Runnable() {
       @Override public void run() {

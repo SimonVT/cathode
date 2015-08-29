@@ -56,7 +56,6 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
       Tables.SHOWS + "." + ShowColumns.OVERVIEW,
       Tables.SHOWS + "." + ShowColumns.POSTER,
       Tables.SHOWS + "." + ShowColumns.STATUS,
-      Tables.SHOWS + "." + ShowColumns.HIDDEN,
       ShowColumns.AIRED_COUNT,
       Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
       ShowColumns.WATCHING,
@@ -143,7 +142,6 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
 
     final String showPosterUrl = cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER));
     final String showTitle = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
-    final boolean isHidden = cursor.getInt(cursor.getColumnIndex(ShowColumns.HIDDEN)) == 1;
     final boolean watching = cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHING)) == 1;
 
     final int airedCount = cursor.getInt(cursor.getColumnIndex(ShowColumns.AIRED_COUNT));

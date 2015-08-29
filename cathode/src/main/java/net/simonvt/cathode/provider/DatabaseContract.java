@@ -36,7 +36,15 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String LAST_MODIFIED = "lastModified";
   }
 
-  public interface ShowColumns extends LastModifiedColumns {
+  public interface HiddenColumns {
+
+    @DataType(INTEGER) @DefaultValue("0") String HIDDEN_CALENDAR = "hiddenCalendar";
+    @DataType(INTEGER) @DefaultValue("0") String HIDDEN_WATCHED = "hiddenWatched";
+    @DataType(INTEGER) @DefaultValue("0") String HIDDEN_COLLECTED = "hiddenCollected";
+    @DataType(INTEGER) @DefaultValue("0") String HIDDEN_RECOMMENDATIONS = "hiddenRecommendations";
+  }
+
+  public interface ShowColumns extends LastModifiedColumns, HiddenColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
     @DataType(TEXT) String TITLE = "showTitle";
@@ -95,7 +103,6 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String IN_WATCHLIST_COUNT = "inWatchlistCount";
     @DataType(INTEGER) @DefaultValue("-1") String TRENDING_INDEX = "trendingIndex";
     @DataType(INTEGER) @DefaultValue("-1") String RECOMMENDATION_INDEX = "recommendationIndex";
-    @DataType(INTEGER) @DefaultValue("0") String HIDDEN = "hidden";
     @DataType(INTEGER) @DefaultValue("0") String FULL_SYNC_REQUESTED = "fullSyncRequested";
 
     @DataType(INTEGER) @DefaultValue("0") String NEEDS_SYNC = "needsSync";
@@ -127,7 +134,7 @@ public final class DatabaseContract {
     String PERSON_ID = "personId";
   }
 
-  public interface SeasonColumns extends LastModifiedColumns {
+  public interface SeasonColumns extends LastModifiedColumns, HiddenColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
     @DataType(INTEGER) @References(table = DatabaseSchematic.TABLE_SHOWS, column = ShowColumns.ID)
@@ -210,7 +217,7 @@ public final class DatabaseContract {
     String SHOW_TITLE = "episodeShowTitle";
   }
 
-  public interface MovieColumns extends LastModifiedColumns {
+  public interface MovieColumns extends LastModifiedColumns, HiddenColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
     @DataType(TEXT) String TITLE = "title";

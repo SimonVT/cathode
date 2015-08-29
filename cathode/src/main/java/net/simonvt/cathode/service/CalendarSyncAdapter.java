@@ -132,7 +132,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
         + ShowColumns.IN_COLLECTION_COUNT
         + ">0"
         + ") AND "
-        + ShowColumns.HIDDEN
+        + ShowColumns.HIDDEN_CALENDAR
         + "=0"
         + " AND "
         + ShowColumns.NEEDS_SYNC

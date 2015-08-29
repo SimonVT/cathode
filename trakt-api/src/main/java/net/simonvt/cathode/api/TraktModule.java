@@ -24,6 +24,7 @@ import net.simonvt.cathode.api.entity.IsoTime;
 import net.simonvt.cathode.api.enumeration.Action;
 import net.simonvt.cathode.api.enumeration.Gender;
 import net.simonvt.cathode.api.enumeration.GrantType;
+import net.simonvt.cathode.api.enumeration.HiddenSection;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.api.enumeration.Scope;
@@ -202,6 +203,13 @@ public class TraktModule {
       @Override public Privacy deserialize(JsonElement jsonElement, Type type,
           JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         return Privacy.fromValue(jsonElement.getAsString());
+      }
+    });
+
+    builder.registerTypeAdapter(HiddenSection.class, new JsonDeserializer<HiddenSection>() {
+      @Override public HiddenSection deserialize(JsonElement json, Type typeOfT,
+          JsonDeserializationContext context) throws JsonParseException {
+        return HiddenSection.fromValue(json.getAsString());
       }
     });
 

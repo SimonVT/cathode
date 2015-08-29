@@ -203,10 +203,12 @@ public class CathodeApp extends Application {
 
         Accounts.requestCalendarSync(this);
       }
+      if (currentVersion <= 31003) {
+        settings.edit().remove("showHidden").apply();
+      }
 
       MainHandler.post(new Runnable() {
-        @Override
-        public void run() {
+        @Override public void run() {
           jobManager.addJob(new SyncJob());
         }
       });

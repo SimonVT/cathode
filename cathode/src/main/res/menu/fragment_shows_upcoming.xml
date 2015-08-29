@@ -39,13 +39,6 @@
       app:showAsAction="never"/>
 
   <item
-      android:id="@+id/menu_hidden"
-      android:orderInCategory="450"
-      android:checkable="true"
-      android:title="@string/action_show_hidden"
-      app:showAsAction="never"/>
-
-  <item
       android:id="@+id/menu_logout"
       android:orderInCategory="500"
       android:title="@string/action_logout"

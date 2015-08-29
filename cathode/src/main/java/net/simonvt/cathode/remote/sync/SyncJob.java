@@ -67,6 +67,11 @@ public class SyncJob extends Job {
       queue(new SyncMovieRecommendations());
     }
 
+    if (TraktTimestamps.hiddenNeedsUpdate(getContext())) {
+      TraktTimestamps.updateHidden(getContext());
+      queue(new SyncHiddenItems());
+    }
+
     final long currentTime = System.currentTimeMillis();
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
     settings.edit().putLong(Settings.LAST_FULL_SYNC, currentTime).apply();
