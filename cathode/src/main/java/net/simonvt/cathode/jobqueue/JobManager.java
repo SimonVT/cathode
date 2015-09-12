@@ -177,6 +177,8 @@ public final class JobManager {
     synchronized (jobs) {
       boolean added = false;
 
+      jobInjector.injectInto(job);
+
       for (int i = 0; i < jobs.size(); i++) {
         if (isMoreImportantThan(job, jobs.get(i))) {
           added = true;
@@ -216,10 +218,6 @@ public final class JobManager {
           }
 
           job.setCheckedOut(true);
-          jobInjector.injectInto(job);
-          if (job.context == null) {
-            Timber.i("Injection failed, context is null");
-          }
           return job;
         }
       }
