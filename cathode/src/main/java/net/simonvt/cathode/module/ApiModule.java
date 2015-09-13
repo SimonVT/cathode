@@ -17,23 +17,18 @@
 package net.simonvt.cathode.module;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import com.squareup.otto.Bus;
 import dagger.Module;
 import dagger.Provides;
 import java.io.IOException;
 import java.util.List;
 import javax.inject.Singleton;
-import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.api.ApiKey;
 import net.simonvt.cathode.api.TraktModule;
-import net.simonvt.cathode.api.UserToken;
+import net.simonvt.cathode.api.TraktSettings;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.RequestFailedEvent;
 import net.simonvt.cathode.remote.FourOneTwoException;
-import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.util.HttpUtils;
 import net.simonvt.cathode.util.MainHandler;
 import retrofit.ErrorHandler;
@@ -51,10 +46,6 @@ import timber.log.Timber;
         TraktModule.class
     })
 public class ApiModule {
-
-  @Provides @ApiKey String provideClientId() {
-    return BuildConfig.TRAKT_CLIENT_ID;
-  }
 
   @Provides @Singleton ErrorHandler provideErrorHandler(final Bus bus) {
     return new ErrorHandler() {
@@ -139,11 +130,7 @@ public class ApiModule {
     };
   }
 
-  @Provides @Singleton UserToken provideUserToken(Context context) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-
-    String token = settings.getString(Settings.TRAKT_TOKEN, null);
-
-    return new UserToken(token);
+  @Provides @Singleton TraktSettings provideTraktSettings(Context context) {
+    return ApiSettings.getInstance(context);
   }
 }

@@ -217,7 +217,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
 
         // Misc
         ShowSearchHandler.class, ShowSearchHandler.SearchThread.class, MovieSearchHandler.class,
-        MovieSearchHandler.SearchThread.class
+        MovieSearchHandler.SearchThread.class, ApiSettings.class
     })
 public class AppModule {
 

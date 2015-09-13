@@ -34,7 +34,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.api.UserToken;
+import net.simonvt.cathode.api.TraktSettings;
 import net.simonvt.cathode.api.entity.AccessToken;
 import net.simonvt.cathode.api.entity.TokenRequest;
 import net.simonvt.cathode.api.entity.UserSettings;
@@ -120,11 +120,9 @@ public class LoginActivity extends BaseActivity {
 
   @Subscribe public void onTokenFetched(TokenFetchedEvent event) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-    settings //
-        .edit() //
-        .putBoolean(Settings.TRAKT_LOGGED_IN, true) //
-        .putString(Settings.TRAKT_TOKEN, event.getToken()) //
-        .putBoolean(Settings.INITIAL_SYNC, true) //
+    settings.edit()
+        .putBoolean(Settings.TRAKT_LOGGED_IN, true)
+        .putBoolean(Settings.INITIAL_SYNC, true)
         .apply();
 
     final String username = settings.getString(Settings.Profile.USERNAME, null);
@@ -147,12 +145,9 @@ public class LoginActivity extends BaseActivity {
 
     boolean success;
 
-    String token;
-
     int errorMessage;
 
-    private Result(String token) {
-      this.token = token;
+    private Result() {
       this.success = true;
     }
 
@@ -166,7 +161,7 @@ public class LoginActivity extends BaseActivity {
 
     @Inject AuthorizationService authorizationService;
     @Inject UsersService usersService;
-    @Inject UserToken userToken;
+    @Inject TraktSettings traktSettings;
     @Inject Bus bus;
 
     final Context context;
@@ -186,21 +181,16 @@ public class LoginActivity extends BaseActivity {
 
       try {
         final AccessToken token = authorizationService.getToken(
-            new TokenRequest(code, BuildConfig.TRAKT_CLIENT_ID, BuildConfig.TRAKT_SECRET,
+            TokenRequest.getAccessToken(code, BuildConfig.TRAKT_CLIENT_ID, BuildConfig.TRAKT_SECRET,
                 BuildConfig.TRAKT_REDIRECT_URL, GrantType.AUTHORIZATION_CODE));
 
-        final String accessToken = token.getAccessToken();
-
-        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        settings.edit().putString(Settings.TRAKT_TOKEN, accessToken).apply();
-
-        userToken.setToken(accessToken);
+        traktSettings.updateTokens(token);
 
         final UserSettings userSettings = usersService.getUserSettings();
         Settings.clearProfile(context);
         Settings.updateProfile(context, userSettings);
 
-        return new Result(accessToken);
+        return new Result();
       } catch (RetrofitError e) {
         switch (e.getKind()) {
           case NETWORK:
@@ -226,7 +216,7 @@ public class LoginActivity extends BaseActivity {
       bus.unregister(this);
 
       if (result.success) {
-        bus.post(new TokenFetchedEvent(result.token));
+        bus.post(new TokenFetchedEvent());
       } else {
         bus.post(new FetchingTokenFailedEvent(result.errorMessage));
       }
@@ -249,16 +239,6 @@ public class LoginActivity extends BaseActivity {
   }
 
   public static class TokenFetchedEvent {
-
-    private String token;
-
-    public TokenFetchedEvent(String token) {
-      this.token = token;
-    }
-
-    public String getToken() {
-      return token;
-    }
   }
 
   public static class FetchingTokenFailedEvent {

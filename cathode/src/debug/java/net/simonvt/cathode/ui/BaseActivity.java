@@ -38,6 +38,7 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.HttpStatusCode;
 import net.simonvt.cathode.IntPreference;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.api.TraktSettings;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.RequestFailedEvent;
@@ -117,6 +118,32 @@ public abstract class BaseActivity extends AppCompatActivity {
       @Override public void onClick(View v) {
         injects.bus.post(new AuthFailedEvent());
         debugViews.drawerLayout.closeDrawers();
+      }
+    });
+
+    debugViews.removeAccessToken.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        settings.edit().remove(Settings.TRAKT_ACCESS_TOKEN).apply();
+      }
+    });
+
+    debugViews.removeRefreshToken.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        settings.edit().remove(Settings.TRAKT_REFRESH_TOKEN).apply();
+      }
+    });
+
+    debugViews.invalidateAccessToken.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        settings.edit().putString(Settings.TRAKT_ACCESS_TOKEN, "invalid token").apply();
+      }
+    });
+
+    debugViews.invalidateRefreshToken.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        settings.edit()
+            .putString(Settings.TRAKT_REFRESH_TOKEN, "invalid token")
+            .apply();
       }
     });
 
@@ -239,6 +266,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Inject @HttpStatusCode IntPreference httpStatusCodePreference;
 
     @Inject JobManager jobManager;
+
+    @Inject TraktSettings traktSettings;
   }
 
   static class DebugViews {
@@ -254,6 +283,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Bind(R.id.debug_requestFailedEvent) View requestFailedEvent;
 
     @Bind(R.id.debug_authFailedEvent) View authFailedEvent;
+
+    @Bind(R.id.debug_removeAccessToken) View removeAccessToken;
+
+    @Bind(R.id.debug_removeRefreshToken) View removeRefreshToken;
+
+    @Bind(R.id.debug_invalidateAccessToken) View invalidateAccessToken;
+
+    @Bind(R.id.debug_invalidateRefreshToken) View invalidateRefreshToken;
 
     @Bind(R.id.debug_networkStatusCode) Spinner httpStatusCode;
 

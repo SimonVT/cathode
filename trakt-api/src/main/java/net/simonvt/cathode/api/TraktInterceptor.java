@@ -13,42 +13,18 @@ public class TraktInterceptor implements RequestInterceptor {
 
   public static final String PATH_USERNAME = "username";
 
-  private String auth = null;
+  private TraktSettings settings;
 
-  private UserToken token;
-
-  private String apiKey;
-
-  @Inject public TraktInterceptor(UserToken token, @ApiKey String apiKey) {
-    if (token == null) {
-      throw new IllegalArgumentException("token must not be null");
-    }
-
-    this.token = token;
-    token.setListener(new UserToken.OnCredentialsChangedListener() {
-      @Override public void onTokenChanged(String token) {
-        setToken(token);
-      }
-    });
-    setToken(token.getToken());
-
-    this.apiKey = apiKey;
-  }
-
-  private void setToken(String token) {
-    if (token == null) {
-      auth = null;
-    } else {
-      auth = "Bearer " + token;
-    }
+  @Inject public TraktInterceptor(TraktSettings settings) {
+    this.settings = settings;
   }
 
   @Override public void intercept(RequestFacade requestFacade) {
-    if (auth != null) {
-      requestFacade.addHeader(HEADER_AUTHORIZATION, auth);
+    if (settings.getAccessToken() != null) {
+      requestFacade.addHeader(HEADER_AUTHORIZATION, "Bearer " + settings.getAccessToken());
     }
 
-    requestFacade.addHeader(HEADER_API_KEY, apiKey);
+    requestFacade.addHeader(HEADER_API_KEY, settings.getClientId());
     requestFacade.addHeader(HEADER_API_VERSION, "2");
 
     requestFacade.addPathParam(PATH_USERNAME, "me");

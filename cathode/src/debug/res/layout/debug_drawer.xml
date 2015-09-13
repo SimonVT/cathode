@@ -83,6 +83,42 @@
       style="@style/DebugDrawerItem"/>
 
   <TextView
+      android:id="@+id/debug_removeAccessToken"
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
+      android:textAllCaps="false"
+      android:text="Remove access token"
+      style="@style/DebugDrawerItem"/>
+
+  <TextView
+      android:id="@+id/debug_removeRefreshToken"
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
+      android:textAllCaps="false"
+      android:text="Remove refresh token"
+      style="@style/DebugDrawerItem"/>
+
+  <TextView
+      android:id="@+id/debug_invalidateAccessToken"
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
+      android:textAllCaps="false"
+      android:text="Invalidate access token"
+      style="@style/DebugDrawerItem"/>
+
+  <TextView
+      android:id="@+id/debug_invalidateRefreshToken"
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
+      android:textAllCaps="false"
+      android:text="Invalidate refresh token"
+      style="@style/DebugDrawerItem"/>
+
+  <TextView
       android:layout_width="0dp"
       android:layout_columnSpan="2"
       android:layout_gravity="start|fill_horizontal"

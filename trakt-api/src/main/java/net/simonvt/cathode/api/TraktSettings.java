@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Simon Vig Therkildsen
+ * Copyright (C) 2015 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,21 @@
 
 package net.simonvt.cathode.api;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import javax.inject.Qualifier;
+import net.simonvt.cathode.api.entity.AccessToken;
 
-@Qualifier @Documented @Retention(RetentionPolicy.RUNTIME)
-public @interface ApiKey {
+public interface TraktSettings {
+
+  String getAccessToken();
+
+  String getRefreshToken();
+
+  void updateTokens(AccessToken tokens);
+
+  String getClientId();
+
+  String getSecret();
+
+  String getRedirectUrl();
+
+  String refreshToken();
 }

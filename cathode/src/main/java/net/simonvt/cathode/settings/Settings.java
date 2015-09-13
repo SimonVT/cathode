@@ -30,7 +30,8 @@ public final class Settings {
   }
 
   public static final String TRAKT_LOGGED_IN = "traktLoggedIn";
-  public static final String TRAKT_TOKEN = "traktToken";
+  public static final String TRAKT_ACCESS_TOKEN = "traktToken";
+  public static final String TRAKT_REFRESH_TOKEN = "traktRefreshToken";
 
   public static final String START_PAGE = "startPage";
 
@@ -232,7 +233,8 @@ public final class Settings {
     SharedPreferences.Editor editor = settings.edit();
 
     editor.remove(TRAKT_LOGGED_IN);
-    editor.remove(TRAKT_TOKEN);
+    editor.remove(TRAKT_ACCESS_TOKEN);
+    editor.remove(TRAKT_REFRESH_TOKEN);
 
     editor.remove(START_PAGE);
 

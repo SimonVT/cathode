@@ -23,6 +23,8 @@ public class TokenRequest {
 
   String code;
 
+  @SerializedName("refresh_token") String refreshToken;
+
   @SerializedName("client_id") String clientId;
 
   @SerializedName("client_secret") String clientSecret;
@@ -31,12 +33,25 @@ public class TokenRequest {
 
   @SerializedName("grant_type") GrantType grantType;
 
-  public TokenRequest(String code, String clientId, String clientSecret, String redirectUrl,
-      GrantType grantType) {
-    this.code = code;
-    this.clientId = clientId;
-    this.clientSecret = clientSecret;
-    this.redirectUrl = redirectUrl;
-    this.grantType = grantType;
+  public static TokenRequest getAccessToken(String code, String clientId, String clientSecret,
+      String redirectUrl, GrantType grantType) {
+    TokenRequest request = new TokenRequest();
+    request.code = code;
+    request.clientId = clientId;
+    request.clientSecret = clientSecret;
+    request.redirectUrl = redirectUrl;
+    request.grantType = grantType;
+    return request;
+  }
+
+  public static TokenRequest refreshToken(String refreshToken, String clientId, String clientSecret,
+      String redirectUrl, GrantType grantType) {
+    TokenRequest request = new TokenRequest();
+    request.refreshToken = refreshToken;
+    request.clientId = clientId;
+    request.clientSecret = clientSecret;
+    request.redirectUrl = redirectUrl;
+    request.grantType = grantType;
+    return request;
   }
 }

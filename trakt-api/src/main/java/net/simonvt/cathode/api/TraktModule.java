@@ -69,13 +69,14 @@ public class TraktModule {
         .build();
   }
 
-  @Provides @Singleton @Trakt OkHttpClient provideOkHttpClient() {
+  @Provides @Singleton @Trakt OkHttpClient provideOkHttpClient(TraktSettings settings) {
     OkHttpClient client = new OkHttpClient();
     client.setConnectTimeout(15, TimeUnit.SECONDS);
     client.setReadTimeout(20, TimeUnit.SECONDS);
 
     client.interceptors().add(new RetryingInterceptor(MAX_RETRIES, RETRY_DELAY));
     client.networkInterceptors().add(new LoggingInterceptor());
+    client.setAuthenticator(new TraktAuthenticator(settings));
 
     return client;
   }
