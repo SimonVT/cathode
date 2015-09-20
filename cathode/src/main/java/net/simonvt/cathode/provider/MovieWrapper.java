@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.api.entity.Images;
 import net.simonvt.cathode.api.entity.Movie;
-import net.simonvt.cathode.api.entity.People;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.database.DatabaseUtils;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -177,10 +176,6 @@ public final class MovieWrapper {
     } catch (OperationApplicationException e) {
       Timber.e(e, "Updating movie genres failed");
     }
-  }
-
-  private static void insertPeople(ContentResolver resolver, long movieId, People people) {
-    // TODO:
   }
 
   private static ContentValues getContentValues(Movie movie) {
