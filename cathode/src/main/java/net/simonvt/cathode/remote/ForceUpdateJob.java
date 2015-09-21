@@ -17,16 +17,19 @@
 package net.simonvt.cathode.remote;
 
 import android.database.Cursor;
+import javax.inject.Inject;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
 
 public class ForceUpdateJob extends Job {
+
+  @Inject transient ShowDatabaseHelper showHelper;
 
   @Override public String key() {
     return "ForceUpdateJob";
@@ -45,7 +48,7 @@ public class ForceUpdateJob extends Job {
       final long showId = shows.getLong(shows.getColumnIndex(ShowColumns.ID));
       final long traktId = shows.getLong(shows.getColumnIndex(ShowColumns.TRAKT_ID));
 
-      final boolean syncFully = ShowWrapper.shouldSyncFully(getContentResolver(), showId);
+      final boolean syncFully = showHelper.shouldSyncFully(showId);
       queue(new SyncShow(traktId, syncFully));
     }
 

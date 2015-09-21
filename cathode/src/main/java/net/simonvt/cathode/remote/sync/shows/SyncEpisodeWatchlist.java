@@ -23,18 +23,22 @@ import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.entity.WatchlistItem;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
-import net.simonvt.cathode.provider.EpisodeWrapper;
+import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.cathode.provider.SeasonWrapper;
-import net.simonvt.cathode.provider.ShowWrapper;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.provider.SeasonDatabaseHelper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.Flags;
 
 public class SyncEpisodeWatchlist extends Job {
 
   @Inject transient SyncService syncService;
+
+  @Inject transient ShowDatabaseHelper showHelper;
+  @Inject transient SeasonDatabaseHelper seasonHelper;
+  @Inject transient EpisodeDatabaseHelper episodeHelper;
 
   public SyncEpisodeWatchlist() {
     super(Flags.REQUIRES_AUTH);
@@ -70,41 +74,38 @@ public class SyncEpisodeWatchlist extends Job {
       final int episodeNumber = episode.getNumber();
       final long listedAt = item.getListedAt().getTimeInMillis();
 
-      boolean didShowExist = true;
-      long showId = ShowWrapper.getShowId(getContentResolver(), showTraktId);
-      if (showId == -1L) {
-        didShowExist = false;
-        showId = ShowWrapper.createShow(getContentResolver(), showTraktId);
+      ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(showTraktId);
+      final long showId = showResult.showId;
+      final boolean didShowExist = !showResult.didCreate;
+      if (showResult.didCreate) {
         queue(new SyncShow(showTraktId));
       }
 
-      boolean didSeasonExist = true;
-      long seasonId = SeasonWrapper.getSeasonId(getContentResolver(), showId, seasonNumber);
-      if (seasonId == -1L) {
-        didSeasonExist = false;
-        seasonId = SeasonWrapper.createSeason(getContentResolver(), showId, seasonNumber);
+      SeasonDatabaseHelper.IdResult seasonResult = seasonHelper.getIdOrCreate(showId, seasonNumber);
+      final long seasonId = seasonResult.id;
+      final boolean didSeasonExist = !seasonResult.didCreate;
+      if (seasonResult.didCreate) {
         if (didShowExist) {
-          queue(new SyncSeason(showTraktId, seasonNumber));
+          queue(new SyncShow(showTraktId, true));
         }
       }
 
-      long episodeId =
-          EpisodeWrapper.getEpisodeId(getContentResolver(), showId, seasonNumber, episodeNumber);
-      if (episodeId == -1L) {
-        episodeId =
-            EpisodeWrapper.createEpisode(getContentResolver(), showId, seasonId, episodeNumber);
+      EpisodeDatabaseHelper.IdResult episodeResult =
+          episodeHelper.getIdOrCreate(showId, seasonId, episodeNumber);
+      final long episodeId = episodeResult.id;
+      if (episodeResult.didCreate) {
         if (didShowExist && didSeasonExist) {
           queue(new SyncSeason(showTraktId, seasonNumber));
         }
       }
 
       if (!episodeIds.remove(episodeId)) {
-        EpisodeWrapper.setIsInWatchlist(getContentResolver(), episodeId, true, listedAt);
+        episodeHelper.setIsInWatchlist(episodeId, true, listedAt);
       }
     }
 
     for (Long episodeId : episodeIds) {
-      EpisodeWrapper.setIsInWatchlist(getContentResolver(), episodeId, false, 0L);
+      episodeHelper.setIsInWatchlist(episodeId, false, 0L);
     }
   }
 }

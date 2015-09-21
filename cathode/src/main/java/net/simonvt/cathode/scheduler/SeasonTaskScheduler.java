@@ -16,13 +16,17 @@
 package net.simonvt.cathode.scheduler;
 
 import android.content.Context;
+import javax.inject.Inject;
 import net.simonvt.cathode.api.util.TimeUtils;
-import net.simonvt.cathode.provider.SeasonWrapper;
-import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.provider.SeasonDatabaseHelper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.action.shows.CollectSeason;
 import net.simonvt.cathode.remote.action.shows.WatchedSeason;
 
 public class SeasonTaskScheduler extends BaseTaskScheduler {
+
+  @Inject ShowDatabaseHelper showHelper;
+  @Inject SeasonDatabaseHelper seasonHelper;
 
   public SeasonTaskScheduler(Context context) {
     super(context);
@@ -38,14 +42,12 @@ public class SeasonTaskScheduler extends BaseTaskScheduler {
           watchedAtMillis = TimeUtils.getMillis(watchedAt);
         }
 
-        final long showId = SeasonWrapper.getShowId(context.getContentResolver(), seasonId);
-        final long traktId = ShowWrapper.getTraktId(context.getContentResolver(), showId);
-        final int seasonNumber =
-            SeasonWrapper.getSeasonNumber(context.getContentResolver(), seasonId);
+        final long showId = seasonHelper.getShowId(seasonId);
+        final long traktId = showHelper.getTraktId(showId);
+        final int seasonNumber = seasonHelper.getNumber(seasonId);
 
         queue(new WatchedSeason(traktId, seasonNumber, watched, watchedAt));
-        SeasonWrapper.setWatched(context.getContentResolver(), showId, seasonId, watched,
-            watchedAtMillis);
+        seasonHelper.setWatched(showId, seasonId, watched, watchedAtMillis);
       }
     });
   }
@@ -60,14 +62,12 @@ public class SeasonTaskScheduler extends BaseTaskScheduler {
           collectedAtMillis = TimeUtils.getMillis(collectedAt);
         }
 
-        final long showId = SeasonWrapper.getShowId(context.getContentResolver(), seasonId);
-        final long traktId = ShowWrapper.getTraktId(context.getContentResolver(), showId);
-        final int seasonNumber =
-            SeasonWrapper.getSeasonNumber(context.getContentResolver(), seasonId);
+        final long showId = seasonHelper.getShowId(seasonId);
+        final long traktId = showHelper.getTraktId(showId);
+        final int seasonNumber = seasonHelper.getNumber(seasonId);
 
         queue(new CollectSeason(traktId, seasonNumber, inCollection, collectedAt));
-        SeasonWrapper.setIsInCollection(context.getContentResolver(), seasonId, inCollection,
-            collectedAtMillis);
+        seasonHelper.setIsInCollection(seasonId, inCollection, collectedAtMillis);
       }
     });
   }

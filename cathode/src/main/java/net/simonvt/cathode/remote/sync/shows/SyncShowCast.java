@@ -32,13 +32,15 @@ import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.PersonWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCharacters;
-import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import timber.log.Timber;
 
 public class SyncShowCast extends Job {
 
   @Inject transient ShowsService showsService;
+
+  @Inject transient ShowDatabaseHelper showHelper;
 
   private long traktId;
 
@@ -58,7 +60,7 @@ public class SyncShowCast extends Job {
     People people = showsService.getPeople(traktId, Extended.FULL_IMAGES);
     List<CastMember> characters = people.getCast();
 
-    final long showId = ShowWrapper.getShowId(getContentResolver(), traktId);
+    final long showId = showHelper.getId(traktId);
 
     ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
     ops.add(ContentProviderOperation.newDelete(ShowCharacters.fromShow(showId)).build());

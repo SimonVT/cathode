@@ -24,15 +24,19 @@ import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.SeasonService;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.EpisodeWrapper;
+import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.cathode.provider.SeasonWrapper;
-import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.provider.SeasonDatabaseHelper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import timber.log.Timber;
 
 public class SyncSeason extends Job {
 
   @Inject transient SeasonService seasonService;
+
+  @Inject transient ShowDatabaseHelper showHelper;
+  @Inject transient SeasonDatabaseHelper seasonHelper;
+  @Inject transient EpisodeDatabaseHelper episodeHelper;
 
   private long traktId;
 
@@ -56,15 +60,20 @@ public class SyncSeason extends Job {
 
     List<Episode> episodes = seasonService.getSeason(traktId, season, Extended.FULL_IMAGES);
 
-    long showId = ShowWrapper.getShowId(getContentResolver(), traktId);
-    if (showId == -1L) {
-      showId = ShowWrapper.createShow(getContentResolver(), traktId);
+    ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
+    final long showId = showResult.showId;
+    final boolean didShowExist = !showResult.didCreate;
+    if (showResult.didCreate) {
       queue(new SyncShow(traktId));
     }
-    long seasonId = SeasonWrapper.getSeasonId(getContentResolver(), showId, season);
-    if (seasonId == -1L) {
-      seasonId = SeasonWrapper.createSeason(getContentResolver(), showId, season);
-      queue(new SyncSeasons(traktId));
+
+    SeasonDatabaseHelper.IdResult seasonResult = seasonHelper.getIdOrCreate(showId, season);
+    final long seasonId = seasonResult.id;
+    final boolean seasonExisted = !seasonResult.didCreate;
+    if (seasonResult.didCreate) {
+      if (didShowExist) {
+        queue(new SyncShow(traktId, true));
+      }
     }
 
     Cursor c = getContentResolver().query(Episodes.fromSeason(seasonId), new String[] {
@@ -78,8 +87,10 @@ public class SyncSeason extends Job {
     c.close();
 
     for (Episode episode : episodes) {
-      final long episodeId =
-          EpisodeWrapper.updateOrInsertEpisode(getContentResolver(), episode, showId, seasonId);
+      EpisodeDatabaseHelper.IdResult episodeResult =
+          episodeHelper.getIdOrCreate(showId, seasonId, episode.getNumber());
+      final long episodeId = episodeResult.id;
+      episodeHelper.updateEpisode(showId, episode);
       episodeIds.remove(episodeId);
     }
 

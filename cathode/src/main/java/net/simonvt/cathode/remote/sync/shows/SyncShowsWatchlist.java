@@ -25,13 +25,15 @@ import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.remote.Flags;
 
 public class SyncShowsWatchlist extends Job {
 
   @Inject transient SyncService syncService;
+
+  @Inject transient ShowDatabaseHelper showHelper;
 
   public SyncShowsWatchlist() {
     super(Flags.REQUIRES_AUTH);
@@ -63,20 +65,19 @@ public class SyncShowsWatchlist extends Job {
       final Show show = item.getShow();
       final long listedAt = item.getListedAt().getTimeInMillis();
       final long traktId = show.getIds().getTrakt();
-
-      long showId = ShowWrapper.getShowId(getContentResolver(), traktId);
-      if (showId == -1L) {
-        showId = ShowWrapper.createShow(getContentResolver(), traktId);
+      ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
+      final long showId = showResult.showId;
+      if (showResult.didCreate) {
         queue(new SyncShow(traktId));
       }
 
       if (!showIds.remove(showId)) {
-        ShowWrapper.setIsInWatchlist(getContentResolver(), showId, true, listedAt);
+        showHelper.setIsInWatchlist(showId, true, listedAt);
       }
     }
 
     for (Long showId : showIds) {
-      ShowWrapper.setIsInWatchlist(getContentResolver(), showId, false);
+      showHelper.setIsInWatchlist(showId, false);
     }
   }
 }

@@ -19,13 +19,15 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.api.util.TimeUtils;
-import net.simonvt.cathode.provider.EpisodeWrapper;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.remote.Flags;
 
 public class CollectEpisode extends Job {
 
   @Inject transient SyncService syncService;
+
+  @Inject transient EpisodeDatabaseHelper episodeHelper;
 
   private long traktId;
 
@@ -80,7 +82,7 @@ public class CollectEpisode extends Job {
       syncService.uncollect(items);
     }
 
-    EpisodeWrapper.setInCollection(getContentResolver(), traktId, season, episode, inCollection,
+    episodeHelper.setInCollection(traktId, season, episode, inCollection,
         TimeUtils.getMillis(collectedAt));
   }
 }

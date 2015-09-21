@@ -15,21 +15,25 @@
  */
 package net.simonvt.cathode.remote.sync.shows;
 
-import android.content.ContentResolver;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.EpisodeService;
-import net.simonvt.cathode.provider.EpisodeWrapper;
-import net.simonvt.cathode.provider.ShowWrapper;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
+import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
+import net.simonvt.cathode.provider.SeasonDatabaseHelper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SyncEpisode extends Job {
 
   @Inject transient EpisodeService episodeService;
+
+  @Inject transient ShowDatabaseHelper showHelper;
+  @Inject transient SeasonDatabaseHelper seasonHelper;
+  @Inject transient EpisodeDatabaseHelper episodeHelper;
 
   private long traktId;
 
@@ -55,16 +59,17 @@ public class SyncEpisode extends Job {
     try {
       Episode summary = episodeService.getSummary(traktId, season, episode, Extended.FULL_IMAGES);
 
-      final ContentResolver resolver = getContentResolver();
-      final long showId = ShowWrapper.getShowId(resolver, traktId);
-      final long seasonId = ShowWrapper.getSeasonId(resolver, showId, season);
+      final long showId = showHelper.getId(traktId);
+      final long seasonId = seasonHelper.getId(showId, season);
 
       if (showId == -1L || seasonId == -1L) {
         queue(new SyncShow(traktId));
         return;
       }
 
-      EpisodeWrapper.updateOrInsertEpisode(getContentResolver(), summary, showId, seasonId);
+      EpisodeDatabaseHelper.IdResult episodeResult =
+          episodeHelper.getIdOrCreate(showId, seasonId, summary.getNumber());
+      episodeHelper.updateEpisode(showId, summary);
     } catch (RetrofitError e) {
       Response response = e.getResponse();
       if (response != null && response.getStatus() == 404) {

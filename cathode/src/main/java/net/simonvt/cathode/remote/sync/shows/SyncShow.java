@@ -20,13 +20,15 @@ import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.SeasonService;
 import net.simonvt.cathode.api.service.ShowsService;
-import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.jobqueue.Job;
 
 public class SyncShow extends Job {
 
   @Inject transient ShowsService showsService;
   @Inject transient SeasonService seasonService;
+
+  @Inject transient ShowDatabaseHelper showHelper;
 
   private long traktId;
 
@@ -51,7 +53,7 @@ public class SyncShow extends Job {
 
   @Override public void perform() {
     Show show = showsService.getSummary(traktId, Extended.FULL_IMAGES);
-    final long showId = ShowWrapper.updateOrInsertShow(getContentResolver(), show);
+    showHelper.updateShow(show);
 
     if (!syncAdditionalInfo) {
       return;

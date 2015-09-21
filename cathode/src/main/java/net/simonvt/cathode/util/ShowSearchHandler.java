@@ -29,7 +29,7 @@ import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.SearchService;
 import net.simonvt.cathode.event.SearchFailureEvent;
 import net.simonvt.cathode.event.ShowSearchResult;
-import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import retrofit.RetrofitError;
 import timber.log.Timber;
 
@@ -89,6 +89,8 @@ public class ShowSearchHandler {
 
     @Inject SearchService searchService;
 
+    @Inject ShowDatabaseHelper showHelper;
+
     private Context context;
 
     private String query;
@@ -113,7 +115,7 @@ public class ShowSearchHandler {
         for (SearchResult result : results) {
           Show show = result.getShow();
           if (!TextUtils.isEmpty(show.getTitle())) {
-            final long showId = ShowWrapper.updateOrInsertShow(context.getContentResolver(), show);
+            final long showId = showHelper.updateShow(show);
             showIds.add(showId);
           }
         }

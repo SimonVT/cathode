@@ -25,7 +25,7 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.action.CancelCheckin;
 import net.simonvt.cathode.remote.action.shows.DismissShowRecommendation;
 import net.simonvt.cathode.remote.action.shows.RateShow;
@@ -36,6 +36,8 @@ import net.simonvt.cathode.remote.sync.shows.SyncShow;
 public class ShowTaskScheduler extends BaseTaskScheduler {
 
   @Inject EpisodeTaskScheduler episodeScheduler;
+
+  @Inject ShowDatabaseHelper showHelper;
 
   public ShowTaskScheduler(Context context) {
     super(context);
@@ -53,7 +55,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         ContentValues cv = new ContentValues();
         cv.put(ShowColumns.FULL_SYNC_REQUESTED, System.currentTimeMillis());
         context.getContentResolver().update(Shows.withId(showId), cv, null, null);
-        final long traktId = ShowWrapper.getTraktId(context.getContentResolver(), showId);
+        final long traktId = showHelper.getTraktId(showId);
         queue(new SyncShow(traktId));
       }
     });
@@ -138,13 +140,13 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
     execute(new Runnable() {
       @Override public void run() {
         Cursor c = context.getContentResolver().query(Shows.withId(showId), new String[] {
-            ShowColumns.TVDB_ID,
+            ShowColumns.TRAKT_ID,
         }, null, null, null);
 
         if (c.moveToFirst()) {
-          final int tvdbId = c.getInt(c.getColumnIndex(ShowColumns.TVDB_ID));
-          ShowWrapper.setWatched(context.getContentResolver(), showId, watched);
-          queue(new WatchedShow(tvdbId, watched));
+          final long traktId = c.getInt(c.getColumnIndex(ShowColumns.TRAKT_ID));
+          showHelper.setWatched(showId, watched);
+          queue(new WatchedShow(traktId, watched));
         }
 
         c.close();
@@ -168,8 +170,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
           }
 
           final long traktId = c.getLong(c.getColumnIndex(ShowColumns.TRAKT_ID));
-          ShowWrapper.setIsInWatchlist(context.getContentResolver(), showId, inWatchlist,
-              listedAtMillis);
+          showHelper.setIsInWatchlist(showId, inWatchlist, listedAtMillis);
           queue(new WatchlistShow(traktId, inWatchlist, listedAt));
 
           final int episodeCount = c.getInt(c.getColumnIndex(ShowColumns.EPISODE_COUNT));
@@ -186,7 +187,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
   public void dismissRecommendation(final long showId) {
     execute(new Runnable() {
       @Override public void run() {
-        final long traktId = ShowWrapper.getTraktId(context.getContentResolver(), showId);
+        final long traktId = showHelper.getTraktId(showId);
 
         ContentValues cv = new ContentValues();
         cv.put(ShowColumns.RECOMMENDATION_INDEX, -1);
@@ -211,7 +212,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         String ratedAt = TimeUtils.getIsoTime();
         long ratedAtMillis = TimeUtils.getMillis(ratedAt);
 
-        final long traktId = ShowWrapper.getTraktId(context.getContentResolver(), showId);
+        final long traktId = showHelper.getTraktId(showId);
 
         ContentValues cv = new ContentValues();
         cv.put(ShowColumns.USER_RATING, rating);

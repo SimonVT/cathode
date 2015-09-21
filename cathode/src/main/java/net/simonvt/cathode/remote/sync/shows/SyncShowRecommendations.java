@@ -28,7 +28,7 @@ import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.service.RecommendationsService;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.remote.Flags;
@@ -39,6 +39,8 @@ public class SyncShowRecommendations extends Job {
   private static final int LIMIT = 20;
 
   @Inject transient RecommendationsService recommendationsService;
+
+  @Inject transient ShowDatabaseHelper showHelper;
 
   public SyncShowRecommendations() {
     super(Flags.REQUIRES_AUTH);
@@ -69,11 +71,10 @@ public class SyncShowRecommendations extends Job {
       for (int index = 0, count = Math.min(shows.size(), 25); index < count; index++) {
         Show show = shows.get(index);
         final long traktId = show.getIds().getTrakt();
-
-        long showId = ShowWrapper.getShowId(resolver, traktId);
-        if (showId == -1L) {
-          showId = ShowWrapper.createShow(resolver, traktId);
-          queue(new SyncShow(show.getIds().getTrakt(), false));
+        ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
+        final long showId = showResult.showId;
+        if (showResult.didCreate) {
+          queue(new SyncShow(traktId));
         }
 
         showIds.remove(showId);

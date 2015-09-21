@@ -25,13 +25,16 @@ import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.SeasonService;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
-import net.simonvt.cathode.provider.SeasonWrapper;
-import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.provider.SeasonDatabaseHelper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.jobqueue.Job;
 
 public class SyncSeasons extends Job {
 
   @Inject transient SeasonService seasonService;
+
+  @Inject transient ShowDatabaseHelper showHelper;
+  @Inject transient SeasonDatabaseHelper seasonHelper;
 
   long traktId;
 
@@ -48,7 +51,7 @@ public class SyncSeasons extends Job {
   }
 
   @Override public void perform() {
-    final long showId = ShowWrapper.getShowId(getContentResolver(), traktId);
+    final long showId = showHelper.getId(traktId);
     if (showId == -1L) {
       queue(new SyncShow(traktId));
       return;
@@ -67,9 +70,9 @@ public class SyncSeasons extends Job {
     currentSeasons.close();
 
     for (Season season : seasons) {
-      final long seasonId =
-          SeasonWrapper.updateOrInsertSeason(getContentResolver(), season, showId);
-      seasonIds.remove(seasonId);
+      SeasonDatabaseHelper.IdResult result = seasonHelper.getIdOrCreate(showId, season.getNumber());
+      seasonHelper.updateSeason(showId, season);
+      seasonIds.remove(result.id);
       queue(new SyncSeason(traktId, season.getNumber()));
     }
 

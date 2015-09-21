@@ -38,8 +38,8 @@ import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.SeasonWrapper;
-import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.provider.SeasonDatabaseHelper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
@@ -49,6 +49,9 @@ import timber.log.Timber;
 public class SyncHiddenSection extends Job {
 
   @Inject transient UsersService usersService;
+
+  @Inject transient ShowDatabaseHelper showHelper;
+  @Inject transient SeasonDatabaseHelper seasonHelper;
 
   private HiddenSection section;
 
@@ -131,10 +134,10 @@ public class SyncHiddenSection extends Job {
         switch (item.getType()) {
           case SHOW: {
             Show show = item.getShow();
-            long showId = ShowWrapper.getShowId(getContentResolver(), show);
-            if (showId == -1L) {
-              final long traktId = show.getIds().getTrakt();
-              showId = ShowWrapper.createShow(getContentResolver(), traktId);
+            final long traktId = show.getIds().getTrakt();
+            ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
+            final long showId = showResult.showId;
+            if (showResult.didCreate) {
               queue(new SyncShow(traktId));
             }
 
@@ -152,19 +155,21 @@ public class SyncHiddenSection extends Job {
 
           case SEASON: {
             Show show = item.getShow();
-            long showId = ShowWrapper.getShowId(getContentResolver(), show);
-            if (showId == -1L) {
-              final long traktId = show.getIds().getTrakt();
-              showId = ShowWrapper.createShow(getContentResolver(), traktId);
+            final long traktId = show.getIds().getTrakt();
+            ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
+            final long showId = showResult.showId;
+            if (showResult.didCreate) {
               queue(new SyncShow(traktId));
             }
 
             Season season = item.getSeason();
             final int seasonNumber = season.getNumber();
-            long seasonId = SeasonWrapper.getSeasonId(getContentResolver(), showId, seasonNumber);
-            if (seasonId == -1L) {
-              seasonId = SeasonWrapper.createSeason(getContentResolver(), showId, seasonNumber);
-              queue(new SyncShow(show.getIds().getTrakt()));
+            SeasonDatabaseHelper.IdResult result = seasonHelper.getIdOrCreate(showId, seasonNumber);
+            final long seasonId = result.id;
+            if (result.didCreate) {
+              if (!showResult.didCreate) {
+                queue(new SyncShow(show.getIds().getTrakt()));
+              }
             }
 
             Timber.d("["

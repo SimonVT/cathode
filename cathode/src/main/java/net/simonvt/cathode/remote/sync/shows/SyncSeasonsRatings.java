@@ -27,8 +27,8 @@ import net.simonvt.cathode.api.entity.RatingItem;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
-import net.simonvt.cathode.provider.SeasonWrapper;
-import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.provider.SeasonDatabaseHelper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
@@ -38,6 +38,9 @@ import timber.log.Timber;
 public class SyncSeasonsRatings extends Job {
 
   @Inject transient SyncService syncService;
+
+  @Inject transient ShowDatabaseHelper showHelper;
+  @Inject transient SeasonDatabaseHelper seasonHelper;
 
   public SyncSeasonsRatings() {
     super(Flags.REQUIRES_AUTH);
@@ -70,19 +73,18 @@ public class SyncSeasonsRatings extends Job {
       final int seasonNumber = rating.getSeason().getNumber();
 
       final long showTraktId = rating.getShow().getIds().getTrakt();
-      boolean didShowExist = true;
-      long showId = ShowWrapper.getShowId(getContentResolver(), showTraktId);
-      if (showId == -1L) {
-        didShowExist = false;
-        showId = ShowWrapper.createShow(getContentResolver(), showTraktId);
+      ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(showTraktId);
+      final long showId = showResult.showId;
+      final boolean didShowExist = !showResult.didCreate;
+      if (showResult.didCreate) {
         queue(new SyncShow(showTraktId));
       }
 
-      long seasonId = SeasonWrapper.getSeasonId(getContentResolver(), showId, seasonNumber);
-      if (seasonId == -1L) {
-        seasonId = SeasonWrapper.createSeason(getContentResolver(), showId, seasonNumber);
+      SeasonDatabaseHelper.IdResult seasonResult = seasonHelper.getIdOrCreate(showId, seasonNumber);
+      final long seasonId = seasonResult.id;
+      if (seasonResult.didCreate) {
         if (didShowExist) {
-          queue(new SyncSeason(showTraktId, seasonNumber));
+          queue(new SyncShow(showTraktId, true));
         }
       }
 

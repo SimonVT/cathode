@@ -30,7 +30,7 @@ import net.simonvt.cathode.api.entity.TrendingItem;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import timber.log.Timber;
@@ -40,6 +40,8 @@ public class SyncTrendingShows extends Job {
   private static final int LIMIT = 20;
 
   @Inject transient ShowsService showsService;
+
+  @Inject transient ShowDatabaseHelper showHelper;
 
   @Override public String key() {
     return "SyncTrendingShows";
@@ -69,11 +71,10 @@ public class SyncTrendingShows extends Job {
         TrendingItem item = shows.get(i);
         Show show = item.getShow();
         final long traktId = show.getIds().getTrakt();
-
-        long showId = ShowWrapper.getShowId(resolver, traktId);
-        if (showId == -1L) {
-          showId = ShowWrapper.createShow(resolver, traktId);
-          queue(new SyncShow(traktId, false));
+        ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
+        final long showId = showResult.showId;
+        if (showResult.didCreate) {
+          queue(new SyncShow(traktId));
         }
 
         ContentValues cv = new ContentValues();

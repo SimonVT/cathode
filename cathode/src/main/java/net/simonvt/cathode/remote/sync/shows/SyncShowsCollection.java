@@ -30,11 +30,11 @@ import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.EpisodeWrapper;
+import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.SeasonWrapper;
-import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.provider.SeasonDatabaseHelper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.remote.Flags;
@@ -43,6 +43,10 @@ import timber.log.Timber;
 public class SyncShowsCollection extends Job {
 
   @Inject transient SyncService syncService;
+
+  @Inject transient ShowDatabaseHelper showHelper;
+  @Inject transient SeasonDatabaseHelper seasonHelper;
+  @Inject transient EpisodeDatabaseHelper episodeHelper;
 
   public SyncShowsCollection() {
     super(Flags.REQUIRES_AUTH);
@@ -78,11 +82,10 @@ public class SyncShowsCollection extends Job {
         Show show = item.getShow();
         final long traktId = show.getIds().getTrakt();
 
-        boolean didShowExist = true;
-        long showId = ShowWrapper.getShowId(resolver, traktId);
-        if (showId == -1L) {
-          didShowExist = false;
-          showId = ShowWrapper.createShow(resolver, traktId);
+        ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
+        final long showId = showResult.showId;
+        final boolean didShowExist = !showResult.didCreate;
+        if (showResult.didCreate) {
           queue(new SyncShow(traktId));
         }
 
@@ -93,25 +96,21 @@ public class SyncShowsCollection extends Job {
         List<CollectionItem.Season> seasons = item.getSeasons();
         for (CollectionItem.Season season : seasons) {
           final int seasonNumber = season.getNumber();
-
-          boolean didSeasonExist = true;
-          long seasonId = SeasonWrapper.getSeasonId(resolver, showId, seasonNumber);
-          if (seasonId == -1L) {
-            didSeasonExist = false;
-            seasonId = SeasonWrapper.createSeason(resolver, showId, seasonNumber);
+          SeasonDatabaseHelper.IdResult seasonResult = seasonHelper.getIdOrCreate(showId, seasonNumber);
+          final long seasonId = seasonResult.id;
+          final boolean didSeasonExist = !seasonResult.didCreate;
+          if (seasonResult.didCreate) {
             if (didShowExist) {
-              queue(new SyncSeason(traktId, seasonNumber));
+              queue(new SyncShow(traktId, true));
             }
           }
 
           List<CollectionItem.Episode> episodes = season.getEpisodes();
           for (CollectionItem.Episode episode : episodes) {
             final int episodeNumber = episode.getNumber();
-            long episodeId =
-                EpisodeWrapper.getEpisodeId(resolver, showId, seasonNumber, episodeNumber);
-
-            if (episodeId == -1L) {
-              episodeId = EpisodeWrapper.createEpisode(resolver, showId, seasonId, episodeNumber);
+            EpisodeDatabaseHelper.IdResult episodeResult = episodeHelper.getIdOrCreate(showId, seasonId, episodeNumber);
+            final long episodeId = episodeResult.id;
+            if (episodeResult.didCreate) {
               if (didShowExist && didSeasonExist) {
                 queue(new SyncSeason(traktId, seasonNumber));
               }

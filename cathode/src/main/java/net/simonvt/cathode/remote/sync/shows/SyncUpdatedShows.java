@@ -22,14 +22,15 @@ import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.entity.UpdatedItem;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.provider.ShowWrapper;
-import timber.log.Timber;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 
 public class SyncUpdatedShows extends Job {
 
   private static final int LIMIT = 100;
 
   @Inject transient ShowsService showsService;
+
+  @Inject transient ShowDatabaseHelper showHelper;
 
   private String updatedSince;
 
@@ -63,14 +64,11 @@ public class SyncUpdatedShows extends Job {
 
       Show show = item.getShow();
       final long traktId = show.getIds().getTrakt();
-      final boolean exists = ShowWrapper.exists(getContentResolver(), traktId);
-      if (exists) {
-        final boolean needsUpdate =
-            ShowWrapper.needsUpdate(getContentResolver(), traktId, updatedAt);
+      final long id = showHelper.getId(traktId);
+      if (id != -1L) {
+        final boolean needsUpdate = showHelper.needsUpdate(traktId, updatedAt);
         if (needsUpdate) {
-          Timber.d("Show: %s - last updated: %s", show.getTitle(), updatedAt);
-          final long id = ShowWrapper.getShowId(getContentResolver(), traktId);
-          if (ShowWrapper.shouldSyncFully(getContentResolver(), id)) {
+          if (showHelper.shouldSyncFully(id)) {
             queue(new SyncShow(traktId));
           } else {
             showSummaries.add(traktId);

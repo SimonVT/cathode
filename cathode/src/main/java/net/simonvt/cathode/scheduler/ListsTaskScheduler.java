@@ -22,13 +22,13 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
-import net.simonvt.cathode.provider.EpisodeWrapper;
+import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ListWrapper;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.provider.PersonWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
-import net.simonvt.cathode.provider.SeasonWrapper;
-import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.provider.SeasonDatabaseHelper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.action.lists.AddEpisode;
 import net.simonvt.cathode.remote.action.lists.AddMovie;
 import net.simonvt.cathode.remote.action.lists.AddPerson;
@@ -44,6 +44,10 @@ import net.simonvt.cathode.remote.action.lists.RemoveShow;
 public class ListsTaskScheduler extends BaseTaskScheduler {
 
   @Inject SyncService syncService;
+
+  @Inject ShowDatabaseHelper showHelper;
+  @Inject SeasonDatabaseHelper seasonHelper;
+  @Inject EpisodeDatabaseHelper episodeHelper;
 
   public ListsTaskScheduler(Context context) {
     super(context);
@@ -94,7 +98,7 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
 
         switch (itemType) {
           case ListItemColumns.Type.SHOW: {
-            final long showTraktId = ShowWrapper.getTraktId(context.getContentResolver(), itemId);
+            final long showTraktId = showHelper.getTraktId(itemId);
 
             if (add) {
               queue(new AddShow(listTraktId, showTraktId));
@@ -105,10 +109,9 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
           }
 
           case ListItemColumns.Type.SEASON: {
-            final long showId = SeasonWrapper.getShowId(context.getContentResolver(), itemId);
-            final long showTraktId = ShowWrapper.getTraktId(context.getContentResolver(), showId);
-            final int seasonNumber =
-                SeasonWrapper.getSeasonNumber(context.getContentResolver(), itemId);
+            final long showId = seasonHelper.getShowId(itemId);
+            final long showTraktId = showHelper.getTraktId(showId);
+            final int seasonNumber = seasonHelper.getNumber(itemId);
 
             if (add) {
               queue(new AddSeason(listTraktId, showTraktId, seasonNumber));
@@ -119,11 +122,10 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
           }
 
           case ListItemColumns.Type.EPISODE: {
-            final long showId = EpisodeWrapper.getShowId(context.getContentResolver(), itemId);
-            final long showTraktId = ShowWrapper.getTraktId(context.getContentResolver(), showId);
-            final int seasonNumber = EpisodeWrapper.getSeason(context.getContentResolver(), itemId);
-            final int episodeNumber =
-                EpisodeWrapper.getEpisodeNumber(context.getContentResolver(), itemId);
+            final long showId = episodeHelper.getShowId(itemId);
+            final long showTraktId = showHelper.getTraktId(showId);
+            final int seasonNumber = episodeHelper.getSeason(itemId);
+            final int episodeNumber = episodeHelper.getNumber(itemId);
 
             if (add) {
               queue(new AddEpisode(listTraktId, showTraktId, seasonNumber, episodeNumber));

@@ -27,7 +27,7 @@ import net.simonvt.cathode.api.entity.RatingItem;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.ShowWrapper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
@@ -37,6 +37,8 @@ import timber.log.Timber;
 public class SyncShowsRatings extends Job {
 
   @Inject transient SyncService syncService;
+
+  @Inject transient ShowDatabaseHelper showHelper;
 
   public SyncShowsRatings() {
     super(Flags.REQUIRES_AUTH);
@@ -67,9 +69,9 @@ public class SyncShowsRatings extends Job {
 
     for (RatingItem rating : ratings) {
       final long traktId = rating.getShow().getIds().getTrakt();
-      long showId = ShowWrapper.getShowId(getContentResolver(), traktId);
-      if (showId == -1L) {
-        showId = ShowWrapper.createShow(getContentResolver(), traktId);
+      ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
+      final long showId = showResult.showId;
+      if (showResult.didCreate) {
         queue(new SyncShow(traktId));
       }
 

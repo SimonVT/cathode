@@ -32,6 +32,9 @@ import net.simonvt.cathode.jobqueue.JobListener;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.jobqueue.JobModule;
 import net.simonvt.cathode.jobqueue.JobService;
+import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
+import net.simonvt.cathode.provider.SeasonDatabaseHelper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.LogoutJob;
@@ -155,7 +158,8 @@ import net.simonvt.cathode.widget.RemoteImageView;
 
 @Module(
     includes = {
-        ApiModule.class, SchedulerModule.class, JobModule.class, TraktModule.class
+        ApiModule.class, SchedulerModule.class, JobModule.class, TraktModule.class,
+        DatabaseHelperModule.class
     },
 
     injects = {
@@ -164,6 +168,9 @@ import net.simonvt.cathode.widget.RemoteImageView;
         // Task schedulers
         EpisodeTaskScheduler.class, MovieTaskScheduler.class, SeasonTaskScheduler.class,
         ShowTaskScheduler.class, SearchTaskScheduler.class, ListsTaskScheduler.class,
+
+        // Database helpers
+        ShowDatabaseHelper.class, SeasonDatabaseHelper.class, EpisodeDatabaseHelper.class,
 
         // Activities
         HomeActivity.class, LoginActivity.class, LoginActivity.TokenTask.class,

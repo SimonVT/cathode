@@ -19,13 +19,15 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.api.util.TimeUtils;
-import net.simonvt.cathode.provider.SeasonWrapper;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.remote.Flags;
 
 public class WatchedSeason extends Job {
 
   @Inject transient SyncService syncService;
+
+  @Inject transient SeasonDatabaseHelper seasonHelper;
 
   private long traktId;
 
@@ -79,6 +81,6 @@ public class WatchedSeason extends Job {
       watchedAt = TimeUtils.getMillis(this.watchedAt);
     }
 
-    SeasonWrapper.setWatched(getContentResolver(), traktId, season, watched, watchedAt);
+    seasonHelper.setWatched(traktId, season, watched, watchedAt);
   }
 }
