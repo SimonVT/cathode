@@ -37,7 +37,6 @@
   <string name="initial_sync_desc">This might take a while…</string>
 
   <string name="lost_connection">Synchronization failed.</string>
-  <string name="retry_in">Retrying in %d minutes.</string>
 
   <string name="auth_failed">Trakt authorization failed</string>
   <string name="auth_failed_desc">Touch to re-authorize with Trakt</string>
@@ -94,6 +93,10 @@
   <string name="genres">Genres</string>
   <string name="to_watch">To watch</string>
   <string name="to_collect">To collect</string>
+
+  <string name="card_more">More</string>
+
+  <string name="title_actors">Actors</string>
 
   <string name="title_shows_watched">Watched shows</string>
   <string name="title_shows_upcoming">Upcoming shows</string>

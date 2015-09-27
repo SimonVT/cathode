@@ -46,14 +46,14 @@
           android:layout_gravity="right|center_vertical"
           android:textAppearance="@style/TextAppearance.AppCompat.Button"
           android:textColor="?android:attr/textColorSecondary"
-          android:text="More"/>
+          android:text="@string/card_more"/>
 
       <TextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginRight="4dp"
           android:layout_gravity="left|center_vertical"
-          android:text="Actors"
+          android:text="@string/title_actors"
           style="@style/Card.Title"/>
     </FrameLayout>
 
