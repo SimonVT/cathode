@@ -273,8 +273,8 @@ public class JobService extends Service {
     return true;
   }
 
-  @Produce public SyncEvent provideRunningEvent() {
-    return new SyncEvent(true);
+  @Produce public JobSyncEvent provideRunningEvent() {
+    return new JobSyncEvent(true);
   }
 
   @Override public void onDestroy() {
@@ -283,7 +283,7 @@ public class JobService extends Service {
     }
 
     bus.unregister(this);
-    bus.post(new SyncEvent(false));
+    bus.post(new JobSyncEvent(false));
 
     looper.quit();
 

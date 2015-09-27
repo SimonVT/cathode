@@ -48,7 +48,7 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobListener;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.jobqueue.JobService;
-import net.simonvt.cathode.jobqueue.SyncEvent;
+import net.simonvt.cathode.jobqueue.JobSyncEvent;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.InitialSyncJob;
 import net.simonvt.cathode.remote.sync.SyncWatching;
@@ -240,7 +240,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
   private class DebugSubscribers {
 
-    @Subscribe public void onJobSyncEvent(SyncEvent event) {
+    @Subscribe public void onJobSyncEvent(JobSyncEvent event) {
       Timber.d("JobService: " + event.isSyncing());
       if (event.isSyncing()) {
         debugViews.jobServiceStatus.setText("Running");

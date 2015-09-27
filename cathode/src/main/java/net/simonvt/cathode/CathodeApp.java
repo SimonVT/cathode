@@ -30,13 +30,16 @@ import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import com.crashlytics.android.Crashlytics;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 import dagger.ObjectGraph;
 import io.fabric.sdk.android.Fabric;
 import javax.inject.Inject;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.LogoutEvent;
+import net.simonvt.cathode.jobqueue.AuthSyncEvent;
 import net.simonvt.cathode.jobqueue.JobManager;
+import net.simonvt.cathode.jobqueue.JobSyncEvent;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.LogoutJob;
@@ -68,6 +71,9 @@ public class CathodeApp extends Application {
 
   private int homeActivityResumedCount;
   private long lastSync;
+
+  private AuthSyncEvent authSyncEvent;
+  private JobSyncEvent jobSyncEvent;
 
   @Override public void onCreate() {
     super.onCreate();
@@ -253,6 +259,35 @@ public class CathodeApp extends Application {
 
     jobManager.addJob(new LogoutJob());
     jobManager.removeJobsWithFlag(Flags.REQUIRES_AUTH);
+  }
+
+  @Subscribe public void onAuthSyncEvent(AuthSyncEvent event) {
+    final boolean didSync = isSyncing();
+    authSyncEvent = event;
+    syncEventIfNecessary(didSync);
+  }
+
+  @Subscribe public void onJobSyncEvent(JobSyncEvent event) {
+    final boolean didSync = isSyncing();
+    jobSyncEvent = event;
+    syncEventIfNecessary(didSync);
+  }
+
+  private boolean isSyncing() {
+    final boolean authSyncing = authSyncEvent != null && authSyncEvent.isSyncing();
+    final boolean jobSyncing = jobSyncEvent != null && jobSyncEvent.isSyncing();
+    return authSyncing || jobSyncing;
+  }
+
+  private void syncEventIfNecessary(boolean didSync) {
+    final boolean isSyncing = isSyncing();
+    if (didSync != isSyncing) {
+      bus.post(new SyncEvent(isSyncing));
+    }
+  }
+
+  @Produce public SyncEvent provideRunningEvent() {
+    return new SyncEvent(isSyncing());
   }
 
   public static void inject(Context context) {

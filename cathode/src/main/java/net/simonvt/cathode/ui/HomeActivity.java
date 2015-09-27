@@ -44,7 +44,7 @@ import net.simonvt.cathode.event.CheckInFailedEvent;
 import net.simonvt.cathode.event.LogoutEvent;
 import net.simonvt.cathode.event.MessageEvent;
 import net.simonvt.cathode.event.RequestFailedEvent;
-import net.simonvt.cathode.jobqueue.SyncEvent;
+import net.simonvt.cathode.SyncEvent;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic;
@@ -353,23 +353,27 @@ public class HomeActivity extends BaseActivity
     }
   };
 
-  @Subscribe public void onSyncEvent(SyncEvent event) {
-    final int progressVisibility = progressTop.getVisibility();
-    ViewPropertyAnimator progressAnimator = progressTop.animate();
-    if (event.isSyncing()) {
-      if (progressVisibility == View.GONE) {
-        progressTop.setAlpha(0.0f);
-        progressTop.setVisibility(View.VISIBLE);
-      }
+  @Subscribe public void onSyncEvent(final SyncEvent event) {
+    MainHandler.post(new Runnable() {
+      @Override public void run() {
+        final int progressVisibility = progressTop.getVisibility();
+        ViewPropertyAnimator progressAnimator = progressTop.animate();
+        if (event.isSyncing()) {
+          if (progressVisibility == View.GONE) {
+            progressTop.setAlpha(0.0f);
+            progressTop.setVisibility(View.VISIBLE);
+          }
 
-      progressAnimator.alpha(1.0f);
-    } else {
-      progressAnimator.alpha(0.0f).withEndAction(new Runnable() {
-        @Override public void run() {
-          progressTop.setVisibility(View.GONE);
+          progressAnimator.alpha(1.0f);
+        } else {
+          progressAnimator.alpha(0.0f).withEndAction(new Runnable() {
+            @Override public void run() {
+              progressTop.setVisibility(View.GONE);
+            }
+          });
         }
-      });
-    }
+      }
+    });
   }
 
   @Subscribe public void onShowMessage(MessageEvent event) {

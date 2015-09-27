@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.jobqueue;
+package net.simonvt.cathode;
 
 public class SyncEvent {
 
