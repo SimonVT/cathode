@@ -22,13 +22,11 @@ import android.content.Context;
 import android.database.Cursor;
 import java.util.Calendar;
 import java.util.List;
-import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.api.entity.Images;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.database.DatabaseUtils;
-import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 
