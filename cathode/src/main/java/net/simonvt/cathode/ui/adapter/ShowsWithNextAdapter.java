@@ -107,7 +107,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
 
     v.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        clickListener.onShowClick(holder.itemView, holder.getPosition(), holder.getItemId());
+        clickListener.onShowClick(holder.itemView, holder.getAdapterPosition(), holder.getItemId());
       }
     });
 
@@ -130,7 +130,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
             break;
 
           case R.id.action_watched:
-            onWatchNext(holder.itemView, holder.getPosition(), holder.getItemId(),
+            onWatchNext(holder.itemView, holder.getAdapterPosition(), holder.getItemId(),
                 holder.showTypeCount, holder.showAiredCount);
             break;
 

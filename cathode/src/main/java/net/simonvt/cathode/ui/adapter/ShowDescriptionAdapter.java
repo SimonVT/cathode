@@ -68,7 +68,7 @@ public class ShowDescriptionAdapter
 
     v.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        listener.onShowClick(v, holder.getPosition(), holder.getItemId());
+        listener.onShowClick(v, holder.getAdapterPosition(), holder.getItemId());
       }
     });
 

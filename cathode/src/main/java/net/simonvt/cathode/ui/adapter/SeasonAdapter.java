@@ -66,7 +66,7 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
 
     v.setOnClickListener(new OnClickListener() {
       @Override public void onClick(View v) {
-        clickListener.onEpisodeClick(holder.itemView, holder.getPosition(), holder.getItemId());
+        clickListener.onEpisodeClick(holder.itemView, holder.getAdapterPosition(), holder.getItemId());
       }
     });
 

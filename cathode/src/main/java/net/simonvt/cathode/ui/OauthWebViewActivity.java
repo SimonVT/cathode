@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.webkit.CookieManager;
@@ -34,7 +35,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.Authorization;
 import timber.log.Timber;
 
-public class OauthWebViewActivity extends ActionBarActivity {
+public class OauthWebViewActivity extends AppCompatActivity {
 
   @Bind(R.id.toolbar) Toolbar toolbar;
 

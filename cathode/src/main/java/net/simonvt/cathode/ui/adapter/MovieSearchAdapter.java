@@ -58,7 +58,7 @@ public class MovieSearchAdapter extends BaseMoviesAdapter<MovieSearchAdapter.Vie
 
     v.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        listener.onMovieClicked(holder.itemView, holder.getPosition(), holder.getItemId());
+        listener.onMovieClicked(holder.itemView, holder.getAdapterPosition(), holder.getItemId());
       }
     });
 

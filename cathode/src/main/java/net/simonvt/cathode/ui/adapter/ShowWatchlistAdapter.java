@@ -124,7 +124,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
       final ShowViewHolder holder = new ShowViewHolder(v);
       holder.itemView.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View view) {
-          onItemClickListener.onShowClicked(holder.getPosition(), holder.getItemId());
+          onItemClickListener.onShowClicked(holder.getAdapterPosition(), holder.getItemId());
         }
       });
       return holder;
@@ -134,7 +134,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
       final EpisodeViewHolder holder = new EpisodeViewHolder(v);
       holder.itemView.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View view) {
-          onItemClickListener.onEpisodeClicked(holder.getPosition(), holder.getItemId());
+          onItemClickListener.onEpisodeClicked(holder.getAdapterPosition(), holder.getItemId());
         }
       });
       return holder;
