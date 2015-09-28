@@ -207,10 +207,6 @@ public final class ShowDatabaseHelper {
     }
   }
 
-  public void setWatched(int tvdbId, boolean watched) {
-    setWatched(getId(tvdbId), watched);
-  }
-
   public void setWatched(long showId, boolean watched) {
     ContentValues cv = new ContentValues();
     cv.put(DatabaseContract.EpisodeColumns.WATCHED, watched);
