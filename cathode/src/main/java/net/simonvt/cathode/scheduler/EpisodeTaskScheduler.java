@@ -63,7 +63,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
             EpisodeColumns.EPISODE);
         c.moveToFirst();
         final long showId = c.getLong(c.getColumnIndex(EpisodeColumns.SHOW_ID));
-        final long traktId = showHelper.getId(showId);
+        final long traktId = showHelper.getTraktId(showId);
         final int season = c.getInt(c.getColumnIndex(EpisodeColumns.SEASON));
         final int number = c.getInt(c.getColumnIndex(EpisodeColumns.EPISODE));
         c.close();
