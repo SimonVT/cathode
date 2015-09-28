@@ -50,7 +50,7 @@ public final class DatabaseSchematic {
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 16;
+  static final int DATABASE_VERSION = 17;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -762,6 +762,20 @@ public final class DatabaseSchematic {
           .forColumns(MovieGenreColumns.MOVIE_ID)
           .build();
 
+  @ExecOnCreate public static final String INDEX_EPISODES_SHOW_ID =
+      SqlIndex.index("episodesShowId")
+          .ifNotExists()
+          .onTable(Tables.EPISODES)
+          .forColumns(EpisodeColumns.SHOW_ID)
+          .build();
+
+  @ExecOnCreate public static final String INDEX_EPISODES_SEASON_ID =
+      SqlIndex.index("episodesSeasonId")
+          .ifNotExists()
+          .onTable(Tables.EPISODES)
+          .forColumns(EpisodeColumns.SEASON_ID)
+          .build();
+
   @OnUpgrade public static void onUpgrade(Context context, SQLiteDatabase db, int oldVersion,
       int newVersion) {
     if (oldVersion < 12) {
@@ -861,6 +875,11 @@ public final class DatabaseSchematic {
           + " ADD COLUMN " + HiddenColumns.HIDDEN_WATCHED + " INTEGER DEFAULT 0");
       db.execSQL("ALTER TABLE " + Tables.MOVIES
           + " ADD COLUMN " + HiddenColumns.HIDDEN_RECOMMENDATIONS + " INTEGER DEFAULT 0");
+    }
+
+    if (oldVersion < 17) {
+      db.execSQL(INDEX_EPISODES_SHOW_ID);
+      db.execSQL(INDEX_EPISODES_SEASON_ID);
     }
   }
 }

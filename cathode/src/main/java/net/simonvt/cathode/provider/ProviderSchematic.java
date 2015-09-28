@@ -343,7 +343,7 @@ public final class ProviderSchematic {
           + "JOIN ("
           + "SELECT season, episode "
           + "FROM episodes "
-          + "WHERE watched=1 AND showId=shows._id "
+          + "WHERE showId=shows._id AND watched=1 "
           + "ORDER BY season DESC, episode DESC LIMIT 1"
           + ") AS ep2 "
           + "WHERE episodes.showId=shows._id AND episodes.season>0 "
