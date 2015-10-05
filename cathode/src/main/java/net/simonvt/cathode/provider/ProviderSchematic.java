@@ -42,6 +42,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Joins;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.schematic.annotation.ContentProvider;
 import net.simonvt.schematic.annotation.ContentUri;
 import net.simonvt.schematic.annotation.InexactContentUri;
@@ -326,12 +327,6 @@ public final class ProviderSchematic {
           + " AND "
           + DatabaseSchematic.TABLE_EPISODES
           + "."
-          + EpisodeColumns.FIRST_AIRED
-          + ">"
-          + DateUtils.YEAR_IN_MILLIS
-          + " AND "
-          + DatabaseSchematic.TABLE_EPISODES
-          + "."
           + EpisodeColumns.SEASON
           + ">0"
           + ")";
@@ -348,10 +343,10 @@ public final class ProviderSchematic {
           + ") AS ep2 "
           + "WHERE episodes.showId=shows._id AND episodes.season>0 "
           + "AND (episodes.season>ep2.season OR (episodes.season=ep2.season AND episodes.episode>ep2.episode)) "
-          + "AND episodes.episodeFirstAired<="
+          + "AND "
+          + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED)
+          + "<="
           + (currentTime + DateUtils.DAY_IN_MILLIS)
-          + " AND episodes.episodeFirstAired>"
-          + DateUtils.YEAR_IN_MILLIS
           + ")";
     }
 
@@ -541,12 +536,6 @@ public final class ProviderSchematic {
           + "."
           + EpisodeColumns.NEEDS_SYNC
           + "=0"
-          + " AND "
-          + DatabaseSchematic.TABLE_EPISODES
-          + "."
-          + EpisodeColumns.FIRST_AIRED
-          + ">"
-          + DateUtils.YEAR_IN_MILLIS
           + " AND "
           + DatabaseSchematic.TABLE_EPISODES
           + "."

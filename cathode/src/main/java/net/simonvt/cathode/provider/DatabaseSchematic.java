@@ -34,7 +34,6 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowSearchSuggestionsColumns;
 import net.simonvt.cathode.provider.generated.CathodeDatabase;
-import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.SqlIndex;
 import net.simonvt.schematic.annotation.Database;
 import net.simonvt.schematic.annotation.ExecOnCreate;
@@ -56,9 +55,6 @@ public final class DatabaseSchematic {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
         + " episodes WHERE episodes.watched=0 AND episodes.showId=shows._id AND episodes.season<>0"
         + " AND episodes.needsSync=0"
-        + " AND episodes.episodeFirstAired>"
-        + DateUtils.YEAR_IN_MILLIS
-        // TODO: Find better solution
         + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
 
     String SHOWS_UPCOMING = "LEFT OUTER JOIN "
@@ -88,9 +84,6 @@ public final class DatabaseSchematic {
         + " episodes WHERE episodes.inCollection=0 AND episodes.showId=shows._id"
         + " AND episodes.season<>0"
         + " AND episodes.needsSync=0"
-        // TODO: Find better solution
-        + " AND episodes.episodeFirstAired>"
-        + DateUtils.YEAR_IN_MILLIS
         + " AND episodes.needsSync=0"
         + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
 
@@ -99,8 +92,6 @@ public final class DatabaseSchematic {
             + " episodes WHERE (episodes.watching=1 OR episodes.checkedIn=1)"
             + " AND episodes.showId=shows._id"
             + " AND episodes.needsSync=0"
-            + " AND episodes.episodeFirstAired>"
-            + DateUtils.YEAR_IN_MILLIS
             + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
 
     String MOVIE_CAST_PERSON = "JOIN "
@@ -304,11 +295,7 @@ public final class DatabaseSchematic {
         + "=NEW."
         + EpisodeColumns.SEASON_ID
         + " AND "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.FIRST_AIRED
-        + ">"
-        + DateUtils.YEAR_IN_MILLIS
+        + Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED + " IS NOT NULL "
         + " AND episodes.needsSync=0"
         + " AND "
         + Tables.EPISODES
@@ -398,11 +385,7 @@ public final class DatabaseSchematic {
         + "=NEW."
         + EpisodeColumns.SHOW_ID
         + " AND "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.FIRST_AIRED
-        + ">"
-        + DateUtils.YEAR_IN_MILLIS
+        + Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED + " IS NOT NULL "
         + " AND episodes.needsSync=0"
         + " AND "
         + Tables.EPISODES

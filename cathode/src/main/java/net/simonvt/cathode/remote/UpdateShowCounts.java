@@ -21,7 +21,6 @@ import android.database.Cursor;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.util.DateUtils;
 
 import static net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import static net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
@@ -60,12 +59,8 @@ public class UpdateShowCounts extends Job {
 
       Cursor airdate = getContentResolver().query(Episodes.fromShow(showId), new String[] {
           EpisodeColumns.ID,
-      }, EpisodeColumns.FIRST_AIRED
-          + ">"
-          + DateUtils.YEAR_IN_MILLIS
-          + " AND "
-          + EpisodeColumns.NEEDS_SYNC
-          + "=0", null, null);
+      }, EpisodeColumns.FIRST_AIRED + " IS NOT NULL AND " + EpisodeColumns.NEEDS_SYNC + "=0", null,
+          null);
       final int airdateCount = airdate.getCount();
       airdate.close();
 
@@ -100,12 +95,8 @@ public class UpdateShowCounts extends Job {
 
       Cursor airdate = getContentResolver().query(Episodes.fromSeason(seasonId), new String[] {
           EpisodeColumns.ID,
-      }, EpisodeColumns.FIRST_AIRED
-          + ">"
-          + DateUtils.YEAR_IN_MILLIS
-          + " AND "
-          + EpisodeColumns.NEEDS_SYNC
-          + "=0", null, null);
+      }, EpisodeColumns.FIRST_AIRED + " IS NOT NULL" + " AND " + EpisodeColumns.NEEDS_SYNC + "=0",
+          null, null);
       final int airdateCount = airdate.getCount();
       airdate.close();
 

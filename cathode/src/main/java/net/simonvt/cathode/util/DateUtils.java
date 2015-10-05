@@ -119,7 +119,7 @@ public final class DateUtils {
 
   /** Formats milliseconds (UTC) as a String. */
   public static String millisToString(Context context, long millis, boolean extended) {
-    if (millis < android.text.format.DateUtils.YEAR_IN_MILLIS) {
+    if (millis == 0L) {
       return context.getResources().getString(R.string.airdate_unknown);
     }
 

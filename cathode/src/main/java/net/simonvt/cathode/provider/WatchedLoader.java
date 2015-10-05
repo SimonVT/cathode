@@ -25,7 +25,6 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.util.DateUtils;
 
 public class WatchedLoader extends SimpleLoaderBase<SimpleMergeCursor> {
 
@@ -71,9 +70,7 @@ public class WatchedLoader extends SimpleLoaderBase<SimpleMergeCursor> {
       toWatch = getContext().getContentResolver()
           .query(Episodes.fromShow(showId), projection, EpisodeColumns.WATCHED
                   + "=0 AND "
-                  + EpisodeColumns.FIRST_AIRED
-                  + ">"
-                  + DateUtils.YEAR_IN_SECONDS
+                  + EpisodeColumns.FIRST_AIRED + " IS NOT NULL"
                   + " AND ("
                   + EpisodeColumns.SEASON
                   + ">"

@@ -23,7 +23,6 @@ import net.simonvt.cathode.database.SimpleLoaderBase;
 import net.simonvt.cathode.database.SimpleMergeCursor;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.cathode.util.DateUtils;
 
 public class CollectLoader extends SimpleLoaderBase<SimpleMergeCursor> {
 
@@ -43,9 +42,7 @@ public class CollectLoader extends SimpleLoaderBase<SimpleMergeCursor> {
     Cursor toCollect = getContext().getContentResolver()
         .query(Episodes.fromShow(showId), projection, EpisodeColumns.IN_COLLECTION
                 + "=0 AND "
-                + EpisodeColumns.FIRST_AIRED
-                + ">"
-                + DateUtils.YEAR_IN_SECONDS
+                + EpisodeColumns.FIRST_AIRED + " IS NOT NULL"
                 + " AND "
                 + EpisodeColumns.SEASON
                 + ">0", null,
