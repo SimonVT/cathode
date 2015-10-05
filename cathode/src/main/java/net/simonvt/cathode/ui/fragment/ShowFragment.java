@@ -122,7 +122,6 @@ public class ShowFragment extends BaseFragment {
   @Bind(R.id.rating) CircularProgressIndicator rating;
   @Bind(R.id.airtime) TextView airTime;
   @Bind(R.id.certification) TextView certification;
-  // TODO: @Bind(R.id.poster) RemoteImageView poster;
   @Bind(R.id.backdrop) RemoteImageView backdrop;
   @Bind(R.id.overview) TextView overview;
   @Bind(R.id.isWatched) TextView watched;
@@ -463,10 +462,6 @@ public class ShowFragment extends BaseFragment {
     final String airDay = cursor.getString(cursor.getColumnIndex(ShowColumns.AIR_DAY));
     final String network = cursor.getString(cursor.getColumnIndex(ShowColumns.NETWORK));
     final String certification = cursor.getString(cursor.getColumnIndex(ShowColumns.CERTIFICATION));
-    final String posterUrl = cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER));
-    if (posterUrl != null) {
-      // TODO: poster.setImage(posterUrl);
-    }
     final String fanartUrl = cursor.getString(cursor.getColumnIndex(ShowColumns.FANART));
     if (fanartUrl != null) {
       backdrop.setImage(fanartUrl, true);
@@ -669,7 +664,6 @@ public class ShowFragment extends BaseFragment {
         final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
         lastCollectedHolder.episodeEpisode.setText("S" + season + "E" + episode);
 
-        // TODO: Fanart? Is SCREEN missing?
         final String screenshotUrl =
             cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
         lastCollectedHolder.episodeScreenshot.setImage(screenshotUrl);
