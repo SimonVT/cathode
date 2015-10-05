@@ -426,9 +426,13 @@ public final class ProviderSchematic {
 
       map.put(SeasonColumns.AIRED_COUNT, getAiredQuery());
       map.put(SeasonColumns.UNAIRED_COUNT, getUnairedQuery());
+      map.put(SeasonColumns.WATCHED_AIRED_COUNT, getWatchedAiredCount());
+      map.put(SeasonColumns.COLLECTED_AIRED_COUNT, getCollectedAiredCount());
       map.put(SeasonColumns.EPISODE_COUNT, getEpisodeCountQuery());
       map.put(Tables.SEASONS + "." + SeasonColumns.AIRED_COUNT, getAiredQuery());
       map.put(Tables.SEASONS + "." + SeasonColumns.UNAIRED_COUNT, getUnairedQuery());
+      map.put(Tables.SEASONS + "." + SeasonColumns.WATCHED_AIRED_COUNT, getWatchedAiredCount());
+      map.put(Tables.SEASONS + "." + SeasonColumns.COLLECTED_AIRED_COUNT, getCollectedAiredCount());
       map.put(Tables.SEASONS + "." + SeasonColumns.EPISODE_COUNT, getEpisodeCountQuery());
 
       return map;
@@ -573,6 +577,72 @@ public final class ProviderSchematic {
           + "."
           + EpisodeColumns.SEASON
           + ">0"
+          + ")";
+    }
+
+    public static String getWatchedAiredCount() {
+      final long currentTime = System.currentTimeMillis();
+      return "(SELECT COUNT(*) FROM "
+          + Tables.EPISODES
+          + " WHERE "
+          + Tables.EPISODES
+          + "."
+          + EpisodeColumns.SEASON_ID
+          + "="
+          + Tables.SEASONS
+          + "."
+          + SeasonColumns.ID
+          + " AND "
+          + Tables.EPISODES
+          + "."
+          + EpisodeColumns.FIRST_AIRED
+          + "<="
+          + currentTime
+          + " AND "
+          + Tables.EPISODES
+          + "."
+          + EpisodeColumns.NEEDS_SYNC
+          + "=0"
+          + " AND "
+          + Tables.EPISODES
+          + "."
+          + EpisodeColumns.SEASON
+          + ">0"
+          + " AND "
+          + Tables.EPISODES + "." + EpisodeColumns.WATCHED + "=1"
+          + ")";
+    }
+
+    public static String getCollectedAiredCount() {
+      final long currentTime = System.currentTimeMillis();
+      return "(SELECT COUNT(*) FROM "
+          + Tables.EPISODES
+          + " WHERE "
+          + Tables.EPISODES
+          + "."
+          + EpisodeColumns.SEASON_ID
+          + "="
+          + Tables.SEASONS
+          + "."
+          + SeasonColumns.ID
+          + " AND "
+          + Tables.EPISODES
+          + "."
+          + EpisodeColumns.FIRST_AIRED
+          + "<="
+          + currentTime
+          + " AND "
+          + Tables.EPISODES
+          + "."
+          + EpisodeColumns.NEEDS_SYNC
+          + "=0"
+          + " AND "
+          + Tables.EPISODES
+          + "."
+          + EpisodeColumns.SEASON
+          + ">0"
+          + " AND "
+          + Tables.EPISODES + "." + EpisodeColumns.IN_COLLECTION + "=1"
           + ")";
     }
 

@@ -163,6 +163,8 @@ public final class DatabaseContract {
 
     String AIRED_COUNT = "airedCount";
     String UNAIRED_COUNT = "unairedCount";
+    String WATCHED_AIRED_COUNT = "watchedAiredCount";
+    String COLLECTED_AIRED_COUNT = "collectedAiredCount";
     String EPISODE_COUNT = "episodeCount";
   }
 

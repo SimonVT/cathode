@@ -43,9 +43,10 @@ import net.simonvt.cathode.widget.OverflowView;
 public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHolder> {
 
   public static final String[] PROJECTION = new String[] {
-      SeasonColumns.ID, SeasonColumns.AIRDATE_COUNT, SeasonColumns.UNAIRED_COUNT,
-      SeasonColumns.WATCHED_COUNT, SeasonColumns.IN_COLLECTION_COUNT, SeasonColumns.SEASON,
-      SeasonColumns.WATCHED_COUNT, SeasonColumns.LAST_MODIFIED,
+      SeasonColumns.ID, SeasonColumns.UNAIRED_COUNT, SeasonColumns.IN_COLLECTION_COUNT,
+      SeasonColumns.SEASON, SeasonColumns.WATCHED_COUNT, SeasonColumns.LAST_MODIFIED,
+      SeasonColumns.AIRED_COUNT, SeasonColumns.WATCHED_AIRED_COUNT,
+      SeasonColumns.COLLECTED_AIRED_COUNT,
   };
 
   @Inject SeasonTaskScheduler seasonScheduler;
@@ -56,12 +57,22 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
 
   private LibraryType type;
 
+  private ColorStateList primaryColor;
+  private ColorStateList secondaryColor;
+
   public SeasonsAdapter(Context context, SeasonClickListener clickListener, LibraryType type) {
     super(context, null);
     CathodeApp.inject(context, this);
     resources = context.getResources();
     this.clickListener = clickListener;
     this.type = type;
+
+    TypedArray a = context.obtainStyledAttributes(new int[] {
+        android.R.attr.textColorPrimary, android.R.attr.textColorSecondary,
+    });
+    primaryColor = a.getColorStateList(0);
+    secondaryColor = a.getColorStateList(1);
+    a.recycle();
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewGroup) {
@@ -71,7 +82,8 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
 
     v.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        clickListener.onSeasonClick(holder.itemView, holder.getAdapterPosition(), holder.getItemId());
+        clickListener.onSeasonClick(holder.itemView, holder.getAdapterPosition(),
+            holder.getItemId());
       }
     });
 
@@ -81,15 +93,15 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
   @Override protected void onBindViewHolder(final ViewHolder holder, Cursor cursor, int position) {
     final int seasonId = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.ID));
     final int seasonNumber = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.SEASON));
-    final int airdateCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.AIRDATE_COUNT));
-    final int unairedCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.UNAIRED_COUNT));
-    final int airedCount = airdateCount - unairedCount;
-    final int collectedCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.IN_COLLECTION_COUNT));
+    final int airedCount = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.AIRED_COUNT));
+    final int watchedAiredCount =
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.WATCHED_AIRED_COUNT));
     final int watchedCount =
         cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.WATCHED_COUNT));
+    final int collectedAiredCount =
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.COLLECTED_AIRED_COUNT));
+    final int collectedCount =
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.IN_COLLECTION_COUNT));
 
     switch (type) {
       case WATCHLIST:
@@ -103,13 +115,13 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     }
 
     holder.overflow.removeItems();
-    if (airedCount - watchedCount > 0) {
+    if (airedCount - watchedAiredCount > 0) {
       holder.overflow.addItem(R.id.action_watched, R.string.action_watched);
     }
     if (watchedCount > 0) {
       holder.overflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
     }
-    if (airedCount - collectedCount > 0) {
+    if (airedCount - collectedAiredCount > 0) {
       holder.overflow.addItem(R.id.action_collection_add, R.string.action_collection_add);
     }
     if (collectedCount > 0) {
@@ -153,24 +165,15 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
   }
 
   private void bindWatched(Context context, ViewHolder holder, Cursor cursor) {
-    final int airdateCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.AIRDATE_COUNT));
     final int unairedCount =
         cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.UNAIRED_COUNT));
-    final int watchedCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.WATCHED_COUNT));
-    int toWatch = airdateCount - unairedCount - watchedCount;
-    toWatch = Math.max(toWatch, 0); // TODO: Query watched, aired, episodes instead
+    final int airedCount = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.AIRED_COUNT));
+    final int watchedAiredCount =
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.WATCHED_AIRED_COUNT));
+    final int toWatch = airedCount - watchedAiredCount;
 
-    holder.progress.setMax(airdateCount);
-    holder.progress.setProgress(watchedCount);
-
-    TypedArray a = context.obtainStyledAttributes(new int[] {
-        android.R.attr.textColorPrimary, android.R.attr.textColorSecondary,
-    });
-    ColorStateList primaryColor = a.getColorStateList(0);
-    ColorStateList secondaryColor = a.getColorStateList(1);
-    a.recycle();
+    holder.progress.setMax(airedCount);
+    holder.progress.setProgress(watchedAiredCount);
 
     String unwatched;
     if (toWatch == 0) {
@@ -198,17 +201,16 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
   }
 
   private void bindCollection(Context context, ViewHolder holder, Cursor cursor) {
-    final int airdateCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.AIRDATE_COUNT));
     final int unairedCount =
         cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.UNAIRED_COUNT));
-    final int collectedCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.IN_COLLECTION_COUNT));
-    int toCollect = airdateCount - unairedCount - collectedCount;
-    toCollect = Math.max(toCollect, 0); // TODO: Query collected, aired, episodes instead
 
-    holder.progress.setMax(airdateCount);
-    holder.progress.setProgress(collectedCount);
+    final int airedCount = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.AIRED_COUNT));
+    final int collectedAiredCount =
+        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.COLLECTED_AIRED_COUNT));
+    final int toCollect = airedCount - collectedAiredCount;
+
+    holder.progress.setMax(airedCount);
+    holder.progress.setProgress(collectedAiredCount);
 
     String uncollected;
     if (toCollect == 0) {
@@ -216,7 +218,23 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     } else {
       uncollected = resources.getString(R.string.x_uncollected, toCollect);
     }
-    holder.summary.setText(uncollected);
+    String unaired;
+    if (unairedCount > 0) {
+      unaired = resources.getString(R.string.x_unaired, unairedCount);
+    } else {
+      unaired = "";
+    }
+
+    SpannableStringBuilder ssb =
+        new SpannableStringBuilder().append(uncollected).append(" ").append(unaired);
+    ssb.setSpan(new TextAppearanceSpan(null, 0, 0, primaryColor, null), 0, uncollected.length() - 1,
+        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+    if (unairedCount > 0) {
+      ssb.setSpan(new TextAppearanceSpan(null, 0, 0, secondaryColor, null), uncollected.length(),
+          uncollected.length() + unaired.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+    }
+
+    holder.summary.setText(ssb.toString());
   }
 
   static class ViewHolder extends RecyclerView.ViewHolder {
