@@ -727,7 +727,6 @@ public final class ProviderSchematic {
 
     @NotifyInsert(paths = Path.EPISODES)
     public static Uri[] notifyInsert(ContentValues cv) {
-      // TODO Is episode watchlist notified?
       final long showId = cv.getAsLong(EpisodeColumns.SHOW_ID);
       final long seasonId = cv.getAsLong(EpisodeColumns.SEASON_ID);
       return new Uri[] {
