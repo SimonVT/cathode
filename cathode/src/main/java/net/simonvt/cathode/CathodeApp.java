@@ -140,11 +140,6 @@ public class CathodeApp extends Application {
   };
 
   private void homeResumed() {
-    if (homeActivityResumedCount > 0) {
-      final String message = "More than one HomeActivity resumed: " + homeActivityResumedCount;
-      Timber.e(new Exception(message), message);
-    }
-
     homeActivityResumedCount++;
 
     if (homeActivityResumedCount == 1) {
