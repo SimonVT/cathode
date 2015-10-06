@@ -98,6 +98,11 @@ public class SyncList extends Job {
     List<ListItem> items = usersService.listItems(traktId);
 
     final long listId = ListWrapper.getId(getContentResolver(), traktId);
+    if (listId == -1L) {
+      // List has been removed
+      return;
+    }
+
     Cursor c = getContentResolver().query(ListItems.inList(listId), new String[] {
         ListItemColumns.ITEM_TYPE, ListItemColumns.ITEM_ID,
     }, null, null, null);
