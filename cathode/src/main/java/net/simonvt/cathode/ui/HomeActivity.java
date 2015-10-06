@@ -141,11 +141,7 @@ public class HomeActivity extends BaseActivity
     });
     watchingView.setWatchingViewListener(watchingListener);
 
-    stack = FragmentStack.forContainer(this, R.id.content, new FragmentStack.Callback() {
-      @Override public void onStackChanged(int stackSize, Fragment topFragment) {
-        Timber.d("onStackChanged: %s", topFragment.getTag());
-      }
-    });
+    stack = FragmentStack.forContainer(this, R.id.content);
     stack.setDefaultAnimation(R.anim.fade_in_front, R.anim.fade_out_back, R.anim.fade_in_back,
         R.anim.fade_out_front);
     if (inState != null) {

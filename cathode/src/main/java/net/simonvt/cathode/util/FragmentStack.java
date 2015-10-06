@@ -34,6 +34,11 @@ public final class FragmentStack {
   }
 
   /** Create an instance for a specific container. */
+  public static FragmentStack forContainer(FragmentActivity activity, int containerId) {
+    return forContainer(activity, containerId, null);
+  }
+
+  /** Create an instance for a specific container. */
   public static FragmentStack forContainer(FragmentActivity activity, int containerId,
       Callback callback) {
     return new FragmentStack(activity, containerId, callback);
