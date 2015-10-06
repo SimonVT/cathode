@@ -61,6 +61,9 @@ public class SyncMovieCrew extends Job {
     People people = moviesService.getPeople(traktId, Extended.FULL_IMAGES);
 
     final long movieId = MovieWrapper.getMovieId(getContentResolver(), traktId);
+    if (movieId == -1L) {
+      return;
+    }
 
     ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 
