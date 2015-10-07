@@ -86,7 +86,7 @@ public class ListAdapter extends RecyclerCursorAdapter<RecyclerView.ViewHolder> 
   @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     ListViewHolder holder;
 
-    if (viewType == ListItemColumns.Type.SHOW) {
+    if (viewType == DatabaseContract.ItemType.SHOW) {
       View v = LayoutInflater.from(getContext()).inflate(R.layout.row_list_show, parent, false);
       final ShowViewHolder showHolder = new ShowViewHolder(v);
       holder = showHolder;
@@ -98,7 +98,7 @@ public class ListAdapter extends RecyclerCursorAdapter<RecyclerView.ViewHolder> 
           showListener.onShowClick(v, showHolder.getAdapterPosition(), itemId);
         }
       });
-    } else if (viewType == ListItemColumns.Type.SEASON) {
+    } else if (viewType == DatabaseContract.ItemType.SEASON) {
       View v = LayoutInflater.from(getContext()).inflate(R.layout.row_list_season, parent, false);
       final SeasonViewHolder seasonHolder = new SeasonViewHolder(v);
       holder = seasonHolder;
@@ -110,7 +110,7 @@ public class ListAdapter extends RecyclerCursorAdapter<RecyclerView.ViewHolder> 
           seasonListener.onSeasonClick(v, seasonHolder.getAdapterPosition(), itemId);
         }
       });
-    } else if (viewType == ListItemColumns.Type.EPISODE) {
+    } else if (viewType == DatabaseContract.ItemType.EPISODE) {
       View v = LayoutInflater.from(getContext()).inflate(R.layout.row_list_episode, parent, false);
 
       final EpisodeViewHolder episodeHolder = new EpisodeViewHolder(v);
@@ -124,7 +124,7 @@ public class ListAdapter extends RecyclerCursorAdapter<RecyclerView.ViewHolder> 
               itemId);
         }
       });
-    } else if (viewType == ListItemColumns.Type.MOVIE) {
+    } else if (viewType == DatabaseContract.ItemType.MOVIE) {
       View v = LayoutInflater.from(getContext()).inflate(R.layout.row_list_movie, parent, false);
       final MovieViewHolder movieHolder = new MovieViewHolder(v);
       holder = movieHolder;
@@ -169,13 +169,13 @@ public class ListAdapter extends RecyclerCursorAdapter<RecyclerView.ViewHolder> 
 
   @Override protected void onBindViewHolder(final RecyclerView.ViewHolder holder, Cursor cursor,
       int position) {
-    if (holder.getItemViewType() == ListItemColumns.Type.SHOW) {
+    if (holder.getItemViewType() == DatabaseContract.ItemType.SHOW) {
       final ShowViewHolder showHolder = (ShowViewHolder) holder;
 
       showHolder.poster.setImage(cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER)));
       showHolder.title.setText(cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE)));
       showHolder.overview.setText(cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW)));
-    } else if (holder.getItemViewType() == ListItemColumns.Type.SEASON) {
+    } else if (holder.getItemViewType() == DatabaseContract.ItemType.SEASON) {
       final String showPoster = cursor.getString(cursor.getColumnIndex("seasonShowPoster"));
       final String showTitle = cursor.getString(cursor.getColumnIndex("seasonShowTitle"));
       final int season = cursor.getInt(cursor.getColumnIndex(SeasonColumns.SEASON));
@@ -184,7 +184,7 @@ public class ListAdapter extends RecyclerCursorAdapter<RecyclerView.ViewHolder> 
       seasonHolder.poster.setImage(showPoster);
       seasonHolder.season.setText(getContext().getResources().getString(R.string.season_x, season));
       seasonHolder.show.setText(showTitle);
-    } else if (holder.getItemViewType() == ListItemColumns.Type.EPISODE) {
+    } else if (holder.getItemViewType() == DatabaseContract.ItemType.EPISODE) {
       final EpisodeViewHolder episodeHolder = (EpisodeViewHolder) holder;
       final String title = cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
       final String screen = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
@@ -195,7 +195,7 @@ public class ListAdapter extends RecyclerCursorAdapter<RecyclerView.ViewHolder> 
       episodeHolder.title.setText(title);
 
       episodeHolder.showTitle.setText(showTitle);
-    } else if (holder.getItemViewType() == ListItemColumns.Type.MOVIE) {
+    } else if (holder.getItemViewType() == DatabaseContract.ItemType.MOVIE) {
       MovieViewHolder movieHolder = (MovieViewHolder) holder;
 
       movieHolder.poster.setImage(cursor.getString(cursor.getColumnIndex(MovieColumns.POSTER)));

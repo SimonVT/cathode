@@ -17,6 +17,7 @@
 package net.simonvt.cathode.api.service;
 
 import java.util.List;
+import net.simonvt.cathode.api.entity.Comment;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.entity.People;
 import net.simonvt.cathode.api.entity.TrendingItem;
@@ -40,4 +41,12 @@ public interface MoviesService {
 
   @GET("/movies/{id}/people") People getPeople(@Path("id") long traktId,
       @Query("extended") Extended extended);
+
+  /**
+   * <b>Pagination</b>
+   * <p>
+   * Returns all top level comments for a movie. Most recent comments returned first.
+   */
+  @GET("/movies/{id}/comments") List<Comment> getComments(@Path("id") long id,
+      @Query("page") int page, @Query("limit") int limit, @Query("extended") Extended extended);
 }

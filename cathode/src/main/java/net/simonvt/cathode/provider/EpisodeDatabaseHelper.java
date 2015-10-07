@@ -121,6 +121,20 @@ public final class EpisodeDatabaseHelper {
     }
   }
 
+  public long getTraktId(long episodeId) {
+    synchronized (LOCK_ID) {
+      Cursor c = resolver.query(Episodes.withId(episodeId), new String[] {
+          EpisodeColumns.TRAKT_ID,
+      }, null, null, null);
+
+      long traktId = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(EpisodeColumns.TRAKT_ID));
+
+      c.close();
+
+      return traktId;
+    }
+  }
+
   public static final class IdResult {
 
     public long id;

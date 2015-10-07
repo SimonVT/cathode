@@ -97,6 +97,10 @@ public class LastActivity {
     return episodes;
   }
 
+  public ActivityItem getComments() {
+    return comments;
+  }
+
   public ActivityItem getLists() {
     return lists;
   }

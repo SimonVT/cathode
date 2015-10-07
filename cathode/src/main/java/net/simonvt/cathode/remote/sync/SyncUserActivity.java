@@ -17,9 +17,12 @@ package net.simonvt.cathode.remote.sync;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.LastActivity;
+import net.simonvt.cathode.api.enumeration.ItemTypes;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.sync.comments.SyncCommentLikes;
+import net.simonvt.cathode.remote.sync.comments.SyncUserComments;
 import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesCollection;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesRatings;
@@ -73,6 +76,8 @@ public class SyncUserActivity extends Job {
     final long movieLastRating = lastActivity.getMovies().getRatedAt().getTimeInMillis();
     final long movieLastComment = lastActivity.getMovies().getCommentedAt().getTimeInMillis();
 
+    final long commentLastLiked = lastActivity.getComments().getLikedAt().getTimeInMillis();
+
     final long listLastUpdated = lastActivity.getLists().getUpdatedAt().getTimeInMillis();
 
     if (TraktTimestamps.episodeWatchedNeedsUpdate(getContext(), episodeLastWatched)) {
@@ -92,7 +97,7 @@ public class SyncUserActivity extends Job {
     }
 
     if (TraktTimestamps.episodeCommentsNeedsUpdate(getContext(), episodeLastComment)) {
-      // TODO: Handle comments eventually
+      queue(new SyncUserComments(ItemTypes.EPISODES));
     }
 
     if (TraktTimestamps.seasonRatingsNeedsUpdate(getContext(), seasonLastRating)) {
@@ -100,7 +105,7 @@ public class SyncUserActivity extends Job {
     }
 
     if (TraktTimestamps.seasonCommentsNeedsUpdate(getContext(), seasonLastComment)) {
-      // TODO: Handle comments eventually
+      queue(new SyncUserComments(ItemTypes.SEASONS));
     }
 
     if (TraktTimestamps.showWatchlistNeedsUpdate(getContext(), showLastWatchlist)) {
@@ -112,7 +117,7 @@ public class SyncUserActivity extends Job {
     }
 
     if (TraktTimestamps.showCommentsNeedsUpdate(getContext(), showLastComment)) {
-      // TODO: Handle comments eventually
+      queue(new SyncUserComments(ItemTypes.SHOWS));
     }
 
     if (TraktTimestamps.movieWatchedNeedsUpdate(getContext(), movieLastWatched)) {
@@ -132,7 +137,11 @@ public class SyncUserActivity extends Job {
     }
 
     if (TraktTimestamps.movieCommentsNeedsUpdate(getContext(), movieLastComment)) {
-      // TODO: Handle comments eventually
+      queue(new SyncUserComments(ItemTypes.MOVIES));
+    }
+
+    if (TraktTimestamps.commentLikedNeedsUpdate(getContext(), commentLastLiked)) {
+      queue(new SyncCommentLikes());
     }
 
     if (TraktTimestamps.listNeedsUpdate(getContext(), listLastUpdated)) {

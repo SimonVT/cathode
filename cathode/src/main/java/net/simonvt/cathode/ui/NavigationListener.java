@@ -16,6 +16,12 @@
 
 package net.simonvt.cathode.ui;
 
+import net.simonvt.cathode.api.enumeration.ItemType;
+
 public interface NavigationListener
     extends ShowsNavigationListener, MoviesNavigationListener, ListNavigationListener {
+
+  void onDisplayComments(ItemType type, long itemId);
+
+  void onDisplayComment(long commentId);
 }

@@ -47,4 +47,7 @@ public interface Fragments {
 
   String LISTS = "net.simonvt.cathode.ui.HomeActivity.listsFragment";
   String LIST = "net.simonvt.cathode.ui.HomeActivity.listFragment";
+
+  String COMMENTS = "net.simonvt.cathode.ui.HomeActivity.commentsFragment";
+  String COMMENT = "net.simonvt.cathode.ui.HomeActivity.commentFragment";
 }

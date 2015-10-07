@@ -39,12 +39,18 @@ public interface Loaders {
   int SHOW_GENRES = 303;
   int SHOW_SEASONS = 304;
   int SHOW_ACTORS = 305;
+  int SHOW_USER_COMMENTS = 306;
+  int SHOW_COMMENTS = 307;
 
-  int SEASON = 306;
-  int EPISODE = 307;
+  int SEASON = 310;
+  int EPISODE = 320;
+  int EPISODE_USER_COMMENTS = 321;
+  int EPISODE_COMMENTS = 322;
 
   int MOVIE = 400;
   int MOVIE_ACTORS = 401;
+  int MOVIE_USER_COMMENTS = 402;
+  int MOVIE_COMMENTS = 403;
 
   int SEARCH_SHOWS = 500;
   int SEARCH_MOVIES = 501;
@@ -59,4 +65,7 @@ public interface Loaders {
 
   int DIALOG_LISTS = 1002;
   int DIALOG_LISTS_STATUS = 1003;
+
+  int COMMENTS = 1100;
+  int COMMENT = 1101;
 }

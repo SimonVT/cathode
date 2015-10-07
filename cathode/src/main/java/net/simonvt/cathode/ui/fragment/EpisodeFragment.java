@@ -26,26 +26,35 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract;
+import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
+import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
+import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.NavigationClickListener;
+import net.simonvt.cathode.ui.adapter.LinearCommentsAdapter;
+import net.simonvt.cathode.ui.dialog.AddCommentDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.RemoteImageView;
 
@@ -60,6 +69,10 @@ public class EpisodeFragment extends BaseFragment {
       "net.simonvt.cathode.ui.fragment.EpisodeFragment.ratingDialog";
   private static final String DIALOG_LISTS_ADD =
       "net.simonvt.cathode.ui.fragment.EpisodeFragment.listsAddDialog";
+  private static final String DIALOG_COMMENT_ADD =
+      "net.simonvt.cathode.ui.fragment.EpisodeFragment.addCommentDialog";
+  private static final String DIALOG_COMMENT_UPDATE =
+      "net.simonvt.cathode.ui.fragment.EpisodeFragment.updateCommentDialog";
 
   @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;
@@ -75,6 +88,12 @@ public class EpisodeFragment extends BaseFragment {
   @Bind(R.id.isWatched) View watchedView;
   @Bind(R.id.inCollection) View inCollectionView;
   @Bind(R.id.inWatchlist) View inWatchlistView;
+
+  @Bind(R.id.commentsParent) View commentsParent;
+  @Bind(R.id.commentsHeader) View commentsHeader;
+  @Bind(R.id.commentsContainer) LinearLayout commentsContainer;
+
+  private Cursor userComments;
 
   private long episodeId;
 
@@ -122,7 +141,9 @@ public class EpisodeFragment extends BaseFragment {
     Bundle args = getArguments();
     episodeId = args.getLong(ARG_EPISODEID);
     showTitle = args.getString(ARG_SHOW_TITLE);
+
     getLoaderManager().initLoader(Loaders.EPISODE, null, episodeCallbacks);
+    getLoaderManager().initLoader(Loaders.EPISODE_USER_COMMENTS, null, userCommentsLoader);
   }
 
   private void updateTitle() {
@@ -159,6 +180,13 @@ public class EpisodeFragment extends BaseFragment {
       @Override public void onClick(View view) {
         RatingDialog.newInstance(RatingDialog.Type.EPISODE, episodeId, currentRating)
             .show(getFragmentManager(), DIALOG_RATING);
+      }
+    });
+
+    commentsHeader.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        AddCommentDialog.newInstance(ItemType.EPISODE, episodeId)
+            .show(getFragmentManager(), DIALOG_COMMENT_ADD);
       }
     });
   }
@@ -233,7 +261,7 @@ public class EpisodeFragment extends BaseFragment {
         return true;
 
       case R.id.menu_lists_add:
-        ListsDialog.newInstance(DatabaseContract.ListItemColumns.Type.EPISODE, episodeId)
+        ListsDialog.newInstance(DatabaseContract.ItemType.EPISODE, episodeId)
             .show(getFragmentManager(), DIALOG_LISTS_ADD);
         return true;
 
@@ -273,6 +301,11 @@ public class EpisodeFragment extends BaseFragment {
     }
   }
 
+  private void updateComments() {
+    LinearCommentsAdapter.updateComments(getContext(), commentsContainer, userComments, null);
+    commentsParent.setVisibility(View.VISIBLE);
+  }
+
   private static final String[] EPISODE_PROJECTION = new String[] {
       EpisodeColumns.TITLE, EpisodeColumns.SCREENSHOT, EpisodeColumns.OVERVIEW,
       EpisodeColumns.FIRST_AIRED, EpisodeColumns.WATCHED, EpisodeColumns.IN_COLLECTION,
@@ -295,6 +328,38 @@ public class EpisodeFragment extends BaseFragment {
         }
 
         @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
+        }
+      };
+
+  private static final String[] COMMENTS_PROJECTION = new String[] {
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.ID),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.COMMENT),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.SPOILER),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.REVIEW),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.CREATED_AT),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.LIKES),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.USER_RATING),
+      SqlColumn.table(Tables.USERS).column(UserColumns.USERNAME),
+      SqlColumn.table(Tables.USERS).column(UserColumns.NAME),
+      SqlColumn.table(Tables.USERS).column(UserColumns.AVATAR),
+  };
+
+  private LoaderManager.LoaderCallbacks<SimpleCursor> userCommentsLoader =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
+          SimpleCursorLoader loader =
+              new SimpleCursorLoader(getContext(), Comments.fromEpisode(episodeId),
+                  COMMENTS_PROJECTION, CommentColumns.IS_USER_COMMENT + "=1", null, null);
+          loader.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
+          return loader;
+        }
+
+        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
+          userComments = data;
+          updateComments();
+        }
+
+        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
         }
       };
 }

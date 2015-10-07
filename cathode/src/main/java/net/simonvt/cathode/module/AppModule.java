@@ -35,11 +35,18 @@ import net.simonvt.cathode.jobqueue.JobService;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
+import net.simonvt.cathode.provider.UserDatabaseHelper;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.LogoutJob;
 import net.simonvt.cathode.remote.UpdateShowCounts;
 import net.simonvt.cathode.remote.action.CancelCheckin;
+import net.simonvt.cathode.remote.action.comments.AddCommentJob;
+import net.simonvt.cathode.remote.action.comments.CommentReplyJob;
+import net.simonvt.cathode.remote.action.comments.DeleteCommentJob;
+import net.simonvt.cathode.remote.action.comments.LikeCommentJob;
+import net.simonvt.cathode.remote.action.comments.UnlikeCommentJob;
+import net.simonvt.cathode.remote.action.comments.UpdateCommentJob;
 import net.simonvt.cathode.remote.action.lists.AddEpisode;
 import net.simonvt.cathode.remote.action.lists.AddMovie;
 import net.simonvt.cathode.remote.action.lists.AddPerson;
@@ -70,11 +77,17 @@ import net.simonvt.cathode.remote.action.shows.WatchlistEpisode;
 import net.simonvt.cathode.remote.action.shows.WatchlistShow;
 import net.simonvt.cathode.remote.sync.PurgeDatabase;
 import net.simonvt.cathode.remote.sync.SyncActivityStream;
+import net.simonvt.cathode.remote.sync.SyncHiddenItems;
+import net.simonvt.cathode.remote.sync.SyncHiddenSection;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.SyncPerson;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
+import net.simonvt.cathode.remote.sync.SyncUserProfile;
 import net.simonvt.cathode.remote.sync.SyncUserSettings;
 import net.simonvt.cathode.remote.sync.SyncWatching;
+import net.simonvt.cathode.remote.sync.comments.SyncCommentLikes;
+import net.simonvt.cathode.remote.sync.comments.SyncComments;
+import net.simonvt.cathode.remote.sync.comments.SyncUserComments;
 import net.simonvt.cathode.remote.sync.lists.SyncList;
 import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
@@ -91,8 +104,6 @@ import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisode;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodesRatings;
-import net.simonvt.cathode.remote.sync.SyncHiddenItems;
-import net.simonvt.cathode.remote.sync.SyncHiddenSection;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncSeasons;
 import net.simonvt.cathode.remote.sync.shows.SyncSeasonsRatings;
@@ -107,6 +118,7 @@ import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncTrendingShows;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
+import net.simonvt.cathode.scheduler.CommentsTaskScheduler;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
@@ -117,6 +129,7 @@ import net.simonvt.cathode.service.CathodeSyncAdapter;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.LoginActivity;
 import net.simonvt.cathode.ui.SettingsActivity;
+import net.simonvt.cathode.ui.adapter.CommentsAdapter;
 import net.simonvt.cathode.ui.adapter.MovieRecommendationsAdapter;
 import net.simonvt.cathode.ui.adapter.MovieSearchAdapter;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
@@ -127,10 +140,14 @@ import net.simonvt.cathode.ui.adapter.ShowRecommendationsAdapter;
 import net.simonvt.cathode.ui.adapter.ShowWatchlistAdapter;
 import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
 import net.simonvt.cathode.ui.adapter.UpcomingAdapter;
+import net.simonvt.cathode.ui.dialog.AddCommentDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
+import net.simonvt.cathode.ui.dialog.UpdateCommentDialog;
+import net.simonvt.cathode.ui.fragment.CommentFragment;
+import net.simonvt.cathode.ui.fragment.CommentsFragment;
 import net.simonvt.cathode.ui.fragment.CreateListFragment;
 import net.simonvt.cathode.ui.fragment.EpisodeFragment;
 import net.simonvt.cathode.ui.fragment.ListFragment;
@@ -168,9 +185,11 @@ import net.simonvt.cathode.widget.RemoteImageView;
         // Task schedulers
         EpisodeTaskScheduler.class, MovieTaskScheduler.class, SeasonTaskScheduler.class,
         ShowTaskScheduler.class, SearchTaskScheduler.class, ListsTaskScheduler.class,
+        CommentsTaskScheduler.class,
 
         // Database helpers
         ShowDatabaseHelper.class, SeasonDatabaseHelper.class, EpisodeDatabaseHelper.class,
+        UserDatabaseHelper.class,
 
         // Activities
         HomeActivity.class, LoginActivity.class, LoginActivity.TokenTask.class,
@@ -183,16 +202,17 @@ import net.simonvt.cathode.widget.RemoteImageView;
         ShowFragment.class, ShowsCollectionFragment.class, ShowRecommendationsFragment.class,
         ShowsWatchlistFragment.class, TrendingShowsFragment.class, TrendingMoviesFragment.class,
         UpcomingShowsFragment.class, WatchedMoviesFragment.class, WatchedShowsFragment.class,
-        CreateListFragment.class, ListFragment.class,
+        CreateListFragment.class, ListFragment.class, CommentsFragment.class, CommentFragment.class,
 
         // Dialogs
         RatingDialog.class, CheckInDialog.class, CheckInDialog.Injections.class, ListsDialog.class,
+        AddCommentDialog.class, UpdateCommentDialog.class,
 
         // ListAdapters
         SeasonAdapter.class, SeasonsAdapter.class, ShowDescriptionAdapter.class,
         MoviesAdapter.class, MovieSearchAdapter.class, ShowRecommendationsAdapter.class,
         MovieRecommendationsAdapter.class, ShowsWithNextAdapter.class, ShowWatchlistAdapter.class,
-        UpcomingAdapter.class,
+        UpcomingAdapter.class, CommentsAdapter.class,
 
         // Views
         PhoneEpisodeView.class, RemoteImageView.class,
@@ -221,6 +241,9 @@ import net.simonvt.cathode.widget.RemoteImageView;
         RemoveShow.class, RemoveSeason.class, RemoveEpisode.class, RemoveMovie.class,
         RemovePerson.class, AddShow.class, AddSeason.class, AddEpisode.class, AddMovie.class,
         AddPerson.class, LogoutJob.class, SyncHiddenItems.class, SyncHiddenSection.class,
+        SyncUserComments.class, AddCommentJob.class, UpdateCommentJob.class, DeleteCommentJob.class,
+        SyncComments.class, CommentReplyJob.class, SyncUserProfile.class, LikeCommentJob.class,
+        UnlikeCommentJob.class, SyncCommentLikes.class,
 
         // Misc
         ShowSearchHandler.class, ShowSearchHandler.SearchThread.class, MovieSearchHandler.class,

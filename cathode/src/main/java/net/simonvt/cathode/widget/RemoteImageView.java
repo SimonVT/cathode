@@ -210,7 +210,7 @@ public class RemoteImageView extends AspectRatioView implements Target {
   }
 
   @Override public void onBitmapFailed(Drawable drawable) {
-    Timber.d("onBitmapFailed");
+    Timber.d("[onBitmapFailed] " + imageUrl);
   }
 
   @Override public void onPrepareLoad(Drawable drawable) {

@@ -1,0 +1,134 @@
+/*
+ * Copyright (C) 2015 Simon Vig Therkildsen
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package net.simonvt.cathode.remote.sync.comments;
+
+import android.content.ContentProviderOperation;
+import android.content.ContentValues;
+import android.content.OperationApplicationException;
+import android.database.Cursor;
+import android.os.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.inject.Inject;
+import net.simonvt.cathode.api.entity.Comment;
+import net.simonvt.cathode.api.entity.Like;
+import net.simonvt.cathode.api.entity.Profile;
+import net.simonvt.cathode.api.enumeration.ItemTypes;
+import net.simonvt.cathode.api.service.UsersService;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobFailedException;
+import net.simonvt.cathode.provider.CommentsHelper;
+import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Comments;
+import net.simonvt.cathode.provider.UserDatabaseHelper;
+import net.simonvt.cathode.provider.generated.CathodeProvider;
+import net.simonvt.cathode.remote.Flags;
+import timber.log.Timber;
+
+public class SyncCommentLikes extends Job {
+
+  private static final int LIMIT = 100;
+
+  @Inject transient UsersService usersService;
+
+  @Inject transient UserDatabaseHelper userHelper;
+
+  public SyncCommentLikes() {
+    super(Flags.REQUIRES_AUTH);
+  }
+
+  @Override public String key() {
+    return "SyncCommentLikes";
+  }
+
+  @Override public int getPriority() {
+    return PRIORITY_USER_DATA;
+  }
+
+  @Override public void perform() {
+    List<Like> likes = new ArrayList<>();
+    List<Like> likesQuery;
+    int page = 1;
+    do {
+      likesQuery = usersService.getLikes(ItemTypes.COMMENTS, page, LIMIT);
+      likes.addAll(likesQuery);
+      page++;
+    } while (likesQuery.size() > 0);
+
+    List<Long> existingLikes = new ArrayList<>();
+    List<Long> deleteLikes = new ArrayList<>();
+    Cursor c = getContentResolver().query(Comments.COMMENTS, new String[] {
+        CommentColumns.ID,
+    }, CommentColumns.LIKED + "=1", null, null);
+    while (c.moveToNext()) {
+      final long id = c.getLong(c.getColumnIndex(CommentColumns.ID));
+      Timber.d("Existing id:" + id);
+      existingLikes.add(id);
+      deleteLikes.add(id);
+    }
+    c.close();
+
+    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+
+    for (Like like : likes) {
+      Comment comment = like.getComment();
+      final long commentId = comment.getId();
+      final long likedAt = like.getLikedAt().getTimeInMillis();
+
+      if (existingLikes.contains(commentId)) {
+        deleteLikes.remove(commentId);
+
+        ContentProviderOperation.Builder op =
+            ContentProviderOperation.newUpdate(Comments.withId(commentId))
+                .withValue(CommentColumns.LIKED, true)
+                .withValue(CommentColumns.LIKED_AT, likedAt);
+        ops.add(op.build());
+      } else {
+        Profile profile = comment.getUser();
+        UserDatabaseHelper.IdResult idResult = userHelper.updateOrCreate(profile);
+        final long userId = idResult.id;
+
+        ContentValues values = CommentsHelper.getValues(comment);
+        values.put(CommentColumns.USER_ID, userId);
+
+        values.put(CommentColumns.LIKED, true);
+        values.put(CommentColumns.LIKED_AT, likedAt);
+
+        ContentProviderOperation.Builder op =
+            ContentProviderOperation.newInsert(Comments.COMMENTS).withValues(values);
+        ops.add(op.build());
+        existingLikes.add(commentId);
+      }
+    }
+
+    for (Long id : deleteLikes) {
+      ContentProviderOperation.Builder op = ContentProviderOperation.newUpdate(Comments.withId(id));
+      op.withValue(CommentColumns.LIKED, false);
+      ops.add(op.build());
+    }
+
+    try {
+      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
+    } catch (RemoteException e) {
+      Timber.e(e, "Updating comments failed");
+      throw new JobFailedException(e);
+    } catch (OperationApplicationException e) {
+      Timber.e(e, "Updating comments failed");
+      throw new JobFailedException(e);
+    }
+  }
+}

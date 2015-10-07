@@ -32,6 +32,7 @@ import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
+import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ListWrapper;
@@ -129,7 +130,8 @@ public class SyncList extends Job {
             queue(new SyncShow(showTraktId));
           }
 
-          final int itemPosition = getItemPosition(oldItems, ListItemColumns.Type.SHOW, showId);
+          final int itemPosition =
+              getItemPosition(oldItems, DatabaseContract.ItemType.SHOW, showId);
           if (itemPosition >= 0) {
             oldItems.remove(itemPosition);
             continue;
@@ -139,7 +141,7 @@ public class SyncList extends Job {
               ContentProviderOperation.newInsert(ListItems.LIST_ITEMS)
                   .withValue(ListItemColumns.LISTED_AT, item.getListedAt().getTimeInMillis())
                   .withValue(ListItemColumns.LIST_ID, listId)
-                  .withValue(ListItemColumns.ITEM_TYPE, ListItemColumns.Type.SHOW)
+                  .withValue(ListItemColumns.ITEM_TYPE, DatabaseContract.ItemType.SHOW)
                   .withValue(ListItemColumns.ITEM_ID, showId);
           ops.add(opBuilder.build());
           break;
@@ -166,7 +168,8 @@ public class SyncList extends Job {
             }
           }
 
-          final int itemPosition = getItemPosition(oldItems, ListItemColumns.Type.SEASON, seasonId);
+          final int itemPosition =
+              getItemPosition(oldItems, DatabaseContract.ItemType.SEASON, seasonId);
           if (itemPosition >= 0) {
             oldItems.remove(itemPosition);
             continue;
@@ -176,7 +179,7 @@ public class SyncList extends Job {
               ContentProviderOperation.newInsert(ListItems.LIST_ITEMS)
                   .withValue(ListItemColumns.LISTED_AT, item.getListedAt().getTimeInMillis())
                   .withValue(ListItemColumns.LIST_ID, listId)
-                  .withValue(ListItemColumns.ITEM_TYPE, ListItemColumns.Type.SEASON)
+                  .withValue(ListItemColumns.ITEM_TYPE, DatabaseContract.ItemType.SEASON)
                   .withValue(ListItemColumns.ITEM_ID, seasonId);
           ops.add(opBuilder.build());
           break;
@@ -215,7 +218,7 @@ public class SyncList extends Job {
           }
 
           final int itemPosition =
-              getItemPosition(oldItems, ListItemColumns.Type.EPISODE, episodeId);
+              getItemPosition(oldItems, DatabaseContract.ItemType.EPISODE, episodeId);
           if (itemPosition >= 0) {
             oldItems.remove(itemPosition);
             continue;
@@ -225,7 +228,7 @@ public class SyncList extends Job {
               ContentProviderOperation.newInsert(ListItems.LIST_ITEMS)
                   .withValue(ListItemColumns.LISTED_AT, item.getListedAt().getTimeInMillis())
                   .withValue(ListItemColumns.LIST_ID, listId)
-                  .withValue(ListItemColumns.ITEM_TYPE, ListItemColumns.Type.EPISODE)
+                  .withValue(ListItemColumns.ITEM_TYPE, DatabaseContract.ItemType.EPISODE)
                   .withValue(ListItemColumns.ITEM_ID, episodeId);
           ops.add(opBuilder.build());
           break;
@@ -239,7 +242,7 @@ public class SyncList extends Job {
             queue(new SyncMovie(movie.getIds().getTrakt()));
           }
 
-          final int itemPosition = getItemPosition(oldItems, ListItemColumns.Type.MOVIE, movieId);
+          final int itemPosition = getItemPosition(oldItems, DatabaseContract.ItemType.MOVIE, movieId);
           if (itemPosition >= 0) {
             oldItems.remove(itemPosition);
             continue;
@@ -249,7 +252,7 @@ public class SyncList extends Job {
               ContentProviderOperation.newInsert(ListItems.LIST_ITEMS)
                   .withValue(ListItemColumns.LISTED_AT, item.getListedAt().getTimeInMillis())
                   .withValue(ListItemColumns.LIST_ID, listId)
-                  .withValue(ListItemColumns.ITEM_TYPE, ListItemColumns.Type.MOVIE)
+                  .withValue(ListItemColumns.ITEM_TYPE, DatabaseContract.ItemType.MOVIE)
                   .withValue(ListItemColumns.ITEM_ID, movieId);
           ops.add(opBuilder.build());
           break;
@@ -263,7 +266,7 @@ public class SyncList extends Job {
             queue(new SyncPerson(person.getIds().getTrakt()));
           }
 
-          final int itemPosition = getItemPosition(oldItems, ListItemColumns.Type.PERSON, personId);
+          final int itemPosition = getItemPosition(oldItems, DatabaseContract.ItemType.PERSON, personId);
           if (itemPosition >= 0) {
             oldItems.remove(itemPosition);
             continue;
@@ -273,7 +276,7 @@ public class SyncList extends Job {
               ContentProviderOperation.newInsert(ListItems.LIST_ITEMS)
                   .withValue(ListItemColumns.LISTED_AT, item.getListedAt().getTimeInMillis())
                   .withValue(ListItemColumns.LIST_ID, listId)
-                  .withValue(ListItemColumns.ITEM_TYPE, ListItemColumns.Type.PERSON)
+                  .withValue(ListItemColumns.ITEM_TYPE, DatabaseContract.ItemType.PERSON)
                   .withValue(ListItemColumns.ITEM_ID, personId);
           ops.add(opBuilder.build());
           break;

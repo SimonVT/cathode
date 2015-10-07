@@ -20,6 +20,7 @@ import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
+import net.simonvt.cathode.scheduler.CommentsTaskScheduler;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
@@ -54,5 +55,9 @@ public class SchedulerModule {
 
   @Provides @Singleton ListsTaskScheduler provideListsTaskSheduler(Context context) {
     return new ListsTaskScheduler(context);
+  }
+
+  @Provides @Singleton CommentsTaskScheduler provideCommentsTaskScheduler(Context context) {
+    return new CommentsTaskScheduler(context);
   }
 }

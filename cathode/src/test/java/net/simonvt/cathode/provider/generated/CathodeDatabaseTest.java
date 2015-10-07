@@ -19,6 +19,8 @@ package net.simonvt.cathode.provider.generated;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import net.simonvt.cathode.provider.DatabaseContract;
+import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -70,29 +72,40 @@ public class CathodeDatabaseTest {
 
     SQLiteDatabase db = helper.getWritableDatabase();
 
+    // Create show
     ContentValues showCV = new ContentValues();
     showCV.put(ShowColumns.TRAKT_ID, 1);
-
     final long showId = db.insert(Tables.SHOWS, null, showCV);
 
+    // Create season
     ContentValues seasonCV = new ContentValues();
     seasonCV.put(SeasonColumns.SEASON, 1);
     seasonCV.put(SeasonColumns.SHOW_ID, showId);
-
     final long seasonId = db.insert(Tables.SEASONS, null, seasonCV);
 
     Cursor seasons = db.query(Tables.SEASONS, null, null, null, null, null, null);
     assertThat(seasons.getCount()).isEqualTo(1);
 
+    // Create episode
     ContentValues episodeCV = new ContentValues();
     episodeCV.put(EpisodeColumns.SEASON_ID, seasonId);
     episodeCV.put(EpisodeColumns.SHOW_ID, showId);
-
     db.insert(Tables.EPISODES, null, episodeCV);
 
     Cursor episodes = db.query(Tables.EPISODES, null, null, null, null, null, null);
     assertThat(episodes.getCount()).isEqualTo(1);
 
+    // Create comment
+    ContentValues commentCV = new ContentValues();
+    commentCV.put(CommentColumns.ITEM_TYPE, DatabaseContract.ItemType.SHOW);
+    commentCV.put(CommentColumns.ITEM_ID, showId);
+    commentCV.put(CommentColumns.COMMENT, "Not null");
+    db.insert(Tables.COMMENTS, null, commentCV);
+
+    Cursor comments = db.query(Tables.COMMENTS, null, null, null, null, null, null);
+    assertThat(comments.getCount()).isEqualTo(1);
+
+    // Delete show and check that other tables are empty
     db.delete(Tables.SHOWS, ShowColumns.ID + "=" + showId, null);
 
     seasons = db.query(Tables.SEASONS, null, null, null, null, null, null);
@@ -100,6 +113,9 @@ public class CathodeDatabaseTest {
 
     episodes = db.query(Tables.EPISODES, null, null, null, null, null, null);
     assertThat(episodes.getCount()).isEqualTo(0);
+
+    comments = db.query(Tables.COMMENTS, null, null, null, null, null, null);
+    assertThat(comments.getCount()).isEqualTo(0);
 
     db.close();
   }

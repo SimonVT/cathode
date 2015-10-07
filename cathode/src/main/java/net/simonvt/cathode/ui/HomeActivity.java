@@ -39,6 +39,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.SyncEvent;
+import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.event.CheckInFailedEvent;
@@ -50,6 +51,8 @@ import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.fragment.ActorsFragment;
+import net.simonvt.cathode.ui.fragment.CommentFragment;
+import net.simonvt.cathode.ui.fragment.CommentsFragment;
 import net.simonvt.cathode.ui.fragment.EpisodeFragment;
 import net.simonvt.cathode.ui.fragment.ListFragment;
 import net.simonvt.cathode.ui.fragment.ListsFragment;
@@ -122,8 +125,7 @@ public class HomeActivity extends BaseActivity
     isTablet = getResources().getBoolean(R.bool.isTablet);
 
     navigation =
-        (NavigationFragment) getSupportFragmentManager().findFragmentByTag(
-            Fragments.NAVIGATION);
+        (NavigationFragment) getSupportFragmentManager().findFragmentByTag(Fragments.NAVIGATION);
 
     watchingParent.setOnTouchListener(new View.OnTouchListener() {
       @Override public boolean onTouch(View v, MotionEvent event) {
@@ -156,8 +158,7 @@ public class HomeActivity extends BaseActivity
     }
 
     getSupportLoaderManager().initLoader(Loaders.SHOW_WATCHING, null, watchingShowCallback);
-    getSupportLoaderManager().initLoader(Loaders.MOVIE_WATCHING, null,
-        watchingMovieCallback);
+    getSupportLoaderManager().initLoader(Loaders.MOVIE_WATCHING, null, watchingMovieCallback);
 
     messageBar = new MessageBar(this);
 
@@ -336,8 +337,8 @@ public class HomeActivity extends BaseActivity
       onDisplayEpisode(episodeId, showTitle);
     }
 
-    @Override public void onMovieClicked(WatchingView view, long id, String title,
-        String overview) {
+    @Override
+    public void onMovieClicked(WatchingView view, long id, String title, String overview) {
       watchingView.collapse();
       onDisplayMovie(id, title, overview);
     }
@@ -418,7 +419,8 @@ public class HomeActivity extends BaseActivity
     }
   }
 
-  @Override public void onDisplayShow(long showId, String title, String overview, LibraryType type) {
+  @Override
+  public void onDisplayShow(long showId, String title, String overview, LibraryType type) {
     stack.push(ShowFragment.class, Fragments.SHOW,
         ShowFragment.getArgs(showId, title, overview, type));
     stack.commit();
@@ -441,10 +443,10 @@ public class HomeActivity extends BaseActivity
   @Override public void searchShow(String query) {
 
     SearchShowFragment f =
-        (SearchShowFragment) getSupportFragmentManager().findFragmentByTag(
-            Fragments.SEARCH_SHOW);
+        (SearchShowFragment) getSupportFragmentManager().findFragmentByTag(Fragments.SEARCH_SHOW);
     if (f == null) {
-      stack.push(SearchShowFragment.class, Fragments.SEARCH_SHOW, SearchShowFragment.getArgs(query));
+      stack.push(SearchShowFragment.class, Fragments.SEARCH_SHOW,
+          SearchShowFragment.getArgs(query));
       stack.commit();
     } else {
       f.query(query);
@@ -457,16 +459,15 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override public void onDisplayMovie(long movieId, String title, String overview) {
-    stack.push(MovieFragment.class, Fragments.MOVIE, MovieFragment.getArgs(movieId, title,
-        overview));
+    stack.push(MovieFragment.class, Fragments.MOVIE,
+        MovieFragment.getArgs(movieId, title, overview));
     stack.commit();
   }
 
   @Override public void searchMovie(String query) {
 
     SearchMovieFragment f =
-        (SearchMovieFragment) getSupportFragmentManager().findFragmentByTag(
-            Fragments.SEARCH_MOVIE);
+        (SearchMovieFragment) getSupportFragmentManager().findFragmentByTag(Fragments.SEARCH_MOVIE);
     if (f == null) {
       stack.push(SearchMovieFragment.class, Fragments.SEARCH_MOVIE,
           SearchMovieFragment.getArgs(query));
@@ -478,6 +479,21 @@ public class HomeActivity extends BaseActivity
 
   @Override public void onDisplayMovieActors(long movieId, String title) {
     stack.push(ActorsFragment.class, Fragments.ACTORS, ActorsFragment.forMovie(movieId, title));
+    stack.commit();
+  }
+
+  @Override public void onShowList(long listId, String listName) {
+    stack.push(ListFragment.class, Fragments.LIST, ListFragment.getArgs(listId, listName));
+    stack.commit();
+  }
+
+  @Override public void onDisplayComments(ItemType type, long itemId) {
+    stack.push(CommentsFragment.class, Fragments.COMMENTS, CommentsFragment.getArgs(type, itemId));
+    stack.commit();
+  }
+
+  @Override public void onDisplayComment(long commentId) {
+    stack.push(CommentFragment.class, Fragments.COMMENT, CommentFragment.getArgs(commentId));
     stack.commit();
   }
 
@@ -588,9 +604,4 @@ public class HomeActivity extends BaseActivity
           watchingMovie = null;
         }
       };
-
-  @Override public void onShowList(long listId, String listName) {
-    stack.push(ListFragment.class, Fragments.LIST, ListFragment.getArgs(listId, listName));
-    stack.commit();
-  }
 }

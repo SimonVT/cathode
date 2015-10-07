@@ -34,22 +34,28 @@ import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract;
+import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
+import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic;
+import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.ui.Loaders;
-import net.simonvt.cathode.ui.MoviesNavigationListener;
+import net.simonvt.cathode.ui.NavigationListener;
+import net.simonvt.cathode.ui.adapter.LinearCommentsAdapter;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
+import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.RemoteImageView;
@@ -66,6 +72,10 @@ public class MovieFragment extends BaseFragment
       "net.simonvt.cathode.ui.fragment.MovieFragment.ratingDialog";
   private static final String DIALOG_LISTS_ADD =
       "net.simonvt.cathode.ui.fragment.MovieFragment.listsAddDialog";
+  private static final String DIALOG_COMMENT_ADD =
+      "net.simonvt.cathode.ui.fragment.MovieFragment.addCommentDialog";
+  private static final String DIALOG_COMMENT_UPDATE =
+      "net.simonvt.cathode.ui.fragment.MovieFragment.updateCommentDialog";
 
   @Inject MovieTaskScheduler movieScheduler;
   @Inject Bus bus;
@@ -84,6 +94,13 @@ public class MovieFragment extends BaseFragment
   @Bind(R.id.actorsHeader) View actorsHeader;
   @Bind(R.id.actors) LinearLayout actors;
   @Bind(R.id.peopleContainer) LinearLayout peopleContainer;
+
+  @Bind(R.id.commentsParent) View commentsParent;
+  @Bind(R.id.commentsHeader) View commentsHeader;
+  @Bind(R.id.commentsContainer) LinearLayout commentsContainer;
+
+  private Cursor userComments;
+  private Cursor comments;
 
   private long movieId;
 
@@ -105,7 +122,7 @@ public class MovieFragment extends BaseFragment
 
   private boolean checkedIn;
 
-  private MoviesNavigationListener navigationListener;
+  private NavigationListener navigationListener;
 
   public static Bundle getArgs(long movieId, String movieTitle, String overview) {
     Bundle args = new Bundle();
@@ -117,12 +134,7 @@ public class MovieFragment extends BaseFragment
 
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
-    try {
-      navigationListener = (MoviesNavigationListener) activity;
-    } catch (ClassCastException e) {
-      throw new ClassCastException(
-          activity.toString() + " must implement MoviesNavigationListener");
-    }
+    navigationListener = (NavigationListener) activity;
   }
 
   @Override public void onCreate(Bundle inState) {
@@ -158,8 +170,16 @@ public class MovieFragment extends BaseFragment
       }
     });
 
+    commentsHeader.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        navigationListener.onDisplayComments(ItemType.MOVIE, movieId);
+      }
+    });
+
     getLoaderManager().initLoader(Loaders.MOVIE, null, this);
     getLoaderManager().initLoader(Loaders.MOVIE_ACTORS, null, actorsLoader);
+    getLoaderManager().initLoader(Loaders.MOVIE_USER_COMMENTS, null, userCommentsLoader);
+    getLoaderManager().initLoader(Loaders.MOVIE_COMMENTS, null, commentsLoader);
   }
 
   @Override public void createMenu(Toolbar toolbar) {
@@ -235,7 +255,7 @@ public class MovieFragment extends BaseFragment
         return true;
 
       case R.id.menu_lists_add:
-        ListsDialog.newInstance(DatabaseContract.ListItemColumns.Type.MOVIE, movieId)
+        ListsDialog.newInstance(DatabaseContract.ItemType.MOVIE, movieId)
             .show(getFragmentManager(), DIALOG_LISTS_ADD);
         return true;
     }
@@ -326,6 +346,11 @@ public class MovieFragment extends BaseFragment
     }
   }
 
+  private void updateComments() {
+    LinearCommentsAdapter.updateComments(getContext(), commentsContainer, userComments, comments);
+    commentsParent.setVisibility(View.VISIBLE);
+  }
+
   private static final String[] CAST_PROJECTION = new String[] {
       Tables.MOVIE_CAST + "." + MovieCastColumns.ID,
       Tables.MOVIE_CAST + "." + MovieCastColumns.PERSON_ID,
@@ -350,6 +375,58 @@ public class MovieFragment extends BaseFragment
         }
 
         @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
+        }
+      };
+
+  private static final String[] COMMENTS_PROJECTION = new String[] {
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.ID),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.COMMENT),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.SPOILER),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.REVIEW),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.CREATED_AT),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.LIKES),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.USER_RATING),
+      SqlColumn.table(Tables.USERS).column(UserColumns.USERNAME),
+      SqlColumn.table(Tables.USERS).column(UserColumns.NAME),
+      SqlColumn.table(Tables.USERS).column(UserColumns.AVATAR),
+  };
+
+  private LoaderManager.LoaderCallbacks<SimpleCursor> userCommentsLoader =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
+          SimpleCursorLoader loader =
+              new SimpleCursorLoader(getContext(), Comments.fromMovie(movieId),
+                  COMMENTS_PROJECTION, CommentColumns.IS_USER_COMMENT + "=1", null, null);
+          loader.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
+          return loader;
+        }
+
+        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
+          userComments = data;
+          updateComments();
+        }
+
+        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
+        }
+      };
+
+  private LoaderManager.LoaderCallbacks<SimpleCursor> commentsLoader =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
+          SimpleCursorLoader loader =
+              new SimpleCursorLoader(getContext(), Comments.fromMovie(movieId), COMMENTS_PROJECTION,
+                  CommentColumns.IS_USER_COMMENT + "=0 AND " + CommentColumns.SPOILER + "=0", null,
+                  CommentColumns.LIKES + " DESC LIMIT 3");
+          loader.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
+          return loader;
+        }
+
+        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
+          comments = data;
+          updateComments();
+        }
+
+        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
         }
       };
 }

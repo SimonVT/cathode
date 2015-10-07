@@ -80,6 +80,8 @@ public final class Settings {
     String MOVIE_WATCHLIST = "movieWatchlist";
     String MOVIE_COMMENT = "movieComment";
 
+    String COMMENT_LIKED_AT = "commentLikedAt";
+
     String LIST_UPDATED_AT = "listUpdatedAt";
   }
 

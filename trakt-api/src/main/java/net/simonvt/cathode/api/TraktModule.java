@@ -22,16 +22,19 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Singleton;
 import net.simonvt.cathode.api.entity.IsoTime;
 import net.simonvt.cathode.api.enumeration.Action;
+import net.simonvt.cathode.api.enumeration.CommentType;
 import net.simonvt.cathode.api.enumeration.Gender;
 import net.simonvt.cathode.api.enumeration.GrantType;
 import net.simonvt.cathode.api.enumeration.HiddenSection;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.api.enumeration.ItemTypes;
 import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.api.enumeration.Scope;
 import net.simonvt.cathode.api.enumeration.ShowStatus;
 import net.simonvt.cathode.api.enumeration.TokenType;
 import net.simonvt.cathode.api.service.AuthorizationService;
 import net.simonvt.cathode.api.service.CheckinService;
+import net.simonvt.cathode.api.service.CommentsService;
 import net.simonvt.cathode.api.service.EpisodeService;
 import net.simonvt.cathode.api.service.MoviesService;
 import net.simonvt.cathode.api.service.PeopleService;
@@ -66,6 +69,7 @@ public class TraktModule {
         .setConverter(new GsonConverter(gson))
         .setRequestInterceptor(interceptor)
         .setErrorHandler(errorHandler)
+        .setLogLevel(RestAdapter.LogLevel.FULL)
         .build();
   }
 
@@ -92,6 +96,10 @@ public class TraktModule {
 
   @Provides @Singleton CheckinService provideCheckinService(@Trakt RestAdapter adapter) {
     return adapter.create(CheckinService.class);
+  }
+
+  @Provides @Singleton CommentsService provideCommentsService(@Trakt RestAdapter adapter) {
+    return adapter.create(CommentsService.class);
   }
 
   @Provides @Singleton EpisodeService provideEpisodeService(@Trakt RestAdapter adapter) {
@@ -211,6 +219,20 @@ public class TraktModule {
       @Override public HiddenSection deserialize(JsonElement json, Type typeOfT,
           JsonDeserializationContext context) throws JsonParseException {
         return HiddenSection.fromValue(json.getAsString());
+      }
+    });
+
+    builder.registerTypeAdapter(CommentType.class, new JsonDeserializer<CommentType>() {
+      @Override public CommentType deserialize(JsonElement json, Type typeOfT,
+          JsonDeserializationContext context) throws JsonParseException {
+        return CommentType.fromValue(json.getAsString());
+      }
+    });
+
+    builder.registerTypeAdapter(ItemTypes.class, new JsonDeserializer<ItemTypes>() {
+      @Override public ItemTypes deserialize(JsonElement json, Type typeOfT,
+          JsonDeserializationContext context) throws JsonParseException {
+        return ItemTypes.fromValue(json.getAsString());
       }
     });
 

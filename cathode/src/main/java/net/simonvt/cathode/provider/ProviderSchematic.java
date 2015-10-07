@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.util.Joiner;
+import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
@@ -39,6 +40,7 @@ import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCharacterColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
+import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Joins;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.util.DateUtils;
@@ -100,6 +102,12 @@ public final class ProviderSchematic {
     String LISTS = "vnd.android.cursor.dir/vnd.simonvt.cathode.lists";
     String LIST_ID = "vnd.android.cursor.item/vnd.simonvt.cathode.list";
     String LIST_ITEMS = "vnd.android.cursor.dir/vnd.simonvt.cathode.listItem";
+
+    String USERS = "vnd.android.cursor.dir/vnd.simonvt.cathode.users";
+    String USER_ID = "vnd.android.cursor.item/vnd.simonvt.cathode.userId";
+
+    String COMMENTS = "vnd.android.cursor.dir/vnd.simonvt.cathode.comments";
+    String COMMENT_ID = "vnd.android.cursor.item/vnd.simonvt.cathode.userComment";
   }
 
   interface Path {
@@ -113,6 +121,7 @@ public final class ProviderSchematic {
 
     String FROM_SHOW = "fromShow";
     String FROM_SEASON = "fromSeason";
+    String FROM_EPISODE = "fromEpisode";
 
     String MOVIES = "movies";
     String MOVIE_GENRES = "movieGenres";
@@ -141,6 +150,13 @@ public final class ProviderSchematic {
     String LIST_ITEMS = "listItems";
 
     String IN_LIST = "inList";
+
+    String USERS = "users";
+
+    String COMMENTS = "comments";
+    String FROM_USER = "fromUser";
+    String WITH_PARENT = "withParent";
+    String WITH_USER = "withUser";
   }
 
   static Uri getBaseUri(Uri uri) {
@@ -1180,6 +1196,106 @@ public final class ProviderSchematic {
         pathSegment = 2)
     public static Uri inList(long id) {
       return buildUri(Path.LIST_ITEMS, Path.IN_LIST, String.valueOf(id));
+    }
+  }
+
+  @TableEndpoint(table = DatabaseSchematic.TABLE_USERS) public static class Users {
+
+    @ContentUri(
+        path = Path.USERS,
+        type = Type.USERS)
+    public static final Uri USERS = buildUri(Path.USERS);
+
+    @InexactContentUri(
+        path = Path.USERS + "/#",
+        type = Type.USER_ID,
+        name = "USER_WITHID",
+        whereColumn = UserColumns.ID,
+        pathSegment = 1)
+    public static Uri withId(long id) {
+      return buildUri(Path.USERS, String.valueOf(id));
+    }
+
+    public static long getUserId(Uri uri) {
+      return Long.valueOf(uri.getPathSegments().get(1));
+    }
+  }
+
+  @TableEndpoint(table = DatabaseSchematic.TABLE_COMMENTS) public static class Comments {
+
+    @ContentUri(
+        path = Path.COMMENTS,
+        type = Type.COMMENTS)
+    @NotificationUri(paths = {
+        Path.COMMENTS + "/" + Path.WITH_USER,
+        Path.COMMENTS + "/" + Path.WITH_PARENT + "/#",
+        Path.COMMENTS + "/" + Path.FROM_SHOW + "/#",
+        Path.COMMENTS + "/" + Path.FROM_MOVIE + "/#",
+        Path.COMMENTS + "/" + Path.FROM_EPISODE + "/#",
+    })
+    public static final Uri COMMENTS = buildUri(Path.COMMENTS);
+
+    @ContentUri(
+        path = Path.COMMENTS + "/" + Path.WITH_USER,
+        type = Type.COMMENTS,
+        join = Joins.COMMENT_PROFILE)
+    public static final Uri COMMENTS_WITH_PROFILE = buildUri(Path.COMMENTS, Path.WITH_USER);
+
+    @InexactContentUri(
+        path = Path.COMMENTS + "/#",
+        type = Type.COMMENT_ID,
+        name = "COMMENT_WITH_ID",
+        whereColumn = CommentColumns.ID,
+        pathSegment = 1)
+    public static Uri withId(long id) {
+      return buildUri(Path.COMMENTS, String.valueOf(id));
+    }
+
+    @InexactContentUri(
+        path = Path.COMMENTS + "/" + Path.WITH_PARENT + "/#",
+        type = Type.COMMENTS,
+        name = "COMMENTS_WITH_PARENT",
+        join = Joins.COMMENT_PROFILE,
+        whereColumn = CommentColumns.PARENT_ID,
+        pathSegment = 2)
+    public static Uri withParent(long parentId) {
+      return buildUri(Path.COMMENTS, Path.WITH_PARENT, String.valueOf(parentId));
+    }
+
+    @InexactContentUri(
+        path = Path.COMMENTS + "/" + Path.FROM_SHOW + "/#",
+        type = Type.COMMENTS,
+        name = "COMMENTS_FROM_SHOW",
+        join = Joins.COMMENT_PROFILE,
+        where = CommentColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.SHOW,
+        whereColumn = CommentColumns.ITEM_ID,
+        pathSegment = 2)
+    public static Uri fromShow(long showId) {
+      return buildUri(Path.COMMENTS, Path.FROM_SHOW, String.valueOf(showId));
+    }
+
+    @InexactContentUri(
+        path = Path.COMMENTS + "/" + Path.FROM_MOVIE + "/#",
+        type = Type.COMMENTS,
+        name = "COMMENTS_FROM_MOVIE",
+        join = Joins.COMMENT_PROFILE,
+        where = CommentColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.MOVIE,
+        whereColumn = CommentColumns.ITEM_ID,
+        pathSegment = 2)
+    public static Uri fromMovie(long movieId) {
+      return buildUri(Path.COMMENTS, Path.FROM_MOVIE, String.valueOf(movieId));
+    }
+
+    @InexactContentUri(
+        path = Path.COMMENTS + "/" + Path.FROM_EPISODE + "/#",
+        type = Type.COMMENTS,
+        name = "COMMENTS_FROM_EPISODE",
+        join = Joins.COMMENT_PROFILE,
+        where = CommentColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.EPISODE,
+        whereColumn = CommentColumns.ITEM_ID,
+        pathSegment = 2)
+    public static Uri fromEpisode(long episodeId) {
+      return buildUri(Path.COMMENTS, Path.FROM_EPISODE, String.valueOf(episodeId));
     }
   }
 }

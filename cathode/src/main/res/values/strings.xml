@@ -97,6 +97,10 @@
   <string name="card_more">More</string>
 
   <string name="title_actors">Actors</string>
+  <string name="title_comments">Comments</string>
+  <string name="title_comment_add">Add comment</string>
+  <string name="title_comment_update">Update comment</string>
+  <string name="title_comment_reply">Reply</string>
 
   <string name="title_shows_watched">Watched shows</string>
   <string name="title_shows_upcoming">Upcoming shows</string>
@@ -156,6 +160,9 @@
   <string name="action_create">Create</string>
   <string name="action_list_remove">Remove from list</string>
   <string name="action_list_add">Add to lists</string>
+  <string name="action_submit">Submit</string>
+  <string name="action_comment_add">Add comment</string>
+  <string name="action_reply">Reply</string>
 
   <string name="checkmark_watched">Watched</string>
   <string name="checkmark_collection">In collection</string>
@@ -274,9 +281,29 @@
   <string name="show_perform_sync">Perform sync</string>
   <string name="recommendations_empty">There are currently no recommendations</string>
 
+  <string name="comments_none">What do you think?</string>
+  <string name="comment_update">Update</string>
+  <string name="comment_delete">Delete</string>
+  <string name="comment_hint">What do you think?</string>
+  <string name="comment_spoiler">Spoiler</string>
+  <string name="comment_too_short">Comment must contain at least 5 words</string>
+  <string name="card_comments_add">Add</string>
+  <string name="comments_username_rating">%1$s (%2$d)</string>
+  <string name="comment_reveal">Click to reveal spoiler</string>
+
   <plurals name="season_x">
     <item quantity="zero">Special</item>
     <item quantity="other">Season %d</item>
+  </plurals>
+
+  <plurals name="likes">
+    <item quantity="one">%d like</item>
+    <item quantity="other">%d likes</item>
+  </plurals>
+
+  <plurals name="replies">
+    <item quantity="one">%d reply</item>
+    <item quantity="other">%d replies</item>
   </plurals>
 
   <string-array name="ratings">

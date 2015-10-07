@@ -16,6 +16,8 @@
 
 package net.simonvt.cathode.api.service;
 
+import java.util.List;
+import net.simonvt.cathode.api.entity.Comment;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.enumeration.Extended;
 import retrofit.http.GET;
@@ -34,4 +36,13 @@ public interface EpisodeService {
   @GET("/shows/{id}/seasons/{season}/episodes/{episode}") Episode getSummary(
       @Path("id") long showId, @Path("season") Integer season, @Path("episode") Integer episode,
       @Query("extended") Extended extended);
+
+  /**
+   * <b>Pagination</b>
+   * <p>
+   * Returns all top level comments for a movie. Most recent comments returned first.
+   */
+  @GET("/movies/{id}/comments") List<Comment> getComments(@Path("id") long showId,
+      @Path("season") int season, @Path("episode") int episode, @Query("page") int page,
+      @Query("limit") int limit, @Query("extended") Extended extended);
 }

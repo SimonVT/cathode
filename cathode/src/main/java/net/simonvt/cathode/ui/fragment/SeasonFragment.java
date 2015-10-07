@@ -163,7 +163,7 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_lists_add:
-        ListsDialog.newInstance(DatabaseContract.ListItemColumns.Type.SEASON, seasonId)
+        ListsDialog.newInstance(DatabaseContract.ItemType.SEASON, seasonId)
             .show(getFragmentManager(), DIALOG_LISTS_ADD);
         return true;
     }

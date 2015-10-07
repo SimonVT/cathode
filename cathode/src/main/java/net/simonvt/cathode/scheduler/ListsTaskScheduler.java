@@ -21,6 +21,7 @@ import android.content.Context;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ListWrapper;
@@ -97,7 +98,7 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
         }
 
         switch (itemType) {
-          case ListItemColumns.Type.SHOW: {
+          case DatabaseContract.ItemType.SHOW: {
             final long showTraktId = showHelper.getTraktId(itemId);
 
             if (add) {
@@ -108,7 +109,7 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
             break;
           }
 
-          case ListItemColumns.Type.SEASON: {
+          case DatabaseContract.ItemType.SEASON: {
             final long showId = seasonHelper.getShowId(itemId);
             final long showTraktId = showHelper.getTraktId(showId);
             final int seasonNumber = seasonHelper.getNumber(itemId);
@@ -121,7 +122,7 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
             break;
           }
 
-          case ListItemColumns.Type.EPISODE: {
+          case DatabaseContract.ItemType.EPISODE: {
             final long showId = episodeHelper.getShowId(itemId);
             final long showTraktId = showHelper.getTraktId(showId);
             final int seasonNumber = episodeHelper.getSeason(itemId);
@@ -135,7 +136,7 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
             break;
           }
 
-          case ListItemColumns.Type.MOVIE: {
+          case DatabaseContract.ItemType.MOVIE: {
             final long movieTraktId = MovieWrapper.getTraktId(context.getContentResolver(), itemId);
 
             if (add) {
@@ -146,7 +147,7 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
             break;
           }
 
-          case ListItemColumns.Type.PERSON: {
+          case DatabaseContract.ItemType.PERSON: {
             final long personTraktId =
                 PersonWrapper.getTraktId(context.getContentResolver(), itemId);
 

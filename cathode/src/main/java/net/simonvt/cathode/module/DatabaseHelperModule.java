@@ -23,6 +23,7 @@ import javax.inject.Singleton;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
+import net.simonvt.cathode.provider.UserDatabaseHelper;
 
 @Module(
     complete = false,
@@ -38,5 +39,9 @@ import net.simonvt.cathode.provider.ShowDatabaseHelper;
 
   @Provides @Singleton EpisodeDatabaseHelper provideEpisodeDatabaseHelper(Context context) {
     return EpisodeDatabaseHelper.getInstance(context);
+  }
+
+  @Provides @Singleton UserDatabaseHelper provideUserDatabaseHelper(Context context) {
+    return UserDatabaseHelper.getInstance(context);
   }
 }

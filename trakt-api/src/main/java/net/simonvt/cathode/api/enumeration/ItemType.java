@@ -25,7 +25,8 @@ public enum ItemType {
   EPISODE("episode"),
   MOVIE("movie"),
   PERSON("person"),
-  LIST("list");
+  LIST("list"),
+  COMMENT("comment");
 
   private final String value;
 

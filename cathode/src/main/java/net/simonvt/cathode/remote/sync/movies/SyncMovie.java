@@ -18,9 +18,11 @@ package net.simonvt.cathode.remote.sync.movies;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.enumeration.Extended;
+import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.MoviesService;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.sync.comments.SyncComments;
 
 public class SyncMovie extends Job {
 
@@ -43,6 +45,8 @@ public class SyncMovie extends Job {
   @Override public void perform() {
     Movie movie = moviesService.getSummary(traktId, Extended.FULL_IMAGES);
     MovieWrapper.updateOrInsertMovie(getContentResolver(), movie);
+
     queue(new SyncMovieCrew(traktId));
+    queue(new SyncComments(ItemType.MOVIE, traktId));
   }
 }

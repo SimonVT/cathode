@@ -365,14 +365,53 @@ public final class DatabaseContract {
     String TITLE = "title";
     String OVERVIEW = "overview";
     String POSTER = "poster";
+  }
 
-    interface Type {
+  public interface ItemType {
 
-      int SHOW = 1;
-      int SEASON = 2;
-      int EPISODE = 3;
-      int MOVIE = 4;
-      int PERSON = 5;
-    }
+    int SHOW = 1;
+    int SEASON = 2;
+    int EPISODE = 3;
+    int MOVIE = 4;
+    int PERSON = 5;
+    int LIST = 6;
+  }
+
+  public interface UserColumns {
+
+    @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
+    @DataType(TEXT) String USERNAME = "username";
+    @DataType(INTEGER) String IS_PRIVATE = "isPrivate";
+    @DataType(TEXT) String NAME = "name";
+    @DataType(INTEGER) String VIP = "vip";
+    @DataType(INTEGER) String VIP_EP = "vipEp";
+    @DataType(INTEGER) String JOINED_AT = "joinedAt";
+    @DataType(TEXT) String LOCATION = "location";
+    @DataType(TEXT) String ABOUT = "about";
+    @DataType(TEXT) String GENDER = "gender";
+    @DataType(INTEGER) String AGE = "age";
+    @DataType(TEXT) String AVATAR = "avatar";
+  }
+
+  public interface CommentColumns extends LastModifiedColumns {
+
+    @DataType(INTEGER) @PrimaryKey String ID = BaseColumns._ID;
+    @DataType(TEXT) @NotNull String COMMENT = "comment";
+    @DataType(INTEGER) @DefaultValue("0") String SPOILER = "spoiler";
+    @DataType(INTEGER) @DefaultValue("0") String REVIEW = "review";
+    @DataType(INTEGER) @DefaultValue("0")  String PARENT_ID = "parentId";
+    @DataType(INTEGER) @DefaultValue("0") String CREATED_AT = "createdAt";
+    @DataType(INTEGER) @DefaultValue("0") String REPLIES = "replies";
+    @DataType(INTEGER) @DefaultValue("0") String LIKES = "likes";
+    @DataType(INTEGER) @DefaultValue("0") String USER_RATING = "userRating";
+
+    @DataType(INTEGER) @NotNull String ITEM_ID = "itemId";
+    @DataType(INTEGER) @NotNull String ITEM_TYPE = "itemType";
+
+    @DataType(INTEGER) @References(table = DatabaseSchematic.Tables.USERS, column = UserColumns.ID)
+    String USER_ID = "userId";
+    @DataType(INTEGER) @DefaultValue("0") String IS_USER_COMMENT = "isUserComment";
+    @DataType(INTEGER) @DefaultValue("0") String LIKED = "liked";
+    @DataType(INTEGER) @DefaultValue("0") String LIKED_AT = "likedAt";
   }
 }

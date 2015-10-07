@@ -30,7 +30,7 @@
 
   <color name="aboutButtonBackground">#FFDDDDDD</color>
   <color name="aboutPressedBackground">#200099CC</color>
-  
+
   <color name="circleProgressColor">@android:color/holo_orange_dark</color>
   <color name="circleProgressBackgroundColor">#808C8C8C</color>
   <color name="circleProgressTextBackground">#80FFFFFF</color>
@@ -48,5 +48,8 @@
   <color name="colorAccent">#FF81C784</color>
 
   <color name="profilePlaceholder">#FF1C1C1E</color>
+
+  <color name="commentIconTint">#FF8C8C8C</color>
+  <color name="commentLikedTint">@android:color/holo_blue_dark</color>
 
 </resources>

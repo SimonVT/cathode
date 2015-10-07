@@ -41,5 +41,9 @@
       layout="@layout/card_actors"
       android:visibility="gone"/>
 
+  <include
+      layout="@layout/card_comments"
+      android:visibility="gone"/>
+
   <include layout="@layout/show_info_episodes"/>
 </LinearLayout>

@@ -19,14 +19,20 @@ package net.simonvt.cathode.api.service;
 import java.util.List;
 import net.simonvt.cathode.api.body.CreateListBody;
 import net.simonvt.cathode.api.body.ListItemActionBody;
+import net.simonvt.cathode.api.entity.CommentItem;
 import net.simonvt.cathode.api.entity.CustomList;
 import net.simonvt.cathode.api.entity.HiddenItem;
+import net.simonvt.cathode.api.entity.Like;
 import net.simonvt.cathode.api.entity.ListItem;
 import net.simonvt.cathode.api.entity.ListItemActionResponse;
+import net.simonvt.cathode.api.entity.Profile;
 import net.simonvt.cathode.api.entity.UserSettings;
 import net.simonvt.cathode.api.entity.Watching;
+import net.simonvt.cathode.api.enumeration.CommentType;
+import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.enumeration.HiddenSection;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.api.enumeration.ItemTypes;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.POST;
@@ -42,6 +48,14 @@ public interface UsersService {
    * the trakt website.
    */
   @GET("/users/settings") UserSettings getUserSettings();
+
+  /**
+   * <b>OAuth Optional</b>
+   * <p>
+   * Get a user's profile information. If the user is private, info will only be returned if you
+   * send OAuth and are either that user or an approved follower.
+   */
+  @GET("/users/me") Profile getProfile(@Query("extended") Extended extended);
 
   /**
    * <b>OAuth Required</b>
@@ -148,4 +162,24 @@ public interface UsersService {
    */
   @POST("/users/{username}/lists/{id}/items/remove") ListItemActionResponse removeItem(
       @Path("username") String username, @Path("id") long id, @Body ListItemActionBody item);
+
+  /**
+   * <b>OAuth Required</b>
+   * <b>Pagination</b>
+   * <p>
+   * Returns comments a user has posted sorted by most recent.
+   */
+  @GET("/users/me/comments/{comment_type}/{type}") List<CommentItem> getUserComments(
+      @Path("comment_type") CommentType commentType, @Path("type") ItemTypes itemTypes,
+      @Query("page") int page, @Query("limit") int limit);
+
+  /**
+   * <b>OAuth Required</b>
+   * <b>Pagination</b>
+   * <p>
+   * Get items a user likes. This will return an array of standard media objects.
+   * @param itemTypes One of {@link ItemTypes#COMMENTS} and {@link ItemTypes#LISTS}.
+   */
+  @GET("/users/likes/{type}") List<Like> getLikes(@Path("type") ItemTypes itemTypes,
+      @Query("page") int page, @Query("limit") int limit);
 }

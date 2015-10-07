@@ -18,10 +18,12 @@ package net.simonvt.cathode.remote.sync.shows;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.enumeration.Extended;
+import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.SeasonService;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.sync.comments.SyncComments;
 
 public class SyncShow extends Job {
 
@@ -63,5 +65,6 @@ public class SyncShow extends Job {
     queue(new SyncShowCollectedStatus(traktId));
     queue(new SyncShowWatchedStatus(traktId));
     queue(new SyncShowCast(traktId));
+    queue(new SyncComments(ItemType.SHOW, traktId));
   }
 }

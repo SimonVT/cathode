@@ -17,6 +17,7 @@ package net.simonvt.cathode.provider;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.HiddenColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
@@ -33,6 +34,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowCharacterColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowSearchSuggestionsColumns;
+import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.generated.CathodeDatabase;
 import net.simonvt.cathode.util.SqlIndex;
 import net.simonvt.schematic.annotation.Database;
@@ -49,7 +51,7 @@ public final class DatabaseSchematic {
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 17;
+  static final int DATABASE_VERSION = 18;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -134,27 +136,27 @@ public final class DatabaseSchematic {
         + EpisodeColumns.SHOW_ID;
 
     String LIST_SHOWS = "LEFT JOIN " + Tables.SHOWS
-        + " ON " + ListItemColumns.ITEM_TYPE + "=" + ListItemColumns.Type.SHOW
+        + " ON " + ListItemColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.SHOW
         +  " AND " + Tables.LIST_ITEMS + "." + ListItemColumns.ITEM_ID
         + "=" + Tables.SHOWS + "." + ShowColumns.ID;
 
     String LIST_SEASONS = "LEFT JOIN " + Tables.SEASONS
-        + " ON " + ListItemColumns.ITEM_TYPE + "=" + ListItemColumns.Type.SEASON
+        + " ON " + ListItemColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.SEASON
         +  " AND " + Tables.LIST_ITEMS + "." + ListItemColumns.ITEM_ID
         + "=" + Tables.SEASONS + "." + SeasonColumns.ID;
 
     String LIST_EPISODES = "LEFT JOIN " + Tables.EPISODES
-        + " ON " + ListItemColumns.ITEM_TYPE + "=" + ListItemColumns.Type.EPISODE
+        + " ON " + ListItemColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.EPISODE
         +  " AND " + Tables.LIST_ITEMS + "." + ListItemColumns.ITEM_ID
         + "=" + Tables.EPISODES + "." + EpisodeColumns.ID;
 
     String LIST_MOVIES = "LEFT JOIN " + Tables.MOVIES
-        + " ON " + ListItemColumns.ITEM_TYPE + "=" + ListItemColumns.Type.MOVIE
+        + " ON " + ListItemColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.MOVIE
         +  " AND " + Tables.LIST_ITEMS + "." + ListItemColumns.ITEM_ID
         + "=" + Tables.MOVIES + "." + MovieColumns.ID;
 
     String LIST_PEOPLE = "LEFT JOIN " + Tables.PEOPLE
-        + " ON " + ListItemColumns.ITEM_TYPE + "=" + ListItemColumns.Type.PERSON
+        + " ON " + ListItemColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.PERSON
         +  " AND " + Tables.LIST_ITEMS + "." + ListItemColumns.ITEM_ID
         + "=" + Tables.PEOPLE + "." + PersonColumns.ID;
 
@@ -167,6 +169,19 @@ public final class DatabaseSchematic {
         + LIST_MOVIES
         + " "
         + LIST_PEOPLE;
+
+    String COMMENT_PROFILE = "JOIN "
+        + Tables.USERS
+        + " AS "
+        + Tables.USERS
+        + " ON "
+        + Tables.USERS
+        + "."
+        + UserColumns.ID
+        + "="
+        + Tables.COMMENTS
+        + "."
+        + CommentColumns.USER_ID;
   }
 
   public interface Tables {
@@ -190,6 +205,10 @@ public final class DatabaseSchematic {
 
     String LISTS = "lists";
     String LIST_ITEMS = "listItems";
+
+    String USERS = "users";
+
+    String COMMENTS = "comments";
   }
 
   interface References {
@@ -199,26 +218,35 @@ public final class DatabaseSchematic {
     String MOVIE_ID = "REFERENCES " + Tables.MOVIES + "(" + MovieColumns.ID + ")";
   }
 
+  interface TriggerName {
+
+    String EPISODE_UPDATE_AIRED = "episodeUpdateAired";
+    String EPISODE_UPDATE_WATCHED = "episodeUpdateWatched";
+    String EPISODE_UPDATE_COLLECTED = "episodeUpdateCollected";
+    String EPISODE_INSERT = "episodeInsert";
+    String EPISODE_UPDATE = "episodeUpdate";
+    String EPISODE_DELETE = "episodeDelete";
+
+    String SHOW_UPDATE = "showUpdate";
+    String SHOW_DELETE = "showDelete";
+
+    String SEASON_UPDATE = "seasonUpdate";
+    String SEASON_DELETE = "seasonDelete";
+
+    String MOVIES_UPDATE = "moviesUpdate";
+    String MOVIE_DELETE = "movieDelete";
+
+    String PEOPLE_UPDATE = "peopleUpdate";
+
+    String LIST_UPDATE = "listUpdate";
+    String LIST_DELETE = "listDelete";
+
+    String LISTITEM_UPDATE = "listItemUpdate";
+
+    String COMMENT_UPDATE = "commentUpdate";
+  }
+
   interface Trigger {
-    String EPISODE_UPDATE_AIRED_NAME = "episodeUpdateAired";
-    String EPISODE_UPDATE_WATCHED_NAME = "episodeUpdateWatched";
-    String EPISODE_UPDATE_COLLECTED_NAME = "episodeUpdateCollected";
-    String EPISODE_INSERT_NAME = "episodeInsert";
-    String SHOW_DELETE_NAME = "showDelete";
-    String SEASON_DELETE_NAME = "seasonDelete";
-    String MOVIE_DELETE_NAME = "movieDelete";
-
-    String SHOW_UPDATE_NAME = "showUpdate";
-    String SEASON_UPDATE_NAME = "seasonUpdate";
-    String EPISODE_UPDATE_NAME = "episodeUpdate";
-
-    String MOVIES_UPDATE_NAME = "moviesUpdate";
-
-    String PEOPLE_UPDATE_NAME = "peopleUpdate";
-
-    String LIST_DELETE_NAME = "listDelete";
-    String LIST_UPDATE_NAME = "listUpdate";
-    String LISTITEM_UPDATE_NAME = "listItemUpdate";
 
     String SEASONS_UPDATE_WATCHED = "UPDATE "
         + Tables.SEASONS
@@ -440,6 +468,22 @@ public final class DatabaseSchematic {
         + ShowColumns.ID
         + ";";
 
+    String SHOW_DELETE_COMMENTS = "DELETE FROM "
+        + Tables.COMMENTS
+        + " WHERE "
+        + Tables.COMMENTS
+        + "."
+        + CommentColumns.ITEM_TYPE
+        + "="
+        + DatabaseContract.ItemType.SHOW
+        + " AND "
+        + Tables.COMMENTS
+        + "."
+        + CommentColumns.ITEM_ID
+        + "=OLD."
+        + ShowColumns.ID
+        + ";";
+
     String SEASON_DELETE_EPISODES = "DELETE FROM "
         + Tables.EPISODES
         + " WHERE "
@@ -448,6 +492,22 @@ public final class DatabaseSchematic {
         + EpisodeColumns.SEASON_ID
         + "=OLD."
         + SeasonColumns.ID
+        + ";";
+
+    String EPISODE_DELETE_COMMENTS = "DELETE FROM "
+        + Tables.COMMENTS
+        + " WHERE "
+        + Tables.COMMENTS
+        + "."
+        + CommentColumns.ITEM_TYPE
+        + "="
+        + DatabaseContract.ItemType.EPISODE
+        + " AND "
+        + Tables.COMMENTS
+        + "."
+        + CommentColumns.ITEM_ID
+        + "=OLD."
+        + EpisodeColumns.ID
         + ";";
 
     String MOVIE_DELETE_GENRES = "DELETE FROM "
@@ -476,6 +536,22 @@ public final class DatabaseSchematic {
         + Tables.MOVIE_CREW
         + "."
         + MovieCrewColumns.MOVIE_ID
+        + "=OLD."
+        + MovieColumns.ID
+        + ";";
+
+    String MOVIE_DELETE_COMMENTS = "DELETE FROM "
+        + Tables.COMMENTS
+        + " WHERE "
+        + Tables.COMMENTS
+        + "."
+        + CommentColumns.ITEM_TYPE
+        + "="
+        + DatabaseContract.ItemType.MOVIE
+        + " AND "
+        + Tables.COMMENTS
+        + "."
+        + CommentColumns.ITEM_ID
         + "=OLD."
         + MovieColumns.ID
         + ";";
@@ -520,6 +596,10 @@ public final class DatabaseSchematic {
     String LISTITEM_UPDATE = "UPDATE " + Tables.LIST_ITEMS
         + " SET " + ListItemColumns.LAST_MODIFIED + "=" + TIME_MILLIS
         + " WHERE " + ListItemColumns.ID + "=old."   + ListItemColumns.ID + ";";
+
+    String COMMENT_UPDATE = "UPDATE " + Tables.COMMENTS
+        + " SET " + CommentColumns.LAST_MODIFIED + "=" + TIME_MILLIS
+        + " WHERE " + CommentColumns.ID + "=old."   + CommentColumns.ID + ";";
   }
 
   @Table(ShowColumns.class) public static final String TABLE_SHOWS = Tables.SHOWS;
@@ -555,9 +635,13 @@ public final class DatabaseSchematic {
   @Table(ListItemColumns.class) public static final String TABLE_LIST_ITEMS =
       Tables.LIST_ITEMS;
 
+  @Table(UserColumns.class) public static final String TABLE_USERS = Tables.USERS;
+
+  @Table(CommentColumns.class) public static final String TABLE_COMMENTS = Tables.COMMENTS;
+
   @ExecOnCreate
-  public static final String TRIGGER_EPISODE_UPDATE_AIRED = "CREATE TRIGGER "
-      + Trigger.EPISODE_UPDATE_AIRED_NAME
+  public static final String TRIGGER_EPISODE_UPDATE_AIRED = "CREATE TRIGGER IF NOT EXISTS "
+      + TriggerName.EPISODE_UPDATE_AIRED
       + " AFTER UPDATE OF "
       + EpisodeColumns.FIRST_AIRED
       + ","
@@ -570,8 +654,8 @@ public final class DatabaseSchematic {
       + " END;";
 
   @ExecOnCreate
-  public static final String TRIGGER_EPISODE_UPDATE_WATCHED = "CREATE TRIGGER "
-      + Trigger.EPISODE_UPDATE_WATCHED_NAME
+  public static final String TRIGGER_EPISODE_UPDATE_WATCHED = "CREATE TRIGGER IF NOT EXISTS "
+      + TriggerName.EPISODE_UPDATE_WATCHED
       + " AFTER UPDATE OF "
       + EpisodeColumns.WATCHED
       + ","
@@ -584,8 +668,8 @@ public final class DatabaseSchematic {
       + " END;";
 
   @ExecOnCreate
-  public static final String TRIGGER_EPISODE_UPDATE_COLLECTED = "CREATE TRIGGER "
-      + Trigger.EPISODE_UPDATE_COLLECTED_NAME
+  public static final String TRIGGER_EPISODE_UPDATE_COLLECTED = "CREATE TRIGGER IF NOT EXISTS "
+      + TriggerName.EPISODE_UPDATE_COLLECTED
       + " AFTER UPDATE OF "
       + EpisodeColumns.IN_COLLECTION
       + ","
@@ -598,8 +682,8 @@ public final class DatabaseSchematic {
       + " END;";
 
   @ExecOnCreate
-  public static final String TRIGGER_EPISODE_INSERT = "CREATE TRIGGER "
-      + Trigger.EPISODE_INSERT_NAME
+  public static final String TRIGGER_EPISODE_INSERT = "CREATE TRIGGER IF NOT EXISTS "
+      + TriggerName.EPISODE_INSERT
       + " AFTER INSERT ON "
       + TABLE_EPISODES
       + " BEGIN "
@@ -611,96 +695,114 @@ public final class DatabaseSchematic {
       + Trigger.SHOWS_UPDATE_COLLECTED
       + " END;";
 
-  @ExecOnCreate public static final String TRIGGER_SHOW_DELETE = "CREATE TRIGGER "
-      + Trigger.SHOW_DELETE_NAME
+  @ExecOnCreate public static final String TRIGGER_SHOW_DELETE = "CREATE TRIGGER IF NOT EXISTS "
+      + TriggerName.SHOW_DELETE
       + " AFTER DELETE ON "
       + Tables.SHOWS
       + " BEGIN "
       + Trigger.SHOW_DELETE_SEASONS
       + Trigger.SHOW_DELETE_GENRES
       + Trigger.SHOW_DELETE_CHARACTERS
+      + Trigger.SHOW_DELETE_COMMENTS
       + " END;";
 
-  @ExecOnCreate public static final String TRIGGER_SEASON_DELETE = "CREATE TRIGGER "
-      + Trigger.SEASON_DELETE_NAME
+  @ExecOnCreate public static final String TRIGGER_SEASON_DELETE = "CREATE TRIGGER IF NOT EXISTS "
+      + TriggerName.SEASON_DELETE
       + " AFTER DELETE ON "
       + Tables.SEASONS
       + " BEGIN "
       + Trigger.SEASON_DELETE_EPISODES
       + " END";
 
-  @ExecOnCreate public static final String TRIGGER_MOVIE_DELETE = "CREATE TRIGGER "
-      + Trigger.MOVIE_DELETE_NAME
+  @ExecOnCreate public static final String TRIGGER_EPISODE_DELETE = "CREATE TRIGGER IF NOT EXISTS "
+      + TriggerName.EPISODE_DELETE
+      + " AFTER DELETE ON "
+      + Tables.EPISODES
+      + " BEGIN "
+      + Trigger.EPISODE_DELETE_COMMENTS
+      + " END";
+
+  @ExecOnCreate public static final String TRIGGER_MOVIE_DELETE = "CREATE TRIGGER IF NOT EXISTS "
+      + TriggerName.MOVIE_DELETE
       + " AFTER DELETE ON "
       + Tables.MOVIES
       + " BEGIN "
       + Trigger.MOVIE_DELETE_GENRES
       + Trigger.MOVIE_DELETE_CAST
       + Trigger.MOVIE_DELETE_CREW
+      + Trigger.MOVIE_DELETE_COMMENTS
       + " END;";
 
-  @ExecOnCreate public static final String TRIGGER_SHOW_UPDATE = "CREATE TRIGGER "
-      + Trigger.SHOW_UPDATE_NAME
+  @ExecOnCreate public static final String TRIGGER_SHOW_UPDATE = "CREATE TRIGGER IF NOT EXISTS "
+      + TriggerName.SHOW_UPDATE
       + " AFTER UPDATE ON "
       + Tables.SHOWS
       + " FOR EACH ROW BEGIN "
       + Trigger.SHOW_UPDATE
       + " END";
 
-  @ExecOnCreate public static final String TRIGGER_SEASON_UPDATE = "CREATE TRIGGER "
-      + Trigger.SEASON_UPDATE_NAME
+  @ExecOnCreate public static final String TRIGGER_SEASON_UPDATE = "CREATE TRIGGER IF NOT EXISTS "
+      + TriggerName.SEASON_UPDATE
       + " AFTER UPDATE ON "
       + Tables.SEASONS
       + " FOR EACH ROW BEGIN "
       + Trigger.SEASON_UPDATE
       + " END";
 
-  @ExecOnCreate public static final String TRIGGER_EPISODE_UPDATE = "CREATE TRIGGER "
-      + Trigger.EPISODE_UPDATE_NAME
+  @ExecOnCreate public static final String TRIGGER_EPISODE_UPDATE = "CREATE TRIGGER IF NOT EXISTS "
+      + TriggerName.EPISODE_UPDATE
       + " AFTER UPDATE ON "
       + Tables.EPISODES
       + " FOR EACH ROW BEGIN "
       + Trigger.EPISODE_UPDATE
       + " END";
 
-  @ExecOnCreate public static final String TRIGGER_MOVIES_UPDATE = "CREATE TRIGGER "
-      + Trigger.MOVIES_UPDATE_NAME
+  @ExecOnCreate public static final String TRIGGER_MOVIES_UPDATE = "CREATE TRIGGER IF NOT EXISTS "
+      + TriggerName.MOVIES_UPDATE
       + " AFTER UPDATE ON "
       + Tables.MOVIES
       + " FOR EACH ROW BEGIN "
       + Trigger.MOVIES_UPDATE
       + " END";
 
-  @ExecOnCreate public static final String TRIGGER_PEOPLE_UPDATE = "CREATE TRIGGER "
-      + Trigger.PEOPLE_UPDATE_NAME
+  @ExecOnCreate public static final String TRIGGER_PEOPLE_UPDATE = "CREATE TRIGGER IF NOT EXISTS "
+      + TriggerName.PEOPLE_UPDATE
       + " AFTER UPDATE ON "
       + Tables.PEOPLE
       + " FOR EACH ROW BEGIN "
       + Trigger.PEOPLE_UPDATE
       + " END";
 
-  @ExecOnCreate public static final String TRIGGER_LIST_DELETE = "CREATE TRIGGER "
-      + Trigger.LIST_DELETE_NAME
+  @ExecOnCreate public static final String TRIGGER_LIST_DELETE = "CREATE TRIGGER IF NOT EXISTS "
+      + TriggerName.LIST_DELETE
       + " AFTER DELETE ON "
       + Tables.LISTS
       + " BEGIN "
       + Trigger.LIST_DELETE
       + " END;";
 
-  @ExecOnCreate public static final String TRIGGER_LIST_UPDATE = "CREATE TRIGGER "
-      + Trigger.LIST_UPDATE_NAME
+  @ExecOnCreate public static final String TRIGGER_LIST_UPDATE = "CREATE TRIGGER IF NOT EXISTS "
+      + TriggerName.LIST_UPDATE
       + " AFTER UPDATE ON "
       + Tables.LISTS
       + " FOR EACH ROW BEGIN "
       + Trigger.LISTS_UPDATE
       + " END";
 
-  @ExecOnCreate public static final String TRIGGER_LISTITEM_UPDATE = "CREATE TRIGGER "
-      + Trigger.LISTITEM_UPDATE_NAME
+  @ExecOnCreate public static final String TRIGGER_LISTITEM_UPDATE = "CREATE TRIGGER IF NOT EXISTS "
+      + TriggerName.LISTITEM_UPDATE
       + " AFTER UPDATE ON "
       + Tables.LIST_ITEMS
       + " FOR EACH ROW BEGIN "
       + Trigger.LISTITEM_UPDATE
+      + " END";
+
+  @ExecOnCreate public static final String TRIGGER_COMMENT_UPDATE = "CREATE TRIGGER IF NOT EXISTS "
+      + TriggerName.COMMENT_UPDATE
+      + " AFTER UPDATE ON "
+      + Tables.COMMENTS
+      + " FOR EACH ROW BEGIN "
+      + Trigger.COMMENT_UPDATE
       + " END";
 
   @ExecOnCreate public static final String INDEX_CHARACTERS_SHOW_ID =
@@ -863,6 +965,19 @@ public final class DatabaseSchematic {
     if (oldVersion < 17) {
       db.execSQL(INDEX_EPISODES_SHOW_ID);
       db.execSQL(INDEX_EPISODES_SEASON_ID);
+    }
+
+    if (oldVersion < 18) {
+      db.execSQL(CathodeDatabase.TABLE_COMMENTS);
+      db.execSQL(CathodeDatabase.TABLE_USERS);
+
+      db.execSQL("DROP TRIGGER IF EXISTS " + TriggerName.SHOW_DELETE);
+      db.execSQL("DROP TRIGGER IF EXISTS " + TriggerName.MOVIE_DELETE);
+      db.execSQL(TRIGGER_SHOW_DELETE);
+      db.execSQL(TRIGGER_MOVIE_DELETE);
+
+      db.execSQL(TRIGGER_COMMENT_UPDATE);
+      db.execSQL(TRIGGER_EPISODE_DELETE);
     }
   }
 }

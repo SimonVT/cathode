@@ -17,6 +17,7 @@
 package net.simonvt.cathode.api.service;
 
 import java.util.List;
+import net.simonvt.cathode.api.entity.Comment;
 import net.simonvt.cathode.api.entity.People;
 import net.simonvt.cathode.api.entity.Rating;
 import net.simonvt.cathode.api.entity.Show;
@@ -106,4 +107,12 @@ public interface ShowsService {
    * @param id Trakt ID
    */
   @GET("/shows/{id}/ratings") Rating getRatings(@Path("id") long id);
+
+  /**
+   * <b>Pagination</b>
+   * <p>
+   * Returns all top level comments for a show. Most recent comments returned first.
+   */
+  @GET("/shows/{id}/comments") List<Comment> getComments(@Path("id") long id,
+      @Query("page") int page, @Query("limit") int limit, @Query("extended") Extended extended);
 }
