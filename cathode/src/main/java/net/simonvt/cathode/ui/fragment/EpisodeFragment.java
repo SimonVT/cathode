@@ -18,8 +18,6 @@ package net.simonvt.cathode.ui.fragment;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
@@ -30,7 +28,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -42,21 +39,17 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
-import net.simonvt.cathode.ui.FragmentContract;
-import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.NavigationClickListener;
-import net.simonvt.cathode.ui.dialog.AboutDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.util.DateUtils;
-import net.simonvt.cathode.widget.AppBarRelativeLayout;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.RemoteImageView;
 
-public class EpisodeFragment extends DialogFragment implements FragmentContract {
+public class EpisodeFragment extends BaseFragment {
 
   private static final String ARG_EPISODEID =
       "net.simonvt.cathode.ui.fragment.EpisodeFragment.episodeId";
@@ -71,10 +64,6 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
   @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;
   @Inject Bus bus;
-
-  @Bind(R.id.appBarLayout) @Nullable AppBarRelativeLayout appBarLayout;
-
-  @Bind(R.id.toolbar) Toolbar toolbar;
 
   @Bind(R.id.title) TextView title;
   @Bind(R.id.backdrop) RemoteImageView backdrop;
@@ -108,8 +97,6 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   private boolean checkedIn;
 
-  private boolean isTablet;
-
   private NavigationClickListener navigationListener;
 
   public static Bundle getArgs(long episodeId, String showTitle) {
@@ -132,25 +119,13 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
 
-    isTablet = getResources().getBoolean(R.bool.isTablet);
-
     Bundle args = getArguments();
     episodeId = args.getLong(ARG_EPISODEID);
     showTitle = args.getString(ARG_SHOW_TITLE);
     getLoaderManager().initLoader(Loaders.EPISODE, null, episodeCallbacks);
-
-    if (getShowsDialog()) {
-      setStyle(DialogFragment.STYLE_NO_TITLE, 0);
-    }
   }
 
   private void updateTitle() {
-    if (toolbar != null) {
-      if (isTablet) {
-        toolbar.setTitle(getTitle());
-      }
-    }
-
     if (appBarLayout != null) {
       appBarLayout.setTitle(getTitle());
     }
@@ -178,15 +153,6 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-    ButterKnife.bind(this, view);
-
-    if (!isTablet) {
-      toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
-    }
-
-    toolbar.setNavigationOnClickListener(navigationClickListener);
-    createMenu(toolbar);
-    toolbar.setOnMenuItemClickListener(menuClickListener);
     updateTitle();
 
     rating.setOnClickListener(new View.OnClickListener() {
@@ -197,42 +163,20 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     });
   }
 
-  private View.OnClickListener navigationClickListener = new View.OnClickListener() {
-    @Override public void onClick(View v) {
-      navigationListener.onHomeClicked();
-    }
-  };
-
-  @Override public void onDestroyView() {
-    ButterKnife.unbind(this);
-    super.onDestroyView();
-  }
-
-  @Override public void onDestroy() {
-    if (getActivity().isFinishing() || isRemoving()) {
-      getLoaderManager().destroyLoader(Loaders.EPISODE);
-    }
-    super.onDestroy();
-  }
-
-  private void createMenu(Toolbar toolbar) {
-    Menu menu = toolbar.getMenu();
-    menu.clear();
-
-    toolbar.inflateMenu(R.menu.activity_base);
+  @Override public void createMenu(Toolbar toolbar) {
     toolbar.inflateMenu(R.menu.fragment_episode);
+
+    Menu menu = toolbar.getMenu();
 
     if (loaded) {
       if (checkedIn) {
         menu.add(0, R.id.action_checkin_cancel, 1, R.string.action_checkin_cancel)
             .setIcon(R.drawable.ic_action_cancel)
-            .setShowAsActionFlags(
-                isTablet ? MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_ALWAYS);
+            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
       } else if (!watching) {
         menu.add(0, R.id.action_checkin, 2, R.string.action_checkin)
             .setIcon(R.drawable.ic_action_checkin)
-            .setShowAsActionFlags(
-                isTablet ? MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_ALWAYS);
+            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
       }
 
       if (watched) {
@@ -254,55 +198,49 @@ public class EpisodeFragment extends DialogFragment implements FragmentContract 
     }
   }
 
-  private Toolbar.OnMenuItemClickListener menuClickListener =
-      new Toolbar.OnMenuItemClickListener() {
-        @Override public boolean onMenuItemClick(MenuItem item) {
-          switch (item.getItemId()) {
-            case R.id.action_watched:
-              episodeScheduler.setWatched(episodeId, true);
-              return true;
+  @Override public boolean onMenuItemClick(MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.action_watched:
+        episodeScheduler.setWatched(episodeId, true);
+        return true;
 
-            case R.id.action_unwatched:
-              episodeScheduler.setWatched(episodeId, false);
-              return true;
+      case R.id.action_unwatched:
+        episodeScheduler.setWatched(episodeId, false);
+        return true;
 
-            case R.id.action_checkin:
-              CheckInDialog.showDialogIfNecessary(getActivity(), Type.SHOW, episodeTitle, episodeId);
-              return true;
+      case R.id.action_checkin:
+        CheckInDialog.showDialogIfNecessary(getActivity(), Type.SHOW, episodeTitle, episodeId);
+        return true;
 
-            case R.id.action_checkin_cancel:
-              showScheduler.cancelCheckin();
-              return true;
+      case R.id.action_checkin_cancel:
+        showScheduler.cancelCheckin();
+        return true;
 
-            case R.id.action_collection_add:
-              episodeScheduler.setIsInCollection(episodeId, true);
-              return true;
+      case R.id.action_collection_add:
+        episodeScheduler.setIsInCollection(episodeId, true);
+        return true;
 
-            case R.id.action_collection_remove:
-              episodeScheduler.setIsInCollection(episodeId, false);
-              return true;
+      case R.id.action_collection_remove:
+        episodeScheduler.setIsInCollection(episodeId, false);
+        return true;
 
-            case R.id.action_watchlist_add:
-              episodeScheduler.setIsInWatchlist(episodeId, true);
-              return true;
+      case R.id.action_watchlist_add:
+        episodeScheduler.setIsInWatchlist(episodeId, true);
+        return true;
 
-            case R.id.action_watchlist_remove:
-              episodeScheduler.setIsInWatchlist(episodeId, false);
-              return true;
+      case R.id.action_watchlist_remove:
+        episodeScheduler.setIsInWatchlist(episodeId, false);
+        return true;
 
-            case R.id.menu_about:
-              new AboutDialog().show(getFragmentManager(), HomeActivity.DIALOG_ABOUT);
-              return true;
+      case R.id.menu_lists_add:
+        ListsDialog.newInstance(DatabaseContract.ListItemColumns.Type.EPISODE, episodeId)
+            .show(getFragmentManager(), DIALOG_LISTS_ADD);
+        return true;
 
-            case R.id.menu_lists_add:
-              ListsDialog.newInstance(DatabaseContract.ListItemColumns.Type.EPISODE, episodeId)
-                  .show(getFragmentManager(), DIALOG_LISTS_ADD);
-              return true;
-          }
-
-          return false;
-        }
-      };
+      default:
+        return super.onMenuItemClick(item);
+    }
+  }
 
   private void updateEpisodeViews(final Cursor cursor) {
     if (cursor.moveToFirst()) {

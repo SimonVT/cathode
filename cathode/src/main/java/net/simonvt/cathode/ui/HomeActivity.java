@@ -38,13 +38,13 @@ import com.squareup.otto.Subscribe;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.SyncEvent;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.event.CheckInFailedEvent;
 import net.simonvt.cathode.event.LogoutEvent;
 import net.simonvt.cathode.event.MessageEvent;
 import net.simonvt.cathode.event.RequestFailedEvent;
-import net.simonvt.cathode.SyncEvent;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic;
@@ -425,16 +425,9 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override public void onDisplayEpisode(long episodeId, String showTitle) {
-    Bundle args = EpisodeFragment.getArgs(episodeId, showTitle);
-    if (isTablet) {
-      EpisodeFragment f =
-          (EpisodeFragment) Fragment.instantiate(this, EpisodeFragment.class.getName(), args);
-      f.show(getSupportFragmentManager(), Fragments.EPISODE);
-    } else {
-      stack.push(EpisodeFragment.class, Fragments.EPISODE,
-          EpisodeFragment.getArgs(episodeId, showTitle));
-      stack.commit();
-    }
+    stack.push(EpisodeFragment.class, Fragments.EPISODE,
+        EpisodeFragment.getArgs(episodeId, showTitle));
+    stack.commit();
   }
 
   @Override
