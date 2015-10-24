@@ -16,16 +16,17 @@
 
 package net.simonvt.cathode.api.service;
 
+import com.squareup.okhttp.ResponseBody;
 import net.simonvt.cathode.api.body.CheckinItem;
 import net.simonvt.cathode.api.entity.CheckinResponse;
-import retrofit.client.Response;
+import retrofit.Call;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
 import retrofit.http.POST;
 
 public interface CheckinService {
 
-  @POST("/checkin") CheckinResponse checkin(@Body CheckinItem item);
+  @POST("/checkin") Call<CheckinResponse> checkin(@Body CheckinItem item);
 
-  @DELETE("/checkin") Response deleteCheckin();
+  @DELETE("/checkin") Call<ResponseBody> deleteCheckin();
 }

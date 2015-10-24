@@ -23,16 +23,17 @@ import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.entity.WatchlistItem;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class SyncEpisodeWatchlist extends Job {
+public class SyncEpisodeWatchlist extends CallJob<List<WatchlistItem>> {
 
   @Inject transient SyncService syncService;
 
@@ -52,7 +53,11 @@ public class SyncEpisodeWatchlist extends Job {
     return PRIORITY_USER_DATA;
   }
 
-  @Override public void perform() {
+  @Override public Call<List<WatchlistItem>> getCall() {
+    return syncService.getEpisodeWatchlist();
+  }
+
+  @Override public void handleResponse(List<WatchlistItem> watchlist) {
     Cursor c = getContentResolver().query(Episodes.EPISODES_IN_WATCHLIST, new String[] {
         DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.ID,
     }, null, null, null);
@@ -63,8 +68,6 @@ public class SyncEpisodeWatchlist extends Job {
       episodeIds.add(c.getLong(c.getColumnIndex(EpisodeColumns.ID)));
     }
     c.close();
-
-    List<WatchlistItem> watchlist = syncService.getEpisodeWatchlist();
 
     for (WatchlistItem item : watchlist) {
       final Show show = item.getShow();

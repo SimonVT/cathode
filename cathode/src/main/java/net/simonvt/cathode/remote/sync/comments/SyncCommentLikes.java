@@ -29,7 +29,6 @@ import net.simonvt.cathode.api.entity.Like;
 import net.simonvt.cathode.api.entity.Profile;
 import net.simonvt.cathode.api.enumeration.ItemTypes;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.CommentsHelper;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
@@ -37,9 +36,11 @@ import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.UserDatabaseHelper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.PagedCallJob;
+import retrofit.Call;
 import timber.log.Timber;
 
-public class SyncCommentLikes extends Job {
+public class SyncCommentLikes extends PagedCallJob<Like> {
 
   private static final int LIMIT = 100;
 
@@ -59,16 +60,11 @@ public class SyncCommentLikes extends Job {
     return PRIORITY_USER_DATA;
   }
 
-  @Override public void perform() {
-    List<Like> likes = new ArrayList<>();
-    List<Like> likesQuery;
-    int page = 1;
-    do {
-      likesQuery = usersService.getLikes(ItemTypes.COMMENTS, page, LIMIT);
-      likes.addAll(likesQuery);
-      page++;
-    } while (likesQuery.size() > 0);
+  @Override public Call<List<Like>> getCall(int page) {
+    return usersService.getLikes(ItemTypes.COMMENTS, page, LIMIT);
+  }
 
+  @Override public void handleResponse(List<Like> likes) {
     List<Long> existingLikes = new ArrayList<>();
     List<Long> deleteLikes = new ArrayList<>();
     Cursor c = getContentResolver().query(Comments.COMMENTS, new String[] {

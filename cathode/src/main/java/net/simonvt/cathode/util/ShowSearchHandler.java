@@ -19,6 +19,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -30,7 +31,8 @@ import net.simonvt.cathode.api.service.SearchService;
 import net.simonvt.cathode.event.SearchFailureEvent;
 import net.simonvt.cathode.event.ShowSearchResult;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import retrofit.RetrofitError;
+import retrofit.Call;
+import retrofit.Response;
 import timber.log.Timber;
 
 public class ShowSearchHandler {
@@ -108,31 +110,39 @@ public class ShowSearchHandler {
 
     @Override public void run() {
       try {
-        List<SearchResult> results = searchService.query(ItemType.SHOW, query);
+        Call<List<SearchResult>> call = searchService.query(ItemType.SHOW, query);
+        Response<List<SearchResult>> response = call.execute();
 
-        final List<Long> showIds = new ArrayList<Long>(results.size());
+        if (response.isSuccess()) {
+          List<SearchResult> results = response.body();
 
-        for (SearchResult result : results) {
-          Show show = result.getShow();
-          if (!TextUtils.isEmpty(show.getTitle())) {
-            final long showId = showHelper.updateShow(show);
-            showIds.add(showId);
+          final List<Long> showIds = new ArrayList<Long>(results.size());
+
+          for (SearchResult result : results) {
+            Show show = result.getShow();
+            if (!TextUtils.isEmpty(show.getTitle())) {
+              final long showId = showHelper.updateShow(show);
+              showIds.add(showId);
+            }
           }
+
+          MainHandler.post(new Runnable() {
+            @Override public void run() {
+              if (handler != null) handler.deliverResult(showIds);
+            }
+          });
+
+          return;
         }
-
-        MainHandler.post(new Runnable() {
-          @Override public void run() {
-            if (handler != null) handler.deliverResult(showIds);
-          }
-        });
-      } catch (RetrofitError e) {
-        e.printStackTrace();
-        MainHandler.post(new Runnable() {
-          @Override public void run() {
-            if (handler != null) handler.deliverFailure();
-          }
-        });
+      } catch (IOException e) {
+        Timber.e(e, "Search failed");
       }
+
+      MainHandler.post(new Runnable() {
+        @Override public void run() {
+          if (handler != null) handler.deliverFailure();
+        }
+      });
     }
   }
 }

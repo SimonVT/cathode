@@ -10,6 +10,7 @@ dependencies {
   compile parent.libraries.dagger
   apt parent.libraries.daggerCompiler
   compile parent.libraries.retrofit
+  compile parent.libraries.retrofitGson
   compile parent.libraries.okhttp
 
   compile parent.libraries.jodaTime

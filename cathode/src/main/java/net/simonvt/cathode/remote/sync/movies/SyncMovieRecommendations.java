@@ -27,15 +27,16 @@ import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.service.RecommendationsService;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobFailedException;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 import timber.log.Timber;
 
-public class SyncMovieRecommendations extends Job {
+public class SyncMovieRecommendations extends CallJob<List<Movie>> {
 
   private static final int LIMIT = 20;
 
@@ -53,7 +54,11 @@ public class SyncMovieRecommendations extends Job {
     return PRIORITY_RECOMMENDED_TRENDING;
   }
 
-  @Override public void perform() {
+  @Override public Call<List<Movie>> getCall() {
+    return recommendationsService.movies(LIMIT);
+  }
+
+  @Override public void handleResponse(List<Movie> recommendations) {
     try {
       ContentResolver resolver = getContentResolver();
 
@@ -65,7 +70,6 @@ public class SyncMovieRecommendations extends Job {
       c.close();
 
       ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
-      List<Movie> recommendations = recommendationsService.movies(LIMIT);
       for (int index = 0; index < Math.min(recommendations.size(), 25); index++) {
         Movie movie = recommendations.get(index);
         final long traktId = movie.getIds().getTrakt();

@@ -22,15 +22,16 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.body.CommentBody;
 import net.simonvt.cathode.api.entity.Comment;
 import net.simonvt.cathode.api.service.CommentsService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.CommentsHelper;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.util.Cursors;
 import timber.log.Timber;
+import retrofit.Call;
 
-public class CommentReplyJob extends Job {
+public class CommentReplyJob extends CallJob<Comment> {
 
   @Inject transient CommentsService commentsService;
 
@@ -59,14 +60,17 @@ public class CommentReplyJob extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public void perform() {
+  @Override public Call<Comment> getCall() {
     // TODO: Catch 422
     CommentBody body = CommentBody.comment(comment);
     if (spoiler) {
       body.spoiler();
     }
 
-    Comment comment = commentsService.reply(parentId, body);
+    return commentsService.reply(parentId, body);
+  }
+
+  @Override public void handleResponse(Comment comment) {
     ContentValues values = CommentsHelper.getValues(comment);
     values.put(CommentColumns.IS_USER_COMMENT, true);
 

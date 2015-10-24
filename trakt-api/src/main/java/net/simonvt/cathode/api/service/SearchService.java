@@ -19,6 +19,7 @@ package net.simonvt.cathode.api.service;
 import java.util.List;
 import net.simonvt.cathode.api.entity.SearchResult;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import retrofit.Call;
 import retrofit.http.GET;
 import retrofit.http.Query;
 
@@ -27,6 +28,6 @@ public interface SearchService {
   /**
    * Queries will search fields like the title and description.
    */
-  @GET("/search") List<SearchResult> query(@Query("type") ItemType type,
+  @GET("/search") Call<List<SearchResult>> query(@Query("type") ItemType type,
       @Query("query") String query);
 }

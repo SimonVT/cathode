@@ -30,12 +30,8 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
-import net.simonvt.cathode.R;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.cathode.remote.FourOhFourException;
 import net.simonvt.cathode.util.WakeLock;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 import timber.log.Timber;
 
 public class AuthJobService extends Service {
@@ -97,15 +93,6 @@ public class AuthJobService extends Service {
       scheduleAlarm();
       stopSelf();
     }
-
-    @Override public boolean ignoreError(Job job, Throwable t) {
-      if (!(t instanceof RetrofitError)) {
-        Timber.i("%s", job.key());
-        Timber.e(t, "Unable to execute job");
-      }
-
-      return false;
-    }
   };
 
   private void scheduleAlarm() {
@@ -126,53 +113,6 @@ public class AuthJobService extends Service {
     }
 
     Timber.d("Scheduling alarm in %d minutes", retryDelay);
-  }
-
-  public boolean handleError(Job job, Throwable t) {
-    int retryDelay = Math.max(1, this.retryDelay);
-
-    String contentText = null;
-
-    if (t instanceof RetrofitError) {
-      RetrofitError error = (RetrofitError) t;
-      switch (error.getKind()) {
-        case HTTP:
-          Response response = error.getResponse();
-          if (response != null) {
-            final int statusCode = response.getStatus();
-            if (statusCode == 401) {
-              // Notification is created elsewhere
-              return true;
-            } else if (statusCode == 404) {
-              Timber.i("%s", job.key());
-              Timber.e(new FourOhFourException(t), "404");
-              jobManager.removeJob(job);
-              //executeNext();
-              return false;
-            } else if (statusCode >= 500 && statusCode < 600) {
-              contentText = getString(R.string.error_5xx_retry_in, retryDelay);
-            } else {
-              contentText = getString(R.string.error_unknown_retry_in, retryDelay);
-            }
-          } else {
-            contentText = getString(R.string.error_unknown_retry_in, retryDelay);
-          }
-          break;
-
-        case CONVERSION:
-        case UNEXPECTED:
-          contentText = getString(R.string.error_unknown_retry_in, retryDelay);
-          break;
-
-        case NETWORK:
-          contentText = getString(R.string.error_unknown_retry_in, retryDelay);
-          break;
-      }
-    } else {
-      contentText = getString(R.string.error_unknown_retry_in, retryDelay);
-    }
-
-    return true;
   }
 
   @Produce public AuthSyncEvent provideRunningEvent() {

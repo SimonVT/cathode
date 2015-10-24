@@ -27,16 +27,17 @@ import net.simonvt.cathode.api.entity.People;
 import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.ShowsService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.PersonWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCharacters;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
+import net.simonvt.cathode.remote.CallJob;
+import retrofit.Call;
 import timber.log.Timber;
 
-public class SyncShowCast extends Job {
+public class SyncShowCast extends CallJob<People> {
 
   @Inject transient ShowsService showsService;
 
@@ -56,8 +57,11 @@ public class SyncShowCast extends Job {
     return PRIORITY_EXTRAS;
   }
 
-  @Override public void perform() {
-    People people = showsService.getPeople(traktId, Extended.FULL_IMAGES);
+  @Override public Call<People> getCall() {
+    return showsService.getPeople(traktId, Extended.FULL_IMAGES);
+  }
+
+  @Override public void handleResponse(People people) {
     List<CastMember> characters = people.getCast();
 
     final long showId = showHelper.getId(traktId);

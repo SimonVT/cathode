@@ -25,16 +25,17 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.RatingItem;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
-import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobFailedException;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 import timber.log.Timber;
 
-public class SyncMoviesRatings extends Job {
+public class SyncMoviesRatings extends CallJob<List<RatingItem>> {
 
   @Inject transient SyncService syncService;
 
@@ -50,9 +51,11 @@ public class SyncMoviesRatings extends Job {
     return PRIORITY_EXTRAS;
   }
 
-  @Override public void perform() {
-    List<RatingItem> ratings = syncService.getMovieRatings();
+  @Override public Call<List<RatingItem>> getCall() {
+    return syncService.getMovieRatings();
+  }
 
+  @Override public void handleResponse(List<RatingItem> ratings) {
     Cursor movies = getContentResolver().query(Movies.MOVIES, new String[] {
         MovieColumns.ID,
     }, MovieColumns.RATED_AT + ">0", null, null);

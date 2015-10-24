@@ -15,12 +15,14 @@
  */
 package net.simonvt.cathode.remote.action.shows;
 
+import com.squareup.okhttp.ResponseBody;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.service.RecommendationsService;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class DismissShowRecommendation extends Job {
+public class DismissShowRecommendation extends CallJob<ResponseBody> {
 
   @Inject transient RecommendationsService recommendationsService;
 
@@ -39,7 +41,10 @@ public class DismissShowRecommendation extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public void perform() {
-    recommendationsService.dismissShow(traktId);
+  @Override public Call<ResponseBody> getCall() {
+    return recommendationsService.dismissShow(traktId);
+  }
+
+  @Override public void handleResponse(ResponseBody response) {
   }
 }

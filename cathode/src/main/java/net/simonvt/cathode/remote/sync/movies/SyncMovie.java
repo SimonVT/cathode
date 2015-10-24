@@ -21,10 +21,11 @@ import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.MoviesService;
 import net.simonvt.cathode.provider.MovieWrapper;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.sync.comments.SyncComments;
+import retrofit.Call;
 
-public class SyncMovie extends Job {
+public class SyncMovie extends CallJob<Movie> {
 
   @Inject transient MoviesService moviesService;
 
@@ -42,8 +43,11 @@ public class SyncMovie extends Job {
     return PRIORITY_MOVIES;
   }
 
-  @Override public void perform() {
-    Movie movie = moviesService.getSummary(traktId, Extended.FULL_IMAGES);
+  @Override public Call<Movie> getCall() {
+    return moviesService.getSummary(traktId, Extended.FULL_IMAGES);
+  }
+
+  @Override public void handleResponse(Movie movie) {
     MovieWrapper.updateOrInsertMovie(getContentResolver(), movie);
 
     queue(new SyncMovieCrew(traktId));

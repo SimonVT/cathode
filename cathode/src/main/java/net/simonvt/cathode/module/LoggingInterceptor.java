@@ -14,30 +14,48 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.api;
+package net.simonvt.cathode.module;
 
 import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.Interceptor;
+import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.squareup.okhttp.ResponseBody;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import net.simonvt.cathode.BuildConfig;
+import net.simonvt.cathode.api.AuthInterceptor;
+import net.simonvt.cathode.api.FourOhFourException;
+import net.simonvt.cathode.api.TraktException;
+import okio.Buffer;
+import okio.BufferedSource;
 import timber.log.Timber;
 
 public class LoggingInterceptor implements Interceptor {
+
+  private static final Charset UTF8 = Charset.forName("UTF-8");
 
   @Override public Response intercept(Chain chain) throws IOException {
     Request request = chain.request();
     Response response = chain.proceed(request);
 
     final int statusCode = response.code();
+
     if (statusCode == 404 || statusCode == 412) {
       Timber.i("Url: %s", request.urlString());
-      Headers headers = request.headers();
+      Timber.i("Status code: %d", statusCode);
+
+      Headers headers = response.headers();
       for (int i = 0; i < headers.size(); i++) {
         String name = headers.name(i);
-        if (!TraktInterceptor.HEADER_AUTHORIZATION.equals(name)) {
+        if (BuildConfig.DEBUG || !AuthInterceptor.HEADER_AUTHORIZATION.equals(name)) {
           Timber.i("%s: %s", name, headers.get(headers.name(i)));
         }
+      }
+
+      if (BuildConfig.DEBUG) {
+        Timber.d("%s", response.body().string());
       }
 
       if (statusCode == 404) {
@@ -45,6 +63,31 @@ public class LoggingInterceptor implements Interceptor {
             statusCode);
       } else {
         Timber.e(new TraktException("Status code " + statusCode), "Status code %d", statusCode);
+      }
+    } else if (BuildConfig.DEBUG && statusCode >= 400) {
+      Timber.d("Url: %s", request.urlString());
+      Timber.d("Status code: %d", statusCode);
+
+      Headers headers = response.headers();
+      for (int i = 0; i < headers.size(); i++) {
+        String name = headers.name(i);
+        Timber.d("%s: %s", name, headers.get(headers.name(i)));
+      }
+
+      // Timber.d("%s", response.body().string());
+      ResponseBody responseBody = response.body();
+      BufferedSource source = responseBody.source();
+      source.request(Long.MAX_VALUE); // Buffer the entire body.
+      Buffer buffer = source.buffer();
+
+      Charset charset = UTF8;
+      MediaType contentType = responseBody.contentType();
+      if (contentType != null) {
+        charset = contentType.charset(UTF8);
+      }
+
+      if (responseBody.contentLength() != 0) {
+        Timber.d(buffer.clone().readString(charset));
       }
     }
 

@@ -16,10 +16,11 @@
 
 package net.simonvt.cathode.api.service;
 
+import com.squareup.okhttp.ResponseBody;
 import java.util.List;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.entity.Show;
-import retrofit.client.Response;
+import retrofit.Call;
 import retrofit.http.DELETE;
 import retrofit.http.GET;
 import retrofit.http.Path;
@@ -33,7 +34,7 @@ public interface RecommendationsService {
    * Personalized movie recommendations for a user. Results returned with the top recommendation
    * first.
    */
-  @GET("/recommendations/movies") List<Movie> movies();
+  @GET("/recommendations/movies") Call<List<Movie>> movies();
 
   /**
    * <b>OAuth Required</b>
@@ -41,16 +42,14 @@ public interface RecommendationsService {
    * Personalized movie recommendations for a user. Results returned with the top recommendation
    * first.
    */
-  @GET("/recommendations/movies") List<Movie> movies(@Query("limit") int limit);
+  @GET("/recommendations/movies") Call<List<Movie>> movies(@Query("limit") int limit);
 
   /**
    * <b>OAuth Required</b>
    * <p>
    * Dismiss a movie from getting recommended anymore.
-   *
-   * @param id Trakt ID
    */
-  @DELETE("/recommendations/movies/{id}") Response dismissMovie(@Path("id") long id);
+  @DELETE("/recommendations/movies/{id}") Call<ResponseBody> dismissMovie(@Path("id") long id);
 
   /**
    * <b>OAuth Required</b>
@@ -58,7 +57,7 @@ public interface RecommendationsService {
    * Personalized show recommendations for a user. Results returned with the top recommendation
    * first.
    */
-  @GET("/recommendations/shows") List<Show> shows();
+  @GET("/recommendations/shows") Call<List<Show>> shows();
 
   /**
    * <b>OAuth Required</b>
@@ -66,14 +65,12 @@ public interface RecommendationsService {
    * Personalized show recommendations for a user. Results returned with the top recommendation
    * first.
    */
-  @GET("/recommendations/shows") List<Show> shows(@Query("limit") int limit);
+  @GET("/recommendations/shows") Call<List<Show>> shows(@Query("limit") int limit);
 
   /**
    * <b>OAuth Required</b>
    * <p>
    * Dismiss a show from getting recommended anymore.
-   *
-   * @param id Trakt ID
    */
-  @DELETE("recommendations/shows/{id}") Response dismissShow(@Path("id") long id);
+  @DELETE("recommendations/shows/{id}") Call<ResponseBody> dismissShow(@Path("id") long id);
 }

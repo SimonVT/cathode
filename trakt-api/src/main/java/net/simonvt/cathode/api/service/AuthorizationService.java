@@ -18,10 +18,11 @@ package net.simonvt.cathode.api.service;
 
 import net.simonvt.cathode.api.entity.AccessToken;
 import net.simonvt.cathode.api.entity.TokenRequest;
+import retrofit.Call;
 import retrofit.http.Body;
 import retrofit.http.POST;
 
 public interface AuthorizationService {
 
-  @POST("/oauth/token") AccessToken getToken(@Body TokenRequest tokenRequest);
+  @POST("/oauth/token") Call<AccessToken> getToken(@Body TokenRequest tokenRequest);
 }

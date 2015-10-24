@@ -33,6 +33,7 @@ import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.enumeration.HiddenSection;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.enumeration.ItemTypes;
+import retrofit.Call;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.POST;
@@ -47,7 +48,7 @@ public interface UsersService {
    * Get the user's settings so you can align your app's experience with what they're used to on
    * the trakt website.
    */
-  @GET("/users/settings") UserSettings getUserSettings();
+  @GET("/users/settings") Call<UserSettings> getUserSettings();
 
   /**
    * <b>OAuth Optional</b>
@@ -55,7 +56,7 @@ public interface UsersService {
    * Get a user's profile information. If the user is private, info will only be returned if you
    * send OAuth and are either that user or an approved follower.
    */
-  @GET("/users/me") Profile getProfile(@Query("extended") Extended extended);
+  @GET("/users/me") Call<Profile> getProfile(@Query("extended") Extended extended);
 
   /**
    * <b>OAuth Required</b>
@@ -64,7 +65,7 @@ public interface UsersService {
    * Get hidden items for a section. This will return an array of standard media objects.
    * You can optionally limit the type of results to return.
    */
-  @GET("/users/hidden/{section}") List<HiddenItem> getHiddenItems(
+  @GET("/users/hidden/{section}") Call<List<HiddenItem>> getHiddenItems(
       @Path("section") HiddenSection section, @Query("page") int page, @Query("limit") int limit);
 
   /**
@@ -77,7 +78,7 @@ public interface UsersService {
    * @param type Possible values: {@link ItemType#SHOW}, {@link ItemType#SEASON},
    * {@link ItemType#MOVIE}
    */
-  @GET("/users/hidden/{section}") List<HiddenItem> getHiddenItems(
+  @GET("/users/hidden/{section}") Call<List<HiddenItem>> getHiddenItems(
       @Path("section") HiddenSection section, @Query("type") ItemType type, @Query("page") int page,
       @Query("limit") int limit);
 
@@ -86,47 +87,47 @@ public interface UsersService {
    * <p>
    * Returns all movies or shows a user has watched sorted by most plays.
    */
-  @GET("/users/{username}/watching") Watching watching();
+  @GET("/users/me/watching") Call<Watching> watching();
 
   /**
    * <b>OAuth Optional</b>
    * <p>
    * Returns all movies or shows a user has watched sorted by most plays.
    */
-  @GET("/users/{username}/watching") Watching watching(@Path("username") String username);
+  @GET("/users/{username}/watching") Call<Watching> watching(@Path("username") String username);
 
   /**
    * <b>OAuth Required</b>
    * <p>
    * Returns all custom lists for a user.
    */
-  @GET("/users/{username}/lists") List<CustomList> lists();
+  @GET("/users/me/lists") Call<List<CustomList>> lists();
 
   /**
    * <b>OAuth Optional</b>
    * <p>
    * Returns all custom lists for a user.
    */
-  @GET("/users/{username}/lists") List<CustomList> lists(@Path("username") String username);
+  @GET("/users/{username}/lists") Call<List<CustomList>> lists(@Path("username") String username);
 
   /**
    * <b>OAuth Required</b>
    * <p>
    * Get all items on a custom list. Items can be movies, shows, seasons, episodes, or people.
    */
-  @GET("/users/{username}/lists/{id}/items") List<ListItem> listItems(@Path("id") long id);
+  @GET("/users/me/lists/{id}/items") Call<List<ListItem>> listItems(@Path("id") long id);
 
   /**
    * <b>OAuth Optional</b>
    * <p>
    * Get all items on a custom list. Items can be movies, shows, seasons, episodes, or people.
    */
-  @GET("/users/{username}/lists/{id}/items") List<ListItem> listItems(
+  @GET("/users/{username}/lists/{id}/items") Call<List<ListItem>> listItems(
       @Path("username") String username, @Path("id") long id);
 
-  @POST("/users/{username}/lists") CustomList createList(@Body CreateListBody createList);
+  @POST("/users/me/lists") Call<CustomList> createList(@Body CreateListBody createList);
 
-  @POST("/users/{username}/lists") CustomList createList(@Path("username") String username,
+  @POST("/users/{username}/lists") Call<CustomList> createList(@Path("username") String username,
       @Body CreateListBody createList);
 
   /**
@@ -135,8 +136,8 @@ public interface UsersService {
    * Add one or more items to a custom list. Items can be movies, shows, seasons, episodes,
    * or people.
    */
-  @POST("/users/{username}/lists/{id}/items") ListItemActionResponse addItems(
-      @Path("id") long id, @Body ListItemActionBody item);
+  @POST("/users/me/lists/{id}/items") Call<ListItemActionResponse> addItems(@Path("id") long id,
+      @Body ListItemActionBody item);
 
   /**
    * <b>OAuth Required</b>
@@ -144,7 +145,7 @@ public interface UsersService {
    * Add one or more items to a custom list. Items can be movies, shows, seasons, episodes,
    * or people.
    */
-  @POST("/users/{username}/lists/{id}/items") ListItemActionResponse addItems(
+  @POST("/users/{username}/lists/{id}/items") Call<ListItemActionResponse> addItems(
       @Path("username") String username, @Path("id") long id, @Body ListItemActionBody item);
 
   /**
@@ -152,7 +153,7 @@ public interface UsersService {
    * <p>
    * Remove one or more items from a custom list.
    */
-  @POST("/users/{username}/lists/{id}/items/remove") ListItemActionResponse removeItem(
+  @POST("/users/me/lists/{id}/items/remove") Call<ListItemActionResponse> removeItem(
       @Path("id") long id, @Body ListItemActionBody item);
 
   /**
@@ -160,7 +161,7 @@ public interface UsersService {
    * <p>
    * Remove one or more items from a custom list.
    */
-  @POST("/users/{username}/lists/{id}/items/remove") ListItemActionResponse removeItem(
+  @POST("/users/{username}/lists/{id}/items/remove") Call<ListItemActionResponse> removeItem(
       @Path("username") String username, @Path("id") long id, @Body ListItemActionBody item);
 
   /**
@@ -169,7 +170,7 @@ public interface UsersService {
    * <p>
    * Returns comments a user has posted sorted by most recent.
    */
-  @GET("/users/me/comments/{comment_type}/{type}") List<CommentItem> getUserComments(
+  @GET("/users/me/comments/{comment_type}/{type}") Call<List<CommentItem>> getUserComments(
       @Path("comment_type") CommentType commentType, @Path("type") ItemTypes itemTypes,
       @Query("page") int page, @Query("limit") int limit);
 
@@ -180,6 +181,6 @@ public interface UsersService {
    * Get items a user likes. This will return an array of standard media objects.
    * @param itemTypes One of {@link ItemTypes#COMMENTS} and {@link ItemTypes#LISTS}.
    */
-  @GET("/users/likes/{type}") List<Like> getLikes(@Path("type") ItemTypes itemTypes,
+  @GET("/users/likes/{type}") Call<List<Like>> getLikes(@Path("type") ItemTypes itemTypes,
       @Query("page") int page, @Query("limit") int limit);
 }

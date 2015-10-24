@@ -25,16 +25,17 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.RatingItem;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
-import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobFailedException;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 import timber.log.Timber;
 
-public class SyncShowsRatings extends Job {
+public class SyncShowsRatings extends CallJob<List<RatingItem>> {
 
   @Inject transient SyncService syncService;
 
@@ -52,9 +53,11 @@ public class SyncShowsRatings extends Job {
     return PRIORITY_EXTRAS;
   }
 
-  @Override public void perform() {
-    List<RatingItem> ratings = syncService.getShowRatings();
+  @Override public Call<List<RatingItem>> getCall() {
+    return syncService.getShowRatings();
+  }
 
+  @Override public void handleResponse(List<RatingItem> ratings) {
     Cursor shows = getContentResolver().query(Shows.SHOWS, new String[] {
         ShowColumns.ID,
     }, ShowColumns.RATED_AT + ">0", null, null);

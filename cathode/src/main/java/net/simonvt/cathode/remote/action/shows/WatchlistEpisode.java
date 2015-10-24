@@ -17,13 +17,15 @@ package net.simonvt.cathode.remote.action.shows;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.SyncItems;
+import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.api.util.TimeUtils;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class WatchlistEpisode extends Job {
+public class WatchlistEpisode extends CallJob<SyncResponse> {
 
   @Inject transient SyncService syncService;
 
@@ -71,17 +73,19 @@ public class WatchlistEpisode extends Job {
     return true;
   }
 
-  @Override public void perform() {
+  @Override public Call<SyncResponse> getCall() {
     if (inWatchlist) {
       SyncItems items = new SyncItems();
       items.show(traktId).season(season).episode(episode).listedAt(listedAt);
-      syncService.watchlist(items);
+      return syncService.watchlist(items);
     } else {
       SyncItems items = new SyncItems();
       items.show(traktId).season(season).episode(episode);
-      syncService.unwatchlist(items);
+      return syncService.unwatchlist(items);
     }
+  }
 
+  @Override public void handleResponse(SyncResponse response) {
     episodeHelper.setIsInWatchlist(traktId, season, episode, inWatchlist,
         TimeUtils.getMillis(listedAt));
   }

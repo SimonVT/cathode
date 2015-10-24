@@ -16,12 +16,14 @@
 
 package net.simonvt.cathode.remote.action.comments;
 
+import com.squareup.okhttp.ResponseBody;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.service.CommentsService;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class DeleteCommentJob extends Job {
+public class DeleteCommentJob extends CallJob<ResponseBody> {
 
   @Inject transient CommentsService commentsService;
 
@@ -44,9 +46,11 @@ public class DeleteCommentJob extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public void perform() {
+  @Override public Call<ResponseBody> getCall() {
     // TODO: Catch 422
+    return commentsService.delete(commentId);
+  }
 
-    commentsService.delete(commentId);
+  @Override public void handleResponse(ResponseBody response) {
   }
 }

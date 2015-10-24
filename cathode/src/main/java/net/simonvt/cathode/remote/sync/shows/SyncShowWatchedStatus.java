@@ -25,17 +25,18 @@ import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.ShowProgress;
 import net.simonvt.cathode.api.service.ShowsService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 import timber.log.Timber;
 
-public class SyncShowWatchedStatus extends Job {
+public class SyncShowWatchedStatus extends CallJob<ShowProgress> {
 
   @Inject transient ShowsService showsService;
 
@@ -58,8 +59,11 @@ public class SyncShowWatchedStatus extends Job {
     return PRIORITY_USER_DATA;
   }
 
-  @Override public void perform() {
-    ShowProgress progress = showsService.getWatchedProgress(traktId);
+  @Override public Call<ShowProgress> getCall() {
+    return showsService.getWatchedProgress(traktId);
+  }
+
+  @Override public void handleResponse(ShowProgress progress) {
     ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
     final long showId = showResult.showId;
     final boolean didShowExist = !showResult.didCreate;

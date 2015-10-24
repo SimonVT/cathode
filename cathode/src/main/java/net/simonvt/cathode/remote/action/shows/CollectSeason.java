@@ -17,13 +17,15 @@ package net.simonvt.cathode.remote.action.shows;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.SyncItems;
+import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.api.util.TimeUtils;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class CollectSeason extends Job {
+public class CollectSeason extends CallJob<SyncResponse> {
 
   @Inject transient SyncService syncService;
 
@@ -65,17 +67,19 @@ public class CollectSeason extends Job {
     return true;
   }
 
-  @Override public void perform() {
+  @Override public Call<SyncResponse> getCall() {
     if (inCollection) {
       SyncItems items = new SyncItems();
       items.show(traktId).season(season).collectedAt(collectedAt);
-      syncService.collect(items);
+      return syncService.collect(items);
     } else {
       SyncItems items = new SyncItems();
       items.show(traktId).season(season);
-      syncService.uncollect(items);
+      return syncService.uncollect(items);
     }
+  }
 
+  @Override public void handleResponse(SyncResponse response) {
     seasonHelper.setIsInCollection(traktId, season, inCollection, TimeUtils.getMillis(collectedAt));
   }
 }

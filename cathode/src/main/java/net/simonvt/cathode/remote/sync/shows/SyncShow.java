@@ -22,10 +22,11 @@ import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.SeasonService;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.sync.comments.SyncComments;
+import retrofit.Call;
 
-public class SyncShow extends Job {
+public class SyncShow extends CallJob<Show> {
 
   @Inject transient ShowsService showsService;
   @Inject transient SeasonService seasonService;
@@ -53,8 +54,11 @@ public class SyncShow extends Job {
     return PRIORITY_SHOWS;
   }
 
-  @Override public void perform() {
-    Show show = showsService.getSummary(traktId, Extended.FULL_IMAGES);
+  @Override public Call<Show> getCall() {
+    return showsService.getSummary(traktId, Extended.FULL_IMAGES);
+  }
+
+  @Override public void handleResponse(Show show) {
     showHelper.updateShow(show);
 
     if (!syncAdditionalInfo) {

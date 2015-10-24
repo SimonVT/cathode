@@ -29,7 +29,6 @@ import net.simonvt.cathode.api.entity.Season;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.enumeration.HiddenSection;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.HiddenColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
@@ -42,11 +41,13 @@ import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.PagedCallJob;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
+import retrofit.Call;
 import timber.log.Timber;
 
-public class SyncHiddenSection extends Job {
+public class SyncHiddenSection extends PagedCallJob<HiddenItem> {
 
   @Inject transient UsersService usersService;
 
@@ -68,7 +69,11 @@ public class SyncHiddenSection extends Job {
     return 0;
   }
 
-  @Override public void perform() {
+  @Override public Call<List<HiddenItem>> getCall(int page) {
+    return usersService.getHiddenItems(section, page, 25);
+  }
+
+  @Override public void handleResponse(List<HiddenItem> items) {
     String hiddenColumn;
     switch (section) {
       case CALENDAR:
@@ -123,95 +128,86 @@ public class SyncHiddenSection extends Job {
 
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
-    List<HiddenItem> items;
-
-    int page = 1;
-    do {
-      items = usersService.getHiddenItems(section, page, 25);
-      page++;
-
-      for (HiddenItem item : items) {
-        switch (item.getType()) {
-          case SHOW: {
-            Show show = item.getShow();
-            final long traktId = show.getIds().getTrakt();
-            ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
-            final long showId = showResult.showId;
-            if (showResult.didCreate) {
-              queue(new SyncShow(traktId));
-            }
-
-            Timber.d("[" + section.toString() + "] Hiding show: " + show.getIds().getTrakt());
-
-            if (!unhandledShows.remove(showId)) {
-              Timber.d("Was not already hidden: " + show.getTitle());
-              ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(showId))
-                  .withValue(hiddenColumn, 1)
-                  .build();
-              ops.add(op);
-            }
-            break;
+    for (HiddenItem item : items) {
+      switch (item.getType()) {
+        case SHOW: {
+          Show show = item.getShow();
+          final long traktId = show.getIds().getTrakt();
+          ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
+          final long showId = showResult.showId;
+          if (showResult.didCreate) {
+            queue(new SyncShow(traktId));
           }
 
-          case SEASON: {
-            Show show = item.getShow();
-            final long traktId = show.getIds().getTrakt();
-            ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
-            final long showId = showResult.showId;
-            if (showResult.didCreate) {
-              queue(new SyncShow(traktId));
-            }
+          Timber.d("[" + section.toString() + "] Hiding show: " + show.getIds().getTrakt());
 
-            Season season = item.getSeason();
-            final int seasonNumber = season.getNumber();
-            SeasonDatabaseHelper.IdResult result = seasonHelper.getIdOrCreate(showId, seasonNumber);
-            final long seasonId = result.id;
-            if (result.didCreate) {
-              if (!showResult.didCreate) {
-                queue(new SyncShow(show.getIds().getTrakt()));
-              }
-            }
+          if (!unhandledShows.remove(showId)) {
+            Timber.d("Was not already hidden: " + show.getTitle());
+            ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(showId))
+                .withValue(hiddenColumn, 1)
+                .build();
+            ops.add(op);
+          }
+          break;
+        }
 
-            Timber.d("["
-                + section.toString()
-                + "] Hiding season: "
-                + show.getIds().getTrakt()
-                + " - "
-                + seasonNumber);
-
-            if (!unhandledSeasons.remove(seasonId)) {
-              ContentProviderOperation op =
-                  ContentProviderOperation.newUpdate(Seasons.withId(seasonId))
-                      .withValue(hiddenColumn, 1)
-                      .build();
-              ops.add(op);
-            }
-            break;
+        case SEASON: {
+          Show show = item.getShow();
+          final long traktId = show.getIds().getTrakt();
+          ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
+          final long showId = showResult.showId;
+          if (showResult.didCreate) {
+            queue(new SyncShow(traktId));
           }
 
-          case MOVIE: {
-            Movie movie = item.getMovie();
-            long movieId = MovieWrapper.getMovieId(getContentResolver(), movie);
-            if (movieId == -1L) {
-              final long traktId = movie.getIds().getTrakt();
-              movieId = MovieWrapper.createMovie(getContentResolver(), traktId);
-              queue(new SyncMovie(traktId));
+          Season season = item.getSeason();
+          final int seasonNumber = season.getNumber();
+          SeasonDatabaseHelper.IdResult result = seasonHelper.getIdOrCreate(showId, seasonNumber);
+          final long seasonId = result.id;
+          if (result.didCreate) {
+            if (!showResult.didCreate) {
+              queue(new SyncShow(show.getIds().getTrakt()));
             }
-
-            Timber.d("[" + section.toString() + "] Hiding movie: " + movie.getIds().getTrakt());
-
-            if (!unhandledMovies.remove(movieId)) {
-              ContentProviderOperation op =
-                  ContentProviderOperation.newUpdate(Movies.withId(movieId))
-                      .withValue(hiddenColumn, 1)
-                      .build();
-              ops.add(op);
-            }
-            break;
           }
+
+          Timber.d("["
+              + section.toString()
+              + "] Hiding season: "
+              + show.getIds().getTrakt()
+              + " - "
+              + seasonNumber);
+
+          if (!unhandledSeasons.remove(seasonId)) {
+            ContentProviderOperation op =
+                ContentProviderOperation.newUpdate(Seasons.withId(seasonId))
+                    .withValue(hiddenColumn, 1)
+                    .build();
+            ops.add(op);
+          }
+          break;
+        }
+
+        case MOVIE: {
+          Movie movie = item.getMovie();
+          long movieId = MovieWrapper.getMovieId(getContentResolver(), movie);
+          if (movieId == -1L) {
+            final long traktId = movie.getIds().getTrakt();
+            movieId = MovieWrapper.createMovie(getContentResolver(), traktId);
+            queue(new SyncMovie(traktId));
+          }
+
+          Timber.d("[" + section.toString() + "] Hiding movie: " + movie.getIds().getTrakt());
+
+          if (!unhandledMovies.remove(movieId)) {
+            ContentProviderOperation op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
+                .withValue(hiddenColumn, 1)
+                .build();
+            ops.add(op);
+          }
+          break;
         }
       }
-    } while (items.size() > 0);
+    }
 
     for (long showId : unhandledShows) {
       ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(showId))

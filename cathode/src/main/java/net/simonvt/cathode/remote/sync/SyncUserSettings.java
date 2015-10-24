@@ -19,11 +19,12 @@ package net.simonvt.cathode.remote.sync;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.UserSettings;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.settings.Settings;
+import retrofit.Call;
 
-public class SyncUserSettings extends Job {
+public class SyncUserSettings extends CallJob<UserSettings> {
 
   @Inject transient UsersService usersService;
 
@@ -39,8 +40,11 @@ public class SyncUserSettings extends Job {
     return PRIORITY_USER_DATA;
   }
 
-  @Override public void perform() {
-    UserSettings userSettings = usersService.getUserSettings();
+  @Override public Call<UserSettings> getCall() {
+    return usersService.getUserSettings();
+  }
+
+  @Override public void handleResponse(UserSettings userSettings) {
     Settings.updateProfile(getContext(), userSettings);
   }
 }

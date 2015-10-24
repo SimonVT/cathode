@@ -28,14 +28,15 @@ import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.entity.TrendingItem;
 import net.simonvt.cathode.api.service.MoviesService;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobFailedException;
+import net.simonvt.cathode.remote.CallJob;
+import retrofit.Call;
 import timber.log.Timber;
 
-public class SyncTrendingMovies extends Job {
+public class SyncTrendingMovies extends CallJob<List<TrendingItem>> {
 
   private static final int LIMIT = 20;
 
@@ -49,51 +50,53 @@ public class SyncTrendingMovies extends Job {
     return PRIORITY_RECOMMENDED_TRENDING;
   }
 
-  @Override public void perform() {
+  @Override public Call<List<TrendingItem>> getCall() {
+    return moviesService.getTrendingMovies(LIMIT);
+  }
+
+  @Override public void handleResponse(List<TrendingItem> movies) {
+    ContentResolver resolver = getContentResolver();
+
+    ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+    Cursor c = resolver.query(Movies.TRENDING, new String[] {
+        MovieColumns.ID,
+    }, null, null, null);
+    List<Long> trendingIds = new ArrayList<Long>();
+    while (c.moveToNext()) {
+      final long movieId = c.getLong(c.getColumnIndex(MovieColumns.ID));
+      trendingIds.add(movieId);
+    }
+    c.close();
+
+    for (int i = 0, count = Math.min(movies.size(), 25); i < count; i++) {
+      TrendingItem item = movies.get(i);
+      Movie movie = item.getMovie();
+      final long traktId = movie.getIds().getTrakt();
+
+      long movieId = MovieWrapper.getMovieId(resolver, traktId);
+      if (movieId == -1L) {
+        movieId = MovieWrapper.createMovie(getContentResolver(), traktId);
+        queue(new SyncMovie(traktId));
+      }
+
+      trendingIds.remove(movieId);
+
+      ContentValues cv = new ContentValues();
+      cv.put(MovieColumns.TRENDING_INDEX, i);
+      ContentProviderOperation op =
+          ContentProviderOperation.newUpdate(Movies.withId(movieId)).withValues(cv).build();
+      ops.add(op);
+    }
+
+    for (Long movieId : trendingIds) {
+      ContentValues cv = new ContentValues();
+      cv.put(MovieColumns.TRENDING_INDEX, -1);
+      ContentProviderOperation op =
+          ContentProviderOperation.newUpdate(Movies.withId(movieId)).withValues(cv).build();
+      ops.add(op);
+    }
+
     try {
-      ContentResolver resolver = getContentResolver();
-
-      List<TrendingItem> movies = moviesService.getTrendingMovies(LIMIT);
-
-      ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
-      Cursor c = resolver.query(Movies.TRENDING, new String[] {
-          MovieColumns.ID,
-      }, null, null, null);
-      List<Long> trendingIds = new ArrayList<Long>();
-      while (c.moveToNext()) {
-        final long movieId = c.getLong(c.getColumnIndex(MovieColumns.ID));
-        trendingIds.add(movieId);
-      }
-      c.close();
-
-      for (int i = 0, count = Math.min(movies.size(), 25); i < count; i++) {
-        TrendingItem item = movies.get(i);
-        Movie movie = item.getMovie();
-        final long traktId = movie.getIds().getTrakt();
-
-        long movieId = MovieWrapper.getMovieId(resolver, traktId);
-        if (movieId == -1L) {
-          movieId = MovieWrapper.createMovie(getContentResolver(), traktId);
-          queue(new SyncMovie(traktId));
-        }
-
-        trendingIds.remove(movieId);
-
-        ContentValues cv = new ContentValues();
-        cv.put(MovieColumns.TRENDING_INDEX, i);
-        ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(Movies.withId(movieId)).withValues(cv).build();
-        ops.add(op);
-      }
-
-      for (Long movieId : trendingIds) {
-        ContentValues cv = new ContentValues();
-        cv.put(MovieColumns.TRENDING_INDEX, -1);
-        ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(Movies.withId(movieId)).withValues(cv).build();
-        ops.add(op);
-      }
-
       resolver.applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
     } catch (RemoteException e) {
       Timber.e(e, "SyncTrendingMoviesTask failed");

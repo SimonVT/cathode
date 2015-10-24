@@ -405,8 +405,8 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String LIKES = "likes";
     @DataType(INTEGER) @DefaultValue("0") String USER_RATING = "userRating";
 
-    @DataType(INTEGER) @NotNull String ITEM_ID = "itemId";
-    @DataType(INTEGER) @NotNull String ITEM_TYPE = "itemType";
+    @DataType(INTEGER) String ITEM_ID = "itemId";
+    @DataType(INTEGER) String ITEM_TYPE = "itemType";
 
     @DataType(INTEGER) @References(table = DatabaseSchematic.Tables.USERS, column = UserColumns.ID)
     String USER_ID = "userId";

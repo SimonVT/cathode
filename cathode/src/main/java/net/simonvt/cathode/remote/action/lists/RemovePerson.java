@@ -18,13 +18,14 @@ package net.simonvt.cathode.remote.action.lists;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.ListItemActionBody;
+import net.simonvt.cathode.api.entity.ListItemActionResponse;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
+import retrofit.Response;
 
-public class RemovePerson extends Job {
+public class RemovePerson extends CallJob<ListItemActionResponse> {
 
   @Inject transient UsersService usersService;
 
@@ -50,17 +51,22 @@ public class RemovePerson extends Job {
     return true;
   }
 
-  @Override public void perform() {
-    try {
-      ListItemActionBody body = new ListItemActionBody();
-      body.person(traktId);
-      usersService.removeItem(listId, body);
-    } catch (RetrofitError error) {
-      Response response = error.getResponse();
+  @Override public Call<ListItemActionResponse> getCall() {
+    ListItemActionBody body = new ListItemActionBody();
+    body.person(traktId);
+    return usersService.removeItem(listId, body);
+  }
+
+  @Override protected boolean handleError(Response<ListItemActionResponse> response) {
+    if (response.code() == 500) {
+      // TODO: Remove once resolved
       // The trakt API has a bug where removing a person returns a 500 status code.
-      if (response == null || response.getStatus() != 500) {
-        throw error;
-      }
+      return true;
     }
+
+    return super.handleError(response);
+  }
+
+  @Override public void handleResponse(ListItemActionResponse response) {
   }
 }

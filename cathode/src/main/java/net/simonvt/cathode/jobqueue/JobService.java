@@ -42,11 +42,8 @@ import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.cathode.remote.FourOhFourException;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.HomeActivity;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 import timber.log.Timber;
 
 public class JobService extends Service {
@@ -145,6 +142,7 @@ public class JobService extends Service {
     @Override public void onQueueFailed() {
       Timber.d("JobService queue failed");
 
+      /*
       if (displayNotification && contentText != null) {
         Intent clickIntent = new Intent(JobService.this, HomeActivity.class);
         PendingIntent clickPi = PendingIntent.getActivity(JobService.this, 0, clickIntent, 0);
@@ -160,11 +158,13 @@ public class JobService extends Service {
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         nm.notify(NOTIFICATION_FAILURE, builder.build());
       }
+      */
 
       scheduleAlarm();
       stopSelf();
     }
 
+    /*
     @Override public boolean ignoreError(Job job, Throwable t) {
       if (!(t instanceof RetrofitError)) {
         Timber.i("%s", job.key());
@@ -208,70 +208,8 @@ public class JobService extends Service {
 
       return false;
     }
+    */
   };
-
-  public boolean handleError(Job job, Throwable t) {
-    int retryDelay = Math.max(1, this.retryDelay);
-
-    String contentText = null;
-
-    if (t instanceof RetrofitError) {
-      RetrofitError error = (RetrofitError) t;
-      switch (error.getKind()) {
-        case HTTP:
-          Response response = error.getResponse();
-          if (response != null) {
-            final int statusCode = response.getStatus();
-            if (statusCode == 401) {
-              // Notification is created elsewhere
-              return true;
-            } else if (statusCode == 404) {
-              Timber.i("%s", job.key());
-              Timber.e(new FourOhFourException(t), "404");
-              //jobManager.jobDone(job);
-              //executeNext();
-              return false;
-            } else if (statusCode >= 500 && statusCode < 600) {
-              contentText = getString(R.string.error_5xx_retry_in, retryDelay);
-            } else {
-              contentText = getString(R.string.error_unknown_retry_in, retryDelay);
-            }
-          } else {
-            contentText = getString(R.string.error_unknown_retry_in, retryDelay);
-          }
-          break;
-
-        case CONVERSION:
-        case UNEXPECTED:
-          contentText = getString(R.string.error_unknown_retry_in, retryDelay);
-          break;
-
-        case NETWORK:
-          contentText = getString(R.string.error_unknown_retry_in, retryDelay);
-          break;
-      }
-    } else {
-      contentText = getString(R.string.error_unknown_retry_in, retryDelay);
-    }
-
-    if (displayNotification) {
-      Intent clickIntent = new Intent(JobService.this, HomeActivity.class);
-      PendingIntent clickPi = PendingIntent.getActivity(JobService.this, 0, clickIntent, 0);
-
-      Notification.Builder builder = new Notification.Builder(JobService.this) //
-          .setSmallIcon(R.drawable.ic_notification)
-          .setTicker(getString(R.string.lost_connection))
-          .setContentTitle(getString(R.string.lost_connection, retryDelay))
-          .setContentIntent(clickPi)
-          .setContentText(contentText)
-          .setStyle(new Notification.BigTextStyle().bigText(contentText));
-
-      NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-      nm.notify(NOTIFICATION_FAILURE, builder.build());
-    }
-
-    return true;
-  }
 
   @Produce public JobSyncEvent provideRunningEvent() {
     return new JobSyncEvent(true);

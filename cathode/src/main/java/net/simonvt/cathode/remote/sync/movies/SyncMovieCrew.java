@@ -28,7 +28,6 @@ import net.simonvt.cathode.api.entity.People;
 import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.MoviesService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCrewColumns;
@@ -37,9 +36,11 @@ import net.simonvt.cathode.provider.PersonWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieCast;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieCrew;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
+import net.simonvt.cathode.remote.CallJob;
+import retrofit.Call;
 import timber.log.Timber;
 
-public class SyncMovieCrew extends Job {
+public class SyncMovieCrew extends CallJob<People> {
 
   @Inject transient MoviesService moviesService;
 
@@ -57,9 +58,11 @@ public class SyncMovieCrew extends Job {
     return PRIORITY_EXTRAS;
   }
 
-  @Override public void perform() {
-    People people = moviesService.getPeople(traktId, Extended.FULL_IMAGES);
+  @Override public Call<People> getCall() {
+    return moviesService.getPeople(traktId, Extended.FULL_IMAGES);
+  }
 
+  @Override public void handleResponse(People people) {
     final long movieId = MovieWrapper.getMovieId(getContentResolver(), traktId);
     if (movieId == -1L) {
       return;

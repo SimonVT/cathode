@@ -28,8 +28,6 @@ public class JobExecutor {
     void onQueueEmpty();
 
     void onQueueFailed();
-
-    boolean ignoreError(Job job, Throwable t);
   }
 
   private JobManager jobManager;
@@ -181,12 +179,11 @@ public class JobExecutor {
 
   private void jobFailed(Job job, Throwable t) {
     synchronized (lock) {
-      if (executorListener != null && executorListener.ignoreError(job, t)) {
-        jobSucceeded(job);
-        return;
+      if (!(t instanceof JobFailedException)) {
+        Timber.e(t, "Job failed: " + job.key());
+      } else {
+        Timber.d(t, "Job failed: " + job.key());
       }
-
-      Timber.d("Job failed: " + job.key());
 
       halt = true;
       jobManager.checkinJob(job);

@@ -17,11 +17,13 @@ package net.simonvt.cathode.remote.action.shows;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.RateItems;
+import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class RateShow extends Job {
+public class RateShow extends CallJob<SyncResponse> {
 
   @Inject transient SyncService syncService;
 
@@ -50,9 +52,13 @@ public class RateShow extends Job {
     return true;
   }
 
-  @Override public void perform() {
+  @Override public Call<SyncResponse> getCall() {
     RateItems items = new RateItems();
     items.show(traktId).rating(rating).ratedAt(ratedAt);
-    syncService.rate(items);
+    return syncService.rate(items);
+  }
+
+  @Override public void handleResponse(SyncResponse response) {
+
   }
 }

@@ -19,6 +19,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -29,10 +30,12 @@ import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.SearchService;
 import net.simonvt.cathode.event.MovieSearchResult;
 import net.simonvt.cathode.event.SearchFailureEvent;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
-import net.simonvt.cathode.jobqueue.JobManager;
-import retrofit.RetrofitError;
+import retrofit.Call;
+import retrofit.Response;
+import timber.log.Timber;
 
 public class MovieSearchHandler {
 
@@ -106,37 +109,44 @@ public class MovieSearchHandler {
 
     @Override public void run() {
       try {
-        List<SearchResult> results = searchService.query(ItemType.MOVIE, query);
+        Call<List<SearchResult>> call = searchService.query(ItemType.MOVIE, query);
+        Response<List<SearchResult>> response = call.execute();
 
-        final List<Long> movieIds = new ArrayList<Long>(results.size());
+        if (response.isSuccess()) {
+          List<SearchResult> results = response.body();
+          final List<Long> movieIds = new ArrayList<Long>(results.size());
 
-        for (SearchResult result : results) {
-          Movie movie = result.getMovie();
-          if (!TextUtils.isEmpty(movie.getTitle())) {
-            final long traktId = movie.getIds().getTrakt();
-            final boolean exists = MovieWrapper.exists(context.getContentResolver(), traktId);
+          for (SearchResult result : results) {
+            Movie movie = result.getMovie();
+            if (!TextUtils.isEmpty(movie.getTitle())) {
+              final long traktId = movie.getIds().getTrakt();
+              final boolean exists = MovieWrapper.exists(context.getContentResolver(), traktId);
 
-            final long movieId =
-                MovieWrapper.updateOrInsertMovie(context.getContentResolver(), movie);
-            movieIds.add(movieId);
+              final long movieId =
+                  MovieWrapper.updateOrInsertMovie(context.getContentResolver(), movie);
+              movieIds.add(movieId);
 
-            if (!exists) jobManager.addJob(new SyncMovie(traktId));
+              if (!exists) jobManager.addJob(new SyncMovie(traktId));
+            }
           }
+
+          MainHandler.post(new Runnable() {
+            @Override public void run() {
+              if (handler != null) handler.deliverResult(movieIds);
+            }
+          });
+
+          return;
         }
-
-        MainHandler.post(new Runnable() {
-          @Override public void run() {
-            if (handler != null) handler.deliverResult(movieIds);
-          }
-        });
-      } catch (RetrofitError e) {
-        e.printStackTrace();
-        MainHandler.post(new Runnable() {
-          @Override public void run() {
-            if (handler != null) handler.deliverFailure();
-          }
-        });
+      } catch (IOException e) {
+        Timber.e(e, "Search failed");
       }
+
+      MainHandler.post(new Runnable() {
+        @Override public void run() {
+          if (handler != null) handler.deliverFailure();
+        }
+      });
     }
   }
 }

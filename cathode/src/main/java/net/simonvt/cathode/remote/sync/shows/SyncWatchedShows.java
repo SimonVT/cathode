@@ -29,6 +29,7 @@ import net.simonvt.cathode.api.entity.IsoTime;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.entity.WatchedItem;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
@@ -36,12 +37,12 @@ import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobFailedException;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 import timber.log.Timber;
 
-public class SyncWatchedShows extends Job {
+public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
 
   @Inject transient SyncService syncService;
 
@@ -61,11 +62,13 @@ public class SyncWatchedShows extends Job {
     return PRIORITY_USER_DATA;
   }
 
-  @Override public void perform() {
+  @Override public Call<List<WatchedItem>> getCall() {
+    return syncService.getWatchedShows();
+  }
+
+  @Override public void handleResponse(List<WatchedItem> watched) {
     try {
       ContentResolver resolver = getContentResolver();
-
-      List<WatchedItem> watched = syncService.getWatchedShows();
 
       Cursor c = resolver.query(Episodes.EPISODES, new String[] {
           EpisodeColumns.ID,

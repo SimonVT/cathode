@@ -21,10 +21,11 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.entity.UpdatedItem;
 import net.simonvt.cathode.api.service.ShowsService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
+import net.simonvt.cathode.remote.CallJob;
+import retrofit.Call;
 
-public class SyncUpdatedShows extends Job {
+public class SyncUpdatedShows extends CallJob<List<UpdatedItem>> {
 
   private static final int LIMIT = 100;
 
@@ -50,14 +51,16 @@ public class SyncUpdatedShows extends Job {
     return PRIORITY_UPDATED;
   }
 
-  @Override public void perform() {
+  @Override public Call<List<UpdatedItem>> getCall() {
+    return showsService.getUpdatedShows(updatedSince, page, LIMIT);
+  }
+
+  @Override public void handleResponse(List<UpdatedItem> updated) {
     if (updatedSince == null) {
       return;
     }
 
     List<Long> showSummaries = new ArrayList<Long>();
-
-    List<UpdatedItem> updated = showsService.getUpdatedShows(updatedSince, page, LIMIT);
 
     for (UpdatedItem item : updated) {
       final String updatedAt = item.getUpdatedAt();

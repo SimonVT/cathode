@@ -22,15 +22,15 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.SeasonService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import timber.log.Timber;
+import net.simonvt.cathode.remote.CallJob;
+import retrofit.Call;
 
-public class SyncSeason extends Job {
+public class SyncSeason extends CallJob<List<Episode>> {
 
   @Inject transient SeasonService seasonService;
 
@@ -55,11 +55,11 @@ public class SyncSeason extends Job {
     return PRIORITY_SEASONS;
   }
 
-  @Override public void perform() {
-    Timber.d("Syncing season %d of show %d", season, traktId);
+  @Override public Call<List<Episode>> getCall() {
+    return seasonService.getSeason(traktId, season, Extended.FULL_IMAGES);
+  }
 
-    List<Episode> episodes = seasonService.getSeason(traktId, season, Extended.FULL_IMAGES);
-
+  @Override public void handleResponse(List<Episode> episodes) {
     ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
     final long showId = showResult.showId;
     final boolean didShowExist = !showResult.didCreate;

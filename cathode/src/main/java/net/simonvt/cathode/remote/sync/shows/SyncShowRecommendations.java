@@ -26,15 +26,16 @@ import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.service.RecommendationsService;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobFailedException;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 import timber.log.Timber;
 
-public class SyncShowRecommendations extends Job {
+public class SyncShowRecommendations extends CallJob<List<Show>> {
 
   private static final int LIMIT = 20;
 
@@ -54,44 +55,47 @@ public class SyncShowRecommendations extends Job {
     return PRIORITY_RECOMMENDED_TRENDING;
   }
 
-  @Override public void perform() {
+  @Override public Call<List<Show>> getCall() {
+    return recommendationsService.shows(LIMIT);
+  }
+
+  @Override public void handleResponse(List<Show> shows) {
+    ContentResolver resolver = getContentResolver();
+
+    List<Long> showIds = new ArrayList<Long>();
+    ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+
+    Cursor c = resolver.query(Shows.SHOWS_RECOMMENDED, null, null, null, null);
+    while (c.moveToNext()) {
+      showIds.add(c.getLong(c.getColumnIndex(ShowColumns.ID)));
+    }
+    c.close();
+
+    for (int index = 0, count = Math.min(shows.size(), 25); index < count; index++) {
+      Show show = shows.get(index);
+      final long traktId = show.getIds().getTrakt();
+      ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
+      final long showId = showResult.showId;
+      if (showResult.didCreate) {
+        queue(new SyncShow(traktId));
+      }
+
+      showIds.remove(showId);
+
+      ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(showId))
+          .withValue(ShowColumns.RECOMMENDATION_INDEX, index)
+          .build();
+      ops.add(op);
+    }
+
+    for (Long id : showIds) {
+      ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(id))
+          .withValue(ShowColumns.RECOMMENDATION_INDEX, -1)
+          .build();
+      ops.add(op);
+    }
+
     try {
-      ContentResolver resolver = getContentResolver();
-
-      List<Show> shows = recommendationsService.shows(LIMIT);
-      List<Long> showIds = new ArrayList<Long>();
-      ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
-
-      Cursor c = resolver.query(Shows.SHOWS_RECOMMENDED, null, null, null, null);
-      while (c.moveToNext()) {
-        showIds.add(c.getLong(c.getColumnIndex(ShowColumns.ID)));
-      }
-      c.close();
-
-      for (int index = 0, count = Math.min(shows.size(), 25); index < count; index++) {
-        Show show = shows.get(index);
-        final long traktId = show.getIds().getTrakt();
-        ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
-        final long showId = showResult.showId;
-        if (showResult.didCreate) {
-          queue(new SyncShow(traktId));
-        }
-
-        showIds.remove(showId);
-
-        ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(showId))
-            .withValue(ShowColumns.RECOMMENDATION_INDEX, index)
-            .build();
-        ops.add(op);
-      }
-
-      for (Long id : showIds) {
-        ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(id))
-            .withValue(ShowColumns.RECOMMENDATION_INDEX, -1)
-            .build();
-        ops.add(op);
-      }
-
       resolver.applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
     } catch (RemoteException e) {
       Timber.e(e, "SyncShowRecommendationsTask failed");

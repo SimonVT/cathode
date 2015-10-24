@@ -101,7 +101,6 @@ import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies;
 import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
-import net.simonvt.cathode.remote.sync.shows.SyncEpisode;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodesRatings;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
@@ -231,7 +230,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         SyncMovieRecommendations.class, SyncMoviesCollection.class, SyncMoviesRatings.class,
         SyncWatchedMovies.class, SyncMoviesWatchlist.class, SyncMovie.class,
         SyncTrendingMovies.class, StartSyncUpdatedMovies.class, SyncEpisodesRatings.class,
-        SyncEpisode.class, SyncEpisodeWatchlist.class, SyncSeasonsRatings.class, SyncSeasons.class,
+        SyncEpisodeWatchlist.class, SyncSeasonsRatings.class, SyncSeasons.class,
         SyncSeason.class, SyncShowCast.class, SyncShowCollectedStatus.class,
         SyncShowRecommendations.class, SyncShowsCollection.class, SyncShowsRatings.class,
         SyncWatchedShows.class, SyncShowsWatchlist.class, SyncShow.class,

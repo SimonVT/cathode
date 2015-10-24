@@ -25,19 +25,20 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.RatingItem;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 import timber.log.Timber;
 
 import static net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import static net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 
-public class SyncEpisodesRatings extends Job {
+public class SyncEpisodesRatings extends CallJob<List<RatingItem>> {
 
   @Inject transient SyncService syncService;
 
@@ -57,9 +58,11 @@ public class SyncEpisodesRatings extends Job {
     return PRIORITY_EXTRAS;
   }
 
-  @Override public void perform() {
-    List<RatingItem> ratings = syncService.getEpisodeRatings();
+  @Override public Call<List<RatingItem>> getCall() {
+    return syncService.getEpisodeRatings();
+  }
 
+  @Override public void handleResponse(List<RatingItem> ratings) {
     Cursor episodes = getContentResolver().query(Episodes.EPISODES, new String[] {
         EpisodeColumns.ID,
     }, EpisodeColumns.RATED_AT + ">0", null, null);

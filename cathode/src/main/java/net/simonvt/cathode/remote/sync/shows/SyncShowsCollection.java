@@ -28,6 +28,7 @@ import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.CollectionItem;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
@@ -35,12 +36,12 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobFailedException;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 import timber.log.Timber;
 
-public class SyncShowsCollection extends Job {
+public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
 
   @Inject transient SyncService syncService;
 
@@ -60,12 +61,14 @@ public class SyncShowsCollection extends Job {
     return PRIORITY_USER_DATA;
   }
 
-  @Override public void perform() {
+  @Override public Call<List<CollectionItem>> getCall() {
+    return syncService.getShowCollection();
+  }
+
+  @Override public void handleResponse(List<CollectionItem> collection) {
     try {
       ContentResolver resolver = getContentResolver();
       ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
-
-      List<CollectionItem> collection = syncService.getShowCollection();
 
       Cursor c = resolver.query(Episodes.EPISODES, new String[] {
           EpisodeColumns.ID, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON_ID,

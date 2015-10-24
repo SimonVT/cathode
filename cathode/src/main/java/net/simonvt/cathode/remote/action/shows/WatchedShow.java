@@ -17,11 +17,13 @@ package net.simonvt.cathode.remote.action.shows;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.SyncItems;
+import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class WatchedShow extends Job {
+public class WatchedShow extends CallJob<SyncResponse> {
 
   @Inject transient SyncService syncService;
 
@@ -56,13 +58,16 @@ public class WatchedShow extends Job {
     return true;
   }
 
-  @Override public void perform() {
+  @Override public Call<SyncResponse> getCall() {
     SyncItems items = new SyncItems();
     items.show(traktId);
     if (watched) {
-      syncService.watched(items);
+      return syncService.watched(items);
     } else {
-      syncService.unwatched(items);
+      return syncService.unwatched(items);
     }
+  }
+
+  @Override public void handleResponse(SyncResponse response) {
   }
 }

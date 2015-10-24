@@ -13,11 +13,13 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
 import dagger.Module;
 import dagger.Provides;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Singleton;
 import net.simonvt.cathode.api.entity.IsoTime;
@@ -45,97 +47,88 @@ import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.api.util.TimeUtils;
-import retrofit.ErrorHandler;
-import retrofit.RestAdapter;
-import retrofit.client.Client;
-import retrofit.client.OkClient;
-import retrofit.converter.GsonConverter;
+import retrofit.GsonConverterFactory;
+import retrofit.Retrofit;
 
-@Module(library = true, complete = false)
-public class TraktModule {
+@Module(library = true, complete = false) public class TraktModule {
 
   //static final String API_URL = "https://api.trakt.tv";
-  static final String API_URL = "https://api-v2launch.trakt.tv";
+  public static final String API_URL = "https://api-v2launch.trakt.tv";
 
   private static final int MAX_RETRIES = 2;
 
   private static final long RETRY_DELAY = 5 * DateUtils.SECOND_IN_MILLIS;
 
-  @Provides @Singleton @Trakt RestAdapter provideRestAdapter(@Trakt Client client, @Trakt Gson gson,
-      TraktInterceptor interceptor, ErrorHandler errorHandler) {
-    return new RestAdapter.Builder() //
-        .setEndpoint(API_URL)
-        .setClient(client)
-        .setConverter(new GsonConverter(gson))
-        .setRequestInterceptor(interceptor)
-        .setErrorHandler(errorHandler)
-        .setLogLevel(RestAdapter.LogLevel.FULL)
+  @Provides @Singleton @Trakt Retrofit provideRestAdapter(@Trakt OkHttpClient client,
+      @Trakt Gson gson) {
+    return new Retrofit.Builder() //
+        .baseUrl(API_URL)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create(gson))
         .build();
   }
 
-  @Provides @Singleton @Trakt OkHttpClient provideOkHttpClient(TraktSettings settings) {
+  @Provides @Singleton @Trakt OkHttpClient provideOkHttpClient(TraktSettings settings,
+      @Trakt List<Interceptor> interceptors) {
     OkHttpClient client = new OkHttpClient();
     client.setConnectTimeout(15, TimeUnit.SECONDS);
     client.setReadTimeout(20, TimeUnit.SECONDS);
 
+    client.interceptors().addAll(interceptors);
     client.interceptors().add(new RetryingInterceptor(MAX_RETRIES, RETRY_DELAY));
-    client.networkInterceptors().add(new LoggingInterceptor());
+    client.networkInterceptors().add(new ApiInterceptor(settings));
+    client.networkInterceptors().add(new AuthInterceptor(settings));
     client.setAuthenticator(new TraktAuthenticator(settings));
 
     return client;
   }
 
-  @Provides @Singleton @Trakt Client provideClient(@Trakt OkHttpClient client) {
-    return new OkClient(client);
-  }
-
-  @Provides @Singleton AuthorizationService provideAuthorizationService(
-      @Trakt RestAdapter adapter) {
+  @Provides @Singleton AuthorizationService provideAuthorizationService(@Trakt Retrofit adapter) {
     return adapter.create(AuthorizationService.class);
   }
 
-  @Provides @Singleton CheckinService provideCheckinService(@Trakt RestAdapter adapter) {
+  @Provides @Singleton CheckinService provideCheckinService(@Trakt Retrofit adapter) {
     return adapter.create(CheckinService.class);
   }
 
-  @Provides @Singleton CommentsService provideCommentsService(@Trakt RestAdapter adapter) {
+  @Provides @Singleton CommentsService provideCommentsService(@Trakt Retrofit adapter) {
     return adapter.create(CommentsService.class);
   }
 
-  @Provides @Singleton EpisodeService provideEpisodeService(@Trakt RestAdapter adapter) {
+  @Provides @Singleton EpisodeService provideEpisodeService(@Trakt Retrofit adapter) {
     return adapter.create(EpisodeService.class);
   }
 
-  @Provides @Singleton MoviesService provideMoviesService(@Trakt RestAdapter adapter) {
+  @Provides @Singleton MoviesService provideMoviesService(@Trakt Retrofit adapter) {
     return adapter.create(MoviesService.class);
   }
 
-  @Provides @Singleton PeopleService providePeopleService(@Trakt RestAdapter adapter) {
+  @Provides @Singleton PeopleService providePeopleService(@Trakt Retrofit adapter) {
     return adapter.create(PeopleService.class);
   }
 
   @Provides @Singleton RecommendationsService provideRecommendationsService(
-      @Trakt RestAdapter adapter) {
+      @Trakt Retrofit adapter) {
     return adapter.create(RecommendationsService.class);
   }
 
-  @Provides @Singleton SearchService provideSearchService(@Trakt RestAdapter adapter) {
+  @Provides @Singleton SearchService provideSearchService(@Trakt Retrofit adapter) {
     return adapter.create(SearchService.class);
   }
 
-  @Provides @Singleton SeasonService provideSeasonService(@Trakt RestAdapter adapter) {
+  @Provides @Singleton SeasonService provideSeasonService(@Trakt Retrofit adapter) {
     return adapter.create(SeasonService.class);
   }
 
-  @Provides @Singleton ShowsService provideShowsService(@Trakt RestAdapter adapter) {
+  @Provides @Singleton ShowsService provideShowsService(@Trakt Retrofit adapter) {
     return adapter.create(ShowsService.class);
   }
 
-  @Provides @Singleton SyncService provideSyncService(@Trakt RestAdapter adapter) {
+  @Provides @Singleton SyncService provideSyncService(@Trakt Retrofit adapter) {
     return adapter.create(SyncService.class);
   }
 
-  @Provides @Singleton UsersService provideUsersService(@Trakt RestAdapter adapter) {
+  @Provides @Singleton UsersService provideUsersService(@Trakt Retrofit adapter) {
     return adapter.create(UsersService.class);
   }
 
@@ -147,8 +140,9 @@ public class TraktModule {
     builder.registerTypeAdapter(Integer.class, new IntTypeAdapter());
 
     builder.registerTypeAdapter(IsoTime.class, new JsonDeserializer<IsoTime>() {
-      @Override public IsoTime deserialize(JsonElement json, Type typeOfT,
-          JsonDeserializationContext context) throws JsonParseException {
+      @Override
+      public IsoTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+          throws JsonParseException {
         String iso = json.getAsString();
         if (iso == null) {
           return null;

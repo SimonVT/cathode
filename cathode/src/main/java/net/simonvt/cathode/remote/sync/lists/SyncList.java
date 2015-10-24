@@ -30,7 +30,6 @@ import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.entity.Season;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
@@ -42,14 +41,16 @@ import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncPerson;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
+import retrofit.Call;
 import timber.log.Timber;
 
-public class SyncList extends Job {
+public class SyncList extends CallJob<List<ListItem>> {
 
   private static class Item {
 
@@ -95,9 +96,11 @@ public class SyncList extends Job {
     return -1;
   }
 
-  @Override public void perform() {
-    List<ListItem> items = usersService.listItems(traktId);
+  @Override public Call<List<ListItem>> getCall() {
+    return usersService.listItems(traktId);
+  }
 
+  @Override public void handleResponse(List<ListItem> items) {
     final long listId = ListWrapper.getId(getContentResolver(), traktId);
     if (listId == -1L) {
       // List has been removed

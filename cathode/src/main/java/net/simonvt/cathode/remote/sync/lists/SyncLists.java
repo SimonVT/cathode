@@ -22,13 +22,14 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.CustomList;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
 import net.simonvt.cathode.provider.ListWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Lists;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class SyncLists extends Job {
+public class SyncLists extends CallJob<List<CustomList>> {
 
   private static final String[] PROJECTION = new String[] {
       ListsColumns.TRAKT_ID,
@@ -48,9 +49,11 @@ public class SyncLists extends Job {
     return PRIORITY_USER_DATA;
   }
 
-  @Override public void perform() {
-    List<CustomList> lists = usersService.lists();
+  @Override public Call<List<CustomList>> getCall() {
+    return usersService.lists();
+  }
 
+  @Override public void handleResponse(List<CustomList> lists) {
     List<Long> listIds = new ArrayList<>();
     Cursor listsCursor =
         getContentResolver().query(Lists.LISTS, PROJECTION, ListsColumns.TRAKT_ID + ">=0", null,

@@ -18,11 +18,13 @@ package net.simonvt.cathode.remote.action.lists;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.ListItemActionBody;
+import net.simonvt.cathode.api.entity.ListItemActionResponse;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class RemoveEpisode extends Job {
+public class RemoveEpisode extends CallJob<ListItemActionResponse> {
 
   @Inject transient UsersService usersService;
 
@@ -43,8 +45,14 @@ public class RemoveEpisode extends Job {
   }
 
   @Override public String key() {
-    return "RemoveEpisode&listId=" + listId + "?traktId=" + showTraktId + "?seasonNumber="
-        + seasonNumber + "?episodeNumber=" + episodeNumber;
+    return "RemoveEpisode&listId="
+        + listId
+        + "?traktId="
+        + showTraktId
+        + "?seasonNumber="
+        + seasonNumber
+        + "?episodeNumber="
+        + episodeNumber;
   }
 
   @Override public int getPriority() {
@@ -55,9 +63,12 @@ public class RemoveEpisode extends Job {
     return true;
   }
 
-  @Override public void perform() {
+  @Override public Call<ListItemActionResponse> getCall() {
     ListItemActionBody body = new ListItemActionBody();
     body.show(showTraktId).season(seasonNumber).episode(episodeNumber);
-    usersService.removeItem(listId, body);
+    return usersService.removeItem(listId, body);
+  }
+
+  @Override public void handleResponse(ListItemActionResponse response) {
   }
 }

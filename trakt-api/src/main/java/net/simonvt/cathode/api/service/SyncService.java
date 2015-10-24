@@ -25,13 +25,14 @@ import net.simonvt.cathode.api.entity.RatingItem;
 import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.entity.WatchedItem;
 import net.simonvt.cathode.api.entity.WatchlistItem;
+import retrofit.Call;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.POST;
 
 public interface SyncService {
 
-  @GET("/sync/last_activities") LastActivity lastActivity();
+  @GET("/sync/last_activities") Call<LastActivity> lastActivity();
 
   /**
    * <b>OAuth Required</b>
@@ -39,7 +40,7 @@ public interface SyncService {
    * Get all collected shows in a user's collection. A collected item indicates availability to
    * watch digitally or on physical media.
    */
-  @GET("/sync/collection/shows") List<CollectionItem> getShowCollection();
+  @GET("/sync/collection/shows") Call<List<CollectionItem>> getShowCollection();
 
   /**
    * <b>OAuth Required</b>
@@ -47,7 +48,7 @@ public interface SyncService {
    * Get all collected movies in a user's collection. A collected item indicates availability to
    * watch digitally or on physical media.
    */
-  @GET("/sync/collection/movies") List<CollectionItem> getMovieCollection();
+  @GET("/sync/collection/movies") Call<List<CollectionItem>> getMovieCollection();
 
   /**
    * <b>OAuth Required</b>
@@ -59,28 +60,28 @@ public interface SyncService {
    * Send a collected_at UTC datetime to mark items as collectedin the past. This is useful for
    * syncing collections from a media center.
    */
-  @POST("/sync/collection") SyncResponse collect(@Body SyncItems collect);
+  @POST("/sync/collection") Call<SyncResponse> collect(@Body SyncItems collect);
 
   /**
    * <b>OAuth Required</b>
    * <p>
    * Remove one or more items from a user's collection.
    */
-  @POST("/sync/collection/remove") SyncResponse uncollect(@Body SyncItems collect);
+  @POST("/sync/collection/remove") Call<SyncResponse> uncollect(@Body SyncItems collect);
 
   /**
    * <b>OAuth Required</b>
    * <p>
    * Returns all movies a user has watched.
    */
-  @GET("/sync/watched/movies") List<WatchedItem> getWatchedMovies();
+  @GET("/sync/watched/movies") Call<List<WatchedItem>> getWatchedMovies();
 
   /**
    * <b>OAuth Required</b>
    * <p>
    * Return all shows a user has watched.
    */
-  @GET("/sync/watched/shows") List<WatchedItem> getWatchedShows();
+  @GET("/sync/watched/shows") Call<List<WatchedItem>> getWatchedShows();
 
   /**
    * <b>OAuth Required</b>
@@ -93,7 +94,7 @@ public interface SyncService {
    * syncing
    * past watches from a media center.
    */
-  @POST("/sync/history") SyncResponse watched(@Body SyncItems collect);
+  @POST("/sync/history") Call<SyncResponse> watched(@Body SyncItems collect);
 
   /**
    * <b>OAuth Required</b>
@@ -103,35 +104,35 @@ public interface SyncService {
    * show will be removed. If seasons are specified, only episodes in those seasons will be
    * removed.
    */
-  @POST("/sync/history/remove") SyncResponse unwatched(@Body SyncItems collect);
+  @POST("/sync/history/remove") Call<SyncResponse> unwatched(@Body SyncItems collect);
 
   /**
    * <b>OAuth Required</b>
    * <p>
    * Get a users ratings.
    */
-  @GET("/sync/ratings/movies") List<RatingItem> getMovieRatings();
+  @GET("/sync/ratings/movies") Call<List<RatingItem>> getMovieRatings();
 
   /**
    * <b>OAuth Required</b>
    * <p>
    * Get a users ratings.
    */
-  @GET("/sync/ratings/shows") List<RatingItem> getShowRatings();
+  @GET("/sync/ratings/shows") Call<List<RatingItem>> getShowRatings();
 
   /**
    * <b>OAuth Required</b>
    * <p>
    * Get a users ratings.
    */
-  @GET("/sync/ratings/seasons") List<RatingItem> getSeasonRatings();
+  @GET("/sync/ratings/seasons") Call<List<RatingItem>> getSeasonRatings();
 
   /**
    * <b>OAuth Required</b>
    * <p>
    * Get a users ratings.
    */
-  @GET("/sync/ratings/episodes") List<RatingItem> getEpisodeRatings();
+  @GET("/sync/ratings/episodes") Call<List<RatingItem>> getEpisodeRatings();
 
   /**
    * <b>OAuth Required</b>
@@ -143,14 +144,14 @@ public interface SyncService {
    * Send a rated_at UTC datetime to mark items as rated in the past. This is useful for syncing
    * ratings from a media center.
    */
-  @POST("/sync/ratings") SyncResponse rate(@Body RateItems items);
+  @POST("/sync/ratings") Call<SyncResponse> rate(@Body RateItems items);
 
   /**
    * <b>OAuth Required</b>
    * <p>
    * Remove ratings for one or more items.
    */
-  @POST("/sync/ratings/remove") SyncResponse removeRating(@Body RateItems items);
+  @POST("/sync/ratings/remove") Call<SyncResponse> removeRating(@Body RateItems items);
 
   /**
    * <b>OAuth Required</b>
@@ -158,7 +159,7 @@ public interface SyncService {
    * Get a users movie watchlist. When a movie is watched, it will be automatically removed. To
    * track what the user is actively watching, use the progress APIs.
    */
-  @GET("/sync/watchlist/movies") List<WatchlistItem> getMovieWatchlist();
+  @GET("/sync/watchlist/movies") Call<List<WatchlistItem>> getMovieWatchlist();
 
   /**
    * <b>OAuth Required</b>
@@ -166,7 +167,7 @@ public interface SyncService {
    * Get a users show watchlist. When a show is watched, it will be automatically removed. To
    * track what the user is actively watching, use the progress APIs.
    */
-  @GET("/sync/watchlist/shows") List<WatchlistItem> getShowWatchlist();
+  @GET("/sync/watchlist/shows") Call<List<WatchlistItem>> getShowWatchlist();
 
   /**
    * <b>OAuth Required</b>
@@ -174,7 +175,7 @@ public interface SyncService {
    * Get a users episode watchlist. When aan episode is watched, it will be automatically removed.
    * To track what the user is actively watching, use the progress APIs.
    */
-  @GET("/sync/watchlist/episodes") List<WatchlistItem> getEpisodeWatchlist();
+  @GET("/sync/watchlist/episodes") Call<List<WatchlistItem>> getEpisodeWatchlist();
 
   /**
    * <b>OAuth Required</b>
@@ -183,12 +184,12 @@ public interface SyncService {
    * only a show is passed, only the show itself will be added. If seasons are specified, all of
    * those seasons will be added.
    */
-  @POST("/sync/watchlist") SyncResponse watchlist(@Body SyncItems collect);
+  @POST("/sync/watchlist") Call<SyncResponse> watchlist(@Body SyncItems collect);
 
   /**
    * <b>OAuth Required</b>
    * <p>
    * Remove one or more items from a user's watchlist.
    */
-  @POST("/sync/watchlist/remove") SyncResponse unwatchlist(@Body SyncItems collect);
+  @POST("/sync/watchlist/remove") Call<SyncResponse> unwatchlist(@Body SyncItems collect);
 }

@@ -20,19 +20,20 @@ import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.body.CheckinItem;
+import net.simonvt.cathode.api.entity.CheckinResponse;
 import net.simonvt.cathode.api.service.CheckinService;
 import net.simonvt.cathode.event.CheckInFailedEvent;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.util.MainHandler;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
+import retrofit.Response;
 
-public class CheckInMovie extends Job {
+public class CheckInMovie extends CallJob<CheckinResponse> {
 
   @Inject transient CheckinService checkinService;
 
@@ -66,42 +67,43 @@ public class CheckInMovie extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public void perform() {
-    try {
-      CheckinItem item = new CheckinItem() //
-          .movie(traktId) //
-          .message(message) //
-          .facebook(facebook) //
-          .twitter(twitter) //
-          .tumblr(tumblr) //
-          .appVersion(BuildConfig.VERSION_NAME) //
-          .appDate(BuildConfig.BUILD_TIME);
-      checkinService.checkin(item);
-    } catch (RetrofitError e) {
-      Response response = e.getResponse();
-      if (response != null) {
-        if (response.getStatus() == 409) {
-          queue(new SyncWatching());
+  @Override public Call<CheckinResponse> getCall() {
+    CheckinItem item = new CheckinItem() //
+        .movie(traktId)
+        .message(message)
+        .facebook(facebook)
+        .twitter(twitter)
+        .tumblr(tumblr)
+        .appVersion(BuildConfig.VERSION_NAME)
+        .appDate(BuildConfig.BUILD_TIME);
+    return checkinService.checkin(item);
+  }
 
-          final long movieId = MovieWrapper.getMovieId(getContentResolver(), traktId);
-          Cursor c = getContentResolver().query(Movies.withId(movieId), new String[] {
-              MovieColumns.TITLE,
-          }, null, null, null);
-          if (c.moveToFirst()) {
-            final String title = c.getString(c.getColumnIndex(MovieColumns.TITLE));
+  @Override protected boolean handleError(Response<CheckinResponse> response) {
+    if (response.code() == 409) {
+      queue(new SyncWatching());
 
-            MainHandler.post(new Runnable() {
-              @Override public void run() {
-                bus.post(new CheckInFailedEvent(title));
-              }
-            });
+      final long movieId = MovieWrapper.getMovieId(getContentResolver(), traktId);
+      Cursor c = getContentResolver().query(Movies.withId(movieId), new String[] {
+          MovieColumns.TITLE,
+      }, null, null, null);
+      if (c.moveToFirst()) {
+        final String title = c.getString(c.getColumnIndex(MovieColumns.TITLE));
+
+        MainHandler.post(new Runnable() {
+          @Override public void run() {
+            bus.post(new CheckInFailedEvent(title));
           }
-          c.close();
-          return;
-        }
+        });
       }
+      c.close();
 
-      throw e;
+      return true;
     }
+
+    return super.handleError(response);
+  }
+
+  @Override public void handleResponse(CheckinResponse response) {
   }
 }

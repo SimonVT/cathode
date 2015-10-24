@@ -33,7 +33,6 @@ import net.simonvt.cathode.api.entity.Season;
 import net.simonvt.cathode.api.enumeration.CommentType;
 import net.simonvt.cathode.api.enumeration.ItemTypes;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.CommentsHelper;
 import net.simonvt.cathode.provider.DatabaseContract;
@@ -46,13 +45,15 @@ import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.UserDatabaseHelper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.PagedCallJob;
 import net.simonvt.cathode.remote.sync.SyncUserProfile;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
+import retrofit.Call;
 import timber.log.Timber;
 
-public class SyncUserComments extends Job {
+public class SyncUserComments extends PagedCallJob<CommentItem> {
 
   private static final int LIMIT = 100;
 
@@ -78,16 +79,11 @@ public class SyncUserComments extends Job {
     return PRIORITY_USER_DATA;
   }
 
-  @Override public void perform() {
-    List<CommentItem> comments = new ArrayList<>();
-    List<CommentItem> commentsQuery;
-    int page = 1;
-    do {
-      commentsQuery = usersService.getUserComments(CommentType.ALL, itemTypes, page, LIMIT);
-      comments.addAll(commentsQuery);
-      page++;
-    } while (commentsQuery.size() > 0);
+  @Override public Call<List<CommentItem>> getCall(int page) {
+    return usersService.getUserComments(CommentType.ALL, itemTypes, page, LIMIT);
+  }
 
+  @Override public void handleResponse(List<CommentItem> comments) {
     List<Long> existingComments = new ArrayList<>();
     Cursor c = getContentResolver().query(Comments.COMMENTS, new String[] {
         CommentColumns.ID,

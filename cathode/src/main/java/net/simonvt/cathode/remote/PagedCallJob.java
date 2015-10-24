@@ -1,0 +1,77 @@
+/*
+ * Copyright (C) 2015 Simon Vig Therkildsen
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package net.simonvt.cathode.remote;
+
+import com.squareup.okhttp.Headers;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import net.simonvt.cathode.jobqueue.JobFailedException;
+import retrofit.Call;
+import retrofit.Response;
+import timber.log.Timber;
+
+public abstract class PagedCallJob<T> extends ErrorHandlerJob<List<T>> {
+
+  private static final String HEADER_PAGE_COUNT = "x-pagination-page-count";
+
+  public PagedCallJob() {
+  }
+
+  public PagedCallJob(int flags) {
+    super(flags);
+  }
+
+  @Override public final void perform() {
+    List<T> results = new ArrayList<>();
+    List<T> result;
+
+    try {
+      int page = 1;
+      int pageCount = 0;
+      do {
+        Call<List<T>> call = getCall(page);
+        Response<List<T>> response = call.execute();
+        if (!response.isSuccess()) {
+          error(response);
+
+          throw new JobFailedException("Failed job: " + key());
+        }
+
+        Headers headers = response.headers();
+        String pageCountStr = headers.get(HEADER_PAGE_COUNT);
+        if (pageCountStr != null) {
+          pageCount = Integer.valueOf(pageCountStr);
+          Timber.d("Page count: " + pageCount);
+        }
+
+        result = response.body();
+        results.addAll(result);
+        page++;
+      } while (page <= pageCount);
+
+      handleResponse(results);
+    } catch (IOException e) {
+      Timber.d(e, "Job failed: " + key());
+      throw new JobFailedException(e);
+    }
+  }
+
+  public abstract Call<List<T>> getCall(int page);
+
+  public abstract void handleResponse(List<T> response);
+}

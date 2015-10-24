@@ -19,6 +19,7 @@ package net.simonvt.cathode.module;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import java.io.IOException;
 import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.CathodeApp;
@@ -28,7 +29,8 @@ import net.simonvt.cathode.api.entity.TokenRequest;
 import net.simonvt.cathode.api.enumeration.GrantType;
 import net.simonvt.cathode.api.service.AuthorizationService;
 import net.simonvt.cathode.settings.Settings;
-import retrofit.RetrofitError;
+import retrofit.Call;
+import retrofit.Response;
 import timber.log.Timber;
 
 public class ApiSettings implements TraktSettings {
@@ -118,26 +120,47 @@ public class ApiSettings implements TraktSettings {
         refreshingToken = true;
 
         Timber.d("Getting new tokens, with refresh token: %s", refreshToken);
-        AccessToken token = authService.getToken(tokenRequest);
-        updateTokens(token);
-        Timber.d("Got new token");
-
-        return token.getAccessToken();
-      } catch (RetrofitError error) {
-        Timber.e(error, "Unable to get new tokens");
-        retrofit.client.Response errorResponse = error.getResponse();
-        if (errorResponse != null) {
-          if (errorResponse.getStatus() == 401) {
+        Call<AccessToken> call = authService.getToken(tokenRequest);
+        Response<AccessToken> response = call.execute();
+        if (response.isSuccess()) {
+          AccessToken token = response.body();
+          updateTokens(token);
+          return token.getAccessToken();
+        } else {
+          if (response.code() == 401) {
             clearRefreshToken();
-            Timber.d("Invalid refresh token, giving up");
             return null;
           }
+
+          String message = "Code: " + response.code();
+          Timber.e(new TokenRefreshFailedException(message), "Unable to get token");
         }
+      } catch (IOException e) {
+        Timber.e(e, "Unable to get new tokens");
       } finally {
         refreshingToken = false;
       }
 
       return null;
+    }
+  }
+
+  public static class TokenRefreshFailedException extends Exception {
+
+    public TokenRefreshFailedException() {
+      super();
+    }
+
+    public TokenRefreshFailedException(String detailMessage) {
+      super(detailMessage);
+    }
+
+    public TokenRefreshFailedException(String detailMessage, Throwable throwable) {
+      super(detailMessage, throwable);
+    }
+
+    public TokenRefreshFailedException(Throwable throwable) {
+      super(throwable);
     }
   }
 }

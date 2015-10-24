@@ -18,12 +18,13 @@ package net.simonvt.cathode.api.service;
 
 import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.enumeration.Extended;
+import retrofit.Call;
 import retrofit.http.GET;
 import retrofit.http.Path;
 import retrofit.http.Query;
 
 public interface PeopleService {
 
-  @GET("/people/{id}") Person summary(@Path("id") long traktId,
+  @GET("/people/{id}") Call<Person> summary(@Path("id") long traktId,
       @Query("extended") Extended extended);
 }

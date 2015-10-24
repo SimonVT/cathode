@@ -18,6 +18,7 @@ package net.simonvt.cathode.module;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
+import com.google.gson.Gson;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Response;
@@ -28,10 +29,11 @@ import javax.inject.Singleton;
 import net.simonvt.cathode.HttpStatusCode;
 import net.simonvt.cathode.IntPreference;
 import net.simonvt.cathode.api.Trakt;
+import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.remote.InitialSyncJob;
 import net.simonvt.cathode.ui.BaseActivity;
-import retrofit.client.Client;
-import retrofit.client.OkClient;
+import retrofit.GsonConverterFactory;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 @Module(
@@ -39,8 +41,7 @@ import timber.log.Timber;
     overrides = true,
     injects = {
         BaseActivity.DebugInjects.class, InitialSyncJob.class
-    })
-public class DebugModule {
+    }) public class DebugModule {
 
   private Context context;
 
@@ -48,8 +49,8 @@ public class DebugModule {
     this.context = context;
   }
 
-  @Provides @Singleton @Trakt Client provideClient(@Trakt OkHttpClient client,
-      @HttpStatusCode final IntPreference httpStatusCode) {
+  @Provides @Singleton @Trakt Retrofit provideRestAdapter(@Trakt OkHttpClient client,
+      @Trakt Gson gson, @HttpStatusCode final IntPreference httpStatusCode) {
     client.networkInterceptors().add(new Interceptor() {
       @Override public Response intercept(Chain chain) throws IOException {
         final int statusCode = httpStatusCode.get();
@@ -61,8 +62,11 @@ public class DebugModule {
         return response;
       }
     });
-
-    return new OkClient(client);
+    return new Retrofit.Builder() //
+        .baseUrl(TraktModule.API_URL)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build();
   }
 
   @Provides @Singleton @HttpStatusCode IntPreference provideHttpStatusCodePreference() {

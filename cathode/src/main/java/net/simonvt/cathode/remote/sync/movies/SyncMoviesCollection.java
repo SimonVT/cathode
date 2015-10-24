@@ -25,10 +25,11 @@ import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class SyncMoviesCollection extends Job {
+public class SyncMoviesCollection extends CallJob<List<CollectionItem>> {
 
   @Inject transient SyncService syncService;
 
@@ -44,7 +45,11 @@ public class SyncMoviesCollection extends Job {
     return PRIORITY_USER_DATA;
   }
 
-  @Override public void perform() {
+  @Override public Call<List<CollectionItem>> getCall() {
+    return syncService.getMovieCollection();
+  }
+
+  @Override public void handleResponse(List<CollectionItem> movies) {
     Cursor c = getContentResolver().query(Movies.MOVIES, new String[] {
         MovieColumns.ID, MovieColumns.LISTED_AT,
     }, MovieColumns.IN_COLLECTION, null, null);
@@ -56,8 +61,6 @@ public class SyncMoviesCollection extends Job {
       ids.put(id, listedAt);
     }
     c.close();
-
-    List<CollectionItem> movies = syncService.getMovieCollection();
 
     for (CollectionItem item : movies) {
       Movie movie = item.getMovie();

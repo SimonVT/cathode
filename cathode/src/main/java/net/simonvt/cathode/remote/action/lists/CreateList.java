@@ -16,21 +16,20 @@
 
 package net.simonvt.cathode.remote.action.lists;
 
-import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.preference.PreferenceManager;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.CreateListBody;
 import net.simonvt.cathode.api.entity.CustomList;
 import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
 import net.simonvt.cathode.provider.ListWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Lists;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class CreateList extends Job {
+public class CreateList extends CallJob<CustomList> {
 
   @Inject transient UsersService usersServie;
 
@@ -65,15 +64,15 @@ public class CreateList extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public void perform() {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-
-    CustomList list = usersServie.createList(CreateListBody.name(name)
+  @Override public Call<CustomList> getCall() {
+    return usersServie.createList(CreateListBody.name(name)
         .description(description)
         .privacy(privacy)
         .displayNumbers(displayNumbers)
         .allowComments(allowComments));
+  }
 
+  @Override public void handleResponse(CustomList list) {
     Cursor c = getContentResolver().query(Lists.LISTS, new String[] {
         ListsColumns.ID,
     }, ListsColumns.ID + "=?", new String[] {

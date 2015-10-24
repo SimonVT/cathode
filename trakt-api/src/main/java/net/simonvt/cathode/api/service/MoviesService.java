@@ -23,23 +23,24 @@ import net.simonvt.cathode.api.entity.People;
 import net.simonvt.cathode.api.entity.TrendingItem;
 import net.simonvt.cathode.api.entity.UpdatedItem;
 import net.simonvt.cathode.api.enumeration.Extended;
+import retrofit.Call;
 import retrofit.http.GET;
 import retrofit.http.Path;
 import retrofit.http.Query;
 
 public interface MoviesService {
 
-  @GET("/movies/trending") List<TrendingItem> getTrendingMovies();
+  @GET("/movies/trending") Call<List<TrendingItem>> getTrendingMovies();
 
-  @GET("/movies/trending") List<TrendingItem> getTrendingMovies(@Query("limit") int limit);
+  @GET("/movies/trending") Call<List<TrendingItem>> getTrendingMovies(@Query("limit") int limit);
 
-  @GET("/movies/updates/{start_date}") List<UpdatedItem> updated(
+  @GET("/movies/updates/{start_date}") Call<List<UpdatedItem>> updated(
       @Path("start_date") String startDate, @Query("page") int page, @Query("limit") int limit);
 
-  @GET("/movies/{id}") Movie getSummary(@Path("id") long traktId,
+  @GET("/movies/{id}") Call<Movie> getSummary(@Path("id") long traktId,
       @Query("extended") Extended extended);
 
-  @GET("/movies/{id}/people") People getPeople(@Path("id") long traktId,
+  @GET("/movies/{id}/people") Call<People> getPeople(@Path("id") long traktId,
       @Query("extended") Extended extended);
 
   /**
@@ -47,6 +48,6 @@ public interface MoviesService {
    * <p>
    * Returns all top level comments for a movie. Most recent comments returned first.
    */
-  @GET("/movies/{id}/comments") List<Comment> getComments(@Path("id") long id,
+  @GET("/movies/{id}/comments") Call<List<Comment>> getComments(@Path("id") long id,
       @Query("page") int page, @Query("limit") int limit, @Query("extended") Extended extended);
 }

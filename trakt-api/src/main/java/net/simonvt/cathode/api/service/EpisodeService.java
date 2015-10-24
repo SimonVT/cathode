@@ -20,6 +20,7 @@ import java.util.List;
 import net.simonvt.cathode.api.entity.Comment;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.enumeration.Extended;
+import retrofit.Call;
 import retrofit.http.GET;
 import retrofit.http.Path;
 import retrofit.http.Query;
@@ -33,7 +34,7 @@ public interface EpisodeService {
    * @param season Season number Example: 1.
    * @param episode Episode number Example: 1.
    */
-  @GET("/shows/{id}/seasons/{season}/episodes/{episode}") Episode getSummary(
+  @GET("/shows/{id}/seasons/{season}/episodes/{episode}") Call<Episode> getSummary(
       @Path("id") long showId, @Path("season") Integer season, @Path("episode") Integer episode,
       @Query("extended") Extended extended);
 
@@ -42,7 +43,7 @@ public interface EpisodeService {
    * <p>
    * Returns all top level comments for a movie. Most recent comments returned first.
    */
-  @GET("/movies/{id}/comments") List<Comment> getComments(@Path("id") long showId,
+  @GET("/movies/{id}/comments") Call<List<Comment>> getComments(@Path("id") long showId,
       @Path("season") int season, @Path("episode") int episode, @Query("page") int page,
       @Query("limit") int limit, @Query("extended") Extended extended);
 }

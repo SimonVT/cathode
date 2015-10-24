@@ -20,10 +20,11 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.PeopleService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.PersonWrapper;
+import net.simonvt.cathode.remote.CallJob;
+import retrofit.Call;
 
-public class SyncPerson extends Job {
+public class SyncPerson extends CallJob<Person> {
 
   @Inject transient PeopleService peopleService;
 
@@ -41,8 +42,11 @@ public class SyncPerson extends Job {
     return PRIORITY_EXTRAS;
   }
 
-  @Override public void perform() {
-    Person person = peopleService.summary(traktId, Extended.FULL_IMAGES);
+  @Override public Call<Person> getCall() {
+    return peopleService.summary(traktId, Extended.FULL_IMAGES);
+  }
+
+  @Override public void handleResponse(Person person) {
     PersonWrapper.updateOrInsert(getContentResolver(), person);
   }
 }

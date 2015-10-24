@@ -17,13 +17,15 @@ package net.simonvt.cathode.remote.action.movies;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.SyncItems;
+import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.provider.MovieWrapper;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class CollectMovie extends Job {
+public class CollectMovie extends CallJob<SyncResponse> {
 
   @Inject transient SyncService syncService;
 
@@ -58,16 +60,18 @@ public class CollectMovie extends Job {
     return true;
   }
 
-  @Override public void perform() {
+  @Override public Call<SyncResponse> getCall() {
     SyncItems items = new SyncItems();
     SyncItems.Movie movie = items.movie(traktId);
     if (collected) {
       movie.collectedAt(collectedAt);
-      syncService.collect(items);
+      return syncService.collect(items);
     } else {
-      syncService.uncollect(items);
+      return syncService.uncollect(items);
     }
+  }
 
+  @Override public void handleResponse(SyncResponse response) {
     MovieWrapper.setIsInCollection(getContentResolver(), traktId, collected,
         TimeUtils.getMillis(collectedAt));
   }

@@ -17,13 +17,15 @@ package net.simonvt.cathode.remote.action.movies;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.SyncItems;
+import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.provider.MovieWrapper;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class WatchlistMovie extends Job {
+public class WatchlistMovie extends CallJob<SyncResponse> {
 
   @Inject transient SyncService syncService;
 
@@ -58,16 +60,18 @@ public class WatchlistMovie extends Job {
     return true;
   }
 
-  @Override public void perform() {
+  @Override public Call<SyncResponse> getCall() {
     SyncItems items = new SyncItems();
     SyncItems.Movie movie = items.movie(traktId);
     if (inWatchlist) {
       movie.listedAt(listedAt);
-      syncService.watchlist(items);
+      return syncService.watchlist(items);
     } else {
-      syncService.unwatchlist(items);
+      return syncService.unwatchlist(items);
     }
+  }
 
+  @Override public void handleResponse(SyncResponse response) {
     MovieWrapper.setIsInWatchlist(getContentResolver(), traktId, inWatchlist,
         TimeUtils.getMillis(listedAt));
   }

@@ -22,7 +22,6 @@ import net.simonvt.cathode.api.body.CommentBody;
 import net.simonvt.cathode.api.entity.Comment;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.CommentsService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.CommentsHelper;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
@@ -31,9 +30,11 @@ import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class AddCommentJob extends Job {
+public class AddCommentJob extends CallJob<Comment> {
 
   @Inject transient CommentsService commentsService;
 
@@ -69,7 +70,7 @@ public class AddCommentJob extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public void perform() {
+  @Override public Call<Comment> getCall() {
     // TODO: Catch 422
     CommentBody body = CommentBody.comment(comment);
     if (spoiler) {
@@ -93,7 +94,10 @@ public class AddCommentJob extends Job {
         throw new IllegalStateException("Unknown type: " + type);
     }
 
-    Comment comment = commentsService.post(body);
+    return commentsService.post(body);
+  }
+
+  @Override public void handleResponse(Comment comment) {
     ContentValues values = CommentsHelper.getValues(comment);
     values.put(CommentColumns.IS_USER_COMMENT, true);
 

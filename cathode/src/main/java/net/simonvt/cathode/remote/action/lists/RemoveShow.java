@@ -18,11 +18,13 @@ package net.simonvt.cathode.remote.action.lists;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.ListItemActionBody;
+import net.simonvt.cathode.api.entity.ListItemActionResponse;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class RemoveShow extends Job {
+public class RemoveShow extends CallJob<ListItemActionResponse> {
 
   @Inject transient UsersService usersService;
 
@@ -48,9 +50,12 @@ public class RemoveShow extends Job {
     return true;
   }
 
-  @Override public void perform() {
+  @Override public Call<ListItemActionResponse> getCall() {
     ListItemActionBody body = new ListItemActionBody();
     body.show(traktId);
-    usersService.removeItem(listId, body);
+    return usersService.removeItem(listId, body);
+  }
+
+  @Override public void handleResponse(ListItemActionResponse response) {
   }
 }

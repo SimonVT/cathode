@@ -21,6 +21,7 @@ import java.util.List;
 import net.simonvt.cathode.api.body.CommentBody;
 import net.simonvt.cathode.api.entity.Comment;
 import net.simonvt.cathode.api.enumeration.Extended;
+import retrofit.Call;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
 import retrofit.http.GET;
@@ -33,18 +34,18 @@ public interface CommentsService {
 
   int MIN_WORD_COUNT = 5;
 
-  @POST("/comments") Comment post(@Body CommentBody body);
+  @POST("/comments") Call<Comment> post(@Body CommentBody body);
 
-  @PUT("/comments/{id}") Comment update(@Path("id") long id, @Body CommentBody body);
+  @PUT("/comments/{id}") Call<Comment> update(@Path("id") long id, @Body CommentBody body);
 
-  @DELETE("/comments/{id}") Void delete(@Path("id") long id);
+  @DELETE("/comments/{id}") Call<ResponseBody> delete(@Path("id") long id);
 
-  @GET("/comments/{id}/replies") List<Comment> getReplies(@Path("id") long id,
+  @GET("/comments/{id}/replies") Call<List<Comment>> getReplies(@Path("id") long id,
       @Query("page") int page, @Query("limit") int limit, @Query("extended") Extended extended);
 
-  @POST("/comments/{id}/replies") Comment reply(@Path("id") long id, @Body CommentBody body);
+  @POST("/comments/{id}/like") Call<ResponseBody> like(@Path("id") long id, @Body String body);
 
-  @POST("/comments/{id}/like") ResponseBody like(@Path("id") long id, @Body String body);
+  @DELETE("/comments/{id}/like") Call<ResponseBody> unlike(@Path("id") long id);
 
-  @DELETE("/comments/{id}/like") ResponseBody unlike(@Path("id") long id);
+  @POST("/comments/{id}/replies") Call<Comment> reply(@Path("id") long id, @Body CommentBody body);
 }

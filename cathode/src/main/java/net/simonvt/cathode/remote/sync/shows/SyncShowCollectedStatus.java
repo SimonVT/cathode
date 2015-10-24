@@ -17,7 +17,6 @@
 package net.simonvt.cathode.remote.sync.shows;
 
 import android.content.ContentProviderOperation;
-import android.content.ContentResolver;
 import android.content.OperationApplicationException;
 import android.os.RemoteException;
 import java.util.ArrayList;
@@ -26,17 +25,18 @@ import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.ShowProgress;
 import net.simonvt.cathode.api.service.ShowsService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 import timber.log.Timber;
 
-public class SyncShowCollectedStatus extends Job {
+public class SyncShowCollectedStatus extends CallJob<ShowProgress> {
 
   @Inject transient ShowsService showsService;
 
@@ -59,11 +59,11 @@ public class SyncShowCollectedStatus extends Job {
     return PRIORITY_USER_DATA;
   }
 
-  @Override public void perform() {
-    ContentResolver resolver = getContentResolver();
+  @Override public Call<ShowProgress> getCall() {
+    return showsService.getCollectionProgress(traktId);
+  }
 
-    ShowProgress progress = showsService.getCollectionProgress(traktId);
-
+  @Override public void handleResponse(ShowProgress progress) {
     ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
     final long showId = showResult.showId;
     final boolean didShowExist = !showResult.didCreate;

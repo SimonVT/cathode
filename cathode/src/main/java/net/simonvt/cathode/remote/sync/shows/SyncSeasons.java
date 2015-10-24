@@ -27,9 +27,10 @@ import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
+import retrofit.Call;
 
-public class SyncSeasons extends Job {
+public class SyncSeasons extends CallJob<List<Season>> {
 
   @Inject transient SeasonService seasonService;
 
@@ -50,14 +51,16 @@ public class SyncSeasons extends Job {
     return PRIORITY_SEASONS;
   }
 
-  @Override public void perform() {
+  @Override public Call<List<Season>> getCall() {
+    return seasonService.getSummary(traktId, Extended.FULL_IMAGES);
+  }
+
+  @Override public void handleResponse(List<Season> seasons) {
     final long showId = showHelper.getId(traktId);
     if (showId == -1L) {
       queue(new SyncShow(traktId));
       return;
     }
-
-    List<Season> seasons = seasonService.getSummary(traktId, Extended.FULL_IMAGES);
 
     List<Long> seasonIds = new ArrayList<Long>();
     Cursor currentSeasons = getContentResolver().query(Seasons.fromShow(showId), new String[] {

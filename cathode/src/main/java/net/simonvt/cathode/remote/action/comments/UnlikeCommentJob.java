@@ -16,12 +16,14 @@
 
 package net.simonvt.cathode.remote.action.comments;
 
+import com.squareup.okhttp.ResponseBody;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.service.CommentsService;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class UnlikeCommentJob extends Job {
+public class UnlikeCommentJob extends CallJob<ResponseBody> {
 
   @Inject transient CommentsService commentsService;
 
@@ -44,9 +46,11 @@ public class UnlikeCommentJob extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public void perform() {
-    // TODO: Catch 422
+  @Override public Call<ResponseBody> getCall() {
+    return commentsService.unlike(commentId);
+  }
 
-    commentsService.unlike(commentId);
+  @Override public void handleResponse(ResponseBody response) {
+    // TODO: Catch 422
   }
 }

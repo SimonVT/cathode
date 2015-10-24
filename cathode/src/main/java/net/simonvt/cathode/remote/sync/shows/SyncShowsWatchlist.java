@@ -26,10 +26,11 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class SyncShowsWatchlist extends Job {
+public class SyncShowsWatchlist extends CallJob<List<WatchlistItem>> {
 
   @Inject transient SyncService syncService;
 
@@ -47,7 +48,11 @@ public class SyncShowsWatchlist extends Job {
     return PRIORITY_USER_DATA;
   }
 
-  @Override public void perform() {
+  @Override public Call<List<WatchlistItem>> getCall() {
+    return syncService.getShowWatchlist();
+  }
+
+  @Override public void handleResponse(List<WatchlistItem> watchlist) {
     Cursor c = getContentResolver().query(Shows.SHOWS, new String[] {
         DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
     }, ShowColumns.IN_WATCHLIST + "=0", null, null);
@@ -58,8 +63,6 @@ public class SyncShowsWatchlist extends Job {
       showIds.add(c.getLong(c.getColumnIndex(ShowColumns.ID)));
     }
     c.close();
-
-    List<WatchlistItem> watchlist = syncService.getShowWatchlist();
 
     for (WatchlistItem item : watchlist) {
       final Show show = item.getShow();

@@ -28,14 +28,15 @@ import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.entity.TrendingItem;
 import net.simonvt.cathode.api.service.ShowsService;
+import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobFailedException;
+import net.simonvt.cathode.remote.CallJob;
+import retrofit.Call;
 import timber.log.Timber;
 
-public class SyncTrendingShows extends Job {
+public class SyncTrendingShows extends CallJob<List<TrendingItem>> {
 
   private static final int LIMIT = 20;
 
@@ -51,11 +52,13 @@ public class SyncTrendingShows extends Job {
     return PRIORITY_RECOMMENDED_TRENDING;
   }
 
-  @Override public void perform() {
+  @Override public Call<List<TrendingItem>> getCall() {
+    return showsService.getTrendingShows(LIMIT);
+  }
+
+  @Override public void handleResponse(List<TrendingItem> shows) {
     try {
       ContentResolver resolver = getContentResolver();
-
-      List<TrendingItem> shows = showsService.getTrendingShows(LIMIT);
 
       ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
       Cursor c = resolver.query(Shows.SHOWS_TRENDING, null, null, null, null);

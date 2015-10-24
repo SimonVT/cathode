@@ -32,7 +32,6 @@ import net.simonvt.cathode.api.service.CommentsService;
 import net.simonvt.cathode.api.service.EpisodeService;
 import net.simonvt.cathode.api.service.MoviesService;
 import net.simonvt.cathode.api.service.ShowsService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.CommentsHelper;
 import net.simonvt.cathode.provider.DatabaseContract;
@@ -44,10 +43,12 @@ import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.UserDatabaseHelper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
+import net.simonvt.cathode.remote.PagedCallJob;
 import net.simonvt.cathode.util.Cursors;
+import retrofit.Call;
 import timber.log.Timber;
 
-public class SyncComments extends Job {
+public class SyncComments extends PagedCallJob<Comment> {
 
   private static final int LIMIT = 100;
 
@@ -99,37 +100,27 @@ public class SyncComments extends Job {
     return PRIORITY_EXTRAS;
   }
 
-  @Override public void perform() {
-    List<Comment> comments = new ArrayList<>();
-    List<Comment> commentsQuery;
-    int page = 1;
-    do {
-      switch (type) {
-        case SHOW:
-          commentsQuery = showsService.getComments(traktId, page, LIMIT, Extended.FULL_IMAGES);
-          break;
+  @Override public Call<List<Comment>> getCall(int page) {
+    switch (type) {
+      case SHOW:
+        return showsService.getComments(traktId, page, LIMIT, Extended.FULL_IMAGES);
 
-        case EPISODE:
-          commentsQuery = episodeService.getComments(traktId, season, episode, page, LIMIT,
-              Extended.FULL_IMAGES);
-          break;
+      case EPISODE:
+        return episodeService.getComments(traktId, season, episode, page, LIMIT,
+            Extended.FULL_IMAGES);
 
-        case MOVIE:
-          commentsQuery = moviesService.getComments(traktId, page, LIMIT, Extended.FULL_IMAGES);
-          break;
+      case MOVIE:
+        return moviesService.getComments(traktId, page, LIMIT, Extended.FULL_IMAGES);
 
-        case COMMENT:
-          commentsQuery = commentsService.getReplies(traktId, page, LIMIT, Extended.FULL_IMAGES);
-          break;
+      case COMMENT:
+        return commentsService.getReplies(traktId, page, LIMIT, Extended.FULL_IMAGES);
 
-        default:
-          throw new RuntimeException("Unknown type: " + type);
-      }
+      default:
+        throw new RuntimeException("Unknown type: " + type);
+    }
+  }
 
-      comments.addAll(commentsQuery);
-      page++;
-    } while (commentsQuery.size() > 0);
-
+  @Override public void handleResponse(List<Comment> comments) {
     int itemType;
     long itemId;
     switch (type) {

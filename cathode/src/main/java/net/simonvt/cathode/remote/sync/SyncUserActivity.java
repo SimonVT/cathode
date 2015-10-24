@@ -19,7 +19,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.LastActivity;
 import net.simonvt.cathode.api.enumeration.ItemTypes;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.comments.SyncCommentLikes;
 import net.simonvt.cathode.remote.sync.comments.SyncUserComments;
@@ -36,8 +36,9 @@ import net.simonvt.cathode.remote.sync.shows.SyncShowsRatings;
 import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.settings.TraktTimestamps;
+import retrofit.Call;
 
-public class SyncUserActivity extends Job {
+public class SyncUserActivity extends CallJob<LastActivity> {
 
   @Inject transient SyncService syncService;
 
@@ -53,9 +54,11 @@ public class SyncUserActivity extends Job {
     return PRIORITY_USER_DATA;
   }
 
-  @Override public void perform() {
-    LastActivity lastActivity = syncService.lastActivity();
+  @Override public Call<LastActivity> getCall() {
+    return syncService.lastActivity();
+  }
 
+  @Override public void handleResponse(LastActivity lastActivity) {
     final long showLastWatchlist = lastActivity.getShows().getWatchlistedAt().getTimeInMillis();
     final long showLastRating = lastActivity.getShows().getRatedAt().getTimeInMillis();
     final long showLastComment = lastActivity.getShows().getCommentedAt().getTimeInMillis();

@@ -20,11 +20,12 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Profile;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.UserDatabaseHelper;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class SyncUserProfile extends Job {
+public class SyncUserProfile extends CallJob<Profile> {
 
   @Inject transient UsersService usersService;
 
@@ -42,8 +43,11 @@ public class SyncUserProfile extends Job {
     return PRIORITY_USER_DATA;
   }
 
-  @Override public void perform() {
-    Profile profile = usersService.getProfile(Extended.FULL_IMAGES);
+  @Override public Call<Profile> getCall() {
+    return usersService.getProfile(Extended.FULL_IMAGES);
+  }
+
+  @Override public void handleResponse(Profile profile) {
     userHelper.updateOrCreate(profile);
   }
 }

@@ -21,6 +21,7 @@ import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.entity.Rating;
 import net.simonvt.cathode.api.entity.Season;
 import net.simonvt.cathode.api.enumeration.Extended;
+import retrofit.Call;
 import retrofit.http.GET;
 import retrofit.http.Path;
 import retrofit.http.Query;
@@ -32,7 +33,7 @@ public interface SeasonService {
    *
    * @param id Show trakt ID
    */
-  @GET("/shows/{id}/seasons") List<Season> getSummary(@Path("id") long id,
+  @GET("/shows/{id}/seasons") Call<List<Season>> getSummary(@Path("id") long id,
       @Query("extended") Extended extended);
 
   /**
@@ -40,9 +41,9 @@ public interface SeasonService {
    *
    * @param id Show trakt ID
    */
-  @GET("/shows/{id}/seasons/{season}") List<Episode> getSeason(@Path("id") long id,
+  @GET("/shows/{id}/seasons/{season}") Call<List<Episode>> getSeason(@Path("id") long id,
       @Path("season") int season, @Query("extended") Extended extended);
 
-  @GET("/shows/{id[/seasons/{season[/ratings") Rating getRatings(@Path("id") long id,
+  @GET("/shows/{id[/seasons/{season[/ratings") Call<Rating> getRatings(@Path("id") long id,
       @Path("season") int season);
 }

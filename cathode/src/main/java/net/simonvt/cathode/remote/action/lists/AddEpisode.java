@@ -18,11 +18,13 @@ package net.simonvt.cathode.remote.action.lists;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.ListItemActionBody;
+import net.simonvt.cathode.api.entity.ListItemActionResponse;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class AddEpisode extends Job {
+public class AddEpisode extends CallJob<ListItemActionResponse> {
 
   @Inject transient UsersService usersService;
 
@@ -55,9 +57,12 @@ public class AddEpisode extends Job {
     return true;
   }
 
-  @Override public void perform() {
+  @Override public Call<ListItemActionResponse> getCall() {
     ListItemActionBody body = new ListItemActionBody();
     body.show(showTraktId).season(seasonNumber).episode(episodeNumber);
-    usersService.addItems(listId, body);
+    return usersService.addItems(listId, body);
+  }
+
+  @Override public void handleResponse(ListItemActionResponse response) {
   }
 }

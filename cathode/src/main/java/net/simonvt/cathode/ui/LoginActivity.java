@@ -30,6 +30,7 @@ import butterknife.ButterKnife;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
+import java.io.IOException;
 import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.CathodeApp;
@@ -46,8 +47,8 @@ import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.setup.CalendarSetupActivity;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
+import retrofit.Response;
 import timber.log.Timber;
 
 public class LoginActivity extends BaseActivity {
@@ -180,36 +181,39 @@ public class LoginActivity extends BaseActivity {
       String code = params[0];
 
       try {
-        final AccessToken token = authorizationService.getToken(
+        Call<AccessToken> call = authorizationService.getToken(
             TokenRequest.getAccessToken(code, BuildConfig.TRAKT_CLIENT_ID, BuildConfig.TRAKT_SECRET,
                 BuildConfig.TRAKT_REDIRECT_URL, GrantType.AUTHORIZATION_CODE));
+        Response<AccessToken> response = call.execute();
 
-        traktSettings.updateTokens(token);
+        if (response.isSuccess()) {
+          AccessToken token = response.body();
+          traktSettings.updateTokens(token);
 
-        final UserSettings userSettings = usersService.getUserSettings();
-        Settings.clearProfile(context);
-        Settings.updateProfile(context, userSettings);
+          Call<UserSettings> userSettingsCall = usersService.getUserSettings();
+          Response<UserSettings> userSettingsResponse = userSettingsCall.execute();
 
-        return new Result();
-      } catch (RetrofitError e) {
-        switch (e.getKind()) {
-          case NETWORK:
-            return new Result(R.string.login_error_network);
-          case HTTP:
-            Response response = e.getResponse();
-            if (response != null) {
-              int status = response.getStatus();
-              if (status >= 500 && status < 600) {
-                return new Result(R.string.login_error_5xx);
-              }
+          if (response.isSuccess()) {
+            final UserSettings userSettings = userSettingsResponse.body();
+            Settings.clearProfile(context);
+            Settings.updateProfile(context, userSettings);
+
+            return new Result();
+          } else {
+            if (response.code() >= 500 && response.code() < 600) {
+              return new Result(R.string.login_error_5xx);
             }
-          case CONVERSION:
-          case UNEXPECTED:
+          }
+        } else {
+          if (response.code() >= 500 && response.code() < 600) {
+            return new Result(R.string.login_error_5xx);
+          }
         }
-
+      } catch (IOException e) {
         Timber.e(e, "Unable to get token");
-        return new Result(R.string.login_error_unknown);
       }
+
+      return new Result(R.string.login_error_unknown);
     }
 
     @Override protected void onPostExecute(Result result) {

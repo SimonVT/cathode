@@ -20,18 +20,19 @@ import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.body.CheckinItem;
+import net.simonvt.cathode.api.entity.CheckinResponse;
 import net.simonvt.cathode.api.service.CheckinService;
 import net.simonvt.cathode.event.CheckInFailedEvent;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.util.MainHandler;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
+import retrofit.Response;
 
-public class CheckInEpisode extends Job {
+public class CheckInEpisode extends CallJob<CheckinResponse> {
 
   @Inject transient CheckinService checkinService;
 
@@ -65,45 +66,45 @@ public class CheckInEpisode extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public void perform() {
-    try {
-      CheckinItem item = new CheckinItem() //
-          .episode(traktId) //
-          .message(message) //
-          .facebook(facebook) //
-          .twitter(twitter) //
-          .tumblr(tumblr) //
-          .appVersion(BuildConfig.VERSION_NAME) //
-          .appDate(BuildConfig.BUILD_TIME);
-      checkinService.checkin(item);
-    } catch (RetrofitError e) {
-      Response response = e.getResponse();
-      if (response != null) {
-        if (response.getStatus() == 409) {
-          queue(new SyncWatching());
+  @Override public Call<CheckinResponse> getCall() {
+    CheckinItem item = new CheckinItem() //
+        .episode(traktId)
+        .message(message)
+        .facebook(facebook)
+        .twitter(twitter)
+        .tumblr(tumblr)
+        .appVersion(BuildConfig.VERSION_NAME)
+        .appDate(BuildConfig.BUILD_TIME);
+    return checkinService.checkin(item);
+  }
 
-          Cursor c = getContentResolver().query(Episodes.EPISODES, new String[] {
-              EpisodeColumns.TITLE,
-          }, EpisodeColumns.TRAKT_ID + "=?", new String[] {
-              String.valueOf(traktId),
-          }, null);
+  @Override protected boolean handleError(Response<CheckinResponse> response) {
+    if (response.code() == 409) {
+      queue(new SyncWatching());
 
-          if (c.moveToFirst()) {
-            final String title = c.getString(c.getColumnIndex(EpisodeColumns.TITLE));
+      Cursor c = getContentResolver().query(Episodes.EPISODES, new String[] {
+          EpisodeColumns.TITLE,
+      }, EpisodeColumns.TRAKT_ID + "=?", new String[] {
+          String.valueOf(traktId),
+      }, null);
 
-            MainHandler.post(new Runnable() {
-              @Override public void run() {
-                bus.post(new CheckInFailedEvent(title));
-              }
-            });
+      if (c.moveToFirst()) {
+        final String title = c.getString(c.getColumnIndex(EpisodeColumns.TITLE));
+
+        MainHandler.post(new Runnable() {
+          @Override public void run() {
+            bus.post(new CheckInFailedEvent(title));
           }
-
-          c.close();
-          return;
-        }
+        });
       }
 
-      throw e;
+      c.close();
+      return true;
     }
+
+    return super.handleError(response);
+  }
+
+  @Override public void handleResponse(CheckinResponse response) {
   }
 }

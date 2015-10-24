@@ -16,12 +16,14 @@
 
 package net.simonvt.cathode.remote.action;
 
+import com.squareup.okhttp.ResponseBody;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.service.CheckinService;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class CancelCheckin extends Job {
+public class CancelCheckin extends CallJob<ResponseBody> {
 
   @Inject transient CheckinService checkinService;
 
@@ -41,7 +43,10 @@ public class CancelCheckin extends Job {
     return true;
   }
 
-  @Override public void perform() {
-    checkinService.deleteCheckin();
+  @Override public Call<ResponseBody> getCall() {
+    return checkinService.deleteCheckin();
+  }
+
+  @Override public void handleResponse(ResponseBody response) {
   }
 }

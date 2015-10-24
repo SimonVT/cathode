@@ -25,10 +25,11 @@ import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import retrofit.Call;
 
-public class SyncWatchedMovies extends Job {
+public class SyncWatchedMovies extends CallJob<List<WatchedItem>> {
 
   @Inject transient SyncService syncService;
 
@@ -44,7 +45,11 @@ public class SyncWatchedMovies extends Job {
     return PRIORITY_USER_DATA;
   }
 
-  @Override public void perform() {
+  @Override public Call<List<WatchedItem>> getCall() {
+    return syncService.getWatchedMovies();
+  }
+
+  @Override public void handleResponse(List<WatchedItem> movies) {
     Cursor c = getContentResolver().query(Movies.MOVIES, new String[] {
         MovieColumns.ID,
     }, MovieColumns.WATCHED, null, null);
@@ -55,8 +60,6 @@ public class SyncWatchedMovies extends Job {
       movieIds.add(c.getLong(0));
     }
     c.close();
-
-    List<WatchedItem> movies = syncService.getWatchedMovies();
 
     for (WatchedItem item : movies) {
       Movie movie = item.getMovie();

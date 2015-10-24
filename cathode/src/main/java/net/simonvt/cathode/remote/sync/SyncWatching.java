@@ -20,7 +20,6 @@ import android.content.ContentResolver;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.os.RemoteException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -28,7 +27,6 @@ import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.Watching;
 import net.simonvt.cathode.api.enumeration.Action;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -39,19 +37,15 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
+import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.cathode.remote.FourOneTwoException;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
-import net.simonvt.cathode.util.HttpUtils;
-import retrofit.RetrofitError;
-import retrofit.client.Header;
-import retrofit.client.Response;
-import retrofit.mime.TypedInput;
+import retrofit.Call;
 import timber.log.Timber;
 
-public class SyncWatching extends Job {
+public class SyncWatching extends CallJob<Watching> {
 
   @Inject transient UsersService usersService;
 
@@ -71,7 +65,11 @@ public class SyncWatching extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public void perform() {
+  @Override public Call<Watching> getCall() {
+    return usersService.watching();
+  }
+
+  @Override public void handleResponse(Watching watching) {
     ContentResolver resolver = getContentResolver();
 
     ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
@@ -101,34 +99,6 @@ public class SyncWatching extends Job {
 
     ContentProviderOperation op = null;
 
-    Watching watching = null;
-    try {
-      watching = usersService.watching();
-    } catch (RetrofitError error) {
-      Response response = error.getResponse();
-      // Some users get a 412 when requesting watched stuff. Ignore so it doesn't stop the entire
-      // job queue
-      if (response != null && response.getStatus() == 412) {
-        List<Header> headers = response.getHeaders();
-        for (Header header : headers) {
-          Timber.i("%s", header.toString());
-        }
-
-        TypedInput input = response.getBody();
-        String body = null;
-        try {
-          body = HttpUtils.streamToString(input.in());
-        } catch (IOException e) {
-          // Ignore
-        }
-        Timber.i("Body: %s", body);
-
-        Timber.e(new FourOneTwoException(), "Precondition failed");
-      } else {
-        throw error;
-      }
-    }
-
     if (watching != null) {
       if (watching.getType() != null) {
         switch (watching.getType()) {
@@ -143,7 +113,8 @@ public class SyncWatching extends Job {
             }
 
             final int seasonNumber = watching.getEpisode().getSeason();
-            SeasonDatabaseHelper.IdResult seasonResult = seasonHelper.getIdOrCreate(showId, seasonNumber);
+            SeasonDatabaseHelper.IdResult seasonResult =
+                seasonHelper.getIdOrCreate(showId, seasonNumber);
             final long seasonId = seasonResult.id;
             final boolean didSeasonExist = !seasonResult.didCreate;
             if (seasonResult.didCreate) {
@@ -154,7 +125,8 @@ public class SyncWatching extends Job {
 
             final int episodeNumber = watching.getEpisode().getNumber();
 
-            EpisodeDatabaseHelper.IdResult episodeResult = episodeHelper.getIdOrCreate(showId, seasonId, episodeNumber);
+            EpisodeDatabaseHelper.IdResult episodeResult =
+                episodeHelper.getIdOrCreate(showId, seasonId, episodeNumber);
             final long episodeId = episodeResult.id;
             if (episodeResult.didCreate) {
               if (didShowExist && didSeasonExist) {
