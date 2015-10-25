@@ -16,7 +16,7 @@ dependencies {
   compile parent.libraries.jodaTime
 
   testCompile parent.libraries.junit
-  testCompile parent.libraries.assertj
+  testCompile parent.libraries.truth
 }
 
 android {

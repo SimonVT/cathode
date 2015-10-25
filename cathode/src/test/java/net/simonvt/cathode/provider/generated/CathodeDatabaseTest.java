@@ -27,16 +27,15 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 
-@RunWith(RobolectricTestRunner.class)
-public class CathodeDatabaseTest {
+@RunWith(RobolectricTestRunner.class) public class CathodeDatabaseTest {
 
   @Test public void testSeasonDeleteTrigger() throws Exception {
-    CathodeDatabase helper = CathodeDatabase.getInstance(Robolectric.application);
+    CathodeDatabase helper = CathodeDatabase.getInstance(RuntimeEnvironment.application);
 
     SQLiteDatabase db = helper.getWritableDatabase();
 
@@ -68,7 +67,7 @@ public class CathodeDatabaseTest {
   }
 
   @Test public void testShowDeleteTrigger() throws Exception {
-    CathodeDatabase helper = CathodeDatabase.getInstance(Robolectric.application);
+    CathodeDatabase helper = CathodeDatabase.getInstance(RuntimeEnvironment.application);
 
     SQLiteDatabase db = helper.getWritableDatabase();
 

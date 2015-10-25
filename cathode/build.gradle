@@ -37,7 +37,7 @@ dependencies {
   testCompile parent.libraries.junit
   testCompile parent.libraries.robolectric
   testCompile parent.libraries.mockito
-  testCompile parent.libraries.assertj
+  testCompile parent.libraries.truth
 }
 
 android {
@@ -108,6 +108,12 @@ android {
 
   lintOptions {
     abortOnError false
+  }
+}
+
+tasks.withType(Test) {
+  testLogging {
+    exceptionFormat = 'full'
   }
 }
 
