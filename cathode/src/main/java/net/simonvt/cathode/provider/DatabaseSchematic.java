@@ -17,6 +17,7 @@ package net.simonvt.cathode.provider;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import java.util.Set;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.HiddenColumns;
@@ -37,10 +38,12 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowSearchSuggestionsColumn
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.generated.CathodeDatabase;
 import net.simonvt.cathode.util.SqlIndex;
+import net.simonvt.cathode.util.SqlUtils;
 import net.simonvt.schematic.annotation.Database;
 import net.simonvt.schematic.annotation.ExecOnCreate;
 import net.simonvt.schematic.annotation.OnUpgrade;
 import net.simonvt.schematic.annotation.Table;
+import timber.log.Timber;
 
 @Database(className = "CathodeDatabase",
     packageName = "net.simonvt.cathode.provider.generated",
@@ -934,32 +937,60 @@ public final class DatabaseSchematic {
     }
 
     if (oldVersion < 16) {
-      db.execSQL("ALTER TABLE " + Tables.SHOWS
-          + " ADD COLUMN " + HiddenColumns.HIDDEN_CALENDAR + " INTEGER DEFAULT 0");
-      db.execSQL("ALTER TABLE " + Tables.SHOWS
-          + " ADD COLUMN " + HiddenColumns.HIDDEN_COLLECTED + " INTEGER DEFAULT 0");
-      db.execSQL("ALTER TABLE " + Tables.SHOWS
-          + " ADD COLUMN " + HiddenColumns.HIDDEN_WATCHED + " INTEGER DEFAULT 0");
-      db.execSQL("ALTER TABLE " + Tables.SHOWS
-          + " ADD COLUMN " + HiddenColumns.HIDDEN_RECOMMENDATIONS + " INTEGER DEFAULT 0");
+      Set<String> showColumns = SqlUtils.columns(db, Tables.SHOWS);
+      if (!showColumns.contains(HiddenColumns.HIDDEN_CALENDAR)) {
+        Timber.d("Column did not exist: " + HiddenColumns.HIDDEN_CALENDAR);
+        db.execSQL("ALTER TABLE " + Tables.SHOWS
+            + " ADD COLUMN " + HiddenColumns.HIDDEN_CALENDAR + " INTEGER DEFAULT 0");
+      }
+      if (!showColumns.contains(HiddenColumns.HIDDEN_COLLECTED)) {
+        db.execSQL("ALTER TABLE " + Tables.SHOWS
+            + " ADD COLUMN " + HiddenColumns.HIDDEN_COLLECTED + " INTEGER DEFAULT 0");
+      }
+      if (!showColumns.contains(HiddenColumns.HIDDEN_WATCHED)) {
+        db.execSQL("ALTER TABLE " + Tables.SHOWS
+            + " ADD COLUMN " + HiddenColumns.HIDDEN_WATCHED + " INTEGER DEFAULT 0");
+      }
+      if (!showColumns.contains(HiddenColumns.HIDDEN_RECOMMENDATIONS)) {
+        db.execSQL("ALTER TABLE " + Tables.SHOWS
+            + " ADD COLUMN " + HiddenColumns.HIDDEN_RECOMMENDATIONS + " INTEGER DEFAULT 0");
+      }
 
-      db.execSQL("ALTER TABLE " + Tables.SEASONS
-          + " ADD COLUMN " + HiddenColumns.HIDDEN_CALENDAR + " INTEGER DEFAULT 0");
-      db.execSQL("ALTER TABLE " + Tables.SEASONS
-          + " ADD COLUMN " + HiddenColumns.HIDDEN_COLLECTED + " INTEGER DEFAULT 0");
-      db.execSQL("ALTER TABLE " + Tables.SEASONS
-          + " ADD COLUMN " + HiddenColumns.HIDDEN_WATCHED + " INTEGER DEFAULT 0");
-      db.execSQL("ALTER TABLE " + Tables.SEASONS
-          + " ADD COLUMN " + HiddenColumns.HIDDEN_RECOMMENDATIONS + " INTEGER DEFAULT 0");
+      Set<String> seasonColumns = SqlUtils.columns(db, Tables.SEASONS);
+      if (!seasonColumns.contains(HiddenColumns.HIDDEN_CALENDAR)) {
+        db.execSQL("ALTER TABLE " + Tables.SEASONS
+            + " ADD COLUMN " + HiddenColumns.HIDDEN_CALENDAR + " INTEGER DEFAULT 0");
+      }
+      if (!seasonColumns.contains(HiddenColumns.HIDDEN_COLLECTED)) {
+        db.execSQL("ALTER TABLE " + Tables.SEASONS
+            + " ADD COLUMN " + HiddenColumns.HIDDEN_COLLECTED + " INTEGER DEFAULT 0");
+      }
+      if (!seasonColumns.contains(HiddenColumns.HIDDEN_WATCHED)) {
+        db.execSQL("ALTER TABLE " + Tables.SEASONS
+            + " ADD COLUMN " + HiddenColumns.HIDDEN_WATCHED + " INTEGER DEFAULT 0");
+      }
+      if (!seasonColumns.contains(HiddenColumns.HIDDEN_RECOMMENDATIONS)) {
+        db.execSQL("ALTER TABLE " + Tables.SEASONS
+            + " ADD COLUMN " + HiddenColumns.HIDDEN_RECOMMENDATIONS + " INTEGER DEFAULT 0");
+      }
 
-      db.execSQL("ALTER TABLE " + Tables.MOVIES
-          + " ADD COLUMN " + HiddenColumns.HIDDEN_CALENDAR + " INTEGER DEFAULT 0");
-      db.execSQL("ALTER TABLE " + Tables.MOVIES
-          + " ADD COLUMN " + HiddenColumns.HIDDEN_COLLECTED + " INTEGER DEFAULT 0");
-      db.execSQL("ALTER TABLE " + Tables.MOVIES
-          + " ADD COLUMN " + HiddenColumns.HIDDEN_WATCHED + " INTEGER DEFAULT 0");
-      db.execSQL("ALTER TABLE " + Tables.MOVIES
-          + " ADD COLUMN " + HiddenColumns.HIDDEN_RECOMMENDATIONS + " INTEGER DEFAULT 0");
+      Set<String> movieColumns = SqlUtils.columns(db, Tables.MOVIES);
+      if (!movieColumns.contains(HiddenColumns.HIDDEN_CALENDAR)) {
+        db.execSQL("ALTER TABLE " + Tables.MOVIES
+            + " ADD COLUMN " + HiddenColumns.HIDDEN_CALENDAR + " INTEGER DEFAULT 0");
+      }
+      if (!movieColumns.contains(HiddenColumns.HIDDEN_COLLECTED)) {
+        db.execSQL("ALTER TABLE " + Tables.MOVIES
+            + " ADD COLUMN " + HiddenColumns.HIDDEN_COLLECTED + " INTEGER DEFAULT 0");
+      }
+      if (!movieColumns.contains(HiddenColumns.HIDDEN_WATCHED)) {
+        db.execSQL("ALTER TABLE " + Tables.MOVIES
+            + " ADD COLUMN " + HiddenColumns.HIDDEN_WATCHED + " INTEGER DEFAULT 0");
+      }
+      if (!movieColumns.contains(HiddenColumns.HIDDEN_RECOMMENDATIONS)) {
+        db.execSQL("ALTER TABLE " + Tables.MOVIES
+            + " ADD COLUMN " + HiddenColumns.HIDDEN_RECOMMENDATIONS + " INTEGER DEFAULT 0");
+      }
     }
 
     if (oldVersion < 17) {
