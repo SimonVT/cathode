@@ -268,7 +268,7 @@ public class MovieFragment extends BaseFragment
     loaded = true;
 
     final String title = cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE));
-    if (!title.equals(movieTitle)) {
+    if (title != null && !title.equals(movieTitle)) {
       movieTitle = title;
       setTitle(movieTitle);
     }
