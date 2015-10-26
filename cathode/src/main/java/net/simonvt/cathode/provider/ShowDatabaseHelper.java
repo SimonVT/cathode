@@ -32,7 +32,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 
 public final class ShowDatabaseHelper {
 
-  private static ShowDatabaseHelper instance;
+  private static volatile ShowDatabaseHelper instance;
 
   public static ShowDatabaseHelper getInstance(Context context) {
     if (instance == null) {

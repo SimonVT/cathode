@@ -30,7 +30,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 
 public final class SeasonDatabaseHelper {
 
-  private static SeasonDatabaseHelper instance;
+  private static volatile SeasonDatabaseHelper instance;
 
   public static SeasonDatabaseHelper getInstance(Context context) {
     if (instance == null) {

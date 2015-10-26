@@ -27,7 +27,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Users;
 
 public class UserDatabaseHelper {
 
-  private static UserDatabaseHelper instance;
+  private static volatile UserDatabaseHelper instance;
 
   public static UserDatabaseHelper getInstance(Context context) {
     if (instance == null) {

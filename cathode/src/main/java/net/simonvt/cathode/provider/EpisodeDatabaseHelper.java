@@ -29,7 +29,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 
 public final class EpisodeDatabaseHelper {
 
-  private static EpisodeDatabaseHelper instance;
+  private static volatile EpisodeDatabaseHelper instance;
 
   public static EpisodeDatabaseHelper getInstance(Context context) {
     if (instance == null) {
