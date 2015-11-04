@@ -31,7 +31,7 @@ ext {
   targetSdkVersion = 23
 
   compileSdkVersion = 23
-  buildToolsVersion = '23.0.0'
+  buildToolsVersion = '23.0.2'
 }
 
 ext.libraries = [
@@ -61,7 +61,7 @@ ext.libraries = [
   retrofitGson: 'com.squareup.retrofit:converter-gson:2.0.0-beta2',
 
   butterknife: 'com.jakewharton:butterknife:7.0.1',
-  timber: 'com.jakewharton.timber:timber:3.1.0',
+  timber: 'com.jakewharton.timber:timber:4.1.0',
 
   dashclockApi: 'com.google.android.apps.dashclock:dashclock-api:2.0.0',
 
