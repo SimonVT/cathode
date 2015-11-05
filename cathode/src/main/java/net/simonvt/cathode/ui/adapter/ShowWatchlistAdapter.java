@@ -181,7 +181,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
         }
 
         @Override public void onPopupDismissed() {
-          holder.setIsRecyclable(false);
+          holder.setIsRecyclable(true);
         }
 
         @Override public void onActionSelected(int action) {
@@ -217,7 +217,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
         }
 
         @Override public void onPopupDismissed() {
-          holder.setIsRecyclable(false);
+          holder.setIsRecyclable(true);
         }
 
         @Override public void onActionSelected(int action) {

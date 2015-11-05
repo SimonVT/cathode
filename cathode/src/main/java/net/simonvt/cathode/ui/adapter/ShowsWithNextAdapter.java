@@ -118,7 +118,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
       }
 
       @Override public void onPopupDismissed() {
-        holder.setIsRecyclable(false);
+        holder.setIsRecyclable(true);
       }
 
       @Override public void onActionSelected(int action) {

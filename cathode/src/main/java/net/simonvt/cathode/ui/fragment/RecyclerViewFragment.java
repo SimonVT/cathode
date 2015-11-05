@@ -28,7 +28,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import butterknife.Bind;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.widget.ScalingItemAnimator;
 
 public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> extends BaseFragment {
 
@@ -71,10 +70,7 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
   }
 
   protected RecyclerView.ItemAnimator getItemAnimator() {
-    RecyclerView.ItemAnimator animator = new ScalingItemAnimator();
-    // See https://code.google.com/p/android/issues/detail?id=159816
-    animator.setSupportsChangeAnimations(false);
-    return animator;
+    return null;
   }
 
   protected void addItemDecorations(RecyclerView recyclerView) {

@@ -189,7 +189,7 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
       }
 
       @Override public void onPopupDismissed() {
-        holder.setIsRecyclable(false);
+        holder.setIsRecyclable(true);
       }
 
       @Override public void onActionSelected(int action) {

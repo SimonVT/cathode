@@ -69,7 +69,7 @@ public class MovieSearchAdapter extends BaseMoviesAdapter<MovieSearchAdapter.Vie
       }
 
       @Override public void onPopupDismissed() {
-        holder.setIsRecyclable(false);
+        holder.setIsRecyclable(true);
       }
 
       @Override public void onActionSelected(int action) {

@@ -137,7 +137,7 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
       }
 
       @Override public void onPopupDismissed() {
-        holder.setIsRecyclable(false);
+        holder.setIsRecyclable(true);
       }
 
       @Override public void onActionSelected(int action) {
