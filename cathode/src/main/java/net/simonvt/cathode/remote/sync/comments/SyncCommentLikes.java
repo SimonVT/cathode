@@ -85,7 +85,17 @@ public class SyncCommentLikes extends PagedCallJob<Like> {
       final long commentId = comment.getId();
       final long likedAt = like.getLikedAt().getTimeInMillis();
 
-      if (existingLikes.contains(commentId)) {
+      boolean exists = existingLikes.contains(commentId);
+      if (!exists) {
+        // May have been created by user likes
+        c = getContentResolver().query(Comments.withId(commentId), new String[] {
+            CommentColumns.ID,
+        }, null, null, null);
+        exists = c.moveToFirst();
+        c.close();
+      }
+
+      if (exists) {
         deleteLikes.remove(commentId);
 
         ContentProviderOperation.Builder op =

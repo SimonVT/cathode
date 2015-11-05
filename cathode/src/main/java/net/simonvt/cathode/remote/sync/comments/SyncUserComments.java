@@ -201,11 +201,21 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
           continue;
       }
 
-      final long id = comment.getId();
-      if (existingComments.contains(id)) {
-        existingComments.remove(id);
+      final long commentId = comment.getId();
+      boolean exists = existingComments.contains(commentId);
+      if (!exists) {
+        // May have been created by user likes
+        c = getContentResolver().query(Comments.withId(commentId), new String[] {
+            CommentColumns.ID,
+        }, null, null, null);
+        exists = c.moveToFirst();
+        c.close();
+      }
+
+      if (exists) {
+        existingComments.remove(commentId);
         ContentProviderOperation.Builder op =
-            ContentProviderOperation.newUpdate(Comments.withId(id)).withValues(values);
+            ContentProviderOperation.newUpdate(Comments.withId(commentId)).withValues(values);
         ops.add(op.build());
       } else {
         ContentProviderOperation.Builder op =
