@@ -91,7 +91,8 @@ public class SyncCommentLikes extends PagedCallJob<Like> {
         ContentProviderOperation.Builder op =
             ContentProviderOperation.newUpdate(Comments.withId(commentId))
                 .withValue(CommentColumns.LIKED, true)
-                .withValue(CommentColumns.LIKED_AT, likedAt);
+                .withValue(CommentColumns.LIKED_AT, likedAt)
+                .withValue(CommentColumns.IS_USER_COMMENT, true);
         ops.add(op.build());
       } else {
         Profile profile = comment.getUser();
@@ -103,6 +104,7 @@ public class SyncCommentLikes extends PagedCallJob<Like> {
 
         values.put(CommentColumns.LIKED, true);
         values.put(CommentColumns.LIKED_AT, likedAt);
+        values.put(CommentColumns.IS_USER_COMMENT, true);
 
         ContentProviderOperation.Builder op =
             ContentProviderOperation.newInsert(Comments.COMMENTS).withValues(values);
