@@ -37,6 +37,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.settings.Settings;
+import timber.log.Timber;
 
 public class CheckInDialog extends DialogFragment {
 
@@ -65,6 +66,12 @@ public class CheckInDialog extends DialogFragment {
 
   public static void showDialogIfNecessary(FragmentActivity activity, Type type, String title,
       long id) {
+    if (title == null) {
+      // TODO: Remove eventually
+      Timber.e(new Exception("Title is null"), "Type: %s", type.toString());
+      return;
+    }
+
     final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
     final boolean facebookShare = settings.getBoolean(Settings.Profile.CONNECTION_FACEBOOK, false);
     final boolean twitterShare = settings.getBoolean(Settings.Profile.CONNECTION_TWITTER, false);
