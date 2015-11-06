@@ -93,9 +93,12 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
 
       v.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          Cursor cursor = getCursor(showHolder.getAdapterPosition());
-          final long itemId = cursor.getLong(cursor.getColumnIndex(ListItemColumns.ITEM_ID));
-          showListener.onShowClick(v, showHolder.getAdapterPosition(), itemId);
+          final int position = showHolder.getAdapterPosition();
+          if (position != RecyclerView.NO_POSITION) {
+            Cursor cursor = getCursor(position);
+            final long itemId = cursor.getLong(cursor.getColumnIndex(ListItemColumns.ITEM_ID));
+            showListener.onShowClick(v, position, itemId);
+          }
         }
       });
     } else if (viewType == DatabaseContract.ItemType.SEASON) {
@@ -105,9 +108,12 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
 
       v.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          Cursor cursor = getCursor(seasonHolder.getAdapterPosition());
-          final long itemId = cursor.getLong(cursor.getColumnIndex(ListItemColumns.ITEM_ID));
-          seasonListener.onSeasonClick(v, seasonHolder.getAdapterPosition(), itemId);
+          final int position = seasonHolder.getAdapterPosition();
+          if (position != RecyclerView.NO_POSITION) {
+            Cursor cursor = getCursor(position);
+            final long itemId = cursor.getLong(cursor.getColumnIndex(ListItemColumns.ITEM_ID));
+            seasonListener.onSeasonClick(v, position, itemId);
+          }
         }
       });
     } else if (viewType == DatabaseContract.ItemType.EPISODE) {
@@ -118,10 +124,12 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
 
       v.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          Cursor cursor = getCursor(episodeHolder.getAdapterPosition());
-          final long itemId = cursor.getLong(cursor.getColumnIndex(ListItemColumns.ITEM_ID));
-          episodeListener.onEpisodeClick(episodeHolder.itemView, episodeHolder.getAdapterPosition(),
-              itemId);
+          final int position = episodeHolder.getAdapterPosition();
+          if (position != RecyclerView.NO_POSITION) {
+            Cursor cursor = getCursor(position);
+            final long itemId = cursor.getLong(cursor.getColumnIndex(ListItemColumns.ITEM_ID));
+            episodeListener.onEpisodeClick(episodeHolder.itemView, position, itemId);
+          }
         }
       });
     } else if (viewType == DatabaseContract.ItemType.MOVIE) {
@@ -131,10 +139,12 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
 
       v.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          Cursor cursor = getCursor(movieHolder.getAdapterPosition());
-          final long itemId = cursor.getLong(cursor.getColumnIndex(ListItemColumns.ITEM_ID));
-          movieListener.onMovieClicked(movieHolder.itemView, movieHolder.getAdapterPosition(),
-              itemId);
+          final int position = movieHolder.getAdapterPosition();
+          if (position != RecyclerView.NO_POSITION) {
+            Cursor cursor = getCursor(position);
+            final long itemId = cursor.getLong(cursor.getColumnIndex(ListItemColumns.ITEM_ID));
+            movieListener.onMovieClicked(movieHolder.itemView, position, itemId);
+          }
         }
       });
     } else {

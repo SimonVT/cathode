@@ -82,8 +82,10 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
 
     v.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        clickListener.onSeasonClick(holder.itemView, holder.getAdapterPosition(),
-            holder.getItemId());
+        final int position = holder.getAdapterPosition();
+        if (position != RecyclerView.NO_POSITION) {
+          clickListener.onSeasonClick(holder.itemView, position, holder.getItemId());
+        }
       }
     });
 

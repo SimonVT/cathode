@@ -116,8 +116,10 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     final ItemViewHolder holder = new ItemViewHolder(v);
     holder.itemView.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
-        onItemClickListener.onShowClicked(holder.itemView, holder.getAdapterPosition(),
-            holder.getItemId());
+        final int position = holder.getAdapterPosition();
+        if (position != RecyclerView.NO_POSITION) {
+          onItemClickListener.onShowClicked(holder.itemView, position, holder.getItemId());
+        }
       }
     });
     return holder;

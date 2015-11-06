@@ -17,6 +17,7 @@ package net.simonvt.cathode.ui.adapter;
 
 import android.database.Cursor;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +45,10 @@ public class MoviesAdapter extends BaseMoviesAdapter<BaseMoviesAdapter.ViewHolde
 
     v.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        listener.onMovieClicked(holder.itemView, holder.getAdapterPosition(), holder.getItemId());
+        final int position = holder.getAdapterPosition();
+        if (position != RecyclerView.NO_POSITION) {
+          listener.onMovieClicked(holder.itemView, position, holder.getItemId());
+        }
       }
     });
 

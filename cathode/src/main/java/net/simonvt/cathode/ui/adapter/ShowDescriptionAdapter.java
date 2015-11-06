@@ -68,7 +68,10 @@ public class ShowDescriptionAdapter
 
     v.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        listener.onShowClick(v, holder.getAdapterPosition(), holder.getItemId());
+        final int position = holder.getAdapterPosition();
+        if (position != RecyclerView.NO_POSITION) {
+          listener.onShowClick(v, position, holder.getItemId());
+        }
       }
     });
 

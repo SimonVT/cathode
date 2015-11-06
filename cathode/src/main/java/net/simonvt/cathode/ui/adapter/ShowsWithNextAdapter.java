@@ -107,7 +107,10 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
 
     v.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        clickListener.onShowClick(holder.itemView, holder.getAdapterPosition(), holder.getItemId());
+        final int position = holder.getAdapterPosition();
+        if (position != RecyclerView.NO_POSITION) {
+          clickListener.onShowClick(holder.itemView, position, holder.getItemId());
+        }
       }
     });
 
