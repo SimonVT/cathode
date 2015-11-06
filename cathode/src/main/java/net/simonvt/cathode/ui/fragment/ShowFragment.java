@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -268,6 +269,7 @@ public class ShowFragment extends BaseFragment {
         new RecyclerViewManager(seasons, new LinearLayoutManager(getActivity()), seasonsEmpty);
     seasonsManager.setAdapter(seasonsAdapter);
     seasons.setAdapter(seasonsAdapter);
+    ((DefaultItemAnimator) seasons.getItemAnimator()).setSupportsChangeAnimations(false);
 
     seasonsEmpty.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {

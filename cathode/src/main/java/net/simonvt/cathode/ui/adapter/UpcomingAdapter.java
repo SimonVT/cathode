@@ -129,6 +129,12 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     return new HeaderViewHolder((TextView) v);
   }
 
+  @Override public void onViewRecycled(RecyclerView.ViewHolder holder) {
+    if (holder instanceof ItemViewHolder) {
+      ((ItemViewHolder) holder).checkIn.dismiss();
+    }
+  }
+
   @Override protected void onBindHeader(RecyclerView.ViewHolder holder, int headerRes) {
     HeaderViewHolder vh = (HeaderViewHolder) holder;
     vh.header.setText(headerRes);

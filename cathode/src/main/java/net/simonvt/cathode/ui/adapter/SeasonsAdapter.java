@@ -90,6 +90,10 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     return holder;
   }
 
+  @Override public void onViewRecycled(ViewHolder holder) {
+    holder.overflow.dismiss();
+  }
+
   @Override protected void onBindViewHolder(final ViewHolder holder, Cursor cursor, int position) {
     final int seasonId = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.ID));
     final int seasonNumber = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.SEASON));

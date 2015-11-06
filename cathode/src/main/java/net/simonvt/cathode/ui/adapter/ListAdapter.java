@@ -39,7 +39,7 @@ import net.simonvt.cathode.ui.listener.SeasonClickListener;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
-public class ListAdapter extends RecyclerCursorAdapter<RecyclerView.ViewHolder> {
+public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolder> {
 
   public interface OnRemoveItemListener {
 
@@ -83,7 +83,7 @@ public class ListAdapter extends RecyclerCursorAdapter<RecyclerView.ViewHolder> 
     return cursor.getLong(cursor.getColumnIndex(LastModifiedColumns.LAST_MODIFIED));
   }
 
-  @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override public ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     ListViewHolder holder;
 
     if (viewType == DatabaseContract.ItemType.SHOW) {
@@ -167,7 +167,11 @@ public class ListAdapter extends RecyclerCursorAdapter<RecyclerView.ViewHolder> 
     return holder;
   }
 
-  @Override protected void onBindViewHolder(final RecyclerView.ViewHolder holder, Cursor cursor,
+  @Override public void onViewRecycled(ListViewHolder holder) {
+    holder.overflow.dismiss();
+  }
+
+  @Override protected void onBindViewHolder(final ListViewHolder holder, Cursor cursor,
       int position) {
     if (holder.getItemViewType() == DatabaseContract.ItemType.SHOW) {
       final ShowViewHolder showHolder = (ShowViewHolder) holder;

@@ -51,6 +51,10 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
     this.listener = listener;
   }
 
+  @Override public void onViewRecycled(ViewHolder holder) {
+    holder.overflow.dismiss();
+  }
+
   @Override protected void onBindViewHolder(T holder, Cursor cursor, int position) {
     final String title = cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE));
     final boolean watched = cursor.getInt(cursor.getColumnIndex(MovieColumns.WATCHED)) == 1;

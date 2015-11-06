@@ -21,7 +21,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.View;
 import javax.inject.Inject;
@@ -50,7 +49,7 @@ import net.simonvt.cathode.ui.listener.SeasonClickListener;
 import net.simonvt.cathode.util.SqlCoalesce;
 import net.simonvt.cathode.util.SqlColumn;
 
-public class ListFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
+public class ListFragment extends ToolbarGridFragment<ListAdapter.ListViewHolder>
     implements LoaderManager.LoaderCallbacks<SimpleCursor>, ShowClickListener,
     SeasonClickListener, EpisodeClickListener, MovieClickListener,
     ListAdapter.OnRemoveItemListener {

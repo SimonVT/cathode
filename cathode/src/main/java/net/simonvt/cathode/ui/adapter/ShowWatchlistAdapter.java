@@ -146,6 +146,14 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
     return new HeaderViewHolder((TextView) v);
   }
 
+  @Override public void onViewRecycled(RecyclerView.ViewHolder holder) {
+    if (holder instanceof ShowViewHolder) {
+      ((ShowViewHolder) holder).overflow.dismiss();
+    } else if (holder instanceof EpisodeViewHolder) {
+      ((EpisodeViewHolder) holder).overflow.dismiss();
+    }
+  }
+
   @Override protected void onBindHeader(RecyclerView.ViewHolder holder, int headerRes) {
     ((HeaderViewHolder) holder).header.setText(headerRes);
   }

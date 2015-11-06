@@ -161,6 +161,10 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
     return holder;
   }
 
+  @Override public void onViewRecycled(ViewHolder holder) {
+    holder.overflow.dismiss();
+  }
+
   @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
     final String showPosterUrl = cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER));
     final String showTitle = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));

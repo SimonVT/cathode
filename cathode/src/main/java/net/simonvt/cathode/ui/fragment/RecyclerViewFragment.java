@@ -18,6 +18,7 @@ package net.simonvt.cathode.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -88,6 +89,8 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
     RecyclerView.ItemAnimator itemAnimator = getItemAnimator();
     if (itemAnimator != null) {
       recyclerView.setItemAnimator(itemAnimator);
+    } else {
+      ((DefaultItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
     }
     addItemDecorations(recyclerView);
 

@@ -92,6 +92,10 @@ public class ShowDescriptionAdapter
     return holder;
   }
 
+  @Override public void onViewRecycled(ViewHolder holder) {
+    holder.overflow.dismiss();
+  }
+
   @Override protected void onBindViewHolder(final ViewHolder holder, Cursor cursor, int position) {
     final long id = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
     final boolean watched = cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHED_COUNT)) > 0;

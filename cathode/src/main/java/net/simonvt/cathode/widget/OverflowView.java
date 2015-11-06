@@ -59,6 +59,8 @@ public class OverflowView extends ImageView {
   private Rect overflowRect = new Rect();
   private TouchDelegate overflowDelegate;
 
+  private PopupMenu popupMenu;
+
   public OverflowView(Context context) {
     super(context);
     init(context);
@@ -100,7 +102,7 @@ public class OverflowView extends ImageView {
     if (getDrawable() == null) setImageResource(R.drawable.item_overflow);
     setOnClickListener(new OnClickListener() {
       @Override public void onClick(View v) {
-        PopupMenu popupMenu = new PopupMenu(context, OverflowView.this);
+        popupMenu = new PopupMenu(context, OverflowView.this);
 
         for (OverflowItem item : items) {
           popupMenu.getMenu().add(0, item.action, 0, item.title);
@@ -108,6 +110,7 @@ public class OverflowView extends ImageView {
 
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
           @Override public boolean onMenuItemClick(MenuItem item) {
+            popupMenu = null;
             if (listener != null) listener.onActionSelected(item.getItemId());
             return true;
           }
@@ -115,6 +118,7 @@ public class OverflowView extends ImageView {
 
         popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
           @Override public void onDismiss(PopupMenu menu) {
+            popupMenu = null;
             if (listener != null) listener.onPopupDismissed();
           }
         });
@@ -123,6 +127,13 @@ public class OverflowView extends ImageView {
         if (listener != null) listener.onPopupShown();
       }
     });
+  }
+
+  public void dismiss() {
+    if (popupMenu != null) {
+      popupMenu.dismiss();
+      popupMenu = null;
+    }
   }
 
   public void removeItems() {
