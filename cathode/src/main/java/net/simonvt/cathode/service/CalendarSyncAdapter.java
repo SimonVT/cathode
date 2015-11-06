@@ -112,6 +112,10 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
             String.valueOf(calendarId),
         }, null);
 
+    if (c == null) {
+      return;
+    }
+
     LongSparseArray<Event> events = new LongSparseArray<Event>();
     while (c.moveToNext()) {
       events.put(c.getLong(c.getColumnIndex(CalendarContract.Events.SYNC_DATA1)), new Event(c));
