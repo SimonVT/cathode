@@ -183,9 +183,11 @@ public class MovieFragment extends AppBarFragment
 
   @Override public void createMenu(Toolbar toolbar) {
     super.createMenu(toolbar);
-    toolbar.inflateMenu(R.menu.fragment_movie);
-
     Menu menu = toolbar.getMenu();
+
+    menu.add(0, R.id.action_refresh, 0, R.string.action_refresh);
+
+    toolbar.inflateMenu(R.menu.fragment_movie);
 
     if (loaded) {
       if (checkedIn) {
@@ -217,10 +219,16 @@ public class MovieFragment extends AppBarFragment
         menu.add(0, R.id.action_collection_add, 6, R.string.action_collection_add);
       }
     }
+
+
   }
 
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
+      case R.id.action_refresh:
+        movieScheduler.sync(movieId);
+        return true;
+
       case R.id.action_watched:
         movieScheduler.setWatched(movieId, true);
         return true;

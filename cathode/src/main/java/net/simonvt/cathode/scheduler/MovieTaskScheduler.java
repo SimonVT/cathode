@@ -29,12 +29,22 @@ import net.simonvt.cathode.remote.action.movies.DismissMovieRecommendation;
 import net.simonvt.cathode.remote.action.movies.RateMovie;
 import net.simonvt.cathode.remote.action.movies.WatchedMovie;
 import net.simonvt.cathode.remote.action.movies.WatchlistMovie;
+import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.util.DateUtils;
 
 public class MovieTaskScheduler extends BaseTaskScheduler {
 
   public MovieTaskScheduler(Context context) {
     super(context);
+  }
+
+  public void sync(final long showId) {
+    execute(new Runnable() {
+      @Override public void run() {
+        final long traktId = MovieWrapper.getTraktId(context.getContentResolver(), showId);
+        queue(new SyncMovie(traktId));
+      }
+    });
   }
 
   /**

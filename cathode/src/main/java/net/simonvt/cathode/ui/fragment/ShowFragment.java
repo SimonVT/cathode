@@ -439,6 +439,9 @@ public class ShowFragment extends AppBarFragment {
     super.createMenu(toolbar);
 
     Menu menu = toolbar.getMenu();
+
+    menu.add(0, R.id.action_refresh, 50, R.string.action_refresh);
+
     toolbar.inflateMenu(R.menu.fragment_show);
 
     if (inWatchlist) {
@@ -450,6 +453,10 @@ public class ShowFragment extends AppBarFragment {
 
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
+      case R.id.action_refresh:
+        showScheduler.sync(showId);
+        return true;
+
       case R.id.menu_seasons:
         hiddenPaneLayout.toggle();
         return true;

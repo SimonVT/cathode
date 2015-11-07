@@ -32,6 +32,8 @@ import net.simonvt.cathode.remote.action.shows.RateShow;
 import net.simonvt.cathode.remote.action.shows.WatchedShow;
 import net.simonvt.cathode.remote.action.shows.WatchlistShow;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
+import net.simonvt.cathode.remote.sync.shows.SyncShowCollectedStatus;
+import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
 
 public class ShowTaskScheduler extends BaseTaskScheduler {
 
@@ -57,6 +59,8 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         context.getContentResolver().update(Shows.withId(showId), cv, null, null);
         final long traktId = showHelper.getTraktId(showId);
         queue(new SyncShow(traktId));
+        queue(new SyncShowWatchedStatus(traktId));
+        queue(new SyncShowCollectedStatus(traktId));
       }
     });
   }

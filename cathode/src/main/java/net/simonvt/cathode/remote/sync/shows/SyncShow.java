@@ -66,8 +66,6 @@ public class SyncShow extends CallJob<Show> {
     }
 
     queue(new SyncSeasons(traktId));
-    queue(new SyncShowCollectedStatus(traktId));
-    queue(new SyncShowWatchedStatus(traktId));
     queue(new SyncShowCast(traktId));
     queue(new SyncComments(ItemType.SHOW, traktId));
   }
