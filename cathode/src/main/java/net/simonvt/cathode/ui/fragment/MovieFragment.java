@@ -60,7 +60,7 @@ import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.RemoteImageView;
 
-public class MovieFragment extends BaseFragment
+public class MovieFragment extends AppBarFragment
     implements LoaderManager.LoaderCallbacks<SimpleCursor> {
 
   private static final String ARG_ID = "net.simonvt.cathode.ui.fragment.MovieFragment.id";
@@ -82,7 +82,6 @@ public class MovieFragment extends BaseFragment
 
   @Bind(R.id.year) TextView year;
   @Bind(R.id.certification) TextView certification;
-  @Bind(R.id.backdrop) RemoteImageView backdrop;
   //@Bind(R.id.poster) RemoteImageView poster;
   @Bind(R.id.overview) TextView overview;
   @Bind(R.id.isWatched) TextView isWatched;
@@ -149,7 +148,7 @@ public class MovieFragment extends BaseFragment
     setTitle(movieTitle);
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+  @Override public View createView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_movie, container, false);
   }
 
@@ -277,7 +276,7 @@ public class MovieFragment extends BaseFragment
         cursor.getString(cursor.getColumnIndex(MovieColumns.CERTIFICATION));
 
     final String fanartUrl = cursor.getString(cursor.getColumnIndex(MovieColumns.FANART));
-    backdrop.setImage(fanartUrl, true);
+    setBackdrop(fanartUrl, true);
     final String posterUrl = cursor.getString(cursor.getColumnIndex(MovieColumns.POSTER));
     //poster.setImage(posterUrl);
 

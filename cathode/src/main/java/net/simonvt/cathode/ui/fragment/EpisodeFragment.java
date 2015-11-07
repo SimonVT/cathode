@@ -56,9 +56,8 @@ import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
-import net.simonvt.cathode.widget.RemoteImageView;
 
-public class EpisodeFragment extends BaseFragment {
+public class EpisodeFragment extends AppBarFragment {
 
   private static final String ARG_EPISODEID =
       "net.simonvt.cathode.ui.fragment.EpisodeFragment.episodeId";
@@ -79,7 +78,6 @@ public class EpisodeFragment extends BaseFragment {
   @Inject Bus bus;
 
   @Bind(R.id.title) TextView title;
-  @Bind(R.id.backdrop) RemoteImageView backdrop;
   @Bind(R.id.overview) TextView overview;
   @Bind(R.id.firstAired) TextView firstAired;
 
@@ -141,15 +139,10 @@ public class EpisodeFragment extends BaseFragment {
     Bundle args = getArguments();
     episodeId = args.getLong(ARG_EPISODEID);
     showTitle = args.getString(ARG_SHOW_TITLE);
+    setTitle(showTitle);
 
     getLoaderManager().initLoader(Loaders.EPISODE, null, episodeCallbacks);
     getLoaderManager().initLoader(Loaders.EPISODE_USER_COMMENTS, null, userCommentsLoader);
-  }
-
-  private void updateTitle() {
-    if (appBarLayout != null) {
-      appBarLayout.setTitle(getTitle());
-    }
   }
 
   public long getEpisodeId() {
@@ -168,13 +161,12 @@ public class EpisodeFragment extends BaseFragment {
     return false;
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+  @Override public View createView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_episode, container, false);
   }
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-    updateTitle();
 
     rating.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
@@ -277,7 +269,8 @@ public class EpisodeFragment extends BaseFragment {
       episodeTitle = cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
       title.setText(episodeTitle);
       overview.setText(cursor.getString(cursor.getColumnIndex(EpisodeColumns.OVERVIEW)));
-      backdrop.setImage(cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT)), true);
+      final String screenshot = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
+      setBackdrop(screenshot, true);
       firstAired.setText(DateUtils.millisToString(getActivity(),
           cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED)), true));
       season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
@@ -297,7 +290,6 @@ public class EpisodeFragment extends BaseFragment {
       rating.setValue(ratingAll);
 
       createMenu(toolbar);
-      updateTitle();
     }
   }
 

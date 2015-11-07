@@ -14,53 +14,35 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<net.simonvt.cathode.widget.ObservableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/scrollView"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-  <net.simonvt.cathode.widget.AppBarRelativeLayout
-      android:id="@+id/appBarLayout"
+  <include
+      layout="@layout/fragment_movie_top"
+      android:id="@+id/topBarContainer"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:fitsSystemWindows="@bool/drawsBehindStatusBar"
-      app:expandedTitleMarginStart="@dimen/appBarTitleMarginStart"
-      app:expandedTitleMarginEnd="@dimen/appBarTitleMarginEnd"
-      app:contentTopViewId="@+id/topBarContainer">
+      android:layout_height="wrap_content"/>
 
-    <include layout="@layout/appbar_backdrop"/>
+  <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
 
-    <include
-        layout="@layout/fragment_movie_top"
-        android:id="@+id/topBarContainer"
+    <LinearLayout
+        android:id="@+id/contentContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/backdrop"/>
+        android:orientation="vertical">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/topBarContainer">
-
-      <LinearLayout
-          android:id="@+id/contentContainer"
+      <FrameLayout
           android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="vertical">
+          android:layout_height="wrap_content">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <include layout="@layout/fragment_movie_content"/>
 
-          <include layout="@layout/fragment_movie_content"/>
-
-          <include layout="@layout/checkmarks"/>
-        </FrameLayout>
-      </LinearLayout>
-    </FrameLayout>
-
-    <include layout="@layout/appbar_toolbar"/>
-  </net.simonvt.cathode.widget.AppBarRelativeLayout>
-</net.simonvt.cathode.widget.ObservableScrollView>
+        <include layout="@layout/checkmarks"/>
+      </FrameLayout>
+    </LinearLayout>
+  </FrameLayout>
+</LinearLayout>

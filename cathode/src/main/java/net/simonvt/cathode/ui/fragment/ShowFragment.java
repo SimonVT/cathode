@@ -73,7 +73,6 @@ import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.SqlColumn;
-import net.simonvt.cathode.widget.AppBarRelativeLayout;
 import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.HiddenPaneLayout;
@@ -82,7 +81,7 @@ import net.simonvt.cathode.widget.RecyclerViewManager;
 import net.simonvt.cathode.widget.RemoteImageView;
 import timber.log.Timber;
 
-public class ShowFragment extends BaseFragment {
+public class ShowFragment extends AppBarFragment {
 
   private static final String ARG_SHOWID = "net.simonvt.cathode.ui.fragment.ShowFragment.showId";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.fragment.ShowFragment.title";
@@ -125,12 +124,9 @@ public class ShowFragment extends BaseFragment {
   private SeasonsAdapter seasonsAdapter;
   private Cursor seasonsCursor;
 
-  @Bind(R.id.appBarLayout) AppBarRelativeLayout appBarLayout;
-
   @Bind(R.id.rating) CircularProgressIndicator rating;
   @Bind(R.id.airtime) TextView airTime;
   @Bind(R.id.certification) TextView certification;
-  @Bind(R.id.backdrop) RemoteImageView backdrop;
   @Bind(R.id.overview) TextView overview;
   @Bind(R.id.isWatched) TextView watched;
   @Bind(R.id.inCollection) TextView collection;
@@ -224,16 +220,14 @@ public class ShowFragment extends BaseFragment {
     showOverview = args.getString(ARG_OVERVIEW);
     type = (LibraryType) args.getSerializable(ARG_TYPE);
 
+    setTitle(showTitle);
+
     seasonsAdapter = new SeasonsAdapter(getActivity(), new SeasonClickListener() {
       @Override public void onSeasonClick(View view, int position, long id) {
         navigationCallbacks.onDisplaySeason(showId, id, showTitle, seasonsCursor.getInt(
             seasonsCursor.getColumnIndex(DatabaseContract.SeasonColumns.SEASON)), type);
       }
     }, type);
-  }
-
-  private void updateTitle() {
-    appBarLayout.setTitle(getTitle());
   }
 
   public String getTitle() {
@@ -257,12 +251,23 @@ public class ShowFragment extends BaseFragment {
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+    HiddenPaneLayout hiddenPane =
+        (HiddenPaneLayout) inflater.inflate(R.layout.fragment_show_hiddenpanelayout, container,
+            false);
+    View v = super.onCreateView(inflater, hiddenPane, inState);
+    hiddenPane.addView(v);
+
+    inflater.inflate(R.layout.fragment_show_seasons, hiddenPane, true);
+
+    return hiddenPane;
+  }
+
+  @Override public View createView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_show, container, false);
   }
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-    updateTitle();
     overview.setText(showOverview);
 
     seasonsManager =
@@ -476,7 +481,7 @@ public class ShowFragment extends BaseFragment {
     String title = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
     if (!TextUtils.equals(title, showTitle)) {
       showTitle = title;
-      updateTitle();
+      setTitle(title);
     }
     final String airTime = cursor.getString(cursor.getColumnIndex(ShowColumns.AIR_TIME));
     final String airDay = cursor.getString(cursor.getColumnIndex(ShowColumns.AIR_DAY));
@@ -484,7 +489,7 @@ public class ShowFragment extends BaseFragment {
     final String certification = cursor.getString(cursor.getColumnIndex(ShowColumns.CERTIFICATION));
     final String fanartUrl = cursor.getString(cursor.getColumnIndex(ShowColumns.FANART));
     if (fanartUrl != null) {
-      backdrop.setImage(fanartUrl, true);
+      setBackdrop(fanartUrl, true);
     }
     showOverview = cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW));
     inWatchlist = cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
@@ -535,8 +540,6 @@ public class ShowFragment extends BaseFragment {
     } else {
       genres = null;
     }
-
-    updateTitle();
   }
 
   private void updateActorViews(Cursor c) {

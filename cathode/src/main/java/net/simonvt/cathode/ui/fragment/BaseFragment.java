@@ -27,13 +27,10 @@ import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.ui.FragmentContract;
 import net.simonvt.cathode.ui.NavigationClickListener;
-import net.simonvt.cathode.widget.AppBarRelativeLayout;
 import net.simonvt.cathode.widget.ToolbarHelper;
 
 public abstract class BaseFragment extends Fragment
     implements FragmentContract, Toolbar.OnMenuItemClickListener {
-
-  @Bind(R.id.appBarLayout) @Nullable AppBarRelativeLayout appBarLayout;
 
   @Bind(R.id.toolbar) @Nullable Toolbar toolbar;
 
@@ -41,7 +38,7 @@ public abstract class BaseFragment extends Fragment
 
   private NavigationClickListener navigationListener;
 
-  private CharSequence title;
+  CharSequence title;
 
   private CharSequence subtitle;
 
@@ -66,9 +63,7 @@ public abstract class BaseFragment extends Fragment
 
   public void setTitle(CharSequence title) {
     this.title = title;
-    if (appBarLayout != null) {
-      appBarLayout.setTitle(title);
-    } else if (toolbar != null) {
+    if (toolbar != null) {
       toolbar.setTitle(title);
     }
   }

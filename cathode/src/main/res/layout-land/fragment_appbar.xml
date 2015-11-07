@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
   ~ Copyright (C) 2015 Simon Vig Therkildsen
   ~
@@ -16,10 +17,8 @@
   -->
 <net.simonvt.cathode.widget.AppBarScrollParent xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:layout_height="match_parent">
 
   <include layout="@layout/appbar_backdrop"/>
 
@@ -38,7 +37,7 @@
         app:expandedTitleMarginStart="@dimen/appBarTitleMarginStart"
         app:expandedTitleMarginEnd="@dimen/appBarTitleMarginEnd">
 
-      <LinearLayout
+      <FrameLayout
           android:id="@id/appBarContent"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
@@ -48,30 +47,8 @@
           android:layout_alignParentTop="true"
           android:layout_alignParentBottom="true"
           android:orientation="vertical"
-          android:background="@color/contentBackground">
-
-        <include
-            layout="@layout/fragment_movie_top"
-            android:id="@+id/topBarContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <LinearLayout
-            android:id="@+id/contentContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-          <FrameLayout
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content">
-
-            <include layout="@layout/fragment_movie_content"/>
-
-            <include layout="@layout/checkmarks"/>
-          </FrameLayout>
-        </LinearLayout>
-      </LinearLayout>
+          android:background="@color/contentBackground"
+          android:paddingBottom="16dp"/>
 
       <include layout="@layout/appbar_toolbar"/>
     </net.simonvt.cathode.widget.AppBarRelativeLayout>

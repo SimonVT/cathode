@@ -14,64 +14,36 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<net.simonvt.cathode.widget.HiddenPaneLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/hiddenPaneLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="@bool/drawsBehindStatusBar">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-  <net.simonvt.cathode.widget.ObservableScrollView
-      android:id="@+id/scrollView"
+  <include
+      layout="@layout/fragment_show_top"
+      android:id="@+id/topBarContainer"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:fillViewport="true">
+      android:layout_height="wrap_content"/>
 
-    <net.simonvt.cathode.widget.AppBarRelativeLayout
-        android:id="@+id/appBarLayout"
+  <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/contentContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="@bool/drawsBehindStatusBar"
-        android:paddingBottom="16dp"
-        app:expandedTitleMarginStart="@dimen/appBarTitleMarginStart"
-        app:expandedTitleMarginEnd="@dimen/appBarTitleMarginEnd"
-        app:contentTopViewId="@id/topBarContainer">
-
-      <include layout="@layout/appbar_backdrop"/>
-
-      <include
-          layout="@layout/fragment_show_top"
-          android:id="@+id/topBarContainer"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_below="@id/backdrop"/>
+        android:orientation="vertical">
 
       <FrameLayout
           android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_below="@+id/topBarContainer">
+          android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:id="@+id/contentContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+        <include layout="@layout/fragment_show_content"/>
 
-          <FrameLayout
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content">
-
-            <include layout="@layout/fragment_show_content"/>
-
-            <include layout="@layout/checkmarks"/>
-          </FrameLayout>
-        </LinearLayout>
+        <include layout="@layout/checkmarks"/>
       </FrameLayout>
-
-      <include layout="@layout/appbar_toolbar"/>
-    </net.simonvt.cathode.widget.AppBarRelativeLayout>
-  </net.simonvt.cathode.widget.ObservableScrollView>
-
-  <include layout="@layout/fragment_show_seasons"/>
-</net.simonvt.cathode.widget.HiddenPaneLayout>
+    </LinearLayout>
+  </FrameLayout>
+</LinearLayout>
