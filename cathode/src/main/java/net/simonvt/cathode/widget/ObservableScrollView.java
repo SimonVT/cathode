@@ -17,7 +17,9 @@
 package net.simonvt.cathode.widget;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.ScrollView;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +42,27 @@ public class ObservableScrollView extends ScrollView {
 
   @Override protected void onScrollChanged(int l, int t, int oldl, int oldt) {
     super.onScrollChanged(l, t, oldl, oldt);
+    dispatchScrollChanged(l, t);
+  }
+
+  private void dispatchScrollChanged(int l, int t) {
     for (ScrollListener listener : listeners) {
       listener.onScrollChanged(l, t);
     }
+  }
+
+
+  @Override protected void onRestoreInstanceState(Parcelable state) {
+    super.onRestoreInstanceState(state);
+    addOnLayoutChangeListener(new OnLayoutChangeListener() {
+      @Override
+      public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft,
+          int oldTop, int oldRight, int oldBottom) {
+        removeOnLayoutChangeListener(this);
+
+        dispatchScrollChanged(getScrollX(), getScrollY());
+      }
+    });
   }
 
   public void addListener(ScrollListener listener) {
