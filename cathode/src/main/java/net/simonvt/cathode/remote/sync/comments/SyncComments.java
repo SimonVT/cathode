@@ -32,6 +32,7 @@ import net.simonvt.cathode.api.service.CommentsService;
 import net.simonvt.cathode.api.service.EpisodeService;
 import net.simonvt.cathode.api.service.MoviesService;
 import net.simonvt.cathode.api.service.ShowsService;
+import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.CommentsHelper;
 import net.simonvt.cathode.provider.DatabaseContract;
@@ -160,6 +161,7 @@ public class SyncComments extends PagedCallJob<Comment> {
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
     List<Long> existingComments = new ArrayList<>();
     List<Long> deleteComments = new ArrayList<>();
+    List<Job> jobs = new ArrayList<>();
 
     if (type == ItemType.COMMENT) {
       Cursor c = getContentResolver().query(Comments.withParent(traktId), new String[] {
@@ -222,7 +224,7 @@ public class SyncComments extends PagedCallJob<Comment> {
       }
 
       if (comment.getReplies() > 0) {
-        queue(new SyncComments(ItemType.COMMENT, commentId));
+        jobs.add(new SyncComments(ItemType.COMMENT, commentId));
       }
     }
 
@@ -239,6 +241,10 @@ public class SyncComments extends PagedCallJob<Comment> {
     } catch (OperationApplicationException e) {
       Timber.e(e, "Updating comments failed");
       throw new JobFailedException(e);
+    }
+
+    for (Job job : jobs) {
+      queue(job);
     }
   }
 }

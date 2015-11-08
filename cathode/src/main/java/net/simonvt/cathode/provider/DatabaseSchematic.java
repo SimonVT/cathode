@@ -54,7 +54,7 @@ public final class DatabaseSchematic {
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 18;
+  static final int DATABASE_VERSION = 19;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -1009,6 +1009,20 @@ public final class DatabaseSchematic {
 
       db.execSQL(TRIGGER_COMMENT_UPDATE);
       db.execSQL(TRIGGER_EPISODE_DELETE);
+    }
+
+    if (oldVersion < 19) {
+      Set<String> showColumns = SqlUtils.columns(db, Tables.SHOWS);
+      if (!showColumns.contains(ShowColumns.LAST_COMMENT_SYNC)) {
+        db.execSQL("ALTER TABLE " + Tables.SHOWS
+            + " ADD COLUMN " + ShowColumns.LAST_COMMENT_SYNC + " INTEGER DEFAULT 0");
+      }
+
+      Set<String> movieColumns = SqlUtils.columns(db, Tables.MOVIES);
+      if (!movieColumns.contains(MovieColumns.LAST_COMMENT_SYNC)) {
+        db.execSQL("ALTER TABLE " + Tables.MOVIES
+            + " ADD COLUMN " + MovieColumns.LAST_COMMENT_SYNC + " INTEGER DEFAULT 0");
+      }
     }
   }
 }

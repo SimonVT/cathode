@@ -20,6 +20,7 @@ import android.content.Context;
 import android.database.Cursor;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -31,6 +32,7 @@ import net.simonvt.cathode.remote.action.shows.DismissShowRecommendation;
 import net.simonvt.cathode.remote.action.shows.RateShow;
 import net.simonvt.cathode.remote.action.shows.WatchedShow;
 import net.simonvt.cathode.remote.action.shows.WatchlistShow;
+import net.simonvt.cathode.remote.sync.comments.SyncComments;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
 import net.simonvt.cathode.remote.sync.shows.SyncShowCollectedStatus;
 import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
@@ -59,8 +61,18 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         context.getContentResolver().update(Shows.withId(showId), cv, null, null);
         final long traktId = showHelper.getTraktId(showId);
         queue(new SyncShow(traktId));
+        queue(new SyncComments(ItemType.SHOW, traktId));
         queue(new SyncShowWatchedStatus(traktId));
         queue(new SyncShowCollectedStatus(traktId));
+      }
+    });
+  }
+
+  public void syncComments(final long showId) {
+    execute(new Runnable() {
+      @Override public void run() {
+        final long traktId = showHelper.getTraktId(showId);
+        queue(new SyncComments(ItemType.SHOW, traktId));
       }
     });
   }

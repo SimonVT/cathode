@@ -18,11 +18,9 @@ package net.simonvt.cathode.remote.sync.movies;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.enumeration.Extended;
-import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.MoviesService;
 import net.simonvt.cathode.provider.MovieWrapper;
 import net.simonvt.cathode.remote.CallJob;
-import net.simonvt.cathode.remote.sync.comments.SyncComments;
 import retrofit.Call;
 
 public class SyncMovie extends CallJob<Movie> {
@@ -51,6 +49,5 @@ public class SyncMovie extends CallJob<Movie> {
     MovieWrapper.updateOrInsertMovie(getContentResolver(), movie);
 
     queue(new SyncMovieCrew(traktId));
-    queue(new SyncComments(ItemType.MOVIE, traktId));
   }
 }

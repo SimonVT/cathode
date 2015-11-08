@@ -177,6 +177,10 @@ public final class TraktTimestamps {
     return System.currentTimeMillis() > lastActivity + 3 * DateUtils.HOUR_IN_MILLIS;
   }
 
+  public static boolean shouldSyncComments(long lastSync) {
+    return System.currentTimeMillis() > lastSync + 3 * DateUtils.HOUR_IN_MILLIS;
+  }
+
   public static boolean shouldPurge(Context context) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 

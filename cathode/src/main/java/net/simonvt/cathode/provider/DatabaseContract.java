@@ -106,6 +106,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String FULL_SYNC_REQUESTED = "fullSyncRequested";
 
     @DataType(INTEGER) @DefaultValue("0") String NEEDS_SYNC = "needsSync";
+    @DataType(INTEGER) @DefaultValue("0") String LAST_COMMENT_SYNC = "lastCommentSync";
 
     // Don't create a columns in database
     String AIRED_COUNT = "airedCount";
@@ -270,6 +271,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String EXPIRES_AT = "expiresAt";
 
     @DataType(INTEGER) @DefaultValue("0") String NEEDS_SYNC = "needsSync";
+    @DataType(INTEGER) @DefaultValue("0") String LAST_COMMENT_SYNC = "lastCommentSync";
   }
 
   public interface MovieGenreColumns {

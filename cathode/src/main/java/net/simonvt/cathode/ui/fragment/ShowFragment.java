@@ -61,6 +61,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.WatchedLoader;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
+import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.NavigationListener;
@@ -71,6 +72,7 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
+import net.simonvt.cathode.util.Cursors;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.CircleTransformation;
@@ -100,7 +102,7 @@ public class ShowFragment extends AppBarFragment {
       ShowColumns.TITLE, ShowColumns.YEAR, ShowColumns.AIR_TIME, ShowColumns.AIR_DAY,
       ShowColumns.NETWORK, ShowColumns.CERTIFICATION, ShowColumns.POSTER, ShowColumns.FANART,
       ShowColumns.USER_RATING, ShowColumns.RATING, ShowColumns.OVERVIEW, ShowColumns.IN_WATCHLIST,
-      ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT,
+      ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT, ShowColumns.LAST_COMMENT_SYNC,
   };
 
   private static final String[] EPISODE_PROJECTION = new String[] {
@@ -527,6 +529,11 @@ public class ShowFragment extends AppBarFragment {
     this.airTime.setText(airTimeString);
     this.certification.setText(certification);
     this.overview.setText(showOverview);
+
+    final long lastCommentSync = Cursors.getLong(cursor, ShowColumns.LAST_COMMENT_SYNC);
+    if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {
+      showScheduler.syncComments(showId);
+    }
 
     invalidateMenu();
   }

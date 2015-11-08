@@ -18,6 +18,7 @@ package net.simonvt.cathode.scheduler;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieWrapper;
@@ -29,6 +30,7 @@ import net.simonvt.cathode.remote.action.movies.DismissMovieRecommendation;
 import net.simonvt.cathode.remote.action.movies.RateMovie;
 import net.simonvt.cathode.remote.action.movies.WatchedMovie;
 import net.simonvt.cathode.remote.action.movies.WatchlistMovie;
+import net.simonvt.cathode.remote.sync.comments.SyncComments;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.util.DateUtils;
 
@@ -43,6 +45,16 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
       @Override public void run() {
         final long traktId = MovieWrapper.getTraktId(context.getContentResolver(), showId);
         queue(new SyncMovie(traktId));
+        queue(new SyncComments(ItemType.MOVIE, traktId));
+      }
+    });
+  }
+
+  public void syncComments(final long movieId) {
+    execute(new Runnable() {
+      @Override public void run() {
+        final long traktId = MovieWrapper.getTraktId(context.getContentResolver(), movieId);
+        queue(new SyncComments(ItemType.MOVIE, traktId));
       }
     });
   }

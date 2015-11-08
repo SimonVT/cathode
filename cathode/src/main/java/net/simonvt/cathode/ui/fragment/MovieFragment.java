@@ -48,6 +48,7 @@ import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.adapter.LinearCommentsAdapter;
@@ -55,6 +56,7 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
+import net.simonvt.cathode.util.Cursors;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
@@ -306,6 +308,11 @@ public class MovieFragment extends AppBarFragment
     this.year.setText(String.valueOf(year));
     this.certification.setText(certification);
     this.overview.setText(movieOverview);
+
+    final long lastCommentSync = Cursors.getLong(cursor, MovieColumns.LAST_COMMENT_SYNC);
+    if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {
+      movieScheduler.syncComments(movieId);
+    }
 
     invalidateMenu();
   }
