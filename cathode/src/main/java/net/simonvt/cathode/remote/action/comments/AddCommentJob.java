@@ -26,7 +26,7 @@ import net.simonvt.cathode.provider.CommentsHelper;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
-import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
@@ -41,6 +41,7 @@ public class AddCommentJob extends CallJob<Comment> {
   @Inject transient ShowDatabaseHelper showHelper;
   @Inject transient SeasonDatabaseHelper seasonHelper;
   @Inject transient EpisodeDatabaseHelper episodeHelper;
+  @Inject transient MovieDatabaseHelper movieHelper;
 
   private ItemType type;
 
@@ -115,7 +116,7 @@ public class AddCommentJob extends CallJob<Comment> {
         break;
 
       case MOVIE:
-        final long movieId = MovieWrapper.getMovieId(getContentResolver(), traktId);
+        final long movieId = movieHelper.getId(traktId);
         values.put(CommentColumns.ITEM_TYPE, DatabaseContract.ItemType.MOVIE);
         values.put(CommentColumns.ITEM_ID, movieId);
         break;

@@ -29,7 +29,7 @@ import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.service.RecommendationsService;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
@@ -41,6 +41,8 @@ public class SyncMovieRecommendations extends CallJob<List<Movie>> {
   private static final int LIMIT = 20;
 
   @Inject transient RecommendationsService recommendationsService;
+
+  @Inject transient MovieDatabaseHelper movieHelper;
 
   public SyncMovieRecommendations() {
     super(Flags.REQUIRES_AUTH);
@@ -73,19 +75,18 @@ public class SyncMovieRecommendations extends CallJob<List<Movie>> {
       for (int index = 0; index < Math.min(recommendations.size(), 25); index++) {
         Movie movie = recommendations.get(index);
         final long traktId = movie.getIds().getTrakt();
-
-        long id = MovieWrapper.getMovieId(resolver, traktId);
-        if (id == -1L) {
-          id = MovieWrapper.createMovie(resolver, traktId);
+        MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(traktId);
+        final long movieId = result.movieId;
+        if (result.didCreate) {
           queue(new SyncMovie(traktId));
         }
 
-        movieIds.remove(id);
+        movieIds.remove(movieId);
 
         ContentValues cv = new ContentValues();
         cv.put(MovieColumns.RECOMMENDATION_INDEX, index);
         ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(Movies.withId(id)).withValues(cv).build();
+            ContentProviderOperation.newUpdate(Movies.withId(movieId)).withValues(cv).build();
         ops.add(op);
       }
 

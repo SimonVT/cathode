@@ -31,6 +31,7 @@ import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.Loaders;
+import net.simonvt.cathode.ui.adapter.MoviesAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 
 public class MovieCollectionFragment extends MoviesFragment implements ListDialog.Callback {
@@ -134,8 +135,9 @@ public class MovieCollectionFragment extends MoviesFragment implements ListDialo
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    SimpleCursorLoader loader = new SimpleCursorLoader(getActivity(), Movies.MOVIES_COLLECTED, null,
-        null, null, sortBy.getSortOrder());
+    SimpleCursorLoader loader =
+        new SimpleCursorLoader(getActivity(), Movies.MOVIES_COLLECTED, MoviesAdapter.PROJECTION,
+            null, null, sortBy.getSortOrder());
     loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return loader;
   }

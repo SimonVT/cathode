@@ -19,13 +19,15 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.MoviesService;
-import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import retrofit.Call;
 
 public class SyncMovie extends CallJob<Movie> {
 
   @Inject transient MoviesService moviesService;
+
+  @Inject transient MovieDatabaseHelper movieHelper;
 
   private long traktId;
 
@@ -46,7 +48,7 @@ public class SyncMovie extends CallJob<Movie> {
   }
 
   @Override public void handleResponse(Movie movie) {
-    MovieWrapper.updateOrInsertMovie(getContentResolver(), movie);
+    movieHelper.updateMovie(movie);
 
     queue(new SyncMovieCrew(traktId));
   }

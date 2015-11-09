@@ -20,7 +20,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.entity.UpdatedItem;
 import net.simonvt.cathode.api.service.MoviesService;
-import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import retrofit.Call;
 
@@ -29,6 +29,8 @@ public class SyncUpdatedMovies extends CallJob<List<UpdatedItem>> {
   private static final int LIMIT = 100;
 
   @Inject transient MoviesService moviesService;
+
+  @Inject transient MovieDatabaseHelper movieHelper;
 
   private String updatedSince;
 
@@ -62,10 +64,9 @@ public class SyncUpdatedMovies extends CallJob<List<UpdatedItem>> {
       final Movie movie = item.getMovie();
       final long traktId = movie.getIds().getTrakt();
 
-      final boolean exists = MovieWrapper.exists(getContentResolver(), traktId);
-      if (exists) {
-        final boolean needsUpdate =
-            MovieWrapper.needsUpdate(getContentResolver(), traktId, updatedAt);
+      final long movieId = movieHelper.getId(traktId);
+      if (movieId != -1L) {
+        final boolean needsUpdate = movieHelper.needsUpdate(traktId, updatedAt);
         if (needsUpdate) {
           queue(new SyncMovie(traktId));
         }

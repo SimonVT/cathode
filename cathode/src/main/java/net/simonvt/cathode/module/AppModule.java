@@ -33,6 +33,7 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.jobqueue.JobModule;
 import net.simonvt.cathode.jobqueue.JobService;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.UserDatabaseHelper;
@@ -188,7 +189,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
 
         // Database helpers
         ShowDatabaseHelper.class, SeasonDatabaseHelper.class, EpisodeDatabaseHelper.class,
-        UserDatabaseHelper.class,
+        MovieDatabaseHelper.class, UserDatabaseHelper.class,
 
         // Activities
         HomeActivity.class, LoginActivity.class, LoginActivity.TokenTask.class,

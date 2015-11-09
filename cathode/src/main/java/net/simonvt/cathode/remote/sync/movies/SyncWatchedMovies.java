@@ -23,7 +23,7 @@ import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.entity.WatchedItem;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
@@ -32,6 +32,8 @@ import retrofit.Call;
 public class SyncWatchedMovies extends CallJob<List<WatchedItem>> {
 
   @Inject transient SyncService syncService;
+
+  @Inject transient MovieDatabaseHelper movieHelper;
 
   public SyncWatchedMovies() {
     super(Flags.REQUIRES_AUTH);
@@ -64,21 +66,21 @@ public class SyncWatchedMovies extends CallJob<List<WatchedItem>> {
     for (WatchedItem item : movies) {
       Movie movie = item.getMovie();
       final long traktId = movie.getIds().getTrakt();
-      long movieId = MovieWrapper.getMovieId(getContentResolver(), traktId);
+      MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(traktId);
+      final long movieId = result.movieId;
       final long watchedAt = item.getLastWatchedAt().getTimeInMillis();
 
-      if (movieId == -1) {
-        movieId = MovieWrapper.createMovie(getContentResolver(), traktId);
+      if (result.didCreate) {
         queue(new SyncMovie(traktId));
       }
 
       if (!movieIds.remove(movieId)) {
-        MovieWrapper.setWatched(getContentResolver(), movieId, true, watchedAt);
+        movieHelper.setWatched(movieId, true, watchedAt);
       }
     }
 
     for (Long movieId : movieIds) {
-      MovieWrapper.setWatched(getContentResolver(), movieId, false, 0);
+      movieHelper.setWatched(movieId, false, 0);
     }
   }
 }

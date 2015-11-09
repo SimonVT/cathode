@@ -25,7 +25,7 @@ import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ListWrapper;
-import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.PersonWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
@@ -49,6 +49,7 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
   @Inject ShowDatabaseHelper showHelper;
   @Inject SeasonDatabaseHelper seasonHelper;
   @Inject EpisodeDatabaseHelper episodeHelper;
+  @Inject MovieDatabaseHelper movieHelper;
 
   public ListsTaskScheduler(Context context) {
     super(context);
@@ -137,7 +138,7 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
           }
 
           case DatabaseContract.ItemType.MOVIE: {
-            final long movieTraktId = MovieWrapper.getTraktId(context.getContentResolver(), itemId);
+            final long movieTraktId = movieHelper.getTraktId(itemId);
 
             if (add) {
               queue(new AddMovie(listTraktId, movieTraktId));

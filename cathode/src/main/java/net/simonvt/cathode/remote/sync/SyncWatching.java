@@ -32,7 +32,7 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
-import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
@@ -52,6 +52,7 @@ public class SyncWatching extends CallJob<Watching> {
   @Inject transient ShowDatabaseHelper showHelper;
   @Inject transient SeasonDatabaseHelper seasonHelper;
   @Inject transient EpisodeDatabaseHelper episodeHelper;
+  @Inject transient MovieDatabaseHelper movieHelper;
 
   public SyncWatching() {
     super(Flags.REQUIRES_AUTH);
@@ -156,9 +157,9 @@ public class SyncWatching extends CallJob<Watching> {
 
           case MOVIE:
             final long movieTraktId = watching.getMovie().getIds().getTrakt();
-            long movieId = MovieWrapper.getMovieId(getContentResolver(), movieTraktId);
-            if (movieId == -1L) {
-              movieId = MovieWrapper.createMovie(getContentResolver(), movieTraktId);
+            MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(movieTraktId);
+            final long movieId = result.movieId;
+            if (result.didCreate) {
               queue(new SyncMovie(movieTraktId));
             }
 

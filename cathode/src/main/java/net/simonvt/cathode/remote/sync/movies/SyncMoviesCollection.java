@@ -23,7 +23,7 @@ import net.simonvt.cathode.api.entity.CollectionItem;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
@@ -32,6 +32,8 @@ import retrofit.Call;
 public class SyncMoviesCollection extends CallJob<List<CollectionItem>> {
 
   @Inject transient SyncService syncService;
+
+  @Inject transient MovieDatabaseHelper movieHelper;
 
   public SyncMoviesCollection() {
     super(Flags.REQUIRES_AUTH);
@@ -65,12 +67,12 @@ public class SyncMoviesCollection extends CallJob<List<CollectionItem>> {
     for (CollectionItem item : movies) {
       Movie movie = item.getMovie();
       final long traktId = movie.getIds().getTrakt();
-      long movieId = MovieWrapper.getMovieId(getContentResolver(), traktId);
+      MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(traktId);
+      final long movieId = result.movieId;
       final long collectedAt = item.getCollectedAt().getTimeInMillis();
 
-      if (movieId == -1) {
+      if (result.didCreate) {
         queue(new SyncMovie(traktId));
-        movieId = MovieWrapper.createMovie(getContentResolver(), traktId);
       }
 
       Long lastListedAt = ids.get(movieId);
@@ -78,7 +80,7 @@ public class SyncMoviesCollection extends CallJob<List<CollectionItem>> {
         ids.remove(movieId);
       }
       if (lastListedAt == null || lastListedAt != collectedAt) {
-        MovieWrapper.setIsInCollection(getContentResolver(), movieId, true, collectedAt);
+        movieHelper.setIsInCollection(movieId, true, collectedAt);
       }
     }
 
@@ -86,7 +88,7 @@ public class SyncMoviesCollection extends CallJob<List<CollectionItem>> {
 
     for (int i = 0; i < size; i++) {
       final long id = ids.keyAt(i);
-      MovieWrapper.setIsInCollection(getContentResolver(), id, false);
+      movieHelper.setIsInCollection(id, false);
     }
   }
 }

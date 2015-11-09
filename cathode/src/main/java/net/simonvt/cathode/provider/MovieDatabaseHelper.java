@@ -18,30 +18,54 @@ package net.simonvt.cathode.provider;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.api.entity.Images;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.database.DatabaseUtils;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.MovieGenres;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import timber.log.Timber;
 
-import  net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
-import  net.simonvt.cathode.provider.ProviderSchematic.MovieGenres;
+public final class MovieDatabaseHelper {
 
-public final class MovieWrapper {
+  private static volatile MovieDatabaseHelper instance;
 
-  private MovieWrapper() {
+  public static MovieDatabaseHelper getInstance(Context context) {
+    if (instance == null) {
+      synchronized (MovieDatabaseHelper.class) {
+        if (instance == null) {
+          instance = new MovieDatabaseHelper(context);
+        }
+      }
+    }
+    return instance;
   }
 
-  public static long getTraktId(ContentResolver resolver, long movieId) {
+  private static final Object LOCK_ID = new Object();
+
+  private Context context;
+
+  private ContentResolver resolver;
+
+  private MovieDatabaseHelper(Context context) {
+    this.context = context;
+
+    resolver = context.getContentResolver();
+
+    CathodeApp.inject(context, this);
+  }
+
+  public long getTraktId(long movieId) {
     Cursor c = resolver.query(Movies.withId(movieId), new String[] {
         MovieColumns.TRAKT_ID,
     }, null, null, null);
@@ -56,40 +80,23 @@ public final class MovieWrapper {
     return traktId;
   }
 
-  public static long getMovieId(ContentResolver resolver, Movie movie) {
-    return getMovieId(resolver, movie.getIds().getTrakt());
-  }
-
-  public static long getMovieId(ContentResolver resolver, long traktId) {
-    Cursor c = resolver.query(Movies.MOVIES, new String[] {
-        MovieColumns.ID,
-    }, MovieColumns.TRAKT_ID + "=?", new String[] {
-        String.valueOf(traktId),
-    }, null);
-
-    long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(MovieColumns.ID));
-
-    c.close();
-
-    return id;
-  }
-
-  public static boolean exists(ContentResolver resolver, long traktId) {
-    Cursor c = null;
-    try {
-      c = resolver.query(Movies.MOVIES, new String[] {
+  public long getId(long traktId) {
+    synchronized (LOCK_ID) {
+      Cursor c = resolver.query(Movies.MOVIES, new String[] {
           MovieColumns.ID,
       }, MovieColumns.TRAKT_ID + "=?", new String[] {
           String.valueOf(traktId),
       }, null);
 
-      return c.moveToFirst();
-    } finally {
-      if (c != null) c.close();
+      long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(MovieColumns.ID));
+
+      c.close();
+
+      return id;
     }
   }
 
-  public static boolean needsUpdate(ContentResolver resolver, long traktId, String lastUpdated) {
+  public boolean needsUpdate(long traktId, String lastUpdated) {
     if (lastUpdated == null) return true;
 
     Cursor c = null;
@@ -112,49 +119,52 @@ public final class MovieWrapper {
     }
   }
 
-  public static long createMovie(ContentResolver resolver, long traktId) {
-    final long showId = getMovieId(resolver, traktId);
-    if (showId != -1L) {
-      throw new IllegalStateException("Trying to create movie that already exists");
-    }
+  public static final class IdResult {
 
+    public long movieId;
+
+    public boolean didCreate;
+
+    public IdResult(long movieId, boolean didCreate) {
+      this.movieId = movieId;
+      this.didCreate = didCreate;
+    }
+  }
+
+  public IdResult getIdOrCreate(long traktId) {
+    synchronized (LOCK_ID) {
+      long id = getId(traktId);
+
+      if (id == -1L) {
+        id = create(traktId);
+        return new IdResult(id, true);
+      } else {
+        return new IdResult(id, false);
+      }
+    }
+  }
+
+  private long create(long traktId) {
     ContentValues cv = new ContentValues();
     cv.put(MovieColumns.TRAKT_ID, traktId);
     cv.put(MovieColumns.NEEDS_SYNC, 1);
 
-    return Movies.getId(resolver.insert(Movies.MOVIES, cv));
+    return ProviderSchematic.Movies.getId(resolver.insert(Movies.MOVIES, cv));
   }
 
-  public static long updateOrInsertMovie(ContentResolver resolver, Movie movie) {
-    long movieId = getMovieId(resolver, movie.getIds().getTrakt());
+  public void updateMovie(Movie movie) {
+    IdResult result = getIdOrCreate(movie.getIds().getTrakt());
+    final long id = result.movieId;
 
-    if (movieId == -1) {
-      movieId = insertMovie(resolver, movie);
-    } else {
-      updateMovie(resolver, movie);
+    ContentValues cv = getContentValues(movie);
+    resolver.update(Movies.withId(id), cv, null, null);
+
+    if (movie.getGenres() != null) {
+      insertGenres(id, movie.getGenres());
     }
-
-    return movieId;
   }
 
-  public static void updateMovie(ContentResolver resolver, Movie movie) {
-    final long movieId = getMovieId(resolver, movie.getIds().getTrakt());
-    ContentValues cv = getContentValues(movie);
-    resolver.update(Movies.withId(movieId), cv, null, null);
-  }
-
-  public static long insertMovie(ContentResolver resolver, Movie movie) {
-    ContentValues cv = getContentValues(movie);
-
-    Uri uri = resolver.insert(Movies.MOVIES, cv);
-    final long movieId = Movies.getId(uri);
-
-    if (movie.getGenres() != null) insertGenres(resolver, movieId, movie.getGenres());
-
-    return movieId;
-  }
-
-  public static void insertGenres(ContentResolver resolver, long movieId, List<String> genres) {
+  public void insertGenres(long movieId, List<String> genres) {
     try {
       ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
       ContentProviderOperation op;
@@ -224,32 +234,29 @@ public final class MovieWrapper {
     return cv;
   }
 
-  public static void setWatched(ContentResolver resolver, long movieId, boolean isWatched,
-      long watchedAt) {
+  public void setWatched(long movieId, boolean isWatched, long watchedAt) {
     ContentValues cv = new ContentValues();
     cv.put(MovieColumns.WATCHED, isWatched);
     cv.put(MovieColumns.WATCHED_AT, watchedAt);
     resolver.update(Movies.withId(movieId), cv, null, null);
   }
 
-  public static void setIsInCollection(ContentResolver resolver, long movieId, boolean collected) {
-    setIsInCollection(resolver, movieId, collected, 0);
+  public void setIsInCollection(long movieId, boolean collected) {
+    setIsInCollection(movieId, collected, 0);
   }
 
-  public static void setIsInCollection(ContentResolver resolver, long movieId, boolean collected,
-      long collectedAt) {
+  public void setIsInCollection(long movieId, boolean collected, long collectedAt) {
     ContentValues cv = new ContentValues();
     cv.put(MovieColumns.IN_COLLECTION, collected);
     cv.put(MovieColumns.COLLECTED_AT, collectedAt);
     resolver.update(Movies.withId(movieId), cv, null, null);
   }
 
-  public static void setIsInWatchlist(ContentResolver resolver, long movieId, boolean inWatchlist) {
-    setIsInWatchlist(resolver, movieId, inWatchlist, 0);
+  public void setIsInWatchlist(long movieId, boolean inWatchlist) {
+    setIsInWatchlist(movieId, inWatchlist, 0);
   }
 
-  public static void setIsInWatchlist(ContentResolver resolver, long movieId, boolean inWatchlist,
-      long listedAt) {
+  public void setIsInWatchlist(long movieId, boolean inWatchlist, long listedAt) {
     ContentValues cv = new ContentValues();
     cv.put(MovieColumns.IN_WATCHLIST, inWatchlist);
     cv.put(MovieColumns.LISTED_AT, listedAt);

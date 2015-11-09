@@ -38,7 +38,7 @@ import net.simonvt.cathode.provider.CommentsHelper;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
-import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
@@ -62,6 +62,7 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
   @Inject transient ShowDatabaseHelper showHelper;
   @Inject transient SeasonDatabaseHelper seasonHelper;
   @Inject transient EpisodeDatabaseHelper episodeHelper;
+  @Inject transient MovieDatabaseHelper movieHelper;
   @Inject transient UserDatabaseHelper userHelper;
 
   private ItemTypes itemTypes;
@@ -150,7 +151,7 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
           break;
         }
 
-        case EPISODE:
+        case EPISODE: {
           final long traktId = commentItem.getShow().getIds().getTrakt();
           ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
           final long showId = showResult.showId;
@@ -183,13 +184,15 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
           values.put(CommentColumns.ITEM_TYPE, DatabaseContract.ItemType.EPISODE);
           values.put(CommentColumns.ITEM_ID, episodeId);
           break;
+        }
 
         case MOVIE: {
           Movie movie = commentItem.getMovie();
-          long movieId = MovieWrapper.getMovieId(getContentResolver(), movie);
-          if (movieId == -1L) {
-            movieId = MovieWrapper.updateOrInsertMovie(getContentResolver(), movie);
-            queue(new SyncMovie(movie.getIds().getTrakt()));
+          final long traktId = movie.getIds().getTrakt();
+          MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(traktId);
+          final long movieId = result.movieId;
+          if (result.didCreate) {
+            queue(new SyncMovie(traktId));
           }
 
           values.put(CommentColumns.ITEM_TYPE, DatabaseContract.ItemType.MOVIE);

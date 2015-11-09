@@ -20,7 +20,7 @@ import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.api.util.TimeUtils;
-import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import retrofit.Call;
@@ -28,6 +28,8 @@ import retrofit.Call;
 public class WatchlistMovie extends CallJob<SyncResponse> {
 
   @Inject transient SyncService syncService;
+
+  @Inject transient MovieDatabaseHelper movieHelper;
 
   private long traktId;
 
@@ -72,7 +74,6 @@ public class WatchlistMovie extends CallJob<SyncResponse> {
   }
 
   @Override public void handleResponse(SyncResponse response) {
-    MovieWrapper.setIsInWatchlist(getContentResolver(), traktId, inWatchlist,
-        TimeUtils.getMillis(listedAt));
+    movieHelper.setIsInWatchlist(traktId, inWatchlist, TimeUtils.getMillis(listedAt));
   }
 }

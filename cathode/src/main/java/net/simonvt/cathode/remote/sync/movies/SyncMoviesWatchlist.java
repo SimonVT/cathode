@@ -23,7 +23,7 @@ import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.entity.WatchlistItem;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
@@ -32,6 +32,8 @@ import retrofit.Call;
 public class SyncMoviesWatchlist extends CallJob<List<WatchlistItem>> {
 
   @Inject transient SyncService syncService;
+
+  @Inject transient MovieDatabaseHelper movieHelper;
 
   public SyncMoviesWatchlist() {
     super(Flags.REQUIRES_AUTH);
@@ -66,19 +68,19 @@ public class SyncMoviesWatchlist extends CallJob<List<WatchlistItem>> {
       final long listedAt = item.getListedAt().getTimeInMillis();
       final long traktId = movie.getIds().getTrakt();
 
-      long movieId = MovieWrapper.getMovieId(getContentResolver(), traktId);
-      if (movieId == -1L) {
-        movieId = MovieWrapper.updateOrInsertMovie(getContentResolver(), movie);
+      MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(traktId);
+      final long movieId = result.movieId;
+      if (result.didCreate) {
         queue(new SyncMovie(traktId));
       }
 
       if (!movieIds.remove(movieId)) {
-        MovieWrapper.setIsInWatchlist(getContentResolver(), movieId, true, listedAt);
+        movieHelper.setIsInWatchlist(movieId, true, listedAt);
       }
     }
 
     for (Long movieId : movieIds) {
-      MovieWrapper.setIsInWatchlist(getContentResolver(), movieId, false);
+      movieHelper.setIsInWatchlist(movieId, false);
     }
   }
 }

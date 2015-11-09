@@ -27,7 +27,7 @@ import net.simonvt.cathode.api.entity.RatingItem;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.CallJob;
@@ -38,6 +38,8 @@ import timber.log.Timber;
 public class SyncMoviesRatings extends CallJob<List<RatingItem>> {
 
   @Inject transient SyncService syncService;
+
+  @Inject transient MovieDatabaseHelper movieHelper;
 
   public SyncMoviesRatings() {
     super(Flags.REQUIRES_AUTH);
@@ -70,9 +72,9 @@ public class SyncMoviesRatings extends CallJob<List<RatingItem>> {
 
     for (RatingItem rating : ratings) {
       final long traktId = rating.getMovie().getIds().getTrakt();
-      long movieId = MovieWrapper.getMovieId(getContentResolver(), traktId);
-      if (movieId == -1L) {
-        movieId = MovieWrapper.createMovie(getContentResolver(), traktId);
+      MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(traktId);
+      final long movieId = result.movieId;
+      if (result.didCreate) {
         queue(new SyncMovie(traktId));
       }
 

@@ -24,7 +24,7 @@ import net.simonvt.cathode.api.entity.CheckinResponse;
 import net.simonvt.cathode.api.service.CheckinService;
 import net.simonvt.cathode.event.CheckInFailedEvent;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
@@ -36,6 +36,8 @@ import retrofit.Response;
 public class CheckInMovie extends CallJob<CheckinResponse> {
 
   @Inject transient CheckinService checkinService;
+
+  @Inject transient MovieDatabaseHelper movieHelper;
 
   @Inject transient Bus bus;
 
@@ -83,7 +85,7 @@ public class CheckInMovie extends CallJob<CheckinResponse> {
     if (response.code() == 409) {
       queue(new SyncWatching());
 
-      final long movieId = MovieWrapper.getMovieId(getContentResolver(), traktId);
+      final long movieId = movieHelper.getId(traktId);
       Cursor c = getContentResolver().query(Movies.withId(movieId), new String[] {
           MovieColumns.TITLE,
       }, null, null, null);

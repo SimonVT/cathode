@@ -33,7 +33,7 @@ import net.simonvt.cathode.provider.DatabaseContract.HiddenColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
@@ -53,6 +53,7 @@ public class SyncHiddenSection extends PagedCallJob<HiddenItem> {
 
   @Inject transient ShowDatabaseHelper showHelper;
   @Inject transient SeasonDatabaseHelper seasonHelper;
+  @Inject transient MovieDatabaseHelper movieHelper;
 
   private HiddenSection section;
 
@@ -189,10 +190,10 @@ public class SyncHiddenSection extends PagedCallJob<HiddenItem> {
 
         case MOVIE: {
           Movie movie = item.getMovie();
-          long movieId = MovieWrapper.getMovieId(getContentResolver(), movie);
-          if (movieId == -1L) {
-            final long traktId = movie.getIds().getTrakt();
-            movieId = MovieWrapper.createMovie(getContentResolver(), traktId);
+          final long traktId = movie.getIds().getTrakt();
+          MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(traktId);
+          final long movieId = result.movieId;
+          if (result.didCreate) {
             queue(new SyncMovie(traktId));
           }
 

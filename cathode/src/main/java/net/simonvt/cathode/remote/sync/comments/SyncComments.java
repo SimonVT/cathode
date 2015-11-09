@@ -39,7 +39,7 @@ import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
-import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.UserDatabaseHelper;
@@ -60,6 +60,7 @@ public class SyncComments extends PagedCallJob<Comment> {
 
   @Inject transient ShowDatabaseHelper showHelper;
   @Inject transient EpisodeDatabaseHelper episodeHelper;
+  @Inject transient MovieDatabaseHelper movieHelper;
   @Inject transient UserDatabaseHelper usersHelper;
 
   private ItemType type;
@@ -137,7 +138,7 @@ public class SyncComments extends PagedCallJob<Comment> {
 
       case MOVIE:
         itemType = DatabaseContract.ItemType.MOVIE;
-        itemId = MovieWrapper.getMovieId(getContentResolver(), traktId);
+        itemId = movieHelper.getId(traktId);
         break;
 
       case COMMENT:

@@ -871,8 +871,9 @@ public final class ProviderSchematic {
         type = Type.MOVIE)
     @NotificationUri(
         paths = {
-            Path.MOVIES + "/" + Path.WATCHING, Path.MOVIES + "/" + Path.TRENDING,
-            Path.MOVIES + "/" + Path.RECOMMENDED
+            Path.MOVIES + "/" + Path.WATCHED, Path.MOVIES + "/" + Path.COLLECTED,
+            Path.MOVIES + "/" + Path.WATCHLIST, Path.MOVIES + "/" + Path.WATCHING,
+            Path.MOVIES + "/" + Path.TRENDING, Path.MOVIES + "/" + Path.RECOMMENDED
         })
     public static final Uri MOVIES = buildUri(Path.MOVIES);
 
@@ -882,7 +883,7 @@ public final class ProviderSchematic {
         where = MovieColumns.WATCHED + "=1 AND " + MovieColumns.HIDDEN_WATCHED + "=0 AND "
             + MovieColumns.NEEDS_SYNC + "=0"
     )
-    public static final Uri MOVIES_WATCHED = buildUri(Path.MOVIES);
+    public static final Uri MOVIES_WATCHED = buildUri(Path.MOVIES, Path.WATCHED);
 
     @ContentUri(
         path = Path.MOVIES + "/" + Path.COLLECTED,
@@ -890,7 +891,7 @@ public final class ProviderSchematic {
         where = MovieColumns.IN_COLLECTION + "=1 AND " + MovieColumns.HIDDEN_COLLECTED + "=0 AND "
             + MovieColumns.NEEDS_SYNC + "=0"
     )
-    public static final Uri MOVIES_COLLECTED = buildUri(Path.MOVIES);
+    public static final Uri MOVIES_COLLECTED = buildUri(Path.MOVIES, Path.COLLECTED);
 
     @ContentUri(
         path = Path.MOVIES + "/" + Path.WATCHLIST,
@@ -898,7 +899,7 @@ public final class ProviderSchematic {
         where = MovieColumns.IN_WATCHLIST + "=1 AND "
             + MovieColumns.NEEDS_SYNC + "=0"
     )
-    public static final Uri MOVIES_WATCHLIST = buildUri(Path.MOVIES);
+    public static final Uri MOVIES_WATCHLIST = buildUri(Path.MOVIES, Path.WATCHLIST);
 
     @InexactContentUri(
         path = Path.MOVIES + "/#",

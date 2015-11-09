@@ -35,7 +35,7 @@ import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ListWrapper;
-import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.PersonWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
@@ -69,6 +69,7 @@ public class SyncList extends CallJob<List<ListItem>> {
   @Inject transient ShowDatabaseHelper showHelper;
   @Inject transient SeasonDatabaseHelper seasonHelper;
   @Inject transient EpisodeDatabaseHelper episodeHelper;
+  @Inject transient MovieDatabaseHelper movieHelper;
 
   private long traktId;
 
@@ -239,10 +240,11 @@ public class SyncList extends CallJob<List<ListItem>> {
 
         case MOVIE: {
           Movie movie = item.getMovie();
-          long movieId = MovieWrapper.getMovieId(getContentResolver(), movie);
-          if (movieId == -1L) {
-            movieId = MovieWrapper.updateOrInsertMovie(getContentResolver(), movie);
-            queue(new SyncMovie(movie.getIds().getTrakt()));
+          final long movieTraktId = movie.getIds().getTrakt();
+          MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(movieTraktId);
+          final long movieId = result.movieId;
+          if (result.didCreate) {
+            queue(new SyncMovie(movieTraktId));
           }
 
           final int itemPosition = getItemPosition(oldItems, DatabaseContract.ItemType.MOVIE, movieId);

@@ -30,7 +30,7 @@ import net.simonvt.cathode.api.entity.TrendingItem;
 import net.simonvt.cathode.api.service.MoviesService;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.MovieWrapper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.CallJob;
 import retrofit.Call;
@@ -41,6 +41,8 @@ public class SyncTrendingMovies extends CallJob<List<TrendingItem>> {
   private static final int LIMIT = 20;
 
   @Inject transient MoviesService moviesService;
+
+  @Inject transient MovieDatabaseHelper movieHelper;
 
   @Override public String key() {
     return "SyncTrendingMovies";
@@ -73,9 +75,9 @@ public class SyncTrendingMovies extends CallJob<List<TrendingItem>> {
       Movie movie = item.getMovie();
       final long traktId = movie.getIds().getTrakt();
 
-      long movieId = MovieWrapper.getMovieId(resolver, traktId);
-      if (movieId == -1L) {
-        movieId = MovieWrapper.createMovie(getContentResolver(), traktId);
+      MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(traktId);
+      final long movieId = result.movieId;
+      if (result.didCreate) {
         queue(new SyncMovie(traktId));
       }
 
