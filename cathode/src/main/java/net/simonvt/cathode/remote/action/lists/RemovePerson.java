@@ -23,7 +23,6 @@ import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import retrofit.Call;
-import retrofit.Response;
 
 public class RemovePerson extends CallJob<ListItemActionResponse> {
 
@@ -55,16 +54,6 @@ public class RemovePerson extends CallJob<ListItemActionResponse> {
     ListItemActionBody body = new ListItemActionBody();
     body.person(traktId);
     return usersService.removeItem(listId, body);
-  }
-
-  @Override protected boolean handleError(Response<ListItemActionResponse> response) {
-    if (response.code() == 500) {
-      // TODO: Remove once resolved
-      // The trakt API has a bug where removing a person returns a 500 status code.
-      return true;
-    }
-
-    return super.handleError(response);
   }
 
   @Override public void handleResponse(ListItemActionResponse response) {
