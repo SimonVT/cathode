@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
@@ -67,12 +68,12 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
 
     static {
       for (SortBy via : SortBy.values()) {
-        STRING_MAPPING.put(via.toString().toUpperCase(), via);
+        STRING_MAPPING.put(via.toString().toUpperCase(Locale.US), via);
       }
     }
 
     public static SortBy fromValue(String value) {
-      SortBy sortBy = STRING_MAPPING.get(value.toUpperCase());
+      SortBy sortBy = STRING_MAPPING.get(value.toUpperCase(Locale.US));
       if (sortBy == null) {
         sortBy = TITLE;
       }

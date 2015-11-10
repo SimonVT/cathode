@@ -18,7 +18,7 @@ package net.simonvt.cathode.util;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.ArraySet;
+import java.util.HashSet;
 import java.util.Set;
 
 public final class SqlUtils {
@@ -28,7 +28,7 @@ public final class SqlUtils {
 
   public static Set<String> columns(SQLiteDatabase db, String table) {
     Cursor cursor = db.rawQuery("PRAGMA table_info(shows)", null);
-    Set<String> columns = new ArraySet<>();
+    Set<String> columns = new HashSet<>();
 
     while (cursor.moveToNext()) {
       final String name = cursor.getString(cursor.getColumnIndex("name"));

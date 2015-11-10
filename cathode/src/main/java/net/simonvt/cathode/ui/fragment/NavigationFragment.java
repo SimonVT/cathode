@@ -15,6 +15,7 @@
  */
 package net.simonvt.cathode.ui.fragment;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -288,6 +289,20 @@ public class NavigationFragment extends AbsAdapterFragment {
       return 4;
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void setupCircularOutline(final RemoteImageView imageView) {
+      imageView.setOutlineProvider(new ViewOutlineProvider() {
+        @Override public void getOutline(View view, Outline outline) {
+          final int width = view.getWidth();
+          final int height = view.getHeight();
+          float radius = Math.min(width / 2, height / 2);
+          outline.setRoundRect(view.getPaddingLeft(), view.getPaddingRight(),
+              width - view.getPaddingRight(), height - view.getPaddingBottom(), radius);
+          outline.setAlpha(imageView.getFraction());
+        }
+      });
+    }
+
     @Override public View getView(int position, View convertView, ViewGroup parent) {
       View v = convertView;
 
@@ -305,16 +320,7 @@ public class NavigationFragment extends AbsAdapterFragment {
           profileIcon.addTransformation(new RoundTransformation());
 
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            profileIcon.setOutlineProvider(new ViewOutlineProvider() {
-              @Override public void getOutline(View view, Outline outline) {
-                final int width = view.getWidth();
-                final int height = view.getHeight();
-                float radius = Math.min(width / 2, height / 2);
-                outline.setRoundRect(view.getPaddingLeft(), view.getPaddingRight(),
-                    width - view.getPaddingRight(), height - view.getPaddingBottom(), radius);
-                outline.setAlpha(profileIcon.getFraction());
-              }
-            });
+            setupCircularOutline(profileIcon);
           } else {
             final int dropShadowSize =
                 (int) parent.getResources().getDimension(R.dimen.profileIconDropShadow);

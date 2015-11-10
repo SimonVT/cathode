@@ -16,11 +16,13 @@
 
 package net.simonvt.cathode.widget;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.WindowInsets;
 import android.widget.FrameLayout;
@@ -56,12 +58,21 @@ public class InsetsFrameLayout extends FrameLayout {
     }
   }
 
-  @Override public WindowInsets onApplyWindowInsets(WindowInsets insets) {
+  @TargetApi(Build.VERSION_CODES.LOLLIPOP) @Override
+  public WindowInsets onApplyWindowInsets(WindowInsets insets) {
     this.insets = new WindowInsets(insets);
 
     setPadding(0, insets.getSystemWindowInsetTop(), 0, 0);
 
     return insets.consumeSystemWindowInsets();
+  }
+
+  @TargetApi(Build.VERSION_CODES.LOLLIPOP) private int getSystemWindowInsetsTop() {
+    if (CATCH_INSETS && insets != null) {
+      return insets.getSystemWindowInsetTop();
+    }
+
+    return 0;
   }
 
   @Override public void draw(Canvas canvas) {
@@ -72,7 +83,7 @@ public class InsetsFrameLayout extends FrameLayout {
         return;
       }
 
-      final int insetsTop = insets.getSystemWindowInsetTop();
+      final int insetsTop = getSystemWindowInsetsTop();
       final int width = getWidth();
 
       rect.set(0, 0, width, insetsTop);

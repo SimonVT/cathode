@@ -237,7 +237,7 @@ public final class TraktTimestamps {
     editor.putLong(ActivityTimestamp.MOVIE_COMMENT,
         lastActivity.getMovies().getCommentedAt().getTimeInMillis());
 
-    editor.commit();
+    editor.apply();
   }
 
   public static void updateTrending(Context context) {
@@ -287,6 +287,6 @@ public final class TraktTimestamps {
     editor.remove(ActivityTimestamp.MOVIE_WATCHLIST);
     editor.remove(ActivityTimestamp.MOVIE_COMMENT);
 
-    editor.commit();
+    editor.apply();
   }
 }

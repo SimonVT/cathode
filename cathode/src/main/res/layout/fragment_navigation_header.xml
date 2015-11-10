@@ -41,7 +41,8 @@
         android:layout_marginTop="32dp"
         android:elevation="4dp"
         app:dominantMeasurement="width"
-        app:placeholder="@drawable/ic_account_circle"/>
+        app:placeholder="@drawable/ic_account_circle"
+        tools:ignore="UnusedAttribute"/>
 
     <TextView
         android:id="@+id/username"

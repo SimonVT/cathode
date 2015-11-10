@@ -49,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="To watch"
+            android:text="@string/to_watch"
             style="@style/Card.Title"/>
 
         <include
@@ -61,7 +61,8 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginRight="8dp"
-          android:layout_gravity="right"/>
+          android:layout_gravity="right"
+          tools:ignore="DuplicateIds,InconsistentLayout"/>
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
@@ -69,7 +70,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:foreground="?android:attr/selectableItemBackground">
+        android:foreground="?android:attr/selectableItemBackground"
+        tools:ignore="InconsistentLayout">
 
       <LinearLayout
           android:layout_width="match_parent"
@@ -80,7 +82,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="Last watched"
+            android:text="@string/last_watched"
             style="@style/Card.Title"/>
 
         <include
@@ -92,7 +94,8 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginRight="8dp"
-          android:layout_gravity="right"/>
+          android:layout_gravity="right"
+          tools:ignore="DuplicateIds,InconsistentLayout"/>
     </android.support.v7.widget.CardView>
   </LinearLayout>
 
@@ -119,7 +122,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="To collect"
+            android:text="@string/to_collect"
             style="@style/Card.Title"/>
 
         <include
@@ -131,7 +134,8 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginRight="8dp"
-          android:layout_gravity="right"/>
+          android:layout_gravity="right"
+          tools:ignore="DuplicateIds,InconsistentLayout"/>
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
@@ -139,7 +143,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:foreground="?android:attr/selectableItemBackground">
+        android:foreground="?android:attr/selectableItemBackground"
+        tools:ignore="InconsistentLayout">
 
       <LinearLayout
           android:layout_width="match_parent"
@@ -150,7 +155,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="Last collected"
+            android:text="@string/last_collected"
             style="@style/Card.Title"/>
 
         <include
@@ -162,7 +167,8 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginRight="8dp"
-          android:layout_gravity="right"/>
+          android:layout_gravity="right"
+          tools:ignore="DuplicateIds,InconsistentLayout"/>
     </android.support.v7.widget.CardView>
   </LinearLayout>
 </LinearLayout>

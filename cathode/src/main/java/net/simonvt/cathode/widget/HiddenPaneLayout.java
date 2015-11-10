@@ -17,10 +17,12 @@ package net.simonvt.cathode.widget;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -114,7 +116,8 @@ public class HiddenPaneLayout extends ViewGroup {
     setWillNotDraw(false);
   }
 
-  @Override public WindowInsets onApplyWindowInsets(WindowInsets insets) {
+  @TargetApi(Build.VERSION_CODES.LOLLIPOP) @Override
+  public WindowInsets onApplyWindowInsets(WindowInsets insets) {
     hiddenPane.setPadding(0, insets.getSystemWindowInsetTop(), 0, 0);
     return insets;
   }

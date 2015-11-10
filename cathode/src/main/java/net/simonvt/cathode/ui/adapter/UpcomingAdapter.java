@@ -239,7 +239,6 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
 
   public static class ItemViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.infoParent) View infoParent;
     @Bind(R.id.title) TextView title;
     @Bind(R.id.nextEpisode) TextView nextEpisode;
     @Bind(R.id.firstAired) TimeStamp firstAired;

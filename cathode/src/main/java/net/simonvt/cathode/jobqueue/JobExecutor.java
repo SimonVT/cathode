@@ -138,7 +138,7 @@ public class JobExecutor {
           while (runningJobCount < threadCount) {
             Job job = jobManager.checkoutJob(withFlags, withoutFlags);
             if (job != null) {
-              Timber.d("Queueing job: " + job.key());
+              Timber.d("Queueing job: %s", job.key());
               executor.execute(new JobRunnable(job));
               runningJobCount++;
             } else {
@@ -156,7 +156,7 @@ public class JobExecutor {
 
   private void jobSucceeded(Job job) {
     synchronized (lock) {
-      Timber.d("Job succeded: " + job.key());
+      Timber.d("Job succeded: %s", job.key());
 
       jobManager.removeJob(job);
       runningJobCount--;
@@ -180,9 +180,9 @@ public class JobExecutor {
   private void jobFailed(Job job, Throwable t) {
     synchronized (lock) {
       if (!(t instanceof JobFailedException)) {
-        Timber.e(t, "Job failed: " + job.key());
+        Timber.e(t, "Job failed: %s", job.key());
       } else {
-        Timber.d(t, "Job failed: " + job.key());
+        Timber.d(t, "Job failed: %s", job.key());
       }
 
       halt = true;
@@ -209,7 +209,7 @@ public class JobExecutor {
 
     @Override public void run() {
       try {
-        Timber.d("Executing job: " + job.key());
+        Timber.d("Executing job: %s", job.key());
         job.perform();
         jobSucceeded(job);
       } catch (Throwable t) {

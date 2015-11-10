@@ -15,6 +15,7 @@
  */
 package net.simonvt.cathode.util;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -270,7 +271,7 @@ public final class FragmentStack {
     }
   }
 
-  private FragmentTransaction ensureTransaction() {
+  @SuppressLint("CommitTransaction") private FragmentTransaction ensureTransaction() {
     if (fragmentTransaction == null) {
       fragmentTransaction = fragmentManager.beginTransaction();
     }

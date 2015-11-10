@@ -41,7 +41,7 @@ public abstract class CallJob<T> extends ErrorHandlerJob<T> {
         error(response);
       }
     } catch (IOException e) {
-      Timber.d(e, "Job failed: " + key());
+      Timber.d(e, "Job failed: %s", key());
       throw new JobFailedException(e);
     }
   }

@@ -16,6 +16,7 @@
 
 package net.simonvt.cathode.widget;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -44,11 +45,6 @@ public class CatchSystemInsets extends FrameLayout {
     init();
   }
 
-  public CatchSystemInsets(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-    super(context, attrs, defStyleAttr, defStyleRes);
-    init();
-  }
-
   private void init() {
     if (CATCH_INSETS) {
       setFitsSystemWindows(true);
@@ -56,7 +52,8 @@ public class CatchSystemInsets extends FrameLayout {
     }
   }
 
-  @Override public WindowInsets onApplyWindowInsets(WindowInsets insets) {
+  @TargetApi(Build.VERSION_CODES.LOLLIPOP) @Override
+  public WindowInsets onApplyWindowInsets(WindowInsets insets) {
     if (CATCH_INSETS) {
       this.insets = new WindowInsets(insets);
       return insets.consumeSystemWindowInsets();
@@ -65,7 +62,8 @@ public class CatchSystemInsets extends FrameLayout {
     return super.onApplyWindowInsets(insets);
   }
 
-  @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+  @TargetApi(Build.VERSION_CODES.LOLLIPOP) @Override
+  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     if (CATCH_INSETS) {
       if (insets != null) {
         for (int i = 0, childCount = getChildCount(); i < childCount; i++) {
@@ -74,6 +72,7 @@ public class CatchSystemInsets extends FrameLayout {
         }
       }
     }
+
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
   }
 }

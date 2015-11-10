@@ -265,7 +265,6 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.infoParent) View infoParent;
     @Bind(R.id.title) TextView title;
     @Bind(R.id.watched) TextView watched;
     @Bind(R.id.progress) ProgressBar progressBar;

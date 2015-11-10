@@ -21,7 +21,6 @@
   <string name="dashclock_title">@string/app_name</string>
   <string name="dashclock_description">Display the next upcoming episode</string>
 
-  <string name="retry">Retry</string>
   <string name="cancel">Cancel</string>
   <string name="yes">Yes</string>
   <string name="no">No</string>
@@ -36,20 +35,11 @@
   <string name="initial_sync">Fetching movies and shows</string>
   <string name="initial_sync_desc">This might take a while…</string>
 
-  <string name="lost_connection">Synchronization failed.</string>
-
   <string name="auth_failed">Trakt authorization failed</string>
   <string name="auth_failed_desc">Touch to re-authorize with Trakt</string>
 
-  <string name="error_unknown">Sync failed, retrying…</string>
-  <string name="error_unknown_retrying">Sync failed</string>
-  <string name="error_unknown_retry_in">Sync failed, retrying in %d minutes</string>
-  <string name="error_network">Unable to connect to Trakt</string>
-  <string name="error_network_retrying">Unable to connect to Trakt, retrying…</string>
-  <string name="error_network_retry_in">Unable to connect to Trakt, retrying in %d minutes</string>
-  <string name="error_5xx">Trakt appears to be having some server issues</string>
+  <string name="error_unknown_retrying">Sync failed, retrying…</string>
   <string name="error_5xx_retrying">Trakt appears to be having some server issues, retrying…</string>
-  <string name="error_5xx_retry_in">Trakt appears to be having some server issues, retrying in %d minutes</string>
 
   <string name="logout_title">Log out</string>
   <string name="logout_message">Are you sure you want to log out?</string>
@@ -63,8 +53,6 @@
   <string name="facebook">Facebook</string>
   <string name="twitter">Twitter</string>
   <string name="tumblr">Tumblr</string>
-  <string name="path">Path</string>
-  <string name="prowl">Prowl</string>
 
   <string name="now">Now</string>
   <plurals name="in_minutes">
@@ -84,15 +72,13 @@
     <item quantity="other">%d hours ago</item>
   </plurals>
 
-  <string name="watched">Watched</string>
-
   <string name="airdate_unknown">Unknown airdate</string>
 
   <string name="overview">Overview</string>
-  <string name="actors">Actors</string>
-  <string name="genres">Genres</string>
   <string name="to_watch">To watch</string>
   <string name="to_collect">To collect</string>
+  <string name="last_watched">Last watched</string>
+  <string name="last_collected">Last collected</string>
 
   <string name="card_more">More</string>
 
@@ -106,7 +92,6 @@
   <string name="title_shows_upcoming">Upcoming shows</string>
   <string name="title_shows_collection">Show collection</string>
   <string name="title_shows_watchlist">Show watchlist</string>
-  <string name="title_shows_episode_watchlist">Episode watchlist</string>
   <string name="title_shows_trending">Trending shows</string>
   <string name="title_shows_recommendations">Show recommendations</string>
 
@@ -134,28 +119,18 @@
   <string name="action_refresh">Refresh</string>
   <string name="action_sort_by">Sort by</string>
   <string name="action_watched">Watched</string>
-  <string name="action_watched_all">Watched all</string>
-  <string name="action_watched_next">Watched next</string>
   <string name="action_unwatched">Unwatched</string>
-  <string name="action_unwatch_all">Unwatch all</string>
   <string name="action_checkin">Check in</string>
   <string name="action_checkin_cancel">Cancel checkin</string>
   <string name="action_collection_add">Add to collection</string>
   <string name="action_collect_next">Collect next</string>
-  <string name="action_collection_add_all">Collect all</string>
   <string name="action_collection_remove">Remove from collection</string>
-  <string name="action_collection_remove_all">Uncollect all</string>
   <string name="action_watchlist_add">Add to watchlist</string>
   <string name="action_watchlist_remove">Remove from watchlist</string>
   <string name="action_search">Search</string>
   <string name="action_rate">Rate</string>
   <string name="action_logout">Logout</string>
   <string name="action_recommendation_dismiss">Dismiss recommendation</string>
-  <string name="action_hide">Hide</string>
-  <string name="action_unhide">Unhide</string>
-  <string name="action_show_hidden">Display hidden</string>
-  <string name="action_show_hide_upcoming">Hide from upcoming</string>
-  <string name="action_show_show_upcoming">Unhide from upcoming</string>
   <string name="action_list_create">Create list</string>
   <string name="action_create">Create</string>
   <string name="action_list_remove">Remove from list</string>
@@ -170,16 +145,14 @@
 
   <string name="no_results">No results for query \'%s\'</string>
   <string name="search_failure">Querying \'%s\' failed\nClick to retry</string>
-  <string name="x_results">%1$d results</string>
+  <plurals name="x_results">
+    <item quantity="one">%1$d result</item>
+    <item quantity="other">%1$d results</item>
+  </plurals>
 
-  <string name="episode">%1$dx%2$d %3$s</string>
   <string name="episode_next">Next: %1$dx%2$d %3$s</string>
   <string name="upcoming_episode_next">%1$dx%2$d %3$s</string>
   <string name="show_watching">Watching</string>
-
-  <string name="full_sync_warning">Performing a complete sync with Trakt, this might take a
-    while..
-  </string>
 
   <string name="shows_loading_trending">Trending shows are loading…</string>
   <string name="movies_loading_trending">Trending movies are loading…</string>
@@ -191,7 +164,6 @@
   <string name="logging_in">Logging in…</string>
   <string name="login_description">Sign in to through the Trakt website and give Cathode access to your account</string>
   <string name="login_error_unknown">Unable to fetch token, please try again</string>
-  <string name="login_error_network">Connection to Trakt timed out, please try again</string>
   <string name="login_error_5xx">Trakt has encountered a server error, please try again</string>
 
   <!-- Setup activities -->
@@ -201,7 +173,6 @@
   <string name="preference_calendar">Display upcoming shows in calendar</string>
 
   <!-- Navigation fragment -->
-  <string name="navigation_title_shows">Shows</string>
   <string name="navigation_shows_upcoming">Upcoming</string>
   <string name="navigation_shows_watched">Watched</string>
   <string name="navigation_shows_collection">Collection</string>
@@ -266,12 +237,19 @@
   </string>
   <string name="empty_lists">You currently have no lists.</string>
 
-  <string name="episode_x">Episode %d</string>
   <string name="all_watched">All episodes watched</string>
-  <string name="x_unwatched">%d unwatched episodes</string>
+  <plurals name="x_unwatched">
+    <item quantity="one">%d unwatched episode</item>
+    <item quantity="other">%d unwatched episodes</item>
+  </plurals>
   <string name="all_collected">All episodes collected</string>
-  <string name="x_uncollected">%d episodes not collected</string>
-  <string name="x_unaired">%d unaired</string>
+  <plurals name="x_uncollected">
+    <item quantity="one">%d episode not collected</item>
+    <item quantity="other">%d episodes not collected</item>
+  </plurals>
+  <plurals name="x_unaired">
+    <item quantity="other">%d unaired</item>
+  </plurals>
 
   <string name="season_x">Season %d</string>
   <string name="season_special">Special</string>
@@ -290,21 +268,6 @@
   <string name="card_comments_add">Add</string>
   <string name="comments_username_rating">%1$s (%2$d)</string>
   <string name="comment_reveal">Click to reveal spoiler</string>
-
-  <plurals name="season_x">
-    <item quantity="zero">Special</item>
-    <item quantity="other">Season %d</item>
-  </plurals>
-
-  <plurals name="likes">
-    <item quantity="one">%d like</item>
-    <item quantity="other">%d likes</item>
-  </plurals>
-
-  <plurals name="replies">
-    <item quantity="one">%d reply</item>
-    <item quantity="other">%d replies</item>
-  </plurals>
 
   <string-array name="ratings">
     <item>Unrated</item>

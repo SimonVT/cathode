@@ -91,7 +91,6 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
     }, CommentColumns.IS_USER_COMMENT + "=1", null, null);
     while (c.moveToNext()) {
       final long id = c.getLong(c.getColumnIndex(CommentColumns.ID));
-      Timber.d("Existing id:" + id);
       existingComments.add(id);
     }
     c.close();

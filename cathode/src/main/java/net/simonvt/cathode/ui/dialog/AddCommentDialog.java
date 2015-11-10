@@ -33,7 +33,6 @@ import net.simonvt.cathode.api.service.CommentsService;
 import net.simonvt.cathode.event.MessageEvent;
 import net.simonvt.cathode.scheduler.CommentsTaskScheduler;
 import net.simonvt.cathode.util.TextUtils;
-import timber.log.Timber;
 
 public class AddCommentDialog extends DialogFragment {
 
@@ -93,8 +92,6 @@ public class AddCommentDialog extends DialogFragment {
             commentsScheduler.comment(type, id, comment, spoiler);
           }
         } else {
-
-          Timber.d("Word count: " + TextUtils.wordCount(comment));
           bus.post(new MessageEvent(R.string.comment_too_short));
         }
       }

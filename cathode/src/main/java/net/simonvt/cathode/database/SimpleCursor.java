@@ -81,13 +81,13 @@ public class SimpleCursor extends AbsSimpleCursor {
       throw new CursorIndexOutOfBoundsException(
           "Requested column: " + column + ", # of columns: " + columnCount);
     }
-    if (mPos < 0) {
+    if (pos < 0) {
       throw new CursorIndexOutOfBoundsException("Before first row.");
     }
-    if (mPos >= data.size()) {
+    if (pos >= data.size()) {
       throw new CursorIndexOutOfBoundsException("After last row.");
     }
-    return data.get(mPos)[column];
+    return data.get(pos)[column];
   }
 
   /**
@@ -109,7 +109,7 @@ public class SimpleCursor extends AbsSimpleCursor {
   }
 
   public Object[] get() {
-    return data.get(mPos);
+    return data.get(pos);
   }
 
   /**

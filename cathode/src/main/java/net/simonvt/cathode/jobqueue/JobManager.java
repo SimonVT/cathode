@@ -232,7 +232,7 @@ public final class JobManager {
 
   public void removeJob(final Job job) {
     synchronized (jobs) {
-      Timber.d("Removing job: " + job.key());
+      Timber.d("Removing job: %s", job.key());
       jobs.remove(job);
       postOnJobRemoved(job);
     }

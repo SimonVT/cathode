@@ -241,7 +241,7 @@ public abstract class BaseActivity extends AppCompatActivity {
   private class DebugSubscribers {
 
     @Subscribe public void onJobSyncEvent(JobSyncEvent event) {
-      Timber.d("JobService: " + event.isSyncing());
+      Timber.d("JobService: %b", event.isSyncing());
       if (event.isSyncing()) {
         debugViews.jobServiceStatus.setText("Running");
       } else {
@@ -250,7 +250,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @Subscribe public void onAuthJobSyncEvent(AuthSyncEvent event) {
-      Timber.d("AuthJobService: " + event.isSyncing());
+      Timber.d("AuthJobService: %b", event.isSyncing());
       if (event.isSyncing()) {
         debugViews.authJobServiceStatus.setText("Running");
       } else {

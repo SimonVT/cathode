@@ -48,7 +48,7 @@ public final class WakeLock {
   public static void acquire(Context context, String tag) {
     PowerManager.WakeLock lock = getLock(context, tag);
     if (!lock.isHeld()) {
-      Timber.d("Acquiring wakelock for tag: " + tag);
+      Timber.d("Acquiring wakelock for tag: %s", tag);
       lock.acquire();
     }
   }
@@ -56,7 +56,7 @@ public final class WakeLock {
   public static void release(Context context, String tag) {
     PowerManager.WakeLock lock = getLock(context, tag);
     if (lock.isHeld()) {
-      Timber.d("Releasing wakelock for tag: " + tag);
+      Timber.d("Releasing wakelock for tag: %s", tag);
       lock.release();
     }
   }

@@ -93,7 +93,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
       allowRemoveCount.decrementAndGet();
     }
 
-    Timber.d("getAccountRemovalAllowed: " + allowRemove);
+    Timber.d("getAccountRemovalAllowed: %b", allowRemove);
     final Bundle result = new Bundle();
     result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, allowRemove);
     return result;

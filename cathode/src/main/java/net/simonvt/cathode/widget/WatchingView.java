@@ -17,6 +17,7 @@
 package net.simonvt.cathode.widget;
 
 import android.animation.ObjectAnimator;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Outline;
@@ -152,11 +153,6 @@ public class WatchingView extends ViewGroup {
     init(context);
   }
 
-  public WatchingView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-    super(context, attrs, defStyleAttr, defStyleRes);
-    init(context);
-  }
-
   private void init(Context context) {
     setWillNotDraw(false);
 
@@ -167,17 +163,7 @@ public class WatchingView extends ViewGroup {
     diameter = expandedDiameter;
 
     if (IS_LOLLIPOP) {
-      setOutlineProvider(new ViewOutlineProvider() {
-        @Override public void getOutline(View view, Outline outline) {
-          Rect outlineRect = new Rect();
-          outlineRect.left = (int) (getPaddingLeft() + posterView.getTranslationX());
-          outlineRect.top = getPaddingTop() + topBottomOffset;
-          outlineRect.right = getWidth() - getPaddingRight();
-          outlineRect.bottom = getHeight() - getPaddingBottom() - topBottomOffset;
-          outline.setRoundRect(outlineRect, diameter / 2);
-        }
-      });
-      setClipToOutline(true);
+      initOutlineProvider();
     }
 
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -192,6 +178,20 @@ public class WatchingView extends ViewGroup {
     setVisibility(GONE);
 
     handler = new Handler();
+  }
+
+  @TargetApi(Build.VERSION_CODES.LOLLIPOP) private void initOutlineProvider() {
+    setOutlineProvider(new ViewOutlineProvider() {
+      @Override public void getOutline(View view, Outline outline) {
+        Rect outlineRect = new Rect();
+        outlineRect.left = (int) (getPaddingLeft() + posterView.getTranslationX());
+        outlineRect.top = getPaddingTop() + topBottomOffset;
+        outlineRect.right = getWidth() - getPaddingRight();
+        outlineRect.bottom = getHeight() - getPaddingBottom() - topBottomOffset;
+        outline.setRoundRect(outlineRect, diameter / 2);
+      }
+    });
+    setClipToOutline(true);
   }
 
   public void setWatchingViewListener(WatchingViewListener watchingViewListener) {
@@ -222,8 +222,8 @@ public class WatchingView extends ViewGroup {
     animateIn();
   }
 
-  public void watchingMovie(long movieId, String movieTitle, String overview, String poster, long startTime,
-      long endTime) {
+  public void watchingMovie(long movieId, String movieTitle, String overview, String poster,
+      long startTime, long endTime) {
     clearVariables();
 
     this.type = Type.MOVIE;
@@ -434,6 +434,10 @@ public class WatchingView extends ViewGroup {
     radiusAnimation(radiusProgress);
 
     invalidate();
+    invalidateOutlineCompat();
+  }
+
+  @TargetApi(Build.VERSION_CODES.LOLLIPOP) private void invalidateOutlineCompat() {
     if (IS_LOLLIPOP) {
       invalidateOutline();
     }
@@ -723,15 +727,15 @@ public class WatchingView extends ViewGroup {
       dest.writeInt(isExpanded ? 1 : 0);
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
-      @Override public SavedState createFromParcel(Parcel in) {
-        return new SavedState(in);
-      }
+    @SuppressWarnings("UnusedDeclaration") public static final Creator<SavedState> CREATOR =
+        new Creator<SavedState>() {
+          @Override public SavedState createFromParcel(Parcel in) {
+            return new SavedState(in);
+          }
 
-      @Override public SavedState[] newArray(int size) {
-        return new SavedState[size];
-      }
-    };
+          @Override public SavedState[] newArray(int size) {
+            return new SavedState[size];
+          }
+        };
   }
 }

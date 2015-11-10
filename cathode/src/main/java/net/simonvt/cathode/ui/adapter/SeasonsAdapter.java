@@ -134,8 +134,12 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
       holder.overflow.addItem(R.id.action_collection_remove, R.string.action_collection_remove);
     }
 
-    holder.title.setText(
-        resources.getQuantityString(R.plurals.season_x, seasonNumber, seasonNumber));
+    if (seasonNumber == 0) {
+      holder.title.setText(R.string.season_special);
+    } else {
+      holder.title.setText(resources.getString(R.string.season_x, seasonNumber));
+    }
+
     holder.overflow.setListener(new OverflowView.OverflowActionListener() {
 
       @Override public void onPopupShown() {
@@ -185,11 +189,11 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     if (toWatch == 0) {
       unwatched = resources.getString(R.string.all_watched);
     } else {
-      unwatched = resources.getString(R.string.x_unwatched, toWatch);
+      unwatched = resources.getQuantityString(R.plurals.x_unwatched, toWatch, toWatch);
     }
     String unaired;
     if (unairedCount > 0) {
-      unaired = resources.getString(R.string.x_unaired, unairedCount);
+      unaired = resources.getQuantityString(R.plurals.x_unaired, unairedCount, unairedCount);
     } else {
       unaired = "";
     }
@@ -222,11 +226,11 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     if (toCollect == 0) {
       uncollected = resources.getString(R.string.all_collected);
     } else {
-      uncollected = resources.getString(R.string.x_uncollected, toCollect);
+      uncollected = resources.getQuantityString(R.plurals.x_uncollected, toCollect, toCollect);
     }
     String unaired;
     if (unairedCount > 0) {
-      unaired = resources.getString(R.string.x_unaired, unairedCount);
+      unaired = resources.getQuantityString(R.plurals.x_unaired, unairedCount, unairedCount);
     } else {
       unaired = "";
     }

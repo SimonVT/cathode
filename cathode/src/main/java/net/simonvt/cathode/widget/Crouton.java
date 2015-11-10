@@ -61,11 +61,6 @@ public class Crouton extends TextView {
     init(context);
   }
 
-  public Crouton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-    super(context, attrs, defStyleAttr, defStyleRes);
-    init(context);
-  }
-
   private void init(Context context) {
     if (isInEditMode()) {
       setBackgroundColor(getResources().getColor(android.R.color.holo_red_dark));

@@ -24,13 +24,10 @@ import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 
 public abstract class AbsSimpleCursor implements Cursor {
 
-  private static final String TAG = "Cursor";
-
-  protected int mPos;
+  protected int pos;
 
   @Override public int getColumnCount() {
     return getColumnNames().length;
@@ -85,44 +82,44 @@ public abstract class AbsSimpleCursor implements Cursor {
   /* -------------------------------------------------------- */
     /* Implementation */
   public AbsSimpleCursor() {
-    mPos = -1;
+    pos = -1;
   }
 
   @Override public final int getPosition() {
-    return mPos;
+    return pos;
   }
 
   @Override public final boolean moveToPosition(int position) {
     // Make sure position isn't past the end of the cursor
     final int count = getCount();
     if (position >= count) {
-      mPos = count;
+      pos = count;
       return false;
     }
 
     // Make sure position isn't before the beginning of the cursor
     if (position < 0) {
-      mPos = -1;
+      pos = -1;
       return false;
     }
 
     // Check for no-op moves, and skip the rest of the work for them
-    if (position == mPos) {
+    if (position == pos) {
       return true;
     }
 
-    boolean result = onMove(mPos, position);
+    boolean result = onMove(pos, position);
     if (!result) {
-      mPos = -1;
+      pos = -1;
     } else {
-      mPos = position;
+      pos = position;
     }
 
     return result;
   }
 
   @Override public final boolean move(int offset) {
-    return moveToPosition(mPos + offset);
+    return moveToPosition(pos + offset);
   }
 
   @Override public final boolean moveToFirst() {
@@ -134,42 +131,40 @@ public abstract class AbsSimpleCursor implements Cursor {
   }
 
   @Override public final boolean moveToNext() {
-    return moveToPosition(mPos + 1);
+    return moveToPosition(pos + 1);
   }
 
   @Override public final boolean moveToPrevious() {
-    return moveToPosition(mPos - 1);
+    return moveToPosition(pos - 1);
   }
 
   @Override public final boolean isFirst() {
-    return mPos == 0 && getCount() != 0;
+    return pos == 0 && getCount() != 0;
   }
 
   @Override public final boolean isLast() {
     int cnt = getCount();
-    return mPos == (cnt - 1) && cnt != 0;
+    return pos == (cnt - 1) && cnt != 0;
   }
 
   @Override public final boolean isBeforeFirst() {
     if (getCount() == 0) {
       return true;
     }
-    return mPos == -1;
+    return pos == -1;
   }
 
   @Override public final boolean isAfterLast() {
     if (getCount() == 0) {
       return true;
     }
-    return mPos == getCount();
+    return pos == getCount();
   }
 
   @Override public int getColumnIndex(String columnName) {
     // Hack according to bug 903852
     final int periodIndex = columnName.lastIndexOf('.');
     if (periodIndex != -1) {
-      Exception e = new Exception();
-      Log.e(TAG, "requesting column name with table name -- " + columnName, e);
       columnName = columnName.substring(periodIndex + 1);
     }
 

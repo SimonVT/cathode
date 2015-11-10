@@ -15,6 +15,7 @@
  */
 package net.simonvt.cathode.widget;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -106,12 +107,16 @@ public class RemoteImageView extends AspectRatioView implements Target {
 
     a.recycle();
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      setOutlineProvider(ViewOutlineProvider.PADDED_BOUNDS);
-    }
+    setupOutlineProvider();
 
     colorMatrix = new ColorMatrix();
     colorMatrixColorFilter = new ColorMatrixColorFilter(colorMatrix);
+  }
+
+  @TargetApi(Build.VERSION_CODES.LOLLIPOP) private void setupOutlineProvider() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      setOutlineProvider(ViewOutlineProvider.PADDED_BOUNDS);
+    }
   }
 
   public void addTransformation(Transformation transformation) {
@@ -210,7 +215,7 @@ public class RemoteImageView extends AspectRatioView implements Target {
   }
 
   @Override public void onBitmapFailed(Drawable drawable) {
-    Timber.d("[onBitmapFailed] " + imageUrl);
+    Timber.d("[onBitmapFailed] %s", imageUrl);
   }
 
   @Override public void onPrepareLoad(Drawable drawable) {

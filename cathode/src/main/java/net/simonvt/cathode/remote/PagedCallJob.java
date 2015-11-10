@@ -56,7 +56,6 @@ public abstract class PagedCallJob<T> extends ErrorHandlerJob<List<T>> {
         String pageCountStr = headers.get(HEADER_PAGE_COUNT);
         if (pageCountStr != null) {
           pageCount = Integer.valueOf(pageCountStr);
-          Timber.d("Page count: " + pageCount);
         }
 
         result = response.body();
@@ -66,7 +65,7 @@ public abstract class PagedCallJob<T> extends ErrorHandlerJob<List<T>> {
 
       handleResponse(results);
     } catch (IOException e) {
-      Timber.d(e, "Job failed: " + key());
+      Timber.d(e, "Job failed: %s", key());
       throw new JobFailedException(e);
     }
   }

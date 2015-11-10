@@ -17,8 +17,10 @@
 package net.simonvt.cathode.ui;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -78,9 +80,7 @@ public class SettingsActivity extends BaseActivity {
           syncCalendar.setChecked(checked);
 
           if (checked && !Permissions.hasCalendarPermission(getActivity())) {
-              requestPermissions(new String[] {
-                  Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR,
-              }, PERMISSION_REQUEST_CALENDAR);
+            requestPermission();
           } else {
             Accounts.requestCalendarSync(getActivity());
           }
@@ -88,6 +88,12 @@ public class SettingsActivity extends BaseActivity {
           return true;
         }
       });
+    }
+
+    @TargetApi(Build.VERSION_CODES.M) private void requestPermission() {
+      requestPermissions(new String[] {
+          Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR,
+      }, PERMISSION_REQUEST_CALENDAR);
     }
 
     @Override public void onRequestPermissionsResult(int requestCode, String[] permissions,

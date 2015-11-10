@@ -24,7 +24,8 @@
     android:layout_marginBottom="32dp"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
-    android:elevation="@dimen/watchingElevation">
+    android:elevation="@dimen/watchingElevation"
+    tools:ignore="UnusedAttribute">
 
   <net.simonvt.cathode.widget.RemoteImageView
       android:id="@+id/poster"

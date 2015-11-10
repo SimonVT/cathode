@@ -34,6 +34,7 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -89,12 +90,12 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
 
     static {
       for (SortBy via : SortBy.values()) {
-        STRING_MAPPING.put(via.toString().toUpperCase(), via);
+        STRING_MAPPING.put(via.toString().toUpperCase(Locale.US), via);
       }
     }
 
     public static SortBy fromValue(String value) {
-      return STRING_MAPPING.get(value.toUpperCase());
+      return STRING_MAPPING.get(value.toUpperCase(Locale.US));
     }
   }
 
@@ -266,7 +267,9 @@ public class SearchShowFragment extends ToolbarGridFragment<ShowDescriptionAdapt
 
   public void updateSubtitle() {
     if (searchShowIds != null) {
-      setSubtitle(getResources().getString(R.string.x_results, searchShowIds.size()));
+      final int count = searchShowIds.size();
+      final String results = getResources().getQuantityString(R.plurals.x_results, count, count);
+      setSubtitle(results);
     } else {
       setSubtitle(null);
     }

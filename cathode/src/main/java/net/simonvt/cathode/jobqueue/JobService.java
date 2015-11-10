@@ -28,10 +28,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
@@ -65,12 +62,6 @@ public class JobService extends Service {
 
   private boolean displayNotification;
 
-  private Handler handler;
-
-  private Looper looper;
-
-  private boolean running;
-
   private JobExecutor executor;
 
   @Override public void onCreate() {
@@ -79,12 +70,6 @@ public class JobService extends Service {
     CathodeApp.inject(this);
 
     cancelAlarm();
-
-    HandlerThread thread = new HandlerThread("JobService");
-    thread.start();
-
-    looper = thread.getLooper();
-    handler = new Handler(looper);
 
     bus.register(this);
 
@@ -132,7 +117,6 @@ public class JobService extends Service {
   }
 
   private JobExecutor.JobExecutorListener executorListener = new JobExecutor.JobExecutorListener() {
-    private String contentText;
 
     @Override public void onQueueEmpty() {
       Timber.d("JobService queue empty");
@@ -142,73 +126,9 @@ public class JobService extends Service {
     @Override public void onQueueFailed() {
       Timber.d("JobService queue failed");
 
-      /*
-      if (displayNotification && contentText != null) {
-        Intent clickIntent = new Intent(JobService.this, HomeActivity.class);
-        PendingIntent clickPi = PendingIntent.getActivity(JobService.this, 0, clickIntent, 0);
-
-        Notification.Builder builder = new Notification.Builder(JobService.this) //
-            .setSmallIcon(R.drawable.ic_notification)
-            .setTicker(getString(R.string.lost_connection))
-            .setContentTitle(getString(R.string.lost_connection, retryDelay))
-            .setContentIntent(clickPi)
-            .setContentText(contentText)
-            .setStyle(new Notification.BigTextStyle().bigText(contentText));
-
-        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        nm.notify(NOTIFICATION_FAILURE, builder.build());
-      }
-      */
-
       scheduleAlarm();
       stopSelf();
     }
-
-    /*
-    @Override public boolean ignoreError(Job job, Throwable t) {
-      if (!(t instanceof RetrofitError)) {
-        Timber.i("%s", job.key());
-        Timber.e(t, "Unable to execute job");
-      } else {
-        RetrofitError error = (RetrofitError) t;
-        switch (error.getKind()) {
-          case HTTP:
-            Response response = error.getResponse();
-            if (response != null) {
-              final int statusCode = response.getStatus();
-              if (statusCode == 401) {
-                contentText = null;
-                // Notification is created elsewhere
-                return false;
-              } else if (statusCode == 404) {
-                Timber.i("%s", job.key());
-                Timber.e(new FourOhFourException(t), "404");
-                contentText = null;
-                return true;
-              } else if (statusCode >= 500 && statusCode < 600) {
-                contentText = getString(R.string.error_5xx_retry_in, retryDelay);
-              } else {
-                contentText = getString(R.string.error_unknown_retry_in, retryDelay);
-              }
-            } else {
-              contentText = getString(R.string.error_unknown_retry_in, retryDelay);
-            }
-            break;
-
-          case CONVERSION:
-          case UNEXPECTED:
-            contentText = getString(R.string.error_unknown_retry_in, retryDelay);
-            break;
-
-          case NETWORK:
-            contentText = getString(R.string.error_unknown_retry_in, retryDelay);
-            break;
-        }
-      }
-
-      return false;
-    }
-    */
   };
 
   @Produce public JobSyncEvent provideRunningEvent() {
@@ -222,8 +142,6 @@ public class JobService extends Service {
 
     bus.unregister(this);
     bus.post(new JobSyncEvent(false));
-
-    looper.quit();
 
     if (displayNotification && !jobManager.hasJobs(0, Flags.REQUIRES_AUTH)) {
       PreferenceManager.getDefaultSharedPreferences(this)

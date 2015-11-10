@@ -72,7 +72,6 @@ public class SyncCommentLikes extends PagedCallJob<Like> {
     }, CommentColumns.LIKED + "=1", null, null);
     while (c.moveToNext()) {
       final long id = c.getLong(c.getColumnIndex(CommentColumns.ID));
-      Timber.d("Existing id:" + id);
       existingLikes.add(id);
       deleteLikes.add(id);
     }

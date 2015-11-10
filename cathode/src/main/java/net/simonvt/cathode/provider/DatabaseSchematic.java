@@ -43,7 +43,6 @@ import net.simonvt.schematic.annotation.Database;
 import net.simonvt.schematic.annotation.ExecOnCreate;
 import net.simonvt.schematic.annotation.OnUpgrade;
 import net.simonvt.schematic.annotation.Table;
-import timber.log.Timber;
 
 @Database(className = "CathodeDatabase",
     packageName = "net.simonvt.cathode.provider.generated",
@@ -939,7 +938,6 @@ public final class DatabaseSchematic {
     if (oldVersion < 16) {
       Set<String> showColumns = SqlUtils.columns(db, Tables.SHOWS);
       if (!showColumns.contains(HiddenColumns.HIDDEN_CALENDAR)) {
-        Timber.d("Column did not exist: " + HiddenColumns.HIDDEN_CALENDAR);
         db.execSQL("ALTER TABLE " + Tables.SHOWS
             + " ADD COLUMN " + HiddenColumns.HIDDEN_CALENDAR + " INTEGER DEFAULT 0");
       }

@@ -41,11 +41,6 @@ public class AppBarScrollParent extends FrameLayout {
     super(context, attrs, defStyleAttr);
   }
 
-  public AppBarScrollParent(Context context, AttributeSet attrs, int defStyleAttr,
-      int defStyleRes) {
-    super(context, attrs, defStyleAttr, defStyleRes);
-  }
-
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
 
@@ -137,10 +132,6 @@ public class AppBarScrollParent extends FrameLayout {
     }
 
     public LayoutParams(MarginLayoutParams source) {
-      super(source);
-    }
-
-    public LayoutParams(FrameLayout.LayoutParams source) {
       super(source);
     }
 

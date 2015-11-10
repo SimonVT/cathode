@@ -82,7 +82,7 @@
     <item name="android:isIndicator">true</item>
   </style>
 
-  <style name="Widget.RatingBar" parent="@android:style/Widget.Material.Light.RatingBar">
+  <style name="Widget.RatingBar" parent="@style/Widget.AppCompat.RatingBar">
     <item name="android:isIndicator">false</item>
     <item name="android:numStars">10</item>
     <item name="android:stepSize">1.0</item>

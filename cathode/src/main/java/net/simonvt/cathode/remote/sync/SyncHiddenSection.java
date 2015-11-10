@@ -140,10 +140,7 @@ public class SyncHiddenSection extends PagedCallJob<HiddenItem> {
             queue(new SyncShow(traktId));
           }
 
-          Timber.d("[" + section.toString() + "] Hiding show: " + show.getIds().getTrakt());
-
           if (!unhandledShows.remove(showId)) {
-            Timber.d("Was not already hidden: " + show.getTitle());
             ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(showId))
                 .withValue(hiddenColumn, 1)
                 .build();
@@ -171,13 +168,6 @@ public class SyncHiddenSection extends PagedCallJob<HiddenItem> {
             }
           }
 
-          Timber.d("["
-              + section.toString()
-              + "] Hiding season: "
-              + show.getIds().getTrakt()
-              + " - "
-              + seasonNumber);
-
           if (!unhandledSeasons.remove(seasonId)) {
             ContentProviderOperation op =
                 ContentProviderOperation.newUpdate(Seasons.withId(seasonId))
@@ -196,8 +186,6 @@ public class SyncHiddenSection extends PagedCallJob<HiddenItem> {
           if (result.didCreate) {
             queue(new SyncMovie(traktId));
           }
-
-          Timber.d("[" + section.toString() + "] Hiding movie: " + movie.getIds().getTrakt());
 
           if (!unhandledMovies.remove(movieId)) {
             ContentProviderOperation op = ContentProviderOperation.newUpdate(Movies.withId(movieId))

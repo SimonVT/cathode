@@ -17,6 +17,7 @@
 package net.simonvt.cathode.ui;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.ui.fragment.ListsFragment;
@@ -79,7 +80,7 @@ public enum StartPage {
 
   static {
     for (StartPage via : StartPage.values()) {
-      STRING_MAPPING.put(via.toString().toUpperCase(), via);
+      STRING_MAPPING.put(via.toString().toUpperCase(Locale.US), via);
     }
   }
 
@@ -88,7 +89,7 @@ public enum StartPage {
       return defaultPage;
     }
 
-    StartPage startPage = STRING_MAPPING.get(value.toUpperCase());
+    StartPage startPage = STRING_MAPPING.get(value.toUpperCase(Locale.US));
 
     if (startPage == null) {
       startPage = defaultPage;

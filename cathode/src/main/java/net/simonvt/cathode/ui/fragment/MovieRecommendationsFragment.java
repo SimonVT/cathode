@@ -28,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -82,12 +83,12 @@ public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdap
 
     static {
       for (SortBy via : SortBy.values()) {
-        STRING_MAPPING.put(via.toString().toUpperCase(), via);
+        STRING_MAPPING.put(via.toString().toUpperCase(Locale.US), via);
       }
     }
 
     public static SortBy fromValue(String value) {
-      SortBy sortBy = STRING_MAPPING.get(value.toUpperCase());
+      SortBy sortBy = STRING_MAPPING.get(value.toUpperCase(Locale.US));
       if (sortBy == null) {
         sortBy = RELEVANCE;
       }

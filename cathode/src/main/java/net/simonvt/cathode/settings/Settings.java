@@ -170,7 +170,7 @@ public final class Settings {
       putString(editor, Profile.SHARING_TEXT_WATCHED, sharingText.getWatched());
     }
 
-    editor.commit();
+    editor.apply();
   }
 
   private static void putString(SharedPreferences.Editor editor, String key, Object value) {

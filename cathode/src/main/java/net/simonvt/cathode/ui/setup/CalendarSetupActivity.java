@@ -22,6 +22,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import net.simonvt.cathode.R;
@@ -47,7 +48,7 @@ public class CalendarSetupActivity extends BaseActivity {
 
   @OnClick(R.id.yes) void syncCalendar() {
     if (!Permissions.hasCalendarPermission(this)) {
-      requestPermissions(new String[] {
+      ActivityCompat.requestPermissions(this, new String[] {
           Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR,
       }, PERMISSION_REQUEST_CALENDAR);
     } else {
