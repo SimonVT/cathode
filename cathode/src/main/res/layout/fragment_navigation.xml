@@ -14,40 +14,33 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@color/drawerBackground">
 
   <FrameLayout
+      android:id="@+id/listContainer"
       android:layout_width="match_parent"
-      android:layout_height="0dp"
-      android:layout_weight="1"
-      android:background="@color/drawerBackground">
+      android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/listContainer"
+    <TextView
+        android:id="@android:id/empty"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"/>
 
-      <TextView
-          android:id="@android:id/empty"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:gravity="center"
-          android:paddingLeft="16dp"
-          android:paddingRight="16dp"/>
-
-      <ListView
-          android:id="@android:id/list"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:clipToPadding="false"
-          android:scrollbarStyle="outsideOverlay"
-          android:dividerHeight="0dp"
-          android:divider="@null"/>
-    </FrameLayout>
-
-    <include layout="@layout/fragment_list_progressbar"/>
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:scrollbarStyle="outsideOverlay"
+        android:dividerHeight="0dp"
+        android:divider="@null"/>
   </FrameLayout>
-</LinearLayout>
+
+  <include layout="@layout/fragment_list_progressbar"/>
+</FrameLayout>
