@@ -15,6 +15,7 @@
  */
 package net.simonvt.cathode.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -128,7 +129,8 @@ public class HomeActivity extends BaseActivity
         (NavigationFragment) getSupportFragmentManager().findFragmentByTag(Fragments.NAVIGATION);
 
     watchingParent.setOnTouchListener(new View.OnTouchListener() {
-      @Override public boolean onTouch(View v, MotionEvent event) {
+      @SuppressLint("ClickableViewAccessibility") @Override
+      public boolean onTouch(View v, MotionEvent event) {
         if (watchingView.isExpanded()) {
           final int action = event.getActionMasked();
           if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
