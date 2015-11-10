@@ -21,7 +21,7 @@
       android:id="@+id/menu_search"
       android:icon="@drawable/ic_action_search"
       android:title="@string/action_search"
-      app:showAsAction="always|collapseActionView"
+      app:showAsAction="ifRoom|collapseActionView"
       app:actionLayout="@layout/search_view"/>
 
   <item

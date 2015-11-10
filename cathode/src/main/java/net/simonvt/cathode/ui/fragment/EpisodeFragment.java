@@ -192,11 +192,11 @@ public class EpisodeFragment extends AppBarFragment {
       if (checkedIn) {
         menu.add(0, R.id.action_checkin_cancel, 1, R.string.action_checkin_cancel)
             .setIcon(R.drawable.ic_action_cancel)
-            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
       } else if (!watching) {
         menu.add(0, R.id.action_checkin, 2, R.string.action_checkin)
             .setIcon(R.drawable.ic_action_checkin)
-            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
       }
 
       if (watched) {
