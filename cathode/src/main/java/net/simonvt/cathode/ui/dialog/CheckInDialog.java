@@ -107,7 +107,8 @@ public class CheckInDialog extends DialogFragment {
     CathodeApp.inject(getActivity(), this);
   }
 
-  @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+  @SuppressWarnings("InflateParams") @Override
+  public Dialog onCreateDialog(Bundle savedInstanceState) {
     final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     AlertDialog.Builder builder =
         new AlertDialog.Builder(getActivity()).setTitle(R.string.action_checkin);

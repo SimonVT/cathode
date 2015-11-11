@@ -75,7 +75,7 @@ public class UpdateCommentDialog extends DialogFragment {
     spoiler = args.getBoolean(ARG_SPOILER);
   }
 
-  @Override public Dialog onCreateDialog(Bundle inState) {
+  @SuppressWarnings("InflateParams") @Override public Dialog onCreateDialog(Bundle inState) {
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
     View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_comment, null);

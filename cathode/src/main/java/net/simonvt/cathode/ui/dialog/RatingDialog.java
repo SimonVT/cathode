@@ -81,7 +81,7 @@ public class RatingDialog extends DialogFragment {
     ratingText = getResources().getStringArray(R.array.ratings);
   }
 
-  @Override public Dialog onCreateDialog(Bundle inState) {
+  @SuppressWarnings("InflateParams") @Override public Dialog onCreateDialog(Bundle inState) {
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
     View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_rating, null);
