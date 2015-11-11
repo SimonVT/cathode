@@ -21,7 +21,8 @@
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:gravity="center"
-    tools:context="net.simonvt.cathode.ui.LoginActivity">
+    tools:context="net.simonvt.cathode.ui.LoginActivity"
+    tools:ignore="MergeRootFrame">
 
   <net.simonvt.cathode.widget.MaxSizeLinearLayout
       android:id="@+id/buttonContainer"

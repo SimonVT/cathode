@@ -17,6 +17,7 @@ package net.simonvt.cathode.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -39,8 +40,8 @@ public abstract class AbsAdapterFragment extends BaseFragment {
 
   private BaseAdapter adapter;
 
-  @Bind(R.id.progressContainer) View progressContainer;
-  @Bind(R.id.listContainer) View listContainer;
+  @Bind(R.id.progressContainer) @Nullable View progressContainer;
+  @Bind(R.id.listContainer) @Nullable View listContainer;
   @Bind(android.R.id.list) AbsListView adapterView;
   @Bind(android.R.id.empty) TextView empty;
 
@@ -78,23 +79,34 @@ public abstract class AbsAdapterFragment extends BaseFragment {
     adapterView.setEmptyView(empty);
     if (adapter != null) adapterView.setAdapter(adapter);
 
-    view.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-      @Override
-      public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft,
-          int oldTop, int oldRight, int oldBottom) {
-        v.removeOnLayoutChangeListener(this);
+    if (listContainer != null && progressContainer != null) {
+      view.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+        @Override
+        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft,
+            int oldTop, int oldRight, int oldBottom) {
+          v.removeOnLayoutChangeListener(this);
 
-        if (adapter == null) {
-          listContainer.setVisibility(View.GONE);
-          progressContainer.setVisibility(View.VISIBLE);
-          currentState = STATE_PROGRESS_VISIBLE;
-        } else {
-          currentState = STATE_LIST_VISIBLE;
-          listContainer.setVisibility(View.VISIBLE);
-          progressContainer.setVisibility(View.GONE);
+          if (adapter == null) {
+            listContainer.setVisibility(View.GONE);
+            progressContainer.setVisibility(View.VISIBLE);
+            currentState = STATE_PROGRESS_VISIBLE;
+          } else {
+            currentState = STATE_LIST_VISIBLE;
+            listContainer.setVisibility(View.VISIBLE);
+            progressContainer.setVisibility(View.GONE);
+          }
         }
+      });
+    } else {
+      if (listContainer != null && progressContainer == null) {
+        throw new IllegalStateException(
+            "Layout must contain both listContainer and progressContainer if one exists");
       }
-    });
+      if (listContainer == null && progressContainer != null) {
+        throw new IllegalStateException(
+            "Layout must contain both listContainer and progressContainer if one exists");
+      }
+    }
   }
 
   @Override public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
@@ -124,6 +136,10 @@ public abstract class AbsAdapterFragment extends BaseFragment {
 
   private void changeState(final int newState, final boolean animate) {
     if (newState == currentState) {
+      return;
+    }
+
+    if (listContainer == null || progressContainer == null) {
       return;
     }
 
@@ -209,7 +225,7 @@ public abstract class AbsAdapterFragment extends BaseFragment {
       if (this.adapter != null) {
         if (adapterView != null) {
           adapterView.setAdapter(this.adapter);
-          if (listContainer.getVisibility() != View.VISIBLE) {
+          if (listContainer != null && listContainer.getVisibility() != View.VISIBLE) {
             changeState(STATE_LIST_VISIBLE, true);
           }
         }
