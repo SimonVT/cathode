@@ -97,15 +97,9 @@ public abstract class AbsAdapterFragment extends BaseFragment {
           }
         }
       });
-    } else {
-      if (listContainer != null && progressContainer == null) {
-        throw new IllegalStateException(
-            "Layout must contain both listContainer and progressContainer if one exists");
-      }
-      if (listContainer == null && progressContainer != null) {
-        throw new IllegalStateException(
-            "Layout must contain both listContainer and progressContainer if one exists");
-      }
+    } else if (listContainer != null || progressContainer != null) {
+      throw new IllegalStateException(
+          "Layout must contain both listContainer and progressContainer if one exists");
     }
   }
 
