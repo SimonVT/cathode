@@ -88,15 +88,17 @@ public class AdapterNotifier {
         if (oldPos == -1) {
           notifyItemInserted(newPos);
           oldItems.add(newPos, new Item(Long.MIN_VALUE, Long.MIN_VALUE));
-        } else if (newPos == oldPos) {
-          Item oldItem = oldItems.get(oldPos);
-          if (newItem.lastModified != oldItem.lastModified) {
-            notifyItemChanged(newPos);
-          }
         } else if (newPos != oldPos) {
           notifyItemMoved(oldPos, newPos);
           oldItems.remove(oldPos);
           oldItems.add(newPos, new Item(Long.MIN_VALUE, Long.MIN_VALUE));
+        }
+
+        if (oldPos != -1) {
+          Item oldItem = oldItems.get(oldPos);
+          if (newItem.lastModified != oldItem.lastModified) {
+            notifyItemChanged(newPos);
+          }
         }
       }
 
