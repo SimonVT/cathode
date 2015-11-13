@@ -22,7 +22,6 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.support.design.widget.TextHelper;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.WindowInsetsCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
@@ -46,7 +45,7 @@ public class AppBarRelativeLayout extends RelativeLayout {
 
   private int contentTopViewId;
 
-  private TextHelper textHelper;
+  private CollapsingTextHelper textHelper;
 
   private Toolbar toolbar;
   private View dummyView;
@@ -90,7 +89,7 @@ public class AppBarRelativeLayout extends RelativeLayout {
 
     setWillNotDraw(false);
 
-    textHelper = new TextHelper(this);
+    textHelper = new CollapsingTextHelper(this);
     textHelper.setExpandedTextGravity(Gravity.LEFT | Gravity.BOTTOM);
     textHelper.setTextSizeInterpolator(new DecelerateInterpolator());
 
@@ -174,6 +173,10 @@ public class AppBarRelativeLayout extends RelativeLayout {
 
   private ScrollListener scrollListener = new ScrollListener() {
     @Override public void onScrollChanged(int l, int t) {
+      if (t == offset) {
+        return;
+      }
+
       int offsetBy = t - offset;
       offset = t;
 
@@ -204,7 +207,7 @@ public class AppBarRelativeLayout extends RelativeLayout {
       expandedBounds.offset(0, offsetBy);
       textHelper.setCollapsedBounds(collapsedBounds);
       textHelper.setExpandedBounds(expandedBounds);
-      textHelper.recalculate();
+      textHelper.offsetBounds(0, offsetBy);
 
       final int toolbarBottom = toolbar.getBottom();
       final int contentTop = contentView.getTop();
