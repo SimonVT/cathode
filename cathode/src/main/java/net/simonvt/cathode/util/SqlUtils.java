@@ -27,7 +27,7 @@ public final class SqlUtils {
   }
 
   public static Set<String> columns(SQLiteDatabase db, String table) {
-    Cursor cursor = db.rawQuery("PRAGMA table_info(shows)", null);
+    Cursor cursor = db.rawQuery("PRAGMA table_info(" + table + ")", null);
     Set<String> columns = new HashSet<>();
 
     while (cursor.moveToNext()) {
