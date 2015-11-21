@@ -20,6 +20,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import java.util.HashSet;
 import java.util.Set;
+import net.simonvt.schematic.annotation.DataType;
 
 public final class SqlUtils {
 
@@ -38,5 +39,19 @@ public final class SqlUtils {
     cursor.close();
 
     return columns;
+  }
+
+  public static boolean createColumnIfNotExists(SQLiteDatabase db, String table, String columnName,
+      DataType.Type type, String defaultValue) {
+    Set<String> columns = columns(db, table);
+
+    if (!columns.contains(columnName)) {
+      db.execSQL(
+          "ALTER TABLE " + table + " ADD COLUMN " + columnName + " " + type.toString() + " DEFAULT "
+              + defaultValue);
+      return true;
+    }
+
+    return false;
   }
 }

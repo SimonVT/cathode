@@ -39,6 +39,7 @@ import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.generated.CathodeDatabase;
 import net.simonvt.cathode.util.SqlIndex;
 import net.simonvt.cathode.util.SqlUtils;
+import net.simonvt.schematic.annotation.DataType;
 import net.simonvt.schematic.annotation.Database;
 import net.simonvt.schematic.annotation.ExecOnCreate;
 import net.simonvt.schematic.annotation.OnUpgrade;
@@ -892,24 +893,24 @@ public final class DatabaseSchematic {
     }
 
     if (oldVersion < 13) {
-      db.execSQL("ALTER TABLE " + Tables.SHOWS
-          + " ADD COLUMN " + LastModifiedColumns.LAST_MODIFIED + " INTEGER DEFAULT 0");
-      db.execSQL("ALTER TABLE " + Tables.SEASONS
-          + " ADD COLUMN " + LastModifiedColumns.LAST_MODIFIED + " INTEGER DEFAULT 0");
-      db.execSQL("ALTER TABLE " + Tables.EPISODES
-          + " ADD COLUMN " + LastModifiedColumns.LAST_MODIFIED + " INTEGER DEFAULT 0");
-      db.execSQL("ALTER TABLE " + Tables.SHOW_CHARACTERS
-          + " ADD COLUMN " + LastModifiedColumns.LAST_MODIFIED + " INTEGER DEFAULT 0");
+      SqlUtils.createColumnIfNotExists(db, Tables.SHOWS, LastModifiedColumns.LAST_MODIFIED,
+          DataType.Type.INTEGER, "0");
+      SqlUtils.createColumnIfNotExists(db, Tables.SEASONS, LastModifiedColumns.LAST_MODIFIED,
+          DataType.Type.INTEGER, "0");
+      SqlUtils.createColumnIfNotExists(db, Tables.EPISODES, LastModifiedColumns.LAST_MODIFIED,
+          DataType.Type.INTEGER, "0");
+      SqlUtils.createColumnIfNotExists(db, Tables.SHOW_CHARACTERS,
+          LastModifiedColumns.LAST_MODIFIED, DataType.Type.INTEGER, "0");
 
-      db.execSQL("ALTER TABLE " + Tables.MOVIES
-          + " ADD COLUMN " + LastModifiedColumns.LAST_MODIFIED + " INTEGER DEFAULT 0");
-      db.execSQL("ALTER TABLE " + Tables.MOVIE_CAST
-          + " ADD COLUMN " + LastModifiedColumns.LAST_MODIFIED + " INTEGER DEFAULT 0");
-      db.execSQL("ALTER TABLE " + Tables.MOVIE_CREW
-          + " ADD COLUMN " + LastModifiedColumns.LAST_MODIFIED + " INTEGER DEFAULT 0");
+      SqlUtils.createColumnIfNotExists(db, Tables.MOVIES, LastModifiedColumns.LAST_MODIFIED,
+          DataType.Type.INTEGER, "0");
+      SqlUtils.createColumnIfNotExists(db, Tables.MOVIE_CAST, LastModifiedColumns.LAST_MODIFIED,
+          DataType.Type.INTEGER, "0");
+      SqlUtils.createColumnIfNotExists(db, Tables.MOVIE_CREW, LastModifiedColumns.LAST_MODIFIED,
+          DataType.Type.INTEGER, "0");
 
-      db.execSQL("ALTER TABLE " + Tables.PEOPLE
-          + " ADD COLUMN " + LastModifiedColumns.LAST_MODIFIED + " INTEGER DEFAULT 0");
+      SqlUtils.createColumnIfNotExists(db, Tables.PEOPLE, LastModifiedColumns.LAST_MODIFIED,
+          DataType.Type.INTEGER, "0");
 
       db.execSQL(TRIGGER_SHOW_UPDATE);
       db.execSQL(TRIGGER_SEASON_UPDATE);
