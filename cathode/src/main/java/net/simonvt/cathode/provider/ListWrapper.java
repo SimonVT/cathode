@@ -94,7 +94,9 @@ public final class ListWrapper {
 
     cv.put(ListsColumns.NAME, list.getName());
     cv.put(ListsColumns.DESCRIPTION, list.getDescription());
-    cv.put(ListsColumns.PRIVACY, list.getPrivacy().toString());
+    if (list.getPrivacy() != null) {
+      cv.put(ListsColumns.PRIVACY, list.getPrivacy().toString());
+    }
     cv.put(ListsColumns.DISPLAY_NUMBERS, list.getDisplayNumbers());
     cv.put(ListsColumns.ALLOW_COMMENTS, list.getAllowComments());
     cv.put(ListsColumns.UPDATED_AT, list.getUpdatedAt().getTimeInMillis());
