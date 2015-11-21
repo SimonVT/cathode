@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.entity.UpdatedItem;
 import net.simonvt.cathode.api.service.ShowsService;
+import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import retrofit.Call;
@@ -52,14 +53,13 @@ public class SyncUpdatedShows extends CallJob<List<UpdatedItem>> {
   }
 
   @Override public Call<List<UpdatedItem>> getCall() {
+    if (updatedSince == null) {
+      updatedSince = TimeUtils.getIsoTime();
+    }
     return showsService.getUpdatedShows(updatedSince, page, LIMIT);
   }
 
   @Override public void handleResponse(List<UpdatedItem> updated) {
-    if (updatedSince == null) {
-      return;
-    }
-
     List<Long> showSummaries = new ArrayList<Long>();
 
     for (UpdatedItem item : updated) {
