@@ -237,6 +237,12 @@ public final class TraktTimestamps {
     editor.putLong(ActivityTimestamp.MOVIE_COMMENT,
         lastActivity.getMovies().getCommentedAt().getTimeInMillis());
 
+    editor.putLong(ActivityTimestamp.COMMENT_LIKED_AT,
+        lastActivity.getComments().getLikedAt().getTimeInMillis());
+
+    editor.putLong(ActivityTimestamp.LIST_UPDATED_AT,
+        lastActivity.getLists().getUpdatedAt().getTimeInMillis());
+
     editor.apply();
   }
 
@@ -286,6 +292,10 @@ public final class TraktTimestamps {
     editor.remove(ActivityTimestamp.MOVIE_RATING);
     editor.remove(ActivityTimestamp.MOVIE_WATCHLIST);
     editor.remove(ActivityTimestamp.MOVIE_COMMENT);
+
+    editor.remove(ActivityTimestamp.COMMENT_LIKED_AT);
+
+    editor.remove(ActivityTimestamp.LIST_UPDATED_AT);
 
     editor.apply();
   }
