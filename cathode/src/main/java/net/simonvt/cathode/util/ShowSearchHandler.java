@@ -135,7 +135,7 @@ public class ShowSearchHandler {
           return;
         }
       } catch (IOException e) {
-        Timber.e(e, "Search failed");
+        Timber.d(e, "Search failed");
       }
 
       MainHandler.post(new Runnable() {

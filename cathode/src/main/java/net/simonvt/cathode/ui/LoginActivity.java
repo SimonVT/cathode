@@ -210,7 +210,7 @@ public class LoginActivity extends BaseActivity {
           }
         }
       } catch (IOException e) {
-        Timber.e(e, "Unable to get token");
+        Timber.d(e, "Unable to get token");
       }
 
       return new Result(R.string.login_error_unknown);
