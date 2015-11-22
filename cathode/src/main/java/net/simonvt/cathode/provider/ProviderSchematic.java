@@ -170,7 +170,7 @@ public final class ProviderSchematic {
     };
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_SHOWS) public static class Shows {
+  @TableEndpoint(table = Tables.SHOWS) public static class Shows {
 
     @MapColumns public static Map<String, String> mapColumns() {
       Map<String, String> map = new HashMap<String, String>();
@@ -325,23 +325,23 @@ public final class ProviderSchematic {
     public static String getAiredQuery() {
       final long currentTime = System.currentTimeMillis();
       return "(SELECT COUNT(*) FROM "
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
           + " WHERE "
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
           + "."
           + EpisodeColumns.SHOW_ID
           + "="
-          + DatabaseSchematic.TABLE_SHOWS
+          + Tables.SHOWS
           + "."
           + ShowColumns.ID
           + " AND "
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
           + "."
           + EpisodeColumns.FIRST_AIRED
           + "<="
           + (currentTime + DateUtils.DAY_IN_MILLIS)
           + " AND "
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
           + "."
           + EpisodeColumns.SEASON
           + ">0"
@@ -369,23 +369,23 @@ public final class ProviderSchematic {
     public static String getUnairedQuery() {
       final long currentTime = System.currentTimeMillis();
       return "(SELECT COUNT(*) FROM "
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
           + " WHERE "
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
           + "."
           + EpisodeColumns.SHOW_ID
           + "="
-          + DatabaseSchematic.TABLE_SHOWS
+          + Tables.SHOWS
           + "."
           + ShowColumns.ID
           + " AND "
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
           + "."
           + EpisodeColumns.FIRST_AIRED
           + ">"
           + currentTime
           + " AND "
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
           + "."
           + EpisodeColumns.SEASON
           + ">0"
@@ -396,19 +396,19 @@ public final class ProviderSchematic {
       return "(SELECT COUNT(*) FROM "
           + DatabaseSchematic.Tables.EPISODES
           + " WHERE "
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
           + "."
           + EpisodeColumns.SHOW_ID
           + "="
-          + DatabaseSchematic.TABLE_SHOWS
+          + Tables.SHOWS
           + "."
           + ShowColumns.ID
           + " AND ("
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
           + "."
           + EpisodeColumns.WATCHING
           + "=1 OR "
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
           + "."
           + EpisodeColumns.CHECKED_IN
           + "=1))";
@@ -422,7 +422,7 @@ public final class ProviderSchematic {
           + "."
           + EpisodeColumns.SHOW_ID
           + "="
-          + DatabaseSchematic.TABLE_SHOWS
+          + Tables.SHOWS
           + "."
           + ShowColumns.ID
           + " AND "
@@ -434,7 +434,7 @@ public final class ProviderSchematic {
     }
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_SEASONS)
+  @TableEndpoint(table = Tables.SEASONS)
   public static class Seasons {
 
     @MapColumns public static Map<String, String> mapColumns() {
@@ -557,7 +557,7 @@ public final class ProviderSchematic {
           + EpisodeColumns.NEEDS_SYNC
           + "=0"
           + " AND "
-          + DatabaseSchematic.TABLE_EPISODES
+          + Tables.EPISODES
           + "."
           + EpisodeColumns.SEASON
           + ">0"
@@ -682,7 +682,7 @@ public final class ProviderSchematic {
     }
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_EPISODES)
+  @TableEndpoint(table = Tables.EPISODES)
   public static class Episodes {
 
     @ContentUri(
@@ -793,7 +793,7 @@ public final class ProviderSchematic {
     }
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_SHOW_GENRES)
+  @TableEndpoint(table = Tables.SHOW_GENRES)
   public static class ShowGenres {
 
     @ContentUri(
@@ -828,7 +828,7 @@ public final class ProviderSchematic {
     }
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_SHOW_CHARACTERS)
+  @TableEndpoint(table = Tables.SHOW_CHARACTERS)
   public static class ShowCharacters {
 
     @ContentUri(
@@ -863,7 +863,7 @@ public final class ProviderSchematic {
     }
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_MOVIES)
+  @TableEndpoint(table = Tables.MOVIES)
   public static class Movies {
 
     @ContentUri(
@@ -968,7 +968,7 @@ public final class ProviderSchematic {
         DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.COLLECTED_AT + " DESC";
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_MOVIE_GENRES)
+  @TableEndpoint(table = Tables.MOVIE_GENRES)
   public static class MovieGenres {
 
     @ContentUri(
@@ -1001,7 +1001,7 @@ public final class ProviderSchematic {
     }
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_MOVIE_CAST)
+  @TableEndpoint(table = Tables.MOVIE_CAST)
   public static class MovieCast {
 
     @ContentUri(
@@ -1035,7 +1035,7 @@ public final class ProviderSchematic {
     }
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_MOVIE_CREW)
+  @TableEndpoint(table = Tables.MOVIE_CREW)
   public static class MovieCrew {
 
     @ContentUri(
@@ -1068,7 +1068,7 @@ public final class ProviderSchematic {
     }
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_SHOW_SEARCH_SUGGESTIONS)
+  @TableEndpoint(table = Tables.SHOW_SEARCH_SUGGESTIONS)
   public static class ShowSearchSuggestions {
 
     @ContentUri(
@@ -1077,7 +1077,7 @@ public final class ProviderSchematic {
     public static final Uri SHOW_SUGGESTIONS = buildUri(Path.SEARCH_SUGGESTIONS, Path.SHOWS);
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_MOVIE_SEARCH_SUGGESTIONS)
+  @TableEndpoint(table = Tables.MOVIE_SEARCH_SUGGESTIONS)
   public static class MovieSearchSuggestions {
 
     @ContentUri(
@@ -1086,7 +1086,7 @@ public final class ProviderSchematic {
     public static final Uri MOVIE_SUGGESTIONS = buildUri(Path.SEARCH_SUGGESTIONS, Path.MOVIES);
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_PEOPLE)
+  @TableEndpoint(table = Tables.PEOPLE)
   public static class People {
 
     @ContentUri(
@@ -1158,7 +1158,7 @@ public final class ProviderSchematic {
     }
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_LISTS)
+  @TableEndpoint(table = Tables.LISTS)
   public static class Lists {
 
     @ContentUri(
@@ -1181,7 +1181,7 @@ public final class ProviderSchematic {
     }
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_LIST_ITEMS) public static class ListItems {
+  @TableEndpoint(table = Tables.LIST_ITEMS) public static class ListItems {
 
     @ContentUri(
         path = Path.LIST_ITEMS,
@@ -1200,7 +1200,7 @@ public final class ProviderSchematic {
     }
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_USERS) public static class Users {
+  @TableEndpoint(table = Tables.USERS) public static class Users {
 
     @ContentUri(
         path = Path.USERS,
@@ -1222,7 +1222,7 @@ public final class ProviderSchematic {
     }
   }
 
-  @TableEndpoint(table = DatabaseSchematic.TABLE_COMMENTS) public static class Comments {
+  @TableEndpoint(table = Tables.COMMENTS) public static class Comments {
 
     @ContentUri(
         path = Path.COMMENTS,

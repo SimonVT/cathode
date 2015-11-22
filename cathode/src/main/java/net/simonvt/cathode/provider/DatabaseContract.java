@@ -16,6 +16,7 @@
 package net.simonvt.cathode.provider;
 
 import android.provider.BaseColumns;
+import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.schematic.annotation.AutoIncrement;
 import net.simonvt.schematic.annotation.DataType;
 import net.simonvt.schematic.annotation.DefaultValue;
@@ -119,7 +120,7 @@ public final class DatabaseContract {
   public interface ShowGenreColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
-    @DataType(INTEGER) @References(table = DatabaseSchematic.TABLE_SHOWS, column = ShowColumns.ID)
+    @DataType(INTEGER) @References(table = Tables.SHOWS, column = ShowColumns.ID)
     String SHOW_ID = "showId";
     @DataType(TEXT) String GENRE = "genre";
   }
@@ -127,18 +128,18 @@ public final class DatabaseContract {
   public interface ShowCharacterColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
-    @DataType(INTEGER) @References(table = DatabaseSchematic.TABLE_SHOWS, column = ShowColumns.ID)
+    @DataType(INTEGER) @References(table = Tables.SHOWS, column = ShowColumns.ID)
     String SHOW_ID = "showId";
 
     @DataType(TEXT) String CHARACTER = "character";
-    @DataType(TEXT) @References(table = DatabaseSchematic.TABLE_PEOPLE, column = PersonColumns.ID)
+    @DataType(TEXT) @References(table = Tables.PEOPLE, column = PersonColumns.ID)
     String PERSON_ID = "personId";
   }
 
   public interface SeasonColumns extends LastModifiedColumns, HiddenColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
-    @DataType(INTEGER) @References(table = DatabaseSchematic.TABLE_SHOWS, column = ShowColumns.ID)
+    @DataType(INTEGER) @References(table = Tables.SHOWS, column = ShowColumns.ID)
     String SHOW_ID = "showId";
     @DataType(INTEGER) @NotNull String SEASON = "season";
 
@@ -172,10 +173,9 @@ public final class DatabaseContract {
   public interface EpisodeColumns extends LastModifiedColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
-    @DataType(INTEGER) @References(table = DatabaseSchematic.TABLE_SHOWS, column = ShowColumns.ID)
-    String SHOW_ID = "showId";
-    @DataType(INTEGER)
-    @References(table = DatabaseSchematic.TABLE_SEASONS, column = SeasonColumns.ID) String
+    @DataType(INTEGER) @References(table = Tables.SHOWS, column = ShowColumns.ID) String SHOW_ID =
+        "showId";
+    @DataType(INTEGER) @References(table = Tables.SEASONS, column = SeasonColumns.ID) String
         SEASON_ID = "seasonId";
 
     @DataType(INTEGER) String SEASON = "season";
@@ -277,7 +277,7 @@ public final class DatabaseContract {
   public interface MovieGenreColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
-    @DataType(INTEGER) @References(table = DatabaseSchematic.TABLE_MOVIES, column = MovieColumns.ID)
+    @DataType(INTEGER) @References(table = Tables.MOVIES, column = MovieColumns.ID)
     String MOVIE_ID = "movieId";
     @DataType(TEXT) String GENRE = "genre";
   }
@@ -285,23 +285,23 @@ public final class DatabaseContract {
   public interface MovieCastColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
-    @DataType(INTEGER) @References(table = DatabaseSchematic.TABLE_MOVIES, column = MovieColumns.ID)
+    @DataType(INTEGER) @References(table = Tables.MOVIES, column = MovieColumns.ID)
     String MOVIE_ID = "movieId";
 
     @DataType(TEXT) String CHARACTER = "character";
-    @DataType(TEXT) @References(table = DatabaseSchematic.TABLE_PEOPLE, column = PersonColumns.ID)
+    @DataType(TEXT) @References(table = Tables.PEOPLE, column = PersonColumns.ID)
     String PERSON_ID = "personId";
   }
 
   public interface MovieCrewColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
-    @DataType(INTEGER) @References(table = DatabaseSchematic.TABLE_MOVIES, column = MovieColumns.ID)
+    @DataType(INTEGER) @References(table = Tables.MOVIES, column = MovieColumns.ID)
     String MOVIE_ID = "movieId";
 
     @DataType(TEXT) String CATEGORY = "category";
     @DataType(TEXT) String JOB = "job";
-    @DataType(TEXT) @References(table = DatabaseSchematic.TABLE_PEOPLE, column = PersonColumns.ID)
+    @DataType(TEXT) @References(table = Tables.PEOPLE, column = PersonColumns.ID)
     String PERSON_ID = "personId";
   }
 
@@ -358,7 +358,7 @@ public final class DatabaseContract {
   public interface ListItemColumns extends LastModifiedColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
-    @DataType(INTEGER) @References(table = DatabaseSchematic.TABLE_LISTS, column = ListsColumns.ID)
+    @DataType(INTEGER) @References(table = Tables.LISTS, column = ListsColumns.ID)
     String LIST_ID = "listId";
     @DataType(INTEGER) String LISTED_AT = "listedAt";
     @DataType(INTEGER) String ITEM_ID = "itemId";
@@ -410,7 +410,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) String ITEM_ID = "itemId";
     @DataType(INTEGER) String ITEM_TYPE = "itemType";
 
-    @DataType(INTEGER) @References(table = DatabaseSchematic.Tables.USERS, column = UserColumns.ID)
+    @DataType(INTEGER) @References(table = Tables.USERS, column = UserColumns.ID)
     String USER_ID = "userId";
     @DataType(INTEGER) @DefaultValue("0") String IS_USER_COMMENT = "isUserComment";
     @DataType(INTEGER) @DefaultValue("0") String LIKED = "liked";

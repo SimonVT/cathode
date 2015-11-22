@@ -42,14 +42,14 @@ import net.simonvt.cathode.util.SqlUtils;
 import net.simonvt.schematic.annotation.DataType;
 import net.simonvt.schematic.annotation.Database;
 import net.simonvt.schematic.annotation.ExecOnCreate;
+import net.simonvt.schematic.annotation.IfNotExists;
 import net.simonvt.schematic.annotation.OnUpgrade;
 import net.simonvt.schematic.annotation.Table;
 
 @Database(className = "CathodeDatabase",
     packageName = "net.simonvt.cathode.provider.generated",
     fileName = "cathode.db",
-    version = DatabaseSchematic.DATABASE_VERSION)
-public final class DatabaseSchematic {
+    version = DatabaseSchematic.DATABASE_VERSION) public final class DatabaseSchematic {
 
   private DatabaseSchematic() {
   }
@@ -62,156 +62,95 @@ public final class DatabaseSchematic {
         + " AND episodes.needsSync=0"
         + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
 
-    String SHOWS_UPCOMING = "LEFT OUTER JOIN "
-        + TABLE_EPISODES
-        + " ON "
-        + TABLE_EPISODES
-        + "."
-        + EpisodeColumns.ID
-        + "="
-        + "("
-        + "SELECT _id "
-        + "FROM episodes "
-        + "JOIN ("
-        + "SELECT season, episode "
-        + "FROM episodes "
-        + "WHERE watched=1 AND showId=shows._id "
-        + "ORDER BY season DESC, episode DESC LIMIT 1"
-        + ") AS ep2 "
-        + "WHERE episodes.watched=0 AND episodes.showId=shows._id"
-        + " AND episodes.needsSync=0"
-        + " AND (episodes.season>ep2.season "
-        + "OR (episodes.season=ep2.season AND episodes.episode>ep2.episode)) "
-        + "ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1"
-        + ")";
+    String SHOWS_UPCOMING =
+        "LEFT OUTER JOIN " + Tables.EPISODES + " ON " + Tables.EPISODES + "." + EpisodeColumns.ID
+            + "=" + "(" + "SELECT _id " + "FROM episodes " + "JOIN (" + "SELECT season, episode "
+            + "FROM episodes " + "WHERE watched=1 AND showId=shows._id "
+            + "ORDER BY season DESC, episode DESC LIMIT 1" + ") AS ep2 "
+            + "WHERE episodes.watched=0 AND episodes.showId=shows._id" + " AND episodes.needsSync=0"
+            + " AND (episodes.season>ep2.season "
+            + "OR (episodes.season=ep2.season AND episodes.episode>ep2.episode)) "
+            + "ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1" + ")";
 
     String SHOWS_UNCOLLECTED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
         + " episodes WHERE episodes.inCollection=0 AND episodes.showId=shows._id"
-        + " AND episodes.season<>0"
-        + " AND episodes.needsSync=0"
-        + " AND episodes.needsSync=0"
+        + " AND episodes.season<>0" + " AND episodes.needsSync=0" + " AND episodes.needsSync=0"
         + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
 
     String SHOWS_WITH_WATCHING =
         "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
             + " episodes WHERE (episodes.watching=1 OR episodes.checkedIn=1)"
-            + " AND episodes.showId=shows._id"
-            + " AND episodes.needsSync=0"
+            + " AND episodes.showId=shows._id" + " AND episodes.needsSync=0"
             + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
 
-    String MOVIE_CAST_PERSON = "JOIN "
-        + Tables.PEOPLE
-        + " AS "
-        + Tables.PEOPLE
-        + " ON "
-        + Tables.PEOPLE
-        + "."
-        + PersonColumns.ID
-        + "="
-        + Tables.MOVIE_CAST
-        + "."
-        + MovieCastColumns.PERSON_ID;
+    String MOVIE_CAST_PERSON =
+        "JOIN " + Tables.PEOPLE + " AS " + Tables.PEOPLE + " ON " + Tables.PEOPLE + "."
+            + PersonColumns.ID + "=" + Tables.MOVIE_CAST + "." + MovieCastColumns.PERSON_ID;
 
-    String SHOW_CAST_PERSON = "JOIN "
-        + Tables.PEOPLE
-        + " AS "
-        + Tables.PEOPLE
-        + " ON "
-        + Tables.PEOPLE
-        + "."
-        + PersonColumns.ID
-        + "="
-        + Tables.SHOW_CHARACTERS
-        + "."
-        + ShowCharacterColumns.PERSON_ID;
+    String SHOW_CAST_PERSON =
+        "JOIN " + Tables.PEOPLE + " AS " + Tables.PEOPLE + " ON " + Tables.PEOPLE + "."
+            + PersonColumns.ID + "=" + Tables.SHOW_CHARACTERS + "."
+            + ShowCharacterColumns.PERSON_ID;
 
-    String EPISODES_WITH_SHOW_TITLE = "JOIN "
-        + Tables.SHOWS
-        + " AS "
-        + Tables.SHOWS
-        + " ON "
-        + Tables.SHOWS
-        + "."
-        + ShowColumns.ID
-        + "="
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.SHOW_ID;
+    String EPISODES_WITH_SHOW_TITLE =
+        "JOIN " + Tables.SHOWS + " AS " + Tables.SHOWS + " ON " + Tables.SHOWS + "."
+            + ShowColumns.ID + "=" + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID;
 
-    String LIST_SHOWS = "LEFT JOIN " + Tables.SHOWS
-        + " ON " + ListItemColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.SHOW
-        +  " AND " + Tables.LIST_ITEMS + "." + ListItemColumns.ITEM_ID
-        + "=" + Tables.SHOWS + "." + ShowColumns.ID;
+    String LIST_SHOWS = "LEFT JOIN " + Tables.SHOWS + " ON " + ListItemColumns.ITEM_TYPE + "="
+        + DatabaseContract.ItemType.SHOW + " AND " + Tables.LIST_ITEMS + "."
+        + ListItemColumns.ITEM_ID + "=" + Tables.SHOWS + "." + ShowColumns.ID;
 
-    String LIST_SEASONS = "LEFT JOIN " + Tables.SEASONS
-        + " ON " + ListItemColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.SEASON
-        +  " AND " + Tables.LIST_ITEMS + "." + ListItemColumns.ITEM_ID
-        + "=" + Tables.SEASONS + "." + SeasonColumns.ID;
+    String LIST_SEASONS = "LEFT JOIN " + Tables.SEASONS + " ON " + ListItemColumns.ITEM_TYPE + "="
+        + DatabaseContract.ItemType.SEASON + " AND " + Tables.LIST_ITEMS + "."
+        + ListItemColumns.ITEM_ID + "=" + Tables.SEASONS + "." + SeasonColumns.ID;
 
-    String LIST_EPISODES = "LEFT JOIN " + Tables.EPISODES
-        + " ON " + ListItemColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.EPISODE
-        +  " AND " + Tables.LIST_ITEMS + "." + ListItemColumns.ITEM_ID
-        + "=" + Tables.EPISODES + "." + EpisodeColumns.ID;
+    String LIST_EPISODES = "LEFT JOIN " + Tables.EPISODES + " ON " + ListItemColumns.ITEM_TYPE + "="
+        + DatabaseContract.ItemType.EPISODE + " AND " + Tables.LIST_ITEMS + "."
+        + ListItemColumns.ITEM_ID + "=" + Tables.EPISODES + "." + EpisodeColumns.ID;
 
-    String LIST_MOVIES = "LEFT JOIN " + Tables.MOVIES
-        + " ON " + ListItemColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.MOVIE
-        +  " AND " + Tables.LIST_ITEMS + "." + ListItemColumns.ITEM_ID
-        + "=" + Tables.MOVIES + "." + MovieColumns.ID;
+    String LIST_MOVIES = "LEFT JOIN " + Tables.MOVIES + " ON " + ListItemColumns.ITEM_TYPE + "="
+        + DatabaseContract.ItemType.MOVIE + " AND " + Tables.LIST_ITEMS + "."
+        + ListItemColumns.ITEM_ID + "=" + Tables.MOVIES + "." + MovieColumns.ID;
 
-    String LIST_PEOPLE = "LEFT JOIN " + Tables.PEOPLE
-        + " ON " + ListItemColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.PERSON
-        +  " AND " + Tables.LIST_ITEMS + "." + ListItemColumns.ITEM_ID
-        + "=" + Tables.PEOPLE + "." + PersonColumns.ID;
+    String LIST_PEOPLE = "LEFT JOIN " + Tables.PEOPLE + " ON " + ListItemColumns.ITEM_TYPE + "="
+        + DatabaseContract.ItemType.PERSON + " AND " + Tables.LIST_ITEMS + "."
+        + ListItemColumns.ITEM_ID + "=" + Tables.PEOPLE + "." + PersonColumns.ID;
 
-    String LIST = LIST_SHOWS
-        + " "
-        + LIST_SEASONS
-        + " "
-        + LIST_EPISODES
-        + " "
-        + LIST_MOVIES
-        + " "
+    String LIST = LIST_SHOWS + " " + LIST_SEASONS + " " + LIST_EPISODES + " " + LIST_MOVIES + " "
         + LIST_PEOPLE;
 
-    String COMMENT_PROFILE = "JOIN "
-        + Tables.USERS
-        + " AS "
-        + Tables.USERS
-        + " ON "
-        + Tables.USERS
-        + "."
-        + UserColumns.ID
-        + "="
-        + Tables.COMMENTS
-        + "."
-        + CommentColumns.USER_ID;
+    String COMMENT_PROFILE =
+        "JOIN " + Tables.USERS + " AS " + Tables.USERS + " ON " + Tables.USERS + "."
+            + UserColumns.ID + "=" + Tables.COMMENTS + "." + CommentColumns.USER_ID;
   }
 
   public interface Tables {
 
-    String SHOWS = "shows";
-    String SHOW_GENRES = "showGenres";
-    String SEASONS = "seasons";
-    String EPISODES = "episodes";
-    String SHOW_CHARACTERS = "showCharacters";
+    @Table(ShowColumns.class) @IfNotExists String SHOWS = "shows";
+    @Table(ShowGenreColumns.class) @IfNotExists String SHOW_GENRES = "showGenres";
+    @Table(SeasonColumns.class) @IfNotExists String SEASONS = "seasons";
+    @Table(EpisodeColumns.class) @IfNotExists String EPISODES = "episodes";
+    @Table(ShowCharacterColumns.class) @IfNotExists String SHOW_CHARACTERS = "showCharacters";
 
-    String MOVIES = "movies";
-    String MOVIE_GENRES = "movieGenres";
+    @Table(MovieColumns.class) @IfNotExists String MOVIES = "movies";
+    @Table(MovieGenreColumns.class) @IfNotExists String MOVIE_GENRES = "movieGenres";
 
-    String MOVIE_CAST = "movieCast";
-    String MOVIE_CREW = "movieCrew";
+    @Table(MovieCastColumns.class) @IfNotExists String MOVIE_CAST = "movieCast";
+    @Table(MovieCrewColumns.class) @IfNotExists String MOVIE_CREW = "movieCrew";
 
-    String PEOPLE = "people";
+    @Table(PersonColumns.class) @IfNotExists String PEOPLE = "people";
 
-    String SHOW_SEARCH_SUGGESTIONS = "showSearchSuggestions";
-    String MOVIE_SEARCH_SUGGESTIONS = "movieSearchSuggestions";
+    @Table(ShowSearchSuggestionsColumns.class) @IfNotExists String SHOW_SEARCH_SUGGESTIONS =
+        "showSearchSuggestions";
+    @Table(MovieSearchSuggestionsColumns.class) @IfNotExists String MOVIE_SEARCH_SUGGESTIONS =
+        "movieSearchSuggestions";
 
-    String LISTS = "lists";
-    String LIST_ITEMS = "listItems";
+    @Table(ListsColumns.class) @IfNotExists String LISTS = "lists";
+    @Table(ListItemColumns.class) @IfNotExists String LIST_ITEMS = "listItems";
 
-    String USERS = "users";
+    @Table(UserColumns.class) @IfNotExists String USERS = "users";
 
-    String COMMENTS = "comments";
+    @Table(CommentColumns.class) @IfNotExists String COMMENTS = "comments";
   }
 
   interface References {
@@ -251,562 +190,218 @@ public final class DatabaseSchematic {
 
   interface Trigger {
 
-    String SEASONS_UPDATE_WATCHED = "UPDATE "
-        + Tables.SEASONS
-        + " SET "
-        + SeasonColumns.WATCHED_COUNT
-        + "=(SELECT COUNT(*) FROM "
-        + Tables.EPISODES
-        + " WHERE "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.SEASON_ID
-        + "=NEW."
-        + EpisodeColumns.SEASON_ID
-        + " AND "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.WATCHED
-        + "=1"
-        + " AND episodes.needsSync=0"
-        + " AND "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.SEASON
-        + ">0)"
-        + " WHERE "
-        + Tables.SEASONS
-        + "."
-        + SeasonColumns.ID
-        + "=NEW."
-        + EpisodeColumns.SEASON_ID
-        + ";";
+    String SEASONS_UPDATE_WATCHED =
+        "UPDATE " + Tables.SEASONS + " SET " + SeasonColumns.WATCHED_COUNT
+            + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE " + Tables.EPISODES + "."
+            + EpisodeColumns.SEASON_ID + "=NEW." + EpisodeColumns.SEASON_ID + " AND "
+            + Tables.EPISODES + "." + EpisodeColumns.WATCHED + "=1" + " AND episodes.needsSync=0"
+            + " AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)" + " WHERE "
+            + Tables.SEASONS + "." + SeasonColumns.ID + "=NEW." + EpisodeColumns.SEASON_ID + ";";
 
-    String SEASONS_UPDATE_COLLECTED = "UPDATE "
-        + Tables.SEASONS
-        + " SET "
-        + SeasonColumns.IN_COLLECTION_COUNT
-        + "=(SELECT COUNT(*) FROM "
-        + Tables.EPISODES
-        + " WHERE "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.SEASON_ID
-        + "=NEW."
-        + EpisodeColumns.SEASON_ID
-        + " AND "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.IN_COLLECTION
-        + "=1"
-        + " AND episodes.needsSync=0"
-        + " AND "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.SEASON
-        + ">0)"
-        + " WHERE "
-        + Tables.SEASONS
-        + "."
-        + SeasonColumns.ID
-        + "=NEW."
-        + EpisodeColumns.SEASON_ID
-        + ";";
+    String SEASONS_UPDATE_COLLECTED =
+        "UPDATE " + Tables.SEASONS + " SET " + SeasonColumns.IN_COLLECTION_COUNT
+            + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE " + Tables.EPISODES + "."
+            + EpisodeColumns.SEASON_ID + "=NEW." + EpisodeColumns.SEASON_ID + " AND "
+            + Tables.EPISODES + "." + EpisodeColumns.IN_COLLECTION + "=1"
+            + " AND episodes.needsSync=0" + " AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON
+            + ">0)" + " WHERE " + Tables.SEASONS + "." + SeasonColumns.ID + "=NEW."
+            + EpisodeColumns.SEASON_ID + ";";
 
-    String SEASONS_UPDATE_AIRDATE = "UPDATE "
-        + Tables.SEASONS
-        + " SET "
-        + SeasonColumns.AIRDATE_COUNT
-        + "=(SELECT COUNT(*) FROM "
-        + Tables.EPISODES
-        + " WHERE "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.SEASON_ID
-        + "=NEW."
-        + EpisodeColumns.SEASON_ID
-        + " AND "
-        + Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED + " IS NOT NULL "
-        + " AND episodes.needsSync=0"
-        + " AND "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.SEASON
-        + ">0)"
-        + " WHERE "
-        + Tables.SEASONS
-        + "."
-        + SeasonColumns.ID
-        + "=NEW."
-        + EpisodeColumns.SEASON_ID
-        + ";";
+    String SEASONS_UPDATE_AIRDATE =
+        "UPDATE " + Tables.SEASONS + " SET " + SeasonColumns.AIRDATE_COUNT
+            + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE " + Tables.EPISODES + "."
+            + EpisodeColumns.SEASON_ID + "=NEW." + EpisodeColumns.SEASON_ID + " AND "
+            + Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED + " IS NOT NULL "
+            + " AND episodes.needsSync=0" + " AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON
+            + ">0)" + " WHERE " + Tables.SEASONS + "." + SeasonColumns.ID + "=NEW."
+            + EpisodeColumns.SEASON_ID + ";";
 
-    String SHOWS_UPDATE_WATCHED = "UPDATE "
-        + Tables.SHOWS
-        + " SET "
-        + ShowColumns.WATCHED_COUNT
-        + "=(SELECT COUNT(*) FROM "
-        + Tables.EPISODES
-        + " WHERE "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.SHOW_ID
-        + "=NEW."
-        + EpisodeColumns.SHOW_ID
-        + " AND "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.WATCHED
-        + "=1"
-        + " AND episodes.needsSync=0"
-        + " AND "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.SEASON
-        + ">0)"
-        + " WHERE "
-        + Tables.SHOWS
-        + "."
-        + ShowColumns.ID
-        + "=NEW."
-        + EpisodeColumns.SHOW_ID
-        + ";";
+    String SHOWS_UPDATE_WATCHED =
+        "UPDATE " + Tables.SHOWS + " SET " + ShowColumns.WATCHED_COUNT + "=(SELECT COUNT(*) FROM "
+            + Tables.EPISODES + " WHERE " + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID + "=NEW."
+            + EpisodeColumns.SHOW_ID + " AND " + Tables.EPISODES + "." + EpisodeColumns.WATCHED
+            + "=1" + " AND episodes.needsSync=0" + " AND " + Tables.EPISODES + "."
+            + EpisodeColumns.SEASON + ">0)" + " WHERE " + Tables.SHOWS + "." + ShowColumns.ID
+            + "=NEW." + EpisodeColumns.SHOW_ID + ";";
 
-    String SHOWS_UPDATE_COLLECTED = "UPDATE "
-        + Tables.SHOWS
-        + " SET "
-        + ShowColumns.IN_COLLECTION_COUNT
-        + "=(SELECT COUNT(*) FROM "
-        + Tables.EPISODES
-        + " WHERE "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.SHOW_ID
-        + "=NEW."
-        + EpisodeColumns.SHOW_ID
-        + " AND "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.IN_COLLECTION
-        + "=1"
-        + " AND episodes.needsSync=0"
-        + " AND "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.SEASON
-        + ">0)"
-        + " WHERE "
-        + Tables.SHOWS
-        + "."
-        + ShowColumns.ID
-        + "=NEW."
-        + EpisodeColumns.SHOW_ID
-        + ";";
+    String SHOWS_UPDATE_COLLECTED =
+        "UPDATE " + Tables.SHOWS + " SET " + ShowColumns.IN_COLLECTION_COUNT
+            + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE " + Tables.EPISODES + "."
+            + EpisodeColumns.SHOW_ID + "=NEW." + EpisodeColumns.SHOW_ID + " AND " + Tables.EPISODES
+            + "." + EpisodeColumns.IN_COLLECTION + "=1" + " AND episodes.needsSync=0" + " AND "
+            + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)" + " WHERE " + Tables.SHOWS + "."
+            + ShowColumns.ID + "=NEW." + EpisodeColumns.SHOW_ID + ";";
 
-    String SHOWS_UPDATE_AIRDATE = "UPDATE "
-        + Tables.SHOWS
-        + " SET "
-        + ShowColumns.AIRDATE_COUNT
-        + "=(SELECT COUNT(*) FROM "
-        + Tables.EPISODES
-        + " WHERE "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.SHOW_ID
-        + "=NEW."
-        + EpisodeColumns.SHOW_ID
-        + " AND "
-        + Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED + " IS NOT NULL "
-        + " AND episodes.needsSync=0"
-        + " AND "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.SEASON
-        + ">0)"
-        + " WHERE "
-        + Tables.SHOWS
-        + "."
-        + ShowColumns.ID
-        + "=NEW."
-        + EpisodeColumns.SHOW_ID
-        + ";";
+    String SHOWS_UPDATE_AIRDATE =
+        "UPDATE " + Tables.SHOWS + " SET " + ShowColumns.AIRDATE_COUNT + "=(SELECT COUNT(*) FROM "
+            + Tables.EPISODES + " WHERE " + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID + "=NEW."
+            + EpisodeColumns.SHOW_ID + " AND " + Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED
+            + " IS NOT NULL " + " AND episodes.needsSync=0" + " AND " + Tables.EPISODES + "."
+            + EpisodeColumns.SEASON + ">0)" + " WHERE " + Tables.SHOWS + "." + ShowColumns.ID
+            + "=NEW." + EpisodeColumns.SHOW_ID + ";";
 
-    String SHOW_DELETE_SEASONS = "DELETE FROM "
-        + Tables.SEASONS
-        + " WHERE "
-        + Tables.SEASONS
-        + "."
-        + SeasonColumns.SHOW_ID
-        + "=OLD."
-        + ShowColumns.ID
-        + ";";
+    String SHOW_DELETE_SEASONS =
+        "DELETE FROM " + Tables.SEASONS + " WHERE " + Tables.SEASONS + "." + SeasonColumns.SHOW_ID
+            + "=OLD." + ShowColumns.ID + ";";
 
-    String SHOW_DELETE_EPISODES = "DELETE FROM "
-        + Tables.EPISODES
-        + " WHERE "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.SHOW_ID
-        + "=OLD."
-        + SeasonColumns.ID
-        + ";";
+    String SHOW_DELETE_EPISODES =
+        "DELETE FROM " + Tables.EPISODES + " WHERE " + Tables.EPISODES + "."
+            + EpisodeColumns.SHOW_ID + "=OLD." + SeasonColumns.ID + ";";
 
-    String SHOW_DELETE_GENRES = "DELETE FROM "
-        + Tables.SHOW_GENRES
-        + " WHERE "
-        + Tables.SHOW_GENRES
-        + "."
-        + ShowGenreColumns.SHOW_ID
-        + "=OLD."
-        + ShowColumns.ID
-        + ";";
+    String SHOW_DELETE_GENRES =
+        "DELETE FROM " + Tables.SHOW_GENRES + " WHERE " + Tables.SHOW_GENRES + "."
+            + ShowGenreColumns.SHOW_ID + "=OLD." + ShowColumns.ID + ";";
 
-    String SHOW_DELETE_CHARACTERS = "DELETE FROM "
-        + Tables.SHOW_CHARACTERS
-        + " WHERE "
-        + Tables.SHOW_CHARACTERS
-        + "."
-        + ShowCharacterColumns.SHOW_ID
-        + "=OLD."
-        + ShowColumns.ID
-        + ";";
+    String SHOW_DELETE_CHARACTERS =
+        "DELETE FROM " + Tables.SHOW_CHARACTERS + " WHERE " + Tables.SHOW_CHARACTERS + "."
+            + ShowCharacterColumns.SHOW_ID + "=OLD." + ShowColumns.ID + ";";
 
-    String SHOW_DELETE_COMMENTS = "DELETE FROM "
-        + Tables.COMMENTS
-        + " WHERE "
-        + Tables.COMMENTS
-        + "."
-        + CommentColumns.ITEM_TYPE
-        + "="
-        + DatabaseContract.ItemType.SHOW
-        + " AND "
-        + Tables.COMMENTS
-        + "."
-        + CommentColumns.ITEM_ID
-        + "=OLD."
-        + ShowColumns.ID
-        + ";";
+    String SHOW_DELETE_COMMENTS =
+        "DELETE FROM " + Tables.COMMENTS + " WHERE " + Tables.COMMENTS + "."
+            + CommentColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.SHOW + " AND "
+            + Tables.COMMENTS + "." + CommentColumns.ITEM_ID + "=OLD." + ShowColumns.ID + ";";
 
-    String SEASON_DELETE_EPISODES = "DELETE FROM "
-        + Tables.EPISODES
-        + " WHERE "
-        + Tables.EPISODES
-        + "."
-        + EpisodeColumns.SEASON_ID
-        + "=OLD."
-        + SeasonColumns.ID
-        + ";";
+    String SEASON_DELETE_EPISODES =
+        "DELETE FROM " + Tables.EPISODES + " WHERE " + Tables.EPISODES + "."
+            + EpisodeColumns.SEASON_ID + "=OLD." + SeasonColumns.ID + ";";
 
-    String EPISODE_DELETE_COMMENTS = "DELETE FROM "
-        + Tables.COMMENTS
-        + " WHERE "
-        + Tables.COMMENTS
-        + "."
-        + CommentColumns.ITEM_TYPE
-        + "="
-        + DatabaseContract.ItemType.EPISODE
-        + " AND "
-        + Tables.COMMENTS
-        + "."
-        + CommentColumns.ITEM_ID
-        + "=OLD."
-        + EpisodeColumns.ID
-        + ";";
+    String EPISODE_DELETE_COMMENTS =
+        "DELETE FROM " + Tables.COMMENTS + " WHERE " + Tables.COMMENTS + "."
+            + CommentColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.EPISODE + " AND "
+            + Tables.COMMENTS + "." + CommentColumns.ITEM_ID + "=OLD." + EpisodeColumns.ID + ";";
 
-    String MOVIE_DELETE_GENRES = "DELETE FROM "
-        + Tables.MOVIE_GENRES
-        + " WHERE "
-        + Tables.MOVIE_GENRES
-        + "."
-        + MovieGenreColumns.MOVIE_ID
-        + "=OLD."
-        + MovieColumns.ID
-        + ";";
+    String MOVIE_DELETE_GENRES =
+        "DELETE FROM " + Tables.MOVIE_GENRES + " WHERE " + Tables.MOVIE_GENRES + "."
+            + MovieGenreColumns.MOVIE_ID + "=OLD." + MovieColumns.ID + ";";
 
-    String MOVIE_DELETE_CAST = "DELETE FROM "
-        + Tables.MOVIE_CAST
-        + " WHERE "
-        + Tables.MOVIE_CAST
-        + "."
-        + MovieCastColumns.MOVIE_ID
-        + "=OLD."
-        + MovieColumns.ID
-        + ";";
+    String MOVIE_DELETE_CAST =
+        "DELETE FROM " + Tables.MOVIE_CAST + " WHERE " + Tables.MOVIE_CAST + "."
+            + MovieCastColumns.MOVIE_ID + "=OLD." + MovieColumns.ID + ";";
 
-    String MOVIE_DELETE_CREW = "DELETE FROM "
-        + Tables.MOVIE_CREW
-        + " WHERE "
-        + Tables.MOVIE_CREW
-        + "."
-        + MovieCrewColumns.MOVIE_ID
-        + "=OLD."
-        + MovieColumns.ID
-        + ";";
+    String MOVIE_DELETE_CREW =
+        "DELETE FROM " + Tables.MOVIE_CREW + " WHERE " + Tables.MOVIE_CREW + "."
+            + MovieCrewColumns.MOVIE_ID + "=OLD." + MovieColumns.ID + ";";
 
-    String MOVIE_DELETE_COMMENTS = "DELETE FROM "
-        + Tables.COMMENTS
-        + " WHERE "
-        + Tables.COMMENTS
-        + "."
-        + CommentColumns.ITEM_TYPE
-        + "="
-        + DatabaseContract.ItemType.MOVIE
-        + " AND "
-        + Tables.COMMENTS
-        + "."
-        + CommentColumns.ITEM_ID
-        + "=OLD."
-        + MovieColumns.ID
-        + ";";
+    String MOVIE_DELETE_COMMENTS =
+        "DELETE FROM " + Tables.COMMENTS + " WHERE " + Tables.COMMENTS + "."
+            + CommentColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.MOVIE + " AND "
+            + Tables.COMMENTS + "." + CommentColumns.ITEM_ID + "=OLD." + MovieColumns.ID + ";";
 
     String TIME_MILLIS =
         "(strftime('%s','now') * 1000 + cast(substr(strftime('%f','now'),4,3) AS INTEGER))";
 
-    String SHOW_UPDATE = "UPDATE " + Tables.SHOWS
-        + " SET " + ShowColumns.LAST_MODIFIED + "=" + TIME_MILLIS
-        + " WHERE " + ShowColumns.ID + "=old."   + ShowColumns.ID + ";";
+    String SHOW_UPDATE =
+        "UPDATE " + Tables.SHOWS + " SET " + ShowColumns.LAST_MODIFIED + "=" + TIME_MILLIS
+            + " WHERE " + ShowColumns.ID + "=old." + ShowColumns.ID + ";";
 
-    String SEASON_UPDATE = "UPDATE " + Tables.SEASONS
-        + " SET " + SeasonColumns.LAST_MODIFIED + "=" + TIME_MILLIS
-        + " WHERE " + SeasonColumns.ID + "=old."   + SeasonColumns.ID + ";";
+    String SEASON_UPDATE =
+        "UPDATE " + Tables.SEASONS + " SET " + SeasonColumns.LAST_MODIFIED + "=" + TIME_MILLIS
+            + " WHERE " + SeasonColumns.ID + "=old." + SeasonColumns.ID + ";";
 
-    String EPISODE_UPDATE = "UPDATE " + Tables.EPISODES
-        + " SET " + EpisodeColumns.LAST_MODIFIED + "=" + TIME_MILLIS
-        + " WHERE " + EpisodeColumns.ID + "=old."   + EpisodeColumns.ID + ";";
+    String EPISODE_UPDATE =
+        "UPDATE " + Tables.EPISODES + " SET " + EpisodeColumns.LAST_MODIFIED + "=" + TIME_MILLIS
+            + " WHERE " + EpisodeColumns.ID + "=old." + EpisodeColumns.ID + ";";
 
-    String MOVIES_UPDATE = "UPDATE " + Tables.MOVIES
-        + " SET " + MovieColumns.LAST_MODIFIED + "=" + TIME_MILLIS
-        + " WHERE " + MovieColumns.ID + "=old."   + MovieColumns.ID + ";";
+    String MOVIES_UPDATE =
+        "UPDATE " + Tables.MOVIES + " SET " + MovieColumns.LAST_MODIFIED + "=" + TIME_MILLIS
+            + " WHERE " + MovieColumns.ID + "=old." + MovieColumns.ID + ";";
 
-    String PEOPLE_UPDATE = "UPDATE " + Tables.PEOPLE
-        + " SET " + PersonColumns.LAST_MODIFIED + "=" + TIME_MILLIS
-        + " WHERE " + PersonColumns.ID + "=old."   + PersonColumns.ID + ";";
+    String PEOPLE_UPDATE =
+        "UPDATE " + Tables.PEOPLE + " SET " + PersonColumns.LAST_MODIFIED + "=" + TIME_MILLIS
+            + " WHERE " + PersonColumns.ID + "=old." + PersonColumns.ID + ";";
 
-    String LIST_DELETE = "DELETE FROM "
-        + Tables.LIST_ITEMS
-        + " WHERE "
-        + Tables.LIST_ITEMS
-        + "."
-        + ListItemColumns.LIST_ID
-        + "=OLD."
-        + ListsColumns.ID
-        + ";";
+    String LIST_DELETE = "DELETE FROM " + Tables.LIST_ITEMS + " WHERE " + Tables.LIST_ITEMS + "."
+        + ListItemColumns.LIST_ID + "=OLD." + ListsColumns.ID + ";";
 
-    String LISTS_UPDATE = "UPDATE " + Tables.LISTS
-        + " SET " + ListsColumns.LAST_MODIFIED + "=" + TIME_MILLIS
-        + " WHERE " + ListsColumns.ID + "=old."   + ListsColumns.ID + ";";
+    String LISTS_UPDATE =
+        "UPDATE " + Tables.LISTS + " SET " + ListsColumns.LAST_MODIFIED + "=" + TIME_MILLIS
+            + " WHERE " + ListsColumns.ID + "=old." + ListsColumns.ID + ";";
 
-    String LISTITEM_UPDATE = "UPDATE " + Tables.LIST_ITEMS
-        + " SET " + ListItemColumns.LAST_MODIFIED + "=" + TIME_MILLIS
-        + " WHERE " + ListItemColumns.ID + "=old."   + ListItemColumns.ID + ";";
+    String LISTITEM_UPDATE =
+        "UPDATE " + Tables.LIST_ITEMS + " SET " + ListItemColumns.LAST_MODIFIED + "=" + TIME_MILLIS
+            + " WHERE " + ListItemColumns.ID + "=old." + ListItemColumns.ID + ";";
 
-    String COMMENT_UPDATE = "UPDATE " + Tables.COMMENTS
-        + " SET " + CommentColumns.LAST_MODIFIED + "=" + TIME_MILLIS
-        + " WHERE " + CommentColumns.ID + "=old."   + CommentColumns.ID + ";";
+    String COMMENT_UPDATE =
+        "UPDATE " + Tables.COMMENTS + " SET " + CommentColumns.LAST_MODIFIED + "=" + TIME_MILLIS
+            + " WHERE " + CommentColumns.ID + "=old." + CommentColumns.ID + ";";
   }
 
-  @Table(ShowColumns.class) public static final String TABLE_SHOWS = Tables.SHOWS;
+  @ExecOnCreate public static final String TRIGGER_EPISODE_UPDATE_AIRED =
+      "CREATE TRIGGER IF NOT EXISTS " + TriggerName.EPISODE_UPDATE_AIRED + " AFTER UPDATE OF "
+          + EpisodeColumns.FIRST_AIRED + "," + EpisodeColumns.NEEDS_SYNC + " ON " + Tables.EPISODES
+          + " BEGIN " + Trigger.SEASONS_UPDATE_AIRDATE + Trigger.SHOWS_UPDATE_AIRDATE + " END;";
 
-  @Table(ShowGenreColumns.class) public static final String TABLE_SHOW_GENRES = Tables.SHOW_GENRES;
+  @ExecOnCreate public static final String TRIGGER_EPISODE_UPDATE_WATCHED =
+      "CREATE TRIGGER IF NOT EXISTS " + TriggerName.EPISODE_UPDATE_WATCHED + " AFTER UPDATE OF "
+          + EpisodeColumns.WATCHED + "," + EpisodeColumns.NEEDS_SYNC + " ON " + Tables.EPISODES
+          + " BEGIN " + Trigger.SEASONS_UPDATE_WATCHED + Trigger.SHOWS_UPDATE_WATCHED + " END;";
 
-  @Table(SeasonColumns.class) public static final String TABLE_SEASONS = Tables.SEASONS;
+  @ExecOnCreate public static final String TRIGGER_EPISODE_UPDATE_COLLECTED =
+      "CREATE TRIGGER IF NOT EXISTS " + TriggerName.EPISODE_UPDATE_COLLECTED + " AFTER UPDATE OF "
+          + EpisodeColumns.IN_COLLECTION + "," + EpisodeColumns.NEEDS_SYNC + " ON "
+          + Tables.EPISODES + " BEGIN " + Trigger.SEASONS_UPDATE_COLLECTED
+          + Trigger.SHOWS_UPDATE_COLLECTED + " END;";
 
-  @Table(EpisodeColumns.class) public static final String TABLE_EPISODES = Tables.EPISODES;
+  @ExecOnCreate public static final String TRIGGER_EPISODE_INSERT =
+      "CREATE TRIGGER IF NOT EXISTS " + TriggerName.EPISODE_INSERT + " AFTER INSERT ON "
+          + Tables.EPISODES + " BEGIN " + Trigger.SEASONS_UPDATE_WATCHED
+          + Trigger.SEASONS_UPDATE_AIRDATE + Trigger.SEASONS_UPDATE_COLLECTED
+          + Trigger.SHOWS_UPDATE_WATCHED + Trigger.SHOWS_UPDATE_AIRDATE
+          + Trigger.SHOWS_UPDATE_COLLECTED + " END;";
 
-  @Table(ShowCharacterColumns.class) public static final String TABLE_SHOW_CHARACTERS =
-      Tables.SHOW_CHARACTERS;
+  @ExecOnCreate public static final String TRIGGER_SHOW_DELETE =
+      "CREATE TRIGGER IF NOT EXISTS " + TriggerName.SHOW_DELETE + " AFTER DELETE ON " + Tables.SHOWS
+          + " BEGIN " + Trigger.SHOW_DELETE_SEASONS + Trigger.SHOW_DELETE_GENRES
+          + Trigger.SHOW_DELETE_CHARACTERS + Trigger.SHOW_DELETE_COMMENTS + " END;";
 
-  @Table(MovieColumns.class) public static final String TABLE_MOVIES = Tables.MOVIES;
+  @ExecOnCreate public static final String TRIGGER_SEASON_DELETE =
+      "CREATE TRIGGER IF NOT EXISTS " + TriggerName.SEASON_DELETE + " AFTER DELETE ON "
+          + Tables.SEASONS + " BEGIN " + Trigger.SEASON_DELETE_EPISODES + " END";
 
-  @Table(MovieGenreColumns.class) public static final String TABLE_MOVIE_GENRES =
-      Tables.MOVIE_GENRES;
+  @ExecOnCreate public static final String TRIGGER_EPISODE_DELETE =
+      "CREATE TRIGGER IF NOT EXISTS " + TriggerName.EPISODE_DELETE + " AFTER DELETE ON "
+          + Tables.EPISODES + " BEGIN " + Trigger.EPISODE_DELETE_COMMENTS + " END";
 
-  @Table(MovieCastColumns.class) public static final String TABLE_MOVIE_CAST = Tables.MOVIE_CAST;
+  @ExecOnCreate public static final String TRIGGER_MOVIE_DELETE =
+      "CREATE TRIGGER IF NOT EXISTS " + TriggerName.MOVIE_DELETE + " AFTER DELETE ON "
+          + Tables.MOVIES + " BEGIN " + Trigger.MOVIE_DELETE_GENRES + Trigger.MOVIE_DELETE_CAST
+          + Trigger.MOVIE_DELETE_CREW + Trigger.MOVIE_DELETE_COMMENTS + " END;";
 
-  @Table(MovieCrewColumns.class) public static final String TABLE_MOVIE_CREW = Tables.MOVIE_CREW;
+  @ExecOnCreate public static final String TRIGGER_SHOW_UPDATE =
+      "CREATE TRIGGER IF NOT EXISTS " + TriggerName.SHOW_UPDATE + " AFTER UPDATE ON " + Tables.SHOWS
+          + " FOR EACH ROW BEGIN " + Trigger.SHOW_UPDATE + " END";
 
-  @Table(PersonColumns.class) public static final String TABLE_PEOPLE = Tables.PEOPLE;
+  @ExecOnCreate public static final String TRIGGER_SEASON_UPDATE =
+      "CREATE TRIGGER IF NOT EXISTS " + TriggerName.SEASON_UPDATE + " AFTER UPDATE ON "
+          + Tables.SEASONS + " FOR EACH ROW BEGIN " + Trigger.SEASON_UPDATE + " END";
 
-  @Table(ShowSearchSuggestionsColumns.class) public static final String
-      TABLE_SHOW_SEARCH_SUGGESTIONS = Tables.SHOW_SEARCH_SUGGESTIONS;
+  @ExecOnCreate public static final String TRIGGER_EPISODE_UPDATE =
+      "CREATE TRIGGER IF NOT EXISTS " + TriggerName.EPISODE_UPDATE + " AFTER UPDATE ON "
+          + Tables.EPISODES + " FOR EACH ROW BEGIN " + Trigger.EPISODE_UPDATE + " END";
 
-  @Table(MovieSearchSuggestionsColumns.class) public static final String
-      TABLE_MOVIE_SEARCH_SUGGESTIONS = Tables.MOVIE_SEARCH_SUGGESTIONS;
+  @ExecOnCreate public static final String TRIGGER_MOVIES_UPDATE =
+      "CREATE TRIGGER IF NOT EXISTS " + TriggerName.MOVIES_UPDATE + " AFTER UPDATE ON "
+          + Tables.MOVIES + " FOR EACH ROW BEGIN " + Trigger.MOVIES_UPDATE + " END";
 
-  @Table(ListsColumns.class) public static final String TABLE_LISTS = Tables.LISTS;
+  @ExecOnCreate public static final String TRIGGER_PEOPLE_UPDATE =
+      "CREATE TRIGGER IF NOT EXISTS " + TriggerName.PEOPLE_UPDATE + " AFTER UPDATE ON "
+          + Tables.PEOPLE + " FOR EACH ROW BEGIN " + Trigger.PEOPLE_UPDATE + " END";
 
-  @Table(ListItemColumns.class) public static final String TABLE_LIST_ITEMS =
-      Tables.LIST_ITEMS;
+  @ExecOnCreate public static final String TRIGGER_LIST_DELETE =
+      "CREATE TRIGGER IF NOT EXISTS " + TriggerName.LIST_DELETE + " AFTER DELETE ON " + Tables.LISTS
+          + " BEGIN " + Trigger.LIST_DELETE + " END;";
 
-  @Table(UserColumns.class) public static final String TABLE_USERS = Tables.USERS;
+  @ExecOnCreate public static final String TRIGGER_LIST_UPDATE =
+      "CREATE TRIGGER IF NOT EXISTS " + TriggerName.LIST_UPDATE + " AFTER UPDATE ON " + Tables.LISTS
+          + " FOR EACH ROW BEGIN " + Trigger.LISTS_UPDATE + " END";
 
-  @Table(CommentColumns.class) public static final String TABLE_COMMENTS = Tables.COMMENTS;
+  @ExecOnCreate public static final String TRIGGER_LISTITEM_UPDATE =
+      "CREATE TRIGGER IF NOT EXISTS " + TriggerName.LISTITEM_UPDATE + " AFTER UPDATE ON "
+          + Tables.LIST_ITEMS + " FOR EACH ROW BEGIN " + Trigger.LISTITEM_UPDATE + " END";
 
-  @ExecOnCreate
-  public static final String TRIGGER_EPISODE_UPDATE_AIRED = "CREATE TRIGGER IF NOT EXISTS "
-      + TriggerName.EPISODE_UPDATE_AIRED
-      + " AFTER UPDATE OF "
-      + EpisodeColumns.FIRST_AIRED
-      + ","
-      + EpisodeColumns.NEEDS_SYNC
-      + " ON "
-      + TABLE_EPISODES
-      + " BEGIN "
-      + Trigger.SEASONS_UPDATE_AIRDATE
-      + Trigger.SHOWS_UPDATE_AIRDATE
-      + " END;";
-
-  @ExecOnCreate
-  public static final String TRIGGER_EPISODE_UPDATE_WATCHED = "CREATE TRIGGER IF NOT EXISTS "
-      + TriggerName.EPISODE_UPDATE_WATCHED
-      + " AFTER UPDATE OF "
-      + EpisodeColumns.WATCHED
-      + ","
-      + EpisodeColumns.NEEDS_SYNC
-      + " ON "
-      + TABLE_EPISODES
-      + " BEGIN "
-      + Trigger.SEASONS_UPDATE_WATCHED
-      + Trigger.SHOWS_UPDATE_WATCHED
-      + " END;";
-
-  @ExecOnCreate
-  public static final String TRIGGER_EPISODE_UPDATE_COLLECTED = "CREATE TRIGGER IF NOT EXISTS "
-      + TriggerName.EPISODE_UPDATE_COLLECTED
-      + " AFTER UPDATE OF "
-      + EpisodeColumns.IN_COLLECTION
-      + ","
-      + EpisodeColumns.NEEDS_SYNC
-      + " ON "
-      + TABLE_EPISODES
-      + " BEGIN "
-      + Trigger.SEASONS_UPDATE_COLLECTED
-      + Trigger.SHOWS_UPDATE_COLLECTED
-      + " END;";
-
-  @ExecOnCreate
-  public static final String TRIGGER_EPISODE_INSERT = "CREATE TRIGGER IF NOT EXISTS "
-      + TriggerName.EPISODE_INSERT
-      + " AFTER INSERT ON "
-      + TABLE_EPISODES
-      + " BEGIN "
-      + Trigger.SEASONS_UPDATE_WATCHED
-      + Trigger.SEASONS_UPDATE_AIRDATE
-      + Trigger.SEASONS_UPDATE_COLLECTED
-      + Trigger.SHOWS_UPDATE_WATCHED
-      + Trigger.SHOWS_UPDATE_AIRDATE
-      + Trigger.SHOWS_UPDATE_COLLECTED
-      + " END;";
-
-  @ExecOnCreate public static final String TRIGGER_SHOW_DELETE = "CREATE TRIGGER IF NOT EXISTS "
-      + TriggerName.SHOW_DELETE
-      + " AFTER DELETE ON "
-      + Tables.SHOWS
-      + " BEGIN "
-      + Trigger.SHOW_DELETE_SEASONS
-      + Trigger.SHOW_DELETE_GENRES
-      + Trigger.SHOW_DELETE_CHARACTERS
-      + Trigger.SHOW_DELETE_COMMENTS
-      + " END;";
-
-  @ExecOnCreate public static final String TRIGGER_SEASON_DELETE = "CREATE TRIGGER IF NOT EXISTS "
-      + TriggerName.SEASON_DELETE
-      + " AFTER DELETE ON "
-      + Tables.SEASONS
-      + " BEGIN "
-      + Trigger.SEASON_DELETE_EPISODES
-      + " END";
-
-  @ExecOnCreate public static final String TRIGGER_EPISODE_DELETE = "CREATE TRIGGER IF NOT EXISTS "
-      + TriggerName.EPISODE_DELETE
-      + " AFTER DELETE ON "
-      + Tables.EPISODES
-      + " BEGIN "
-      + Trigger.EPISODE_DELETE_COMMENTS
-      + " END";
-
-  @ExecOnCreate public static final String TRIGGER_MOVIE_DELETE = "CREATE TRIGGER IF NOT EXISTS "
-      + TriggerName.MOVIE_DELETE
-      + " AFTER DELETE ON "
-      + Tables.MOVIES
-      + " BEGIN "
-      + Trigger.MOVIE_DELETE_GENRES
-      + Trigger.MOVIE_DELETE_CAST
-      + Trigger.MOVIE_DELETE_CREW
-      + Trigger.MOVIE_DELETE_COMMENTS
-      + " END;";
-
-  @ExecOnCreate public static final String TRIGGER_SHOW_UPDATE = "CREATE TRIGGER IF NOT EXISTS "
-      + TriggerName.SHOW_UPDATE
-      + " AFTER UPDATE ON "
-      + Tables.SHOWS
-      + " FOR EACH ROW BEGIN "
-      + Trigger.SHOW_UPDATE
-      + " END";
-
-  @ExecOnCreate public static final String TRIGGER_SEASON_UPDATE = "CREATE TRIGGER IF NOT EXISTS "
-      + TriggerName.SEASON_UPDATE
-      + " AFTER UPDATE ON "
-      + Tables.SEASONS
-      + " FOR EACH ROW BEGIN "
-      + Trigger.SEASON_UPDATE
-      + " END";
-
-  @ExecOnCreate public static final String TRIGGER_EPISODE_UPDATE = "CREATE TRIGGER IF NOT EXISTS "
-      + TriggerName.EPISODE_UPDATE
-      + " AFTER UPDATE ON "
-      + Tables.EPISODES
-      + " FOR EACH ROW BEGIN "
-      + Trigger.EPISODE_UPDATE
-      + " END";
-
-  @ExecOnCreate public static final String TRIGGER_MOVIES_UPDATE = "CREATE TRIGGER IF NOT EXISTS "
-      + TriggerName.MOVIES_UPDATE
-      + " AFTER UPDATE ON "
-      + Tables.MOVIES
-      + " FOR EACH ROW BEGIN "
-      + Trigger.MOVIES_UPDATE
-      + " END";
-
-  @ExecOnCreate public static final String TRIGGER_PEOPLE_UPDATE = "CREATE TRIGGER IF NOT EXISTS "
-      + TriggerName.PEOPLE_UPDATE
-      + " AFTER UPDATE ON "
-      + Tables.PEOPLE
-      + " FOR EACH ROW BEGIN "
-      + Trigger.PEOPLE_UPDATE
-      + " END";
-
-  @ExecOnCreate public static final String TRIGGER_LIST_DELETE = "CREATE TRIGGER IF NOT EXISTS "
-      + TriggerName.LIST_DELETE
-      + " AFTER DELETE ON "
-      + Tables.LISTS
-      + " BEGIN "
-      + Trigger.LIST_DELETE
-      + " END;";
-
-  @ExecOnCreate public static final String TRIGGER_LIST_UPDATE = "CREATE TRIGGER IF NOT EXISTS "
-      + TriggerName.LIST_UPDATE
-      + " AFTER UPDATE ON "
-      + Tables.LISTS
-      + " FOR EACH ROW BEGIN "
-      + Trigger.LISTS_UPDATE
-      + " END";
-
-  @ExecOnCreate public static final String TRIGGER_LISTITEM_UPDATE = "CREATE TRIGGER IF NOT EXISTS "
-      + TriggerName.LISTITEM_UPDATE
-      + " AFTER UPDATE ON "
-      + Tables.LIST_ITEMS
-      + " FOR EACH ROW BEGIN "
-      + Trigger.LISTITEM_UPDATE
-      + " END";
-
-  @ExecOnCreate public static final String TRIGGER_COMMENT_UPDATE = "CREATE TRIGGER IF NOT EXISTS "
-      + TriggerName.COMMENT_UPDATE
-      + " AFTER UPDATE ON "
-      + Tables.COMMENTS
-      + " FOR EACH ROW BEGIN "
-      + Trigger.COMMENT_UPDATE
-      + " END";
+  @ExecOnCreate public static final String TRIGGER_COMMENT_UPDATE =
+      "CREATE TRIGGER IF NOT EXISTS " + TriggerName.COMMENT_UPDATE + " AFTER UPDATE ON "
+          + Tables.COMMENTS + " FOR EACH ROW BEGIN " + Trigger.COMMENT_UPDATE + " END";
 
   @ExecOnCreate public static final String INDEX_CHARACTERS_SHOW_ID =
       SqlIndex.index("characterShowId")
@@ -815,47 +410,41 @@ public final class DatabaseSchematic {
           .forColumns(ShowCharacterColumns.SHOW_ID)
           .build();
 
-  @ExecOnCreate public static final String INDEX_SEASON_SHOW_ID =
-      SqlIndex.index("seasonShowId")
-          .ifNotExists()
-          .onTable(Tables.SEASONS)
-          .forColumns(SeasonColumns.SHOW_ID)
-          .build();
+  @ExecOnCreate public static final String INDEX_SEASON_SHOW_ID = SqlIndex.index("seasonShowId")
+      .ifNotExists()
+      .onTable(Tables.SEASONS)
+      .forColumns(SeasonColumns.SHOW_ID)
+      .build();
 
-  @ExecOnCreate public static final String INDEX_GENRE_SHOW_ID =
-      SqlIndex.index("genreShowId")
-          .ifNotExists()
-          .onTable(Tables.SHOW_GENRES)
-          .forColumns(ShowGenreColumns.SHOW_ID)
-          .build();
+  @ExecOnCreate public static final String INDEX_GENRE_SHOW_ID = SqlIndex.index("genreShowId")
+      .ifNotExists()
+      .onTable(Tables.SHOW_GENRES)
+      .forColumns(ShowGenreColumns.SHOW_ID)
+      .build();
 
-  @ExecOnCreate public static final String INDEX_CAST_MOVIE_ID =
-      SqlIndex.index("castMovieId")
-          .ifNotExists()
-          .onTable(Tables.MOVIE_CAST)
-          .forColumns(MovieCastColumns.MOVIE_ID)
-          .build();
+  @ExecOnCreate public static final String INDEX_CAST_MOVIE_ID = SqlIndex.index("castMovieId")
+      .ifNotExists()
+      .onTable(Tables.MOVIE_CAST)
+      .forColumns(MovieCastColumns.MOVIE_ID)
+      .build();
 
-  @ExecOnCreate public static final String INDEX_CREW_MOVIE_ID =
-      SqlIndex.index("crewMovieId")
-          .ifNotExists()
-          .onTable(Tables.MOVIE_CREW)
-          .forColumns(MovieCrewColumns.MOVIE_ID)
-          .build();
+  @ExecOnCreate public static final String INDEX_CREW_MOVIE_ID = SqlIndex.index("crewMovieId")
+      .ifNotExists()
+      .onTable(Tables.MOVIE_CREW)
+      .forColumns(MovieCrewColumns.MOVIE_ID)
+      .build();
 
-  @ExecOnCreate public static final String INDEX_GENRE_MOVIE_ID =
-      SqlIndex.index("genreMovieId")
-          .ifNotExists()
-          .onTable(Tables.MOVIE_GENRES)
-          .forColumns(MovieGenreColumns.MOVIE_ID)
-          .build();
+  @ExecOnCreate public static final String INDEX_GENRE_MOVIE_ID = SqlIndex.index("genreMovieId")
+      .ifNotExists()
+      .onTable(Tables.MOVIE_GENRES)
+      .forColumns(MovieGenreColumns.MOVIE_ID)
+      .build();
 
-  @ExecOnCreate public static final String INDEX_EPISODES_SHOW_ID =
-      SqlIndex.index("episodesShowId")
-          .ifNotExists()
-          .onTable(Tables.EPISODES)
-          .forColumns(EpisodeColumns.SHOW_ID)
-          .build();
+  @ExecOnCreate public static final String INDEX_EPISODES_SHOW_ID = SqlIndex.index("episodesShowId")
+      .ifNotExists()
+      .onTable(Tables.EPISODES)
+      .forColumns(EpisodeColumns.SHOW_ID)
+      .build();
 
   @ExecOnCreate public static final String INDEX_EPISODES_SEASON_ID =
       SqlIndex.index("episodesSeasonId")
@@ -864,8 +453,8 @@ public final class DatabaseSchematic {
           .forColumns(EpisodeColumns.SEASON_ID)
           .build();
 
-  @OnUpgrade public static void onUpgrade(Context context, SQLiteDatabase db, int oldVersion,
-      int newVersion) {
+  @OnUpgrade
+  public static void onUpgrade(Context context, SQLiteDatabase db, int oldVersion, int newVersion) {
     if (oldVersion < 12) {
       db.execSQL("DROP TABLE IF EXISTS shows");
       db.execSQL("DROP TABLE IF EXISTS showTopWatchers");
@@ -920,8 +509,8 @@ public final class DatabaseSchematic {
     }
 
     if (oldVersion < 14) {
-      db.execSQL(CathodeDatabase.TABLE_LISTS);
-      db.execSQL(CathodeDatabase.TABLE_LIST_ITEMS);
+      db.execSQL(CathodeDatabase.LISTS);
+      db.execSQL(CathodeDatabase.LIST_ITEMS);
       db.execSQL(TRIGGER_LIST_DELETE);
       db.execSQL(TRIGGER_LIST_UPDATE);
       db.execSQL(TRIGGER_LISTITEM_UPDATE);
@@ -939,56 +528,59 @@ public final class DatabaseSchematic {
     if (oldVersion < 16) {
       Set<String> showColumns = SqlUtils.columns(db, Tables.SHOWS);
       if (!showColumns.contains(HiddenColumns.HIDDEN_CALENDAR)) {
-        db.execSQL("ALTER TABLE " + Tables.SHOWS
-            + " ADD COLUMN " + HiddenColumns.HIDDEN_CALENDAR + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + Tables.SHOWS + " ADD COLUMN " + HiddenColumns.HIDDEN_CALENDAR
+            + " INTEGER DEFAULT 0");
       }
       if (!showColumns.contains(HiddenColumns.HIDDEN_COLLECTED)) {
-        db.execSQL("ALTER TABLE " + Tables.SHOWS
-            + " ADD COLUMN " + HiddenColumns.HIDDEN_COLLECTED + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + Tables.SHOWS + " ADD COLUMN " + HiddenColumns.HIDDEN_COLLECTED
+            + " INTEGER DEFAULT 0");
       }
       if (!showColumns.contains(HiddenColumns.HIDDEN_WATCHED)) {
-        db.execSQL("ALTER TABLE " + Tables.SHOWS
-            + " ADD COLUMN " + HiddenColumns.HIDDEN_WATCHED + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + Tables.SHOWS + " ADD COLUMN " + HiddenColumns.HIDDEN_WATCHED
+            + " INTEGER DEFAULT 0");
       }
       if (!showColumns.contains(HiddenColumns.HIDDEN_RECOMMENDATIONS)) {
-        db.execSQL("ALTER TABLE " + Tables.SHOWS
-            + " ADD COLUMN " + HiddenColumns.HIDDEN_RECOMMENDATIONS + " INTEGER DEFAULT 0");
+        db.execSQL(
+            "ALTER TABLE " + Tables.SHOWS + " ADD COLUMN " + HiddenColumns.HIDDEN_RECOMMENDATIONS
+                + " INTEGER DEFAULT 0");
       }
 
       Set<String> seasonColumns = SqlUtils.columns(db, Tables.SEASONS);
       if (!seasonColumns.contains(HiddenColumns.HIDDEN_CALENDAR)) {
-        db.execSQL("ALTER TABLE " + Tables.SEASONS
-            + " ADD COLUMN " + HiddenColumns.HIDDEN_CALENDAR + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + Tables.SEASONS + " ADD COLUMN " + HiddenColumns.HIDDEN_CALENDAR
+            + " INTEGER DEFAULT 0");
       }
       if (!seasonColumns.contains(HiddenColumns.HIDDEN_COLLECTED)) {
-        db.execSQL("ALTER TABLE " + Tables.SEASONS
-            + " ADD COLUMN " + HiddenColumns.HIDDEN_COLLECTED + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + Tables.SEASONS + " ADD COLUMN " + HiddenColumns.HIDDEN_COLLECTED
+            + " INTEGER DEFAULT 0");
       }
       if (!seasonColumns.contains(HiddenColumns.HIDDEN_WATCHED)) {
-        db.execSQL("ALTER TABLE " + Tables.SEASONS
-            + " ADD COLUMN " + HiddenColumns.HIDDEN_WATCHED + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + Tables.SEASONS + " ADD COLUMN " + HiddenColumns.HIDDEN_WATCHED
+            + " INTEGER DEFAULT 0");
       }
       if (!seasonColumns.contains(HiddenColumns.HIDDEN_RECOMMENDATIONS)) {
-        db.execSQL("ALTER TABLE " + Tables.SEASONS
-            + " ADD COLUMN " + HiddenColumns.HIDDEN_RECOMMENDATIONS + " INTEGER DEFAULT 0");
+        db.execSQL(
+            "ALTER TABLE " + Tables.SEASONS + " ADD COLUMN " + HiddenColumns.HIDDEN_RECOMMENDATIONS
+                + " INTEGER DEFAULT 0");
       }
 
       Set<String> movieColumns = SqlUtils.columns(db, Tables.MOVIES);
       if (!movieColumns.contains(HiddenColumns.HIDDEN_CALENDAR)) {
-        db.execSQL("ALTER TABLE " + Tables.MOVIES
-            + " ADD COLUMN " + HiddenColumns.HIDDEN_CALENDAR + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + Tables.MOVIES + " ADD COLUMN " + HiddenColumns.HIDDEN_CALENDAR
+            + " INTEGER DEFAULT 0");
       }
       if (!movieColumns.contains(HiddenColumns.HIDDEN_COLLECTED)) {
-        db.execSQL("ALTER TABLE " + Tables.MOVIES
-            + " ADD COLUMN " + HiddenColumns.HIDDEN_COLLECTED + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + Tables.MOVIES + " ADD COLUMN " + HiddenColumns.HIDDEN_COLLECTED
+            + " INTEGER DEFAULT 0");
       }
       if (!movieColumns.contains(HiddenColumns.HIDDEN_WATCHED)) {
-        db.execSQL("ALTER TABLE " + Tables.MOVIES
-            + " ADD COLUMN " + HiddenColumns.HIDDEN_WATCHED + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + Tables.MOVIES + " ADD COLUMN " + HiddenColumns.HIDDEN_WATCHED
+            + " INTEGER DEFAULT 0");
       }
       if (!movieColumns.contains(HiddenColumns.HIDDEN_RECOMMENDATIONS)) {
-        db.execSQL("ALTER TABLE " + Tables.MOVIES
-            + " ADD COLUMN " + HiddenColumns.HIDDEN_RECOMMENDATIONS + " INTEGER DEFAULT 0");
+        db.execSQL(
+            "ALTER TABLE " + Tables.MOVIES + " ADD COLUMN " + HiddenColumns.HIDDEN_RECOMMENDATIONS
+                + " INTEGER DEFAULT 0");
       }
     }
 
@@ -998,8 +590,8 @@ public final class DatabaseSchematic {
     }
 
     if (oldVersion < 18) {
-      db.execSQL(CathodeDatabase.TABLE_COMMENTS);
-      db.execSQL(CathodeDatabase.TABLE_USERS);
+      db.execSQL(CathodeDatabase.COMMENTS);
+      db.execSQL(CathodeDatabase.USERS);
 
       db.execSQL("DROP TRIGGER IF EXISTS " + TriggerName.SHOW_DELETE);
       db.execSQL("DROP TRIGGER IF EXISTS " + TriggerName.MOVIE_DELETE);
@@ -1013,16 +605,16 @@ public final class DatabaseSchematic {
     if (oldVersion < 19) {
       Set<String> showColumns = SqlUtils.columns(db, Tables.SHOWS);
       if (!showColumns.contains(ShowColumns.LAST_COMMENT_SYNC)) {
-        db.execSQL("ALTER TABLE " + Tables.SHOWS
-            + " ADD COLUMN " + ShowColumns.LAST_COMMENT_SYNC + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + Tables.SHOWS + " ADD COLUMN " + ShowColumns.LAST_COMMENT_SYNC
+            + " INTEGER DEFAULT 0");
       }
     }
 
     if (oldVersion < 20) {
       Set<String> movieColumns = SqlUtils.columns(db, Tables.MOVIES);
       if (!movieColumns.contains(MovieColumns.LAST_COMMENT_SYNC)) {
-        db.execSQL("ALTER TABLE " + Tables.MOVIES
-            + " ADD COLUMN " + MovieColumns.LAST_COMMENT_SYNC + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + Tables.MOVIES + " ADD COLUMN " + MovieColumns.LAST_COMMENT_SYNC
+            + " INTEGER DEFAULT 0");
       }
     }
   }
