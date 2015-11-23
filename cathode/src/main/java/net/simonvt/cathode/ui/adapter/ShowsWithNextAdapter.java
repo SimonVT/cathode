@@ -151,6 +151,14 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
           case R.id.action_collection_add:
             showScheduler.collectedNext(holder.getItemId());
             break;
+
+          case R.id.action_watched_hide:
+            showScheduler.hideFromWatched(holder.getItemId(), true);
+            break;
+
+          case R.id.action_collection_hide:
+            showScheduler.hideFromCollected(holder.getItemId(), true);
+            break;
         }
       }
     });
@@ -247,12 +255,16 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
             overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
           }
         }
+
+        overflow.addItem(R.id.action_watched_hide, R.string.action_watched_hide);
         break;
 
       case COLLECTION:
         if (airedCount - typeCount > 0) {
           overflow.addItem(R.id.action_collection_add, R.string.action_collect_next);
         }
+
+        overflow.addItem(R.id.action_collection_hide, R.string.action_collection_hide);
         break;
     }
   }

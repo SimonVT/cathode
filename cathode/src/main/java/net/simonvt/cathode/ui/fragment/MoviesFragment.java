@@ -31,6 +31,7 @@ import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.remote.sync.SyncJob;
+import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
@@ -103,7 +104,7 @@ public abstract class MoviesFragment
   }
 
   protected RecyclerView.Adapter<MoviesAdapter.ViewHolder> getAdapter(Cursor cursor) {
-    return new MoviesAdapter(getActivity(), this, cursor);
+    return new MoviesAdapter(getActivity(), this, cursor, getLibraryType());
   }
 
   void setCursor(Cursor cursor) {
@@ -114,6 +115,8 @@ public abstract class MoviesFragment
       ((RecyclerCursorAdapter) getAdapter()).changeCursor(cursor);
     }
   }
+
+  protected abstract LibraryType getLibraryType();
 
   protected abstract int getLoaderId();
 

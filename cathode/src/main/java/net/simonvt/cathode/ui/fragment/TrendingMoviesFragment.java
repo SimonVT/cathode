@@ -37,6 +37,7 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
@@ -155,7 +156,12 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
   }
 
   protected RecyclerView.Adapter<MoviesAdapter.ViewHolder> getAdapter(Cursor cursor) {
-    return new MoviesAdapter(getActivity(), this, cursor, R.layout.list_row_movie_rating);
+    return new MoviesAdapter(getActivity(), this, cursor, R.layout.list_row_movie_rating,
+        LibraryType.WATCHED);
+  }
+
+  @Override protected LibraryType getLibraryType() {
+    return LibraryType.TRENDING;
   }
 
   @Override protected int getLoaderId() {

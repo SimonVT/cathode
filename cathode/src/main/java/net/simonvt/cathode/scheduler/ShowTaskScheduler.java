@@ -24,6 +24,7 @@ import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.HiddenColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
@@ -239,6 +240,45 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         context.getContentResolver().update(Shows.withId(showId), cv, null, null);
 
         queue(new RateShow(traktId, rating, ratedAt));
+      }
+    });
+  }
+
+  public void hideFromCalendar(final long showId, final boolean hidden) {
+    execute(new Runnable() {
+      @Override public void run() {
+        // TODO: Wait for trakt support
+        // queue(new CalendarHideShow(showId, hidden));
+
+        ContentValues values = new ContentValues();
+        values.put(HiddenColumns.HIDDEN_CALENDAR, hidden);
+        context.getContentResolver().update(Shows.withId(showId), values, null, null);
+      }
+    });
+  }
+
+  public void hideFromWatched(final long showId, final boolean hidden) {
+    execute(new Runnable() {
+      @Override public void run() {
+        // TODO: Wait for trakt support
+        // queue(new WatchedHideShow(showId, hidden));
+
+        ContentValues values = new ContentValues();
+        values.put(HiddenColumns.HIDDEN_WATCHED, hidden);
+        context.getContentResolver().update(Shows.withId(showId), values, null, null);
+      }
+    });
+  }
+
+  public void hideFromCollected(final long showId, final boolean hidden) {
+    execute(new Runnable() {
+      @Override public void run() {
+        // TODO: Wait for trakt support
+        // queue(new CollectedHideShow(showId, hidden));
+
+        ContentValues values = new ContentValues();
+        values.put(HiddenColumns.HIDDEN_COLLECTED, hidden);
+        context.getContentResolver().update(Shows.withId(showId), values, null, null);
       }
     });
   }

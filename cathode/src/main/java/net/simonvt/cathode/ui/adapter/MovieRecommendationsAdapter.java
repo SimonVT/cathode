@@ -19,6 +19,7 @@ import android.database.Cursor;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.widget.OverflowView;
 
@@ -33,7 +34,7 @@ public class MovieRecommendationsAdapter extends MoviesAdapter {
 
   public MovieRecommendationsAdapter(FragmentActivity activity, MovieClickListener clickListener,
       Cursor c, DismissListener dismissListener) {
-    super(activity, clickListener, c, R.layout.list_row_movie_rating);
+    super(activity, clickListener, c, R.layout.list_row_movie_rating, LibraryType.RECOMMENDED);
     this.dismissListener = dismissListener;
   }
 

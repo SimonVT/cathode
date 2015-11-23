@@ -25,6 +25,7 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
+import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.widget.IndicatorView;
 import net.simonvt.cathode.widget.OverflowView;
@@ -47,7 +48,7 @@ public class MovieSearchAdapter extends BaseMoviesAdapter<MovieSearchAdapter.Vie
   };
 
   public MovieSearchAdapter(FragmentActivity activity, MovieClickListener listener, Cursor cursor) {
-    super(activity, listener, cursor);
+    super(activity, listener, cursor, LibraryType.WATCHED);
     CathodeApp.inject(activity, this);
   }
 

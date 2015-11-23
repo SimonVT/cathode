@@ -49,6 +49,7 @@ import net.simonvt.cathode.provider.CollectLoader;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.HiddenColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCharacterColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -107,7 +108,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       ShowColumns.USER_RATING, ShowColumns.RATING, ShowColumns.OVERVIEW, ShowColumns.IN_WATCHLIST,
       ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT, ShowColumns.LAST_COMMENT_SYNC,
       ShowColumns.HOMEPAGE, ShowColumns.TRAILER, ShowColumns.IMDB_ID, ShowColumns.TVDB_ID,
-      ShowColumns.TMDB_ID,
+      ShowColumns.TMDB_ID, HiddenColumns.HIDDEN_CALENDAR,
   };
 
   private static final String[] EPISODE_PROJECTION = new String[] {
@@ -208,6 +209,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private boolean inWatchlist;
 
   private int currentRating;
+
+  private boolean calendarHidden;
 
   private LibraryType type;
 
@@ -477,6 +480,12 @@ public class ShowFragment extends RefreshableAppBarFragment {
     } else {
       menu.add(0, R.id.action_watchlist_add, 300, R.string.action_watchlist_add);
     }
+
+    if (calendarHidden) {
+      menu.add(0, R.id.action_calendar_unhide, 400, R.string.action_calendar_unhide);
+    } else {
+      menu.add(0, R.id.action_calendar_hide, 400, R.string.action_calendar_hide);
+    }
   }
 
   @Override public boolean onMenuItemClick(MenuItem item) {
@@ -500,6 +509,14 @@ public class ShowFragment extends RefreshableAppBarFragment {
       case R.id.menu_lists_add:
         ListsDialog.newInstance(DatabaseContract.ItemType.SHOW, showId)
             .show(getFragmentManager(), DIALOG_LISTS_ADD);
+        return true;
+
+      case R.id.action_calendar_hide:
+        showScheduler.hideFromCalendar(showId, true);
+        return true;
+
+      case R.id.action_calendar_unhide:
+        showScheduler.hideFromCalendar(showId, false);
         return true;
     }
 
@@ -535,6 +552,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
     currentRating = cursor.getInt(cursor.getColumnIndex(ShowColumns.USER_RATING));
     final float ratingAll = cursor.getFloat(cursor.getColumnIndex(ShowColumns.RATING));
     rating.setValue(ratingAll);
+
+    calendarHidden = Cursors.getBoolean(cursor, HiddenColumns.HIDDEN_CALENDAR);
 
     watched.setVisibility(watchedCount > 0 ? View.VISIBLE : View.GONE);
     collection.setVisibility(inCollectionCount > 0 ? View.VISIBLE : View.GONE);

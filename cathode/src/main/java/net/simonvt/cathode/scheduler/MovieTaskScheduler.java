@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.provider.DatabaseContract.HiddenColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
@@ -237,6 +238,45 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         context.getContentResolver().update(Movies.withId(movieId), cv, null, null);
 
         queue(new RateMovie(traktId, rating, ratedAt));
+      }
+    });
+  }
+
+  public void hideFromCalendar(final long movieId, final boolean hidden) {
+    execute(new Runnable() {
+      @Override public void run() {
+        // TODO: Wait for trakt support
+        // queue(new CalendarHideMovie(movieId, hidden));
+
+        ContentValues values = new ContentValues();
+        values.put(HiddenColumns.HIDDEN_CALENDAR, hidden);
+        context.getContentResolver().update(Movies.withId(movieId), values, null, null);
+      }
+    });
+  }
+
+  public void hideFromWatched(final long movieId, final boolean hidden) {
+    execute(new Runnable() {
+      @Override public void run() {
+        // TODO: Wait for trakt support
+        // queue(new WatchedHideMovie(movieId, hidden));
+
+        ContentValues values = new ContentValues();
+        values.put(HiddenColumns.HIDDEN_WATCHED, hidden);
+        context.getContentResolver().update(Movies.withId(movieId), values, null, null);
+      }
+    });
+  }
+
+  public void hideFromCollected(final long movieId, final boolean hidden) {
+    execute(new Runnable() {
+      @Override public void run() {
+        // TODO: Wait for trakt support
+        // queue(new CollectedHideMovie(movieId, hidden));
+
+        ContentValues values = new ContentValues();
+        values.put(HiddenColumns.HIDDEN_COLLECTED, hidden);
+        context.getContentResolver().update(Movies.withId(movieId), values, null, null);
       }
     });
   }

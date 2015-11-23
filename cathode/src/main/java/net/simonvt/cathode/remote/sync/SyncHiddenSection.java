@@ -198,6 +198,7 @@ public class SyncHiddenSection extends PagedCallJob<HiddenItem> {
       }
     }
 
+    /** TODO: Once trakt supports hiding via the API, remove this
     for (long showId : unhandledShows) {
       ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(showId))
           .withValue(hiddenColumn, 0)
@@ -218,6 +219,7 @@ public class SyncHiddenSection extends PagedCallJob<HiddenItem> {
           .build();
       ops.add(op);
     }
+     */
 
     try {
       getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);

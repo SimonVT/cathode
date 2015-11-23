@@ -28,6 +28,7 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
@@ -44,11 +45,15 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
 
   protected MovieClickListener listener;
 
-  public BaseMoviesAdapter(FragmentActivity activity, MovieClickListener listener, Cursor c) {
+  protected LibraryType libraryType;
+
+  public BaseMoviesAdapter(FragmentActivity activity, MovieClickListener listener, Cursor c,
+      LibraryType libraryType) {
     super(activity, c);
     CathodeApp.inject(activity, this);
     this.activity = activity;
     this.listener = listener;
+    this.libraryType = libraryType;
   }
 
   @Override public void onViewRecycled(ViewHolder holder) {
@@ -96,6 +101,16 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
     } else {
       overflow.addItem(R.id.action_collection_add, R.string.action_collection_add);
     }
+
+    switch (libraryType) {
+      case WATCHED:
+        overflow.addItem(R.id.action_watched_hide, R.string.action_watched_hide);
+        break;
+
+      case COLLECTION:
+        overflow.addItem(R.id.action_collection_hide, R.string.action_collection_hide);
+        break;
+    }
   }
 
   protected void onOverflowActionSelected(View view, long id, int action, int position,
@@ -131,6 +146,14 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
 
       case R.id.action_collection_remove:
         movieScheduler.setIsInCollection(id, false);
+        break;
+
+      case R.id.action_watched_hide:
+        movieScheduler.hideFromWatched(id, true);
+        break;
+
+      case R.id.action_collection_hide:
+        movieScheduler.hideFromCollected(id, true);
         break;
     }
   }

@@ -24,6 +24,7 @@ import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchlist;
+import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.Loaders;
 
 public class MovieWatchlistFragment extends MoviesFragment {
@@ -44,6 +45,10 @@ public class MovieWatchlistFragment extends MoviesFragment {
     Job job = new SyncMoviesWatchlist();
     job.setOnDoneListener(onDoneListener);
     jobManager.addJob(job);
+  }
+
+  @Override protected LibraryType getLibraryType() {
+    return LibraryType.WATCHLIST;
   }
 
   @Override protected int getLoaderId() {
