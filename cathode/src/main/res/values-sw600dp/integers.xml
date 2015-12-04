@@ -25,4 +25,6 @@
 
   <integer name="listColumns">3</integer>
 
+  <integer name="hiddenColumns">3</integer>
+
 </resources>

@@ -73,6 +73,10 @@
         android:name="net.simonvt.cathode.ui.SettingsActivity"
         android:theme="@style/SettingsTheme"/>
 
+    <activity
+        android:name="net.simonvt.cathode.ui.HiddenItems"
+        android:theme="@style/Theme"/>
+
     <!-- Providers -->
     <provider
         android:name="net.simonvt.cathode.provider.generated.CathodeProvider"

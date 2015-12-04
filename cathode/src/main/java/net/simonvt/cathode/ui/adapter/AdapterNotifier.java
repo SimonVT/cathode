@@ -18,6 +18,7 @@ package net.simonvt.cathode.ui.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import timber.log.Timber;
 
 public class AdapterNotifier {
 
@@ -101,17 +102,13 @@ public class AdapterNotifier {
           }
         }
       }
-
-      if (oldItemCount > itemCount) {
-        final int removeCount = oldItemCount - itemCount;
-        notifyItemRangeRemoved(itemCount, removeCount);
-      }
     }
 
     items = newItems;
   }
 
   public final void notifyItemChanged(int position) {
+    Timber.d("notifyItemChanged: %d", position);
     adapter.notifyItemChanged(position);
   }
 
@@ -120,22 +117,27 @@ public class AdapterNotifier {
   }
 
   public final void notifyItemInserted(int position) {
+    Timber.d("notifyItemInserted: %d", position);
     adapter.notifyItemRangeInserted(position, 1);
   }
 
   public final void notifyItemMoved(int fromPosition, int toPosition) {
+    Timber.d("notifyItemMoved: %d - %d", fromPosition, toPosition);
     adapter.notifyItemMoved(fromPosition, toPosition);
   }
 
   public final void notifyItemRangeInserted(int positionStart, int itemCount) {
+    Timber.d("notifyItemRangeInserted: %d", positionStart);
     adapter.notifyItemRangeInserted(positionStart, itemCount);
   }
 
   public final void notifyItemRemoved(int position) {
+    Timber.d("notifyItemRemoved: %d", position);
     adapter.notifyItemRangeRemoved(position, 1);
   }
 
   public final void notifyItemRangeRemoved(int positionStart, int itemCount) {
+    Timber.d("notifyItemRangeRemoved: %d", positionStart);
     adapter.notifyItemRangeRemoved(positionStart, itemCount);
   }
 }

@@ -18,6 +18,7 @@ package net.simonvt.cathode.ui;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -88,6 +89,14 @@ public class SettingsActivity extends BaseActivity {
           return true;
         }
       });
+
+      findPreference("hiddenItems").setOnPreferenceClickListener(
+          new Preference.OnPreferenceClickListener() {
+            @Override public boolean onPreferenceClick(Preference preference) {
+              startActivity(new Intent(getActivity(), HiddenItems.class));
+              return true;
+            }
+          });
     }
 
     @TargetApi(Build.VERSION_CODES.M) private void requestPermission() {

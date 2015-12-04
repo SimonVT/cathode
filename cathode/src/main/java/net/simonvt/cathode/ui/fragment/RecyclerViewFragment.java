@@ -339,7 +339,14 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
     return adapter;
   }
 
-  final void setEmptyText(String text) {
+  public void clearEmptyText() {
+    emptyText = "";
+    if (empty != null) {
+      empty.setText(emptyText);
+    }
+  }
+
+  public final void setEmptyText(String text) {
     if (text == null) {
       text = "";
     }
@@ -349,7 +356,7 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
     }
   }
 
-  final void setEmptyText(int resId) {
+  public final void setEmptyText(int resId) {
     String text = appContext.getString(resId);
     if (text != null) {
       emptyText = text;
@@ -359,7 +366,7 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
     }
   }
 
-  final void setEmptyText(int resId, Object... formatArgs) {
+  public final void setEmptyText(int resId, Object... formatArgs) {
     String text = appContext.getString(resId, formatArgs);
     if (text != null) {
       emptyText = text;

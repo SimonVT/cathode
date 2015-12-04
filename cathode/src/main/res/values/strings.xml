@@ -115,6 +115,13 @@
   <string name="header_shows">Shows</string>
   <string name="header_episodes">Episodes</string>
 
+  <string name="header_hidden_calendar_shows">Shows hidden from calendar</string>
+  <string name="header_hidden_watched_shows">Shows hidden from watched list</string>
+  <string name="header_hidden_collected_shows">Shows hidden from collection</string>
+  <string name="header_hidden_calendar_movies">Movies hidden from calendar</string>
+  <string name="header_hidden_watched_movies">Movies hidden from watched list</string>
+  <string name="header_hidden_collected_movies">Movies hidden from collection</string>
+
   <string name="sort_title">Title</string>
   <string name="sort_next_episode">Next episode</string>
   <string name="sort_rating">Rating</string>
@@ -151,6 +158,7 @@
   <string name="action_reply">Reply</string>
   <string name="action_calendar_hide">Hide from upcoming</string>
   <string name="action_calendar_unhide">Unhide from upcoming</string>
+  <string name="action_unhide">Unhide</string>
 
   <string name="checkmark_watched">Watched</string>
   <string name="checkmark_collection">In collection</string>
@@ -181,6 +189,8 @@
 
   <!-- Settings -->
   <string name="preference_calendar">Display upcoming shows in calendar</string>
+  <string name="preference_hidden_items">Hidden items</string>
+  <string name="preference_hidden_empty">You have no hidden items</string>
 
   <!-- Navigation fragment -->
   <string name="navigation_shows_upcoming">Upcoming</string>

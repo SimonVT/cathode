@@ -65,6 +65,7 @@
   <item name="action_list_remove" type="id"/>
   <item name="action_calendar_hide" type="id"/>
   <item name="action_calendar_unhide" type="id"/>
+  <item name="action_unhide" type="id"/>
 
   <item name="front" type="id"/>
   <item name="back" type="id"/>

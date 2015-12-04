@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
+import net.simonvt.cathode.util.Cursors;
 import timber.log.Timber;
 
 public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
@@ -138,7 +139,7 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
         }
 
         header.cursor.moveToPosition(offsetPosition - 1);
-        return header.cursor.getLong(header.cursor.getColumnIndex(BaseColumns._ID));
+        return getItemId(position, header.cursor);
       }
 
       offset += header.size;
@@ -147,7 +148,11 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
     throw new IllegalStateException("No id found for position " + position);
   }
 
-  @Override public long getItemId(int position) {
+  protected long getItemId(int position, Cursor cursor) {
+    return Cursors.getLong(cursor, BaseColumns._ID);
+  }
+
+  @Override public final long getItemId(int position) {
     Long id = itemIds.get(position);
     if (id == null) {
       id = getId(position);
@@ -174,14 +179,6 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
       }
 
       offset += header.size;
-    }
-
-    Timber.i("Count: %d", getItemCount());
-    Timber.i("Header count: %d", headers.size());
-
-    for (Header header : headers) {
-      Timber.i("Header id: %d", header.headerId);
-      Timber.i("Header size: %d", header.size);
     }
 
     throw new RuntimeException(

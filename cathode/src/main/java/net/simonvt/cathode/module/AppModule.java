@@ -59,19 +59,25 @@ import net.simonvt.cathode.remote.action.lists.RemoveMovie;
 import net.simonvt.cathode.remote.action.lists.RemovePerson;
 import net.simonvt.cathode.remote.action.lists.RemoveSeason;
 import net.simonvt.cathode.remote.action.lists.RemoveShow;
+import net.simonvt.cathode.remote.action.movies.CalendarHideMovie;
 import net.simonvt.cathode.remote.action.movies.CheckInMovie;
 import net.simonvt.cathode.remote.action.movies.CollectMovie;
+import net.simonvt.cathode.remote.action.movies.CollectedHideMovie;
 import net.simonvt.cathode.remote.action.movies.DismissMovieRecommendation;
 import net.simonvt.cathode.remote.action.movies.RateMovie;
+import net.simonvt.cathode.remote.action.movies.WatchedHideMovie;
 import net.simonvt.cathode.remote.action.movies.WatchedMovie;
 import net.simonvt.cathode.remote.action.movies.WatchlistMovie;
+import net.simonvt.cathode.remote.action.shows.CalendarHideShow;
 import net.simonvt.cathode.remote.action.shows.CheckInEpisode;
 import net.simonvt.cathode.remote.action.shows.CollectEpisode;
 import net.simonvt.cathode.remote.action.shows.CollectSeason;
+import net.simonvt.cathode.remote.action.shows.CollectedHideShow;
 import net.simonvt.cathode.remote.action.shows.DismissShowRecommendation;
 import net.simonvt.cathode.remote.action.shows.RateEpisode;
 import net.simonvt.cathode.remote.action.shows.RateShow;
 import net.simonvt.cathode.remote.action.shows.WatchedEpisode;
+import net.simonvt.cathode.remote.action.shows.WatchedHideShow;
 import net.simonvt.cathode.remote.action.shows.WatchedSeason;
 import net.simonvt.cathode.remote.action.shows.WatchedShow;
 import net.simonvt.cathode.remote.action.shows.WatchlistEpisode;
@@ -129,10 +135,12 @@ import net.simonvt.cathode.search.MovieSearchHandler;
 import net.simonvt.cathode.search.ShowSearchHandler;
 import net.simonvt.cathode.service.CathodeSyncAdapter;
 import net.simonvt.cathode.service.SyncWatchingReceiver;
+import net.simonvt.cathode.ui.HiddenItems;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.LoginActivity;
 import net.simonvt.cathode.ui.SettingsActivity;
 import net.simonvt.cathode.ui.adapter.CommentsAdapter;
+import net.simonvt.cathode.ui.adapter.HiddenItemsAdapter;
 import net.simonvt.cathode.ui.adapter.MovieRecommendationsAdapter;
 import net.simonvt.cathode.ui.adapter.MovieSearchAdapter;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
@@ -195,7 +203,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
 
         // Activities
         HomeActivity.class, LoginActivity.class, LoginActivity.TokenTask.class,
-        CalendarSetupActivity.class, SettingsActivity.class,
+        CalendarSetupActivity.class, SettingsActivity.class, HiddenItems.class,
 
         // Fragments
         EpisodeFragment.class, LogoutDialog.class, MovieCollectionFragment.class,
@@ -215,7 +223,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         SeasonAdapter.class, SeasonsAdapter.class, ShowDescriptionAdapter.class,
         MoviesAdapter.class, MovieSearchAdapter.class, ShowRecommendationsAdapter.class,
         MovieRecommendationsAdapter.class, ShowsWithNextAdapter.class, ShowWatchlistAdapter.class,
-        UpcomingAdapter.class, CommentsAdapter.class,
+        UpcomingAdapter.class, CommentsAdapter.class, HiddenItemsAdapter.class,
 
         // Views
         PhoneEpisodeView.class, RemoteImageView.class,
@@ -249,7 +257,9 @@ import net.simonvt.cathode.widget.RemoteImageView;
         AddPerson.class, LogoutJob.class, SyncHiddenItems.class, SyncHiddenSection.class,
         SyncUserComments.class, AddCommentJob.class, UpdateCommentJob.class, DeleteCommentJob.class,
         SyncComments.class, CommentReplyJob.class, SyncUserProfile.class, LikeCommentJob.class,
-        UnlikeCommentJob.class, SyncCommentLikes.class,
+        UnlikeCommentJob.class, SyncCommentLikes.class, CalendarHideShow.class,
+        WatchedHideShow.class, CollectedHideShow.class, CalendarHideMovie.class,
+        WatchedHideMovie.class, CollectedHideMovie.class,
 
         // Misc
         ShowSearchHandler.class, ShowSearchHandler.SearchThread.class, MovieSearchHandler.class,
