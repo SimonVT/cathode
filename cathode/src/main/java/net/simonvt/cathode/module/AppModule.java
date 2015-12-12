@@ -126,6 +126,7 @@ import net.simonvt.cathode.scheduler.SearchTaskScheduler;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.service.CathodeSyncAdapter;
+import net.simonvt.cathode.service.SyncWatchingReceiver;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.LoginActivity;
 import net.simonvt.cathode.ui.SettingsActivity;
@@ -219,6 +220,9 @@ import net.simonvt.cathode.widget.RemoteImageView;
 
         // Services
         JobService.class, CathodeSyncAdapter.class, AuthJobService.class,
+
+        // Receivers
+        SyncWatchingReceiver.class,
 
         // Tasks
         CancelCheckin.class, CheckInMovie.class, DismissMovieRecommendation.class,
