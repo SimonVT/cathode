@@ -49,21 +49,15 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
   private static final String COLUMN_EPISODE_LAST_UPDATED = "episodeLastUpdated";
 
   public static final String[] PROJECTION = new String[] {
-      Tables.SHOWS + "." + ShowColumns.ID,
-      Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.OVERVIEW,
-      Tables.SHOWS + "." + ShowColumns.POSTER,
-      ShowColumns.AIRED_COUNT,
-      Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
-      Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
-      Tables.SHOWS + "." + ShowColumns.STATUS,
-      ShowColumns.WATCHING,
-      Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
+      Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.POSTER,
+      ShowColumns.AIRED_COUNT, Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
+      Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT, Tables.SHOWS + "." + ShowColumns.STATUS,
+      ShowColumns.WATCHING, Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
       Tables.EPISODES + "." + EpisodeColumns.ID + " AS " + COLUMN_EPISODE_ID,
       Tables.EPISODES + "." + EpisodeColumns.TITLE,
       Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
-      Tables.EPISODES + "." + EpisodeColumns.SEASON,
-      Tables.EPISODES + "." + EpisodeColumns.EPISODE,
+      Tables.EPISODES + "." + EpisodeColumns.SEASON, Tables.EPISODES + "." + EpisodeColumns.EPISODE,
       Tables.EPISODES + "." + EpisodeColumns.LAST_MODIFIED + " AS " + COLUMN_EPISODE_LAST_UPDATED,
   };
 
@@ -199,8 +193,8 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
 
     holder.progressBar.setMax(showAiredCount);
     holder.progressBar.setProgress(showTypeCount);
-
-    holder.watched.setText(showTypeCount + "/" + showAiredCount);
+    final String typeCount = getContext().getString(R.string.x_of_y, showTypeCount, showAiredCount);
+    holder.watched.setText(typeCount);
 
     String episodeText;
     if (episodeTitle == null) {

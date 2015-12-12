@@ -54,25 +54,19 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
   }
 
   public static final String[] PROJECTION_SHOW = new String[] {
-      Tables.SHOWS + "." + ShowColumns.ID,
-      Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.OVERVIEW,
-      Tables.SHOWS + "." + ShowColumns.POSTER,
-      Tables.SHOWS + "." + ShowColumns.TVDB_ID,
-      Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
+      Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.POSTER,
+      Tables.SHOWS + "." + ShowColumns.TVDB_ID, Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
       Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
-      Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST,
-      Tables.SHOWS + "." + ShowColumns.RATING,
+      Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST, Tables.SHOWS + "." + ShowColumns.RATING,
       Tables.SHOWS + "." + LastModifiedColumns.LAST_MODIFIED,
   };
 
   public static final String[] PROJECTION_EPISODE = new String[] {
-      Tables.EPISODES + "." + EpisodeColumns.ID,
-      Tables.EPISODES + "." + EpisodeColumns.SCREENSHOT,
+      Tables.EPISODES + "." + EpisodeColumns.ID, Tables.EPISODES + "." + EpisodeColumns.SCREENSHOT,
       Tables.EPISODES + "." + EpisodeColumns.TITLE,
       Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
-      Tables.EPISODES + "." + EpisodeColumns.SEASON,
-      Tables.EPISODES + "." + EpisodeColumns.EPISODE,
+      Tables.EPISODES + "." + EpisodeColumns.SEASON, Tables.EPISODES + "." + EpisodeColumns.EPISODE,
       Tables.EPISODES + "." + LastModifiedColumns.LAST_MODIFIED,
       Tables.SHOWS + "." + ShowColumns.TITLE,
   };
@@ -222,7 +216,8 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
       vh.screen.setImage(screenshotUrl);
       vh.title.setText(title);
       vh.firstAired.setTimeInMillis(firstAired);
-      vh.episode.setText(season + "x" + episode);
+      final String episodeNumber = context.getString(R.string.season_x_episode_y, season, episode);
+      vh.episode.setText(episodeNumber);
       final View view = holder.itemView;
       vh.overflow.setListener(new OverflowView.OverflowActionListener() {
 

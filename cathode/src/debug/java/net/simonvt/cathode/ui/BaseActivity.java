@@ -15,6 +15,7 @@
  */
 package net.simonvt.cathode.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -58,7 +59,7 @@ import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
 import net.simonvt.cathode.settings.Settings;
 import timber.log.Timber;
 
-public abstract class BaseActivity extends AppCompatActivity {
+@SuppressLint("SetTextI18n") public abstract class BaseActivity extends AppCompatActivity {
 
   private final DebugViews debugViews = new DebugViews();
 
@@ -141,9 +142,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     debugViews.invalidateRefreshToken.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        settings.edit()
-            .putString(Settings.TRAKT_REFRESH_TOKEN, "invalid token")
-            .apply();
+        settings.edit().putString(Settings.TRAKT_REFRESH_TOKEN, "invalid token").apply();
       }
     });
 

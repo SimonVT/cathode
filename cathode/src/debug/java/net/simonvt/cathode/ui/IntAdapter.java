@@ -62,7 +62,7 @@ public class IntAdapter extends BaseAdapter {
 
     TextView tv = ButterKnife.findById(v, android.R.id.text1);
 
-    tv.setText(Integer.toString(ints[position]));
+    tv.setText(String.format("%d", ints[position]));
 
     return tv;
   }

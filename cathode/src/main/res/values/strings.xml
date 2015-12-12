@@ -251,7 +251,9 @@
     <item quantity="other">%d unaired</item>
   </plurals>
 
+  <string name="x_of_y">%1$d/%2$d</string>
   <string name="season_x">Season %d</string>
+  <string name="season_x_episode_y">S%1$dE%2$d</string>
   <string name="season_special">Special</string>
   <string name="seasons">Seasons</string>
   <string name="show_not_synced">If a show has no watched episodes, is not in the collection or is

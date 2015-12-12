@@ -598,7 +598,8 @@ public class ShowFragment extends AppBarFragment {
 
       final int season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
       final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
-      toWatchHolder.episodeEpisode.setText("S" + season + "E" + episode);
+      final String toWatchEpisodeText = getString(R.string.season_x_episode_y, season, episode);
+      toWatchHolder.episodeEpisode.setText(toWatchEpisodeText);
 
       final String screenshotUrl =
           cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
@@ -641,7 +642,9 @@ public class ShowFragment extends AppBarFragment {
 
         final int season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
         final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
-        lastWatchedHolder.episodeEpisode.setText("S" + season + "E" + episode);
+        final String lastWatchedEpisodeText =
+            getString(R.string.season_x_episode_y, season, episode);
+        lastWatchedHolder.episodeEpisode.setText(lastWatchedEpisodeText);
 
         final String screenshotUrl =
             cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
@@ -674,7 +677,8 @@ public class ShowFragment extends AppBarFragment {
 
       final int season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
       final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
-      toCollectHolder.episodeEpisode.setText("S" + season + "E" + episode);
+      final String toCollectEpisodeText = getString(R.string.season_x_episode_y, season, episode);
+      toCollectHolder.episodeEpisode.setText(toCollectEpisodeText);
 
       final String screenshotUrl =
           cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
@@ -699,7 +703,9 @@ public class ShowFragment extends AppBarFragment {
 
         final int season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
         final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
-        lastCollectedHolder.episodeEpisode.setText("S" + season + "E" + episode);
+        final String lastCollectedEpisodeText =
+            getString(R.string.season_x_episode_y, season, episode);
+        lastCollectedHolder.episodeEpisode.setText(lastCollectedEpisodeText);
 
         final String screenshotUrl =
             cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
