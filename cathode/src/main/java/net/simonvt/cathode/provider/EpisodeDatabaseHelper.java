@@ -173,9 +173,7 @@ public final class EpisodeDatabaseHelper {
     return Episodes.getId(resolver.insert(Episodes.EPISODES, cv));
   }
 
-  public long updateEpisode(long showId, Episode episode) {
-    final long episodeId = getId(showId, episode.getSeason(), episode.getNumber());
-
+  public long updateEpisode(long episodeId, Episode episode) {
     ContentValues cv = getEpisodeCVs(episode);
     resolver.update(Episodes.withId(episodeId), cv, null, null);
     return episodeId;

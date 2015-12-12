@@ -90,7 +90,7 @@ public class SyncSeason extends CallJob<List<Episode>> {
       EpisodeDatabaseHelper.IdResult episodeResult =
           episodeHelper.getIdOrCreate(showId, seasonId, episode.getNumber());
       final long episodeId = episodeResult.id;
-      episodeHelper.updateEpisode(showId, episode);
+      episodeHelper.updateEpisode(episodeId, episode);
       episodeIds.remove(episodeId);
     }
 
