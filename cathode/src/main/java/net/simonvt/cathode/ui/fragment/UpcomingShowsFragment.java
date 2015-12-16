@@ -30,7 +30,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
-import com.squareup.otto.Bus;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,11 +40,13 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.SyncJob;
+import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.Loaders;
@@ -57,7 +58,8 @@ import net.simonvt.cathode.ui.adapter.UpcomingAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.widget.SearchView;
 
-public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
+public class UpcomingShowsFragment
+    extends ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>
     implements UpcomingAdapter.OnRemoveListener, ListDialog.Callback, LoaderCallbacks<SimpleCursor>,
     UpcomingAdapter.OnItemClickListener {
 
@@ -187,8 +189,6 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
     });
   }
 
-  @Inject Bus bus;
-
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.sort_by:
@@ -244,6 +244,18 @@ public class UpcomingShowsFragment extends ToolbarGridFragment<RecyclerView.View
     }
 
     ((UpcomingAdapter) getAdapter()).notifyChanged();
+  }
+
+  private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
+    @Override public void onDone(Job job) {
+      setRefreshing(false);
+    }
+  };
+
+  @Override public void onRefresh() {
+    Job job = new SyncWatchedShows();
+    job.setOnDoneListener(onDoneListener);
+    jobManager.addJob(job);
   }
 
   private UpcomingAdapter ensureAdapter() {

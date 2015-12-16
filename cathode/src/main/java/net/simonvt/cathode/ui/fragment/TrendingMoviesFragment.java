@@ -32,8 +32,10 @@ import java.util.Map;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
+import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
@@ -102,6 +104,18 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
+  }
+
+  private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
+    @Override public void onDone(Job job) {
+      setRefreshing(false);
+    }
+  };
+
+  @Override public void onRefresh() {
+    Job job = new SyncTrendingMovies();
+    job.setOnDoneListener(onDoneListener);
+    jobManager.addJob(job);
   }
 
   @Override public void createMenu(Toolbar toolbar) {

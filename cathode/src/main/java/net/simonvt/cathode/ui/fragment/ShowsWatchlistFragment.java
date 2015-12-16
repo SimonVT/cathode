@@ -33,6 +33,7 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -40,6 +41,8 @@ import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.SyncJob;
+import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
+import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchlist;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
@@ -49,7 +52,8 @@ import net.simonvt.cathode.ui.adapter.ShowWatchlistAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.widget.SearchView;
 
-public class ShowsWatchlistFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
+public class ShowsWatchlistFragment
+    extends ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>
     implements ShowWatchlistAdapter.RemoveListener, ShowWatchlistAdapter.OnItemClickListener {
 
   @Inject JobManager jobManager;
@@ -97,6 +101,21 @@ public class ShowsWatchlistFragment extends ToolbarGridFragment<RecyclerView.Vie
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
     toolbar.setNavigationOnClickListener(navigationClickListener);
+  }
+
+  private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
+    @Override public void onDone(Job job) {
+      setRefreshing(false);
+    }
+  };
+
+  @Override public void onRefresh() {
+    Job job = new SyncEpisodeWatchlist();
+    jobManager.addJob(job);
+    job = new SyncShowsWatchlist();
+    // Jobs are executed in order, so only attach listener to the last one
+    job.setOnDoneListener(onDoneListener);
+    jobManager.addJob(job);
   }
 
   private View.OnClickListener navigationClickListener = new View.OnClickListener() {

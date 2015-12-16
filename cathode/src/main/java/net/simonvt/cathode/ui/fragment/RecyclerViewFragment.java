@@ -101,10 +101,8 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
 
       if (adapter != null && adapter.getItemCount() > 0) {
         empty.setVisibility(View.GONE);
-        recyclerView.setVisibility(View.VISIBLE);
       } else {
         empty.setVisibility(View.VISIBLE);
-        recyclerView.setVisibility(View.GONE);
       }
     }
 
@@ -239,10 +237,8 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
         if (empty != null) {
           if (adapter.getItemCount() > 0) {
             empty.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
           } else {
             empty.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
           }
         }
       } else if (recyclerView != null) {
@@ -252,12 +248,11 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
   }
 
   private void showEmptyView(boolean show) {
+    final View empty = this.empty;
+
     if (empty == null) {
       return;
     }
-
-    final View empty = this.empty;
-    final View recyclerView = this.recyclerView;
 
     if (show && empty.getVisibility() == View.GONE) {
       empty.setAlpha(0.0f);
@@ -266,23 +261,11 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
           empty.setVisibility(View.VISIBLE);
         }
       });
-      recyclerView.animate().alpha(0.0f).withEndAction(new Runnable() {
-        @Override public void run() {
-          recyclerView.setVisibility(View.GONE);
-          recyclerView.setAlpha(1.0f);
-        }
-      });
     } else if (!show && empty.getVisibility() == View.VISIBLE) {
       empty.animate().alpha(0.0f).withEndAction(new Runnable() {
         @Override public void run() {
           empty.setAlpha(1.0f);
           empty.setVisibility(View.GONE);
-        }
-      });
-      recyclerView.animate().alpha(1.0f).withStartAction(new Runnable() {
-        @Override public void run() {
-          recyclerView.setAlpha(0.0f);
-          recyclerView.setVisibility(View.VISIBLE);
         }
       });
     }

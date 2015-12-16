@@ -40,7 +40,8 @@ import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.widget.SearchView;
 
-public abstract class MoviesFragment extends ToolbarGridFragment<MoviesAdapter.ViewHolder>
+public abstract class MoviesFragment
+    extends ToolbarSwipeRefreshRecyclerFragment<MoviesAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<SimpleCursor>, MovieClickListener {
 
   @Inject JobManager jobManager;

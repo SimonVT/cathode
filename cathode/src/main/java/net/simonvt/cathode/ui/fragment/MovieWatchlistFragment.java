@@ -21,7 +21,9 @@ import android.text.format.DateUtils;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
+import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchlist;
 import net.simonvt.cathode.ui.Loaders;
 
 public class MovieWatchlistFragment extends MoviesFragment {
@@ -32,13 +34,26 @@ public class MovieWatchlistFragment extends MoviesFragment {
     setTitle(R.string.title_movies_watchlist);
   }
 
+  private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
+    @Override public void onDone(Job job) {
+      setRefreshing(false);
+    }
+  };
+
+  @Override public void onRefresh() {
+    Job job = new SyncMoviesWatchlist();
+    job.setOnDoneListener(onDoneListener);
+    jobManager.addJob(job);
+  }
+
   @Override protected int getLoaderId() {
     return Loaders.MOVIES_WATCHLIST;
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    SimpleCursorLoader loader = new SimpleCursorLoader(getActivity(), Movies.MOVIES_WATCHLIST, null,
-        null, null, Movies.DEFAULT_SORT);
+    SimpleCursorLoader loader =
+        new SimpleCursorLoader(getActivity(), Movies.MOVIES_WATCHLIST, null, null, null,
+            Movies.DEFAULT_SORT);
     loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return loader;
   }

@@ -109,7 +109,8 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
         List<WatchedItem.Season> seasons = item.getSeasons();
         for (WatchedItem.Season season : seasons) {
           final int seasonNumber = season.getNumber();
-          SeasonDatabaseHelper.IdResult seasonResult = seasonHelper.getIdOrCreate(showId, seasonNumber);
+          SeasonDatabaseHelper.IdResult seasonResult =
+              seasonHelper.getIdOrCreate(showId, seasonNumber);
           final long seasonId = seasonResult.id;
           final boolean didSeasonExist = !seasonResult.didCreate;
           if (seasonResult.didCreate) {
@@ -121,7 +122,8 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
           List<WatchedItem.Episode> episodes = season.getEpisodes();
           for (WatchedItem.Episode episode : episodes) {
             final int episodeNumber = episode.getNumber();
-            EpisodeDatabaseHelper.IdResult episodeResult = episodeHelper.getIdOrCreate(showId, seasonId, episodeNumber);
+            EpisodeDatabaseHelper.IdResult episodeResult =
+                episodeHelper.getIdOrCreate(showId, seasonId, episodeNumber);
             final long episodeId = episodeResult.id;
             if (episodeResult.didCreate) {
               if (didShowExist && didSeasonExist) {

@@ -37,10 +37,12 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.SyncJob;
+import net.simonvt.cathode.remote.sync.shows.SyncShowRecommendations;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.Loaders;
@@ -54,7 +56,7 @@ import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.widget.SearchView;
 
 public class ShowRecommendationsFragment
-    extends ToolbarGridFragment<ShowDescriptionAdapter.ViewHolder>
+    extends ToolbarSwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<SimpleCursor>,
     ShowRecommendationsAdapter.DismissListener, ListDialog.Callback, ShowClickListener {
 
@@ -157,6 +159,18 @@ public class ShowRecommendationsFragment
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
     toolbar.setNavigationOnClickListener(navigationClickListener);
+  }
+
+  private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
+    @Override public void onDone(Job job) {
+      setRefreshing(false);
+    }
+  };
+
+  @Override public void onRefresh() {
+    Job job = new SyncShowRecommendations();
+    job.setOnDoneListener(onDoneListener);
+    jobManager.addJob(job);
   }
 
   private View.OnClickListener navigationClickListener = new View.OnClickListener() {

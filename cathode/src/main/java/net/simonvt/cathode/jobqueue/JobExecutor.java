@@ -214,6 +214,8 @@ public class JobExecutor {
         jobSucceeded(job);
       } catch (Throwable t) {
         jobFailed(job, t);
+      } finally {
+        job.done();
       }
     }
   }

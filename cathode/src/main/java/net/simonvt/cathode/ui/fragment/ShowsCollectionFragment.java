@@ -30,7 +30,9 @@ import java.util.Map;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.remote.sync.shows.SyncShowsCollection;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.Loaders;
@@ -102,6 +104,18 @@ public class ShowsCollectionFragment extends ShowsFragment implements ListDialog
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
     toolbar.inflateMenu(R.menu.fragment_shows_collected);
+  }
+
+  private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
+    @Override public void onDone(Job job) {
+      setRefreshing(false);
+    }
+  };
+
+  @Override public void onRefresh() {
+    Job job = new SyncShowsCollection();
+    job.setOnDoneListener(onDoneListener);
+    jobManager.addJob(job);
   }
 
   @Override public boolean onMenuItemClick(MenuItem item) {

@@ -35,10 +35,12 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.SyncJob;
+import net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
@@ -50,7 +52,8 @@ import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.widget.SearchView;
 
-public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdapter.ViewHolder>
+public class MovieRecommendationsFragment
+    extends ToolbarSwipeRefreshRecyclerFragment<MoviesAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<SimpleCursor>, MovieClickListener,
     MovieRecommendationsAdapter.DismissListener, ListDialog.Callback {
 
@@ -141,6 +144,18 @@ public class MovieRecommendationsFragment extends ToolbarGridFragment<MoviesAdap
 
   @Override protected int getColumnCount() {
     return columnCount;
+  }
+
+  private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
+    @Override public void onDone(Job job) {
+      setRefreshing(false);
+    }
+  };
+
+  @Override public void onRefresh() {
+    Job job = new SyncMovieRecommendations();
+    job.setOnDoneListener(onDoneListener);
+    jobManager.addJob(job);
   }
 
   @Override public boolean displaysMenuIcon() {

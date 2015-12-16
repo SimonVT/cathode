@@ -28,6 +28,8 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
@@ -36,7 +38,9 @@ import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
+import net.simonvt.cathode.provider.ListWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic;
+import net.simonvt.cathode.remote.sync.lists.SyncList;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.Loaders;
@@ -49,16 +53,17 @@ import net.simonvt.cathode.ui.listener.SeasonClickListener;
 import net.simonvt.cathode.util.SqlCoalesce;
 import net.simonvt.cathode.util.SqlColumn;
 
-public class ListFragment extends ToolbarGridFragment<ListAdapter.ListViewHolder>
-    implements LoaderManager.LoaderCallbacks<SimpleCursor>, ShowClickListener,
-    SeasonClickListener, EpisodeClickListener, MovieClickListener,
-    ListAdapter.OnRemoveItemListener {
+public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHolder>
+    implements LoaderManager.LoaderCallbacks<SimpleCursor>, ShowClickListener, SeasonClickListener,
+    EpisodeClickListener, MovieClickListener, ListAdapter.OnRemoveItemListener {
 
   private static final String ARG_LIST_ID = "net.simonvt.cathode.ui.fragment.ListFragment.lidtId";
   private static final String ARG_LIST_NAME =
       "net.simonvt.cathode.ui.fragment.ListFragment.listName";
 
   @Inject ListsTaskScheduler listScheduler;
+
+  @Inject JobManager jobManager;
 
   private NavigationListener navigationListener;
 
@@ -96,6 +101,23 @@ public class ListFragment extends ToolbarGridFragment<ListAdapter.ListViewHolder
 
   @Override protected int getColumnCount() {
     return columnCount;
+  }
+
+  private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
+    @Override public void onDone(Job job) {
+      setRefreshing(false);
+    }
+  };
+
+  @Override public void onRefresh() {
+    new Thread(new Runnable() {
+      @Override public void run() {
+        final long traktId = ListWrapper.getTraktId(getActivity().getContentResolver(), listId);
+        Job job = new SyncList(traktId);
+        job.setOnDoneListener(onDoneListener);
+        jobManager.addJob(job);
+      }
+    }).start();
   }
 
   @Override public void onShowClick(View view, int position, long id) {
@@ -167,20 +189,30 @@ public class ListFragment extends ToolbarGridFragment<ListAdapter.ListViewHolder
 
       SqlColumn.table(Tables.SEASONS).column(SeasonColumns.SEASON),
       SqlColumn.table(Tables.SEASONS).column(SeasonColumns.SHOW_ID),
-      SqlColumn.table(Tables.SEASONS).column(LastModifiedColumns.LAST_MODIFIED),
-      "(SELECT " + ShowColumns.TITLE
-      + " FROM " + Tables.SHOWS
+      SqlColumn.table(Tables.SEASONS).column(LastModifiedColumns.LAST_MODIFIED), "(SELECT "
+      + ShowColumns.TITLE
+      + " FROM "
+      + Tables.SHOWS
       + " WHERE "
-      + Tables.SHOWS + "." + ShowColumns.ID
+      + Tables.SHOWS
+      + "."
+      + ShowColumns.ID
       + "="
-      + Tables.SEASONS + "." + SeasonColumns.SHOW_ID
-      + ") AS seasonShowTitle",
-      "(SELECT " + ShowColumns.POSTER
-      + " FROM " + Tables.SHOWS
+      + Tables.SEASONS
+      + "."
+      + SeasonColumns.SHOW_ID
+      + ") AS seasonShowTitle", "(SELECT "
+      + ShowColumns.POSTER
+      + " FROM "
+      + Tables.SHOWS
       + " WHERE "
-      + Tables.SHOWS + "." + ShowColumns.ID
+      + Tables.SHOWS
+      + "."
+      + ShowColumns.ID
       + "="
-      + Tables.SEASONS + "." + SeasonColumns.SHOW_ID
+      + Tables.SEASONS
+      + "."
+      + SeasonColumns.SHOW_ID
       + ") AS seasonShowPoster",
 
       SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.TITLE),
@@ -189,13 +221,18 @@ public class ListFragment extends ToolbarGridFragment<ListAdapter.ListViewHolder
       SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.WATCHED),
       SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED),
       SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.SCREENSHOT),
-      SqlColumn.table(Tables.EPISODES).column(LastModifiedColumns.LAST_MODIFIED),
-      "(SELECT " + ShowColumns.TITLE
-      + " FROM " + Tables.SHOWS
+      SqlColumn.table(Tables.EPISODES).column(LastModifiedColumns.LAST_MODIFIED), "(SELECT "
+      + ShowColumns.TITLE
+      + " FROM "
+      + Tables.SHOWS
       + " WHERE "
-      + Tables.SHOWS + "." + ShowColumns.ID
+      + Tables.SHOWS
+      + "."
+      + ShowColumns.ID
       + "="
-      + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID
+      + Tables.EPISODES
+      + "."
+      + EpisodeColumns.SHOW_ID
       + ") AS episodeShowTitle",
 
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.TITLE),

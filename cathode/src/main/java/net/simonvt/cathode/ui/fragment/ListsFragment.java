@@ -24,18 +24,25 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.view.MenuItem;
+import javax.inject.Inject;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.ProviderSchematic;
+import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.ui.ListNavigationListener;
 import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.adapter.ListsAdapter;
 
-public class ListsFragment extends ToolbarGridFragment<ListsAdapter.ViewHolder>
+public class ListsFragment extends ToolbarSwipeRefreshRecyclerFragment<ListsAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<SimpleCursor>, ListsAdapter.OnListClickListener {
 
   static final String DIALOG_LIST_CREATE = "net.simonvt.cathode.ui.HomeActivity.createListFragment";
+
+  @Inject JobManager jobManager;
 
   private ListNavigationListener listener;
 
@@ -48,6 +55,7 @@ public class ListsFragment extends ToolbarGridFragment<ListsAdapter.ViewHolder>
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
+    CathodeApp.inject(getActivity(), this);
     setTitle(R.string.navigation_lists);
     setEmptyText(R.string.empty_lists);
     getLoaderManager().initLoader(Loaders.LISTS, null, this);
@@ -55,6 +63,18 @@ public class ListsFragment extends ToolbarGridFragment<ListsAdapter.ViewHolder>
 
   @Override protected int getColumnCount() {
     return 1;
+  }
+
+  private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
+    @Override public void onDone(Job job) {
+      setRefreshing(false);
+    }
+  };
+
+  @Override public void onRefresh() {
+    Job job = new SyncLists();
+    job.setOnDoneListener(onDoneListener);
+    jobManager.addJob(job);
   }
 
   @Override public void onListClicked(long listId, String listName) {

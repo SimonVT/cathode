@@ -18,9 +18,16 @@ package net.simonvt.cathode.jobqueue;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import java.lang.ref.WeakReference;
 import javax.inject.Inject;
+import net.simonvt.cathode.util.MainHandler;
 
 public abstract class Job {
+
+  public interface OnDoneListener {
+
+    void onDone(Job job);
+  }
 
   public static final int PRIORITY_ACTIONS = 10;
 
@@ -48,6 +55,8 @@ public abstract class Job {
 
   private transient boolean checkedOut;
 
+  private transient WeakReference<OnDoneListener> onDoneRef;
+
   protected Job() {
     this(0);
   }
@@ -61,6 +70,20 @@ public abstract class Job {
   public abstract int getPriority();
 
   public abstract void perform();
+
+  public final void done() {
+    if (onDoneRef != null) {
+      MainHandler.post(new Runnable() {
+        @Override public void run() {
+          OnDoneListener listener = onDoneRef.get();
+          if (listener != null) {
+            onDoneRef.clear();
+            listener.onDone(Job.this);
+          }
+        }
+      });
+    }
+  }
 
   public boolean allowDuplicates() {
     return false;
@@ -96,6 +119,14 @@ public abstract class Job {
 
   public boolean hasFlags(int flags) {
     return (this.flags & flags) == flags;
+  }
+
+  public void setOnDoneListener(OnDoneListener listener) {
+    if (onDoneRef != null) {
+      throw new RuntimeException("OnDoneListener can only be set once");
+    }
+
+    onDoneRef = new WeakReference<>(listener);
   }
 
   final void setCheckedOut(boolean checkedOut) {

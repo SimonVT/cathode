@@ -41,7 +41,7 @@ import net.simonvt.cathode.widget.SearchView;
 import timber.log.Timber;
 
 public abstract class ShowsFragment<D extends Cursor>
-    extends ToolbarGridFragment<ShowsWithNextAdapter.ViewHolder>
+    extends ToolbarSwipeRefreshRecyclerFragment<ShowsWithNextAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<D>, ShowClickListener {
 
   @Inject JobManager jobManager;
