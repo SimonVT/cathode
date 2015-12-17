@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ Copyright (C) 2015 Simon Vig Therkildsen
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<net.simonvt.cathode.widget.AppBarScrollParent xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+  <include layout="@layout/appbar_backdrop"/>
+
+  <android.support.v4.widget.SwipeRefreshLayout
+      android:id="@+id/swipeRefresh"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+
+    <net.simonvt.cathode.widget.ObservableScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+      <net.simonvt.cathode.widget.AppBarRelativeLayout
+          android:id="@+id/appBarLayout"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:fitsSystemWindows="@bool/drawsBehindStatusBar"
+          app:expandedTitleMarginStart="@dimen/appBarTitleMarginStart"
+          app:expandedTitleMarginEnd="@dimen/appBarTitleMarginEnd">
+
+        <FrameLayout
+            android:id="@id/appBarContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/appBarContentOffset"
+            android:layout_marginLeft="@dimen/appBarContentMargin"
+            android:layout_marginRight="@dimen/appBarContentMargin"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
+            android:background="@color/contentBackground"
+            android:paddingBottom="16dp"/>
+
+        <include layout="@layout/appbar_toolbar"/>
+      </net.simonvt.cathode.widget.AppBarRelativeLayout>
+    </net.simonvt.cathode.widget.ObservableScrollView>
+  </android.support.v4.widget.SwipeRefreshLayout>
+</net.simonvt.cathode.widget.AppBarScrollParent>

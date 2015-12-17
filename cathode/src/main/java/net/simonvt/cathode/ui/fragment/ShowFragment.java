@@ -43,6 +43,7 @@ import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.database.SimpleMergeCursor;
+import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.CollectLoader;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
@@ -83,7 +84,7 @@ import net.simonvt.cathode.widget.RecyclerViewManager;
 import net.simonvt.cathode.widget.RemoteImageView;
 import timber.log.Timber;
 
-public class ShowFragment extends AppBarFragment {
+public class ShowFragment extends RefreshableAppBarFragment {
 
   private static final String ARG_SHOWID = "net.simonvt.cathode.ui.fragment.ShowFragment.showId";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.fragment.ShowFragment.title";
@@ -435,6 +436,16 @@ public class ShowFragment extends AppBarFragment {
     getLoaderManager().initLoader(Loaders.SHOW_SEASONS, null, seasonsLoader);
     getLoaderManager().initLoader(Loaders.SHOW_USER_COMMENTS, null, userCommentsLoader);
     getLoaderManager().initLoader(Loaders.SHOW_COMMENTS, null, commentsLoader);
+  }
+
+  private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
+    @Override public void onDone(Job job) {
+      setRefreshing(false);
+    }
+  };
+
+  @Override public void onRefresh() {
+    showScheduler.sync(showId, onDoneListener);
   }
 
   @Override public void createMenu(Toolbar toolbar) {

@@ -44,14 +44,24 @@ public class AppBarScrollParent extends FrameLayout {
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
 
-    for (int i = 0; i < getChildCount(); i++) {
-      final View child = getChildAt(i);
+    scrollView = findScrollView(this);
+
+    scrollView.addListener(scrollListener);
+  }
+
+  private ObservableScrollView findScrollView(ViewGroup viewGroup) {
+    for (int i = 0, childCount = viewGroup.getChildCount(); i < childCount; i++) {
+      final View child = viewGroup.getChildAt(i);
       if (child instanceof ObservableScrollView) {
-        scrollView = (ObservableScrollView) child;
+        return (ObservableScrollView) child;
+      }
+
+      if (child instanceof ViewGroup) {
+        return findScrollView((ViewGroup) child);
       }
     }
 
-    scrollView.addListener(scrollListener);
+    return null;
   }
 
   private ScrollListener scrollListener = new ScrollListener() {

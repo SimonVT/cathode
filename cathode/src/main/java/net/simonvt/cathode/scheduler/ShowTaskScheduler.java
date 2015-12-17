@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TimeUtils;
+import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
@@ -48,12 +49,11 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
     CathodeApp.inject(context, this);
   }
 
-  /**
-   * Sync data for show with Trakt.
-   *
-   * @param showId The database id of the show.
-   */
   public void sync(final long showId) {
+    sync(showId, null);
+  }
+
+  public void sync(final long showId, final Job.OnDoneListener onDoneListener) {
     execute(new Runnable() {
       @Override public void run() {
         ContentValues cv = new ContentValues();
@@ -63,7 +63,10 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         queue(new SyncShow(traktId));
         queue(new SyncComments(ItemType.SHOW, traktId));
         queue(new SyncShowWatchedStatus(traktId));
-        queue(new SyncShowCollectedStatus(traktId));
+
+        Job job = new SyncShowCollectedStatus(traktId);
+        job.setOnDoneListener(onDoneListener);
+        queue(job);
       }
     });
   }

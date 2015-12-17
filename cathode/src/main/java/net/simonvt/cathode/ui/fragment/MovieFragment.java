@@ -37,6 +37,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
@@ -62,7 +63,7 @@ import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.RemoteImageView;
 
-public class MovieFragment extends AppBarFragment
+public class MovieFragment extends RefreshableAppBarFragment
     implements LoaderManager.LoaderCallbacks<SimpleCursor> {
 
   private static final String ARG_ID = "net.simonvt.cathode.ui.fragment.MovieFragment.id";
@@ -182,6 +183,17 @@ public class MovieFragment extends AppBarFragment
     getLoaderManager().initLoader(Loaders.MOVIE_USER_COMMENTS, null, userCommentsLoader);
     getLoaderManager().initLoader(Loaders.MOVIE_COMMENTS, null, commentsLoader);
   }
+
+  private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
+    @Override public void onDone(Job job) {
+      setRefreshing(false);
+    }
+  };
+
+  @Override public void onRefresh() {
+    movieScheduler.sync(movieId, onDoneListener);
+  }
+
 
   @Override public void createMenu(Toolbar toolbar) {
     super.createMenu(toolbar);

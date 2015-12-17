@@ -21,6 +21,7 @@ import android.database.Cursor;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TimeUtils;
+import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
@@ -44,11 +45,18 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
   }
 
   public void sync(final long movieId) {
+    sync(movieId, null);
+  }
+
+  public void sync(final long movieId, final Job.OnDoneListener onDoneListener) {
     execute(new Runnable() {
       @Override public void run() {
         final long traktId = movieHelper.getTraktId(movieId);
         queue(new SyncMovie(traktId));
-        queue(new SyncComments(ItemType.MOVIE, traktId));
+
+        Job job = new SyncComments(ItemType.MOVIE, traktId);
+        job.setOnDoneListener(onDoneListener);
+        queue(job);
       }
     });
   }
