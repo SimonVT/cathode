@@ -100,6 +100,8 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
         if (lastWatched != null) {
           // TODO: Find out if this can happen once released
           lastWatchedMillis = lastWatched.getTimeInMillis();
+        } else {
+          Timber.e(new IllegalStateException("lastWatched is null"), "lastWatched is null");
         }
 
         ops.add(ContentProviderOperation.newUpdate(ProviderSchematic.Shows.withId(showId))

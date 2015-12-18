@@ -142,17 +142,22 @@ public class SyncComments extends PagedCallJob<Comment> {
         break;
 
       case COMMENT:
-        Cursor c = getContentResolver().query(Comments.withId(traktId), new String[] {
-            CommentColumns.ITEM_TYPE, CommentColumns.ITEM_ID
-        }, null, null, null);
-        if (c.moveToFirst()) {
-          itemType = Cursors.getInt(c, CommentColumns.ITEM_TYPE);
-          itemId = Cursors.getLong(c, CommentColumns.ITEM_ID);
-        } else {
-          // TODO: return;
-          throw new RuntimeException("Not found");
+        Cursor c = null;
+        try {
+          c = getContentResolver().query(Comments.withId(traktId), new String[] {
+              CommentColumns.ITEM_TYPE, CommentColumns.ITEM_ID
+          }, null, null, null);
+          if (c.moveToFirst()) {
+            itemType = Cursors.getInt(c, CommentColumns.ITEM_TYPE);
+            itemId = Cursors.getLong(c, CommentColumns.ITEM_ID);
+          } else {
+            return;
+          }
+        } finally {
+          if (c != null) {
+            c.close();
+          }
         }
-        c.close();
         break;
 
       default:

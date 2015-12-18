@@ -213,7 +213,6 @@ public final class SeasonDatabaseHelper {
     cv.put(DatabaseContract.EpisodeColumns.IN_COLLECTION, collected);
     cv.put(DatabaseContract.EpisodeColumns.COLLECTED_AT, collectedAt);
 
-    // TODO: How does trakt handle setting collectedAt if item is already watched?
     while (episodes.moveToNext()) {
       final boolean isCollected =
           episodes.getInt(episodes.getColumnIndex(DatabaseContract.EpisodeColumns.IN_COLLECTION))
