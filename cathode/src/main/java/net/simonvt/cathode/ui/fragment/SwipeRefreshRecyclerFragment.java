@@ -37,6 +37,13 @@ public abstract class SwipeRefreshRecyclerFragment<T extends RecyclerView.ViewHo
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
     swipeRefreshLayout.setOnRefreshListener(this);
+    swipeRefreshLayout.setColorSchemeResources(getColorScheme());
+  }
+
+  public int[] getColorScheme() {
+    return new int[] {
+        R.color.watchedColor, R.color.collectedColor, R.color.watchlistColor
+    };
   }
 
   public SwipeRefreshLayout getSwipeRefreshLayout() {

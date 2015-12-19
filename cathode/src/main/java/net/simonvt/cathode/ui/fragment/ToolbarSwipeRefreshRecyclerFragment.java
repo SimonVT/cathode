@@ -32,7 +32,5 @@ public abstract class ToolbarSwipeRefreshRecyclerFragment<T extends RecyclerView
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-    getSwipeRefreshLayout().setColorSchemeResources(R.color.watchedColor, R.color.collectedColor,
-        R.color.watchlistColor);
   }
 }
