@@ -280,8 +280,8 @@ public class ShowRecommendationsFragment
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
     final Uri contentUri = Shows.SHOWS_RECOMMENDED;
     SimpleCursorLoader cl =
-        new SimpleCursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION,
-            ShowColumns.NEEDS_SYNC, null, sortBy.getSortOrder());
+        new SimpleCursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION, null,
+            null, sortBy.getSortOrder());
     cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return cl;
   }
