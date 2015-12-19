@@ -18,7 +18,6 @@ package net.simonvt.cathode.ui.fragment;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -298,10 +297,9 @@ public class UpcomingShowsFragment
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-    final Uri contentUri = Shows.SHOWS_UPCOMING;
     SimpleCursorLoader cl =
-        new SimpleCursorLoader(getActivity(), contentUri, UpcomingAdapter.PROJECTION, null, null,
-            sortBy.getSortOrder());
+        new SimpleCursorLoader(getActivity(), Shows.SHOWS_UPCOMING, UpcomingAdapter.PROJECTION,
+            null, null, sortBy.getSortOrder());
     cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return cl;
   }
