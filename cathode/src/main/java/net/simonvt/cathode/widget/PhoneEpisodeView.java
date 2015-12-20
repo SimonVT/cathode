@@ -98,7 +98,7 @@ public class PhoneEpisodeView extends ViewGroup {
     final int infoOffset = (height - paddingTop - paddingBottom - infoHeight) / 2;
 
     final int titleLeft = posterRight + posterLp.rightMargin + titleLp.leftMargin;
-    final int titleRight = titleLeft + title.getMeasuredWidth();
+    final int titleRight = numberLeft - numberLp.leftMargin - titleLp.rightMargin;
     final int titleTop = paddingTop + infoOffset + titleLp.topMargin;
     final int titleBottom = titleTop + title.getMeasuredHeight();
     title.layout(titleLeft, titleTop, titleRight, titleBottom);
@@ -165,7 +165,7 @@ public class PhoneEpisodeView extends ViewGroup {
 
     final int titleMaxWidth = leftoverWidth - titleLp.leftMargin - titleLp.rightMargin;
     final int titleWidthMeasureSpec =
-        MeasureSpec.makeMeasureSpec(titleMaxWidth, MeasureSpec.AT_MOST);
+        MeasureSpec.makeMeasureSpec(titleMaxWidth, MeasureSpec.EXACTLY);
     final int titleHeightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
     title.measure(titleWidthMeasureSpec, titleHeightMeasureSpec);
 
