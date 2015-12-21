@@ -127,12 +127,10 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
     navigationListener.onDisplayShow(id, title, overview, LibraryType.WATCHED);
   }
 
-  @Override public void onSeasonClick(View view, int position, long id) {
-    Cursor cursor = adapter.getCursor(position);
-    final long showId = cursor.getLong(cursor.getColumnIndex(SeasonColumns.SHOW_ID));
-    final String showTitle = cursor.getString(cursor.getColumnIndex("seasonShowTitle"));
-    final int seasonNumber = cursor.getInt(cursor.getColumnIndex(SeasonColumns.SEASON));
-    navigationListener.onDisplaySeason(showId, id, showTitle, seasonNumber, LibraryType.WATCHED);
+  @Override
+  public void onSeasonClick(long showId, long seasonId, String showTitle, int seasonNumber) {
+    navigationListener.onDisplaySeason(showId, seasonId, showTitle, seasonNumber,
+        LibraryType.WATCHED);
   }
 
   @Override public void onEpisodeClick(View view, int position, long id) {

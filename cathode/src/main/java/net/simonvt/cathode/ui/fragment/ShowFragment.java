@@ -226,9 +226,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
     setTitle(showTitle);
 
     seasonsAdapter = new SeasonsAdapter(getActivity(), new SeasonClickListener() {
-      @Override public void onSeasonClick(View view, int position, long id) {
-        navigationCallbacks.onDisplaySeason(showId, id, showTitle, seasonsCursor.getInt(
-            seasonsCursor.getColumnIndex(DatabaseContract.SeasonColumns.SEASON)), type);
+      @Override public void onSeasonClick(long showId, long seasonId, String showTitle, int seasonNumber) {
+        navigationCallbacks.onDisplaySeason(showId, seasonId, showTitle, seasonNumber, type);
       }
     }, type);
   }

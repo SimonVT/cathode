@@ -36,6 +36,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
+import net.simonvt.cathode.util.Cursors;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
@@ -111,8 +112,12 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
           final int position = seasonHolder.getAdapterPosition();
           if (position != RecyclerView.NO_POSITION) {
             Cursor cursor = getCursor(position);
-            final long itemId = cursor.getLong(cursor.getColumnIndex(ListItemColumns.ITEM_ID));
-            seasonListener.onSeasonClick(v, position, itemId);
+
+            final long showId = Cursors.getLong(cursor, SeasonColumns.SHOW_ID);
+            final String showTitle = Cursors.getString(cursor, "seasonShowTitle");
+            final int seasonNumber = Cursors.getInt(cursor, SeasonColumns.SEASON);
+            final long seasonId = Cursors.getLong(cursor, ListItemColumns.ITEM_ID);
+            seasonListener.onSeasonClick(showId, seasonId, showTitle, seasonNumber);
           }
         }
       });

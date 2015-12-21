@@ -35,18 +35,39 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
+import net.simonvt.cathode.util.Cursors;
 import net.simonvt.cathode.widget.OverflowView;
 
 public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHolder> {
 
   public static final String[] PROJECTION = new String[] {
-      SeasonColumns.ID, SeasonColumns.UNAIRED_COUNT, SeasonColumns.IN_COLLECTION_COUNT,
-      SeasonColumns.SEASON, SeasonColumns.WATCHED_COUNT, SeasonColumns.LAST_MODIFIED,
-      SeasonColumns.AIRED_COUNT, SeasonColumns.WATCHED_AIRED_COUNT,
+      SeasonColumns.ID,
+      SeasonColumns.SHOW_ID,
+      SeasonColumns.SEASON,
+      SeasonColumns.UNAIRED_COUNT,
+      SeasonColumns.WATCHED_COUNT,
+      SeasonColumns.IN_COLLECTION_COUNT,
+      SeasonColumns.AIRED_COUNT,
+      SeasonColumns.WATCHED_AIRED_COUNT,
       SeasonColumns.COLLECTED_AIRED_COUNT,
+      SeasonColumns.LAST_MODIFIED, "(SELECT "
+      + ShowColumns.TITLE
+      + " FROM "
+      + Tables.SHOWS
+      + " WHERE "
+      + Tables.SHOWS
+      + "."
+      + ShowColumns.ID
+      + "="
+      + Tables.SEASONS
+      + "."
+      + SeasonColumns.SHOW_ID
+      + ") AS seasonShowTitle",
   };
 
   @Inject SeasonTaskScheduler seasonScheduler;
@@ -84,7 +105,11 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
       @Override public void onClick(View v) {
         final int position = holder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
-          clickListener.onSeasonClick(holder.itemView, position, holder.getItemId());
+          Cursor cursor = getCursor(position);
+          final long showId = Cursors.getLong(cursor, SeasonColumns.SHOW_ID);
+          final int seasonNumber = Cursors.getInt(cursor, SeasonColumns.SEASON);
+          final String showTitle = Cursors.getString(cursor, "seasonShowTitle");
+          clickListener.onSeasonClick(showId, holder.getItemId(), showTitle, seasonNumber);
         }
       }
     });

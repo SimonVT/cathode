@@ -16,9 +16,7 @@
 
 package net.simonvt.cathode.ui.listener;
 
-import android.view.View;
-
 public interface SeasonClickListener {
 
-  void onSeasonClick(View view, int position, long id);
+  void onSeasonClick(long showId, long seasonId, String showTitle, int seasonNumber);
 }

@@ -30,11 +30,7 @@ import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
-import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
@@ -109,50 +105,21 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
 
     getLoaderManager().initLoader(Loaders.SEASON, null, episodesLoader);
 
-    if (title == null) {
-      SimpleCursorLoader loader =
-          new SimpleCursorLoader(getActivity(), Shows.withId(showId), new String[] {
-              ShowColumns.TITLE,
-          }, null, null, null);
-      loader.registerListener(0, new Loader.OnLoadCompleteListener<SimpleCursor>() {
-        @Override public void onLoadComplete(Loader<SimpleCursor> cursorLoader,
-            SimpleCursor cursor) {
-          cursor.moveToFirst();
-          title = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
-          setTitle(title);
-
-          cursorLoader.stopLoading();
-        }
-      });
-      loader.startLoading();
-    }
-
-    if (seasonNumber == -1) {
-      new Thread(new Runnable() {
-        @Override public void run() {
-          Cursor c =
-              getActivity().getContentResolver().query(Seasons.withId(seasonId), new String[] {
-                  SeasonColumns.SEASON,
-              }, null, null, null);
-
-          if (c.moveToFirst()) {
-            seasonNumber = c.getInt(c.getColumnIndex(SeasonColumns.SEASON));
-            updateSubtitle();
-          }
-          c.close();
-        }
-      }).start();
-    }
-
     columnCount = getResources().getInteger(R.integer.episodesColumns);
   }
 
-  public String updateSubtitle() {
-    if (seasonNumber == 0) {
-      return getResources().getString(R.string.season_special);
-    } else {
-      return getResources().getString(R.string.season_x, seasonNumber);
+  public void updateSubtitle() {
+    if (seasonNumber == -1) {
+      return;
     }
+    String subtitle;
+    if (seasonNumber == 0) {
+      subtitle = getResources().getString(R.string.season_special);
+    } else {
+      subtitle = getResources().getString(R.string.season_x, seasonNumber);
+    }
+
+    setSubtitle(subtitle);
   }
 
   @Override public void createMenu(Toolbar toolbar) {
