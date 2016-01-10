@@ -129,6 +129,7 @@ public abstract class SuggestionsAdapter extends BaseAdapter implements Filterab
       FilterResults results = new FilterResults();
 
       if (constraint == null) return results;
+      if (queries == null) return results;
 
       String filter = constraint.toString().toLowerCase(Locale.getDefault());
 

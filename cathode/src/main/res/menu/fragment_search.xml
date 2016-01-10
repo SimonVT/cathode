@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2013 Simon Vig Therkildsen
+  ~ Copyright (C) 2016 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -18,18 +18,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <item
-      android:id="@+id/menu_search"
-      android:icon="@drawable/ic_action_search"
-      android:title="@string/action_search"
-      app:showAsAction="ifRoom"/>
-
-  <item
-      android:id="@+id/menu_refresh"
-      android:title="@string/action_refresh"
-      app:showAsAction="never"/>
-
-  <item
-      android:id="@+id/menu_logout"
-      android:title="@string/action_logout"
-      app:showAsAction="never"/>
+      android:id="@+id/sort_by"
+      android:icon="@drawable/ic_action_sort"
+      android:orderInCategory="30"
+      android:title="@string/action_sort_by"
+      app:showAsAction="ifRoom|withText"/>
 </menu>

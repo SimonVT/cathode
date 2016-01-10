@@ -423,6 +423,16 @@ public class HomeActivity extends BaseActivity
     }
   }
 
+  @Override public void onSearchShow() {
+    stack.push(SearchShowFragment.class, Fragments.SEARCH_SHOW);
+    stack.commit();
+  }
+
+  @Override public void onSearchMovie() {
+    stack.push(SearchMovieFragment.class, Fragments.SEARCH_MOVIE);
+    stack.commit();
+  }
+
   @Override
   public void onDisplayShow(long showId, String title, String overview, LibraryType type) {
     stack.push(ShowFragment.class, Fragments.SHOW,
@@ -444,19 +454,6 @@ public class HomeActivity extends BaseActivity
     stack.commit();
   }
 
-  @Override public void searchShow(String query) {
-
-    SearchShowFragment f =
-        (SearchShowFragment) getSupportFragmentManager().findFragmentByTag(Fragments.SEARCH_SHOW);
-    if (f == null) {
-      stack.push(SearchShowFragment.class, Fragments.SEARCH_SHOW,
-          SearchShowFragment.getArgs(query));
-      stack.commit();
-    } else {
-      f.query(query);
-    }
-  }
-
   @Override public void onDisplayShowActors(long showId, String title) {
     stack.push(ActorsFragment.class, Fragments.ACTORS, ActorsFragment.forShow(showId, title));
     stack.commit();
@@ -466,19 +463,6 @@ public class HomeActivity extends BaseActivity
     stack.push(MovieFragment.class, Fragments.MOVIE,
         MovieFragment.getArgs(movieId, title, overview));
     stack.commit();
-  }
-
-  @Override public void searchMovie(String query) {
-
-    SearchMovieFragment f =
-        (SearchMovieFragment) getSupportFragmentManager().findFragmentByTag(Fragments.SEARCH_MOVIE);
-    if (f == null) {
-      stack.push(SearchMovieFragment.class, Fragments.SEARCH_MOVIE,
-          SearchMovieFragment.getArgs(query));
-      stack.commit();
-    } else {
-      f.query(query);
-    }
   }
 
   @Override public void onDisplayMovieActors(long movieId, String title) {

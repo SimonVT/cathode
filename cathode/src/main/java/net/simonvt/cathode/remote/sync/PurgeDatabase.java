@@ -22,6 +22,7 @@ import android.database.Cursor;
 import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
@@ -29,11 +30,15 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.util.MovieSearchHandler;
-import net.simonvt.cathode.util.ShowSearchHandler;
+import net.simonvt.cathode.search.MovieSearchHandler;
+import net.simonvt.cathode.search.ShowSearchHandler;
 import timber.log.Timber;
 
 public class PurgeDatabase extends Job {
+
+  @Inject transient ShowSearchHandler showSearchHandler;
+
+  @Inject transient MovieSearchHandler movieSearchHandler;
 
   @Override public String key() {
     return "PurgeDatabase";
@@ -79,7 +84,7 @@ public class PurgeDatabase extends Job {
 
     shows.close();
 
-    List<Long> showSearchIds = ShowSearchHandler.showIds;
+    List<Long> showSearchIds = showSearchHandler.getResultIds();
     if (showSearchIds != null) {
       for (Long id : showSearchIds) {
         showIds.remove(id);
@@ -129,7 +134,7 @@ public class PurgeDatabase extends Job {
 
     movies.close();
 
-    List<Long> movieSearchIds = MovieSearchHandler.movieIds;
+    List<Long> movieSearchIds = movieSearchHandler.getResultIds();
     if (movieSearchIds != null) {
       for (Long id : movieSearchIds) {
         movieIds.remove(id);

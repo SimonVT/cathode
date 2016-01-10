@@ -19,7 +19,7 @@ public interface MoviesNavigationListener extends NavigationClickListener {
 
   void onDisplayMovie(long movieId, String title, String overview);
 
-  void searchMovie(String query);
+  void onSearchMovie();
 
   void onDisplayMovieActors(long movieId, String title);
 }

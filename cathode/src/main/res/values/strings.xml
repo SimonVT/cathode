@@ -143,6 +143,7 @@
   <string name="checkmark_collection">In collection</string>
   <string name="checkmark_watchlist">In watchlist</string>
 
+  <string name="search_initial">Search Trakt</string>
   <string name="no_results">No results for query \'%s\'</string>
   <string name="search_failure">Querying \'%s\' failed\nClick to retry</string>
   <plurals name="x_results">

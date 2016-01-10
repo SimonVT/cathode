@@ -23,7 +23,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
@@ -37,8 +36,6 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
   private static final int STATE_NONE = -1;
   private static final int STATE_PROGRESS_VISIBLE = 0;
   private static final int STATE_CONTENT_VISIBLE = 1;
-
-  private static final int ANIMATION_DURATION = 600;
 
   private RecyclerView.Adapter<T> adapter;
 
@@ -55,6 +52,8 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
 
   private int currentState = STATE_PROGRESS_VISIBLE;
   private int pendingStateChange = STATE_NONE;
+
+  private boolean forceDisplayProgress;
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
@@ -162,56 +161,94 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
 
     currentState = newState;
 
-    if (newState == STATE_PROGRESS_VISIBLE && listContainer.getVisibility() != View.VISIBLE) {
+    updateViewVisiblity(animate);
+  }
+
+  private void updateViewVisiblity(boolean animate) {
+    if (currentState == STATE_NONE) {
       return;
     }
 
-    if (newState == STATE_CONTENT_VISIBLE && !animate) {
-      listContainer.setVisibility(View.VISIBLE);
-      progressContainer.setVisibility(View.GONE);
-    } else if (newState == STATE_PROGRESS_VISIBLE && !animate) {
-      listContainer.setVisibility(View.GONE);
-      progressContainer.setVisibility(View.VISIBLE);
+    if (forceDisplayProgress || currentState == STATE_PROGRESS_VISIBLE) {
+      if (listContainer.getVisibility() != View.GONE) {
+        hideContent(animate);
+      }
+
+      displayProgress(animate);
     } else {
-      listContainer.setVisibility(View.VISIBLE);
-      progressContainer.setVisibility(View.VISIBLE);
+      if (progressContainer.getVisibility() != View.GONE) {
+        hideProgress(animate);
+      }
 
-      final Animation fadeIn = new AlphaAnimation(0.0f, 1.0f);
-      fadeIn.setDuration(ANIMATION_DURATION);
-      final Animation fadeOut = new AlphaAnimation(1.0f, 0.0f);
-      fadeOut.setDuration(ANIMATION_DURATION);
-      fadeOut.setAnimationListener(new Animation.AnimationListener() {
-        @Override public void onAnimationStart(Animation animation) {
-        }
-
-        @Override public void onAnimationEnd(Animation animation) {
-          if (progressContainer == null) {
-            // In case fragment is removed before animation is done
-            return;
-          }
-          if (newState == STATE_CONTENT_VISIBLE) {
-            progressContainer.setVisibility(View.GONE);
-          } else {
-            listContainer.setVisibility(View.GONE);
-            if (adapter == null) {
-              recyclerView.setAdapter(null);
-            }
-          }
-        }
-
-        @Override public void onAnimationRepeat(Animation animation) {
-        }
-      });
-
-      getView().postOnAnimation(new Runnable() {
-        @Override public void run() {
-          if (listContainer != null) {
-            listContainer.startAnimation(newState == STATE_CONTENT_VISIBLE ? fadeIn : fadeOut);
-            progressContainer.startAnimation(newState == STATE_CONTENT_VISIBLE ? fadeOut : fadeIn);
-          }
-        }
-      });
+      displayContent(animate);
     }
+  }
+
+  private void displayProgress(boolean animate) {
+    final boolean wasGone = progressContainer.getVisibility() == View.GONE;
+    progressContainer.setVisibility(View.VISIBLE);
+
+    if (animate) {
+      if (wasGone) {
+        progressContainer.setAlpha(0.0f);
+      }
+
+      progressContainer.animate().alpha(1.0f);
+    }
+  }
+
+  private void hideProgress(boolean animate) {
+    final View progressContainer = this.progressContainer;
+    if (!animate) {
+      progressContainer.setVisibility(View.GONE);
+    } else {
+      if (progressContainer.getVisibility() != View.GONE) {
+        progressContainer.animate().alpha(0.0f).withEndAction(new Runnable() {
+          @Override public void run() {
+            progressContainer.setVisibility(View.GONE);
+          }
+        });
+      }
+    }
+  }
+
+  private void displayContent(boolean animate) {
+    final boolean wasGone = listContainer.getVisibility() == View.GONE;
+    listContainer.setVisibility(View.VISIBLE);
+
+    if (animate) {
+      if (wasGone) {
+        listContainer.setAlpha(0.0f);
+      }
+
+      listContainer.animate().alpha(1.0f);
+    }
+  }
+
+  private void hideContent(boolean animate) {
+    final View listContainer = this.listContainer;
+
+    if (!animate) {
+      listContainer.setVisibility(View.GONE);
+    } else {
+      if (listContainer.getVisibility() != View.GONE) {
+        listContainer.animate().alpha(0.0f).withEndAction(new Runnable() {
+          @Override public void run() {
+            listContainer.setVisibility(View.GONE);
+          }
+        });
+      }
+    }
+  }
+
+  public void setForceDisplayProgress(boolean forceDisplayProgress) {
+    if (forceDisplayProgress == this.forceDisplayProgress) {
+      return;
+    }
+
+    this.forceDisplayProgress = forceDisplayProgress;
+
+    updateViewVisiblity(true);
   }
 
   public RecyclerView getRecyclerView() {
@@ -225,15 +262,18 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
       }
 
       this.adapter = adapter;
+
+      if (recyclerView != null) {
+        recyclerView.setAdapter(this.adapter);
+      }
+
       if (this.adapter != null) {
         if (recyclerView != null) {
-          recyclerView.setAdapter(this.adapter);
-          if (listContainer.getVisibility() != View.VISIBLE) {
-            changeState(STATE_CONTENT_VISIBLE, true);
-          }
+          changeState(STATE_CONTENT_VISIBLE, true);
         }
 
         adapter.registerAdapterDataObserver(adapterObserver);
+
         if (empty != null) {
           if (adapter.getItemCount() > 0) {
             empty.setVisibility(View.GONE);
@@ -242,6 +282,7 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
           }
         }
       } else if (recyclerView != null) {
+        recyclerView.setAdapter(null);
         changeState(STATE_PROGRESS_VISIBLE, true);
       }
     }
@@ -296,13 +337,6 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
 
   public RecyclerView.Adapter<T> getAdapter() {
     return adapter;
-  }
-
-  public void clearEmptyText() {
-    emptyText = "";
-    if (empty != null) {
-      empty.setText(emptyText);
-    }
   }
 
   final void setEmptyText(String text) {

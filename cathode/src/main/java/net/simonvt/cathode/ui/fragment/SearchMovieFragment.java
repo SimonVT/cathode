@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Simon Vig Therkildsen
+ * Copyright (C) 2016 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,351 +13,104 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package net.simonvt.cathode.ui.fragment;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.database.SimpleCursor;
-import net.simonvt.cathode.database.SimpleCursorLoader;
-import net.simonvt.cathode.event.MovieSearchResult;
-import net.simonvt.cathode.event.SearchFailureEvent;
-import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
+import net.simonvt.cathode.search.MovieSearchHandler;
+import net.simonvt.cathode.search.SearchHandler;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.adapter.MovieSearchAdapter;
 import net.simonvt.cathode.ui.adapter.MovieSuggestionAdapter;
+import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
-import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
-import net.simonvt.cathode.util.MovieSearchHandler;
-import net.simonvt.cathode.widget.SearchView;
 
-public class SearchMovieFragment extends ToolbarGridFragment<MovieSearchAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<SimpleCursor>, ListDialog.Callback,
-    MovieClickListener {
-
-  private enum SortBy {
-    TITLE("title", Movies.SORT_TITLE),
-    RATING("rating", Movies.SORT_RATING),
-    RELEVANCE("relevance", null);
-
-    private String key;
-
-    private String sortOrder;
-
-    SortBy(String key, String sortOrder) {
-      this.key = key;
-      this.sortOrder = sortOrder;
-    }
-
-    public String getKey() {
-      return key;
-    }
-
-    public String getSortOrder() {
-      return sortOrder;
-    }
-
-    @Override public String toString() {
-      return key;
-    }
-
-    private static final Map<String, SortBy> STRING_MAPPING = new HashMap<String, SortBy>();
-
-    static {
-      for (SortBy via : SortBy.values()) {
-        STRING_MAPPING.put(via.toString().toUpperCase(Locale.US), via);
-      }
-    }
-
-    public static SortBy fromValue(String value) {
-      return STRING_MAPPING.get(value.toUpperCase(Locale.US));
-    }
-  }
-
-  private static final String ARGS_QUERY = "net.simonvt.cathode.ui.SearchMovieFragment.query";
-
-  private static final String STATE_QUERY = "net.simonvt.cathode.ui.SearchMovieFragment.query";
-
-  private static final String DIALOG_SORT =
-      "net.simonvt.cathode.ui.fragment.SearchMovieFragment.sortDialog";
+public class SearchMovieFragment extends SearchFragment {
 
   @Inject MovieSearchHandler searchHandler;
 
-  @Inject Bus bus;
-
-  private SharedPreferences settings;
-
-  private MovieSearchAdapter movieAdapter;
-
-  private List<Long> searchMovieIds;
-
-  private String query;
-
   private MoviesNavigationListener navigationListener;
-
-  private SortBy sortBy;
 
   private int columnCount;
 
-  private Cursor cursor;
-
-  public static Bundle getArgs(String query) {
-    Bundle args = new Bundle();
-    args.putString(ARGS_QUERY, query);
-    return args;
-  }
-
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
-    try {
-      navigationListener = (MoviesNavigationListener) activity;
-    } catch (ClassCastException e) {
-      throw new ClassCastException(
-          activity.toString() + " must implement MoviesNavigationListener");
-    }
+    navigationListener = (MoviesNavigationListener) activity;
   }
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    CathodeApp.inject(getActivity(), this);
-
-    settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-    sortBy =
-        SortBy.fromValue(settings.getString(Settings.Sort.SHOW_SEARCH, SortBy.RELEVANCE.getKey()));
-
-    if (inState == null) {
-      Bundle args = getArguments();
-      query = args.getString(ARGS_QUERY);
-      searchHandler.search(query);
-    } else {
-      query = inState.getString(STATE_QUERY);
-      if (searchMovieIds == null && !searchHandler.isSearching()) {
-        searchHandler.search(query);
-      }
-    }
+    searchHandler.addListener(this);
 
     columnCount = getResources().getInteger(R.integer.movieColumns);
-
-    setTitle(query);
-    updateSubtitle();
-  }
-
-  private void updateSubtitle() {
-    if (searchMovieIds != null) {
-      final int count = searchMovieIds.size();
-      final String results = getResources().getQuantityString(R.plurals.x_results, count, count);
-      setSubtitle(results);
-    } else {
-      setSubtitle(null);
-    }
-  }
-
-  @Override public void onSaveInstanceState(Bundle outState) {
-    super.onSaveInstanceState(outState);
-    outState.putString(STATE_QUERY, query);
   }
 
   @Override protected int getColumnCount() {
     return columnCount;
   }
 
-  @Override public boolean displaysMenuIcon() {
-    return false;
+  @Override public void onSuggestionSelected(Object suggestion) {
+    SuggestionsAdapter.Suggestion item = (SuggestionsAdapter.Suggestion) suggestion;
+    if (item.getId() != null) {
+      navigationListener.onDisplayMovie(item.getId(), item.getTitle(), item.getOverview());
+    } else {
+      query(item.getTitle());
+    }
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
-    return inflater.inflate(R.layout.fragment_search, container, false);
+  @Override public SearchFragment.SortBy getSortBy() {
+    String sortBy = PreferenceManager.getDefaultSharedPreferences(getContext())
+        .getString(Settings.Sort.MOVIE_SEARCH, SortBy.RELEVANCE.getKey());
+    return SortBy.fromValue(sortBy);
   }
 
-  @Override public void onViewCreated(View view, Bundle inState) {
-    super.onViewCreated(view, inState);
-    bus.register(this);
+  @Override public SuggestionsAdapter getSuggestionsAdapter(Context context) {
+    return new MovieSuggestionAdapter(context);
   }
 
-  @Override public void onDestroyView() {
-    bus.unregister(this);
-    super.onDestroyView();
+  @Override public SearchHandler getSearchHandler() {
+    return searchHandler;
   }
 
-  @Override public void createMenu(Toolbar toolbar) {
-    super.createMenu(toolbar);
-    toolbar.inflateMenu(R.menu.fragment_movies_search);
-
-    final MenuItem searchItem = toolbar.getMenu().findItem(R.id.menu_search);
-    SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-    searchView.setAdapter(new MovieSuggestionAdapter(searchView.getContext()));
-
-    searchView.setListener(new SearchView.SearchViewListener() {
-      @Override public void onTextChanged(String newText) {
-      }
-
-      @Override public void onSubmit(String query) {
-        navigationListener.searchMovie(query);
-
-        MenuItemCompat.collapseActionView(searchItem);
-      }
-
-      @Override public void onSuggestionSelected(Object suggestion) {
-        SuggestionsAdapter.Suggestion item = (SuggestionsAdapter.Suggestion) suggestion;
-        if (item.getId() != null) {
-          navigationListener.onDisplayMovie(item.getId(), item.getTitle(), item.getOverview());
-        } else {
-          navigationListener.searchMovie(item.getTitle());
-        }
-
-        MenuItemCompat.collapseActionView(searchItem);
-      }
-    });
+  @Override public RecyclerCursorAdapter createAdapter(Cursor cursor) {
+    return new MovieSearchAdapter(getActivity(), movieClickListener, cursor);
   }
 
-  @Override public boolean onMenuItemClick(MenuItem item) {
-    switch (item.getItemId()) {
-      case R.id.sort_by:
-        ArrayList<ListDialog.Item> items = new ArrayList<ListDialog.Item>();
-        items.add(new ListDialog.Item(R.id.sort_relevance, R.string.sort_relevance));
-        items.add(new ListDialog.Item(R.id.sort_rating, R.string.sort_rating));
-        items.add(new ListDialog.Item(R.id.sort_title, R.string.sort_title));
-        ListDialog.newInstance(R.string.action_sort_by, items, this)
-            .show(getFragmentManager(), DIALOG_SORT);
-        return true;
+  private MovieClickListener movieClickListener = new MovieClickListener() {
+    @Override public void onMovieClicked(View v, int position, long id) {
+
+    }
+  };
+
+  @Override public Uri getUri() {
+    return Movies.MOVIES;
+  }
+
+  @Override public String[] getProjection() {
+    return MovieSearchAdapter.PROJECTION;
+  }
+
+  @Override public String getSortString(SortBy sortBy) {
+    switch (sortBy) {
+      case TITLE:
+        return Movies.SORT_TITLE;
+
+      case RATING:
+        return Movies.SORT_RATING;
 
       default:
-        return false;
+        return null;
     }
-  }
-
-  @Override public void onItemSelected(int id) {
-    switch (id) {
-      case R.id.sort_relevance:
-        sortBy = SortBy.RELEVANCE;
-        settings.edit().putString(Settings.Sort.MOVIE_SEARCH, SortBy.RELEVANCE.getKey()).apply();
-        if (getLoaderManager().getLoader(Loaders.SEARCH_MOVIES) != null) {
-          getLoaderManager().restartLoader(Loaders.SEARCH_MOVIES, null, this);
-        }
-        break;
-
-      case R.id.sort_rating:
-        sortBy = SortBy.RATING;
-        settings.edit().putString(Settings.Sort.MOVIE_SEARCH, SortBy.RATING.getKey()).apply();
-        if (getLoaderManager().getLoader(Loaders.SEARCH_MOVIES) != null) {
-          getLoaderManager().restartLoader(Loaders.SEARCH_MOVIES, null, this);
-        }
-        break;
-
-      case R.id.sort_title:
-        sortBy = SortBy.TITLE;
-        settings.edit().putString(Settings.Sort.MOVIE_SEARCH, SortBy.TITLE.getKey()).apply();
-        if (getLoaderManager().getLoader(Loaders.SEARCH_MOVIES) != null) {
-          getLoaderManager().restartLoader(Loaders.SEARCH_MOVIES, null, this);
-        }
-        break;
-    }
-  }
-
-  public void query(String query) {
-    this.query = query;
-    if (movieAdapter != null) {
-      movieAdapter.changeCursor(null);
-      movieAdapter = null;
-      setAdapter(null);
-      searchMovieIds = null;
-    }
-    getLoaderManager().destroyLoader(Loaders.SEARCH_MOVIES);
-    searchHandler.search(query);
-
-    setTitle(query);
-  }
-
-  @Override public void onMovieClicked(View v, int position, long id) {
-    cursor.moveToPosition(position);
-    final String title = cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE));
-    final String overview = cursor.getString(cursor.getColumnIndex(MovieColumns.OVERVIEW));
-    navigationListener.onDisplayMovie(id, title, overview);
-  }
-
-  @Subscribe public void onSearchEvent(MovieSearchResult result) {
-    searchMovieIds = result.getMovieIds();
-    getLoaderManager().initLoader(Loaders.SEARCH_MOVIES, null, this);
-    setEmptyText(R.string.no_results, query);
-    empty.setOnClickListener(null);
-    empty.setClickable(false);
-    updateSubtitle();
-  }
-
-  @Subscribe public void onSearchFailure(SearchFailureEvent event) {
-    if (event.getType() == SearchFailureEvent.Type.MOVIE) {
-      setCursor(null);
-      setEmptyText(R.string.search_failure, query);
-      empty.setOnClickListener(new View.OnClickListener() {
-        @Override public void onClick(View v) {
-          query(query);
-        }
-      });
-    }
-  }
-
-  private void setCursor(Cursor cursor) {
-    this.cursor = cursor;
-
-    if (movieAdapter == null) {
-      movieAdapter = new MovieSearchAdapter(getActivity(), this, cursor);
-      setAdapter(movieAdapter);
-      return;
-    }
-
-    movieAdapter.changeCursor(cursor);
-  }
-
-  @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-    StringBuilder where = new StringBuilder();
-    where.append(MovieColumns.ID).append(" in (");
-    final int showCount = searchMovieIds.size();
-    String[] ids = new String[showCount];
-    for (int i = 0; i < showCount; i++) {
-      ids[i] = String.valueOf(searchMovieIds.get(i));
-
-      where.append("?");
-      if (i < showCount - 1) {
-        where.append(",");
-      }
-    }
-    where.append(")");
-
-    SimpleCursorLoader loader =
-        new SimpleCursorLoader(getActivity(), Movies.MOVIES, MovieSearchAdapter.PROJECTION,
-            where.toString(), ids, sortBy.getSortOrder());
-    loader.setUpdateThrottle(2000);
-    return loader;
-  }
-
-  @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-    setCursor(data);
-  }
-
-  @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
   }
 }

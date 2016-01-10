@@ -20,7 +20,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -33,12 +32,9 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
-import net.simonvt.cathode.ui.adapter.MovieSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
-import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
-import net.simonvt.cathode.widget.SearchView;
 
 public abstract class MoviesFragment
     extends ToolbarSwipeRefreshRecyclerFragment<MoviesAdapter.ViewHolder>
@@ -78,38 +74,16 @@ public abstract class MoviesFragment
   @Override public void createMenu(Toolbar toolbar) {
     super.createMenu(toolbar);
     toolbar.inflateMenu(R.menu.fragment_movies);
-
-    final MenuItem searchItem = toolbar.getMenu().findItem(R.id.menu_search);
-    SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-    searchView.setAdapter(new MovieSuggestionAdapter(searchView.getContext()));
-
-    searchView.setListener(new SearchView.SearchViewListener() {
-      @Override public void onTextChanged(String newText) {
-      }
-
-      @Override public void onSubmit(String query) {
-        navigationListener.searchMovie(query);
-
-        MenuItemCompat.collapseActionView(searchItem);
-      }
-
-      @Override public void onSuggestionSelected(Object suggestion) {
-        SuggestionsAdapter.Suggestion item = (SuggestionsAdapter.Suggestion) suggestion;
-        if (item.getId() != null) {
-          navigationListener.onDisplayMovie(item.getId(), item.getTitle(), item.getOverview());
-        } else {
-          navigationListener.searchMovie(item.getTitle());
-        }
-
-        MenuItemCompat.collapseActionView(searchItem);
-      }
-    });
   }
 
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_refresh:
         jobManager.addJob(new SyncJob());
+        return true;
+
+      case R.id.menu_search:
+        navigationListener.onSearchMovie();
         return true;
 
       default:

@@ -52,8 +52,7 @@ public interface Loaders {
   int MOVIE_USER_COMMENTS = 402;
   int MOVIE_COMMENTS = 403;
 
-  int SEARCH_SHOWS = 500;
-  int SEARCH_MOVIES = 501;
+  int SEARCH = 500;
 
   int SHOW_WATCHING = 600;
   int MOVIE_WATCHING = 601;

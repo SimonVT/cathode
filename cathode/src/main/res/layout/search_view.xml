@@ -16,10 +16,11 @@
   -->
 <net.simonvt.cathode.widget.SearchView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/search_frame"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
 
   <AutoCompleteTextView
       android:id="@+id/search_input"
@@ -27,7 +28,6 @@
       android:layout_width="0dp"
       android:layout_weight="1"
       android:minWidth="@dimen/abc_search_view_text_min_width"
-      android:layout_gravity="bottom"
       android:paddingLeft="@dimen/abc_dropdownitem_text_padding_left"
       android:paddingRight="@dimen/abc_dropdownitem_text_padding_right"
       android:singleLine="true"

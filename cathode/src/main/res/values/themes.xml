@@ -51,6 +51,10 @@
     <item name="android:windowBackground">@color/contentBackground</item>
   </style>
 
+  <style name="SearchTheme" parent="Theme">
+
+  </style>
+
   <style name="Theme.Oauth"/>
 
   <style name="Theme.Login"/>

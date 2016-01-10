@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2015 Simon Vig Therkildsen
+  ~ Copyright (C) 2016 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -22,27 +22,26 @@
   <include layout="@layout/toolbar"/>
 
   <FrameLayout
+      android:id="@+id/overlayParent"
       android:layout_width="match_parent"
       android:layout_height="0dp"
       android:layout_weight="1">
 
     <FrameLayout
-        android:id="@+id/listContainer"
+        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-      <TextView
-          android:id="@android:id/empty"
+      <include
+          layout="@layout/fragment_recyclerview"
           android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:background="?attr/selectableItemBackground"
-          android:gravity="center"
-          android:paddingLeft="16dp"
-          android:paddingRight="16dp"/>
-
-      <include layout="@layout/recyclerview"/>
+          android:layout_height="match_parent"/>
     </FrameLayout>
 
-    <include layout="@layout/fragment_list_progressbar"/>
+    <TextView
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"/>
   </FrameLayout>
 </LinearLayout>

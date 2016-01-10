@@ -125,6 +125,8 @@ import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.SearchTaskScheduler;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
+import net.simonvt.cathode.search.MovieSearchHandler;
+import net.simonvt.cathode.search.ShowSearchHandler;
 import net.simonvt.cathode.service.CathodeSyncAdapter;
 import net.simonvt.cathode.service.SyncWatchingReceiver;
 import net.simonvt.cathode.ui.HomeActivity;
@@ -170,8 +172,6 @@ import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
 import net.simonvt.cathode.ui.setup.CalendarSetupActivity;
-import net.simonvt.cathode.util.MovieSearchHandler;
-import net.simonvt.cathode.util.ShowSearchHandler;
 import net.simonvt.cathode.widget.PhoneEpisodeView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
@@ -198,14 +198,14 @@ import net.simonvt.cathode.widget.RemoteImageView;
         CalendarSetupActivity.class, SettingsActivity.class,
 
         // Fragments
-        SearchShowFragment.class, EpisodeFragment.class, LogoutDialog.class,
-        MovieCollectionFragment.class, MovieFragment.class, MovieRecommendationsFragment.class,
-        MovieWatchlistFragment.class, SearchMovieFragment.class, SeasonFragment.class,
-        ShowFragment.class, ShowsCollectionFragment.class, ShowRecommendationsFragment.class,
-        ShowsWatchlistFragment.class, TrendingShowsFragment.class, TrendingMoviesFragment.class,
-        UpcomingShowsFragment.class, WatchedMoviesFragment.class, WatchedShowsFragment.class,
-        CreateListFragment.class, ListFragment.class, CommentsFragment.class, CommentFragment.class,
-        ListsFragment.class,
+        EpisodeFragment.class, LogoutDialog.class, MovieCollectionFragment.class,
+        MovieFragment.class, MovieRecommendationsFragment.class, MovieWatchlistFragment.class,
+        SeasonFragment.class, ShowFragment.class, ShowsCollectionFragment.class,
+        ShowRecommendationsFragment.class, ShowsWatchlistFragment.class,
+        TrendingShowsFragment.class, TrendingMoviesFragment.class, UpcomingShowsFragment.class,
+        WatchedMoviesFragment.class, WatchedShowsFragment.class, CreateListFragment.class,
+        ListFragment.class, CommentsFragment.class, CommentFragment.class, ListsFragment.class,
+        SearchShowFragment.class, SearchMovieFragment.class,
 
         // Dialogs
         RatingDialog.class, CheckInDialog.class, CheckInDialog.Injections.class, ListsDialog.class,
@@ -299,11 +299,11 @@ public class AppModule {
   }
 
   @Provides @Singleton ShowSearchHandler provideShowSearchHandler(Bus bus) {
-    return new ShowSearchHandler(app, bus);
+    return new ShowSearchHandler(app);
   }
 
   @Provides @Singleton MovieSearchHandler provideMovieSearchHandler(Bus bus) {
-    return new MovieSearchHandler(app, bus);
+    return new MovieSearchHandler(app);
   }
 
   @Provides @Singleton Picasso providePicasso() {

@@ -78,9 +78,15 @@ public class ListDialog extends DialogFragment {
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.dialog.ListDialog.title";
   private static final String ARG_ITEMS = "net.simonvt.cathode.ui.dialog.ListDialog.items";
 
+  public static ListDialog newInstance(int title, ArrayList<Item> items) {
+    return newInstance(title, items, null);
+  }
+
   public static ListDialog newInstance(int title, ArrayList<Item> items, Fragment target) {
     ListDialog dialog = new ListDialog();
-    dialog.setTargetFragment(target, 0);
+    if (target != null) {
+      dialog.setTargetFragment(target, 0);
+    }
 
     Bundle args = new Bundle();
     args.putInt(ARG_TITLE, title);
@@ -91,7 +97,14 @@ public class ListDialog extends DialogFragment {
   }
 
   @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
-    final Callback callback = (Callback) getTargetFragment();
+    Callback c;
+    Fragment target = getTargetFragment();
+    if (target == null) {
+      c = (Callback) getActivity();
+    } else {
+      c = (Callback) target;
+    }
+    final Callback callback = c;
     final int title = getArguments().getInt(ARG_TITLE);
     final ArrayList<Item> listItems = getArguments().getParcelableArrayList(ARG_ITEMS);
 

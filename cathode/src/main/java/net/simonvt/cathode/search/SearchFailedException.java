@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Simon Vig Therkildsen
+ * Copyright (C) 2016 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.ui;
 
-public interface ShowsNavigationListener extends NavigationClickListener {
+package net.simonvt.cathode.search;
 
-  void onDisplayShow(long showId, String title, String overview, LibraryType type);
-
-  void onDisplaySeason(long showId, long seasonId, String showTitle, int seasonNumber,
-      LibraryType type);
-
-  void onDisplayEpisode(long episodeId, String showTitle);
-
-  void onSearchShow();
-
-  void onDisplayShowActors(long showId, String title);
+public class SearchFailedException extends Exception {
 }

@@ -20,7 +20,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,11 +33,7 @@ import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.adapter.ShowClickListener;
-import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
-import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
-import net.simonvt.cathode.widget.SearchView;
-import timber.log.Timber;
 
 public abstract class ShowsFragment<D extends Cursor>
     extends ToolbarSwipeRefreshRecyclerFragment<ShowsWithNextAdapter.ViewHolder>
@@ -83,40 +78,16 @@ public abstract class ShowsFragment<D extends Cursor>
   @Override public void createMenu(Toolbar toolbar) {
     super.createMenu(toolbar);
     toolbar.inflateMenu(R.menu.fragment_shows);
-
-    final MenuItem searchItem = toolbar.getMenu().findItem(R.id.menu_search);
-    SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-    searchView.setAdapter(new ShowSuggestionAdapter(searchView.getContext()));
-
-    searchView.setListener(new SearchView.SearchViewListener() {
-      @Override public void onTextChanged(String newText) {
-      }
-
-      @Override public void onSubmit(String query) {
-        Timber.d("[onQueryTextSubmit] Query: %s", query);
-        navigationListener.searchShow(query);
-
-        MenuItemCompat.collapseActionView(searchItem);
-      }
-
-      @Override public void onSuggestionSelected(Object suggestion) {
-        SuggestionsAdapter.Suggestion item = (SuggestionsAdapter.Suggestion) suggestion;
-        if (item.getId() != null) {
-          navigationListener.onDisplayShow(item.getId(), item.getTitle(), item.getOverview(),
-              LibraryType.WATCHED);
-        } else {
-          navigationListener.searchShow(item.getTitle());
-        }
-
-        MenuItemCompat.collapseActionView(searchItem);
-      }
-    });
   }
 
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_refresh:
         jobManager.addJob(new SyncJob());
+        return true;
+
+      case R.id.menu_search:
+        navigationListener.onSearchShow();
         return true;
 
       default:
