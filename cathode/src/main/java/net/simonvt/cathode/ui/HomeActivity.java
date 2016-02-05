@@ -205,7 +205,6 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override protected void onResume() {
-    stack.dispatchResume();
     super.onResume();
     bus.register(this);
   }
@@ -213,7 +212,6 @@ public class HomeActivity extends BaseActivity
   @Override protected void onPause() {
     bus.unregister(this);
     stack.commit();
-    stack.dispatchPause();
     super.onPause();
   }
 

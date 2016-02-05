@@ -47,8 +47,8 @@ public final class FragmentStack {
 
   private static final String STATE_STACK = "net.simonvt.util.FragmentStack.stack";
 
-  private LinkedList<Fragment> stack = new LinkedList<Fragment>();
-  private Set<String> topLevelTags = new HashSet<String>();
+  private LinkedList<Fragment> stack = new LinkedList<>();
+  private Set<String> topLevelTags = new HashSet<>();
 
   private Activity activity;
 
@@ -64,25 +64,11 @@ public final class FragmentStack {
   private int popStackEnterAnimation;
   private int popStackExitAnimation;
 
-  private boolean isPaused;
-
   private FragmentStack(FragmentActivity activity, int containerId, Callback callback) {
     this.activity = activity;
     fragmentManager = activity.getSupportFragmentManager();
     this.containerId = containerId;
     this.callback = callback;
-  }
-
-  public void dispatchPause() {
-    isPaused = true;
-  }
-
-  public void dispatchResume() {
-    isPaused = false;
-  }
-
-  public boolean isPaused() {
-    return isPaused;
   }
 
   /** Removes all added fragments and clears the stack. */
@@ -150,7 +136,7 @@ public final class FragmentStack {
    * @param args Arguments to be set on the fragment using {@link Fragment#setArguments(android.os.Bundle)}.
    */
   public void replace(Class fragment, String tag, Bundle args) {
-    if (isPaused()) {
+    if (fragmentManager.isDestroyed()) {
       return;
     }
 
@@ -188,7 +174,7 @@ public final class FragmentStack {
 
   /** Adds a new fragment to the stack and displays it. */
   public void push(Class fragment, String tag, Bundle args) {
-    if (isPaused()) {
+    if (fragmentManager.isDestroyed()) {
       return;
     }
 
@@ -226,7 +212,7 @@ public final class FragmentStack {
    * @return Whether a transaction has been enqueued.
    */
   public boolean pop(boolean commit) {
-    if (isPaused()) {
+    if (fragmentManager.isDestroyed()) {
       return true;
     }
 
@@ -314,11 +300,8 @@ public final class FragmentStack {
     popStackExitAnimation = popExit;
   }
 
-  /**
-   * Commit pending transactions. This will be posted, not executed immediately.
-   */
   public void commit() {
-    if (isPaused()) {
+    if (fragmentManager.isDestroyed()) {
       return;
     }
 
