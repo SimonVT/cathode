@@ -145,7 +145,7 @@ public abstract class SearchFragment extends OverlayToolbarGridFragment<Recycler
       }
 
       @Override public void onSuggestionSelected(Object suggestion) {
-        onSuggestionSelected(suggestion);
+        SearchFragment.this.onSuggestionSelected(suggestion);
         searchView.clearFocus();
       }
     });
@@ -180,7 +180,7 @@ public abstract class SearchFragment extends OverlayToolbarGridFragment<Recycler
         items.add(new ListDialog.Item(R.id.sort_relevance, R.string.sort_relevance));
         items.add(new ListDialog.Item(R.id.sort_rating, R.string.sort_rating));
         items.add(new ListDialog.Item(R.id.sort_title, R.string.sort_title));
-        ListDialog.newInstance(R.string.action_sort_by, items)
+        ListDialog.newInstance(R.string.action_sort_by, items, this)
             .show(getFragmentManager(), DIALOG_SORT);
         return true;
 

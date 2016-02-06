@@ -78,10 +78,6 @@ public class ListDialog extends DialogFragment {
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.dialog.ListDialog.title";
   private static final String ARG_ITEMS = "net.simonvt.cathode.ui.dialog.ListDialog.items";
 
-  public static ListDialog newInstance(int title, ArrayList<Item> items) {
-    return newInstance(title, items, null);
-  }
-
   public static ListDialog newInstance(int title, ArrayList<Item> items, Fragment target) {
     ListDialog dialog = new ListDialog();
     if (target != null) {
