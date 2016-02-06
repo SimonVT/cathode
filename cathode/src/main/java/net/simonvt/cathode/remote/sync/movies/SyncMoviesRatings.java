@@ -32,7 +32,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import retrofit.Call;
+import retrofit2.Call;
 import timber.log.Timber;
 
 public class SyncMoviesRatings extends CallJob<List<RatingItem>> {

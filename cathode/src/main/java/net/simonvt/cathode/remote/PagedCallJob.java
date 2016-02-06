@@ -16,13 +16,13 @@
 
 package net.simonvt.cathode.remote;
 
-import com.squareup.okhttp.Headers;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.jobqueue.JobFailedException;
-import retrofit.Call;
-import retrofit.Response;
+import okhttp3.Headers;
+import retrofit2.Call;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public abstract class PagedCallJob<T> extends ErrorHandlerJob<List<T>> {

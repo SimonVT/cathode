@@ -19,9 +19,6 @@ package net.simonvt.cathode.module;
 import android.content.Context;
 import android.preference.PreferenceManager;
 import com.google.gson.Gson;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Response;
 import dagger.Module;
 import dagger.Provides;
 import java.io.IOException;
@@ -32,8 +29,11 @@ import net.simonvt.cathode.api.Trakt;
 import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.remote.InitialSyncJob;
 import net.simonvt.cathode.ui.BaseActivity;
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
 @Module(
@@ -51,7 +51,8 @@ import timber.log.Timber;
 
   @Provides @Singleton @Trakt Retrofit provideRestAdapter(@Trakt OkHttpClient client,
       @Trakt Gson gson, @HttpStatusCode final IntPreference httpStatusCode) {
-    client.networkInterceptors().add(new Interceptor() {
+    OkHttpClient.Builder builder = client.newBuilder();
+    builder.networkInterceptors().add(new Interceptor() {
       @Override public Response intercept(Chain chain) throws IOException {
         final int statusCode = httpStatusCode.get();
         Response response = chain.proceed(chain.request());
@@ -64,7 +65,7 @@ import timber.log.Timber;
     });
     return new Retrofit.Builder() //
         .baseUrl(TraktModule.API_URL)
-        .client(client)
+        .client(builder.build())
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build();
   }

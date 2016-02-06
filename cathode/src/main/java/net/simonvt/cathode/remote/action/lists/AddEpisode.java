@@ -22,7 +22,7 @@ import net.simonvt.cathode.api.entity.ListItemActionResponse;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import retrofit.Call;
+import retrofit2.Call;
 
 public class AddEpisode extends CallJob<ListItemActionResponse> {
 

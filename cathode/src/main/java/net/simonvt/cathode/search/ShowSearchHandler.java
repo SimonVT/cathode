@@ -26,8 +26,8 @@ import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.SearchService;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import retrofit.Call;
-import retrofit.Response;
+import retrofit2.Call;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class ShowSearchHandler extends SearchHandler {

@@ -19,9 +19,9 @@ package net.simonvt.cathode.api.service;
 import java.util.List;
 import net.simonvt.cathode.api.entity.SearchResult;
 import net.simonvt.cathode.api.enumeration.ItemType;
-import retrofit.Call;
-import retrofit.http.GET;
-import retrofit.http.Query;
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
 
 public interface SearchService {
 

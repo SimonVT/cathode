@@ -17,7 +17,6 @@
 package net.simonvt.cathode.module;
 
 import android.content.Context;
-import com.squareup.okhttp.Interceptor;
 import dagger.Module;
 import dagger.Provides;
 import java.util.ArrayList;
@@ -26,6 +25,7 @@ import javax.inject.Singleton;
 import net.simonvt.cathode.api.Trakt;
 import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.api.TraktSettings;
+import okhttp3.Interceptor;
 
 @Module(
     complete = false,

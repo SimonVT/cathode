@@ -24,7 +24,7 @@ import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
-import retrofit.Call;
+import retrofit2.Call;
 
 public class SyncUpdatedShows extends CallJob<List<UpdatedItem>> {
 

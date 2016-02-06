@@ -50,7 +50,7 @@ import net.simonvt.cathode.remote.sync.SyncUserProfile;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
-import retrofit.Call;
+import retrofit2.Call;
 import timber.log.Timber;
 
 public class SyncUserComments extends PagedCallJob<CommentItem> {

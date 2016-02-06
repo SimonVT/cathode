@@ -22,7 +22,7 @@ import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.PeopleService;
 import net.simonvt.cathode.provider.PersonWrapper;
 import net.simonvt.cathode.remote.CallJob;
-import retrofit.Call;
+import retrofit2.Call;
 
 public class SyncPerson extends CallJob<Person> {
 

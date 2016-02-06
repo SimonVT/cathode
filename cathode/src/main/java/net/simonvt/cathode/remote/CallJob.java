@@ -18,8 +18,8 @@ package net.simonvt.cathode.remote;
 
 import java.io.IOException;
 import net.simonvt.cathode.jobqueue.JobFailedException;
-import retrofit.Call;
-import retrofit.Response;
+import retrofit2.Call;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public abstract class CallJob<T> extends ErrorHandlerJob<T> {

@@ -16,18 +16,18 @@
 
 package net.simonvt.cathode.module;
 
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.AuthInterceptor;
 import net.simonvt.cathode.api.FourOhFourException;
 import net.simonvt.cathode.api.TraktException;
+import okhttp3.Headers;
+import okhttp3.Interceptor;
+import okhttp3.MediaType;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSource;
 import timber.log.Timber;
@@ -43,7 +43,7 @@ public class LoggingInterceptor implements Interceptor {
     final int statusCode = response.code();
 
     if (statusCode == 404 || statusCode == 412) {
-      Timber.i("Url: %s", request.urlString());
+      Timber.i("Url: %s", request.url().toString());
       Timber.i("Status code: %d", statusCode);
 
       Headers headers = response.headers();
@@ -65,7 +65,7 @@ public class LoggingInterceptor implements Interceptor {
         Timber.e(new TraktException("Status code " + statusCode), "Status code %d", statusCode);
       }
     } else if (BuildConfig.DEBUG && statusCode >= 400) {
-      Timber.d("Url: %s", request.urlString());
+      Timber.d("Url: %s", request.url().toString());
       Timber.d("Status code: %d", statusCode);
 
       Headers headers = response.headers();

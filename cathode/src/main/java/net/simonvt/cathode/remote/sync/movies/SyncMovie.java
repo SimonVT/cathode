@@ -21,7 +21,7 @@ import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.MoviesService;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
-import retrofit.Call;
+import retrofit2.Call;
 
 public class SyncMovie extends CallJob<Movie> {
 

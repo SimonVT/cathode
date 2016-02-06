@@ -47,8 +47,8 @@ import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.setup.CalendarSetupActivity;
-import retrofit.Call;
-import retrofit.Response;
+import retrofit2.Call;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class LoginActivity extends BaseActivity {

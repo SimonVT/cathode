@@ -28,7 +28,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
-import retrofit.Call;
+import retrofit2.Call;
 
 public class SyncSeason extends CallJob<List<Episode>> {
 

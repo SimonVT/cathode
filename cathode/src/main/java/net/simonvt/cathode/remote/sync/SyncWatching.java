@@ -42,7 +42,7 @@ import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
-import retrofit.Call;
+import retrofit2.Call;
 import timber.log.Timber;
 
 public class SyncWatching extends CallJob<Watching> {

@@ -29,8 +29,8 @@ import net.simonvt.cathode.api.entity.TokenRequest;
 import net.simonvt.cathode.api.enumeration.GrantType;
 import net.simonvt.cathode.api.service.AuthorizationService;
 import net.simonvt.cathode.settings.Settings;
-import retrofit.Call;
-import retrofit.Response;
+import retrofit2.Call;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class ApiSettings implements TraktSettings {

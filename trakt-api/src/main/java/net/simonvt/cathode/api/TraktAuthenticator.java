@@ -16,11 +16,11 @@
 
 package net.simonvt.cathode.api;
 
-import com.squareup.okhttp.Authenticator;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 import java.io.IOException;
-import java.net.Proxy;
+import okhttp3.Authenticator;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.Route;
 import timber.log.Timber;
 
 public class TraktAuthenticator implements Authenticator {
@@ -31,7 +31,7 @@ public class TraktAuthenticator implements Authenticator {
     this.settings = settings;
   }
 
-  @Override public Request authenticate(Proxy proxy, Response response) throws IOException {
+  @Override public Request authenticate(Route route, Response response) throws IOException {
     Timber.d("Auth failed");
     synchronized (TraktAuthenticator.class) {
       if (responseCount(response) >= 3) {
@@ -60,10 +60,6 @@ public class TraktAuthenticator implements Authenticator {
 
       return null;
     }
-  }
-
-  @Override public Request authenticateProxy(Proxy proxy, Response response) throws IOException {
-    return null;
   }
 
   private int responseCount(Response response) {

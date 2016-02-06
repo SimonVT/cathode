@@ -22,7 +22,7 @@ import net.simonvt.cathode.api.service.SeasonService;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
-import retrofit.Call;
+import retrofit2.Call;
 
 public class SyncShow extends CallJob<Show> {
 

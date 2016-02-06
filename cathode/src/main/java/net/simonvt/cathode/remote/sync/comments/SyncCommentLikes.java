@@ -37,7 +37,7 @@ import net.simonvt.cathode.provider.UserDatabaseHelper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.PagedCallJob;
-import retrofit.Call;
+import retrofit2.Call;
 import timber.log.Timber;
 
 public class SyncCommentLikes extends PagedCallJob<Like> {

@@ -29,7 +29,7 @@ import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.util.Cursors;
 import timber.log.Timber;
-import retrofit.Call;
+import retrofit2.Call;
 
 public class CommentReplyJob extends CallJob<Comment> {
 

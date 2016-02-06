@@ -23,10 +23,10 @@ import net.simonvt.cathode.api.entity.People;
 import net.simonvt.cathode.api.entity.TrendingItem;
 import net.simonvt.cathode.api.entity.UpdatedItem;
 import net.simonvt.cathode.api.enumeration.Extended;
-import retrofit.Call;
-import retrofit.http.GET;
-import retrofit.http.Path;
-import retrofit.http.Query;
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface MoviesService {
 

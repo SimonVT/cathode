@@ -46,7 +46,7 @@ import net.simonvt.cathode.provider.UserDatabaseHelper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.PagedCallJob;
 import net.simonvt.cathode.util.Cursors;
-import retrofit.Call;
+import retrofit2.Call;
 import timber.log.Timber;
 
 public class SyncComments extends PagedCallJob<Comment> {

@@ -21,7 +21,7 @@ import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import retrofit.Call;
+import retrofit2.Call;
 
 public class WatchlistShow extends CallJob<SyncResponse> {
 

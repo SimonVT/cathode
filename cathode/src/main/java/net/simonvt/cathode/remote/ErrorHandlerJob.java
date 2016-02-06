@@ -16,7 +16,6 @@
 
 package net.simonvt.cathode.remote;
 
-import com.squareup.okhttp.Headers;
 import com.squareup.otto.Bus;
 import java.io.IOException;
 import javax.inject.Inject;
@@ -26,7 +25,8 @@ import net.simonvt.cathode.event.RequestFailedEvent;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.util.MainHandler;
-import retrofit.Response;
+import okhttp3.Headers;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public abstract class ErrorHandlerJob<T> extends Job {
@@ -57,8 +57,8 @@ public abstract class ErrorHandlerJob<T> extends Job {
         // TODO: Check body?
         return;
       } else if (statusCode == 412) {
-        response.raw().request().urlString();
-        Timber.i("Url: %s", response.raw().request().urlString());
+        response.raw().request().url().toString();
+        Timber.i("Url: %s", response.raw().request().url().toString());
 
         Headers headers = response.headers();
         for (int i = 0; i < headers.size(); i++) {

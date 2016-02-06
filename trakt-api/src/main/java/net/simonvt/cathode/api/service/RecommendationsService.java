@@ -16,15 +16,15 @@
 
 package net.simonvt.cathode.api.service;
 
-import com.squareup.okhttp.ResponseBody;
 import java.util.List;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.entity.Show;
-import retrofit.Call;
-import retrofit.http.DELETE;
-import retrofit.http.GET;
-import retrofit.http.Path;
-import retrofit.http.Query;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.http.DELETE;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface RecommendationsService {
 

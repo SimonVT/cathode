@@ -13,8 +13,6 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.OkHttpClient;
 import dagger.Module;
 import dagger.Provides;
 import java.io.IOException;
@@ -47,8 +45,10 @@ import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.api.util.TimeUtils;
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module(library = true, complete = false) public class TraktModule {
 
@@ -70,17 +70,17 @@ import retrofit.Retrofit;
 
   @Provides @Singleton @Trakt OkHttpClient provideOkHttpClient(TraktSettings settings,
       @Trakt List<Interceptor> interceptors) {
-    OkHttpClient client = new OkHttpClient();
-    client.setConnectTimeout(15, TimeUnit.SECONDS);
-    client.setReadTimeout(20, TimeUnit.SECONDS);
+    OkHttpClient.Builder builder = new OkHttpClient.Builder();
+    builder.connectTimeout(15, TimeUnit.SECONDS);
+    builder.readTimeout(20, TimeUnit.SECONDS);
 
-    client.interceptors().addAll(interceptors);
-    client.interceptors().add(new RetryingInterceptor(MAX_RETRIES, RETRY_DELAY));
-    client.networkInterceptors().add(new ApiInterceptor(settings));
-    client.networkInterceptors().add(new AuthInterceptor(settings));
-    client.setAuthenticator(new TraktAuthenticator(settings));
+    builder.interceptors().addAll(interceptors);
+    builder.interceptors().add(new RetryingInterceptor(MAX_RETRIES, RETRY_DELAY));
+    builder.networkInterceptors().add(new ApiInterceptor(settings));
+    builder.networkInterceptors().add(new AuthInterceptor(settings));
+    builder.authenticator(new TraktAuthenticator(settings));
 
-    return client;
+    return builder.build();
   }
 
   @Provides @Singleton AuthorizationService provideAuthorizationService(@Trakt Retrofit adapter) {

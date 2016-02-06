@@ -23,7 +23,7 @@ import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.provider.UserDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import retrofit.Call;
+import retrofit2.Call;
 
 public class SyncUserProfile extends CallJob<Profile> {
 

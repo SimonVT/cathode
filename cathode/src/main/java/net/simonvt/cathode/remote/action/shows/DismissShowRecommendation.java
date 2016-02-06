@@ -15,12 +15,12 @@
  */
 package net.simonvt.cathode.remote.action.shows;
 
-import com.squareup.okhttp.ResponseBody;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.service.RecommendationsService;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import retrofit.Call;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
 
 public class DismissShowRecommendation extends CallJob<ResponseBody> {
 

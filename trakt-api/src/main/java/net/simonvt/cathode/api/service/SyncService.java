@@ -25,10 +25,10 @@ import net.simonvt.cathode.api.entity.RatingItem;
 import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.entity.WatchedItem;
 import net.simonvt.cathode.api.entity.WatchlistItem;
-import retrofit.Call;
-import retrofit.http.Body;
-import retrofit.http.GET;
-import retrofit.http.POST;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
 
 public interface SyncService {
 

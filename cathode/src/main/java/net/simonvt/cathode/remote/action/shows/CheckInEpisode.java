@@ -41,8 +41,8 @@ import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.service.SyncWatchingReceiver;
 import net.simonvt.cathode.util.Cursors;
 import net.simonvt.cathode.util.MainHandler;
-import retrofit.Call;
-import retrofit.Response;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class CheckInEpisode extends CallJob<CheckinResponse> {
 

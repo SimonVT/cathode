@@ -34,7 +34,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.ShowCharacters;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.CallJob;
-import retrofit.Call;
+import retrofit2.Call;
 import timber.log.Timber;
 
 public class SyncShowCast extends CallJob<People> {

@@ -25,7 +25,7 @@ import net.simonvt.cathode.provider.CommentsHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import retrofit.Call;
+import retrofit2.Call;
 
 public class UpdateCommentJob extends CallJob<Comment> {
 

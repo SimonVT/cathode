@@ -36,7 +36,7 @@ import net.simonvt.cathode.remote.sync.shows.SyncShowsRatings;
 import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.settings.TraktTimestamps;
-import retrofit.Call;
+import retrofit2.Call;
 
 public class SyncUserActivity extends CallJob<LastActivity> {
 
