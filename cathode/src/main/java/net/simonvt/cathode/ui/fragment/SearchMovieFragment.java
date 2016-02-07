@@ -25,6 +25,7 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.search.MovieSearchHandler;
 import net.simonvt.cathode.search.SearchHandler;
@@ -35,6 +36,7 @@ import net.simonvt.cathode.ui.adapter.MovieSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
+import net.simonvt.cathode.util.Cursors;
 
 public class SearchMovieFragment extends SearchFragment {
 
@@ -89,7 +91,10 @@ public class SearchMovieFragment extends SearchFragment {
 
   private MovieClickListener movieClickListener = new MovieClickListener() {
     @Override public void onMovieClicked(View v, int position, long id) {
-
+      Cursor c = getCursorAdapter().getCursor(position);
+      final String title = Cursors.getString(c, MovieColumns.TITLE);
+      final String overview = Cursors.getString(c, MovieColumns.OVERVIEW);
+      navigationListener.onDisplayMovie(id, title, overview);
     }
   };
 

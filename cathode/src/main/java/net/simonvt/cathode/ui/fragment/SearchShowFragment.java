@@ -25,6 +25,7 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.search.SearchHandler;
 import net.simonvt.cathode.search.ShowSearchHandler;
@@ -36,6 +37,7 @@ import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
 import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
+import net.simonvt.cathode.util.Cursors;
 
 public class SearchShowFragment extends SearchFragment {
 
@@ -110,7 +112,11 @@ public class SearchShowFragment extends SearchFragment {
 
   private ShowClickListener showClickListener = new ShowClickListener() {
     @Override public void onShowClick(View view, int position, long id) {
+      Cursor c = getCursorAdapter().getCursor(position);
 
+      final String title = Cursors.getString(c, ShowColumns.TITLE);
+      final String overview = Cursors.getString(c, ShowColumns.OVERVIEW);
+      navigationListener.onDisplayShow(id, title, overview, LibraryType.WATCHED);
     }
   };
 }

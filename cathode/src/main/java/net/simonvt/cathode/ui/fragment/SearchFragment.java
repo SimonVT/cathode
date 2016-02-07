@@ -257,6 +257,10 @@ public abstract class SearchFragment extends OverlayToolbarGridFragment<Recycler
 
   public abstract RecyclerCursorAdapter createAdapter(Cursor cursor);
 
+  public RecyclerCursorAdapter getCursorAdapter() {
+    return adapter;
+  }
+
   private void setCursor(Cursor cursor) {
     Timber.d("setCursor");
     setForceDisplayProgress(false);
