@@ -158,6 +158,9 @@ public final class SeasonDatabaseHelper {
   public void setWatched(long traktId, int season, boolean watched, long watchedAt) {
     final long showId = showHelper.getId(traktId);
     final long seasonId = getId(showId, season);
+    if (seasonId == -1L) {
+      return;
+    }
     setWatched(showId, seasonId, watched, watchedAt);
   }
 
