@@ -81,7 +81,7 @@ public class CalendarSetupActivity extends BaseActivity {
   @Override public void onRequestPermissionsResult(int requestCode, String[] permissions,
       int[] grantResults) {
     if (requestCode == PERMISSION_REQUEST_CALENDAR) {
-      if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+      if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
         Timber.d("Calendar permission granted");
         doSync();
       } else {
