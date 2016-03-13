@@ -46,7 +46,7 @@ public abstract class PagedCallJob<T> extends ErrorHandlerJob<List<T>> {
       do {
         Call<List<T>> call = getCall(page);
         Response<List<T>> response = call.execute();
-        if (!response.isSuccess()) {
+        if (!response.isSuccessful()) {
           error(response);
 
           throw new JobFailedException("Failed job: " + key());

@@ -45,7 +45,7 @@ public class ShowSearchHandler extends SearchHandler {
       Call<List<SearchResult>> call = searchService.query(ItemType.SHOW, query);
       Response<List<SearchResult>> response = call.execute();
 
-      if (response.isSuccess()) {
+      if (response.isSuccessful()) {
         List<SearchResult> results = response.body();
 
         final List<Long> showIds = new ArrayList<Long>(results.size());

@@ -186,14 +186,14 @@ public class LoginActivity extends BaseActivity {
                 BuildConfig.TRAKT_REDIRECT_URL, GrantType.AUTHORIZATION_CODE));
         Response<AccessToken> response = call.execute();
 
-        if (response.isSuccess()) {
+        if (response.isSuccessful()) {
           AccessToken token = response.body();
           traktSettings.updateTokens(token);
 
           Call<UserSettings> userSettingsCall = usersService.getUserSettings();
           Response<UserSettings> userSettingsResponse = userSettingsCall.execute();
 
-          if (response.isSuccess()) {
+          if (response.isSuccessful()) {
             final UserSettings userSettings = userSettingsResponse.body();
             Settings.clearProfile(context);
             Settings.updateProfile(context, userSettings);

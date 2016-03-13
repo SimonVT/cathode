@@ -122,7 +122,7 @@ public class ApiSettings implements TraktSettings {
         Timber.d("Getting new tokens, with refresh token: %s", refreshToken);
         Call<AccessToken> call = authService.getToken(tokenRequest);
         Response<AccessToken> response = call.execute();
-        if (response.isSuccess()) {
+        if (response.isSuccessful()) {
           AccessToken token = response.body();
           updateTokens(token);
           return token.getAccessToken();

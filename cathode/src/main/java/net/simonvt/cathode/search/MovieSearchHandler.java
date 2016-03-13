@@ -49,7 +49,7 @@ public class MovieSearchHandler extends SearchHandler {
       Call<List<SearchResult>> call = searchService.query(ItemType.MOVIE, query);
       Response<List<SearchResult>> response = call.execute();
 
-      if (response.isSuccess()) {
+      if (response.isSuccessful()) {
         List<SearchResult> results = response.body();
         final List<Long> movieIds = new ArrayList<>(results.size());
 
