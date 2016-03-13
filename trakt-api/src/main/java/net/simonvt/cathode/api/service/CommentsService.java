@@ -20,6 +20,7 @@ import java.util.List;
 import net.simonvt.cathode.api.body.CommentBody;
 import net.simonvt.cathode.api.entity.Comment;
 import net.simonvt.cathode.api.enumeration.Extended;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -43,7 +44,7 @@ public interface CommentsService {
   @GET("/comments/{id}/replies") Call<List<Comment>> getReplies(@Path("id") long id,
       @Query("page") int page, @Query("limit") int limit, @Query("extended") Extended extended);
 
-  @POST("/comments/{id}/like") Call<ResponseBody> like(@Path("id") long id, @Body String body);
+  @POST("/comments/{id}/like") Call<ResponseBody> like(@Path("id") long id, @Body RequestBody body);
 
   @DELETE("/comments/{id}/like") Call<ResponseBody> unlike(@Path("id") long id);
 

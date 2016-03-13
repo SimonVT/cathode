@@ -18,6 +18,7 @@ package net.simonvt.cathode.remote.action.comments;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.service.CommentsService;
+import net.simonvt.cathode.api.util.Requests;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import okhttp3.ResponseBody;
@@ -48,8 +49,7 @@ public class LikeCommentJob extends CallJob<ResponseBody> {
 
   @Override public Call<ResponseBody> getCall() {
     // TODO: Catch 422
-    // TOOD: Can the empty body be made unnecessary
-    return commentsService.like(commentId, "");
+    return commentsService.like(commentId, Requests.EMPTY_BODY);
   }
 
   @Override public void handleResponse(ResponseBody response) {
