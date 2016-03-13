@@ -41,7 +41,6 @@ ext.libraries = [
   assertj: 'org.assertj:assertj-core:3.2.0',
   truth: 'com.google.truth:truth:0.27',
 
-  messagebar: 'net.simonvt.messagebar:messagebar:1.0.2',
   schematic: 'net.simonvt.schematic:schematic:0.6.4',
   schematicCompiler: 'net.simonvt.schematic:schematic-compiler:0.6.4',
 

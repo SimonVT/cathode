@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -79,7 +80,6 @@ import net.simonvt.cathode.util.MainHandler;
 import net.simonvt.cathode.widget.Crouton;
 import net.simonvt.cathode.widget.WatchingView;
 import net.simonvt.cathode.widget.WatchingView.WatchingViewListener;
-import net.simonvt.messagebar.MessageBar;
 import timber.log.Timber;
 
 public class HomeActivity extends BaseActivity
@@ -93,8 +93,6 @@ public class HomeActivity extends BaseActivity
   public static final String DIALOG_LOGOUT = "net.simonvt.cathode.ui.HomeActivity.logoutDialog";
 
   @Inject Bus bus;
-
-  protected MessageBar messageBar;
 
   @Bind(R.id.progress_top) ProgressBar progressTop;
 
@@ -161,8 +159,6 @@ public class HomeActivity extends BaseActivity
 
     getSupportLoaderManager().initLoader(Loaders.SHOW_WATCHING, null, watchingShowCallback);
     getSupportLoaderManager().initLoader(Loaders.MOVIE_WATCHING, null, watchingMovieCallback);
-
-    messageBar = new MessageBar(this);
 
     drawer.setDrawerListener(new DrawerLayout.DrawerListener() {
       @Override public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -377,9 +373,9 @@ public class HomeActivity extends BaseActivity
 
   @Subscribe public void onShowMessage(MessageEvent event) {
     if (event.getMessage() != null) {
-      messageBar.show(event.getMessage());
+      Snackbar.make(drawer, event.getMessage(), Snackbar.LENGTH_LONG).show();
     } else {
-      messageBar.show(getString(event.getMessageRes()));
+      Snackbar.make(drawer, event.getMessageRes(), Snackbar.LENGTH_LONG).show();
     }
   }
 

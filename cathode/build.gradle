@@ -7,7 +7,7 @@ apply plugin: 'android-apt'
 
 dependencies {
   compile project(':trakt-api')
-  compile parent.libraries.messagebar
+
   compile parent.libraries.schematic
   apt parent.libraries.schematicCompiler
 
