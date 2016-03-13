@@ -46,10 +46,10 @@ ext.libraries = [
 
   gson: 'com.google.code.gson:gson:2.6.2',
 
-  appcompat: 'com.android.support:appcompat-v7:23.1.1',
-  cardView: 'com.android.support:cardview-v7:23.1.1',
-  recyclerView: 'com.android.support:recyclerview-v7:23.1.1',
-  androidDesign: 'com.android.support:design:23.1.1',
+  appcompat: 'com.android.support:appcompat-v7:23.2.1',
+  cardView: 'com.android.support:cardview-v7:23.2.1',
+  recyclerView: 'com.android.support:recyclerview-v7:23.2.1',
+  androidDesign: 'com.android.support:design:23.2.1',
 
   dagger: 'com.squareup.dagger:dagger:1.2.2',
   daggerCompiler: 'com.squareup.dagger:dagger-compiler:1.2.2',
