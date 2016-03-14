@@ -54,7 +54,7 @@ public class LoggingInterceptor implements Interceptor {
         }
       }
 
-      if (BuildConfig.DEBUG) {
+      if (BuildConfig.DEBUG || statusCode == 404) {
         Timber.d("%s", response.body().string());
       }
 
