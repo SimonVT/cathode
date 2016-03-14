@@ -205,9 +205,15 @@ public class HomeActivity extends BaseActivity
     bus.register(this);
   }
 
+  @Override protected void onResumeFragments() {
+    super.onResumeFragments();
+    stack.resume();
+  }
+
   @Override protected void onPause() {
     bus.unregister(this);
     stack.commit();
+    stack.pause();
     super.onPause();
   }
 

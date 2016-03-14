@@ -64,11 +64,22 @@ public final class FragmentStack {
   private int popStackEnterAnimation;
   private int popStackExitAnimation;
 
+  private boolean paused;
+
   private FragmentStack(FragmentActivity activity, int containerId, Callback callback) {
     this.activity = activity;
     fragmentManager = activity.getSupportFragmentManager();
     this.containerId = containerId;
     this.callback = callback;
+  }
+
+  public void pause() {
+    paused = true;
+  }
+
+  public void resume() {
+    paused = false;
+    commit();
   }
 
   /** Removes all added fragments and clears the stack. */
@@ -301,7 +312,7 @@ public final class FragmentStack {
   }
 
   public void commit() {
-    if (fragmentManager.isDestroyed()) {
+    if (paused || fragmentManager.isDestroyed()) {
       return;
     }
 
