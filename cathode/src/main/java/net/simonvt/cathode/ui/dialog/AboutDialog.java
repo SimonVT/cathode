@@ -15,9 +15,6 @@
  */
 package net.simonvt.cathode.ui.dialog;
 
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -29,6 +26,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.util.Intents;
 
 public class AboutDialog extends DialogFragment {
 
@@ -37,14 +35,12 @@ public class AboutDialog extends DialogFragment {
 
   @Bind(R.id.version) TextView version;
 
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
+  @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setStyle(STYLE_NO_TITLE, getTheme());
   }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     return inflater.inflate(R.layout.dialog_about, container, false);
   }
@@ -55,27 +51,25 @@ public class AboutDialog extends DialogFragment {
     version.setText(BuildConfig.VERSION_NAME);
   }
 
-  @OnClick(R.id.licenses)
-  public void showLicenses() {
+  @OnClick(R.id.licenses) public void showLicenses() {
     new LicensesDialog().show(getFragmentManager(), DIALOG_LICENSES);
   }
 
   @OnClick({
       R.id.version, R.id.gplus, R.id.github, R.id.source
-  })
-  public void openUrl(View v) {
+  }) public void openUrl(View v) {
     switch (v.getId()) {
       case R.id.version:
-        openUrl(getString(R.string.play_store_url));
+        Intents.openUrl(getContext(), getString(R.string.play_store_url));
         break;
       case R.id.gplus:
-        openUrl(getString(R.string.dev_gplus));
+        Intents.openUrl(getContext(), getString(R.string.dev_gplus));
         break;
       case R.id.github:
-        openUrl(getString(R.string.dev_github));
+        Intents.openUrl(getContext(), getString(R.string.dev_github));
         break;
       case R.id.source:
-        openUrl(getString(R.string.source_url));
+        Intents.openUrl(getContext(), getString(R.string.source_url));
         break;
     }
   }
@@ -83,13 +77,5 @@ public class AboutDialog extends DialogFragment {
   @Override public void onDestroyView() {
     ButterKnife.unbind(this);
     super.onDestroyView();
-  }
-
-  private void openUrl(String url) {
-    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-    PackageManager pm = getActivity().getPackageManager();
-    if (pm.resolveActivity(intent, 0) != null) {
-      startActivity(intent);
-    }
   }
 }

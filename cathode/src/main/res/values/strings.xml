@@ -87,6 +87,8 @@
   <string name="title_comment_add">Add comment</string>
   <string name="title_comment_update">Update comment</string>
   <string name="title_comment_reply">Reply</string>
+  <string name="title_website">Website</string>
+  <string name="title_view_on">View on</string>
 
   <string name="title_shows_watched">Watched shows</string>
   <string name="title_shows_upcoming">Upcoming shows</string>
@@ -100,6 +102,10 @@
   <string name="title_movies_watchlist">Movie watchlist</string>
   <string name="title_movies_trending">Trending movies</string>
   <string name="title_movies_recommendations">Movie recommendations</string>
+
+  <string name="info_imdb">imdb</string>
+  <string name="info_tvdb">tvdb</string>
+  <string name="info_tmdb">tmdb</string>
 
   <string name="title_settings">Settings</string>
 

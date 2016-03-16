@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,6 +36,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.api.util.TraktUtils;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
@@ -58,6 +60,7 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.util.Cursors;
+import net.simonvt.cathode.util.Intents;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
@@ -100,6 +103,14 @@ public class MovieFragment extends RefreshableAppBarFragment
   @Bind(R.id.commentsParent) View commentsParent;
   @Bind(R.id.commentsHeader) View commentsHeader;
   @Bind(R.id.commentsContainer) LinearLayout commentsContainer;
+
+  @Bind(R.id.websiteTitle) View websiteTitle;
+  @Bind(R.id.website) TextView website;
+
+  @Bind(R.id.viewOnTitle) View viewOnTitle;
+  @Bind(R.id.viewOnContainer) ViewGroup viewOnContainer;
+  @Bind(R.id.viewOnImdb) View viewOnImdb;
+  @Bind(R.id.viewOnTmdb) View viewOnTmdb;
 
   private Cursor userComments;
   private Cursor comments;
@@ -324,6 +335,56 @@ public class MovieFragment extends RefreshableAppBarFragment
     final long lastCommentSync = Cursors.getLong(cursor, MovieColumns.LAST_COMMENT_SYNC);
     if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {
       movieScheduler.syncComments(movieId);
+    }
+
+    final String website = Cursors.getString(cursor, DatabaseContract.ShowColumns.HOMEPAGE);
+    if (!TextUtils.isEmpty(website)) {
+      this.websiteTitle.setVisibility(View.VISIBLE);
+      this.website.setVisibility(View.VISIBLE);
+
+      this.website.setText(website);
+      this.website.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          Intents.openUrl(getContext(), website);
+        }
+      });
+    } else {
+      this.websiteTitle.setVisibility(View.GONE);
+      this.website.setVisibility(View.GONE);
+    }
+
+    final String imdbId = Cursors.getString(cursor, DatabaseContract.MovieColumns.IMDB_ID);
+    final int tmdbId = Cursors.getInt(cursor, DatabaseContract.MovieColumns.TMDB_ID);
+
+    final boolean hasImdbId = !TextUtils.isEmpty(imdbId);
+    if (hasImdbId) {
+      viewOnImdb.setVisibility(View.VISIBLE);
+      viewOnImdb.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          Intents.openUrl(getContext(), TraktUtils.getImdbUrl(imdbId));
+        }
+      });
+    } else {
+      viewOnImdb.setVisibility(View.GONE);
+    }
+
+    if (tmdbId > 0) {
+      viewOnTmdb.setVisibility(View.VISIBLE);
+      viewOnTmdb.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          Intents.openUrl(getContext(), TraktUtils.getTmdbTvUrl(tmdbId));
+        }
+      });
+    } else {
+      viewOnTmdb.setVisibility(View.GONE);
+    }
+
+    if (hasImdbId || tmdbId > 0) {
+      viewOnTitle.setVisibility(View.VISIBLE);
+      viewOnContainer.setVisibility(View.VISIBLE);
+    } else {
+      viewOnTitle.setVisibility(View.GONE);
+      viewOnContainer.setVisibility(View.GONE);
     }
 
     invalidateMenu();

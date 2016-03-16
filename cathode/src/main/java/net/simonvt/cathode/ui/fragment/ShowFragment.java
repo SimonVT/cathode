@@ -40,6 +40,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.api.util.TraktUtils;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.database.SimpleMergeCursor;
@@ -75,6 +76,7 @@ import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
 import net.simonvt.cathode.util.Cursors;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.util.Intents;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
@@ -104,6 +106,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
       ShowColumns.NETWORK, ShowColumns.CERTIFICATION, ShowColumns.POSTER, ShowColumns.FANART,
       ShowColumns.USER_RATING, ShowColumns.RATING, ShowColumns.OVERVIEW, ShowColumns.IN_WATCHLIST,
       ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT, ShowColumns.LAST_COMMENT_SYNC,
+      ShowColumns.HOMEPAGE, ShowColumns.TRAILER, ShowColumns.IMDB_ID, ShowColumns.TVDB_ID,
+      ShowColumns.TMDB_ID,
   };
 
   private static final String[] EPISODE_PROJECTION = new String[] {
@@ -143,6 +147,15 @@ public class ShowFragment extends RefreshableAppBarFragment {
   @Bind(R.id.commentsParent) View commentsParent;
   @Bind(R.id.commentsHeader) View commentsHeader;
   @Bind(R.id.commentsContainer) LinearLayout commentsContainer;
+
+  @Bind(R.id.websiteTitle) View websiteTitle;
+  @Bind(R.id.website) TextView website;
+
+  @Bind(R.id.viewOnTitle) View viewOnTitle;
+  @Bind(R.id.viewOnContainer) ViewGroup viewOnContainer;
+  @Bind(R.id.viewOnImdb) View viewOnImdb;
+  @Bind(R.id.viewOnTvdb) View viewOnTvdb;
+  @Bind(R.id.viewOnTmdb) View viewOnTmdb;
 
   private Cursor userComments;
   private Cursor comments;
@@ -226,7 +239,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
     setTitle(showTitle);
 
     seasonsAdapter = new SeasonsAdapter(getActivity(), new SeasonClickListener() {
-      @Override public void onSeasonClick(long showId, long seasonId, String showTitle, int seasonNumber) {
+      @Override
+      public void onSeasonClick(long showId, long seasonId, String showTitle, int seasonNumber) {
         navigationCallbacks.onDisplaySeason(showId, seasonId, showTitle, seasonNumber, type);
       }
     }, type);
@@ -543,6 +557,68 @@ public class ShowFragment extends RefreshableAppBarFragment {
     final long lastCommentSync = Cursors.getLong(cursor, ShowColumns.LAST_COMMENT_SYNC);
     if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {
       showScheduler.syncComments(showId);
+    }
+
+    final String website = Cursors.getString(cursor, ShowColumns.HOMEPAGE);
+    if (!TextUtils.isEmpty(website)) {
+      this.websiteTitle.setVisibility(View.VISIBLE);
+      this.website.setVisibility(View.VISIBLE);
+
+      this.website.setText(website);
+      this.website.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          Intents.openUrl(getContext(), website);
+        }
+      });
+    } else {
+      this.websiteTitle.setVisibility(View.GONE);
+      this.website.setVisibility(View.GONE);
+    }
+
+    final String imdbId = Cursors.getString(cursor, ShowColumns.IMDB_ID);
+    final int tvdbId = Cursors.getInt(cursor, ShowColumns.TVDB_ID);
+    final int tmdbId = Cursors.getInt(cursor, ShowColumns.TMDB_ID);
+
+    final boolean hasImdbId = !TextUtils.isEmpty(imdbId);
+    if (hasImdbId) {
+      viewOnImdb.setVisibility(View.VISIBLE);
+      viewOnImdb.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          Intents.openUrl(getContext(), TraktUtils.getImdbUrl(imdbId));
+        }
+      });
+    } else {
+      viewOnImdb.setVisibility(View.GONE);
+    }
+
+    if (tvdbId > 0) {
+      viewOnTvdb.setVisibility(View.VISIBLE);
+      viewOnTvdb.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          Intents.openUrl(getContext(), TraktUtils.getTvdbUrl(tvdbId));
+        }
+      });
+    } else {
+      viewOnTvdb.setVisibility(View.GONE);
+    }
+
+    if (tmdbId > 0) {
+      viewOnTmdb.setVisibility(View.VISIBLE);
+      viewOnTmdb.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          Intents.openUrl(getContext(), TraktUtils.getTmdbTvUrl(tmdbId));
+        }
+      });
+    } else {
+      viewOnTmdb.setVisibility(View.GONE);
+    }
+
+    if (hasImdbId || tvdbId > 0 || tmdbId > 0) {
+      viewOnTitle.setVisibility(View.VISIBLE);
+      viewOnContainer.setVisibility(View.VISIBLE);
+    } else {
+      viewOnTitle.setVisibility(View.GONE);
+      viewOnContainer.setVisibility(View.GONE);
     }
 
     invalidateMenu();

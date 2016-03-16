@@ -28,4 +28,20 @@ public final class TraktUtils {
     Pattern pattern = Pattern.compile("^[a-zA-Z0-9._-]+$");
     return pattern.matcher(username).matches();
   }
+
+  public static String getImdbUrl(String imdbId) {
+    return "http://www.imdb.com/title/" + imdbId;
+  }
+
+  public static String getTvdbUrl(int tvdbId) {
+    return "http://thetvdb.com/?tab=series&id=" + tvdbId;
+  }
+
+  public static String getTmdbTvUrl(int tmdbId) {
+    return "https://www.themoviedb.org/tv/" + tmdbId;
+  }
+
+  public static String getTmdbMovieUrl(int tmdbId) {
+    return "https://www.themoviedb.org/movie/" + tmdbId;
+  }
 }

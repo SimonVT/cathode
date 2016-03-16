@@ -40,6 +40,14 @@
     <item name="android:textColor">@color/titleTextColor</item>
   </style>
 
+  <style name="Widget.InfoTitle.ReducedPadding">
+    <item name="android:paddingBottom">4dp</item>
+  </style>
+
+  <style name="Widget.InfoTitle.ReducedPadding.ReducedMargin">
+    <item name="android:layout_marginTop">0dp</item>
+  </style>
+
   <style name="Widget.InfoText">
     <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
     <item name="android:fontFamily">sans-light</item>
