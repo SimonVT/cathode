@@ -19,9 +19,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/detailContentPadding"
     android:paddingTop="@dimen/detailContentPaddingTop"
-    android:paddingRight="@dimen/detailContentPadding"
     android:paddingBottom="16dp">
 
   <TextView

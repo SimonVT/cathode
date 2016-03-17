@@ -37,6 +37,8 @@
     <item name="android:layout_marginTop">4dp</item>
     <item name="android:paddingTop">8dp</item>
     <item name="android:paddingBottom">8dp</item>
+    <item name="android:paddingLeft">@dimen/detailContentPadding</item>
+    <item name="android:paddingRight">@dimen/detailContentPadding</item>
     <item name="android:textColor">@color/titleTextColor</item>
   </style>
 
@@ -53,6 +55,8 @@
     <item name="android:fontFamily">sans-light</item>
     <item name="android:textColor">#FF777777</item>
     <item name="android:lineSpacingExtra">2dp</item>
+    <item name="android:paddingLeft">@dimen/detailContentPadding</item>
+    <item name="android:paddingRight">@dimen/detailContentPadding</item>
   </style>
 
   <style name="Widget.Person">
