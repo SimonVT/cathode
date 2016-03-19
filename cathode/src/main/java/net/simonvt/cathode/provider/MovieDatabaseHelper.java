@@ -224,6 +224,14 @@ public final class MovieDatabaseHelper {
       cv.put(MovieColumns.CERTIFICATION, movie.getCertification());
     }
 
+    if (movie.getTrailer() != null) {
+      cv.put(MovieColumns.TRAILER, movie.getTrailer());
+    }
+
+    if (movie.getHomepage() != null) {
+      cv.put(MovieColumns.HOMEPAGE, movie.getHomepage());
+    }
+
     if (movie.getRating() != null) {
       cv.put(MovieColumns.RATING, movie.getRating());
     }

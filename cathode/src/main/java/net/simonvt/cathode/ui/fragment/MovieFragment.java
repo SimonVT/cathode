@@ -95,6 +95,8 @@ public class MovieFragment extends RefreshableAppBarFragment
   @Bind(R.id.inWatchlist) TextView watchlist;
   @Bind(R.id.rating) CircularProgressIndicator rating;
 
+  @Bind(R.id.trailer) View trailer;
+
   @Bind(R.id.actorsParent) View actorsParent;
   @Bind(R.id.actorsHeader) View actorsHeader;
   @Bind(R.id.actors) LinearLayout actors;
@@ -205,7 +207,6 @@ public class MovieFragment extends RefreshableAppBarFragment
     movieScheduler.sync(movieId, onDoneListener);
   }
 
-
   @Override public void createMenu(Toolbar toolbar) {
     super.createMenu(toolbar);
     Menu menu = toolbar.getMenu();
@@ -244,8 +245,6 @@ public class MovieFragment extends RefreshableAppBarFragment
         menu.add(0, R.id.action_collection_add, 6, R.string.action_collection_add);
       }
     }
-
-
   }
 
   @Override public boolean onMenuItemClick(MenuItem item) {
@@ -331,6 +330,18 @@ public class MovieFragment extends RefreshableAppBarFragment
     this.year.setText(String.valueOf(year));
     this.certification.setText(certification);
     this.overview.setText(movieOverview);
+
+    final String trailer = Cursors.getString(cursor, MovieColumns.TRAILER);
+    if (!TextUtils.isEmpty(trailer)) {
+      this.trailer.setVisibility(View.VISIBLE);
+      this.trailer.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          Intents.openUrl(getActivity(), trailer);
+        }
+      });
+    } else {
+      this.trailer.setVisibility(View.GONE);
+    }
 
     final long lastCommentSync = Cursors.getLong(cursor, MovieColumns.LAST_COMMENT_SYNC);
     if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {
@@ -482,8 +493,8 @@ public class MovieFragment extends RefreshableAppBarFragment
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
           SimpleCursorLoader loader =
-              new SimpleCursorLoader(getContext(), Comments.fromMovie(movieId),
-                  COMMENTS_PROJECTION, CommentColumns.IS_USER_COMMENT + "=1", null, null);
+              new SimpleCursorLoader(getContext(), Comments.fromMovie(movieId), COMMENTS_PROJECTION,
+                  CommentColumns.IS_USER_COMMENT + "=1", null, null);
           loader.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
           return loader;
         }

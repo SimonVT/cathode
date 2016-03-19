@@ -35,6 +35,25 @@
       tools:text="A long description of a show."
       style="@style/Widget.InfoText"/>
 
+  <android.support.v7.widget.CardView
+      android:id="@+id/trailer"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginLeft="@dimen/detailContentPadding"
+      android:layout_marginTop="12dp"
+      android:layout_marginRight="@dimen/detailContentPadding"
+      android:foreground="?attr/selectableItemBackground"
+      android:visibility="gone"
+      tools:visibility="visible">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/watch_trailer"
+        style="@style/Widget.InfoTrailer"/>
+  </android.support.v7.widget.CardView>
+
   <include
       layout="@layout/card_actors"
       android:visibility="gone"/>

@@ -44,4 +44,36 @@ public final class TraktUtils {
   public static String getTmdbMovieUrl(int tmdbId) {
     return "https://www.themoviedb.org/movie/" + tmdbId;
   }
+
+  public static String getYoutubeId(String url) {
+    if (url.contains("youtube.com")) {
+      String id = url.substring(url.indexOf("?v=") + 3);
+      int index = id.indexOf("&");
+      if (index >= 0) {
+        id = id.substring(0, index);
+      }
+      return id;
+    } else if (url.contains("youtu.be")) {
+      String id = url.substring(url.lastIndexOf("/") + 1);
+      int index = id.indexOf("&");
+      if (index >= 0) {
+        id = id.substring(0, index);
+      }
+
+      return id;
+    }
+
+    return null;
+  }
+
+  public static String getTrailerSnapshot(String url) {
+    if (url.contains("youtube") || url.contains("youtu.be")) {
+      final String id = getYoutubeId(url);
+      String snapshot = "http://img.youtube.com/vi/";
+      snapshot += id + "/hqdefault.jpg";
+      return snapshot;
+    }
+
+    return null;
+  }
 }

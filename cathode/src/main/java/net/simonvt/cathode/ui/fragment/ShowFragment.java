@@ -139,6 +139,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
   @Bind(R.id.inCollection) TextView collection;
   @Bind(R.id.inWatchlist) TextView watchlist;
 
+  @Bind(R.id.trailer) View trailer;
+
   @Bind(R.id.actorsParent) View actorsParent;
   @Bind(R.id.actorsHeader) View actorsHeader;
   @Bind(R.id.actors) LinearLayout actors;
@@ -553,6 +555,18 @@ public class ShowFragment extends RefreshableAppBarFragment {
     this.airTime.setText(airTimeString);
     this.certification.setText(certification);
     this.overview.setText(showOverview);
+
+    final String trailer = Cursors.getString(cursor, ShowColumns.TRAILER);
+    if (!TextUtils.isEmpty(trailer)) {
+      this.trailer.setVisibility(View.VISIBLE);
+      this.trailer.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          Intents.openUrl(getActivity(), trailer);
+        }
+      });
+    } else {
+      this.trailer.setVisibility(View.GONE);
+    }
 
     final long lastCommentSync = Cursors.getLong(cursor, ShowColumns.LAST_COMMENT_SYNC);
     if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {
