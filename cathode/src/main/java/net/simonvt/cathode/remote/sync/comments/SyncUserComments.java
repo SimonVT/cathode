@@ -21,9 +21,12 @@ import android.content.ContentValues;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.os.RemoteException;
+import android.support.v4.util.LongSparseArray;
+import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import net.simonvt.cathode.api.Trakt;
 import net.simonvt.cathode.api.entity.Comment;
 import net.simonvt.cathode.api.entity.CommentItem;
 import net.simonvt.cathode.api.entity.Episode;
@@ -55,6 +58,9 @@ import timber.log.Timber;
 
 public class SyncUserComments extends PagedCallJob<CommentItem> {
 
+  public static class DuplicateCommentException extends Exception {
+  }
+
   private static final int LIMIT = 100;
 
   @Inject transient UsersService usersService;
@@ -64,6 +70,8 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
   @Inject transient EpisodeDatabaseHelper episodeHelper;
   @Inject transient MovieDatabaseHelper movieHelper;
   @Inject transient UserDatabaseHelper userHelper;
+
+  @Inject @Trakt transient Gson gson;
 
   private ItemTypes itemTypes;
 
@@ -86,6 +94,7 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
 
   @Override public void handleResponse(List<CommentItem> comments) {
     List<Long> existingComments = new ArrayList<>();
+    LongSparseArray<CommentItem> addedLater = new LongSparseArray<>();
     Cursor c = getContentResolver().query(Comments.COMMENTS, new String[] {
         CommentColumns.ID,
     }, CommentColumns.IS_USER_COMMENT + "=1", null, null);
@@ -101,6 +110,19 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
 
     for (CommentItem commentItem : comments) {
       Comment comment = commentItem.getComment();
+      final long commentId = comment.getId();
+
+      if (addedLater.get(commentId) != null) {
+        CommentItem otherCommentItem = addedLater.get(commentId);
+        String otherComment = gson.toJson(otherCommentItem);
+        String thisComment = gson.toJson(commentItem);
+        Timber.i("Other comment: %s", otherComment);
+        Timber.i("Comment: %s", thisComment);
+        Timber.e(new DuplicateCommentException(), "Comment with id %d appears twice in result",
+            commentId);
+        continue;
+      }
+
       ContentValues values = CommentsHelper.getValues(comment);
       values.put(CommentColumns.IS_USER_COMMENT, true);
 
@@ -203,7 +225,6 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
           continue;
       }
 
-      final long commentId = comment.getId();
       boolean exists = existingComments.contains(commentId);
       if (!exists) {
         // May have been created by user likes
@@ -223,6 +244,8 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
         ContentProviderOperation.Builder op =
             ContentProviderOperation.newInsert(Comments.COMMENTS).withValues(values);
         ops.add(op.build());
+
+        addedLater.put(commentId, commentItem);
       }
     }
 
