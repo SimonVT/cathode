@@ -57,11 +57,13 @@
 
   <include
       layout="@layout/card_actors"
-      android:visibility="gone"/>
+      android:visibility="gone"
+      tools:visibility="visible"/>
 
   <include
       layout="@layout/card_comments"
-      android:visibility="gone"/>
+      android:visibility="gone"
+      tools:visibility="visible"/>
 
   <TextView
       android:id="@+id/websiteTitle"

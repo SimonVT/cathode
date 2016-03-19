@@ -21,7 +21,7 @@
     android:id="@+id/commentsParent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
+    android:layout_marginTop="16dp"
     android:layout_marginLeft="@dimen/showActorsMargin"
     android:layout_marginRight="@dimen/showActorsMargin"
     android:paddingBottom="8dp"
