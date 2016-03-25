@@ -36,6 +36,8 @@
   <dimen name="showActorsMargin">@dimen/detailContentPadding</dimen>
   <dimen name="showActorsCardRadius">2dp</dimen>
 
+  <dimen name="trailerMargin">@dimen/detailContentPadding</dimen>
+
   <!-- App bar dimensions -->
   <dimen name="appBarContentOffset">0dp</dimen>
   <dimen name="appBarContentMargin">0dp</dimen>
