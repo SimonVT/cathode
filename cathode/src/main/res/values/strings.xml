@@ -153,10 +153,6 @@
   <string name="search_initial">Search Trakt</string>
   <string name="no_results">No results for query \'%s\'</string>
   <string name="search_failure">Querying \'%s\' failed\nClick to retry</string>
-  <plurals name="x_results">
-    <item quantity="one">%1$d result</item>
-    <item quantity="other">%1$d results</item>
-  </plurals>
 
   <string name="episode_next">Next: %1$dx%2$d %3$s</string>
   <string name="upcoming_episode_next">%1$dx%2$d %3$s</string>
