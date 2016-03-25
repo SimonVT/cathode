@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.AuthInterceptor;
-import net.simonvt.cathode.api.FourOhFourException;
 import net.simonvt.cathode.api.TraktException;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
@@ -42,7 +41,7 @@ public class LoggingInterceptor implements Interceptor {
 
     final int statusCode = response.code();
 
-    if (statusCode == 404 || statusCode == 412) {
+    if (statusCode == 412) {
       Timber.i("Url: %s", request.url().toString());
       Timber.i("Status code: %d", statusCode);
 
@@ -54,16 +53,11 @@ public class LoggingInterceptor implements Interceptor {
         }
       }
 
-      if (BuildConfig.DEBUG || statusCode == 404) {
+      if (BuildConfig.DEBUG) {
         Timber.d("%s", response.body().string());
       }
 
-      if (statusCode == 404) {
-        Timber.e(new FourOhFourException("Status code " + statusCode), "Status code %d",
-            statusCode);
-      } else {
-        Timber.e(new TraktException("Status code " + statusCode), "Status code %d", statusCode);
-      }
+      Timber.e(new TraktException("Status code " + statusCode), "Status code %d", statusCode);
     } else if (BuildConfig.DEBUG && statusCode >= 400) {
       Timber.d("Url: %s", request.url().toString());
       Timber.d("Status code: %d", statusCode);
