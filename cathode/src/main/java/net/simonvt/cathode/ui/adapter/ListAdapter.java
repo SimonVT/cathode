@@ -46,6 +46,7 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
 
     void onRemoveItem(int position, long id);
   }
+
   private ShowClickListener showListener;
 
   private SeasonClickListener seasonListener;
@@ -171,6 +172,10 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
 
       @Override public void onActionSelected(int action) {
         finalHolder.setIsRecyclable(true);
+        if (finalHolder.getAdapterPosition() == RecyclerView.NO_POSITION) {
+          return;
+        }
+
         switch (action) {
           case R.id.action_list_remove:
             removeListener.onRemoveItem(finalHolder.getAdapterPosition(), finalHolder.getItemId());
@@ -186,8 +191,8 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
     holder.overflow.dismiss();
   }
 
-  @Override protected void onBindViewHolder(final ListViewHolder holder, Cursor cursor,
-      int position) {
+  @Override
+  protected void onBindViewHolder(final ListViewHolder holder, Cursor cursor, int position) {
     if (holder.getItemViewType() == DatabaseContract.ItemType.SHOW) {
       final ShowViewHolder showHolder = (ShowViewHolder) holder;
 
