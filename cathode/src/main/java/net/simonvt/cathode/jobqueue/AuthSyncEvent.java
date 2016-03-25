@@ -18,9 +18,9 @@ package net.simonvt.cathode.jobqueue;
 
 public class AuthSyncEvent {
 
-  boolean syncing;
+  private boolean syncing;
 
-  AuthSyncEvent(boolean syncing) {
+  public AuthSyncEvent(boolean syncing) {
     this.syncing = syncing;
   }
 

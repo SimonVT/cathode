@@ -32,8 +32,6 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Produce;
 import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.CathodeApp;
@@ -56,8 +54,6 @@ public class JobService extends Service {
 
   @Inject JobManager jobManager;
 
-  @Inject Bus bus;
-
   private volatile int retryDelay = -1;
 
   private boolean displayNotification;
@@ -68,10 +64,9 @@ public class JobService extends Service {
     super.onCreate();
     Timber.d("JobService started");
     CathodeApp.inject(this);
+    CathodeApp.jobServiceStarted();
 
     cancelAlarm();
-
-    bus.register(this);
 
     displayNotification =
         PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Settings.INITIAL_SYNC, true);
@@ -131,17 +126,12 @@ public class JobService extends Service {
     }
   };
 
-  @Produce public JobSyncEvent provideRunningEvent() {
-    return new JobSyncEvent(true);
-  }
-
   @Override public void onDestroy() {
     if (executor != null) {
       executor.destroy();
     }
 
-    bus.unregister(this);
-    bus.post(new JobSyncEvent(false));
+    CathodeApp.jobServiceStopped();
 
     if (displayNotification && !jobManager.hasJobs(0, Flags.REQUIRES_AUTH)) {
       PreferenceManager.getDefaultSharedPreferences(this)

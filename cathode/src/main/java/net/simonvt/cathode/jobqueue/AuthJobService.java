@@ -26,8 +26,6 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.text.format.DateUtils;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Produce;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.remote.Flags;
@@ -44,8 +42,6 @@ public class AuthJobService extends Service {
 
   @Inject JobManager jobManager;
 
-  @Inject Bus bus;
-
   private volatile int retryDelay = -1;
 
   private JobExecutor executor;
@@ -54,13 +50,12 @@ public class AuthJobService extends Service {
     super.onCreate();
     Timber.d("AuthJobService started");
     CathodeApp.inject(this);
+    CathodeApp.authServiceStarted();
 
     WakeLock.acquire(this, WAKELOCK_TAG);
 
     HandlerThread thread = new HandlerThread("AuthJobService");
     thread.start();
-
-    bus.register(this);
 
     if (jobManager.hasJobs(Flags.REQUIRES_AUTH, 0)) {
       executor = new JobExecutor(jobManager, executorListener, 1, Flags.REQUIRES_AUTH, 0);
@@ -101,8 +96,8 @@ public class AuthJobService extends Service {
     final int nextDelay = Math.min(retryDelay * 2, MAX_RETRY_DELAY);
     intent.putExtra(RETRY_DELAY, nextDelay);
 
-    PendingIntent pi =
-        PendingIntent.getBroadcast(AuthJobService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+    PendingIntent pi = PendingIntent.getBroadcast(AuthJobService.this, 0, intent,
+        PendingIntent.FLAG_CANCEL_CURRENT);
 
     AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
     final long runAt = SystemClock.elapsedRealtime() + retryDelay * DateUtils.MINUTE_IN_MILLIS;
@@ -115,17 +110,12 @@ public class AuthJobService extends Service {
     Timber.d("Scheduling alarm in %d minutes", retryDelay);
   }
 
-  @Produce public AuthSyncEvent provideRunningEvent() {
-    return new AuthSyncEvent(true);
-  }
-
   @Override public void onDestroy() {
     if (executor != null) {
       executor.destroy();
     }
 
-    bus.unregister(this);
-    bus.post(new AuthSyncEvent(false));
+    CathodeApp.authServiceStopped();
 
     WakeLock.release(this, WAKELOCK_TAG);
 

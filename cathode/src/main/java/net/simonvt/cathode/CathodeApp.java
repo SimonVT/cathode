@@ -61,6 +61,8 @@ public class CathodeApp extends Application {
 
   private static final long SYNC_DELAY = 15 * DateUtils.MINUTE_IN_MILLIS;
 
+  private static CathodeApp instance;
+
   private SharedPreferences settings;
 
   private ObjectGraph objectGraph;
@@ -72,11 +74,13 @@ public class CathodeApp extends Application {
   private int homeActivityResumedCount;
   private long lastSync;
 
-  private AuthSyncEvent authSyncEvent;
-  private JobSyncEvent jobSyncEvent;
+  private int authSyncCount;
+  private int jobSyncCount;
 
   @Override public void onCreate() {
     super.onCreate();
+    instance = this;
+
     if (BuildConfig.DEBUG) {
       Timber.plant(new Timber.DebugTree());
 
@@ -198,8 +202,8 @@ public class CathodeApp extends Application {
         if (account != null) {
           ContentResolver.setIsSyncable(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, 1);
           ContentResolver.setSyncAutomatically(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, true);
-          ContentResolver.addPeriodicSync(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, new Bundle(),
-                  12 * DateUtils.HOUR_IN_SECONDS);
+          ContentResolver.addPeriodicSync(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR,
+              new Bundle(), 12 * DateUtils.HOUR_IN_SECONDS);
         }
 
         Accounts.requestCalendarSync(this);
@@ -256,22 +260,52 @@ public class CathodeApp extends Application {
     jobManager.removeJobsWithFlag(Flags.REQUIRES_AUTH);
   }
 
-  @Subscribe public void onAuthSyncEvent(AuthSyncEvent event) {
-    final boolean didSync = isSyncing();
-    authSyncEvent = event;
-    syncEventIfNecessary(didSync);
+  public static void authServiceStarted() {
+    final boolean didSync = instance.isSyncing();
+    instance.authSyncCount++;
+    instance.syncEventIfNecessary(didSync);
+    Timber.d("Auth service running count: %d", instance.authSyncCount);
+
+    if (BuildConfig.DEBUG && instance.authSyncCount == 1) {
+      instance.bus.post(new AuthSyncEvent(true));
+    }
   }
 
-  @Subscribe public void onJobSyncEvent(JobSyncEvent event) {
-    final boolean didSync = isSyncing();
-    jobSyncEvent = event;
-    syncEventIfNecessary(didSync);
+  public static void authServiceStopped() {
+    final boolean didSync = instance.isSyncing();
+    instance.authSyncCount--;
+    instance.syncEventIfNecessary(didSync);
+    Timber.d("Auth service running count: %d", instance.authSyncCount);
+
+    if (BuildConfig.DEBUG && instance.authSyncCount == 0) {
+      instance.bus.post(new AuthSyncEvent(false));
+    }
+  }
+
+  public static void jobServiceStarted() {
+    final boolean didSync = instance.isSyncing();
+    instance.jobSyncCount++;
+    instance.syncEventIfNecessary(didSync);
+    Timber.d("Job service running count: %d", instance.jobSyncCount);
+
+    if (BuildConfig.DEBUG && instance.jobSyncCount == 1) {
+      instance.bus.post(new JobSyncEvent(true));
+    }
+  }
+
+  public static void jobServiceStopped() {
+    final boolean didSync = instance.isSyncing();
+    instance.jobSyncCount--;
+    instance.syncEventIfNecessary(didSync);
+    Timber.d("Job service running count: %d", instance.jobSyncCount);
+
+    if (BuildConfig.DEBUG && instance.jobSyncCount == 0) {
+      instance.bus.post(new JobSyncEvent(false));
+    }
   }
 
   private boolean isSyncing() {
-    final boolean authSyncing = authSyncEvent != null && authSyncEvent.isSyncing();
-    final boolean jobSyncing = jobSyncEvent != null && jobSyncEvent.isSyncing();
-    return authSyncing || jobSyncing;
+    return authSyncCount > 0 || jobSyncCount > 0;
   }
 
   private void syncEventIfNecessary(boolean didSync) {
@@ -283,6 +317,14 @@ public class CathodeApp extends Application {
 
   @Produce public SyncEvent provideRunningEvent() {
     return new SyncEvent(isSyncing());
+  }
+
+  @Produce public AuthSyncEvent provideAuthRunningEvent() {
+    return new AuthSyncEvent(authSyncCount > 0);
+  }
+
+  @Produce public JobSyncEvent provideJobRunningEvent() {
+    return new JobSyncEvent(jobSyncCount > 0);
   }
 
   public static void inject(Context context) {
