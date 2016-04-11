@@ -19,6 +19,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -90,7 +91,7 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
 
   @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
     final long id = cursor.getLong(cursor.getColumnIndexOrThrow(EpisodeColumns.ID));
-    final String title = cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.TITLE));
+    String title = cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.TITLE));
     final int season = cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.SEASON));
     final int episode = cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.EPISODE));
     final boolean watched =
@@ -108,6 +109,14 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
     final String screen = cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.SCREENSHOT));
 
     holder.screen.setImage(screen);
+
+    if (TextUtils.isEmpty(title)) {
+      if (season == 0) {
+        title = getContext().getString(R.string.special_x, episode);
+      } else {
+        title = getContext().getString(R.string.episode_x, episode);
+      }
+    }
 
     holder.title.setText(title);
 

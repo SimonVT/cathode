@@ -18,6 +18,7 @@ package net.simonvt.cathode.ui.adapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -207,11 +208,19 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
       final long id = cursor.getLong(cursor.getColumnIndex(EpisodeColumns.ID));
       final String screenshotUrl =
           cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.SCREENSHOT));
-      final String title = cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.TITLE));
+      String title = cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.TITLE));
       final long firstAired =
           cursor.getLong(cursor.getColumnIndexOrThrow(EpisodeColumns.FIRST_AIRED));
       final int season = cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.SEASON));
       final int episode = cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.EPISODE));
+
+      if (TextUtils.isEmpty(title)) {
+        if (season == 0) {
+          title = context.getString(R.string.special_x, episode);
+        } else {
+          title = context.getString(R.string.episode_x, episode);
+        }
+      }
 
       vh.screen.setImage(screenshotUrl);
       vh.title.setText(title);

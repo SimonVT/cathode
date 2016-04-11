@@ -19,6 +19,7 @@ package net.simonvt.cathode.ui.adapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -210,9 +211,19 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
       seasonHolder.show.setText(showTitle);
     } else if (holder.getItemViewType() == DatabaseContract.ItemType.EPISODE) {
       final EpisodeViewHolder episodeHolder = (EpisodeViewHolder) holder;
-      final String title = cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
+      String title = cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
       final String screen = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
       final String showTitle = cursor.getString(cursor.getColumnIndex("episodeShowTitle"));
+      final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
+      final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
+
+      if (TextUtils.isEmpty(title)) {
+        if (season == 0) {
+          title = getContext().getString(R.string.special_x, episode);
+        } else {
+          title = getContext().getString(R.string.episode_x, episode);
+        }
+      }
 
       episodeHolder.screen.setImage(screen);
 

@@ -260,6 +260,10 @@
   <string name="season_x_episode_y">S%1$dE%2$d</string>
   <string name="season_special">Special</string>
   <string name="seasons">Seasons</string>
+
+  <string name="episode_x">Episode %d</string>
+  <string name="special_x">Special %d</string>
+
   <string name="show_not_synced">If a show has no watched episodes, is not in the collection or is
     not in the watchlist it will not be synced automatically</string>
   <string name="show_perform_sync">Perform sync</string>

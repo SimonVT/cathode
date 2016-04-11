@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,6 +54,7 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
+import net.simonvt.cathode.util.Cursors;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
@@ -266,14 +268,24 @@ public class EpisodeFragment extends AppBarFragment {
     if (cursor.moveToFirst()) {
       loaded = true;
 
+      final int episodeNumber = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
+      season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
+
       episodeTitle = cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
+      if (TextUtils.isEmpty(episodeTitle)) {
+        if (season == 0) {
+          episodeTitle = getResources().getString(R.string.special_x, episodeNumber);
+        } else {
+          episodeTitle = getResources().getString(R.string.episode_x, episodeNumber);
+        }
+      }
+
       title.setText(episodeTitle);
       overview.setText(cursor.getString(cursor.getColumnIndex(EpisodeColumns.OVERVIEW)));
       final String screenshot = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
       setBackdrop(screenshot, true);
       firstAired.setText(DateUtils.millisToString(getActivity(),
           cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED)), true));
-      season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
 
       watched = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.WATCHED)) == 1;
       collected = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.IN_COLLECTION)) == 1;
@@ -303,6 +315,7 @@ public class EpisodeFragment extends AppBarFragment {
       EpisodeColumns.FIRST_AIRED, EpisodeColumns.WATCHED, EpisodeColumns.IN_COLLECTION,
       EpisodeColumns.IN_WATCHLIST, EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN,
       EpisodeColumns.USER_RATING, EpisodeColumns.RATING, EpisodeColumns.SEASON,
+      EpisodeColumns.EPISODE,
   };
 
   private LoaderManager.LoaderCallbacks<SimpleCursor> episodeCallbacks =

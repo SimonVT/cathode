@@ -16,7 +16,6 @@
 package net.simonvt.cathode.ui.fragment;
 
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.Loader;
@@ -156,10 +155,9 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    final Uri contentUri = Shows.SHOWS_WATCHED;
     SimpleCursorLoader cl =
-        new SimpleCursorLoader(getActivity(), contentUri, ShowsWithNextAdapter.PROJECTION, null,
-            null, sortBy.getSortOrder());
+        new SimpleCursorLoader(getActivity(), Shows.SHOWS_WATCHED, ShowsWithNextAdapter.PROJECTION,
+            null, null, sortBy.getSortOrder());
     cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return cl;
   }
