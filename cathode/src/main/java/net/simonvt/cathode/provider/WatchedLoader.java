@@ -58,7 +58,8 @@ public class WatchedLoader extends SimpleLoaderBase<SimpleMergeCursor> {
     Cursor toWatch;
     if (watching) {
       toWatch = getContext().getContentResolver()
-          .query(Episodes.fromShow(showId), projection, EpisodeColumns.WATCHING + "=1", null, null);
+          .query(Episodes.fromShow(showId), projection,
+              EpisodeColumns.WATCHING + "=1 OR " + EpisodeColumns.CHECKED_IN + "=1", null, null);
     } else {
       long lastWatchedSeason = 0;
       long lastWatchedEpisode = -1;
@@ -70,7 +71,8 @@ public class WatchedLoader extends SimpleLoaderBase<SimpleMergeCursor> {
       toWatch = getContext().getContentResolver()
           .query(Episodes.fromShow(showId), projection, EpisodeColumns.WATCHED
                   + "=0 AND "
-                  + EpisodeColumns.FIRST_AIRED + " IS NOT NULL"
+                  + EpisodeColumns.FIRST_AIRED
+                  + " IS NOT NULL"
                   + " AND ("
                   + EpisodeColumns.SEASON
                   + ">"
