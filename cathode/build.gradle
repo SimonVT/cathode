@@ -56,8 +56,6 @@ android {
     versionCode = parent.ext.versionCode;
     versionName = parent.ext.versionName
 
-    buildConfigField "String", "BUILD_TIME", "\"" + buildTime() + "\""
-
     buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + getTraktClientId() + "\""
     buildConfigField "String", "TRAKT_SECRET", "\"" + getTraktSecret() + "\""
     buildConfigField "String", "TRAKT_REDIRECT_URL", "\"" + getTraktRedirectUrl() + "\""
@@ -69,6 +67,8 @@ android {
 
   buildTypes {
     debug {
+      buildConfigField "String", "BUILD_TIME", "\"2016-01-01T00:00Z\""
+
       buildConfigField "String", "PROVIDER_AUTHORITY",
           "\"net.simonvt.cathode.debug.provider.CathodeProvider\""
       resValue "string", "authority_provider", "net.simonvt.cathode.debug.provider.CathodeProvider"
@@ -83,6 +83,8 @@ android {
       ext.enableCrashlytics = false
     }
     release {
+      buildConfigField "String", "BUILD_TIME", "\"" + buildTime() + "\""
+
       buildConfigField "String", "PROVIDER_AUTHORITY",
           "\"net.simonvt.cathode.provider.CathodeProvider\""
       resValue "string", "authority_provider", "net.simonvt.cathode.provider.CathodeProvider"
