@@ -301,7 +301,7 @@ public class EpisodeFragment extends AppBarFragment {
       final float ratingAll = cursor.getFloat(cursor.getColumnIndex(EpisodeColumns.RATING));
       rating.setValue(ratingAll);
 
-      createMenu(toolbar);
+      invalidateMenu();
     }
   }
 
