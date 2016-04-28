@@ -188,6 +188,7 @@
   <string name="setup_calendar_text">Would you like upcoming shows to be added to your calendar?</string>
 
   <!-- Settings -->
+  <string name="preference_startpage">Start page</string>
   <string name="preference_calendar">Display upcoming shows in calendar</string>
   <string name="preference_hidden_items">Hidden items</string>
   <string name="preference_hidden_empty">You have no hidden items</string>

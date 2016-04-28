@@ -36,7 +36,7 @@ import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
 public enum StartPage {
   SHOWS_UPCOMING("showsUpcoming", UpcomingShowsFragment.class, Fragments.SHOWS_UPCOMING,
       R.id.menu_shows_upcoming, R.string.startpage_shows_upcoming),
-  SHOWS_WATCHED("showsCollected", WatchedShowsFragment.class, Fragments.SHOWS_WATCHED,
+  SHOWS_WATCHED("showsWatched", WatchedShowsFragment.class, Fragments.SHOWS_WATCHED,
       R.id.menu_shows_watched, R.string.startpage_shows_watched),
   SHOWS_COLLECTED("showsCollected", ShowsCollectionFragment.class, Fragments.SHOWS_COLLECTION,
       R.id.menu_shows_collection, R.string.startpage_shows_collected),

@@ -17,6 +17,14 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+  <ListPreference
+      android:key="startPage"
+      android:title="@string/preference_startpage"
+      android:dialogTitle="@string/preference_startpage"
+      android:entries="@array/setting_startpage"
+      android:entryValues="@array/setting_startpage_values"
+      android:defaultValue="@string/settings_startpage_default"/>
+
   <SwitchPreference
       android:key="calendarSync"
       android:title="@string/preference_calendar"/>
