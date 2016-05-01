@@ -132,8 +132,7 @@ public class Crouton extends TextView {
   ViewPropertyAnimator animator;
 
   private final Runnable hideRunnable = new Runnable() {
-    @Override
-    public void run() {
+    @Override public void run() {
       animator = animate();
       animator.translationY(getHeight()).withEndAction(new Runnable() {
         @Override public void run() {

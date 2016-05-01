@@ -51,7 +51,6 @@ public class ObservableScrollView extends ScrollView {
     }
   }
 
-
   @Override protected void onRestoreInstanceState(Parcelable state) {
     super.onRestoreInstanceState(state);
     addOnLayoutChangeListener(new OnLayoutChangeListener() {

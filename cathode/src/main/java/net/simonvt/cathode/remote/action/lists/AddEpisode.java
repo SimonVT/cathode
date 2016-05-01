@@ -45,8 +45,14 @@ public class AddEpisode extends CallJob<ListItemActionResponse> {
   }
 
   @Override public String key() {
-    return "AddEpisode&listId=" + listId + "?traktId=" + showTraktId + "?seasonNumber="
-        + seasonNumber + "?episodeNumber=" + episodeNumber;
+    return "AddEpisode&listId="
+        + listId
+        + "?traktId="
+        + showTraktId
+        + "?seasonNumber="
+        + seasonNumber
+        + "?episodeNumber="
+        + episodeNumber;
   }
 
   @Override public int getPriority() {

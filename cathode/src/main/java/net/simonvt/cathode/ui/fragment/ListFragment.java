@@ -172,8 +172,8 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
       ListItemColumns.ITEM_ID,
 
       SqlCoalesce.coaloesce(SqlColumn.table(Tables.SHOWS).column(ShowColumns.OVERVIEW),
-          SqlColumn.table(Tables.MOVIES).column(MovieColumns.OVERVIEW))
-          .as(ListItemColumns.OVERVIEW),
+          SqlColumn.table(Tables.MOVIES).column(MovieColumns.OVERVIEW)).as(
+          ListItemColumns.OVERVIEW),
 
       SqlCoalesce.coaloesce(SqlColumn.table(Tables.SHOWS).column(ShowColumns.POSTER),
           SqlColumn.table(Tables.MOVIES).column(MovieColumns.POSTER)).as(ListItemColumns.POSTER),

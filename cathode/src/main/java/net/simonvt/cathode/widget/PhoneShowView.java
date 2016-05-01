@@ -113,8 +113,7 @@ public class PhoneShowView extends ViewGroup {
 
     final int osterHeight =
         viewHeight - paddingTop - paddingBottom - posterLp.topMargin - posterLp.bottomMargin;
-    final int posterWidthMeasureSpec =
-        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
+    final int posterWidthMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
     final int posterHeightMeasureSpec =
         MeasureSpec.makeMeasureSpec(osterHeight, MeasureSpec.EXACTLY);
     poster.measure(posterWidthMeasureSpec, posterHeightMeasureSpec);

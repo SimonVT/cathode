@@ -70,8 +70,7 @@ public class MovieSuggestionAdapter extends SuggestionsAdapter {
       Cursor previousQueries = context.getContentResolver()
           .query(MovieSearchSuggestions.MOVIE_SUGGESTIONS, null, null, null, null);
 
-      final int queryIndex =
-          previousQueries.getColumnIndex(MovieSearchSuggestionsColumns.QUERY);
+      final int queryIndex = previousQueries.getColumnIndex(MovieSearchSuggestionsColumns.QUERY);
 
       List<Suggestion> queries = new ArrayList<Suggestion>();
       while (previousQueries.moveToNext()) {
@@ -79,13 +78,9 @@ public class MovieSuggestionAdapter extends SuggestionsAdapter {
       }
       previousQueries.close();
 
-      Cursor allMovies =
-          context.getContentResolver().query(Movies.MOVIES, new String[] {
-              MovieColumns.ID, MovieColumns.TITLE, MovieColumns.OVERVIEW,
-          }, MovieColumns.IN_COLLECTION
-              + "=1 OR "
-              + MovieColumns.WATCHED
-              + "=1", null, null);
+      Cursor allMovies = context.getContentResolver().query(Movies.MOVIES, new String[] {
+          MovieColumns.ID, MovieColumns.TITLE, MovieColumns.OVERVIEW,
+      }, MovieColumns.IN_COLLECTION + "=1 OR " + MovieColumns.WATCHED + "=1", null, null);
 
       final int titleIndex = allMovies.getColumnIndex(MovieColumns.TITLE);
       final int overviewIndex = allMovies.getColumnIndex(MovieColumns.OVERVIEW);

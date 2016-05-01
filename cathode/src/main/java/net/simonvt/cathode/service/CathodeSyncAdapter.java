@@ -23,9 +23,9 @@ import android.content.SyncResult;
 import android.os.Bundle;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.jobqueue.JobManager;
 
 public class CathodeSyncAdapter extends AbstractThreadedSyncAdapter {
 

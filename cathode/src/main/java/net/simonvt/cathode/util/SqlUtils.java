@@ -46,9 +46,14 @@ public final class SqlUtils {
     Set<String> columns = columns(db, table);
 
     if (!columns.contains(columnName)) {
-      db.execSQL(
-          "ALTER TABLE " + table + " ADD COLUMN " + columnName + " " + type.toString() + " DEFAULT "
-              + defaultValue);
+      db.execSQL("ALTER TABLE "
+          + table
+          + " ADD COLUMN "
+          + columnName
+          + " "
+          + type.toString()
+          + " DEFAULT "
+          + defaultValue);
       return true;
     }
 

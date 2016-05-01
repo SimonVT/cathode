@@ -42,7 +42,11 @@ public class AddSeason extends CallJob<ListItemActionResponse> {
   }
 
   @Override public String key() {
-    return "AddSeason&listId=" + listId + "?traktId=" + showTraktId + "?seasonNumber="
+    return "AddSeason&listId="
+        + listId
+        + "?traktId="
+        + showTraktId
+        + "?seasonNumber="
         + seasonNumber;
   }
 

@@ -247,7 +247,8 @@ public class SyncList extends CallJob<List<ListItem>> {
             queue(new SyncMovie(movieTraktId));
           }
 
-          final int itemPosition = getItemPosition(oldItems, DatabaseContract.ItemType.MOVIE, movieId);
+          final int itemPosition =
+              getItemPosition(oldItems, DatabaseContract.ItemType.MOVIE, movieId);
           if (itemPosition >= 0) {
             oldItems.remove(itemPosition);
             continue;
@@ -271,7 +272,8 @@ public class SyncList extends CallJob<List<ListItem>> {
             queue(new SyncPerson(person.getIds().getTrakt()));
           }
 
-          final int itemPosition = getItemPosition(oldItems, DatabaseContract.ItemType.PERSON, personId);
+          final int itemPosition =
+              getItemPosition(oldItems, DatabaseContract.ItemType.PERSON, personId);
           if (itemPosition >= 0) {
             oldItems.remove(itemPosition);
             continue;

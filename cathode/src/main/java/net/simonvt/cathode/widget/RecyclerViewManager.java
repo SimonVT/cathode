@@ -27,7 +27,8 @@ public class RecyclerViewManager {
 
   RecyclerView.Adapter adapter;
 
-  public RecyclerViewManager(RecyclerView recyclerView, RecyclerView.LayoutManager layoutManager, View emptyView) {
+  public RecyclerViewManager(RecyclerView recyclerView, RecyclerView.LayoutManager layoutManager,
+      View emptyView) {
     this.recyclerView = recyclerView;
     recyclerView.setLayoutManager(layoutManager);
     this.emptyView = emptyView;

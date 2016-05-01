@@ -613,15 +613,15 @@ public class HiddenPaneLayout extends ViewGroup {
       dest.writeInt(open ? 1 : 0);
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
-      @Override public SavedState createFromParcel(Parcel in) {
-        return new SavedState(in);
-      }
+    @SuppressWarnings("UnusedDeclaration") public static final Creator<SavedState> CREATOR =
+        new Creator<SavedState>() {
+          @Override public SavedState createFromParcel(Parcel in) {
+            return new SavedState(in);
+          }
 
-      @Override public SavedState[] newArray(int size) {
-        return new SavedState[size];
-      }
-    };
+          @Override public SavedState[] newArray(int size) {
+            return new SavedState[size];
+          }
+        };
   }
 }

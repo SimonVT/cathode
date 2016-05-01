@@ -91,10 +91,11 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
     final boolean syncCalendar = settings.getBoolean(Settings.CALENDAR_SYNC, false);
     if (!syncCalendar) {
       Timber.d("Deleting calendar");
-      context.getContentResolver().delete(CalendarContract.Events.CONTENT_URI,
-          CalendarContract.Events.CALENDAR_ID + "=?", new String[] {
-             String.valueOf(calendarId),
-          });
+      context.getContentResolver()
+          .delete(CalendarContract.Events.CONTENT_URI, CalendarContract.Events.CALENDAR_ID + "=?",
+              new String[] {
+                  String.valueOf(calendarId),
+              });
 
       Uri calenderUri = CalendarContract.Calendars.CONTENT_URI.buildUpon()
           .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, account.name)
@@ -146,8 +147,12 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
       Cursor episodes = context.getContentResolver().query(Episodes.EPISODES, new String[] {
           EpisodeColumns.ID, EpisodeColumns.SHOW_ID, EpisodeColumns.TITLE, EpisodeColumns.SEASON,
           EpisodeColumns.EPISODE, EpisodeColumns.FIRST_AIRED,
-      }, EpisodeColumns.SHOW_ID + "=? AND " + EpisodeColumns.FIRST_AIRED + ">? AND "
-          + EpisodeColumns.NEEDS_SYNC + "=0", new String[] {
+      }, EpisodeColumns.SHOW_ID
+          + "=? AND "
+          + EpisodeColumns.FIRST_AIRED
+          + ">? AND "
+          + EpisodeColumns.NEEDS_SYNC
+          + "=0", new String[] {
           String.valueOf(shows.getLong(0)), String.valueOf(time - 30 * DateUtils.DAY_IN_MILLIS),
       }, null);
 
@@ -265,8 +270,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
                 .appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER, "true")
                 .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, account.name)
                 .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, account.type)
-                .build()
-        );
+                .build());
         builder.withValue(CalendarContract.Calendars.ACCOUNT_NAME, account.name);
         builder.withValue(CalendarContract.Calendars.ACCOUNT_TYPE, account.type);
         builder.withValue(CalendarContract.Calendars.NAME, context.getString(R.string.app_name));

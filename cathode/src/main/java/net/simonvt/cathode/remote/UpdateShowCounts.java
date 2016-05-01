@@ -58,8 +58,8 @@ public class UpdateShowCounts extends Job {
       collected.close();
 
       Cursor airdate = getContentResolver().query(Episodes.fromShow(showId), new String[] {
-          EpisodeColumns.ID,
-      }, EpisodeColumns.FIRST_AIRED + " IS NOT NULL AND " + EpisodeColumns.NEEDS_SYNC + "=0", null,
+              EpisodeColumns.ID,
+          }, EpisodeColumns.FIRST_AIRED + " IS NOT NULL AND " + EpisodeColumns.NEEDS_SYNC + "=0", null,
           null);
       final int airdateCount = airdate.getCount();
       airdate.close();
@@ -94,8 +94,8 @@ public class UpdateShowCounts extends Job {
       collected.close();
 
       Cursor airdate = getContentResolver().query(Episodes.fromSeason(seasonId), new String[] {
-          EpisodeColumns.ID,
-      }, EpisodeColumns.FIRST_AIRED + " IS NOT NULL" + " AND " + EpisodeColumns.NEEDS_SYNC + "=0",
+              EpisodeColumns.ID,
+          }, EpisodeColumns.FIRST_AIRED + " IS NOT NULL" + " AND " + EpisodeColumns.NEEDS_SYNC + "=0",
           null, null);
       final int airdateCount = airdate.getCount();
       airdate.close();

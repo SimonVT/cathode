@@ -74,11 +74,13 @@ public class SyncShowCast extends CallJob<People> {
         Person person = character.getPerson();
         final long personId = PersonWrapper.updateOrInsert(getContentResolver(), person);
 
-        ContentProviderOperation op = ContentProviderOperation.newInsert(ShowCharacters.SHOW_CHARACTERS)
-            .withValue(DatabaseContract.ShowCharacterColumns.SHOW_ID, showId)
-            .withValue(DatabaseContract.ShowCharacterColumns.PERSON_ID, personId)
-            .withValue(DatabaseContract.ShowCharacterColumns.CHARACTER, character.getCharacter())
-            .build();
+        ContentProviderOperation op =
+            ContentProviderOperation.newInsert(ShowCharacters.SHOW_CHARACTERS)
+                .withValue(DatabaseContract.ShowCharacterColumns.SHOW_ID, showId)
+                .withValue(DatabaseContract.ShowCharacterColumns.PERSON_ID, personId)
+                .withValue(DatabaseContract.ShowCharacterColumns.CHARACTER,
+                    character.getCharacter())
+                .build();
         ops.add(op);
       }
     }
