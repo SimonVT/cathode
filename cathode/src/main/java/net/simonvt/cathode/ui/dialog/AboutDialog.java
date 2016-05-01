@@ -15,8 +15,8 @@
  */
 package net.simonvt.cathode.ui.dialog;
 
+import android.app.DialogFragment;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,16 +69,16 @@ public class AboutDialog extends DialogFragment {
   }) public void openUrl(View v) {
     switch (v.getId()) {
       case R.id.version:
-        Intents.openUrl(getContext(), getString(R.string.play_store_url));
+        Intents.openUrl(getActivity(), getString(R.string.play_store_url));
         break;
       case R.id.gplus:
-        Intents.openUrl(getContext(), getString(R.string.dev_gplus));
+        Intents.openUrl(getActivity(), getString(R.string.dev_gplus));
         break;
       case R.id.github:
-        Intents.openUrl(getContext(), getString(R.string.dev_github));
+        Intents.openUrl(getActivity(), getString(R.string.dev_github));
         break;
       case R.id.source:
-        Intents.openUrl(getContext(), getString(R.string.source_url));
+        Intents.openUrl(getActivity(), getString(R.string.source_url));
         break;
     }
   }

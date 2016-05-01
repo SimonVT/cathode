@@ -39,7 +39,6 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchlist;
 import net.simonvt.cathode.ui.LibraryType;
@@ -127,10 +126,6 @@ public class ShowsWatchlistFragment
 
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
-      case R.id.menu_refresh:
-        jobManager.addJob(new SyncJob());
-        return true;
-
       case R.id.menu_search:
         navigationListener.onSearchShow();
         return true;

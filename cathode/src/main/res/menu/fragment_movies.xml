@@ -22,14 +22,4 @@
       android:icon="@drawable/ic_action_search"
       android:title="@string/action_search"
       app:showAsAction="ifRoom"/>
-
-  <item
-      android:id="@+id/menu_refresh"
-      android:title="@string/action_refresh"
-      app:showAsAction="never"/>
-
-  <item
-      android:id="@+id/menu_logout"
-      android:title="@string/action_logout"
-      app:showAsAction="never"/>
 </menu>

@@ -211,8 +211,6 @@ public class MovieFragment extends RefreshableAppBarFragment
     super.createMenu(toolbar);
     Menu menu = toolbar.getMenu();
 
-    menu.add(0, R.id.action_refresh, 0, R.string.action_refresh);
-
     toolbar.inflateMenu(R.menu.fragment_movie);
 
     if (loaded) {
@@ -249,10 +247,6 @@ public class MovieFragment extends RefreshableAppBarFragment
 
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
-      case R.id.action_refresh:
-        movieScheduler.sync(movieId);
-        return true;
-
       case R.id.action_watched:
         movieScheduler.setWatched(movieId, true);
         return true;

@@ -33,6 +33,8 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Permissions;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.ui.dialog.AboutDialog;
+import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import timber.log.Timber;
 
 public class SettingsActivity extends BaseActivity {
@@ -94,6 +96,22 @@ public class SettingsActivity extends BaseActivity {
           new Preference.OnPreferenceClickListener() {
             @Override public boolean onPreferenceClick(Preference preference) {
               startActivity(new Intent(getActivity(), HiddenItems.class));
+              return true;
+            }
+          });
+
+      findPreference("about").setOnPreferenceClickListener(
+          new Preference.OnPreferenceClickListener() {
+            @Override public boolean onPreferenceClick(Preference preference) {
+              new AboutDialog().show(getFragmentManager(), HomeActivity.DIALOG_ABOUT);
+              return true;
+            }
+          });
+
+      findPreference("logout").setOnPreferenceClickListener(
+          new Preference.OnPreferenceClickListener() {
+            @Override public boolean onPreferenceClick(Preference preference) {
+              new LogoutDialog().show(getFragmentManager(), HomeActivity.DIALOG_LOGOUT);
               return true;
             }
           });

@@ -40,7 +40,6 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.shows.SyncTrendingShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
@@ -165,10 +164,6 @@ public class TrendingShowsFragment
 
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
-      case R.id.menu_refresh:
-        jobManager.addJob(new SyncJob());
-        return true;
-
       case R.id.sort_by:
         ArrayList<ListDialog.Item> items = new ArrayList<ListDialog.Item>();
         items.add(new ListDialog.Item(R.id.sort_viewers, R.string.sort_viewers));

@@ -28,7 +28,6 @@ import butterknife.Unbinder;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.ui.FragmentContract;
 import net.simonvt.cathode.ui.NavigationClickListener;
-import net.simonvt.cathode.widget.ToolbarHelper;
 
 public abstract class BaseFragment extends Fragment
     implements FragmentContract, Toolbar.OnMenuItemClickListener {
@@ -36,8 +35,6 @@ public abstract class BaseFragment extends Fragment
   private Unbinder unbinder;
 
   @BindView(R.id.toolbar) @Nullable Toolbar toolbar;
-
-  private ToolbarHelper toolbarHelper;
 
   private NavigationClickListener navigationListener;
 
@@ -54,10 +51,6 @@ public abstract class BaseFragment extends Fragment
 
   public Toolbar getToolbar() {
     return toolbar;
-  }
-
-  public ToolbarHelper getToolbarHelper() {
-    return toolbarHelper;
   }
 
   public void setTitle(int titleRes) {
@@ -94,7 +87,13 @@ public abstract class BaseFragment extends Fragment
     unbinder = ButterKnife.bind(this, view);
     if (toolbar != null) {
       toolbar.setOnMenuItemClickListener(this);
-      toolbarHelper = new ToolbarHelper(this, toolbar, displaysMenuIcon());
+
+      if (displaysMenuIcon()) {
+        toolbar.setNavigationIcon(R.drawable.ic_menu);
+      } else {
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+      }
+
       createMenu();
 
       if (navigationListener != null) {
@@ -123,11 +122,10 @@ public abstract class BaseFragment extends Fragment
   }
 
   public void createMenu(Toolbar toolbar) {
-    toolbarHelper.createMenu();
   }
 
   @Override public boolean onMenuItemClick(MenuItem item) {
-    return toolbarHelper.onMenuItemClick(item);
+    return false;
   }
 
   @Override public boolean onBackPressed() {

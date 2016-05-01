@@ -28,7 +28,6 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
@@ -82,10 +81,6 @@ public abstract class ShowsFragment<D extends Cursor>
 
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
-      case R.id.menu_refresh:
-        jobManager.addJob(new SyncJob());
-        return true;
-
       case R.id.menu_search:
         navigationListener.onSearchShow();
         return true;

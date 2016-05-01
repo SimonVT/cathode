@@ -54,7 +54,6 @@
   <item name="action_checkin_cancel" type="id"/>
   <item name="action_unwatched" type="id"/>
   <item name="action_unwatch_all" type="id"/>
-  <item name="action_refresh" type="id"/>
   <item name="action_collection_add" type="id"/>
   <item name="action_collection_remove" type="id"/>
   <item name="action_collection_hide" type="id"/>

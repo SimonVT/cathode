@@ -17,11 +17,11 @@ package net.simonvt.cathode.ui.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;

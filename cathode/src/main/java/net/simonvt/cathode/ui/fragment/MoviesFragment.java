@@ -30,7 +30,6 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
@@ -79,10 +78,6 @@ public abstract class MoviesFragment
 
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
-      case R.id.menu_refresh:
-        jobManager.addJob(new SyncJob());
-        return true;
-
       case R.id.menu_search:
         navigationListener.onSearchMovie();
         return true;

@@ -43,7 +43,6 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
@@ -165,10 +164,6 @@ public class UpcomingShowsFragment
         items.add(new ListDialog.Item(R.id.sort_next_episode, R.string.sort_next_episode));
         ListDialog.newInstance(R.string.action_sort_by, items, UpcomingShowsFragment.this)
             .show(getFragmentManager(), DIALOG_SORT);
-        return true;
-
-      case R.id.menu_refresh:
-        jobManager.addJob(new SyncJob());
         return true;
 
       case R.id.menu_search:

@@ -30,16 +30,4 @@
       android:orderInCategory="20"
       android:title="@string/action_search"
       app:showAsAction="always"/>
-
-  <item
-      android:id="@+id/menu_refresh"
-      android:orderInCategory="400"
-      android:title="@string/action_refresh"
-      app:showAsAction="never"/>
-
-  <item
-      android:id="@+id/menu_logout"
-      android:orderInCategory="500"
-      android:title="@string/action_logout"
-      app:showAsAction="never"/>
 </menu>
