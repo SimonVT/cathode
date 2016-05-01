@@ -27,7 +27,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
@@ -36,11 +36,11 @@ import timber.log.Timber;
 
 public class OauthWebViewActivity extends AppCompatActivity {
 
-  @Bind(R.id.toolbar) Toolbar toolbar;
+  @BindView(R.id.toolbar) Toolbar toolbar;
 
-  @Bind(R.id.progress_top) ProgressBar progressBar;
+  @BindView(R.id.progress_top) ProgressBar progressBar;
 
-  @Bind(R.id.webview) WebView webView;
+  @BindView(R.id.webview) WebView webView;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

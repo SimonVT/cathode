@@ -23,7 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
@@ -66,9 +66,9 @@ public class MovieActorsAdapter extends RecyclerCursorAdapter<MovieActorsAdapter
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.headshot) RemoteImageView headshot;
-    @Bind(R.id.person_name) TextView name;
-    @Bind(R.id.person_job) TextView job;
+    @BindView(R.id.headshot) RemoteImageView headshot;
+    @BindView(R.id.person_name) TextView name;
+    @BindView(R.id.person_job) TextView job;
 
     public ViewHolder(View itemView) {
       super(itemView);

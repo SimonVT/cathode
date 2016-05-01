@@ -21,7 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.widget.AppBarRelativeLayout;
@@ -29,9 +29,9 @@ import net.simonvt.cathode.widget.RemoteImageView;
 
 public abstract class AppBarFragment extends BaseFragment {
 
-  @Bind(R.id.appBarLayout) AppBarRelativeLayout appBarLayout;
+  @BindView(R.id.appBarLayout) AppBarRelativeLayout appBarLayout;
 
-  @Bind(R.id.backdrop) RemoteImageView backdrop;
+  @BindView(R.id.backdrop) RemoteImageView backdrop;
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     View v = inflater.inflate(R.layout.fragment_appbar, container, false);

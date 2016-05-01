@@ -22,14 +22,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 
 public abstract class RefreshableAppBarFragment extends AppBarFragment
     implements SwipeRefreshLayout.OnRefreshListener {
 
-  @Bind(R.id.swipeRefresh) SwipeRefreshLayout swipeRefreshLayout;
+  @BindView(R.id.swipeRefresh) SwipeRefreshLayout swipeRefreshLayout;
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     View v = inflater.inflate(R.layout.fragment_appbar_refreshable, container, false);

@@ -34,7 +34,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 
@@ -49,9 +49,9 @@ public class SearchView extends LinearLayout implements CollapsibleActionView {
     void onSuggestionSelected(Object suggestion);
   }
 
-  @Bind(R.id.search_input) AutoCompleteTextView inputView;
+  @BindView(R.id.search_input) AutoCompleteTextView inputView;
 
-  @Bind(R.id.search_clear) View clearView;
+  @BindView(R.id.search_clear) View clearView;
 
   private SearchViewListener listener;
 

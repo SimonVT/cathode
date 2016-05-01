@@ -24,7 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract;
@@ -247,7 +247,7 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
 
   public static class ListViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.overflow) OverflowView overflow;
+    @BindView(R.id.overflow) OverflowView overflow;
 
     public ListViewHolder(View v) {
       super(v);
@@ -257,9 +257,9 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
 
   public static class ShowViewHolder extends ListViewHolder {
 
-    @Bind(R.id.poster) RemoteImageView poster;
-    @Bind(R.id.title) TextView title;
-    @Bind(R.id.overview) TextView overview;
+    @BindView(R.id.poster) RemoteImageView poster;
+    @BindView(R.id.title) TextView title;
+    @BindView(R.id.overview) TextView overview;
 
     public ShowViewHolder(View v) {
       super(v);
@@ -268,9 +268,9 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
 
   public static class SeasonViewHolder extends ListViewHolder {
 
-    @Bind(R.id.poster) RemoteImageView poster;
-    @Bind(R.id.season) TextView season;
-    @Bind(R.id.show) TextView show;
+    @BindView(R.id.poster) RemoteImageView poster;
+    @BindView(R.id.season) TextView season;
+    @BindView(R.id.show) TextView show;
 
     public SeasonViewHolder(View v) {
       super(v);
@@ -279,9 +279,9 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
 
   public static class EpisodeViewHolder extends ListViewHolder {
 
-    @Bind(R.id.screen) RemoteImageView screen;
-    @Bind(R.id.title) TextView title;
-    @Bind(R.id.showTitle) TextView showTitle;
+    @BindView(R.id.screen) RemoteImageView screen;
+    @BindView(R.id.title) TextView title;
+    @BindView(R.id.showTitle) TextView showTitle;
 
     EpisodeViewHolder(View v) {
       super(v);
@@ -290,9 +290,9 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
 
   public static class MovieViewHolder extends ListViewHolder {
 
-    @Bind(R.id.poster) public RemoteImageView poster;
-    @Bind(R.id.title) public TextView title;
-    @Bind(R.id.overview) public TextView overview;
+    @BindView(R.id.poster) public RemoteImageView poster;
+    @BindView(R.id.title) public TextView title;
+    @BindView(R.id.overview) public TextView overview;
 
     public MovieViewHolder(View v) {
       super(v);
@@ -301,8 +301,8 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
 
   public static class PersonViewHolder extends ListViewHolder {
 
-    @Bind(R.id.headshot) RemoteImageView headshot;
-    @Bind(R.id.person_name) TextView name;
+    @BindView(R.id.headshot) RemoteImageView headshot;
+    @BindView(R.id.person_name) TextView name;
 
     public PersonViewHolder(View v) {
       super(v);

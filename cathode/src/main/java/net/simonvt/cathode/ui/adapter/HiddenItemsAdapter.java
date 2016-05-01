@@ -23,7 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -318,7 +318,7 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
 
   public static class ListViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.overflow) OverflowView overflow;
+    @BindView(R.id.overflow) OverflowView overflow;
 
     public ListViewHolder(View v) {
       super(v);
@@ -328,9 +328,9 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
 
   public static class ShowViewHolder extends ListViewHolder {
 
-    @Bind(R.id.poster) RemoteImageView poster;
-    @Bind(R.id.title) TextView title;
-    @Bind(R.id.overview) TextView overview;
+    @BindView(R.id.poster) RemoteImageView poster;
+    @BindView(R.id.title) TextView title;
+    @BindView(R.id.overview) TextView overview;
 
     public ShowViewHolder(View v) {
       super(v);
@@ -339,9 +339,9 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
 
   public static class MovieViewHolder extends ListViewHolder {
 
-    @Bind(R.id.poster) public RemoteImageView poster;
-    @Bind(R.id.title) public TextView title;
-    @Bind(R.id.overview) public TextView overview;
+    @BindView(R.id.poster) public RemoteImageView poster;
+    @BindView(R.id.title) public TextView title;
+    @BindView(R.id.overview) public TextView overview;
 
     public MovieViewHolder(View v) {
       super(v);

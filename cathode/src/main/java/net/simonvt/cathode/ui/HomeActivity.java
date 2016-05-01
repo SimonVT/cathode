@@ -33,7 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.widget.ProgressBar;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -94,18 +94,18 @@ public class HomeActivity extends BaseActivity
 
   @Inject Bus bus;
 
-  @Bind(R.id.progress_top) ProgressBar progressTop;
+  @BindView(R.id.progress_top) ProgressBar progressTop;
 
-  @Bind(R.id.crouton) Crouton crouton;
+  @BindView(R.id.crouton) Crouton crouton;
 
   private FragmentStack stack;
 
-  @Bind(R.id.drawer) DrawerLayout drawer;
+  @BindView(R.id.drawer) DrawerLayout drawer;
   private int drawerState = DrawerLayout.STATE_IDLE;
   private NavigationFragment navigation;
 
-  @Bind(R.id.watching_parent) ViewGroup watchingParent;
-  @Bind(R.id.watchingView) WatchingView watchingView;
+  @BindView(R.id.watching_parent) ViewGroup watchingParent;
+  @BindView(R.id.watchingView) WatchingView watchingView;
 
   private Cursor watchingShow;
   private Cursor watchingMovie;

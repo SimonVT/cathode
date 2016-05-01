@@ -33,7 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
@@ -125,70 +125,70 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   private long showId;
 
-  @Bind(R.id.hiddenPaneLayout) HiddenPaneLayout hiddenPaneLayout;
+  @BindView(R.id.hiddenPaneLayout) HiddenPaneLayout hiddenPaneLayout;
 
-  @Bind(R.id.seasons) RecyclerView seasons;
-  @Bind(R.id.seasonsEmpty) View seasonsEmpty;
+  @BindView(R.id.seasons) RecyclerView seasons;
+  @BindView(R.id.seasonsEmpty) View seasonsEmpty;
   private SeasonsAdapter seasonsAdapter;
   private Cursor seasonsCursor;
 
-  @Bind(R.id.rating) CircularProgressIndicator rating;
-  @Bind(R.id.airtime) TextView airTime;
-  @Bind(R.id.certification) TextView certification;
-  @Bind(R.id.overview) TextView overview;
-  @Bind(R.id.isWatched) TextView watched;
-  @Bind(R.id.inCollection) TextView collection;
-  @Bind(R.id.inWatchlist) TextView watchlist;
+  @BindView(R.id.rating) CircularProgressIndicator rating;
+  @BindView(R.id.airtime) TextView airTime;
+  @BindView(R.id.certification) TextView certification;
+  @BindView(R.id.overview) TextView overview;
+  @BindView(R.id.isWatched) TextView watched;
+  @BindView(R.id.inCollection) TextView collection;
+  @BindView(R.id.inWatchlist) TextView watchlist;
 
-  @Bind(R.id.trailer) View trailer;
+  @BindView(R.id.trailer) View trailer;
 
-  @Bind(R.id.actorsParent) View actorsParent;
-  @Bind(R.id.actorsHeader) View actorsHeader;
-  @Bind(R.id.actors) LinearLayout actors;
-  @Bind(R.id.peopleContainer) LinearLayout peopleContainer;
+  @BindView(R.id.actorsParent) View actorsParent;
+  @BindView(R.id.actorsHeader) View actorsHeader;
+  @BindView(R.id.actors) LinearLayout actors;
+  @BindView(R.id.peopleContainer) LinearLayout peopleContainer;
 
-  @Bind(R.id.commentsParent) View commentsParent;
-  @Bind(R.id.commentsHeader) View commentsHeader;
-  @Bind(R.id.commentsContainer) LinearLayout commentsContainer;
+  @BindView(R.id.commentsParent) View commentsParent;
+  @BindView(R.id.commentsHeader) View commentsHeader;
+  @BindView(R.id.commentsContainer) LinearLayout commentsContainer;
 
-  @Bind(R.id.websiteTitle) View websiteTitle;
-  @Bind(R.id.website) TextView website;
+  @BindView(R.id.websiteTitle) View websiteTitle;
+  @BindView(R.id.website) TextView website;
 
-  @Bind(R.id.viewOnTitle) View viewOnTitle;
-  @Bind(R.id.viewOnContainer) ViewGroup viewOnContainer;
-  @Bind(R.id.viewOnImdb) View viewOnImdb;
-  @Bind(R.id.viewOnTvdb) View viewOnTvdb;
-  @Bind(R.id.viewOnTmdb) View viewOnTmdb;
+  @BindView(R.id.viewOnTitle) View viewOnTitle;
+  @BindView(R.id.viewOnContainer) ViewGroup viewOnContainer;
+  @BindView(R.id.viewOnImdb) View viewOnImdb;
+  @BindView(R.id.viewOnTvdb) View viewOnTvdb;
+  @BindView(R.id.viewOnTmdb) View viewOnTmdb;
 
   private Cursor userComments;
   private Cursor comments;
 
-  @Bind(R.id.episodes) LinearLayout episodes;
+  @BindView(R.id.episodes) LinearLayout episodes;
 
-  @Bind(R.id.toWatch) View toWatch;
+  @BindView(R.id.toWatch) View toWatch;
   private EpisodeHolder toWatchHolder;
   private long toWatchId = -1;
   private String toWatchTitle;
 
-  @Bind(R.id.lastWatched) @Nullable View lastWatched;
+  @BindView(R.id.lastWatched) @Nullable View lastWatched;
   private EpisodeHolder lastWatchedHolder;
   private long lastWatchedId = -1;
 
-  @Bind(R.id.toCollect) View toCollect;
+  @BindView(R.id.toCollect) View toCollect;
   private EpisodeHolder toCollectHolder;
   private long toCollectId = -1;
 
-  @Bind(R.id.lastCollected) @Nullable View lastCollected;
+  @BindView(R.id.lastCollected) @Nullable View lastCollected;
   private EpisodeHolder lastCollectedHolder;
   private long lastCollectedId = -1;
 
   static class EpisodeHolder {
 
-    @Bind(R.id.episodeScreenshot) RemoteImageView episodeScreenshot;
-    @Bind(R.id.episodeTitle) TextView episodeTitle;
-    @Bind(R.id.episodeAirTime) TextView episodeAirTime;
-    @Bind(R.id.episodeEpisode) TextView episodeEpisode;
-    @Bind(R.id.episodeOverflow) OverflowView episodeOverflow;
+    @BindView(R.id.episodeScreenshot) RemoteImageView episodeScreenshot;
+    @BindView(R.id.episodeTitle) TextView episodeTitle;
+    @BindView(R.id.episodeAirTime) TextView episodeAirTime;
+    @BindView(R.id.episodeEpisode) TextView episodeEpisode;
+    @BindView(R.id.episodeOverflow) OverflowView episodeOverflow;
 
     public EpisodeHolder(View v) {
       ButterKnife.bind(this, v);

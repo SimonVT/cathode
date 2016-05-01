@@ -26,7 +26,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import net.simonvt.cathode.R;
 
 public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> extends BaseFragment {
@@ -39,10 +39,10 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
 
   private RecyclerView.Adapter<T> adapter;
 
-  @Bind(R.id.progressContainer) View progressContainer;
-  @Bind(R.id.listContainer) View listContainer;
-  @Bind(android.R.id.list) RecyclerView recyclerView;
-  @Bind(android.R.id.empty) TextView empty;
+  @BindView(R.id.progressContainer) View progressContainer;
+  @BindView(R.id.listContainer) View listContainer;
+  @BindView(android.R.id.list) RecyclerView recyclerView;
+  @BindView(android.R.id.empty) TextView empty;
 
   private Context appContext;
 

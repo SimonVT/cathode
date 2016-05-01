@@ -30,7 +30,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -271,46 +271,46 @@ import timber.log.Timber;
 
   static class DebugViews {
 
-    @Bind(R.id.debug_drawerLayout) DrawerLayout drawerLayout;
+    @BindView(R.id.debug_drawerLayout) DrawerLayout drawerLayout;
 
-    @Bind(R.id.debug_content) ViewGroup container;
+    @BindView(R.id.debug_content) ViewGroup container;
 
-    @Bind(R.id.debug_startPage) Spinner startPage;
+    @BindView(R.id.debug_startPage) Spinner startPage;
 
-    @Bind(R.id.debug_recreateActivity) View recreateActivity;
+    @BindView(R.id.debug_recreateActivity) View recreateActivity;
 
-    @Bind(R.id.debug_requestFailedEvent) View requestFailedEvent;
+    @BindView(R.id.debug_requestFailedEvent) View requestFailedEvent;
 
-    @Bind(R.id.debug_authFailedEvent) View authFailedEvent;
+    @BindView(R.id.debug_authFailedEvent) View authFailedEvent;
 
-    @Bind(R.id.debug_removeAccessToken) View removeAccessToken;
+    @BindView(R.id.debug_removeAccessToken) View removeAccessToken;
 
-    @Bind(R.id.debug_removeRefreshToken) View removeRefreshToken;
+    @BindView(R.id.debug_removeRefreshToken) View removeRefreshToken;
 
-    @Bind(R.id.debug_invalidateAccessToken) View invalidateAccessToken;
+    @BindView(R.id.debug_invalidateAccessToken) View invalidateAccessToken;
 
-    @Bind(R.id.debug_invalidateRefreshToken) View invalidateRefreshToken;
+    @BindView(R.id.debug_invalidateRefreshToken) View invalidateRefreshToken;
 
-    @Bind(R.id.debug_networkStatusCode) Spinner httpStatusCode;
+    @BindView(R.id.debug_networkStatusCode) Spinner httpStatusCode;
 
-    @Bind(R.id.debug_drawer) ViewGroup drawerContent;
+    @BindView(R.id.debug_drawer) ViewGroup drawerContent;
 
-    @Bind(R.id.debug_initialSync) View initialSync;
+    @BindView(R.id.debug_initialSync) View initialSync;
 
-    @Bind(R.id.debug_forceUpdate) View forceUpdate;
+    @BindView(R.id.debug_forceUpdate) View forceUpdate;
 
-    @Bind(R.id.debug_updatedLastDay) View updatedLastDay;
+    @BindView(R.id.debug_updatedLastDay) View updatedLastDay;
 
-    @Bind(R.id.debug_syncWatching) View syncWatching;
+    @BindView(R.id.debug_syncWatching) View syncWatching;
 
-    @Bind(R.id.debug_syncLists) View syncLists;
+    @BindView(R.id.debug_syncLists) View syncLists;
 
-    @Bind(R.id.debug_authJobServiceStatus) TextView authJobServiceStatus;
+    @BindView(R.id.debug_authJobServiceStatus) TextView authJobServiceStatus;
 
-    @Bind(R.id.debug_jobServiceStatus) TextView jobServiceStatus;
+    @BindView(R.id.debug_jobServiceStatus) TextView jobServiceStatus;
 
-    @Bind(R.id.debug_jobCount) TextView jobCount;
+    @BindView(R.id.debug_jobCount) TextView jobCount;
 
-    @Bind(R.id.debug_startJobService) TextView startJobService;
+    @BindView(R.id.debug_startJobService) TextView startJobService;
   }
 }

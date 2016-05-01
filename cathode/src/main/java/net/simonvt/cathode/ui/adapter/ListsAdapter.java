@@ -23,7 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
@@ -80,9 +80,9 @@ public class ListsAdapter extends RecyclerCursorAdapter<ListsAdapter.ViewHolder>
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.name) TextView name;
+    @BindView(R.id.name) TextView name;
 
-    @Bind(R.id.description) TextView description;
+    @BindView(R.id.description) TextView description;
 
     public ViewHolder(View itemView) {
       super(itemView);

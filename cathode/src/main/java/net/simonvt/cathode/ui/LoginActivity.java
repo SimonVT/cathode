@@ -25,7 +25,7 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
@@ -61,11 +61,11 @@ public class LoginActivity extends BaseActivity {
 
   @Inject Bus bus;
 
-  @Bind(R.id.buttonContainer) View buttonContainer;
-  @Bind(R.id.error_message) TextView errorMessage;
-  @Bind(R.id.login) Button login;
+  @BindView(R.id.buttonContainer) View buttonContainer;
+  @BindView(R.id.error_message) TextView errorMessage;
+  @BindView(R.id.login) Button login;
 
-  @Bind(R.id.progressContainer) View progressContainer;
+  @BindView(R.id.progressContainer) View progressContainer;
 
   private boolean fetchingToken;
 

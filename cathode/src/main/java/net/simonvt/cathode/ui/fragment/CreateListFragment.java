@@ -28,8 +28,9 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -40,17 +41,19 @@ public class CreateListFragment extends DialogFragment {
 
   @Inject ListsTaskScheduler listsTaskScheduler;
 
-  @Bind(R.id.toolbar) Toolbar toolbar;
+  private Unbinder unbinder;
 
-  @Bind(R.id.name) EditText name;
+  @BindView(R.id.toolbar) Toolbar toolbar;
 
-  @Bind(R.id.description) EditText description;
+  @BindView(R.id.name) EditText name;
 
-  @Bind(R.id.privacy) Spinner privacy;
+  @BindView(R.id.description) EditText description;
 
-  @Bind(R.id.displayNumbers) CheckBox displayNumbers;
+  @BindView(R.id.privacy) Spinner privacy;
 
-  @Bind(R.id.allowComments) CheckBox allowComments;
+  @BindView(R.id.displayNumbers) CheckBox displayNumbers;
+
+  @BindView(R.id.allowComments) CheckBox allowComments;
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -68,7 +71,7 @@ public class CreateListFragment extends DialogFragment {
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    ButterKnife.bind(this, view);
+    unbinder = ButterKnife.bind(this, view);
 
     toolbar.setTitle(R.string.action_list_create);
     toolbar.inflateMenu(R.menu.fragment_list_create);
@@ -101,5 +104,11 @@ public class CreateListFragment extends DialogFragment {
             android.R.layout.simple_spinner_item);
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     privacy.setAdapter(adapter);
+  }
+
+  @Override public void onDestroyView() {
+    unbinder.unbind();
+    unbinder = null;
+    super.onDestroyView();
   }
 }

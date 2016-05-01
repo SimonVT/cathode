@@ -29,7 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -274,10 +274,10 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
 
   static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.title) TextView title;
-    @Bind(R.id.progress) ProgressBar progress;
-    @Bind(R.id.summary) TextView summary;
-    @Bind(R.id.overflow) OverflowView overflow;
+    @BindView(R.id.title) TextView title;
+    @BindView(R.id.progress) ProgressBar progress;
+    @BindView(R.id.summary) TextView summary;
+    @BindView(R.id.overflow) OverflowView overflow;
 
     ViewHolder(View v) {
       super(v);

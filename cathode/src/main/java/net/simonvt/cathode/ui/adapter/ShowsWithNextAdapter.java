@@ -23,7 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -271,13 +271,13 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.title) TextView title;
-    @Bind(R.id.watched) TextView watched;
-    @Bind(R.id.progress) ProgressBar progressBar;
-    @Bind(R.id.nextEpisode) TextView nextEpisode;
-    @Bind(R.id.firstAired) TimeStamp firstAired;
-    @Bind(R.id.overflow) OverflowView overflow;
-    @Bind(R.id.poster) RemoteImageView poster;
+    @BindView(R.id.title) TextView title;
+    @BindView(R.id.watched) TextView watched;
+    @BindView(R.id.progress) ProgressBar progressBar;
+    @BindView(R.id.nextEpisode) TextView nextEpisode;
+    @BindView(R.id.firstAired) TimeStamp firstAired;
+    @BindView(R.id.overflow) OverflowView overflow;
+    @BindView(R.id.poster) RemoteImageView poster;
 
     public int showTypeCount;
     public int showAiredCount;

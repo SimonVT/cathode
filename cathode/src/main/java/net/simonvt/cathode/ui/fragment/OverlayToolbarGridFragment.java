@@ -22,16 +22,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import net.simonvt.cathode.R;
 
 public abstract class OverlayToolbarGridFragment<T extends RecyclerView.ViewHolder>
     extends ToolbarGridFragment<T> {
 
-  @Bind(R.id.overlayParent) ViewGroup overlayParent;
+  @BindView(R.id.overlayParent) ViewGroup overlayParent;
 
-  @Bind(R.id.content) View layout;
-  @Bind(R.id.overlay) TextView overlay;
+  @BindView(R.id.content) View layout;
+  @BindView(R.id.overlay) TextView overlay;
   private int overlayText;
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {

@@ -25,7 +25,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -135,11 +135,11 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.screen) RemoteImageView screen;
+    @BindView(R.id.screen) RemoteImageView screen;
 
-    @Bind(R.id.title) TextView title;
-    @Bind(R.id.firstAired) TimeStamp firstAired;
-    @Bind(R.id.number) TextView number;
+    @BindView(R.id.title) TextView title;
+    @BindView(R.id.firstAired) TimeStamp firstAired;
+    @BindView(R.id.number) TextView number;
 
     ViewHolder(View v) {
       super(v);

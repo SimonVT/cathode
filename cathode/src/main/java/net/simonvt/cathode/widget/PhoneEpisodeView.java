@@ -19,7 +19,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -28,13 +28,13 @@ public class PhoneEpisodeView extends ViewGroup {
 
   private static final float SCREEN_RATIO = 680.f / 1000.f;
 
-  @Bind(R.id.screen) RemoteImageView poster;
+  @BindView(R.id.screen) RemoteImageView poster;
 
-  @Bind(R.id.number) TextView number;
+  @BindView(R.id.number) TextView number;
 
-  @Bind(R.id.title) TextView title;
+  @BindView(R.id.title) TextView title;
 
-  @Bind(R.id.firstAired) TextView firstAired;
+  @BindView(R.id.firstAired) TextView firstAired;
 
   private int minHeight;
 

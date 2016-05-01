@@ -23,7 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -268,12 +268,12 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
 
   static class ShowViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.poster) RemoteImageView poster;
-    @Bind(R.id.indicator) IndicatorView indicator;
-    @Bind(R.id.title) TextView title;
-    @Bind(R.id.overview) TextView overview;
-    @Bind(R.id.overflow) OverflowView overflow;
-    @Bind(R.id.rating) CircularProgressIndicator rating;
+    @BindView(R.id.poster) RemoteImageView poster;
+    @BindView(R.id.indicator) IndicatorView indicator;
+    @BindView(R.id.title) TextView title;
+    @BindView(R.id.overview) TextView overview;
+    @BindView(R.id.overflow) OverflowView overflow;
+    @BindView(R.id.rating) CircularProgressIndicator rating;
 
     ShowViewHolder(View v) {
       super(v);
@@ -283,11 +283,11 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
 
   static class EpisodeViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.screen) RemoteImageView screen;
-    @Bind(R.id.title) TextView title;
-    @Bind(R.id.firstAired) TimeStamp firstAired;
-    @Bind(R.id.episode) TextView episode;
-    @Bind(R.id.overflow) OverflowView overflow;
+    @BindView(R.id.screen) RemoteImageView screen;
+    @BindView(R.id.title) TextView title;
+    @BindView(R.id.firstAired) TimeStamp firstAired;
+    @BindView(R.id.episode) TextView episode;
+    @BindView(R.id.overflow) OverflowView overflow;
 
     public EpisodeViewHolder(View v) {
       super(v);

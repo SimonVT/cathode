@@ -28,7 +28,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import java.text.DateFormat;
 import java.util.Date;
@@ -298,15 +298,15 @@ public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewH
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.infoPane) View infoPane;
-    @Bind(R.id.avatar) RemoteImageView avatar;
-    @Bind(R.id.username) TextView username;
-    @Bind(R.id.date) TextView date;
-    @Bind(R.id.commentText) TextView commentText;
-    @Bind(R.id.likes) TextView likes;
-    @Bind(R.id.replies) @Nullable TextView replies;
-    @Bind(R.id.spoiler) View spoiler;
-    @Bind(R.id.spoilerOverlay) View spoilerOverlay;
+    @BindView(R.id.infoPane) View infoPane;
+    @BindView(R.id.avatar) RemoteImageView avatar;
+    @BindView(R.id.username) TextView username;
+    @BindView(R.id.date) TextView date;
+    @BindView(R.id.commentText) TextView commentText;
+    @BindView(R.id.likes) TextView likes;
+    @BindView(R.id.replies) @Nullable TextView replies;
+    @BindView(R.id.spoiler) View spoiler;
+    @BindView(R.id.spoilerOverlay) View spoilerOverlay;
 
     Drawable likeDrawable;
     Drawable repliesDrawable;

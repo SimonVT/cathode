@@ -22,7 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -239,11 +239,11 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
 
   public static class ItemViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.title) TextView title;
-    @Bind(R.id.nextEpisode) TextView nextEpisode;
-    @Bind(R.id.firstAired) TimeStamp firstAired;
-    @Bind(R.id.check_in) OverflowView checkIn;
-    @Bind(R.id.poster) RemoteImageView poster;
+    @BindView(R.id.title) TextView title;
+    @BindView(R.id.nextEpisode) TextView nextEpisode;
+    @BindView(R.id.firstAired) TimeStamp firstAired;
+    @BindView(R.id.check_in) OverflowView checkIn;
+    @BindView(R.id.poster) RemoteImageView poster;
 
     ItemViewHolder(View v) {
       super(v);

@@ -21,9 +21,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.util.Intents;
@@ -33,7 +34,9 @@ public class AboutDialog extends DialogFragment {
   private static final String DIALOG_LICENSES =
       "net.simonvt.cathode.ui.dialog.AboutDialog.licenses";
 
-  @Bind(R.id.version) TextView version;
+  private Unbinder unbinder;
+
+  @BindView(R.id.version) TextView version;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -47,8 +50,14 @@ public class AboutDialog extends DialogFragment {
 
   @Override public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    ButterKnife.bind(this, view);
+    unbinder = ButterKnife.bind(this, view);
     version.setText(BuildConfig.VERSION_NAME);
+  }
+
+  @Override public void onDestroyView() {
+    unbinder.unbind();
+    unbinder = null;
+    super.onDestroyView();
   }
 
   @OnClick(R.id.licenses) public void showLicenses() {
@@ -72,10 +81,5 @@ public class AboutDialog extends DialogFragment {
         Intents.openUrl(getContext(), getString(R.string.source_url));
         break;
     }
-  }
-
-  @Override public void onDestroyView() {
-    ButterKnife.unbind(this);
-    super.onDestroyView();
   }
 }

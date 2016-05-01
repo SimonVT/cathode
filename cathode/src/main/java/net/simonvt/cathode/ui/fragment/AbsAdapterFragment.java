@@ -25,7 +25,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import net.simonvt.cathode.R;
 
 public abstract class AbsAdapterFragment extends BaseFragment {
@@ -40,10 +40,10 @@ public abstract class AbsAdapterFragment extends BaseFragment {
 
   private BaseAdapter adapter;
 
-  @Bind(R.id.progressContainer) @Nullable View progressContainer;
-  @Bind(R.id.listContainer) @Nullable View listContainer;
-  @Bind(android.R.id.list) AbsListView adapterView;
-  @Bind(android.R.id.empty) TextView empty;
+  @BindView(R.id.progressContainer) @Nullable View progressContainer;
+  @BindView(R.id.listContainer) @Nullable View listContainer;
+  @BindView(android.R.id.list) AbsListView adapterView;
+  @BindView(android.R.id.empty) TextView empty;
 
   private Context appContext;
 

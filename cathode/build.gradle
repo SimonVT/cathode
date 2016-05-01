@@ -26,6 +26,7 @@ dependencies {
   compile parent.libraries.okhttp
 
   compile parent.libraries.butterknife
+  apt parent.libraries.butterknifeCompiler
   compile parent.libraries.timber
 
   compile parent.libraries.dashclockApi

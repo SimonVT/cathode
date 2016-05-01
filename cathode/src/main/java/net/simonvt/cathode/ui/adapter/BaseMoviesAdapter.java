@@ -21,7 +21,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -160,11 +160,11 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.poster) RemoteImageView poster;
-    @Bind(R.id.title) TextView title;
-    @Bind(R.id.overview) TextView overview;
-    @Bind(R.id.overflow) OverflowView overflow;
-    @Bind(R.id.rating) @Nullable CircularProgressIndicator rating;
+    @BindView(R.id.poster) RemoteImageView poster;
+    @BindView(R.id.title) TextView title;
+    @BindView(R.id.overview) TextView overview;
+    @BindView(R.id.overflow) OverflowView overflow;
+    @BindView(R.id.rating) @Nullable CircularProgressIndicator rating;
 
     ViewHolder(View v) {
       super(v);

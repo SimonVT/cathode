@@ -30,7 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -86,33 +86,33 @@ public class MovieFragment extends RefreshableAppBarFragment
   @Inject MovieTaskScheduler movieScheduler;
   @Inject Bus bus;
 
-  @Bind(R.id.year) TextView year;
-  @Bind(R.id.certification) TextView certification;
-  //@Bind(R.id.poster) RemoteImageView poster;
-  @Bind(R.id.overview) TextView overview;
-  @Bind(R.id.isWatched) TextView isWatched;
-  @Bind(R.id.inCollection) TextView collection;
-  @Bind(R.id.inWatchlist) TextView watchlist;
-  @Bind(R.id.rating) CircularProgressIndicator rating;
+  @BindView(R.id.year) TextView year;
+  @BindView(R.id.certification) TextView certification;
+  //@BindView(R.id.poster) RemoteImageView poster;
+  @BindView(R.id.overview) TextView overview;
+  @BindView(R.id.isWatched) TextView isWatched;
+  @BindView(R.id.inCollection) TextView collection;
+  @BindView(R.id.inWatchlist) TextView watchlist;
+  @BindView(R.id.rating) CircularProgressIndicator rating;
 
-  @Bind(R.id.trailer) View trailer;
+  @BindView(R.id.trailer) View trailer;
 
-  @Bind(R.id.actorsParent) View actorsParent;
-  @Bind(R.id.actorsHeader) View actorsHeader;
-  @Bind(R.id.actors) LinearLayout actors;
-  @Bind(R.id.peopleContainer) LinearLayout peopleContainer;
+  @BindView(R.id.actorsParent) View actorsParent;
+  @BindView(R.id.actorsHeader) View actorsHeader;
+  @BindView(R.id.actors) LinearLayout actors;
+  @BindView(R.id.peopleContainer) LinearLayout peopleContainer;
 
-  @Bind(R.id.commentsParent) View commentsParent;
-  @Bind(R.id.commentsHeader) View commentsHeader;
-  @Bind(R.id.commentsContainer) LinearLayout commentsContainer;
+  @BindView(R.id.commentsParent) View commentsParent;
+  @BindView(R.id.commentsHeader) View commentsHeader;
+  @BindView(R.id.commentsContainer) LinearLayout commentsContainer;
 
-  @Bind(R.id.websiteTitle) View websiteTitle;
-  @Bind(R.id.website) TextView website;
+  @BindView(R.id.websiteTitle) View websiteTitle;
+  @BindView(R.id.website) TextView website;
 
-  @Bind(R.id.viewOnTitle) View viewOnTitle;
-  @Bind(R.id.viewOnContainer) ViewGroup viewOnContainer;
-  @Bind(R.id.viewOnImdb) View viewOnImdb;
-  @Bind(R.id.viewOnTmdb) View viewOnTmdb;
+  @BindView(R.id.viewOnTitle) View viewOnTitle;
+  @BindView(R.id.viewOnContainer) ViewGroup viewOnContainer;
+  @BindView(R.id.viewOnImdb) View viewOnImdb;
+  @BindView(R.id.viewOnTmdb) View viewOnTmdb;
 
   private Cursor userComments;
   private Cursor comments;

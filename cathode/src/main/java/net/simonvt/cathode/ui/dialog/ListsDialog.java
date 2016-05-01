@@ -30,8 +30,9 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -78,7 +79,9 @@ public class ListsDialog extends DialogFragment {
 
   private List<Item> lists = new ArrayList<>();
 
-  @Bind(R.id.container) LinearLayout container;
+  private Unbinder unbinder;
+
+  @BindView(R.id.container) LinearLayout container;
 
   private View loading;
   private View empty;
@@ -119,7 +122,7 @@ public class ListsDialog extends DialogFragment {
 
   @Override public void onViewCreated(View view, @Nullable Bundle inState) {
     super.onViewCreated(view, inState);
-    ButterKnife.bind(this, view);
+    unbinder = ButterKnife.bind(this, view);
 
     loading = getLayoutInflater(inState).inflate(R.layout.dialog_lists_loading, container, false);
     empty = getLayoutInflater(inState).inflate(R.layout.dialog_lists_empty, container, false);
@@ -128,7 +131,8 @@ public class ListsDialog extends DialogFragment {
   }
 
   @Override public void onDestroyView() {
-    ButterKnife.unbind(this);
+    unbinder.unbind();
+    unbinder = null;
     loading = null;
     empty = null;
     super.onDestroyView();

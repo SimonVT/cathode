@@ -29,7 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -79,19 +79,19 @@ public class EpisodeFragment extends AppBarFragment {
   @Inject EpisodeTaskScheduler episodeScheduler;
   @Inject Bus bus;
 
-  @Bind(R.id.title) TextView title;
-  @Bind(R.id.overview) TextView overview;
-  @Bind(R.id.firstAired) TextView firstAired;
+  @BindView(R.id.title) TextView title;
+  @BindView(R.id.overview) TextView overview;
+  @BindView(R.id.firstAired) TextView firstAired;
 
-  @Bind(R.id.rating) CircularProgressIndicator rating;
+  @BindView(R.id.rating) CircularProgressIndicator rating;
 
-  @Bind(R.id.isWatched) View watchedView;
-  @Bind(R.id.inCollection) View inCollectionView;
-  @Bind(R.id.inWatchlist) View inWatchlistView;
+  @BindView(R.id.isWatched) View watchedView;
+  @BindView(R.id.inCollection) View inCollectionView;
+  @BindView(R.id.inWatchlist) View inWatchlistView;
 
-  @Bind(R.id.commentsParent) View commentsParent;
-  @Bind(R.id.commentsHeader) View commentsHeader;
-  @Bind(R.id.commentsContainer) LinearLayout commentsContainer;
+  @BindView(R.id.commentsParent) View commentsParent;
+  @BindView(R.id.commentsHeader) View commentsHeader;
+  @BindView(R.id.commentsContainer) LinearLayout commentsContainer;
 
   private Cursor userComments;
 

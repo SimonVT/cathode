@@ -19,7 +19,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import butterknife.Bind;
+import butterknife.BindView;
 import net.simonvt.cathode.R;
 
 public abstract class ProgressFragment extends BaseFragment {
@@ -30,9 +30,9 @@ public abstract class ProgressFragment extends BaseFragment {
 
   private static final int ANIMATION_DURATION = 600;
 
-  @Bind(R.id.contentContainer) View content;
+  @BindView(R.id.contentContainer) View content;
 
-  @Bind(R.id.progressContainer) View progress;
+  @BindView(R.id.progressContainer) View progress;
 
   private boolean animating;
 

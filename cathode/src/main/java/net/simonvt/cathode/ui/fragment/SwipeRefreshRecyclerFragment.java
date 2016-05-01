@@ -22,13 +22,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.Bind;
+import butterknife.BindView;
 import net.simonvt.cathode.R;
 
 public abstract class SwipeRefreshRecyclerFragment<T extends RecyclerView.ViewHolder>
     extends GridRecyclerViewFragment<T> implements SwipeRefreshLayout.OnRefreshListener {
 
-  @Bind(R.id.swipeRefresh) SwipeRefreshLayout swipeRefreshLayout;
+  @BindView(R.id.swipeRefresh) SwipeRefreshLayout swipeRefreshLayout;
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_swiperefresh_recyclerview, container, false);

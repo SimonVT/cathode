@@ -19,7 +19,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 
@@ -27,9 +27,9 @@ public class PhoneShowView extends ViewGroup {
 
   private int minHeight;
 
-  @Bind(R.id.infoParent) View infoParent;
-  @Bind(R.id.overflow) OverflowView overflow;
-  @Bind(R.id.poster) RemoteImageView poster;
+  @BindView(R.id.infoParent) View infoParent;
+  @BindView(R.id.overflow) OverflowView overflow;
+  @BindView(R.id.poster) RemoteImageView poster;
 
   public PhoneShowView(Context context) {
     super(context);
