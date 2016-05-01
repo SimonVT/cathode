@@ -193,7 +193,7 @@ public class LoginActivity extends BaseActivity {
           Call<UserSettings> userSettingsCall = usersService.getUserSettings();
           Response<UserSettings> userSettingsResponse = userSettingsCall.execute();
 
-          if (response.isSuccessful()) {
+          if (response.isSuccessful() && userSettingsResponse.body() != null) {
             final UserSettings userSettings = userSettingsResponse.body();
             Settings.clearProfile(context);
             Settings.updateProfile(context, userSettings);
