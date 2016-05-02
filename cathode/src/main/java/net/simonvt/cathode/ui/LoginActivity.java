@@ -23,10 +23,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
@@ -63,7 +63,6 @@ public class LoginActivity extends BaseActivity {
 
   @BindView(R.id.buttonContainer) View buttonContainer;
   @BindView(R.id.error_message) TextView errorMessage;
-  @BindView(R.id.login) Button login;
 
   @BindView(R.id.progressContainer) View progressContainer;
 
@@ -75,14 +74,12 @@ public class LoginActivity extends BaseActivity {
 
     setContentView(R.layout.activity_login);
     ButterKnife.bind(this);
+  }
 
-    login.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        Intent authorize = new Intent(LoginActivity.this, OauthWebViewActivity.class);
-        startActivityForResult(authorize, REQUEST_OAUTH);
-        errorMessage.setVisibility(View.GONE);
-      }
-    });
+  @OnClick(R.id.login) void onLoginClick() {
+    Intent authorize = new Intent(LoginActivity.this, OauthWebViewActivity.class);
+    startActivityForResult(authorize, REQUEST_OAUTH);
+    errorMessage.setVisibility(View.GONE);
   }
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {

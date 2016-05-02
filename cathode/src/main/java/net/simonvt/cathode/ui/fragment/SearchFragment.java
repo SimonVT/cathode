@@ -31,6 +31,7 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import butterknife.OnClick;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -150,13 +151,11 @@ public abstract class SearchFragment extends OverlayToolbarGridFragment<Recycler
       }
     });
 
-    empty.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        query(query);
-      }
-    });
-
     Timber.d("onViewCreated");
+  }
+
+  @OnClick(android.R.id.empty) void onResendQuery() {
+    query(query);
   }
 
   @Override public void onDestroy() {

@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
+import butterknife.OnClick;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -169,20 +170,16 @@ public class EpisodeFragment extends AppBarFragment {
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
+  }
 
-    rating.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        RatingDialog.newInstance(RatingDialog.Type.EPISODE, episodeId, currentRating)
-            .show(getFragmentManager(), DIALOG_RATING);
-      }
-    });
+  @OnClick(R.id.rating) void onRatingClick() {
+    RatingDialog.newInstance(RatingDialog.Type.EPISODE, episodeId, currentRating)
+        .show(getFragmentManager(), DIALOG_RATING);
+  }
 
-    commentsHeader.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        AddCommentDialog.newInstance(ItemType.EPISODE, episodeId)
-            .show(getFragmentManager(), DIALOG_COMMENT_ADD);
-      }
-    });
+  @OnClick(R.id.commentsHeader) void onShowComments() {
+    AddCommentDialog.newInstance(ItemType.EPISODE, episodeId)
+        .show(getFragmentManager(), DIALOG_COMMENT_ADD);
   }
 
   @Override public void createMenu(Toolbar toolbar) {

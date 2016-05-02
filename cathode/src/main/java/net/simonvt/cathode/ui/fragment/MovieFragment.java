@@ -31,6 +31,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
+import butterknife.OnClick;
 import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -172,29 +173,23 @@ public class MovieFragment extends RefreshableAppBarFragment
     super.onViewCreated(view, inState);
     overview.setText(movieOverview);
 
-    rating.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        RatingDialog.newInstance(RatingDialog.Type.MOVIE, movieId, currentRating)
-            .show(getFragmentManager(), DIALOG_RATING);
-      }
-    });
-
-    actorsHeader.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        navigationListener.onDisplayMovieActors(movieId, movieTitle);
-      }
-    });
-
-    commentsHeader.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        navigationListener.onDisplayComments(ItemType.MOVIE, movieId);
-      }
-    });
-
     getLoaderManager().initLoader(Loaders.MOVIE, null, this);
     getLoaderManager().initLoader(Loaders.MOVIE_ACTORS, null, actorsLoader);
     getLoaderManager().initLoader(Loaders.MOVIE_USER_COMMENTS, null, userCommentsLoader);
     getLoaderManager().initLoader(Loaders.MOVIE_COMMENTS, null, commentsLoader);
+  }
+
+  @OnClick(R.id.rating) void onRatingClick() {
+    RatingDialog.newInstance(RatingDialog.Type.MOVIE, movieId, currentRating)
+        .show(getFragmentManager(), DIALOG_RATING);
+  }
+
+  @OnClick(R.id.actorsHeader) void onShowActors() {
+    navigationListener.onDisplayMovieActors(movieId, movieTitle);
+  }
+
+  @OnClick(R.id.commentsHeader) void onShowComments() {
+    navigationListener.onDisplayComments(ItemType.MOVIE, movieId);
   }
 
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
