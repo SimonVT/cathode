@@ -132,6 +132,7 @@ import net.simonvt.cathode.scheduler.SearchTaskScheduler;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.search.MovieSearchHandler;
+import net.simonvt.cathode.search.SearchHandler;
 import net.simonvt.cathode.search.ShowSearchHandler;
 import net.simonvt.cathode.service.CathodeSyncAdapter;
 import net.simonvt.cathode.service.SyncWatchingReceiver;
@@ -262,8 +263,8 @@ import net.simonvt.cathode.widget.RemoteImageView;
         CollectedHideMovie.class,
 
         // Misc
-        ShowSearchHandler.class, ShowSearchHandler.SearchThread.class, MovieSearchHandler.class,
-        MovieSearchHandler.SearchThread.class, ApiSettings.class
+        ShowSearchHandler.class, SearchHandler.SearchThread.class, MovieSearchHandler.class,
+        ApiSettings.class
     })
 public class AppModule {
 
