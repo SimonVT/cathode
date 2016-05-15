@@ -140,6 +140,7 @@ import net.simonvt.cathode.ui.HiddenItems;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.LoginActivity;
 import net.simonvt.cathode.ui.SettingsActivity;
+import net.simonvt.cathode.ui.TokenTask;
 import net.simonvt.cathode.ui.adapter.CommentsAdapter;
 import net.simonvt.cathode.ui.adapter.HiddenItemsAdapter;
 import net.simonvt.cathode.ui.adapter.MovieRecommendationsAdapter;
@@ -203,7 +204,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         MovieDatabaseHelper.class, UserDatabaseHelper.class,
 
         // Activities
-        HomeActivity.class, LoginActivity.class, LoginActivity.TokenTask.class,
+        HomeActivity.class, LoginActivity.class, TokenTask.class,
         CalendarSetupActivity.class, SettingsActivity.class, HiddenItems.class,
 
         // Fragments

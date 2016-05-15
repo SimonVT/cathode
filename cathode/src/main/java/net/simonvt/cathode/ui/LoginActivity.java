@@ -16,10 +16,8 @@
 
 package net.simonvt.cathode.ui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -27,31 +25,16 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Produce;
-import com.squareup.otto.Subscribe;
-import java.io.IOException;
 import javax.inject.Inject;
-import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.api.TraktSettings;
-import net.simonvt.cathode.api.entity.AccessToken;
-import net.simonvt.cathode.api.entity.TokenRequest;
-import net.simonvt.cathode.api.entity.UserSettings;
-import net.simonvt.cathode.api.enumeration.GrantType;
-import net.simonvt.cathode.api.service.AuthorizationService;
-import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.setup.CalendarSetupActivity;
-import retrofit2.Call;
-import retrofit2.Response;
-import timber.log.Timber;
 
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends BaseActivity implements TokenTask.Callback {
 
   static final String QUERY_CODE = "code";
 
@@ -59,14 +42,10 @@ public class LoginActivity extends BaseActivity {
 
   @Inject JobManager jobManager;
 
-  @Inject Bus bus;
-
   @BindView(R.id.buttonContainer) View buttonContainer;
   @BindView(R.id.error_message) TextView errorMessage;
 
   @BindView(R.id.progressContainer) View progressContainer;
-
-  private boolean fetchingToken;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -74,6 +53,11 @@ public class LoginActivity extends BaseActivity {
 
     setContentView(R.layout.activity_login);
     ButterKnife.bind(this);
+
+    if (TokenTask.runningInstance != null) {
+      TokenTask.runningInstance.setCallback(this);
+      setRefreshing(true);
+    }
   }
 
   @OnClick(R.id.login) void onLoginClick() {
@@ -85,38 +69,14 @@ public class LoginActivity extends BaseActivity {
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (requestCode == REQUEST_OAUTH && resultCode == RESULT_OK) {
       final String code = data.getStringExtra(QUERY_CODE);
-      new TokenTask(this).execute(code);
+      TokenTask.start(this, code, this);
+      setRefreshing(true);
     }
   }
 
-  @Override protected void onResume() {
-    super.onResume();
-    bus.register(this);
-  }
+  @Override public void onTokenFetched() {
+    setRefreshing(false);
 
-  @Override protected void onPause() {
-    bus.unregister(this);
-    super.onPause();
-  }
-
-  @Subscribe public void onFetchingTokenEvent(FetchingTokenEvent event) {
-    if (isFinishing()) {
-      Timber.d("Is finishing");
-      return;
-    }
-
-    fetchingToken = event.isFetchingToken();
-
-    if (fetchingToken) {
-      buttonContainer.setVisibility(View.GONE);
-      progressContainer.setVisibility(View.VISIBLE);
-    } else {
-      buttonContainer.setVisibility(View.VISIBLE);
-      progressContainer.setVisibility(View.GONE);
-    }
-  }
-
-  @Subscribe public void onTokenFetched(TokenFetchedEvent event) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
     settings.edit()
         .putBoolean(Settings.TRAKT_LOGGED_IN, true)
@@ -134,124 +94,20 @@ public class LoginActivity extends BaseActivity {
     jobManager.addJob(new SyncJob());
   }
 
-  @Subscribe public void onFetchingTokenFailedEvent(FetchingTokenFailedEvent event) {
+  @Override public void onTokenFetchedFail(int error) {
+    setRefreshing(false);
+
     errorMessage.setVisibility(View.VISIBLE);
-    errorMessage.setText(event.getError());
+    errorMessage.setText(error);
   }
 
-  private static class Result {
-
-    boolean success;
-
-    int errorMessage;
-
-    private Result() {
-      this.success = true;
-    }
-
-    public Result(int errorMessage) {
-      this.errorMessage = errorMessage;
-      this.success = false;
-    }
-  }
-
-  public static class TokenTask extends AsyncTask<String, Void, Result> {
-
-    @Inject AuthorizationService authorizationService;
-    @Inject UsersService usersService;
-    @Inject TraktSettings traktSettings;
-    @Inject Bus bus;
-
-    final Context context;
-
-    public TokenTask(Context context) {
-      this.context = context.getApplicationContext();
-      CathodeApp.inject(context, this);
-      bus.register(this);
-    }
-
-    @Produce public FetchingTokenEvent produceFetchingTokenEvent() {
-      return new FetchingTokenEvent(true);
-    }
-
-    @Override protected Result doInBackground(String... params) {
-      String code = params[0];
-
-      try {
-        Call<AccessToken> call = authorizationService.getToken(
-            TokenRequest.getAccessToken(code, BuildConfig.TRAKT_CLIENT_ID, BuildConfig.TRAKT_SECRET,
-                BuildConfig.TRAKT_REDIRECT_URL, GrantType.AUTHORIZATION_CODE));
-        Response<AccessToken> response = call.execute();
-
-        if (response.isSuccessful()) {
-          AccessToken token = response.body();
-          traktSettings.updateTokens(token);
-
-          Call<UserSettings> userSettingsCall = usersService.getUserSettings();
-          Response<UserSettings> userSettingsResponse = userSettingsCall.execute();
-
-          if (response.isSuccessful() && userSettingsResponse.body() != null) {
-            final UserSettings userSettings = userSettingsResponse.body();
-            Settings.clearProfile(context);
-            Settings.updateProfile(context, userSettings);
-
-            return new Result();
-          } else {
-            if (response.code() >= 500 && response.code() < 600) {
-              return new Result(R.string.login_error_5xx);
-            }
-          }
-        } else {
-          if (response.code() >= 500 && response.code() < 600) {
-            return new Result(R.string.login_error_5xx);
-          }
-        }
-      } catch (IOException e) {
-        Timber.d(e, "Unable to get token");
-      }
-
-      return new Result(R.string.login_error_unknown);
-    }
-
-    @Override protected void onPostExecute(Result result) {
-      bus.unregister(this);
-
-      if (result.success) {
-        bus.post(new TokenFetchedEvent());
-      } else {
-        bus.post(new FetchingTokenFailedEvent(result.errorMessage));
-      }
-
-      bus.post(new FetchingTokenEvent(false));
-    }
-  }
-
-  public static class FetchingTokenEvent {
-
-    private boolean fetchingToken;
-
-    public FetchingTokenEvent(boolean fetchingToken) {
-      this.fetchingToken = fetchingToken;
-    }
-
-    public boolean isFetchingToken() {
-      return fetchingToken;
-    }
-  }
-
-  public static class TokenFetchedEvent {
-  }
-
-  public static class FetchingTokenFailedEvent {
-
-    private int error;
-
-    public FetchingTokenFailedEvent(int error) {
-      this.error = error;
-    }
-
-    public int getError() {
-      return error;
+  void setRefreshing(boolean refreshing) {
+    if (refreshing) {
+      buttonContainer.setVisibility(View.GONE);
+      progressContainer.setVisibility(View.VISIBLE);
+    } else {
+      buttonContainer.setVisibility(View.VISIBLE);
+      progressContainer.setVisibility(View.GONE);
     }
   }
 }
