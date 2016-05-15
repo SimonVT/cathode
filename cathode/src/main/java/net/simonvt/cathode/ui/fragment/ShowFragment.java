@@ -106,9 +106,10 @@ public class ShowFragment extends RefreshableAppBarFragment {
       ShowColumns.TITLE, ShowColumns.YEAR, ShowColumns.AIR_TIME, ShowColumns.AIR_DAY,
       ShowColumns.NETWORK, ShowColumns.CERTIFICATION, ShowColumns.POSTER, ShowColumns.FANART,
       ShowColumns.USER_RATING, ShowColumns.RATING, ShowColumns.OVERVIEW, ShowColumns.IN_WATCHLIST,
-      ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT, ShowColumns.LAST_COMMENT_SYNC,
-      ShowColumns.HOMEPAGE, ShowColumns.TRAILER, ShowColumns.IMDB_ID, ShowColumns.TVDB_ID,
-      ShowColumns.TMDB_ID, HiddenColumns.HIDDEN_CALENDAR,
+      ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT, ShowColumns.LAST_SYNC,
+      ShowColumns.LAST_COMMENT_SYNC, ShowColumns.LAST_ACTORS_SYNC, ShowColumns.HOMEPAGE,
+      ShowColumns.TRAILER, ShowColumns.IMDB_ID, ShowColumns.TVDB_ID, ShowColumns.TMDB_ID,
+      HiddenColumns.HIDDEN_CALENDAR,
   };
 
   private static final String[] EPISODE_PROJECTION = new String[] {
@@ -581,9 +582,16 @@ public class ShowFragment extends RefreshableAppBarFragment {
       this.trailer.setVisibility(View.GONE);
     }
 
+    final long lastSync = Cursors.getLong(cursor, ShowColumns.LAST_SYNC);
+
     final long lastCommentSync = Cursors.getLong(cursor, ShowColumns.LAST_COMMENT_SYNC);
     if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {
       showScheduler.syncComments(showId);
+    }
+
+    final long lastActorsSync = Cursors.getLong(cursor, ShowColumns.LAST_ACTORS_SYNC);
+    if (lastSync > lastActorsSync) {
+      showScheduler.syncActors(showId);
     }
 
     final String website = Cursors.getString(cursor, ShowColumns.HOMEPAGE);

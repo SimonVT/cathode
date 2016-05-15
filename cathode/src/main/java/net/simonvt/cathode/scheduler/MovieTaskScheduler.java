@@ -35,6 +35,7 @@ import net.simonvt.cathode.remote.action.movies.WatchedMovie;
 import net.simonvt.cathode.remote.action.movies.WatchlistMovie;
 import net.simonvt.cathode.remote.sync.comments.SyncComments;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
+import net.simonvt.cathode.remote.sync.movies.SyncMovieCrew;
 import net.simonvt.cathode.util.DateUtils;
 
 public class MovieTaskScheduler extends BaseTaskScheduler {
@@ -54,6 +55,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
       @Override public void run() {
         final long traktId = movieHelper.getTraktId(movieId);
         queue(new SyncMovie(traktId));
+        queue(new SyncMovieCrew(traktId));
 
         Job job = new SyncComments(ItemType.MOVIE, traktId);
         job.setOnDoneListener(onDoneListener);
@@ -67,6 +69,19 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
       @Override public void run() {
         final long traktId = movieHelper.getTraktId(movieId);
         queue(new SyncComments(ItemType.MOVIE, traktId));
+      }
+    });
+  }
+
+  public void syncCrew(final long movieId) {
+    execute(new Runnable() {
+      @Override public void run() {
+        final long traktId = movieHelper.getTraktId(movieId);
+        queue(new SyncMovieCrew(traktId));
+
+        ContentValues values = new ContentValues();
+        values.put(MovieColumns.LAST_CREW_SYNC, System.currentTimeMillis());
+        context.getContentResolver().update(Movies.withId(movieId), values, null, null);
       }
     });
   }

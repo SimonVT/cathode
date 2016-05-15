@@ -152,7 +152,7 @@ public final class MovieDatabaseHelper {
     return ProviderSchematic.Movies.getId(resolver.insert(Movies.MOVIES, cv));
   }
 
-  public void updateMovie(Movie movie) {
+  public long updateMovie(Movie movie) {
     IdResult result = getIdOrCreate(movie.getIds().getTrakt());
     final long id = result.movieId;
 
@@ -162,6 +162,8 @@ public final class MovieDatabaseHelper {
     if (movie.getGenres() != null) {
       insertGenres(id, movie.getGenres());
     }
+
+    return id;
   }
 
   public void insertGenres(long movieId, List<String> genres) {

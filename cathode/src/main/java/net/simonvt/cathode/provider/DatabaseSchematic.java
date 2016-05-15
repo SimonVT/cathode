@@ -15,6 +15,7 @@
  */
 package net.simonvt.cathode.provider;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import java.util.Set;
@@ -54,7 +55,7 @@ import net.simonvt.schematic.annotation.Table;
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 20;
+  static final int DATABASE_VERSION = 21;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -616,6 +617,31 @@ import net.simonvt.schematic.annotation.Table;
         db.execSQL("ALTER TABLE " + Tables.MOVIES + " ADD COLUMN " + MovieColumns.LAST_COMMENT_SYNC
             + " INTEGER DEFAULT 0");
       }
+    }
+
+    if (oldVersion < 21) {
+      SqlUtils.createColumnIfNotExists(db, Tables.SHOWS, ShowColumns.LAST_SYNC,
+          DataType.Type.INTEGER, "0");
+      SqlUtils.createColumnIfNotExists(db, Tables.SHOWS, ShowColumns.LAST_ACTORS_SYNC,
+          DataType.Type.INTEGER, "0");
+      SqlUtils.createColumnIfNotExists(db, Tables.MOVIES, MovieColumns.LAST_SYNC,
+          DataType.Type.INTEGER, "0");
+      SqlUtils.createColumnIfNotExists(db, Tables.MOVIES, MovieColumns.LAST_CREW_SYNC,
+          DataType.Type.INTEGER, "0");
+
+      final long currentTime = System.currentTimeMillis();
+
+      ContentValues values = new ContentValues();
+      values.put(ShowColumns.LAST_SYNC, currentTime);
+      values.put(ShowColumns.LAST_ACTORS_SYNC, currentTime);
+
+      db.update(Tables.SHOWS, values, null, null);
+
+      values = new ContentValues();
+      values.put(MovieColumns.LAST_SYNC, currentTime);
+      values.put(MovieColumns.LAST_CREW_SYNC, currentTime);
+
+      db.update(Tables.MOVIES, values, null, null);
     }
   }
 }

@@ -332,9 +332,15 @@ public class MovieFragment extends RefreshableAppBarFragment
       this.trailer.setVisibility(View.GONE);
     }
 
+    final long lastSync = Cursors.getLong(cursor, MovieColumns.LAST_SYNC);
     final long lastCommentSync = Cursors.getLong(cursor, MovieColumns.LAST_COMMENT_SYNC);
     if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {
       movieScheduler.syncComments(movieId);
+    }
+
+    final long lastActorsSync = Cursors.getLong(cursor, MovieColumns.LAST_CREW_SYNC);
+    if (lastSync > lastActorsSync) {
+      movieScheduler.syncCrew(movieId);
     }
 
     final String website = Cursors.getString(cursor, DatabaseContract.ShowColumns.HOMEPAGE);
