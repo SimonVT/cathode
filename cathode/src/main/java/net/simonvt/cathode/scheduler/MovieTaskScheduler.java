@@ -69,6 +69,10 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
       @Override public void run() {
         final long traktId = movieHelper.getTraktId(movieId);
         queue(new SyncComments(ItemType.MOVIE, traktId));
+
+        ContentValues values = new ContentValues();
+        values.put(MovieColumns.LAST_COMMENT_SYNC, System.currentTimeMillis());
+        context.getContentResolver().update(Movies.withId(movieId), values, null, null);
       }
     });
   }

@@ -79,6 +79,10 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
       @Override public void run() {
         final long traktId = showHelper.getTraktId(showId);
         queue(new SyncComments(ItemType.SHOW, traktId));
+
+        ContentValues values = new ContentValues();
+        values.put(ShowColumns.LAST_COMMENT_SYNC, System.currentTimeMillis());
+        context.getContentResolver().update(Shows.withId(showId), values, null, null);
       }
     });
   }
