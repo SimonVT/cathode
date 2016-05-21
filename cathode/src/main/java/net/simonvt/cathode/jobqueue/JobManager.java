@@ -26,6 +26,7 @@ import java.util.List;
 import net.simonvt.cathode.jobqueue.JobDatabase.Tables;
 import net.simonvt.cathode.jobqueue.database.JobDatabase;
 import net.simonvt.cathode.util.MainHandler;
+import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
 public final class JobManager {
@@ -131,7 +132,7 @@ public final class JobManager {
       Cursor c = db.query(Tables.JOBS, null, null, null, null, null, null);
 
       while (c.moveToNext()) {
-        byte[] bytes = c.getBlob(c.getColumnIndex(JobColumns.JOB));
+        byte[] bytes = Cursors.getBlob(c, JobColumns.JOB);
         Job job = converter.from(bytes);
         addJobInternal(job);
       }

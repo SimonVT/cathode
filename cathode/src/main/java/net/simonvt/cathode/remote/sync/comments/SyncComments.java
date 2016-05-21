@@ -45,7 +45,7 @@ import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.UserDatabaseHelper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.PagedCallJob;
-import net.simonvt.cathode.util.Cursors;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import timber.log.Timber;
 
@@ -174,7 +174,7 @@ public class SyncComments extends PagedCallJob<Comment> {
           Tables.COMMENTS + "." + CommentColumns.ID,
       }, null, null, null);
       while (c.moveToNext()) {
-        final long id = c.getLong(c.getColumnIndex(CommentColumns.ID));
+        final long id = Cursors.getLong(c, CommentColumns.ID);
         existingComments.add(id);
         deleteComments.add(id);
       }
@@ -186,7 +186,7 @@ public class SyncComments extends PagedCallJob<Comment> {
           String.valueOf(itemType), String.valueOf(itemId),
       }, null);
       while (c.moveToNext()) {
-        final long id = c.getLong(c.getColumnIndex(CommentColumns.ID));
+        final long id = Cursors.getLong(c, CommentColumns.ID);
         existingComments.add(id);
         deleteComments.add(id);
       }

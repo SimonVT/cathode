@@ -168,12 +168,11 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
     } else {
       EpisodeViewHolder episodeHolder = (EpisodeViewHolder) holder;
 
-      final long id = cursor.getLong(cursor.getColumnIndex(EpisodeColumns.ID));
-      final String screenshotUrl =
-          cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.SCREENSHOT));
-      String title = cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.TITLE));
-      final int season = cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.SEASON));
-      final int episode = cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.EPISODE));
+      final long id = Cursors.getLong(cursor, EpisodeColumns.ID);
+      final String screenshotUrl = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
+      String title = Cursors.getString(cursor, EpisodeColumns.TITLE);
+      final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
+      final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
 
       if (TextUtils.isEmpty(title)) {
         if (season == 0) {

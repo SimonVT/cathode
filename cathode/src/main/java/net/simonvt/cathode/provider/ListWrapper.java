@@ -24,6 +24,7 @@ import net.simonvt.cathode.api.entity.CustomList;
 import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Lists;
+import net.simonvt.schematic.Cursors;
 
 public final class ListWrapper {
 
@@ -37,7 +38,7 @@ public final class ListWrapper {
         String.valueOf(traktId),
     }, null);
 
-    long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(ListsColumns.ID));
+    long id = !c.moveToFirst() ? -1L : Cursors.getLong(c, ListsColumns.ID);
 
     c.close();
 
@@ -49,7 +50,7 @@ public final class ListWrapper {
         ListsColumns.TRAKT_ID,
     }, null, null, null);
 
-    long traktId = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(ListsColumns.TRAKT_ID));
+    long traktId = !c.moveToFirst() ? -1L : Cursors.getLong(c, ListsColumns.TRAKT_ID);
 
     c.close();
 

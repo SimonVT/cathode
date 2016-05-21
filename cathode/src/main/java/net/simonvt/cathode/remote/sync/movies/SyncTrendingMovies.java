@@ -33,6 +33,7 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.CallJob;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import timber.log.Timber;
 
@@ -65,7 +66,7 @@ public class SyncTrendingMovies extends CallJob<List<TrendingItem>> {
     }, null, null, null);
     List<Long> trendingIds = new ArrayList<Long>();
     while (c.moveToNext()) {
-      final long movieId = c.getLong(c.getColumnIndex(MovieColumns.ID));
+      final long movieId = Cursors.getLong(c, MovieColumns.ID);
       trendingIds.add(movieId);
     }
     c.close();

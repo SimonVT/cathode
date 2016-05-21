@@ -28,6 +28,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
 public class SyncSeasons extends CallJob<List<Season>> {
@@ -67,7 +68,7 @@ public class SyncSeasons extends CallJob<List<Season>> {
         SeasonColumns.ID,
     }, null, null, null);
     while (currentSeasons.moveToNext()) {
-      final long id = currentSeasons.getLong(currentSeasons.getColumnIndex(SeasonColumns.ID));
+      final long id = Cursors.getLong(currentSeasons, SeasonColumns.ID);
       seasonIds.add(id);
     }
     currentSeasons.close();

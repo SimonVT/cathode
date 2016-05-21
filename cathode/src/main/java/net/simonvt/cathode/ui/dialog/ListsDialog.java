@@ -48,6 +48,7 @@ import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.ui.Loaders;
+import net.simonvt.schematic.Cursors;
 
 public class ListsDialog extends DialogFragment {
 
@@ -167,8 +168,8 @@ public class ListsDialog extends DialogFragment {
 
     listsCursor.moveToPosition(-1);
     while (listsCursor.moveToNext()) {
-      final long id = listsCursor.getLong(listsCursor.getColumnIndex(ListsColumns.ID));
-      final String name = listsCursor.getString(listsCursor.getColumnIndex(ListsColumns.NAME));
+      final long id = Cursors.getLong(listsCursor, ListsColumns.ID);
+      final String name = Cursors.getString(listsCursor, ListsColumns.NAME);
       Item item = getItem(id);
       if (item == null) {
         item = new Item(id, name);
@@ -183,8 +184,7 @@ public class ListsDialog extends DialogFragment {
 
     listItemCursor.moveToPosition(-1);
     while (listItemCursor.moveToNext()) {
-      final long listId =
-          listItemCursor.getLong(listItemCursor.getColumnIndex(ListItemColumns.LIST_ID));
+      final long listId = Cursors.getLong(listItemCursor, ListItemColumns.LIST_ID);
       getItem(listId).checked = true;
     }
 

@@ -27,6 +27,7 @@ import net.simonvt.cathode.provider.ListWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Lists;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
 public class SyncLists extends CallJob<List<CustomList>> {
@@ -59,7 +60,7 @@ public class SyncLists extends CallJob<List<CustomList>> {
         getContentResolver().query(Lists.LISTS, PROJECTION, ListsColumns.TRAKT_ID + ">=0", null,
             null);
     while (listsCursor.moveToNext()) {
-      listIds.add(listsCursor.getLong(listsCursor.getColumnIndex(ListsColumns.TRAKT_ID)));
+      listIds.add(Cursors.getLong(listsCursor, ListsColumns.TRAKT_ID));
     }
     listsCursor.close();
 

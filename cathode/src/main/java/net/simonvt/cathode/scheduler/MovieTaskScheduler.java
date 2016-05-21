@@ -37,6 +37,7 @@ import net.simonvt.cathode.remote.sync.comments.SyncComments;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieCrew;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.schematic.Cursors;
 
 public class MovieTaskScheduler extends BaseTaskScheduler {
 
@@ -171,7 +172,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         final long currentTime = System.currentTimeMillis();
         long expires = 0;
         if (c.moveToFirst()) {
-          expires = c.getLong(c.getColumnIndex(MovieColumns.EXPIRES_AT));
+          expires = Cursors.getLong(c, MovieColumns.EXPIRES_AT);
         }
 
         if (c.getCount() == 0 || (expires >= currentTime && expires > 0)) {
@@ -179,7 +180,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
               MovieColumns.ID, MovieColumns.RUNTIME,
           }, null, null, null);
           movie.moveToFirst();
-          final int runtime = movie.getInt(movie.getColumnIndex(MovieColumns.RUNTIME));
+          final int runtime = Cursors.getInt(movie, MovieColumns.RUNTIME);
           movie.close();
 
           final long startedAt = System.currentTimeMillis();

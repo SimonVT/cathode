@@ -32,6 +32,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import timber.log.Timber;
 
@@ -63,7 +64,7 @@ public class SyncMoviesRatings extends CallJob<List<RatingItem>> {
     }, MovieColumns.RATED_AT + ">0", null, null);
     List<Long> movieIds = new ArrayList<Long>();
     while (movies.moveToNext()) {
-      final long movieId = movies.getLong(movies.getColumnIndex(MovieColumns.ID));
+      final long movieId = Cursors.getLong(movies, MovieColumns.ID);
       movieIds.add(movieId);
     }
     movies.close();

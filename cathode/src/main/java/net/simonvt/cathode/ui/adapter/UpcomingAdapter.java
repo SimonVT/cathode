@@ -39,6 +39,7 @@ import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.OverflowView.OverflowActionListener;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.cathode.widget.TimeStamp;
+import net.simonvt.schematic.Cursors;
 
 public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder> {
 
@@ -100,10 +101,8 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     if (!isHeader(position)) {
       Cursor cursor = getCursor(position);
 
-      final long showLastModified =
-          cursor.getLong(cursor.getColumnIndexOrThrow(LastModifiedColumns.LAST_MODIFIED));
-      final long episodeLastModified =
-          cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_EPISODE_LAST_UPDATED));
+      final long showLastModified = Cursors.getLong(cursor, LastModifiedColumns.LAST_MODIFIED);
+      final long episodeLastModified = Cursors.getLong(cursor, COLUMN_EPISODE_LAST_UPDATED);
 
       return showLastModified + episodeLastModified;
     }
@@ -146,21 +145,20 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
       final int position) {
     final ItemViewHolder vh = (ItemViewHolder) holder;
 
-    final long id = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
+    final long id = Cursors.getLong(cursor, ShowColumns.ID);
 
-    final String showPosterUrl = cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER));
-    final String showTitle = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
-    final boolean watching = cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHING)) == 1;
+    final String showPosterUrl = Cursors.getString(cursor, ShowColumns.POSTER);
+    final String showTitle = Cursors.getString(cursor, ShowColumns.TITLE);
+    final boolean watching = Cursors.getInt(cursor, ShowColumns.WATCHING) == 1;
 
-    final int airedCount = cursor.getInt(cursor.getColumnIndex(ShowColumns.AIRED_COUNT));
-    final int watchedCount = cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHED_COUNT));
+    final int airedCount = Cursors.getInt(cursor, ShowColumns.AIRED_COUNT);
+    final int watchedCount = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT);
 
-    final long episodeId = cursor.getLong(cursor.getColumnIndex(COLUMN_EPISODE_ID));
-    final String episodeTitle = cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
-    final long episodeFirstAired =
-        cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED));
-    final int episodeSeasonNumber = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
-    final int episodeNumber = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
+    final long episodeId = Cursors.getLong(cursor, COLUMN_EPISODE_ID);
+    final String episodeTitle = Cursors.getString(cursor, EpisodeColumns.TITLE);
+    final long episodeFirstAired = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
+    final int episodeSeasonNumber = Cursors.getInt(cursor, EpisodeColumns.SEASON);
+    final int episodeNumber = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
 
     vh.title.setText(showTitle);
     vh.poster.setImage(showPosterUrl);

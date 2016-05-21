@@ -29,6 +29,7 @@ import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.database.DatabaseUtils;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.schematic.Cursors;
 
 public final class ShowDatabaseHelper {
 
@@ -70,7 +71,7 @@ public final class ShowDatabaseHelper {
       long id = -1L;
 
       if (c.moveToFirst()) {
-        id = c.getLong(c.getColumnIndex(ShowColumns.ID));
+        id = Cursors.getLong(c, ShowColumns.ID);
       }
 
       c.close();
@@ -90,7 +91,7 @@ public final class ShowDatabaseHelper {
 
     long traktId = -1L;
     if (c.moveToFirst()) {
-      traktId = c.getInt(c.getColumnIndex(ShowColumns.TRAKT_ID));
+      traktId = Cursors.getInt(c, ShowColumns.TRAKT_ID);
     }
 
     c.close();
@@ -160,7 +161,7 @@ public final class ShowDatabaseHelper {
 
       boolean exists = c.moveToFirst();
       if (exists) {
-        return lastUpdated > c.getLong(c.getColumnIndex(ShowColumns.LAST_UPDATED));
+        return lastUpdated > Cursors.getLong(c, ShowColumns.LAST_UPDATED);
       }
 
       return true;
@@ -178,10 +179,10 @@ public final class ShowDatabaseHelper {
       }, null, null, null);
 
       if (c.moveToFirst()) {
-        final boolean inWatchlist = c.getInt(c.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
-        final long fullSyncRequested = c.getLong(c.getColumnIndex(ShowColumns.FULL_SYNC_REQUESTED));
-        final int watchedCount = c.getInt(c.getColumnIndex(ShowColumns.WATCHED_COUNT));
-        final int collectionCount = c.getInt(c.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT));
+        final boolean inWatchlist = Cursors.getInt(c, ShowColumns.IN_WATCHLIST) == 1;
+        final long fullSyncRequested = Cursors.getLong(c, ShowColumns.FULL_SYNC_REQUESTED);
+        final int watchedCount = Cursors.getInt(c, ShowColumns.WATCHED_COUNT);
+        final int collectionCount = Cursors.getInt(c, ShowColumns.IN_COLLECTION_COUNT);
 
         return inWatchlist || watchedCount > 0 || collectionCount > 0 || fullSyncRequested > 0;
       }

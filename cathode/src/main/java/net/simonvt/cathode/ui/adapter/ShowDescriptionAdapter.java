@@ -34,6 +34,7 @@ import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.IndicatorView;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
+import net.simonvt.schematic.Cursors;
 
 public class ShowDescriptionAdapter
     extends RecyclerCursorAdapter<ShowDescriptionAdapter.ViewHolder> {
@@ -100,20 +101,19 @@ public class ShowDescriptionAdapter
   }
 
   @Override protected void onBindViewHolder(final ViewHolder holder, Cursor cursor, int position) {
-    final long id = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
-    final boolean watched = cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHED_COUNT)) > 0;
-    final boolean inCollection =
-        cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT)) > 1;
-    final boolean inWatchlist = cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
-    final float rating = cursor.getFloat(cursor.getColumnIndex(ShowColumns.RATING));
+    final long id = Cursors.getLong(cursor, ShowColumns.ID);
+    final boolean watched = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT) > 0;
+    final boolean inCollection = Cursors.getInt(cursor, ShowColumns.IN_COLLECTION_COUNT) > 1;
+    final boolean inWatchlist = Cursors.getInt(cursor, ShowColumns.IN_WATCHLIST) == 1;
+    final float rating = Cursors.getFloat(cursor, ShowColumns.RATING);
 
     holder.indicator.setWatched(watched);
     holder.indicator.setCollected(inCollection);
     holder.indicator.setInWatchlist(inWatchlist);
 
-    holder.poster.setImage(cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER)));
-    holder.title.setText(cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE)));
-    holder.overview.setText(cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW)));
+    holder.poster.setImage(Cursors.getString(cursor, ShowColumns.POSTER));
+    holder.title.setText(Cursors.getString(cursor, ShowColumns.TITLE));
+    holder.overview.setText(Cursors.getString(cursor, ShowColumns.OVERVIEW));
 
     holder.rating.setValue(rating);
 

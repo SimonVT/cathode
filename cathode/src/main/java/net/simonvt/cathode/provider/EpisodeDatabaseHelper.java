@@ -26,6 +26,7 @@ import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.entity.Images;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.schematic.Cursors;
 
 public final class EpisodeDatabaseHelper {
 
@@ -71,7 +72,7 @@ public final class EpisodeDatabaseHelper {
           String.valueOf(traktId),
       }, null);
 
-      long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(EpisodeColumns.ID));
+      long id = !c.moveToFirst() ? -1L : Cursors.getLong(c, EpisodeColumns.ID);
 
       c.close();
 
@@ -92,7 +93,7 @@ public final class EpisodeDatabaseHelper {
           String.valueOf(showId), String.valueOf(season), String.valueOf(episode),
       }, null);
 
-      long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(EpisodeColumns.ID));
+      long id = !c.moveToFirst() ? -1L : Cursors.getLong(c, EpisodeColumns.ID);
 
       c.close();
 
@@ -113,7 +114,7 @@ public final class EpisodeDatabaseHelper {
           String.valueOf(showId), String.valueOf(seasonId), String.valueOf(episode),
       }, null);
 
-      long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(EpisodeColumns.ID));
+      long id = !c.moveToFirst() ? -1L : Cursors.getLong(c, EpisodeColumns.ID);
 
       c.close();
 
@@ -127,7 +128,7 @@ public final class EpisodeDatabaseHelper {
           EpisodeColumns.TRAKT_ID,
       }, null, null, null);
 
-      long traktId = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(EpisodeColumns.TRAKT_ID));
+      long traktId = !c.moveToFirst() ? -1L : Cursors.getLong(c, EpisodeColumns.TRAKT_ID);
 
       c.close();
 
@@ -186,7 +187,7 @@ public final class EpisodeDatabaseHelper {
 
     long id = -1L;
     if (c.moveToFirst()) {
-      id = c.getLong(c.getColumnIndex(EpisodeColumns.SHOW_ID));
+      id = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
     }
 
     c.close();
@@ -201,7 +202,7 @@ public final class EpisodeDatabaseHelper {
 
     int season = -1;
     if (c.moveToFirst()) {
-      season = c.getInt(c.getColumnIndex(EpisodeColumns.SEASON));
+      season = Cursors.getInt(c, EpisodeColumns.SEASON);
     }
 
     c.close();
@@ -214,7 +215,7 @@ public final class EpisodeDatabaseHelper {
         EpisodeColumns.EPISODE,
     }, null, null, null);
 
-    int number = !c.moveToFirst() ? -1 : c.getInt(c.getColumnIndex(EpisodeColumns.EPISODE));
+    int number = !c.moveToFirst() ? -1 : Cursors.getInt(c, EpisodeColumns.EPISODE);
 
     c.close();
 
@@ -238,7 +239,7 @@ public final class EpisodeDatabaseHelper {
       }, null, null, null);
       c.moveToFirst();
       final long lastWatched =
-          c.getLong(c.getColumnIndex(DatabaseContract.ShowColumns.LAST_WATCHED_AT));
+          Cursors.getLong(c, DatabaseContract.ShowColumns.LAST_WATCHED_AT);
       c.close();
       if (watchedAt > lastWatched) {
         cv = new ContentValues();

@@ -37,6 +37,7 @@ import net.simonvt.cathode.provider.UserDatabaseHelper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.PagedCallJob;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import timber.log.Timber;
 
@@ -71,7 +72,7 @@ public class SyncCommentLikes extends PagedCallJob<Like> {
         CommentColumns.ID,
     }, CommentColumns.LIKED + "=1", null, null);
     while (c.moveToNext()) {
-      final long id = c.getLong(c.getColumnIndex(CommentColumns.ID));
+      final long id = Cursors.getLong(c, CommentColumns.ID);
       existingLikes.add(id);
       deleteLikes.add(id);
     }

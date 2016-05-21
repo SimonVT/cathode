@@ -53,6 +53,7 @@ import net.simonvt.cathode.remote.sync.SyncUserProfile;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import timber.log.Timber;
 
@@ -99,7 +100,7 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
         CommentColumns.ID,
     }, CommentColumns.IS_USER_COMMENT + "=1", null, null);
     while (c.moveToNext()) {
-      final long id = c.getLong(c.getColumnIndex(CommentColumns.ID));
+      final long id = Cursors.getLong(c, CommentColumns.ID);
       existingComments.add(id);
     }
     c.close();

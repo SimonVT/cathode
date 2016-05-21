@@ -20,6 +20,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import java.util.HashSet;
 import java.util.Set;
+import net.simonvt.schematic.Cursors;
 import net.simonvt.schematic.annotation.DataType;
 
 public final class SqlUtils {
@@ -32,7 +33,7 @@ public final class SqlUtils {
     Set<String> columns = new HashSet<>();
 
     while (cursor.moveToNext()) {
-      final String name = cursor.getString(cursor.getColumnIndex("name"));
+      final String name = Cursors.getString(cursor, "name");
       columns.add(name);
     }
 

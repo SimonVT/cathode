@@ -45,6 +45,7 @@ import net.simonvt.cathode.provider.DatabaseSchematic.Joins;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.SqlColumn;
+import net.simonvt.schematic.Cursors;
 import net.simonvt.schematic.annotation.ContentProvider;
 import net.simonvt.schematic.annotation.ContentUri;
 import net.simonvt.schematic.annotation.InexactContentUri;
@@ -1142,7 +1143,7 @@ public final class ProviderSchematic {
 
       List<Long> peopleIds = new ArrayList<Long>();
       while (people.moveToNext()) {
-        final long personId = people.getLong(people.getColumnIndex(PersonColumns.ID));
+        final long personId = Cursors.getLong(people, PersonColumns.ID);
         peopleIds.add(personId);
       }
 
@@ -1157,7 +1158,7 @@ public final class ProviderSchematic {
       }, null);
 
       while (c.moveToNext()) {
-        final long showId = c.getLong(c.getColumnIndex(ShowCharacterColumns.SHOW_ID));
+        final long showId = Cursors.getLong(c, ShowCharacterColumns.SHOW_ID);
 
         uris.add(ShowCharacters.fromShow(showId));
       }
@@ -1170,7 +1171,7 @@ public final class ProviderSchematic {
       }, null);
 
       while (c.moveToNext()) {
-        final long showId = c.getLong(c.getColumnIndex(MovieCastColumns.MOVIE_ID));
+        final long showId = Cursors.getLong(c, MovieCastColumns.MOVIE_ID);
 
         uris.add(MovieCast.fromMovie(showId));
       }

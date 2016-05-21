@@ -33,6 +33,7 @@ import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import timber.log.Timber;
 
@@ -67,7 +68,7 @@ public class SyncMovieRecommendations extends CallJob<List<Movie>> {
       List<Long> movieIds = new ArrayList<Long>();
       Cursor c = resolver.query(Movies.RECOMMENDED, null, null, null, null);
       while (c.moveToNext()) {
-        movieIds.add(c.getLong(c.getColumnIndex(MovieColumns.ID)));
+        movieIds.add(Cursors.getLong(c, MovieColumns.ID));
       }
       c.close();
 

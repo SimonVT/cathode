@@ -47,6 +47,7 @@ import net.simonvt.cathode.remote.sync.SyncPerson;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import timber.log.Timber;
 
@@ -115,8 +116,8 @@ public class SyncList extends CallJob<List<ListItem>> {
     List<Item> oldItems = new ArrayList<>(c.getCount());
 
     while (c.moveToNext()) {
-      oldItems.add(new Item(c.getInt(c.getColumnIndex(ListItemColumns.ITEM_TYPE)),
-          c.getLong(c.getColumnIndex(ListItemColumns.ITEM_ID))));
+      oldItems.add(new Item(Cursors.getInt(c, ListItemColumns.ITEM_TYPE),
+          Cursors.getLong(c, ListItemColumns.ITEM_ID)));
     }
     c.close();
 

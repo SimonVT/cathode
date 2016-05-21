@@ -27,6 +27,7 @@ import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
 public class SyncMoviesCollection extends CallJob<List<CollectionItem>> {
@@ -58,8 +59,8 @@ public class SyncMoviesCollection extends CallJob<List<CollectionItem>> {
 
     LongSparseArray<Long> ids = new LongSparseArray<Long>();
     while (c.moveToNext()) {
-      final long id = c.getLong(c.getColumnIndex(MovieColumns.ID));
-      final long listedAt = c.getLong(c.getColumnIndex(MovieColumns.LISTED_AT));
+      final long id = Cursors.getLong(c, MovieColumns.ID);
+      final long listedAt = Cursors.getLong(c, MovieColumns.LISTED_AT);
       ids.put(id, listedAt);
     }
     c.close();

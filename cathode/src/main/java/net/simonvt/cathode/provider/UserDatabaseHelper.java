@@ -24,6 +24,7 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.api.entity.Profile;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Users;
+import net.simonvt.schematic.Cursors;
 
 public class UserDatabaseHelper {
 
@@ -77,7 +78,7 @@ public class UserDatabaseHelper {
       long id = -1L;
 
       if (c.moveToFirst()) {
-        id = c.getLong(c.getColumnIndex(UserColumns.ID));
+        id = Cursors.getLong(c, UserColumns.ID);
       }
 
       c.close();

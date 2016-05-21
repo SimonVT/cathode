@@ -32,6 +32,7 @@ import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.RemoteImageView;
+import net.simonvt.schematic.Cursors;
 
 public class MovieActorsAdapter extends RecyclerCursorAdapter<MovieActorsAdapter.ViewHolder> {
 
@@ -59,9 +60,9 @@ public class MovieActorsAdapter extends RecyclerCursorAdapter<MovieActorsAdapter
   }
 
   @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
-    holder.headshot.setImage(cursor.getString(cursor.getColumnIndex(PersonColumns.HEADSHOT)));
-    holder.name.setText(cursor.getString(cursor.getColumnIndex(PersonColumns.NAME)));
-    holder.job.setText(cursor.getString(cursor.getColumnIndex(MovieCastColumns.CHARACTER)));
+    holder.headshot.setImage(Cursors.getString(cursor, PersonColumns.HEADSHOT));
+    holder.name.setText(Cursors.getString(cursor, PersonColumns.NAME));
+    holder.job.setText(Cursors.getString(cursor, MovieCastColumns.CHARACTER));
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {

@@ -27,6 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
+import net.simonvt.schematic.Cursors;
 
 public class ListsAdapter extends RecyclerCursorAdapter<ListsAdapter.ViewHolder> {
 
@@ -66,9 +67,9 @@ public class ListsAdapter extends RecyclerCursorAdapter<ListsAdapter.ViewHolder>
   }
 
   @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
-    final String name = cursor.getString(cursor.getColumnIndex(ListsColumns.NAME));
-    final String description = cursor.getString(cursor.getColumnIndex(ListsColumns.DESCRIPTION));
-    final long traktId = cursor.getLong(cursor.getColumnIndex(ListsColumns.TRAKT_ID));
+    final String name = Cursors.getString(cursor, ListsColumns.NAME);
+    final String description = Cursors.getString(cursor, ListsColumns.DESCRIPTION);
+    final long traktId = Cursors.getLong(cursor, ListsColumns.TRAKT_ID);
 
     final boolean enabled = traktId >= 0L;
     holder.itemView.setEnabled(enabled);

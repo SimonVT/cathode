@@ -28,6 +28,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
 public class SyncShowsWatchlist extends CallJob<List<WatchlistItem>> {
@@ -60,7 +61,7 @@ public class SyncShowsWatchlist extends CallJob<List<WatchlistItem>> {
     List<Long> showIds = new ArrayList<Long>();
 
     while (c.moveToNext()) {
-      showIds.add(c.getLong(c.getColumnIndex(ShowColumns.ID)));
+      showIds.add(Cursors.getLong(c, ShowColumns.ID));
     }
     c.close();
 

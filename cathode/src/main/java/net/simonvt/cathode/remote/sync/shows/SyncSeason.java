@@ -28,6 +28,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
 public class SyncSeason extends CallJob<List<Episode>> {
@@ -81,7 +82,7 @@ public class SyncSeason extends CallJob<List<Episode>> {
     }, null, null, null);
     List<Long> episodeIds = new ArrayList<Long>();
     while (c.moveToNext()) {
-      final long episodeId = c.getLong(c.getColumnIndex(EpisodeColumns.ID));
+      final long episodeId = Cursors.getLong(c, EpisodeColumns.ID);
       episodeIds.add(episodeId);
     }
     c.close();

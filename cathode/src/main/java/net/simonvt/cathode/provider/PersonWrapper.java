@@ -23,6 +23,7 @@ import net.simonvt.cathode.api.entity.Images;
 import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.People;
+import net.simonvt.schematic.Cursors;
 
 public final class PersonWrapper {
 
@@ -36,7 +37,7 @@ public final class PersonWrapper {
         String.valueOf(traktId),
     }, null);
 
-    long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(PersonColumns.ID));
+    long id = !c.moveToFirst() ? -1L : Cursors.getLong(c, PersonColumns.ID);
 
     c.close();
 
@@ -48,7 +49,7 @@ public final class PersonWrapper {
         PersonColumns.TRAKT_ID,
     }, null, null, null);
 
-    long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(PersonColumns.TRAKT_ID));
+    long id = !c.moveToFirst() ? -1L : Cursors.getLong(c, PersonColumns.TRAKT_ID);
 
     c.close();
 

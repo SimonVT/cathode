@@ -55,10 +55,10 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
-import net.simonvt.cathode.util.Cursors;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
+import net.simonvt.schematic.Cursors;
 
 public class EpisodeFragment extends AppBarFragment {
 
@@ -266,9 +266,9 @@ public class EpisodeFragment extends AppBarFragment {
       loaded = true;
 
       final int episodeNumber = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-      season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
+      season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
 
-      episodeTitle = cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
+      episodeTitle = Cursors.getString(cursor, EpisodeColumns.TITLE);
       if (TextUtils.isEmpty(episodeTitle)) {
         if (season == 0) {
           episodeTitle = getResources().getString(R.string.special_x, episodeNumber);
@@ -278,24 +278,24 @@ public class EpisodeFragment extends AppBarFragment {
       }
 
       title.setText(episodeTitle);
-      overview.setText(cursor.getString(cursor.getColumnIndex(EpisodeColumns.OVERVIEW)));
-      final String screenshot = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
+      overview.setText(Cursors.getString(cursor, EpisodeColumns.OVERVIEW));
+      final String screenshot = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
       setBackdrop(screenshot, true);
       firstAired.setText(DateUtils.millisToString(getActivity(),
-          cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED)), true));
+          Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED), true));
 
-      watched = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.WATCHED)) == 1;
-      collected = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.IN_COLLECTION)) == 1;
-      inWatchlist = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.IN_WATCHLIST)) == 1;
-      watching = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.WATCHING)) == 1;
-      checkedIn = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.CHECKED_IN)) == 1;
+      watched = Cursors.getInt(cursor, EpisodeColumns.WATCHED) == 1;
+      collected = Cursors.getInt(cursor, EpisodeColumns.IN_COLLECTION) == 1;
+      inWatchlist = Cursors.getInt(cursor, EpisodeColumns.IN_WATCHLIST) == 1;
+      watching = Cursors.getInt(cursor, EpisodeColumns.WATCHING) == 1;
+      checkedIn = Cursors.getInt(cursor, EpisodeColumns.CHECKED_IN) == 1;
 
       watchedView.setVisibility(watched ? View.VISIBLE : View.GONE);
       inCollectionView.setVisibility(collected ? View.VISIBLE : View.GONE);
       inWatchlistView.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
 
-      currentRating = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.USER_RATING));
-      final float ratingAll = cursor.getFloat(cursor.getColumnIndex(EpisodeColumns.RATING));
+      currentRating = Cursors.getInt(cursor, EpisodeColumns.USER_RATING);
+      final float ratingAll = Cursors.getFloat(cursor, EpisodeColumns.RATING);
       rating.setValue(ratingAll);
 
       invalidateMenu();

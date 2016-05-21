@@ -24,6 +24,7 @@ import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.schematic.Cursors;
 
 public class DashClockService extends DashClockExtension {
 
@@ -49,11 +50,11 @@ public class DashClockService extends DashClockExtension {
         }, EpisodeColumns.FIRST_AIRED + " ASC LIMIT 1");
 
     if (c.moveToFirst()) {
-      final int episode = c.getInt(c.getColumnIndex(EpisodeColumns.EPISODE));
-      final int season = c.getInt(c.getColumnIndex(EpisodeColumns.SEASON));
-      final String title = c.getString(c.getColumnIndex(EpisodeColumns.TITLE));
-      final long showId = c.getLong(c.getColumnIndex(EpisodeColumns.SHOW_ID));
-      final long firstAired = c.getLong(c.getColumnIndex(EpisodeColumns.FIRST_AIRED));
+      final int episode = Cursors.getInt(c, EpisodeColumns.EPISODE);
+      final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
+      final String title = Cursors.getString(c, EpisodeColumns.TITLE);
+      final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
+      final long firstAired = Cursors.getLong(c, EpisodeColumns.FIRST_AIRED);
 
       final String date = DateUtils.millisToString(this, firstAired, false);
 
@@ -62,7 +63,7 @@ public class DashClockService extends DashClockExtension {
         show.close();
         return; // Wat
       }
-      final String showTitle = show.getString(show.getColumnIndex(ShowColumns.TITLE));
+      final String showTitle = Cursors.getString(show, ShowColumns.TITLE);
       show.close();
 
       ExtensionData data = new ExtensionData().visible(true)

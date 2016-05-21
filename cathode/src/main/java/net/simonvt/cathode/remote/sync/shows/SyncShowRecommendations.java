@@ -32,6 +32,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import timber.log.Timber;
 
@@ -67,7 +68,7 @@ public class SyncShowRecommendations extends CallJob<List<Show>> {
 
     Cursor c = resolver.query(Shows.SHOWS_RECOMMENDED, null, null, null, null);
     while (c.moveToNext()) {
-      showIds.add(c.getLong(c.getColumnIndex(ShowColumns.ID)));
+      showIds.add(Cursors.getLong(c, ShowColumns.ID));
     }
     c.close();
 

@@ -46,6 +46,7 @@ import net.simonvt.cathode.ui.adapter.MovieRecommendationsAdapter;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
+import net.simonvt.schematic.Cursors;
 
 public class MovieRecommendationsFragment
     extends ToolbarSwipeRefreshRecyclerFragment<MoviesAdapter.ViewHolder>
@@ -202,8 +203,8 @@ public class MovieRecommendationsFragment
 
   @Override public void onMovieClicked(View view, int position, long id) {
     cursor.moveToPosition(position);
-    final String title = cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE));
-    final String overview = cursor.getString(cursor.getColumnIndex(MovieColumns.OVERVIEW));
+    final String title = Cursors.getString(cursor, MovieColumns.TITLE);
+    final String overview = Cursors.getString(cursor, MovieColumns.OVERVIEW);
     navigationListener.onDisplayMovie(id, title, overview);
   }
 

@@ -46,6 +46,7 @@ import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.HeaderSpanLookup;
 import net.simonvt.cathode.ui.adapter.ShowWatchlistAdapter;
+import net.simonvt.schematic.Cursors;
 
 public class ShowsWatchlistFragment
     extends ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>
@@ -137,14 +138,14 @@ public class ShowsWatchlistFragment
 
   @Override public void onShowClicked(int position, long id) {
     Cursor c = ((ShowWatchlistAdapter) getAdapter()).getCursor(position);
-    final String title = c.getString(c.getColumnIndex(ShowColumns.TITLE));
-    final String overview = c.getString(c.getColumnIndex(ShowColumns.OVERVIEW));
+    final String title = Cursors.getString(c, ShowColumns.TITLE);
+    final String overview = Cursors.getString(c, ShowColumns.OVERVIEW);
     navigationListener.onDisplayShow(id, title, overview, LibraryType.WATCHED);
   }
 
   @Override public void onEpisodeClicked(int position, long id) {
     Cursor c = ((ShowWatchlistAdapter) getAdapter()).getCursor(position);
-    navigationListener.onDisplayEpisode(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)));
+    navigationListener.onDisplayEpisode(id, Cursors.getString(c, ShowColumns.TITLE));
   }
 
   private void throttleLoaders() {

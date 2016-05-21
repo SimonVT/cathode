@@ -37,6 +37,7 @@ import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.cathode.widget.TimeStamp;
+import net.simonvt.schematic.Cursors;
 
 public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolder> {
 
@@ -90,23 +91,17 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
   }
 
   @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
-    final long id = cursor.getLong(cursor.getColumnIndexOrThrow(EpisodeColumns.ID));
-    String title = cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.TITLE));
-    final int season = cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.SEASON));
-    final int episode = cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.EPISODE));
-    final boolean watched =
-        cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.WATCHED)) == 1;
-    final boolean inCollection =
-        cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.IN_COLLECTION)) == 1;
-    final boolean inWatchlist =
-        cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.IN_WATCHLIST)) == 1;
-    final boolean watching =
-        cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.WATCHING)) == 1;
-    final boolean checkedIn =
-        cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.CHECKED_IN)) == 1;
-    final long firstAired =
-        cursor.getLong(cursor.getColumnIndexOrThrow(EpisodeColumns.FIRST_AIRED));
-    final String screen = cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.SCREENSHOT));
+    final long id = Cursors.getLong(cursor, EpisodeColumns.ID);
+    String title = Cursors.getString(cursor, EpisodeColumns.TITLE);
+    final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
+    final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
+    final boolean watched = Cursors.getInt(cursor, EpisodeColumns.WATCHED) == 1;
+    final boolean inCollection = Cursors.getInt(cursor, EpisodeColumns.IN_COLLECTION) == 1;
+    final boolean inWatchlist = Cursors.getInt(cursor, EpisodeColumns.IN_WATCHLIST) == 1;
+    final boolean watching = Cursors.getInt(cursor, EpisodeColumns.WATCHING) == 1;
+    final boolean checkedIn = Cursors.getInt(cursor, EpisodeColumns.CHECKED_IN) == 1;
+    final long firstAired = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
+    final String screen = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
 
     holder.screen.setImage(screen);
 

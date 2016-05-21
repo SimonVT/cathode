@@ -60,12 +60,12 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
-import net.simonvt.cathode.util.Cursors;
 import net.simonvt.cathode.util.Intents;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.RemoteImageView;
+import net.simonvt.schematic.Cursors;
 
 public class MovieFragment extends RefreshableAppBarFragment
     implements LoaderManager.LoaderCallbacks<SimpleCursor> {
@@ -287,30 +287,29 @@ public class MovieFragment extends RefreshableAppBarFragment
     if (cursor == null || !cursor.moveToFirst()) return;
     loaded = true;
 
-    final String title = cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE));
+    final String title = Cursors.getString(cursor, MovieColumns.TITLE);
     if (title != null && !title.equals(movieTitle)) {
       movieTitle = title;
       setTitle(movieTitle);
     }
-    final int year = cursor.getInt(cursor.getColumnIndex(MovieColumns.YEAR));
-    final String certification =
-        cursor.getString(cursor.getColumnIndex(MovieColumns.CERTIFICATION));
+    final int year = Cursors.getInt(cursor, MovieColumns.YEAR);
+    final String certification = Cursors.getString(cursor, MovieColumns.CERTIFICATION);
 
-    final String fanartUrl = cursor.getString(cursor.getColumnIndex(MovieColumns.FANART));
+    final String fanartUrl = Cursors.getString(cursor, MovieColumns.FANART);
     setBackdrop(fanartUrl, true);
-    final String posterUrl = cursor.getString(cursor.getColumnIndex(MovieColumns.POSTER));
+    final String posterUrl = Cursors.getString(cursor, MovieColumns.POSTER);
     //poster.setImage(posterUrl);
 
-    currentRating = cursor.getInt(cursor.getColumnIndex(MovieColumns.USER_RATING));
-    final float ratingAll = cursor.getFloat(cursor.getColumnIndex(MovieColumns.RATING));
+    currentRating = Cursors.getInt(cursor, MovieColumns.USER_RATING);
+    final float ratingAll = Cursors.getFloat(cursor, MovieColumns.RATING);
     rating.setValue(ratingAll);
 
-    movieOverview = cursor.getString(cursor.getColumnIndex(MovieColumns.OVERVIEW));
-    watched = cursor.getInt(cursor.getColumnIndex(MovieColumns.WATCHED)) == 1;
-    collected = cursor.getInt(cursor.getColumnIndex(MovieColumns.IN_COLLECTION)) == 1;
-    inWatchlist = cursor.getInt(cursor.getColumnIndex(MovieColumns.IN_WATCHLIST)) == 1;
-    watching = cursor.getInt(cursor.getColumnIndex(MovieColumns.WATCHING)) == 1;
-    checkedIn = cursor.getInt(cursor.getColumnIndex(MovieColumns.CHECKED_IN)) == 1;
+    movieOverview = Cursors.getString(cursor, MovieColumns.OVERVIEW);
+    watched = Cursors.getInt(cursor, MovieColumns.WATCHED) == 1;
+    collected = Cursors.getInt(cursor, MovieColumns.IN_COLLECTION) == 1;
+    inWatchlist = Cursors.getInt(cursor, MovieColumns.IN_WATCHLIST) == 1;
+    watching = Cursors.getInt(cursor, MovieColumns.WATCHING) == 1;
+    checkedIn = Cursors.getInt(cursor, MovieColumns.CHECKED_IN) == 1;
 
     isWatched.setVisibility(watched ? View.VISIBLE : View.GONE);
     collection.setVisibility(collected ? View.VISIBLE : View.GONE);
@@ -425,13 +424,13 @@ public class MovieFragment extends RefreshableAppBarFragment
 
       RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
       headshot.addTransformation(new CircleTransformation());
-      headshot.setImage(c.getString(c.getColumnIndex(PersonColumns.HEADSHOT)));
+      headshot.setImage(Cursors.getString(c, PersonColumns.HEADSHOT));
 
       TextView name = (TextView) v.findViewById(R.id.person_name);
-      name.setText(c.getString(c.getColumnIndex(PersonColumns.NAME)));
+      name.setText(Cursors.getString(c, PersonColumns.NAME));
 
       TextView character = (TextView) v.findViewById(R.id.person_job);
-      character.setText(c.getString(c.getColumnIndex(MovieCastColumns.CHARACTER)));
+      character.setText(Cursors.getString(c, MovieCastColumns.CHARACTER));
 
       peopleContainer.addView(v);
 

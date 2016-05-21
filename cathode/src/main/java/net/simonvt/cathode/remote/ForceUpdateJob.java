@@ -26,6 +26,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
+import net.simonvt.schematic.Cursors;
 
 public class ForceUpdateJob extends Job {
 
@@ -45,8 +46,8 @@ public class ForceUpdateJob extends Job {
     }, null, null, null);
 
     while (shows.moveToNext()) {
-      final long showId = shows.getLong(shows.getColumnIndex(ShowColumns.ID));
-      final long traktId = shows.getLong(shows.getColumnIndex(ShowColumns.TRAKT_ID));
+      final long showId = Cursors.getLong(shows, ShowColumns.ID);
+      final long traktId = Cursors.getLong(shows, ShowColumns.TRAKT_ID);
 
       final boolean syncFully = showHelper.shouldSyncFully(showId);
       queue(new SyncShow(traktId, syncFully));
@@ -59,7 +60,7 @@ public class ForceUpdateJob extends Job {
     }, null, null, null);
 
     while (movies.moveToNext()) {
-      final long traktId = movies.getLong(movies.getColumnIndex(MovieColumns.TRAKT_ID));
+      final long traktId = Cursors.getLong(movies, MovieColumns.TRAKT_ID);
       queue(new SyncMovie(traktId));
     }
 

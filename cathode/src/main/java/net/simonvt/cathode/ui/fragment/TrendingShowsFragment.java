@@ -48,6 +48,7 @@ import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
+import net.simonvt.schematic.Cursors;
 
 public class TrendingShowsFragment
     extends ToolbarSwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>
@@ -199,8 +200,8 @@ public class TrendingShowsFragment
 
   @Override public void onShowClick(View view, int position, long id) {
     cursor.moveToPosition(position);
-    final String title = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
-    final String overview = cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW));
+    final String title = Cursors.getString(cursor, ShowColumns.TITLE);
+    final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
     navigationListener.onDisplayShow(id, title, overview, LibraryType.WATCHED);
   }
 

@@ -48,13 +48,16 @@ import net.simonvt.cathode.event.CheckInFailedEvent;
 import net.simonvt.cathode.event.LogoutEvent;
 import net.simonvt.cathode.event.MessageEvent;
 import net.simonvt.cathode.event.RequestFailedEvent;
-import net.simonvt.cathode.provider.DatabaseContract;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.fragment.ActorsFragment;
 import net.simonvt.cathode.ui.fragment.CommentFragment;
 import net.simonvt.cathode.ui.fragment.CommentsFragment;
+import net.simonvt.cathode.ui.fragment.DashboardFragment;
 import net.simonvt.cathode.ui.fragment.EpisodeFragment;
 import net.simonvt.cathode.ui.fragment.ListFragment;
 import net.simonvt.cathode.ui.fragment.ListsFragment;
@@ -63,7 +66,6 @@ import net.simonvt.cathode.ui.fragment.MovieFragment;
 import net.simonvt.cathode.ui.fragment.MovieRecommendationsFragment;
 import net.simonvt.cathode.ui.fragment.MovieWatchlistFragment;
 import net.simonvt.cathode.ui.fragment.NavigationFragment;
-import net.simonvt.cathode.ui.fragment.DashboardFragment;
 import net.simonvt.cathode.ui.fragment.SearchMovieFragment;
 import net.simonvt.cathode.ui.fragment.SearchShowFragment;
 import net.simonvt.cathode.ui.fragment.SeasonFragment;
@@ -81,6 +83,7 @@ import net.simonvt.cathode.util.MainHandler;
 import net.simonvt.cathode.widget.Crouton;
 import net.simonvt.cathode.widget.WatchingView;
 import net.simonvt.cathode.widget.WatchingView.WatchingViewListener;
+import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
 public class HomeActivity extends BaseActivity
@@ -505,43 +508,27 @@ public class HomeActivity extends BaseActivity
 
   private void updateWatching() {
     if (watchingShow != null && watchingShow.moveToFirst()) {
-      final long showId =
-          watchingShow.getLong(watchingShow.getColumnIndex(DatabaseContract.ShowColumns.ID));
-      final String show =
-          watchingShow.getString(watchingShow.getColumnIndex(DatabaseContract.ShowColumns.TITLE));
-      final String poster =
-          watchingShow.getString(watchingShow.getColumnIndex(DatabaseContract.ShowColumns.POSTER));
-      final String episode = watchingShow.getString(
-          watchingShow.getColumnIndex(DatabaseContract.EpisodeColumns.TITLE));
-      final int season =
-          watchingShow.getInt(watchingShow.getColumnIndex(DatabaseContract.EpisodeColumns.SEASON));
+      final long showId = Cursors.getLong(watchingShow, ShowColumns.ID);
+      final String show = Cursors.getString(watchingShow, ShowColumns.TITLE);
+      final String poster = Cursors.getString(watchingShow, ShowColumns.POSTER);
+      final String episode = Cursors.getString(watchingShow, EpisodeColumns.TITLE);
+      final int season = Cursors.getInt(watchingShow, EpisodeColumns.SEASON);
 
-      final long episodeId = watchingShow.getLong(watchingShow.getColumnIndex("episodeId"));
-      final String episodeTitle = watchingShow.getString(
-          watchingShow.getColumnIndex(DatabaseContract.EpisodeColumns.TITLE));
-      final int episodeNumber =
-          watchingShow.getInt(watchingShow.getColumnIndex(DatabaseContract.EpisodeColumns.EPISODE));
-      final boolean checkedIn = watchingShow.getInt(
-          watchingShow.getColumnIndex(DatabaseContract.EpisodeColumns.CHECKED_IN)) == 1;
-      final long startTime = watchingShow.getLong(
-          watchingShow.getColumnIndex(DatabaseContract.EpisodeColumns.STARTED_AT));
-      final long endTime = watchingShow.getLong(
-          watchingShow.getColumnIndex(DatabaseContract.EpisodeColumns.EXPIRES_AT));
+      final long episodeId = Cursors.getLong(watchingShow, "episodeId");
+      final String episodeTitle = Cursors.getString(watchingShow, EpisodeColumns.TITLE);
+      final int episodeNumber = Cursors.getInt(watchingShow, EpisodeColumns.EPISODE);
+      final boolean checkedIn = Cursors.getInt(watchingShow, EpisodeColumns.CHECKED_IN) == 1;
+      final long startTime = Cursors.getLong(watchingShow, EpisodeColumns.STARTED_AT);
+      final long endTime = Cursors.getLong(watchingShow, EpisodeColumns.EXPIRES_AT);
 
       watchingView.watchingShow(showId, show, episodeId, episodeTitle, poster, startTime, endTime);
     } else if (watchingMovie != null && watchingMovie.moveToFirst()) {
-      final long id =
-          watchingMovie.getLong(watchingMovie.getColumnIndex(DatabaseContract.MovieColumns.ID));
-      final String title = watchingMovie.getString(
-          watchingMovie.getColumnIndex(DatabaseContract.MovieColumns.TITLE));
-      final String overview = watchingMovie.getString(
-          watchingMovie.getColumnIndex(DatabaseContract.MovieColumns.OVERVIEW));
-      final String poster = watchingMovie.getString(
-          watchingMovie.getColumnIndex(DatabaseContract.MovieColumns.POSTER));
-      final long startTime = watchingMovie.getLong(
-          watchingMovie.getColumnIndex(DatabaseContract.MovieColumns.STARTED_AT));
-      final long endTime = watchingMovie.getLong(
-          watchingMovie.getColumnIndex(DatabaseContract.MovieColumns.EXPIRES_AT));
+      final long id = Cursors.getLong(watchingMovie, MovieColumns.ID);
+      final String title = Cursors.getString(watchingMovie, MovieColumns.TITLE);
+      final String overview = Cursors.getString(watchingMovie, MovieColumns.OVERVIEW);
+      final String poster = Cursors.getString(watchingMovie, MovieColumns.POSTER);
+      final long startTime = Cursors.getLong(watchingMovie, MovieColumns.STARTED_AT);
+      final long endTime = Cursors.getLong(watchingMovie, MovieColumns.EXPIRES_AT);
 
       watchingView.watchingMovie(id, title, overview, poster, startTime, endTime);
     } else {
@@ -550,19 +537,19 @@ public class HomeActivity extends BaseActivity
   }
 
   private static final String[] SHOW_WATCHING_PROJECTION = new String[] {
-      DatabaseSchematic.Tables.SHOWS + "." + DatabaseContract.ShowColumns.ID,
-      DatabaseSchematic.Tables.SHOWS + "." + DatabaseContract.ShowColumns.TITLE,
-      DatabaseSchematic.Tables.SHOWS + "." + DatabaseContract.ShowColumns.POSTER,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.POSTER,
       DatabaseSchematic.Tables.EPISODES
           + "."
-          + DatabaseContract.EpisodeColumns.ID
+          + EpisodeColumns.ID
           + " AS episodeId",
-      DatabaseSchematic.Tables.EPISODES + "." + DatabaseContract.EpisodeColumns.TITLE,
-      DatabaseSchematic.Tables.EPISODES + "." + DatabaseContract.EpisodeColumns.SEASON,
-      DatabaseSchematic.Tables.EPISODES + "." + DatabaseContract.EpisodeColumns.EPISODE,
-      DatabaseSchematic.Tables.EPISODES + "." + DatabaseContract.EpisodeColumns.CHECKED_IN,
-      DatabaseSchematic.Tables.EPISODES + "." + DatabaseContract.EpisodeColumns.STARTED_AT,
-      DatabaseSchematic.Tables.EPISODES + "." + DatabaseContract.EpisodeColumns.EXPIRES_AT,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.TITLE,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SEASON,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.EPISODE,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.CHECKED_IN,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.STARTED_AT,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.EXPIRES_AT,
   };
 
   private LoaderManager.LoaderCallbacks<SimpleCursor> watchingShowCallback =
@@ -591,7 +578,7 @@ public class HomeActivity extends BaseActivity
         @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
           SimpleCursorLoader loader =
               new SimpleCursorLoader(HomeActivity.this, ProviderSchematic.Movies.WATCHING, null,
-                  DatabaseContract.MovieColumns.NEEDS_SYNC + "=0", null, null);
+                  MovieColumns.NEEDS_SYNC + "=0", null, null);
           loader.setUpdateThrottle(2000);
           return loader;
         }

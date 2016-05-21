@@ -42,6 +42,7 @@ import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import timber.log.Timber;
 
@@ -82,8 +83,7 @@ public class SyncWatching extends CallJob<Watching> {
 
     List<Long> episodeWatching = new ArrayList<Long>();
     while (episodeWatchingCursor.moveToNext()) {
-      episodeWatching.add(
-          episodeWatchingCursor.getLong(episodeWatchingCursor.getColumnIndex(EpisodeColumns.ID)));
+      episodeWatching.add(Cursors.getLong(episodeWatchingCursor, EpisodeColumns.ID));
     }
     episodeWatchingCursor.close();
 
@@ -93,8 +93,7 @@ public class SyncWatching extends CallJob<Watching> {
 
     List<Long> movieWatching = new ArrayList<Long>();
     while (movieWatchingCursor.moveToNext()) {
-      movieWatching.add(
-          movieWatchingCursor.getLong(movieWatchingCursor.getColumnIndex(MovieColumns.ID)));
+      movieWatching.add(Cursors.getLong(movieWatchingCursor, MovieColumns.ID));
     }
     movieWatchingCursor.close();
 

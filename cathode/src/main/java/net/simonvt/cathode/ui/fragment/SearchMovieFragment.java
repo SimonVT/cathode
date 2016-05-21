@@ -36,7 +36,7 @@ import net.simonvt.cathode.ui.adapter.MovieSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
-import net.simonvt.cathode.util.Cursors;
+import net.simonvt.schematic.Cursors;
 
 public class SearchMovieFragment extends SearchFragment {
 

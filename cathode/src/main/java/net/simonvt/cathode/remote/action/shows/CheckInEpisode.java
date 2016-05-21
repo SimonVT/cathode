@@ -39,8 +39,8 @@ import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.service.SyncWatchingReceiver;
-import net.simonvt.cathode.util.Cursors;
 import net.simonvt.cathode.util.MainHandler;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -103,7 +103,7 @@ public class CheckInEpisode extends CallJob<CheckinResponse> {
       }, null);
 
       if (c.moveToFirst()) {
-        final String title = c.getString(c.getColumnIndex(EpisodeColumns.TITLE));
+        final String title = Cursors.getString(c, EpisodeColumns.TITLE);
 
         MainHandler.post(new Runnable() {
           @Override public void run() {

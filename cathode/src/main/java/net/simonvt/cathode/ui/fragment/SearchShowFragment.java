@@ -37,7 +37,7 @@ import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
 import net.simonvt.cathode.ui.adapter.ShowSuggestionAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
-import net.simonvt.cathode.util.Cursors;
+import net.simonvt.schematic.Cursors;
 
 public class SearchShowFragment extends SearchFragment {
 

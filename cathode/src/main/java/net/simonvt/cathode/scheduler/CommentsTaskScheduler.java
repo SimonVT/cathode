@@ -33,7 +33,7 @@ import net.simonvt.cathode.remote.action.comments.DeleteCommentJob;
 import net.simonvt.cathode.remote.action.comments.LikeCommentJob;
 import net.simonvt.cathode.remote.action.comments.UnlikeCommentJob;
 import net.simonvt.cathode.remote.action.comments.UpdateCommentJob;
-import net.simonvt.cathode.util.Cursors;
+import net.simonvt.schematic.Cursors;
 
 public class CommentsTaskScheduler extends BaseTaskScheduler {
 

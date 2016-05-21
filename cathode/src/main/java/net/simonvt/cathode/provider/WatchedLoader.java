@@ -25,6 +25,7 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.schematic.Cursors;
 
 public class WatchedLoader extends SimpleLoaderBase<SimpleMergeCursor> {
 
@@ -64,8 +65,8 @@ public class WatchedLoader extends SimpleLoaderBase<SimpleMergeCursor> {
       long lastWatchedSeason = 0;
       long lastWatchedEpisode = -1;
       if (lastWatched.moveToFirst()) {
-        lastWatchedSeason = lastWatched.getInt(lastWatched.getColumnIndex(EpisodeColumns.SEASON));
-        lastWatchedEpisode = lastWatched.getInt(lastWatched.getColumnIndex(EpisodeColumns.EPISODE));
+        lastWatchedSeason = Cursors.getInt(lastWatched, EpisodeColumns.SEASON);
+        lastWatchedEpisode = Cursors.getInt(lastWatched, EpisodeColumns.EPISODE);
       }
 
       toWatch = getContext().getContentResolver()

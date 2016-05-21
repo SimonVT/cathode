@@ -40,8 +40,8 @@ import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
-import net.simonvt.cathode.util.Cursors;
 import net.simonvt.cathode.widget.OverflowView;
+import net.simonvt.schematic.Cursors;
 
 public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHolder> {
 
@@ -122,17 +122,13 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
   }
 
   @Override protected void onBindViewHolder(final ViewHolder holder, Cursor cursor, int position) {
-    final int seasonId = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.ID));
-    final int seasonNumber = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.SEASON));
-    final int airedCount = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.AIRED_COUNT));
-    final int watchedAiredCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.WATCHED_AIRED_COUNT));
-    final int watchedCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.WATCHED_COUNT));
-    final int collectedAiredCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.COLLECTED_AIRED_COUNT));
-    final int collectedCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.IN_COLLECTION_COUNT));
+    final int seasonId = Cursors.getInt(cursor, SeasonColumns.ID);
+    final int seasonNumber = Cursors.getInt(cursor, SeasonColumns.SEASON);
+    final int airedCount = Cursors.getInt(cursor, SeasonColumns.AIRED_COUNT);
+    final int watchedAiredCount = Cursors.getInt(cursor, SeasonColumns.WATCHED_AIRED_COUNT);
+    final int watchedCount = Cursors.getInt(cursor, SeasonColumns.WATCHED_COUNT);
+    final int collectedAiredCount = Cursors.getInt(cursor, SeasonColumns.COLLECTED_AIRED_COUNT);
+    final int collectedCount = Cursors.getInt(cursor, SeasonColumns.IN_COLLECTION_COUNT);
 
     switch (type) {
       case WATCHLIST:
@@ -200,11 +196,9 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
   }
 
   private void bindWatched(Context context, ViewHolder holder, Cursor cursor) {
-    final int unairedCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.UNAIRED_COUNT));
-    final int airedCount = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.AIRED_COUNT));
-    final int watchedAiredCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.WATCHED_AIRED_COUNT));
+    final int unairedCount = Cursors.getInt(cursor, SeasonColumns.UNAIRED_COUNT);
+    final int airedCount = Cursors.getInt(cursor, SeasonColumns.AIRED_COUNT);
+    final int watchedAiredCount = Cursors.getInt(cursor, SeasonColumns.WATCHED_AIRED_COUNT);
     final int toWatch = airedCount - watchedAiredCount;
 
     holder.progress.setMax(airedCount);
@@ -236,12 +230,10 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
   }
 
   private void bindCollection(Context context, ViewHolder holder, Cursor cursor) {
-    final int unairedCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.UNAIRED_COUNT));
+    final int unairedCount = Cursors.getInt(cursor, SeasonColumns.UNAIRED_COUNT);
 
-    final int airedCount = cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.AIRED_COUNT));
-    final int collectedAiredCount =
-        cursor.getInt(cursor.getColumnIndexOrThrow(SeasonColumns.COLLECTED_AIRED_COUNT));
+    final int airedCount = Cursors.getInt(cursor, SeasonColumns.AIRED_COUNT);
+    final int collectedAiredCount = Cursors.getInt(cursor, SeasonColumns.COLLECTED_AIRED_COUNT);
     final int toCollect = airedCount - collectedAiredCount;
 
     holder.progress.setMax(airedCount);

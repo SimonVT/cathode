@@ -75,7 +75,6 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
-import net.simonvt.cathode.util.Cursors;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.Intents;
 import net.simonvt.cathode.util.SqlColumn;
@@ -85,6 +84,7 @@ import net.simonvt.cathode.widget.HiddenPaneLayout;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RecyclerViewManager;
 import net.simonvt.cathode.widget.RemoteImageView;
+import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
 public class ShowFragment extends RefreshableAppBarFragment {
@@ -525,27 +525,26 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private void updateShowView(final Cursor cursor) {
     if (cursor == null || !cursor.moveToFirst()) return;
 
-    String title = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
+    String title = Cursors.getString(cursor, ShowColumns.TITLE);
     if (!TextUtils.equals(title, showTitle)) {
       showTitle = title;
       setTitle(title);
     }
-    final String airTime = cursor.getString(cursor.getColumnIndex(ShowColumns.AIR_TIME));
-    final String airDay = cursor.getString(cursor.getColumnIndex(ShowColumns.AIR_DAY));
-    final String network = cursor.getString(cursor.getColumnIndex(ShowColumns.NETWORK));
-    final String certification = cursor.getString(cursor.getColumnIndex(ShowColumns.CERTIFICATION));
-    final String fanartUrl = cursor.getString(cursor.getColumnIndex(ShowColumns.FANART));
+    final String airTime = Cursors.getString(cursor, ShowColumns.AIR_TIME);
+    final String airDay = Cursors.getString(cursor, ShowColumns.AIR_DAY);
+    final String network = Cursors.getString(cursor, ShowColumns.NETWORK);
+    final String certification = Cursors.getString(cursor, ShowColumns.CERTIFICATION);
+    final String fanartUrl = Cursors.getString(cursor, ShowColumns.FANART);
     if (fanartUrl != null) {
       setBackdrop(fanartUrl, true);
     }
-    showOverview = cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW));
-    inWatchlist = cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
-    final int inCollectionCount =
-        cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT));
-    final int watchedCount = cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHED_COUNT));
+    showOverview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
+    inWatchlist = Cursors.getInt(cursor, ShowColumns.IN_WATCHLIST) == 1;
+    final int inCollectionCount = Cursors.getInt(cursor, ShowColumns.IN_COLLECTION_COUNT);
+    final int watchedCount = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT);
 
-    currentRating = cursor.getInt(cursor.getColumnIndex(ShowColumns.USER_RATING));
-    final float ratingAll = cursor.getFloat(cursor.getColumnIndex(ShowColumns.RATING));
+    currentRating = Cursors.getInt(cursor, ShowColumns.USER_RATING);
+    final float ratingAll = Cursors.getFloat(cursor, ShowColumns.RATING);
     rating.setValue(ratingAll);
 
     calendarHidden = Cursors.getBoolean(cursor, HiddenColumns.HIDDEN_CALENDAR);
@@ -692,13 +691,13 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
       RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
       headshot.addTransformation(new CircleTransformation());
-      headshot.setImage(c.getString(c.getColumnIndex(PersonColumns.HEADSHOT)));
+      headshot.setImage(Cursors.getString(c, PersonColumns.HEADSHOT));
 
       TextView name = (TextView) v.findViewById(R.id.person_name);
-      name.setText(c.getString(c.getColumnIndex(PersonColumns.NAME)));
+      name.setText(Cursors.getString(c, PersonColumns.NAME));
 
       TextView character = (TextView) v.findViewById(R.id.person_job);
-      character.setText(c.getString(c.getColumnIndex(ShowCharacterColumns.CHARACTER)));
+      character.setText(Cursors.getString(c, ShowCharacterColumns.CHARACTER));
 
       peopleContainer.addView(v);
 
@@ -710,27 +709,25 @@ public class ShowFragment extends RefreshableAppBarFragment {
     if (cursor.moveToFirst()) {
       toWatch.setVisibility(View.VISIBLE);
 
-      toWatchId = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
-      toWatchTitle = cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
+      toWatchId = Cursors.getLong(cursor, ShowColumns.ID);
+      toWatchTitle = Cursors.getString(cursor, EpisodeColumns.TITLE);
 
       toWatchHolder.episodeTitle.setText(toWatchTitle);
 
-      final long airTime = cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED));
+      final long airTime = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
 
-      final int season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
-      final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
+      final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
+      final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
       final String toWatchEpisodeText = getString(R.string.season_x_episode_y, season, episode);
       toWatchHolder.episodeEpisode.setText(toWatchEpisodeText);
 
-      final String screenshotUrl =
-          cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
+      final String screenshotUrl = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
       toWatchHolder.episodeScreenshot.setImage(screenshotUrl);
 
       String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
 
-      final boolean watching = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.WATCHING)) == 1;
-      final boolean checkedIn =
-          cursor.getInt(cursor.getColumnIndex(EpisodeColumns.CHECKED_IN)) == 1;
+      final boolean watching = Cursors.getInt(cursor, EpisodeColumns.WATCHING) == 1;
+      final boolean checkedIn = Cursors.getInt(cursor, EpisodeColumns.CHECKED_IN) == 1;
 
       toWatchHolder.episodeOverflow.removeItems();
       if (checkedIn) {
@@ -752,23 +749,21 @@ public class ShowFragment extends RefreshableAppBarFragment {
       if (cursor.moveToNext()) {
         lastWatched.setVisibility(View.VISIBLE);
 
-        lastWatchedId = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
+        lastWatchedId = Cursors.getLong(cursor, ShowColumns.ID);
 
-        lastWatchedHolder.episodeTitle.setText(
-            cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE)));
+        lastWatchedHolder.episodeTitle.setText(Cursors.getString(cursor, EpisodeColumns.TITLE));
 
-        final long airTime = cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED));
+        final long airTime = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
         final String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
         lastWatchedHolder.episodeAirTime.setText(airTimeStr);
 
-        final int season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
-        final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
+        final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
+        final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
         final String lastWatchedEpisodeText =
             getString(R.string.season_x_episode_y, season, episode);
         lastWatchedHolder.episodeEpisode.setText(lastWatchedEpisodeText);
 
-        final String screenshotUrl =
-            cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
+        final String screenshotUrl = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
         lastWatchedHolder.episodeScreenshot.setImage(screenshotUrl);
       } else {
         lastWatched.setVisibility(toWatchId == -1 ? View.GONE : View.INVISIBLE);
@@ -787,22 +782,20 @@ public class ShowFragment extends RefreshableAppBarFragment {
     if (cursor.moveToFirst()) {
       toCollect.setVisibility(View.VISIBLE);
 
-      toCollectId = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
+      toCollectId = Cursors.getLong(cursor, ShowColumns.ID);
 
-      toCollectHolder.episodeTitle.setText(
-          cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE)));
+      toCollectHolder.episodeTitle.setText(Cursors.getString(cursor, EpisodeColumns.TITLE));
 
-      final long airTime = cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED));
+      final long airTime = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
       final String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
       toCollectHolder.episodeAirTime.setText(airTimeStr);
 
-      final int season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
-      final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
+      final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
+      final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
       final String toCollectEpisodeText = getString(R.string.season_x_episode_y, season, episode);
       toCollectHolder.episodeEpisode.setText(toCollectEpisodeText);
 
-      final String screenshotUrl =
-          cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
+      final String screenshotUrl = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
       toCollectHolder.episodeScreenshot.setImage(screenshotUrl);
     } else {
       toCollect.setVisibility(View.GONE);
@@ -813,23 +806,21 @@ public class ShowFragment extends RefreshableAppBarFragment {
       if (cursor.moveToNext()) {
         lastCollected.setVisibility(View.VISIBLE);
 
-        lastCollectedId = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
+        lastCollectedId = Cursors.getLong(cursor, ShowColumns.ID);
 
-        lastCollectedHolder.episodeTitle.setText(
-            cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE)));
+        lastCollectedHolder.episodeTitle.setText(Cursors.getString(cursor, EpisodeColumns.TITLE));
 
-        final long airTime = cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED));
+        final long airTime = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
         final String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
         lastCollectedHolder.episodeAirTime.setText(airTimeStr);
 
-        final int season = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
-        final int episode = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
+        final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
+        final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
         final String lastCollectedEpisodeText =
             getString(R.string.season_x_episode_y, season, episode);
         lastCollectedHolder.episodeEpisode.setText(lastCollectedEpisodeText);
 
-        final String screenshotUrl =
-            cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
+        final String screenshotUrl = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
         lastCollectedHolder.episodeScreenshot.setImage(screenshotUrl);
       } else {
         lastCollectedId = -1;

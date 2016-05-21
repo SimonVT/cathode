@@ -52,6 +52,7 @@ import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
 import net.simonvt.cathode.util.SqlCoalesce;
 import net.simonvt.cathode.util.SqlColumn;
+import net.simonvt.schematic.Cursors;
 
 public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHolder>
     implements LoaderManager.LoaderCallbacks<SimpleCursor>, ShowClickListener, SeasonClickListener,
@@ -122,8 +123,8 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
 
   @Override public void onShowClick(View view, int position, long id) {
     Cursor cursor = adapter.getCursor(position);
-    final String title = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
-    final String overview = cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW));
+    final String title = Cursors.getString(cursor, ShowColumns.TITLE);
+    final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
     navigationListener.onDisplayShow(id, title, overview, LibraryType.WATCHED);
   }
 
@@ -139,8 +140,8 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
 
   @Override public void onMovieClicked(View v, int position, long id) {
     Cursor cursor = adapter.getCursor(position);
-    final String title = cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE));
-    final String overview = cursor.getString(cursor.getColumnIndex(MovieColumns.OVERVIEW));
+    final String title = Cursors.getString(cursor, MovieColumns.TITLE);
+    final String overview = Cursors.getString(cursor, MovieColumns.OVERVIEW);
     navigationListener.onDisplayMovie(id, title, overview);
   }
 
@@ -150,8 +151,8 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
 
     final SimpleCursor cursor = (SimpleCursor) adapter.getCursor(position);
 
-    final long itemId = cursor.getLong(cursor.getColumnIndex(ListItemColumns.ITEM_ID));
-    final int itemType = cursor.getInt(cursor.getColumnIndex(ListItemColumns.ITEM_TYPE));
+    final long itemId = Cursors.getLong(cursor, ListItemColumns.ITEM_ID);
+    final int itemType = Cursors.getInt(cursor, ListItemColumns.ITEM_TYPE);
     listScheduler.removeItem(listId, itemType, itemId);
 
     cursor.remove(id);

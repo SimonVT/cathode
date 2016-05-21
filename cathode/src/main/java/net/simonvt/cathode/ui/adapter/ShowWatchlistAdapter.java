@@ -39,6 +39,7 @@ import net.simonvt.cathode.widget.IndicatorView;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.cathode.widget.TimeStamp;
+import net.simonvt.schematic.Cursors;
 
 public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder> {
 
@@ -98,7 +99,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
   @Override public long getLastModified(int position) {
     if (!isHeader(position)) {
       Cursor cursor = getCursor(position);
-      return cursor.getLong(cursor.getColumnIndexOrThrow(LastModifiedColumns.LAST_MODIFIED));
+      return Cursors.getLong(cursor, LastModifiedColumns.LAST_MODIFIED);
     }
 
     return super.getLastModified(position);
@@ -164,21 +165,19 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
     if (holder.getItemViewType() == TYPE_SHOW) {
       ShowViewHolder vh = (ShowViewHolder) holder;
 
-      final long id = cursor.getLong(cursor.getColumnIndex(ShowColumns.ID));
-      final boolean watched = cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHED_COUNT)) > 0;
-      final boolean inCollection =
-          cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT)) > 1;
-      final boolean inWatchlist =
-          cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_WATCHLIST)) == 1;
-      final float rating = cursor.getFloat(cursor.getColumnIndex(ShowColumns.RATING));
+      final long id = Cursors.getLong(cursor, ShowColumns.ID);
+      final boolean watched = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT) > 0;
+      final boolean inCollection = Cursors.getInt(cursor, ShowColumns.IN_COLLECTION_COUNT) > 1;
+      final boolean inWatchlist = Cursors.getInt(cursor, ShowColumns.IN_WATCHLIST) == 1;
+      final float rating = Cursors.getFloat(cursor, ShowColumns.RATING);
 
       vh.indicator.setWatched(watched);
       vh.indicator.setCollected(inCollection);
       vh.indicator.setInWatchlist(inWatchlist);
 
-      vh.poster.setImage(cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER)));
-      vh.title.setText(cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE)));
-      vh.overview.setText(cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW)));
+      vh.poster.setImage(Cursors.getString(cursor, ShowColumns.POSTER));
+      vh.title.setText(Cursors.getString(cursor, ShowColumns.TITLE));
+      vh.overview.setText(Cursors.getString(cursor, ShowColumns.OVERVIEW));
 
       vh.rating.setValue(rating);
 
@@ -205,14 +204,12 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
     } else {
       EpisodeViewHolder vh = (EpisodeViewHolder) holder;
 
-      final long id = cursor.getLong(cursor.getColumnIndex(EpisodeColumns.ID));
-      final String screenshotUrl =
-          cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.SCREENSHOT));
-      String title = cursor.getString(cursor.getColumnIndexOrThrow(EpisodeColumns.TITLE));
-      final long firstAired =
-          cursor.getLong(cursor.getColumnIndexOrThrow(EpisodeColumns.FIRST_AIRED));
-      final int season = cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.SEASON));
-      final int episode = cursor.getInt(cursor.getColumnIndexOrThrow(EpisodeColumns.EPISODE));
+      final long id = Cursors.getLong(cursor, EpisodeColumns.ID);
+      final String screenshotUrl = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
+      String title = Cursors.getString(cursor, EpisodeColumns.TITLE);
+      final long firstAired = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
+      final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
+      final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
 
       if (TextUtils.isEmpty(title)) {
         if (season == 0) {

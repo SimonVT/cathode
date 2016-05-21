@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
-import net.simonvt.cathode.util.Cursors;
+import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
 public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
@@ -167,7 +167,7 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
     }
 
     Cursor cursor = getCursor(position);
-    return cursor.getLong(cursor.getColumnIndexOrThrow(LastModifiedColumns.LAST_MODIFIED));
+    return Cursors.getLong(cursor, LastModifiedColumns.LAST_MODIFIED);
   }
 
   public Header getHeader(int position) {

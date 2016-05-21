@@ -33,6 +33,7 @@ import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import timber.log.Timber;
 
@@ -65,7 +66,7 @@ public class SyncSeasonsRatings extends CallJob<List<RatingItem>> {
     }, SeasonColumns.RATED_AT + ">0", null, null);
     List<Long> seasonIds = new ArrayList<Long>();
     while (seasons.moveToNext()) {
-      final long seasonId = seasons.getLong(seasons.getColumnIndex(SeasonColumns.ID));
+      final long seasonId = Cursors.getLong(seasons, SeasonColumns.ID);
       seasonIds.add(seasonId);
     }
     seasons.close();

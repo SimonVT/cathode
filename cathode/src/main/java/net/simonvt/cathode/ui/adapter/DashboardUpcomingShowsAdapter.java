@@ -26,8 +26,8 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.ui.fragment.DashboardFragment;
@@ -67,10 +67,8 @@ public class DashboardUpcomingShowsAdapter
   @Override public long getLastModified(int position) {
     Cursor cursor = getCursor(position);
 
-    final long showLastModified = cursor.getLong(
-        cursor.getColumnIndexOrThrow(DatabaseContract.LastModifiedColumns.LAST_MODIFIED));
-    final long episodeLastModified =
-        cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_EPISODE_LAST_UPDATED));
+    final long showLastModified = Cursors.getLong(cursor, LastModifiedColumns.LAST_MODIFIED);
+    final long episodeLastModified = Cursors.getLong(cursor, COLUMN_EPISODE_LAST_UPDATED);
 
     return showLastModified + episodeLastModified;
   }
@@ -98,7 +96,7 @@ public class DashboardUpcomingShowsAdapter
   @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
     final String poster = Cursors.getString(cursor, ShowColumns.POSTER);
     final String title = Cursors.getString(cursor, ShowColumns.TITLE);
-    final boolean watching = cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHING)) == 1;
+    final boolean watching = Cursors.getInt(cursor, ShowColumns.WATCHING) == 1;
     final String episodeTitle = Cursors.getString(cursor, EpisodeColumns.TITLE);
     final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);

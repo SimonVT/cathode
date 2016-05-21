@@ -32,14 +32,15 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
-import net.simonvt.cathode.util.Cursors;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
+import net.simonvt.schematic.Cursors;
 
 public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolder> {
 
@@ -78,12 +79,12 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
 
   @Override public int getItemViewType(int position) {
     Cursor cursor = getCursor(position);
-    return cursor.getInt(cursor.getColumnIndex(ListItemColumns.ITEM_TYPE));
+    return Cursors.getInt(cursor, ListItemColumns.ITEM_TYPE);
   }
 
   @Override public long getLastModified(int position) {
     Cursor cursor = getCursor(position);
-    return cursor.getLong(cursor.getColumnIndex(LastModifiedColumns.LAST_MODIFIED));
+    return Cursors.getLong(cursor, LastModifiedColumns.LAST_MODIFIED);
   }
 
   @Override public ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -99,7 +100,7 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
           final int position = showHolder.getAdapterPosition();
           if (position != RecyclerView.NO_POSITION) {
             Cursor cursor = getCursor(position);
-            final long itemId = cursor.getLong(cursor.getColumnIndex(ListItemColumns.ITEM_ID));
+            final long itemId = Cursors.getLong(cursor, ListItemColumns.ITEM_ID);
             showListener.onShowClick(v, position, itemId);
           }
         }
@@ -134,7 +135,7 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
           final int position = episodeHolder.getAdapterPosition();
           if (position != RecyclerView.NO_POSITION) {
             Cursor cursor = getCursor(position);
-            final long itemId = cursor.getLong(cursor.getColumnIndex(ListItemColumns.ITEM_ID));
+            final long itemId = Cursors.getLong(cursor, ListItemColumns.ITEM_ID);
             episodeListener.onEpisodeClick(episodeHolder.itemView, position, itemId);
           }
         }
@@ -149,7 +150,7 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
           final int position = movieHolder.getAdapterPosition();
           if (position != RecyclerView.NO_POSITION) {
             Cursor cursor = getCursor(position);
-            final long itemId = cursor.getLong(cursor.getColumnIndex(ListItemColumns.ITEM_ID));
+            final long itemId = Cursors.getLong(cursor, ListItemColumns.ITEM_ID);
             movieListener.onMovieClicked(movieHolder.itemView, position, itemId);
           }
         }
@@ -197,13 +198,13 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
     if (holder.getItemViewType() == DatabaseContract.ItemType.SHOW) {
       final ShowViewHolder showHolder = (ShowViewHolder) holder;
 
-      showHolder.poster.setImage(cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER)));
-      showHolder.title.setText(cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE)));
-      showHolder.overview.setText(cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW)));
+      showHolder.poster.setImage(Cursors.getString(cursor, ShowColumns.POSTER));
+      showHolder.title.setText(Cursors.getString(cursor, ShowColumns.TITLE));
+      showHolder.overview.setText(Cursors.getString(cursor, ShowColumns.OVERVIEW));
     } else if (holder.getItemViewType() == DatabaseContract.ItemType.SEASON) {
-      final String showPoster = cursor.getString(cursor.getColumnIndex("seasonShowPoster"));
-      final String showTitle = cursor.getString(cursor.getColumnIndex("seasonShowTitle"));
-      final int season = cursor.getInt(cursor.getColumnIndex(SeasonColumns.SEASON));
+      final String showPoster = Cursors.getString(cursor, "seasonShowPoster");
+      final String showTitle = Cursors.getString(cursor, "seasonShowTitle");
+      final int season = Cursors.getInt(cursor, SeasonColumns.SEASON);
 
       SeasonViewHolder seasonHolder = (SeasonViewHolder) holder;
       seasonHolder.poster.setImage(showPoster);
@@ -211,9 +212,9 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
       seasonHolder.show.setText(showTitle);
     } else if (holder.getItemViewType() == DatabaseContract.ItemType.EPISODE) {
       final EpisodeViewHolder episodeHolder = (EpisodeViewHolder) holder;
-      String title = cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
-      final String screen = cursor.getString(cursor.getColumnIndex(EpisodeColumns.SCREENSHOT));
-      final String showTitle = cursor.getString(cursor.getColumnIndex("episodeShowTitle"));
+      String title = Cursors.getString(cursor, EpisodeColumns.TITLE);
+      final String screen = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
+      final String showTitle = Cursors.getString(cursor, "episodeShowTitle");
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
 
@@ -233,15 +234,13 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
     } else if (holder.getItemViewType() == DatabaseContract.ItemType.MOVIE) {
       MovieViewHolder movieHolder = (MovieViewHolder) holder;
 
-      movieHolder.poster.setImage(cursor.getString(cursor.getColumnIndex(MovieColumns.POSTER)));
-      movieHolder.title.setText(cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE)));
-      movieHolder.overview.setText(cursor.getString(cursor.getColumnIndex(MovieColumns.OVERVIEW)));
+      movieHolder.poster.setImage(Cursors.getString(cursor, MovieColumns.POSTER));
+      movieHolder.title.setText(Cursors.getString(cursor, MovieColumns.TITLE));
+      movieHolder.overview.setText(Cursors.getString(cursor, MovieColumns.OVERVIEW));
     } else {
       PersonViewHolder personHolder = (PersonViewHolder) holder;
-      personHolder.headshot.setImage(
-          cursor.getString(cursor.getColumnIndex(DatabaseContract.PersonColumns.HEADSHOT)));
-      personHolder.name.setText(
-          cursor.getString(cursor.getColumnIndex(DatabaseContract.PersonColumns.NAME)));
+      personHolder.headshot.setImage(Cursors.getString(cursor, PersonColumns.HEADSHOT));
+      personHolder.name.setText(Cursors.getString(cursor, PersonColumns.NAME));
     }
   }
 

@@ -42,6 +42,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.settings.Permissions;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
 public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
@@ -57,10 +58,10 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
     long episodeId;
 
     public Event(Cursor c) {
-      id = c.getLong(c.getColumnIndex(CalendarContract.Events._ID));
-      start = c.getLong(c.getColumnIndex(CalendarContract.Events.DTSTART));
-      end = c.getLong(c.getColumnIndex(CalendarContract.Events.DTEND));
-      episodeId = c.getLong(c.getColumnIndex(CalendarContract.Events.SYNC_DATA1));
+      id = Cursors.getLong(c, CalendarContract.Events._ID);
+      start = Cursors.getLong(c, CalendarContract.Events.DTSTART);
+      end = Cursors.getLong(c, CalendarContract.Events.DTEND);
+      episodeId = Cursors.getLong(c, CalendarContract.Events.SYNC_DATA1);
     }
   }
 
@@ -119,7 +120,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
 
     LongSparseArray<Event> events = new LongSparseArray<Event>();
     while (c.moveToNext()) {
-      events.put(c.getLong(c.getColumnIndex(CalendarContract.Events.SYNC_DATA1)), new Event(c));
+      events.put(Cursors.getLong(c, CalendarContract.Events.SYNC_DATA1), new Event(c));
     }
     c.close();
 
@@ -157,21 +158,20 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
       }, null);
 
       while (episodes.moveToNext()) {
-        final long id = episodes.getLong(episodes.getColumnIndex(EpisodeColumns.ID));
-        final long showId = episodes.getLong(episodes.getColumnIndex(EpisodeColumns.SHOW_ID));
-        final String title = episodes.getString(episodes.getColumnIndex(EpisodeColumns.TITLE));
-        final int season = episodes.getInt(episodes.getColumnIndex(EpisodeColumns.SEASON));
-        final int episode = episodes.getInt(episodes.getColumnIndex(EpisodeColumns.EPISODE));
-        final long firstAired =
-            episodes.getLong(episodes.getColumnIndex(EpisodeColumns.FIRST_AIRED));
+        final long id = Cursors.getLong(episodes, EpisodeColumns.ID);
+        final long showId = Cursors.getLong(episodes, EpisodeColumns.SHOW_ID);
+        final String title = Cursors.getString(episodes, EpisodeColumns.TITLE);
+        final int season = Cursors.getInt(episodes, EpisodeColumns.SEASON);
+        final int episode = Cursors.getInt(episodes, EpisodeColumns.EPISODE);
+        final long firstAired = Cursors.getLong(episodes, EpisodeColumns.FIRST_AIRED);
 
         Cursor show = context.getContentResolver().query(Shows.withId(showId), new String[] {
             ShowColumns.TITLE, ShowColumns.RUNTIME,
         }, null, null, null);
         show.moveToFirst();
 
-        final String showTitle = show.getString(show.getColumnIndex(ShowColumns.TITLE));
-        final long runtime = show.getLong(show.getColumnIndex(ShowColumns.RUNTIME));
+        final String showTitle = Cursors.getString(show, ShowColumns.TITLE);
+        final long runtime = Cursors.getLong(show, ShowColumns.RUNTIME);
 
         show.close();
 

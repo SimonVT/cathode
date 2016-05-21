@@ -29,6 +29,7 @@ import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.widget.IndicatorView;
 import net.simonvt.cathode.widget.OverflowView;
+import net.simonvt.schematic.Cursors;
 
 public class MovieSearchAdapter extends BaseMoviesAdapter<MovieSearchAdapter.ViewHolder> {
 
@@ -86,11 +87,11 @@ public class MovieSearchAdapter extends BaseMoviesAdapter<MovieSearchAdapter.Vie
   @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
     super.onBindViewHolder(holder, cursor, position);
 
-    final boolean watched = cursor.getInt(cursor.getColumnIndex(MovieColumns.WATCHED)) == 1;
+    final boolean watched = Cursors.getInt(cursor, MovieColumns.WATCHED) == 1;
     final boolean inCollection =
-        cursor.getInt(cursor.getColumnIndex(MovieColumns.IN_COLLECTION)) == 1;
+        Cursors.getInt(cursor, MovieColumns.IN_COLLECTION) == 1;
     final boolean inWatchlist =
-        cursor.getInt(cursor.getColumnIndex(MovieColumns.IN_WATCHLIST)) == 1;
+        Cursors.getInt(cursor, MovieColumns.IN_WATCHLIST) == 1;
 
     holder.indicator.setWatched(watched);
     holder.indicator.setCollected(inCollection);

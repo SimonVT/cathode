@@ -21,6 +21,7 @@ import android.database.Cursor;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.schematic.Cursors;
 
 import static net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import static net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
@@ -43,7 +44,7 @@ public class UpdateShowCounts extends Job {
     }, null, null, null);
 
     while (shows.moveToNext()) {
-      final long showId = shows.getLong(shows.getColumnIndex(ShowColumns.ID));
+      final long showId = Cursors.getLong(shows, ShowColumns.ID);
 
       Cursor watched = getContentResolver().query(Episodes.fromShow(showId), new String[] {
           EpisodeColumns.ID,
@@ -79,7 +80,7 @@ public class UpdateShowCounts extends Job {
     }, null, null, null);
 
     while (seasons.moveToNext()) {
-      final long seasonId = seasons.getLong(seasons.getColumnIndex(SeasonColumns.ID));
+      final long seasonId = Cursors.getLong(seasons, SeasonColumns.ID);
 
       Cursor watched = getContentResolver().query(Episodes.fromSeason(seasonId), new String[] {
           EpisodeColumns.ID,

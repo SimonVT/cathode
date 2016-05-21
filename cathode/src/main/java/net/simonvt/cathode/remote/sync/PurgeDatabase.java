@@ -32,6 +32,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.search.MovieSearchHandler;
 import net.simonvt.cathode.search.ShowSearchHandler;
+import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
 public class PurgeDatabase extends Job {
@@ -76,8 +77,8 @@ public class PurgeDatabase extends Job {
 
     List<Long> showIds = new ArrayList<Long>();
     while (shows.moveToNext()) {
-      final long id = shows.getLong(shows.getColumnIndex(ShowColumns.ID));
-      final String title = shows.getString(shows.getColumnIndex(ShowColumns.TITLE));
+      final long id = Cursors.getLong(shows, ShowColumns.ID);
+      final String title = Cursors.getString(shows, ShowColumns.TITLE);
       Timber.d("Purging %s", title);
       showIds.add(id);
     }
@@ -126,8 +127,8 @@ public class PurgeDatabase extends Job {
 
     List<Long> movieIds = new ArrayList<Long>();
     while (movies.moveToNext()) {
-      final long id = movies.getLong(movies.getColumnIndex(MovieColumns.ID));
-      final String title = movies.getString(movies.getColumnIndex(MovieColumns.TITLE));
+      final long id = Cursors.getLong(movies, MovieColumns.ID);
+      final String title = Cursors.getString(movies, MovieColumns.TITLE);
       Timber.d("Purging %s", title);
       movieIds.add(id);
     }

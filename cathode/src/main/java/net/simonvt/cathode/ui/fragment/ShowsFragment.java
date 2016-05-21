@@ -33,6 +33,7 @@ import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
+import net.simonvt.schematic.Cursors;
 
 public abstract class ShowsFragment<D extends Cursor>
     extends ToolbarSwipeRefreshRecyclerFragment<ShowsWithNextAdapter.ViewHolder>
@@ -92,8 +93,8 @@ public abstract class ShowsFragment<D extends Cursor>
 
   @Override public void onShowClick(View view, int position, long id) {
     cursor.moveToPosition(position);
-    final String title = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
-    final String overview = cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW));
+    final String title = Cursors.getString(cursor, ShowColumns.TITLE);
+    final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
     navigationListener.onDisplayShow(id, title, overview, getLibraryType());
   }
 

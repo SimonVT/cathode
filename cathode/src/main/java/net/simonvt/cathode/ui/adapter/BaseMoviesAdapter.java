@@ -35,6 +35,7 @@ import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
+import net.simonvt.schematic.Cursors;
 
 public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
     extends RecyclerCursorAdapter<T> {
@@ -61,20 +62,19 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
   }
 
   @Override protected void onBindViewHolder(T holder, Cursor cursor, int position) {
-    final String title = cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE));
-    final boolean watched = cursor.getInt(cursor.getColumnIndex(MovieColumns.WATCHED)) == 1;
-    final boolean collected = cursor.getInt(cursor.getColumnIndex(MovieColumns.IN_COLLECTION)) == 1;
-    final boolean inWatchlist =
-        cursor.getInt(cursor.getColumnIndex(MovieColumns.IN_WATCHLIST)) == 1;
-    final boolean watching = cursor.getInt(cursor.getColumnIndex(MovieColumns.WATCHING)) == 1;
-    final boolean checkedIn = cursor.getInt(cursor.getColumnIndex(MovieColumns.CHECKED_IN)) == 1;
+    final String title = Cursors.getString(cursor, MovieColumns.TITLE);
+    final boolean watched = Cursors.getInt(cursor, MovieColumns.WATCHED) == 1;
+    final boolean collected = Cursors.getInt(cursor, MovieColumns.IN_COLLECTION) == 1;
+    final boolean inWatchlist = Cursors.getInt(cursor, MovieColumns.IN_WATCHLIST) == 1;
+    final boolean watching = Cursors.getInt(cursor, MovieColumns.WATCHING) == 1;
+    final boolean checkedIn = Cursors.getInt(cursor, MovieColumns.CHECKED_IN) == 1;
 
-    holder.poster.setImage(cursor.getString(cursor.getColumnIndex(MovieColumns.POSTER)));
+    holder.poster.setImage(Cursors.getString(cursor, MovieColumns.POSTER));
     holder.title.setText(title);
-    holder.overview.setText(cursor.getString(cursor.getColumnIndex(MovieColumns.OVERVIEW)));
+    holder.overview.setText(Cursors.getString(cursor, MovieColumns.OVERVIEW));
 
     if (holder.rating != null) {
-      final float rating = cursor.getFloat(cursor.getColumnIndex(MovieColumns.RATING));
+      final float rating = Cursors.getFloat(cursor, MovieColumns.RATING);
       holder.rating.setValue(rating);
     }
 

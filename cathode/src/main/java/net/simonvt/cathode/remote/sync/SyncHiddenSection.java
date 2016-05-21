@@ -44,6 +44,7 @@ import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.PagedCallJob;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import timber.log.Timber;
 
@@ -102,7 +103,7 @@ public class SyncHiddenSection extends PagedCallJob<HiddenItem> {
         ShowColumns.ID,
     }, hiddenColumn + "=1", null, null);
     while (hiddenShows.moveToNext()) {
-      final long id = hiddenShows.getLong(hiddenShows.getColumnIndex(ShowColumns.ID));
+      final long id = Cursors.getLong(hiddenShows, ShowColumns.ID);
       unhandledShows.add(id);
     }
     hiddenShows.close();
@@ -112,7 +113,7 @@ public class SyncHiddenSection extends PagedCallJob<HiddenItem> {
         MovieColumns.ID,
     }, hiddenColumn + "=1", null, null);
     while (hiddenMovies.moveToNext()) {
-      final long id = hiddenMovies.getLong(hiddenMovies.getColumnIndex(MovieColumns.ID));
+      final long id = Cursors.getLong(hiddenMovies, MovieColumns.ID);
       unhandledMovies.add(id);
     }
     hiddenMovies.close();
@@ -122,7 +123,7 @@ public class SyncHiddenSection extends PagedCallJob<HiddenItem> {
         SeasonColumns.ID,
     }, hiddenColumn + "=1", null, null);
     while (hiddenSeasons.moveToNext()) {
-      final long id = hiddenSeasons.getLong(hiddenSeasons.getColumnIndex(SeasonColumns.ID));
+      final long id = Cursors.getLong(hiddenSeasons, SeasonColumns.ID);
       unhandledSeasons.add(id);
     }
     hiddenSeasons.close();

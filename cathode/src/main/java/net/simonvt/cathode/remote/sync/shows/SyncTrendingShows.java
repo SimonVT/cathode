@@ -33,6 +33,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import timber.log.Timber;
 
@@ -65,7 +66,7 @@ public class SyncTrendingShows extends CallJob<List<TrendingItem>> {
 
       List<Long> showIds = new ArrayList<Long>();
       while (c.moveToNext()) {
-        final long showId = c.getLong(c.getColumnIndex(ShowColumns.ID));
+        final long showId = Cursors.getLong(c, ShowColumns.ID);
         showIds.add(showId);
       }
       c.close();

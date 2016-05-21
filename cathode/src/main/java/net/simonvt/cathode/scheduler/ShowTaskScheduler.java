@@ -39,6 +39,7 @@ import net.simonvt.cathode.remote.sync.shows.SyncShow;
 import net.simonvt.cathode.remote.sync.shows.SyncShowCast;
 import net.simonvt.cathode.remote.sync.shows.SyncShowCollectedStatus;
 import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
+import net.simonvt.schematic.Cursors;
 
 public class ShowTaskScheduler extends BaseTaskScheduler {
 
@@ -109,7 +110,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
             EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1");
 
         if (c.moveToNext()) {
-          final long episodeId = c.getLong(c.getColumnIndexOrThrow(EpisodeColumns.ID));
+          final long episodeId = Cursors.getLong(c, EpisodeColumns.ID);
           episodeScheduler.setWatched(episodeId, true);
         }
 
@@ -166,7 +167,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
             EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1");
 
         if (c.moveToNext()) {
-          final long episodeId = c.getLong(c.getColumnIndexOrThrow(EpisodeColumns.ID));
+          final long episodeId = Cursors.getLong(c, EpisodeColumns.ID);
           episodeScheduler.setIsInCollection(episodeId, true);
         }
 
@@ -183,7 +184,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         }, null, null, null);
 
         if (c.moveToFirst()) {
-          final long traktId = c.getInt(c.getColumnIndex(ShowColumns.TRAKT_ID));
+          final long traktId = Cursors.getInt(c, ShowColumns.TRAKT_ID);
           showHelper.setWatched(showId, watched);
           queue(new WatchedShow(traktId, watched));
         }
@@ -208,11 +209,11 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
             listedAtMillis = TimeUtils.getMillis(listedAt);
           }
 
-          final long traktId = c.getLong(c.getColumnIndex(ShowColumns.TRAKT_ID));
+          final long traktId = Cursors.getLong(c, ShowColumns.TRAKT_ID);
           showHelper.setIsInWatchlist(showId, inWatchlist, listedAtMillis);
           queue(new WatchlistShow(traktId, inWatchlist, listedAt));
 
-          final int episodeCount = c.getInt(c.getColumnIndex(ShowColumns.EPISODE_COUNT));
+          final int episodeCount = Cursors.getInt(c, ShowColumns.EPISODE_COUNT);
           if (episodeCount == 0) {
             queue(new SyncShow(traktId));
           }

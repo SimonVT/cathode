@@ -34,6 +34,7 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieGenres;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
+import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
 public final class MovieDatabaseHelper {
@@ -72,7 +73,7 @@ public final class MovieDatabaseHelper {
 
     int traktId = -1;
     if (c.moveToFirst()) {
-      traktId = c.getInt(c.getColumnIndex(MovieColumns.TRAKT_ID));
+      traktId = Cursors.getInt(c, MovieColumns.TRAKT_ID);
     }
 
     c.close();
@@ -88,7 +89,7 @@ public final class MovieDatabaseHelper {
           String.valueOf(traktId),
       }, null);
 
-      long id = !c.moveToFirst() ? -1L : c.getLong(c.getColumnIndex(MovieColumns.ID));
+      long id = !c.moveToFirst() ? -1L : Cursors.getLong(c, MovieColumns.ID);
 
       c.close();
 
@@ -109,8 +110,7 @@ public final class MovieDatabaseHelper {
 
       boolean exists = c.moveToFirst();
       if (exists) {
-        return TimeUtils.getMillis(lastUpdated) > c.getLong(
-            c.getColumnIndex(MovieColumns.LAST_UPDATED));
+        return TimeUtils.getMillis(lastUpdated) > Cursors.getLong(c, MovieColumns.LAST_UPDATED);
       }
 
       return false;

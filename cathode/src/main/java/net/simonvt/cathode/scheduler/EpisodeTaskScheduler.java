@@ -33,6 +33,7 @@ import net.simonvt.cathode.remote.action.shows.WatchedEpisode;
 import net.simonvt.cathode.remote.action.shows.WatchlistEpisode;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.schematic.Cursors;
 
 public class EpisodeTaskScheduler extends BaseTaskScheduler {
 
@@ -62,10 +63,10 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
         Cursor c = episodeHelper.query(episodeId, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON,
             EpisodeColumns.EPISODE);
         c.moveToFirst();
-        final long showId = c.getLong(c.getColumnIndex(EpisodeColumns.SHOW_ID));
+        final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
         final long traktId = showHelper.getTraktId(showId);
-        final int season = c.getInt(c.getColumnIndex(EpisodeColumns.SEASON));
-        final int number = c.getInt(c.getColumnIndex(EpisodeColumns.EPISODE));
+        final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
+        final int number = Cursors.getInt(c, EpisodeColumns.EPISODE);
         c.close();
 
         episodeHelper.setWatched(showId, episodeId, watched, watchedAtMillis);
@@ -86,13 +87,13 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
         final long currentTime = System.currentTimeMillis();
         long expires = 0;
         if (c.moveToFirst()) {
-          expires = c.getLong(c.getColumnIndex(EpisodeColumns.EXPIRES_AT));
+          expires = Cursors.getLong(c, EpisodeColumns.EXPIRES_AT);
         }
 
         if (c.getCount() == 0 || (expires >= currentTime && expires > 0)) {
           Cursor episode = episodeHelper.query(episodeId, EpisodeColumns.TRAKT_ID);
           episode.moveToFirst();
-          final long traktId = episode.getLong(episode.getColumnIndex(EpisodeColumns.TRAKT_ID));
+          final long traktId = Cursors.getLong(episode, EpisodeColumns.TRAKT_ID);
           episode.close();
 
           final long showId = episodeHelper.getShowId(episodeId);
@@ -102,7 +103,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
           }, null, null, null);
 
           show.moveToFirst();
-          final int runtime = show.getInt(show.getColumnIndex(ShowColumns.RUNTIME));
+          final int runtime = Cursors.getInt(show, ShowColumns.RUNTIME);
           show.close();
 
           final long startedAt = currentTime;
@@ -141,10 +142,10 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
         Cursor c = episodeHelper.query(episodeId, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON,
             EpisodeColumns.EPISODE);
         c.moveToFirst();
-        final long showId = c.getLong(c.getColumnIndex(EpisodeColumns.SHOW_ID));
+        final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
         final long traktId = showHelper.getTraktId(showId);
-        final int season = c.getInt(c.getColumnIndex(EpisodeColumns.SEASON));
-        final int number = c.getInt(c.getColumnIndex(EpisodeColumns.EPISODE));
+        final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
+        final int number = Cursors.getInt(c, EpisodeColumns.EPISODE);
         c.close();
 
         episodeHelper.setInCollection(episodeId, inCollection, collectedAtMillis);
@@ -167,10 +168,10 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
         Cursor c = episodeHelper.query(episodeId, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON,
             EpisodeColumns.EPISODE);
         c.moveToFirst();
-        final long showId = c.getLong(c.getColumnIndex(EpisodeColumns.SHOW_ID));
+        final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
         final long traktId = showHelper.getTraktId(showId);
-        final int season = c.getInt(c.getColumnIndex(EpisodeColumns.SEASON));
-        final int number = c.getInt(c.getColumnIndex(EpisodeColumns.EPISODE));
+        final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
+        final int number = Cursors.getInt(c, EpisodeColumns.EPISODE);
         c.close();
 
         episodeHelper.setIsInWatchlist(episodeId, inWatchlist, listeddAtMillis);
@@ -199,8 +200,8 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
         Cursor c = episodeHelper.query(episodeId, EpisodeColumns.EPISODE, EpisodeColumns.SEASON);
 
         if (c.moveToFirst()) {
-          final int episode = c.getInt(c.getColumnIndex(EpisodeColumns.EPISODE));
-          final int season = c.getInt(c.getColumnIndex(EpisodeColumns.SEASON));
+          final int episode = Cursors.getInt(c, EpisodeColumns.EPISODE);
+          final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
 
           ContentValues cv = new ContentValues();
           cv.put(EpisodeColumns.USER_RATING, rating);

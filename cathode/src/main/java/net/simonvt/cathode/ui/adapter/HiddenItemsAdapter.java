@@ -34,10 +34,10 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
-import net.simonvt.cathode.util.Cursors;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
+import net.simonvt.schematic.Cursors;
 
 public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder> {
 
@@ -106,7 +106,7 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
   @Override public long getLastModified(int position) {
     if (!isHeader(position)) {
       Cursor cursor = getCursor(position);
-      return cursor.getLong(cursor.getColumnIndexOrThrow(LastModifiedColumns.LAST_MODIFIED));
+      return Cursors.getLong(cursor, LastModifiedColumns.LAST_MODIFIED);
     }
 
     return super.getLastModified(position);
@@ -294,15 +294,15 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
     if (holder.getItemViewType() == TYPE_SHOW) {
       final ShowViewHolder vh = (ShowViewHolder) holder;
 
-      vh.poster.setImage(cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER)));
-      vh.title.setText(cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE)));
-      vh.overview.setText(cursor.getString(cursor.getColumnIndex(ShowColumns.OVERVIEW)));
+      vh.poster.setImage(Cursors.getString(cursor, ShowColumns.POSTER));
+      vh.title.setText(Cursors.getString(cursor, ShowColumns.TITLE));
+      vh.overview.setText(Cursors.getString(cursor, ShowColumns.OVERVIEW));
     } else {
       final MovieViewHolder vh = (MovieViewHolder) holder;
 
-      vh.poster.setImage(cursor.getString(cursor.getColumnIndex(MovieColumns.POSTER)));
-      vh.title.setText(cursor.getString(cursor.getColumnIndex(MovieColumns.TITLE)));
-      vh.overview.setText(cursor.getString(cursor.getColumnIndex(MovieColumns.OVERVIEW)));
+      vh.poster.setImage(Cursors.getString(cursor, MovieColumns.POSTER));
+      vh.title.setText(Cursors.getString(cursor, MovieColumns.TITLE));
+      vh.overview.setText(Cursors.getString(cursor, MovieColumns.OVERVIEW));
     }
   }
 

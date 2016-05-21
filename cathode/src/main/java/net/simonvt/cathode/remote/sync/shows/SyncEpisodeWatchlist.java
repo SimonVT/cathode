@@ -31,6 +31,7 @@ import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
 public class SyncEpisodeWatchlist extends CallJob<List<WatchlistItem>> {
@@ -65,7 +66,7 @@ public class SyncEpisodeWatchlist extends CallJob<List<WatchlistItem>> {
     List<Long> episodeIds = new ArrayList<Long>();
 
     while (c.moveToNext()) {
-      episodeIds.add(c.getLong(c.getColumnIndex(EpisodeColumns.ID)));
+      episodeIds.add(Cursors.getLong(c, EpisodeColumns.ID));
     }
     c.close();
 

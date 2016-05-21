@@ -51,6 +51,7 @@ import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.HeaderSpanLookup;
 import net.simonvt.cathode.ui.adapter.UpcomingAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
+import net.simonvt.schematic.Cursors;
 
 public class UpcomingShowsFragment
     extends ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>
@@ -177,8 +178,8 @@ public class UpcomingShowsFragment
 
   @Override public void onShowClicked(View v, int position, long id) {
     Cursor c = ((UpcomingAdapter) getAdapter()).getCursor(position);
-    final String title = c.getString(c.getColumnIndex(ShowColumns.TITLE));
-    final String overview = c.getString(c.getColumnIndex(ShowColumns.OVERVIEW));
+    final String title = Cursors.getString(c, ShowColumns.TITLE);
+    final String overview = Cursors.getString(c, ShowColumns.OVERVIEW);
     navigationListener.onDisplayShow(id, title, overview, LibraryType.WATCHED);
   }
 

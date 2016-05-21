@@ -39,6 +39,7 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.cathode.widget.TimeStamp;
+import net.simonvt.schematic.Cursors;
 
 /**
  * A show adapter that displays the next episode as well.
@@ -86,10 +87,8 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
   @Override public long getLastModified(int position) {
     Cursor cursor = getCursor(position);
 
-    final long showLastModified =
-        cursor.getLong(cursor.getColumnIndexOrThrow(LastModifiedColumns.LAST_MODIFIED));
-    final long episodeLastModified =
-        cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_EPISODE_LAST_UPDATED));
+    final long showLastModified = Cursors.getLong(cursor, LastModifiedColumns.LAST_MODIFIED);
+    final long episodeLastModified = Cursors.getLong(cursor, COLUMN_EPISODE_LAST_UPDATED);
 
     return showLastModified + episodeLastModified;
   }
@@ -171,31 +170,31 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
   }
 
   @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
-    final String showPosterUrl = cursor.getString(cursor.getColumnIndex(ShowColumns.POSTER));
-    final String showTitle = cursor.getString(cursor.getColumnIndex(ShowColumns.TITLE));
-    final String showStatus = cursor.getString(cursor.getColumnIndex(ShowColumns.STATUS));
-    final boolean watching = cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHING)) == 1;
+    final String showPosterUrl = Cursors.getString(cursor, ShowColumns.POSTER);
+    final String showTitle = Cursors.getString(cursor, ShowColumns.TITLE);
+    final String showStatus = Cursors.getString(cursor, ShowColumns.STATUS);
+    final boolean watching = Cursors.getInt(cursor, ShowColumns.WATCHING) == 1;
 
-    final int showAiredCount = cursor.getInt(cursor.getColumnIndex(ShowColumns.AIRED_COUNT));
+    final int showAiredCount = Cursors.getInt(cursor, ShowColumns.AIRED_COUNT);
     int count = 0;
     switch (libraryType) {
       case WATCHED:
       case WATCHLIST:
-        count = cursor.getInt(cursor.getColumnIndex(ShowColumns.WATCHED_COUNT));
+        count = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT);
         break;
 
       case COLLECTION:
-        count = cursor.getInt(cursor.getColumnIndex(ShowColumns.IN_COLLECTION_COUNT));
+        count = Cursors.getInt(cursor, ShowColumns.IN_COLLECTION_COUNT);
         break;
     }
     final int showTypeCount = count;
 
-    final long episodeId = cursor.getLong(cursor.getColumnIndex(COLUMN_EPISODE_ID));
-    final String episodeTitle = cursor.getString(cursor.getColumnIndex(EpisodeColumns.TITLE));
+    final long episodeId = Cursors.getLong(cursor, COLUMN_EPISODE_ID);
+    final String episodeTitle = Cursors.getString(cursor, EpisodeColumns.TITLE);
     final long episodeFirstAired =
-        cursor.getLong(cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED));
-    final int episodeSeasonNumber = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.SEASON));
-    final int episodeNumber = cursor.getInt(cursor.getColumnIndex(EpisodeColumns.EPISODE));
+        Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
+    final int episodeSeasonNumber = Cursors.getInt(cursor, EpisodeColumns.SEASON);
+    final int episodeNumber = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
 
     holder.title.setText(showTitle);
 
