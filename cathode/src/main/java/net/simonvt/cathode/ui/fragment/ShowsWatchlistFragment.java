@@ -144,7 +144,7 @@ public class ShowsWatchlistFragment
 
   @Override public void onEpisodeClicked(int position, long id) {
     Cursor c = ((ShowWatchlistAdapter) getAdapter()).getCursor(position);
-    navigationListener.onDisplayEpisode(id, c.getString(c.getColumnIndex(EpisodeColumns.TITLE)));
+    navigationListener.onDisplayEpisode(id, c.getString(c.getColumnIndex(ShowColumns.TITLE)));
   }
 
   private void throttleLoaders() {
