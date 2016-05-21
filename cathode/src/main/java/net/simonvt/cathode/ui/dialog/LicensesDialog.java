@@ -50,7 +50,7 @@ public class LicensesDialog extends DialogFragment {
 
   private final class LicenseAdapter extends BaseAdapter {
 
-    List<License> licenses = new ArrayList<License>();
+    List<License> licenses = new ArrayList<>();
 
     private LicenseAdapter() {
       licenses.add(new License(R.string.license_gson, R.string.license_text_gson));

@@ -48,7 +48,7 @@ public class ShowSearchHandler extends SearchHandler {
       if (response.isSuccessful()) {
         List<SearchResult> results = response.body();
 
-        final List<Long> showIds = new ArrayList<Long>(results.size());
+        final List<Long> showIds = new ArrayList<>(results.size());
 
         for (SearchResult result : results) {
           Show show = result.getShow();

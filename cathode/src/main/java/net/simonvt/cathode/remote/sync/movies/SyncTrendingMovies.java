@@ -60,11 +60,11 @@ public class SyncTrendingMovies extends CallJob<List<TrendingItem>> {
   @Override public void handleResponse(List<TrendingItem> movies) {
     ContentResolver resolver = getContentResolver();
 
-    ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
     Cursor c = resolver.query(Movies.TRENDING, new String[] {
         MovieColumns.ID,
     }, null, null, null);
-    List<Long> trendingIds = new ArrayList<Long>();
+    List<Long> trendingIds = new ArrayList<>();
     while (c.moveToNext()) {
       final long movieId = Cursors.getLong(c, MovieColumns.ID);
       trendingIds.add(movieId);

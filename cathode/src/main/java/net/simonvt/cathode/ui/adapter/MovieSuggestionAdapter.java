@@ -63,7 +63,7 @@ public class MovieSuggestionAdapter extends SuggestionsAdapter {
 
     private FireAndForget(Context context, Callback callback) {
       this.context = context.getApplicationContext();
-      this.callbackRef = new WeakReference<Callback>(callback);
+      this.callbackRef = new WeakReference<>(callback);
     }
 
     @Override protected Results doInBackground(Void... params) {
@@ -72,7 +72,7 @@ public class MovieSuggestionAdapter extends SuggestionsAdapter {
 
       final int queryIndex = previousQueries.getColumnIndex(MovieSearchSuggestionsColumns.QUERY);
 
-      List<Suggestion> queries = new ArrayList<Suggestion>();
+      List<Suggestion> queries = new ArrayList<>();
       while (previousQueries.moveToNext()) {
         queries.add(new Suggestion(previousQueries.getString(queryIndex), null, null));
       }
@@ -86,7 +86,7 @@ public class MovieSuggestionAdapter extends SuggestionsAdapter {
       final int overviewIndex = allMovies.getColumnIndex(MovieColumns.OVERVIEW);
       final int idIndex = allMovies.getColumnIndex(MovieColumns.ID);
 
-      List<Suggestion> movies = new ArrayList<Suggestion>();
+      List<Suggestion> movies = new ArrayList<>();
       while (allMovies.moveToNext()) {
         movies.add(
             new Suggestion(allMovies.getString(titleIndex), allMovies.getString(overviewIndex),

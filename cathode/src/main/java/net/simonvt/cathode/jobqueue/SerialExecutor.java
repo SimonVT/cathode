@@ -41,7 +41,7 @@ public final class SerialExecutor {
 
   private static class SerialExecutorImpl implements Executor {
 
-    final Queue<Runnable> tasks = new ArrayDeque<Runnable>();
+    final Queue<Runnable> tasks = new ArrayDeque<>();
 
     private Runnable active;
 

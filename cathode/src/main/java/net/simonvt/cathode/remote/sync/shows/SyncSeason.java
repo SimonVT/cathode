@@ -80,7 +80,7 @@ public class SyncSeason extends CallJob<List<Episode>> {
     Cursor c = getContentResolver().query(Episodes.fromSeason(seasonId), new String[] {
         EpisodeColumns.ID
     }, null, null, null);
-    List<Long> episodeIds = new ArrayList<Long>();
+    List<Long> episodeIds = new ArrayList<>();
     while (c.moveToNext()) {
       final long episodeId = Cursors.getLong(c, EpisodeColumns.ID);
       episodeIds.add(episodeId);

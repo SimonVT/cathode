@@ -35,7 +35,7 @@ public enum ShowStatus {
     return value;
   }
 
-  private static final Map<String, ShowStatus> STRING_MAPPING = new HashMap<String, ShowStatus>();
+  private static final Map<String, ShowStatus> STRING_MAPPING = new HashMap<>();
 
   static {
     for (ShowStatus via : ShowStatus.values()) {

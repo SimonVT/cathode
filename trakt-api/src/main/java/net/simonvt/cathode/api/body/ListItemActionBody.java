@@ -62,7 +62,7 @@ public class ListItemActionBody {
 
     public Episode episode(int episodeNumber) {
       if (this.episodes == null) {
-        this.episodes = new ArrayList<Episode>();
+        this.episodes = new ArrayList<>();
       }
 
       Episode episode = new Episode(episodeNumber);

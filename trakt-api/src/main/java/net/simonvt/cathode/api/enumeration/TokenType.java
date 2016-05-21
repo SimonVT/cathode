@@ -32,8 +32,7 @@ public enum TokenType {
     return value;
   }
 
-  private static final Map<String, TokenType> STRING_MAPPING =
-      new HashMap<String, TokenType>();
+  private static final Map<String, TokenType> STRING_MAPPING = new HashMap<>();
 
   static {
     for (TokenType via : TokenType.values()) {

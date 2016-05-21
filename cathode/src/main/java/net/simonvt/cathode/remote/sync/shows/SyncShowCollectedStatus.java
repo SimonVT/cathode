@@ -73,7 +73,7 @@ public class SyncShowCollectedStatus extends CallJob<ShowProgress> {
 
     List<ShowProgress.Season> seasons = progress.getSeasons();
 
-    ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
     for (ShowProgress.Season season : seasons) {
       final int seasonNumber = season.getNumber();

@@ -66,7 +66,7 @@ public class TimeStamp extends TextView {
 
     Message m = handler.obtainMessage(MSG_UPDATE);
     m.what = MSG_UPDATE;
-    m.obj = new WeakReference<TimeStamp>(this);
+    m.obj = new WeakReference<>(this);
     handler.sendMessageDelayed(m, nextUpdate);
   }
 

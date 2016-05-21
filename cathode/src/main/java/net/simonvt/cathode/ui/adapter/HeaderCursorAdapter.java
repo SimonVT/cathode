@@ -68,12 +68,12 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
     }
   }
 
-  List<Header> headers = new ArrayList<Header>();
+  List<Header> headers = new ArrayList<>();
   long headerIdOffset;
 
   int itemCount;
 
-  final List<Integer> headerPositions = new ArrayList<Integer>();
+  final List<Integer> headerPositions = new ArrayList<>();
 
   private SparseArray<Long> itemIds = new SparseArray<>();
 

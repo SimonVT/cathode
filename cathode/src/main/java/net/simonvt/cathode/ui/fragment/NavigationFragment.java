@@ -50,7 +50,7 @@ public class NavigationFragment extends AbsAdapterFragment {
     boolean onMenuItemClicked(int id);
   }
 
-  private List<NavigationItem> menuItems = new ArrayList<NavigationItem>();
+  private List<NavigationItem> menuItems = new ArrayList<>();
 
   {
     menuItems.add(new MenuItem(R.id.menu_dashboard, R.string.navigation_dashboard, 0));

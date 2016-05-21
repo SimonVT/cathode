@@ -57,7 +57,7 @@ public class SyncMoviesWatchlist extends CallJob<List<WatchlistItem>> {
         MovieColumns.ID,
     }, MovieColumns.IN_WATCHLIST, null, null);
 
-    List<Long> movieIds = new ArrayList<Long>();
+    List<Long> movieIds = new ArrayList<>();
 
     while (c.moveToNext()) {
       movieIds.add(Cursors.getLong(c, MovieColumns.ID));

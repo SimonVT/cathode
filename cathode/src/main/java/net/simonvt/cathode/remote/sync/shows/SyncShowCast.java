@@ -66,7 +66,7 @@ public class SyncShowCast extends CallJob<People> {
 
     final long showId = showHelper.getId(traktId);
 
-    ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
     ops.add(ContentProviderOperation.newDelete(ShowCharacters.fromShow(showId)).build());
 
     if (characters != null) {

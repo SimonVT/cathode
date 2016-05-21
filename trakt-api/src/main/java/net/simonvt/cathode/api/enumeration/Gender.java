@@ -29,7 +29,7 @@ public enum Gender {
     this.gender = gender;
   }
 
-  private static final Map<String, Gender> STRING_MAPPING = new HashMap<String, Gender>();
+  private static final Map<String, Gender> STRING_MAPPING = new HashMap<>();
 
   static {
     for (Gender via : Gender.values()) {

@@ -63,7 +63,7 @@ public class SyncSeasons extends CallJob<List<Season>> {
       return;
     }
 
-    List<Long> seasonIds = new ArrayList<Long>();
+    List<Long> seasonIds = new ArrayList<>();
     Cursor currentSeasons = getContentResolver().query(Seasons.fromShow(showId), new String[] {
         SeasonColumns.ID,
     }, null, null, null);

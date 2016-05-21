@@ -60,7 +60,7 @@ public class SyncUpdatedShows extends CallJob<List<UpdatedItem>> {
   }
 
   @Override public void handleResponse(List<UpdatedItem> updated) {
-    List<Long> showSummaries = new ArrayList<Long>();
+    List<Long> showSummaries = new ArrayList<>();
 
     for (UpdatedItem item : updated) {
       final String updatedAt = item.getUpdatedAt();

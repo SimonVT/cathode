@@ -32,8 +32,7 @@ public enum Scope {
     return value;
   }
 
-  private static final Map<String, Scope> STRING_MAPPING =
-      new HashMap<String, Scope>();
+  private static final Map<String, Scope> STRING_MAPPING = new HashMap<>();
 
   static {
     for (Scope via : Scope.values()) {

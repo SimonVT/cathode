@@ -58,7 +58,7 @@ public class SyncShowsWatchlist extends CallJob<List<WatchlistItem>> {
         DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
     }, ShowColumns.IN_WATCHLIST + "=0", null, null);
 
-    List<Long> showIds = new ArrayList<Long>();
+    List<Long> showIds = new ArrayList<>();
 
     while (c.moveToNext()) {
       showIds.add(Cursors.getLong(c, ShowColumns.ID));

@@ -34,7 +34,7 @@ public enum GrantType {
     return value;
   }
 
-  private static final Map<String, GrantType> STRING_MAPPING = new HashMap<String, GrantType>();
+  private static final Map<String, GrantType> STRING_MAPPING = new HashMap<>();
 
   static {
     for (GrantType via : GrantType.values()) {

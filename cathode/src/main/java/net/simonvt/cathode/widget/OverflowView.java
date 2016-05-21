@@ -52,7 +52,7 @@ public class OverflowView extends ImageView {
     }
   }
 
-  private List<OverflowItem> items = new ArrayList<OverflowItem>();
+  private List<OverflowItem> items = new ArrayList<>();
 
   private OverflowActionListener listener;
 

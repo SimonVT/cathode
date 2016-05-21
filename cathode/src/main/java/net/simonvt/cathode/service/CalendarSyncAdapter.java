@@ -118,7 +118,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
       return;
     }
 
-    LongSparseArray<Event> events = new LongSparseArray<Event>();
+    LongSparseArray<Event> events = new LongSparseArray<>();
     while (c.moveToNext()) {
       events.put(Cursors.getLong(c, CalendarContract.Events.SYNC_DATA1), new Event(c));
     }
@@ -126,7 +126,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
 
     final long time = System.currentTimeMillis();
 
-    ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
     Cursor shows = context.getContentResolver().query(Shows.SHOWS, new String[] {
         ShowColumns.ID,
@@ -262,8 +262,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
           return INVALID_ID;
         }
 
-        ArrayList<ContentProviderOperation> operationList =
-            new ArrayList<ContentProviderOperation>();
+        ArrayList<ContentProviderOperation> operationList = new ArrayList<>();
 
         ContentProviderOperation.Builder builder = ContentProviderOperation.newInsert(
             CalendarContract.Calendars.CONTENT_URI.buildUpon()

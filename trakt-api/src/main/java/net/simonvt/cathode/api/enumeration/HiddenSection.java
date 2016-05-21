@@ -35,7 +35,7 @@ public enum HiddenSection {
     return value;
   }
 
-  private static final Map<String, HiddenSection> STRING_MAPPING = new HashMap<String, HiddenSection>();
+  private static final Map<String, HiddenSection> STRING_MAPPING = new HashMap<>();
 
   static {
     for (HiddenSection via : HiddenSection.values()) {

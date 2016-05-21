@@ -63,7 +63,7 @@ public class SyncEpisodeWatchlist extends CallJob<List<WatchlistItem>> {
         DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.ID,
     }, null, null, null);
 
-    List<Long> episodeIds = new ArrayList<Long>();
+    List<Long> episodeIds = new ArrayList<>();
 
     while (c.moveToNext()) {
       episodeIds.add(Cursors.getLong(c, EpisodeColumns.ID));

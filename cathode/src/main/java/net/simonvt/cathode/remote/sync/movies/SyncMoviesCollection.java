@@ -57,7 +57,7 @@ public class SyncMoviesCollection extends CallJob<List<CollectionItem>> {
         MovieColumns.ID, MovieColumns.LISTED_AT,
     }, MovieColumns.IN_COLLECTION, null, null);
 
-    LongSparseArray<Long> ids = new LongSparseArray<Long>();
+    LongSparseArray<Long> ids = new LongSparseArray<>();
     while (c.moveToNext()) {
       final long id = Cursors.getLong(c, MovieColumns.ID);
       final long listedAt = Cursors.getLong(c, MovieColumns.LISTED_AT);

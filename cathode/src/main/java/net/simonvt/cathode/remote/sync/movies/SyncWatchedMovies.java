@@ -56,7 +56,7 @@ public class SyncWatchedMovies extends CallJob<List<WatchedItem>> {
         MovieColumns.ID,
     }, MovieColumns.WATCHED, null, null);
 
-    List<Long> movieIds = new ArrayList<Long>(c.getCount());
+    List<Long> movieIds = new ArrayList<>(c.getCount());
 
     while (c.moveToNext()) {
       movieIds.add(c.getLong(0));

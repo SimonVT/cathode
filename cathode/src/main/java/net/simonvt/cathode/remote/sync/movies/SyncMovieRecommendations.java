@@ -65,14 +65,14 @@ public class SyncMovieRecommendations extends CallJob<List<Movie>> {
     try {
       ContentResolver resolver = getContentResolver();
 
-      List<Long> movieIds = new ArrayList<Long>();
+      List<Long> movieIds = new ArrayList<>();
       Cursor c = resolver.query(Movies.RECOMMENDED, null, null, null, null);
       while (c.moveToNext()) {
         movieIds.add(Cursors.getLong(c, MovieColumns.ID));
       }
       c.close();
 
-      ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+      ArrayList<ContentProviderOperation> ops = new ArrayList<>();
       for (int index = 0; index < Math.min(recommendations.size(), 25); index++) {
         Movie movie = recommendations.get(index);
         final long traktId = movie.getIds().getTrakt();

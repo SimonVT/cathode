@@ -67,14 +67,14 @@ public class SyncEpisodesRatings extends CallJob<List<RatingItem>> {
     Cursor episodes = getContentResolver().query(Episodes.EPISODES, new String[] {
         EpisodeColumns.ID,
     }, EpisodeColumns.RATED_AT + ">0", null, null);
-    List<Long> episodeIds = new ArrayList<Long>();
+    List<Long> episodeIds = new ArrayList<>();
     while (episodes.moveToNext()) {
       final long episodeId = Cursors.getLong(episodes, EpisodeColumns.ID);
       episodeIds.add(episodeId);
     }
     episodes.close();
 
-    ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
     for (RatingItem rating : ratings) {
       final int seasonNumber = rating.getEpisode().getSeason();

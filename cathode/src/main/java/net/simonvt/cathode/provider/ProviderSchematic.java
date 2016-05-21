@@ -174,7 +174,7 @@ public final class ProviderSchematic {
   @TableEndpoint(table = Tables.SHOWS) public static class Shows {
 
     @MapColumns public static Map<String, String> mapColumns() {
-      Map<String, String> map = new HashMap<String, String>();
+      Map<String, String> map = new HashMap<>();
 
       map.put(ShowColumns.AIRED_COUNT, getAiredQuery());
       map.put(ShowColumns.UNAIRED_COUNT, getUnairedQuery());
@@ -439,7 +439,7 @@ public final class ProviderSchematic {
   public static class Seasons {
 
     @MapColumns public static Map<String, String> mapColumns() {
-      Map<String, String> map = new HashMap<String, String>();
+      Map<String, String> map = new HashMap<>();
 
       map.put(SeasonColumns.AIRED_COUNT, getAiredQuery());
       map.put(SeasonColumns.UNAIRED_COUNT, getUnairedQuery());
@@ -506,7 +506,7 @@ public final class ProviderSchematic {
         Path.SEASONS, Path.SEASONS + "/#", Path.SEASONS + "/" + Path.FROM_SHOW + "/#"
     })
     public static Uri[] notifyUpdate(Context context, Uri uri, String where, String[] whereArgs) {
-      Set<Uri> uris = new HashSet<Uri>();
+      Set<Uri> uris = new HashSet<>();
 
       Cursor c = context.getContentResolver().query(uri, new String[] {
           SeasonColumns.ID, SeasonColumns.SHOW_ID,
@@ -766,7 +766,7 @@ public final class ProviderSchematic {
         Path.EPISODES + "/" + Path.FROM_SHOW + "/#"
     })
     public static Uri[] notifyUpdate(Context context, String where, String[] whereArgs) {
-      Set<Uri> uris = new HashSet<Uri>();
+      Set<Uri> uris = new HashSet<>();
 
       Cursor c = context.getContentResolver().query(EPISODES, new String[] {
           EpisodeColumns.ID, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON_ID,
@@ -1135,13 +1135,13 @@ public final class ProviderSchematic {
         Path.PEOPLE, Path.PEOPLE + "/#"
     })
     public static Uri[] notifyUpdate(Context context, Uri uri, String where, String[] whereArgs) {
-      Set<Uri> uris = new HashSet<Uri>();
+      Set<Uri> uris = new HashSet<>();
 
       Cursor people = context.getContentResolver().query(uri, new String[] {
           PersonColumns.ID,
       }, where, whereArgs, null);
 
-      List<Long> peopleIds = new ArrayList<Long>();
+      List<Long> peopleIds = new ArrayList<>();
       while (people.moveToNext()) {
         final long personId = Cursors.getLong(people, PersonColumns.ID);
         peopleIds.add(personId);

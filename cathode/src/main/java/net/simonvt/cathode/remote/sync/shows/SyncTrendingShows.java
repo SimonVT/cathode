@@ -61,10 +61,10 @@ public class SyncTrendingShows extends CallJob<List<TrendingItem>> {
     try {
       ContentResolver resolver = getContentResolver();
 
-      ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+      ArrayList<ContentProviderOperation> ops = new ArrayList<>();
       Cursor c = resolver.query(Shows.SHOWS_TRENDING, null, null, null, null);
 
-      List<Long> showIds = new ArrayList<Long>();
+      List<Long> showIds = new ArrayList<>();
       while (c.moveToNext()) {
         final long showId = Cursors.getLong(c, ShowColumns.ID);
         showIds.add(showId);

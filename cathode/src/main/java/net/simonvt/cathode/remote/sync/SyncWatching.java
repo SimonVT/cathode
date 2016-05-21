@@ -74,14 +74,14 @@ public class SyncWatching extends CallJob<Watching> {
   @Override public void handleResponse(Watching watching) {
     ContentResolver resolver = getContentResolver();
 
-    ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
     Cursor episodeWatchingCursor =
         getContentResolver().query(Episodes.EPISODE_WATCHING, new String[] {
             Tables.EPISODES + "." + EpisodeColumns.ID,
         }, null, null, null);
 
-    List<Long> episodeWatching = new ArrayList<Long>();
+    List<Long> episodeWatching = new ArrayList<>();
     while (episodeWatchingCursor.moveToNext()) {
       episodeWatching.add(Cursors.getLong(episodeWatchingCursor, EpisodeColumns.ID));
     }
@@ -91,7 +91,7 @@ public class SyncWatching extends CallJob<Watching> {
         MovieColumns.ID,
     }, null, null, null);
 
-    List<Long> movieWatching = new ArrayList<Long>();
+    List<Long> movieWatching = new ArrayList<>();
     while (movieWatchingCursor.moveToNext()) {
       movieWatching.add(Cursors.getLong(movieWatchingCursor, MovieColumns.ID));
     }

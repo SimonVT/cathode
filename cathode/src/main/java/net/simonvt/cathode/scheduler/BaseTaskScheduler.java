@@ -53,7 +53,7 @@ public class BaseTaskScheduler {
 
   private static class SerialExecutor implements Executor {
 
-    final Queue<Runnable> tasks = new ArrayDeque<Runnable>();
+    final Queue<Runnable> tasks = new ArrayDeque<>();
     Runnable active;
 
     public synchronized void execute(final Runnable r) {

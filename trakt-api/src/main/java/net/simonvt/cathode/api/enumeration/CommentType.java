@@ -34,7 +34,7 @@ public enum CommentType {
     return value;
   }
 
-  private static final Map<String, CommentType> STRING_MAPPING = new HashMap<String, CommentType>();
+  private static final Map<String, CommentType> STRING_MAPPING = new HashMap<>();
 
   static {
     for (CommentType via : CommentType.values()) {

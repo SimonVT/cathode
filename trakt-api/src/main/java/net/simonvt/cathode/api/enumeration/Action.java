@@ -33,7 +33,7 @@ public enum Action {
     return value;
   }
 
-  private static final Map<String, Action> STRING_MAPPING = new HashMap<String, Action>();
+  private static final Map<String, Action> STRING_MAPPING = new HashMap<>();
 
   static {
     for (Action via : Action.values()) {

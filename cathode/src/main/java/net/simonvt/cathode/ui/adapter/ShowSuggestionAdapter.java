@@ -63,7 +63,7 @@ public class ShowSuggestionAdapter extends SuggestionsAdapter {
 
     private FireAndForget(Context context, Callback callback) {
       this.context = context.getApplicationContext();
-      this.callbackRef = new WeakReference<Callback>(callback);
+      this.callbackRef = new WeakReference<>(callback);
     }
 
     @Override protected Results doInBackground(Void... params) {
@@ -72,7 +72,7 @@ public class ShowSuggestionAdapter extends SuggestionsAdapter {
 
       final int queryIndex = previousQueries.getColumnIndex(ShowSearchSuggestionsColumns.QUERY);
 
-      List<Suggestion> queries = new ArrayList<Suggestion>();
+      List<Suggestion> queries = new ArrayList<>();
       while (previousQueries.moveToNext()) {
         queries.add(new Suggestion(previousQueries.getString(queryIndex), null, null));
       }
@@ -92,7 +92,7 @@ public class ShowSuggestionAdapter extends SuggestionsAdapter {
       final int overviewIndex = allShows.getColumnIndex(ShowColumns.OVERVIEW);
       final int idIndex = allShows.getColumnIndex(ShowColumns.ID);
 
-      List<Suggestion> shows = new ArrayList<Suggestion>();
+      List<Suggestion> shows = new ArrayList<>();
       while (allShows.moveToNext()) {
         shows.add(new Suggestion(allShows.getString(titleIndex), allShows.getString(overviewIndex),
             allShows.getLong(idIndex)));

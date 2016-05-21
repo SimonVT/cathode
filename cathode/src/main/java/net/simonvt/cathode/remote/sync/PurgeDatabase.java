@@ -75,7 +75,7 @@ public class PurgeDatabase extends Job {
         ShowColumns.ID, ShowColumns.TITLE,
     }, showsWhere, null, null);
 
-    List<Long> showIds = new ArrayList<Long>();
+    List<Long> showIds = new ArrayList<>();
     while (shows.moveToNext()) {
       final long id = Cursors.getLong(shows, ShowColumns.ID);
       final String title = Cursors.getString(shows, ShowColumns.TITLE);
@@ -92,7 +92,7 @@ public class PurgeDatabase extends Job {
       }
     }
 
-    ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
     for (Long id : showIds) {
       ContentProviderOperation op = ContentProviderOperation.newDelete(Shows.withId(id)).build();
       ops.add(op);
@@ -125,7 +125,7 @@ public class PurgeDatabase extends Job {
         MovieColumns.ID, MovieColumns.TITLE,
     }, moviesWhere, null, null);
 
-    List<Long> movieIds = new ArrayList<Long>();
+    List<Long> movieIds = new ArrayList<>();
     while (movies.moveToNext()) {
       final long id = Cursors.getLong(movies, MovieColumns.ID);
       final String title = Cursors.getString(movies, MovieColumns.TITLE);
@@ -142,7 +142,7 @@ public class PurgeDatabase extends Job {
       }
     }
 
-    ops = new ArrayList<ContentProviderOperation>();
+    ops = new ArrayList<>();
     for (Long id : movieIds) {
       ContentProviderOperation op = ContentProviderOperation.newDelete(Movies.withId(id)).build();
       ops.add(op);

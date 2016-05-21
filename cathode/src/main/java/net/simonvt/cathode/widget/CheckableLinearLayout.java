@@ -28,7 +28,7 @@ import java.util.List;
 public class CheckableLinearLayout extends LinearLayout implements Checkable {
 
   private boolean checked;
-  private final List<Checkable> checkables = new ArrayList<Checkable>();
+  private final List<Checkable> checkables = new ArrayList<>();
 
   public CheckableLinearLayout(Context context) {
     super(context);

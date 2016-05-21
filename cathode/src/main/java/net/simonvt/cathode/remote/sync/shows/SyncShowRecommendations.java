@@ -63,8 +63,8 @@ public class SyncShowRecommendations extends CallJob<List<Show>> {
   @Override public void handleResponse(List<Show> shows) {
     ContentResolver resolver = getContentResolver();
 
-    List<Long> showIds = new ArrayList<Long>();
-    ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+    List<Long> showIds = new ArrayList<>();
+    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
     Cursor c = resolver.query(Shows.SHOWS_RECOMMENDED, null, null, null, null);
     while (c.moveToNext()) {

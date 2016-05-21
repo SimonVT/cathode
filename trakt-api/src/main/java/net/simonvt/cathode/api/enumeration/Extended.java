@@ -34,7 +34,7 @@ public enum Extended {
     return value;
   }
 
-  private static final Map<String, Extended> STRING_MAPPING = new HashMap<String, Extended>();
+  private static final Map<String, Extended> STRING_MAPPING = new HashMap<>();
 
   static {
     for (Extended via : Extended.values()) {

@@ -168,7 +168,7 @@ public final class MovieDatabaseHelper {
 
   public void insertGenres(long movieId, List<String> genres) {
     try {
-      ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+      ArrayList<ContentProviderOperation> ops = new ArrayList<>();
       ContentProviderOperation op;
 
       op = ContentProviderOperation.newDelete(MovieGenres.fromMovie(movieId)).build();

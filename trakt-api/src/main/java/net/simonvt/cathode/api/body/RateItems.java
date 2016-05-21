@@ -66,7 +66,7 @@ public class RateItems {
 
     public Season season(int number) {
       if (seasons == null) {
-        seasons = new ArrayList<Season>();
+        seasons = new ArrayList<>();
       }
       Season season = new Season(number);
       seasons.add(season);
@@ -100,7 +100,7 @@ public class RateItems {
 
     public Episode episode(int episodeNumber) {
       if (this.episodes == null) {
-        this.episodes = new ArrayList<Episode>();
+        this.episodes = new ArrayList<>();
       }
 
       Episode episode = new Episode(episodeNumber);
@@ -146,9 +146,9 @@ public class RateItems {
     }
   }
 
-  List<Movie> movies = new ArrayList<Movie>();
+  List<Movie> movies = new ArrayList<>();
 
-  List<Show> shows = new ArrayList<Show>();
+  List<Show> shows = new ArrayList<>();
 
   public Movie movie(long traktId) {
     Movie movie = new Movie(traktId);

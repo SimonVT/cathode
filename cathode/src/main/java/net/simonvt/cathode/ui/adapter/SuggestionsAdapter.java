@@ -133,7 +133,7 @@ public abstract class SuggestionsAdapter extends BaseAdapter implements Filterab
 
       String filter = constraint.toString().toLowerCase(Locale.getDefault());
 
-      List<Suggestion> items = new ArrayList<Suggestion>();
+      List<Suggestion> items = new ArrayList<>();
 
       int queryCount = 0;
       for (Suggestion suggestion : queries) {

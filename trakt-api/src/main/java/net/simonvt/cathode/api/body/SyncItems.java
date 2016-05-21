@@ -67,7 +67,7 @@ public class SyncItems {
 
     public Season season(int number) {
       if (seasons == null) {
-        seasons = new ArrayList<Season>();
+        seasons = new ArrayList<>();
       }
       Season season = new Season(number);
       seasons.add(season);
@@ -105,7 +105,7 @@ public class SyncItems {
 
     public Episode episode(int episodeNumber) {
       if (episodes == null) {
-        this.episodes = new ArrayList<Episode>();
+        this.episodes = new ArrayList<>();
       }
 
       Episode episode = new Episode(episodeNumber);
@@ -172,9 +172,9 @@ public class SyncItems {
     }
   }
 
-  List<Movie> movies = new ArrayList<Movie>();
+  List<Movie> movies = new ArrayList<>();
 
-  List<Show> shows = new ArrayList<Show>();
+  List<Show> shows = new ArrayList<>();
 
   public Movie movie(long traktId) {
     Movie movie = new Movie(traktId);

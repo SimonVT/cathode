@@ -28,7 +28,7 @@ import java.util.List;
 public class SimpleCursor extends AbsSimpleCursor {
 
   private final String[] columnNames;
-  private List<Object[]> data = new ArrayList<Object[]>();
+  private List<Object[]> data = new ArrayList<>();
   private final int columnCount;
 
   /**

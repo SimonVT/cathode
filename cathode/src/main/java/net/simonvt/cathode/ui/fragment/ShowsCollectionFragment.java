@@ -66,7 +66,7 @@ public class ShowsCollectionFragment extends ShowsFragment implements ListDialog
       return key;
     }
 
-    private static final Map<String, SortBy> STRING_MAPPING = new HashMap<String, SortBy>();
+    private static final Map<String, SortBy> STRING_MAPPING = new HashMap<>();
 
     static {
       for (SortBy via : SortBy.values()) {
@@ -120,7 +120,7 @@ public class ShowsCollectionFragment extends ShowsFragment implements ListDialog
 
   @Override public boolean onMenuItemClick(MenuItem item) {
     if (item.getItemId() == R.id.menu_sort) {
-      ArrayList<ListDialog.Item> items = new ArrayList<ListDialog.Item>();
+      ArrayList<ListDialog.Item> items = new ArrayList<>();
       items.add(new ListDialog.Item(R.id.sort_title, R.string.sort_title));
       items.add(new ListDialog.Item(R.id.sort_collected, R.string.sort_collected));
       ListDialog.newInstance(R.string.action_sort_by, items, this)

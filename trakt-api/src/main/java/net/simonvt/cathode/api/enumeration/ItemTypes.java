@@ -38,7 +38,7 @@ public enum ItemTypes {
     return value;
   }
 
-  private static final Map<String, ItemTypes> STRING_MAPPING = new HashMap<String, ItemTypes>();
+  private static final Map<String, ItemTypes> STRING_MAPPING = new HashMap<>();
 
   static {
     for (ItemTypes via : ItemTypes.values()) {

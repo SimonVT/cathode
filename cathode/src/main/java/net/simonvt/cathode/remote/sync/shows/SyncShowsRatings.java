@@ -62,14 +62,14 @@ public class SyncShowsRatings extends CallJob<List<RatingItem>> {
     Cursor shows = getContentResolver().query(Shows.SHOWS, new String[] {
         ShowColumns.ID,
     }, ShowColumns.RATED_AT + ">0", null, null);
-    List<Long> showIds = new ArrayList<Long>();
+    List<Long> showIds = new ArrayList<>();
     while (shows.moveToNext()) {
       final long showId = Cursors.getLong(shows, ShowColumns.ID);
       showIds.add(showId);
     }
     shows.close();
 
-    ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
     for (RatingItem rating : ratings) {
       final long traktId = rating.getShow().getIds().getTrakt();

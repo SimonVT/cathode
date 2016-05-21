@@ -70,7 +70,7 @@ public class SyncMovieCrew extends CallJob<People> {
       return;
     }
 
-    ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
     ContentProviderOperation op =
         ContentProviderOperation.newDelete(MovieCast.fromMovie(movieId)).build();

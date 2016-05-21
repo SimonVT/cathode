@@ -34,7 +34,7 @@ public enum Privacy {
     return value;
   }
 
-  private static final Map<String, Privacy> STRING_MAPPING = new HashMap<String, Privacy>();
+  private static final Map<String, Privacy> STRING_MAPPING = new HashMap<>();
 
   static {
     for (Privacy via : Privacy.values()) {

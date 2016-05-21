@@ -83,7 +83,7 @@ public class UpcomingShowsFragment
       return key;
     }
 
-    private static final Map<String, SortBy> STRING_MAPPING = new HashMap<String, SortBy>();
+    private static final Map<String, SortBy> STRING_MAPPING = new HashMap<>();
 
     static {
       for (SortBy via : SortBy.values()) {
@@ -160,7 +160,7 @@ public class UpcomingShowsFragment
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.sort_by:
-        ArrayList<ListDialog.Item> items = new ArrayList<ListDialog.Item>();
+        ArrayList<ListDialog.Item> items = new ArrayList<>();
         items.add(new ListDialog.Item(R.id.sort_title, R.string.sort_title));
         items.add(new ListDialog.Item(R.id.sort_next_episode, R.string.sort_next_episode));
         ListDialog.newInstance(R.string.action_sort_by, items, UpcomingShowsFragment.this)
