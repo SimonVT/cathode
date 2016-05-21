@@ -148,7 +148,7 @@ public class UpcomingShowsFragment
   }
 
   @Override public boolean displaysMenuIcon() {
-    return true;
+    return amITopLevel();
   }
 
   @Override public void createMenu(Toolbar toolbar) {

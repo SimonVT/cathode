@@ -16,6 +16,7 @@
 
 package net.simonvt.cathode.ui;
 
+import android.support.v4.app.Fragment;
 import net.simonvt.cathode.api.enumeration.ItemType;
 
 public interface NavigationListener
@@ -24,4 +25,8 @@ public interface NavigationListener
   void onDisplayComments(ItemType type, long itemId);
 
   void onDisplayComment(long commentId);
+
+  void displayFragment(Class clazz, String tag);
+
+  boolean isFragmentTopLevel(Fragment fragment);
 }

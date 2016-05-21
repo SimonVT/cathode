@@ -53,6 +53,10 @@ public class NavigationFragment extends AbsAdapterFragment {
   private List<NavigationItem> menuItems = new ArrayList<NavigationItem>();
 
   {
+    menuItems.add(new MenuItem(R.id.menu_dashboard, R.string.navigation_dashboard, 0));
+
+    menuItems.add(new Divider());
+
     // menuItems.add(new NavigationItem(R.string.navigation_title_shows));
     menuItems.add(new MenuItem(R.id.menu_shows_upcoming, R.string.navigation_shows_upcoming, 0));
     menuItems.add(new MenuItem(R.id.menu_shows_watched, R.string.navigation_shows_watched, 0));
@@ -107,7 +111,7 @@ public class NavigationFragment extends AbsAdapterFragment {
     } else {
       SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
       final String startPagePref = settings.getString(Settings.START_PAGE, null);
-      StartPage startPage = StartPage.fromValue(startPagePref, StartPage.SHOWS_UPCOMING);
+      StartPage startPage = StartPage.fromValue(startPagePref, StartPage.DASHBOARD);
       selectedPosition = getPositionForId(startPage.getMenuId());
     }
 

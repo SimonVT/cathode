@@ -82,6 +82,10 @@ public final class FragmentStack {
     commit();
   }
 
+  public int positionInstack(Fragment fragment) {
+    return stack.indexOf(fragment);
+  }
+
   /** Removes all added fragments and clears the stack. */
   public void destroy() {
     commit();

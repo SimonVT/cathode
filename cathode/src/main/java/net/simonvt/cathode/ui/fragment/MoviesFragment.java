@@ -67,8 +67,9 @@ public abstract class MoviesFragment
     columnCount = getResources().getInteger(R.integer.movieColumns);
   }
 
+
   @Override public boolean displaysMenuIcon() {
-    return true;
+    return amITopLevel();
   }
 
   @Override public void createMenu(Toolbar toolbar) {

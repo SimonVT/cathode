@@ -18,6 +18,8 @@
   <item name="contentContainer" type="id"/>
   <item name="progressContainer" type="id"/>
 
+  <item name="menu_dashboard" type="id"/>
+
   <item name="menu_shows_upcoming" type="id"/>
   <item name="menu_shows_watched" type="id"/>
   <item name="menu_shows_collection" type="id"/>

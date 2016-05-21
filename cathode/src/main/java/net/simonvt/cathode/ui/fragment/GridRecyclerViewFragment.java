@@ -26,7 +26,9 @@ public abstract class GridRecyclerViewFragment<T extends RecyclerView.ViewHolder
 
   private GridLayoutItemSpacing itemSpacing;
 
-  protected abstract int getColumnCount();
+  protected int getColumnCount() {
+    return 1;
+  }
 
   protected int getHorizontalSpacing() {
     return getResources().getDimensionPixelSize(R.dimen.recyclerViewHorizontalSpacing);

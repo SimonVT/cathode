@@ -63,6 +63,7 @@ import net.simonvt.cathode.ui.fragment.MovieFragment;
 import net.simonvt.cathode.ui.fragment.MovieRecommendationsFragment;
 import net.simonvt.cathode.ui.fragment.MovieWatchlistFragment;
 import net.simonvt.cathode.ui.fragment.NavigationFragment;
+import net.simonvt.cathode.ui.fragment.DashboardFragment;
 import net.simonvt.cathode.ui.fragment.SearchMovieFragment;
 import net.simonvt.cathode.ui.fragment.SearchShowFragment;
 import net.simonvt.cathode.ui.fragment.SeasonFragment;
@@ -152,7 +153,7 @@ public class HomeActivity extends BaseActivity
     if (stack.size() == 0) {
       SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
       final String startPagePref = settings.getString(Settings.START_PAGE, null);
-      StartPage startPage = StartPage.fromValue(startPagePref, StartPage.SHOWS_UPCOMING);
+      StartPage startPage = StartPage.fromValue(startPagePref, StartPage.DASHBOARD);
       stack.replace(startPage.getPageClass(), startPage.getTag());
       stack.commit();
     }
@@ -257,6 +258,10 @@ public class HomeActivity extends BaseActivity
 
   @Override public boolean onMenuItemClicked(int id) {
     switch (id) {
+      case R.id.menu_dashboard:
+        stack.replace(DashboardFragment.class, DashboardFragment.TAG);
+        break;
+
       case R.id.menu_shows_upcoming:
         stack.replace(UpcomingShowsFragment.class, Fragments.SHOWS_UPCOMING);
         break;
@@ -483,6 +488,15 @@ public class HomeActivity extends BaseActivity
   @Override public void onDisplayComment(long commentId) {
     stack.push(CommentFragment.class, Fragments.COMMENT, CommentFragment.getArgs(commentId));
     stack.commit();
+  }
+
+  @Override public void displayFragment(Class clazz, String tag) {
+    stack.push(clazz, tag, null);
+    stack.commit();
+  }
+
+  @Override public boolean isFragmentTopLevel(Fragment fragment) {
+    return stack.positionInstack(fragment) == 0;
   }
 
   ///////////////////////////////////////////////////////////////////////////

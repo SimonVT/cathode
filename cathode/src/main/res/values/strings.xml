@@ -91,6 +91,8 @@
   <string name="title_website">Website</string>
   <string name="title_view_on">View on</string>
 
+  <string name="title_dashboard">Dashboard</string>
+
   <string name="title_shows_watched">Watched shows</string>
   <string name="title_shows_upcoming">Upcoming shows</string>
   <string name="title_shows_collection">Show collection</string>
@@ -103,6 +105,12 @@
   <string name="title_movies_watchlist">Movie watchlist</string>
   <string name="title_movies_trending">Trending movies</string>
   <string name="title_movies_recommendations">Movie recommendations</string>
+
+  <string name="category_shows_upcoming">Upcoming shows</string>
+  <string name="category_shows_watchlist">Show watchlist</string>
+  <string name="category_shows_trending">Trending shows</string>
+  <string name="category_movies_watchlist">Movie watchlist</string>
+  <string name="category_movies_trending">Trending movies</string>
 
   <string name="info_imdb">imdb</string>
   <string name="info_tvdb">tvdb</string>
@@ -197,6 +205,8 @@
   <string name="preference_logout">Logout</string>
 
   <!-- Navigation fragment -->
+  <string name="navigation_dashboard">Dashboard</string>
+
   <string name="navigation_shows_upcoming">Upcoming</string>
   <string name="navigation_shows_watched">Watched</string>
   <string name="navigation_shows_collection">Collection</string>
@@ -215,6 +225,8 @@
   <string name="navigation_settings">Settings</string>
 
   <!-- Startpage -->
+  <string name="startpage_dashboard">Dashboard</string>
+
   <string name="startpage_shows_upcoming">Upcoming shows</string>
   <string name="startpage_shows_watched">Wathched shows</string>
   <string name="startpage_shows_collected">Collected shows</string>

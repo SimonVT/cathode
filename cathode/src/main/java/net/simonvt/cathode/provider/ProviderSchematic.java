@@ -685,6 +685,14 @@ public final class ProviderSchematic {
   @TableEndpoint(table = Tables.EPISODES)
   public static class Episodes {
 
+    @MapColumns public static Map<String, String> mapColumns() {
+      Map<String, String> map = new HashMap<>();
+
+      map.put(EpisodeColumns.SHOW_TITLE, getShowTitleQuery());
+
+      return map;
+    }
+
     @ContentUri(
         path = Path.EPISODES,
         type = Type.EPISODE) @NotificationUri(
@@ -790,6 +798,20 @@ public final class ProviderSchematic {
       return new Uri[] {
           Shows.SHOWS, Seasons.SEASONS, EPISODES,
       };
+    }
+
+    private static String getShowTitleQuery() {
+      return "(SELECT " + ShowColumns.TITLE + " FROM "
+          + Tables.SHOWS
+          + " WHERE "
+          + Tables.EPISODES
+          + "."
+          + EpisodeColumns.SHOW_ID
+          + "="
+          + Tables.SHOWS
+          + "."
+          + ShowColumns.ID
+          + ")";
     }
   }
 

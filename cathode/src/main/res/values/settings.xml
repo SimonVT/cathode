@@ -17,6 +17,8 @@
 <resources>
 
   <string-array name="setting_startpage">
+    <item>Dashboard</item>
+
     <item>Upcoming shows</item>
     <item>Watched shows</item>
     <item>Collected shows</item>
@@ -34,6 +36,8 @@
   </string-array>
 
   <string-array name="setting_startpage_values">
+    <item>dashboard</item>
+
     <item>showsUpcoming</item>
     <item>showsWatched</item>
     <item>showsCollected</item>

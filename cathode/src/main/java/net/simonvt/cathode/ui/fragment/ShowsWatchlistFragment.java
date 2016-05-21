@@ -82,7 +82,7 @@ public class ShowsWatchlistFragment
   }
 
   @Override public boolean displaysMenuIcon() {
-    return true;
+    return amITopLevel();
   }
 
   @Override protected int getColumnCount() {

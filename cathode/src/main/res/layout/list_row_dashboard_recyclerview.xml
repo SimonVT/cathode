@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2013 Simon Vig Therkildsen
+  ~ Copyright (C) 2016 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -14,19 +14,16 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<resources>
-
-  <dimen name="searchViewMaxWidth">320dp</dimen>
-
-  <dimen name="detailContentPaddingBottom">16dp</dimen>
-
-  <dimen name="recyclerViewVerticalSpacing">8dp</dimen>
-  <dimen name="recyclerViewHorizontalSpacing">8dp</dimen>
-
-  <dimen name="watchingPosterWidth">72dp</dimen>
-
-  <dimen name="trailerMargin">0dp</dimen>
-
-  <dimen name="dashboardItemWidth">196dp</dimen>
-
-</resources>
+<android.support.v7.widget.RecyclerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/list"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:drawSelectorOnTop="true"
+    android:scrollbars="horizontal"
+    android:scrollbarStyle="outsideOverlay"
+    android:paddingLeft="4dp"
+    android:paddingTop="4dp"
+    android:paddingRight="4dp"
+    android:paddingBottom="4dp"
+    android:clipToPadding="false"/>

@@ -38,6 +38,8 @@
 
   <dimen name="trailerMargin">@dimen/detailContentPadding</dimen>
 
+  <dimen name="dashboardItemWidth">128dp</dimen>
+
   <!-- App bar dimensions -->
   <dimen name="appBarContentOffset">0dp</dimen>
   <dimen name="appBarContentMargin">0dp</dimen>

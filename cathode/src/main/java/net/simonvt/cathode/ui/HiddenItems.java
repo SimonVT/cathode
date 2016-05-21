@@ -19,6 +19,7 @@ package net.simonvt.cathode.ui;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
@@ -151,6 +152,15 @@ public class HiddenItems extends BaseActivity
   @Override public void onDisplayComment(long commentId) {
     stack.push(CommentFragment.class, Fragments.COMMENT, CommentFragment.getArgs(commentId));
     stack.commit();
+  }
+
+  @Override public void displayFragment(Class clazz, String tag) {
+    stack.push(clazz, tag, null);
+    stack.commit();
+  }
+
+  @Override public boolean isFragmentTopLevel(Fragment fragment) {
+    return stack.positionInstack(fragment) == 0;
   }
 
   public static class HiddenItemsFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>

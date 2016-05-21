@@ -67,7 +67,7 @@ public abstract class ShowsFragment<D extends Cursor>
   }
 
   @Override public boolean displaysMenuIcon() {
-    return true;
+    return amITopLevel();
   }
 
   @Override protected int getColumnCount() {

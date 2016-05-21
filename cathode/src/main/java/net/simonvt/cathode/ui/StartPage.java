@@ -27,6 +27,7 @@ import net.simonvt.cathode.ui.fragment.MovieWatchlistFragment;
 import net.simonvt.cathode.ui.fragment.ShowRecommendationsFragment;
 import net.simonvt.cathode.ui.fragment.ShowsCollectionFragment;
 import net.simonvt.cathode.ui.fragment.ShowsWatchlistFragment;
+import net.simonvt.cathode.ui.fragment.DashboardFragment;
 import net.simonvt.cathode.ui.fragment.TrendingMoviesFragment;
 import net.simonvt.cathode.ui.fragment.TrendingShowsFragment;
 import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
@@ -34,6 +35,9 @@ import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
 
 public enum StartPage {
+  DASHBOARD("dashboard", DashboardFragment.class, DashboardFragment.TAG, R.id.menu_dashboard,
+      R.string.startpage_dashboard),
+
   SHOWS_UPCOMING("showsUpcoming", UpcomingShowsFragment.class, Fragments.SHOWS_UPCOMING,
       R.id.menu_shows_upcoming, R.string.startpage_shows_upcoming),
   SHOWS_WATCHED("showsWatched", WatchedShowsFragment.class, Fragments.SHOWS_WATCHED,
