@@ -99,7 +99,7 @@ import timber.log.Timber;
       }
     });
     StartPage startPage = StartPage.fromValue(settings.getString(Settings.START_PAGE, null),
-        StartPage.SHOWS_UPCOMING);
+        StartPage.DASHBOARD);
     debugViews.startPage.setSelection(startPageAdapter.getPositionForValue(startPage));
 
     debugViews.recreateActivity.setOnClickListener(new View.OnClickListener() {
