@@ -24,6 +24,9 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -96,6 +99,10 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
     adapter.initCategory(R.string.category_shows_trending);
     adapter.initCategory(R.string.category_movies_watchlist);
     adapter.initCategory(R.string.category_movies_trending);
+  }
+
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+    return inflater.inflate(R.layout.fragment_dashboard, container, false);
   }
 
   @Override public boolean displaysMenuIcon() {

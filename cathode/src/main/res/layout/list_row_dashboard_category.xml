@@ -19,6 +19,9 @@
     android:id="@+id/categoryContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingRight="8dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
     android:background="?attr/selectableItemBackground">
 
   <TextView
@@ -29,7 +32,6 @@
       android:layout_marginLeft="8dp"
       style="@style/Widget.UpcomingHeader"
       tools:text="Aired"/>
-
 
   <TextView
       android:layout_width="wrap_content"
