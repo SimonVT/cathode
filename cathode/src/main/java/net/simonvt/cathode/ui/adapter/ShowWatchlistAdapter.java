@@ -94,6 +94,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
     this.onItemClickListener = onItemClickListener;
     this.onRemoveListener = onRemoveListener;
     CathodeApp.inject(context, this);
+    setHasStableIds(false);
   }
 
   @Override public long getLastModified(int position) {

@@ -26,9 +26,11 @@ public class AdapterNotifier {
 
     long id;
 
+    int viewType;
+
     long lastModified;
 
-    public Item(long id, long lastModified) {
+    public Item(long id, int viewType, long lastModified) {
       this.id = id;
       this.lastModified = lastModified;
     }
@@ -42,10 +44,10 @@ public class AdapterNotifier {
     this.adapter = adapter;
   }
 
-  private int indexOf(List<Item> items, long id) {
+  private int indexOf(List<Item> items, long id, int viewType) {
     for (int i = 0, count = items.size(); i < count; i++) {
       Item item = items.get(i);
-      if (id == item.id) {
+      if (id == item.id && viewType == item.viewType) {
         return i;
       }
     }
@@ -58,7 +60,8 @@ public class AdapterNotifier {
     final int itemCount = adapter.getItemCount();
     List<Item> newItems = new ArrayList<>();
     for (int position = 0; position < itemCount; position++) {
-      newItems.add(new Item(adapter.getItemId(position), adapter.getLastModified(position)));
+      newItems.add(new Item(adapter.getItemId(position), adapter.getItemViewType(position),
+          adapter.getLastModified(position)));
     }
 
     if (oldItems == null) {
@@ -69,7 +72,7 @@ public class AdapterNotifier {
 
       for (int i = oldItemCount - 1; i >= 0; i--) {
         Item item = oldItems.get(i);
-        final int newPos = indexOf(newItems, item.id);
+        final int newPos = indexOf(newItems, item.id, item.viewType);
         if (newPos == -1) {
           notifyItemRemoved(i);
           oldItems.remove(i);
@@ -79,20 +82,20 @@ public class AdapterNotifier {
       // Fill oldItems, in case one is moved to the end of the list later.
       if (oldItems.size() < newItemCount) {
         for (int i = oldItems.size(); i < newItemCount; i++) {
-          oldItems.add(new Item(Long.MIN_VALUE, Long.MIN_VALUE));
+          oldItems.add(new Item(Long.MIN_VALUE, Integer.MIN_VALUE, Long.MIN_VALUE));
         }
       }
 
       for (int newPos = 0; newPos < newItemCount; newPos++) {
         Item newItem = newItems.get(newPos);
-        final int oldPos = indexOf(oldItems, newItem.id);
+        final int oldPos = indexOf(oldItems, newItem.id, newItem.viewType);
         if (oldPos == -1) {
           notifyItemInserted(newPos);
-          oldItems.add(newPos, new Item(Long.MIN_VALUE, Long.MIN_VALUE));
+          oldItems.add(newPos, new Item(Long.MIN_VALUE, Integer.MIN_VALUE, Long.MIN_VALUE));
         } else if (newPos != oldPos) {
           notifyItemMoved(oldPos, newPos);
           oldItems.remove(oldPos);
-          oldItems.add(newPos, new Item(Long.MIN_VALUE, Long.MIN_VALUE));
+          oldItems.add(newPos, new Item(Long.MIN_VALUE, Integer.MIN_VALUE, Long.MIN_VALUE));
         }
 
         if (oldPos != -1) {
