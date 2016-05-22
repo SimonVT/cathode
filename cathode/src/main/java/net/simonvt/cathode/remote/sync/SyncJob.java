@@ -48,7 +48,6 @@ public class SyncJob extends Job {
     }
 
     queue(new SyncUserSettings());
-    queue(new SyncActivityStream());
 
     queue(new StartSyncUpdatedShows());
     queue(new StartSyncUpdatedMovies());

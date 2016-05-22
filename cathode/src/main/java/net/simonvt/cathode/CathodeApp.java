@@ -135,7 +135,6 @@ public class CathodeApp extends Application {
       if (lastFullSync + 24 * DateUtils.DAY_IN_MILLIS < currentTime) {
         jobManager.addJob(new SyncJob());
       } else {
-        // TODO: jobManager.addJob(new SyncActivityStreamTask());
         jobManager.addJob(new SyncUserActivity());
       }
       lastSync = System.currentTimeMillis();

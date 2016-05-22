@@ -27,16 +27,6 @@ public final class TraktTimestamps {
   private TraktTimestamps() {
   }
 
-  public static void updateLastActivityStreamSync(Context context, long lastSync) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-    settings.edit().putLong(Settings.ACTIVITY_STREAM_SYNC, lastSync).apply();
-  }
-
-  public static long lastActivityStreamSync(Context context) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-    return settings.getLong(Settings.ACTIVITY_STREAM_SYNC, -1);
-  }
-
   public static boolean episodeWatchedNeedsUpdate(Context context, long lastUpdated) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 

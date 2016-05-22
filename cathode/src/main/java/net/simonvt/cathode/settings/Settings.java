@@ -41,9 +41,6 @@ public final class Settings {
   // Whether hidden shows should be displayed in upcoming
   public static final String SHOW_HIDDEN = "showHidden";
 
-  // Last time the activity stream was synced
-  public static final String ACTIVITY_STREAM_SYNC = "activityStreamSync";
-
   // Last trending and recommendations sync
   public static final String TRENDING = "trending";
   public static final String RECOMMENDATIONS = "recommendations";
@@ -242,7 +239,6 @@ public final class Settings {
 
     editor.remove(CALENDAR_SYNC);
     editor.remove(SHOW_HIDDEN);
-    editor.remove(ACTIVITY_STREAM_SYNC);
 
     editor.remove(TRENDING);
     editor.remove(RECOMMENDATIONS);

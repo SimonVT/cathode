@@ -83,7 +83,6 @@ import net.simonvt.cathode.remote.action.shows.WatchedShow;
 import net.simonvt.cathode.remote.action.shows.WatchlistEpisode;
 import net.simonvt.cathode.remote.action.shows.WatchlistShow;
 import net.simonvt.cathode.remote.sync.PurgeDatabase;
-import net.simonvt.cathode.remote.sync.SyncActivityStream;
 import net.simonvt.cathode.remote.sync.SyncHiddenItems;
 import net.simonvt.cathode.remote.sync.SyncHiddenSection;
 import net.simonvt.cathode.remote.sync.SyncJob;
@@ -242,17 +241,16 @@ import net.simonvt.cathode.widget.RemoteImageView;
         CheckInEpisode.class, DismissShowRecommendation.class, CollectEpisode.class,
         RateEpisode.class, WatchedEpisode.class, WatchlistEpisode.class, CollectSeason.class,
         WatchedSeason.class, RateShow.class, WatchedShow.class, WatchlistShow.class,
-        PurgeDatabase.class, SyncActivityStream.class, SyncJob.class, SyncUserActivity.class,
-        SyncUserSettings.class, SyncWatching.class, SyncMovieCrew.class,
-        SyncMovieRecommendations.class, SyncMoviesCollection.class, SyncMoviesRatings.class,
-        SyncWatchedMovies.class, SyncMoviesWatchlist.class, SyncMovie.class,
-        SyncTrendingMovies.class, StartSyncUpdatedMovies.class, SyncEpisodesRatings.class,
-        SyncEpisodeWatchlist.class, SyncSeasonsRatings.class, SyncSeasons.class, SyncSeason.class,
-        SyncShowCast.class, SyncShowCollectedStatus.class, SyncShowRecommendations.class,
-        SyncShowsCollection.class, SyncShowsRatings.class, SyncWatchedShows.class,
-        SyncShowsWatchlist.class, SyncShow.class, SyncShowWatchedStatus.class,
-        SyncTrendingShows.class, StartSyncUpdatedShows.class, SyncPerson.class,
-        SyncUpdatedShows.class, SyncUpdatedMovies.class, ForceUpdateJob.class,
+        PurgeDatabase.class, SyncJob.class, SyncUserActivity.class, SyncUserSettings.class,
+        SyncWatching.class, SyncMovieCrew.class, SyncMovieRecommendations.class,
+        SyncMoviesCollection.class, SyncMoviesRatings.class, SyncWatchedMovies.class,
+        SyncMoviesWatchlist.class, SyncMovie.class, SyncTrendingMovies.class,
+        StartSyncUpdatedMovies.class, SyncEpisodesRatings.class, SyncEpisodeWatchlist.class,
+        SyncSeasonsRatings.class, SyncSeasons.class, SyncSeason.class, SyncShowCast.class,
+        SyncShowCollectedStatus.class, SyncShowRecommendations.class, SyncShowsCollection.class,
+        SyncShowsRatings.class, SyncWatchedShows.class, SyncShowsWatchlist.class, SyncShow.class,
+        SyncShowWatchedStatus.class, SyncTrendingShows.class, StartSyncUpdatedShows.class,
+        SyncPerson.class, SyncUpdatedShows.class, SyncUpdatedMovies.class, ForceUpdateJob.class,
         UpdateShowCounts.class, SyncLists.class, SyncList.class, CreateList.class, RemoveShow.class,
         RemoveSeason.class, RemoveEpisode.class, RemoveMovie.class, RemovePerson.class,
         AddShow.class, AddSeason.class, AddEpisode.class, AddMovie.class, AddPerson.class,
