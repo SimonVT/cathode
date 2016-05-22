@@ -211,6 +211,9 @@ public class CathodeApp extends Application {
       if (currentVersion <= 31003) {
         settings.edit().remove("showHidden").apply();
       }
+      if (currentVersion <= 37000) {
+        settings.edit().remove(Settings.START_PAGE).apply();
+      }
 
       MainHandler.post(new Runnable() {
         @Override public void run() {

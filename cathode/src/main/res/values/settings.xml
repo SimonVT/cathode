@@ -54,6 +54,6 @@
     <item>lists</item>
   </string-array>
 
-  <string name="settings_startpage_default">showsUpcoming</string>
+  <string name="settings_startpage_default">dashboard</string>
 
 </resources>
