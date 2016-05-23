@@ -59,7 +59,7 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         queue(new SyncMovieCrew(traktId));
 
         Job job = new SyncComments(ItemType.MOVIE, traktId);
-        job.setOnDoneListener(onDoneListener);
+        job.registerOnDoneListener(onDoneListener);
         queue(job);
       }
     });

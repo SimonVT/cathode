@@ -165,7 +165,7 @@ public class ShowRecommendationsFragment
 
   @Override public void onRefresh() {
     Job job = new SyncShowRecommendations();
-    job.setOnDoneListener(onDoneListener);
+    job.registerOnDoneListener(onDoneListener);
     jobManager.addJob(job);
   }
 

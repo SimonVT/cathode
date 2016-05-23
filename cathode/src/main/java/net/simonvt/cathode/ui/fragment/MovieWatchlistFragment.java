@@ -43,7 +43,7 @@ public class MovieWatchlistFragment extends MoviesFragment {
 
   @Override public void onRefresh() {
     Job job = new SyncMoviesWatchlist();
-    job.setOnDoneListener(onDoneListener);
+    job.registerOnDoneListener(onDoneListener);
     jobManager.addJob(job);
   }
 

@@ -113,7 +113,7 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
 
   @Override public void onRefresh() {
     Job job = new SyncWatchedShows();
-    job.setOnDoneListener(onDoneListener);
+    job.registerOnDoneListener(onDoneListener);
     jobManager.addJob(job);
   }
 

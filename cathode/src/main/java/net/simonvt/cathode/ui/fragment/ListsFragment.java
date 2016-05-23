@@ -73,7 +73,7 @@ public class ListsFragment extends ToolbarSwipeRefreshRecyclerFragment<ListsAdap
 
   @Override public void onRefresh() {
     Job job = new SyncLists();
-    job.setOnDoneListener(onDoneListener);
+    job.registerOnDoneListener(onDoneListener);
     jobManager.addJob(job);
   }
 

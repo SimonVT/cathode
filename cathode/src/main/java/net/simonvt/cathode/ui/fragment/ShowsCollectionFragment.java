@@ -114,7 +114,7 @@ public class ShowsCollectionFragment extends ShowsFragment implements ListDialog
 
   @Override public void onRefresh() {
     Job job = new SyncShowsCollection();
-    job.setOnDoneListener(onDoneListener);
+    job.registerOnDoneListener(onDoneListener);
     jobManager.addJob(job);
   }
 

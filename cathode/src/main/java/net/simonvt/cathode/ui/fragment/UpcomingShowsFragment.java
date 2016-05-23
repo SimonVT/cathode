@@ -222,7 +222,7 @@ public class UpcomingShowsFragment
 
   @Override public void onRefresh() {
     Job job = new SyncWatchedShows();
-    job.setOnDoneListener(onDoneListener);
+    job.registerOnDoneListener(onDoneListener);
     jobManager.addJob(job);
   }
 

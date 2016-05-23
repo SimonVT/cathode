@@ -115,7 +115,7 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
       @Override public void run() {
         final long traktId = ListWrapper.getTraktId(getActivity().getContentResolver(), listId);
         Job job = new SyncList(traktId);
-        job.setOnDoneListener(onDoneListener);
+        job.registerOnDoneListener(onDoneListener);
         jobManager.addJob(job);
       }
     }).start();

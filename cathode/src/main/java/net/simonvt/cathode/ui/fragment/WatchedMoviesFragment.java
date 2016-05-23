@@ -113,7 +113,7 @@ public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.
 
   @Override public void onRefresh() {
     Job job = new SyncWatchedMovies();
-    job.setOnDoneListener(onDoneListener);
+    job.registerOnDoneListener(onDoneListener);
     jobManager.addJob(job);
   }
 

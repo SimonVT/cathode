@@ -69,7 +69,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         queue(new SyncShowCast(traktId));
 
         Job job = new SyncShowCollectedStatus(traktId);
-        job.setOnDoneListener(onDoneListener);
+        job.registerOnDoneListener(onDoneListener);
         queue(job);
       }
     });

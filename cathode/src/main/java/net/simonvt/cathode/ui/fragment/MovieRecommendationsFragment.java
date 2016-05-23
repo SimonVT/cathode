@@ -150,7 +150,7 @@ public class MovieRecommendationsFragment
 
   @Override public void onRefresh() {
     Job job = new SyncMovieRecommendations();
-    job.setOnDoneListener(onDoneListener);
+    job.registerOnDoneListener(onDoneListener);
     jobManager.addJob(job);
   }
 

@@ -160,6 +160,15 @@ public final class JobManager {
             final String key = job.key();
             for (Job existingJob : jobs) {
               if (key.equals(existingJob.key())) {
+                List<WeakReference<Job.OnDoneListener>> listeners = job.getOnDoneRefs();
+                if (listeners != null) {
+                  for (WeakReference<Job.OnDoneListener> ref : listeners) {
+                    Job.OnDoneListener listener = ref.get();
+                    if (listener != null) {
+                      existingJob.registerOnDoneListener(listener);
+                    }
+                  }
+                }
                 Timber.d("Job %s matched %s", key, existingJob.key());
                 return;
               }

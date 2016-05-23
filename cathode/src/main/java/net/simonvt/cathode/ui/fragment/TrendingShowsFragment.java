@@ -149,7 +149,7 @@ public class TrendingShowsFragment
 
   @Override public void onRefresh() {
     Job job = new SyncTrendingShows();
-    job.setOnDoneListener(onDoneListener);
+    job.registerOnDoneListener(onDoneListener);
     jobManager.addJob(job);
   }
 

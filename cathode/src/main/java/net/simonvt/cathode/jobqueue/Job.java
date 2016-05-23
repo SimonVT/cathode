@@ -19,6 +19,8 @@ package net.simonvt.cathode.jobqueue;
 import android.content.ContentResolver;
 import android.content.Context;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.util.MainHandler;
 
@@ -55,7 +57,7 @@ public abstract class Job {
 
   private transient boolean checkedOut;
 
-  private transient WeakReference<OnDoneListener> onDoneRef;
+  private transient List<WeakReference<OnDoneListener>> onDoneRefs;
 
   protected Job() {
     this(0);
@@ -72,13 +74,15 @@ public abstract class Job {
   public abstract void perform();
 
   public final void done() {
-    if (onDoneRef != null) {
+    if (onDoneRefs != null) {
       MainHandler.post(new Runnable() {
         @Override public void run() {
-          OnDoneListener listener = onDoneRef.get();
-          if (listener != null) {
-            onDoneRef.clear();
-            listener.onDone(Job.this);
+          for (WeakReference<OnDoneListener> ref : onDoneRefs) {
+            OnDoneListener listener = ref.get();
+            if (listener != null) {
+              listener.onDone(Job.this);
+              ref.clear();
+            }
           }
         }
       });
@@ -121,12 +125,16 @@ public abstract class Job {
     return (this.flags & flags) == flags;
   }
 
-  public void setOnDoneListener(OnDoneListener listener) {
-    if (onDoneRef != null) {
-      throw new RuntimeException("OnDoneListener can only be set once");
+  public void registerOnDoneListener(OnDoneListener listener) {
+    if (onDoneRefs == null) {
+      onDoneRefs = new ArrayList<>();
     }
 
-    onDoneRef = new WeakReference<>(listener);
+    onDoneRefs.add(new WeakReference<OnDoneListener>(listener));
+  }
+
+  public List<WeakReference<OnDoneListener>> getOnDoneRefs() {
+    return onDoneRefs;
   }
 
   final void setCheckedOut(boolean checkedOut) {

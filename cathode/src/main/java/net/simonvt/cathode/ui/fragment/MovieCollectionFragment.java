@@ -113,7 +113,7 @@ public class MovieCollectionFragment extends MoviesFragment implements ListDialo
 
   @Override public void onRefresh() {
     Job job = new SyncMoviesCollection();
-    job.setOnDoneListener(onDoneListener);
+    job.registerOnDoneListener(onDoneListener);
     jobManager.addJob(job);
   }
 

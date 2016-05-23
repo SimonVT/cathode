@@ -115,7 +115,7 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
 
   @Override public void onRefresh() {
     Job job = new SyncTrendingMovies();
-    job.setOnDoneListener(onDoneListener);
+    job.registerOnDoneListener(onDoneListener);
     jobManager.addJob(job);
   }
 

@@ -110,7 +110,7 @@ public class ShowsWatchlistFragment
     jobManager.addJob(job);
     job = new SyncShowsWatchlist();
     // Jobs are executed in order, so only attach listener to the last one
-    job.setOnDoneListener(onDoneListener);
+    job.registerOnDoneListener(onDoneListener);
     jobManager.addJob(job);
   }
 
