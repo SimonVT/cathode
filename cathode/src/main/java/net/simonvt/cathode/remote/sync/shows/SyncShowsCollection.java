@@ -69,142 +69,157 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
   }
 
   @Override public void handleResponse(List<CollectionItem> collection) {
+    Cursor c = getContentResolver().query(Episodes.EPISODES, new String[] {
+        EpisodeColumns.ID, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON, EpisodeColumns.SEASON_ID,
+        EpisodeColumns.EPISODE,
+    }, EpisodeColumns.IN_COLLECTION, null, null);
+
+    LongSparseArray<CollectedShow> showsMap = new LongSparseArray<>();
+    LongSparseArray<Long> showIdToTraktMap = new LongSparseArray<>();
+    List<Long> episodeIds = new ArrayList<>(c.getCount());
+
+    while (c.moveToNext()) {
+      final long id = Cursors.getLong(c, EpisodeColumns.ID);
+      final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
+      final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
+      final long seasonId = Cursors.getLong(c, EpisodeColumns.SEASON_ID);
+
+      CollectedShow collectedShow;
+      Long showTraktId = showIdToTraktMap.get(showId);
+      if (showTraktId == null) {
+        showTraktId = showHelper.getTraktId(showId);
+
+        showIdToTraktMap.put(showId, showTraktId);
+
+        collectedShow = new CollectedShow(showTraktId, showId);
+        showsMap.put(showTraktId, collectedShow);
+      } else {
+        collectedShow = showsMap.get(showTraktId);
+      }
+
+      CollectedSeason syncSeason = collectedShow.seasons.get(season);
+      if (syncSeason == null) {
+        syncSeason = new CollectedSeason(season, seasonId);
+        collectedShow.seasons.put(season, syncSeason);
+      }
+
+      final int number = Cursors.getInt(c, EpisodeColumns.EPISODE);
+
+      CollectedEpisode syncEpisode = syncSeason.episodes.get(number);
+      if (syncEpisode == null) {
+        syncEpisode = new CollectedEpisode(id, number);
+        syncSeason.episodes.put(number, syncEpisode);
+      }
+
+      episodeIds.add(id);
+    }
+    c.close();
+
+    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+
+    for (CollectionItem item : collection) {
+      Show show = item.getShow();
+      final long traktId = show.getIds().getTrakt();
+
+      CollectedShow collectedShow = showsMap.get(traktId);
+
+      boolean didShowExist = true;
+      if (collectedShow == null) {
+        ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
+        final long showId = showResult.showId;
+        if (showResult.didCreate) {
+          didShowExist = false;
+          queue(new SyncShow(traktId));
+        }
+        collectedShow = new CollectedShow(traktId, showId);
+        showsMap.put(traktId, collectedShow);
+      }
+
+      IsoTime lastCollected = item.getLastCollectedAt();
+      final long lastCollectedMillis = lastCollected.getTimeInMillis();
+
+      addOp(ops,
+          ContentProviderOperation.newUpdate(ProviderSchematic.Shows.withId(collectedShow.id))
+              .withValue(ShowColumns.LAST_COLLECTED_AT, lastCollectedMillis)
+              .build());
+
+      List<CollectionItem.Season> seasons = item.getSeasons();
+      for (CollectionItem.Season season : seasons) {
+        final int seasonNumber = season.getNumber();
+        CollectedSeason collectedSeason = collectedShow.seasons.get(seasonNumber);
+        boolean didSeasonExist = true;
+        if (collectedSeason == null) {
+          SeasonDatabaseHelper.IdResult seasonResult =
+              seasonHelper.getIdOrCreate(collectedShow.id, seasonNumber);
+          final long seasonId = seasonResult.id;
+          if (seasonResult.didCreate) {
+            didSeasonExist = false;
+            if (didShowExist) {
+              queue(new SyncShow(traktId, true));
+            }
+          }
+          collectedSeason = new CollectedSeason(seasonNumber, seasonId);
+          collectedShow.seasons.put(seasonNumber, collectedSeason);
+        }
+
+        List<CollectionItem.Episode> episodes = season.getEpisodes();
+        for (CollectionItem.Episode episode : episodes) {
+          final int episodeNumber = episode.getNumber();
+          CollectedEpisode syncEpisode = collectedSeason.episodes.get(episodeNumber);
+
+          if (syncEpisode == null) {
+            EpisodeDatabaseHelper.IdResult episodeResult =
+                episodeHelper.getIdOrCreate(collectedShow.id, collectedSeason.id, episodeNumber);
+            final long episodeId = episodeResult.id;
+            if (episodeResult.didCreate) {
+              if (didShowExist && didSeasonExist) {
+                queue(new SyncSeason(traktId, seasonNumber));
+              }
+            }
+
+            ContentProviderOperation.Builder builder =
+                ContentProviderOperation.newUpdate(Episodes.withId(episodeId));
+            ContentValues cv = new ContentValues();
+            cv.put(EpisodeColumns.IN_COLLECTION, true);
+            builder.withValues(cv);
+            addOp(ops, builder.build());
+          } else {
+            episodeIds.remove(syncEpisode.id);
+          }
+        }
+      }
+
+      applyBatch(ops);
+    }
+
+    ops.clear();
+    for (long episodeId : episodeIds) {
+      ContentProviderOperation.Builder builder =
+          ContentProviderOperation.newUpdate(Episodes.withId(episodeId));
+      ContentValues cv = new ContentValues();
+      cv.put(EpisodeColumns.IN_COLLECTION, false);
+      builder.withValues(cv);
+      addOp(ops, builder.build());
+    }
+    applyBatch(ops);
+  }
+
+  private void addOp(ArrayList<ContentProviderOperation> ops, ContentProviderOperation op) {
+    ops.add(op);
+    if (ops.size() > 25) {
+      applyBatch(ops);
+      ops.clear();
+    }
+  }
+
+  private void applyBatch(ArrayList<ContentProviderOperation> ops) {
     try {
-      Cursor c = getContentResolver().query(Episodes.EPISODES, new String[] {
-          EpisodeColumns.ID, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON,
-          EpisodeColumns.SEASON_ID, EpisodeColumns.EPISODE,
-      }, EpisodeColumns.IN_COLLECTION, null, null);
-
-      LongSparseArray<CollectedShow> showsMap = new LongSparseArray<>();
-      LongSparseArray<Long> showIdToTraktMap = new LongSparseArray<>();
-      List<Long> episodeIds = new ArrayList<>(c.getCount());
-
-      while (c.moveToNext()) {
-        final long id = Cursors.getLong(c, EpisodeColumns.ID);
-        final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
-        final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
-        final long seasonId = Cursors.getLong(c, EpisodeColumns.SEASON_ID);
-
-        CollectedShow collectedShow;
-        Long showTraktId = showIdToTraktMap.get(showId);
-        if (showTraktId == null) {
-          showTraktId = showHelper.getTraktId(showId);
-
-          showIdToTraktMap.put(showId, showTraktId);
-
-          collectedShow = new CollectedShow(showTraktId, showId);
-          showsMap.put(showTraktId, collectedShow);
-        } else {
-          collectedShow = showsMap.get(showTraktId);
-        }
-
-        CollectedSeason syncSeason = collectedShow.seasons.get(season);
-        if (syncSeason == null) {
-          syncSeason = new CollectedSeason(season, seasonId);
-          collectedShow.seasons.put(season, syncSeason);
-        }
-
-        final int number = Cursors.getInt(c, EpisodeColumns.EPISODE);
-
-        CollectedEpisode syncEpisode = syncSeason.episodes.get(number);
-        if (syncEpisode == null) {
-          syncEpisode = new CollectedEpisode(id, number);
-          syncSeason.episodes.put(number, syncEpisode);
-        }
-
-        episodeIds.add(id);
-      }
-      c.close();
-
-      ArrayList<ContentProviderOperation> ops = new ArrayList<>();
-
-      for (CollectionItem item : collection) {
-        Show show = item.getShow();
-        final long traktId = show.getIds().getTrakt();
-
-        CollectedShow collectedShow = showsMap.get(traktId);
-
-        boolean didShowExist = true;
-        if (collectedShow == null) {
-          ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
-          final long showId = showResult.showId;
-          if (showResult.didCreate) {
-            didShowExist = false;
-            queue(new SyncShow(traktId));
-          }
-          collectedShow = new CollectedShow(traktId, showId);
-          showsMap.put(traktId, collectedShow);
-        }
-
-        IsoTime lastCollected = item.getLastCollectedAt();
-        final long lastCollectedMillis = lastCollected.getTimeInMillis();
-
-        ops.add(ContentProviderOperation.newUpdate(ProviderSchematic.Shows.withId(collectedShow.id))
-            .withValue(ShowColumns.LAST_COLLECTED_AT, lastCollectedMillis)
-            .build());
-
-        List<CollectionItem.Season> seasons = item.getSeasons();
-        for (CollectionItem.Season season : seasons) {
-          final int seasonNumber = season.getNumber();
-          CollectedSeason collectedSeason = collectedShow.seasons.get(seasonNumber);
-          boolean didSeasonExist = true;
-          if (collectedSeason == null) {
-            SeasonDatabaseHelper.IdResult seasonResult =
-                seasonHelper.getIdOrCreate(collectedShow.id, seasonNumber);
-            final long seasonId = seasonResult.id;
-            if (seasonResult.didCreate) {
-              didSeasonExist = false;
-              if (didShowExist) {
-                queue(new SyncShow(traktId, true));
-              }
-            }
-            collectedSeason = new CollectedSeason(seasonNumber, seasonId);
-            collectedShow.seasons.put(seasonNumber, collectedSeason);
-          }
-
-          List<CollectionItem.Episode> episodes = season.getEpisodes();
-          for (CollectionItem.Episode episode : episodes) {
-            final int episodeNumber = episode.getNumber();
-            CollectedEpisode syncEpisode = collectedSeason.episodes.get(episodeNumber);
-
-            if (syncEpisode == null) {
-              EpisodeDatabaseHelper.IdResult episodeResult =
-                  episodeHelper.getIdOrCreate(collectedShow.id, collectedSeason.id, episodeNumber);
-              final long episodeId = episodeResult.id;
-              if (episodeResult.didCreate) {
-                if (didShowExist && didSeasonExist) {
-                  queue(new SyncSeason(traktId, seasonNumber));
-                }
-              }
-
-              ContentProviderOperation.Builder builder =
-                  ContentProviderOperation.newUpdate(Episodes.withId(episodeId));
-              ContentValues cv = new ContentValues();
-              cv.put(EpisodeColumns.IN_COLLECTION, true);
-              builder.withValues(cv);
-              ops.add(builder.build());
-            } else {
-              episodeIds.remove(syncEpisode.id);
-            }
-          }
-        }
-      }
-
-      for (long episodeId : episodeIds) {
-        ContentProviderOperation.Builder builder =
-            ContentProviderOperation.newUpdate(Episodes.withId(episodeId));
-        ContentValues cv = new ContentValues();
-        cv.put(EpisodeColumns.IN_COLLECTION, false);
-        builder.withValues(cv);
-        ops.add(builder.build());
-      }
-
       getContentResolver().applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
     } catch (RemoteException e) {
-      Timber.e(e, "SyncShowsCollectionTask failed");
+      Timber.e(e, "SyncShowsWatchedTask failed");
       throw new JobFailedException(e);
     } catch (OperationApplicationException e) {
-      Timber.e(e, "SyncShowsCollectionTask failed");
+      Timber.e(e, "SyncShowsWatchedTask failed");
       throw new JobFailedException(e);
     }
   }
