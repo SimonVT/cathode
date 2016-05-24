@@ -16,17 +16,32 @@
 
 package net.simonvt.cathode.jobqueue;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import net.simonvt.schematic.annotation.Database;
+import net.simonvt.schematic.annotation.OnUpgrade;
 import net.simonvt.schematic.annotation.Table;
 
 @Database(
-    version = 1,
+    version = 2,
     packageName = "net.simonvt.cathode.jobqueue.database"
 )
 public class JobDatabase {
 
+  private JobDatabase() {
+  }
+
   public static class Tables {
 
     @Table(JobColumns.class) public static final String JOBS = "jobs";
+  }
+
+  @OnUpgrade
+  public static void onUpgrade(Context context, SQLiteDatabase db, int oldVersion, int newVersion) {
+    if (oldVersion <= 1) {
+      db.delete(Tables.JOBS, JobColumns.JOB_NAME + "=?", new String[] {
+          "net.simonvt.cathode.remote.sync.SyncActivityStream",
+      });
+    }
   }
 }

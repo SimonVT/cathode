@@ -83,7 +83,6 @@ import net.simonvt.cathode.remote.action.shows.WatchedShow;
 import net.simonvt.cathode.remote.action.shows.WatchlistEpisode;
 import net.simonvt.cathode.remote.action.shows.WatchlistShow;
 import net.simonvt.cathode.remote.sync.PurgeDatabase;
-import net.simonvt.cathode.remote.sync.SyncActivityStream;
 import net.simonvt.cathode.remote.sync.SyncHiddenItems;
 import net.simonvt.cathode.remote.sync.SyncHiddenSection;
 import net.simonvt.cathode.remote.sync.SyncJob;
@@ -260,7 +259,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         CommentReplyJob.class, SyncUserProfile.class, LikeCommentJob.class, UnlikeCommentJob.class,
         SyncCommentLikes.class, CalendarHideShow.class, WatchedHideShow.class,
         CollectedHideShow.class, CalendarHideMovie.class, WatchedHideMovie.class,
-        CollectedHideMovie.class, SyncActivityStream.class,
+        CollectedHideMovie.class,
 
         // Misc
         ShowSearchHandler.class, SearchHandler.SearchThread.class, MovieSearchHandler.class,
