@@ -49,6 +49,8 @@ public abstract class ShowsFragment<D extends Cursor>
 
   private int columnCount;
 
+  protected boolean scrollToTop;
+
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
@@ -112,6 +114,11 @@ public abstract class ShowsFragment<D extends Cursor>
     }
 
     showsAdapter.changeCursor(cursor);
+
+    if (scrollToTop) {
+      getRecyclerView().scrollToPosition(0);
+      scrollToTop = false;
+    }
   }
 
   protected abstract LibraryType getLibraryType();

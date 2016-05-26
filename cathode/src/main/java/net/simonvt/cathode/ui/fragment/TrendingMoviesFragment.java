@@ -21,10 +21,11 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -103,6 +104,10 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
     setEmptyText(R.string.movies_loading_trending);
   }
 
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+    return inflater.inflate(R.layout.fragment_swiperefresh_recyclerview, container, false);
+  }
+
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
   }
@@ -117,11 +122,6 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
     Job job = new SyncTrendingMovies();
     job.registerOnDoneListener(onDoneListener);
     jobManager.addJob(job);
-  }
-
-  @Override public void createMenu(Toolbar toolbar) {
-    super.createMenu(toolbar);
-    toolbar.inflateMenu(R.menu.fragment_movies_trending);
   }
 
   @Override public boolean onMenuItemClick(MenuItem item) {
@@ -142,15 +142,21 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
   @Override public void onItemSelected(int id) {
     switch (id) {
       case R.id.sort_viewers:
-        sortBy = SortBy.VIEWERS;
-        settings.edit().putString(Settings.Sort.MOVIE_TRENDING, SortBy.VIEWERS.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.MOVIES_TRENDING, null, this);
+        if (sortBy != SortBy.VIEWERS) {
+          sortBy = SortBy.VIEWERS;
+          settings.edit().putString(Settings.Sort.MOVIE_TRENDING, SortBy.VIEWERS.getKey()).apply();
+          getLoaderManager().restartLoader(Loaders.MOVIES_TRENDING, null, this);
+          scrollToTop = true;
+        }
         break;
 
       case R.id.sort_rating:
-        sortBy = SortBy.RATING;
-        settings.edit().putString(Settings.Sort.MOVIE_TRENDING, SortBy.RATING.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.MOVIES_TRENDING, null, this);
+        if (sortBy != SortBy.RATING) {
+          sortBy = SortBy.RATING;
+          settings.edit().putString(Settings.Sort.MOVIE_TRENDING, SortBy.RATING.getKey()).apply();
+          getLoaderManager().restartLoader(Loaders.MOVIES_TRENDING, null, this);
+          scrollToTop = true;
+        }
         break;
     }
   }

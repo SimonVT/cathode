@@ -23,7 +23,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,7 +50,7 @@ import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.schematic.Cursors;
 
 public class TrendingShowsFragment
-    extends ToolbarSwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>
+    extends SwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<SimpleCursor>, ListDialog.Callback, ShowClickListener {
 
   private enum SortBy {
@@ -113,13 +112,11 @@ public class TrendingShowsFragment
 
   private int columnCount;
 
+  private boolean scrollToTop;
+
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
-    try {
-      navigationListener = (ShowsNavigationListener) activity;
-    } catch (ClassCastException e) {
-      throw new ClassCastException(activity.toString() + " must implement ShowsNavigationListener");
-    }
+    navigationListener = (ShowsNavigationListener) activity;
   }
 
   @Override public void onCreate(Bundle inState) {
@@ -153,16 +150,6 @@ public class TrendingShowsFragment
     jobManager.addJob(job);
   }
 
-  @Override public boolean displaysMenuIcon() {
-    return amITopLevel();
-  }
-
-  @Override public void createMenu(Toolbar toolbar) {
-    super.createMenu(toolbar);
-    toolbar.inflateMenu(R.menu.fragment_shows);
-    toolbar.inflateMenu(R.menu.fragment_shows_trending);
-  }
-
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.sort_by:
@@ -173,10 +160,6 @@ public class TrendingShowsFragment
             .show(getFragmentManager(), DIALOG_SORT);
         return true;
 
-      case R.id.menu_search:
-        navigationListener.onSearchShow();
-        return true;
-
       default:
         return super.onMenuItemClick(item);
     }
@@ -185,15 +168,21 @@ public class TrendingShowsFragment
   @Override public void onItemSelected(int id) {
     switch (id) {
       case R.id.sort_viewers:
-        sortBy = SortBy.VIEWERS;
-        settings.edit().putString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.SHOWS_TRENDING, null, this);
+        if (sortBy != SortBy.VIEWERS) {
+          sortBy = SortBy.VIEWERS;
+          settings.edit().putString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey()).apply();
+          getLoaderManager().restartLoader(Loaders.SHOWS_TRENDING, null, this);
+          scrollToTop = true;
+        }
         break;
 
       case R.id.sort_rating:
-        sortBy = SortBy.RATING;
-        settings.edit().putString(Settings.Sort.SHOW_TRENDING, SortBy.RATING.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.SHOWS_TRENDING, null, this);
+        if (sortBy != SortBy.RATING) {
+          sortBy = SortBy.RATING;
+          settings.edit().putString(Settings.Sort.SHOW_TRENDING, SortBy.RATING.getKey()).apply();
+          getLoaderManager().restartLoader(Loaders.SHOWS_TRENDING, null, this);
+          scrollToTop = true;
+        }
         break;
     }
   }
@@ -215,6 +204,10 @@ public class TrendingShowsFragment
     }
 
     showsAdapter.changeCursor(cursor);
+    if (scrollToTop) {
+      getRecyclerView().scrollToPosition(0);
+      scrollToTop = false;
+    }
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {

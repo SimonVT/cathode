@@ -63,18 +63,16 @@ import net.simonvt.cathode.ui.fragment.ListFragment;
 import net.simonvt.cathode.ui.fragment.ListsFragment;
 import net.simonvt.cathode.ui.fragment.MovieCollectionFragment;
 import net.simonvt.cathode.ui.fragment.MovieFragment;
-import net.simonvt.cathode.ui.fragment.MovieRecommendationsFragment;
+import net.simonvt.cathode.ui.fragment.MovieSuggestionsFragment;
 import net.simonvt.cathode.ui.fragment.MovieWatchlistFragment;
 import net.simonvt.cathode.ui.fragment.NavigationFragment;
 import net.simonvt.cathode.ui.fragment.SearchMovieFragment;
 import net.simonvt.cathode.ui.fragment.SearchShowFragment;
 import net.simonvt.cathode.ui.fragment.SeasonFragment;
 import net.simonvt.cathode.ui.fragment.ShowFragment;
-import net.simonvt.cathode.ui.fragment.ShowRecommendationsFragment;
+import net.simonvt.cathode.ui.fragment.ShowSuggestionsFragment;
 import net.simonvt.cathode.ui.fragment.ShowsCollectionFragment;
 import net.simonvt.cathode.ui.fragment.ShowsWatchlistFragment;
-import net.simonvt.cathode.ui.fragment.TrendingMoviesFragment;
-import net.simonvt.cathode.ui.fragment.TrendingShowsFragment;
 import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
@@ -281,12 +279,8 @@ public class HomeActivity extends BaseActivity
         stack.replace(ShowsWatchlistFragment.class, Fragments.SHOWS_WATCHLIST);
         break;
 
-      case R.id.menu_shows_trending:
-        stack.replace(TrendingShowsFragment.class, Fragments.SHOWS_TRENDING);
-        break;
-
-      case R.id.menu_shows_recommendations:
-        stack.replace(ShowRecommendationsFragment.class, Fragments.SHOWS_RECOMMENDATIONS);
+      case R.id.menu_shows_suggestions:
+        stack.replace(ShowSuggestionsFragment.class, ShowSuggestionsFragment.TAG);
         break;
 
       case R.id.menu_movies_watched:
@@ -301,12 +295,8 @@ public class HomeActivity extends BaseActivity
         stack.replace(MovieWatchlistFragment.class, Fragments.MOVIES_WATCHLIST);
         break;
 
-      case R.id.menu_movies_trending:
-        stack.replace(TrendingMoviesFragment.class, Fragments.MOVIES_TRENDING);
-        break;
-
-      case R.id.menu_movies_recommendations:
-        stack.replace(MovieRecommendationsFragment.class, Fragments.MOVIES_RECOMMENDATIONS);
+      case R.id.menu_movies_suggestions:
+        stack.replace(MovieSuggestionsFragment.class, MovieSuggestionsFragment.TAG);
         break;
 
       case R.id.menu_lists:

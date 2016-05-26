@@ -20,16 +20,14 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.ui.fragment.DashboardFragment;
 import net.simonvt.cathode.ui.fragment.ListsFragment;
 import net.simonvt.cathode.ui.fragment.MovieCollectionFragment;
-import net.simonvt.cathode.ui.fragment.MovieRecommendationsFragment;
+import net.simonvt.cathode.ui.fragment.MovieSuggestionsFragment;
 import net.simonvt.cathode.ui.fragment.MovieWatchlistFragment;
-import net.simonvt.cathode.ui.fragment.ShowRecommendationsFragment;
+import net.simonvt.cathode.ui.fragment.ShowSuggestionsFragment;
 import net.simonvt.cathode.ui.fragment.ShowsCollectionFragment;
 import net.simonvt.cathode.ui.fragment.ShowsWatchlistFragment;
-import net.simonvt.cathode.ui.fragment.DashboardFragment;
-import net.simonvt.cathode.ui.fragment.TrendingMoviesFragment;
-import net.simonvt.cathode.ui.fragment.TrendingShowsFragment;
 import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
@@ -46,11 +44,8 @@ public enum StartPage {
       R.id.menu_shows_collection, R.string.startpage_shows_collected),
   SHOWS_WATCHLIST("showsWatchlist", ShowsWatchlistFragment.class, Fragments.SHOWS_WATCHLIST,
       R.id.menu_shows_watchlist, R.string.startpage_shows_watchlist),
-  SHOWS_TRENDING("showsTrending", TrendingShowsFragment.class, Fragments.SHOWS_TRENDING,
-      R.id.menu_shows_trending, R.string.startpage_shows_trending),
-  SHOWS_RECOMMENDATIONS("showsRecommendations", ShowRecommendationsFragment.class,
-      Fragments.SHOWS_RECOMMENDATIONS, R.id.menu_shows_recommendations,
-      R.string.startpage_shows_recommendations),
+  SHOWS_SUGGESTIONS("showSuggestions", ShowSuggestionsFragment.class, ShowSuggestionsFragment.TAG,
+      R.id.menu_shows_suggestions, R.string.startpage_shows_suggestions),
 
   MOVIES_WATCHED("moviesWatched", WatchedMoviesFragment.class, Fragments.MOVIES_WATCHED,
       R.id.menu_movies_watched, R.string.startpage_movies_watched),
@@ -58,11 +53,9 @@ public enum StartPage {
       R.id.menu_movies_collection, R.string.startpage_movies_collected),
   MOVIES_WATCHLIST("movieWatchlist", MovieWatchlistFragment.class, Fragments.MOVIES_WATCHLIST,
       R.id.menu_movies_watchlist, R.string.startpage_movies_watchlist),
-  MOVIES_TRENDING("moviesTrending", TrendingMoviesFragment.class, Fragments.MOVIES_TRENDING,
-      R.id.menu_movies_trending, R.string.startpage_movies_trending),
-  MOVIES_RECOMMENDATIONS("movieRecommendations", MovieRecommendationsFragment.class,
-      Fragments.MOVIES_RECOMMENDATIONS, R.id.menu_movies_recommendations,
-      R.string.startpage_movies_recommendations),
+  MOVIES_SUGGESTIONS("movieSuggestions", MovieSuggestionsFragment.class,
+      MovieSuggestionsFragment.TAG, R.id.menu_movies_suggestions,
+      R.string.startpage_movies_suggestions),
 
   LISTS("lists", ListsFragment.class, Fragments.LISTS, R.id.menu_lists, R.string.startpage_lists);
 

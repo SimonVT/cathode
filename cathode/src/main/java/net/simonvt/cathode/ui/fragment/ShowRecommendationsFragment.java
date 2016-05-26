@@ -23,7 +23,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,7 +51,7 @@ import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.schematic.Cursors;
 
 public class ShowRecommendationsFragment
-    extends ToolbarSwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>
+    extends SwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<SimpleCursor>,
     ShowRecommendationsAdapter.DismissListener, ListDialog.Callback, ShowClickListener {
 
@@ -117,6 +116,8 @@ public class ShowRecommendationsFragment
 
   private int columnCount;
 
+  private boolean scrollToTop;
+
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
@@ -148,15 +149,6 @@ public class ShowRecommendationsFragment
     return columnCount;
   }
 
-  @Override public boolean displaysMenuIcon() {
-    return true;
-  }
-
-  @Override public void onViewCreated(View view, Bundle inState) {
-    super.onViewCreated(view, inState);
-    toolbar.setNavigationOnClickListener(navigationClickListener);
-  }
-
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
     @Override public void onDone(Job job) {
       setRefreshing(false);
@@ -169,18 +161,6 @@ public class ShowRecommendationsFragment
     jobManager.addJob(job);
   }
 
-  private View.OnClickListener navigationClickListener = new View.OnClickListener() {
-    @Override public void onClick(View v) {
-      navigationListener.onHomeClicked();
-    }
-  };
-
-  @Override public void createMenu(Toolbar toolbar) {
-    super.createMenu(toolbar);
-    toolbar.inflateMenu(R.menu.fragment_shows);
-    toolbar.inflateMenu(R.menu.fragment_shows_recommended);
-  }
-
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.sort_by:
@@ -191,10 +171,6 @@ public class ShowRecommendationsFragment
             .show(getFragmentManager(), DIALOG_SORT);
         return true;
 
-      case R.id.menu_search:
-        navigationListener.onSearchShow();
-        return true;
-
       default:
         return super.onMenuItemClick(item);
     }
@@ -203,17 +179,23 @@ public class ShowRecommendationsFragment
   @Override public void onItemSelected(int id) {
     switch (id) {
       case R.id.sort_relevance:
-        sortBy = SortBy.RELEVANCE;
-        settings.edit()
-            .putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey())
-            .apply();
-        getLoaderManager().restartLoader(Loaders.SHOWS_RECOMMENDATIONS, null, this);
+        if (sortBy != SortBy.RELEVANCE) {
+          sortBy = SortBy.RELEVANCE;
+          settings.edit()
+              .putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey())
+              .apply();
+          getLoaderManager().restartLoader(Loaders.SHOWS_RECOMMENDATIONS, null, this);
+          scrollToTop = true;
+        }
         break;
 
       case R.id.sort_rating:
-        sortBy = SortBy.RATING;
-        settings.edit().putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RATING.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.SHOWS_RECOMMENDATIONS, null, this);
+        if (sortBy != SortBy.RATING) {
+          sortBy = SortBy.RATING;
+          settings.edit().putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RATING.getKey()).apply();
+          getLoaderManager().restartLoader(Loaders.SHOWS_RECOMMENDATIONS, null, this);
+          scrollToTop = true;
+        }
         break;
     }
   }
@@ -244,6 +226,11 @@ public class ShowRecommendationsFragment
     }
 
     showsAdapter.changeCursor(cursor);
+
+    if (scrollToTop) {
+      getRecyclerView().scrollToPosition(0);
+      scrollToTop = false;
+    }
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {

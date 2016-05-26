@@ -24,8 +24,6 @@ public interface Fragments {
   String SHOWS_UPCOMING = "net.simonvt.cathode.ui.HomeActivity.upcomingShowsFragment";
   String SHOWS_COLLECTION = "net.simonvt.cathode.ui.HomeActivity.collectionShowsFragment";
   String SHOWS_WATCHLIST = "net.simonvt.cathode.ui.HomeActivity.showsWatchlistFragment";
-  String SHOWS_TRENDING = "net.simonvt.cathode.ui.HomeActivity.trendingShowsFragment";
-  String SHOWS_RECOMMENDATIONS = "net.simonvt.cathode.ui.HomeActivity.showRecommendationsFragment";
 
   String SHOW = "net.simonvt.cathode.ui.HomeActivity.showFragment";
   String SEASON = "net.simonvt.cathode.ui.HomeActivity.seasonFragment";
@@ -34,9 +32,6 @@ public interface Fragments {
   String MOVIES_WATCHED = "net.simonvt.cathode.ui.HomeActivity.moviesWatchedFragment";
   String MOVIES_COLLECTION = "net.simonvt.cathode.ui.HomeActivity.moviesCollectionFragment";
   String MOVIES_WATCHLIST = "net.simonvt.cathode.ui.HomeActivity.moviesWatchlistFragment";
-  String MOVIES_TRENDING = "net.simonvt.cathode.ui.HomeActivity.moviesTrendingFragment";
-  String MOVIES_RECOMMENDATIONS =
-      "net.simonvt.cathode.ui.HomeActivity.movieRecommendationsFragment";
 
   String MOVIE = "net.simonvt.cathode.ui.HomeActivity.movieFragment";
 

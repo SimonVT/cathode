@@ -134,15 +134,23 @@ public class ShowsCollectionFragment extends ShowsFragment implements ListDialog
   @Override public void onItemSelected(int id) {
     switch (id) {
       case R.id.sort_title:
-        sortBy = SortBy.TITLE;
-        settings.edit().putString(Settings.Sort.SHOW_COLLECTED, SortBy.TITLE.getKey()).apply();
-        getLoaderManager().restartLoader(getLoaderId(), null, this);
+        if (sortBy != SortBy.TITLE) {
+          sortBy = SortBy.TITLE;
+          settings.edit().putString(Settings.Sort.SHOW_COLLECTED, SortBy.TITLE.getKey()).apply();
+          getLoaderManager().restartLoader(getLoaderId(), null, this);
+          scrollToTop = true;
+        }
         break;
 
       case R.id.sort_collected:
-        sortBy = SortBy.COLLECTED;
-        settings.edit().putString(Settings.Sort.SHOW_COLLECTED, SortBy.COLLECTED.getKey()).apply();
-        getLoaderManager().restartLoader(getLoaderId(), null, this);
+        if (sortBy != SortBy.COLLECTED) {
+          sortBy = SortBy.COLLECTED;
+          settings.edit()
+              .putString(Settings.Sort.SHOW_COLLECTED, SortBy.COLLECTED.getKey())
+              .apply();
+          getLoaderManager().restartLoader(getLoaderId(), null, this);
+          scrollToTop = true;
+        }
         break;
     }
   }

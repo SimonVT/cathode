@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,7 +48,7 @@ import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.schematic.Cursors;
 
 public class MovieRecommendationsFragment
-    extends ToolbarSwipeRefreshRecyclerFragment<MoviesAdapter.ViewHolder>
+    extends SwipeRefreshRecyclerFragment<MoviesAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<SimpleCursor>, MovieClickListener,
     MovieRecommendationsAdapter.DismissListener, ListDialog.Callback {
 
@@ -112,6 +111,8 @@ public class MovieRecommendationsFragment
 
   private int columnCount;
 
+  private boolean scrollToTop;
+
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
@@ -154,16 +155,6 @@ public class MovieRecommendationsFragment
     jobManager.addJob(job);
   }
 
-  @Override public boolean displaysMenuIcon() {
-    return true;
-  }
-
-  @Override public void createMenu(Toolbar toolbar) {
-    super.createMenu(toolbar);
-    toolbar.inflateMenu(R.menu.fragment_movies);
-    toolbar.inflateMenu(R.menu.fragment_movies_recommended);
-  }
-
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.sort_by:
@@ -174,10 +165,6 @@ public class MovieRecommendationsFragment
             .show(getFragmentManager(), DIALOG_SORT);
         return true;
 
-      case R.id.menu_search:
-        navigationListener.onSearchMovie();
-        return true;
-
       default:
         return super.onMenuItemClick(item);
     }
@@ -186,17 +173,25 @@ public class MovieRecommendationsFragment
   @Override public void onItemSelected(int id) {
     switch (id) {
       case R.id.sort_relevance:
-        sortBy = SortBy.RELEVANCE;
-        settings.edit()
-            .putString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey())
-            .apply();
-        getLoaderManager().restartLoader(Loaders.MOVIES_RECOMMENDATIONS, null, this);
+        if (sortBy != SortBy.RELEVANCE) {
+          sortBy = SortBy.RELEVANCE;
+          settings.edit()
+              .putString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey())
+              .apply();
+          getLoaderManager().restartLoader(Loaders.MOVIES_RECOMMENDATIONS, null, this);
+          scrollToTop = true;
+        }
         break;
 
       case R.id.sort_rating:
-        sortBy = SortBy.RATING;
-        settings.edit().putString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RATING.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.MOVIES_RECOMMENDATIONS, null, this);
+        if (sortBy != SortBy.RATING) {
+          sortBy = SortBy.RATING;
+          settings.edit()
+              .putString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RATING.getKey())
+              .apply();
+          getLoaderManager().restartLoader(Loaders.MOVIES_RECOMMENDATIONS, null, this);
+          scrollToTop = true;
+        }
         break;
     }
   }
@@ -226,6 +221,11 @@ public class MovieRecommendationsFragment
     }
 
     movieAdapter.changeCursor(c);
+
+    if (scrollToTop) {
+      getRecyclerView().scrollToPosition(0);
+      scrollToTop = false;
+    }
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {

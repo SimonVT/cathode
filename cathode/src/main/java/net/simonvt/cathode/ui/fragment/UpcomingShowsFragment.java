@@ -115,6 +115,8 @@ public class UpcomingShowsFragment
 
   private UpcomingAdapter adapter;
 
+  private boolean scrollToTop;
+
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
@@ -186,17 +188,23 @@ public class UpcomingShowsFragment
   @Override public void onItemSelected(int id) {
     switch (id) {
       case R.id.sort_title:
-        sortBy = SortBy.TITLE;
-        settings.edit().putString(Settings.Sort.SHOW_UPCOMING, SortBy.TITLE.getKey()).apply();
-        getLoaderManager().restartLoader(Loaders.SHOWS_UPCOMING, null, this);
+        if (sortBy != SortBy.TITLE) {
+          sortBy = SortBy.TITLE;
+          settings.edit().putString(Settings.Sort.SHOW_UPCOMING, SortBy.TITLE.getKey()).apply();
+          getLoaderManager().restartLoader(Loaders.SHOWS_UPCOMING, null, this);
+          scrollToTop = true;
+        }
         break;
 
       case R.id.sort_next_episode:
-        sortBy = SortBy.NEXT_EPISODE;
-        settings.edit()
-            .putString(Settings.Sort.SHOW_UPCOMING, SortBy.NEXT_EPISODE.getKey())
-            .apply();
-        getLoaderManager().restartLoader(Loaders.SHOWS_UPCOMING, null, this);
+        if (sortBy != SortBy.NEXT_EPISODE) {
+          sortBy = SortBy.NEXT_EPISODE;
+          settings.edit()
+              .putString(Settings.Sort.SHOW_UPCOMING, SortBy.NEXT_EPISODE.getKey())
+              .apply();
+          getLoaderManager().restartLoader(Loaders.SHOWS_UPCOMING, null, this);
+          scrollToTop = true;
+        }
         break;
     }
   }
@@ -263,6 +271,11 @@ public class UpcomingShowsFragment
 
     adapter.updateCursorForHeader(R.string.header_aired, airedCursor);
     adapter.updateCursorForHeader(R.string.header_upcoming, unairedCursor);
+
+    if (scrollToTop) {
+      getRecyclerView().scrollToPosition(0);
+      scrollToTop = false;
+    }
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {

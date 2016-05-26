@@ -49,6 +49,8 @@ public abstract class MoviesFragment
 
   private int columnCount;
 
+  protected boolean scrollToTop;
+
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     try {
@@ -110,6 +112,11 @@ public abstract class MoviesFragment
       setAdapter(getAdapter(cursor));
     } else {
       ((RecyclerCursorAdapter) getAdapter()).changeCursor(cursor);
+    }
+
+    if (scrollToTop) {
+      getRecyclerView().scrollToPosition(0);
+      scrollToTop = false;
     }
   }
 

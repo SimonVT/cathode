@@ -105,6 +105,8 @@ public abstract class SearchFragment extends OverlayToolbarGridFragment<Recycler
 
   private List<Long> resultIds;
 
+  private boolean scrollToTop;
+
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
     CathodeApp.inject(getContext(), this);
@@ -191,26 +193,35 @@ public abstract class SearchFragment extends OverlayToolbarGridFragment<Recycler
   @Override public void onItemSelected(int id) {
     switch (id) {
       case R.id.sort_relevance:
-        sortBy = SortBy.RELEVANCE;
-        settings.edit().putString(Settings.Sort.SHOW_SEARCH, SortBy.RELEVANCE.getKey()).apply();
-        if (getLoaderManager().getLoader(Loaders.SEARCH) != null) {
-          getLoaderManager().restartLoader(Loaders.SEARCH, null, this);
+        if (sortBy != SortBy.RELEVANCE) {
+          sortBy = SortBy.RELEVANCE;
+          settings.edit().putString(Settings.Sort.SHOW_SEARCH, SortBy.RELEVANCE.getKey()).apply();
+          if (getLoaderManager().getLoader(Loaders.SEARCH) != null) {
+            getLoaderManager().restartLoader(Loaders.SEARCH, null, this);
+          }
+          scrollToTop = true;
         }
         break;
 
       case R.id.sort_rating:
-        sortBy = SortBy.RATING;
-        settings.edit().putString(Settings.Sort.SHOW_SEARCH, SortBy.RATING.getKey()).apply();
-        if (getLoaderManager().getLoader(Loaders.SEARCH) != null) {
-          getLoaderManager().restartLoader(Loaders.SEARCH, null, this);
+        if (sortBy != SortBy.RATING) {
+          sortBy = SortBy.RATING;
+          settings.edit().putString(Settings.Sort.SHOW_SEARCH, SortBy.RATING.getKey()).apply();
+          if (getLoaderManager().getLoader(Loaders.SEARCH) != null) {
+            getLoaderManager().restartLoader(Loaders.SEARCH, null, this);
+          }
+          scrollToTop = true;
         }
         break;
 
       case R.id.sort_title:
-        sortBy = SortBy.TITLE;
-        settings.edit().putString(Settings.Sort.SHOW_SEARCH, SortBy.TITLE.getKey()).apply();
-        if (getLoaderManager().getLoader(Loaders.SEARCH) != null) {
-          getLoaderManager().restartLoader(Loaders.SEARCH, null, this);
+        if (sortBy != SortBy.TITLE) {
+          sortBy = SortBy.TITLE;
+          settings.edit().putString(Settings.Sort.SHOW_SEARCH, SortBy.TITLE.getKey()).apply();
+          if (getLoaderManager().getLoader(Loaders.SEARCH) != null) {
+            getLoaderManager().restartLoader(Loaders.SEARCH, null, this);
+          }
+          scrollToTop = true;
         }
         break;
     }
@@ -269,6 +280,11 @@ public abstract class SearchFragment extends OverlayToolbarGridFragment<Recycler
       setAdapter(adapter);
     } else {
       adapter.changeCursor(cursor);
+    }
+
+    if (scrollToTop) {
+      getRecyclerView().scrollToPosition(0);
+      scrollToTop = false;
     }
   }
 

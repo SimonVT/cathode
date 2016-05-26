@@ -96,9 +96,9 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
     adapter.initCategory(R.string.category_shows_upcoming);
     adapter.initCategory(R.string.category_shows_watchlist);
-    adapter.initCategory(R.string.category_shows_trending);
+    adapter.initCategory(R.string.category_shows_suggestions);
     adapter.initCategory(R.string.category_movies_watchlist);
-    adapter.initCategory(R.string.category_movies_trending);
+    adapter.initCategory(R.string.category_movies_suggestions);
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
@@ -123,9 +123,9 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
                   Fragments.SHOWS_WATCHLIST);
               break;
 
-            case R.string.category_shows_trending:
-              navigationListener.displayFragment(TrendingShowsFragment.class,
-                  Fragments.SHOWS_TRENDING);
+            case R.string.category_shows_suggestions:
+              navigationListener.displayFragment(ShowSuggestionsFragment.class,
+                  ShowSuggestionsFragment.TAG);
               break;
 
             case R.string.category_movies_watchlist:
@@ -133,9 +133,9 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
                   Fragments.MOVIES_WATCHLIST);
               break;
 
-            case R.string.category_movies_trending:
-              navigationListener.displayFragment(TrendingMoviesFragment.class,
-                  Fragments.MOVIES_TRENDING);
+            case R.string.category_movies_suggestions:
+              navigationListener.displayFragment(MovieSuggestionsFragment.class,
+                  MovieSuggestionsFragment.TAG);
               break;
           }
         }
@@ -196,7 +196,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
   private void updateShowsTrendingCursor(SimpleCursor cursor) {
     if (trendingShowsAdapter == null) {
       trendingShowsAdapter = new DashboardShowsAdapter(getContext(), callback);
-      adapter.setAdapter(R.string.category_shows_trending, trendingShowsAdapter);
+      adapter.setAdapter(R.string.category_shows_suggestions, trendingShowsAdapter);
     }
 
     trendingShowsAdapter.changeCursor(cursor);
@@ -214,7 +214,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
   private void updateMoviesTrendingCursor(SimpleCursor cursor) {
     if (trendingMoviesAdapter == null) {
       trendingMoviesAdapter = new DashboardMoviesAdapter(getContext(), callback);
-      adapter.setAdapter(R.string.category_movies_trending, trendingMoviesAdapter);
+      adapter.setAdapter(R.string.category_movies_suggestions, trendingMoviesAdapter);
     }
 
     trendingMoviesAdapter.changeCursor(cursor);

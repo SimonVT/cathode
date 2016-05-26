@@ -89,6 +89,10 @@
   <string name="title_website">Website</string>
   <string name="title_view_on">View on</string>
 
+  <string name="title_suggestions">Suggestions</string>
+  <string name="title_recommendations">Recommendations</string>
+  <string name="title_trending">Trending</string>
+
   <string name="title_dashboard">Dashboard</string>
 
   <string name="title_shows_watched">Watched shows</string>
@@ -106,9 +110,9 @@
 
   <string name="category_shows_upcoming">Upcoming shows</string>
   <string name="category_shows_watchlist">Show watchlist</string>
-  <string name="category_shows_trending">Trending shows</string>
+  <string name="category_shows_suggestions">Show suggestions</string>
   <string name="category_movies_watchlist">Movie watchlist</string>
-  <string name="category_movies_trending">Trending movies</string>
+  <string name="category_movies_suggestions">Show suggestions</string>
 
   <string name="info_imdb">imdb</string>
   <string name="info_tvdb">tvdb</string>
@@ -204,6 +208,7 @@
   <string name="navigation_shows_upcoming">Upcoming</string>
   <string name="navigation_shows_watched">Watched</string>
   <string name="navigation_shows_collection">Collection</string>
+  <string name="navigation_shows_suggestions">Suggestions</string>
   <string name="navigation_shows_watchlist">Watchlist</string>
   <string name="navigation_shows_trending">Trending</string>
   <string name="navigation_shows_recommendations">Recommendations</string>
@@ -211,6 +216,7 @@
   <string name="navigation_title_movies">Movies</string>
   <string name="navigation_movies_watched">Watched</string>
   <string name="navigation_movies_collection">Collection</string>
+  <string name="navigation_movies_suggestions">Suggestions</string>
   <string name="navigation_movies_watchlist">Watchlist</string>
   <string name="navigation_movies_trending">Trending</string>
   <string name="navigation_movies_recommendations">Recommendations</string>
@@ -225,14 +231,12 @@
   <string name="startpage_shows_watched">Wathched shows</string>
   <string name="startpage_shows_collected">Collected shows</string>
   <string name="startpage_shows_watchlist">Show watchlist</string>
-  <string name="startpage_shows_trending">Trending shows</string>
-  <string name="startpage_shows_recommendations">Show recommendations</string>
+  <string name="startpage_shows_suggestions">Show suggestions</string>
 
   <string name="startpage_movies_watched">Watched movies</string>
   <string name="startpage_movies_collected">Collected movies</string>
   <string name="startpage_movies_watchlist">Movie watchlist</string>
-  <string name="startpage_movies_trending">Trending movies</string>
-  <string name="startpage_movies_recommendations">Movie recommendations</string>
+  <string name="startpage_movies_suggestions">Movie suggestions</string>
 
   <string name="startpage_lists">Lists</string>
 
