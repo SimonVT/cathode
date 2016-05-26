@@ -64,6 +64,10 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
   private Bundle adapterState;
 
   public static Bundle getArgs(ItemType itemType, long itemId) {
+    if (itemId < 0) {
+      throw new IllegalArgumentException("itemId must be >= 0");
+    }
+
     Bundle args = new Bundle();
     args.putSerializable(ARG_ITEM_TYPE, itemType);
     args.putLong(ARG_ITEM_ID, itemId);

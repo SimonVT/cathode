@@ -218,6 +218,10 @@ public class ShowFragment extends RefreshableAppBarFragment {
   RecyclerViewManager seasonsManager;
 
   public static Bundle getArgs(long showId, String title, String overview, LibraryType type) {
+    if (showId < 0) {
+      throw new IllegalArgumentException("showId must be >= 0");
+    }
+
     Bundle args = new Bundle();
     args.putLong(ARG_SHOWID, showId);
     args.putString(ARG_TITLE, title);
