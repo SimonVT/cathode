@@ -17,6 +17,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_gravity="right"
     android:orientation="vertical"
     android:gravity="right">
@@ -30,6 +31,8 @@
       android:drawableRight="@drawable/ic_checkmark_watched"
       android:text="@string/checkmark_watched"
       android:textColor="@color/watchedColor"
+      android:visibility="gone"
+      tools:visibility="visible"
       style="@style/Widget.CheckMark"/>
 
   <TextView
@@ -41,6 +44,8 @@
       android:drawableRight="@drawable/ic_checkmark_collection"
       android:text="@string/checkmark_collection"
       android:textColor="@color/collectedColor"
+      android:visibility="gone"
+      tools:visibility="visible"
       style="@style/Widget.CheckMark"/>
 
   <TextView
@@ -52,5 +57,7 @@
       android:drawableRight="@drawable/ic_checkmark_watchlist"
       android:text="@string/checkmark_watchlist"
       android:textColor="@color/watchlistColor"
+      android:visibility="gone"
+      tools:visibility="visible"
       style="@style/Widget.CheckMark"/>
 </LinearLayout>
