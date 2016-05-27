@@ -20,8 +20,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingRight="8dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
     android:background="?attr/selectableItemBackground">
 
   <TextView
