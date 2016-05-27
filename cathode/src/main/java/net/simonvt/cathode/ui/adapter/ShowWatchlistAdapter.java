@@ -123,7 +123,8 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
         @Override public void onClick(View view) {
           final int position = holder.getAdapterPosition();
           if (position != RecyclerView.NO_POSITION) {
-            onItemClickListener.onShowClicked(position, holder.getItemId());
+            final long id = getItemId(position);
+            onItemClickListener.onShowClicked(position, id);
           }
         }
       });
@@ -136,7 +137,8 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
         @Override public void onClick(View view) {
           final int position = holder.getAdapterPosition();
           if (position != RecyclerView.NO_POSITION) {
-            onItemClickListener.onEpisodeClicked(position, holder.getItemId());
+            final long id = getItemId(position);
+            onItemClickListener.onEpisodeClicked(position, id);
           }
         }
       });
