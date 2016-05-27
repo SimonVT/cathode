@@ -100,7 +100,9 @@ public final class ListWrapper {
     }
     cv.put(ListsColumns.DISPLAY_NUMBERS, list.getDisplayNumbers());
     cv.put(ListsColumns.ALLOW_COMMENTS, list.getAllowComments());
-    cv.put(ListsColumns.UPDATED_AT, list.getUpdatedAt().getTimeInMillis());
+    if (list.getUpdatedAt() != null) {
+      cv.put(ListsColumns.UPDATED_AT, list.getUpdatedAt().getTimeInMillis());
+    }
     cv.put(ListsColumns.LIKES, list.getLikes());
     cv.put(ListsColumns.SLUG, list.getIds().getSlug());
     cv.put(ListsColumns.TRAKT_ID, list.getIds().getTrakt());
