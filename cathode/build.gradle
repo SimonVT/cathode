@@ -57,6 +57,8 @@ android {
     versionCode = parent.ext.versionCode;
     versionName = parent.ext.versionName
 
+    vectorDrawables.useSupportLibrary = true
+
     buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + getTraktClientId() + "\""
     buildConfigField "String", "TRAKT_SECRET", "\"" + getTraktSecret() + "\""
     buildConfigField "String", "TRAKT_REDIRECT_URL", "\"" + getTraktRedirectUrl() + "\""

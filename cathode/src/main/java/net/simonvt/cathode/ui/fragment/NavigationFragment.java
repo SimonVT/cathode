@@ -23,6 +23,8 @@ import android.graphics.Outline;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.graphics.drawable.VectorDrawableCompat;
+import android.support.v4.widget.TextViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,37 +55,44 @@ public class NavigationFragment extends AbsAdapterFragment {
   private List<NavigationItem> menuItems = new ArrayList<>();
 
   {
-    menuItems.add(new MenuItem(R.id.menu_dashboard, R.string.navigation_dashboard, 0));
+    menuItems.add(new MenuItem(R.id.menu_dashboard, R.string.navigation_dashboard,
+        R.drawable.ic_nav_dashboard_24dp));
 
     menuItems.add(new Divider());
 
-    // menuItems.add(new NavigationItem(R.string.navigation_title_shows));
-    menuItems.add(new MenuItem(R.id.menu_shows_upcoming, R.string.navigation_shows_upcoming, 0));
-    menuItems.add(new MenuItem(R.id.menu_shows_watched, R.string.navigation_shows_watched, 0));
-    menuItems.add(
-        new MenuItem(R.id.menu_shows_collection, R.string.navigation_shows_collection, 0));
-    menuItems.add(new MenuItem(R.id.menu_shows_watchlist, R.string.navigation_shows_watchlist, 0));
-    menuItems.add(
-        new MenuItem(R.id.menu_shows_suggestions, R.string.navigation_shows_suggestions, 0));
+    menuItems.add(new CategoryItem(R.string.navigation_title_shows));
+    menuItems.add(new MenuItem(R.id.menu_shows_upcoming, R.string.navigation_shows_upcoming,
+        R.drawable.ic_nav_upcoming_24dp));
+    menuItems.add(new MenuItem(R.id.menu_shows_watched, R.string.navigation_shows_watched,
+        R.drawable.ic_nav_shows_watched_24dp));
+    menuItems.add(new MenuItem(R.id.menu_shows_collection, R.string.navigation_shows_collection,
+        R.drawable.ic_nav_shows_collected_24dp));
+    menuItems.add(new MenuItem(R.id.menu_shows_watchlist, R.string.navigation_shows_watchlist,
+        R.drawable.ic_nav_watchlist_24dp));
+    menuItems.add(new MenuItem(R.id.menu_shows_suggestions, R.string.navigation_shows_suggestions,
+        R.drawable.ic_nav_suggestions_black_24dp));
 
     menuItems.add(new Divider());
 
     menuItems.add(new CategoryItem(R.string.navigation_title_movies));
-    menuItems.add(new MenuItem(R.id.menu_movies_watched, R.string.navigation_movies_watched, 0));
-    menuItems.add(
-        new MenuItem(R.id.menu_movies_collection, R.string.navigation_movies_collection, 0));
-    menuItems.add(
-        new MenuItem(R.id.menu_movies_watchlist, R.string.navigation_movies_watchlist, 0));
-    menuItems.add(
-        new MenuItem(R.id.menu_movies_suggestions, R.string.navigation_movies_suggestions, 0));
+    menuItems.add(new MenuItem(R.id.menu_movies_watched, R.string.navigation_movies_watched,
+        R.drawable.ic_nav_movies_watched_24dp));
+    menuItems.add(new MenuItem(R.id.menu_movies_collection, R.string.navigation_movies_collection,
+        R.drawable.ic_nav_movies_collected_24dp));
+    menuItems.add(new MenuItem(R.id.menu_movies_watchlist, R.string.navigation_movies_watchlist,
+        R.drawable.ic_nav_watchlist_24dp));
+    menuItems.add(new MenuItem(R.id.menu_movies_suggestions, R.string.navigation_movies_suggestions,
+        R.drawable.ic_nav_suggestions_black_24dp));
 
     menuItems.add(new Divider());
 
-    menuItems.add(new MenuItem(R.id.menu_lists, R.string.navigation_lists, 0));
+    menuItems.add(
+        new MenuItem(R.id.menu_lists, R.string.navigation_lists, R.drawable.ic_nav_list_24dp));
 
     menuItems.add(new Divider());
 
-    menuItems.add(new MenuItem(R.id.menu_settings, R.string.navigation_settings, 0));
+    menuItems.add(new MenuItem(R.id.menu_settings, R.string.navigation_settings,
+        R.drawable.ic_nav_settings_24dp));
   }
 
   private OnMenuClickListener listener;
@@ -358,7 +367,10 @@ public class NavigationFragment extends AbsAdapterFragment {
         MenuItem menuItem = (MenuItem) item;
 
         ((TextView) v).setText(menuItem.title);
-        ((TextView) v).setCompoundDrawablesWithIntrinsicBounds(menuItem.iconRes, 0, 0, 0);
+        VectorDrawableCompat d =
+            VectorDrawableCompat.create(getResources(), menuItem.iconRes, null);
+        TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(((TextView) v), d, null,
+            null, null);
       } else {
         v = LayoutInflater.from(context).inflate(R.layout.navigation_divider, parent, false);
       }

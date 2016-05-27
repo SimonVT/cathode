@@ -205,6 +205,7 @@
   <!-- Navigation fragment -->
   <string name="navigation_dashboard">Dashboard</string>
 
+  <string name="navigation_title_shows">Shows</string>
   <string name="navigation_shows_upcoming">Upcoming</string>
   <string name="navigation_shows_watched">Watched</string>
   <string name="navigation_shows_collection">Collection</string>
