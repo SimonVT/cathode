@@ -318,11 +318,8 @@ public class EpisodeFragment extends AppBarFragment {
   private LoaderManager.LoaderCallbacks<SimpleCursor> episodeCallbacks =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader cl =
-              new SimpleCursorLoader(getActivity(), Episodes.withId(episodeId), EPISODE_PROJECTION,
-                  null, null, null);
-          cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
-          return cl;
+          return new SimpleCursorLoader(getActivity(), Episodes.withId(episodeId), EPISODE_PROJECTION,
+              null, null, null);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
@@ -349,11 +346,8 @@ public class EpisodeFragment extends AppBarFragment {
   private LoaderManager.LoaderCallbacks<SimpleCursor> userCommentsLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader loader =
-              new SimpleCursorLoader(getContext(), Comments.fromEpisode(episodeId),
-                  COMMENTS_PROJECTION, CommentColumns.IS_USER_COMMENT + "=1", null, null);
-          loader.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
-          return loader;
+          return new SimpleCursorLoader(getContext(), Comments.fromEpisode(episodeId),
+              COMMENTS_PROJECTION, CommentColumns.IS_USER_COMMENT + "=1", null, null);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

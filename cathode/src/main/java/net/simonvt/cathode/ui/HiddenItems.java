@@ -23,7 +23,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
 import android.view.View;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
@@ -233,11 +232,9 @@ public class HiddenItems extends BaseActivity
     private LoaderManager.LoaderCallbacks<SimpleCursor> hiddenShowsCalendarCallback =
         new LoaderManager.LoaderCallbacks<SimpleCursor>() {
           @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-            SimpleCursorLoader loader = new SimpleCursorLoader(getActivity(), Shows.SHOWS,
+            return new SimpleCursorLoader(getActivity(), Shows.SHOWS,
                 HiddenItemsAdapter.PROJECTION_SHOW, HiddenColumns.HIDDEN_CALENDAR + "=1", null,
                 Shows.SORT_TITLE);
-            loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-            return loader;
           }
 
           @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
@@ -253,11 +250,9 @@ public class HiddenItems extends BaseActivity
     private LoaderManager.LoaderCallbacks<SimpleCursor> hiddenShowsWatchedCallback =
         new LoaderManager.LoaderCallbacks<SimpleCursor>() {
           @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-            SimpleCursorLoader loader = new SimpleCursorLoader(getActivity(), Shows.SHOWS,
+            return new SimpleCursorLoader(getActivity(), Shows.SHOWS,
                 HiddenItemsAdapter.PROJECTION_SHOW, HiddenColumns.HIDDEN_WATCHED + "=1", null,
                 Shows.SORT_TITLE);
-            loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-            return loader;
           }
 
           @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
@@ -273,11 +268,9 @@ public class HiddenItems extends BaseActivity
     private LoaderManager.LoaderCallbacks<SimpleCursor> hiddenShowsCollectedCallback =
         new LoaderManager.LoaderCallbacks<SimpleCursor>() {
           @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-            SimpleCursorLoader loader = new SimpleCursorLoader(getActivity(), Shows.SHOWS,
+            return new SimpleCursorLoader(getActivity(), Shows.SHOWS,
                 HiddenItemsAdapter.PROJECTION_SHOW, HiddenColumns.HIDDEN_COLLECTED + "=1", null,
                 Shows.SORT_TITLE);
-            loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-            return loader;
           }
 
           @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
@@ -293,11 +286,9 @@ public class HiddenItems extends BaseActivity
     private LoaderManager.LoaderCallbacks<SimpleCursor> hiddenMoviesCalendarCallback =
         new LoaderManager.LoaderCallbacks<SimpleCursor>() {
           @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-            SimpleCursorLoader loader = new SimpleCursorLoader(getActivity(), Movies.MOVIES,
+            return new SimpleCursorLoader(getActivity(), Movies.MOVIES,
                 HiddenItemsAdapter.PROJECTION_MOVIES, HiddenColumns.HIDDEN_CALENDAR + "=1", null,
                 Movies.SORT_TITLE);
-            loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-            return loader;
           }
 
           @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
@@ -313,11 +304,9 @@ public class HiddenItems extends BaseActivity
     private LoaderManager.LoaderCallbacks<SimpleCursor> hiddenMoviesWatchedCallback =
         new LoaderManager.LoaderCallbacks<SimpleCursor>() {
           @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-            SimpleCursorLoader loader = new SimpleCursorLoader(getActivity(), Movies.MOVIES,
+            return new SimpleCursorLoader(getActivity(), Movies.MOVIES,
                 HiddenItemsAdapter.PROJECTION_MOVIES, HiddenColumns.HIDDEN_WATCHED + "=1", null,
                 Movies.SORT_TITLE);
-            loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-            return loader;
           }
 
           @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
@@ -333,11 +322,9 @@ public class HiddenItems extends BaseActivity
     private LoaderManager.LoaderCallbacks<SimpleCursor> hiddenMoviesCollectedCallback =
         new LoaderManager.LoaderCallbacks<SimpleCursor>() {
           @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-            SimpleCursorLoader loader = new SimpleCursorLoader(getActivity(), Movies.MOVIES,
+            return new SimpleCursorLoader(getActivity(), Movies.MOVIES,
                 HiddenItemsAdapter.PROJECTION_MOVIES, HiddenColumns.HIDDEN_COLLECTED + "=1", null,
                 Movies.SORT_TITLE);
-            loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-            return loader;
           }
 
           @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

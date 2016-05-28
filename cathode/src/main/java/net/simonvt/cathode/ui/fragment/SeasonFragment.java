@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
 import net.simonvt.cathode.CathodeApp;
@@ -174,11 +173,8 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
   private LoaderManager.LoaderCallbacks<SimpleCursor> episodesLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader cl =
-              new SimpleCursorLoader(getActivity(), Episodes.fromSeason(seasonId), null,
-                  EpisodeColumns.NEEDS_SYNC + "=0", null, EpisodeColumns.EPISODE + " ASC");
-          cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-          return cl;
+          return new SimpleCursorLoader(getActivity(), Episodes.fromSeason(seasonId), null,
+              EpisodeColumns.NEEDS_SYNC + "=0", null, EpisodeColumns.EPISODE + " ASC");
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {

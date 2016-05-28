@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateUtils;
 import android.view.MenuItem;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -111,10 +110,8 @@ public class ListsFragment extends ToolbarSwipeRefreshRecyclerFragment<ListsAdap
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-    SimpleCursorLoader loader = new SimpleCursorLoader(getActivity(), ProviderSchematic.Lists.LISTS,
+    return new SimpleCursorLoader(getActivity(), ProviderSchematic.Lists.LISTS,
         ListsAdapter.PROJECTION, null, null, null);
-    loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-    return loader;
   }
 
   @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

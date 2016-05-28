@@ -20,7 +20,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.Loader;
-import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
 import java.util.ArrayList;
@@ -165,10 +164,7 @@ public class ShowsCollectionFragment extends ShowsFragment implements ListDialog
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
     final Uri contentUri = Shows.SHOWS_COLLECTION;
-    SimpleCursorLoader cl =
-        new SimpleCursorLoader(getActivity(), contentUri, ShowsWithNextAdapter.PROJECTION, null,
-            null, sortBy.getSortOrder());
-    cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-    return cl;
+    return new SimpleCursorLoader(getActivity(), contentUri, ShowsWithNextAdapter.PROJECTION, null,
+        null, sortBy.getSortOrder());
   }
 }

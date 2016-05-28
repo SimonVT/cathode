@@ -847,11 +847,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private LoaderManager.LoaderCallbacks<SimpleCursor> showCallbacks =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader cl =
-              new SimpleCursorLoader(getActivity(), Shows.withId(showId), SHOW_PROJECTION, null,
-                  null, null);
-          cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
-          return cl;
+          return new SimpleCursorLoader(getActivity(), Shows.withId(showId), SHOW_PROJECTION, null,
+              null, null);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
@@ -865,11 +862,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private LoaderManager.LoaderCallbacks<SimpleCursor> genreCallbacks =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader cl =
-              new SimpleCursorLoader(getActivity(), ShowGenres.fromShow(showId), GENRES_PROJECTION,
-                  null, null, ShowGenres.DEFAULT_SORT);
-          cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
-          return cl;
+          return new SimpleCursorLoader(getActivity(), ShowGenres.fromShow(showId), GENRES_PROJECTION,
+              null, null, ShowGenres.DEFAULT_SORT);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
@@ -889,11 +883,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private LoaderManager.LoaderCallbacks<SimpleCursor> charactersCallback =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader cl = new SimpleCursorLoader(getActivity(),
+          return new SimpleCursorLoader(getActivity(),
               ProviderSchematic.ShowCharacters.fromShow(showId), CHARACTERS_PROJECTION,
               Tables.PEOPLE + "." + PersonColumns.NEEDS_SYNC + "=0", null, null);
-          cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
-          return cl;
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
@@ -937,10 +929,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private LoaderManager.LoaderCallbacks<SimpleCursor> seasonsLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader cl = new SimpleCursorLoader(getActivity(), Seasons.fromShow(showId),
+          return new SimpleCursorLoader(getActivity(), Seasons.fromShow(showId),
               SeasonsAdapter.PROJECTION, null, null, Seasons.DEFAULT_SORT);
-          cl.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
-          return cl;
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
@@ -970,11 +960,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private LoaderManager.LoaderCallbacks<SimpleCursor> userCommentsLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader loader =
-              new SimpleCursorLoader(getContext(), Comments.fromShow(showId), COMMENTS_PROJECTION,
-                  CommentColumns.IS_USER_COMMENT + "=1", null, null);
-          loader.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
-          return loader;
+          return new SimpleCursorLoader(getContext(), Comments.fromShow(showId), COMMENTS_PROJECTION,
+              CommentColumns.IS_USER_COMMENT + "=1", null, null);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
@@ -989,12 +976,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private LoaderManager.LoaderCallbacks<SimpleCursor> commentsLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader loader =
-              new SimpleCursorLoader(getContext(), Comments.fromShow(showId), COMMENTS_PROJECTION,
-                  CommentColumns.IS_USER_COMMENT + "=0 AND " + CommentColumns.SPOILER + "=0", null,
-                  CommentColumns.LIKES + " DESC LIMIT 3");
-          loader.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
-          return loader;
+          return new SimpleCursorLoader(getContext(), Comments.fromShow(showId), COMMENTS_PROJECTION,
+              CommentColumns.IS_USER_COMMENT + "=0 AND " + CommentColumns.SPOILER + "=0", null,
+              CommentColumns.LIKES + " DESC LIMIT 3");
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

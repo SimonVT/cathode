@@ -545,11 +545,8 @@ public class HomeActivity extends BaseActivity
   private LoaderManager.LoaderCallbacks<SimpleCursor> watchingShowCallback =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-          SimpleCursorLoader loader =
-              new SimpleCursorLoader(HomeActivity.this, ProviderSchematic.Shows.SHOW_WATCHING,
-                  SHOW_WATCHING_PROJECTION, null, null, null);
-          loader.setUpdateThrottle(2000);
-          return loader;
+          return new SimpleCursorLoader(HomeActivity.this, ProviderSchematic.Shows.SHOW_WATCHING,
+              SHOW_WATCHING_PROJECTION, null, null, null);
         }
 
         @Override
@@ -566,11 +563,8 @@ public class HomeActivity extends BaseActivity
   private LoaderManager.LoaderCallbacks<SimpleCursor> watchingMovieCallback =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-          SimpleCursorLoader loader =
-              new SimpleCursorLoader(HomeActivity.this, ProviderSchematic.Movies.WATCHING, null,
-                  MovieColumns.NEEDS_SYNC + "=0", null, null);
-          loader.setUpdateThrottle(2000);
-          return loader;
+          return new SimpleCursorLoader(HomeActivity.this, ProviderSchematic.Movies.WATCHING, null,
+              MovieColumns.NEEDS_SYNC + "=0", null, null);
         }
 
         @Override

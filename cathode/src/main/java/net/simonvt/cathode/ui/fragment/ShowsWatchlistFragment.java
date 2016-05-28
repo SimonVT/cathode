@@ -17,14 +17,12 @@ package net.simonvt.cathode.ui.fragment;
 
 import android.app.Activity;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
 import javax.inject.Inject;
@@ -151,11 +149,11 @@ public class ShowsWatchlistFragment
   private void throttleLoaders() {
     Loader l = getLoaderManager().getLoader(Loaders.EPISODES_WATCHLIST);
     SimpleCursorLoader loader = (SimpleCursorLoader) l;
-    loader.throttle(2000);
+    loader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
 
     l = getLoaderManager().getLoader(Loaders.SHOWS_WATCHLIST);
     loader = (SimpleCursorLoader) l;
-    loader.throttle(2000);
+    loader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
   }
 
   @Override public void onRemoveItem(View view, int position, long id) {
@@ -197,11 +195,8 @@ public class ShowsWatchlistFragment
   private LoaderManager.LoaderCallbacks<SimpleCursor> showsCallback =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          final Uri contentUri = Shows.SHOWS_WATCHLIST;
-          SimpleCursorLoader loader = new SimpleCursorLoader(getActivity(), contentUri,
+          return new SimpleCursorLoader(getActivity(), Shows.SHOWS_WATCHLIST,
               ShowWatchlistAdapter.PROJECTION_SHOW, null, null, Shows.DEFAULT_SORT);
-          loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-          return loader;
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
@@ -215,13 +210,10 @@ public class ShowsWatchlistFragment
   private LoaderManager.LoaderCallbacks<SimpleCursor> episodeCallback =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader loader =
-              new SimpleCursorLoader(getActivity(), Episodes.EPISODES_IN_WATCHLIST,
-                  ShowWatchlistAdapter.PROJECTION_EPISODE,
-                  Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC + "=0", null,
-                  EpisodeColumns.SHOW_ID + " ASC");
-          loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-          return loader;
+          return new SimpleCursorLoader(getActivity(), Episodes.EPISODES_IN_WATCHLIST,
+              ShowWatchlistAdapter.PROJECTION_EPISODE,
+              Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC + "=0", null,
+              EpisodeColumns.SHOW_ID + " ASC");
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

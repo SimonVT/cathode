@@ -18,12 +18,10 @@ package net.simonvt.cathode.ui.fragment;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
 import java.util.ArrayList;
@@ -211,12 +209,9 @@ public class TrendingShowsFragment
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    final Uri contentUri = Shows.SHOWS_TRENDING;
-    SimpleCursorLoader cl =
-        new SimpleCursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION,
-            ShowColumns.NEEDS_SYNC + "=0", null, sortBy.getSortOrder());
-    cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-    return cl;
+    return new SimpleCursorLoader(getActivity(), Shows.SHOWS_TRENDING,
+        ShowDescriptionAdapter.PROJECTION, ShowColumns.NEEDS_SYNC + "=0", null,
+        sortBy.getSortOrder());
   }
 
   @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

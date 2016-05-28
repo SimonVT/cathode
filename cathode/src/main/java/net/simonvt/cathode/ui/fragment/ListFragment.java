@@ -21,7 +21,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.text.format.DateUtils;
 import android.view.View;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
@@ -147,7 +146,7 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
 
   @Override public void onRemoveItem(int position, long id) {
     Loader loader = getLoaderManager().getLoader(Loaders.LIST);
-    ((SimpleCursorLoader) loader).throttle(2 * DateUtils.SECOND_IN_MILLIS);
+    ((SimpleCursorLoader) loader).throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
 
     final SimpleCursor cursor = (SimpleCursor) adapter.getCursor(position);
 
@@ -248,11 +247,8 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
   };
 
   @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-    SimpleCursorLoader loader =
-        new SimpleCursorLoader(getActivity(), ProviderSchematic.ListItems.inList(listId),
-            PROJECTION, null, null, null);
-    loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-    return loader;
+    return new SimpleCursorLoader(getActivity(), ProviderSchematic.ListItems.inList(listId),
+        PROJECTION, null, null, null);
   }
 
   @Override public void onLoadFinished(Loader loader, SimpleCursor data) {

@@ -22,7 +22,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -396,10 +395,7 @@ public class MovieFragment extends RefreshableAppBarFragment
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    SimpleCursorLoader loader =
-        new SimpleCursorLoader(getActivity(), Movies.withId(movieId), null, null, null, null);
-    loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-    return loader;
+    return new SimpleCursorLoader(getActivity(), Movies.withId(movieId), null, null, null, null);
   }
 
   @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor cursor) {
@@ -453,12 +449,9 @@ public class MovieFragment extends RefreshableAppBarFragment
   private LoaderManager.LoaderCallbacks<SimpleCursor> actorsLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-          SimpleCursorLoader loader =
-              new SimpleCursorLoader(getActivity(), ProviderSchematic.MovieCast.fromMovie(movieId),
-                  CAST_PROJECTION, Tables.PEOPLE + "." + PersonColumns.NEEDS_SYNC + "=0", null,
-                  null);
-          loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-          return loader;
+          return new SimpleCursorLoader(getActivity(), ProviderSchematic.MovieCast.fromMovie(movieId),
+              CAST_PROJECTION, Tables.PEOPLE + "." + PersonColumns.NEEDS_SYNC + "=0", null,
+              null);
         }
 
         @Override
@@ -486,11 +479,8 @@ public class MovieFragment extends RefreshableAppBarFragment
   private LoaderManager.LoaderCallbacks<SimpleCursor> userCommentsLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader loader =
-              new SimpleCursorLoader(getContext(), Comments.fromMovie(movieId), COMMENTS_PROJECTION,
-                  CommentColumns.IS_USER_COMMENT + "=1", null, null);
-          loader.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
-          return loader;
+          return new SimpleCursorLoader(getContext(), Comments.fromMovie(movieId), COMMENTS_PROJECTION,
+              CommentColumns.IS_USER_COMMENT + "=1", null, null);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
@@ -505,12 +495,9 @@ public class MovieFragment extends RefreshableAppBarFragment
   private LoaderManager.LoaderCallbacks<SimpleCursor> commentsLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader loader =
-              new SimpleCursorLoader(getContext(), Comments.fromMovie(movieId), COMMENTS_PROJECTION,
-                  CommentColumns.IS_USER_COMMENT + "=0 AND " + CommentColumns.SPOILER + "=0", null,
-                  CommentColumns.LIKES + " DESC LIMIT 3");
-          loader.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
-          return loader;
+          return new SimpleCursorLoader(getContext(), Comments.fromMovie(movieId), COMMENTS_PROJECTION,
+              CommentColumns.IS_USER_COMMENT + "=0 AND " + CommentColumns.SPOILER + "=0", null,
+              CommentColumns.LIKES + " DESC LIMIT 3");
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

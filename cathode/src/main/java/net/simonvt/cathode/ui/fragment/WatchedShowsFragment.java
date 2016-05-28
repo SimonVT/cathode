@@ -19,7 +19,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.Loader;
-import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
 import java.util.ArrayList;
@@ -161,10 +160,7 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    SimpleCursorLoader cl =
-        new SimpleCursorLoader(getActivity(), Shows.SHOWS_WATCHED, ShowsWithNextAdapter.PROJECTION,
-            null, null, sortBy.getSortOrder());
-    cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-    return cl;
+    return new SimpleCursorLoader(getActivity(), Shows.SHOWS_WATCHED, ShowsWithNextAdapter.PROJECTION,
+        null, null, sortBy.getSortOrder());
   }
 }

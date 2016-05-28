@@ -17,7 +17,6 @@ package net.simonvt.cathode.ui.fragment;
 
 import android.os.Bundle;
 import android.support.v4.content.Loader;
-import android.text.format.DateUtils;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -56,10 +55,7 @@ public class MovieWatchlistFragment extends MoviesFragment {
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    SimpleCursorLoader loader =
-        new SimpleCursorLoader(getActivity(), Movies.MOVIES_WATCHLIST, null, null, null,
-            Movies.DEFAULT_SORT);
-    loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-    return loader;
+    return new SimpleCursorLoader(getActivity(), Movies.MOVIES_WATCHLIST, null, null, null,
+        Movies.DEFAULT_SORT);
   }
 }

@@ -30,6 +30,9 @@ import timber.log.Timber;
 
 public abstract class SimpleLoaderBase<T extends AbsSimpleCursor> extends AsyncTaskLoader<T> {
 
+  public static final long DEFAULT_UPDATE_THROTTLE = 1000;
+  public static final long DEFAULT_THROTTLE = 1000;
+
   private final List<Uri> notificationUris = new ArrayList<>();
 
   private final Map<Uri, ContentObserver> observers = new HashMap<>();
@@ -48,6 +51,7 @@ public abstract class SimpleLoaderBase<T extends AbsSimpleCursor> extends AsyncT
 
   public SimpleLoaderBase(Context context) {
     super(context);
+    setUpdateThrottle(DEFAULT_UPDATE_THROTTLE);
   }
 
   public void addNotificationUri(Uri uri) {

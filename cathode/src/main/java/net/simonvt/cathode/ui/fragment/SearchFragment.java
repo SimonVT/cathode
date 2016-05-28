@@ -27,7 +27,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -310,11 +309,8 @@ public abstract class SearchFragment extends OverlayToolbarGridFragment<Recycler
     }
     where.append(")");
 
-    SimpleCursorLoader loader =
-        new SimpleCursorLoader(getContext(), getUri(), getProjection(), where.toString(), ids,
-            getSortString(sortBy));
-    loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-    return loader;
+    return new SimpleCursorLoader(getContext(), getUri(), getProjection(), where.toString(), ids,
+        getSortString(sortBy));
   }
 
   @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

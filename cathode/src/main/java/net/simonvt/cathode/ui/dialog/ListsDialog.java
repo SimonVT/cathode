@@ -23,7 +23,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -224,8 +223,8 @@ public class ListsDialog extends DialogFragment {
       @Override public void onClick(View v) {
         Loader listsLoader = getLoaderManager().getLoader(Loaders.DIALOG_LISTS);
         Loader listItemLoader = getLoaderManager().getLoader(Loaders.DIALOG_LISTS_STATUS);
-        ((SimpleCursorLoader) listsLoader).throttle(2 * DateUtils.SECOND_IN_MILLIS);
-        ((SimpleCursorLoader) listItemLoader).throttle(2 * DateUtils.SECOND_IN_MILLIS);
+        ((SimpleCursorLoader) listsLoader).throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
+        ((SimpleCursorLoader) listItemLoader).throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
 
         if (checkBox.isChecked()) {
           checkBox.setChecked(false);
@@ -251,11 +250,8 @@ public class ListsDialog extends DialogFragment {
   private LoaderManager.LoaderCallbacks<SimpleCursor> listsLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle bundle) {
-          SimpleCursorLoader loader =
-              new SimpleCursorLoader(getActivity(), ProviderSchematic.Lists.LISTS, LISTS_PROJECTION,
-                  null, null, null);
-          loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-          return loader;
+          return new SimpleCursorLoader(getActivity(), ProviderSchematic.Lists.LISTS, LISTS_PROJECTION,
+              null, null, null);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
@@ -270,14 +266,11 @@ public class ListsDialog extends DialogFragment {
   private LoaderManager.LoaderCallbacks<SimpleCursor> listItemLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle bundle) {
-          SimpleCursorLoader loader =
-              new SimpleCursorLoader(getActivity(), ListItems.LIST_ITEMS, LIST_ITEM_PROJECTION,
-                  ListItemColumns.ITEM_TYPE + "=? AND " + ListItemColumns.ITEM_ID + "=?",
-                  new String[] {
-                      String.valueOf(itemType), String.valueOf(itemId),
-                  }, null);
-          loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-          return loader;
+          return new SimpleCursorLoader(getActivity(), ListItems.LIST_ITEMS, LIST_ITEM_PROJECTION,
+              ListItemColumns.ITEM_TYPE + "=? AND " + ListItemColumns.ITEM_ID + "=?",
+              new String[] {
+                  String.valueOf(itemType), String.valueOf(itemId),
+              }, null);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

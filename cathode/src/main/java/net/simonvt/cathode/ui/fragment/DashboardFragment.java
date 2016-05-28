@@ -23,7 +23,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -223,10 +222,8 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
   private final LoaderManager.LoaderCallbacks<SimpleCursor> showsUpcomingCallback =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader cl = new SimpleCursorLoader(getActivity(), Shows.SHOWS_UPCOMING,
+          return new SimpleCursorLoader(getActivity(), Shows.SHOWS_UPCOMING,
               DashboardUpcomingShowsAdapter.PROJECTION, null, null, Shows.SORT_NEXT_EPISODE);
-          cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-          return cl;
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
@@ -240,10 +237,8 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
   private final LoaderManager.LoaderCallbacks<SimpleCursor> showsWatchlistCallback =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader cl = new SimpleCursorLoader(getActivity(), Shows.SHOWS_WATCHLIST,
+          return new SimpleCursorLoader(getActivity(), Shows.SHOWS_WATCHLIST,
               DashboardShowsWatchlistAdapter.PROJECTION, null, null, null);
-          cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-          return cl;
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
@@ -257,11 +252,8 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
   private final LoaderManager.LoaderCallbacks<SimpleCursor> episodeWatchlistCallback =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader cl =
-              new SimpleCursorLoader(getActivity(), Episodes.EPISODES_IN_WATCHLIST,
-                  DashboardShowsWatchlistAdapter.PROJECTION_EPISODE, null, null, null);
-          cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-          return cl;
+          return new SimpleCursorLoader(getActivity(), Episodes.EPISODES_IN_WATCHLIST,
+              DashboardShowsWatchlistAdapter.PROJECTION_EPISODE, null, null, null);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
@@ -275,10 +267,8 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
   private final LoaderManager.LoaderCallbacks<SimpleCursor> showsTrendingCallback =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader cl = new SimpleCursorLoader(getActivity(), Shows.SHOWS_TRENDING,
+          return new SimpleCursorLoader(getActivity(), Shows.SHOWS_TRENDING,
               DashboardShowsAdapter.PROJECTION, null, null, null);
-          cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-          return cl;
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
@@ -292,11 +282,8 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
   private final LoaderManager.LoaderCallbacks<SimpleCursor> moviesWatchlistCallback =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader cl =
-              new SimpleCursorLoader(getActivity(), ProviderSchematic.Movies.MOVIES_WATCHLIST,
-                  DashboardMoviesAdapter.PROJECTION, null, null, null);
-          cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-          return cl;
+          return new SimpleCursorLoader(getActivity(), ProviderSchematic.Movies.MOVIES_WATCHLIST,
+              DashboardMoviesAdapter.PROJECTION, null, null, null);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
@@ -310,11 +297,8 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
   private final LoaderManager.LoaderCallbacks<SimpleCursor> moviesTrendingCallback =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader cl =
-              new SimpleCursorLoader(getActivity(), ProviderSchematic.Movies.TRENDING,
-                  DashboardMoviesAdapter.PROJECTION, null, null, null);
-          cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-          return cl;
+          return new SimpleCursorLoader(getActivity(), ProviderSchematic.Movies.TRENDING,
+              DashboardMoviesAdapter.PROJECTION, null, null, null);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

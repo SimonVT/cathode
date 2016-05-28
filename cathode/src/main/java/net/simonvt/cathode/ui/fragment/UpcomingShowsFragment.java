@@ -25,7 +25,6 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
 import java.util.ArrayList;
@@ -212,7 +211,7 @@ public class UpcomingShowsFragment
   @Override public void onRemove(View view, int position, long id) {
     Loader loader = getLoaderManager().getLoader(Loaders.SHOWS_UPCOMING);
     SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
-    cursorLoader.throttle(2000);
+    cursorLoader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
 
     List<Cursor> cursors = ((UpcomingAdapter) getAdapter()).getCursors();
     for (Cursor cursor : cursors) {
@@ -279,11 +278,8 @@ public class UpcomingShowsFragment
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-    SimpleCursorLoader cl =
-        new SimpleCursorLoader(getActivity(), Shows.SHOWS_UPCOMING, UpcomingAdapter.PROJECTION,
-            null, null, sortBy.getSortOrder());
-    cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-    return cl;
+    return new SimpleCursorLoader(getActivity(), Shows.SHOWS_UPCOMING, UpcomingAdapter.PROJECTION,
+        null, null, sortBy.getSortOrder());
   }
 
   @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -117,7 +116,6 @@ public class ActorsFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
           null, null);
     }
 
-    loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
     return loader;
   }
 

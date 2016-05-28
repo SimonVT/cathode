@@ -23,7 +23,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
 import java.util.ArrayList;
@@ -210,7 +209,7 @@ public class ShowRecommendationsFragment
   @Override public void onDismissItem(final View view, final long id) {
     Loader loader = getLoaderManager().getLoader(Loaders.SHOWS_RECOMMENDATIONS);
     SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
-    cursorLoader.throttle(2000);
+    cursorLoader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
 
     cursor.remove(id);
     showsAdapter.notifyDataSetChanged();
@@ -235,11 +234,8 @@ public class ShowRecommendationsFragment
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
     final Uri contentUri = Shows.SHOWS_RECOMMENDED;
-    SimpleCursorLoader cl =
-        new SimpleCursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION, null,
-            null, sortBy.getSortOrder());
-    cl.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-    return cl;
+    return new SimpleCursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION, null,
+        null, sortBy.getSortOrder());
   }
 
   @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

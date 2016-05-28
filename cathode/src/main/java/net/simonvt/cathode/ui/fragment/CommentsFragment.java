@@ -166,16 +166,13 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
               throw new IllegalArgumentException("Type " + itemType.toString() + " not supported");
           }
 
-          SimpleCursorLoader loader =
-              new SimpleCursorLoader(getContext(), uri, CommentsAdapter.PROJECTION,
-                  CommentColumns.PARENT_ID + "=0", null, CommentColumns.IS_USER_COMMENT
-                  + " DESC, "
-                  + CommentColumns.LIKES
-                  + " DESC, "
-                  + CommentColumns.CREATED_AT
-                  + " DESC");
-          loader.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
-          return loader;
+          return new SimpleCursorLoader(getContext(), uri, CommentsAdapter.PROJECTION,
+              CommentColumns.PARENT_ID + "=0", null, CommentColumns.IS_USER_COMMENT
+              + " DESC, "
+              + CommentColumns.LIKES
+              + " DESC, "
+              + CommentColumns.CREATED_AT
+              + " DESC");
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

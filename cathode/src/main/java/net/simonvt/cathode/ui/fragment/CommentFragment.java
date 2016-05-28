@@ -148,14 +148,11 @@ public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHol
   private LoaderManager.LoaderCallbacks<SimpleCursor> commentLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader loader =
-              new SimpleCursorLoader(getContext(), Comments.COMMENTS_WITH_PROFILE,
-                  CommentsAdapter.PROJECTION, Tables.COMMENTS + "." + CommentColumns.ID + "=?",
-                  new String[] {
-                      String.valueOf(commentId),
-                  }, null);
-          loader.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
-          return loader;
+          return new SimpleCursorLoader(getContext(), Comments.COMMENTS_WITH_PROFILE,
+              CommentsAdapter.PROJECTION, Tables.COMMENTS + "." + CommentColumns.ID + "=?",
+              new String[] {
+                  String.valueOf(commentId),
+              }, null);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
@@ -170,11 +167,8 @@ public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHol
   private LoaderManager.LoaderCallbacks<SimpleCursor> repliesLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          SimpleCursorLoader loader =
-              new SimpleCursorLoader(getContext(), Comments.withParent(commentId),
-                  CommentsAdapter.PROJECTION, null, null, CommentColumns.CREATED_AT + " DESC");
-          loader.setUpdateThrottle(2 * android.text.format.DateUtils.SECOND_IN_MILLIS);
-          return loader;
+          return new SimpleCursorLoader(getContext(), Comments.withParent(commentId),
+              CommentsAdapter.PROJECTION, null, null, CommentColumns.CREATED_AT + " DESC");
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

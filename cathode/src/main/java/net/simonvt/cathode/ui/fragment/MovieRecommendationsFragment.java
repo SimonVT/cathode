@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
 import java.util.ArrayList;
@@ -206,7 +205,7 @@ public class MovieRecommendationsFragment
   @Override public void onDismissItem(final View view, final long id) {
     Loader loader = getLoaderManager().getLoader(Loaders.MOVIES_RECOMMENDATIONS);
     SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
-    cursorLoader.throttle(2000);
+    cursorLoader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
 
     cursor.remove(id);
     movieAdapter.notifyDataSetChanged();
@@ -229,10 +228,8 @@ public class MovieRecommendationsFragment
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    SimpleCursorLoader loader = new SimpleCursorLoader(getActivity(), Movies.RECOMMENDED, null,
+    return new SimpleCursorLoader(getActivity(), Movies.RECOMMENDED, null,
         MovieColumns.NEEDS_SYNC + "=0", null, sortBy.getSortOrder());
-    loader.setUpdateThrottle(2 * DateUtils.SECOND_IN_MILLIS);
-    return loader;
   }
 
   @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
