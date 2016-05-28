@@ -1,5 +1,6 @@
 package net.simonvt.cathode.api;
 
+import android.content.Context;
 import android.text.format.DateUtils;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -15,6 +16,7 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import dagger.Module;
 import dagger.Provides;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -44,7 +46,9 @@ import net.simonvt.cathode.api.service.SeasonService;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.api.service.UsersService;
+import net.simonvt.cathode.api.util.OkHttpUtils;
 import net.simonvt.cathode.api.util.TimeUtils;
+import okhttp3.Cache;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -68,11 +72,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
         .build();
   }
 
-  @Provides @Singleton @Trakt OkHttpClient provideOkHttpClient(TraktSettings settings,
+  @Provides @Singleton @Trakt OkHttpClient provideOkHttpClient(Context context, TraktSettings settings,
       @Trakt List<Interceptor> interceptors) {
     OkHttpClient.Builder builder = new OkHttpClient.Builder();
     builder.connectTimeout(15, TimeUnit.SECONDS);
     builder.readTimeout(20, TimeUnit.SECONDS);
+
+    final File cacheDir = OkHttpUtils.getCacheDir(context);
+    builder.cache(new Cache(cacheDir, OkHttpUtils.getCacheSize(cacheDir)));
 
     builder.interceptors().addAll(interceptors);
     builder.interceptors().add(new RetryingInterceptor(MAX_RETRIES, RETRY_DELAY));
