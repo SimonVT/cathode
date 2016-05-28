@@ -24,10 +24,7 @@ import net.simonvt.cathode.util.WakeLock;
 public class JobReceiver extends BroadcastReceiver {
 
   @Override public void onReceive(Context context, Intent intent) {
-    WakeLock.acquire(context, JobService.WAKELOCK_TAG);
-
     final int retryDelay = intent.getIntExtra(JobService.RETRY_DELAY, 1);
-
     Intent i = new Intent(context, JobService.class);
     i.putExtra(JobService.RETRY_DELAY, retryDelay);
     context.startService(i);

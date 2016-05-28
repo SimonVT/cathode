@@ -43,8 +43,6 @@ import timber.log.Timber;
 
 public class JobService extends Service {
 
-  static final String WAKELOCK_TAG = "net.simonvt.cathode.sync.TraktTaskService";
-
   static final String RETRY_DELAY = "net.simonvt.cathode.sync.TraktTaskService.retryDelay";
 
   private static final int MAX_RETRY_DELAY = 60; // In minutes
