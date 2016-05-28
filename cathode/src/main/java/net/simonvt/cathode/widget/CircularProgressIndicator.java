@@ -26,6 +26,7 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
+import java.util.Locale;
 import net.simonvt.cathode.R;
 
 public class CircularProgressIndicator extends View {
@@ -123,7 +124,7 @@ public class CircularProgressIndicator extends View {
 
   public void setValue(float value) {
     this.value = value;
-    valueString = String.format("%.1f", value);
+    valueString = String.format(Locale.US, "%.1f", value);
     textPaint.getTextBounds(valueString, 0, valueString.length(), textBounds);
     textWidth = textPaint.measureText(valueString);
     invalidate();

@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import butterknife.ButterKnife;
+import java.util.Locale;
 
 public class IntAdapter extends BaseAdapter {
 
@@ -62,7 +63,7 @@ public class IntAdapter extends BaseAdapter {
 
     TextView tv = ButterKnife.findById(v, android.R.id.text1);
 
-    tv.setText(String.format("%d", ints[position]));
+    tv.setText(String.format(Locale.US, "%d", ints[position]));
 
     return tv;
   }

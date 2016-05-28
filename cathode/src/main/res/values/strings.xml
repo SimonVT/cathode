@@ -211,16 +211,12 @@
   <string name="navigation_shows_collection">Collection</string>
   <string name="navigation_shows_suggestions">Suggestions</string>
   <string name="navigation_shows_watchlist">Watchlist</string>
-  <string name="navigation_shows_trending">Trending</string>
-  <string name="navigation_shows_recommendations">Recommendations</string>
 
   <string name="navigation_title_movies">Movies</string>
   <string name="navigation_movies_watched">Watched</string>
   <string name="navigation_movies_collection">Collection</string>
   <string name="navigation_movies_suggestions">Suggestions</string>
   <string name="navigation_movies_watchlist">Watchlist</string>
-  <string name="navigation_movies_trending">Trending</string>
-  <string name="navigation_movies_recommendations">Recommendations</string>
 
   <string name="navigation_lists">Lists</string>
   <string name="navigation_settings">Settings</string>

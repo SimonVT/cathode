@@ -178,7 +178,7 @@ public final class DateUtils {
         sb.append(cal.get(Calendar.HOUR));
       }
 
-      sb.append(":").append(String.format("%02d", cal.get(Calendar.MINUTE)));
+      sb.append(":").append(String.format(Locale.US, "%02d", cal.get(Calendar.MINUTE)));
 
       if (!twentyFourHourFormat) {
         sb.append(" ");
