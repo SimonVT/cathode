@@ -28,6 +28,9 @@ public class OkHttpUtils {
   private static final int CACHE_SIZE_MIN = 5 * 1024 * 1024;
   private static final int CACHE_SIZE_MAX = 30 * 1024 * 1024;
 
+  private OkHttpUtils() {
+  }
+
   public static File getCacheDir(Context context) {
     File cache = new File(context.getApplicationContext().getCacheDir(), CACHE_DIR);
     if (!cache.exists()) {

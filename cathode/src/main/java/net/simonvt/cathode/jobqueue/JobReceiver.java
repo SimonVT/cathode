@@ -19,7 +19,6 @@ package net.simonvt.cathode.jobqueue;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import net.simonvt.cathode.util.WakeLock;
 
 public class JobReceiver extends BroadcastReceiver {
 
