@@ -56,7 +56,7 @@ public class SyncShowsWatchlist extends CallJob<List<WatchlistItem>> {
   @Override public void handleResponse(List<WatchlistItem> watchlist) {
     Cursor c = getContentResolver().query(Shows.SHOWS, new String[] {
         DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
-    }, ShowColumns.IN_WATCHLIST + "=0", null, null);
+    }, ShowColumns.IN_WATCHLIST, null, null);
 
     List<Long> showIds = new ArrayList<>();
 
