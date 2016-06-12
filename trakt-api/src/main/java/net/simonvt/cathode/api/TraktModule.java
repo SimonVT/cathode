@@ -82,7 +82,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
     builder.cache(new Cache(cacheDir, OkHttpUtils.getCacheSize(cacheDir)));
 
     builder.interceptors().addAll(interceptors);
-    builder.interceptors().add(new RetryingInterceptor(MAX_RETRIES, RETRY_DELAY));
     builder.networkInterceptors().add(new ApiInterceptor(settings));
     builder.networkInterceptors().add(new AuthInterceptor(settings));
     builder.authenticator(new TraktAuthenticator(settings));
