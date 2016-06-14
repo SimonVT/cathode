@@ -146,7 +146,9 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
 
   @Override public void onRemoveItem(int position, long id) {
     Loader loader = getLoaderManager().getLoader(Loaders.LIST);
-    ((SimpleCursorLoader) loader).throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
+    if (loader != null) {
+      ((SimpleCursorLoader) loader).throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
+    }
 
     final SimpleCursor cursor = (SimpleCursor) adapter.getCursor(position);
 

@@ -148,12 +148,16 @@ public class ShowsWatchlistFragment
 
   private void throttleLoaders() {
     Loader l = getLoaderManager().getLoader(Loaders.EPISODES_WATCHLIST);
-    SimpleCursorLoader loader = (SimpleCursorLoader) l;
-    loader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
+    if (l != null) {
+      SimpleCursorLoader loader = (SimpleCursorLoader) l;
+      loader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
+    }
 
     l = getLoaderManager().getLoader(Loaders.SHOWS_WATCHLIST);
-    loader = (SimpleCursorLoader) l;
-    loader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
+    if (l != null) {
+      SimpleCursorLoader loader = (SimpleCursorLoader) l;
+      loader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
+    }
   }
 
   @Override public void onRemoveItem(View view, int position, long id) {

@@ -210,15 +210,17 @@ public class UpcomingShowsFragment
 
   @Override public void onRemove(View view, int position, long id) {
     Loader loader = getLoaderManager().getLoader(Loaders.SHOWS_UPCOMING);
-    SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
-    cursorLoader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
+    if (loader != null) {
+      SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
+      cursorLoader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
 
-    List<Cursor> cursors = ((UpcomingAdapter) getAdapter()).getCursors();
-    for (Cursor cursor : cursors) {
-      ((SimpleCursor) cursor).remove(id);
+      List<Cursor> cursors = ((UpcomingAdapter) getAdapter()).getCursors();
+      for (Cursor cursor : cursors) {
+        ((SimpleCursor) cursor).remove(id);
+      }
+
+      ((UpcomingAdapter) getAdapter()).notifyChanged();
     }
-
-    ((UpcomingAdapter) getAdapter()).notifyChanged();
   }
 
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {

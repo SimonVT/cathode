@@ -204,11 +204,13 @@ public class MovieRecommendationsFragment
 
   @Override public void onDismissItem(final View view, final long id) {
     Loader loader = getLoaderManager().getLoader(Loaders.MOVIES_RECOMMENDATIONS);
-    SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
-    cursorLoader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
+    if (loader != null) {
+      SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
+      cursorLoader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
 
-    cursor.remove(id);
-    movieAdapter.notifyDataSetChanged();
+      cursor.remove(id);
+      movieAdapter.notifyDataSetChanged();
+    }
   }
 
   protected void setCursor(SimpleCursor c) {

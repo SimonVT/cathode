@@ -208,11 +208,13 @@ public class ShowRecommendationsFragment
 
   @Override public void onDismissItem(final View view, final long id) {
     Loader loader = getLoaderManager().getLoader(Loaders.SHOWS_RECOMMENDATIONS);
-    SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
-    cursorLoader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
+    if (loader != null) {
+      SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
+      cursorLoader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
 
-    cursor.remove(id);
-    showsAdapter.notifyDataSetChanged();
+      cursor.remove(id);
+      showsAdapter.notifyDataSetChanged();
+    }
   }
 
   private void setCursor(Cursor c) {
