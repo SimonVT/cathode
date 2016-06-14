@@ -110,6 +110,10 @@ public abstract class BaseFragment extends Fragment
   }
 
   @Override public void onDestroyView() {
+    if (toolbar != null) {
+      toolbar.setOnMenuItemClickListener(null);
+      toolbar.setNavigationOnClickListener(null);
+    }
     unbinder.unbind();
     unbinder = null;
     super.onDestroyView();
