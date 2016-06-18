@@ -96,7 +96,7 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
   @Override public void onCreate(Bundle inState) {
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     sortBy =
-        SortBy.fromValue(settings.getString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey()));
+        SortBy.fromValue(settings.getString(Settings.Sort.MOVIE_TRENDING, SortBy.VIEWERS.getKey()));
     super.onCreate(inState);
 
     setTitle(R.string.title_movies_trending);
