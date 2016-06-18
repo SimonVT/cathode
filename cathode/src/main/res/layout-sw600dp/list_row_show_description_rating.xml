@@ -18,40 +18,39 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@id/front"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="@dimen/cardCornerRadius">
+    app:cardCornerRadius="@dimen/cardCornerRadius"
+    tools:layout_width="300dp">
 
-  <RelativeLayout
+  <LinearLayout
       android:layout_width="match_parent"
-      android:layout_height="84dp"
-      android:minHeight="64dp">
+      android:layout_height="wrap_content"
+      android:orientation="vertical">
 
     <net.simonvt.cathode.widget.RemoteImageView
         android:id="@+id/poster"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:background="#FF00FF00"
-        app:dominantMeasurement="height"
-        app:aspectRatio="0.68"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:dominantMeasurement="width"
+        app:aspectRatio="1.4705"/>
 
     <net.simonvt.cathode.widget.IndicatorView
         android:id="@+id/indicator"
-        android:layout_width="3dp"
-        android:layout_height="match_parent"
-        android:layout_toRightOf="@id/poster"/>
+        android:layout_width="match_parent"
+        android:layout_height="3dp"/>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/indicator"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="4dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="4dp"
         android:layout_marginRight="16dp"
-        android:paddingBottom="2dp"
-        android:orientation="vertical">
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
 
       <TextView
           android:id="@+id/title"
@@ -67,16 +66,27 @@
           android:layout_height="wrap_content"
           android:ellipsize="end"
           android:fontFamily="sans-light"
+          android:minLines="3"
           android:maxLines="3"
           android:textAppearance="?android:attr/textAppearanceSmall"
           android:textSize="12sp"
           tools:text="This is a description of the show. It can be long. And multiline. Lots of lots of lines. Even more lines"/>
-    </LinearLayout>
 
-    <net.simonvt.cathode.widget.OverflowView
-        android:id="@+id/overflow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"/>
-  </RelativeLayout>
+    </LinearLayout>
+  </LinearLayout>
+
+  <net.simonvt.cathode.widget.OverflowView
+      android:id="@+id/overflow"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|right"/>
+
+  <net.simonvt.cathode.widget.CircularProgressIndicator
+      android:id="@+id/rating"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="right"
+      android:layout_marginTop="8dp"
+      android:layout_marginRight="8dp"
+      app:textBackgroundColor="@color/circleProgressTextBackground"/>
 </android.support.v7.widget.CardView>

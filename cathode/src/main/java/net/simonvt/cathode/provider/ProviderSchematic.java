@@ -141,6 +141,7 @@ public final class ProviderSchematic {
 
     String TRENDING = "trending";
     String RECOMMENDED = "recommended";
+    String ANTICIPATED = "anticipated";
     String WATCHING = "watching";
 
     String SEARCH_SUGGESTIONS = "searchSuggestions";
@@ -276,6 +277,16 @@ public final class ProviderSchematic {
     public static final Uri SHOWS_RECOMMENDED = buildUri(Path.SHOWS, Path.RECOMMENDED);
 
     @ContentUri(
+        path = Path.SHOWS + "/" + Path.ANTICIPATED,
+        type = Type.SHOW,
+        where = {
+            ShowColumns.ANTICIPATED_INDEX + ">=0",
+            Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0"
+        },
+        defaultSort = ShowColumns.ANTICIPATED_INDEX + " ASC")
+    public static final Uri SHOWS_ANTICIPATED = buildUri(Path.SHOWS, Path.ANTICIPATED);
+
+    @ContentUri(
         path = Path.SHOWS + "/" + Path.WATCHING,
         type = Type.SHOW,
         join = Joins.SHOWS_WITH_WATCHING)
@@ -316,6 +327,9 @@ public final class ProviderSchematic {
 
     public static final String SORT_RECOMMENDED =
         DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.RECOMMENDATION_INDEX + " ASC";
+
+    public static final String SORT_ANTICIPATED =
+        DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ANTICIPATED_INDEX + " ASC";
 
     public static final String SORT_WATCHED =
         Tables.SHOWS + "." + ShowColumns.LAST_WATCHED_AT + " DESC";
@@ -964,6 +978,16 @@ public final class ProviderSchematic {
         defaultSort = MovieColumns.RECOMMENDATION_INDEX + " ASC")
     public static final Uri RECOMMENDED = buildUri(Path.MOVIES, Path.RECOMMENDED);
 
+    @ContentUri(
+        path = Path.MOVIES + "/" + Path.ANTICIPATED,
+        type = Type.MOVIE,
+        where = {
+            MovieColumns.ANTICIPATED_INDEX + ">=0",
+            MovieColumns.NEEDS_SYNC + "=0"
+        },
+        defaultSort = MovieColumns.ANTICIPATED_INDEX + " ASC")
+    public static final Uri ANTICIPATED = buildUri(Path.MOVIES, Path.ANTICIPATED);
+
     public static final String SORT_TITLE =
         DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.TITLE_NO_ARTICLE + " ASC";
 
@@ -983,6 +1007,9 @@ public final class ProviderSchematic {
 
     public static final String SORT_RECOMMENDED =
         DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.RECOMMENDATION_INDEX + " ASC";
+
+    public static final String SORT_ANTICIPATED =
+        DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.ANTICIPATED_INDEX + " ASC";
 
     public static final String SORT_WATCHED =
         DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.WATCHED_AT + " DESC";

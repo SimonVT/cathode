@@ -104,6 +104,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String IN_WATCHLIST_COUNT = "inWatchlistCount";
     @DataType(INTEGER) @DefaultValue("-1") String TRENDING_INDEX = "trendingIndex";
     @DataType(INTEGER) @DefaultValue("-1") String RECOMMENDATION_INDEX = "recommendationIndex";
+    @DataType(INTEGER) @DefaultValue("-1") String ANTICIPATED_INDEX = "anticipatedIndex";
     @DataType(INTEGER) @DefaultValue("0") String FULL_SYNC_REQUESTED = "fullSyncRequested";
 
     @DataType(INTEGER) @DefaultValue("0") String NEEDS_SYNC = "needsSync";
@@ -266,6 +267,7 @@ public final class DatabaseContract {
 
     @DataType(INTEGER) @DefaultValue("0") String TRENDING_INDEX = "trendingIndex";
     @DataType(INTEGER) @DefaultValue("0") String RECOMMENDATION_INDEX = "recommendationIndex";
+    @DataType(INTEGER) @DefaultValue("-1") String ANTICIPATED_INDEX = "anticipatedIndex";
 
     @DataType(INTEGER) @DefaultValue("0") String WATCHING = "watching";
     @DataType(INTEGER) @DefaultValue("0") String CHECKED_IN = "checkedIn";

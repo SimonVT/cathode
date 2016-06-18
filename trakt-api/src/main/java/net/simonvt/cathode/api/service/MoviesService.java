@@ -17,6 +17,7 @@
 package net.simonvt.cathode.api.service;
 
 import java.util.List;
+import net.simonvt.cathode.api.entity.AnticipatedItem;
 import net.simonvt.cathode.api.entity.Comment;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.entity.People;
@@ -33,6 +34,17 @@ public interface MoviesService {
   @GET("/movies/trending") Call<List<TrendingItem>> getTrendingMovies();
 
   @GET("/movies/trending") Call<List<TrendingItem>> getTrendingMovies(@Query("limit") int limit);
+
+  /**
+   * Returns the most anticipated movies based on the number of lists a movie appears on.
+   */
+  @GET("/movies/anticipated") Call<List<AnticipatedItem>> getAnticipatedMovies();
+
+  /**
+   * Returns the most anticipated movies based on the number of lists a movie appears on.
+   */
+  @GET("/movies/anticipated") Call<List<AnticipatedItem>> getAnticipatedMovies(
+      @Query("limit") int limit);
 
   @GET("/movies/updates/{start_date}") Call<List<UpdatedItem>> updated(
       @Path("start_date") String startDate, @Query("page") int page, @Query("limit") int limit);

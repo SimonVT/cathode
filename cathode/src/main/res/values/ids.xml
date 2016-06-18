@@ -26,7 +26,7 @@
   <item name="menu_shows_watchlist" type="id"/>
   <item name="menu_shows_suggestions" type="id"/>
   <item name="menu_shows_trending" type="id"/>
-  <item name="menu_shows_recommendations" type="id"/>
+  <item name="menu_shows_recommended" type="id"/>
   <item name="menu_show_hide_upcoming" type="id"/>
   <item name="menu_show_show_upcoming" type="id"/>
 
@@ -35,7 +35,7 @@
   <item name="menu_movies_watchlist" type="id"/>
   <item name="menu_movies_suggestions" type="id"/>
   <item name="menu_movies_trending" type="id"/>
-  <item name="menu_movies_recommendations" type="id"/>
+  <item name="menu_movies_recommended" type="id"/>
 
   <item name="menu_lists" type="id"/>
   <item name="menu_settings" type="id"/>
@@ -49,6 +49,7 @@
   <item name="sort_viewers" type="id"/>
   <item name="sort_watched" type="id"/>
   <item name="sort_collected" type="id"/>
+  <item name="sort_anticipated" type="id"/>
 
   <item name="action_watched" type="id"/>
   <item name="action_watched_all" type="id"/>

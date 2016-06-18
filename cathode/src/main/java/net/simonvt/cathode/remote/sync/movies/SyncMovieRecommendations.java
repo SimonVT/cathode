@@ -54,7 +54,7 @@ public class SyncMovieRecommendations extends CallJob<List<Movie>> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_RECOMMENDED_TRENDING;
+    return PRIORITY_SUGGESTIONS;
   }
 
   @Override public Call<List<Movie>> getCall() {

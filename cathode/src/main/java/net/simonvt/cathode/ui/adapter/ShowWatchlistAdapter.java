@@ -117,7 +117,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
   @Override protected RecyclerView.ViewHolder onCreateItemHolder(ViewGroup parent, int viewType) {
     if (viewType == TYPE_SHOW) {
       View v =
-          LayoutInflater.from(context).inflate(R.layout.list_row_show_description, parent, false);
+          LayoutInflater.from(context).inflate(R.layout.list_row_show_description_rating, parent, false);
       final ShowViewHolder holder = new ShowViewHolder(v);
       holder.itemView.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View view) {

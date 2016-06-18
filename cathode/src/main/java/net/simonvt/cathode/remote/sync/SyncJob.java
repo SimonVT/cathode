@@ -20,9 +20,11 @@ import android.preference.PreferenceManager;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
+import net.simonvt.cathode.remote.sync.movies.SyncAnticipatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations;
 import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
+import net.simonvt.cathode.remote.sync.shows.SyncAnticipatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncShowRecommendations;
 import net.simonvt.cathode.remote.sync.shows.SyncTrendingShows;
 import net.simonvt.cathode.settings.Settings;
@@ -54,16 +56,14 @@ public class SyncJob extends Job {
 
     queue(new SyncUserActivity());
 
-    if (TraktTimestamps.trendingNeedsUpdate(getContext())) {
-      TraktTimestamps.updateTrending(getContext());
+    if (TraktTimestamps.suggestionsNeedsUpdate(getContext())) {
+      TraktTimestamps.updateSuggestions(getContext());
       queue(new SyncTrendingShows());
       queue(new SyncTrendingMovies());
-    }
-
-    if (TraktTimestamps.recommendationsNeedsUpdate(getContext())) {
-      TraktTimestamps.updateRecommendations(getContext());
       queue(new SyncShowRecommendations());
       queue(new SyncMovieRecommendations());
+      queue(new SyncAnticipatedShows());
+      queue(new SyncAnticipatedMovies());
     }
 
     if (TraktTimestamps.hiddenNeedsUpdate(getContext())) {

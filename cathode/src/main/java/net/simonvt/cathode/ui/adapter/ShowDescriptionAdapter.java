@@ -17,6 +17,7 @@ package net.simonvt.cathode.ui.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,15 +41,11 @@ public class ShowDescriptionAdapter
     extends RecyclerCursorAdapter<ShowDescriptionAdapter.ViewHolder> {
 
   public static final String[] PROJECTION = new String[] {
-      Tables.SHOWS + "." + ShowColumns.ID,
-      Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.OVERVIEW,
-      Tables.SHOWS + "." + ShowColumns.POSTER,
-      Tables.SHOWS + "." + ShowColumns.TVDB_ID,
-      Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
+      Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.POSTER,
+      Tables.SHOWS + "." + ShowColumns.TVDB_ID, Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
       Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
-      Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST,
-      Tables.SHOWS + "." + ShowColumns.RATING,
+      Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST, Tables.SHOWS + "." + ShowColumns.RATING,
       Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
   };
 
@@ -56,15 +53,31 @@ public class ShowDescriptionAdapter
 
   private ShowClickListener listener;
 
+  private boolean displayRating;
+
   public ShowDescriptionAdapter(Context context, ShowClickListener listener, Cursor cursor) {
-    super(context, cursor);
+    this(context, listener, cursor, true);
     CathodeApp.inject(context, this);
     this.listener = listener;
   }
 
+  public ShowDescriptionAdapter(Context context, ShowClickListener listener, Cursor cursor,
+      boolean displayRating) {
+    super(context, cursor);
+    CathodeApp.inject(context, this);
+    this.listener = listener;
+    this.displayRating = displayRating;
+  }
+
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View v = LayoutInflater.from(getContext())
-        .inflate(R.layout.list_row_show_description, parent, false);
+    View v;
+    if (displayRating) {
+      v = LayoutInflater.from(getContext())
+          .inflate(R.layout.list_row_show_description_rating, parent, false);
+    } else {
+      v = LayoutInflater.from(getContext())
+          .inflate(R.layout.list_row_show_description, parent, false);
+    }
     final ViewHolder holder = new ViewHolder(v);
 
     v.setOnClickListener(new View.OnClickListener() {
@@ -101,11 +114,9 @@ public class ShowDescriptionAdapter
   }
 
   @Override protected void onBindViewHolder(final ViewHolder holder, Cursor cursor, int position) {
-    final long id = Cursors.getLong(cursor, ShowColumns.ID);
     final boolean watched = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT) > 0;
     final boolean inCollection = Cursors.getInt(cursor, ShowColumns.IN_COLLECTION_COUNT) > 1;
     final boolean inWatchlist = Cursors.getInt(cursor, ShowColumns.IN_WATCHLIST) == 1;
-    final float rating = Cursors.getFloat(cursor, ShowColumns.RATING);
 
     holder.indicator.setWatched(watched);
     holder.indicator.setCollected(inCollection);
@@ -115,7 +126,10 @@ public class ShowDescriptionAdapter
     holder.title.setText(Cursors.getString(cursor, ShowColumns.TITLE));
     holder.overview.setText(Cursors.getString(cursor, ShowColumns.OVERVIEW));
 
-    holder.rating.setValue(rating);
+    if (displayRating) {
+      final float rating = Cursors.getFloat(cursor, ShowColumns.RATING);
+      holder.rating.setValue(rating);
+    }
 
     holder.overflow.removeItems();
     setupOverflowItems(holder.overflow, inWatchlist);
@@ -152,7 +166,7 @@ public class ShowDescriptionAdapter
     @BindView(R.id.title) TextView title;
     @BindView(R.id.overview) TextView overview;
     @BindView(R.id.overflow) OverflowView overflow;
-    @BindView(R.id.rating) CircularProgressIndicator rating;
+    @BindView(R.id.rating) @Nullable CircularProgressIndicator rating;
 
     ViewHolder(View v) {
       super(v);

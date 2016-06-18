@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Simon Vig Therkildsen
+ * Copyright (C) 2016 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
+import net.simonvt.cathode.api.entity.AnticipatedItem;
 import net.simonvt.cathode.api.entity.Show;
-import net.simonvt.cathode.api.entity.TrendingItem;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -37,7 +37,7 @@ import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import timber.log.Timber;
 
-public class SyncTrendingShows extends CallJob<List<TrendingItem>> {
+public class SyncAnticipatedShows extends CallJob<List<AnticipatedItem>> {
 
   private static final int LIMIT = 20;
 
@@ -46,23 +46,23 @@ public class SyncTrendingShows extends CallJob<List<TrendingItem>> {
   @Inject transient ShowDatabaseHelper showHelper;
 
   @Override public String key() {
-    return "SyncTrendingShows";
+    return "SyncAnticipatedShows";
   }
 
   @Override public int getPriority() {
     return PRIORITY_SUGGESTIONS;
   }
 
-  @Override public Call<List<TrendingItem>> getCall() {
-    return showsService.getTrendingShows(LIMIT);
+  @Override public Call<List<AnticipatedItem>> getCall() {
+    return showsService.getAnticipatedShows(LIMIT);
   }
 
-  @Override public void handleResponse(List<TrendingItem> shows) {
+  @Override public void handleResponse(List<AnticipatedItem> shows) {
     try {
       ContentResolver resolver = getContentResolver();
 
       ArrayList<ContentProviderOperation> ops = new ArrayList<>();
-      Cursor c = resolver.query(Shows.SHOWS_TRENDING, null, null, null, null);
+      Cursor c = resolver.query(Shows.SHOWS_ANTICIPATED, null, null, null, null);
 
       List<Long> showIds = new ArrayList<>();
       while (c.moveToNext()) {
@@ -72,7 +72,7 @@ public class SyncTrendingShows extends CallJob<List<TrendingItem>> {
       c.close();
 
       for (int i = 0, count = Math.min(shows.size(), 25); i < count; i++) {
-        TrendingItem item = shows.get(i);
+        AnticipatedItem item = shows.get(i);
         Show show = item.getShow();
         final long traktId = show.getIds().getTrakt();
         ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
@@ -82,7 +82,7 @@ public class SyncTrendingShows extends CallJob<List<TrendingItem>> {
         }
 
         ContentValues cv = new ContentValues();
-        cv.put(ShowColumns.TRENDING_INDEX, i);
+        cv.put(ShowColumns.ANTICIPATED_INDEX, i);
         ContentProviderOperation op =
             ContentProviderOperation.newUpdate(Shows.withId(showId)).withValues(cv).build();
         ops.add(op);
@@ -92,16 +92,16 @@ public class SyncTrendingShows extends CallJob<List<TrendingItem>> {
 
       for (Long showId : showIds) {
         ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(showId))
-            .withValue(ShowColumns.TRENDING_INDEX, -1)
+            .withValue(ShowColumns.ANTICIPATED_INDEX, -1)
             .build();
         ops.add(op);
       }
 
       resolver.applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
     } catch (RemoteException e) {
-      Timber.e(e, "SyncTrendingShowsTask failed");
+      Timber.e(e, "SyncAnticipatedShows failed");
     } catch (OperationApplicationException e) {
-      Timber.e(e, "SyncTrendingShowsTask failed");
+      Timber.e(e, "SyncAnticipatedShows failed");
       throw new JobFailedException(e);
     }
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Simon Vig Therkildsen
+ * Copyright (C) 2016 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.ui;
 
-public enum LibraryType {
-  WATCHED,
-  COLLECTION,
-  WATCHLIST,
-  TRENDING,
-  RECOMMENDED,
-  ANTICIPATED,
+package net.simonvt.cathode.api.entity;
+
+public class AnticipatedItem {
+
+  Long listCount;
+
+  Show show;
+
+  Movie movie;
+
+  public Long getListCount() {
+    return listCount;
+  }
+
+  public Show getShow() {
+    return show;
+  }
+
+  public Movie getMovie() {
+    return movie;
+  }
 }

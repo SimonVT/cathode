@@ -17,6 +17,7 @@
 package net.simonvt.cathode.api.service;
 
 import java.util.List;
+import net.simonvt.cathode.api.entity.AnticipatedItem;
 import net.simonvt.cathode.api.entity.Comment;
 import net.simonvt.cathode.api.entity.People;
 import net.simonvt.cathode.api.entity.Rating;
@@ -47,6 +48,17 @@ public interface ShowsService {
    * Returns all shows being watched right now. Shows with the most users are returned first.
    */
   @GET("/shows/trending") Call<List<TrendingItem>> getTrendingShows(@Query("limit") int limit);
+
+  /**
+   * Returns the most anticipated shows based on the number of lists a show appears on.
+   */
+  @GET("/shows/anticipated") Call<List<AnticipatedItem>> getAnticipatedShows();
+
+  /**
+   * Returns the most anticipated shows based on the number of lists a show appears on.
+   */
+  @GET("/shows/anticipated") Call<List<AnticipatedItem>> getAnticipatedShows(
+      @Query("limit") int limit);
 
   /**
    * Returns all shows updated since the specified UTC date. We recommended storing the date you

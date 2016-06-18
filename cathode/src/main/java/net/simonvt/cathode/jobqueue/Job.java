@@ -41,7 +41,7 @@ public abstract class Job {
 
   public static final int PRIORITY_MOVIES = 4;
 
-  public static final int PRIORITY_RECOMMENDED_TRENDING = 3;
+  public static final int PRIORITY_SUGGESTIONS = 3;
 
   public static final int PRIORITY_EXTRAS = 2;
 

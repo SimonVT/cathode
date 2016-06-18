@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Simon Vig Therkildsen
+ * Copyright (C) 2016 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package net.simonvt.cathode.ui.fragment;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
@@ -38,25 +37,23 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.remote.sync.shows.SyncShowRecommendations;
+import net.simonvt.cathode.remote.sync.shows.SyncAnticipatedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
-import net.simonvt.cathode.ui.adapter.ShowRecommendationsAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 import net.simonvt.schematic.Cursors;
 
-public class ShowRecommendationsFragment
+public class AnticipatedShowsFragment
     extends SwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<SimpleCursor>,
-    ShowRecommendationsAdapter.DismissListener, ListDialog.Callback, ShowClickListener {
+    implements LoaderManager.LoaderCallbacks<SimpleCursor>, ListDialog.Callback, ShowClickListener {
 
   private enum SortBy {
-    RELEVANCE("relevance", Shows.SORT_RECOMMENDED),
-    RATING("rating", Shows.SORT_RATING);
+    ANTICIPATED("anticipated", Shows.SORT_ANTICIPATED),
+    TITLE("title", Shows.SORT_TITLE);
 
     private String key;
 
@@ -90,28 +87,26 @@ public class ShowRecommendationsFragment
     public static SortBy fromValue(String value) {
       SortBy sortBy = STRING_MAPPING.get(value.toUpperCase(Locale.US));
       if (sortBy == null) {
-        sortBy = RELEVANCE;
+        sortBy = ANTICIPATED;
       }
       return sortBy;
     }
   }
 
   private static final String DIALOG_SORT =
-      "net.simonvt.cathode.ui.fragment.ShowRecommendationsFragment.sortDialog";
+      "net.simonvt.cathode.ui.fragment.AnticipatedShowsFragment.sortDialog";
 
-  private ShowRecommendationsAdapter showsAdapter;
+  private ShowDescriptionAdapter showsAdapter;
 
   private ShowsNavigationListener navigationListener;
 
   @Inject JobManager jobManager;
 
-  private boolean isTablet;
-
-  private SimpleCursor cursor;
-
   private SharedPreferences settings;
 
   private SortBy sortBy;
+
+  private Cursor cursor;
 
   private int columnCount;
 
@@ -119,11 +114,7 @@ public class ShowRecommendationsFragment
 
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
-    try {
-      navigationListener = (ShowsNavigationListener) activity;
-    } catch (ClassCastException e) {
-      throw new ClassCastException(activity.toString() + " must implement ShowsNavigationListener");
-    }
+    navigationListener = (ShowsNavigationListener) activity;
   }
 
   @Override public void onCreate(Bundle inState) {
@@ -132,16 +123,13 @@ public class ShowRecommendationsFragment
 
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     sortBy = SortBy.fromValue(
-        settings.getString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey()));
+        settings.getString(Settings.Sort.SHOW_ANTICIPATED, SortBy.ANTICIPATED.getKey()));
 
-    getLoaderManager().initLoader(Loaders.SHOWS_RECOMMENDATIONS, null, this);
-
-    isTablet = getResources().getBoolean(R.bool.isTablet);
+    getLoaderManager().initLoader(Loaders.SHOWS_ANTICIPATED, null, this);
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
-
-    setTitle(R.string.title_shows_recommended);
-    setEmptyText(R.string.recommendations_empty);
+    setTitle(R.string.title_shows_anticipated);
+    setEmptyText(R.string.shows_loading_anticipated);
   }
 
   @Override protected int getColumnCount() {
@@ -155,7 +143,7 @@ public class ShowRecommendationsFragment
   };
 
   @Override public void onRefresh() {
-    Job job = new SyncShowRecommendations();
+    Job job = new SyncAnticipatedShows();
     job.registerOnDoneListener(onDoneListener);
     jobManager.addJob(job);
   }
@@ -164,8 +152,8 @@ public class ShowRecommendationsFragment
     switch (item.getItemId()) {
       case R.id.sort_by:
         ArrayList<ListDialog.Item> items = new ArrayList<>();
-        items.add(new ListDialog.Item(R.id.sort_relevance, R.string.sort_relevance));
-        items.add(new ListDialog.Item(R.id.sort_rating, R.string.sort_rating));
+        items.add(new ListDialog.Item(R.id.sort_anticipated, R.string.sort_anticipated));
+        items.add(new ListDialog.Item(R.id.sort_title, R.string.sort_title));
         ListDialog.newInstance(R.string.action_sort_by, items, this)
             .show(getFragmentManager(), DIALOG_SORT);
         return true;
@@ -177,22 +165,22 @@ public class ShowRecommendationsFragment
 
   @Override public void onItemSelected(int id) {
     switch (id) {
-      case R.id.sort_relevance:
-        if (sortBy != SortBy.RELEVANCE) {
-          sortBy = SortBy.RELEVANCE;
+      case R.id.sort_viewers:
+        if (sortBy != SortBy.ANTICIPATED) {
+          sortBy = SortBy.ANTICIPATED;
           settings.edit()
-              .putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey())
+              .putString(Settings.Sort.SHOW_ANTICIPATED, SortBy.ANTICIPATED.getKey())
               .apply();
-          getLoaderManager().restartLoader(Loaders.SHOWS_RECOMMENDATIONS, null, this);
+          getLoaderManager().restartLoader(Loaders.SHOWS_ANTICIPATED, null, this);
           scrollToTop = true;
         }
         break;
 
-      case R.id.sort_rating:
-        if (sortBy != SortBy.RATING) {
-          sortBy = SortBy.RATING;
-          settings.edit().putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RATING.getKey()).apply();
-          getLoaderManager().restartLoader(Loaders.SHOWS_RECOMMENDATIONS, null, this);
+      case R.id.sort_title:
+        if (sortBy != SortBy.TITLE) {
+          sortBy = SortBy.TITLE;
+          settings.edit().putString(Settings.Sort.SHOW_ANTICIPATED, SortBy.TITLE.getKey()).apply();
+          getLoaderManager().restartLoader(Loaders.SHOWS_ANTICIPATED, null, this);
           scrollToTop = true;
         }
         break;
@@ -206,28 +194,16 @@ public class ShowRecommendationsFragment
     navigationListener.onDisplayShow(id, title, overview, LibraryType.WATCHED);
   }
 
-  @Override public void onDismissItem(final View view, final long id) {
-    Loader loader = getLoaderManager().getLoader(Loaders.SHOWS_RECOMMENDATIONS);
-    if (loader != null) {
-      SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
-      cursorLoader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
-
-      cursor.remove(id);
-      showsAdapter.notifyDataSetChanged();
-    }
-  }
-
-  private void setCursor(Cursor c) {
-    cursor = (SimpleCursor) c;
+  private void setCursor(Cursor cursor) {
+    this.cursor = cursor;
 
     if (showsAdapter == null) {
-      showsAdapter = new ShowRecommendationsAdapter(getActivity(), this, cursor, this);
+      showsAdapter = new ShowDescriptionAdapter(getActivity(), this, cursor, false);
       setAdapter(showsAdapter);
       return;
     }
 
     showsAdapter.changeCursor(cursor);
-
     if (scrollToTop) {
       getRecyclerView().scrollToPosition(0);
       scrollToTop = false;
@@ -235,9 +211,8 @@ public class ShowRecommendationsFragment
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    final Uri contentUri = Shows.SHOWS_RECOMMENDED;
-    return new SimpleCursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION, null,
-        null, sortBy.getSortOrder());
+    return new SimpleCursorLoader(getActivity(), Shows.SHOWS_ANTICIPATED,
+        ShowDescriptionAdapter.PROJECTION, null, null, sortBy.getSortOrder());
   }
 
   @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

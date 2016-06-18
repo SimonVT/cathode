@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Simon Vig Therkildsen
+ * Copyright (C) 2016 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
+import net.simonvt.cathode.api.entity.AnticipatedItem;
 import net.simonvt.cathode.api.entity.Movie;
-import net.simonvt.cathode.api.entity.TrendingItem;
 import net.simonvt.cathode.api.service.MoviesService;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -37,7 +37,7 @@ import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import timber.log.Timber;
 
-public class SyncTrendingMovies extends CallJob<List<TrendingItem>> {
+public class SyncAnticipatedMovies extends CallJob<List<AnticipatedItem>> {
 
   private static final int LIMIT = 20;
 
@@ -46,33 +46,33 @@ public class SyncTrendingMovies extends CallJob<List<TrendingItem>> {
   @Inject transient MovieDatabaseHelper movieHelper;
 
   @Override public String key() {
-    return "SyncTrendingMovies";
+    return "SyncAnticipatedMovies";
   }
 
   @Override public int getPriority() {
     return PRIORITY_SUGGESTIONS;
   }
 
-  @Override public Call<List<TrendingItem>> getCall() {
-    return moviesService.getTrendingMovies(LIMIT);
+  @Override public Call<List<AnticipatedItem>> getCall() {
+    return moviesService.getAnticipatedMovies(LIMIT);
   }
 
-  @Override public void handleResponse(List<TrendingItem> movies) {
+  @Override public void handleResponse(List<AnticipatedItem> movies) {
     ContentResolver resolver = getContentResolver();
 
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
-    Cursor c = resolver.query(Movies.TRENDING, new String[] {
+    Cursor c = resolver.query(Movies.ANTICIPATED, new String[] {
         MovieColumns.ID,
     }, null, null, null);
-    List<Long> trendingIds = new ArrayList<>();
+    List<Long> movieIds = new ArrayList<>();
     while (c.moveToNext()) {
       final long movieId = Cursors.getLong(c, MovieColumns.ID);
-      trendingIds.add(movieId);
+      movieIds.add(movieId);
     }
     c.close();
 
     for (int i = 0, count = Math.min(movies.size(), 25); i < count; i++) {
-      TrendingItem item = movies.get(i);
+      AnticipatedItem item = movies.get(i);
       Movie movie = item.getMovie();
       final long traktId = movie.getIds().getTrakt();
 
@@ -82,18 +82,18 @@ public class SyncTrendingMovies extends CallJob<List<TrendingItem>> {
         queue(new SyncMovie(traktId));
       }
 
-      trendingIds.remove(movieId);
+      movieIds.remove(movieId);
 
       ContentValues cv = new ContentValues();
-      cv.put(MovieColumns.TRENDING_INDEX, i);
+      cv.put(MovieColumns.ANTICIPATED_INDEX, i);
       ContentProviderOperation op =
           ContentProviderOperation.newUpdate(Movies.withId(movieId)).withValues(cv).build();
       ops.add(op);
     }
 
-    for (Long movieId : trendingIds) {
+    for (Long movieId : movieIds) {
       ContentValues cv = new ContentValues();
-      cv.put(MovieColumns.TRENDING_INDEX, -1);
+      cv.put(MovieColumns.ANTICIPATED_INDEX, -1);
       ContentProviderOperation op =
           ContentProviderOperation.newUpdate(Movies.withId(movieId)).withValues(cv).build();
       ops.add(op);
@@ -102,10 +102,10 @@ public class SyncTrendingMovies extends CallJob<List<TrendingItem>> {
     try {
       resolver.applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
     } catch (RemoteException e) {
-      Timber.e(e, "SyncTrendingMoviesTask failed");
+      Timber.e(e, "SyncAnticipatedMovies failed");
       throw new JobFailedException(e);
     } catch (OperationApplicationException e) {
-      Timber.e(e, "SyncTrendingMoviesTask failed");
+      Timber.e(e, "SyncAnticipatedMovies failed");
       throw new JobFailedException(e);
     }
   }

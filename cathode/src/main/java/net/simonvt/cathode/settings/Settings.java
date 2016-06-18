@@ -42,8 +42,7 @@ public final class Settings {
   public static final String SHOW_HIDDEN = "showHidden";
 
   // Last trending and recommendations sync
-  public static final String TRENDING = "trending";
-  public static final String RECOMMENDATIONS = "recommendations";
+  public static final String SUGGESTIONS = "suggestions";
   public static final String LAST_SYNC_HIDDEN = "lastSyncHidden";
 
   // Whether the initial sync has been performed
@@ -88,12 +87,14 @@ public final class Settings {
     String SHOW_SEARCH = "sortShowSearch";
     String SHOW_TRENDING = "sortShowTrending";
     String SHOW_RECOMMENDED = "sortShowRecommended";
+    String SHOW_ANTICIPATED = "sortShowAnticipated";
     String SHOW_WATCHED = "sortShowWatched";
     String SHOW_COLLECTED = "sortShowCollected";
 
     String MOVIE_SEARCH = "sortMovieSearch";
     String MOVIE_TRENDING = "sortMovieTrending";
     String MOVIE_RECOMMENDED = "sortMovieRecommended";
+    String MOVIE_ANTICIPATED = "sortMovieAnticipated";
     String MOVIE_WATCHED = "sortMovieCollected";
     String MOVIE_COLLECTED = "sortMovieCollected";
   }
@@ -240,8 +241,7 @@ public final class Settings {
     editor.remove(CALENDAR_SYNC);
     editor.remove(SHOW_HIDDEN);
 
-    editor.remove(TRENDING);
-    editor.remove(RECOMMENDATIONS);
+    editor.remove(SUGGESTIONS);
 
     // Clear sorting options
     editor.remove(Sort.SHOW_UPCOMING);

@@ -134,7 +134,7 @@ public class MovieRecommendationsFragment
 
     columnCount = getResources().getInteger(R.integer.movieColumns);
 
-    setTitle(R.string.title_movies_recommendations);
+    setTitle(R.string.title_movies_recommended);
     setEmptyText(R.string.recommendations_empty);
   }
 

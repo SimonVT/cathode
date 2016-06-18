@@ -53,7 +53,7 @@ public class SyncShowRecommendations extends CallJob<List<Show>> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_RECOMMENDED_TRENDING;
+    return PRIORITY_SUGGESTIONS;
   }
 
   @Override public Call<List<Show>> getCall() {

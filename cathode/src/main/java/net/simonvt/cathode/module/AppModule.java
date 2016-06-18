@@ -97,6 +97,7 @@ import net.simonvt.cathode.remote.sync.comments.SyncUserComments;
 import net.simonvt.cathode.remote.sync.lists.SyncList;
 import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
+import net.simonvt.cathode.remote.sync.movies.SyncAnticipatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieCrew;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations;
@@ -107,6 +108,7 @@ import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies;
 import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
+import net.simonvt.cathode.remote.sync.shows.SyncAnticipatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodesRatings;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
@@ -158,6 +160,8 @@ import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.dialog.UpdateCommentDialog;
+import net.simonvt.cathode.ui.fragment.AnticipatedMoviesFragment;
+import net.simonvt.cathode.ui.fragment.AnticipatedShowsFragment;
 import net.simonvt.cathode.ui.fragment.CommentFragment;
 import net.simonvt.cathode.ui.fragment.CommentsFragment;
 import net.simonvt.cathode.ui.fragment.CreateListFragment;
@@ -214,7 +218,8 @@ import net.simonvt.cathode.widget.RemoteImageView;
         TrendingShowsFragment.class, TrendingMoviesFragment.class, UpcomingShowsFragment.class,
         WatchedMoviesFragment.class, WatchedShowsFragment.class, CreateListFragment.class,
         ListFragment.class, CommentsFragment.class, CommentFragment.class, ListsFragment.class,
-        SearchShowFragment.class, SearchMovieFragment.class,
+        SearchShowFragment.class, SearchMovieFragment.class, AnticipatedShowsFragment.class,
+        AnticipatedMoviesFragment.class,
 
         // Dialogs
         RatingDialog.class, CheckInDialog.class, CheckInDialog.Injections.class, ListsDialog.class,
@@ -259,7 +264,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         CommentReplyJob.class, SyncUserProfile.class, LikeCommentJob.class, UnlikeCommentJob.class,
         SyncCommentLikes.class, CalendarHideShow.class, WatchedHideShow.class,
         CollectedHideShow.class, CalendarHideMovie.class, WatchedHideMovie.class,
-        CollectedHideMovie.class,
+        CollectedHideMovie.class, SyncAnticipatedShows.class, SyncAnticipatedMovies.class,
 
         // Misc
         ShowSearchHandler.class, SearchHandler.SearchThread.class, MovieSearchHandler.class,

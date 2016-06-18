@@ -146,17 +146,10 @@ public final class TraktTimestamps {
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
-  public static boolean trendingNeedsUpdate(Context context) {
+  public static boolean suggestionsNeedsUpdate(Context context) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 
-    final long lastActivity = settings.getLong(Settings.TRENDING, -1);
-    return System.currentTimeMillis() > lastActivity + 3 * DateUtils.HOUR_IN_MILLIS;
-  }
-
-  public static boolean recommendationsNeedsUpdate(Context context) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-
-    final long lastActivity = settings.getLong(Settings.RECOMMENDATIONS, -1);
+    final long lastActivity = settings.getLong(Settings.SUGGESTIONS, -1);
     return System.currentTimeMillis() > lastActivity + 3 * DateUtils.HOUR_IN_MILLIS;
   }
 
@@ -236,19 +229,11 @@ public final class TraktTimestamps {
     editor.apply();
   }
 
-  public static void updateTrending(Context context) {
+  public static void updateSuggestions(Context context) {
     final long currentTimeMillis = System.currentTimeMillis();
     PreferenceManager.getDefaultSharedPreferences(context)
         .edit()
-        .putLong(Settings.TRENDING, currentTimeMillis)
-        .apply();
-  }
-
-  public static void updateRecommendations(Context context) {
-    final long currentTimeMillis = System.currentTimeMillis();
-    PreferenceManager.getDefaultSharedPreferences(context)
-        .edit()
-        .putLong(Settings.RECOMMENDATIONS, currentTimeMillis)
+        .putLong(Settings.SUGGESTIONS, currentTimeMillis)
         .apply();
   }
 

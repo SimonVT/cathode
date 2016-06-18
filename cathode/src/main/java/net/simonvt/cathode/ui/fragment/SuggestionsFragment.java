@@ -58,6 +58,7 @@ public abstract class SuggestionsFragment extends BaseFragment {
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
     pager.setAdapter(getAdapter());
+    pager.setOffscreenPageLimit(2);
     tabLayout.setupWithViewPager(pager);
   }
 

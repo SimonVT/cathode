@@ -90,8 +90,9 @@
   <string name="title_view_on">View on</string>
 
   <string name="title_suggestions">Suggestions</string>
-  <string name="title_recommendations">Recommendations</string>
+  <string name="title_recommended">Recommended</string>
   <string name="title_trending">Trending</string>
+  <string name="title_anticipated">Anticipated</string>
 
   <string name="title_dashboard">Dashboard</string>
 
@@ -100,13 +101,15 @@
   <string name="title_shows_collection">Show collection</string>
   <string name="title_shows_watchlist">Show watchlist</string>
   <string name="title_shows_trending">Trending shows</string>
-  <string name="title_shows_recommendations">Show recommendations</string>
+  <string name="title_shows_recommended">Recommended shows</string>
+  <string name="title_shows_anticipated">Anticipated shows</string>
 
   <string name="title_movies_watched">Watched movies</string>
   <string name="title_movies_collection">Movie collection</string>
   <string name="title_movies_watchlist">Movie watchlist</string>
   <string name="title_movies_trending">Trending movies</string>
-  <string name="title_movies_recommendations">Movie recommendations</string>
+  <string name="title_movies_recommended">Recommended movies</string>
+  <string name="title_movies_anticipated">Anticipated movies</string>
 
   <string name="category_shows_upcoming">Upcoming shows</string>
   <string name="category_shows_watchlist">Show watchlist</string>
@@ -139,6 +142,7 @@
   <string name="sort_viewers">Viewers</string>
   <string name="sort_watched">Last watched</string>
   <string name="sort_collected">Last collected</string>
+  <string name="sort_anticipated">Most anticipated</string>
 
   <string name="action_sort_by">Sort by</string>
   <string name="action_watched">Watched</string>
@@ -180,6 +184,9 @@
 
   <string name="shows_loading_trending">Trending shows are loading…</string>
   <string name="movies_loading_trending">Trending movies are loading…</string>
+
+  <string name="shows_loading_anticipated">Anticipated shows are loading…</string>
+  <string name="movies_loading_anticipated">Anticipated movies are loading…</string>
 
   <!-- Login activity -->
   <string name="login_sign_in">Sign in</string>
