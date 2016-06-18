@@ -103,7 +103,7 @@ public final class FragmentStack {
       removeFragment(fragmentManager.findFragmentByTag(tag));
     }
 
-    fragmentTransaction.commit();
+    fragmentTransaction.commitNow();
     fragmentTransaction = null;
   }
 
@@ -181,6 +181,8 @@ public final class FragmentStack {
     stack.add(f);
 
     topLevelTags.add(tag);
+
+    commit();
   }
 
   public void push(Class fragment, String tag) {
@@ -205,6 +207,8 @@ public final class FragmentStack {
 
     attachFragment(f, tag);
     stack.add(f);
+
+    commit();
   }
 
   /**
@@ -215,20 +219,8 @@ public final class FragmentStack {
    * @return Whether a transaction has been enqueued.
    */
   public boolean pop() {
-    return pop(false);
-  }
-
-  /**
-   * Removes the fragment at the top of the stack and displays the previous one. This will not do
-   * anything if there is
-   * only one fragment in the stack.
-   *
-   * @param commit Whether the transaction should be committed.
-   * @return Whether a transaction has been enqueued.
-   */
-  public boolean pop(boolean commit) {
     if (fragmentManager.isDestroyed()) {
-      return true;
+      return false;
     }
 
     if (stack.size() > 1) {
@@ -238,9 +230,7 @@ public final class FragmentStack {
       Fragment f = stack.peekLast();
       attachFragment(f, f.getTag());
 
-      if (commit) {
-        commit();
-      }
+      commit();
 
       return true;
     }
@@ -315,16 +305,15 @@ public final class FragmentStack {
     popStackExitAnimation = popExit;
   }
 
-  public void commit() {
+  private void commit() {
     if (paused || fragmentManager.isDestroyed()) {
       return;
     }
 
     if (fragmentTransaction != null && !fragmentTransaction.isEmpty()) {
-      fragmentTransaction.commit();
+      fragmentTransaction.commitNow();
     }
 
     fragmentTransaction = null;
-    fragmentManager.executePendingTransactions();
   }
 }

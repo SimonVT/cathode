@@ -87,6 +87,18 @@ import timber.log.Timber;
 public class HomeActivity extends BaseActivity
     implements NavigationFragment.OnMenuClickListener, NavigationListener {
 
+  private class PendingReplacement {
+
+    Class fragment;
+
+    String tag;
+
+    public PendingReplacement(Class fragment, String tag) {
+      this.fragment = fragment;
+      this.tag = tag;
+    }
+  }
+
   public static final String DIALOG_ABOUT = "net.simonvt.cathode.ui.BaseActivity.aboutDialog";
 
   private static final String STATE_STACK = "net.simonvt.cathode.ui.HomeActivity.stack";
@@ -113,6 +125,8 @@ public class HomeActivity extends BaseActivity
   private Cursor watchingMovie;
 
   private boolean isTablet;
+
+  private PendingReplacement pendingReplacement;
 
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
@@ -156,25 +170,31 @@ public class HomeActivity extends BaseActivity
       final String startPagePref = settings.getString(Settings.START_PAGE, null);
       StartPage startPage = StartPage.fromValue(startPagePref, StartPage.DASHBOARD);
       stack.replace(startPage.getPageClass(), startPage.getTag());
-      stack.commit();
     }
 
     getSupportLoaderManager().initLoader(Loaders.SHOW_WATCHING, null, watchingShowCallback);
     getSupportLoaderManager().initLoader(Loaders.MOVIE_WATCHING, null, watchingMovieCallback);
 
-    drawer.setDrawerListener(new DrawerLayout.DrawerListener() {
+    drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
       @Override public void onDrawerSlide(View drawerView, float slideOffset) {
       }
 
       @Override public void onDrawerOpened(View drawerView) {
+        pendingReplacement = null;
       }
 
       @Override public void onDrawerClosed(View drawerView) {
-        stack.commit();
+        if (pendingReplacement != null) {
+          stack.replace(pendingReplacement.fragment, pendingReplacement.tag);
+          pendingReplacement = null;
+        }
       }
 
       @Override public void onDrawerStateChanged(int newState) {
         drawerState = newState;
+        if (newState == DrawerLayout.STATE_DRAGGING) {
+          pendingReplacement = null;
+        }
       }
     });
 
@@ -214,7 +234,6 @@ public class HomeActivity extends BaseActivity
 
   @Override protected void onPause() {
     bus.unregister(this);
-    stack.commit();
     stack.pause();
     super.onPause();
   }
@@ -240,7 +259,7 @@ public class HomeActivity extends BaseActivity
       return;
     }
 
-    if (stack.pop(true)) {
+    if (stack.pop()) {
       return;
     }
 
@@ -260,47 +279,56 @@ public class HomeActivity extends BaseActivity
   @Override public boolean onMenuItemClicked(int id) {
     switch (id) {
       case R.id.menu_dashboard:
-        stack.replace(DashboardFragment.class, DashboardFragment.TAG);
+        pendingReplacement = new PendingReplacement(DashboardFragment.class, DashboardFragment.TAG);
         break;
 
       case R.id.menu_shows_upcoming:
-        stack.replace(UpcomingShowsFragment.class, Fragments.SHOWS_UPCOMING);
+        pendingReplacement =
+            new PendingReplacement(UpcomingShowsFragment.class, Fragments.SHOWS_UPCOMING);
         break;
 
       case R.id.menu_shows_watched:
-        stack.replace(WatchedShowsFragment.class, Fragments.SHOWS_WATCHED);
+        pendingReplacement =
+            new PendingReplacement(WatchedShowsFragment.class, Fragments.SHOWS_WATCHED);
         break;
 
       case R.id.menu_shows_collection:
-        stack.replace(ShowsCollectionFragment.class, Fragments.SHOWS_COLLECTION);
+        pendingReplacement =
+            new PendingReplacement(ShowsCollectionFragment.class, Fragments.SHOWS_COLLECTION);
         break;
 
       case R.id.menu_shows_watchlist:
-        stack.replace(ShowsWatchlistFragment.class, Fragments.SHOWS_WATCHLIST);
+        pendingReplacement =
+            new PendingReplacement(ShowsWatchlistFragment.class, Fragments.SHOWS_WATCHLIST);
         break;
 
       case R.id.menu_shows_suggestions:
-        stack.replace(ShowSuggestionsFragment.class, ShowSuggestionsFragment.TAG);
+        pendingReplacement =
+            new PendingReplacement(ShowSuggestionsFragment.class, ShowSuggestionsFragment.TAG);
         break;
 
       case R.id.menu_movies_watched:
-        stack.replace(WatchedMoviesFragment.class, Fragments.MOVIES_WATCHED);
+        pendingReplacement =
+            new PendingReplacement(WatchedMoviesFragment.class, Fragments.MOVIES_WATCHED);
         break;
 
       case R.id.menu_movies_collection:
-        stack.replace(MovieCollectionFragment.class, Fragments.MOVIES_COLLECTION);
+        pendingReplacement =
+            new PendingReplacement(MovieCollectionFragment.class, Fragments.MOVIES_COLLECTION);
         break;
 
       case R.id.menu_movies_watchlist:
-        stack.replace(MovieWatchlistFragment.class, Fragments.MOVIES_WATCHLIST);
+        pendingReplacement =
+            new PendingReplacement(MovieWatchlistFragment.class, Fragments.MOVIES_WATCHLIST);
         break;
 
       case R.id.menu_movies_suggestions:
-        stack.replace(MovieSuggestionsFragment.class, MovieSuggestionsFragment.TAG);
+        pendingReplacement =
+            new PendingReplacement(MovieSuggestionsFragment.class, MovieSuggestionsFragment.TAG);
         break;
 
       case R.id.menu_lists:
-        stack.replace(ListsFragment.class, Fragments.LISTS);
+        pendingReplacement = new PendingReplacement(ListsFragment.class, Fragments.LISTS);
         break;
 
       case R.id.menu_settings:
@@ -414,34 +442,26 @@ public class HomeActivity extends BaseActivity
       return;
     }
 
-    if (!stack.pop(!drawerVisible)) {
-      if (drawerVisible) {
-        drawer.closeDrawer(Gravity.LEFT);
-      }
-    }
+    stack.pop();
   }
 
   @Override public void onSearchShow() {
     stack.push(SearchShowFragment.class, Fragments.SEARCH_SHOW);
-    stack.commit();
   }
 
   @Override public void onSearchMovie() {
     stack.push(SearchMovieFragment.class, Fragments.SEARCH_MOVIE);
-    stack.commit();
   }
 
   @Override
   public void onDisplayShow(long showId, String title, String overview, LibraryType type) {
     stack.push(ShowFragment.class, Fragments.SHOW,
         ShowFragment.getArgs(showId, title, overview, type));
-    stack.commit();
   }
 
   @Override public void onDisplayEpisode(long episodeId, String showTitle) {
     stack.push(EpisodeFragment.class, Fragments.EPISODE,
         EpisodeFragment.getArgs(episodeId, showTitle));
-    stack.commit();
   }
 
   @Override
@@ -449,43 +469,35 @@ public class HomeActivity extends BaseActivity
       LibraryType type) {
     stack.push(SeasonFragment.class, Fragments.SEASON,
         SeasonFragment.getArgs(showId, seasonId, showTitle, seasonNumber, type));
-    stack.commit();
   }
 
   @Override public void onDisplayShowActors(long showId, String title) {
     stack.push(ActorsFragment.class, Fragments.ACTORS, ActorsFragment.forShow(showId, title));
-    stack.commit();
   }
 
   @Override public void onDisplayMovie(long movieId, String title, String overview) {
     stack.push(MovieFragment.class, Fragments.MOVIE,
         MovieFragment.getArgs(movieId, title, overview));
-    stack.commit();
   }
 
   @Override public void onDisplayMovieActors(long movieId, String title) {
     stack.push(ActorsFragment.class, Fragments.ACTORS, ActorsFragment.forMovie(movieId, title));
-    stack.commit();
   }
 
   @Override public void onShowList(long listId, String listName) {
     stack.push(ListFragment.class, Fragments.LIST, ListFragment.getArgs(listId, listName));
-    stack.commit();
   }
 
   @Override public void onDisplayComments(ItemType type, long itemId) {
     stack.push(CommentsFragment.class, Fragments.COMMENTS, CommentsFragment.getArgs(type, itemId));
-    stack.commit();
   }
 
   @Override public void onDisplayComment(long commentId) {
     stack.push(CommentFragment.class, Fragments.COMMENT, CommentFragment.getArgs(commentId));
-    stack.commit();
   }
 
   @Override public void displayFragment(Class clazz, String tag) {
     stack.push(clazz, tag, null);
-    stack.commit();
   }
 
   @Override public boolean isFragmentTopLevel(Fragment fragment) {
@@ -530,10 +542,7 @@ public class HomeActivity extends BaseActivity
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.POSTER,
-      DatabaseSchematic.Tables.EPISODES
-          + "."
-          + EpisodeColumns.ID
-          + " AS episodeId",
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.ID + " AS episodeId",
       DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.TITLE,
       DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SEASON,
       DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.EPISODE,
