@@ -140,6 +140,10 @@ public class MovieFragment extends RefreshableAppBarFragment
   private NavigationListener navigationListener;
 
   public static Bundle getArgs(long movieId, String movieTitle, String overview) {
+    if (movieId < 0) {
+      throw new IllegalArgumentException("movieId must be >= 0");
+    }
+
     Bundle args = new Bundle();
     args.putLong(ARG_ID, movieId);
     args.putString(ARG_TITLE, movieTitle);
