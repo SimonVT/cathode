@@ -1,7 +1,6 @@
 language: android
 
 jdk:
- - oraclejdk7
  - oraclejdk8
 
 env: CI=travis
@@ -10,7 +9,7 @@ android:
   components:
     - platform-tools
     - tools
-    - build-tools-24.0.
+    - build-tools-24.0.0
     - android-24
     - extra-android-m2repository
 
