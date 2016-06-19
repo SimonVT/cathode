@@ -92,6 +92,7 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
         android.R.attr.textColorPrimary, android.R.attr.textColorSecondary,
     });
     primaryColor = a.getColorStateList(0);
+    //noinspection ResourceType
     secondaryColor = a.getColorStateList(1);
     a.recycle();
   }
