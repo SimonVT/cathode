@@ -644,7 +644,7 @@ import net.simonvt.schematic.annotation.Table;
       db.update(Tables.MOVIES, values, null, null);
     }
 
-    if (oldVersion < 21) {
+    if (oldVersion < 22) {
       SqlUtils.createColumnIfNotExists(db, Tables.SHOWS, ShowColumns.ANTICIPATED_INDEX,
           DataType.Type.INTEGER, "-1");
       SqlUtils.createColumnIfNotExists(db, Tables.MOVIES, MovieColumns.ANTICIPATED_INDEX,
