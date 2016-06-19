@@ -32,6 +32,7 @@ public class AdapterNotifier {
 
     public Item(long id, int viewType, long lastModified) {
       this.id = id;
+      this.viewType = viewType;
       this.lastModified = lastModified;
     }
   }
