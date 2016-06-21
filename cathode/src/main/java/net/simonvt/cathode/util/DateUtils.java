@@ -16,6 +16,7 @@
 package net.simonvt.cathode.util;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.text.format.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,6 +42,12 @@ public final class DateUtils {
   public static final long DAY_IN_MILLIS = android.text.format.DateUtils.DAY_IN_MILLIS;
 
   public static final long YEAR_IN_MILLIS = android.text.format.DateUtils.YEAR_IN_MILLIS;
+
+  public static final long HOUR_IN_MINUTES = 60;
+
+  public static final long DAY_IN_MINUTES = 24 * HOUR_IN_MINUTES;
+
+  public static final long YEAR_IN_MINUTES = 365 * DAY_IN_MINUTES;
 
   private DateUtils() {
   }
@@ -192,5 +199,51 @@ public final class DateUtils {
     }
 
     return sb.toString();
+  }
+
+  public static String getStatsString(Context context, long timeInMinutes) {
+    Resources res = context.getResources();
+    final int years = (int) (timeInMinutes / YEAR_IN_MINUTES);
+    long timeLeft = timeInMinutes - years * YEAR_IN_MINUTES;
+    final int days = (int) (timeLeft / DAY_IN_MINUTES);
+    timeLeft = timeLeft - days * DAY_IN_MINUTES;
+    final int hours = (int) (timeLeft / HOUR_IN_MINUTES);
+    timeLeft = timeLeft - hours * HOUR_IN_MINUTES;
+    final int minutes = (int) timeLeft;
+
+    StringBuilder builder = new StringBuilder();
+    if (years > 0) {
+      String yearString = res.getString(R.string.stats_years, years);
+      builder.append(yearString);
+    }
+
+    if (days > 0) {
+      if (years > 0) {
+        builder.append(" ");
+      }
+
+      String daysString = res.getString(R.string.stats_days, days);
+      builder.append(daysString);
+    }
+
+    if (hours > 0) {
+      if (days > 0 || years > 0) {
+        builder.append(" ");
+      }
+
+      String hourString = res.getString(R.string.stats_hours, hours);
+      builder.append(hourString);
+    }
+
+    if (minutes > 0 && years == 0) {
+      if (hours > 0 || days > 0) {
+        builder.append(" ");
+      }
+
+      String minuteString = res.getString(R.string.stats_minutes, minutes);
+      builder.append(minuteString);
+    }
+
+    return builder.toString();
   }
 }

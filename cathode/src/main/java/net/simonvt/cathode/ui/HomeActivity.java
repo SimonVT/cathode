@@ -73,6 +73,7 @@ import net.simonvt.cathode.ui.fragment.ShowFragment;
 import net.simonvt.cathode.ui.fragment.ShowSuggestionsFragment;
 import net.simonvt.cathode.ui.fragment.ShowsCollectionFragment;
 import net.simonvt.cathode.ui.fragment.ShowsWatchlistFragment;
+import net.simonvt.cathode.ui.fragment.StatsFragment;
 import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
@@ -329,6 +330,10 @@ public class HomeActivity extends BaseActivity
 
       case R.id.menu_lists:
         pendingReplacement = new PendingReplacement(ListsFragment.class, Fragments.LISTS);
+        break;
+
+      case R.id.menu_stats:
+        pendingReplacement = new PendingReplacement(StatsFragment.class, StatsFragment.TAG);
         break;
 
       case R.id.menu_settings:

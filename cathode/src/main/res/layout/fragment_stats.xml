@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2016 Simon Vig Therkildsen
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+  <include layout="@layout/toolbar"/>
+
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1"
+      android:paddingTop="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:animateLayoutChanges="true">
+
+      <LinearLayout
+          android:id="@+id/stats_shows"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:visibility="gone"
+          tools:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_spent"
+            style="@style/StatsText"/>
+
+        <TextView
+            android:id="@+id/episodeTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="45 hours"
+            style="@style/StatsValue"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_watching"
+            style="@style/StatsText"/>
+
+        <TextView
+            android:id="@+id/episodeCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="45 episodes"
+            style="@style/StatsValue"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_from"
+            style="@style/StatsText"/>
+
+        <TextView
+            android:id="@+id/showCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="5 shows"
+            style="@style/StatsValue"/>
+
+        <View
+            style="@style/StatsDivider"/>
+      </LinearLayout>
+
+      <LinearLayout
+          android:id="@+id/stats_movies"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:visibility="gone"
+          tools:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_made_it_through"
+            style="@style/StatsText"/>
+
+        <TextView
+            android:id="@+id/movieCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="45 movies"
+            style="@style/StatsValue"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_play_time"
+            style="@style/StatsText"/>
+
+        <TextView
+            android:id="@+id/moviesTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="45 hours"
+            style="@style/StatsValue"/>
+      </LinearLayout>
+    </LinearLayout>
+  </ScrollView>
+</LinearLayout>

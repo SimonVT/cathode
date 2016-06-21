@@ -91,6 +91,8 @@ public class NavigationFragment extends AbsAdapterFragment {
 
     menuItems.add(new Divider());
 
+    menuItems.add(
+        new MenuItem(R.id.menu_stats, R.string.navigation_stats, R.drawable.ic_nav_stats_24dp));
     menuItems.add(new MenuItem(R.id.menu_settings, R.string.navigation_settings,
         R.drawable.ic_nav_settings_24dp));
   }

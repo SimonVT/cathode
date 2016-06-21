@@ -38,6 +38,8 @@
   <item name="menu_movies_recommended" type="id"/>
 
   <item name="menu_lists" type="id"/>
+
+  <item name="menu_stats" type="id"/>
   <item name="menu_settings" type="id"/>
 
   <item name="menu_hidden" type="id"/>

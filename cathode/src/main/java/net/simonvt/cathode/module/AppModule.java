@@ -179,6 +179,7 @@ import net.simonvt.cathode.ui.fragment.ShowFragment;
 import net.simonvt.cathode.ui.fragment.ShowRecommendationsFragment;
 import net.simonvt.cathode.ui.fragment.ShowsCollectionFragment;
 import net.simonvt.cathode.ui.fragment.ShowsWatchlistFragment;
+import net.simonvt.cathode.ui.fragment.StatsFragment;
 import net.simonvt.cathode.ui.fragment.TrendingMoviesFragment;
 import net.simonvt.cathode.ui.fragment.TrendingShowsFragment;
 import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
@@ -219,7 +220,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         WatchedMoviesFragment.class, WatchedShowsFragment.class, CreateListFragment.class,
         ListFragment.class, CommentsFragment.class, CommentFragment.class, ListsFragment.class,
         SearchShowFragment.class, SearchMovieFragment.class, AnticipatedShowsFragment.class,
-        AnticipatedMoviesFragment.class,
+        AnticipatedMoviesFragment.class, StatsFragment.class,
 
         // Dialogs
         RatingDialog.class, CheckInDialog.class, CheckInDialog.Injections.class, ListsDialog.class,
