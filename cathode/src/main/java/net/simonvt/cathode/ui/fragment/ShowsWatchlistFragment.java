@@ -40,7 +40,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchlist;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.HeaderSpanLookup;
 import net.simonvt.cathode.ui.adapter.ShowWatchlistAdapter;
@@ -51,6 +50,9 @@ public class ShowsWatchlistFragment
     implements ShowWatchlistAdapter.RemoveListener, ShowWatchlistAdapter.OnItemClickListener {
 
   public static final String TAG = "net.simonvt.cathode.ui.fragment.ShowsWatchlistFragment";
+
+  private static final int LOADER_SHOWS_WATCHLIST = 1;
+  private static final int LOADER_EPISODES_WATCHLIST = 2;
 
   @Inject JobManager jobManager;
 
@@ -73,8 +75,8 @@ public class ShowsWatchlistFragment
     super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
 
-    getLoaderManager().initLoader(Loaders.SHOWS_WATCHLIST, null, showsCallback);
-    getLoaderManager().initLoader(Loaders.EPISODES_WATCHLIST, null, episodeCallback);
+    getLoaderManager().initLoader(LOADER_SHOWS_WATCHLIST, null, showsCallback);
+    getLoaderManager().initLoader(LOADER_EPISODES_WATCHLIST, null, episodeCallback);
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
 
@@ -149,13 +151,13 @@ public class ShowsWatchlistFragment
   }
 
   private void throttleLoaders() {
-    Loader l = getLoaderManager().getLoader(Loaders.EPISODES_WATCHLIST);
+    Loader l = getLoaderManager().getLoader(LOADER_EPISODES_WATCHLIST);
     if (l != null) {
       SimpleCursorLoader loader = (SimpleCursorLoader) l;
       loader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
     }
 
-    l = getLoaderManager().getLoader(Loaders.SHOWS_WATCHLIST);
+    l = getLoaderManager().getLoader(LOADER_SHOWS_WATCHLIST);
     if (l != null) {
       SimpleCursorLoader loader = (SimpleCursorLoader) l;
       loader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);

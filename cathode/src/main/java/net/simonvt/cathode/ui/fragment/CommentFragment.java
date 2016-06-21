@@ -31,7 +31,6 @@ import net.simonvt.cathode.database.SimpleMergeCursor;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.adapter.CommentsAdapter;
 import net.simonvt.cathode.ui.dialog.AddCommentDialog;
 import net.simonvt.cathode.ui.dialog.UpdateCommentDialog;
@@ -50,6 +49,9 @@ public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHol
 
   private static final String STATE_ADAPTER =
       "net.simonvt.cathode.ui.fragment.CommentFragment.adapterState";
+
+  private static final int LOADER_COMMENT = 1;
+  private static final int LOADER_COMMENTS = 2;
 
   private long commentId;
 
@@ -85,8 +87,8 @@ public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHol
 
     setTitle(R.string.title_comments);
 
-    getLoaderManager().initLoader(Loaders.COMMENT, null, commentLoader);
-    getLoaderManager().initLoader(Loaders.COMMENTS, null, repliesLoader);
+    getLoaderManager().initLoader(LOADER_COMMENT, null, commentLoader);
+    getLoaderManager().initLoader(LOADER_COMMENTS, null, repliesLoader);
   }
 
   @Override public void onSaveInstanceState(Bundle outState) {

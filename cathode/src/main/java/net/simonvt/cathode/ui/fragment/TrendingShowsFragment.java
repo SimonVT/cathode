@@ -40,7 +40,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.shows.SyncTrendingShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
@@ -96,6 +95,8 @@ public class TrendingShowsFragment
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.fragment.TrendingShowsFragment.sortDialog";
 
+  private static final int LOADER_SHOWS_TRENDING = 1;
+
   private ShowDescriptionAdapter showsAdapter;
 
   private ShowsNavigationListener navigationListener;
@@ -125,7 +126,7 @@ public class TrendingShowsFragment
     sortBy =
         SortBy.fromValue(settings.getString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey()));
 
-    getLoaderManager().initLoader(Loaders.SHOWS_TRENDING, null, this);
+    getLoaderManager().initLoader(LOADER_SHOWS_TRENDING, null, this);
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
     setTitle(R.string.title_shows_trending);
@@ -169,7 +170,7 @@ public class TrendingShowsFragment
         if (sortBy != SortBy.VIEWERS) {
           sortBy = SortBy.VIEWERS;
           settings.edit().putString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey()).apply();
-          getLoaderManager().restartLoader(Loaders.SHOWS_TRENDING, null, this);
+          getLoaderManager().restartLoader(LOADER_SHOWS_TRENDING, null, this);
           scrollToTop = true;
         }
         break;
@@ -178,7 +179,7 @@ public class TrendingShowsFragment
         if (sortBy != SortBy.RATING) {
           sortBy = SortBy.RATING;
           settings.edit().putString(Settings.Sort.SHOW_TRENDING, SortBy.RATING.getKey()).apply();
-          getLoaderManager().restartLoader(Loaders.SHOWS_TRENDING, null, this);
+          getLoaderManager().restartLoader(LOADER_SHOWS_TRENDING, null, this);
           scrollToTop = true;
         }
         break;

@@ -33,7 +33,6 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.ui.ListNavigationListener;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.adapter.ListsAdapter;
 
 public class ListsFragment extends ToolbarSwipeRefreshRecyclerFragment<ListsAdapter.ViewHolder>
@@ -42,6 +41,8 @@ public class ListsFragment extends ToolbarSwipeRefreshRecyclerFragment<ListsAdap
   public static final String TAG = "net.simonvt.cathode.ui.fragment.ListsFragment";
 
   static final String DIALOG_LIST_CREATE = "net.simonvt.cathode.ui.HomeActivity.createListFragment";
+
+  private static final int LOADER_LISTS = 1;
 
   @Inject JobManager jobManager;
 
@@ -59,7 +60,7 @@ public class ListsFragment extends ToolbarSwipeRefreshRecyclerFragment<ListsAdap
     CathodeApp.inject(getActivity(), this);
     setTitle(R.string.navigation_lists);
     setEmptyText(R.string.empty_lists);
-    getLoaderManager().initLoader(Loaders.LISTS, null, this);
+    getLoaderManager().initLoader(LOADER_LISTS, null, this);
   }
 
   @Override protected int getColumnCount() {

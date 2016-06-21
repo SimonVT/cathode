@@ -42,7 +42,6 @@ import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.search.SearchHandler;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.adapter.SuggestionsAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
@@ -91,6 +90,8 @@ public abstract class SearchFragment extends OverlayToolbarGridFragment<Recycler
 
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.fragment.SearchActivity.sortDialog";
+
+  private static final int LOADER_SEARCH = 1;
 
   SearchView searchView;
 
@@ -195,8 +196,8 @@ public abstract class SearchFragment extends OverlayToolbarGridFragment<Recycler
         if (sortBy != SortBy.RELEVANCE) {
           sortBy = SortBy.RELEVANCE;
           settings.edit().putString(Settings.Sort.SHOW_SEARCH, SortBy.RELEVANCE.getKey()).apply();
-          if (getLoaderManager().getLoader(Loaders.SEARCH) != null) {
-            getLoaderManager().restartLoader(Loaders.SEARCH, null, this);
+          if (getLoaderManager().getLoader(LOADER_SEARCH) != null) {
+            getLoaderManager().restartLoader(LOADER_SEARCH, null, this);
           }
           scrollToTop = true;
         }
@@ -206,8 +207,8 @@ public abstract class SearchFragment extends OverlayToolbarGridFragment<Recycler
         if (sortBy != SortBy.RATING) {
           sortBy = SortBy.RATING;
           settings.edit().putString(Settings.Sort.SHOW_SEARCH, SortBy.RATING.getKey()).apply();
-          if (getLoaderManager().getLoader(Loaders.SEARCH) != null) {
-            getLoaderManager().restartLoader(Loaders.SEARCH, null, this);
+          if (getLoaderManager().getLoader(LOADER_SEARCH) != null) {
+            getLoaderManager().restartLoader(LOADER_SEARCH, null, this);
           }
           scrollToTop = true;
         }
@@ -217,8 +218,8 @@ public abstract class SearchFragment extends OverlayToolbarGridFragment<Recycler
         if (sortBy != SortBy.TITLE) {
           sortBy = SortBy.TITLE;
           settings.edit().putString(Settings.Sort.SHOW_SEARCH, SortBy.TITLE.getKey()).apply();
-          if (getLoaderManager().getLoader(Loaders.SEARCH) != null) {
-            getLoaderManager().restartLoader(Loaders.SEARCH, null, this);
+          if (getLoaderManager().getLoader(LOADER_SEARCH) != null) {
+            getLoaderManager().restartLoader(LOADER_SEARCH, null, this);
           }
           scrollToTop = true;
         }
@@ -234,7 +235,7 @@ public abstract class SearchFragment extends OverlayToolbarGridFragment<Recycler
 
     this.query = query;
 
-    getLoaderManager().destroyLoader(Loaders.SEARCH);
+    getLoaderManager().destroyLoader(LOADER_SEARCH);
     resultIds = null;
 
     setForceDisplayProgress(true);
@@ -246,7 +247,7 @@ public abstract class SearchFragment extends OverlayToolbarGridFragment<Recycler
     Timber.d("onSearchSuccess");
     this.resultIds = resultIds;
 
-    getLoaderManager().initLoader(Loaders.SEARCH, null, this);
+    getLoaderManager().initLoader(LOADER_SEARCH, null, this);
     setEmptyText(getResources().getString(R.string.no_results, query));
   }
 

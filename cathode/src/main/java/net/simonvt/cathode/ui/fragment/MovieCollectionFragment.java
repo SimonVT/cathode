@@ -33,13 +33,10 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesCollection;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 
 public class MovieCollectionFragment extends MoviesFragment implements ListDialog.Callback {
-
-  public static final String TAG = "net.simonvt.cathode.ui.fragment.MovieCollectionFragment";
 
   private enum SortBy {
     TITLE("title", Movies.SORT_TITLE),
@@ -83,8 +80,12 @@ public class MovieCollectionFragment extends MoviesFragment implements ListDialo
     }
   }
 
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.MovieCollectionFragment";
+
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.fragment.MovieCollectionFragment.sortDialog";
+
+  private static final int LOADER_MOVIES_COLLECTION = 1;
 
   private SharedPreferences settings;
 
@@ -160,7 +161,7 @@ public class MovieCollectionFragment extends MoviesFragment implements ListDialo
   }
 
   @Override protected int getLoaderId() {
-    return Loaders.MOVIES_COLLECTION;
+    return LOADER_MOVIES_COLLECTION;
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {

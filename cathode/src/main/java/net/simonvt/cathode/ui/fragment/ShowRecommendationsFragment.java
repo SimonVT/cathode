@@ -41,7 +41,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.shows.SyncShowRecommendations;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
@@ -99,6 +98,8 @@ public class ShowRecommendationsFragment
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.fragment.ShowRecommendationsFragment.sortDialog";
 
+  private static final int LOADER_SHOWS_RECOMMENDATIONS = 1;
+
   private ShowRecommendationsAdapter showsAdapter;
 
   private ShowsNavigationListener navigationListener;
@@ -134,7 +135,7 @@ public class ShowRecommendationsFragment
     sortBy = SortBy.fromValue(
         settings.getString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey()));
 
-    getLoaderManager().initLoader(Loaders.SHOWS_RECOMMENDATIONS, null, this);
+    getLoaderManager().initLoader(LOADER_SHOWS_RECOMMENDATIONS, null, this);
 
     isTablet = getResources().getBoolean(R.bool.isTablet);
 
@@ -183,7 +184,7 @@ public class ShowRecommendationsFragment
           settings.edit()
               .putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey())
               .apply();
-          getLoaderManager().restartLoader(Loaders.SHOWS_RECOMMENDATIONS, null, this);
+          getLoaderManager().restartLoader(LOADER_SHOWS_RECOMMENDATIONS, null, this);
           scrollToTop = true;
         }
         break;
@@ -192,7 +193,7 @@ public class ShowRecommendationsFragment
         if (sortBy != SortBy.RATING) {
           sortBy = SortBy.RATING;
           settings.edit().putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RATING.getKey()).apply();
-          getLoaderManager().restartLoader(Loaders.SHOWS_RECOMMENDATIONS, null, this);
+          getLoaderManager().restartLoader(LOADER_SHOWS_RECOMMENDATIONS, null, this);
           scrollToTop = true;
         }
         break;
@@ -207,7 +208,7 @@ public class ShowRecommendationsFragment
   }
 
   @Override public void onDismissItem(final View view, final long id) {
-    Loader loader = getLoaderManager().getLoader(Loaders.SHOWS_RECOMMENDATIONS);
+    Loader loader = getLoaderManager().getLoader(LOADER_SHOWS_RECOMMENDATIONS);
     if (loader != null) {
       SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
       cursorLoader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);

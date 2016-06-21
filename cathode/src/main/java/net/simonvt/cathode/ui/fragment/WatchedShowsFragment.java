@@ -33,13 +33,14 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 
 public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Callback {
 
   public static final String TAG = "net.simonvt.cathode.ui.fragment.WatchedShowsFragment";
+
+  private static final int LOADER_SHOWS_WATCHED = 1;
 
   private enum SortBy {
     TITLE("title", Shows.SORT_TITLE),
@@ -158,7 +159,7 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
   }
 
   protected int getLoaderId() {
-    return Loaders.SHOWS_WATCHED;
+    return LOADER_SHOWS_WATCHED;
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {

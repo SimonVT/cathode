@@ -42,7 +42,6 @@ import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.remote.sync.lists.SyncList;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.adapter.ListAdapter;
 import net.simonvt.cathode.ui.adapter.ShowClickListener;
@@ -62,6 +61,8 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
   private static final String ARG_LIST_ID = "net.simonvt.cathode.ui.fragment.ListFragment.lidtId";
   private static final String ARG_LIST_NAME =
       "net.simonvt.cathode.ui.fragment.ListFragment.listName";
+
+  private static final int LOADER_LIST = 1;
 
   @Inject ListsTaskScheduler listScheduler;
 
@@ -98,7 +99,7 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
 
     columnCount = getResources().getInteger(R.integer.listColumns);
 
-    getLoaderManager().initLoader(Loaders.LIST, null, this);
+    getLoaderManager().initLoader(LOADER_LIST, null, this);
   }
 
   @Override protected int getColumnCount() {
@@ -147,7 +148,7 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
   }
 
   @Override public void onRemoveItem(int position, long id) {
-    Loader loader = getLoaderManager().getLoader(Loaders.LIST);
+    Loader loader = getLoaderManager().getLoader(LOADER_LIST);
     if (loader != null) {
       ((SimpleCursorLoader) loader).throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
     }

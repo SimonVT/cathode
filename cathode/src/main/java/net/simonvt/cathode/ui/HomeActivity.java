@@ -107,6 +107,9 @@ public class HomeActivity extends BaseActivity
   public static final String ACTION_LOGIN = "net.simonvt.cathode.intent.action.LOGIN";
   public static final String DIALOG_LOGOUT = "net.simonvt.cathode.ui.HomeActivity.logoutDialog";
 
+  private static final int LOADER_SHOW_WATCHING = 1;
+  private static final int LOADER_MOVIE_WATCHING = 2;
+
   @Inject Bus bus;
 
   @BindView(R.id.progress_top) ProgressBar progressTop;
@@ -173,8 +176,8 @@ public class HomeActivity extends BaseActivity
       stack.replace(startPage.getPageClass(), startPage.getTag());
     }
 
-    getSupportLoaderManager().initLoader(Loaders.SHOW_WATCHING, null, watchingShowCallback);
-    getSupportLoaderManager().initLoader(Loaders.MOVIE_WATCHING, null, watchingMovieCallback);
+    getSupportLoaderManager().initLoader(LOADER_SHOW_WATCHING, null, watchingShowCallback);
+    getSupportLoaderManager().initLoader(LOADER_MOVIE_WATCHING, null, watchingMovieCallback);
 
     drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
       @Override public void onDrawerSlide(View drawerView, float slideOffset) {

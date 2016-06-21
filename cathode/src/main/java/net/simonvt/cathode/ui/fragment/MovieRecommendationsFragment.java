@@ -38,7 +38,6 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.adapter.MovieRecommendationsAdapter;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
@@ -96,6 +95,8 @@ public class MovieRecommendationsFragment
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.fragment.RecommendedMoviesFragment.sortDialog";
 
+  private static final int LOADER_MOVIES_RECOMMENDATIONS = 1;
+
   @Inject JobManager jobManager;
 
   private MoviesNavigationListener navigationListener;
@@ -130,7 +131,7 @@ public class MovieRecommendationsFragment
     sortBy = SortBy.fromValue(
         settings.getString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey()));
 
-    getLoaderManager().initLoader(Loaders.MOVIES_RECOMMENDATIONS, null, this);
+    getLoaderManager().initLoader(LOADER_MOVIES_RECOMMENDATIONS, null, this);
 
     columnCount = getResources().getInteger(R.integer.movieColumns);
 
@@ -177,7 +178,7 @@ public class MovieRecommendationsFragment
           settings.edit()
               .putString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey())
               .apply();
-          getLoaderManager().restartLoader(Loaders.MOVIES_RECOMMENDATIONS, null, this);
+          getLoaderManager().restartLoader(LOADER_MOVIES_RECOMMENDATIONS, null, this);
           scrollToTop = true;
         }
         break;
@@ -188,7 +189,7 @@ public class MovieRecommendationsFragment
           settings.edit()
               .putString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RATING.getKey())
               .apply();
-          getLoaderManager().restartLoader(Loaders.MOVIES_RECOMMENDATIONS, null, this);
+          getLoaderManager().restartLoader(LOADER_MOVIES_RECOMMENDATIONS, null, this);
           scrollToTop = true;
         }
         break;
@@ -203,7 +204,7 @@ public class MovieRecommendationsFragment
   }
 
   @Override public void onDismissItem(final View view, final long id) {
-    Loader loader = getLoaderManager().getLoader(Loaders.MOVIES_RECOMMENDATIONS);
+    Loader loader = getLoaderManager().getLoader(LOADER_MOVIES_RECOMMENDATIONS);
     if (loader != null) {
       SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
       cursorLoader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);

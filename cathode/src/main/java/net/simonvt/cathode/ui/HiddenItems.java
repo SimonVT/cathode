@@ -51,6 +51,13 @@ public class HiddenItems extends BaseActivity
 
   private static final String STATE_STACK = "net.simonvt.cathode.ui.HomeActivity.stack";
 
+  private static final int LOADER_SHOWS_CALENDAR = 1;
+  private static final int LOADER_SHOWS_WATCHED = 2;
+  private static final int LOADER_SHOWS_COLLECTED = 3;
+  private static final int LOADER_MOVIES_CALENDAR = 4;
+  private static final int LOADER_MOVIES_WATCHED = 5;
+  private static final int LOADER_MOVIES_COLLECTED = 6;
+
   private FragmentStack stack;
 
   @Override protected void onCreate(Bundle inState) {
@@ -175,16 +182,16 @@ public class HiddenItems extends BaseActivity
       setTitle(R.string.preference_hidden_items);
       setEmptyText(R.string.preference_hidden_empty);
 
-      getLoaderManager().initLoader(Loaders.HIDDEN_SHOWS_CALENDAR, null,
+      getLoaderManager().initLoader(LOADER_SHOWS_CALENDAR, null,
           hiddenShowsCalendarCallback);
-      getLoaderManager().initLoader(Loaders.HIDDEN_SHOWS_WATCHED, null, hiddenShowsWatchedCallback);
-      getLoaderManager().initLoader(Loaders.HIDDEN_SHOWS_COLLECTED, null,
+      getLoaderManager().initLoader(LOADER_SHOWS_WATCHED, null, hiddenShowsWatchedCallback);
+      getLoaderManager().initLoader(LOADER_SHOWS_COLLECTED, null,
           hiddenShowsCollectedCallback);
-      getLoaderManager().initLoader(Loaders.HIDDEN_MOVIES_CALENDAR, null,
+      getLoaderManager().initLoader(LOADER_MOVIES_CALENDAR, null,
           hiddenMoviesCalendarCallback);
-      getLoaderManager().initLoader(Loaders.HIDDEN_MOVIES_WATCHED, null,
+      getLoaderManager().initLoader(LOADER_MOVIES_WATCHED, null,
           hiddenMoviesWatchedCallback);
-      getLoaderManager().initLoader(Loaders.HIDDEN_MOVIES_COLLECTED, null,
+      getLoaderManager().initLoader(LOADER_MOVIES_COLLECTED, null,
           hiddenMoviesCollectedCallback);
     }
 

@@ -38,7 +38,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 
@@ -88,6 +87,8 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
 
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.fragment.TrendingMoviesFragment.sortDialog";
+
+  private static final int LOADER_MOVIES_TRENDING = 1;
 
   private SharedPreferences settings;
 
@@ -144,7 +145,7 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
         if (sortBy != SortBy.VIEWERS) {
           sortBy = SortBy.VIEWERS;
           settings.edit().putString(Settings.Sort.MOVIE_TRENDING, SortBy.VIEWERS.getKey()).apply();
-          getLoaderManager().restartLoader(Loaders.MOVIES_TRENDING, null, this);
+          getLoaderManager().restartLoader(LOADER_MOVIES_TRENDING, null, this);
           scrollToTop = true;
         }
         break;
@@ -153,7 +154,7 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
         if (sortBy != SortBy.RATING) {
           sortBy = SortBy.RATING;
           settings.edit().putString(Settings.Sort.MOVIE_TRENDING, SortBy.RATING.getKey()).apply();
-          getLoaderManager().restartLoader(Loaders.MOVIES_TRENDING, null, this);
+          getLoaderManager().restartLoader(LOADER_MOVIES_TRENDING, null, this);
           scrollToTop = true;
         }
         break;
@@ -170,7 +171,7 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
   }
 
   @Override protected int getLoaderId() {
-    return Loaders.MOVIES_TRENDING;
+    return LOADER_MOVIES_TRENDING;
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {

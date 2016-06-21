@@ -37,7 +37,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.movies.SyncAnticipatedMovies;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.adapter.MoviesAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 
@@ -87,6 +86,8 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
 
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.fragment.AnticipatedMoviesFragment.sortDialog";
+
+  private static final int LOADER_MOVIES_ANTICIPATED = 1;
 
   private SharedPreferences settings;
 
@@ -145,7 +146,7 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
           settings.edit()
               .putString(Settings.Sort.MOVIE_ANTICIPATED, SortBy.ANTICIPATED.getKey())
               .apply();
-          getLoaderManager().restartLoader(Loaders.MOVIES_ANTICIPATED, null, this);
+          getLoaderManager().restartLoader(LOADER_MOVIES_ANTICIPATED, null, this);
           scrollToTop = true;
         }
         break;
@@ -154,7 +155,7 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
         if (sortBy != SortBy.TITLE) {
           sortBy = SortBy.TITLE;
           settings.edit().putString(Settings.Sort.MOVIE_ANTICIPATED, SortBy.TITLE.getKey()).apply();
-          getLoaderManager().restartLoader(Loaders.MOVIES_ANTICIPATED, null, this);
+          getLoaderManager().restartLoader(LOADER_MOVIES_ANTICIPATED, null, this);
           scrollToTop = true;
         }
         break;
@@ -171,7 +172,7 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
   }
 
   @Override protected int getLoaderId() {
-    return Loaders.MOVIES_ANTICIPATED;
+    return LOADER_MOVIES_ANTICIPATED;
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {

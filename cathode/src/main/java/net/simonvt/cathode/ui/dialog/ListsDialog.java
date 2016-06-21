@@ -46,7 +46,6 @@ import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.schematic.Cursors;
 
 public class ListsDialog extends DialogFragment {
@@ -67,6 +66,9 @@ public class ListsDialog extends DialogFragment {
 
   private static final String ARG_TYPE = "net.simonvt.cathode.ui.dialog.ListsDialog.itemType";
   private static final String ARG_ID = "net.simonvt.cathode.ui.dialog.ListsDialog.itemId";
+
+  private static final int LOADER_DIALOG_LISTS = 1;
+  private static final int LOADER_DIALOG_LISTS_STATUS = 2;
 
   @Inject ListsTaskScheduler listScheduler;
 
@@ -105,8 +107,8 @@ public class ListsDialog extends DialogFragment {
     itemType = args.getInt(ARG_TYPE);
     itemId = args.getLong(ARG_ID);
 
-    getLoaderManager().initLoader(Loaders.DIALOG_LISTS, null, listsLoader);
-    getLoaderManager().initLoader(Loaders.DIALOG_LISTS_STATUS, null, listItemLoader);
+    getLoaderManager().initLoader(LOADER_DIALOG_LISTS, null, listsLoader);
+    getLoaderManager().initLoader(LOADER_DIALOG_LISTS_STATUS, null, listItemLoader);
   }
 
   @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -221,8 +223,8 @@ public class ListsDialog extends DialogFragment {
 
     v.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        Loader listsLoader = getLoaderManager().getLoader(Loaders.DIALOG_LISTS);
-        Loader listItemLoader = getLoaderManager().getLoader(Loaders.DIALOG_LISTS_STATUS);
+        Loader listsLoader = getLoaderManager().getLoader(LOADER_DIALOG_LISTS);
+        Loader listItemLoader = getLoaderManager().getLoader(LOADER_DIALOG_LISTS_STATUS);
         ((SimpleCursorLoader) listsLoader).throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
         ((SimpleCursorLoader) listItemLoader).throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
 

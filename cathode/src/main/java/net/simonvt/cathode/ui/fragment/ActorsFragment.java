@@ -27,7 +27,6 @@ import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.adapter.MovieActorsAdapter;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.adapter.ShowActorsAdapter;
@@ -45,6 +44,8 @@ public class ActorsFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
   private static final String ARG_TYPE = "net.simonvt.cathode.ui.fragment.ActorsFragment.type";
   private static final String ARG_ID = "net.simonvt.cathode.ui.fragment.ActorsFragment.id";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.fragment.ActorsFragment.title";
+
+  private static final int LOADER_ACTORS = 1;
 
   private Type type;
 
@@ -81,7 +82,7 @@ public class ActorsFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
 
     setTitle(title);
 
-    getLoaderManager().initLoader(Loaders.ACTORS, null, this);
+    getLoaderManager().initLoader(LOADER_ACTORS, null, this);
   }
 
   @Override protected int getColumnCount() {

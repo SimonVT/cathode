@@ -66,7 +66,6 @@ import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.adapter.LinearCommentsAdapter;
 import net.simonvt.cathode.ui.adapter.SeasonsAdapter;
@@ -103,6 +102,15 @@ public class ShowFragment extends RefreshableAppBarFragment {
       "net.simonvt.cathode.ui.fragment.ShowFragment.listsAddDialog";
   private static final String DIALOG_COMMENT_UPDATE =
       "net.simonvt.cathode.ui.fragment.ShowFragment.updateCommentDialog";
+
+  private static final int LOADER_SHOW = 1;
+  private static final int LOADER_SHOW_WATCH = 2;
+  private static final int LOADER_SHOW_COLLECT = 3;
+  private static final int LOADER_SHOW_GENRES = 4;
+  private static final int LOADER_SHOW_SEASONS = 5;
+  private static final int LOADER_SHOW_ACTORS = 6;
+  private static final int LOADER_SHOW_USER_COMMENTS = 7;
+  private static final int LOADER_SHOW_COMMENTS = 8;
 
   private static final String[] SHOW_PROJECTION = new String[] {
       ShowColumns.TITLE, ShowColumns.YEAR, ShowColumns.AIR_TIME, ShowColumns.AIR_DAY,
@@ -453,14 +461,14 @@ public class ShowFragment extends RefreshableAppBarFragment {
       });
     }
 
-    getLoaderManager().initLoader(Loaders.SHOW, null, showCallbacks);
-    getLoaderManager().initLoader(Loaders.SHOW_GENRES, null, genreCallbacks);
-    getLoaderManager().initLoader(Loaders.SHOW_ACTORS, null, charactersCallback);
-    getLoaderManager().initLoader(Loaders.SHOW_WATCH, null, episodeWatchCallbacks);
-    getLoaderManager().initLoader(Loaders.SHOW_COLLECT, null, episodeCollectCallbacks);
-    getLoaderManager().initLoader(Loaders.SHOW_SEASONS, null, seasonsLoader);
-    getLoaderManager().initLoader(Loaders.SHOW_USER_COMMENTS, null, userCommentsLoader);
-    getLoaderManager().initLoader(Loaders.SHOW_COMMENTS, null, commentsLoader);
+    getLoaderManager().initLoader(LOADER_SHOW, null, showCallbacks);
+    getLoaderManager().initLoader(LOADER_SHOW_GENRES, null, genreCallbacks);
+    getLoaderManager().initLoader(LOADER_SHOW_ACTORS, null, charactersCallback);
+    getLoaderManager().initLoader(LOADER_SHOW_WATCH, null, episodeWatchCallbacks);
+    getLoaderManager().initLoader(LOADER_SHOW_COLLECT, null, episodeCollectCallbacks);
+    getLoaderManager().initLoader(LOADER_SHOW_SEASONS, null, seasonsLoader);
+    getLoaderManager().initLoader(LOADER_SHOW_USER_COMMENTS, null, userCommentsLoader);
+    getLoaderManager().initLoader(LOADER_SHOW_COMMENTS, null, commentsLoader);
   }
 
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {

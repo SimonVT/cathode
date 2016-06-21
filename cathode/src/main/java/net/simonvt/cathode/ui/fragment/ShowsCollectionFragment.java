@@ -34,13 +34,14 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.shows.SyncShowsCollection;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
 import net.simonvt.cathode.ui.dialog.ListDialog;
 
 public class ShowsCollectionFragment extends ShowsFragment implements ListDialog.Callback {
 
   public static final String TAG = "net.simonvt.cathode.ui.fragment.ShowsCollectionFragment";
+
+  private static final int LOADER_SHOWS_COLLECTION = 1;
 
   private enum SortBy {
     TITLE("title", Shows.SORT_TITLE),
@@ -161,7 +162,7 @@ public class ShowsCollectionFragment extends ShowsFragment implements ListDialog
   }
 
   @Override protected int getLoaderId() {
-    return Loaders.SHOWS_COLLECTION;
+    return LOADER_SHOWS_COLLECTION;
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {

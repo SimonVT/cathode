@@ -30,7 +30,6 @@ import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.adapter.CommentsAdapter;
 import net.simonvt.cathode.ui.dialog.AddCommentDialog;
@@ -52,6 +51,8 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
 
   private static final String STATE_ADAPTER =
       "net.simonvt.cathode.ui.fragment.CommentFragment.adapterState";
+
+  private static final int LOADER_COMMENTS = 1;
 
   private NavigationListener navigationCallbacks;
 
@@ -98,7 +99,7 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
 
     setTitle(R.string.title_comments);
 
-    getLoaderManager().initLoader(Loaders.COMMENTS, null, commentsLoader);
+    getLoaderManager().initLoader(LOADER_COMMENTS, null, commentsLoader);
   }
 
   @Override protected int getColumnCount() {

@@ -52,7 +52,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.settings.TraktTimestamps;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.adapter.LinearCommentsAdapter;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
@@ -70,6 +69,11 @@ public class MovieFragment extends RefreshableAppBarFragment
     implements LoaderManager.LoaderCallbacks<SimpleCursor> {
 
   public static final String TAG = "net.simonvt.cathode.ui.fragment.MovieFragment";
+
+  private static final int LOADER_MOVIE = 1;
+  private static final int LOADER_MOVIE_ACTORS = 2;
+  private static final int LOADER_MOVIE_USER_COMMENTS = 3;
+  private static final int LOADER_MOVIE_COMMENTS = 4;
 
   private static final String ARG_ID = "net.simonvt.cathode.ui.fragment.MovieFragment.id";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.fragment.MovieFragment.title";
@@ -178,10 +182,10 @@ public class MovieFragment extends RefreshableAppBarFragment
     super.onViewCreated(view, inState);
     overview.setText(movieOverview);
 
-    getLoaderManager().initLoader(Loaders.MOVIE, null, this);
-    getLoaderManager().initLoader(Loaders.MOVIE_ACTORS, null, actorsLoader);
-    getLoaderManager().initLoader(Loaders.MOVIE_USER_COMMENTS, null, userCommentsLoader);
-    getLoaderManager().initLoader(Loaders.MOVIE_COMMENTS, null, commentsLoader);
+    getLoaderManager().initLoader(LOADER_MOVIE, null, this);
+    getLoaderManager().initLoader(LOADER_MOVIE_ACTORS, null, actorsLoader);
+    getLoaderManager().initLoader(LOADER_MOVIE_USER_COMMENTS, null, userCommentsLoader);
+    getLoaderManager().initLoader(LOADER_MOVIE_COMMENTS, null, commentsLoader);
   }
 
   @OnClick(R.id.rating) void onRatingClick() {

@@ -45,7 +45,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.HeaderSpanLookup;
 import net.simonvt.cathode.ui.adapter.UpcomingAdapter;
@@ -58,6 +57,8 @@ public class UpcomingShowsFragment
     UpcomingAdapter.OnItemClickListener {
 
   public static final String TAG = "net.simonvt.cathode.ui.fragment.UpcomingShowsFragment";
+
+  private static final int LOADER_SHOWS_UPCOMING = 1;
 
   private enum SortBy {
     TITLE("title", Shows.SORT_TITLE),
@@ -134,7 +135,7 @@ public class UpcomingShowsFragment
     sortBy =
         SortBy.fromValue(settings.getString(Settings.Sort.SHOW_UPCOMING, SortBy.TITLE.getKey()));
 
-    getLoaderManager().initLoader(Loaders.SHOWS_UPCOMING, null, this);
+    getLoaderManager().initLoader(LOADER_SHOWS_UPCOMING, null, this);
 
     setEmptyText(R.string.empty_show_upcoming);
 
@@ -192,7 +193,7 @@ public class UpcomingShowsFragment
         if (sortBy != SortBy.TITLE) {
           sortBy = SortBy.TITLE;
           settings.edit().putString(Settings.Sort.SHOW_UPCOMING, SortBy.TITLE.getKey()).apply();
-          getLoaderManager().restartLoader(Loaders.SHOWS_UPCOMING, null, this);
+          getLoaderManager().restartLoader(LOADER_SHOWS_UPCOMING, null, this);
           scrollToTop = true;
         }
         break;
@@ -203,7 +204,7 @@ public class UpcomingShowsFragment
           settings.edit()
               .putString(Settings.Sort.SHOW_UPCOMING, SortBy.NEXT_EPISODE.getKey())
               .apply();
-          getLoaderManager().restartLoader(Loaders.SHOWS_UPCOMING, null, this);
+          getLoaderManager().restartLoader(LOADER_SHOWS_UPCOMING, null, this);
           scrollToTop = true;
         }
         break;
@@ -211,7 +212,7 @@ public class UpcomingShowsFragment
   }
 
   @Override public void onRemove(View view, int position, long id) {
-    Loader loader = getLoaderManager().getLoader(Loaders.SHOWS_UPCOMING);
+    Loader loader = getLoaderManager().getLoader(LOADER_SHOWS_UPCOMING);
     if (loader != null) {
       SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
       cursorLoader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);

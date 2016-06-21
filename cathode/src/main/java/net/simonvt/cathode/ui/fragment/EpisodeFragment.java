@@ -47,7 +47,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.NavigationClickListener;
 import net.simonvt.cathode.ui.adapter.LinearCommentsAdapter;
 import net.simonvt.cathode.ui.dialog.AddCommentDialog;
@@ -63,6 +62,9 @@ import net.simonvt.schematic.Cursors;
 public class EpisodeFragment extends AppBarFragment {
 
   public static final String TAG = "net.simonvt.cathode.ui.fragment.EpisodeFragment";
+
+  private static final int LOADER_EPISODE = 1;
+  private static final int LOADER_EPISODE_USER_COMMENTS = 2;
 
   private static final String ARG_EPISODEID =
       "net.simonvt.cathode.ui.fragment.EpisodeFragment.episodeId";
@@ -146,8 +148,8 @@ public class EpisodeFragment extends AppBarFragment {
     showTitle = args.getString(ARG_SHOW_TITLE);
     setTitle(showTitle);
 
-    getLoaderManager().initLoader(Loaders.EPISODE, null, episodeCallbacks);
-    getLoaderManager().initLoader(Loaders.EPISODE_USER_COMMENTS, null, userCommentsLoader);
+    getLoaderManager().initLoader(LOADER_EPISODE, null, episodeCallbacks);
+    getLoaderManager().initLoader(LOADER_EPISODE_USER_COMMENTS, null, userCommentsLoader);
   }
 
   public long getEpisodeId() {

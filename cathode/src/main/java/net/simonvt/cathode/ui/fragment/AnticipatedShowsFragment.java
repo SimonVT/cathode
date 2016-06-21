@@ -40,7 +40,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.shows.SyncAnticipatedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
@@ -96,6 +95,8 @@ public class AnticipatedShowsFragment
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.fragment.AnticipatedShowsFragment.sortDialog";
 
+  private static final int LOADER_SHOWS_ANTICIPATED = 1;
+
   private ShowDescriptionAdapter showsAdapter;
 
   private ShowsNavigationListener navigationListener;
@@ -125,7 +126,7 @@ public class AnticipatedShowsFragment
     sortBy = SortBy.fromValue(
         settings.getString(Settings.Sort.SHOW_ANTICIPATED, SortBy.ANTICIPATED.getKey()));
 
-    getLoaderManager().initLoader(Loaders.SHOWS_ANTICIPATED, null, this);
+    getLoaderManager().initLoader(LOADER_SHOWS_ANTICIPATED, null, this);
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
     setTitle(R.string.title_shows_anticipated);
@@ -171,7 +172,7 @@ public class AnticipatedShowsFragment
           settings.edit()
               .putString(Settings.Sort.SHOW_ANTICIPATED, SortBy.ANTICIPATED.getKey())
               .apply();
-          getLoaderManager().restartLoader(Loaders.SHOWS_ANTICIPATED, null, this);
+          getLoaderManager().restartLoader(LOADER_SHOWS_ANTICIPATED, null, this);
           scrollToTop = true;
         }
         break;
@@ -180,7 +181,7 @@ public class AnticipatedShowsFragment
         if (sortBy != SortBy.TITLE) {
           sortBy = SortBy.TITLE;
           settings.edit().putString(Settings.Sort.SHOW_ANTICIPATED, SortBy.TITLE.getKey()).apply();
-          getLoaderManager().restartLoader(Loaders.SHOWS_ANTICIPATED, null, this);
+          getLoaderManager().restartLoader(LOADER_SHOWS_ANTICIPATED, null, this);
           scrollToTop = true;
         }
         break;

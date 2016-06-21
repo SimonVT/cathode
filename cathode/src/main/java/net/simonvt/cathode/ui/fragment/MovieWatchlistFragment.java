@@ -24,11 +24,12 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchlist;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.Loaders;
 
 public class MovieWatchlistFragment extends MoviesFragment {
 
   public static final String TAG = "net.simonvt.cathode.ui.fragment.MovieWatchlistFragment";
+
+  private static final int LOADER_MOVIES_WATCHLIST = 1;
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
@@ -53,7 +54,7 @@ public class MovieWatchlistFragment extends MoviesFragment {
   }
 
   @Override protected int getLoaderId() {
-    return Loaders.MOVIES_WATCHLIST;
+    return LOADER_MOVIES_WATCHLIST;
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {

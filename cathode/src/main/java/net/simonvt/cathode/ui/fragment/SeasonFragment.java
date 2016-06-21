@@ -34,7 +34,6 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.Loaders;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.SeasonAdapter;
 import net.simonvt.cathode.ui.dialog.ListsDialog;
@@ -46,6 +45,8 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
     implements EpisodeClickListener {
 
   public static final String TAG = "net.simonvt.cathode.ui.fragment.SeasonFragment";
+
+  private static final int LOADER_SEASON = 1;
 
   private static final String ARG_SHOW_ID = "net.simonvt.cathode.ui.fragment.SeasonFragment.showId";
   private static final String ARG_SEASONID =
@@ -115,7 +116,7 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
     setTitle(title);
     updateSubtitle();
 
-    getLoaderManager().initLoader(Loaders.SEASON, null, episodesLoader);
+    getLoaderManager().initLoader(LOADER_SEASON, null, episodesLoader);
 
     columnCount = getResources().getInteger(R.integer.episodesColumns);
   }
