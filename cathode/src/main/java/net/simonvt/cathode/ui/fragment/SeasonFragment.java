@@ -259,7 +259,6 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
         }
 
         @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
-          setCursor(null);
         }
       };
 }

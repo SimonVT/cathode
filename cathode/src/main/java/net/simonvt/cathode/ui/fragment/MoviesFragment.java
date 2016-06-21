@@ -129,6 +129,5 @@ public abstract class MoviesFragment
   }
 
   @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-    setAdapter(null);
   }
 }

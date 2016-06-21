@@ -289,6 +289,5 @@ public class UpcomingShowsFragment
   }
 
   @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-
   }
 }

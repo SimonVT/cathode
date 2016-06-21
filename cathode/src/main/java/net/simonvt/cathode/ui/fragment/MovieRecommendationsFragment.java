@@ -239,6 +239,5 @@ public class MovieRecommendationsFragment
   }
 
   @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-    setAdapter(null);
   }
 }

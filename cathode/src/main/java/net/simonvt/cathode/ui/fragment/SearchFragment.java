@@ -314,11 +314,9 @@ public abstract class SearchFragment extends OverlayToolbarGridFragment<Recycler
   }
 
   @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-    Timber.d("Load finished");
     setCursor(data);
   }
 
   @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-    Timber.d("Resetting loader");
   }
 }

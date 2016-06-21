@@ -258,6 +258,5 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
   }
 
   @Override public void onLoaderReset(Loader loader) {
-    setCursor(null);
   }
 }

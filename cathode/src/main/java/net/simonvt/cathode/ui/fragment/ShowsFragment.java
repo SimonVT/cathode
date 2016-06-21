@@ -130,6 +130,5 @@ public abstract class ShowsFragment<D extends Cursor>
   }
 
   @Override public void onLoaderReset(Loader<D> cursorLoader) {
-    showsAdapter.changeCursor(null);
   }
 }
