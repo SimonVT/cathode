@@ -40,6 +40,8 @@ import net.simonvt.cathode.ui.dialog.ListDialog;
 
 public class ShowsCollectionFragment extends ShowsFragment implements ListDialog.Callback {
 
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.ShowsCollectionFragment";
+
   private enum SortBy {
     TITLE("title", Shows.SORT_TITLE),
     COLLECTED("collected", Shows.SORT_COLLECTED);

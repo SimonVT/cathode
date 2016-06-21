@@ -36,28 +36,28 @@ public enum StartPage {
   DASHBOARD("dashboard", DashboardFragment.class, DashboardFragment.TAG, R.id.menu_dashboard,
       R.string.startpage_dashboard),
 
-  SHOWS_UPCOMING("showsUpcoming", UpcomingShowsFragment.class, Fragments.SHOWS_UPCOMING,
+  SHOWS_UPCOMING("showsUpcoming", UpcomingShowsFragment.class, UpcomingShowsFragment.TAG,
       R.id.menu_shows_upcoming, R.string.startpage_shows_upcoming),
-  SHOWS_WATCHED("showsWatched", WatchedShowsFragment.class, Fragments.SHOWS_WATCHED,
+  SHOWS_WATCHED("showsWatched", WatchedShowsFragment.class, WatchedShowsFragment.TAG,
       R.id.menu_shows_watched, R.string.startpage_shows_watched),
-  SHOWS_COLLECTED("showsCollected", ShowsCollectionFragment.class, Fragments.SHOWS_COLLECTION,
+  SHOWS_COLLECTED("showsCollected", ShowsCollectionFragment.class, ShowsCollectionFragment.TAG,
       R.id.menu_shows_collection, R.string.startpage_shows_collected),
-  SHOWS_WATCHLIST("showsWatchlist", ShowsWatchlistFragment.class, Fragments.SHOWS_WATCHLIST,
+  SHOWS_WATCHLIST("showsWatchlist", ShowsWatchlistFragment.class, ShowsWatchlistFragment.TAG,
       R.id.menu_shows_watchlist, R.string.startpage_shows_watchlist),
   SHOWS_SUGGESTIONS("showSuggestions", ShowSuggestionsFragment.class, ShowSuggestionsFragment.TAG,
       R.id.menu_shows_suggestions, R.string.startpage_shows_suggestions),
 
-  MOVIES_WATCHED("moviesWatched", WatchedMoviesFragment.class, Fragments.MOVIES_WATCHED,
+  MOVIES_WATCHED("moviesWatched", WatchedMoviesFragment.class, WatchedMoviesFragment.TAG,
       R.id.menu_movies_watched, R.string.startpage_movies_watched),
-  MOVIES_COLLECTED("moviesCollected", MovieCollectionFragment.class, Fragments.MOVIES_COLLECTION,
+  MOVIES_COLLECTED("moviesCollected", MovieCollectionFragment.class, MovieCollectionFragment.TAG,
       R.id.menu_movies_collection, R.string.startpage_movies_collected),
-  MOVIES_WATCHLIST("movieWatchlist", MovieWatchlistFragment.class, Fragments.MOVIES_WATCHLIST,
+  MOVIES_WATCHLIST("movieWatchlist", MovieWatchlistFragment.class, MovieWatchlistFragment.TAG,
       R.id.menu_movies_watchlist, R.string.startpage_movies_watchlist),
   MOVIES_SUGGESTIONS("movieSuggestions", MovieSuggestionsFragment.class,
       MovieSuggestionsFragment.TAG, R.id.menu_movies_suggestions,
       R.string.startpage_movies_suggestions),
 
-  LISTS("lists", ListsFragment.class, Fragments.LISTS, R.id.menu_lists, R.string.startpage_lists);
+  LISTS("lists", ListsFragment.class, ListsFragment.TAG, R.id.menu_lists, R.string.startpage_lists);
 
   private String startPage;
   private Class clazz;

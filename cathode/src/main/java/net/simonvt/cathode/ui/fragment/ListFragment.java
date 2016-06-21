@@ -57,6 +57,8 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
     implements LoaderManager.LoaderCallbacks<SimpleCursor>, ShowClickListener, SeasonClickListener,
     EpisodeClickListener, MovieClickListener, ListAdapter.OnRemoveItemListener {
 
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.ListFragment";
+
   private static final String ARG_LIST_ID = "net.simonvt.cathode.ui.fragment.ListFragment.lidtId";
   private static final String ARG_LIST_NAME =
       "net.simonvt.cathode.ui.fragment.ListFragment.listName";

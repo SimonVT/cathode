@@ -57,6 +57,8 @@ public class UpcomingShowsFragment
     implements UpcomingAdapter.OnRemoveListener, ListDialog.Callback, LoaderCallbacks<SimpleCursor>,
     UpcomingAdapter.OnItemClickListener {
 
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.UpcomingShowsFragment";
+
   private enum SortBy {
     TITLE("title", Shows.SORT_TITLE),
     NEXT_EPISODE("nextEpisode", Shows.SORT_NEXT_EPISODE);

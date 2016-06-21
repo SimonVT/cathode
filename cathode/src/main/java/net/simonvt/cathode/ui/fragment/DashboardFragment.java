@@ -32,7 +32,6 @@ import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.ui.Fragments;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.adapter.CategoryAdapter;
@@ -52,7 +51,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
     void onDisplayMovie(long movieId, String title, String overview);
   }
 
-  public static final String TAG = "net.simonvt.cathode.ui.fragment.StartPageFragment";
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.DashboardFragment";
 
   private static final int LOADER_SHOWS_UPCOMING = 1;
   private static final int LOADER_SHOWS_WATCHLIST = 2;
@@ -114,12 +113,12 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
           switch (category) {
             case R.string.category_shows_upcoming:
               navigationListener.displayFragment(UpcomingShowsFragment.class,
-                  Fragments.SHOWS_UPCOMING);
+                  UpcomingShowsFragment.TAG);
               break;
 
             case R.string.category_shows_watchlist:
               navigationListener.displayFragment(ShowsWatchlistFragment.class,
-                  Fragments.SHOWS_WATCHLIST);
+                  ShowsWatchlistFragment.TAG);
               break;
 
             case R.string.category_shows_suggestions:
@@ -129,7 +128,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
             case R.string.category_movies_watchlist:
               navigationListener.displayFragment(MovieWatchlistFragment.class,
-                  Fragments.MOVIES_WATCHLIST);
+                  MovieWatchlistFragment.TAG);
               break;
 
             case R.string.category_movies_suggestions:

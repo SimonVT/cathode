@@ -39,6 +39,8 @@ import net.simonvt.cathode.ui.dialog.ListDialog;
 
 public class MovieCollectionFragment extends MoviesFragment implements ListDialog.Callback {
 
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.MovieCollectionFragment";
+
   private enum SortBy {
     TITLE("title", Movies.SORT_TITLE),
     COLLECTED("collected", Movies.SORT_COLLECTED);

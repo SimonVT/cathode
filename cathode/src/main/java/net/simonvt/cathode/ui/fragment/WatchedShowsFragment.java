@@ -39,6 +39,8 @@ import net.simonvt.cathode.ui.dialog.ListDialog;
 
 public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Callback {
 
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.WatchedShowsFragment";
+
   private enum SortBy {
     TITLE("title", Shows.SORT_TITLE),
     WATCHED("watched", Shows.SORT_WATCHED);

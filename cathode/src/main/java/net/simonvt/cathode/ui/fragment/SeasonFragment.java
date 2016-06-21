@@ -45,6 +45,8 @@ import timber.log.Timber;
 public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder>
     implements EpisodeClickListener {
 
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.SeasonFragment";
+
   private static final String ARG_SHOW_ID = "net.simonvt.cathode.ui.fragment.SeasonFragment.showId";
   private static final String ARG_SEASONID =
       "net.simonvt.cathode.ui.fragment.SeasonFragment.seasonId";

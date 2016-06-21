@@ -40,6 +40,8 @@ import net.simonvt.schematic.Cursors;
 
 public class SearchMovieFragment extends SearchFragment {
 
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.SearchMovieFragment";
+
   @Inject MovieSearchHandler searchHandler;
 
   private MoviesNavigationListener navigationListener;

@@ -39,6 +39,8 @@ import net.simonvt.cathode.ui.adapter.ListsAdapter;
 public class ListsFragment extends ToolbarSwipeRefreshRecyclerFragment<ListsAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<SimpleCursor>, ListsAdapter.OnListClickListener {
 
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.ListsFragment";
+
   static final String DIALOG_LIST_CREATE = "net.simonvt.cathode.ui.HomeActivity.createListFragment";
 
   @Inject JobManager jobManager;

@@ -38,6 +38,8 @@ import net.simonvt.cathode.ui.dialog.UpdateCommentDialog;
 
 public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHolder> {
 
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.CommentsFragment";
+
   private static final String ARG_ITEM_TYPE =
       "net.simonvt.cathode.ui.fragment.CommentsFragment.itemType";
   private static final String ARG_ITEM_ID =

@@ -62,6 +62,8 @@ import net.simonvt.schematic.Cursors;
 
 public class EpisodeFragment extends AppBarFragment {
 
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.EpisodeFragment";
+
   private static final String ARG_EPISODEID =
       "net.simonvt.cathode.ui.fragment.EpisodeFragment.episodeId";
   private static final String ARG_SHOW_TITLE =

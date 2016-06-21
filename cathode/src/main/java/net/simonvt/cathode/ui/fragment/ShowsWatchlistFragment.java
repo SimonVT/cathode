@@ -50,6 +50,8 @@ public class ShowsWatchlistFragment
     extends ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>
     implements ShowWatchlistAdapter.RemoveListener, ShowWatchlistAdapter.OnItemClickListener {
 
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.ShowsWatchlistFragment";
+
   @Inject JobManager jobManager;
 
   private ShowsNavigationListener navigationListener;

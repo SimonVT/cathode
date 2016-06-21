@@ -28,6 +28,8 @@ import net.simonvt.cathode.ui.Loaders;
 
 public class MovieWatchlistFragment extends MoviesFragment {
 
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.MovieWatchlistFragment";
+
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
     setEmptyText(R.string.empty_movie_watchlist);

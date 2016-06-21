@@ -89,6 +89,8 @@ import timber.log.Timber;
 
 public class ShowFragment extends RefreshableAppBarFragment {
 
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.ShowFragment";
+
   private static final String ARG_SHOWID = "net.simonvt.cathode.ui.fragment.ShowFragment.showId";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.fragment.ShowFragment.title";
   private static final String ARG_OVERVIEW =

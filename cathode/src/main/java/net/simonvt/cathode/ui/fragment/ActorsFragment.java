@@ -35,6 +35,8 @@ import net.simonvt.cathode.ui.adapter.ShowActorsAdapter;
 public class ActorsFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
     implements LoaderManager.LoaderCallbacks<SimpleCursor> {
 
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.ActorsFragment";
+
   private enum Type {
     SHOW,
     MOVIE;

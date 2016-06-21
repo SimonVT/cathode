@@ -69,6 +69,8 @@ import net.simonvt.schematic.Cursors;
 public class MovieFragment extends RefreshableAppBarFragment
     implements LoaderManager.LoaderCallbacks<SimpleCursor> {
 
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.MovieFragment";
+
   private static final String ARG_ID = "net.simonvt.cathode.ui.fragment.MovieFragment.id";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.fragment.MovieFragment.title";
   private static final String ARG_OVERVIEW =

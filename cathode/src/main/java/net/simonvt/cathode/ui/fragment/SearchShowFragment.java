@@ -41,6 +41,8 @@ import net.simonvt.schematic.Cursors;
 
 public class SearchShowFragment extends SearchFragment {
 
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.SearchShowFragment";
+
   @Inject ShowSearchHandler searchHandler;
 
   private ShowsNavigationListener navigationListener;

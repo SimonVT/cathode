@@ -44,6 +44,8 @@ import net.simonvt.cathode.widget.RoundTransformation;
 
 public class NavigationFragment extends AbsAdapterFragment {
 
+  public static final String TAG = "net.simonvt.cathode.ui.fragment.NavigationFragment";
+
   private static final String STATE_SELECTED_ID =
       "net.simonvt.cathode.ui.fragment.NavigationFragment.selectedId";
 

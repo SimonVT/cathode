@@ -102,45 +102,45 @@ public class HiddenItems extends BaseActivity
 
   @Override
   public void onDisplayShow(long showId, String title, String overview, LibraryType type) {
-    stack.push(ShowFragment.class, Fragments.SHOW,
+    stack.push(ShowFragment.class, ShowFragment.TAG,
         ShowFragment.getArgs(showId, title, overview, type));
   }
 
   @Override public void onDisplayEpisode(long episodeId, String showTitle) {
-    stack.push(EpisodeFragment.class, Fragments.EPISODE,
+    stack.push(EpisodeFragment.class, EpisodeFragment.TAG,
         EpisodeFragment.getArgs(episodeId, showTitle));
   }
 
   @Override
   public void onDisplaySeason(long showId, long seasonId, String showTitle, int seasonNumber,
       LibraryType type) {
-    stack.push(SeasonFragment.class, Fragments.SEASON,
+    stack.push(SeasonFragment.class, SeasonFragment.TAG,
         SeasonFragment.getArgs(showId, seasonId, showTitle, seasonNumber, type));
   }
 
   @Override public void onDisplayShowActors(long showId, String title) {
-    stack.push(ActorsFragment.class, Fragments.ACTORS, ActorsFragment.forShow(showId, title));
+    stack.push(ActorsFragment.class, ActorsFragment.TAG, ActorsFragment.forShow(showId, title));
   }
 
   @Override public void onDisplayMovie(long movieId, String title, String overview) {
-    stack.push(MovieFragment.class, Fragments.MOVIE,
+    stack.push(MovieFragment.class, MovieFragment.TAG,
         MovieFragment.getArgs(movieId, title, overview));
   }
 
   @Override public void onDisplayMovieActors(long movieId, String title) {
-    stack.push(ActorsFragment.class, Fragments.ACTORS, ActorsFragment.forMovie(movieId, title));
+    stack.push(ActorsFragment.class, ActorsFragment.TAG, ActorsFragment.forMovie(movieId, title));
   }
 
   @Override public void onShowList(long listId, String listName) {
-    stack.push(ListFragment.class, Fragments.LIST, ListFragment.getArgs(listId, listName));
+    stack.push(ListFragment.class, ListFragment.TAG, ListFragment.getArgs(listId, listName));
   }
 
   @Override public void onDisplayComments(ItemType type, long itemId) {
-    stack.push(CommentsFragment.class, Fragments.COMMENTS, CommentsFragment.getArgs(type, itemId));
+    stack.push(CommentsFragment.class, CommentsFragment.TAG, CommentsFragment.getArgs(type, itemId));
   }
 
   @Override public void onDisplayComment(long commentId) {
-    stack.push(CommentFragment.class, Fragments.COMMENT, CommentFragment.getArgs(commentId));
+    stack.push(CommentFragment.class, CommentFragment.TAG, CommentFragment.getArgs(commentId));
   }
 
   @Override public void displayFragment(Class clazz, String tag) {
