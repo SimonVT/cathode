@@ -21,7 +21,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -46,7 +45,6 @@ import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.event.CheckInFailedEvent;
 import net.simonvt.cathode.event.LogoutEvent;
-import net.simonvt.cathode.event.MessageEvent;
 import net.simonvt.cathode.event.RequestFailedEvent;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -409,14 +407,6 @@ public class HomeActivity extends BaseActivity
         }
       }
     });
-  }
-
-  @Subscribe public void onShowMessage(MessageEvent event) {
-    if (event.getMessage() != null) {
-      Snackbar.make(drawer, event.getMessage(), Snackbar.LENGTH_LONG).show();
-    } else {
-      Snackbar.make(drawer, event.getMessageRes(), Snackbar.LENGTH_LONG).show();
-    }
   }
 
   @Subscribe public void onRequestFailedEvent(RequestFailedEvent event) {

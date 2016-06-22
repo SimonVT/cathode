@@ -20,6 +20,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +31,6 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.service.CommentsService;
-import net.simonvt.cathode.event.MessageEvent;
 import net.simonvt.cathode.scheduler.CommentsTaskScheduler;
 import net.simonvt.cathode.util.TextUtils;
 
@@ -94,7 +94,8 @@ public class UpdateCommentDialog extends DialogFragment {
         if (TextUtils.wordCount(comment) >= CommentsService.MIN_WORD_COUNT) {
           commentsScheduler.updateComment(commentId, comment, spoiler);
         } else {
-          bus.post(new MessageEvent(R.string.comment_too_short));
+          Snackbar.make(getActivity().findViewById(android.R.id.content),
+              R.string.comment_too_short, Snackbar.LENGTH_LONG).show();
         }
       }
     });
