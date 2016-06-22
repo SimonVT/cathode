@@ -74,6 +74,9 @@ public class WatchedLoader extends SimpleLoaderBase<SimpleMergeCursor> {
                   + "=0 AND "
                   + EpisodeColumns.FIRST_AIRED
                   + " IS NOT NULL"
+                  + " AND "
+                  + EpisodeColumns.SEASON
+                  + ">0"
                   + " AND ("
                   + EpisodeColumns.SEASON
                   + ">"
