@@ -24,30 +24,51 @@ import net.simonvt.cathode.ui.fragment.AnticipatedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.BaseFragment;
 import net.simonvt.cathode.ui.fragment.MovieRecommendationsFragment;
 import net.simonvt.cathode.ui.fragment.TrendingMoviesFragment;
+import net.simonvt.cathode.util.ViewPagerUtils;
 
 public class MovieSuggestionsPagerAdapter extends FragmentPagerAdapter {
 
   private Context context;
 
   private MovieRecommendationsFragment recommendationsFragment;
-  private TrendingMoviesFragment trendingMoviesFragment;
-  private AnticipatedMoviesFragment anticipatedMoviesFragment;
+  private TrendingMoviesFragment trendingFragment;
+  private AnticipatedMoviesFragment anticipatedFragment;
 
   public MovieSuggestionsPagerAdapter(Context context, FragmentManager fm) {
     super(fm);
     this.context = context;
     recommendationsFragment = new MovieRecommendationsFragment();
-    trendingMoviesFragment = new TrendingMoviesFragment();
-    anticipatedMoviesFragment = new AnticipatedMoviesFragment();
+    trendingFragment = new TrendingMoviesFragment();
+    anticipatedFragment = new AnticipatedMoviesFragment();
+
+    recommendationsFragment =
+        (MovieRecommendationsFragment) fm.findFragmentByTag(makeFragmentName(0));
+    if (recommendationsFragment == null) {
+      recommendationsFragment = new MovieRecommendationsFragment();
+    }
+
+    trendingFragment = (TrendingMoviesFragment) fm.findFragmentByTag(makeFragmentName(1));
+    if (trendingFragment == null) {
+      trendingFragment = new TrendingMoviesFragment();
+    }
+
+    anticipatedFragment = (AnticipatedMoviesFragment) fm.findFragmentByTag(makeFragmentName(2));
+    if (anticipatedFragment == null) {
+      anticipatedFragment = new AnticipatedMoviesFragment();
+    }
+  }
+
+  private static String makeFragmentName(long id) {
+    return ViewPagerUtils.makeFragmentName(R.id.pager, id);
   }
 
   @Override public BaseFragment getItem(int position) {
     if (position == 0) {
       return recommendationsFragment;
     } else if (position == 1) {
-      return trendingMoviesFragment;
+      return trendingFragment;
     } else {
-      return anticipatedMoviesFragment;
+      return anticipatedFragment;
     }
   }
 
