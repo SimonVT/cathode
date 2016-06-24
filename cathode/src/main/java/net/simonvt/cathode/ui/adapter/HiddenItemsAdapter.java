@@ -167,16 +167,12 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
       showHolder.overflow.addItem(R.id.action_unhide, R.string.action_unhide);
       showHolder.overflow.setListener(new OverflowView.OverflowActionListener() {
         @Override public void onPopupShown() {
-          showHolder.setIsRecyclable(false);
         }
 
         @Override public void onPopupDismissed() {
-          showHolder.setIsRecyclable(true);
         }
 
         @Override public void onActionSelected(int action) {
-          showHolder.setIsRecyclable(true);
-
           final int position = showHolder.getAdapterPosition();
           if (position != RecyclerView.NO_ID) {
             final long id = showHolder.getItemId();
@@ -221,16 +217,12 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
       movieHolder.overflow.addItem(R.id.action_unhide, R.string.action_unhide);
       movieHolder.overflow.setListener(new OverflowView.OverflowActionListener() {
         @Override public void onPopupShown() {
-          movieHolder.setIsRecyclable(false);
         }
 
         @Override public void onPopupDismissed() {
-          movieHolder.setIsRecyclable(true);
         }
 
         @Override public void onActionSelected(int action) {
-          movieHolder.setIsRecyclable(true);
-
           final int position = movieHolder.getAdapterPosition();
           if (position != RecyclerView.NO_ID) {
             final long id = movieHolder.getItemId();
@@ -278,10 +270,8 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
   }
 
   @Override public void onViewRecycled(RecyclerView.ViewHolder holder) {
-    if (holder instanceof ShowViewHolder) {
-      ((ShowViewHolder) holder).overflow.dismiss();
-    } else if (holder instanceof MovieViewHolder) {
-      ((MovieViewHolder) holder).overflow.dismiss();
+    if (holder instanceof ListViewHolder) {
+      ((ListViewHolder) holder).overflow.dismiss();
     }
   }
 

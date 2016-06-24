@@ -110,16 +110,12 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
     holder.overflow.setListener(new OverflowView.OverflowActionListener() {
 
       @Override public void onPopupShown() {
-        holder.setIsRecyclable(false);
       }
 
       @Override public void onPopupDismissed() {
-        holder.setIsRecyclable(true);
       }
 
       @Override public void onActionSelected(int action) {
-        holder.setIsRecyclable(true);
-
         switch (action) {
           case R.id.action_watchlist_remove:
             showScheduler.setIsInWatchlist(holder.getItemId(), false);

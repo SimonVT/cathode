@@ -136,6 +136,10 @@ public class OverflowView extends ImageView {
     }
   }
 
+  public int itemCount() {
+    return items.size();
+  }
+
   public void removeItems() {
     items.clear();
     setWillNotDraw(true);
@@ -144,6 +148,13 @@ public class OverflowView extends ImageView {
   public void addItem(int action, int title) {
     items.add(new OverflowItem(action, title));
     setWillNotDraw(false);
+
+    if (popupMenu != null) {
+      popupMenu.getMenu().clear();
+      for (OverflowItem item : items) {
+        popupMenu.getMenu().add(0, item.action, 0, item.title);
+      }
+    }
   }
 
   public void setListener(OverflowActionListener listener) {

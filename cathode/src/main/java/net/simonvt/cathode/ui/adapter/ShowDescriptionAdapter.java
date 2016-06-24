@@ -92,15 +92,12 @@ public class ShowDescriptionAdapter
     holder.overflow.setListener(new OverflowView.OverflowActionListener() {
 
       @Override public void onPopupShown() {
-        holder.setIsRecyclable(false);
       }
 
       @Override public void onPopupDismissed() {
-        holder.setIsRecyclable(true);
       }
 
       @Override public void onActionSelected(int action) {
-        holder.setIsRecyclable(true);
         onOverflowActionSelected(holder.itemView, holder.getItemId(), action,
             holder.getAdapterPosition());
       }

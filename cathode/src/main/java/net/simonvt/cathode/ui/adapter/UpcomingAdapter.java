@@ -179,28 +179,29 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     vh.nextEpisode.setText(episodeText);
     vh.nextEpisode.setEnabled(episodeTitle != null);
 
-    vh.checkIn.removeItems();
-    if (watching) {
-      vh.checkIn.setImageResource(R.drawable.ic_checkin_cancel);
-      vh.checkIn.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
-    } else {
-      vh.checkIn.setImageResource(R.drawable.ic_checkin);
-      vh.checkIn.addItem(R.id.action_checkin, R.string.action_checkin);
-      vh.checkIn.addItem(R.id.action_watched, R.string.action_watched);
+    if (watching != vh.watching) {
+      vh.checkIn.dismiss();
+      vh.watching = watching;
+      vh.checkIn.removeItems();
+    }
+    if (vh.checkIn.itemCount() == 0) {
+      if (watching) {
+        vh.checkIn.setImageResource(R.drawable.ic_checkin_cancel);
+        vh.checkIn.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
+      } else {
+        vh.checkIn.setImageResource(R.drawable.ic_checkin);
+        vh.checkIn.addItem(R.id.action_checkin, R.string.action_checkin);
+        vh.checkIn.addItem(R.id.action_watched, R.string.action_watched);
+      }
     }
     vh.checkIn.setListener(new OverflowActionListener() {
-
       @Override public void onPopupShown() {
-        holder.setIsRecyclable(false);
       }
 
       @Override public void onPopupDismissed() {
-        holder.setIsRecyclable(true);
       }
 
       @Override public void onActionSelected(int action) {
-        holder.setIsRecyclable(true);
-
         switch (action) {
           case R.id.action_checkin_cancel:
             showScheduler.cancelCheckin();
@@ -242,6 +243,8 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     @BindView(R.id.firstAired) TimeStamp firstAired;
     @BindView(R.id.check_in) OverflowView checkIn;
     @BindView(R.id.poster) RemoteImageView poster;
+
+    boolean watching;
 
     ItemViewHolder(View v) {
       super(v);

@@ -165,15 +165,12 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
     holder.overflow.addItem(R.id.action_list_remove, R.string.action_list_remove);
     holder.overflow.setListener(new OverflowView.OverflowActionListener() {
       @Override public void onPopupShown() {
-        finalHolder.setIsRecyclable(false);
       }
 
       @Override public void onPopupDismissed() {
-        finalHolder.setIsRecyclable(true);
       }
 
       @Override public void onActionSelected(int action) {
-        finalHolder.setIsRecyclable(true);
         if (finalHolder.getAdapterPosition() == RecyclerView.NO_POSITION) {
           return;
         }

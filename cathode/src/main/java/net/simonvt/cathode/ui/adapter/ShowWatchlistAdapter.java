@@ -188,15 +188,12 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
       vh.overflow.setListener(new OverflowView.OverflowActionListener() {
 
         @Override public void onPopupShown() {
-          holder.setIsRecyclable(false);
         }
 
         @Override public void onPopupDismissed() {
-          holder.setIsRecyclable(true);
         }
 
         @Override public void onActionSelected(int action) {
-          holder.setIsRecyclable(true);
           switch (action) {
             case R.id.action_watchlist_remove:
               onRemoveListener.onRemoveItem(view, vh.getAdapterPosition(), id);
@@ -231,16 +228,12 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
       vh.overflow.setListener(new OverflowView.OverflowActionListener() {
 
         @Override public void onPopupShown() {
-          holder.setIsRecyclable(false);
         }
 
         @Override public void onPopupDismissed() {
-          holder.setIsRecyclable(true);
         }
 
         @Override public void onActionSelected(int action) {
-          holder.setIsRecyclable(true);
-
           switch (action) {
             case R.id.action_watched:
               episodeScheduler.setWatched(id, true);

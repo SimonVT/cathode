@@ -27,6 +27,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -205,6 +206,16 @@ public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewH
     return holder;
   }
 
+  @Override public void onViewRecycled(ViewHolder holder) {
+    super.onViewRecycled(holder);
+    if (holder.commentAnimator != null) {
+      holder.commentAnimator.cancel();
+    }
+    if (holder.spoilerAnimator != null) {
+      holder.spoilerAnimator.cancel();
+    }
+  }
+
   @Override protected void onBindViewHolder(final ViewHolder holder, Cursor cursor, int position) {
     final long commentId = Cursors.getLong(cursor, CommentColumns.ID);
     final String comment = Cursors.getString(cursor, CommentColumns.COMMENT);
@@ -271,16 +282,15 @@ public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewH
             revealedSpoilers.add(holder.getItemId());
             holder.isRevealed = true;
 
-            holder.setIsRecyclable(false);
             holder.commentText.setVisibility(View.VISIBLE);
             holder.commentText.setAlpha(0.0f);
-            holder.commentText.animate().alpha(1.0f);
-            holder.spoilerOverlay.animate().alpha(0.0f).withEndAction(new Runnable() {
-              @Override public void run() {
-                holder.setIsRecyclable(true);
-                holder.spoilerOverlay.setVisibility(View.GONE);
-              }
-            });
+            holder.commentAnimator = holder.commentText.animate().alpha(1.0f);
+            holder.spoilerAnimator =
+                holder.spoilerOverlay.animate().alpha(0.0f).withEndAction(new Runnable() {
+                  @Override public void run() {
+                    holder.spoilerOverlay.setVisibility(View.GONE);
+                  }
+                });
           }
         });
       } else {
@@ -307,6 +317,9 @@ public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewH
     @BindView(R.id.replies) @Nullable TextView replies;
     @BindView(R.id.spoiler) View spoiler;
     @BindView(R.id.spoilerOverlay) View spoilerOverlay;
+
+    ViewPropertyAnimator commentAnimator;
+    ViewPropertyAnimator spoilerAnimator;
 
     Drawable likeDrawable;
     Drawable repliesDrawable;
