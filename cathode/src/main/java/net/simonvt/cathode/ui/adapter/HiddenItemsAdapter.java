@@ -290,7 +290,7 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
   }
 
   @Override protected void onBindViewHolder(final RecyclerView.ViewHolder holder, Cursor cursor,
-      final int position) {
+      int position) {
     if (holder.getItemViewType() == TYPE_SHOW) {
       final ShowViewHolder vh = (ShowViewHolder) holder;
 

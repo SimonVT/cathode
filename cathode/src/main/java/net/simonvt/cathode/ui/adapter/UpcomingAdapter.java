@@ -142,7 +142,7 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
   }
 
   @Override protected void onBindViewHolder(final RecyclerView.ViewHolder holder, Cursor cursor,
-      final int position) {
+      int position) {
     final ItemViewHolder vh = (ItemViewHolder) holder;
 
     final long id = Cursors.getLong(cursor, ShowColumns.ID);
@@ -212,7 +212,7 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
 
           case R.id.action_watched:
             if (watchedCount + 1 >= airedCount) {
-              onRemoveListener.onRemove(vh.itemView, position, id);
+              onRemoveListener.onRemove(vh.itemView, vh.getAdapterPosition(), id);
             }
             episodeScheduler.setWatched(episodeId, true);
             break;

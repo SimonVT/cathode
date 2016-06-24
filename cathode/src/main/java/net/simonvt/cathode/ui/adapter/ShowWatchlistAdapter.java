@@ -166,7 +166,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
   @Override protected void onBindViewHolder(final RecyclerView.ViewHolder holder, Cursor cursor,
       final int position) {
     if (holder.getItemViewType() == TYPE_SHOW) {
-      ShowViewHolder vh = (ShowViewHolder) holder;
+      final ShowViewHolder vh = (ShowViewHolder) holder;
 
       final long id = Cursors.getLong(cursor, ShowColumns.ID);
       final boolean watched = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT) > 0;
@@ -199,7 +199,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
           holder.setIsRecyclable(true);
           switch (action) {
             case R.id.action_watchlist_remove:
-              onRemoveListener.onRemoveItem(view, position, id);
+              onRemoveListener.onRemoveItem(view, vh.getAdapterPosition(), id);
               showScheduler.setIsInWatchlist(id, false);
           }
         }
