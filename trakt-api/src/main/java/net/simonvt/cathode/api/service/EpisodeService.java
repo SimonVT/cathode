@@ -43,7 +43,7 @@ public interface EpisodeService {
    * <p>
    * Returns all top level comments for a movie. Most recent comments returned first.
    */
-  @GET("/movies/{id}/comments") Call<List<Comment>> getComments(@Path("id") long showId,
-      @Path("season") int season, @Path("episode") int episode, @Query("page") int page,
-      @Query("limit") int limit, @Query("extended") Extended extended);
+  @GET("/shows/{id}/seasons/{season}/episodes/{episode}/comments") Call<List<Comment>> getComments(
+      @Path("id") long showId, @Path("season") int season, @Path("episode") int episode,
+      @Query("page") int page, @Query("limit") int limit, @Query("extended") Extended extended);
 }

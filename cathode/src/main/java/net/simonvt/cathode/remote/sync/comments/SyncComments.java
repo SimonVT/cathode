@@ -133,7 +133,8 @@ public class SyncComments extends PagedCallJob<Comment> {
 
       case EPISODE:
         itemType = DatabaseContract.ItemType.EPISODE;
-        itemId = episodeHelper.getId(traktId);
+        final long showId = showHelper.getId(traktId);
+        itemId = episodeHelper.getId(showId, season, episode);
         break;
 
       case MOVIE:

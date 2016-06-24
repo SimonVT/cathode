@@ -39,6 +39,6 @@
       style="@style/Widget.InfoText"/>
 
   <include
-      layout="@layout/card_comments_episodes"
+      layout="@layout/card_comments"
       android:visibility="gone"/>
 </LinearLayout>

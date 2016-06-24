@@ -19,7 +19,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import javax.inject.Inject;
+import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TimeUtils;
+import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
@@ -32,6 +34,8 @@ import net.simonvt.cathode.remote.action.shows.RateEpisode;
 import net.simonvt.cathode.remote.action.shows.WatchedEpisode;
 import net.simonvt.cathode.remote.action.shows.WatchlistEpisode;
 import net.simonvt.cathode.remote.sync.SyncWatching;
+import net.simonvt.cathode.remote.sync.comments.SyncComments;
+import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.schematic.Cursors;
 
@@ -42,6 +46,26 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
 
   public EpisodeTaskScheduler(Context context) {
     super(context);
+  }
+
+  public void sync(final long episodeId, final Job.OnDoneListener onDoneListener) {
+    execute(new Runnable() {
+      @Override public void run() {
+        final long showId = episodeHelper.getShowId(episodeId);
+        final long traktId = showHelper.getTraktId(showId);
+        final int season = episodeHelper.getSeason(episodeId);
+        final int episode = episodeHelper.getNumber(episodeId);
+
+        queue(new SyncSeason(traktId, season));
+        Job syncComments = new SyncComments(ItemType.EPISODE, traktId, season, episode);
+        syncComments.registerOnDoneListener(onDoneListener);
+        queue(syncComments);
+
+        ContentValues values = new ContentValues();
+        values.put(EpisodeColumns.LAST_COMMENT_SYNC, System.currentTimeMillis());
+        context.getContentResolver().update(Episodes.withId(episodeId), values, null, null);
+      }
+    });
   }
 
   /**
@@ -211,6 +235,22 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
           queue(new RateEpisode(showTraktId, season, episode, rating, ratedAt));
         }
         c.close();
+      }
+    });
+  }
+
+  public void syncComments(final long episodeId) {
+    execute(new Runnable() {
+      @Override public void run() {
+        final long showId = episodeHelper.getShowId(episodeId);
+        final long traktId = showHelper.getTraktId(showId);
+        final int season = episodeHelper.getSeason(episodeId);
+        final int episode = episodeHelper.getNumber(episodeId);
+        queue(new SyncComments(ItemType.EPISODE, traktId, season, episode));
+
+        ContentValues values = new ContentValues();
+        values.put(EpisodeColumns.LAST_COMMENT_SYNC, System.currentTimeMillis());
+        context.getContentResolver().update(Episodes.withId(episodeId), values, null, null);
       }
     });
   }

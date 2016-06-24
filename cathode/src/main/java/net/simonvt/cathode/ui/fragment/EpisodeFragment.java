@@ -38,6 +38,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -47,9 +48,9 @@ import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
-import net.simonvt.cathode.ui.NavigationClickListener;
+import net.simonvt.cathode.settings.TraktTimestamps;
+import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.adapter.LinearCommentsAdapter;
-import net.simonvt.cathode.ui.dialog.AddCommentDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.ListsDialog;
@@ -59,7 +60,7 @@ import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.schematic.Cursors;
 
-public class EpisodeFragment extends AppBarFragment {
+public class EpisodeFragment extends RefreshableAppBarFragment {
 
   public static final String TAG = "net.simonvt.cathode.ui.fragment.EpisodeFragment";
 
@@ -121,7 +122,7 @@ public class EpisodeFragment extends AppBarFragment {
 
   private boolean checkedIn;
 
-  private NavigationClickListener navigationListener;
+  private NavigationListener navigationListener;
 
   public static Bundle getArgs(long episodeId, String showTitle) {
     Bundle args = new Bundle();
@@ -132,11 +133,7 @@ public class EpisodeFragment extends AppBarFragment {
 
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
-    try {
-      navigationListener = (NavigationClickListener) activity;
-    } catch (ClassCastException e) {
-      throw new ClassCastException(activity.toString() + " must implement NavigationClickListener");
-    }
+    navigationListener = (NavigationListener) activity;
   }
 
   @Override public void onCreate(Bundle inState) {
@@ -176,14 +173,23 @@ public class EpisodeFragment extends AppBarFragment {
     super.onViewCreated(view, inState);
   }
 
+  private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
+    @Override public void onDone(Job job) {
+      setRefreshing(false);
+    }
+  };
+
+  @Override public void onRefresh() {
+    episodeScheduler.sync(episodeId, onDoneListener);
+  }
+
   @OnClick(R.id.rating) void onRatingClick() {
     RatingDialog.newInstance(RatingDialog.Type.EPISODE, episodeId, currentRating)
         .show(getFragmentManager(), DIALOG_RATING);
   }
 
   @OnClick(R.id.commentsHeader) void onShowComments() {
-    AddCommentDialog.newInstance(ItemType.EPISODE, episodeId)
-        .show(getFragmentManager(), DIALOG_COMMENT_ADD);
+    navigationListener.onDisplayComments(ItemType.EPISODE, episodeId);
   }
 
   @Override public void createMenu(Toolbar toolbar) {
@@ -302,6 +308,11 @@ public class EpisodeFragment extends AppBarFragment {
       final float ratingAll = Cursors.getFloat(cursor, EpisodeColumns.RATING);
       rating.setValue(ratingAll);
 
+      final long lastCommentSync = Cursors.getLong(cursor, EpisodeColumns.LAST_COMMENT_SYNC);
+      if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {
+        episodeScheduler.syncComments(episodeId);
+      }
+
       invalidateMenu();
     }
   }
@@ -316,14 +327,14 @@ public class EpisodeFragment extends AppBarFragment {
       EpisodeColumns.FIRST_AIRED, EpisodeColumns.WATCHED, EpisodeColumns.IN_COLLECTION,
       EpisodeColumns.IN_WATCHLIST, EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN,
       EpisodeColumns.USER_RATING, EpisodeColumns.RATING, EpisodeColumns.SEASON,
-      EpisodeColumns.EPISODE,
+      EpisodeColumns.EPISODE, EpisodeColumns.LAST_COMMENT_SYNC,
   };
 
   private LoaderManager.LoaderCallbacks<SimpleCursor> episodeCallbacks =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), Episodes.withId(episodeId), EPISODE_PROJECTION,
-              null, null, null);
+          return new SimpleCursorLoader(getActivity(), Episodes.withId(episodeId),
+              EPISODE_PROJECTION, null, null, null);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
@@ -351,7 +362,9 @@ public class EpisodeFragment extends AppBarFragment {
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
           return new SimpleCursorLoader(getContext(), Comments.fromEpisode(episodeId),
-              COMMENTS_PROJECTION, CommentColumns.IS_USER_COMMENT + "=1", null, null);
+              COMMENTS_PROJECTION,
+              CommentColumns.IS_USER_COMMENT + "=0 AND " + CommentColumns.SPOILER + "=0", null,
+              CommentColumns.LIKES + " DESC LIMIT 3");
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

@@ -24,6 +24,7 @@ import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
@@ -42,17 +43,38 @@ public class CommentsTaskScheduler extends BaseTaskScheduler {
   @Inject ShowDatabaseHelper showHelper;
   @Inject SeasonDatabaseHelper seasonHelper;
   @Inject EpisodeDatabaseHelper episodeHelper;
+  @Inject MovieDatabaseHelper movieHelper;
 
   public CommentsTaskScheduler(Context context) {
     super(context);
   }
 
-  public void comment(final ItemType type, final long showId, final String comment,
+  public void comment(final ItemType type, final long itemId, final String comment,
       final boolean spoiler) {
     execute(new Runnable() {
       @Override public void run() {
-        final long traktId = showHelper.getTraktId(showId);
-        queue(new AddCommentJob(type, traktId, comment, spoiler));
+        switch (type) {
+          case SHOW: {
+            final long traktId = showHelper.getTraktId(itemId);
+            queue(new AddCommentJob(type, traktId, comment, spoiler));
+            break;
+          }
+
+          case EPISODE: {
+            final long traktId = episodeHelper.getTraktId(itemId);
+            queue(new AddCommentJob(type, traktId, comment, spoiler));
+            break;
+          }
+
+          case MOVIE: {
+            final long traktId = movieHelper.getTraktId(itemId);
+            queue(new AddCommentJob(type, traktId, comment, spoiler));
+            break;
+          }
+
+          default:
+            throw new RuntimeException("Unknown type " + type.toString());
+        }
       }
     });
   }

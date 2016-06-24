@@ -218,6 +218,8 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String STARTED_AT = "startedAt";
     @DataType(INTEGER) @DefaultValue("0") String EXPIRES_AT = "expiresAt";
 
+    @DataType(INTEGER) @DefaultValue("0") String LAST_COMMENT_SYNC = "lastCommentSync";
+
     @DataType(INTEGER) @DefaultValue("0") String NEEDS_SYNC = "needsSync";
 
     String SHOW_TITLE = "episodeShowTitle";

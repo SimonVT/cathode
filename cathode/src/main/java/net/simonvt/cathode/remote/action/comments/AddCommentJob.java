@@ -20,6 +20,7 @@ import android.content.ContentValues;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.CommentBody;
 import net.simonvt.cathode.api.entity.Comment;
+import net.simonvt.cathode.api.entity.Profile;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.CommentsService;
 import net.simonvt.cathode.provider.CommentsHelper;
@@ -30,6 +31,7 @@ import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
+import net.simonvt.cathode.provider.UserDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import retrofit2.Call;
@@ -42,6 +44,7 @@ public class AddCommentJob extends CallJob<Comment> {
   @Inject transient SeasonDatabaseHelper seasonHelper;
   @Inject transient EpisodeDatabaseHelper episodeHelper;
   @Inject transient MovieDatabaseHelper movieHelper;
+  @Inject transient UserDatabaseHelper userHelper;
 
   private ItemType type;
 
@@ -101,6 +104,11 @@ public class AddCommentJob extends CallJob<Comment> {
   @Override public void handleResponse(Comment comment) {
     ContentValues values = CommentsHelper.getValues(comment);
     values.put(CommentColumns.IS_USER_COMMENT, true);
+
+    Profile profile = comment.getUser();
+    UserDatabaseHelper.IdResult result = userHelper.updateOrCreate(profile);
+    final long profileId = result.id;
+    values.put(CommentColumns.USER_ID, profileId);
 
     switch (type) {
       case SHOW:

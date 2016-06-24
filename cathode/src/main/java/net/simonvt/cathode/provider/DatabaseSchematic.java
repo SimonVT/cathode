@@ -55,7 +55,7 @@ import net.simonvt.schematic.annotation.Table;
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 22;
+  static final int DATABASE_VERSION = 23;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -649,6 +649,11 @@ import net.simonvt.schematic.annotation.Table;
           DataType.Type.INTEGER, "-1");
       SqlUtils.createColumnIfNotExists(db, Tables.MOVIES, MovieColumns.ANTICIPATED_INDEX,
           DataType.Type.INTEGER, "-1");
+    }
+
+    if (oldVersion < 23) {
+      SqlUtils.createColumnIfNotExists(db, Tables.EPISODES, EpisodeColumns.LAST_COMMENT_SYNC,
+          DataType.Type.INTEGER, "0");
     }
   }
 }
