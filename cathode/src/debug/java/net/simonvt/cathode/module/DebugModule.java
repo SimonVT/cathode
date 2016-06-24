@@ -32,6 +32,7 @@ import net.simonvt.cathode.ui.BaseActivity;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
@@ -49,8 +50,13 @@ import timber.log.Timber;
     this.context = context;
   }
 
+  @Provides @Singleton HttpLoggingInterceptor provideLoggingInterceptor() {
+    return new HttpLoggingInterceptor();
+  }
+
   @Provides @Singleton @Trakt Retrofit provideRestAdapter(@Trakt OkHttpClient client,
-      @Trakt Gson gson, @HttpStatusCode final IntPreference httpStatusCode) {
+      @Trakt Gson gson, @HttpStatusCode final IntPreference httpStatusCode,
+      HttpLoggingInterceptor loggingInterceptor) {
     OkHttpClient.Builder builder = client.newBuilder();
     builder.networkInterceptors().add(new Interceptor() {
       @Override public Response intercept(Chain chain) throws IOException {
@@ -63,6 +69,7 @@ import timber.log.Timber;
         return response;
       }
     });
+    builder.interceptors().add(loggingInterceptor);
     return new Retrofit.Builder() //
         .baseUrl(TraktModule.API_URL)
         .client(builder.build())

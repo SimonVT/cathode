@@ -24,6 +24,7 @@ dependencies {
   compile parent.libraries.picasso
   compile parent.libraries.retrofit
   compile parent.libraries.okhttp
+  debugCompile parent.libraries.okhttpLogger
 
   compile parent.libraries.butterknife
   apt parent.libraries.butterknifeCompiler

@@ -57,6 +57,7 @@ import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
 import net.simonvt.cathode.settings.Settings;
+import okhttp3.logging.HttpLoggingInterceptor;
 import timber.log.Timber;
 
 @SuppressLint("SetTextI18n") public abstract class BaseActivity extends AppCompatActivity {
@@ -98,8 +99,8 @@ import timber.log.Timber;
       @Override public void onNothingSelected(AdapterView<?> parent) {
       }
     });
-    StartPage startPage = StartPage.fromValue(settings.getString(Settings.START_PAGE, null),
-        StartPage.DASHBOARD);
+    StartPage startPage =
+        StartPage.fromValue(settings.getString(Settings.START_PAGE, null), StartPage.DASHBOARD);
     debugViews.startPage.setSelection(startPageAdapter.getPositionForValue(startPage));
 
     debugViews.recreateActivity.setOnClickListener(new View.OnClickListener() {
@@ -145,6 +146,22 @@ import timber.log.Timber;
         settings.edit().putString(Settings.TRAKT_REFRESH_TOKEN, "invalid token").apply();
       }
     });
+
+    final EnumAdapter<HttpLoggingInterceptor.Level> logLevelAdapter =
+        new EnumAdapter(HttpLoggingInterceptor.Level.values());
+    debugViews.logLevel.setAdapter(logLevelAdapter);
+    debugViews.logLevel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+      @Override
+      public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+        HttpLoggingInterceptor.Level logLevel = logLevelAdapter.getItem(position);
+        injects.loggingInterceptor.setLevel(logLevel);
+      }
+
+      @Override public void onNothingSelected(AdapterView<?> adapterView) {
+      }
+    });
+    debugViews.logLevel.setSelection(
+        logLevelAdapter.getPositionForValue(injects.loggingInterceptor.getLevel()));
 
     int[] statusCodes = new int[] {
         200, 401, 404, 409, 412, 502,
@@ -267,6 +284,8 @@ import timber.log.Timber;
     @Inject JobManager jobManager;
 
     @Inject TraktSettings traktSettings;
+
+    @Inject HttpLoggingInterceptor loggingInterceptor;
   }
 
   static class DebugViews {
@@ -290,6 +309,8 @@ import timber.log.Timber;
     @BindView(R.id.debug_invalidateAccessToken) View invalidateAccessToken;
 
     @BindView(R.id.debug_invalidateRefreshToken) View invalidateRefreshToken;
+
+    @BindView(R.id.debug_logLevel) Spinner logLevel;
 
     @BindView(R.id.debug_networkStatusCode) Spinner httpStatusCode;
 
