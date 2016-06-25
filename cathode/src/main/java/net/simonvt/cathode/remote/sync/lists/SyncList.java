@@ -169,7 +169,7 @@ public class SyncList extends CallJob<List<ListItem>> {
           final long seasonId = seasonResult.id;
           if (seasonResult.didCreate) {
             if (didShowExist) {
-              queue(new SyncShow(showTraktId, true));
+              queue(new SyncShow(showTraktId));
             }
           }
 
@@ -209,7 +209,7 @@ public class SyncList extends CallJob<List<ListItem>> {
           final boolean didSeasonExist = !seasonResult.didCreate;
           if (seasonResult.didCreate) {
             if (didShowExist) {
-              queue(new SyncShow(showTraktId, true));
+              queue(new SyncShow(showTraktId));
             }
           }
 

@@ -156,7 +156,7 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
           if (seasonResult.didCreate) {
             didSeasonExist = false;
             if (didShowExist) {
-              queue(new SyncShow(traktId, true));
+              queue(new SyncShow(traktId));
             }
           }
           watchedSeason = new WatchedSeason(seasonNumber, seasonId);

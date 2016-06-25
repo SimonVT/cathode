@@ -83,7 +83,7 @@ public class SyncShowCollectedStatus extends CallJob<ShowProgress> {
       final boolean didSeasonExist = !seasonResult.didCreate;
       if (seasonResult.didCreate) {
         if (didShowExist) {
-          queue(new SyncShow(traktId, true));
+          queue(new SyncShow(traktId));
         }
       }
 

@@ -73,7 +73,7 @@ public class SyncSeason extends CallJob<List<Episode>> {
     final boolean seasonExisted = !seasonResult.didCreate;
     if (seasonResult.didCreate) {
       if (didShowExist) {
-        queue(new SyncShow(traktId, true));
+        queue(new SyncShow(traktId));
       }
     }
 

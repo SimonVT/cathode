@@ -90,7 +90,7 @@ public class SyncEpisodeWatchlist extends CallJob<List<WatchlistItem>> {
       final boolean didSeasonExist = !seasonResult.didCreate;
       if (seasonResult.didCreate) {
         if (didShowExist) {
-          queue(new SyncShow(showTraktId, true));
+          queue(new SyncShow(showTraktId));
         }
       }
 

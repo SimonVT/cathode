@@ -155,7 +155,7 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
           if (seasonResult.didCreate) {
             didSeasonExist = false;
             if (didShowExist) {
-              queue(new SyncShow(traktId, true));
+              queue(new SyncShow(traktId));
             }
           }
           collectedSeason = new CollectedSeason(seasonNumber, seasonId);

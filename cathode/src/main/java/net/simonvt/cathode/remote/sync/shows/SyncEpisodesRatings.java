@@ -93,7 +93,7 @@ public class SyncEpisodesRatings extends CallJob<List<RatingItem>> {
       final boolean didSeasonExist = !seasonResult.didCreate;
       if (seasonResult.didCreate) {
         if (didShowExist) {
-          queue(new SyncShow(showTraktId, true));
+          queue(new SyncShow(showTraktId));
         }
       }
 

@@ -88,7 +88,7 @@ public class SyncSeasonsRatings extends CallJob<List<RatingItem>> {
       final long seasonId = seasonResult.id;
       if (seasonResult.didCreate) {
         if (didShowExist) {
-          queue(new SyncShow(showTraktId, true));
+          queue(new SyncShow(showTraktId));
         }
       }
 
