@@ -102,7 +102,7 @@
 
     <service
         android:name="net.simonvt.cathode.service.DashClockService"
-        android:icon="@drawable/ic_action_search"
+        android:icon="@drawable/ic_dashclock_search"
         android:label="@string/dashclock_title"
         android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
       <intent-filter>

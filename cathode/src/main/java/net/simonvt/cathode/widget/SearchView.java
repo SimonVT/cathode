@@ -18,6 +18,7 @@ package net.simonvt.cathode.widget;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v7.view.CollapsibleActionView;
 import android.text.Editable;
 import android.text.Spannable;
@@ -86,7 +87,8 @@ public class SearchView extends LinearLayout implements CollapsibleActionView {
 
     SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
     ssb.append(getResources().getString(R.string.action_search));
-    Drawable searchIcon = getContext().getResources().getDrawable(R.drawable.ic_action_search);
+    Drawable searchIcon =
+        VectorDrawableCompat.create(getResources(), R.drawable.ic_action_search_24dp, null);
     int textSize = (int) (inputView.getTextSize() * 1.25);
     searchIcon.setBounds(0, 0, textSize, textSize);
     ssb.setSpan(new ImageSpan(searchIcon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

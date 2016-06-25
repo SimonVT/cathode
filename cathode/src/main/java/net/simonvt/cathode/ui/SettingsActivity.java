@@ -54,7 +54,7 @@ public class SettingsActivity extends BaseActivity {
 
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     toolbar.setTitle(R.string.title_settings);
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
     toolbar.setNavigationOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         finish();

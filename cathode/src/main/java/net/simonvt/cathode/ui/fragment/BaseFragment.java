@@ -93,9 +93,9 @@ public abstract class BaseFragment extends Fragment
       toolbar.setOnMenuItemClickListener(this);
 
       if (displaysMenuIcon()) {
-        toolbar.setNavigationIcon(R.drawable.ic_menu);
+        toolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
       } else {
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
       }
 
       createMenu();

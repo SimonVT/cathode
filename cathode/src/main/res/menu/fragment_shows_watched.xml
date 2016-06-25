@@ -19,7 +19,7 @@
 
   <item
       android:id="@+id/menu_sort"
-      android:icon="@drawable/ic_action_sort"
+      android:icon="@drawable/ic_action_sort_24dp"
       android:orderInCategory="30"
       android:title="@string/action_sort_by"
       app:showAsAction="ifRoom|withText"/>

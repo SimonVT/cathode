@@ -19,6 +19,8 @@
   <color name="darker_gray">#FFAAAAAA</color>
 
   <color name="nav_item">#FF757575</color>
+  <color name="action_item">#FFFFFFFF</color>
+  <color name="action_item_light">#FF757575</color>
 
   <color name="drawerBackground">#FFFFFFFF</color>
   <color name="contentBackground">#FFE5E5E5</color>

@@ -17,19 +17,19 @@ package net.simonvt.cathode.widget;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.R;
 
-public class OverflowView extends ImageView {
+public class OverflowView extends AppCompatImageView {
 
   public interface OverflowActionListener {
 

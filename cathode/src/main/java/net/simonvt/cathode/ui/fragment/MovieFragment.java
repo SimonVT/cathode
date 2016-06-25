@@ -220,12 +220,12 @@ public class MovieFragment extends RefreshableAppBarFragment
     if (loaded) {
       if (checkedIn) {
         menu.add(0, R.id.action_checkin_cancel, 1, R.string.action_checkin_cancel)
-            .setIcon(R.drawable.ic_action_cancel)
+            .setIcon(R.drawable.ic_action_cancel_24dp)
             .setShowAsActionFlags(
                 MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
       } else if (!watching) {
         menu.add(0, R.id.action_checkin, 2, R.string.action_checkin)
-            .setIcon(R.drawable.ic_action_checkin)
+            .setIcon(R.drawable.ic_action_checkin_24dp)
             .setShowAsActionFlags(
                 MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
       }
