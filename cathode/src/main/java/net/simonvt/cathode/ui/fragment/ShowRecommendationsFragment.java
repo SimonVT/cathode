@@ -214,7 +214,7 @@ public class ShowRecommendationsFragment
       cursorLoader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
 
       cursor.remove(id);
-      showsAdapter.notifyDataSetChanged();
+      showsAdapter.notifyChanged();
     }
   }
 

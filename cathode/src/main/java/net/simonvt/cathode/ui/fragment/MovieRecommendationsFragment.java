@@ -210,7 +210,7 @@ public class MovieRecommendationsFragment
       cursorLoader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
 
       cursor.remove(id);
-      movieAdapter.notifyDataSetChanged();
+      movieAdapter.notifyChanged();
     }
   }
 
