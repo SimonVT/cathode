@@ -532,10 +532,6 @@ public class ShowFragment extends RefreshableAppBarFragment {
     return super.onMenuItemClick(item);
   }
 
-  @Override public void onDestroyView() {
-    super.onDestroyView();
-  }
-
   private void updateShowView(final Cursor cursor) {
     if (cursor == null || !cursor.moveToFirst()) return;
 
@@ -878,8 +874,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private LoaderManager.LoaderCallbacks<SimpleCursor> genreCallbacks =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), ShowGenres.fromShow(showId), GENRES_PROJECTION,
-              null, null, ShowGenres.DEFAULT_SORT);
+          return new SimpleCursorLoader(getActivity(), ShowGenres.fromShow(showId),
+              GENRES_PROJECTION, null, null, ShowGenres.DEFAULT_SORT);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
@@ -976,8 +972,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private LoaderManager.LoaderCallbacks<SimpleCursor> userCommentsLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getContext(), Comments.fromShow(showId), COMMENTS_PROJECTION,
-              CommentColumns.IS_USER_COMMENT + "=1", null, null);
+          return new SimpleCursorLoader(getContext(), Comments.fromShow(showId),
+              COMMENTS_PROJECTION, CommentColumns.IS_USER_COMMENT + "=1", null, null);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
@@ -992,7 +988,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private LoaderManager.LoaderCallbacks<SimpleCursor> commentsLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getContext(), Comments.fromShow(showId), COMMENTS_PROJECTION,
+          return new SimpleCursorLoader(getContext(), Comments.fromShow(showId),
+              COMMENTS_PROJECTION,
               CommentColumns.IS_USER_COMMENT + "=0 AND " + CommentColumns.SPOILER + "=0", null,
               CommentColumns.LIKES + " DESC LIMIT 3");
         }

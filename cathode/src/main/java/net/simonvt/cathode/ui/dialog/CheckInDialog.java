@@ -43,7 +43,7 @@ public class CheckInDialog extends DialogFragment {
 
   public enum Type {
     SHOW,
-    MOVIE;
+    MOVIE
   }
 
   private static final String ARG_TYPE = "net.simonvt.cathode.ui.dialog.CheckInDialog.type";

@@ -26,7 +26,7 @@ public enum Privacy {
 
   private final String value;
 
-  private Privacy(String value) {
+  Privacy(String value) {
     this.value = value;
   }
 

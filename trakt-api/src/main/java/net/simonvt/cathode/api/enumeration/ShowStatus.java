@@ -27,7 +27,7 @@ public enum ShowStatus {
 
   private final String value;
 
-  private ShowStatus(String value) {
+  ShowStatus(String value) {
     this.value = value;
   }
 

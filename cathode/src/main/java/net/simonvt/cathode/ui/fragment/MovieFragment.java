@@ -464,9 +464,9 @@ public class MovieFragment extends RefreshableAppBarFragment
   private LoaderManager.LoaderCallbacks<SimpleCursor> actorsLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-          return new SimpleCursorLoader(getActivity(), ProviderSchematic.MovieCast.fromMovie(movieId),
-              CAST_PROJECTION, Tables.PEOPLE + "." + PersonColumns.NEEDS_SYNC + "=0", null,
-              null);
+          return new SimpleCursorLoader(getActivity(),
+              ProviderSchematic.MovieCast.fromMovie(movieId), CAST_PROJECTION,
+              Tables.PEOPLE + "." + PersonColumns.NEEDS_SYNC + "=0", null, null);
         }
 
         @Override
@@ -494,8 +494,8 @@ public class MovieFragment extends RefreshableAppBarFragment
   private LoaderManager.LoaderCallbacks<SimpleCursor> userCommentsLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getContext(), Comments.fromMovie(movieId), COMMENTS_PROJECTION,
-              CommentColumns.IS_USER_COMMENT + "=1", null, null);
+          return new SimpleCursorLoader(getContext(), Comments.fromMovie(movieId),
+              COMMENTS_PROJECTION, CommentColumns.IS_USER_COMMENT + "=1", null, null);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
@@ -510,7 +510,8 @@ public class MovieFragment extends RefreshableAppBarFragment
   private LoaderManager.LoaderCallbacks<SimpleCursor> commentsLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getContext(), Comments.fromMovie(movieId), COMMENTS_PROJECTION,
+          return new SimpleCursorLoader(getContext(), Comments.fromMovie(movieId),
+              COMMENTS_PROJECTION,
               CommentColumns.IS_USER_COMMENT + "=0 AND " + CommentColumns.SPOILER + "=0", null,
               CommentColumns.LIKES + " DESC LIMIT 3");
         }

@@ -187,8 +187,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
 
     final long episodeId = Cursors.getLong(cursor, COLUMN_EPISODE_ID);
     final String episodeTitle = Cursors.getString(cursor, EpisodeColumns.TITLE);
-    final long episodeFirstAired =
-        Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
+    final long episodeFirstAired = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
     final int episodeSeasonNumber = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episodeNumber = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
 

@@ -143,7 +143,8 @@ public class HiddenItems extends BaseActivity
   }
 
   @Override public void onDisplayComments(ItemType type, long itemId) {
-    stack.push(CommentsFragment.class, CommentsFragment.TAG, CommentsFragment.getArgs(type, itemId));
+    stack.push(CommentsFragment.class, CommentsFragment.TAG,
+        CommentsFragment.getArgs(type, itemId));
   }
 
   @Override public void onDisplayComment(long commentId) {
@@ -182,17 +183,12 @@ public class HiddenItems extends BaseActivity
       setTitle(R.string.preference_hidden_items);
       setEmptyText(R.string.preference_hidden_empty);
 
-      getLoaderManager().initLoader(LOADER_SHOWS_CALENDAR, null,
-          hiddenShowsCalendarCallback);
+      getLoaderManager().initLoader(LOADER_SHOWS_CALENDAR, null, hiddenShowsCalendarCallback);
       getLoaderManager().initLoader(LOADER_SHOWS_WATCHED, null, hiddenShowsWatchedCallback);
-      getLoaderManager().initLoader(LOADER_SHOWS_COLLECTED, null,
-          hiddenShowsCollectedCallback);
-      getLoaderManager().initLoader(LOADER_MOVIES_CALENDAR, null,
-          hiddenMoviesCalendarCallback);
-      getLoaderManager().initLoader(LOADER_MOVIES_WATCHED, null,
-          hiddenMoviesWatchedCallback);
-      getLoaderManager().initLoader(LOADER_MOVIES_COLLECTED, null,
-          hiddenMoviesCollectedCallback);
+      getLoaderManager().initLoader(LOADER_SHOWS_COLLECTED, null, hiddenShowsCollectedCallback);
+      getLoaderManager().initLoader(LOADER_MOVIES_CALENDAR, null, hiddenMoviesCalendarCallback);
+      getLoaderManager().initLoader(LOADER_MOVIES_WATCHED, null, hiddenMoviesWatchedCallback);
+      getLoaderManager().initLoader(LOADER_MOVIES_COLLECTED, null, hiddenMoviesCollectedCallback);
     }
 
     @Override protected int getColumnCount() {

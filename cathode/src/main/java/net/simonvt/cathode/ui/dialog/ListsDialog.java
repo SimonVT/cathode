@@ -252,8 +252,8 @@ public class ListsDialog extends DialogFragment {
   private LoaderManager.LoaderCallbacks<SimpleCursor> listsLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle bundle) {
-          return new SimpleCursorLoader(getActivity(), ProviderSchematic.Lists.LISTS, LISTS_PROJECTION,
-              null, null, null);
+          return new SimpleCursorLoader(getActivity(), ProviderSchematic.Lists.LISTS,
+              LISTS_PROJECTION, null, null, null);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

@@ -53,6 +53,7 @@ public class OkHttpUtils {
 
       size = available / 50;
     } catch (IllegalArgumentException e) {
+      // Ignore
     }
 
     return Math.max(Math.min(size, CACHE_SIZE_MAX), CACHE_SIZE_MIN);

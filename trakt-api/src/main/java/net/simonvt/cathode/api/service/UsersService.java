@@ -179,6 +179,7 @@ public interface UsersService {
    * <b>Pagination</b>
    * <p>
    * Get items a user likes. This will return an array of standard media objects.
+   *
    * @param itemTypes One of {@link ItemTypes#COMMENTS} and {@link ItemTypes#LISTS}.
    */
   @GET("/users/likes/{type}") Call<List<Like>> getLikes(@Path("type") ItemTypes itemTypes,

@@ -29,8 +29,4 @@ public abstract class ToolbarSwipeRefreshRecyclerFragment<T extends RecyclerView
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_toolbar_swiperefresh_recyclerview, container, false);
   }
-
-  @Override public void onViewCreated(View view, Bundle inState) {
-    super.onViewCreated(view, inState);
-  }
 }

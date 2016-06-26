@@ -1,7 +1,6 @@
 package net.simonvt.cathode.api;
 
 import android.content.Context;
-import android.text.format.DateUtils;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -54,14 +53,11 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-@Module(library = true, complete = false) public class TraktModule {
+@Module(library = true, complete = false)
+public class TraktModule {
 
   //static final String API_URL = "https://api.trakt.tv";
   public static final String API_URL = "https://api-v2launch.trakt.tv";
-
-  private static final int MAX_RETRIES = 2;
-
-  private static final long RETRY_DELAY = 5 * DateUtils.SECOND_IN_MILLIS;
 
   @Provides @Singleton @Trakt Retrofit provideRestAdapter(@Trakt OkHttpClient client,
       @Trakt Gson gson) {
@@ -72,8 +68,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
         .build();
   }
 
-  @Provides @Singleton @Trakt OkHttpClient provideOkHttpClient(Context context, TraktSettings settings,
-      @Trakt List<Interceptor> interceptors) {
+  @Provides @Singleton @Trakt OkHttpClient provideOkHttpClient(Context context,
+      TraktSettings settings, @Trakt List<Interceptor> interceptors) {
     OkHttpClient.Builder builder = new OkHttpClient.Builder();
     builder.connectTimeout(15, TimeUnit.SECONDS);
     builder.readTimeout(20, TimeUnit.SECONDS);

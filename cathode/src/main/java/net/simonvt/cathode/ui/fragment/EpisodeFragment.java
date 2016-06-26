@@ -169,10 +169,6 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
     return inflater.inflate(R.layout.fragment_episode, container, false);
   }
 
-  @Override public void onViewCreated(View view, Bundle inState) {
-    super.onViewCreated(view, inState);
-  }
-
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
     @Override public void onDone(Job job) {
       setRefreshing(false);

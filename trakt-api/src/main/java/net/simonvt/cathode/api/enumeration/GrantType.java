@@ -26,7 +26,7 @@ public enum GrantType {
 
   private final String value;
 
-  private GrantType(String value) {
+  GrantType(String value) {
     this.value = value;
   }
 

@@ -237,8 +237,8 @@ public class ShowRecommendationsFragment
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
     final Uri contentUri = Shows.SHOWS_RECOMMENDED;
-    return new SimpleCursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION, null,
-        null, sortBy.getSortOrder());
+    return new SimpleCursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION,
+        null, null, sortBy.getSortOrder());
   }
 
   @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

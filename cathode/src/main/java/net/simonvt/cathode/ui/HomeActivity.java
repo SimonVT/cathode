@@ -487,7 +487,8 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override public void onDisplayComments(ItemType type, long itemId) {
-    stack.push(CommentsFragment.class, CommentsFragment.TAG, CommentsFragment.getArgs(type, itemId));
+    stack.push(CommentsFragment.class, CommentsFragment.TAG,
+        CommentsFragment.getArgs(type, itemId));
   }
 
   @Override public void onDisplayComment(long commentId) {

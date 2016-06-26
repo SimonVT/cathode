@@ -38,7 +38,7 @@ public class ActorsFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
 
   private enum Type {
     SHOW,
-    MOVIE;
+    MOVIE
   }
 
   private static final String ARG_TYPE = "net.simonvt.cathode.ui.fragment.ActorsFragment.type";

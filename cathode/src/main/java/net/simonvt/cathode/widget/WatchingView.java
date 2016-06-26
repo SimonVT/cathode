@@ -58,9 +58,9 @@ public class WatchingView extends ViewGroup {
     void onAnimatingOut(WatchingView view);
   }
 
-  public static enum Type {
+  public enum Type {
     SHOW,
-    MOVIE;
+    MOVIE
   }
 
   private static final int EXPAND_DURATION = 300;

@@ -163,8 +163,8 @@ public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    return new SimpleCursorLoader(getActivity(), Movies.MOVIES_WATCHED, MoviesAdapter.PROJECTION, null,
-        null, sortBy.getSortOrder());
+    return new SimpleCursorLoader(getActivity(), Movies.MOVIES_WATCHED, MoviesAdapter.PROJECTION,
+        null, null, sortBy.getSortOrder());
   }
 
   @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

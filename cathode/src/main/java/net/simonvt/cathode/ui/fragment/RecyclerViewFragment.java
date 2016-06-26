@@ -120,10 +120,6 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
     }
   }
 
-  @Override public void onDestroyView() {
-    super.onDestroyView();
-  }
-
   @Override public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
     Animation animation = null;
     if (nextAnim != 0) {

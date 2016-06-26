@@ -32,7 +32,8 @@ import net.simonvt.cathode.ui.fragment.DashboardFragment;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.schematic.Cursors;
 
-public class DashboardMoviesAdapter extends RecyclerCursorAdapter<DashboardMoviesAdapter.ViewHolder> {
+public class DashboardMoviesAdapter
+    extends RecyclerCursorAdapter<DashboardMoviesAdapter.ViewHolder> {
 
   public static final String[] PROJECTION = new String[] {
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.ID,

@@ -163,7 +163,7 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    return new SimpleCursorLoader(getActivity(), Shows.SHOWS_WATCHED, ShowsWithNextAdapter.PROJECTION,
-        null, null, sortBy.getSortOrder());
+    return new SimpleCursorLoader(getActivity(), Shows.SHOWS_WATCHED,
+        ShowsWithNextAdapter.PROJECTION, null, null, sortBy.getSortOrder());
   }
 }

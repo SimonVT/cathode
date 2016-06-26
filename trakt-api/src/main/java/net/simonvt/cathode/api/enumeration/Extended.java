@@ -26,7 +26,7 @@ public enum Extended {
 
   private final String value;
 
-  private Extended(String value) {
+  Extended(String value) {
     this.value = value;
   }
 

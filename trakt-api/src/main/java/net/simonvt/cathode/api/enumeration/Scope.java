@@ -24,7 +24,7 @@ public enum Scope {
 
   private final String value;
 
-  private Scope(String value) {
+  Scope(String value) {
     this.value = value;
   }
 

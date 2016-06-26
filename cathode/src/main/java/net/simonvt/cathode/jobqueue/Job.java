@@ -130,7 +130,7 @@ public abstract class Job {
       onDoneRefs = new ArrayList<>();
     }
 
-    onDoneRefs.add(new WeakReference<OnDoneListener>(listener));
+    onDoneRefs.add(new WeakReference<>(listener));
   }
 
   public List<WeakReference<OnDoneListener>> getOnDoneRefs() {

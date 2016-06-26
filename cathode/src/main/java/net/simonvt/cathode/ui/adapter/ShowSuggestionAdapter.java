@@ -79,11 +79,9 @@ public class ShowSuggestionAdapter extends SuggestionsAdapter {
       previousQueries.close();
 
       Cursor allShows = context.getContentResolver().query(Shows.SHOWS, new String[] {
-          ShowColumns.ID, ShowColumns.TITLE, ShowColumns.OVERVIEW
-      }, "(" + ShowColumns.IN_COLLECTION_COUNT
-          + ">0 OR "
-          + ShowColumns.WATCHED_COUNT
-          + ">0)", null, null);
+              ShowColumns.ID, ShowColumns.TITLE, ShowColumns.OVERVIEW
+          }, "(" + ShowColumns.IN_COLLECTION_COUNT + ">0 OR " + ShowColumns.WATCHED_COUNT + ">0)", null,
+          null);
 
       final int titleIndex = allShows.getColumnIndex(ShowColumns.TITLE);
       final int overviewIndex = allShows.getColumnIndex(ShowColumns.OVERVIEW);
