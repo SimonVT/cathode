@@ -46,7 +46,7 @@ public class WatchedLoader extends SimpleLoaderBase<SimpleMergeCursor> {
         ShowColumns.WATCHING,
     }, null, null, null);
     show.moveToFirst();
-    final boolean watching = show.getInt(0) == 1;
+    final boolean watching = Cursors.getBoolean(show, ShowColumns.WATCHING);
     show.close();
 
     Cursor lastWatched = null;

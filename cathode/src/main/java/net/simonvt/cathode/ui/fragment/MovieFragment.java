@@ -314,11 +314,11 @@ public class MovieFragment extends RefreshableAppBarFragment
     rating.setValue(ratingAll);
 
     movieOverview = Cursors.getString(cursor, MovieColumns.OVERVIEW);
-    watched = Cursors.getInt(cursor, MovieColumns.WATCHED) == 1;
-    collected = Cursors.getInt(cursor, MovieColumns.IN_COLLECTION) == 1;
-    inWatchlist = Cursors.getInt(cursor, MovieColumns.IN_WATCHLIST) == 1;
-    watching = Cursors.getInt(cursor, MovieColumns.WATCHING) == 1;
-    checkedIn = Cursors.getInt(cursor, MovieColumns.CHECKED_IN) == 1;
+    watched = Cursors.getBoolean(cursor, MovieColumns.WATCHED);
+    collected = Cursors.getBoolean(cursor, MovieColumns.IN_COLLECTION);
+    inWatchlist = Cursors.getBoolean(cursor, MovieColumns.IN_WATCHLIST);
+    watching = Cursors.getBoolean(cursor, MovieColumns.WATCHING);
+    checkedIn = Cursors.getBoolean(cursor, MovieColumns.CHECKED_IN);
 
     isWatched.setVisibility(watched ? View.VISIBLE : View.GONE);
     collection.setVisibility(collected ? View.VISIBLE : View.GONE);

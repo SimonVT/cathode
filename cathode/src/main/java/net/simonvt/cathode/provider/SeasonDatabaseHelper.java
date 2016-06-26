@@ -175,7 +175,7 @@ public final class SeasonDatabaseHelper {
     cv.put(EpisodeColumns.WATCHED, watched);
 
     while (episodes.moveToNext()) {
-      final boolean isWatched = Cursors.getInt(episodes, EpisodeColumns.WATCHED) == 1;
+      final boolean isWatched = Cursors.getBoolean(episodes, EpisodeColumns.WATCHED);
       if (isWatched != watched) {
         final long episodeId = Cursors.getLong(episodes, EpisodeColumns.ID);
         resolver.update(ProviderSchematic.Episodes.withId(episodeId), cv, null, null);
@@ -216,7 +216,7 @@ public final class SeasonDatabaseHelper {
     cv.put(EpisodeColumns.COLLECTED_AT, collectedAt);
 
     while (episodes.moveToNext()) {
-      final boolean isCollected = Cursors.getInt(episodes, EpisodeColumns.IN_COLLECTION) == 1;
+      final boolean isCollected = Cursors.getBoolean(episodes, EpisodeColumns.IN_COLLECTION);
       if (isCollected != collected) {
         final long episodeId = Cursors.getLong(episodes, EpisodeColumns.ID);
         resolver.update(ProviderSchematic.Episodes.withId(episodeId), cv, null, null);

@@ -63,11 +63,11 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
 
   @Override protected void onBindViewHolder(T holder, Cursor cursor, int position) {
     final String title = Cursors.getString(cursor, MovieColumns.TITLE);
-    final boolean watched = Cursors.getInt(cursor, MovieColumns.WATCHED) == 1;
-    final boolean collected = Cursors.getInt(cursor, MovieColumns.IN_COLLECTION) == 1;
-    final boolean inWatchlist = Cursors.getInt(cursor, MovieColumns.IN_WATCHLIST) == 1;
-    final boolean watching = Cursors.getInt(cursor, MovieColumns.WATCHING) == 1;
-    final boolean checkedIn = Cursors.getInt(cursor, MovieColumns.CHECKED_IN) == 1;
+    final boolean watched = Cursors.getBoolean(cursor, MovieColumns.WATCHED);
+    final boolean collected = Cursors.getBoolean(cursor, MovieColumns.IN_COLLECTION);
+    final boolean inWatchlist = Cursors.getBoolean(cursor, MovieColumns.IN_WATCHLIST);
+    final boolean watching = Cursors.getBoolean(cursor, MovieColumns.WATCHING);
+    final boolean checkedIn = Cursors.getBoolean(cursor, MovieColumns.CHECKED_IN);
 
     holder.poster.setImage(Cursors.getString(cursor, MovieColumns.POSTER));
     holder.title.setText(title);

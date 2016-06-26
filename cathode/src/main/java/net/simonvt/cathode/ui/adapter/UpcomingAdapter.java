@@ -149,7 +149,7 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
 
     final String showPosterUrl = Cursors.getString(cursor, ShowColumns.POSTER);
     final String showTitle = Cursors.getString(cursor, ShowColumns.TITLE);
-    final boolean watching = Cursors.getInt(cursor, ShowColumns.WATCHING) == 1;
+    final boolean watching = Cursors.getBoolean(cursor, ShowColumns.WATCHING);
 
     final int airedCount = Cursors.getInt(cursor, ShowColumns.AIRED_COUNT);
     final int watchedCount = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT);

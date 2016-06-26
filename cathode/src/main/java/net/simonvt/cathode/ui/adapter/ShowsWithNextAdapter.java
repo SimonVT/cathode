@@ -169,7 +169,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
     final String showPosterUrl = Cursors.getString(cursor, ShowColumns.POSTER);
     final String showTitle = Cursors.getString(cursor, ShowColumns.TITLE);
     final String showStatus = Cursors.getString(cursor, ShowColumns.STATUS);
-    final boolean watching = Cursors.getInt(cursor, ShowColumns.WATCHING) == 1;
+    final boolean watching = Cursors.getBoolean(cursor, ShowColumns.WATCHING);
 
     final int showAiredCount = Cursors.getInt(cursor, ShowColumns.AIRED_COUNT);
     int count = 0;

@@ -96,7 +96,7 @@ public class DashboardUpcomingShowsAdapter
   @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
     final String poster = Cursors.getString(cursor, ShowColumns.POSTER);
     final String title = Cursors.getString(cursor, ShowColumns.TITLE);
-    final boolean watching = Cursors.getInt(cursor, ShowColumns.WATCHING) == 1;
+    final boolean watching = Cursors.getBoolean(cursor, ShowColumns.WATCHING);
     final String episodeTitle = Cursors.getString(cursor, EpisodeColumns.TITLE);
     final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);

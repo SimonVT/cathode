@@ -179,7 +179,7 @@ public final class ShowDatabaseHelper {
       }, null, null, null);
 
       if (c.moveToFirst()) {
-        final boolean inWatchlist = Cursors.getInt(c, ShowColumns.IN_WATCHLIST) == 1;
+        final boolean inWatchlist = Cursors.getBoolean(c, ShowColumns.IN_WATCHLIST);
         final long fullSyncRequested = Cursors.getLong(c, ShowColumns.FULL_SYNC_REQUESTED);
         final int watchedCount = Cursors.getInt(c, ShowColumns.WATCHED_COUNT);
         final int collectionCount = Cursors.getInt(c, ShowColumns.IN_COLLECTION_COUNT);

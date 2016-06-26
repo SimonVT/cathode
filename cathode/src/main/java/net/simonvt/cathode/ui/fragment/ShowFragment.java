@@ -553,7 +553,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       setBackdrop(fanartUrl, true);
     }
     showOverview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
-    inWatchlist = Cursors.getInt(cursor, ShowColumns.IN_WATCHLIST) == 1;
+    inWatchlist = Cursors.getBoolean(cursor, ShowColumns.IN_WATCHLIST);
     final int inCollectionCount = Cursors.getInt(cursor, ShowColumns.IN_COLLECTION_COUNT);
     final int watchedCount = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT);
 
@@ -740,8 +740,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
       String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
 
-      final boolean watching = Cursors.getInt(cursor, EpisodeColumns.WATCHING) == 1;
-      final boolean checkedIn = Cursors.getInt(cursor, EpisodeColumns.CHECKED_IN) == 1;
+      final boolean watching = Cursors.getBoolean(cursor, EpisodeColumns.WATCHING);
+      final boolean checkedIn = Cursors.getBoolean(cursor, EpisodeColumns.CHECKED_IN);
 
       toWatchHolder.episodeOverflow.removeItems();
       if (checkedIn) {

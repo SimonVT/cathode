@@ -517,7 +517,7 @@ public class HomeActivity extends BaseActivity
       final long episodeId = Cursors.getLong(watchingShow, "episodeId");
       final String episodeTitle = Cursors.getString(watchingShow, EpisodeColumns.TITLE);
       final int episodeNumber = Cursors.getInt(watchingShow, EpisodeColumns.EPISODE);
-      final boolean checkedIn = Cursors.getInt(watchingShow, EpisodeColumns.CHECKED_IN) == 1;
+      final boolean checkedIn = Cursors.getBoolean(watchingShow, EpisodeColumns.CHECKED_IN);
       final long startTime = Cursors.getLong(watchingShow, EpisodeColumns.STARTED_AT);
       final long endTime = Cursors.getLong(watchingShow, EpisodeColumns.EXPIRES_AT);
 

@@ -95,11 +95,11 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
     String title = Cursors.getString(cursor, EpisodeColumns.TITLE);
     final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-    final boolean watched = Cursors.getInt(cursor, EpisodeColumns.WATCHED) == 1;
-    final boolean inCollection = Cursors.getInt(cursor, EpisodeColumns.IN_COLLECTION) == 1;
-    final boolean inWatchlist = Cursors.getInt(cursor, EpisodeColumns.IN_WATCHLIST) == 1;
-    final boolean watching = Cursors.getInt(cursor, EpisodeColumns.WATCHING) == 1;
-    final boolean checkedIn = Cursors.getInt(cursor, EpisodeColumns.CHECKED_IN) == 1;
+    final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
+    final boolean inCollection = Cursors.getBoolean(cursor, EpisodeColumns.IN_COLLECTION);
+    final boolean inWatchlist = Cursors.getBoolean(cursor, EpisodeColumns.IN_WATCHLIST);
+    final boolean watching = Cursors.getBoolean(cursor, EpisodeColumns.WATCHING);
+    final boolean checkedIn = Cursors.getBoolean(cursor, EpisodeColumns.CHECKED_IN);
     final long firstAired = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
     final String screen = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
 

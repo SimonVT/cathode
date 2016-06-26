@@ -84,11 +84,9 @@ public class MovieSearchAdapter extends BaseMoviesAdapter<MovieSearchAdapter.Vie
   @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
     super.onBindViewHolder(holder, cursor, position);
 
-    final boolean watched = Cursors.getInt(cursor, MovieColumns.WATCHED) == 1;
-    final boolean inCollection =
-        Cursors.getInt(cursor, MovieColumns.IN_COLLECTION) == 1;
-    final boolean inWatchlist =
-        Cursors.getInt(cursor, MovieColumns.IN_WATCHLIST) == 1;
+    final boolean watched = Cursors.getBoolean(cursor, MovieColumns.WATCHED);
+    final boolean inCollection = Cursors.getBoolean(cursor, MovieColumns.IN_COLLECTION);
+    final boolean inWatchlist = Cursors.getBoolean(cursor, MovieColumns.IN_WATCHLIST);
 
     holder.indicator.setWatched(watched);
     holder.indicator.setCollected(inCollection);

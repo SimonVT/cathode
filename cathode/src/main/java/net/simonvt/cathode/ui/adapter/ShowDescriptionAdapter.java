@@ -113,7 +113,7 @@ public class ShowDescriptionAdapter
   @Override protected void onBindViewHolder(final ViewHolder holder, Cursor cursor, int position) {
     final boolean watched = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT) > 0;
     final boolean inCollection = Cursors.getInt(cursor, ShowColumns.IN_COLLECTION_COUNT) > 1;
-    final boolean inWatchlist = Cursors.getInt(cursor, ShowColumns.IN_WATCHLIST) == 1;
+    final boolean inWatchlist = Cursors.getBoolean(cursor, ShowColumns.IN_WATCHLIST);
 
     holder.indicator.setWatched(watched);
     holder.indicator.setCollected(inCollection);

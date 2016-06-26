@@ -294,11 +294,11 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
       firstAired.setText(DateUtils.millisToString(getActivity(),
           Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED), true));
 
-      watched = Cursors.getInt(cursor, EpisodeColumns.WATCHED) == 1;
-      collected = Cursors.getInt(cursor, EpisodeColumns.IN_COLLECTION) == 1;
-      inWatchlist = Cursors.getInt(cursor, EpisodeColumns.IN_WATCHLIST) == 1;
-      watching = Cursors.getInt(cursor, EpisodeColumns.WATCHING) == 1;
-      checkedIn = Cursors.getInt(cursor, EpisodeColumns.CHECKED_IN) == 1;
+      watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
+      collected = Cursors.getBoolean(cursor, EpisodeColumns.IN_COLLECTION);
+      inWatchlist = Cursors.getBoolean(cursor, EpisodeColumns.IN_WATCHLIST);
+      watching = Cursors.getBoolean(cursor, EpisodeColumns.WATCHING);
+      checkedIn = Cursors.getBoolean(cursor, EpisodeColumns.CHECKED_IN);
 
       watchedView.setVisibility(watched ? View.VISIBLE : View.GONE);
       inCollectionView.setVisibility(collected ? View.VISIBLE : View.GONE);
