@@ -112,10 +112,11 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String LAST_COMMENT_SYNC = "lastCommentSync";
     @DataType(INTEGER) @DefaultValue("0") String LAST_ACTORS_SYNC = "lastActorsSync";
 
+    @DataType(INTEGER) @DefaultValue("0") String WATCHING = "watchingShow";
+
     // Don't create a columns in database
     String AIRED_COUNT = "airedCount";
     String UNAIRED_COUNT = "unairedCount";
-    String WATCHING = "watchingShow";
     String EPISODE_COUNT = "episodeCount";
     String AIRED_AFTER_WATCHED = "airedAfterWatched";
   }

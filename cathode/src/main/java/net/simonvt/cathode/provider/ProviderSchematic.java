@@ -179,12 +179,10 @@ public final class ProviderSchematic {
 
       map.put(ShowColumns.AIRED_COUNT, getAiredQuery());
       map.put(ShowColumns.UNAIRED_COUNT, getUnairedQuery());
-      map.put(ShowColumns.WATCHING, getWatchingQuery());
       map.put(ShowColumns.EPISODE_COUNT, getEpisodeCountQuery());
       map.put(ShowColumns.AIRED_AFTER_WATCHED, getAiredAfterWatched());
       map.put(Tables.SHOWS + "." + ShowColumns.AIRED_COUNT, getAiredQuery());
       map.put(Tables.SHOWS + "." + ShowColumns.UNAIRED_COUNT, getUnairedQuery());
-      map.put(Tables.SHOWS + "." + ShowColumns.WATCHING, getWatchingQuery());
       map.put(Tables.SHOWS + "." + ShowColumns.EPISODE_COUNT, getEpisodeCountQuery());
       map.put(Tables.SHOWS + "." + ShowColumns.AIRED_AFTER_WATCHED, getAiredAfterWatched());
 
@@ -289,15 +287,13 @@ public final class ProviderSchematic {
     @ContentUri(
         path = Path.SHOWS + "/" + Path.WATCHING,
         type = Type.SHOW,
-        join = Joins.SHOWS_WITH_WATCHING)
+        join = Joins.SHOWS_WITH_WATCHING,
+        where = {
+            Tables.SHOWS + "." + ShowColumns.WATCHING + "=1",
+            Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0"
+        }
+    )
     public static final Uri SHOW_WATCHING = buildUri(Path.SHOWS, Path.WATCHING);
-
-    @Where(path = Path.SHOWS + "/" + Path.WATCHING)
-    public static String[] watchingWhere() {
-      return new String[] {
-          getWatchingQuery() + ">0", Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0"
-      };
-    }
 
     public static final String SORT_TITLE =
         DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE_NO_ARTICLE + " ASC";
@@ -405,28 +401,6 @@ public final class ProviderSchematic {
           + EpisodeColumns.SEASON
           + ">0"
           + ")";
-    }
-
-    public static String getWatchingQuery() {
-      return "(SELECT COUNT(*) FROM "
-          + DatabaseSchematic.Tables.EPISODES
-          + " WHERE "
-          + Tables.EPISODES
-          + "."
-          + EpisodeColumns.SHOW_ID
-          + "="
-          + Tables.SHOWS
-          + "."
-          + ShowColumns.ID
-          + " AND ("
-          + Tables.EPISODES
-          + "."
-          + EpisodeColumns.WATCHING
-          + "=1 OR "
-          + Tables.EPISODES
-          + "."
-          + EpisodeColumns.CHECKED_IN
-          + "=1))";
     }
 
     public static String getEpisodeCountQuery() {

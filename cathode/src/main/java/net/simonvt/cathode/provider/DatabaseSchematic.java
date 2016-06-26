@@ -55,7 +55,7 @@ import net.simonvt.schematic.annotation.Table;
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 23;
+  static final int DATABASE_VERSION = 24;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -166,6 +166,8 @@ import net.simonvt.schematic.annotation.Table;
     String EPISODE_UPDATE_AIRED = "episodeUpdateAired";
     String EPISODE_UPDATE_WATCHED = "episodeUpdateWatched";
     String EPISODE_UPDATE_COLLECTED = "episodeUpdateCollected";
+    String EPISODE_UPDATE_WATCHING = "episodeUpdateWatching";
+
     String EPISODE_INSERT = "episodeInsert";
     String EPISODE_UPDATE = "episodeUpdate";
     String EPISODE_DELETE = "episodeDelete";
@@ -240,6 +242,29 @@ import net.simonvt.schematic.annotation.Table;
             + " IS NOT NULL " + " AND episodes.needsSync=0" + " AND " + Tables.EPISODES + "."
             + EpisodeColumns.SEASON + ">0)" + " WHERE " + Tables.SHOWS + "." + ShowColumns.ID
             + "=NEW." + EpisodeColumns.SHOW_ID + ";";
+
+    String SHOWS_UPDATE_WATCHING = "UPDATE "
+        + Tables.SHOWS
+        + " SET "
+        + ShowColumns.WATCHING
+        + "=(SELECT COUNT(*) FROM "
+        + Tables.EPISODES
+        + " WHERE "
+        + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID + "=NEW." + EpisodeColumns.SHOW_ID
+        + " AND "
+        + "("
+        + Tables.EPISODES + "." + EpisodeColumns.WATCHING + "=1"
+        + " OR "
+        + Tables.EPISODES + "." + EpisodeColumns.CHECKED_IN + "=1"
+        + ")"
+        + " AND "
+        + Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC + "=0"
+        + " AND "
+        + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0"
+        + ")"
+        + " WHERE "
+        + Tables.SHOWS + "." + ShowColumns.ID + "=NEW." + EpisodeColumns.SHOW_ID
+        + ";";
 
     String SHOW_DELETE_SEASONS =
         "DELETE FROM " + Tables.SEASONS + " WHERE " + Tables.SEASONS + "." + SeasonColumns.SHOW_ID
@@ -342,6 +367,11 @@ import net.simonvt.schematic.annotation.Table;
           + EpisodeColumns.IN_COLLECTION + "," + EpisodeColumns.NEEDS_SYNC + " ON "
           + Tables.EPISODES + " BEGIN " + Trigger.SEASONS_UPDATE_COLLECTED
           + Trigger.SHOWS_UPDATE_COLLECTED + " END;";
+
+  @ExecOnCreate public static final String TRIGGER_EPISODE_UPDATE_WATCHING =
+      "CREATE TRIGGER IF NOT EXISTS " + TriggerName.EPISODE_UPDATE_WATCHING + " AFTER UPDATE OF "
+          + EpisodeColumns.WATCHING + "," + EpisodeColumns.CHECKED_IN + " ON " + Tables.EPISODES
+          + " BEGIN " + Trigger.SHOWS_UPDATE_WATCHING + " END;";
 
   @ExecOnCreate public static final String TRIGGER_EPISODE_INSERT =
       "CREATE TRIGGER IF NOT EXISTS " + TriggerName.EPISODE_INSERT + " AFTER INSERT ON "
@@ -654,6 +684,12 @@ import net.simonvt.schematic.annotation.Table;
     if (oldVersion < 23) {
       SqlUtils.createColumnIfNotExists(db, Tables.EPISODES, EpisodeColumns.LAST_COMMENT_SYNC,
           DataType.Type.INTEGER, "0");
+    }
+
+    if (oldVersion < 24) {
+      SqlUtils.createColumnIfNotExists(db, Tables.SHOWS, ShowColumns.WATCHING,
+          DataType.Type.INTEGER, "0");
+      db.execSQL(TRIGGER_EPISODE_UPDATE_WATCHING);
     }
   }
 }

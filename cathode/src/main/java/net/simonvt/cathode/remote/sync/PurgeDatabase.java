@@ -64,7 +64,7 @@ public class PurgeDatabase extends Job {
         + "=0 AND "
         + ShowColumns.IN_WATCHLIST
         + "=0 AND "
-        + Shows.getWatchingQuery()
+        + ShowColumns.WATCHING
         + "=0 AND "
         + ShowColumns.RECOMMENDATION_INDEX
         + "=-1 AND "
