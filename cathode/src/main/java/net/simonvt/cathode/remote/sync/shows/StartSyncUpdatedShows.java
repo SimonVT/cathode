@@ -42,9 +42,6 @@ public class StartSyncUpdatedShows extends Job {
       long millis = TimeUtils.getMillis(lastUpdated);
       millis = millis - 12 * DateUtils.HOUR_IN_MILLIS;
       String updatedSince = TimeUtils.getIsoTime(millis);
-      Timber.i("Last updated: %s", lastUpdated);
-      Timber.i("Millis: %d", millis);
-      Timber.i("Updated since: %s", updatedSince);
       if (updatedSince == null) {
         long currentTimeMillis = System.currentTimeMillis();
         currentTimeMillis = currentTimeMillis - DateUtils.DAY_IN_MILLIS;
