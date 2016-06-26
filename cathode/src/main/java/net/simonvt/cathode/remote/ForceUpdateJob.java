@@ -46,11 +46,8 @@ public class ForceUpdateJob extends Job {
     }, null, null, null);
 
     while (shows.moveToNext()) {
-      final long showId = Cursors.getLong(shows, ShowColumns.ID);
       final long traktId = Cursors.getLong(shows, ShowColumns.TRAKT_ID);
-
-      final boolean syncFully = showHelper.shouldSyncFully(showId);
-      queue(new SyncShow(traktId, syncFully));
+      queue(new SyncShow(traktId));
     }
 
     shows.close();

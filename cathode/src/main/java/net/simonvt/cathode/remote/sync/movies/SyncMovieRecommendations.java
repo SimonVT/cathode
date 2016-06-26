@@ -26,6 +26,7 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.Movie;
+import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.RecommendationsService;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -58,7 +59,7 @@ public class SyncMovieRecommendations extends CallJob<List<Movie>> {
   }
 
   @Override public Call<List<Movie>> getCall() {
-    return recommendationsService.movies(LIMIT);
+    return recommendationsService.movies(LIMIT, Extended.FULL_IMAGES);
   }
 
   @Override public void handleResponse(List<Movie> recommendations) {
@@ -75,12 +76,7 @@ public class SyncMovieRecommendations extends CallJob<List<Movie>> {
       ArrayList<ContentProviderOperation> ops = new ArrayList<>();
       for (int index = 0; index < Math.min(recommendations.size(), 25); index++) {
         Movie movie = recommendations.get(index);
-        final long traktId = movie.getIds().getTrakt();
-        MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(traktId);
-        final long movieId = result.movieId;
-        if (result.didCreate) {
-          queue(new SyncMovie(traktId));
-        }
+        final long movieId = movieHelper.partialUpdate(movie);
 
         movieIds.remove(movieId);
 

@@ -97,25 +97,54 @@ public final class MovieDatabaseHelper {
     }
   }
 
-  public boolean needsUpdate(long traktId, String lastUpdated) {
-    if (lastUpdated == null) return true;
-
-    Cursor c = null;
+  public boolean needsSync(long movieId) {
+    Cursor movie = null;
     try {
-      c = resolver.query(Movies.MOVIES, new String[] {
-          MovieColumns.LAST_UPDATED,
-      }, MovieColumns.TRAKT_ID + "=?", new String[] {
-          String.valueOf(traktId),
-      }, null);
+      movie = resolver.query(Movies.withId(movieId), new String[] {
+          MovieColumns.NEEDS_SYNC,
+      }, null, null, null);
 
-      boolean exists = c.moveToFirst();
-      if (exists) {
-        return TimeUtils.getMillis(lastUpdated) > Cursors.getLong(c, MovieColumns.LAST_UPDATED);
+      if (movie.moveToFirst()) {
+        return Cursors.getBoolean(movie, MovieColumns.NEEDS_SYNC);
       }
 
       return false;
     } finally {
-      if (c != null) c.close();
+      if (movie != null) {
+        movie.close();
+      }
+    }
+  }
+
+  public boolean shouldUpdate(long traktId, String lastUpdated) {
+    if (lastUpdated == null) return true;
+
+    Cursor movie = null;
+    try {
+      movie = resolver.query(Movies.MOVIES, new String[] {
+          MovieColumns.LAST_UPDATED, MovieColumns.WATCHED, MovieColumns.IN_COLLECTION,
+          MovieColumns.IN_WATCHLIST,
+      }, MovieColumns.TRAKT_ID + "=?", new String[] {
+          String.valueOf(traktId),
+      }, null);
+
+      if (movie.moveToFirst()) {
+        final boolean watched = Cursors.getBoolean(movie, MovieColumns.WATCHED);
+        final boolean collected = Cursors.getBoolean(movie, MovieColumns.IN_COLLECTION);
+        final boolean inWatchlist = Cursors.getBoolean(movie, MovieColumns.IN_WATCHLIST);
+
+        final boolean isUpdated =
+            TimeUtils.getMillis(lastUpdated) > Cursors.getLong(movie, MovieColumns.LAST_UPDATED);
+        if (isUpdated) {
+          if (watched || collected || inWatchlist) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    } finally {
+      if (movie != null) movie.close();
     }
   }
 
@@ -147,12 +176,27 @@ public final class MovieDatabaseHelper {
   private long create(long traktId) {
     ContentValues cv = new ContentValues();
     cv.put(MovieColumns.TRAKT_ID, traktId);
-    cv.put(MovieColumns.NEEDS_SYNC, 1);
+    cv.put(MovieColumns.NEEDS_SYNC, true);
 
     return ProviderSchematic.Movies.getId(resolver.insert(Movies.MOVIES, cv));
   }
 
-  public long updateMovie(Movie movie) {
+  public long fullUpdate(Movie movie) {
+    IdResult result = getIdOrCreate(movie.getIds().getTrakt());
+    final long id = result.movieId;
+
+    ContentValues cv = getContentValues(movie);
+    cv.put(MovieColumns.NEEDS_SYNC, false);
+    resolver.update(Movies.withId(id), cv, null, null);
+
+    if (movie.getGenres() != null) {
+      insertGenres(id, movie.getGenres());
+    }
+
+    return id;
+  }
+
+  public long partialUpdate(Movie movie) {
     IdResult result = getIdOrCreate(movie.getIds().getTrakt());
     final long id = result.movieId;
 
@@ -192,8 +236,6 @@ public final class MovieDatabaseHelper {
 
   private static ContentValues getContentValues(Movie movie) {
     ContentValues cv = new ContentValues();
-
-    cv.put(MovieColumns.NEEDS_SYNC, 0);
 
     cv.put(MovieColumns.TITLE, movie.getTitle());
     cv.put(MovieColumns.TITLE_NO_ARTICLE, DatabaseUtils.removeLeadingArticle(movie.getTitle()));

@@ -51,7 +51,7 @@ public class SyncMovie extends CallJob<Movie> {
   }
 
   @Override public void handleResponse(Movie movie) {
-    final long movieId = movieHelper.updateMovie(movie);
+    final long movieId = movieHelper.fullUpdate(movie);
 
     ContentValues cv = new ContentValues();
     cv.put(MovieColumns.LAST_SYNC, System.currentTimeMillis());

@@ -127,15 +127,31 @@ public final class ShowDatabaseHelper {
   private long create(long traktId) {
     ContentValues cv = new ContentValues();
     cv.put(ShowColumns.TRAKT_ID, traktId);
-    cv.put(ShowColumns.NEEDS_SYNC, 1);
+    cv.put(ShowColumns.NEEDS_SYNC, true);
 
     return Shows.getShowId(resolver.insert(Shows.SHOWS, cv));
+  }
+
+  public long fullUpdate(Show show) {
+    IdResult result = getIdOrCreate(show.getIds().getTrakt());
+    final long id = result.showId;
+
+    ContentValues cv = getShowCVs(show);
+    cv.put(ShowColumns.NEEDS_SYNC, false);
+    cv.put(ShowColumns.LAST_SYNC, System.currentTimeMillis());
+    resolver.update(Shows.withId(id), cv, null, null);
+
+    if (show.getGenres() != null) {
+      insertShowGenres(id, show.getGenres());
+    }
+
+    return id;
   }
 
   /**
    * Creates the show if it does not exist.
    */
-  public long updateShow(Show show) {
+  public long partialUpdate(Show show) {
     IdResult result = getIdOrCreate(show.getIds().getTrakt());
     final long id = result.showId;
 
@@ -149,49 +165,53 @@ public final class ShowDatabaseHelper {
     return id;
   }
 
-  public boolean needsUpdate(long traktId, String lastUpdatedIso) {
-    long lastUpdated = TimeUtils.getMillis(lastUpdatedIso);
-    Cursor c = null;
+  public boolean needsSync(long showId) {
+    Cursor show = null;
     try {
-      c = resolver.query(Shows.SHOWS, new String[] {
-          ShowColumns.LAST_UPDATED,
-      }, ShowColumns.TRAKT_ID + "=?", new String[] {
-          String.valueOf(traktId),
-      }, null);
-
-      boolean exists = c.moveToFirst();
-      if (exists) {
-        return lastUpdated > Cursors.getLong(c, ShowColumns.LAST_UPDATED);
-      }
-
-      return true;
-    } finally {
-      if (c != null) c.close();
-    }
-  }
-
-  public boolean shouldSyncFully(long id) {
-    Cursor c = null;
-    try {
-      c = resolver.query(Shows.withId(id), new String[] {
-          ShowColumns.IN_WATCHLIST, ShowColumns.FULL_SYNC_REQUESTED,
-          ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT,
+      show = resolver.query(Shows.withId(showId), new String[] {
+          ShowColumns.NEEDS_SYNC,
       }, null, null, null);
 
-      if (c.moveToFirst()) {
-        final boolean inWatchlist = Cursors.getBoolean(c, ShowColumns.IN_WATCHLIST);
-        final long fullSyncRequested = Cursors.getLong(c, ShowColumns.FULL_SYNC_REQUESTED);
-        final int watchedCount = Cursors.getInt(c, ShowColumns.WATCHED_COUNT);
-        final int collectionCount = Cursors.getInt(c, ShowColumns.IN_COLLECTION_COUNT);
-
-        return inWatchlist || watchedCount > 0 || collectionCount > 0 || fullSyncRequested > 0;
+      if (show.moveToFirst()) {
+        return Cursors.getBoolean(show, ShowColumns.NEEDS_SYNC);
       }
 
       return false;
     } finally {
-      if (c != null) {
-        c.close();
+      if (show != null) {
+        show.close();
       }
+    }
+  }
+
+  public boolean shouldUpdate(long traktId, String lastUpdatedIso) {
+    long lastUpdated = TimeUtils.getMillis(lastUpdatedIso);
+    Cursor show = null;
+    try {
+      show = resolver.query(Shows.SHOWS, new String[] {
+          ShowColumns.LAST_UPDATED, ShowColumns.WATCHED_COUNT, ShowColumns.IN_COLLECTION_COUNT,
+          ShowColumns.IN_WATCHLIST_COUNT, ShowColumns.IN_COLLECTION_COUNT, ShowColumns.IN_WATCHLIST,
+      }, ShowColumns.TRAKT_ID + "=?", new String[] {
+          String.valueOf(traktId),
+      }, null);
+
+      if (show.moveToFirst()) {
+        final int watchedCount = Cursors.getInt(show, ShowColumns.WATCHED_COUNT);
+        final int collectedCount = Cursors.getInt(show, ShowColumns.IN_COLLECTION_COUNT);
+        final int watchlistCount = Cursors.getInt(show, ShowColumns.IN_WATCHLIST_COUNT);
+        final boolean inWatchlist = Cursors.getBoolean(show, ShowColumns.IN_WATCHLIST);
+
+        final boolean isUpdated = lastUpdated > Cursors.getLong(show, ShowColumns.LAST_UPDATED);
+        if (isUpdated) {
+          if (watchedCount > 0 || collectedCount > 0 || watchlistCount > 0 || inWatchlist) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    } finally {
+      if (show != null) show.close();
     }
   }
 
@@ -249,8 +269,6 @@ public final class ShowDatabaseHelper {
 
   private static ContentValues getShowCVs(Show show) {
     ContentValues cv = new ContentValues();
-
-    cv.put(ShowColumns.NEEDS_SYNC, 0);
 
     cv.put(ShowColumns.TITLE, show.getTitle());
     cv.put(ShowColumns.TITLE_NO_ARTICLE, DatabaseUtils.removeLeadingArticle(show.getTitle()));

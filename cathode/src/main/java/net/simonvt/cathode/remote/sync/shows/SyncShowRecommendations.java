@@ -25,6 +25,7 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.Show;
+import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.RecommendationsService;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -57,7 +58,7 @@ public class SyncShowRecommendations extends CallJob<List<Show>> {
   }
 
   @Override public Call<List<Show>> getCall() {
-    return recommendationsService.shows(LIMIT);
+    return recommendationsService.shows(LIMIT, Extended.FULL_IMAGES);
   }
 
   @Override public void handleResponse(List<Show> shows) {
@@ -74,12 +75,8 @@ public class SyncShowRecommendations extends CallJob<List<Show>> {
 
     for (int index = 0, count = Math.min(shows.size(), 25); index < count; index++) {
       Show show = shows.get(index);
-      final long traktId = show.getIds().getTrakt();
-      ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
-      final long showId = showResult.showId;
-      if (showResult.didCreate) {
-        queue(new SyncShow(traktId));
-      }
+
+      final long showId = showHelper.partialUpdate(show);
 
       showIds.remove(showId);
 

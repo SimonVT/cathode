@@ -19,6 +19,7 @@ package net.simonvt.cathode.api.service;
 import java.util.List;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.entity.Show;
+import net.simonvt.cathode.api.enumeration.Extended;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.DELETE;
@@ -47,6 +48,15 @@ public interface RecommendationsService {
   /**
    * <b>OAuth Required</b>
    * <p>
+   * Personalized movie recommendations for a user. Results returned with the top recommendation
+   * first.
+   */
+  @GET("/recommendations/movies") Call<List<Movie>> movies(@Query("limit") int limit,
+      @Query("extended") Extended extended);
+
+  /**
+   * <b>OAuth Required</b>
+   * <p>
    * Dismiss a movie from getting recommended anymore.
    */
   @DELETE("/recommendations/movies/{id}") Call<ResponseBody> dismissMovie(@Path("id") long id);
@@ -66,6 +76,15 @@ public interface RecommendationsService {
    * first.
    */
   @GET("/recommendations/shows") Call<List<Show>> shows(@Query("limit") int limit);
+
+  /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Personalized show recommendations for a user. Results returned with the top recommendation
+   * first.
+   */
+  @GET("/recommendations/shows") Call<List<Show>> shows(@Query("limit") int limit,
+      @Query("extended") Extended extended);
 
   /**
    * <b>OAuth Required</b>

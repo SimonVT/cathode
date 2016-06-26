@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.entity.TrendingItem;
+import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -54,7 +55,7 @@ public class SyncTrendingShows extends CallJob<List<TrendingItem>> {
   }
 
   @Override public Call<List<TrendingItem>> getCall() {
-    return showsService.getTrendingShows(LIMIT);
+    return showsService.getTrendingShows(LIMIT, Extended.FULL_IMAGES);
   }
 
   @Override public void handleResponse(List<TrendingItem> shows) {
@@ -74,12 +75,8 @@ public class SyncTrendingShows extends CallJob<List<TrendingItem>> {
       for (int i = 0, count = Math.min(shows.size(), 25); i < count; i++) {
         TrendingItem item = shows.get(i);
         Show show = item.getShow();
-        final long traktId = show.getIds().getTrakt();
-        ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
-        final long showId = showResult.showId;
-        if (showResult.didCreate) {
-          queue(new SyncShow(traktId));
-        }
+
+        final long showId = showHelper.partialUpdate(show);
 
         ContentValues cv = new ContentValues();
         cv.put(ShowColumns.TRENDING_INDEX, i);

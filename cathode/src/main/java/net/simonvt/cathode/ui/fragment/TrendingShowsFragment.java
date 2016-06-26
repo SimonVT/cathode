@@ -211,8 +211,7 @@ public class TrendingShowsFragment
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
     return new SimpleCursorLoader(getActivity(), Shows.SHOWS_TRENDING,
-        ShowDescriptionAdapter.PROJECTION, ShowColumns.NEEDS_SYNC + "=0", null,
-        sortBy.getSortOrder());
+        ShowDescriptionAdapter.PROJECTION, null, null, sortBy.getSortOrder());
   }
 
   @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

@@ -15,13 +15,16 @@
  */
 package net.simonvt.cathode.remote.sync.movies;
 
+import android.content.ContentValues;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.entity.UpdatedItem;
 import net.simonvt.cathode.api.service.MoviesService;
 import net.simonvt.cathode.api.util.TimeUtils;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.CallJob;
 import retrofit2.Call;
 
@@ -66,9 +69,13 @@ public class SyncUpdatedMovies extends CallJob<List<UpdatedItem>> {
 
       final long movieId = movieHelper.getId(traktId);
       if (movieId != -1L) {
-        final boolean needsUpdate = movieHelper.needsUpdate(traktId, updatedAt);
-        if (needsUpdate) {
+        final boolean shouldUpdate = movieHelper.shouldUpdate(traktId, updatedAt);
+        if (shouldUpdate) {
           queue(new SyncMovie(traktId));
+        } else {
+          ContentValues values = new ContentValues();
+          values.put(MovieColumns.NEEDS_SYNC, true);
+          getContentResolver().update(Movies.withId(movieId), values, null, null);
         }
       }
     }

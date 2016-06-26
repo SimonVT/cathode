@@ -340,6 +340,11 @@ public class MovieFragment extends RefreshableAppBarFragment
       this.trailer.setVisibility(View.GONE);
     }
 
+    final boolean needsSync = Cursors.getBoolean(cursor, MovieColumns.NEEDS_SYNC);
+    if (needsSync) {
+      movieScheduler.sync(movieId);
+    }
+
     final long lastSync = Cursors.getLong(cursor, MovieColumns.LAST_SYNC);
     final long lastCommentSync = Cursors.getLong(cursor, MovieColumns.LAST_COMMENT_SYNC);
     if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {

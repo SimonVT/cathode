@@ -60,7 +60,7 @@ public class MovieSearchHandler extends SearchHandler {
             MovieDatabaseHelper.IdResult idResult = movieHelper.getIdOrCreate(traktId);
 
             final long movieId = idResult.movieId;
-            movieHelper.updateMovie(movie);
+            movieHelper.partialUpdate(movie);
             movieIds.add(movieId);
 
             if (idResult.didCreate) jobManager.addJob(new SyncMovie(traktId));

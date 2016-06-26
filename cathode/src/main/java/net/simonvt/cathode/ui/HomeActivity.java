@@ -571,7 +571,7 @@ public class HomeActivity extends BaseActivity
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
           return new SimpleCursorLoader(HomeActivity.this, ProviderSchematic.Movies.WATCHING, null,
-              MovieColumns.NEEDS_SYNC + "=0", null, null);
+              null, null, null);
         }
 
         @Override

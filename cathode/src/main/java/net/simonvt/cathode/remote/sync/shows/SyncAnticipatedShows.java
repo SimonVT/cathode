@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.AnticipatedItem;
 import net.simonvt.cathode.api.entity.Show;
+import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -54,7 +55,7 @@ public class SyncAnticipatedShows extends CallJob<List<AnticipatedItem>> {
   }
 
   @Override public Call<List<AnticipatedItem>> getCall() {
-    return showsService.getAnticipatedShows(LIMIT);
+    return showsService.getAnticipatedShows(LIMIT, Extended.FULL_IMAGES);
   }
 
   @Override public void handleResponse(List<AnticipatedItem> shows) {
@@ -74,12 +75,8 @@ public class SyncAnticipatedShows extends CallJob<List<AnticipatedItem>> {
       for (int i = 0, count = Math.min(shows.size(), 25); i < count; i++) {
         AnticipatedItem item = shows.get(i);
         Show show = item.getShow();
-        final long traktId = show.getIds().getTrakt();
-        ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
-        final long showId = showResult.showId;
-        if (showResult.didCreate) {
-          queue(new SyncShow(traktId));
-        }
+
+        final long showId = showHelper.partialUpdate(show);
 
         ContentValues cv = new ContentValues();
         cv.put(ShowColumns.ANTICIPATED_INDEX, i);

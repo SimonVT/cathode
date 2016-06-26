@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.entity.TrendingItem;
+import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.MoviesService;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -54,7 +55,7 @@ public class SyncTrendingMovies extends CallJob<List<TrendingItem>> {
   }
 
   @Override public Call<List<TrendingItem>> getCall() {
-    return moviesService.getTrendingMovies(LIMIT);
+    return moviesService.getTrendingMovies(LIMIT, Extended.FULL_IMAGES);
   }
 
   @Override public void handleResponse(List<TrendingItem> movies) {
@@ -74,13 +75,7 @@ public class SyncTrendingMovies extends CallJob<List<TrendingItem>> {
     for (int i = 0, count = Math.min(movies.size(), 25); i < count; i++) {
       TrendingItem item = movies.get(i);
       Movie movie = item.getMovie();
-      final long traktId = movie.getIds().getTrakt();
-
-      MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(traktId);
-      final long movieId = result.movieId;
-      if (result.didCreate) {
-        queue(new SyncMovie(traktId));
-      }
+      final long movieId = movieHelper.partialUpdate(movie);
 
       trendingIds.remove(movieId);
 

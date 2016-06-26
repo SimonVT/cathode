@@ -53,7 +53,7 @@ public class ShowSearchHandler extends SearchHandler {
         for (SearchResult result : results) {
           Show show = result.getShow();
           if (!TextUtils.isEmpty(show.getTitle())) {
-            final long showId = showHelper.updateShow(show);
+            final long showId = showHelper.partialUpdate(show);
             showIds.add(showId);
           }
         }

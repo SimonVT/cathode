@@ -16,7 +16,7 @@
 package net.simonvt.cathode.remote.sync.movies;
 
 import android.database.Cursor;
-import android.util.LongSparseArray;
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.CollectionItem;
@@ -54,14 +54,13 @@ public class SyncMoviesCollection extends CallJob<List<CollectionItem>> {
 
   @Override public void handleResponse(List<CollectionItem> movies) {
     Cursor c = getContentResolver().query(Movies.MOVIES, new String[] {
-        MovieColumns.ID, MovieColumns.LISTED_AT,
+        MovieColumns.ID,
     }, MovieColumns.IN_COLLECTION, null, null);
 
-    LongSparseArray<Long> ids = new LongSparseArray<>();
+    List<Long> movieIds = new ArrayList<>();
     while (c.moveToNext()) {
       final long id = Cursors.getLong(c, MovieColumns.ID);
-      final long listedAt = Cursors.getLong(c, MovieColumns.LISTED_AT);
-      ids.put(id, listedAt);
+      movieIds.add(id);
     }
     c.close();
 
@@ -72,23 +71,19 @@ public class SyncMoviesCollection extends CallJob<List<CollectionItem>> {
       final long movieId = result.movieId;
       final long collectedAt = item.getCollectedAt().getTimeInMillis();
 
-      if (result.didCreate) {
-        queue(new SyncMovie(traktId));
-      }
-
-      Long lastListedAt = ids.get(movieId);
-      if (lastListedAt != null) {
-        ids.remove(movieId);
-      }
-      if (lastListedAt == null || lastListedAt != collectedAt) {
+      if (!movieIds.remove(movieId)) {
         movieHelper.setIsInCollection(movieId, true, collectedAt);
+
+        if (movieHelper.needsSync(movieId)) {
+          queue(new SyncMovie(traktId));
+        }
       }
     }
 
-    final int size = ids.size();
+    final int size = movieIds.size();
 
     for (int i = 0; i < size; i++) {
-      final long id = ids.keyAt(i);
+      final long id = movieIds.get(i);
       movieHelper.setIsInCollection(id, false);
     }
   }

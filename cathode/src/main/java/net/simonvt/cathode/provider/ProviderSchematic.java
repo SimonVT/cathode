@@ -258,8 +258,7 @@ public final class ProviderSchematic {
         path = Path.SHOWS + "/" + Path.TRENDING,
         type = Type.SHOW,
         where = {
-            ShowColumns.TRENDING_INDEX + ">=0",
-            Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0"
+            ShowColumns.TRENDING_INDEX + ">=0"
         },
         defaultSort = ShowColumns.TRENDING_INDEX + " ASC")
     public static final Uri SHOWS_TRENDING = buildUri(Path.SHOWS, Path.TRENDING);
@@ -268,8 +267,7 @@ public final class ProviderSchematic {
         path = Path.SHOWS + "/" + Path.RECOMMENDED,
         type = Type.SHOW,
         where = {
-            ShowColumns.RECOMMENDATION_INDEX + ">=0",
-            Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0"
+            ShowColumns.RECOMMENDATION_INDEX + ">=0"
         },
         defaultSort = ShowColumns.RECOMMENDATION_INDEX + " ASC")
     public static final Uri SHOWS_RECOMMENDED = buildUri(Path.SHOWS, Path.RECOMMENDED);
@@ -278,8 +276,7 @@ public final class ProviderSchematic {
         path = Path.SHOWS + "/" + Path.ANTICIPATED,
         type = Type.SHOW,
         where = {
-            ShowColumns.ANTICIPATED_INDEX + ">=0",
-            Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0"
+            ShowColumns.ANTICIPATED_INDEX + ">=0"
         },
         defaultSort = ShowColumns.ANTICIPATED_INDEX + " ASC")
     public static final Uri SHOWS_ANTICIPATED = buildUri(Path.SHOWS, Path.ANTICIPATED);
@@ -891,24 +888,29 @@ public final class ProviderSchematic {
     @ContentUri(
         path = Path.MOVIES + "/" + Path.WATCHED,
         type = Type.MOVIE,
-        where = MovieColumns.WATCHED + "=1 AND " + MovieColumns.HIDDEN_WATCHED + "=0 AND "
-            + MovieColumns.NEEDS_SYNC + "=0"
+        where = {
+            MovieColumns.WATCHED + "=1", MovieColumns.HIDDEN_WATCHED + "=0",
+            MovieColumns.NEEDS_SYNC + "=0"
+        }
     )
     public static final Uri MOVIES_WATCHED = buildUri(Path.MOVIES, Path.WATCHED);
 
     @ContentUri(
         path = Path.MOVIES + "/" + Path.COLLECTED,
         type = Type.MOVIE,
-        where = MovieColumns.IN_COLLECTION + "=1 AND " + MovieColumns.HIDDEN_COLLECTED + "=0 AND "
-            + MovieColumns.NEEDS_SYNC + "=0"
+        where = {
+            MovieColumns.IN_COLLECTION + "=1", MovieColumns.HIDDEN_COLLECTED + "=0",
+            MovieColumns.NEEDS_SYNC + "=0"
+        }
     )
     public static final Uri MOVIES_COLLECTED = buildUri(Path.MOVIES, Path.COLLECTED);
 
     @ContentUri(
         path = Path.MOVIES + "/" + Path.WATCHLIST,
         type = Type.MOVIE,
-        where = MovieColumns.IN_WATCHLIST + "=1 AND "
-            + MovieColumns.NEEDS_SYNC + "=0"
+        where = {
+            MovieColumns.IN_WATCHLIST + "=1", MovieColumns.NEEDS_SYNC + "=0"
+        }
     )
     public static final Uri MOVIES_WATCHLIST = buildUri(Path.MOVIES, Path.WATCHLIST);
 
@@ -936,8 +938,7 @@ public final class ProviderSchematic {
         path = Path.MOVIES + "/" + Path.TRENDING,
         type = Type.MOVIE,
         where = {
-            MovieColumns.TRENDING_INDEX + ">=0",
-            MovieColumns.NEEDS_SYNC + "=0"
+            MovieColumns.TRENDING_INDEX + ">=0"
         },
         defaultSort = MovieColumns.TRENDING_INDEX + " ASC")
     public static final Uri TRENDING = buildUri(Path.MOVIES, Path.TRENDING);
@@ -946,8 +947,7 @@ public final class ProviderSchematic {
         path = Path.MOVIES + "/" + Path.RECOMMENDED,
         type = Type.MOVIE,
         where = {
-            MovieColumns.RECOMMENDATION_INDEX + ">=0",
-            MovieColumns.NEEDS_SYNC + "=0"
+            MovieColumns.RECOMMENDATION_INDEX + ">=0"
         },
         defaultSort = MovieColumns.RECOMMENDATION_INDEX + " ASC")
     public static final Uri RECOMMENDED = buildUri(Path.MOVIES, Path.RECOMMENDED);
@@ -956,8 +956,7 @@ public final class ProviderSchematic {
         path = Path.MOVIES + "/" + Path.ANTICIPATED,
         type = Type.MOVIE,
         where = {
-            MovieColumns.ANTICIPATED_INDEX + ">=0",
-            MovieColumns.NEEDS_SYNC + "=0"
+            MovieColumns.ANTICIPATED_INDEX + ">=0"
         },
         defaultSort = MovieColumns.ANTICIPATED_INDEX + " ASC")
     public static final Uri ANTICIPATED = buildUri(Path.MOVIES, Path.ANTICIPATED);

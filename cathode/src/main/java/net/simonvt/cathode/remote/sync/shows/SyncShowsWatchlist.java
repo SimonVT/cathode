@@ -77,6 +77,10 @@ public class SyncShowsWatchlist extends CallJob<List<WatchlistItem>> {
 
       if (!showIds.remove(showId)) {
         showHelper.setIsInWatchlist(showId, true, listedAt);
+
+        if (showHelper.needsSync(showId)) {
+          queue(new SyncShow(traktId));
+        }
       }
     }
 

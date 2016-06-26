@@ -15,14 +15,11 @@
  */
 package net.simonvt.cathode.remote.sync.shows;
 
-import android.content.ContentValues;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.SeasonService;
 import net.simonvt.cathode.api.service.ShowsService;
-import net.simonvt.cathode.provider.DatabaseContract;
-import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import retrofit2.Call;
@@ -36,19 +33,12 @@ public class SyncShow extends CallJob<Show> {
 
   private long traktId;
 
-  private boolean syncAdditionalInfo;
-
   public SyncShow(long traktId) {
-    this(traktId, true);
-  }
-
-  public SyncShow(long traktId, boolean syncAdditionalInfo) {
     this.traktId = traktId;
-    this.syncAdditionalInfo = syncAdditionalInfo;
   }
 
   @Override public String key() {
-    return "SyncShow" + "&traktId=" + traktId + "&syncAdditionalInfo=" + syncAdditionalInfo;
+    return "SyncShow" + "&traktId=" + traktId;
   }
 
   @Override public int getPriority() {
@@ -60,16 +50,7 @@ public class SyncShow extends CallJob<Show> {
   }
 
   @Override public void handleResponse(Show show) {
-    final long showId = showHelper.updateShow(show);
-
-    ContentValues cv = new ContentValues();
-    cv.put(DatabaseContract.ShowColumns.LAST_SYNC, System.currentTimeMillis());
-    getContentResolver().update(ProviderSchematic.Shows.withId(showId), cv, null, null);
-
-    if (!syncAdditionalInfo) {
-      return;
-    }
-
+    showHelper.fullUpdate(show);
     queue(new SyncSeasons(traktId));
   }
 }

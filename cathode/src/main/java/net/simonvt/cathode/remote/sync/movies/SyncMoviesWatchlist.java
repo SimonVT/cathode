@@ -71,12 +71,13 @@ public class SyncMoviesWatchlist extends CallJob<List<WatchlistItem>> {
 
       MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(traktId);
       final long movieId = result.movieId;
-      if (result.didCreate) {
-        queue(new SyncMovie(traktId));
-      }
 
       if (!movieIds.remove(movieId)) {
         movieHelper.setIsInWatchlist(movieId, true, listedAt);
+
+        if (movieHelper.needsSync(movieId)) {
+          queue(new SyncMovie(traktId));
+        }
       }
     }
 

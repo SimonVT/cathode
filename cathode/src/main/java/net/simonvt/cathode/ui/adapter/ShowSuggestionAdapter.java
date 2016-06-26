@@ -80,10 +80,7 @@ public class ShowSuggestionAdapter extends SuggestionsAdapter {
 
       Cursor allShows = context.getContentResolver().query(Shows.SHOWS, new String[] {
           ShowColumns.ID, ShowColumns.TITLE, ShowColumns.OVERVIEW
-      }, ShowColumns.NEEDS_SYNC
-          + "=0"
-          + " AND ("
-          + ShowColumns.IN_COLLECTION_COUNT
+      }, "(" + ShowColumns.IN_COLLECTION_COUNT
           + ">0 OR "
           + ShowColumns.WATCHED_COUNT
           + ">0)", null, null);

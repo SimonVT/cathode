@@ -15,6 +15,7 @@
  */
 package net.simonvt.cathode.remote.sync.shows;
 
+import android.content.ContentValues;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -22,6 +23,8 @@ import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.entity.UpdatedItem;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.api.util.TimeUtils;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import retrofit2.Call;
@@ -69,20 +72,14 @@ public class SyncUpdatedShows extends CallJob<List<UpdatedItem>> {
       final long traktId = show.getIds().getTrakt();
       final long id = showHelper.getId(traktId);
       if (id != -1L) {
-        final boolean needsUpdate = showHelper.needsUpdate(traktId, updatedAt);
-        if (needsUpdate) {
-          if (showHelper.shouldSyncFully(id)) {
-            queue(new SyncShow(traktId));
-          } else {
-            showSummaries.add(traktId);
-          }
+        final boolean shouldUpdate = showHelper.shouldUpdate(traktId, updatedAt);
+        if (shouldUpdate) {
+          queue(new SyncShow(traktId));
+        } else {
+          ContentValues values = new ContentValues();
+          values.put(ShowColumns.NEEDS_SYNC, true);
+          getContentResolver().update(Shows.withId(id), values, null, null);
         }
-      }
-    }
-
-    if (showSummaries.size() > 0) {
-      for (Long traktId : showSummaries) {
-        queue(new SyncShow(traktId, false));
       }
     }
 

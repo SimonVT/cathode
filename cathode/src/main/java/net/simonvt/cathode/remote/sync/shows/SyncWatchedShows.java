@@ -31,11 +31,11 @@ import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.entity.WatchedItem;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.jobqueue.JobFailedException;
-import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
-import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
@@ -129,10 +129,12 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
       if (watchedShow == null) {
         ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
         final long showId = showResult.showId;
-        if (showResult.didCreate) {
-          didShowExist = false;
+        didShowExist = !showResult.didCreate;
+
+        if (showHelper.needsSync(showId)) {
           queue(new SyncShow(traktId));
         }
+
         watchedShow = new WatchedShow(traktId, showId);
         showsMap.put(traktId, watchedShow);
       }
@@ -140,8 +142,8 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
       IsoTime lastWatched = item.getLastWatchedAt();
       final long lastWatchedMillis = lastWatched.getTimeInMillis();
 
-      addOp(ops, ContentProviderOperation.newUpdate(ProviderSchematic.Shows.withId(watchedShow.id))
-          .withValue(DatabaseContract.ShowColumns.LAST_WATCHED_AT, lastWatchedMillis)
+      ops.add(ContentProviderOperation.newUpdate(Shows.withId(watchedShow.id))
+          .withValue(ShowColumns.LAST_WATCHED_AT, lastWatchedMillis)
           .build());
 
       List<WatchedItem.Season> seasons = item.getSeasons();
@@ -183,12 +185,14 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
             ContentValues cv = new ContentValues();
             cv.put(EpisodeColumns.WATCHED, true);
             builder.withValues(cv);
-            addOp(ops, builder.build());
+            ops.add(builder.build());
           } else {
             episodeIds.remove(syncEpisode.id);
           }
         }
       }
+
+      applyBatch(ops);
     }
     Timber.d("Done processing items");
 
@@ -198,22 +202,15 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
       ContentValues cv = new ContentValues();
       cv.put(EpisodeColumns.WATCHED, false);
       builder.withValues(cv);
-      addOp(ops, builder.build());
+      ops.add(builder.build());
     }
     applyBatch(ops);
-  }
-
-  private void addOp(ArrayList<ContentProviderOperation> ops, ContentProviderOperation op) {
-    ops.add(op);
-    if (ops.size() > 25) {
-      applyBatch(ops);
-      ops.clear();
-    }
   }
 
   private void applyBatch(ArrayList<ContentProviderOperation> ops) {
     try {
       getContentResolver().applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
+      ops.clear();
     } catch (RemoteException e) {
       Timber.e(e, "SyncShowsWatchedTask failed");
       throw new JobFailedException(e);

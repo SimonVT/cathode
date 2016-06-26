@@ -34,8 +34,8 @@ import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
-import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
@@ -127,10 +127,12 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
       if (collectedShow == null) {
         ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
         final long showId = showResult.showId;
-        if (showResult.didCreate) {
-          didShowExist = false;
+        didShowExist = !showResult.didCreate;
+
+        if (showHelper.needsSync(showId)) {
           queue(new SyncShow(traktId));
         }
+
         collectedShow = new CollectedShow(traktId, showId);
         showsMap.put(traktId, collectedShow);
       }
@@ -138,10 +140,9 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
       IsoTime lastCollected = item.getLastCollectedAt();
       final long lastCollectedMillis = lastCollected.getTimeInMillis();
 
-      addOp(ops,
-          ContentProviderOperation.newUpdate(ProviderSchematic.Shows.withId(collectedShow.id))
-              .withValue(ShowColumns.LAST_COLLECTED_AT, lastCollectedMillis)
-              .build());
+      ops.add(ContentProviderOperation.newUpdate(Shows.withId(collectedShow.id))
+          .withValue(ShowColumns.LAST_COLLECTED_AT, lastCollectedMillis)
+          .build());
 
       List<CollectionItem.Season> seasons = item.getSeasons();
       for (CollectionItem.Season season : seasons) {
@@ -182,7 +183,7 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
             ContentValues cv = new ContentValues();
             cv.put(EpisodeColumns.IN_COLLECTION, true);
             builder.withValues(cv);
-            addOp(ops, builder.build());
+            ops.add(builder.build());
           } else {
             episodeIds.remove(syncEpisode.id);
           }
@@ -199,22 +200,15 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
       ContentValues cv = new ContentValues();
       cv.put(EpisodeColumns.IN_COLLECTION, false);
       builder.withValues(cv);
-      addOp(ops, builder.build());
+      ops.add(builder.build());
     }
     applyBatch(ops);
-  }
-
-  private void addOp(ArrayList<ContentProviderOperation> ops, ContentProviderOperation op) {
-    ops.add(op);
-    if (ops.size() > 25) {
-      applyBatch(ops);
-      ops.clear();
-    }
   }
 
   private void applyBatch(ArrayList<ContentProviderOperation> ops) {
     try {
       getContentResolver().applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
+      ops.clear();
     } catch (RemoteException e) {
       Timber.e(e, "SyncShowsWatchedTask failed");
       throw new JobFailedException(e);

@@ -231,8 +231,8 @@ public class MovieRecommendationsFragment
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    return new SimpleCursorLoader(getActivity(), Movies.RECOMMENDED, null,
-        MovieColumns.NEEDS_SYNC + "=0", null, sortBy.getSortOrder());
+    return new SimpleCursorLoader(getActivity(), Movies.RECOMMENDED, null, null, null,
+        sortBy.getSortOrder());
   }
 
   @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

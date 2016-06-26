@@ -119,7 +119,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT, ShowColumns.LAST_SYNC,
       ShowColumns.LAST_COMMENT_SYNC, ShowColumns.LAST_ACTORS_SYNC, ShowColumns.HOMEPAGE,
       ShowColumns.TRAILER, ShowColumns.IMDB_ID, ShowColumns.TVDB_ID, ShowColumns.TMDB_ID,
-      HiddenColumns.HIDDEN_CALENDAR,
+      ShowColumns.NEEDS_SYNC, HiddenColumns.HIDDEN_CALENDAR,
   };
 
   private static final String[] EPISODE_PROJECTION = new String[] {
@@ -593,6 +593,12 @@ public class ShowFragment extends RefreshableAppBarFragment {
       });
     } else {
       this.trailer.setVisibility(View.GONE);
+    }
+
+    final boolean needsSync = Cursors.getBoolean(cursor, ShowColumns.NEEDS_SYNC);
+    if (needsSync) {
+      Timber.d("Needs sync: %d", showId);
+      showScheduler.sync(showId);
     }
 
     final long lastSync = Cursors.getLong(cursor, ShowColumns.LAST_SYNC);

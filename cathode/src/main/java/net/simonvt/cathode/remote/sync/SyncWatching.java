@@ -28,6 +28,7 @@ import net.simonvt.cathode.api.entity.Watching;
 import net.simonvt.cathode.api.enumeration.Action;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.jobqueue.JobFailedException;
+import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
@@ -35,6 +36,7 @@ import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
@@ -102,15 +104,23 @@ public class SyncWatching extends CallJob<Watching> {
     if (watching != null) {
       if (watching.getType() != null) {
         switch (watching.getType()) {
-          case EPISODE:
+          case EPISODE: {
             final long showTraktId = watching.getShow().getIds().getTrakt();
 
             ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(showTraktId);
             final long showId = showResult.showId;
-            final boolean didShowExist = !showResult.didCreate;
-            if (showResult.didCreate) {
+
+            Cursor showCursor = getContentResolver().query(Shows.withId(showId), new String[] {
+                DatabaseContract.ShowColumns.NEEDS_SYNC,
+            }, null, null, null);
+            final boolean needsSync =
+                Cursors.getBoolean(showCursor, DatabaseContract.ShowColumns.NEEDS_SYNC);
+            if (needsSync) {
               queue(new SyncShow(showTraktId));
             }
+            showCursor.close();
+
+            final boolean didShowExist = !showResult.didCreate;
 
             final int seasonNumber = watching.getEpisode().getSeason();
             SeasonDatabaseHelper.IdResult seasonResult =
@@ -153,12 +163,14 @@ public class SyncWatching extends CallJob<Watching> {
             }
             ops.add(op);
             break;
+          }
 
-          case MOVIE:
+          case MOVIE: {
             final long movieTraktId = watching.getMovie().getIds().getTrakt();
             MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(movieTraktId);
             final long movieId = result.movieId;
-            if (result.didCreate) {
+
+            if (movieHelper.needsSync(movieId)) {
               queue(new SyncMovie(movieTraktId));
             }
 
@@ -181,6 +193,7 @@ public class SyncWatching extends CallJob<Watching> {
             }
             ops.add(op);
             break;
+          }
         }
       }
     }
