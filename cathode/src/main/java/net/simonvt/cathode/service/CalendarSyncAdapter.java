@@ -92,6 +92,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
     final boolean syncCalendar = settings.getBoolean(Settings.CALENDAR_SYNC, false);
     if (!syncCalendar) {
       Timber.d("Deleting calendar");
+      //noinspection MissingPermission
       context.getContentResolver()
           .delete(CalendarContract.Events.CONTENT_URI, CalendarContract.Events.CALENDAR_ID + "=?",
               new String[] {
@@ -106,6 +107,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
       return;
     }
 
+    //noinspection MissingPermission
     Cursor c =
         context.getContentResolver().query(CalendarContract.Events.CONTENT_URI, new String[] {
             CalendarContract.Events._ID, CalendarContract.Events.DTSTART,

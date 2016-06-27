@@ -90,11 +90,15 @@ public class StatsFragment extends BaseFragment implements LoaderCallbacks<Stats
     if (stats != null && getView() != null) {
       statsShows.setVisibility(View.VISIBLE);
       episodeTime.setText(DateUtils.getStatsString(getContext(), stats.episodeTime));
-      episodeCount.setText(getResources().getString(R.string.stats_episodes, stats.episodeCount));
-      showCount.setText(getResources().getString(R.string.stats_shows, stats.showCount));
+      episodeCount.setText(
+          getResources().getQuantityString(R.plurals.stats_episodes, stats.episodeCount,
+              stats.episodeCount));
+      showCount.setText(getResources().getQuantityString(R.plurals.stats_shows, stats.showCount,
+          stats.showCount));
 
       statsMovies.setVisibility(View.VISIBLE);
-      movieCount.setText(getResources().getString(R.string.stats_movies, stats.movieCount));
+      movieCount.setText(getResources().getQuantityString(R.plurals.stats_movies, stats.movieCount,
+          stats.movieCount));
       movieTime.setText(DateUtils.getStatsString(getContext(), stats.moviesTime));
     }
   }

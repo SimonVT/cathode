@@ -311,22 +311,33 @@
   <string name="comment_hint">What do you think?</string>
   <string name="comment_spoiler">Spoiler</string>
   <string name="comment_too_short">Comment must contain at least 5 words</string>
-  <string name="card_comments_add">Add</string>
   <string name="comments_username_rating">%1$s (%2$d)</string>
   <string name="comment_reveal">Click to reveal spoiler</string>
   
   <string name="stats_spent">You have spent</string>
   <string name="stats_watching">watching</string>
-  <string name="stats_episodes">%d episodes</string>
   <string name="stats_from">from</string>
   <string name="stats_made_it_through">You have made it through</string>
-  <string name="stats_movies">%d movies</string>
   <string name="stats_play_time">with a total play time of</string>
-  <string name="stats_shows">%d shows</string>
   <string name="stats_years">%dy</string>
   <string name="stats_days">%dd</string>
   <string name="stats_hours">%dh</string>
   <string name="stats_minutes">%dm</string>
+
+  <plurals name="stats_shows">
+    <item quantity="one">%d show</item>
+    <item quantity="other">%d shows</item>
+  </plurals>
+
+  <plurals name="stats_episodes">
+    <item quantity="one">%d episode</item>
+    <item quantity="other">%d episodes</item>
+  </plurals>
+
+  <plurals name="stats_movies">
+    <item quantity="one">%d movie</item>
+    <item quantity="other">%d movies</item>
+  </plurals>
 
   <string-array name="ratings">
     <item>Unrated</item>

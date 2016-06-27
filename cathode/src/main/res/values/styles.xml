@@ -184,19 +184,6 @@
     <item name="android:layout_marginTop">2dp</item>
   </style>
 
-  <style name="StatsTitle">
-    <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-    <item name="android:layout_marginLeft">8dp</item>
-    <item name="android:layout_marginRight">16dp</item>
-    <item name="android:textAllCaps">true</item>
-  </style>
-
-  <style name="StatsGenre">
-    <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-    <item name="android:layout_marginLeft">8dp</item>
-    <item name="android:layout_marginRight">16dp</item>
-  </style>
-
   <style name="StatsText">
     <item name="android:layout_gravity">center_horizontal</item>
     <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
