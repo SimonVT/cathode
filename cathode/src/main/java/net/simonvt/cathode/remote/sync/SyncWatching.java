@@ -28,7 +28,6 @@ import net.simonvt.cathode.api.entity.Watching;
 import net.simonvt.cathode.api.enumeration.Action;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.jobqueue.JobFailedException;
-import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
@@ -36,7 +35,6 @@ import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
@@ -110,15 +108,9 @@ public class SyncWatching extends CallJob<Watching> {
             ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(showTraktId);
             final long showId = showResult.showId;
 
-            Cursor showCursor = getContentResolver().query(Shows.withId(showId), new String[] {
-                DatabaseContract.ShowColumns.NEEDS_SYNC,
-            }, null, null, null);
-            final boolean needsSync =
-                Cursors.getBoolean(showCursor, DatabaseContract.ShowColumns.NEEDS_SYNC);
-            if (needsSync) {
+            if (showHelper.needsSync(showId)) {
               queue(new SyncShow(showTraktId));
             }
-            showCursor.close();
 
             final boolean didShowExist = !showResult.didCreate;
 
