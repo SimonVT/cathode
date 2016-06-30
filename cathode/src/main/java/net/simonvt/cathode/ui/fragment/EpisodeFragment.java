@@ -57,6 +57,7 @@ import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.SqlColumn;
+import net.simonvt.cathode.widget.CheckInDrawable;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.schematic.Cursors;
 
@@ -124,6 +125,9 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
   private NavigationListener navigationListener;
 
+  private MenuItem checkInItem;
+  private CheckInDrawable checkInDrawable;
+
   public static Bundle getArgs(long episodeId, String showTitle) {
     Bundle args = new Bundle();
     args.putLong(ARG_EPISODEID, episodeId);
@@ -188,21 +192,49 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
     navigationListener.onDisplayComments(ItemType.EPISODE, episodeId);
   }
 
+  @Override public void onDestroyView() {
+    checkInItem = null;
+    super.onDestroyView();
+  }
+
   @Override public void createMenu(Toolbar toolbar) {
     toolbar.inflateMenu(R.menu.fragment_episode);
-
     Menu menu = toolbar.getMenu();
 
     if (loaded) {
-      if (checkedIn) {
-        menu.add(0, R.id.action_checkin_cancel, 1, R.string.action_checkin_cancel)
-            .setIcon(R.drawable.ic_action_cancel_24dp)
-            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-      } else if (!watching) {
-        menu.add(0, R.id.action_checkin, 2, R.string.action_checkin)
-            .setIcon(R.drawable.ic_action_checkin_24dp)
-            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+      if (checkInDrawable == null) {
+        checkInDrawable = new CheckInDrawable(toolbar.getContext());
+        checkInDrawable.setWatching(watching || checkedIn);
+        checkInDrawable.setId(episodeId);
       }
+      if (checkInItem == null) {
+        if (watching || checkedIn) {
+          checkInItem = menu.add(0, R.id.action_checkin, 1, R.string.action_checkin_cancel);
+        } else {
+          checkInItem = menu.add(0, R.id.action_checkin, 1, R.string.action_checkin);
+        }
+
+        checkInItem.setIcon(checkInDrawable).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+      } else {
+        if (watching || checkedIn) {
+          checkInItem.setTitle(R.string.action_checkin_cancel);
+        } else {
+          checkInItem.setTitle(R.string.action_checkin);
+        }
+      }
+
+      if (watching) {
+        checkInItem.setEnabled(false);
+      } else {
+        checkInItem.setEnabled(true);
+      }
+
+      menu.removeItem(R.id.action_unwatched);
+      menu.removeItem(R.id.action_watched);
+      menu.removeItem(R.id.action_watchlist_remove);
+      menu.removeItem(R.id.action_watchlist_add);
+      menu.removeItem(R.id.action_collection_remove);
+      menu.removeItem(R.id.action_collection_add);
 
       if (watched) {
         menu.add(0, R.id.action_unwatched, 3, R.string.action_unwatched);
@@ -234,7 +266,19 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
         return true;
 
       case R.id.action_checkin:
-        CheckInDialog.showDialogIfNecessary(getActivity(), Type.SHOW, episodeTitle, episodeId);
+        if (!watching) {
+          if (checkedIn) {
+            showScheduler.cancelCheckin();
+            if (checkInDrawable != null) {
+              checkInDrawable.setWatching(false);
+            }
+          } else {
+            if (!CheckInDialog.showDialogIfNecessary(getActivity(), Type.SHOW, episodeTitle,
+                episodeId)) {
+              checkInDrawable.setWatching(true);
+            }
+          }
+        }
         return true;
 
       case R.id.action_checkin_cancel:
@@ -296,6 +340,10 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
       watching = Cursors.getBoolean(cursor, EpisodeColumns.WATCHING);
       checkedIn = Cursors.getBoolean(cursor, EpisodeColumns.CHECKED_IN);
 
+      if (checkInDrawable != null) {
+        checkInDrawable.setWatching(watching || checkedIn);
+      }
+
       watchedView.setVisibility(watched ? View.VISIBLE : View.GONE);
       inCollectionView.setVisibility(collected ? View.VISIBLE : View.GONE);
       inWatchlistView.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
@@ -309,7 +357,9 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
         episodeScheduler.syncComments(episodeId);
       }
 
-      invalidateMenu();
+      if (toolbar != null) {
+        createMenu(toolbar);
+      }
     }
   }
 

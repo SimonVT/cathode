@@ -64,12 +64,12 @@ public class CheckInDialog extends DialogFragment {
     }
   }
 
-  public static void showDialogIfNecessary(FragmentActivity activity, Type type, String title,
+  public static boolean showDialogIfNecessary(FragmentActivity activity, Type type, String title,
       long id) {
     if (title == null) {
       // TODO: Remove eventually
       Timber.e(new Exception("Title is null"), "Type: %s", type.toString());
-      return;
+      return true;
     }
 
     final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
@@ -79,6 +79,7 @@ public class CheckInDialog extends DialogFragment {
 
     if (facebookShare || twitterShare || tumblrShare) {
       newInstance(type, title, id).show(activity.getSupportFragmentManager(), DIALOG_TAG);
+      return true;
     } else {
       Injections injections = new Injections(activity);
 
@@ -87,6 +88,8 @@ public class CheckInDialog extends DialogFragment {
       } else {
         injections.movieScheduler.checkin(id, null, false, false, false);
       }
+
+      return false;
     }
   }
 

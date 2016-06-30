@@ -35,7 +35,7 @@ import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
-import net.simonvt.cathode.widget.OverflowView;
+import net.simonvt.cathode.widget.CheckInView;
 import net.simonvt.cathode.widget.OverflowView.OverflowActionListener;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.cathode.widget.TimeStamp;
@@ -127,7 +127,9 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
 
   @Override public void onViewRecycled(RecyclerView.ViewHolder holder) {
     if (holder instanceof ItemViewHolder) {
-      ((ItemViewHolder) holder).checkIn.dismiss();
+      ItemViewHolder itemHolder = (ItemViewHolder) holder;
+      itemHolder.checkIn.dismiss();
+      itemHolder.checkIn.reset();
     }
   }
 
@@ -174,21 +176,8 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     vh.nextEpisode.setText(episodeText);
     vh.nextEpisode.setEnabled(episodeTitle != null);
 
-    if (watching != vh.watching) {
-      vh.checkIn.dismiss();
-      vh.watching = watching;
-      vh.checkIn.removeItems();
-    }
-    if (vh.checkIn.itemCount() == 0) {
-      if (watching) {
-        vh.checkIn.setImageResource(R.drawable.ic_cancel_32dp);
-        vh.checkIn.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
-      } else {
-        vh.checkIn.setImageResource(R.drawable.ic_checkin_32dp);
-        vh.checkIn.addItem(R.id.action_checkin, R.string.action_checkin);
-        vh.checkIn.addItem(R.id.action_watched, R.string.action_watched);
-      }
-    }
+    vh.checkIn.setWatching(watching);
+    vh.checkIn.setId(id);
     vh.checkIn.setListener(new OverflowActionListener() {
       @Override public void onPopupShown() {
       }
@@ -200,10 +189,14 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
         switch (action) {
           case R.id.action_checkin_cancel:
             showScheduler.cancelCheckin();
+            vh.checkIn.setWatching(false);
             break;
 
           case R.id.action_checkin:
-            CheckInDialog.showDialogIfNecessary(activity, Type.SHOW, episodeTitle, episodeId);
+            if (!CheckInDialog.showDialogIfNecessary(activity, Type.SHOW, episodeTitle,
+                episodeId)) {
+              vh.checkIn.setWatching(true);
+            }
             break;
 
           case R.id.action_watched:
@@ -236,10 +229,10 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     @BindView(R.id.title) TextView title;
     @BindView(R.id.nextEpisode) TextView nextEpisode;
     @BindView(R.id.firstAired) TimeStamp firstAired;
-    @BindView(R.id.check_in) OverflowView checkIn;
+    @BindView(R.id.check_in) CheckInView checkIn;
     @BindView(R.id.poster) RemoteImageView poster;
 
-    boolean watching;
+    long id;
 
     ItemViewHolder(View v) {
       super(v);
