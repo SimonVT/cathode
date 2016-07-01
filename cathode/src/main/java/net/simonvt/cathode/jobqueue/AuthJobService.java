@@ -97,9 +97,11 @@ public class AuthJobService extends Service {
     intent.putExtra(RETRY_DELAY, nextDelay);
 
     PendingIntent pi = PendingIntent.getBroadcast(AuthJobService.this, 0, intent,
-        PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent.FLAG_UPDATE_CURRENT);
 
     AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+    am.cancel(pi);
+
     final long runAt = SystemClock.elapsedRealtime() + retryDelay * DateUtils.MINUTE_IN_MILLIS;
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && retryDelay < 10) {
       am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, runAt, pi);

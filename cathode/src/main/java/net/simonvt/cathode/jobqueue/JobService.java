@@ -26,7 +26,6 @@ import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
@@ -171,15 +170,13 @@ public class JobService extends Service {
     intent.putExtra(RETRY_DELAY, nextDelay);
 
     PendingIntent pi =
-        PendingIntent.getBroadcast(JobService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent.getBroadcast(JobService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
     AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+    am.cancel(pi);
+
     final long runAt = SystemClock.elapsedRealtime() + retryDelay * DateUtils.MINUTE_IN_MILLIS;
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && retryDelay < 10) {
-      am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, runAt, pi);
-    } else {
-      am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, runAt, pi);
-    }
+    am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, runAt, pi);
 
     Timber.d("Scheduling alarm in %d minutes", retryDelay);
   }
