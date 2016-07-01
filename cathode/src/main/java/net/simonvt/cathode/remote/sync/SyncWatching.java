@@ -40,8 +40,10 @@ import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
+import net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
+import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import timber.log.Timber;
@@ -191,6 +193,10 @@ public class SyncWatching extends CallJob<Watching> {
     }
 
     for (Long episodeId : episodeWatching) {
+      final long showId = episodeHelper.getShowId(episodeId);
+      final long showTraktId = showHelper.getTraktId(showId);
+      queue(new SyncShowWatchedStatus(showTraktId));
+
       op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
           .withValue(EpisodeColumns.CHECKED_IN, false)
           .withValue(EpisodeColumns.WATCHING, false)
@@ -199,6 +205,8 @@ public class SyncWatching extends CallJob<Watching> {
     }
 
     for (Long movieId : movieWatching) {
+      queue(new SyncWatchedMovies());
+
       op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
           .withValue(MovieColumns.CHECKED_IN, false)
           .withValue(MovieColumns.WATCHING, false)

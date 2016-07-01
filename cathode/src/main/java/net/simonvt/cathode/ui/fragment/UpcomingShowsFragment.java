@@ -42,6 +42,7 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
@@ -233,6 +234,7 @@ public class UpcomingShowsFragment
   };
 
   @Override public void onRefresh() {
+    jobManager.addJob(new SyncWatching());
     Job job = new SyncWatchedShows();
     job.registerOnDoneListener(onDoneListener);
     jobManager.addJob(job);

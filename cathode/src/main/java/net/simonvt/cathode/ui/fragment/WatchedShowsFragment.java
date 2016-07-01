@@ -30,6 +30,7 @@ import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
@@ -114,6 +115,7 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
   };
 
   @Override public void onRefresh() {
+    jobManager.addJob(new SyncWatching());
     Job job = new SyncWatchedShows();
     job.registerOnDoneListener(onDoneListener);
     jobManager.addJob(job);
