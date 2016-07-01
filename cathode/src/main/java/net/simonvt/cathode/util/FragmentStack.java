@@ -127,7 +127,11 @@ public final class FragmentStack {
     String[] stackTags = inState.getStringArray(STATE_STACK);
     for (String tag : stackTags) {
       Fragment f = fragmentManager.findFragmentByTag(tag);
-      stack.add(f);
+      if (f == null) {
+        throw new IllegalStateException("Restoring fragment stack failed: " + inState.toString());
+      } else {
+        stack.add(f);
+      }
     }
     dispatchOnStackChangedEvent();
   }
