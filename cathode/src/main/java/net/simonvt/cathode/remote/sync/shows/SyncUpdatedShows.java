@@ -16,7 +16,6 @@
 package net.simonvt.cathode.remote.sync.shows;
 
 import android.content.ContentValues;
-import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Show;
@@ -63,8 +62,6 @@ public class SyncUpdatedShows extends CallJob<List<UpdatedItem>> {
   }
 
   @Override public void handleResponse(List<UpdatedItem> updated) {
-    List<Long> showSummaries = new ArrayList<>();
-
     for (UpdatedItem item : updated) {
       final String updatedAt = item.getUpdatedAt();
 
@@ -72,13 +69,15 @@ public class SyncUpdatedShows extends CallJob<List<UpdatedItem>> {
       final long traktId = show.getIds().getTrakt();
       final long id = showHelper.getId(traktId);
       if (id != -1L) {
-        final boolean shouldUpdate = showHelper.shouldUpdate(traktId, updatedAt);
-        if (shouldUpdate) {
-          queue(new SyncShow(traktId));
-        } else {
-          ContentValues values = new ContentValues();
-          values.put(ShowColumns.NEEDS_SYNC, true);
-          getContentResolver().update(Shows.withId(id), values, null, null);
+        if (showHelper.isUpdated(traktId, updatedAt)) {
+          final boolean shouldUpdate = showHelper.shouldUpdate(traktId);
+          if (shouldUpdate) {
+            queue(new SyncShow(traktId));
+          } else {
+            ContentValues values = new ContentValues();
+            values.put(ShowColumns.NEEDS_SYNC, true);
+            getContentResolver().update(Shows.withId(id), values, null, null);
+          }
         }
       }
     }

@@ -184,12 +184,31 @@ public final class ShowDatabaseHelper {
     }
   }
 
-  public boolean shouldUpdate(long traktId, String lastUpdatedIso) {
+  public boolean isUpdated(long traktId, String lastUpdatedIso) {
     long lastUpdated = TimeUtils.getMillis(lastUpdatedIso);
     Cursor show = null;
     try {
       show = resolver.query(Shows.SHOWS, new String[] {
-          ShowColumns.LAST_UPDATED, ShowColumns.WATCHED_COUNT, ShowColumns.IN_COLLECTION_COUNT,
+          ShowColumns.LAST_UPDATED,
+      }, ShowColumns.TRAKT_ID + "=?", new String[] {
+          String.valueOf(traktId),
+      }, null);
+
+      if (show.moveToFirst()) {
+        return lastUpdated > Cursors.getLong(show, ShowColumns.LAST_UPDATED);
+      }
+
+      return false;
+    } finally {
+      if (show != null) show.close();
+    }
+  }
+
+  public boolean shouldUpdate(long traktId) {
+    Cursor show = null;
+    try {
+      show = resolver.query(Shows.SHOWS, new String[] {
+          ShowColumns.WATCHED_COUNT, ShowColumns.IN_COLLECTION_COUNT,
           ShowColumns.IN_WATCHLIST_COUNT, ShowColumns.IN_COLLECTION_COUNT, ShowColumns.IN_WATCHLIST,
       }, ShowColumns.TRAKT_ID + "=?", new String[] {
           String.valueOf(traktId),
@@ -201,11 +220,8 @@ public final class ShowDatabaseHelper {
         final int watchlistCount = Cursors.getInt(show, ShowColumns.IN_WATCHLIST_COUNT);
         final boolean inWatchlist = Cursors.getBoolean(show, ShowColumns.IN_WATCHLIST);
 
-        final boolean isUpdated = lastUpdated > Cursors.getLong(show, ShowColumns.LAST_UPDATED);
-        if (isUpdated) {
-          if (watchedCount > 0 || collectedCount > 0 || watchlistCount > 0 || inWatchlist) {
-            return true;
-          }
+        if (watchedCount > 0 || collectedCount > 0 || watchlistCount > 0 || inWatchlist) {
+          return true;
         }
       }
 

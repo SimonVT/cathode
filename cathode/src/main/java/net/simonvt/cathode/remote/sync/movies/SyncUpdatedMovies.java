@@ -69,13 +69,15 @@ public class SyncUpdatedMovies extends CallJob<List<UpdatedItem>> {
 
       final long movieId = movieHelper.getId(traktId);
       if (movieId != -1L) {
-        final boolean shouldUpdate = movieHelper.shouldUpdate(traktId, updatedAt);
-        if (shouldUpdate) {
-          queue(new SyncMovie(traktId));
-        } else {
-          ContentValues values = new ContentValues();
-          values.put(MovieColumns.NEEDS_SYNC, true);
-          getContentResolver().update(Movies.withId(movieId), values, null, null);
+        if (movieHelper.isUpdated(traktId, updatedAt)) {
+          final boolean shouldUpdate = movieHelper.shouldUpdate(traktId, updatedAt);
+          if (shouldUpdate) {
+            queue(new SyncMovie(traktId));
+          } else {
+            ContentValues values = new ContentValues();
+            values.put(MovieColumns.NEEDS_SYNC, true);
+            getContentResolver().update(Movies.withId(movieId), values, null, null);
+          }
         }
       }
     }

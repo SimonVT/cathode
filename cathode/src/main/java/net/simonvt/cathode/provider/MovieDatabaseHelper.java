@@ -116,14 +116,32 @@ public final class MovieDatabaseHelper {
     }
   }
 
+  public boolean isUpdated(long traktId, String lastUpdated) {
+    Cursor movie = null;
+    try {
+      movie = resolver.query(Movies.MOVIES, new String[] {
+          MovieColumns.LAST_UPDATED,
+      }, MovieColumns.TRAKT_ID + "=?", new String[] {
+          String.valueOf(traktId),
+      }, null);
+
+      if (movie.moveToFirst()) {
+        return TimeUtils.getMillis(lastUpdated) > Cursors.getLong(movie, MovieColumns.LAST_UPDATED);
+      }
+
+      return false;
+    } finally {
+      if (movie != null) movie.close();
+    }
+  }
+
   public boolean shouldUpdate(long traktId, String lastUpdated) {
     if (lastUpdated == null) return true;
 
     Cursor movie = null;
     try {
       movie = resolver.query(Movies.MOVIES, new String[] {
-          MovieColumns.LAST_UPDATED, MovieColumns.WATCHED, MovieColumns.IN_COLLECTION,
-          MovieColumns.IN_WATCHLIST,
+          MovieColumns.WATCHED, MovieColumns.IN_COLLECTION, MovieColumns.IN_WATCHLIST,
       }, MovieColumns.TRAKT_ID + "=?", new String[] {
           String.valueOf(traktId),
       }, null);
@@ -133,12 +151,8 @@ public final class MovieDatabaseHelper {
         final boolean collected = Cursors.getBoolean(movie, MovieColumns.IN_COLLECTION);
         final boolean inWatchlist = Cursors.getBoolean(movie, MovieColumns.IN_WATCHLIST);
 
-        final boolean isUpdated =
-            TimeUtils.getMillis(lastUpdated) > Cursors.getLong(movie, MovieColumns.LAST_UPDATED);
-        if (isUpdated) {
-          if (watched || collected || inWatchlist) {
-            return true;
-          }
+        if (watched || collected || inWatchlist) {
+          return true;
         }
       }
 
