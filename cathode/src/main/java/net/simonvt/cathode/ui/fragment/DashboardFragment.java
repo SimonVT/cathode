@@ -113,27 +113,27 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
           switch (category) {
             case R.string.category_shows_upcoming:
               navigationListener.displayFragment(UpcomingShowsFragment.class,
-                  UpcomingShowsFragment.TAG);
+                  UpcomingShowsFragment.TAG + "_dashboard");
               break;
 
             case R.string.category_shows_watchlist:
               navigationListener.displayFragment(ShowsWatchlistFragment.class,
-                  ShowsWatchlistFragment.TAG);
+                  ShowsWatchlistFragment.TAG + "_dashboard");
               break;
 
             case R.string.category_shows_suggestions:
               navigationListener.displayFragment(ShowSuggestionsFragment.class,
-                  ShowSuggestionsFragment.TAG);
+                  ShowSuggestionsFragment.TAG + "_dashboard");
               break;
 
             case R.string.category_movies_watchlist:
               navigationListener.displayFragment(MovieWatchlistFragment.class,
-                  MovieWatchlistFragment.TAG);
+                  MovieWatchlistFragment.TAG + "_dashboard");
               break;
 
             case R.string.category_movies_suggestions:
               navigationListener.displayFragment(MovieSuggestionsFragment.class,
-                  MovieSuggestionsFragment.TAG);
+                  MovieSuggestionsFragment.TAG + "_dashboard");
               break;
           }
         }
