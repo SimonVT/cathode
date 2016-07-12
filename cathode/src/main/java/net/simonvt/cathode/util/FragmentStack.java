@@ -25,6 +25,7 @@ import android.support.v4.app.FragmentTransaction;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
+import net.simonvt.cathode.api.util.Joiner;
 
 /** A class that manages a stack of {@link Fragment}s in a single container. */
 public final class FragmentStack {
@@ -128,7 +129,8 @@ public final class FragmentStack {
     for (String tag : stackTags) {
       Fragment f = fragmentManager.findFragmentByTag(tag);
       if (f == null) {
-        throw new IllegalStateException("Restoring fragment stack failed: " + inState.toString());
+        throw new IllegalStateException(
+            "Restoring fragment stack failed: " + Joiner.on(",").join(stackTags));
       } else {
         stack.add(f);
       }
