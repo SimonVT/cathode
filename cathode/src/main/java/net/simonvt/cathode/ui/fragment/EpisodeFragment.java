@@ -198,10 +198,13 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
   }
 
   @Override public void createMenu(Toolbar toolbar) {
-    toolbar.inflateMenu(R.menu.fragment_episode);
-    Menu menu = toolbar.getMenu();
-
     if (loaded) {
+      Menu menu = toolbar.getMenu();
+
+      if (menu.findItem(R.id.menu_lists_add) == null) {
+        menu.add(0, R.id.menu_lists_add, 0, R.string.action_list_add);
+      }
+
       if (checkInDrawable == null) {
         checkInDrawable = new CheckInDrawable(toolbar.getContext());
         checkInDrawable.setWatching(watching || checkedIn);

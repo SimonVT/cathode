@@ -934,6 +934,26 @@ public final class ProviderSchematic {
         where = MovieColumns.WATCHING + "=1 OR " + MovieColumns.CHECKED_IN + "=1")
     public static final Uri WATCHING = buildUri(Path.MOVIES, Path.WATCHING);
 
+    @NotifyUpdate(paths = {
+        Path.MOVIES + "/" + Path.WATCHING
+    })
+    public static Uri[] notifyUpdate(Context context, String where, String[] whereArgs) {
+      Set<Uri> uris = new HashSet<>();
+
+      Cursor c = context.getContentResolver().query(WATCHING, new String[] {
+          MovieColumns.ID,
+      }, where, whereArgs, null);
+
+      while (c.moveToNext()) {
+        final long id = Cursors.getLong(c, MovieColumns.ID);
+        uris.add(withId(id));
+      }
+
+      c.close();
+
+      return uris.toArray(new Uri[uris.size()]);
+    }
+
     @ContentUri(
         path = Path.MOVIES + "/" + Path.TRENDING,
         type = Type.MOVIE,

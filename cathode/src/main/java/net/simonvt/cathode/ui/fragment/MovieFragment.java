@@ -60,6 +60,7 @@ import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.util.Intents;
 import net.simonvt.cathode.util.SqlColumn;
+import net.simonvt.cathode.widget.CheckInDrawable;
 import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.RemoteImageView;
@@ -145,6 +146,9 @@ public class MovieFragment extends RefreshableAppBarFragment
 
   private NavigationListener navigationListener;
 
+  private MenuItem checkInItem;
+  private CheckInDrawable checkInDrawable;
+
   public static Bundle getArgs(long movieId, String movieTitle, String overview) {
     if (movieId < 0) {
       throw new IllegalArgumentException("movieId must be >= 0");
@@ -188,6 +192,11 @@ public class MovieFragment extends RefreshableAppBarFragment
     getLoaderManager().initLoader(LOADER_MOVIE_COMMENTS, null, commentsLoader);
   }
 
+  @Override public void onDestroyView() {
+    checkInItem = null;
+    super.onDestroyView();
+  }
+
   @OnClick(R.id.rating) void onRatingClick() {
     RatingDialog.newInstance(RatingDialog.Type.MOVIE, movieId, currentRating)
         .show(getFragmentManager(), DIALOG_RATING);
@@ -212,23 +221,46 @@ public class MovieFragment extends RefreshableAppBarFragment
   }
 
   @Override public void createMenu(Toolbar toolbar) {
-    super.createMenu(toolbar);
-    Menu menu = toolbar.getMenu();
-
-    toolbar.inflateMenu(R.menu.fragment_movie);
-
     if (loaded) {
-      if (checkedIn) {
-        menu.add(0, R.id.action_checkin_cancel, 1, R.string.action_checkin_cancel)
-            .setIcon(R.drawable.ic_action_cancel_24dp)
-            .setShowAsActionFlags(
-                MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-      } else if (!watching) {
-        menu.add(0, R.id.action_checkin, 2, R.string.action_checkin)
-            .setIcon(R.drawable.ic_action_checkin_24dp)
-            .setShowAsActionFlags(
-                MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+      Menu menu = toolbar.getMenu();
+
+      if (menu.findItem(R.id.menu_lists_add) == null) {
+        menu.add(0, R.id.menu_lists_add, 0, R.string.action_list_add);
       }
+
+      if (checkInDrawable == null) {
+        checkInDrawable = new CheckInDrawable(toolbar.getContext());
+        checkInDrawable.setWatching(watching || checkedIn);
+        checkInDrawable.setId(movieId);
+      }
+      if (checkInItem == null) {
+        if (watching || checkedIn) {
+          checkInItem = menu.add(0, R.id.action_checkin, 1, R.string.action_checkin_cancel);
+        } else {
+          checkInItem = menu.add(0, R.id.action_checkin, 1, R.string.action_checkin);
+        }
+
+        checkInItem.setIcon(checkInDrawable).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+      } else {
+        if (watching || checkedIn) {
+          checkInItem.setTitle(R.string.action_checkin_cancel);
+        } else {
+          checkInItem.setTitle(R.string.action_checkin);
+        }
+      }
+
+      if (watching) {
+        checkInItem.setEnabled(false);
+      } else {
+        checkInItem.setEnabled(true);
+      }
+
+      menu.removeItem(R.id.action_unwatched);
+      menu.removeItem(R.id.action_watched);
+      menu.removeItem(R.id.action_watchlist_remove);
+      menu.removeItem(R.id.action_watchlist_add);
+      menu.removeItem(R.id.action_collection_remove);
+      menu.removeItem(R.id.action_collection_add);
 
       if (watched) {
         menu.add(0, R.id.action_unwatched, 3, R.string.action_unwatched);
@@ -260,7 +292,19 @@ public class MovieFragment extends RefreshableAppBarFragment
         return true;
 
       case R.id.action_checkin:
-        CheckInDialog.showDialogIfNecessary(getActivity(), Type.MOVIE, movieTitle, movieId);
+        if (!watching) {
+          if (checkedIn) {
+            movieScheduler.cancelCheckin();
+            if (checkInDrawable != null) {
+              checkInDrawable.setWatching(false);
+            }
+          } else {
+            if (!CheckInDialog.showDialogIfNecessary(getActivity(), Type.MOVIE, movieTitle,
+                movieId)) {
+              checkInDrawable.setWatching(true);
+            }
+          }
+        }
         return true;
 
       case R.id.action_checkin_cancel:
@@ -319,6 +363,10 @@ public class MovieFragment extends RefreshableAppBarFragment
     inWatchlist = Cursors.getBoolean(cursor, MovieColumns.IN_WATCHLIST);
     watching = Cursors.getBoolean(cursor, MovieColumns.WATCHING);
     checkedIn = Cursors.getBoolean(cursor, MovieColumns.CHECKED_IN);
+
+    if (checkInDrawable != null) {
+      checkInDrawable.setWatching(watching || checkedIn);
+    }
 
     isWatched.setVisibility(watched ? View.VISIBLE : View.GONE);
     collection.setVisibility(collected ? View.VISIBLE : View.GONE);
@@ -406,7 +454,9 @@ public class MovieFragment extends RefreshableAppBarFragment
       viewOnContainer.setVisibility(View.GONE);
     }
 
-    invalidateMenu();
+    if (toolbar != null) {
+      createMenu(toolbar);
+    }
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
