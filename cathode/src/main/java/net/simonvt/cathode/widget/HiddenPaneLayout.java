@@ -238,21 +238,6 @@ public class HiddenPaneLayout extends ViewGroup {
     setOffsetPixels(Math.max(Math.min(offsetPixels + dx, 0), -hiddenPaneWidth));
   }
 
-  protected void onUpEvent(int x, int y) {
-    final int offsetPixels = (int) this.offsetPixels;
-
-    if (isDragging) {
-      velocityTracker.computeCurrentVelocity(1000, maxVelocity);
-      final int initialVelocity = (int) velocityTracker.getXVelocity(activePointerId);
-      lastMotionX = x;
-      animateOffsetTo(initialVelocity < 0 ? -hiddenPaneWidth : 0, initialVelocity, true);
-
-      // Close the menu when content is clicked while the menu is visible.
-    } else if (this.offsetPixels < 0.0f && x < getWidth() + offsetPixels) {
-      close();
-    }
-  }
-
   protected boolean checkTouchSlop(float dx, float dy) {
     return Math.abs(dx) > touchSlop && Math.abs(dx) > Math.abs(dy);
   }
@@ -535,12 +520,29 @@ public class HiddenPaneLayout extends ViewGroup {
         break;
       }
 
-      case MotionEvent.ACTION_CANCEL:
       case MotionEvent.ACTION_UP: {
         final int index = ev.findPointerIndex(activePointerId);
         final int x = (int) ev.getX(index);
-        final int y = (int) ev.getY(index);
-        onUpEvent(x, y);
+        final int offsetPixels = (int) this.offsetPixels;
+
+        if (isDragging) {
+          velocityTracker.computeCurrentVelocity(1000, maxVelocity);
+          final int initialVelocity = (int) velocityTracker.getXVelocity(activePointerId);
+          lastMotionX = x;
+          animateOffsetTo(initialVelocity < 0 ? -hiddenPaneWidth : 0, initialVelocity, true);
+
+          // Close the menu when content is clicked while the menu is visible.
+        } else if (this.offsetPixels < 0.0f && x < getWidth() + offsetPixels) {
+          close();
+        }
+
+        activePointerId = INVALID_POINTER;
+        isDragging = false;
+        break;
+      }
+
+      case MotionEvent.ACTION_CANCEL: {
+        close();
         activePointerId = INVALID_POINTER;
         isDragging = false;
         break;
