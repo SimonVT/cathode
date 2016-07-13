@@ -16,11 +16,62 @@
 
 package net.simonvt.cathode.event;
 
-public class CheckInFailedEvent {
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+import net.simonvt.cathode.util.MainHandler;
+
+public final class CheckInFailedEvent {
+
+  public interface OnCheckInFailedListener {
+
+    void onCheckInFailed(CheckInFailedEvent event);
+  }
+
+  private static final List<WeakReference<OnCheckInFailedListener>> LISTENERS = new ArrayList<>();
+
+  public static void registerListener(OnCheckInFailedListener listener) {
+    synchronized (LISTENERS) {
+      LISTENERS.add(new WeakReference<>(listener));
+    }
+  }
+
+  public static void unregisterListener(OnCheckInFailedListener listener) {
+    synchronized (LISTENERS) {
+      for (int i = LISTENERS.size() - 1; i >= 0; i--) {
+        WeakReference<OnCheckInFailedListener> ref = LISTENERS.get(i);
+        OnCheckInFailedListener l = ref.get();
+        if (l == null || l == listener) {
+          LISTENERS.remove(ref);
+        }
+      }
+    }
+  }
+
+  public static void post(final String title) {
+    MainHandler.post(new Runnable() {
+      @Override public void run() {
+        synchronized (LISTENERS) {
+          CheckInFailedEvent event = new CheckInFailedEvent(title);
+
+          for (int i = LISTENERS.size() - 1; i >= 0; i--) {
+            WeakReference<OnCheckInFailedListener> ref = LISTENERS.get(i);
+            OnCheckInFailedListener l = ref.get();
+            if (l == null) {
+              LISTENERS.remove(ref);
+              continue;
+            }
+
+            l.onCheckInFailed(event);
+          }
+        }
+      }
+    });
+  }
 
   public String title;
 
-  public CheckInFailedEvent(String title) {
+  private CheckInFailedEvent(String title) {
     this.title = title;
   }
 

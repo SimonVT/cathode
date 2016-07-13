@@ -29,20 +29,13 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import com.crashlytics.android.Crashlytics;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Produce;
-import com.squareup.otto.Subscribe;
 import dagger.ObjectGraph;
 import io.fabric.sdk.android.Fabric;
 import javax.inject.Inject;
 import net.simonvt.cathode.event.AuthFailedEvent;
-import net.simonvt.cathode.event.LogoutEvent;
-import net.simonvt.cathode.jobqueue.AuthSyncEvent;
+import net.simonvt.cathode.event.AuthFailedEvent.OnAuthFailedListener;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.jobqueue.JobSyncEvent;
-import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.ForceUpdateJob;
-import net.simonvt.cathode.remote.LogoutJob;
 import net.simonvt.cathode.remote.UpdateShowCounts;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
@@ -70,15 +63,10 @@ public class CathodeApp extends Application {
 
   private ObjectGraph objectGraph;
 
-  @Inject Bus bus;
-
   @Inject JobManager jobManager;
 
   private int homeActivityResumedCount;
   private long lastSync;
-
-  private int authSyncCount;
-  private int jobSyncCount;
 
   @Override public void onCreate() {
     super.onCreate();
@@ -102,7 +90,7 @@ public class CathodeApp extends Application {
     objectGraph = ObjectGraph.create(Modules.list(this));
     objectGraph.inject(this);
 
-    bus.register(this);
+    AuthFailedEvent.registerListener(authFailedListener);
 
     final boolean isLoggedIn = settings.getBoolean(Settings.TRAKT_LOGGED_IN, false);
     final boolean accountExists = Accounts.accountExists(this);
@@ -242,110 +230,37 @@ public class CathodeApp extends Application {
     }
   }
 
-  @Subscribe public void onAuthFailure(AuthFailedEvent event) {
-    Timber.i("onAuthFailure");
-    if (!Accounts.accountExists(this)) {
-      // TODO: Try and make sure this doesn't happen
-      return; // User has logged out, ignore.
+  private OnAuthFailedListener authFailedListener = new OnAuthFailedListener() {
+    @Override public void onAuthFailed() {
+      Timber.i("onAuthFailure");
+      if (!Accounts.accountExists(CathodeApp.this)) {
+        // TODO: Try and make sure this doesn't happen
+        return; // User has logged out, ignore.
+      }
+
+      SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(CathodeApp.this);
+      settings.edit().putBoolean(Settings.TRAKT_LOGGED_IN, false).apply();
+
+      Intent intent = new Intent(CathodeApp.this, LoginActivity.class);
+      intent.setAction(HomeActivity.ACTION_LOGIN);
+      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+      PendingIntent pi = PendingIntent.getActivity(CathodeApp.this, 0, intent, 0);
+
+      Notification.Builder builder = new Notification.Builder(CathodeApp.this) //
+          .setSmallIcon(R.drawable.ic_noti_error)
+          .setTicker(getString(R.string.auth_failed))
+          .setContentTitle(getString(R.string.auth_failed))
+          .setContentText(getString(R.string.auth_failed_desc))
+          .setContentIntent(pi)
+          .setPriority(Notification.PRIORITY_HIGH)
+          .setAutoCancel(true);
+
+      NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+      nm.notify(AUTH_NOTIFICATION, builder.build());
     }
-
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-    settings.edit().putBoolean(Settings.TRAKT_LOGGED_IN, false).apply();
-
-    Intent intent = new Intent(this, LoginActivity.class);
-    intent.setAction(HomeActivity.ACTION_LOGIN);
-    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-    PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
-
-    Notification.Builder builder = new Notification.Builder(this) //
-        .setSmallIcon(R.drawable.ic_noti_error)
-        .setTicker(getString(R.string.auth_failed))
-        .setContentTitle(getString(R.string.auth_failed))
-        .setContentText(getString(R.string.auth_failed_desc))
-        .setContentIntent(pi)
-        .setPriority(Notification.PRIORITY_HIGH)
-        .setAutoCancel(true);
-
-    NotificationManager nm = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
-    nm.notify(AUTH_NOTIFICATION, builder.build());
-  }
-
-  @Subscribe public void onLogout(LogoutEvent event) {
-    Settings.clearUserSettings(this);
-    TraktTimestamps.clear(this);
-
-    jobManager.addJob(new LogoutJob());
-    jobManager.removeJobsWithFlag(Flags.REQUIRES_AUTH);
-  }
-
-  public static void authServiceStarted() {
-    final boolean didSync = instance.isSyncing();
-    instance.authSyncCount++;
-    instance.syncEventIfNecessary(didSync);
-    Timber.d("Auth service running count: %d", instance.authSyncCount);
-
-    if (BuildConfig.DEBUG && instance.authSyncCount == 1) {
-      instance.bus.post(new AuthSyncEvent(true));
-    }
-  }
-
-  public static void authServiceStopped() {
-    final boolean didSync = instance.isSyncing();
-    instance.authSyncCount--;
-    instance.syncEventIfNecessary(didSync);
-    Timber.d("Auth service running count: %d", instance.authSyncCount);
-
-    if (BuildConfig.DEBUG && instance.authSyncCount == 0) {
-      instance.bus.post(new AuthSyncEvent(false));
-    }
-  }
-
-  public static void jobServiceStarted() {
-    final boolean didSync = instance.isSyncing();
-    instance.jobSyncCount++;
-    instance.syncEventIfNecessary(didSync);
-    Timber.d("Job service running count: %d", instance.jobSyncCount);
-
-    if (BuildConfig.DEBUG && instance.jobSyncCount == 1) {
-      instance.bus.post(new JobSyncEvent(true));
-    }
-  }
-
-  public static void jobServiceStopped() {
-    final boolean didSync = instance.isSyncing();
-    instance.jobSyncCount--;
-    instance.syncEventIfNecessary(didSync);
-    Timber.d("Job service running count: %d", instance.jobSyncCount);
-
-    if (BuildConfig.DEBUG && instance.jobSyncCount == 0) {
-      instance.bus.post(new JobSyncEvent(false));
-    }
-  }
-
-  private boolean isSyncing() {
-    return authSyncCount > 0 || jobSyncCount > 0;
-  }
-
-  private void syncEventIfNecessary(boolean didSync) {
-    final boolean isSyncing = isSyncing();
-    if (didSync != isSyncing) {
-      bus.post(new SyncEvent(isSyncing));
-    }
-  }
-
-  @Produce public SyncEvent provideRunningEvent() {
-    return new SyncEvent(isSyncing());
-  }
-
-  @Produce public AuthSyncEvent provideAuthRunningEvent() {
-    return new AuthSyncEvent(authSyncCount > 0);
-  }
-
-  @Produce public JobSyncEvent provideJobRunningEvent() {
-    return new JobSyncEvent(jobSyncCount > 0);
-  }
+  };
 
   public static void inject(Context context) {
     ((CathodeApp) context.getApplicationContext()).objectGraph.inject(context);

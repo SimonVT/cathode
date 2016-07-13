@@ -31,7 +31,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.OnClick;
-import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -84,7 +83,6 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
   @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;
-  @Inject Bus bus;
 
   @BindView(R.id.title) TextView title;
   @BindView(R.id.overview) TextView overview;

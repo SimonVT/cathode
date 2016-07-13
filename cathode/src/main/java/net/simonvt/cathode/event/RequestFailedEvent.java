@@ -15,11 +15,62 @@
  */
 package net.simonvt.cathode.event;
 
-public class RequestFailedEvent {
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+import net.simonvt.cathode.util.MainHandler;
+
+public final class RequestFailedEvent {
+
+  public interface OnRequestFailedListener {
+
+    void onRequestFailed(RequestFailedEvent event);
+  }
+
+  private static final List<WeakReference<OnRequestFailedListener>> LISTENERS = new ArrayList<>();
+
+  public static void registerListener(OnRequestFailedListener listener) {
+    synchronized (LISTENERS) {
+      LISTENERS.add(new WeakReference<>(listener));
+    }
+  }
+
+  public static void unregisterListener(OnRequestFailedListener listener) {
+    synchronized (LISTENERS) {
+      for (int i = LISTENERS.size() - 1; i >= 0; i--) {
+        WeakReference<OnRequestFailedListener> ref = LISTENERS.get(i);
+        OnRequestFailedListener l = ref.get();
+        if (l == null || l == listener) {
+          LISTENERS.remove(ref);
+        }
+      }
+    }
+  }
+
+  public static void post(final int errorMessage) {
+    MainHandler.post(new Runnable() {
+      @Override public void run() {
+        synchronized (LISTENERS) {
+          RequestFailedEvent event = new RequestFailedEvent(errorMessage);
+
+          for (int i = LISTENERS.size() - 1; i >= 0; i--) {
+            WeakReference<OnRequestFailedListener> ref = LISTENERS.get(i);
+            OnRequestFailedListener l = ref.get();
+            if (l == null) {
+              LISTENERS.remove(ref);
+              continue;
+            }
+
+            l.onRequestFailed(event);
+          }
+        }
+      }
+    });
+  }
 
   private int errorMessage;
 
-  public RequestFailedEvent(int errorMessage) {
+  private RequestFailedEvent(int errorMessage) {
     this.errorMessage = errorMessage;
   }
 

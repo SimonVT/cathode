@@ -25,7 +25,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -38,8 +37,6 @@ public class AddCommentDialog extends DialogFragment {
 
   private static final String ARG_TYPE = "net.simonvt.cathode.ui.dialog.AddCommentDialog.type";
   private static final String ARG_ID = "net.simonvt.cathode.ui.dialog.AddCommentDialog.id";
-
-  @Inject Bus bus;
 
   @Inject CommentsTaskScheduler commentsScheduler;
 

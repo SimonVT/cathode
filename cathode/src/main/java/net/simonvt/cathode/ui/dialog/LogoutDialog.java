@@ -20,18 +20,22 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.event.LogoutEvent;
+import net.simonvt.cathode.jobqueue.JobManager;
+import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.LogoutJob;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.TraktTimestamps;
+import net.simonvt.cathode.ui.LoginActivity;
 
 public class LogoutDialog extends DialogFragment {
 
-  @Inject Bus bus;
+  @Inject JobManager jobManager;
 
   @Override public Dialog onCreateDialog(Bundle inState) {
     return new AlertDialog.Builder(getActivity()).setTitle(R.string.logout_title)
@@ -46,7 +50,15 @@ public class LogoutDialog extends DialogFragment {
                 .putBoolean(Settings.TRAKT_LOGGED_IN, false) //
                 .apply();
 
-            bus.post(new LogoutEvent());
+            Settings.clearUserSettings(getActivity());
+            TraktTimestamps.clear(getActivity());
+
+            jobManager.addJob(new LogoutJob());
+            jobManager.removeJobsWithFlag(Flags.REQUIRES_AUTH);
+
+            Intent login = new Intent(getActivity(), LoginActivity.class);
+            login.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(login);
           }
         })
         .setNegativeButton(R.string.cancel, null)

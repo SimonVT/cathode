@@ -32,8 +32,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.HttpStatusCode;
@@ -43,13 +41,13 @@ import net.simonvt.cathode.api.TraktSettings;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.RequestFailedEvent;
+import net.simonvt.cathode.event.SyncEvent;
+import net.simonvt.cathode.event.SyncEvent.OnSyncListener;
 import net.simonvt.cathode.jobqueue.AuthJobService;
-import net.simonvt.cathode.jobqueue.AuthSyncEvent;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobListener;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.jobqueue.JobService;
-import net.simonvt.cathode.jobqueue.JobSyncEvent;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.InitialSyncJob;
 import net.simonvt.cathode.remote.sync.SyncWatching;
@@ -58,15 +56,12 @@ import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
 import net.simonvt.cathode.settings.Settings;
 import okhttp3.logging.HttpLoggingInterceptor;
-import timber.log.Timber;
 
 @SuppressLint("SetTextI18n") public abstract class BaseActivity extends AppCompatActivity {
 
   private final DebugViews debugViews = new DebugViews();
 
   private final DebugInjects injects = new DebugInjects();
-
-  private final DebugSubscribers subscribers = new DebugSubscribers();
 
   private SharedPreferences settings;
 
@@ -85,7 +80,7 @@ import timber.log.Timber;
 
     ButterKnife.bind(debugViews, this);
 
-    injects.bus.register(subscribers);
+    SyncEvent.registerListener(debugSyncListener);
 
     final StartPageAdapter startPageAdapter = new StartPageAdapter();
     debugViews.startPage.setAdapter(startPageAdapter);
@@ -111,14 +106,14 @@ import timber.log.Timber;
 
     debugViews.requestFailedEvent.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        injects.bus.post(new RequestFailedEvent(R.string.error_unknown_retrying));
+        RequestFailedEvent.post(R.string.error_unknown_retrying);
         debugViews.drawerLayout.closeDrawers();
       }
     });
 
     debugViews.authFailedEvent.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        injects.bus.post(new AuthFailedEvent());
+        AuthFailedEvent.post();
         debugViews.drawerLayout.closeDrawers();
       }
     });
@@ -250,34 +245,27 @@ import timber.log.Timber;
 
   @Override protected void onDestroy() {
     injects.jobManager.removeJobListener(jobListener);
-    injects.bus.unregister(subscribers);
+    SyncEvent.unregisterListener(debugSyncListener);
     super.onDestroy();
   }
 
-  private class DebugSubscribers {
+  private OnSyncListener debugSyncListener = new OnSyncListener() {
+    @Override public void onSyncChanged(int authSyncCount, int jobSyncCount) {
+      if (authSyncCount > 0) {
+        debugViews.authJobServiceStatus.setText("Running");
+      } else {
+        debugViews.authJobServiceStatus.setText("Stopped");
+      }
 
-    @Subscribe public void onJobSyncEvent(JobSyncEvent event) {
-      Timber.d("JobService: %b", event.isSyncing());
-      if (event.isSyncing()) {
+      if (jobSyncCount > 0) {
         debugViews.jobServiceStatus.setText("Running");
       } else {
         debugViews.jobServiceStatus.setText("Stopped");
       }
     }
-
-    @Subscribe public void onAuthJobSyncEvent(AuthSyncEvent event) {
-      Timber.d("AuthJobService: %b", event.isSyncing());
-      if (event.isSyncing()) {
-        debugViews.authJobServiceStatus.setText("Running");
-      } else {
-        debugViews.authJobServiceStatus.setText("Stopped");
-      }
-    }
-  }
+  };
 
   public static class DebugInjects {
-
-    @Inject Bus bus;
 
     @Inject @HttpStatusCode IntPreference httpStatusCodePreference;
 

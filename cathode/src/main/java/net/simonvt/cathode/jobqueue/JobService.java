@@ -35,6 +35,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.event.SyncEvent;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.HomeActivity;
@@ -61,7 +62,7 @@ public class JobService extends Service {
     super.onCreate();
     Timber.d("JobService started");
     CathodeApp.inject(this);
-    CathodeApp.jobServiceStarted();
+    SyncEvent.jobServiceStarted();
 
     cancelAlarm();
 
@@ -128,7 +129,7 @@ public class JobService extends Service {
       executor.destroy();
     }
 
-    CathodeApp.jobServiceStopped();
+    SyncEvent.jobServiceStopped();
 
     if (displayNotification && !jobManager.hasJobs(0, Flags.REQUIRES_AUTH)) {
       PreferenceManager.getDefaultSharedPreferences(this)

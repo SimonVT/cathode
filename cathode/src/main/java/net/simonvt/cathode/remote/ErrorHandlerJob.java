@@ -16,22 +16,17 @@
 
 package net.simonvt.cathode.remote;
 
-import com.squareup.otto.Bus;
 import java.io.IOException;
-import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.RequestFailedEvent;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobFailedException;
-import net.simonvt.cathode.util.MainHandler;
 import okhttp3.Headers;
 import retrofit2.Response;
 import timber.log.Timber;
 
 public abstract class ErrorHandlerJob<T> extends Job {
-
-  @Inject transient Bus bus;
 
   public ErrorHandlerJob() {
   }
@@ -46,11 +41,7 @@ public abstract class ErrorHandlerJob<T> extends Job {
       Timber.d("Status code: %d", statusCode);
 
       if (statusCode == 401) {
-        MainHandler.post(new Runnable() {
-          @Override public void run() {
-            bus.post(new AuthFailedEvent());
-          }
-        });
+        AuthFailedEvent.post();
 
         throw new JobFailedException("Auth failed");
       } else if (response.code() == 404) {
@@ -70,23 +61,11 @@ public abstract class ErrorHandlerJob<T> extends Job {
 
         Timber.e(new FourOneTwoException(), "Precondition failed");
 
-        MainHandler.post(new Runnable() {
-          @Override public void run() {
-            bus.post(new RequestFailedEvent(R.string.error_unknown_retrying));
-          }
-        });
+        RequestFailedEvent.post(R.string.error_unknown_retrying);
       } else if (statusCode >= 500 && statusCode < 600) {
-        MainHandler.post(new Runnable() {
-          @Override public void run() {
-            bus.post(new RequestFailedEvent(R.string.error_5xx_retrying));
-          }
-        });
+        RequestFailedEvent.post(R.string.error_5xx_retrying);
       } else {
-        MainHandler.post(new Runnable() {
-          @Override public void run() {
-            bus.post(new RequestFailedEvent(R.string.error_unknown_retrying));
-          }
-        });
+        RequestFailedEvent.post(R.string.error_unknown_retrying);
       }
 
       throw new JobFailedException();

@@ -18,7 +18,6 @@ dependencies {
   compile parent.libraries.recyclerView
   compile parent.libraries.androidDesign
 
-  compile parent.libraries.otto
   compile parent.libraries.dagger
   apt parent.libraries.daggerCompiler
   compile parent.libraries.picasso

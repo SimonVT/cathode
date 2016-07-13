@@ -34,18 +34,17 @@ import android.view.ViewPropertyAnimator;
 import android.widget.ProgressBar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
-import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.SyncEvent;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.event.CheckInFailedEvent;
-import net.simonvt.cathode.event.LogoutEvent;
+import net.simonvt.cathode.event.CheckInFailedEvent.OnCheckInFailedListener;
 import net.simonvt.cathode.event.RequestFailedEvent;
+import net.simonvt.cathode.event.RequestFailedEvent.OnRequestFailedListener;
+import net.simonvt.cathode.event.SyncEvent;
+import net.simonvt.cathode.event.SyncEvent.OnSyncListener;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -108,8 +107,6 @@ public class HomeActivity extends BaseActivity
   private static final int LOADER_SHOW_WATCHING = 1;
   private static final int LOADER_MOVIE_WATCHING = 2;
 
-  @Inject Bus bus;
-
   @BindView(R.id.progress_top) ProgressBar progressTop;
 
   @BindView(R.id.crouton) Crouton crouton;
@@ -129,6 +126,8 @@ public class HomeActivity extends BaseActivity
   private boolean isTablet;
 
   private PendingReplacement pendingReplacement;
+
+  private boolean isSyncing = false;
 
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
@@ -203,6 +202,10 @@ public class HomeActivity extends BaseActivity
     if (!Settings.isLoggedIn(this) || isLoginAction(getIntent())) {
       startLoginActivity();
     }
+
+    SyncEvent.registerListener(onSyncEvent);
+    RequestFailedEvent.registerListener(requestFailedListener);
+    CheckInFailedEvent.registerListener(checkInFailedListener);
   }
 
   @Override protected void onNewIntent(Intent intent) {
@@ -224,24 +227,21 @@ public class HomeActivity extends BaseActivity
     super.onSaveInstanceState(outState);
   }
 
-  @Override protected void onResume() {
-    super.onResume();
-    bus.register(this);
-  }
-
   @Override protected void onResumeFragments() {
     super.onResumeFragments();
     stack.resume();
   }
 
   @Override protected void onPause() {
-    bus.unregister(this);
     stack.pause();
     super.onPause();
   }
 
   @Override protected void onDestroy() {
     Timber.d("onDestroy");
+    SyncEvent.unregisterListener(onSyncEvent);
+    RequestFailedEvent.unregisterListener(requestFailedListener);
+    CheckInFailedEvent.unregisterListener(checkInFailedListener);
     super.onDestroy();
   }
 
@@ -386,12 +386,15 @@ public class HomeActivity extends BaseActivity
     }
   };
 
-  @Subscribe public void onSyncEvent(final SyncEvent event) {
-    MainHandler.post(new Runnable() {
-      @Override public void run() {
+  private OnSyncListener onSyncEvent = new OnSyncListener() {
+    @Override public void onSyncChanged(int authSyncCount, int jobSyncCount) {
+      final boolean isSyncing = authSyncCount > 0 || jobSyncCount > 0;
+      if (isSyncing != HomeActivity.this.isSyncing) {
+        HomeActivity.this.isSyncing = isSyncing;
+
         final int progressVisibility = progressTop.getVisibility();
         ViewPropertyAnimator progressAnimator = progressTop.animate();
-        if (event.isSyncing()) {
+        if (isSyncing) {
           if (progressVisibility == View.GONE) {
             progressTop.setAlpha(0.0f);
             progressTop.setVisibility(View.VISIBLE);
@@ -406,22 +409,22 @@ public class HomeActivity extends BaseActivity
           });
         }
       }
-    });
-  }
+    }
+  };
 
-  @Subscribe public void onRequestFailedEvent(RequestFailedEvent event) {
-    crouton.show(getString(event.getErrorMessage()),
-        getResources().getColor(android.R.color.holo_red_dark));
-  }
+  private OnRequestFailedListener requestFailedListener = new OnRequestFailedListener() {
+    @Override public void onRequestFailed(RequestFailedEvent event) {
+      crouton.show(getString(event.getErrorMessage()),
+          getResources().getColor(android.R.color.holo_red_dark));
+    }
+  };
 
-  @Subscribe public void onCheckInFailedEvent(CheckInFailedEvent event) {
-    crouton.show(getResources().getString(R.string.checkin_error, event.getTitle()),
-        getResources().getColor(android.R.color.holo_red_dark));
-  }
-
-  @Subscribe public void onLogout(LogoutEvent event) {
-    startLoginActivity();
-  }
+  private OnCheckInFailedListener checkInFailedListener = new OnCheckInFailedListener() {
+    @Override public void onCheckInFailed(CheckInFailedEvent event) {
+      crouton.show(getResources().getString(R.string.checkin_error, event.getTitle()),
+          getResources().getColor(android.R.color.holo_red_dark));
+    }
+  };
 
   private void startLoginActivity() {
     Intent login = new Intent(this, LoginActivity.class);

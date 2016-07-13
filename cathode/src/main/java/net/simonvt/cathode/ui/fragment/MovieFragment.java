@@ -31,7 +31,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.OnClick;
-import com.squareup.otto.Bus;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -91,7 +90,6 @@ public class MovieFragment extends RefreshableAppBarFragment
       "net.simonvt.cathode.ui.fragment.MovieFragment.updateCommentDialog";
 
   @Inject MovieTaskScheduler movieScheduler;
-  @Inject Bus bus;
 
   @BindView(R.id.year) TextView year;
   @BindView(R.id.certification) TextView certification;

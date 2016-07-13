@@ -18,7 +18,6 @@ package net.simonvt.cathode.module;
 
 import android.content.Context;
 import android.content.Intent;
-import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
 import dagger.Module;
 import dagger.Provides;
@@ -318,19 +317,15 @@ public class AppModule {
     };
   }
 
-  @Provides @Singleton ShowSearchHandler provideShowSearchHandler(Bus bus) {
+  @Provides @Singleton ShowSearchHandler provideShowSearchHandler() {
     return new ShowSearchHandler(app);
   }
 
-  @Provides @Singleton MovieSearchHandler provideMovieSearchHandler(Bus bus) {
+  @Provides @Singleton MovieSearchHandler provideMovieSearchHandler() {
     return new MovieSearchHandler(app);
   }
 
   @Provides @Singleton Picasso providePicasso() {
     return new Picasso.Builder(app).build();
-  }
-
-  @Provides @Singleton Bus provideBus() {
-    return new Bus();
   }
 }
