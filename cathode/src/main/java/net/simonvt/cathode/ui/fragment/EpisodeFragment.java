@@ -155,14 +155,6 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
     return episodeId;
   }
 
-  public String getTitle() {
-    return showTitle;
-  }
-
-  public String getSubtitle() {
-    return season == -1 ? null : getString(R.string.season_x, season);
-  }
-
   @Override public boolean onBackPressed() {
     return false;
   }

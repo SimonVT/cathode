@@ -263,14 +263,6 @@ public class ShowFragment extends RefreshableAppBarFragment {
     }, type);
   }
 
-  public String getTitle() {
-    return showTitle == null ? "" : showTitle;
-  }
-
-  public String getSubtitle() {
-    return genres;
-  }
-
   @Override public boolean onBackPressed() {
     if (hiddenPaneLayout != null) {
       final int state = hiddenPaneLayout.getState();
