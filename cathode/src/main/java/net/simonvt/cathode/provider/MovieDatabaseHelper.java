@@ -34,6 +34,7 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieGenres;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
+import net.simonvt.cathode.util.TextUtils;
 import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
@@ -235,7 +236,7 @@ public final class MovieDatabaseHelper {
       for (String genre : genres) {
         op = ContentProviderOperation.newInsert(MovieGenres.fromMovie(movieId))
             .withValue(MovieGenreColumns.MOVIE_ID, movieId)
-            .withValue(MovieGenreColumns.GENRE, genre)
+            .withValue(MovieGenreColumns.GENRE, TextUtils.upperCaseFirstLetter(genre))
             .build();
         ops.add(op);
       }

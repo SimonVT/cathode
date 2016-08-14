@@ -29,6 +29,7 @@ import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.database.DatabaseUtils;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.util.TextUtils;
 import net.simonvt.schematic.Cursors;
 
 public final class ShowDatabaseHelper {
@@ -238,7 +239,7 @@ public final class ShowDatabaseHelper {
       ContentValues cv = new ContentValues();
 
       cv.put(DatabaseContract.ShowGenreColumns.SHOW_ID, showId);
-      cv.put(DatabaseContract.ShowGenreColumns.GENRE, genre);
+      cv.put(DatabaseContract.ShowGenreColumns.GENRE, TextUtils.upperCaseFirstLetter(genre));
 
       resolver.insert(ProviderSchematic.ShowGenres.fromShow(showId), cv);
     }

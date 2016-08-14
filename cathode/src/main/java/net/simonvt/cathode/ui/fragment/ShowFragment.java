@@ -146,6 +146,10 @@ public class ShowFragment extends RefreshableAppBarFragment {
   @BindView(R.id.airtime) TextView airTime;
   @BindView(R.id.certification) TextView certification;
   @BindView(R.id.overview) TextView overview;
+
+  @BindView(R.id.genresTitle) View genresTitle;
+  @BindView(R.id.genres) TextView genres;
+
   @BindView(R.id.isWatched) TextView watched;
   @BindView(R.id.inCollection) TextView collection;
   @BindView(R.id.inWatchlist) TextView watchlist;
@@ -211,8 +215,6 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private String showTitle;
 
   private String showOverview;
-
-  private String genres;
 
   private boolean inWatchlist;
 
@@ -675,9 +677,12 @@ public class ShowFragment extends RefreshableAppBarFragment {
         if (!cursor.isLast()) sb.append(", ");
       }
 
-      genres = sb.toString();
+      genresTitle.setVisibility(View.VISIBLE);
+      genres.setVisibility(View.VISIBLE);
+      genres.setText(sb.toString());
     } else {
-      genres = null;
+      genresTitle.setVisibility(View.GONE);
+      genres.setVisibility(View.GONE);
     }
   }
 

@@ -16,6 +16,8 @@
 
 package net.simonvt.cathode.util;
 
+import java.util.Locale;
+
 public final class TextUtils {
 
   private TextUtils() {
@@ -34,5 +36,13 @@ public final class TextUtils {
 
     String[] split = trimmed.split("\\s+");
     return split.length;
+  }
+
+  public static String upperCaseFirstLetter(String string) {
+    if (android.text.TextUtils.isEmpty(string)) {
+      return string;
+    }
+
+    return string.substring(0, 1).toUpperCase(Locale.US) + string.substring(1);
   }
 }

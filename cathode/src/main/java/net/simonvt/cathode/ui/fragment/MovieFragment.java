@@ -43,11 +43,13 @@ import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
+import net.simonvt.cathode.provider.ProviderSchematic.MovieGenres;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.settings.TraktTimestamps;
@@ -71,6 +73,7 @@ public class MovieFragment extends RefreshableAppBarFragment
   public static final String TAG = "net.simonvt.cathode.ui.fragment.MovieFragment";
 
   private static final int LOADER_MOVIE = 1;
+  private static final int LOADER_MOVIE_GENRES = 4;
   private static final int LOADER_MOVIE_ACTORS = 2;
   private static final int LOADER_MOVIE_USER_COMMENTS = 3;
   private static final int LOADER_MOVIE_COMMENTS = 4;
@@ -95,6 +98,10 @@ public class MovieFragment extends RefreshableAppBarFragment
   @BindView(R.id.certification) TextView certification;
   //@BindView(R.id.poster) RemoteImageView poster;
   @BindView(R.id.overview) TextView overview;
+
+  @BindView(R.id.genresTitle) View genresTitle;
+  @BindView(R.id.genres) TextView genres;
+
   @BindView(R.id.isWatched) TextView isWatched;
   @BindView(R.id.inCollection) TextView collection;
   @BindView(R.id.inWatchlist) TextView watchlist;
@@ -185,6 +192,7 @@ public class MovieFragment extends RefreshableAppBarFragment
     overview.setText(movieOverview);
 
     getLoaderManager().initLoader(LOADER_MOVIE, null, this);
+    getLoaderManager().initLoader(LOADER_MOVIE_GENRES, null, genresLoader);
     getLoaderManager().initLoader(LOADER_MOVIE_ACTORS, null, actorsLoader);
     getLoaderManager().initLoader(LOADER_MOVIE_USER_COMMENTS, null, userCommentsLoader);
     getLoaderManager().initLoader(LOADER_MOVIE_COMMENTS, null, commentsLoader);
@@ -468,6 +476,27 @@ public class MovieFragment extends RefreshableAppBarFragment
   @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
   }
 
+  private void updateGenreViews(final Cursor cursor) {
+    if (cursor.getCount() > 0) {
+      StringBuilder sb = new StringBuilder();
+      final int genreColumnIndex = cursor.getColumnIndex(DatabaseContract.ShowGenreColumns.GENRE);
+
+      cursor.moveToPosition(-1);
+
+      while (cursor.moveToNext()) {
+        sb.append(cursor.getString(genreColumnIndex));
+        if (!cursor.isLast()) sb.append(", ");
+      }
+
+      genresTitle.setVisibility(View.VISIBLE);
+      genres.setVisibility(View.VISIBLE);
+      genres.setText(sb.toString());
+    } else {
+      genresTitle.setVisibility(View.GONE);
+      genres.setVisibility(View.GONE);
+    }
+  }
+
   private void updateActors(Cursor c) {
     peopleContainer.removeAllViews();
 
@@ -501,6 +530,25 @@ public class MovieFragment extends RefreshableAppBarFragment
     LinearCommentsAdapter.updateComments(getContext(), commentsContainer, userComments, comments);
     commentsParent.setVisibility(View.VISIBLE);
   }
+
+  private static final String[] GENRES_PROJECTION = new String[] {
+      MovieGenreColumns.GENRE,
+  };
+
+  private LoaderManager.LoaderCallbacks<SimpleCursor> genresLoader =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
+          return new SimpleCursorLoader(getActivity(), MovieGenres.fromMovie(movieId),
+              GENRES_PROJECTION, null, null, null);
+        }
+
+        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
+          updateGenreViews(data);
+        }
+
+        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
+        }
+      };
 
   private static final String[] CAST_PROJECTION = new String[] {
       Tables.MOVIE_CAST + "." + MovieCastColumns.ID,

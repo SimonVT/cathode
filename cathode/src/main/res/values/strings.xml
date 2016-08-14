@@ -73,6 +73,8 @@
   <string name="airdate_unknown">Unknown airdate</string>
 
   <string name="overview">Overview</string>
+  <string name="genres">Genres</string>
+
   <string name="to_watch">To watch</string>
   <string name="to_collect">To collect</string>
   <string name="last_watched">Last watched</string>

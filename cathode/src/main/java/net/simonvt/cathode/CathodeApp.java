@@ -42,6 +42,7 @@ import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.remote.sync.movies.SyncAnticipatedMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncAnticipatedShows;
 import net.simonvt.cathode.remote.upgrade.EnsureSync;
+import net.simonvt.cathode.remote.upgrade.UpperCaseGenres;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.TraktTimestamps;
@@ -216,6 +217,13 @@ public class CathodeApp extends Application {
         MainHandler.post(new Runnable() {
           @Override public void run() {
             jobManager.addJob(new EnsureSync());
+          }
+        });
+      }
+      if (currentVersion <= 40104) {
+        MainHandler.post(new Runnable() {
+          @Override public void run() {
+            jobManager.addJob(new UpperCaseGenres());
           }
         });
       }

@@ -125,6 +125,7 @@ import net.simonvt.cathode.remote.sync.shows.SyncTrendingShows;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.remote.upgrade.EnsureSync;
+import net.simonvt.cathode.remote.upgrade.UpperCaseGenres;
 import net.simonvt.cathode.scheduler.CommentsTaskScheduler;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
@@ -268,7 +269,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         CollectedHideMovie.class, SyncAnticipatedShows.class, SyncAnticipatedMovies.class,
 
         // Upgrade tasks
-        EnsureSync.class,
+        EnsureSync.class, UpperCaseGenres.class,
 
         // Misc
         ShowSearchHandler.class, SearchHandler.SearchThread.class, MovieSearchHandler.class,

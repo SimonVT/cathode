@@ -17,10 +17,12 @@
 package net.simonvt.cathode.util;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class TextUtilsTest {
+@RunWith(RobolectricTestRunner.class) public class TextUtilsTest {
 
   @Test public void testWordCount() throws Exception {
     String empty = "";
@@ -34,5 +36,13 @@ public class TextUtilsTest {
     assertThat(TextUtils.wordCount(fiveWords)).isEqualTo(5);
     assertThat(TextUtils.wordCount(doubleSpace)).isEqualTo(2);
     assertThat(TextUtils.wordCount(doubleSpaceSpecialChars)).isEqualTo(2);
+  }
+
+  @Test public void testUpperCaseFirstLetter() throws Exception {
+    assertThat(TextUtils.upperCaseFirstLetter(null)).isEqualTo(null);
+    assertThat(TextUtils.upperCaseFirstLetter("")).isEqualTo("");
+    assertThat(TextUtils.upperCaseFirstLetter("a")).isEqualTo("A");
+    assertThat(TextUtils.upperCaseFirstLetter("A")).isEqualTo("A");
+    assertThat(TextUtils.upperCaseFirstLetter("string string")).isEqualTo("String string");
   }
 }

@@ -35,6 +35,20 @@
       tools:text="A long description of a show."
       style="@style/Widget.InfoText"/>
 
+  <TextView
+      android:id="@+id/genresTitle"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/genres"
+      style="@style/Widget.InfoTitle"/>
+
+  <TextView
+      android:id="@+id/genres"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      tools:text="Comedy"
+      style="@style/Widget.InfoText"/>
+
   <android.support.v7.widget.CardView
       android:id="@+id/trailer"
       android:layout_width="match_parent"
