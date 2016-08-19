@@ -130,7 +130,7 @@ public class ShowsWatchlistFragment
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_search:
-        navigationListener.onSearchShow();
+        navigationListener.onSearchClicked();
         return true;
 
       default:

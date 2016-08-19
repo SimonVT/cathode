@@ -14,7 +14,33 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.search;
+package net.simonvt.cathode.api.enumeration;
 
-public class SearchFailedException extends Exception {
+public class Enums<T extends Enum<?>> {
+
+  private T[] enums;
+
+  public static Enums of(Enum... enums) {
+    return new Enums(enums);
+  }
+
+  private Enums(T[] enums) {
+    this.enums = enums;
+  }
+
+  @Override public String toString() {
+    StringBuilder builder = null;
+
+    for (Object e : enums) {
+      if (builder == null) {
+        builder = new StringBuilder();
+      } else {
+        builder.append(",");
+      }
+
+      builder.append(e.toString());
+    }
+
+    return builder.toString();
+  }
 }

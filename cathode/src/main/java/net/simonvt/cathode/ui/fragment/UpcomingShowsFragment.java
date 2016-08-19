@@ -173,7 +173,7 @@ public class UpcomingShowsFragment
         return true;
 
       case R.id.menu_search:
-        navigationListener.onSearchShow();
+        navigationListener.onSearchClicked();
         return true;
 
       default:

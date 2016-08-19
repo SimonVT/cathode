@@ -84,7 +84,6 @@ public final class Settings {
   public interface Sort {
 
     String SHOW_UPCOMING = "sortShowUpcoming";
-    String SHOW_SEARCH = "sortShowSearch";
     String SHOW_TRENDING = "sortShowTrending";
     String SHOW_RECOMMENDED = "sortShowRecommended";
     String SHOW_ANTICIPATED = "sortShowAnticipated";
@@ -97,6 +96,8 @@ public final class Settings {
     String MOVIE_ANTICIPATED = "sortMovieAnticipated";
     String MOVIE_WATCHED = "sortMovieCollected";
     String MOVIE_COLLECTED = "sortMovieCollected";
+
+    String SEARCH = "sortSearch";
   }
 
   public interface Profile {
@@ -245,7 +246,7 @@ public final class Settings {
 
     // Clear sorting options
     editor.remove(Sort.SHOW_UPCOMING);
-    editor.remove(Sort.SHOW_SEARCH);
+    editor.remove(Sort.SEARCH);
     editor.remove(Sort.SHOW_TRENDING);
     editor.remove(Sort.SHOW_RECOMMENDED);
     editor.remove(Sort.SHOW_WATCHED);

@@ -23,7 +23,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import net.simonvt.cathode.R;
@@ -105,6 +107,21 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
   @Override public boolean displaysMenuIcon() {
     return true;
+  }
+
+  @Override public void createMenu(Toolbar toolbar) {
+    super.createMenu(toolbar);
+    toolbar.inflateMenu(R.menu.search);
+  }
+
+  @Override public boolean onMenuItemClick(MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.menu_search:
+        navigationListener.onSearchClicked();
+        return true;
+    }
+
+    return super.onMenuItemClick(item);
   }
 
   private final CategoryAdapter.CategoryClickListener categoryClickListener =

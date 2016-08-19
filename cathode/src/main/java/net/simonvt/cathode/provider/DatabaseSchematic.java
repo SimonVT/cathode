@@ -29,13 +29,12 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCrewColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
-import net.simonvt.cathode.provider.DatabaseContract.MovieSearchSuggestionsColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
+import net.simonvt.cathode.provider.DatabaseContract.RecentQueriesColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCharacterColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowSearchSuggestionsColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.generated.CathodeDatabase;
 import net.simonvt.cathode.util.SqlIndex;
@@ -55,7 +54,7 @@ import net.simonvt.schematic.annotation.Table;
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 24;
+  static final int DATABASE_VERSION = 25;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -141,10 +140,7 @@ import net.simonvt.schematic.annotation.Table;
 
     @Table(PersonColumns.class) @IfNotExists String PEOPLE = "people";
 
-    @Table(ShowSearchSuggestionsColumns.class) @IfNotExists String SHOW_SEARCH_SUGGESTIONS =
-        "showSearchSuggestions";
-    @Table(MovieSearchSuggestionsColumns.class) @IfNotExists String MOVIE_SEARCH_SUGGESTIONS =
-        "movieSearchSuggestions";
+    @Table(RecentQueriesColumns.class) @IfNotExists String RECENT_QUERIES = "recentQueries";
 
     @Table(ListsColumns.class) @IfNotExists String LISTS = "lists";
     @Table(ListItemColumns.class) @IfNotExists String LIST_ITEMS = "listItems";
@@ -690,6 +686,13 @@ import net.simonvt.schematic.annotation.Table;
       SqlUtils.createColumnIfNotExists(db, Tables.SHOWS, ShowColumns.WATCHING,
           DataType.Type.INTEGER, "0");
       db.execSQL(TRIGGER_EPISODE_UPDATE_WATCHING);
+    }
+
+    if (oldVersion < 25) {
+      db.execSQL("DROP TABLE IF EXISTS showSearchSuggestions");
+      db.execSQL("DROP TABLE IF EXISTS movieSearchSuggestions");
+
+      db.execSQL(CathodeDatabase.RECENT_QUERIES);
     }
   }
 }

@@ -16,7 +16,11 @@
 
 package net.simonvt.cathode.api.entity;
 
+import net.simonvt.cathode.api.enumeration.ItemType;
+
 public class SearchResult {
+
+  private ItemType type;
 
   private Double score;
 
@@ -25,6 +29,10 @@ public class SearchResult {
   private Show show;
 
   private Episode episode;
+
+  public ItemType getType() {
+    return type;
+  }
 
   public Double getScore() {
     return score;

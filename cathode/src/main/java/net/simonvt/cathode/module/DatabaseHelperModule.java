@@ -22,6 +22,7 @@ import dagger.Provides;
 import javax.inject.Singleton;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
+import net.simonvt.cathode.provider.SearchDatabaseHelper;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.UserDatabaseHelper;
@@ -49,5 +50,9 @@ public class DatabaseHelperModule {
 
   @Provides @Singleton UserDatabaseHelper provideUserDatabaseHelper(Context context) {
     return UserDatabaseHelper.getInstance(context);
+  }
+
+  @Provides @Singleton SearchDatabaseHelper provideSearchDatabaseHelper(Context context) {
+    return SearchDatabaseHelper.getInstance(context);
   }
 }

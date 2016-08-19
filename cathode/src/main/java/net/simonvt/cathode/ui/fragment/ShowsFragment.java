@@ -85,7 +85,7 @@ public abstract class ShowsFragment<D extends Cursor>
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_search:
-        navigationListener.onSearchShow();
+        navigationListener.onSearchClicked();
         return true;
 
       default:

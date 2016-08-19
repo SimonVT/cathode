@@ -22,7 +22,7 @@
     android:orientation="horizontal"
     android:gravity="center_vertical">
 
-  <AutoCompleteTextView
+  <EditText
       android:id="@+id/search_input"
       android:layout_height="36dp"
       android:layout_width="0dp"
@@ -33,12 +33,7 @@
       android:singleLine="true"
       android:ellipsize="end"
       android:background="@null"
-      android:inputType="text|textAutoComplete|textNoSuggestions"
-      android:imeOptions="actionSearch"
-      android:dropDownHeight="wrap_content"
-      android:dropDownAnchor="@id/search_frame"
-      android:dropDownVerticalOffset="0dip"
-      android:dropDownHorizontalOffset="0dip"/>
+      android:inputType="text|textAutoComplete|textNoSuggestions"/>
 
   <ImageView
       android:id="@+id/search_clear"

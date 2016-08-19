@@ -17,33 +17,56 @@
 package net.simonvt.cathode.search;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.text.TextUtils;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.api.entity.Movie;
+import net.simonvt.cathode.api.entity.SearchResult;
+import net.simonvt.cathode.api.entity.Show;
+import net.simonvt.cathode.api.enumeration.Enums;
+import net.simonvt.cathode.api.enumeration.Extended;
+import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.SearchService;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.util.MainHandler;
+import net.simonvt.schematic.Cursors;
+import retrofit2.Call;
+import retrofit2.Response;
 import timber.log.Timber;
 
-public abstract class SearchHandler {
+public class SearchHandler {
 
   public interface SearchListener {
 
-    void onSearchFailure();
-
-    void onSearchSuccess(List<Long> resultIds);
+    void onSearchResult(List<Result> results, boolean localResults);
   }
+
+  private static final int LIMIT = 50;
+
+  @Inject SearchService searchService;
+
+  @Inject ShowDatabaseHelper showHelper;
+  @Inject MovieDatabaseHelper movieHelper;
 
   private final List<WeakReference<SearchListener>> listeners = new ArrayList<>();
 
-  private List<Long> resultIds;
+  private List<Result> results;
 
-  private boolean lastSearchFailed = false;
-
-  private SearchThread thread;
+  private boolean localResults;
 
   private Context context;
+
+  private SearchExecutor executor = new SearchExecutor();
 
   public SearchHandler(Context context) {
     this.context = context;
@@ -54,10 +77,8 @@ public abstract class SearchHandler {
     WeakReference<SearchListener> listenerRef = new WeakReference<>(listener);
     listeners.add(listenerRef);
 
-    if (resultIds != null) {
-      listener.onSearchSuccess(resultIds);
-    } else if (lastSearchFailed) {
-      listener.onSearchFailure();
+    if (results != null) {
+      listener.onSearchResult(results, localResults);
     }
   }
 
@@ -71,24 +92,16 @@ public abstract class SearchHandler {
     }
   }
 
-  public List<Long> getResultIds() {
-    return resultIds;
-  }
-
   public void clear() {
-    resultIds = null;
-    lastSearchFailed = false;
-
-    if (thread != null) {
-      thread.unregister();
-      thread = null;
-    }
+    executor.cancelRunning();
+    results = null;
+    localResults = false;
   }
 
-  public void postOnFailure() {
-    thread = null;
-    lastSearchFailed = true;
-    resultIds = null;
+  public void publishResult(final List<Result> results, final boolean localResults) {
+    Timber.d("Publishing %d results", results.size());
+    SearchHandler.this.results = results;
+    SearchHandler.this.localResults = localResults;
 
     for (int i = listeners.size() - 1; i >= 0; i--) {
       WeakReference<SearchListener> listenerRef = listeners.get(i);
@@ -97,93 +110,154 @@ public abstract class SearchHandler {
       if (listener == null) {
         listeners.remove(listenerRef);
       } else {
-        listener.onSearchFailure();
+        listener.onSearchResult(results, localResults);
       }
     }
   }
 
-  public void publishResult(List<Long> resultIds) {
-    Timber.d("Publishing results");
-    thread = null;
-    this.resultIds = resultIds;
-    lastSearchFailed = false;
-
-    for (int i = listeners.size() - 1; i >= 0; i--) {
-      WeakReference<SearchListener> listenerRef = listeners.get(i);
-      SearchListener listener = listenerRef.get();
-
-      if (listener == null) {
-        listeners.remove(listenerRef);
-      } else {
-        listener.onSearchSuccess(resultIds);
-      }
-    }
+  public void forceSearch(final String query) {
+    executor.cancelRunning();
+    search(query);
   }
 
-  public void search(String query) {
-    resultIds = null;
-    lastSearchFailed = false;
-
-    if (thread != null) {
-      thread.unregister();
-    }
-
-    thread = new SearchThread(context, this, query);
-    thread.start();
+  public void search(final String query) {
+    executor.execute(new SearchRunnable(query));
   }
 
-  public boolean isSearching() {
-    return thread != null;
-  }
+  class SearchRunnable implements Runnable {
 
-  public boolean noResults() {
-    return !lastSearchFailed && resultIds == null;
-  }
+    volatile boolean canceled;
 
-  protected abstract List<Long> performSearch(String query) throws SearchFailedException;
+    final String query;
 
-  public static final class SearchThread extends Thread {
-
-    @Inject SearchService searchService;
-
-    private SearchHandler handler;
-
-    private Context context;
-
-    private String query;
-
-    private SearchThread(Context context, SearchHandler handler, String query) {
-      this.context = context;
-      this.handler = handler;
+    public SearchRunnable(String query) {
       this.query = query;
-
-      CathodeApp.inject(context, this);
     }
 
-    public void unregister() {
-      handler = null;
+    public void cancel() {
+      synchronized (this) {
+        canceled = true;
+      }
     }
 
     @Override public void run() {
+      Enums<ItemType> types = Enums.of(ItemType.SHOW, ItemType.MOVIE);
       try {
-        if (handler != null) {
-          final List<Long> resultIds = handler.performSearch(query);
+        Call<List<SearchResult>> call =
+            searchService.search(types, query, Extended.FULL_IMAGES, LIMIT);
+        Response<List<SearchResult>> response = call.execute();
 
-          MainHandler.post(new Runnable() {
-            @Override public void run() {
-              if (handler != null) handler.publishResult(resultIds);
+        if (response.isSuccessful()) {
+          int relevance = 0;
+          List<SearchResult> searchResults = response.body();
+          final List<Result> results = new ArrayList<>(searchResults.size());
+
+          for (SearchResult searchResult : searchResults) {
+            if (searchResult.getType() == ItemType.SHOW) {
+              Show show = searchResult.getShow();
+              if (!TextUtils.isEmpty(show.getTitle())) {
+                final long showId = showHelper.partialUpdate(show);
+
+                String poster = null;
+                if (show.getImages() != null) {
+                  poster = show.getImages().getPoster().getFull();
+                }
+
+                String title = show.getTitle();
+                String overview = show.getOverview();
+                float rating = show.getRating() == null ? 0.0f : show.getRating();
+
+                Result result =
+                    new Result(ItemType.SHOW, showId, poster, title, overview, rating, relevance++);
+                results.add(result);
+              }
+            } else if (searchResult.getType() == ItemType.MOVIE) {
+              Movie movie = searchResult.getMovie();
+              if (!TextUtils.isEmpty(movie.getTitle())) {
+                final long movieId = movieHelper.partialUpdate(movie);
+
+                String poster = null;
+                if (movie.getImages() != null) {
+                  poster = movie.getImages().getPoster().getFull();
+                }
+
+                String title = movie.getTitle();
+                String overview = movie.getOverview();
+                float rating = movie.getRating() == null ? 0.0f : movie.getRating();
+
+                Result result = new Result(ItemType.MOVIE, movieId, poster, title, overview, rating,
+                    relevance++);
+                results.add(result);
+              }
             }
-          });
-        }
-      } catch (SearchFailedException e) {
-        Timber.d(e, "Search failed");
-
-        MainHandler.post(new Runnable() {
-          @Override public void run() {
-            if (handler != null) handler.postOnFailure();
           }
-        });
+
+          publish(results, false);
+          return;
+        }
+      } catch (IOException e) {
+        Timber.d(e, "Search failed");
+      } catch (Throwable t) {
+        Timber.e(t, "Search failed");
       }
+
+      int relevance = 0;
+      List<Result> results = new ArrayList<>();
+
+      Cursor shows = context.getContentResolver().query(Shows.SHOWS, new String[] {
+          ShowColumns.ID, ShowColumns.POSTER, ShowColumns.TITLE, ShowColumns.OVERVIEW,
+          ShowColumns.RATING,
+      }, ShowColumns.TITLE + " LIKE ?", new String[] {
+          "%" + query + "%",
+      }, null);
+
+      while (shows.moveToNext()) {
+        final long id = Cursors.getLong(shows, ShowColumns.ID);
+        final String poster = Cursors.getString(shows, ShowColumns.POSTER);
+        final String title = Cursors.getString(shows, ShowColumns.TITLE);
+        final String overview = Cursors.getString(shows, ShowColumns.OVERVIEW);
+        final float rating = Cursors.getFloat(shows, ShowColumns.RATING);
+
+        Result result = new Result(ItemType.SHOW, id, poster, title, overview, rating, relevance++);
+        results.add(result);
+      }
+
+      shows.close();
+
+      Cursor movies = context.getContentResolver().query(Movies.MOVIES, new String[] {
+          MovieColumns.ID, MovieColumns.POSTER, MovieColumns.TITLE, MovieColumns.OVERVIEW,
+          MovieColumns.RATING,
+      }, MovieColumns.TITLE + " LIKE ?", new String[] {
+          "%" + query + "%",
+      }, null);
+
+      while (movies.moveToNext()) {
+        final long id = Cursors.getLong(movies, MovieColumns.ID);
+        final String poster = Cursors.getString(movies, MovieColumns.POSTER);
+        final String title = Cursors.getString(movies, MovieColumns.TITLE);
+        final String overview = Cursors.getString(movies, MovieColumns.OVERVIEW);
+        final float rating = Cursors.getFloat(movies, MovieColumns.RATING);
+
+        Result result =
+            new Result(ItemType.MOVIE, id, poster, title, overview, rating, relevance++);
+        results.add(result);
+      }
+
+      movies.close();
+
+      publish(results, true);
+    }
+
+    private void publish(final List<Result> results, final boolean localResults) {
+      MainHandler.post(new Runnable() {
+        @Override public void run() {
+          synchronized (this) {
+            if (!canceled) {
+              publishResult(results, localResults);
+            }
+          }
+        }
+      });
     }
   }
 }

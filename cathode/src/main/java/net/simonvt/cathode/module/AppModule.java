@@ -33,6 +33,7 @@ import net.simonvt.cathode.jobqueue.JobModule;
 import net.simonvt.cathode.jobqueue.JobService;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
+import net.simonvt.cathode.provider.SearchDatabaseHelper;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.UserDatabaseHelper;
@@ -133,9 +134,7 @@ import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.SearchTaskScheduler;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
-import net.simonvt.cathode.search.MovieSearchHandler;
 import net.simonvt.cathode.search.SearchHandler;
-import net.simonvt.cathode.search.ShowSearchHandler;
 import net.simonvt.cathode.service.CathodeSyncAdapter;
 import net.simonvt.cathode.service.SyncWatchingReceiver;
 import net.simonvt.cathode.ui.HiddenItems;
@@ -173,8 +172,7 @@ import net.simonvt.cathode.ui.fragment.MovieCollectionFragment;
 import net.simonvt.cathode.ui.fragment.MovieFragment;
 import net.simonvt.cathode.ui.fragment.MovieRecommendationsFragment;
 import net.simonvt.cathode.ui.fragment.MovieWatchlistFragment;
-import net.simonvt.cathode.ui.fragment.SearchMovieFragment;
-import net.simonvt.cathode.ui.fragment.SearchShowFragment;
+import net.simonvt.cathode.search.SearchFragment;
 import net.simonvt.cathode.ui.fragment.SeasonFragment;
 import net.simonvt.cathode.ui.fragment.ShowFragment;
 import net.simonvt.cathode.ui.fragment.ShowRecommendationsFragment;
@@ -206,7 +204,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
 
         // Database helpers
         ShowDatabaseHelper.class, SeasonDatabaseHelper.class, EpisodeDatabaseHelper.class,
-        MovieDatabaseHelper.class, UserDatabaseHelper.class,
+        MovieDatabaseHelper.class, UserDatabaseHelper.class, SearchDatabaseHelper.class,
 
         // Activities
         HomeActivity.class, LoginActivity.class, TokenTask.class,
@@ -220,8 +218,8 @@ import net.simonvt.cathode.widget.RemoteImageView;
         TrendingShowsFragment.class, TrendingMoviesFragment.class, UpcomingShowsFragment.class,
         WatchedMoviesFragment.class, WatchedShowsFragment.class, CreateListFragment.class,
         ListFragment.class, CommentsFragment.class, CommentFragment.class, ListsFragment.class,
-        SearchShowFragment.class, SearchMovieFragment.class, AnticipatedShowsFragment.class,
-        AnticipatedMoviesFragment.class, StatsFragment.class,
+        AnticipatedShowsFragment.class, AnticipatedMoviesFragment.class, StatsFragment.class,
+        SearchFragment.class,
 
         // Dialogs
         RatingDialog.class, CheckInDialog.class, CheckInDialog.Injections.class, ListsDialog.class,
@@ -272,8 +270,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         EnsureSync.class, UpperCaseGenres.class,
 
         // Misc
-        ShowSearchHandler.class, SearchHandler.SearchThread.class, MovieSearchHandler.class,
-        ApiSettings.class
+        SearchHandler.class, ApiSettings.class
     })
 public class AppModule {
 
@@ -318,12 +315,8 @@ public class AppModule {
     };
   }
 
-  @Provides @Singleton ShowSearchHandler provideShowSearchHandler() {
-    return new ShowSearchHandler(app);
-  }
-
-  @Provides @Singleton MovieSearchHandler provideMovieSearchHandler() {
-    return new MovieSearchHandler(app);
+  @Provides @Singleton SearchHandler provideSearchHandler() {
+    return new SearchHandler(app);
   }
 
   @Provides @Singleton Picasso providePicasso() {

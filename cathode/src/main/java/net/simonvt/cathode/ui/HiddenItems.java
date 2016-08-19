@@ -99,11 +99,7 @@ public class HiddenItems extends BaseActivity
     super.onBackPressed();
   }
 
-  @Override public void onSearchShow() {
-    throw new RuntimeException("Searching from HiddenItems not supported");
-  }
-
-  @Override public void onSearchMovie() {
+  @Override public void onSearchClicked() {
     throw new RuntimeException("Searching from HiddenItems not supported");
   }
 

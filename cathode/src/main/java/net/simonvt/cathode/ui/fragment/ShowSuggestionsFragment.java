@@ -52,7 +52,7 @@ public class ShowSuggestionsFragment extends SuggestionsFragment {
         return adapter.getItem(pager.getCurrentItem()).onMenuItemClick(item);
 
       case R.id.menu_search:
-        navigationListener.onSearchShow();
+        navigationListener.onSearchClicked();
         return true;
 
       default:

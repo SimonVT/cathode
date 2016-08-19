@@ -333,16 +333,10 @@ public final class DatabaseContract {
     @DataType(INTEGER) String NEEDS_SYNC = "needsSync";
   }
 
-  public interface ShowSearchSuggestionsColumns {
+  public interface RecentQueriesColumns {
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
     @DataType(TEXT) @NotNull String QUERY = "query";
-    @DataType(INTEGER) @DefaultValue("0") String COUNT = "queryCount";
-  }
-
-  public interface MovieSearchSuggestionsColumns {
-    @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
-    @DataType(TEXT) @NotNull String QUERY = "query";
-    @DataType(INTEGER) @DefaultValue("0") String COUNT = "queryCount";
+    @DataType(INTEGER) @NotNull String QUERIED_AT = "queriedAt";
   }
 
   public interface ListsColumns extends LastModifiedColumns {

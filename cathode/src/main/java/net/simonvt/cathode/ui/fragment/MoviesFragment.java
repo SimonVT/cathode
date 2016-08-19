@@ -82,7 +82,7 @@ public abstract class MoviesFragment
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_search:
-        navigationListener.onSearchMovie();
+        navigationListener.onSearchClicked();
         return true;
 
       default:

@@ -30,11 +30,8 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
-import android.widget.Filterable;
+import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
@@ -46,11 +43,9 @@ public class SearchView extends LinearLayout implements CollapsibleActionView {
     void onTextChanged(String newText);
 
     void onSubmit(String query);
-
-    void onSuggestionSelected(Object suggestion);
   }
 
-  @BindView(R.id.search_input) AutoCompleteTextView inputView;
+  @BindView(R.id.search_input) EditText inputView;
 
   @BindView(R.id.search_clear) View clearView;
 
@@ -81,7 +76,6 @@ public class SearchView extends LinearLayout implements CollapsibleActionView {
     super.onFinishInflate();
     ButterKnife.bind(this);
 
-    inputView.setOnItemClickListener(suggestionListener);
     inputView.setOnKeyListener(inputKeyListener);
     inputView.addTextChangedListener(inputListener);
 
@@ -155,20 +149,13 @@ public class SearchView extends LinearLayout implements CollapsibleActionView {
     }
   };
 
-  private AdapterView.OnItemClickListener suggestionListener =
-      new AdapterView.OnItemClickListener() {
-        @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-          if (listener != null) {
-            listener.onSuggestionSelected(parent.getItemAtPosition(position));
-          }
-        }
-      };
-
   private OnKeyListener inputKeyListener = new OnKeyListener() {
     @Override public boolean onKey(View v, int keyCode, KeyEvent event) {
       if (event.getAction() == KeyEvent.ACTION_UP) {
         if (keyCode == KeyEvent.KEYCODE_ENTER) {
-          if (listener != null) listener.onSubmit(inputView.getText().toString());
+          if (listener != null) {
+            listener.onSubmit(inputView.getText().toString());
+          }
         }
       }
       return false;
@@ -187,10 +174,6 @@ public class SearchView extends LinearLayout implements CollapsibleActionView {
     @Override public void afterTextChanged(Editable s) {
     }
   };
-
-  public <T extends ListAdapter & Filterable> void setAdapter(T adapter) {
-    inputView.setAdapter(adapter);
-  }
 
   public void setQuery(CharSequence query) {
     inputView.setText(query);

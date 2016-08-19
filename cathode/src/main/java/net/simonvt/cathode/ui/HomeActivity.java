@@ -50,6 +50,7 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic;
+import net.simonvt.cathode.search.SearchFragment;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.fragment.ActorsFragment;
 import net.simonvt.cathode.ui.fragment.CommentFragment;
@@ -63,8 +64,6 @@ import net.simonvt.cathode.ui.fragment.MovieFragment;
 import net.simonvt.cathode.ui.fragment.MovieSuggestionsFragment;
 import net.simonvt.cathode.ui.fragment.MovieWatchlistFragment;
 import net.simonvt.cathode.ui.fragment.NavigationFragment;
-import net.simonvt.cathode.ui.fragment.SearchMovieFragment;
-import net.simonvt.cathode.ui.fragment.SearchShowFragment;
 import net.simonvt.cathode.ui.fragment.SeasonFragment;
 import net.simonvt.cathode.ui.fragment.ShowFragment;
 import net.simonvt.cathode.ui.fragment.ShowSuggestionsFragment;
@@ -446,12 +445,8 @@ public class HomeActivity extends BaseActivity
     stack.pop();
   }
 
-  @Override public void onSearchShow() {
-    stack.push(SearchShowFragment.class, SearchShowFragment.TAG);
-  }
-
-  @Override public void onSearchMovie() {
-    stack.push(SearchMovieFragment.class, SearchMovieFragment.TAG);
+  @Override public void onSearchClicked() {
+    stack.push(SearchFragment.class, SearchFragment.TAG);
   }
 
   @Override

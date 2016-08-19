@@ -94,8 +94,7 @@ public final class ProviderSchematic {
     String MOVIE_CAST = "vnd.android.cursor.dir/vnd.simonvt.cathode.movieCast";
     String MOVIE_CREW = "vnd.android.cursor.dir/vnd.simonvt.cathode.movieCrew";
 
-    String SHOW_SEARCH = "vnd.android.cursor.dir/vnd.simonvt.cathode.showSearchSuggestions";
-    String MOVIE_SEARCH = "vnd.android.cursor.dir/vnd.simonvt.cathode.movieSearchSuggestions";
+    String RECENT_QUERIES = "vnd.android.cursor.dir/vnd.simonvt.cathode.recentQueries";
 
     String PEOPLE = "vnd.android.cursor.dir/vnd.simonvt.cathode.people";
     String PERSON = "vnd.android.cursor.item/vnd.simonvt.cathode.person";
@@ -144,7 +143,7 @@ public final class ProviderSchematic {
     String ANTICIPATED = "anticipated";
     String WATCHING = "watching";
 
-    String SEARCH_SUGGESTIONS = "searchSuggestions";
+    String RECENT_QUERIES = "recentQueries";
 
     String PEOPLE = "people";
 
@@ -1111,22 +1110,14 @@ public final class ProviderSchematic {
     }
   }
 
-  @TableEndpoint(table = Tables.SHOW_SEARCH_SUGGESTIONS)
-  public static class ShowSearchSuggestions {
+  @TableEndpoint(table = Tables.RECENT_QUERIES)
+  public static class RecentQueries {
 
     @ContentUri(
-        path = Path.SEARCH_SUGGESTIONS + "/" + Path.SHOWS,
-        type = Type.SHOW_SEARCH)
-    public static final Uri SHOW_SUGGESTIONS = buildUri(Path.SEARCH_SUGGESTIONS, Path.SHOWS);
-  }
-
-  @TableEndpoint(table = Tables.MOVIE_SEARCH_SUGGESTIONS)
-  public static class MovieSearchSuggestions {
-
-    @ContentUri(
-        path = Path.SEARCH_SUGGESTIONS + "/" + Path.MOVIES,
-        type = Type.MOVIE_SEARCH)
-    public static final Uri MOVIE_SUGGESTIONS = buildUri(Path.SEARCH_SUGGESTIONS, Path.MOVIES);
+        path = Path.RECENT_QUERIES,
+        type = Type.RECENT_QUERIES,
+        defaultSort = DatabaseContract.RecentQueriesColumns.QUERIED_AT + " DESC")
+    public static final Uri RECENT_QUERIES = buildUri(Path.RECENT_QUERIES);
   }
 
   @TableEndpoint(table = Tables.PEOPLE)

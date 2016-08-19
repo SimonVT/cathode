@@ -176,9 +176,12 @@
   <string name="checkmark_collection">In collection</string>
   <string name="checkmark_watchlist">In watchlist</string>
 
-  <string name="search_initial">Search Trakt</string>
-  <string name="no_results">No results for query \'%s\'</string>
+  <string name="search_empty">Search shows and movies</string>
+  <string name="search_no_results">No results</string>
   <string name="search_failure">Querying \'%s\' failed\nClick to retry</string>
+  <string name="search_recent">Recent queries</string>
+  <string name="search_searching">Searching…</string>
+  <string name="search_local_results">Searching Trakt failed, showing local results</string>
 
   <string name="episode_next">Next: %1$dx%2$d %3$s</string>
   <string name="upcoming_episode_next">%1$dx%2$d %3$s</string>
