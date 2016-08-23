@@ -25,7 +25,8 @@ import android.support.v4.app.FragmentTransaction;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
-import net.simonvt.cathode.api.util.Joiner;
+
+import static net.simonvt.cathode.api.util.Preconditions.checkNotNull;
 
 /** A class that manages a stack of {@link Fragment}s in a single container. */
 public final class FragmentStack {
@@ -116,7 +117,10 @@ public final class FragmentStack {
 
     int i = 0;
     for (Fragment f : stack) {
-      stackTags[i++] = f.getTag();
+      String tag = f.getTag();
+      checkNotNull(tag, "Null tag for Fragment %s", f.getClass().getName());
+
+      stackTags[i++] = tag;
     }
 
     Bundle outState = new Bundle();
@@ -128,12 +132,7 @@ public final class FragmentStack {
     String[] stackTags = inState.getStringArray(STATE_STACK);
     for (String tag : stackTags) {
       Fragment f = fragmentManager.findFragmentByTag(tag);
-      if (f == null) {
-        throw new IllegalStateException(
-            "Restoring fragment stack failed: " + Joiner.on(",").join(stackTags));
-      } else {
-        stack.add(f);
-      }
+      stack.add(f);
     }
     dispatchOnStackChangedEvent();
   }
@@ -157,6 +156,8 @@ public final class FragmentStack {
    * @param args Arguments to be set on the fragment using {@link Fragment#setArguments(android.os.Bundle)}.
    */
   public void replace(Class fragment, String tag, Bundle args) {
+    checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
+
     if (fragmentManager.isDestroyed()) {
       return;
     }
@@ -197,6 +198,8 @@ public final class FragmentStack {
 
   /** Adds a new fragment to the stack and displays it. */
   public void push(Class fragment, String tag, Bundle args) {
+    checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
+
     if (fragmentManager.isDestroyed()) {
       return;
     }
@@ -277,16 +280,16 @@ public final class FragmentStack {
   }
 
   private void attachFragment(Fragment fragment, String tag) {
-    if (fragment != null) {
-      if (fragment.isDetached()) {
-        ensureTransaction();
+    checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
 
-        fragmentTransaction.attach(fragment);
-      } else if (!fragment.isAdded()) {
-        ensureTransaction();
+    if (fragment.isDetached()) {
+      ensureTransaction();
 
-        fragmentTransaction.add(containerId, fragment, tag);
-      }
+      fragmentTransaction.attach(fragment);
+    } else if (!fragment.isAdded()) {
+      ensureTransaction();
+
+      fragmentTransaction.add(containerId, fragment, tag);
     }
   }
 
