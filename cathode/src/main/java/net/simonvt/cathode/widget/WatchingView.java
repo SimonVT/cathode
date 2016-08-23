@@ -293,9 +293,13 @@ public class WatchingView extends ViewGroup {
   private OnClickListener expandedClickListener = new OnClickListener() {
     @Override public void onClick(View v) {
       if (type == Type.SHOW) {
-        watchingViewListener.onEpisodeClicked(WatchingView.this, episodeId, showTitle);
+        if (episodeId >= 0) {
+          watchingViewListener.onEpisodeClicked(WatchingView.this, episodeId, showTitle);
+        }
       } else {
-        watchingViewListener.onMovieClicked(WatchingView.this, movieId, movieTitle, movieOverview);
+        if (movieId >= 0) {
+          watchingViewListener.onMovieClicked(WatchingView.this, movieId, movieTitle, movieOverview);
+        }
       }
     }
   };
