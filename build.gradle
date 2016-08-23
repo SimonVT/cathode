@@ -31,7 +31,7 @@ ext {
   targetSdkVersion = 24
 
   compileSdkVersion = 24
-  buildToolsVersion = '24.0.0'
+  buildToolsVersion = '24.0.1'
 }
 
 ext.libraries = [
@@ -53,15 +53,15 @@ ext.libraries = [
 
   dagger: 'com.squareup.dagger:dagger:1.2.5',
   daggerCompiler: 'com.squareup.dagger:dagger-compiler:1.2.5',
-  okhttp: 'com.squareup.okhttp3:okhttp:3.3.1',
-  okhttpLogger: 'com.squareup.okhttp3:logging-interceptor:3.3.1',
+  okhttp: 'com.squareup.okhttp3:okhttp:3.4.1',
+  okhttpLogger: 'com.squareup.okhttp3:logging-interceptor:3.4.1',
   picasso: 'com.squareup.picasso:picasso:2.5.2',
   retrofit: 'com.squareup.retrofit2:retrofit:2.1.0',
   retrofitGson: 'com.squareup.retrofit2:converter-gson:2.1.0',
 
   butterknife: 'com.jakewharton:butterknife:8.1.0',
   butterknifeCompiler: 'com.jakewharton:butterknife-compiler:8.1.0',
-  timber: 'com.jakewharton.timber:timber:4.1.2',
+  timber: 'com.jakewharton.timber:timber:4.3.0',
 
   dashclockApi: 'com.google.android.apps.dashclock:dashclock-api:2.0.0',
 
