@@ -39,7 +39,7 @@ import timber.log.Timber;
 
 public class SyncShowRecommendations extends CallJob<List<Show>> {
 
-  private static final int LIMIT = 20;
+  private static final int LIMIT = 50;
 
   @Inject transient RecommendationsService recommendationsService;
 
@@ -73,7 +73,7 @@ public class SyncShowRecommendations extends CallJob<List<Show>> {
     }
     c.close();
 
-    for (int index = 0, count = Math.min(shows.size(), 25); index < count; index++) {
+    for (int index = 0, count = shows.size(); index < count; index++) {
       Show show = shows.get(index);
 
       final long showId = showHelper.partialUpdate(show);

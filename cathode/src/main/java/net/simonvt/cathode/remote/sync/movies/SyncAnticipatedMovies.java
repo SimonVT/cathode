@@ -40,7 +40,7 @@ import timber.log.Timber;
 
 public class SyncAnticipatedMovies extends CallJob<List<AnticipatedItem>> {
 
-  private static final int LIMIT = 20;
+  private static final int LIMIT = 50;
 
   @Inject transient MoviesService moviesService;
 
@@ -72,7 +72,7 @@ public class SyncAnticipatedMovies extends CallJob<List<AnticipatedItem>> {
     }
     c.close();
 
-    for (int i = 0, count = Math.min(movies.size(), 25); i < count; i++) {
+    for (int i = 0, count = movies.size(); i < count; i++) {
       AnticipatedItem item = movies.get(i);
       Movie movie = item.getMovie();
       final long movieId = movieHelper.partialUpdate(movie);

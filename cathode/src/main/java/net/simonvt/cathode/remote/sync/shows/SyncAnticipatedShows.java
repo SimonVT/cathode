@@ -40,7 +40,7 @@ import timber.log.Timber;
 
 public class SyncAnticipatedShows extends CallJob<List<AnticipatedItem>> {
 
-  private static final int LIMIT = 20;
+  private static final int LIMIT = 50;
 
   @Inject transient ShowsService showsService;
 
@@ -72,7 +72,7 @@ public class SyncAnticipatedShows extends CallJob<List<AnticipatedItem>> {
       }
       c.close();
 
-      for (int i = 0, count = Math.min(shows.size(), 25); i < count; i++) {
+      for (int i = 0, count = shows.size(); i < count; i++) {
         AnticipatedItem item = shows.get(i);
         Show show = item.getShow();
 
