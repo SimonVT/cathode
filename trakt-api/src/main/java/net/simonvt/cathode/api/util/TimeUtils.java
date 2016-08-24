@@ -16,9 +16,12 @@
 
 package net.simonvt.cathode.api.util;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public final class TimeUtils {
 
@@ -27,30 +30,35 @@ public final class TimeUtils {
 
   public static long getMillis(String iso) {
     if (iso != null) {
+      DateFormat dateFormat;
+
       final int length = iso.length();
-      DateTimeFormatter fmt;
 
       if (length <= 20) {
-        fmt = ISODateTimeFormat.dateTimeNoMillis();
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
       } else {
-        fmt = ISODateTimeFormat.dateTime();
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
       }
 
-      return fmt.parseDateTime(iso).getMillis();
+      dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+      try {
+        return dateFormat.parse(iso).getTime();
+      } catch (ParseException e) {
+        throw new IllegalArgumentException(e);
+      }
     }
 
     return 0L;
   }
 
   public static String getIsoTime() {
-    DateTime dt = new DateTime();
-    DateTimeFormatter fmt = ISODateTimeFormat.dateTime().withZoneUTC();
-    return fmt.print(dt);
+    return getIsoTime(System.currentTimeMillis());
   }
 
   public static String getIsoTime(long millis) {
-    DateTime dt = new DateTime(millis);
-    DateTimeFormatter fmt = ISODateTimeFormat.dateTime().withZoneUTC();
-    return fmt.print(dt);
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+    return dateFormat.format(new Date(millis));
   }
 }

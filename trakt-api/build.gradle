@@ -13,8 +13,6 @@ dependencies {
   compile parent.libraries.retrofitGson
   compile parent.libraries.okhttp
 
-  compile parent.libraries.jodaTime
-
   testCompile parent.libraries.junit
   testCompile parent.libraries.truth
 }

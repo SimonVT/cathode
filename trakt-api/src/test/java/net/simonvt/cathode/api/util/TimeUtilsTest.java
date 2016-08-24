@@ -22,21 +22,15 @@ import static com.google.common.truth.Truth.assertThat;
 
 public class TimeUtilsTest {
 
+  static final long DATE_MILLIS = 1000000000000L;
+
   @Test public void testDateParsing() throws Exception {
-    final long dateMillis = 1000000000000L;
-
-    final String[] dates = new String[] {
-        "2001-09-08T18:46:40.000-07:00", "2001-09-09T01:46:40.000Z", "2001-09-09T01:46:40Z",
-    };
-
-    for (String date : dates) {
-      long millis = TimeUtils.getMillis(date);
-      assertThat(millis).isEqualTo(dateMillis);
-    }
+    assertThat(TimeUtils.getMillis("2001-09-09T01:46:40.000Z")).isEqualTo(DATE_MILLIS);
+    assertThat(TimeUtils.getMillis("2001-09-09T01:46:40Z")).isEqualTo(DATE_MILLIS);
   }
 
   @Test public void testIsoTime() throws Exception {
-    String isoTime = TimeUtils.getIsoTime();
-    assertThat(isoTime).contains("Z");
+    String isoTime = TimeUtils.getIsoTime(DATE_MILLIS);
+    assertThat(isoTime).isEqualTo("2001-09-09T01:46:40.000Z");
   }
 }
