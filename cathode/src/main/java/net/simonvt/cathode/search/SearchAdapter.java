@@ -278,7 +278,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
       final RecentsViewHolder holder = new RecentsViewHolder(view);
 
-      VectorDrawableCompat icon = VectorDrawableCompat.create(parent.getContext().getResources(), R.drawable.ic_search_history_24dp, null);
+      VectorDrawableCompat icon = VectorDrawableCompat.create(parent.getContext().getResources(),
+          R.drawable.ic_search_history_24dp, null);
 
       holder.query1.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
       holder.query2.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
