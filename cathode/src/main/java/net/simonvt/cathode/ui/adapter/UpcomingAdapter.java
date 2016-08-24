@@ -186,25 +186,28 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
       }
 
       @Override public void onActionSelected(int action) {
-        switch (action) {
-          case R.id.action_checkin_cancel:
-            showScheduler.cancelCheckin();
-            vh.checkIn.setWatching(false);
-            break;
+        final int position = holder.getAdapterPosition();
+        if (position != RecyclerView.NO_POSITION) {
+          switch (action) {
+            case R.id.action_checkin_cancel:
+              showScheduler.cancelCheckin();
+              vh.checkIn.setWatching(false);
+              break;
 
-          case R.id.action_checkin:
-            if (!CheckInDialog.showDialogIfNecessary(activity, Type.SHOW, episodeTitle,
-                episodeId)) {
-              vh.checkIn.setWatching(true);
-            }
-            break;
+            case R.id.action_checkin:
+              if (!CheckInDialog.showDialogIfNecessary(activity, Type.SHOW, episodeTitle,
+                  episodeId)) {
+                vh.checkIn.setWatching(true);
+              }
+              break;
 
-          case R.id.action_watched:
-            if (watchedCount + 1 >= airedCount) {
-              onRemoveListener.onRemove(vh.itemView, vh.getAdapterPosition(), id);
-            }
-            episodeScheduler.setWatched(episodeId, true);
-            break;
+            case R.id.action_watched:
+              if (watchedCount + 1 >= airedCount) {
+                onRemoveListener.onRemove(vh.itemView, position, id);
+              }
+              episodeScheduler.setWatched(episodeId, true);
+              break;
+          }
         }
       }
     });

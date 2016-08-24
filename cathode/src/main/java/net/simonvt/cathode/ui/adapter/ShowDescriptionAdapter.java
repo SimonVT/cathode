@@ -98,8 +98,10 @@ public class ShowDescriptionAdapter
       }
 
       @Override public void onActionSelected(int action) {
-        onOverflowActionSelected(holder.itemView, holder.getItemId(), action,
-            holder.getAdapterPosition());
+        final int position = holder.getAdapterPosition();
+        if (position != RecyclerView.NO_POSITION) {
+          onOverflowActionSelected(holder.itemView, holder.getItemId(), action, position);
+        }
       }
     });
 

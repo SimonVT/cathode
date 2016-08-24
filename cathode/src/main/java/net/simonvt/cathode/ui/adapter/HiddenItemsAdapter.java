@@ -174,7 +174,7 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
 
         @Override public void onActionSelected(int action) {
           final int position = showHolder.getAdapterPosition();
-          if (position != RecyclerView.NO_ID) {
+          if (position != RecyclerView.NO_POSITION) {
             final long id = showHolder.getItemId();
             final long itemId = reverseIdLookup(getHeader(position).headerId, id);
 

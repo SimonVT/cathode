@@ -71,8 +71,11 @@ public class MoviesAdapter extends BaseMoviesAdapter<BaseMoviesAdapter.ViewHolde
       }
 
       @Override public void onActionSelected(int action) {
-        onOverflowActionSelected(holder.itemView, holder.getItemId(), action,
-            holder.getAdapterPosition(), holder.title.getText().toString());
+        final int position = holder.getAdapterPosition();
+        if (position != RecyclerView.NO_POSITION) {
+          onOverflowActionSelected(holder.itemView, holder.getItemId(), action, position,
+              holder.title.getText().toString());
+        }
       }
     });
 

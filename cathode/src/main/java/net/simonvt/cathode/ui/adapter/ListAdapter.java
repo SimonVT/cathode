@@ -171,14 +171,13 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
       }
 
       @Override public void onActionSelected(int action) {
-        if (finalHolder.getAdapterPosition() == RecyclerView.NO_POSITION) {
-          return;
-        }
-
-        switch (action) {
-          case R.id.action_list_remove:
-            removeListener.onRemoveItem(finalHolder.getAdapterPosition(), finalHolder.getItemId());
-            break;
+        final int position = finalHolder.getAdapterPosition();
+        if (position != RecyclerView.NO_POSITION) {
+          switch (action) {
+            case R.id.action_list_remove:
+              removeListener.onRemoveItem(position, finalHolder.getItemId());
+              break;
+          }
         }
       }
     });

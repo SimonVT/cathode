@@ -194,10 +194,13 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
         }
 
         @Override public void onActionSelected(int action) {
-          switch (action) {
-            case R.id.action_watchlist_remove:
-              onRemoveListener.onRemoveItem(view, vh.getAdapterPosition(), id);
-              showScheduler.setIsInWatchlist(id, false);
+          final int position = holder.getAdapterPosition();
+          if (position != RecyclerView.NO_POSITION) {
+            switch (action) {
+              case R.id.action_watchlist_remove:
+                onRemoveListener.onRemoveItem(view, position, id);
+                showScheduler.setIsInWatchlist(id, false);
+            }
           }
         }
       });
@@ -234,15 +237,18 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
         }
 
         @Override public void onActionSelected(int action) {
-          switch (action) {
-            case R.id.action_watched:
-              episodeScheduler.setWatched(id, true);
-              break;
+          final int position = holder.getAdapterPosition();
+          if (position != RecyclerView.NO_POSITION) {
+            switch (action) {
+              case R.id.action_watched:
+                episodeScheduler.setWatched(id, true);
+                break;
 
-            case R.id.action_watchlist_remove:
-              onRemoveListener.onRemoveItem(view, position, id);
-              episodeScheduler.setIsInWatchlist(id, false);
-              break;
+              case R.id.action_watchlist_remove:
+                onRemoveListener.onRemoveItem(view, position, id);
+                episodeScheduler.setIsInWatchlist(id, false);
+                break;
+            }
           }
         }
       });

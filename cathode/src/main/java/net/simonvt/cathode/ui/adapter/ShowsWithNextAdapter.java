@@ -116,44 +116,47 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
       }
 
       @Override public void onActionSelected(int action) {
-        switch (action) {
-          case R.id.action_watchlist_remove:
-            showScheduler.setIsInWatchlist(holder.getItemId(), false);
-            break;
+        final int position = holder.getAdapterPosition();
+        if (position != RecyclerView.NO_POSITION) {
+          switch (action) {
+            case R.id.action_watchlist_remove:
+              showScheduler.setIsInWatchlist(holder.getItemId(), false);
+              break;
 
-          case R.id.action_watched:
-            onWatchNext(holder.itemView, holder.getAdapterPosition(), holder.getItemId(),
-                holder.showTypeCount, holder.showAiredCount);
-            break;
+            case R.id.action_watched:
+              onWatchNext(holder.itemView, position, holder.getItemId(), holder.showTypeCount,
+                  holder.showAiredCount);
+              break;
 
-          case R.id.action_watched_all:
-            showScheduler.setWatched(holder.getItemId(), true);
-            break;
+            case R.id.action_watched_all:
+              showScheduler.setWatched(holder.getItemId(), true);
+              break;
 
-          case R.id.action_unwatch_all:
-            showScheduler.setWatched(holder.getItemId(), false);
-            break;
+            case R.id.action_unwatch_all:
+              showScheduler.setWatched(holder.getItemId(), false);
+              break;
 
-          case R.id.action_checkin:
-            CheckInDialog.showDialogIfNecessary(activity, Type.SHOW, holder.episodeTitle,
-                holder.episodeId);
-            break;
+            case R.id.action_checkin:
+              CheckInDialog.showDialogIfNecessary(activity, Type.SHOW, holder.episodeTitle,
+                  holder.episodeId);
+              break;
 
-          case R.id.action_checkin_cancel:
-            showScheduler.cancelCheckin();
-            break;
+            case R.id.action_checkin_cancel:
+              showScheduler.cancelCheckin();
+              break;
 
-          case R.id.action_collection_add:
-            showScheduler.collectedNext(holder.getItemId());
-            break;
+            case R.id.action_collection_add:
+              showScheduler.collectedNext(holder.getItemId());
+              break;
 
-          case R.id.action_watched_hide:
-            showScheduler.hideFromWatched(holder.getItemId(), true);
-            break;
+            case R.id.action_watched_hide:
+              showScheduler.hideFromWatched(holder.getItemId(), true);
+              break;
 
-          case R.id.action_collection_hide:
-            showScheduler.hideFromCollected(holder.getItemId(), true);
-            break;
+            case R.id.action_collection_hide:
+              showScheduler.hideFromCollected(holder.getItemId(), true);
+              break;
+          }
         }
       }
     });

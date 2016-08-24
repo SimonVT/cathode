@@ -17,6 +17,7 @@ package net.simonvt.cathode.ui.adapter;
 
 import android.database.Cursor;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,8 +74,11 @@ public class MovieSearchAdapter extends BaseMoviesAdapter<MovieSearchAdapter.Vie
       }
 
       @Override public void onActionSelected(int action) {
-        onOverflowActionSelected(holder.itemView, holder.getItemId(), action,
-            holder.getAdapterPosition(), holder.title.getText().toString());
+        final int position = holder.getAdapterPosition();
+        if (position != RecyclerView.NO_POSITION) {
+          onOverflowActionSelected(holder.itemView, holder.getItemId(), action, position,
+              holder.title.getText().toString());
+        }
       }
     });
 

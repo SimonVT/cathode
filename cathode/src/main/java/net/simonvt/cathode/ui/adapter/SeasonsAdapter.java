@@ -171,22 +171,25 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
       }
 
       @Override public void onActionSelected(int action) {
-        switch (action) {
-          case R.id.action_watched:
-            seasonScheduler.setWatched(seasonId, true);
-            break;
+        final int position = holder.getAdapterPosition();
+        if (position != RecyclerView.NO_POSITION) {
+          switch (action) {
+            case R.id.action_watched:
+              seasonScheduler.setWatched(seasonId, true);
+              break;
 
-          case R.id.action_unwatched:
-            seasonScheduler.setWatched(seasonId, false);
-            break;
+            case R.id.action_unwatched:
+              seasonScheduler.setWatched(seasonId, false);
+              break;
 
-          case R.id.action_collection_add:
-            seasonScheduler.setInCollection(seasonId, true);
-            break;
+            case R.id.action_collection_add:
+              seasonScheduler.setInCollection(seasonId, true);
+              break;
 
-          case R.id.action_collection_remove:
-            seasonScheduler.setInCollection(seasonId, false);
-            break;
+            case R.id.action_collection_remove:
+              seasonScheduler.setInCollection(seasonId, false);
+              break;
+          }
         }
       }
     });
