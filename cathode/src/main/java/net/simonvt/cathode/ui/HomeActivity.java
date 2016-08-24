@@ -375,6 +375,15 @@ public class HomeActivity extends BaseActivity
     @Override
     public void onMovieClicked(WatchingView view, long id, String title, String overview) {
       watchingView.collapse();
+
+      Fragment top = stack.peek();
+      if (top instanceof MovieFragment) {
+        MovieFragment f = (MovieFragment) top;
+        if (id == f.getMovieId()) {
+          return;
+        }
+      }
+
       onDisplayMovie(id, title, overview);
     }
 
@@ -456,7 +465,7 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override public void onDisplayEpisode(long episodeId, String showTitle) {
-    stack.push(EpisodeFragment.class, EpisodeFragment.TAG,
+    stack.push(EpisodeFragment.class, EpisodeFragment.getTag(episodeId),
         EpisodeFragment.getArgs(episodeId, showTitle));
   }
 
@@ -472,7 +481,7 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override public void onDisplayMovie(long movieId, String title, String overview) {
-    stack.push(MovieFragment.class, MovieFragment.TAG,
+    stack.push(MovieFragment.class, MovieFragment.getTag(movieId),
         MovieFragment.getArgs(movieId, title, overview));
   }
 

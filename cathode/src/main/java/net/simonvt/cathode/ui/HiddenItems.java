@@ -110,7 +110,7 @@ public class HiddenItems extends BaseActivity
   }
 
   @Override public void onDisplayEpisode(long episodeId, String showTitle) {
-    stack.push(EpisodeFragment.class, EpisodeFragment.TAG,
+    stack.push(EpisodeFragment.class, EpisodeFragment.getTag(episodeId),
         EpisodeFragment.getArgs(episodeId, showTitle));
   }
 
@@ -126,7 +126,7 @@ public class HiddenItems extends BaseActivity
   }
 
   @Override public void onDisplayMovie(long movieId, String title, String overview) {
-    stack.push(MovieFragment.class, MovieFragment.TAG,
+    stack.push(MovieFragment.class, MovieFragment.getTag(movieId),
         MovieFragment.getArgs(movieId, title, overview));
   }
 

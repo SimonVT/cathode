@@ -62,7 +62,7 @@ import net.simonvt.schematic.Cursors;
 
 public class EpisodeFragment extends RefreshableAppBarFragment {
 
-  public static final String TAG = "net.simonvt.cathode.ui.fragment.EpisodeFragment";
+  private static final String TAG = "net.simonvt.cathode.ui.fragment.EpisodeFragment";
 
   private static final int LOADER_EPISODE = 1;
   private static final int LOADER_EPISODE_USER_COMMENTS = 2;
@@ -125,6 +125,10 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
   private MenuItem checkInItem;
   private CheckInDrawable checkInDrawable;
+
+  public static String getTag(long episodeId) {
+    return TAG + "/" + episodeId;
+  }
 
   public static Bundle getArgs(long episodeId, String showTitle) {
     Bundle args = new Bundle();

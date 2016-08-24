@@ -70,7 +70,7 @@ import net.simonvt.schematic.Cursors;
 public class MovieFragment extends RefreshableAppBarFragment
     implements LoaderManager.LoaderCallbacks<SimpleCursor> {
 
-  public static final String TAG = "net.simonvt.cathode.ui.fragment.MovieFragment";
+  private static final String TAG = "net.simonvt.cathode.ui.fragment.MovieFragment";
 
   private static final int LOADER_MOVIE = 1;
   private static final int LOADER_MOVIE_GENRES = 2;
@@ -154,6 +154,10 @@ public class MovieFragment extends RefreshableAppBarFragment
   private MenuItem checkInItem;
   private CheckInDrawable checkInDrawable;
 
+  public static String getTag(long movieId) {
+    return TAG + "/" + movieId;
+  }
+
   public static Bundle getArgs(long movieId, String movieTitle, String overview) {
     if (movieId < 0) {
       throw new IllegalArgumentException("movieId must be >= 0");
@@ -181,6 +185,10 @@ public class MovieFragment extends RefreshableAppBarFragment
     movieOverview = args.getString(ARG_OVERVIEW);
 
     setTitle(movieTitle);
+  }
+
+  public long getMovieId() {
+    return movieId;
   }
 
   @Override public View createView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
