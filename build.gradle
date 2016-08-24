@@ -5,7 +5,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:2.1.2'
+    classpath 'com.android.tools.build:gradle:2.1.3'
     classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
     classpath 'io.fabric.tools:gradle:1.+'
   }
@@ -59,8 +59,8 @@ ext.libraries = [
   retrofit: 'com.squareup.retrofit2:retrofit:2.1.0',
   retrofitGson: 'com.squareup.retrofit2:converter-gson:2.1.0',
 
-  butterknife: 'com.jakewharton:butterknife:8.1.0',
-  butterknifeCompiler: 'com.jakewharton:butterknife-compiler:8.1.0',
+  butterknife: 'com.jakewharton:butterknife:8.3.0',
+  butterknifeCompiler: 'com.jakewharton:butterknife-compiler:8.3.0',
   timber: 'com.jakewharton.timber:timber:4.3.0',
 
   dashclockApi: 'com.google.android.apps.dashclock:dashclock-api:2.0.0',
