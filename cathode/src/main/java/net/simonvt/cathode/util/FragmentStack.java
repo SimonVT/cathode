@@ -25,6 +25,7 @@ import android.support.v4.app.FragmentTransaction;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
+import timber.log.Timber;
 
 import static net.simonvt.cathode.api.util.Preconditions.checkNotNull;
 
@@ -173,6 +174,8 @@ public final class FragmentStack {
 
         attachFragment(stack.peek(), tag);
       }
+
+      commit();
       return;
     }
 
@@ -282,6 +285,8 @@ public final class FragmentStack {
   private void attachFragment(Fragment fragment, String tag) {
     checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
 
+    Timber.d("Attaching fragment: %s", tag);
+
     if (fragment.isDetached()) {
       ensureTransaction();
 
@@ -295,6 +300,8 @@ public final class FragmentStack {
 
   private void detachFragment(Fragment fragment) {
     if (fragment != null && !fragment.isDetached()) {
+      Timber.d("Detaching fragment: %s", fragment.getTag());
+
       ensureTransaction();
       fragmentTransaction.detach(fragment);
     }
@@ -302,6 +309,8 @@ public final class FragmentStack {
 
   private void removeFragment(Fragment fragment) {
     if (fragment != null && (fragment.isAdded() || fragment.isDetached())) {
+      Timber.d("Removing fragment: %s", fragment.getTag());
+
       ensureTransaction();
       fragmentTransaction.remove(fragment);
     }
