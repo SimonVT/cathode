@@ -17,6 +17,7 @@
 package net.simonvt.cathode.search;
 
 import android.graphics.drawable.Animatable;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
@@ -276,6 +277,12 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
           LayoutInflater.from(parent.getContext()).inflate(R.layout.search_recents, parent, false);
 
       final RecentsViewHolder holder = new RecentsViewHolder(view);
+
+      VectorDrawableCompat icon = VectorDrawableCompat.create(parent.getContext().getResources(), R.drawable.ic_search_history_24dp, null);
+
+      holder.query1.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
+      holder.query2.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
+      holder.query3.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
 
       holder.query1.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View view) {
