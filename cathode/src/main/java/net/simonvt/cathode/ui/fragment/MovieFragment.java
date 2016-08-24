@@ -73,10 +73,10 @@ public class MovieFragment extends RefreshableAppBarFragment
   public static final String TAG = "net.simonvt.cathode.ui.fragment.MovieFragment";
 
   private static final int LOADER_MOVIE = 1;
-  private static final int LOADER_MOVIE_GENRES = 4;
-  private static final int LOADER_MOVIE_ACTORS = 2;
-  private static final int LOADER_MOVIE_USER_COMMENTS = 3;
-  private static final int LOADER_MOVIE_COMMENTS = 4;
+  private static final int LOADER_MOVIE_GENRES = 2;
+  private static final int LOADER_MOVIE_ACTORS = 3;
+  private static final int LOADER_MOVIE_USER_COMMENTS = 4;
+  private static final int LOADER_MOVIE_COMMENTS = 5;
 
   private static final String ARG_ID = "net.simonvt.cathode.ui.fragment.MovieFragment.id";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.fragment.MovieFragment.title";
