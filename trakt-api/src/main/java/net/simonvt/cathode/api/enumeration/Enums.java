@@ -16,12 +16,12 @@
 
 package net.simonvt.cathode.api.enumeration;
 
-public class Enums<T extends Enum<?>> {
+public class Enums<T extends Enum<T>> {
 
   private T[] enums;
 
-  public static Enums of(Enum... enums) {
-    return new Enums(enums);
+  public static <T extends Enum<T>> Enums<T> of(T... enums) {
+    return new Enums<>(enums);
   }
 
   private Enums(T[] enums) {
