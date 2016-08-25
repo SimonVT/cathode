@@ -40,6 +40,8 @@ public class CheckInDrawable extends Drawable implements Drawable.Callback {
 
   private Drawable currentDrawable;
 
+  private Animatable2.AnimationCallback callbacks;
+
   public CheckInDrawable(Context context) {
     this(context, R.drawable.ic_anim_checkin_24dp, R.drawable.ic_anim_cancel_24dp,
         R.drawable.ic_action_checkin_24dp, R.drawable.ic_action_cancel_24dp);
@@ -138,8 +140,6 @@ public class CheckInDrawable extends Drawable implements Drawable.Callback {
 
     invalidateSelf();
   }
-
-  private Animatable2.AnimationCallback callbacks;
 
   @Override public int getIntrinsicWidth() {
     return checkInDrawable.getIntrinsicWidth();

@@ -23,12 +23,6 @@ public final class TraktUtils {
   private TraktUtils() {
   }
 
-  public static boolean isValidUsername(String username) {
-    // letters, numbers, -, _, or .
-    Pattern pattern = Pattern.compile("^[a-zA-Z0-9._-]+$");
-    return pattern.matcher(username).matches();
-  }
-
   public static String getImdbUrl(String imdbId) {
     return "http://www.imdb.com/title/" + imdbId;
   }

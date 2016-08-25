@@ -178,7 +178,6 @@
 
   <string name="search_empty">Search shows and movies</string>
   <string name="search_no_results">No results</string>
-  <string name="search_failure">Querying \'%s\' failed\nClick to retry</string>
   <string name="search_recent">Recent queries</string>
   <string name="search_searching">Searching…</string>
   <string name="search_local_results">Searching Trakt failed, showing local results</string>
