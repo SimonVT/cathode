@@ -90,7 +90,7 @@ public class SearchFragment extends ToolbarGridFragment<SearchAdapter.ViewHolder
 
   private static final int LOADER_RECENTS = 1;
 
-  private static final long DEBOUNCE_MILLIS = 150;
+  private static final long DEBOUNCE_MILLIS = 350;
 
   @Inject SearchHandler searchHandler;
 
@@ -202,6 +202,7 @@ public class SearchFragment extends ToolbarGridFragment<SearchAdapter.ViewHolder
     if (TextUtils.isEmpty(query)) {
       Debouncer.remove("search");
       adapter.setResults(null);
+      searchHandler.clear();
     } else {
       Debouncer.debounce("search", getSearchRunnable(query), DEBOUNCE_MILLIS);
     }
