@@ -54,11 +54,13 @@ import net.simonvt.cathode.remote.action.lists.AddPerson;
 import net.simonvt.cathode.remote.action.lists.AddSeason;
 import net.simonvt.cathode.remote.action.lists.AddShow;
 import net.simonvt.cathode.remote.action.lists.CreateList;
+import net.simonvt.cathode.remote.action.lists.DeleteList;
 import net.simonvt.cathode.remote.action.lists.RemoveEpisode;
 import net.simonvt.cathode.remote.action.lists.RemoveMovie;
 import net.simonvt.cathode.remote.action.lists.RemovePerson;
 import net.simonvt.cathode.remote.action.lists.RemoveSeason;
 import net.simonvt.cathode.remote.action.lists.RemoveShow;
+import net.simonvt.cathode.remote.action.lists.UpdateList;
 import net.simonvt.cathode.remote.action.movies.CalendarHideMovie;
 import net.simonvt.cathode.remote.action.movies.CheckInMovie;
 import net.simonvt.cathode.remote.action.movies.CollectMovie;
@@ -164,10 +166,11 @@ import net.simonvt.cathode.ui.fragment.AnticipatedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.AnticipatedShowsFragment;
 import net.simonvt.cathode.ui.fragment.CommentFragment;
 import net.simonvt.cathode.ui.fragment.CommentsFragment;
-import net.simonvt.cathode.ui.fragment.CreateListFragment;
+import net.simonvt.cathode.ui.lists.CreateListFragment;
 import net.simonvt.cathode.ui.fragment.EpisodeFragment;
-import net.simonvt.cathode.ui.fragment.ListFragment;
-import net.simonvt.cathode.ui.fragment.ListsFragment;
+import net.simonvt.cathode.ui.lists.DeleteListDialog;
+import net.simonvt.cathode.ui.lists.ListFragment;
+import net.simonvt.cathode.ui.lists.ListsFragment;
 import net.simonvt.cathode.ui.fragment.MovieCollectionFragment;
 import net.simonvt.cathode.ui.fragment.MovieFragment;
 import net.simonvt.cathode.ui.fragment.MovieRecommendationsFragment;
@@ -184,6 +187,7 @@ import net.simonvt.cathode.ui.fragment.TrendingShowsFragment;
 import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
+import net.simonvt.cathode.ui.lists.UpdateListFragment;
 import net.simonvt.cathode.ui.setup.CalendarSetupActivity;
 import net.simonvt.cathode.widget.PhoneEpisodeView;
 import net.simonvt.cathode.widget.RemoteImageView;
@@ -219,11 +223,11 @@ import net.simonvt.cathode.widget.RemoteImageView;
         WatchedMoviesFragment.class, WatchedShowsFragment.class, CreateListFragment.class,
         ListFragment.class, CommentsFragment.class, CommentFragment.class, ListsFragment.class,
         AnticipatedShowsFragment.class, AnticipatedMoviesFragment.class, StatsFragment.class,
-        SearchFragment.class,
+        SearchFragment.class, UpdateListFragment.class,
 
         // Dialogs
         RatingDialog.class, CheckInDialog.class, CheckInDialog.Injections.class, ListsDialog.class,
-        AddCommentDialog.class, UpdateCommentDialog.class,
+        AddCommentDialog.class, UpdateCommentDialog.class, DeleteListDialog.class,
 
         // ListAdapters
         SeasonAdapter.class, SeasonsAdapter.class, ShowDescriptionAdapter.class,
@@ -265,6 +269,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         SyncCommentLikes.class, CalendarHideShow.class, WatchedHideShow.class,
         CollectedHideShow.class, CalendarHideMovie.class, WatchedHideMovie.class,
         CollectedHideMovie.class, SyncAnticipatedShows.class, SyncAnticipatedMovies.class,
+        UpdateList.class, DeleteList.class,
 
         // Upgrade tasks
         EnsureSync.class, UpperCaseGenres.class,

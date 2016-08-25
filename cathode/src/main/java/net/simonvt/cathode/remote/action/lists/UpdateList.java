@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2016 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,20 @@
 
 package net.simonvt.cathode.remote.action.lists;
 
-import android.database.Cursor;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.ListInfoBody;
 import net.simonvt.cathode.api.entity.CustomList;
 import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
-import net.simonvt.cathode.provider.ListWrapper;
-import net.simonvt.cathode.provider.ProviderSchematic.Lists;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import retrofit2.Call;
 
-public class CreateList extends CallJob<CustomList> {
+public class UpdateList extends CallJob<CustomList> {
 
   @Inject transient UsersService usersServie;
 
-  private Long listId;
+  private Long traktId;
 
   private String name;
 
@@ -45,10 +41,10 @@ public class CreateList extends CallJob<CustomList> {
 
   private Boolean allowComments;
 
-  public CreateList(long listId, String name, String description, Privacy privacy,
+  public UpdateList(long traktId, String name, String description, Privacy privacy,
       Boolean displayNumbers, Boolean allowComments) {
     super(Flags.REQUIRES_AUTH);
-    this.listId = listId;
+    this.traktId = traktId;
     this.name = name;
     this.description = description;
     this.privacy = privacy;
@@ -57,7 +53,11 @@ public class CreateList extends CallJob<CustomList> {
   }
 
   @Override public String key() {
-    return "CreateList&name=" + name;
+    return "UpdateList&traktId=" + traktId;
+  }
+
+  @Override public boolean allowDuplicates() {
+    return true;
   }
 
   @Override public int getPriority() {
@@ -65,7 +65,7 @@ public class CreateList extends CallJob<CustomList> {
   }
 
   @Override public Call<CustomList> getCall() {
-    return usersServie.createList(ListInfoBody.name(name)
+    return usersServie.updateList(traktId, ListInfoBody.name(name)
         .description(description)
         .privacy(privacy)
         .displayNumbers(displayNumbers)
@@ -73,18 +73,5 @@ public class CreateList extends CallJob<CustomList> {
   }
 
   @Override public void handleResponse(CustomList list) {
-    Cursor c = getContentResolver().query(Lists.LISTS, new String[] {
-        ListsColumns.ID,
-    }, ListsColumns.ID + "=?", new String[] {
-        String.valueOf(listId),
-    }, null);
-
-    if (c.moveToFirst()) {
-      ListWrapper.update(getContentResolver(), listId, list);
-    } else {
-      ListWrapper.updateOrInsert(getContentResolver(), list);
-    }
-
-    c.close();
   }
 }

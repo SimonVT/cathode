@@ -73,6 +73,19 @@ public final class ListWrapper {
     return listId;
   }
 
+  public static void updateList(ContentResolver resolver, long listId, String name,
+      String description, Privacy privacy, boolean displayNumbers, boolean allowComments) {
+    ContentValues values = new ContentValues();
+    values.put(ListsColumns.NAME, name);
+    values.put(ListsColumns.DESCRIPTION, description);
+    values.put(ListsColumns.PRIVACY, privacy.toString());
+    values.put(ListsColumns.DISPLAY_NUMBERS, displayNumbers);
+    values.put(ListsColumns.ALLOW_COMMENTS, allowComments);
+    values.put(ListsColumns.TRAKT_ID, -1L);
+
+    resolver.update(Lists.withId(listId), values, null, null);
+  }
+
   public static long updateOrInsert(ContentResolver resolver, CustomList list) {
     final long traktId = list.getIds().getTrakt();
     long listId = getId(resolver, traktId);

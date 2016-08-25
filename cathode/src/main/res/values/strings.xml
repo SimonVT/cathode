@@ -162,7 +162,11 @@
   <string name="action_rate">Rate</string>
   <string name="action_recommendation_dismiss">Dismiss recommendation</string>
   <string name="action_list_create">Create list</string>
+  <string name="action_list_update">Update list</string>
+  <string name="action_list_edit">Edit list</string>
+  <string name="action_list_delete">Delete list</string>
   <string name="action_create">Create</string>
+  <string name="action_update">Update</string>
   <string name="action_list_remove">Remove from list</string>
   <string name="action_list_add">Add to lists</string>
   <string name="action_submit">Submit</string>
@@ -250,12 +254,17 @@
 
   <string name="startpage_lists">Lists</string>
 
-  <!-- Create list fragment -->
+  <!-- List fragments -->
   <string name="list_create_name">Name</string>
   <string name="list_create_description">Description</string>
   <string name="list_create_privacy">Privacy</string>
   <string name="list_create_allow_comments">Allow comments</string>
   <string name="list_create_display_numbers">Display numbers</string>
+
+  <string name="list_delete_title">Delete list</string>
+  <string name="list_delete_message">Are you sure you want to delete this list?</string>
+
+  <string name="list_dialog_delete">Delete</string>
 
   <string name="no_lists">You have no lists</string>
 

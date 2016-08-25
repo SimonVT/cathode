@@ -21,7 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.ui.fragment.DashboardFragment;
-import net.simonvt.cathode.ui.fragment.ListsFragment;
+import net.simonvt.cathode.ui.lists.ListsFragment;
 import net.simonvt.cathode.ui.fragment.MovieCollectionFragment;
 import net.simonvt.cathode.ui.fragment.MovieSuggestionsFragment;
 import net.simonvt.cathode.ui.fragment.MovieWatchlistFragment;

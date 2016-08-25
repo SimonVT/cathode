@@ -19,4 +19,6 @@ package net.simonvt.cathode.ui;
 public interface ListNavigationListener {
 
   void onShowList(long listId, String listName);
+
+  void onListDeleted(long listId);
 }

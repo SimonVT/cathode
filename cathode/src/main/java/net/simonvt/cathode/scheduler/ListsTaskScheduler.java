@@ -27,6 +27,7 @@ import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ListWrapper;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.PersonWrapper;
+import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
@@ -36,11 +37,13 @@ import net.simonvt.cathode.remote.action.lists.AddPerson;
 import net.simonvt.cathode.remote.action.lists.AddSeason;
 import net.simonvt.cathode.remote.action.lists.AddShow;
 import net.simonvt.cathode.remote.action.lists.CreateList;
+import net.simonvt.cathode.remote.action.lists.DeleteList;
 import net.simonvt.cathode.remote.action.lists.RemoveEpisode;
 import net.simonvt.cathode.remote.action.lists.RemoveMovie;
 import net.simonvt.cathode.remote.action.lists.RemovePerson;
 import net.simonvt.cathode.remote.action.lists.RemoveSeason;
 import net.simonvt.cathode.remote.action.lists.RemoveShow;
+import net.simonvt.cathode.remote.action.lists.UpdateList;
 
 public class ListsTaskScheduler extends BaseTaskScheduler {
 
@@ -64,6 +67,33 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
                 displayNumbers, allowComments);
 
         queue(new CreateList(listId, name, description, privacy, displayNumbers, allowComments));
+      }
+    });
+  }
+
+  public void updateList(final long listId, final String name, final String description,
+      final Privacy privacy, final boolean displayNumbers, final boolean allowComments) {
+    execute(new Runnable() {
+      @Override public void run() {
+        final long traktId = ListWrapper.getTraktId(context.getContentResolver(), listId);
+
+        ListWrapper.updateList(context.getContentResolver(), listId, name, description, privacy,
+            displayNumbers, allowComments);
+
+        queue(new UpdateList(traktId, name, description, privacy, displayNumbers, allowComments));
+      }
+    });
+  }
+
+  public void deleteList(final long listId) {
+    execute(new Runnable() {
+      @Override public void run() {
+        final long traktId = ListWrapper.getTraktId(context.getContentResolver(), listId);
+
+        context.getContentResolver().delete(ListItems.inList(listId), null, null);
+        context.getContentResolver().delete(ProviderSchematic.Lists.withId(listId), null, null);
+
+        queue(new DeleteList(traktId));
       }
     });
   }

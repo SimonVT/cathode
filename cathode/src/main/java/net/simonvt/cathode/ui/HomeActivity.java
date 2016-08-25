@@ -57,8 +57,8 @@ import net.simonvt.cathode.ui.fragment.CommentFragment;
 import net.simonvt.cathode.ui.fragment.CommentsFragment;
 import net.simonvt.cathode.ui.fragment.DashboardFragment;
 import net.simonvt.cathode.ui.fragment.EpisodeFragment;
-import net.simonvt.cathode.ui.fragment.ListFragment;
-import net.simonvt.cathode.ui.fragment.ListsFragment;
+import net.simonvt.cathode.ui.lists.ListFragment;
+import net.simonvt.cathode.ui.lists.ListsFragment;
 import net.simonvt.cathode.ui.fragment.MovieCollectionFragment;
 import net.simonvt.cathode.ui.fragment.MovieFragment;
 import net.simonvt.cathode.ui.fragment.MovieSuggestionsFragment;
@@ -491,6 +491,16 @@ public class HomeActivity extends BaseActivity
 
   @Override public void onShowList(long listId, String listName) {
     stack.push(ListFragment.class, ListFragment.TAG, ListFragment.getArgs(listId, listName));
+  }
+
+  @Override public void onListDeleted(long listId) {
+    Fragment top = stack.peek();
+    if (top instanceof ListFragment) {
+      ListFragment f = (ListFragment) top;
+      if (listId == f.getListId()) {
+        stack.pop();
+      }
+    }
   }
 
   @Override public void onDisplayComments(ItemType type, long itemId) {

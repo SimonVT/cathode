@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2016 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.ui.adapter;
+package net.simonvt.cathode.ui.lists;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -27,6 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
+import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.schematic.Cursors;
 
 public class ListsAdapter extends RecyclerCursorAdapter<ListsAdapter.ViewHolder> {

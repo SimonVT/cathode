@@ -17,7 +17,7 @@
 package net.simonvt.cathode.api.service;
 
 import java.util.List;
-import net.simonvt.cathode.api.body.CreateListBody;
+import net.simonvt.cathode.api.body.ListInfoBody;
 import net.simonvt.cathode.api.body.ListItemActionBody;
 import net.simonvt.cathode.api.entity.CommentItem;
 import net.simonvt.cathode.api.entity.CustomList;
@@ -33,10 +33,13 @@ import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.enumeration.HiddenSection;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.enumeration.ItemTypes;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -125,10 +128,26 @@ public interface UsersService {
   @GET("/users/{username}/lists/{id}/items") Call<List<ListItem>> listItems(
       @Path("username") String username, @Path("id") long id);
 
-  @POST("/users/me/lists") Call<CustomList> createList(@Body CreateListBody createList);
+  @POST("/users/me/lists") Call<CustomList> createList(@Body ListInfoBody createList);
 
   @POST("/users/{username}/lists") Call<CustomList> createList(@Path("username") String username,
-      @Body CreateListBody createList);
+      @Body ListInfoBody createList);
+
+  /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Update a custom list by sending 1 or more parameters. If you update the list name, the original
+   * slug will still be retained so existing references to this list won't break.
+   */
+  @PUT("/users/me/lists/{id}") Call<CustomList> updateList(@Path("id") long id,
+      @Body ListInfoBody updateList);
+
+  /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Remove a custom list and all items it contains.
+   */
+  @DELETE("/users/me/lists/{id}") Call<ResponseBody> deleteList(@Path("id") long id);
 
   /**
    * <b>OAuth Required</b>

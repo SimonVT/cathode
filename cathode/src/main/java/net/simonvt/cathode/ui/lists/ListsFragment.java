@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2016 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.ui.fragment;
+package net.simonvt.cathode.ui.lists;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -33,12 +33,12 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.ui.ListNavigationListener;
-import net.simonvt.cathode.ui.adapter.ListsAdapter;
+import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 
 public class ListsFragment extends ToolbarSwipeRefreshRecyclerFragment<ListsAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<SimpleCursor>, ListsAdapter.OnListClickListener {
 
-  public static final String TAG = "net.simonvt.cathode.ui.fragment.ListsFragment";
+  public static final String TAG = "net.simonvt.cathode.ui.lists.ListsFragment";
 
   static final String DIALOG_LIST_CREATE = "net.simonvt.cathode.ui.HomeActivity.createListFragment";
 

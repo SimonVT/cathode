@@ -16,8 +16,6 @@
 
 package net.simonvt.cathode.api.util;
 
-import java.util.regex.Pattern;
-
 public final class TraktUtils {
 
   private TraktUtils() {

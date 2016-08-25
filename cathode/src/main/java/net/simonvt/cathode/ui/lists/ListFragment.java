@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2016 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.ui.fragment;
+package net.simonvt.cathode.ui.lists;
 
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
@@ -32,6 +35,7 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
@@ -43,8 +47,8 @@ import net.simonvt.cathode.remote.sync.lists.SyncList;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
-import net.simonvt.cathode.ui.adapter.ListAdapter;
 import net.simonvt.cathode.ui.adapter.ShowClickListener;
+import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
@@ -53,16 +57,19 @@ import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.schematic.Cursors;
 
 public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHolder>
-    implements LoaderManager.LoaderCallbacks<SimpleCursor>, ShowClickListener, SeasonClickListener,
-    EpisodeClickListener, MovieClickListener, ListAdapter.OnRemoveItemListener {
+    implements ShowClickListener, SeasonClickListener, EpisodeClickListener, MovieClickListener,
+    ListAdapter.OnRemoveItemListener {
 
-  public static final String TAG = "net.simonvt.cathode.ui.fragment.ListFragment";
+  public static final String TAG = "net.simonvt.cathode.ui.lists.ListFragment";
 
-  private static final String ARG_LIST_ID = "net.simonvt.cathode.ui.fragment.ListFragment.lidtId";
-  private static final String ARG_LIST_NAME =
-      "net.simonvt.cathode.ui.fragment.ListFragment.listName";
+  private static final String ARG_LIST_ID = "net.simonvt.cathode.ui.lists.ListFragment.lidtId";
+  private static final String ARG_LIST_NAME = "net.simonvt.cathode.ui.lists.ListFragment.listName";
 
-  private static final int LOADER_LIST = 1;
+  static final String DIALOG_UPDATE = "net.simonvt.cathode.ui.lists.ListFragment.updateListsDialog";
+  static final String DIALOG_DELETE = "net.simonvt.cathode.ui.lists.ListFragment.deleteListsDialog";
+
+  private static final int LOADER_LIST_INFO = 1;
+  private static final int LOADER_LIST_ITEMS = 2;
 
   @Inject ListsTaskScheduler listScheduler;
 
@@ -75,6 +82,8 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
   private ListAdapter adapter;
 
   private int columnCount;
+
+  private Cursor listInfo;
 
   public static Bundle getArgs(long listId, String listName) {
     Bundle args = new Bundle();
@@ -99,11 +108,16 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
 
     columnCount = getResources().getInteger(R.integer.listColumns);
 
-    getLoaderManager().initLoader(LOADER_LIST, null, this);
+    getLoaderManager().initLoader(LOADER_LIST_ITEMS, null, itemsLoader);
+    getLoaderManager().initLoader(LOADER_LIST_INFO, null, infoLoader);
   }
 
   @Override protected int getColumnCount() {
     return columnCount;
+  }
+
+  public long getListId() {
+    return listId;
   }
 
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
@@ -121,6 +135,35 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
         jobManager.addJob(job);
       }
     }).start();
+  }
+
+  @Override public void createMenu(Toolbar toolbar) {
+    toolbar.inflateMenu(R.menu.fragment_list);
+  }
+
+  @Override public boolean onMenuItemClick(MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.menu_list_edit:
+        if (listInfo != null && listInfo.moveToFirst()) {
+          final String name = Cursors.getString(listInfo, ListsColumns.NAME);
+          final String description = Cursors.getString(listInfo, ListsColumns.DESCRIPTION);
+          final Privacy privacy =
+              Privacy.fromValue(Cursors.getString(listInfo, ListsColumns.PRIVACY));
+          final boolean displayNumbers = Cursors.getBoolean(listInfo, ListsColumns.DISPLAY_NUMBERS);
+          final boolean allowComments = Cursors.getBoolean(listInfo, ListsColumns.ALLOW_COMMENTS);
+          UpdateListFragment updateFragment = new UpdateListFragment();
+          updateFragment.setArguments(
+              UpdateListFragment.getArgs(listId, name, description, privacy, displayNumbers,
+                  allowComments));
+          updateFragment.show(getFragmentManager(), DIALOG_UPDATE);
+        }
+        return true;
+
+      case R.id.menu_list_delete:
+        DeleteListDialog.newInstance(listId).show(getFragmentManager(), DIALOG_DELETE);
+        return true;
+    }
+    return super.onMenuItemClick(item);
   }
 
   @Override public void onShowClick(View view, int position, long id) {
@@ -148,7 +191,7 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
   }
 
   @Override public void onRemoveItem(int position, long id) {
-    Loader loader = getLoaderManager().getLoader(LOADER_LIST);
+    Loader loader = getLoaderManager().getLoader(LOADER_LIST_ITEMS);
     if (loader != null) {
       ((SimpleCursorLoader) loader).throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
     }
@@ -171,6 +214,28 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
 
     adapter.changeCursor(cursor);
   }
+
+  private LoaderManager.LoaderCallbacks<SimpleCursor> infoLoader =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
+          return new SimpleCursorLoader(getContext(), ProviderSchematic.Lists.withId(listId),
+              new String[] {
+                  ListsColumns.ID, ListsColumns.NAME, ListsColumns.DESCRIPTION,
+                  ListsColumns.PRIVACY, ListsColumns.DISPLAY_NUMBERS, ListsColumns.ALLOW_COMMENTS,
+              }, null, null, null);
+        }
+
+        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
+          listInfo = data;
+          if (listInfo.moveToFirst()) {
+            final String name = Cursors.getString(listInfo, ListsColumns.NAME);
+            setTitle(name);
+          }
+        }
+
+        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
+        }
+      };
 
   private static final String[] PROJECTION = {
       SqlColumn.table(Tables.LIST_ITEMS).column(ListItemColumns.ID), ListItemColumns.ITEM_TYPE,
@@ -251,15 +316,18 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
       SqlColumn.table(Tables.PEOPLE).column(LastModifiedColumns.LAST_MODIFIED),
   };
 
-  @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-    return new SimpleCursorLoader(getActivity(), ProviderSchematic.ListItems.inList(listId),
-        PROJECTION, null, null, null);
-  }
+  LoaderManager.LoaderCallbacks<SimpleCursor> itemsLoader =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
+          return new SimpleCursorLoader(getActivity(), ProviderSchematic.ListItems.inList(listId),
+              PROJECTION, null, null, null);
+        }
 
-  @Override public void onLoadFinished(Loader loader, SimpleCursor data) {
-    setCursor(data);
-  }
+        @Override public void onLoadFinished(Loader loader, SimpleCursor data) {
+          setCursor(data);
+        }
 
-  @Override public void onLoaderReset(Loader loader) {
-  }
+        @Override public void onLoaderReset(Loader loader) {
+        }
+      };
 }

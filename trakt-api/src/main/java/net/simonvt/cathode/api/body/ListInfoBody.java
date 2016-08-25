@@ -18,7 +18,7 @@ package net.simonvt.cathode.api.body;
 
 import net.simonvt.cathode.api.enumeration.Privacy;
 
-public class CreateListBody {
+public class ListInfoBody {
 
   private String name;
 
@@ -30,31 +30,31 @@ public class CreateListBody {
 
   private Boolean allowComments;
 
-  private CreateListBody() {
+  private ListInfoBody() {
   }
 
-  public static CreateListBody name(String name) {
-    CreateListBody createList = new CreateListBody();
+  public static ListInfoBody name(String name) {
+    ListInfoBody createList = new ListInfoBody();
     createList.name = name;
     return createList;
   }
 
-  public CreateListBody description(String description) {
+  public ListInfoBody description(String description) {
     this.description = description;
     return this;
   }
 
-  public CreateListBody privacy(Privacy privacy) {
+  public ListInfoBody privacy(Privacy privacy) {
     this.privacy = privacy;
     return this;
   }
 
-  public CreateListBody displayNumbers(Boolean displayNumbers) {
+  public ListInfoBody displayNumbers(Boolean displayNumbers) {
     this.displayNumbers = displayNumbers;
     return this;
   }
 
-  public CreateListBody allowComments(Boolean allowComments) {
+  public ListInfoBody allowComments(Boolean allowComments) {
     this.allowComments = allowComments;
     return this;
   }
