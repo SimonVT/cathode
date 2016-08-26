@@ -31,6 +31,7 @@ import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.CalendarContract;
 import android.provider.ContactsContract;
+import android.text.TextUtils;
 import android.text.format.Time;
 import android.util.LongSparseArray;
 import java.util.ArrayList;
@@ -161,10 +162,14 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
 
       while (episodes.moveToNext()) {
         final long episodeId = Cursors.getLong(episodes, EpisodeColumns.ID);
-        final String title = Cursors.getString(episodes, EpisodeColumns.TITLE);
+        String title = Cursors.getString(episodes, EpisodeColumns.TITLE);
         final int season = Cursors.getInt(episodes, EpisodeColumns.SEASON);
         final int episode = Cursors.getInt(episodes, EpisodeColumns.EPISODE);
         final long firstAired = Cursors.getLong(episodes, EpisodeColumns.FIRST_AIRED);
+
+        if (TextUtils.isEmpty(title)) {
+          title = getContext().getString(R.string.episode_x, episode);
+        }
 
         String eventTitle = showTitle + " - " + season + "x" + episode + " " + title;
 
@@ -184,10 +189,34 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
       final long runtime = Cursors.getLong(watchlistShows, ShowColumns.RUNTIME);
 
       Cursor episodes = context.getContentResolver().query(Episodes.fromShow(showId), new String[] {
-
-      }, EpisodeColumns.FIRST_AIRED + ">? AND " + EpisodeColumns.EPISODE + "=1", new String[] {
+          EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
+          EpisodeColumns.FIRST_AIRED,
+      }, EpisodeColumns.FIRST_AIRED
+          + ">? AND "
+          + EpisodeColumns.EPISODE
+          + "=1 AND "
+          + EpisodeColumns.SEASON
+          + ">0", new String[] {
           String.valueOf(time - 30 * DateUtils.DAY_IN_MILLIS),
-      }, null);
+      }, EpisodeColumns.SEASON + " ASC LIMIT 1");
+
+      if (episodes.moveToFirst()) {
+        final long episodeId = Cursors.getLong(episodes, EpisodeColumns.ID);
+        String title = Cursors.getString(episodes, EpisodeColumns.TITLE);
+        final int season = Cursors.getInt(episodes, EpisodeColumns.SEASON);
+        final int episode = Cursors.getInt(episodes, EpisodeColumns.EPISODE);
+        final long firstAired = Cursors.getLong(episodes, EpisodeColumns.FIRST_AIRED);
+
+        if (TextUtils.isEmpty(title)) {
+          title = getContext().getString(R.string.episode_x, episode);
+        }
+
+        String eventTitle = showTitle + " - " + season + "x" + episode + " " + title;
+
+        addEvent(ops, events, calendarId, episodeId, eventTitle, firstAired, runtime);
+      }
+
+      episodes.close();
     }
 
     watchlistShows.close();
