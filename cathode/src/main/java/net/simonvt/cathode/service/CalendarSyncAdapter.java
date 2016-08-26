@@ -34,6 +34,7 @@ import android.provider.ContactsContract;
 import android.text.format.Time;
 import android.util.LongSparseArray;
 import java.util.ArrayList;
+import java.util.List;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -131,7 +132,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
     Cursor shows = context.getContentResolver().query(Shows.SHOWS, new String[] {
-        ShowColumns.ID,
+        ShowColumns.ID, ShowColumns.TITLE, ShowColumns.RUNTIME,
     }, "("
         + ShowColumns.WATCHED_COUNT
         + ">0 OR "
@@ -147,76 +148,49 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
         + "=0", null, null);
 
     while (shows.moveToNext()) {
-      Cursor episodes = context.getContentResolver().query(Episodes.EPISODES, new String[] {
-          EpisodeColumns.ID, EpisodeColumns.SHOW_ID, EpisodeColumns.TITLE, EpisodeColumns.SEASON,
-          EpisodeColumns.EPISODE, EpisodeColumns.FIRST_AIRED,
-      }, EpisodeColumns.SHOW_ID
-          + "=? AND "
-          + EpisodeColumns.FIRST_AIRED
-          + ">? AND "
-          + EpisodeColumns.NEEDS_SYNC
-          + "=0", new String[] {
-          String.valueOf(shows.getLong(0)), String.valueOf(time - 30 * DateUtils.DAY_IN_MILLIS),
+      final long showId = Cursors.getLong(shows, ShowColumns.ID);
+      final String showTitle = Cursors.getString(shows, ShowColumns.TITLE);
+      final long runtime = Cursors.getLong(shows, ShowColumns.RUNTIME);
+
+      Cursor episodes = context.getContentResolver().query(Episodes.fromShow(showId), new String[] {
+          EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
+          EpisodeColumns.FIRST_AIRED,
+      }, EpisodeColumns.FIRST_AIRED + ">? AND " + EpisodeColumns.NEEDS_SYNC + "=0", new String[] {
+          String.valueOf(time - 30 * DateUtils.DAY_IN_MILLIS),
       }, null);
 
       while (episodes.moveToNext()) {
-        final long id = Cursors.getLong(episodes, EpisodeColumns.ID);
-        final long showId = Cursors.getLong(episodes, EpisodeColumns.SHOW_ID);
+        final long episodeId = Cursors.getLong(episodes, EpisodeColumns.ID);
         final String title = Cursors.getString(episodes, EpisodeColumns.TITLE);
         final int season = Cursors.getInt(episodes, EpisodeColumns.SEASON);
         final int episode = Cursors.getInt(episodes, EpisodeColumns.EPISODE);
         final long firstAired = Cursors.getLong(episodes, EpisodeColumns.FIRST_AIRED);
 
-        Cursor show = context.getContentResolver().query(Shows.withId(showId), new String[] {
-            ShowColumns.TITLE, ShowColumns.RUNTIME,
-        }, null, null, null);
-        show.moveToFirst();
-
-        final String showTitle = Cursors.getString(show, ShowColumns.TITLE);
-        final long runtime = Cursors.getLong(show, ShowColumns.RUNTIME);
-
-        show.close();
-
         String eventTitle = showTitle + " - " + season + "x" + episode + " " + title;
 
-        Event event = events.get(id);
-        if (event != null) {
-          ContentProviderOperation op =
-              ContentProviderOperation.newUpdate(CalendarContract.Events.CONTENT_URI)
-                  .withValue(CalendarContract.Events.DTSTART, firstAired)
-                  .withValue(CalendarContract.Events.DTEND,
-                      firstAired + runtime * DateUtils.MINUTE_IN_MILLIS)
-                  .withValue(CalendarContract.Events.EVENT_TIMEZONE, Time.TIMEZONE_UTC)
-                  .withValue(CalendarContract.Events.TITLE, eventTitle)
-                  .withSelection(CalendarContract.Events._ID + "=?", new String[] {
-                      String.valueOf(event.id),
-                  })
-                  .build();
-          ops.add(op);
-          events.remove(id);
-        } else {
-          ContentProviderOperation op = ContentProviderOperation.newInsert(
-              CalendarContract.Events.CONTENT_URI.buildUpon()
-                  .appendQueryParameter(ContactsContract.CALLER_IS_SYNCADAPTER, "true")
-                  .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME,
-                      context.getString(R.string.accountName))
-                  .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE,
-                      context.getString(R.string.accountType))
-                  .build())
-              .withValue(CalendarContract.Events.DTSTART, firstAired)
-              .withValue(CalendarContract.Events.DTEND,
-                  firstAired + runtime * DateUtils.MINUTE_IN_MILLIS)
-              .withValue(CalendarContract.Events.EVENT_TIMEZONE, Time.TIMEZONE_UTC)
-              .withValue(CalendarContract.Events.TITLE, eventTitle)
-              .withValue(CalendarContract.Events.SYNC_DATA1, id)
-              .withValue(CalendarContract.Events.CALENDAR_ID, calendarId)
-              .build();
-          ops.add(op);
-        }
+        addEvent(ops, events, calendarId, episodeId, eventTitle, firstAired, runtime);
       }
       episodes.close();
     }
     shows.close();
+
+    Cursor watchlistShows = context.getContentResolver().query(Shows.SHOWS_WATCHLIST, new String[] {
+        ShowColumns.ID, ShowColumns.TITLE, ShowColumns.RUNTIME,
+    }, null, null, null);
+
+    while (watchlistShows.moveToNext()) {
+      final long showId = Cursors.getLong(watchlistShows, ShowColumns.ID);
+      final String showTitle = Cursors.getString(watchlistShows, ShowColumns.TITLE);
+      final long runtime = Cursors.getLong(watchlistShows, ShowColumns.RUNTIME);
+
+      Cursor episodes = context.getContentResolver().query(Episodes.fromShow(showId), new String[] {
+
+      }, EpisodeColumns.FIRST_AIRED + ">? AND " + EpisodeColumns.EPISODE + "=1", new String[] {
+          String.valueOf(time - 30 * DateUtils.DAY_IN_MILLIS),
+      }, null);
+    }
+
+    watchlistShows.close();
 
     for (int i = 0, size = events.size(); i < size; i++) {
       Event event = events.valueAt(i);
@@ -235,6 +209,44 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
       e.printStackTrace();
     } catch (OperationApplicationException e) {
       e.printStackTrace();
+    }
+  }
+
+  private void addEvent(List<ContentProviderOperation> ops, LongSparseArray<Event> events,
+      long calendarId, long episodeId, String eventTitle, long firstAired, long runtime) {
+    Event event = events.get(episodeId);
+    if (event != null) {
+      ContentProviderOperation op =
+          ContentProviderOperation.newUpdate(CalendarContract.Events.CONTENT_URI)
+              .withValue(CalendarContract.Events.DTSTART, firstAired)
+              .withValue(CalendarContract.Events.DTEND,
+                  firstAired + runtime * DateUtils.MINUTE_IN_MILLIS)
+              .withValue(CalendarContract.Events.EVENT_TIMEZONE, Time.TIMEZONE_UTC)
+              .withValue(CalendarContract.Events.TITLE, eventTitle)
+              .withSelection(CalendarContract.Events._ID + "=?", new String[] {
+                  String.valueOf(event.id),
+              })
+              .build();
+      ops.add(op);
+      events.remove(episodeId);
+    } else {
+      ContentProviderOperation op = ContentProviderOperation.newInsert(
+          CalendarContract.Events.CONTENT_URI.buildUpon()
+              .appendQueryParameter(ContactsContract.CALLER_IS_SYNCADAPTER, "true")
+              .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME,
+                  context.getString(R.string.accountName))
+              .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE,
+                  context.getString(R.string.accountType))
+              .build())
+          .withValue(CalendarContract.Events.DTSTART, firstAired)
+          .withValue(CalendarContract.Events.DTEND,
+              firstAired + runtime * DateUtils.MINUTE_IN_MILLIS)
+          .withValue(CalendarContract.Events.EVENT_TIMEZONE, Time.TIMEZONE_UTC)
+          .withValue(CalendarContract.Events.TITLE, eventTitle)
+          .withValue(CalendarContract.Events.SYNC_DATA1, episodeId)
+          .withValue(CalendarContract.Events.CALENDAR_ID, calendarId)
+          .build();
+      ops.add(op);
     }
   }
 
