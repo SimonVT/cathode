@@ -139,6 +139,7 @@
 
   <string name="sort_title">Title</string>
   <string name="sort_next_episode">Next episode</string>
+  <string name="sort_last_watched">Last watched</string>
   <string name="sort_rating">Rating</string>
   <string name="sort_relevance">Relevance</string>
   <string name="sort_viewers">Viewers</string>

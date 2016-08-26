@@ -305,6 +305,15 @@ public final class ProviderSchematic {
         + ShowColumns.TITLE
         + " DESC";
 
+    public static final String SORT_LAST_WATCHED = DatabaseSchematic.Tables.SHOWS
+        + "."
+        + ShowColumns.LAST_WATCHED_AT
+        + " DESC,"
+        + DatabaseSchematic.Tables.SHOWS
+        + "."
+        + ShowColumns.TITLE
+        + " ASC";
+
     public static final String SORT_RATING = DatabaseSchematic.Tables.SHOWS
         + "."
         + ShowColumns.RATING

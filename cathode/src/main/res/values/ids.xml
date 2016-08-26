@@ -46,6 +46,7 @@
 
   <item name="sort_title" type="id"/>
   <item name="sort_next_episode" type="id"/>
+  <item name="sort_last_watched" type="id"/>
   <item name="sort_rating" type="id"/>
   <item name="sort_relevance" type="id"/>
   <item name="sort_viewers" type="id"/>

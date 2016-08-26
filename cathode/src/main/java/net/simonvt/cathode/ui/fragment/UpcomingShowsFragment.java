@@ -63,7 +63,8 @@ public class UpcomingShowsFragment
 
   private enum SortBy {
     TITLE("title", Shows.SORT_TITLE),
-    NEXT_EPISODE("nextEpisode", Shows.SORT_NEXT_EPISODE);
+    NEXT_EPISODE("nextEpisode", Shows.SORT_NEXT_EPISODE),
+    LAST_WATCHED("lastWatched", Shows.SORT_LAST_WATCHED);
 
     private String key;
 
@@ -168,6 +169,7 @@ public class UpcomingShowsFragment
         ArrayList<ListDialog.Item> items = new ArrayList<>();
         items.add(new ListDialog.Item(R.id.sort_title, R.string.sort_title));
         items.add(new ListDialog.Item(R.id.sort_next_episode, R.string.sort_next_episode));
+        items.add(new ListDialog.Item(R.id.sort_last_watched, R.string.sort_last_watched));
         ListDialog.newInstance(R.string.action_sort_by, items, UpcomingShowsFragment.this)
             .show(getFragmentManager(), DIALOG_SORT);
         return true;
@@ -204,6 +206,17 @@ public class UpcomingShowsFragment
           sortBy = SortBy.NEXT_EPISODE;
           settings.edit()
               .putString(Settings.Sort.SHOW_UPCOMING, SortBy.NEXT_EPISODE.getKey())
+              .apply();
+          getLoaderManager().restartLoader(LOADER_SHOWS_UPCOMING, null, this);
+          scrollToTop = true;
+        }
+        break;
+
+      case R.id.sort_last_watched:
+        if (sortBy != SortBy.LAST_WATCHED) {
+          sortBy = SortBy.LAST_WATCHED;
+          settings.edit()
+              .putString(Settings.Sort.SHOW_UPCOMING, SortBy.LAST_WATCHED.getKey())
               .apply();
           getLoaderManager().restartLoader(LOADER_SHOWS_UPCOMING, null, this);
           scrollToTop = true;
