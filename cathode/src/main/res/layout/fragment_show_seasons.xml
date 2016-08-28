@@ -37,15 +37,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/show_not_synced"/>
-
-    <TextView
-        android:id="@+id/sync"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/show_seasons_button_background"
-        android:text="@string/show_perform_sync"
-        android:padding="8dp"/>
+        android:text="@string/loading"/>
   </LinearLayout>
 </FrameLayout>

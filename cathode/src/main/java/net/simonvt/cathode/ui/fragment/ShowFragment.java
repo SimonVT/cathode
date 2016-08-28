@@ -303,12 +303,6 @@ public class ShowFragment extends RefreshableAppBarFragment {
     seasons.setAdapter(seasonsAdapter);
     ((DefaultItemAnimator) seasons.getItemAnimator()).setSupportsChangeAnimations(false);
 
-    seasonsEmpty.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        showScheduler.sync(showId);
-      }
-    });
-
     rating.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         RatingDialog.newInstance(RatingDialog.Type.SHOW, showId, currentRating)
