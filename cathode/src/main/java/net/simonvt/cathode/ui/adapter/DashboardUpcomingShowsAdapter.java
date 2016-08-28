@@ -19,6 +19,7 @@ package net.simonvt.cathode.ui.adapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,7 +98,7 @@ public class DashboardUpcomingShowsAdapter
     final String poster = Cursors.getString(cursor, ShowColumns.POSTER);
     final String title = Cursors.getString(cursor, ShowColumns.TITLE);
     final boolean watching = Cursors.getBoolean(cursor, ShowColumns.WATCHING);
-    final String episodeTitle = Cursors.getString(cursor, EpisodeColumns.TITLE);
+    String episodeTitle = Cursors.getString(cursor, EpisodeColumns.TITLE);
     final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
 
@@ -108,6 +109,13 @@ public class DashboardUpcomingShowsAdapter
     if (watching) {
       episodeText = getContext().getString(R.string.show_watching);
     } else {
+      if (TextUtils.isEmpty(episodeTitle)) {
+        if (season == 0) {
+          episodeTitle = getContext().getString(R.string.special_x, episode);
+        } else {
+          episodeTitle = getContext().getString(R.string.episode_x, episode);
+        }
+      }
       episodeText =
           getContext().getString(R.string.upcoming_episode_next, season, episode, episodeTitle);
     }

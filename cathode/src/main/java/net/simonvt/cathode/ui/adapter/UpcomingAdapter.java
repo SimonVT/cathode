@@ -18,6 +18,7 @@ package net.simonvt.cathode.ui.adapter;
 import android.database.Cursor;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -152,7 +153,7 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     final int watchedCount = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT);
 
     final long episodeId = Cursors.getLong(cursor, COLUMN_EPISODE_ID);
-    final String episodeTitle = Cursors.getString(cursor, EpisodeColumns.TITLE);
+    String episodeTitle = Cursors.getString(cursor, EpisodeColumns.TITLE);
     final long episodeFirstAired = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
     final int episodeSeasonNumber = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episodeNumber = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
@@ -165,10 +166,20 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     if (watching) {
       episodeText = activity.getString(R.string.show_watching);
     } else {
+      if (TextUtils.isEmpty(episodeTitle)) {
+        if (episodeSeasonNumber == 0) {
+          episodeTitle = activity.getString(R.string.special_x, episodeNumber);
+        } else {
+          episodeTitle = activity.getString(R.string.episode_x, episodeNumber);
+        }
+      }
+
       episodeText =
           activity.getString(R.string.upcoming_episode_next, episodeSeasonNumber, episodeNumber,
               episodeTitle);
     }
+
+    final String finalEpisodeTitle = episodeTitle;
 
     vh.firstAired.setVisibility(View.VISIBLE);
     vh.firstAired.setTimeInMillis(episodeFirstAired);
@@ -195,7 +206,7 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
               break;
 
             case R.id.action_checkin:
-              if (!CheckInDialog.showDialogIfNecessary(activity, Type.SHOW, episodeTitle,
+              if (!CheckInDialog.showDialogIfNecessary(activity, Type.SHOW, finalEpisodeTitle,
                   episodeId)) {
                 vh.checkIn.setWatching(true);
               }
