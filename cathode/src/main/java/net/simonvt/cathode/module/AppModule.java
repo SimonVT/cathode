@@ -139,6 +139,7 @@ import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.search.SearchHandler;
 import net.simonvt.cathode.service.CathodeSyncAdapter;
 import net.simonvt.cathode.service.SyncWatchingReceiver;
+import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.ui.HiddenItems;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.LoginActivity;
@@ -223,7 +224,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         WatchedMoviesFragment.class, WatchedShowsFragment.class, CreateListFragment.class,
         ListFragment.class, CommentsFragment.class, CommentFragment.class, ListsFragment.class,
         AnticipatedShowsFragment.class, AnticipatedMoviesFragment.class, StatsFragment.class,
-        SearchFragment.class, UpdateListFragment.class,
+        SearchFragment.class, UpdateListFragment.class, SettingsActivity.SettingsFragment.class,
 
         // Dialogs
         RatingDialog.class, CheckInDialog.class, CheckInDialog.Injections.class, ListsDialog.class,
@@ -326,5 +327,9 @@ public class AppModule {
 
   @Provides @Singleton Picasso providePicasso() {
     return new Picasso.Builder(app).build();
+  }
+
+  @Provides @Singleton UpcomingTimePreference provideUpcomingTimePreference() {
+    return UpcomingTimePreference.getInstance();
   }
 }

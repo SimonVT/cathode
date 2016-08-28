@@ -45,6 +45,8 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.UpcomingTime;
+import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.HeaderSpanLookup;
@@ -109,6 +111,8 @@ public class UpcomingShowsFragment
 
   @Inject JobManager jobManager;
 
+  @Inject UpcomingTimePreference upcomingTimePreference;
+
   private SharedPreferences settings;
 
   private SortBy sortBy;
@@ -144,6 +148,13 @@ public class UpcomingShowsFragment
     columnCount = getResources().getInteger(R.integer.showsColumns);
 
     setTitle(R.string.title_shows_upcoming);
+
+    upcomingTimePreference.registerListener(upcomingTimeChangeListener);
+  }
+
+  @Override public void onDestroy() {
+    upcomingTimePreference.unregisterListener(upcomingTimeChangeListener);
+    super.onDestroy();
   }
 
   @Override protected int getColumnCount() {
@@ -153,6 +164,13 @@ public class UpcomingShowsFragment
   @Override protected GridLayoutManager.SpanSizeLookup getSpanSizeLookup() {
     return new HeaderSpanLookup(ensureAdapter(), columnCount);
   }
+
+  private UpcomingTimePreference.UpcomingTimeChangeListener upcomingTimeChangeListener =
+      new UpcomingTimePreference.UpcomingTimeChangeListener() {
+        @Override public void onUpcomingTimeChanged(UpcomingTime message) {
+          getLoaderManager().restartLoader(LOADER_SHOWS_UPCOMING, null, UpcomingShowsFragment.this);
+        }
+      };
 
   @Override public boolean displaysMenuIcon() {
     return amITopLevel();

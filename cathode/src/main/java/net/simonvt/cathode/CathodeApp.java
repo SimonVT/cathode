@@ -46,6 +46,7 @@ import net.simonvt.cathode.remote.upgrade.UpperCaseGenres;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.TraktTimestamps;
+import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.LoginActivity;
 import net.simonvt.cathode.util.DateUtils;
@@ -83,6 +84,8 @@ public class CathodeApp extends Application {
       Fabric.with(this, new Crashlytics());
       Timber.plant(new CrashlyticsTree());
     }
+
+    UpcomingTimePreference.init(this);
 
     settings = PreferenceManager.getDefaultSharedPreferences(this);
 

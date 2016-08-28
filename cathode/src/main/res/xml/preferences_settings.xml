@@ -34,6 +34,14 @@
       android:title="@string/preference_hidden_items"/>
 
   <PreferenceCategory
+      android:title="@string/preference_upcoming"/>
+
+  <Preference
+      android:key="upcomingTime"
+      android:title="@string/preference_upcoming_time"
+      android:summary="@string/preference_upcoming_time_summary"/>
+
+  <PreferenceCategory
       android:title="@string/preference_other"/>
 
   <Preference

@@ -29,10 +29,15 @@ import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import javax.inject.Inject;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Permissions;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.UpcomingTime;
+import net.simonvt.cathode.settings.UpcomingTimeDialog;
+import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.ui.dialog.AboutDialog;
 import net.simonvt.cathode.ui.dialog.LogoutDialog;
 import timber.log.Timber;
@@ -62,9 +67,15 @@ public class SettingsActivity extends BaseActivity {
     });
   }
 
-  public static class SettingsFragment extends PreferenceFragment {
+  public static class SettingsFragment extends PreferenceFragment
+      implements UpcomingTimeDialog.UpcomingTimeSelectedListener {
+
+    private static final String DIALOG_UPCOMING_TIME =
+        "net.simonvt.cathode.settings.SettingsActivity.SettingsFragment.upcomingTime";
 
     private static final int PERMISSION_REQUEST_CALENDAR = 11;
+
+    @Inject UpcomingTimePreference upcomingTimePreference;
 
     SharedPreferences settings;
 
@@ -72,6 +83,7 @@ public class SettingsActivity extends BaseActivity {
 
     @Override public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
+      CathodeApp.inject(getActivity(), this);
       settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
       addPreferencesFromResource(R.xml.preferences_settings);
@@ -96,6 +108,18 @@ public class SettingsActivity extends BaseActivity {
           new Preference.OnPreferenceClickListener() {
             @Override public boolean onPreferenceClick(Preference preference) {
               startActivity(new Intent(getActivity(), HiddenItems.class));
+              return true;
+            }
+          });
+
+      findPreference("upcomingTime").setOnPreferenceClickListener(
+          new Preference.OnPreferenceClickListener() {
+            @Override public boolean onPreferenceClick(Preference preference) {
+              UpcomingTime upcomingTime = UpcomingTime.fromValue(
+                  settings.getLong(Settings.UPCOMING_TIME, UpcomingTime.WEEKS_1.getCacheTime()));
+              UpcomingTimeDialog dialog = UpcomingTimeDialog.newInstance(upcomingTime);
+              dialog.setTargetFragment(SettingsFragment.this, 0);
+              dialog.show(getFragmentManager(), DIALOG_UPCOMING_TIME);
               return true;
             }
           });
@@ -133,6 +157,10 @@ public class SettingsActivity extends BaseActivity {
           Timber.d("Calendar permission not granted");
         }
       }
+    }
+
+    @Override public void onUpcomingTimeSelected(UpcomingTime value) {
+      upcomingTimePreference.set(value);
     }
   }
 }

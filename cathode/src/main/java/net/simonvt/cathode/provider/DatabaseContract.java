@@ -118,7 +118,6 @@ public final class DatabaseContract {
     String AIRED_COUNT = "airedCount";
     String UNAIRED_COUNT = "unairedCount";
     String EPISODE_COUNT = "episodeCount";
-    String AIRED_AFTER_WATCHED = "airedAfterWatched";
   }
 
   public interface ShowGenreColumns {

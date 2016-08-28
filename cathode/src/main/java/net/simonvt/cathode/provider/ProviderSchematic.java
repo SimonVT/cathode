@@ -43,6 +43,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Joins;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
+import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.schematic.Cursors;
@@ -179,11 +180,9 @@ public final class ProviderSchematic {
       map.put(ShowColumns.AIRED_COUNT, getAiredQuery());
       map.put(ShowColumns.UNAIRED_COUNT, getUnairedQuery());
       map.put(ShowColumns.EPISODE_COUNT, getEpisodeCountQuery());
-      map.put(ShowColumns.AIRED_AFTER_WATCHED, getAiredAfterWatched());
       map.put(Tables.SHOWS + "." + ShowColumns.AIRED_COUNT, getAiredQuery());
       map.put(Tables.SHOWS + "." + ShowColumns.UNAIRED_COUNT, getUnairedQuery());
       map.put(Tables.SHOWS + "." + ShowColumns.EPISODE_COUNT, getEpisodeCountQuery());
-      map.put(Tables.SHOWS + "." + ShowColumns.AIRED_AFTER_WATCHED, getAiredAfterWatched());
 
       return map;
     }
@@ -247,10 +246,33 @@ public final class ProviderSchematic {
 
     @Where(path = Path.SHOWS + "/" + Path.UPCOMING)
     public static String[] upcomingWhere() {
+      final long upcomingTime = UpcomingTimePreference.getInstance().get().getCacheTime();
       return new String[] {
-          ShowColumns.WATCHED_COUNT + ">0", getAiredAfterWatched() + ">0",
+          ShowColumns.WATCHED_COUNT + ">0", getUpcomingQuery(upcomingTime) + ">0",
           Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0"
       };
+    }
+
+    public static String getUpcomingQuery(long upcomingTime) {
+      final long currentTime = System.currentTimeMillis();
+      String query = "(SELECT COUNT(*) FROM episodes "
+          + "JOIN ("
+          + "SELECT season, episode "
+          + "FROM episodes "
+          + "WHERE showId=shows._id AND watched=1 "
+          + "ORDER BY season DESC, episode DESC LIMIT 1"
+          + ") AS ep2 "
+          + "WHERE episodes.showId=shows._id AND episodes.season>0"
+          + " AND (episodes.season>ep2.season OR (episodes.season=ep2.season AND episodes.episode>ep2.episode))";
+
+      if (upcomingTime > 0L) {
+        query += " AND " + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED);
+        query += "<=" + (currentTime + upcomingTime);
+      }
+
+      query += ")";
+
+      return query;
     }
 
     @ContentUri(
@@ -361,24 +383,6 @@ public final class ProviderSchematic {
           + "."
           + EpisodeColumns.SEASON
           + ">0"
-          + ")";
-    }
-
-    public static String getAiredAfterWatched() {
-      final long currentTime = System.currentTimeMillis();
-      return "(SELECT COUNT(*) FROM episodes "
-          + "JOIN ("
-          + "SELECT season, episode "
-          + "FROM episodes "
-          + "WHERE showId=shows._id AND watched=1 "
-          + "ORDER BY season DESC, episode DESC LIMIT 1"
-          + ") AS ep2 "
-          + "WHERE episodes.showId=shows._id AND episodes.season>0 "
-          + "AND (episodes.season>ep2.season OR (episodes.season=ep2.season AND episodes.episode>ep2.episode)) "
-          + "AND "
-          + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED)
-          + "<="
-          + (currentTime + DateUtils.DAY_IN_MILLIS)
           + ")";
     }
 

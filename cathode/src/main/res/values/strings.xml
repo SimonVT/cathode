@@ -218,6 +218,18 @@
   <string name="preference_about">About</string>
   <string name="preference_logout">Logout</string>
 
+  <string name="preference_upcoming">Upcoming shows</string>
+
+  <string name="preference_upcoming_time">Next episode air date</string>
+  <string name="preference_upcoming_time_summary">
+    Display show in upcoming if the next episode airs within this timeframe
+  </string>
+
+  <string name="preference_upcoming_time_weeks_1">1 week</string>
+  <string name="preference_upcoming_time_weeks_2">2 weeks</string>
+  <string name="preference_upcoming_time_months_1">1 month</string>
+  <string name="preference_upcoming_time_end">End of time</string>
+
   <!-- Navigation fragment -->
   <string name="navigation_dashboard">Dashboard</string>
 
