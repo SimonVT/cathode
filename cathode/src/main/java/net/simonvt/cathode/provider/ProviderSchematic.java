@@ -263,7 +263,10 @@ public final class ProviderSchematic {
           + "ORDER BY season DESC, episode DESC LIMIT 1"
           + ") AS ep2 "
           + "WHERE episodes.showId=shows._id AND episodes.season>0"
-          + " AND (episodes.season>ep2.season OR (episodes.season=ep2.season AND episodes.episode>ep2.episode))";
+          + " AND (episodes.season>ep2.season OR (episodes.season=ep2.season AND episodes.episode>ep2.episode))"
+          + " AND "
+          + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED)
+          + " NOT NULL";
 
       if (upcomingTime > 0L) {
         query += " AND " + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED);
