@@ -85,6 +85,14 @@ public final class FragmentStack {
     commit();
   }
 
+  private boolean allowTransactions() {
+    if (paused || fragmentManager.isDestroyed()) {
+      return false;
+    }
+
+    return true;
+  }
+
   public int positionInstack(Fragment fragment) {
     return stack.indexOf(fragment);
   }
@@ -159,7 +167,7 @@ public final class FragmentStack {
   public void replace(Class fragment, String tag, Bundle args) {
     checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
 
-    if (fragmentManager.isDestroyed()) {
+    if (!allowTransactions()) {
       return;
     }
 
@@ -203,7 +211,7 @@ public final class FragmentStack {
   public void push(Class fragment, String tag, Bundle args) {
     checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
 
-    if (fragmentManager.isDestroyed()) {
+    if (!allowTransactions()) {
       return;
     }
 
@@ -231,7 +239,7 @@ public final class FragmentStack {
    * @return Whether a transaction has been enqueued.
    */
   public boolean pop() {
-    if (fragmentManager.isDestroyed()) {
+    if (!allowTransactions()) {
       return false;
     }
 
@@ -324,7 +332,7 @@ public final class FragmentStack {
   }
 
   private void commit() {
-    if (paused || fragmentManager.isDestroyed()) {
+    if (!allowTransactions()) {
       return;
     }
 
