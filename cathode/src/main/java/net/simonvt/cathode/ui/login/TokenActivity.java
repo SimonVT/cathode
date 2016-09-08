@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2016 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.ui;
+package net.simonvt.cathode.ui.login;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -32,13 +32,12 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.setup.CalendarSetupActivity;
 
-public class LoginActivity extends BaseActivity implements TokenTask.Callback {
+public class TokenActivity extends BaseActivity implements TokenTask.Callback {
 
-  static final String QUERY_CODE = "code";
-
-  static final int REQUEST_OAUTH = 1;
+  static final String EXTRA_CODE = "code";
 
   @Inject JobManager jobManager;
 
@@ -47,58 +46,26 @@ public class LoginActivity extends BaseActivity implements TokenTask.Callback {
 
   @BindView(R.id.progressContainer) View progressContainer;
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    CathodeApp.inject(this);
-
-    setContentView(R.layout.activity_login);
+  @Override protected void onCreate(Bundle inState) {
+    super.onCreate(inState);
+    setContentView(R.layout.activity_login_token);
     ButterKnife.bind(this);
+    CathodeApp.inject(this);
 
     if (TokenTask.runningInstance != null) {
       TokenTask.runningInstance.setCallback(this);
-      setRefreshing(true);
-    }
-  }
-
-  @OnClick(R.id.login) void onLoginClick() {
-    Intent authorize = new Intent(LoginActivity.this, OauthWebViewActivity.class);
-    startActivityForResult(authorize, REQUEST_OAUTH);
-    errorMessage.setVisibility(View.GONE);
-  }
-
-  @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (requestCode == REQUEST_OAUTH && resultCode == RESULT_OK) {
-      final String code = data.getStringExtra(QUERY_CODE);
+    } else {
+      final String code = getIntent().getStringExtra(EXTRA_CODE);
       TokenTask.start(this, code, this);
-      setRefreshing(true);
     }
+
+    setRefreshing(true);
   }
 
-  @Override public void onTokenFetched() {
-    setRefreshing(false);
-
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-    settings.edit()
-        .putBoolean(Settings.TRAKT_LOGGED_IN, true)
-        .putBoolean(Settings.INITIAL_SYNC, true)
-        .apply();
-
-    final String username = settings.getString(Settings.Profile.USERNAME, null);
-
-    Accounts.setupAccount(this, username);
-
-    Intent setup = new Intent(this, CalendarSetupActivity.class);
-    startActivity(setup);
+  @OnClick(R.id.retry) void onRetryClicked() {
+    Intent login = new Intent(this, LoginActivity.class);
+    startActivity(login);
     finish();
-
-    jobManager.addJob(new SyncJob());
-  }
-
-  @Override public void onTokenFetchedFail(int error) {
-    setRefreshing(false);
-
-    errorMessage.setVisibility(View.VISIBLE);
-    errorMessage.setText(error);
   }
 
   void setRefreshing(boolean refreshing) {
@@ -109,5 +76,30 @@ public class LoginActivity extends BaseActivity implements TokenTask.Callback {
       buttonContainer.setVisibility(View.VISIBLE);
       progressContainer.setVisibility(View.GONE);
     }
+  }
+
+  @Override public void onTokenFetched() {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+    settings.edit()
+        .putBoolean(Settings.TRAKT_LOGGED_IN, true)
+        .putBoolean(Settings.INITIAL_SYNC, true)
+        .apply();
+
+    final String username = settings.getString(Settings.Profile.USERNAME, null);
+
+    Accounts.setupAccount(this, username);
+
+    jobManager.addJob(new SyncJob());
+
+    Intent setup = new Intent(this, CalendarSetupActivity.class);
+    startActivity(setup);
+    finish();
+  }
+
+  @Override public void onTokenFetchedFail(int error) {
+    setRefreshing(false);
+
+    errorMessage.setVisibility(View.VISIBLE);
+    errorMessage.setText(error);
   }
 }

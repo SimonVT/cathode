@@ -31,7 +31,7 @@ import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.LogoutJob;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.TraktTimestamps;
-import net.simonvt.cathode.ui.LoginActivity;
+import net.simonvt.cathode.ui.login.LoginActivity;
 
 public class LogoutDialog extends DialogFragment {
 

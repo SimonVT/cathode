@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.ui;
+package net.simonvt.cathode.ui.login;
 
 import android.content.Context;
 import android.os.AsyncTask;

@@ -73,6 +73,7 @@ import net.simonvt.cathode.ui.fragment.StatsFragment;
 import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
+import net.simonvt.cathode.ui.login.LoginActivity;
 import net.simonvt.cathode.util.FragmentStack;
 import net.simonvt.cathode.util.MainHandler;
 import net.simonvt.cathode.widget.Crouton;

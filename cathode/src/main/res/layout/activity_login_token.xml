@@ -34,30 +34,43 @@
       app:maxWidth="460dp"
       android:padding="16dp">
 
+    <Button
+        android:id="@+id/retry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login_retry"/>
+
     <TextView
+        android:id="@+id/error_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:gravity="center_horizontal"
-        android:text="@string/login_description"/>
+        android:paddingTop="8dp"
+        android:paddingBottom="16dp"
+        android:visibility="gone"
+        android:textColor="@android:color/holo_red_dark"
+        android:gravity="center"
+        tools:visibility="visible"
+        tools:text="Login failed"/>
+  </net.simonvt.cathode.widget.MaxSizeLinearLayout>
 
-    <Button
-        android:id="@+id/external"
+  <LinearLayout
+      android:id="@+id/progressContainer"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:gravity="center"
+      android:orientation="vertical"
+      android:visibility="gone"
+      tools:visibility="visible">
+
+    <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/login_sign_in"/>
+        style="?android:attr/progressBarStyle"/>
 
     <TextView
-        android:id="@+id/in_app"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:paddingLeft="32dp"
-        android:paddingRight="32dp"
-        android:background="?selectableItemBackground"
-        android:textAllCaps="true"
-        android:text="@string/login_in_app"/>
-  </net.simonvt.cathode.widget.MaxSizeLinearLayout>
+        android:text="@string/logging_in"/>
+  </LinearLayout>
 </FrameLayout>
