@@ -31,7 +31,6 @@ import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.CalendarContract;
 import android.provider.ContactsContract;
-import android.text.TextUtils;
 import android.text.format.Time;
 import android.util.LongSparseArray;
 import java.util.ArrayList;
@@ -43,6 +42,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.settings.Permissions;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
@@ -162,14 +162,10 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
 
       while (episodes.moveToNext()) {
         final long episodeId = Cursors.getLong(episodes, EpisodeColumns.ID);
-        String title = Cursors.getString(episodes, EpisodeColumns.TITLE);
         final int season = Cursors.getInt(episodes, EpisodeColumns.SEASON);
         final int episode = Cursors.getInt(episodes, EpisodeColumns.EPISODE);
+        final String title = DataHelper.getEpisodeTitle(context, episodes, season, episode);
         final long firstAired = Cursors.getLong(episodes, EpisodeColumns.FIRST_AIRED);
-
-        if (TextUtils.isEmpty(title)) {
-          title = getContext().getString(R.string.episode_x, episode);
-        }
 
         String eventTitle = showTitle + " - " + season + "x" + episode + " " + title;
 
@@ -202,14 +198,10 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
 
       if (episodes.moveToFirst()) {
         final long episodeId = Cursors.getLong(episodes, EpisodeColumns.ID);
-        String title = Cursors.getString(episodes, EpisodeColumns.TITLE);
         final int season = Cursors.getInt(episodes, EpisodeColumns.SEASON);
         final int episode = Cursors.getInt(episodes, EpisodeColumns.EPISODE);
+        final String title = DataHelper.getEpisodeTitle(context, episodes, season, episode);
         final long firstAired = Cursors.getLong(episodes, EpisodeColumns.FIRST_AIRED);
-
-        if (TextUtils.isEmpty(title)) {
-          title = getContext().getString(R.string.episode_x, episode);
-        }
 
         String eventTitle = showTitle + " - " + season + "x" + episode + " " + title;
 

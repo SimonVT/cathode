@@ -36,6 +36,7 @@ import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
+import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.cathode.widget.TimeStamp;
@@ -189,10 +190,12 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
     final int showTypeCount = count;
 
     final long episodeId = Cursors.getLong(cursor, COLUMN_EPISODE_ID);
-    final String episodeTitle = Cursors.getString(cursor, EpisodeColumns.TITLE);
     final long episodeFirstAired = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
     final int episodeSeasonNumber = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episodeNumber = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
+
+    final String episodeTitle =
+        DataHelper.getEpisodeTitle(getContext(), cursor, episodeSeasonNumber, episodeNumber);
 
     holder.title.setText(showTitle);
 

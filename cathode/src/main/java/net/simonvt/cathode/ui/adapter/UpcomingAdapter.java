@@ -18,7 +18,6 @@ package net.simonvt.cathode.ui.adapter;
 import android.database.Cursor;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +35,7 @@ import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
+import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.widget.CheckInView;
 import net.simonvt.cathode.widget.OverflowView.OverflowActionListener;
 import net.simonvt.cathode.widget.RemoteImageView;
@@ -153,10 +153,11 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     final int watchedCount = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT);
 
     final long episodeId = Cursors.getLong(cursor, COLUMN_EPISODE_ID);
-    String episodeTitle = Cursors.getString(cursor, EpisodeColumns.TITLE);
     final long episodeFirstAired = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
     final int episodeSeasonNumber = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episodeNumber = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
+    final String episodeTitle =
+        DataHelper.getEpisodeTitle(activity, cursor, episodeSeasonNumber, episodeNumber);
 
     vh.title.setText(showTitle);
     vh.poster.setImage(showPosterUrl);
@@ -166,14 +167,6 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     if (watching) {
       episodeText = activity.getString(R.string.show_watching);
     } else {
-      if (TextUtils.isEmpty(episodeTitle)) {
-        if (episodeSeasonNumber == 0) {
-          episodeTitle = activity.getString(R.string.special_x, episodeNumber);
-        } else {
-          episodeTitle = activity.getString(R.string.episode_x, episodeNumber);
-        }
-      }
-
       episodeText =
           activity.getString(R.string.upcoming_episode_next, episodeSeasonNumber, episodeNumber,
               episodeTitle);

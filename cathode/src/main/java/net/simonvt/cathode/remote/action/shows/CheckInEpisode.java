@@ -38,6 +38,7 @@ import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.service.SyncWatchingReceiver;
+import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -93,13 +94,15 @@ public class CheckInEpisode extends CallJob<CheckinResponse> {
       queue(new SyncWatching());
 
       Cursor c = getContentResolver().query(Episodes.EPISODES, new String[] {
-          EpisodeColumns.TITLE,
+          EpisodeColumns.TITLE, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
       }, EpisodeColumns.TRAKT_ID + "=?", new String[] {
           String.valueOf(traktId),
       }, null);
 
       if (c.moveToFirst()) {
-        final String title = Cursors.getString(c, EpisodeColumns.TITLE);
+        final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
+        final int episode = Cursors.getInt(c, EpisodeColumns.EPISODE);
+        final String title = DataHelper.getEpisodeTitle(getContext(), c, season, episode);
         CheckInFailedEvent.post(title);
       }
 

@@ -19,7 +19,6 @@ package net.simonvt.cathode.ui.adapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +31,7 @@ import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.ui.fragment.DashboardFragment;
+import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.schematic.Cursors;
 
@@ -98,9 +98,9 @@ public class DashboardUpcomingShowsAdapter
     final String poster = Cursors.getString(cursor, ShowColumns.POSTER);
     final String title = Cursors.getString(cursor, ShowColumns.TITLE);
     final boolean watching = Cursors.getBoolean(cursor, ShowColumns.WATCHING);
-    String episodeTitle = Cursors.getString(cursor, EpisodeColumns.TITLE);
     final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
+    final String episodeTitle = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
 
     holder.poster.setImage(poster);
     holder.title.setText(title);
@@ -109,13 +109,6 @@ public class DashboardUpcomingShowsAdapter
     if (watching) {
       episodeText = getContext().getString(R.string.show_watching);
     } else {
-      if (TextUtils.isEmpty(episodeTitle)) {
-        if (season == 0) {
-          episodeTitle = getContext().getString(R.string.special_x, episode);
-        } else {
-          episodeTitle = getContext().getString(R.string.episode_x, episode);
-        }
-      }
       episodeText =
           getContext().getString(R.string.upcoming_episode_next, season, episode, episodeTitle);
     }

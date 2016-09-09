@@ -73,6 +73,7 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
+import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.Intents;
 import net.simonvt.cathode.util.SqlColumn;
@@ -714,15 +715,15 @@ public class ShowFragment extends RefreshableAppBarFragment {
       toWatch.setVisibility(View.VISIBLE);
 
       toWatchId = Cursors.getLong(cursor, ShowColumns.ID);
-      toWatchTitle = Cursors.getString(cursor, EpisodeColumns.TITLE);
-
-      toWatchHolder.episodeTitle.setText(toWatchTitle);
 
       final long airTime = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
 
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
+      toWatchTitle = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
       final String toWatchEpisodeText = getString(R.string.season_x_episode_y, season, episode);
+
+      toWatchHolder.episodeTitle.setText(toWatchTitle);
       toWatchHolder.episodeEpisode.setText(toWatchEpisodeText);
 
       final String screenshotUrl = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
@@ -755,14 +756,16 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
         lastWatchedId = Cursors.getLong(cursor, ShowColumns.ID);
 
-        lastWatchedHolder.episodeTitle.setText(Cursors.getString(cursor, EpisodeColumns.TITLE));
+        final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
+        final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
+        final String title = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
+
+        lastWatchedHolder.episodeTitle.setText(title);
 
         final long airTime = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
         final String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
         lastWatchedHolder.episodeAirTime.setText(airTimeStr);
 
-        final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
-        final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
         final String lastWatchedEpisodeText =
             getString(R.string.season_x_episode_y, season, episode);
         lastWatchedHolder.episodeEpisode.setText(lastWatchedEpisodeText);
@@ -788,14 +791,16 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
       toCollectId = Cursors.getLong(cursor, ShowColumns.ID);
 
-      toCollectHolder.episodeTitle.setText(Cursors.getString(cursor, EpisodeColumns.TITLE));
+      final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
+      final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
+      final String title = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
+
+      toCollectHolder.episodeTitle.setText(title);
 
       final long airTime = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
       final String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
       toCollectHolder.episodeAirTime.setText(airTimeStr);
 
-      final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
-      final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
       final String toCollectEpisodeText = getString(R.string.season_x_episode_y, season, episode);
       toCollectHolder.episodeEpisode.setText(toCollectEpisodeText);
 
@@ -812,14 +817,16 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
         lastCollectedId = Cursors.getLong(cursor, ShowColumns.ID);
 
-        lastCollectedHolder.episodeTitle.setText(Cursors.getString(cursor, EpisodeColumns.TITLE));
+        final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
+        final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
+        final String title = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
+
+        lastCollectedHolder.episodeTitle.setText(title);
 
         final long airTime = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
         final String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
         lastCollectedHolder.episodeAirTime.setText(airTimeStr);
 
-        final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
-        final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
         final String lastCollectedEpisodeText =
             getString(R.string.season_x_episode_y, season, episode);
         lastCollectedHolder.episodeEpisode.setText(lastCollectedEpisodeText);

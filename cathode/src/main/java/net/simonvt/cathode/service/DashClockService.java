@@ -23,6 +23,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.schematic.Cursors;
 
@@ -52,7 +53,7 @@ public class DashClockService extends DashClockExtension {
     if (c.moveToFirst()) {
       final int episode = Cursors.getInt(c, EpisodeColumns.EPISODE);
       final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
-      final String title = Cursors.getString(c, EpisodeColumns.TITLE);
+      final String title = DataHelper.getEpisodeTitle(this, c, season, episode);
       final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
       final long firstAired = Cursors.getLong(c, EpisodeColumns.FIRST_AIRED);
 

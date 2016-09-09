@@ -18,7 +18,6 @@ package net.simonvt.cathode.ui.adapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +33,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
+import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.IndicatorView;
 import net.simonvt.cathode.widget.OverflowView;
@@ -209,18 +209,10 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
 
       final long id = Cursors.getLong(cursor, EpisodeColumns.ID);
       final String screenshotUrl = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
-      String title = Cursors.getString(cursor, EpisodeColumns.TITLE);
       final long firstAired = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-
-      if (TextUtils.isEmpty(title)) {
-        if (season == 0) {
-          title = context.getString(R.string.special_x, episode);
-        } else {
-          title = context.getString(R.string.episode_x, episode);
-        }
-      }
+      final String title = DataHelper.getEpisodeTitle(context, cursor, season, episode);
 
       vh.screen.setImage(screenshotUrl);
       vh.title.setText(title);

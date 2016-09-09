@@ -74,6 +74,7 @@ import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
 import net.simonvt.cathode.ui.login.LoginActivity;
+import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.util.FragmentStack;
 import net.simonvt.cathode.util.MainHandler;
 import net.simonvt.cathode.widget.Crouton;
@@ -530,12 +531,11 @@ public class HomeActivity extends BaseActivity
       final long showId = Cursors.getLong(watchingShow, ShowColumns.ID);
       final String show = Cursors.getString(watchingShow, ShowColumns.TITLE);
       final String poster = Cursors.getString(watchingShow, ShowColumns.POSTER);
-      final String episode = Cursors.getString(watchingShow, EpisodeColumns.TITLE);
       final int season = Cursors.getInt(watchingShow, EpisodeColumns.SEASON);
+      final int episode = Cursors.getInt(watchingShow, EpisodeColumns.EPISODE);
 
       final long episodeId = Cursors.getLong(watchingShow, "episodeId");
-      final String episodeTitle = Cursors.getString(watchingShow, EpisodeColumns.TITLE);
-      final int episodeNumber = Cursors.getInt(watchingShow, EpisodeColumns.EPISODE);
+      final String episodeTitle = DataHelper.getEpisodeTitle(this, watchingShow, season, episode);
       final boolean checkedIn = Cursors.getBoolean(watchingShow, EpisodeColumns.CHECKED_IN);
       final long startTime = Cursors.getLong(watchingShow, EpisodeColumns.STARTED_AT);
       final long endTime = Cursors.getLong(watchingShow, EpisodeColumns.EXPIRES_AT);

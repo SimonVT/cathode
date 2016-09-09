@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -54,6 +53,7 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
+import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.CheckInDrawable;
@@ -312,17 +312,9 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
     if (cursor.moveToFirst()) {
       loaded = true;
 
-      final int episodeNumber = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
       season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
-
-      episodeTitle = Cursors.getString(cursor, EpisodeColumns.TITLE);
-      if (TextUtils.isEmpty(episodeTitle)) {
-        if (season == 0) {
-          episodeTitle = getResources().getString(R.string.special_x, episodeNumber);
-        } else {
-          episodeTitle = getResources().getString(R.string.episode_x, episodeNumber);
-        }
-      }
+      final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
+      episodeTitle = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
 
       title.setText(episodeTitle);
       overview.setText(Cursors.getString(cursor, EpisodeColumns.OVERVIEW));

@@ -19,7 +19,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,6 +34,7 @@ import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.listener.EpisodeClickListener;
+import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.cathode.widget.TimeStamp;
 import net.simonvt.schematic.Cursors;
@@ -92,7 +92,6 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
 
   @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
     final long id = Cursors.getLong(cursor, EpisodeColumns.ID);
-    String title = Cursors.getString(cursor, EpisodeColumns.TITLE);
     final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
     final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
@@ -102,16 +101,9 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
     final boolean checkedIn = Cursors.getBoolean(cursor, EpisodeColumns.CHECKED_IN);
     final long firstAired = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
     final String screen = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
+    final String title = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
 
     holder.screen.setImage(screen);
-
-    if (TextUtils.isEmpty(title)) {
-      if (season == 0) {
-        title = getContext().getString(R.string.special_x, episode);
-      } else {
-        title = getContext().getString(R.string.episode_x, episode);
-      }
-    }
 
     holder.title.setText(title);
 

@@ -19,7 +19,6 @@ package net.simonvt.cathode.ui.lists;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +39,7 @@ import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
+import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.schematic.Cursors;
@@ -210,19 +210,11 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
       seasonHolder.show.setText(showTitle);
     } else if (holder.getItemViewType() == DatabaseContract.ItemType.EPISODE) {
       final EpisodeViewHolder episodeHolder = (EpisodeViewHolder) holder;
-      String title = Cursors.getString(cursor, EpisodeColumns.TITLE);
       final String screen = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
       final String showTitle = Cursors.getString(cursor, "episodeShowTitle");
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-
-      if (TextUtils.isEmpty(title)) {
-        if (season == 0) {
-          title = getContext().getString(R.string.special_x, episode);
-        } else {
-          title = getContext().getString(R.string.episode_x, episode);
-        }
-      }
+      final String title = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
 
       episodeHolder.screen.setImage(screen);
 
