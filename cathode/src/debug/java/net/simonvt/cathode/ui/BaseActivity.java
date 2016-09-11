@@ -132,7 +132,10 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
     debugViews.invalidateAccessToken.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        settings.edit().putString(Settings.TRAKT_ACCESS_TOKEN, "invalid token").apply();
+        settings.edit()
+            .putString(Settings.TRAKT_ACCESS_TOKEN, "invalid token")
+            .putLong(Settings.TRAKT_TOKEN_EXPIRATION, 0L)
+            .apply();
       }
     });
 

@@ -19,6 +19,7 @@ package net.simonvt.cathode.module;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.format.DateUtils;
 import java.io.IOException;
 import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
@@ -55,30 +56,37 @@ public class ApiSettings implements TraktSettings {
 
   @Inject AuthorizationService authService;
 
-  private boolean refreshingToken;
-
   public ApiSettings(Context context) {
     this.context = context;
     settings = PreferenceManager.getDefaultSharedPreferences(context);
   }
 
   @Override public String getAccessToken() {
-    synchronized (ApiSettings.class) {
+    synchronized (this) {
       return settings.getString(Settings.TRAKT_ACCESS_TOKEN, null);
     }
   }
 
   @Override public String getRefreshToken() {
-    synchronized (ApiSettings.class) {
+    synchronized (this) {
       return settings.getString(Settings.TRAKT_REFRESH_TOKEN, null);
     }
   }
 
+  private boolean isTokenExpired() {
+    synchronized (this) {
+      return settings.getLong(Settings.TRAKT_TOKEN_EXPIRATION, 0) < System.currentTimeMillis();
+    }
+  }
+
   @Override public void updateTokens(AccessToken tokens) {
-    synchronized (ApiSettings.class) {
+    synchronized (this) {
+      final long expirationMillis =
+          System.currentTimeMillis() + (tokens.getExpiresIn() * DateUtils.SECOND_IN_MILLIS);
       settings.edit()
           .putString(Settings.TRAKT_ACCESS_TOKEN, tokens.getAccessToken())
           .putString(Settings.TRAKT_REFRESH_TOKEN, tokens.getRefreshToken())
+          .putLong(Settings.TRAKT_TOKEN_EXPIRATION, expirationMillis)
           .apply();
     }
   }
@@ -96,19 +104,24 @@ public class ApiSettings implements TraktSettings {
   }
 
   private void clearRefreshToken() {
-    synchronized (ApiSettings.class) {
+    synchronized (this) {
       settings.edit().remove(Settings.TRAKT_REFRESH_TOKEN).apply();
     }
   }
 
   @Override public String refreshToken() {
-    synchronized (ApiSettings.class) {
+    synchronized (this) {
       if (authService == null) {
         CathodeApp.inject(context, this);
       }
 
+      if (!isTokenExpired()) {
+        Timber.d("Token still valid");
+        return getAccessToken();
+      }
+
       final String refreshToken = getRefreshToken();
-      if (refreshToken == null || refreshingToken) {
+      if (refreshToken == null) {
         return null;
       }
 
@@ -117,8 +130,6 @@ public class ApiSettings implements TraktSettings {
               GrantType.REFRESH_TOKEN);
 
       try {
-        refreshingToken = true;
-
         Timber.d("Getting new tokens, with refresh token: %s", refreshToken);
         Call<AccessToken> call = authService.getToken(tokenRequest);
         Response<AccessToken> response = call.execute();
@@ -137,8 +148,6 @@ public class ApiSettings implements TraktSettings {
         }
       } catch (IOException e) {
         Timber.e(e, "Unable to get new tokens");
-      } finally {
-        refreshingToken = false;
       }
 
       return null;

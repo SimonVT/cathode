@@ -32,6 +32,7 @@ public final class Settings {
   public static final String TRAKT_LOGGED_IN = "traktLoggedIn";
   public static final String TRAKT_ACCESS_TOKEN = "traktToken";
   public static final String TRAKT_REFRESH_TOKEN = "traktRefreshToken";
+  public static final String TRAKT_TOKEN_EXPIRATION = "traktTokenExpiration";
 
   public static final String START_PAGE = "startPage";
 

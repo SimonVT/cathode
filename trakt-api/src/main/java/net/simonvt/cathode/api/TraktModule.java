@@ -78,8 +78,8 @@ public class TraktModule {
     builder.cache(new Cache(cacheDir, OkHttpUtils.getCacheSize(cacheDir)));
 
     builder.interceptors().addAll(interceptors);
-    builder.networkInterceptors().add(new ApiInterceptor(settings));
-    builder.networkInterceptors().add(new AuthInterceptor(settings));
+    builder.interceptors().add(new ApiInterceptor(settings));
+    builder.interceptors().add(new AuthInterceptor(settings));
     builder.authenticator(new TraktAuthenticator(settings));
 
     return builder.build();
