@@ -35,6 +35,7 @@ import net.simonvt.cathode.remote.action.shows.RateShow;
 import net.simonvt.cathode.remote.action.shows.WatchedShow;
 import net.simonvt.cathode.remote.action.shows.WatchlistShow;
 import net.simonvt.cathode.remote.sync.comments.SyncComments;
+import net.simonvt.cathode.remote.sync.shows.SyncRelatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
 import net.simonvt.cathode.remote.sync.shows.SyncShowCast;
 import net.simonvt.cathode.remote.sync.shows.SyncShowCollectedStatus;
@@ -67,6 +68,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         queue(new SyncComments(ItemType.SHOW, traktId));
         queue(new SyncShowWatchedStatus(traktId));
         queue(new SyncShowCast(traktId));
+        queue(new SyncRelatedShows(traktId));
 
         Job job = new SyncShowCollectedStatus(traktId);
         job.registerOnDoneListener(onDoneListener);
@@ -97,6 +99,17 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         ContentValues values = new ContentValues();
         values.put(ShowColumns.LAST_ACTORS_SYNC, System.currentTimeMillis());
         context.getContentResolver().update(Shows.withId(showId), values, null, null);
+      }
+    });
+  }
+
+  public void syncRelated(final long showId, final Job.OnDoneListener onDoneListener) {
+    execute(new Runnable() {
+      @Override public void run() {
+        final long traktId = showHelper.getTraktId(showId);
+        Job job = new SyncRelatedShows(traktId);
+        job.registerOnDoneListener(onDoneListener);
+        queue(job);
       }
     });
   }

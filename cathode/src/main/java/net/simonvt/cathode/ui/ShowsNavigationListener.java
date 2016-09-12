@@ -25,4 +25,6 @@ public interface ShowsNavigationListener extends NavigationClickListener {
   void onDisplayEpisode(long episodeId, String showTitle);
 
   void onDisplayShowActors(long showId, String title);
+
+  void onDisplayRelatedShows(long showId, String title);
 }

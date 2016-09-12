@@ -36,6 +36,8 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
+import net.simonvt.cathode.provider.DatabaseContract.RelatedMoviesColumns;
+import net.simonvt.cathode.provider.DatabaseContract.RelatedShowsColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCharacterColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -119,6 +121,7 @@ public final class ProviderSchematic {
     String EPISODES = "episodes";
     String SHOW_GENRES = "showGenres";
     String SHOW_CHARACTERS = "showCharacters";
+    String SHOW_RELATED = "showRelated";
 
     String FROM_SHOW = "fromShow";
     String FROM_SEASON = "fromSeason";
@@ -132,6 +135,7 @@ public final class ProviderSchematic {
     String MOVIE_WRITERS = "movieWriters";
     String MOVIE_PRODUCERS = "movieProducers";
     String MOVIE_TOP_WATCHERS = "movieTopWatchers";
+    String MOVIE_RELATED = "movieRelated";
 
     String FROM_MOVIE = "fromMovie";
 
@@ -1347,6 +1351,72 @@ public final class ProviderSchematic {
         pathSegment = 2)
     public static Uri fromEpisode(long episodeId) {
       return buildUri(Path.COMMENTS, Path.FROM_EPISODE, String.valueOf(episodeId));
+    }
+  }
+
+  @TableEndpoint(table = Tables.SHOW_RELATED)
+  public static class RelatedShows {
+
+    @ContentUri(
+        path = Path.SHOW_RELATED,
+        type = Type.SHOW,
+        join = Joins.SHOW_RELATED)
+    public static final Uri RELATED = buildUri(Path.SHOW_RELATED);
+
+    @InexactContentUri(
+        path = Path.SHOW_RELATED + "/" + Path.FROM_SHOW + "/#",
+        type = Type.SHOW,
+        name = "RELATED_FROMSHOW",
+        whereColumn = RelatedShowsColumns.SHOW_ID,
+        pathSegment = 2,
+        join = Joins.SHOW_RELATED,
+        defaultSort = RelatedShowsColumns.RELATED_INDEX + " ASC")
+    public static Uri fromShow(long showId) {
+      return buildUri(Path.SHOW_RELATED, Path.FROM_SHOW, String.valueOf(showId));
+    }
+
+    @InexactContentUri(
+        path = Path.SHOW_RELATED + "/#",
+        type = Type.SHOW,
+        name = "RELATED_WITHID",
+        whereColumn = RelatedShowsColumns.ID,
+        pathSegment = 1,
+        join = Joins.SHOW_RELATED)
+    public static Uri withId(long id) {
+      return buildUri(Path.SHOW_RELATED, String.valueOf(id));
+    }
+  }
+
+  @TableEndpoint(table = Tables.MOVIE_RELATED)
+  public static class RelatedMovies {
+
+    @ContentUri(
+        path = Path.MOVIE_RELATED,
+        type = Type.MOVIE,
+        join = Joins.MOVIE_RELATED)
+    public static final Uri RELATED = buildUri(Path.MOVIE_RELATED);
+
+    @InexactContentUri(
+        path = Path.MOVIE_RELATED + "/" + Path.FROM_MOVIE + "/#",
+        type = Type.MOVIE,
+        name = "RELATED_FROMMOVIE",
+        whereColumn = RelatedMoviesColumns.MOVIE_ID,
+        pathSegment = 2,
+        join = Joins.MOVIE_RELATED,
+        defaultSort = RelatedMoviesColumns.RELATED_INDEX + " ASC")
+    public static Uri fromMovie(long movieId) {
+      return buildUri(Path.MOVIE_RELATED, Path.FROM_MOVIE, String.valueOf(movieId));
+    }
+
+    @InexactContentUri(
+        path = Path.MOVIE_RELATED + "/#",
+        type = Type.MOVIE,
+        name = "RELATED_WITHID",
+        whereColumn = RelatedMoviesColumns.ID,
+        pathSegment = 1,
+        join = Joins.MOVIE_RELATED)
+    public static Uri withId(long id) {
+      return buildUri(Path.MOVIE_RELATED, Path.FROM_MOVIE, String.valueOf(id));
     }
   }
 }

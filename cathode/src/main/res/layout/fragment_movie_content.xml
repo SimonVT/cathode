@@ -83,6 +83,11 @@
       android:visibility="gone"
       tools:visibility="visible"/>
 
+  <include
+      layout="@layout/card_related"
+      android:visibility="gone"
+      tools:visibility="visible"/>
+
   <TextView
       android:id="@+id/websiteTitle"
       android:layout_width="match_parent"

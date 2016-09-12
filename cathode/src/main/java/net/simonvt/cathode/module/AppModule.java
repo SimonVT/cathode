@@ -113,6 +113,8 @@ import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncAnticipatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodesRatings;
+import net.simonvt.cathode.remote.sync.movies.SyncRelatedMovies;
+import net.simonvt.cathode.remote.sync.shows.SyncRelatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncSeasons;
 import net.simonvt.cathode.remote.sync.shows.SyncSeasonsRatings;
@@ -142,6 +144,8 @@ import net.simonvt.cathode.service.SyncWatchingReceiver;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.ui.HiddenItems;
 import net.simonvt.cathode.ui.HomeActivity;
+import net.simonvt.cathode.ui.fragment.RelatedMoviesFragment;
+import net.simonvt.cathode.ui.fragment.RelatedShowsFragment;
 import net.simonvt.cathode.ui.login.LoginActivity;
 import net.simonvt.cathode.ui.SettingsActivity;
 import net.simonvt.cathode.ui.login.TokenActivity;
@@ -226,6 +230,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         ListFragment.class, CommentsFragment.class, CommentFragment.class, ListsFragment.class,
         AnticipatedShowsFragment.class, AnticipatedMoviesFragment.class, StatsFragment.class,
         SearchFragment.class, UpdateListFragment.class, SettingsActivity.SettingsFragment.class,
+        RelatedShowsFragment.class, RelatedMoviesFragment.class,
 
         // Dialogs
         RatingDialog.class, CheckInDialog.class, CheckInDialog.Injections.class, ListsDialog.class,
@@ -271,7 +276,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         SyncCommentLikes.class, CalendarHideShow.class, WatchedHideShow.class,
         CollectedHideShow.class, CalendarHideMovie.class, WatchedHideMovie.class,
         CollectedHideMovie.class, SyncAnticipatedShows.class, SyncAnticipatedMovies.class,
-        UpdateList.class, DeleteList.class,
+        UpdateList.class, DeleteList.class, SyncRelatedShows.class, SyncRelatedMovies.class,
 
         // Upgrade tasks
         EnsureSync.class, UpperCaseGenres.class,

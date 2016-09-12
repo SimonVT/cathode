@@ -31,6 +31,8 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieCrewColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.RecentQueriesColumns;
+import net.simonvt.cathode.provider.DatabaseContract.RelatedMoviesColumns;
+import net.simonvt.cathode.provider.DatabaseContract.RelatedShowsColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCharacterColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -54,7 +56,7 @@ import net.simonvt.schematic.annotation.Table;
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 25;
+  static final int DATABASE_VERSION = 27;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -82,6 +84,14 @@ import net.simonvt.schematic.annotation.Table;
             + " episodes WHERE (episodes.watching=1 OR episodes.checkedIn=1)"
             + " AND episodes.showId=shows._id" + " AND episodes.needsSync=0"
             + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
+
+    String SHOW_RELATED = "JOIN " + Tables.SHOWS + " AS " + Tables.SHOWS + " ON " + Tables.SHOWS
+        + "." + ShowColumns.ID + "="
+        + Tables.SHOW_RELATED + "." + RelatedShowsColumns.RELATED_SHOW_ID;
+
+    String MOVIE_RELATED = "JOIN " + Tables.MOVIES + " AS " + Tables.MOVIES + " ON " + Tables.MOVIES
+        + "." + MovieColumns.ID + "="
+        + Tables.MOVIE_RELATED + "." + RelatedMoviesColumns.RELATED_MOVIE_ID;
 
     String MOVIE_CAST_PERSON =
         "JOIN " + Tables.PEOPLE + " AS " + Tables.PEOPLE + " ON " + Tables.PEOPLE + "."
@@ -131,12 +141,15 @@ import net.simonvt.schematic.annotation.Table;
     @Table(SeasonColumns.class) @IfNotExists String SEASONS = "seasons";
     @Table(EpisodeColumns.class) @IfNotExists String EPISODES = "episodes";
     @Table(ShowCharacterColumns.class) @IfNotExists String SHOW_CHARACTERS = "showCharacters";
+    @Table(RelatedShowsColumns.class) @IfNotExists String SHOW_RELATED =
+        "relatedShows";
 
     @Table(MovieColumns.class) @IfNotExists String MOVIES = "movies";
     @Table(MovieGenreColumns.class) @IfNotExists String MOVIE_GENRES = "movieGenres";
-
     @Table(MovieCastColumns.class) @IfNotExists String MOVIE_CAST = "movieCast";
     @Table(MovieCrewColumns.class) @IfNotExists String MOVIE_CREW = "movieCrew";
+    @Table(RelatedMoviesColumns.class) @IfNotExists String MOVIE_RELATED =
+        "relatedMovies";
 
     @Table(PersonColumns.class) @IfNotExists String PEOPLE = "people";
 
@@ -693,6 +706,18 @@ import net.simonvt.schematic.annotation.Table;
       db.execSQL("DROP TABLE IF EXISTS movieSearchSuggestions");
 
       db.execSQL(CathodeDatabase.RECENT_QUERIES);
+    }
+
+    if (oldVersion < 26) {
+      db.execSQL(CathodeDatabase.SHOW_RELATED);
+      db.execSQL(CathodeDatabase.MOVIE_RELATED);
+    }
+
+    if (oldVersion < 27) {
+      SqlUtils.createColumnIfNotExists(db, Tables.SHOWS, ShowColumns.LAST_RELATED_SYNC,
+          DataType.Type.INTEGER, "0");
+      SqlUtils.createColumnIfNotExists(db, Tables.MOVIES, MovieColumns.LAST_RELATED_SYNC,
+          DataType.Type.INTEGER, "0");
     }
   }
 }

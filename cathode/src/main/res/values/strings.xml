@@ -90,6 +90,10 @@
   <string name="title_comment_reply">Reply</string>
   <string name="title_website">Website</string>
   <string name="title_view_on">View on</string>
+  <string name="title_related">Related</string>
+
+  <string name="related_rating">%1$s (%2$s votes)</string>
+  <string name="related_rating_thousands">%1$s (%2$sk votes)</string>
 
   <string name="title_suggestions">Suggestions</string>
   <string name="title_recommended">Recommended</string>
@@ -298,6 +302,7 @@
   <string name="empty_show_watchlist">Add shows to the watchlist that you\'d like to watch, but just
     haven\'t had the time for.
   </string>
+  <string name="empty_show_related">There are no related shows</string>
   <string name="empty_movie_watched">Find movies you\'ve watched by using the search button.
   </string>
   <string name="empty_movie_collection">Your collection is empty. Find movies by using the search
@@ -306,6 +311,7 @@
   <string name="empty_movie_watchlist">Add movies to the watchlist that you\'d like to watch, but
     just haven\'t had the time for.
   </string>
+  <string name="empty_movie_related">There are no related movies</string>
   <string name="empty_lists">You currently have no lists.</string>
 
   <string name="all_watched">All episodes watched</string>

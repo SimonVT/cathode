@@ -105,7 +105,7 @@ public class HiddenItems extends BaseActivity
 
   @Override
   public void onDisplayShow(long showId, String title, String overview, LibraryType type) {
-    stack.push(ShowFragment.class, ShowFragment.TAG,
+    stack.push(ShowFragment.class, ShowFragment.getTag(showId),
         ShowFragment.getArgs(showId, title, overview, type));
   }
 
@@ -125,6 +125,10 @@ public class HiddenItems extends BaseActivity
     stack.push(ActorsFragment.class, ActorsFragment.TAG, ActorsFragment.forShow(showId, title));
   }
 
+  @Override public void onDisplayRelatedShows(long showId, String title) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Override public void onDisplayMovie(long movieId, String title, String overview) {
     stack.push(MovieFragment.class, MovieFragment.getTag(movieId),
         MovieFragment.getArgs(movieId, title, overview));
@@ -132,6 +136,10 @@ public class HiddenItems extends BaseActivity
 
   @Override public void onDisplayMovieActors(long movieId, String title) {
     stack.push(ActorsFragment.class, ActorsFragment.TAG, ActorsFragment.forMovie(movieId, title));
+  }
+
+  @Override public void onDisplayRelatedMovies(long movieId, String title) {
+    throw new RuntimeException("Not implemented");
   }
 
   @Override public void onShowList(long listId, String listName) {

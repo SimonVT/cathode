@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Simon Vig Therkildsen
+ * Copyright (C) 2016 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.ui;
 
-public interface MoviesNavigationListener extends NavigationClickListener {
+package net.simonvt.cathode.util;
 
-  void onDisplayMovie(long movieId, String title, String overview);
+import java.util.concurrent.atomic.AtomicInteger;
 
-  void onDisplayMovieActors(long movieId, String title);
+public final class Ids {
 
-  void onDisplayRelatedMovies(long movieId, String title);
+  private static final AtomicInteger NEXT_ID = new AtomicInteger(1);
+
+  private Ids() {
+  }
+
+  public static int newId() {
+    while (true) {
+      final int id = NEXT_ID.get();
+      int nextId = id + 1;
+      if (Ids.NEXT_ID.compareAndSet(id, nextId)) {
+        return id;
+      }
+    }
+  }
 }

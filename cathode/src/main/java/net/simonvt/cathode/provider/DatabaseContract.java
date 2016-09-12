@@ -111,6 +111,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String LAST_SYNC = "lastSync";
     @DataType(INTEGER) @DefaultValue("0") String LAST_COMMENT_SYNC = "lastCommentSync";
     @DataType(INTEGER) @DefaultValue("0") String LAST_ACTORS_SYNC = "lastActorsSync";
+    @DataType(INTEGER) @DefaultValue("0") String LAST_RELATED_SYNC = "lastRelatedSync";
 
     @DataType(INTEGER) @DefaultValue("0") String WATCHING = "watchingShow";
 
@@ -280,6 +281,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String LAST_SYNC = "lastSync";
     @DataType(INTEGER) @DefaultValue("0") String LAST_COMMENT_SYNC = "lastCommentSync";
     @DataType(INTEGER) @DefaultValue("0") String LAST_CREW_SYNC = "lastCrewSync";
+    @DataType(INTEGER) @DefaultValue("0") String LAST_RELATED_SYNC = "lastRelatedSync";
   }
 
   public interface MovieGenreColumns {
@@ -417,5 +419,25 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String IS_USER_COMMENT = "isUserComment";
     @DataType(INTEGER) @DefaultValue("0") String LIKED = "liked";
     @DataType(INTEGER) @DefaultValue("0") String LIKED_AT = "likedAt";
+  }
+
+  public interface RelatedShowsColumns {
+
+    @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
+    @DataType(INTEGER) @References(table = Tables.SHOWS, column = ShowColumns.ID) String SHOW_ID =
+        "showId";
+    @DataType(INTEGER) @References(table = Tables.SHOWS, column = ShowColumns.ID) String
+        RELATED_SHOW_ID = "relatedShowId";
+    @DataType(INTEGER) String RELATED_INDEX = "relatedIndex";
+  }
+
+  public interface RelatedMoviesColumns {
+
+    @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
+    @DataType(INTEGER) @References(table = Tables.MOVIES, column = MovieColumns.ID) String
+        MOVIE_ID = "movieId";
+    @DataType(INTEGER) @References(table = Tables.MOVIES, column = MovieColumns.ID) String
+        RELATED_MOVIE_ID = "relatedMovieId";
+    @DataType(INTEGER) String RELATED_INDEX = "relatedIndex";
   }
 }

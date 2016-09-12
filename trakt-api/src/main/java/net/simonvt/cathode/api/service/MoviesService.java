@@ -71,4 +71,12 @@ public interface MoviesService {
    */
   @GET("/movies/{id}/comments") Call<List<Comment>> getComments(@Path("id") long id,
       @Query("page") int page, @Query("limit") int limit, @Query("extended") Extended extended);
+
+  /**
+   * <b>Pagination</b>
+   * <p>
+   * Returns related and similar movies.
+   */
+  @GET("/movies/{id}/related") Call<List<Movie>> getRelated(@Path("id") long id,
+      @Query("limit") int limit, @Query("extended") Extended extended);
 }

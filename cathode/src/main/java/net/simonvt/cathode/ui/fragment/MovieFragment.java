@@ -31,6 +31,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.OnClick;
+import java.util.Locale;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -45,12 +46,14 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
+import net.simonvt.cathode.provider.DatabaseContract.RelatedMoviesColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieGenres;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
+import net.simonvt.cathode.provider.ProviderSchematic.RelatedMovies;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.NavigationListener;
@@ -59,6 +62,7 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
+import net.simonvt.cathode.util.Ids;
 import net.simonvt.cathode.util.Intents;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.CheckInDrawable;
@@ -77,6 +81,7 @@ public class MovieFragment extends RefreshableAppBarFragment
   private static final int LOADER_MOVIE_ACTORS = 3;
   private static final int LOADER_MOVIE_USER_COMMENTS = 4;
   private static final int LOADER_MOVIE_COMMENTS = 5;
+  private static final int LOADER_RELATED = 6;
 
   private static final String ARG_ID = "net.simonvt.cathode.ui.fragment.MovieFragment.id";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.fragment.MovieFragment.title";
@@ -118,6 +123,11 @@ public class MovieFragment extends RefreshableAppBarFragment
   @BindView(R.id.commentsHeader) View commentsHeader;
   @BindView(R.id.commentsContainer) LinearLayout commentsContainer;
 
+  @BindView(R.id.relatedParent) View relatedParent;
+  @BindView(R.id.relatedHeader) View relatedHeader;
+  @BindView(R.id.related) LinearLayout related;
+  @BindView(R.id.relatedContainer) LinearLayout relatedContainer;
+
   @BindView(R.id.websiteTitle) View websiteTitle;
   @BindView(R.id.website) TextView website;
 
@@ -155,7 +165,7 @@ public class MovieFragment extends RefreshableAppBarFragment
   private CheckInDrawable checkInDrawable;
 
   public static String getTag(long movieId) {
-    return TAG + "/" + movieId;
+    return TAG + "/" + movieId + "/" + Ids.newId();
   }
 
   public static Bundle getArgs(long movieId, String movieTitle, String overview) {
@@ -204,6 +214,7 @@ public class MovieFragment extends RefreshableAppBarFragment
     getLoaderManager().initLoader(LOADER_MOVIE_ACTORS, null, actorsLoader);
     getLoaderManager().initLoader(LOADER_MOVIE_USER_COMMENTS, null, userCommentsLoader);
     getLoaderManager().initLoader(LOADER_MOVIE_COMMENTS, null, commentsLoader);
+    getLoaderManager().initLoader(LOADER_RELATED, null, relatedLoader);
   }
 
   @Override public void onDestroyView() {
@@ -222,6 +233,10 @@ public class MovieFragment extends RefreshableAppBarFragment
 
   @OnClick(R.id.commentsHeader) void onShowComments() {
     navigationListener.onDisplayComments(ItemType.MOVIE, movieId);
+  }
+
+  @OnClick(R.id.relatedHeader) void onShowRelated() {
+    navigationListener.onDisplayRelatedMovies(movieId, movieTitle);
   }
 
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
@@ -418,7 +433,12 @@ public class MovieFragment extends RefreshableAppBarFragment
       movieScheduler.syncCrew(movieId);
     }
 
-    final String website = Cursors.getString(cursor, DatabaseContract.ShowColumns.HOMEPAGE);
+    final long lastRelatedSync = Cursors.getLong(cursor, MovieColumns.LAST_RELATED_SYNC);
+    if (lastSync > lastRelatedSync) {
+      movieScheduler.syncRelated(movieId, null);
+    }
+
+    final String website = Cursors.getString(cursor, MovieColumns.HOMEPAGE);
     if (!TextUtils.isEmpty(website)) {
       this.websiteTitle.setVisibility(View.VISIBLE);
       this.website.setVisibility(View.VISIBLE);
@@ -434,8 +454,8 @@ public class MovieFragment extends RefreshableAppBarFragment
       this.website.setVisibility(View.GONE);
     }
 
-    final String imdbId = Cursors.getString(cursor, DatabaseContract.MovieColumns.IMDB_ID);
-    final int tmdbId = Cursors.getInt(cursor, DatabaseContract.MovieColumns.TMDB_ID);
+    final String imdbId = Cursors.getString(cursor, MovieColumns.IMDB_ID);
+    final int tmdbId = Cursors.getInt(cursor, MovieColumns.TMDB_ID);
 
     final boolean hasImdbId = !TextUtils.isEmpty(imdbId);
     if (hasImdbId) {
@@ -487,7 +507,7 @@ public class MovieFragment extends RefreshableAppBarFragment
   private void updateGenreViews(final Cursor cursor) {
     if (cursor.getCount() > 0) {
       StringBuilder sb = new StringBuilder();
-      final int genreColumnIndex = cursor.getColumnIndex(DatabaseContract.ShowGenreColumns.GENRE);
+      final int genreColumnIndex = cursor.getColumnIndex(MovieGenreColumns.GENRE);
 
       cursor.moveToPosition(-1);
 
@@ -516,7 +536,8 @@ public class MovieFragment extends RefreshableAppBarFragment
 
     c.moveToPosition(-1);
     while (c.moveToNext() && index < 3) {
-      View v = LayoutInflater.from(getActivity()).inflate(R.layout.item_person, actors, false);
+      View v =
+          LayoutInflater.from(getActivity()).inflate(R.layout.item_person, peopleContainer, false);
 
       RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
       headshot.addTransformation(new CircleTransformation());
@@ -529,6 +550,60 @@ public class MovieFragment extends RefreshableAppBarFragment
       character.setText(Cursors.getString(c, MovieCastColumns.CHARACTER));
 
       peopleContainer.addView(v);
+
+      index++;
+    }
+  }
+
+  private void updateRelatedView(Cursor related) {
+    relatedContainer.removeAllViews();
+
+    final int count = related.getCount();
+    final int visibility = count > 0 ? View.VISIBLE : View.GONE;
+    relatedParent.setVisibility(visibility);
+
+    int index = 0;
+
+    related.moveToPosition(-1);
+    while (related.moveToNext() && index < 3) {
+      View v = LayoutInflater.from(getActivity())
+          .inflate(R.layout.item_related, relatedContainer, false);
+
+      final long relatedMovieId = Cursors.getLong(related, RelatedMoviesColumns.RELATED_MOVIE_ID);
+      final String title = Cursors.getString(related, MovieColumns.TITLE);
+      final String overview = Cursors.getString(related, MovieColumns.OVERVIEW);
+      final String poster = Cursors.getString(related, MovieColumns.POSTER);
+      final int rating = Cursors.getInt(related, MovieColumns.RATING);
+      final int votes = Cursors.getInt(related, MovieColumns.VOTES);
+
+      RemoteImageView posterView = (RemoteImageView) v.findViewById(R.id.related_poster);
+      posterView.addTransformation(new CircleTransformation());
+      posterView.setImage(poster);
+
+      TextView titleView = (TextView) v.findViewById(R.id.related_title);
+      titleView.setText(title);
+
+      float convertedRating = rating / 10.0f;
+      final String formattedRating = String.format(Locale.getDefault(), "%.1f", convertedRating);
+
+      String ratingText;
+      if (votes >= 1000) {
+        final float convertedVotes = votes / 1000.0f;
+        final String formattedVotes = String.format(Locale.getDefault(), "%.1f", convertedVotes);
+        ratingText = getString(R.string.related_rating, formattedRating, formattedVotes);
+      } else {
+        ratingText = getString(R.string.related_rating, formattedRating, votes);
+      }
+
+      TextView ratingView = (TextView) v.findViewById(R.id.related_rating);
+      ratingView.setText(ratingText);
+
+      v.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          navigationListener.onDisplayMovie(relatedMovieId, title, overview);
+        }
+      });
+      relatedContainer.addView(v);
 
       index++;
     }
@@ -623,6 +698,30 @@ public class MovieFragment extends RefreshableAppBarFragment
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
           comments = data;
           updateComments();
+        }
+
+        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
+        }
+      };
+
+  private static final String[] RELATED_PROJECTION = new String[] {
+      SqlColumn.table(Tables.MOVIE_RELATED).column(RelatedMoviesColumns.RELATED_MOVIE_ID),
+      SqlColumn.table(Tables.MOVIES).column(MovieColumns.TITLE),
+      SqlColumn.table(Tables.MOVIES).column(MovieColumns.OVERVIEW),
+      SqlColumn.table(Tables.MOVIES).column(MovieColumns.POSTER),
+      SqlColumn.table(Tables.MOVIES).column(MovieColumns.RATING),
+      SqlColumn.table(Tables.MOVIES).column(MovieColumns.VOTES),
+  };
+
+  private LoaderManager.LoaderCallbacks<SimpleCursor> relatedLoader =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
+          return new SimpleCursorLoader(getContext(), RelatedMovies.fromMovie(movieId),
+              RELATED_PROJECTION, null, null, RelatedMoviesColumns.RELATED_INDEX + " ASC LIMIT 3");
+        }
+
+        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
+          updateRelatedView(data);
         }
 
         @Override public void onLoaderReset(Loader<SimpleCursor> loader) {

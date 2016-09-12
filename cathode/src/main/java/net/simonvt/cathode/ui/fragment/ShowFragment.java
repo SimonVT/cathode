@@ -35,6 +35,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import java.util.Locale;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -50,6 +51,7 @@ import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.HiddenColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
+import net.simonvt.cathode.provider.DatabaseContract.RelatedShowsColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCharacterColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
@@ -57,6 +59,7 @@ import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
+import net.simonvt.cathode.provider.ProviderSchematic.RelatedShows;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowGenres;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
@@ -75,6 +78,7 @@ import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.util.Ids;
 import net.simonvt.cathode.util.Intents;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.CircleTransformation;
@@ -88,7 +92,7 @@ import timber.log.Timber;
 
 public class ShowFragment extends RefreshableAppBarFragment {
 
-  public static final String TAG = "net.simonvt.cathode.ui.fragment.ShowFragment";
+  private static final String TAG = "net.simonvt.cathode.ui.fragment.ShowFragment";
 
   private static final String ARG_SHOWID = "net.simonvt.cathode.ui.fragment.ShowFragment.showId";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.fragment.ShowFragment.title";
@@ -111,15 +115,16 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private static final int LOADER_SHOW_ACTORS = 6;
   private static final int LOADER_SHOW_USER_COMMENTS = 7;
   private static final int LOADER_SHOW_COMMENTS = 8;
+  private static final int LOADER_RELATED = 9;
 
   private static final String[] SHOW_PROJECTION = new String[] {
       ShowColumns.TITLE, ShowColumns.YEAR, ShowColumns.AIR_TIME, ShowColumns.AIR_DAY,
       ShowColumns.NETWORK, ShowColumns.CERTIFICATION, ShowColumns.POSTER, ShowColumns.FANART,
       ShowColumns.USER_RATING, ShowColumns.RATING, ShowColumns.OVERVIEW, ShowColumns.IN_WATCHLIST,
       ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT, ShowColumns.LAST_SYNC,
-      ShowColumns.LAST_COMMENT_SYNC, ShowColumns.LAST_ACTORS_SYNC, ShowColumns.HOMEPAGE,
-      ShowColumns.TRAILER, ShowColumns.IMDB_ID, ShowColumns.TVDB_ID, ShowColumns.TMDB_ID,
-      ShowColumns.NEEDS_SYNC, HiddenColumns.HIDDEN_CALENDAR,
+      ShowColumns.LAST_COMMENT_SYNC, ShowColumns.LAST_ACTORS_SYNC, ShowColumns.LAST_RELATED_SYNC,
+      ShowColumns.HOMEPAGE, ShowColumns.TRAILER, ShowColumns.IMDB_ID, ShowColumns.TVDB_ID,
+      ShowColumns.TMDB_ID, ShowColumns.NEEDS_SYNC, HiddenColumns.HIDDEN_CALENDAR,
   };
 
   private static final String[] EPISODE_PROJECTION = new String[] {
@@ -165,6 +170,11 @@ public class ShowFragment extends RefreshableAppBarFragment {
   @BindView(R.id.commentsParent) View commentsParent;
   @BindView(R.id.commentsHeader) View commentsHeader;
   @BindView(R.id.commentsContainer) LinearLayout commentsContainer;
+
+  @BindView(R.id.relatedParent) View relatedParent;
+  @BindView(R.id.relatedHeader) View relatedHeader;
+  @BindView(R.id.related) LinearLayout related;
+  @BindView(R.id.relatedContainer) LinearLayout relatedContainer;
 
   @BindView(R.id.websiteTitle) View websiteTitle;
   @BindView(R.id.website) TextView website;
@@ -226,6 +236,10 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private LibraryType type;
 
   RecyclerViewManager seasonsManager;
+
+  public static String getTag(long showId) {
+    return TAG + "/" + showId + "/" + Ids.newId();
+  }
 
   public static Bundle getArgs(long showId, String title, String overview, LibraryType type) {
     if (showId < 0) {
@@ -320,6 +334,12 @@ public class ShowFragment extends RefreshableAppBarFragment {
     commentsHeader.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         navigationCallbacks.onDisplayComments(ItemType.SHOW, showId);
+      }
+    });
+
+    relatedHeader.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        navigationCallbacks.onDisplayRelatedShows(showId, showTitle);
       }
     });
 
@@ -455,6 +475,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
     getLoaderManager().initLoader(LOADER_SHOW_SEASONS, null, seasonsLoader);
     getLoaderManager().initLoader(LOADER_SHOW_USER_COMMENTS, null, userCommentsLoader);
     getLoaderManager().initLoader(LOADER_SHOW_COMMENTS, null, commentsLoader);
+    getLoaderManager().initLoader(LOADER_RELATED, null, relatedLoader);
   }
 
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
@@ -595,6 +616,11 @@ public class ShowFragment extends RefreshableAppBarFragment {
       showScheduler.syncActors(showId);
     }
 
+    final long lastRelatedSync = Cursors.getLong(cursor, ShowColumns.LAST_RELATED_SYNC);
+    if (lastSync > lastRelatedSync) {
+      showScheduler.syncRelated(showId, null);
+    }
+
     final String website = Cursors.getString(cursor, ShowColumns.HOMEPAGE);
     if (!TextUtils.isEmpty(website)) {
       this.websiteTitle.setVisibility(View.VISIBLE);
@@ -692,7 +718,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
     c.moveToPosition(-1);
     while (c.moveToNext() && index < 3) {
-      View v = LayoutInflater.from(getActivity()).inflate(R.layout.item_person, actors, false);
+      View v =
+          LayoutInflater.from(getActivity()).inflate(R.layout.item_person, peopleContainer, false);
 
       RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
       headshot.addTransformation(new CircleTransformation());
@@ -705,6 +732,60 @@ public class ShowFragment extends RefreshableAppBarFragment {
       character.setText(Cursors.getString(c, ShowCharacterColumns.CHARACTER));
 
       peopleContainer.addView(v);
+
+      index++;
+    }
+  }
+
+  private void updateRelatedView(Cursor related) {
+    relatedContainer.removeAllViews();
+
+    final int count = related.getCount();
+    final int visibility = count > 0 ? View.VISIBLE : View.GONE;
+    relatedParent.setVisibility(visibility);
+
+    int index = 0;
+
+    related.moveToPosition(-1);
+    while (related.moveToNext() && index < 3) {
+      View v = LayoutInflater.from(getActivity())
+          .inflate(R.layout.item_related, this.relatedContainer, false);
+
+      final long relatedShowId = Cursors.getLong(related, RelatedShowsColumns.RELATED_SHOW_ID);
+      final String title = Cursors.getString(related, ShowColumns.TITLE);
+      final String overview = Cursors.getString(related, ShowColumns.OVERVIEW);
+      final String poster = Cursors.getString(related, ShowColumns.POSTER);
+      final int rating = Cursors.getInt(related, ShowColumns.RATING);
+      final int votes = Cursors.getInt(related, ShowColumns.VOTES);
+
+      RemoteImageView posterView = (RemoteImageView) v.findViewById(R.id.related_poster);
+      posterView.addTransformation(new CircleTransformation());
+      posterView.setImage(poster);
+
+      TextView titleView = (TextView) v.findViewById(R.id.related_title);
+      titleView.setText(title);
+
+      float convertedRating = rating / 10.0f;
+      final String formattedRating = String.format(Locale.getDefault(), "%.1f", convertedRating);
+
+      String ratingText;
+      if (votes >= 1000) {
+        final float convertedVotes = votes / 1000.0f;
+        final String formattedVotes = String.format(Locale.getDefault(), "%.1f", convertedVotes);
+        ratingText = getString(R.string.related_rating, formattedRating, formattedVotes);
+      } else {
+        ratingText = getString(R.string.related_rating, formattedRating, votes);
+      }
+
+      TextView ratingView = (TextView) v.findViewById(R.id.related_rating);
+      ratingView.setText(ratingText);
+
+      v.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          navigationCallbacks.onDisplayShow(relatedShowId, title, overview, LibraryType.WATCHED);
+        }
+      });
+      relatedContainer.addView(v);
 
       index++;
     }
@@ -992,6 +1073,30 @@ public class ShowFragment extends RefreshableAppBarFragment {
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
           comments = data;
           updateComments();
+        }
+
+        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
+        }
+      };
+
+  private static final String[] RELATED_PROJECTION = new String[] {
+      SqlColumn.table(Tables.SHOW_RELATED).column(RelatedShowsColumns.RELATED_SHOW_ID),
+      SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
+      SqlColumn.table(Tables.SHOWS).column(ShowColumns.OVERVIEW),
+      SqlColumn.table(Tables.SHOWS).column(ShowColumns.POSTER),
+      SqlColumn.table(Tables.SHOWS).column(ShowColumns.RATING),
+      SqlColumn.table(Tables.SHOWS).column(ShowColumns.VOTES),
+  };
+
+  private LoaderManager.LoaderCallbacks<SimpleCursor> relatedLoader =
+      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
+        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
+          return new SimpleCursorLoader(getContext(), RelatedShows.fromShow(showId),
+              RELATED_PROJECTION, null, null, RelatedShowsColumns.RELATED_INDEX + " ASC LIMIT 3");
+        }
+
+        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
+          updateRelatedView(data);
         }
 
         @Override public void onLoaderReset(Loader<SimpleCursor> loader) {

@@ -22,10 +22,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
-    android:layout_marginLeft="@dimen/showActorsMargin"
-    android:layout_marginRight="@dimen/showActorsMargin"
+    android:layout_marginLeft="@dimen/detailsCardMargin"
+    android:layout_marginRight="@dimen/detailsCardMargin"
     android:paddingBottom="8dp"
-    app:cardCornerRadius="@dimen/showActorsCardRadius">
+    app:cardCornerRadius="@dimen/detailsCardRadius">
 
   <LinearLayout
       android:id="@+id/comments"

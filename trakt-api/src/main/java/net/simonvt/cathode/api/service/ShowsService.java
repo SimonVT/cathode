@@ -142,4 +142,12 @@ public interface ShowsService {
    */
   @GET("/shows/{id}/comments") Call<List<Comment>> getComments(@Path("id") long id,
       @Query("page") int page, @Query("limit") int limit, @Query("extended") Extended extended);
+
+  /**
+   * <b>Pagination</b>
+   * <p>
+   * Returns related and similar shows.
+   */
+  @GET("/shows/{id}/related") Call<List<Show>> getRelated(@Path("id") long id,
+      @Query("limit") int limit, @Query("extended") Extended extended);
 }
