@@ -24,6 +24,7 @@ import net.simonvt.cathode.scheduler.CommentsTaskScheduler;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.scheduler.PersonTaskScheduler;
 import net.simonvt.cathode.scheduler.SearchTaskScheduler;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
@@ -59,5 +60,9 @@ public class SchedulerModule {
 
   @Provides @Singleton CommentsTaskScheduler provideCommentsTaskScheduler(Context context) {
     return new CommentsTaskScheduler(context);
+  }
+
+  @Provides @Singleton PersonTaskScheduler providePersonTaskScheduler(Context context) {
+    return new PersonTaskScheduler(context);
   }
 }

@@ -190,7 +190,7 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
         }
       }
 
-      applyBatch(ops);
+      apply(ops);
     }
 
     ops.clear();
@@ -202,10 +202,10 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
       builder.withValues(cv);
       ops.add(builder.build());
     }
-    applyBatch(ops);
+    apply(ops);
   }
 
-  private void applyBatch(ArrayList<ContentProviderOperation> ops) {
+  private void apply(ArrayList<ContentProviderOperation> ops) {
     try {
       getContentResolver().applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
       ops.clear();

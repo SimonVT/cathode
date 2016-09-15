@@ -110,7 +110,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String NEEDS_SYNC = "needsSync";
     @DataType(INTEGER) @DefaultValue("0") String LAST_SYNC = "lastSync";
     @DataType(INTEGER) @DefaultValue("0") String LAST_COMMENT_SYNC = "lastCommentSync";
-    @DataType(INTEGER) @DefaultValue("0") String LAST_ACTORS_SYNC = "lastActorsSync";
+    @DataType(INTEGER) @DefaultValue("0") String LAST_CREDITS_SYNC = "lastCreditsSync";
     @DataType(INTEGER) @DefaultValue("0") String LAST_RELATED_SYNC = "lastRelatedSync";
 
     @DataType(INTEGER) @DefaultValue("0") String WATCHING = "watchingShow";
@@ -129,13 +129,25 @@ public final class DatabaseContract {
     @DataType(TEXT) String GENRE = "genre";
   }
 
-  public interface ShowCharacterColumns {
+  public interface ShowCastColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
     @DataType(INTEGER) @References(table = Tables.SHOWS, column = ShowColumns.ID)
     String SHOW_ID = "showId";
 
     @DataType(TEXT) String CHARACTER = "character";
+    @DataType(TEXT) @References(table = Tables.PEOPLE, column = PersonColumns.ID)
+    String PERSON_ID = "personId";
+  }
+
+  public interface ShowCrewColumns {
+
+    @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
+    @DataType(INTEGER) @References(table = Tables.SHOWS, column = ShowColumns.ID)
+    String SHOW_ID = "showId";
+
+    @DataType(TEXT) String CATEGORY = "category";
+    @DataType(TEXT) String JOB = "job";
     @DataType(TEXT) @References(table = Tables.PEOPLE, column = PersonColumns.ID)
     String PERSON_ID = "personId";
   }
@@ -280,7 +292,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String NEEDS_SYNC = "needsSync";
     @DataType(INTEGER) @DefaultValue("0") String LAST_SYNC = "lastSync";
     @DataType(INTEGER) @DefaultValue("0") String LAST_COMMENT_SYNC = "lastCommentSync";
-    @DataType(INTEGER) @DefaultValue("0") String LAST_CREW_SYNC = "lastCrewSync";
+    @DataType(INTEGER) @DefaultValue("0") String LAST_CREDITS_SYNC = "lastCreditsSync";
     @DataType(INTEGER) @DefaultValue("0") String LAST_RELATED_SYNC = "lastRelatedSync";
   }
 
@@ -325,11 +337,13 @@ public final class DatabaseContract {
     @DataType(INTEGER) String TMDB_ID = "tmdbId";
     @DataType(INTEGER) String TVRAGE_ID = "tvrageId";
     @DataType(TEXT) String HEADSHOT = "headshot";
+    @DataType(TEXT) String FANART = "fanart";
     @DataType(TEXT) String BIOGRAPHY = "biography";
     @DataType(TEXT) String BIRTHDAY = "birthday";
     @DataType(TEXT) String DEATH = "death";
     @DataType(TEXT) String BIRTHPLACE = "birthplace";
     @DataType(TEXT) String HOMEPAGE = "homepage";
+    @DataType(INTEGER) @DefaultValue("0") String LAST_SYNC = "lastSync";
 
     @DataType(INTEGER) String NEEDS_SYNC = "needsSync";
   }

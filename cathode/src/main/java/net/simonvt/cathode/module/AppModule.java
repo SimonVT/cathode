@@ -101,7 +101,7 @@ import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncAnticipatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
-import net.simonvt.cathode.remote.sync.movies.SyncMovieCrew;
+import net.simonvt.cathode.remote.sync.movies.SyncMovieCredits;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesCollection;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesRatings;
@@ -109,6 +109,8 @@ import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchlist;
 import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies;
+import net.simonvt.cathode.remote.sync.people.SyncPersonMovieCredits;
+import net.simonvt.cathode.remote.sync.people.SyncPersonShowCredits;
 import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncAnticipatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
@@ -119,7 +121,7 @@ import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncSeasons;
 import net.simonvt.cathode.remote.sync.shows.SyncSeasonsRatings;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
-import net.simonvt.cathode.remote.sync.shows.SyncShowCast;
+import net.simonvt.cathode.remote.sync.shows.SyncShowCredits;
 import net.simonvt.cathode.remote.sync.shows.SyncShowCollectedStatus;
 import net.simonvt.cathode.remote.sync.shows.SyncShowRecommendations;
 import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
@@ -135,6 +137,7 @@ import net.simonvt.cathode.scheduler.CommentsTaskScheduler;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.scheduler.PersonTaskScheduler;
 import net.simonvt.cathode.scheduler.SearchTaskScheduler;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
@@ -144,6 +147,7 @@ import net.simonvt.cathode.service.SyncWatchingReceiver;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.ui.HiddenItems;
 import net.simonvt.cathode.ui.HomeActivity;
+import net.simonvt.cathode.ui.credits.CreditsFragment;
 import net.simonvt.cathode.ui.fragment.RelatedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.RelatedShowsFragment;
 import net.simonvt.cathode.ui.login.LoginActivity;
@@ -194,6 +198,7 @@ import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
 import net.simonvt.cathode.ui.lists.UpdateListFragment;
+import net.simonvt.cathode.ui.person.PersonFragment;
 import net.simonvt.cathode.ui.setup.CalendarSetupActivity;
 import net.simonvt.cathode.widget.PhoneEpisodeView;
 import net.simonvt.cathode.widget.RemoteImageView;
@@ -210,7 +215,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         // Task schedulers
         EpisodeTaskScheduler.class, MovieTaskScheduler.class, SeasonTaskScheduler.class,
         ShowTaskScheduler.class, SearchTaskScheduler.class, ListsTaskScheduler.class,
-        CommentsTaskScheduler.class,
+        CommentsTaskScheduler.class, PersonTaskScheduler.class,
 
         // Database helpers
         ShowDatabaseHelper.class, SeasonDatabaseHelper.class, EpisodeDatabaseHelper.class,
@@ -230,7 +235,8 @@ import net.simonvt.cathode.widget.RemoteImageView;
         ListFragment.class, CommentsFragment.class, CommentFragment.class, ListsFragment.class,
         AnticipatedShowsFragment.class, AnticipatedMoviesFragment.class, StatsFragment.class,
         SearchFragment.class, UpdateListFragment.class, SettingsActivity.SettingsFragment.class,
-        RelatedShowsFragment.class, RelatedMoviesFragment.class,
+        RelatedShowsFragment.class, RelatedMoviesFragment.class, PersonFragment.class,
+        CreditsFragment.class,
 
         // Dialogs
         RatingDialog.class, CheckInDialog.class, CheckInDialog.Injections.class, ListsDialog.class,
@@ -258,11 +264,11 @@ import net.simonvt.cathode.widget.RemoteImageView;
         RateEpisode.class, WatchedEpisode.class, WatchlistEpisode.class, CollectSeason.class,
         WatchedSeason.class, RateShow.class, WatchedShow.class, WatchlistShow.class,
         PurgeDatabase.class, SyncJob.class, SyncUserActivity.class, SyncUserSettings.class,
-        SyncWatching.class, SyncMovieCrew.class, SyncMovieRecommendations.class,
+        SyncWatching.class, SyncMovieCredits.class, SyncMovieRecommendations.class,
         SyncMoviesCollection.class, SyncMoviesRatings.class, SyncWatchedMovies.class,
         SyncMoviesWatchlist.class, SyncMovie.class, SyncTrendingMovies.class,
         StartSyncUpdatedMovies.class, SyncEpisodesRatings.class, SyncEpisodeWatchlist.class,
-        SyncSeasonsRatings.class, SyncSeasons.class, SyncSeason.class, SyncShowCast.class,
+        SyncSeasonsRatings.class, SyncSeasons.class, SyncSeason.class, SyncShowCredits.class,
         SyncShowCollectedStatus.class, SyncShowRecommendations.class, SyncShowsCollection.class,
         SyncShowsRatings.class, SyncWatchedShows.class, SyncShowsWatchlist.class, SyncShow.class,
         SyncShowWatchedStatus.class, SyncTrendingShows.class, StartSyncUpdatedShows.class,
@@ -277,6 +283,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         CollectedHideShow.class, CalendarHideMovie.class, WatchedHideMovie.class,
         CollectedHideMovie.class, SyncAnticipatedShows.class, SyncAnticipatedMovies.class,
         UpdateList.class, DeleteList.class, SyncRelatedShows.class, SyncRelatedMovies.class,
+        SyncPersonShowCredits.class, SyncPersonMovieCredits.class,
 
         // Upgrade tasks
         EnsureSync.class, UpperCaseGenres.class,

@@ -26,6 +26,7 @@ import net.simonvt.cathode.api.entity.CastMember;
 import net.simonvt.cathode.api.entity.CrewMember;
 import net.simonvt.cathode.api.entity.People;
 import net.simonvt.cathode.api.entity.Person;
+import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.MoviesService;
 import net.simonvt.cathode.jobqueue.JobFailedException;
@@ -40,7 +41,7 @@ import net.simonvt.cathode.remote.CallJob;
 import retrofit2.Call;
 import timber.log.Timber;
 
-public class SyncMovieCrew extends CallJob<People> {
+public class SyncMovieCredits extends CallJob<People> {
 
   @Inject transient MoviesService moviesService;
 
@@ -48,12 +49,12 @@ public class SyncMovieCrew extends CallJob<People> {
 
   private long traktId;
 
-  public SyncMovieCrew(long traktId) {
+  public SyncMovieCredits(long traktId) {
     this.traktId = traktId;
   }
 
   @Override public String key() {
-    return "SyncMovieCrew" + "&traktId=" + traktId;
+    return "SyncMovieCredits" + "&traktId=" + traktId;
   }
 
   @Override public int getPriority() {
@@ -95,14 +96,14 @@ public class SyncMovieCrew extends CallJob<People> {
 
     People.Crew crew = people.getCrew();
     if (crew != null) {
-      insertCrew(ops, movieId, "production", crew.getProduction());
-      insertCrew(ops, movieId, "art", crew.getArt());
-      insertCrew(ops, movieId, "crew", crew.getCrew());
-      insertCrew(ops, movieId, "costume & make-up", crew.getCostumeAndMakeUp());
-      insertCrew(ops, movieId, "directing", crew.getDirecting());
-      insertCrew(ops, movieId, "writing", crew.getWriting());
-      insertCrew(ops, movieId, "sound", crew.getSound());
-      insertCrew(ops, movieId, "camera", crew.getCamera());
+      insertCrew(ops, movieId, Department.PRODUCTION, crew.getProduction());
+      insertCrew(ops, movieId, Department.ART, crew.getArt());
+      insertCrew(ops, movieId, Department.CREW, crew.getCrew());
+      insertCrew(ops, movieId, Department.COSTUME_AND_MAKEUP, crew.getCostumeAndMakeUp());
+      insertCrew(ops, movieId, Department.DIRECTING, crew.getDirecting());
+      insertCrew(ops, movieId, Department.WRITING, crew.getWriting());
+      insertCrew(ops, movieId, Department.SOUND, crew.getSound());
+      insertCrew(ops, movieId, Department.CAMERA, crew.getCamera());
     }
 
     try {
@@ -116,8 +117,8 @@ public class SyncMovieCrew extends CallJob<People> {
     }
   }
 
-  private void insertCrew(ArrayList<ContentProviderOperation> ops, long movieId, String category,
-      List<CrewMember> crew) {
+  private void insertCrew(ArrayList<ContentProviderOperation> ops, long movieId,
+      Department department, List<CrewMember> crew) {
     if (crew == null) {
       return;
     }
@@ -128,7 +129,7 @@ public class SyncMovieCrew extends CallJob<People> {
       ContentProviderOperation op = ContentProviderOperation.newInsert(MovieCrew.MOVIE_CREW)
           .withValue(MovieCrewColumns.MOVIE_ID, movieId)
           .withValue(MovieCrewColumns.PERSON_ID, personId)
-          .withValue(MovieCrewColumns.CATEGORY, category)
+          .withValue(MovieCrewColumns.CATEGORY, department.toString())
           .withValue(MovieCrewColumns.JOB, crewMember.getJob())
           .build();
       ops.add(op);

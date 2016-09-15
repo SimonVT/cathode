@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2016 Simon Vig Therkildsen
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/contentBackground"
+    android:paddingBottom="16dp">
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:paddingLeft="16dp"
+      android:paddingTop="8dp"
+      android:paddingRight="16dp">
+
+    <net.simonvt.cathode.widget.RemoteImageView
+        android:id="@+id/headshot"
+        android:layout_width="96dp"
+        android:layout_height="wrap_content"
+        app:dominantMeasurement="width"
+        app:aspectRatio="1.5"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical">
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Born"/>
+
+      <TextView
+          android:id="@+id/birthday"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          tools:text="1956-03-07"/>
+
+      <TextView
+          android:id="@+id/birthplace"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          tools:text="San Fernando Valley, California, USA"/>
+
+      <TextView
+          android:id="@+id/death"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          tools:text="1956-03-07"/>
+    </LinearLayout>
+  </LinearLayout>
+
+  <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/biography"
+      style="@style/Widget.InfoTitle"/>
+
+  <TextView
+      android:id="@+id/biography"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      tools:text="A biography"
+      style="@style/Widget.InfoText"/>
+
+  <LinearLayout
+      android:id="@+id/cast_header"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:visibility="gone"
+      tools:visibility="visible"
+      style="@style/Person.Header">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/person_department_cast"
+        style="@style/Card.Title"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/card_more"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textColor="?android:attr/textColorSecondary"/>
+  </LinearLayout>
+
+  <LinearLayout
+      android:id="@+id/cast_items"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:weightSum="@integer/personCreditColumns"
+      android:orientation="horizontal"
+      android:visibility="gone"
+      tools:visibility="visible"/>
+
+  <LinearLayout
+      android:id="@+id/production_header"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:visibility="gone"
+      tools:visibility="visible"
+      style="@style/Person.Header">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/person_department_production"
+        style="@style/Card.Title"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/card_more"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textColor="?android:attr/textColorSecondary"/>
+  </LinearLayout>
+
+  <LinearLayout
+      android:id="@+id/production_items"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:weightSum="@integer/personCreditColumns"
+      android:orientation="horizontal"
+      android:visibility="gone"
+      tools:visibility="visible"/>
+
+  <LinearLayout
+      android:id="@+id/art_header"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:visibility="gone"
+      tools:visibility="visible"
+      style="@style/Person.Header">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/person_department_art"
+        style="@style/Card.Title"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/card_more"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textColor="?android:attr/textColorSecondary"/>
+  </LinearLayout>
+
+  <LinearLayout
+      android:id="@+id/art_items"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:weightSum="@integer/personCreditColumns"
+      android:orientation="horizontal"
+      android:visibility="gone"
+      tools:visibility="visible"/>
+
+  <LinearLayout
+      android:id="@+id/crew_header"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:visibility="gone"
+      tools:visibility="visible"
+      style="@style/Person.Header">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/person_department_crew"
+        style="@style/Card.Title"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/card_more"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textColor="?android:attr/textColorSecondary"/>
+  </LinearLayout>
+
+  <LinearLayout
+      android:id="@+id/crew_items"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:weightSum="@integer/personCreditColumns"
+      android:orientation="horizontal"
+      android:visibility="gone"
+      tools:visibility="visible"/>
+
+  <LinearLayout
+      android:id="@+id/costume_makeup_header"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:visibility="gone"
+      tools:visibility="visible"
+      style="@style/Person.Header">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/person_department_costume_makeup"
+        style="@style/Card.Title"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/card_more"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textColor="?android:attr/textColorSecondary"/>
+  </LinearLayout>
+
+  <LinearLayout
+      android:id="@+id/costume_makeup_items"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:weightSum="@integer/personCreditColumns"
+      android:orientation="horizontal"
+      android:visibility="gone"
+      tools:visibility="visible"/>
+
+  <LinearLayout
+      android:id="@+id/directing_header"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:visibility="gone"
+      tools:visibility="visible"
+      style="@style/Person.Header">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/person_department_directing"
+        style="@style/Card.Title"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/card_more"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textColor="?android:attr/textColorSecondary"/>
+  </LinearLayout>
+
+  <LinearLayout
+      android:id="@+id/directing_items"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:weightSum="@integer/personCreditColumns"
+      android:orientation="horizontal"
+      android:visibility="gone"
+      tools:visibility="visible"/>
+
+  <LinearLayout
+      android:id="@+id/writing_header"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:visibility="gone"
+      tools:visibility="visible"
+      style="@style/Person.Header">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/person_department_writing"
+        style="@style/Card.Title"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/card_more"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textColor="?android:attr/textColorSecondary"/>
+  </LinearLayout>
+
+  <LinearLayout
+      android:id="@+id/writing_items"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:weightSum="@integer/personCreditColumns"
+      android:orientation="horizontal"
+      android:visibility="gone"
+      tools:visibility="visible"/>
+
+  <LinearLayout
+      android:id="@+id/sound_header"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:visibility="gone"
+      tools:visibility="visible"
+      style="@style/Person.Header">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/person_department_sound"
+        style="@style/Card.Title"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/card_more"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textColor="?android:attr/textColorSecondary"/>
+  </LinearLayout>
+
+  <LinearLayout
+      android:id="@+id/sound_items"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:weightSum="@integer/personCreditColumns"
+      android:orientation="horizontal"
+      android:visibility="gone"
+      tools:visibility="visible"/>
+
+  <LinearLayout
+      android:id="@+id/camera_header"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:visibility="gone"
+      tools:visibility="visible"
+      style="@style/Person.Header">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/person_department_camera"
+        style="@style/Card.Title"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/card_more"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textColor="?android:attr/textColorSecondary"/>
+  </LinearLayout>
+
+  <LinearLayout
+      android:id="@+id/camera_items"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:weightSum="@integer/personCreditColumns"
+      android:orientation="horizontal"
+      android:visibility="gone"
+      tools:visibility="visible"/>
+</LinearLayout>

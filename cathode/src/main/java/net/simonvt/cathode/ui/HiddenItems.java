@@ -25,6 +25,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -32,7 +33,8 @@ import net.simonvt.cathode.provider.DatabaseContract.HiddenColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.ui.adapter.HiddenItemsAdapter;
-import net.simonvt.cathode.ui.fragment.ActorsFragment;
+import net.simonvt.cathode.ui.credits.CreditFragment;
+import net.simonvt.cathode.ui.credits.CreditsFragment;
 import net.simonvt.cathode.ui.fragment.CommentFragment;
 import net.simonvt.cathode.ui.fragment.CommentsFragment;
 import net.simonvt.cathode.ui.fragment.EpisodeFragment;
@@ -41,6 +43,8 @@ import net.simonvt.cathode.ui.fragment.SeasonFragment;
 import net.simonvt.cathode.ui.fragment.ShowFragment;
 import net.simonvt.cathode.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.ui.lists.ListFragment;
+import net.simonvt.cathode.ui.person.PersonCreditsFragment;
+import net.simonvt.cathode.ui.person.PersonFragment;
 import net.simonvt.cathode.util.FragmentStack;
 
 public class HiddenItems extends BaseActivity
@@ -121,10 +125,6 @@ public class HiddenItems extends BaseActivity
         SeasonFragment.getArgs(showId, seasonId, showTitle, seasonNumber, type));
   }
 
-  @Override public void onDisplayShowActors(long showId, String title) {
-    stack.push(ActorsFragment.class, ActorsFragment.TAG, ActorsFragment.forShow(showId, title));
-  }
-
   @Override public void onDisplayRelatedShows(long showId, String title) {
     throw new RuntimeException("Not implemented");
   }
@@ -132,10 +132,6 @@ public class HiddenItems extends BaseActivity
   @Override public void onDisplayMovie(long movieId, String title, String overview) {
     stack.push(MovieFragment.class, MovieFragment.getTag(movieId),
         MovieFragment.getArgs(movieId, title, overview));
-  }
-
-  @Override public void onDisplayMovieActors(long movieId, String title) {
-    stack.push(ActorsFragment.class, ActorsFragment.TAG, ActorsFragment.forMovie(movieId, title));
   }
 
   @Override public void onDisplayRelatedMovies(long movieId, String title) {
@@ -163,6 +159,26 @@ public class HiddenItems extends BaseActivity
 
   @Override public void onDisplayComment(long commentId) {
     stack.push(CommentFragment.class, CommentFragment.TAG, CommentFragment.getArgs(commentId));
+  }
+
+  @Override public void onDisplayPerson(long personId) {
+    stack.push(PersonFragment.class, PersonFragment.getTag(personId),
+        PersonFragment.getArgs(personId));
+  }
+
+  @Override public void onDisplayPersonCredit(long personId, Department department) {
+    stack.push(PersonCreditsFragment.class, PersonCreditsFragment.getTag(personId),
+        PersonCreditsFragment.getArgs(personId, department));
+  }
+
+  @Override public void onDisplayCredit(ItemType itemType, long itemId, Department department) {
+    stack.push(CreditFragment.class, CreditFragment.getTag(itemId),
+        CreditFragment.getArgs(itemType, itemId, department));
+  }
+
+  @Override public void onDisplayCredits(ItemType itemType, long itemId, String title) {
+    stack.push(CreditsFragment.class, CreditsFragment.getTag(itemId),
+        CreditsFragment.getArgs(itemType, itemId, title));
   }
 
   @Override public void displayFragment(Class clazz, String tag) {

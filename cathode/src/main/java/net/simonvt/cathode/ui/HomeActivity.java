@@ -36,6 +36,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -52,7 +53,8 @@ import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.search.SearchFragment;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.ui.fragment.ActorsFragment;
+import net.simonvt.cathode.ui.credits.CreditFragment;
+import net.simonvt.cathode.ui.credits.CreditsFragment;
 import net.simonvt.cathode.ui.fragment.CommentFragment;
 import net.simonvt.cathode.ui.fragment.CommentsFragment;
 import net.simonvt.cathode.ui.fragment.DashboardFragment;
@@ -76,6 +78,8 @@ import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
 import net.simonvt.cathode.ui.lists.ListFragment;
 import net.simonvt.cathode.ui.lists.ListsFragment;
 import net.simonvt.cathode.ui.login.LoginActivity;
+import net.simonvt.cathode.ui.person.PersonCreditsFragment;
+import net.simonvt.cathode.ui.person.PersonFragment;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.util.FragmentStack;
 import net.simonvt.cathode.util.MainHandler;
@@ -480,10 +484,6 @@ public class HomeActivity extends BaseActivity
         SeasonFragment.getArgs(showId, seasonId, showTitle, seasonNumber, type));
   }
 
-  @Override public void onDisplayShowActors(long showId, String title) {
-    stack.push(ActorsFragment.class, ActorsFragment.TAG, ActorsFragment.forShow(showId, title));
-  }
-
   @Override public void onDisplayRelatedShows(long showId, String title) {
     stack.push(RelatedShowsFragment.class, RelatedShowsFragment.getTag(showId),
         RelatedShowsFragment.getArgs(showId));
@@ -492,10 +492,6 @@ public class HomeActivity extends BaseActivity
   @Override public void onDisplayMovie(long movieId, String title, String overview) {
     stack.push(MovieFragment.class, MovieFragment.getTag(movieId),
         MovieFragment.getArgs(movieId, title, overview));
-  }
-
-  @Override public void onDisplayMovieActors(long movieId, String title) {
-    stack.push(ActorsFragment.class, ActorsFragment.TAG, ActorsFragment.forMovie(movieId, title));
   }
 
   @Override public void onDisplayRelatedMovies(long movieId, String title) {
@@ -524,6 +520,26 @@ public class HomeActivity extends BaseActivity
 
   @Override public void onDisplayComment(long commentId) {
     stack.push(CommentFragment.class, CommentFragment.TAG, CommentFragment.getArgs(commentId));
+  }
+
+  @Override public void onDisplayPerson(long personId) {
+    stack.push(PersonFragment.class, PersonFragment.getTag(personId),
+        PersonFragment.getArgs(personId));
+  }
+
+  @Override public void onDisplayPersonCredit(long personId, Department department) {
+    stack.push(PersonCreditsFragment.class, PersonCreditsFragment.getTag(personId),
+        PersonCreditsFragment.getArgs(personId, department));
+  }
+
+  @Override public void onDisplayCredit(ItemType itemType, long itemId, Department department) {
+    stack.push(CreditFragment.class, CreditFragment.getTag(itemId),
+        CreditFragment.getArgs(itemType, itemId, department));
+  }
+
+  @Override public void onDisplayCredits(ItemType itemType, long itemId, String title) {
+    stack.push(CreditsFragment.class, CreditsFragment.getTag(itemId),
+        CreditsFragment.getArgs(itemType, itemId, title));
   }
 
   @Override public void displayFragment(Class clazz, String tag) {

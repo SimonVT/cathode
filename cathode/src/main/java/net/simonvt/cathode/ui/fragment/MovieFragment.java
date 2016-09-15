@@ -78,7 +78,7 @@ public class MovieFragment extends RefreshableAppBarFragment
 
   private static final int LOADER_MOVIE = 1;
   private static final int LOADER_MOVIE_GENRES = 2;
-  private static final int LOADER_MOVIE_ACTORS = 3;
+  private static final int LOADER_MOVIE_CAST = 3;
   private static final int LOADER_MOVIE_USER_COMMENTS = 4;
   private static final int LOADER_MOVIE_COMMENTS = 5;
   private static final int LOADER_RELATED = 6;
@@ -114,10 +114,10 @@ public class MovieFragment extends RefreshableAppBarFragment
 
   @BindView(R.id.trailer) View trailer;
 
-  @BindView(R.id.actorsParent) View actorsParent;
-  @BindView(R.id.actorsHeader) View actorsHeader;
-  @BindView(R.id.actors) LinearLayout actors;
-  @BindView(R.id.peopleContainer) LinearLayout peopleContainer;
+  @BindView(R.id.castParent) View castParent;
+  @BindView(R.id.castHeader) View castHeader;
+  @BindView(R.id.cast) LinearLayout cast;
+  @BindView(R.id.castContainer) LinearLayout castContainer;
 
   @BindView(R.id.commentsParent) View commentsParent;
   @BindView(R.id.commentsHeader) View commentsHeader;
@@ -211,7 +211,7 @@ public class MovieFragment extends RefreshableAppBarFragment
 
     getLoaderManager().initLoader(LOADER_MOVIE, null, this);
     getLoaderManager().initLoader(LOADER_MOVIE_GENRES, null, genresLoader);
-    getLoaderManager().initLoader(LOADER_MOVIE_ACTORS, null, actorsLoader);
+    getLoaderManager().initLoader(LOADER_MOVIE_CAST, null, castLoader);
     getLoaderManager().initLoader(LOADER_MOVIE_USER_COMMENTS, null, userCommentsLoader);
     getLoaderManager().initLoader(LOADER_MOVIE_COMMENTS, null, commentsLoader);
     getLoaderManager().initLoader(LOADER_RELATED, null, relatedLoader);
@@ -227,8 +227,8 @@ public class MovieFragment extends RefreshableAppBarFragment
         .show(getFragmentManager(), DIALOG_RATING);
   }
 
-  @OnClick(R.id.actorsHeader) void onShowActors() {
-    navigationListener.onDisplayMovieActors(movieId, movieTitle);
+  @OnClick(R.id.castHeader) void onDisplayCast() {
+    navigationListener.onDisplayCredits(ItemType.MOVIE, movieId, movieTitle);
   }
 
   @OnClick(R.id.commentsHeader) void onShowComments() {
@@ -428,9 +428,9 @@ public class MovieFragment extends RefreshableAppBarFragment
       movieScheduler.syncComments(movieId);
     }
 
-    final long lastActorsSync = Cursors.getLong(cursor, MovieColumns.LAST_CREW_SYNC);
-    if (lastSync > lastActorsSync) {
-      movieScheduler.syncCrew(movieId);
+    final long lastCreditsSync = Cursors.getLong(cursor, MovieColumns.LAST_CREDITS_SYNC);
+    if (lastSync > lastCreditsSync) {
+      movieScheduler.syncCredits(movieId, null);
     }
 
     final long lastRelatedSync = Cursors.getLong(cursor, MovieColumns.LAST_RELATED_SYNC);
@@ -525,19 +525,21 @@ public class MovieFragment extends RefreshableAppBarFragment
     }
   }
 
-  private void updateActors(Cursor c) {
-    peopleContainer.removeAllViews();
+  private void updateCast(Cursor c) {
+    castContainer.removeAllViews();
 
     final int count = c.getCount();
     final int visibility = count > 0 ? View.VISIBLE : View.GONE;
-    actorsParent.setVisibility(visibility);
+    castParent.setVisibility(visibility);
 
     int index = 0;
 
     c.moveToPosition(-1);
     while (c.moveToNext() && index < 3) {
       View v =
-          LayoutInflater.from(getActivity()).inflate(R.layout.item_person, peopleContainer, false);
+          LayoutInflater.from(getActivity()).inflate(R.layout.item_person, castContainer, false);
+
+      final long personId = Cursors.getLong(c, MovieCastColumns.PERSON_ID);
 
       RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
       headshot.addTransformation(new CircleTransformation());
@@ -549,7 +551,13 @@ public class MovieFragment extends RefreshableAppBarFragment
       TextView character = (TextView) v.findViewById(R.id.person_job);
       character.setText(Cursors.getString(c, MovieCastColumns.CHARACTER));
 
-      peopleContainer.addView(v);
+      v.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          navigationListener.onDisplayPerson(personId);
+        }
+      });
+
+      castContainer.addView(v);
 
       index++;
     }
@@ -640,7 +648,7 @@ public class MovieFragment extends RefreshableAppBarFragment
       Tables.PEOPLE + "." + PersonColumns.NAME, Tables.PEOPLE + "." + PersonColumns.HEADSHOT,
   };
 
-  private LoaderManager.LoaderCallbacks<SimpleCursor> actorsLoader =
+  private LoaderManager.LoaderCallbacks<SimpleCursor> castLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
           return new SimpleCursorLoader(getActivity(),
@@ -650,7 +658,7 @@ public class MovieFragment extends RefreshableAppBarFragment
 
         @Override
         public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor cursor) {
-          updateActors(cursor);
+          updateCast(cursor);
         }
 
         @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {

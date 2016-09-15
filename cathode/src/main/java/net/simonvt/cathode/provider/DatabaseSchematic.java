@@ -34,8 +34,9 @@ import net.simonvt.cathode.provider.DatabaseContract.RecentQueriesColumns;
 import net.simonvt.cathode.provider.DatabaseContract.RelatedMoviesColumns;
 import net.simonvt.cathode.provider.DatabaseContract.RelatedShowsColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowCharacterColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowCrewColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.generated.CathodeDatabase;
@@ -51,12 +52,13 @@ import net.simonvt.schematic.annotation.Table;
 @Database(className = "CathodeDatabase",
     packageName = "net.simonvt.cathode.provider.generated",
     fileName = "cathode.db",
-    version = DatabaseSchematic.DATABASE_VERSION) public final class DatabaseSchematic {
+    version = DatabaseSchematic.DATABASE_VERSION)
+public final class DatabaseSchematic {
 
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 27;
+  static final int DATABASE_VERSION = 31;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -93,14 +95,53 @@ import net.simonvt.schematic.annotation.Table;
         + "." + MovieColumns.ID + "="
         + Tables.MOVIE_RELATED + "." + RelatedMoviesColumns.RELATED_MOVIE_ID;
 
-    String MOVIE_CAST_PERSON =
-        "JOIN " + Tables.PEOPLE + " AS " + Tables.PEOPLE + " ON " + Tables.PEOPLE + "."
-            + PersonColumns.ID + "=" + Tables.MOVIE_CAST + "." + MovieCastColumns.PERSON_ID;
-
     String SHOW_CAST_PERSON =
         "JOIN " + Tables.PEOPLE + " AS " + Tables.PEOPLE + " ON " + Tables.PEOPLE + "."
-            + PersonColumns.ID + "=" + Tables.SHOW_CHARACTERS + "."
-            + ShowCharacterColumns.PERSON_ID;
+            + PersonColumns.ID + "=" + Tables.SHOW_CAST + "."
+            + ShowCastColumns.PERSON_ID;
+
+    String SHOW_CAST_SHOW =
+        "JOIN " + Tables.SHOWS + " AS " + Tables.SHOWS + " ON " + Tables.SHOWS + "."
+            + ShowColumns.ID + "=" + Tables.SHOW_CAST + "."
+            + ShowCrewColumns.SHOW_ID;
+
+    String SHOW_CAST = SHOW_CAST_PERSON + " " + SHOW_CAST_SHOW;
+
+    String SHOW_CREW_PERSON =
+        "JOIN " + Tables.PEOPLE + " AS " + Tables.PEOPLE + " ON " + Tables.PEOPLE + "."
+            + PersonColumns.ID + "=" + Tables.SHOW_CREW + "."
+            + ShowCrewColumns.PERSON_ID;
+
+    String SHOW_CREW_SHOW =
+        "JOIN " + Tables.SHOWS + " AS " + Tables.SHOWS + " ON " + Tables.SHOWS + "."
+            + ShowColumns.ID + "=" + Tables.SHOW_CREW + "."
+            + ShowCrewColumns.SHOW_ID;
+
+    String SHOW_CREW = SHOW_CREW_PERSON + " " + SHOW_CREW_SHOW;
+
+    String MOVIE_CAST_PERSON =
+        "JOIN " + Tables.PEOPLE + " AS " + Tables.PEOPLE + " ON " + Tables.PEOPLE + "."
+            + PersonColumns.ID + "=" + Tables.MOVIE_CAST + "."
+            + MovieCastColumns.PERSON_ID;
+
+    String MOVIE_CAST_MOVIE =
+        "JOIN " + Tables.MOVIES + " AS " + Tables.MOVIES + " ON " + Tables.MOVIES + "."
+            + MovieColumns.ID + "=" + Tables.MOVIE_CAST + "."
+            + MovieCrewColumns.MOVIE_ID;
+
+    String MOVIE_CAST = MOVIE_CAST_PERSON + " " + MOVIE_CAST_MOVIE;
+
+    String MOVIE_CREW_PERSON =
+        "JOIN " + Tables.PEOPLE + " AS " + Tables.PEOPLE + " ON " + Tables.PEOPLE + "."
+            + PersonColumns.ID + "=" + Tables.MOVIE_CREW + "."
+            + MovieCrewColumns.PERSON_ID;
+
+    String MOVIE_CREW_MOVIE =
+        "JOIN " + Tables.MOVIES + " AS " + Tables.MOVIES + " ON " + Tables.MOVIES + "."
+            + MovieColumns.ID + "=" + Tables.MOVIE_CREW + "."
+            + MovieCrewColumns.MOVIE_ID;
+
+    String MOVIE_CREW = MOVIE_CREW_PERSON + " " + MOVIE_CREW_MOVIE;
 
     String EPISODES_WITH_SHOW_TITLE =
         "JOIN " + Tables.SHOWS + " AS " + Tables.SHOWS + " ON " + Tables.SHOWS + "."
@@ -140,7 +181,8 @@ import net.simonvt.schematic.annotation.Table;
     @Table(ShowGenreColumns.class) @IfNotExists String SHOW_GENRES = "showGenres";
     @Table(SeasonColumns.class) @IfNotExists String SEASONS = "seasons";
     @Table(EpisodeColumns.class) @IfNotExists String EPISODES = "episodes";
-    @Table(ShowCharacterColumns.class) @IfNotExists String SHOW_CHARACTERS = "showCharacters";
+    @Table(ShowCastColumns.class) @IfNotExists String SHOW_CAST = "showCast";
+    @Table(ShowCrewColumns.class) @IfNotExists String SHOW_CREW = "showCrew";
     @Table(RelatedShowsColumns.class) @IfNotExists String SHOW_RELATED =
         "relatedShows";
 
@@ -288,8 +330,8 @@ import net.simonvt.schematic.annotation.Table;
             + ShowGenreColumns.SHOW_ID + "=OLD." + ShowColumns.ID + ";";
 
     String SHOW_DELETE_CHARACTERS =
-        "DELETE FROM " + Tables.SHOW_CHARACTERS + " WHERE " + Tables.SHOW_CHARACTERS + "."
-            + ShowCharacterColumns.SHOW_ID + "=OLD." + ShowColumns.ID + ";";
+        "DELETE FROM " + Tables.SHOW_CAST + " WHERE " + Tables.SHOW_CAST + "."
+            + ShowCastColumns.SHOW_ID + "=OLD." + ShowColumns.ID + ";";
 
     String SHOW_DELETE_COMMENTS =
         "DELETE FROM " + Tables.COMMENTS + " WHERE " + Tables.COMMENTS + "."
@@ -446,8 +488,8 @@ import net.simonvt.schematic.annotation.Table;
   @ExecOnCreate public static final String INDEX_CHARACTERS_SHOW_ID =
       SqlIndex.index("characterShowId")
           .ifNotExists()
-          .onTable(Tables.SHOW_CHARACTERS)
-          .forColumns(ShowCharacterColumns.SHOW_ID)
+          .onTable(Tables.SHOW_CAST)
+          .forColumns(ShowCastColumns.SHOW_ID)
           .build();
 
   @ExecOnCreate public static final String INDEX_SEASON_SHOW_ID = SqlIndex.index("seasonShowId")
@@ -528,7 +570,7 @@ import net.simonvt.schematic.annotation.Table;
           DataType.Type.INTEGER, "0");
       SqlUtils.createColumnIfNotExists(db, Tables.EPISODES, LastModifiedColumns.LAST_MODIFIED,
           DataType.Type.INTEGER, "0");
-      SqlUtils.createColumnIfNotExists(db, Tables.SHOW_CHARACTERS,
+      SqlUtils.createColumnIfNotExists(db, Tables.SHOW_CAST,
           LastModifiedColumns.LAST_MODIFIED, DataType.Type.INTEGER, "0");
 
       SqlUtils.createColumnIfNotExists(db, Tables.MOVIES, LastModifiedColumns.LAST_MODIFIED,
@@ -661,24 +703,24 @@ import net.simonvt.schematic.annotation.Table;
     if (oldVersion < 21) {
       SqlUtils.createColumnIfNotExists(db, Tables.SHOWS, ShowColumns.LAST_SYNC,
           DataType.Type.INTEGER, "0");
-      SqlUtils.createColumnIfNotExists(db, Tables.SHOWS, ShowColumns.LAST_ACTORS_SYNC,
+      SqlUtils.createColumnIfNotExists(db, Tables.SHOWS, ShowColumns.LAST_CREDITS_SYNC,
           DataType.Type.INTEGER, "0");
       SqlUtils.createColumnIfNotExists(db, Tables.MOVIES, MovieColumns.LAST_SYNC,
           DataType.Type.INTEGER, "0");
-      SqlUtils.createColumnIfNotExists(db, Tables.MOVIES, MovieColumns.LAST_CREW_SYNC,
+      SqlUtils.createColumnIfNotExists(db, Tables.MOVIES, MovieColumns.LAST_CREDITS_SYNC,
           DataType.Type.INTEGER, "0");
 
       final long currentTime = System.currentTimeMillis();
 
       ContentValues values = new ContentValues();
       values.put(ShowColumns.LAST_SYNC, currentTime);
-      values.put(ShowColumns.LAST_ACTORS_SYNC, currentTime);
+      values.put(ShowColumns.LAST_CREDITS_SYNC, currentTime);
 
       db.update(Tables.SHOWS, values, null, null);
 
       values = new ContentValues();
       values.put(MovieColumns.LAST_SYNC, currentTime);
-      values.put(MovieColumns.LAST_CREW_SYNC, currentTime);
+      values.put(MovieColumns.LAST_CREDITS_SYNC, currentTime);
 
       db.update(Tables.MOVIES, values, null, null);
     }
@@ -717,6 +759,28 @@ import net.simonvt.schematic.annotation.Table;
       SqlUtils.createColumnIfNotExists(db, Tables.SHOWS, ShowColumns.LAST_RELATED_SYNC,
           DataType.Type.INTEGER, "0");
       SqlUtils.createColumnIfNotExists(db, Tables.MOVIES, MovieColumns.LAST_RELATED_SYNC,
+          DataType.Type.INTEGER, "0");
+    }
+
+    if (oldVersion < 28) {
+      db.execSQL("ALTER TABLE showCharacters RENAME TO " + Tables.SHOW_CAST);
+      db.execSQL(CathodeDatabase.SHOW_CREW);
+    }
+
+    if (oldVersion < 29) {
+      SqlUtils.createColumnIfNotExists(db, Tables.PEOPLE, PersonColumns.FANART, DataType.Type.TEXT,
+          null);
+    }
+
+    if (oldVersion < 30) {
+      SqlUtils.createColumnIfNotExists(db, Tables.PEOPLE, PersonColumns.LAST_SYNC,
+          DataType.Type.INTEGER, "0");
+    }
+
+    if (oldVersion < 31) {
+      SqlUtils.createColumnIfNotExists(db, Tables.SHOWS, ShowColumns.LAST_CREDITS_SYNC,
+          DataType.Type.INTEGER, "0");
+      SqlUtils.createColumnIfNotExists(db, Tables.MOVIES, MovieColumns.LAST_CREDITS_SYNC,
           DataType.Type.INTEGER, "0");
     }
   }

@@ -16,13 +16,18 @@
 
 package net.simonvt.cathode.jobqueue;
 
+import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.OperationApplicationException;
+import android.os.RemoteException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.util.MainHandler;
+import timber.log.Timber;
 
 public abstract class Job {
 
@@ -107,6 +112,16 @@ public abstract class Job {
 
   protected final ContentResolver getContentResolver() {
     return context.getContentResolver();
+  }
+
+  protected final void applyBatch(ArrayList<ContentProviderOperation> ops) {
+    try {
+      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
+    } catch (RemoteException e) {
+      Timber.e(e);
+    } catch (OperationApplicationException e) {
+      Timber.e(e);
+    }
   }
 
   public void setFlags(int flags) {

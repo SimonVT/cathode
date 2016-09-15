@@ -52,7 +52,7 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.HiddenColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.RelatedShowsColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowCharacterColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
@@ -112,7 +112,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private static final int LOADER_SHOW_COLLECT = 3;
   private static final int LOADER_SHOW_GENRES = 4;
   private static final int LOADER_SHOW_SEASONS = 5;
-  private static final int LOADER_SHOW_ACTORS = 6;
+  private static final int LOADER_SHOW_CAST = 6;
   private static final int LOADER_SHOW_USER_COMMENTS = 7;
   private static final int LOADER_SHOW_COMMENTS = 8;
   private static final int LOADER_RELATED = 9;
@@ -122,7 +122,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       ShowColumns.NETWORK, ShowColumns.CERTIFICATION, ShowColumns.POSTER, ShowColumns.FANART,
       ShowColumns.USER_RATING, ShowColumns.RATING, ShowColumns.OVERVIEW, ShowColumns.IN_WATCHLIST,
       ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT, ShowColumns.LAST_SYNC,
-      ShowColumns.LAST_COMMENT_SYNC, ShowColumns.LAST_ACTORS_SYNC, ShowColumns.LAST_RELATED_SYNC,
+      ShowColumns.LAST_COMMENT_SYNC, ShowColumns.LAST_CREDITS_SYNC, ShowColumns.LAST_RELATED_SYNC,
       ShowColumns.HOMEPAGE, ShowColumns.TRAILER, ShowColumns.IMDB_ID, ShowColumns.TVDB_ID,
       ShowColumns.TMDB_ID, ShowColumns.NEEDS_SYNC, HiddenColumns.HIDDEN_CALENDAR,
   };
@@ -162,10 +162,10 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   @BindView(R.id.trailer) View trailer;
 
-  @BindView(R.id.actorsParent) View actorsParent;
-  @BindView(R.id.actorsHeader) View actorsHeader;
-  @BindView(R.id.actors) LinearLayout actors;
-  @BindView(R.id.peopleContainer) LinearLayout peopleContainer;
+  @BindView(R.id.castParent) View castParent;
+  @BindView(R.id.castHeader) View castHeader;
+  @BindView(R.id.cast) LinearLayout cast;
+  @BindView(R.id.castContainer) LinearLayout castContainer;
 
   @BindView(R.id.commentsParent) View commentsParent;
   @BindView(R.id.commentsHeader) View commentsHeader;
@@ -325,9 +325,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
       }
     });
 
-    actorsHeader.setOnClickListener(new View.OnClickListener() {
+    castHeader.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        navigationCallbacks.onDisplayShowActors(showId, showTitle);
+        navigationCallbacks.onDisplayCredits(ItemType.SHOW, showId, showTitle);
       }
     });
 
@@ -469,7 +469,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
     getLoaderManager().initLoader(LOADER_SHOW, null, showCallbacks);
     getLoaderManager().initLoader(LOADER_SHOW_GENRES, null, genreCallbacks);
-    getLoaderManager().initLoader(LOADER_SHOW_ACTORS, null, charactersCallback);
+    getLoaderManager().initLoader(LOADER_SHOW_CAST, null, castCallback);
     getLoaderManager().initLoader(LOADER_SHOW_WATCH, null, episodeWatchCallbacks);
     getLoaderManager().initLoader(LOADER_SHOW_COLLECT, null, episodeCollectCallbacks);
     getLoaderManager().initLoader(LOADER_SHOW_SEASONS, null, seasonsLoader);
@@ -611,9 +611,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
       showScheduler.syncComments(showId);
     }
 
-    final long lastActorsSync = Cursors.getLong(cursor, ShowColumns.LAST_ACTORS_SYNC);
+    final long lastActorsSync = Cursors.getLong(cursor, ShowColumns.LAST_CREDITS_SYNC);
     if (lastSync > lastActorsSync) {
-      showScheduler.syncActors(showId);
+      showScheduler.syncCredits(showId, null);
     }
 
     final long lastRelatedSync = Cursors.getLong(cursor, ShowColumns.LAST_RELATED_SYNC);
@@ -707,19 +707,21 @@ public class ShowFragment extends RefreshableAppBarFragment {
     }
   }
 
-  private void updateActorViews(Cursor c) {
-    peopleContainer.removeAllViews();
+  private void updateCastViews(Cursor c) {
+    castContainer.removeAllViews();
 
     final int count = c.getCount();
     final int visibility = count > 0 ? View.VISIBLE : View.GONE;
-    actorsParent.setVisibility(visibility);
+    castParent.setVisibility(visibility);
 
     int index = 0;
 
     c.moveToPosition(-1);
     while (c.moveToNext() && index < 3) {
       View v =
-          LayoutInflater.from(getActivity()).inflate(R.layout.item_person, peopleContainer, false);
+          LayoutInflater.from(getActivity()).inflate(R.layout.item_person, castContainer, false);
+
+      final long personId = Cursors.getLong(c, ShowCastColumns.PERSON_ID);
 
       RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
       headshot.addTransformation(new CircleTransformation());
@@ -729,9 +731,15 @@ public class ShowFragment extends RefreshableAppBarFragment {
       name.setText(Cursors.getString(c, PersonColumns.NAME));
 
       TextView character = (TextView) v.findViewById(R.id.person_job);
-      character.setText(Cursors.getString(c, ShowCharacterColumns.CHARACTER));
+      character.setText(Cursors.getString(c, ShowCastColumns.CHARACTER));
 
-      peopleContainer.addView(v);
+      v.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          navigationCallbacks.onDisplayPerson(personId);
+        }
+      });
+
+      castContainer.addView(v);
 
       index++;
     }
@@ -962,22 +970,23 @@ public class ShowFragment extends RefreshableAppBarFragment {
         }
       };
 
-  private static final String[] CHARACTERS_PROJECTION = new String[] {
-      Tables.SHOW_CHARACTERS + "." + ShowCharacterColumns.ID,
-      Tables.SHOW_CHARACTERS + "." + ShowCharacterColumns.CHARACTER,
-      Tables.PEOPLE + "." + PersonColumns.NAME, Tables.PEOPLE + "." + PersonColumns.HEADSHOT,
+  private static final String[] CAST_PROJECTION = new String[] {
+      Tables.SHOW_CAST + "." + ShowCastColumns.ID,
+      Tables.SHOW_CAST + "." + ShowCastColumns.CHARACTER,
+      Tables.SHOW_CAST + "." + ShowCastColumns.PERSON_ID,
+      Tables.PEOPLE + "." + PersonColumns.NAME,
+      Tables.PEOPLE + "." + PersonColumns.HEADSHOT,
   };
 
-  private LoaderManager.LoaderCallbacks<SimpleCursor> charactersCallback =
+  private LoaderManager.LoaderCallbacks<SimpleCursor> castCallback =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(),
-              ProviderSchematic.ShowCharacters.fromShow(showId), CHARACTERS_PROJECTION,
-              Tables.PEOPLE + "." + PersonColumns.NEEDS_SYNC + "=0", null, null);
+          return new SimpleCursorLoader(getActivity(), ProviderSchematic.ShowCast.fromShow(showId),
+              CAST_PROJECTION, Tables.PEOPLE + "." + PersonColumns.NEEDS_SYNC + "=0", null, null);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          updateActorViews(data);
+          updateCastViews(data);
         }
 
         @Override public void onLoaderReset(Loader<SimpleCursor> loader) {

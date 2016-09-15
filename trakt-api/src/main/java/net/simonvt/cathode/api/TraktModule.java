@@ -24,6 +24,7 @@ import javax.inject.Singleton;
 import net.simonvt.cathode.api.entity.IsoTime;
 import net.simonvt.cathode.api.enumeration.Action;
 import net.simonvt.cathode.api.enumeration.CommentType;
+import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.Gender;
 import net.simonvt.cathode.api.enumeration.GrantType;
 import net.simonvt.cathode.api.enumeration.HiddenSection;
@@ -229,6 +230,13 @@ public class TraktModule {
       @Override public ItemTypes deserialize(JsonElement json, Type typeOfT,
           JsonDeserializationContext context) throws JsonParseException {
         return ItemTypes.fromValue(json.getAsString());
+      }
+    });
+
+    builder.registerTypeAdapter(Department.class, new JsonDeserializer<Department>() {
+      @Override public Department deserialize(JsonElement json, Type typeOfT,
+          JsonDeserializationContext context) throws JsonParseException {
+        return Department.fromValue(json.getAsString());
       }
     });
 

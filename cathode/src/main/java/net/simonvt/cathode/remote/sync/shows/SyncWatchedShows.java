@@ -192,7 +192,7 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
         }
       }
 
-      applyBatch(ops);
+      apply(ops);
     }
     Timber.d("Done processing items");
 
@@ -204,10 +204,10 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
       builder.withValues(cv);
       ops.add(builder.build());
     }
-    applyBatch(ops);
+    apply(ops);
   }
 
-  private void applyBatch(ArrayList<ContentProviderOperation> ops) {
+  private void apply(ArrayList<ContentProviderOperation> ops) {
     try {
       getContentResolver().applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
       ops.clear();

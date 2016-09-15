@@ -88,10 +88,18 @@ public final class PersonWrapper {
     cv.put(PersonColumns.TVRAGE_ID, person.getIds().getTvrage());
 
     Images images = person.getImages();
-    if (images != null && images.getHeadshot() != null) {
-      cv.put(PersonColumns.HEADSHOT, images.getHeadshot().getFull());
-    } else {
-      cv.putNull(PersonColumns.HEADSHOT);
+    if (images != null) {
+      if (images.getHeadshot() != null) {
+        cv.put(PersonColumns.HEADSHOT, images.getHeadshot().getFull());
+      } else {
+        cv.putNull(PersonColumns.HEADSHOT);
+      }
+
+      if (images.getFanart() != null) {
+        cv.put(PersonColumns.FANART, images.getFanart().getFull());
+      } else {
+        cv.putNull(PersonColumns.FANART);
+      }
     }
 
     cv.put(PersonColumns.BIOGRAPHY, person.getBiography());

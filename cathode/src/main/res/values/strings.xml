@@ -74,6 +74,7 @@
 
   <string name="overview">Overview</string>
   <string name="genres">Genres</string>
+  <string name="biography">Biography</string>
 
   <string name="to_watch">To watch</string>
   <string name="to_collect">To collect</string>
@@ -83,7 +84,7 @@
 
   <string name="card_more">More</string>
 
-  <string name="title_actors">Actors</string>
+  <string name="title_cast">Cast</string>
   <string name="title_comments">Comments</string>
   <string name="title_comment_add">Add comment</string>
   <string name="title_comment_update">Update comment</string>
@@ -94,6 +95,16 @@
 
   <string name="related_rating">%1$s (%2$s votes)</string>
   <string name="related_rating_thousands">%1$s (%2$sk votes)</string>
+
+  <string name="person_department_cast">Cast</string>
+  <string name="person_department_production">Production</string>
+  <string name="person_department_art">Art</string>
+  <string name="person_department_crew">Crew</string>
+  <string name="person_department_costume_makeup">Costume &amp; make-up</string>
+  <string name="person_department_directing">Directing</string>
+  <string name="person_department_writing">Writing</string>
+  <string name="person_department_sound">Sound</string>
+  <string name="person_department_camera">Camera</string>
 
   <string name="title_suggestions">Suggestions</string>
   <string name="title_recommended">Recommended</string>

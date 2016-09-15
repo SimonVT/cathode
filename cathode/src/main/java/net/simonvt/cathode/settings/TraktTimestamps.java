@@ -164,6 +164,10 @@ public final class TraktTimestamps {
     return System.currentTimeMillis() > lastSync + 3 * DateUtils.HOUR_IN_MILLIS;
   }
 
+  public static boolean shouldSyncPerson(long lastSync) {
+    return System.currentTimeMillis() > lastSync + 24 * DateUtils.HOUR_IN_MILLIS;
+  }
+
   public static boolean shouldPurge(Context context) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 

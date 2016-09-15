@@ -16,6 +16,7 @@
 
 package net.simonvt.cathode.api.service;
 
+import net.simonvt.cathode.api.entity.Credits;
 import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.enumeration.Extended;
 import retrofit2.Call;
@@ -26,5 +27,11 @@ import retrofit2.http.Query;
 public interface PeopleService {
 
   @GET("/people/{id}") Call<Person> summary(@Path("id") long traktId,
+      @Query("extended") Extended extended);
+
+  @GET("/people/{id}/shows") Call<Credits> shows(@Path("id") long traktId,
+      @Query("extended") Extended extended);
+
+  @GET("/people/{id}/movies") Call<Credits> movies(@Path("id") long traktId,
       @Query("extended") Extended extended);
 }

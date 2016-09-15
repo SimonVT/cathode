@@ -15,4 +15,8 @@
   -->
 <resources>
 
+  <integer name="creditColumns">4</integer>
+
+  <integer name="personCreditColumns">4</integer>
+
 </resources>

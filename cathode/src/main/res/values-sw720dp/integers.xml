@@ -27,4 +27,8 @@
 
   <integer name="hiddenColumns">3</integer>
 
+  <integer name="creditColumns">4</integer>
+
+  <integer name="personCreditColumns">4</integer>
+
 </resources>

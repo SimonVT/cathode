@@ -34,13 +34,15 @@ import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.DatabaseContract.MovieCrewColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.RelatedMoviesColumns;
 import net.simonvt.cathode.provider.DatabaseContract.RelatedShowsColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowCharacterColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowCrewColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Joins;
@@ -84,7 +86,8 @@ public final class ProviderSchematic {
   interface Type {
     String SHOW = "vnd.android.cursor.dir/vnd.simonvt.cathode.show";
     String SHOW_ID = "vnd.android.cursor.item/vnd.simonvt.cathode.show";
-    String SHOW_CHARACTERS = "vnd.android.cursor.dir/vnd.simonvt.cathode.showCharacters";
+    String SHOW_CAST = "vnd.android.cursor.dir/vnd.simonvt.cathode.showCast";
+    String SHOW_CREW = "vnd.android.cursor.dir/vnd.simonvt.cathode.showCrew";
     String SHOW_GENRE = "vnd.android.cursor.dir/vnd.simonvt.cathode.showGenre";
     String SEASON = "vnd.android.cursor.dir/vnd.simonvt.cathode.season";
     String SEASON_ID = "vnd.android.cursor.item/vnd.simonvt.cathode.season";
@@ -120,7 +123,8 @@ public final class ProviderSchematic {
     String SEASONS = "seasons";
     String EPISODES = "episodes";
     String SHOW_GENRES = "showGenres";
-    String SHOW_CHARACTERS = "showCharacters";
+    String SHOW_CAST = "showCast";
+    String SHOW_CREW = "showCrew";
     String SHOW_RELATED = "showRelated";
 
     String FROM_SHOW = "fromShow";
@@ -151,6 +155,7 @@ public final class ProviderSchematic {
     String RECENT_QUERIES = "recentQueries";
 
     String PEOPLE = "people";
+    String FROM_PERSON = "fromPerson";
 
     String LISTS = "lists";
     String LIST_ITEMS = "listItems";
@@ -855,38 +860,117 @@ public final class ProviderSchematic {
     }
   }
 
-  @TableEndpoint(table = Tables.SHOW_CHARACTERS)
-  public static class ShowCharacters {
+  @TableEndpoint(table = Tables.SHOW_CAST)
+  public static class ShowCast {
 
     @ContentUri(
-        path = Path.SHOW_CHARACTERS,
-        type = Type.SHOW_CHARACTERS,
-        join = Joins.SHOW_CAST_PERSON)
-    public static final Uri SHOW_CHARACTERS = buildUri(Path.SHOW_CHARACTERS);
+        path = Path.SHOW_CAST,
+        type = Type.SHOW_CAST,
+        join = Joins.SHOW_CAST)
+    public static final Uri SHOW_CAST = buildUri(Path.SHOW_CAST);
 
     @InexactContentUri(
-        path = Path.SHOW_CHARACTERS + "/" + Path.FROM_SHOW + "/#",
-        type = Type.SHOW_CHARACTERS,
-        name = "CHARACTERS_FROMSHOW",
-        whereColumn = ShowCharacterColumns.SHOW_ID,
-        pathSegment = 2,
-        join = Joins.SHOW_CAST_PERSON)
-    public static Uri fromShow(long showId) {
-      return buildUri(Path.SHOW_CHARACTERS, Path.FROM_SHOW, String.valueOf(showId));
+        path = Path.SHOW_CAST + "/#",
+        type = Type.SHOW_CAST,
+        name = "CAST_WITHID",
+        whereColumn = ShowCastColumns.ID,
+        pathSegment = 1,
+        join = Joins.SHOW_CAST)
+    public static Uri withId(long id) {
+      return buildUri(Path.SHOW_CAST, String.valueOf(id));
     }
 
-    @InsertUri(paths = Path.SHOW_CHARACTERS)
+    @InexactContentUri(
+        path = Path.SHOW_CAST + "/" + Path.FROM_SHOW + "/#",
+        type = Type.SHOW_CAST,
+        name = "CAST_FROMSHOW",
+        whereColumn = ShowCastColumns.SHOW_ID,
+        pathSegment = 2,
+        join = Joins.SHOW_CAST)
+    public static Uri fromShow(long showId) {
+      return buildUri(Path.SHOW_CAST, Path.FROM_SHOW, String.valueOf(showId));
+    }
+
+    @InexactContentUri(
+        path = Path.SHOW_CAST + "/" + Path.FROM_PERSON + "/#",
+        type = Type.SHOW_CAST,
+        name = "CAST_FROMPERSON",
+        whereColumn = ShowCastColumns.PERSON_ID,
+        pathSegment = 2,
+        join = Joins.SHOW_CAST)
+    public static Uri fromPerson(long personId) {
+      return buildUri(Path.SHOW_CAST, Path.FROM_PERSON, String.valueOf(personId));
+    }
+
+    @InsertUri(paths = Path.SHOW_CAST)
     public static Uri insertReturnUri(ContentValues cv) {
-      final long showId = cv.getAsLong(ShowCharacterColumns.SHOW_ID);
+      final long showId = cv.getAsLong(ShowCastColumns.SHOW_ID);
       return fromShow(showId);
     }
 
-    @NotifyInsert(paths = Path.SHOW_CHARACTERS)
+    @NotifyInsert(paths = Path.SHOW_CAST)
     public static Uri[] notifyInsert(ContentValues cv) {
-      final long showId = cv.getAsLong(ShowCharacterColumns.SHOW_ID);
+      final long showId = cv.getAsLong(ShowCastColumns.SHOW_ID);
       return new Uri[] {
           fromShow(showId),
       };
+    }
+  }
+
+  @TableEndpoint(table = Tables.SHOW_CREW)
+  public static class ShowCrew {
+
+    @ContentUri(
+        path = Path.SHOW_CREW,
+        type = Type.SHOW_CREW,
+        join = Joins.SHOW_CREW)
+    public static final Uri SHOW_CREW = buildUri(Path.SHOW_CREW);
+
+    @InexactContentUri(
+        path = Path.SHOW_CREW + "/#",
+        type = Type.SHOW_CREW,
+        name = "CREW_WITHID",
+        whereColumn = ShowCrewColumns.ID,
+        pathSegment = 1,
+        join = Joins.SHOW_CREW)
+    public static Uri withId(long id) {
+      return buildUri(Path.SHOW_CREW, String.valueOf(id));
+    }
+
+    @InexactContentUri(
+        path = Path.SHOW_CREW + "/" + Path.FROM_SHOW + "/#",
+        type = Type.SHOW_CREW,
+        name = "CREW_FROMSHOW",
+        whereColumn = ShowCrewColumns.SHOW_ID,
+        pathSegment = 2,
+        join = Joins.SHOW_CREW)
+    public static Uri fromShow(long showId) {
+      return buildUri(Path.SHOW_CREW, Path.FROM_SHOW, String.valueOf(showId));
+    }
+
+    @InexactContentUri(
+        path = Path.SHOW_CREW + "/" + Path.FROM_PERSON + "/#",
+        type = Type.SHOW_CREW,
+        name = "CREW_FROMPERSON",
+        whereColumn = ShowCrewColumns.PERSON_ID,
+        pathSegment = 2,
+        join = Joins.SHOW_CREW)
+    public static Uri fromPerson(long personId) {
+      return buildUri(Path.SHOW_CREW, Path.FROM_PERSON, String.valueOf(personId));
+    }
+
+    @NotifyInsert(paths = Path.SHOW_CREW)
+    public static Uri[] notifyInsert(ContentValues cv) {
+      final long showId = cv.getAsLong(ShowCrewColumns.SHOW_ID);
+      return new Uri[] {
+          fromShow(showId),
+      };
+    }
+
+    @InsertUri(paths = Path.SHOW_CREW)
+    public static Uri insertUri(ContentValues cv) {
+      final long showId = cv.getAsLong(ShowCrewColumns.SHOW_ID);
+      return fromShow(showId);
     }
   }
 
@@ -1068,8 +1152,20 @@ public final class ProviderSchematic {
 
     @ContentUri(
         path = Path.MOVIE_CAST,
-        type = Type.MOVIE_CAST)
+        type = Type.MOVIE_CAST,
+        join = Joins.MOVIE_CAST)
     public static final Uri MOVIE_CAST = buildUri(Path.MOVIE_CAST);
+
+    @InexactContentUri(
+        path = Path.MOVIE_CAST + "/#",
+        type = Type.MOVIE_CAST,
+        name = "CAST_WITHID",
+        whereColumn = MovieCastColumns.ID,
+        pathSegment = 1,
+        join = Joins.MOVIE_CAST)
+    public static Uri withId(long id) {
+      return buildUri(Path.MOVIE_CAST, String.valueOf(id));
+    }
 
     @InexactContentUri(
         path = Path.MOVIE_CAST + "/" + Path.FROM_MOVIE + "/#",
@@ -1077,9 +1173,20 @@ public final class ProviderSchematic {
         name = "CAST_FROMMOVIE",
         whereColumn = MovieCastColumns.MOVIE_ID,
         pathSegment = 2,
-        join = Joins.MOVIE_CAST_PERSON)
+        join = Joins.MOVIE_CAST)
     public static Uri fromMovie(long movieId) {
       return buildUri(Path.MOVIE_CAST, Path.FROM_MOVIE, String.valueOf(movieId));
+    }
+
+    @InexactContentUri(
+        path = Path.MOVIE_CAST + "/" + Path.FROM_PERSON + "/#",
+        type = Type.MOVIE_CAST,
+        name = "CAST_FROMPERSON",
+        whereColumn = MovieCastColumns.PERSON_ID,
+        pathSegment = 2,
+        join = Joins.MOVIE_CAST)
+    public static Uri fromPerson(long personId) {
+      return buildUri(Path.MOVIE_CAST, Path.FROM_PERSON, String.valueOf(personId));
     }
 
     @NotifyInsert(paths = Path.MOVIE_CAST)
@@ -1102,22 +1209,46 @@ public final class ProviderSchematic {
 
     @ContentUri(
         path = Path.MOVIE_CREW,
-        type = Type.MOVIE_CREW)
+        type = Type.MOVIE_CREW,
+        join = Joins.MOVIE_CREW)
     public static final Uri MOVIE_CREW = buildUri(Path.MOVIE_CREW);
+
+    @InexactContentUri(
+        path = Path.MOVIE_CREW + "/#",
+        type = Type.MOVIE_CREW,
+        name = "CREW_WITHID",
+        whereColumn = MovieCrewColumns.ID,
+        pathSegment = 1,
+        join = Joins.MOVIE_CREW)
+    public static Uri withId(long id) {
+      return buildUri(Path.MOVIE_CREW, String.valueOf(id));
+    }
 
     @InexactContentUri(
         path = Path.MOVIE_CREW + "/" + Path.FROM_MOVIE + "/#",
         type = Type.MOVIE_CREW,
         name = "CREW_FROMMOVIE",
-        whereColumn = MovieCastColumns.MOVIE_ID,
-        pathSegment = 2)
+        whereColumn = MovieCrewColumns.MOVIE_ID,
+        pathSegment = 2,
+        join = Joins.MOVIE_CREW)
     public static Uri fromMovie(long movieId) {
       return buildUri(Path.MOVIE_CREW, Path.FROM_MOVIE, String.valueOf(movieId));
     }
 
+    @InexactContentUri(
+        path = Path.MOVIE_CREW + "/" + Path.FROM_PERSON + "/#",
+        type = Type.MOVIE_CREW,
+        name = "CREW_FROMPERSON",
+        whereColumn = MovieCrewColumns.PERSON_ID,
+        pathSegment = 2,
+        join = Joins.MOVIE_CREW)
+    public static Uri fromPerson(long personId) {
+      return buildUri(Path.MOVIE_CREW, Path.FROM_PERSON, String.valueOf(personId));
+    }
+
     @NotifyInsert(paths = Path.MOVIE_CREW)
     public static Uri[] notifyInsert(ContentValues cv) {
-      final long movieId = cv.getAsLong(MovieCastColumns.MOVIE_ID);
+      final long movieId = cv.getAsLong(MovieCrewColumns.MOVIE_ID);
       return new Uri[] {
           fromMovie(movieId),
       };
@@ -1125,7 +1256,7 @@ public final class ProviderSchematic {
 
     @InsertUri(paths = Path.MOVIE_CREW)
     public static Uri insertUri(ContentValues cv) {
-      final long movieId = cv.getAsLong(MovieCastColumns.MOVIE_ID);
+      final long movieId = cv.getAsLong(MovieCrewColumns.MOVIE_ID);
       return fromMovie(movieId);
     }
   }
@@ -1182,16 +1313,16 @@ public final class ProviderSchematic {
 
       String joined = Joiner.on(", ").join(peopleIds);
 
-      Cursor c = context.getContentResolver().query(ShowCharacters.SHOW_CHARACTERS, new String[] {
-          ShowCharacterColumns.SHOW_ID,
-      }, ShowCharacterColumns.PERSON_ID + " IN (?)", new String[] {
+      Cursor c = context.getContentResolver().query(ShowCast.SHOW_CAST, new String[] {
+          ShowCastColumns.SHOW_ID,
+      }, ShowCastColumns.PERSON_ID + " IN (?)", new String[] {
           joined
       }, null);
 
       while (c.moveToNext()) {
-        final long showId = Cursors.getLong(c, ShowCharacterColumns.SHOW_ID);
+        final long showId = Cursors.getLong(c, ShowCastColumns.SHOW_ID);
 
-        uris.add(ShowCharacters.fromShow(showId));
+        uris.add(ShowCast.fromShow(showId));
       }
       c.close();
 
