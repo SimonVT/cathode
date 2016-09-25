@@ -109,6 +109,8 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
       return;
     }
 
+    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+
     //noinspection MissingPermission
     Cursor c =
         context.getContentResolver().query(CalendarContract.Events.CONTENT_URI, new String[] {
@@ -124,13 +126,35 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
 
     LongSparseArray<Event> events = new LongSparseArray<>();
     while (c.moveToNext()) {
-      events.put(Cursors.getLong(c, CalendarContract.Events.SYNC_DATA1), new Event(c));
+      final long id = Cursors.getLong(c, CalendarContract.Events._ID);
+      final Long episodeId = Cursors.getLongOrNull(c, CalendarContract.Events.SYNC_DATA1);
+      if (episodeId != null) {
+        Event event = events.get(episodeId);
+        Event newEvent = new Event(c);
+        if (event == null) {
+          events.put(episodeId, newEvent);
+        } else {
+          ContentProviderOperation op =
+              ContentProviderOperation.newDelete(CalendarContract.Events.CONTENT_URI)
+                  .withSelection(CalendarContract.Events._ID + "=?", new String[] {
+                      String.valueOf(id),
+                  })
+                  .build();
+          ops.add(op);
+        }
+      } else {
+        ContentProviderOperation op =
+            ContentProviderOperation.newDelete(CalendarContract.Events.CONTENT_URI)
+                .withSelection(CalendarContract.Events._ID + "=?", new String[] {
+                    String.valueOf(id),
+                })
+                .build();
+        ops.add(op);
+      }
     }
     c.close();
 
     final long time = System.currentTimeMillis();
-
-    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
     Cursor shows = context.getContentResolver().query(Shows.SHOWS, new String[] {
         ShowColumns.ID, ShowColumns.TITLE, ShowColumns.RUNTIME,
