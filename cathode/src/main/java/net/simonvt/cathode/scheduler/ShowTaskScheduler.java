@@ -97,6 +97,10 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         Job job = new SyncRelatedShows(traktId);
         job.registerOnDoneListener(onDoneListener);
         queue(job);
+
+        ContentValues values = new ContentValues();
+        values.put(ShowColumns.LAST_RELATED_SYNC, System.currentTimeMillis());
+        context.getContentResolver().update(Shows.withId(showId), values, null, null);
       }
     });
   }

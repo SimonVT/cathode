@@ -87,6 +87,10 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         Job job = new SyncRelatedMovies(traktId);
         job.registerOnDoneListener(onDoneListener);
         queue(job);
+
+        ContentValues values = new ContentValues();
+        values.put(MovieColumns.LAST_RELATED_SYNC, System.currentTimeMillis());
+        context.getContentResolver().update(Movies.withId(movieId), values, null, null);
       }
     });
   }
