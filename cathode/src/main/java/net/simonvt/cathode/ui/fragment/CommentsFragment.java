@@ -54,7 +54,7 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
 
   private static final int LOADER_COMMENTS = 1;
 
-  private NavigationListener navigationCallbacks;
+  private NavigationListener navigationListener;
 
   private ItemType itemType;
 
@@ -79,7 +79,7 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
 
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
-    navigationCallbacks = (NavigationListener) activity;
+    navigationListener = (NavigationListener) activity;
   }
 
   @Override public void onCreate(Bundle inState) {
@@ -131,7 +131,7 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
             UpdateCommentDialog.newInstance(commentId, comment, spoiler)
                 .show(getFragmentManager(), DIALOG_COMMENT_UPDATE);
           } else {
-            navigationCallbacks.onDisplayComment(commentId);
+            navigationListener.onDisplayComment(commentId);
           }
         }
       };

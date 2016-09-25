@@ -137,7 +137,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       ShowGenreColumns.GENRE,
   };
 
-  private NavigationListener navigationCallbacks;
+  private NavigationListener navigationListener;
 
   private long showId;
 
@@ -256,7 +256,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
-    navigationCallbacks = (NavigationListener) activity;
+    navigationListener = (NavigationListener) activity;
   }
 
   @Override public void onCreate(Bundle inState) {
@@ -275,7 +275,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
     seasonsAdapter = new SeasonsAdapter(getActivity(), new SeasonClickListener() {
       @Override
       public void onSeasonClick(long showId, long seasonId, String showTitle, int seasonNumber) {
-        navigationCallbacks.onDisplaySeason(showId, seasonId, showTitle, seasonNumber, type);
+        navigationListener.onDisplaySeason(showId, seasonId, showTitle, seasonNumber, type);
       }
     }, type);
   }
@@ -327,26 +327,26 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
     castHeader.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        navigationCallbacks.onDisplayCredits(ItemType.SHOW, showId, showTitle);
+        navigationListener.onDisplayCredits(ItemType.SHOW, showId, showTitle);
       }
     });
 
     commentsHeader.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        navigationCallbacks.onDisplayComments(ItemType.SHOW, showId);
+        navigationListener.onDisplayComments(ItemType.SHOW, showId);
       }
     });
 
     relatedHeader.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        navigationCallbacks.onDisplayRelatedShows(showId, showTitle);
+        navigationListener.onDisplayRelatedShows(showId, showTitle);
       }
     });
 
     toWatchHolder = new EpisodeHolder(toWatch);
     toWatch.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
-        if (toWatchId != -1) navigationCallbacks.onDisplayEpisode(toWatchId, showTitle);
+        if (toWatchId != -1) navigationListener.onDisplayEpisode(toWatchId, showTitle);
       }
     });
 
@@ -384,7 +384,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       lastWatched.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View view) {
           if (lastWatchedId != -1) {
-            navigationCallbacks.onDisplayEpisode(lastWatchedId, showTitle);
+            navigationListener.onDisplayEpisode(lastWatchedId, showTitle);
           }
         }
       });
@@ -412,7 +412,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
     toCollectHolder = new EpisodeHolder(toCollect);
     toCollect.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
-        if (toCollectId != -1) navigationCallbacks.onDisplayEpisode(toCollectId, showTitle);
+        if (toCollectId != -1) navigationListener.onDisplayEpisode(toCollectId, showTitle);
       }
     });
 
@@ -441,7 +441,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       lastCollected.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View view) {
           if (lastCollectedId != -1) {
-            navigationCallbacks.onDisplayEpisode(lastCollectedId, showTitle);
+            navigationListener.onDisplayEpisode(lastCollectedId, showTitle);
           }
         }
       });
@@ -735,7 +735,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
       v.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          navigationCallbacks.onDisplayPerson(personId);
+          navigationListener.onDisplayPerson(personId);
         }
       });
 
@@ -790,7 +790,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
       v.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          navigationCallbacks.onDisplayShow(relatedShowId, title, overview, LibraryType.WATCHED);
+          navigationListener.onDisplayShow(relatedShowId, title, overview, LibraryType.WATCHED);
         }
       });
       relatedContainer.addView(v);
