@@ -115,12 +115,7 @@ public class MovieRecommendationsFragment
 
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
-    try {
-      navigationListener = (MoviesNavigationListener) activity;
-    } catch (ClassCastException e) {
-      throw new ClassCastException(
-          activity.toString() + " must implement MoviesNavigationListener");
-    }
+    navigationListener = (MoviesNavigationListener) activity;
   }
 
   @Override public void onCreate(Bundle inState) {

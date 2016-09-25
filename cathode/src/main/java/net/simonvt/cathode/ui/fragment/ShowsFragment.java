@@ -53,11 +53,7 @@ public abstract class ShowsFragment<D extends Cursor>
 
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
-    try {
-      navigationListener = (ShowsNavigationListener) activity;
-    } catch (ClassCastException e) {
-      throw new ClassCastException(activity.toString() + " must implement ShowsNavigationListener");
-    }
+    navigationListener = (ShowsNavigationListener) activity;
   }
 
   @Override public void onCreate(Bundle inState) {
