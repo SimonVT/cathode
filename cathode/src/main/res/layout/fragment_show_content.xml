@@ -40,12 +40,16 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:text="@string/genres"
+      android:visibility="gone"
+      tools:visibility="visible"
       style="@style/Widget.InfoTitle"/>
 
   <TextView
       android:id="@+id/genres"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:visibility="gone"
+      tools:visibility="visible"
       tools:text="Comedy"
       style="@style/Widget.InfoText"/>
 
