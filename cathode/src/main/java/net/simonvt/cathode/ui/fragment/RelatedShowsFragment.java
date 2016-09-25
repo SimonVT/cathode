@@ -20,14 +20,12 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.view.View;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.RelatedShows;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
@@ -35,7 +33,6 @@ import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
 import net.simonvt.cathode.util.Ids;
-import net.simonvt.schematic.Cursors;
 
 public class RelatedShowsFragment
     extends ToolbarSwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>
@@ -92,11 +89,8 @@ public class RelatedShowsFragment
     showScheduler.syncRelated(showId, onDoneListener);
   }
 
-  @Override public void onShowClick(View view, int position, long id) {
-    Cursor cursor = showsAdapter.getCursor(position);
-    final String title = Cursors.getString(cursor, ShowColumns.TITLE);
-    final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
-    navigationListener.onDisplayShow(id, title, overview, LibraryType.WATCHED);
+  @Override public void onShowClick(long showId, String title, String overview) {
+    navigationListener.onDisplayShow(showId, title, overview, LibraryType.WATCHED);
   }
 
   private void setCursor(Cursor cursor) {

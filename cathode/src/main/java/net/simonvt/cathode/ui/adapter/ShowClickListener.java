@@ -16,9 +16,7 @@
 
 package net.simonvt.cathode.ui.adapter;
 
-import android.view.View;
-
 public interface ShowClickListener {
 
-  void onShowClick(View view, int position, long id);
+  void onShowClick(long showId, String title, String overview);
 }

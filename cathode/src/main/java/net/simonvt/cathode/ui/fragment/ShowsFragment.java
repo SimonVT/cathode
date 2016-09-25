@@ -22,18 +22,15 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.adapter.ShowClickListener;
 import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
-import net.simonvt.schematic.Cursors;
 
 public abstract class ShowsFragment<D extends Cursor>
     extends ToolbarSwipeRefreshRecyclerFragment<ShowsWithNextAdapter.ViewHolder>
@@ -89,11 +86,8 @@ public abstract class ShowsFragment<D extends Cursor>
     }
   }
 
-  @Override public void onShowClick(View view, int position, long id) {
-    cursor.moveToPosition(position);
-    final String title = Cursors.getString(cursor, ShowColumns.TITLE);
-    final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
-    navigationListener.onDisplayShow(id, title, overview, getLibraryType());
+  @Override public void onShowClick(long showId, String title, String overview) {
+    navigationListener.onDisplayShow(showId, title, overview, getLibraryType());
   }
 
   protected ShowsWithNextAdapter getAdapter(Cursor cursor) {

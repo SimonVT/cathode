@@ -166,11 +166,8 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
     return super.onMenuItemClick(item);
   }
 
-  @Override public void onShowClick(View view, int position, long id) {
-    Cursor cursor = adapter.getCursor(position);
-    final String title = Cursors.getString(cursor, ShowColumns.TITLE);
-    final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
-    navigationListener.onDisplayShow(id, title, overview, LibraryType.WATCHED);
+  @Override public void onShowClick(long showId, String title, String overview) {
+    navigationListener.onDisplayShow(showId, title, overview, LibraryType.WATCHED);
   }
 
   @Override

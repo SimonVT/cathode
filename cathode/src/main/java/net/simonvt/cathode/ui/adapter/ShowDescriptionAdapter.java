@@ -84,7 +84,10 @@ public class ShowDescriptionAdapter
       @Override public void onClick(View v) {
         final int position = holder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
-          listener.onShowClick(v, position, holder.getItemId());
+          Cursor cursor = getCursor(position);
+          final String title = Cursors.getString(cursor, ShowColumns.TITLE);
+          final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
+          listener.onShowClick(holder.getItemId(), title, overview);
         }
       }
     });

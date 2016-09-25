@@ -103,7 +103,9 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
           if (position != RecyclerView.NO_POSITION) {
             Cursor cursor = getCursor(position);
             final long itemId = Cursors.getLong(cursor, ListItemColumns.ITEM_ID);
-            showListener.onShowClick(v, position, itemId);
+            final String title = Cursors.getString(cursor, ShowColumns.TITLE);
+            final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
+            showListener.onShowClick(itemId, title, overview);
           }
         }
       });
