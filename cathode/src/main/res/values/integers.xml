@@ -21,8 +21,6 @@
 
   <integer name="movieColumns">1</integer>
 
-  <integer name="actorColumns">1</integer>
-
   <integer name="listColumns">1</integer>
 
   <integer name="hiddenColumns">1</integer>

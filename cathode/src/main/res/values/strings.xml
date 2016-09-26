@@ -218,12 +218,9 @@
   <string name="login_title">@string/login_sign_in</string>
   <string name="logging_in">Logging in…</string>
   <string name="login_in_app">Use In-App browser</string>
-  <string name="login_external">External browser</string>
   <string name="login_description">Sign in to through the Trakt website and give Cathode access to your account</string>
   <string name="login_error_unknown">Unable to fetch token, please try again</string>
   <string name="login_error_5xx">Trakt has encountered a server error, please try again</string>
-
-  <string name="login_open_browser">Open browser</string>
 
   <!-- Setup activities -->
   <string name="setup_calendar_text">Would you like upcoming shows to be added to your calendar?</string>

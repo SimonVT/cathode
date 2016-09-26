@@ -599,7 +599,7 @@ public class MovieFragment extends RefreshableAppBarFragment
       if (votes >= 1000) {
         final float convertedVotes = votes / 1000.0f;
         final String formattedVotes = String.format(Locale.getDefault(), "%.1f", convertedVotes);
-        ratingText = getString(R.string.related_rating, formattedRating, formattedVotes);
+        ratingText = getString(R.string.related_rating_thousands, formattedRating, formattedVotes);
       } else {
         ratingText = getString(R.string.related_rating, formattedRating, votes);
       }
