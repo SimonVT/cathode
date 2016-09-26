@@ -55,6 +55,7 @@ import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.StartPage;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 @SuppressLint("SetTextI18n") public abstract class BaseActivity extends AppCompatActivity {

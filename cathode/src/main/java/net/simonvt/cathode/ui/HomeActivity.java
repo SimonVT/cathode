@@ -51,33 +51,35 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic;
-import net.simonvt.cathode.search.SearchFragment;
+import net.simonvt.cathode.settings.SettingsActivity;
+import net.simonvt.cathode.settings.StartPage;
+import net.simonvt.cathode.ui.search.SearchFragment;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.credits.CreditFragment;
 import net.simonvt.cathode.ui.credits.CreditsFragment;
-import net.simonvt.cathode.ui.fragment.CommentFragment;
-import net.simonvt.cathode.ui.fragment.CommentsFragment;
-import net.simonvt.cathode.ui.fragment.DashboardFragment;
-import net.simonvt.cathode.ui.fragment.EpisodeFragment;
-import net.simonvt.cathode.ui.fragment.MovieCollectionFragment;
-import net.simonvt.cathode.ui.fragment.MovieFragment;
-import net.simonvt.cathode.ui.fragment.MovieSuggestionsFragment;
-import net.simonvt.cathode.ui.fragment.MovieWatchlistFragment;
-import net.simonvt.cathode.ui.fragment.NavigationFragment;
-import net.simonvt.cathode.ui.fragment.RelatedMoviesFragment;
-import net.simonvt.cathode.ui.fragment.RelatedShowsFragment;
-import net.simonvt.cathode.ui.fragment.SeasonFragment;
-import net.simonvt.cathode.ui.fragment.ShowFragment;
-import net.simonvt.cathode.ui.fragment.ShowSuggestionsFragment;
-import net.simonvt.cathode.ui.fragment.ShowsCollectionFragment;
-import net.simonvt.cathode.ui.fragment.ShowsWatchlistFragment;
-import net.simonvt.cathode.ui.fragment.StatsFragment;
-import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
-import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
-import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
+import net.simonvt.cathode.ui.comments.CommentFragment;
+import net.simonvt.cathode.ui.comments.CommentsFragment;
+import net.simonvt.cathode.ui.dashboard.DashboardFragment;
+import net.simonvt.cathode.ui.show.EpisodeFragment;
+import net.simonvt.cathode.ui.movies.collected.CollectedMoviesFragment;
+import net.simonvt.cathode.ui.movie.MovieFragment;
+import net.simonvt.cathode.ui.suggestions.movies.MovieSuggestionsFragment;
+import net.simonvt.cathode.ui.movies.watchlist.MovieWatchlistFragment;
+import net.simonvt.cathode.ui.navigation.NavigationFragment;
+import net.simonvt.cathode.ui.movie.RelatedMoviesFragment;
+import net.simonvt.cathode.ui.show.RelatedShowsFragment;
+import net.simonvt.cathode.ui.show.SeasonFragment;
+import net.simonvt.cathode.ui.show.ShowFragment;
+import net.simonvt.cathode.ui.suggestions.shows.ShowSuggestionsFragment;
+import net.simonvt.cathode.ui.shows.collected.CollectedShowsFragment;
+import net.simonvt.cathode.ui.shows.watchlist.ShowsWatchlistFragment;
+import net.simonvt.cathode.ui.stats.StatsFragment;
+import net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment;
+import net.simonvt.cathode.ui.movies.watched.WatchedMoviesFragment;
+import net.simonvt.cathode.ui.shows.watched.WatchedShowsFragment;
 import net.simonvt.cathode.ui.lists.ListFragment;
 import net.simonvt.cathode.ui.lists.ListsFragment;
-import net.simonvt.cathode.ui.login.LoginActivity;
+import net.simonvt.cathode.settings.login.LoginActivity;
 import net.simonvt.cathode.ui.person.PersonCreditsFragment;
 import net.simonvt.cathode.ui.person.PersonFragment;
 import net.simonvt.cathode.util.DataHelper;
@@ -303,7 +305,7 @@ public class HomeActivity extends BaseActivity
 
       case R.id.menu_shows_collection:
         pendingReplacement =
-            new PendingReplacement(ShowsCollectionFragment.class, ShowsCollectionFragment.TAG);
+            new PendingReplacement(CollectedShowsFragment.class, CollectedShowsFragment.TAG);
         break;
 
       case R.id.menu_shows_watchlist:
@@ -323,7 +325,7 @@ public class HomeActivity extends BaseActivity
 
       case R.id.menu_movies_collection:
         pendingReplacement =
-            new PendingReplacement(MovieCollectionFragment.class, MovieCollectionFragment.TAG);
+            new PendingReplacement(CollectedMoviesFragment.class, CollectedMoviesFragment.TAG);
         break;
 
       case R.id.menu_movies_watchlist:

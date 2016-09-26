@@ -31,13 +31,13 @@ import timber.log.Timber;
 public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
     extends BaseAdapter<T> {
 
-  static class Header {
+  public static class Header {
 
-    final int header;
+    public final int header;
 
-    long headerId;
+    public long headerId;
 
-    Cursor cursor;
+    public Cursor cursor;
 
     int size;
 

@@ -19,7 +19,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
   <fragment
-      class="net.simonvt.cathode.ui.fragment.NavigationFragment"
+      class="net.simonvt.cathode.ui.navigation.NavigationFragment"
       android:layout_width="320dp"
       android:layout_height="match_parent"
       android:layout_gravity="left"

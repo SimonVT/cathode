@@ -145,61 +145,61 @@ import net.simonvt.cathode.search.SearchHandler;
 import net.simonvt.cathode.service.CathodeSyncAdapter;
 import net.simonvt.cathode.service.SyncWatchingReceiver;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
-import net.simonvt.cathode.ui.HiddenItems;
+import net.simonvt.cathode.settings.hidden.HiddenItems;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.credits.CreditsFragment;
-import net.simonvt.cathode.ui.fragment.RelatedMoviesFragment;
-import net.simonvt.cathode.ui.fragment.RelatedShowsFragment;
-import net.simonvt.cathode.ui.login.LoginActivity;
-import net.simonvt.cathode.ui.SettingsActivity;
-import net.simonvt.cathode.ui.login.TokenActivity;
-import net.simonvt.cathode.ui.login.TokenTask;
-import net.simonvt.cathode.ui.adapter.CommentsAdapter;
-import net.simonvt.cathode.ui.adapter.HiddenItemsAdapter;
-import net.simonvt.cathode.ui.adapter.MovieRecommendationsAdapter;
-import net.simonvt.cathode.ui.adapter.MovieSearchAdapter;
-import net.simonvt.cathode.ui.adapter.MoviesAdapter;
-import net.simonvt.cathode.ui.adapter.SeasonAdapter;
-import net.simonvt.cathode.ui.adapter.SeasonsAdapter;
-import net.simonvt.cathode.ui.adapter.ShowDescriptionAdapter;
-import net.simonvt.cathode.ui.adapter.ShowRecommendationsAdapter;
-import net.simonvt.cathode.ui.adapter.ShowWatchlistAdapter;
-import net.simonvt.cathode.ui.adapter.ShowsWithNextAdapter;
-import net.simonvt.cathode.ui.adapter.UpcomingAdapter;
-import net.simonvt.cathode.ui.dialog.AddCommentDialog;
+import net.simonvt.cathode.ui.movie.RelatedMoviesFragment;
+import net.simonvt.cathode.ui.show.RelatedShowsFragment;
+import net.simonvt.cathode.settings.login.LoginActivity;
+import net.simonvt.cathode.settings.SettingsActivity;
+import net.simonvt.cathode.settings.login.TokenActivity;
+import net.simonvt.cathode.settings.login.TokenTask;
+import net.simonvt.cathode.ui.comments.CommentsAdapter;
+import net.simonvt.cathode.settings.hidden.HiddenItemsAdapter;
+import net.simonvt.cathode.ui.suggestions.movies.MovieRecommendationsAdapter;
+import net.simonvt.cathode.ui.search.MovieSearchAdapter;
+import net.simonvt.cathode.ui.movies.MoviesAdapter;
+import net.simonvt.cathode.ui.show.SeasonAdapter;
+import net.simonvt.cathode.ui.show.SeasonsAdapter;
+import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
+import net.simonvt.cathode.ui.suggestions.shows.ShowRecommendationsAdapter;
+import net.simonvt.cathode.ui.shows.watchlist.ShowWatchlistAdapter;
+import net.simonvt.cathode.ui.shows.ShowsWithNextAdapter;
+import net.simonvt.cathode.ui.shows.upcoming.UpcomingAdapter;
+import net.simonvt.cathode.ui.comments.AddCommentDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
-import net.simonvt.cathode.ui.dialog.ListsDialog;
-import net.simonvt.cathode.ui.dialog.LogoutDialog;
+import net.simonvt.cathode.ui.lists.ListsDialog;
+import net.simonvt.cathode.settings.LogoutDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
-import net.simonvt.cathode.ui.dialog.UpdateCommentDialog;
-import net.simonvt.cathode.ui.fragment.AnticipatedMoviesFragment;
-import net.simonvt.cathode.ui.fragment.AnticipatedShowsFragment;
-import net.simonvt.cathode.ui.fragment.CommentFragment;
-import net.simonvt.cathode.ui.fragment.CommentsFragment;
+import net.simonvt.cathode.ui.comments.UpdateCommentDialog;
+import net.simonvt.cathode.ui.suggestions.movies.AnticipatedMoviesFragment;
+import net.simonvt.cathode.ui.suggestions.shows.AnticipatedShowsFragment;
+import net.simonvt.cathode.ui.comments.CommentFragment;
+import net.simonvt.cathode.ui.comments.CommentsFragment;
 import net.simonvt.cathode.ui.lists.CreateListFragment;
-import net.simonvt.cathode.ui.fragment.EpisodeFragment;
+import net.simonvt.cathode.ui.show.EpisodeFragment;
 import net.simonvt.cathode.ui.lists.DeleteListDialog;
 import net.simonvt.cathode.ui.lists.ListFragment;
 import net.simonvt.cathode.ui.lists.ListsFragment;
-import net.simonvt.cathode.ui.fragment.MovieCollectionFragment;
-import net.simonvt.cathode.ui.fragment.MovieFragment;
-import net.simonvt.cathode.ui.fragment.MovieRecommendationsFragment;
-import net.simonvt.cathode.ui.fragment.MovieWatchlistFragment;
-import net.simonvt.cathode.search.SearchFragment;
-import net.simonvt.cathode.ui.fragment.SeasonFragment;
-import net.simonvt.cathode.ui.fragment.ShowFragment;
-import net.simonvt.cathode.ui.fragment.ShowRecommendationsFragment;
-import net.simonvt.cathode.ui.fragment.ShowsCollectionFragment;
-import net.simonvt.cathode.ui.fragment.ShowsWatchlistFragment;
-import net.simonvt.cathode.ui.fragment.StatsFragment;
-import net.simonvt.cathode.ui.fragment.TrendingMoviesFragment;
-import net.simonvt.cathode.ui.fragment.TrendingShowsFragment;
-import net.simonvt.cathode.ui.fragment.UpcomingShowsFragment;
-import net.simonvt.cathode.ui.fragment.WatchedMoviesFragment;
-import net.simonvt.cathode.ui.fragment.WatchedShowsFragment;
+import net.simonvt.cathode.ui.movies.collected.CollectedMoviesFragment;
+import net.simonvt.cathode.ui.movie.MovieFragment;
+import net.simonvt.cathode.ui.suggestions.movies.MovieRecommendationsFragment;
+import net.simonvt.cathode.ui.movies.watchlist.MovieWatchlistFragment;
+import net.simonvt.cathode.ui.search.SearchFragment;
+import net.simonvt.cathode.ui.show.SeasonFragment;
+import net.simonvt.cathode.ui.show.ShowFragment;
+import net.simonvt.cathode.ui.suggestions.shows.ShowRecommendationsFragment;
+import net.simonvt.cathode.ui.shows.collected.CollectedShowsFragment;
+import net.simonvt.cathode.ui.shows.watchlist.ShowsWatchlistFragment;
+import net.simonvt.cathode.ui.stats.StatsFragment;
+import net.simonvt.cathode.ui.suggestions.movies.TrendingMoviesFragment;
+import net.simonvt.cathode.ui.suggestions.shows.TrendingShowsFragment;
+import net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment;
+import net.simonvt.cathode.ui.movies.watched.WatchedMoviesFragment;
+import net.simonvt.cathode.ui.shows.watched.WatchedShowsFragment;
 import net.simonvt.cathode.ui.lists.UpdateListFragment;
 import net.simonvt.cathode.ui.person.PersonFragment;
-import net.simonvt.cathode.ui.setup.CalendarSetupActivity;
+import net.simonvt.cathode.settings.setup.CalendarSetupActivity;
 import net.simonvt.cathode.widget.PhoneEpisodeView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
@@ -226,9 +226,9 @@ import net.simonvt.cathode.widget.RemoteImageView;
         CalendarSetupActivity.class, SettingsActivity.class, HiddenItems.class, TokenActivity.class,
 
         // Fragments
-        EpisodeFragment.class, LogoutDialog.class, MovieCollectionFragment.class,
+        EpisodeFragment.class, LogoutDialog.class, CollectedMoviesFragment.class,
         MovieFragment.class, MovieRecommendationsFragment.class, MovieWatchlistFragment.class,
-        SeasonFragment.class, ShowFragment.class, ShowsCollectionFragment.class,
+        SeasonFragment.class, ShowFragment.class, CollectedShowsFragment.class,
         ShowRecommendationsFragment.class, ShowsWatchlistFragment.class,
         TrendingShowsFragment.class, TrendingMoviesFragment.class, UpcomingShowsFragment.class,
         WatchedMoviesFragment.class, WatchedShowsFragment.class, CreateListFragment.class,

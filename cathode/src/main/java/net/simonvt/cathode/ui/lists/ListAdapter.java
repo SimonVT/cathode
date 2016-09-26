@@ -35,7 +35,7 @@ import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
-import net.simonvt.cathode.ui.adapter.ShowClickListener;
+import net.simonvt.cathode.ui.shows.ShowClickListener;
 import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
