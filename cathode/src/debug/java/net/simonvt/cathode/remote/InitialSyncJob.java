@@ -46,9 +46,6 @@ public class InitialSyncJob extends Job {
     Settings.clearProfile(getContext());
     TraktTimestamps.clear(getContext());
 
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-    settings.edit().putBoolean(Settings.INITIAL_SYNC, true).apply();
-
     getContentResolver().delete(Shows.SHOWS, null, null);
     getContentResolver().delete(Movies.MOVIES, null, null);
     getContentResolver().delete(People.PEOPLE, null, null);

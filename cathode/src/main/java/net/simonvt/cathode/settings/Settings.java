@@ -48,9 +48,6 @@ public final class Settings {
   public static final String SUGGESTIONS = "suggestions";
   public static final String LAST_SYNC_HIDDEN = "lastSyncHidden";
 
-  // Whether the initial sync has been performed
-  public static final String INITIAL_SYNC = "initial Sync";
-
   // Settings not related to the user
   public static final String LAST_FULL_SYNC = "fullSync";
   public static final String LAST_PURGE = "lastPurge";

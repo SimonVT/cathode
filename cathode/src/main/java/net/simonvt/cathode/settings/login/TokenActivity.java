@@ -82,7 +82,6 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
     settings.edit()
         .putBoolean(Settings.TRAKT_LOGGED_IN, true)
-        .putBoolean(Settings.INITIAL_SYNC, true)
         .apply();
 
     final String username = settings.getString(Settings.Profile.USERNAME, null);

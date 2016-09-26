@@ -16,29 +16,19 @@
 
 package net.simonvt.cathode.jobqueue;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import javax.inject.Inject;
-import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.CathodeApp;
-import net.simonvt.cathode.R;
 import net.simonvt.cathode.event.SyncEvent;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.ui.HomeActivity;
 import timber.log.Timber;
 
 public class JobService extends Service {
@@ -47,14 +37,11 @@ public class JobService extends Service {
 
   private static final int MAX_RETRY_DELAY = 60; // In minutes
 
-  private static final int NOTIFICATION_FOREGROUND = 42;
-  private static final int NOTIFICATION_FAILURE = 43;
+  private static final int NOTIFICATION_FAILURE = 42;
 
   @Inject JobManager jobManager;
 
   private volatile int retryDelay = -1;
-
-  private boolean displayNotification;
 
   private JobExecutor executor;
 
@@ -65,26 +52,6 @@ public class JobService extends Service {
     SyncEvent.jobServiceStarted();
 
     cancelAlarm();
-
-    displayNotification =
-        PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Settings.INITIAL_SYNC, true);
-
-    if (displayNotification) {
-      Timber.d("Displaying initial sync notification");
-      Intent clickIntent = new Intent(this, HomeActivity.class);
-      PendingIntent clickPi = PendingIntent.getActivity(this, 0, clickIntent, 0);
-
-      Notification.Builder builder = new Notification.Builder(this) //
-          .setSmallIcon(R.drawable.ic_notification)
-          .setTicker(getString(R.string.initial_sync))
-          .setContentTitle(getString(R.string.initial_sync))
-          .setContentText(getString(R.string.initial_sync_desc))
-          .setContentIntent(clickPi)
-          .setPriority(Notification.PRIORITY_LOW)
-          .setProgress(0, 0, true)
-          .setOngoing(true);
-      startForeground(NOTIFICATION_FOREGROUND, builder.build());
-    }
 
     NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     nm.cancel(NOTIFICATION_FAILURE);
@@ -130,23 +97,6 @@ public class JobService extends Service {
     }
 
     SyncEvent.jobServiceStopped();
-
-    if (displayNotification && !jobManager.hasJobs(0, Flags.REQUIRES_AUTH)) {
-      PreferenceManager.getDefaultSharedPreferences(this)
-          .edit()
-          .putBoolean(Settings.INITIAL_SYNC, false)
-          .apply();
-
-      Bundle extras = new Bundle();
-      extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-      extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-
-      AccountManager am = AccountManager.get(this);
-      Account[] accounts = am.getAccountsByType(getString(R.string.accountType));
-      for (Account account : accounts) {
-        ContentResolver.requestSync(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, extras);
-      }
-    }
 
     Timber.d("JobService stopped");
     super.onDestroy();
