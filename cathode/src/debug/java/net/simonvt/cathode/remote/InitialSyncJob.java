@@ -16,8 +16,6 @@
 
 package net.simonvt.cathode.remote;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import javax.inject.Inject;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
