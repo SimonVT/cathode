@@ -36,10 +36,8 @@ ext {
 
 ext.libraries = [
   junit: 'junit:junit:4.12',
-  robolectric: 'org.robolectric:robolectric:3.0',
-  mockito: 'org.mockito:mockito-core:1.10.19',
-  assertj: 'org.assertj:assertj-core:3.2.0',
-  truth: 'com.google.truth:truth:0.27',
+  robolectric: 'org.robolectric:robolectric:3.1.2',
+  truth: 'com.google.truth:truth:0.30',
 
   schematic: 'net.simonvt.schematic:schematic:0.6.7',
   schematicCompiler: 'net.simonvt.schematic:schematic-compiler:0.6.7',
@@ -59,9 +57,9 @@ ext.libraries = [
   retrofit: 'com.squareup.retrofit2:retrofit:2.1.0',
   retrofitGson: 'com.squareup.retrofit2:converter-gson:2.1.0',
 
-  butterknife: 'com.jakewharton:butterknife:8.3.0',
-  butterknifeCompiler: 'com.jakewharton:butterknife-compiler:8.3.0',
-  timber: 'com.jakewharton.timber:timber:4.3.0',
+  butterknife: 'com.jakewharton:butterknife:8.4.0',
+  butterknifeCompiler: 'com.jakewharton:butterknife-compiler:8.4.0',
+  timber: 'com.jakewharton.timber:timber:4.3.1',
 
   dashclockApi: 'com.google.android.apps.dashclock:dashclock-api:2.0.0',
 

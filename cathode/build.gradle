@@ -37,7 +37,6 @@ dependencies {
 
   testCompile parent.libraries.junit
   testCompile parent.libraries.robolectric
-  testCompile parent.libraries.mockito
   testCompile parent.libraries.truth
 }
 
