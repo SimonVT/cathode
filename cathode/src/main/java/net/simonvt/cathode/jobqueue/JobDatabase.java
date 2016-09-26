@@ -23,7 +23,7 @@ import net.simonvt.schematic.annotation.OnUpgrade;
 import net.simonvt.schematic.annotation.Table;
 
 @Database(
-    version = 2,
+    version = 3,
     packageName = "net.simonvt.cathode.jobqueue.database"
 )
 public class JobDatabase {
@@ -41,6 +41,15 @@ public class JobDatabase {
     if (oldVersion <= 1) {
       db.delete(Tables.JOBS, JobColumns.JOB_NAME + "=?", new String[] {
           "net.simonvt.cathode.remote.sync.SyncActivityStream",
+      });
+    }
+
+    if (oldVersion <= 2) {
+      db.delete(Tables.JOBS, JobColumns.JOB_NAME + "=?", new String[] {
+          "net.simonvt.cathode.remote.sync.shows.SyncShowCast",
+      });
+      db.delete(Tables.JOBS, JobColumns.JOB_NAME + "=?", new String[] {
+          "net.simonvt.cathode.remote.sync.movies.SyncMovieCrew",
       });
     }
   }
