@@ -54,6 +54,7 @@ ext.libraries = [
   okhttp: 'com.squareup.okhttp3:okhttp:3.4.1',
   okhttpLogger: 'com.squareup.okhttp3:logging-interceptor:3.4.1',
   picasso: 'com.squareup.picasso:picasso:2.5.2',
+  picassoOkHttp: 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2',
   retrofit: 'com.squareup.retrofit2:retrofit:2.1.0',
   retrofitGson: 'com.squareup.retrofit2:converter-gson:2.1.0',
 

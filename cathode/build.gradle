@@ -21,6 +21,7 @@ dependencies {
   compile parent.libraries.dagger
   apt parent.libraries.daggerCompiler
   compile parent.libraries.picasso
+  compile parent.libraries.picassoOkHttp
   compile parent.libraries.retrofit
   compile parent.libraries.okhttp
   debugCompile parent.libraries.okhttpLogger

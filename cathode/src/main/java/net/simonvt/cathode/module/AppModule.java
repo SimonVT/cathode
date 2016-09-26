@@ -18,6 +18,7 @@ package net.simonvt.cathode.module;
 
 import android.content.Context;
 import android.content.Intent;
+import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 import dagger.Module;
 import dagger.Provides;
@@ -338,8 +339,8 @@ public class AppModule {
     return new SearchHandler(app);
   }
 
-  @Provides @Singleton Picasso providePicasso() {
-    return new Picasso.Builder(app).build();
+  @Provides @Singleton Picasso providePicasso(Context context) {
+    return new Picasso.Builder(app).downloader(new OkHttp3Downloader(context)).build();
   }
 
   @Provides @Singleton UpcomingTimePreference provideUpcomingTimePreference() {
