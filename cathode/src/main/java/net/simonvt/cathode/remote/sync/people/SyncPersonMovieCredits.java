@@ -65,7 +65,7 @@ public class SyncPersonMovieCredits extends CallJob<Credits> {
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
     final long personId = PersonWrapper.getId(getContentResolver(), traktId);
 
-    Cursor oldCastCursor = getContentResolver().query(MovieCast.fromPerson(personId), new String[] {
+    Cursor oldCastCursor = getContentResolver().query(MovieCast.withPerson(personId), new String[] {
         Tables.MOVIE_CAST + "." + MovieCastColumns.ID, MovieCastColumns.MOVIE_ID,
     }, null, null, null);
     List<Long> oldCast = new ArrayList<>();
@@ -127,7 +127,7 @@ public class SyncPersonMovieCredits extends CallJob<Credits> {
 
   private void insertCrew(ArrayList<ContentProviderOperation> ops, long personId,
       Department department, List<Credits.Credit> crew) {
-    Cursor oldCrewCursor = getContentResolver().query(MovieCrew.fromPerson(personId), new String[] {
+    Cursor oldCrewCursor = getContentResolver().query(MovieCrew.withPerson(personId), new String[] {
         Tables.MOVIE_CREW + "." + MovieCrewColumns.ID, MovieCrewColumns.MOVIE_ID,
     }, MovieCrewColumns.CATEGORY + "=?", new String[] {
         department.toString(),

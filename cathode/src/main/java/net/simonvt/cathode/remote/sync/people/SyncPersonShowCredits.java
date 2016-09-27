@@ -67,7 +67,7 @@ public class SyncPersonShowCredits extends CallJob<Credits> {
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
     final long personId = PersonWrapper.getId(getContentResolver(), traktId);
 
-    Cursor oldCastCursor = getContentResolver().query(ShowCast.fromPerson(personId), new String[] {
+    Cursor oldCastCursor = getContentResolver().query(ShowCast.withPerson(personId), new String[] {
         Tables.SHOW_CAST + "." + ShowCastColumns.ID, ShowCastColumns.SHOW_ID,
     }, null, null, null);
     List<Long> oldCast = new ArrayList<>();
@@ -129,7 +129,7 @@ public class SyncPersonShowCredits extends CallJob<Credits> {
 
   private void insertCrew(ArrayList<ContentProviderOperation> ops, long personId,
       Department department, List<Credit> crew) {
-    Cursor oldCrewCursor = getContentResolver().query(ShowCrew.fromPerson(personId), new String[] {
+    Cursor oldCrewCursor = getContentResolver().query(ShowCrew.withPerson(personId), new String[] {
         Tables.SHOW_CREW + "." + ShowCrewColumns.ID, ShowCrewColumns.SHOW_ID,
     }, ShowCrewColumns.CATEGORY + "=?", new String[] {
         department.toString(),

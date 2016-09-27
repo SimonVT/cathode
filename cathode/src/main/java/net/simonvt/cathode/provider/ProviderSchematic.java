@@ -155,7 +155,7 @@ public final class ProviderSchematic {
     String RECENT_QUERIES = "recentQueries";
 
     String PEOPLE = "people";
-    String FROM_PERSON = "fromPerson";
+    String FROM_PERSON = "withPerson";
 
     String LISTS = "lists";
     String LIST_ITEMS = "listItems";
@@ -894,11 +894,11 @@ public final class ProviderSchematic {
     @InexactContentUri(
         path = Path.SHOW_CAST + "/" + Path.FROM_PERSON + "/#",
         type = Type.SHOW_CAST,
-        name = "CAST_FROMPERSON",
+        name = "CAST_WITHPERSON",
         whereColumn = ShowCastColumns.PERSON_ID,
         pathSegment = 2,
         join = Joins.SHOW_CAST)
-    public static Uri fromPerson(long personId) {
+    public static Uri withPerson(long personId) {
       return buildUri(Path.SHOW_CAST, Path.FROM_PERSON, String.valueOf(personId));
     }
 
@@ -911,8 +911,9 @@ public final class ProviderSchematic {
     @NotifyInsert(paths = Path.SHOW_CAST)
     public static Uri[] notifyInsert(ContentValues cv) {
       final long showId = cv.getAsLong(ShowCastColumns.SHOW_ID);
+      final long personId = cv.getAsLong(ShowCastColumns.PERSON_ID);
       return new Uri[] {
-          fromShow(showId),
+          fromShow(showId), withPerson(personId),
       };
     }
   }
@@ -951,19 +952,20 @@ public final class ProviderSchematic {
     @InexactContentUri(
         path = Path.SHOW_CREW + "/" + Path.FROM_PERSON + "/#",
         type = Type.SHOW_CREW,
-        name = "CREW_FROMPERSON",
+        name = "CREW_WITHPERSON",
         whereColumn = ShowCrewColumns.PERSON_ID,
         pathSegment = 2,
         join = Joins.SHOW_CREW)
-    public static Uri fromPerson(long personId) {
+    public static Uri withPerson(long personId) {
       return buildUri(Path.SHOW_CREW, Path.FROM_PERSON, String.valueOf(personId));
     }
 
     @NotifyInsert(paths = Path.SHOW_CREW)
     public static Uri[] notifyInsert(ContentValues cv) {
       final long showId = cv.getAsLong(ShowCrewColumns.SHOW_ID);
+      final long personId = cv.getAsLong(ShowCrewColumns.PERSON_ID);
       return new Uri[] {
-          fromShow(showId),
+          fromShow(showId), withPerson(personId),
       };
     }
 
@@ -1181,19 +1183,20 @@ public final class ProviderSchematic {
     @InexactContentUri(
         path = Path.MOVIE_CAST + "/" + Path.FROM_PERSON + "/#",
         type = Type.MOVIE_CAST,
-        name = "CAST_FROMPERSON",
+        name = "CAST_WITHPERSON",
         whereColumn = MovieCastColumns.PERSON_ID,
         pathSegment = 2,
         join = Joins.MOVIE_CAST)
-    public static Uri fromPerson(long personId) {
+    public static Uri withPerson(long personId) {
       return buildUri(Path.MOVIE_CAST, Path.FROM_PERSON, String.valueOf(personId));
     }
 
     @NotifyInsert(paths = Path.MOVIE_CAST)
     public static Uri[] notifyInsert(ContentValues cv) {
       final long movieId = cv.getAsLong(MovieCastColumns.MOVIE_ID);
+      final long personId = cv.getAsLong(MovieCastColumns.PERSON_ID);
       return new Uri[] {
-          fromMovie(movieId),
+          fromMovie(movieId), withPerson(personId),
       };
     }
 
@@ -1238,19 +1241,20 @@ public final class ProviderSchematic {
     @InexactContentUri(
         path = Path.MOVIE_CREW + "/" + Path.FROM_PERSON + "/#",
         type = Type.MOVIE_CREW,
-        name = "CREW_FROMPERSON",
+        name = "CREW_WITHPERSON",
         whereColumn = MovieCrewColumns.PERSON_ID,
         pathSegment = 2,
         join = Joins.MOVIE_CREW)
-    public static Uri fromPerson(long personId) {
+    public static Uri withPerson(long personId) {
       return buildUri(Path.MOVIE_CREW, Path.FROM_PERSON, String.valueOf(personId));
     }
 
     @NotifyInsert(paths = Path.MOVIE_CREW)
     public static Uri[] notifyInsert(ContentValues cv) {
       final long movieId = cv.getAsLong(MovieCrewColumns.MOVIE_ID);
+      final long personId = cv.getAsLong(MovieCrewColumns.PERSON_ID);
       return new Uri[] {
-          fromMovie(movieId),
+          fromMovie(movieId), withPerson(personId),
       };
     }
 

@@ -89,10 +89,10 @@ public class PersonLoader extends BaseAsyncLoader<Person> {
     resolver = context.getContentResolver();
 
     addNotificationUri(People.withId(personId));
-    addNotificationUri(ShowCast.fromPerson(personId));
-    addNotificationUri(ShowCrew.fromPerson(personId));
-    addNotificationUri(MovieCast.fromPerson(personId));
-    addNotificationUri(MovieCrew.fromPerson(personId));
+    addNotificationUri(ShowCast.withPerson(personId));
+    addNotificationUri(ShowCrew.withPerson(personId));
+    addNotificationUri(MovieCast.withPerson(personId));
+    addNotificationUri(MovieCrew.withPerson(personId));
   }
 
   @Override public Person loadInBackground() {
@@ -144,8 +144,8 @@ public class PersonLoader extends BaseAsyncLoader<Person> {
   };
 
   private void loadShowCredits(PersonCredits credits) {
-    Uri castUri = ShowCast.fromPerson(personId);
-    Uri crewUri = ShowCrew.fromPerson(personId);
+    Uri castUri = ShowCast.withPerson(personId);
+    Uri crewUri = ShowCrew.withPerson(personId);
 
     List<PersonCredit> cast = null;
     Cursor castCursor = resolver.query(castUri, SHOW_CAST_PROJECTION, null, null, null);
@@ -216,8 +216,8 @@ public class PersonLoader extends BaseAsyncLoader<Person> {
   }
 
   private void loadMovieCredits(PersonCredits credits) {
-    Uri castUri = MovieCast.fromPerson(personId);
-    Uri crewUri = MovieCrew.fromPerson(personId);
+    Uri castUri = MovieCast.withPerson(personId);
+    Uri crewUri = MovieCrew.withPerson(personId);
 
     List<PersonCredit> cast = null;
     Cursor castCursor = resolver.query(castUri, MOVIE_CAST_PROJECTION, null, null, null);
