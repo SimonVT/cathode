@@ -18,11 +18,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:animateLayoutChanges="true"
     android:paddingLeft="@dimen/detailContentPadding"
     android:paddingTop="18dp"
     android:paddingRight="@dimen/detailContentPadding"
-    android:paddingBottom="@dimen/detailContentPaddingBottom"
-    android:orientation="vertical">
+    android:paddingBottom="@dimen/detailContentPaddingBottom">
 
   <TextView
       android:id="@+id/overviewTitle"

@@ -19,6 +19,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:animateLayoutChanges="true"
     android:paddingTop="@dimen/detailContentPaddingTop"
     android:paddingBottom="16dp">
 
