@@ -33,4 +33,13 @@ public final class Intents {
       context.startActivity(intent);
     }
   }
+
+  public static boolean isAvailable(Context context, Intent intent) {
+    PackageManager pm = context.getPackageManager();
+    if (pm.resolveActivity(intent, 0) != null) {
+      return true;
+    }
+
+    return false;
+  }
 }

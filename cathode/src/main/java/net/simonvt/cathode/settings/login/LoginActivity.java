@@ -20,6 +20,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import net.simonvt.cathode.BuildConfig;
@@ -27,6 +29,7 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.Authorization;
 import net.simonvt.cathode.ui.BaseActivity;
+import net.simonvt.cathode.util.Intents;
 
 public class LoginActivity extends BaseActivity {
 
@@ -36,12 +39,28 @@ public class LoginActivity extends BaseActivity {
 
   private static final int REQUEST_OAUTH = 1;
 
+  @BindView(R.id.login_in_app) View loginInApp;
+
+  private Intent browserIntent;
+
+  private boolean browserAvailable = true;
+
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     CathodeApp.inject(this);
 
     setContentView(R.layout.activity_login);
     ButterKnife.bind(this);
+
+    browserIntent = new Intent(Intent.ACTION_VIEW);
+    browserIntent.setData(Uri.parse(
+        Authorization.getOAuthUri(BuildConfig.TRAKT_CLIENT_ID, BuildConfig.TRAKT_REDIRECT_URL)));
+
+    if (!Intents.isAvailable(this, browserIntent)) {
+      browserAvailable = false;
+
+      loginInApp.setVisibility(View.GONE);
+    }
 
     onNewIntent(getIntent());
   }
@@ -76,15 +95,16 @@ public class LoginActivity extends BaseActivity {
     finish();
   }
 
-  @OnClick(R.id.in_app) void onInAppClicked() {
+  @OnClick(R.id.login_in_app) void onInAppClicked() {
     Intent authorize = new Intent(LoginActivity.this, OauthWebViewActivity.class);
     startActivityForResult(authorize, REQUEST_OAUTH);
   }
 
-  @OnClick(R.id.external) void onExternalClicked() {
-    Intent authorize = new Intent(Intent.ACTION_VIEW);
-    authorize.setData(Uri.parse(
-        Authorization.getOAuthUri(BuildConfig.TRAKT_CLIENT_ID, BuildConfig.TRAKT_REDIRECT_URL)));
-    startActivity(authorize);
+  @OnClick(R.id.login) void onLoginClicked() {
+    if (browserAvailable) {
+      startActivity(browserIntent);
+    } else {
+      onInAppClicked();
+    }
   }
 }

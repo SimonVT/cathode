@@ -42,13 +42,13 @@
         android:text="@string/login_description"/>
 
     <Button
-        android:id="@+id/external"
+        android:id="@+id/login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/login_sign_in"/>
 
     <TextView
-        android:id="@+id/in_app"
+        android:id="@+id/login_in_app"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
