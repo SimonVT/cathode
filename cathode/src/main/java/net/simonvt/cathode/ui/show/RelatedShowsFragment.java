@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import javax.inject.Inject;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -73,6 +74,8 @@ public class RelatedShowsFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
+    CathodeApp.inject(getContext(), this);
+
     showId = getArguments().getLong(ARG_SHOW_ID);
 
     setEmptyText(R.string.empty_show_related);
