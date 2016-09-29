@@ -39,7 +39,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.util.ViewUtils;
-import timber.log.Timber;
 
 public class WatchingView extends ViewGroup {
 
@@ -132,7 +131,6 @@ public class WatchingView extends ViewGroup {
 
   private Runnable updateProgress = new Runnable() {
     @Override public void run() {
-      Timber.d("Updating watched progress");
       progress.setProgress((int) (System.currentTimeMillis() - startTime));
       handler.postDelayed(this, 30 * 1000L);
     }
@@ -200,11 +198,13 @@ public class WatchingView extends ViewGroup {
 
   public void watchingShow(long showId, String showTitle, long episodeId, String episodeTitle,
       String poster, long startTime, long endTime) {
-    clearVariables();
+    if (type != Type.SHOW || showId != this.showId) {
+      clearVariables();
 
-    this.type = Type.SHOW;
+      this.type = Type.SHOW;
+      this.showId = showId;
+    }
 
-    this.showId = showId;
     this.showTitle = showTitle;
     this.episodeId = episodeId;
     this.episodeTitle = episodeTitle;
@@ -224,11 +224,13 @@ public class WatchingView extends ViewGroup {
 
   public void watchingMovie(long movieId, String movieTitle, String overview, String poster,
       long startTime, long endTime) {
-    clearVariables();
+    if (type != Type.MOVIE || movieId != this.movieId) {
+      clearVariables();
 
-    this.type = Type.MOVIE;
+      this.type = Type.MOVIE;
+      this.movieId = movieId;
+    }
 
-    this.movieId = movieId;
     this.movieTitle = movieTitle;
     this.movieOverview = overview;
     this.poster = poster;
@@ -238,6 +240,8 @@ public class WatchingView extends ViewGroup {
     posterView.setImage(poster);
     titleView.setText(movieTitle);
     subtitleView.setVisibility(GONE);
+    progress.setMax((int) (endTime - startTime));
+    progress.setProgress((int) (System.currentTimeMillis() - startTime));
 
     animateIn();
   }
@@ -258,8 +262,6 @@ public class WatchingView extends ViewGroup {
     poster = null;
     startTime = 0L;
     endTime = 0L;
-
-    isExpanded = false;
   }
 
   private void animateIn() {
@@ -285,6 +287,7 @@ public class WatchingView extends ViewGroup {
         @Override public void run() {
           setVisibility(GONE);
           collapse();
+          setAnimationProgress(1.0f);
         }
       });
     }
@@ -298,7 +301,8 @@ public class WatchingView extends ViewGroup {
         }
       } else {
         if (movieId >= 0) {
-          watchingViewListener.onMovieClicked(WatchingView.this, movieId, movieTitle, movieOverview);
+          watchingViewListener.onMovieClicked(WatchingView.this, movieId, movieTitle,
+              movieOverview);
         }
       }
     }
