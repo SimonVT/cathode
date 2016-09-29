@@ -30,6 +30,8 @@ import android.preference.SwitchPreference;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import javax.inject.Inject;
+import net.simonvt.android.colorpicker.ColorPickerDialog;
+import net.simonvt.android.colorpicker.ColorPickerSwatch;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.settings.hidden.HiddenItems;
@@ -41,6 +43,9 @@ public class SettingsActivity extends BaseActivity {
 
   private static final String FRAGMENT_SETTINGS =
       "net.simonvt.cathode.settings.SettingsActivity.settingsFragment";
+
+  private static final String DIALOG_COLOR_PICKER =
+      "net.simonvt.cathode.settings.SettingsActivity.ColorPicker";
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -63,7 +68,8 @@ public class SettingsActivity extends BaseActivity {
   }
 
   public static class SettingsFragment extends PreferenceFragment
-      implements UpcomingTimeDialog.UpcomingTimeSelectedListener {
+      implements UpcomingTimeDialog.UpcomingTimeSelectedListener,
+      ColorPickerSwatch.OnColorSelectedListener {
 
     private static final String DIALOG_UPCOMING_TIME =
         "net.simonvt.cathode.settings.SettingsActivity.SettingsFragment.upcomingTime";
@@ -76,10 +82,14 @@ public class SettingsActivity extends BaseActivity {
 
     SwitchPreference syncCalendar;
 
+    private boolean isTablet;
+
     @Override public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       CathodeApp.inject(getActivity(), this);
       settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+      isTablet = getResources().getBoolean(R.bool.isTablet);
 
       addPreferencesFromResource(R.xml.preferences_settings);
 
@@ -98,6 +108,22 @@ public class SettingsActivity extends BaseActivity {
           return true;
         }
       });
+
+      findPreference("calendarColor").setOnPreferenceClickListener(
+          new Preference.OnPreferenceClickListener() {
+            @Override public boolean onPreferenceClick(Preference preference) {
+              final int calendarColor =
+                  settings.getInt(Settings.CALENDAR_COLOR, Settings.CALENDAR_COLOR_DEFAULT);
+              final int size =
+                  isTablet ? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL;
+              ColorPickerDialog dialog =
+                  ColorPickerDialog.newInstance(R.string.preference_calendar_color,
+                      Settings.CALENDAR_COLORS, calendarColor, 5, size);
+              dialog.setTargetFragment(SettingsFragment.this, 0);
+              dialog.show(getFragmentManager(), DIALOG_COLOR_PICKER);
+              return true;
+            }
+          });
 
       findPreference("hiddenItems").setOnPreferenceClickListener(
           new Preference.OnPreferenceClickListener() {
@@ -156,6 +182,21 @@ public class SettingsActivity extends BaseActivity {
 
     @Override public void onUpcomingTimeSelected(UpcomingTime value) {
       upcomingTimePreference.set(value);
+    }
+
+    @Override public void onColorSelected(int color) {
+      final int calendarColor =
+          settings.getInt(Settings.CALENDAR_COLOR, Settings.CALENDAR_COLOR_DEFAULT);
+      if (color != calendarColor) {
+        settings.edit()
+            .putInt(Settings.CALENDAR_COLOR, color)
+            .putBoolean(Settings.CALENDAR_COLOR_NEEDS_UPDATE, true)
+            .apply();
+
+        if (Permissions.hasCalendarPermission(getActivity())) {
+          Accounts.requestCalendarSync(getActivity());
+        }
+      }
     }
   }
 }

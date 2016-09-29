@@ -40,6 +40,15 @@ public final class Settings {
 
   // Whether upcoming shows should be added to the calendar
   public static final String CALENDAR_SYNC = "calendarSync";
+  public static final String CALENDAR_COLOR = "calendarColor";
+  public static final int CALENDAR_COLOR_DEFAULT = 0xff34495e;
+  public static final int[] CALENDAR_COLORS = new int[] {
+      0xff34495e, 0xffd50000, 0xfff4511e, 0xffef6c00, 0xfff09300, 0xfff6bf26, 0xffe4c441,
+      0xffc0ca33, 0xff7cb342, 0xff0b8043, 0xff009688, 0xff33b679, 0xff039be5, 0xff4285f4,
+      0xff3f51b5, 0xff7986cb, 0xffb39ddb, 0xff9e69af, 0xff8e24aa, 0xffad1457, 0xffd81b60,
+      0xffe67c73, 0xff795548, 0xff616161, 0xffa79b8e,
+  };
+  public static final String CALENDAR_COLOR_NEEDS_UPDATE = "calendarColorNeedsUpdate";
 
   // Whether hidden shows should be displayed in upcoming
   public static final String SHOW_HIDDEN = "showHidden";

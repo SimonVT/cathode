@@ -19,6 +19,7 @@ import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
@@ -93,20 +94,14 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
     final boolean syncCalendar = settings.getBoolean(Settings.CALENDAR_SYNC, false);
     if (!syncCalendar) {
-      Timber.d("Deleting calendar");
-      //noinspection MissingPermission
-      context.getContentResolver()
-          .delete(CalendarContract.Events.CONTENT_URI, CalendarContract.Events.CALENDAR_ID + "=?",
-              new String[] {
-                  String.valueOf(calendarId),
-              });
-
-      Uri calenderUri = CalendarContract.Calendars.CONTENT_URI.buildUpon()
-          .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, account.name)
-          .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, account.type)
-          .build();
-      context.getContentResolver().delete(calenderUri, null, null);
+      deleteCalendar(account, calendarId);
       return;
+    }
+
+    final boolean updateCalendarColor =
+        settings.getBoolean(Settings.CALENDAR_COLOR_NEEDS_UPDATE, false);
+    if (updateCalendarColor) {
+      updateCalendarColor(calendarId);
     }
 
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
@@ -295,6 +290,29 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
     }
   }
 
+  private int getCalendarColor() {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    return settings.getInt(Settings.CALENDAR_COLOR, Settings.CALENDAR_COLOR_DEFAULT);
+  }
+
+  private void updateCalendarColor(long calendarId) {
+    final int calendarColor = getCalendarColor();
+
+    ContentValues values = new ContentValues();
+    values.put(CalendarContract.Calendars.CALENDAR_COLOR, calendarColor);
+    //noinspection MissingPermission
+    context.getContentResolver()
+        .update(CalendarContract.Calendars.CONTENT_URI, values, BaseColumns._ID + "=?",
+            new String[] {
+                String.valueOf(calendarId),
+            });
+
+    PreferenceManager.getDefaultSharedPreferences(context)
+        .edit()
+        .putBoolean(Settings.CALENDAR_COLOR_NEEDS_UPDATE, false)
+        .apply();
+  }
+
   private long getCalendar(Account account) {
     return getCalendar(account, true);
   }
@@ -321,7 +339,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
           return INVALID_ID;
         }
 
-        ArrayList<ContentProviderOperation> operationList = new ArrayList<>();
+        ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
         ContentProviderOperation.Builder builder = ContentProviderOperation.newInsert(
             CalendarContract.Calendars.CONTENT_URI.buildUpon()
@@ -334,16 +352,16 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
         builder.withValue(CalendarContract.Calendars.NAME, context.getString(R.string.app_name));
         builder.withValue(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
             context.getString(R.string.calendarName));
-        builder.withValue(CalendarContract.Calendars.CALENDAR_COLOR, 0xD51007);
+        builder.withValue(CalendarContract.Calendars.CALENDAR_COLOR, getCalendarColor());
         builder.withValue(CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL,
             CalendarContract.Calendars.CAL_ACCESS_READ);
         builder.withValue(CalendarContract.Calendars.OWNER_ACCOUNT, account.name);
         builder.withValue(CalendarContract.Calendars.SYNC_EVENTS, 1);
-        operationList.add(builder.build());
+        ops.add(builder.build());
         try {
-          context.getContentResolver().applyBatch(CalendarContract.AUTHORITY, operationList);
+          context.getContentResolver().applyBatch(CalendarContract.AUTHORITY, ops);
         } catch (Exception e) {
-          e.printStackTrace();
+          Timber.e(e, "Unable to create calendar");
           return INVALID_ID;
         }
         return getCalendar(account, false);
@@ -351,5 +369,21 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
     } finally {
       if (c != null) c.close();
     }
+  }
+
+  private void deleteCalendar(Account account, long calendarId) {
+    Timber.d("Deleting calendar");
+    //noinspection MissingPermission
+    context.getContentResolver()
+        .delete(CalendarContract.Events.CONTENT_URI, CalendarContract.Events.CALENDAR_ID + "=?",
+            new String[] {
+                String.valueOf(calendarId),
+            });
+
+    Uri calenderUri = CalendarContract.Calendars.CONTENT_URI.buildUpon()
+        .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, account.name)
+        .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, account.type)
+        .build();
+    context.getContentResolver().delete(calenderUri, null, null);
   }
 }

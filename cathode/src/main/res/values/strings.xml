@@ -228,6 +228,7 @@
   <!-- Settings -->
   <string name="preference_startpage">Start page</string>
   <string name="preference_calendar">Display upcoming shows in calendar</string>
+  <string name="preference_calendar_color">Calendar color</string>
   <string name="preference_hidden_items">Hidden items</string>
   <string name="preference_hidden_empty">You have no hidden items</string>
 

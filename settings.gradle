@@ -1,1 +1,1 @@
-include 'cathode', 'trakt-api'
+include 'cathode', 'trakt-api', ':libs:colorpicker'
