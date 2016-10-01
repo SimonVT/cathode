@@ -25,7 +25,9 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.database.DatabaseUtils;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.cathode.util.TextUtils;
@@ -200,6 +202,50 @@ public final class ShowDatabaseHelper {
     return id;
   }
 
+  public long getNextEpisodeId(long showId) {
+    int lastWatchedSeason = -1;
+    int lastWatchedEpisode = -1;
+
+    Cursor lastWatchedCursor = resolver.query(Episodes.fromShow(showId), new String[] {
+            EpisodeColumns.ID, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
+        }, EpisodeColumns.WATCHED + "=1", null,
+        EpisodeColumns.SEASON + " DESC, " + EpisodeColumns.EPISODE + " DESC LIMIT 1");
+
+    if (lastWatchedCursor.moveToFirst()) {
+      lastWatchedSeason = Cursors.getInt(lastWatchedCursor, EpisodeColumns.SEASON);
+      lastWatchedEpisode = Cursors.getInt(lastWatchedCursor, EpisodeColumns.EPISODE);
+    }
+    lastWatchedCursor.close();
+
+    Cursor nextEpisode = resolver.query(Episodes.fromShow(showId), new String[] {
+        EpisodeColumns.ID,
+    }, EpisodeColumns.SEASON
+        + ">0 AND ("
+        + EpisodeColumns.SEASON
+        + ">? OR ("
+        + EpisodeColumns.SEASON
+        + "=? AND "
+        + EpisodeColumns.EPISODE
+        + ">?)) AND "
+        + EpisodeColumns.FIRST_AIRED
+        + " NOT NULL", new String[] {
+        String.valueOf(lastWatchedSeason), String.valueOf(lastWatchedSeason),
+        String.valueOf(lastWatchedEpisode),
+    }, EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1");
+
+    long nextEpisodeId = -1L;
+
+    if (nextEpisode.moveToFirst()) {
+      nextEpisodeId = Cursors.getLong(nextEpisode, EpisodeColumns.ID);
+    } else {
+      throw new RuntimeException("Cursor empty");
+    }
+
+    nextEpisode.close();
+
+    return nextEpisodeId;
+  }
+
   public boolean needsSync(long showId) {
     Cursor show = null;
     try {
@@ -281,15 +327,14 @@ public final class ShowDatabaseHelper {
 
   public void setWatched(long showId, boolean watched) {
     ContentValues cv = new ContentValues();
-    cv.put(DatabaseContract.EpisodeColumns.WATCHED, watched);
+    cv.put(EpisodeColumns.WATCHED, watched);
 
     final long firstAiredOffset = FirstAiredOffsetPreference.getInstance().getOffsetMillis();
     final long millis = System.currentTimeMillis() - firstAiredOffset;
 
-    resolver.update(ProviderSchematic.Episodes.fromShow(showId), cv,
-        DatabaseContract.EpisodeColumns.FIRST_AIRED + "<?", new String[] {
-            String.valueOf(millis),
-        });
+    resolver.update(Episodes.fromShow(showId), cv, EpisodeColumns.FIRST_AIRED + "<?", new String[] {
+        String.valueOf(millis),
+    });
   }
 
   public void setIsInWatchlist(long showId, boolean inWatchlist) {
@@ -307,15 +352,14 @@ public final class ShowDatabaseHelper {
   public void setIsInCollection(long traktId, boolean inCollection) {
     final long showId = getId(traktId);
     ContentValues cv = new ContentValues();
-    cv.put(DatabaseContract.EpisodeColumns.IN_COLLECTION, inCollection);
+    cv.put(EpisodeColumns.IN_COLLECTION, inCollection);
 
     final long firstAiredOffset = FirstAiredOffsetPreference.getInstance().getOffsetMillis();
     final long millis = System.currentTimeMillis() - firstAiredOffset;
 
-    resolver.update(ProviderSchematic.Episodes.fromShow(showId), cv,
-        DatabaseContract.EpisodeColumns.FIRST_AIRED + "<?", new String[] {
-            String.valueOf(millis),
-        });
+    resolver.update(Episodes.fromShow(showId), cv, EpisodeColumns.FIRST_AIRED + "<?", new String[] {
+        String.valueOf(millis),
+    });
   }
 
   private static ContentValues getShowCVs(Show show) {

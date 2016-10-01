@@ -18,12 +18,15 @@ package net.simonvt.cathode.util;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import timber.log.Timber;
 
@@ -35,6 +38,53 @@ public final class FragmentStack {
   public interface Callback {
 
     void onStackChanged(int stackSize, Fragment topFragment);
+  }
+
+  public static class StackEntry implements Parcelable {
+
+    Class fragment;
+
+    String tag;
+
+    Bundle args;
+
+    public StackEntry(Class fragment, String tag) {
+      this.fragment = fragment;
+      this.tag = tag;
+    }
+
+    public StackEntry(Class fragment, String tag, Bundle args) {
+      this.fragment = fragment;
+      this.tag = tag;
+      this.args = args;
+    }
+
+    public StackEntry(Parcel in) {
+      fragment = (Class) in.readValue(getClass().getClassLoader());
+      tag = in.readString();
+      args = in.readBundle(getClass().getClassLoader());
+    }
+
+    @Override public int describeContents() {
+      return 0;
+    }
+
+    @Override public void writeToParcel(Parcel dest, int flags) {
+      dest.writeValue(fragment);
+      dest.writeString(tag);
+      dest.writeBundle(args);
+    }
+
+    public static final Parcelable.Creator<StackEntry> CREATOR =
+        new Parcelable.Creator<StackEntry>() {
+          @Override public StackEntry createFromParcel(Parcel in) {
+            return new StackEntry(in);
+          }
+
+          @Override public StackEntry[] newArray(int size) {
+            return new StackEntry[size];
+          }
+        };
   }
 
   /** Create an instance for a specific container. */
@@ -154,6 +204,10 @@ public final class FragmentStack {
     return stack.peekLast();
   }
 
+  public Fragment peekFirst() {
+    return stack.peekFirst();
+  }
+
   /** Replaces the entire stack with this fragment. */
   public void replace(Class fragment, String tag) {
     replace(fragment, tag, null);
@@ -201,6 +255,78 @@ public final class FragmentStack {
     topLevelTags.add(tag);
 
     commit();
+  }
+
+  public void replaceStack(List<StackEntry> stackEntries) {
+    if (!allowTransactions()) {
+      return;
+    }
+
+    ensureTransaction();
+    fragmentTransaction.setCustomAnimations(popStackEnterAnimation, popStackExitAnimation);
+
+    final int stackSize = stackEntries.size();
+
+    if (stackSize > 1) {
+      while (stack.size() > 1) {
+        removeFragment(stack.pollLast());
+      }
+    }
+
+    StackEntry topLevel = stackEntries.get(0);
+    Fragment firstFragment = fragmentManager.findFragmentByTag(topLevel.tag);
+
+    Fragment first = stack.peekFirst();
+    if (firstFragment == null) {
+      Fragment f = Fragment.instantiate(activity, topLevel.fragment.getName(), topLevel.args);
+      attachFragment(f, topLevel.tag);
+      commit();
+
+      stack.clear();
+      stack.add(f);
+    }
+
+    if (stackEntries.size() == 1) {
+      if (firstFragment != null) {
+        ensureTransaction();
+        attachFragment(firstFragment, topLevel.tag);
+        commit();
+
+        stack.clear();
+        stack.add(firstFragment);
+      }
+    } else {
+      ensureTransaction();
+      if (firstFragment == first) {
+        detachFragment(first);
+      } else {
+        detachFragment(first);
+        detachFragment(firstFragment);
+      }
+      commit();
+
+      if (firstFragment != null) {
+        stack.clear();
+        stack.add(firstFragment);
+      }
+
+      for (int i = 1; i < stackSize; i++) {
+        StackEntry entry = stackEntries.get(i);
+        Fragment f = Fragment.instantiate(activity, entry.fragment.getName(), entry.args);
+
+        ensureTransaction();
+        attachFragment(f, entry.tag);
+        commit();
+
+        stack.add(f);
+
+        if (i + 1 < stackSize) {
+          ensureTransaction();
+          detachFragment(f);
+          commit();
+        }
+      }
+    }
   }
 
   public void push(Class fragment, String tag) {

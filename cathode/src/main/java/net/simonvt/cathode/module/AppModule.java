@@ -37,6 +37,7 @@ import net.simonvt.cathode.jobqueue.JobListener;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.jobqueue.JobModule;
 import net.simonvt.cathode.jobqueue.JobService;
+import net.simonvt.cathode.notification.NotificationActionService;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.SearchDatabaseHelper;
@@ -151,6 +152,7 @@ import net.simonvt.cathode.search.SearchHandler;
 import net.simonvt.cathode.service.CathodeSyncAdapter;
 import net.simonvt.cathode.service.SyncWatchingReceiver;
 import net.simonvt.cathode.settings.LogoutDialog;
+import net.simonvt.cathode.settings.NotificationSettingsActivity;
 import net.simonvt.cathode.settings.SettingsActivity;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.settings.hidden.HiddenItems;
@@ -159,6 +161,7 @@ import net.simonvt.cathode.settings.login.LoginActivity;
 import net.simonvt.cathode.settings.login.TokenActivity;
 import net.simonvt.cathode.settings.login.TokenTask;
 import net.simonvt.cathode.settings.setup.CalendarSetupActivity;
+import net.simonvt.cathode.settings.setup.NotificationSetupActivity;
 import net.simonvt.cathode.tmdb.TmdbModule;
 import net.simonvt.cathode.tmdb.api.SyncConfiguration;
 import net.simonvt.cathode.tmdb.api.movie.SyncMovieImages;
@@ -166,6 +169,7 @@ import net.simonvt.cathode.tmdb.api.people.SyncPersonBackdrop;
 import net.simonvt.cathode.tmdb.api.people.SyncPersonHeadshot;
 import net.simonvt.cathode.tmdb.api.show.SyncEpisodeImages;
 import net.simonvt.cathode.tmdb.api.show.SyncShowImages;
+import net.simonvt.cathode.ui.EpisodeDetailsActivity;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.comments.AddCommentDialog;
 import net.simonvt.cathode.ui.comments.CommentFragment;
@@ -244,6 +248,9 @@ import net.simonvt.cathode.widget.RemoteImageView;
         // Activities
         HomeActivity.class, LoginActivity.class, TokenTask.class, CalendarSetupActivity.class,
         SettingsActivity.class, HiddenItems.class, TokenActivity.class,
+        EpisodeDetailsActivity.class, NotificationSettingsActivity.class,
+        NotificationSettingsActivity.NotificationSettingsFragment.class,
+        NotificationSetupActivity.class,
 
         // Fragments
         EpisodeFragment.class, LogoutDialog.class, CollectedMoviesFragment.class,
@@ -279,7 +286,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         PersonRequestHandler.class, ImageRequestHandler.class,
 
         // Services
-        JobService.class, CathodeSyncAdapter.class, AuthJobService.class,
+        JobService.class, CathodeSyncAdapter.class, AuthJobService.class, NotificationActionService.class,
 
         // Receivers
         SyncWatchingReceiver.class,

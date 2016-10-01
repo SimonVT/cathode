@@ -97,7 +97,7 @@ public class SettingsActivity extends BaseActivity {
 
       isTablet = getResources().getBoolean(R.bool.isTablet);
 
-      addPreferencesFromResource(R.xml.preferences_settings);
+      addPreferencesFromResource(R.xml.settings_general);
 
       syncCalendar = (SwitchPreference) findPreference(Settings.CALENDAR_SYNC);
       syncCalendar.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -127,6 +127,14 @@ public class SettingsActivity extends BaseActivity {
                       Settings.CALENDAR_COLORS, calendarColor, 5, size);
               dialog.setTargetFragment(SettingsFragment.this, 0);
               dialog.show(getFragmentManager(), DIALOG_COLOR_PICKER);
+              return true;
+            }
+          });
+
+      findPreference("notifications").setOnPreferenceClickListener(
+          new Preference.OnPreferenceClickListener() {
+            @Override public boolean onPreferenceClick(Preference preference) {
+              startActivity(new Intent(getActivity(), NotificationSettingsActivity.class));
               return true;
             }
           });

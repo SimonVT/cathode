@@ -51,6 +51,15 @@
       style="@style/DebugDrawerItem"/>
 
   <TextView
+      android:id="@+id/debug_updateNotifications"
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
+      android:textAllCaps="false"
+      android:text="Update notification"
+      style="@style/DebugDrawerItem"/>
+
+  <TextView
       android:layout_width="0dp"
       android:layout_columnSpan="2"
       android:layout_gravity="start|fill_horizontal"
@@ -116,6 +125,31 @@
       android:layout_gravity="start|fill_horizontal"
       android:textAllCaps="false"
       android:text="Invalidate refresh token"
+      style="@style/DebugDrawerItem"/>
+
+  <TextView
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
+      android:text="Fake show"
+      style="@style/DebugDrawerTitle"/>
+
+  <TextView
+      android:id="@+id/debug_insertFakeShow"
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
+      android:textAllCaps="false"
+      android:text="Insert fake show"
+      style="@style/DebugDrawerItem"/>
+
+  <TextView
+      android:id="@+id/debug_removeFakeShow"
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
+      android:textAllCaps="false"
+      android:text="Remove fake show"
       style="@style/DebugDrawerItem"/>
 
   <TextView

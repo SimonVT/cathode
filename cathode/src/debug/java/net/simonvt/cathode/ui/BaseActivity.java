@@ -16,9 +16,11 @@
 package net.simonvt.cathode.ui;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
@@ -48,6 +50,12 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobListener;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.jobqueue.JobService;
+import net.simonvt.cathode.notification.NotificationService;
+import net.simonvt.cathode.provider.DatabaseContract;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.InitialSyncJob;
 import net.simonvt.cathode.remote.sync.SyncWatching;
@@ -57,13 +65,16 @@ import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.StartPage;
 import net.simonvt.cathode.tmdb.api.SyncConfiguration;
+import net.simonvt.cathode.util.DateUtils;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 @SuppressLint("SetTextI18n") public abstract class BaseActivity extends AppCompatActivity {
 
-  private final DebugViews debugViews = new DebugViews();
+  private static final long FAKE_SHOW_ID = Long.MAX_VALUE;
 
-  private final DebugInjects injects = new DebugInjects();
+  final DebugViews debugViews = new DebugViews();
+
+  final DebugInjects injects = new DebugInjects();
 
   private SharedPreferences settings;
 
@@ -106,6 +117,13 @@ import okhttp3.logging.HttpLoggingInterceptor;
       }
     });
 
+    debugViews.updateNotifications.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        Intent i = new Intent(BaseActivity.this, NotificationService.class);
+        startService(i);
+      }
+    });
+
     debugViews.requestFailedEvent.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         RequestFailedEvent.post(R.string.error_unknown_retrying);
@@ -144,6 +162,56 @@ import okhttp3.logging.HttpLoggingInterceptor;
     debugViews.invalidateRefreshToken.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         settings.edit().putString(Settings.TRAKT_REFRESH_TOKEN, "invalid token").apply();
+      }
+    });
+
+    debugViews.insertFakeShow.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        new Thread(new Runnable() {
+          @Override public void run() {
+            long showId = injects.showHelper.getId(FAKE_SHOW_ID);
+            if (showId > -1L) {
+              getContentResolver().delete(Shows.withId(showId), null, null);
+            }
+
+            ContentValues values = new ContentValues();
+            values.put(ShowColumns.TITLE, "Fake show");
+            values.put(ShowColumns.TRAKT_ID, FAKE_SHOW_ID);
+            values.put(ShowColumns.RUNTIME, 1);
+            Uri showUri = getContentResolver().insert(Shows.SHOWS, values);
+            showId = Shows.getShowId(showUri);
+
+            values = new ContentValues();
+            values.put(DatabaseContract.SeasonColumns.SHOW_ID, showId);
+            values.put(DatabaseContract.SeasonColumns.SEASON, 1);
+            Uri seasonUri = getContentResolver().insert(ProviderSchematic.Seasons.SEASONS, values);
+            long seasonId = ProviderSchematic.Seasons.getId(seasonUri);
+
+            long time = System.currentTimeMillis() - DateUtils.MINUTE_IN_MILLIS;
+
+            for (int i = 1; i <= 10; i++) {
+              values = new ContentValues();
+              values.put(DatabaseContract.EpisodeColumns.SHOW_ID, showId);
+              values.put(DatabaseContract.EpisodeColumns.SEASON_ID, seasonId);
+              values.put(DatabaseContract.EpisodeColumns.SEASON, 1);
+              values.put(DatabaseContract.EpisodeColumns.EPISODE, i);
+              values.put(DatabaseContract.EpisodeColumns.FIRST_AIRED, time);
+              values.put(DatabaseContract.EpisodeColumns.WATCHED, i == 1);
+              getContentResolver().insert(ProviderSchematic.Episodes.EPISODES, values);
+
+              time += DateUtils.MINUTE_IN_MILLIS;
+            }
+          }
+        }).start();
+      }
+    });
+
+    debugViews.removeFakeShow.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        final long showId = injects.showHelper.getId(FAKE_SHOW_ID);
+        if (showId > -1L) {
+          getContentResolver().delete(Shows.withId(showId), null, null);
+        }
       }
     });
 
@@ -285,6 +353,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
     @Inject TraktSettings traktSettings;
 
     @Inject HttpLoggingInterceptor loggingInterceptor;
+
+    @Inject ShowDatabaseHelper showHelper;
   }
 
   static class DebugViews {
@@ -297,6 +367,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
     @BindView(R.id.debug_recreateActivity) View recreateActivity;
 
+    @BindView(R.id.debug_updateNotifications) View updateNotifications;
+
     @BindView(R.id.debug_requestFailedEvent) View requestFailedEvent;
 
     @BindView(R.id.debug_authFailedEvent) View authFailedEvent;
@@ -308,6 +380,10 @@ import okhttp3.logging.HttpLoggingInterceptor;
     @BindView(R.id.debug_invalidateAccessToken) View invalidateAccessToken;
 
     @BindView(R.id.debug_invalidateRefreshToken) View invalidateRefreshToken;
+
+    @BindView(R.id.debug_insertFakeShow) View insertFakeShow;
+
+    @BindView(R.id.debug_removeFakeShow) View removeFakeShow;
 
     @BindView(R.id.debug_logLevel) Spinner logLevel;
 

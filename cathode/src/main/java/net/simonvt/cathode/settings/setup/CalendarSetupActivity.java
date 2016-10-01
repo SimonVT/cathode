@@ -59,21 +59,28 @@ public class CalendarSetupActivity extends BaseActivity {
   void doSync() {
     Timber.d("doSync");
     settings.edit().putBoolean(Settings.CALENDAR_SYNC, true).apply();
-    startHome();
+    toNotifications();
   }
 
   @OnClick(R.id.no) void dontSync() {
     Timber.d("dontSync");
     settings.edit().putBoolean(Settings.CALENDAR_SYNC, false).apply();
-    startHome();
+    toNotifications();
   }
 
   @Override public void onBackPressed() {
-    dontSync();
+    settings.edit().putBoolean(Settings.CALENDAR_SYNC, false).apply();
+    toHome();
   }
 
-  private void startHome() {
+  private void toHome() {
     Intent i = new Intent(this, HomeActivity.class);
+    startActivity(i);
+    finish();
+  }
+
+  private void toNotifications() {
+    Intent i = new Intent(this, NotificationSetupActivity.class);
     startActivity(i);
     finish();
   }

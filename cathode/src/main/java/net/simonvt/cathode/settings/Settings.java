@@ -55,6 +55,12 @@ public final class Settings {
   };
   public static final String CALENDAR_COLOR_NEEDS_UPDATE = "calendarColorNeedsUpdate";
 
+  // Notifications
+  public static final String NOTIFICACTIONS_ENABLED = "notificationsEnabled";
+  public static final String NOTIFICACTION_TIME = "notificationTime";
+  public static final String NOTIFICACTION_VIBRATE = "notificationVibrate";
+  public static final String NOTIFICACTION_SOUND = "notificationSound";
+
   // Whether hidden shows should be displayed in upcoming
   public static final String SHOW_HIDDEN = "showHidden";
 

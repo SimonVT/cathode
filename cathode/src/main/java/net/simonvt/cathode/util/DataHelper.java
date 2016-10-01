@@ -31,6 +31,10 @@ public final class DataHelper {
   public static String getEpisodeTitle(Context context, Cursor cursor, int season, int episode) {
     String title = Cursors.getString(cursor, EpisodeColumns.TITLE);
 
+    return getEpisodeTitle(context, title, season, episode);
+  }
+
+  public static String getEpisodeTitle(Context context, String title, int season, int episode) {
     if (android.text.TextUtils.isEmpty(title)) {
       if (season == 0) {
         title = context.getString(R.string.special_x, episode);

@@ -118,7 +118,10 @@ public final class ProviderSchematic {
 
   interface Path {
     String SHOWS = "shows";
+
     String UPCOMING = "upcoming";
+    String WITH_NEXT = "withNext";
+    String WITH_SHOW = "withShow";
 
     String SEASONS = "seasons";
     String EPISODES = "episodes";
@@ -285,6 +288,39 @@ public final class ProviderSchematic {
       }
 
       query += ")";
+
+      return query;
+    }
+
+    @ContentUri(
+        path = Path.SHOWS + "/" + Path.WITH_NEXT,
+        type = Type.SHOW,
+        join = Joins.SHOWS_WITH_NEXT,
+        where = ShowColumns.HIDDEN_CALENDAR + "=0"
+    )
+    public static final Uri WITH_NEXT = buildUri(Path.SHOWS, Path.WITH_NEXT);
+
+    @Where(path = Path.SHOWS + "/" + Path.WITH_NEXT)
+    public static String[] withNextWhere() {
+      return new String[] {
+          ShowColumns.WATCHED_COUNT + ">0", withNextQuery() + ">0",
+          Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0"
+      };
+    }
+
+    static String withNextQuery() {
+      String query = "(SELECT COUNT(*) FROM episodes "
+          + "JOIN ("
+          + "SELECT season, episode "
+          + "FROM episodes "
+          + "WHERE showId=shows._id AND watched=1 "
+          + "ORDER BY season DESC, episode DESC LIMIT 1"
+          + ") AS ep2 "
+          + "WHERE episodes.showId=shows._id AND episodes.season>0"
+          + " AND (episodes.season>ep2.season OR (episodes.season=ep2.season AND episodes.episode>ep2.episode))"
+          + " AND "
+          + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED)
+          + " NOT NULL)";
 
       return query;
     }
@@ -718,6 +754,13 @@ public final class ProviderSchematic {
             Path.EPISODES + "/" + Path.WATCHLIST
         })
     public static final Uri EPISODES = buildUri(Path.EPISODES);
+
+    @ContentUri(
+        path = Path.EPISODES + "/" + Path.WITH_SHOW,
+        type = Type.EPISODE,
+        join = Joins.EPISODES_WITH_SHOW
+    )
+    public static final Uri EPISODES_WITH_SHOW = buildUri(Path.EPISODES, Path.WITH_SHOW);
 
     @ContentUri(
         path = Path.EPISODES + "/" + Path.WATCHLIST,

@@ -34,6 +34,8 @@ import android.view.ViewPropertyAnimator;
 import android.widget.ProgressBar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -47,6 +49,7 @@ import net.simonvt.cathode.event.RequestFailedEvent;
 import net.simonvt.cathode.event.RequestFailedEvent.OnRequestFailedListener;
 import net.simonvt.cathode.event.SyncEvent;
 import net.simonvt.cathode.event.SyncEvent.OnSyncListener;
+import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -55,40 +58,40 @@ import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
+import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.SettingsActivity;
 import net.simonvt.cathode.settings.StartPage;
-import net.simonvt.cathode.images.ImageType;
-import net.simonvt.cathode.ui.search.SearchFragment;
-import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.ui.credits.CreditFragment;
-import net.simonvt.cathode.ui.credits.CreditsFragment;
+import net.simonvt.cathode.settings.login.LoginActivity;
 import net.simonvt.cathode.ui.comments.CommentFragment;
 import net.simonvt.cathode.ui.comments.CommentsFragment;
+import net.simonvt.cathode.ui.credits.CreditFragment;
+import net.simonvt.cathode.ui.credits.CreditsFragment;
 import net.simonvt.cathode.ui.dashboard.DashboardFragment;
-import net.simonvt.cathode.ui.show.EpisodeFragment;
-import net.simonvt.cathode.ui.movies.collected.CollectedMoviesFragment;
+import net.simonvt.cathode.ui.lists.ListFragment;
+import net.simonvt.cathode.ui.lists.ListsFragment;
 import net.simonvt.cathode.ui.movie.MovieFragment;
-import net.simonvt.cathode.ui.suggestions.movies.MovieSuggestionsFragment;
+import net.simonvt.cathode.ui.movie.RelatedMoviesFragment;
+import net.simonvt.cathode.ui.movies.collected.CollectedMoviesFragment;
+import net.simonvt.cathode.ui.movies.watched.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.movies.watchlist.MovieWatchlistFragment;
 import net.simonvt.cathode.ui.navigation.NavigationFragment;
-import net.simonvt.cathode.ui.movie.RelatedMoviesFragment;
+import net.simonvt.cathode.ui.person.PersonCreditsFragment;
+import net.simonvt.cathode.ui.person.PersonFragment;
+import net.simonvt.cathode.ui.search.SearchFragment;
+import net.simonvt.cathode.ui.show.EpisodeFragment;
 import net.simonvt.cathode.ui.show.RelatedShowsFragment;
 import net.simonvt.cathode.ui.show.SeasonFragment;
 import net.simonvt.cathode.ui.show.ShowFragment;
-import net.simonvt.cathode.ui.suggestions.shows.ShowSuggestionsFragment;
 import net.simonvt.cathode.ui.shows.collected.CollectedShowsFragment;
+import net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment;
+import net.simonvt.cathode.ui.shows.watched.WatchedShowsFragment;
 import net.simonvt.cathode.ui.shows.watchlist.ShowsWatchlistFragment;
 import net.simonvt.cathode.ui.stats.StatsFragment;
-import net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment;
-import net.simonvt.cathode.ui.movies.watched.WatchedMoviesFragment;
-import net.simonvt.cathode.ui.shows.watched.WatchedShowsFragment;
-import net.simonvt.cathode.ui.lists.ListFragment;
-import net.simonvt.cathode.ui.lists.ListsFragment;
-import net.simonvt.cathode.settings.login.LoginActivity;
-import net.simonvt.cathode.ui.person.PersonCreditsFragment;
-import net.simonvt.cathode.ui.person.PersonFragment;
+import net.simonvt.cathode.ui.suggestions.movies.MovieSuggestionsFragment;
+import net.simonvt.cathode.ui.suggestions.shows.ShowSuggestionsFragment;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.util.FragmentStack;
+import net.simonvt.cathode.util.FragmentStack.StackEntry;
 import net.simonvt.cathode.util.MainHandler;
 import net.simonvt.cathode.widget.Crouton;
 import net.simonvt.cathode.widget.WatchingView;
@@ -112,11 +115,15 @@ public class HomeActivity extends BaseActivity
   }
 
   public static final String DIALOG_ABOUT = "net.simonvt.cathode.ui.BaseActivity.aboutDialog";
+  public static final String DIALOG_LOGOUT = "net.simonvt.cathode.ui.HomeActivity.logoutDialog";
 
   private static final String STATE_STACK = "net.simonvt.cathode.ui.HomeActivity.stack";
 
+  public static final String EXTRA_STACK_ENTRIES =
+      "net.simonvt.cathode.ui.HomeActivity.stackEntries";
+
   public static final String ACTION_LOGIN = "net.simonvt.cathode.intent.action.LOGIN";
-  public static final String DIALOG_LOGOUT = "net.simonvt.cathode.ui.HomeActivity.logoutDialog";
+  public static final String ACTION_REPLACE_STACK = "replaceStack";
 
   private static final int LOADER_SHOW_WATCHING = 1;
   private static final int LOADER_MOVIE_WATCHING = 2;
@@ -218,6 +225,10 @@ public class HomeActivity extends BaseActivity
 
     if (!Settings.isLoggedIn(this) || isLoginAction(getIntent())) {
       startLoginActivity();
+    } else if (isReplaceStackAction(getIntent())) {
+      ArrayList<StackEntry> stackEntries =
+          getIntent().getParcelableArrayListExtra(EXTRA_STACK_ENTRIES);
+      replaceStack(stackEntries);
     }
 
     SyncEvent.registerListener(onSyncEvent);
@@ -232,7 +243,26 @@ public class HomeActivity extends BaseActivity
           startLoginActivity();
         }
       });
+    } else if (isReplaceStackAction(intent)) {
+      final ArrayList<StackEntry> stackEntries =
+          intent.getParcelableArrayListExtra(EXTRA_STACK_ENTRIES);
+      MainHandler.post(new Runnable() {
+        @Override public void run() {
+          replaceStack(stackEntries);
+        }
+      });
     }
+  }
+
+  private void replaceStack(List<StackEntry> stackEntries) {
+    Fragment f = stack.peekFirst();
+    StackEntry entry = new StackEntry(f.getClass(), f.getTag(), f.getArguments());
+    stackEntries.add(0, entry);
+    stack.replaceStack(stackEntries);
+  }
+
+  private boolean isReplaceStackAction(Intent intent) {
+    return ACTION_REPLACE_STACK.equals(intent.getAction());
   }
 
   private boolean isLoginAction(Intent intent) {

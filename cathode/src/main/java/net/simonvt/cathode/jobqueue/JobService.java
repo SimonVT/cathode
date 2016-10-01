@@ -28,6 +28,7 @@ import android.text.format.DateUtils;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.event.SyncEvent;
+import net.simonvt.cathode.notification.NotificationUtils;
 import net.simonvt.cathode.remote.Flags;
 import timber.log.Timber;
 
@@ -36,6 +37,8 @@ public class JobService extends Service {
   static final String RETRY_DELAY = "net.simonvt.cathode.sync.TraktTaskService.retryDelay";
 
   private static final int MAX_RETRY_DELAY = 60; // In minutes
+
+  private static final long NOTIFICATION_SCHEDULE_DELAY = DateUtils.MINUTE_IN_MILLIS;
 
   private static final int NOTIFICATION_FAILURE = 42;
 
@@ -95,6 +98,8 @@ public class JobService extends Service {
     if (executor != null) {
       executor.destroy();
     }
+
+    NotificationUtils.scheduleNotifications(this, 0);
 
     SyncEvent.jobServiceStopped();
 

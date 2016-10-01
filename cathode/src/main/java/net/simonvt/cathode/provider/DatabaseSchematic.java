@@ -58,7 +58,7 @@ public final class DatabaseSchematic {
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 36;
+  static final int DATABASE_VERSION = 37;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -67,6 +67,16 @@ public final class DatabaseSchematic {
         + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
 
     String SHOWS_UPCOMING =
+        "LEFT OUTER JOIN " + Tables.EPISODES + " ON " + Tables.EPISODES + "." + EpisodeColumns.ID
+            + "=" + "(" + "SELECT _id " + "FROM episodes " + "JOIN (" + "SELECT season, episode "
+            + "FROM episodes " + "WHERE watched=1 AND showId=shows._id "
+            + "ORDER BY season DESC, episode DESC LIMIT 1" + ") AS ep2 "
+            + "WHERE episodes.watched=0 AND episodes.showId=shows._id" + " AND episodes.needsSync=0"
+            + " AND (episodes.season>ep2.season "
+            + "OR (episodes.season=ep2.season AND episodes.episode>ep2.episode)) "
+            + "ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1" + ")";
+
+    String SHOWS_WITH_NEXT =
         "LEFT OUTER JOIN " + Tables.EPISODES + " ON " + Tables.EPISODES + "." + EpisodeColumns.ID
             + "=" + "(" + "SELECT _id " + "FROM episodes " + "JOIN (" + "SELECT season, episode "
             + "FROM episodes " + "WHERE watched=1 AND showId=shows._id "
@@ -142,6 +152,9 @@ public final class DatabaseSchematic {
             + MovieCrewColumns.MOVIE_ID;
 
     String MOVIE_CREW = MOVIE_CREW_PERSON + " " + MOVIE_CREW_MOVIE;
+
+    String EPISODES_WITH_SHOW = "LEFT OUTER JOIN " + Tables.SHOWS + " ON " + Tables.SHOWS + "."
+            + ShowColumns.ID + "=" + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID;
 
     String EPISODES_WITH_SHOW_TITLE =
         "JOIN " + Tables.SHOWS + " AS " + Tables.SHOWS + " ON " + Tables.SHOWS + "."
@@ -863,6 +876,11 @@ public final class DatabaseSchematic {
       db.execSQL(INDEX_GENRE_MOVIE_ID);
       db.execSQL(INDEX_EPISODES_SHOW_ID);
       db.execSQL(INDEX_EPISODES_SEASON_ID);
+    }
+
+    if (oldVersion < 37) {
+      SqlUtils.createColumnIfNotExists(db, Tables.EPISODES, EpisodeColumns.NOTIFICATION_DISMISSED,
+          DataType.Type.INTEGER, "0");
     }
   }
 }

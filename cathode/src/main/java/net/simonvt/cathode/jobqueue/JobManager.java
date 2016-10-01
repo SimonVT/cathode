@@ -152,35 +152,39 @@ public final class JobManager {
   public void addJob(final Job job) {
     serialExecutor.execute(new Runnable() {
       @Override public void run() {
-        Timber.d("Adding job: %s", job.key());
-        postOnJobAdded(job);
-
-        synchronized (jobs) {
-          if (!job.allowDuplicates()) {
-            final String key = job.key();
-            for (Job existingJob : jobs) {
-              if (key.equals(existingJob.key())) {
-                List<WeakReference<Job.OnDoneListener>> listeners = job.getOnDoneRefs();
-                if (listeners != null) {
-                  for (WeakReference<Job.OnDoneListener> ref : listeners) {
-                    Job.OnDoneListener listener = ref.get();
-                    if (listener != null) {
-                      existingJob.registerOnDoneListener(listener);
-                    }
-                  }
-                }
-                Timber.d("Job %s matched %s", key, existingJob.key());
-                return;
-              }
-            }
-          }
-
-          addJobInternal(job);
-        }
-
-        persistJob(job);
+        addJobNow(job);
       }
     });
+  }
+
+  public void addJobNow(final Job job) {
+    Timber.d("Adding job: %s", job.key());
+    postOnJobAdded(job);
+
+    synchronized (jobs) {
+      if (!job.allowDuplicates()) {
+        final String key = job.key();
+        for (Job existingJob : jobs) {
+          if (key.equals(existingJob.key())) {
+            List<WeakReference<Job.OnDoneListener>> listeners = job.getOnDoneRefs();
+            if (listeners != null) {
+              for (WeakReference<Job.OnDoneListener> ref : listeners) {
+                Job.OnDoneListener listener = ref.get();
+                if (listener != null) {
+                  existingJob.registerOnDoneListener(listener);
+                }
+              }
+            }
+            Timber.d("Job %s matched %s", key, existingJob.key());
+            return;
+          }
+        }
+      }
+
+      addJobInternal(job);
+    }
+
+    persistJob(job);
   }
 
   private void addJobInternal(Job job) {

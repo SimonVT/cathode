@@ -126,17 +126,10 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
   public void watchedNext(final long showId) {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c = context.getContentResolver().query(Episodes.fromShow(showId), new String[] {
-                EpisodeColumns.ID, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
-            }, "watched=0 AND season<>0", null,
-            EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1");
-
-        if (c.moveToNext()) {
-          final long episodeId = Cursors.getLong(c, EpisodeColumns.ID);
+        final long episodeId = showHelper.getNextEpisodeId(showId);
+        if (episodeId != -1L) {
           episodeScheduler.setWatched(episodeId, true);
         }
-
-        c.close();
       }
     });
   }
