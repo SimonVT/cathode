@@ -19,13 +19,17 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchlist;
 import retrofit2.Call;
 
 public class WatchlistShow extends CallJob<SyncResponse> {
 
   @Inject transient SyncService syncService;
+
+  @Inject transient ShowDatabaseHelper showHelper;
 
   private long traktId;
 
@@ -70,5 +74,6 @@ public class WatchlistShow extends CallJob<SyncResponse> {
   }
 
   @Override public void handleResponse(SyncResponse response) {
+    queue(new SyncShowsWatchlist());
   }
 }
