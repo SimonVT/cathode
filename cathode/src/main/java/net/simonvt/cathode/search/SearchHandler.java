@@ -32,12 +32,16 @@ import net.simonvt.cathode.api.enumeration.Enums;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.SearchService;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
+import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.scheduler.ShowTaskScheduler;
+import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.util.MainHandler;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
@@ -54,6 +58,9 @@ public class SearchHandler {
   private static final int LIMIT = 50;
 
   @Inject SearchService searchService;
+
+  @Inject ShowTaskScheduler showScheduler;
+  @Inject MovieTaskScheduler movieScheduler;
 
   @Inject ShowDatabaseHelper showHelper;
   @Inject MovieDatabaseHelper movieHelper;
@@ -130,6 +137,8 @@ public class SearchHandler {
 
     final String query;
 
+    private List<Result> results;
+
     public SearchRunnable(String query) {
       this.query = query;
     }
@@ -144,7 +153,7 @@ public class SearchHandler {
       Enums<ItemType> types = Enums.of(ItemType.SHOW, ItemType.MOVIE);
       try {
         Call<List<SearchResult>> call =
-            searchService.search(types, query, Extended.FULL_IMAGES, LIMIT);
+            searchService.search(types, query, Extended.FULL, LIMIT);
         Response<List<SearchResult>> response = call.execute();
 
         if (response.isSuccessful()) {
@@ -158,17 +167,12 @@ public class SearchHandler {
               if (!TextUtils.isEmpty(show.getTitle())) {
                 final long showId = showHelper.partialUpdate(show);
 
-                String poster = null;
-                if (show.getImages() != null) {
-                  poster = show.getImages().getPoster().getFull();
-                }
-
                 String title = show.getTitle();
                 String overview = show.getOverview();
                 float rating = show.getRating() == null ? 0.0f : show.getRating();
 
                 Result result =
-                    new Result(ItemType.SHOW, showId, poster, title, overview, rating, relevance++);
+                    new Result(ItemType.SHOW, showId, title, overview, rating, relevance++);
                 results.add(result);
               }
             } else if (searchResult.getType() == ItemType.MOVIE) {
@@ -176,17 +180,12 @@ public class SearchHandler {
               if (!TextUtils.isEmpty(movie.getTitle())) {
                 final long movieId = movieHelper.partialUpdate(movie);
 
-                String poster = null;
-                if (movie.getImages() != null) {
-                  poster = movie.getImages().getPoster().getFull();
-                }
-
                 String title = movie.getTitle();
                 String overview = movie.getOverview();
                 float rating = movie.getRating() == null ? 0.0f : movie.getRating();
 
-                Result result = new Result(ItemType.MOVIE, movieId, poster, title, overview, rating,
-                    relevance++);
+                Result result =
+                    new Result(ItemType.MOVIE, movieId, title, overview, rating, relevance++);
                 results.add(result);
               }
             }
@@ -205,41 +204,43 @@ public class SearchHandler {
       List<Result> results = new ArrayList<>();
 
       Cursor shows = context.getContentResolver().query(Shows.SHOWS, new String[] {
-          ShowColumns.ID, ShowColumns.POSTER, ShowColumns.TITLE, ShowColumns.OVERVIEW,
-          ShowColumns.RATING,
+          ShowColumns.ID, ShowColumns.TITLE, ShowColumns.OVERVIEW, ShowColumns.RATING,
       }, ShowColumns.TITLE + " LIKE ?", new String[] {
           "%" + query + "%",
       }, null);
 
       while (shows.moveToNext()) {
         final long id = Cursors.getLong(shows, ShowColumns.ID);
-        final String poster = Cursors.getString(shows, ShowColumns.POSTER);
         final String title = Cursors.getString(shows, ShowColumns.TITLE);
         final String overview = Cursors.getString(shows, ShowColumns.OVERVIEW);
         final float rating = Cursors.getFloat(shows, ShowColumns.RATING);
 
-        Result result = new Result(ItemType.SHOW, id, poster, title, overview, rating, relevance++);
+        final String poster =
+            ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
+
+        Result result = new Result(ItemType.SHOW, id, title, overview, rating, relevance++);
         results.add(result);
       }
 
       shows.close();
 
       Cursor movies = context.getContentResolver().query(Movies.MOVIES, new String[] {
-          MovieColumns.ID, MovieColumns.POSTER, MovieColumns.TITLE, MovieColumns.OVERVIEW,
-          MovieColumns.RATING,
+          MovieColumns.ID, MovieColumns.TITLE, MovieColumns.OVERVIEW, MovieColumns.RATING,
       }, MovieColumns.TITLE + " LIKE ?", new String[] {
           "%" + query + "%",
       }, null);
 
       while (movies.moveToNext()) {
         final long id = Cursors.getLong(movies, MovieColumns.ID);
-        final String poster = Cursors.getString(movies, MovieColumns.POSTER);
         final String title = Cursors.getString(movies, MovieColumns.TITLE);
         final String overview = Cursors.getString(movies, MovieColumns.OVERVIEW);
         final float rating = Cursors.getFloat(movies, MovieColumns.RATING);
 
+        final String poster =
+            ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
+
         Result result =
-            new Result(ItemType.MOVIE, id, poster, title, overview, rating, relevance++);
+            new Result(ItemType.MOVIE, id, title, overview, rating, relevance++);
         results.add(result);
       }
 

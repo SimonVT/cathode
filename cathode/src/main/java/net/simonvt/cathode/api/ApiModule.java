@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Simon Vig Therkildsen
+ * Copyright (C) 2016 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.module;
+package net.simonvt.cathode.api;
 
 import android.content.Context;
 import dagger.Module;
@@ -22,9 +22,10 @@ import dagger.Provides;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Singleton;
-import net.simonvt.cathode.api.Trakt;
-import net.simonvt.cathode.api.TraktModule;
-import net.simonvt.cathode.api.TraktSettings;
+import net.simonvt.cathode.BuildConfig;
+import net.simonvt.cathode.module.ApiSettings;
+import net.simonvt.cathode.module.LoggingInterceptor;
+import net.simonvt.cathode.tmdb.TmdbApiKey;
 import okhttp3.Interceptor;
 
 @Module(
@@ -44,5 +45,9 @@ public class ApiModule {
     List<Interceptor> interceptors = new ArrayList<>();
     interceptors.add(new LoggingInterceptor());
     return interceptors;
+  }
+
+  @Provides @TmdbApiKey String tmdbApiKey() {
+    return BuildConfig.TMDB_API_KEY;
   }
 }

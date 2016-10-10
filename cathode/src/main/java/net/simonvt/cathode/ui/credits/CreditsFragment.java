@@ -37,6 +37,7 @@ import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.scheduler.PersonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.fragment.RefreshableToolbarFragment;
@@ -55,6 +56,7 @@ public class CreditsFragment extends RefreshableToolbarFragment {
 
   @Inject ShowTaskScheduler showScheduler;
   @Inject MovieTaskScheduler movieScheduler;
+  @Inject PersonTaskScheduler personScheduler;
 
   private NavigationListener navigationListener;
 

@@ -44,6 +44,8 @@ import net.simonvt.cathode.api.util.TraktUtils;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.database.SimpleMergeCursor;
+import net.simonvt.cathode.images.ImageType;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.CollectLoader;
 import net.simonvt.cathode.provider.DatabaseContract;
@@ -65,6 +67,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.ShowGenres;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.WatchedLoader;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
+import net.simonvt.cathode.scheduler.PersonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.LibraryType;
@@ -72,10 +75,10 @@ import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.comments.LinearCommentsAdapter;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
-import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
+import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.Ids;
@@ -96,8 +99,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   private static final String ARG_SHOWID = "net.simonvt.cathode.ui.show.ShowFragment.showId";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.show.ShowFragment.title";
-  private static final String ARG_OVERVIEW =
-      "net.simonvt.cathode.ui.show.ShowFragment.overview";
+  private static final String ARG_OVERVIEW = "net.simonvt.cathode.ui.show.ShowFragment.overview";
   private static final String ARG_TYPE = "net.simonvt.cathode.ui.show.ShowFragment.type";
 
   private static final String DIALOG_RATING =
@@ -119,23 +121,24 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   private static final String[] SHOW_PROJECTION = new String[] {
       ShowColumns.TITLE, ShowColumns.YEAR, ShowColumns.AIR_TIME, ShowColumns.AIR_DAY,
-      ShowColumns.NETWORK, ShowColumns.CERTIFICATION, ShowColumns.POSTER, ShowColumns.FANART,
-      ShowColumns.USER_RATING, ShowColumns.RATING, ShowColumns.OVERVIEW, ShowColumns.IN_WATCHLIST,
-      ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT, ShowColumns.LAST_SYNC,
-      ShowColumns.LAST_COMMENT_SYNC, ShowColumns.LAST_CREDITS_SYNC, ShowColumns.LAST_RELATED_SYNC,
-      ShowColumns.HOMEPAGE, ShowColumns.TRAILER, ShowColumns.IMDB_ID, ShowColumns.TVDB_ID,
-      ShowColumns.TMDB_ID, ShowColumns.NEEDS_SYNC, HiddenColumns.HIDDEN_CALENDAR,
+      ShowColumns.NETWORK, ShowColumns.CERTIFICATION, ShowColumns.USER_RATING, ShowColumns.RATING,
+      ShowColumns.OVERVIEW, ShowColumns.IN_WATCHLIST, ShowColumns.IN_COLLECTION_COUNT,
+      ShowColumns.WATCHED_COUNT, ShowColumns.LAST_SYNC, ShowColumns.LAST_COMMENT_SYNC,
+      ShowColumns.LAST_CREDITS_SYNC, ShowColumns.LAST_RELATED_SYNC, ShowColumns.HOMEPAGE,
+      ShowColumns.TRAILER, ShowColumns.IMDB_ID, ShowColumns.TVDB_ID, ShowColumns.TMDB_ID,
+      ShowColumns.NEEDS_SYNC, HiddenColumns.HIDDEN_CALENDAR,
   };
 
   private static final String[] EPISODE_PROJECTION = new String[] {
-      EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.SCREENSHOT,
-      EpisodeColumns.FIRST_AIRED, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
-      EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN,
+      EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.FIRST_AIRED, EpisodeColumns.SEASON,
+      EpisodeColumns.EPISODE, EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN,
   };
 
   private static final String[] GENRES_PROJECTION = new String[] {
       ShowGenreColumns.GENRE,
   };
+
+  @Inject PersonTaskScheduler personScheduler;
 
   private NavigationListener navigationListener;
 
@@ -551,10 +554,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
     final String airDay = Cursors.getString(cursor, ShowColumns.AIR_DAY);
     final String network = Cursors.getString(cursor, ShowColumns.NETWORK);
     final String certification = Cursors.getString(cursor, ShowColumns.CERTIFICATION);
-    final String fanartUrl = Cursors.getString(cursor, ShowColumns.FANART);
-    if (fanartUrl != null) {
-      setBackdrop(fanartUrl, true);
-    }
+    final String backdropUri = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.BACKDROP, showId);
+    setBackdrop(backdropUri, true);
     showOverview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
     inWatchlist = Cursors.getBoolean(cursor, ShowColumns.IN_WATCHLIST);
     final int inCollectionCount = Cursors.getInt(cursor, ShowColumns.IN_COLLECTION_COUNT);
@@ -722,10 +723,11 @@ public class ShowFragment extends RefreshableAppBarFragment {
           LayoutInflater.from(getActivity()).inflate(R.layout.item_person, castContainer, false);
 
       final long personId = Cursors.getLong(c, ShowCastColumns.PERSON_ID);
+      final String headshotUrl = ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, personId);
 
       RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
       headshot.addTransformation(new CircleTransformation());
-      headshot.setImage(Cursors.getString(c, PersonColumns.HEADSHOT));
+      headshot.setImage(headshotUrl);
 
       TextView name = (TextView) v.findViewById(R.id.person_name);
       name.setText(Cursors.getString(c, PersonColumns.NAME));
@@ -762,9 +764,10 @@ public class ShowFragment extends RefreshableAppBarFragment {
       final long relatedShowId = Cursors.getLong(related, RelatedShowsColumns.RELATED_SHOW_ID);
       final String title = Cursors.getString(related, ShowColumns.TITLE);
       final String overview = Cursors.getString(related, ShowColumns.OVERVIEW);
-      final String poster = Cursors.getString(related, ShowColumns.POSTER);
       final int rating = Cursors.getInt(related, ShowColumns.RATING);
       final int votes = Cursors.getInt(related, ShowColumns.VOTES);
+
+      final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, relatedShowId);
 
       RemoteImageView posterView = (RemoteImageView) v.findViewById(R.id.related_poster);
       posterView.addTransformation(new CircleTransformation());
@@ -803,7 +806,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
     if (cursor.moveToFirst()) {
       toWatch.setVisibility(View.VISIBLE);
 
-      toWatchId = Cursors.getLong(cursor, ShowColumns.ID);
+      toWatchId = Cursors.getLong(cursor, EpisodeColumns.ID);
 
       final long airTime = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
 
@@ -815,8 +818,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
       toWatchHolder.episodeTitle.setText(toWatchTitle);
       toWatchHolder.episodeEpisode.setText(toWatchEpisodeText);
 
-      final String screenshotUrl = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
-      toWatchHolder.episodeScreenshot.setImage(screenshotUrl);
+      final String screenshotUri =
+          ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, toWatchId);
+      toWatchHolder.episodeScreenshot.setImage(screenshotUri);
 
       String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
 
@@ -843,7 +847,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       if (cursor.moveToNext()) {
         lastWatched.setVisibility(View.VISIBLE);
 
-        lastWatchedId = Cursors.getLong(cursor, ShowColumns.ID);
+        lastWatchedId = Cursors.getLong(cursor, EpisodeColumns.ID);
 
         final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
         final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
@@ -859,8 +863,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
             getString(R.string.season_x_episode_y, season, episode);
         lastWatchedHolder.episodeEpisode.setText(lastWatchedEpisodeText);
 
-        final String screenshotUrl = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
-        lastWatchedHolder.episodeScreenshot.setImage(screenshotUrl);
+        final String screenshotUri =
+            ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, lastWatchedId);
+        lastWatchedHolder.episodeScreenshot.setImage(screenshotUri);
       } else {
         lastWatched.setVisibility(toWatchId == -1 ? View.GONE : View.INVISIBLE);
         lastWatchedId = -1;
@@ -878,7 +883,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
     if (cursor.moveToFirst()) {
       toCollect.setVisibility(View.VISIBLE);
 
-      toCollectId = Cursors.getLong(cursor, ShowColumns.ID);
+      toCollectId = Cursors.getLong(cursor, EpisodeColumns.ID);
 
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
@@ -893,8 +898,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
       final String toCollectEpisodeText = getString(R.string.season_x_episode_y, season, episode);
       toCollectHolder.episodeEpisode.setText(toCollectEpisodeText);
 
-      final String screenshotUrl = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
-      toCollectHolder.episodeScreenshot.setImage(screenshotUrl);
+      final String screenshotUri =
+          ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, toCollectId);
+      toCollectHolder.episodeScreenshot.setImage(screenshotUri);
     } else {
       toCollect.setVisibility(View.GONE);
       toCollectId = -1;
@@ -904,7 +910,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       if (cursor.moveToNext()) {
         lastCollected.setVisibility(View.VISIBLE);
 
-        lastCollectedId = Cursors.getLong(cursor, ShowColumns.ID);
+        lastCollectedId = Cursors.getLong(cursor, EpisodeColumns.ID);
 
         final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
         final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
@@ -920,8 +926,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
             getString(R.string.season_x_episode_y, season, episode);
         lastCollectedHolder.episodeEpisode.setText(lastCollectedEpisodeText);
 
-        final String screenshotUrl = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
-        lastCollectedHolder.episodeScreenshot.setImage(screenshotUrl);
+        final String screenshotUri =
+            ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, lastCollectedId);
+        lastCollectedHolder.episodeScreenshot.setImage(screenshotUri);
       } else {
         lastCollectedId = -1;
         lastCollected.setVisibility(View.INVISIBLE);
@@ -973,9 +980,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private static final String[] CAST_PROJECTION = new String[] {
       Tables.SHOW_CAST + "." + ShowCastColumns.ID,
       Tables.SHOW_CAST + "." + ShowCastColumns.CHARACTER,
-      Tables.SHOW_CAST + "." + ShowCastColumns.PERSON_ID,
-      Tables.PEOPLE + "." + PersonColumns.NAME,
-      Tables.PEOPLE + "." + PersonColumns.HEADSHOT,
+      Tables.SHOW_CAST + "." + ShowCastColumns.PERSON_ID, Tables.PEOPLE + "." + PersonColumns.NAME,
   };
 
   private LoaderManager.LoaderCallbacks<SimpleCursor> castCallback =
@@ -1092,7 +1097,6 @@ public class ShowFragment extends RefreshableAppBarFragment {
       SqlColumn.table(Tables.SHOW_RELATED).column(RelatedShowsColumns.RELATED_SHOW_ID),
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.OVERVIEW),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.POSTER),
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.RATING),
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.VOTES),
   };

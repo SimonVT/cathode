@@ -24,6 +24,8 @@ import net.simonvt.cathode.provider.PersonWrapper;
 import net.simonvt.cathode.provider.ProviderSchematic.People;
 import net.simonvt.cathode.remote.sync.people.SyncPersonMovieCredits;
 import net.simonvt.cathode.remote.sync.people.SyncPersonShowCredits;
+import net.simonvt.cathode.tmdb.api.people.SyncPersonBackdrop;
+import net.simonvt.cathode.tmdb.api.people.SyncPersonHeadshot;
 
 public class PersonTaskScheduler extends BaseTaskScheduler {
 
@@ -43,6 +45,10 @@ public class PersonTaskScheduler extends BaseTaskScheduler {
         context.getContentResolver().update(People.withId(personId), values, null, null);
 
         final long traktId = PersonWrapper.getTraktId(context.getContentResolver(), personId);
+        final int tmdbId = PersonWrapper.getTmdbId(context.getContentResolver(), personId);
+
+        queue(new SyncPersonHeadshot(tmdbId));
+        queue(new SyncPersonBackdrop(tmdbId));
         queue(new SyncPersonShowCredits(traktId));
         Job job = new SyncPersonMovieCredits(traktId);
         if (onDoneListener != null) {

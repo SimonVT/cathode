@@ -43,7 +43,7 @@ public class SyncPerson extends CallJob<Person> {
   }
 
   @Override public Call<Person> getCall() {
-    return peopleService.summary(traktId, Extended.FULL_IMAGES);
+    return peopleService.summary(traktId, Extended.FULL);
   }
 
   @Override public void handleResponse(Person person) {

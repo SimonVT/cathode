@@ -58,7 +58,7 @@ public final class DatabaseSchematic {
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 31;
+  static final int DATABASE_VERSION = 35;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -768,7 +768,7 @@ public final class DatabaseSchematic {
     }
 
     if (oldVersion < 29) {
-      SqlUtils.createColumnIfNotExists(db, Tables.PEOPLE, PersonColumns.FANART, DataType.Type.TEXT,
+      SqlUtils.createColumnIfNotExists(db, Tables.PEOPLE, PersonColumns.SCREENSHOT, DataType.Type.TEXT,
           null);
     }
 
@@ -782,6 +782,50 @@ public final class DatabaseSchematic {
           DataType.Type.INTEGER, "0");
       SqlUtils.createColumnIfNotExists(db, Tables.MOVIES, MovieColumns.LAST_CREDITS_SYNC,
           DataType.Type.INTEGER, "0");
+    }
+
+    if (oldVersion < 32) {
+      SqlUtils.createColumnIfNotExists(db, Tables.EPISODES, EpisodeColumns.IMAGES_LAST_SYNC,
+          DataType.Type.INTEGER, "0");
+      SqlUtils.createColumnIfNotExists(db, Tables.PEOPLE, PersonColumns.IMAGES_LAST_SYNC,
+          DataType.Type.INTEGER, "0");
+    }
+
+    if (oldVersion < 33) {
+      SqlUtils.createColumnIfNotExists(db, Tables.SHOWS, ShowColumns.IMAGES_LAST_SYNC,
+          DataType.Type.INTEGER, "0");
+      SqlUtils.createColumnIfNotExists(db, Tables.MOVIE_CAST, MovieColumns.IMAGES_LAST_SYNC,
+          DataType.Type.INTEGER, "0");
+    }
+
+    if (oldVersion < 34) {
+      SqlUtils.createColumnIfNotExists(db, Tables.SHOWS, ShowColumns.BACKDROP,
+          DataType.Type.TEXT, null);
+      SqlUtils.createColumnIfNotExists(db, Tables.MOVIES, MovieColumns.BACKDROP,
+          DataType.Type.TEXT, null);
+      SqlUtils.createColumnIfNotExists(db, Tables.PEOPLE, PersonColumns.SCREENSHOT,
+          DataType.Type.TEXT, null);
+    }
+
+    if (oldVersion < 35) {
+      ContentValues showValues = new ContentValues();
+      showValues.putNull(ShowColumns.BACKDROP);
+      showValues.putNull(ShowColumns.POSTER);
+      db.update(Tables.SHOWS, showValues, null, null);
+
+      ContentValues episodeValues = new ContentValues();
+      episodeValues.putNull(EpisodeColumns.SCREENSHOT);
+      db.update(Tables.EPISODES, episodeValues, null, null);
+
+      ContentValues movieValues = new ContentValues();
+      movieValues.putNull(MovieColumns.BACKDROP);
+      movieValues.putNull(MovieColumns.POSTER);
+      db.update(Tables.MOVIES, movieValues, null, null);
+
+      ContentValues personValues = new ContentValues();
+      personValues.putNull(PersonColumns.SCREENSHOT);
+      personValues.putNull(PersonColumns.HEADSHOT);
+      db.update(Tables.PEOPLE, personValues, null, null);
     }
   }
 }

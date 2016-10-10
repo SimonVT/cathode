@@ -37,6 +37,8 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.images.ImageType;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
@@ -52,9 +54,9 @@ import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.comments.LinearCommentsAdapter;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
-import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.fragment.RefreshableAppBarFragment;
+import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.SqlColumn;
@@ -320,8 +322,11 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
       title.setText(episodeTitle);
       overview.setText(Cursors.getString(cursor, EpisodeColumns.OVERVIEW));
-      final String screenshot = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
-      setBackdrop(screenshot, true);
+
+      final String screenshotUri =
+          ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, episodeId);
+
+      setBackdrop(screenshotUri, true);
       firstAired.setText(DateUtils.millisToString(getActivity(),
           Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED), true));
 
@@ -360,11 +365,11 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
   }
 
   private static final String[] EPISODE_PROJECTION = new String[] {
-      EpisodeColumns.TITLE, EpisodeColumns.SCREENSHOT, EpisodeColumns.OVERVIEW,
-      EpisodeColumns.FIRST_AIRED, EpisodeColumns.WATCHED, EpisodeColumns.IN_COLLECTION,
-      EpisodeColumns.IN_WATCHLIST, EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN,
-      EpisodeColumns.USER_RATING, EpisodeColumns.RATING, EpisodeColumns.SEASON,
-      EpisodeColumns.EPISODE, EpisodeColumns.LAST_COMMENT_SYNC,
+      EpisodeColumns.TITLE, EpisodeColumns.OVERVIEW, EpisodeColumns.FIRST_AIRED,
+      EpisodeColumns.WATCHED, EpisodeColumns.IN_COLLECTION, EpisodeColumns.IN_WATCHLIST,
+      EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN, EpisodeColumns.USER_RATING,
+      EpisodeColumns.RATING, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
+      EpisodeColumns.LAST_COMMENT_SYNC,
   };
 
   private LoaderManager.LoaderCallbacks<SimpleCursor> episodeCallbacks =

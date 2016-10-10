@@ -25,9 +25,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import javax.inject.Inject;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
+import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.schematic.Cursors;
@@ -39,15 +44,18 @@ public class DashboardMoviesAdapter
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.ID,
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.TITLE,
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.OVERVIEW,
-      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.POSTER,
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.LAST_MODIFIED,
   };
+
+  @Inject MovieTaskScheduler movieScheduler;
 
   private DashboardFragment.OverviewCallback callback;
 
   public DashboardMoviesAdapter(Context context, DashboardFragment.OverviewCallback callback) {
     super(context);
     this.callback = callback;
+
+    CathodeApp.inject(context, this);
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -71,7 +79,11 @@ public class DashboardMoviesAdapter
   }
 
   @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
-    holder.poster.setImage(Cursors.getString(cursor, MovieColumns.POSTER));
+    final long id = Cursors.getLong(cursor, MovieColumns.ID);
+    final String poster =
+        ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
+
+    holder.poster.setImage(poster);
     holder.title.setText(Cursors.getString(cursor, MovieColumns.TITLE));
   }
 

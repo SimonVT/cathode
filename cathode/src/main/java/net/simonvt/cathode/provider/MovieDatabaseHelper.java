@@ -25,7 +25,6 @@ import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.CathodeApp;
-import net.simonvt.cathode.api.entity.Images;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.database.DatabaseUtils;
@@ -72,9 +71,24 @@ public final class MovieDatabaseHelper {
         MovieColumns.TRAKT_ID,
     }, null, null, null);
 
-    int traktId = -1;
+    long traktId = -1;
     if (c.moveToFirst()) {
-      traktId = Cursors.getInt(c, MovieColumns.TRAKT_ID);
+      traktId = Cursors.getLong(c, MovieColumns.TRAKT_ID);
+    }
+
+    c.close();
+
+    return traktId;
+  }
+
+  public int getTmdbId(long movieId) {
+    Cursor c = resolver.query(Movies.withId(movieId), new String[] {
+        MovieColumns.TMDB_ID,
+    }, null, null, null);
+
+    int  traktId = -1;
+    if (c.moveToFirst()) {
+      traktId = Cursors.getInt(c, MovieColumns.TMDB_ID);
     }
 
     c.close();
@@ -88,6 +102,22 @@ public final class MovieDatabaseHelper {
           MovieColumns.ID,
       }, MovieColumns.TRAKT_ID + "=?", new String[] {
           String.valueOf(traktId),
+      }, null);
+
+      long id = !c.moveToFirst() ? -1L : Cursors.getLong(c, MovieColumns.ID);
+
+      c.close();
+
+      return id;
+    }
+  }
+
+  public long getIdFromTmdb(int tmdbId) {
+    synchronized (LOCK_ID) {
+      Cursor c = resolver.query(Movies.MOVIES, new String[] {
+          MovieColumns.ID,
+      }, MovieColumns.TMDB_ID + "=?", new String[] {
+          String.valueOf(tmdbId),
       }, null);
 
       long id = !c.moveToFirst() ? -1L : Cursors.getLong(c, MovieColumns.ID);
@@ -266,18 +296,6 @@ public final class MovieDatabaseHelper {
     cv.put(MovieColumns.TMDB_ID, movie.getIds().getTmdb());
 
     if (movie.getLanguage() != null) cv.put(MovieColumns.LANGUAGE, movie.getLanguage());
-
-    if (movie.getImages() != null) {
-      Images images = movie.getImages();
-      if (images.getFanart() != null) cv.put(MovieColumns.FANART, images.getFanart().getFull());
-      if (images.getPoster() != null) cv.put(MovieColumns.POSTER, images.getPoster().getFull());
-      if (images.getLogo() != null) cv.put(MovieColumns.LOGO, images.getLogo().getFull());
-      if (images.getClearart() != null) {
-        cv.put(MovieColumns.CLEARART, images.getClearart().getFull());
-      }
-      if (images.getBanner() != null) cv.put(MovieColumns.BANNER, images.getBanner().getFull());
-      if (images.getThumb() != null) cv.put(MovieColumns.THUMB, images.getThumb().getFull());
-    }
 
     if (movie.getCertification() != null) {
       cv.put(MovieColumns.CERTIFICATION, movie.getCertification());

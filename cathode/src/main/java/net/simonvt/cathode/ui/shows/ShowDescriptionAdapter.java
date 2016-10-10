@@ -28,9 +28,11 @@ import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
+import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.IndicatorView;
@@ -42,11 +44,14 @@ public class ShowDescriptionAdapter
     extends RecyclerCursorAdapter<ShowDescriptionAdapter.ViewHolder> {
 
   public static final String[] PROJECTION = new String[] {
-      Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.POSTER,
-      Tables.SHOWS + "." + ShowColumns.TVDB_ID, Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
+      Tables.SHOWS + "." + ShowColumns.ID,
+      Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.SHOWS + "." + ShowColumns.OVERVIEW,
+      Tables.SHOWS + "." + ShowColumns.TVDB_ID,
+      Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
       Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
-      Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST, Tables.SHOWS + "." + ShowColumns.RATING,
+      Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST,
+      Tables.SHOWS + "." + ShowColumns.RATING,
       Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
   };
 
@@ -117,15 +122,20 @@ public class ShowDescriptionAdapter
   }
 
   @Override protected void onBindViewHolder(final ViewHolder holder, Cursor cursor, int position) {
+    final long id = Cursors.getLong(cursor, ShowColumns.ID);
+
     final boolean watched = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT) > 0;
     final boolean inCollection = Cursors.getInt(cursor, ShowColumns.IN_COLLECTION_COUNT) > 1;
     final boolean inWatchlist = Cursors.getBoolean(cursor, ShowColumns.IN_WATCHLIST);
+
+    final String poster =
+        ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
 
     holder.indicator.setWatched(watched);
     holder.indicator.setCollected(inCollection);
     holder.indicator.setInWatchlist(inWatchlist);
 
-    holder.poster.setImage(Cursors.getString(cursor, ShowColumns.POSTER));
+    holder.poster.setImage(poster);
     holder.title.setText(Cursors.getString(cursor, ShowColumns.TITLE));
     holder.overview.setText(Cursors.getString(cursor, ShowColumns.OVERVIEW));
 

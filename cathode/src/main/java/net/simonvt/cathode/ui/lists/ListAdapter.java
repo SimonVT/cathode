@@ -25,7 +25,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import javax.inject.Inject;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.images.ImageType;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
@@ -34,11 +38,15 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
+import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.scheduler.PersonTaskScheduler;
+import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
-import net.simonvt.cathode.ui.shows.ShowClickListener;
 import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
+import net.simonvt.cathode.ui.shows.ShowClickListener;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
@@ -50,6 +58,11 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
 
     void onRemoveItem(int position, long id);
   }
+
+  @Inject ShowTaskScheduler showScheduler;
+  @Inject MovieTaskScheduler movieScheduler;
+  @Inject EpisodeTaskScheduler episodeScheduler;
+  @Inject PersonTaskScheduler personScheduler;
 
   private ShowClickListener showListener;
 
@@ -77,6 +90,8 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
     this.episodeListener = episodeListener;
     this.movieListener = movieListener;
     this.removeListener = removeListener;
+
+    CathodeApp.inject(context, this);
   }
 
   @Override public int getItemViewType(int position) {
@@ -195,10 +210,14 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
 
   @Override
   protected void onBindViewHolder(final ListViewHolder holder, Cursor cursor, int position) {
+    final long itemId = Cursors.getLong(cursor, ListItemColumns.ITEM_ID);
+
     if (holder.getItemViewType() == DatabaseContract.ItemType.SHOW) {
       final ShowViewHolder showHolder = (ShowViewHolder) holder;
 
-      showHolder.poster.setImage(Cursors.getString(cursor, ShowColumns.POSTER));
+      final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, itemId);
+
+      showHolder.poster.setImage(poster);
       showHolder.title.setText(Cursors.getString(cursor, ShowColumns.TITLE));
       showHolder.overview.setText(Cursors.getString(cursor, ShowColumns.OVERVIEW));
     } else if (holder.getItemViewType() == DatabaseContract.ItemType.SEASON) {
@@ -212,26 +231,30 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
       seasonHolder.show.setText(showTitle);
     } else if (holder.getItemViewType() == DatabaseContract.ItemType.EPISODE) {
       final EpisodeViewHolder episodeHolder = (EpisodeViewHolder) holder;
-      final String screen = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
       final String showTitle = Cursors.getString(cursor, "episodeShowTitle");
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
       final String title = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
 
-      episodeHolder.screen.setImage(screen);
+      final String screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, itemId);
 
+      episodeHolder.screen.setImage(screenshotUri);
       episodeHolder.title.setText(title);
-
       episodeHolder.showTitle.setText(showTitle);
     } else if (holder.getItemViewType() == DatabaseContract.ItemType.MOVIE) {
       MovieViewHolder movieHolder = (MovieViewHolder) holder;
 
-      movieHolder.poster.setImage(Cursors.getString(cursor, MovieColumns.POSTER));
+      final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, itemId);
+
+      movieHolder.poster.setImage(poster);
       movieHolder.title.setText(Cursors.getString(cursor, MovieColumns.TITLE));
       movieHolder.overview.setText(Cursors.getString(cursor, MovieColumns.OVERVIEW));
     } else {
       PersonViewHolder personHolder = (PersonViewHolder) holder;
-      personHolder.headshot.setImage(Cursors.getString(cursor, PersonColumns.HEADSHOT));
+
+      final String headshot = ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, itemId);
+
+      personHolder.headshot.setImage(headshot);
       personHolder.name.setText(Cursors.getString(cursor, PersonColumns.NAME));
     }
   }

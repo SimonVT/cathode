@@ -25,6 +25,7 @@ import java.util.List;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.database.BaseAsyncLoader;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCrewColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
@@ -35,6 +36,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.MovieCast;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieCrew;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCast;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCrew;
+import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.schematic.Cursors;
 
@@ -45,7 +47,6 @@ public class CreditsLoader extends BaseAsyncLoader<Credits> {
       SqlColumn.table(Tables.SHOW_CAST).column(ShowCastColumns.CHARACTER),
       SqlColumn.table(Tables.SHOW_CAST).column(ShowCastColumns.PERSON_ID),
       SqlColumn.table(Tables.PEOPLE).column(PersonColumns.NAME),
-      SqlColumn.table(Tables.PEOPLE).column(PersonColumns.HEADSHOT),
   };
 
   private static final String[] SHOW_CREW_PROJECTION = new String[] {
@@ -53,7 +54,6 @@ public class CreditsLoader extends BaseAsyncLoader<Credits> {
       SqlColumn.table(Tables.SHOW_CREW).column(ShowCrewColumns.JOB),
       SqlColumn.table(Tables.SHOW_CREW).column(ShowCrewColumns.PERSON_ID),
       SqlColumn.table(Tables.PEOPLE).column(PersonColumns.NAME),
-      SqlColumn.table(Tables.PEOPLE).column(PersonColumns.HEADSHOT),
   };
 
   private static final String[] MOVIE_CAST_PROJECTION = new String[] {
@@ -61,7 +61,6 @@ public class CreditsLoader extends BaseAsyncLoader<Credits> {
       SqlColumn.table(Tables.MOVIE_CAST).column(MovieCastColumns.CHARACTER),
       SqlColumn.table(Tables.MOVIE_CAST).column(MovieCastColumns.PERSON_ID),
       SqlColumn.table(Tables.PEOPLE).column(PersonColumns.NAME),
-      SqlColumn.table(Tables.PEOPLE).column(PersonColumns.HEADSHOT),
   };
 
   private static final String[] MOVIE_CREW_PROJECTION = new String[] {
@@ -69,7 +68,6 @@ public class CreditsLoader extends BaseAsyncLoader<Credits> {
       SqlColumn.table(Tables.MOVIE_CREW).column(MovieCrewColumns.JOB),
       SqlColumn.table(Tables.MOVIE_CREW).column(MovieCrewColumns.PERSON_ID),
       SqlColumn.table(Tables.PEOPLE).column(PersonColumns.NAME),
-      SqlColumn.table(Tables.PEOPLE).column(PersonColumns.HEADSHOT),
   };
 
   private ItemType itemType;
@@ -114,8 +112,11 @@ public class CreditsLoader extends BaseAsyncLoader<Credits> {
       while (castCursor.moveToNext()) {
         final String character = Cursors.getString(castCursor, ShowCastColumns.CHARACTER);
         final long personId = Cursors.getLong(castCursor, ShowCastColumns.PERSON_ID);
-        final String headshot = Cursors.getString(castCursor, PersonColumns.HEADSHOT);
         final String name = Cursors.getString(castCursor, PersonColumns.NAME);
+
+        final String headshot =
+            ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE,
+                personId);
 
         Credit credit = Credit.character(character, personId, name, headshot);
         cast.add(credit);
@@ -152,8 +153,11 @@ public class CreditsLoader extends BaseAsyncLoader<Credits> {
         while (cursor.moveToNext()) {
           final String character = Cursors.getString(cursor, ShowCrewColumns.JOB);
           final long personId = Cursors.getLong(cursor, ShowCrewColumns.PERSON_ID);
-          final String headshot = Cursors.getString(cursor, PersonColumns.HEADSHOT);
           final String name = Cursors.getString(cursor, PersonColumns.NAME);
+
+          final String headshot =
+              ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE,
+                  personId);
 
           Credit credit = Credit.character(character, personId, name, headshot);
           credits.add(credit);
@@ -181,8 +185,11 @@ public class CreditsLoader extends BaseAsyncLoader<Credits> {
       while (castCursor.moveToNext()) {
         final String character = Cursors.getString(castCursor, MovieCastColumns.CHARACTER);
         final long personId = Cursors.getLong(castCursor, MovieCastColumns.PERSON_ID);
-        final String headshot = Cursors.getString(castCursor, PersonColumns.HEADSHOT);
         final String name = Cursors.getString(castCursor, PersonColumns.NAME);
+
+        final String headshot =
+            ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE,
+                personId);
 
         Credit credit = Credit.character(character, personId, name, headshot);
         cast.add(credit);
@@ -219,8 +226,11 @@ public class CreditsLoader extends BaseAsyncLoader<Credits> {
         while (cursor.moveToNext()) {
           final String character = Cursors.getString(cursor, MovieCrewColumns.JOB);
           final long personId = Cursors.getLong(cursor, MovieCrewColumns.PERSON_ID);
-          final String headshot = Cursors.getString(cursor, PersonColumns.HEADSHOT);
           final String name = Cursors.getString(cursor, PersonColumns.NAME);
+
+          final String headshot =
+              ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE,
+                  personId);
 
           Credit credit = Credit.character(character, personId, name, headshot);
           credits.add(credit);

@@ -36,9 +36,13 @@ public abstract class Job {
     void onDone(Job job);
   }
 
+  public static final int PRIORITY_CONFIGURATION = 11;
+
   public static final int PRIORITY_ACTIONS = 10;
 
   public static final int PRIORITY_USER_DATA = 9;
+
+  public static final int PRIORITY_IMAGES = 7;
 
   public static final int PRIORITY_SEASONS = 6;
 

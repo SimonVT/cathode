@@ -57,7 +57,7 @@ public class SyncSeason extends CallJob<List<Episode>> {
   }
 
   @Override public Call<List<Episode>> getCall() {
-    return seasonService.getSeason(traktId, season, Extended.FULL_IMAGES);
+    return seasonService.getSeason(traktId, season, Extended.FULL);
   }
 
   @Override public void handleResponse(List<Episode> episodes) {

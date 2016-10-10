@@ -17,6 +17,7 @@ package net.simonvt.cathode.remote.sync;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import net.simonvt.cathode.tmdb.api.SyncConfiguration;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
@@ -48,6 +49,8 @@ public class SyncJob extends Job {
     if (TraktTimestamps.shouldPurge(getContext())) {
       queue(new PurgeDatabase());
     }
+
+    queue(new SyncConfiguration());
 
     queue(new SyncUserSettings());
 

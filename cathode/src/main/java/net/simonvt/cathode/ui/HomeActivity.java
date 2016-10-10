@@ -34,6 +34,7 @@ import android.view.ViewPropertyAnimator;
 import android.widget.ProgressBar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
@@ -46,13 +47,17 @@ import net.simonvt.cathode.event.RequestFailedEvent;
 import net.simonvt.cathode.event.RequestFailedEvent.OnRequestFailedListener;
 import net.simonvt.cathode.event.SyncEvent;
 import net.simonvt.cathode.event.SyncEvent.OnSyncListener;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic;
+import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.settings.SettingsActivity;
 import net.simonvt.cathode.settings.StartPage;
+import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.ui.search.SearchFragment;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.credits.CreditFragment;
@@ -115,6 +120,9 @@ public class HomeActivity extends BaseActivity
 
   private static final int LOADER_SHOW_WATCHING = 1;
   private static final int LOADER_MOVIE_WATCHING = 2;
+
+  @Inject ShowTaskScheduler showScheduler;
+  @Inject MovieTaskScheduler movieScheduler;
 
   @BindView(R.id.progress_top) ProgressBar progressTop;
 
@@ -560,7 +568,6 @@ public class HomeActivity extends BaseActivity
     if (watchingShow != null && watchingShow.moveToFirst()) {
       final long showId = Cursors.getLong(watchingShow, ShowColumns.ID);
       final String show = Cursors.getString(watchingShow, ShowColumns.TITLE);
-      final String poster = Cursors.getString(watchingShow, ShowColumns.POSTER);
       final int season = Cursors.getInt(watchingShow, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(watchingShow, EpisodeColumns.EPISODE);
 
@@ -570,14 +577,19 @@ public class HomeActivity extends BaseActivity
       final long startTime = Cursors.getLong(watchingShow, EpisodeColumns.STARTED_AT);
       final long endTime = Cursors.getLong(watchingShow, EpisodeColumns.EXPIRES_AT);
 
+      final String poster =
+          ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, showId);
+
       watchingView.watchingShow(showId, show, episodeId, episodeTitle, poster, startTime, endTime);
     } else if (watchingMovie != null && watchingMovie.moveToFirst()) {
       final long id = Cursors.getLong(watchingMovie, MovieColumns.ID);
       final String title = Cursors.getString(watchingMovie, MovieColumns.TITLE);
       final String overview = Cursors.getString(watchingMovie, MovieColumns.OVERVIEW);
-      final String poster = Cursors.getString(watchingMovie, MovieColumns.POSTER);
       final long startTime = Cursors.getLong(watchingMovie, MovieColumns.STARTED_AT);
       final long endTime = Cursors.getLong(watchingMovie, MovieColumns.EXPIRES_AT);
+
+      final String poster =
+          ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
 
       watchingView.watchingMovie(id, title, overview, poster, startTime, endTime);
     } else {
@@ -588,7 +600,6 @@ public class HomeActivity extends BaseActivity
   private static final String[] SHOW_WATCHING_PROJECTION = new String[] {
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.POSTER,
       DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.ID + " AS episodeId",
       DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.TITLE,
       DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SEASON,

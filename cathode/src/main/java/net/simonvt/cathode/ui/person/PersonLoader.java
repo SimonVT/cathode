@@ -27,6 +27,8 @@ import java.util.List;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.database.BaseAsyncLoader;
+import net.simonvt.cathode.images.ImageType;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCrewColumns;
@@ -48,7 +50,6 @@ public class PersonLoader extends BaseAsyncLoader<Person> {
   private static final String[] SHOW_CAST_PROJECTION = new String[] {
       SqlColumn.table(Tables.SHOW_CAST).column(ShowCastColumns.SHOW_ID),
       SqlColumn.table(Tables.SHOW_CAST).column(ShowCastColumns.CHARACTER),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.POSTER),
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.OVERVIEW),
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.YEAR),
@@ -56,7 +57,6 @@ public class PersonLoader extends BaseAsyncLoader<Person> {
 
   private static final String[] SHOW_CREW_PROJECTION = new String[] {
       SqlColumn.table(Tables.SHOW_CREW).column(ShowCrewColumns.SHOW_ID),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.POSTER),
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.OVERVIEW),
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.YEAR),
@@ -65,7 +65,6 @@ public class PersonLoader extends BaseAsyncLoader<Person> {
   private static final String[] MOVIE_CAST_PROJECTION = new String[] {
       SqlColumn.table(Tables.MOVIE_CAST).column(MovieCastColumns.MOVIE_ID),
       SqlColumn.table(Tables.MOVIE_CAST).column(MovieCastColumns.CHARACTER),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.POSTER),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.TITLE),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.OVERVIEW),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.YEAR),
@@ -73,7 +72,6 @@ public class PersonLoader extends BaseAsyncLoader<Person> {
 
   private static final String[] MOVIE_CREW_PROJECTION = new String[] {
       SqlColumn.table(Tables.MOVIE_CREW).column(MovieCrewColumns.MOVIE_ID),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.POSTER),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.TITLE),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.OVERVIEW),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.YEAR),
@@ -97,21 +95,21 @@ public class PersonLoader extends BaseAsyncLoader<Person> {
 
   @Override public Person loadInBackground() {
     Cursor person = resolver.query(People.withId(personId), new String[] {
-        PersonColumns.NAME, PersonColumns.HEADSHOT, PersonColumns.FANART, PersonColumns.BIOGRAPHY,
-        PersonColumns.BIRTHDAY, PersonColumns.DEATH, PersonColumns.BIRTHPLACE,
-        PersonColumns.HOMEPAGE, PersonColumns.LAST_SYNC,
+        PersonColumns.NAME, PersonColumns.BIOGRAPHY, PersonColumns.BIRTHDAY, PersonColumns.DEATH,
+        PersonColumns.BIRTHPLACE, PersonColumns.HOMEPAGE, PersonColumns.LAST_SYNC,
     }, null, null, null);
     try {
       if (person.moveToFirst()) {
         final String name = Cursors.getString(person, PersonColumns.NAME);
-        final String headshot = Cursors.getString(person, PersonColumns.HEADSHOT);
-        final String fanart = Cursors.getString(person, PersonColumns.FANART);
         final String biography = Cursors.getString(person, PersonColumns.BIOGRAPHY);
         final String birthday = Cursors.getString(person, PersonColumns.BIRTHDAY);
         final String death = Cursors.getString(person, PersonColumns.DEATH);
         final String birthplace = Cursors.getString(person, PersonColumns.BIRTHPLACE);
         final String homepage = Cursors.getString(person, PersonColumns.HOMEPAGE);
         final long lastSync = Cursors.getLong(person, PersonColumns.LAST_SYNC);
+
+        final String headshot = ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, personId);
+        final String screenshot = ImageUri.create(ImageUri.ITEM_PERSON, ImageType.STILL, personId);
 
         PersonCredits credits = new PersonCredits();
         loadShowCredits(credits);
@@ -127,8 +125,8 @@ public class PersonLoader extends BaseAsyncLoader<Person> {
         Collections.sort(credits.getSound(), comparator);
         Collections.sort(credits.getCamera(), comparator);
 
-        return new Person(name, headshot, fanart, biography, birthday, death, birthplace, homepage,
-            lastSync, credits);
+        return new Person(name, headshot, screenshot, biography, birthday, death, birthplace,
+            homepage, lastSync, credits);
       }
     } finally {
       person.close();
@@ -156,10 +154,11 @@ public class PersonLoader extends BaseAsyncLoader<Person> {
       while (castCursor.moveToNext()) {
         final String character = Cursors.getString(castCursor, ShowCastColumns.CHARACTER);
         final long itemId = Cursors.getLong(castCursor, ShowCastColumns.SHOW_ID);
-        final String poster = Cursors.getString(castCursor, ShowColumns.POSTER);
         final String title = Cursors.getString(castCursor, ShowColumns.TITLE);
         final String overview = Cursors.getString(castCursor, ShowColumns.OVERVIEW);
         final int year = Cursors.getInt(castCursor, ShowColumns.YEAR);
+
+        final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, itemId);
 
         PersonCredit credit =
             PersonCredit.character(character, ItemType.SHOW, itemId, poster, title, overview, year);
@@ -195,10 +194,11 @@ public class PersonLoader extends BaseAsyncLoader<Person> {
 
         while (cursor.moveToNext()) {
           final long itemId = Cursors.getLong(cursor, ShowCrewColumns.SHOW_ID);
-          final String poster = Cursors.getString(cursor, ShowColumns.POSTER);
           final String title = Cursors.getString(cursor, ShowColumns.TITLE);
           final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
           final int year = Cursors.getInt(cursor, ShowColumns.YEAR);
+
+          final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, itemId);
 
           PersonCredit credit =
               PersonCredit.job(department.toString(), ItemType.SHOW, itemId, poster, title,
@@ -228,10 +228,11 @@ public class PersonLoader extends BaseAsyncLoader<Person> {
       while (castCursor.moveToNext()) {
         final String character = Cursors.getString(castCursor, MovieCastColumns.CHARACTER);
         final long itemId = Cursors.getLong(castCursor, MovieCastColumns.MOVIE_ID);
-        final String poster = Cursors.getString(castCursor, MovieColumns.POSTER);
         final String title = Cursors.getString(castCursor, MovieColumns.TITLE);
         final String overview = Cursors.getString(castCursor, MovieColumns.OVERVIEW);
         final int year = Cursors.getInt(castCursor, MovieColumns.YEAR);
+
+        final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, itemId);
 
         PersonCredit credit =
             PersonCredit.character(character, ItemType.MOVIE, itemId, poster, title, overview,
@@ -268,10 +269,11 @@ public class PersonLoader extends BaseAsyncLoader<Person> {
 
         while (cursor.moveToNext()) {
           final long itemId = Cursors.getLong(cursor, MovieCrewColumns.MOVIE_ID);
-          final String poster = Cursors.getString(cursor, MovieColumns.POSTER);
           final String title = Cursors.getString(cursor, MovieColumns.TITLE);
           final String overview = Cursors.getString(cursor, MovieColumns.OVERVIEW);
           final int year = Cursors.getInt(cursor, MovieColumns.YEAR);
+
+          final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, itemId);
 
           PersonCredit credit =
               PersonCredit.job(department.toString(), ItemType.MOVIE, itemId, poster, title,

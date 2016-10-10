@@ -25,9 +25,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import javax.inject.Inject;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
+import net.simonvt.cathode.scheduler.ShowTaskScheduler;
+import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.schematic.Cursors;
@@ -38,15 +43,18 @@ public class DashboardShowsAdapter extends RecyclerCursorAdapter<DashboardShowsA
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.OVERVIEW,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.POSTER,
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
   };
+
+  @Inject ShowTaskScheduler showScheduler;
 
   private DashboardFragment.OverviewCallback callback;
 
   public DashboardShowsAdapter(Context context, DashboardFragment.OverviewCallback callback) {
     super(context);
     this.callback = callback;
+
+    CathodeApp.inject(context, this);
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -70,7 +78,11 @@ public class DashboardShowsAdapter extends RecyclerCursorAdapter<DashboardShowsA
   }
 
   @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
-    holder.poster.setImage(Cursors.getString(cursor, ShowColumns.POSTER));
+    final long id = Cursors.getLong(cursor, ShowColumns.ID);
+    final String poster =
+        ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
+
+    holder.poster.setImage(poster);
     holder.title.setText(Cursors.getString(cursor, ShowColumns.TITLE));
   }
 

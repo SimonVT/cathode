@@ -59,8 +59,6 @@ public class Show {
 
   List<String> genres;
 
-  Images images;
-
   public String getTitle() {
     return title;
   }
@@ -135,9 +133,5 @@ public class Show {
 
   public List<String> getGenres() {
     return genres;
-  }
-
-  public Images getImages() {
-    return images;
   }
 }

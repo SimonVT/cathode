@@ -55,7 +55,7 @@ public class SyncTrendingShows extends CallJob<List<TrendingItem>> {
   }
 
   @Override public Call<List<TrendingItem>> getCall() {
-    return showsService.getTrendingShows(LIMIT, Extended.FULL_IMAGES);
+    return showsService.getTrendingShows(LIMIT, Extended.FULL);
   }
 
   @Override public void handleResponse(List<TrendingItem> shows) {
@@ -75,7 +75,6 @@ public class SyncTrendingShows extends CallJob<List<TrendingItem>> {
       for (int i = 0, count = shows.size(); i < count; i++) {
         TrendingItem item = shows.get(i);
         Show show = item.getShow();
-
         final long showId = showHelper.partialUpdate(show);
 
         ContentValues cv = new ContentValues();

@@ -29,6 +29,8 @@ import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.images.ImageType;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
@@ -101,10 +103,11 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
     final boolean watching = Cursors.getBoolean(cursor, EpisodeColumns.WATCHING);
     final boolean checkedIn = Cursors.getBoolean(cursor, EpisodeColumns.CHECKED_IN);
     final long firstAired = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
-    final String screen = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
     final String title = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
 
-    holder.screen.setImage(screen);
+    final String screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, id);
+
+    holder.screen.setImage(screenshotUri);
 
     holder.title.setText(title);
 

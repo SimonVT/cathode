@@ -27,6 +27,8 @@ import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.images.ImageType;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -55,9 +57,8 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
 
   public static final String[] PROJECTION = new String[] {
       Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.POSTER,
-      Tables.SHOWS + "." + ShowColumns.STATUS, ShowColumns.AIRED_COUNT,
-      Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT, ShowColumns.WATCHING,
+      Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.STATUS,
+      ShowColumns.AIRED_COUNT, Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT, ShowColumns.WATCHING,
       Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
       Tables.EPISODES + "." + EpisodeColumns.ID + " AS " + COLUMN_EPISODE_ID,
       Tables.EPISODES + "." + EpisodeColumns.TITLE,
@@ -146,7 +147,6 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
 
     final long id = Cursors.getLong(cursor, ShowColumns.ID);
 
-    final String showPosterUrl = Cursors.getString(cursor, ShowColumns.POSTER);
     final String showTitle = Cursors.getString(cursor, ShowColumns.TITLE);
     final boolean watching = Cursors.getBoolean(cursor, ShowColumns.WATCHING);
 
@@ -160,8 +160,10 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     final String episodeTitle =
         DataHelper.getEpisodeTitle(activity, cursor, episodeSeasonNumber, episodeNumber);
 
+    final String showPosterUri = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
+
     vh.title.setText(showTitle);
-    vh.poster.setImage(showPosterUrl);
+    vh.poster.setImage(showPosterUri);
 
     String episodeText;
 

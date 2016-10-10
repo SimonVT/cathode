@@ -15,3 +15,4 @@ crashlytics.properties
 
 # Trakt
 trakt.properties
+api.properties

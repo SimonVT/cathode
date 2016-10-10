@@ -23,7 +23,6 @@ import android.database.Cursor;
 import java.util.Calendar;
 import java.util.List;
 import net.simonvt.cathode.CathodeApp;
-import net.simonvt.cathode.api.entity.Images;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.database.DatabaseUtils;
@@ -81,6 +80,26 @@ public final class ShowDatabaseHelper {
     }
   }
 
+  public long getIdFromTmdb(int tmdbId) {
+    synchronized (LOCK_ID) {
+      Cursor c = resolver.query(Shows.SHOWS, new String[] {
+          ShowColumns.ID,
+      }, ShowColumns.TMDB_ID + "=?", new String[] {
+          String.valueOf(tmdbId),
+      }, null);
+
+      long id = -1L;
+
+      if (c.moveToFirst()) {
+        id = Cursors.getLong(c, ShowColumns.ID);
+      }
+
+      c.close();
+
+      return id;
+    }
+  }
+
   public boolean exists(long traktId) {
     return getId(traktId) != -1L;
   }
@@ -92,12 +111,27 @@ public final class ShowDatabaseHelper {
 
     long traktId = -1L;
     if (c.moveToFirst()) {
-      traktId = Cursors.getInt(c, ShowColumns.TRAKT_ID);
+      traktId = Cursors.getLong(c, ShowColumns.TRAKT_ID);
     }
 
     c.close();
 
     return traktId;
+  }
+
+  public int getTmdbId(long showId) {
+    Cursor c = resolver.query(Shows.withId(showId), new String[] {
+        ShowColumns.TMDB_ID,
+    }, null, null, null);
+
+    int tmdbId = -1;
+    if (c.moveToFirst()) {
+      tmdbId = Cursors.getInt(c, ShowColumns.TMDB_ID);
+    }
+
+    c.close();
+
+    return tmdbId;
   }
 
   public static final class IdResult {
@@ -321,27 +355,6 @@ public final class ShowDatabaseHelper {
     cv.put(ShowColumns.TVRAGE_ID, show.getIds().getTvrage());
     if (show.getUpdatedAt() != null) {
       cv.put(ShowColumns.LAST_UPDATED, show.getUpdatedAt().getTimeInMillis());
-    }
-    if (show.getImages() != null) {
-      Images images = show.getImages();
-      if (images.getFanart() != null) {
-        cv.put(ShowColumns.FANART, images.getFanart().getFull());
-      }
-      if (images.getPoster() != null) {
-        cv.put(ShowColumns.POSTER, images.getPoster().getFull());
-      }
-      if (images.getLogo() != null) {
-        cv.put(ShowColumns.LOGO, images.getLogo().getFull());
-      }
-      if (images.getClearart() != null) {
-        cv.put(ShowColumns.CLEARART, images.getClearart().getFull());
-      }
-      if (images.getBanner() != null) {
-        cv.put(ShowColumns.BANNER, images.getBanner().getFull());
-      }
-      if (images.getThumb() != null) {
-        cv.put(ShowColumns.THUMB, images.getThumb().getFull());
-      }
     }
 
     if (show.getRating() != null) {

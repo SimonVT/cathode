@@ -25,8 +25,11 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import java.util.List;
+import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public class PersonCreditsAdapter extends RecyclerView.Adapter<PersonCreditsAdapter.ViewHolder> {
@@ -37,6 +40,9 @@ public class PersonCreditsAdapter extends RecyclerView.Adapter<PersonCreditsAdap
 
     void onMovieClicked(long movieId, String title, String overview);
   }
+
+  @Inject ShowTaskScheduler showScheduler;
+  @Inject MovieTaskScheduler movieScheduler;
 
   private List<PersonCredit> credits;
 

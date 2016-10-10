@@ -18,13 +18,18 @@ package net.simonvt.cathode.module;
 
 import android.content.Context;
 import android.content.Intent;
-import com.jakewharton.picasso.OkHttp3Downloader;
-import com.squareup.picasso.Picasso;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
 import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.api.ApiModule;
 import net.simonvt.cathode.api.TraktModule;
+import net.simonvt.cathode.images.EpisodeRequestHandler;
+import net.simonvt.cathode.images.ImageModule;
+import net.simonvt.cathode.images.ImageRequestHandler;
+import net.simonvt.cathode.images.MovieRequestHandler;
+import net.simonvt.cathode.images.PersonRequestHandler;
+import net.simonvt.cathode.images.ShowRequestHandler;
 import net.simonvt.cathode.jobqueue.AuthJobService;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobInjector;
@@ -107,6 +112,7 @@ import net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesCollection;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesRatings;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchlist;
+import net.simonvt.cathode.remote.sync.movies.SyncRelatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies;
@@ -116,14 +122,13 @@ import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncAnticipatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodesRatings;
-import net.simonvt.cathode.remote.sync.movies.SyncRelatedMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncRelatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncSeasons;
 import net.simonvt.cathode.remote.sync.shows.SyncSeasonsRatings;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
-import net.simonvt.cathode.remote.sync.shows.SyncShowCredits;
 import net.simonvt.cathode.remote.sync.shows.SyncShowCollectedStatus;
+import net.simonvt.cathode.remote.sync.shows.SyncShowCredits;
 import net.simonvt.cathode.remote.sync.shows.SyncShowRecommendations;
 import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
 import net.simonvt.cathode.remote.sync.shows.SyncShowsCollection;
@@ -145,69 +150,82 @@ import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.search.SearchHandler;
 import net.simonvt.cathode.service.CathodeSyncAdapter;
 import net.simonvt.cathode.service.SyncWatchingReceiver;
+import net.simonvt.cathode.settings.LogoutDialog;
+import net.simonvt.cathode.settings.SettingsActivity;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.settings.hidden.HiddenItems;
-import net.simonvt.cathode.ui.HomeActivity;
-import net.simonvt.cathode.ui.credits.CreditsFragment;
-import net.simonvt.cathode.ui.movie.RelatedMoviesFragment;
-import net.simonvt.cathode.ui.show.RelatedShowsFragment;
+import net.simonvt.cathode.settings.hidden.HiddenItemsAdapter;
 import net.simonvt.cathode.settings.login.LoginActivity;
-import net.simonvt.cathode.settings.SettingsActivity;
 import net.simonvt.cathode.settings.login.TokenActivity;
 import net.simonvt.cathode.settings.login.TokenTask;
-import net.simonvt.cathode.ui.comments.CommentsAdapter;
-import net.simonvt.cathode.settings.hidden.HiddenItemsAdapter;
-import net.simonvt.cathode.ui.suggestions.movies.MovieRecommendationsAdapter;
-import net.simonvt.cathode.ui.search.MovieSearchAdapter;
-import net.simonvt.cathode.ui.movies.MoviesAdapter;
-import net.simonvt.cathode.ui.show.SeasonAdapter;
-import net.simonvt.cathode.ui.show.SeasonsAdapter;
-import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
-import net.simonvt.cathode.ui.suggestions.shows.ShowRecommendationsAdapter;
-import net.simonvt.cathode.ui.shows.watchlist.ShowWatchlistAdapter;
-import net.simonvt.cathode.ui.shows.ShowsWithNextAdapter;
-import net.simonvt.cathode.ui.shows.upcoming.UpcomingAdapter;
+import net.simonvt.cathode.settings.setup.CalendarSetupActivity;
+import net.simonvt.cathode.tmdb.TmdbModule;
+import net.simonvt.cathode.tmdb.api.SyncConfiguration;
+import net.simonvt.cathode.tmdb.api.movie.SyncMovieImages;
+import net.simonvt.cathode.tmdb.api.people.SyncPersonHeadshot;
+import net.simonvt.cathode.tmdb.api.show.SyncEpisodeImages;
+import net.simonvt.cathode.tmdb.api.show.SyncShowImages;
+import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.comments.AddCommentDialog;
-import net.simonvt.cathode.ui.dialog.CheckInDialog;
-import net.simonvt.cathode.ui.lists.ListsDialog;
-import net.simonvt.cathode.settings.LogoutDialog;
-import net.simonvt.cathode.ui.dialog.RatingDialog;
-import net.simonvt.cathode.ui.comments.UpdateCommentDialog;
-import net.simonvt.cathode.ui.suggestions.movies.AnticipatedMoviesFragment;
-import net.simonvt.cathode.ui.suggestions.shows.AnticipatedShowsFragment;
 import net.simonvt.cathode.ui.comments.CommentFragment;
+import net.simonvt.cathode.ui.comments.CommentsAdapter;
 import net.simonvt.cathode.ui.comments.CommentsFragment;
+import net.simonvt.cathode.ui.comments.UpdateCommentDialog;
+import net.simonvt.cathode.ui.credits.CreditsFragment;
+import net.simonvt.cathode.ui.dashboard.DashboardMoviesAdapter;
+import net.simonvt.cathode.ui.dashboard.DashboardShowsAdapter;
+import net.simonvt.cathode.ui.dashboard.DashboardShowsWatchlistAdapter;
+import net.simonvt.cathode.ui.dashboard.DashboardUpcomingShowsAdapter;
+import net.simonvt.cathode.ui.dialog.CheckInDialog;
+import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.lists.CreateListFragment;
-import net.simonvt.cathode.ui.show.EpisodeFragment;
 import net.simonvt.cathode.ui.lists.DeleteListDialog;
+import net.simonvt.cathode.ui.lists.ListAdapter;
 import net.simonvt.cathode.ui.lists.ListFragment;
+import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.ui.lists.ListsFragment;
-import net.simonvt.cathode.ui.movies.collected.CollectedMoviesFragment;
+import net.simonvt.cathode.ui.lists.UpdateListFragment;
 import net.simonvt.cathode.ui.movie.MovieFragment;
-import net.simonvt.cathode.ui.suggestions.movies.MovieRecommendationsFragment;
+import net.simonvt.cathode.ui.movie.RelatedMoviesFragment;
+import net.simonvt.cathode.ui.movies.MoviesAdapter;
+import net.simonvt.cathode.ui.movies.collected.CollectedMoviesFragment;
+import net.simonvt.cathode.ui.movies.watched.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.movies.watchlist.MovieWatchlistFragment;
+import net.simonvt.cathode.ui.person.PersonCreditsAdapter;
+import net.simonvt.cathode.ui.person.PersonFragment;
+import net.simonvt.cathode.ui.search.MovieSearchAdapter;
+import net.simonvt.cathode.ui.search.SearchAdapter;
 import net.simonvt.cathode.ui.search.SearchFragment;
+import net.simonvt.cathode.ui.show.EpisodeFragment;
+import net.simonvt.cathode.ui.show.RelatedShowsFragment;
+import net.simonvt.cathode.ui.show.SeasonAdapter;
 import net.simonvt.cathode.ui.show.SeasonFragment;
+import net.simonvt.cathode.ui.show.SeasonsAdapter;
 import net.simonvt.cathode.ui.show.ShowFragment;
-import net.simonvt.cathode.ui.suggestions.shows.ShowRecommendationsFragment;
+import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
+import net.simonvt.cathode.ui.shows.ShowsWithNextAdapter;
 import net.simonvt.cathode.ui.shows.collected.CollectedShowsFragment;
+import net.simonvt.cathode.ui.shows.upcoming.UpcomingAdapter;
+import net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment;
+import net.simonvt.cathode.ui.shows.watched.WatchedShowsFragment;
+import net.simonvt.cathode.ui.shows.watchlist.ShowWatchlistAdapter;
 import net.simonvt.cathode.ui.shows.watchlist.ShowsWatchlistFragment;
 import net.simonvt.cathode.ui.stats.StatsFragment;
+import net.simonvt.cathode.ui.suggestions.movies.AnticipatedMoviesFragment;
+import net.simonvt.cathode.ui.suggestions.movies.MovieRecommendationsAdapter;
+import net.simonvt.cathode.ui.suggestions.movies.MovieRecommendationsFragment;
 import net.simonvt.cathode.ui.suggestions.movies.TrendingMoviesFragment;
+import net.simonvt.cathode.ui.suggestions.shows.AnticipatedShowsFragment;
+import net.simonvt.cathode.ui.suggestions.shows.ShowRecommendationsAdapter;
+import net.simonvt.cathode.ui.suggestions.shows.ShowRecommendationsFragment;
 import net.simonvt.cathode.ui.suggestions.shows.TrendingShowsFragment;
-import net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment;
-import net.simonvt.cathode.ui.movies.watched.WatchedMoviesFragment;
-import net.simonvt.cathode.ui.shows.watched.WatchedShowsFragment;
-import net.simonvt.cathode.ui.lists.UpdateListFragment;
-import net.simonvt.cathode.ui.person.PersonFragment;
-import net.simonvt.cathode.settings.setup.CalendarSetupActivity;
 import net.simonvt.cathode.widget.PhoneEpisodeView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 @Module(
     includes = {
         ApiModule.class, SchedulerModule.class, JobModule.class, TraktModule.class,
-        DatabaseHelperModule.class
+        DatabaseHelperModule.class, TmdbModule.class, ImageModule.class
     },
 
     injects = {
@@ -223,8 +241,8 @@ import net.simonvt.cathode.widget.RemoteImageView;
         MovieDatabaseHelper.class, UserDatabaseHelper.class, SearchDatabaseHelper.class,
 
         // Activities
-        HomeActivity.class, LoginActivity.class, TokenTask.class,
-        CalendarSetupActivity.class, SettingsActivity.class, HiddenItems.class, TokenActivity.class,
+        HomeActivity.class, LoginActivity.class, TokenTask.class, CalendarSetupActivity.class,
+        SettingsActivity.class, HiddenItems.class, TokenActivity.class,
 
         // Fragments
         EpisodeFragment.class, LogoutDialog.class, CollectedMoviesFragment.class,
@@ -248,9 +266,16 @@ import net.simonvt.cathode.widget.RemoteImageView;
         MoviesAdapter.class, MovieSearchAdapter.class, ShowRecommendationsAdapter.class,
         MovieRecommendationsAdapter.class, ShowsWithNextAdapter.class, ShowWatchlistAdapter.class,
         UpcomingAdapter.class, CommentsAdapter.class, HiddenItemsAdapter.class,
+        DashboardShowsWatchlistAdapter.class, ListAdapter.class, DashboardMoviesAdapter.class,
+        PersonCreditsAdapter.class, DashboardShowsAdapter.class,
+        DashboardUpcomingShowsAdapter.class, SearchAdapter.class,
 
         // Views
         PhoneEpisodeView.class, RemoteImageView.class,
+
+        // Images
+        ShowRequestHandler.class, EpisodeRequestHandler.class, MovieRequestHandler.class,
+        PersonRequestHandler.class, ImageRequestHandler.class,
 
         // Services
         JobService.class, CathodeSyncAdapter.class, AuthJobService.class,
@@ -284,7 +309,9 @@ import net.simonvt.cathode.widget.RemoteImageView;
         CollectedHideShow.class, CalendarHideMovie.class, WatchedHideMovie.class,
         CollectedHideMovie.class, SyncAnticipatedShows.class, SyncAnticipatedMovies.class,
         UpdateList.class, DeleteList.class, SyncRelatedShows.class, SyncRelatedMovies.class,
-        SyncPersonShowCredits.class, SyncPersonMovieCredits.class,
+        SyncPersonShowCredits.class, SyncPersonMovieCredits.class, SyncMovieImages.class,
+        SyncConfiguration.class, SyncShowImages.class, SyncEpisodeImages.class,
+        SyncPersonHeadshot.class,
 
         // Upgrade tasks
         EnsureSync.class, UpperCaseGenres.class,
@@ -314,7 +341,8 @@ public class AppModule {
         if (jobManager.hasJobs(Flags.REQUIRES_AUTH, 0)) {
           Intent i = new Intent(context, AuthJobService.class);
           context.startService(i);
-        } else if (jobManager.hasJobs(0, Flags.REQUIRES_AUTH)) {
+        }
+        if (jobManager.hasJobs(0, Flags.REQUIRES_AUTH)) {
           Intent i = new Intent(context, JobService.class);
           context.startService(i);
         }
@@ -337,10 +365,6 @@ public class AppModule {
 
   @Provides @Singleton SearchHandler provideSearchHandler() {
     return new SearchHandler(app);
-  }
-
-  @Provides @Singleton Picasso providePicasso(Context context) {
-    return new Picasso.Builder(app).downloader(new OkHttp3Downloader(context)).build();
   }
 
   @Provides @Singleton UpcomingTimePreference provideUpcomingTimePreference() {

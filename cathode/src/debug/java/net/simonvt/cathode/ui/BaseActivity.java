@@ -56,6 +56,7 @@ import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.StartPage;
+import net.simonvt.cathode.tmdb.api.SyncConfiguration;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 @SuppressLint("SetTextI18n") public abstract class BaseActivity extends AppCompatActivity {
@@ -178,6 +179,12 @@ import okhttp3.logging.HttpLoggingInterceptor;
     });
     debugViews.httpStatusCode.setSelection(
         httpStatusCodeAdapter.getPositionForValue(injects.httpStatusCodePreference.get()));
+
+    debugViews.syncConfiguration.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        injects.jobManager.addJob(new SyncConfiguration());
+      }
+    });
 
     debugViews.initialSync.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
@@ -307,6 +314,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
     @BindView(R.id.debug_networkStatusCode) Spinner httpStatusCode;
 
     @BindView(R.id.debug_drawer) ViewGroup drawerContent;
+
+    @BindView(R.id.debug_syncConfiguration) View syncConfiguration;
 
     @BindView(R.id.debug_initialSync) View initialSync;
 

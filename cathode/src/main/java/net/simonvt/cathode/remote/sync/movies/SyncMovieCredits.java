@@ -62,7 +62,7 @@ public class SyncMovieCredits extends CallJob<People> {
   }
 
   @Override public Call<People> getCall() {
-    return moviesService.getPeople(traktId, Extended.FULL_IMAGES);
+    return moviesService.getPeople(traktId, Extended.FULL);
   }
 
   @Override public void handleResponse(People people) {

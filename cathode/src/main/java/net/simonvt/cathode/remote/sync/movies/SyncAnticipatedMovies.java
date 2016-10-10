@@ -55,7 +55,7 @@ public class SyncAnticipatedMovies extends CallJob<List<AnticipatedItem>> {
   }
 
   @Override public Call<List<AnticipatedItem>> getCall() {
-    return moviesService.getAnticipatedMovies(LIMIT, Extended.FULL_IMAGES);
+    return moviesService.getAnticipatedMovies(LIMIT, Extended.FULL);
   }
 
   @Override public void handleResponse(List<AnticipatedItem> movies) {
@@ -75,6 +75,7 @@ public class SyncAnticipatedMovies extends CallJob<List<AnticipatedItem>> {
     for (int i = 0, count = movies.size(); i < count; i++) {
       AnticipatedItem item = movies.get(i);
       Movie movie = item.getMovie();
+
       final long movieId = movieHelper.partialUpdate(movie);
 
       movieIds.remove(movieId);

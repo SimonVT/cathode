@@ -73,12 +73,9 @@ public final class DatabaseContract {
     @DataType(TEXT) String HOMEPAGE = "homepage";
     @DataType(TEXT) String STATUS = "status";
 
-    @DataType(TEXT) String FANART = "fanart";
+    @DataType(INTEGER) String IMAGES_LAST_SYNC = "imagesLastSync";
+    @DataType(TEXT) String BACKDROP = "backdrop";
     @DataType(TEXT) String POSTER = "poster";
-    @DataType(TEXT) String LOGO = "logo";
-    @DataType(TEXT) String CLEARART = "clearart";
-    @DataType(TEXT) String BANNER = "banner";
-    @DataType(TEXT) String THUMB = "thumb";
 
     @DataType(INTEGER) @DefaultValue("0") String USER_RATING = "userRating";
     @DataType(INTEGER) @DefaultValue("0") String RATED_AT = "ratedAt";
@@ -163,9 +160,6 @@ public final class DatabaseContract {
     @DataType(INTEGER) String TMDB_ID = "tmdbId";
     @DataType(INTEGER) String TVRAGE_ID = "tvrageId";
 
-    @DataType(TEXT) String POSTER = "poster";
-    @DataType(TEXT) String THUMB = "thumb";
-
     @DataType(INTEGER) @DefaultValue("0") String USER_RATING = "userRating";
     @DataType(INTEGER) @DefaultValue("0") String RATED_AT = "ratedAt";
 
@@ -207,6 +201,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) String TMDB_ID = "tmdbId";
     @DataType(INTEGER) String TVRAGE_ID = "tvrageId";
 
+    @DataType(INTEGER) String IMAGES_LAST_SYNC = "imagesLastSync";
     @DataType(TEXT) String SCREENSHOT = "screenshot";
 
     @DataType(INTEGER) String FIRST_AIRED = "episodeFirstAired";
@@ -258,12 +253,9 @@ public final class DatabaseContract {
     @DataType(TEXT) String IMDB_ID = "imdbId";
     @DataType(INTEGER) String TMDB_ID = "tmdbId";
 
-    @DataType(TEXT) String FANART = "fanart";
+    @DataType(INTEGER) String IMAGES_LAST_SYNC = "imagesLastSync";
+    @DataType(TEXT) String BACKDROP = "backdrop";
     @DataType(TEXT) String POSTER = "poster";
-    @DataType(TEXT) String LOGO = "logo";
-    @DataType(TEXT) String CLEARART = "clearart";
-    @DataType(TEXT) String BANNER = "banner";
-    @DataType(TEXT) String THUMB = "thumb";
 
     @DataType(INTEGER) @DefaultValue("0") String USER_RATING = "userRating";
     @DataType(INTEGER) @DefaultValue("0") String RATED_AT = "ratedAt";
@@ -336,8 +328,11 @@ public final class DatabaseContract {
     @DataType(INTEGER) String IMDB_ID = "imdbId";
     @DataType(INTEGER) String TMDB_ID = "tmdbId";
     @DataType(INTEGER) String TVRAGE_ID = "tvrageId";
+
+    @DataType(INTEGER) String IMAGES_LAST_SYNC = "imagesLastSync";
     @DataType(TEXT) String HEADSHOT = "headshot";
-    @DataType(TEXT) String FANART = "fanart";
+    @DataType(TEXT) String SCREENSHOT = "screenshot";
+
     @DataType(TEXT) String BIOGRAPHY = "biography";
     @DataType(TEXT) String BIRTHDAY = "birthday";
     @DataType(TEXT) String DEATH = "death";
@@ -384,7 +379,6 @@ public final class DatabaseContract {
 
     String TITLE = "title";
     String OVERVIEW = "overview";
-    String POSTER = "poster";
   }
 
   public interface ItemType {

@@ -31,7 +31,7 @@ public abstract class CallJob<T> extends ErrorHandlerJob<T> {
     super(flags);
   }
 
-  @Override public final void perform() {
+  @Override public void perform() {
     try {
       Call<T> call = getCall();
       Response<T> response = call.execute();

@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.MoviesService;
+import net.simonvt.cathode.tmdb.api.movie.SyncMovieImages;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic;
@@ -47,11 +48,14 @@ public class SyncMovie extends CallJob<Movie> {
   }
 
   @Override public Call<Movie> getCall() {
-    return moviesService.getSummary(traktId, Extended.FULL_IMAGES);
+    return moviesService.getSummary(traktId, Extended.FULL);
   }
 
   @Override public void handleResponse(Movie movie) {
     final long movieId = movieHelper.fullUpdate(movie);
+
+    final int tmdbId = movie.getIds().getTmdb();
+    queue(new SyncMovieImages(tmdbId));
 
     ContentValues cv = new ContentValues();
     cv.put(MovieColumns.LAST_SYNC, System.currentTimeMillis());

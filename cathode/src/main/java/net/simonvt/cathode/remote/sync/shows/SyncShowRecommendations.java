@@ -58,7 +58,7 @@ public class SyncShowRecommendations extends CallJob<List<Show>> {
   }
 
   @Override public Call<List<Show>> getCall() {
-    return recommendationsService.shows(LIMIT, Extended.FULL_IMAGES);
+    return recommendationsService.shows(LIMIT, Extended.FULL);
   }
 
   @Override public void handleResponse(List<Show> shows) {
@@ -75,7 +75,6 @@ public class SyncShowRecommendations extends CallJob<List<Show>> {
 
     for (int index = 0, count = shows.size(); index < count; index++) {
       Show show = shows.get(index);
-
       final long showId = showHelper.partialUpdate(show);
 
       showIds.remove(showId);

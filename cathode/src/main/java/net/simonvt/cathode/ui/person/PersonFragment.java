@@ -36,7 +36,9 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.PersonTaskScheduler;
+import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
@@ -54,6 +56,8 @@ public class PersonFragment extends RefreshableAppBarFragment {
   private static final int LOADER_PERSON = 1;
 
   @Inject PersonTaskScheduler personScheduler;
+  @Inject ShowTaskScheduler showScheduler;
+  @Inject MovieTaskScheduler movieScheduler;
 
   private long personId;
 
@@ -183,8 +187,7 @@ public class PersonFragment extends RefreshableAppBarFragment {
     this.person = person;
     if (person != null && getView() != null) {
       setTitle(person.getName());
-
-      setBackdrop(person.getFanart());
+      setBackdrop(person.getScreenshot());
       headshot.setImage(person.getHeadshot());
       birthday.setText(person.getBirthday());
       birthplace.setText(person.getBirthplace());

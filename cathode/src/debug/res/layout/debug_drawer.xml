@@ -153,6 +153,15 @@
       style="@style/DebugDrawerTitle"/>
 
   <TextView
+      android:id="@+id/debug_syncConfiguration"
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
+      android:textAllCaps="false"
+      android:text="Sync configuration"
+      style="@style/DebugDrawerItem"/>
+
+  <TextView
       android:id="@+id/debug_initialSync"
       android:layout_width="0dp"
       android:layout_columnSpan="2"

@@ -55,7 +55,7 @@ public class SyncTrendingMovies extends CallJob<List<TrendingItem>> {
   }
 
   @Override public Call<List<TrendingItem>> getCall() {
-    return moviesService.getTrendingMovies(LIMIT, Extended.FULL_IMAGES);
+    return moviesService.getTrendingMovies(LIMIT, Extended.FULL);
   }
 
   @Override public void handleResponse(List<TrendingItem> movies) {

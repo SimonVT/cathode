@@ -59,7 +59,7 @@ public class SyncMovieRecommendations extends CallJob<List<Movie>> {
   }
 
   @Override public Call<List<Movie>> getCall() {
-    return recommendationsService.movies(LIMIT, Extended.FULL_IMAGES);
+    return recommendationsService.movies(LIMIT, Extended.FULL);
   }
 
   @Override public void handleResponse(List<Movie> recommendations) {
@@ -76,6 +76,7 @@ public class SyncMovieRecommendations extends CallJob<List<Movie>> {
       ArrayList<ContentProviderOperation> ops = new ArrayList<>();
       for (int index = 0, count = recommendations.size(); index < count; index++) {
         Movie movie = recommendations.get(index);
+
         final long movieId = movieHelper.partialUpdate(movie);
 
         movieIds.remove(movieId);

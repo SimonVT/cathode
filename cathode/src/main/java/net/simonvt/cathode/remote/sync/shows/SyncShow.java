@@ -46,7 +46,7 @@ public class SyncShow extends CallJob<Show> {
   }
 
   @Override public Call<Show> getCall() {
-    return showsService.getSummary(traktId, Extended.FULL_IMAGES);
+    return showsService.getSummary(traktId, Extended.FULL);
   }
 
   @Override public void handleResponse(Show show) {

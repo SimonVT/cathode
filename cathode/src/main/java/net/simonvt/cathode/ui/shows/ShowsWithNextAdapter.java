@@ -28,6 +28,8 @@ import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.images.ImageType;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -53,8 +55,8 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
 
   public static final String[] PROJECTION = new String[] {
       Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.POSTER,
-      ShowColumns.AIRED_COUNT, Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
+      Tables.SHOWS + "." + ShowColumns.OVERVIEW, ShowColumns.AIRED_COUNT,
+      Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
       Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT, Tables.SHOWS + "." + ShowColumns.STATUS,
       ShowColumns.WATCHING, Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
       Tables.EPISODES + "." + EpisodeColumns.ID + " AS " + COLUMN_EPISODE_ID,
@@ -174,10 +176,12 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
   }
 
   @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
-    final String showPosterUrl = Cursors.getString(cursor, ShowColumns.POSTER);
+    final long id = Cursors.getLong(cursor, ShowColumns.ID);
     final String showTitle = Cursors.getString(cursor, ShowColumns.TITLE);
     final String showStatus = Cursors.getString(cursor, ShowColumns.STATUS);
     final boolean watching = Cursors.getBoolean(cursor, ShowColumns.WATCHING);
+
+    final String showPosterUri = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
 
     final int showAiredCount = Cursors.getInt(cursor, ShowColumns.AIRED_COUNT);
     int count = 0;
@@ -231,7 +235,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
     setupOverflowItems(holder.overflow, showTypeCount, showAiredCount, episodeTitle != null,
         watching);
 
-    holder.poster.setImage(showPosterUrl);
+    holder.poster.setImage(showPosterUri);
 
     holder.showTypeCount = showTypeCount;
     holder.showAiredCount = showAiredCount;

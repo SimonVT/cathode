@@ -19,7 +19,6 @@ package net.simonvt.cathode.provider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
-import net.simonvt.cathode.api.entity.Images;
 import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.People;
@@ -44,12 +43,38 @@ public final class PersonWrapper {
     return id;
   }
 
+  public static long getIdFromTmdb(ContentResolver resolver, int tmdbId) {
+    Cursor c = resolver.query(People.PEOPLE, new String[] {
+        PersonColumns.ID,
+    }, PersonColumns.TMDB_ID + "=?", new String[] {
+        String.valueOf(tmdbId),
+    }, null);
+
+    long id = !c.moveToFirst() ? -1L : Cursors.getLong(c, PersonColumns.ID);
+
+    c.close();
+
+    return id;
+  }
+
   public static long getTraktId(ContentResolver resolver, long personId) {
     Cursor c = resolver.query(People.withId(personId), new String[] {
         PersonColumns.TRAKT_ID,
     }, null, null, null);
 
     long id = !c.moveToFirst() ? -1L : Cursors.getLong(c, PersonColumns.TRAKT_ID);
+
+    c.close();
+
+    return id;
+  }
+
+  public static int getTmdbId(ContentResolver resolver, long personId) {
+    Cursor c = resolver.query(People.withId(personId), new String[] {
+        PersonColumns.TMDB_ID,
+    }, null, null, null);
+
+    int id = !c.moveToFirst() ? -1 : Cursors.getInt(c, PersonColumns.TMDB_ID);
 
     c.close();
 
@@ -86,21 +111,6 @@ public final class PersonWrapper {
     cv.put(PersonColumns.IMDB_ID, person.getIds().getImdb());
     cv.put(PersonColumns.TMDB_ID, person.getIds().getTmdb());
     cv.put(PersonColumns.TVRAGE_ID, person.getIds().getTvrage());
-
-    Images images = person.getImages();
-    if (images != null) {
-      if (images.getHeadshot() != null) {
-        cv.put(PersonColumns.HEADSHOT, images.getHeadshot().getFull());
-      } else {
-        cv.putNull(PersonColumns.HEADSHOT);
-      }
-
-      if (images.getFanart() != null) {
-        cv.put(PersonColumns.FANART, images.getFanart().getFull());
-      } else {
-        cv.putNull(PersonColumns.FANART);
-      }
-    }
 
     cv.put(PersonColumns.BIOGRAPHY, person.getBiography());
     if (person.getBirthday() != null) {

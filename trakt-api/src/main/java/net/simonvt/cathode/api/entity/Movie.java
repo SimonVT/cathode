@@ -48,8 +48,6 @@ public class Movie {
 
   List<String> availableTranslations;
 
-  Images images;
-
   List<String> genres;
 
   String certification;
@@ -108,10 +106,6 @@ public class Movie {
 
   public List<String> getAvailableTranslations() {
     return availableTranslations;
-  }
-
-  public Images getImages() {
-    return images;
   }
 
   public List<String> getGenres() {

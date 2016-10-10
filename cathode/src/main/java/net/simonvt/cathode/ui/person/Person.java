@@ -22,7 +22,7 @@ public class Person {
 
   private String headshot;
 
-  private String fanart;
+  private String screenshot;
 
   private String biography;
 
@@ -38,11 +38,11 @@ public class Person {
 
   private PersonCredits credits;
 
-  public Person(String name, String headshot, String fanart, String biography, String birthday,
+  public Person(String name, String headshot, String screenshot, String biography, String birthday,
       String death, String birthplace, String homepage, long lastSync, PersonCredits credits) {
     this.name = name;
     this.headshot = headshot;
-    this.fanart = fanart;
+    this.screenshot = screenshot;
     this.biography = biography;
     this.birthday = birthday;
     this.death = death;
@@ -60,8 +60,8 @@ public class Person {
     return headshot;
   }
 
-  public String getFanart() {
-    return fanart;
+  public String getScreenshot() {
+    return screenshot;
   }
 
   public String getBiography() {

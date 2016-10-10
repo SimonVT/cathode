@@ -39,7 +39,6 @@ public class MovieSearchAdapter extends BaseMoviesAdapter<MovieSearchAdapter.Vie
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.ID,
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.TITLE,
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.OVERVIEW,
-      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.POSTER,
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.TMDB_ID,
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.WATCHED,
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.IN_COLLECTION,

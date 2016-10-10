@@ -39,57 +39,9 @@ public class Images {
     }
   }
 
-  ImageType fanart;
-
-  ImageType poster;
-
-  ImageType logo;
-
-  ImageType clearart;
-
-  ImageType banner;
-
-  ImageType thumb;
-
   ImageType avatar;
-
-  ImageType headshot;
-
-  ImageType screenshot;
-
-  public ImageType getFanart() {
-    return fanart;
-  }
-
-  public ImageType getPoster() {
-    return poster;
-  }
-
-  public ImageType getLogo() {
-    return logo;
-  }
-
-  public ImageType getClearart() {
-    return clearart;
-  }
-
-  public ImageType getBanner() {
-    return banner;
-  }
-
-  public ImageType getThumb() {
-    return thumb;
-  }
 
   public ImageType getAvatar() {
     return avatar;
-  }
-
-  public ImageType getHeadshot() {
-    return headshot;
-  }
-
-  public ImageType getScreenshot() {
-    return screenshot;
   }
 }

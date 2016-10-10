@@ -40,6 +40,7 @@ import net.simonvt.cathode.remote.sync.shows.SyncShow;
 import net.simonvt.cathode.remote.sync.shows.SyncShowCollectedStatus;
 import net.simonvt.cathode.remote.sync.shows.SyncShowCredits;
 import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
+import net.simonvt.cathode.tmdb.api.show.SyncShowImages;
 import net.simonvt.schematic.Cursors;
 
 public class ShowTaskScheduler extends BaseTaskScheduler {
@@ -64,7 +65,9 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         cv.put(ShowColumns.FULL_SYNC_REQUESTED, System.currentTimeMillis());
         context.getContentResolver().update(Shows.withId(showId), cv, null, null);
         final long traktId = showHelper.getTraktId(showId);
+        final int tmdbId = showHelper.getTmdbId(showId);
         queue(new SyncShow(traktId));
+        queue(new SyncShowImages(tmdbId));
         queue(new SyncComments(ItemType.SHOW, traktId));
         queue(new SyncShowWatchedStatus(traktId));
         queue(new SyncShowCredits(traktId));

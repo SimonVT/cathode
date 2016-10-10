@@ -26,11 +26,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import javax.inject.Inject;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
+import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
+import net.simonvt.cathode.scheduler.ShowTaskScheduler;
+import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.ui.adapter.AdapterNotifier;
 import net.simonvt.cathode.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.util.DataHelper;
@@ -40,13 +46,14 @@ import net.simonvt.schematic.Cursors;
 public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.ViewHolder> {
 
   public static final String[] PROJECTION = new String[] {
-      Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.POSTER,
+      Tables.SHOWS + "." + ShowColumns.ID,
+      Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.SHOWS + "." + ShowColumns.OVERVIEW,
       Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
   };
 
   public static final String[] PROJECTION_EPISODE = new String[] {
-      Tables.EPISODES + "." + EpisodeColumns.ID, Tables.EPISODES + "." + EpisodeColumns.SCREENSHOT,
+      Tables.EPISODES + "." + EpisodeColumns.ID,
       Tables.EPISODES + "." + EpisodeColumns.TITLE,
       Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
       Tables.EPISODES + "." + EpisodeColumns.SEASON, Tables.EPISODES + "." + EpisodeColumns.EPISODE,
@@ -56,6 +63,9 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
 
   private static final int TYPE_SHOW = 0;
   private static final int TYPE_EPISODE = 1;
+
+  @Inject ShowTaskScheduler showScheduler;
+  @Inject EpisodeTaskScheduler episodeScheduler;
 
   private Context context;
 
@@ -71,6 +81,8 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
       DashboardFragment.OverviewCallback callback) {
     this.context = context;
     this.callback = callback;
+
+    CathodeApp.inject(context, this);
 
     notifier = new AdapterNotifier(this);
   }
@@ -161,8 +173,12 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
     Cursor cursor = getCursor(position);
     if (holder.getItemViewType() == TYPE_SHOW) {
       ShowViewHolder showHolder = (ShowViewHolder) holder;
-      final String poster = Cursors.getString(cursor, ShowColumns.POSTER);
+
+      final long id = Cursors.getLong(cursor, ShowColumns.ID);
       final String title = Cursors.getString(cursor, ShowColumns.TITLE);
+
+      final String poster =
+          ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
 
       showHolder.poster.setImage(poster);
       showHolder.title.setText(title);
@@ -170,12 +186,14 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
       EpisodeViewHolder episodeHolder = (EpisodeViewHolder) holder;
 
       final long id = Cursors.getLong(cursor, EpisodeColumns.ID);
-      final String screenshotUrl = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
       final String title = DataHelper.getEpisodeTitle(context, cursor, season, episode);
 
-      episodeHolder.screenshot.setImage(screenshotUrl);
+      final String screenshotUri =
+          ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, id);
+
+      episodeHolder.screenshot.setImage(screenshotUri);
       String episodeText =
           context.getString(R.string.upcoming_episode_next, season, episode, title);
       episodeHolder.title.setText(episodeText);

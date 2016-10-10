@@ -26,8 +26,10 @@ import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
@@ -63,6 +65,7 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
   }
 
   @Override protected void onBindViewHolder(T holder, Cursor cursor, int position) {
+    final long id = Cursors.getLong(cursor, MovieColumns.ID);
     final String title = Cursors.getString(cursor, MovieColumns.TITLE);
     final boolean watched = Cursors.getBoolean(cursor, MovieColumns.WATCHED);
     final boolean collected = Cursors.getBoolean(cursor, MovieColumns.IN_COLLECTION);
@@ -70,7 +73,10 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
     final boolean watching = Cursors.getBoolean(cursor, MovieColumns.WATCHING);
     final boolean checkedIn = Cursors.getBoolean(cursor, MovieColumns.CHECKED_IN);
 
-    holder.poster.setImage(Cursors.getString(cursor, MovieColumns.POSTER));
+    final String poster =
+        ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
+
+    holder.poster.setImage(poster);
     holder.title.setText(title);
     holder.overview.setText(Cursors.getString(cursor, MovieColumns.OVERVIEW));
 

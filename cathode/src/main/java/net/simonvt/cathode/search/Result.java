@@ -24,8 +24,6 @@ public class Result {
 
   private long itemId;
 
-  private String poster;
-
   private String title;
 
   private String overview;
@@ -34,11 +32,9 @@ public class Result {
 
   private int relevance;
 
-  public Result(ItemType itemType, long itemId, String poster, String title, String overview,
-      float rating, int relevance) {
+  public Result(ItemType itemType, long itemId, String title, String overview, float rating, int relevance) {
     this.itemType = itemType;
     this.itemId = itemId;
-    this.poster = poster;
     this.title = title;
     this.overview = overview;
     this.rating = rating;
@@ -51,10 +47,6 @@ public class Result {
 
   public long getItemId() {
     return itemId;
-  }
-
-  public String getPoster() {
-    return poster;
   }
 
   public String getTitle() {
@@ -83,7 +75,6 @@ public class Result {
     if (Float.compare(result.rating, rating) != 0) return false;
     if (relevance != result.relevance) return false;
     if (itemType != result.itemType) return false;
-    if (poster != null ? !poster.equals(result.poster) : result.poster != null) return false;
     if (title != null ? !title.equals(result.title) : result.title != null) return false;
     return overview != null ? overview.equals(result.overview) : result.overview == null;
   }
@@ -91,7 +82,6 @@ public class Result {
   @Override public int hashCode() {
     int result = itemType.hashCode();
     result = 31 * result + (int) (itemId ^ (itemId >>> 32));
-    result = 31 * result + (poster != null ? poster.hashCode() : 0);
     result = 31 * result + (title != null ? title.hashCode() : 0);
     result = 31 * result + (overview != null ? overview.hashCode() : 0);
     result = 31 * result + (rating != +0.0f ? Float.floatToIntBits(rating) : 0);

@@ -26,7 +26,7 @@ public class Ids {
 
   String imdb;
 
-  Long tmdb;
+  int tmdb;
 
   Long tvrage;
 
@@ -46,7 +46,7 @@ public class Ids {
     return imdb;
   }
 
-  public Long getTmdb() {
+  public int getTmdb() {
     return tmdb;
   }
 

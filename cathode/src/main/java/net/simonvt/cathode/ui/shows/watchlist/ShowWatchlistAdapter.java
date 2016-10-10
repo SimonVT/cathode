@@ -27,6 +27,8 @@ import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.images.ImageType;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -58,16 +60,15 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
 
   public static final String[] PROJECTION_SHOW = new String[] {
       Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.POSTER,
-      Tables.SHOWS + "." + ShowColumns.TVDB_ID, Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
+      Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.TVDB_ID,
+      Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
       Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
       Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST, Tables.SHOWS + "." + ShowColumns.RATING,
       Tables.SHOWS + "." + LastModifiedColumns.LAST_MODIFIED,
   };
 
   public static final String[] PROJECTION_EPISODE = new String[] {
-      Tables.EPISODES + "." + EpisodeColumns.ID, Tables.EPISODES + "." + EpisodeColumns.SCREENSHOT,
-      Tables.EPISODES + "." + EpisodeColumns.TITLE,
+      Tables.EPISODES + "." + EpisodeColumns.ID, Tables.EPISODES + "." + EpisodeColumns.TITLE,
       Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
       Tables.EPISODES + "." + EpisodeColumns.SEASON, Tables.EPISODES + "." + EpisodeColumns.EPISODE,
       Tables.EPISODES + "." + LastModifiedColumns.LAST_MODIFIED,
@@ -175,11 +176,13 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
       final boolean inWatchlist = Cursors.getBoolean(cursor, ShowColumns.IN_WATCHLIST);
       final float rating = Cursors.getFloat(cursor, ShowColumns.RATING);
 
+      final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
+
       vh.indicator.setWatched(watched);
       vh.indicator.setCollected(inCollection);
       vh.indicator.setInWatchlist(inWatchlist);
 
-      vh.poster.setImage(Cursors.getString(cursor, ShowColumns.POSTER));
+      vh.poster.setImage(poster);
       vh.title.setText(Cursors.getString(cursor, ShowColumns.TITLE));
       vh.overview.setText(Cursors.getString(cursor, ShowColumns.OVERVIEW));
 
@@ -209,13 +212,14 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
       EpisodeViewHolder vh = (EpisodeViewHolder) holder;
 
       final long id = Cursors.getLong(cursor, EpisodeColumns.ID);
-      final String screenshotUrl = Cursors.getString(cursor, EpisodeColumns.SCREENSHOT);
       final long firstAired = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
       final String title = DataHelper.getEpisodeTitle(context, cursor, season, episode);
 
-      vh.screen.setImage(screenshotUrl);
+      final String screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, id);
+
+      vh.screen.setImage(screenshotUri);
       vh.title.setText(title);
       vh.firstAired.setTimeInMillis(firstAired);
       final String episodeNumber = context.getString(R.string.season_x_episode_y, season, episode);

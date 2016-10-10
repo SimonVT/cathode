@@ -58,7 +58,7 @@ public class SyncRelatedShows extends CallJob<List<Show>> {
   }
 
   @Override public Call<List<Show>> getCall() {
-    return showsService.getRelated(traktId, RELATED_COUNT, Extended.FULL_IMAGES);
+    return showsService.getRelated(traktId, RELATED_COUNT, Extended.FULL);
   }
 
   @Override public void handleResponse(List<Show> shows) {
@@ -78,6 +78,8 @@ public class SyncRelatedShows extends CallJob<List<Show>> {
 
     int relatedIndex = 0;
     for (Show show : shows) {
+      final long traktId = show.getIds().getTrakt();
+      final int tmdbId = show.getIds().getTmdb();
       final long relatedShowId = showHelper.partialUpdate(show);
 
       ContentProviderOperation op = ContentProviderOperation.newInsert(RelatedShows.RELATED)

@@ -36,6 +36,7 @@ import net.simonvt.cathode.remote.action.shows.WatchlistEpisode;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.comments.SyncComments;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
+import net.simonvt.cathode.tmdb.api.show.SyncEpisodeImages;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.schematic.Cursors;
 
@@ -52,11 +53,13 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
     execute(new Runnable() {
       @Override public void run() {
         final long showId = episodeHelper.getShowId(episodeId);
+        final int showTmdbId = showHelper.getTmdbId(showId);
         final long traktId = showHelper.getTraktId(showId);
         final int season = episodeHelper.getSeason(episodeId);
         final int episode = episodeHelper.getNumber(episodeId);
 
         queue(new SyncSeason(traktId, season));
+        queue(new SyncEpisodeImages(showTmdbId, season, episode));
         Job syncComments = new SyncComments(ItemType.EPISODE, traktId, season, episode);
         syncComments.registerOnDoneListener(onDoneListener);
         queue(syncComments);

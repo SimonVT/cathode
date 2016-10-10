@@ -69,7 +69,7 @@ import timber.log.Timber;
         return response;
       }
     });
-    builder.interceptors().add(loggingInterceptor);
+    builder.networkInterceptors().add(loggingInterceptor);
     return new Retrofit.Builder() //
         .baseUrl(TraktModule.API_URL)
         .client(builder.build())

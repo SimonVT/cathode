@@ -23,7 +23,6 @@ import android.database.Cursor;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.api.entity.Episode;
-import net.simonvt.cathode.api.entity.Images;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.schematic.Cursors;
@@ -129,6 +128,20 @@ public final class EpisodeDatabaseHelper {
       }, null, null, null);
 
       long traktId = !c.moveToFirst() ? -1L : Cursors.getLong(c, EpisodeColumns.TRAKT_ID);
+
+      c.close();
+
+      return traktId;
+    }
+  }
+
+  public int getTmdbId(long episodeId) {
+    synchronized (LOCK_ID) {
+      Cursor c = resolver.query(Episodes.withId(episodeId), new String[] {
+          EpisodeColumns.TMDB_ID,
+      }, null, null, null);
+
+      int traktId = !c.moveToFirst() ? -1 : Cursors.getInt(c, EpisodeColumns.TMDB_ID);
 
       c.close();
 
@@ -303,13 +316,6 @@ public final class EpisodeDatabaseHelper {
     cv.put(EpisodeColumns.TVDB_ID, episode.getIds().getTvdb());
     cv.put(EpisodeColumns.TMDB_ID, episode.getIds().getTmdb());
     cv.put(EpisodeColumns.TVRAGE_ID, episode.getIds().getTvrage());
-
-    if (episode.getImages() != null) {
-      Images images = episode.getImages();
-      if (images.getScreenshot() != null) {
-        cv.put(EpisodeColumns.SCREENSHOT, images.getScreenshot().getFull());
-      }
-    }
 
     if (episode.getRating() != null) {
       cv.put(EpisodeColumns.RATING, episode.getRating());

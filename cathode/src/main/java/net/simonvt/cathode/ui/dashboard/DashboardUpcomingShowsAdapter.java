@@ -25,11 +25,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import javax.inject.Inject;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
+import net.simonvt.cathode.scheduler.ShowTaskScheduler;
+import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.widget.RemoteImageView;
@@ -45,7 +50,6 @@ public class DashboardUpcomingShowsAdapter
       Tables.SHOWS + "." + ShowColumns.ID,
       Tables.SHOWS + "." + ShowColumns.TITLE,
       Tables.SHOWS + "." + ShowColumns.OVERVIEW,
-      Tables.SHOWS + "." + ShowColumns.POSTER,
       Tables.SHOWS + "." + ShowColumns.STATUS,
       ShowColumns.WATCHING,
       Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
@@ -57,12 +61,16 @@ public class DashboardUpcomingShowsAdapter
       Tables.EPISODES + "." + EpisodeColumns.LAST_MODIFIED + " AS " + COLUMN_EPISODE_LAST_UPDATED,
   };
 
+  @Inject ShowTaskScheduler showScheduler;
+
   private DashboardFragment.OverviewCallback callback;
 
   public DashboardUpcomingShowsAdapter(Context context,
       DashboardFragment.OverviewCallback callback) {
     super(context);
     this.callback = callback;
+
+    CathodeApp.inject(context, this);
   }
 
   @Override public long getLastModified(int position) {
@@ -95,12 +103,15 @@ public class DashboardUpcomingShowsAdapter
   }
 
   @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
-    final String poster = Cursors.getString(cursor, ShowColumns.POSTER);
+    final long id = Cursors.getLong(cursor, ShowColumns.ID);
     final String title = Cursors.getString(cursor, ShowColumns.TITLE);
     final boolean watching = Cursors.getBoolean(cursor, ShowColumns.WATCHING);
     final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
     final String episodeTitle = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
+
+    final String poster =
+        ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
 
     holder.poster.setImage(poster);
     holder.title.setText(title);

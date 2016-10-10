@@ -28,8 +28,6 @@ public class Episode {
 
   Ids ids;
 
-  Images images;
-
   Integer numberAbs;
 
   String overview;
@@ -58,10 +56,6 @@ public class Episode {
 
   public Ids getIds() {
     return ids;
-  }
-
-  public Images getImages() {
-    return images;
   }
 
   public Integer getNumberAbs() {

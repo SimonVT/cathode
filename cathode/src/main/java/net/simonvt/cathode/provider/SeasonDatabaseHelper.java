@@ -23,7 +23,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
-import net.simonvt.cathode.api.entity.Images;
 import net.simonvt.cathode.api.entity.Season;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
@@ -236,12 +235,6 @@ public final class SeasonDatabaseHelper {
     cv.put(SeasonColumns.TVDB_ID, season.getIds().getTvdb());
     cv.put(SeasonColumns.TMDB_ID, season.getIds().getTmdb());
     cv.put(SeasonColumns.TVRAGE_ID, season.getIds().getTvrage());
-
-    if (season.getImages() != null) {
-      Images images = season.getImages();
-      cv.put(SeasonColumns.POSTER, images.getPoster().getFull());
-      cv.put(SeasonColumns.THUMB, images.getThumb().getFull());
-    }
 
     if (season.getRating() != null) {
       cv.put(SeasonColumns.RATING, season.getRating());

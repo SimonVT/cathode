@@ -22,8 +22,6 @@ public class Person {
 
   Ids ids;
 
-  Images images;
-
   String biography;
 
   String birthday;
@@ -40,10 +38,6 @@ public class Person {
 
   public Ids getIds() {
     return ids;
-  }
-
-  public Images getImages() {
-    return images;
   }
 
   public String getBiography() {

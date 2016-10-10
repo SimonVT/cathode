@@ -37,6 +37,7 @@ import net.simonvt.cathode.remote.sync.comments.SyncComments;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieCredits;
 import net.simonvt.cathode.remote.sync.movies.SyncRelatedMovies;
+import net.simonvt.cathode.tmdb.api.movie.SyncMovieImages;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.schematic.Cursors;
 
@@ -56,7 +57,9 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
     execute(new Runnable() {
       @Override public void run() {
         final long traktId = movieHelper.getTraktId(movieId);
+        final int tmdbId = movieHelper.getTmdbId(movieId);
         queue(new SyncMovie(traktId));
+        queue(new SyncMovieImages(tmdbId));
         queue(new SyncMovieCredits(traktId));
         queue(new SyncRelatedMovies(traktId));
 

@@ -242,9 +242,6 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
           SqlColumn.table(Tables.MOVIES).column(MovieColumns.OVERVIEW)).as(
           ListItemColumns.OVERVIEW),
 
-      SqlCoalesce.coaloesce(SqlColumn.table(Tables.SHOWS).column(ShowColumns.POSTER),
-          SqlColumn.table(Tables.MOVIES).column(MovieColumns.POSTER)).as(ListItemColumns.POSTER),
-
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.WATCHED_COUNT),
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.IN_COLLECTION_COUNT),
@@ -285,7 +282,6 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
       SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.EPISODE),
       SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.WATCHED),
       SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED),
-      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.SCREENSHOT),
       SqlColumn.table(Tables.EPISODES).column(LastModifiedColumns.LAST_MODIFIED), "(SELECT "
       + ShowColumns.TITLE
       + " FROM "
@@ -308,7 +304,6 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.CHECKED_IN),
       SqlColumn.table(Tables.MOVIES).column(LastModifiedColumns.LAST_MODIFIED),
 
-      SqlColumn.table(Tables.PEOPLE).column(PersonColumns.HEADSHOT),
       SqlColumn.table(Tables.PEOPLE).column(PersonColumns.NAME),
       SqlColumn.table(Tables.PEOPLE).column(LastModifiedColumns.LAST_MODIFIED),
   };

@@ -22,8 +22,6 @@ public class Season {
 
   Ids ids;
 
-  Images images;
-
   Float rating;
 
   Integer votes;
@@ -34,10 +32,6 @@ public class Season {
 
   public Ids getIds() {
     return ids;
-  }
-
-  public Images getImages() {
-    return images;
   }
 
   public Float getRating() {

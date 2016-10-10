@@ -55,7 +55,7 @@ public class SyncAnticipatedShows extends CallJob<List<AnticipatedItem>> {
   }
 
   @Override public Call<List<AnticipatedItem>> getCall() {
-    return showsService.getAnticipatedShows(LIMIT, Extended.FULL_IMAGES);
+    return showsService.getAnticipatedShows(LIMIT, Extended.FULL);
   }
 
   @Override public void handleResponse(List<AnticipatedItem> shows) {
@@ -75,7 +75,6 @@ public class SyncAnticipatedShows extends CallJob<List<AnticipatedItem>> {
       for (int i = 0, count = shows.size(); i < count; i++) {
         AnticipatedItem item = shows.get(i);
         Show show = item.getShow();
-
         final long showId = showHelper.partialUpdate(show);
 
         ContentValues cv = new ContentValues();

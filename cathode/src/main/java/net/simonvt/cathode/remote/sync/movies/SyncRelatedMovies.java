@@ -59,7 +59,7 @@ public class SyncRelatedMovies extends CallJob<List<Movie>> {
   }
 
   @Override public Call<List<Movie>> getCall() {
-    return moviesService.getRelated(traktId, RELATED_COUNT, Extended.FULL_IMAGES);
+    return moviesService.getRelated(traktId, RELATED_COUNT, Extended.FULL);
   }
 
   @Override public void handleResponse(List<Movie> movies) {
@@ -79,11 +79,11 @@ public class SyncRelatedMovies extends CallJob<List<Movie>> {
 
     int relatedIndex = 0;
     for (Movie movie : movies) {
-      final long relatedShowId = movieHelper.partialUpdate(movie);
+      final long relatedMovieId = movieHelper.partialUpdate(movie);
 
       ContentProviderOperation op = ContentProviderOperation.newInsert(RelatedMovies.RELATED)
           .withValue(RelatedMoviesColumns.MOVIE_ID, movieId)
-          .withValue(RelatedMoviesColumns.RELATED_MOVIE_ID, relatedShowId)
+          .withValue(RelatedMoviesColumns.RELATED_MOVIE_ID, relatedMovieId)
           .withValue(RelatedMoviesColumns.RELATED_INDEX, relatedIndex)
           .build();
       ops.add(op);

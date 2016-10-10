@@ -39,6 +39,8 @@ import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TraktUtils;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.images.ImageType;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
@@ -55,14 +57,15 @@ import net.simonvt.cathode.provider.ProviderSchematic.MovieGenres;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.RelatedMovies;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.scheduler.PersonTaskScheduler;
 import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.comments.LinearCommentsAdapter;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
-import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.fragment.RefreshableAppBarFragment;
+import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.util.Ids;
 import net.simonvt.cathode.util.Intents;
 import net.simonvt.cathode.util.SqlColumn;
@@ -86,8 +89,7 @@ public class MovieFragment extends RefreshableAppBarFragment
 
   private static final String ARG_ID = "net.simonvt.cathode.ui.movie.MovieFragment.id";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.movie.MovieFragment.title";
-  private static final String ARG_OVERVIEW =
-      "net.simonvt.cathode.ui.movie.MovieFragment.overview";
+  private static final String ARG_OVERVIEW = "net.simonvt.cathode.ui.movie.MovieFragment.overview";
 
   private static final String DIALOG_RATING =
       "net.simonvt.cathode.ui.movie.MovieFragment.ratingDialog";
@@ -99,6 +101,7 @@ public class MovieFragment extends RefreshableAppBarFragment
       "net.simonvt.cathode.ui.movie.MovieFragment.updateCommentDialog";
 
   @Inject MovieTaskScheduler movieScheduler;
+  @Inject PersonTaskScheduler personScheduler;
 
   @BindView(R.id.year) TextView year;
   @BindView(R.id.certification) TextView certification;
@@ -378,10 +381,8 @@ public class MovieFragment extends RefreshableAppBarFragment
     final int year = Cursors.getInt(cursor, MovieColumns.YEAR);
     final String certification = Cursors.getString(cursor, MovieColumns.CERTIFICATION);
 
-    final String fanartUrl = Cursors.getString(cursor, MovieColumns.FANART);
-    setBackdrop(fanartUrl, true);
-    final String posterUrl = Cursors.getString(cursor, MovieColumns.POSTER);
-    //poster.setImage(posterUrl);
+    final String backdropUri = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.BACKDROP, movieId);
+    setBackdrop(backdropUri, true);
 
     currentRating = Cursors.getInt(cursor, MovieColumns.USER_RATING);
     final float ratingAll = Cursors.getFloat(cursor, MovieColumns.RATING);
@@ -542,9 +543,11 @@ public class MovieFragment extends RefreshableAppBarFragment
 
       final long personId = Cursors.getLong(c, MovieCastColumns.PERSON_ID);
 
+      final String headshotUri = ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, personId);
+
       RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
       headshot.addTransformation(new CircleTransformation());
-      headshot.setImage(Cursors.getString(c, PersonColumns.HEADSHOT));
+      headshot.setImage(headshotUri);
 
       TextView name = (TextView) v.findViewById(R.id.person_name);
       name.setText(Cursors.getString(c, PersonColumns.NAME));
@@ -581,9 +584,10 @@ public class MovieFragment extends RefreshableAppBarFragment
       final long relatedMovieId = Cursors.getLong(related, RelatedMoviesColumns.RELATED_MOVIE_ID);
       final String title = Cursors.getString(related, MovieColumns.TITLE);
       final String overview = Cursors.getString(related, MovieColumns.OVERVIEW);
-      final String poster = Cursors.getString(related, MovieColumns.POSTER);
       final int rating = Cursors.getInt(related, MovieColumns.RATING);
       final int votes = Cursors.getInt(related, MovieColumns.VOTES);
+
+      final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, relatedMovieId);
 
       RemoteImageView posterView = (RemoteImageView) v.findViewById(R.id.related_poster);
       posterView.addTransformation(new CircleTransformation());
@@ -646,7 +650,7 @@ public class MovieFragment extends RefreshableAppBarFragment
       Tables.MOVIE_CAST + "." + MovieCastColumns.ID,
       Tables.MOVIE_CAST + "." + MovieCastColumns.PERSON_ID,
       Tables.MOVIE_CAST + "." + MovieCastColumns.CHARACTER,
-      Tables.PEOPLE + "." + PersonColumns.NAME, Tables.PEOPLE + "." + PersonColumns.HEADSHOT,
+      Tables.PEOPLE + "." + PersonColumns.NAME,
   };
 
   private LoaderManager.LoaderCallbacks<SimpleCursor> castLoader =
@@ -717,7 +721,6 @@ public class MovieFragment extends RefreshableAppBarFragment
       SqlColumn.table(Tables.MOVIE_RELATED).column(RelatedMoviesColumns.RELATED_MOVIE_ID),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.TITLE),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.OVERVIEW),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.POSTER),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.RATING),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.VOTES),
   };

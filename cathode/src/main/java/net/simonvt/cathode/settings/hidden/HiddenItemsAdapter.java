@@ -28,12 +28,14 @@ import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
+import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.ui.adapter.HeaderCursorAdapter;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.OverflowView;
@@ -56,7 +58,6 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
 
   public static final String[] PROJECTION_SHOW = new String[] {
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.ID),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.POSTER),
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.OVERVIEW),
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.WATCHED_COUNT),
@@ -68,7 +69,6 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
 
   public static final String[] PROJECTION_MOVIES = new String[] {
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.ID),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.POSTER),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.TITLE),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.OVERVIEW),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.WATCHED),
@@ -285,13 +285,21 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
     if (holder.getItemViewType() == TYPE_SHOW) {
       final ShowViewHolder vh = (ShowViewHolder) holder;
 
-      vh.poster.setImage(Cursors.getString(cursor, ShowColumns.POSTER));
+      final long id = Cursors.getLong(cursor, ShowColumns.ID);
+      final String poster =
+          ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
+
+      vh.poster.setImage(poster);
       vh.title.setText(Cursors.getString(cursor, ShowColumns.TITLE));
       vh.overview.setText(Cursors.getString(cursor, ShowColumns.OVERVIEW));
     } else {
       final MovieViewHolder vh = (MovieViewHolder) holder;
 
-      vh.poster.setImage(Cursors.getString(cursor, MovieColumns.POSTER));
+      final long id = Cursors.getLong(cursor, MovieColumns.ID);
+      final String poster =
+          ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
+
+      vh.poster.setImage(poster);
       vh.title.setText(Cursors.getString(cursor, MovieColumns.TITLE));
       vh.overview.setText(Cursors.getString(cursor, MovieColumns.OVERVIEW));
     }

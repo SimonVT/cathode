@@ -30,6 +30,8 @@ import butterknife.ButterKnife;
 import java.util.List;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.images.ImageType;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.search.Result;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.RemoteImageView;
@@ -361,7 +363,14 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
       ResultViewHolder resultHolder = (ResultViewHolder) holder;
       Result result = results.get(position - offset);
 
-      resultHolder.poster.setImage(result.getPoster());
+      String poster;
+      if (result.getItemType() == ItemType.SHOW) {
+        poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, result.getItemId());
+      } else {
+        poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, result.getItemId());
+      }
+
+      resultHolder.poster.setImage(poster);
       resultHolder.title.setText(result.getTitle());
       resultHolder.overview.setText(result.getOverview());
       resultHolder.rating.setValue(result.getRating());

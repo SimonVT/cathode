@@ -38,7 +38,7 @@ public abstract class ErrorHandlerJob<T> extends Job {
   protected final void error(Response<T> response) throws IOException {
     if (!handleError(response)) {
       final int statusCode = response.code();
-      Timber.d("Status code: %d", statusCode);
+      Timber.d("[%s] Status code: %d", key(), statusCode);
 
       if (statusCode == 401) {
         AuthFailedEvent.post();

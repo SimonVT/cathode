@@ -33,8 +33,7 @@ public class MoviesAdapter extends BaseMoviesAdapter<BaseMoviesAdapter.ViewHolde
   public static final String[] PROJECTION = new String[] {
       MovieColumns.ID, MovieColumns.TITLE, MovieColumns.WATCHED, MovieColumns.IN_COLLECTION,
       MovieColumns.IN_WATCHLIST, MovieColumns.WATCHING, MovieColumns.CHECKED_IN,
-      MovieColumns.POSTER, MovieColumns.OVERVIEW, MovieColumns.RATING,
-      LastModifiedColumns.LAST_MODIFIED
+      MovieColumns.OVERVIEW, MovieColumns.RATING, LastModifiedColumns.LAST_MODIFIED
   };
 
   private int rowLayout;
