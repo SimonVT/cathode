@@ -584,7 +584,7 @@ public class MovieFragment extends RefreshableAppBarFragment
       final long relatedMovieId = Cursors.getLong(related, RelatedMoviesColumns.RELATED_MOVIE_ID);
       final String title = Cursors.getString(related, MovieColumns.TITLE);
       final String overview = Cursors.getString(related, MovieColumns.OVERVIEW);
-      final int rating = Cursors.getInt(related, MovieColumns.RATING);
+      final float rating = Cursors.getFloat(related, MovieColumns.RATING);
       final int votes = Cursors.getInt(related, MovieColumns.VOTES);
 
       final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, relatedMovieId);
@@ -596,8 +596,7 @@ public class MovieFragment extends RefreshableAppBarFragment
       TextView titleView = (TextView) v.findViewById(R.id.related_title);
       titleView.setText(title);
 
-      float convertedRating = rating / 10.0f;
-      final String formattedRating = String.format(Locale.getDefault(), "%.1f", convertedRating);
+      final String formattedRating = String.format(Locale.getDefault(), "%.1f", rating);
 
       String ratingText;
       if (votes >= 1000) {

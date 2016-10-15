@@ -764,7 +764,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       final long relatedShowId = Cursors.getLong(related, RelatedShowsColumns.RELATED_SHOW_ID);
       final String title = Cursors.getString(related, ShowColumns.TITLE);
       final String overview = Cursors.getString(related, ShowColumns.OVERVIEW);
-      final int rating = Cursors.getInt(related, ShowColumns.RATING);
+      final float rating = Cursors.getFloat(related, ShowColumns.RATING);
       final int votes = Cursors.getInt(related, ShowColumns.VOTES);
 
       final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, relatedShowId);
@@ -776,8 +776,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       TextView titleView = (TextView) v.findViewById(R.id.related_title);
       titleView.setText(title);
 
-      float convertedRating = rating / 10.0f;
-      final String formattedRating = String.format(Locale.getDefault(), "%.1f", convertedRating);
+      final String formattedRating = String.format(Locale.getDefault(), "%.1f", rating);
 
       String ratingText;
       if (votes >= 1000) {
