@@ -1551,7 +1551,7 @@ public final class ProviderSchematic {
         pathSegment = 1,
         join = Joins.MOVIE_RELATED)
     public static Uri withId(long id) {
-      return buildUri(Path.MOVIE_RELATED, Path.FROM_MOVIE, String.valueOf(id));
+      return buildUri(Path.MOVIE_RELATED, String.valueOf(id));
     }
   }
 }
