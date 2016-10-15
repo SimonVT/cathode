@@ -45,17 +45,17 @@ ext.libraries = [
 
   gson: 'com.google.code.gson:gson:2.7',
 
-  appcompat: 'com.android.support:appcompat-v7:24.2.0',
-  cardView: 'com.android.support:cardview-v7:24.2.0',
-  recyclerView: 'com.android.support:recyclerview-v7:24.2.0',
-  androidDesign: 'com.android.support:design:24.2.0',
+  appcompat: 'com.android.support:appcompat-v7:24.2.1',
+  cardView: 'com.android.support:cardview-v7:24.2.1',
+  recyclerView: 'com.android.support:recyclerview-v7:24.2.1',
+  androidDesign: 'com.android.support:design:24.2.1',
 
   dagger: 'com.squareup.dagger:dagger:1.2.5',
   daggerCompiler: 'com.squareup.dagger:dagger-compiler:1.2.5',
   okhttp: 'com.squareup.okhttp3:okhttp:3.4.1',
   okhttpLogger: 'com.squareup.okhttp3:logging-interceptor:3.4.1',
   picasso: 'com.squareup.picasso:picasso:2.5.2',
-  picassoOkHttp: 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2',
+  picassoOkHttp: 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0',
   retrofit: 'com.squareup.retrofit2:retrofit:2.1.0',
   retrofitGson: 'com.squareup.retrofit2:converter-gson:2.1.0',
 
