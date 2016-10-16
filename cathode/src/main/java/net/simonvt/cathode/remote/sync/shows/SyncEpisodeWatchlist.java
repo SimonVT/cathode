@@ -82,6 +82,7 @@ public class SyncEpisodeWatchlist extends CallJob<List<WatchlistItem>> {
       final long showId = showResult.showId;
       final boolean didShowExist = !showResult.didCreate;
       if (showResult.didCreate) {
+        showHelper.partialUpdate(show);
         queue(new SyncShow(showTraktId));
       }
 
