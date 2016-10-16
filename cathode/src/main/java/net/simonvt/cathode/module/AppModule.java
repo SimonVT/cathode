@@ -162,6 +162,7 @@ import net.simonvt.cathode.settings.setup.CalendarSetupActivity;
 import net.simonvt.cathode.tmdb.TmdbModule;
 import net.simonvt.cathode.tmdb.api.SyncConfiguration;
 import net.simonvt.cathode.tmdb.api.movie.SyncMovieImages;
+import net.simonvt.cathode.tmdb.api.people.SyncPersonBackdrop;
 import net.simonvt.cathode.tmdb.api.people.SyncPersonHeadshot;
 import net.simonvt.cathode.tmdb.api.show.SyncEpisodeImages;
 import net.simonvt.cathode.tmdb.api.show.SyncShowImages;
@@ -311,7 +312,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         UpdateList.class, DeleteList.class, SyncRelatedShows.class, SyncRelatedMovies.class,
         SyncPersonShowCredits.class, SyncPersonMovieCredits.class, SyncMovieImages.class,
         SyncConfiguration.class, SyncShowImages.class, SyncEpisodeImages.class,
-        SyncPersonHeadshot.class,
+        SyncPersonHeadshot.class, SyncPersonBackdrop.class,
 
         // Upgrade tasks
         EnsureSync.class, UpperCaseGenres.class,
