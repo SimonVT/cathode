@@ -16,6 +16,22 @@
   -->
 <resources>
 
+  <string name="license_schematic">Schematic</string>
+  <string name="license_text_schematic">Copyright 2014 Simon Vig Therkildsen
+
+    \n\nLicensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    \n\nhttp://www.apache.org/licenses/LICENSE-2.0
+
+    \n\nUnless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+  </string>
+
   <string name="license_gson">GSON</string>
   <string name="license_text_gson">Copyright © 2008 Google Inc.
     \n\nLicensed under the Apache License, Version 2.0 (the "License");
@@ -31,8 +47,8 @@
     limitations under the License.
   </string>
 
-  <string name="license_okhttp">OkHttp</string>
-  <string name="license_okhttp_text">Copyright 2013 Square, Inc.
+  <string name="license_android_support_library">Android Support Library</string>
+  <string name="license_android_support_library_text">Copyright 2013 The Android Open Source Project
 
     \n\nLicensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -63,9 +79,8 @@
     limitations under the License.
   </string>
 
-  <string name="license_otto">Otto</string>
-  <string name="license_otto_text">Copyright 2012 Square, Inc.
-    \nCopyright 2010 Google, Inc.
+  <string name="license_okhttp">OkHttp</string>
+  <string name="license_okhttp_text">Copyright 2013 Square, Inc.
 
     \n\nLicensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -128,6 +143,22 @@
     limitations under the License.
   </string>
 
+  <string name="license_timber">Butterknife</string>
+  <string name="license_timber_text">Copyright 2013 Jake Wharton
+
+    \n\nLicensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    \n\nhttp://www.apache.org/licenses/LICENSE-2.0
+
+    \n\nUnless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+  </string>
+
   <string name="license_dashclock">DashClock Api</string>
   <string name="license_dashclock_text">Copyright 2013 Google Inc.
 
@@ -144,25 +175,9 @@
     limitations under the License.
   </string>
 
-  <string name="license_timber">Timber</string>
-  <string name="license_timber_text">Copyright 2013 Jake Wharton
-
-  \n\nLicensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  \n\nhttp://www.apache.org/licenses/LICENSE-2.0
-
-  \n\nUnless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  </string>
-
-  <string name="license_joda_time">Joda-Time</string>
-  <string name="license_joda_time_text">This product includes software developed by\n
-  Joda.org (http://www.joda.org/).
+  <string name="license_tmdb_java">tmdb-java</string>
+  <string name="license_tmdb_java_text">
+    Created by Uwe Trottmann. Except where noted otherwise, released into the public domain.
   </string>
 
 </resources>

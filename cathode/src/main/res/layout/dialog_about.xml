@@ -77,6 +77,13 @@
         style="@style/AboutText.Header"/>
 
     <TextView
+        android:id="@+id/credits"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/credits"
+        style="@style/AboutText.Clickable"/>
+
+    <TextView
         android:id="@+id/licenses"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

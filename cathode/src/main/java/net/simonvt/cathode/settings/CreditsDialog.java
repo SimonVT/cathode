@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package net.simonvt.cathode.settings;
 
 import android.app.AlertDialog;
@@ -28,11 +29,11 @@ import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.R;
 
-public class LicensesDialog extends DialogFragment {
+public class CreditsDialog extends DialogFragment {
 
   @Override public Dialog onCreateDialog(Bundle inState) {
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()) //
-        .setTitle(R.string.licenses).setAdapter(new LicenseAdapter(), null);
+        .setTitle(R.string.credits).setAdapter(new CreditsAdapter(), null);
 
     return builder.create();
   }
@@ -48,30 +49,21 @@ public class LicensesDialog extends DialogFragment {
     }
   }
 
-  private final class LicenseAdapter extends BaseAdapter {
+  private final class CreditsAdapter extends BaseAdapter {
 
-    List<License> licenses = new ArrayList<>();
+    List<License> credits = new ArrayList<>();
 
-    private LicenseAdapter() {
-      licenses.add(new License(R.string.license_gson, R.string.license_text_gson));
-      licenses.add(new License(R.string.license_android_support_library,
-          R.string.license_android_support_library_text));
-      licenses.add(new License(R.string.license_dagger, R.string.license_dagger_text));
-      licenses.add(new License(R.string.license_okhttp, R.string.license_okhttp_text));
-      licenses.add(new License(R.string.license_picasso, R.string.license_picasso_text));
-      licenses.add(new License(R.string.license_retrofit, R.string.license_retrofit_text));
-      licenses.add(new License(R.string.license_butterknife, R.string.license_butterknife_text));
-      licenses.add(new License(R.string.license_timber, R.string.license_timber_text));
-      licenses.add(new License(R.string.license_dashclock, R.string.license_dashclock_text));
-      licenses.add(new License(R.string.license_tmdb_java, R.string.license_tmdb_java_text));
+    private CreditsAdapter() {
+      credits.add(new License(R.string.credits_trakt, R.string.credits_trakt_text));
+      credits.add(new License(R.string.credits_tmdb, R.string.credits_tmdb_text));
     }
 
     @Override public int getCount() {
-      return licenses.size();
+      return credits.size();
     }
 
     @Override public Object getItem(int position) {
-      return licenses.get(position);
+      return credits.get(position);
     }
 
     @Override public long getItemId(int position) {
@@ -88,7 +80,7 @@ public class LicensesDialog extends DialogFragment {
 
     @Override public View getView(int position, View convertView, ViewGroup parent) {
       View v = convertView;
-      License item = licenses.get(position);
+      License item = credits.get(position);
 
       if (v == null) {
         v = LayoutInflater.from(getActivity()).inflate(R.layout.row_license, parent, false);

@@ -31,6 +31,8 @@ import net.simonvt.cathode.util.Intents;
 
 public class AboutDialog extends DialogFragment {
 
+  private static final String DIALOG_CREDITS =
+      "net.simonvt.cathode.settings.AboutDialog.credits";
   private static final String DIALOG_LICENSES =
       "net.simonvt.cathode.settings.AboutDialog.licenses";
 
@@ -58,6 +60,10 @@ public class AboutDialog extends DialogFragment {
     unbinder.unbind();
     unbinder = null;
     super.onDestroyView();
+  }
+
+  @OnClick(R.id.credits) public void showCredits() {
+    new CreditsDialog().show(getFragmentManager(), DIALOG_CREDITS);
   }
 
   @OnClick(R.id.licenses) public void showLicenses() {
