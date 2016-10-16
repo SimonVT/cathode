@@ -58,7 +58,7 @@ public final class DatabaseSchematic {
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 35;
+  static final int DATABASE_VERSION = 36;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -321,22 +321,26 @@ public final class DatabaseSchematic {
         "DELETE FROM " + Tables.SEASONS + " WHERE " + Tables.SEASONS + "." + SeasonColumns.SHOW_ID
             + "=OLD." + ShowColumns.ID + ";";
 
-    String SHOW_DELETE_EPISODES =
-        "DELETE FROM " + Tables.EPISODES + " WHERE " + Tables.EPISODES + "."
-            + EpisodeColumns.SHOW_ID + "=OLD." + SeasonColumns.ID + ";";
-
     String SHOW_DELETE_GENRES =
         "DELETE FROM " + Tables.SHOW_GENRES + " WHERE " + Tables.SHOW_GENRES + "."
             + ShowGenreColumns.SHOW_ID + "=OLD." + ShowColumns.ID + ";";
 
-    String SHOW_DELETE_CHARACTERS =
+    String SHOW_DELETE_CAST =
         "DELETE FROM " + Tables.SHOW_CAST + " WHERE " + Tables.SHOW_CAST + "."
             + ShowCastColumns.SHOW_ID + "=OLD." + ShowColumns.ID + ";";
+
+    String SHOW_DELETE_CREW =
+        "DELETE FROM " + Tables.SHOW_CREW + " WHERE " + Tables.SHOW_CREW + "."
+            + ShowCrewColumns.SHOW_ID + "=OLD." + ShowColumns.ID + ";";
 
     String SHOW_DELETE_COMMENTS =
         "DELETE FROM " + Tables.COMMENTS + " WHERE " + Tables.COMMENTS + "."
             + CommentColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.SHOW + " AND "
             + Tables.COMMENTS + "." + CommentColumns.ITEM_ID + "=OLD." + ShowColumns.ID + ";";
+
+    String SHOW_DELETE_RELATED =
+        "DELETE FROM " + Tables.SHOW_RELATED + " WHERE " + Tables.SHOW_RELATED + "."
+            + RelatedShowsColumns.SHOW_ID + "=OLD." + ShowColumns.ID + ";";
 
     String SEASON_DELETE_EPISODES =
         "DELETE FROM " + Tables.EPISODES + " WHERE " + Tables.EPISODES + "."
@@ -363,6 +367,10 @@ public final class DatabaseSchematic {
         "DELETE FROM " + Tables.COMMENTS + " WHERE " + Tables.COMMENTS + "."
             + CommentColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.MOVIE + " AND "
             + Tables.COMMENTS + "." + CommentColumns.ITEM_ID + "=OLD." + MovieColumns.ID + ";";
+
+    String MOVIE_DELETE_RELATED =
+        "DELETE FROM " + Tables.MOVIE_RELATED + " WHERE " + Tables.MOVIE_RELATED + "."
+            + RelatedMoviesColumns.MOVIE_ID + "=OLD." + MovieColumns.ID + ";";
 
     String TIME_MILLIS =
         "(strftime('%s','now') * 1000 + cast(substr(strftime('%f','now'),4,3) AS INTEGER))";
@@ -434,7 +442,8 @@ public final class DatabaseSchematic {
   @ExecOnCreate public static final String TRIGGER_SHOW_DELETE =
       "CREATE TRIGGER IF NOT EXISTS " + TriggerName.SHOW_DELETE + " AFTER DELETE ON " + Tables.SHOWS
           + " BEGIN " + Trigger.SHOW_DELETE_SEASONS + Trigger.SHOW_DELETE_GENRES
-          + Trigger.SHOW_DELETE_CHARACTERS + Trigger.SHOW_DELETE_COMMENTS + " END;";
+          + Trigger.SHOW_DELETE_CAST + Trigger.SHOW_DELETE_CREW + Trigger.SHOW_DELETE_COMMENTS
+          + Trigger.SHOW_DELETE_RELATED + " END;";
 
   @ExecOnCreate public static final String TRIGGER_SEASON_DELETE =
       "CREATE TRIGGER IF NOT EXISTS " + TriggerName.SEASON_DELETE + " AFTER DELETE ON "
@@ -447,7 +456,8 @@ public final class DatabaseSchematic {
   @ExecOnCreate public static final String TRIGGER_MOVIE_DELETE =
       "CREATE TRIGGER IF NOT EXISTS " + TriggerName.MOVIE_DELETE + " AFTER DELETE ON "
           + Tables.MOVIES + " BEGIN " + Trigger.MOVIE_DELETE_GENRES + Trigger.MOVIE_DELETE_CAST
-          + Trigger.MOVIE_DELETE_CREW + Trigger.MOVIE_DELETE_COMMENTS + " END;";
+          + Trigger.MOVIE_DELETE_CREW + Trigger.MOVIE_DELETE_COMMENTS + Trigger.MOVIE_DELETE_RELATED
+          + " END;";
 
   @ExecOnCreate public static final String TRIGGER_SHOW_UPDATE =
       "CREATE TRIGGER IF NOT EXISTS " + TriggerName.SHOW_UPDATE + " AFTER UPDATE ON " + Tables.SHOWS
@@ -485,11 +495,25 @@ public final class DatabaseSchematic {
       "CREATE TRIGGER IF NOT EXISTS " + TriggerName.COMMENT_UPDATE + " AFTER UPDATE ON "
           + Tables.COMMENTS + " FOR EACH ROW BEGIN " + Trigger.COMMENT_UPDATE + " END";
 
-  @ExecOnCreate public static final String INDEX_CHARACTERS_SHOW_ID =
-      SqlIndex.index("characterShowId")
+  @ExecOnCreate public static final String INDEX_CAST_SHOW_ID =
+      SqlIndex.index("castShowId")
           .ifNotExists()
           .onTable(Tables.SHOW_CAST)
           .forColumns(ShowCastColumns.SHOW_ID)
+          .build();
+
+  @ExecOnCreate public static final String INDEX_CREW_SHOW_ID =
+      SqlIndex.index("crewShowId")
+          .ifNotExists()
+          .onTable(Tables.SHOW_CREW)
+          .forColumns(ShowCrewColumns.SHOW_ID)
+          .build();
+
+  @ExecOnCreate public static final String INDEX_RELATED_SHOW_ID =
+      SqlIndex.index("relatedShowId")
+          .ifNotExists()
+          .onTable(Tables.SHOW_RELATED)
+          .forColumns(RelatedShowsColumns.SHOW_ID)
           .build();
 
   @ExecOnCreate public static final String INDEX_SEASON_SHOW_ID = SqlIndex.index("seasonShowId")
@@ -514,6 +538,12 @@ public final class DatabaseSchematic {
       .ifNotExists()
       .onTable(Tables.MOVIE_CREW)
       .forColumns(MovieCrewColumns.MOVIE_ID)
+      .build();
+
+  @ExecOnCreate public static final String INDEX_RELATED_MOVIE_ID = SqlIndex.index("relatedMovieId")
+      .ifNotExists()
+      .onTable(Tables.MOVIE_RELATED)
+      .forColumns(RelatedMoviesColumns.MOVIE_ID)
       .build();
 
   @ExecOnCreate public static final String INDEX_GENRE_MOVIE_ID = SqlIndex.index("genreMovieId")
@@ -582,29 +612,11 @@ public final class DatabaseSchematic {
 
       SqlUtils.createColumnIfNotExists(db, Tables.PEOPLE, LastModifiedColumns.LAST_MODIFIED,
           DataType.Type.INTEGER, "0");
-
-      db.execSQL(TRIGGER_SHOW_UPDATE);
-      db.execSQL(TRIGGER_SEASON_UPDATE);
-      db.execSQL(TRIGGER_EPISODE_UPDATE);
-      db.execSQL(TRIGGER_MOVIES_UPDATE);
-      db.execSQL(TRIGGER_PEOPLE_UPDATE);
     }
 
     if (oldVersion < 14) {
       db.execSQL(CathodeDatabase.LISTS);
       db.execSQL(CathodeDatabase.LIST_ITEMS);
-      db.execSQL(TRIGGER_LIST_DELETE);
-      db.execSQL(TRIGGER_LIST_UPDATE);
-      db.execSQL(TRIGGER_LISTITEM_UPDATE);
-    }
-
-    if (oldVersion < 15) {
-      db.execSQL(INDEX_SEASON_SHOW_ID);
-      db.execSQL(INDEX_CHARACTERS_SHOW_ID);
-      db.execSQL(INDEX_GENRE_SHOW_ID);
-      db.execSQL(INDEX_CAST_MOVIE_ID);
-      db.execSQL(INDEX_CREW_MOVIE_ID);
-      db.execSQL(INDEX_GENRE_MOVIE_ID);
     }
 
     if (oldVersion < 16) {
@@ -666,22 +678,9 @@ public final class DatabaseSchematic {
       }
     }
 
-    if (oldVersion < 17) {
-      db.execSQL(INDEX_EPISODES_SHOW_ID);
-      db.execSQL(INDEX_EPISODES_SEASON_ID);
-    }
-
     if (oldVersion < 18) {
       db.execSQL(CathodeDatabase.COMMENTS);
       db.execSQL(CathodeDatabase.USERS);
-
-      db.execSQL("DROP TRIGGER IF EXISTS " + TriggerName.SHOW_DELETE);
-      db.execSQL("DROP TRIGGER IF EXISTS " + TriggerName.MOVIE_DELETE);
-      db.execSQL(TRIGGER_SHOW_DELETE);
-      db.execSQL(TRIGGER_MOVIE_DELETE);
-
-      db.execSQL(TRIGGER_COMMENT_UPDATE);
-      db.execSQL(TRIGGER_EPISODE_DELETE);
     }
 
     if (oldVersion < 19) {
@@ -826,6 +825,44 @@ public final class DatabaseSchematic {
       personValues.putNull(PersonColumns.SCREENSHOT);
       personValues.putNull(PersonColumns.HEADSHOT);
       db.update(Tables.PEOPLE, personValues, null, null);
+    }
+
+    if (oldVersion < 36) {
+      db.execSQL("DROP TRIGGER IF EXISTS showDelete");
+      db.execSQL("DROP TRIGGER IF EXISTS movieDelete");
+
+      db.execSQL(TRIGGER_EPISODE_UPDATE_AIRED);
+      db.execSQL(TRIGGER_EPISODE_UPDATE_WATCHED);
+      db.execSQL(TRIGGER_EPISODE_UPDATE_COLLECTED);
+      db.execSQL(TRIGGER_EPISODE_UPDATE_WATCHING);
+      db.execSQL(TRIGGER_EPISODE_INSERT);
+      db.execSQL(TRIGGER_SHOW_DELETE);
+      db.execSQL(TRIGGER_SEASON_DELETE);
+      db.execSQL(TRIGGER_EPISODE_DELETE);
+      db.execSQL(TRIGGER_MOVIE_DELETE);
+      db.execSQL(TRIGGER_SHOW_UPDATE);
+      db.execSQL(TRIGGER_SEASON_UPDATE);
+      db.execSQL(TRIGGER_EPISODE_UPDATE);
+      db.execSQL(TRIGGER_MOVIES_UPDATE);
+      db.execSQL(TRIGGER_PEOPLE_UPDATE);
+      db.execSQL(TRIGGER_LIST_DELETE);
+      db.execSQL(TRIGGER_LIST_UPDATE);
+      db.execSQL(TRIGGER_LISTITEM_UPDATE);
+      db.execSQL(TRIGGER_COMMENT_UPDATE);
+
+      db.execSQL("DROP INDEX IF EXISTS characterShowId");
+
+      db.execSQL(INDEX_CAST_SHOW_ID);
+      db.execSQL(INDEX_CREW_SHOW_ID);
+      db.execSQL(INDEX_RELATED_SHOW_ID);
+      db.execSQL(INDEX_SEASON_SHOW_ID);
+      db.execSQL(INDEX_GENRE_SHOW_ID);
+      db.execSQL(INDEX_CAST_MOVIE_ID);
+      db.execSQL(INDEX_CREW_MOVIE_ID);
+      db.execSQL(INDEX_RELATED_MOVIE_ID);
+      db.execSQL(INDEX_GENRE_MOVIE_ID);
+      db.execSQL(INDEX_EPISODES_SHOW_ID);
+      db.execSQL(INDEX_EPISODES_SEASON_ID);
     }
   }
 }
