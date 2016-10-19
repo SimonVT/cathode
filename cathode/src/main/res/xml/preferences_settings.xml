@@ -46,6 +46,14 @@
       android:summary="@string/preference_upcoming_time_summary"/>
 
   <PreferenceCategory
+      android:title="@string/preference_shows"/>
+
+  <Preference
+      android:key="showsOffset"
+      android:title="@string/preference_shows_offset"
+      android:summary="@string/preference_shows_offset_sum"/>
+
+  <PreferenceCategory
       android:title="@string/preference_other"/>
 
   <Preference

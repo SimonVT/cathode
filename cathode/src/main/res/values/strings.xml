@@ -244,6 +244,10 @@
     Display show in upcoming if the next episode airs within this timeframe
   </string>
 
+  <string name="preference_shows">Shows</string>
+  <string name="preference_shows_offset">Offset air time</string>
+  <string name="preference_shows_offset_sum">Number of hours to offset show air dates by</string>
+
   <string name="preference_upcoming_time_weeks_1">1 week</string>
   <string name="preference_upcoming_time_weeks_2">2 weeks</string>
   <string name="preference_upcoming_time_months_1">1 month</string>

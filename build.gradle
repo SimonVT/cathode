@@ -40,8 +40,8 @@ ext.libraries = [
   robolectric: 'org.robolectric:robolectric:3.1.2',
   truth: 'com.google.truth:truth:0.30',
 
-  schematic: 'net.simonvt.schematic:schematic:0.6.7',
-  schematicCompiler: 'net.simonvt.schematic:schematic-compiler:0.6.7',
+  schematic: 'net.simonvt.schematic:schematic:0.6.8',
+  schematicCompiler: 'net.simonvt.schematic:schematic-compiler:0.6.8',
 
   gson: 'com.google.code.gson:gson:2.7',
 

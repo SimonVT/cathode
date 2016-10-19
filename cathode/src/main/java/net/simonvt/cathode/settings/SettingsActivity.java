@@ -18,6 +18,8 @@ package net.simonvt.cathode.settings;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -34,6 +36,8 @@ import net.simonvt.android.colorpicker.ColorPickerDialog;
 import net.simonvt.android.colorpicker.ColorPickerSwatch;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.settings.hidden.HiddenItems;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.HomeActivity;
@@ -69,10 +73,12 @@ public class SettingsActivity extends BaseActivity {
 
   public static class SettingsFragment extends PreferenceFragment
       implements UpcomingTimeDialog.UpcomingTimeSelectedListener,
-      ColorPickerSwatch.OnColorSelectedListener {
+      ColorPickerSwatch.OnColorSelectedListener, ShowOffsetDialog.ShowOffsetSelectedListener {
 
     private static final String DIALOG_UPCOMING_TIME =
         "net.simonvt.cathode.settings.SettingsActivity.SettingsFragment.upcomingTime";
+    private static final String DIALOG_SHOW_OFFSET =
+        "net.simonvt.cathode.settings.SettingsActivity.SettingsFragment.showOffset";
 
     private static final int PERMISSION_REQUEST_CALENDAR = 11;
 
@@ -145,6 +151,17 @@ public class SettingsActivity extends BaseActivity {
             }
           });
 
+      findPreference(Settings.SHOWS_OFFSET).setOnPreferenceClickListener(
+          new Preference.OnPreferenceClickListener() {
+            @Override public boolean onPreferenceClick(Preference preference) {
+              final int offset = FirstAiredOffsetPreference.getInstance().getOffsetHours();
+              ShowOffsetDialog dialog = ShowOffsetDialog.newInstance(offset);
+              dialog.setTargetFragment(SettingsFragment.this, 0);
+              dialog.show(getFragmentManager(), DIALOG_SHOW_OFFSET);
+              return true;
+            }
+          });
+
       findPreference("about").setOnPreferenceClickListener(
           new Preference.OnPreferenceClickListener() {
             @Override public boolean onPreferenceClick(Preference preference) {
@@ -196,6 +213,25 @@ public class SettingsActivity extends BaseActivity {
         if (Permissions.hasCalendarPermission(getActivity())) {
           Accounts.requestCalendarSync(getActivity());
         }
+      }
+    }
+
+    @Override public void onShowOffsetSelected(int offset) {
+      final int showOffset = FirstAiredOffsetPreference.getInstance().getOffsetHours();
+      if (offset != showOffset) {
+        FirstAiredOffsetPreference.getInstance().set(offset);
+
+        final Context context = getActivity();
+
+        new Thread(new Runnable() {
+          @Override public void run() {
+            ContentValues values = new ContentValues();
+            values.put(EpisodeColumns.LAST_MODIFIED, System.currentTimeMillis());
+            context.getContentResolver().update(Episodes.EPISODES, values, null, null);
+
+            Accounts.requestCalendarSync(context);
+          }
+        }).start();
       }
     }
   }

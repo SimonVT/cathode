@@ -23,6 +23,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.schematic.Cursors;
@@ -30,6 +31,7 @@ import net.simonvt.schematic.Cursors;
 public class DashClockService extends DashClockExtension {
 
   @Override protected void onUpdateData(int reason) {
+    final long firstAiredOffset = FirstAiredOffsetPreference.getInstance().getOffsetMillis();
     Cursor c = getContentResolver().query(Episodes.EPISODES, null,
         EpisodeColumns.FIRST_AIRED + ">? AND "
         + EpisodeColumns.WATCHED + "=0"
@@ -47,7 +49,7 @@ public class DashClockService extends DashClockExtension {
         + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID
         + ")=1)",
         new String[] {
-            String.valueOf(System.currentTimeMillis()),
+            String.valueOf(System.currentTimeMillis() - firstAiredOffset),
         }, EpisodeColumns.FIRST_AIRED + " ASC LIMIT 1");
 
     if (c.moveToFirst()) {
@@ -55,7 +57,7 @@ public class DashClockService extends DashClockExtension {
       final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
       final String title = DataHelper.getEpisodeTitle(this, c, season, episode);
       final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
-      final long firstAired = Cursors.getLong(c, EpisodeColumns.FIRST_AIRED);
+      final long firstAired = DataHelper.getFirstAired(c);
 
       final String date = DateUtils.millisToString(this, firstAired, false);
 

@@ -20,7 +20,6 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import java.util.Calendar;
 import java.util.List;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.api.entity.Show;
@@ -28,6 +27,7 @@ import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.database.DatabaseUtils;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.cathode.util.TextUtils;
 import net.simonvt.schematic.Cursors;
 
@@ -283,8 +283,8 @@ public final class ShowDatabaseHelper {
     ContentValues cv = new ContentValues();
     cv.put(DatabaseContract.EpisodeColumns.WATCHED, watched);
 
-    Calendar cal = Calendar.getInstance();
-    final long millis = cal.getTimeInMillis();
+    final long firstAiredOffset = FirstAiredOffsetPreference.getInstance().getOffsetMillis();
+    final long millis = System.currentTimeMillis() - firstAiredOffset;
 
     resolver.update(ProviderSchematic.Episodes.fromShow(showId), cv,
         DatabaseContract.EpisodeColumns.FIRST_AIRED + "<?", new String[] {
@@ -309,8 +309,8 @@ public final class ShowDatabaseHelper {
     ContentValues cv = new ContentValues();
     cv.put(DatabaseContract.EpisodeColumns.IN_COLLECTION, inCollection);
 
-    Calendar cal = Calendar.getInstance();
-    final long millis = cal.getTimeInMillis();
+    final long firstAiredOffset = FirstAiredOffsetPreference.getInstance().getOffsetMillis();
+    final long millis = System.currentTimeMillis() - firstAiredOffset;
 
     resolver.update(ProviderSchematic.Episodes.fromShow(showId), cv,
         DatabaseContract.EpisodeColumns.FIRST_AIRED + "<?", new String[] {

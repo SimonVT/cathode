@@ -328,7 +328,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
       setBackdrop(screenshotUri, true);
       firstAired.setText(DateUtils.millisToString(getActivity(),
-          Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED), true));
+          DataHelper.getFirstAired(cursor), true));
 
       watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
       collected = Cursors.getBoolean(cursor, EpisodeColumns.IN_COLLECTION);

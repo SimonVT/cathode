@@ -39,7 +39,6 @@ import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.SyncWatching;
@@ -52,6 +51,7 @@ import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.HeaderSpanLookup;
 import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
+import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.schematic.Cursors;
 
 public class UpcomingShowsFragment
@@ -289,12 +289,10 @@ public class UpcomingShowsFragment
     SimpleCursor airedCursor = new SimpleCursor(cursor.getColumnNames());
     SimpleCursor unairedCursor = new SimpleCursor(cursor.getColumnNames());
 
-    final int airedIndex = cursor.getColumnIndex(EpisodeColumns.FIRST_AIRED);
-
     cursor.moveToPosition(-1);
     while (cursor.moveToNext()) {
       Object[] data = cursor.get();
-      final long firstAired = cursor.getLong(airedIndex);
+      final long firstAired = DataHelper.getFirstAired(cursor);
       if (firstAired <= currentTime) {
         airedCursor.add(data);
       } else {

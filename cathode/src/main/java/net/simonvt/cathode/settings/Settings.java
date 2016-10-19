@@ -41,6 +41,7 @@ public final class Settings {
   public static final String START_PAGE = "startPage";
 
   public static final String UPCOMING_TIME = "upcomingTime";
+  public static final String SHOWS_OFFSET = "showsOffset";
 
   // Whether upcoming shows should be added to the calendar
   public static final String CALENDAR_SYNC = "calendarSync";

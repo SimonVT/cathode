@@ -20,6 +20,7 @@ import android.content.Context;
 import android.database.Cursor;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.schematic.Cursors;
 
 public final class DataHelper {
@@ -39,5 +40,11 @@ public final class DataHelper {
     }
 
     return title;
+  }
+
+  public static long getFirstAired(Cursor cursor) {
+    final long firstAired = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
+    final long offset = FirstAiredOffsetPreference.getInstance().getOffsetMillis();
+    return firstAired + offset;
   }
 }

@@ -807,7 +807,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
       toWatchId = Cursors.getLong(cursor, EpisodeColumns.ID);
 
-      final long airTime = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
+      final long firstAired = DataHelper.getFirstAired(cursor);
 
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
@@ -821,7 +821,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
           ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, toWatchId);
       toWatchHolder.episodeScreenshot.setImage(screenshotUri);
 
-      String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
+      String firstAiredString = DateUtils.millisToString(getActivity(), firstAired, false);
 
       final boolean watching = Cursors.getBoolean(cursor, EpisodeColumns.WATCHING);
       final boolean checkedIn = Cursors.getBoolean(cursor, EpisodeColumns.CHECKED_IN);
@@ -830,13 +830,13 @@ public class ShowFragment extends RefreshableAppBarFragment {
       if (checkedIn) {
         toWatchHolder.episodeOverflow.addItem(R.id.action_checkin_cancel,
             R.string.action_checkin_cancel);
-        airTimeStr = getResources().getString(R.string.show_watching);
+        firstAiredString = getResources().getString(R.string.show_watching);
       } else if (!watching) {
         toWatchHolder.episodeOverflow.addItem(R.id.action_checkin, R.string.action_checkin);
         toWatchHolder.episodeOverflow.addItem(R.id.action_watched, R.string.action_watched);
       }
 
-      toWatchHolder.episodeAirTime.setText(airTimeStr);
+      toWatchHolder.episodeAirTime.setText(firstAiredString);
     } else {
       toWatch.setVisibility(View.GONE);
       toWatchId = -1;
@@ -854,9 +854,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
         lastWatchedHolder.episodeTitle.setText(title);
 
-        final long airTime = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
-        final String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
-        lastWatchedHolder.episodeAirTime.setText(airTimeStr);
+        final long firstAired = DataHelper.getFirstAired(cursor);
+        final String firstAiredString = DateUtils.millisToString(getActivity(), firstAired, false);
+        lastWatchedHolder.episodeAirTime.setText(firstAiredString);
 
         final String lastWatchedEpisodeText =
             getString(R.string.season_x_episode_y, season, episode);
@@ -890,9 +890,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
       toCollectHolder.episodeTitle.setText(title);
 
-      final long airTime = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
-      final String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
-      toCollectHolder.episodeAirTime.setText(airTimeStr);
+      final long firstAired = DataHelper.getFirstAired(cursor);
+      final String firstAiredString = DateUtils.millisToString(getActivity(), firstAired, false);
+      toCollectHolder.episodeAirTime.setText(firstAiredString);
 
       final String toCollectEpisodeText = getString(R.string.season_x_episode_y, season, episode);
       toCollectHolder.episodeEpisode.setText(toCollectEpisodeText);
@@ -917,9 +917,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
         lastCollectedHolder.episodeTitle.setText(title);
 
-        final long airTime = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
-        final String airTimeStr = DateUtils.millisToString(getActivity(), airTime, false);
-        lastCollectedHolder.episodeAirTime.setText(airTimeStr);
+        final long firstAired = DataHelper.getFirstAired(cursor);
+        final String firstAiredString = DateUtils.millisToString(getActivity(), firstAired, false);
+        lastCollectedHolder.episodeAirTime.setText(firstAiredString);
 
         final String lastCollectedEpisodeText =
             getString(R.string.season_x_episode_y, season, episode);

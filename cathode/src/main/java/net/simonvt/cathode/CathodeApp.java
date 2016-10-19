@@ -44,6 +44,7 @@ import net.simonvt.cathode.remote.sync.shows.SyncAnticipatedShows;
 import net.simonvt.cathode.remote.upgrade.EnsureSync;
 import net.simonvt.cathode.remote.upgrade.UpperCaseGenres;
 import net.simonvt.cathode.settings.Accounts;
+import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
@@ -86,6 +87,7 @@ public class CathodeApp extends Application {
     }
 
     UpcomingTimePreference.init(this);
+    FirstAiredOffsetPreference.init(this);
 
     settings = PreferenceManager.getDefaultSharedPreferences(this);
 

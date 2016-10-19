@@ -154,7 +154,7 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     final int watchedCount = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT);
 
     final long episodeId = Cursors.getLong(cursor, COLUMN_EPISODE_ID);
-    final long episodeFirstAired = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
+    final long episodeFirstAired = DataHelper.getFirstAired(cursor);
     final int episodeSeasonNumber = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episodeNumber = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
     final String episodeTitle =

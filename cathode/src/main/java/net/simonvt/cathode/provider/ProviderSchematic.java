@@ -20,7 +20,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -47,6 +46,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Joins;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
+import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.SqlColumn;
@@ -263,6 +263,7 @@ public final class ProviderSchematic {
     }
 
     public static String getUpcomingQuery(long upcomingTime) {
+      final long offset = FirstAiredOffsetPreference.getInstance().getOffsetMillis();
       final long currentTime = System.currentTimeMillis();
       String query = "(SELECT COUNT(*) FROM episodes "
           + "JOIN ("
@@ -278,7 +279,8 @@ public final class ProviderSchematic {
           + " NOT NULL";
 
       if (upcomingTime > 0L) {
-        query += " AND " + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED);
+        query += " AND (" + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED);
+        query += " + " + offset + ")";
         query += "<=" + (currentTime + upcomingTime);
       }
 
@@ -373,6 +375,7 @@ public final class ProviderSchematic {
         Tables.SHOWS + "." + ShowColumns.LAST_COLLECTED_AT + " DESC";
 
     public static String getAiredQuery() {
+      final long firstAiredOffset = FirstAiredOffsetPreference.getInstance().getOffsetMillis();
       final long currentTime = System.currentTimeMillis();
       return "(SELECT COUNT(*) FROM "
           + Tables.EPISODES
@@ -389,7 +392,7 @@ public final class ProviderSchematic {
           + "."
           + EpisodeColumns.FIRST_AIRED
           + "<="
-          + (currentTime + DateUtils.DAY_IN_MILLIS)
+          + (currentTime - firstAiredOffset + DateUtils.DAY_IN_MILLIS)
           + " AND "
           + Tables.EPISODES
           + "."
@@ -399,6 +402,7 @@ public final class ProviderSchematic {
     }
 
     public static String getUnairedQuery() {
+      final long firstAiredOffset = FirstAiredOffsetPreference.getInstance().getOffsetMillis();
       final long currentTime = System.currentTimeMillis();
       return "(SELECT COUNT(*) FROM "
           + Tables.EPISODES
@@ -415,7 +419,7 @@ public final class ProviderSchematic {
           + "."
           + EpisodeColumns.FIRST_AIRED
           + ">"
-          + currentTime
+          + (currentTime - firstAiredOffset)
           + " AND "
           + Tables.EPISODES
           + "."
@@ -544,6 +548,7 @@ public final class ProviderSchematic {
     }
 
     public static String getAiredQuery() {
+      final long firstAiredOffset = FirstAiredOffsetPreference.getInstance().getOffsetMillis();
       final long currentTime = System.currentTimeMillis();
       return "(SELECT COUNT(*) FROM "
           + Tables.EPISODES
@@ -560,7 +565,7 @@ public final class ProviderSchematic {
           + "."
           + EpisodeColumns.FIRST_AIRED
           + "<="
-          + currentTime
+          + (currentTime + firstAiredOffset)
           + " AND "
           + Tables.EPISODES
           + "."
@@ -575,8 +580,8 @@ public final class ProviderSchematic {
     }
 
     public static String getUnairedQuery() {
-      Calendar cal = Calendar.getInstance();
-      final long currentTime = cal.getTimeInMillis();
+      final long firstAiredOffset = FirstAiredOffsetPreference.getInstance().getOffsetMillis();
+      final long currentTime = System.currentTimeMillis();
       return "(SELECT COUNT(*) FROM "
           + Tables.EPISODES
           + " WHERE "
@@ -592,7 +597,7 @@ public final class ProviderSchematic {
           + "."
           + EpisodeColumns.FIRST_AIRED
           + ">"
-          + currentTime
+          + (currentTime - firstAiredOffset)
           + " AND "
           + Tables.EPISODES
           + "."
@@ -607,6 +612,7 @@ public final class ProviderSchematic {
     }
 
     public static String getWatchedAiredCount() {
+      final long firstAiredOffset = FirstAiredOffsetPreference.getInstance().getOffsetMillis();
       final long currentTime = System.currentTimeMillis();
       return "(SELECT COUNT(*) FROM "
           + Tables.EPISODES
@@ -623,7 +629,7 @@ public final class ProviderSchematic {
           + "."
           + EpisodeColumns.FIRST_AIRED
           + "<="
-          + currentTime
+          + (currentTime - firstAiredOffset)
           + " AND "
           + Tables.EPISODES
           + "."
@@ -640,6 +646,7 @@ public final class ProviderSchematic {
     }
 
     public static String getCollectedAiredCount() {
+      final long firstAiredOffset = FirstAiredOffsetPreference.getInstance().getOffsetMillis();
       final long currentTime = System.currentTimeMillis();
       return "(SELECT COUNT(*) FROM "
           + Tables.EPISODES
@@ -656,7 +663,7 @@ public final class ProviderSchematic {
           + "."
           + EpisodeColumns.FIRST_AIRED
           + "<="
-          + currentTime
+          + (currentTime - firstAiredOffset)
           + " AND "
           + Tables.EPISODES
           + "."

@@ -212,7 +212,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
       EpisodeViewHolder vh = (EpisodeViewHolder) holder;
 
       final long id = Cursors.getLong(cursor, EpisodeColumns.ID);
-      final long firstAired = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED);
+      final long firstAired = DataHelper.getFirstAired(cursor);
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
       final String title = DataHelper.getEpisodeTitle(context, cursor, season, episode);
