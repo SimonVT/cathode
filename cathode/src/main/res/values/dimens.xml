@@ -19,6 +19,9 @@
 
   <dimen name="showItemMinHeight">72dp</dimen>
 
+  <dimen name="appWidgetPosterHeight">64dp</dimen>
+  <dimen name="appWidgetPosterWidth">43dp</dimen>
+
   <dimen name="searchViewMaxWidth">0dp</dimen>
 
   <dimen name="detailContentPadding">8dp</dimen>

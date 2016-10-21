@@ -315,6 +315,10 @@
 
   <string name="startpage_lists">Lists</string>
 
+  <!-- App widget -->
+  <string name="appwidget_header_upcoming">Upcoming episodes</string>
+  <string name="appwidget_upcoming_empty">No upcoming episodes.</string>
+
   <!-- List fragments -->
   <string name="list_create_name">Name</string>
   <string name="list_create_description">Description</string>
@@ -388,7 +392,7 @@
   <string name="comment_too_short">Comment must contain at least 5 words</string>
   <string name="comments_username_rating">%1$s (%2$d)</string>
   <string name="comment_reveal">Click to reveal spoiler</string>
-  
+
   <string name="stats_spent">You have spent</string>
   <string name="stats_watching">watching</string>
   <string name="stats_from">from</string>

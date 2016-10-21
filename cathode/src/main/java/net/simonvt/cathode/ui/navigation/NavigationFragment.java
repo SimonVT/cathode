@@ -38,8 +38,8 @@ import java.util.List;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.StartPage;
-import net.simonvt.cathode.widget.CircularShadowTransformation;
 import net.simonvt.cathode.ui.fragment.AbsAdapterFragment;
+import net.simonvt.cathode.widget.CircularShadowTransformation;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.cathode.widget.RoundTransformation;
 
@@ -47,8 +47,8 @@ public class NavigationFragment extends AbsAdapterFragment {
 
   public static final String TAG = "net.simonvt.cathode.ui.navigation.NavigationFragment";
 
-  private static final String STATE_SELECTED_ID =
-      "net.simonvt.cathode.ui.navigation.NavigationFragment.selectedId";
+  private static final String STATE_SELECTED_POSITION =
+      "net.simonvt.cathode.ui.navigation.NavigationFragment.selectedPosition";
 
   public interface OnMenuClickListener {
 
@@ -117,7 +117,7 @@ public class NavigationFragment extends AbsAdapterFragment {
     super.onCreate(inState);
 
     if (inState != null) {
-      selectedPosition = inState.getInt(STATE_SELECTED_ID);
+      selectedPosition = inState.getInt(STATE_SELECTED_POSITION);
     } else {
       SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
       final String startPagePref = settings.getString(Settings.START_PAGE, null);
@@ -136,7 +136,7 @@ public class NavigationFragment extends AbsAdapterFragment {
     setAdapter(adapter);
   }
 
-  private int getPositionForId(int itemId) {
+  private int getPositionForId(long itemId) {
     for (int i = 0; i < menuItems.size(); i++) {
       NavigationItem item = menuItems.get(i);
       if (item instanceof MenuItem && ((MenuItem) item).id == itemId) {
@@ -171,7 +171,7 @@ public class NavigationFragment extends AbsAdapterFragment {
 
   @Override public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
-    outState.putInt(STATE_SELECTED_ID, selectedPosition);
+    outState.putInt(STATE_SELECTED_POSITION, selectedPosition);
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
@@ -197,6 +197,15 @@ public class NavigationFragment extends AbsAdapterFragment {
     }
 
     getAdapterView().setItemChecked(selectedPosition, true);
+  }
+
+  public void setSelectedId(long id) {
+    selectedPosition = getPositionForId(id);
+    adapter.notifyDataSetChanged();
+
+    if (getAdapterView() != null) {
+      getAdapterView().setItemChecked(selectedPosition, true);
+    }
   }
 
   private abstract static class NavigationItem {

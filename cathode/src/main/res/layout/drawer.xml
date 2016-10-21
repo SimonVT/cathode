@@ -23,6 +23,6 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:layout_gravity="left"
-      android:tag="net.simonvt.cathode.ui.HomeActivity.navigationFragment"
+      android:tag="net.simonvt.cathode.ui.navigation.NavigationFragment"
       tools:layout="@layout/fragment_navigation"/>
 </merge>

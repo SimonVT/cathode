@@ -119,10 +119,13 @@ public class HomeActivity extends BaseActivity
 
   private static final String STATE_STACK = "net.simonvt.cathode.ui.HomeActivity.stack";
 
+  public static final String EXTRA_START_PAGE = "net.simonvt.cathode.ui.HomeActivity.startPage";
   public static final String EXTRA_STACK_ENTRIES =
       "net.simonvt.cathode.ui.HomeActivity.stackEntries";
 
   public static final String ACTION_LOGIN = "net.simonvt.cathode.intent.action.LOGIN";
+  public static final String ACTION_SHOW_START_PAGE =
+      "net.simonvt.cathode.intent.action.showStartPage";
   public static final String ACTION_REPLACE_STACK = "replaceStack";
 
   private static final int LOADER_SHOW_WATCHING = 1;
@@ -190,11 +193,18 @@ public class HomeActivity extends BaseActivity
     if (inState != null) {
       stack.restoreState(inState.getBundle(STATE_STACK));
     }
-    if (stack.size() == 0) {
-      SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-      final String startPagePref = settings.getString(Settings.START_PAGE, null);
-      StartPage startPage = StartPage.fromValue(startPagePref, StartPage.DASHBOARD);
+    if (isShowStartPageIntent(getIntent())) {
+      StartPage startPage = (StartPage) getIntent().getSerializableExtra(EXTRA_START_PAGE);
+      navigation.setSelectedId(startPage.getMenuId());
       stack.replace(startPage.getPageClass(), startPage.getTag());
+    } else {
+      if (stack.size() == 0) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        final String startPagePref = settings.getString(Settings.START_PAGE, null);
+        StartPage startPage = StartPage.fromValue(startPagePref, StartPage.DASHBOARD);
+        navigation.setSelectedId(startPage.getMenuId());
+        stack.replace(startPage.getPageClass(), startPage.getTag());
+      }
     }
 
     getSupportLoaderManager().initLoader(LOADER_SHOW_WATCHING, null, watchingShowCallback);
@@ -223,9 +233,11 @@ public class HomeActivity extends BaseActivity
       }
     });
 
-    if (!Settings.isLoggedIn(this) || isLoginAction(getIntent())) {
+    final Intent intent = getIntent();
+
+    if (!Settings.isLoggedIn(this) || isLoginAction(intent)) {
       startLoginActivity();
-    } else if (isReplaceStackAction(getIntent())) {
+    } else if (isReplaceStackAction(intent)) {
       ArrayList<StackEntry> stackEntries =
           getIntent().getParcelableArrayListExtra(EXTRA_STACK_ENTRIES);
       replaceStack(stackEntries);
@@ -243,6 +255,13 @@ public class HomeActivity extends BaseActivity
           startLoginActivity();
         }
       });
+    } else if (isShowStartPageIntent(intent)) {
+      final StartPage startPage = (StartPage) intent.getSerializableExtra(EXTRA_START_PAGE);
+      MainHandler.post(new Runnable() {
+        @Override public void run() {
+          showStartPage(startPage);
+        }
+      });
     } else if (isReplaceStackAction(intent)) {
       final ArrayList<StackEntry> stackEntries =
           intent.getParcelableArrayListExtra(EXTRA_STACK_ENTRIES);
@@ -251,6 +270,20 @@ public class HomeActivity extends BaseActivity
           replaceStack(stackEntries);
         }
       });
+    }
+  }
+
+  private boolean isShowStartPageIntent(Intent intent) {
+    return ACTION_SHOW_START_PAGE.equals(intent.getAction());
+  }
+
+  private void showStartPage(StartPage startPage) {
+    navigation.setSelectedId(startPage.getMenuId());
+    onMenuItemClicked(startPage.getMenuId());
+
+    if (pendingReplacement != null) {
+      stack.replace(pendingReplacement.fragment, pendingReplacement.tag);
+      pendingReplacement = null;
     }
   }
 
@@ -607,8 +640,7 @@ public class HomeActivity extends BaseActivity
       final long startTime = Cursors.getLong(watchingShow, EpisodeColumns.STARTED_AT);
       final long endTime = Cursors.getLong(watchingShow, EpisodeColumns.EXPIRES_AT);
 
-      final String poster =
-          ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, showId);
+      final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, showId);
 
       watchingView.watchingShow(showId, show, episodeId, episodeTitle, poster, startTime, endTime);
     } else if (watchingMovie != null && watchingMovie.moveToFirst()) {
@@ -618,8 +650,7 @@ public class HomeActivity extends BaseActivity
       final long startTime = Cursors.getLong(watchingMovie, MovieColumns.STARTED_AT);
       final long endTime = Cursors.getLong(watchingMovie, MovieColumns.EXPIRES_AT);
 
-      final String poster =
-          ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
+      final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
 
       watchingView.watchingMovie(id, title, overview, poster, startTime, endTime);
     } else {

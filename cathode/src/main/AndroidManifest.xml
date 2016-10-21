@@ -30,8 +30,8 @@
 
   <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
 
-  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-  <uses-permission android:name="android.permission.VIBRATE" />
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+  <uses-permission android:name="android.permission.VIBRATE"/>
 
   <application
       android:name="net.simonvt.cathode.CathodeApp"
@@ -134,7 +134,7 @@
 
     <receiver android:name="net.simonvt.cathode.notification.NotificationBootReceiver">
       <intent-filter>
-        <action android:name="android.intent.action.BOOT_COMPLETED" />
+        <action android:name="android.intent.action.BOOT_COMPLETED"/>
       </intent-filter>
     </receiver>
 
@@ -197,6 +197,22 @@
           android:resource="@xml/calendar_syncadapter"/>
     </service>
 
+    <!-- App widget -->
+    <receiver
+        android:label="Upcoming shows"
+        android:name="net.simonvt.cathode.appwidget.UpcomingWidgetProvider">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+      </intent-filter>
+      <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/appwidget_upcoming"/>
+    </receiver>
+
+    <service
+        android:name="net.simonvt.cathode.appwidget.UpcomingWidgetService"
+        android:permission="android.permission.BIND_REMOTEVIEWS"
+        android:exported="false"/>
   </application>
 
 </manifest>

@@ -24,6 +24,7 @@ import javax.inject.Singleton;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.api.ApiModule;
 import net.simonvt.cathode.api.TraktModule;
+import net.simonvt.cathode.appwidget.UpcomingWidgetService.UpcomingRemoteViewsFactory;
 import net.simonvt.cathode.images.EpisodeRequestHandler;
 import net.simonvt.cathode.images.ImageModule;
 import net.simonvt.cathode.images.ImageRequestHandler;
@@ -290,6 +291,9 @@ import net.simonvt.cathode.widget.RemoteImageView;
 
         // Receivers
         SyncWatchingReceiver.class,
+
+        // Appwidget
+        UpcomingRemoteViewsFactory.class,
 
         // Tasks
         CancelCheckin.class, CheckInMovie.class, DismissMovieRecommendation.class,

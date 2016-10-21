@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (C) 2015 Simon Vig Therkildsen
+  ~ Copyright (C) 2016 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,14 +15,9 @@
   ~ limitations under the License.
   -->
 
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
-  <fragment
-      class="net.simonvt.cathode.ui.navigation.NavigationFragment"
-      android:layout_width="320dp"
-      android:layout_height="match_parent"
-      android:layout_gravity="left"
-      android:tag="net.simonvt.cathode.ui.navigation.NavigationFragment"
-      tools:layout="@layout/fragment_navigation"/>
-</merge>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:initialLayout="@layout/appwidget_loading"
+    android:minHeight="110dip"
+    android:minWidth="250dip"
+    android:resizeMode="vertical|horizontal"
+    android:updatePeriodMillis="3600000"/>
