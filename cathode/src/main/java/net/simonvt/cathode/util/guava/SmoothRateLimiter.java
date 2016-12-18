@@ -229,7 +229,7 @@ abstract class SmoothRateLimiter extends RateLimiter {
       // measuring the integral on the right part of the function (the climbing line)
       if (availablePermitsAboveThreshold > 0.0) {
         double permitsAboveThresholdToTake = min(availablePermitsAboveThreshold, permitsToTake);
-        // TODO(cpovirk): Figure out a good name for this variable.
+        // (cpovirk): Figure out a good name for this variable.
         double length = permitsToTime(availablePermitsAboveThreshold) + permitsToTime(
             availablePermitsAboveThreshold - permitsAboveThresholdToTake);
         micros = (long) (permitsAboveThresholdToTake * length / 2.0);

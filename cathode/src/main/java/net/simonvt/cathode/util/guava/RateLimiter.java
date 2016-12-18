@@ -92,7 +92,7 @@ public abstract class RateLimiter {
    * permits become available per second
    * @throws IllegalArgumentException if {@code permitsPerSecond} is negative or zero
    */
-  // TODO(user): "This is equivalent to
+  // (user): "This is equivalent to
   // {@code createWithCapacity(permitsPerSecond, 1, TimeUnit.SECONDS)}".
   public static RateLimiter create(double permitsPerSecond) {
     /*
@@ -112,7 +112,7 @@ public abstract class RateLimiter {
   }
 
   /*
-   * TODO(cpovirk): make SleepingStopwatch the last parameter throughout the class so that the
+   * (cpovirk): make SleepingStopwatch the last parameter throughout the class so that the
    * overloads follow the usual convention: Foo(int), Foo(int, SleepingStopwatch)
    */
   static RateLimiter create(SleepingStopwatch stopwatch, double permitsPerSecond) {
@@ -386,7 +386,7 @@ public abstract class RateLimiter {
     }
 
     /*
-     * We always hold the mutex when calling this. TODO(cpovirk): Is that important? Perhaps we need
+     * We always hold the mutex when calling this. (cpovirk): Is that important? Perhaps we need
      * to guarantee that each call to reserveEarliestAvailable, etc. sees a value >= the previous?
      * Also, is it OK that we don't hold the mutex when sleeping?
      */
