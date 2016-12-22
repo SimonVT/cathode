@@ -475,7 +475,7 @@ public class MovieFragment extends RefreshableAppBarFragment
       viewOnTmdb.setVisibility(View.VISIBLE);
       viewOnTmdb.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          Intents.openUrl(getContext(), TraktUtils.getTmdbTvUrl(tmdbId));
+          Intents.openUrl(getContext(), TraktUtils.getTmdbMovieUrl(tmdbId));
         }
       });
     } else {
