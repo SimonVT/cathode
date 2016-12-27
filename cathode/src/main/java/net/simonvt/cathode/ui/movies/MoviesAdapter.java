@@ -24,6 +24,8 @@ import android.view.ViewGroup;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.DatabaseSchematic;
+import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.widget.OverflowView;
@@ -31,9 +33,16 @@ import net.simonvt.cathode.widget.OverflowView;
 public class MoviesAdapter extends BaseMoviesAdapter<BaseMoviesAdapter.ViewHolder> {
 
   public static final String[] PROJECTION = new String[] {
-      MovieColumns.ID, MovieColumns.TITLE, MovieColumns.WATCHED, MovieColumns.IN_COLLECTION,
-      MovieColumns.IN_WATCHLIST, MovieColumns.WATCHING, MovieColumns.CHECKED_IN,
-      MovieColumns.OVERVIEW, MovieColumns.RATING, LastModifiedColumns.LAST_MODIFIED
+      Tables.MOVIES + "." + MovieColumns.ID,
+      Tables.MOVIES + "." + MovieColumns.TITLE,
+      Tables.MOVIES + "." + MovieColumns.WATCHED,
+      Tables.MOVIES + "." + MovieColumns.IN_COLLECTION,
+      Tables.MOVIES + "." + MovieColumns.IN_WATCHLIST,
+      Tables.MOVIES + "." + MovieColumns.WATCHING,
+      Tables.MOVIES + "." + MovieColumns.CHECKED_IN,
+      Tables.MOVIES + "." + MovieColumns.OVERVIEW,
+      Tables.MOVIES + "." + MovieColumns.RATING,
+      Tables.MOVIES + "." + LastModifiedColumns.LAST_MODIFIED
   };
 
   private int rowLayout;

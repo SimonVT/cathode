@@ -30,6 +30,7 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic;
+import net.simonvt.cathode.provider.ProviderSchematic.RelatedMovies;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
@@ -125,8 +126,8 @@ public class RelatedMoviesFragment
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    return new SimpleCursorLoader(getActivity(), ProviderSchematic.RelatedMovies.fromMovie(movieId),
-        null, null, null, null);
+    return new SimpleCursorLoader(getActivity(), RelatedMovies.fromMovie(movieId),
+        MoviesAdapter.PROJECTION, null, null, null);
   }
 
   @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
