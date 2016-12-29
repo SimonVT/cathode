@@ -158,23 +158,26 @@ public final class DateUtils {
       return context.getResources().getQuantityString(R.plurals.in_hours, hours, hours);
     }
 
-    final int year = cal.get(Calendar.YEAR);
+    final int currentYear = cal.get(Calendar.YEAR);
+
     cal.setTimeInMillis(millis);
     final int millisYear = cal.get(Calendar.YEAR);
-
-    String month = cal.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault());
+    final String month = cal.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault());
     final int day = cal.get(Calendar.DAY_OF_MONTH);
+
     StringBuilder sb = new StringBuilder();
 
-    if (millisYear >= year || extended) {
+    if (millisYear >= currentYear || extended) {
       sb.append(month).append(" ").append(day);
     }
 
-    if (millisYear < year && !extended) {
+    if (millisYear < currentYear && !extended) {
       sb.append(millisYear);
-    } else if (millisYear != year && extended) {
+    } else if (millisYear != currentYear && extended) {
       sb.append(", ").append(millisYear);
-    } else if (extended && millis > rightNow - 24 * HOUR_IN_MILLIS) {
+    }
+
+    if (extended) {
       final boolean twentyFourHourFormat = DateFormat.is24HourFormat(context);
 
       sb.append(" ");
