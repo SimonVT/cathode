@@ -23,7 +23,8 @@ public enum ShowStatus {
   ENDED("ended"),
   RETURNING("returning series"),
   CANCELED("canceled"),
-  IN_PRODUCTION("in production﻿");
+  IN_PRODUCTION("in production"),
+  PLANNED("planned");
 
   private final String value;
 

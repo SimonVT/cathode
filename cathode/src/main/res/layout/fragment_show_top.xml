@@ -36,14 +36,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="?android:attr/textColorPrimary"
-        tools:text="Sunday 10:00pm, AMC"/>
+        tools:text="Sunday 10:00pm, AMC, TV-MA"/>
 
     <TextView
-        android:id="@+id/certification"
+        android:id="@+id/status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="?android:attr/textColorPrimary"
-        tools:text="TV-MA"/>
+        tools:text="Returning series"/>
   </LinearLayout>
 
   <net.simonvt.cathode.widget.CircularProgressIndicator

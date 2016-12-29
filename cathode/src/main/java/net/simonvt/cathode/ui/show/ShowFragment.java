@@ -40,6 +40,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.api.enumeration.ShowStatus;
 import net.simonvt.cathode.api.util.TraktUtils;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -121,12 +122,12 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   private static final String[] SHOW_PROJECTION = new String[] {
       ShowColumns.TITLE, ShowColumns.YEAR, ShowColumns.AIR_TIME, ShowColumns.AIR_DAY,
-      ShowColumns.NETWORK, ShowColumns.CERTIFICATION, ShowColumns.USER_RATING, ShowColumns.RATING,
-      ShowColumns.OVERVIEW, ShowColumns.IN_WATCHLIST, ShowColumns.IN_COLLECTION_COUNT,
-      ShowColumns.WATCHED_COUNT, ShowColumns.LAST_SYNC, ShowColumns.LAST_COMMENT_SYNC,
-      ShowColumns.LAST_CREDITS_SYNC, ShowColumns.LAST_RELATED_SYNC, ShowColumns.HOMEPAGE,
-      ShowColumns.TRAILER, ShowColumns.IMDB_ID, ShowColumns.TVDB_ID, ShowColumns.TMDB_ID,
-      ShowColumns.NEEDS_SYNC, HiddenColumns.HIDDEN_CALENDAR,
+      ShowColumns.NETWORK, ShowColumns.CERTIFICATION, ShowColumns.STATUS, ShowColumns.USER_RATING,
+      ShowColumns.RATING, ShowColumns.OVERVIEW, ShowColumns.IN_WATCHLIST,
+      ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT, ShowColumns.LAST_SYNC,
+      ShowColumns.LAST_COMMENT_SYNC, ShowColumns.LAST_CREDITS_SYNC, ShowColumns.LAST_RELATED_SYNC,
+      ShowColumns.HOMEPAGE, ShowColumns.TRAILER, ShowColumns.IMDB_ID, ShowColumns.TVDB_ID,
+      ShowColumns.TMDB_ID, ShowColumns.NEEDS_SYNC, HiddenColumns.HIDDEN_CALENDAR,
   };
 
   private static final String[] EPISODE_PROJECTION = new String[] {
@@ -153,7 +154,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   @BindView(R.id.rating) CircularProgressIndicator rating;
   @BindView(R.id.airtime) TextView airTime;
-  @BindView(R.id.certification) TextView certification;
+  @BindView(R.id.status) TextView status;
   @BindView(R.id.overview) TextView overview;
 
   @BindView(R.id.genresTitle) View genresTitle;
@@ -554,6 +555,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
     final String airDay = Cursors.getString(cursor, ShowColumns.AIR_DAY);
     final String network = Cursors.getString(cursor, ShowColumns.NETWORK);
     final String certification = Cursors.getString(cursor, ShowColumns.CERTIFICATION);
+    final ShowStatus status = ShowStatus.fromValue(Cursors.getString(cursor, ShowColumns.STATUS));
     final String backdropUri = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.BACKDROP, showId);
     setBackdrop(backdropUri, true);
     showOverview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
@@ -582,9 +584,41 @@ public class ShowFragment extends RefreshableAppBarFragment {
         airTimeString = network;
       }
     }
+    if (certification != null) {
+      if (airTimeString != null) {
+        airTimeString += ", " + certification;
+      } else {
+        airTimeString = certification;
+      }
+    }
 
     this.airTime.setText(airTimeString);
-    this.certification.setText(certification);
+
+    String statusString = null;
+    switch (status) {
+      case ENDED:
+        statusString = getString(R.string.show_status_ended);
+        break;
+
+      case RETURNING:
+        statusString = getString(R.string.show_status_returning);
+        break;
+
+      case CANCELED:
+        statusString = getString(R.string.show_status_canceled);
+        break;
+
+      case IN_PRODUCTION:
+        statusString = getString(R.string.show_status_in_production);
+        break;
+
+      case PLANNED:
+        statusString = getString(R.string.show_status_planned);
+        break;
+    }
+
+    this.status.setText(statusString);
+
     this.overview.setText(showOverview);
 
     final String trailer = Cursors.getString(cursor, ShowColumns.TRAILER);

@@ -213,6 +213,12 @@
   <string name="shows_loading_anticipated">Anticipated shows are loading…</string>
   <string name="movies_loading_anticipated">Anticipated movies are loading…</string>
 
+  <string name="show_status_returning">Returning series</string>
+  <string name="show_status_in_production">In production</string>
+  <string name="show_status_planned">Planned</string>
+  <string name="show_status_canceled">Canceled</string>
+  <string name="show_status_ended">Ended</string>
+
   <!-- Login activity -->
   <string name="login_sign_in">Sign in</string>
   <string name="login_retry">Retry</string>
