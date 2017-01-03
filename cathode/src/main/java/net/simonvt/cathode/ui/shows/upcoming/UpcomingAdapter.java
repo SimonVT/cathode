@@ -49,16 +49,19 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
 
   public interface OnItemClickListener {
 
-    void onShowClicked(View v, int position, long id);
+    void onEpisodeClicked(long episodeId, String showTitle);
   }
 
   private static final String COLUMN_EPISODE_ID = "episodeId";
   private static final String COLUMN_EPISODE_LAST_UPDATED = "episodeLastUpdated";
 
   public static final String[] PROJECTION = new String[] {
-      Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.STATUS,
-      ShowColumns.AIRED_COUNT, Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT, ShowColumns.WATCHING,
+      Tables.SHOWS + "." + ShowColumns.ID,
+      Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.SHOWS + "." + ShowColumns.STATUS,
+      ShowColumns.AIRED_COUNT,
+      Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
+      ShowColumns.WATCHING,
       Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
       Tables.EPISODES + "." + EpisodeColumns.ID + " AS " + COLUMN_EPISODE_ID,
       Tables.EPISODES + "." + EpisodeColumns.TITLE,
@@ -115,7 +118,10 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
       @Override public void onClick(View view) {
         final int position = holder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
-          onItemClickListener.onShowClicked(holder.itemView, position, holder.getItemId());
+          Cursor cursor = getCursor(position);
+          final long episodeId = Cursors.getLong(cursor, COLUMN_EPISODE_ID);
+          final String showTitle = Cursors.getString(cursor, ShowColumns.TITLE);
+          onItemClickListener.onEpisodeClicked(episodeId, showTitle);
         }
       }
     });

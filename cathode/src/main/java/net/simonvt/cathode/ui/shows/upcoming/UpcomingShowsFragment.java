@@ -39,20 +39,17 @@ import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.UpcomingTime;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
-import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.HeaderSpanLookup;
-import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
+import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.util.DataHelper;
-import net.simonvt.schematic.Cursors;
 
 public class UpcomingShowsFragment
     extends ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>
@@ -197,11 +194,8 @@ public class UpcomingShowsFragment
     }
   }
 
-  @Override public void onShowClicked(View v, int position, long id) {
-    Cursor c = ((UpcomingAdapter) getAdapter()).getCursor(position);
-    final String title = Cursors.getString(c, ShowColumns.TITLE);
-    final String overview = Cursors.getString(c, ShowColumns.OVERVIEW);
-    navigationListener.onDisplayShow(id, title, overview, LibraryType.WATCHED);
+  @Override public void onEpisodeClicked(long episodeId, String showTitle) {
+    navigationListener.onDisplayEpisode(episodeId, showTitle);
   }
 
   @Override public void onItemSelected(int id) {
