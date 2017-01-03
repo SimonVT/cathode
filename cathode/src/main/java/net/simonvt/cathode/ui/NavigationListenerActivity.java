@@ -50,6 +50,10 @@ public class NavigationListenerActivity extends BaseActivity implements Navigati
     throw new RuntimeException("Not implemented");
   }
 
+  @Override public void upFromEpisode(long showId, String showTitle, long seasonId) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Override public boolean isFragmentTopLevel(Fragment fragment) {
     throw new RuntimeException("Not implemented");
   }

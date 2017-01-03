@@ -60,6 +60,10 @@ public class EpisodeDetailsActivity extends NavigationListenerActivity {
     }
   }
 
+  @Override public void upFromEpisode(long showId, String showTitle, long seasonId) {
+    onHomeClicked();
+  }
+
   @Override public void onHomeClicked() {
     ArrayList<StackEntry> stack = new ArrayList<>();
 

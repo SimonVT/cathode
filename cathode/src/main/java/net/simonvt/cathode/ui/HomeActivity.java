@@ -287,7 +287,7 @@ public class HomeActivity extends BaseActivity
     }
   }
 
-  private void replaceStack(List<StackEntry> stackEntries) {
+  public void replaceStack(List<StackEntry> stackEntries) {
     Fragment f = stack.peekFirst();
     StackEntry entry = new StackEntry(f.getClass(), f.getTag(), f.getArguments());
     stackEntries.add(0, entry);
@@ -617,6 +617,24 @@ public class HomeActivity extends BaseActivity
 
   @Override public void displayFragment(Class clazz, String tag) {
     stack.push(clazz, tag, null);
+  }
+
+  @Override public void upFromEpisode(long showId, String showTitle, long seasonId) {
+    if (stack.removeTop()) {
+      Fragment f = stack.peek();
+      if (f instanceof ShowFragment && ((ShowFragment) f).getShowId() == showId) {
+        stack.attachTop();
+        stack.commit();
+      } else if (seasonId >= 0
+          && f instanceof SeasonFragment
+          && ((SeasonFragment) f).getSeasonId() == seasonId) {
+        stack.attachTop();
+        stack.commit();
+      } else {
+        stack.putFragment(ShowFragment.class, ShowFragment.getTag(showId),
+            ShowFragment.getArgs(showId, showTitle, null, LibraryType.WATCHED));
+      }
+    }
   }
 
   @Override public boolean isFragmentTopLevel(Fragment fragment) {

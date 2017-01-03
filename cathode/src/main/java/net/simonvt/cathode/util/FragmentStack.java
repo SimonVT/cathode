@@ -359,10 +359,9 @@ public final class FragmentStack {
 
   /**
    * Removes the fragment at the top of the stack and displays the previous one. This will not do
-   * anything if there is
-   * only one fragment in the stack.
+   * anything if there is only one fragment in the stack.
    *
-   * @return Whether a transaction has been enqueued.
+   * @return Whether a transaction was committed.
    */
   public boolean pop() {
     if (!allowTransactions()) {
@@ -382,6 +381,58 @@ public final class FragmentStack {
     }
 
     return false;
+  }
+
+  /**
+   * Removes the top fragment if there are more than one in the stack.
+   *
+   * @return Whether a transaction was committed.
+   */
+  public boolean removeTop() {
+    if (!allowTransactions()) {
+      return false;
+    }
+
+    if (stack.size() > 1) {
+      ensureTransaction();
+      fragmentTransaction.setCustomAnimations(popStackEnterAnimation, popStackExitAnimation);
+      removeFragment(stack.pollLast());
+      commit();
+
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Adds a fragment to the top of the stack and attaches it.
+   */
+  public void putFragment(Class fragment, String tag, Bundle args) {
+    checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
+
+    if (!allowTransactions()) {
+      return;
+    }
+
+    ensureTransaction();
+    fragmentTransaction.setCustomAnimations(enterAnimation, exitAnimation);
+
+    if (fragmentManager.findFragmentByTag(tag) != null) {
+      throw new IllegalStateException("Fragment with tag " + tag + " already exists");
+    }
+
+    Fragment f = Fragment.instantiate(activity, fragment.getName(), args);
+
+    attachFragment(f, tag);
+    stack.add(f);
+
+    commit();
+  }
+
+  public void attachTop() {
+    Fragment f = stack.peekLast();
+    attachFragment(f, f.getTag());
   }
 
   private void detachTop() {
@@ -457,7 +508,7 @@ public final class FragmentStack {
     popStackExitAnimation = popExit;
   }
 
-  private void commit() {
+  public void commit() {
     if (!allowTransactions()) {
       return;
     }

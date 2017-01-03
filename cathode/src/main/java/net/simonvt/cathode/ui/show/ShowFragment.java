@@ -258,6 +258,10 @@ public class ShowFragment extends RefreshableAppBarFragment {
     return args;
   }
 
+  public long getShowId() {
+    return showId;
+  }
+
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     navigationListener = (NavigationListener) activity;

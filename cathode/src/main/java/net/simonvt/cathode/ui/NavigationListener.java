@@ -37,5 +37,7 @@ public interface NavigationListener
 
   void displayFragment(Class clazz, String tag);
 
+  void upFromEpisode(long showId, String showTitle, long seasonId);
+
   boolean isFragmentTopLevel(Fragment fragment);
 }

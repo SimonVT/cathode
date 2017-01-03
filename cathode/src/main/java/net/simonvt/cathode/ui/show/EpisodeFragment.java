@@ -109,7 +109,9 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
   private String episodeTitle;
 
   private String showTitle;
+  private long showId = -1L;
   private int season = -1;
+  private long seasonId = -1L;
 
   private int currentRating;
 
@@ -165,6 +167,14 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
   @Override public boolean onBackPressed() {
     return false;
+  }
+
+  @Override protected void onHomeClicked() {
+    if (showId >= 0L && seasonId >= 0L) {
+      navigationListener.upFromEpisode(showId, showTitle, seasonId);
+    } else {
+      navigationListener.onHomeClicked();
+    }
   }
 
   @Override public View createView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
@@ -316,6 +326,9 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
     if (cursor.moveToFirst()) {
       loaded = true;
 
+      showId = Cursors.getLong(cursor, EpisodeColumns.SHOW_ID);
+      seasonId = Cursors.getLong(cursor, EpisodeColumns.SEASON_ID);
+
       season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
       episodeTitle = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
@@ -369,7 +382,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
       EpisodeColumns.WATCHED, EpisodeColumns.IN_COLLECTION, EpisodeColumns.IN_WATCHLIST,
       EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN, EpisodeColumns.USER_RATING,
       EpisodeColumns.RATING, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
-      EpisodeColumns.LAST_COMMENT_SYNC,
+      EpisodeColumns.LAST_COMMENT_SYNC, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON_ID,
   };
 
   private LoaderManager.LoaderCallbacks<SimpleCursor> episodeCallbacks =

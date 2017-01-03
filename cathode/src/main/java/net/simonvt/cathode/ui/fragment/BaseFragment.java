@@ -121,9 +121,13 @@ public abstract class BaseFragment extends Fragment
 
   private View.OnClickListener navigationClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
-      navigationListener.onHomeClicked();
+      onHomeClicked();
     }
   };
+
+  protected void onHomeClicked() {
+    navigationListener.onHomeClicked();
+  }
 
   private void createMenu() {
     createMenu(toolbar);

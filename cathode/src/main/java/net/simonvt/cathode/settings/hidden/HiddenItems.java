@@ -37,18 +37,18 @@ import net.simonvt.cathode.ui.FragmentContract;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationClickListener;
 import net.simonvt.cathode.ui.NavigationListener;
-import net.simonvt.cathode.ui.credits.CreditFragment;
-import net.simonvt.cathode.ui.credits.CreditsFragment;
 import net.simonvt.cathode.ui.comments.CommentFragment;
 import net.simonvt.cathode.ui.comments.CommentsFragment;
-import net.simonvt.cathode.ui.show.EpisodeFragment;
-import net.simonvt.cathode.ui.movie.MovieFragment;
-import net.simonvt.cathode.ui.show.SeasonFragment;
-import net.simonvt.cathode.ui.show.ShowFragment;
+import net.simonvt.cathode.ui.credits.CreditFragment;
+import net.simonvt.cathode.ui.credits.CreditsFragment;
 import net.simonvt.cathode.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.ui.lists.ListFragment;
+import net.simonvt.cathode.ui.movie.MovieFragment;
 import net.simonvt.cathode.ui.person.PersonCreditsFragment;
 import net.simonvt.cathode.ui.person.PersonFragment;
+import net.simonvt.cathode.ui.show.EpisodeFragment;
+import net.simonvt.cathode.ui.show.SeasonFragment;
+import net.simonvt.cathode.ui.show.ShowFragment;
 import net.simonvt.cathode.util.FragmentStack;
 
 public class HiddenItems extends BaseActivity
@@ -187,6 +187,24 @@ public class HiddenItems extends BaseActivity
 
   @Override public void displayFragment(Class clazz, String tag) {
     stack.push(clazz, tag, null);
+  }
+
+  @Override public void upFromEpisode(long showId, String showTitle, long seasonId) {
+    if (stack.removeTop()) {
+      Fragment f = stack.peek();
+      if (f instanceof ShowFragment && ((ShowFragment) f).getShowId() == showId) {
+        stack.attachTop();
+        stack.commit();
+      } else if (seasonId >= 0
+          && f instanceof SeasonFragment
+          && ((SeasonFragment) f).getSeasonId() == seasonId) {
+        stack.attachTop();
+        stack.commit();
+      } else {
+        stack.putFragment(ShowFragment.class, ShowFragment.getTag(showId),
+            ShowFragment.getArgs(showId, showTitle, null, LibraryType.WATCHED));
+      }
+    }
   }
 
   @Override public boolean isFragmentTopLevel(Fragment fragment) {

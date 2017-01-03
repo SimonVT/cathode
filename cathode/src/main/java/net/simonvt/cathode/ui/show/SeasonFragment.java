@@ -93,6 +93,10 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
     return args;
   }
 
+  public long getSeasonId() {
+    return seasonId;
+  }
+
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
     navigationListener = (ShowsNavigationListener) activity;
