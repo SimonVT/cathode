@@ -50,6 +50,7 @@ import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.settings.login.LoginActivity;
+import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.MainHandler;
 import timber.log.Timber;
@@ -86,6 +87,7 @@ public class CathodeApp extends Application {
       Timber.plant(new CrashlyticsTree());
     }
 
+    UpcomingSortByPreference.init(this);
     UpcomingTimePreference.init(this);
     FirstAiredOffsetPreference.init(this);
 

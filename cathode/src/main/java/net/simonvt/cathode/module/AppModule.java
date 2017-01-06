@@ -178,6 +178,7 @@ import net.simonvt.cathode.ui.comments.CommentsAdapter;
 import net.simonvt.cathode.ui.comments.CommentsFragment;
 import net.simonvt.cathode.ui.comments.UpdateCommentDialog;
 import net.simonvt.cathode.ui.credits.CreditsFragment;
+import net.simonvt.cathode.ui.dashboard.DashboardFragment;
 import net.simonvt.cathode.ui.dashboard.DashboardMoviesAdapter;
 import net.simonvt.cathode.ui.dashboard.DashboardShowsAdapter;
 import net.simonvt.cathode.ui.dashboard.DashboardShowsWatchlistAdapter;
@@ -213,6 +214,7 @@ import net.simonvt.cathode.ui.shows.ShowsWithNextAdapter;
 import net.simonvt.cathode.ui.shows.collected.CollectedShowsFragment;
 import net.simonvt.cathode.ui.shows.upcoming.UpcomingAdapter;
 import net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment;
+import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference;
 import net.simonvt.cathode.ui.shows.watched.WatchedShowsFragment;
 import net.simonvt.cathode.ui.shows.watchlist.ShowWatchlistAdapter;
 import net.simonvt.cathode.ui.shows.watchlist.ShowsWatchlistFragment;
@@ -264,7 +266,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         AnticipatedShowsFragment.class, AnticipatedMoviesFragment.class, StatsFragment.class,
         SearchFragment.class, UpdateListFragment.class, SettingsActivity.SettingsFragment.class,
         RelatedShowsFragment.class, RelatedMoviesFragment.class, PersonFragment.class,
-        CreditsFragment.class,
+        CreditsFragment.class, DashboardFragment.class,
 
         // Dialogs
         RatingDialog.class, CheckInDialog.class, CheckInDialog.Injections.class, ListsDialog.class,
@@ -381,5 +383,9 @@ public class AppModule {
 
   @Provides @Singleton UpcomingTimePreference provideUpcomingTimePreference() {
     return UpcomingTimePreference.getInstance();
+  }
+
+  @Provides @Singleton UpcomingSortByPreference provideUpcomingSortByPreference() {
+    return UpcomingSortByPreference.getInstance();
   }
 }

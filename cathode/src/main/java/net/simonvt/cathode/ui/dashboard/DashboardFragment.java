@@ -28,6 +28,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import javax.inject.Inject;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -39,10 +41,12 @@ import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.adapter.CategoryAdapter;
 import net.simonvt.cathode.ui.fragment.ToolbarRecyclerFragment;
 import net.simonvt.cathode.ui.movies.watchlist.MovieWatchlistFragment;
+import net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment;
+import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortBy;
+import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference;
+import net.simonvt.cathode.ui.shows.watchlist.ShowsWatchlistFragment;
 import net.simonvt.cathode.ui.suggestions.movies.MovieSuggestionsFragment;
 import net.simonvt.cathode.ui.suggestions.shows.ShowSuggestionsFragment;
-import net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment;
-import net.simonvt.cathode.ui.shows.watchlist.ShowsWatchlistFragment;
 
 public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.ViewHolder> {
 
@@ -67,6 +71,9 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
   CategoryAdapter adapter;
 
   DashboardUpcomingShowsAdapter upcomingShowsAdapter;
+  UpcomingSortBy upcomingSortBy;
+  @Inject UpcomingSortByPreference upcomingSortByPreference;
+
   DashboardShowsAdapter trendingShowsAdapter;
   DashboardMoviesAdapter movieWatchlistAdapter;
   DashboardMoviesAdapter trendingMoviesAdapter;
@@ -84,7 +91,12 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    CathodeApp.inject(getContext(), this);
+
     setTitle(R.string.title_dashboard);
+
+    upcomingSortByPreference.registerListener(upcomingSortByListener);
+    upcomingSortBy = upcomingSortByPreference.get();
 
     getLoaderManager().initLoader(LOADER_SHOWS_UPCOMING, null, showsUpcomingCallback);
     getLoaderManager().initLoader(LOADER_SHOWS_WATCHLIST, null, showsWatchlistCallback);
@@ -101,6 +113,11 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
     adapter.initCategory(R.string.category_shows_suggestions);
     adapter.initCategory(R.string.category_movies_watchlist);
     adapter.initCategory(R.string.category_movies_suggestions);
+  }
+
+  @Override public void onDestroy() {
+    upcomingSortByPreference.unregisterListener(upcomingSortByListener);
+    super.onDestroy();
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
@@ -125,6 +142,14 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
     return super.onMenuItemClick(item);
   }
+
+  private UpcomingSortByPreference.UpcomingSortByListener upcomingSortByListener =
+      new UpcomingSortByPreference.UpcomingSortByListener() {
+        @Override public void onUpcomingSortByChanged(UpcomingSortBy sortBy) {
+          DashboardFragment.this.upcomingSortBy = sortBy;
+          getLoaderManager().restartLoader(LOADER_SHOWS_UPCOMING, null, showsUpcomingCallback);
+        }
+      };
 
   private final CategoryAdapter.CategoryClickListener categoryClickListener =
       new CategoryAdapter.CategoryClickListener() {
@@ -241,7 +266,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
           return new SimpleCursorLoader(getActivity(), Shows.SHOWS_UPCOMING,
-              DashboardUpcomingShowsAdapter.PROJECTION, null, null, Shows.SORT_NEXT_EPISODE);
+              DashboardUpcomingShowsAdapter.PROJECTION, null, null, upcomingSortBy.getSortOrder());
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

@@ -16,10 +16,8 @@
 package net.simonvt.cathode.ui.shows.upcoming;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
@@ -28,10 +26,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -42,13 +37,13 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
-import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.UpcomingTime;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.HeaderSpanLookup;
 import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.ui.lists.ListDialog;
+import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference.UpcomingSortByListener;
 import net.simonvt.cathode.util.DataHelper;
 
 public class UpcomingShowsFragment
@@ -60,59 +55,15 @@ public class UpcomingShowsFragment
 
   private static final int LOADER_SHOWS_UPCOMING = 1;
 
-  private enum SortBy {
-    TITLE("title", Shows.SORT_TITLE),
-    NEXT_EPISODE("nextEpisode", Shows.SORT_NEXT_EPISODE),
-    LAST_WATCHED("lastWatched", Shows.SORT_LAST_WATCHED);
-
-    private String key;
-
-    private String sortOrder;
-
-    SortBy(String key, String sortOrder) {
-      this.key = key;
-      this.sortOrder = sortOrder;
-    }
-
-    public String getKey() {
-      return key;
-    }
-
-    public String getSortOrder() {
-      return sortOrder;
-    }
-
-    @Override public String toString() {
-      return key;
-    }
-
-    private static final Map<String, SortBy> STRING_MAPPING = new HashMap<>();
-
-    static {
-      for (SortBy via : SortBy.values()) {
-        STRING_MAPPING.put(via.toString().toUpperCase(Locale.US), via);
-      }
-    }
-
-    public static SortBy fromValue(String value) {
-      SortBy sortBy = STRING_MAPPING.get(value.toUpperCase(Locale.US));
-      if (sortBy == null) {
-        sortBy = TITLE;
-      }
-      return sortBy;
-    }
-  }
-
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment.sortDialog";
 
   @Inject JobManager jobManager;
 
   @Inject UpcomingTimePreference upcomingTimePreference;
+  @Inject UpcomingSortByPreference upcomingSortByPreference;
 
-  private SharedPreferences settings;
-
-  private SortBy sortBy;
+  UpcomingSortBy sortBy;
 
   private ShowsNavigationListener navigationListener;
 
@@ -120,7 +71,7 @@ public class UpcomingShowsFragment
 
   private UpcomingAdapter adapter;
 
-  private boolean scrollToTop;
+  boolean scrollToTop;
 
   @Override public void onAttach(Activity activity) {
     super.onAttach(activity);
@@ -130,23 +81,31 @@ public class UpcomingShowsFragment
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
     CathodeApp.inject(getActivity(), this);
-    settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-    sortBy =
-        SortBy.fromValue(settings.getString(Settings.Sort.SHOW_UPCOMING, SortBy.TITLE.getKey()));
 
-    getLoaderManager().initLoader(LOADER_SHOWS_UPCOMING, null, this);
+    sortBy = upcomingSortByPreference.get();
+    upcomingSortByPreference.registerListener(upcomingSortByListener);
 
+    setTitle(R.string.title_shows_upcoming);
     setEmptyText(R.string.empty_show_upcoming);
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
 
-    setTitle(R.string.title_shows_upcoming);
-
     upcomingTimePreference.registerListener(upcomingTimeChangeListener);
+
+    getLoaderManager().initLoader(LOADER_SHOWS_UPCOMING, null, this);
   }
+
+  private UpcomingSortByListener upcomingSortByListener = new UpcomingSortByListener() {
+    @Override public void onUpcomingSortByChanged(UpcomingSortBy sortBy) {
+      UpcomingShowsFragment.this.sortBy = sortBy;
+      scrollToTop = true;
+      getLoaderManager().restartLoader(LOADER_SHOWS_UPCOMING, null, UpcomingShowsFragment.this);
+    }
+  };
 
   @Override public void onDestroy() {
     upcomingTimePreference.unregisterListener(upcomingTimeChangeListener);
+    upcomingSortByPreference.unregisterListener(upcomingSortByListener);
     super.onDestroy();
   }
 
@@ -201,33 +160,20 @@ public class UpcomingShowsFragment
   @Override public void onItemSelected(int id) {
     switch (id) {
       case R.id.sort_title:
-        if (sortBy != SortBy.TITLE) {
-          sortBy = SortBy.TITLE;
-          settings.edit().putString(Settings.Sort.SHOW_UPCOMING, SortBy.TITLE.getKey()).apply();
-          getLoaderManager().restartLoader(LOADER_SHOWS_UPCOMING, null, this);
-          scrollToTop = true;
+        if (sortBy != UpcomingSortBy.TITLE) {
+          upcomingSortByPreference.set(UpcomingSortBy.TITLE);
         }
         break;
 
       case R.id.sort_next_episode:
-        if (sortBy != SortBy.NEXT_EPISODE) {
-          sortBy = SortBy.NEXT_EPISODE;
-          settings.edit()
-              .putString(Settings.Sort.SHOW_UPCOMING, SortBy.NEXT_EPISODE.getKey())
-              .apply();
-          getLoaderManager().restartLoader(LOADER_SHOWS_UPCOMING, null, this);
-          scrollToTop = true;
+        if (sortBy != UpcomingSortBy.NEXT_EPISODE) {
+          upcomingSortByPreference.set(UpcomingSortBy.NEXT_EPISODE);
         }
         break;
 
       case R.id.sort_last_watched:
-        if (sortBy != SortBy.LAST_WATCHED) {
-          sortBy = SortBy.LAST_WATCHED;
-          settings.edit()
-              .putString(Settings.Sort.SHOW_UPCOMING, SortBy.LAST_WATCHED.getKey())
-              .apply();
-          getLoaderManager().restartLoader(LOADER_SHOWS_UPCOMING, null, this);
-          scrollToTop = true;
+        if (sortBy != UpcomingSortBy.LAST_WATCHED) {
+          upcomingSortByPreference.set(UpcomingSortBy.LAST_WATCHED);
         }
         break;
     }
