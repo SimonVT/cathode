@@ -277,6 +277,10 @@
   <string name="preference_upcoming_time_months_1">1 month</string>
   <string name="preference_upcoming_time_end">End of time</string>
 
+  <!-- Shortcuts -->
+  <string name="shortcut_not_available">Not available</string>
+  <string name="shortcut_label_search">Search</string>
+  <string name="shortcut_label_upcoming">Upcoming</string>
 
   <!-- Notifications -->
   <string name="notification_airing_at">Airing at %s</string>

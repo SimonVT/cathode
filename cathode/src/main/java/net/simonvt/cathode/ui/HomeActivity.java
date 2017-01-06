@@ -123,10 +123,13 @@ public class HomeActivity extends BaseActivity
   public static final String EXTRA_STACK_ENTRIES =
       "net.simonvt.cathode.ui.HomeActivity.stackEntries";
 
+  public static final String ACTION_CONSUMED = "consumed";
   public static final String ACTION_LOGIN = "net.simonvt.cathode.intent.action.LOGIN";
   public static final String ACTION_SHOW_START_PAGE =
       "net.simonvt.cathode.intent.action.showStartPage";
   public static final String ACTION_REPLACE_STACK = "replaceStack";
+  public static final String ACTION_SEARCH = "net.simonvt.cathode.SEARCH";
+  public static final String ACTION_UPCOMING = "net.simonvt.cathode.UPCOMING";
 
   private static final int LOADER_SHOW_WATCHING = 1;
   private static final int LOADER_MOVIE_WATCHING = 2;
@@ -150,8 +153,6 @@ public class HomeActivity extends BaseActivity
   private Cursor watchingShow;
   private Cursor watchingMovie;
 
-  private boolean isTablet;
-
   private PendingReplacement pendingReplacement;
 
   private boolean isSyncing = false;
@@ -164,28 +165,12 @@ public class HomeActivity extends BaseActivity
     setContentView(R.layout.activity_home);
 
     ButterKnife.bind(this);
-
-    isTablet = getResources().getBoolean(R.bool.isTablet);
+    drawer.addDrawerListener(drawerListener);
+    watchingParent.setOnTouchListener(watchingTouchListener);
+    watchingView.setWatchingViewListener(watchingListener);
 
     navigation =
         (NavigationFragment) getSupportFragmentManager().findFragmentByTag(NavigationFragment.TAG);
-
-    watchingParent.setOnTouchListener(new View.OnTouchListener() {
-      @SuppressLint("ClickableViewAccessibility") @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        if (watchingView.isExpanded()) {
-          final int action = event.getActionMasked();
-          if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-            watchingView.collapse();
-          }
-
-          return true;
-        }
-
-        return false;
-      }
-    });
-    watchingView.setWatchingViewListener(watchingListener);
 
     stack = FragmentStack.forContainer(this, R.id.content);
     stack.setDefaultAnimation(R.anim.fade_in_front, R.anim.fade_out_back, R.anim.fade_in_back,
@@ -193,10 +178,16 @@ public class HomeActivity extends BaseActivity
     if (inState != null) {
       stack.restoreState(inState.getBundle(STATE_STACK));
     }
-    if (isShowStartPageIntent(getIntent())) {
-      StartPage startPage = (StartPage) getIntent().getSerializableExtra(EXTRA_START_PAGE);
+
+    final Intent intent = getIntent();
+
+    if (isShowStartPageIntent(intent)) {
+      StartPage startPage = (StartPage) intent.getSerializableExtra(EXTRA_START_PAGE);
       navigation.setSelectedId(startPage.getMenuId());
       stack.replace(startPage.getPageClass(), startPage.getTag());
+    } else if (isShowUpcomingAction(intent)) {
+      navigation.setSelectedId(StartPage.SHOWS_UPCOMING.getMenuId());
+      stack.replace(StartPage.SHOWS_UPCOMING.getPageClass(), StartPage.SHOWS_UPCOMING.getTag());
     } else {
       if (stack.size() == 0) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -205,35 +196,11 @@ public class HomeActivity extends BaseActivity
         navigation.setSelectedId(startPage.getMenuId());
         stack.replace(startPage.getPageClass(), startPage.getTag());
       }
+
+      if (isSearchAction(intent)) {
+        onSearchClicked();
+      }
     }
-
-    getSupportLoaderManager().initLoader(LOADER_SHOW_WATCHING, null, watchingShowCallback);
-    getSupportLoaderManager().initLoader(LOADER_MOVIE_WATCHING, null, watchingMovieCallback);
-
-    drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
-      @Override public void onDrawerSlide(View drawerView, float slideOffset) {
-      }
-
-      @Override public void onDrawerOpened(View drawerView) {
-        pendingReplacement = null;
-      }
-
-      @Override public void onDrawerClosed(View drawerView) {
-        if (pendingReplacement != null) {
-          stack.replace(pendingReplacement.fragment, pendingReplacement.tag);
-          pendingReplacement = null;
-        }
-      }
-
-      @Override public void onDrawerStateChanged(int newState) {
-        drawerState = newState;
-        if (newState == DrawerLayout.STATE_DRAGGING) {
-          pendingReplacement = null;
-        }
-      }
-    });
-
-    final Intent intent = getIntent();
 
     if (!Settings.isLoggedIn(this) || isLoginAction(intent)) {
       startLoginActivity();
@@ -243,9 +210,14 @@ public class HomeActivity extends BaseActivity
       replaceStack(stackEntries);
     }
 
+    intent.setAction(ACTION_CONSUMED);
+
     SyncEvent.registerListener(onSyncEvent);
     RequestFailedEvent.registerListener(requestFailedListener);
     CheckInFailedEvent.registerListener(checkInFailedListener);
+
+    getSupportLoaderManager().initLoader(LOADER_SHOW_WATCHING, null, watchingShowCallback);
+    getSupportLoaderManager().initLoader(LOADER_MOVIE_WATCHING, null, watchingMovieCallback);
   }
 
   @Override protected void onNewIntent(Intent intent) {
@@ -271,6 +243,8 @@ public class HomeActivity extends BaseActivity
         }
       });
     }
+
+    intent.setAction(ACTION_CONSUMED);
   }
 
   private boolean isShowStartPageIntent(Intent intent) {
@@ -302,6 +276,14 @@ public class HomeActivity extends BaseActivity
     return ACTION_LOGIN.equals(intent.getAction());
   }
 
+  private boolean isSearchAction(Intent intent) {
+    return ACTION_SEARCH.equals(intent.getAction());
+  }
+
+  private boolean isShowUpcomingAction(Intent intent) {
+    return ACTION_UPCOMING.equals(intent.getAction());
+  }
+
   @Override protected void onSaveInstanceState(Bundle outState) {
     outState.putBundle(STATE_STACK, stack.saveState());
     super.onSaveInstanceState(outState);
@@ -324,6 +306,29 @@ public class HomeActivity extends BaseActivity
     CheckInFailedEvent.unregisterListener(checkInFailedListener);
     super.onDestroy();
   }
+
+  private DrawerLayout.DrawerListener drawerListener = new DrawerLayout.DrawerListener() {
+    @Override public void onDrawerSlide(View drawerView, float slideOffset) {
+    }
+
+    @Override public void onDrawerOpened(View drawerView) {
+      pendingReplacement = null;
+    }
+
+    @Override public void onDrawerClosed(View drawerView) {
+      if (pendingReplacement != null) {
+        stack.replace(pendingReplacement.fragment, pendingReplacement.tag);
+        pendingReplacement = null;
+      }
+    }
+
+    @Override public void onDrawerStateChanged(int newState) {
+      drawerState = newState;
+      if (newState == DrawerLayout.STATE_DRAGGING) {
+        pendingReplacement = null;
+      }
+    }
+  };
 
   @Override public void onBackPressed() {
     if (watchingView.isExpanded()) {
@@ -429,6 +434,22 @@ public class HomeActivity extends BaseActivity
     drawer.closeDrawer(Gravity.LEFT);
     return true;
   }
+
+  private View.OnTouchListener watchingTouchListener = new View.OnTouchListener() {
+    @SuppressLint("ClickableViewAccessibility") @Override
+    public boolean onTouch(View v, MotionEvent event) {
+      if (watchingView.isExpanded()) {
+        final int action = event.getActionMasked();
+        if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+          watchingView.collapse();
+        }
+
+        return true;
+      }
+
+      return false;
+    }
+  };
 
   private WatchingViewListener watchingListener = new WatchingViewListener() {
     @Override public void onExpand(WatchingView view) {
