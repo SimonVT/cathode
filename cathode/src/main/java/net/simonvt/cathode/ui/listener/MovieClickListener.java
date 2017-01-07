@@ -16,9 +16,7 @@
 
 package net.simonvt.cathode.ui.listener;
 
-import android.view.View;
-
 public interface MovieClickListener {
 
-  void onMovieClicked(View v, int position, long id);
+  void onMovieClicked(long movieId, String title, String overview);
 }

@@ -20,7 +20,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.view.View;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -28,7 +27,6 @@ import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.RelatedMovies;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
@@ -37,7 +35,6 @@ import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
 import net.simonvt.cathode.util.Ids;
-import net.simonvt.schematic.Cursors;
 
 public class RelatedMoviesFragment
     extends ToolbarSwipeRefreshRecyclerFragment<MoviesAdapter.ViewHolder>
@@ -106,11 +103,8 @@ public class RelatedMoviesFragment
     movieScheduler.syncRelated(movieId, onDoneListener);
   }
 
-  @Override public void onMovieClicked(View view, int position, long id) {
-    cursor.moveToPosition(position);
-    final String title = Cursors.getString(cursor, MovieColumns.TITLE);
-    final String overview = Cursors.getString(cursor, MovieColumns.OVERVIEW);
-    navigationListener.onDisplayMovie(id, title, overview);
+  @Override public void onMovieClicked(long movieId, String title, String overview) {
+    navigationListener.onDisplayMovie(movieId, title, overview);
   }
 
   protected void setCursor(SimpleCursor c) {

@@ -163,13 +163,13 @@ public class ShowDescriptionAdapter
         break;
 
       case R.id.action_watchlist_remove:
-        onWatchlistRemove(view, position, id);
+        onWatchlistRemove(id);
         break;
     }
   }
 
-  protected void onWatchlistRemove(View view, int position, long id) {
-    showScheduler.setIsInWatchlist(id, false);
+  protected void onWatchlistRemove(long showId) {
+    showScheduler.setIsInWatchlist(showId, false);
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {

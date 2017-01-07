@@ -35,16 +35,14 @@ import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
-import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.fragment.SwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
+import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
-import net.simonvt.schematic.Cursors;
 
 public class MovieRecommendationsFragment
     extends SwipeRefreshRecyclerFragment<MoviesAdapter.ViewHolder>
@@ -192,11 +190,8 @@ public class MovieRecommendationsFragment
     }
   }
 
-  @Override public void onMovieClicked(View view, int position, long id) {
-    cursor.moveToPosition(position);
-    final String title = Cursors.getString(cursor, MovieColumns.TITLE);
-    final String overview = Cursors.getString(cursor, MovieColumns.OVERVIEW);
-    navigationListener.onDisplayMovie(id, title, overview);
+  @Override public void onMovieClicked(long movieId, String title, String overview) {
+    navigationListener.onDisplayMovie(movieId, title, overview);
   }
 
   @Override public void onDismissItem(final View view, final long id) {

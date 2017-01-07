@@ -24,7 +24,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -179,7 +178,7 @@ public class UpcomingShowsFragment
     }
   }
 
-  @Override public void onRemove(View view, int position, long id) {
+  @Override public void onRemove(long showId) {
     Loader loader = getLoaderManager().getLoader(LOADER_SHOWS_UPCOMING);
     if (loader != null) {
       SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
@@ -187,7 +186,7 @@ public class UpcomingShowsFragment
 
       List<Cursor> cursors = ((UpcomingAdapter) getAdapter()).getCursors();
       for (Cursor cursor : cursors) {
-        ((SimpleCursor) cursor).remove(id);
+        ((SimpleCursor) cursor).remove(showId);
       }
 
       ((UpcomingAdapter) getAdapter()).notifyChanged();

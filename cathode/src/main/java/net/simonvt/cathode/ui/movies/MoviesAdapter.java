@@ -28,6 +28,7 @@ import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.widget.OverflowView;
+import net.simonvt.schematic.Cursors;
 
 public class MoviesAdapter extends BaseMoviesAdapter<BaseMoviesAdapter.ViewHolder> {
 
@@ -65,7 +66,10 @@ public class MoviesAdapter extends BaseMoviesAdapter<BaseMoviesAdapter.ViewHolde
       @Override public void onClick(View v) {
         final int position = holder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
-          listener.onMovieClicked(holder.itemView, position, holder.getItemId());
+          Cursor cursor = getCursor(position);
+          final String title = Cursors.getString(cursor, MovieColumns.TITLE);
+          final String overview = Cursors.getString(cursor, MovieColumns.OVERVIEW);
+          listener.onMovieClicked(holder.getItemId(), title, overview);
         }
       }
     });

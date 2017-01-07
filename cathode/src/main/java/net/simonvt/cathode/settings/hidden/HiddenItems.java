@@ -23,7 +23,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
@@ -212,7 +211,7 @@ public class HiddenItems extends BaseActivity
   }
 
   public static class HiddenItemsFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
-      implements HiddenItemsAdapter.OnItemClickListener, HiddenItemsAdapter.RemoveListener {
+      implements HiddenItemsAdapter.OnItemClickListener {
 
     private HiddenItemsAdapter adapter;
 
@@ -247,22 +246,18 @@ public class HiddenItems extends BaseActivity
       return getResources().getInteger(R.integer.hiddenColumns);
     }
 
-    @Override public void onShowClicked(int position, long showId, String title, String overview) {
+    @Override public void onShowClicked(long showId, String title, String overview) {
       navigationListener.onDisplayShow(showId, title, overview, LibraryType.WATCHED);
     }
 
     @Override
-    public void onMovieClicked(int position, long movieId, String title, String overview) {
+    public void onMovieClicked(long movieId, String title, String overview) {
       navigationListener.onDisplayMovie(movieId, title, overview);
-    }
-
-    @Override public void onRemoveItem(View view, int position, long id) {
-
     }
 
     private void ensureAdapter() {
       if (adapter == null) {
-        adapter = new HiddenItemsAdapter(getActivity(), this, this);
+        adapter = new HiddenItemsAdapter(getActivity(), this);
         adapter.addHeader(R.string.header_hidden_calendar_shows);
         adapter.addHeader(R.string.header_hidden_watched_shows);
         adapter.addHeader(R.string.header_hidden_collected_shows);

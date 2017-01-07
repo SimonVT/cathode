@@ -155,7 +155,7 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
           if (position != RecyclerView.NO_POSITION) {
             Cursor cursor = getCursor(position);
             final long itemId = Cursors.getLong(cursor, ListItemColumns.ITEM_ID);
-            episodeListener.onEpisodeClick(episodeHolder.itemView, position, itemId);
+            episodeListener.onEpisodeClick(itemId);
           }
         }
       });
@@ -170,7 +170,9 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
           if (position != RecyclerView.NO_POSITION) {
             Cursor cursor = getCursor(position);
             final long itemId = Cursors.getLong(cursor, ListItemColumns.ITEM_ID);
-            movieListener.onMovieClicked(movieHolder.itemView, position, itemId);
+            final String title = Cursors.getString(cursor, MovieColumns.TITLE);
+            final String overview = Cursors.getString(cursor, MovieColumns.OVERVIEW);
+            movieListener.onMovieClicked(itemId, title, overview);
           }
         }
       });

@@ -23,7 +23,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
@@ -47,11 +46,11 @@ import net.simonvt.cathode.remote.sync.lists.SyncList;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
-import net.simonvt.cathode.ui.shows.ShowClickListener;
 import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
+import net.simonvt.cathode.ui.shows.ShowClickListener;
 import net.simonvt.cathode.util.SqlCoalesce;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.schematic.Cursors;
@@ -176,15 +175,12 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
         LibraryType.WATCHED);
   }
 
-  @Override public void onEpisodeClick(View view, int position, long id) {
+  @Override public void onEpisodeClick(long id) {
     navigationListener.onDisplayEpisode(id, null);
   }
 
-  @Override public void onMovieClicked(View v, int position, long id) {
-    Cursor cursor = adapter.getCursor(position);
-    final String title = Cursors.getString(cursor, MovieColumns.TITLE);
-    final String overview = Cursors.getString(cursor, MovieColumns.OVERVIEW);
-    navigationListener.onDisplayMovie(id, title, overview);
+  @Override public void onMovieClicked(long movieId, String title, String overview) {
+    navigationListener.onDisplayMovie(movieId, title, overview);
   }
 
   @Override public void onRemoveItem(int position, long id) {

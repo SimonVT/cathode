@@ -28,6 +28,7 @@ import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -35,7 +36,6 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
-import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.ui.adapter.HeaderCursorAdapter;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.OverflowView;
@@ -44,16 +44,11 @@ import net.simonvt.schematic.Cursors;
 
 public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder> {
 
-  public interface RemoveListener {
-
-    void onRemoveItem(View view, int position, long id);
-  }
-
   public interface OnItemClickListener {
 
-    void onShowClicked(int position, long showId, String title, String overview);
+    void onShowClicked(long showId, String title, String overview);
 
-    void onMovieClicked(int position, long movieId, String title, String overview);
+    void onMovieClicked(long movieId, String title, String overview);
   }
 
   public static final String[] PROJECTION_SHOW = new String[] {
@@ -89,18 +84,14 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
 
   private Context context;
 
-  private RemoveListener onRemoveListener;
-
   private OnItemClickListener onItemClickListener;
 
   private long nextId;
 
-  public HiddenItemsAdapter(Context context, OnItemClickListener onItemClickListener,
-      RemoveListener onRemoveListener) {
+  public HiddenItemsAdapter(Context context, OnItemClickListener onItemClickListener) {
     super();
     this.context = context;
     this.onItemClickListener = onItemClickListener;
-    this.onRemoveListener = onRemoveListener;
     CathodeApp.inject(context, this);
   }
 
@@ -206,7 +197,7 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
             final String title = Cursors.getString(cursor, ShowColumns.TITLE);
             final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
 
-            onItemClickListener.onShowClicked(position, itemId, title, overview);
+            onItemClickListener.onShowClicked(itemId, title, overview);
           }
         }
       });
@@ -256,7 +247,7 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
             final String title = Cursors.getString(cursor, MovieColumns.TITLE);
             final String overview = Cursors.getString(cursor, MovieColumns.OVERVIEW);
 
-            onItemClickListener.onMovieClicked(position, itemId, title, overview);
+            onItemClickListener.onMovieClicked(itemId, title, overview);
           }
         }
       });

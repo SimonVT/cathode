@@ -204,7 +204,7 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
     }
   };
 
-  @Override public void onEpisodeClick(View view, int position, long id) {
+  @Override public void onEpisodeClick(long id) {
     navigationListener.onDisplayEpisode(id, title);
   }
 

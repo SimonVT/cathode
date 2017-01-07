@@ -48,14 +48,14 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
 
   public interface RemoveListener {
 
-    void onRemoveItem(View view, int position, long id);
+    void onRemoveItem(int position, long itemId);
   }
 
   public interface OnItemClickListener {
 
-    void onShowClicked(int position, long id);
+    void onShowClicked(long showId, String title, String overview);
 
-    void onEpisodeClicked(int position, long id);
+    void onEpisodeClicked(long episodeId, String showTitle);
   }
 
   public static final String[] PROJECTION_SHOW = new String[] {
@@ -125,8 +125,11 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
         @Override public void onClick(View view) {
           final int position = holder.getAdapterPosition();
           if (position != RecyclerView.NO_POSITION) {
+            Cursor cursor = getCursor(position);
             final long id = getItemId(position);
-            onItemClickListener.onShowClicked(position, id);
+            final String title = Cursors.getString(cursor, ShowColumns.TITLE);
+            final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
+            onItemClickListener.onShowClicked(id, title, overview);
           }
         }
       });
@@ -139,8 +142,10 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
         @Override public void onClick(View view) {
           final int position = holder.getAdapterPosition();
           if (position != RecyclerView.NO_POSITION) {
+            Cursor cursor = getCursor(position);
             final long id = getItemId(position);
-            onItemClickListener.onEpisodeClicked(position, id);
+            final String showTitle = Cursors.getString(cursor, ShowColumns.TITLE);
+            onItemClickListener.onEpisodeClicked(id, showTitle);
           }
         }
       });
@@ -202,7 +207,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
           if (position != RecyclerView.NO_POSITION) {
             switch (action) {
               case R.id.action_watchlist_remove:
-                onRemoveListener.onRemoveItem(view, position, id);
+                onRemoveListener.onRemoveItem(position, id);
                 showScheduler.setIsInWatchlist(id, false);
             }
           }
@@ -242,7 +247,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
                 break;
 
               case R.id.action_watchlist_remove:
-                onRemoveListener.onRemoveItem(view, position, id);
+                onRemoveListener.onRemoveItem(position, id);
                 episodeScheduler.setIsInWatchlist(id, false);
                 break;
             }

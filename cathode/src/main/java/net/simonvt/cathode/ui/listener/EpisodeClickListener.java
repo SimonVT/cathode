@@ -16,9 +16,7 @@
 
 package net.simonvt.cathode.ui.listener;
 
-import android.view.View;
-
 public interface EpisodeClickListener {
 
-  void onEpisodeClick(View view, int position, long id);
+  void onEpisodeClick(long id);
 }

@@ -33,7 +33,6 @@ import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
@@ -43,7 +42,6 @@ import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.adapter.HeaderSpanLookup;
 import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
-import net.simonvt.schematic.Cursors;
 
 public class ShowsWatchlistFragment
     extends ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>
@@ -134,16 +132,12 @@ public class ShowsWatchlistFragment
     }
   }
 
-  @Override public void onShowClicked(int position, long id) {
-    Cursor c = ((ShowWatchlistAdapter) getAdapter()).getCursor(position);
-    final String title = Cursors.getString(c, ShowColumns.TITLE);
-    final String overview = Cursors.getString(c, ShowColumns.OVERVIEW);
-    navigationListener.onDisplayShow(id, title, overview, LibraryType.WATCHED);
+  @Override public void onShowClicked(long showId, String title, String overview) {
+    navigationListener.onDisplayShow(showId, title, overview, LibraryType.WATCHED);
   }
 
-  @Override public void onEpisodeClicked(int position, long id) {
-    Cursor c = ((ShowWatchlistAdapter) getAdapter()).getCursor(position);
-    navigationListener.onDisplayEpisode(id, Cursors.getString(c, ShowColumns.TITLE));
+  @Override public void onEpisodeClicked(long episodeId, String showTitle) {
+    navigationListener.onDisplayEpisode(episodeId, showTitle);
   }
 
   private void throttleLoaders() {
@@ -160,11 +154,11 @@ public class ShowsWatchlistFragment
     }
   }
 
-  @Override public void onRemoveItem(View view, int position, long id) {
+  @Override public void onRemoveItem(int position, long itemId) {
     throttleLoaders();
     SimpleCursor cursor =
         (SimpleCursor) (((ShowWatchlistAdapter) getAdapter()).getCursor(position));
-    cursor.remove(id);
+    cursor.remove(itemId);
     ((ShowWatchlistAdapter) getAdapter()).notifyChanged();
   }
 
