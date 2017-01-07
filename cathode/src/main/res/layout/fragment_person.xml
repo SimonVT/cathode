@@ -49,9 +49,11 @@
         android:orientation="vertical">
 
       <TextView
+          android:id="@+id/bornTitle"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:text="Born"/>
+          android:textStyle="italic"
+          android:text="@string/person_born"/>
 
       <TextView
           android:id="@+id/birthday"
@@ -64,6 +66,14 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           tools:text="San Fernando Valley, California, USA"/>
+
+      <TextView
+          android:id="@+id/deathTitle"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:textStyle="italic"
+          android:text="@string/person_death"/>
 
       <TextView
           android:id="@+id/death"

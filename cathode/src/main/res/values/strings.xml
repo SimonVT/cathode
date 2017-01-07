@@ -107,6 +107,9 @@
   <string name="person_department_sound">Sound</string>
   <string name="person_department_camera">Camera</string>
 
+  <string name="person_born">Born</string>
+  <string name="person_death">Death</string>
+
   <string name="title_suggestions">Suggestions</string>
   <string name="title_recommended">Recommended</string>
   <string name="title_trending">Trending</string>

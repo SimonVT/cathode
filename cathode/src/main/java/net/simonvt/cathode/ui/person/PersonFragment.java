@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,8 +67,10 @@ public class PersonFragment extends RefreshableAppBarFragment {
   private int itemCount;
 
   @BindView(R.id.headshot) RemoteImageView headshot;
+  @BindView(R.id.bornTitle) View bornTitle;
   @BindView(R.id.birthday) TextView birthday;
   @BindView(R.id.birthplace) TextView birthplace;
+  @BindView(R.id.deathTitle) View deathTitle;
   @BindView(R.id.death) TextView death;
   @BindView(R.id.biography) TextView biography;
 
@@ -189,14 +192,29 @@ public class PersonFragment extends RefreshableAppBarFragment {
       setTitle(person.getName());
       setBackdrop(person.getScreenshot());
       headshot.setImage(person.getHeadshot());
-      birthday.setText(person.getBirthday());
-      birthplace.setText(person.getBirthplace());
-      if (person.getDeath() != null) {
+
+      if (!TextUtils.isEmpty(person.getBirthday())) {
+        bornTitle.setVisibility(View.VISIBLE);
+        birthday.setVisibility(View.VISIBLE);
+        birthplace.setVisibility(View.VISIBLE);
+
+        birthday.setText(person.getBirthday());
+        birthplace.setText(person.getBirthplace());
+      } else {
+        bornTitle.setVisibility(View.GONE);
+        birthday.setVisibility(View.GONE);
+        birthplace.setVisibility(View.GONE);
+      }
+
+      if (!TextUtils.isEmpty(person.getDeath())) {
+        deathTitle.setVisibility(View.VISIBLE);
         death.setVisibility(View.VISIBLE);
         death.setText(person.getDeath());
       } else {
+        deathTitle.setVisibility(View.GONE);
         death.setVisibility(View.GONE);
       }
+
       biography.setText(person.getBiography());
 
       updateItems(castHeader, castItems, person.getCredits().getCast());
