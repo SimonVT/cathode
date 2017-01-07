@@ -602,11 +602,11 @@ public final class DatabaseSchematic {
       db.execSQL("DROP TRIGGER IF EXISTS episodeUpdateAired");
       db.execSQL("DROP TRIGGER IF EXISTS episodeUpdateWatched");
       db.execSQL("DROP TRIGGER IF EXISTS episodeUpdateCollected");
-
-      CathodeDatabase.getInstance(context).onCreate(db);
     }
 
     if (oldVersion < 13) {
+      CathodeDatabase.getInstance(context).onCreate(db);
+
       SqlUtils.createColumnIfNotExists(db, Tables.SHOWS, LastModifiedColumns.LAST_MODIFIED,
           DataType.Type.INTEGER, "0");
       SqlUtils.createColumnIfNotExists(db, Tables.SEASONS, LastModifiedColumns.LAST_MODIFIED,
