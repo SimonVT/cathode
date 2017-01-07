@@ -21,6 +21,26 @@ public final class TraktUtils {
   private TraktUtils() {
   }
 
+  public static String getTraktShowUrl(long traktId) {
+    return "https://trakt.tv/search/trakt/" + traktId + "?id_type=show";
+  }
+
+  public static String getTraktSeasonUrl(long traktId) {
+    return "https://trakt.tv/search/trakt/" + traktId + "?id_type=season";
+  }
+
+  public static String getTraktEpisodeUrl(long traktId) {
+    return "https://trakt.tv/search/trakt/" + traktId + "?id_type=episode";
+  }
+
+  public static String getTraktMovieUrl(long traktId) {
+    return "https://trakt.tv/search/trakt/" + traktId + "?id_type=movie";
+  }
+
+  public static String getTraktPersonUrl(long traktId) {
+    return "https://trakt.tv/search/trakt/" + traktId + "?id_type=person";
+  }
+
   public static String getImdbUrl(String imdbId) {
     return "http://www.imdb.com/title/" + imdbId;
   }

@@ -121,9 +121,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private static final int LOADER_RELATED = 9;
 
   private static final String[] SHOW_PROJECTION = new String[] {
-      ShowColumns.TITLE, ShowColumns.YEAR, ShowColumns.AIR_TIME, ShowColumns.AIR_DAY,
-      ShowColumns.NETWORK, ShowColumns.CERTIFICATION, ShowColumns.STATUS, ShowColumns.USER_RATING,
-      ShowColumns.RATING, ShowColumns.OVERVIEW, ShowColumns.IN_WATCHLIST,
+      ShowColumns.TRAKT_ID, ShowColumns.TITLE, ShowColumns.YEAR, ShowColumns.AIR_TIME,
+      ShowColumns.AIR_DAY, ShowColumns.NETWORK, ShowColumns.CERTIFICATION, ShowColumns.STATUS,
+      ShowColumns.USER_RATING, ShowColumns.RATING, ShowColumns.OVERVIEW, ShowColumns.IN_WATCHLIST,
       ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT, ShowColumns.LAST_SYNC,
       ShowColumns.LAST_COMMENT_SYNC, ShowColumns.LAST_CREDITS_SYNC, ShowColumns.LAST_RELATED_SYNC,
       ShowColumns.HOMEPAGE, ShowColumns.TRAILER, ShowColumns.IMDB_ID, ShowColumns.TVDB_ID,
@@ -183,8 +183,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
   @BindView(R.id.websiteTitle) View websiteTitle;
   @BindView(R.id.website) TextView website;
 
-  @BindView(R.id.viewOnTitle) View viewOnTitle;
-  @BindView(R.id.viewOnContainer) ViewGroup viewOnContainer;
+  @BindView(R.id.viewOnTrakt) View viewOnTrakt;
   @BindView(R.id.viewOnImdb) View viewOnImdb;
   @BindView(R.id.viewOnTvdb) View viewOnTvdb;
   @BindView(R.id.viewOnTmdb) View viewOnTmdb;
@@ -550,6 +549,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private void updateShowView(final Cursor cursor) {
     if (cursor == null || !cursor.moveToFirst()) return;
 
+    final long traktId = Cursors.getLong(cursor, ShowColumns.TRAKT_ID);
     String title = Cursors.getString(cursor, ShowColumns.TITLE);
     if (!TextUtils.equals(title, showTitle)) {
       showTitle = title;
@@ -680,6 +680,12 @@ public class ShowFragment extends RefreshableAppBarFragment {
     final int tvdbId = Cursors.getInt(cursor, ShowColumns.TVDB_ID);
     final int tmdbId = Cursors.getInt(cursor, ShowColumns.TMDB_ID);
 
+    viewOnTrakt.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        Intents.openUrl(getContext(), TraktUtils.getTraktShowUrl(traktId));
+      }
+    });
+
     final boolean hasImdbId = !TextUtils.isEmpty(imdbId);
     if (hasImdbId) {
       viewOnImdb.setVisibility(View.VISIBLE);
@@ -712,14 +718,6 @@ public class ShowFragment extends RefreshableAppBarFragment {
       });
     } else {
       viewOnTmdb.setVisibility(View.GONE);
-    }
-
-    if (hasImdbId || tvdbId > 0 || tmdbId > 0) {
-      viewOnTitle.setVisibility(View.VISIBLE);
-      viewOnContainer.setVisibility(View.VISIBLE);
-    } else {
-      viewOnTitle.setVisibility(View.GONE);
-      viewOnContainer.setVisibility(View.GONE);
     }
 
     invalidateMenu();

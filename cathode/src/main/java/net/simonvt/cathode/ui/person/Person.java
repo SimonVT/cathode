@@ -18,6 +18,8 @@ package net.simonvt.cathode.ui.person;
 
 public class Person {
 
+  private long traktId;
+
   private String name;
 
   private String headshot;
@@ -38,8 +40,10 @@ public class Person {
 
   private PersonCredits credits;
 
-  public Person(String name, String headshot, String screenshot, String biography, String birthday,
-      String death, String birthplace, String homepage, long lastSync, PersonCredits credits) {
+  public Person(long traktId, String name, String headshot, String screenshot, String biography,
+      String birthday, String death, String birthplace, String homepage, long lastSync,
+      PersonCredits credits) {
+    this.traktId = traktId;
     this.name = name;
     this.headshot = headshot;
     this.screenshot = screenshot;
@@ -50,6 +54,10 @@ public class Person {
     this.homepage = homepage;
     this.lastSync = lastSync;
     this.credits = credits;
+  }
+
+  public long getTraktId() {
+    return traktId;
   }
 
   public String getName() {

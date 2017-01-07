@@ -35,6 +35,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.api.util.TraktUtils;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.images.ImageType;
@@ -59,6 +60,7 @@ import net.simonvt.cathode.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.util.Intents;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.CheckInDrawable;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
@@ -101,6 +103,8 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
   @BindView(R.id.commentsParent) View commentsParent;
   @BindView(R.id.commentsHeader) View commentsHeader;
   @BindView(R.id.commentsContainer) LinearLayout commentsContainer;
+
+  @BindView(R.id.viewOnTrakt) View viewOnTrakt;
 
   private Cursor userComments;
 
@@ -326,6 +330,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
     if (cursor.moveToFirst()) {
       loaded = true;
 
+      final long traktId = Cursors.getLong(cursor, EpisodeColumns.TRAKT_ID);
       showId = Cursors.getLong(cursor, EpisodeColumns.SHOW_ID);
       seasonId = Cursors.getLong(cursor, EpisodeColumns.SEASON_ID);
 
@@ -340,8 +345,8 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
           ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, episodeId);
 
       setBackdrop(screenshotUri, true);
-      firstAired.setText(DateUtils.millisToString(getActivity(),
-          DataHelper.getFirstAired(cursor), true));
+      firstAired.setText(
+          DateUtils.millisToString(getActivity(), DataHelper.getFirstAired(cursor), true));
 
       watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
       collected = Cursors.getBoolean(cursor, EpisodeColumns.IN_COLLECTION);
@@ -361,6 +366,12 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
       final float ratingAll = Cursors.getFloat(cursor, EpisodeColumns.RATING);
       rating.setValue(ratingAll);
 
+      viewOnTrakt.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          Intents.openUrl(getContext(), TraktUtils.getTraktEpisodeUrl(traktId));
+        }
+      });
+
       final long lastCommentSync = Cursors.getLong(cursor, EpisodeColumns.LAST_COMMENT_SYNC);
       if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {
         episodeScheduler.syncComments(episodeId);
@@ -378,11 +389,12 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
   }
 
   private static final String[] EPISODE_PROJECTION = new String[] {
-      EpisodeColumns.TITLE, EpisodeColumns.OVERVIEW, EpisodeColumns.FIRST_AIRED,
-      EpisodeColumns.WATCHED, EpisodeColumns.IN_COLLECTION, EpisodeColumns.IN_WATCHLIST,
-      EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN, EpisodeColumns.USER_RATING,
-      EpisodeColumns.RATING, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
-      EpisodeColumns.LAST_COMMENT_SYNC, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON_ID,
+      EpisodeColumns.TRAKT_ID, EpisodeColumns.TITLE, EpisodeColumns.OVERVIEW,
+      EpisodeColumns.FIRST_AIRED, EpisodeColumns.WATCHED, EpisodeColumns.IN_COLLECTION,
+      EpisodeColumns.IN_WATCHLIST, EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN,
+      EpisodeColumns.USER_RATING, EpisodeColumns.RATING, EpisodeColumns.SEASON,
+      EpisodeColumns.EPISODE, EpisodeColumns.LAST_COMMENT_SYNC, EpisodeColumns.SHOW_ID,
+      EpisodeColumns.SEASON_ID,
   };
 
   private LoaderManager.LoaderCallbacks<SimpleCursor> episodeCallbacks =

@@ -95,11 +95,13 @@ public class PersonLoader extends BaseAsyncLoader<Person> {
 
   @Override public Person loadInBackground() {
     Cursor person = resolver.query(People.withId(personId), new String[] {
-        PersonColumns.NAME, PersonColumns.BIOGRAPHY, PersonColumns.BIRTHDAY, PersonColumns.DEATH,
-        PersonColumns.BIRTHPLACE, PersonColumns.HOMEPAGE, PersonColumns.LAST_SYNC,
+        PersonColumns.TRAKT_ID, PersonColumns.NAME, PersonColumns.BIOGRAPHY, PersonColumns.BIRTHDAY,
+        PersonColumns.DEATH, PersonColumns.BIRTHPLACE, PersonColumns.HOMEPAGE,
+        PersonColumns.LAST_SYNC,
     }, null, null, null);
     try {
       if (person.moveToFirst()) {
+        final long traktId = Cursors.getLong(person, PersonColumns.TRAKT_ID);
         final String name = Cursors.getString(person, PersonColumns.NAME);
         final String biography = Cursors.getString(person, PersonColumns.BIOGRAPHY);
         final String birthday = Cursors.getString(person, PersonColumns.BIRTHDAY);
@@ -125,8 +127,8 @@ public class PersonLoader extends BaseAsyncLoader<Person> {
         Collections.sort(credits.getSound(), comparator);
         Collections.sort(credits.getCamera(), comparator);
 
-        return new Person(name, headshot, screenshot, biography, birthday, death, birthplace,
-            homepage, lastSync, credits);
+        return new Person(traktId, name, headshot, screenshot, biography, birthday, death,
+            birthplace, homepage, lastSync, credits);
       }
     } finally {
       person.close();

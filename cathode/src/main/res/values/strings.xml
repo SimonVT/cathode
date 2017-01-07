@@ -138,6 +138,7 @@
   <string name="category_movies_watchlist">Movie watchlist</string>
   <string name="category_movies_suggestions">Movie suggestions</string>
 
+  <string name="info_trakt">trakt</string>
   <string name="info_imdb">imdb</string>
   <string name="info_tvdb">tvdb</string>
   <string name="info_tmdb">tmdb</string>

@@ -135,8 +135,7 @@ public class MovieFragment extends RefreshableAppBarFragment
   @BindView(R.id.websiteTitle) View websiteTitle;
   @BindView(R.id.website) TextView website;
 
-  @BindView(R.id.viewOnTitle) View viewOnTitle;
-  @BindView(R.id.viewOnContainer) ViewGroup viewOnContainer;
+  @BindView(R.id.viewOnTrakt) View viewOnTrakt;
   @BindView(R.id.viewOnImdb) View viewOnImdb;
   @BindView(R.id.viewOnTmdb) View viewOnTmdb;
 
@@ -373,6 +372,7 @@ public class MovieFragment extends RefreshableAppBarFragment
     if (cursor == null || !cursor.moveToFirst()) return;
     loaded = true;
 
+    final long traktId = Cursors.getLong(cursor, MovieColumns.TRAKT_ID);
     final String title = Cursors.getString(cursor, MovieColumns.TITLE);
     if (title != null && !title.equals(movieTitle)) {
       movieTitle = title;
@@ -459,6 +459,12 @@ public class MovieFragment extends RefreshableAppBarFragment
     final String imdbId = Cursors.getString(cursor, MovieColumns.IMDB_ID);
     final int tmdbId = Cursors.getInt(cursor, MovieColumns.TMDB_ID);
 
+    viewOnTrakt.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        Intents.openUrl(getContext(), TraktUtils.getTraktMovieUrl(traktId));
+      }
+    });
+
     final boolean hasImdbId = !TextUtils.isEmpty(imdbId);
     if (hasImdbId) {
       viewOnImdb.setVisibility(View.VISIBLE);
@@ -480,14 +486,6 @@ public class MovieFragment extends RefreshableAppBarFragment
       });
     } else {
       viewOnTmdb.setVisibility(View.GONE);
-    }
-
-    if (hasImdbId || tmdbId > 0) {
-      viewOnTitle.setVisibility(View.VISIBLE);
-      viewOnContainer.setVisibility(View.VISIBLE);
-    } else {
-      viewOnTitle.setVisibility(View.GONE);
-      viewOnContainer.setVisibility(View.GONE);
     }
 
     if (getToolbar() != null) {

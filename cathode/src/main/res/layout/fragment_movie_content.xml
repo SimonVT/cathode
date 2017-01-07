@@ -112,15 +112,23 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:text="@string/title_view_on"
-      android:visibility="gone"
       style="@style/Widget.InfoTitle.ReducedPadding.ReducedMargin"/>
 
   <LinearLayout
       android:id="@+id/viewOnContainer"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:orientation="vertical"
-      android:visibility="gone">
+      android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/viewOnTrakt"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/selectableItemBackground"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:text="@string/info_trakt"
+        style="@style/Widget.InfoText"/>
 
     <TextView
         android:id="@+id/viewOnImdb"
@@ -129,6 +137,7 @@
         android:background="?attr/selectableItemBackground"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
+        android:visibility="gone"
         android:text="@string/info_imdb"
         style="@style/Widget.InfoText"/>
 
@@ -139,6 +148,7 @@
         android:background="?attr/selectableItemBackground"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
+        android:visibility="gone"
         android:text="@string/info_tmdb"
         style="@style/Widget.InfoText"/>
   </LinearLayout>

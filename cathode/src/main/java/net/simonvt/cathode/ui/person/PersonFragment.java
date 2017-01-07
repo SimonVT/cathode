@@ -36,6 +36,7 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.api.util.TraktUtils;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.PersonTaskScheduler;
@@ -45,6 +46,7 @@ import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.util.Ids;
+import net.simonvt.cathode.util.Intents;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public class PersonFragment extends RefreshableAppBarFragment {
@@ -100,6 +102,8 @@ public class PersonFragment extends RefreshableAppBarFragment {
 
   @BindView(R.id.camera_header) LinearLayout cameraHeader;
   @BindView(R.id.camera_items) LinearLayout cameraItems;
+
+  @BindView(R.id.viewOnTrakt) View viewOnTrakt;
 
   private NavigationListener navigationListener;
 
@@ -186,7 +190,7 @@ public class PersonFragment extends RefreshableAppBarFragment {
     navigationListener.onDisplayPersonCredit(personId, Department.CAMERA);
   }
 
-  private void updateView(Person person) {
+  private void updateView(final Person person) {
     this.person = person;
     if (person != null && getView() != null) {
       setTitle(person.getName());
@@ -227,6 +231,12 @@ public class PersonFragment extends RefreshableAppBarFragment {
       updateItems(writingHeader, writingItems, person.getCredits().getWriting());
       updateItems(soundHeader, soundItems, person.getCredits().getSound());
       updateItems(cameraHeader, cameraItems, person.getCredits().getCamera());
+
+      viewOnTrakt.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          Intents.openUrl(getContext(), TraktUtils.getTraktPersonUrl(person.getTraktId()));
+        }
+      });
 
       if (TraktTimestamps.shouldSyncPerson(person.getLastSync())) {
         personScheduler.sync(personId);
