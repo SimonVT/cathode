@@ -92,9 +92,9 @@ public class DashboardUpcomingShowsAdapter
         final int position = holder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
           Cursor cursor = getCursor(position);
-          final String title = Cursors.getString(cursor, ShowColumns.TITLE);
-          final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
-          callback.onDisplayShow(holder.getItemId(), title, overview);
+          final long episodeId = Cursors.getLong(cursor, COLUMN_EPISODE_ID);
+          final String showTitle = Cursors.getString(cursor, ShowColumns.TITLE);
+          callback.onDisplayEpisode(episodeId, showTitle);
         }
       }
     });
