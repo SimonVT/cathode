@@ -18,9 +18,10 @@ package net.simonvt.cathode.scheduler;
 
 import android.content.ContentValues;
 import android.content.Context;
+import javax.inject.Inject;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
-import net.simonvt.cathode.provider.PersonWrapper;
+import net.simonvt.cathode.provider.PersonDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.People;
 import net.simonvt.cathode.remote.sync.people.SyncPersonMovieCredits;
 import net.simonvt.cathode.remote.sync.people.SyncPersonShowCredits;
@@ -28,6 +29,8 @@ import net.simonvt.cathode.tmdb.api.people.SyncPersonBackdrop;
 import net.simonvt.cathode.tmdb.api.people.SyncPersonHeadshot;
 
 public class PersonTaskScheduler extends BaseTaskScheduler {
+
+  @Inject transient PersonDatabaseHelper personHelper;
 
   public PersonTaskScheduler(Context context) {
     super(context);
@@ -44,8 +47,8 @@ public class PersonTaskScheduler extends BaseTaskScheduler {
         values.put(PersonColumns.LAST_SYNC, System.currentTimeMillis());
         context.getContentResolver().update(People.withId(personId), values, null, null);
 
-        final long traktId = PersonWrapper.getTraktId(context.getContentResolver(), personId);
-        final int tmdbId = PersonWrapper.getTmdbId(context.getContentResolver(), personId);
+        final long traktId = personHelper.getTraktId(personId);
+        final int tmdbId = personHelper.getTmdbId(personId);
 
         queue(new SyncPersonHeadshot(tmdbId));
         queue(new SyncPersonBackdrop(tmdbId));

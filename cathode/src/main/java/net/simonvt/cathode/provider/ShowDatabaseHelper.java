@@ -41,7 +41,7 @@ public final class ShowDatabaseHelper {
     if (instance == null) {
       synchronized (ShowDatabaseHelper.class) {
         if (instance == null) {
-          instance = new ShowDatabaseHelper(context);
+          instance = new ShowDatabaseHelper(context.getApplicationContext());
         }
       }
     }

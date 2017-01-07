@@ -45,7 +45,7 @@ public final class MovieDatabaseHelper {
     if (instance == null) {
       synchronized (MovieDatabaseHelper.class) {
         if (instance == null) {
-          instance = new MovieDatabaseHelper(context);
+          instance = new MovieDatabaseHelper(context.getApplicationContext());
         }
       }
     }

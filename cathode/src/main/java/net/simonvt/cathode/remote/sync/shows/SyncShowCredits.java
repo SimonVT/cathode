@@ -32,7 +32,7 @@ import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCrewColumns;
-import net.simonvt.cathode.provider.PersonWrapper;
+import net.simonvt.cathode.provider.PersonDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCast;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCrew;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
@@ -46,6 +46,7 @@ public class SyncShowCredits extends CallJob<People> {
   @Inject transient ShowsService showsService;
 
   @Inject transient ShowDatabaseHelper showHelper;
+  @Inject transient PersonDatabaseHelper personHelper;
 
   private long traktId;
 
@@ -77,7 +78,7 @@ public class SyncShowCredits extends CallJob<People> {
     if (characters != null) {
       for (CastMember character : characters) {
         Person person = character.getPerson();
-        final long personId = PersonWrapper.updateOrInsert(getContentResolver(), person);
+        final long personId = personHelper.updateOrInsert(person);
 
         ContentProviderOperation op = ContentProviderOperation.newInsert(ShowCast.SHOW_CAST)
             .withValue(ShowCastColumns.SHOW_ID, showId)
@@ -116,7 +117,7 @@ public class SyncShowCredits extends CallJob<People> {
     if (crew != null) {
       for (CrewMember member : crew) {
         Person person = member.getPerson();
-        final long personId = PersonWrapper.updateOrInsert(getContentResolver(), person);
+        final long personId = personHelper.updateOrInsert(person);
 
         ContentProviderOperation op = ContentProviderOperation.newInsert(ShowCrew.SHOW_CREW)
             .withValue(ShowCrewColumns.SHOW_ID, showId)

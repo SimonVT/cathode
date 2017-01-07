@@ -33,7 +33,7 @@ import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCrewColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
-import net.simonvt.cathode.provider.PersonWrapper;
+import net.simonvt.cathode.provider.PersonDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieCast;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieCrew;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
@@ -46,6 +46,7 @@ public class SyncMovieCredits extends CallJob<People> {
   @Inject transient MoviesService moviesService;
 
   @Inject transient MovieDatabaseHelper movieHelper;
+  @Inject transient PersonDatabaseHelper personHelper;
 
   private long traktId;
 
@@ -83,7 +84,7 @@ public class SyncMovieCredits extends CallJob<People> {
     if (cast != null) {
       for (CastMember castMember : cast) {
         Person person = castMember.getPerson();
-        final long personId = PersonWrapper.updateOrInsert(getContentResolver(), person);
+        final long personId = personHelper.updateOrInsert(person);
 
         op = ContentProviderOperation.newInsert(MovieCast.MOVIE_CAST)
             .withValue(MovieCastColumns.MOVIE_ID, movieId)
@@ -124,7 +125,7 @@ public class SyncMovieCredits extends CallJob<People> {
     }
     for (CrewMember crewMember : crew) {
       Person person = crewMember.getPerson();
-      final long personId = PersonWrapper.updateOrInsert(getContentResolver(), person);
+      final long personId = personHelper.updateOrInsert(person);
 
       ContentProviderOperation op = ContentProviderOperation.newInsert(MovieCrew.MOVIE_CREW)
           .withValue(MovieCrewColumns.MOVIE_ID, movieId)

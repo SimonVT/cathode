@@ -34,7 +34,7 @@ public class UserDatabaseHelper {
     if (instance == null) {
       synchronized (UserDatabaseHelper.class) {
         if (instance == null) {
-          instance = new UserDatabaseHelper(context);
+          instance = new UserDatabaseHelper(context.getApplicationContext());
         }
       }
     }

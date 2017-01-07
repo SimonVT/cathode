@@ -37,7 +37,7 @@ public final class SeasonDatabaseHelper {
     if (instance == null) {
       synchronized (SeasonDatabaseHelper.class) {
         if (instance == null) {
-          instance = new SeasonDatabaseHelper(context);
+          instance = new SeasonDatabaseHelper(context.getApplicationContext());
         }
       }
     }

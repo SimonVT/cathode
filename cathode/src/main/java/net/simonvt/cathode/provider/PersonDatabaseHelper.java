@@ -18,18 +18,38 @@ package net.simonvt.cathode.provider;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.People;
 import net.simonvt.schematic.Cursors;
 
-public final class PersonWrapper {
+public final class PersonDatabaseHelper {
 
-  private PersonWrapper() {
+  private static volatile PersonDatabaseHelper instance;
+
+  public static PersonDatabaseHelper getInstance(Context context) {
+    if (instance == null) {
+      synchronized (PersonDatabaseHelper.class) {
+        if (instance == null) {
+          instance = new PersonDatabaseHelper(context.getApplicationContext());
+        }
+      }
+    }
+    return instance;
   }
 
-  public static long getId(ContentResolver resolver, long traktId) {
+  private Context context;
+
+  private ContentResolver resolver;
+
+  private PersonDatabaseHelper(Context context) {
+    this.context = context;
+    resolver = context.getContentResolver();
+  }
+
+  public long getId(long traktId) {
     Cursor c = resolver.query(People.PEOPLE, new String[] {
         PersonColumns.ID,
     }, PersonColumns.TRAKT_ID + "=?", new String[] {
@@ -43,7 +63,7 @@ public final class PersonWrapper {
     return id;
   }
 
-  public static long getIdFromTmdb(ContentResolver resolver, int tmdbId) {
+  public long getIdFromTmdb(int tmdbId) {
     Cursor c = resolver.query(People.PEOPLE, new String[] {
         PersonColumns.ID,
     }, PersonColumns.TMDB_ID + "=?", new String[] {
@@ -57,7 +77,7 @@ public final class PersonWrapper {
     return id;
   }
 
-  public static long getTraktId(ContentResolver resolver, long personId) {
+  public long getTraktId(long personId) {
     Cursor c = resolver.query(People.withId(personId), new String[] {
         PersonColumns.TRAKT_ID,
     }, null, null, null);
@@ -69,7 +89,7 @@ public final class PersonWrapper {
     return id;
   }
 
-  public static int getTmdbId(ContentResolver resolver, long personId) {
+  public int getTmdbId(long personId) {
     Cursor c = resolver.query(People.withId(personId), new String[] {
         PersonColumns.TMDB_ID,
     }, null, null, null);
@@ -81,7 +101,7 @@ public final class PersonWrapper {
     return id;
   }
 
-  public static long createPerson(ContentResolver resolver, long traktId) {
+  public long createPerson(long traktId) {
     ContentValues values = new ContentValues();
     values.put(PersonColumns.TRAKT_ID, traktId);
     values.put(PersonColumns.NEEDS_SYNC, true);
@@ -89,9 +109,9 @@ public final class PersonWrapper {
     return People.getId(resolver.insert(People.PEOPLE, values));
   }
 
-  public static long updateOrInsert(ContentResolver resolver, Person person) {
+  public long updateOrInsert(Person person) {
     final long traktId = person.getIds().getTrakt();
-    long personId = getId(resolver, traktId);
+    long personId = getId(traktId);
 
     if (personId == -1L) {
       personId = People.getId(resolver.insert(People.PEOPLE, getValues(person)));

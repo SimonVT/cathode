@@ -32,7 +32,7 @@ import net.simonvt.cathode.api.service.PeopleService;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCrewColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
-import net.simonvt.cathode.provider.PersonWrapper;
+import net.simonvt.cathode.provider.PersonDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCast;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCrew;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
@@ -44,6 +44,7 @@ public class SyncPersonShowCredits extends CallJob<Credits> {
 
   @Inject transient PeopleService peopleService;
   @Inject transient ShowDatabaseHelper showHelper;
+  @Inject transient PersonDatabaseHelper personHelper;
 
   private long traktId;
 
@@ -65,7 +66,7 @@ public class SyncPersonShowCredits extends CallJob<Credits> {
 
   @Override public void handleResponse(Credits credits) {
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
-    final long personId = PersonWrapper.getId(getContentResolver(), traktId);
+    final long personId = personHelper.getId(traktId);
 
     Cursor oldCastCursor = getContentResolver().query(ShowCast.withPerson(personId), new String[] {
         Tables.SHOW_CAST + "." + ShowCastColumns.ID, ShowCastColumns.SHOW_ID,

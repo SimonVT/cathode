@@ -29,7 +29,7 @@ public final class SearchDatabaseHelper {
     if (instance == null) {
       synchronized (SearchDatabaseHelper.class) {
         if (instance == null) {
-          instance = new SearchDatabaseHelper(context);
+          instance = new SearchDatabaseHelper(context.getApplicationContext());
         }
       }
     }

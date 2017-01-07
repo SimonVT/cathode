@@ -21,18 +21,20 @@ import com.uwetrottmann.tmdb2.entities.Image;
 import com.uwetrottmann.tmdb2.entities.PersonImages;
 import com.uwetrottmann.tmdb2.services.PeopleService;
 import javax.inject.Inject;
-import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.images.ImageType;
-import net.simonvt.cathode.tmdb.api.TmdbCallJob;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
-import net.simonvt.cathode.provider.PersonWrapper;
+import net.simonvt.cathode.provider.PersonDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.People;
+import net.simonvt.cathode.tmdb.api.TmdbCallJob;
 import retrofit2.Call;
 import timber.log.Timber;
 
 public class SyncPersonHeadshot extends TmdbCallJob<PersonImages> {
 
   @Inject transient PeopleService peopleService;
+
+  @Inject transient PersonDatabaseHelper personHelper;
 
   private int tmdbId;
 
@@ -53,7 +55,7 @@ public class SyncPersonHeadshot extends TmdbCallJob<PersonImages> {
   }
 
   @Override public void handleResponse(PersonImages images) {
-    final long personId = PersonWrapper.getIdFromTmdb(getContentResolver(), tmdbId);
+    final long personId = personHelper.getIdFromTmdb(tmdbId);
 
     ContentValues values = new ContentValues();
 

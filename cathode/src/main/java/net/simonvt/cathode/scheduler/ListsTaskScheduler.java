@@ -26,7 +26,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ListWrapper;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
-import net.simonvt.cathode.provider.PersonWrapper;
+import net.simonvt.cathode.provider.PersonDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
@@ -53,6 +53,7 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
   @Inject SeasonDatabaseHelper seasonHelper;
   @Inject EpisodeDatabaseHelper episodeHelper;
   @Inject MovieDatabaseHelper movieHelper;
+  @Inject transient PersonDatabaseHelper personHelper;
 
   public ListsTaskScheduler(Context context) {
     super(context);
@@ -179,8 +180,7 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
           }
 
           case DatabaseContract.ItemType.PERSON: {
-            final long personTraktId =
-                PersonWrapper.getTraktId(context.getContentResolver(), itemId);
+            final long personTraktId = personHelper.getTraktId(itemId);
 
             if (add) {
               queue(new AddPerson(listTraktId, personTraktId));

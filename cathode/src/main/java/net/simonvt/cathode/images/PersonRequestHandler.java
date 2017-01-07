@@ -28,7 +28,7 @@ import com.uwetrottmann.tmdb2.services.PeopleService;
 import java.io.IOException;
 import javax.inject.Inject;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
-import net.simonvt.cathode.provider.PersonWrapper;
+import net.simonvt.cathode.provider.PersonDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.People;
 import net.simonvt.cathode.tmdb.TmdbRateLimiter;
 import net.simonvt.cathode.util.Closeables;
@@ -40,6 +40,8 @@ public class PersonRequestHandler extends ItemRequestHandler {
 
   @Inject PeopleService peopleService;
 
+  @Inject transient PersonDatabaseHelper personHelper;
+
   public PersonRequestHandler(Context context, ImageDownloader downloader) {
     super(context, downloader);
   }
@@ -49,7 +51,7 @@ public class PersonRequestHandler extends ItemRequestHandler {
   }
 
   @Override protected int getTmdbId(long id) {
-    return PersonWrapper.getTmdbId(context.getContentResolver(), id);
+    return personHelper.getTmdbId(id);
   }
 
   @Override protected String getCachedPath(ImageType imageType, long id) {

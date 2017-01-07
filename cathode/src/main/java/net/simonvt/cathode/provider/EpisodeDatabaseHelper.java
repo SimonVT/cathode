@@ -35,7 +35,7 @@ public final class EpisodeDatabaseHelper {
     if (instance == null) {
       synchronized (EpisodeDatabaseHelper.class) {
         if (instance == null) {
-          instance = new EpisodeDatabaseHelper(context);
+          instance = new EpisodeDatabaseHelper(context.getApplicationContext());
         }
       }
     }
@@ -251,8 +251,7 @@ public final class EpisodeDatabaseHelper {
           DatabaseContract.ShowColumns.LAST_WATCHED_AT,
       }, null, null, null);
       c.moveToFirst();
-      final long lastWatched =
-          Cursors.getLong(c, DatabaseContract.ShowColumns.LAST_WATCHED_AT);
+      final long lastWatched = Cursors.getLong(c, DatabaseContract.ShowColumns.LAST_WATCHED_AT);
       c.close();
       if (watchedAt > lastWatched) {
         cv = new ContentValues();

@@ -36,7 +36,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ListWrapper;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
-import net.simonvt.cathode.provider.PersonWrapper;
+import net.simonvt.cathode.provider.PersonDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
@@ -71,6 +71,7 @@ public class SyncList extends CallJob<List<ListItem>> {
   @Inject transient SeasonDatabaseHelper seasonHelper;
   @Inject transient EpisodeDatabaseHelper episodeHelper;
   @Inject transient MovieDatabaseHelper movieHelper;
+  @Inject transient PersonDatabaseHelper personHelper;
 
   private long traktId;
 
@@ -267,9 +268,9 @@ public class SyncList extends CallJob<List<ListItem>> {
 
         case PERSON: {
           Person person = item.getPerson();
-          long personId = PersonWrapper.getId(getContentResolver(), person.getIds().getTrakt());
+          long personId = personHelper.getId(person.getIds().getTrakt());
           if (personId == -1L) {
-            personId = PersonWrapper.updateOrInsert(getContentResolver(), person);
+            personId = personHelper.updateOrInsert(person);
             queue(new SyncPerson(person.getIds().getTrakt()));
           }
 

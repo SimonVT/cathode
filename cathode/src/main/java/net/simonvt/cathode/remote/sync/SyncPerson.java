@@ -20,13 +20,14 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.PeopleService;
-import net.simonvt.cathode.provider.PersonWrapper;
+import net.simonvt.cathode.provider.PersonDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import retrofit2.Call;
 
 public class SyncPerson extends CallJob<Person> {
 
   @Inject transient PeopleService peopleService;
+  @Inject transient PersonDatabaseHelper personHelper;
 
   private long traktId;
 
@@ -47,6 +48,6 @@ public class SyncPerson extends CallJob<Person> {
   }
 
   @Override public void handleResponse(Person person) {
-    PersonWrapper.updateOrInsert(getContentResolver(), person);
+    personHelper.updateOrInsert(person);
   }
 }

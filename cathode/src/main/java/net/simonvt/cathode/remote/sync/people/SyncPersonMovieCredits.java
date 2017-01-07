@@ -31,7 +31,7 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCrewColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
-import net.simonvt.cathode.provider.PersonWrapper;
+import net.simonvt.cathode.provider.PersonDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieCast;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieCrew;
 import net.simonvt.cathode.remote.CallJob;
@@ -42,6 +42,7 @@ public class SyncPersonMovieCredits extends CallJob<Credits> {
 
   @Inject transient PeopleService peopleService;
   @Inject transient MovieDatabaseHelper movieHelper;
+  @Inject transient PersonDatabaseHelper personHelper;
 
   private long traktId;
 
@@ -63,7 +64,7 @@ public class SyncPersonMovieCredits extends CallJob<Credits> {
 
   @Override public void handleResponse(Credits credits) {
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
-    final long personId = PersonWrapper.getId(getContentResolver(), traktId);
+    final long personId = personHelper.getId(traktId);
 
     Cursor oldCastCursor = getContentResolver().query(MovieCast.withPerson(personId), new String[] {
         Tables.MOVIE_CAST + "." + MovieCastColumns.ID, MovieCastColumns.MOVIE_ID,
