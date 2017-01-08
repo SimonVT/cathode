@@ -127,10 +127,15 @@ public class NotificationService extends IntentService {
             SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED),
             SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.NOTIFICATION_DISMISSED),
         },
-        "(" + SqlColumn.table(Tables.SHOWS).column(ShowColumns.WATCHED_COUNT) + ">0 OR " + SqlColumn
-            .table(Tables.SHOWS)
-            .column(ShowColumns.IN_WATCHLIST) + "=1)" + " AND (" + SqlColumn.table(Tables.EPISODES)
-            .column(EpisodeColumns.FIRST_AIRED) + ">?)", new String[] {
+        "(" + SqlColumn.table(Tables.SHOWS).column(ShowColumns.WATCHED_COUNT)
+            + ">0 OR "
+            + SqlColumn.table(Tables.SHOWS).column(ShowColumns.IN_WATCHLIST)
+            + "=1) AND "
+            + SqlColumn.table(Tables.SHOWS).column(ShowColumns.HIDDEN_CALENDAR)
+            + "=0 AND ("
+            + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED)
+            + ">?)",
+        new String[] {
             String.valueOf(currentTime - 6 * DateUtils.HOUR_IN_MILLIS)
         }, Shows.SORT_NEXT_EPISODE);
 

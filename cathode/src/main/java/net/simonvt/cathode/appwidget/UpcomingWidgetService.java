@@ -102,12 +102,14 @@ public class UpcomingWidgetService extends RemoteViewsService {
           + SqlColumn.table(Tables.SHOWS).column(ShowColumns.WATCHED_COUNT)
           + ">0 OR "
           + SqlColumn.table(Tables.SHOWS).column(ShowColumns.IN_WATCHLIST)
-          + "=1)"
-          + " AND ("
+          + "=1) AND "
+          + SqlColumn.table(Tables.SHOWS).column(ShowColumns.HIDDEN_CALENDAR)
+          + "=0 AND ("
           + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED)
           + ">? AND "
           + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED)
-          + "<?)", new String[] {
+          + "<?)",
+          new String[] {
           String.valueOf(currentTime - DateUtils.HOUR_IN_MILLIS), String.valueOf(upcomingTime)
       }, ProviderSchematic.Shows.SORT_NEXT_EPISODE);
 
