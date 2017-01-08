@@ -18,6 +18,7 @@ package net.simonvt.cathode.provider;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.pm.ProviderInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import net.simonvt.cathode.BuildConfig;
@@ -33,10 +34,11 @@ import net.simonvt.schematic.Cursors;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowContentResolver;
+import org.robolectric.util.ContentProviderController;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -44,13 +46,13 @@ import static com.google.common.truth.Truth.assertThat;
 @Config(application = CathodeApp.class, constants = BuildConfig.class, sdk = 21,
     packageName = "net.simonvt.cathode") public class ShowDatabaseHelperTest {
 
-  CathodeProvider provider;
+  ContentProviderController<CathodeProvider> provider;
   ContentResolver contentResolver = RuntimeEnvironment.application.getContentResolver();
 
   @Before public void setUp() {
-    provider = new CathodeProvider();
-    provider.onCreate();
-    ShadowContentResolver.registerProvider(BuildConfig.PROVIDER_AUTHORITY, provider);
+    ProviderInfo info = new ProviderInfo();
+    info.authority = BuildConfig.PROVIDER_AUTHORITY;
+    provider = Robolectric.buildContentProvider(CathodeProvider.class).create(info);
   }
 
   @Test public void getNextEpisodeId() throws Exception {
