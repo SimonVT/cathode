@@ -22,7 +22,7 @@ allprojects {
 ext {
   enableCrashlytics = false
   versionMajor = 5
-  versionMinor = 0
+  versionMinor = 1
   versionPatch = 0
 
   versionCode = versionMajor * 10000 + versionMinor * 100 + versionPatch
