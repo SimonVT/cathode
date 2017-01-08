@@ -43,10 +43,6 @@ import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.PersonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
-import net.simonvt.cathode.ui.listener.EpisodeClickListener;
-import net.simonvt.cathode.ui.listener.MovieClickListener;
-import net.simonvt.cathode.ui.listener.SeasonClickListener;
-import net.simonvt.cathode.ui.shows.ShowClickListener;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
@@ -54,7 +50,17 @@ import net.simonvt.schematic.Cursors;
 
 public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolder> {
 
-  public interface OnRemoveItemListener {
+  interface ListListener {
+
+    void onShowClick(long showId, String title, String overview);
+
+    void onSeasonClick(long showId, long seasonId, String showTitle, int seasonNumber);
+
+    void onEpisodeClick(long id);
+
+    void onMovieClicked(long movieId, String title, String overview);
+
+    void onPersonClick(long personId);
 
     void onRemoveItem(int position, long id);
   }
@@ -64,32 +70,11 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
   @Inject EpisodeTaskScheduler episodeScheduler;
   @Inject PersonTaskScheduler personScheduler;
 
-  private ShowClickListener showListener;
+  ListListener listener;
 
-  private SeasonClickListener seasonListener;
-
-  private EpisodeClickListener episodeListener;
-
-  private MovieClickListener movieListener;
-
-  private OnRemoveItemListener removeListener;
-
-  public ListAdapter(Context context, ShowClickListener showListener,
-      SeasonClickListener seasonListener, EpisodeClickListener episodeListener,
-      MovieClickListener movieListener, OnRemoveItemListener removeListener) {
-    this(context, showListener, seasonListener, episodeListener, movieListener, removeListener,
-        null);
-  }
-
-  public ListAdapter(Context context, ShowClickListener showListener,
-      SeasonClickListener seasonListener, EpisodeClickListener episodeListener,
-      MovieClickListener movieListener, OnRemoveItemListener removeListener, Cursor cursor) {
-    super(context, cursor);
-    this.showListener = showListener;
-    this.seasonListener = seasonListener;
-    this.episodeListener = episodeListener;
-    this.movieListener = movieListener;
-    this.removeListener = removeListener;
+  public ListAdapter(Context context, ListListener listener) {
+    super(context);
+    this.listener = listener;
 
     CathodeApp.inject(context, this);
   }
@@ -120,7 +105,7 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
             final long itemId = Cursors.getLong(cursor, ListItemColumns.ITEM_ID);
             final String title = Cursors.getString(cursor, ShowColumns.TITLE);
             final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
-            showListener.onShowClick(itemId, title, overview);
+            listener.onShowClick(itemId, title, overview);
           }
         }
       });
@@ -139,7 +124,7 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
             final String showTitle = Cursors.getString(cursor, "seasonShowTitle");
             final int seasonNumber = Cursors.getInt(cursor, SeasonColumns.SEASON);
             final long seasonId = Cursors.getLong(cursor, ListItemColumns.ITEM_ID);
-            seasonListener.onSeasonClick(showId, seasonId, showTitle, seasonNumber);
+            listener.onSeasonClick(showId, seasonId, showTitle, seasonNumber);
           }
         }
       });
@@ -155,7 +140,7 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
           if (position != RecyclerView.NO_POSITION) {
             Cursor cursor = getCursor(position);
             final long itemId = Cursors.getLong(cursor, ListItemColumns.ITEM_ID);
-            episodeListener.onEpisodeClick(itemId);
+            listener.onEpisodeClick(itemId);
           }
         }
       });
@@ -172,14 +157,25 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
             final long itemId = Cursors.getLong(cursor, ListItemColumns.ITEM_ID);
             final String title = Cursors.getString(cursor, MovieColumns.TITLE);
             final String overview = Cursors.getString(cursor, MovieColumns.OVERVIEW);
-            movieListener.onMovieClicked(itemId, title, overview);
+            listener.onMovieClicked(itemId, title, overview);
           }
         }
       });
     } else {
-      View view =
-          LayoutInflater.from(getContext()).inflate(R.layout.row_list_person, parent, false);
-      holder = new PersonViewHolder(view);
+      View v = LayoutInflater.from(getContext()).inflate(R.layout.row_list_person, parent, false);
+      final PersonViewHolder personHolder = new PersonViewHolder(v);
+      holder = personHolder;
+
+      v.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          final int position = personHolder.getAdapterPosition();
+          if (position != RecyclerView.NO_POSITION) {
+            Cursor cursor = getCursor(position);
+            final long itemId = Cursors.getLong(cursor, ListItemColumns.ITEM_ID);
+            listener.onPersonClick(itemId);
+          }
+        }
+      });
     }
 
     final ListViewHolder finalHolder = holder;
@@ -196,7 +192,7 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
         if (position != RecyclerView.NO_POSITION) {
           switch (action) {
             case R.id.action_list_remove:
-              removeListener.onRemoveItem(position, finalHolder.getItemId());
+              listener.onRemoveItem(position, finalHolder.getItemId());
               break;
           }
         }

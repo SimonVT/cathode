@@ -47,17 +47,12 @@ import net.simonvt.cathode.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
-import net.simonvt.cathode.ui.listener.EpisodeClickListener;
-import net.simonvt.cathode.ui.listener.MovieClickListener;
-import net.simonvt.cathode.ui.listener.SeasonClickListener;
-import net.simonvt.cathode.ui.shows.ShowClickListener;
 import net.simonvt.cathode.util.SqlCoalesce;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.schematic.Cursors;
 
 public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHolder>
-    implements ShowClickListener, SeasonClickListener, EpisodeClickListener, MovieClickListener,
-    ListAdapter.OnRemoveItemListener {
+    implements ListAdapter.ListListener {
 
   public static final String TAG = "net.simonvt.cathode.ui.lists.ListFragment";
 
@@ -183,6 +178,10 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
     navigationListener.onDisplayMovie(movieId, title, overview);
   }
 
+  @Override public void onPersonClick(long personId) {
+    navigationListener.onDisplayPerson(personId);
+  }
+
   @Override public void onRemoveItem(int position, long id) {
     Loader loader = getLoaderManager().getLoader(LOADER_LIST_ITEMS);
     if (loader != null) {
@@ -201,7 +200,7 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
 
   private void setCursor(SimpleCursor cursor) {
     if (adapter == null) {
-      adapter = new ListAdapter(getActivity(), this, this, this, this, this);
+      adapter = new ListAdapter(getActivity(), this);
       setAdapter(adapter);
     }
 
