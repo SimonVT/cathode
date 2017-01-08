@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'checkstyle'
-apply plugin: 'android-apt'
 
 dependencies {
   compile parent.libraries.gson
@@ -8,7 +7,7 @@ dependencies {
   compile parent.libraries.timber
 
   compile parent.libraries.dagger
-  apt parent.libraries.daggerCompiler
+  annotationProcessor parent.libraries.daggerCompiler
   compile parent.libraries.retrofit
   compile parent.libraries.retrofitGson
   compile parent.libraries.okhttp
