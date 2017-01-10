@@ -202,8 +202,10 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
     final int episodeSeasonNumber = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episodeNumber = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
 
-    final String episodeTitle =
-        DataHelper.getEpisodeTitle(getContext(), cursor, episodeSeasonNumber, episodeNumber);
+    String episodeTitle = null;
+    if (episodeSeasonNumber > 0) {
+      episodeTitle = DataHelper.getEpisodeTitle(getContext(), cursor, episodeSeasonNumber, episodeNumber);
+    }
 
     holder.title.setText(showTitle);
 
