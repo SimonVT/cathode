@@ -71,7 +71,7 @@ public class ShowOffsetDialog extends DialogFragment {
     int selectedPosition = 0;
 
     for (int i = 0; i < length; i++) {
-      final String value = values[i];
+      final String value = values[i].replace("+", "");
       final int intValue = Integer.valueOf(value);
       if (intValue == selected) {
         selectedPosition = i;
@@ -82,8 +82,9 @@ public class ShowOffsetDialog extends DialogFragment {
     return new AlertDialog.Builder(getActivity()).setTitle(R.string.preference_shows_offset)
         .setSingleChoiceItems(values, selectedPosition, new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
-
-            listener.onShowOffsetSelected(Integer.valueOf(values[which]));
+            String val = values[which];
+            val = val.replace("+", "");
+            listener.onShowOffsetSelected(Integer.valueOf(val));
 
             dialog.dismiss();
           }
