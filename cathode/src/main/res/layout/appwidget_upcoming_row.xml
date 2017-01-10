@@ -50,7 +50,7 @@
           android:layout_marginBottom="4dp"
           android:singleLine="true"
           android:textAppearance="?android:attr/textAppearanceMedium"
-          android:textColor="?android:attr/textColorSecondary"
+          android:textColor="@color/appwidget_item_title"
           android:textSize="14sp"
           tools:text="Title"/>
 
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:singleLine="true"
-            android:textColor="?android:attr/textColorHint"
+            android:textColor="@color/appwidget_item_subtitle"
             android:textSize="12sp"
             tools:text="1x07 Awesome new episode"/>
 
@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:singleLine="true"
-            android:textColor="?android:attr/textColorHint"
+            android:textColor="@color/appwidget_item_subtitle"
             android:textSize="12sp"
             tools:text="May 20."/>
       </LinearLayout>

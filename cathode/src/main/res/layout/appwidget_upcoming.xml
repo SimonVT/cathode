@@ -54,7 +54,7 @@
           android:layout_height="wrap_content"
           android:layout_gravity="center_vertical"
           android:textAppearance="?android:attr/textAppearance"
-          android:textColor="?android:attr/textColorPrimaryInverse"
+          android:textColor="@color/appwidget_toolbar_title"
           android:textSize="20sp"
           android:text="@string/appwidget_header_upcoming"/>
     </LinearLayout>
@@ -73,5 +73,6 @@
       android:layout_height="0dp"
       android:layout_weight="1"
       android:gravity="center"
+      android:textColor="@color/appwidget_item_subtitle"
       android:text="@string/appwidget_upcoming_empty"/>
 </LinearLayout>

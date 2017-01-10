@@ -19,4 +19,5 @@
     android:layout_height="match_parent"
     android:background="@android:drawable/screen_background_dark_transparent"
     android:gravity="center"
+    android:textColor="@android:color/white"
     android:text="@string/loading"/>

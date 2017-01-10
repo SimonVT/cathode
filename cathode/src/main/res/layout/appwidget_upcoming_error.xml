@@ -52,7 +52,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:textAppearance="?android:attr/textAppearance"
-          android:textColor="?android:attr/textColorPrimaryInverse"
+          android:textColor="@color/appwidget_item_subtitle"
           android:textSize="20sp"
           android:text="@string/appwidget_header_upcoming"/>
     </LinearLayout>

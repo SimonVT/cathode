@@ -53,4 +53,8 @@
   <color name="commentIconTint">#FF8C8C8C</color>
   <color name="commentLikedTint">@android:color/holo_blue_dark</color>
 
+  <color name="appwidget_toolbar_title">#FFFFFFFF</color>
+  <color name="appwidget_item_title">#DE000000</color>
+  <color name="appwidget_item_subtitle">#8A000000</color>
+
 </resources>
