@@ -20,6 +20,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import java.util.ArrayList;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.ui.comments.CommentsFragment;
 import net.simonvt.cathode.ui.show.EpisodeFragment;
 import net.simonvt.cathode.ui.show.ShowFragment;
 import net.simonvt.cathode.util.FragmentStack.StackEntry;
@@ -70,6 +72,25 @@ public class EpisodeDetailsActivity extends NavigationListenerActivity {
     StackEntry showEntry = new StackEntry(ShowFragment.class, ShowFragment.getTag(showId),
         ShowFragment.getArgs(showId, showTitle, showOverview, LibraryType.WATCHED));
     stack.add(showEntry);
+
+    Intent i = new Intent(this, HomeActivity.class);
+    i.setAction(HomeActivity.ACTION_REPLACE_STACK);
+    i.putParcelableArrayListExtra(HomeActivity.EXTRA_STACK_ENTRIES, stack);
+
+    startActivity(i);
+    finish();
+  }
+
+  @Override public void onDisplayComments(ItemType type, long itemId) {
+    ArrayList<StackEntry> stack = new ArrayList<>();
+
+    StackEntry episodeEntry = new StackEntry(EpisodeFragment.class, EpisodeFragment.getTag(id),
+        EpisodeFragment.getArgs(id, showTitle));
+    stack.add(episodeEntry);
+
+    StackEntry commentsEntry = new StackEntry(CommentsFragment.class, CommentsFragment.TAG,
+        CommentsFragment.getArgs(ItemType.EPISODE, itemId));
+    stack.add(commentsEntry);
 
     Intent i = new Intent(this, HomeActivity.class);
     i.setAction(HomeActivity.ACTION_REPLACE_STACK);
