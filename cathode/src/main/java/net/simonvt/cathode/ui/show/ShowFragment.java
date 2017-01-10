@@ -559,7 +559,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
     final String airDay = Cursors.getString(cursor, ShowColumns.AIR_DAY);
     final String network = Cursors.getString(cursor, ShowColumns.NETWORK);
     final String certification = Cursors.getString(cursor, ShowColumns.CERTIFICATION);
-    final ShowStatus status = ShowStatus.fromValue(Cursors.getString(cursor, ShowColumns.STATUS));
+    final String showStatus = Cursors.getString(cursor, ShowColumns.STATUS);
     final String backdropUri = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.BACKDROP, showId);
     setBackdrop(backdropUri, true);
     showOverview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
@@ -599,26 +599,30 @@ public class ShowFragment extends RefreshableAppBarFragment {
     this.airTime.setText(airTimeString);
 
     String statusString = null;
-    switch (status) {
-      case ENDED:
-        statusString = getString(R.string.show_status_ended);
-        break;
+    if (showStatus != null) {
+      final ShowStatus status = ShowStatus.fromValue(showStatus);
 
-      case RETURNING:
-        statusString = getString(R.string.show_status_returning);
-        break;
+      switch (status) {
+        case ENDED:
+          statusString = getString(R.string.show_status_ended);
+          break;
 
-      case CANCELED:
-        statusString = getString(R.string.show_status_canceled);
-        break;
+        case RETURNING:
+          statusString = getString(R.string.show_status_returning);
+          break;
 
-      case IN_PRODUCTION:
-        statusString = getString(R.string.show_status_in_production);
-        break;
+        case CANCELED:
+          statusString = getString(R.string.show_status_canceled);
+          break;
 
-      case PLANNED:
-        statusString = getString(R.string.show_status_planned);
-        break;
+        case IN_PRODUCTION:
+          statusString = getString(R.string.show_status_in_production);
+          break;
+
+        case PLANNED:
+          statusString = getString(R.string.show_status_planned);
+          break;
+      }
     }
 
     this.status.setText(statusString);
