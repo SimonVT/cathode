@@ -327,59 +327,58 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
   }
 
   private void updateEpisodeViews(final Cursor cursor) {
-    if (cursor.moveToFirst()) {
-      loaded = true;
+    if (cursor == null || !cursor.moveToFirst()) return;
 
-      final long traktId = Cursors.getLong(cursor, EpisodeColumns.TRAKT_ID);
-      showId = Cursors.getLong(cursor, EpisodeColumns.SHOW_ID);
-      seasonId = Cursors.getLong(cursor, EpisodeColumns.SEASON_ID);
+    loaded = true;
 
-      season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
-      final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-      episodeTitle = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
+    final long traktId = Cursors.getLong(cursor, EpisodeColumns.TRAKT_ID);
+    showId = Cursors.getLong(cursor, EpisodeColumns.SHOW_ID);
+    seasonId = Cursors.getLong(cursor, EpisodeColumns.SEASON_ID);
 
-      title.setText(episodeTitle);
-      overview.setText(Cursors.getString(cursor, EpisodeColumns.OVERVIEW));
+    season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
+    final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
+    episodeTitle = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
 
-      final String screenshotUri =
-          ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, episodeId);
+    title.setText(episodeTitle);
+    overview.setText(Cursors.getString(cursor, EpisodeColumns.OVERVIEW));
 
-      setBackdrop(screenshotUri, true);
-      firstAired.setText(
-          DateUtils.millisToString(getActivity(), DataHelper.getFirstAired(cursor), true));
+    final String screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, episodeId);
 
-      watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
-      collected = Cursors.getBoolean(cursor, EpisodeColumns.IN_COLLECTION);
-      inWatchlist = Cursors.getBoolean(cursor, EpisodeColumns.IN_WATCHLIST);
-      watching = Cursors.getBoolean(cursor, EpisodeColumns.WATCHING);
-      checkedIn = Cursors.getBoolean(cursor, EpisodeColumns.CHECKED_IN);
+    setBackdrop(screenshotUri, true);
+    firstAired.setText(
+        DateUtils.millisToString(getActivity(), DataHelper.getFirstAired(cursor), true));
 
-      if (checkInDrawable != null) {
-        checkInDrawable.setWatching(watching || checkedIn);
+    watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
+    collected = Cursors.getBoolean(cursor, EpisodeColumns.IN_COLLECTION);
+    inWatchlist = Cursors.getBoolean(cursor, EpisodeColumns.IN_WATCHLIST);
+    watching = Cursors.getBoolean(cursor, EpisodeColumns.WATCHING);
+    checkedIn = Cursors.getBoolean(cursor, EpisodeColumns.CHECKED_IN);
+
+    if (checkInDrawable != null) {
+      checkInDrawable.setWatching(watching || checkedIn);
+    }
+
+    watchedView.setVisibility(watched ? View.VISIBLE : View.GONE);
+    inCollectionView.setVisibility(collected ? View.VISIBLE : View.GONE);
+    inWatchlistView.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
+
+    currentRating = Cursors.getInt(cursor, EpisodeColumns.USER_RATING);
+    final float ratingAll = Cursors.getFloat(cursor, EpisodeColumns.RATING);
+    rating.setValue(ratingAll);
+
+    viewOnTrakt.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        Intents.openUrl(getContext(), TraktUtils.getTraktEpisodeUrl(traktId));
       }
+    });
 
-      watchedView.setVisibility(watched ? View.VISIBLE : View.GONE);
-      inCollectionView.setVisibility(collected ? View.VISIBLE : View.GONE);
-      inWatchlistView.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
+    final long lastCommentSync = Cursors.getLong(cursor, EpisodeColumns.LAST_COMMENT_SYNC);
+    if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {
+      episodeScheduler.syncComments(episodeId);
+    }
 
-      currentRating = Cursors.getInt(cursor, EpisodeColumns.USER_RATING);
-      final float ratingAll = Cursors.getFloat(cursor, EpisodeColumns.RATING);
-      rating.setValue(ratingAll);
-
-      viewOnTrakt.setOnClickListener(new View.OnClickListener() {
-        @Override public void onClick(View v) {
-          Intents.openUrl(getContext(), TraktUtils.getTraktEpisodeUrl(traktId));
-        }
-      });
-
-      final long lastCommentSync = Cursors.getLong(cursor, EpisodeColumns.LAST_COMMENT_SYNC);
-      if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {
-        episodeScheduler.syncComments(episodeId);
-      }
-
-      if (getToolbar() != null) {
-        createMenu(getToolbar());
-      }
+    if (getToolbar() != null) {
+      createMenu(getToolbar());
     }
   }
 
