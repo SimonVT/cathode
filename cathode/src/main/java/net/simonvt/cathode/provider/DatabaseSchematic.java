@@ -775,7 +775,8 @@ public final class DatabaseSchematic {
     }
 
     if (oldVersion < 28) {
-      db.execSQL("ALTER TABLE showCharacters RENAME TO " + Tables.SHOW_CAST);
+      db.execSQL("DROP TABLE IF EXISTS showCharacters");
+      db.execSQL(CathodeDatabase.SHOW_CAST);
       db.execSQL(CathodeDatabase.SHOW_CREW);
     }
 
