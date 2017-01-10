@@ -237,8 +237,6 @@ public final class ShowDatabaseHelper {
 
     if (nextEpisode.moveToFirst()) {
       nextEpisodeId = Cursors.getLong(nextEpisode, EpisodeColumns.ID);
-    } else {
-      throw new RuntimeException("Cursor empty");
     }
 
     nextEpisode.close();
