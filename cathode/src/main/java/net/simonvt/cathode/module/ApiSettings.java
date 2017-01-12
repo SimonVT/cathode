@@ -56,6 +56,8 @@ public class ApiSettings implements TraktSettings {
 
   @Inject AuthorizationService authService;
 
+  private volatile boolean refreshingToken;
+
   public ApiSettings(Context context) {
     this.context = context;
     settings = PreferenceManager.getDefaultSharedPreferences(context);
@@ -76,6 +78,18 @@ public class ApiSettings implements TraktSettings {
   private boolean isTokenExpired() {
     synchronized (this) {
       return settings.getLong(Settings.TRAKT_TOKEN_EXPIRATION, 0) < System.currentTimeMillis();
+    }
+  }
+
+  private boolean isRefreshingToken() {
+    synchronized (this) {
+      return refreshingToken;
+    }
+  }
+
+  public void setRefreshingToken(boolean refreshingToken) {
+    synchronized (this) {
+      this.refreshingToken = refreshingToken;
     }
   }
 
@@ -111,47 +125,53 @@ public class ApiSettings implements TraktSettings {
 
   @Override public String refreshToken() {
     synchronized (this) {
-      if (authService == null) {
-        CathodeApp.inject(context, this);
-      }
-
-      if (!isTokenExpired()) {
-        Timber.d("Token still valid");
-        return getAccessToken();
-      }
-
-      final String refreshToken = getRefreshToken();
-      if (refreshToken == null) {
-        return null;
-      }
-
-      TokenRequest tokenRequest =
-          TokenRequest.refreshToken(refreshToken, getClientId(), getSecret(), getRedirectUrl(),
-              GrantType.REFRESH_TOKEN);
-
-      try {
-        Timber.d("Getting new tokens, with refresh token: %s", refreshToken);
-        Call<AccessToken> call = authService.getToken(tokenRequest);
-        Response<AccessToken> response = call.execute();
-        if (response.isSuccessful()) {
-          AccessToken token = response.body();
-          updateTokens(token);
-          return token.getAccessToken();
-        } else {
-          if (response.code() == 401) {
-            clearRefreshToken();
-            return null;
-          }
-
-          String message = "Code: " + response.code();
-          Timber.e(new TokenRefreshFailedException(message), "Unable to get token");
+      if (!isRefreshingToken()) {
+        if (authService == null) {
+          CathodeApp.inject(context, this);
         }
-      } catch (IOException e) {
-        Timber.e(e, "Unable to get new tokens");
-      }
 
-      return null;
+        if (!isTokenExpired()) {
+          Timber.d("Token still valid");
+          return getAccessToken();
+        }
+
+        final String refreshToken = getRefreshToken();
+        if (refreshToken == null) {
+          return null;
+        }
+
+        try {
+          setRefreshingToken(true);
+
+          TokenRequest tokenRequest =
+              TokenRequest.refreshToken(refreshToken, getClientId(), getSecret(), getRedirectUrl(),
+                  GrantType.REFRESH_TOKEN);
+
+          Timber.d("Getting new tokens, with refresh token: %s", refreshToken);
+          Call<AccessToken> call = authService.getToken(tokenRequest);
+          Response<AccessToken> response = call.execute();
+          if (response.isSuccessful()) {
+            AccessToken token = response.body();
+            updateTokens(token);
+            return token.getAccessToken();
+          } else {
+            if (response.code() == 401) {
+              clearRefreshToken();
+              return null;
+            }
+
+            String message = "Code: " + response.code();
+            Timber.e(new TokenRefreshFailedException(message), "Unable to get token");
+          }
+        } catch (IOException e) {
+          Timber.e(e, "Unable to get new tokens");
+        } finally {
+          setRefreshingToken(false);
+        }
+      }
     }
+
+    return null;
   }
 
   public static class TokenRefreshFailedException extends Exception {
