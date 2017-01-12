@@ -32,10 +32,9 @@ public class TraktAuthenticator implements Authenticator {
   }
 
   @Override public Request authenticate(Route route, Response response) throws IOException {
-    Timber.d("Auth failed");
     synchronized (TraktAuthenticator.class) {
-      if (responseCount(response) >= 3) {
-        Timber.d("Failed 3 times, giving up");
+      if (responseCount(response) >= 2) {
+        Timber.d("Failed 2 times, giving up");
         return null;
       }
 
