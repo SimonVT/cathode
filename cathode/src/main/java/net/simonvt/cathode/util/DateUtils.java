@@ -124,6 +124,41 @@ public final class DateUtils {
         "Unable to get update time for millis " + millis + " at time " + rightNowMillis);
   }
 
+  public static String getTimeString(Context context, long millis) {
+    StringBuilder sb = new StringBuilder();
+    Calendar cal = Calendar.getInstance();
+    cal.setTimeInMillis(millis);
+    final boolean twentyFourHourFormat = DateFormat.is24HourFormat(context);
+
+    if (twentyFourHourFormat) {
+      sb.append(cal.get(Calendar.HOUR_OF_DAY));
+    } else {
+      sb.append(cal.get(Calendar.HOUR));
+    }
+
+    sb.append(":").append(String.format(Locale.US, "%02d", cal.get(Calendar.MINUTE)));
+
+    if (!twentyFourHourFormat) {
+      sb.append(" ");
+      final int ampm = cal.get(Calendar.AM_PM);
+      if (ampm == Calendar.AM) {
+        sb.append("am");
+      } else {
+        sb.append("pm");
+      }
+    }
+
+    return sb.toString();
+  }
+
+  public static String getDateString(long millis) {
+    Calendar cal = Calendar.getInstance();
+    cal.setTimeInMillis(millis);
+
+    SimpleDateFormat formatter = new SimpleDateFormat("EEEE, MMMM d", Locale.US);
+    return formatter.format(cal.getTime());
+  }
+
   /** Formats milliseconds (UTC) as a String. */
   public static String millisToString(Context context, long millis, boolean extended) {
     if (millis == 0L) {
