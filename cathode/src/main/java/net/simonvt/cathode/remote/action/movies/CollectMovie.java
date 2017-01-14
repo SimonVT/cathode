@@ -74,6 +74,7 @@ public class CollectMovie extends CallJob<SyncResponse> {
   }
 
   @Override public void handleResponse(SyncResponse response) {
-    movieHelper.setIsInCollection(traktId, collected, TimeUtils.getMillis(collectedAt));
+    final long movieId = movieHelper.getId(traktId);
+    movieHelper.setIsInCollection(movieId, collected, TimeUtils.getMillis(collectedAt));
   }
 }

@@ -74,6 +74,7 @@ public class WatchedMovie extends CallJob<SyncResponse> {
   }
 
   @Override public void handleResponse(SyncResponse response) {
-    movieHelper.setWatched(traktId, watched, TimeUtils.getMillis(watchedAt));
+    final long movieId = movieHelper.getId(traktId);
+    movieHelper.setWatched(movieId, watched, TimeUtils.getMillis(watchedAt));
   }
 }
