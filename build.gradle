@@ -21,7 +21,7 @@ ext {
   enableCrashlytics = false
   versionMajor = 5
   versionMinor = 1
-  versionPatch = 1
+  versionPatch = 2
 
   versionCode = versionMajor * 10000 + versionMinor * 100 + versionPatch
   versionName = versionMajor + "." + versionMinor + "." + versionPatch
