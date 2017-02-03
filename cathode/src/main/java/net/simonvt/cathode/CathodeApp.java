@@ -48,8 +48,8 @@ import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
-import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.settings.login.LoginActivity;
+import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.MainHandler;
@@ -101,11 +101,9 @@ public class CathodeApp extends Application {
     AuthFailedEvent.registerListener(authFailedListener);
 
     final boolean isLoggedIn = settings.getBoolean(Settings.TRAKT_LOGGED_IN, false);
-    final boolean accountExists = Accounts.accountExists(this);
-    if (isLoggedIn && !accountExists) {
-      final String username = settings.getString(Settings.Profile.USERNAME, null);
-      Accounts.setupAccount(this, username);
-    } else if (!isLoggedIn && accountExists) {
+    if (isLoggedIn) {
+      Accounts.setupAccount(this);
+    } else if (!isLoggedIn) {
       Accounts.removeAccount(this);
     }
 
@@ -248,10 +246,6 @@ public class CathodeApp extends Application {
   private OnAuthFailedListener authFailedListener = new OnAuthFailedListener() {
     @Override public void onAuthFailed() {
       Timber.i("onAuthFailure");
-      if (!Accounts.accountExists(CathodeApp.this)) {
-        // TODO: Try and make sure this doesn't happen
-        return; // User has logged out, ignore.
-      }
 
       SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(CathodeApp.this);
       settings.edit().putBoolean(Settings.TRAKT_LOGGED_IN, false).apply();

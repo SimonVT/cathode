@@ -86,7 +86,7 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
 
     final String username = settings.getString(Settings.Profile.USERNAME, null);
 
-    Accounts.setupAccount(this, username);
+    Accounts.setupAccount(this);
 
     jobManager.addJob(new SyncJob());
 
