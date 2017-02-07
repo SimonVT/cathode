@@ -331,7 +331,7 @@
 
   <!-- App widget -->
   <string name="appwidget_header_upcoming">Upcoming episodes</string>
-  <string name="appwidget_upcoming_empty">No upcoming episodes.</string>
+  <string name="appwidget_upcoming_empty">No upcoming episodes</string>
 
   <!-- List fragments -->
   <string name="list_create_name">Name</string>

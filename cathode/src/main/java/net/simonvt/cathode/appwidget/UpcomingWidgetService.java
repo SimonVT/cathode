@@ -141,13 +141,26 @@ public class UpcomingWidgetService extends RemoteViewsService {
     }
 
     @Override public int getCount() {
-      return items != null ? items.getItemCount() : 0;
+      if (items == null) {
+        return 1;
+      }
+
+      final int itemCount = items.getItemCount();
+      if (itemCount == 0) {
+        return 1;
+      }
+
+      return itemCount;
     }
 
     @Override public RemoteViews getViewAt(int position) {
       RemoteViews rv;
 
-      if (items.getItemType(position) == WidgetItem.TYPE_DAY) {
+      if (items == null) {
+        rv = new RemoteViews(context.getPackageName(), R.layout.appwidget_loading);
+      } else if (items.getItemCount() == 0) {
+        rv = new RemoteViews(context.getPackageName(), R.layout.appwidget_upcoming_row_empty);
+      } else if (items.getItemType(position) == WidgetItem.TYPE_DAY) {
         DayInfo dayInfo = items.getDay(position);
         rv = new RemoteViews(context.getPackageName(), R.layout.appwidget_upcoming_row_header);
         rv.setTextViewText(R.id.title, dayInfo.getDayLabel());
@@ -193,7 +206,7 @@ public class UpcomingWidgetService extends RemoteViewsService {
     }
 
     @Override public int getViewTypeCount() {
-      return 2;
+      return 4;
     }
 
     @Override public long getItemId(int position) {

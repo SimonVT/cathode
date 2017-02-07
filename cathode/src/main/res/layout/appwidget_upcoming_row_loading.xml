@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2016 Simon Vig Therkildsen
+  ~ Copyright (C) 2017 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@
   -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:drawable/screen_background_dark_transparent"
+    android:layout_height="64dp"
     android:gravity="center"
     android:padding="16dp"
-    android:textColor="@android:color/white"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:textColor="@color/appwidget_item_title"
+    android:textSize="14sp"
     android:text="@string/loading"/>
