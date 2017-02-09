@@ -63,6 +63,7 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
       Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
       ShowColumns.WATCHING,
       Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
+      ShowColumns.WATCHING_EPISODE_ID,
       Tables.EPISODES + "." + EpisodeColumns.ID + " AS " + COLUMN_EPISODE_ID,
       Tables.EPISODES + "." + EpisodeColumns.TITLE,
       Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
@@ -119,9 +120,14 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
         final int position = holder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
           Cursor cursor = getCursor(position);
-          final long episodeId = Cursors.getLong(cursor, COLUMN_EPISODE_ID);
           final String showTitle = Cursors.getString(cursor, ShowColumns.TITLE);
-          onItemClickListener.onEpisodeClicked(episodeId, showTitle);
+
+          if (holder.watching) {
+            onItemClickListener.onEpisodeClicked(holder.watchingId, showTitle);
+          } else {
+            final long episodeId = Cursors.getLong(cursor, COLUMN_EPISODE_ID);
+            onItemClickListener.onEpisodeClicked(episodeId, showTitle);
+          }
         }
       }
     });
@@ -139,6 +145,9 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
       ItemViewHolder itemHolder = (ItemViewHolder) holder;
       itemHolder.checkIn.dismiss();
       itemHolder.checkIn.reset();
+
+      itemHolder.watching = false;
+      itemHolder.watchingId = null;
     }
   }
 
@@ -165,6 +174,7 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     final int episodeNumber = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
     final String episodeTitle =
         DataHelper.getEpisodeTitle(activity, cursor, episodeSeasonNumber, episodeNumber);
+    final Long watchingEpisodeId = Cursors.getLongOrNull(cursor, ShowColumns.WATCHING_EPISODE_ID);
 
     final String showPosterUri = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
 
@@ -172,6 +182,9 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     vh.poster.setImage(showPosterUri);
 
     String episodeText;
+
+    vh.watching = watching;
+    vh.watchingId = watchingEpisodeId;
 
     if (watching) {
       episodeText = activity.getString(R.string.show_watching);
@@ -248,7 +261,8 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     @BindView(R.id.check_in) CheckInView checkIn;
     @BindView(R.id.poster) RemoteImageView poster;
 
-    long id;
+    boolean watching;
+    Long watchingId;
 
     ItemViewHolder(View v) {
       super(v);

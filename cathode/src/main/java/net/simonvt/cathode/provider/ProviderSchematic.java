@@ -192,9 +192,11 @@ public final class ProviderSchematic {
       map.put(ShowColumns.AIRED_COUNT, getAiredQuery());
       map.put(ShowColumns.UNAIRED_COUNT, getUnairedQuery());
       map.put(ShowColumns.EPISODE_COUNT, getEpisodeCountQuery());
+      map.put(ShowColumns.WATCHING_EPISODE_ID, getWatchingIdQuery());
       map.put(Tables.SHOWS + "." + ShowColumns.AIRED_COUNT, getAiredQuery());
       map.put(Tables.SHOWS + "." + ShowColumns.UNAIRED_COUNT, getUnairedQuery());
       map.put(Tables.SHOWS + "." + ShowColumns.EPISODE_COUNT, getEpisodeCountQuery());
+      map.put(Tables.SHOWS + "." + ShowColumns.WATCHING_EPISODE_ID, getWatchingIdQuery());
 
       return map;
     }
@@ -479,6 +481,25 @@ public final class ProviderSchematic {
           + Tables.EPISODES
           + "."
           + EpisodeColumns.NEEDS_SYNC
+          + "=0"
+          + ")";
+    }
+
+    public static String getWatchingIdQuery() {
+      return "(SELECT " + Tables.EPISODES + "." + EpisodeColumns.ID + " FROM "
+          + Tables.EPISODES
+          + " WHERE "
+          + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID
+          + "="
+          + Tables.SHOWS + "." + ShowColumns.ID
+          + " AND ("
+          + Tables.EPISODES + "." + EpisodeColumns.WATCHING
+          + "=1"
+          + " OR "
+          + Tables.EPISODES + "." + EpisodeColumns.CHECKED_IN
+          + "=1"
+          + ") AND "
+          + Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC
           + "=0"
           + ")";
     }
