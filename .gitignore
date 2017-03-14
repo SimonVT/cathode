@@ -6,6 +6,9 @@ build
 # IntelliJ IDEA
 .idea
 *.iml
+!.idea/
+.idea/*
+!.idea/codeStyleSettings.xml
 
 # OSX
 .DS_Store
