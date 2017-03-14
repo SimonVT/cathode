@@ -39,12 +39,13 @@
 
       <TextView
           android:id="@+id/title"
-          android:layout_width="wrap_content"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
+          android:layout_marginTop="4dp"
+          android:layout_marginBottom="4dp"
           android:textAppearance="?android:attr/textAppearanceMedium"
           android:fontFamily="sans-light"
-          android:singleLine="true"
-          tools:text="This is an episode name that is very long indeed"/>
+          tools:text="This is an episode name that is very long indeed. Maybe even so long it spans three lines."/>
 
       <net.simonvt.cathode.widget.TimeStamp
           android:id="@+id/firstAired"
