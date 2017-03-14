@@ -2,18 +2,18 @@ apply plugin: 'com.android.library'
 apply plugin: 'checkstyle'
 
 dependencies {
-  compile parent.libraries.gson
+  compile deps.gson
 
-  compile parent.libraries.timber
+  compile deps.timber
 
-  compile parent.libraries.dagger
-  annotationProcessor parent.libraries.daggerCompiler
-  compile parent.libraries.retrofit
-  compile parent.libraries.retrofitGson
-  compile parent.libraries.okhttp
+  compile deps.dagger
+  annotationProcessor deps.daggerCompiler
+  compile deps.retrofit
+  compile deps.retrofitGson
+  compile deps.okhttp
 
-  testCompile parent.libraries.junit
-  testCompile parent.libraries.truth
+  testCompile deps.junit
+  testCompile deps.truth
 }
 
 android {
@@ -49,3 +49,5 @@ android.libraryVariants.all { variant ->
   checkstyle.exclude('**/R.java')
   project.tasks.getByName("check").dependsOn checkstyle
 }
+
+apply from: rootProject.file('deps.gradle')

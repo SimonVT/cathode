@@ -1,0 +1,63 @@
+/*
+ * Copyright (C) 2017 Simon Vig Therkildsen
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+ext {
+  daggerVersion = '1.2.5'
+  okhttpVersion = '3.6.0'
+  retrofitVersion = '2.2.0'
+
+  butterknifeVersion = '8.5.1'
+
+  supportLibrariesVersion = '25.2.0'
+
+  deps = [
+      androidPlugin       : 'com.android.tools.build:gradle:2.3.0',
+      crashlytics         : 'com.crashlytics.sdk.android:crashlytics:2.6.7@aar',
+
+      schematic           : 'net.simonvt.schematic:schematic:0.7.0',
+      schematicCompiler   : 'net.simonvt.schematic:schematic-compiler:0.7.0',
+
+      gson                : 'com.google.code.gson:gson:2.8.0',
+
+      dagger              : "com.squareup.dagger:dagger:$daggerVersion",
+      daggerCompiler      : "com.squareup.dagger:dagger-compiler:$daggerVersion",
+      okhttp              : "com.squareup.okhttp3:okhttp:$okhttpVersion",
+      okhttpLogger        : "com.squareup.okhttp3:logging-interceptor:$okhttpVersion",
+      picasso             : 'com.squareup.picasso:picasso:2.5.2',
+      picassoOkHttp       : 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0',
+      retrofit            : "com.squareup.retrofit2:retrofit:$retrofitVersion",
+      retrofitGson        : "com.squareup.retrofit2:converter-gson:$retrofitVersion",
+
+      timber              : 'com.jakewharton.timber:timber:4.5.1',
+      butterknife         : "com.jakewharton:butterknife:$butterknifeVersion",
+      butterknifeCompiler : "com.jakewharton:butterknife-compiler:$butterknifeVersion",
+
+      appcompat           : "com.android.support:appcompat-v7:$supportLibrariesVersion",
+      cardView            : "com.android.support:cardview-v7:$supportLibrariesVersion",
+      recyclerView        : "com.android.support:recyclerview-v7:$supportLibrariesVersion",
+      androidDesign       : "com.android.support:design:$supportLibrariesVersion",
+
+      dashclockApi        : 'com.google.android.apps.dashclock:dashclock-api:2.0.0',
+
+      tmdb                : 'com.uwetrottmann.tmdb2:tmdb-java:1.6.0',
+
+      junit               : 'junit:junit:4.12',
+      robolectric         : 'org.robolectric:robolectric:3.2.1',
+      truth               : 'com.google.truth:truth:0.31'
+  ]
+
+  isCi = "true".equals(System.getenv('CI'))
+}

@@ -8,39 +8,39 @@ dependencies {
   compile project(':trakt-api')
   compile project(':libs:colorpicker')
 
-  compile parent.libraries.schematic
-  annotationProcessor parent.libraries.schematicCompiler
+  compile deps.schematic
+  annotationProcessor deps.schematicCompiler
 
-  compile parent.libraries.gson
+  compile deps.gson
 
-  compile parent.libraries.appcompat
-  compile parent.libraries.cardView
-  compile parent.libraries.recyclerView
-  compile parent.libraries.androidDesign
+  compile deps.appcompat
+  compile deps.cardView
+  compile deps.recyclerView
+  compile deps.androidDesign
 
-  compile parent.libraries.dagger
-  annotationProcessor parent.libraries.daggerCompiler
-  compile parent.libraries.picasso
-  compile parent.libraries.picassoOkHttp
-  compile parent.libraries.retrofit
-  compile parent.libraries.okhttp
-  debugCompile parent.libraries.okhttpLogger
+  compile deps.dagger
+  annotationProcessor deps.daggerCompiler
+  compile deps.picasso
+  compile deps.picassoOkHttp
+  compile deps.retrofit
+  compile deps.okhttp
+  debugCompile deps.okhttpLogger
 
-  compile parent.libraries.butterknife
-  annotationProcessor parent.libraries.butterknifeCompiler
-  compile parent.libraries.timber
+  compile deps.butterknife
+  annotationProcessor deps.butterknifeCompiler
+  compile deps.timber
 
-  compile parent.libraries.dashclockApi
+  compile deps.dashclockApi
 
-  compile parent.libraries.tmdb
+  compile deps.tmdb
 
-  compile(parent.libraries.crashlytics) {
+  compile(deps.crashlytics) {
     transitive = true
   }
 
-  testCompile parent.libraries.junit
-  testCompile parent.libraries.robolectric
-  testCompile parent.libraries.truth
+  testCompile deps.junit
+  testCompile deps.robolectric
+  testCompile deps.truth
 }
 
 android {
@@ -205,3 +205,5 @@ if (isOnCI()) {
   android.signingConfigs.release.keyPassword = android.signingConfigs.debug.keyPassword
   android.signingConfigs.release.keyAlias = android.signingConfigs.debug.keyAlias
 }
+
+apply from: rootProject.file('deps.gradle')
