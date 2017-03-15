@@ -16,7 +16,6 @@
 
 package net.simonvt.cathode.remote.sync;
 
-import net.simonvt.cathode.api.enumeration.HiddenSection;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.remote.Flags;
 
@@ -35,9 +34,9 @@ public class SyncHiddenItems extends Job {
   }
 
   @Override public void perform() {
-    queue(new SyncHiddenSection(HiddenSection.CALENDAR));
-    queue(new SyncHiddenSection(HiddenSection.PROGRESS_COLLECTED));
-    queue(new SyncHiddenSection(HiddenSection.PROGRESS_WATCHED));
-    queue(new SyncHiddenSection(HiddenSection.RECOMMENDATIONS));
+    queue(new SyncHiddenCalendar());
+    queue(new SyncHiddenCollected());
+    queue(new SyncHiddenRecommendations());
+    queue(new SyncHiddenWatched());
   }
 }

@@ -24,14 +24,16 @@ import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.HiddenColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.action.CancelCheckin;
+import net.simonvt.cathode.remote.action.shows.CalendarHideShow;
+import net.simonvt.cathode.remote.action.shows.CollectedHideShow;
 import net.simonvt.cathode.remote.action.shows.DismissShowRecommendation;
 import net.simonvt.cathode.remote.action.shows.RateShow;
+import net.simonvt.cathode.remote.action.shows.WatchedHideShow;
 import net.simonvt.cathode.remote.action.shows.WatchedShow;
 import net.simonvt.cathode.remote.action.shows.WatchlistShow;
 import net.simonvt.cathode.remote.sync.comments.SyncComments;
@@ -282,11 +284,11 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
   public void hideFromCalendar(final long showId, final boolean hidden) {
     execute(new Runnable() {
       @Override public void run() {
-        // TODO: Wait for trakt support
-        // queue(new CalendarHideShow(showId, hidden));
+        final long traktId = showHelper.getTraktId(showId);
+        queue(new CalendarHideShow(traktId, hidden));
 
         ContentValues values = new ContentValues();
-        values.put(HiddenColumns.HIDDEN_CALENDAR, hidden);
+        values.put(ShowColumns.HIDDEN_CALENDAR, hidden);
         context.getContentResolver().update(Shows.withId(showId), values, null, null);
       }
     });
@@ -295,11 +297,11 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
   public void hideFromWatched(final long showId, final boolean hidden) {
     execute(new Runnable() {
       @Override public void run() {
-        // TODO: Wait for trakt support
-        // queue(new WatchedHideShow(showId, hidden));
+        final long traktId = showHelper.getTraktId(showId);
+        queue(new WatchedHideShow(traktId, hidden));
 
         ContentValues values = new ContentValues();
-        values.put(HiddenColumns.HIDDEN_WATCHED, hidden);
+        values.put(ShowColumns.HIDDEN_WATCHED, hidden);
         context.getContentResolver().update(Shows.withId(showId), values, null, null);
       }
     });
@@ -308,11 +310,11 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
   public void hideFromCollected(final long showId, final boolean hidden) {
     execute(new Runnable() {
       @Override public void run() {
-        // TODO: Wait for trakt support
-        // queue(new CollectedHideShow(showId, hidden));
+        final long traktId = showHelper.getTraktId(showId);
+        queue(new CollectedHideShow(traktId, hidden));
 
         ContentValues values = new ContentValues();
-        values.put(HiddenColumns.HIDDEN_COLLECTED, hidden);
+        values.put(ShowColumns.HIDDEN_COLLECTED, hidden);
         context.getContentResolver().update(Shows.withId(showId), values, null, null);
       }
     });

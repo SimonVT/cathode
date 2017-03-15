@@ -17,11 +17,13 @@
 package net.simonvt.cathode.api.service;
 
 import java.util.List;
+import net.simonvt.cathode.api.body.HiddenItems;
 import net.simonvt.cathode.api.body.ListInfoBody;
 import net.simonvt.cathode.api.body.ListItemActionBody;
 import net.simonvt.cathode.api.entity.CommentItem;
 import net.simonvt.cathode.api.entity.CustomList;
 import net.simonvt.cathode.api.entity.HiddenItem;
+import net.simonvt.cathode.api.entity.HideResponse;
 import net.simonvt.cathode.api.entity.Like;
 import net.simonvt.cathode.api.entity.ListItem;
 import net.simonvt.cathode.api.entity.ListItemActionResponse;
@@ -84,6 +86,22 @@ public interface UsersService {
   @GET("/users/hidden/{section}") Call<List<HiddenItem>> getHiddenItems(
       @Path("section") HiddenSection section, @Query("type") ItemType type, @Query("page") int page,
       @Query("limit") int limit);
+
+  /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Hide items for a specific section.
+   */
+  @POST("/users/hidden/{section}") Call<HideResponse> addHiddenItems(
+      @Path("section") HiddenSection section, @Body HiddenItems hiddenItems);
+
+  /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Unhide items for a specific section.
+   */
+  @POST("/users/hidden/{section}/remove") Call<HideResponse> removeHiddenItems(
+      @Path("section") HiddenSection section, @Body HiddenItems hiddenItems);
 
   /**
    * <b>OAuth Required</b>

@@ -108,16 +108,6 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
     } else {
       overflow.addItem(R.id.action_collection_add, R.string.action_collection_add);
     }
-
-    switch (libraryType) {
-      case WATCHED:
-        overflow.addItem(R.id.action_watched_hide, R.string.action_watched_hide);
-        break;
-
-      case COLLECTION:
-        overflow.addItem(R.id.action_collection_hide, R.string.action_collection_hide);
-        break;
-    }
   }
 
   protected void onOverflowActionSelected(View view, long id, int action, int position,
@@ -153,14 +143,6 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
 
       case R.id.action_collection_remove:
         movieScheduler.setIsInCollection(id, false);
-        break;
-
-      case R.id.action_watched_hide:
-        movieScheduler.hideFromWatched(id, true);
-        break;
-
-      case R.id.action_collection_hide:
-        movieScheduler.hideFromCollected(id, true);
         break;
     }
   }

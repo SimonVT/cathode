@@ -22,11 +22,11 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.provider.DatabaseContract.HiddenColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.action.CancelCheckin;
+import net.simonvt.cathode.remote.action.movies.CalendarHideMovie;
 import net.simonvt.cathode.remote.action.movies.CheckInMovie;
 import net.simonvt.cathode.remote.action.movies.CollectMovie;
 import net.simonvt.cathode.remote.action.movies.DismissMovieRecommendation;
@@ -287,37 +287,11 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
   public void hideFromCalendar(final long movieId, final boolean hidden) {
     execute(new Runnable() {
       @Override public void run() {
-        // TODO: Wait for trakt support
-        // queue(new CalendarHideMovie(movieId, hidden));
+        final long traktId = movieHelper.getTraktId(movieId);
+        queue(new CalendarHideMovie(traktId, hidden));
 
         ContentValues values = new ContentValues();
-        values.put(HiddenColumns.HIDDEN_CALENDAR, hidden);
-        context.getContentResolver().update(Movies.withId(movieId), values, null, null);
-      }
-    });
-  }
-
-  public void hideFromWatched(final long movieId, final boolean hidden) {
-    execute(new Runnable() {
-      @Override public void run() {
-        // TODO: Wait for trakt support
-        // queue(new WatchedHideMovie(movieId, hidden));
-
-        ContentValues values = new ContentValues();
-        values.put(HiddenColumns.HIDDEN_WATCHED, hidden);
-        context.getContentResolver().update(Movies.withId(movieId), values, null, null);
-      }
-    });
-  }
-
-  public void hideFromCollected(final long movieId, final boolean hidden) {
-    execute(new Runnable() {
-      @Override public void run() {
-        // TODO: Wait for trakt support
-        // queue(new CollectedHideMovie(movieId, hidden));
-
-        ContentValues values = new ContentValues();
-        values.put(HiddenColumns.HIDDEN_COLLECTED, hidden);
+        values.put(MovieColumns.HIDDEN_CALENDAR, hidden);
         context.getContentResolver().update(Movies.withId(movieId), values, null, null);
       }
     });

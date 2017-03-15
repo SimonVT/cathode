@@ -52,7 +52,6 @@ import net.simonvt.cathode.provider.CollectLoader;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.HiddenColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.RelatedShowsColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCastColumns;
@@ -127,7 +126,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT, ShowColumns.LAST_SYNC,
       ShowColumns.LAST_COMMENT_SYNC, ShowColumns.LAST_CREDITS_SYNC, ShowColumns.LAST_RELATED_SYNC,
       ShowColumns.HOMEPAGE, ShowColumns.TRAILER, ShowColumns.IMDB_ID, ShowColumns.TVDB_ID,
-      ShowColumns.TMDB_ID, ShowColumns.NEEDS_SYNC, HiddenColumns.HIDDEN_CALENDAR,
+      ShowColumns.TMDB_ID, ShowColumns.NEEDS_SYNC, ShowColumns.HIDDEN_CALENDAR,
   };
 
   private static final String[] EPISODE_PROJECTION = new String[] {
@@ -571,7 +570,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
     final float ratingAll = Cursors.getFloat(cursor, ShowColumns.RATING);
     rating.setValue(ratingAll);
 
-    calendarHidden = Cursors.getBoolean(cursor, HiddenColumns.HIDDEN_CALENDAR);
+    calendarHidden = Cursors.getBoolean(cursor, ShowColumns.HIDDEN_CALENDAR);
 
     watched.setVisibility(watchedCount > 0 ? View.VISIBLE : View.GONE);
     collection.setVisibility(inCollectionCount > 0 ? View.VISIBLE : View.GONE);

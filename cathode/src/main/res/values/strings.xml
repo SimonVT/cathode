@@ -150,12 +150,10 @@
   <string name="header_shows">Shows</string>
   <string name="header_episodes">Episodes</string>
 
-  <string name="header_hidden_calendar_shows">Shows hidden from calendar</string>
+  <string name="header_hidden_calendar_shows">Shows hidden from calendar and upcoming</string>
   <string name="header_hidden_watched_shows">Shows hidden from watched list</string>
   <string name="header_hidden_collected_shows">Shows hidden from collection</string>
   <string name="header_hidden_calendar_movies">Movies hidden from calendar</string>
-  <string name="header_hidden_watched_movies">Movies hidden from watched list</string>
-  <string name="header_hidden_collected_movies">Movies hidden from collection</string>
 
   <string name="sort_title">Title</string>
   <string name="sort_next_episode">Next episode</string>

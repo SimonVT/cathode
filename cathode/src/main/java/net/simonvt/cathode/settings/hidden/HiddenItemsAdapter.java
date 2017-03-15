@@ -225,10 +225,6 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
                 Header header = getHeader(position);
                 if (header.header == R.string.header_hidden_calendar_movies) {
                   movieScheduler.hideFromCalendar(itemId, false);
-                } else if (header.header == R.string.header_hidden_watched_movies) {
-                  movieScheduler.hideFromWatched(itemId, false);
-                } else {
-                  movieScheduler.hideFromCollected(itemId, false);
                 }
                 break;
             }

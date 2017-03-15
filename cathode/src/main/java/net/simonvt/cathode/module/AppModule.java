@@ -72,10 +72,8 @@ import net.simonvt.cathode.remote.action.lists.UpdateList;
 import net.simonvt.cathode.remote.action.movies.CalendarHideMovie;
 import net.simonvt.cathode.remote.action.movies.CheckInMovie;
 import net.simonvt.cathode.remote.action.movies.CollectMovie;
-import net.simonvt.cathode.remote.action.movies.CollectedHideMovie;
 import net.simonvt.cathode.remote.action.movies.DismissMovieRecommendation;
 import net.simonvt.cathode.remote.action.movies.RateMovie;
-import net.simonvt.cathode.remote.action.movies.WatchedHideMovie;
 import net.simonvt.cathode.remote.action.movies.WatchedMovie;
 import net.simonvt.cathode.remote.action.movies.WatchlistMovie;
 import net.simonvt.cathode.remote.action.shows.CalendarHideShow;
@@ -93,8 +91,11 @@ import net.simonvt.cathode.remote.action.shows.WatchedShow;
 import net.simonvt.cathode.remote.action.shows.WatchlistEpisode;
 import net.simonvt.cathode.remote.action.shows.WatchlistShow;
 import net.simonvt.cathode.remote.sync.PurgeDatabase;
+import net.simonvt.cathode.remote.sync.SyncHiddenCalendar;
+import net.simonvt.cathode.remote.sync.SyncHiddenCollected;
 import net.simonvt.cathode.remote.sync.SyncHiddenItems;
-import net.simonvt.cathode.remote.sync.SyncHiddenSection;
+import net.simonvt.cathode.remote.sync.SyncHiddenRecommendations;
+import net.simonvt.cathode.remote.sync.SyncHiddenWatched;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.SyncPerson;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
@@ -250,8 +251,8 @@ import net.simonvt.cathode.widget.RemoteImageView;
 
         // Activities
         HomeActivity.class, LoginActivity.class, TokenTask.class, CalendarSetupActivity.class,
-        SettingsActivity.class, HiddenItems.class, TokenActivity.class,
-        EpisodeDetailsActivity.class, NotificationSettingsActivity.class,
+        SettingsActivity.class, HiddenItems.class, HiddenItems.HiddenItemsFragment.class,
+        TokenActivity.class, EpisodeDetailsActivity.class, NotificationSettingsActivity.class,
         NotificationSettingsActivity.NotificationSettingsFragment.class,
         NotificationSetupActivity.class,
 
@@ -316,16 +317,16 @@ import net.simonvt.cathode.widget.RemoteImageView;
         UpdateShowCounts.class, SyncLists.class, SyncList.class, CreateList.class, RemoveShow.class,
         RemoveSeason.class, RemoveEpisode.class, RemoveMovie.class, RemovePerson.class,
         AddShow.class, AddSeason.class, AddEpisode.class, AddMovie.class, AddPerson.class,
-        LogoutJob.class, SyncHiddenItems.class, SyncHiddenSection.class, SyncUserComments.class,
+        LogoutJob.class, SyncHiddenItems.class, SyncHiddenCalendar.class, SyncHiddenCollected.class,
+        SyncHiddenRecommendations.class, SyncHiddenWatched.class, SyncUserComments.class,
         AddCommentJob.class, UpdateCommentJob.class, DeleteCommentJob.class, SyncComments.class,
         CommentReplyJob.class, SyncUserProfile.class, LikeCommentJob.class, UnlikeCommentJob.class,
         SyncCommentLikes.class, CalendarHideShow.class, WatchedHideShow.class,
-        CollectedHideShow.class, CalendarHideMovie.class, WatchedHideMovie.class,
-        CollectedHideMovie.class, SyncAnticipatedShows.class, SyncAnticipatedMovies.class,
-        UpdateList.class, DeleteList.class, SyncRelatedShows.class, SyncRelatedMovies.class,
-        SyncPersonShowCredits.class, SyncPersonMovieCredits.class, SyncMovieImages.class,
-        SyncConfiguration.class, SyncShowImages.class, SyncEpisodeImages.class,
-        SyncPersonHeadshot.class, SyncPersonBackdrop.class,
+        CollectedHideShow.class, CalendarHideMovie.class, SyncAnticipatedShows.class,
+        SyncAnticipatedMovies.class, UpdateList.class, DeleteList.class, SyncRelatedShows.class,
+        SyncRelatedMovies.class, SyncPersonShowCredits.class, SyncPersonMovieCredits.class,
+        SyncMovieImages.class, SyncConfiguration.class, SyncShowImages.class,
+        SyncEpisodeImages.class, SyncPersonHeadshot.class, SyncPersonBackdrop.class,
 
         // Upgrade tasks
         EnsureSync.class, UpperCaseGenres.class,

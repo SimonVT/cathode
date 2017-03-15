@@ -23,14 +23,20 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
+import javax.inject.Inject;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
-import net.simonvt.cathode.provider.DatabaseContract.HiddenColumns;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobManager;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.remote.sync.SyncHiddenItems;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.FragmentContract;
 import net.simonvt.cathode.ui.LibraryType;
@@ -40,7 +46,7 @@ import net.simonvt.cathode.ui.comments.CommentFragment;
 import net.simonvt.cathode.ui.comments.CommentsFragment;
 import net.simonvt.cathode.ui.credits.CreditFragment;
 import net.simonvt.cathode.ui.credits.CreditsFragment;
-import net.simonvt.cathode.ui.fragment.ToolbarGridFragment;
+import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.ui.lists.ListFragment;
 import net.simonvt.cathode.ui.movie.MovieFragment;
 import net.simonvt.cathode.ui.person.PersonCreditsFragment;
@@ -62,8 +68,6 @@ public class HiddenItems extends BaseActivity
   private static final int LOADER_SHOWS_WATCHED = 2;
   private static final int LOADER_SHOWS_COLLECTED = 3;
   private static final int LOADER_MOVIES_CALENDAR = 4;
-  private static final int LOADER_MOVIES_WATCHED = 5;
-  private static final int LOADER_MOVIES_COLLECTED = 6;
 
   private FragmentStack stack;
 
@@ -210,8 +214,11 @@ public class HiddenItems extends BaseActivity
     return stack.positionInstack(fragment) == 0;
   }
 
-  public static class HiddenItemsFragment extends ToolbarGridFragment<RecyclerView.ViewHolder>
+  public static class HiddenItemsFragment
+      extends ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>
       implements HiddenItemsAdapter.OnItemClickListener {
+
+    @Inject JobManager jobManager;
 
     private HiddenItemsAdapter adapter;
 
@@ -219,8 +226,6 @@ public class HiddenItems extends BaseActivity
     Cursor hiddenShowsWatched;
     Cursor hiddenShowsCollected;
     Cursor hiddenMoviesCalendar;
-    Cursor hiddenMoviesWatched;
-    Cursor hiddenMoviesCollected;
 
     NavigationListener navigationListener;
 
@@ -231,6 +236,8 @@ public class HiddenItems extends BaseActivity
 
     @Override public void onCreate(Bundle inState) {
       super.onCreate(inState);
+      CathodeApp.inject(getContext(), this);
+
       setTitle(R.string.preference_hidden_items);
       setEmptyText(R.string.preference_hidden_empty);
 
@@ -238,9 +245,19 @@ public class HiddenItems extends BaseActivity
       getLoaderManager().initLoader(LOADER_SHOWS_WATCHED, null, hiddenShowsWatchedCallback);
       getLoaderManager().initLoader(LOADER_SHOWS_COLLECTED, null, hiddenShowsCollectedCallback);
       getLoaderManager().initLoader(LOADER_MOVIES_CALENDAR, null, hiddenMoviesCalendarCallback);
-      getLoaderManager().initLoader(LOADER_MOVIES_WATCHED, null, hiddenMoviesWatchedCallback);
-      getLoaderManager().initLoader(LOADER_MOVIES_COLLECTED, null, hiddenMoviesCollectedCallback);
     }
+
+    @Override public void onRefresh() {
+      Job job = new SyncHiddenItems();
+      job.registerOnDoneListener(onDoneListener);
+      jobManager.addJob(job);
+    }
+
+    private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
+      @Override public void onDone(Job job) {
+        setRefreshing(false);
+      }
+    };
 
     @Override protected int getColumnCount() {
       return getResources().getInteger(R.integer.hiddenColumns);
@@ -250,8 +267,7 @@ public class HiddenItems extends BaseActivity
       navigationListener.onDisplayShow(showId, title, overview, LibraryType.WATCHED);
     }
 
-    @Override
-    public void onMovieClicked(long movieId, String title, String overview) {
+    @Override public void onMovieClicked(long movieId, String title, String overview) {
       navigationListener.onDisplayMovie(movieId, title, overview);
     }
 
@@ -262,8 +278,6 @@ public class HiddenItems extends BaseActivity
         adapter.addHeader(R.string.header_hidden_watched_shows);
         adapter.addHeader(R.string.header_hidden_collected_shows);
         adapter.addHeader(R.string.header_hidden_calendar_movies);
-        adapter.addHeader(R.string.header_hidden_watched_movies);
-        adapter.addHeader(R.string.header_hidden_collected_movies);
         setAdapter(adapter);
       }
     }
@@ -272,7 +286,7 @@ public class HiddenItems extends BaseActivity
         new LoaderManager.LoaderCallbacks<SimpleCursor>() {
           @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
             return new SimpleCursorLoader(getActivity(), Shows.SHOWS,
-                HiddenItemsAdapter.PROJECTION_SHOW, HiddenColumns.HIDDEN_CALENDAR + "=1", null,
+                HiddenItemsAdapter.PROJECTION_SHOW, ShowColumns.HIDDEN_CALENDAR + "=1", null,
                 Shows.SORT_TITLE);
           }
 
@@ -290,7 +304,7 @@ public class HiddenItems extends BaseActivity
         new LoaderManager.LoaderCallbacks<SimpleCursor>() {
           @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
             return new SimpleCursorLoader(getActivity(), Shows.SHOWS,
-                HiddenItemsAdapter.PROJECTION_SHOW, HiddenColumns.HIDDEN_WATCHED + "=1", null,
+                HiddenItemsAdapter.PROJECTION_SHOW, ShowColumns.HIDDEN_WATCHED + "=1", null,
                 Shows.SORT_TITLE);
           }
 
@@ -308,7 +322,7 @@ public class HiddenItems extends BaseActivity
         new LoaderManager.LoaderCallbacks<SimpleCursor>() {
           @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
             return new SimpleCursorLoader(getActivity(), Shows.SHOWS,
-                HiddenItemsAdapter.PROJECTION_SHOW, HiddenColumns.HIDDEN_COLLECTED + "=1", null,
+                HiddenItemsAdapter.PROJECTION_SHOW, ShowColumns.HIDDEN_COLLECTED + "=1", null,
                 Shows.SORT_TITLE);
           }
 
@@ -326,7 +340,7 @@ public class HiddenItems extends BaseActivity
         new LoaderManager.LoaderCallbacks<SimpleCursor>() {
           @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
             return new SimpleCursorLoader(getActivity(), Movies.MOVIES,
-                HiddenItemsAdapter.PROJECTION_MOVIES, HiddenColumns.HIDDEN_CALENDAR + "=1", null,
+                HiddenItemsAdapter.PROJECTION_MOVIES, MovieColumns.HIDDEN_CALENDAR + "=1", null,
                 Movies.SORT_TITLE);
           }
 
@@ -334,42 +348,6 @@ public class HiddenItems extends BaseActivity
             ensureAdapter();
             adapter.updateCursorForHeader(R.string.header_hidden_calendar_movies, data);
             hiddenMoviesCalendar = data;
-          }
-
-          @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-          }
-        };
-
-    private LoaderManager.LoaderCallbacks<SimpleCursor> hiddenMoviesWatchedCallback =
-        new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-          @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-            return new SimpleCursorLoader(getActivity(), Movies.MOVIES,
-                HiddenItemsAdapter.PROJECTION_MOVIES, HiddenColumns.HIDDEN_WATCHED + "=1", null,
-                Movies.SORT_TITLE);
-          }
-
-          @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-            ensureAdapter();
-            adapter.updateCursorForHeader(R.string.header_hidden_watched_movies, data);
-            hiddenMoviesWatched = data;
-          }
-
-          @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-          }
-        };
-
-    private LoaderManager.LoaderCallbacks<SimpleCursor> hiddenMoviesCollectedCallback =
-        new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-          @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-            return new SimpleCursorLoader(getActivity(), Movies.MOVIES,
-                HiddenItemsAdapter.PROJECTION_MOVIES, HiddenColumns.HIDDEN_COLLECTED + "=1", null,
-                Movies.SORT_TITLE);
-          }
-
-          @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-            ensureAdapter();
-            adapter.updateCursorForHeader(R.string.header_hidden_collected_movies, data);
-            hiddenMoviesCollected = data;
           }
 
           @Override public void onLoaderReset(Loader<SimpleCursor> loader) {

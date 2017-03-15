@@ -16,25 +16,36 @@
 
 package net.simonvt.cathode.remote.action.movies;
 
+import android.content.ContentValues;
+import javax.inject.Inject;
+import net.simonvt.cathode.api.body.HiddenItems;
 import net.simonvt.cathode.api.entity.HideResponse;
+import net.simonvt.cathode.api.enumeration.HiddenSection;
+import net.simonvt.cathode.api.service.UsersService;
+import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import retrofit2.Call;
 
 public class CalendarHideMovie extends CallJob<HideResponse> {
 
-  private long movieId;
+  @Inject transient UsersService usersService;
+  @Inject transient MovieDatabaseHelper movieHelper;
+
+  private long traktId;
 
   private boolean hidden;
 
-  public CalendarHideMovie(long movieId, boolean hidden) {
+  public CalendarHideMovie(long traktId, boolean hidden) {
     super(Flags.REQUIRES_AUTH);
-    this.movieId = movieId;
+    this.traktId = traktId;
     this.hidden = hidden;
   }
 
   @Override public String key() {
-    return "CalendarHideMovie?movieId=" + movieId + "&hidden" + hidden;
+    return "CalendarHideMovie?traktId=" + traktId + "&hidden=" + hidden;
   }
 
   @Override public boolean allowDuplicates() {
@@ -46,10 +57,20 @@ public class CalendarHideMovie extends CallJob<HideResponse> {
   }
 
   @Override public Call<HideResponse> getCall() {
-    return null;
+    HiddenItems items = new HiddenItems();
+    items.movie(traktId);
+
+    if (hidden) {
+      return usersService.addHiddenItems(HiddenSection.CALENDAR, items);
+    } else {
+      return usersService.removeHiddenItems(HiddenSection.CALENDAR, items);
+    }
   }
 
   @Override public void handleResponse(HideResponse response) {
-    // TODO: Wait for trakt support
+    final long movieId = movieHelper.getId(traktId);
+    ContentValues values = new ContentValues();
+    values.put(MovieColumns.HIDDEN_CALENDAR, hidden);
+    getContentResolver().update(Movies.withId(movieId), values, null, null);
   }
 }

@@ -37,15 +37,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String LAST_MODIFIED = "lastModified";
   }
 
-  public interface HiddenColumns {
-
-    @DataType(INTEGER) @DefaultValue("0") String HIDDEN_CALENDAR = "hiddenCalendar";
-    @DataType(INTEGER) @DefaultValue("0") String HIDDEN_WATCHED = "hiddenWatched";
-    @DataType(INTEGER) @DefaultValue("0") String HIDDEN_COLLECTED = "hiddenCollected";
-    @DataType(INTEGER) @DefaultValue("0") String HIDDEN_RECOMMENDATIONS = "hiddenRecommendations";
-  }
-
-  public interface ShowColumns extends LastModifiedColumns, HiddenColumns {
+  public interface ShowColumns extends LastModifiedColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
     @DataType(TEXT) String TITLE = "showTitle";
@@ -93,6 +85,11 @@ public final class DatabaseContract {
 
     @DataType(INTEGER) @DefaultValue("0") String LAST_WATCHED_AT = "lastWatchedAt";
     @DataType(INTEGER) @DefaultValue("0") String LAST_COLLECTED_AT = "lastCollectedAt";
+
+    @DataType(INTEGER) @DefaultValue("0") String HIDDEN_CALENDAR = "hiddenCalendar";
+    @DataType(INTEGER) @DefaultValue("0") String HIDDEN_WATCHED = "hiddenWatched";
+    @DataType(INTEGER) @DefaultValue("0") String HIDDEN_COLLECTED = "hiddenCollected";
+    @DataType(INTEGER) @DefaultValue("0") String HIDDEN_RECOMMENDATIONS = "hiddenRecommendations";
 
     @DataType(INTEGER) @DefaultValue("0") String WATCHED_COUNT = "watchedCount";
     @DataType(INTEGER) @DefaultValue("0") String AIRDATE_COUNT = "airdateCount";
@@ -150,7 +147,7 @@ public final class DatabaseContract {
     String PERSON_ID = "personId";
   }
 
-  public interface SeasonColumns extends LastModifiedColumns, HiddenColumns {
+  public interface SeasonColumns extends LastModifiedColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
     @DataType(INTEGER) @References(table = Tables.SHOWS, column = ShowColumns.ID)
@@ -166,6 +163,9 @@ public final class DatabaseContract {
 
     @DataType(INTEGER) @DefaultValue("0") String RATING = "rating";
     @DataType(INTEGER) @DefaultValue("0") String VOTES = "votes";
+
+    @DataType(INTEGER) @DefaultValue("0") String HIDDEN_WATCHED = "hiddenWatched";
+    @DataType(INTEGER) @DefaultValue("0") String HIDDEN_COLLECTED = "hiddenCollected";
 
     @DataType(INTEGER) @DefaultValue("0") String WATCHED_COUNT = "watchedCount";
     @DataType(INTEGER) @DefaultValue("0") String AIRDATE_COUNT = "airdateCount";
@@ -235,7 +235,7 @@ public final class DatabaseContract {
     String SHOW_TITLE = "episodeShowTitle";
   }
 
-  public interface MovieColumns extends LastModifiedColumns, HiddenColumns {
+  public interface MovieColumns extends LastModifiedColumns {
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String ID = BaseColumns._ID;
     @DataType(TEXT) String TITLE = "title";
@@ -271,6 +271,9 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String WATCHED_AT = "watchedAt";
     @DataType(INTEGER) @DefaultValue("0") String COLLECTED_AT = "collectedAt";
     @DataType(INTEGER) @DefaultValue("0") String LISTED_AT = "watchlistListedAt";
+
+    @DataType(INTEGER) @DefaultValue("0") String HIDDEN_CALENDAR = "hiddenCalendar";
+    @DataType(INTEGER) @DefaultValue("0") String HIDDEN_RECOMMENDATIONS = "hiddenRecommendations";
 
     @DataType(INTEGER) @DefaultValue("0") String LAST_UPDATED = "lastUpdated";
 

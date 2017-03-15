@@ -1065,8 +1065,7 @@ public final class ProviderSchematic {
         path = Path.MOVIES + "/" + Path.WATCHED,
         type = Type.MOVIE,
         where = {
-            MovieColumns.WATCHED + "=1", MovieColumns.HIDDEN_WATCHED + "=0",
-            MovieColumns.NEEDS_SYNC + "=0"
+            MovieColumns.WATCHED + "=1", MovieColumns.NEEDS_SYNC + "=0"
         }
     )
     public static final Uri MOVIES_WATCHED = buildUri(Path.MOVIES, Path.WATCHED);
@@ -1075,8 +1074,7 @@ public final class ProviderSchematic {
         path = Path.MOVIES + "/" + Path.COLLECTED,
         type = Type.MOVIE,
         where = {
-            MovieColumns.IN_COLLECTION + "=1", MovieColumns.HIDDEN_COLLECTED + "=0",
-            MovieColumns.NEEDS_SYNC + "=0"
+            MovieColumns.IN_COLLECTION + "=1", MovieColumns.NEEDS_SYNC + "=0"
         }
     )
     public static final Uri MOVIES_COLLECTED = buildUri(Path.MOVIES, Path.COLLECTED);
