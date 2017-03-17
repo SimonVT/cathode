@@ -23,6 +23,7 @@ import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface SearchService {
@@ -30,6 +31,7 @@ public interface SearchService {
   /**
    * Queries will search fields like the title and description.
    */
-  @GET("/search") Call<List<SearchResult>> search(@Query("type") Enums<ItemType> types,
-      @Query("query") String query, @Query("extended") Extended extended, @Query("limit") int limit);
+  @GET("/search/{type}") Call<List<SearchResult>> search(@Path("type") Enums<ItemType> types,
+      @Query("query") String query, @Query("extended") Extended extended,
+      @Query("limit") int limit);
 }
