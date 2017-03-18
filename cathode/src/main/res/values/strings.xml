@@ -404,6 +404,8 @@
   <string name="comment_too_short">Comment must contain at least 5 words</string>
   <string name="comments_username_rating">%1$s (%2$d)</string>
   <string name="comment_reveal">Click to reveal spoiler</string>
+  <string name="comment_submit_error">Posting comment failed</string>
+  <string name="comment_update_error">Updating comment failed</string>
 
   <string name="stats_spent">You have spent</string>
   <string name="stats_watching">watching</string>

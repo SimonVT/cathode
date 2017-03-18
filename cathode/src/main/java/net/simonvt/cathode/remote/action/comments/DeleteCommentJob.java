@@ -17,11 +17,15 @@
 package net.simonvt.cathode.remote.action.comments;
 
 import javax.inject.Inject;
+import net.simonvt.cathode.R;
+import net.simonvt.cathode.api.entity.Comment;
 import net.simonvt.cathode.api.service.CommentsService;
+import net.simonvt.cathode.event.RequestFailedEvent;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Response;
 
 public class DeleteCommentJob extends CallJob<ResponseBody> {
 
@@ -47,7 +51,6 @@ public class DeleteCommentJob extends CallJob<ResponseBody> {
   }
 
   @Override public Call<ResponseBody> getCall() {
-    // TODO: Catch 422
     return commentsService.delete(commentId);
   }
 

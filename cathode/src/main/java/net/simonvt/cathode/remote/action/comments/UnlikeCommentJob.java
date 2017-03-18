@@ -51,6 +51,5 @@ public class UnlikeCommentJob extends CallJob<ResponseBody> {
   }
 
   @Override public void handleResponse(ResponseBody response) {
-    // TODO: Catch 422
   }
 }

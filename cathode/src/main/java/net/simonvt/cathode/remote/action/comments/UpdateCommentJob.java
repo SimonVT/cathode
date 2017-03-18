@@ -18,14 +18,17 @@ package net.simonvt.cathode.remote.action.comments;
 
 import android.content.ContentValues;
 import javax.inject.Inject;
+import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.body.CommentBody;
 import net.simonvt.cathode.api.entity.Comment;
 import net.simonvt.cathode.api.service.CommentsService;
+import net.simonvt.cathode.event.RequestFailedEvent;
 import net.simonvt.cathode.provider.CommentsHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import retrofit2.Call;
+import retrofit2.Response;
 
 public class UpdateCommentJob extends CallJob<Comment> {
 
@@ -62,13 +65,22 @@ public class UpdateCommentJob extends CallJob<Comment> {
   }
 
   @Override public Call<Comment> getCall() {
-    // TODO: Catch 422
     CommentBody body = CommentBody.comment(comment);
     if (spoiler) {
       body.spoiler();
     }
 
     return commentsService.update(commentId, body);
+  }
+
+  @Override protected boolean handleError(Response<Comment> response) {
+    final int statusCode = response.code();
+    if (statusCode == 422) {
+      RequestFailedEvent.post(R.string.comment_update_error);
+      return true;
+    }
+
+    return super.handleError(response);
   }
 
   @Override public void handleResponse(Comment comment) {

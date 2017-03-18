@@ -48,7 +48,6 @@ public class LikeCommentJob extends CallJob<ResponseBody> {
   }
 
   @Override public Call<ResponseBody> getCall() {
-    // TODO: Catch 422
     return commentsService.like(commentId, Requests.EMPTY_BODY);
   }
 
