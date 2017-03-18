@@ -23,7 +23,7 @@ import net.simonvt.schematic.annotation.OnUpgrade;
 import net.simonvt.schematic.annotation.Table;
 
 @Database(
-    version = 3,
+    version = 4,
     packageName = "net.simonvt.cathode.jobqueue.database"
 )
 public class JobDatabase {
@@ -38,19 +38,24 @@ public class JobDatabase {
 
   @OnUpgrade
   public static void onUpgrade(Context context, SQLiteDatabase db, int oldVersion, int newVersion) {
-    if (oldVersion <= 1) {
-      db.delete(Tables.JOBS, JobColumns.JOB_NAME + "=?", new String[] {
-          "net.simonvt.cathode.remote.sync.SyncActivityStream",
-      });
+    if (oldVersion < 2) {
+      deleteJob(db, "net.simonvt.cathode.remote.sync.SyncActivityStream");
     }
 
-    if (oldVersion <= 2) {
-      db.delete(Tables.JOBS, JobColumns.JOB_NAME + "=?", new String[] {
-          "net.simonvt.cathode.remote.sync.shows.SyncShowCast",
-      });
-      db.delete(Tables.JOBS, JobColumns.JOB_NAME + "=?", new String[] {
-          "net.simonvt.cathode.remote.sync.movies.SyncMovieCrew",
-      });
+    if (oldVersion < 3) {
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncShowCast");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.movies.SyncMovieCrew");
     }
+
+    if (oldVersion < 4) {
+      deleteJob(db, "net.simonvt.cathode.remote.sync.SyncHiddenSection");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.PurgeDatabase");
+    }
+  }
+
+  private static void deleteJob(SQLiteDatabase db, String job) {
+    db.delete(Tables.JOBS, JobColumns.JOB_NAME + "=?", new String[] {
+        job,
+    });
   }
 }
