@@ -66,6 +66,10 @@ public class SyncEpisodeImages extends TmdbCallJob<Images> {
     final long showId = showHelper.getIdFromTmdb(tmdbId);
     final long episodeId = episodeHelper.getId(showId, season, episode);
 
+    if (episodeId == -1L) {
+      return;
+    }
+
     ContentValues values = new ContentValues();
 
     if (images.stills.size() > 0) {
