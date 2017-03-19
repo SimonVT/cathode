@@ -46,10 +46,6 @@ public class SyncJob extends Job {
   }
 
   @Override public void perform() {
-    if (TraktTimestamps.shouldPurge(getContext())) {
-      queue(new PurgeDatabase());
-    }
-
     queue(new SyncConfiguration());
 
     queue(new SyncUserSettings());
