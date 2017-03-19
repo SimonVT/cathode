@@ -164,7 +164,7 @@ public class ApiSettings implements TraktSettings {
             Timber.e(new TokenRefreshFailedException(message), "Unable to get token");
           }
         } catch (IOException e) {
-          Timber.e(e, "Unable to get new tokens");
+          Timber.d(e, "Unable to get new tokens");
         } finally {
           setRefreshingToken(false);
         }
