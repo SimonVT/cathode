@@ -60,6 +60,7 @@ import net.simonvt.cathode.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.util.Ids;
 import net.simonvt.cathode.util.Intents;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.widget.CheckInDrawable;
@@ -137,7 +138,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
   private CheckInDrawable checkInDrawable;
 
   public static String getTag(long episodeId) {
-    return TAG + "/" + episodeId;
+    return TAG + "/" + episodeId + "/" + Ids.newId();
   }
 
   public static Bundle getArgs(long episodeId, String showTitle) {
