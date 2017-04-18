@@ -47,6 +47,7 @@ import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.util.Ids;
 import net.simonvt.cathode.util.Intents;
+import net.simonvt.cathode.util.guava.Preconditions;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public class PersonFragment extends RefreshableAppBarFragment {
@@ -112,6 +113,8 @@ public class PersonFragment extends RefreshableAppBarFragment {
   }
 
   public static Bundle getArgs(long personId) {
+    Preconditions.checkArgument(personId >= 0, "personId must be >= 0");
+
     Bundle args = new Bundle();
     args.putLong(ARG_PERSON_ID, personId);
     return args;

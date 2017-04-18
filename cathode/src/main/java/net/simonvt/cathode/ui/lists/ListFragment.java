@@ -49,6 +49,7 @@ import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.util.SqlCoalesce;
 import net.simonvt.cathode.util.SqlColumn;
+import net.simonvt.cathode.util.guava.Preconditions;
 import net.simonvt.schematic.Cursors;
 
 public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHolder>
@@ -80,6 +81,8 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
   private Cursor listInfo;
 
   public static Bundle getArgs(long listId, String listName) {
+    Preconditions.checkArgument(listId >= 0, "listId must be >= 0");
+
     Bundle args = new Bundle();
     args.putLong(ARG_LIST_ID, listId);
     args.putString(ARG_LIST_NAME, listName);

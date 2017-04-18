@@ -35,6 +35,7 @@ import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
 import net.simonvt.cathode.util.Ids;
+import net.simonvt.cathode.util.guava.Preconditions;
 
 public class RelatedMoviesFragment
     extends ToolbarSwipeRefreshRecyclerFragment<MoviesAdapter.ViewHolder>
@@ -65,6 +66,8 @@ public class RelatedMoviesFragment
   }
 
   public static Bundle getArgs(long movieId) {
+    Preconditions.checkArgument(movieId >= 0, "movieId must be >= 0");
+
     Bundle args = new Bundle();
     args.putLong(ARG_MOVIE_ID, movieId);
     return args;

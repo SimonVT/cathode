@@ -38,6 +38,7 @@ import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.ui.listener.EpisodeClickListener;
+import net.simonvt.cathode.util.guava.Preconditions;
 import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
@@ -84,6 +85,9 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
 
   public static Bundle getArgs(long showId, long seasonId, String showTitle, int seasonNumber,
       LibraryType type) {
+    Preconditions.checkArgument(showId >= 0, "showId must be >= 0");
+    Preconditions.checkArgument(seasonId >= 0, "seasonId must be >= 0");
+
     Bundle args = new Bundle();
     args.putLong(ARG_SHOW_ID, showId);
     args.putLong(ARG_SEASONID, seasonId);

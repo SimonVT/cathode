@@ -84,6 +84,7 @@ import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.Ids;
 import net.simonvt.cathode.util.Intents;
 import net.simonvt.cathode.util.SqlColumn;
+import net.simonvt.cathode.util.guava.Preconditions;
 import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.HiddenPaneLayout;
@@ -244,9 +245,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
   }
 
   public static Bundle getArgs(long showId, String title, String overview, LibraryType type) {
-    if (showId < 0) {
-      throw new IllegalArgumentException("showId must be >= 0");
-    }
+    Preconditions.checkArgument(showId >= 0, "showId must be >= 0");
 
     Bundle args = new Bundle();
     args.putLong(ARG_SHOWID, showId);

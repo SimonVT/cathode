@@ -69,6 +69,7 @@ import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.util.Ids;
 import net.simonvt.cathode.util.Intents;
 import net.simonvt.cathode.util.SqlColumn;
+import net.simonvt.cathode.util.guava.Preconditions;
 import net.simonvt.cathode.widget.CheckInDrawable;
 import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
@@ -172,9 +173,7 @@ public class MovieFragment extends RefreshableAppBarFragment
   }
 
   public static Bundle getArgs(long movieId, String movieTitle, String overview) {
-    if (movieId < 0) {
-      throw new IllegalArgumentException("movieId must be >= 0");
-    }
+    Preconditions.checkArgument(movieId >= 0, "movieId must be >= 0");
 
     Bundle args = new Bundle();
     args.putLong(ARG_ID, movieId);

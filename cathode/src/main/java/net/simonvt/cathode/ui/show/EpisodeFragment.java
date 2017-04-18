@@ -63,6 +63,7 @@ import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.cathode.util.Ids;
 import net.simonvt.cathode.util.Intents;
 import net.simonvt.cathode.util.SqlColumn;
+import net.simonvt.cathode.util.guava.Preconditions;
 import net.simonvt.cathode.widget.CheckInDrawable;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.schematic.Cursors;
@@ -142,6 +143,8 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
   }
 
   public static Bundle getArgs(long episodeId, String showTitle) {
+    Preconditions.checkArgument(episodeId >= 0, "episodeId must be >= 0");
+
     Bundle args = new Bundle();
     args.putLong(ARG_EPISODEID, episodeId);
     args.putString(ARG_SHOW_TITLE, showTitle);

@@ -36,6 +36,7 @@ import net.simonvt.cathode.ui.shows.ShowClickListener;
 import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
 import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.util.Ids;
+import net.simonvt.cathode.util.guava.Preconditions;
 
 public class RelatedShowsFragment
     extends ToolbarSwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>
@@ -62,6 +63,8 @@ public class RelatedShowsFragment
   }
 
   public static Bundle getArgs(long showId) {
+    Preconditions.checkArgument(showId >= 0, "showId must be >= 0");
+
     Bundle args = new Bundle();
     args.putLong(ARG_SHOW_ID, showId);
     return args;

@@ -36,6 +36,7 @@ import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
+import net.simonvt.cathode.util.guava.Preconditions;
 
 public class UpdateListFragment extends DialogFragment {
 
@@ -69,15 +70,15 @@ public class UpdateListFragment extends DialogFragment {
 
   public static Bundle getArgs(long listId, String name, String description, Privacy privacy,
       boolean displayNumbers, boolean allowComments) {
-    Bundle args = new Bundle();
+    Preconditions.checkArgument(listId >= 0, "listId must be >= 0");
 
+    Bundle args = new Bundle();
     args.putLong(ARG_LIST_ID, listId);
     args.putString(ARG_NAME, name);
     args.putString(ARG_DESCRIPTION, description);
     args.putString(ARG_PRIVACY, privacy.toString());
     args.putBoolean(ARG_DISPLAY_NUMBERS, displayNumbers);
     args.putBoolean(ARG_ALLOW_COMMENTS, allowComments);
-
     return args;
   }
 

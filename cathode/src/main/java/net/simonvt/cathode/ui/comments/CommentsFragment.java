@@ -32,6 +32,7 @@ import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.fragment.ToolbarGridFragment;
+import net.simonvt.cathode.util.guava.Preconditions;
 
 public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHolder> {
 
@@ -65,9 +66,7 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
   private Bundle adapterState;
 
   public static Bundle getArgs(ItemType itemType, long itemId) {
-    if (itemId < 0) {
-      throw new IllegalArgumentException("itemId must be >= 0");
-    }
+    Preconditions.checkArgument(itemId >= 0, "itemId must be >= 0");
 
     Bundle args = new Bundle();
     args.putSerializable(ARG_ITEM_TYPE, itemType);

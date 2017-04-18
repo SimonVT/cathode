@@ -27,6 +27,7 @@ import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.util.Ids;
+import net.simonvt.cathode.util.guava.Preconditions;
 
 public class PersonCreditsFragment extends ToolbarGridFragment<PersonCreditsAdapter.ViewHolder>
     implements PersonCreditsAdapter.OnCreditClickListener {
@@ -54,6 +55,8 @@ public class PersonCreditsFragment extends ToolbarGridFragment<PersonCreditsAdap
   }
 
   public static Bundle getArgs(long personId, Department department) {
+    Preconditions.checkArgument(personId >= 0, "personId must be >= 0");
+
     Bundle args = new Bundle();
     args.putLong(ARG_PERSON_ID, personId);
     args.putSerializable(ARG_DEPARTMENT, department);

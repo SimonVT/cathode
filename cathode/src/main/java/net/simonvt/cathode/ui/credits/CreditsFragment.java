@@ -42,6 +42,7 @@ import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.fragment.RefreshableToolbarFragment;
 import net.simonvt.cathode.util.Ids;
+import net.simonvt.cathode.util.guava.Preconditions;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public class CreditsFragment extends RefreshableToolbarFragment {
@@ -102,6 +103,8 @@ public class CreditsFragment extends RefreshableToolbarFragment {
   }
 
   public static Bundle getArgs(ItemType itemType, long itemId, String title) {
+    Preconditions.checkArgument(itemId >= 0, "itemId must be >= 0");
+
     Bundle args = new Bundle();
     args.putSerializable(ARG_TYPE, itemType);
     args.putLong(ARG_ITEM_ID, itemId);
