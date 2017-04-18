@@ -183,6 +183,9 @@ public class HomeActivity extends BaseActivity
 
     if (isShowStartPageIntent(intent)) {
       StartPage startPage = (StartPage) intent.getSerializableExtra(EXTRA_START_PAGE);
+      if (startPage == null) {
+        startPage = StartPage.SHOWS_UPCOMING;
+      }
       navigation.setSelectedId(startPage.getMenuId());
       stack.replace(startPage.getPageClass(), startPage.getTag());
     } else if (isShowUpcomingAction(intent)) {
