@@ -16,15 +16,15 @@
 
 ext {
   daggerVersion = '1.2.5'
-  okhttpVersion = '3.6.0'
+  okhttpVersion = '3.7.0'
   retrofitVersion = '2.2.0'
 
   butterknifeVersion = '8.5.1'
 
-  supportLibrariesVersion = '25.2.0'
+  supportLibrariesVersion = '25.3.1'
 
   deps = [
-      androidPlugin       : 'com.android.tools.build:gradle:2.3.0',
+      androidPlugin       : 'com.android.tools.build:gradle:2.3.1',
       crashlytics         : 'com.crashlytics.sdk.android:crashlytics:2.6.7@aar',
 
       schematic           : 'net.simonvt.schematic:schematic:0.7.0',
