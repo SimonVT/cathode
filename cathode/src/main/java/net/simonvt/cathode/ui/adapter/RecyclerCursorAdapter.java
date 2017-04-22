@@ -33,15 +33,12 @@ public abstract class RecyclerCursorAdapter<VH extends RecyclerView.ViewHolder>
 
   private int lastModifiedIndex = -1;
 
-  private AdapterNotifier notifier;
-
   public RecyclerCursorAdapter(Context context) {
     this(context, null);
   }
 
   public RecyclerCursorAdapter(Context context, Cursor cursor) {
     this.context = context;
-    notifier = new AdapterNotifier(this);
     setHasStableIds(true);
     changeCursor(cursor);
   }
@@ -80,10 +77,6 @@ public abstract class RecyclerCursorAdapter<VH extends RecyclerView.ViewHolder>
     }
 
     notifyChanged();
-  }
-
-  public void notifyChanged() {
-    notifier.notifyChanged();
   }
 
   @Override public long getItemId(int position) {

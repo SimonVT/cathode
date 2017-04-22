@@ -29,6 +29,7 @@ import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
@@ -36,8 +37,6 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
-import net.simonvt.cathode.images.ImageType;
-import net.simonvt.cathode.ui.adapter.AdapterNotifier;
 import net.simonvt.cathode.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.widget.RemoteImageView;
@@ -71,8 +70,6 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
 
   private DashboardFragment.OverviewCallback callback;
 
-  private AdapterNotifier notifier;
-
   private Cursor showsWatchlist;
 
   private Cursor episodeWatchlist;
@@ -83,18 +80,16 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
     this.callback = callback;
 
     CathodeApp.inject(context, this);
-
-    notifier = new AdapterNotifier(this);
   }
 
   public void changeShowsCursor(Cursor cursor) {
     showsWatchlist = cursor;
-    notifier.notifyChanged();
+    notifyChanged();
   }
 
   public void changeEpisodeCursor(Cursor cursor) {
     episodeWatchlist = cursor;
-    notifier.notifyChanged();
+    notifyChanged();
   }
 
   @Override public int getItemViewType(int position) {

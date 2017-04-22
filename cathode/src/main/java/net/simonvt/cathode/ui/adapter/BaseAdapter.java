@@ -21,5 +21,19 @@ import android.support.v7.widget.RecyclerView;
 public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder>
     extends RecyclerView.Adapter<VH> {
 
+  private AdapterNotifier notifier;
+
+  public BaseAdapter() {
+    notifier = new AdapterNotifier(this);
+  }
+
   public abstract long getLastModified(int position);
+
+  public final void notifyChanged() {
+    onNotifyChanged();
+    notifier.notifyChanged();
+  }
+
+  protected void onNotifyChanged() {
+  }
 }

@@ -77,11 +77,8 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
 
   private SparseArray<Long> itemIds = new SparseArray<>();
 
-  private AdapterNotifier notifier;
-
   public HeaderCursorAdapter() {
     setHasStableIds(true);
-    notifier = new AdapterNotifier(this);
   }
 
   public void addHeader(int header) {
@@ -97,7 +94,7 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
     notifyChanged();
   }
 
-  public void notifyChanged() {
+  @Override protected void onNotifyChanged() {
     itemIds.clear();
     itemCount = 0;
 
@@ -111,8 +108,6 @@ public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
         itemCount += header.size;
       }
     }
-
-    notifier.notifyChanged();
   }
 
   public void updateCursorForHeader(int headerRes, Cursor cursor) {
