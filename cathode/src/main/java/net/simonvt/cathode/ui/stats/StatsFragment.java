@@ -17,24 +17,18 @@
 package net.simonvt.cathode.ui.stats;
 
 import android.content.Context;
-import android.database.ContentObserver;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.BindView;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.database.BaseAsyncLoader;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
@@ -43,7 +37,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.ui.fragment.BaseFragment;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.schematic.Cursors;
-import timber.log.Timber;
 
 public class StatsFragment extends BaseFragment implements LoaderCallbacks<StatsFragment.Stats> {
 
@@ -131,32 +124,14 @@ public class StatsFragment extends BaseFragment implements LoaderCallbacks<Stats
     }
   }
 
-  public static class StatsLoader extends AsyncTaskLoader<Stats> {
-
-    private final List<Uri> notificationUris = new ArrayList<>();
-    private final Map<Uri, ContentObserver> observers = new HashMap<>();
-
-    Stats stats;
+  public static class StatsLoader extends BaseAsyncLoader<Stats> {
 
     public StatsLoader(Context context) {
       super(context);
 
-      registerUri(Shows.SHOWS);
-      registerUri(Episodes.EPISODES);
-      registerUri(Movies.MOVIES);
-    }
-
-    private void registerUri(Uri uri) {
-      synchronized (notificationUris) {
-        notificationUris.add(uri);
-
-        ContentObserver observer = new ForceLoadContentObserver();
-        observers.put(uri, observer);
-
-        if (isStarted()) {
-          getContext().getContentResolver().registerContentObserver(uri, true, observer);
-        }
-      }
+      addNotificationUri(Shows.SHOWS);
+      addNotificationUri(Episodes.EPISODES);
+      addNotificationUri(Movies.MOVIES);
     }
 
     @Override public Stats loadInBackground() {
@@ -192,45 +167,6 @@ public class StatsFragment extends BaseFragment implements LoaderCallbacks<Stats
       movies.close();
 
       return new Stats(episodeTime, episodeCount, showCount, moviesTime, movieCount);
-    }
-
-    @Override public void deliverResult(Stats stats) {
-      if (isStarted()) {
-        super.deliverResult(stats);
-      }
-    }
-
-    /**
-     * Handles a request to start the Loader.
-     */
-    @Override protected void onStartLoading() {
-      if (stats != null) {
-        deliverResult(stats);
-      }
-
-      synchronized (notificationUris) {
-        for (Uri uri : notificationUris) {
-          ContentObserver observer = observers.get(uri);
-          getContext().getContentResolver().registerContentObserver(uri, true, observer);
-          Timber.d("Registering observer");
-        }
-      }
-
-      forceLoad();
-    }
-
-    @Override protected void onStopLoading() {
-      cancelLoad();
-
-      for (ContentObserver observer : observers.values()) {
-        getContext().getContentResolver().unregisterContentObserver(observer);
-        Timber.d("unregistering observer");
-      }
-    }
-
-    @Override protected void onReset() {
-      super.onReset();
-      onStopLoading();
     }
   }
 }

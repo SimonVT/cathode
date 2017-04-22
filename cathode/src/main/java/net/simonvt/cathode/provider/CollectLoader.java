@@ -18,13 +18,13 @@ package net.simonvt.cathode.provider;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import net.simonvt.cathode.database.BaseAsyncLoader;
 import net.simonvt.cathode.database.DatabaseUtils;
-import net.simonvt.cathode.database.SimpleLoaderBase;
 import net.simonvt.cathode.database.SimpleMergeCursor;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 
-public class CollectLoader extends SimpleLoaderBase<SimpleMergeCursor> {
+public class CollectLoader extends BaseAsyncLoader<SimpleMergeCursor> {
 
   private long showId;
 
@@ -42,7 +42,8 @@ public class CollectLoader extends SimpleLoaderBase<SimpleMergeCursor> {
     Cursor toCollect = getContext().getContentResolver()
         .query(Episodes.fromShow(showId), projection, EpisodeColumns.IN_COLLECTION
                 + "=0 AND "
-                + EpisodeColumns.FIRST_AIRED + " IS NOT NULL"
+                + EpisodeColumns.FIRST_AIRED
+                + " IS NOT NULL"
                 + " AND "
                 + EpisodeColumns.SEASON
                 + ">0", null,

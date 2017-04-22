@@ -19,7 +19,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-public class SimpleCursorLoader extends SimpleLoaderBase<SimpleCursor> {
+public class SimpleCursorLoader extends BaseAsyncLoader<SimpleCursor> {
 
   private Uri uri;
   private String[] projection;
