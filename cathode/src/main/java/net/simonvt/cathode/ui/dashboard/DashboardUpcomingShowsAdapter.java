@@ -28,13 +28,13 @@ import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
-import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.widget.RemoteImageView;
@@ -108,7 +108,8 @@ public class DashboardUpcomingShowsAdapter
     final boolean watching = Cursors.getBoolean(cursor, ShowColumns.WATCHING);
     final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-    final String episodeTitle = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
+    final String episodeTitle =
+        DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, true);
 
     final String poster =
         ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
@@ -116,15 +117,11 @@ public class DashboardUpcomingShowsAdapter
     holder.poster.setImage(poster);
     holder.title.setText(title);
 
-    String episodeText;
     if (watching) {
-      episodeText = getContext().getString(R.string.show_watching);
+      holder.nextEpisode.setText(R.string.show_watching);
     } else {
-      episodeText =
-          getContext().getString(R.string.upcoming_episode_next, season, episode, episodeTitle);
+      holder.nextEpisode.setText(episodeTitle);
     }
-
-    holder.nextEpisode.setText(episodeText);
   }
 
   static class ViewHolder extends RecyclerView.ViewHolder {

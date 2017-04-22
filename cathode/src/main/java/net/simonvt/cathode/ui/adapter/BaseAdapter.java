@@ -25,6 +25,7 @@ public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder>
 
   public BaseAdapter() {
     notifier = new AdapterNotifier(this);
+    Adapters.registerAdapter(this);
   }
 
   public abstract long getLastModified(int position);

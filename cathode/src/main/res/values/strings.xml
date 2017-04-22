@@ -205,8 +205,7 @@
   <string name="search_searching">Searching…</string>
   <string name="search_local_results">Searching Trakt failed, showing local results</string>
 
-  <string name="episode_next">Next: %1$dx%2$d %3$s</string>
-  <string name="upcoming_episode_next">%1$dx%2$d %3$s</string>
+  <string name="episode_next">Next: %1$s</string>
   <string name="show_watching">Watching</string>
 
   <string name="shows_loading_trending">Trending shows are loading…</string>
@@ -257,6 +256,8 @@
   </string>
 
   <string name="preference_shows">Shows</string>
+  <string name="preference_shows_avoid_spoilers">Avoid spoilers</string>
+  <string name="preference_shows_avoid_spoilers_sum">Hide episode titles and descriptions until episode is watched</string>
   <string name="preference_shows_offset">Offset air time</string>
   <string name="preference_shows_offset_sum">Number of hours to offset show air dates by</string>
 
@@ -391,6 +392,10 @@
 
   <string name="episode_x">Episode %d</string>
   <string name="special_x">Special %d</string>
+  <string name="season_x_episode">%1$dx%2$d</string>
+  <string name="episode_with_number">%1$dx%2$d %3$s</string>
+
+  <string name="episode_overview_nospoiler">Watch the episode to see the description.</string>
 
   <string name="loading">Loading…</string>
 

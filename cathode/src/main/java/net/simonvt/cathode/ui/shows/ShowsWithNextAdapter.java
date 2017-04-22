@@ -222,9 +222,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
       if (watching) {
         episodeText = getContext().getString(R.string.show_watching);
       } else {
-        episodeText =
-            getContext().getString(R.string.episode_next, episodeSeasonNumber, episodeNumber,
-                episodeTitle);
+        episodeText = getContext().getString(R.string.episode_next, episodeTitle);
       }
       holder.firstAired.setVisibility(View.VISIBLE);
       holder.firstAired.setTimeInMillis(episodeFirstAired);

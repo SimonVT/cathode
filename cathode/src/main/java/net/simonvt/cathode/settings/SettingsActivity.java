@@ -41,6 +41,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.settings.hidden.HiddenItems;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.HomeActivity;
+import net.simonvt.cathode.ui.adapter.Adapters;
 import timber.log.Timber;
 
 public class SettingsActivity extends BaseActivity {
@@ -127,6 +128,11 @@ public class SettingsActivity extends BaseActivity {
                       Settings.CALENDAR_COLORS, calendarColor, 5, size);
               dialog.setTargetFragment(SettingsFragment.this, 0);
               dialog.show(getFragmentManager(), DIALOG_COLOR_PICKER);
+
+              if (settings.getBoolean(Settings.CALENDAR_SYNC, false)) {
+                Accounts.requestCalendarSync(getActivity());
+              }
+
               return true;
             }
           });
@@ -155,6 +161,18 @@ public class SettingsActivity extends BaseActivity {
               UpcomingTimeDialog dialog = UpcomingTimeDialog.newInstance(upcomingTime);
               dialog.setTargetFragment(SettingsFragment.this, 0);
               dialog.show(getFragmentManager(), DIALOG_UPCOMING_TIME);
+              return true;
+            }
+          });
+
+      findPreference(Settings.SHOWS_AVOID_SPOILERS).setOnPreferenceChangeListener(
+          new Preference.OnPreferenceChangeListener() {
+            @Override public boolean onPreferenceChange(Preference preference, Object newValue) {
+              Adapters.notifyAdapters();
+
+              if (settings.getBoolean(Settings.CALENDAR_SYNC, false)) {
+                Accounts.requestCalendarSync(getActivity());
+              }
               return true;
             }
           });

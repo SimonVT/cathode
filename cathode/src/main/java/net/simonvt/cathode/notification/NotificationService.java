@@ -145,9 +145,9 @@ public class NotificationService extends IntentService {
       final int runtime = Cursors.getInt(episodes, ShowColumns.RUNTIME);
 
       final long episodeId = Cursors.getLong(episodes, "episodeId");
-      final String episodeTitle = Cursors.getString(episodes, EpisodeColumns.TITLE);
       final int season = Cursors.getInt(episodes, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(episodes, EpisodeColumns.EPISODE);
+      final String episodeTitle = DataHelper.getEpisodeTitle(this, episodes, season, episode);
       final long firstAired = DataHelper.getFirstAired(episodes);
       final boolean notificationDismissed =
           Cursors.getBoolean(episodes, EpisodeColumns.NOTIFICATION_DISMISSED);
@@ -234,9 +234,9 @@ public class NotificationService extends IntentService {
 
   private void displayNotification(long showId, String showTitle, long episodeId,
       String episodeTitle, int season, int episode, long firstAired, boolean airing) {
-    final String epiTitle = DataHelper.getEpisodeTitle(this, episodeTitle, season, episode);
+    final String epiTitle = DataHelper.getEpisodeTitle(this, episodeTitle, season, episode, true);
 
-    final String contentTitle = showTitle + " - " + season + "x" + episode + " " + epiTitle;
+    final String contentTitle = showTitle + " - " + epiTitle;
 
     String contentText;
     String tickerText;

@@ -183,15 +183,12 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
       final long id = Cursors.getLong(cursor, EpisodeColumns.ID);
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-      final String title = DataHelper.getEpisodeTitle(context, cursor, season, episode);
+      final String title = DataHelper.getEpisodeTitle(context, cursor, season, episode, true);
 
-      final String screenshotUri =
-          ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, id);
+      final String screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, id);
 
       episodeHolder.screenshot.setImage(screenshotUri);
-      String episodeText =
-          context.getString(R.string.upcoming_episode_next, season, episode, title);
-      episodeHolder.title.setText(episodeText);
+      episodeHolder.title.setText(title);
     }
   }
 

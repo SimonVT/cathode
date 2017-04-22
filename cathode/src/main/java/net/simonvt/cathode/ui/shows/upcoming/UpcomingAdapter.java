@@ -181,26 +181,18 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     vh.title.setText(showTitle);
     vh.poster.setImage(showPosterUri);
 
-    String episodeText;
-
     vh.watching = watching;
     vh.watchingId = watchingEpisodeId;
 
     if (watching) {
-      episodeText = activity.getString(R.string.show_watching);
+      vh.nextEpisode.setText(R.string.show_watching);
     } else {
-      episodeText =
-          activity.getString(R.string.upcoming_episode_next, episodeSeasonNumber, episodeNumber,
-              episodeTitle);
+      vh.nextEpisode.setText(episodeTitle);
     }
-
-    final String finalEpisodeTitle = episodeTitle;
 
     vh.firstAired.setVisibility(View.VISIBLE);
     vh.firstAired.setTimeInMillis(episodeFirstAired);
 
-    vh.nextEpisode.setText(episodeText);
-    vh.nextEpisode.setEnabled(episodeTitle != null);
 
     vh.checkIn.setWatching(watching);
     vh.checkIn.setId(id);
@@ -221,7 +213,7 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
               break;
 
             case R.id.action_checkin:
-              if (!CheckInDialog.showDialogIfNecessary(activity, Type.SHOW, finalEpisodeTitle,
+              if (!CheckInDialog.showDialogIfNecessary(activity, Type.SHOW, episodeTitle,
                   episodeId)) {
                 vh.checkIn.setWatching(true);
               }

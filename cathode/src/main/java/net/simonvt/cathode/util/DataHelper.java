@@ -17,10 +17,13 @@
 package net.simonvt.cathode.util;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.preference.PreferenceManager;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
+import net.simonvt.cathode.settings.Settings;
 import net.simonvt.schematic.Cursors;
 
 public final class DataHelper {
@@ -29,21 +32,57 @@ public final class DataHelper {
   }
 
   public static String getEpisodeTitle(Context context, Cursor cursor, int season, int episode) {
-    String title = Cursors.getString(cursor, EpisodeColumns.TITLE);
-
-    return getEpisodeTitle(context, title, season, episode);
+    return getEpisodeTitle(context, cursor, season, episode, false);
   }
 
   public static String getEpisodeTitle(Context context, String title, int season, int episode) {
+    return getEpisodeTitle(context, title, season, episode, false);
+  }
+
+  public static String getEpisodeTitle(Context context, Cursor cursor, int season, int episode,
+      boolean withNumber) {
+    String title = Cursors.getString(cursor, EpisodeColumns.TITLE);
+
+    return getEpisodeTitle(context, title, season, episode, withNumber);
+  }
+
+  public static String getEpisodeTitle(Context context, String title, int season, int episode,
+      boolean withNumber) {
+    if (title == null) {
+      return null;
+    }
+
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    final boolean avoidSpoilers = settings.getBoolean(Settings.SHOWS_AVOID_SPOILERS, false);
+
+    if (avoidSpoilers) {
+      return context.getString(R.string.season_x_episode, season, episode);
+    }
+
     if (android.text.TextUtils.isEmpty(title)) {
       if (season == 0) {
-        title = context.getString(R.string.special_x, episode);
+        return context.getString(R.string.special_x, episode);
       } else {
-        title = context.getString(R.string.episode_x, episode);
+        return context.getString(R.string.episode_x, episode);
       }
     }
 
+    if (withNumber) {
+      return context.getString(R.string.episode_with_number, season, episode, title);
+    }
+
     return title;
+  }
+
+  public static String getEpisodeOverview(Context context, Cursor cursor) {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    final boolean avoidSpoilers = settings.getBoolean(Settings.SHOWS_AVOID_SPOILERS, false);
+
+    if (avoidSpoilers) {
+      return context.getString(R.string.episode_overview_nospoiler);
+    } else {
+      return Cursors.getString(cursor, EpisodeColumns.OVERVIEW);
+    }
   }
 
   public static long getFirstAired(Cursor cursor) {
