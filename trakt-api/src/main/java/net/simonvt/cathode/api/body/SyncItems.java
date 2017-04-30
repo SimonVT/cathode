@@ -22,6 +22,8 @@ import java.util.List;
 
 public class SyncItems {
 
+  public static final String TIME_RELEASED = "released";
+
   public static class Movie {
 
     @SerializedName("watched_at") String watchedAt;

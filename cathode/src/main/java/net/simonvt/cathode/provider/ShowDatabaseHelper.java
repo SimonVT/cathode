@@ -35,6 +35,8 @@ import net.simonvt.schematic.Cursors;
 
 public final class ShowDatabaseHelper {
 
+  public static final long WATCHED_RELEASE = -1L;
+
   private static volatile ShowDatabaseHelper instance;
 
   public static ShowDatabaseHelper getInstance(Context context) {
@@ -323,16 +325,53 @@ public final class ShowDatabaseHelper {
     }
   }
 
-  public void setWatched(long showId, boolean watched) {
-    ContentValues cv = new ContentValues();
-    cv.put(EpisodeColumns.WATCHED, watched);
+  public void addToHistory(long showId, long watchedAt) {
+    ContentValues values = new ContentValues();
+    values.put(EpisodeColumns.WATCHED, true);
 
     final long firstAiredOffset = FirstAiredOffsetPreference.getInstance().getOffsetMillis();
     final long millis = System.currentTimeMillis() - firstAiredOffset;
 
-    resolver.update(Episodes.fromShow(showId), cv, EpisodeColumns.FIRST_AIRED + "<?", new String[] {
-        String.valueOf(millis),
-    });
+    resolver.update(Episodes.fromShow(showId), values, EpisodeColumns.FIRST_AIRED + "<?",
+        new String[] {
+            String.valueOf(millis),
+        });
+
+    if (watchedAt == WATCHED_RELEASE) {
+      values.clear();
+
+      Cursor episodes = resolver.query(Episodes.fromShow(showId), new String[] {
+          EpisodeColumns.ID, EpisodeColumns.FIRST_AIRED,
+      }, EpisodeColumns.WATCHED
+          + " AND "
+          + EpisodeColumns.FIRST_AIRED
+          + ">"
+          + EpisodeColumns.LAST_WATCHED_AT, null, null);
+
+      while (episodes.moveToNext()) {
+        final long episodeId = Cursors.getLong(episodes, EpisodeColumns.ID);
+        final long firstAired = Cursors.getLong(episodes, EpisodeColumns.FIRST_AIRED);
+        values.put(EpisodeColumns.LAST_WATCHED_AT, firstAired);
+        resolver.update(Episodes.withId(episodeId), values, null, null);
+      }
+
+      episodes.close();
+    } else {
+      values.clear();
+      values.put(EpisodeColumns.LAST_WATCHED_AT, watchedAt);
+
+      resolver.update(Episodes.fromShow(showId), values,
+          EpisodeColumns.WATCHED + " AND " + EpisodeColumns.LAST_WATCHED_AT + "<?", new String[] {
+              String.valueOf(watchedAt),
+          });
+    }
+  }
+
+  public void removeFromHistory(long showId) {
+    ContentValues values = new ContentValues();
+    values.put(EpisodeColumns.WATCHED, false);
+    values.put(EpisodeColumns.LAST_WATCHED_AT, 0);
+    resolver.update(Episodes.fromShow(showId), null, null, null);
   }
 
   public void setIsInWatchlist(long showId, boolean inWatchlist) {

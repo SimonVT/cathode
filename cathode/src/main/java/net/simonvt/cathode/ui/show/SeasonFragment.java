@@ -35,9 +35,10 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
-import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.ui.fragment.ToolbarGridFragment;
+import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.ui.listener.EpisodeClickListener;
+import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.util.guava.Preconditions;
 import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
@@ -50,8 +51,7 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
   private static final int LOADER_SEASON = 1;
 
   private static final String ARG_SHOW_ID = "net.simonvt.cathode.ui.show.SeasonFragment.showId";
-  private static final String ARG_SEASONID =
-      "net.simonvt.cathode.ui.show.SeasonFragment.seasonId";
+  private static final String ARG_SEASONID = "net.simonvt.cathode.ui.show.SeasonFragment.seasonId";
   private static final String ARG_SHOW_TITLE =
       "net.simonvt.cathode.ui.show.SeasonFragment.showTitle";
   private static final String ARG_SEASON_NUMBER =
@@ -147,9 +147,7 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
 
     if (count > 0) {
       Menu menu = toolbar.getMenu();
-      if (watchedCount < count) {
-        menu.add(0, R.id.action_watched, 0, R.string.action_watched);
-      }
+      menu.add(0, R.id.action_history_add, 0, R.string.action_history_add);
       if (watchedCount > 0) {
         menu.add(0, R.id.action_unwatched, 0, R.string.action_unwatched);
       }
@@ -169,12 +167,14 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
             .show(getFragmentManager(), DIALOG_LISTS_ADD);
         return true;
 
-      case R.id.action_watched:
-        seasonScheduler.setWatched(seasonId, true);
+      case R.id.action_history_add:
+        AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.SEASON, seasonId,
+            getString(R.string.season_x, seasonNumber))
+            .show(getFragmentManager(), AddToHistoryDialog.TAG);
         return true;
 
       case R.id.action_unwatched:
-        seasonScheduler.setWatched(seasonId, false);
+        seasonScheduler.removeFromHistory(seasonId);
         return true;
 
       case R.id.action_collection_add:

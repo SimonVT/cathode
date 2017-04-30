@@ -85,7 +85,11 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
         if (type == LibraryType.COLLECTION) {
           episodeScheduler.setIsInCollection(holder.getItemId(), !activated);
         } else {
-          episodeScheduler.setWatched(holder.getItemId(), !activated);
+          if (activated) {
+            episodeScheduler.removeFromHistory(holder.getItemId());
+          } else {
+            episodeScheduler.addToHistoryNow(holder.getItemId());
+          }
         }
       }
     });

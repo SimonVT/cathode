@@ -26,14 +26,15 @@ import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
-import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
+import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.OverflowView;
@@ -73,8 +74,7 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
     final boolean watching = Cursors.getBoolean(cursor, MovieColumns.WATCHING);
     final boolean checkedIn = Cursors.getBoolean(cursor, MovieColumns.CHECKED_IN);
 
-    final String poster =
-        ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
+    final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
 
     holder.poster.setImage(poster);
     holder.title.setText(title);
@@ -113,12 +113,13 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
   protected void onOverflowActionSelected(View view, long id, int action, int position,
       String title) {
     switch (action) {
-      case R.id.action_watched:
-        movieScheduler.setWatched(id, true);
+      case R.id.action_history_add:
+        AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.MOVIE, id, title)
+            .show(activity.getSupportFragmentManager(), AddToHistoryDialog.TAG);
         break;
 
       case R.id.action_unwatched:
-        movieScheduler.setWatched(id, false);
+        movieScheduler.removeFromHistory(id);
         break;
 
       case R.id.action_checkin:

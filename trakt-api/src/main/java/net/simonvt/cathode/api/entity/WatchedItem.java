@@ -41,12 +41,18 @@ public class WatchedItem {
 
     Integer plays;
 
+    IsoTime lastWatchedAt;
+
     public Integer getNumber() {
       return number;
     }
 
     public Integer getPlays() {
       return plays;
+    }
+
+    public IsoTime getLastWatchedAt() {
+      return lastWatchedAt;
     }
   }
 

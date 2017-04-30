@@ -71,7 +71,7 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
   @Override public void handleResponse(List<WatchedItem> watched) {
     Cursor c = getContentResolver().query(Episodes.EPISODES, new String[] {
         EpisodeColumns.ID, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON, EpisodeColumns.SEASON_ID,
-        EpisodeColumns.EPISODE,
+        EpisodeColumns.EPISODE, EpisodeColumns.LAST_WATCHED_AT,
     }, EpisodeColumns.WATCHED, null, null);
 
     LongSparseArray<WatchedShow> showsMap = new LongSparseArray<>();
@@ -83,6 +83,7 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
       final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
       final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
       final long seasonId = Cursors.getLong(c, EpisodeColumns.SEASON_ID);
+      final long lastWatchedAt = Cursors.getLong(c, EpisodeColumns.LAST_WATCHED_AT);
 
       WatchedShow watchedShow;
       Long showTraktId = showIdToTraktMap.get(showId);
@@ -107,7 +108,7 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
 
       WatchedEpisode syncEpisode = syncSeason.episodes.get(number);
       if (syncEpisode == null) {
-        syncEpisode = new WatchedEpisode(id, number);
+        syncEpisode = new WatchedEpisode(id, number, lastWatchedAt);
         syncSeason.episodes.put(number, syncEpisode);
       }
 
@@ -168,6 +169,7 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
         List<WatchedItem.Episode> episodes = season.getEpisodes();
         for (WatchedItem.Episode episode : episodes) {
           final int episodeNumber = episode.getNumber();
+          final long lastWatchedAt = episode.getLastWatchedAt().getTimeInMillis();
           WatchedEpisode syncEpisode = watchedSeason.episodes.get(episodeNumber);
 
           if (syncEpisode == null) {
@@ -184,17 +186,26 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
                 ContentProviderOperation.newUpdate(Episodes.withId(episodeId));
             ContentValues cv = new ContentValues();
             cv.put(EpisodeColumns.WATCHED, true);
+            cv.put(EpisodeColumns.LAST_WATCHED_AT, lastWatchedAt);
             builder.withValues(cv);
             ops.add(builder.build());
           } else {
             episodeIds.remove(syncEpisode.id);
+
+            if (lastWatchedAt != syncEpisode.lastWatched) {
+              ContentProviderOperation.Builder builder =
+                  ContentProviderOperation.newUpdate(Episodes.withId(syncEpisode.id));
+              ContentValues cv = new ContentValues();
+              cv.put(EpisodeColumns.LAST_WATCHED_AT, lastWatchedAt);
+              builder.withValues(cv);
+              ops.add(builder.build());
+            }
           }
         }
       }
 
       apply(ops);
     }
-    Timber.d("Done processing items");
 
     for (long episodeId : episodeIds) {
       ContentProviderOperation.Builder builder =
@@ -254,9 +265,12 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
 
     int number;
 
-    public WatchedEpisode(long id, int number) {
+    long lastWatched;
+
+    public WatchedEpisode(long id, int number, long lastWatched) {
       this.id = id;
       this.number = number;
+      this.lastWatched = lastWatched;
     }
   }
 }

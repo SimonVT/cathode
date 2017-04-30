@@ -19,6 +19,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import javax.inject.Inject;
+import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.jobqueue.Job;
@@ -28,10 +29,11 @@ import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
+import net.simonvt.cathode.remote.action.shows.AddEpisodeToHistory;
 import net.simonvt.cathode.remote.action.shows.CheckInEpisode;
 import net.simonvt.cathode.remote.action.shows.CollectEpisode;
 import net.simonvt.cathode.remote.action.shows.RateEpisode;
-import net.simonvt.cathode.remote.action.shows.WatchedEpisode;
+import net.simonvt.cathode.remote.action.shows.RemoveEpisodeFromHistory;
 import net.simonvt.cathode.remote.action.shows.WatchlistEpisode;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.comments.SyncComments;
@@ -71,22 +73,27 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
     });
   }
 
-  /**
-   * Add episodes watched outside of trakt to user library.
-   *
-   * @param episodeId The database id of the episode.
-   * @param watched Whether the episode has been watched.
-   */
-  public void setWatched(final long episodeId, final boolean watched) {
+  public void addToHistoryNow(final long episodeId) {
+    addToHistory(episodeId, System.currentTimeMillis());
+  }
+
+  public void addToHistoryOnRelease(final long episodeId) {
+    addToHistory(episodeId, SyncItems.TIME_RELEASED);
+  }
+
+  public void addToHistory(final long episodeId, final long watchedAt) {
+    final String isoWhen = TimeUtils.getIsoTime(watchedAt);
+    addToHistory(episodeId, isoWhen);
+  }
+
+  public void addToHistory(final long episodeId, final int year, final int month, final int day,
+      final int hour, final int minute) {
+    addToHistory(episodeId, TimeUtils.getMillis(year, month, day, hour, minute));
+  }
+
+  public void addToHistory(final long episodeId, final String watchedAt) {
     execute(new Runnable() {
       @Override public void run() {
-        String watchedAt = null;
-        long watchedAtMillis = 0L;
-        if (watched) {
-          watchedAt = TimeUtils.getIsoTime();
-          watchedAtMillis = TimeUtils.getMillis(watchedAt);
-        }
-
         Cursor c = episodeHelper.query(episodeId, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON,
             EpisodeColumns.EPISODE);
         c.moveToFirst();
@@ -96,9 +103,32 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
         final int number = Cursors.getInt(c, EpisodeColumns.EPISODE);
         c.close();
 
-        episodeHelper.setWatched(showId, episodeId, watched, watchedAtMillis);
+        if (SyncItems.TIME_RELEASED.equals(watchedAt)) {
+          episodeHelper.addToHistory(episodeId, EpisodeDatabaseHelper.WATCHED_RELEASE);
+        } else {
+          episodeHelper.addToHistory(episodeId, TimeUtils.getMillis(watchedAt));
+        }
 
-        queue(new WatchedEpisode(traktId, season, number, watched, watchedAt));
+        queue(new AddEpisodeToHistory(traktId, season, number, watchedAt));
+      }
+    });
+  }
+
+  public void removeFromHistory(final long episodeId) {
+    execute(new Runnable() {
+      @Override public void run() {
+        Cursor c = episodeHelper.query(episodeId, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON,
+            EpisodeColumns.EPISODE);
+        c.moveToFirst();
+        final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
+        final long traktId = showHelper.getTraktId(showId);
+        final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
+        final int number = Cursors.getInt(c, EpisodeColumns.EPISODE);
+        c.close();
+
+        episodeHelper.removeFromHistory(episodeId);
+
+        queue(new RemoveEpisodeFromHistory(traktId, season, number));
       }
     });
   }

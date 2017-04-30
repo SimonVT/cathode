@@ -19,6 +19,7 @@ package net.simonvt.cathode.api.util;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -50,6 +51,22 @@ public final class TimeUtils {
     }
 
     return 0L;
+  }
+
+  /**
+   * @param month The first month is 0.
+   */
+  public static long getMillis(final int year, final int month, final int day, final int hour,
+      final int minute) {
+    Calendar calendar = Calendar.getInstance();
+    calendar.set(Calendar.YEAR, year);
+    calendar.set(Calendar.MONTH, month);
+    calendar.set(Calendar.DAY_OF_MONTH, day);
+    calendar.set(Calendar.HOUR_OF_DAY, hour);
+    calendar.set(Calendar.MINUTE, minute);
+    calendar.set(Calendar.SECOND, 0);
+    calendar.set(Calendar.MILLISECOND, 0);
+    return calendar.getTimeInMillis();
   }
 
   public static String getIsoTime() {

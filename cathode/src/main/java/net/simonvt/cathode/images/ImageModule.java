@@ -78,6 +78,7 @@ public class ImageModule {
         new Picasso.Builder(context).requestTransformer(new ImageRequestTransformer(context))
             .addRequestHandler(new ImageRequestHandler(context, downloader))
             .addRequestHandler(new ShowRequestHandler(context, imageDownloader))
+            .addRequestHandler(new SeasonRequestHandler(context, imageDownloader))
             .addRequestHandler(new EpisodeRequestHandler(context, imageDownloader))
             .addRequestHandler(new MovieRequestHandler(context, imageDownloader))
             .addRequestHandler(new PersonRequestHandler(context, imageDownloader))

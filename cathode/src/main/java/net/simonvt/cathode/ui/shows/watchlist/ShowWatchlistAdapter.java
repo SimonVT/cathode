@@ -15,8 +15,8 @@
  */
 package net.simonvt.cathode.ui.shows.watchlist;
 
-import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +36,7 @@ import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.adapter.HeaderCursorAdapter;
+import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.IndicatorView;
@@ -83,19 +84,19 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
 
   @Inject EpisodeTaskScheduler episodeScheduler;
 
-  private Context context;
+  private FragmentActivity activity;
 
   private RemoveListener onRemoveListener;
 
   private OnItemClickListener onItemClickListener;
 
-  public ShowWatchlistAdapter(Context context, OnItemClickListener onItemClickListener,
+  public ShowWatchlistAdapter(FragmentActivity activity, OnItemClickListener onItemClickListener,
       RemoveListener onRemoveListener) {
     super();
-    this.context = context;
+    this.activity = activity;
     this.onItemClickListener = onItemClickListener;
     this.onRemoveListener = onRemoveListener;
-    CathodeApp.inject(context, this);
+    CathodeApp.inject(activity, this);
     setHasStableIds(false);
   }
 
@@ -118,7 +119,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
 
   @Override protected RecyclerView.ViewHolder onCreateItemHolder(ViewGroup parent, int viewType) {
     if (viewType == TYPE_SHOW) {
-      View v = LayoutInflater.from(context)
+      View v = LayoutInflater.from(parent.getContext())
           .inflate(R.layout.list_row_show_description_rating, parent, false);
       final ShowViewHolder holder = new ShowViewHolder(v);
       holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -135,8 +136,8 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
       });
       return holder;
     } else {
-      View v =
-          LayoutInflater.from(context).inflate(R.layout.list_row_watchlist_episode, parent, false);
+      View v = LayoutInflater.from(parent.getContext())
+          .inflate(R.layout.list_row_watchlist_episode, parent, false);
       final EpisodeViewHolder holder = new EpisodeViewHolder(v);
       holder.itemView.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View view) {
@@ -154,7 +155,8 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
   }
 
   @Override protected RecyclerView.ViewHolder onCreateHeaderHolder(ViewGroup parent) {
-    View v = LayoutInflater.from(context).inflate(R.layout.list_row_upcoming_header, parent, false);
+    View v = LayoutInflater.from(parent.getContext())
+        .inflate(R.layout.list_row_upcoming_header, parent, false);
     return new HeaderViewHolder((TextView) v);
   }
 
@@ -220,14 +222,14 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
       final long firstAired = DataHelper.getFirstAired(cursor);
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-      final String title = DataHelper.getEpisodeTitle(context, cursor, season, episode);
+      final String title = DataHelper.getEpisodeTitle(activity, cursor, season, episode);
 
       final String screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, id);
 
       vh.screen.setImage(screenshotUri);
       vh.title.setText(title);
       vh.firstAired.setTimeInMillis(firstAired);
-      final String episodeNumber = context.getString(R.string.season_x_episode_y, season, episode);
+      final String episodeNumber = activity.getString(R.string.season_x_episode_y, season, episode);
       vh.episode.setText(episodeNumber);
       final View view = holder.itemView;
       vh.overflow.setListener(new OverflowView.OverflowActionListener() {
@@ -242,8 +244,9 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
           final int position = holder.getAdapterPosition();
           if (position != RecyclerView.NO_POSITION) {
             switch (action) {
-              case R.id.action_watched:
-                episodeScheduler.setWatched(id, true);
+              case R.id.action_history_add:
+                AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.EPISODE, id, title)
+                    .show(activity.getSupportFragmentManager(), AddToHistoryDialog.TAG);
                 break;
 
               case R.id.action_watchlist_remove:

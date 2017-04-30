@@ -94,7 +94,7 @@ public interface SyncService {
    * syncing
    * past watches from a media center.
    */
-  @POST("/sync/history") Call<SyncResponse> watched(@Body SyncItems collect);
+  @POST("/sync/history") Call<SyncResponse> watched(@Body SyncItems watch);
 
   /**
    * <b>OAuth Required</b>

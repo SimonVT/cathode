@@ -67,6 +67,7 @@ import net.simonvt.cathode.ui.comments.CommentsFragment;
 import net.simonvt.cathode.ui.credits.CreditFragment;
 import net.simonvt.cathode.ui.credits.CreditsFragment;
 import net.simonvt.cathode.ui.dashboard.DashboardFragment;
+import net.simonvt.cathode.ui.history.SelectHistoryDateFragment;
 import net.simonvt.cathode.ui.lists.ListFragment;
 import net.simonvt.cathode.ui.lists.ListsFragment;
 import net.simonvt.cathode.ui.movie.MovieFragment;
@@ -586,6 +587,22 @@ public class HomeActivity extends BaseActivity
         RelatedShowsFragment.getArgs(showId));
   }
 
+  @Override public void onSelectShowWatchedDate(long showId, String title) {
+    stack.push(SelectHistoryDateFragment.class, SelectHistoryDateFragment.TAG,
+        SelectHistoryDateFragment.getArgs(SelectHistoryDateFragment.Type.SHOW, showId, title));
+  }
+
+  @Override public void onSelectSeasonWatchedDate(long seasonId, String title) {
+    stack.push(SelectHistoryDateFragment.class, SelectHistoryDateFragment.TAG,
+        SelectHistoryDateFragment.getArgs(SelectHistoryDateFragment.Type.SEASON, seasonId, title));
+  }
+
+  @Override public void onSelectEpisodeWatchedDate(long episodeId, String title) {
+    stack.push(SelectHistoryDateFragment.class, SelectHistoryDateFragment.TAG,
+        SelectHistoryDateFragment.getArgs(SelectHistoryDateFragment.Type.EPISODE, episodeId,
+            title));
+  }
+
   @Override public void onDisplayMovie(long movieId, String title, String overview) {
     stack.push(MovieFragment.class, MovieFragment.getTag(movieId),
         MovieFragment.getArgs(movieId, title, overview));
@@ -594,6 +611,11 @@ public class HomeActivity extends BaseActivity
   @Override public void onDisplayRelatedMovies(long movieId, String title) {
     stack.push(RelatedMoviesFragment.class, RelatedMoviesFragment.getTag(movieId),
         RelatedMoviesFragment.getArgs(movieId));
+  }
+
+  @Override public void onSelectMovieWatchedDate(long movieId, String title) {
+    stack.push(SelectHistoryDateFragment.class, SelectHistoryDateFragment.TAG,
+        SelectHistoryDateFragment.getArgs(SelectHistoryDateFragment.Type.MOVIE, movieId, title));
   }
 
   @Override public void onShowList(long listId, String listName) {
@@ -658,6 +680,12 @@ public class HomeActivity extends BaseActivity
         stack.putFragment(ShowFragment.class, ShowFragment.getTag(showId),
             ShowFragment.getArgs(showId, showTitle, null, LibraryType.WATCHED));
       }
+    }
+  }
+
+  @Override public void popIfTop(Fragment fragment) {
+    if (fragment == stack.peek()) {
+      stack.pop();
     }
   }
 

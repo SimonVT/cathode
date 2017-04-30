@@ -167,6 +167,7 @@
 
   <string name="action_sort_by">Sort by</string>
   <string name="action_watched">Watched</string>
+  <string name="action_history_add">Add to history</string>
   <string name="action_watched_hide">Hide</string>
   <string name="action_unwatched">Unwatched</string>
   <string name="action_checkin">Check in</string>
@@ -219,6 +220,15 @@
   <string name="show_status_planned">Planned</string>
   <string name="show_status_canceled">Canceled</string>
   <string name="show_status_ended">Ended</string>
+
+  <!-- History -->
+  <string name="history_watched_when">When did you watch it?</string>
+  <string name="history_watched_now">Now</string>
+  <string name="history_watched_release">Release date</string>
+  <string name="history_watched_other">Other date</string>
+  
+  <string name="history_date_cancel">Cancel</string>
+  <string name="history_date_watched">Watched</string>
 
   <!-- Login activity -->
   <string name="login_sign_in">Sign in</string>

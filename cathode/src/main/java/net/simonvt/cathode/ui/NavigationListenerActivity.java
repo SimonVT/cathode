@@ -54,6 +54,10 @@ public class NavigationListenerActivity extends BaseActivity implements Navigati
     throw new RuntimeException("Not implemented");
   }
 
+  @Override public void popIfTop(Fragment fragment) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Override public boolean isFragmentTopLevel(Fragment fragment) {
     throw new RuntimeException("Not implemented");
   }
@@ -74,6 +78,10 @@ public class NavigationListenerActivity extends BaseActivity implements Navigati
     throw new RuntimeException("Not implemented");
   }
 
+  @Override public void onSelectMovieWatchedDate(long movieId, String title) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Override
   public void onDisplayShow(long showId, String title, String overview, LibraryType type) {
     throw new RuntimeException("Not implemented");
@@ -90,6 +98,18 @@ public class NavigationListenerActivity extends BaseActivity implements Navigati
   }
 
   @Override public void onDisplayRelatedShows(long showId, String title) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Override public void onSelectShowWatchedDate(long showId, String title) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Override public void onSelectSeasonWatchedDate(long seasonId, String title) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Override public void onSelectEpisodeWatchedDate(long episodeId, String title) {
     throw new RuntimeException("Not implemented");
   }
 

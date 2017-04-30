@@ -20,4 +20,6 @@ public interface MoviesNavigationListener extends NavigationClickListener {
   void onDisplayMovie(long movieId, String title, String overview);
 
   void onDisplayRelatedMovies(long movieId, String title);
+
+  void onSelectMovieWatchedDate(long movieId, String title);
 }

@@ -33,6 +33,8 @@ public abstract class AppBarFragment extends BaseFragment {
 
   @BindView(R.id.backdrop) RemoteImageView backdrop;
 
+  private String backdropUri;
+
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     View v = inflater.inflate(R.layout.fragment_appbar, container, false);
 
@@ -46,6 +48,11 @@ public abstract class AppBarFragment extends BaseFragment {
 
   protected abstract View createView(LayoutInflater inflater, ViewGroup container, Bundle inState);
 
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
+    backdrop.setImage(backdropUri);
+  }
+
   @Override public void setTitle(CharSequence title) {
     this.title = title;
     if (appBarLayout != null) {
@@ -53,11 +60,19 @@ public abstract class AppBarFragment extends BaseFragment {
     }
   }
 
-  public void setBackdrop(String url) {
-    backdrop.setImage(url);
+  public void setBackdrop(String uri) {
+    backdropUri = uri;
+
+    if (backdrop != null) {
+      backdrop.setImage(uri);
+    }
   }
 
-  public void setBackdrop(String url, boolean animateIfDifferent) {
-    backdrop.setImage(url, animateIfDifferent);
+  public void setBackdrop(String uri, boolean animateIfDifferent) {
+    backdropUri = uri;
+
+    if (backdrop != null) {
+      backdrop.setImage(uri, animateIfDifferent);
+    }
   }
 }

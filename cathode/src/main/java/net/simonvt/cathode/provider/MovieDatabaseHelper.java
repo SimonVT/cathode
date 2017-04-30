@@ -22,8 +22,11 @@ import android.content.Context;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.os.RemoteException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.util.TimeUtils;
@@ -38,6 +41,8 @@ import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
 public final class MovieDatabaseHelper {
+
+  public static final long WATCHED_RELEASE = -1L;
 
   private static volatile MovieDatabaseHelper instance;
 
@@ -86,7 +91,7 @@ public final class MovieDatabaseHelper {
         MovieColumns.TMDB_ID,
     }, null, null, null);
 
-    int  traktId = -1;
+    int traktId = -1;
     if (c.moveToFirst()) {
       traktId = Cursors.getInt(c, MovieColumns.TMDB_ID);
     }
@@ -319,11 +324,37 @@ public final class MovieDatabaseHelper {
     return cv;
   }
 
-  public void setWatched(long movieId, boolean isWatched, long watchedAt) {
-    ContentValues cv = new ContentValues();
-    cv.put(MovieColumns.WATCHED, isWatched);
-    cv.put(MovieColumns.WATCHED_AT, watchedAt);
-    resolver.update(Movies.withId(movieId), cv, null, null);
+  public void addToHistory(final long movieId, final long watchedAt) {
+    ContentValues values = new ContentValues();
+    values.put(MovieColumns.WATCHED, true);
+
+    if (watchedAt == WATCHED_RELEASE) {
+      Cursor movie = context.getContentResolver().query(Movies.withId(movieId), new String[] {
+          MovieColumns.RELEASED,
+      }, null, null, null);
+      if (movie.moveToFirst()) {
+        final String released = Cursors.getString(movie, MovieColumns.RELEASED);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        try {
+          final long releaseDate = df.parse(released).getTime();
+          values.put(MovieColumns.WATCHED_AT, releaseDate);
+        } catch (ParseException e) {
+          Timber.e("Parsing release date %s failed", released);
+        }
+      }
+      movie.close();
+    } else {
+      values.put(MovieColumns.WATCHED_AT, watchedAt);
+    }
+
+    resolver.update(Movies.withId(movieId), values, null, null);
+  }
+
+  public void removeFromHistory(final long movieId) {
+    ContentValues values = new ContentValues();
+    values.put(MovieColumns.WATCHED, false);
+    values.put(MovieColumns.WATCHED_AT, 0L);
+    resolver.update(Movies.withId(movieId), values, null, null);
   }
 
   public void setIsInCollection(long movieId, boolean collected) {

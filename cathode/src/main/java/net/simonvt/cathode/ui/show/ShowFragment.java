@@ -77,6 +77,7 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.fragment.RefreshableAppBarFragment;
+import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
 import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.util.DataHelper;
@@ -375,9 +376,10 @@ public class ShowFragment extends RefreshableAppBarFragment {
               showScheduler.cancelCheckin();
             }
             break;
-          case R.id.action_watched:
+          case R.id.action_history_add:
             if (toWatchId != -1) {
-              episodeScheduler.setWatched(toWatchId, true);
+              AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.EPISODE, toWatchId,
+                  toWatchTitle).show(getFragmentManager(), AddToHistoryDialog.TAG);
             }
             break;
         }
@@ -406,7 +408,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
           switch (action) {
             case R.id.action_unwatched:
               if (lastWatchedId != -1) {
-                episodeScheduler.setWatched(lastWatchedId, false);
+                episodeScheduler.removeFromHistory(lastWatchedId);
               }
               break;
           }
@@ -871,7 +873,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
         firstAiredString = getResources().getString(R.string.show_watching);
       } else if (!watching) {
         toWatchHolder.episodeOverflow.addItem(R.id.action_checkin, R.string.action_checkin);
-        toWatchHolder.episodeOverflow.addItem(R.id.action_watched, R.string.action_watched);
+        toWatchHolder.episodeOverflow.addItem(R.id.action_history_add, R.string.action_history_add);
       }
 
       toWatchHolder.episodeAirTime.setText(firstAiredString);

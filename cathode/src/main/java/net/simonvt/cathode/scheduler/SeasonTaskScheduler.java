@@ -17,11 +17,13 @@ package net.simonvt.cathode.scheduler;
 
 import android.content.Context;
 import javax.inject.Inject;
+import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
+import net.simonvt.cathode.remote.action.shows.AddSeasonToHistory;
 import net.simonvt.cathode.remote.action.shows.CollectSeason;
-import net.simonvt.cathode.remote.action.shows.WatchedSeason;
+import net.simonvt.cathode.remote.action.shows.RemoveSeasonFromHistory;
 
 public class SeasonTaskScheduler extends BaseTaskScheduler {
 
@@ -32,22 +34,52 @@ public class SeasonTaskScheduler extends BaseTaskScheduler {
     super(context);
   }
 
-  public void setWatched(final long seasonId, final boolean watched) {
+  public void addToHistoryNow(final long seasonId) {
+    addToHistory(seasonId, System.currentTimeMillis());
+  }
+
+  public void addToHistoryOnRelease(final long seasonId) {
+    addToHistory(seasonId, SyncItems.TIME_RELEASED);
+  }
+
+  public void addToHistory(final long seasonId, final long watchedAt) {
+    final String isoWhen = TimeUtils.getIsoTime(watchedAt);
+    addToHistory(seasonId, isoWhen);
+  }
+
+  public void addToHistory(final long seasonId, final int year, final int month, final int day,
+      final int hour, final int minute) {
+    addToHistory(seasonId, TimeUtils.getMillis(year, month, day, hour, minute));
+  }
+
+  public void addToHistory(final long seasonId, final String watchedAt) {
     execute(new Runnable() {
       @Override public void run() {
-        String watchedAt = null;
-        long watchedAtMillis = 0L;
-        if (watched) {
-          watchedAt = TimeUtils.getIsoTime();
-          watchedAtMillis = TimeUtils.getMillis(watchedAt);
+        final long showId = seasonHelper.getShowId(seasonId);
+        final long traktId = showHelper.getTraktId(showId);
+        final int seasonNumber = seasonHelper.getNumber(seasonId);
+
+        long watched = SeasonDatabaseHelper.WATCHED_RELEASE;
+        if (!SyncItems.TIME_RELEASED.equals(watchedAt)) {
+          watched = TimeUtils.getMillis(watchedAt);
         }
+
+        seasonHelper.addToHistory(seasonId, watched);
+        queue(new AddSeasonToHistory(traktId, seasonNumber, watchedAt));
+      }
+    });
+  }
+
+  public void removeFromHistory(final long seasonId) {
+    execute(new Runnable() {
+      @Override public void run() {
+        seasonHelper.removeFromHistory(seasonId);
 
         final long showId = seasonHelper.getShowId(seasonId);
         final long traktId = showHelper.getTraktId(showId);
         final int seasonNumber = seasonHelper.getNumber(seasonId);
 
-        queue(new WatchedSeason(traktId, seasonNumber, watched, watchedAt));
-        seasonHelper.setWatched(showId, seasonId, watched, watchedAtMillis);
+        queue(new RemoveSeasonFromHistory(traktId, seasonNumber));
       }
     });
   }

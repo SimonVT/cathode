@@ -38,6 +38,7 @@ import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.adapter.HeaderCursorAdapter;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
+import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.widget.CheckInView;
 import net.simonvt.cathode.widget.OverflowView.OverflowActionListener;
@@ -56,14 +57,10 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
   private static final String COLUMN_EPISODE_LAST_UPDATED = "episodeLastUpdated";
 
   public static final String[] PROJECTION = new String[] {
-      Tables.SHOWS + "." + ShowColumns.ID,
-      Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.STATUS,
-      ShowColumns.AIRED_COUNT,
-      Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
-      ShowColumns.WATCHING,
-      Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
-      ShowColumns.WATCHING_EPISODE_ID,
+      Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.SHOWS + "." + ShowColumns.STATUS, ShowColumns.AIRED_COUNT,
+      Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT, ShowColumns.WATCHING,
+      Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED, ShowColumns.WATCHING_EPISODE_ID,
       Tables.EPISODES + "." + EpisodeColumns.ID + " AS " + COLUMN_EPISODE_ID,
       Tables.EPISODES + "." + EpisodeColumns.TITLE,
       Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
@@ -193,7 +190,6 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     vh.firstAired.setVisibility(View.VISIBLE);
     vh.firstAired.setTimeInMillis(episodeFirstAired);
 
-
     vh.checkIn.setWatching(watching);
     vh.checkIn.setId(id);
     vh.checkIn.setListener(new OverflowActionListener() {
@@ -219,11 +215,13 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
               }
               break;
 
-            case R.id.action_watched:
+            case R.id.action_history_add:
               if (watchedCount + 1 >= airedCount) {
                 onRemoveListener.onRemove(id);
               }
-              episodeScheduler.setWatched(episodeId, true);
+
+              AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.EPISODE, episodeId,
+                  episodeTitle).show(activity.getSupportFragmentManager(), AddToHistoryDialog.TAG);
               break;
           }
         }

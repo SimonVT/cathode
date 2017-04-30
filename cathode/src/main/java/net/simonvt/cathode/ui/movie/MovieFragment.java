@@ -65,6 +65,7 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.fragment.RefreshableAppBarFragment;
+import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.util.Ids;
 import net.simonvt.cathode.util.Intents;
@@ -287,16 +288,17 @@ public class MovieFragment extends RefreshableAppBarFragment
       }
 
       menu.removeItem(R.id.action_unwatched);
-      menu.removeItem(R.id.action_watched);
+      menu.removeItem(R.id.action_history_add);
       menu.removeItem(R.id.action_watchlist_remove);
       menu.removeItem(R.id.action_watchlist_add);
       menu.removeItem(R.id.action_collection_remove);
       menu.removeItem(R.id.action_collection_add);
 
+      menu.add(0, R.id.action_history_add, 4, R.string.action_history_add);
+
       if (watched) {
         menu.add(0, R.id.action_unwatched, 3, R.string.action_unwatched);
       } else {
-        menu.add(0, R.id.action_watched, 4, R.string.action_watched);
         if (inWatchlist) {
           menu.add(0, R.id.action_watchlist_remove, 7, R.string.action_watchlist_remove);
         } else {
@@ -314,12 +316,13 @@ public class MovieFragment extends RefreshableAppBarFragment
 
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
-      case R.id.action_watched:
-        movieScheduler.setWatched(movieId, true);
+      case R.id.action_history_add:
+        AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.MOVIE, movieId, movieTitle)
+            .show(getFragmentManager(), AddToHistoryDialog.TAG);
         return true;
 
       case R.id.action_unwatched:
-        movieScheduler.setWatched(movieId, false);
+        movieScheduler.removeFromHistory(movieId);
         return true;
 
       case R.id.action_checkin:

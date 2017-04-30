@@ -136,6 +136,18 @@ public class HiddenItems extends BaseActivity
     throw new RuntimeException("Not implemented");
   }
 
+  @Override public void onSelectShowWatchedDate(long showId, String title) {
+    // TODO:
+  }
+
+  @Override public void onSelectSeasonWatchedDate(long seasonId, String title) {
+    // TODO:
+  }
+
+  @Override public void onSelectEpisodeWatchedDate(long episodeId, String title) {
+    // TODO:
+  }
+
   @Override public void onDisplayMovie(long movieId, String title, String overview) {
     stack.push(MovieFragment.class, MovieFragment.getTag(movieId),
         MovieFragment.getArgs(movieId, title, overview));
@@ -143,6 +155,10 @@ public class HiddenItems extends BaseActivity
 
   @Override public void onDisplayRelatedMovies(long movieId, String title) {
     throw new RuntimeException("Not implemented");
+  }
+
+  @Override public void onSelectMovieWatchedDate(long movieId, String title) {
+    // TODO:
   }
 
   @Override public void onShowList(long listId, String listName) {
@@ -207,6 +223,12 @@ public class HiddenItems extends BaseActivity
         stack.putFragment(ShowFragment.class, ShowFragment.getTag(showId),
             ShowFragment.getArgs(showId, showTitle, null, LibraryType.WATCHED));
       }
+    }
+  }
+
+  @Override public void popIfTop(Fragment fragment) {
+    if (fragment == stack.peek()) {
+      stack.pop();
     }
   }
 

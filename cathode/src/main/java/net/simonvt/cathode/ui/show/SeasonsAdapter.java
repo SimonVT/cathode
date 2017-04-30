@@ -20,6 +20,8 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.database.Cursor;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -40,6 +42,7 @@ import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
+import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.schematic.Cursors;
@@ -47,15 +50,9 @@ import net.simonvt.schematic.Cursors;
 public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHolder> {
 
   public static final String[] PROJECTION = new String[] {
-      SeasonColumns.ID,
-      SeasonColumns.SHOW_ID,
-      SeasonColumns.SEASON,
-      SeasonColumns.UNAIRED_COUNT,
-      SeasonColumns.WATCHED_COUNT,
-      SeasonColumns.IN_COLLECTION_COUNT,
-      SeasonColumns.AIRED_COUNT,
-      SeasonColumns.WATCHED_AIRED_COUNT,
-      SeasonColumns.COLLECTED_AIRED_COUNT,
+      SeasonColumns.ID, SeasonColumns.SHOW_ID, SeasonColumns.SEASON, SeasonColumns.UNAIRED_COUNT,
+      SeasonColumns.WATCHED_COUNT, SeasonColumns.IN_COLLECTION_COUNT, SeasonColumns.AIRED_COUNT,
+      SeasonColumns.WATCHED_AIRED_COUNT, SeasonColumns.COLLECTED_AIRED_COUNT,
       SeasonColumns.LAST_MODIFIED, "(SELECT "
       + ShowColumns.TITLE
       + " FROM "
@@ -73,6 +70,8 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
 
   @Inject SeasonTaskScheduler seasonScheduler;
 
+  private FragmentActivity activity;
+
   private Resources resources;
 
   private SeasonClickListener clickListener;
@@ -82,14 +81,16 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
   private ColorStateList primaryColor;
   private ColorStateList secondaryColor;
 
-  public SeasonsAdapter(Context context, SeasonClickListener clickListener, LibraryType type) {
-    super(context, null);
-    CathodeApp.inject(context, this);
-    resources = context.getResources();
+  public SeasonsAdapter(FragmentActivity activity, SeasonClickListener clickListener,
+      LibraryType type) {
+    super(activity, null);
+    CathodeApp.inject(activity, this);
+    this.activity = activity;
+    resources = activity.getResources();
     this.clickListener = clickListener;
     this.type = type;
 
-    TypedArray a = context.obtainStyledAttributes(new int[] {
+    TypedArray a = activity.obtainStyledAttributes(new int[] {
         android.R.attr.textColorPrimary, android.R.attr.textColorSecondary,
     });
     primaryColor = a.getColorStateList(0);
@@ -144,9 +145,7 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     }
 
     holder.overflow.removeItems();
-    if (airedCount - watchedAiredCount > 0) {
-      holder.overflow.addItem(R.id.action_watched, R.string.action_watched);
-    }
+    holder.overflow.addItem(R.id.action_history_add, R.string.action_history_add);
     if (watchedCount > 0) {
       holder.overflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
     }
@@ -164,7 +163,6 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     }
 
     holder.overflow.setListener(new OverflowView.OverflowActionListener() {
-
       @Override public void onPopupShown() {
       }
 
@@ -175,12 +173,14 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
         final int position = holder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
           switch (action) {
-            case R.id.action_watched:
-              seasonScheduler.setWatched(seasonId, true);
+            case R.id.action_history_add:
+              AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.SEASON, seasonId,
+                  getContext().getString(R.string.season_x, seasonNumber))
+                  .show(activity.getSupportFragmentManager(), AddToHistoryDialog.TAG);
               break;
 
             case R.id.action_unwatched:
-              seasonScheduler.setWatched(seasonId, false);
+              seasonScheduler.removeFromHistory(seasonId);
               break;
 
             case R.id.action_collection_add:

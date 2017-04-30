@@ -29,6 +29,8 @@ import net.simonvt.schematic.Cursors;
 
 public final class EpisodeDatabaseHelper {
 
+  public static final long WATCHED_RELEASE = -1L;
+
   private static volatile EpisodeDatabaseHelper instance;
 
   public static EpisodeDatabaseHelper getInstance(Context context) {
@@ -235,30 +237,46 @@ public final class EpisodeDatabaseHelper {
     return number;
   }
 
-  public void setWatched(long traktId, int season, int episode, boolean watched, long watchedAt) {
-    final long showId = showHelper.getId(traktId);
-    final long episodeId = getId(showId, season, episode);
-    setWatched(showId, episodeId, watched, watchedAt);
+  public void addToHistory(long episodeId, long watchedAt) {
+    ContentValues values = new ContentValues();
+    values.put(EpisodeColumns.WATCHED, true);
+
+    resolver.update(Episodes.withId(episodeId), values, null, null);
+
+    if (watchedAt == WATCHED_RELEASE) {
+      values.clear();
+
+      Cursor episode = resolver.query(Episodes.withId(episodeId), new String[] {
+          EpisodeColumns.FIRST_AIRED,
+      }, EpisodeColumns.WATCHED
+          + " AND "
+          + EpisodeColumns.FIRST_AIRED
+          + ">"
+          + EpisodeColumns.LAST_WATCHED_AT, null, null);
+
+      if (episode.moveToNext()) {
+        final long firstAired = Cursors.getLong(episode, EpisodeColumns.FIRST_AIRED);
+        values.put(EpisodeColumns.LAST_WATCHED_AT, firstAired);
+        resolver.update(Episodes.withId(episodeId), values, null, null);
+      }
+
+      episode.close();
+    } else {
+      values.clear();
+      values.put(EpisodeColumns.LAST_WATCHED_AT, watchedAt);
+
+      resolver.update(Episodes.withId(episodeId), values,
+          EpisodeColumns.WATCHED + " AND " + EpisodeColumns.LAST_WATCHED_AT + "<?", new String[] {
+              String.valueOf(watchedAt),
+          });
+    }
   }
 
-  public void setWatched(long showId, long episodeId, boolean watched, long watchedAt) {
-    ContentValues cv = new ContentValues();
-    cv.put(EpisodeColumns.WATCHED, watched);
-    resolver.update(Episodes.withId(episodeId), cv, null, null);
-
-    if (watched) {
-      Cursor c = resolver.query(ProviderSchematic.Shows.withId(showId), new String[] {
-          DatabaseContract.ShowColumns.LAST_WATCHED_AT,
-      }, null, null, null);
-      c.moveToFirst();
-      final long lastWatched = Cursors.getLong(c, DatabaseContract.ShowColumns.LAST_WATCHED_AT);
-      c.close();
-      if (watchedAt > lastWatched) {
-        cv = new ContentValues();
-        cv.put(DatabaseContract.ShowColumns.LAST_WATCHED_AT, watchedAt);
-        resolver.update(ProviderSchematic.Shows.withId(showId), cv, null, null);
-      }
-    }
+  public void removeFromHistory(long episodeId) {
+    ContentValues values = new ContentValues();
+    values.put(EpisodeColumns.WATCHED, false);
+    values.put(EpisodeColumns.LAST_WATCHED_AT, 0L);
+    resolver.update(Episodes.withId(episodeId), values, null, null);
   }
 
   public void setInCollection(long traktId, int season, int episode, boolean inCollection,

@@ -30,6 +30,7 @@ import net.simonvt.cathode.images.ImageModule;
 import net.simonvt.cathode.images.ImageRequestHandler;
 import net.simonvt.cathode.images.MovieRequestHandler;
 import net.simonvt.cathode.images.PersonRequestHandler;
+import net.simonvt.cathode.images.SeasonRequestHandler;
 import net.simonvt.cathode.images.ShowRequestHandler;
 import net.simonvt.cathode.jobqueue.AuthJobService;
 import net.simonvt.cathode.jobqueue.Job;
@@ -69,13 +70,17 @@ import net.simonvt.cathode.remote.action.lists.RemovePerson;
 import net.simonvt.cathode.remote.action.lists.RemoveSeason;
 import net.simonvt.cathode.remote.action.lists.RemoveShow;
 import net.simonvt.cathode.remote.action.lists.UpdateList;
+import net.simonvt.cathode.remote.action.movies.AddMovieToHistory;
 import net.simonvt.cathode.remote.action.movies.CalendarHideMovie;
 import net.simonvt.cathode.remote.action.movies.CheckInMovie;
 import net.simonvt.cathode.remote.action.movies.CollectMovie;
 import net.simonvt.cathode.remote.action.movies.DismissMovieRecommendation;
 import net.simonvt.cathode.remote.action.movies.RateMovie;
-import net.simonvt.cathode.remote.action.movies.WatchedMovie;
+import net.simonvt.cathode.remote.action.movies.RemoveMovieFromHistory;
 import net.simonvt.cathode.remote.action.movies.WatchlistMovie;
+import net.simonvt.cathode.remote.action.shows.AddEpisodeToHistory;
+import net.simonvt.cathode.remote.action.shows.AddSeasonToHistory;
+import net.simonvt.cathode.remote.action.shows.AddShowToHistory;
 import net.simonvt.cathode.remote.action.shows.CalendarHideShow;
 import net.simonvt.cathode.remote.action.shows.CheckInEpisode;
 import net.simonvt.cathode.remote.action.shows.CollectEpisode;
@@ -84,10 +89,9 @@ import net.simonvt.cathode.remote.action.shows.CollectedHideShow;
 import net.simonvt.cathode.remote.action.shows.DismissShowRecommendation;
 import net.simonvt.cathode.remote.action.shows.RateEpisode;
 import net.simonvt.cathode.remote.action.shows.RateShow;
-import net.simonvt.cathode.remote.action.shows.WatchedEpisode;
+import net.simonvt.cathode.remote.action.shows.RemoveEpisodeFromHistory;
+import net.simonvt.cathode.remote.action.shows.RemoveSeasonFromHistory;
 import net.simonvt.cathode.remote.action.shows.WatchedHideShow;
-import net.simonvt.cathode.remote.action.shows.WatchedSeason;
-import net.simonvt.cathode.remote.action.shows.WatchedShow;
 import net.simonvt.cathode.remote.action.shows.WatchlistEpisode;
 import net.simonvt.cathode.remote.action.shows.WatchlistShow;
 import net.simonvt.cathode.remote.sync.SyncHiddenCalendar;
@@ -185,6 +189,8 @@ import net.simonvt.cathode.ui.dashboard.DashboardShowsWatchlistAdapter;
 import net.simonvt.cathode.ui.dashboard.DashboardUpcomingShowsAdapter;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
+import net.simonvt.cathode.ui.history.AddToHistoryDialog;
+import net.simonvt.cathode.ui.history.SelectHistoryDateFragment;
 import net.simonvt.cathode.ui.lists.CreateListFragment;
 import net.simonvt.cathode.ui.lists.DeleteListDialog;
 import net.simonvt.cathode.ui.lists.ListAdapter;
@@ -266,7 +272,8 @@ import net.simonvt.cathode.widget.RemoteImageView;
         AnticipatedShowsFragment.class, AnticipatedMoviesFragment.class, StatsFragment.class,
         SearchFragment.class, UpdateListFragment.class, SettingsActivity.SettingsFragment.class,
         RelatedShowsFragment.class, RelatedMoviesFragment.class, PersonFragment.class,
-        CreditsFragment.class, DashboardFragment.class,
+        CreditsFragment.class, DashboardFragment.class, AddToHistoryDialog.class,
+        SelectHistoryDateFragment.class,
 
         // Dialogs
         RatingDialog.class, CheckInDialog.class, CheckInDialog.Injections.class, ListsDialog.class,
@@ -285,8 +292,8 @@ import net.simonvt.cathode.widget.RemoteImageView;
         PhoneEpisodeView.class, RemoteImageView.class,
 
         // Images
-        ShowRequestHandler.class, EpisodeRequestHandler.class, MovieRequestHandler.class,
-        PersonRequestHandler.class, ImageRequestHandler.class,
+        ShowRequestHandler.class, SeasonRequestHandler.class, EpisodeRequestHandler.class,
+        MovieRequestHandler.class, PersonRequestHandler.class, ImageRequestHandler.class,
 
         // Services
         JobService.class, CathodeSyncAdapter.class, AuthJobService.class, NotificationActionService.class,
@@ -299,20 +306,19 @@ import net.simonvt.cathode.widget.RemoteImageView;
 
         // Tasks
         CancelCheckin.class, CheckInMovie.class, DismissMovieRecommendation.class,
-        CollectMovie.class, RateMovie.class, WatchedMovie.class, WatchlistMovie.class,
-        CheckInEpisode.class, DismissShowRecommendation.class, CollectEpisode.class,
-        RateEpisode.class, WatchedEpisode.class, WatchlistEpisode.class, CollectSeason.class,
-        WatchedSeason.class, RateShow.class, WatchedShow.class, WatchlistShow.class, SyncJob.class,
-        SyncUserActivity.class, SyncUserSettings.class, SyncWatching.class, SyncMovieCredits.class,
-        SyncMovieRecommendations.class, SyncMoviesCollection.class, SyncMoviesRatings.class,
-        SyncWatchedMovies.class, SyncMoviesWatchlist.class, SyncMovie.class,
-        SyncTrendingMovies.class, StartSyncUpdatedMovies.class, SyncEpisodesRatings.class,
-        SyncEpisodeWatchlist.class, SyncSeasonsRatings.class, SyncSeasons.class, SyncSeason.class,
-        SyncShowCredits.class, SyncShowCollectedStatus.class, SyncShowRecommendations.class,
-        SyncShowsCollection.class, SyncShowsRatings.class, SyncWatchedShows.class,
-        SyncShowsWatchlist.class, SyncShow.class, SyncShowWatchedStatus.class,
-        SyncTrendingShows.class, StartSyncUpdatedShows.class, SyncPerson.class,
-        SyncUpdatedShows.class, SyncUpdatedMovies.class, ForceUpdateJob.class,
+        CollectMovie.class, RateMovie.class, WatchlistMovie.class, CheckInEpisode.class,
+        DismissShowRecommendation.class, CollectEpisode.class, RateEpisode.class,
+        WatchlistEpisode.class, CollectSeason.class, RateShow.class, WatchlistShow.class,
+        SyncJob.class, SyncUserActivity.class, SyncUserSettings.class, SyncWatching.class,
+        SyncMovieCredits.class, SyncMovieRecommendations.class, SyncMoviesCollection.class,
+        SyncMoviesRatings.class, SyncWatchedMovies.class, SyncMoviesWatchlist.class,
+        SyncMovie.class, SyncTrendingMovies.class, StartSyncUpdatedMovies.class,
+        SyncEpisodesRatings.class, SyncEpisodeWatchlist.class, SyncSeasonsRatings.class,
+        SyncSeasons.class, SyncSeason.class, SyncShowCredits.class, SyncShowCollectedStatus.class,
+        SyncShowRecommendations.class, SyncShowsCollection.class, SyncShowsRatings.class,
+        SyncWatchedShows.class, SyncShowsWatchlist.class, SyncShow.class,
+        SyncShowWatchedStatus.class, SyncTrendingShows.class, StartSyncUpdatedShows.class,
+        SyncPerson.class, SyncUpdatedShows.class, SyncUpdatedMovies.class, ForceUpdateJob.class,
         UpdateShowCounts.class, SyncLists.class, SyncList.class, CreateList.class, RemoveShow.class,
         RemoveSeason.class, RemoveEpisode.class, RemoveMovie.class, RemovePerson.class,
         AddShow.class, AddSeason.class, AddEpisode.class, AddMovie.class, AddPerson.class,
@@ -326,6 +332,9 @@ import net.simonvt.cathode.widget.RemoteImageView;
         SyncRelatedMovies.class, SyncPersonShowCredits.class, SyncPersonMovieCredits.class,
         SyncMovieImages.class, SyncConfiguration.class, SyncShowImages.class,
         SyncEpisodeImages.class, SyncPersonHeadshot.class, SyncPersonBackdrop.class,
+        AddShowToHistory.class, AddSeasonToHistory.class, AddEpisodeToHistory.class,
+        AddMovieToHistory.class, RemoveSeasonFromHistory.class, RemoveEpisodeFromHistory.class,
+        RemoveMovieFromHistory.class,
 
         // Upgrade tasks
         EnsureSync.class, UpperCaseGenres.class,

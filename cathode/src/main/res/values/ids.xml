@@ -55,13 +55,12 @@
   <item name="sort_anticipated" type="id"/>
 
   <item name="action_watched" type="id"/>
-  <item name="action_watched_all" type="id"/>
+  <item name="action_history_add" type="id"/>
   <item name="action_watched_hide" type="id"/>
   <item name="action_watched_unhide" type="id"/>
   <item name="action_checkin" type="id"/>
   <item name="action_checkin_cancel" type="id"/>
   <item name="action_unwatched" type="id"/>
-  <item name="action_unwatch_all" type="id"/>
   <item name="action_collection_add" type="id"/>
   <item name="action_collection_remove" type="id"/>
   <item name="action_collection_hide" type="id"/>

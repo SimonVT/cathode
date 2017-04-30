@@ -19,6 +19,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import javax.inject.Inject;
+import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.jobqueue.Job;
@@ -26,12 +27,13 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.action.CancelCheckin;
+import net.simonvt.cathode.remote.action.movies.AddMovieToHistory;
 import net.simonvt.cathode.remote.action.movies.CalendarHideMovie;
 import net.simonvt.cathode.remote.action.movies.CheckInMovie;
 import net.simonvt.cathode.remote.action.movies.CollectMovie;
 import net.simonvt.cathode.remote.action.movies.DismissMovieRecommendation;
 import net.simonvt.cathode.remote.action.movies.RateMovie;
-import net.simonvt.cathode.remote.action.movies.WatchedMovie;
+import net.simonvt.cathode.remote.action.movies.RemoveMovieFromHistory;
 import net.simonvt.cathode.remote.action.movies.WatchlistMovie;
 import net.simonvt.cathode.remote.sync.comments.SyncComments;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
@@ -113,27 +115,51 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
     });
   }
 
+  public void addToHistoryNow(final long movieId) {
+    addToHistory(movieId, System.currentTimeMillis());
+  }
+
+  public void addToHistoryOnRelease(final long movieId) {
+    addToHistory(movieId, SyncItems.TIME_RELEASED);
+  }
+
+  public void addToHistory(final long movieId, final long watchedAt) {
+    final String isoWhen = TimeUtils.getIsoTime(watchedAt);
+    addToHistory(movieId, isoWhen);
+  }
+
+  public void addToHistory(final long movieId, final int year, final int month, final int day,
+      final int hour, final int minute) {
+    addToHistory(movieId, TimeUtils.getMillis(year, month, day, hour, minute));
+  }
+
   /**
    * Add episodes watched outside of trakt to user library.
    *
    * @param movieId The database id of the episode.
-   * @param watched Whether the episode has been watched.
    */
-  public void setWatched(final long movieId, final boolean watched) {
+  public void addToHistory(final long movieId, final String watchedAt) {
     execute(new Runnable() {
       @Override public void run() {
-        String watchedAt = null;
-        long watchedAtMillis = 0L;
-        if (watched) {
-          watchedAt = TimeUtils.getIsoTime();
-          watchedAtMillis = TimeUtils.getMillis(watchedAt);
-        }
-
         final long traktId = movieHelper.getTraktId(movieId);
 
-        movieHelper.setWatched(movieId, watched, watchedAtMillis);
+        if (SyncItems.TIME_RELEASED.equals(watchedAt)) {
+          movieHelper.addToHistory(movieId, MovieDatabaseHelper.WATCHED_RELEASE);
+        } else {
+          movieHelper.addToHistory(movieId, TimeUtils.getMillis(watchedAt));
+        }
 
-        queue(new WatchedMovie(traktId, watched, watchedAt));
+        queue(new AddMovieToHistory(traktId, watchedAt));
+      }
+    });
+  }
+
+  public void removeFromHistory(final long movieId) {
+    execute(new Runnable() {
+      @Override public void run() {
+        final long traktId = movieHelper.getTraktId(movieId);
+        movieHelper.removeFromHistory(movieId);
+        queue(new RemoveMovieFromHistory(traktId));
       }
     });
   }

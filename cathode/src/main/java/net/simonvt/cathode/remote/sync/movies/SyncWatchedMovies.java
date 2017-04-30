@@ -71,7 +71,7 @@ public class SyncWatchedMovies extends CallJob<List<WatchedItem>> {
       final long watchedAt = item.getLastWatchedAt().getTimeInMillis();
 
       if (!movieIds.remove(movieId)) {
-        movieHelper.setWatched(movieId, true, watchedAt);
+        movieHelper.addToHistory(movieId, watchedAt);
 
         if (movieHelper.needsSync(movieId)) {
           queue(new SyncMovie(traktId));
@@ -80,7 +80,7 @@ public class SyncWatchedMovies extends CallJob<List<WatchedItem>> {
     }
 
     for (Long movieId : movieIds) {
-      movieHelper.setWatched(movieId, false, 0);
+      movieHelper.removeFromHistory(movieId);
     }
   }
 }

@@ -135,14 +135,6 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
                   holder.showAiredCount);
               break;
 
-            case R.id.action_watched_all:
-              showScheduler.setWatched(holder.getItemId(), true);
-              break;
-
-            case R.id.action_unwatch_all:
-              showScheduler.setWatched(holder.getItemId(), false);
-              break;
-
             case R.id.action_checkin:
               CheckInDialog.showDialogIfNecessary(activity, Type.SHOW, holder.episodeTitle,
                   holder.episodeId);

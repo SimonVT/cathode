@@ -21,6 +21,7 @@ import android.net.Uri;
 public final class ImageUri {
 
   public static final String ITEM_SHOW = "show";
+  public static final String ITEM_SEASON = "season";
   public static final String ITEM_EPISODE = "episode";
   public static final String ITEM_MOVIE = "movie";
   public static final String ITEM_PERSON = "person";

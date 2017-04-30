@@ -20,6 +20,7 @@ import android.content.Context;
 import android.database.Cursor;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.jobqueue.Job;
@@ -29,12 +30,12 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.action.CancelCheckin;
+import net.simonvt.cathode.remote.action.shows.AddShowToHistory;
 import net.simonvt.cathode.remote.action.shows.CalendarHideShow;
 import net.simonvt.cathode.remote.action.shows.CollectedHideShow;
 import net.simonvt.cathode.remote.action.shows.DismissShowRecommendation;
 import net.simonvt.cathode.remote.action.shows.RateShow;
 import net.simonvt.cathode.remote.action.shows.WatchedHideShow;
-import net.simonvt.cathode.remote.action.shows.WatchedShow;
 import net.simonvt.cathode.remote.action.shows.WatchlistShow;
 import net.simonvt.cathode.remote.sync.comments.SyncComments;
 import net.simonvt.cathode.remote.sync.shows.SyncRelatedShows;
@@ -130,7 +131,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
       @Override public void run() {
         final long episodeId = showHelper.getNextEpisodeId(showId);
         if (episodeId != -1L) {
-          episodeScheduler.setWatched(episodeId, true);
+          episodeScheduler.addToHistory(episodeId, System.currentTimeMillis());
         }
       }
     });
@@ -193,20 +194,36 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
     });
   }
 
-  public void setWatched(final long showId, final boolean watched) {
+  public void addToHistoryNow(final long showId) {
+    addToHistory(showId, System.currentTimeMillis());
+  }
+
+  public void addToHistoryOnRelease(final long showId) {
+    addToHistory(showId, SyncItems.TIME_RELEASED);
+  }
+
+  public void addToHistory(final long showId, final long watchedAt) {
+    final String isoWhen = TimeUtils.getIsoTime(watchedAt);
+    addToHistory(showId, isoWhen);
+  }
+
+  public void addToHistory(final long showId, final int year, final int month, final int day,
+      final int hour, final int minute) {
+    addToHistory(showId, TimeUtils.getMillis(year, month, day, hour, minute));
+  }
+
+  public void addToHistory(final long showId, final String watchedAt) {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c = context.getContentResolver().query(Shows.withId(showId), new String[] {
-            ShowColumns.TRAKT_ID,
-        }, null, null, null);
+        final long traktId = showHelper.getTraktId(showId);
 
-        if (c.moveToFirst()) {
-          final long traktId = Cursors.getInt(c, ShowColumns.TRAKT_ID);
-          showHelper.setWatched(showId, watched);
-          queue(new WatchedShow(traktId, watched));
+        if (SyncItems.TIME_RELEASED.equals(watchedAt)) {
+          showHelper.addToHistory(showId, ShowDatabaseHelper.WATCHED_RELEASE);
+        } else {
+          showHelper.addToHistory(showId, TimeUtils.getMillis(watchedAt));
         }
 
-        c.close();
+        queue(new AddShowToHistory(traktId, watchedAt));
       }
     });
   }

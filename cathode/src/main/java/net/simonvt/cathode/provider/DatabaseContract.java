@@ -217,6 +217,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String PLAYS = "plays";
 
     @DataType(INTEGER) @DefaultValue("0") String WATCHED = "watched";
+    @DataType(INTEGER) @DefaultValue("0") String LAST_WATCHED_AT = "lastWatchedAt";
     @DataType(INTEGER) @DefaultValue("0") String IN_WATCHLIST = "inWatchlist";
     @DataType(INTEGER) @DefaultValue("0") String IN_COLLECTION = "inCollection";
     @DataType(INTEGER) @DefaultValue("0") String COLLECTED_AT = "collectedAt";

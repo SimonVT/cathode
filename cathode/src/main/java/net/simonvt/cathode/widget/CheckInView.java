@@ -68,7 +68,7 @@ public class CheckInView extends OverflowView {
       addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
     } else {
       addItem(R.id.action_checkin, R.string.action_checkin);
-      addItem(R.id.action_watched, R.string.action_watched);
+      addItem(R.id.action_history_add, R.string.action_history_add);
     }
   }
 

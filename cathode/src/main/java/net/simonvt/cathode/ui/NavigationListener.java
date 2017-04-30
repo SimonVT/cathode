@@ -39,5 +39,7 @@ public interface NavigationListener
 
   void upFromEpisode(long showId, String showTitle, long seasonId);
 
+  void popIfTop(Fragment fragment);
+
   boolean isFragmentTopLevel(Fragment fragment);
 }

@@ -7,6 +7,7 @@ apply plugin: 'checkstyle'
 dependencies {
   compile project(':trakt-api')
   compile project(':libs:colorpicker')
+  compile project(':libs:datetimepicker')
 
   compile deps.schematic
   annotationProcessor deps.schematicCompiler
