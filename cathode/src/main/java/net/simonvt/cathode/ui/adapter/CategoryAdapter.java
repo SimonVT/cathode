@@ -49,7 +49,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private int adapterCount;
 
-    public Category(int category, long categoryId, long adapterId) {
+    Category(int category, long categoryId, long adapterId) {
       this.category = category;
       this.categoryId = categoryId;
       this.adapterId = adapterId;
@@ -254,7 +254,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @BindView(R.id.category) TextView category;
 
-    public CategoryViewHolder(View itemView) {
+    CategoryViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
     }
@@ -264,7 +264,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     RecyclerView recyclerView;
 
-    public ItemsViewHolder(RecyclerView recyclerView) {
+    ItemsViewHolder(RecyclerView recyclerView) {
       super(recyclerView);
       this.recyclerView = recyclerView;
     }

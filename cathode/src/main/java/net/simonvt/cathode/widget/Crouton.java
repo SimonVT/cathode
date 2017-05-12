@@ -189,12 +189,12 @@ public class Crouton extends TextView {
 
     final int backgroundColor;
 
-    public Message(String message, int backgroundColor) {
+    Message(String message, int backgroundColor) {
       this.message = message;
       this.backgroundColor = backgroundColor;
     }
 
-    public Message(Parcel p) {
+    Message(Parcel p) {
       message = p.readString();
       backgroundColor = p.readInt();
     }

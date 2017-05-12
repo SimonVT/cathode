@@ -92,7 +92,7 @@ public class DashboardMoviesAdapter
     @BindView(R.id.poster) RemoteImageView poster;
     @BindView(R.id.title) TextView title;
 
-    public ViewHolder(View itemView) {
+    ViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
     }

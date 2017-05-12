@@ -320,11 +320,11 @@ public class RemoteImageView extends AspectRatioView implements Target {
 
     int imageResource;
 
-    public SavedState(Parcelable superState) {
+    SavedState(Parcelable superState) {
       super(superState);
     }
 
-    public SavedState(Parcel in) {
+    SavedState(Parcel in) {
       super(in);
       imageUrl = in.readString();
       imageResource = in.readInt();

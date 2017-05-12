@@ -203,7 +203,7 @@ public class JobExecutor {
 
     private Job job;
 
-    public JobRunnable(Job job) {
+    JobRunnable(Job job) {
       this.job = job;
     }
 

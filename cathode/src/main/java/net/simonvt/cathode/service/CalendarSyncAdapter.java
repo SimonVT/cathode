@@ -60,7 +60,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
 
     long episodeId;
 
-    public Event(Cursor c) {
+    Event(Cursor c) {
       id = Cursors.getLong(c, CalendarContract.Events._ID);
       start = Cursors.getLong(c, CalendarContract.Events.DTSTART);
       end = Cursors.getLong(c, CalendarContract.Events.DTEND);

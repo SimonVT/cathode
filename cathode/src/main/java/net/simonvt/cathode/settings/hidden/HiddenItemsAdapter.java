@@ -296,40 +296,40 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
 
     TextView header;
 
-    public HeaderViewHolder(TextView header) {
+    HeaderViewHolder(TextView header) {
       super(header);
       this.header = header;
     }
   }
 
-  public static class ListViewHolder extends RecyclerView.ViewHolder {
+  static class ListViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.overflow) OverflowView overflow;
 
-    public ListViewHolder(View v) {
+    ListViewHolder(View v) {
       super(v);
       ButterKnife.bind(this, v);
     }
   }
 
-  public static class ShowViewHolder extends ListViewHolder {
+  static class ShowViewHolder extends ListViewHolder {
 
     @BindView(R.id.poster) RemoteImageView poster;
     @BindView(R.id.title) TextView title;
     @BindView(R.id.overview) TextView overview;
 
-    public ShowViewHolder(View v) {
+    ShowViewHolder(View v) {
       super(v);
     }
   }
 
-  public static class MovieViewHolder extends ListViewHolder {
+  static class MovieViewHolder extends ListViewHolder {
 
-    @BindView(R.id.poster) public RemoteImageView poster;
-    @BindView(R.id.title) public TextView title;
-    @BindView(R.id.overview) public TextView overview;
+    @BindView(R.id.poster) RemoteImageView poster;
+    @BindView(R.id.title) TextView title;
+    @BindView(R.id.overview) TextView overview;
 
-    public MovieViewHolder(View v) {
+    MovieViewHolder(View v) {
       super(v);
     }
   }

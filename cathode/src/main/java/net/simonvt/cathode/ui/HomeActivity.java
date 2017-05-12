@@ -109,7 +109,7 @@ public class HomeActivity extends BaseActivity
 
     String tag;
 
-    public PendingReplacement(Class fragment, String tag) {
+    PendingReplacement(Class fragment, String tag) {
       this.fragment = fragment;
       this.tag = tag;
     }

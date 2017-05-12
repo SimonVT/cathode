@@ -59,7 +59,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
     void onEpisodeClicked(long episodeId, String showTitle);
   }
 
-  public static final String[] PROJECTION_SHOW = new String[] {
+  static final String[] PROJECTION_SHOW = new String[] {
       Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
       Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.TVDB_ID,
       Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
@@ -68,7 +68,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
       Tables.SHOWS + "." + LastModifiedColumns.LAST_MODIFIED,
   };
 
-  public static final String[] PROJECTION_EPISODE = new String[] {
+  static final String[] PROJECTION_EPISODE = new String[] {
       Tables.EPISODES + "." + EpisodeColumns.ID, Tables.EPISODES + "." + EpisodeColumns.TITLE,
       Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
       Tables.EPISODES + "." + EpisodeColumns.SEASON, Tables.EPISODES + "." + EpisodeColumns.EPISODE,
@@ -264,7 +264,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
 
     TextView header;
 
-    public HeaderViewHolder(TextView header) {
+    HeaderViewHolder(TextView header) {
       super(header);
       this.header = header;
     }
@@ -293,7 +293,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
     @BindView(R.id.episode) TextView episode;
     @BindView(R.id.overflow) OverflowView overflow;
 
-    public EpisodeViewHolder(View v) {
+    EpisodeViewHolder(View v) {
       super(v);
       ButterKnife.bind(this, v);
     }

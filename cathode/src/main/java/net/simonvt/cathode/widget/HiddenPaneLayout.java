@@ -601,11 +601,11 @@ public class HiddenPaneLayout extends ViewGroup {
 
     boolean open;
 
-    public SavedState(Parcelable superState) {
+    SavedState(Parcelable superState) {
       super(superState);
     }
 
-    public SavedState(Parcel in) {
+    SavedState(Parcel in) {
       super(in);
       open = in.readInt() == 1;
     }

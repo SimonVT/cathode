@@ -219,7 +219,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
     @BindView(R.id.episodeEpisode) TextView episodeEpisode;
     @BindView(R.id.episodeOverflow) OverflowView episodeOverflow;
 
-    public EpisodeHolder(View v) {
+    EpisodeHolder(View v) {
       ButterKnife.bind(this, v);
     }
   }

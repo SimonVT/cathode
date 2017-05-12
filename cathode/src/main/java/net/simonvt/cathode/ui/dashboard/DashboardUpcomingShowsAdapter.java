@@ -130,7 +130,7 @@ public class DashboardUpcomingShowsAdapter
     @BindView(R.id.title) TextView title;
     @BindView(R.id.nextEpisode) TextView nextEpisode;
 
-    public ViewHolder(View itemView) {
+    ViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
     }

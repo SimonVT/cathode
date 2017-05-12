@@ -50,7 +50,7 @@ public class ImageSizeSelector {
 
     int height;
 
-    public ImageSize(String size, int width, int height) {
+    ImageSize(String size, int width, int height) {
       this.size = size;
       this.width = width;
       this.height = height;

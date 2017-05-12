@@ -38,7 +38,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
 
-  public interface OnResultClickListener {
+  interface OnResultClickListener {
 
     void onShowClicked(long showId, String title, String overview);
 
@@ -379,7 +379,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
   static class ViewHolder extends RecyclerView.ViewHolder {
 
-    public ViewHolder(View itemView) {
+    ViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
     }
@@ -390,7 +390,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     @BindView(R.id.searching) AppCompatImageView searching;
     Animatable drawable;
 
-    public SearchingHolder(View itemView) {
+    SearchingHolder(View itemView) {
       super(itemView);
       drawable = (Animatable) searching.getDrawable();
     }
@@ -407,7 +407,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     String queryTwoQuery;
     String queryThreeQuery;
 
-    public RecentsViewHolder(View itemView) {
+    RecentsViewHolder(View itemView) {
       super(itemView);
     }
   }
@@ -419,7 +419,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     @BindView(R.id.overview) TextView overview;
     @BindView(R.id.rating) CircularProgressIndicator rating;
 
-    public ResultViewHolder(View itemView) {
+    ResultViewHolder(View itemView) {
       super(itemView);
     }
   }

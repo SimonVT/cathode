@@ -139,7 +139,7 @@ public class SearchHandler {
 
     private List<Result> results;
 
-    public SearchRunnable(String query) {
+    SearchRunnable(String query) {
       this.query = query;
     }
 

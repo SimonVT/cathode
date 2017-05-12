@@ -51,11 +51,11 @@ public class SearchExecutor implements Executor {
     }
   }
 
-  class ExecutorRunnable implements Runnable {
+  private class ExecutorRunnable implements Runnable {
 
     SearchHandler.SearchRunnable runnable;
 
-    public ExecutorRunnable(SearchHandler.SearchRunnable runnable) {
+    ExecutorRunnable(SearchHandler.SearchRunnable runnable) {
       this.runnable = runnable;
     }
 

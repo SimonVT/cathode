@@ -44,11 +44,11 @@ public class TokenTask extends AsyncTask<Void, Void, TokenTask.Result> {
 
     int errorMessage;
 
-    private Result() {
+    Result() {
       this.success = true;
     }
 
-    public Result(int errorMessage) {
+    Result(int errorMessage) {
       this.errorMessage = errorMessage;
       this.success = false;
     }

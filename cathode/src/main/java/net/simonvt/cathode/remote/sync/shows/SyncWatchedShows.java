@@ -237,7 +237,7 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
 
     long id;
 
-    public WatchedShow(long traktId, long id) {
+    WatchedShow(long traktId, long id) {
       this.traktId = traktId;
       this.id = id;
     }
@@ -251,7 +251,7 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
 
     long id;
 
-    public WatchedSeason(int season, long id) {
+    WatchedSeason(int season, long id) {
       this.season = season;
       this.id = id;
     }
@@ -267,7 +267,7 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
 
     long lastWatched;
 
-    public WatchedEpisode(long id, int number, long lastWatched) {
+    WatchedEpisode(long id, int number, long lastWatched) {
       this.id = id;
       this.number = number;
       this.lastWatched = lastWatched;

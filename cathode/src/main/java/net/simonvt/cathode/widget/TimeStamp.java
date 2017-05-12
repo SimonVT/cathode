@@ -83,7 +83,8 @@ public class TimeStamp extends TextView {
   }
 
   private static class TimeStampHandler extends Handler {
-    public TimeStampHandler() {
+
+    TimeStampHandler() {
       super(Looper.getMainLooper());
     }
 

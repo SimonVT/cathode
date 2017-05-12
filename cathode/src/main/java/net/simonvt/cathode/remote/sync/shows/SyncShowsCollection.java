@@ -224,7 +224,7 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
 
     long id;
 
-    public CollectedShow(long traktId, long id) {
+    CollectedShow(long traktId, long id) {
       this.traktId = traktId;
       this.id = id;
     }
@@ -238,7 +238,7 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
 
     long id;
 
-    public CollectedSeason(int season, long id) {
+    CollectedSeason(int season, long id) {
       this.season = season;
       this.id = id;
     }
@@ -252,7 +252,7 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
 
     int number;
 
-    public CollectedEpisode(long id, int number) {
+    CollectedEpisode(long id, int number) {
       this.id = id;
       this.number = number;
     }

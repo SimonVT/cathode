@@ -59,7 +59,7 @@ public class SyncList extends CallJob<List<ListItem>> {
 
     long itemId;
 
-    public Item(int itemType, long itemId) {
+    Item(int itemType, long itemId) {
       this.itemType = itemType;
       this.itemId = itemId;
     }

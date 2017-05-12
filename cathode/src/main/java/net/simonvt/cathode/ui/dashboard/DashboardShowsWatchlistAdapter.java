@@ -44,14 +44,14 @@ import net.simonvt.schematic.Cursors;
 
 public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.ViewHolder> {
 
-  public static final String[] PROJECTION = new String[] {
+  static final String[] PROJECTION = new String[] {
       Tables.SHOWS + "." + ShowColumns.ID,
       Tables.SHOWS + "." + ShowColumns.TITLE,
       Tables.SHOWS + "." + ShowColumns.OVERVIEW,
       Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
   };
 
-  public static final String[] PROJECTION_EPISODE = new String[] {
+  static final String[] PROJECTION_EPISODE = new String[] {
       Tables.EPISODES + "." + EpisodeColumns.ID,
       Tables.EPISODES + "." + EpisodeColumns.TITLE,
       Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
@@ -201,7 +201,7 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
     @BindView(R.id.poster) RemoteImageView poster;
     @BindView(R.id.title) TextView title;
 
-    public ShowViewHolder(View itemView) {
+    ShowViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
     }
@@ -212,7 +212,7 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
     @BindView(R.id.screenshot) RemoteImageView screenshot;
     @BindView(R.id.title) TextView title;
 
-    public EpisodeViewHolder(View itemView) {
+    EpisodeViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
     }

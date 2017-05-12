@@ -699,11 +699,11 @@ public class WatchingView extends ViewGroup {
 
     private boolean isExpanded;
 
-    public SavedState(Parcelable superState) {
+    SavedState(Parcelable superState) {
       super(superState);
     }
 
-    public SavedState(Parcel in) {
+    SavedState(Parcel in) {
       super(in);
       type = (Type) in.readSerializable();
       showId = in.readLong();

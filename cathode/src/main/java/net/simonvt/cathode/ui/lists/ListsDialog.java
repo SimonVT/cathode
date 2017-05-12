@@ -58,7 +58,7 @@ public class ListsDialog extends DialogFragment {
 
     boolean checked;
 
-    public Item(long listId, String listName) {
+    Item(long listId, String listName) {
       this.listId = listId;
       this.listName = listName;
     }

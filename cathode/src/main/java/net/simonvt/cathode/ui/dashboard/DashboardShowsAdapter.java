@@ -39,7 +39,7 @@ import net.simonvt.schematic.Cursors;
 
 public class DashboardShowsAdapter extends RecyclerCursorAdapter<DashboardShowsAdapter.ViewHolder> {
 
-  public static final String[] PROJECTION = new String[] {
+  static final String[] PROJECTION = new String[] {
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.OVERVIEW,
@@ -91,7 +91,7 @@ public class DashboardShowsAdapter extends RecyclerCursorAdapter<DashboardShowsA
     @BindView(R.id.poster) RemoteImageView poster;
     @BindView(R.id.title) TextView title;
 
-    public ViewHolder(View itemView) {
+    ViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
     }
