@@ -24,8 +24,8 @@ ext {
   supportLibrariesVersion = '25.3.1'
 
   deps = [
-      androidPlugin       : 'com.android.tools.build:gradle:2.3.1',
-      crashlytics         : 'com.crashlytics.sdk.android:crashlytics:2.6.7@aar',
+      androidPlugin       : 'com.android.tools.build:gradle:2.3.2',
+      crashlytics         : 'com.crashlytics.sdk.android:crashlytics:2.6.8@aar',
 
       schematic           : 'net.simonvt.schematic:schematic:0.7.0',
       schematicCompiler   : 'net.simonvt.schematic:schematic-compiler:0.7.0',
