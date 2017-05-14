@@ -130,10 +130,22 @@ public class AddToHistoryDialog extends DialogFragment {
 
     builder.setPositiveButton(R.string.history_watched_now, new DialogInterface.OnClickListener() {
       @Override public void onClick(DialogInterface dialog, int which) {
-        if (type == Type.EPISODE) {
-          episodeScheduler.addToHistoryNow(id);
-        } else if (type == Type.MOVIE) {
-          movieScheduler.addToHistoryNow(id);
+        switch (type) {
+          case SHOW:
+            showScheduler.addToHistoryNow(id);
+            break;
+
+          case SEASON:
+            seasonScheduler.addToHistoryNow(id);
+            break;
+
+          case EPISODE:
+            episodeScheduler.addToHistoryNow(id);
+            break;
+
+          case MOVIE:
+            movieScheduler.addToHistoryNow(id);
+            break;
         }
       }
     });

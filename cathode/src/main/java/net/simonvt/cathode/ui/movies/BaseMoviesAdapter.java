@@ -94,7 +94,7 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
     if (checkedIn) {
       overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
     } else if (watched) {
-      overflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
+      overflow.addItem(R.id.action_history_remove, R.string.action_history_remove);
     } else if (inWatchlist) {
       overflow.addItem(R.id.action_checkin, R.string.action_checkin);
       overflow.addItem(R.id.action_watchlist_remove, R.string.action_watchlist_remove);
@@ -118,7 +118,7 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
             .show(activity.getSupportFragmentManager(), AddToHistoryDialog.TAG);
         break;
 
-      case R.id.action_unwatched:
+      case R.id.action_history_remove:
         movieScheduler.removeFromHistory(id);
         break;
 

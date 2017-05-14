@@ -146,7 +146,7 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     holder.overflow.removeItems();
     holder.overflow.addItem(R.id.action_history_add, R.string.action_history_add);
     if (watchedCount > 0) {
-      holder.overflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
+      holder.overflow.addItem(R.id.action_history_remove, R.string.action_history_remove);
     }
     if (airedCount - collectedAiredCount > 0) {
       holder.overflow.addItem(R.id.action_collection_add, R.string.action_collection_add);
@@ -178,7 +178,7 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
                   .show(activity.getSupportFragmentManager(), AddToHistoryDialog.TAG);
               break;
 
-            case R.id.action_unwatched:
+            case R.id.action_history_remove:
               seasonScheduler.removeFromHistory(seasonId);
               break;
 
@@ -275,7 +275,7 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
       super(v);
       ButterKnife.bind(this, v);
       overflow.addItem(R.id.action_watched, R.string.action_watched);
-      overflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
+      overflow.addItem(R.id.action_history_remove, R.string.action_history_remove);
     }
   }
 }

@@ -37,6 +37,8 @@
   <item name="menu_movies_trending" type="id"/>
   <item name="menu_movies_recommended" type="id"/>
 
+  <item name="menu_seasons" type="id"/>
+
   <item name="menu_lists" type="id"/>
 
   <item name="menu_stats" type="id"/>
@@ -56,11 +58,11 @@
 
   <item name="action_watched" type="id"/>
   <item name="action_history_add" type="id"/>
+  <item name="action_history_remove" type="id"/>
   <item name="action_watched_hide" type="id"/>
   <item name="action_watched_unhide" type="id"/>
   <item name="action_checkin" type="id"/>
   <item name="action_checkin_cancel" type="id"/>
-  <item name="action_unwatched" type="id"/>
   <item name="action_collection_add" type="id"/>
   <item name="action_collection_remove" type="id"/>
   <item name="action_collection_hide" type="id"/>
@@ -68,6 +70,7 @@
   <item name="action_watchlist_add" type="id"/>
   <item name="action_watchlist_remove" type="id"/>
   <item name="action_dismiss" type="id"/>
+  <item name="action_list_add" type="id"/>
   <item name="action_list_remove" type="id"/>
   <item name="action_calendar_hide" type="id"/>
   <item name="action_calendar_unhide" type="id"/>

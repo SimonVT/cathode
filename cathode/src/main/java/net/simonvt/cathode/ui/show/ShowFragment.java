@@ -396,7 +396,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
         }
       });
 
-      lastWatchedHolder.episodeOverflow.addItem(R.id.action_unwatched, R.string.action_unwatched);
+      lastWatchedHolder.episodeOverflow.addItem(R.id.action_history_remove,
+          R.string.action_history_remove);
       lastWatchedHolder.episodeOverflow.setListener(new OverflowView.OverflowActionListener() {
         @Override public void onPopupShown() {
         }
@@ -406,7 +407,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
         @Override public void onActionSelected(int action) {
           switch (action) {
-            case R.id.action_unwatched:
+            case R.id.action_history_remove:
               if (lastWatchedId != -1) {
                 episodeScheduler.removeFromHistory(lastWatchedId);
               }
@@ -497,22 +498,25 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   @Override public void createMenu(Toolbar toolbar) {
     super.createMenu(toolbar);
-
     Menu menu = toolbar.getMenu();
 
-    toolbar.inflateMenu(R.menu.fragment_show);
+    menu.add(0, R.id.menu_seasons, 0, R.string.seasons)
+        .setIcon(R.drawable.ic_action_list_24dp)
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
     if (inWatchlist) {
-      menu.add(0, R.id.action_watchlist_remove, 300, R.string.action_watchlist_remove);
+      menu.add(0, R.id.action_watchlist_remove, 1, R.string.action_watchlist_remove);
     } else {
-      menu.add(0, R.id.action_watchlist_add, 300, R.string.action_watchlist_add);
+      menu.add(0, R.id.action_watchlist_add, 1, R.string.action_watchlist_add);
     }
 
     if (calendarHidden) {
-      menu.add(0, R.id.action_calendar_unhide, 400, R.string.action_calendar_unhide);
+      menu.add(0, R.id.action_calendar_unhide, 2, R.string.action_calendar_unhide);
     } else {
-      menu.add(0, R.id.action_calendar_hide, 400, R.string.action_calendar_hide);
+      menu.add(0, R.id.action_calendar_hide, 2, R.string.action_calendar_hide);
     }
+
+    menu.add(0, R.id.action_list_add, 3, R.string.action_list_add);
   }
 
   @Override public boolean onMenuItemClick(MenuItem item) {
@@ -529,7 +533,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
         showScheduler.setIsInWatchlist(showId, true);
         return true;
 
-      case R.id.menu_lists_add:
+      case R.id.action_list_add:
         ListsDialog.newInstance(DatabaseContract.ItemType.SHOW, showId)
             .show(getFragmentManager(), DIALOG_LISTS_ADD);
         return true;

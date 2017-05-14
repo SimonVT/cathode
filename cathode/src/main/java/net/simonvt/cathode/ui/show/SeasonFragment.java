@@ -41,7 +41,6 @@ import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.util.guava.Preconditions;
 import net.simonvt.schematic.Cursors;
-import timber.log.Timber;
 
 public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder>
     implements EpisodeClickListener {
@@ -141,15 +140,12 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
 
   @Override public void createMenu(Toolbar toolbar) {
     super.createMenu(toolbar);
-    toolbar.inflateMenu(R.menu.fragment_season);
-
-    Timber.d("%d - %d - %d", count, watchedCount, collectedCount);
+    Menu menu = toolbar.getMenu();
 
     if (count > 0) {
-      Menu menu = toolbar.getMenu();
       menu.add(0, R.id.action_history_add, 0, R.string.action_history_add);
       if (watchedCount > 0) {
-        menu.add(0, R.id.action_unwatched, 0, R.string.action_unwatched);
+        menu.add(0, R.id.action_history_remove, 0, R.string.action_history_remove);
       }
       if (collectedCount < count) {
         menu.add(0, R.id.action_collection_add, 0, R.string.action_collection_add);
@@ -158,11 +154,13 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
         menu.add(0, R.id.action_collection_remove, 0, R.string.action_collection_remove);
       }
     }
+
+    menu.add(0, R.id.action_list_add, 0, R.string.action_list_add);
   }
 
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
-      case R.id.menu_lists_add:
+      case R.id.action_list_add:
         ListsDialog.newInstance(DatabaseContract.ItemType.SEASON, seasonId)
             .show(getFragmentManager(), DIALOG_LISTS_ADD);
         return true;
@@ -173,7 +171,7 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
             .show(getFragmentManager(), AddToHistoryDialog.TAG);
         return true;
 
-      case R.id.action_unwatched:
+      case R.id.action_history_remove:
         seasonScheduler.removeFromHistory(seasonId);
         return true;
 

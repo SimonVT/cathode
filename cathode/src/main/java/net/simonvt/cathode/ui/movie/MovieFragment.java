@@ -166,7 +166,6 @@ public class MovieFragment extends RefreshableAppBarFragment
 
   private NavigationListener navigationListener;
 
-  private MenuItem checkInItem;
   private CheckInDrawable checkInDrawable;
 
   public static String getTag(long movieId) {
@@ -220,11 +219,6 @@ public class MovieFragment extends RefreshableAppBarFragment
     getLoaderManager().initLoader(LOADER_RELATED, null, relatedLoader);
   }
 
-  @Override public void onDestroyView() {
-    checkInItem = null;
-    super.onDestroyView();
-  }
-
   @OnClick(R.id.rating) void onRatingClick() {
     RatingDialog.newInstance(RatingDialog.Type.MOVIE, movieId, currentRating)
         .show(getFragmentManager(), DIALOG_RATING);
@@ -256,30 +250,21 @@ public class MovieFragment extends RefreshableAppBarFragment
     if (loaded) {
       Menu menu = toolbar.getMenu();
 
-      if (menu.findItem(R.id.menu_lists_add) == null) {
-        menu.add(0, R.id.menu_lists_add, 0, R.string.action_list_add);
-      }
-
       if (checkInDrawable == null) {
         checkInDrawable = new CheckInDrawable(toolbar.getContext());
         checkInDrawable.setWatching(watching || checkedIn);
         checkInDrawable.setId(movieId);
       }
-      if (checkInItem == null) {
-        if (watching || checkedIn) {
-          checkInItem = menu.add(0, R.id.action_checkin, 1, R.string.action_checkin_cancel);
-        } else {
-          checkInItem = menu.add(0, R.id.action_checkin, 1, R.string.action_checkin);
-        }
 
-        checkInItem.setIcon(checkInDrawable).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+      MenuItem checkInItem;
+
+      if (watching || checkedIn) {
+        checkInItem = menu.add(0, R.id.action_checkin, 1, R.string.action_checkin_cancel);
       } else {
-        if (watching || checkedIn) {
-          checkInItem.setTitle(R.string.action_checkin_cancel);
-        } else {
-          checkInItem.setTitle(R.string.action_checkin);
-        }
+        checkInItem = menu.add(0, R.id.action_checkin, 1, R.string.action_checkin);
       }
+
+      checkInItem.setIcon(checkInDrawable).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
       if (watching) {
         checkInItem.setEnabled(false);
@@ -287,17 +272,10 @@ public class MovieFragment extends RefreshableAppBarFragment
         checkInItem.setEnabled(true);
       }
 
-      menu.removeItem(R.id.action_unwatched);
-      menu.removeItem(R.id.action_history_add);
-      menu.removeItem(R.id.action_watchlist_remove);
-      menu.removeItem(R.id.action_watchlist_add);
-      menu.removeItem(R.id.action_collection_remove);
-      menu.removeItem(R.id.action_collection_add);
-
-      menu.add(0, R.id.action_history_add, 4, R.string.action_history_add);
+      menu.add(0, R.id.action_history_add, 3, R.string.action_history_add);
 
       if (watched) {
-        menu.add(0, R.id.action_unwatched, 3, R.string.action_unwatched);
+        menu.add(0, R.id.action_history_remove, 4, R.string.action_history_remove);
       } else {
         if (inWatchlist) {
           menu.add(0, R.id.action_watchlist_remove, 7, R.string.action_watchlist_remove);
@@ -311,6 +289,8 @@ public class MovieFragment extends RefreshableAppBarFragment
       } else {
         menu.add(0, R.id.action_collection_add, 6, R.string.action_collection_add);
       }
+
+      menu.add(0, R.id.action_list_add, 9, R.string.action_list_add);
     }
   }
 
@@ -321,7 +301,7 @@ public class MovieFragment extends RefreshableAppBarFragment
             .show(getFragmentManager(), AddToHistoryDialog.TAG);
         return true;
 
-      case R.id.action_unwatched:
+      case R.id.action_history_remove:
         movieScheduler.removeFromHistory(movieId);
         return true;
 
@@ -361,7 +341,7 @@ public class MovieFragment extends RefreshableAppBarFragment
         movieScheduler.setIsInCollection(movieId, false);
         return true;
 
-      case R.id.menu_lists_add:
+      case R.id.action_list_add:
         ListsDialog.newInstance(DatabaseContract.ItemType.MOVIE, movieId)
             .show(getFragmentManager(), DIALOG_LISTS_ADD);
         return true;
@@ -490,9 +470,7 @@ public class MovieFragment extends RefreshableAppBarFragment
       viewOnTmdb.setVisibility(View.GONE);
     }
 
-    if (getToolbar() != null) {
-      createMenu(getToolbar());
-    }
+    invalidateMenu();
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
