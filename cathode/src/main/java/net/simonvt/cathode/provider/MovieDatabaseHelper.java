@@ -162,7 +162,15 @@ public final class MovieDatabaseHelper {
       }, null);
 
       if (movie.moveToFirst()) {
-        return TimeUtils.getMillis(lastUpdated) > Cursors.getLong(movie, MovieColumns.LAST_UPDATED);
+        final long movieLastUpdated = Cursors.getLong(movie, MovieColumns.LAST_UPDATED);
+        final long currentTime = System.currentTimeMillis();
+        if (movieLastUpdated > currentTime) {
+          Timber.e(new IllegalArgumentException(
+                  "Last updated: " + movieLastUpdated + " - current time: " + currentTime),
+              "Wrong LAST_UPDATED");
+          return true;
+        }
+        return TimeUtils.getMillis(lastUpdated) > movieLastUpdated;
       }
 
       return false;

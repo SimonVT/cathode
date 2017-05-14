@@ -32,6 +32,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.cathode.util.TextUtils;
 import net.simonvt.schematic.Cursors;
+import timber.log.Timber;
 
 public final class ShowDatabaseHelper {
 
@@ -276,7 +277,15 @@ public final class ShowDatabaseHelper {
       }, null);
 
       if (show.moveToFirst()) {
-        return lastUpdated > Cursors.getLong(show, ShowColumns.LAST_UPDATED);
+        final long showLastUpdated = Cursors.getLong(show, ShowColumns.LAST_UPDATED);
+        final long currentTime = System.currentTimeMillis();
+        if (showLastUpdated > currentTime) {
+          Timber.e(new IllegalArgumentException(
+                  "Last updated: " + showLastUpdated + " - current time: " + currentTime),
+              "Wrong LAST_UPDATED");
+          return true;
+        }
+        return lastUpdated > showLastUpdated;
       }
 
       return false;
