@@ -62,6 +62,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
       ShowColumns.WATCHING, Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
       Tables.EPISODES + "." + EpisodeColumns.ID + " AS " + COLUMN_EPISODE_ID,
       Tables.EPISODES + "." + EpisodeColumns.TITLE,
+      Tables.EPISODES + "." + EpisodeColumns.WATCHED,
       Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
       Tables.EPISODES + "." + EpisodeColumns.SEASON, Tables.EPISODES + "." + EpisodeColumns.EPISODE,
       Tables.EPISODES + "." + EpisodeColumns.LAST_MODIFIED + " AS " + COLUMN_EPISODE_LAST_UPDATED,
@@ -195,12 +196,13 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
     final long episodeFirstAired = DataHelper.getFirstAired(cursor);
     final int episodeSeasonNumber = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episodeNumber = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
+    final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
 
     String episodeTitle = null;
     if (episodeSeasonNumber > 0) {
       episodeTitle =
           DataHelper.getEpisodeTitle(getContext(), cursor, episodeSeasonNumber, episodeNumber,
-              true);
+              watched, true);
     }
 
     holder.title.setText(showTitle);

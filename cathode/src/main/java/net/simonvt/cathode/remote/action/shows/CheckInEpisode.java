@@ -95,6 +95,7 @@ public class CheckInEpisode extends CallJob<CheckinResponse> {
 
       Cursor c = getContentResolver().query(Episodes.EPISODES, new String[] {
           EpisodeColumns.TITLE, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
+          EpisodeColumns.WATCHED
       }, EpisodeColumns.TRAKT_ID + "=?", new String[] {
           String.valueOf(traktId),
       }, null);
@@ -102,7 +103,8 @@ public class CheckInEpisode extends CallJob<CheckinResponse> {
       if (c.moveToFirst()) {
         final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
         final int episode = Cursors.getInt(c, EpisodeColumns.EPISODE);
-        final String title = DataHelper.getEpisodeTitle(getContext(), c, season, episode);
+        final boolean watched = Cursors.getBoolean(c, EpisodeColumns.WATCHED);
+        final String title = DataHelper.getEpisodeTitle(getContext(), c, season, episode, watched);
         CheckInFailedEvent.post(title);
       }
 

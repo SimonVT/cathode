@@ -42,6 +42,7 @@ public class ItemModel {
       SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.SEASON),
       SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.EPISODE),
       SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED),
+      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.WATCHED),
   };
 
   private List<WidgetItem> widgetItems;
@@ -104,9 +105,11 @@ public class ItemModel {
       final long episodeId = Cursors.getLong(cursor, COLUMN_EPISODE_ID);
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
+      final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
       final long firstAired = DataHelper.getFirstAired(cursor);
 
-      final String episodeTitle = DataHelper.getEpisodeTitle(context, cursor, season, episode);
+      final String episodeTitle = DataHelper.getEpisodeTitle(context, cursor, season, episode,
+          watched);
 
       String airTime = DateUtils.getTimeString(context, firstAired);
 

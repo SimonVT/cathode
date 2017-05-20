@@ -54,6 +54,7 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
   static final String[] PROJECTION_EPISODE = new String[] {
       Tables.EPISODES + "." + EpisodeColumns.ID,
       Tables.EPISODES + "." + EpisodeColumns.TITLE,
+      Tables.EPISODES + "." + EpisodeColumns.WATCHED,
       Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
       Tables.EPISODES + "." + EpisodeColumns.SEASON, Tables.EPISODES + "." + EpisodeColumns.EPISODE,
       Tables.EPISODES + "." + LastModifiedColumns.LAST_MODIFIED,
@@ -183,7 +184,9 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
       final long id = Cursors.getLong(cursor, EpisodeColumns.ID);
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-      final String title = DataHelper.getEpisodeTitle(context, cursor, season, episode, true);
+      final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
+      final String title = DataHelper.getEpisodeTitle(context, cursor, season, episode, watched,
+          true);
 
       final String screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, id);
 

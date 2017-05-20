@@ -55,7 +55,8 @@ public class DashClockService extends DashClockExtension {
     if (c.moveToFirst()) {
       final int episode = Cursors.getInt(c, EpisodeColumns.EPISODE);
       final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
-      final String title = DataHelper.getEpisodeTitle(this, c, season, episode);
+      final boolean watched = Cursors.getBoolean(c, EpisodeColumns.WATCHED);
+      final String title = DataHelper.getEpisodeTitle(this, c, season, episode, watched);
       final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
       final long firstAired = DataHelper.getFirstAired(c);
 

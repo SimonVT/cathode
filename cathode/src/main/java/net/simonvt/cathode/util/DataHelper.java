@@ -31,23 +31,25 @@ public final class DataHelper {
   private DataHelper() {
   }
 
-  public static String getEpisodeTitle(Context context, Cursor cursor, int season, int episode) {
-    return getEpisodeTitle(context, cursor, season, episode, false);
-  }
-
-  public static String getEpisodeTitle(Context context, String title, int season, int episode) {
-    return getEpisodeTitle(context, title, season, episode, false);
-  }
-
   public static String getEpisodeTitle(Context context, Cursor cursor, int season, int episode,
-      boolean withNumber) {
-    String title = Cursors.getString(cursor, EpisodeColumns.TITLE);
-
-    return getEpisodeTitle(context, title, season, episode, withNumber);
+      boolean watched) {
+    return getEpisodeTitle(context, cursor, season, episode, watched, false);
   }
 
   public static String getEpisodeTitle(Context context, String title, int season, int episode,
-      boolean withNumber) {
+      boolean watched) {
+    return getEpisodeTitle(context, title, season, episode, watched, false);
+  }
+
+  public static String getEpisodeTitle(Context context, Cursor cursor, int season, int episode,
+      boolean watched, boolean withNumber) {
+    String title = Cursors.getString(cursor, EpisodeColumns.TITLE);
+
+    return getEpisodeTitle(context, title, season, episode, watched, withNumber);
+  }
+
+  public static String getEpisodeTitle(Context context, String title, int season, int episode,
+      boolean watched, boolean withNumber) {
     if (title == null) {
       return null;
     }
@@ -55,7 +57,7 @@ public final class DataHelper {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
     final boolean avoidSpoilers = settings.getBoolean(Settings.SHOWS_AVOID_SPOILERS, false);
 
-    if (avoidSpoilers) {
+    if (avoidSpoilers && !watched) {
       return context.getString(R.string.season_x_episode, season, episode);
     }
 

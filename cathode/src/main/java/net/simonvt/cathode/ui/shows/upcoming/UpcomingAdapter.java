@@ -63,6 +63,7 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
       Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED, ShowColumns.WATCHING_EPISODE_ID,
       Tables.EPISODES + "." + EpisodeColumns.ID + " AS " + COLUMN_EPISODE_ID,
       Tables.EPISODES + "." + EpisodeColumns.TITLE,
+      Tables.EPISODES + "." + EpisodeColumns.WATCHED,
       Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
       Tables.EPISODES + "." + EpisodeColumns.SEASON, Tables.EPISODES + "." + EpisodeColumns.EPISODE,
       Tables.EPISODES + "." + EpisodeColumns.LAST_MODIFIED + " AS " + COLUMN_EPISODE_LAST_UPDATED,
@@ -169,8 +170,10 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     final long episodeFirstAired = DataHelper.getFirstAired(cursor);
     final int episodeSeasonNumber = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episodeNumber = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
+    final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
     final String episodeTitle =
-        DataHelper.getEpisodeTitle(activity, cursor, episodeSeasonNumber, episodeNumber, true);
+        DataHelper.getEpisodeTitle(activity, cursor, episodeSeasonNumber, episodeNumber, watched,
+            true);
     final Long watchingEpisodeId = Cursors.getLongOrNull(cursor, ShowColumns.WATCHING_EPISODE_ID);
 
     final String showPosterUri = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);

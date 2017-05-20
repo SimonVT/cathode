@@ -133,7 +133,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   private static final String[] EPISODE_PROJECTION = new String[] {
       EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.FIRST_AIRED, EpisodeColumns.SEASON,
-      EpisodeColumns.EPISODE, EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN,
+      EpisodeColumns.EPISODE, EpisodeColumns.WATCHED, EpisodeColumns.WATCHING,
+      EpisodeColumns.CHECKED_IN,
   };
 
   private static final String[] GENRES_PROJECTION = new String[] {
@@ -855,7 +856,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-      toWatchTitle = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
+      final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
+      toWatchTitle = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, watched);
       final String toWatchEpisodeText = getString(R.string.season_x_episode_y, season, episode);
 
       toWatchHolder.episodeTitle.setText(toWatchTitle);
@@ -894,7 +896,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
         final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
         final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-        final String title = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
+        final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
+        final String title =
+            DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, watched);
 
         lastWatchedHolder.episodeTitle.setText(title);
 
@@ -930,7 +934,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-      final String title = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
+      final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
+      final String title =
+          DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, watched);
 
       toCollectHolder.episodeTitle.setText(title);
 
@@ -957,7 +963,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
         final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
         final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-        final String title = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
+        final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
+        final String title =
+            DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, watched);
 
         lastCollectedHolder.episodeTitle.setText(title);
 

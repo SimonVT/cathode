@@ -58,6 +58,7 @@ public class DashboardUpcomingShowsAdapter
       Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
       Tables.EPISODES + "." + EpisodeColumns.SEASON,
       Tables.EPISODES + "." + EpisodeColumns.EPISODE,
+      Tables.EPISODES + "." + EpisodeColumns.WATCHED,
       Tables.EPISODES + "." + EpisodeColumns.LAST_MODIFIED + " AS " + COLUMN_EPISODE_LAST_UPDATED,
   };
 
@@ -108,8 +109,9 @@ public class DashboardUpcomingShowsAdapter
     final boolean watching = Cursors.getBoolean(cursor, ShowColumns.WATCHING);
     final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
+    final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
     final String episodeTitle =
-        DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, true);
+        DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, watched, true);
 
     final String poster =
         ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);

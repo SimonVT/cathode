@@ -232,7 +232,9 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
       final String showTitle = Cursors.getString(cursor, "episodeShowTitle");
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-      final String title = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
+      final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
+      final String title =
+          DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, watched);
 
       final String screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, itemId);
 

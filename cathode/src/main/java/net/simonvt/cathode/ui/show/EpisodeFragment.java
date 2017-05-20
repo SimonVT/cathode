@@ -324,7 +324,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
     season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-    episodeTitle = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
+    episodeTitle = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, watched);
 
     title.setText(episodeTitle);
 

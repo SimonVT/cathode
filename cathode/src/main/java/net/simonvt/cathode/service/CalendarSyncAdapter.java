@@ -174,7 +174,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
 
       Cursor episodes = context.getContentResolver().query(Episodes.fromShow(showId), new String[] {
           EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
-          EpisodeColumns.FIRST_AIRED,
+          EpisodeColumns.WATCHED, EpisodeColumns.FIRST_AIRED,
       }, EpisodeColumns.FIRST_AIRED + ">? AND " + EpisodeColumns.NEEDS_SYNC + "=0", new String[] {
           String.valueOf(time - 30 * DateUtils.DAY_IN_MILLIS),
       }, null);
@@ -183,7 +183,9 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
         final long episodeId = Cursors.getLong(episodes, EpisodeColumns.ID);
         final int season = Cursors.getInt(episodes, EpisodeColumns.SEASON);
         final int episode = Cursors.getInt(episodes, EpisodeColumns.EPISODE);
-        final String title = DataHelper.getEpisodeTitle(context, episodes, season, episode);
+        final boolean watched = Cursors.getBoolean(episodes, EpisodeColumns.WATCHED);
+        final String title =
+            DataHelper.getEpisodeTitle(context, episodes, season, episode, watched);
         final long firstAired = DataHelper.getFirstAired(episodes);
 
         String eventTitle = showTitle + " - " + season + "x" + episode + " " + title;
@@ -205,7 +207,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
 
       Cursor episodes = context.getContentResolver().query(Episodes.fromShow(showId), new String[] {
           EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
-          EpisodeColumns.FIRST_AIRED,
+          EpisodeColumns.WATCHED, EpisodeColumns.FIRST_AIRED,
       }, EpisodeColumns.FIRST_AIRED
           + ">? AND "
           + EpisodeColumns.EPISODE
@@ -219,7 +221,9 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
         final long episodeId = Cursors.getLong(episodes, EpisodeColumns.ID);
         final int season = Cursors.getInt(episodes, EpisodeColumns.SEASON);
         final int episode = Cursors.getInt(episodes, EpisodeColumns.EPISODE);
-        final String title = DataHelper.getEpisodeTitle(context, episodes, season, episode);
+        final boolean watched = Cursors.getBoolean(episodes, EpisodeColumns.WATCHED);
+        final String title =
+            DataHelper.getEpisodeTitle(context, episodes, season, episode, watched);
         final long firstAired = DataHelper.getFirstAired(episodes);
 
         String eventTitle = showTitle + " - " + season + "x" + episode + " " + title;

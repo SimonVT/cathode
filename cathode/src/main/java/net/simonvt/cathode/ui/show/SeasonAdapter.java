@@ -107,7 +107,7 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
     final boolean watching = Cursors.getBoolean(cursor, EpisodeColumns.WATCHING);
     final boolean checkedIn = Cursors.getBoolean(cursor, EpisodeColumns.CHECKED_IN);
     final long firstAired = DataHelper.getFirstAired(cursor);
-    final String title = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode);
+    final String title = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, watched);
 
     final String screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, id);
 

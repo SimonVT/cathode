@@ -124,18 +124,15 @@ public class NotificationService extends IntentService {
             SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.TITLE),
             SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.SEASON),
             SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.EPISODE),
+            SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.WATCHED),
             SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED),
             SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.NOTIFICATION_DISMISSED),
         },
-        "(" + SqlColumn.table(Tables.SHOWS).column(ShowColumns.WATCHED_COUNT)
-            + ">0 OR "
-            + SqlColumn.table(Tables.SHOWS).column(ShowColumns.IN_WATCHLIST)
-            + "=1) AND "
-            + SqlColumn.table(Tables.SHOWS).column(ShowColumns.HIDDEN_CALENDAR)
-            + "=0 AND ("
-            + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED)
-            + ">?)",
-        new String[] {
+        "(" + SqlColumn.table(Tables.SHOWS).column(ShowColumns.WATCHED_COUNT) + ">0 OR " + SqlColumn
+            .table(Tables.SHOWS)
+            .column(ShowColumns.IN_WATCHLIST) + "=1) AND " + SqlColumn.table(Tables.SHOWS)
+            .column(ShowColumns.HIDDEN_CALENDAR) + "=0 AND (" + SqlColumn.table(Tables.EPISODES)
+            .column(EpisodeColumns.FIRST_AIRED) + ">?)", new String[] {
             String.valueOf(currentTime - 6 * DateUtils.HOUR_IN_MILLIS)
         }, Shows.SORT_NEXT_EPISODE);
 
@@ -147,7 +144,9 @@ public class NotificationService extends IntentService {
       final long episodeId = Cursors.getLong(episodes, "episodeId");
       final int season = Cursors.getInt(episodes, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(episodes, EpisodeColumns.EPISODE);
-      final String episodeTitle = DataHelper.getEpisodeTitle(this, episodes, season, episode);
+      final boolean watched = Cursors.getBoolean(episodes, EpisodeColumns.WATCHED);
+      final String episodeTitle =
+          DataHelper.getEpisodeTitle(this, episodes, season, episode, watched);
       final long firstAired = DataHelper.getFirstAired(episodes);
       final boolean notificationDismissed =
           Cursors.getBoolean(episodes, EpisodeColumns.NOTIFICATION_DISMISSED);
@@ -165,16 +164,16 @@ public class NotificationService extends IntentService {
         }
       } else if (advanceTime <= currentTime && firstAired > currentTime) {
         // Advance notification
-        displayNotification(showId, showTitle, episodeId, episodeTitle, season, episode, firstAired,
-            false);
+        displayNotification(showId, showTitle, episodeId, episodeTitle, season, episode, watched,
+            firstAired, false);
 
         if (nextNotificationTime > firstAired) {
           nextNotificationTime = firstAired;
         }
       } else if (airingEnd > currentTime) {
         // Airing
-        displayNotification(showId, showTitle, episodeId, episodeTitle, season, episode, firstAired,
-            true);
+        displayNotification(showId, showTitle, episodeId, episodeTitle, season, episode, watched,
+            firstAired, true);
 
         if (nextNotificationTime > airingEnd) {
           nextNotificationTime = airingEnd;
@@ -233,8 +232,10 @@ public class NotificationService extends IntentService {
   }
 
   private void displayNotification(long showId, String showTitle, long episodeId,
-      String episodeTitle, int season, int episode, long firstAired, boolean airing) {
-    final String epiTitle = DataHelper.getEpisodeTitle(this, episodeTitle, season, episode, true);
+      String episodeTitle, int season, int episode, boolean watched, long firstAired,
+      boolean airing) {
+    final String epiTitle =
+        DataHelper.getEpisodeTitle(this, episodeTitle, season, episode, watched, true);
 
     final String contentTitle = showTitle + " - " + epiTitle;
 

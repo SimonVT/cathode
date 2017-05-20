@@ -69,9 +69,12 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
   };
 
   static final String[] PROJECTION_EPISODE = new String[] {
-      Tables.EPISODES + "." + EpisodeColumns.ID, Tables.EPISODES + "." + EpisodeColumns.TITLE,
+      Tables.EPISODES + "." + EpisodeColumns.ID,
+      Tables.EPISODES + "." + EpisodeColumns.TITLE,
+      Tables.EPISODES + "." + EpisodeColumns.WATCHED,
       Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
-      Tables.EPISODES + "." + EpisodeColumns.SEASON, Tables.EPISODES + "." + EpisodeColumns.EPISODE,
+      Tables.EPISODES + "." + EpisodeColumns.SEASON,
+      Tables.EPISODES + "." + EpisodeColumns.EPISODE,
       Tables.EPISODES + "." + LastModifiedColumns.LAST_MODIFIED,
       Tables.SHOWS + "." + ShowColumns.TITLE,
   };
@@ -222,7 +225,8 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
       final long firstAired = DataHelper.getFirstAired(cursor);
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-      final String title = DataHelper.getEpisodeTitle(activity, cursor, season, episode);
+      final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
+      final String title = DataHelper.getEpisodeTitle(activity, cursor, season, episode, watched);
 
       final String screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, id);
 
