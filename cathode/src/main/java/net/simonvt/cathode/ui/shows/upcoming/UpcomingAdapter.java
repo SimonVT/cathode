@@ -170,7 +170,7 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     final int episodeSeasonNumber = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episodeNumber = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
     final String episodeTitle =
-        DataHelper.getEpisodeTitle(activity, cursor, episodeSeasonNumber, episodeNumber);
+        DataHelper.getEpisodeTitle(activity, cursor, episodeSeasonNumber, episodeNumber, true);
     final Long watchingEpisodeId = Cursors.getLongOrNull(cursor, ShowColumns.WATCHING_EPISODE_ID);
 
     final String showPosterUri = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
