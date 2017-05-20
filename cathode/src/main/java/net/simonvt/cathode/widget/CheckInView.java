@@ -49,7 +49,7 @@ public class CheckInView extends OverflowView {
     setImageDrawable(checkInDrawable);
 
     addItem(R.id.action_checkin, R.string.action_checkin);
-    addItem(R.id.action_watched, R.string.action_watched);
+    addItem(R.id.action_history_add, R.string.action_history_add);
   }
 
   public void reset() {

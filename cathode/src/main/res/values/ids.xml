@@ -56,7 +56,6 @@
   <item name="sort_collected" type="id"/>
   <item name="sort_anticipated" type="id"/>
 
-  <item name="action_watched" type="id"/>
   <item name="action_history_add" type="id"/>
   <item name="action_history_remove" type="id"/>
   <item name="action_watched_hide" type="id"/>

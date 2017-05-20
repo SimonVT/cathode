@@ -39,6 +39,7 @@ import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
+import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.cathode.widget.RemoteImageView;
@@ -130,9 +131,10 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
               showScheduler.setIsInWatchlist(holder.getItemId(), false);
               break;
 
-            case R.id.action_watched:
-              onWatchNext(holder.itemView, position, holder.getItemId(), holder.showTypeCount,
-                  holder.showAiredCount);
+            case R.id.action_history_add:
+              AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.EPISODE, holder.episodeId,
+                  holder.episodeTitle)
+                  .show(activity.getSupportFragmentManager(), AddToHistoryDialog.TAG);
               break;
 
             case R.id.action_checkin:
@@ -196,7 +198,8 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
 
     String episodeTitle = null;
     if (episodeSeasonNumber > 0) {
-      episodeTitle = DataHelper.getEpisodeTitle(getContext(), cursor, episodeSeasonNumber, episodeNumber);
+      episodeTitle =
+          DataHelper.getEpisodeTitle(getContext(), cursor, episodeSeasonNumber, episodeNumber);
     }
 
     holder.title.setText(showTitle);
@@ -250,7 +253,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
         if (airedCount - typeCount > 0) {
           if (!watching && hasNext) {
             overflow.addItem(R.id.action_checkin, R.string.action_checkin);
-            overflow.addItem(R.id.action_watched, R.string.action_watched);
+            overflow.addItem(R.id.action_history_add, R.string.action_history_add);
           } else if (watching) {
             overflow.addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
           }

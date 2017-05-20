@@ -274,7 +274,7 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     ViewHolder(View v) {
       super(v);
       ButterKnife.bind(this, v);
-      overflow.addItem(R.id.action_watched, R.string.action_watched);
+      overflow.addItem(R.id.action_history_add, R.string.action_history_add);
       overflow.addItem(R.id.action_history_remove, R.string.action_history_remove);
     }
   }

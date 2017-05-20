@@ -166,7 +166,6 @@
   <string name="sort_anticipated">Most anticipated</string>
 
   <string name="action_sort_by">Sort by</string>
-  <string name="action_watched">Watched</string>
   <string name="action_history_add">Add to history</string>
   <string name="action_history_remove">Remove from history</string>
   <string name="action_watched_hide">Hide</string>
