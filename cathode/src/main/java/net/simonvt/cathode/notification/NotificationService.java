@@ -62,12 +62,25 @@ public class NotificationService extends IntentService {
   private static final DateFormat SORT_KEY_FORMAT =
       new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
 
-  private static final String GROUP = "upcoming";
+  static final String GROUP = "upcoming";
 
-  private static final int GROUP_NOTIFICATION_ID = Integer.MAX_VALUE - 1;
+  static final int GROUP_NOTIFICATION_ID = Integer.MAX_VALUE - 1;
 
   private static final long[] VIBRATION = new long[] {
       0, 100, 200, 100, 200, 100
+  };
+
+  private static final String[] PROJECTION = new String[] {
+      SqlColumn.table(Tables.SHOWS).column(ShowColumns.ID),
+      SqlColumn.table(Tables.SHOWS).column(ShowColumns.RUNTIME),
+      SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
+      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.ID) + " AS episodeId",
+      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.TITLE),
+      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.SEASON),
+      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.EPISODE),
+      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.WATCHED),
+      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED),
+      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.NOTIFICATION_DISMISSED),
   };
 
   private DateFormat timeDateFormat;
@@ -116,18 +129,7 @@ public class NotificationService extends IntentService {
     final boolean vibrate = settings.getBoolean(Settings.NOTIFICACTION_VIBRATE, true);
     final boolean sound = settings.getBoolean(Settings.NOTIFICACTION_SOUND, true);
 
-    Cursor episodes = getContentResolver().query(Episodes.EPISODES_WITH_SHOW, new String[] {
-            SqlColumn.table(Tables.SHOWS).column(ShowColumns.ID),
-            SqlColumn.table(Tables.SHOWS).column(ShowColumns.RUNTIME),
-            SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
-            SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.ID) + " AS episodeId",
-            SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.TITLE),
-            SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.SEASON),
-            SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.EPISODE),
-            SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.WATCHED),
-            SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED),
-            SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.NOTIFICATION_DISMISSED),
-        },
+    Cursor episodes = getContentResolver().query(Episodes.EPISODES_WITH_SHOW, PROJECTION,
         "(" + SqlColumn.table(Tables.SHOWS).column(ShowColumns.WATCHED_COUNT) + ">0 OR " + SqlColumn
             .table(Tables.SHOWS)
             .column(ShowColumns.IN_WATCHLIST) + "=1) AND " + SqlColumn.table(Tables.SHOWS)
@@ -186,7 +188,7 @@ public class NotificationService extends IntentService {
     episodes.close();
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      if (getGroupNotificationCount(GROUP) == 0) {
+      if (getGroupNotificationCount(nm, GROUP) == 0) {
         nm.cancel(GROUP_NOTIFICATION_ID);
       } else {
         Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -218,7 +220,8 @@ public class NotificationService extends IntentService {
     }
   }
 
-  @TargetApi(Build.VERSION_CODES.N) private int getGroupNotificationCount(String group) {
+  @TargetApi(Build.VERSION_CODES.N)
+  static int getGroupNotificationCount(NotificationManager nm, String group) {
     StatusBarNotification[] notifications = nm.getActiveNotifications();
     int count = 0;
     for (StatusBarNotification statusBarNotification : notifications) {
@@ -252,6 +255,8 @@ public class NotificationService extends IntentService {
       tickerText = getString(R.string.notification_show_airing_at, showTitle, time);
     }
 
+    final int notificationId = Longs.hashCode(episodeId);
+
     NotificationCompat.Builder notification =
         new NotificationCompat.Builder(this).setShowWhen(false)
             .setContentTitle(contentTitle)
@@ -269,6 +274,7 @@ public class NotificationService extends IntentService {
     // Check-in action
     Intent checkInIntent = new Intent(this, NotificationActionReceiver.class);
     checkInIntent.setAction(NotificationActionReceiver.ACTION_CHECK_IN);
+    checkInIntent.putExtra(NotificationActionReceiver.EXTRA_NOTIFICATION_ID, notificationId);
     checkInIntent.putExtra(NotificationActionReceiver.EXTRA_ID, episodeId);
     checkInIntent.setData(Episodes.withId(episodeId));
     PendingIntent checkInPI = PendingIntent.getBroadcast(this, 0, checkInIntent, 0);
@@ -278,6 +284,7 @@ public class NotificationService extends IntentService {
     // Delete intent
     Intent dismissIntent = new Intent(this, NotificationActionReceiver.class);
     dismissIntent.setAction(NotificationActionReceiver.ACTION_DISMISS);
+    dismissIntent.putExtra(NotificationActionReceiver.EXTRA_NOTIFICATION_ID, notificationId);
     dismissIntent.putExtra(NotificationActionReceiver.EXTRA_ID, episodeId);
     dismissIntent.setData(Episodes.withId(episodeId));
     PendingIntent dismissPI = PendingIntent.getBroadcast(this, 0, dismissIntent, 0);
@@ -295,7 +302,7 @@ public class NotificationService extends IntentService {
     notification.setContentIntent(contentPI);
 
     NotificationManagerCompat nm = NotificationManagerCompat.from(this);
-    nm.notify(Longs.hashCode(episodeId), notification.build());
+    nm.notify(notificationId, notification.build());
   }
 
   private static String createSortKey(long firstAired) {

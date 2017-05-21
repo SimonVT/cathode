@@ -23,6 +23,7 @@ import net.simonvt.cathode.util.WakeLock;
 
 public class NotificationActionReceiver extends BroadcastReceiver {
 
+  public static final String EXTRA_NOTIFICATION_ID = "notificationId";
   public static final String EXTRA_ID = "id";
 
   public static final String ACTION_CHECK_IN = "checkIn";
@@ -32,11 +33,13 @@ public class NotificationActionReceiver extends BroadcastReceiver {
     WakeLock.acquire(context, NotificationActionService.LOCK_TAG);
 
     final String action = intent.getAction();
-    final long id = intent.getLongExtra(NotificationActionReceiver.EXTRA_ID, -1L);
+    final int notificationId = intent.getIntExtra(EXTRA_NOTIFICATION_ID, -1);
+    final long id = intent.getLongExtra(EXTRA_ID, -1L);
 
     Intent actionIntent = new Intent(context, NotificationActionService.class);
     actionIntent.setAction(action);
     actionIntent.putExtra(EXTRA_ID, id);
+    actionIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
     context.startService(actionIntent);
   }
 }

@@ -17,8 +17,11 @@
 package net.simonvt.cathode.notification;
 
 import android.app.IntentService;
+import android.app.NotificationManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -53,6 +56,8 @@ public class NotificationActionService extends IntentService {
 
   @Override protected void onHandleIntent(Intent intent) {
     final String action = intent.getAction();
+    final int notificationId =
+        intent.getIntExtra(NotificationActionReceiver.EXTRA_NOTIFICATION_ID, -1);
     final long id = intent.getLongExtra(NotificationActionReceiver.EXTRA_ID, -1L);
 
     switch (action) {
@@ -61,6 +66,29 @@ public class NotificationActionService extends IntentService {
         final long traktId = episodeHelper.getTraktId(id);
         CheckInEpisode checkInJob = new CheckInEpisode(traktId, null, false, false, false);
         jobManager.addJobNow(checkInJob);
+
+        NotificationManager nm =
+            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (notificationId > -1) {
+          int notificationCount = -1;
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            notificationCount =
+                NotificationService.getGroupNotificationCount(nm, NotificationService.GROUP);
+          }
+
+          nm.cancel(notificationId);
+
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (notificationCount <= 1) {
+              nm.cancel(NotificationService.GROUP_NOTIFICATION_ID);
+            }
+          }
+        }
+
+        ContentValues values = new ContentValues();
+        values.put(EpisodeColumns.NOTIFICATION_DISMISSED, true);
+        getContentResolver().update(Episodes.withId(id), values, null, null);
         break;
       }
 
