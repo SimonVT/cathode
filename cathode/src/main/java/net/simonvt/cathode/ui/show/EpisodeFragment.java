@@ -328,7 +328,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
     title.setText(episodeTitle);
 
-    final String overviewText = DataHelper.getEpisodeOverview(getContext(), cursor);
+    final String overviewText = DataHelper.getEpisodeOverview(getContext(), cursor, watched);
     overview.setText(overviewText);
 
     final String screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, episodeId);

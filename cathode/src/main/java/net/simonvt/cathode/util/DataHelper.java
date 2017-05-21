@@ -76,11 +76,11 @@ public final class DataHelper {
     return title;
   }
 
-  public static String getEpisodeOverview(Context context, Cursor cursor) {
+  public static String getEpisodeOverview(Context context, Cursor cursor, boolean watched) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
     final boolean avoidSpoilers = settings.getBoolean(Settings.SHOWS_AVOID_SPOILERS, false);
 
-    if (avoidSpoilers) {
+    if (avoidSpoilers && !watched) {
       return context.getString(R.string.episode_overview_nospoiler);
     } else {
       return Cursors.getString(cursor, EpisodeColumns.OVERVIEW);
