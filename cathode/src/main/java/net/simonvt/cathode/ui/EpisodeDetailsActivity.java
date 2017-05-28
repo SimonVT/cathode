@@ -25,6 +25,7 @@ import net.simonvt.cathode.ui.comments.CommentsFragment;
 import net.simonvt.cathode.ui.show.EpisodeFragment;
 import net.simonvt.cathode.ui.show.ShowFragment;
 import net.simonvt.cathode.util.FragmentStack.StackEntry;
+import timber.log.Timber;
 
 public class EpisodeDetailsActivity extends NavigationListenerActivity {
 
@@ -52,13 +53,18 @@ public class EpisodeDetailsActivity extends NavigationListenerActivity {
     showTitle = intent.getStringExtra(EXTRA_SHOW_TITLE);
     showOverview = intent.getStringExtra(EXTRA_SHOW_OVERVIEW);
 
-    if (inState == null) {
-      Bundle args = EpisodeFragment.getArgs(id, showTitle);
-      EpisodeFragment f = new EpisodeFragment();
-      f.setArguments(args);
-      getSupportFragmentManager().beginTransaction()
-          .add(R.id.content, f, EpisodeFragment.getTag(id))
-          .commitNow();
+    if (id == -1L) {
+      Timber.e(new Exception("ID was " + id));
+      finish();
+    } else {
+      if (inState == null) {
+        Bundle args = EpisodeFragment.getArgs(id, showTitle);
+        EpisodeFragment f = new EpisodeFragment();
+        f.setArguments(args);
+        getSupportFragmentManager().beginTransaction()
+            .add(R.id.content, f, EpisodeFragment.getTag(id))
+            .commitNow();
+      }
     }
   }
 

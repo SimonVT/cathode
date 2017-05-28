@@ -143,7 +143,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
   }
 
   public static Bundle getArgs(long episodeId, String showTitle) {
-    Preconditions.checkArgument(episodeId >= 0, "episodeId must be >= 0");
+    Preconditions.checkArgument(episodeId >= 0, "episodeId must be >= 0, was " + episodeId);
 
     Bundle args = new Bundle();
     args.putLong(ARG_EPISODEID, episodeId);
