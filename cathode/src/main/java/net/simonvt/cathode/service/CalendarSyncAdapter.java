@@ -184,11 +184,11 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
         final int season = Cursors.getInt(episodes, EpisodeColumns.SEASON);
         final int episode = Cursors.getInt(episodes, EpisodeColumns.EPISODE);
         final boolean watched = Cursors.getBoolean(episodes, EpisodeColumns.WATCHED);
-        final String title =
-            DataHelper.getEpisodeTitle(context, episodes, season, episode, watched);
+        final String episodeTitle =
+            DataHelper.getEpisodeTitle(context, episodes, season, episode, watched, true);
         final long firstAired = DataHelper.getFirstAired(episodes);
 
-        String eventTitle = showTitle + " - " + season + "x" + episode + " " + title;
+        String eventTitle = showTitle + " - " + episodeTitle;
 
         addEvent(ops, events, calendarId, episodeId, eventTitle, firstAired, runtime);
       }
