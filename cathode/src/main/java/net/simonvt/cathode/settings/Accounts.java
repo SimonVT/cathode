@@ -20,11 +20,13 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.service.AccountAuthenticator;
 import net.simonvt.cathode.util.DateUtils;
+import timber.log.Timber;
 
 public final class Accounts {
 
@@ -41,26 +43,38 @@ public final class Accounts {
 
     Account account = getAccount(context);
 
-    if (manager.addAccountExplicitly(account, null, null)) {
-      ContentResolver.setIsSyncable(account, BuildConfig.PROVIDER_AUTHORITY, 1);
-      ContentResolver.setSyncAutomatically(account, BuildConfig.PROVIDER_AUTHORITY, true);
-      ContentResolver.addPeriodicSync(account, BuildConfig.PROVIDER_AUTHORITY, new Bundle(),
-          12 * DateUtils.HOUR_IN_SECONDS);
+    try {
+      if (manager.addAccountExplicitly(account, null, null)) {
+        ContentResolver.setIsSyncable(account, BuildConfig.PROVIDER_AUTHORITY, 1);
+        ContentResolver.setSyncAutomatically(account, BuildConfig.PROVIDER_AUTHORITY, true);
+        ContentResolver.addPeriodicSync(account, BuildConfig.PROVIDER_AUTHORITY, new Bundle(),
+            12 * DateUtils.HOUR_IN_SECONDS);
 
-      ContentResolver.setIsSyncable(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, 1);
-      ContentResolver.setSyncAutomatically(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, true);
-      ContentResolver.addPeriodicSync(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, new Bundle(),
-          12 * DateUtils.HOUR_IN_SECONDS);
+        ContentResolver.setIsSyncable(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, 1);
+        ContentResolver.setSyncAutomatically(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, true);
+        ContentResolver.addPeriodicSync(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, new Bundle(),
+            12 * DateUtils.HOUR_IN_SECONDS);
+      }
+    } catch (SecurityException e) {
+      Timber.e(e, "Unable to add account");
     }
   }
 
   public static void removeAccount(Context context) {
-    AccountManager am = AccountManager.get(context);
-    Account account = getAccount(context);
-    ContentResolver.removePeriodicSync(account, BuildConfig.PROVIDER_AUTHORITY, new Bundle());
-    ContentResolver.removePeriodicSync(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, new Bundle());
-    AccountAuthenticator.allowRemove();
-    am.removeAccount(account, null, null);
+    try {
+      AccountManager am = AccountManager.get(context);
+      Account account = getAccount(context);
+      ContentResolver.removePeriodicSync(account, BuildConfig.PROVIDER_AUTHORITY, new Bundle());
+      ContentResolver.removePeriodicSync(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, new Bundle());
+      AccountAuthenticator.allowRemove();
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+        am.removeAccount(account, null, null, null);
+      } else {
+        am.removeAccount(account, null, null);
+      }
+    } catch (SecurityException e) {
+      Timber.e(e, "Unable to remove account");
+    }
   }
 
   public static void requestCalendarSync(Context context) {
