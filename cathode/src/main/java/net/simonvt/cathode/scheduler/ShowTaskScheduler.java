@@ -19,7 +19,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TimeUtils;
@@ -54,7 +54,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
 
   public ShowTaskScheduler(Context context) {
     super(context);
-    CathodeApp.inject(context, this);
+    Injector.obtain().inject(this);
   }
 
   public void sync(final long showId) {

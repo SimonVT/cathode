@@ -21,7 +21,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -80,7 +80,7 @@ public class RelatedMoviesFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    CathodeApp.inject(getActivity(), this);
+    Injector.obtain().inject(this);
 
     movieId = getArguments().getLong(ARG_MOVIE_ID);
 

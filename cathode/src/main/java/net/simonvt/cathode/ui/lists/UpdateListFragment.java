@@ -32,7 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
@@ -84,7 +84,7 @@ public class UpdateListFragment extends DialogFragment {
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    CathodeApp.inject(getActivity(), this);
+    Injector.obtain().inject(this);
 
     if (getShowsDialog()) {
       setStyle(DialogFragment.STYLE_NO_TITLE, 0);

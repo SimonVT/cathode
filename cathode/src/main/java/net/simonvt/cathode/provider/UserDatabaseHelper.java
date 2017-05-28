@@ -20,7 +20,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.api.entity.Profile;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Users;
@@ -52,7 +52,7 @@ public class UserDatabaseHelper {
 
     resolver = context.getContentResolver();
 
-    CathodeApp.inject(context, this);
+    Injector.obtain().inject(this);
   }
 
   public static final class IdResult {

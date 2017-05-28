@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -40,10 +40,10 @@ import net.simonvt.cathode.remote.sync.shows.SyncAnticipatedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
+import net.simonvt.cathode.ui.fragment.SwipeRefreshRecyclerFragment;
+import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.shows.ShowClickListener;
 import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
-import net.simonvt.cathode.ui.lists.ListDialog;
-import net.simonvt.cathode.ui.fragment.SwipeRefreshRecyclerFragment;
 
 public class AnticipatedShowsFragment
     extends SwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>
@@ -119,7 +119,7 @@ public class AnticipatedShowsFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    CathodeApp.inject(getActivity(), this);
+    Injector.obtain().inject(this);
 
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     sortBy = SortBy.fromValue(

@@ -35,9 +35,9 @@ import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.shows.ShowsWithNextAdapter;
 import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.shows.ShowsFragment;
+import net.simonvt.cathode.ui.shows.ShowsWithNextAdapter;
 
 public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Callback {
 

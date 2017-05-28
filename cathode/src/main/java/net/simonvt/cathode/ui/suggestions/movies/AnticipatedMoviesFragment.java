@@ -38,8 +38,8 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.movies.SyncAnticipatedMovies;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.movies.MoviesAdapter;
 import net.simonvt.cathode.ui.lists.ListDialog;
+import net.simonvt.cathode.ui.movies.MoviesAdapter;
 import net.simonvt.cathode.ui.movies.MoviesFragment;
 
 public class AnticipatedMoviesFragment extends MoviesFragment implements ListDialog.Callback {

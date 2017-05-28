@@ -37,7 +37,7 @@ import butterknife.ButterKnife;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
@@ -161,7 +161,7 @@ public class HomeActivity extends BaseActivity
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
     Timber.d("onCreate");
-    CathodeApp.inject(this);
+    Injector.obtain().inject(this);
 
     setContentView(R.layout.activity_home);
 

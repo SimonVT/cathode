@@ -17,7 +17,6 @@ package net.simonvt.cathode.remote.sync;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import net.simonvt.cathode.tmdb.api.SyncConfiguration;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
@@ -30,6 +29,7 @@ import net.simonvt.cathode.remote.sync.shows.SyncShowRecommendations;
 import net.simonvt.cathode.remote.sync.shows.SyncTrendingShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.TraktTimestamps;
+import net.simonvt.cathode.tmdb.api.SyncConfiguration;
 
 public class SyncJob extends Job {
 

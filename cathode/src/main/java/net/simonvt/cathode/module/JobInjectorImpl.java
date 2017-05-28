@@ -17,7 +17,7 @@
 package net.simonvt.cathode.module;
 
 import android.content.Context;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobInjector;
 
@@ -44,6 +44,6 @@ public class JobInjectorImpl implements JobInjector {
   }
 
   @Override public void injectInto(Job job) {
-    CathodeApp.inject(context, job);
+    Injector.obtain().inject(job);
   }
 }

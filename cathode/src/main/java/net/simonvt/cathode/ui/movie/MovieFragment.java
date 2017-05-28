@@ -33,7 +33,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import java.util.Locale;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TraktUtils;
@@ -189,7 +189,7 @@ public class MovieFragment extends RefreshableAppBarFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    CathodeApp.inject(getActivity(), this);
+    Injector.obtain().inject(this);
 
     Bundle args = getArguments();
     movieId = args.getLong(ARG_ID);

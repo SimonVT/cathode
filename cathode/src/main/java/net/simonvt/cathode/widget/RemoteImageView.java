@@ -38,7 +38,7 @@ import com.squareup.picasso.Transformation;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.widget.animation.MaterialTransition;
 import timber.log.Timber;
@@ -95,7 +95,7 @@ public class RemoteImageView extends AspectRatioView implements Target {
   public RemoteImageView(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
     if (!isInEditMode()) {
-      CathodeApp.inject(context, this);
+      Injector.obtain().inject(this);
     }
 
     TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RemoteImageView);

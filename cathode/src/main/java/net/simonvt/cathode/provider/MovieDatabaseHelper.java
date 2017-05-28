@@ -27,7 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.database.DatabaseUtils;
@@ -68,7 +68,7 @@ public final class MovieDatabaseHelper {
 
     resolver = context.getContentResolver();
 
-    CathodeApp.inject(context, this);
+    Injector.obtain().inject(this);
   }
 
   public long getTraktId(long movieId) {

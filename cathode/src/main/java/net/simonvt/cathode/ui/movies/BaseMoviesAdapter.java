@@ -24,7 +24,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
@@ -55,7 +55,7 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
   public BaseMoviesAdapter(FragmentActivity activity, MovieClickListener listener, Cursor c,
       LibraryType libraryType) {
     super(activity, c);
-    CathodeApp.inject(activity, this);
+    Injector.obtain().inject(this);
     this.activity = activity;
     this.listener = listener;
     this.libraryType = libraryType;

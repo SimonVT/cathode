@@ -26,7 +26,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
@@ -84,7 +84,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
   public ShowsWithNextAdapter(FragmentActivity activity, ShowClickListener clickListener,
       Cursor cursor, LibraryType libraryType) {
     super(activity, cursor);
-    CathodeApp.inject(activity, this);
+    Injector.obtain().inject(this);
     this.activity = activity;
     this.clickListener = clickListener;
     this.libraryType = libraryType;

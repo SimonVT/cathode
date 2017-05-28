@@ -22,7 +22,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.ui.NavigationListener;
@@ -57,7 +57,7 @@ public class DeleteListDialog extends DialogFragment {
         .setMessage(R.string.list_delete_message)
         .setPositiveButton(R.string.list_dialog_delete, new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
-            CathodeApp.inject(getContext(), DeleteListDialog.this);
+            Injector.obtain().inject(DeleteListDialog.this);
 
             listScheduler.deleteList(listId);
             navigationListener.onListDeleted(listId);

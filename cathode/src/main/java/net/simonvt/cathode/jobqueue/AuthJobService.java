@@ -27,7 +27,7 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.text.format.DateUtils;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.event.SyncEvent;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.util.WakeLock;
@@ -50,7 +50,7 @@ public class AuthJobService extends Service {
   @Override public void onCreate() {
     super.onCreate();
     Timber.d("AuthJobService started");
-    CathodeApp.inject(this);
+    Injector.obtain().inject(this);
     SyncEvent.authServiceStarted();
 
     WakeLock.acquire(this, WAKELOCK_TAG);

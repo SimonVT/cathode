@@ -25,7 +25,7 @@ import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
@@ -71,7 +71,7 @@ public class RatingDialog extends DialogFragment {
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    CathodeApp.inject(getActivity(), this);
+    Injector.obtain().inject(this);
 
     Bundle args = getArguments();
     type = (Type) args.getSerializable(ARG_TYPE);

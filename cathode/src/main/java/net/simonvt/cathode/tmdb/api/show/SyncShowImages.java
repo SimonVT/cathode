@@ -21,12 +21,12 @@ import com.uwetrottmann.tmdb2.entities.Image;
 import com.uwetrottmann.tmdb2.entities.Images;
 import com.uwetrottmann.tmdb2.services.TvService;
 import javax.inject.Inject;
-import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.images.ImageType;
-import net.simonvt.cathode.tmdb.api.TmdbCallJob;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
+import net.simonvt.cathode.tmdb.api.TmdbCallJob;
 import retrofit2.Call;
 import timber.log.Timber;
 

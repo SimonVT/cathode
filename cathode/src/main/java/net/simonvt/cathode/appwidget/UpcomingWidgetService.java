@@ -31,7 +31,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -73,7 +73,7 @@ public class UpcomingWidgetService extends RemoteViewsService {
     public UpcomingRemoteViewsFactory(Context context, Intent intent) {
       this.context = context;
 
-      CathodeApp.inject(context, this);
+      Injector.obtain().inject(this);
 
       appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
           AppWidgetManager.INVALID_APPWIDGET_ID);

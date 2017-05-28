@@ -29,7 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -91,7 +91,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    CathodeApp.inject(getContext(), this);
+    Injector.obtain().inject(this);
 
     setTitle(R.string.title_dashboard);
 

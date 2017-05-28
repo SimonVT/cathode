@@ -21,7 +21,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import java.util.List;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.database.DatabaseUtils;
@@ -62,7 +62,7 @@ public final class ShowDatabaseHelper {
 
     resolver = context.getContentResolver();
 
-    CathodeApp.inject(context, this);
+    Injector.obtain().inject(this);
   }
 
   public long getId(long traktId) {

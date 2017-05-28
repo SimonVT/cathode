@@ -26,7 +26,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -67,7 +67,7 @@ public class ShowsWatchlistFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    CathodeApp.inject(getActivity(), this);
+    Injector.obtain().inject(this);
 
     getLoaderManager().initLoader(LOADER_SHOWS_WATCHLIST, null, showsCallback);
     getLoaderManager().initLoader(LOADER_EPISODES_WATCHLIST, null, episodeCallback);

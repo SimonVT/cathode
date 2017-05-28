@@ -23,7 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
@@ -46,7 +46,7 @@ public class NotificationActionService extends IntentService {
 
   @Override public void onCreate() {
     super.onCreate();
-    CathodeApp.inject(this);
+    Injector.obtain().inject(this);
   }
 
   @Override public void onDestroy() {

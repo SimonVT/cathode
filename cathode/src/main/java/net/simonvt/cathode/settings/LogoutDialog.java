@@ -24,7 +24,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.Flags;
@@ -41,7 +41,7 @@ public class LogoutDialog extends DialogFragment {
         .setPositiveButton(R.string.logout_button, new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
             final Context context = getActivity().getApplicationContext();
-            CathodeApp.inject(context, LogoutDialog.this);
+            Injector.obtain().inject(LogoutDialog.this);
 
             PreferenceManager.getDefaultSharedPreferences(getActivity()) //
                 .edit() //

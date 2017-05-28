@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract.RecentQueriesColumns;
@@ -123,7 +123,7 @@ public class SearchFragment extends ToolbarGridFragment<SearchAdapter.ViewHolder
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    CathodeApp.inject(getContext(), this);
+    Injector.obtain().inject(this);
 
     settings = PreferenceManager.getDefaultSharedPreferences(getContext());
 

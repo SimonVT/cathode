@@ -23,7 +23,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.notification.NotificationUtils;
 import net.simonvt.cathode.ui.BaseActivity;
@@ -65,7 +65,7 @@ public class NotificationSettingsActivity extends BaseActivity {
 
     @Override public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
-      CathodeApp.inject(getActivity(), this);
+      Injector.obtain().inject(this);
       settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
       isTablet = getResources().getBoolean(R.bool.isTablet);

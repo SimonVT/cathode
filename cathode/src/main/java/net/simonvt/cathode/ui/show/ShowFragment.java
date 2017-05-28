@@ -37,7 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import java.util.Locale;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.enumeration.ShowStatus;
@@ -269,7 +269,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
     Timber.d("ShowFragment#onCreate");
-    CathodeApp.inject(getActivity(), this);
+    Injector.obtain().inject(this);
 
     Bundle args = getArguments();
     showId = args.getLong(ARG_SHOWID);

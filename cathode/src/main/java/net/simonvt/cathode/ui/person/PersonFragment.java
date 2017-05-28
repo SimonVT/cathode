@@ -32,7 +32,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import java.util.List;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
@@ -127,7 +127,7 @@ public class PersonFragment extends RefreshableAppBarFragment {
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    CathodeApp.inject(getActivity(), this);
+    Injector.obtain().inject(this);
 
     Bundle args = getArguments();
     personId = args.getLong(ARG_PERSON_ID);

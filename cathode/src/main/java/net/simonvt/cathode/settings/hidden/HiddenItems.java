@@ -24,7 +24,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
@@ -258,7 +258,7 @@ public class HiddenItems extends BaseActivity
 
     @Override public void onCreate(Bundle inState) {
       super.onCreate(inState);
-      CathodeApp.inject(getContext(), this);
+      Injector.obtain().inject(this);
 
       setTitle(R.string.preference_hidden_items);
       setEmptyText(R.string.preference_hidden_empty);

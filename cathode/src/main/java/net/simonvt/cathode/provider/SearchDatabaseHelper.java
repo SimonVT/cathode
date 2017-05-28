@@ -18,7 +18,7 @@ package net.simonvt.cathode.provider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.provider.ProviderSchematic.RecentQueries;
 
 public final class SearchDatabaseHelper {
@@ -45,7 +45,7 @@ public final class SearchDatabaseHelper {
 
     resolver = context.getContentResolver();
 
-    CathodeApp.inject(context, this);
+    Injector.obtain().inject(this);
   }
 
   public void insertRecentQuery(String query) {

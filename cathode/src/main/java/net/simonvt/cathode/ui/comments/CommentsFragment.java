@@ -23,7 +23,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.database.SimpleCursor;
@@ -81,7 +81,7 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    CathodeApp.inject(getActivity(), this);
+    Injector.obtain().inject(this);
 
     Bundle args = getArguments();
     itemType = (ItemType) args.getSerializable(ARG_ITEM_TYPE);

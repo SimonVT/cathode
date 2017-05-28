@@ -26,14 +26,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.settings.setup.CalendarSetupActivity;
+import net.simonvt.cathode.ui.BaseActivity;
 
 public class TokenActivity extends BaseActivity implements TokenTask.Callback {
 
@@ -50,7 +50,7 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
     super.onCreate(inState);
     setContentView(R.layout.activity_login_token);
     ButterKnife.bind(this);
-    CathodeApp.inject(this);
+    Injector.obtain().inject(this);
 
     if (TokenTask.runningInstance != null) {
       TokenTask.runningInstance.setCallback(this);

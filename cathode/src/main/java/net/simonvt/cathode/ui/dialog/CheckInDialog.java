@@ -32,7 +32,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
@@ -60,7 +60,7 @@ public class CheckInDialog extends DialogFragment {
     @Inject MovieTaskScheduler movieScheduler;
 
     public Injections(Context context) {
-      CathodeApp.inject(context, this);
+      Injector.obtain().inject(this);
     }
   }
 
@@ -107,7 +107,7 @@ public class CheckInDialog extends DialogFragment {
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    CathodeApp.inject(getActivity(), this);
+    Injector.obtain().inject(this);
   }
 
   @SuppressWarnings("InflateParams") @Override

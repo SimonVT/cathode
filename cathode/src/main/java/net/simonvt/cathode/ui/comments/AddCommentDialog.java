@@ -26,7 +26,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.CommentsService;
@@ -57,7 +57,7 @@ public class AddCommentDialog extends DialogFragment {
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    CathodeApp.inject(getActivity(), this);
+    Injector.obtain().inject(this);
 
     Bundle args = getArguments();
     type = (ItemType) args.getSerializable(ARG_TYPE);

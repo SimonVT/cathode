@@ -23,7 +23,7 @@ import android.text.format.DateUtils;
 import java.io.IOException;
 import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.api.TraktSettings;
 import net.simonvt.cathode.api.entity.AccessToken;
 import net.simonvt.cathode.api.entity.TokenRequest;
@@ -127,7 +127,7 @@ public class ApiSettings implements TraktSettings {
     synchronized (this) {
       if (!isRefreshingToken()) {
         if (authService == null) {
-          CathodeApp.inject(context, this);
+          Injector.obtain().inject(this);
         }
 
         if (!isTokenExpired()) {

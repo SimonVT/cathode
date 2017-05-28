@@ -22,7 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.BindView;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
@@ -51,7 +51,7 @@ public class MovieSearchAdapter extends BaseMoviesAdapter<MovieSearchAdapter.Vie
 
   public MovieSearchAdapter(FragmentActivity activity, MovieClickListener listener, Cursor cursor) {
     super(activity, listener, cursor, LibraryType.WATCHED);
-    CathodeApp.inject(activity, this);
+    Injector.obtain().inject(this);
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

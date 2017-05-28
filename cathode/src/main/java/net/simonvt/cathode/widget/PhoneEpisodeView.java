@@ -21,7 +21,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 
 public class PhoneEpisodeView extends ViewGroup {
@@ -54,7 +54,7 @@ public class PhoneEpisodeView extends ViewGroup {
   }
 
   private void init(Context context) {
-    if (!isInEditMode()) CathodeApp.inject(context, this);
+    if (!isInEditMode()) Injector.obtain().inject(this);
     minHeight = getResources().getDimensionPixelSize(R.dimen.showItemMinHeight);
   }
 

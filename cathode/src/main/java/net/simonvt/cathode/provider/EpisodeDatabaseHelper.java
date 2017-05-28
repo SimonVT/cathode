@@ -21,7 +21,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
@@ -58,7 +58,7 @@ public final class EpisodeDatabaseHelper {
 
     resolver = context.getContentResolver();
 
-    CathodeApp.inject(context, this);
+    Injector.obtain().inject(this);
   }
 
   public Cursor query(long id, String... columns) {

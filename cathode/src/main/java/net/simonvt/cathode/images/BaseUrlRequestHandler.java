@@ -26,7 +26,7 @@ import com.uwetrottmann.tmdb2.entities.Configuration;
 import com.uwetrottmann.tmdb2.services.ConfigurationService;
 import java.io.IOException;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.tmdb.TmdbRateLimiter;
 import retrofit2.Call;
@@ -50,7 +50,7 @@ public abstract class BaseUrlRequestHandler extends RequestHandler {
   public BaseUrlRequestHandler(Context context) {
     this.context = context;
 
-    CathodeApp.inject(context, this);
+    Injector.obtain().inject(this);
 
     settings = PreferenceManager.getDefaultSharedPreferences(context);
   }

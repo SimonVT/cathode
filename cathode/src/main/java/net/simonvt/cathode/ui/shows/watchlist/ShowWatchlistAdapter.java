@@ -25,7 +25,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
@@ -99,7 +99,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
     this.activity = activity;
     this.onItemClickListener = onItemClickListener;
     this.onRemoveListener = onRemoveListener;
-    CathodeApp.inject(activity, this);
+    Injector.obtain().inject(this);
     setHasStableIds(false);
   }
 

@@ -35,8 +35,8 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.HttpStatusCode;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.IntPreference;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.TraktSettings;
@@ -80,8 +80,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
-    CathodeApp.inject(this);
-    CathodeApp.inject(this, injects);
+    Injector.obtain().inject(this);
+    Injector.obtain().inject(injects);
 
     super.setContentView(R.layout.debug_home);
 

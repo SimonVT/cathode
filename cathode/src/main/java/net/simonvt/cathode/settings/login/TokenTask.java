@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.TraktSettings;
 import net.simonvt.cathode.api.entity.AccessToken;
@@ -87,7 +87,7 @@ public class TokenTask extends AsyncTask<Void, Void, TokenTask.Result> {
     this.context = context.getApplicationContext();
     this.code = code;
 
-    CathodeApp.inject(context, this);
+    Injector.obtain().inject(this);
   }
 
   public void setCallback(Callback callback) {

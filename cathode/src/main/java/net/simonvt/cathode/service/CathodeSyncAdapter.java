@@ -22,7 +22,7 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.Settings;
@@ -33,7 +33,7 @@ public class CathodeSyncAdapter extends AbstractThreadedSyncAdapter {
 
   public CathodeSyncAdapter(Context context) {
     super(context, true);
-    CathodeApp.inject(context, this);
+    Injector.obtain().inject(this);
   }
 
   @Override public void onPerformSync(Account account, Bundle extras, String authority,

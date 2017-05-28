@@ -26,7 +26,7 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.text.format.DateUtils;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.event.SyncEvent;
 import net.simonvt.cathode.notification.NotificationUtils;
 import net.simonvt.cathode.remote.Flags;
@@ -51,7 +51,7 @@ public class JobService extends Service {
   @Override public void onCreate() {
     super.onCreate();
     Timber.d("JobService started");
-    CathodeApp.inject(this);
+    Injector.obtain().inject(this);
     SyncEvent.jobServiceStarted();
 
     cancelAlarm();

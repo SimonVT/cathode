@@ -25,7 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -107,7 +107,7 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    CathodeApp.inject(getActivity(), this);
+    Injector.obtain().inject(this);
 
     Bundle args = getArguments();
     showId = args.getLong(ARG_SHOW_ID);

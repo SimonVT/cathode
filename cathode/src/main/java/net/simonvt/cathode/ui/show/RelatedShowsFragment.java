@@ -22,7 +22,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -32,9 +32,9 @@ import net.simonvt.cathode.provider.ProviderSchematic.RelatedShows;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
+import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.ui.shows.ShowClickListener;
 import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
-import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.util.Ids;
 import net.simonvt.cathode.util.guava.Preconditions;
 
@@ -77,7 +77,7 @@ public class RelatedShowsFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    CathodeApp.inject(getContext(), this);
+    Injector.obtain().inject(this);
 
     showId = getArguments().getLong(ARG_SHOW_ID);
 

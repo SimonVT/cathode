@@ -23,14 +23,14 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.ui.dashboard.DashboardFragment;
 import net.simonvt.cathode.ui.lists.ListsFragment;
 import net.simonvt.cathode.ui.movies.collected.CollectedMoviesFragment;
-import net.simonvt.cathode.ui.suggestions.movies.MovieSuggestionsFragment;
-import net.simonvt.cathode.ui.movies.watchlist.MovieWatchlistFragment;
-import net.simonvt.cathode.ui.suggestions.shows.ShowSuggestionsFragment;
-import net.simonvt.cathode.ui.shows.collected.CollectedShowsFragment;
-import net.simonvt.cathode.ui.shows.watchlist.ShowsWatchlistFragment;
-import net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.movies.watched.WatchedMoviesFragment;
+import net.simonvt.cathode.ui.movies.watchlist.MovieWatchlistFragment;
+import net.simonvt.cathode.ui.shows.collected.CollectedShowsFragment;
+import net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment;
 import net.simonvt.cathode.ui.shows.watched.WatchedShowsFragment;
+import net.simonvt.cathode.ui.shows.watchlist.ShowsWatchlistFragment;
+import net.simonvt.cathode.ui.suggestions.movies.MovieSuggestionsFragment;
+import net.simonvt.cathode.ui.suggestions.shows.ShowSuggestionsFragment;
 
 public enum StartPage {
   DASHBOARD("dashboard", DashboardFragment.class, DashboardFragment.TAG, R.id.menu_dashboard,

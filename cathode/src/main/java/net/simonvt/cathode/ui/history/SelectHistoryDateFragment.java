@@ -33,7 +33,7 @@ import com.android.datetimepicker.time.TimePickerDialog;
 import java.text.DateFormat;
 import java.util.Calendar;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
@@ -113,7 +113,7 @@ public class SelectHistoryDateFragment extends AppBarFragment
 
   @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
-    CathodeApp.inject(getContext(), this);
+    Injector.obtain().inject(this);
 
     type = (Type) getArguments().getSerializable(ARG_TYPE);
     id = getArguments().getLong(ARG_ID);

@@ -22,14 +22,12 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import com.crashlytics.android.Crashlytics;
-import dagger.ObjectGraph;
 import io.fabric.sdk.android.Fabric;
 import javax.inject.Inject;
 import net.simonvt.cathode.event.AuthFailedEvent;
@@ -65,8 +63,6 @@ public class CathodeApp extends Application {
 
   private SharedPreferences settings;
 
-  private ObjectGraph objectGraph;
-
   @Inject JobManager jobManager;
 
   private int homeActivityResumedCount;
@@ -95,8 +91,8 @@ public class CathodeApp extends Application {
 
     upgrade();
 
-    objectGraph = ObjectGraph.create(Modules.list(this));
-    objectGraph.inject(this);
+    Injector.install(this);
+    Injector.obtain().inject(this);
 
     AuthFailedEvent.registerListener(authFailedListener);
 
@@ -270,12 +266,4 @@ public class CathodeApp extends Application {
       nm.notify(AUTH_NOTIFICATION, builder.build());
     }
   };
-
-  public static void inject(Context context) {
-    ((CathodeApp) context.getApplicationContext()).objectGraph.inject(context);
-  }
-
-  public static void inject(Context context, Object object) {
-    ((CathodeApp) context.getApplicationContext()).objectGraph.inject(object);
-  }
 }

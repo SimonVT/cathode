@@ -33,7 +33,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -83,7 +83,7 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
   public SeasonsAdapter(FragmentActivity activity, SeasonClickListener clickListener,
       LibraryType type) {
     super(activity, null);
-    CathodeApp.inject(activity, this);
+    Injector.obtain().inject(this);
     this.activity = activity;
     resources = activity.getResources();
     this.clickListener = clickListener;

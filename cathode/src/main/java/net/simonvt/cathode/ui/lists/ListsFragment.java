@@ -24,7 +24,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -57,7 +57,7 @@ public class ListsFragment extends ToolbarSwipeRefreshRecyclerFragment<ListsAdap
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    CathodeApp.inject(getActivity(), this);
+    Injector.obtain().inject(this);
     setTitle(R.string.navigation_lists);
     setEmptyText(R.string.empty_lists);
     getLoaderManager().initLoader(LOADER_LISTS, null, this);

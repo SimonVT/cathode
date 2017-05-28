@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Simon Vig Therkildsen
+ * Copyright (C) 2017 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.ui;
 
-import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import net.simonvt.cathode.Injector;
+package net.simonvt.cathode;
 
-public abstract class BaseActivity extends ActionBarActivity {
+import dagger.ObjectGraph;
 
-  @Override protected void onCreate(Bundle inState) {
-    super.onCreate(inState);
-    Injector.obtain().inject(this);
+public class Injector {
+
+  private static ObjectGraph objectGraph;
+
+  public static void install(CathodeApp app) {
+    objectGraph = ObjectGraph.create(Modules.list(app));
+  }
+
+  public static ObjectGraph obtain() {
+    if (objectGraph == null) {
+      throw new RuntimeException("ObjectGraph not yet initialized");
+    }
+
+    return objectGraph;
   }
 }

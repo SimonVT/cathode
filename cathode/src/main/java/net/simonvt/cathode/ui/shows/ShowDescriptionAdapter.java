@@ -26,13 +26,13 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
-import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.IndicatorView;
@@ -63,14 +63,14 @@ public class ShowDescriptionAdapter
 
   public ShowDescriptionAdapter(Context context, ShowClickListener listener, Cursor cursor) {
     this(context, listener, cursor, true);
-    CathodeApp.inject(context, this);
+    Injector.obtain().inject(this);
     this.listener = listener;
   }
 
   public ShowDescriptionAdapter(Context context, ShowClickListener listener, Cursor cursor,
       boolean displayRating) {
     super(context, cursor);
-    CathodeApp.inject(context, this);
+    Injector.obtain().inject(this);
     this.listener = listener;
     this.displayRating = displayRating;
   }

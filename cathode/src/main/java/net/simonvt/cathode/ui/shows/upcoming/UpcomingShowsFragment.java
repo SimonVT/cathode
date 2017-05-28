@@ -27,7 +27,7 @@ import android.view.MenuItem;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
@@ -79,7 +79,7 @@ public class UpcomingShowsFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    CathodeApp.inject(getActivity(), this);
+    Injector.obtain().inject(this);
 
     sortBy = upcomingSortByPreference.get();
     upcomingSortByPreference.registerListener(upcomingSortByListener);

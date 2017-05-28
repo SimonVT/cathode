@@ -36,7 +36,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
@@ -99,7 +99,7 @@ public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewH
     this.showsReplies = showsReplies;
     this.listener = listener;
 
-    CathodeApp.inject(context, this);
+    Injector.obtain().inject(this);
 
     tintColor = context.getResources().getColor(R.color.commentIconTint);
     likedTintColor = context.getResources().getColor(R.color.commentLikedTint);

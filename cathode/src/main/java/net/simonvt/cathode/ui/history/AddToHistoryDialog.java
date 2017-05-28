@@ -25,7 +25,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
@@ -59,7 +59,7 @@ public class AddToHistoryDialog extends DialogFragment {
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    CathodeApp.inject(getContext(), this);
+    Injector.obtain().inject(this);
   }
 
   public static AddToHistoryDialog newInstance(Type type, long id, String title) {

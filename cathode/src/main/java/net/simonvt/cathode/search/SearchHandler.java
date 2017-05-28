@@ -24,7 +24,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.entity.SearchResult;
 import net.simonvt.cathode.api.entity.Show;
@@ -32,6 +32,7 @@ import net.simonvt.cathode.api.enumeration.Enums;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.SearchService;
+import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -41,7 +42,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
-import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.util.MainHandler;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
@@ -77,7 +77,7 @@ public class SearchHandler {
 
   public SearchHandler(Context context) {
     this.context = context;
-    CathodeApp.inject(context, this);
+    Injector.obtain().inject(this);
   }
 
   public void addListener(SearchListener listener) {

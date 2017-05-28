@@ -27,7 +27,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
@@ -80,7 +80,7 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
     this.context = context;
     this.callback = callback;
 
-    CathodeApp.inject(context, this);
+    Injector.obtain().inject(this);
   }
 
   public void changeShowsCursor(Cursor cursor) {

@@ -34,7 +34,7 @@ import android.view.View;
 import javax.inject.Inject;
 import net.simonvt.android.colorpicker.ColorPickerDialog;
 import net.simonvt.android.colorpicker.ColorPickerSwatch;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
@@ -93,7 +93,7 @@ public class SettingsActivity extends BaseActivity {
 
     @Override public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
-      CathodeApp.inject(getActivity(), this);
+      Injector.obtain().inject(this);
       settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
       isTablet = getResources().getBoolean(R.bool.isTablet);
