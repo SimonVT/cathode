@@ -18,7 +18,10 @@ package net.simonvt.cathode;
 
 import dagger.ObjectGraph;
 
-public class Injector {
+public final class Injector {
+
+  private Injector() {
+  }
 
   private static ObjectGraph objectGraph;
 
