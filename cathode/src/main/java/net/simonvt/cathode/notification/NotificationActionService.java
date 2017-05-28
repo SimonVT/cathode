@@ -55,6 +55,10 @@ public class NotificationActionService extends IntentService {
   }
 
   @Override protected void onHandleIntent(Intent intent) {
+    if (intent == null) {
+      return;
+    }
+
     final String action = intent.getAction();
     final int notificationId =
         intent.getIntExtra(NotificationActionReceiver.EXTRA_NOTIFICATION_ID, -1);
