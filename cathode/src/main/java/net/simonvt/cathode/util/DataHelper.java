@@ -50,10 +50,6 @@ public final class DataHelper {
 
   public static String getEpisodeTitle(Context context, String title, int season, int episode,
       boolean watched, boolean withNumber) {
-    if (title == null) {
-      return null;
-    }
-
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
     final boolean avoidSpoilers = settings.getBoolean(Settings.SHOWS_AVOID_SPOILERS, false);
 
