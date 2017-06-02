@@ -26,6 +26,7 @@ import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.util.guava.Preconditions;
 import net.simonvt.schematic.Cursors;
 
 public final class EpisodeDatabaseHelper {
@@ -165,6 +166,8 @@ public final class EpisodeDatabaseHelper {
   }
 
   public IdResult getIdOrCreate(long showId, long seasonId, int episode) {
+    Preconditions.checkArgument(showId >= 0, "showId must be >=0, was %d", showId);
+    Preconditions.checkArgument(seasonId >= 0, "seasonId must be >=0, was %d", seasonId);
     synchronized (LOCK_ID) {
       long id = getId(showId, seasonId, episode);
 
