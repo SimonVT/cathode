@@ -55,7 +55,7 @@ public class NotificationActionService extends IntentService {
   }
 
   @Override protected void onHandleIntent(Intent intent) {
-    if (intent == null) {
+    if (intent == null || intent.getAction() == null) {
       return;
     }
 
@@ -70,6 +70,7 @@ public class NotificationActionService extends IntentService {
         final long traktId = episodeHelper.getTraktId(id);
         CheckInEpisode checkInJob = new CheckInEpisode(traktId, null, false, false, false);
         jobManager.addJobNow(checkInJob);
+        episodeHelper.checkIn(id);
 
         NotificationManager nm =
             (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

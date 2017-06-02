@@ -24,10 +24,8 @@ import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.action.shows.AddEpisodeToHistory;
 import net.simonvt.cathode.remote.action.shows.CheckInEpisode;
@@ -39,7 +37,6 @@ import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.comments.SyncComments;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.tmdb.api.show.SyncEpisodeImages;
-import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.schematic.Cursors;
 
 public class EpisodeTaskScheduler extends BaseTaskScheduler {
@@ -152,25 +149,7 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
           episode.moveToFirst();
           final long traktId = Cursors.getLong(episode, EpisodeColumns.TRAKT_ID);
           episode.close();
-
-          final long showId = episodeHelper.getShowId(episodeId);
-
-          Cursor show = context.getContentResolver().query(Shows.withId(showId), new String[] {
-              ShowColumns.RUNTIME,
-          }, null, null, null);
-
-          show.moveToFirst();
-          final int runtime = Cursors.getInt(show, ShowColumns.RUNTIME);
-          show.close();
-
-          final long startedAt = currentTime;
-          final long expiresAt = startedAt + runtime * DateUtils.MINUTE_IN_MILLIS;
-
-          ContentValues cv = new ContentValues();
-          cv.put(EpisodeColumns.CHECKED_IN, true);
-          cv.put(EpisodeColumns.STARTED_AT, startedAt);
-          cv.put(EpisodeColumns.EXPIRES_AT, expiresAt);
-          context.getContentResolver().update(Episodes.withId(episodeId), cv, null, null);
+          episodeHelper.checkIn(episodeId);
 
           queue(new CheckInEpisode(traktId, message, facebook, twitter, tumblr));
         }

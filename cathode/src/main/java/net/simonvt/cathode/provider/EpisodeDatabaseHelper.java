@@ -25,6 +25,7 @@ import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.schematic.Cursors;
 
 public final class EpisodeDatabaseHelper {
@@ -235,6 +236,29 @@ public final class EpisodeDatabaseHelper {
     c.close();
 
     return number;
+  }
+
+  public void checkIn(long episodeId) {
+    final long currentTime = System.currentTimeMillis();
+    final long showId = getShowId(episodeId);
+
+    Cursor show =
+        context.getContentResolver().query(ProviderSchematic.Shows.withId(showId), new String[] {
+            DatabaseContract.ShowColumns.RUNTIME,
+        }, null, null, null);
+
+    show.moveToFirst();
+    final int runtime = Cursors.getInt(show, DatabaseContract.ShowColumns.RUNTIME);
+    show.close();
+
+    final long startedAt = currentTime;
+    final long expiresAt = startedAt + runtime * DateUtils.MINUTE_IN_MILLIS;
+
+    ContentValues cv = new ContentValues();
+    cv.put(EpisodeColumns.CHECKED_IN, true);
+    cv.put(EpisodeColumns.STARTED_AT, startedAt);
+    cv.put(EpisodeColumns.EXPIRES_AT, expiresAt);
+    context.getContentResolver().update(Episodes.withId(episodeId), cv, null, null);
   }
 
   public void addToHistory(long episodeId, long watchedAt) {

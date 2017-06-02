@@ -30,16 +30,24 @@ public class NotificationActionReceiver extends BroadcastReceiver {
   public static final String ACTION_DISMISS = "dismiss";
 
   @Override public void onReceive(Context context, Intent intent) {
-    WakeLock.acquire(context, NotificationActionService.LOCK_TAG);
-
     final String action = intent.getAction();
-    final int notificationId = intent.getIntExtra(EXTRA_NOTIFICATION_ID, -1);
-    final long id = intent.getLongExtra(EXTRA_ID, -1L);
+    if (action == null) {
+      return;
+    }
 
-    Intent actionIntent = new Intent(context, NotificationActionService.class);
-    actionIntent.setAction(action);
-    actionIntent.putExtra(EXTRA_ID, id);
-    actionIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
-    context.startService(actionIntent);
+    switch (action) {
+      case ACTION_CHECK_IN:
+      case ACTION_DISMISS: {
+        WakeLock.acquire(context, NotificationActionService.LOCK_TAG);
+        final int notificationId = intent.getIntExtra(EXTRA_NOTIFICATION_ID, -1);
+        final long id = intent.getLongExtra(EXTRA_ID, -1L);
+
+        Intent actionIntent = new Intent(context, NotificationActionService.class);
+        actionIntent.setAction(action);
+        actionIntent.putExtra(EXTRA_ID, id);
+        actionIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
+        context.startService(actionIntent);
+      }
+    }
   }
 }
