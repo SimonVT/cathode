@@ -342,12 +342,20 @@ public final class MovieDatabaseHelper {
       }, null, null, null);
       if (movie.moveToFirst()) {
         final String released = Cursors.getString(movie, MovieColumns.RELEASED);
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        try {
-          final long releaseDate = df.parse(released).getTime();
-          values.put(MovieColumns.WATCHED_AT, releaseDate);
-        } catch (ParseException e) {
-          Timber.e("Parsing release date %s failed", released);
+        if (android.text.TextUtils.isEmpty(released)) {
+          // No release date, just use current date. Trakt will mark it watched on release
+          // and it will get synced back later.
+          values.put(MovieColumns.WATCHED_AT, System.currentTimeMillis());
+        } else {
+          SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+          try {
+            final long releaseDate = df.parse(released).getTime();
+            values.put(MovieColumns.WATCHED_AT, releaseDate);
+          } catch (ParseException e) {
+            Timber.e("Parsing release date %s failed", released);
+            // Use current date.
+            values.put(MovieColumns.WATCHED_AT, System.currentTimeMillis());
+          }
         }
       }
       movie.close();
