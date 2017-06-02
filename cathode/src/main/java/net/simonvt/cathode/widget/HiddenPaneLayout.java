@@ -443,8 +443,6 @@ public class HiddenPaneLayout extends ViewGroup {
 
       case MotionEvent.ACTION_POINTER_UP:
         onPointerUp(ev);
-        lastMotionX = ev.getX(ev.findPointerIndex(activePointerId));
-        lastMotionY = ev.getY(ev.findPointerIndex(activePointerId));
         break;
     }
 
@@ -530,9 +528,8 @@ public class HiddenPaneLayout extends ViewGroup {
           final int initialVelocity = (int) velocityTracker.getXVelocity(activePointerId);
           lastMotionX = x;
           animateOffsetTo(initialVelocity < 0 ? -hiddenPaneWidth : 0, initialVelocity, true);
-
-          // Close the menu when content is clicked while the menu is visible.
         } else if (this.offsetPixels < 0.0f && x < getWidth() + offsetPixels) {
+          // Close the menu when content is clicked while the menu is visible.
           close();
         }
 
@@ -569,13 +566,32 @@ public class HiddenPaneLayout extends ViewGroup {
   private void onPointerUp(MotionEvent ev) {
     final int pointerIndex = ev.getActionIndex();
     final int pointerId = ev.getPointerId(pointerIndex);
-    if (pointerId == activePointerId) {
-      final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
-      lastMotionX = ev.getX(newPointerIndex);
-      activePointerId = ev.getPointerId(newPointerIndex);
-      if (velocityTracker != null) {
-        velocityTracker.clear();
+    if (isDragging && pointerId == activePointerId) {
+      int newActivePointer = INVALID_POINTER;
+      final int pointerCount = ev.getPointerCount();
+      for (int i = 0; i < pointerCount; i++) {
+        final int id = ev.getPointerId(i);
+        if (id == activePointerId) {
+          continue;
+        }
+
+        newActivePointer = id;
       }
+
+      if (newActivePointer == INVALID_POINTER) {
+        velocityTracker.computeCurrentVelocity(1000, maxVelocity);
+        final int initialVelocity = (int) velocityTracker.getXVelocity(activePointerId);
+        animateOffsetTo(initialVelocity < 0 ? -hiddenPaneWidth : 0, initialVelocity, true);
+      } else {
+        final int newPointerIndex = ev.findPointerIndex(newActivePointer);
+        lastMotionX = ev.getX(newPointerIndex);
+        lastMotionY = ev.getY(newPointerIndex);
+        if (velocityTracker != null) {
+          velocityTracker.clear();
+        }
+      }
+
+      activePointerId = newActivePointer;
     }
   }
 
