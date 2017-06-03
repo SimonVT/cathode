@@ -51,6 +51,7 @@ import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.LogoutJob;
 import net.simonvt.cathode.remote.UpdateShowCounts;
 import net.simonvt.cathode.remote.action.CancelCheckin;
+import net.simonvt.cathode.remote.action.RemoveHistoryItem;
 import net.simonvt.cathode.remote.action.comments.AddCommentJob;
 import net.simonvt.cathode.remote.action.comments.CommentReplyJob;
 import net.simonvt.cathode.remote.action.comments.DeleteCommentJob;
@@ -190,6 +191,7 @@ import net.simonvt.cathode.ui.dashboard.DashboardUpcomingShowsAdapter;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
+import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
 import net.simonvt.cathode.ui.history.SelectHistoryDateFragment;
 import net.simonvt.cathode.ui.lists.CreateListFragment;
 import net.simonvt.cathode.ui.lists.DeleteListDialog;
@@ -199,6 +201,8 @@ import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.ui.lists.ListsFragment;
 import net.simonvt.cathode.ui.lists.UpdateListFragment;
 import net.simonvt.cathode.ui.movie.MovieFragment;
+import net.simonvt.cathode.ui.movie.MovieHistoryFragment;
+import net.simonvt.cathode.ui.movie.MovieHistoryLoader;
 import net.simonvt.cathode.ui.movie.RelatedMoviesFragment;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
 import net.simonvt.cathode.ui.movies.collected.CollectedMoviesFragment;
@@ -210,6 +214,8 @@ import net.simonvt.cathode.ui.search.MovieSearchAdapter;
 import net.simonvt.cathode.ui.search.SearchAdapter;
 import net.simonvt.cathode.ui.search.SearchFragment;
 import net.simonvt.cathode.ui.show.EpisodeFragment;
+import net.simonvt.cathode.ui.show.EpisodeHistoryFragment;
+import net.simonvt.cathode.ui.show.EpisodeHistoryLoader;
 import net.simonvt.cathode.ui.show.RelatedShowsFragment;
 import net.simonvt.cathode.ui.show.SeasonAdapter;
 import net.simonvt.cathode.ui.show.SeasonFragment;
@@ -272,12 +278,13 @@ import net.simonvt.cathode.widget.RemoteImageView;
         AnticipatedShowsFragment.class, AnticipatedMoviesFragment.class, StatsFragment.class,
         SearchFragment.class, UpdateListFragment.class, SettingsActivity.SettingsFragment.class,
         RelatedShowsFragment.class, RelatedMoviesFragment.class, PersonFragment.class,
-        CreditsFragment.class, DashboardFragment.class, AddToHistoryDialog.class,
-        SelectHistoryDateFragment.class,
+        CreditsFragment.class, DashboardFragment.class, SelectHistoryDateFragment.class,
+        EpisodeHistoryFragment.class, MovieHistoryFragment.class,
 
         // Dialogs
         RatingDialog.class, CheckInDialog.class, CheckInDialog.Injections.class, ListsDialog.class,
         AddCommentDialog.class, UpdateCommentDialog.class, DeleteListDialog.class,
+        AddToHistoryDialog.class, RemoveFromHistoryDialog.class,
 
         // ListAdapters
         SeasonAdapter.class, SeasonsAdapter.class, ShowDescriptionAdapter.class,
@@ -334,13 +341,14 @@ import net.simonvt.cathode.widget.RemoteImageView;
         SyncEpisodeImages.class, SyncPersonHeadshot.class, SyncPersonBackdrop.class,
         AddShowToHistory.class, AddSeasonToHistory.class, AddEpisodeToHistory.class,
         AddMovieToHistory.class, RemoveSeasonFromHistory.class, RemoveEpisodeFromHistory.class,
-        RemoveMovieFromHistory.class,
+        RemoveMovieFromHistory.class, RemoveHistoryItem.class,
 
         // Upgrade tasks
         EnsureSync.class, UpperCaseGenres.class,
 
         // Misc
-        SearchHandler.class, ApiSettings.class
+        SearchHandler.class, ApiSettings.class, EpisodeHistoryLoader.class,
+        MovieHistoryLoader.class,
     })
 public class AppModule {
 

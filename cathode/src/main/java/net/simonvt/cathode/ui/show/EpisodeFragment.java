@@ -58,6 +58,7 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
+import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
 import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.util.DateUtils;
@@ -264,7 +265,8 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
         return true;
 
       case R.id.action_history_remove:
-        episodeScheduler.removeFromHistory(episodeId);
+        RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.EPISODE, episodeId,
+            episodeTitle, showTitle).show(getFragmentManager(), RemoveFromHistoryDialog.TAG);
         return true;
 
       case R.id.action_checkin:

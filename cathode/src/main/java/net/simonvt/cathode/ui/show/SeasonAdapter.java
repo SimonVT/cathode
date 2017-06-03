@@ -32,10 +32,13 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
+import net.simonvt.cathode.ui.history.AddToHistoryDialog;
+import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
 import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.widget.RemoteImageView;
@@ -43,6 +46,13 @@ import net.simonvt.cathode.widget.TimeStamp;
 import net.simonvt.schematic.Cursors;
 
 public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolder> {
+
+  public static final String[] PROJECTION = {
+      EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
+      EpisodeColumns.WATCHED, EpisodeColumns.IN_COLLECTION, EpisodeColumns.IN_WATCHLIST,
+      EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN, EpisodeColumns.FIRST_AIRED,
+      EpisodeColumns.SHOW_TITLE, LastModifiedColumns.LAST_MODIFIED,
+  };
 
   @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;
@@ -80,15 +90,21 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
 
     holder.number.setOnClickListener(new OnClickListener() {
       @Override public void onClick(View v) {
-        final boolean activated = holder.number.isActivated();
-        holder.number.setActivated(!activated);
-        if (type == LibraryType.COLLECTION) {
-          episodeScheduler.setIsInCollection(holder.getItemId(), !activated);
-        } else {
-          if (activated) {
-            episodeScheduler.removeFromHistory(holder.getItemId());
+        if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
+          final boolean activated = holder.number.isActivated();
+          if (type == LibraryType.COLLECTION) {
+            holder.number.setActivated(!activated);
+            episodeScheduler.setIsInCollection(holder.getItemId(), !activated);
           } else {
-            episodeScheduler.addToHistoryNow(holder.getItemId());
+            if (activated) {
+              RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.EPISODE,
+                  holder.getItemId(), holder.episodeTitle, holder.showTitle)
+                  .show(activity.getSupportFragmentManager(), RemoveFromHistoryDialog.TAG);
+            } else {
+              AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.EPISODE, holder.getItemId(),
+                  holder.episodeTitle)
+                  .show(activity.getSupportFragmentManager(), AddToHistoryDialog.TAG);
+            }
           }
         }
       }
@@ -108,8 +124,11 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
     final boolean checkedIn = Cursors.getBoolean(cursor, EpisodeColumns.CHECKED_IN);
     final long firstAired = DataHelper.getFirstAired(cursor);
     final String title = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, watched);
-
+    final String showTitle = Cursors.getString(cursor, EpisodeColumns.SHOW_TITLE);
     final String screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, id);
+
+    holder.episodeTitle = title;
+    holder.showTitle = showTitle;
 
     holder.screen.setImage(screenshotUri);
 
@@ -135,6 +154,9 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
     @BindView(R.id.title) TextView title;
     @BindView(R.id.firstAired) TimeStamp firstAired;
     @BindView(R.id.number) TextView number;
+
+    String episodeTitle;
+    String showTitle;
 
     ViewHolder(View v) {
       super(v);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Simon Vig Therkildsen
+ * Copyright (C) 2017 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.ui;
 
-public interface MoviesNavigationListener extends NavigationClickListener {
+package net.simonvt.cathode.ui.show;
 
-  void onDisplayMovie(long movieId, String title, String overview);
+class HistoryItem {
 
-  void onDisplayRelatedMovies(long movieId, String title);
+  long historyId;
 
-  void onSelectMovieWatchedDate(long movieId, String title);
+  String watchedAt;
 
-  void onDisplayMovieHistory(long movieId, String title);
+  HistoryItem(long historyId, String watchedAt) {
+    this.historyId = historyId;
+    this.watchedAt = watchedAt;
+  }
 }

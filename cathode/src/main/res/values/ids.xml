@@ -82,4 +82,6 @@
 
   <item name="appBarContent" type="id"/>
 
+  <item name="historyId" type="id"/>
+
 </resources>

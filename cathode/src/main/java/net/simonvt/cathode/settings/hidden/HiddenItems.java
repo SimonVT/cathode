@@ -49,9 +49,11 @@ import net.simonvt.cathode.ui.credits.CreditsFragment;
 import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.ui.lists.ListFragment;
 import net.simonvt.cathode.ui.movie.MovieFragment;
+import net.simonvt.cathode.ui.movie.MovieHistoryFragment;
 import net.simonvt.cathode.ui.person.PersonCreditsFragment;
 import net.simonvt.cathode.ui.person.PersonFragment;
 import net.simonvt.cathode.ui.show.EpisodeFragment;
+import net.simonvt.cathode.ui.show.EpisodeHistoryFragment;
 import net.simonvt.cathode.ui.show.SeasonFragment;
 import net.simonvt.cathode.ui.show.ShowFragment;
 import net.simonvt.cathode.util.FragmentStack;
@@ -125,6 +127,11 @@ public class HiddenItems extends BaseActivity
         EpisodeFragment.getArgs(episodeId, showTitle));
   }
 
+  @Override public void onDisplayEpisodeHistory(long episodeId, String showTitle) {
+    stack.push(EpisodeHistoryFragment.class, EpisodeHistoryFragment.getTag(episodeId),
+        EpisodeHistoryFragment.getArgs(episodeId, showTitle));
+  }
+
   @Override
   public void onDisplaySeason(long showId, long seasonId, String showTitle, int seasonNumber,
       LibraryType type) {
@@ -159,6 +166,11 @@ public class HiddenItems extends BaseActivity
 
   @Override public void onSelectMovieWatchedDate(long movieId, String title) {
     // TODO:
+  }
+
+  @Override public void onDisplayMovieHistory(long movieId, String title) {
+    stack.push(MovieHistoryFragment.class, MovieHistoryFragment.getTag(movieId),
+        MovieHistoryFragment.getArgs(movieId, title));
   }
 
   @Override public void onShowList(long listId, String listName) {

@@ -18,8 +18,10 @@ package net.simonvt.cathode.api.service;
 
 import java.util.List;
 import net.simonvt.cathode.api.body.RateItems;
+import net.simonvt.cathode.api.body.RemoveHistoryBody;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.entity.CollectionItem;
+import net.simonvt.cathode.api.entity.HistoryItem;
 import net.simonvt.cathode.api.entity.LastActivity;
 import net.simonvt.cathode.api.entity.RatingItem;
 import net.simonvt.cathode.api.entity.SyncResponse;
@@ -29,6 +31,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface SyncService {
 
@@ -82,6 +85,48 @@ public interface SyncService {
    * Return all shows a user has watched.
    */
   @GET("/sync/watched/shows") Call<List<WatchedItem>> getWatchedShows();
+
+  /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Return watched history for episodes the user has watched, sorted by most recent.
+   */
+  @GET("/sync/history/shows/{id}") Call<List<HistoryItem>> getShowHistory(@Path("id") long id);
+
+  /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Return watched history for episodes the user has watched, sorted by most recent.
+   */
+  @GET("/sync/history/seasons/{id}") Call<List<HistoryItem>> getSeasonHistory(@Path("id") long id);
+
+  /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Return watched history for an episode, sorted by most recent.
+   */
+  @GET("/sync/history/episodes/{id}") Call<List<HistoryItem>> getEpisodeHistory(@Path("id") long id);
+
+  /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Return watched history for a movie, sorted by most recent.
+   */
+  @GET("/sync/history/movies/{id}") Call<List<HistoryItem>> getMovieHistory(@Path("id") long id);
+
+  /**
+   * <b>OAuth Required</b>
+   * <p>
+   * Remove items from a user's watch history including all watches, scrobbles, and checkins.
+   * Accepts shows, seasons, episodes and movies. If only a show is passed, all episodes for the
+   * show will be removed. If seasons are specified, only episodes in those seasons will be
+   * removed.
+   * <p>
+   * You can also send a list of raw history ids (64-bit integers) to delete single plays
+   * from the watched history. The /sync/history method will return an individual id (64-bit
+   * integer) for each history item.
+   */
+  @POST("/sync/history/remove") Call<SyncResponse> removeHistory(@Body RemoveHistoryBody body);
 
   /**
    * <b>OAuth Required</b>

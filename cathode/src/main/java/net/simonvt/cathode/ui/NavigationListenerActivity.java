@@ -82,6 +82,10 @@ public class NavigationListenerActivity extends BaseActivity implements Navigati
     throw new RuntimeException("Not implemented");
   }
 
+  @Override public void onDisplayMovieHistory(long movieId, String title) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Override
   public void onDisplayShow(long showId, String title, String overview, LibraryType type) {
     throw new RuntimeException("Not implemented");
@@ -94,6 +98,10 @@ public class NavigationListenerActivity extends BaseActivity implements Navigati
   }
 
   @Override public void onDisplayEpisode(long episodeId, String showTitle) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Override public void onDisplayEpisodeHistory(long episodeId, String showTitle) {
     throw new RuntimeException("Not implemented");
   }
 

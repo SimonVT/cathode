@@ -37,6 +37,7 @@ import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
+import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
 import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.util.guava.Preconditions;
@@ -172,7 +173,9 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
         return true;
 
       case R.id.action_history_remove:
-        seasonScheduler.removeFromHistory(seasonId);
+        RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.SEASON, seasonId,
+            getContext().getString(R.string.season_x, seasonNumber))
+            .show(getFragmentManager(), RemoveFromHistoryDialog.TAG);
         return true;
 
       case R.id.action_collection_add:
@@ -255,8 +258,9 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
   private LoaderManager.LoaderCallbacks<SimpleCursor> episodesLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), Episodes.fromSeason(seasonId), null,
-              EpisodeColumns.NEEDS_SYNC + "=0", null, EpisodeColumns.EPISODE + " ASC");
+          return new SimpleCursorLoader(getActivity(), Episodes.fromSeason(seasonId),
+              SeasonAdapter.PROJECTION, EpisodeColumns.NEEDS_SYNC + "=0", null,
+              EpisodeColumns.EPISODE + " ASC");
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {

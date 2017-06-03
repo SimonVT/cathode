@@ -35,6 +35,7 @@ import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
+import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
 import net.simonvt.cathode.widget.OverflowView;
@@ -119,7 +120,8 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
         break;
 
       case R.id.action_history_remove:
-        movieScheduler.removeFromHistory(id);
+        RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.MOVIE, id, title)
+            .show(activity.getSupportFragmentManager(), RemoveFromHistoryDialog.TAG);
         break;
 
       case R.id.action_checkin:

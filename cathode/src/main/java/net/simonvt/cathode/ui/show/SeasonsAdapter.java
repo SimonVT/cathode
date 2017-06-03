@@ -42,6 +42,7 @@ import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
+import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.schematic.Cursors;
@@ -179,7 +180,9 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
               break;
 
             case R.id.action_history_remove:
-              seasonScheduler.removeFromHistory(seasonId);
+              RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.SEASON, seasonId,
+                  getContext().getString(R.string.season_x, seasonNumber))
+                  .show(activity.getSupportFragmentManager(), RemoveFromHistoryDialog.TAG);
               break;
 
             case R.id.action_collection_add:

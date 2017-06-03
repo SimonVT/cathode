@@ -27,6 +27,7 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
+import net.simonvt.cathode.remote.action.RemoveHistoryItem;
 import net.simonvt.cathode.remote.action.shows.AddEpisodeToHistory;
 import net.simonvt.cathode.remote.action.shows.CheckInEpisode;
 import net.simonvt.cathode.remote.action.shows.CollectEpisode;
@@ -36,6 +37,7 @@ import net.simonvt.cathode.remote.action.shows.WatchlistEpisode;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.comments.SyncComments;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
+import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
 import net.simonvt.cathode.tmdb.api.show.SyncEpisodeImages;
 import net.simonvt.schematic.Cursors;
 
@@ -126,6 +128,23 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
         episodeHelper.removeFromHistory(episodeId);
 
         queue(new RemoveEpisodeFromHistory(traktId, season, number));
+      }
+    });
+  }
+
+  public void removeHistoryItem(final long episodeId, final long historyId,
+      final boolean lastItem) {
+    execute(new Runnable() {
+      @Override public void run() {
+        queue(new RemoveHistoryItem(historyId));
+
+        if (lastItem) {
+          episodeHelper.removeFromHistory(episodeId);
+        }
+
+        final long showId = episodeHelper.getShowId(episodeId);
+        final long traktId = showHelper.getTraktId(showId);
+        queue(new SyncShowWatchedStatus(traktId));
       }
     });
   }

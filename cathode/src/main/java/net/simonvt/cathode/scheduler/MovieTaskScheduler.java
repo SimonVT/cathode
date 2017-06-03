@@ -27,6 +27,7 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.action.CancelCheckin;
+import net.simonvt.cathode.remote.action.RemoveHistoryItem;
 import net.simonvt.cathode.remote.action.movies.AddMovieToHistory;
 import net.simonvt.cathode.remote.action.movies.CalendarHideMovie;
 import net.simonvt.cathode.remote.action.movies.CheckInMovie;
@@ -39,6 +40,7 @@ import net.simonvt.cathode.remote.sync.comments.SyncComments;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieCredits;
 import net.simonvt.cathode.remote.sync.movies.SyncRelatedMovies;
+import net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies;
 import net.simonvt.cathode.tmdb.api.movie.SyncMovieImages;
 import net.simonvt.cathode.util.DateUtils;
 import net.simonvt.schematic.Cursors;
@@ -160,6 +162,20 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         final long traktId = movieHelper.getTraktId(movieId);
         movieHelper.removeFromHistory(movieId);
         queue(new RemoveMovieFromHistory(traktId));
+      }
+    });
+  }
+
+  public void removeHistoryItem(final long movieId, final long historyId, final boolean lastItem) {
+    execute(new Runnable() {
+      @Override public void run() {
+        queue(new RemoveHistoryItem(historyId));
+
+        if (lastItem) {
+          movieHelper.removeFromHistory(movieId);
+        }
+
+        queue(new SyncWatchedMovies());
       }
     });
   }

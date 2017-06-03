@@ -71,6 +71,7 @@ import net.simonvt.cathode.ui.history.SelectHistoryDateFragment;
 import net.simonvt.cathode.ui.lists.ListFragment;
 import net.simonvt.cathode.ui.lists.ListsFragment;
 import net.simonvt.cathode.ui.movie.MovieFragment;
+import net.simonvt.cathode.ui.movie.MovieHistoryFragment;
 import net.simonvt.cathode.ui.movie.RelatedMoviesFragment;
 import net.simonvt.cathode.ui.movies.collected.CollectedMoviesFragment;
 import net.simonvt.cathode.ui.movies.watched.WatchedMoviesFragment;
@@ -80,6 +81,7 @@ import net.simonvt.cathode.ui.person.PersonCreditsFragment;
 import net.simonvt.cathode.ui.person.PersonFragment;
 import net.simonvt.cathode.ui.search.SearchFragment;
 import net.simonvt.cathode.ui.show.EpisodeFragment;
+import net.simonvt.cathode.ui.show.EpisodeHistoryFragment;
 import net.simonvt.cathode.ui.show.RelatedShowsFragment;
 import net.simonvt.cathode.ui.show.SeasonFragment;
 import net.simonvt.cathode.ui.show.ShowFragment;
@@ -575,6 +577,11 @@ public class HomeActivity extends BaseActivity
         EpisodeFragment.getArgs(episodeId, showTitle));
   }
 
+  @Override public void onDisplayEpisodeHistory(long episodeId, String showTitle) {
+    stack.push(EpisodeHistoryFragment.class, EpisodeHistoryFragment.getTag(episodeId),
+        EpisodeHistoryFragment.getArgs(episodeId, showTitle));
+  }
+
   @Override
   public void onDisplaySeason(long showId, long seasonId, String showTitle, int seasonNumber,
       LibraryType type) {
@@ -616,6 +623,11 @@ public class HomeActivity extends BaseActivity
   @Override public void onSelectMovieWatchedDate(long movieId, String title) {
     stack.push(SelectHistoryDateFragment.class, SelectHistoryDateFragment.TAG,
         SelectHistoryDateFragment.getArgs(SelectHistoryDateFragment.Type.MOVIE, movieId, title));
+  }
+
+  @Override public void onDisplayMovieHistory(long movieId, String title) {
+    stack.push(MovieHistoryFragment.class, MovieHistoryFragment.getTag(movieId),
+        MovieHistoryFragment.getArgs(movieId, title));
   }
 
   @Override public void onShowList(long listId, String listName) {

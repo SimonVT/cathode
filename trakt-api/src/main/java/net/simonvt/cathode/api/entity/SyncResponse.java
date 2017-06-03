@@ -57,6 +57,8 @@ public class SyncResponse {
 
     private List<Episode> episodes;
 
+    private List<Integer> ids;
+
     public List<Movie> getMovies() {
       return movies;
     }
@@ -71,6 +73,10 @@ public class SyncResponse {
 
     public List<Episode> getEpisodes() {
       return episodes;
+    }
+
+    public List<Integer> getIds() {
+      return ids;
     }
   }
 
