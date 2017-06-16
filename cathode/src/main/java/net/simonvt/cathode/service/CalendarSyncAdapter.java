@@ -36,6 +36,7 @@ import android.text.format.Time;
 import android.util.LongSparseArray;
 import java.util.ArrayList;
 import java.util.List;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -80,6 +81,10 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
   @Override public void onPerformSync(Account account, Bundle extras, String authority,
       ContentProviderClient provider, SyncResult syncResult) {
     Timber.d("onPerformSync");
+    // This might be true when Android restores backup on install.
+    if (!(context.getApplicationContext() instanceof CathodeApp)) {
+      return;
+    }
 
     if (!Permissions.hasCalendarPermission(context)) {
       Timber.d("Calendar permission not granted");

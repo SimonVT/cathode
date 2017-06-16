@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
 import javax.inject.Inject;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncJob;
@@ -33,12 +34,15 @@ public class CathodeSyncAdapter extends AbstractThreadedSyncAdapter {
 
   public CathodeSyncAdapter(Context context) {
     super(context, true);
-    Injector.obtain().inject(this);
+    // This might not be true when Android restores backup on install.
+    if (context.getApplicationContext() instanceof CathodeApp) {
+      Injector.obtain().inject(this);
+    }
   }
 
   @Override public void onPerformSync(Account account, Bundle extras, String authority,
       ContentProviderClient provider, SyncResult syncResult) {
-    if (Settings.isLoggedIn(getContext())) {
+    if (jobManager != null && Settings.isLoggedIn(getContext())) {
       jobManager.addJob(new SyncJob());
     }
   }
