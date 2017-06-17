@@ -47,13 +47,16 @@ import net.simonvt.cathode.ui.comments.CommentsFragment;
 import net.simonvt.cathode.ui.credits.CreditFragment;
 import net.simonvt.cathode.ui.credits.CreditsFragment;
 import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
+import net.simonvt.cathode.ui.history.SelectHistoryDateFragment;
 import net.simonvt.cathode.ui.lists.ListFragment;
 import net.simonvt.cathode.ui.movie.MovieFragment;
 import net.simonvt.cathode.ui.movie.MovieHistoryFragment;
+import net.simonvt.cathode.ui.movie.RelatedMoviesFragment;
 import net.simonvt.cathode.ui.person.PersonCreditsFragment;
 import net.simonvt.cathode.ui.person.PersonFragment;
 import net.simonvt.cathode.ui.show.EpisodeFragment;
 import net.simonvt.cathode.ui.show.EpisodeHistoryFragment;
+import net.simonvt.cathode.ui.show.RelatedShowsFragment;
 import net.simonvt.cathode.ui.show.SeasonFragment;
 import net.simonvt.cathode.ui.show.ShowFragment;
 import net.simonvt.cathode.util.FragmentStack;
@@ -140,19 +143,24 @@ public class HiddenItems extends BaseActivity
   }
 
   @Override public void onDisplayRelatedShows(long showId, String title) {
-    throw new RuntimeException("Not implemented");
+    stack.push(RelatedShowsFragment.class, RelatedShowsFragment.getTag(showId),
+        RelatedShowsFragment.getArgs(showId));
   }
 
   @Override public void onSelectShowWatchedDate(long showId, String title) {
-    // TODO:
+    stack.push(SelectHistoryDateFragment.class, SelectHistoryDateFragment.TAG,
+        SelectHistoryDateFragment.getArgs(SelectHistoryDateFragment.Type.SHOW, showId, title));
   }
 
   @Override public void onSelectSeasonWatchedDate(long seasonId, String title) {
-    // TODO:
+    stack.push(SelectHistoryDateFragment.class, SelectHistoryDateFragment.TAG,
+        SelectHistoryDateFragment.getArgs(SelectHistoryDateFragment.Type.SEASON, seasonId, title));
   }
 
   @Override public void onSelectEpisodeWatchedDate(long episodeId, String title) {
-    // TODO:
+    stack.push(SelectHistoryDateFragment.class, SelectHistoryDateFragment.TAG,
+        SelectHistoryDateFragment.getArgs(SelectHistoryDateFragment.Type.EPISODE, episodeId,
+            title));
   }
 
   @Override public void onDisplayMovie(long movieId, String title, String overview) {
@@ -161,11 +169,13 @@ public class HiddenItems extends BaseActivity
   }
 
   @Override public void onDisplayRelatedMovies(long movieId, String title) {
-    throw new RuntimeException("Not implemented");
+    stack.push(RelatedMoviesFragment.class, RelatedMoviesFragment.getTag(movieId),
+        RelatedMoviesFragment.getArgs(movieId));
   }
 
   @Override public void onSelectMovieWatchedDate(long movieId, String title) {
-    // TODO:
+    stack.push(SelectHistoryDateFragment.class, SelectHistoryDateFragment.TAG,
+        SelectHistoryDateFragment.getArgs(SelectHistoryDateFragment.Type.MOVIE, movieId, title));
   }
 
   @Override public void onDisplayMovieHistory(long movieId, String title) {
