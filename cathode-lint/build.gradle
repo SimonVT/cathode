@@ -1,0 +1,28 @@
+apply plugin: 'java'
+
+repositories {
+  maven {
+    url  "http://dl.bintray.com/android/android-tools"
+  }
+}
+
+targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_1_8
+
+dependencies {
+  compile deps.lintApi
+  compile deps.lintChecks
+
+  testCompile deps.junit
+  testCompile deps.lint
+  testCompile deps.lintTests
+  testCompile deps.truth
+}
+
+jar {
+  manifest {
+    attributes('Lint-Registry': 'net.simonvt.cathode.lint.IssueRegistry')
+  }
+}
+
+apply from: rootProject.file('deps.gradle')

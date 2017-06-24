@@ -23,8 +23,16 @@ ext {
 
   supportLibrariesVersion = '25.3.1'
 
+  lintVersion = '25.3.3'
+
   deps = [
       androidPlugin       : 'com.android.tools.build:gradle:2.3.2',
+
+      lint                : "com.android.tools.lint:lint:${lintVersion}",
+      lintApi             : "com.android.tools.lint:lint-api:${lintVersion}",
+      lintChecks          : "com.android.tools.lint:lint-checks:${lintVersion}",
+      lintTests           : "com.android.tools.lint:lint-tests:${lintVersion}",
+
       crashlytics         : 'com.crashlytics.sdk.android:crashlytics:2.6.8@aar',
 
       schematic           : 'net.simonvt.schematic:schematic:0.7.0',

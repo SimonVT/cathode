@@ -3,6 +3,7 @@ import java.text.SimpleDateFormat
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'checkstyle'
+apply plugin: 'com.kageiit.lintrules'
 
 dependencies {
   compile project(':trakt-api')
@@ -38,6 +39,8 @@ dependencies {
   compile(deps.crashlytics) {
     transitive = true
   }
+
+  lintRules project(':cathode-lint')
 
   testCompile deps.junit
   testCompile deps.robolectric

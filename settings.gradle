@@ -1,1 +1,1 @@
-include 'cathode', 'trakt-api', ':libs:colorpicker', 'libs:datetimepicker'
+include 'cathode', 'trakt-api', ':libs:colorpicker', 'libs:datetimepicker', 'cathode-lint'
