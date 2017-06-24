@@ -34,6 +34,7 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
+import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
@@ -69,6 +70,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
   };
 
   @Inject ShowTaskScheduler showScheduler;
+  @Inject EpisodeTaskScheduler episodeScheduler;
 
   private FragmentActivity activity;
 
@@ -144,7 +146,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
               break;
 
             case R.id.action_checkin_cancel:
-              showScheduler.cancelCheckin();
+              episodeScheduler.cancelCheckin();
               break;
 
             case R.id.action_collection_add:

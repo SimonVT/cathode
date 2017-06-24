@@ -29,7 +29,6 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import net.simonvt.cathode.remote.action.CancelCheckin;
 import net.simonvt.cathode.remote.action.shows.AddShowToHistory;
 import net.simonvt.cathode.remote.action.shows.CalendarHideShow;
 import net.simonvt.cathode.remote.action.shows.CollectedHideShow;
@@ -133,45 +132,6 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         if (episodeId != -1L) {
           episodeScheduler.addToHistory(episodeId, System.currentTimeMillis());
         }
-      }
-    });
-  }
-
-  //public void checkinNext(final long showId) {
-  //  execute(new Runnable() {
-  //    @Override public void run() {
-  //      Cursor c = context.getContentResolver()
-  //          .query(CathodeContract.EpisodeColumns.buildFromShowId(showId), new String[] {
-  //              CathodeContract.EpisodeColumns.ID, CathodeContract.EpisodeColumns.SEASON,
-  //              CathodeContract.EpisodeColumns.EPISODE,
-  //          }, "watched=0 AND season<>0", null, CathodeContract.EpisodeColumns.SEASON
-  //              + " ASC, "
-  //              + CathodeContract.EpisodeColumns.EPISODE
-  //              + " ASC LIMIT 1");
-  //
-  //      if (c.moveToNext()) {
-  //        final long episodeId = c.getLong(c.getColumnIndexOrThrow(CathodeContract.EpisodeColumns.ID));
-  //        episodeScheduler.checkin(episodeId);
-  //      }
-  //
-  //      c.close();
-  //    }
-  //  });
-  //}
-
-  public void cancelCheckin() {
-    execute(new Runnable() {
-      @Override public void run() {
-        Cursor c = context.getContentResolver()
-            .query(Episodes.EPISODES, null, EpisodeColumns.CHECKED_IN + "=1", null, null);
-        if (c.moveToNext()) {
-          ContentValues cv = new ContentValues();
-          cv.put(EpisodeColumns.CHECKED_IN, false);
-          context.getContentResolver().update(Episodes.EPISODE_WATCHING, cv, null, null);
-
-          queue(new CancelCheckin());
-        }
-        c.close();
       }
     });
   }

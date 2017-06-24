@@ -18,18 +18,26 @@ package net.simonvt.cathode.notification;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Build;
+import android.support.v4.app.NotificationCompat;
 import javax.inject.Inject;
 import net.simonvt.cathode.Injector;
+import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.cathode.remote.action.shows.CheckInEpisode;
+import net.simonvt.cathode.trakt.CheckIn;
+import net.simonvt.cathode.ui.EpisodeDetailsActivity;
+import net.simonvt.cathode.util.DataHelper;
+import net.simonvt.cathode.util.Longs;
 import net.simonvt.cathode.util.WakeLock;
+import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
 public class NotificationActionService extends IntentService {
@@ -37,8 +45,8 @@ public class NotificationActionService extends IntentService {
   static final String LOCK_TAG = "NotificationActionService";
 
   @Inject JobManager jobManager;
-
   @Inject EpisodeDatabaseHelper episodeHelper;
+  @Inject CheckIn checkIn;
 
   public NotificationActionService() {
     super("NotificationActionService");
@@ -60,21 +68,14 @@ public class NotificationActionService extends IntentService {
     }
 
     final String action = intent.getAction();
-    final int notificationId =
-        intent.getIntExtra(NotificationActionReceiver.EXTRA_NOTIFICATION_ID, -1);
+    int notificationId = intent.getIntExtra(NotificationActionReceiver.EXTRA_NOTIFICATION_ID, -1);
     final long id = intent.getLongExtra(NotificationActionReceiver.EXTRA_ID, -1L);
 
     switch (action) {
       case NotificationActionReceiver.ACTION_CHECK_IN: {
         Timber.d("Action check in");
-        final long traktId = episodeHelper.getTraktId(id);
-        CheckInEpisode checkInJob = new CheckInEpisode(traktId, null, false, false, false);
-        jobManager.addJobNow(checkInJob);
-        episodeHelper.checkIn(id);
-
         NotificationManager nm =
             (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
         if (notificationId > -1) {
           int notificationCount = -1;
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -89,6 +90,61 @@ public class NotificationActionService extends IntentService {
               nm.cancel(NotificationService.GROUP_NOTIFICATION_ID);
             }
           }
+        }
+
+        if (!checkIn.episode(id, null, false, false, false)) {
+          notificationId = Longs.hashCode(id);
+
+          Cursor episode = getContentResolver().query(Episodes.withId(id), new String[] {
+              EpisodeColumns.TITLE, EpisodeColumns.SHOW_ID, EpisodeColumns.SHOW_TITLE,
+              EpisodeColumns.SEASON, EpisodeColumns.EPISODE, EpisodeColumns.WATCHED,
+          }, null, null, null);
+          episode.moveToFirst();
+          final long showId = Cursors.getLong(episode, EpisodeColumns.SHOW_ID);
+          final String showTitle = Cursors.getString(episode, EpisodeColumns.SHOW_TITLE);
+          final int number = Cursors.getInt(episode, EpisodeColumns.EPISODE);
+          final int season = Cursors.getInt(episode, EpisodeColumns.SEASON);
+          final boolean watched = Cursors.getBoolean(episode, EpisodeColumns.WATCHED);
+          final String episodeTitle =
+              DataHelper.getEpisodeTitle(this, episode, season, number, watched, true);
+          episode.close();
+
+          Timber.d("Title: %s", episodeTitle);
+
+          NotificationCompat.Builder notification = new NotificationCompat.Builder(this)
+              .setShowWhen(false)
+              .setContentTitle(getString(R.string.checkin_error_notification_title))
+              .setContentText(getString(R.string.checkin_error_notification_body, episodeTitle))
+              .setTicker(getString(R.string.checkin_error_notification_title))
+              .setSmallIcon(R.drawable.ic_notification)
+              .setAutoCancel(false)
+              .setPriority(NotificationCompat.PRIORITY_HIGH)
+              .setCategory(NotificationCompat.CATEGORY_ERROR)
+              .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+              .setLocalOnly(true);
+
+          // Check-in action
+          Intent checkInIntent = new Intent(this, NotificationActionReceiver.class);
+          checkInIntent.setAction(NotificationActionReceiver.ACTION_CHECK_IN);
+          checkInIntent.putExtra(NotificationActionReceiver.EXTRA_NOTIFICATION_ID, notificationId);
+          checkInIntent.putExtra(NotificationActionReceiver.EXTRA_ID, id);
+          checkInIntent.setData(Episodes.withId(id));
+          PendingIntent checkInPI = PendingIntent.getBroadcast(this, 0, checkInIntent, 0);
+          final String checkIn = getString(R.string.action_checkin);
+          notification.addAction(0, checkIn, checkInPI);
+
+          // Content intent
+          Intent contentIntent = new Intent(this, EpisodeDetailsActivity.class);
+          contentIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+          contentIntent.putExtra(EpisodeDetailsActivity.EXTRA_ID, id);
+          contentIntent.putExtra(EpisodeDetailsActivity.EXTRA_SHOW_ID, showId);
+          contentIntent.putExtra(EpisodeDetailsActivity.EXTRA_SHOW_TITLE, showTitle);
+          contentIntent.setData(Episodes.withId(id));
+          PendingIntent contentPI =
+              PendingIntent.getActivity(this, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+          notification.setContentIntent(contentPI);
+
+          nm.notify(notificationId, notification.build());
         }
 
         ContentValues values = new ContentValues();

@@ -374,7 +374,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
             break;
           case R.id.action_checkin_cancel:
             if (toWatchId != -1) {
-              showScheduler.cancelCheckin();
+              episodeScheduler.cancelCheckin();
             }
             break;
           case R.id.action_history_add:

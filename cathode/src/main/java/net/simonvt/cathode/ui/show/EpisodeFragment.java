@@ -272,7 +272,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
       case R.id.action_checkin:
         if (!watching) {
           if (checkedIn) {
-            showScheduler.cancelCheckin();
+            episodeScheduler.cancelCheckin();
             if (checkInDrawable != null) {
               checkInDrawable.setWatching(false);
             }
@@ -286,7 +286,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
         return true;
 
       case R.id.action_checkin_cancel:
-        showScheduler.cancelCheckin();
+        episodeScheduler.cancelCheckin();
         return true;
 
       case R.id.action_collection_add:

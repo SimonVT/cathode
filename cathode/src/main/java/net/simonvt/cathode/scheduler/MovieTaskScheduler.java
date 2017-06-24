@@ -18,36 +18,46 @@ package net.simonvt.cathode.scheduler;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.text.format.DateUtils;
+import java.io.IOException;
 import javax.inject.Inject;
+import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.api.service.CheckinService;
 import net.simonvt.cathode.api.util.TimeUtils;
+import net.simonvt.cathode.event.ErrorEvent;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.remote.action.CancelCheckin;
 import net.simonvt.cathode.remote.action.RemoveHistoryItem;
 import net.simonvt.cathode.remote.action.movies.AddMovieToHistory;
 import net.simonvt.cathode.remote.action.movies.CalendarHideMovie;
-import net.simonvt.cathode.remote.action.movies.CheckInMovie;
 import net.simonvt.cathode.remote.action.movies.CollectMovie;
 import net.simonvt.cathode.remote.action.movies.DismissMovieRecommendation;
 import net.simonvt.cathode.remote.action.movies.RateMovie;
 import net.simonvt.cathode.remote.action.movies.RemoveMovieFromHistory;
 import net.simonvt.cathode.remote.action.movies.WatchlistMovie;
+import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.comments.SyncComments;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieCredits;
 import net.simonvt.cathode.remote.sync.movies.SyncRelatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies;
 import net.simonvt.cathode.tmdb.api.movie.SyncMovieImages;
-import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.trakt.CheckIn;
 import net.simonvt.schematic.Cursors;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Response;
+import timber.log.Timber;
 
 public class MovieTaskScheduler extends BaseTaskScheduler {
 
   @Inject MovieDatabaseHelper movieHelper;
+  @Inject CheckinService checkinService;
+  @Inject CheckIn checkIn;
 
   public MovieTaskScheduler(Context context) {
     super(context);
@@ -229,38 +239,33 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
       final boolean twitter, final boolean tumblr) {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c = context.getContentResolver().query(Movies.WATCHING, new String[] {
-            MovieColumns.ID, MovieColumns.EXPIRES_AT,
+        Cursor watching = context.getContentResolver().query(Movies.WATCHING, new String[] {
+            MovieColumns.RUNTIME, MovieColumns.EXPIRES_AT,
         }, null, null, null);
 
+        watching.moveToFirst();
         final long currentTime = System.currentTimeMillis();
-        long expires = 0;
-        if (c.moveToFirst()) {
-          expires = Cursors.getLong(c, MovieColumns.EXPIRES_AT);
+        final int runtime = Cursors.getInt(watching, MovieColumns.RUNTIME);
+        final long expires = Cursors.getLong(watching, MovieColumns.EXPIRES_AT);
+        final long watchSlop = (long) (runtime * DateUtils.MINUTE_IN_MILLIS * 0.8f);
+
+        Cursor movie = context.getContentResolver().query(Movies.withId(movieId), new String[] {
+            MovieColumns.TITLE,
+        }, null, null, null);
+        movie.moveToFirst();
+        final String title = Cursors.getString(movie, MovieColumns.TITLE);
+        movie.close();
+
+        if (watching.getCount() == 0 || ((expires - watchSlop) < currentTime && expires > 0)) {
+          if (checkIn.movie(movieId, message, facebook, twitter, tumblr)) {
+            movieHelper.checkIn(movieId);
+          }
+        } else {
+          ErrorEvent.post(context.getString(R.string.checkin_error_watching, title));
         }
 
-        if (c.getCount() == 0 || (expires >= currentTime && expires > 0)) {
-          Cursor movie = context.getContentResolver().query(Movies.withId(movieId), new String[] {
-              MovieColumns.ID, MovieColumns.RUNTIME,
-          }, null, null, null);
-          movie.moveToFirst();
-          final int runtime = Cursors.getInt(movie, MovieColumns.RUNTIME);
-          movie.close();
-
-          final long startedAt = System.currentTimeMillis();
-          final long expiresAt = startedAt + runtime * DateUtils.MINUTE_IN_MILLIS;
-
-          ContentValues cv = new ContentValues();
-          cv.put(MovieColumns.CHECKED_IN, true);
-          cv.put(MovieColumns.STARTED_AT, startedAt);
-          cv.put(MovieColumns.EXPIRES_AT, expiresAt);
-          context.getContentResolver().update(Movies.withId(movieId), cv, null, null);
-
-          final long traktId = movieHelper.getTraktId(movieId);
-          queue(new CheckInMovie(traktId, message, facebook, twitter, tumblr));
-        }
-
-        c.close();
+        watching.close();
+        queue(new SyncWatching());
       }
     });
   }
@@ -271,19 +276,46 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
   public void cancelCheckin() {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c = context.getContentResolver().query(Movies.WATCHING, new String[] {
-            MovieColumns.TMDB_ID,
-        }, null, null, null);
+        Cursor movie = null;
+        try {
+          movie = context.getContentResolver().query(Movies.WATCHING, new String[] {
+              MovieColumns.ID, MovieColumns.STARTED_AT, MovieColumns.EXPIRES_AT,
+          }, null, null, null);
 
-        if (c.moveToFirst()) {
-          ContentValues cv = new ContentValues();
-          cv.put(MovieColumns.CHECKED_IN, false);
-          context.getContentResolver().update(Movies.WATCHING, cv, null, null);
+          if (movie.moveToFirst()) {
+            final long id = Cursors.getLong(movie, MovieColumns.ID);
+            final long startedAt = Cursors.getLong(movie, MovieColumns.STARTED_AT);
+            final long expiresAt = Cursors.getLong(movie, MovieColumns.EXPIRES_AT);
 
-          queue(new CancelCheckin());
+            ContentValues values = new ContentValues();
+            values.put(MovieColumns.CHECKED_IN, false);
+            context.getContentResolver().update(Movies.WATCHING, values, null, null);
+
+            try {
+              Call<ResponseBody> call = checkinService.deleteCheckin();
+              Response<ResponseBody> response = call.execute();
+              if (response.isSuccessful()) {
+                return;
+              }
+            } catch (IOException e) {
+              Timber.d(e);
+            }
+
+            ErrorEvent.post(context.getString(R.string.checkin_cancel_error));
+
+            values.clear();
+            values.put(MovieColumns.CHECKED_IN, true);
+            values.put(MovieColumns.STARTED_AT, startedAt);
+            values.put(MovieColumns.EXPIRES_AT, expiresAt);
+            context.getContentResolver().update(Movies.withId(id), values, null, null);
+
+            queue(new SyncWatching());
+          }
+        } finally {
+          if (movie != null) {
+            movie.close();
+          }
         }
-
-        c.close();
       }
     });
   }

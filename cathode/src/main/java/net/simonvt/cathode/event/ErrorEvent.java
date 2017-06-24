@@ -21,26 +21,29 @@ import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.util.MainHandler;
 
-public final class CheckInFailedEvent {
+public final class ErrorEvent {
 
-  public interface OnCheckInFailedListener {
-
-    void onCheckInFailed(CheckInFailedEvent event);
+  private ErrorEvent() {
   }
 
-  private static final List<WeakReference<OnCheckInFailedListener>> LISTENERS = new ArrayList<>();
+  public interface ErrorListener {
 
-  public static void registerListener(OnCheckInFailedListener listener) {
+    void onError(String error);
+  }
+
+  private static final List<WeakReference<ErrorListener>> LISTENERS = new ArrayList<>();
+
+  public static void registerListener(ErrorListener listener) {
     synchronized (LISTENERS) {
       LISTENERS.add(new WeakReference<>(listener));
     }
   }
 
-  public static void unregisterListener(OnCheckInFailedListener listener) {
+  public static void unregisterListener(ErrorListener listener) {
     synchronized (LISTENERS) {
       for (int i = LISTENERS.size() - 1; i >= 0; i--) {
-        WeakReference<OnCheckInFailedListener> ref = LISTENERS.get(i);
-        OnCheckInFailedListener l = ref.get();
+        WeakReference<ErrorListener> ref = LISTENERS.get(i);
+        ErrorListener l = ref.get();
         if (l == null || l == listener) {
           LISTENERS.remove(ref);
         }
@@ -48,34 +51,22 @@ public final class CheckInFailedEvent {
     }
   }
 
-  public static void post(final String title) {
+  public static void post(final String error) {
     MainHandler.post(new Runnable() {
       @Override public void run() {
         synchronized (LISTENERS) {
-          CheckInFailedEvent event = new CheckInFailedEvent(title);
-
           for (int i = LISTENERS.size() - 1; i >= 0; i--) {
-            WeakReference<OnCheckInFailedListener> ref = LISTENERS.get(i);
-            OnCheckInFailedListener l = ref.get();
+            WeakReference<ErrorListener> ref = LISTENERS.get(i);
+            ErrorListener l = ref.get();
             if (l == null) {
               LISTENERS.remove(ref);
               continue;
             }
 
-            l.onCheckInFailed(event);
+            l.onError(error);
           }
         }
       }
     });
-  }
-
-  public String title;
-
-  private CheckInFailedEvent(String title) {
-    this.title = title;
-  }
-
-  public String getTitle() {
-    return title;
   }
 }

@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.os.RemoteException;
+import android.text.format.DateUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -207,7 +208,7 @@ public final class MovieDatabaseHelper {
     ContentValues cv = new ContentValues();
     cv.put(MovieColumns.TRAKT_ID, traktId);
 
-    return ProviderSchematic.Movies.getId(resolver.insert(Movies.MOVIES, cv));
+    return Movies.getId(resolver.insert(Movies.MOVIES, cv));
   }
 
   public long fullUpdate(Movie movie) {
@@ -302,6 +303,25 @@ public final class MovieDatabaseHelper {
     }
 
     return cv;
+  }
+
+  public void checkIn(long movieId) {
+    Cursor movie = context.getContentResolver().query(Movies.withId(movieId), new String[] {
+        MovieColumns.RUNTIME,
+    }, null, null, null);
+
+    movie.moveToFirst();
+    final int runtime = Cursors.getInt(movie, MovieColumns.RUNTIME);
+    movie.close();
+
+    final long startedAt = System.currentTimeMillis();
+    final long expiresAt = startedAt + runtime * DateUtils.MINUTE_IN_MILLIS;
+
+    ContentValues cv = new ContentValues();
+    cv.put(MovieColumns.CHECKED_IN, true);
+    cv.put(MovieColumns.STARTED_AT, startedAt);
+    cv.put(MovieColumns.EXPIRES_AT, expiresAt);
+    context.getContentResolver().update(Movies.withId(movieId), cv, null, null);
   }
 
   public void addToHistory(final long movieId, final long watchedAt) {

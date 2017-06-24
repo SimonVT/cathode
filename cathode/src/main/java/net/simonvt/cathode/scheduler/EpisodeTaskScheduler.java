@@ -18,18 +18,24 @@ package net.simonvt.cathode.scheduler;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.text.format.DateUtils;
+import java.io.IOException;
 import javax.inject.Inject;
+import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.api.service.CheckinService;
 import net.simonvt.cathode.api.util.TimeUtils;
+import net.simonvt.cathode.event.ErrorEvent;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.action.RemoveHistoryItem;
 import net.simonvt.cathode.remote.action.shows.AddEpisodeToHistory;
-import net.simonvt.cathode.remote.action.shows.CheckInEpisode;
 import net.simonvt.cathode.remote.action.shows.CollectEpisode;
 import net.simonvt.cathode.remote.action.shows.RateEpisode;
 import net.simonvt.cathode.remote.action.shows.RemoveEpisodeFromHistory;
@@ -39,12 +45,20 @@ import net.simonvt.cathode.remote.sync.comments.SyncComments;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
 import net.simonvt.cathode.tmdb.api.show.SyncEpisodeImages;
+import net.simonvt.cathode.trakt.CheckIn;
+import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.schematic.Cursors;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Response;
+import timber.log.Timber;
 
 public class EpisodeTaskScheduler extends BaseTaskScheduler {
 
   @Inject ShowDatabaseHelper showHelper;
   @Inject EpisodeDatabaseHelper episodeHelper;
+  @Inject CheckinService checkinService;
+  @Inject CheckIn checkIn;
 
   public EpisodeTaskScheduler(Context context) {
     super(context);
@@ -153,28 +167,93 @@ public class EpisodeTaskScheduler extends BaseTaskScheduler {
       final boolean twitter, final boolean tumblr) {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c = context.getContentResolver().query(Episodes.EPISODE_WATCHING, new String[] {
-            EpisodeColumns.ID, EpisodeColumns.EXPIRES_AT,
-        }, null, null, null);
+        Cursor watching =
+            context.getContentResolver().query(Episodes.EPISODE_WATCHING, new String[] {
+                EpisodeColumns.ID, EpisodeColumns.EXPIRES_AT,
+            }, null, null, null);
 
         final long currentTime = System.currentTimeMillis();
         long expires = 0;
-        if (c.moveToFirst()) {
-          expires = Cursors.getLong(c, EpisodeColumns.EXPIRES_AT);
+        if (watching.moveToFirst()) {
+          expires = Cursors.getLong(watching, EpisodeColumns.EXPIRES_AT);
         }
 
-        if (c.getCount() == 0 || (expires >= currentTime && expires > 0)) {
-          Cursor episode = episodeHelper.query(episodeId, EpisodeColumns.TRAKT_ID);
-          episode.moveToFirst();
-          final long traktId = Cursors.getLong(episode, EpisodeColumns.TRAKT_ID);
-          episode.close();
-          episodeHelper.checkIn(episodeId);
+        Cursor episode =
+            episodeHelper.query(episodeId, EpisodeColumns.SHOW_ID, EpisodeColumns.TITLE,
+                EpisodeColumns.SEASON, EpisodeColumns.EPISODE, EpisodeColumns.WATCHED);
+        episode.moveToFirst();
+        final long showId = Cursors.getLong(episode, EpisodeColumns.SHOW_ID);
+        final int season = Cursors.getInt(episode, EpisodeColumns.SEASON);
+        final int number = Cursors.getInt(episode, EpisodeColumns.EPISODE);
+        final boolean watched = Cursors.getBoolean(episode, EpisodeColumns.WATCHED);
+        final String title = DataHelper.getEpisodeTitle(context, episode, season, number, watched);
+        episode.close();
 
-          queue(new CheckInEpisode(traktId, message, facebook, twitter, tumblr));
+        Cursor show = context.getContentResolver().query(Shows.withId(showId), new String[] {
+            ShowColumns.RUNTIME,
+        }, null, null, null);
+        show.moveToFirst();
+        final int runtime = Cursors.getInt(show, ShowColumns.RUNTIME);
+        final long watchSlop = (long) (runtime * DateUtils.MINUTE_IN_MILLIS * 0.8f);
+        show.close();
+
+        if (watching.getCount() == 0 || ((expires - watchSlop) < currentTime && expires > 0)) {
+          if (checkIn.episode(episodeId, message, facebook, twitter, tumblr)) {
+            episodeHelper.checkIn(episodeId);
+          }
+        } else {
+          ErrorEvent.post(context.getString(R.string.checkin_error_watching, title));
         }
 
-        c.close();
+        watching.close();
         queue(new SyncWatching());
+      }
+    });
+  }
+
+  public void cancelCheckin() {
+    execute(new Runnable() {
+      @Override public void run() {
+        Cursor episode = null;
+        try {
+          episode = context.getContentResolver().query(Episodes.EPISODE_WATCHING, new String[] {
+              EpisodeColumns.ID, EpisodeColumns.STARTED_AT, EpisodeColumns.EXPIRES_AT,
+          }, null, null, null);
+
+          if (episode.moveToFirst()) {
+            final long id = Cursors.getLong(episode, EpisodeColumns.ID);
+            final long startedAt = Cursors.getLong(episode, EpisodeColumns.STARTED_AT);
+            final long expiresAt = Cursors.getLong(episode, EpisodeColumns.EXPIRES_AT);
+
+            ContentValues values = new ContentValues();
+            values.put(EpisodeColumns.CHECKED_IN, false);
+            context.getContentResolver().update(Episodes.EPISODE_WATCHING, values, null, null);
+
+            try {
+              Call<ResponseBody> call = checkinService.deleteCheckin();
+              Response<ResponseBody> response = call.execute();
+              if (response.isSuccessful()) {
+                return;
+              }
+            } catch (IOException e) {
+              Timber.d(e);
+            }
+
+            ErrorEvent.post(context.getString(R.string.checkin_cancel_error));
+
+            values.clear();
+            values.put(EpisodeColumns.CHECKED_IN, true);
+            values.put(EpisodeColumns.STARTED_AT, startedAt);
+            values.put(EpisodeColumns.EXPIRES_AT, expiresAt);
+            context.getContentResolver().update(Episodes.withId(id), values, null, null);
+
+            queue(new SyncWatching());
+          }
+        } finally {
+          if (episode != null) {
+            episode.close();
+          }
+        }
       }
     });
   }

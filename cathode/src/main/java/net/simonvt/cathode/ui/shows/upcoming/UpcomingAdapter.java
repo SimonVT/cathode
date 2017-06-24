@@ -207,7 +207,7 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
         if (position != RecyclerView.NO_POSITION) {
           switch (action) {
             case R.id.action_checkin_cancel:
-              showScheduler.cancelCheckin();
+              episodeScheduler.cancelCheckin();
               vh.checkIn.setWatching(false);
               break;
 

@@ -46,7 +46,6 @@ import net.simonvt.cathode.provider.UserDatabaseHelper;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.LogoutJob;
 import net.simonvt.cathode.remote.UpdateShowCounts;
-import net.simonvt.cathode.remote.action.CancelCheckin;
 import net.simonvt.cathode.remote.action.RemoveHistoryItem;
 import net.simonvt.cathode.remote.action.comments.AddCommentJob;
 import net.simonvt.cathode.remote.action.comments.CommentReplyJob;
@@ -69,7 +68,6 @@ import net.simonvt.cathode.remote.action.lists.RemoveShow;
 import net.simonvt.cathode.remote.action.lists.UpdateList;
 import net.simonvt.cathode.remote.action.movies.AddMovieToHistory;
 import net.simonvt.cathode.remote.action.movies.CalendarHideMovie;
-import net.simonvt.cathode.remote.action.movies.CheckInMovie;
 import net.simonvt.cathode.remote.action.movies.CollectMovie;
 import net.simonvt.cathode.remote.action.movies.DismissMovieRecommendation;
 import net.simonvt.cathode.remote.action.movies.RateMovie;
@@ -79,7 +77,6 @@ import net.simonvt.cathode.remote.action.shows.AddEpisodeToHistory;
 import net.simonvt.cathode.remote.action.shows.AddSeasonToHistory;
 import net.simonvt.cathode.remote.action.shows.AddShowToHistory;
 import net.simonvt.cathode.remote.action.shows.CalendarHideShow;
-import net.simonvt.cathode.remote.action.shows.CheckInEpisode;
 import net.simonvt.cathode.remote.action.shows.CollectEpisode;
 import net.simonvt.cathode.remote.action.shows.CollectSeason;
 import net.simonvt.cathode.remote.action.shows.CollectedHideShow;
@@ -172,6 +169,7 @@ import net.simonvt.cathode.tmdb.api.people.SyncPersonBackdrop;
 import net.simonvt.cathode.tmdb.api.people.SyncPersonHeadshot;
 import net.simonvt.cathode.tmdb.api.show.SyncEpisodeImages;
 import net.simonvt.cathode.tmdb.api.show.SyncShowImages;
+import net.simonvt.cathode.trakt.CheckIn;
 import net.simonvt.cathode.ui.EpisodeDetailsActivity;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.comments.AddCommentDialog;
@@ -309,8 +307,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         UpcomingRemoteViewsFactory.class,
 
         // Tasks
-        CancelCheckin.class, CheckInMovie.class, DismissMovieRecommendation.class,
-        CollectMovie.class, RateMovie.class, WatchlistMovie.class, CheckInEpisode.class,
+        DismissMovieRecommendation.class, CollectMovie.class, RateMovie.class, WatchlistMovie.class,
         DismissShowRecommendation.class, CollectEpisode.class, RateEpisode.class,
         WatchlistEpisode.class, CollectSeason.class, RateShow.class, WatchlistShow.class,
         SyncJob.class, SyncUserActivity.class, SyncUserSettings.class, SyncWatching.class,
@@ -345,7 +342,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         EnsureSync.class, UpperCaseGenres.class,
 
         // Misc
-        SearchHandler.class, ApiSettings.class, EpisodeHistoryLoader.class,
+        SearchHandler.class, ApiSettings.class, EpisodeHistoryLoader.class, CheckIn.class,
         MovieHistoryLoader.class, AuthJobHandler.class, DataJobHandler.class,
     })
 public class AppModule {
@@ -374,5 +371,9 @@ public class AppModule {
 
   @Provides @Singleton UpcomingSortByPreference provideUpcomingSortByPreference() {
     return UpcomingSortByPreference.getInstance();
+  }
+
+  @Provides @Singleton CheckIn provideCheckIn() {
+    return new CheckIn();
   }
 }

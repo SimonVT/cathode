@@ -43,8 +43,8 @@ import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
-import net.simonvt.cathode.event.CheckInFailedEvent;
-import net.simonvt.cathode.event.CheckInFailedEvent.OnCheckInFailedListener;
+import net.simonvt.cathode.event.ErrorEvent;
+import net.simonvt.cathode.event.ErrorEvent.ErrorListener;
 import net.simonvt.cathode.event.RequestFailedEvent;
 import net.simonvt.cathode.event.RequestFailedEvent.OnRequestFailedListener;
 import net.simonvt.cathode.event.SyncEvent;
@@ -220,7 +220,7 @@ public class HomeActivity extends BaseActivity
 
     SyncEvent.registerListener(onSyncEvent);
     RequestFailedEvent.registerListener(requestFailedListener);
-    CheckInFailedEvent.registerListener(checkInFailedListener);
+    ErrorEvent.registerListener(checkInFailedListener);
 
     getSupportLoaderManager().initLoader(LOADER_SHOW_WATCHING, null, watchingShowCallback);
     getSupportLoaderManager().initLoader(LOADER_MOVIE_WATCHING, null, watchingMovieCallback);
@@ -309,7 +309,7 @@ public class HomeActivity extends BaseActivity
     Timber.d("onDestroy");
     SyncEvent.unregisterListener(onSyncEvent);
     RequestFailedEvent.unregisterListener(requestFailedListener);
-    CheckInFailedEvent.unregisterListener(checkInFailedListener);
+    ErrorEvent.unregisterListener(checkInFailedListener);
     super.onDestroy();
   }
 
@@ -535,10 +535,9 @@ public class HomeActivity extends BaseActivity
     }
   };
 
-  private OnCheckInFailedListener checkInFailedListener = new OnCheckInFailedListener() {
-    @Override public void onCheckInFailed(CheckInFailedEvent event) {
-      crouton.show(getResources().getString(R.string.checkin_error, event.getTitle()),
-          getResources().getColor(android.R.color.holo_red_dark));
+  private ErrorListener checkInFailedListener = new ErrorListener() {
+    @Override public void onError(String error) {
+      crouton.show(error, getResources().getColor(android.R.color.holo_red_dark));
     }
   };
 
