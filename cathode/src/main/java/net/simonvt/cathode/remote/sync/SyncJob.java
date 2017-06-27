@@ -19,8 +19,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
-import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
+import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
+import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.tmdb.api.SyncConfiguration;
 
@@ -43,8 +43,8 @@ public class SyncJob extends Job {
 
     queue(new SyncUserSettings());
 
-    queue(new StartSyncUpdatedShows());
-    queue(new StartSyncUpdatedMovies());
+    queue(new SyncUpdatedShows());
+    queue(new SyncUpdatedMovies());
 
     queue(new SyncUserActivity());
 

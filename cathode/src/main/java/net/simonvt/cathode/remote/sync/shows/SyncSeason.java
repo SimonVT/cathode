@@ -15,6 +15,7 @@
  */
 package net.simonvt.cathode.remote.sync.shows;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +24,10 @@ import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.SeasonService;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
@@ -70,7 +73,6 @@ public class SyncSeason extends CallJob<List<Episode>> {
 
     SeasonDatabaseHelper.IdResult seasonResult = seasonHelper.getIdOrCreate(showId, season);
     final long seasonId = seasonResult.id;
-    final boolean seasonExisted = !seasonResult.didCreate;
     if (seasonResult.didCreate) {
       if (didShowExist) {
         queue(new SyncShow(traktId));
@@ -99,6 +101,9 @@ public class SyncSeason extends CallJob<List<Episode>> {
       getContentResolver().delete(Episodes.withId(episodeId), null, null);
     }
 
+    ContentValues values = new ContentValues();
+    values.put(SeasonColumns.NEEDS_SYNC, false);
+    getContentResolver().update(Seasons.withId(seasonId), values, null, null);
     return true;
   }
 }

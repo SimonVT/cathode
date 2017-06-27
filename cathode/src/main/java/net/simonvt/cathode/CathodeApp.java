@@ -30,6 +30,7 @@ import android.preference.PreferenceManager;
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
 import javax.inject.Inject;
+import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.AuthFailedEvent.OnAuthFailedListener;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -227,6 +228,18 @@ public class CathodeApp extends Application {
             jobManager.addJob(new UpperCaseGenres());
           }
         });
+      }
+      if (currentVersion <= 50303) {
+        final String showsLastUpdated = settings.getString(Settings.SHOWS_LAST_UPDATED, null);
+        if (showsLastUpdated != null) {
+          final long showsLastUpdatedMillis = TimeUtils.getMillis(showsLastUpdated);
+          settings.edit().putLong(Settings.SHOWS_LAST_UPDATED, showsLastUpdatedMillis).apply();
+        }
+        final String moviesLastUpdated = settings.getString(Settings.MOVIES_LAST_UPDATED, null);
+        if (moviesLastUpdated != null) {
+          final long moviesLastUpdatedMillis = TimeUtils.getMillis(moviesLastUpdated);
+          settings.edit().putLong(Settings.MOVIES_LAST_UPDATED, moviesLastUpdatedMillis).apply();
+        }
       }
 
       MainHandler.post(new Runnable() {

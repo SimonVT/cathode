@@ -15,16 +15,12 @@
  */
 package net.simonvt.cathode.remote.sync.movies;
 
-import android.content.ContentValues;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.MoviesService;
-import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
-import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.remote.CallJob;
-import net.simonvt.cathode.tmdb.api.movie.SyncMovieImages;
 import retrofit2.Call;
 
 public class SyncMovie extends CallJob<Movie> {
@@ -52,15 +48,7 @@ public class SyncMovie extends CallJob<Movie> {
   }
 
   @Override public boolean handleResponse(Movie movie) {
-    final long movieId = movieHelper.fullUpdate(movie);
-
-    final int tmdbId = movie.getIds().getTmdb();
-    queue(new SyncMovieImages(tmdbId));
-
-    ContentValues cv = new ContentValues();
-    cv.put(MovieColumns.LAST_SYNC, System.currentTimeMillis());
-    getContentResolver().update(ProviderSchematic.Movies.withId(movieId), cv, null, null);
-
+    movieHelper.fullUpdate(movie);
     return true;
   }
 }

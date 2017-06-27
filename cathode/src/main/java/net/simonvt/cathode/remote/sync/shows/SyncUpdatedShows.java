@@ -15,7 +15,12 @@
  */
 package net.simonvt.cathode.remote.sync.shows;
 
+import android.content.ContentProviderOperation;
 import android.content.ContentValues;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.text.format.DateUtils;
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Show;
@@ -25,67 +30,68 @@ import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import net.simonvt.cathode.remote.CallJob;
+import net.simonvt.cathode.remote.SeparatePagesCallJob;
+import net.simonvt.cathode.settings.Settings;
 import retrofit2.Call;
 
-public class SyncUpdatedShows extends CallJob<List<UpdatedItem>> {
+public class SyncUpdatedShows extends SeparatePagesCallJob<UpdatedItem> {
 
   private static final int LIMIT = 100;
 
   @Inject transient ShowsService showsService;
-
   @Inject transient ShowDatabaseHelper showHelper;
 
-  private String updatedSince;
+  private transient SharedPreferences settings;
+  private transient long currentTime;
 
-  private int page;
-
-  public SyncUpdatedShows(String updatedSince, int page) {
-    super();
-    this.updatedSince = updatedSince;
-    this.page = page;
+  public SyncUpdatedShows() {
+    currentTime = System.currentTimeMillis();
   }
 
   @Override public String key() {
-    return "SyncUpdatedShows" + "&updatedSince=" + updatedSince + "&page=" + page;
+    return "SyncUpdatedShows";
   }
 
   @Override public int getPriority() {
     return PRIORITY_UPDATED;
   }
 
-  @Override public Call<List<UpdatedItem>> getCall() {
-    if (updatedSince == null) {
-      updatedSince = TimeUtils.getIsoTime();
-    }
+  @Override public Call<List<UpdatedItem>> getCall(int page) {
+    settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+    final long lastUpdated = settings.getLong(Settings.SHOWS_LAST_UPDATED, currentTime);
+    final long millis = lastUpdated - 12 * DateUtils.HOUR_IN_MILLIS;
+    final String updatedSince = TimeUtils.getIsoTime(millis);
     return showsService.getUpdatedShows(updatedSince, page, LIMIT);
   }
 
-  @Override public boolean handleResponse(List<UpdatedItem> updated) {
+  @Override public boolean handleResponse(int page, List<UpdatedItem> updated) {
+    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+
     for (UpdatedItem item : updated) {
-      final String updatedAt = item.getUpdatedAt();
+      final long updatedAt = item.getUpdatedAt().getTimeInMillis();
 
       Show show = item.getShow();
       final long traktId = show.getIds().getTrakt();
       final long id = showHelper.getId(traktId);
       if (id != -1L) {
         if (showHelper.isUpdated(traktId, updatedAt)) {
-          final boolean shouldUpdate = showHelper.shouldUpdate(traktId);
-          if (shouldUpdate) {
-            queue(new SyncShow(traktId));
-          } else {
-            ContentValues values = new ContentValues();
-            values.put(ShowColumns.NEEDS_SYNC, true);
-            getContentResolver().update(Shows.withId(id), values, null, null);
-          }
+          ContentValues values = new ContentValues();
+          values.put(ShowColumns.NEEDS_SYNC, true);
+          ops.add(ContentProviderOperation.newUpdate(Shows.withId(id)).withValues(values).build());
         }
       }
     }
 
-    if (updated.size() >= LIMIT) {
-      queue(new SyncUpdatedShows(updatedSince, page + 1));
+    if (!applyBatch(ops)) {
+      return false;
     }
 
+    return true;
+  }
+
+  @Override public boolean onDone() {
+    queue(new SyncPendingShows());
+    settings.edit().putLong(Settings.SHOWS_LAST_UPDATED, currentTime).apply();
     return true;
   }
 }

@@ -40,7 +40,6 @@ import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.IntPreference;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.TraktSettings;
-import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.RequestFailedEvent;
 import net.simonvt.cathode.event.SyncEvent;
@@ -60,8 +59,8 @@ import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.InitialSyncJob;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.lists.SyncLists;
-import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
-import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
+import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
+import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.StartPage;
 import net.simonvt.cathode.tmdb.api.SyncConfiguration;
@@ -266,15 +265,10 @@ import okhttp3.logging.HttpLoggingInterceptor;
       }
     });
 
-    debugViews.updatedLastDay.setOnClickListener(new View.OnClickListener() {
+    debugViews.updated.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        String lastUpdated = TimeUtils.getIsoTime();
-        settings.edit()
-            .putString(Settings.MOVIES_LAST_UPDATED, lastUpdated)
-            .putString(Settings.SHOWS_LAST_UPDATED, lastUpdated)
-            .apply();
-        injects.jobManager.addJob(new StartSyncUpdatedShows());
-        injects.jobManager.addJob(new StartSyncUpdatedMovies());
+        injects.jobManager.addJob(new SyncUpdatedShows());
+        injects.jobManager.addJob(new SyncUpdatedMovies());
       }
     });
 
@@ -397,7 +391,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
     @BindView(R.id.debug_forceUpdate) View forceUpdate;
 
-    @BindView(R.id.debug_updatedLastDay) View updatedLastDay;
+    @BindView(R.id.debug_updated) View updated;
 
     @BindView(R.id.debug_syncWatching) View syncWatching;
 

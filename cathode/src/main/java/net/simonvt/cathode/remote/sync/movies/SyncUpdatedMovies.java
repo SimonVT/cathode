@@ -15,7 +15,12 @@
  */
 package net.simonvt.cathode.remote.sync.movies;
 
+import android.content.ContentProviderOperation;
 import android.content.ContentValues;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.text.format.DateUtils;
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Movie;
@@ -25,67 +30,70 @@ import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.remote.CallJob;
+import net.simonvt.cathode.remote.SeparatePagesCallJob;
+import net.simonvt.cathode.settings.Settings;
 import retrofit2.Call;
 
-public class SyncUpdatedMovies extends CallJob<List<UpdatedItem>> {
+public class SyncUpdatedMovies extends SeparatePagesCallJob<UpdatedItem> {
 
   private static final int LIMIT = 100;
 
   @Inject transient MoviesService moviesService;
-
   @Inject transient MovieDatabaseHelper movieHelper;
 
-  private String updatedSince;
+  private transient SharedPreferences settings;
+  private transient long currentTime;
 
-  private int page;
-
-  public SyncUpdatedMovies(String updatedSince, int page) {
-    super();
-    this.updatedSince = updatedSince;
-    this.page = page;
+  public SyncUpdatedMovies() {
+    currentTime = System.currentTimeMillis();
   }
 
   @Override public String key() {
-    return "SyncUpdatedMovies" + "&updatedSince=" + updatedSince + "&page=" + page;
+    return "SyncUpdatedMovies";
   }
 
   @Override public int getPriority() {
     return PRIORITY_UPDATED;
   }
 
-  @Override public Call<List<UpdatedItem>> getCall() {
-    if (updatedSince == null) {
-      updatedSince = TimeUtils.getIsoTime();
-    }
+  @Override public Call<List<UpdatedItem>> getCall(int page) {
+    settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+    final long lastUpdated = settings.getLong(Settings.MOVIES_LAST_UPDATED, currentTime);
+    final long millis = lastUpdated - 12 * DateUtils.HOUR_IN_MILLIS;
+    final String updatedSince = TimeUtils.getIsoTime(millis);
     return moviesService.updated(updatedSince, page, LIMIT);
   }
 
-  @Override public boolean handleResponse(List<UpdatedItem> updated) {
+  @Override public boolean handleResponse(int page, List<UpdatedItem> updated) {
+    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+
     for (UpdatedItem item : updated) {
-      final String updatedAt = item.getUpdatedAt();
+      final long updatedAt = item.getUpdatedAt().getTimeInMillis();
       final Movie movie = item.getMovie();
       final long traktId = movie.getIds().getTrakt();
 
       final long movieId = movieHelper.getId(traktId);
       if (movieId != -1L) {
         if (movieHelper.isUpdated(traktId, updatedAt)) {
-          final boolean shouldUpdate = movieHelper.shouldUpdate(traktId, updatedAt);
-          if (shouldUpdate) {
-            queue(new SyncMovie(traktId));
-          } else {
-            ContentValues values = new ContentValues();
-            values.put(MovieColumns.NEEDS_SYNC, true);
-            getContentResolver().update(Movies.withId(movieId), values, null, null);
-          }
+          ContentValues values = new ContentValues();
+          values.put(MovieColumns.NEEDS_SYNC, true);
+          ops.add(ContentProviderOperation.newUpdate(Movies.withId(movieId))
+              .withValues(values)
+              .build());
         }
       }
     }
 
-    if (updated.size() >= LIMIT) {
-      queue(new SyncUpdatedMovies(updatedSince, page + 1));
+    if (!applyBatch(ops)) {
+      return false;
     }
 
+    return true;
+  }
+
+  @Override public boolean onDone() {
+    queue(new SyncPendingMovies());
+    settings.edit().putLong(Settings.MOVIES_LAST_UPDATED, currentTime).apply();
     return true;
   }
 }

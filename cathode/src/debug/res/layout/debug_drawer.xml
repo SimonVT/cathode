@@ -214,12 +214,12 @@
       style="@style/DebugDrawerItem"/>
 
   <TextView
-      android:id="@+id/debug_updatedLastDay"
+      android:id="@+id/debug_updated"
       android:layout_width="0dp"
       android:layout_columnSpan="2"
       android:layout_gravity="start|fill_horizontal"
       android:textAllCaps="false"
-      android:text="Sync updated last day"
+      android:text="Sync updated"
       style="@style/DebugDrawerItem"/>
 
   <TextView

@@ -145,7 +145,6 @@ public final class SeasonDatabaseHelper {
     ContentValues cv = new ContentValues();
     cv.put(SeasonColumns.SHOW_ID, showId);
     cv.put(SeasonColumns.SEASON, season);
-    cv.put(SeasonColumns.NEEDS_SYNC, 1);
 
     Uri uri = resolver.insert(Seasons.SEASONS, cv);
     return Seasons.getId(uri);
@@ -276,9 +275,6 @@ public final class SeasonDatabaseHelper {
 
   private static ContentValues getSeasonCVs(Season season) {
     ContentValues cv = new ContentValues();
-
-    cv.put(SeasonColumns.NEEDS_SYNC, 0);
-
     cv.put(SeasonColumns.SEASON, season.getNumber());
 
     cv.put(SeasonColumns.TVDB_ID, season.getIds().getTvdb());

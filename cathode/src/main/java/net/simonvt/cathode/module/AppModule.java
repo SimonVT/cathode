@@ -111,7 +111,6 @@ import net.simonvt.cathode.remote.sync.comments.SyncComments;
 import net.simonvt.cathode.remote.sync.comments.SyncUserComments;
 import net.simonvt.cathode.remote.sync.lists.SyncList;
 import net.simonvt.cathode.remote.sync.lists.SyncLists;
-import net.simonvt.cathode.remote.sync.movies.StartSyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncAnticipatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieCredits;
@@ -119,16 +118,18 @@ import net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesCollection;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesRatings;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchlist;
+import net.simonvt.cathode.remote.sync.movies.SyncPendingMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncRelatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies;
 import net.simonvt.cathode.remote.sync.people.SyncPersonMovieCredits;
 import net.simonvt.cathode.remote.sync.people.SyncPersonShowCredits;
-import net.simonvt.cathode.remote.sync.shows.StartSyncUpdatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncAnticipatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodesRatings;
+import net.simonvt.cathode.remote.sync.shows.SyncPendingSeasons;
+import net.simonvt.cathode.remote.sync.shows.SyncPendingShows;
 import net.simonvt.cathode.remote.sync.shows.SyncRelatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncSeasons;
@@ -319,29 +320,30 @@ import net.simonvt.cathode.widget.RemoteImageView;
         SyncJob.class, SyncUserActivity.class, SyncUserSettings.class, SyncWatching.class,
         SyncMovieCredits.class, SyncMovieRecommendations.class, SyncMoviesCollection.class,
         SyncMoviesRatings.class, SyncWatchedMovies.class, SyncMoviesWatchlist.class,
-        SyncMovie.class, SyncTrendingMovies.class, StartSyncUpdatedMovies.class,
-        SyncEpisodesRatings.class, SyncEpisodeWatchlist.class, SyncSeasonsRatings.class,
-        SyncSeasons.class, SyncSeason.class, SyncShowCredits.class, SyncShowCollectedStatus.class,
-        SyncShowRecommendations.class, SyncShowsCollection.class, SyncShowsRatings.class,
-        SyncWatchedShows.class, SyncShowsWatchlist.class, SyncShow.class,
-        SyncShowWatchedStatus.class, SyncTrendingShows.class, StartSyncUpdatedShows.class,
-        SyncPerson.class, SyncUpdatedShows.class, SyncUpdatedMovies.class, ForceUpdateJob.class,
-        UpdateShowCounts.class, SyncLists.class, SyncList.class, CreateList.class, RemoveShow.class,
-        RemoveSeason.class, RemoveEpisode.class, RemoveMovie.class, RemovePerson.class,
-        AddShow.class, AddSeason.class, AddEpisode.class, AddMovie.class, AddPerson.class,
-        LogoutJob.class, SyncHiddenItems.class, SyncHiddenCalendar.class, SyncHiddenCollected.class,
-        SyncHiddenRecommendations.class, SyncHiddenWatched.class, SyncUserComments.class,
-        AddCommentJob.class, UpdateCommentJob.class, DeleteCommentJob.class, SyncComments.class,
-        CommentReplyJob.class, SyncUserProfile.class, LikeCommentJob.class, UnlikeCommentJob.class,
-        SyncCommentLikes.class, CalendarHideShow.class, WatchedHideShow.class,
-        CollectedHideShow.class, CalendarHideMovie.class, SyncAnticipatedShows.class,
-        SyncAnticipatedMovies.class, UpdateList.class, DeleteList.class, SyncRelatedShows.class,
-        SyncRelatedMovies.class, SyncPersonShowCredits.class, SyncPersonMovieCredits.class,
-        SyncMovieImages.class, SyncConfiguration.class, SyncShowImages.class,
-        SyncEpisodeImages.class, SyncPersonHeadshot.class, SyncPersonBackdrop.class,
-        AddShowToHistory.class, AddSeasonToHistory.class, AddEpisodeToHistory.class,
-        AddMovieToHistory.class, RemoveSeasonFromHistory.class, RemoveEpisodeFromHistory.class,
-        RemoveMovieFromHistory.class, RemoveHistoryItem.class,
+        SyncMovie.class, SyncTrendingMovies.class, SyncEpisodesRatings.class,
+        SyncEpisodeWatchlist.class, SyncSeasonsRatings.class, SyncSeasons.class, SyncSeason.class,
+        SyncShowCredits.class, SyncShowCollectedStatus.class, SyncShowRecommendations.class,
+        SyncShowsCollection.class, SyncShowsRatings.class, SyncWatchedShows.class,
+        SyncShowsWatchlist.class, SyncShow.class, SyncShowWatchedStatus.class,
+        SyncTrendingShows.class, SyncPerson.class, SyncUpdatedShows.class, SyncUpdatedMovies.class,
+        ForceUpdateJob.class, UpdateShowCounts.class, SyncLists.class, SyncList.class,
+        CreateList.class, RemoveShow.class, RemoveSeason.class, RemoveEpisode.class,
+        RemoveMovie.class, RemovePerson.class, AddShow.class, AddSeason.class, AddEpisode.class,
+        AddMovie.class, AddPerson.class, LogoutJob.class, SyncHiddenItems.class,
+        SyncHiddenCalendar.class, SyncHiddenCollected.class, SyncHiddenRecommendations.class,
+        SyncHiddenWatched.class, SyncUserComments.class, AddCommentJob.class,
+        UpdateCommentJob.class, DeleteCommentJob.class, SyncComments.class, CommentReplyJob.class,
+        SyncUserProfile.class, LikeCommentJob.class, UnlikeCommentJob.class, SyncCommentLikes.class,
+        CalendarHideShow.class, WatchedHideShow.class, CollectedHideShow.class,
+        CalendarHideMovie.class, SyncAnticipatedShows.class, SyncAnticipatedMovies.class,
+        UpdateList.class, DeleteList.class, SyncRelatedShows.class, SyncRelatedMovies.class,
+        SyncPersonShowCredits.class, SyncPersonMovieCredits.class, SyncMovieImages.class,
+        SyncConfiguration.class, SyncShowImages.class, SyncEpisodeImages.class,
+        SyncPersonHeadshot.class, SyncPersonBackdrop.class, AddShowToHistory.class,
+        AddSeasonToHistory.class, AddEpisodeToHistory.class, AddMovieToHistory.class,
+        RemoveSeasonFromHistory.class, RemoveEpisodeFromHistory.class, RemoveMovieFromHistory.class,
+        RemoveHistoryItem.class, SyncPendingShows.class, SyncPendingSeasons.class,
+        SyncPendingMovies.class,
 
         // Upgrade tasks
         EnsureSync.class, UpperCaseGenres.class,

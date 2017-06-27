@@ -169,8 +169,8 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
         + ShowColumns.HIDDEN_CALENDAR
         + "=0"
         + " AND "
-        + ShowColumns.NEEDS_SYNC
-        + "=0", null, null);
+        + ShowColumns.LAST_SYNC
+        + ">0", null, null);
 
     while (shows.moveToNext()) {
       final long showId = Cursors.getLong(shows, ShowColumns.ID);

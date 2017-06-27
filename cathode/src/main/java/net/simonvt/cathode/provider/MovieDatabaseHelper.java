@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Locale;
 import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.api.entity.Movie;
-import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.database.DatabaseUtils;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
@@ -152,7 +151,7 @@ public final class MovieDatabaseHelper {
     }
   }
 
-  public boolean isUpdated(long traktId, String lastUpdated) {
+  public boolean isUpdated(long traktId, long lastUpdated) {
     Cursor movie = null;
     try {
       movie = resolver.query(Movies.MOVIES, new String[] {
@@ -170,34 +169,7 @@ public final class MovieDatabaseHelper {
               "Wrong LAST_UPDATED");
           return true;
         }
-        return TimeUtils.getMillis(lastUpdated) > movieLastUpdated;
-      }
-
-      return false;
-    } finally {
-      if (movie != null) movie.close();
-    }
-  }
-
-  public boolean shouldUpdate(long traktId, String lastUpdated) {
-    if (lastUpdated == null) return true;
-
-    Cursor movie = null;
-    try {
-      movie = resolver.query(Movies.MOVIES, new String[] {
-          MovieColumns.WATCHED, MovieColumns.IN_COLLECTION, MovieColumns.IN_WATCHLIST,
-      }, MovieColumns.TRAKT_ID + "=?", new String[] {
-          String.valueOf(traktId),
-      }, null);
-
-      if (movie.moveToFirst()) {
-        final boolean watched = Cursors.getBoolean(movie, MovieColumns.WATCHED);
-        final boolean collected = Cursors.getBoolean(movie, MovieColumns.IN_COLLECTION);
-        final boolean inWatchlist = Cursors.getBoolean(movie, MovieColumns.IN_WATCHLIST);
-
-        if (watched || collected || inWatchlist) {
-          return true;
-        }
+        return lastUpdated > movieLastUpdated;
       }
 
       return false;
@@ -234,7 +206,6 @@ public final class MovieDatabaseHelper {
   private long create(long traktId) {
     ContentValues cv = new ContentValues();
     cv.put(MovieColumns.TRAKT_ID, traktId);
-    cv.put(MovieColumns.NEEDS_SYNC, true);
 
     return ProviderSchematic.Movies.getId(resolver.insert(Movies.MOVIES, cv));
   }
@@ -245,6 +216,7 @@ public final class MovieDatabaseHelper {
 
     ContentValues cv = getContentValues(movie);
     cv.put(MovieColumns.NEEDS_SYNC, false);
+    cv.put(MovieColumns.LAST_SYNC, System.currentTimeMillis());
     resolver.update(Movies.withId(id), cv, null, null);
 
     if (movie.getGenres() != null) {

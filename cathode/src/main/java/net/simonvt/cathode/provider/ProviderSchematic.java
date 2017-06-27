@@ -230,7 +230,7 @@ public final class ProviderSchematic {
         type = Type.SHOW,
         join = Joins.SHOWS_UNWATCHED,
         where = ShowColumns.WATCHED_COUNT + ">0 AND "
-            + Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0 AND "
+            + Tables.SHOWS + "." + ShowColumns.LAST_SYNC + ">0 AND "
             + Tables.SHOWS + "." + ShowColumns.HIDDEN_WATCHED + "=0")
     public static final Uri SHOWS_WATCHED = buildUri(Path.SHOWS, Path.WATCHED);
 
@@ -239,7 +239,7 @@ public final class ProviderSchematic {
         type = Type.SHOW,
         join = Joins.SHOWS_UNCOLLECTED,
         where = ShowColumns.IN_COLLECTION_COUNT + ">0 AND "
-            + Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0 AND "
+            + Tables.SHOWS + "." + ShowColumns.LAST_SYNC + ">0 AND "
             + Tables.SHOWS + "." + ShowColumns.HIDDEN_COLLECTED + "=0")
     public static final Uri SHOWS_COLLECTION = buildUri(Path.SHOWS, Path.COLLECTED);
 
@@ -247,7 +247,7 @@ public final class ProviderSchematic {
         path = Path.SHOWS + "/" + Path.WATCHLIST,
         type = Type.SHOW,
         where = ShowColumns.IN_WATCHLIST + "=1 AND "
-            + Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0")
+            + Tables.SHOWS + "." + ShowColumns.LAST_SYNC + ">0")
     public static final Uri SHOWS_WATCHLIST = buildUri(Path.SHOWS, Path.WATCHLIST);
 
     @ContentUri(
@@ -263,7 +263,7 @@ public final class ProviderSchematic {
       final long upcomingTime = UpcomingTimePreference.getInstance().get().getCacheTime();
       return new String[] {
           ShowColumns.WATCHED_COUNT + ">0", getUpcomingQuery(upcomingTime) + ">0",
-          Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0"
+          Tables.SHOWS + "." + ShowColumns.LAST_SYNC + ">0"
       };
     }
 
@@ -306,7 +306,7 @@ public final class ProviderSchematic {
     public static String[] withNextWhere() {
       return new String[] {
           ShowColumns.WATCHED_COUNT + ">0", withNextQuery() + ">0",
-          Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0"
+          Tables.SHOWS + "." + ShowColumns.LAST_UPDATED + ">0"
       };
     }
 
@@ -360,7 +360,7 @@ public final class ProviderSchematic {
         join = Joins.SHOWS_WITH_WATCHING,
         where = {
             Tables.SHOWS + "." + ShowColumns.WATCHING + "=1",
-            Tables.SHOWS + "." + ShowColumns.NEEDS_SYNC + "=0"
+            Tables.SHOWS + "." + ShowColumns.LAST_UPDATED + ">0"
         }
     )
     public static final Uri SHOW_WATCHING = buildUri(Path.SHOWS, Path.WATCHING);
@@ -1065,7 +1065,7 @@ public final class ProviderSchematic {
         path = Path.MOVIES + "/" + Path.WATCHED,
         type = Type.MOVIE,
         where = {
-            MovieColumns.WATCHED + "=1", MovieColumns.NEEDS_SYNC + "=0"
+            MovieColumns.WATCHED + "=1", MovieColumns.LAST_SYNC + ">0"
         }
     )
     public static final Uri MOVIES_WATCHED = buildUri(Path.MOVIES, Path.WATCHED);
@@ -1074,7 +1074,7 @@ public final class ProviderSchematic {
         path = Path.MOVIES + "/" + Path.COLLECTED,
         type = Type.MOVIE,
         where = {
-            MovieColumns.IN_COLLECTION + "=1", MovieColumns.NEEDS_SYNC + "=0"
+            MovieColumns.IN_COLLECTION + "=1", MovieColumns.LAST_SYNC + ">0"
         }
     )
     public static final Uri MOVIES_COLLECTED = buildUri(Path.MOVIES, Path.COLLECTED);
@@ -1083,7 +1083,7 @@ public final class ProviderSchematic {
         path = Path.MOVIES + "/" + Path.WATCHLIST,
         type = Type.MOVIE,
         where = {
-            MovieColumns.IN_WATCHLIST + "=1", MovieColumns.NEEDS_SYNC + "=0"
+            MovieColumns.IN_WATCHLIST + "=1", MovieColumns.LAST_SYNC + ">0"
         }
     )
     public static final Uri MOVIES_WATCHLIST = buildUri(Path.MOVIES, Path.WATCHLIST);

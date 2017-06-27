@@ -18,13 +18,13 @@ package net.simonvt.cathode.api.entity;
 
 public class UpdatedItem {
 
-  String updatedAt;
+  IsoTime updatedAt;
 
   Show show;
 
   Movie movie;
 
-  public String getUpdatedAt() {
+  public IsoTime getUpdatedAt() {
     return updatedAt;
   }
 
