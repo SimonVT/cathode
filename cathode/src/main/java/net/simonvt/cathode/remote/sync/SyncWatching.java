@@ -15,14 +15,22 @@
  */
 package net.simonvt.cathode.remote.sync;
 
+import android.app.job.JobInfo;
+import android.content.ComponentName;
 import android.content.ContentProviderOperation;
+import android.content.Context;
 import android.database.Cursor;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.text.format.DateUtils;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Watching;
 import net.simonvt.cathode.api.enumeration.Action;
 import net.simonvt.cathode.api.service.UsersService;
+import net.simonvt.cathode.jobscheduler.Jobs;
+import net.simonvt.cathode.jobscheduler.SchedulerService;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
@@ -44,12 +52,26 @@ import retrofit2.Call;
 
 public class SyncWatching extends CallJob<Watching> {
 
+  public static final int ID = 200;
+
   @Inject transient UsersService usersService;
 
   @Inject transient ShowDatabaseHelper showHelper;
   @Inject transient SeasonDatabaseHelper seasonHelper;
   @Inject transient EpisodeDatabaseHelper episodeHelper;
   @Inject transient MovieDatabaseHelper movieHelper;
+
+  @RequiresApi(api = Build.VERSION_CODES.N)
+  public static void schedule(Context context, long delayMillis) {
+    JobInfo jobInfo = new JobInfo.Builder(ID,
+        new ComponentName(context, SchedulerService.class)).setRequiredNetworkType(
+        JobInfo.NETWORK_TYPE_ANY)
+        .setBackoffCriteria(DateUtils.MINUTE_IN_MILLIS, JobInfo.BACKOFF_POLICY_EXPONENTIAL)
+        .setMinimumLatency(delayMillis)
+        .setPersisted(true)
+        .build();
+    Jobs.schedule(context, jobInfo);
+  }
 
   public SyncWatching() {
     super(Flags.REQUIRES_AUTH);

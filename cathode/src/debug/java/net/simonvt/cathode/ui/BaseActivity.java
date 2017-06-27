@@ -16,6 +16,9 @@
 package net.simonvt.cathode.ui;
 
 import android.annotation.SuppressLint;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -47,6 +50,9 @@ import net.simonvt.cathode.event.SyncEvent.OnSyncListener;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobListener;
 import net.simonvt.cathode.jobqueue.JobManager;
+import net.simonvt.cathode.jobscheduler.AuthJobHandlerJob;
+import net.simonvt.cathode.jobscheduler.DataJobHandlerJob;
+import net.simonvt.cathode.jobscheduler.SchedulerService;
 import net.simonvt.cathode.notification.NotificationService;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -55,6 +61,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.InitialSyncJob;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
@@ -283,6 +290,44 @@ import okhttp3.logging.HttpLoggingInterceptor;
     });
 
     injects.jobManager.addJobListener(jobListener);
+
+    debugViews.startPeriodicJobs.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+          JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+
+          JobInfo job = new JobInfo.Builder(SyncUpdatedShows.ID,
+              new ComponentName(BaseActivity.this, SchedulerService.class))
+              .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+              .build();
+          scheduler.schedule(job);
+
+          job = new JobInfo.Builder(SyncUpdatedMovies.ID,
+              new ComponentName(BaseActivity.this, SchedulerService.class))
+              .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+              .build();
+          scheduler.schedule(job);
+
+          job = new JobInfo.Builder(SyncUserActivity.ID,
+              new ComponentName(BaseActivity.this, SchedulerService.class))
+              .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+              .build();
+          scheduler.schedule(job);
+
+          job = new JobInfo.Builder(AuthJobHandlerJob.ID,
+              new ComponentName(BaseActivity.this, SchedulerService.class))
+              .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+              .build();
+          scheduler.schedule(job);
+
+          job = new JobInfo.Builder(DataJobHandlerJob.ID,
+              new ComponentName(BaseActivity.this, SchedulerService.class))
+              .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+              .build();
+          scheduler.schedule(job);
+        }
+      }
+    });
   }
 
   private JobListener jobListener = new JobListener() {
@@ -390,5 +435,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
     @BindView(R.id.debug_dataHandlerStatus) TextView dataHandlerStatus;
 
     @BindView(R.id.debug_jobCount) TextView jobCount;
+
+    @BindView(R.id.debug_startPeriodicJobs) View startPeriodicJobs;
   }
 }

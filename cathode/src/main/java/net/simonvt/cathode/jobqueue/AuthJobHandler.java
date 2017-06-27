@@ -18,6 +18,8 @@ package net.simonvt.cathode.jobqueue;
 
 import android.content.Intent;
 import net.simonvt.cathode.event.SyncEvent;
+import net.simonvt.cathode.jobscheduler.AuthJobHandlerJob;
+import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.remote.Flags;
 
 public class AuthJobHandler extends JobHandler {
@@ -44,8 +46,12 @@ public class AuthJobHandler extends JobHandler {
 
   @Override protected void onStop() {
     if (hasJobs()) {
-      Intent i = new Intent(context, AuthJobService.class);
-      context.startService(i);
+      if (Jobs.usesScheduler()) {
+        AuthJobHandlerJob.schedule(context);
+      } else {
+        Intent i = new Intent(context, AuthJobService.class);
+        context.startService(i);
+      }
     }
   }
 }

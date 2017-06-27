@@ -24,6 +24,7 @@ import android.os.Build;
 import android.os.Bundle;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.service.AccountAuthenticator;
 import net.simonvt.cathode.util.DateUtils;
 import timber.log.Timber;
@@ -45,10 +46,12 @@ public final class Accounts {
 
     try {
       if (manager.addAccountExplicitly(account, null, null)) {
-        ContentResolver.setIsSyncable(account, BuildConfig.PROVIDER_AUTHORITY, 1);
-        ContentResolver.setSyncAutomatically(account, BuildConfig.PROVIDER_AUTHORITY, true);
-        ContentResolver.addPeriodicSync(account, BuildConfig.PROVIDER_AUTHORITY, new Bundle(),
-            12 * DateUtils.HOUR_IN_SECONDS);
+        if (!Jobs.usesScheduler()) {
+          ContentResolver.setIsSyncable(account, BuildConfig.PROVIDER_AUTHORITY, 1);
+          ContentResolver.setSyncAutomatically(account, BuildConfig.PROVIDER_AUTHORITY, true);
+          ContentResolver.addPeriodicSync(account, BuildConfig.PROVIDER_AUTHORITY, new Bundle(),
+              12 * DateUtils.HOUR_IN_SECONDS);
+        }
 
         ContentResolver.setIsSyncable(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, 1);
         ContentResolver.setSyncAutomatically(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, true);

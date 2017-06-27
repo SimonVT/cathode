@@ -30,9 +30,11 @@ import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncJob;
+import net.simonvt.cathode.remote.sync.SyncUserSettings;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.setup.CalendarSetupActivity;
+import net.simonvt.cathode.tmdb.api.SyncConfiguration;
 import net.simonvt.cathode.ui.BaseActivity;
 
 public class TokenActivity extends BaseActivity implements TokenTask.Callback {
@@ -88,6 +90,8 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
 
     Accounts.setupAccount(this);
 
+    jobManager.addJob(new SyncConfiguration());
+    jobManager.addJob(new SyncUserSettings());
     jobManager.addJob(new SyncJob());
 
     Intent setup = new Intent(this, CalendarSetupActivity.class);

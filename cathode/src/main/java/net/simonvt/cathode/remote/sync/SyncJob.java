@@ -18,6 +18,7 @@ package net.simonvt.cathode.remote.sync;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
@@ -53,12 +54,12 @@ public class SyncJob extends Job {
     }
     if (lastShowSync == 0L) {
       settings.edit().putLong(Settings.SHOWS_LAST_UPDATED, currentTime).apply();
-    } else if (lastShowSync + 2 * DateUtils.DAY_IN_MILLIS < currentTime) {
+    } else if (lastShowSync + getUpdatedSyncDelay() * DateUtils.DAY_IN_MILLIS < currentTime) {
       queue(new SyncUpdatedShows());
     }
     if (lastMovieSync == 0L) {
       settings.edit().putLong(Settings.MOVIES_LAST_UPDATED, currentTime).apply();
-    } else if (lastMovieSync + 2 * DateUtils.DAY_IN_MILLIS < currentTime) {
+    } else if (lastMovieSync + getUpdatedSyncDelay() * DateUtils.DAY_IN_MILLIS < currentTime) {
       queue(new SyncUpdatedMovies());
     }
 
@@ -67,5 +68,13 @@ public class SyncJob extends Job {
 
     settings.edit().putLong(Settings.LAST_FULL_SYNC, currentTime).apply();
     return true;
+  }
+
+  private long getUpdatedSyncDelay() {
+    if (Jobs.usesScheduler()) {
+      return 7 * DateUtils.DAY_IN_MILLIS;
+    } else {
+      return 2 * DateUtils.DAY_IN_MILLIS;
+    }
   }
 }

@@ -37,13 +37,18 @@ import net.simonvt.cathode.jobqueue.AuthJobHandler;
 import net.simonvt.cathode.jobqueue.DataJobHandler;
 import net.simonvt.cathode.jobqueue.JobHandler;
 import net.simonvt.cathode.jobqueue.JobManager;
+import net.simonvt.cathode.jobscheduler.AuthJobHandlerJob;
+import net.simonvt.cathode.jobscheduler.DataJobHandlerJob;
+import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.UpdateShowCounts;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.movies.SyncAnticipatedMovies;
+import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncAnticipatedShows;
+import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
 import net.simonvt.cathode.remote.upgrade.EnsureSync;
 import net.simonvt.cathode.remote.upgrade.UpperCaseGenres;
 import net.simonvt.cathode.settings.Accounts;
@@ -122,6 +127,14 @@ public class CathodeApp extends Application {
         }
       }
     });
+
+    if (Jobs.usesScheduler()) {
+      SyncUpdatedShows.schedulePeriodic(this);
+      SyncUpdatedMovies.schedulePeriodic(this);
+      SyncUserActivity.schedulePeriodic(this);
+      AuthJobHandlerJob.schedulePeriodic(this);
+      DataJobHandlerJob.schedulePeriodic(this);
+    }
   }
 
   private Runnable syncRunnable = new Runnable() {
@@ -263,6 +276,17 @@ public class CathodeApp extends Application {
         });
       }
       if (currentVersion <= 50303) {
+        if (Jobs.usesScheduler()) {
+          final boolean isLoggedIn = settings.getBoolean(Settings.TRAKT_LOGGED_IN, false);
+          if (isLoggedIn) {
+            Account account = Accounts.getAccount(this);
+            ContentResolver.removePeriodicSync(account, BuildConfig.PROVIDER_AUTHORITY,
+                new Bundle());
+            ContentResolver.setSyncAutomatically(account, BuildConfig.PROVIDER_AUTHORITY, false);
+            ContentResolver.setIsSyncable(account, BuildConfig.PROVIDER_AUTHORITY, 0);
+          }
+        }
+
         final String showsLastUpdated = settings.getString(Settings.SHOWS_LAST_UPDATED, null);
         if (showsLastUpdated != null) {
           final long showsLastUpdatedMillis = TimeUtils.getMillis(showsLastUpdated);

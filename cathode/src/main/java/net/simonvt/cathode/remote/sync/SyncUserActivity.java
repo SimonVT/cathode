@@ -15,10 +15,17 @@
  */
 package net.simonvt.cathode.remote.sync;
 
+import android.app.job.JobInfo;
+import android.content.ComponentName;
+import android.content.Context;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.LastActivity;
 import net.simonvt.cathode.api.enumeration.ItemTypes;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.jobscheduler.Jobs;
+import net.simonvt.cathode.jobscheduler.SchedulerService;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.comments.SyncCommentLikes;
@@ -40,7 +47,21 @@ import retrofit2.Call;
 
 public class SyncUserActivity extends CallJob<LastActivity> {
 
+  public static final int ID = 102;
+
   @Inject transient SyncService syncService;
+
+  @RequiresApi(api = Build.VERSION_CODES.N)
+  public static void schedulePeriodic(Context context) {
+    JobInfo jobInfo = new JobInfo.Builder(ID, new ComponentName(context, SchedulerService.class)) //
+        .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+        .setRequiresCharging(true)
+        .setRequiresDeviceIdle(true)
+        .setPeriodic(android.text.format.DateUtils.DAY_IN_MILLIS)
+        .setPersisted(true)
+        .build();
+    Jobs.schedule(context, jobInfo);
+  }
 
   public SyncUserActivity() {
     super(Flags.REQUIRES_AUTH);

@@ -16,8 +16,14 @@
 
 package net.simonvt.cathode.remote.sync.shows;
 
+import android.app.job.JobInfo;
+import android.content.ComponentName;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.text.format.DateUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +31,8 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.SeasonService;
+import net.simonvt.cathode.jobscheduler.Jobs;
+import net.simonvt.cathode.jobscheduler.SchedulerService;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
@@ -39,10 +47,23 @@ import timber.log.Timber;
 
 public class SyncPendingSeasons extends ErrorHandlerJob<List<Episode>> {
 
+  public static final int ID = 104;
+
   @Inject transient SeasonService seasonService;
 
   @Inject transient ShowDatabaseHelper showHelper;
   @Inject transient EpisodeDatabaseHelper episodeHelper;
+
+  @RequiresApi(api = Build.VERSION_CODES.N) public static void schedule(Context context) {
+    JobInfo jobInfo = new JobInfo.Builder(ID,
+        new ComponentName(context, SchedulerService.class)).setRequiredNetworkType(
+        JobInfo.NETWORK_TYPE_ANY)
+        .setRequiresCharging(true)
+        .setBackoffCriteria(DateUtils.MINUTE_IN_MILLIS, JobInfo.BACKOFF_POLICY_EXPONENTIAL)
+        .setPersisted(true)
+        .build();
+    Jobs.schedule(context, jobInfo);
+  }
 
   @Override public String key() {
     return "SyncPendingSeasons";
@@ -62,7 +83,7 @@ public class SyncPendingSeasons extends ErrorHandlerJob<List<Episode>> {
     }, SeasonColumns.NEEDS_SYNC, null, null);
 
     try {
-      while (seasons.moveToNext()) {
+      while (seasons.moveToNext() && !isStopped()) {
         final long seasonId = Cursors.getLong(seasons, SeasonColumns.ID);
         final long showId = Cursors.getLong(seasons, SeasonColumns.SHOW_ID);
         final int season = Cursors.getInt(seasons, SeasonColumns.SEASON);
@@ -107,6 +128,10 @@ public class SyncPendingSeasons extends ErrorHandlerJob<List<Episode>> {
             return false;
           }
         }
+      }
+
+      if (isStopped()) {
+        return false;
       }
 
       return true;

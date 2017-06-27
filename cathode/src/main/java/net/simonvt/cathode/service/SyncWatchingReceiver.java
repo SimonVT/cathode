@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import javax.inject.Inject;
 import net.simonvt.cathode.Injector;
+import net.simonvt.cathode.jobqueue.AuthJobService;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 
@@ -31,5 +32,7 @@ public class SyncWatchingReceiver extends BroadcastReceiver {
   @Override public void onReceive(Context context, Intent intent) {
     Injector.obtain().inject(this);
     jobManager.addJob(new SyncWatching());
+    Intent i = new Intent(context, AuthJobService.class);
+    context.startService(i);
   }
 }

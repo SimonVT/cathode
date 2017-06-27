@@ -34,6 +34,11 @@ public abstract class CallJob<T> extends ErrorHandlerJob<T> {
     try {
       Call<T> call = getCall();
       Response<T> response = call.execute();
+
+      if (isStopped()) {
+        return false;
+      }
+
       if (response.isSuccessful()) {
         return handleResponse(response.body());
       } else {

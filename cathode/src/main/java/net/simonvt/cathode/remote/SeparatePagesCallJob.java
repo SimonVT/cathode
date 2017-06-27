@@ -57,7 +57,11 @@ public abstract class SeparatePagesCallJob<T> extends ErrorHandlerJob<List<T>> {
         }
 
         page++;
-      } while (page <= pageCount);
+      } while (page <= pageCount && !isStopped());
+
+      if (isStopped()) {
+        return false;
+      }
 
       return onDone();
     } catch (IOException e) {

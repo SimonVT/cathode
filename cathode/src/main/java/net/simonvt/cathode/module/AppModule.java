@@ -36,6 +36,9 @@ import net.simonvt.cathode.jobqueue.AuthJobService;
 import net.simonvt.cathode.jobqueue.DataJobHandler;
 import net.simonvt.cathode.jobqueue.JobInjector;
 import net.simonvt.cathode.jobqueue.JobModule;
+import net.simonvt.cathode.jobscheduler.AuthJobHandlerJob;
+import net.simonvt.cathode.jobscheduler.DataJobHandlerJob;
+import net.simonvt.cathode.jobscheduler.JobCreator;
 import net.simonvt.cathode.notification.NotificationActionService;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
@@ -306,7 +309,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         // Appwidget
         UpcomingRemoteViewsFactory.class,
 
-        // Tasks
+        // Jobs
         DismissMovieRecommendation.class, CollectMovie.class, RateMovie.class, WatchlistMovie.class,
         DismissShowRecommendation.class, CollectEpisode.class, RateEpisode.class,
         WatchlistEpisode.class, CollectSeason.class, RateShow.class, WatchlistShow.class,
@@ -338,12 +341,15 @@ import net.simonvt.cathode.widget.RemoteImageView;
         RemoveHistoryItem.class, SyncPendingShows.class, SyncPendingSeasons.class,
         SyncPendingMovies.class,
 
+        // Scheduler jobs
+        AuthJobHandlerJob.class, DataJobHandlerJob.class,
+
         // Upgrade tasks
         EnsureSync.class, UpperCaseGenres.class,
 
         // Misc
         SearchHandler.class, ApiSettings.class, EpisodeHistoryLoader.class, CheckIn.class,
-        MovieHistoryLoader.class, AuthJobHandler.class, DataJobHandler.class,
+        MovieHistoryLoader.class, AuthJobHandler.class, DataJobHandler.class, JobCreator.class,
     })
 public class AppModule {
 

@@ -16,8 +16,14 @@
 
 package net.simonvt.cathode.remote.sync.shows;
 
+import android.app.job.JobInfo;
+import android.content.ComponentName;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.text.format.DateUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +33,8 @@ import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.SeasonService;
 import net.simonvt.cathode.api.service.ShowsService;
+import net.simonvt.cathode.jobscheduler.Jobs;
+import net.simonvt.cathode.jobscheduler.SchedulerService;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
@@ -41,11 +49,24 @@ import timber.log.Timber;
 
 public class SyncPendingShows extends ErrorHandlerJob {
 
+  public static final int ID = 103;
+
   @Inject transient ShowsService showsService;
   @Inject transient SeasonService seasonService;
 
   @Inject transient ShowDatabaseHelper showHelper;
   @Inject transient SeasonDatabaseHelper seasonHelper;
+
+  @RequiresApi(api = Build.VERSION_CODES.N) public static void schedule(Context context) {
+    JobInfo jobInfo = new JobInfo.Builder(ID,
+        new ComponentName(context, SchedulerService.class)).setRequiredNetworkType(
+        JobInfo.NETWORK_TYPE_ANY)
+        .setRequiresCharging(true)
+        .setBackoffCriteria(DateUtils.MINUTE_IN_MILLIS, JobInfo.BACKOFF_POLICY_EXPONENTIAL)
+        .setPersisted(true)
+        .build();
+    Jobs.schedule(context, jobInfo);
+  }
 
   @Override public String key() {
     return "SyncPendingShows";
@@ -72,7 +93,7 @@ public class SyncPendingShows extends ErrorHandlerJob {
     }, where, null, null);
 
     try {
-      while (shows.moveToNext()) {
+      while (shows.moveToNext() && !isStopped()) {
         final long showId = Cursors.getLong(shows, ShowColumns.ID);
         final long traktId = Cursors.getLong(shows, ShowColumns.TRAKT_ID);
         final int watchedCount = Cursors.getInt(shows, ShowColumns.WATCHED_COUNT);
@@ -132,7 +153,15 @@ public class SyncPendingShows extends ErrorHandlerJob {
         }
       }
 
-      queue(new SyncPendingSeasons());
+      if (isStopped()) {
+        return false;
+      }
+
+      if (Jobs.usesScheduler()) {
+        SyncPendingSeasons.schedule(getContext());
+      } else {
+        queue(new SyncPendingSeasons());
+      }
 
       return true;
     } catch (IOException e) {

@@ -58,7 +58,11 @@ public abstract class PagedCallJob<T> extends ErrorHandlerJob<List<T>> {
         result = response.body();
         results.addAll(result);
         page++;
-      } while (page <= pageCount);
+      } while (page <= pageCount && !isStopped());
+
+      if (isStopped()) {
+        return false;
+      }
 
       return handleResponse(results);
     } catch (IOException e) {

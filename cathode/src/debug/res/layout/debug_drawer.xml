@@ -297,4 +297,20 @@
       android:textAllCaps="false"
       tools:text="10"
       style="@style/DebugDrawerValue"/>
+
+  <TextView
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
+      android:text="Job scheduler"
+      style="@style/DebugDrawerTitle"/>
+
+  <TextView
+      android:id="@+id/debug_startPeriodicJobs"
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
+      android:textAllCaps="false"
+      android:text="Start periodic"
+      style="@style/DebugDrawerItem"/>
 </GridLayout>

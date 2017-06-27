@@ -15,10 +15,15 @@
  */
 package net.simonvt.cathode.remote.sync.shows;
 
+import android.app.job.JobInfo;
+import android.content.ComponentName;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.RequiresApi;
 import android.text.format.DateUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +32,8 @@ import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.entity.UpdatedItem;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.api.util.TimeUtils;
+import net.simonvt.cathode.jobscheduler.Jobs;
+import net.simonvt.cathode.jobscheduler.SchedulerService;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
@@ -36,6 +43,8 @@ import retrofit2.Call;
 
 public class SyncUpdatedShows extends SeparatePagesCallJob<UpdatedItem> {
 
+  public static final int ID = 100;
+
   private static final int LIMIT = 100;
 
   @Inject transient ShowsService showsService;
@@ -43,6 +52,18 @@ public class SyncUpdatedShows extends SeparatePagesCallJob<UpdatedItem> {
 
   private transient SharedPreferences settings;
   private transient long currentTime;
+
+  @RequiresApi(api = Build.VERSION_CODES.N)
+  public static void schedulePeriodic(Context context) {
+    JobInfo jobInfo = new JobInfo.Builder(ID, new ComponentName(context, SchedulerService.class)) //
+        .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+        .setRequiresCharging(true)
+        .setRequiresDeviceIdle(true)
+        .setPeriodic(android.text.format.DateUtils.DAY_IN_MILLIS)
+        .setPersisted(true)
+        .build();
+    Jobs.schedule(context, jobInfo);
+  }
 
   public SyncUpdatedShows() {
     currentTime = System.currentTimeMillis();
@@ -90,7 +111,12 @@ public class SyncUpdatedShows extends SeparatePagesCallJob<UpdatedItem> {
   }
 
   @Override public boolean onDone() {
-    queue(new SyncPendingShows());
+    if (Jobs.usesScheduler()) {
+      SyncPendingShows.schedule(getContext());
+    } else {
+      queue(new SyncPendingShows());
+    }
+
     settings.edit().putLong(Settings.SHOWS_LAST_UPDATED, currentTime).apply();
     return true;
   }

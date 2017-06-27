@@ -32,12 +32,14 @@ import net.simonvt.cathode.api.body.CheckinItem;
 import net.simonvt.cathode.api.entity.CheckinResponse;
 import net.simonvt.cathode.api.service.CheckinService;
 import net.simonvt.cathode.event.ErrorEvent;
+import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
+import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.service.SyncWatchingReceiver;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.util.DateUtils;
@@ -91,12 +93,16 @@ public class CheckIn {
       Response<CheckinResponse> response = call.execute();
 
       if (response.isSuccessful()) {
-        Intent i = new Intent(context, SyncWatchingReceiver.class);
-        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
+        if (Jobs.usesScheduler()) {
+          SyncWatching.schedule(context, runtime * DateUtils.MINUTE_IN_MILLIS);
+        } else {
+          Intent i = new Intent(context, SyncWatchingReceiver.class);
+          PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
 
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime()
-            + (runtime + 1) * android.text.format.DateUtils.MINUTE_IN_MILLIS, pi);
+          AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+          am.set(AlarmManager.ELAPSED_REALTIME,
+              SystemClock.elapsedRealtime() + runtime * DateUtils.MINUTE_IN_MILLIS, pi);
+        }
         return true;
       } else {
         if (response.code() == 409) {
@@ -147,13 +153,16 @@ public class CheckIn {
       Response<CheckinResponse> response = call.execute();
 
       if (response.isSuccessful()) {
-        Intent i = new Intent(context, SyncWatchingReceiver.class);
-        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
+        if (Jobs.usesScheduler()) {
+          SyncWatching.schedule(context, runtime * DateUtils.MINUTE_IN_MILLIS);
+        } else {
+          Intent i = new Intent(context, SyncWatchingReceiver.class);
+          PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
 
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime()
-            + (runtime + 1) * android.text.format.DateUtils.MINUTE_IN_MILLIS, pi);
-
+          AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+          am.set(AlarmManager.ELAPSED_REALTIME,
+              SystemClock.elapsedRealtime() + runtime * DateUtils.MINUTE_IN_MILLIS, pi);
+        }
         return true;
       } else {
         if (response.code() == 409) {

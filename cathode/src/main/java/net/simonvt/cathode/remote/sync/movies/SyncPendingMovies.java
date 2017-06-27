@@ -16,12 +16,20 @@
 
 package net.simonvt.cathode.remote.sync.movies;
 
+import android.app.job.JobInfo;
+import android.content.ComponentName;
+import android.content.Context;
 import android.database.Cursor;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.text.format.DateUtils;
 import java.io.IOException;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.MoviesService;
+import net.simonvt.cathode.jobscheduler.Jobs;
+import net.simonvt.cathode.jobscheduler.SchedulerService;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
@@ -33,8 +41,21 @@ import timber.log.Timber;
 
 public class SyncPendingMovies extends ErrorHandlerJob<Movie> {
 
+  public static final int ID = 105;
+
   @Inject transient MoviesService moviesService;
   @Inject transient MovieDatabaseHelper movieHelper;
+
+  @RequiresApi(api = Build.VERSION_CODES.N) public static void schedule(Context context) {
+    JobInfo jobInfo = new JobInfo.Builder(ID,
+        new ComponentName(context, SchedulerService.class)).setRequiredNetworkType(
+        JobInfo.NETWORK_TYPE_ANY)
+        .setRequiresCharging(true)
+        .setBackoffCriteria(DateUtils.MINUTE_IN_MILLIS, JobInfo.BACKOFF_POLICY_EXPONENTIAL)
+        .setPersisted(true)
+        .build();
+    Jobs.schedule(context, jobInfo);
+  }
 
   @Override public String key() {
     return "SyncPendingMovies";
@@ -61,7 +82,7 @@ public class SyncPendingMovies extends ErrorHandlerJob<Movie> {
         MovieColumns.TRAKT_ID,
     }, where, null, null);
     try {
-      while (movies.moveToNext()) {
+      while (movies.moveToNext() && !isStopped()) {
         final long traktId = Cursors.getLong(movies, MovieColumns.TRAKT_ID);
         Timber.d("Syncing pending movie %d", traktId);
 
@@ -75,6 +96,10 @@ public class SyncPendingMovies extends ErrorHandlerJob<Movie> {
             return false;
           }
         }
+      }
+
+      if (isStopped()) {
+        return false;
       }
 
       return true;

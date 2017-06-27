@@ -146,6 +146,10 @@
     <service android:name="net.simonvt.cathode.notification.NotificationService"/>
 
     <service
+        android:name="net.simonvt.cathode.jobscheduler.SchedulerService"
+        android:permission="android.permission.BIND_JOB_SERVICE"/>
+
+    <service
         android:name="net.simonvt.cathode.service.DashClockService"
         android:icon="@drawable/ic_dashclock_search"
         android:label="@string/dashclock_title"
