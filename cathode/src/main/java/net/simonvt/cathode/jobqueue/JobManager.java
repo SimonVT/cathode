@@ -39,7 +39,8 @@ public final class JobManager {
 
   private Converter converter;
 
-  private final ArrayList<Job> jobs = new ArrayList<>();
+  private final List<Job> jobs = new ArrayList<>();
+  private final List<String> checkedOutKeys = new ArrayList<>();
 
   private final SerialExecutor serialExecutor;
 
@@ -231,6 +232,11 @@ public final class JobManager {
             continue;
           }
 
+          if (checkedOutKeys.contains(job.key())) {
+            continue;
+          }
+
+          checkedOutKeys.add(job.key());
           job.setCheckedOut(true);
           return job;
         }
@@ -242,12 +248,14 @@ public final class JobManager {
 
   public void checkinJob(Job job) {
     job.setCheckedOut(false);
+    checkedOutKeys.remove(job.key());
   }
 
   public void removeJob(final Job job) {
     synchronized (jobs) {
       Timber.d("Removing job: %s", job.key());
       jobs.remove(job);
+      checkedOutKeys.remove(job.key());
       postOnJobRemoved(job);
     }
 
@@ -292,6 +300,7 @@ public final class JobManager {
             Job job = jobs.get(i);
             if (job.hasFlags(flag)) {
               jobs.remove(i);
+              checkedOutKeys.remove(job.key());
               removeJobFromDatabase(job);
             }
           }
