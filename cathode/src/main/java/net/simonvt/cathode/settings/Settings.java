@@ -69,6 +69,14 @@ public final class Settings {
   // Last trending and recommendations sync
   public static final String SUGGESTIONS = "suggestions";
 
+  public static final String SUGGESTIONS_SHOWS_RECOMMENDED = "suggestionsShowsRecommended";
+  public static final String SUGGESTIONS_SHOWS_TRENDING = "suggestionsShowsTrending";
+  public static final String SUGGESTIONS_SHOWS_ANTICIPATED = "suggestionsShowsAnticipated";
+  public static final String SUGGESTIONS_MOVIES_RECOMMENDED = "suggestionsMoviesRecommended";
+  public static final String SUGGESTIONS_MOVIES_TRENDING = "suggestionsMoviesTrending";
+  public static final String SUGGESTIONS_MOVIES_ANTICIPATED = "suggestionsMoviesAnticipated";
+  public static final String LAST_SYNC_HIDDEN = "lastSyncHidden";
+
   // Settings not related to the user
   public static final String LAST_FULL_SYNC = "fullSync";
   public static final String LAST_PURGE = "lastPurge";

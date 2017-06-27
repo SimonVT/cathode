@@ -37,6 +37,7 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.movies.SyncAnticipatedMovies;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
@@ -103,6 +104,12 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
 
     setTitle(R.string.title_movies_anticipated);
     setEmptyText(R.string.movies_loading_anticipated);
+
+    if (TraktTimestamps.suggestionsNeedsUpdate(getActivity(),
+        Settings.SUGGESTIONS_MOVIES_ANTICIPATED)) {
+      jobManager.addJob(new SyncAnticipatedMovies());
+      TraktTimestamps.updateSuggestions(getActivity(), Settings.SUGGESTIONS_MOVIES_ANTICIPATED);
+    }
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {

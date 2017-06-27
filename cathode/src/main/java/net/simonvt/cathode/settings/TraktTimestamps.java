@@ -160,11 +160,11 @@ public final class TraktTimestamps {
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
-  public static boolean suggestionsNeedsUpdate(Context context) {
+  public static boolean suggestionsNeedsUpdate(Context context, String key) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 
-    final long lastActivity = settings.getLong(Settings.SUGGESTIONS, -1);
-    return System.currentTimeMillis() > lastActivity + 3 * DateUtils.HOUR_IN_MILLIS;
+    final long lastActivity = settings.getLong(key, -1);
+    return System.currentTimeMillis() > lastActivity + 6 * DateUtils.HOUR_IN_MILLIS;
   }
 
   public static boolean shouldSyncComments(long lastSync) {
@@ -240,11 +240,11 @@ public final class TraktTimestamps {
     editor.apply();
   }
 
-  public static void updateSuggestions(Context context) {
+  public static void updateSuggestions(Context context, String key) {
     final long currentTimeMillis = System.currentTimeMillis();
     PreferenceManager.getDefaultSharedPreferences(context)
         .edit()
-        .putLong(Settings.SUGGESTIONS, currentTimeMillis)
+        .putLong(key, currentTimeMillis)
         .apply();
   }
 

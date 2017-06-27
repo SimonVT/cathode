@@ -38,6 +38,7 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.shows.SyncAnticipatedShows;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.fragment.SwipeRefreshRecyclerFragment;
@@ -130,6 +131,12 @@ public class AnticipatedShowsFragment
     columnCount = getResources().getInteger(R.integer.showsColumns);
     setTitle(R.string.title_shows_anticipated);
     setEmptyText(R.string.shows_loading_anticipated);
+
+    if (TraktTimestamps.suggestionsNeedsUpdate(getActivity(),
+        Settings.SUGGESTIONS_SHOWS_ANTICIPATED)) {
+      jobManager.addJob(new SyncAnticipatedShows());
+      TraktTimestamps.updateSuggestions(getActivity(), Settings.SUGGESTIONS_SHOWS_ANTICIPATED);
+    }
   }
 
   @Override protected int getColumnCount() {

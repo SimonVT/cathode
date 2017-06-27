@@ -37,6 +37,7 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
@@ -103,6 +104,12 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
 
     setTitle(R.string.title_movies_trending);
     setEmptyText(R.string.movies_loading_trending);
+
+    if (TraktTimestamps.suggestionsNeedsUpdate(getActivity(),
+        Settings.SUGGESTIONS_MOVIES_TRENDING)) {
+      jobManager.addJob(new SyncTrendingMovies());
+      TraktTimestamps.updateSuggestions(getActivity(), Settings.SUGGESTIONS_MOVIES_TRENDING);
+    }
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {

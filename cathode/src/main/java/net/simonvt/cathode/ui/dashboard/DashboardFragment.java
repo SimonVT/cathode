@@ -33,9 +33,14 @@ import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
+import net.simonvt.cathode.remote.sync.shows.SyncTrendingShows;
+import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.adapter.CategoryAdapter;
@@ -67,6 +72,8 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
   private static final int LOADER_SHOWS_TRENDING = 4;
   private static final int LOADER_MOVIES_WATCHLIST = 5;
   private static final int LOADER_MOVIES_TRENDING = 6;
+
+  @Inject JobManager jobManager;
 
   CategoryAdapter adapter;
 
@@ -113,6 +120,18 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
     adapter.initCategory(R.string.category_shows_suggestions);
     adapter.initCategory(R.string.category_movies_watchlist);
     adapter.initCategory(R.string.category_movies_suggestions);
+
+    if (TraktTimestamps.suggestionsNeedsUpdate(getActivity(),
+        Settings.SUGGESTIONS_SHOWS_TRENDING)) {
+      jobManager.addJob(new SyncTrendingShows());
+      TraktTimestamps.updateSuggestions(getActivity(), Settings.SUGGESTIONS_SHOWS_TRENDING);
+    }
+
+    if (TraktTimestamps.suggestionsNeedsUpdate(getActivity(),
+        Settings.SUGGESTIONS_MOVIES_TRENDING)) {
+      jobManager.addJob(new SyncTrendingMovies());
+      TraktTimestamps.updateSuggestions(getActivity(), Settings.SUGGESTIONS_MOVIES_TRENDING);
+    }
   }
 
   @Override public void onDestroy() {

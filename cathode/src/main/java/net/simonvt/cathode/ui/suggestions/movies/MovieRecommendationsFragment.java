@@ -38,6 +38,7 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.fragment.SwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
@@ -131,6 +132,12 @@ public class MovieRecommendationsFragment
 
     setTitle(R.string.title_movies_recommended);
     setEmptyText(R.string.recommendations_empty);
+
+    if (TraktTimestamps.suggestionsNeedsUpdate(getActivity(),
+        Settings.SUGGESTIONS_MOVIES_RECOMMENDED)) {
+      jobManager.addJob(new SyncMovieRecommendations());
+      TraktTimestamps.updateSuggestions(getActivity(), Settings.SUGGESTIONS_MOVIES_RECOMMENDED);
+    }
   }
 
   @Override protected int getColumnCount() {

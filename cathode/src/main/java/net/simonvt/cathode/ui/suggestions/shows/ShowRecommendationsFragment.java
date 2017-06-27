@@ -40,6 +40,7 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.shows.SyncShowRecommendations;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.fragment.SwipeRefreshRecyclerFragment;
@@ -138,6 +139,12 @@ public class ShowRecommendationsFragment
 
     setTitle(R.string.title_shows_recommended);
     setEmptyText(R.string.recommendations_empty);
+
+    if (TraktTimestamps.suggestionsNeedsUpdate(getActivity(),
+        Settings.SUGGESTIONS_SHOWS_RECOMMENDED)) {
+      jobManager.addJob(new SyncShowRecommendations());
+      TraktTimestamps.updateSuggestions(getActivity(), Settings.SUGGESTIONS_SHOWS_RECOMMENDED);
+    }
   }
 
   @Override protected int getColumnCount() {
