@@ -97,6 +97,13 @@ public final class TraktTimestamps {
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
+  public static boolean showHideNeedsUpdate(Context context, long lastUpdated) {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+
+    long lastActivity = settings.getLong(ActivityTimestamp.SHOW_HIDE, -1);
+    return lastActivity == -1 || lastUpdated > lastActivity;
+  }
+
   public static boolean movieWatchedNeedsUpdate(Context context, long lastUpdated) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 
@@ -132,6 +139,13 @@ public final class TraktTimestamps {
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
+  public static boolean movieHideNeedsUpdate(Context context, long lastUpdated) {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+
+    long lastActivity = settings.getLong(ActivityTimestamp.MOVIE_HIDE, -1);
+    return lastActivity == -1 || lastUpdated > lastActivity;
+  }
+
   public static boolean commentLikedNeedsUpdate(Context context, long lastLiked) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 
@@ -150,13 +164,6 @@ public final class TraktTimestamps {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 
     final long lastActivity = settings.getLong(Settings.SUGGESTIONS, -1);
-    return System.currentTimeMillis() > lastActivity + 3 * DateUtils.HOUR_IN_MILLIS;
-  }
-
-  public static boolean hiddenNeedsUpdate(Context context) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-
-    final long lastActivity = settings.getLong(Settings.LAST_SYNC_HIDDEN, -1);
     return System.currentTimeMillis() > lastActivity + 3 * DateUtils.HOUR_IN_MILLIS;
   }
 
@@ -262,6 +269,7 @@ public final class TraktTimestamps {
     editor.remove(ActivityTimestamp.SHOW_RATING);
     editor.remove(ActivityTimestamp.SHOW_WATCHLIST);
     editor.remove(ActivityTimestamp.SHOW_COMMENT);
+    editor.remove(ActivityTimestamp.SHOW_HIDE);
 
     editor.remove(ActivityTimestamp.SEASON_COMMENT);
     editor.remove(ActivityTimestamp.SEASON_RATING);
@@ -271,6 +279,7 @@ public final class TraktTimestamps {
     editor.remove(ActivityTimestamp.MOVIE_RATING);
     editor.remove(ActivityTimestamp.MOVIE_WATCHLIST);
     editor.remove(ActivityTimestamp.MOVIE_COMMENT);
+    editor.remove(ActivityTimestamp.MOVIE_HIDE);
 
     editor.remove(ActivityTimestamp.COMMENT_LIKED_AT);
 

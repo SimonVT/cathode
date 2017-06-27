@@ -68,7 +68,6 @@ public final class Settings {
 
   // Last trending and recommendations sync
   public static final String SUGGESTIONS = "suggestions";
-  public static final String LAST_SYNC_HIDDEN = "lastSyncHidden";
 
   // Settings not related to the user
   public static final String LAST_FULL_SYNC = "fullSync";
@@ -93,6 +92,7 @@ public final class Settings {
     String SHOW_RATING = "showRating";
     String SHOW_WATCHLIST = "showWatchlist";
     String SHOW_COMMENT = "showComment";
+    String SHOW_HIDE = "showHide";
 
     String SEASON_RATING = "seasonRating";
     String SEASON_COMMENT = "seasonComment";
@@ -108,6 +108,7 @@ public final class Settings {
     String MOVIE_RATING = "movieRating";
     String MOVIE_WATCHLIST = "movieWatchlist";
     String MOVIE_COMMENT = "movieComment";
+    String MOVIE_HIDE = "movieHide";
 
     String COMMENT_LIKED_AT = "commentLikedAt";
 

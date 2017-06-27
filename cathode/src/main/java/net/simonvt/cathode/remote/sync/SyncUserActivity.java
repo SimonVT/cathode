@@ -62,9 +62,12 @@ public class SyncUserActivity extends CallJob<LastActivity> {
     final long showLastWatchlist = lastActivity.getShows().getWatchlistedAt().getTimeInMillis();
     final long showLastRating = lastActivity.getShows().getRatedAt().getTimeInMillis();
     final long showLastComment = lastActivity.getShows().getCommentedAt().getTimeInMillis();
+    final long showLastHide = lastActivity.getShows().getHiddenAt().getTimeInMillis();
 
     final long seasonLastRating = lastActivity.getSeasons().getRatedAt().getTimeInMillis();
+    final long seasonLastWatchlist = lastActivity.getSeasons().getWatchlistedAt().getTimeInMillis();
     final long seasonLastComment = lastActivity.getSeasons().getCommentedAt().getTimeInMillis();
+    final long seasonLastHide = lastActivity.getSeasons().getHiddenAt().getTimeInMillis();
 
     final long episodeLastWatched = lastActivity.getEpisodes().getWatchedAt().getTimeInMillis();
     final long episodeLastCollected = lastActivity.getEpisodes().getCollectedAt().getTimeInMillis();
@@ -78,6 +81,7 @@ public class SyncUserActivity extends CallJob<LastActivity> {
     final long movieLastWatchlist = lastActivity.getMovies().getWatchlistedAt().getTimeInMillis();
     final long movieLastRating = lastActivity.getMovies().getRatedAt().getTimeInMillis();
     final long movieLastComment = lastActivity.getMovies().getCommentedAt().getTimeInMillis();
+    final long movieLastHide = lastActivity.getMovies().getHiddenAt().getTimeInMillis();
 
     final long commentLastLiked = lastActivity.getComments().getLikedAt().getTimeInMillis();
 
@@ -149,6 +153,11 @@ public class SyncUserActivity extends CallJob<LastActivity> {
 
     if (TraktTimestamps.listNeedsUpdate(getContext(), listLastUpdated)) {
       queue(new SyncLists());
+    }
+
+    if (TraktTimestamps.showHideNeedsUpdate(getContext(), showLastHide)
+        || TraktTimestamps.movieHideNeedsUpdate(getContext(), movieLastHide)) {
+      queue(new SyncHiddenItems());
     }
 
     queue(new SyncWatching());

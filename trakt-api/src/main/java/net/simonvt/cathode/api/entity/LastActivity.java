@@ -32,6 +32,8 @@ public class LastActivity {
 
     private IsoTime pausedAt;
 
+    private IsoTime hiddenAt;
+
     private IsoTime likedAt;
 
     private IsoTime updatedAt;
@@ -58,6 +60,10 @@ public class LastActivity {
 
     public IsoTime getPausedAt() {
       return pausedAt;
+    }
+
+    public IsoTime getHiddenAt() {
+      return hiddenAt;
     }
 
     public IsoTime getLikedAt() {
