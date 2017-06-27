@@ -79,6 +79,7 @@ public final class Settings {
 
   // Settings not related to the user
   public static final String LAST_FULL_SYNC = "fullSync";
+  public static final String LAST_CONFIG_SYNC = "configSync";
   public static final String LAST_PURGE = "lastPurge";
   public static final String VERSION_CODE = "versionCode";
   public static final String SHOWS_LAST_UPDATED = "showsLastUpdated";

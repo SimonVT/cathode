@@ -23,6 +23,7 @@ import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.tmdb.api.SyncConfiguration;
+import net.simonvt.cathode.util.DateUtils;
 
 public class SyncJob extends Job {
 
@@ -39,17 +40,31 @@ public class SyncJob extends Job {
   }
 
   @Override public boolean perform() {
-    queue(new SyncConfiguration());
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+    final long currentTime = System.currentTimeMillis();
+    final long lastConfigSync = settings.getLong(Settings.LAST_CONFIG_SYNC, 0L);
+    final long lastShowSync = settings.getLong(Settings.SHOWS_LAST_UPDATED, 0L);
+    final long lastMovieSync = settings.getLong(Settings.MOVIES_LAST_UPDATED, 0L);
 
-    queue(new SyncUserSettings());
-
-    queue(new SyncUpdatedShows());
-    queue(new SyncUpdatedMovies());
+    if (lastConfigSync + DateUtils.DAY_IN_MILLIS < currentTime) {
+      queue(new SyncUserSettings());
+      queue(new SyncConfiguration());
+      settings.edit().putLong(Settings.LAST_CONFIG_SYNC, currentTime).apply();
+    }
+    if (lastShowSync == 0L) {
+      settings.edit().putLong(Settings.SHOWS_LAST_UPDATED, currentTime).apply();
+    } else if (lastShowSync + 2 * DateUtils.DAY_IN_MILLIS < currentTime) {
+      queue(new SyncUpdatedShows());
+    }
+    if (lastMovieSync == 0L) {
+      settings.edit().putLong(Settings.MOVIES_LAST_UPDATED, currentTime).apply();
+    } else if (lastMovieSync + 2 * DateUtils.DAY_IN_MILLIS < currentTime) {
+      queue(new SyncUpdatedMovies());
+    }
 
     queue(new SyncUserActivity());
+    queue(new SyncWatching());
 
-    final long currentTime = System.currentTimeMillis();
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
     settings.edit().putLong(Settings.LAST_FULL_SYNC, currentTime).apply();
     return true;
   }

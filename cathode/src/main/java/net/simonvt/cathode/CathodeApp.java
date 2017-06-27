@@ -38,6 +38,7 @@ import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.UpdateShowCounts;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
+import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.movies.SyncAnticipatedMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncAnticipatedShows;
 import net.simonvt.cathode.remote.upgrade.EnsureSync;
@@ -123,14 +124,16 @@ public class CathodeApp extends Application {
   private Runnable syncRunnable = new Runnable() {
     @Override public void run() {
       Timber.d("Performing periodic sync");
-      SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(CathodeApp.this);
-      final long lastFullSync = settings.getLong(Settings.LAST_FULL_SYNC, 0);
       final long currentTime = System.currentTimeMillis();
-      if (lastFullSync + 24 * DateUtils.DAY_IN_MILLIS < currentTime) {
+      final long lastFullSync = settings.getLong(Settings.LAST_FULL_SYNC, 0);
+
+      if (lastFullSync + DateUtils.DAY_IN_MILLIS < currentTime) {
         jobManager.addJob(new SyncJob());
       } else {
         jobManager.addJob(new SyncUserActivity());
+        jobManager.addJob(new SyncWatching());
       }
+
       lastSync = System.currentTimeMillis();
       MainHandler.postDelayed(this, SYNC_DELAY);
     }

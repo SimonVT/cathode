@@ -160,8 +160,6 @@ public class SyncUserActivity extends CallJob<LastActivity> {
       queue(new SyncHiddenItems());
     }
 
-    queue(new SyncWatching());
-
     TraktTimestamps.update(getContext(), lastActivity);
 
     return true;
