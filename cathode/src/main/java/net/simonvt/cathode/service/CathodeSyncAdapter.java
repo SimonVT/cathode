@@ -21,16 +21,24 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
+import java.util.concurrent.CountDownLatch;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.Injector;
+import net.simonvt.cathode.jobqueue.AuthJobHandler;
+import net.simonvt.cathode.jobqueue.DataJobHandler;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobHandler;
+import net.simonvt.cathode.jobqueue.JobInjector;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.Settings;
+import timber.log.Timber;
 
 public class CathodeSyncAdapter extends AbstractThreadedSyncAdapter {
 
   @Inject JobManager jobManager;
+  @Inject JobInjector injector;
 
   public CathodeSyncAdapter(Context context) {
     super(context, true);
@@ -42,8 +50,66 @@ public class CathodeSyncAdapter extends AbstractThreadedSyncAdapter {
 
   @Override public void onPerformSync(Account account, Bundle extras, String authority,
       ContentProviderClient provider, SyncResult syncResult) {
-    if (jobManager != null && Settings.isLoggedIn(getContext())) {
+    if (jobManager == null) {
+      return;
+    }
+
+    if (!Settings.isLoggedIn(getContext())) {
+      return;
+    }
+
+    if (inject(new SyncJob()).perform()) {
+      final CountDownLatch latch = new CountDownLatch(2);
+
+      final AuthJobHandler authJobHandler = AuthJobHandler.getInstance();
+      final DataJobHandler dataJobHandler = DataJobHandler.getInstance();
+
+      if (authJobHandler.hasJobs()) {
+        authJobHandler.registerListener(new JobHandler.JobHandlerListener() {
+
+          @Override public void onQueueEmpty() {
+            latch.countDown();
+            authJobHandler.unregisterListener(this);
+          }
+
+          @Override public void onQueueFailed() {
+            latch.countDown();
+            authJobHandler.unregisterListener(this);
+          }
+        });
+      } else {
+        latch.countDown();
+      }
+
+      if (dataJobHandler.hasJobs()) {
+        dataJobHandler.registerListener(new JobHandler.JobHandlerListener() {
+
+          @Override public void onQueueEmpty() {
+            latch.countDown();
+            dataJobHandler.unregisterListener(this);
+          }
+
+          @Override public void onQueueFailed() {
+            latch.countDown();
+            dataJobHandler.unregisterListener(this);
+          }
+        });
+      } else {
+        latch.countDown();
+      }
+
+      try {
+        latch.await();
+      } catch (InterruptedException e) {
+        Timber.d(e);
+      }
+    } else {
       jobManager.addJob(new SyncJob());
     }
+  }
+
+  private Job inject(Job job) {
+    injector.injectInto(job);
+    return job;
   }
 }

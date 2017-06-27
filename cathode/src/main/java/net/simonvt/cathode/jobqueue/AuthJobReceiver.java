@@ -25,7 +25,7 @@ public class AuthJobReceiver extends BroadcastReceiver {
 
   @Override public void onReceive(Context context, Intent intent) {
     WakeLock.acquire(context, AuthJobService.WAKELOCK_TAG);
-    final int retryDelay = intent.getIntExtra(AuthJobService.RETRY_DELAY, 1);
+    final long retryDelay = intent.getLongExtra(AuthJobService.RETRY_DELAY, -1L);
     Intent i = new Intent(context, AuthJobService.class);
     i.putExtra(AuthJobService.RETRY_DELAY, retryDelay);
     context.startService(i);

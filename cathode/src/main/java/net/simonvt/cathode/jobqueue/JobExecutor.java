@@ -25,6 +25,8 @@ public class JobExecutor {
 
   public interface JobExecutorListener {
 
+    void onStartJob(Job job);
+
     void onQueueEmpty();
 
     void onQueueFailed();
@@ -42,9 +44,7 @@ public class JobExecutor {
 
   private ExecutorService executor;
 
-  private boolean paused;
-
-  private boolean destroyed;
+  private boolean stopped = true;
 
   private boolean halt;
 
@@ -65,27 +65,29 @@ public class JobExecutor {
     lock = new Object();
 
     jobManager.addJobListener(jobListener);
-
-    startJobs();
   }
 
-  public void pause() {
+  public void start() {
     synchronized (lock) {
-      paused = true;
-    }
-  }
-
-  public void resume() {
-    synchronized (lock) {
-      paused = false;
+      stopped = false;
+      halt = false;
       startJobs();
     }
   }
 
-  public void destroy() {
+  public void stop() {
     synchronized (lock) {
-      destroyed = true;
-      executor.shutdown();
+      stopped = true;
+    }
+  }
+
+  public boolean hasJobs() {
+    synchronized (lock) {
+      if (runningJobCount > 0) {
+        return true;
+      }
+
+      return jobManager.hasJobs(withFlags, withoutFlags);
     }
   }
 
@@ -94,22 +96,24 @@ public class JobExecutor {
     }
 
     @Override public void onJobAdded(JobManager jobManager, Job job) {
-      if (!destroyed) {
-        startJobs();
-      }
+      startJobs();
     }
 
     @Override public void onJobRemoved(JobManager jobManager, Job job) {
     }
   };
 
+  private void postOnStartJob(final Job job) {
+    MainHandler.post(new Runnable() {
+      @Override public void run() {
+        executorListener.onStartJob(job);
+      }
+    });
+  }
+
   private void postQueueEmpty() {
     MainHandler.post(new Runnable() {
       @Override public void run() {
-        if (destroyed) {
-          return;
-        }
-
         // Jobs might have been posted since postQueueEmpty was called,
         // can happen if last job in the queue posts additional jobs.
         if (jobManager.hasJobs(withFlags, withoutFlags)) {
@@ -133,7 +137,7 @@ public class JobExecutor {
 
   private void startJobs() {
     synchronized (lock) {
-      if (!paused) {
+      if (!stopped) {
         if (!halt) {
           while (runningJobCount < threadCount) {
             Job job = jobManager.checkoutJob(withFlags, withoutFlags);
@@ -141,6 +145,7 @@ public class JobExecutor {
               Timber.d("Queueing job: %s", job.key());
               executor.execute(new JobRunnable(job));
               runningJobCount++;
+              postOnStartJob(job);
             } else {
               break;
             }
@@ -149,7 +154,7 @@ public class JobExecutor {
           Timber.d("Queue is halted, not starting");
         }
       } else {
-        Timber.d("Queue paused, not starting");
+        Timber.d("Queue stopped, not starting");
       }
     }
   }
@@ -160,10 +165,6 @@ public class JobExecutor {
 
       jobManager.removeJob(job);
       runningJobCount--;
-
-      if (destroyed) {
-        return;
-      }
 
       if (halt) {
         halt = false;
@@ -189,10 +190,6 @@ public class JobExecutor {
       halt = true;
       jobManager.checkinJob(job);
       runningJobCount--;
-
-      if (destroyed) {
-        return;
-      }
 
       if (runningJobCount == 0) {
         postQueueFailed();

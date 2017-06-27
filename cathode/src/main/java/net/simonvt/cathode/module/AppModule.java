@@ -17,7 +17,6 @@
 package net.simonvt.cathode.module;
 
 import android.content.Context;
-import android.content.Intent;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
@@ -32,13 +31,11 @@ import net.simonvt.cathode.images.MovieRequestHandler;
 import net.simonvt.cathode.images.PersonRequestHandler;
 import net.simonvt.cathode.images.SeasonRequestHandler;
 import net.simonvt.cathode.images.ShowRequestHandler;
+import net.simonvt.cathode.jobqueue.AuthJobHandler;
 import net.simonvt.cathode.jobqueue.AuthJobService;
-import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.DataJobHandler;
 import net.simonvt.cathode.jobqueue.JobInjector;
-import net.simonvt.cathode.jobqueue.JobListener;
-import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.jobqueue.JobModule;
-import net.simonvt.cathode.jobqueue.JobService;
 import net.simonvt.cathode.notification.NotificationActionService;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
@@ -46,7 +43,6 @@ import net.simonvt.cathode.provider.SearchDatabaseHelper;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.UserDatabaseHelper;
-import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.LogoutJob;
 import net.simonvt.cathode.remote.UpdateShowCounts;
@@ -304,7 +300,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         MovieRequestHandler.class, PersonRequestHandler.class, ImageRequestHandler.class,
 
         // Services
-        JobService.class, CathodeSyncAdapter.class, AuthJobService.class, NotificationActionService.class,
+        CathodeSyncAdapter.class, AuthJobService.class, NotificationActionService.class,
 
         // Receivers
         SyncWatchingReceiver.class,
@@ -350,7 +346,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
 
         // Misc
         SearchHandler.class, ApiSettings.class, EpisodeHistoryLoader.class,
-        MovieHistoryLoader.class,
+        MovieHistoryLoader.class, AuthJobHandler.class, DataJobHandler.class,
     })
 public class AppModule {
 
@@ -366,34 +362,6 @@ public class AppModule {
 
   @Provides @Singleton JobInjector provideJobInjector(final Context context) {
     return JobInjectorImpl.getInstance(context);
-  }
-
-  @Provides @Singleton JobListener provideJobListener(final Context context) {
-    return new JobListener() {
-      @Override public void onJobsLoaded(JobManager jobManager) {
-        if (jobManager.hasJobs(Flags.REQUIRES_AUTH, 0)) {
-          Intent i = new Intent(context, AuthJobService.class);
-          context.startService(i);
-        }
-        if (jobManager.hasJobs(0, Flags.REQUIRES_AUTH)) {
-          Intent i = new Intent(context, JobService.class);
-          context.startService(i);
-        }
-      }
-
-      @Override public void onJobAdded(JobManager jobManager, Job job) {
-        if (job.hasFlags(Flags.REQUIRES_AUTH)) {
-          Intent i = new Intent(context, AuthJobService.class);
-          context.startService(i);
-        } else {
-          Intent i = new Intent(context, JobService.class);
-          context.startService(i);
-        }
-      }
-
-      @Override public void onJobRemoved(JobManager jobManager, Job job) {
-      }
-    };
   }
 
   @Provides @Singleton SearchHandler provideSearchHandler() {

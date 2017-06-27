@@ -44,11 +44,9 @@ import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.RequestFailedEvent;
 import net.simonvt.cathode.event.SyncEvent;
 import net.simonvt.cathode.event.SyncEvent.OnSyncListener;
-import net.simonvt.cathode.jobqueue.AuthJobService;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobListener;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.jobqueue.JobService;
 import net.simonvt.cathode.notification.NotificationService;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -285,16 +283,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
     });
 
     injects.jobManager.addJobListener(jobListener);
-
-    debugViews.startJobService.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        Intent i = new Intent(BaseActivity.this, JobService.class);
-        startService(i);
-
-        i = new Intent(BaseActivity.this, AuthJobService.class);
-        startService(i);
-      }
-    });
   }
 
   private JobListener jobListener = new JobListener() {
@@ -323,17 +311,17 @@ import okhttp3.logging.HttpLoggingInterceptor;
   }
 
   private OnSyncListener debugSyncListener = new OnSyncListener() {
-    @Override public void onSyncChanged(int authSyncCount, int jobSyncCount) {
-      if (authSyncCount > 0) {
-        debugViews.authJobServiceStatus.setText("Running");
+    @Override public void onSyncChanged(boolean authExecuting, boolean dataExecuting) {
+      if (authExecuting) {
+        debugViews.authHandlerStatus.setText("Running");
       } else {
-        debugViews.authJobServiceStatus.setText("Stopped");
+        debugViews.authHandlerStatus.setText("Stopped");
       }
 
-      if (jobSyncCount > 0) {
-        debugViews.jobServiceStatus.setText("Running");
+      if (dataExecuting) {
+        debugViews.dataHandlerStatus.setText("Running");
       } else {
-        debugViews.jobServiceStatus.setText("Stopped");
+        debugViews.dataHandlerStatus.setText("Stopped");
       }
     }
   };
@@ -397,12 +385,10 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
     @BindView(R.id.debug_syncLists) View syncLists;
 
-    @BindView(R.id.debug_authJobServiceStatus) TextView authJobServiceStatus;
+    @BindView(R.id.debug_authHandlerStatus) TextView authHandlerStatus;
 
-    @BindView(R.id.debug_jobServiceStatus) TextView jobServiceStatus;
+    @BindView(R.id.debug_dataHandlerStatus) TextView dataHandlerStatus;
 
     @BindView(R.id.debug_jobCount) TextView jobCount;
-
-    @BindView(R.id.debug_startJobService) TextView startJobService;
   }
 }

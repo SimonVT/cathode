@@ -25,14 +25,14 @@ public final class SyncEvent {
 
   public interface OnSyncListener {
 
-    void onSyncChanged(int authSyncCount, int jobSyncCount);
+    void onSyncChanged(boolean authExecuting, boolean dataExecuting);
   }
 
   private static final List<WeakReference<OnSyncListener>> LISTENERS = new ArrayList<>();
 
-  private static int authSyncCount = 0;
+  private static boolean authSyncing;
 
-  private static int jobSyncCount = 0;
+  private static boolean dataSyncing;
 
   public static void registerListener(final OnSyncListener listener) {
     synchronized (LISTENERS) {
@@ -40,7 +40,7 @@ public final class SyncEvent {
 
       MainHandler.post(new Runnable() {
         @Override public void run() {
-          listener.onSyncChanged(authSyncCount, jobSyncCount);
+          listener.onSyncChanged(authSyncing, dataSyncing);
         }
       });
     }
@@ -61,23 +61,23 @@ public final class SyncEvent {
   private SyncEvent() {
   }
 
-  public static void authServiceStarted() {
-    authSyncCount++;
+  public static void authExecutorStarted() {
+    authSyncing = true;
     postSyncEvent();
   }
 
-  public static void authServiceStopped() {
-    authSyncCount--;
+  public static void authExecutorStopped() {
+    authSyncing = false;
     postSyncEvent();
   }
 
-  public static void jobServiceStarted() {
-    jobSyncCount++;
+  public static void dataExecutorStarted() {
+    dataSyncing = true;
     postSyncEvent();
   }
 
-  public static void jobServiceStopped() {
-    jobSyncCount--;
+  public static void dataExecutorStopped() {
+    dataSyncing = false;
     postSyncEvent();
   }
 
@@ -93,7 +93,7 @@ public final class SyncEvent {
               continue;
             }
 
-            l.onSyncChanged(authSyncCount, jobSyncCount);
+            l.onSyncChanged(authSyncing, dataSyncing);
           }
         }
       }

@@ -33,6 +33,9 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.event.AuthFailedEvent;
 import net.simonvt.cathode.event.AuthFailedEvent.OnAuthFailedListener;
+import net.simonvt.cathode.jobqueue.AuthJobHandler;
+import net.simonvt.cathode.jobqueue.DataJobHandler;
+import net.simonvt.cathode.jobqueue.JobHandler;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.UpdateShowCounts;
@@ -151,6 +154,9 @@ public class CathodeApp extends Application {
         final long delay = Math.max(SYNC_DELAY - (currentTime - lastSync), 0);
         MainHandler.postDelayed(syncRunnable, delay);
       }
+
+      AuthJobHandler.getInstance().registerListener(authJobListener);
+      DataJobHandler.getInstance().registerListener(dataJobListener);
     }
   }
 
@@ -159,8 +165,32 @@ public class CathodeApp extends Application {
     if (homeActivityResumedCount == 0) {
       Timber.d("Pausing periodic sync");
       MainHandler.removeCallbacks(syncRunnable);
+      AuthJobHandler.getInstance().unregisterListener(authJobListener);
+      DataJobHandler.getInstance().unregisterListener(dataJobListener);
     }
   }
+
+  private JobHandler.JobHandlerListener authJobListener = new JobHandler.JobHandlerListener() {
+
+    @Override public void onQueueEmpty() {
+      Timber.d("Auth job queue empty");
+    }
+
+    @Override public void onQueueFailed() {
+      Timber.d("Auth job queue failed");
+    }
+  };
+
+  private JobHandler.JobHandlerListener dataJobListener = new JobHandler.JobHandlerListener() {
+
+    @Override public void onQueueEmpty() {
+      Timber.d("Data job queue empty");
+    }
+
+    @Override public void onQueueFailed() {
+      Timber.d("Data job queue failed");
+    }
+  };
 
   private void upgrade() {
     final int currentVersion = settings.getInt(Settings.VERSION_CODE, -1);

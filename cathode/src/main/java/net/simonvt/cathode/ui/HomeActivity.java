@@ -503,8 +503,8 @@ public class HomeActivity extends BaseActivity
   };
 
   private OnSyncListener onSyncEvent = new OnSyncListener() {
-    @Override public void onSyncChanged(int authSyncCount, int jobSyncCount) {
-      final boolean isSyncing = authSyncCount > 0 || jobSyncCount > 0;
+    @Override public void onSyncChanged(boolean authExecuting, boolean dataExecuting) {
+      final boolean isSyncing = authExecuting || dataExecuting;
       if (isSyncing != HomeActivity.this.isSyncing) {
         HomeActivity.this.isSyncing = isSyncing;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2017 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,28 @@
 
 package net.simonvt.cathode.jobqueue;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
+import net.simonvt.cathode.event.SyncEvent;
+import net.simonvt.cathode.remote.Flags;
 
-public class JobReceiver extends BroadcastReceiver {
+public class DataJobHandler extends JobHandler {
 
-  @Override public void onReceive(Context context, Intent intent) {
-    final int retryDelay = intent.getIntExtra(JobService.RETRY_DELAY, 1);
-    Intent i = new Intent(context, JobService.class);
-    i.putExtra(JobService.RETRY_DELAY, retryDelay);
-    context.startService(i);
+  private static final int THREAD_COUNT = 3;
+
+  private static volatile DataJobHandler instance = new DataJobHandler();
+
+  public static DataJobHandler getInstance() {
+    return instance;
+  }
+
+  public DataJobHandler() {
+    super(0, Flags.REQUIRES_AUTH, THREAD_COUNT);
+  }
+
+  @Override protected void onResume() {
+    SyncEvent.dataExecutorStarted();
+  }
+
+  @Override protected void onPause() {
+    SyncEvent.dataExecutorStopped();
   }
 }

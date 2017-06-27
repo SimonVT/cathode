@@ -22,14 +22,10 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.text.format.DateUtils;
-import javax.inject.Inject;
 import net.simonvt.cathode.Injector;
-import net.simonvt.cathode.event.SyncEvent;
-import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.util.WakeLock;
 import timber.log.Timber;
 
@@ -39,62 +35,62 @@ public class AuthJobService extends Service {
 
   static final String RETRY_DELAY = "net.simonvt.cathode.sync.AuthJobService.retryDelay";
 
-  private static final int MAX_RETRY_DELAY = 60; // In minutes
+  private static final long MAX_RETRY_DELAY = 5 * DateUtils.HOUR_IN_MILLIS;
 
-  @Inject JobManager jobManager;
+  private AuthJobHandler executor;
 
-  private volatile int retryDelay = -1;
+  private volatile long retryDelay = -1;
 
-  private JobExecutor executor;
+  private int startId;
 
   @Override public void onCreate() {
     super.onCreate();
     Timber.d("AuthJobService started");
     Injector.obtain().inject(this);
-    SyncEvent.authServiceStarted();
 
     WakeLock.acquire(this, WAKELOCK_TAG);
 
-    HandlerThread thread = new HandlerThread("AuthJobService");
-    thread.start();
-
-    if (jobManager.hasJobs(Flags.REQUIRES_AUTH, 0)) {
-      executor = new JobExecutor(jobManager, executorListener, 1, Flags.REQUIRES_AUTH, 0);
-    } else {
-      stopSelf();
-    }
+    executor = AuthJobHandler.getInstance();
+    executor.registerListener(handlerListener);
   }
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
-    if (retryDelay == -1) {
+    this.startId = startId;
+
+    if (retryDelay == -1L) {
       if (intent != null) {
-        int delay = intent.getIntExtra(RETRY_DELAY, -1);
-        if (delay != -1) {
+        long delay = intent.getLongExtra(RETRY_DELAY, -1L);
+        if (delay != -1L) {
           retryDelay = delay;
         }
       }
     }
 
+    if (!executor.hasJobs()) {
+      stopSelfResult(startId);
+    }
+
     return START_STICKY;
   }
 
-  private JobExecutor.JobExecutorListener executorListener = new JobExecutor.JobExecutorListener() {
+  private JobHandler.JobHandlerListener handlerListener = new JobHandler.JobHandlerListener() {
+
     @Override public void onQueueEmpty() {
       Timber.d("AuthJobService queue empty");
-      stopSelf();
+      stopSelfResult(startId);
     }
 
     @Override public void onQueueFailed() {
       Timber.d("AuthJobService queue failed");
       scheduleAlarm();
-      stopSelf();
+      stopSelfResult(startId);
     }
   };
 
   private void scheduleAlarm() {
     Intent intent = new Intent(AuthJobService.this, AuthJobReceiver.class);
-    final int retryDelay = Math.max(1, this.retryDelay);
-    final int nextDelay = Math.min(retryDelay * 2, MAX_RETRY_DELAY);
+    final long retryDelay = Math.max(1, this.retryDelay);
+    final long nextDelay = Math.min(retryDelay * 2, MAX_RETRY_DELAY);
     intent.putExtra(RETRY_DELAY, nextDelay);
 
     PendingIntent pi = PendingIntent.getBroadcast(AuthJobService.this, 0, intent,
@@ -103,7 +99,7 @@ public class AuthJobService extends Service {
     AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
     am.cancel(pi);
 
-    final long runAt = SystemClock.elapsedRealtime() + retryDelay * DateUtils.MINUTE_IN_MILLIS;
+    final long runAt = SystemClock.elapsedRealtime() + retryDelay;
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && retryDelay < 10) {
       am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, runAt, pi);
     } else {
@@ -114,15 +110,9 @@ public class AuthJobService extends Service {
   }
 
   @Override public void onDestroy() {
-    if (executor != null) {
-      executor.destroy();
-    }
-
-    SyncEvent.authServiceStopped();
-
-    WakeLock.release(this, WAKELOCK_TAG);
-
     Timber.d("AuthJobService stopped");
+    executor.unregisterListener(handlerListener);
+    WakeLock.release(this, WAKELOCK_TAG);
     super.onDestroy();
   }
 
