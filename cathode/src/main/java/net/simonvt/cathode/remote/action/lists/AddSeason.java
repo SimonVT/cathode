@@ -64,6 +64,7 @@ public class AddSeason extends CallJob<ListItemActionResponse> {
     return usersService.addItems(listId, body);
   }
 
-  @Override public void handleResponse(ListItemActionResponse response) {
+  @Override public boolean handleResponse(ListItemActionResponse response) {
+    return true;
   }
 }

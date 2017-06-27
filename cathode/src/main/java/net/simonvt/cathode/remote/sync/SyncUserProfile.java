@@ -47,7 +47,8 @@ public class SyncUserProfile extends CallJob<Profile> {
     return usersService.getProfile(Extended.FULL_IMAGES);
   }
 
-  @Override public void handleResponse(Profile profile) {
+  @Override public boolean handleResponse(Profile profile) {
     userHelper.updateOrCreate(profile);
+    return true;
   }
 }

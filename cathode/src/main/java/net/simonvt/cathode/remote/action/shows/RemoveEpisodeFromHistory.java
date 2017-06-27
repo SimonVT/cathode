@@ -70,9 +70,10 @@ public class RemoveEpisodeFromHistory extends CallJob<SyncResponse> {
     return syncService.unwatched(items);
   }
 
-  @Override public void handleResponse(SyncResponse response) {
+  @Override public boolean handleResponse(SyncResponse response) {
     final long showId = showHelper.getId(traktId);
     final long episodeId = episodeHelper.getId(showId, season, episode);
     episodeHelper.removeFromHistory(episodeId);
+    return true;
   }
 }

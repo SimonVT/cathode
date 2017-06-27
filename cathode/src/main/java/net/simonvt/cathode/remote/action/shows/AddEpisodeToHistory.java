@@ -76,7 +76,7 @@ public class AddEpisodeToHistory extends CallJob<SyncResponse> {
     return syncService.watched(items);
   }
 
-  @Override public void handleResponse(SyncResponse response) {
+  @Override public boolean handleResponse(SyncResponse response) {
     final long showId = showHelper.getId(traktId);
     final long episodeId = episodeHelper.getId(showId, season, episode);
 
@@ -85,5 +85,7 @@ public class AddEpisodeToHistory extends CallJob<SyncResponse> {
     } else {
       episodeHelper.addToHistory(episodeId, TimeUtils.getMillis(watchedAt));
     }
+
+    return true;
   }
 }

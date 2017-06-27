@@ -19,14 +19,13 @@ package net.simonvt.cathode.remote;
 import android.content.ContentValues;
 import android.database.Cursor;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.schematic.Cursors;
-
-import static net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import static net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
-import static net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import static net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 
 public class UpdateShowCounts extends Job {
 
@@ -38,7 +37,7 @@ public class UpdateShowCounts extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public void perform() {
+  @Override public boolean perform() {
     Cursor shows = getContentResolver().query(Shows.SHOWS, new String[] {
         ShowColumns.ID,
     }, null, null, null);
@@ -110,5 +109,7 @@ public class UpdateShowCounts extends Job {
     }
 
     seasons.close();
+
+    return true;
   }
 }

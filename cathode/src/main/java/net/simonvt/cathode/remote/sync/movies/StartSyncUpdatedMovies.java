@@ -33,7 +33,7 @@ public class StartSyncUpdatedMovies extends Job {
     return PRIORITY_UPDATED;
   }
 
-  @Override public void perform() {
+  @Override public boolean perform() {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
 
     final String lastUpdated = settings.getString(Settings.MOVIES_LAST_UPDATED, null);
@@ -48,5 +48,7 @@ public class StartSyncUpdatedMovies extends Job {
     }
 
     settings.edit().putString(Settings.MOVIES_LAST_UPDATED, currentTime).apply();
+
+    return true;
   }
 }

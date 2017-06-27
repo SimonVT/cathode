@@ -18,9 +18,7 @@ package net.simonvt.cathode.remote.sync.comments;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -29,24 +27,20 @@ import net.simonvt.cathode.api.entity.Like;
 import net.simonvt.cathode.api.entity.Profile;
 import net.simonvt.cathode.api.enumeration.ItemTypes;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.CommentsHelper;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.UserDatabaseHelper;
-import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.PagedCallJob;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
-import timber.log.Timber;
 
 public class SyncCommentLikes extends PagedCallJob<Like> {
 
   private static final int LIMIT = 100;
 
   @Inject transient UsersService usersService;
-
   @Inject transient UserDatabaseHelper userHelper;
 
   public SyncCommentLikes() {
@@ -65,7 +59,7 @@ public class SyncCommentLikes extends PagedCallJob<Like> {
     return usersService.getLikes(ItemTypes.COMMENTS, page, LIMIT);
   }
 
-  @Override public void handleResponse(List<Like> likes) {
+  @Override public boolean handleResponse(List<Like> likes) {
     List<Long> existingLikes = new ArrayList<>();
     List<Long> deleteLikes = new ArrayList<>();
     Cursor c = getContentResolver().query(Comments.COMMENTS, new String[] {
@@ -129,14 +123,6 @@ public class SyncCommentLikes extends PagedCallJob<Like> {
       ops.add(op.build());
     }
 
-    try {
-      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
-    } catch (RemoteException e) {
-      Timber.e(e, "Updating comments failed");
-      throw new JobFailedException(e);
-    } catch (OperationApplicationException e) {
-      Timber.e(e, "Updating comments failed");
-      throw new JobFailedException(e);
-    }
+    return applyBatch(ops);
   }
 }

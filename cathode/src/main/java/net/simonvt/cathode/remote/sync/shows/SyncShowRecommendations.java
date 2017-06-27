@@ -17,17 +17,13 @@ package net.simonvt.cathode.remote.sync.shows;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.RecommendationsService;
-import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
@@ -35,7 +31,6 @@ import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
-import timber.log.Timber;
 
 public class SyncShowRecommendations extends CallJob<List<Show>> {
 
@@ -61,7 +56,7 @@ public class SyncShowRecommendations extends CallJob<List<Show>> {
     return recommendationsService.shows(LIMIT, Extended.FULL);
   }
 
-  @Override public void handleResponse(List<Show> shows) {
+  @Override public boolean handleResponse(List<Show> shows) {
     ContentResolver resolver = getContentResolver();
 
     List<Long> showIds = new ArrayList<>();
@@ -92,14 +87,6 @@ public class SyncShowRecommendations extends CallJob<List<Show>> {
       ops.add(op);
     }
 
-    try {
-      resolver.applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
-    } catch (RemoteException e) {
-      Timber.e(e, "SyncShowRecommendationsTask failed");
-      throw new JobFailedException(e);
-    } catch (OperationApplicationException e) {
-      Timber.e(e, "SyncShowRecommendationsTask failed");
-      throw new JobFailedException(e);
-    }
+    return applyBatch(ops);
   }
 }

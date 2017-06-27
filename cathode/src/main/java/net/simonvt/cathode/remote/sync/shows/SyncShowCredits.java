@@ -17,8 +17,6 @@
 package net.simonvt.cathode.remote.sync.shows;
 
 import android.content.ContentProviderOperation;
-import android.content.OperationApplicationException;
-import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -29,17 +27,14 @@ import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.ShowsService;
-import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCrewColumns;
 import net.simonvt.cathode.provider.PersonDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCast;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCrew;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.CallJob;
 import retrofit2.Call;
-import timber.log.Timber;
 
 public class SyncShowCredits extends CallJob<People> {
 
@@ -66,7 +61,7 @@ public class SyncShowCredits extends CallJob<People> {
     return showsService.getPeople(traktId, Extended.FULL);
   }
 
-  @Override public void handleResponse(People people) {
+  @Override public boolean handleResponse(People people) {
     List<CastMember> characters = people.getCast();
 
     final long showId = showHelper.getId(traktId);
@@ -101,15 +96,7 @@ public class SyncShowCredits extends CallJob<People> {
       insertCrew(ops, showId, Department.CAMERA, crew.getCamera());
     }
 
-    try {
-      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
-    } catch (RemoteException e) {
-      Timber.e(e, "Updating show characters failed");
-      throw new JobFailedException(e);
-    } catch (OperationApplicationException e) {
-      Timber.e(e, "Updating show characters failed");
-      throw new JobFailedException(e);
-    }
+    return applyBatch(ops);
   }
 
   private void insertCrew(List<ContentProviderOperation> ops, long showId, Department department,

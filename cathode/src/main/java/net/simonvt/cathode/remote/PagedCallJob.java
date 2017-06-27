@@ -19,7 +19,6 @@ package net.simonvt.cathode.remote;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import net.simonvt.cathode.jobqueue.JobFailedException;
 import okhttp3.Headers;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -36,7 +35,7 @@ public abstract class PagedCallJob<T> extends ErrorHandlerJob<List<T>> {
     super(flags);
   }
 
-  @Override public final void perform() {
+  @Override public final boolean perform() {
     List<T> results = new ArrayList<>();
     List<T> result;
 
@@ -47,9 +46,7 @@ public abstract class PagedCallJob<T> extends ErrorHandlerJob<List<T>> {
         Call<List<T>> call = getCall(page);
         Response<List<T>> response = call.execute();
         if (!response.isSuccessful()) {
-          error(response);
-
-          throw new JobFailedException("Failed job: " + key());
+          return !isError(response);
         }
 
         Headers headers = response.headers();
@@ -63,14 +60,15 @@ public abstract class PagedCallJob<T> extends ErrorHandlerJob<List<T>> {
         page++;
       } while (page <= pageCount);
 
-      handleResponse(results);
+      return handleResponse(results);
     } catch (IOException e) {
       Timber.d(e, "Job failed: %s", key());
-      throw new JobFailedException(e);
     }
+
+    return false;
   }
 
   public abstract Call<List<T>> getCall(int page);
 
-  public abstract void handleResponse(List<T> response);
+  public abstract boolean handleResponse(List<T> response);
 }

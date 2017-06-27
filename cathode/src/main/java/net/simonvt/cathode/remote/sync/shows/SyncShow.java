@@ -49,8 +49,9 @@ public class SyncShow extends CallJob<Show> {
     return showsService.getSummary(traktId, Extended.FULL);
   }
 
-  @Override public void handleResponse(Show show) {
+  @Override public boolean handleResponse(Show show) {
     showHelper.fullUpdate(show);
     queue(new SyncSeasons(traktId));
+    return true;
   }
 }

@@ -72,7 +72,7 @@ public class CreateList extends CallJob<CustomList> {
         .allowComments(allowComments));
   }
 
-  @Override public void handleResponse(CustomList list) {
+  @Override public boolean handleResponse(CustomList list) {
     Cursor c = getContentResolver().query(Lists.LISTS, new String[] {
         ListsColumns.ID,
     }, ListsColumns.ID + "=?", new String[] {
@@ -86,5 +86,7 @@ public class CreateList extends CallJob<CustomList> {
     }
 
     c.close();
+
+    return true;
   }
 }

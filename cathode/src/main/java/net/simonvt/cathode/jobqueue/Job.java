@@ -80,7 +80,7 @@ public abstract class Job {
 
   public abstract int getPriority();
 
-  public abstract void perform();
+  public abstract boolean perform();
 
   public final void done() {
     if (onDoneRefs != null) {
@@ -118,14 +118,17 @@ public abstract class Job {
     return context.getContentResolver();
   }
 
-  protected final void applyBatch(ArrayList<ContentProviderOperation> ops) {
+  protected final boolean applyBatch(ArrayList<ContentProviderOperation> ops) {
     try {
       getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
+      return true;
     } catch (RemoteException e) {
       Timber.e(e);
     } catch (OperationApplicationException e) {
       Timber.e(e);
     }
+
+    return false;
   }
 
   public void setFlags(int flags) {

@@ -17,8 +17,6 @@
 package net.simonvt.cathode.remote.sync.movies;
 
 import android.content.ContentProviderOperation;
-import android.content.OperationApplicationException;
-import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -29,17 +27,14 @@ import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.MoviesService;
-import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCrewColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.PersonDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieCast;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieCrew;
-import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.CallJob;
 import retrofit2.Call;
-import timber.log.Timber;
 
 public class SyncMovieCredits extends CallJob<People> {
 
@@ -66,10 +61,10 @@ public class SyncMovieCredits extends CallJob<People> {
     return moviesService.getPeople(traktId, Extended.FULL);
   }
 
-  @Override public void handleResponse(People people) {
+  @Override public boolean handleResponse(People people) {
     final long movieId = movieHelper.getId(traktId);
     if (movieId == -1L) {
-      return;
+      return true;
     }
 
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
@@ -107,15 +102,7 @@ public class SyncMovieCredits extends CallJob<People> {
       insertCrew(ops, movieId, Department.CAMERA, crew.getCamera());
     }
 
-    try {
-      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
-    } catch (RemoteException e) {
-      Timber.e(e, "Updating movie crew failed");
-      throw new JobFailedException(e);
-    } catch (OperationApplicationException e) {
-      Timber.e(e, "Updating movie crew failed");
-      throw new JobFailedException(e);
-    }
+    return applyBatch(ops);
   }
 
   private void insertCrew(ArrayList<ContentProviderOperation> ops, long movieId,

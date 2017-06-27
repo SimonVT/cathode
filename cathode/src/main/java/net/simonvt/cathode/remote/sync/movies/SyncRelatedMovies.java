@@ -17,9 +17,7 @@
 package net.simonvt.cathode.remote.sync.movies;
 
 import android.content.ContentProviderOperation;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -30,11 +28,9 @@ import net.simonvt.cathode.provider.DatabaseContract.RelatedMoviesColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.RelatedMovies;
-import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
-import timber.log.Timber;
 
 public class SyncRelatedMovies extends CallJob<List<Movie>> {
 
@@ -62,7 +58,7 @@ public class SyncRelatedMovies extends CallJob<List<Movie>> {
     return moviesService.getRelated(traktId, RELATED_COUNT, Extended.FULL);
   }
 
-  @Override public void handleResponse(List<Movie> movies) {
+  @Override public boolean handleResponse(List<Movie> movies) {
     final long movieId = movieHelper.getId(traktId);
 
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
@@ -95,12 +91,6 @@ public class SyncRelatedMovies extends CallJob<List<Movie>> {
       ops.add(ContentProviderOperation.newDelete(RelatedMovies.withId(id)).build());
     }
 
-    try {
-      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
-    } catch (RemoteException e) {
-      Timber.e(e, "Unable to update related movies");
-    } catch (OperationApplicationException e) {
-      Timber.e(e, "Unable to update related movies");
-    }
+    return applyBatch(ops);
   }
 }

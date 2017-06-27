@@ -18,9 +18,7 @@ package net.simonvt.cathode.remote.sync.comments;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.os.RemoteException;
 import android.support.v4.util.LongSparseArray;
 import com.google.gson.Gson;
 import java.util.ArrayList;
@@ -36,7 +34,6 @@ import net.simonvt.cathode.api.entity.Season;
 import net.simonvt.cathode.api.enumeration.CommentType;
 import net.simonvt.cathode.api.enumeration.ItemTypes;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.CommentsHelper;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
@@ -46,7 +43,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.UserDatabaseHelper;
-import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.PagedCallJob;
 import net.simonvt.cathode.remote.sync.SyncUserProfile;
@@ -93,7 +89,7 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
     return usersService.getUserComments(CommentType.ALL, itemTypes, page, LIMIT);
   }
 
-  @Override public void handleResponse(List<CommentItem> comments) {
+  @Override public boolean handleResponse(List<CommentItem> comments) {
     List<Long> existingComments = new ArrayList<>();
     LongSparseArray<CommentItem> addedLater = new LongSparseArray<>();
     Cursor c = getContentResolver().query(Comments.COMMENTS, new String[] {
@@ -255,14 +251,6 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
       ops.add(op.build());
     }
 
-    try {
-      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
-    } catch (RemoteException e) {
-      Timber.e(e, "Updating comments failed");
-      throw new JobFailedException(e);
-    } catch (OperationApplicationException e) {
-      Timber.e(e, "Updating comments failed");
-      throw new JobFailedException(e);
-    }
+    return applyBatch(ops);
   }
 }

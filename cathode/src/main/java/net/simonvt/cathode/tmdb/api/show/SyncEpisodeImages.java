@@ -62,12 +62,12 @@ public class SyncEpisodeImages extends TmdbCallJob<Images> {
     return tvEpisodesService.images(tmdbId, season, episode);
   }
 
-  @Override public void handleResponse(Images images) {
+  @Override public boolean handleResponse(Images images) {
     final long showId = showHelper.getIdFromTmdb(tmdbId);
     final long episodeId = episodeHelper.getId(showId, season, episode);
 
     if (episodeId == -1L) {
-      return;
+      return true;
     }
 
     ContentValues values = new ContentValues();
@@ -83,5 +83,7 @@ public class SyncEpisodeImages extends TmdbCallJob<Images> {
     }
 
     getContentResolver().update(Episodes.withId(episodeId), values, null, null);
+
+    return true;
   }
 }

@@ -54,7 +54,7 @@ public class SyncLists extends CallJob<List<CustomList>> {
     return usersService.lists();
   }
 
-  @Override public void handleResponse(List<CustomList> lists) {
+  @Override public boolean handleResponse(List<CustomList> lists) {
     List<Long> listIds = new ArrayList<>();
     Cursor listsCursor =
         getContentResolver().query(Lists.LISTS, PROJECTION, ListsColumns.TRAKT_ID + ">=0", null,
@@ -74,5 +74,7 @@ public class SyncLists extends CallJob<List<CustomList>> {
     for (Long id : listIds) {
       getContentResolver().delete(Lists.withId(id), null, null);
     }
+
+    return true;
   }
 }

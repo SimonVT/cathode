@@ -33,7 +33,6 @@ import retrofit2.Call;
 public class SyncMoviesWatchlist extends CallJob<List<WatchlistItem>> {
 
   @Inject transient SyncService syncService;
-
   @Inject transient MovieDatabaseHelper movieHelper;
 
   public SyncMoviesWatchlist() {
@@ -52,7 +51,7 @@ public class SyncMoviesWatchlist extends CallJob<List<WatchlistItem>> {
     return syncService.getMovieWatchlist();
   }
 
-  @Override public void handleResponse(List<WatchlistItem> watchlist) {
+  @Override public boolean handleResponse(List<WatchlistItem> watchlist) {
     Cursor c = getContentResolver().query(Movies.MOVIES, new String[] {
         MovieColumns.ID,
     }, MovieColumns.IN_WATCHLIST, null, null);
@@ -84,5 +83,7 @@ public class SyncMoviesWatchlist extends CallJob<List<WatchlistItem>> {
     for (Long movieId : movieIds) {
       movieHelper.setIsInWatchlist(movieId, false);
     }
+
+    return true;
   }
 }

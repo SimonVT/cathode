@@ -54,7 +54,7 @@ public class SyncPersonHeadshot extends TmdbCallJob<PersonImages> {
     return peopleService.images(tmdbId);
   }
 
-  @Override public void handleResponse(PersonImages images) {
+  @Override public boolean handleResponse(PersonImages images) {
     final long personId = personHelper.getIdFromTmdb(tmdbId);
 
     ContentValues values = new ContentValues();
@@ -70,5 +70,7 @@ public class SyncPersonHeadshot extends TmdbCallJob<PersonImages> {
     }
 
     getContentResolver().update(People.withId(personId), values, null, null);
+
+    return true;
   }
 }

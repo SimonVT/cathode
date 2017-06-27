@@ -17,6 +17,7 @@
 package net.simonvt.cathode.remote.action.comments;
 
 import android.content.ContentValues;
+import java.io.IOException;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.body.CommentBody;
@@ -73,18 +74,19 @@ public class UpdateCommentJob extends CallJob<Comment> {
     return commentsService.update(commentId, body);
   }
 
-  @Override protected boolean handleError(Response<Comment> response) {
+  @Override protected boolean isError(Response<Comment> response) throws IOException {
     final int statusCode = response.code();
     if (statusCode == 422) {
       RequestFailedEvent.post(R.string.comment_update_error);
-      return true;
+      return false;
     }
 
-    return super.handleError(response);
+    return super.isError(response);
   }
 
-  @Override public void handleResponse(Comment comment) {
+  @Override public boolean handleResponse(Comment comment) {
     ContentValues values = CommentsHelper.getValues(comment);
     getContentResolver().update(Comments.withId(commentId), values, null, null);
+    return true;
   }
 }

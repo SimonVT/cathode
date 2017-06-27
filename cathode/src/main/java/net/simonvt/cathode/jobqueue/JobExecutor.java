@@ -179,12 +179,13 @@ public class JobExecutor {
 
   private void jobFailed(Job job, Throwable t) {
     synchronized (lock) {
-      if (!(t instanceof JobFailedException)) {
-        Timber.e(t, "Job failed: %s", job.key());
-      } else {
-        Timber.d(t, "Job failed: %s", job.key());
-      }
+      Timber.d(t, "Job failed: %s", job.key());
+      jobFailed(job);
+    }
+  }
 
+  private void jobFailed(Job job) {
+    synchronized (lock) {
       halt = true;
       jobManager.checkinJob(job);
       runningJobCount--;
@@ -210,8 +211,11 @@ public class JobExecutor {
     @Override public void run() {
       try {
         Timber.d("Executing job: %s", job.key());
-        job.perform();
-        jobSucceeded(job);
+        if (job.perform()) {
+          jobSucceeded(job);
+        } else {
+          jobFailed(job);
+        }
       } catch (Throwable t) {
         jobFailed(job, t);
       } finally {

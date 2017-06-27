@@ -73,7 +73,8 @@ public class WatchlistMovie extends CallJob<SyncResponse> {
     }
   }
 
-  @Override public void handleResponse(SyncResponse response) {
+  @Override public boolean handleResponse(SyncResponse response) {
     queue(new SyncMoviesWatchlist());
+    return true;
   }
 }

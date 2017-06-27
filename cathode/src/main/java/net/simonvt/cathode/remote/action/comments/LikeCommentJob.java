@@ -51,6 +51,7 @@ public class LikeCommentJob extends CallJob<ResponseBody> {
     return commentsService.like(commentId, Requests.EMPTY_BODY);
   }
 
-  @Override public void handleResponse(ResponseBody response) {
+  @Override public boolean handleResponse(ResponseBody response) {
+    return true;
   }
 }

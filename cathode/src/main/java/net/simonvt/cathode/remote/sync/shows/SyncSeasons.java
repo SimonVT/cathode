@@ -56,11 +56,11 @@ public class SyncSeasons extends CallJob<List<Season>> {
     return seasonService.getSummary(traktId, Extended.FULL);
   }
 
-  @Override public void handleResponse(List<Season> seasons) {
+  @Override public boolean handleResponse(List<Season> seasons) {
     final long showId = showHelper.getId(traktId);
     if (showId == -1L) {
       queue(new SyncShow(traktId));
-      return;
+      return true;
     }
 
     List<Long> seasonIds = new ArrayList<>();
@@ -83,5 +83,7 @@ public class SyncSeasons extends CallJob<List<Season>> {
     for (Long seasonId : seasonIds) {
       getContentResolver().delete(Seasons.withId(seasonId), null, null);
     }
+
+    return true;
   }
 }

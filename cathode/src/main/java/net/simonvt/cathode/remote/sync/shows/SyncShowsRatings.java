@@ -17,29 +17,23 @@
 package net.simonvt.cathode.remote.sync.shows;
 
 import android.content.ContentProviderOperation;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.RatingItem;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
-import timber.log.Timber;
 
 public class SyncShowsRatings extends CallJob<List<RatingItem>> {
 
   @Inject transient SyncService syncService;
-
   @Inject transient ShowDatabaseHelper showHelper;
 
   public SyncShowsRatings() {
@@ -58,7 +52,7 @@ public class SyncShowsRatings extends CallJob<List<RatingItem>> {
     return syncService.getShowRatings();
   }
 
-  @Override public void handleResponse(List<RatingItem> ratings) {
+  @Override public boolean handleResponse(List<RatingItem> ratings) {
     Cursor shows = getContentResolver().query(Shows.SHOWS, new String[] {
         ShowColumns.ID,
     }, ShowColumns.RATED_AT + ">0", null, null);
@@ -96,14 +90,6 @@ public class SyncShowsRatings extends CallJob<List<RatingItem>> {
       ops.add(op);
     }
 
-    try {
-      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
-    } catch (RemoteException e) {
-      Timber.e(e, "Unable to sync show ratings");
-      throw new JobFailedException(e);
-    } catch (OperationApplicationException e) {
-      Timber.e(e, "Unable to sync show ratings");
-      throw new JobFailedException(e);
-    }
+    return applyBatch(ops);
   }
 }

@@ -85,8 +85,9 @@ public class CollectEpisode extends CallJob<SyncResponse> {
     }
   }
 
-  @Override public void handleResponse(SyncResponse response) {
+  @Override public boolean handleResponse(SyncResponse response) {
     episodeHelper.setInCollection(traktId, season, episode, inCollection,
         TimeUtils.getMillis(collectedAt));
+    return true;
   }
 }

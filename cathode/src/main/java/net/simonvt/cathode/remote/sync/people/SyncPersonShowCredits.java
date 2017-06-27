@@ -64,7 +64,7 @@ public class SyncPersonShowCredits extends CallJob<Credits> {
     return peopleService.shows(traktId, Extended.FULL);
   }
 
-  @Override public void handleResponse(Credits credits) {
+  @Override public boolean handleResponse(Credits credits) {
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
     final long personId = personHelper.getId(traktId);
 
@@ -125,7 +125,7 @@ public class SyncPersonShowCredits extends CallJob<Credits> {
       insertCrew(ops, personId, Department.CAMERA, crew.getCamera());
     }
 
-    applyBatch(ops);
+    return applyBatch(ops);
   }
 
   private void insertCrew(ArrayList<ContentProviderOperation> ops, long personId,

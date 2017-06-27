@@ -33,7 +33,6 @@ import retrofit2.Call;
 public class SyncMoviesCollection extends CallJob<List<CollectionItem>> {
 
   @Inject transient SyncService syncService;
-
   @Inject transient MovieDatabaseHelper movieHelper;
 
   public SyncMoviesCollection() {
@@ -52,7 +51,7 @@ public class SyncMoviesCollection extends CallJob<List<CollectionItem>> {
     return syncService.getMovieCollection();
   }
 
-  @Override public void handleResponse(List<CollectionItem> movies) {
+  @Override public boolean handleResponse(List<CollectionItem> movies) {
     Cursor c = getContentResolver().query(Movies.MOVIES, new String[] {
         MovieColumns.ID,
     }, MovieColumns.IN_COLLECTION, null, null);
@@ -86,5 +85,7 @@ public class SyncMoviesCollection extends CallJob<List<CollectionItem>> {
       final long id = movieIds.get(i);
       movieHelper.setIsInCollection(id, false);
     }
+
+    return true;
   }
 }

@@ -17,27 +17,21 @@
 package net.simonvt.cathode.remote.sync.shows;
 
 import android.content.ContentProviderOperation;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.RatingItem;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.jobqueue.JobFailedException;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
-import timber.log.Timber;
-
-import static net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import static net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 
 public class SyncEpisodesRatings extends CallJob<List<RatingItem>> {
 
@@ -63,7 +57,7 @@ public class SyncEpisodesRatings extends CallJob<List<RatingItem>> {
     return syncService.getEpisodeRatings();
   }
 
-  @Override public void handleResponse(List<RatingItem> ratings) {
+  @Override public boolean handleResponse(List<RatingItem> ratings) {
     Cursor episodes = getContentResolver().query(Episodes.EPISODES, new String[] {
         EpisodeColumns.ID,
     }, EpisodeColumns.RATED_AT + ">0", null, null);
@@ -123,14 +117,6 @@ public class SyncEpisodesRatings extends CallJob<List<RatingItem>> {
       ops.add(op);
     }
 
-    try {
-      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
-    } catch (RemoteException e) {
-      Timber.e(e, "Unable to sync season ratings");
-      throw new JobFailedException(e);
-    } catch (OperationApplicationException e) {
-      Timber.e(e, "Unable to sync season ratings");
-      throw new JobFailedException(e);
-    }
+    return applyBatch(ops);
   }
 }

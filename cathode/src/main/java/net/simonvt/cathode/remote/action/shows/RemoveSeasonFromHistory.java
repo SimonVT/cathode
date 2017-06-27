@@ -61,9 +61,10 @@ public class RemoveSeasonFromHistory extends CallJob<SyncResponse> {
     return syncService.unwatched(items);
   }
 
-  @Override public void handleResponse(SyncResponse response) {
+  @Override public boolean handleResponse(SyncResponse response) {
     final long showId = showHelper.getId(traktId);
     final long seasonId = seasonHelper.getId(showId, season);
     seasonHelper.removeFromHistory(seasonId);
+    return true;
   }
 }

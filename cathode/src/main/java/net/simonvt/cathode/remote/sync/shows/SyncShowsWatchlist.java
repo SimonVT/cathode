@@ -53,7 +53,7 @@ public class SyncShowsWatchlist extends CallJob<List<WatchlistItem>> {
     return syncService.getShowWatchlist();
   }
 
-  @Override public void handleResponse(List<WatchlistItem> watchlist) {
+  @Override public boolean handleResponse(List<WatchlistItem> watchlist) {
     Cursor c = getContentResolver().query(Shows.SHOWS, new String[] {
         DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
     }, ShowColumns.IN_WATCHLIST, null, null);
@@ -87,5 +87,7 @@ public class SyncShowsWatchlist extends CallJob<List<WatchlistItem>> {
     for (Long showId : showIds) {
       showHelper.setIsInWatchlist(showId, false);
     }
+
+    return true;
   }
 }

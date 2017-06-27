@@ -45,6 +45,7 @@ public class DismissMovieRecommendation extends CallJob<ResponseBody> {
     return recommendationsService.dismissMovie(traktId);
   }
 
-  @Override public void handleResponse(ResponseBody response) {
+  @Override public boolean handleResponse(ResponseBody response) {
+    return true;
   }
 }

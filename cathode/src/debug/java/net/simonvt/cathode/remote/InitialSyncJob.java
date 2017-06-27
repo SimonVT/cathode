@@ -38,7 +38,7 @@ public class InitialSyncJob extends Job {
     return 1000;
   }
 
-  @Override public void perform() {
+  @Override public boolean perform() {
     jobManager.clear();
 
     Settings.clearProfile(getContext());
@@ -49,5 +49,7 @@ public class InitialSyncJob extends Job {
     getContentResolver().delete(People.PEOPLE, null, null);
 
     queue(new SyncJob());
+
+    return true;
   }
 }

@@ -60,7 +60,7 @@ public class SyncSeason extends CallJob<List<Episode>> {
     return seasonService.getSeason(traktId, season, Extended.FULL);
   }
 
-  @Override public void handleResponse(List<Episode> episodes) {
+  @Override public boolean handleResponse(List<Episode> episodes) {
     ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
     final long showId = showResult.showId;
     final boolean didShowExist = !showResult.didCreate;
@@ -98,5 +98,7 @@ public class SyncSeason extends CallJob<List<Episode>> {
     for (Long episodeId : episodeIds) {
       getContentResolver().delete(Episodes.withId(episodeId), null, null);
     }
+
+    return true;
   }
 }

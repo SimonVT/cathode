@@ -47,6 +47,7 @@ public class CancelCheckin extends CallJob<ResponseBody> {
     return checkinService.deleteCheckin();
   }
 
-  @Override public void handleResponse(ResponseBody response) {
+  @Override public boolean handleResponse(ResponseBody response) {
+    return true;
   }
 }

@@ -17,9 +17,7 @@
 package net.simonvt.cathode.remote.sync;
 
 import android.content.ContentProviderOperation;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -34,14 +32,12 @@ import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.PagedCallJob;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
-import timber.log.Timber;
 
 public class SyncHiddenRecommendations extends PagedCallJob<HiddenItem> {
 
@@ -66,7 +62,7 @@ public class SyncHiddenRecommendations extends PagedCallJob<HiddenItem> {
     return usersService.getHiddenItems(HiddenSection.RECOMMENDATIONS, page, 25);
   }
 
-  @Override public void handleResponse(List<HiddenItem> items) {
+  @Override public boolean handleResponse(List<HiddenItem> items) {
     List<Long> unhandledShows = new ArrayList<>();
     Cursor hiddenShows = getContentResolver().query(Shows.SHOWS, new String[] {
         ShowColumns.ID,
@@ -143,12 +139,6 @@ public class SyncHiddenRecommendations extends PagedCallJob<HiddenItem> {
       ops.add(op);
     }
 
-    try {
-      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
-    } catch (RemoteException e) {
-      Timber.e(e, "Unable to update hidden state");
-    } catch (OperationApplicationException e) {
-      Timber.e(e, "Unable to update hidden state");
-    }
+    return applyBatch(ops);
   }
 }

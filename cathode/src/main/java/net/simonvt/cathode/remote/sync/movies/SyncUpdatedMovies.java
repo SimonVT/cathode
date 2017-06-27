@@ -61,7 +61,7 @@ public class SyncUpdatedMovies extends CallJob<List<UpdatedItem>> {
     return moviesService.updated(updatedSince, page, LIMIT);
   }
 
-  @Override public void handleResponse(List<UpdatedItem> updated) {
+  @Override public boolean handleResponse(List<UpdatedItem> updated) {
     for (UpdatedItem item : updated) {
       final String updatedAt = item.getUpdatedAt();
       final Movie movie = item.getMovie();
@@ -85,5 +85,7 @@ public class SyncUpdatedMovies extends CallJob<List<UpdatedItem>> {
     if (updated.size() >= LIMIT) {
       queue(new SyncUpdatedMovies(updatedSince, page + 1));
     }
+
+    return true;
   }
 }

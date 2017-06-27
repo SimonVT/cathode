@@ -18,9 +18,7 @@ package net.simonvt.cathode.remote.sync.comments;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -33,7 +31,6 @@ import net.simonvt.cathode.api.service.EpisodeService;
 import net.simonvt.cathode.api.service.MoviesService;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.CommentsHelper;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
@@ -43,11 +40,9 @@ import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.UserDatabaseHelper;
-import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.PagedCallJob;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
-import timber.log.Timber;
 
 public class SyncComments extends PagedCallJob<Comment> {
 
@@ -122,7 +117,7 @@ public class SyncComments extends PagedCallJob<Comment> {
     }
   }
 
-  @Override public void handleResponse(List<Comment> comments) {
+  @Override public boolean handleResponse(List<Comment> comments) {
     int itemType;
     long itemId;
     switch (type) {
@@ -152,7 +147,7 @@ public class SyncComments extends PagedCallJob<Comment> {
             itemType = Cursors.getInt(c, CommentColumns.ITEM_TYPE);
             itemId = Cursors.getLong(c, CommentColumns.ITEM_ID);
           } else {
-            return;
+            return true;
           }
         } finally {
           if (c != null) {
@@ -240,18 +235,14 @@ public class SyncComments extends PagedCallJob<Comment> {
       ops.add(op.build());
     }
 
-    try {
-      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
-    } catch (RemoteException e) {
-      Timber.e(e, "Updating comments failed");
-      throw new JobFailedException(e);
-    } catch (OperationApplicationException e) {
-      Timber.e(e, "Updating comments failed");
-      throw new JobFailedException(e);
+    if (!applyBatch(ops)) {
+      return false;
     }
 
     for (Job job : jobs) {
       queue(job);
     }
+
+    return true;
   }
 }

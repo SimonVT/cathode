@@ -85,7 +85,8 @@ public class WatchlistEpisode extends CallJob<SyncResponse> {
     }
   }
 
-  @Override public void handleResponse(SyncResponse response) {
+  @Override public boolean handleResponse(SyncResponse response) {
     queue(new SyncEpisodeWatchlist());
+    return true;
   }
 }

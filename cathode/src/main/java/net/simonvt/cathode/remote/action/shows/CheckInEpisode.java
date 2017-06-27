@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.SystemClock;
 import android.text.format.DateUtils;
+import java.io.IOException;
 import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.body.CheckinItem;
@@ -89,7 +90,7 @@ public class CheckInEpisode extends CallJob<CheckinResponse> {
     return checkinService.checkin(item);
   }
 
-  @Override protected boolean handleError(Response<CheckinResponse> response) {
+  @Override protected boolean isError(Response<CheckinResponse> response) throws IOException {
     if (response.code() == 409) {
       queue(new SyncWatching());
 
@@ -109,13 +110,13 @@ public class CheckInEpisode extends CallJob<CheckinResponse> {
       }
 
       c.close();
-      return true;
+      return false;
     }
 
-    return super.handleError(response);
+    return super.isError(response);
   }
 
-  @Override public void handleResponse(CheckinResponse response) {
+  @Override public boolean handleResponse(CheckinResponse response) {
     final Show show = response.getShow();
     final long showId = showHelper.getId(show.getIds().getTrakt());
     Cursor c = getContentResolver().query(Shows.withId(showId), new String[] {
@@ -134,5 +135,7 @@ public class CheckInEpisode extends CallJob<CheckinResponse> {
     }
 
     c.close();
+
+    return true;
   }
 }

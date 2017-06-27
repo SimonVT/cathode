@@ -17,15 +17,11 @@
 package net.simonvt.cathode.remote.sync.shows;
 
 import android.content.ContentProviderOperation;
-import android.content.OperationApplicationException;
-import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.ShowProgress;
 import net.simonvt.cathode.api.service.ShowsService;
-import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic;
@@ -34,7 +30,6 @@ import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import retrofit2.Call;
-import timber.log.Timber;
 
 public class SyncShowCollectedStatus extends CallJob<ShowProgress> {
 
@@ -63,7 +58,7 @@ public class SyncShowCollectedStatus extends CallJob<ShowProgress> {
     return showsService.getCollectionProgress(traktId);
   }
 
-  @Override public void handleResponse(ShowProgress progress) {
+  @Override public boolean handleResponse(ShowProgress progress) {
     ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
     final long showId = showResult.showId;
     final boolean didShowExist = !showResult.didCreate;
@@ -107,14 +102,6 @@ public class SyncShowCollectedStatus extends CallJob<ShowProgress> {
       }
     }
 
-    try {
-      getContentResolver().applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
-    } catch (RemoteException e) {
-      Timber.e(e, "SyncShowWatchedStatus failed");
-      throw new JobFailedException(e);
-    } catch (OperationApplicationException e) {
-      Timber.e(e, "SyncShowWatchedStatus failed");
-      throw new JobFailedException(e);
-    }
+    return applyBatch(ops);
   }
 }

@@ -56,8 +56,9 @@ public class RemoveMovieFromHistory extends CallJob<SyncResponse> {
     return syncService.unwatched(items);
   }
 
-  @Override public void handleResponse(SyncResponse response) {
+  @Override public boolean handleResponse(SyncResponse response) {
     final long movieId = movieHelper.getId(traktId);
     movieHelper.removeFromHistory(movieId);
+    return true;
   }
 }

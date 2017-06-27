@@ -17,7 +17,6 @@
 package net.simonvt.cathode.remote;
 
 import java.io.IOException;
-import net.simonvt.cathode.jobqueue.JobFailedException;
 import retrofit2.Call;
 import retrofit2.Response;
 import timber.log.Timber;
@@ -31,22 +30,22 @@ public abstract class CallJob<T> extends ErrorHandlerJob<T> {
     super(flags);
   }
 
-  @Override public void perform() {
+  @Override public boolean perform() {
     try {
       Call<T> call = getCall();
       Response<T> response = call.execute();
       if (response.isSuccessful()) {
-        handleResponse(response.body());
+        return handleResponse(response.body());
       } else {
-        error(response);
+        return !isError(response);
       }
     } catch (IOException e) {
       Timber.d(e, "Job failed: %s", key());
-      throw new JobFailedException(e);
+      return false;
     }
   }
 
   public abstract Call<T> getCall();
 
-  public abstract void handleResponse(T response);
+  public abstract boolean handleResponse(T response);
 }

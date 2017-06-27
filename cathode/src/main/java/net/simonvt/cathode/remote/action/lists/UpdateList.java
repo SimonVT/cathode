@@ -72,6 +72,7 @@ public class UpdateList extends CallJob<CustomList> {
         .allowComments(allowComments));
   }
 
-  @Override public void handleResponse(CustomList list) {
+  @Override public boolean handleResponse(CustomList list) {
+    return true;
   }
 }

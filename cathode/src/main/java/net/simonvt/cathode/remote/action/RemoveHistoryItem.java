@@ -47,6 +47,7 @@ public class RemoveHistoryItem extends CallJob<SyncResponse> {
     return syncService.removeHistory(body);
   }
 
-  @Override public void handleResponse(SyncResponse response) {
+  @Override public boolean handleResponse(SyncResponse response) {
+    return true;
   }
 }

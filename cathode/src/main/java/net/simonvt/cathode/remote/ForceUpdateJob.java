@@ -40,7 +40,7 @@ public class ForceUpdateJob extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public void perform() {
+  @Override public boolean perform() {
     Cursor shows = getContentResolver().query(Shows.SHOWS, new String[] {
         ShowColumns.ID, ShowColumns.TRAKT_ID,
     }, null, null, null);
@@ -62,5 +62,7 @@ public class ForceUpdateJob extends Job {
     }
 
     movies.close();
+
+    return true;
   }
 }

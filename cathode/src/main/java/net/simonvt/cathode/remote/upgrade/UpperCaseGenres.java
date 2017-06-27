@@ -36,7 +36,7 @@ public class UpperCaseGenres extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public void perform() {
+  @Override public boolean perform() {
     Cursor showGenres = getContentResolver().query(ShowGenres.SHOW_GENRES, new String[] {
         ShowGenreColumns.ID, ShowGenreColumns.GENRE,
     }, null, null, null);
@@ -74,5 +74,7 @@ public class UpperCaseGenres extends Job {
     }
 
     movieGenres.close();
+
+    return true;
   }
 }

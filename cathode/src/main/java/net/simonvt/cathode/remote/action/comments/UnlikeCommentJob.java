@@ -50,6 +50,7 @@ public class UnlikeCommentJob extends CallJob<ResponseBody> {
     return commentsService.unlike(commentId);
   }
 
-  @Override public void handleResponse(ResponseBody response) {
+  @Override public boolean handleResponse(ResponseBody response) {
+    return true;
   }
 }

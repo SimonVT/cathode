@@ -58,6 +58,7 @@ public class RateMovie extends CallJob<SyncResponse> {
     return syncService.rate(items);
   }
 
-  @Override public void handleResponse(SyncResponse response) {
+  @Override public boolean handleResponse(SyncResponse response) {
+    return true;
   }
 }

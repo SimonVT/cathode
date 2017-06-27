@@ -21,8 +21,8 @@ import net.simonvt.cathode.tmdb.TmdbRateLimiter;
 
 public abstract class TmdbCallJob<T> extends CallJob<T> {
 
-  @Override public void perform() {
+  @Override public boolean perform() {
     TmdbRateLimiter.acquire();
-    super.perform();
+    return super.perform();
   }
 }

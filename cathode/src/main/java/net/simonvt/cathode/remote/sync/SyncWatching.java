@@ -16,18 +16,13 @@
 package net.simonvt.cathode.remote.sync;
 
 import android.content.ContentProviderOperation;
-import android.content.ContentResolver;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.Watching;
 import net.simonvt.cathode.api.enumeration.Action;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
@@ -46,7 +41,6 @@ import net.simonvt.cathode.remote.sync.shows.SyncShow;
 import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
-import timber.log.Timber;
 
 public class SyncWatching extends CallJob<Watching> {
 
@@ -73,9 +67,7 @@ public class SyncWatching extends CallJob<Watching> {
     return usersService.watching();
   }
 
-  @Override public void handleResponse(Watching watching) {
-    ContentResolver resolver = getContentResolver();
-
+  @Override public boolean handleResponse(Watching watching) {
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
     Cursor episodeWatchingCursor =
@@ -214,14 +206,6 @@ public class SyncWatching extends CallJob<Watching> {
       ops.add(op);
     }
 
-    try {
-      resolver.applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
-    } catch (RemoteException e) {
-      Timber.e(e, "SyncWatchingTask failed");
-      throw new JobFailedException(e);
-    } catch (OperationApplicationException e) {
-      Timber.e(e, "SyncWatchingTask failed");
-      throw new JobFailedException(e);
-    }
+    return applyBatch(ops);
   }
 }

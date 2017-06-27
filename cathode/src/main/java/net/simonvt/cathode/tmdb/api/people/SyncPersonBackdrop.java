@@ -54,7 +54,7 @@ public class SyncPersonBackdrop extends TmdbCallJob<TaggedImagesResultsPage> {
     return peopleService.taggedImages(tmdbId, 1, "en");
   }
 
-  @Override public void handleResponse(TaggedImagesResultsPage images) {
+  @Override public boolean handleResponse(TaggedImagesResultsPage images) {
     final long personId = personHelper.getIdFromTmdb(tmdbId);
 
     ContentValues values = new ContentValues();
@@ -70,5 +70,7 @@ public class SyncPersonBackdrop extends TmdbCallJob<TaggedImagesResultsPage> {
     }
 
     getContentResolver().update(People.withId(personId), values, null, null);
+
+    return true;
   }
 }

@@ -45,7 +45,7 @@ public class SyncJob extends Job {
     return PRIORITY_USER_DATA;
   }
 
-  @Override public void perform() {
+  @Override public boolean perform() {
     queue(new SyncConfiguration());
 
     queue(new SyncUserSettings());
@@ -73,5 +73,6 @@ public class SyncJob extends Job {
     final long currentTime = System.currentTimeMillis();
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
     settings.edit().putLong(Settings.LAST_FULL_SYNC, currentTime).apply();
+    return true;
   }
 }

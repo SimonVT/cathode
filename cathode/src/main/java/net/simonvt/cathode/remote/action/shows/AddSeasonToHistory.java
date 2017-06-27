@@ -70,7 +70,7 @@ public class AddSeasonToHistory extends CallJob<SyncResponse> {
     return syncService.watched(items);
   }
 
-  @Override public void handleResponse(SyncResponse response) {
+  @Override public boolean handleResponse(SyncResponse response) {
     final long showId = showHelper.getId(traktId);
     final long seasonId = seasonHelper.getId(showId, season);
 
@@ -79,5 +79,7 @@ public class AddSeasonToHistory extends CallJob<SyncResponse> {
     } else {
       seasonHelper.addToHistory(seasonId, TimeUtils.getMillis(watchedAt));
     }
+
+    return true;
   }
 }

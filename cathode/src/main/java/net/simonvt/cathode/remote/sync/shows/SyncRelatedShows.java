@@ -16,9 +16,7 @@
 package net.simonvt.cathode.remote.sync.shows;
 
 import android.content.ContentProviderOperation;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -29,11 +27,9 @@ import net.simonvt.cathode.provider.DatabaseContract.RelatedShowsColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.RelatedShows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
-import timber.log.Timber;
 
 public class SyncRelatedShows extends CallJob<List<Show>> {
 
@@ -61,7 +57,7 @@ public class SyncRelatedShows extends CallJob<List<Show>> {
     return showsService.getRelated(traktId, RELATED_COUNT, Extended.FULL);
   }
 
-  @Override public void handleResponse(List<Show> shows) {
+  @Override public boolean handleResponse(List<Show> shows) {
     final long showId = showHelper.getId(traktId);
 
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
@@ -96,12 +92,6 @@ public class SyncRelatedShows extends CallJob<List<Show>> {
       ops.add(ContentProviderOperation.newDelete(RelatedShows.withId(id)).build());
     }
 
-    try {
-      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
-    } catch (RemoteException e) {
-      Timber.e(e, "Unable to update related shows");
-    } catch (OperationApplicationException e) {
-      Timber.e(e, "Unable to update related shows");
-    }
+    return applyBatch(ops);
   }
 }

@@ -54,7 +54,7 @@ public class SyncShowImages extends TmdbCallJob<Images> {
     return tvService.images(tmdbId, "en");
   }
 
-  @Override public void handleResponse(Images images) {
+  @Override public boolean handleResponse(Images images) {
     final long showId = showHelper.getIdFromTmdb(tmdbId);
 
     ContentValues values = new ContentValues();
@@ -80,5 +80,7 @@ public class SyncShowImages extends TmdbCallJob<Images> {
     }
 
     getContentResolver().update(Shows.withId(showId), values, null, null);
+
+    return true;
   }
 }

@@ -79,7 +79,8 @@ public class CollectSeason extends CallJob<SyncResponse> {
     }
   }
 
-  @Override public void handleResponse(SyncResponse response) {
+  @Override public boolean handleResponse(SyncResponse response) {
     seasonHelper.setIsInCollection(traktId, season, inCollection, TimeUtils.getMillis(collectedAt));
+    return true;
   }
 }

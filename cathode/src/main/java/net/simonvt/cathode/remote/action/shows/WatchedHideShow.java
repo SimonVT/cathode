@@ -67,10 +67,11 @@ public class WatchedHideShow extends CallJob<HideResponse> {
     }
   }
 
-  @Override public void handleResponse(HideResponse response) {
+  @Override public boolean handleResponse(HideResponse response) {
     final long showId = showHelper.getId(traktId);
     ContentValues values = new ContentValues();
     values.put(ShowColumns.HIDDEN_WATCHED, hidden);
     getContentResolver().update(Shows.withId(showId), values, null, null);
+    return true;
   }
 }

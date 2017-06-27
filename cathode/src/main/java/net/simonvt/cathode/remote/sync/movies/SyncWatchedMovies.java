@@ -32,7 +32,6 @@ import retrofit2.Call;
 public class SyncWatchedMovies extends CallJob<List<WatchedItem>> {
 
   @Inject transient SyncService syncService;
-
   @Inject transient MovieDatabaseHelper movieHelper;
 
   public SyncWatchedMovies() {
@@ -51,7 +50,7 @@ public class SyncWatchedMovies extends CallJob<List<WatchedItem>> {
     return syncService.getWatchedMovies();
   }
 
-  @Override public void handleResponse(List<WatchedItem> movies) {
+  @Override public boolean handleResponse(List<WatchedItem> movies) {
     Cursor c = getContentResolver().query(Movies.MOVIES, new String[] {
         MovieColumns.ID,
     }, MovieColumns.WATCHED, null, null);
@@ -82,5 +81,7 @@ public class SyncWatchedMovies extends CallJob<List<WatchedItem>> {
     for (Long movieId : movieIds) {
       movieHelper.removeFromHistory(movieId);
     }
+
+    return true;
   }
 }

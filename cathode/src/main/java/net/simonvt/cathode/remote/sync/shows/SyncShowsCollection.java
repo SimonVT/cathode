@@ -17,20 +17,16 @@ package net.simonvt.cathode.remote.sync.shows;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.os.RemoteException;
 import android.support.v4.util.LongSparseArray;
 import android.support.v4.util.SparseArrayCompat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.CollectionItem;
 import net.simonvt.cathode.api.entity.IsoTime;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
@@ -42,7 +38,6 @@ import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
-import timber.log.Timber;
 
 public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
 
@@ -68,7 +63,7 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
     return syncService.getShowCollection();
   }
 
-  @Override public void handleResponse(List<CollectionItem> collection) {
+  @Override public boolean handleResponse(List<CollectionItem> collection) {
     Cursor c = getContentResolver().query(Episodes.EPISODES, new String[] {
         EpisodeColumns.ID, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON, EpisodeColumns.SEASON_ID,
         EpisodeColumns.EPISODE,
@@ -190,7 +185,9 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
         }
       }
 
-      apply(ops);
+      if (!apply(ops)) {
+        return false;
+      }
     }
 
     ops.clear();
@@ -202,20 +199,17 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
       builder.withValues(cv);
       ops.add(builder.build());
     }
-    apply(ops);
+    if (!apply(ops)) {
+      return false;
+    }
+
+    return true;
   }
 
-  private void apply(ArrayList<ContentProviderOperation> ops) {
-    try {
-      getContentResolver().applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
-      ops.clear();
-    } catch (RemoteException e) {
-      Timber.e(e, "SyncShowsWatchedTask failed");
-      throw new JobFailedException(e);
-    } catch (OperationApplicationException e) {
-      Timber.e(e, "SyncShowsWatchedTask failed");
-      throw new JobFailedException(e);
-    }
+  private boolean apply(ArrayList<ContentProviderOperation> ops) {
+    boolean result = applyBatch(ops);
+    ops.clear();
+    return result;
   }
 
   private static class CollectedShow {

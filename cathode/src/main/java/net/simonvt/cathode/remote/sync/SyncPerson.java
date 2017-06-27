@@ -47,7 +47,8 @@ public class SyncPerson extends CallJob<Person> {
     return peopleService.summary(traktId, Extended.FULL);
   }
 
-  @Override public void handleResponse(Person person) {
+  @Override public boolean handleResponse(Person person) {
     personHelper.updateOrInsert(person);
+    return true;
   }
 }

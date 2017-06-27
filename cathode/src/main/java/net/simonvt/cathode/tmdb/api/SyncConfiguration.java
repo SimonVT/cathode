@@ -38,7 +38,8 @@ public class SyncConfiguration extends TmdbCallJob<Configuration> {
     return configurationService.configuration();
   }
 
-  @Override public void handleResponse(Configuration configuration) {
+  @Override public boolean handleResponse(Configuration configuration) {
     Settings.updateTmdbConfiguration(getContext(), configuration);
+    return true;
   }
 }

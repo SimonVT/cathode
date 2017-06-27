@@ -16,27 +16,21 @@
 package net.simonvt.cathode.remote.sync.shows;
 
 import android.content.ContentProviderOperation;
-import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.AnticipatedItem;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.ShowsService;
-import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
-import timber.log.Timber;
 
 public class SyncAnticipatedShows extends CallJob<List<AnticipatedItem>> {
 
@@ -58,47 +52,38 @@ public class SyncAnticipatedShows extends CallJob<List<AnticipatedItem>> {
     return showsService.getAnticipatedShows(LIMIT, Extended.FULL);
   }
 
-  @Override public void handleResponse(List<AnticipatedItem> shows) {
-    try {
-      ContentResolver resolver = getContentResolver();
+  @Override public boolean handleResponse(List<AnticipatedItem> shows) {
+    ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+    Cursor c = getContentResolver().query(Shows.SHOWS_ANTICIPATED, null, null, null, null);
 
-      ArrayList<ContentProviderOperation> ops = new ArrayList<>();
-      Cursor c = resolver.query(Shows.SHOWS_ANTICIPATED, null, null, null, null);
-
-      List<Long> showIds = new ArrayList<>();
-      while (c.moveToNext()) {
-        final long showId = Cursors.getLong(c, ShowColumns.ID);
-        showIds.add(showId);
-      }
-      c.close();
-
-      for (int i = 0, count = shows.size(); i < count; i++) {
-        AnticipatedItem item = shows.get(i);
-        Show show = item.getShow();
-        final long showId = showHelper.partialUpdate(show);
-
-        ContentValues cv = new ContentValues();
-        cv.put(ShowColumns.ANTICIPATED_INDEX, i);
-        ContentProviderOperation op =
-            ContentProviderOperation.newUpdate(Shows.withId(showId)).withValues(cv).build();
-        ops.add(op);
-
-        showIds.remove(showId);
-      }
-
-      for (Long showId : showIds) {
-        ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(showId))
-            .withValue(ShowColumns.ANTICIPATED_INDEX, -1)
-            .build();
-        ops.add(op);
-      }
-
-      resolver.applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
-    } catch (RemoteException e) {
-      Timber.e(e, "SyncAnticipatedShows failed");
-    } catch (OperationApplicationException e) {
-      Timber.e(e, "SyncAnticipatedShows failed");
-      throw new JobFailedException(e);
+    List<Long> showIds = new ArrayList<>();
+    while (c.moveToNext()) {
+      final long showId = Cursors.getLong(c, ShowColumns.ID);
+      showIds.add(showId);
     }
+    c.close();
+
+    for (int i = 0, count = shows.size(); i < count; i++) {
+      AnticipatedItem item = shows.get(i);
+      Show show = item.getShow();
+      final long showId = showHelper.partialUpdate(show);
+
+      ContentValues cv = new ContentValues();
+      cv.put(ShowColumns.ANTICIPATED_INDEX, i);
+      ContentProviderOperation op =
+          ContentProviderOperation.newUpdate(Shows.withId(showId)).withValues(cv).build();
+      ops.add(op);
+
+      showIds.remove(showId);
+    }
+
+    for (Long showId : showIds) {
+      ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(showId))
+          .withValue(ShowColumns.ANTICIPATED_INDEX, -1)
+          .build();
+      ops.add(op);
+    }
+
+    return applyBatch(ops);
   }
 }

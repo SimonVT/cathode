@@ -38,7 +38,7 @@ public class LogoutJob extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public void perform() {
+  @Override public boolean perform() {
     ContentValues values;
 
     // Clear movie user data
@@ -113,5 +113,7 @@ public class LogoutJob extends Job {
     getContentResolver().update(Shows.SHOWS, values, null, null);
 
     getContentResolver().delete(Lists.LISTS, null, null);
+
+    return true;
   }
 }

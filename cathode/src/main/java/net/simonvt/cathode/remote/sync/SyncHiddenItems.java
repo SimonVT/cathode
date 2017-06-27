@@ -33,10 +33,11 @@ public class SyncHiddenItems extends Job {
     return PRIORITY_USER_DATA;
   }
 
-  @Override public void perform() {
+  @Override public boolean perform() {
     queue(new SyncHiddenCalendar());
     queue(new SyncHiddenCollected());
     queue(new SyncHiddenRecommendations());
     queue(new SyncHiddenWatched());
+    return true;
   }
 }

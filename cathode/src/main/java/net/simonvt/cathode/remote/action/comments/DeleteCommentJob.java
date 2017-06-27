@@ -50,6 +50,7 @@ public class DeleteCommentJob extends CallJob<ResponseBody> {
     return commentsService.delete(commentId);
   }
 
-  @Override public void handleResponse(ResponseBody response) {
+  @Override public boolean handleResponse(ResponseBody response) {
+    return true;
   }
 }

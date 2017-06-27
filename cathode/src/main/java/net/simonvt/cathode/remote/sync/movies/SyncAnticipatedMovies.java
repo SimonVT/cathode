@@ -18,25 +18,20 @@ package net.simonvt.cathode.remote.sync.movies;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.entity.AnticipatedItem;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.MoviesService;
-import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
-import timber.log.Timber;
 
 public class SyncAnticipatedMovies extends CallJob<List<AnticipatedItem>> {
 
@@ -58,7 +53,7 @@ public class SyncAnticipatedMovies extends CallJob<List<AnticipatedItem>> {
     return moviesService.getAnticipatedMovies(LIMIT, Extended.FULL);
   }
 
-  @Override public void handleResponse(List<AnticipatedItem> movies) {
+  @Override public boolean handleResponse(List<AnticipatedItem> movies) {
     ContentResolver resolver = getContentResolver();
 
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
@@ -95,14 +90,6 @@ public class SyncAnticipatedMovies extends CallJob<List<AnticipatedItem>> {
       ops.add(op);
     }
 
-    try {
-      resolver.applyBatch(BuildConfig.PROVIDER_AUTHORITY, ops);
-    } catch (RemoteException e) {
-      Timber.e(e, "SyncAnticipatedMovies failed");
-      throw new JobFailedException(e);
-    } catch (OperationApplicationException e) {
-      Timber.e(e, "SyncAnticipatedMovies failed");
-      throw new JobFailedException(e);
-    }
+    return applyBatch(ops);
   }
 }

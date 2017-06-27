@@ -67,10 +67,11 @@ public class CalendarHideMovie extends CallJob<HideResponse> {
     }
   }
 
-  @Override public void handleResponse(HideResponse response) {
+  @Override public boolean handleResponse(HideResponse response) {
     final long movieId = movieHelper.getId(traktId);
     ContentValues values = new ContentValues();
     values.put(MovieColumns.HIDDEN_CALENDAR, hidden);
     getContentResolver().update(Movies.withId(movieId), values, null, null);
+    return true;
   }
 }

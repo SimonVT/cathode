@@ -36,7 +36,7 @@ public class EnsureSync extends Job {
     return PRIORITY_ACTIONS;
   }
 
-  @Override public void perform() {
+  @Override public boolean perform() {
     Cursor shows = getContentResolver().query(Shows.SHOWS, new String[] {
         ShowColumns.TRAKT_ID, ShowColumns.NEEDS_SYNC, ShowColumns.IN_WATCHLIST,
         ShowColumns.WATCHED_COUNT, ShowColumns.IN_COLLECTION_COUNT, ShowColumns.IN_WATCHLIST_COUNT,
@@ -79,5 +79,7 @@ public class EnsureSync extends Job {
     }
 
     movies.close();
+
+    return true;
   }
 }

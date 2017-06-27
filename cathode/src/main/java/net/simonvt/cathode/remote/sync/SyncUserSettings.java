@@ -44,7 +44,8 @@ public class SyncUserSettings extends CallJob<UserSettings> {
     return usersService.getUserSettings();
   }
 
-  @Override public void handleResponse(UserSettings userSettings) {
+  @Override public boolean handleResponse(UserSettings userSettings) {
     Settings.updateProfile(getContext(), userSettings);
+    return true;
   }
 }

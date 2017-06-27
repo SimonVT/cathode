@@ -73,8 +73,9 @@ public class CollectMovie extends CallJob<SyncResponse> {
     }
   }
 
-  @Override public void handleResponse(SyncResponse response) {
+  @Override public boolean handleResponse(SyncResponse response) {
     final long movieId = movieHelper.getId(traktId);
     movieHelper.setIsInCollection(movieId, collected, TimeUtils.getMillis(collectedAt));
+    return true;
   }
 }

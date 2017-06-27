@@ -17,9 +17,7 @@
 package net.simonvt.cathode.remote.sync.lists;
 
 import android.content.ContentProviderOperation;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -30,7 +28,6 @@ import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.entity.Season;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.JobFailedException;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
@@ -40,7 +37,6 @@ import net.simonvt.cathode.provider.PersonDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncPerson;
@@ -49,7 +45,6 @@ import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
-import timber.log.Timber;
 
 public class SyncList extends CallJob<List<ListItem>> {
 
@@ -103,11 +98,11 @@ public class SyncList extends CallJob<List<ListItem>> {
     return usersService.listItems(traktId);
   }
 
-  @Override public void handleResponse(List<ListItem> items) {
+  @Override public boolean handleResponse(List<ListItem> items) {
     final long listId = ListWrapper.getId(getContentResolver(), traktId);
     if (listId == -1L) {
       // List has been removed
-      return;
+      return true;
     }
 
     Cursor c = getContentResolver().query(ListItems.inList(listId), new String[] {
@@ -303,14 +298,6 @@ public class SyncList extends CallJob<List<ListItem>> {
       ops.add(opBuilder.build());
     }
 
-    try {
-      getContentResolver().applyBatch(CathodeProvider.AUTHORITY, ops);
-    } catch (RemoteException e) {
-      Timber.e(e, "Updating list failed");
-      throw new JobFailedException(e);
-    } catch (OperationApplicationException e) {
-      Timber.e(e, "Updating list failed");
-      throw new JobFailedException(e);
-    }
+    return applyBatch(ops);
   }
 }

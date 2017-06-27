@@ -59,7 +59,7 @@ public class AddMovieToHistory extends CallJob<SyncResponse> {
     return syncService.watched(items);
   }
 
-  @Override public void handleResponse(SyncResponse response) {
+  @Override public boolean handleResponse(SyncResponse response) {
     final long movieId = movieHelper.getId(traktId);
 
     if (SyncItems.TIME_RELEASED.equals(watchedAt)) {
@@ -67,5 +67,7 @@ public class AddMovieToHistory extends CallJob<SyncResponse> {
     } else {
       movieHelper.addToHistory(movieId, TimeUtils.getMillis(watchedAt));
     }
+
+    return true;
   }
 }

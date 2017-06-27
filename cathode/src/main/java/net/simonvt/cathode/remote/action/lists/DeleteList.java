@@ -46,6 +46,7 @@ public class DeleteList extends CallJob<ResponseBody> {
     return usersServie.deleteList(traktId);
   }
 
-  @Override public void handleResponse(ResponseBody responseBody) {
+  @Override public boolean handleResponse(ResponseBody responseBody) {
+    return true;
   }
 }

@@ -33,7 +33,7 @@ public class StartSyncUpdatedShows extends Job {
     return PRIORITY_UPDATED;
   }
 
-  @Override public void perform() {
+  @Override public boolean perform() {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
     String lastUpdated = settings.getString(Settings.SHOWS_LAST_UPDATED, null);
     String currentTime = TimeUtils.getIsoTime();
@@ -49,12 +49,14 @@ public class StartSyncUpdatedShows extends Job {
       }
       if (updatedSince == null) {
         Timber.e(new Exception("Last sync time failed"), "Last sync time failed");
-        return;
+        return false;
       } else {
         queue(new SyncUpdatedShows(updatedSince, 1));
       }
     }
 
     settings.edit().putString(Settings.SHOWS_LAST_UPDATED, currentTime).apply();
+
+    return true;
   }
 }

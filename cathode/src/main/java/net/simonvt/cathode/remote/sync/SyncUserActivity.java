@@ -47,7 +47,7 @@ public class SyncUserActivity extends CallJob<LastActivity> {
   }
 
   @Override public String key() {
-    return "SyncUserActivityTask";
+    return "SyncUserActivity";
   }
 
   @Override public int getPriority() {
@@ -58,7 +58,7 @@ public class SyncUserActivity extends CallJob<LastActivity> {
     return syncService.lastActivity();
   }
 
-  @Override public void handleResponse(LastActivity lastActivity) {
+  @Override public boolean handleResponse(LastActivity lastActivity) {
     final long showLastWatchlist = lastActivity.getShows().getWatchlistedAt().getTimeInMillis();
     final long showLastRating = lastActivity.getShows().getRatedAt().getTimeInMillis();
     final long showLastComment = lastActivity.getShows().getCommentedAt().getTimeInMillis();
@@ -154,5 +154,7 @@ public class SyncUserActivity extends CallJob<LastActivity> {
     queue(new SyncWatching());
 
     TraktTimestamps.update(getContext(), lastActivity);
+
+    return true;
   }
 }

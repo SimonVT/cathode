@@ -51,7 +51,7 @@ public class SyncMovie extends CallJob<Movie> {
     return moviesService.getSummary(traktId, Extended.FULL);
   }
 
-  @Override public void handleResponse(Movie movie) {
+  @Override public boolean handleResponse(Movie movie) {
     final long movieId = movieHelper.fullUpdate(movie);
 
     final int tmdbId = movie.getIds().getTmdb();
@@ -60,5 +60,7 @@ public class SyncMovie extends CallJob<Movie> {
     ContentValues cv = new ContentValues();
     cv.put(MovieColumns.LAST_SYNC, System.currentTimeMillis());
     getContentResolver().update(ProviderSchematic.Movies.withId(movieId), cv, null, null);
+
+    return true;
   }
 }

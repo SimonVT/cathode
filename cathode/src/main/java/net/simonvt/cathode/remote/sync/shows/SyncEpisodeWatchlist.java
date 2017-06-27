@@ -58,7 +58,7 @@ public class SyncEpisodeWatchlist extends CallJob<List<WatchlistItem>> {
     return syncService.getEpisodeWatchlist();
   }
 
-  @Override public void handleResponse(List<WatchlistItem> watchlist) {
+  @Override public boolean handleResponse(List<WatchlistItem> watchlist) {
     Cursor c = getContentResolver().query(Episodes.EPISODES_IN_WATCHLIST, new String[] {
         DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.ID,
     }, null, null, null);
@@ -112,5 +112,7 @@ public class SyncEpisodeWatchlist extends CallJob<List<WatchlistItem>> {
     for (Long episodeId : episodeIds) {
       episodeHelper.setIsInWatchlist(episodeId, false, 0L);
     }
+
+    return true;
   }
 }
