@@ -31,9 +31,6 @@
   <string name="source_code">Source Code</string>
   <string name="other">Other</string>
 
-  <string name="initial_sync">Fetching movies and shows</string>
-  <string name="initial_sync_desc">This might take a while…</string>
-
   <string name="auth_failed">Trakt authorization failed</string>
   <string name="auth_failed_desc">Touch to re-authorize with Trakt</string>
 
@@ -233,9 +230,6 @@
   <string name="history_unwatched_title">Remove from history?</string>
   <string name="history_unwatched_all">All plays</string>
   <string name="history_unwatched_view_all">View all plays</string>
-  
-  <string name="history_date_cancel">Cancel</string>
-  <string name="history_date_watched">Watched</string>
 
   <string name="history_list_error">Unable to get watched history</string>
   <string name="history_episode_list_empty">This episode has not been watched</string>
