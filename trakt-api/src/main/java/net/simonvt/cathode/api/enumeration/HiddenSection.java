@@ -17,6 +17,7 @@
 package net.simonvt.cathode.api.enumeration;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public enum HiddenSection {
@@ -39,7 +40,7 @@ public enum HiddenSection {
 
   static {
     for (HiddenSection via : HiddenSection.values()) {
-      STRING_MAPPING.put(via.toString().toUpperCase(), via);
+      STRING_MAPPING.put(via.toString().toUpperCase(Locale.US), via);
     }
   }
 

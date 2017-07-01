@@ -17,6 +17,7 @@
 package net.simonvt.cathode.images;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public enum ImageType {
@@ -46,7 +47,7 @@ public enum ImageType {
 
   static {
     for (ImageType via : ImageType.values()) {
-      STRING_MAPPING.put(via.toString().toUpperCase(), via);
+      STRING_MAPPING.put(via.toString().toUpperCase(Locale.US), via);
     }
   }
 

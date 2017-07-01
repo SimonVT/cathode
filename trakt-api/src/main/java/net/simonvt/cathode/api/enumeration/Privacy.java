@@ -17,6 +17,7 @@
 package net.simonvt.cathode.api.enumeration;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public enum Privacy {
@@ -38,7 +39,7 @@ public enum Privacy {
 
   static {
     for (Privacy via : Privacy.values()) {
-      STRING_MAPPING.put(via.toString().toUpperCase(), via);
+      STRING_MAPPING.put(via.toString().toUpperCase(Locale.US), via);
     }
   }
 

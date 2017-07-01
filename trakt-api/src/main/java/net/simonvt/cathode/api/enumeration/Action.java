@@ -17,6 +17,7 @@
 package net.simonvt.cathode.api.enumeration;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public enum Action {
@@ -37,7 +38,7 @@ public enum Action {
 
   static {
     for (Action via : Action.values()) {
-      STRING_MAPPING.put(via.toString().toUpperCase(), via);
+      STRING_MAPPING.put(via.toString().toUpperCase(Locale.US), via);
     }
   }
 

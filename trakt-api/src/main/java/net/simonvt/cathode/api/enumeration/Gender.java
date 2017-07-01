@@ -17,6 +17,7 @@
 package net.simonvt.cathode.api.enumeration;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public enum Gender {
@@ -33,7 +34,7 @@ public enum Gender {
 
   static {
     for (Gender via : Gender.values()) {
-      STRING_MAPPING.put(via.toString().toUpperCase(), via);
+      STRING_MAPPING.put(via.toString().toUpperCase(Locale.US), via);
     }
   }
 

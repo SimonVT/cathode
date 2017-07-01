@@ -18,6 +18,7 @@ package net.simonvt.cathode.api.enumeration;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public enum GrantType {
@@ -38,7 +39,7 @@ public enum GrantType {
 
   static {
     for (GrantType via : GrantType.values()) {
-      STRING_MAPPING.put(via.toString().toUpperCase(), via);
+      STRING_MAPPING.put(via.toString().toUpperCase(Locale.US), via);
     }
   }
 

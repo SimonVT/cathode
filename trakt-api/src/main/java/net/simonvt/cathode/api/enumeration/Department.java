@@ -17,6 +17,7 @@
 package net.simonvt.cathode.api.enumeration;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public enum Department {
@@ -45,7 +46,7 @@ public enum Department {
   }
 
   public static Department fromValue(String value) {
-    return STRING_MAPPING.get(value.toUpperCase());
+    return STRING_MAPPING.get(value.toUpperCase(Locale.US));
   }
 
   @Override public String toString() {
