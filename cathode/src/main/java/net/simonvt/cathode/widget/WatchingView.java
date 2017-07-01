@@ -17,7 +17,6 @@
 package net.simonvt.cathode.widget;
 
 import android.animation.ObjectAnimator;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Outline;
@@ -29,6 +28,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -178,7 +178,7 @@ public class WatchingView extends ViewGroup {
     handler = new Handler();
   }
 
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP) private void initOutlineProvider() {
+  @RequiresApi(Build.VERSION_CODES.LOLLIPOP) private void initOutlineProvider() {
     setOutlineProvider(new ViewOutlineProvider() {
       @Override public void getOutline(View view, Outline outline) {
         Rect outlineRect = new Rect();
@@ -445,7 +445,7 @@ public class WatchingView extends ViewGroup {
     invalidateOutlineCompat();
   }
 
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP) private void invalidateOutlineCompat() {
+  private void invalidateOutlineCompat() {
     if (IS_LOLLIPOP) {
       invalidateOutline();
     }

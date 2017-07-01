@@ -17,10 +17,8 @@
 package net.simonvt.cathode.settings;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import net.simonvt.cathode.util.VersionCodes;
 
 public final class Permissions {
@@ -34,7 +32,6 @@ public final class Permissions {
     });
   }
 
-  @TargetApi(Build.VERSION_CODES.M)
   public static boolean hasPermissions(Context context, String[] permissions) {
     if (VersionCodes.isAtLeastM()) {
       for (String permission : permissions) {

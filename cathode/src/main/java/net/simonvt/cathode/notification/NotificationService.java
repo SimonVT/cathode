@@ -16,7 +16,6 @@
 
 package net.simonvt.cathode.notification;
 
-import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
@@ -31,6 +30,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.service.notification.StatusBarNotification;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import java.text.DateFormat;
@@ -220,7 +220,7 @@ public class NotificationService extends IntentService {
     }
   }
 
-  @TargetApi(Build.VERSION_CODES.N)
+  @RequiresApi(Build.VERSION_CODES.N)
   static int getGroupNotificationCount(NotificationManager nm, String group) {
     StatusBarNotification[] notifications = nm.getActiveNotifications();
     int count = 0;

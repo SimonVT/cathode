@@ -24,6 +24,7 @@ import android.graphics.drawable.Animatable2;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import net.simonvt.cathode.R;
@@ -56,7 +57,7 @@ public class CheckInDrawable extends Drawable implements Drawable.Callback {
       cancelDrawable = context.getDrawable(animatedCancelDrawableRes);
 
       callbacks = new Animatable2.AnimationCallback() {
-        @Override public void onAnimationEnd(Drawable drawable) {
+        @RequiresApi(api = Build.VERSION_CODES.M) @Override public void onAnimationEnd(Drawable drawable) {
           ((AnimatedVectorDrawable) checkInDrawable).clearAnimationCallbacks();
           ((AnimatedVectorDrawable) checkInDrawable).reset();
           ((AnimatedVectorDrawable) cancelDrawable).clearAnimationCallbacks();

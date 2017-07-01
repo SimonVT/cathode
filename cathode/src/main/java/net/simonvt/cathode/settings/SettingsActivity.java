@@ -17,7 +17,6 @@
 package net.simonvt.cathode.settings;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -29,6 +28,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import javax.inject.Inject;
@@ -42,6 +42,7 @@ import net.simonvt.cathode.settings.hidden.HiddenItems;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.adapter.Adapters;
+import net.simonvt.cathode.util.VersionCodes;
 import timber.log.Timber;
 
 public class SettingsActivity extends BaseActivity {
@@ -106,8 +107,10 @@ public class SettingsActivity extends BaseActivity {
           boolean checked = (boolean) newValue;
           syncCalendar.setChecked(checked);
 
-          if (checked && !Permissions.hasCalendarPermission(getActivity())) {
-            requestPermission();
+          if (VersionCodes.isAtLeastM()) {
+            if (checked && !Permissions.hasCalendarPermission(getActivity())) {
+              requestPermission();
+            }
           } else {
             Accounts.requestCalendarSync(getActivity());
           }
@@ -205,7 +208,7 @@ public class SettingsActivity extends BaseActivity {
           });
     }
 
-    @TargetApi(Build.VERSION_CODES.M) private void requestPermission() {
+    @RequiresApi(Build.VERSION_CODES.M) private void requestPermission() {
       requestPermissions(new String[] {
           Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR,
       }, PERMISSION_REQUEST_CALENDAR);

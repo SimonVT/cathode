@@ -16,9 +16,9 @@
 
 package net.simonvt.cathode.widget;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.WindowInsets;
@@ -52,7 +52,7 @@ public class CatchSystemInsets extends FrameLayout {
     }
   }
 
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP) @Override
+  @RequiresApi(Build.VERSION_CODES.LOLLIPOP) @Override
   public WindowInsets onApplyWindowInsets(WindowInsets insets) {
     if (CATCH_INSETS) {
       this.insets = new WindowInsets(insets);
@@ -62,7 +62,7 @@ public class CatchSystemInsets extends FrameLayout {
     return super.onApplyWindowInsets(insets);
   }
 
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP) @Override
+  @RequiresApi(Build.VERSION_CODES.LOLLIPOP) @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     if (CATCH_INSETS) {
       if (insets != null) {

@@ -15,7 +15,6 @@
  */
 package net.simonvt.cathode.ui.navigation;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -23,6 +22,7 @@ import android.graphics.Outline;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.RequiresApi;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.widget.TextViewCompat;
 import android.view.LayoutInflater;
@@ -312,7 +312,7 @@ public class NavigationFragment extends AbsAdapterFragment {
       return 4;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private void setupCircularOutline(final RemoteImageView imageView) {
       imageView.setOutlineProvider(new ViewOutlineProvider() {
         @Override public void getOutline(View view, Outline outline) {
