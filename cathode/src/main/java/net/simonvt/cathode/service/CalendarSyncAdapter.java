@@ -45,7 +45,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.settings.Permissions;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.util.DataHelper;
-import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.common.util.DateUtils;
 import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 

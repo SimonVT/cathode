@@ -6,6 +6,9 @@ apply plugin: 'checkstyle'
 apply plugin: 'com.kageiit.lintrules'
 
 dependencies {
+  compile project(':cathode-common')
+  compile project(':cathode-provider')
+  compile project(':cathode-settings')
   compile project(':trakt-api')
   compile project(':libs:colorpicker')
   compile project(':libs:datetimepicker')
@@ -65,6 +68,9 @@ android {
 
     vectorDrawables.useSupportLibrary = true
 
+    buildConfigField "String", "PROVIDER_AUTHORITY",
+        "net.simonvt.cathode.provider.BuildConfig.PROVIDER_AUTHORITY"
+
     buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + getTraktClientId() + "\""
     buildConfigField "String", "TRAKT_SECRET", "\"" + getTraktSecret() + "\""
     buildConfigField "String", "TRAKT_REDIRECT_URL", "\"" + getTraktRedirectUrl() + "\""
@@ -79,10 +85,6 @@ android {
     debug {
       buildConfigField "String", "BUILD_TIME", "\"2016-01-01T00:00Z\""
 
-      buildConfigField "String", "PROVIDER_AUTHORITY",
-          "\"net.simonvt.cathode.debug.provider.CathodeProvider\""
-      resValue "string", "authority_provider", "net.simonvt.cathode.debug.provider.CathodeProvider"
-
       buildConfigField "String", "AUTHORITY_DUMMY_CALENDAR",
           "\"net.simonvt.cathode.debug.provider.DummyCalendarProvider\""
       resValue "string", "authority_dummy_calendar",
@@ -94,10 +96,6 @@ android {
     }
     release {
       buildConfigField "String", "BUILD_TIME", "\"" + buildTime() + "\""
-
-      buildConfigField "String", "PROVIDER_AUTHORITY",
-          "\"net.simonvt.cathode.provider.CathodeProvider\""
-      resValue "string", "authority_provider", "net.simonvt.cathode.provider.CathodeProvider"
 
       buildConfigField "String", "AUTHORITY_DUMMY_CALENDAR",
           "\"net.simonvt.cathode.provider.DummyCalendarProvider\""

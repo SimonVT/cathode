@@ -68,7 +68,7 @@ public abstract class BaseUrlRequestHandler extends RequestHandler {
               Configuration configuration = response.body();
               secureBaseUrl = configuration.images.secure_base_url;
 
-              Settings.updateTmdbConfiguration(context, configuration);
+              ImageSettings.updateTmdbConfiguration(context, configuration);
             }
           } else {
             secureBaseUrl = s;

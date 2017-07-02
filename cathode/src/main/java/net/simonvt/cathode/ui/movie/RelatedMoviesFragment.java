@@ -35,7 +35,7 @@ import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
 import net.simonvt.cathode.util.Ids;
-import net.simonvt.cathode.util.guava.Preconditions;
+import net.simonvt.cathode.common.util.guava.Preconditions;
 
 public class RelatedMoviesFragment
     extends ToolbarSwipeRefreshRecyclerFragment<MoviesAdapter.ViewHolder>

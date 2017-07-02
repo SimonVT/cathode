@@ -42,7 +42,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.service.SyncWatchingReceiver;
 import net.simonvt.cathode.util.DataHelper;
-import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.common.util.DateUtils;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import retrofit2.Response;

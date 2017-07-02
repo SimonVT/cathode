@@ -26,7 +26,7 @@ import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.service.AccountAuthenticator;
-import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.common.util.DateUtils;
 import timber.log.Timber;
 
 public final class Accounts {

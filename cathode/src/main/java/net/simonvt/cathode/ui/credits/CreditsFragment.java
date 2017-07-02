@@ -42,7 +42,7 @@ import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.fragment.RefreshableToolbarFragment;
 import net.simonvt.cathode.util.Ids;
-import net.simonvt.cathode.util.guava.Preconditions;
+import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public class CreditsFragment extends RefreshableToolbarFragment {

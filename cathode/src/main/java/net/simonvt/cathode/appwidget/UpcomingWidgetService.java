@@ -44,7 +44,7 @@ import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.ui.EpisodeDetailsActivity;
-import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.common.util.DateUtils;
 import net.simonvt.cathode.util.SqlColumn;
 import timber.log.Timber;
 

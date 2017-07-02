@@ -19,7 +19,7 @@ package net.simonvt.cathode.tmdb.api;
 import com.uwetrottmann.tmdb2.entities.Configuration;
 import com.uwetrottmann.tmdb2.services.ConfigurationService;
 import javax.inject.Inject;
-import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.images.ImageSettings;
 import retrofit2.Call;
 
 public class SyncConfiguration extends TmdbCallJob<Configuration> {
@@ -39,7 +39,7 @@ public class SyncConfiguration extends TmdbCallJob<Configuration> {
   }
 
   @Override public boolean handleResponse(Configuration configuration) {
-    Settings.updateTmdbConfiguration(getContext(), configuration);
+    ImageSettings.updateTmdbConfiguration(getContext(), configuration);
     return true;
   }
 }

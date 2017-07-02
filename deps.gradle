@@ -58,7 +58,9 @@ ext {
       recyclerView        : "com.android.support:recyclerview-v7:$supportLibrariesVersion",
       androidDesign       : "com.android.support:design:$supportLibrariesVersion",
 
+      supportAnnotations  : "com.android.support:support-annotations:$supportLibrariesVersion",
       supportCoreUi       : "com.android.support:support-core-ui:$supportLibrariesVersion",
+      supportCoreUtils    : "com.android.support:support-core-utils:$supportLibrariesVersion",
       supportFragment     : "com.android.support:support-fragment:$supportLibrariesVersion",
 
       dashclockApi        : 'com.google.android.apps.dashclock:dashclock-api:2.0.0',

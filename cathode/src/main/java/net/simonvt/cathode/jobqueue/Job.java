@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.inject.Inject;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
-import net.simonvt.cathode.util.MainHandler;
+import net.simonvt.cathode.common.util.MainHandler;
 import timber.log.Timber;
 
 public abstract class Job {

@@ -18,7 +18,7 @@ package net.simonvt.cathode.jobqueue;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import net.simonvt.cathode.util.MainHandler;
+import net.simonvt.cathode.common.util.MainHandler;
 import timber.log.Timber;
 
 public class JobExecutor {

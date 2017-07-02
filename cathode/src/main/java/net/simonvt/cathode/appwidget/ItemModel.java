@@ -25,7 +25,7 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.util.DataHelper;
-import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.common.util.DateUtils;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.schematic.Cursors;
 

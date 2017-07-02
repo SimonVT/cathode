@@ -39,9 +39,9 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.util.DataHelper;
-import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.common.util.DateUtils;
 import net.simonvt.cathode.util.Ids;
-import net.simonvt.cathode.util.guava.Preconditions;
+import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.schematic.Cursors;
 
 public class EpisodeHistoryFragment extends RefreshableAppBarFragment {

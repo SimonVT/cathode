@@ -23,7 +23,7 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieGenres;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowGenres;
-import net.simonvt.cathode.util.TextUtils;
+import net.simonvt.cathode.common.util.TextUtils;
 import net.simonvt.schematic.Cursors;
 
 public class UpperCaseGenres extends Job {

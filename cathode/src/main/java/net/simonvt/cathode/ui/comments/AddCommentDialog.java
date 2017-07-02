@@ -31,7 +31,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.CommentsService;
 import net.simonvt.cathode.scheduler.CommentsTaskScheduler;
-import net.simonvt.cathode.util.TextUtils;
+import net.simonvt.cathode.common.util.TextUtils;
 
 public class AddCommentDialog extends DialogFragment {
 

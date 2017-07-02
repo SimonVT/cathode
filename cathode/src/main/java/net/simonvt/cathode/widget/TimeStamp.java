@@ -22,7 +22,7 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.widget.TextView;
 import java.lang.ref.WeakReference;
-import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.common.util.DateUtils;
 
 public class TimeStamp extends TextView {
 

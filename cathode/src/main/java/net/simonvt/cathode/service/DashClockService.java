@@ -25,7 +25,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.cathode.util.DataHelper;
-import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.common.util.DateUtils;
 import net.simonvt.schematic.Cursors;
 
 public class DashClockService extends DashClockExtension {

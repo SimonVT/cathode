@@ -49,7 +49,7 @@ import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.EpisodeDetailsActivity;
 import net.simonvt.cathode.util.Alarms;
 import net.simonvt.cathode.util.DataHelper;
-import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.common.util.DateUtils;
 import net.simonvt.cathode.util.Longs;
 import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.util.WakeLock;

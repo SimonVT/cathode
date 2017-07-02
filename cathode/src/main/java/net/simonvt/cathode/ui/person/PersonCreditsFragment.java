@@ -27,7 +27,7 @@ import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.util.Ids;
-import net.simonvt.cathode.util.guava.Preconditions;
+import net.simonvt.cathode.common.util.guava.Preconditions;
 
 public class PersonCreditsFragment extends ToolbarGridFragment<PersonCreditsAdapter.ViewHolder>
     implements PersonCreditsAdapter.OnCreditClickListener {

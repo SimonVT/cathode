@@ -18,7 +18,7 @@ package net.simonvt.cathode.event;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import net.simonvt.cathode.util.MainHandler;
+import net.simonvt.cathode.common.util.MainHandler;
 
 public final class RequestFailedEvent {
 

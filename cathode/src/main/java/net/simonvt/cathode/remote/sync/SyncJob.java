@@ -24,7 +24,7 @@ import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.tmdb.api.SyncConfiguration;
-import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.common.util.DateUtils;
 
 public class SyncJob extends Job {
 

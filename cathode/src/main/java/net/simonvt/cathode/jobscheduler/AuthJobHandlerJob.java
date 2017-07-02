@@ -26,7 +26,7 @@ import android.text.format.DateUtils;
 import net.simonvt.cathode.jobqueue.AuthJobHandler;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobHandler;
-import net.simonvt.cathode.util.MainHandler;
+import net.simonvt.cathode.common.util.MainHandler;
 import timber.log.Timber;
 
 @RequiresApi(api = Build.VERSION_CODES.N) public class AuthJobHandlerJob extends Job {

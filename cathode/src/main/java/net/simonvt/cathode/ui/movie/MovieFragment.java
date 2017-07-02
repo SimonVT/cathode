@@ -71,7 +71,7 @@ import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.util.Ids;
 import net.simonvt.cathode.util.Intents;
 import net.simonvt.cathode.util.SqlColumn;
-import net.simonvt.cathode.util.guava.Preconditions;
+import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.widget.CheckInDrawable;
 import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.CircularProgressIndicator;

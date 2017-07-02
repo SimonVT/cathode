@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.Injector;
-import net.simonvt.cathode.util.MainHandler;
+import net.simonvt.cathode.common.util.MainHandler;
 import timber.log.Timber;
 
 public class JobHandler {

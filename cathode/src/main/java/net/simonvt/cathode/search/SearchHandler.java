@@ -42,7 +42,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
-import net.simonvt.cathode.util.MainHandler;
+import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import retrofit2.Response;

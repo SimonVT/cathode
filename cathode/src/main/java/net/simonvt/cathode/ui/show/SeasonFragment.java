@@ -40,7 +40,7 @@ import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
 import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 import net.simonvt.cathode.ui.lists.ListsDialog;
-import net.simonvt.cathode.util.guava.Preconditions;
+import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.schematic.Cursors;
 
 public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder>

@@ -18,6 +18,7 @@ package net.simonvt.cathode.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import net.simonvt.cathode.common.util.MainHandler;
 import timber.log.Timber;
 
 public class Debouncer {

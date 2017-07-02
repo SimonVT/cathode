@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import com.crashlytics.android.Crashlytics;
+import dagger.ObjectGraph;
 import io.fabric.sdk.android.Fabric;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.util.TimeUtils;
@@ -59,8 +60,8 @@ import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.settings.login.LoginActivity;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference;
-import net.simonvt.cathode.util.DateUtils;
-import net.simonvt.cathode.util.MainHandler;
+import net.simonvt.cathode.common.util.DateUtils;
+import net.simonvt.cathode.common.util.MainHandler;
 import timber.log.Timber;
 
 public class CathodeApp extends Application {
@@ -101,7 +102,7 @@ public class CathodeApp extends Application {
 
     upgrade();
 
-    Injector.install(this);
+    Injector.install(ObjectGraph.create(Modules.list(this)));
     Injector.obtain().inject(this);
 
     AuthFailedEvent.registerListener(authFailedListener);

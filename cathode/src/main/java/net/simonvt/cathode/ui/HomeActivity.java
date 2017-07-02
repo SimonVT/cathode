@@ -95,7 +95,7 @@ import net.simonvt.cathode.ui.suggestions.shows.ShowSuggestionsFragment;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.util.FragmentStack;
 import net.simonvt.cathode.util.FragmentStack.StackEntry;
-import net.simonvt.cathode.util.MainHandler;
+import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.widget.Crouton;
 import net.simonvt.cathode.widget.WatchingView;
 import net.simonvt.cathode.widget.WatchingView.WatchingViewListener;

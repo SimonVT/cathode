@@ -54,26 +54,6 @@
   <string name="twitter">Twitter</string>
   <string name="tumblr">Tumblr</string>
 
-  <string name="now">Now</string>
-  <plurals name="in_minutes">
-    <item quantity="one">In %d minute</item>
-    <item quantity="other">In %d minutes</item>
-  </plurals>
-  <plurals name="minutes_ago">
-    <item quantity="one">%d minute ago</item>
-    <item quantity="other">%d minutes ago</item>
-  </plurals>
-  <plurals name="in_hours">
-    <item quantity="one">In %d hour</item>
-    <item quantity="other">In %d hours</item>
-  </plurals>
-  <plurals name="hours_ago">
-    <item quantity="one">%d hour ago</item>
-    <item quantity="other">%d hours ago</item>
-  </plurals>
-
-  <string name="airdate_unknown">Unknown airdate</string>
-
   <string name="overview">Overview</string>
   <string name="genres">Genres</string>
   <string name="biography">Biography</string>
@@ -289,11 +269,6 @@
   <string name="preference_notification_time_hours_1">1 hour</string>
   <string name="preference_notification_time_hours_2">2 hours</string>
 
-  <string name="preference_upcoming_time_weeks_1">1 week</string>
-  <string name="preference_upcoming_time_weeks_2">2 weeks</string>
-  <string name="preference_upcoming_time_months_1">1 month</string>
-  <string name="preference_upcoming_time_end">End of time</string>
-
   <!-- Shortcuts -->
   <string name="shortcut_not_available">Not available</string>
   <string name="shortcut_label_search">Search</string>
@@ -431,10 +406,6 @@
   <string name="stats_from">from</string>
   <string name="stats_made_it_through">You have made it through</string>
   <string name="stats_play_time">with a total play time of</string>
-  <string name="stats_years">%dy</string>
-  <string name="stats_days">%dd</string>
-  <string name="stats_hours">%dh</string>
-  <string name="stats_minutes">%dm</string>
 
   <plurals name="stats_shows">
     <item quantity="one">%d show</item>

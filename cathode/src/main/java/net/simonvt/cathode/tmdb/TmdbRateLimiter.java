@@ -16,7 +16,7 @@
 
 package net.simonvt.cathode.tmdb;
 
-import net.simonvt.cathode.util.guava.RateLimiter;
+import net.simonvt.cathode.common.util.guava.RateLimiter;
 
 public final class TmdbRateLimiter {
 

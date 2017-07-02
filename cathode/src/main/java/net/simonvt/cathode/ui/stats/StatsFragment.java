@@ -35,7 +35,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.ui.fragment.BaseFragment;
-import net.simonvt.cathode.util.DateUtils;
+import net.simonvt.cathode.common.util.DateUtils;
 import net.simonvt.schematic.Cursors;
 
 public class StatsFragment extends BaseFragment implements LoaderCallbacks<StatsFragment.Stats> {

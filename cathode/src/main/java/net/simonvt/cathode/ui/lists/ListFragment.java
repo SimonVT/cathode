@@ -49,7 +49,7 @@ import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.util.SqlCoalesce;
 import net.simonvt.cathode.util.SqlColumn;
-import net.simonvt.cathode.util.guava.Preconditions;
+import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.schematic.Cursors;
 
 public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHolder>
