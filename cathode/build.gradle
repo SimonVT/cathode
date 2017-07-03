@@ -1,5 +1,3 @@
-import java.text.SimpleDateFormat
-
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'checkstyle'
@@ -8,6 +6,7 @@ apply plugin: 'com.kageiit.lintrules'
 dependencies {
   compile project(':cathode-common')
   compile project(':cathode-jobqueue')
+  compile project(':cathode-jobs')
   compile project(':cathode-provider')
   compile project(':cathode-settings')
   compile project(':trakt-api')
@@ -84,8 +83,6 @@ android {
 
   buildTypes {
     debug {
-      buildConfigField "String", "BUILD_TIME", "\"2016-01-01T00:00Z\""
-
       buildConfigField "String", "AUTHORITY_DUMMY_CALENDAR",
           "\"net.simonvt.cathode.debug.provider.DummyCalendarProvider\""
       resValue "string", "authority_dummy_calendar",
@@ -96,8 +93,6 @@ android {
       ext.enableCrashlytics = false
     }
     release {
-      buildConfigField "String", "BUILD_TIME", "\"" + buildTime() + "\""
-
       buildConfigField "String", "AUTHORITY_DUMMY_CALENDAR",
           "\"net.simonvt.cathode.provider.DummyCalendarProvider\""
       resValue "string", "authority_dummy_calendar",
@@ -127,12 +122,6 @@ tasks.withType(Test) {
 def isOnCI() {
   def ci = System.getenv('CI')
   return ci != null && ci == 'travis'
-}
-
-def buildTime() {
-  def date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
-  date.setTimeZone(TimeZone.getTimeZone("UTC"))
-  return date.format(new Date())
 }
 
 checkstyle {

@@ -1,0 +1,67 @@
+import java.text.SimpleDateFormat
+
+apply plugin: 'com.android.library'
+apply plugin: 'checkstyle'
+
+dependencies {
+  compile project(':cathode-common')
+  compile project(':cathode-images')
+  compile project(':cathode-jobqueue')
+  compile project(':cathode-provider')
+  compile project(':cathode-settings')
+  compile deps.dagger
+  annotationProcessor deps.daggerCompiler
+  compile deps.retrofit
+  compile deps.timber
+}
+
+android {
+  compileSdkVersion parent.ext.compileSdkVersion
+  buildToolsVersion parent.ext.buildToolsVersion
+
+  defaultConfig {
+    minSdkVersion parent.ext.minSdkVersion
+    targetSdkVersion parent.ext.targetSdkVersion
+
+    versionCode = parent.ext.versionCode;
+    versionName = parent.ext.versionName
+  }
+
+  lintOptions {
+    abortOnError false
+  }
+
+  buildTypes {
+    debug {
+      buildConfigField "String", "BUILD_TIME", "\"2016-01-01T00:00Z\""
+    }
+    release {
+      buildConfigField "String", "BUILD_TIME", "\"" + buildTime() + "\""
+    }
+  }
+}
+
+def buildTime() {
+  def date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
+  date.setTimeZone(TimeZone.getTimeZone("UTC"))
+  return date.format(new Date())
+}
+
+checkstyle {
+  configFile project.file('../config/checkstyle/checkstyle.xml')
+  showViolations true
+}
+
+android.libraryVariants.all { variant ->
+  def name = variant.buildType.name
+
+  def checkstyle = project.tasks.create "checkstyle${name.capitalize()}", Checkstyle
+  checkstyle.dependsOn variant.javaCompile
+  checkstyle.source variant.javaCompile.source
+  checkstyle.classpath = project.fileTree(variant.javaCompile.destinationDir)
+  checkstyle.exclude('**/BuildConfig.java')
+  checkstyle.exclude('**/R.java')
+  project.tasks.getByName("check").dependsOn checkstyle
+}
+
+apply from: rootProject.file('deps.gradle')

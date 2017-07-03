@@ -129,8 +129,6 @@
         android:label="@string/sync_calendar"/>
 
     <!-- Receivers -->
-    <receiver android:name="net.simonvt.cathode.jobqueue.AuthJobReceiver"/>
-    <receiver android:name="net.simonvt.cathode.service.SyncWatchingReceiver"/>
     <receiver android:name="net.simonvt.cathode.notification.NotificationActionReceiver"/>
     <receiver android:name="net.simonvt.cathode.notification.NotificationReceiver"/>
 
@@ -141,7 +139,6 @@
     </receiver>
 
     <!-- Services -->
-    <service android:name="net.simonvt.cathode.jobqueue.AuthJobService"/>
     <service android:name="net.simonvt.cathode.notification.NotificationActionService"/>
     <service android:name="net.simonvt.cathode.notification.NotificationService"/>
 
