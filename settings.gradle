@@ -1,5 +1,6 @@
 include 'cathode'
 include 'cathode-common'
+include 'cathode-jobqueue'
 include 'cathode-lint'
 include 'cathode-provider'
 include 'cathode-settings'

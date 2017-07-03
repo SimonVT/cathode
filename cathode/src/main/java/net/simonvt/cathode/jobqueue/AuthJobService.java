@@ -26,7 +26,7 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.text.format.DateUtils;
 import net.simonvt.cathode.Injector;
-import net.simonvt.cathode.util.WakeLock;
+import net.simonvt.cathode.common.util.WakeLock;
 import timber.log.Timber;
 
 public class AuthJobService extends Service {
