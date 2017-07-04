@@ -7,6 +7,12 @@ dependencies {
   compile deps.schematic
   annotationProcessor deps.schematicCompiler
   compile deps.supportCoreUtils
+
+  testCompile deps.junit
+  testCompile deps.robolectric
+  testCompile deps.truth
+  testCompile deps.dagger
+  testAnnotationProcessor deps.daggerCompiler
 }
 
 android {

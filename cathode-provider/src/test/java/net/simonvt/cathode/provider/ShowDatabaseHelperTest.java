@@ -21,8 +21,7 @@ import android.content.ContentValues;
 import android.content.pm.ProviderInfo;
 import android.database.Cursor;
 import android.net.Uri;
-import net.simonvt.cathode.BuildConfig;
-import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.TestApp;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -43,7 +42,7 @@ import org.robolectric.util.ContentProviderController;
 import static com.google.common.truth.Truth.assertThat;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(application = CathodeApp.class, constants = BuildConfig.class, sdk = 21,
+@Config(application = TestApp.class, constants = BuildConfig.class, sdk = 21,
     packageName = "net.simonvt.cathode") public class ShowDatabaseHelperTest {
 
   ContentProviderController<CathodeProvider> provider;
