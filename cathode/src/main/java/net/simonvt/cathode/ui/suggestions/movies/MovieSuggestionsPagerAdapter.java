@@ -21,7 +21,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.ui.fragment.BaseFragment;
-import net.simonvt.cathode.util.ViewPagerUtils;
+import net.simonvt.cathode.common.util.ViewPagerUtils;
 
 public class MovieSuggestionsPagerAdapter extends FragmentPagerAdapter {
 

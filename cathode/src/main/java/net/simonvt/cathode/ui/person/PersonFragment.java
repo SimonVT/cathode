@@ -45,8 +45,8 @@ import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.fragment.RefreshableAppBarFragment;
-import net.simonvt.cathode.util.Ids;
-import net.simonvt.cathode.util.Intents;
+import net.simonvt.cathode.common.util.Ids;
+import net.simonvt.cathode.common.util.Intents;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.widget.RemoteImageView;
 

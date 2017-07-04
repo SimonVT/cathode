@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Simon Vig Therkildsen
+ * Copyright (C) 2017 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.util;
+package net.simonvt.cathode.common.util;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;

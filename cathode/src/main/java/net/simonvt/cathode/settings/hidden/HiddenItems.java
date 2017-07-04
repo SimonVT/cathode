@@ -59,7 +59,7 @@ import net.simonvt.cathode.ui.show.EpisodeHistoryFragment;
 import net.simonvt.cathode.ui.show.RelatedShowsFragment;
 import net.simonvt.cathode.ui.show.SeasonFragment;
 import net.simonvt.cathode.ui.show.ShowFragment;
-import net.simonvt.cathode.util.FragmentStack;
+import net.simonvt.cathode.common.util.FragmentStack;
 
 public class HiddenItems extends BaseActivity
     implements NavigationClickListener, NavigationListener {

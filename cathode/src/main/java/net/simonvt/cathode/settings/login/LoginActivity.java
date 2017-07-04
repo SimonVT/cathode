@@ -29,7 +29,7 @@ import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.Authorization;
 import net.simonvt.cathode.ui.BaseActivity;
-import net.simonvt.cathode.util.Intents;
+import net.simonvt.cathode.common.util.Intents;
 
 public class LoginActivity extends BaseActivity {
 

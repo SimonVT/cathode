@@ -19,7 +19,7 @@ package net.simonvt.cathode.settings;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import net.simonvt.cathode.util.VersionCodes;
+import net.simonvt.cathode.common.util.VersionCodes;
 
 public final class Permissions {
 

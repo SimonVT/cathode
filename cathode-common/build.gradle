@@ -20,7 +20,12 @@ apply plugin: 'checkstyle'
 dependencies {
   compile deps.dagger
   compile deps.supportAnnotations
+  compile deps.supportFragment
   compile deps.timber
+
+  testCompile deps.junit
+  testCompile deps.robolectric
+  testCompile deps.truth
 }
 
 android {

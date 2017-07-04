@@ -24,7 +24,7 @@ import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.ui.comments.CommentsFragment;
 import net.simonvt.cathode.ui.show.EpisodeFragment;
 import net.simonvt.cathode.ui.show.ShowFragment;
-import net.simonvt.cathode.util.FragmentStack.StackEntry;
+import net.simonvt.cathode.common.util.FragmentStack.StackEntry;
 import timber.log.Timber;
 
 public class EpisodeDetailsActivity extends NavigationListenerActivity {

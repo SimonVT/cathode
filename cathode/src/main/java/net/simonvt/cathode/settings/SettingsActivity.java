@@ -42,7 +42,7 @@ import net.simonvt.cathode.settings.hidden.HiddenItems;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.adapter.Adapters;
-import net.simonvt.cathode.util.VersionCodes;
+import net.simonvt.cathode.common.util.VersionCodes;
 import timber.log.Timber;
 
 public class SettingsActivity extends BaseActivity {

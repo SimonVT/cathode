@@ -48,7 +48,7 @@ import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.fragment.ToolbarGridFragment;
-import net.simonvt.cathode.util.Debouncer;
+import net.simonvt.cathode.common.util.Debouncer;
 import net.simonvt.cathode.widget.ErrorView;
 import net.simonvt.cathode.widget.SearchView;
 import net.simonvt.schematic.Cursors;

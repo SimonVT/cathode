@@ -38,7 +38,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.util.ViewUtils;
+import net.simonvt.cathode.common.util.ViewUtils;
 
 public class WatchingView extends ViewGroup {
 

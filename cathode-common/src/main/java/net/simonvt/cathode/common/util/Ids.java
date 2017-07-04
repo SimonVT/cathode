@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Simon Vig Therkildsen
+ * Copyright (C) 2017 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,29 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.util;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+package net.simonvt.cathode.common.util;
 
-public final class HttpUtils {
+import java.util.concurrent.atomic.AtomicInteger;
 
-  private HttpUtils() {
+public final class Ids {
+
+  private static final AtomicInteger NEXT_ID = new AtomicInteger(1);
+
+  private Ids() {
   }
 
-  public static String streamToString(InputStream is) {
-    try {
-      BufferedReader br = new BufferedReader(new InputStreamReader(is));
-      StringBuilder input = new StringBuilder();
-      String line;
-      while ((line = br.readLine()) != null) {
-        input.append(line);
+  public static int newId() {
+    while (true) {
+      final int id = NEXT_ID.get();
+      int nextId = id + 1;
+      if (Ids.NEXT_ID.compareAndSet(id, nextId)) {
+        return id;
       }
-
-      return input.toString();
-    } catch (Throwable t) {
-      return null;
     }
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2017 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.util;
+package net.simonvt.cathode.common.util;
 
-import android.os.Build;
+import android.content.Context;
 
-public final class VersionCodes {
+public final class ViewUtils {
 
-  private VersionCodes() {
+  private ViewUtils() {
   }
 
-  public static boolean isAtLeastM() {
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+  public static int dpToPx(Context context, int dp) {
+    return (int) (context.getResources().getDisplayMetrics().density * dp + 0.5f);
   }
 }

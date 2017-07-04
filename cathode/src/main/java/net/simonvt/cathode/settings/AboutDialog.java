@@ -27,7 +27,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.util.Intents;
+import net.simonvt.cathode.common.util.Intents;
 
 public class AboutDialog extends DialogFragment {
 

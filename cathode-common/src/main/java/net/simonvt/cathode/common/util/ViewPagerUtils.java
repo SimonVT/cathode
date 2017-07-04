@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Simon Vig Therkildsen
+ * Copyright (C) 2017 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.util;
+package net.simonvt.cathode.common.util;
 
-import java.util.concurrent.atomic.AtomicInteger;
+public class ViewPagerUtils {
 
-public final class Ids {
-
-  private static final AtomicInteger NEXT_ID = new AtomicInteger(1);
-
-  private Ids() {
+  private ViewPagerUtils() {
   }
 
-  public static int newId() {
-    while (true) {
-      final int id = NEXT_ID.get();
-      int nextId = id + 1;
-      if (Ids.NEXT_ID.compareAndSet(id, nextId)) {
-        return id;
-      }
-    }
+  public static String makeFragmentName(int viewId, long id) {
+    return "android:switcher:" + viewId + ":" + id;
   }
 }

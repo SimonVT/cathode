@@ -35,7 +35,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.trakt.CheckIn;
 import net.simonvt.cathode.ui.EpisodeDetailsActivity;
 import net.simonvt.cathode.util.DataHelper;
-import net.simonvt.cathode.util.Longs;
+import net.simonvt.cathode.common.util.Longs;
 import net.simonvt.cathode.common.util.WakeLock;
 import net.simonvt.schematic.Cursors;
 import timber.log.Timber;

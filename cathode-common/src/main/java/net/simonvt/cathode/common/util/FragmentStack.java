@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Simon Vig Therkildsen
+ * Copyright (C) 2017 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.util;
+package net.simonvt.cathode.common.util;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -28,9 +28,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import net.simonvt.cathode.common.util.guava.Preconditions;
 import timber.log.Timber;
-
-import static net.simonvt.cathode.api.util.Preconditions.checkNotNull;
 
 /** A class that manages a stack of {@link Fragment}s in a single container. */
 public final class FragmentStack {
@@ -177,7 +176,7 @@ public final class FragmentStack {
     int i = 0;
     for (Fragment f : stack) {
       String tag = f.getTag();
-      checkNotNull(tag, "Null tag for Fragment %s", f.getClass().getName());
+      Preconditions.checkNotNull(tag, "Null tag for Fragment %s", f.getClass().getName());
 
       stackTags[i++] = tag;
     }
@@ -219,7 +218,7 @@ public final class FragmentStack {
    * @param args Arguments to be set on the fragment using {@link Fragment#setArguments(android.os.Bundle)}.
    */
   public void replace(Class fragment, String tag, Bundle args) {
-    checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
+    Preconditions.checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
 
     if (!allowTransactions()) {
       return;
@@ -335,7 +334,7 @@ public final class FragmentStack {
 
   /** Adds a new fragment to the stack and displays it. */
   public void push(Class fragment, String tag, Bundle args) {
-    checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
+    Preconditions.checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
 
     if (!allowTransactions()) {
       return;
@@ -409,7 +408,7 @@ public final class FragmentStack {
    * Adds a fragment to the top of the stack and attaches it.
    */
   public void putFragment(Class fragment, String tag, Bundle args) {
-    checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
+    Preconditions.checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
 
     if (!allowTransactions()) {
       return;
@@ -468,7 +467,7 @@ public final class FragmentStack {
   }
 
   private void attachFragment(Fragment fragment, String tag) {
-    checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
+    Preconditions.checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
 
     Timber.d("Attaching fragment: %s", tag);
 
