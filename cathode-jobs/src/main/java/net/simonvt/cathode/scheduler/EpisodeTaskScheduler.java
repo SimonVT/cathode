@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Simon Vig Therkildsen
+ * Copyright (C) 2017 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,13 @@ import android.database.Cursor;
 import android.text.format.DateUtils;
 import java.io.IOException;
 import javax.inject.Inject;
-import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.CheckinService;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.common.event.ErrorEvent;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobs.R;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;

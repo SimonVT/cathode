@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Simon Vig Therkildsen
+ * Copyright (C) 2017 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -7,27 +7,19 @@
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by contextlicable law or agreed to in writing, software
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 
-package net.simonvt.cathode.module;
+package net.simonvt.cathode.scheduler;
 
 import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
-import net.simonvt.cathode.scheduler.CommentsTaskScheduler;
-import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
-import net.simonvt.cathode.scheduler.ListsTaskScheduler;
-import net.simonvt.cathode.scheduler.MovieTaskScheduler;
-import net.simonvt.cathode.scheduler.PersonTaskScheduler;
-import net.simonvt.cathode.scheduler.SearchTaskScheduler;
-import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
-import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 
 @Module(
     complete = false,

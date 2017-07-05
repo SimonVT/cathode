@@ -21,4 +21,6 @@
 
   <string name="comment_submit_error">Posting comment failed</string>
   <string name="comment_update_error">Updating comment failed</string>
+
+  <string name="checkin_cancel_error">Unable to cancel check in</string>
 </resources>

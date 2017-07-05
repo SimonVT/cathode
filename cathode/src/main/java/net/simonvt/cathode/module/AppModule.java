@@ -149,6 +149,7 @@ import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.PersonTaskScheduler;
+import net.simonvt.cathode.scheduler.SchedulerModule;
 import net.simonvt.cathode.scheduler.SearchTaskScheduler;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
@@ -241,7 +242,7 @@ import net.simonvt.cathode.ui.suggestions.shows.TrendingShowsFragment;
 import net.simonvt.cathode.widget.PhoneEpisodeView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
-@Module( //
+@Module(//
     includes = {
         ApiModule.class, SchedulerModule.class, JobModule.class, TraktModule.class,
         DatabaseHelperModule.class, TmdbModule.class, ImageModule.class, JobsModule.class,
