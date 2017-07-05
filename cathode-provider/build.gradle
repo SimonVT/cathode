@@ -4,6 +4,8 @@ apply plugin: 'checkstyle'
 dependencies {
   compile project(':cathode-common')
   compile project(':cathode-settings')
+  compile deps.dagger
+  annotationProcessor deps.daggerCompiler
   compile deps.schematic
   annotationProcessor deps.schematicCompiler
   compile deps.supportCoreUtils

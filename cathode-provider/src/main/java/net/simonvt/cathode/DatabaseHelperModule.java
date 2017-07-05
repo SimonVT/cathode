@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.module;
+package net.simonvt.cathode;
 
 import android.content.Context;
 import dagger.Module;

@@ -21,6 +21,8 @@ import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
 import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.DatabaseHelperModule;
+import net.simonvt.cathode.JobsModule;
 import net.simonvt.cathode.api.ApiModule;
 import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.appwidget.UpcomingWidgetService.UpcomingRemoteViewsFactory;
@@ -34,7 +36,6 @@ import net.simonvt.cathode.images.ShowRequestHandler;
 import net.simonvt.cathode.jobqueue.AuthJobHandler;
 import net.simonvt.cathode.jobqueue.AuthJobService;
 import net.simonvt.cathode.jobqueue.DataJobHandler;
-import net.simonvt.cathode.jobqueue.JobInjector;
 import net.simonvt.cathode.jobqueue.JobModule;
 import net.simonvt.cathode.jobscheduler.AuthJobHandlerJob;
 import net.simonvt.cathode.jobscheduler.DataJobHandlerJob;
@@ -240,10 +241,10 @@ import net.simonvt.cathode.ui.suggestions.shows.TrendingShowsFragment;
 import net.simonvt.cathode.widget.PhoneEpisodeView;
 import net.simonvt.cathode.widget.RemoteImageView;
 
-@Module(
+@Module( //
     includes = {
         ApiModule.class, SchedulerModule.class, JobModule.class, TraktModule.class,
-        DatabaseHelperModule.class, TmdbModule.class, ImageModule.class
+        DatabaseHelperModule.class, TmdbModule.class, ImageModule.class, JobsModule.class,
     },
 
     injects = {
@@ -350,7 +351,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         // Misc
         SearchHandler.class, ApiSettings.class, EpisodeHistoryLoader.class, CheckIn.class,
         MovieHistoryLoader.class, AuthJobHandler.class, DataJobHandler.class, JobCreator.class,
-    })
+    }) //
 public class AppModule {
 
   private final Context app;
@@ -361,10 +362,6 @@ public class AppModule {
 
   @Provides Context provideContext() {
     return app;
-  }
-
-  @Provides @Singleton JobInjector provideJobInjector(final Context context) {
-    return JobInjectorImpl.getInstance(context);
   }
 
   @Provides @Singleton SearchHandler provideSearchHandler() {

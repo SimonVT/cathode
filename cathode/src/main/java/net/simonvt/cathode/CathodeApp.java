@@ -34,6 +34,8 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.common.event.AuthFailedEvent;
 import net.simonvt.cathode.common.event.AuthFailedEvent.OnAuthFailedListener;
+import net.simonvt.cathode.common.util.DateUtils;
+import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.jobqueue.AuthJobHandler;
 import net.simonvt.cathode.jobqueue.DataJobHandler;
 import net.simonvt.cathode.jobqueue.JobHandler;
@@ -60,8 +62,6 @@ import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.settings.login.LoginActivity;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference;
-import net.simonvt.cathode.common.util.DateUtils;
-import net.simonvt.cathode.common.util.MainHandler;
 import timber.log.Timber;
 
 public class CathodeApp extends Application {
