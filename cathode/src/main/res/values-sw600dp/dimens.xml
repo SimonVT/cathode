@@ -15,13 +15,7 @@
   ~ limitations under the License.
   -->
 <resources>
-
-  <dimen name="searchViewMaxWidth">320dp</dimen>
-
   <dimen name="detailContentPaddingBottom">16dp</dimen>
-
-  <dimen name="recyclerViewVerticalSpacing">8dp</dimen>
-  <dimen name="recyclerViewHorizontalSpacing">8dp</dimen>
 
   <dimen name="watchingPosterWidth">72dp</dimen>
 

@@ -16,12 +16,12 @@
 
 package net.simonvt.cathode.ui;
 
-import android.support.v4.app.Fragment;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
 
 public interface NavigationListener
-    extends ShowsNavigationListener, MoviesNavigationListener, ListNavigationListener {
+    extends FragmentCallbacks, ShowsNavigationListener, MoviesNavigationListener,
+    ListNavigationListener {
 
   void onDisplayComments(ItemType type, long itemId);
 
@@ -38,8 +38,4 @@ public interface NavigationListener
   void displayFragment(Class clazz, String tag);
 
   void upFromEpisode(long showId, String showTitle, long seasonId);
-
-  void popIfTop(Fragment fragment);
-
-  boolean isFragmentTopLevel(Fragment fragment);
 }

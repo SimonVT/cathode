@@ -16,6 +16,10 @@
   -->
 
 <resources>
+  <string name="action_search">Search</string>
+
+  <string name="card_more">More</string>
+
   <string name="now">Now</string>
   <string name="airdate_unknown">Unknown airdate</string>
   <plurals name="in_minutes">

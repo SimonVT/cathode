@@ -15,7 +15,8 @@
   -->
 <resources>
 
-  <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar"/>
+  <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
+  </style>
 
   <style name="Theme" parent="BaseTheme">
     <!-- The primary branding color for the app. By default, this is the color applied to the
@@ -42,7 +43,8 @@
     <!-- The color applied to framework buttons in their normal state. -->
     <!--item name="colorButtonNormal">#FF00FFFF</item-->
 
-    <item name="circularProgressIndicatorStyle">@style/Widget.CircularProgressIndicator</item>
+    <item name="circularProgressIndicatorStyle">@style/CircularProgressIndicator</item>
+    <item name="remoteImageViewStyle">@style/RemoteImageViewStyle</item>
 
     <item name="android:windowBackground">@color/contentBackground</item>
   </style>

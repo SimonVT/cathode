@@ -18,6 +18,7 @@ package net.simonvt.cathode.database;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import timber.log.Timber;
 
 public class SimpleCursorLoader extends BaseAsyncLoader<SimpleCursor> {
 
@@ -46,6 +47,9 @@ public class SimpleCursorLoader extends BaseAsyncLoader<SimpleCursor> {
     if (cursor != null) {
       clearNotificationUris();
       notificationUri = DatabaseUtils.getNotificationUri(cursor);
+      if (notificationUri == null) {
+        Timber.d("Null notification found for: %s", uri.toString());
+      }
       addNotificationUri(notificationUri);
 
       result = new SimpleCursor(cursor);

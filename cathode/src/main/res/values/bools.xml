@@ -15,9 +15,5 @@
   ~ limitations under the License.
   -->
 <resources>
-
   <bool name="isTablet">false</bool>
-
-  <bool name="drawsBehindStatusBar">false</bool>
-
 </resources>

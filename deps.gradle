@@ -52,6 +52,7 @@ ext {
       timber              : 'com.jakewharton.timber:timber:4.5.1',
       butterknife         : "com.jakewharton:butterknife:$butterknifeVersion",
       butterknifeCompiler : "com.jakewharton:butterknife-compiler:$butterknifeVersion",
+      butterknifeGradle   : "com.jakewharton:butterknife-gradle-plugin:$butterknifeVersion",
 
       appcompat           : "com.android.support:appcompat-v7:$supportLibrariesVersion",
       cardView            : "com.android.support:cardview-v7:$supportLibrariesVersion",

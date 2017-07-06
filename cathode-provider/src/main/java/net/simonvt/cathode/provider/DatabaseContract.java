@@ -17,6 +17,7 @@ package net.simonvt.cathode.provider;
 
 import android.provider.BaseColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
+import net.simonvt.cathode.ui.adapter.LastModifiedColumn;
 import net.simonvt.schematic.annotation.AutoIncrement;
 import net.simonvt.schematic.annotation.DataType;
 import net.simonvt.schematic.annotation.DefaultValue;
@@ -34,7 +35,7 @@ public final class DatabaseContract {
 
   public interface LastModifiedColumns {
 
-    @DataType(INTEGER) @DefaultValue("0") String LAST_MODIFIED = "lastModified";
+    @DataType(INTEGER) @DefaultValue("0") String LAST_MODIFIED = LastModifiedColumn.LAST_MODIFIED;
   }
 
   public interface ShowColumns extends LastModifiedColumns {

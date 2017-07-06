@@ -1,4 +1,6 @@
 buildscript {
+  apply from: rootProject.file('deps.gradle')
+
   repositories {
     google()
     jcenter()
@@ -12,6 +14,7 @@ buildscript {
     classpath 'com.android.tools.build:gradle:2.3.3'
     classpath 'io.fabric.tools:gradle:1.+'
     classpath 'gradle.plugin.com.kageiit:lintrules:1.1.3'
+    classpath deps.butterknifeGradle
   }
 }
 
@@ -44,8 +47,7 @@ def getProperty(String propertyFile, String field) {
   def localProperties = new File(rootDir, propertyFile + ".properties")
   if (localProperties.exists()) {
     Properties properties = new Properties()
-    localProperties.withInputStream { instr ->
-      properties.load(instr)
+    localProperties.withInputStream { instr -> properties.load(instr)
     }
     def value = properties.getProperty(field)
     return value

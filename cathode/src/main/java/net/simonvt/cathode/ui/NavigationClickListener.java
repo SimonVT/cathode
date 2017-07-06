@@ -18,7 +18,5 @@ package net.simonvt.cathode.ui;
 
 public interface NavigationClickListener {
 
-  void onHomeClicked();
-
   void onSearchClicked();
 }

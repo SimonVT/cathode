@@ -17,10 +17,6 @@
 
   <style name="Widget" parent="android:Widget.Holo"/>
 
-  <style name="Toolbar">
-    <item name="android:background">?attr/colorPrimary</item>
-  </style>
-
   <style name="Crouton">
     <item name="android:gravity">center</item>
     <item name="android:paddingLeft">16dp</item>
@@ -109,15 +105,6 @@
     <item name="android:stepSize">1.0</item>
   </style>
 
-  <style name="Widget.CircularProgressIndicator">
-    <item name="textMargin">20dp</item>
-    <item name="textColor">?android:attr/textColorPrimary</item>
-    <item name="textSize">12sp</item>
-    <item name="circleStrokeWidth">2dp</item>
-    <item name="circleColor">@color/circleProgressColor</item>
-    <item name="circleBackgroundColor">@color/circleProgressBackgroundColor</item>
-  </style>
-
   <style name="AboutText" parent="android:TextAppearance.DeviceDefault.Small">
     <item name="android:gravity">center</item>
   </style>
@@ -169,28 +156,16 @@
     <item name="android:paddingBottom">8dp</item>
   </style>
 
-  <style name="AppBarRelativeLayout">
-    <item name="expandedTitleMargin">32dp</item>
-    <item name="expandedTitleTextAppearance">@style/ExpandedTitleTextAppearance</item>
-    <item name="collapsedTitleTextAppearance">@style/CollapsedTitleTextAppearance</item>
-    <item name="contentScrim">?attr/colorPrimary</item>
-    <item name="statusBarScrim">?attr/colorPrimaryDark</item>
-  </style>
-
-  <style name="ExpandedTitleTextAppearance" parent="TextAppearance.AppCompat.Display1">
-    <item name="android:textColor">@android:color/white</item>
-  </style>
-
-  <style name="CollapsedTitleTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
-    <item name="android:textColor">@android:color/white</item>
-  </style>
-
   <style name="TopBarDivider">
     <item name="android:layout_gravity">top</item>
   </style>
 
   <style name="TopBarContent">
     <item name="android:layout_marginTop">2dp</item>
+  </style>
+
+  <style name="RemoteImageViewStyle">
+    <item name="placeholder">@drawable/placeholder</item>
   </style>
 
   <style name="StatsText">

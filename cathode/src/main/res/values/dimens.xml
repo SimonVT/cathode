@@ -22,14 +22,9 @@
   <dimen name="appWidgetPosterHeight">64dp</dimen>
   <dimen name="appWidgetPosterWidth">43dp</dimen>
 
-  <dimen name="searchViewMaxWidth">0dp</dimen>
-
   <dimen name="detailContentPadding">8dp</dimen>
   <dimen name="detailContentPaddingTop">18dp</dimen>
   <dimen name="detailContentPaddingBottom">8dp</dimen>
-
-  <dimen name="recyclerViewVerticalSpacing">4dp</dimen>
-  <dimen name="recyclerViewHorizontalSpacing">4dp</dimen>
 
   <dimen name="profileIconDropShadow">2dp</dimen>
 
@@ -42,11 +37,5 @@
   <dimen name="trailerMargin">@dimen/detailContentPadding</dimen>
 
   <dimen name="dashboardItemWidth">128dp</dimen>
-
-  <!-- App bar dimensions -->
-  <dimen name="appBarContentOffset">0dp</dimen>
-  <dimen name="appBarContentMargin">0dp</dimen>
-  <dimen name="appBarTitleMarginStart">48dp</dimen>
-  <dimen name="appBarTitleMarginEnd">32dp</dimen>
 
 </resources>

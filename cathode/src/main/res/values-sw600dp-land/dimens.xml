@@ -21,9 +21,4 @@
   <dimen name="detailsCardMargin">0dp</dimen>
   <dimen name="detailsCardRadius">0dp</dimen>
 
-  <dimen name="appBarContentOffset">300dp</dimen>
-  <dimen name="appBarContentMargin">64dp</dimen>
-  <dimen name="appBarTitleMarginStart">80dp</dimen>
-  <dimen name="appBarTitleMarginEnd">80dp</dimen>
-
 </resources>

@@ -58,8 +58,6 @@
   <string name="last_collected">Last collected</string>
   <string name="watch_trailer">Watch trailer</string>
 
-  <string name="card_more">More</string>
-
   <string name="title_cast">Cast</string>
   <string name="title_comments">Comments</string>
   <string name="title_comment_add">Add comment</string>
@@ -152,7 +150,6 @@
   <string name="action_collection_hide">Hide</string>
   <string name="action_watchlist_add">Add to watchlist</string>
   <string name="action_watchlist_remove">Remove from watchlist</string>
-  <string name="action_search">Search</string>
   <string name="action_rate">Rate</string>
   <string name="action_recommendation_dismiss">Dismiss recommendation</string>
   <string name="action_list_create">Create list</string>

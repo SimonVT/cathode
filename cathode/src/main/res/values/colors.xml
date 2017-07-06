@@ -19,23 +19,17 @@
   <color name="darker_gray">#FFAAAAAA</color>
 
   <color name="nav_item">#FF757575</color>
-  <color name="action_item">#FFFFFFFF</color>
-  <color name="action_item_light">#FF757575</color>
 
   <color name="drawerBackground">#FFFFFFFF</color>
   <color name="contentBackground">#FFE5E5E5</color>
 
   <color name="calendarColor">#FF4CAF50</color>
-  <color name="watchedColor">#FF2196F3</color> <!-- Material blue 600 -->
+  <color name="watchedColor">#FF2196F3</color>
   <color name="collectedColor">#FFFF9800</color>
   <color name="watchlistColor">#FFF44336</color>
   <color name="defaultColor">#FF7E7E7E</color>
 
   <color name="placeholderBackground">#FF1C1C1E</color>
-
-  <color name="circleProgressColor">@android:color/holo_orange_dark</color>
-  <color name="circleProgressBackgroundColor">#808C8C8C</color>
-  <color name="circleProgressTextBackground">#80FFFFFF</color>
 
   <color name="showHeaderBackground">#FFFFFFFF</color>
 
