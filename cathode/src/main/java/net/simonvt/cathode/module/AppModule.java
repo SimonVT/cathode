@@ -20,6 +20,7 @@ import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
+import net.simonvt.cathode.api.ApiSettings;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.DatabaseHelperModule;
 import net.simonvt.cathode.JobsModule;
@@ -375,9 +376,5 @@ public class AppModule {
 
   @Provides @Singleton UpcomingSortByPreference provideUpcomingSortByPreference() {
     return UpcomingSortByPreference.getInstance();
-  }
-
-  @Provides @Singleton CheckIn provideCheckIn() {
-    return new CheckIn();
   }
 }

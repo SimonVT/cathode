@@ -21,10 +21,15 @@ import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
 import net.simonvt.cathode.jobqueue.JobInjector;
+import net.simonvt.cathode.trakt.CheckIn;
 
 @Module(complete = false, library = true) public class JobsModule {
 
   @Provides @Singleton JobInjector provideJobInjector(final Context context) {
     return JobInjectorImpl.getInstance(context);
+  }
+
+  @Provides @Singleton CheckIn provideCheckIn() {
+    return new CheckIn();
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2017 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.module;
+package net.simonvt.cathode.api;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.api.AuthInterceptor;
 import net.simonvt.cathode.api.TraktException;
+import net.simonvt.cathode.jobs.BuildConfig;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;

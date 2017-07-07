@@ -71,10 +71,14 @@ android {
     buildConfigField "String", "PROVIDER_AUTHORITY",
         "net.simonvt.cathode.provider.BuildConfig.PROVIDER_AUTHORITY"
 
-    buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + getTraktClientId() + "\""
-    buildConfigField "String", "TRAKT_SECRET", "\"" + getTraktSecret() + "\""
-    buildConfigField "String", "TRAKT_REDIRECT_URL", "\"" + getTraktRedirectUrl() + "\""
-    buildConfigField "String", "TMDB_API_KEY", "\"" + getTmdbApiKey() + "\""
+    buildConfigField "String", "TRAKT_CLIENT_ID",
+        "net.simonvt.cathode.jobs.BuildConfig.TRAKT_CLIENT_ID"
+    buildConfigField "String", "TRAKT_SECRET",
+        "net.simonvt.cathode.jobs.BuildConfig.TRAKT_SECRET"
+    buildConfigField "String", "TRAKT_REDIRECT_URL",
+        "net.simonvt.cathode.jobs.BuildConfig.TRAKT_REDIRECT_URL"
+    buildConfigField "String", "TMDB_API_KEY",
+        "net.simonvt.cathode.jobs.BuildConfig.TMDB_API_KEY"
   }
 
   signingConfigs {
@@ -139,42 +143,6 @@ android.applicationVariants.all { variant ->
   checkstyle.exclude('**/BuildConfig.java')
   checkstyle.exclude('**/R.java')
   project.tasks.getByName("check").dependsOn checkstyle
-}
-
-def getTraktClientId() {
-  def clientId = getProperty('api', 'trakt.clientId')
-
-  if (!clientId) {
-    clientId = '8da90b18271eff4311d02c6b3c51f4925127c140fccf7f15bdbfe82a6f628c03'
-  }
-
-  return clientId
-}
-
-def getTraktSecret() {
-  def secret = getProperty('api', 'trakt.secret')
-
-  if (!secret) {
-    secret = 'a6d4e2366529691707d97cbd42e4a2344b4141d1b7354e1f93900b0686961680'
-  }
-
-  return secret
-}
-
-def getTraktRedirectUrl() {
-  def redirectUrl = getProperty('api', 'trakt.redirectUrl')
-
-  if (!redirectUrl) {
-    redirectUrl = 'cathode://oauth/authorize'
-  }
-
-  return redirectUrl
-}
-
-def getTmdbApiKey() {
-  def redirectUrl = getProperty('api', 'tmdb.apiKey')
-
-  return redirectUrl
 }
 
 if (project.hasProperty('cathodeStoreFile')) {

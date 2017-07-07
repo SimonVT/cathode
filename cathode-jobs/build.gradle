@@ -25,6 +25,11 @@ android {
 
     versionCode = parent.ext.versionCode;
     versionName = parent.ext.versionName
+
+    buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + getTraktClientId() + "\""
+    buildConfigField "String", "TRAKT_SECRET", "\"" + getTraktSecret() + "\""
+    buildConfigField "String", "TRAKT_REDIRECT_URL", "\"" + getTraktRedirectUrl() + "\""
+    buildConfigField "String", "TMDB_API_KEY", "\"" + getTmdbApiKey() + "\""
   }
 
   lintOptions {
@@ -45,6 +50,42 @@ def buildTime() {
   def date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
   date.setTimeZone(TimeZone.getTimeZone("UTC"))
   return date.format(new Date())
+}
+
+def getTraktClientId() {
+  def clientId = getProperty('api', 'trakt.clientId')
+
+  if (!clientId) {
+    clientId = '8da90b18271eff4311d02c6b3c51f4925127c140fccf7f15bdbfe82a6f628c03'
+  }
+
+  return clientId
+}
+
+def getTraktSecret() {
+  def secret = getProperty('api', 'trakt.secret')
+
+  if (!secret) {
+    secret = 'a6d4e2366529691707d97cbd42e4a2344b4141d1b7354e1f93900b0686961680'
+  }
+
+  return secret
+}
+
+def getTraktRedirectUrl() {
+  def redirectUrl = getProperty('api', 'trakt.redirectUrl')
+
+  if (!redirectUrl) {
+    redirectUrl = 'cathode://oauth/authorize'
+  }
+
+  return redirectUrl
+}
+
+def getTmdbApiKey() {
+  def redirectUrl = getProperty('api', 'tmdb.apiKey')
+
+  return redirectUrl
 }
 
 checkstyle {

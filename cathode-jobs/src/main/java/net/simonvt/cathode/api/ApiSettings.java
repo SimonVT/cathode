@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2017 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.module;
+package net.simonvt.cathode.api;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -22,9 +22,8 @@ import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import java.io.IOException;
 import javax.inject.Inject;
-import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.Injector;
-import net.simonvt.cathode.api.TraktSettings;
+import net.simonvt.cathode.jobs.BuildConfig;
 import net.simonvt.cathode.api.entity.AccessToken;
 import net.simonvt.cathode.api.entity.TokenRequest;
 import net.simonvt.cathode.api.enumeration.GrantType;

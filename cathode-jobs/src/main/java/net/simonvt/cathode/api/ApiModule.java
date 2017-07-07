@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Simon Vig Therkildsen
+ * Copyright (C) 2017 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,7 @@ import dagger.Provides;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Singleton;
-import net.simonvt.cathode.BuildConfig;
-import net.simonvt.cathode.module.ApiSettings;
-import net.simonvt.cathode.module.LoggingInterceptor;
+import net.simonvt.cathode.jobs.BuildConfig;
 import net.simonvt.cathode.tmdb.TmdbApiKey;
 import okhttp3.Interceptor;
 
