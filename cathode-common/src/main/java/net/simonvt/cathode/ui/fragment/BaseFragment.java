@@ -22,11 +22,10 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import net.simonvt.cathode.common.R;
-import net.simonvt.cathode.common.R2;
+import net.simonvt.cathode.common.util.Views;
 import net.simonvt.cathode.ui.FragmentCallbacks;
 import net.simonvt.cathode.ui.FragmentContract;
 
@@ -35,7 +34,7 @@ public abstract class BaseFragment extends Fragment
 
   private Unbinder unbinder;
 
-  @BindView(R2.id.toolbar) @Nullable Toolbar toolbar;
+  @Nullable private Toolbar toolbar;
 
   CharSequence title;
 
@@ -90,6 +89,7 @@ public abstract class BaseFragment extends Fragment
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
     unbinder = ButterKnife.bind(this, view);
+    toolbar = Views.find(view, R.id.toolbar);
     if (toolbar != null) {
       toolbar.setOnMenuItemClickListener(this);
 
@@ -114,6 +114,7 @@ public abstract class BaseFragment extends Fragment
     if (toolbar != null) {
       toolbar.setOnMenuItemClickListener(null);
       toolbar.setNavigationOnClickListener(null);
+      toolbar = null;
     }
     unbinder.unbind();
     unbinder = null;

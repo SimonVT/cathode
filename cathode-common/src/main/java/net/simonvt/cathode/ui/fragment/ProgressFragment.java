@@ -19,8 +19,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import butterknife.BindView;
-import net.simonvt.cathode.common.R2;
+import net.simonvt.cathode.common.R;
+import net.simonvt.cathode.common.util.Views;
 
 public abstract class ProgressFragment extends BaseFragment {
 
@@ -30,9 +30,8 @@ public abstract class ProgressFragment extends BaseFragment {
 
   private static final int ANIMATION_DURATION = 600;
 
-  @BindView(R2.id.contentContainer) View content;
-
-  @BindView(R2.id.progressContainer) View progress;
+  private View content;
+  private View progress;
 
   private boolean animating;
 
@@ -43,6 +42,8 @@ public abstract class ProgressFragment extends BaseFragment {
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
+    content = Views.findRequired(view, R.id.contentContainer);
+    progress = Views.findRequired(view, R.id.progressContainer);
 
     wait = true;
     view.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -64,6 +65,12 @@ public abstract class ProgressFragment extends BaseFragment {
         }
       }
     });
+  }
+
+  @Override public void onDestroyView() {
+    content = null;
+    progress = null;
+    super.onDestroyView();
   }
 
   @Override public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {

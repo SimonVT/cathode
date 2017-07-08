@@ -21,25 +21,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import net.simonvt.cathode.common.R;
-import net.simonvt.cathode.common.R2;
+import net.simonvt.cathode.common.util.Views;
 import net.simonvt.cathode.widget.AppBarRelativeLayout;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public abstract class AppBarFragment extends BaseFragment {
 
-  @BindView(R2.id.appBarLayout) AppBarRelativeLayout appBarLayout;
-
-  @BindView(R2.id.backdrop) RemoteImageView backdrop;
+  private AppBarRelativeLayout appBarLayout;
+  private RemoteImageView backdrop;
 
   private String backdropUri;
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     View v = inflater.inflate(R.layout.fragment_appbar, container, false);
 
-    FrameLayout appBarContent = ButterKnife.findById(v, R.id.appBarContent);
+    FrameLayout appBarContent = Views.findRequired(v, R.id.appBarContent);
 
     View content = createView(inflater, appBarContent, inState);
     appBarContent.addView(content);
@@ -51,7 +48,15 @@ public abstract class AppBarFragment extends BaseFragment {
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
+    appBarLayout = Views.findRequired(view, R.id.appBarLayout);
+    backdrop = Views.findRequired(view, R.id.backdrop);
     backdrop.setImage(backdropUri);
+  }
+
+  @Override public void onDestroyView() {
+    appBarLayout = null;
+    backdrop = null;
+    super.onDestroyView();
   }
 
   @Override public void setTitle(CharSequence title) {

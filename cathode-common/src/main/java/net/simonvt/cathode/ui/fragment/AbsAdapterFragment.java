@@ -25,8 +25,8 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import butterknife.BindView;
-import net.simonvt.cathode.common.R2;
+import net.simonvt.cathode.common.R;
+import net.simonvt.cathode.common.util.Views;
 
 public abstract class AbsAdapterFragment extends BaseFragment {
 
@@ -40,10 +40,10 @@ public abstract class AbsAdapterFragment extends BaseFragment {
 
   private BaseAdapter adapter;
 
-  @BindView(R2.id.progressContainer) @Nullable View progressContainer;
-  @BindView(R2.id.listContainer) @Nullable View listContainer;
-  @BindView(android.R.id.list) AbsListView adapterView;
-  @BindView(android.R.id.empty) TextView empty;
+  @Nullable private View progressContainer;
+  @Nullable private View listContainer;
+  private AbsListView adapterView;
+  private TextView empty;
 
   private Context appContext;
 
@@ -72,6 +72,11 @@ public abstract class AbsAdapterFragment extends BaseFragment {
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
+    progressContainer = Views.find(view, R.id.progressContainer);
+    listContainer = Views.find(view, R.id.listContainer);
+    adapterView = Views.findRequired(view, android.R.id.list);
+    empty = Views.findRequired(view, android.R.id.empty);
+
     if (emptyText != null) empty.setText(emptyText);
 
     adapterView.setOnItemClickListener(onClickListener);
@@ -101,6 +106,14 @@ public abstract class AbsAdapterFragment extends BaseFragment {
       throw new IllegalStateException(
           "Layout must contain both listContainer and progressContainer if one exists");
     }
+  }
+
+  @Override public void onDestroyView() {
+    progressContainer = null;
+    listContainer = null;
+    adapterView = null;
+    empty = null;
+    super.onDestroyView();
   }
 
   @Override public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {

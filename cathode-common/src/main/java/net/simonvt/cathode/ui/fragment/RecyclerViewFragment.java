@@ -26,9 +26,8 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
-import butterknife.BindView;
 import net.simonvt.cathode.common.R;
-import net.simonvt.cathode.common.R2;
+import net.simonvt.cathode.common.util.Views;
 
 public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> extends BaseFragment {
 
@@ -40,10 +39,10 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
 
   private RecyclerView.Adapter<T> adapter;
 
-  @BindView(R2.id.progressContainer) View progressContainer;
-  @BindView(R2.id.listContainer) View listContainer;
-  @BindView(android.R.id.list) RecyclerView recyclerView;
-  @BindView(android.R.id.empty) TextView empty;
+  private View progressContainer;
+  private View listContainer;
+  private RecyclerView recyclerView;
+  private TextView empty;
 
   private Context appContext;
 
@@ -85,6 +84,11 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
 
   public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
+    progressContainer = Views.find(view, R.id.progressContainer);
+    listContainer = Views.find(view, R.id.listContainer);
+    recyclerView = Views.findRequired(view, android.R.id.list);
+    empty = Views.findRequired(view, android.R.id.empty);
+
     recyclerView.setLayoutManager(getLayoutManager());
     RecyclerView.ItemAnimator itemAnimator = getItemAnimator();
     if (itemAnimator != null) {
@@ -119,6 +123,14 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
       listContainer.setVisibility(View.VISIBLE);
       progressContainer.setVisibility(View.GONE);
     }
+  }
+
+  @Override public void onDestroyView() {
+    progressContainer = null;
+    listContainer = null;
+    recyclerView = null;
+    empty = null;
+    super.onDestroyView();
   }
 
   @Override public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {

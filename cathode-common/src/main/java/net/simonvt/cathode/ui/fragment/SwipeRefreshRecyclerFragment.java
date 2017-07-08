@@ -22,14 +22,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.BindView;
 import net.simonvt.cathode.common.R;
-import net.simonvt.cathode.common.R2;
+import net.simonvt.cathode.common.util.Views;
 
 public abstract class SwipeRefreshRecyclerFragment<T extends RecyclerView.ViewHolder>
     extends GridRecyclerViewFragment<T> implements SwipeRefreshLayout.OnRefreshListener {
 
-  @BindView(R2.id.swipeRefresh) SwipeRefreshLayout swipeRefreshLayout;
+  private SwipeRefreshLayout swipeRefreshLayout;
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_swiperefresh_recyclerview, container, false);
@@ -37,8 +36,14 @@ public abstract class SwipeRefreshRecyclerFragment<T extends RecyclerView.ViewHo
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
+    swipeRefreshLayout = Views.findRequired(view, R.id.swipeRefresh);
     swipeRefreshLayout.setOnRefreshListener(this);
     swipeRefreshLayout.setColorSchemeResources(getColorScheme());
+  }
+
+  @Override public void onDestroyView() {
+    swipeRefreshLayout = null;
+    super.onDestroyView();
   }
 
   public int[] getColorScheme() {

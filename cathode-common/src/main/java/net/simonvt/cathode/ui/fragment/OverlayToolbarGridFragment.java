@@ -22,17 +22,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import butterknife.BindView;
 import net.simonvt.cathode.common.R;
-import net.simonvt.cathode.common.R2;
+import net.simonvt.cathode.common.util.Views;
 
 public abstract class OverlayToolbarGridFragment<T extends RecyclerView.ViewHolder>
     extends ToolbarGridFragment<T> {
 
-  @BindView(R2.id.overlayParent) ViewGroup overlayParent;
+  private ViewGroup overlayParent;
 
-  @BindView(R2.id.content) View layout;
-  @BindView(R2.id.overlay) TextView overlay;
+  private View layout;
+  private TextView overlay;
   private int overlayText;
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
@@ -41,6 +40,9 @@ public abstract class OverlayToolbarGridFragment<T extends RecyclerView.ViewHold
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
+    overlayParent = Views.findRequired(view, R.id.overlayParent);
+    layout = Views.findRequired(view, R.id.content);
+    overlay = Views.findRequired(view, R.id.overlay);
 
     if (overlayText != 0) {
       layout.setVisibility(View.GONE);
@@ -50,6 +52,13 @@ public abstract class OverlayToolbarGridFragment<T extends RecyclerView.ViewHold
       layout.setVisibility(View.VISIBLE);
       overlay.setVisibility(View.GONE);
     }
+  }
+
+  @Override public void onDestroyView() {
+    overlayParent = null;
+    layout = null;
+    overlay = null;
+    super.onDestroyView();
   }
 
   public void setOverlay(int overlayText) {

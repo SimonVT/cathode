@@ -22,20 +22,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import net.simonvt.cathode.common.R;
-import net.simonvt.cathode.common.R2;
+import net.simonvt.cathode.common.util.Views;
 
 public abstract class RefreshableToolbarFragment extends BaseFragment
     implements SwipeRefreshLayout.OnRefreshListener {
 
-  @BindView(R2.id.swipeRefresh) SwipeRefreshLayout swipeRefreshLayout;
+  private SwipeRefreshLayout swipeRefreshLayout;
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     View v = inflater.inflate(R.layout.fragment_toolbar_refreshable, container, false);
 
-    FrameLayout appBarContent = ButterKnife.findById(v, R.id.toolbarContent);
+    FrameLayout appBarContent = Views.findRequired(v, R.id.toolbarContent);
 
     View content = createView(inflater, appBarContent, inState);
     appBarContent.addView(content);
@@ -47,8 +45,14 @@ public abstract class RefreshableToolbarFragment extends BaseFragment
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
+    swipeRefreshLayout = Views.findRequired(view, R.id.swipeRefresh);
     swipeRefreshLayout.setOnRefreshListener(this);
     swipeRefreshLayout.setColorSchemeResources(getColorScheme());
+  }
+
+  @Override public void onDestroyView() {
+    swipeRefreshLayout = null;
+    super.onDestroyView();
   }
 
   public int[] getColorScheme() {
