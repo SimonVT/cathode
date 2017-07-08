@@ -231,7 +231,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
       return holder;
     } else {
       final RecyclerView recyclerView = (RecyclerView) LayoutInflater.from(parent.getContext())
-          .inflate(R.layout.category_adapter_category, parent, false);
+          .inflate(R.layout.category_adapter_recyclerview, parent, false);
       recyclerView.setLayoutManager(
           new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
       ItemsViewHolder holder = new ItemsViewHolder(recyclerView);
