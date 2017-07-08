@@ -27,6 +27,7 @@ import android.view.View;
 import javax.inject.Inject;
 import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract;
@@ -40,7 +41,6 @@ import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
 import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 import net.simonvt.cathode.ui.lists.ListsDialog;
-import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.schematic.Cursors;
 
 public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder>

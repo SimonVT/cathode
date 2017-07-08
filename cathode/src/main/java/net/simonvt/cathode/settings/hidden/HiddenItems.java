@@ -28,6 +28,7 @@ import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.common.util.FragmentStack;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
@@ -59,7 +60,6 @@ import net.simonvt.cathode.ui.show.EpisodeHistoryFragment;
 import net.simonvt.cathode.ui.show.RelatedShowsFragment;
 import net.simonvt.cathode.ui.show.SeasonFragment;
 import net.simonvt.cathode.ui.show.ShowFragment;
-import net.simonvt.cathode.common.util.FragmentStack;
 
 public class HiddenItems extends BaseActivity
     implements NavigationClickListener, NavigationListener {

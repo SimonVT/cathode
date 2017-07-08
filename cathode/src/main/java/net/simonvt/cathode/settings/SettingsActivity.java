@@ -36,13 +36,13 @@ import net.simonvt.android.colorpicker.ColorPickerDialog;
 import net.simonvt.android.colorpicker.ColorPickerSwatch;
 import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.util.VersionCodes;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.settings.hidden.HiddenItems;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.adapter.Adapters;
-import net.simonvt.cathode.common.util.VersionCodes;
 import timber.log.Timber;
 
 public class SettingsActivity extends BaseActivity {

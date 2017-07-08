@@ -37,6 +37,9 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TraktUtils;
+import net.simonvt.cathode.common.util.Ids;
+import net.simonvt.cathode.common.util.Intents;
+import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.PersonTaskScheduler;
@@ -45,9 +48,6 @@ import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.fragment.RefreshableAppBarFragment;
-import net.simonvt.cathode.common.util.Ids;
-import net.simonvt.cathode.common.util.Intents;
-import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public class PersonFragment extends RefreshableAppBarFragment {

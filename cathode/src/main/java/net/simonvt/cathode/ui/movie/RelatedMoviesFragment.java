@@ -23,6 +23,8 @@ import android.support.v4.content.Loader;
 import javax.inject.Inject;
 import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.util.Ids;
+import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
@@ -34,8 +36,6 @@ import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
-import net.simonvt.cathode.common.util.Ids;
-import net.simonvt.cathode.common.util.guava.Preconditions;
 
 public class RelatedMoviesFragment
     extends ToolbarSwipeRefreshRecyclerFragment<MoviesAdapter.ViewHolder>

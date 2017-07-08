@@ -35,14 +35,14 @@ import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.common.util.Ids;
+import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.PersonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.fragment.RefreshableToolbarFragment;
-import net.simonvt.cathode.common.util.Ids;
-import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.widget.RemoteImageView;
 
 public class CreditsFragment extends RefreshableToolbarFragment {

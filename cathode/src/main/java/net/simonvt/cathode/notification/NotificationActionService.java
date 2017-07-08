@@ -28,6 +28,8 @@ import android.support.v4.app.NotificationCompat;
 import javax.inject.Inject;
 import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.util.Longs;
+import net.simonvt.cathode.common.util.WakeLock;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
@@ -35,8 +37,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.trakt.CheckIn;
 import net.simonvt.cathode.ui.EpisodeDetailsActivity;
 import net.simonvt.cathode.util.DataHelper;
-import net.simonvt.cathode.common.util.Longs;
-import net.simonvt.cathode.common.util.WakeLock;
 import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 

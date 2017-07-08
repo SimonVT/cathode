@@ -24,14 +24,14 @@ import java.util.List;
 import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.util.TimeUtils;
+import net.simonvt.cathode.common.util.DateUtils;
+import net.simonvt.cathode.common.util.TextUtils;
 import net.simonvt.cathode.database.DatabaseUtils;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
-import net.simonvt.cathode.common.util.DateUtils;
-import net.simonvt.cathode.common.util.TextUtils;
 import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 

@@ -39,6 +39,10 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.util.Alarms;
+import net.simonvt.cathode.common.util.DateUtils;
+import net.simonvt.cathode.common.util.Longs;
+import net.simonvt.cathode.common.util.WakeLock;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
@@ -47,12 +51,8 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.settings.NotificationTime;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.EpisodeDetailsActivity;
-import net.simonvt.cathode.common.util.Alarms;
 import net.simonvt.cathode.util.DataHelper;
-import net.simonvt.cathode.common.util.DateUtils;
-import net.simonvt.cathode.common.util.Longs;
 import net.simonvt.cathode.util.SqlColumn;
-import net.simonvt.cathode.common.util.WakeLock;
 import net.simonvt.schematic.Cursors;
 
 public class NotificationService extends IntentService {

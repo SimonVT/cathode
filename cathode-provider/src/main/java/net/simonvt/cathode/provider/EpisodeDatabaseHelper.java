@@ -23,10 +23,10 @@ import android.database.Cursor;
 import javax.inject.Inject;
 import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.api.entity.Episode;
-import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.common.util.DateUtils;
 import net.simonvt.cathode.common.util.guava.Preconditions;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.schematic.Cursors;
 
 public final class EpisodeDatabaseHelper {

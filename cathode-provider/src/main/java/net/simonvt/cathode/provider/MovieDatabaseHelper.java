@@ -30,13 +30,13 @@ import java.util.List;
 import java.util.Locale;
 import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.api.entity.Movie;
+import net.simonvt.cathode.common.util.TextUtils;
 import net.simonvt.cathode.database.DatabaseUtils;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieGenres;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
-import net.simonvt.cathode.common.util.TextUtils;
 import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 

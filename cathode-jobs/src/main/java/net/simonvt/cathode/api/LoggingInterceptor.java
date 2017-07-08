@@ -18,8 +18,6 @@ package net.simonvt.cathode.api;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import net.simonvt.cathode.api.AuthInterceptor;
-import net.simonvt.cathode.api.TraktException;
 import net.simonvt.cathode.jobs.BuildConfig;
 import okhttp3.Headers;
 import okhttp3.Interceptor;

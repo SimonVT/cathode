@@ -23,10 +23,10 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.text.format.DateUtils;
+import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.jobqueue.DataJobHandler;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobHandler;
-import net.simonvt.cathode.common.util.MainHandler;
 import timber.log.Timber;
 
 @RequiresApi(api = Build.VERSION_CODES.N) public class DataJobHandlerJob extends Job {

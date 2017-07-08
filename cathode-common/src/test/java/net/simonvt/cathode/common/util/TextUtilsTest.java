@@ -16,7 +16,6 @@
 
 package net.simonvt.cathode.common.util;
 
-import net.simonvt.cathode.common.util.TextUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;

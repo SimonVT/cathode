@@ -16,8 +16,8 @@
 
 package net.simonvt.cathode.tmdb.api;
 
-import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.common.tmdb.TmdbRateLimiter;
+import net.simonvt.cathode.remote.CallJob;
 
 public abstract class TmdbCallJob<T> extends CallJob<T> {
 

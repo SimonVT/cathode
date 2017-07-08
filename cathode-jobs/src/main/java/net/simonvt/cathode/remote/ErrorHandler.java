@@ -17,9 +17,9 @@
 package net.simonvt.cathode.remote;
 
 import java.io.IOException;
-import net.simonvt.cathode.jobs.R;
 import net.simonvt.cathode.common.event.AuthFailedEvent;
 import net.simonvt.cathode.common.event.RequestFailedEvent;
+import net.simonvt.cathode.jobs.R;
 import okhttp3.Headers;
 import retrofit2.Response;
 import timber.log.Timber;

@@ -19,8 +19,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import net.simonvt.cathode.api.entity.LastActivity;
-import net.simonvt.cathode.settings.Settings.ActivityTimestamp;
 import net.simonvt.cathode.common.util.DateUtils;
+import net.simonvt.cathode.settings.Settings.ActivityTimestamp;
 
 public final class TraktTimestamps {
 

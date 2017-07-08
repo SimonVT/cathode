@@ -18,6 +18,7 @@ package net.simonvt.cathode.service;
 import android.database.Cursor;
 import com.google.android.apps.dashclock.api.DashClockExtension;
 import com.google.android.apps.dashclock.api.ExtensionData;
+import net.simonvt.cathode.common.util.DateUtils;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
@@ -25,7 +26,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.cathode.util.DataHelper;
-import net.simonvt.cathode.common.util.DateUtils;
 import net.simonvt.schematic.Cursors;
 
 public class DashClockService extends DashClockExtension {

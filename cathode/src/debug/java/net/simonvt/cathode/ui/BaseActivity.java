@@ -47,6 +47,7 @@ import net.simonvt.cathode.common.event.AuthFailedEvent;
 import net.simonvt.cathode.common.event.RequestFailedEvent;
 import net.simonvt.cathode.common.event.SyncEvent;
 import net.simonvt.cathode.common.event.SyncEvent.OnSyncListener;
+import net.simonvt.cathode.common.util.DateUtils;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobListener;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -69,7 +70,6 @@ import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.StartPage;
 import net.simonvt.cathode.tmdb.api.SyncConfiguration;
-import net.simonvt.cathode.common.util.DateUtils;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 @SuppressLint("SetTextI18n") public abstract class BaseActivity extends AppCompatActivity {
