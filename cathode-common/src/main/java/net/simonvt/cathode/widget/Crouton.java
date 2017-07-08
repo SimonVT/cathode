@@ -22,12 +22,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.view.ViewPropertyAnimator;
-import android.widget.TextView;
 import java.util.LinkedList;
 
-public class Crouton extends TextView {
+public class Crouton extends AppCompatTextView {
 
   private static final String STATE_MESSAGES = "net.simonvt.messagebar.Crouton.messages";
   private static final String STATE_CURRENT_MESSAGE =

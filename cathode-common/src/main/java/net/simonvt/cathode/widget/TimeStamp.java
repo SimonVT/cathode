@@ -19,12 +19,12 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
-import android.widget.TextView;
 import java.lang.ref.WeakReference;
 import net.simonvt.cathode.common.util.DateUtils;
 
-public class TimeStamp extends TextView {
+public class TimeStamp extends AppCompatTextView {
 
   private static final int MSG_UPDATE = 1;
 

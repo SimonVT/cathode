@@ -16,12 +16,12 @@
 package net.simonvt.cathode.widget;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
-import android.widget.TextView;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.ui.LibraryType;
 
-public class CheckMark extends TextView {
+public class CheckMark extends AppCompatTextView {
 
   private LibraryType type;
 

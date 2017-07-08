@@ -18,12 +18,12 @@ package net.simonvt.cathode.widget;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
-import android.widget.TextView;
 
-public class ErrorView extends TextView {
+public class ErrorView extends AppCompatTextView {
 
   private boolean showing;
 
