@@ -44,6 +44,6 @@ public enum Privacy {
   }
 
   public static Privacy fromValue(String value) {
-    return STRING_MAPPING.get(value.toUpperCase());
+    return STRING_MAPPING.get(value.toUpperCase(Locale.US));
   }
 }

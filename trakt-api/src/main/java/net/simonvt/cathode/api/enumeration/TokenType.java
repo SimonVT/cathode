@@ -42,6 +42,6 @@ public enum TokenType {
   }
 
   public static TokenType fromValue(String value) {
-    return STRING_MAPPING.get(value.toUpperCase());
+    return STRING_MAPPING.get(value.toUpperCase(Locale.US));
   }
 }

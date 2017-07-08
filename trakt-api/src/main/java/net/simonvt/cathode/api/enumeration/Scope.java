@@ -42,6 +42,6 @@ public enum Scope {
   }
 
   public static Scope fromValue(String value) {
-    return STRING_MAPPING.get(value.toUpperCase());
+    return STRING_MAPPING.get(value.toUpperCase(Locale.US));
   }
 }

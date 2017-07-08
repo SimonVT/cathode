@@ -39,7 +39,7 @@ public enum Gender {
   }
 
   public static Gender fromValue(String value) {
-    return STRING_MAPPING.get(value.toUpperCase());
+    return STRING_MAPPING.get(value.toUpperCase(Locale.US));
   }
 
   @Override public String toString() {

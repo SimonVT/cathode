@@ -46,6 +46,6 @@ public enum ShowStatus {
   }
 
   public static ShowStatus fromValue(String value) {
-    return STRING_MAPPING.get(value.toUpperCase());
+    return STRING_MAPPING.get(value.toUpperCase(Locale.US));
   }
 }

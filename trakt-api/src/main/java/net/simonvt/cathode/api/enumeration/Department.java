@@ -41,7 +41,7 @@ public enum Department {
 
   static {
     for (Department via : Department.values()) {
-      STRING_MAPPING.put(via.toString().toUpperCase(), via);
+      STRING_MAPPING.put(via.toString().toUpperCase(Locale.US), via);
     }
   }
 
