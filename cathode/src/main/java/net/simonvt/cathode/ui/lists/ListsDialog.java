@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.ui.lists;
 
 import android.app.Dialog;
@@ -269,10 +268,9 @@ public class ListsDialog extends DialogFragment {
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle bundle) {
           return new SimpleCursorLoader(getActivity(), ListItems.LIST_ITEMS, LIST_ITEM_PROJECTION,
-              ListItemColumns.ITEM_TYPE + "=? AND " + ListItemColumns.ITEM_ID + "=?",
-              new String[] {
-                  String.valueOf(itemType), String.valueOf(itemId),
-              }, null);
+              ListItemColumns.ITEM_TYPE + "=? AND " + ListItemColumns.ITEM_ID + "=?", new String[] {
+              String.valueOf(itemType), String.valueOf(itemId),
+          }, null);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

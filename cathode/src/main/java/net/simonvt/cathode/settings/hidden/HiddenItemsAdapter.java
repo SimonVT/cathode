@@ -273,8 +273,7 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
       final ShowViewHolder vh = (ShowViewHolder) holder;
 
       final long id = Cursors.getLong(cursor, ShowColumns.ID);
-      final String poster =
-          ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
+      final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
 
       vh.poster.setImage(poster);
       vh.title.setText(Cursors.getString(cursor, ShowColumns.TITLE));
@@ -283,8 +282,7 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
       final MovieViewHolder vh = (MovieViewHolder) holder;
 
       final long id = Cursors.getLong(cursor, MovieColumns.ID);
-      final String poster =
-          ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
+      final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
 
       vh.poster.setImage(poster);
       vh.title.setText(Cursors.getString(cursor, MovieColumns.TITLE));

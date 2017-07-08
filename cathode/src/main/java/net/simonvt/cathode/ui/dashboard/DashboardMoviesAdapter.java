@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.ui.dashboard;
 
 import android.content.Context;
@@ -80,8 +79,7 @@ public class DashboardMoviesAdapter
 
   @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
     final long id = Cursors.getLong(cursor, MovieColumns.ID);
-    final String poster =
-        ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
+    final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
 
     holder.poster.setImage(poster);
     holder.title.setText(Cursors.getString(cursor, MovieColumns.TITLE));

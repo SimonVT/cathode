@@ -105,7 +105,8 @@ public interface SyncService {
    * <p>
    * Return watched history for an episode, sorted by most recent.
    */
-  @GET("/sync/history/episodes/{id}") Call<List<HistoryItem>> getEpisodeHistory(@Path("id") long id);
+  @GET("/sync/history/episodes/{id}") Call<List<HistoryItem>> getEpisodeHistory(
+      @Path("id") long id);
 
   /**
    * <b>OAuth Required</b>

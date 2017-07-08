@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.settings;
 
 import android.accounts.Account;
@@ -68,7 +67,8 @@ public final class Accounts {
       AccountManager am = AccountManager.get(context);
       Account account = getAccount(context);
       ContentResolver.removePeriodicSync(account, BuildConfig.PROVIDER_AUTHORITY, new Bundle());
-      ContentResolver.removePeriodicSync(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, new Bundle());
+      ContentResolver.removePeriodicSync(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR,
+          new Bundle());
       AccountAuthenticator.allowRemove();
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
         am.removeAccount(account, null, null, null);

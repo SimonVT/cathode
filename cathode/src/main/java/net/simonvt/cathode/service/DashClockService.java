@@ -32,25 +32,47 @@ public class DashClockService extends DashClockExtension {
 
   @Override protected void onUpdateData(int reason) {
     final long firstAiredOffset = FirstAiredOffsetPreference.getInstance().getOffsetMillis();
-    Cursor c = getContentResolver().query(Episodes.EPISODES, null,
-        EpisodeColumns.FIRST_AIRED + ">? AND "
-        + EpisodeColumns.WATCHED + "=0"
+    Cursor c = getContentResolver().query(Episodes.EPISODES, null, EpisodeColumns.FIRST_AIRED
+        + ">? AND "
+        + EpisodeColumns.WATCHED
+        + "=0"
         + " AND "
         + EpisodeColumns.NEEDS_SYNC
         + "=0"
-        + " AND ((SELECT " + Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT
-        + " FROM " + Tables.SHOWS + " WHERE "
-        + Tables.SHOWS + "." + ShowColumns.ID + "="
-        + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID
-        + ")>0 OR " + EpisodeColumns.IN_WATCHLIST + "=1 OR "
-        + "(SELECT " + Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST
-        + " FROM " + Tables.SHOWS + " WHERE "
-        + Tables.SHOWS + "." + ShowColumns.ID + "="
-        + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID
-        + ")=1)",
-        new String[] {
-            String.valueOf(System.currentTimeMillis() - firstAiredOffset),
-        }, EpisodeColumns.FIRST_AIRED + " ASC LIMIT 1");
+        + " AND ((SELECT "
+        + Tables.SHOWS
+        + "."
+        + ShowColumns.WATCHED_COUNT
+        + " FROM "
+        + Tables.SHOWS
+        + " WHERE "
+        + Tables.SHOWS
+        + "."
+        + ShowColumns.ID
+        + "="
+        + Tables.EPISODES
+        + "."
+        + EpisodeColumns.SHOW_ID
+        + ")>0 OR "
+        + EpisodeColumns.IN_WATCHLIST
+        + "=1 OR "
+        + "(SELECT "
+        + Tables.SHOWS
+        + "."
+        + ShowColumns.IN_WATCHLIST
+        + " FROM "
+        + Tables.SHOWS
+        + " WHERE "
+        + Tables.SHOWS
+        + "."
+        + ShowColumns.ID
+        + "="
+        + Tables.EPISODES
+        + "."
+        + EpisodeColumns.SHOW_ID
+        + ")=1)", new String[] {
+        String.valueOf(System.currentTimeMillis() - firstAiredOffset),
+    }, EpisodeColumns.FIRST_AIRED + " ASC LIMIT 1");
 
     if (c.moveToFirst()) {
       final int episode = Cursors.getInt(c, EpisodeColumns.EPISODE);

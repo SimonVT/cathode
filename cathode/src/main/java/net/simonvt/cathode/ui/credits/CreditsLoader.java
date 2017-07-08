@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.ui.credits;
 
 import android.content.ContentResolver;
@@ -114,9 +113,7 @@ public class CreditsLoader extends BaseAsyncLoader<Credits> {
         final long personId = Cursors.getLong(castCursor, ShowCastColumns.PERSON_ID);
         final String name = Cursors.getString(castCursor, PersonColumns.NAME);
 
-        final String headshot =
-            ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE,
-                personId);
+        final String headshot = ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, personId);
 
         Credit credit = Credit.character(character, personId, name, headshot);
         cast.add(credit);
@@ -156,8 +153,7 @@ public class CreditsLoader extends BaseAsyncLoader<Credits> {
           final String name = Cursors.getString(cursor, PersonColumns.NAME);
 
           final String headshot =
-              ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE,
-                  personId);
+              ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, personId);
 
           Credit credit = Credit.character(character, personId, name, headshot);
           credits.add(credit);
@@ -187,9 +183,7 @@ public class CreditsLoader extends BaseAsyncLoader<Credits> {
         final long personId = Cursors.getLong(castCursor, MovieCastColumns.PERSON_ID);
         final String name = Cursors.getString(castCursor, PersonColumns.NAME);
 
-        final String headshot =
-            ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE,
-                personId);
+        final String headshot = ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, personId);
 
         Credit credit = Credit.character(character, personId, name, headshot);
         cast.add(credit);
@@ -229,8 +223,7 @@ public class CreditsLoader extends BaseAsyncLoader<Credits> {
           final String name = Cursors.getString(cursor, PersonColumns.NAME);
 
           final String headshot =
-              ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE,
-                  personId);
+              ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, personId);
 
           Credit credit = Credit.character(character, personId, name, headshot);
           credits.add(credit);

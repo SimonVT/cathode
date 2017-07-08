@@ -21,6 +21,7 @@
   <application>
     <receiver android:name="net.simonvt.cathode.jobqueue.AuthJobReceiver"/>
     <receiver android:name="net.simonvt.cathode.service.SyncWatchingReceiver"/>
+
     <service android:name="net.simonvt.cathode.jobqueue.AuthJobService"/>
   </application>
 </manifest>

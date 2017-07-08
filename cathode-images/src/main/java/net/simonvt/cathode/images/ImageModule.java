@@ -28,10 +28,7 @@ import java.io.File;
 import javax.inject.Singleton;
 import okhttp3.OkHttpClient;
 
-@Module(
-    complete = false,
-    library = true)
-public class ImageModule {
+@Module(complete = false, library = true) public class ImageModule {
 
   private static final String PICASSO_CACHE = "picasso-cache";
   private static final int MIN_DISK_CACHE_SIZE = 5 * 1024 * 1024; // 5MB

@@ -21,8 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public enum Action {
-  SCROBBLE("scrobble"),
-  CHECKIN("checkin");
+  SCROBBLE("scrobble"), CHECKIN("checkin");
 
   private final String value;
 

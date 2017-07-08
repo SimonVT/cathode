@@ -34,9 +34,7 @@ import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 public class RatingDialog extends DialogFragment {
 
   public enum Type {
-    SHOW,
-    EPISODE,
-    MOVIE,
+    SHOW, EPISODE, MOVIE,
   }
 
   private static final String ARG_TYPE = "net.simonvt.cathode.ui.dialog.RatingDialog.type";

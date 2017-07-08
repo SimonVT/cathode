@@ -140,8 +140,7 @@ public class CheckIn {
     context.getContentResolver().update(Movies.withId(movieId), cv, null, null);
 
     try {
-      CheckinItem item = new CheckinItem()
-          .movie(traktId)
+      CheckinItem item = new CheckinItem().movie(traktId)
           .message(message)
           .facebook(facebook)
           .twitter(twitter)

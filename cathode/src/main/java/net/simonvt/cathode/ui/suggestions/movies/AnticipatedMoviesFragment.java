@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.ui.suggestions.movies;
 
 import android.content.SharedPreferences;
@@ -46,8 +45,7 @@ import net.simonvt.cathode.ui.movies.MoviesFragment;
 public class AnticipatedMoviesFragment extends MoviesFragment implements ListDialog.Callback {
 
   private enum SortBy {
-    ANTICIPATED("anticipated", Movies.SORT_ANTICIPATED),
-    TITLE("title", Movies.SORT_TITLE);
+    ANTICIPATED("anticipated", Movies.SORT_ANTICIPATED), TITLE("title", Movies.SORT_TITLE);
 
     private String key;
 

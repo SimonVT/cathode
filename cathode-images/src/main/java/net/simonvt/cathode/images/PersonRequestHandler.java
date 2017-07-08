@@ -127,8 +127,7 @@ public class PersonRequestHandler extends ItemRequestHandler {
 
         if (images.results.size() > 0) {
           Image screenshot = images.results.get(0);
-          final String screenshotPath =
-              ImageUri.create(ImageType.STILL, screenshot.file_path);
+          final String screenshotPath = ImageUri.create(ImageType.STILL, screenshot.file_path);
 
           values.put(PersonColumns.SCREENSHOT, screenshotPath);
           path = screenshotPath;

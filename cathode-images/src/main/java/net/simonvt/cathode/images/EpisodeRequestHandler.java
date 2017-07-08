@@ -119,8 +119,7 @@ public class EpisodeRequestHandler extends ItemRequestHandler {
 
       if (images.stills.size() > 0) {
         Image backdrop = images.stills.get(0);
-        final String backdropPath =
-            ImageUri.create(ImageType.BACKDROP, backdrop.file_path);
+        final String backdropPath = ImageUri.create(ImageType.BACKDROP, backdrop.file_path);
 
         values.put(ShowColumns.BACKDROP, backdropPath);
         path = backdropPath;

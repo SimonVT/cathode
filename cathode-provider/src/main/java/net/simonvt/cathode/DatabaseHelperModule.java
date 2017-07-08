@@ -28,10 +28,7 @@ import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.UserDatabaseHelper;
 
-@Module(
-    complete = false,
-    library = true)
-public class DatabaseHelperModule {
+@Module(complete = false, library = true) public class DatabaseHelperModule {
 
   @Provides @Singleton ShowDatabaseHelper provideShowDatabaseHelper(Context context) {
     return ShowDatabaseHelper.getInstance(context);

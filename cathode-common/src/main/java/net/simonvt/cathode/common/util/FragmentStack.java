@@ -218,7 +218,8 @@ public final class FragmentStack {
    * @param args Arguments to be set on the fragment using {@link Fragment#setArguments(android.os.Bundle)}.
    */
   public void replace(Class fragment, String tag, Bundle args) {
-    Preconditions.checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
+    Preconditions.checkNotNull(tag, "Passed null tag for Fragment %s",
+        fragment.getClass().getName());
 
     if (!allowTransactions()) {
       return;
@@ -334,7 +335,8 @@ public final class FragmentStack {
 
   /** Adds a new fragment to the stack and displays it. */
   public void push(Class fragment, String tag, Bundle args) {
-    Preconditions.checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
+    Preconditions.checkNotNull(tag, "Passed null tag for Fragment %s",
+        fragment.getClass().getName());
 
     if (!allowTransactions()) {
       return;
@@ -408,7 +410,8 @@ public final class FragmentStack {
    * Adds a fragment to the top of the stack and attaches it.
    */
   public void putFragment(Class fragment, String tag, Bundle args) {
-    Preconditions.checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
+    Preconditions.checkNotNull(tag, "Passed null tag for Fragment %s",
+        fragment.getClass().getName());
 
     if (!allowTransactions()) {
       return;
@@ -467,7 +470,8 @@ public final class FragmentStack {
   }
 
   private void attachFragment(Fragment fragment, String tag) {
-    Preconditions.checkNotNull(tag, "Passed null tag for Fragment %s", fragment.getClass().getName());
+    Preconditions.checkNotNull(tag, "Passed null tag for Fragment %s",
+        fragment.getClass().getName());
 
     Timber.d("Attaching fragment: %s", tag);
 

@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<manifest
-    package="net.simonvt.cathode.settings">
+<manifest package="net.simonvt.cathode.settings">
+
   <application/>
 </manifest>

@@ -32,7 +32,8 @@ import okhttp3.Interceptor;
 
     includes = {
         TraktModule.class
-    })
+    }
+)
 public class ApiModule {
 
   @Provides @Singleton TraktSettings provideTraktSettings(Context context) {

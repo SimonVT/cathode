@@ -177,9 +177,10 @@ public class CollapsingTextHelper {
   }
 
   void onBoundsChanged() {
-    mDrawTitle =
-        mCollapsedBounds.width() > 0 && mCollapsedBounds.height() > 0 && mExpandedBounds.width() > 0
-            && mExpandedBounds.height() > 0;
+    mDrawTitle = mCollapsedBounds.width() > 0
+        && mCollapsedBounds.height() > 0
+        && mExpandedBounds.width() > 0
+        && mExpandedBounds.height() > 0;
   }
 
   void setExpandedTextGravity(int gravity) {

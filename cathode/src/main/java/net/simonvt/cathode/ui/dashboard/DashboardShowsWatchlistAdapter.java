@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.ui.dashboard;
 
 import android.content.Context;
@@ -56,7 +55,8 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
       Tables.EPISODES + "." + EpisodeColumns.TITLE,
       Tables.EPISODES + "." + EpisodeColumns.WATCHED,
       Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
-      Tables.EPISODES + "." + EpisodeColumns.SEASON, Tables.EPISODES + "." + EpisodeColumns.EPISODE,
+      Tables.EPISODES + "." + EpisodeColumns.SEASON,
+      Tables.EPISODES + "." + EpisodeColumns.EPISODE,
       Tables.EPISODES + "." + LastModifiedColumns.LAST_MODIFIED,
       Tables.SHOWS + "." + ShowColumns.TITLE,
   };
@@ -173,8 +173,7 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
       final long id = Cursors.getLong(cursor, ShowColumns.ID);
       final String title = Cursors.getString(cursor, ShowColumns.TITLE);
 
-      final String poster =
-          ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
+      final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
 
       showHolder.poster.setImage(poster);
       showHolder.title.setText(title);
@@ -185,8 +184,8 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
       final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
       final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
       final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
-      final String title = DataHelper.getEpisodeTitle(context, cursor, season, episode, watched,
-          true);
+      final String title =
+          DataHelper.getEpisodeTitle(context, cursor, season, episode, watched, true);
 
       final String screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, id);
 

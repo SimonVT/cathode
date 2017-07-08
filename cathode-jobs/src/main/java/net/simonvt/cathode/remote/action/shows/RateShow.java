@@ -61,6 +61,5 @@ public class RateShow extends CallJob<SyncResponse> {
 
   @Override public boolean handleResponse(SyncResponse response) {
     return true;
-
   }
 }

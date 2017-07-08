@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.widget;
 
 import android.animation.ObjectAnimator;
@@ -58,8 +57,7 @@ public class WatchingView extends ViewGroup {
   }
 
   public enum Type {
-    SHOW,
-    MOVIE
+    SHOW, MOVIE
   }
 
   private static final int EXPAND_DURATION = 300;

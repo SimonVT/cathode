@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.search;
 
 import net.simonvt.cathode.api.enumeration.ItemType;
@@ -32,7 +31,8 @@ public class Result {
 
   private int relevance;
 
-  public Result(ItemType itemType, long itemId, String title, String overview, float rating, int relevance) {
+  public Result(ItemType itemType, long itemId, String title, String overview, float rating,
+      int relevance) {
     this.itemType = itemType;
     this.itemId = itemId;
     this.title = title;

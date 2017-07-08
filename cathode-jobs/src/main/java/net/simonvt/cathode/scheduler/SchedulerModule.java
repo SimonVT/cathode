@@ -21,10 +21,7 @@ import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
 
-@Module(
-    complete = false,
-    library = true)
-public class SchedulerModule {
+@Module(complete = false, library = true) public class SchedulerModule {
 
   @Provides @Singleton EpisodeTaskScheduler provideEpisodeScheduler(Context context) {
     return new EpisodeTaskScheduler(context);

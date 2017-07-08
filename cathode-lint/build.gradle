@@ -2,7 +2,7 @@ apply plugin: 'java'
 
 repositories {
   maven {
-    url  "http://dl.bintray.com/android/android-tools"
+    url "http://dl.bintray.com/android/android-tools"
   }
 }
 

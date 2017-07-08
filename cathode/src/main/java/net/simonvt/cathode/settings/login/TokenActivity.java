@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.settings.login;
 
 import android.content.Intent;
@@ -82,9 +81,7 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
 
   @Override public void onTokenFetched() {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-    settings.edit()
-        .putBoolean(Settings.TRAKT_LOGGED_IN, true)
-        .apply();
+    settings.edit().putBoolean(Settings.TRAKT_LOGGED_IN, true).apply();
 
     final String username = settings.getString(Settings.Profile.USERNAME, null);
 

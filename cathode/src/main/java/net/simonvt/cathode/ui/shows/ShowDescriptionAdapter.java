@@ -128,8 +128,7 @@ public class ShowDescriptionAdapter
     final boolean inCollection = Cursors.getInt(cursor, ShowColumns.IN_COLLECTION_COUNT) > 1;
     final boolean inWatchlist = Cursors.getBoolean(cursor, ShowColumns.IN_WATCHLIST);
 
-    final String poster =
-        ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
+    final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
 
     holder.indicator.setWatched(watched);
     holder.indicator.setCollected(inCollection);

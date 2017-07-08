@@ -54,8 +54,7 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-@Module(library = true, complete = false)
-public class TraktModule {
+@Module(library = true, complete = false) public class TraktModule {
 
   public static final String API_URL = "https://api.trakt.tv";
 

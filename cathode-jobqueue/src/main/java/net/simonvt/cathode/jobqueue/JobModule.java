@@ -21,8 +21,7 @@ import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
 
-@Module(library = true, complete = false)
-public class JobModule {
+@Module(library = true, complete = false) public class JobModule {
 
   @Provides @Singleton JobManager provideJobManager(Context context, JobInjector jobInjector) {
     return new JobManager(context, jobInjector);

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.module;
 
 import android.content.Context;
@@ -40,9 +39,12 @@ import timber.log.Timber;
 @Module(
     addsTo = AppModule.class,
     overrides = true,
+
     injects = {
         BaseActivity.DebugInjects.class, InitialSyncJob.class
-    }) public class DebugModule {
+    }
+)
+public class DebugModule {
 
   private Context context;
 

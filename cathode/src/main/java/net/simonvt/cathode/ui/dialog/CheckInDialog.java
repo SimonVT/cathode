@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.ui.dialog;
 
 import android.app.AlertDialog;
@@ -42,8 +41,7 @@ import timber.log.Timber;
 public class CheckInDialog extends DialogFragment {
 
   public enum Type {
-    SHOW,
-    MOVIE
+    SHOW, MOVIE
   }
 
   private static final String ARG_TYPE = "net.simonvt.cathode.ui.dialog.CheckInDialog.type";

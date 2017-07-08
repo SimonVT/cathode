@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.notification;
 
 import android.app.IntentService;
@@ -111,17 +110,17 @@ public class NotificationActionService extends IntentService {
 
           Timber.d("Title: %s", episodeTitle);
 
-          NotificationCompat.Builder notification = new NotificationCompat.Builder(this)
-              .setShowWhen(false)
-              .setContentTitle(getString(R.string.checkin_error_notification_title))
-              .setContentText(getString(R.string.checkin_error_notification_body, episodeTitle))
-              .setTicker(getString(R.string.checkin_error_notification_title))
-              .setSmallIcon(R.drawable.ic_notification)
-              .setAutoCancel(false)
-              .setPriority(NotificationCompat.PRIORITY_HIGH)
-              .setCategory(NotificationCompat.CATEGORY_ERROR)
-              .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-              .setLocalOnly(true);
+          NotificationCompat.Builder notification =
+              new NotificationCompat.Builder(this).setShowWhen(false)
+                  .setContentTitle(getString(R.string.checkin_error_notification_title))
+                  .setContentText(getString(R.string.checkin_error_notification_body, episodeTitle))
+                  .setTicker(getString(R.string.checkin_error_notification_title))
+                  .setSmallIcon(R.drawable.ic_notification)
+                  .setAutoCancel(false)
+                  .setPriority(NotificationCompat.PRIORITY_HIGH)
+                  .setCategory(NotificationCompat.CATEGORY_ERROR)
+                  .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                  .setLocalOnly(true);
 
           // Check-in action
           Intent checkInIntent = new Intent(this, NotificationActionReceiver.class);

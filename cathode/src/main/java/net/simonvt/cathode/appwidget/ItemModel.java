@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.appwidget;
 
 import android.content.Context;
@@ -108,8 +107,8 @@ public class ItemModel {
       final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
       final long firstAired = DataHelper.getFirstAired(cursor);
 
-      final String episodeTitle = DataHelper.getEpisodeTitle(context, cursor, season, episode,
-          watched);
+      final String episodeTitle =
+          DataHelper.getEpisodeTitle(context, cursor, season, episode, watched);
 
       String airTime = DateUtils.getTimeString(context, firstAired);
 

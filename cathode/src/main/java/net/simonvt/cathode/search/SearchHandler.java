@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.search;
 
 import android.content.Context;
@@ -152,8 +151,7 @@ public class SearchHandler {
     @Override public void run() {
       Enums<ItemType> types = Enums.of(ItemType.SHOW, ItemType.MOVIE);
       try {
-        Call<List<SearchResult>> call =
-            searchService.search(types, query, Extended.FULL, LIMIT);
+        Call<List<SearchResult>> call = searchService.search(types, query, Extended.FULL, LIMIT);
         Response<List<SearchResult>> response = call.execute();
 
         if (response.isSuccessful()) {
@@ -215,8 +213,7 @@ public class SearchHandler {
         final String overview = Cursors.getString(shows, ShowColumns.OVERVIEW);
         final float rating = Cursors.getFloat(shows, ShowColumns.RATING);
 
-        final String poster =
-            ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
+        final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
 
         Result result = new Result(ItemType.SHOW, id, title, overview, rating, relevance++);
         results.add(result);
@@ -236,11 +233,9 @@ public class SearchHandler {
         final String overview = Cursors.getString(movies, MovieColumns.OVERVIEW);
         final float rating = Cursors.getFloat(movies, MovieColumns.RATING);
 
-        final String poster =
-            ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
+        final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
 
-        Result result =
-            new Result(ItemType.MOVIE, id, title, overview, rating, relevance++);
+        Result result = new Result(ItemType.MOVIE, id, title, overview, rating, relevance++);
         results.add(result);
       }
 

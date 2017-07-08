@@ -31,10 +31,8 @@ import net.simonvt.cathode.common.util.Intents;
 
 public class AboutDialog extends DialogFragment {
 
-  private static final String DIALOG_CREDITS =
-      "net.simonvt.cathode.settings.AboutDialog.credits";
-  private static final String DIALOG_LICENSES =
-      "net.simonvt.cathode.settings.AboutDialog.licenses";
+  private static final String DIALOG_CREDITS = "net.simonvt.cathode.settings.AboutDialog.credits";
+  private static final String DIALOG_LICENSES = "net.simonvt.cathode.settings.AboutDialog.licenses";
 
   private Unbinder unbinder;
 

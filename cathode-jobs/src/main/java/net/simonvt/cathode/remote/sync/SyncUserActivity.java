@@ -52,8 +52,7 @@ public class SyncUserActivity extends CallJob<LastActivity> {
 
   @Inject transient SyncService syncService;
 
-  @RequiresApi(api = Build.VERSION_CODES.N)
-  public static void schedulePeriodic(Context context) {
+  @RequiresApi(api = Build.VERSION_CODES.N) public static void schedulePeriodic(Context context) {
     JobInfo jobInfo = new JobInfo.Builder(ID, new ComponentName(context, SchedulerService.class)) //
         .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
         .setRequiresCharging(true)

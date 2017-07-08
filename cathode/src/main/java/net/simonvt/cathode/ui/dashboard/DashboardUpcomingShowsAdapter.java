@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.ui.dashboard;
 
 import android.content.Context;
@@ -113,8 +112,7 @@ public class DashboardUpcomingShowsAdapter
     final String episodeTitle =
         DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, watched, true);
 
-    final String poster =
-        ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
+    final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
 
     holder.poster.setImage(poster);
     holder.title.setText(title);

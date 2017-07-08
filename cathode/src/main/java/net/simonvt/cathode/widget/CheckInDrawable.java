@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.widget;
 
 import android.content.Context;
@@ -57,7 +56,8 @@ public class CheckInDrawable extends Drawable implements Drawable.Callback {
       cancelDrawable = context.getDrawable(animatedCancelDrawableRes);
 
       callbacks = new Animatable2.AnimationCallback() {
-        @RequiresApi(api = Build.VERSION_CODES.M) @Override public void onAnimationEnd(Drawable drawable) {
+        @RequiresApi(api = Build.VERSION_CODES.M) @Override
+        public void onAnimationEnd(Drawable drawable) {
           ((AnimatedVectorDrawable) checkInDrawable).clearAnimationCallbacks();
           ((AnimatedVectorDrawable) checkInDrawable).reset();
           ((AnimatedVectorDrawable) cancelDrawable).clearAnimationCallbacks();

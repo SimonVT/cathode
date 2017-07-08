@@ -15,5 +15,7 @@
   ~ limitations under the License.
   -->
 <full-backup-content>
-  <include domain="sharedpref" path="net.simonvt.cathode_preferences.xml"/>
+  <include
+      domain="sharedpref"
+      path="net.simonvt.cathode_preferences.xml"/>
 </full-backup-content>

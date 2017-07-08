@@ -16,7 +16,7 @@
   -->
 <lint>
 
-  <issue id="UnusedResources" severity="error" />
+  <issue id="UnusedResources" severity="error"/>
 
-  <issue id="IconMissingDensityFolder" severity="ignore" />
+  <issue id="IconMissingDensityFolder" severity="ignore"/>
 </lint>

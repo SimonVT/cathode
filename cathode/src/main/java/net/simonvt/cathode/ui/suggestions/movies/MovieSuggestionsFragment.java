@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.ui.suggestions.movies;
 
 import android.os.Bundle;
@@ -26,7 +25,8 @@ import net.simonvt.cathode.ui.suggestions.SuggestionsFragment;
 
 public class MovieSuggestionsFragment extends SuggestionsFragment {
 
-  public static final String TAG = "net.simonvt.cathode.ui.suggestions.movies.MovieSuggestionsFragment";
+  public static final String TAG =
+      "net.simonvt.cathode.ui.suggestions.movies.MovieSuggestionsFragment";
 
   private MovieSuggestionsPagerAdapter adapter;
 

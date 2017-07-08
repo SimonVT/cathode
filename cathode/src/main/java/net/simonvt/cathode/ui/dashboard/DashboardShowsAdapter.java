@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.ui.dashboard;
 
 import android.content.Context;
@@ -79,8 +78,7 @@ public class DashboardShowsAdapter extends RecyclerCursorAdapter<DashboardShowsA
 
   @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
     final long id = Cursors.getLong(cursor, ShowColumns.ID);
-    final String poster =
-        ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
+    final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
 
     holder.poster.setImage(poster);
     holder.title.setText(Cursors.getString(cursor, ShowColumns.TITLE));

@@ -102,8 +102,7 @@ public class MovieRequestHandler extends ItemRequestHandler {
 
       if (images.backdrops.size() > 0) {
         Image backdrop = images.backdrops.get(0);
-        final String backdropPath =
-            ImageUri.create(ImageType.BACKDROP, backdrop.file_path);
+        final String backdropPath = ImageUri.create(ImageType.BACKDROP, backdrop.file_path);
 
         values.put(MovieColumns.BACKDROP, backdropPath);
 

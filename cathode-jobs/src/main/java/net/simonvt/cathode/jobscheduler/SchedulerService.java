@@ -67,8 +67,6 @@ import timber.log.Timber;
     return true;
   }
 
-
-
   private void execute(final JobParameters params, final Job job) {
     executor.execute(new Runnable() {
       @Override public void run() {

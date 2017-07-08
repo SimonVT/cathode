@@ -54,8 +54,7 @@ public class SyncUpdatedShows extends SeparatePagesCallJob<UpdatedItem> {
   private transient SharedPreferences settings;
   private transient long currentTime;
 
-  @RequiresApi(api = Build.VERSION_CODES.N)
-  public static void schedulePeriodic(Context context) {
+  @RequiresApi(api = Build.VERSION_CODES.N) public static void schedulePeriodic(Context context) {
     JobInfo jobInfo = new JobInfo.Builder(ID, new ComponentName(context, SchedulerService.class)) //
         .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
         .setRequiresCharging(true)

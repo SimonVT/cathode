@@ -81,7 +81,8 @@ public class CollectedMoviesFragment extends MoviesFragment implements ListDialo
     }
   }
 
-  public static final String TAG = "net.simonvt.cathode.ui.movies.collected.MovieCollectionFragment";
+  public static final String TAG =
+      "net.simonvt.cathode.ui.movies.collected.MovieCollectionFragment";
 
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.movies.collected.MovieCollectionFragment.sortDialog";

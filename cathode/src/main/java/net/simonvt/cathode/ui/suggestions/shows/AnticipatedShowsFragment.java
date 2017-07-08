@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.simonvt.cathode.ui.suggestions.shows;
 
 import android.app.Activity;
@@ -51,8 +50,7 @@ public class AnticipatedShowsFragment
     implements LoaderManager.LoaderCallbacks<SimpleCursor>, ListDialog.Callback, ShowClickListener {
 
   private enum SortBy {
-    ANTICIPATED("anticipated", Shows.SORT_ANTICIPATED),
-    TITLE("title", Shows.SORT_TITLE);
+    ANTICIPATED("anticipated", Shows.SORT_ANTICIPATED), TITLE("title", Shows.SORT_TITLE);
 
     private String key;
 

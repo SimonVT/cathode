@@ -39,28 +39,28 @@
       android:layout_weight="1"
       android:orientation="vertical">
 
-  <TextView
-      android:id="@+id/username"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:textColor="?android:attr/textColorPrimary"
-      tools:text="Username (10)"/>
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?android:attr/textColorPrimary"
+        tools:text="Username (10)"/>
 
-  <TextView
-      android:id="@+id/date"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:textColor="?android:attr/textColorSecondary"
-      tools:text="19/10-2015"/>
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?android:attr/textColorSecondary"
+        tools:text="19/10-2015"/>
 
-  <TextView
-      android:id="@+id/commentText"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="4dp"
-      android:maxLines="4"
-      android:ellipsize="end"
-      android:textColor="?android:attr/textColorPrimary"
-      tools:text="Show comment"/>
+    <TextView
+        android:id="@+id/commentText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:maxLines="4"
+        android:ellipsize="end"
+        android:textColor="?android:attr/textColorPrimary"
+        tools:text="Show comment"/>
   </LinearLayout>
 </LinearLayout>
