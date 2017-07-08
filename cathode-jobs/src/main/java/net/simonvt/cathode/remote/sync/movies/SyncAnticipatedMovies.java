@@ -26,6 +26,7 @@ import net.simonvt.cathode.api.entity.AnticipatedItem;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.MoviesService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
@@ -46,7 +47,7 @@ public class SyncAnticipatedMovies extends CallJob<List<AnticipatedItem>> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_SUGGESTIONS;
+    return JobPriority.SUGGESTIONS;
   }
 
   @Override public Call<List<AnticipatedItem>> getCall() {

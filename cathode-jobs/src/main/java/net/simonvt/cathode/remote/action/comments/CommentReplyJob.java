@@ -20,6 +20,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import java.io.IOException;
 import javax.inject.Inject;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.jobs.R;
 import net.simonvt.cathode.api.body.CommentBody;
 import net.simonvt.cathode.api.entity.Comment;
@@ -61,7 +62,7 @@ public class CommentReplyJob extends CallJob<Comment> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_ACTIONS;
+    return JobPriority.ACTIONS;
   }
 
   @Override public Call<Comment> getCall() {

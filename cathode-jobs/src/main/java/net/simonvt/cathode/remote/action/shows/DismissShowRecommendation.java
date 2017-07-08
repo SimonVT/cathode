@@ -17,6 +17,7 @@ package net.simonvt.cathode.remote.action.shows;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.service.RecommendationsService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import okhttp3.ResponseBody;
@@ -38,7 +39,7 @@ public class DismissShowRecommendation extends CallJob<ResponseBody> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_ACTIONS;
+    return JobPriority.ACTIONS;
   }
 
   @Override public Call<ResponseBody> getCall() {

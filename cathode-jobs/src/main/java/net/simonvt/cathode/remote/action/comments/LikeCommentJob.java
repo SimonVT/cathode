@@ -19,6 +19,7 @@ package net.simonvt.cathode.remote.action.comments;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.service.CommentsService;
 import net.simonvt.cathode.api.util.Requests;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import okhttp3.ResponseBody;
@@ -44,7 +45,7 @@ public class LikeCommentJob extends CallJob<ResponseBody> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_ACTIONS;
+    return JobPriority.ACTIONS;
   }
 
   @Override public Call<ResponseBody> getCall() {

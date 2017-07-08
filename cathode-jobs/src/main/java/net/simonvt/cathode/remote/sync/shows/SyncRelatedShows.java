@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.ShowsService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.RelatedShowsColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.RelatedShows;
@@ -50,7 +51,7 @@ public class SyncRelatedShows extends CallJob<List<Show>> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_EXTRAS;
+    return JobPriority.EXTRAS;
   }
 
   @Override public Call<List<Show>> getCall() {

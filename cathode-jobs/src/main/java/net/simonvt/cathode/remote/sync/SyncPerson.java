@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.PeopleService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.PersonDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import retrofit2.Call;
@@ -40,7 +41,7 @@ public class SyncPerson extends CallJob<Person> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_EXTRAS;
+    return JobPriority.EXTRAS;
   }
 
   @Override public Call<Person> getCall() {

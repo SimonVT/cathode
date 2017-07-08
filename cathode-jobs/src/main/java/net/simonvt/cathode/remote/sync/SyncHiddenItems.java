@@ -17,6 +17,7 @@
 package net.simonvt.cathode.remote.sync;
 
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.Flags;
 
 public class SyncHiddenItems extends Job {
@@ -30,7 +31,7 @@ public class SyncHiddenItems extends Job {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_USER_DATA;
+    return JobPriority.USER_DATA;
   }
 
   @Override public boolean perform() {

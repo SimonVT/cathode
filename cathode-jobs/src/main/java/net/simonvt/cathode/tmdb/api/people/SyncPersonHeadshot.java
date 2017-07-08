@@ -23,6 +23,7 @@ import com.uwetrottmann.tmdb2.services.PeopleService;
 import javax.inject.Inject;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.PersonDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.People;
@@ -47,7 +48,7 @@ public class SyncPersonHeadshot extends TmdbCallJob<PersonImages> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_IMAGES;
+    return JobPriority.IMAGES;
   }
 
   @Override public Call<PersonImages> getCall() {

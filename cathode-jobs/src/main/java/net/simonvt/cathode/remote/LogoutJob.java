@@ -18,6 +18,7 @@ package net.simonvt.cathode.remote;
 
 import android.content.ContentValues;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
@@ -35,7 +36,7 @@ public class LogoutJob extends Job {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_ACTIONS;
+    return JobPriority.ACTIONS;
   }
 
   @Override public boolean perform() {

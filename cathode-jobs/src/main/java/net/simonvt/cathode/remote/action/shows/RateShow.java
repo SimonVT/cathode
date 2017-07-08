@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.body.RateItems;
 import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import retrofit2.Call;
@@ -45,7 +46,7 @@ public class RateShow extends CallJob<SyncResponse> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_ACTIONS;
+    return JobPriority.ACTIONS;
   }
 
   @Override public boolean allowDuplicates() {

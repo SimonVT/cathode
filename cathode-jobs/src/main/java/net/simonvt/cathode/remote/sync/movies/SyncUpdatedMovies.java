@@ -32,6 +32,7 @@ import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.entity.UpdatedItem;
 import net.simonvt.cathode.api.service.MoviesService;
 import net.simonvt.cathode.api.util.TimeUtils;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.jobscheduler.SchedulerService;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -74,7 +75,7 @@ public class SyncUpdatedMovies extends SeparatePagesCallJob<UpdatedItem> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_UPDATED;
+    return JobPriority.UPDATED;
   }
 
   @Override public Call<List<UpdatedItem>> getCall(int page) {

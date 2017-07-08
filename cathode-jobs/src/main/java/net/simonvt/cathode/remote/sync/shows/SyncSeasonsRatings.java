@@ -23,6 +23,7 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.RatingItem;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
@@ -48,7 +49,7 @@ public class SyncSeasonsRatings extends CallJob<List<RatingItem>> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_EXTRAS;
+    return JobPriority.EXTRAS;
   }
 
   @Override public Call<List<RatingItem>> getCall() {

@@ -31,6 +31,7 @@ import net.simonvt.cathode.api.service.EpisodeService;
 import net.simonvt.cathode.api.service.MoviesService;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.CommentsHelper;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
@@ -94,7 +95,7 @@ public class SyncComments extends PagedCallJob<Comment> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_EXTRAS;
+    return JobPriority.EXTRAS;
   }
 
   @Override public Call<List<Comment>> getCall(int page) {

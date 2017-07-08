@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.MoviesService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.jobscheduler.SchedulerService;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -66,7 +67,7 @@ public class SyncPendingMovies extends ErrorHandlerJob<Movie> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_UPDATED;
+    return JobPriority.UPDATED;
   }
 
   @Override public boolean perform() {

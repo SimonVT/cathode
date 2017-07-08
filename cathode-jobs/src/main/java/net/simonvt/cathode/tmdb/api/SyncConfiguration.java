@@ -20,6 +20,7 @@ import com.uwetrottmann.tmdb2.entities.Configuration;
 import com.uwetrottmann.tmdb2.services.ConfigurationService;
 import javax.inject.Inject;
 import net.simonvt.cathode.images.ImageSettings;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import retrofit2.Call;
 
 public class SyncConfiguration extends TmdbCallJob<Configuration> {
@@ -31,7 +32,7 @@ public class SyncConfiguration extends TmdbCallJob<Configuration> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_CONFIGURATION;
+    return JobPriority.CONFIGURATION;
   }
 
   @Override public Call<Configuration> getCall() {

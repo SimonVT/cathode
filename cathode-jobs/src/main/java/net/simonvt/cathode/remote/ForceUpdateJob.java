@@ -19,6 +19,7 @@ package net.simonvt.cathode.remote;
 import android.database.Cursor;
 import javax.inject.Inject;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
@@ -37,7 +38,7 @@ public class ForceUpdateJob extends Job {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_ACTIONS;
+    return JobPriority.ACTIONS;
   }
 
   @Override public boolean perform() {

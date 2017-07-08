@@ -29,6 +29,7 @@ import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.PeopleService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCrewColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
@@ -57,7 +58,7 @@ public class SyncPersonShowCredits extends CallJob<Credits> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_EXTRAS;
+    return JobPriority.EXTRAS;
   }
 
   @Override public Call<Credits> getCall() {

@@ -19,6 +19,7 @@ package net.simonvt.cathode.remote.sync;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.UserSettings;
 import net.simonvt.cathode.api.service.UsersService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.settings.Settings;
@@ -37,7 +38,7 @@ public class SyncUserSettings extends CallJob<UserSettings> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_USER_DATA;
+    return JobPriority.USER_DATA;
   }
 
   @Override public Call<UserSettings> getCall() {

@@ -22,6 +22,7 @@ import net.simonvt.cathode.api.body.HiddenItems;
 import net.simonvt.cathode.api.entity.HideResponse;
 import net.simonvt.cathode.api.enumeration.HiddenSection;
 import net.simonvt.cathode.api.service.UsersService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
@@ -53,7 +54,7 @@ public class CollectedHideShow extends CallJob<HideResponse> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_ACTIONS;
+    return JobPriority.ACTIONS;
   }
 
   @Override public Call<HideResponse> getCall() {

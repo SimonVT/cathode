@@ -27,6 +27,7 @@ import net.simonvt.cathode.api.entity.CollectionItem;
 import net.simonvt.cathode.api.entity.IsoTime;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
@@ -56,7 +57,7 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_USER_DATA;
+    return JobPriority.USER_DATA;
   }
 
   @Override public Call<List<CollectionItem>> getCall() {

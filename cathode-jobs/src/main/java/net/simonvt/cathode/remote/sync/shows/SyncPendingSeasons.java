@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.SeasonService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.jobscheduler.SchedulerService;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -74,7 +75,7 @@ public class SyncPendingSeasons extends ErrorHandlerJob<List<Episode>> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_SEASONS;
+    return JobPriority.SEASONS;
   }
 
   @Override public boolean perform() {

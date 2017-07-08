@@ -23,6 +23,7 @@ import com.uwetrottmann.tmdb2.services.MoviesService;
 import javax.inject.Inject;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
@@ -47,7 +48,7 @@ public class SyncMovieImages extends TmdbCallJob<Images> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_MOVIES;
+    return JobPriority.MOVIES;
   }
 
   @Override public Call<Images> getCall() {

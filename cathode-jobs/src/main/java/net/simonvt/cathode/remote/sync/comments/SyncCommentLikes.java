@@ -27,6 +27,7 @@ import net.simonvt.cathode.api.entity.Like;
 import net.simonvt.cathode.api.entity.Profile;
 import net.simonvt.cathode.api.enumeration.ItemTypes;
 import net.simonvt.cathode.api.service.UsersService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.CommentsHelper;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
@@ -52,7 +53,7 @@ public class SyncCommentLikes extends PagedCallJob<Like> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_USER_DATA;
+    return JobPriority.USER_DATA;
   }
 
   @Override public Call<List<Like>> getCall(int page) {

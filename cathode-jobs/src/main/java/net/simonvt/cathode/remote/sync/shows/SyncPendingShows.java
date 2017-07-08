@@ -33,6 +33,7 @@ import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.SeasonService;
 import net.simonvt.cathode.api.service.ShowsService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.jobscheduler.SchedulerService;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
@@ -73,7 +74,7 @@ public class SyncPendingShows extends ErrorHandlerJob {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_SHOWS;
+    return JobPriority.SHOWS;
   }
 
   @Override public boolean perform() {

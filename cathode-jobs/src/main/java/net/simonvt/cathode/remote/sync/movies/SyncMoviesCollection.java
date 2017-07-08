@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.CollectionItem;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
@@ -44,7 +45,7 @@ public class SyncMoviesCollection extends CallJob<List<CollectionItem>> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_USER_DATA;
+    return JobPriority.USER_DATA;
   }
 
   @Override public Call<List<CollectionItem>> getCall() {

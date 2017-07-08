@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.body.ListItemActionBody;
 import net.simonvt.cathode.api.entity.ListItemActionResponse;
 import net.simonvt.cathode.api.service.UsersService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import retrofit2.Call;
@@ -43,7 +44,7 @@ public class AddPerson extends CallJob<ListItemActionResponse> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_ACTIONS;
+    return JobPriority.ACTIONS;
   }
 
   @Override public boolean allowDuplicates() {

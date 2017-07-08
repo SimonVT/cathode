@@ -25,6 +25,7 @@ import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.entity.TrendingItem;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.ShowsService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
@@ -45,7 +46,7 @@ public class SyncTrendingShows extends CallJob<List<TrendingItem>> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_SUGGESTIONS;
+    return JobPriority.SUGGESTIONS;
   }
 
   @Override public Call<List<TrendingItem>> getCall() {

@@ -18,6 +18,7 @@ package net.simonvt.cathode.remote.sync;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
@@ -37,7 +38,7 @@ public class SyncJob extends Job {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_USER_DATA;
+    return JobPriority.USER_DATA;
   }
 
   @Override public boolean perform() {

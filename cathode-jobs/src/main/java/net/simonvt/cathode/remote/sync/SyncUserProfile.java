@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Profile;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.UsersService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.UserDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
@@ -40,7 +41,7 @@ public class SyncUserProfile extends CallJob<Profile> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_USER_DATA;
+    return JobPriority.USER_DATA;
   }
 
   @Override public Call<Profile> getCall() {

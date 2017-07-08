@@ -18,6 +18,7 @@ package net.simonvt.cathode.remote.action.lists;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.service.UsersService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import okhttp3.ResponseBody;
@@ -39,7 +40,7 @@ public class DeleteList extends CallJob<ResponseBody> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_ACTIONS;
+    return JobPriority.ACTIONS;
   }
 
   @Override public Call<ResponseBody> getCall() {

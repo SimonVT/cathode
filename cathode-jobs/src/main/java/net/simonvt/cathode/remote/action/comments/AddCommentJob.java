@@ -19,6 +19,7 @@ package net.simonvt.cathode.remote.action.comments;
 import android.content.ContentValues;
 import java.io.IOException;
 import javax.inject.Inject;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.jobs.R;
 import net.simonvt.cathode.api.body.CommentBody;
 import net.simonvt.cathode.api.entity.Comment;
@@ -75,7 +76,7 @@ public class AddCommentJob extends CallJob<Comment> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_ACTIONS;
+    return JobPriority.ACTIONS;
   }
 
   @Override public Call<Comment> getCall() {

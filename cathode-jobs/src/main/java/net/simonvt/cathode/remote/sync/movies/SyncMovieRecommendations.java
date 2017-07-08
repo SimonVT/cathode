@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.RecommendationsService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
@@ -49,7 +50,7 @@ public class SyncMovieRecommendations extends CallJob<List<Movie>> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_SUGGESTIONS;
+    return JobPriority.SUGGESTIONS;
   }
 
   @Override public Call<List<Movie>> getCall() {

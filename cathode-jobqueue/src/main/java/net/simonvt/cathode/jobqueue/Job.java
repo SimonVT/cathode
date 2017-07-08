@@ -37,28 +37,6 @@ public abstract class Job {
     void onDone(Job job);
   }
 
-  public static final int PRIORITY_CONFIGURATION = 11;
-
-  public static final int PRIORITY_ACTIONS = 10;
-
-  public static final int PRIORITY_USER_DATA = 9;
-
-  public static final int PRIORITY_IMAGES = 7;
-
-  public static final int PRIORITY_SEASONS = 6;
-
-  public static final int PRIORITY_SHOWS = 5;
-
-  public static final int PRIORITY_MOVIES = 4;
-
-  public static final int PRIORITY_SUGGESTIONS = 3;
-
-  public static final int PRIORITY_EXTRAS = 2;
-
-  public static final int PRIORITY_UPDATED = 1;
-
-  public static final int PRIORITY_PURGE = 0;
-
   @Inject transient JobManager jobManager;
   @Inject transient Context context;
 
@@ -139,18 +117,6 @@ public abstract class Job {
 
   public boolean isStopped() {
     return stopped.get();
-  }
-
-  public void setFlags(int flags) {
-    this.flags = flags;
-  }
-
-  public void addFlag(int flag) {
-    flags |= flag;
-  }
-
-  public void removeFlag(int flag) {
-    flags &= ~flag;
   }
 
   public boolean hasFlags(int flags) {

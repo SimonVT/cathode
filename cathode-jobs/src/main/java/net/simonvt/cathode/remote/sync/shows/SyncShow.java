@@ -20,6 +20,7 @@ import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.SeasonService;
 import net.simonvt.cathode.api.service.ShowsService;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import retrofit2.Call;
@@ -42,7 +43,7 @@ public class SyncShow extends CallJob<Show> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_SHOWS;
+    return JobPriority.SHOWS;
   }
 
   @Override public Call<Show> getCall() {

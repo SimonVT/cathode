@@ -23,6 +23,7 @@ import com.uwetrottmann.tmdb2.services.TvEpisodesService;
 import javax.inject.Inject;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
+import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
@@ -55,7 +56,7 @@ public class SyncEpisodeImages extends TmdbCallJob<Images> {
   }
 
   @Override public int getPriority() {
-    return PRIORITY_IMAGES;
+    return JobPriority.IMAGES;
   }
 
   @Override public Call<Images> getCall() {
