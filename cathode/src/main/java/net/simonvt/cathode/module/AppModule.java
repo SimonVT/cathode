@@ -62,14 +62,11 @@ import net.simonvt.cathode.remote.action.lists.AddMovie;
 import net.simonvt.cathode.remote.action.lists.AddPerson;
 import net.simonvt.cathode.remote.action.lists.AddSeason;
 import net.simonvt.cathode.remote.action.lists.AddShow;
-import net.simonvt.cathode.remote.action.lists.CreateList;
-import net.simonvt.cathode.remote.action.lists.DeleteList;
 import net.simonvt.cathode.remote.action.lists.RemoveEpisode;
 import net.simonvt.cathode.remote.action.lists.RemoveMovie;
 import net.simonvt.cathode.remote.action.lists.RemovePerson;
 import net.simonvt.cathode.remote.action.lists.RemoveSeason;
 import net.simonvt.cathode.remote.action.lists.RemoveShow;
-import net.simonvt.cathode.remote.action.lists.UpdateList;
 import net.simonvt.cathode.remote.action.movies.AddMovieToHistory;
 import net.simonvt.cathode.remote.action.movies.CalendarHideMovie;
 import net.simonvt.cathode.remote.action.movies.CollectMovie;
@@ -175,6 +172,7 @@ import net.simonvt.cathode.tmdb.api.people.SyncPersonHeadshot;
 import net.simonvt.cathode.tmdb.api.show.SyncEpisodeImages;
 import net.simonvt.cathode.tmdb.api.show.SyncShowImages;
 import net.simonvt.cathode.trakt.CheckIn;
+import net.simonvt.cathode.trakt.UserList;
 import net.simonvt.cathode.ui.EpisodeDetailsActivity;
 import net.simonvt.cathode.ui.HomeActivity;
 import net.simonvt.cathode.ui.comments.AddCommentDialog;
@@ -325,23 +323,22 @@ import net.simonvt.cathode.widget.RemoteImageView;
         SyncShowsWatchlist.class, SyncShow.class, SyncShowWatchedStatus.class,
         SyncTrendingShows.class, SyncPerson.class, SyncUpdatedShows.class, SyncUpdatedMovies.class,
         ForceUpdateJob.class, UpdateShowCounts.class, SyncLists.class, SyncList.class,
-        CreateList.class, RemoveShow.class, RemoveSeason.class, RemoveEpisode.class,
-        RemoveMovie.class, RemovePerson.class, AddShow.class, AddSeason.class, AddEpisode.class,
-        AddMovie.class, AddPerson.class, LogoutJob.class, SyncHiddenItems.class,
-        SyncHiddenCalendar.class, SyncHiddenCollected.class, SyncHiddenRecommendations.class,
-        SyncHiddenWatched.class, SyncUserComments.class, AddCommentJob.class,
-        UpdateCommentJob.class, DeleteCommentJob.class, SyncComments.class, CommentReplyJob.class,
-        SyncUserProfile.class, LikeCommentJob.class, UnlikeCommentJob.class, SyncCommentLikes.class,
-        CalendarHideShow.class, WatchedHideShow.class, CollectedHideShow.class,
-        CalendarHideMovie.class, SyncAnticipatedShows.class, SyncAnticipatedMovies.class,
-        UpdateList.class, DeleteList.class, SyncRelatedShows.class, SyncRelatedMovies.class,
-        SyncPersonShowCredits.class, SyncPersonMovieCredits.class, SyncMovieImages.class,
-        SyncConfiguration.class, SyncShowImages.class, SyncEpisodeImages.class,
-        SyncPersonHeadshot.class, SyncPersonBackdrop.class, AddShowToHistory.class,
-        AddSeasonToHistory.class, AddEpisodeToHistory.class, AddMovieToHistory.class,
-        RemoveSeasonFromHistory.class, RemoveEpisodeFromHistory.class, RemoveMovieFromHistory.class,
-        RemoveHistoryItem.class, SyncPendingShows.class, SyncPendingSeasons.class,
-        SyncPendingMovies.class,
+        RemoveShow.class, RemoveSeason.class, RemoveEpisode.class, RemoveMovie.class,
+        RemovePerson.class, AddShow.class, AddSeason.class, AddEpisode.class, AddMovie.class,
+        AddPerson.class, LogoutJob.class, SyncHiddenItems.class, SyncHiddenCalendar.class,
+        SyncHiddenCollected.class, SyncHiddenRecommendations.class, SyncHiddenWatched.class,
+        SyncUserComments.class, AddCommentJob.class, UpdateCommentJob.class, DeleteCommentJob.class,
+        SyncComments.class, CommentReplyJob.class, SyncUserProfile.class, LikeCommentJob.class,
+        UnlikeCommentJob.class, SyncCommentLikes.class, CalendarHideShow.class,
+        WatchedHideShow.class, CollectedHideShow.class, CalendarHideMovie.class,
+        SyncAnticipatedShows.class, SyncAnticipatedMovies.class, SyncRelatedShows.class,
+        SyncRelatedMovies.class, SyncPersonShowCredits.class, SyncPersonMovieCredits.class,
+        SyncMovieImages.class, SyncConfiguration.class, SyncShowImages.class,
+        SyncEpisodeImages.class, SyncPersonHeadshot.class, SyncPersonBackdrop.class,
+        AddShowToHistory.class, AddSeasonToHistory.class, AddEpisodeToHistory.class,
+        AddMovieToHistory.class, RemoveSeasonFromHistory.class, RemoveEpisodeFromHistory.class,
+        RemoveMovieFromHistory.class, RemoveHistoryItem.class, SyncPendingShows.class,
+        SyncPendingSeasons.class, SyncPendingMovies.class,
 
         // Scheduler jobs
         AuthJobHandlerJob.class, DataJobHandlerJob.class,
@@ -352,6 +349,7 @@ import net.simonvt.cathode.widget.RemoteImageView;
         // Misc
         SearchHandler.class, ApiSettings.class, EpisodeHistoryLoader.class, CheckIn.class,
         MovieHistoryLoader.class, AuthJobHandler.class, DataJobHandler.class, JobCreator.class,
+        UserList.class,
     }) //
 public class AppModule {
 

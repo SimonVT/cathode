@@ -18,17 +18,19 @@ package net.simonvt.cathode.scheduler;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ListWrapper;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.PersonDatabaseHelper;
-import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
+import net.simonvt.cathode.provider.ProviderSchematic.Lists;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.action.lists.AddEpisode;
@@ -36,14 +38,14 @@ import net.simonvt.cathode.remote.action.lists.AddMovie;
 import net.simonvt.cathode.remote.action.lists.AddPerson;
 import net.simonvt.cathode.remote.action.lists.AddSeason;
 import net.simonvt.cathode.remote.action.lists.AddShow;
-import net.simonvt.cathode.remote.action.lists.CreateList;
-import net.simonvt.cathode.remote.action.lists.DeleteList;
 import net.simonvt.cathode.remote.action.lists.RemoveEpisode;
 import net.simonvt.cathode.remote.action.lists.RemoveMovie;
 import net.simonvt.cathode.remote.action.lists.RemovePerson;
 import net.simonvt.cathode.remote.action.lists.RemoveSeason;
 import net.simonvt.cathode.remote.action.lists.RemoveShow;
-import net.simonvt.cathode.remote.action.lists.UpdateList;
+import net.simonvt.cathode.remote.sync.lists.SyncLists;
+import net.simonvt.cathode.trakt.UserList;
+import net.simonvt.schematic.Cursors;
 
 public class ListsTaskScheduler extends BaseTaskScheduler {
 
@@ -55,6 +57,8 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
   @Inject MovieDatabaseHelper movieHelper;
   @Inject transient PersonDatabaseHelper personHelper;
 
+  @Inject UserList userList;
+
   public ListsTaskScheduler(Context context) {
     super(context);
   }
@@ -63,11 +67,8 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
       final boolean displayNumbers, final boolean allowComments) {
     execute(new Runnable() {
       @Override public void run() {
-        final long listId =
-            ListWrapper.createList(context.getContentResolver(), name, description, privacy,
-                displayNumbers, allowComments);
-
-        queue(new CreateList(listId, name, description, privacy, displayNumbers, allowComments));
+        userList.create(name, description, privacy, displayNumbers, allowComments);
+        queue(new SyncLists());
       }
     });
   }
@@ -77,11 +78,8 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
     execute(new Runnable() {
       @Override public void run() {
         final long traktId = ListWrapper.getTraktId(context.getContentResolver(), listId);
-
-        ListWrapper.updateList(context.getContentResolver(), listId, name, description, privacy,
-            displayNumbers, allowComments);
-
-        queue(new UpdateList(traktId, name, description, privacy, displayNumbers, allowComments));
+        userList.update(traktId, name, description, privacy, displayNumbers, allowComments);
+        queue(new SyncLists());
       }
     });
   }
@@ -89,12 +87,21 @@ public class ListsTaskScheduler extends BaseTaskScheduler {
   public void deleteList(final long listId) {
     execute(new Runnable() {
       @Override public void run() {
-        final long traktId = ListWrapper.getTraktId(context.getContentResolver(), listId);
+        Cursor list = context.getContentResolver().query(Lists.withId(listId), new String[] {
+            ListsColumns.NAME, ListsColumns.TRAKT_ID,
+        }, null, null, null);
+        if (list.moveToFirst()) {
+          final String name = Cursors.getString(list, ListsColumns.NAME);
+          final long traktId = Cursors.getLong(list, ListsColumns.TRAKT_ID);
 
-        context.getContentResolver().delete(ListItems.inList(listId), null, null);
-        context.getContentResolver().delete(ProviderSchematic.Lists.withId(listId), null, null);
+          if (userList.delete(traktId, name)) {
+            context.getContentResolver().delete(ListItems.inList(listId), null, null);
+            context.getContentResolver().delete(Lists.withId(listId), null, null);
+          }
 
-        queue(new DeleteList(traktId));
+          queue(new SyncLists());
+        }
+        list.close();
       }
     });
   }

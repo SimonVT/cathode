@@ -22,6 +22,7 @@ import dagger.Provides;
 import javax.inject.Singleton;
 import net.simonvt.cathode.jobqueue.JobInjector;
 import net.simonvt.cathode.trakt.CheckIn;
+import net.simonvt.cathode.trakt.UserList;
 
 @Module(complete = false, library = true) public class JobsModule {
 
@@ -31,5 +32,9 @@ import net.simonvt.cathode.trakt.CheckIn;
 
   @Provides @Singleton CheckIn provideCheckIn() {
     return new CheckIn();
+  }
+
+  @Provides @Singleton UserList provideUserList() {
+    return new UserList();
   }
 }

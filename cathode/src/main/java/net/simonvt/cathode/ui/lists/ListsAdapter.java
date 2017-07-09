@@ -69,12 +69,7 @@ public class ListsAdapter extends RecyclerCursorAdapter<ListsAdapter.ViewHolder>
   @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
     final String name = Cursors.getString(cursor, ListsColumns.NAME);
     final String description = Cursors.getString(cursor, ListsColumns.DESCRIPTION);
-    final long traktId = Cursors.getLong(cursor, ListsColumns.TRAKT_ID);
 
-    final boolean enabled = traktId >= 0L;
-    holder.itemView.setEnabled(enabled);
-    holder.name.setEnabled(enabled);
-    holder.description.setEnabled(enabled);
     holder.name.setText(name);
     holder.description.setText(description);
   }

@@ -34,7 +34,7 @@ import retrofit2.Call;
 public class SyncLists extends CallJob<List<CustomList>> {
 
   private static final String[] PROJECTION = new String[] {
-      ListsColumns.TRAKT_ID,
+      ListsColumns.ID, ListsColumns.TRAKT_ID,
   };
 
   @Inject transient UsersService usersService;
@@ -57,19 +57,17 @@ public class SyncLists extends CallJob<List<CustomList>> {
 
   @Override public boolean handleResponse(List<CustomList> lists) {
     List<Long> listIds = new ArrayList<>();
-    Cursor listsCursor =
-        getContentResolver().query(Lists.LISTS, PROJECTION, ListsColumns.TRAKT_ID + ">=0", null,
-            null);
+    Cursor listsCursor = getContentResolver().query(Lists.LISTS, PROJECTION, null, null, null);
     while (listsCursor.moveToNext()) {
-      listIds.add(Cursors.getLong(listsCursor, ListsColumns.TRAKT_ID));
+      listIds.add(Cursors.getLong(listsCursor, ListsColumns.ID));
     }
     listsCursor.close();
 
     for (CustomList list : lists) {
       final long traktId = list.getIds().getTrakt();
-      ListWrapper.updateOrInsert(getContentResolver(), list);
+      final long listId = ListWrapper.updateOrInsert(getContentResolver(), list);
       queue(new SyncList(traktId));
-      listIds.remove(traktId);
+      listIds.remove(listId);
     }
 
     for (Long id : listIds) {

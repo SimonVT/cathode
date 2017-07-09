@@ -23,4 +23,8 @@
 
   <string name="checkin_error">Unable to check in %1$s</string>
   <string name="checkin_error_watching">Unable to check in %1$s, already watching something else</string>
+
+  <string name="list_create_error">Unable to create list %s</string>
+  <string name="list_update_error">Unable to update list %s</string>
+  <string name="list_delete_error">Unable to delete list %s</string>
 </resources>
