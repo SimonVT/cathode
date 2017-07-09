@@ -49,22 +49,17 @@ public class CollectLoader extends BaseAsyncLoader<SimpleMergeCursor> {
                 + ">0", null,
             EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1");
 
+    Uri notiUri = DatabaseUtils.getNotificationUri(toCollect);
+    addNotificationUri(notiUri);
+
     if (toCollect.getCount() == 0) {
       SimpleMergeCursor cursor = new SimpleMergeCursor(toCollect);
-      toCollect.close();
       return cursor;
     }
 
     Cursor lastCollected = getContext().getContentResolver()
         .query(Episodes.fromShow(showId), projection, EpisodeColumns.IN_COLLECTION + "=1", null,
             EpisodeColumns.SEASON + " DESC, " + EpisodeColumns.EPISODE + " DESC LIMIT 1");
-
-    lastCollected.getCount();
-
-    Uri notiUri = DatabaseUtils.getNotificationUri(toCollect);
-    addNotificationUri(notiUri);
-    notiUri = DatabaseUtils.getNotificationUri(lastCollected);
-    addNotificationUri(notiUri);
 
     return new SimpleMergeCursor(toCollect, lastCollected);
   }

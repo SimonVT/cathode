@@ -25,12 +25,7 @@ import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.common.util.guava.Preconditions;
-import net.simonvt.cathode.database.SimpleCursor;
-import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.database.SimpleMergeCursor;
-import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
-import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.ui.fragment.ToolbarGridFragment;
 
 public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHolder> {
@@ -49,17 +44,12 @@ public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHol
       "net.simonvt.cathode.ui.comments.CommentFragment.adapterState";
 
   private static final int LOADER_COMMENT = 1;
-  private static final int LOADER_COMMENTS = 2;
 
   private long commentId;
 
   private int columnCount;
 
   private CommentsAdapter adapter;
-
-  private Cursor comment;
-
-  private Cursor replies;
 
   private Bundle adapterState;
 
@@ -88,7 +78,6 @@ public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHol
     setTitle(R.string.title_comments);
 
     getLoaderManager().initLoader(LOADER_COMMENT, null, commentLoader);
-    getLoaderManager().initLoader(LOADER_COMMENTS, null, repliesLoader);
   }
 
   @Override public void onSaveInstanceState(Bundle outState) {
@@ -128,20 +117,12 @@ public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHol
         }
       };
 
-  private void updateCursor() {
-    if (comment == null || replies == null) {
-      return;
-    }
-
-    SimpleMergeCursor cursor = new SimpleMergeCursor(comment, replies);
-    setCursor(cursor);
-  }
-
   private void setCursor(Cursor cursor) {
     if (adapter == null) {
       adapter = new CommentsAdapter(getActivity(), null, true, commentClickListener);
       if (adapterState != null) {
         adapter.restoreState(adapterState);
+        adapterState = null;
       }
       setAdapter(adapter);
     }
@@ -149,38 +130,18 @@ public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHol
     adapter.changeCursor(cursor);
   }
 
-  private LoaderManager.LoaderCallbacks<SimpleCursor> commentLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getContext(), Comments.COMMENTS_WITH_PROFILE,
-              CommentsAdapter.PROJECTION, Tables.COMMENTS + "." + CommentColumns.ID + "=?",
-              new String[] {
-                  String.valueOf(commentId),
-              }, null);
+  private LoaderManager.LoaderCallbacks<SimpleMergeCursor> commentLoader =
+      new LoaderManager.LoaderCallbacks<SimpleMergeCursor>() {
+        @Override public Loader<SimpleMergeCursor> onCreateLoader(int id, Bundle args) {
+          return new CommentAndRepliesLoader(getContext(), commentId);
         }
 
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          comment = data;
-          updateCursor();
+        @Override
+        public void onLoadFinished(Loader<SimpleMergeCursor> loader, SimpleMergeCursor data) {
+          setCursor(data);
         }
 
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> repliesLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getContext(), Comments.withParent(commentId),
-              CommentsAdapter.PROJECTION, null, null, CommentColumns.CREATED_AT + " DESC");
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          replies = data;
-          updateCursor();
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
+        @Override public void onLoaderReset(Loader<SimpleMergeCursor> loader) {
         }
       };
 }
