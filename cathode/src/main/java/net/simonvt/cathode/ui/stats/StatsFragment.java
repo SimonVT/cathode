@@ -27,7 +27,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.BindView;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.util.DateUtils;
+import net.simonvt.cathode.common.util.DateStringUtils;
 import net.simonvt.cathode.database.BaseAsyncLoader;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -82,7 +82,7 @@ public class StatsFragment extends BaseFragment implements LoaderCallbacks<Stats
   private void updateStats() {
     if (stats != null && getView() != null) {
       statsShows.setVisibility(View.VISIBLE);
-      episodeTime.setText(DateUtils.getStatsString(getContext(), stats.episodeTime));
+      episodeTime.setText(DateStringUtils.getStatsString(getContext(), stats.episodeTime));
       episodeCount.setText(
           getResources().getQuantityString(R.plurals.stats_episodes, stats.episodeCount,
               stats.episodeCount));
@@ -92,7 +92,7 @@ public class StatsFragment extends BaseFragment implements LoaderCallbacks<Stats
       statsMovies.setVisibility(View.VISIBLE);
       movieCount.setText(getResources().getQuantityString(R.plurals.stats_movies, stats.movieCount,
           stats.movieCount));
-      movieTime.setText(DateUtils.getStatsString(getContext(), stats.moviesTime));
+      movieTime.setText(DateStringUtils.getStatsString(getContext(), stats.moviesTime));
     }
   }
 

@@ -18,8 +18,8 @@ package net.simonvt.cathode.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.format.DateUtils;
 import net.simonvt.cathode.api.entity.LastActivity;
-import net.simonvt.cathode.common.util.DateUtils;
 import net.simonvt.cathode.settings.Settings.ActivityTimestamp;
 
 public final class TraktTimestamps {

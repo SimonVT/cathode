@@ -17,10 +17,11 @@ package net.simonvt.cathode.appwidget;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.text.format.DateUtils;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import net.simonvt.cathode.common.util.DateUtils;
+import net.simonvt.cathode.common.util.DateStringUtils;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
@@ -110,7 +111,7 @@ public class ItemModel {
       final String episodeTitle =
           DataHelper.getEpisodeTitle(context, cursor, season, episode, watched);
 
-      String airTime = DateUtils.getTimeString(context, firstAired);
+      String airTime = DateStringUtils.getTimeString(context, firstAired);
 
       ItemInfo item =
           new ItemInfo(showId, showTitle, showOverview, episodeId, episodeTitle, season, episode,
@@ -123,7 +124,7 @@ public class ItemModel {
       final long itemDay = calendar.getTimeInMillis();
 
       if (lastDay == null || itemDay != lastDay.dayStart) {
-        lastDay = new DayInfo(itemDay, DateUtils.getDateString(itemDay));
+        lastDay = new DayInfo(itemDay, DateStringUtils.getDateString(itemDay));
         items.add(lastDay);
       }
 

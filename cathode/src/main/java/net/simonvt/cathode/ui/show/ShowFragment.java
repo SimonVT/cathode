@@ -42,7 +42,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.enumeration.ShowStatus;
 import net.simonvt.cathode.api.util.TraktUtils;
-import net.simonvt.cathode.common.util.DateUtils;
+import net.simonvt.cathode.common.util.DateStringUtils;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.Intents;
 import net.simonvt.cathode.common.util.guava.Preconditions;
@@ -847,7 +847,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
           ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, toWatchId);
       toWatchHolder.episodeScreenshot.setImage(screenshotUri);
 
-      String firstAiredString = DateUtils.millisToString(getActivity(), firstAired, false);
+      String firstAiredString = DateStringUtils.getAirdateInterval(getActivity(), firstAired, false);
 
       final boolean watching = Cursors.getBoolean(cursor, EpisodeColumns.WATCHING);
       final boolean checkedIn = Cursors.getBoolean(cursor, EpisodeColumns.CHECKED_IN);
@@ -883,7 +883,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
         lastWatchedHolder.episodeTitle.setText(title);
 
         final long firstAired = DataHelper.getFirstAired(cursor);
-        final String firstAiredString = DateUtils.millisToString(getActivity(), firstAired, false);
+        final String firstAiredString =
+            DateStringUtils.getAirdateInterval(getActivity(), firstAired, false);
         lastWatchedHolder.episodeAirTime.setText(firstAiredString);
 
         final String lastWatchedEpisodeText =
@@ -921,7 +922,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
       toCollectHolder.episodeTitle.setText(title);
 
       final long firstAired = DataHelper.getFirstAired(cursor);
-      final String firstAiredString = DateUtils.millisToString(getActivity(), firstAired, false);
+      final String firstAiredString =
+          DateStringUtils.getAirdateInterval(getActivity(), firstAired, false);
       toCollectHolder.episodeAirTime.setText(firstAiredString);
 
       final String toCollectEpisodeText = getString(R.string.season_x_episode_y, season, episode);
@@ -950,7 +952,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
         lastCollectedHolder.episodeTitle.setText(title);
 
         final long firstAired = DataHelper.getFirstAired(cursor);
-        final String firstAiredString = DateUtils.millisToString(getActivity(), firstAired, false);
+        final String firstAiredString =
+            DateStringUtils.getAirdateInterval(getActivity(), firstAired, false);
         lastCollectedHolder.episodeAirTime.setText(firstAiredString);
 
         final String lastCollectedEpisodeText =

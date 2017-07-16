@@ -31,7 +31,7 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.util.DateUtils;
+import net.simonvt.cathode.common.util.DateStringUtils;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.database.SimpleCursor;
@@ -137,7 +137,7 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
     final String screenshot = Cursors.getString(episode, EpisodeColumns.SCREENSHOT);
     final long firstAired = DataHelper.getFirstAired(episode);
     final String firstAiredString =
-        DateUtils.millisToString(getActivity(), DataHelper.getFirstAired(episode), true);
+        DateStringUtils.getAirdateInterval(getActivity(), DataHelper.getFirstAired(episode), true);
     showTitle = Cursors.getString(episode, EpisodeColumns.SHOW_TITLE);
 
     setTitle(showTitle);

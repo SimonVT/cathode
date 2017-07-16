@@ -18,7 +18,7 @@ package net.simonvt.cathode.service;
 import android.database.Cursor;
 import com.google.android.apps.dashclock.api.DashClockExtension;
 import com.google.android.apps.dashclock.api.ExtensionData;
-import net.simonvt.cathode.common.util.DateUtils;
+import net.simonvt.cathode.common.util.DateStringUtils;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
@@ -82,7 +82,7 @@ public class DashClockService extends DashClockExtension {
       final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
       final long firstAired = DataHelper.getFirstAired(c);
 
-      final String date = DateUtils.millisToString(this, firstAired, false);
+      final String date = DateStringUtils.getAirdateInterval(this, firstAired, false);
 
       Cursor show = getContentResolver().query(Shows.withId(showId), null, null, null, null);
       if (!show.moveToFirst()) {

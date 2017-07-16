@@ -27,6 +27,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.text.format.DateUtils;
 import com.crashlytics.android.Crashlytics;
 import dagger.ObjectGraph;
 import io.fabric.sdk.android.Fabric;
@@ -34,7 +35,6 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.common.event.AuthFailedEvent;
 import net.simonvt.cathode.common.event.AuthFailedEvent.OnAuthFailedListener;
-import net.simonvt.cathode.common.util.DateUtils;
 import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.jobqueue.AuthJobHandler;
 import net.simonvt.cathode.jobqueue.DataJobHandler;
@@ -243,7 +243,7 @@ public class CathodeApp extends Application {
           ContentResolver.setIsSyncable(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, 1);
           ContentResolver.setSyncAutomatically(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, true);
           ContentResolver.addPeriodicSync(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR,
-              new Bundle(), 12 * DateUtils.HOUR_IN_SECONDS);
+              new Bundle(), 12 * 60 * 60 /* 12 hours in seconds */);
         }
 
         Accounts.requestCalendarSync(this);

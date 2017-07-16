@@ -17,7 +17,7 @@ package net.simonvt.cathode.remote.sync;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import net.simonvt.cathode.common.util.DateUtils;
+import android.text.format.DateUtils;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.jobscheduler.Jobs;

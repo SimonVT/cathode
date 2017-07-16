@@ -35,7 +35,7 @@ import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TraktUtils;
-import net.simonvt.cathode.common.util.DateUtils;
+import net.simonvt.cathode.common.util.DateStringUtils;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.Intents;
 import net.simonvt.cathode.common.util.guava.Preconditions;
@@ -336,7 +336,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
     setBackdrop(screenshotUri, true);
     firstAired.setText(
-        DateUtils.millisToString(getActivity(), DataHelper.getFirstAired(cursor), true));
+        DateStringUtils.getAirdateInterval(getActivity(), DataHelper.getFirstAired(cursor), true));
 
     watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
     collected = Cursors.getBoolean(cursor, EpisodeColumns.IN_COLLECTION);

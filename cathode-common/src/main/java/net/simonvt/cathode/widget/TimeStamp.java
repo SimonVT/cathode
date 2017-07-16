@@ -20,9 +20,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v7.widget.AppCompatTextView;
+import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import java.lang.ref.WeakReference;
-import net.simonvt.cathode.common.util.DateUtils;
+import net.simonvt.cathode.common.util.DateStringUtils;
 
 public class TimeStamp extends AppCompatTextView {
 
@@ -57,10 +58,10 @@ public class TimeStamp extends AppCompatTextView {
   }
 
   private void updateTimestamp() {
-    final String timeStamp = DateUtils.millisToString(getContext(), timeInMillis, extended);
+    final String timeStamp = DateStringUtils.getAirdateInterval(getContext(), timeInMillis, extended);
     setText(timeStamp);
 
-    long nextUpdate = DateUtils.timeUntilUpdate(timeInMillis);
+    long nextUpdate = DateStringUtils.timeUntilUpdate(timeInMillis);
     nextUpdate = Math.min(nextUpdate, 1 * DateUtils.HOUR_IN_MILLIS);
     handler.removeMessages(MSG_UPDATE);
 

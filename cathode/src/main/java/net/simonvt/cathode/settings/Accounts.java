@@ -23,7 +23,6 @@ import android.os.Build;
 import android.os.Bundle;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.util.DateUtils;
 import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.service.AccountAuthenticator;
 import timber.log.Timber;
@@ -49,13 +48,13 @@ public final class Accounts {
           ContentResolver.setIsSyncable(account, BuildConfig.PROVIDER_AUTHORITY, 1);
           ContentResolver.setSyncAutomatically(account, BuildConfig.PROVIDER_AUTHORITY, true);
           ContentResolver.addPeriodicSync(account, BuildConfig.PROVIDER_AUTHORITY, new Bundle(),
-              12 * DateUtils.HOUR_IN_SECONDS);
+              12 * 60 * 60 /* 12 hours in seconds */);
         }
 
         ContentResolver.setIsSyncable(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, 1);
         ContentResolver.setSyncAutomatically(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, true);
         ContentResolver.addPeriodicSync(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, new Bundle(),
-            12 * DateUtils.HOUR_IN_SECONDS);
+            12 * 60 * 60 /* 12 hours in seconds */);
       }
     } catch (SecurityException e) {
       Timber.e(e, "Unable to add account");
