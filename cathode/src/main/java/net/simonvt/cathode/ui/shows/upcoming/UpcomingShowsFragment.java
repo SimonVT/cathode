@@ -118,7 +118,7 @@ public class UpcomingShowsFragment
 
   private UpcomingTimePreference.UpcomingTimeChangeListener upcomingTimeChangeListener =
       new UpcomingTimePreference.UpcomingTimeChangeListener() {
-        @Override public void onUpcomingTimeChanged(UpcomingTime message) {
+        @Override public void onUpcomingTimeChanged(UpcomingTime upcomingTime) {
           getLoaderManager().restartLoader(LOADER_SHOWS_UPCOMING, null, UpcomingShowsFragment.this);
         }
       };

@@ -22,13 +22,12 @@ import android.preference.PreferenceManager;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import net.simonvt.cathode.common.util.MainHandler;
 
 public class UpcomingTimePreference {
 
   public interface UpcomingTimeChangeListener {
 
-    void onUpcomingTimeChanged(UpcomingTime message);
+    void onUpcomingTimeChanged(UpcomingTime upcomingTime);
   }
 
   private static UpcomingTimePreference instance;
@@ -59,7 +58,7 @@ public class UpcomingTimePreference {
 
   public void set(UpcomingTime upcomingTime) {
     settings.edit().putLong(Settings.UPCOMING_TIME, upcomingTime.getCacheTime()).apply();
-    post(upcomingTime);
+    onUpcomingTimeChanged(upcomingTime);
   }
 
   public UpcomingTime get() {
@@ -68,39 +67,29 @@ public class UpcomingTimePreference {
   }
 
   public void registerListener(UpcomingTimeChangeListener listener) {
-    synchronized (listeners) {
-      listeners.add(new WeakReference<>(listener));
-    }
+    listeners.add(new WeakReference<>(listener));
   }
 
   public void unregisterListener(UpcomingTimeChangeListener listener) {
-    synchronized (listeners) {
-      for (int i = listeners.size() - 1; i >= 0; i--) {
-        WeakReference<UpcomingTimeChangeListener> ref = listeners.get(i);
-        UpcomingTimeChangeListener l = ref.get();
-        if (l == null || l == listener) {
-          listeners.remove(ref);
-        }
+    for (int i = listeners.size() - 1; i >= 0; i--) {
+      WeakReference<UpcomingTimeChangeListener> ref = listeners.get(i);
+      UpcomingTimeChangeListener l = ref.get();
+      if (l == null || l == listener) {
+        listeners.remove(ref);
       }
     }
   }
 
-  public void post(final UpcomingTime upcomingTime) {
-    MainHandler.post(new Runnable() {
-      @Override public void run() {
-        synchronized (listeners) {
-          for (int i = listeners.size() - 1; i >= 0; i--) {
-            WeakReference<UpcomingTimeChangeListener> ref = listeners.get(i);
-            UpcomingTimeChangeListener l = ref.get();
-            if (l == null) {
-              listeners.remove(ref);
-              continue;
-            }
-
-            l.onUpcomingTimeChanged(upcomingTime);
-          }
-        }
+  private void onUpcomingTimeChanged(UpcomingTime upcomingTime) {
+    for (int i = listeners.size() - 1; i >= 0; i--) {
+      WeakReference<UpcomingTimeChangeListener> ref = listeners.get(i);
+      UpcomingTimeChangeListener l = ref.get();
+      if (l == null) {
+        listeners.remove(ref);
+        continue;
       }
-    });
+
+      l.onUpcomingTimeChanged(upcomingTime);
+    }
   }
 }
