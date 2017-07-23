@@ -43,9 +43,10 @@ public class LogoutDialog extends DialogFragment {
             final Context context = getActivity().getApplicationContext();
             Injector.obtain().inject(LogoutDialog.this);
 
-            PreferenceManager.getDefaultSharedPreferences(getActivity()) //
-                .edit() //
-                .putBoolean(Settings.TRAKT_LOGGED_IN, false) //
+            PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .edit()
+                .putBoolean(TraktLinkSettings.TRAKT_LINKED, false)
+                .putBoolean(TraktLinkSettings.TRAKT_AUTH_FAILED, false)
                 .apply();
 
             Settings.clearUserSettings(getActivity());
@@ -55,6 +56,7 @@ public class LogoutDialog extends DialogFragment {
             jobManager.removeJobsWithFlag(Flags.REQUIRES_AUTH);
 
             Intent login = new Intent(getActivity(), LoginActivity.class);
+            login.putExtra(LoginActivity.EXTRA_TASK, LoginActivity.TASK_LOGIN);
             login.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(login);
           }

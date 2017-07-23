@@ -57,6 +57,7 @@ import net.simonvt.cathode.remote.upgrade.UpperCaseGenres;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.settings.login.LoginActivity;
@@ -107,10 +108,9 @@ public class CathodeApp extends Application {
 
     AuthFailedEvent.registerListener(authFailedListener);
 
-    final boolean isLoggedIn = settings.getBoolean(Settings.TRAKT_LOGGED_IN, false);
-    if (isLoggedIn) {
+    if (TraktLinkSettings.isLinked(this)) {
       Accounts.setupAccount(this);
-    } else if (!isLoggedIn) {
+    } else {
       Accounts.removeAccount(this);
     }
 
@@ -278,8 +278,7 @@ public class CathodeApp extends Application {
       }
       if (currentVersion <= 50303) {
         if (Jobs.usesScheduler()) {
-          final boolean isLoggedIn = settings.getBoolean(Settings.TRAKT_LOGGED_IN, false);
-          if (isLoggedIn) {
+          if (TraktLinkSettings.isLinked(this)) {
             Account account = Accounts.getAccount(this);
             ContentResolver.removePeriodicSync(account, BuildConfig.PROVIDER_AUTHORITY,
                 new Bundle());
@@ -315,7 +314,7 @@ public class CathodeApp extends Application {
       Timber.i("onAuthFailure");
 
       SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(CathodeApp.this);
-      settings.edit().putBoolean(Settings.TRAKT_LOGGED_IN, false).apply();
+      settings.edit().putBoolean(TraktLinkSettings.TRAKT_AUTH_FAILED, true).apply();
 
       Intent intent = new Intent(CathodeApp.this, LoginActivity.class);
       intent.setAction(HomeActivity.ACTION_LOGIN);

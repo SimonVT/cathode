@@ -34,6 +34,9 @@
   <string name="auth_failed">Trakt authorization failed</string>
   <string name="auth_failed_desc">Touch to re-authorize with Trakt</string>
 
+  <string name="auth_failed_crouton">Trakt authorization failed</string>
+  <string name="auth_failed_crouton_action">Sign in</string>
+
   <string name="logout_title">Log out</string>
   <string name="logout_message">Are you sure you want to log out?</string>
   <string name="logout_button">Log out</string>

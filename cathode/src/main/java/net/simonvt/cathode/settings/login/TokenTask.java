@@ -30,7 +30,6 @@ import net.simonvt.cathode.api.entity.UserSettings;
 import net.simonvt.cathode.api.enumeration.GrantType;
 import net.simonvt.cathode.api.service.AuthorizationService;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.settings.Settings;
 import retrofit2.Call;
 import retrofit2.Response;
 import timber.log.Timber;
@@ -43,19 +42,33 @@ public class TokenTask extends AsyncTask<Void, Void, TokenTask.Result> {
 
     int errorMessage;
 
-    Result() {
+    AccessToken accessToken;
+
+    UserSettings userSettings;
+
+    private Result(AccessToken accessToken, UserSettings userSettings) {
       this.success = true;
+      this.accessToken = accessToken;
+      this.userSettings = userSettings;
     }
 
-    Result(int errorMessage) {
+    private Result(int errorMessage) {
       this.errorMessage = errorMessage;
       this.success = false;
+    }
+
+    public static Result success(AccessToken accessToken, UserSettings userSettings) {
+      return new Result(accessToken, userSettings);
+    }
+
+    public static Result error(int errorMessage) {
+      return new Result(errorMessage);
     }
   }
 
   public interface Callback {
 
-    void onTokenFetched();
+    void onTokenFetched(AccessToken accessToken, UserSettings userSettings);
 
     void onTokenFetchedFail(int error);
   }
@@ -109,25 +122,23 @@ public class TokenTask extends AsyncTask<Void, Void, TokenTask.Result> {
 
         if (response.isSuccessful() && userSettingsResponse.body() != null) {
           final UserSettings userSettings = userSettingsResponse.body();
-          Settings.clearProfile(context);
-          Settings.updateProfile(context, userSettings);
 
-          return new TokenTask.Result();
+          return Result.success(token, userSettings);
         } else {
           if (response.code() >= 500 && response.code() < 600) {
-            return new TokenTask.Result(R.string.login_error_5xx);
+            return Result.error(R.string.login_error_5xx);
           }
         }
       } else {
         if (response.code() >= 500 && response.code() < 600) {
-          return new TokenTask.Result(R.string.login_error_5xx);
+          return Result.error(R.string.login_error_5xx);
         }
       }
     } catch (IOException e) {
       Timber.d(e, "Unable to get token");
     }
 
-    return new TokenTask.Result(R.string.login_error_unknown);
+    return Result.error(R.string.login_error_unknown);
   }
 
   @Override protected void onPostExecute(TokenTask.Result result) {
@@ -136,7 +147,7 @@ public class TokenTask extends AsyncTask<Void, Void, TokenTask.Result> {
     Callback callback = this.callback.get();
     if (callback != null) {
       if (result.success) {
-        callback.onTokenFetched();
+        callback.onTokenFetched(result.accessToken, result.userSettings);
       } else {
         callback.onTokenFetchedFail(result.errorMessage);
       }

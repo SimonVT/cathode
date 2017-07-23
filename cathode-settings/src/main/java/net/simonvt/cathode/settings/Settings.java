@@ -29,11 +29,6 @@ public final class Settings {
   private Settings() {
   }
 
-  public static final String TRAKT_LOGGED_IN = "traktLoggedIn";
-  public static final String TRAKT_ACCESS_TOKEN = "traktToken";
-  public static final String TRAKT_REFRESH_TOKEN = "traktRefreshToken";
-  public static final String TRAKT_TOKEN_EXPIRATION = "traktTokenExpiration";
-
   public static final String START_PAGE = "startPage";
 
   public static final String UPCOMING_TIME = "upcomingTime";
@@ -163,11 +158,6 @@ public final class Settings {
     String SHARING_TEXT_WATCHED = "profileSharingTextWatched";
   }
 
-  public static boolean isLoggedIn(Context context) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-    return settings.getBoolean(TRAKT_LOGGED_IN, false);
-  }
-
   public static void updateProfile(Context context, UserSettings userSettings) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
     SharedPreferences.Editor editor = settings.edit();
@@ -272,9 +262,11 @@ public final class Settings {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
     SharedPreferences.Editor editor = settings.edit();
 
-    editor.remove(TRAKT_LOGGED_IN);
-    editor.remove(TRAKT_ACCESS_TOKEN);
-    editor.remove(TRAKT_REFRESH_TOKEN);
+    editor.remove(TraktLinkSettings.TRAKT_LINKED);
+    editor.remove(TraktLinkSettings.TRAKT_AUTH_FAILED);
+    editor.remove(TraktLinkSettings.TRAKT_ACCESS_TOKEN);
+    editor.remove(TraktLinkSettings.TRAKT_REFRESH_TOKEN);
+    editor.remove(TraktLinkSettings.TRAKT_TOKEN_EXPIRATION);
 
     editor.remove(START_PAGE);
 

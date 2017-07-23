@@ -32,7 +32,7 @@ import net.simonvt.cathode.jobqueue.JobHandler;
 import net.simonvt.cathode.jobqueue.JobInjector;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncJob;
-import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import timber.log.Timber;
 
 public class CathodeSyncAdapter extends AbstractThreadedSyncAdapter {
@@ -54,7 +54,7 @@ public class CathodeSyncAdapter extends AbstractThreadedSyncAdapter {
       return;
     }
 
-    if (!Settings.isLoggedIn(getContext())) {
+    if (!TraktLinkSettings.isLinked(getContext())) {
       return;
     }
 

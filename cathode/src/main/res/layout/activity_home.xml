@@ -15,9 +15,9 @@
   ~ limitations under the License.
   -->
 <net.simonvt.cathode.widget.CatchSystemInsets
-    android:id="@+id/contentFrameLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/contentFrameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -44,11 +44,43 @@
         <include layout="@layout/view_watching"/>
       </FrameLayout>
 
+      <LinearLayout
+          android:id="@+id/authFailedView"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_gravity="bottom"
+          android:orientation="horizontal"
+          android:background="@android:color/holo_red_dark">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="16dp"
+            android:paddingTop="8dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="8dp"
+            android:textColor="?android:attr/textColorPrimaryInverseNoDisable"
+            android:text="@string/auth_failed_crouton"/>
+
+        <TextView
+            android:id="@+id/authFailedAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingTop="8dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="8dp"
+            android:textColor="?android:attr/textColorPrimaryInverseNoDisable"
+            android:text="@string/auth_failed_crouton_action"/>
+      </LinearLayout>
+
       <net.simonvt.cathode.widget.Crouton
           android:id="@+id/crouton"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_gravity="bottom"
+          tools:visibility="gone"
           style="@style/Crouton"/>
     </FrameLayout>
 

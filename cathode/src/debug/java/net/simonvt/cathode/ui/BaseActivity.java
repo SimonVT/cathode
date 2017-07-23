@@ -72,6 +72,7 @@ import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.StartPage;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.tmdb.api.SyncConfiguration;
 import okhttp3.logging.HttpLoggingInterceptor;
 
@@ -153,28 +154,28 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
     debugViews.removeAccessToken.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        settings.edit().remove(Settings.TRAKT_ACCESS_TOKEN).apply();
+        settings.edit().remove(TraktLinkSettings.TRAKT_ACCESS_TOKEN).apply();
       }
     });
 
     debugViews.removeRefreshToken.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        settings.edit().remove(Settings.TRAKT_REFRESH_TOKEN).apply();
+        settings.edit().remove(TraktLinkSettings.TRAKT_REFRESH_TOKEN).apply();
       }
     });
 
     debugViews.invalidateAccessToken.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         settings.edit()
-            .putString(Settings.TRAKT_ACCESS_TOKEN, "invalid token")
-            .putLong(Settings.TRAKT_TOKEN_EXPIRATION, 0L)
+            .putString(TraktLinkSettings.TRAKT_ACCESS_TOKEN, "invalid token")
+            .putLong(TraktLinkSettings.TRAKT_TOKEN_EXPIRATION, 0L)
             .apply();
       }
     });
 
     debugViews.invalidateRefreshToken.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        settings.edit().putString(Settings.TRAKT_REFRESH_TOKEN, "invalid token").apply();
+        settings.edit().putString(TraktLinkSettings.TRAKT_REFRESH_TOKEN, "invalid token").apply();
       }
     });
 

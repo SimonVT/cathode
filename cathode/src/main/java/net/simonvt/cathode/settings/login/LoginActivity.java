@@ -32,6 +32,11 @@ import net.simonvt.cathode.ui.BaseActivity;
 
 public class LoginActivity extends BaseActivity {
 
+  public static final String EXTRA_TASK = "net.simonvt.cathode.settings.login.LoginActivity.task";
+
+  public static final int TASK_LOGIN = 0;
+  public static final int TASK_TOKEN_REFRESH = 1;
+
   static final String HOST_OAUTH = "oauth";
   static final String PATH_AUTHORIZE = "authorize";
   static final String QUERY_CODE = "code";
@@ -40,6 +45,8 @@ public class LoginActivity extends BaseActivity {
 
   @BindView(R.id.login_in_app) View loginInApp;
 
+  private int task;
+
   private Intent browserIntent;
 
   private boolean browserAvailable = true;
@@ -47,6 +54,9 @@ public class LoginActivity extends BaseActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     Injector.obtain().inject(this);
+
+    Intent intent = getIntent();
+    task = intent.getIntExtra(EXTRA_TASK, TASK_LOGIN);
 
     setContentView(R.layout.activity_login);
     ButterKnife.bind(this);
@@ -89,6 +99,7 @@ public class LoginActivity extends BaseActivity {
 
   private void onCodeReceived(String code) {
     Intent result = new Intent(this, TokenActivity.class);
+    result.putExtra(EXTRA_TASK, task);
     result.putExtra(TokenActivity.EXTRA_CODE, code);
     startActivity(result);
     finish();

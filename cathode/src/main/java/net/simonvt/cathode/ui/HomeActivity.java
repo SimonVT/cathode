@@ -41,6 +41,8 @@ import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.common.event.AuthFailedEvent;
+import net.simonvt.cathode.common.event.AuthFailedEvent.OnAuthFailedListener;
 import net.simonvt.cathode.common.event.ErrorEvent;
 import net.simonvt.cathode.common.event.ErrorEvent.ErrorListener;
 import net.simonvt.cathode.common.event.RequestFailedEvent;
@@ -64,6 +66,7 @@ import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.SettingsActivity;
 import net.simonvt.cathode.settings.StartPage;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.login.LoginActivity;
 import net.simonvt.cathode.ui.comments.CommentFragment;
 import net.simonvt.cathode.ui.comments.CommentsFragment;
@@ -153,6 +156,9 @@ public class HomeActivity extends BaseActivity
   @BindView(R.id.watching_parent) ViewGroup watchingParent;
   @BindView(R.id.watchingView) WatchingView watchingView;
 
+  @BindView(R.id.authFailedView) View authFailedView;
+  @BindView(R.id.authFailedAction) View authFailedAction;
+
   private Cursor watchingShow;
   private Cursor watchingMovie;
 
@@ -171,6 +177,12 @@ public class HomeActivity extends BaseActivity
     drawer.addDrawerListener(drawerListener);
     watchingParent.setOnTouchListener(watchingTouchListener);
     watchingView.setWatchingViewListener(watchingListener);
+
+    authFailedAction.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        startLoginActivity();
+      }
+    });
 
     navigation =
         (NavigationFragment) getSupportFragmentManager().findFragmentByTag(NavigationFragment.TAG);
@@ -208,7 +220,7 @@ public class HomeActivity extends BaseActivity
       }
     }
 
-    if (!Settings.isLoggedIn(this) || isLoginAction(intent)) {
+    if (!TraktLinkSettings.isLinked(this) || isLoginAction(getIntent())) {
       startLoginActivity();
     } else if (isReplaceStackAction(intent)) {
       ArrayList<StackEntry> stackEntries =
@@ -221,6 +233,7 @@ public class HomeActivity extends BaseActivity
     SyncEvent.registerListener(onSyncEvent);
     RequestFailedEvent.registerListener(requestFailedListener);
     ErrorEvent.registerListener(checkInFailedListener);
+    AuthFailedEvent.registerListener(onAuthFailedListener);
 
     getSupportLoaderManager().initLoader(LOADER_SHOW_WATCHING, null, watchingShowCallback);
     getSupportLoaderManager().initLoader(LOADER_MOVIE_WATCHING, null, watchingMovieCallback);
@@ -293,6 +306,15 @@ public class HomeActivity extends BaseActivity
   @Override protected void onSaveInstanceState(Bundle outState) {
     outState.putBundle(STATE_STACK, stack.saveState());
     super.onSaveInstanceState(outState);
+  }
+
+  @Override protected void onResume() {
+    super.onResume();
+    if (TraktLinkSettings.hasAuthFailed(this)) {
+      authFailedView.setVisibility(View.VISIBLE);
+    } else {
+      authFailedView.setVisibility(View.GONE);
+    }
   }
 
   @Override protected void onResumeFragments() {
@@ -541,8 +563,15 @@ public class HomeActivity extends BaseActivity
     }
   };
 
+  private OnAuthFailedListener onAuthFailedListener = new OnAuthFailedListener() {
+    @Override public void onAuthFailed() {
+      authFailedView.setVisibility(View.VISIBLE);
+    }
+  };
+
   private void startLoginActivity() {
     Intent login = new Intent(this, LoginActivity.class);
+    login.putExtra(LoginActivity.EXTRA_TASK, LoginActivity.TASK_TOKEN_REFRESH);
     startActivity(login);
     finish();
   }

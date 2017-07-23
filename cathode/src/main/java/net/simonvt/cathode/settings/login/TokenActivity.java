@@ -27,28 +27,37 @@ import butterknife.OnClick;
 import javax.inject.Inject;
 import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.api.TraktSettings;
+import net.simonvt.cathode.api.entity.AccessToken;
+import net.simonvt.cathode.api.entity.UserSettings;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncJob;
-import net.simonvt.cathode.remote.sync.SyncUserSettings;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.setup.CalendarSetupActivity;
-import net.simonvt.cathode.tmdb.api.SyncConfiguration;
 import net.simonvt.cathode.ui.BaseActivity;
+import net.simonvt.cathode.ui.HomeActivity;
 
 public class TokenActivity extends BaseActivity implements TokenTask.Callback {
 
   static final String EXTRA_CODE = "code";
 
   @Inject JobManager jobManager;
+  @Inject TraktSettings traktSettings;
 
   @BindView(R.id.buttonContainer) View buttonContainer;
   @BindView(R.id.error_message) TextView errorMessage;
 
   @BindView(R.id.progressContainer) View progressContainer;
 
+  private int task;
+
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
+    Intent intent = getIntent();
+    task = intent.getIntExtra(LoginActivity.EXTRA_TASK, LoginActivity.TASK_LOGIN);
+
     setContentView(R.layout.activity_login_token);
     ButterKnife.bind(this);
     Injector.obtain().inject(this);
@@ -65,6 +74,7 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
 
   @OnClick(R.id.retry) void onRetryClicked() {
     Intent login = new Intent(this, LoginActivity.class);
+    login.putExtra(LoginActivity.EXTRA_TASK, task);
     startActivity(login);
     finish();
   }
@@ -79,20 +89,31 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
     }
   }
 
-  @Override public void onTokenFetched() {
+  @Override public void onTokenFetched(AccessToken accessToken, UserSettings userSettings) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-    settings.edit().putBoolean(Settings.TRAKT_LOGGED_IN, true).apply();
 
-    final String username = settings.getString(Settings.Profile.USERNAME, null);
+    final boolean wasLinked = settings.getBoolean(TraktLinkSettings.TRAKT_LINKED, false);
+
+    settings.edit()
+        .putBoolean(TraktLinkSettings.TRAKT_LINKED, true)
+        .putBoolean(TraktLinkSettings.TRAKT_AUTH_FAILED, false)
+        .apply();
+
+    Settings.clearProfile(this);
+    Settings.updateProfile(this, userSettings);
 
     Accounts.setupAccount(this);
 
-    jobManager.addJob(new SyncConfiguration());
-    jobManager.addJob(new SyncUserSettings());
     jobManager.addJob(new SyncJob());
 
-    Intent setup = new Intent(this, CalendarSetupActivity.class);
-    startActivity(setup);
+    if (wasLinked) {
+      Intent home = new Intent(this, HomeActivity.class);
+      startActivity(home);
+    } else {
+      Intent setup = new Intent(this, CalendarSetupActivity.class);
+      startActivity(setup);
+    }
+
     finish();
   }
 

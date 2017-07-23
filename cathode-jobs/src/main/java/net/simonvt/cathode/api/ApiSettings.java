@@ -28,7 +28,7 @@ import net.simonvt.cathode.api.entity.TokenRequest;
 import net.simonvt.cathode.api.enumeration.GrantType;
 import net.simonvt.cathode.api.service.AuthorizationService;
 import net.simonvt.cathode.jobs.BuildConfig;
-import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import retrofit2.Call;
 import retrofit2.Response;
 import timber.log.Timber;
@@ -41,7 +41,7 @@ public class ApiSettings implements TraktSettings {
     if (instance == null) {
       synchronized (ApiSettings.class) {
         if (instance == null) {
-          instance = new ApiSettings(context);
+          instance = new ApiSettings(context.getApplicationContext());
         }
       }
     }
@@ -64,19 +64,19 @@ public class ApiSettings implements TraktSettings {
 
   @Override public String getAccessToken() {
     synchronized (this) {
-      return settings.getString(Settings.TRAKT_ACCESS_TOKEN, null);
+      return settings.getString(TraktLinkSettings.TRAKT_ACCESS_TOKEN, null);
     }
   }
 
   @Override public String getRefreshToken() {
     synchronized (this) {
-      return settings.getString(Settings.TRAKT_REFRESH_TOKEN, null);
+      return settings.getString(TraktLinkSettings.TRAKT_REFRESH_TOKEN, null);
     }
   }
 
   private boolean isTokenExpired() {
     synchronized (this) {
-      return settings.getLong(Settings.TRAKT_TOKEN_EXPIRATION, 0) < System.currentTimeMillis();
+      return settings.getLong(TraktLinkSettings.TRAKT_TOKEN_EXPIRATION, 0) < System.currentTimeMillis();
     }
   }
 
@@ -97,9 +97,9 @@ public class ApiSettings implements TraktSettings {
       final long expirationMillis =
           System.currentTimeMillis() + (tokens.getExpiresIn() * DateUtils.SECOND_IN_MILLIS);
       settings.edit()
-          .putString(Settings.TRAKT_ACCESS_TOKEN, tokens.getAccessToken())
-          .putString(Settings.TRAKT_REFRESH_TOKEN, tokens.getRefreshToken())
-          .putLong(Settings.TRAKT_TOKEN_EXPIRATION, expirationMillis)
+          .putString(TraktLinkSettings.TRAKT_ACCESS_TOKEN, tokens.getAccessToken())
+          .putString(TraktLinkSettings.TRAKT_REFRESH_TOKEN, tokens.getRefreshToken())
+          .putLong(TraktLinkSettings.TRAKT_TOKEN_EXPIRATION, expirationMillis)
           .apply();
     }
   }
@@ -118,7 +118,7 @@ public class ApiSettings implements TraktSettings {
 
   private void clearRefreshToken() {
     synchronized (this) {
-      settings.edit().remove(Settings.TRAKT_REFRESH_TOKEN).apply();
+      settings.edit().remove(TraktLinkSettings.TRAKT_REFRESH_TOKEN).apply();
     }
   }
 
