@@ -75,6 +75,7 @@ public class JobHandler {
     @Override public void onQueueFailed() {
       Timber.d("%s queue failed", getClass().getSimpleName());
       pause();
+      MainHandler.postDelayed(resumeRunnable, FAILURE_DELAY);
       dispatchQueueFailed();
     }
   };
@@ -90,8 +91,6 @@ public class JobHandler {
   }
 
   private void dispatchQueueFailed() {
-    MainHandler.postDelayed(resumeRunnable, FAILURE_DELAY);
-
     for (JobHandlerListener listener : listeners) {
       listener.onQueueFailed();
     }
@@ -166,6 +165,7 @@ public class JobHandler {
 
   private Runnable resumeRunnable = new Runnable() {
     @Override public void run() {
+      executor.start();
       resume();
     }
   };
