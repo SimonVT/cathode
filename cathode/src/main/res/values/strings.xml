@@ -220,6 +220,19 @@
   <string name="login_error_unknown">Unable to fetch token, please try again</string>
   <string name="login_error_5xx">Trakt has encountered a server error, please try again</string>
 
+  <!-- Link activity -->
+  <string name="trakt_link">What should happen to your local data?\n\n
+     Watched shows\n
+     Collected shows\n
+     Watched movies\n
+     Collected movies\n
+     Lists</string>
+  <string name="trakt_link_action_forget">Forget it</string>
+  <string name="trakt_link_action_sync">Sync to Trakt</string>
+  <string name="trakt_link_sync">Your data is ready to sync</string>
+  <string name="trakt_link_sync_action_forget">Never mind</string>
+  <string name="trakt_link_sync_action_sync">Sync it</string>
+
   <!-- Setup activities -->
   <string name="setup_calendar_text">Would you like upcoming shows to be added to your calendar?</string>
   <string name="setup_notifications_text">Would you like a notification when a tv show is about to air?</string>

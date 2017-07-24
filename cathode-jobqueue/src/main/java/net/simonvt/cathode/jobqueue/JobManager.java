@@ -312,6 +312,19 @@ import timber.log.Timber;
     });
   }
 
+  public void removeJobsWithFlagNow(final int flag) {
+    synchronized (jobs) {
+      for (int i = jobs.size() - 1; i >= 0; i--) {
+        Job job = jobs.get(i);
+        if (job.hasFlags(flag)) {
+          jobs.remove(i);
+          checkedOutKeys.remove(job.key());
+          removeJobFromDatabase(job);
+        }
+      }
+    }
+  }
+
   public int jobCount() {
     synchronized (jobs) {
       return jobs.size();

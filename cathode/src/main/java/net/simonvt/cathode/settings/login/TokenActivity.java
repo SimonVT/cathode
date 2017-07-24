@@ -27,7 +27,6 @@ import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.TraktSettings;
 import net.simonvt.cathode.api.entity.AccessToken;
-import net.simonvt.cathode.api.entity.UserSettings;
 import net.simonvt.cathode.api.service.AuthorizationService;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -36,7 +35,9 @@ import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.ProfileSettings;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.Timestamps;
 import net.simonvt.cathode.settings.TraktLinkSettings;
+import net.simonvt.cathode.settings.link.TraktLinkActivity;
 import net.simonvt.cathode.settings.setup.CalendarSetupActivity;
 import net.simonvt.cathode.sync.jobscheduler.AuthJobHandlerJob;
 import net.simonvt.cathode.sync.jobscheduler.Jobs;
@@ -96,18 +97,11 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
     }
   }
 
-  @Override public void onTokenFetched(AccessToken accessToken, UserSettings userSettings) {
+  @Override public void onTokenFetched(AccessToken accessToken) {
     final boolean wasLinked = Settings.get(this).getBoolean(TraktLinkSettings.TRAKT_LINKED, false);
 
-    Settings.get(this)
-        .edit()
-        .putBoolean(TraktLinkSettings.TRAKT_LINK_PROMPTED, true)
-        .putBoolean(TraktLinkSettings.TRAKT_LINKED, true)
-        .putBoolean(TraktLinkSettings.TRAKT_AUTH_FAILED, false)
-        .apply();
-
     ProfileSettings.clearProfile(this);
-    ProfileSettings.updateProfile(this, userSettings);
+    Timestamps.get(this).edit().remove(Timestamps.LAST_CONFIG_SYNC).apply();
 
     Accounts.setupAccount(this);
 
@@ -117,12 +111,24 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
       SyncUserActivity.schedulePeriodic(this);
     }
 
-    if (wasLinked) {
-      Intent home = new Intent(this, HomeActivity.class);
-      startActivity(home);
+    if (task == LoginActivity.TASK_LINK) {
+      Intent traktSync = new Intent(this, TraktLinkActivity.class);
+      startActivity(traktSync);
     } else {
-      Intent setup = new Intent(this, CalendarSetupActivity.class);
-      startActivity(setup);
+      Settings.get(this)
+          .edit()
+          .putBoolean(TraktLinkSettings.TRAKT_LINK_PROMPTED, true)
+          .putBoolean(TraktLinkSettings.TRAKT_LINKED, true)
+          .putBoolean(TraktLinkSettings.TRAKT_AUTH_FAILED, false)
+          .apply();
+
+      if (wasLinked) {
+        Intent home = new Intent(this, HomeActivity.class);
+        startActivity(home);
+      } else {
+        Intent setup = new Intent(this, CalendarSetupActivity.class);
+        startActivity(setup);
+      }
     }
 
     finish();

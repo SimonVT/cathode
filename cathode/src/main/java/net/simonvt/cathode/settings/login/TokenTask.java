@@ -18,13 +18,11 @@ package net.simonvt.cathode.settings.login;
 import android.os.AsyncTask;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import javax.inject.Inject;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.TraktSettings;
 import net.simonvt.cathode.api.entity.AccessToken;
 import net.simonvt.cathode.api.entity.TokenRequest;
-import net.simonvt.cathode.api.entity.UserSettings;
 import net.simonvt.cathode.api.enumeration.GrantType;
 import net.simonvt.cathode.api.service.AuthorizationService;
 import net.simonvt.cathode.api.service.UsersService;
@@ -42,12 +40,9 @@ public class TokenTask extends AsyncTask<Void, Void, TokenTask.Result> {
 
     AccessToken accessToken;
 
-    UserSettings userSettings;
-
-    private Result(AccessToken accessToken, UserSettings userSettings) {
+    private Result(AccessToken accessToken) {
       this.success = true;
       this.accessToken = accessToken;
-      this.userSettings = userSettings;
     }
 
     private Result(int errorMessage) {
@@ -55,8 +50,8 @@ public class TokenTask extends AsyncTask<Void, Void, TokenTask.Result> {
       this.success = false;
     }
 
-    static Result success(AccessToken accessToken, UserSettings userSettings) {
-      return new Result(accessToken, userSettings);
+    static Result success(AccessToken accessToken) {
+      return new Result(accessToken);
     }
 
     static Result error(int errorMessage) {
@@ -66,16 +61,16 @@ public class TokenTask extends AsyncTask<Void, Void, TokenTask.Result> {
 
   public interface Callback {
 
-    void onTokenFetched(AccessToken accessToken, UserSettings userSettings);
+    void onTokenFetched(AccessToken accessToken);
 
     void onTokenFetchedFail(int error);
   }
 
   static TokenTask runningInstance;
 
-  @Inject AuthorizationService authorizationService;
-  @Inject UsersService usersService;
-  @Inject TraktSettings traktSettings;
+  AuthorizationService authorizationService;
+  UsersService usersService;
+  TraktSettings traktSettings;
 
   private String code;
 
@@ -115,18 +110,7 @@ public class TokenTask extends AsyncTask<Void, Void, TokenTask.Result> {
         AccessToken token = response.body();
         traktSettings.updateTokens(token);
 
-        Call<UserSettings> userSettingsCall = usersService.getUserSettings();
-        Response<UserSettings> userSettingsResponse = userSettingsCall.execute();
-
-        if (response.isSuccessful() && userSettingsResponse.body() != null) {
-          final UserSettings userSettings = userSettingsResponse.body();
-
-          return Result.success(token, userSettings);
-        } else {
-          if (response.code() >= 500 && response.code() < 600) {
-            return Result.error(R.string.login_error_5xx);
-          }
-        }
+        return Result.success(token);
       } else {
         if (response.code() >= 500 && response.code() < 600) {
           return Result.error(R.string.login_error_5xx);
@@ -145,7 +129,7 @@ public class TokenTask extends AsyncTask<Void, Void, TokenTask.Result> {
     Callback callback = this.callback.get();
     if (callback != null) {
       if (result.success) {
-        callback.onTokenFetched(result.accessToken, result.userSettings);
+        callback.onTokenFetched(result.accessToken);
       } else {
         callback.onTokenFetchedFail(result.errorMessage);
       }
