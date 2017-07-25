@@ -62,11 +62,10 @@ public class SyncWatching extends CallJob<Watching> {
   @Inject transient EpisodeDatabaseHelper episodeHelper;
   @Inject transient MovieDatabaseHelper movieHelper;
 
-  @RequiresApi(api = Build.VERSION_CODES.N)
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public static void schedule(Context context, long delayMillis) {
-    JobInfo jobInfo = new JobInfo.Builder(ID,
-        new ComponentName(context, SchedulerService.class)).setRequiredNetworkType(
-        JobInfo.NETWORK_TYPE_ANY)
+    JobInfo jobInfo = new JobInfo.Builder(ID, new ComponentName(context, SchedulerService.class)) //
+        .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
         .setBackoffCriteria(DateUtils.MINUTE_IN_MILLIS, JobInfo.BACKOFF_POLICY_EXPONENTIAL)
         .setMinimumLatency(delayMillis)
         .setPersisted(true)

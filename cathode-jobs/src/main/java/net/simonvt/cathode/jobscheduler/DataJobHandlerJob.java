@@ -29,9 +29,9 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobHandler;
 import timber.log.Timber;
 
-@RequiresApi(api = Build.VERSION_CODES.N) public class DataJobHandlerJob extends Job {
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public class DataJobHandlerJob extends Job {
 
-  public static final int ID = 2;
+  public static final int ID = 3;
 
   private DataJobHandler jobHandler;
 
@@ -46,7 +46,7 @@ import timber.log.Timber;
         .setPeriodic(DateUtils.DAY_IN_MILLIS)
         .setPersisted(true)
         .build();
-    Jobs.schedule(context, jobInfo);
+    Jobs.scheduleNotPending(context, jobInfo);
   }
 
   public DataJobHandlerJob(SchedulerService service, JobParameters params) {

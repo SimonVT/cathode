@@ -21,6 +21,7 @@ import android.app.job.JobScheduler;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import java.util.List;
 
 public final class Jobs {
 
@@ -28,20 +29,42 @@ public final class Jobs {
   }
 
   public static boolean usesScheduler() {
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
+    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.N)
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+  public static JobScheduler getScheduler(Context context) {
+    return (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+  }
+
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public static void schedule(Context context, JobInfo job) {
-    JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+    JobScheduler scheduler = getScheduler(context);
     scheduler.schedule(job);
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.N)
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public static void scheduleNotPending(Context context, JobInfo job) {
-    JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-    if (scheduler.getPendingJob(job.getId()) == null) {
+    JobScheduler scheduler = getScheduler(context);
+    if (getPendingJob(context, job.getId()) == null) {
       scheduler.schedule(job);
+    }
+  }
+
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+  public static JobInfo getPendingJob(Context context, int jobId) {
+    JobScheduler scheduler = getScheduler(context);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      return scheduler.getPendingJob(jobId);
+    } else {
+      List<JobInfo> pendingJobs = scheduler.getAllPendingJobs();
+      for (JobInfo job : pendingJobs) {
+        if (jobId == job.getId()) {
+          return job;
+        }
+      }
+
+      return null;
     }
   }
 }

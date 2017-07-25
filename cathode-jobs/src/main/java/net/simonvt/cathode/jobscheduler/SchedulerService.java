@@ -26,7 +26,7 @@ import java.util.concurrent.Executors;
 import net.simonvt.cathode.jobqueue.Job;
 import timber.log.Timber;
 
-@RequiresApi(api = Build.VERSION_CODES.N) public class SchedulerService extends JobService {
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public class SchedulerService extends JobService {
 
   private static final int THREAD_COUNT = 3;
 
@@ -48,23 +48,29 @@ import timber.log.Timber;
   @Override public boolean onStartJob(final JobParameters params) {
     Timber.d("[onStartJob] %d", params.getJobId());
 
-    if (params.getJobId() == AuthJobHandlerJob.ID) {
-      Job job = new AuthJobHandlerJob(this, params);
-      runningJobs.put(params.getJobId(), job);
-      job.perform();
-      return true;
-    }
-    if (params.getJobId() == DataJobHandlerJob.ID) {
-      Job job = new DataJobHandlerJob(this, params);
-      runningJobs.put(params.getJobId(), job);
-      job.perform();
-      return true;
-    }
+    switch (params.getJobId()) {
+      case AuthJobHandlerJob.ID:
+        case AuthJobHandlerJob.ID_ONESHOT: {
+          Job job = new AuthJobHandlerJob(this, params);
+          runningJobs.put(params.getJobId(), job);
+          job.perform();
+          return true;
+        }
 
-    Job job = jobCreator.create(params);
-    runningJobs.put(params.getJobId(), job);
-    execute(params, job);
-    return true;
+      case DataJobHandlerJob.ID: {
+        Job job = new DataJobHandlerJob(this, params);
+        runningJobs.put(params.getJobId(), job);
+        job.perform();
+        return true;
+      }
+
+      default: {
+        Job job = jobCreator.create(params);
+        runningJobs.put(params.getJobId(), job);
+        execute(params, job);
+        return true;
+      }
+    }
   }
 
   private void execute(final JobParameters params, final Job job) {

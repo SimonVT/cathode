@@ -31,7 +31,7 @@ import net.simonvt.cathode.remote.sync.shows.SyncPendingSeasons;
 import net.simonvt.cathode.remote.sync.shows.SyncPendingShows;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
 
-@RequiresApi(api = Build.VERSION_CODES.N) public class JobCreator {
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public class JobCreator {
 
   @Inject JobInjector injector;
 

@@ -29,9 +29,10 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobHandler;
 import timber.log.Timber;
 
-@RequiresApi(api = Build.VERSION_CODES.N) public class AuthJobHandlerJob extends Job {
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public class AuthJobHandlerJob extends Job {
 
   public static final int ID = 1;
+  public static final int ID_ONESHOT = 2;
 
   private AuthJobHandler jobHandler;
 
@@ -39,8 +40,12 @@ import timber.log.Timber;
   private JobParameters params;
 
   public static void schedule(Context context) {
-    JobInfo jobInfo = new JobInfo.Builder(ID, new ComponentName(context, SchedulerService.class)) //
-        .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY).setPersisted(true).build();
+    JobInfo jobInfo =
+        new JobInfo.Builder(ID_ONESHOT, new ComponentName(context, SchedulerService.class)) //
+            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+            .setBackoffCriteria(DateUtils.MINUTE_IN_MILLIS, JobInfo.BACKOFF_POLICY_EXPONENTIAL)
+            .setPersisted(true)
+            .build();
     Jobs.schedule(context, jobInfo);
   }
 
@@ -51,7 +56,7 @@ import timber.log.Timber;
         .setPeriodic(6 * DateUtils.HOUR_IN_MILLIS)
         .setPersisted(true)
         .build();
-    Jobs.schedule(context, jobInfo);
+    Jobs.scheduleNotPending(context, jobInfo);
   }
 
   public AuthJobHandlerJob(SchedulerService service, JobParameters params) {

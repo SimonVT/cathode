@@ -54,7 +54,7 @@ public class SyncUpdatedShows extends SeparatePagesCallJob<UpdatedItem> {
   private transient SharedPreferences settings;
   private transient long currentTime;
 
-  @RequiresApi(api = Build.VERSION_CODES.N) public static void schedulePeriodic(Context context) {
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public static void schedulePeriodic(Context context) {
     JobInfo jobInfo = new JobInfo.Builder(ID, new ComponentName(context, SchedulerService.class)) //
         .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
         .setRequiresCharging(true)
@@ -62,7 +62,7 @@ public class SyncUpdatedShows extends SeparatePagesCallJob<UpdatedItem> {
         .setPeriodic(android.text.format.DateUtils.DAY_IN_MILLIS)
         .setPersisted(true)
         .build();
-    Jobs.schedule(context, jobInfo);
+    Jobs.scheduleNotPending(context, jobInfo);
   }
 
   public SyncUpdatedShows() {

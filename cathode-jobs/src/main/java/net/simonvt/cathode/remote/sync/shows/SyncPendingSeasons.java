@@ -55,10 +55,9 @@ public class SyncPendingSeasons extends ErrorHandlerJob<List<Episode>> {
   @Inject transient ShowDatabaseHelper showHelper;
   @Inject transient EpisodeDatabaseHelper episodeHelper;
 
-  @RequiresApi(api = Build.VERSION_CODES.N) public static void schedule(Context context) {
-    JobInfo jobInfo = new JobInfo.Builder(ID,
-        new ComponentName(context, SchedulerService.class)).setRequiredNetworkType(
-        JobInfo.NETWORK_TYPE_ANY)
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public static void schedule(Context context) {
+    JobInfo jobInfo = new JobInfo.Builder(ID, new ComponentName(context, SchedulerService.class)) //
+        .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
         .setRequiresCharging(true)
         .setBackoffCriteria(DateUtils.MINUTE_IN_MILLIS, JobInfo.BACKOFF_POLICY_EXPONENTIAL)
         .setPersisted(true)
