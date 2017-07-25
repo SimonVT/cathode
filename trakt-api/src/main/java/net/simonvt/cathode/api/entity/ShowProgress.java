@@ -53,12 +53,18 @@ public class ShowProgress {
 
     Boolean completed;
 
+    IsoTime collectedAt;
+
     public Integer getNumber() {
       return number;
     }
 
     public Boolean getCompleted() {
       return completed;
+    }
+
+    public IsoTime getCollectedAt() {
+      return collectedAt;
     }
   }
 

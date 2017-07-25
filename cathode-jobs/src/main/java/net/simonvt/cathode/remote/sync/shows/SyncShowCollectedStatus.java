@@ -23,9 +23,9 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.ShowProgress;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.jobqueue.JobPriority;
-import net.simonvt.cathode.provider.DatabaseContract;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
-import net.simonvt.cathode.provider.ProviderSchematic;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
@@ -97,8 +97,14 @@ public class SyncShowCollectedStatus extends CallJob<ShowProgress> {
         }
 
         ContentProviderOperation.Builder builder =
-            ContentProviderOperation.newUpdate(ProviderSchematic.Episodes.withId(episodeId));
-        builder.withValue(DatabaseContract.EpisodeColumns.IN_COLLECTION, episode.getCompleted());
+            ContentProviderOperation.newUpdate(Episodes.withId(episodeId));
+        builder.withValue(EpisodeColumns.IN_COLLECTION, episode.getCompleted());
+        if (episode.getCollectedAt() != null) {
+          builder.withValue(EpisodeColumns.COLLECTED_AT,
+              episode.getCollectedAt().getTimeInMillis());
+        } else {
+          builder.withValue(EpisodeColumns.COLLECTED_AT, null);
+        }
         ops.add(builder.build());
       }
     }

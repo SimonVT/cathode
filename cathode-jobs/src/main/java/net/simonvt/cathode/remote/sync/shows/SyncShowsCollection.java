@@ -67,7 +67,7 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
   @Override public boolean handleResponse(List<CollectionItem> collection) {
     Cursor c = getContentResolver().query(Episodes.EPISODES, new String[] {
         EpisodeColumns.ID, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON, EpisodeColumns.SEASON_ID,
-        EpisodeColumns.EPISODE,
+        EpisodeColumns.EPISODE, EpisodeColumns.COLLECTED_AT,
     }, EpisodeColumns.IN_COLLECTION, null, null);
 
     LongSparseArray<CollectedShow> showsMap = new LongSparseArray<>();
@@ -79,6 +79,7 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
       final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
       final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
       final long seasonId = Cursors.getLong(c, EpisodeColumns.SEASON_ID);
+      final long collectedAt = Cursors.getLong(c, EpisodeColumns.COLLECTED_AT);
 
       CollectedShow collectedShow;
       Long showTraktId = showIdToTraktMap.get(showId);
@@ -103,7 +104,7 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
 
       CollectedEpisode syncEpisode = syncSeason.episodes.get(number);
       if (syncEpisode == null) {
-        syncEpisode = new CollectedEpisode(id, number);
+        syncEpisode = new CollectedEpisode(id, number, collectedAt);
         syncSeason.episodes.put(number, syncEpisode);
       }
 
@@ -162,9 +163,10 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
         List<CollectionItem.Episode> episodes = season.getEpisodes();
         for (CollectionItem.Episode episode : episodes) {
           final int episodeNumber = episode.getNumber();
+          final long collectedAt = episode.getCollectedAt().getTimeInMillis();
           CollectedEpisode syncEpisode = collectedSeason.episodes.get(episodeNumber);
 
-          if (syncEpisode == null) {
+          if (syncEpisode == null || collectedAt != syncEpisode.collectedAt) {
             EpisodeDatabaseHelper.IdResult episodeResult =
                 episodeHelper.getIdOrCreate(collectedShow.id, collectedSeason.id, episodeNumber);
             final long episodeId = episodeResult.id;
@@ -178,6 +180,7 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
                 ContentProviderOperation.newUpdate(Episodes.withId(episodeId));
             ContentValues cv = new ContentValues();
             cv.put(EpisodeColumns.IN_COLLECTION, true);
+            cv.put(EpisodeColumns.COLLECTED_AT, collectedAt);
             builder.withValues(cv);
             ops.add(builder.build());
           } else {
@@ -247,9 +250,12 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
 
     int number;
 
-    CollectedEpisode(long id, int number) {
+    long collectedAt;
+
+    public CollectedEpisode(long id, int number, long collectedAt) {
       this.id = id;
       this.number = number;
+      this.collectedAt = collectedAt;
     }
   }
 }
