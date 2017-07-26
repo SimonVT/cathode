@@ -16,7 +16,10 @@
 package net.simonvt.cathode.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.CalendarContract;
+import android.text.TextUtils;
 import java.util.ArrayList;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
@@ -47,10 +50,22 @@ public class EpisodeDetailsActivity extends NavigationListenerActivity {
     setContentView(R.layout.activity_details);
 
     Intent intent = getIntent();
-    id = intent.getLongExtra(EXTRA_ID, -1L);
-    showId = intent.getLongExtra(EXTRA_SHOW_ID, -1L);
-    showTitle = intent.getStringExtra(EXTRA_SHOW_TITLE);
-    showOverview = intent.getStringExtra(EXTRA_SHOW_OVERVIEW);
+
+    if (CalendarContract.ACTION_HANDLE_CUSTOM_EVENT.equals(intent.getAction())) {
+      String uriString = intent.getStringExtra(CalendarContract.EXTRA_CUSTOM_APP_URI);
+      Uri uri = Uri.parse(uriString);
+      String idSegment = uri.getPathSegments().get(0);
+      if (!TextUtils.isEmpty(idSegment)) {
+        id = Long.parseLong(idSegment);
+      } else {
+        finish();
+      }
+    } else {
+      id = intent.getLongExtra(EXTRA_ID, -1L);
+      showId = intent.getLongExtra(EXTRA_SHOW_ID, -1L);
+      showTitle = intent.getStringExtra(EXTRA_SHOW_TITLE);
+      showOverview = intent.getStringExtra(EXTRA_SHOW_OVERVIEW);
+    }
 
     if (id == -1L) {
       Timber.e(new Exception("ID was " + id));
@@ -67,7 +82,13 @@ public class EpisodeDetailsActivity extends NavigationListenerActivity {
     }
   }
 
+  public static Uri createUri(long episodeId) {
+    return Uri.parse("cathode://episode/" + episodeId);
+  }
+
   @Override public void upFromEpisode(long showId, String showTitle, long seasonId) {
+    this.showId = showId;
+    this.showTitle = showTitle;
     onHomeClicked();
   }
 

@@ -322,6 +322,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
     final long traktId = Cursors.getLong(cursor, EpisodeColumns.TRAKT_ID);
     showId = Cursors.getLong(cursor, EpisodeColumns.SHOW_ID);
     seasonId = Cursors.getLong(cursor, EpisodeColumns.SEASON_ID);
+    showTitle = Cursors.getString(cursor, EpisodeColumns.SHOW_TITLE);
 
     season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
     final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
@@ -381,7 +382,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
       EpisodeColumns.IN_WATCHLIST, EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN,
       EpisodeColumns.USER_RATING, EpisodeColumns.RATING, EpisodeColumns.SEASON,
       EpisodeColumns.EPISODE, EpisodeColumns.LAST_COMMENT_SYNC, EpisodeColumns.SHOW_ID,
-      EpisodeColumns.SEASON_ID,
+      EpisodeColumns.SEASON_ID, EpisodeColumns.SHOW_TITLE,
   };
 
   private LoaderManager.LoaderCallbacks<SimpleCursor> episodeCallbacks =

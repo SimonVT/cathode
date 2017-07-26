@@ -45,6 +45,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.settings.Permissions;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.ui.EpisodeDetailsActivity;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
@@ -294,6 +295,9 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
           .withValue(CalendarContract.Events.TITLE, eventTitle)
           .withValue(CalendarContract.Events.SYNC_DATA1, episodeId)
           .withValue(CalendarContract.Events.CALENDAR_ID, calendarId)
+          .withValue(CalendarContract.Events.CUSTOM_APP_PACKAGE, context.getPackageName())
+          .withValue(CalendarContract.Events.CUSTOM_APP_URI,
+              EpisodeDetailsActivity.createUri(episodeId).toString())
           .build();
       ops.add(op);
     }
