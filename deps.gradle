@@ -49,6 +49,7 @@ ext {
       supportCoreUi       : "com.android.support:support-core-ui:$supportLibrariesVersion",
       supportCoreUtils    : "com.android.support:support-core-utils:$supportLibrariesVersion",
       supportFragment     : "com.android.support:support-fragment:$supportLibrariesVersion",
+      supportPalette      : "com.android.support:palette-v7:$supportLibrariesVersion",
 
       dashclockApi        : 'com.google.android.apps.dashclock:dashclock-api:2.0.0',
 

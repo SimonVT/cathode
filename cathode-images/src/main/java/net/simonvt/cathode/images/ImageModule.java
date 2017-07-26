@@ -27,6 +27,7 @@ import dagger.Provides;
 import java.io.File;
 import javax.inject.Singleton;
 import okhttp3.OkHttpClient;
+import timber.log.Timber;
 
 @Module(complete = false, library = true) public class ImageModule {
 
@@ -83,7 +84,7 @@ import okhttp3.OkHttpClient;
     if (BuildConfig.DEBUG) {
       builder.listener(new Picasso.Listener() {
         @Override public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-          exception.printStackTrace();
+          Timber.d(exception);
         }
       });
     }

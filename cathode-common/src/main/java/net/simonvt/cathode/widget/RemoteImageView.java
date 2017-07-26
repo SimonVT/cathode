@@ -192,6 +192,11 @@ public class RemoteImageView extends AspectRatioView implements Target {
 
     if (creator != null) {
       creator.resize(width - resizeInsetX, height - resizeInsetY).centerCrop();
+
+      if (PaletteTransformation.shouldTransform) {
+        creator.transform(new PaletteTransformation());
+      }
+
       for (Transformation transformation : transformations) {
         creator.transform(transformation);
       }

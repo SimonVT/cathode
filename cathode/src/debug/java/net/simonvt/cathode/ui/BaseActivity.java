@@ -28,12 +28,14 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.text.format.DateUtils;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import butterknife.BindView;
@@ -48,6 +50,7 @@ import net.simonvt.cathode.common.event.AuthFailedEvent;
 import net.simonvt.cathode.common.event.RequestFailedEvent;
 import net.simonvt.cathode.common.event.SyncEvent;
 import net.simonvt.cathode.common.event.SyncEvent.OnSyncListener;
+import net.simonvt.cathode.widget.PaletteTransformation;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobListener;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -125,6 +128,12 @@ import okhttp3.logging.HttpLoggingInterceptor;
       @Override public void onClick(View v) {
         Intent i = new Intent(BaseActivity.this, NotificationService.class);
         startService(i);
+      }
+    });
+
+    debugViews.playImages.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+      @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        PaletteTransformation.shouldTransform = isChecked;
       }
     });
 
@@ -395,6 +404,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
     @BindView(R.id.debug_recreateActivity) View recreateActivity;
 
     @BindView(R.id.debug_updateNotifications) View updateNotifications;
+
+    @BindView(R.id.debug_playImages) SwitchCompat playImages;
 
     @BindView(R.id.debug_requestFailedEvent) View requestFailedEvent;
 

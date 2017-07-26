@@ -59,6 +59,14 @@
       android:text="Update notification"
       style="@style/DebugDrawerItem"/>
 
+  <android.support.v7.widget.SwitchCompat
+      android:id="@+id/debug_playImages"
+      android:layout_width="0dp"
+      android:layout_columnSpan="2"
+      android:layout_gravity="start|fill_horizontal"
+      android:text="Palette images"
+      style="@style/DebugDrawerSwitch"/>
+
   <TextView
       android:layout_width="0dp"
       android:layout_columnSpan="2"
