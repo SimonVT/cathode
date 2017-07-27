@@ -67,7 +67,7 @@ public class SearchExecutor implements Executor {
     }
   }
 
-  protected void scheduleNext() {
+  private void scheduleNext() {
     synchronized (this) {
       active = next;
       next = null;

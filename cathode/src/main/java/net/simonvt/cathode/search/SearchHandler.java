@@ -22,6 +22,10 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import javax.inject.Inject;
 import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.api.entity.Movie;
@@ -32,8 +36,6 @@ import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.SearchService;
 import net.simonvt.cathode.common.util.MainHandler;
-import net.simonvt.cathode.images.ImageType;
-import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
@@ -68,7 +70,7 @@ public class SearchHandler {
 
   private List<Result> results;
 
-  private boolean localResults;
+  private boolean remoteQueryFailed;
 
   private Context context;
 
@@ -84,7 +86,7 @@ public class SearchHandler {
     listeners.add(listenerRef);
 
     if (results != null) {
-      listener.onSearchResult(results, localResults);
+      listener.onSearchResult(results, remoteQueryFailed);
     }
   }
 
@@ -101,13 +103,13 @@ public class SearchHandler {
   public void clear() {
     executor.cancelRunning();
     results = null;
-    localResults = false;
+    remoteQueryFailed = false;
   }
 
-  public void publishResult(final List<Result> results, final boolean localResults) {
+  public void publishResult(final List<Result> results, final boolean remoteQueryFailed) {
     Timber.d("Publishing %d results", results.size());
     SearchHandler.this.results = results;
-    SearchHandler.this.localResults = localResults;
+    SearchHandler.this.remoteQueryFailed = remoteQueryFailed;
 
     for (int i = listeners.size() - 1; i >= 0; i--) {
       WeakReference<SearchListener> listenerRef = listeners.get(i);
@@ -116,7 +118,7 @@ public class SearchHandler {
       if (listener == null) {
         listeners.remove(listenerRef);
       } else {
-        listener.onSearchResult(results, localResults);
+        listener.onSearchResult(results, remoteQueryFailed);
       }
     }
   }
@@ -136,8 +138,6 @@ public class SearchHandler {
 
     final String query;
 
-    private List<Result> results;
-
     SearchRunnable(String query) {
       this.query = query;
     }
@@ -149,111 +149,139 @@ public class SearchHandler {
     }
 
     @Override public void run() {
-      Enums<ItemType> types = Enums.of(ItemType.SHOW, ItemType.MOVIE);
+      Future<List<Result>> remote = searchTrakt(query);
+
+      List<Result> local = searchLocal(query);
+      if (!remote.isDone()) {
+        publish(local, false);
+      }
+
       try {
-        Call<List<SearchResult>> call = searchService.search(types, query, Extended.FULL, LIMIT);
-        Response<List<SearchResult>> response = call.execute();
-
-        if (response.isSuccessful()) {
-          int relevance = 0;
-          List<SearchResult> searchResults = response.body();
-          final List<Result> results = new ArrayList<>(searchResults.size());
-
-          for (SearchResult searchResult : searchResults) {
-            if (searchResult.getType() == ItemType.SHOW) {
-              Show show = searchResult.getShow();
-              if (!TextUtils.isEmpty(show.getTitle())) {
-                final long showId = showHelper.partialUpdate(show);
-
-                String title = show.getTitle();
-                String overview = show.getOverview();
-                float rating = show.getRating() == null ? 0.0f : show.getRating();
-
-                Result result =
-                    new Result(ItemType.SHOW, showId, title, overview, rating, relevance++);
-                results.add(result);
-              }
-            } else if (searchResult.getType() == ItemType.MOVIE) {
-              Movie movie = searchResult.getMovie();
-              if (!TextUtils.isEmpty(movie.getTitle())) {
-                final long movieId = movieHelper.partialUpdate(movie);
-
-                String title = movie.getTitle();
-                String overview = movie.getOverview();
-                float rating = movie.getRating() == null ? 0.0f : movie.getRating();
-
-                Result result =
-                    new Result(ItemType.MOVIE, movieId, title, overview, rating, relevance++);
-                results.add(result);
-              }
-            }
-          }
-
-          publish(results, false);
+        List<Result> remoteResults = remote.get();
+        if (remoteResults != null) {
+          publish(remoteResults, false);
           return;
         }
-      } catch (IOException e) {
-        Timber.d(e, "Search failed");
-      } catch (Throwable t) {
-        Timber.e(t, "Search failed");
+      } catch (InterruptedException e) {
+        Timber.e(e);
+      } catch (ExecutionException e) {
+        Timber.e(e);
       }
 
-      int relevance = 0;
-      List<Result> results = new ArrayList<>();
-
-      Cursor shows = context.getContentResolver().query(Shows.SHOWS, new String[] {
-          ShowColumns.ID, ShowColumns.TITLE, ShowColumns.OVERVIEW, ShowColumns.RATING,
-      }, ShowColumns.TITLE + " LIKE ?", new String[] {
-          "%" + query + "%",
-      }, null);
-
-      while (shows.moveToNext()) {
-        final long id = Cursors.getLong(shows, ShowColumns.ID);
-        final String title = Cursors.getString(shows, ShowColumns.TITLE);
-        final String overview = Cursors.getString(shows, ShowColumns.OVERVIEW);
-        final float rating = Cursors.getFloat(shows, ShowColumns.RATING);
-
-        final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
-
-        Result result = new Result(ItemType.SHOW, id, title, overview, rating, relevance++);
-        results.add(result);
-      }
-
-      shows.close();
-
-      Cursor movies = context.getContentResolver().query(Movies.MOVIES, new String[] {
-          MovieColumns.ID, MovieColumns.TITLE, MovieColumns.OVERVIEW, MovieColumns.RATING,
-      }, MovieColumns.TITLE + " LIKE ?", new String[] {
-          "%" + query + "%",
-      }, null);
-
-      while (movies.moveToNext()) {
-        final long id = Cursors.getLong(movies, MovieColumns.ID);
-        final String title = Cursors.getString(movies, MovieColumns.TITLE);
-        final String overview = Cursors.getString(movies, MovieColumns.OVERVIEW);
-        final float rating = Cursors.getFloat(movies, MovieColumns.RATING);
-
-        final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
-
-        Result result = new Result(ItemType.MOVIE, id, title, overview, rating, relevance++);
-        results.add(result);
-      }
-
-      movies.close();
-
-      publish(results, true);
+      publish(local, true);
     }
 
-    private void publish(final List<Result> results, final boolean localResults) {
+    private void publish(final List<Result> results, final boolean remoteQueryFailed) {
       MainHandler.post(new Runnable() {
         @Override public void run() {
           synchronized (this) {
             if (!canceled) {
-              publishResult(results, localResults);
+              publishResult(results, remoteQueryFailed);
             }
           }
         }
       });
     }
+  }
+
+  private List<Result> searchLocal(String query) {
+    int relevance = 0;
+    List<Result> results = new ArrayList<>();
+
+    Cursor shows = context.getContentResolver().query(Shows.SHOWS, new String[] {
+        ShowColumns.ID, ShowColumns.TITLE, ShowColumns.OVERVIEW, ShowColumns.RATING,
+    }, ShowColumns.TITLE + " LIKE ?", new String[] {
+        "%" + query + "%",
+    }, null);
+
+    while (shows.moveToNext()) {
+      final long id = Cursors.getLong(shows, ShowColumns.ID);
+      final String title = Cursors.getString(shows, ShowColumns.TITLE);
+      final String overview = Cursors.getString(shows, ShowColumns.OVERVIEW);
+      final float rating = Cursors.getFloat(shows, ShowColumns.RATING);
+
+      Result result = new Result(ItemType.SHOW, id, title, overview, rating, relevance++);
+      results.add(result);
+    }
+
+    shows.close();
+
+    Cursor movies = context.getContentResolver().query(Movies.MOVIES, new String[] {
+        MovieColumns.ID, MovieColumns.TITLE, MovieColumns.OVERVIEW, MovieColumns.RATING,
+    }, MovieColumns.TITLE + " LIKE ?", new String[] {
+        "%" + query + "%",
+    }, null);
+
+    while (movies.moveToNext()) {
+      final long id = Cursors.getLong(movies, MovieColumns.ID);
+      final String title = Cursors.getString(movies, MovieColumns.TITLE);
+      final String overview = Cursors.getString(movies, MovieColumns.OVERVIEW);
+      final float rating = Cursors.getFloat(movies, MovieColumns.RATING);
+
+      Result result = new Result(ItemType.MOVIE, id, title, overview, rating, relevance++);
+      results.add(result);
+    }
+
+    movies.close();
+
+    return results;
+  }
+
+  private Future<List<Result>> searchTrakt(final String query) {
+    FutureTask<List<Result>> future = new FutureTask<>(new Callable<List<Result>>() {
+      @Override public List<Result> call() throws Exception {
+        Enums<ItemType> types = Enums.of(ItemType.SHOW, ItemType.MOVIE);
+        try {
+          Call<List<SearchResult>> call = searchService.search(types, query, Extended.FULL, LIMIT);
+          Response<List<SearchResult>> response = call.execute();
+
+          if (response.isSuccessful()) {
+            int relevance = 0;
+            List<SearchResult> searchResults = response.body();
+            final List<Result> results = new ArrayList<>(searchResults.size());
+
+            for (SearchResult searchResult : searchResults) {
+              if (searchResult.getType() == ItemType.SHOW) {
+                Show show = searchResult.getShow();
+                if (!TextUtils.isEmpty(show.getTitle())) {
+                  final long showId = showHelper.partialUpdate(show);
+
+                  String title = show.getTitle();
+                  String overview = show.getOverview();
+                  float rating = show.getRating() == null ? 0.0f : show.getRating();
+
+                  Result result =
+                      new Result(ItemType.SHOW, showId, title, overview, rating, relevance++);
+                  results.add(result);
+                }
+              } else if (searchResult.getType() == ItemType.MOVIE) {
+                Movie movie = searchResult.getMovie();
+                if (!TextUtils.isEmpty(movie.getTitle())) {
+                  final long movieId = movieHelper.partialUpdate(movie);
+
+                  String title = movie.getTitle();
+                  String overview = movie.getOverview();
+                  float rating = movie.getRating() == null ? 0.0f : movie.getRating();
+
+                  Result result =
+                      new Result(ItemType.MOVIE, movieId, title, overview, rating, relevance++);
+                  results.add(result);
+                }
+              }
+            }
+
+            return results;
+          }
+        } catch (IOException e) {
+          Timber.d(e, "Search failed");
+        } catch (Throwable t) {
+          Timber.e(t, "Search failed");
+        }
+
+        return null;
+      }
+    });
+    new Thread(future).start();
+    return future;
   }
 }

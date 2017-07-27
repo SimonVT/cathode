@@ -33,27 +33,25 @@ public class Debouncer {
     Timber.d("Debouncing key %s", key);
     if (INSTANCE.runnables.containsKey(key)) {
       Timber.d("Key %s already exists", key);
-
-      Runnable runnable = INSTANCE.runnables.get(key);
-      MainHandler.removeCallbacks(runnable);
-
-      INSTANCE.runnables.remove(key);
+      remove(key);
     }
-
-    INSTANCE.runnables.put(key, r);
 
     Runnable runner = new Runnable() {
       @Override public void run() {
         Timber.d("Running key %s", key);
-        remove(key);
+        INSTANCE.runnables.remove(key);
         r.run();
       }
     };
+
+    INSTANCE.runnables.put(key, runner);
     MainHandler.postDelayed(runner, delayMillis);
   }
 
   public static void remove(final String key) {
     Timber.d("Removing key");
+    Runnable runner = INSTANCE.runnables.get(key);
+    MainHandler.removeCallbacks(runner);
     INSTANCE.runnables.remove(key);
   }
 }
