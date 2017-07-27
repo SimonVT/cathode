@@ -20,6 +20,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import com.squareup.picasso.Request;
 import com.uwetrottmann.tmdb2.entities.Image;
 import com.uwetrottmann.tmdb2.entities.PersonImages;
@@ -59,18 +60,22 @@ public class PersonRequestHandler extends ItemRequestHandler {
 
     try {
       c = context.getContentResolver().query(People.withId(id), new String[] {
-          PersonColumns.HEADSHOT, PersonColumns.SCREENSHOT,
+          PersonColumns.IMAGES_LAST_UPDATE, PersonColumns.HEADSHOT, PersonColumns.SCREENSHOT,
       }, null, null, null);
       c.moveToFirst();
 
+      final long lastUpdate = Cursors.getLong(c, PersonColumns.IMAGES_LAST_UPDATE);
+      final boolean needsUpdate =
+          lastUpdate + DateUtils.WEEK_IN_MILLIS < System.currentTimeMillis();
+
       if (imageType == ImageType.PROFILE) {
         String headshotPath = Cursors.getString(c, PersonColumns.HEADSHOT);
-        if (!TextUtils.isEmpty(headshotPath)) {
+        if (!needsUpdate && !TextUtils.isEmpty(headshotPath)) {
           return headshotPath;
         }
       } else if (imageType == ImageType.STILL) {
         String screenshotPath = Cursors.getString(c, PersonColumns.SCREENSHOT);
-        if (!TextUtils.isEmpty(screenshotPath)) {
+        if (!needsUpdate && !TextUtils.isEmpty(screenshotPath)) {
           return screenshotPath;
         }
       } else {
@@ -85,6 +90,7 @@ public class PersonRequestHandler extends ItemRequestHandler {
 
   protected void clearCachedPaths(long id) {
     ContentValues values = new ContentValues();
+    values.put(PersonColumns.IMAGES_LAST_UPDATE, 0L);
     values.putNull(PersonColumns.HEADSHOT);
     values.putNull(PersonColumns.SCREENSHOT);
     context.getContentResolver().update(People.withId(id), values, null, null);

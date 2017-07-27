@@ -20,6 +20,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import com.squareup.picasso.Request;
 import com.uwetrottmann.tmdb2.entities.Image;
 import com.uwetrottmann.tmdb2.entities.Images;
@@ -57,18 +58,22 @@ public class MovieRequestHandler extends ItemRequestHandler {
 
     try {
       c = context.getContentResolver().query(Movies.withId(id), new String[] {
-          MovieColumns.POSTER, MovieColumns.BACKDROP,
+          MovieColumns.IMAGES_LAST_UPDATE, MovieColumns.POSTER, MovieColumns.BACKDROP,
       }, null, null, null);
       c.moveToFirst();
 
+      final long lastUpdate = Cursors.getLong(c, MovieColumns.IMAGES_LAST_UPDATE);
+      final boolean needsUpdate =
+          lastUpdate + DateUtils.WEEK_IN_MILLIS < System.currentTimeMillis();
+
       if (imageType == ImageType.POSTER) {
         String posterPath = Cursors.getString(c, MovieColumns.POSTER);
-        if (!TextUtils.isEmpty(posterPath)) {
+        if (!needsUpdate && !TextUtils.isEmpty(posterPath)) {
           return posterPath;
         }
       } else if (imageType == ImageType.BACKDROP) {
         String backdropPath = Cursors.getString(c, MovieColumns.BACKDROP);
-        if (!TextUtils.isEmpty(backdropPath)) {
+        if (!needsUpdate && !TextUtils.isEmpty(backdropPath)) {
           return backdropPath;
         }
       } else {
@@ -83,6 +88,7 @@ public class MovieRequestHandler extends ItemRequestHandler {
 
   protected void clearCachedPaths(long id) {
     ContentValues values = new ContentValues();
+    values.put(MovieColumns.IMAGES_LAST_UPDATE, 0L);
     values.putNull(MovieColumns.BACKDROP);
     values.putNull(MovieColumns.POSTER);
     context.getContentResolver().update(Movies.withId(id), values, null, null);
@@ -99,6 +105,7 @@ public class MovieRequestHandler extends ItemRequestHandler {
       Images images = response.body();
 
       ContentValues values = new ContentValues();
+      values.put(MovieColumns.IMAGES_LAST_UPDATE, System.currentTimeMillis());
 
       if (images.backdrops.size() > 0) {
         Image backdrop = images.backdrops.get(0);

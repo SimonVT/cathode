@@ -66,7 +66,7 @@ public final class DatabaseContract {
     @DataType(TEXT) String HOMEPAGE = "homepage";
     @DataType(TEXT) String STATUS = "status";
 
-    @DataType(INTEGER) String IMAGES_LAST_SYNC = "imagesLastSync";
+    @DataType(INTEGER) @DefaultValue("0") String IMAGES_LAST_UPDATE = "imagesLastUpdate";
     @DataType(TEXT) String BACKDROP = "backdrop";
     @DataType(TEXT) String POSTER = "poster";
 
@@ -203,7 +203,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) String TMDB_ID = "tmdbId";
     @DataType(INTEGER) String TVRAGE_ID = "tvrageId";
 
-    @DataType(INTEGER) String IMAGES_LAST_SYNC = "imagesLastSync";
+    @DataType(INTEGER) String IMAGES_LAST_UPDATE = "imagesLastUpdate";
     @DataType(TEXT) String SCREENSHOT = "screenshot";
 
     @DataType(INTEGER) String FIRST_AIRED = "episodeFirstAired";
@@ -257,7 +257,7 @@ public final class DatabaseContract {
     @DataType(TEXT) String IMDB_ID = "imdbId";
     @DataType(INTEGER) String TMDB_ID = "tmdbId";
 
-    @DataType(INTEGER) String IMAGES_LAST_SYNC = "imagesLastSync";
+    @DataType(INTEGER) String IMAGES_LAST_UPDATE = "imagesLastUpdate";
     @DataType(TEXT) String BACKDROP = "backdrop";
     @DataType(TEXT) String POSTER = "poster";
 
@@ -336,7 +336,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) String TMDB_ID = "tmdbId";
     @DataType(INTEGER) String TVRAGE_ID = "tvrageId";
 
-    @DataType(INTEGER) String IMAGES_LAST_SYNC = "imagesLastSync";
+    @DataType(INTEGER) String IMAGES_LAST_UPDATE = "imagesLastUpdate";
     @DataType(TEXT) String HEADSHOT = "headshot";
     @DataType(TEXT) String SCREENSHOT = "screenshot";
 

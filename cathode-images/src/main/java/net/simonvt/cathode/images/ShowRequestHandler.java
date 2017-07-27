@@ -20,6 +20,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import com.squareup.picasso.Request;
 import com.uwetrottmann.tmdb2.entities.Image;
 import com.uwetrottmann.tmdb2.entities.Images;
@@ -57,18 +58,22 @@ public class ShowRequestHandler extends ItemRequestHandler {
 
     try {
       c = context.getContentResolver().query(Shows.withId(id), new String[] {
-          ShowColumns.POSTER, ShowColumns.BACKDROP,
+          ShowColumns.IMAGES_LAST_UPDATE, ShowColumns.POSTER, ShowColumns.BACKDROP,
       }, null, null, null);
       c.moveToFirst();
 
+      final long lastUpdate = Cursors.getLong(c, ShowColumns.IMAGES_LAST_UPDATE);
+      final boolean needsUpdate =
+          lastUpdate + DateUtils.WEEK_IN_MILLIS < System.currentTimeMillis();
+
       if (imageType == ImageType.POSTER) {
         String posterPath = Cursors.getString(c, ShowColumns.POSTER);
-        if (!TextUtils.isEmpty(posterPath)) {
+        if (!needsUpdate && !TextUtils.isEmpty(posterPath)) {
           return posterPath;
         }
       } else if (imageType == ImageType.BACKDROP) {
         String backdropPath = Cursors.getString(c, ShowColumns.BACKDROP);
-        if (!TextUtils.isEmpty(backdropPath)) {
+        if (!needsUpdate && !TextUtils.isEmpty(backdropPath)) {
           return backdropPath;
         }
       } else {
@@ -83,6 +88,7 @@ public class ShowRequestHandler extends ItemRequestHandler {
 
   protected void clearCachedPaths(long id) {
     ContentValues values = new ContentValues();
+    values.put(ShowColumns.IMAGES_LAST_UPDATE, 0L);
     values.putNull(ShowColumns.BACKDROP);
     values.putNull(ShowColumns.POSTER);
     context.getContentResolver().update(Shows.withId(id), values, null, null);

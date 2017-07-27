@@ -57,7 +57,7 @@ public final class DatabaseSchematic {
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 39;
+  static final int DATABASE_VERSION = 40;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -779,20 +779,6 @@ public final class DatabaseSchematic {
           DataType.Type.INTEGER, "0");
     }
 
-    if (oldVersion < 32) {
-      SqlUtils.createColumnIfNotExists(db, Tables.EPISODES, EpisodeColumns.IMAGES_LAST_SYNC,
-          DataType.Type.INTEGER, "0");
-      SqlUtils.createColumnIfNotExists(db, Tables.PEOPLE, PersonColumns.IMAGES_LAST_SYNC,
-          DataType.Type.INTEGER, "0");
-    }
-
-    if (oldVersion < 33) {
-      SqlUtils.createColumnIfNotExists(db, Tables.SHOWS, ShowColumns.IMAGES_LAST_SYNC,
-          DataType.Type.INTEGER, "0");
-      SqlUtils.createColumnIfNotExists(db, Tables.MOVIE_CAST, MovieColumns.IMAGES_LAST_SYNC,
-          DataType.Type.INTEGER, "0");
-    }
-
     if (oldVersion < 34) {
       SqlUtils.createColumnIfNotExists(db, Tables.SHOWS, ShowColumns.BACKDROP,
           DataType.Type.TEXT, null);
@@ -873,6 +859,17 @@ public final class DatabaseSchematic {
 
     if (oldVersion < 39) {
       db.delete(Tables.LISTS, ListsColumns.TRAKT_ID + "<0", null);
+    }
+
+    if (oldVersion < 40) {
+      SqlUtils.createColumnIfNotExists(db, Tables.SHOWS, ShowColumns.IMAGES_LAST_UPDATE,
+          DataType.Type.INTEGER, "0");
+      SqlUtils.createColumnIfNotExists(db, Tables.EPISODES, EpisodeColumns.IMAGES_LAST_UPDATE,
+          DataType.Type.INTEGER, "0");
+      SqlUtils.createColumnIfNotExists(db, Tables.MOVIES, MovieColumns.IMAGES_LAST_UPDATE,
+          DataType.Type.INTEGER, "0");
+      SqlUtils.createColumnIfNotExists(db, Tables.PEOPLE, PersonColumns.IMAGES_LAST_UPDATE,
+          DataType.Type.INTEGER, "0");
     }
   }
 }

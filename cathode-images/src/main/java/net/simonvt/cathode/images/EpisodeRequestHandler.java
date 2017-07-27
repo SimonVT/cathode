@@ -20,6 +20,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import com.squareup.picasso.Request;
 import com.uwetrottmann.tmdb2.entities.Image;
 import com.uwetrottmann.tmdb2.entities.Images;
@@ -29,10 +30,8 @@ import javax.inject.Inject;
 import net.simonvt.cathode.common.tmdb.TmdbRateLimiter;
 import net.simonvt.cathode.common.util.Closeables;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Response;
@@ -61,13 +60,17 @@ public class EpisodeRequestHandler extends ItemRequestHandler {
 
     try {
       c = context.getContentResolver().query(Episodes.withId(id), new String[] {
-          EpisodeColumns.SCREENSHOT
+          EpisodeColumns.IMAGES_LAST_UPDATE, EpisodeColumns.SCREENSHOT,
       }, null, null, null);
       c.moveToFirst();
 
+      long lastUpdate = Cursors.getLong(c, EpisodeColumns.IMAGES_LAST_UPDATE);
+      final boolean needsUpdate =
+          lastUpdate + DateUtils.WEEK_IN_MILLIS < System.currentTimeMillis();
+
       if (imageType == ImageType.STILL) {
         String path = Cursors.getString(c, EpisodeColumns.SCREENSHOT);
-        if (!TextUtils.isEmpty(path)) {
+        if (!needsUpdate && !TextUtils.isEmpty(path)) {
           return path;
         }
       } else {
@@ -82,9 +85,9 @@ public class EpisodeRequestHandler extends ItemRequestHandler {
 
   protected void clearCachedPaths(long id) {
     ContentValues values = new ContentValues();
-    values.putNull(ShowColumns.BACKDROP);
-    values.putNull(ShowColumns.POSTER);
-    context.getContentResolver().update(Shows.withId(id), values, null, null);
+    values.put(EpisodeColumns.IMAGES_LAST_UPDATE, 0L);
+    values.putNull(EpisodeColumns.SCREENSHOT);
+    context.getContentResolver().update(Episodes.withId(id), values, null, null);
   }
 
   @Override protected String queryPath(ImageType imageType, long id, int tmdbId)
@@ -116,18 +119,19 @@ public class EpisodeRequestHandler extends ItemRequestHandler {
       Images images = response.body();
 
       ContentValues values = new ContentValues();
+      values.put(EpisodeColumns.IMAGES_LAST_UPDATE, System.currentTimeMillis());
 
       if (images.stills.size() > 0) {
-        Image backdrop = images.stills.get(0);
-        final String backdropPath = ImageUri.create(ImageType.BACKDROP, backdrop.file_path);
+        Image screenshot = images.stills.get(0);
+        final String screenshotPath = ImageUri.create(ImageType.BACKDROP, screenshot.file_path);
 
-        values.put(ShowColumns.BACKDROP, backdropPath);
-        path = backdropPath;
+        values.put(EpisodeColumns.SCREENSHOT, screenshotPath);
+        path = screenshotPath;
       } else {
-        values.putNull(ShowColumns.BACKDROP);
+        values.putNull(EpisodeColumns.SCREENSHOT);
       }
 
-      context.getContentResolver().update(Shows.withId(id), values, null, null);
+      context.getContentResolver().update(Episodes.withId(id), values, null, null);
     }
 
     return path;

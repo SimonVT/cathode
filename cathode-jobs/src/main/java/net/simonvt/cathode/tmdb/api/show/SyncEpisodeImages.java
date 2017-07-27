@@ -72,6 +72,7 @@ public class SyncEpisodeImages extends TmdbCallJob<Images> {
     }
 
     ContentValues values = new ContentValues();
+    values.put(EpisodeColumns.IMAGES_LAST_UPDATE, System.currentTimeMillis());
 
     if (images.stills.size() > 0) {
       Image still = images.stills.get(0);

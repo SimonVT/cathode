@@ -59,6 +59,7 @@ public class SyncMovieImages extends TmdbCallJob<Images> {
     final long movieId = movieHelper.getIdFromTmdb(tmdbId);
 
     ContentValues values = new ContentValues();
+    values.put(MovieColumns.IMAGES_LAST_UPDATE, System.currentTimeMillis());
 
     if (images.backdrops.size() > 0) {
       Image backdrop = images.backdrops.get(0);

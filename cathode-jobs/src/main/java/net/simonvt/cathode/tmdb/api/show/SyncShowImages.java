@@ -59,6 +59,7 @@ public class SyncShowImages extends TmdbCallJob<Images> {
     final long showId = showHelper.getIdFromTmdb(tmdbId);
 
     ContentValues values = new ContentValues();
+    values.put(ShowColumns.IMAGES_LAST_UPDATE, System.currentTimeMillis());
 
     if (images.backdrops.size() > 0) {
       Image backdrop = images.backdrops.get(0);
