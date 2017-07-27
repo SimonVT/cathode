@@ -18,6 +18,7 @@ package net.simonvt.cathode.notification;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -61,6 +62,7 @@ public class NotificationService extends IntentService {
 
   static final String GROUP = "upcoming";
 
+  static final String CHANNEL_REMINDERS = "channel_reminders";
   static final int GROUP_NOTIFICATION_ID = Integer.MAX_VALUE - 1;
 
   private static final long[] VIBRATION = new long[] {
@@ -83,6 +85,17 @@ public class NotificationService extends IntentService {
   private DateFormat timeDateFormat;
 
   private NotificationManager nm;
+
+  public static void start(Context context) {
+    Intent i = new Intent(context, NotificationService.class);
+    context.startService(i);
+  }
+
+  public static void scheduleAt(Context context, long millis) {
+    Intent i = new Intent(context, NotificationReceiver.class);
+    PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
+    Alarms.setExactAndAllowWhileIdle(context, AlarmManager.RTC_WAKEUP, millis, pi);
+  }
 
   public NotificationService() {
     super("ScheduleNotificationService");
@@ -109,8 +122,9 @@ public class NotificationService extends IntentService {
   }
 
   @Override protected void onHandleIntent(Intent intent) {
-    final long currentTime = System.currentTimeMillis();
+    createReminderChannel();
 
+    final long currentTime = System.currentTimeMillis();
     long nextNotificationTime = Long.MAX_VALUE;
 
     final boolean enabled = Settings.get(this).getBoolean(Settings.NOTIFICACTIONS_ENABLED, false);
@@ -190,7 +204,8 @@ public class NotificationService extends IntentService {
         Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         NotificationCompat.Builder summaryNotification =
-            new NotificationCompat.Builder(this).setShowWhen(false)
+            new NotificationCompat.Builder(this, CHANNEL_REMINDERS) //
+                .setShowWhen(false)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setGroup(GROUP)
                 .setGroupSummary(true)
@@ -212,7 +227,7 @@ public class NotificationService extends IntentService {
     }
 
     if (nextNotificationTime < Long.MAX_VALUE) {
-      scheduleAt(nextNotificationTime);
+      scheduleAt(this, nextNotificationTime);
     }
   }
 
@@ -254,7 +269,8 @@ public class NotificationService extends IntentService {
     final int notificationId = Longs.hashCode(episodeId);
 
     NotificationCompat.Builder notification =
-        new NotificationCompat.Builder(this).setShowWhen(false)
+        new NotificationCompat.Builder(this, CHANNEL_REMINDERS) //
+            .setShowWhen(false)
             .setContentTitle(contentTitle)
             .setContentText(contentText)
             .setTicker(tickerText)
@@ -301,13 +317,20 @@ public class NotificationService extends IntentService {
     nm.notify(notificationId, notification.build());
   }
 
-  private static String createSortKey(long firstAired) {
-    return SORT_KEY_FORMAT.format(firstAired);
+  private void createReminderChannel() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      final String name = getString(R.string.channel_reminders);
+      final String description = getString(R.string.channel_reminders_description);
+      NotificationChannel channel =
+          new NotificationChannel(CHANNEL_REMINDERS, name, NotificationManager.IMPORTANCE_HIGH);
+      channel.setDescription(description);
+      channel.enableLights(true);
+      channel.enableVibration(true);
+      nm.createNotificationChannel(channel);
+    }
   }
 
-  private void scheduleAt(long millis) {
-    Intent i = new Intent(this, NotificationReceiver.class);
-    PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
-    Alarms.setExactAndAllowWhileIdle(this, AlarmManager.RTC_WAKEUP, millis, pi);
+  private static String createSortKey(long firstAired) {
+    return SORT_KEY_FORMAT.format(firstAired);
   }
 }

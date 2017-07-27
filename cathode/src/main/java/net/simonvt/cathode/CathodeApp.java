@@ -18,9 +18,13 @@ package net.simonvt.cathode;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.os.Build;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.text.format.DateUtils;
 import javax.inject.Inject;
 import net.simonvt.cathode.common.event.AuthFailedEvent;
@@ -47,6 +51,8 @@ import net.simonvt.cathode.ui.HomeActivity;
 import timber.log.Timber;
 
 public class CathodeApp extends Application {
+
+  public static final String CHANNEL_ERRORS = "channel_errors";
 
   private static final int AUTH_NOTIFICATION = 2;
 
@@ -183,17 +189,32 @@ public class CathodeApp extends Application {
 
       PendingIntent pi = PendingIntent.getActivity(CathodeApp.this, 0, intent, 0);
 
-      Notification.Builder builder = new Notification.Builder(CathodeApp.this) //
-          .setSmallIcon(R.drawable.ic_noti_error)
-          .setTicker(getString(R.string.auth_failed))
-          .setContentTitle(getString(R.string.auth_failed))
-          .setContentText(getString(R.string.auth_failed_desc))
-          .setContentIntent(pi)
-          .setPriority(Notification.PRIORITY_HIGH)
-          .setAutoCancel(true);
+      createAuthChannel();
 
-      NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+      NotificationCompat.Builder builder =
+          new NotificationCompat.Builder(CathodeApp.this, CHANNEL_ERRORS) //
+              .setSmallIcon(R.drawable.ic_noti_error)
+              .setTicker(getString(R.string.auth_failed))
+              .setContentTitle(getString(R.string.auth_failed))
+              .setContentText(getString(R.string.auth_failed_desc))
+              .setContentIntent(pi)
+              .setPriority(Notification.PRIORITY_HIGH)
+              .setAutoCancel(true);
+
+      NotificationManagerCompat nm = NotificationManagerCompat.from(CathodeApp.this);
       nm.notify(AUTH_NOTIFICATION, builder.build());
     }
   };
+
+  private void createAuthChannel() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+      final String name = getString(R.string.channel_errors);
+      NotificationChannel channel =
+          new NotificationChannel(CHANNEL_ERRORS, name, NotificationManager.IMPORTANCE_HIGH);
+      channel.enableLights(true);
+      channel.enableVibration(true);
+      nm.createNotificationChannel(channel);
+    }
+  }
 }

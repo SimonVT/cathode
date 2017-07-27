@@ -25,6 +25,7 @@ import android.database.Cursor;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import javax.inject.Inject;
+import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.util.Longs;
@@ -111,7 +112,7 @@ public class NotificationActionService extends IntentService {
           Timber.d("Title: %s", episodeTitle);
 
           NotificationCompat.Builder notification =
-              new NotificationCompat.Builder(this).setShowWhen(false)
+              new NotificationCompat.Builder(this, CathodeApp.CHANNEL_ERRORS).setShowWhen(false)
                   .setContentTitle(getString(R.string.checkin_error_notification_title))
                   .setContentText(getString(R.string.checkin_error_notification_body, episodeTitle))
                   .setTicker(getString(R.string.checkin_error_notification_title))

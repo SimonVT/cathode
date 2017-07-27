@@ -22,7 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.notification.NotificationUtils;
+import net.simonvt.cathode.notification.NotificationService;
 import net.simonvt.cathode.ui.BaseActivity;
 
 public class NotificationSettingsActivity extends BaseActivity {
@@ -65,7 +65,7 @@ public class NotificationSettingsActivity extends BaseActivity {
       findPreference(Settings.NOTIFICACTIONS_ENABLED).setOnPreferenceChangeListener(
           new Preference.OnPreferenceChangeListener() {
             @Override public boolean onPreferenceChange(Preference preference, Object newValue) {
-              scheduleNotificationService();
+              NotificationService.start(getActivity());
               return true;
             }
           });
@@ -85,16 +85,12 @@ public class NotificationSettingsActivity extends BaseActivity {
           });
     }
 
-    private void scheduleNotificationService() {
-      NotificationUtils.scheduleNotifications(getActivity(), 0);
-    }
-
     @Override public void onNotificationTimeSelected(NotificationTime value) {
       Settings.get(getActivity())
           .edit()
           .putLong(Settings.NOTIFICACTION_TIME, value.getNotificationTime())
           .apply();
-      scheduleNotificationService();
+      NotificationService.start(getActivity());
     }
   }
 }

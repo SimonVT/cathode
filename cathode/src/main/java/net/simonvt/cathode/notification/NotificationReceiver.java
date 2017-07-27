@@ -24,6 +24,6 @@ public class NotificationReceiver extends BroadcastReceiver {
 
   @Override public void onReceive(Context context, Intent intent) {
     WakeLock.acquire(context, NotificationService.LOCK_TAG);
-    context.startService(new Intent(context, NotificationService.class));
+    NotificationService.start(context);
   }
 }

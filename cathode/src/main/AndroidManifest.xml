@@ -142,9 +142,7 @@
 
     <!-- Receivers -->
     <receiver android:name="net.simonvt.cathode.notification.NotificationActionReceiver"/>
-    <receiver android:name="net.simonvt.cathode.notification.NotificationReceiver"/>
-
-    <receiver android:name="net.simonvt.cathode.notification.NotificationBootReceiver">
+    <receiver android:name="net.simonvt.cathode.notification.NotificationReceiver">
       <intent-filter>
         <action android:name="android.intent.action.BOOT_COMPLETED"/>
       </intent-filter>
