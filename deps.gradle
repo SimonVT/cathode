@@ -5,7 +5,7 @@ ext {
 
   butterknifeVersion = '8.7.0'
 
-  supportLibrariesVersion = '25.4.0'
+  supportLibrariesVersion = '26.0.0'
 
   lintVersion = '25.3.3'
 
