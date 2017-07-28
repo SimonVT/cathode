@@ -57,7 +57,7 @@ public final class DatabaseSchematic {
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 40;
+  static final int DATABASE_VERSION = 41;
 
   public interface Joins {
     String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
@@ -870,6 +870,13 @@ public final class DatabaseSchematic {
           DataType.Type.INTEGER, "0");
       SqlUtils.createColumnIfNotExists(db, Tables.PEOPLE, PersonColumns.IMAGES_LAST_UPDATE,
           DataType.Type.INTEGER, "0");
+    }
+
+    if (oldVersion < 41) {
+      SqlUtils.createColumnIfNotExists(db, Tables.SEASONS, SeasonColumns.IMAGES_LAST_UPDATE,
+          DataType.Type.INTEGER, "0");
+      SqlUtils.createColumnIfNotExists(db, Tables.SEASONS, SeasonColumns.POSTER, DataType.Type.TEXT,
+          null);
     }
   }
 }

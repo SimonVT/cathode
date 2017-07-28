@@ -81,6 +81,21 @@ public final class SeasonDatabaseHelper {
     }
   }
 
+  public int getTmdbId(long seasonId) {
+    synchronized (LOCK_ID) {
+      Cursor c = null;
+      try {
+        c = resolver.query(Seasons.withId(seasonId), new String[] {
+            SeasonColumns.TMDB_ID,
+        }, null, null, null);
+
+        return !c.moveToFirst() ? -1 : Cursors.getInt(c, SeasonColumns.TMDB_ID);
+      } finally {
+        if (c != null) c.close();
+      }
+    }
+  }
+
   public int getNumber(long seasonId) {
     Cursor c = null;
     try {

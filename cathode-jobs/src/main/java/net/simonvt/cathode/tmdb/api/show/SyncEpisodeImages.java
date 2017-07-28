@@ -16,21 +16,15 @@
 
 package net.simonvt.cathode.tmdb.api.show;
 
-import android.content.ContentValues;
-import com.uwetrottmann.tmdb2.entities.Image;
 import com.uwetrottmann.tmdb2.entities.Images;
 import com.uwetrottmann.tmdb2.services.TvEpisodesService;
 import javax.inject.Inject;
-import net.simonvt.cathode.images.ImageType;
-import net.simonvt.cathode.images.ImageUri;
+import net.simonvt.cathode.images.EpisodeRequestHandler;
 import net.simonvt.cathode.jobqueue.JobPriority;
-import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
-import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.tmdb.api.TmdbCallJob;
 import retrofit2.Call;
-import timber.log.Timber;
 
 public class SyncEpisodeImages extends TmdbCallJob<Images> {
 
@@ -71,20 +65,7 @@ public class SyncEpisodeImages extends TmdbCallJob<Images> {
       return true;
     }
 
-    ContentValues values = new ContentValues();
-    values.put(EpisodeColumns.IMAGES_LAST_UPDATE, System.currentTimeMillis());
-
-    if (images.stills.size() > 0) {
-      Image still = images.stills.get(0);
-      final String path = ImageUri.create(ImageType.STILL, still.file_path);
-      Timber.d("Still: %s", path);
-
-      values.put(EpisodeColumns.SCREENSHOT, path);
-    } else {
-      values.putNull(EpisodeColumns.SCREENSHOT);
-    }
-
-    getContentResolver().update(Episodes.withId(episodeId), values, null, null);
+    EpisodeRequestHandler.retainImages(getContext(), episodeId, images);
 
     return true;
   }

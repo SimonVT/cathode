@@ -22,8 +22,7 @@ import android.database.Cursor;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import com.squareup.picasso.Request;
-import com.uwetrottmann.tmdb2.entities.Image;
-import com.uwetrottmann.tmdb2.entities.Images;
+import com.uwetrottmann.tmdb2.entities.Movie;
 import com.uwetrottmann.tmdb2.services.MoviesService;
 import java.io.IOException;
 import javax.inject.Inject;
@@ -99,44 +98,49 @@ public class MovieRequestHandler extends ItemRequestHandler {
     String path = null;
 
     TmdbRateLimiter.acquire();
-    Response<Images> response = moviesService.images(tmdbId, "en").execute();
+    Response<Movie> response = moviesService.summary(tmdbId, "en").execute();
 
     if (response.isSuccessful()) {
-      Images images = response.body();
-
-      ContentValues values = new ContentValues();
-      values.put(MovieColumns.IMAGES_LAST_UPDATE, System.currentTimeMillis());
-
-      if (images.backdrops.size() > 0) {
-        Image backdrop = images.backdrops.get(0);
-        final String backdropPath = ImageUri.create(ImageType.BACKDROP, backdrop.file_path);
-
-        values.put(MovieColumns.BACKDROP, backdropPath);
-
-        if (imageType == ImageType.BACKDROP) {
-          path = backdropPath;
-        }
-      } else {
-        values.putNull(MovieColumns.BACKDROP);
-      }
-
-      if (images.posters.size() > 0) {
-        Image poster = images.posters.get(0);
-        final String posterPath = ImageUri.create(ImageType.POSTER, poster.file_path);
-
-        values.put(MovieColumns.POSTER, posterPath);
-
-        if (imageType == ImageType.POSTER) {
-          path = posterPath;
-        }
-      } else {
-        values.putNull(MovieColumns.POSTER);
-      }
-
-      final long movieId = movieHelper.getIdFromTmdb(tmdbId);
-
-      context.getContentResolver().update(Movies.withId(movieId), values, null, null);
+      Movie movie = response.body();
+      path = retainImages(context, imageType, id, movie);
     }
+
+    return path;
+  }
+
+  public static void retainImages(Context context, long id, Movie movie) {
+    retainImages(context, null, id, movie);
+  }
+
+  private static String retainImages(Context context, ImageType imageType, long id, Movie movie) {
+    ContentValues values = new ContentValues();
+    values.put(MovieColumns.IMAGES_LAST_UPDATE, System.currentTimeMillis());
+
+    String path = null;
+
+    if (movie.backdrop_path != null) {
+      final String backdropPath = ImageUri.create(ImageType.BACKDROP, movie.backdrop_path);
+      values.put(MovieColumns.BACKDROP, backdropPath);
+
+      if (imageType == ImageType.BACKDROP) {
+        path = backdropPath;
+      }
+    } else {
+      values.putNull(MovieColumns.BACKDROP);
+    }
+
+    if (movie.poster_path != null) {
+      final String posterPath = ImageUri.create(ImageType.POSTER, movie.poster_path);
+      values.put(MovieColumns.POSTER, posterPath);
+
+      if (imageType == ImageType.POSTER) {
+        path = posterPath;
+      }
+    } else {
+      values.putNull(MovieColumns.POSTER);
+    }
+
+    context.getContentResolver().update(Movies.withId(id), values, null, null);
 
     return path;
   }

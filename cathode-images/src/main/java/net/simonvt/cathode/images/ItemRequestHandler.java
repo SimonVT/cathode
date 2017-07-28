@@ -21,7 +21,12 @@ import android.net.Uri;
 import android.text.TextUtils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
+import com.uwetrottmann.tmdb2.entities.Image;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import static com.squareup.picasso.Picasso.LoadedFrom.DISK;
 import static com.squareup.picasso.Picasso.LoadedFrom.NETWORK;
@@ -95,5 +100,26 @@ public abstract class ItemRequestHandler extends BaseUrlRequestHandler {
     }
 
     return null;
+  }
+
+  public static Image selectBest(List<Image> imageList) {
+    if (imageList.size() == 0) {
+      return null;
+    }
+
+    List<Image> images = new ArrayList<>(imageList);
+    Collections.sort(images, new Comparator<Image>() {
+      @Override public int compare(Image image1, Image image2) {
+        return image1.vote_average.compareTo(image2.vote_average);
+      }
+    });
+
+    for (Image image : images) {
+      if (image.vote_count > 10) {
+        return image;
+      }
+    }
+
+    return images.get(0);
   }
 }

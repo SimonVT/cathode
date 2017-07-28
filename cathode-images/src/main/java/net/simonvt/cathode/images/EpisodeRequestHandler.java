@@ -117,22 +117,28 @@ public class EpisodeRequestHandler extends ItemRequestHandler {
 
     if (response.isSuccessful()) {
       Images images = response.body();
-
-      ContentValues values = new ContentValues();
-      values.put(EpisodeColumns.IMAGES_LAST_UPDATE, System.currentTimeMillis());
-
-      if (images.stills.size() > 0) {
-        Image screenshot = images.stills.get(0);
-        final String screenshotPath = ImageUri.create(ImageType.BACKDROP, screenshot.file_path);
-
-        values.put(EpisodeColumns.SCREENSHOT, screenshotPath);
-        path = screenshotPath;
-      } else {
-        values.putNull(EpisodeColumns.SCREENSHOT);
-      }
-
-      context.getContentResolver().update(Episodes.withId(id), values, null, null);
+      path = retainImages(context, id, images);
     }
+
+    return path;
+  }
+
+  public static String retainImages(Context context, long id, Images images) {
+    ContentValues values = new ContentValues();
+    values.put(EpisodeColumns.IMAGES_LAST_UPDATE, System.currentTimeMillis());
+    Image screenshot = selectBest(images.stills);
+
+    String path = null;
+
+    if (screenshot != null) {
+      final String screenshotPath = ImageUri.create(ImageType.BACKDROP, screenshot.file_path);
+      values.put(EpisodeColumns.SCREENSHOT, screenshotPath);
+      path = screenshotPath;
+    } else {
+      values.putNull(EpisodeColumns.SCREENSHOT);
+    }
+
+    context.getContentResolver().update(Episodes.withId(id), values, null, null);
 
     return path;
   }

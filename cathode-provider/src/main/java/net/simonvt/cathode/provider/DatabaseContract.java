@@ -159,6 +159,9 @@ public final class DatabaseContract {
     @DataType(INTEGER) String TMDB_ID = "tmdbId";
     @DataType(INTEGER) String TVRAGE_ID = "tvrageId";
 
+    @DataType(INTEGER) String IMAGES_LAST_UPDATE = "imagesLastUpdate";
+    @DataType(TEXT) String POSTER = "poster";
+
     @DataType(INTEGER) @DefaultValue("0") String USER_RATING = "userRating";
     @DataType(INTEGER) @DefaultValue("0") String RATED_AT = "ratedAt";
 

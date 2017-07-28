@@ -17,17 +17,17 @@
 package net.simonvt.cathode.tmdb;
 
 import android.content.Context;
-import com.uwetrottmann.tmdb2.services.CollectionService;
+import com.uwetrottmann.tmdb2.services.CollectionsService;
 import com.uwetrottmann.tmdb2.services.ConfigurationService;
 import com.uwetrottmann.tmdb2.services.DiscoverService;
 import com.uwetrottmann.tmdb2.services.FindService;
-import com.uwetrottmann.tmdb2.services.GenreService;
+import com.uwetrottmann.tmdb2.services.GenresService;
 import com.uwetrottmann.tmdb2.services.MoviesService;
 import com.uwetrottmann.tmdb2.services.PeopleService;
 import com.uwetrottmann.tmdb2.services.SearchService;
 import com.uwetrottmann.tmdb2.services.TvEpisodesService;
 import com.uwetrottmann.tmdb2.services.TvSeasonsService;
-import com.uwetrottmann.tmdb2.services.TvService;
+import com.uwetrottmann.tmdb2.services.TvShowService;
 import dagger.Module;
 import dagger.Provides;
 import java.io.File;
@@ -67,7 +67,7 @@ import okhttp3.OkHttpClient;
     return new TmdbSettings(apiKey, okBuilder);
   }
 
-  @Provides @Singleton CollectionService collectionService(TmdbSettings tmdb) {
+  @Provides @Singleton CollectionsService collectionService(TmdbSettings tmdb) {
     return tmdb.collectionService();
   }
 
@@ -83,7 +83,7 @@ import okhttp3.OkHttpClient;
     return tmdb.findService();
   }
 
-  @Provides @Singleton GenreService genreService(TmdbSettings tmdb) {
+  @Provides @Singleton GenresService genreService(TmdbSettings tmdb) {
     return tmdb.genreService();
   }
 
@@ -99,15 +99,15 @@ import okhttp3.OkHttpClient;
     return tmdb.searchService();
   }
 
-  @Provides @Singleton TvEpisodesService tvEpisodesService(TmdbSettings tmdb) {
-    return tmdb.tvEpisodesService();
+  @Provides @Singleton TvShowService tvShowService(TmdbSettings tmdb) {
+    return tmdb.tvService();
   }
 
   @Provides @Singleton TvSeasonsService tvSeasonsService(TmdbSettings tmdb) {
     return tmdb.tvSeasonsService();
   }
 
-  @Provides @Singleton TvService tvService(TmdbSettings tmdb) {
-    return tmdb.tvService();
+  @Provides @Singleton TvEpisodesService tvEpisodesService(TmdbSettings tmdb) {
+    return tmdb.tvEpisodesService();
   }
 }

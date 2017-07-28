@@ -22,9 +22,8 @@ import android.database.Cursor;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import com.squareup.picasso.Request;
-import com.uwetrottmann.tmdb2.entities.Image;
-import com.uwetrottmann.tmdb2.entities.Images;
-import com.uwetrottmann.tmdb2.services.TvService;
+import com.uwetrottmann.tmdb2.entities.TvShow;
+import com.uwetrottmann.tmdb2.services.TvShowService;
 import java.io.IOException;
 import javax.inject.Inject;
 import net.simonvt.cathode.common.tmdb.TmdbRateLimiter;
@@ -37,7 +36,7 @@ import retrofit2.Response;
 
 public class ShowRequestHandler extends ItemRequestHandler {
 
-  @Inject TvService tvService;
+  @Inject TvShowService tvShowService;
 
   @Inject ShowDatabaseHelper showHelper;
 
@@ -99,43 +98,49 @@ public class ShowRequestHandler extends ItemRequestHandler {
     String path = null;
 
     TmdbRateLimiter.acquire();
-    Response<Images> response = tvService.images(tmdbId, "en").execute();
+    Response<TvShow> response = tvShowService.tv(tmdbId, "en").execute();
 
     if (response.isSuccessful()) {
-      Images images = response.body();
-
-      ContentValues values = new ContentValues();
-
-      if (images.backdrops.size() > 0) {
-        Image backdrop = images.backdrops.get(0);
-        final String backdropPath = ImageUri.create(ImageType.BACKDROP, backdrop.file_path);
-
-        values.put(ShowColumns.BACKDROP, backdropPath);
-
-        if (imageType == ImageType.BACKDROP) {
-          path = backdropPath;
-        }
-      } else {
-        values.putNull(ShowColumns.BACKDROP);
-      }
-
-      if (images.posters.size() > 0) {
-        Image poster = images.posters.get(0);
-        final String posterPath = ImageUri.create(ImageType.POSTER, poster.file_path);
-
-        values.put(ShowColumns.POSTER, posterPath);
-
-        if (imageType == ImageType.POSTER) {
-          path = posterPath;
-        }
-      } else {
-        values.putNull(ShowColumns.POSTER);
-      }
-
-      final long showId = showHelper.getIdFromTmdb(tmdbId);
-
-      context.getContentResolver().update(Shows.withId(showId), values, null, null);
+      TvShow show = response.body();
+      path = retainImages(context, imageType, id, show);
     }
+
+    return path;
+  }
+
+  public static void retainImages(Context context, long id, TvShow show) {
+    retainImages(context, null, id, show);
+  }
+
+  private static String retainImages(Context context, ImageType imageType, long id, TvShow show) {
+    ContentValues values = new ContentValues();
+    values.put(ShowColumns.IMAGES_LAST_UPDATE, System.currentTimeMillis());
+
+    String path = null;
+
+    if (show.backdrop_path != null) {
+      final String backdropPath = ImageUri.create(ImageType.BACKDROP, show.backdrop_path);
+      values.put(ShowColumns.BACKDROP, backdropPath);
+
+      if (imageType == ImageType.BACKDROP) {
+        path = backdropPath;
+      }
+    } else {
+      values.putNull(ShowColumns.BACKDROP);
+    }
+
+    if (show.poster_path != null) {
+      final String posterPath = ImageUri.create(ImageType.POSTER, show.poster_path);
+      values.put(ShowColumns.POSTER, posterPath);
+
+      if (imageType == ImageType.POSTER) {
+        path = posterPath;
+      }
+    } else {
+      values.putNull(ShowColumns.POSTER);
+    }
+
+    context.getContentResolver().update(Shows.withId(id), values, null, null);
 
     return path;
   }

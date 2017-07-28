@@ -23,10 +23,13 @@ import android.text.TextUtils;
 import android.text.format.DateUtils;
 import com.squareup.picasso.Request;
 import com.uwetrottmann.tmdb2.entities.Image;
-import com.uwetrottmann.tmdb2.entities.PersonImages;
+import com.uwetrottmann.tmdb2.entities.Person;
+import com.uwetrottmann.tmdb2.entities.TaggedImage;
 import com.uwetrottmann.tmdb2.entities.TaggedImagesResultsPage;
 import com.uwetrottmann.tmdb2.services.PeopleService;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.common.tmdb.TmdbRateLimiter;
 import net.simonvt.cathode.common.util.Closeables;
@@ -35,7 +38,6 @@ import net.simonvt.cathode.provider.PersonDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.People;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Response;
-import timber.log.Timber;
 
 public class PersonRequestHandler extends ItemRequestHandler {
 
@@ -101,50 +103,50 @@ public class PersonRequestHandler extends ItemRequestHandler {
     String path = null;
 
     TmdbRateLimiter.acquire();
-    if (imageType == ImageType.PROFILE) {
-      Response<PersonImages> response = peopleService.images(tmdbId).execute();
+    Response<Person> personResponse = peopleService.summary(tmdbId).execute();
+    TmdbRateLimiter.acquire();
+    Response<TaggedImagesResultsPage> stillResponse =
+        peopleService.taggedImages(tmdbId, 1, "en").execute();
 
-      if (response.isSuccessful()) {
-        PersonImages images = response.body();
-
-        ContentValues values = new ContentValues();
-
-        if (images.profiles.size() > 0) {
-          Image profile = images.profiles.get(0);
-          final String profilePath = ImageUri.create(ImageType.PROFILE, profile.file_path);
-
-          values.put(PersonColumns.HEADSHOT, profilePath);
-          path = profilePath;
-        } else {
-          values.putNull(PersonColumns.HEADSHOT);
-        }
-
-        context.getContentResolver().update(People.withId(id), values, null, null);
-      }
+    if (!personResponse.isSuccessful() || !stillResponse.isSuccessful()) {
+      return null;
     }
-    if (imageType == ImageType.STILL) {
-      Response<TaggedImagesResultsPage> response =
-          peopleService.taggedImages(tmdbId, 1, "en").execute();
 
-      if (response.isSuccessful()) {
-        TaggedImagesResultsPage images = response.body();
+    Person person = personResponse.body();
 
-        ContentValues values = new ContentValues();
+    ContentValues values = new ContentValues();
+    values.put(PersonColumns.IMAGES_LAST_UPDATE, System.currentTimeMillis());
 
-        if (images.results.size() > 0) {
-          Image screenshot = images.results.get(0);
-          final String screenshotPath = ImageUri.create(ImageType.STILL, screenshot.file_path);
+    if (person.profile_path != null) {
+      final String profilePath = ImageUri.create(ImageType.PROFILE, person.profile_path);
+      values.put(PersonColumns.HEADSHOT, profilePath);
 
-          values.put(PersonColumns.SCREENSHOT, screenshotPath);
-          path = screenshotPath;
-        } else {
-          Timber.d("No screenshots");
-          values.putNull(PersonColumns.SCREENSHOT);
-        }
-
-        context.getContentResolver().update(People.withId(id), values, null, null);
+      if (imageType == ImageType.PROFILE) {
+        path = profilePath;
       }
+    } else {
+      values.putNull(PersonColumns.HEADSHOT);
     }
+
+    TaggedImagesResultsPage images = stillResponse.body();
+    List<Image> imageList = new ArrayList<>();
+    for (TaggedImage image : images.results) {
+      imageList.add(image);
+    }
+    Image screenshot = selectBest(imageList);
+
+    if (screenshot != null) {
+      final String screenshotPath = ImageUri.create(ImageType.STILL, screenshot.file_path);
+      values.put(PersonColumns.SCREENSHOT, screenshotPath);
+
+      if (imageType == ImageType.STILL) {
+        path = screenshotPath;
+      }
+    } else {
+      values.putNull(PersonColumns.SCREENSHOT);
+    }
+
+    context.getContentResolver().update(People.withId(id), values, null, null);
 
     return path;
   }

@@ -16,24 +16,18 @@
 
 package net.simonvt.cathode.tmdb.api.show;
 
-import android.content.ContentValues;
-import com.uwetrottmann.tmdb2.entities.Image;
-import com.uwetrottmann.tmdb2.entities.Images;
-import com.uwetrottmann.tmdb2.services.TvService;
+import com.uwetrottmann.tmdb2.entities.TvShow;
+import com.uwetrottmann.tmdb2.services.TvShowService;
 import javax.inject.Inject;
-import net.simonvt.cathode.images.ImageType;
-import net.simonvt.cathode.images.ImageUri;
+import net.simonvt.cathode.images.ShowRequestHandler;
 import net.simonvt.cathode.jobqueue.JobPriority;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.tmdb.api.TmdbCallJob;
 import retrofit2.Call;
-import timber.log.Timber;
 
-public class SyncShowImages extends TmdbCallJob<Images> {
+public class SyncShowImages extends TmdbCallJob<TvShow> {
 
-  @Inject transient TvService tvService;
+  @Inject transient TvShowService tvShowService;
 
   @Inject transient ShowDatabaseHelper showHelper;
 
@@ -51,38 +45,13 @@ public class SyncShowImages extends TmdbCallJob<Images> {
     return JobPriority.IMAGES;
   }
 
-  @Override public Call<Images> getCall() {
-    return tvService.images(tmdbId, "en");
+  @Override public Call<TvShow> getCall() {
+    return tvShowService.tv(tmdbId, "en");
   }
 
-  @Override public boolean handleResponse(Images images) {
+  @Override public boolean handleResponse(TvShow show) {
     final long showId = showHelper.getIdFromTmdb(tmdbId);
-
-    ContentValues values = new ContentValues();
-    values.put(ShowColumns.IMAGES_LAST_UPDATE, System.currentTimeMillis());
-
-    if (images.backdrops.size() > 0) {
-      Image backdrop = images.backdrops.get(0);
-      final String path = ImageUri.create(ImageType.BACKDROP, backdrop.file_path);
-      Timber.d("Backdrop: %s", path);
-
-      values.put(ShowColumns.BACKDROP, path);
-    } else {
-      values.putNull(ShowColumns.BACKDROP);
-    }
-
-    if (images.posters.size() > 0) {
-      Image poster = images.posters.get(0);
-      final String path = ImageUri.create(ImageType.POSTER, poster.file_path);
-      Timber.d("Poster: %s", path);
-
-      values.put(ShowColumns.POSTER, path);
-    } else {
-      values.putNull(ShowColumns.POSTER);
-    }
-
-    getContentResolver().update(Shows.withId(showId), values, null, null);
-
+    ShowRequestHandler.retainImages(getContext(), showId, show);
     return true;
   }
 }
