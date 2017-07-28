@@ -22,6 +22,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -86,11 +87,10 @@ import net.simonvt.cathode.ui.listener.SeasonClickListener;
 import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.cathode.util.SqlColumn;
+import net.simonvt.cathode.widget.AdapterCountDataObserver;
 import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.CircularProgressIndicator;
-import net.simonvt.cathode.widget.HiddenPaneLayout;
 import net.simonvt.cathode.widget.OverflowView;
-import net.simonvt.cathode.widget.RecyclerViewManager;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
@@ -147,12 +147,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   private long showId;
 
-  @BindView(R.id.hiddenPaneLayout) HiddenPaneLayout hiddenPaneLayout;
-
+  @BindView(R.id.seasonsTitle) View seasonsTitle;
   @BindView(R.id.seasons) RecyclerView seasons;
-  @BindView(R.id.seasonsEmpty) View seasonsEmpty;
   private SeasonsAdapter seasonsAdapter;
-  private Cursor seasonsCursor;
 
   @BindView(R.id.rating) CircularProgressIndicator rating;
   @BindView(R.id.airtime) TextView airTime;
@@ -240,8 +237,6 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   private LibraryType type;
 
-  RecyclerViewManager seasonsManager;
-
   public static String getTag(long showId) {
     return TAG + "/" + showId + "/" + Ids.newId();
   }
@@ -287,30 +282,6 @@ public class ShowFragment extends RefreshableAppBarFragment {
     }, type);
   }
 
-  @Override public boolean onBackPressed() {
-    if (hiddenPaneLayout != null) {
-      final int state = hiddenPaneLayout.getState();
-      if (state == HiddenPaneLayout.STATE_OPEN || state == HiddenPaneLayout.STATE_OPENING) {
-        hiddenPaneLayout.close();
-        return true;
-      }
-    }
-
-    return super.onBackPressed();
-  }
-
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
-    HiddenPaneLayout hiddenPane =
-        (HiddenPaneLayout) inflater.inflate(R.layout.fragment_show_hiddenpanelayout, container,
-            false);
-    View v = super.onCreateView(inflater, hiddenPane, inState);
-    hiddenPane.addView(v);
-
-    inflater.inflate(R.layout.fragment_show_seasons, hiddenPane, true);
-
-    return hiddenPane;
-  }
-
   @Override public View createView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_show, container, false);
   }
@@ -319,11 +290,33 @@ public class ShowFragment extends RefreshableAppBarFragment {
     super.onViewCreated(view, inState);
     overview.setText(showOverview);
 
-    seasonsManager =
-        new RecyclerViewManager(seasons, new LinearLayoutManager(getActivity()), seasonsEmpty);
-    seasonsManager.setAdapter(seasonsAdapter);
+    DividerItemDecoration decoration = new DividerItemDecoration(getActivity(), LinearLayoutManager.HORIZONTAL);
+    decoration.setDrawable(getContext().getDrawable(R.drawable.divider_4dp));
+    seasons.addItemDecoration(decoration);
+    seasons.setLayoutManager(
+        new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
     seasons.setAdapter(seasonsAdapter);
     ((DefaultItemAnimator) seasons.getItemAnimator()).setSupportsChangeAnimations(false);
+    seasonsAdapter.registerAdapterDataObserver(new AdapterCountDataObserver(seasonsAdapter) {
+      @Override public void onCountChanged(int itemCount) {
+        if (seasonsTitle != null && seasons != null) {
+          if (itemCount == 0) {
+            seasonsTitle.setVisibility(View.GONE);
+            seasons.setVisibility(View.GONE);
+          } else {
+            seasonsTitle.setVisibility(View.VISIBLE);
+            seasons.setVisibility(View.VISIBLE);
+          }
+        }
+      }
+    });
+    if (seasonsAdapter.getItemCount() > 0) {
+      seasonsTitle.setVisibility(View.VISIBLE);
+      seasons.setVisibility(View.VISIBLE);
+    } else {
+      seasonsTitle.setVisibility(View.GONE);
+      seasons.setVisibility(View.GONE);
+    }
 
     rating.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
@@ -481,10 +474,6 @@ public class ShowFragment extends RefreshableAppBarFragment {
     super.createMenu(toolbar);
     Menu menu = toolbar.getMenu();
 
-    menu.add(0, R.id.menu_seasons, 0, R.string.seasons)
-        .setIcon(R.drawable.ic_action_list_24dp)
-        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
     if (inWatchlist) {
       menu.add(0, R.id.action_watchlist_remove, 1, R.string.action_watchlist_remove);
     } else {
@@ -502,10 +491,6 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
-      case R.id.menu_seasons:
-        hiddenPaneLayout.toggle();
-        return true;
-
       case R.id.action_watchlist_remove:
         showScheduler.setIsInWatchlist(showId, false);
         return true;
@@ -847,7 +832,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
           ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, toWatchId);
       toWatchHolder.episodeScreenshot.setImage(screenshotUri);
 
-      String firstAiredString = DateStringUtils.getAirdateInterval(getActivity(), firstAired, false);
+      String firstAiredString =
+          DateStringUtils.getAirdateInterval(getActivity(), firstAired, false);
 
       final boolean watching = Cursors.getBoolean(cursor, EpisodeColumns.WATCHING);
       final boolean checkedIn = Cursors.getBoolean(cursor, EpisodeColumns.CHECKED_IN);
@@ -1070,12 +1056,10 @@ public class ShowFragment extends RefreshableAppBarFragment {
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
-          seasonsCursor = data;
           seasonsAdapter.changeCursor(data);
         }
 
         @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
-          seasonsCursor = null;
           seasonsAdapter.changeCursor(null);
         }
       };

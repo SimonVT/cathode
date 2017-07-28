@@ -31,6 +31,7 @@ public class ImageRequestTransformer implements Picasso.RequestTransformer {
 
   static {
     SCHEMES.add(ImageUri.ITEM_SHOW);
+    SCHEMES.add(ImageUri.ITEM_SEASON);
     SCHEMES.add(ImageUri.ITEM_EPISODE);
     SCHEMES.add(ImageUri.ITEM_MOVIE);
     SCHEMES.add(ImageUri.ITEM_PERSON);

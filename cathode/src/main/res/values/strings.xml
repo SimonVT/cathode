@@ -355,13 +355,21 @@
 
   <string name="all_watched">All episodes watched</string>
   <plurals name="x_unwatched">
-    <item quantity="one">%d unwatched episode</item>
-    <item quantity="other">%d unwatched episodes</item>
+    <item quantity="one">%1$d unwatched</item>
+    <item quantity="other">%1$d unwatched</item>
+  </plurals>
+  <plurals name="x_unwatched_x_unaired">
+    <item quantity="one">%1$d(+%2$d) unwatched</item>
+    <item quantity="other">%1$d(+%2$d) unwatched</item>
   </plurals>
   <string name="all_collected">All episodes collected</string>
   <plurals name="x_uncollected">
-    <item quantity="one">%d episode not collected</item>
-    <item quantity="other">%d episodes not collected</item>
+    <item quantity="one">%1$d not collected</item>
+    <item quantity="other">%1$d not collected</item>
+  </plurals>
+  <plurals name="x_uncollected_x_unaired">
+    <item quantity="one">%1$d(+%2$d) not collected</item>
+    <item quantity="other">%1$d(+%2$d) not collected</item>
   </plurals>
   <plurals name="x_unaired">
     <item quantity="other">%d unaired</item>

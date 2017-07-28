@@ -22,9 +22,6 @@ import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.TextAppearanceSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,16 +32,16 @@ import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.images.ImageType;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
-import net.simonvt.cathode.ui.history.AddToHistoryDialog;
-import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
 import net.simonvt.cathode.ui.listener.SeasonClickListener;
-import net.simonvt.cathode.widget.OverflowView;
+import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.schematic.Cursors;
 
 public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHolder> {
@@ -120,18 +117,9 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     return holder;
   }
 
-  @Override public void onViewRecycled(ViewHolder holder) {
-    holder.overflow.dismiss();
-  }
-
   @Override protected void onBindViewHolder(final ViewHolder holder, Cursor cursor, int position) {
     final int seasonId = Cursors.getInt(cursor, SeasonColumns.ID);
     final int seasonNumber = Cursors.getInt(cursor, SeasonColumns.SEASON);
-    final int airedCount = Cursors.getInt(cursor, SeasonColumns.AIRED_COUNT);
-    final int watchedAiredCount = Cursors.getInt(cursor, SeasonColumns.WATCHED_AIRED_COUNT);
-    final int watchedCount = Cursors.getInt(cursor, SeasonColumns.WATCHED_COUNT);
-    final int collectedAiredCount = Cursors.getInt(cursor, SeasonColumns.COLLECTED_AIRED_COUNT);
-    final int collectedCount = Cursors.getInt(cursor, SeasonColumns.IN_COLLECTION_COUNT);
 
     switch (type) {
       case WATCHLIST:
@@ -144,58 +132,14 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
         break;
     }
 
-    holder.overflow.removeItems();
-    holder.overflow.addItem(R.id.action_history_add, R.string.action_history_add);
-    if (watchedCount > 0) {
-      holder.overflow.addItem(R.id.action_history_remove, R.string.action_history_remove);
-    }
-    if (airedCount - collectedAiredCount > 0) {
-      holder.overflow.addItem(R.id.action_collection_add, R.string.action_collection_add);
-    }
-    if (collectedCount > 0) {
-      holder.overflow.addItem(R.id.action_collection_remove, R.string.action_collection_remove);
-    }
-
     if (seasonNumber == 0) {
       holder.title.setText(R.string.season_special);
     } else {
       holder.title.setText(resources.getString(R.string.season_x, seasonNumber));
     }
 
-    holder.overflow.setListener(new OverflowView.OverflowActionListener() {
-      @Override public void onPopupShown() {
-      }
-
-      @Override public void onPopupDismissed() {
-      }
-
-      @Override public void onActionSelected(int action) {
-        final int position = holder.getAdapterPosition();
-        if (position != RecyclerView.NO_POSITION) {
-          switch (action) {
-            case R.id.action_history_add:
-              AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.SEASON, seasonId,
-                  getContext().getString(R.string.season_x, seasonNumber))
-                  .show(activity.getSupportFragmentManager(), AddToHistoryDialog.TAG);
-              break;
-
-            case R.id.action_history_remove:
-              RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.SEASON, seasonId,
-                  getContext().getString(R.string.season_x, seasonNumber))
-                  .show(activity.getSupportFragmentManager(), RemoveFromHistoryDialog.TAG);
-              break;
-
-            case R.id.action_collection_add:
-              seasonScheduler.setInCollection(seasonId, true);
-              break;
-
-            case R.id.action_collection_remove:
-              seasonScheduler.setInCollection(seasonId, false);
-              break;
-          }
-        }
-      }
-    });
+    final String posterUri = ImageUri.create(ImageUri.ITEM_SEASON, ImageType.POSTER, seasonId);
+    holder.poster.setImage(posterUri);
   }
 
   private void bindWatched(Context context, ViewHolder holder, Cursor cursor) {
@@ -207,29 +151,19 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     holder.progress.setMax(airedCount);
     holder.progress.setProgress(watchedAiredCount);
 
-    String unwatched;
-    if (toWatch == 0) {
-      unwatched = resources.getString(R.string.all_watched);
+    String summary;
+    if (toWatch > 0 && unairedCount > 0) {
+      summary = resources.getQuantityString(R.plurals.x_unwatched_x_unaired, toWatch, toWatch,
+          unairedCount);
+    } else if (toWatch > 0 && unairedCount == 0) {
+      summary = resources.getQuantityString(R.plurals.x_unwatched, toWatch, toWatch);
+    } else if (toWatch == 0 && unairedCount > 0) {
+      summary = resources.getQuantityString(R.plurals.x_unaired, unairedCount, unairedCount);
     } else {
-      unwatched = resources.getQuantityString(R.plurals.x_unwatched, toWatch, toWatch);
-    }
-    String unaired;
-    if (unairedCount > 0) {
-      unaired = resources.getQuantityString(R.plurals.x_unaired, unairedCount, unairedCount);
-    } else {
-      unaired = "";
+      summary = resources.getString(R.string.all_watched);
     }
 
-    SpannableStringBuilder ssb =
-        new SpannableStringBuilder().append(unwatched).append(" ").append(unaired);
-    ssb.setSpan(new TextAppearanceSpan(null, 0, 0, primaryColor, null), 0, unwatched.length() - 1,
-        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-    if (unairedCount > 0) {
-      ssb.setSpan(new TextAppearanceSpan(null, 0, 0, secondaryColor, null), unwatched.length(),
-          unwatched.length() + unaired.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-    }
-
-    holder.summary.setText(ssb.toString());
+    holder.summary.setText(summary);
   }
 
   private void bindCollection(Context context, ViewHolder holder, Cursor cursor) {
@@ -242,29 +176,19 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     holder.progress.setMax(airedCount);
     holder.progress.setProgress(collectedAiredCount);
 
-    String uncollected;
-    if (toCollect == 0) {
-      uncollected = resources.getString(R.string.all_collected);
+    String summary;
+    if (toCollect > 0 && unairedCount > 0) {
+      summary = resources.getQuantityString(R.plurals.x_uncollected_x_unaired, toCollect, toCollect,
+          unairedCount);
+    } else if (toCollect > 0 && unairedCount == 0) {
+      summary = resources.getQuantityString(R.plurals.x_uncollected, toCollect, toCollect);
+    } else if (toCollect == 0 && unairedCount > 0) {
+      summary = resources.getQuantityString(R.plurals.x_unaired, unairedCount, unairedCount);
     } else {
-      uncollected = resources.getQuantityString(R.plurals.x_uncollected, toCollect, toCollect);
-    }
-    String unaired;
-    if (unairedCount > 0) {
-      unaired = resources.getQuantityString(R.plurals.x_unaired, unairedCount, unairedCount);
-    } else {
-      unaired = "";
+      summary = resources.getString(R.string.all_watched);
     }
 
-    SpannableStringBuilder ssb =
-        new SpannableStringBuilder().append(uncollected).append(" ").append(unaired);
-    ssb.setSpan(new TextAppearanceSpan(null, 0, 0, primaryColor, null), 0, uncollected.length() - 1,
-        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-    if (unairedCount > 0) {
-      ssb.setSpan(new TextAppearanceSpan(null, 0, 0, secondaryColor, null), uncollected.length(),
-          uncollected.length() + unaired.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-    }
-
-    holder.summary.setText(ssb.toString());
+    holder.summary.setText(summary);
   }
 
   static class ViewHolder extends RecyclerView.ViewHolder {
@@ -272,13 +196,11 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     @BindView(R.id.title) TextView title;
     @BindView(R.id.progress) ProgressBar progress;
     @BindView(R.id.summary) TextView summary;
-    @BindView(R.id.overflow) OverflowView overflow;
+    @BindView(R.id.poster) RemoteImageView poster;
 
     ViewHolder(View v) {
       super(v);
       ButterKnife.bind(this, v);
-      overflow.addItem(R.id.action_history_add, R.string.action_history_add);
-      overflow.addItem(R.id.action_history_remove, R.string.action_history_remove);
     }
   }
 }

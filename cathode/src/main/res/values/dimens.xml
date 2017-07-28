@@ -38,4 +38,6 @@
 
   <dimen name="dashboardItemWidth">128dp</dimen>
 
+  <dimen name="seasonPosterWidth">128dp</dimen>
+
 </resources>
