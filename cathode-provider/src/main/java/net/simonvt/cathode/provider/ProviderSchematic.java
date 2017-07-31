@@ -44,7 +44,6 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCrewColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic.Joins;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
@@ -269,15 +268,48 @@ public final class ProviderSchematic {
     public static String getUpcomingQuery(long upcomingTime) {
       final long offset = FirstAiredOffsetPreference.getInstance().getOffsetMillis();
       final long currentTime = System.currentTimeMillis();
-      String query = "(SELECT COUNT(*) FROM episodes "
-          + "JOIN ("
-          + "SELECT season, episode "
-          + "FROM episodes "
-          + "WHERE showId=shows._id AND watched=1 "
-          + "ORDER BY season DESC, episode DESC LIMIT 1"
+      String query = "(SELECT COUNT(*) FROM "
+          + Tables.EPISODES
+          + " JOIN ("
+          + "SELECT "
+          + EpisodeColumns.SEASON
+          + ", "
+          + EpisodeColumns.EPISODE
+          + " FROM "
+          + Tables.EPISODES
+          + " WHERE "
+          + EpisodeColumns.SHOW_ID
+          + "="
+          + SqlColumn.table(Tables.SHOWS).column(ShowColumns.ID)
+          + " AND "
+          + EpisodeColumns.WATCHED
+          + "=1"
+          + " ORDER BY "
+          + EpisodeColumns.SEASON
+          + " DESC, "
+          + EpisodeColumns.EPISODE
+          + " DESC LIMIT 1"
           + ") AS ep2 "
-          + "WHERE episodes.showId=shows._id AND episodes.season>0"
-          + " AND (episodes.season>ep2.season OR (episodes.season=ep2.season AND episodes.episode>ep2.episode))"
+          + "WHERE "
+          + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.SHOW_ID)
+          + "="
+          + SqlColumn.table(Tables.SHOWS).column(ShowColumns.ID)
+          + " AND "
+          + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.SEASON)
+          + ">0"
+          + " AND ("
+          + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.SEASON)
+          + ">"
+          + SqlColumn.table("ep2").column(EpisodeColumns.SEASON)
+          + " OR ("
+          + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.SEASON)
+          + "="
+          + SqlColumn.table("ep2").column(EpisodeColumns.SEASON)
+          + " AND "
+          + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.EPISODE)
+          + ">"
+          + SqlColumn.table("ep2").column(EpisodeColumns.EPISODE)
+          + "))"
           + " AND "
           + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED)
           + " NOT NULL";
@@ -310,15 +342,48 @@ public final class ProviderSchematic {
     }
 
     static String withNextQuery() {
-      String query = "(SELECT COUNT(*) FROM episodes "
-          + "JOIN ("
-          + "SELECT season, episode "
-          + "FROM episodes "
-          + "WHERE showId=shows._id AND watched=1 "
-          + "ORDER BY season DESC, episode DESC LIMIT 1"
+      String query = "(SELECT COUNT(*) FROM "
+          + Tables.EPISODES
+          + " JOIN ("
+          + "SELECT "
+          + EpisodeColumns.SEASON
+          + ", "
+          + EpisodeColumns.EPISODE
+          + " FROM "
+          + Tables.EPISODES
+          + " WHERE "
+          + EpisodeColumns.SHOW_ID
+          + "="
+          + SqlColumn.table(Tables.SHOWS).column(ShowColumns.ID)
+          + " AND "
+          + EpisodeColumns.WATCHED
+          + "=1 "
+          + "ORDER BY "
+          + EpisodeColumns.SEASON
+          + " DESC, "
+          + EpisodeColumns.EPISODE
+          + " DESC LIMIT 1"
           + ") AS ep2 "
-          + "WHERE episodes.showId=shows._id AND episodes.season>0"
-          + " AND (episodes.season>ep2.season OR (episodes.season=ep2.season AND episodes.episode>ep2.episode))"
+          + "WHERE "
+          + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.SHOW_ID)
+          + "="
+          + SqlColumn.table(Tables.SHOWS).column(ShowColumns.ID)
+          + " AND "
+          + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.SEASON)
+          + ">0"
+          + " AND ("
+          + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.SEASON)
+          + ">"
+          + SqlColumn.table("ep2").column(EpisodeColumns.SEASON)
+          + " OR ("
+          + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.SEASON)
+          + "="
+          + SqlColumn.table("ep2").column(EpisodeColumns.SEASON)
+          + " AND "
+          + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.EPISODE)
+          + ">"
+          + SqlColumn.table("ep2").column(EpisodeColumns.EPISODE)
+          + "))"
           + " AND "
           + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED)
           + " NOT NULL)";

@@ -21,15 +21,15 @@ public class SqlColumn {
   private SqlColumn() {
   }
 
-  String column;
+  String table;
 
   public static SqlColumn table(String table) {
     SqlColumn column = new SqlColumn();
-    column.column = table;
+    column.table = table;
     return column;
   }
 
   public String column(String column) {
-    return this.column += "." + column;
+    return this.table += "." + column;
   }
 }

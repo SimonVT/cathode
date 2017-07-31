@@ -39,6 +39,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowCrewColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.generated.CathodeDatabase;
+import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.util.SqlIndex;
 import net.simonvt.cathode.util.SqlUtils;
 import net.simonvt.schematic.annotation.DataType;
@@ -58,134 +59,6 @@ public final class DatabaseSchematic {
   }
 
   static final int DATABASE_VERSION = 41;
-
-  public interface Joins {
-    String SHOWS_UNWATCHED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
-        + " episodes WHERE episodes.watched=0 AND episodes.showId=shows._id AND episodes.season<>0"
-        + " AND episodes.needsSync=0"
-        + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
-
-    String SHOWS_UPCOMING =
-        "LEFT OUTER JOIN " + Tables.EPISODES + " ON " + Tables.EPISODES + "." + EpisodeColumns.ID
-            + "=" + "(" + "SELECT _id " + "FROM episodes " + "JOIN (" + "SELECT season, episode "
-            + "FROM episodes " + "WHERE watched=1 AND showId=shows._id "
-            + "ORDER BY season DESC, episode DESC LIMIT 1" + ") AS ep2 "
-            + "WHERE episodes.watched=0 AND episodes.showId=shows._id" + " AND episodes.needsSync=0"
-            + " AND (episodes.season>ep2.season "
-            + "OR (episodes.season=ep2.season AND episodes.episode>ep2.episode)) "
-            + "ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1" + ")";
-
-    String SHOWS_WITH_NEXT =
-        "LEFT OUTER JOIN " + Tables.EPISODES + " ON " + Tables.EPISODES + "." + EpisodeColumns.ID
-            + "=" + "(" + "SELECT _id " + "FROM episodes " + "JOIN (" + "SELECT season, episode "
-            + "FROM episodes " + "WHERE watched=1 AND showId=shows._id "
-            + "ORDER BY season DESC, episode DESC LIMIT 1" + ") AS ep2 "
-            + "WHERE episodes.watched=0 AND episodes.showId=shows._id" + " AND episodes.needsSync=0"
-            + " AND (episodes.season>ep2.season "
-            + "OR (episodes.season=ep2.season AND episodes.episode>ep2.episode)) "
-            + "ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1" + ")";
-
-    String SHOWS_UNCOLLECTED = "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
-        + " episodes WHERE episodes.inCollection=0 AND episodes.showId=shows._id"
-        + " AND episodes.season<>0" + " AND episodes.needsSync=0" + " AND episodes.needsSync=0"
-        + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
-
-    String SHOWS_WITH_WATCHING =
-        "LEFT OUTER JOIN episodes ON episodes._id=(SELECT episodes._id FROM"
-            + " episodes WHERE (episodes.watching=1 OR episodes.checkedIn=1)"
-            + " AND episodes.showId=shows._id" + " AND episodes.needsSync=0"
-            + " ORDER BY episodes.season ASC, episodes.episode ASC LIMIT 1)";
-
-    String SHOW_RELATED = "JOIN " + Tables.SHOWS + " AS " + Tables.SHOWS + " ON " + Tables.SHOWS
-        + "." + ShowColumns.ID + "="
-        + Tables.SHOW_RELATED + "." + RelatedShowsColumns.RELATED_SHOW_ID;
-
-    String MOVIE_RELATED = "JOIN " + Tables.MOVIES + " AS " + Tables.MOVIES + " ON " + Tables.MOVIES
-        + "." + MovieColumns.ID + "="
-        + Tables.MOVIE_RELATED + "." + RelatedMoviesColumns.RELATED_MOVIE_ID;
-
-    String SHOW_CAST_PERSON =
-        "JOIN " + Tables.PEOPLE + " AS " + Tables.PEOPLE + " ON " + Tables.PEOPLE + "."
-            + PersonColumns.ID + "=" + Tables.SHOW_CAST + "."
-            + ShowCastColumns.PERSON_ID;
-
-    String SHOW_CAST_SHOW =
-        "JOIN " + Tables.SHOWS + " AS " + Tables.SHOWS + " ON " + Tables.SHOWS + "."
-            + ShowColumns.ID + "=" + Tables.SHOW_CAST + "."
-            + ShowCrewColumns.SHOW_ID;
-
-    String SHOW_CAST = SHOW_CAST_PERSON + " " + SHOW_CAST_SHOW;
-
-    String SHOW_CREW_PERSON =
-        "JOIN " + Tables.PEOPLE + " AS " + Tables.PEOPLE + " ON " + Tables.PEOPLE + "."
-            + PersonColumns.ID + "=" + Tables.SHOW_CREW + "."
-            + ShowCrewColumns.PERSON_ID;
-
-    String SHOW_CREW_SHOW =
-        "JOIN " + Tables.SHOWS + " AS " + Tables.SHOWS + " ON " + Tables.SHOWS + "."
-            + ShowColumns.ID + "=" + Tables.SHOW_CREW + "."
-            + ShowCrewColumns.SHOW_ID;
-
-    String SHOW_CREW = SHOW_CREW_PERSON + " " + SHOW_CREW_SHOW;
-
-    String MOVIE_CAST_PERSON =
-        "JOIN " + Tables.PEOPLE + " AS " + Tables.PEOPLE + " ON " + Tables.PEOPLE + "."
-            + PersonColumns.ID + "=" + Tables.MOVIE_CAST + "."
-            + MovieCastColumns.PERSON_ID;
-
-    String MOVIE_CAST_MOVIE =
-        "JOIN " + Tables.MOVIES + " AS " + Tables.MOVIES + " ON " + Tables.MOVIES + "."
-            + MovieColumns.ID + "=" + Tables.MOVIE_CAST + "."
-            + MovieCrewColumns.MOVIE_ID;
-
-    String MOVIE_CAST = MOVIE_CAST_PERSON + " " + MOVIE_CAST_MOVIE;
-
-    String MOVIE_CREW_PERSON =
-        "JOIN " + Tables.PEOPLE + " AS " + Tables.PEOPLE + " ON " + Tables.PEOPLE + "."
-            + PersonColumns.ID + "=" + Tables.MOVIE_CREW + "."
-            + MovieCrewColumns.PERSON_ID;
-
-    String MOVIE_CREW_MOVIE =
-        "JOIN " + Tables.MOVIES + " AS " + Tables.MOVIES + " ON " + Tables.MOVIES + "."
-            + MovieColumns.ID + "=" + Tables.MOVIE_CREW + "."
-            + MovieCrewColumns.MOVIE_ID;
-
-    String MOVIE_CREW = MOVIE_CREW_PERSON + " " + MOVIE_CREW_MOVIE;
-
-    String EPISODES_WITH_SHOW = "LEFT OUTER JOIN " + Tables.SHOWS + " ON " + Tables.SHOWS + "."
-            + ShowColumns.ID + "=" + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID;
-
-    String EPISODES_WITH_SHOW_TITLE =
-        "JOIN " + Tables.SHOWS + " AS " + Tables.SHOWS + " ON " + Tables.SHOWS + "."
-            + ShowColumns.ID + "=" + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID;
-
-    String LIST_SHOWS = "LEFT JOIN " + Tables.SHOWS + " ON " + ListItemColumns.ITEM_TYPE + "="
-        + DatabaseContract.ItemType.SHOW + " AND " + Tables.LIST_ITEMS + "."
-        + ListItemColumns.ITEM_ID + "=" + Tables.SHOWS + "." + ShowColumns.ID;
-
-    String LIST_SEASONS = "LEFT JOIN " + Tables.SEASONS + " ON " + ListItemColumns.ITEM_TYPE + "="
-        + DatabaseContract.ItemType.SEASON + " AND " + Tables.LIST_ITEMS + "."
-        + ListItemColumns.ITEM_ID + "=" + Tables.SEASONS + "." + SeasonColumns.ID;
-
-    String LIST_EPISODES = "LEFT JOIN " + Tables.EPISODES + " ON " + ListItemColumns.ITEM_TYPE + "="
-        + DatabaseContract.ItemType.EPISODE + " AND " + Tables.LIST_ITEMS + "."
-        + ListItemColumns.ITEM_ID + "=" + Tables.EPISODES + "." + EpisodeColumns.ID;
-
-    String LIST_MOVIES = "LEFT JOIN " + Tables.MOVIES + " ON " + ListItemColumns.ITEM_TYPE + "="
-        + DatabaseContract.ItemType.MOVIE + " AND " + Tables.LIST_ITEMS + "."
-        + ListItemColumns.ITEM_ID + "=" + Tables.MOVIES + "." + MovieColumns.ID;
-
-    String LIST_PEOPLE = "LEFT JOIN " + Tables.PEOPLE + " ON " + ListItemColumns.ITEM_TYPE + "="
-        + DatabaseContract.ItemType.PERSON + " AND " + Tables.LIST_ITEMS + "."
-        + ListItemColumns.ITEM_ID + "=" + Tables.PEOPLE + "." + PersonColumns.ID;
-
-    String LIST = LIST_SHOWS + " " + LIST_SEASONS + " " + LIST_EPISODES + " " + LIST_MOVIES + " "
-        + LIST_PEOPLE;
-
-    String COMMENT_PROFILE =
-        "JOIN " + Tables.USERS + " AS " + Tables.USERS + " ON " + Tables.USERS + "."
-            + UserColumns.ID + "=" + Tables.COMMENTS + "." + CommentColumns.USER_ID;
-  }
 
   public interface Tables {
 
@@ -260,51 +133,53 @@ public final class DatabaseSchematic {
         "UPDATE " + Tables.SEASONS + " SET " + SeasonColumns.WATCHED_COUNT
             + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE " + Tables.EPISODES + "."
             + EpisodeColumns.SEASON_ID + "=NEW." + EpisodeColumns.SEASON_ID + " AND "
-            + Tables.EPISODES + "." + EpisodeColumns.WATCHED + "=1" + " AND episodes.needsSync=0"
-            + " AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)" + " WHERE "
-            + Tables.SEASONS + "." + SeasonColumns.ID + "=NEW." + EpisodeColumns.SEASON_ID + ";";
+            + Tables.EPISODES + "." + EpisodeColumns.WATCHED + "=1" + " AND " + Tables.EPISODES
+            + "." + EpisodeColumns.NEEDS_SYNC + "=0" + " AND " + Tables.EPISODES + "."
+            + EpisodeColumns.SEASON + ">0)" + " WHERE " + Tables.SEASONS + "." + SeasonColumns.ID
+            + "=NEW." + EpisodeColumns.SEASON_ID + ";";
 
     String SEASONS_UPDATE_COLLECTED =
         "UPDATE " + Tables.SEASONS + " SET " + SeasonColumns.IN_COLLECTION_COUNT
             + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE " + Tables.EPISODES + "."
             + EpisodeColumns.SEASON_ID + "=NEW." + EpisodeColumns.SEASON_ID + " AND "
             + Tables.EPISODES + "." + EpisodeColumns.IN_COLLECTION + "=1"
-            + " AND episodes.needsSync=0" + " AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON
-            + ">0)" + " WHERE " + Tables.SEASONS + "." + SeasonColumns.ID + "=NEW."
-            + EpisodeColumns.SEASON_ID + ";";
+            + " AND " + Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC + "=0" + " AND "
+            + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)" + " WHERE " + Tables.SEASONS
+            + "." + SeasonColumns.ID + "=NEW." + EpisodeColumns.SEASON_ID + ";";
 
     String SEASONS_UPDATE_AIRDATE =
         "UPDATE " + Tables.SEASONS + " SET " + SeasonColumns.AIRDATE_COUNT
             + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE " + Tables.EPISODES + "."
             + EpisodeColumns.SEASON_ID + "=NEW." + EpisodeColumns.SEASON_ID + " AND "
             + Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED + " IS NOT NULL "
-            + " AND episodes.needsSync=0" + " AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON
-            + ">0)" + " WHERE " + Tables.SEASONS + "." + SeasonColumns.ID + "=NEW."
-            + EpisodeColumns.SEASON_ID + ";";
+            + " AND " + Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC + "=0" + " AND "
+            + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)" + " WHERE " + Tables.SEASONS
+            + "." + SeasonColumns.ID + "=NEW." + EpisodeColumns.SEASON_ID + ";";
 
     String SHOWS_UPDATE_WATCHED =
         "UPDATE " + Tables.SHOWS + " SET " + ShowColumns.WATCHED_COUNT + "=(SELECT COUNT(*) FROM "
             + Tables.EPISODES + " WHERE " + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID + "=NEW."
             + EpisodeColumns.SHOW_ID + " AND " + Tables.EPISODES + "." + EpisodeColumns.WATCHED
-            + "=1" + " AND episodes.needsSync=0" + " AND " + Tables.EPISODES + "."
-            + EpisodeColumns.SEASON + ">0)" + " WHERE " + Tables.SHOWS + "." + ShowColumns.ID
-            + "=NEW." + EpisodeColumns.SHOW_ID + ";";
+            + "=1" + " AND " + Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC + "=0" + " AND "
+            + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)" + " WHERE " + Tables.SHOWS + "."
+            + ShowColumns.ID + "=NEW." + EpisodeColumns.SHOW_ID + ";";
 
     String SHOWS_UPDATE_COLLECTED =
         "UPDATE " + Tables.SHOWS + " SET " + ShowColumns.IN_COLLECTION_COUNT
             + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE " + Tables.EPISODES + "."
             + EpisodeColumns.SHOW_ID + "=NEW." + EpisodeColumns.SHOW_ID + " AND " + Tables.EPISODES
-            + "." + EpisodeColumns.IN_COLLECTION + "=1" + " AND episodes.needsSync=0" + " AND "
-            + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)" + " WHERE " + Tables.SHOWS + "."
-            + ShowColumns.ID + "=NEW." + EpisodeColumns.SHOW_ID + ";";
+            + "." + EpisodeColumns.IN_COLLECTION + "=1" + " AND " + Tables.EPISODES + "."
+            + EpisodeColumns.NEEDS_SYNC + "=0" + " AND " + Tables.EPISODES + "."
+            + EpisodeColumns.SEASON + ">0)" + " WHERE " + Tables.SHOWS + "." + ShowColumns.ID
+            + "=NEW." + EpisodeColumns.SHOW_ID + ";";
 
     String SHOWS_UPDATE_AIRDATE =
         "UPDATE " + Tables.SHOWS + " SET " + ShowColumns.AIRDATE_COUNT + "=(SELECT COUNT(*) FROM "
             + Tables.EPISODES + " WHERE " + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID + "=NEW."
             + EpisodeColumns.SHOW_ID + " AND " + Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED
-            + " IS NOT NULL " + " AND episodes.needsSync=0" + " AND " + Tables.EPISODES + "."
-            + EpisodeColumns.SEASON + ">0)" + " WHERE " + Tables.SHOWS + "." + ShowColumns.ID
-            + "=NEW." + EpisodeColumns.SHOW_ID + ";";
+            + " IS NOT NULL " + " AND " + Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC + "=0"
+            + " AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)" + " WHERE "
+            + Tables.SHOWS + "." + ShowColumns.ID + "=NEW." + EpisodeColumns.SHOW_ID + ";";
 
     String SHOWS_UPDATE_WATCHING = "UPDATE "
         + Tables.SHOWS
