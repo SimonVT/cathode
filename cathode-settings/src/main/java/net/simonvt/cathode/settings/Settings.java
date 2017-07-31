@@ -54,9 +54,6 @@ public final class Settings {
   public static final String NOTIFICACTION_VIBRATE = "notificationVibrate";
   public static final String NOTIFICACTION_SOUND = "notificationSound";
 
-  // Whether hidden shows should be displayed in upcoming
-  public static final String SHOW_HIDDEN = "showHidden";
-
   // Last trending and recommendations sync
   public static final String SUGGESTIONS = "suggestions";
 
@@ -271,7 +268,6 @@ public final class Settings {
     editor.remove(START_PAGE);
 
     editor.remove(CALENDAR_SYNC);
-    editor.remove(SHOW_HIDDEN);
 
     editor.remove(SUGGESTIONS);
 

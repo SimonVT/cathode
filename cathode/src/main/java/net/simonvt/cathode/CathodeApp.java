@@ -15,16 +15,13 @@
  */
 package net.simonvt.cathode;
 
-import android.accounts.Account;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
@@ -32,33 +29,26 @@ import com.crashlytics.android.Crashlytics;
 import dagger.ObjectGraph;
 import io.fabric.sdk.android.Fabric;
 import javax.inject.Inject;
-import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.common.event.AuthFailedEvent;
 import net.simonvt.cathode.common.event.AuthFailedEvent.OnAuthFailedListener;
 import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.jobqueue.AuthJobHandler;
 import net.simonvt.cathode.jobqueue.DataJobHandler;
+import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobHandler;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.jobscheduler.AuthJobHandlerJob;
 import net.simonvt.cathode.jobscheduler.DataJobHandlerJob;
 import net.simonvt.cathode.jobscheduler.Jobs;
-import net.simonvt.cathode.remote.ForceUpdateJob;
-import net.simonvt.cathode.remote.UpdateShowCounts;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.remote.sync.SyncWatching;
-import net.simonvt.cathode.remote.sync.movies.SyncAnticipatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
-import net.simonvt.cathode.remote.sync.shows.SyncAnticipatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
-import net.simonvt.cathode.remote.upgrade.EnsureSync;
-import net.simonvt.cathode.remote.upgrade.UpperCaseGenres;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.TraktLinkSettings;
-import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.settings.login.LoginActivity;
 import net.simonvt.cathode.ui.HomeActivity;
@@ -71,8 +61,6 @@ public class CathodeApp extends Application {
 
   private static final long SYNC_DELAY = 15 * DateUtils.MINUTE_IN_MILLIS;
 
-  private static CathodeApp instance;
-
   private SharedPreferences settings;
 
   @Inject JobManager jobManager;
@@ -82,8 +70,6 @@ public class CathodeApp extends Application {
 
   @Override public void onCreate() {
     super.onCreate();
-    instance = this;
-
     if (BuildConfig.DEBUG) {
       Timber.plant(new Timber.DebugTree());
 
@@ -101,7 +87,15 @@ public class CathodeApp extends Application {
 
     settings = PreferenceManager.getDefaultSharedPreferences(this);
 
-    upgrade();
+    Upgrader.upgrade(this, new Upgrader.JobQueue() {
+      @Override public void add(final Job job) {
+        MainHandler.post(new Runnable() {
+          @Override public void run() {
+            jobManager.addJob(job);
+          }
+        });
+      }
+    });
 
     Injector.install(ObjectGraph.create(Modules.list(this)));
     Injector.obtain().inject(this);
@@ -205,109 +199,6 @@ public class CathodeApp extends Application {
       Timber.d("Data job queue failed");
     }
   };
-
-  private void upgrade() {
-    final int currentVersion = settings.getInt(Settings.VERSION_CODE, -1);
-
-    if (currentVersion == -1) {
-      settings.edit().putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE).apply();
-      return;
-    }
-
-    if (currentVersion != BuildConfig.VERSION_CODE) {
-      if (currentVersion < 20002) {
-        Accounts.removeAccount(this);
-        settings.edit().clear().apply();
-      }
-      if (currentVersion < 20501) {
-        TraktTimestamps.clear(this);
-      }
-      if (currentVersion < 21001) {
-        MainHandler.post(new Runnable() {
-          @Override public void run() {
-            jobManager.addJob(new ForceUpdateJob());
-          }
-        });
-      }
-      if (currentVersion <= 21001) {
-        MainHandler.post(new Runnable() {
-          @Override public void run() {
-            jobManager.addJob(new UpdateShowCounts());
-          }
-        });
-      }
-      if (currentVersion <= 31001) {
-        Account account = Accounts.getAccount(this);
-
-        if (account != null) {
-          ContentResolver.setIsSyncable(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, 1);
-          ContentResolver.setSyncAutomatically(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, true);
-          ContentResolver.addPeriodicSync(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR,
-              new Bundle(), 12 * 60 * 60 /* 12 hours in seconds */);
-        }
-
-        Accounts.requestCalendarSync(this);
-      }
-      if (currentVersion <= 31003) {
-        settings.edit().remove("showHidden").apply();
-      }
-      if (currentVersion <= 37000) {
-        settings.edit().remove(Settings.START_PAGE).apply();
-      }
-      if (currentVersion <= 39003) {
-        MainHandler.post(new Runnable() {
-          @Override public void run() {
-            jobManager.addJob(new SyncAnticipatedShows());
-            jobManager.addJob(new SyncAnticipatedMovies());
-          }
-        });
-      }
-      if (currentVersion <= 40102) {
-        MainHandler.post(new Runnable() {
-          @Override public void run() {
-            jobManager.addJob(new EnsureSync());
-          }
-        });
-      }
-      if (currentVersion <= 40104) {
-        MainHandler.post(new Runnable() {
-          @Override public void run() {
-            jobManager.addJob(new UpperCaseGenres());
-          }
-        });
-      }
-      if (currentVersion <= 50303) {
-        if (Jobs.usesScheduler()) {
-          if (TraktLinkSettings.isLinked(this)) {
-            Account account = Accounts.getAccount(this);
-            ContentResolver.removePeriodicSync(account, BuildConfig.PROVIDER_AUTHORITY,
-                new Bundle());
-            ContentResolver.setSyncAutomatically(account, BuildConfig.PROVIDER_AUTHORITY, false);
-            ContentResolver.setIsSyncable(account, BuildConfig.PROVIDER_AUTHORITY, 0);
-          }
-        }
-
-        final String showsLastUpdated = settings.getString(Settings.SHOWS_LAST_UPDATED, null);
-        if (showsLastUpdated != null) {
-          final long showsLastUpdatedMillis = TimeUtils.getMillis(showsLastUpdated);
-          settings.edit().putLong(Settings.SHOWS_LAST_UPDATED, showsLastUpdatedMillis).apply();
-        }
-        final String moviesLastUpdated = settings.getString(Settings.MOVIES_LAST_UPDATED, null);
-        if (moviesLastUpdated != null) {
-          final long moviesLastUpdatedMillis = TimeUtils.getMillis(moviesLastUpdated);
-          settings.edit().putLong(Settings.MOVIES_LAST_UPDATED, moviesLastUpdatedMillis).apply();
-        }
-      }
-
-      MainHandler.post(new Runnable() {
-        @Override public void run() {
-          jobManager.addJob(new SyncJob());
-        }
-      });
-
-      settings.edit().putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE).apply();
-    }
-  }
 
   private OnAuthFailedListener authFailedListener = new OnAuthFailedListener() {
     @Override public void onAuthFailed() {
