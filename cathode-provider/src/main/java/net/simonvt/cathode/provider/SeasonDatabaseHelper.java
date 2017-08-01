@@ -158,12 +158,12 @@ public final class SeasonDatabaseHelper {
   }
 
   private long create(long showId, int season) {
-    ContentValues cv = new ContentValues();
-    cv.put(SeasonColumns.SHOW_ID, showId);
-    cv.put(SeasonColumns.SEASON, season);
-    cv.put(SeasonColumns.NEEDS_SYNC, true);
+    ContentValues values = new ContentValues();
+    values.put(SeasonColumns.SHOW_ID, showId);
+    values.put(SeasonColumns.SEASON, season);
+    values.put(SeasonColumns.NEEDS_SYNC, true);
 
-    Uri uri = resolver.insert(Seasons.SEASONS, cv);
+    Uri uri = resolver.insert(Seasons.SEASONS, values);
     return Seasons.getId(uri);
   }
 
@@ -171,8 +171,8 @@ public final class SeasonDatabaseHelper {
     IdResult result = getIdOrCreate(showId, season.getNumber());
     final long seasonId = result.id;
 
-    ContentValues cv = getSeasonCVs(season);
-    resolver.update(Seasons.withId(seasonId), cv, null, null);
+    ContentValues values = getValues(season);
+    resolver.update(Seasons.withId(seasonId), values, null, null);
 
     return seasonId;
   }
@@ -238,36 +238,36 @@ public final class SeasonDatabaseHelper {
         EpisodeColumns.ID, EpisodeColumns.IN_COLLECTION,
     }, null, null, null);
 
-    ContentValues cv = new ContentValues();
-    cv.put(EpisodeColumns.IN_COLLECTION, collected);
-    cv.put(EpisodeColumns.COLLECTED_AT, collectedAt);
+    ContentValues values = new ContentValues();
+    values.put(EpisodeColumns.IN_COLLECTION, collected);
+    values.put(EpisodeColumns.COLLECTED_AT, collectedAt);
 
     while (episodes.moveToNext()) {
       final boolean isCollected = Cursors.getBoolean(episodes, EpisodeColumns.IN_COLLECTION);
       if (isCollected != collected) {
         final long episodeId = Cursors.getLong(episodes, EpisodeColumns.ID);
-        resolver.update(Episodes.withId(episodeId), cv, null, null);
+        resolver.update(Episodes.withId(episodeId), values, null, null);
       }
     }
 
     episodes.close();
   }
 
-  private static ContentValues getSeasonCVs(Season season) {
-    ContentValues cv = new ContentValues();
-    cv.put(SeasonColumns.SEASON, season.getNumber());
+  private static ContentValues getValues(Season season) {
+    ContentValues values = new ContentValues();
+    values.put(SeasonColumns.SEASON, season.getNumber());
 
-    cv.put(SeasonColumns.TVDB_ID, season.getIds().getTvdb());
-    cv.put(SeasonColumns.TMDB_ID, season.getIds().getTmdb());
-    cv.put(SeasonColumns.TVRAGE_ID, season.getIds().getTvrage());
+    values.put(SeasonColumns.TVDB_ID, season.getIds().getTvdb());
+    values.put(SeasonColumns.TMDB_ID, season.getIds().getTmdb());
+    values.put(SeasonColumns.TVRAGE_ID, season.getIds().getTvrage());
 
     if (season.getRating() != null) {
-      cv.put(SeasonColumns.RATING, season.getRating());
+      values.put(SeasonColumns.RATING, season.getRating());
     }
     if (season.getVotes() != null) {
-      cv.put(SeasonColumns.VOTES, season.getVotes());
+      values.put(SeasonColumns.VOTES, season.getVotes());
     }
 
-    return cv;
+    return values;
   }
 }

@@ -64,9 +64,9 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
   public void sync(final long showId, final Job.OnDoneListener onDoneListener) {
     execute(new Runnable() {
       @Override public void run() {
-        ContentValues cv = new ContentValues();
-        cv.put(ShowColumns.FULL_SYNC_REQUESTED, System.currentTimeMillis());
-        context.getContentResolver().update(Shows.withId(showId), cv, null, null);
+        ContentValues values = new ContentValues();
+        values.put(ShowColumns.FULL_SYNC_REQUESTED, System.currentTimeMillis());
+        context.getContentResolver().update(Shows.withId(showId), values, null, null);
         final long traktId = showHelper.getTraktId(showId);
         final int tmdbId = showHelper.getTmdbId(showId);
         queue(new SyncShow(traktId));
@@ -226,9 +226,9 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
       @Override public void run() {
         final long traktId = showHelper.getTraktId(showId);
 
-        ContentValues cv = new ContentValues();
-        cv.put(ShowColumns.RECOMMENDATION_INDEX, -1);
-        context.getContentResolver().update(Shows.withId(showId), cv, null, null);
+        ContentValues values = new ContentValues();
+        values.put(ShowColumns.RECOMMENDATION_INDEX, -1);
+        context.getContentResolver().update(Shows.withId(showId), values, null, null);
 
         queue(new DismissShowRecommendation(traktId));
       }
@@ -251,10 +251,10 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
 
         final long traktId = showHelper.getTraktId(showId);
 
-        ContentValues cv = new ContentValues();
-        cv.put(ShowColumns.USER_RATING, rating);
-        cv.put(ShowColumns.RATED_AT, ratedAtMillis);
-        context.getContentResolver().update(Shows.withId(showId), cv, null, null);
+        ContentValues values = new ContentValues();
+        values.put(ShowColumns.USER_RATING, rating);
+        values.put(ShowColumns.RATED_AT, ratedAtMillis);
+        context.getContentResolver().update(Shows.withId(showId), values, null, null);
 
         queue(new RateShow(traktId, rating, ratedAt));
       }

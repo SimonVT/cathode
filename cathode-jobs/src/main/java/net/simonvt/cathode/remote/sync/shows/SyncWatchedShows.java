@@ -181,10 +181,10 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
 
             ContentProviderOperation.Builder builder =
                 ContentProviderOperation.newUpdate(Episodes.withId(episodeId));
-            ContentValues cv = new ContentValues();
-            cv.put(EpisodeColumns.WATCHED, true);
-            cv.put(EpisodeColumns.LAST_WATCHED_AT, lastWatchedAt);
-            builder.withValues(cv);
+            ContentValues values = new ContentValues();
+            values.put(EpisodeColumns.WATCHED, true);
+            values.put(EpisodeColumns.LAST_WATCHED_AT, lastWatchedAt);
+            builder.withValues(values);
             ops.add(builder.build());
           } else {
             episodeIds.remove(syncEpisode.id);
@@ -192,9 +192,9 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
             if (lastWatchedAt != syncEpisode.lastWatched) {
               ContentProviderOperation.Builder builder =
                   ContentProviderOperation.newUpdate(Episodes.withId(syncEpisode.id));
-              ContentValues cv = new ContentValues();
-              cv.put(EpisodeColumns.LAST_WATCHED_AT, lastWatchedAt);
-              builder.withValues(cv);
+              ContentValues values = new ContentValues();
+              values.put(EpisodeColumns.LAST_WATCHED_AT, lastWatchedAt);
+              builder.withValues(values);
               ops.add(builder.build());
             }
           }
@@ -209,9 +209,9 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
     for (long episodeId : episodeIds) {
       ContentProviderOperation.Builder builder =
           ContentProviderOperation.newUpdate(Episodes.withId(episodeId));
-      ContentValues cv = new ContentValues();
-      cv.put(EpisodeColumns.WATCHED, false);
-      builder.withValues(cv);
+      ContentValues values = new ContentValues();
+      values.put(EpisodeColumns.WATCHED, false);
+      builder.withValues(values);
       ops.add(builder.build());
     }
     if (!apply(ops)) {

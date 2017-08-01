@@ -76,18 +76,18 @@ public class SyncAnticipatedMovies extends CallJob<List<AnticipatedItem>> {
 
       movieIds.remove(movieId);
 
-      ContentValues cv = new ContentValues();
-      cv.put(MovieColumns.ANTICIPATED_INDEX, i);
+      ContentValues values = new ContentValues();
+      values.put(MovieColumns.ANTICIPATED_INDEX, i);
       ContentProviderOperation op =
-          ContentProviderOperation.newUpdate(Movies.withId(movieId)).withValues(cv).build();
+          ContentProviderOperation.newUpdate(Movies.withId(movieId)).withValues(values).build();
       ops.add(op);
     }
 
     for (Long movieId : movieIds) {
-      ContentValues cv = new ContentValues();
-      cv.put(MovieColumns.ANTICIPATED_INDEX, -1);
+      ContentValues values = new ContentValues();
+      values.put(MovieColumns.ANTICIPATED_INDEX, -1);
       ContentProviderOperation op =
-          ContentProviderOperation.newUpdate(Movies.withId(movieId)).withValues(cv).build();
+          ContentProviderOperation.newUpdate(Movies.withId(movieId)).withValues(values).build();
       ops.add(op);
     }
 

@@ -123,31 +123,31 @@ public final class PersonDatabaseHelper {
   }
 
   private static ContentValues getValues(Person person) {
-    ContentValues cv = new ContentValues();
+    ContentValues values = new ContentValues();
 
-    cv.put(PersonColumns.NAME, person.getName());
-    cv.put(PersonColumns.TRAKT_ID, person.getIds().getTrakt());
-    cv.put(PersonColumns.SLUG, person.getIds().getSlug());
-    cv.put(PersonColumns.IMDB_ID, person.getIds().getImdb());
-    cv.put(PersonColumns.TMDB_ID, person.getIds().getTmdb());
-    cv.put(PersonColumns.TVRAGE_ID, person.getIds().getTvrage());
+    values.put(PersonColumns.NAME, person.getName());
+    values.put(PersonColumns.TRAKT_ID, person.getIds().getTrakt());
+    values.put(PersonColumns.SLUG, person.getIds().getSlug());
+    values.put(PersonColumns.IMDB_ID, person.getIds().getImdb());
+    values.put(PersonColumns.TMDB_ID, person.getIds().getTmdb());
+    values.put(PersonColumns.TVRAGE_ID, person.getIds().getTvrage());
 
-    cv.put(PersonColumns.BIOGRAPHY, person.getBiography());
+    values.put(PersonColumns.BIOGRAPHY, person.getBiography());
     if (person.getBirthday() != null) {
-      cv.put(PersonColumns.BIRTHDAY, person.getBirthday());
+      values.put(PersonColumns.BIRTHDAY, person.getBirthday());
     } else {
-      cv.putNull(PersonColumns.BIRTHDAY);
+      values.putNull(PersonColumns.BIRTHDAY);
     }
     if (person.getDeath() != null) {
-      cv.put(PersonColumns.DEATH, person.getDeath());
+      values.put(PersonColumns.DEATH, person.getDeath());
     } else {
-      cv.putNull(PersonColumns.DEATH);
+      values.putNull(PersonColumns.DEATH);
     }
-    cv.put(PersonColumns.BIRTHPLACE, person.getBirthplace());
-    cv.put(PersonColumns.HOMEPAGE, person.getHomepage());
+    values.put(PersonColumns.BIRTHPLACE, person.getBirthplace());
+    values.put(PersonColumns.HOMEPAGE, person.getHomepage());
 
-    cv.put(PersonColumns.NEEDS_SYNC, false);
+    values.put(PersonColumns.NEEDS_SYNC, false);
 
-    return cv;
+    return values;
   }
 }

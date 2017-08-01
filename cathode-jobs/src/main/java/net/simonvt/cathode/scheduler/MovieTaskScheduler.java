@@ -324,9 +324,9 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
     execute(new Runnable() {
       @Override public void run() {
         final long traktId = movieHelper.getTraktId(movieId);
-        ContentValues cv = new ContentValues();
-        cv.put(MovieColumns.RECOMMENDATION_INDEX, -1);
-        context.getContentResolver().update(Movies.withId(movieId), cv, null, null);
+        ContentValues values = new ContentValues();
+        values.put(MovieColumns.RECOMMENDATION_INDEX, -1);
+        context.getContentResolver().update(Movies.withId(movieId), values, null, null);
         queue(new DismissMovieRecommendation(traktId));
       }
     });
@@ -348,10 +348,10 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
 
         final long traktId = movieHelper.getTraktId(movieId);
 
-        ContentValues cv = new ContentValues();
-        cv.put(MovieColumns.USER_RATING, rating);
-        cv.put(MovieColumns.RATED_AT, ratedAtMillis);
-        context.getContentResolver().update(Movies.withId(movieId), cv, null, null);
+        ContentValues values = new ContentValues();
+        values.put(MovieColumns.USER_RATING, rating);
+        values.put(MovieColumns.RATED_AT, ratedAtMillis);
+        context.getContentResolver().update(Movies.withId(movieId), values, null, null);
 
         queue(new RateMovie(traktId, rating, ratedAt));
       }

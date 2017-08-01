@@ -622,8 +622,8 @@ public final class ProviderSchematic {
         DatabaseSchematic.Tables.SEASONS + "." + SeasonColumns.SEASON + " DESC";
 
     @NotifyInsert(paths = Path.SEASONS)
-    public static Uri[] notifyInsert(ContentValues cv) {
-      final long showId = cv.getAsLong(SeasonColumns.SHOW_ID);
+    public static Uri[] notifyInsert(ContentValues values) {
+      final long showId = values.getAsLong(SeasonColumns.SHOW_ID);
       return new Uri[] {
           fromShow(showId),
       };
@@ -863,9 +863,9 @@ public final class ProviderSchematic {
     }
 
     @NotifyInsert(paths = Path.EPISODES)
-    public static Uri[] notifyInsert(ContentValues cv) {
-      final long showId = cv.getAsLong(EpisodeColumns.SHOW_ID);
-      final long seasonId = cv.getAsLong(EpisodeColumns.SEASON_ID);
+    public static Uri[] notifyInsert(ContentValues values) {
+      final long showId = values.getAsLong(EpisodeColumns.SHOW_ID);
+      final long seasonId = values.getAsLong(EpisodeColumns.SEASON_ID);
       return new Uri[] {
           fromShow(showId), fromSeason(seasonId), Shows.withId(showId), Seasons.withId(seasonId),
           Seasons.fromShow(showId),
@@ -949,14 +949,14 @@ public final class ProviderSchematic {
     public static final String DEFAULT_SORT = ShowGenreColumns.GENRE + " ASC";
 
     @InsertUri(paths = Path.SHOW_GENRES)
-    public static Uri insertReturnUri(ContentValues cv) {
-      final long showId = cv.getAsLong(ShowGenreColumns.SHOW_ID);
+    public static Uri insertReturnUri(ContentValues values) {
+      final long showId = values.getAsLong(ShowGenreColumns.SHOW_ID);
       return fromShow(showId);
     }
 
     @NotifyInsert(paths = Path.SHOW_GENRES)
-    public static Uri[] notifyInsert(ContentValues cv) {
-      final long showId = cv.getAsLong(ShowGenreColumns.SHOW_ID);
+    public static Uri[] notifyInsert(ContentValues values) {
+      final long showId = values.getAsLong(ShowGenreColumns.SHOW_ID);
       return new Uri[] {
           fromShow(showId),
       };
@@ -1006,15 +1006,15 @@ public final class ProviderSchematic {
     }
 
     @InsertUri(paths = Path.SHOW_CAST)
-    public static Uri insertReturnUri(ContentValues cv) {
-      final long showId = cv.getAsLong(ShowCastColumns.SHOW_ID);
+    public static Uri insertReturnUri(ContentValues values) {
+      final long showId = values.getAsLong(ShowCastColumns.SHOW_ID);
       return fromShow(showId);
     }
 
     @NotifyInsert(paths = Path.SHOW_CAST)
-    public static Uri[] notifyInsert(ContentValues cv) {
-      final long showId = cv.getAsLong(ShowCastColumns.SHOW_ID);
-      final long personId = cv.getAsLong(ShowCastColumns.PERSON_ID);
+    public static Uri[] notifyInsert(ContentValues values) {
+      final long showId = values.getAsLong(ShowCastColumns.SHOW_ID);
+      final long personId = values.getAsLong(ShowCastColumns.PERSON_ID);
       return new Uri[] {
           fromShow(showId), withPerson(personId),
       };
@@ -1064,17 +1064,17 @@ public final class ProviderSchematic {
     }
 
     @NotifyInsert(paths = Path.SHOW_CREW)
-    public static Uri[] notifyInsert(ContentValues cv) {
-      final long showId = cv.getAsLong(ShowCrewColumns.SHOW_ID);
-      final long personId = cv.getAsLong(ShowCrewColumns.PERSON_ID);
+    public static Uri[] notifyInsert(ContentValues values) {
+      final long showId = values.getAsLong(ShowCrewColumns.SHOW_ID);
+      final long personId = values.getAsLong(ShowCrewColumns.PERSON_ID);
       return new Uri[] {
           fromShow(showId), withPerson(personId),
       };
     }
 
     @InsertUri(paths = Path.SHOW_CREW)
-    public static Uri insertUri(ContentValues cv) {
-      final long showId = cv.getAsLong(ShowCrewColumns.SHOW_ID);
+    public static Uri insertUri(ContentValues values) {
+      final long showId = values.getAsLong(ShowCrewColumns.SHOW_ID);
       return fromShow(showId);
     }
   }
@@ -1236,16 +1236,16 @@ public final class ProviderSchematic {
     }
 
     @NotifyInsert(paths = Path.MOVIE_GENRES)
-    public static Uri[] notifyInsert(ContentValues cv) {
-      final long movieId = cv.getAsLong(MovieGenreColumns.MOVIE_ID);
+    public static Uri[] notifyInsert(ContentValues values) {
+      final long movieId = values.getAsLong(MovieGenreColumns.MOVIE_ID);
       return new Uri[] {
           fromMovie(movieId),
       };
     }
 
     @InsertUri(paths = Path.MOVIE_GENRES)
-    public static Uri insertUri(ContentValues cv) {
-      final long movieId = cv.getAsLong(MovieGenreColumns.MOVIE_ID);
+    public static Uri insertUri(ContentValues values) {
+      final long movieId = values.getAsLong(MovieGenreColumns.MOVIE_ID);
       return fromMovie(movieId);
     }
   }
@@ -1293,17 +1293,17 @@ public final class ProviderSchematic {
     }
 
     @NotifyInsert(paths = Path.MOVIE_CAST)
-    public static Uri[] notifyInsert(ContentValues cv) {
-      final long movieId = cv.getAsLong(MovieCastColumns.MOVIE_ID);
-      final long personId = cv.getAsLong(MovieCastColumns.PERSON_ID);
+    public static Uri[] notifyInsert(ContentValues values) {
+      final long movieId = values.getAsLong(MovieCastColumns.MOVIE_ID);
+      final long personId = values.getAsLong(MovieCastColumns.PERSON_ID);
       return new Uri[] {
           fromMovie(movieId), withPerson(personId),
       };
     }
 
     @InsertUri(paths = Path.MOVIE_CAST)
-    public static Uri insertUri(ContentValues cv) {
-      final long movieId = cv.getAsLong(MovieCastColumns.MOVIE_ID);
+    public static Uri insertUri(ContentValues values) {
+      final long movieId = values.getAsLong(MovieCastColumns.MOVIE_ID);
       return fromMovie(movieId);
     }
   }
@@ -1351,17 +1351,17 @@ public final class ProviderSchematic {
     }
 
     @NotifyInsert(paths = Path.MOVIE_CREW)
-    public static Uri[] notifyInsert(ContentValues cv) {
-      final long movieId = cv.getAsLong(MovieCrewColumns.MOVIE_ID);
-      final long personId = cv.getAsLong(MovieCrewColumns.PERSON_ID);
+    public static Uri[] notifyInsert(ContentValues values) {
+      final long movieId = values.getAsLong(MovieCrewColumns.MOVIE_ID);
+      final long personId = values.getAsLong(MovieCrewColumns.PERSON_ID);
       return new Uri[] {
           fromMovie(movieId), withPerson(personId),
       };
     }
 
     @InsertUri(paths = Path.MOVIE_CREW)
-    public static Uri insertUri(ContentValues cv) {
-      final long movieId = cv.getAsLong(MovieCrewColumns.MOVIE_ID);
+    public static Uri insertUri(ContentValues values) {
+      final long movieId = values.getAsLong(MovieCrewColumns.MOVIE_ID);
       return fromMovie(movieId);
     }
   }

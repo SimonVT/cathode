@@ -69,10 +69,10 @@ public class SyncTrendingShows extends CallJob<List<TrendingItem>> {
       Show show = item.getShow();
       final long showId = showHelper.partialUpdate(show);
 
-      ContentValues cv = new ContentValues();
-      cv.put(ShowColumns.TRENDING_INDEX, i);
+      ContentValues values = new ContentValues();
+      values.put(ShowColumns.TRENDING_INDEX, i);
       ContentProviderOperation op =
-          ContentProviderOperation.newUpdate(Shows.withId(showId)).withValues(cv).build();
+          ContentProviderOperation.newUpdate(Shows.withId(showId)).withValues(values).build();
       ops.add(op);
 
       showIds.remove(showId);

@@ -162,21 +162,21 @@ public final class ShowDatabaseHelper {
   }
 
   private long create(long traktId) {
-    ContentValues cv = new ContentValues();
-    cv.put(ShowColumns.TRAKT_ID, traktId);
-    cv.put(ShowColumns.NEEDS_SYNC, true);
+    ContentValues values = new ContentValues();
+    values.put(ShowColumns.TRAKT_ID, traktId);
+    values.put(ShowColumns.NEEDS_SYNC, true);
 
-    return Shows.getShowId(resolver.insert(Shows.SHOWS, cv));
+    return Shows.getShowId(resolver.insert(Shows.SHOWS, values));
   }
 
   public long fullUpdate(Show show) {
     IdResult result = getIdOrCreate(show.getIds().getTrakt());
     final long id = result.showId;
 
-    ContentValues cv = getShowCVs(show);
-    cv.put(ShowColumns.NEEDS_SYNC, false);
-    cv.put(ShowColumns.LAST_SYNC, System.currentTimeMillis());
-    resolver.update(Shows.withId(id), cv, null, null);
+    ContentValues values = getValues(show);
+    values.put(ShowColumns.NEEDS_SYNC, false);
+    values.put(ShowColumns.LAST_SYNC, System.currentTimeMillis());
+    resolver.update(Shows.withId(id), values, null, null);
 
     if (show.getGenres() != null) {
       insertShowGenres(id, show.getGenres());
@@ -192,8 +192,8 @@ public final class ShowDatabaseHelper {
     IdResult result = getIdOrCreate(show.getIds().getTrakt());
     final long id = result.showId;
 
-    ContentValues cv = getShowCVs(show);
-    resolver.update(Shows.withId(id), cv, null, null);
+    ContentValues values = getValues(show);
+    resolver.update(Shows.withId(id), values, null, null);
 
     if (show.getGenres() != null) {
       insertShowGenres(id, show.getGenres());
@@ -298,12 +298,12 @@ public final class ShowDatabaseHelper {
     resolver.delete(ProviderSchematic.ShowGenres.fromShow(showId), null, null);
 
     for (String genre : genres) {
-      ContentValues cv = new ContentValues();
+      ContentValues values = new ContentValues();
 
-      cv.put(DatabaseContract.ShowGenreColumns.SHOW_ID, showId);
-      cv.put(DatabaseContract.ShowGenreColumns.GENRE, TextUtils.upperCaseFirstLetter(genre));
+      values.put(DatabaseContract.ShowGenreColumns.SHOW_ID, showId);
+      values.put(DatabaseContract.ShowGenreColumns.GENRE, TextUtils.upperCaseFirstLetter(genre));
 
-      resolver.insert(ProviderSchematic.ShowGenres.fromShow(showId), cv);
+      resolver.insert(ProviderSchematic.ShowGenres.fromShow(showId), values);
     }
   }
 
@@ -361,72 +361,72 @@ public final class ShowDatabaseHelper {
   }
 
   public void setIsInWatchlist(long showId, boolean inWatchlist, long listedAt) {
-    ContentValues cv = new ContentValues();
-    cv.put(ShowColumns.IN_WATCHLIST, inWatchlist);
-    cv.put(ShowColumns.LISTED_AT, listedAt);
+    ContentValues values = new ContentValues();
+    values.put(ShowColumns.IN_WATCHLIST, inWatchlist);
+    values.put(ShowColumns.LISTED_AT, listedAt);
 
-    resolver.update(Shows.withId(showId), cv, null, null);
+    resolver.update(Shows.withId(showId), values, null, null);
   }
 
   public void setIsInCollection(long traktId, boolean inCollection) {
     final long showId = getId(traktId);
-    ContentValues cv = new ContentValues();
-    cv.put(EpisodeColumns.IN_COLLECTION, inCollection);
+    ContentValues values = new ContentValues();
+    values.put(EpisodeColumns.IN_COLLECTION, inCollection);
 
     final long firstAiredOffset = FirstAiredOffsetPreference.getInstance().getOffsetMillis();
     final long millis = System.currentTimeMillis() - firstAiredOffset;
 
-    resolver.update(Episodes.fromShow(showId), cv, EpisodeColumns.FIRST_AIRED + "<?", new String[] {
+    resolver.update(Episodes.fromShow(showId), values, EpisodeColumns.FIRST_AIRED + "<?", new String[] {
         String.valueOf(millis),
     });
   }
 
-  private static ContentValues getShowCVs(Show show) {
-    ContentValues cv = new ContentValues();
+  private static ContentValues getValues(Show show) {
+    ContentValues values = new ContentValues();
 
-    cv.put(ShowColumns.TITLE, show.getTitle());
-    cv.put(ShowColumns.TITLE_NO_ARTICLE, DatabaseUtils.removeLeadingArticle(show.getTitle()));
-    if (show.getYear() != null) cv.put(ShowColumns.YEAR, show.getYear());
-    if (show.getCountry() != null) cv.put(ShowColumns.COUNTRY, show.getCountry());
+    values.put(ShowColumns.TITLE, show.getTitle());
+    values.put(ShowColumns.TITLE_NO_ARTICLE, DatabaseUtils.removeLeadingArticle(show.getTitle()));
+    if (show.getYear() != null) values.put(ShowColumns.YEAR, show.getYear());
+    if (show.getCountry() != null) values.put(ShowColumns.COUNTRY, show.getCountry());
     if (show.getOverview() != null) {
-      cv.put(ShowColumns.OVERVIEW, show.getOverview());
+      values.put(ShowColumns.OVERVIEW, show.getOverview());
     }
-    if (show.getRuntime() != null) cv.put(ShowColumns.RUNTIME, show.getRuntime());
-    if (show.getNetwork() != null) cv.put(ShowColumns.NETWORK, show.getNetwork());
+    if (show.getRuntime() != null) values.put(ShowColumns.RUNTIME, show.getRuntime());
+    if (show.getNetwork() != null) values.put(ShowColumns.NETWORK, show.getNetwork());
     if (show.getAirs() != null) {
-      cv.put(ShowColumns.AIR_DAY, show.getAirs().getDay());
-      cv.put(ShowColumns.AIR_TIME, show.getAirs().getTime());
-      cv.put(ShowColumns.AIR_TIMEZONE, show.getAirs().getTimezone());
+      values.put(ShowColumns.AIR_DAY, show.getAirs().getDay());
+      values.put(ShowColumns.AIR_TIME, show.getAirs().getTime());
+      values.put(ShowColumns.AIR_TIMEZONE, show.getAirs().getTimezone());
     }
     if (show.getCertification() != null) {
-      cv.put(ShowColumns.CERTIFICATION, show.getCertification());
+      values.put(ShowColumns.CERTIFICATION, show.getCertification());
     }
 
-    if (show.getTrailer() != null) cv.put(ShowColumns.TRAILER, show.getTrailer());
+    if (show.getTrailer() != null) values.put(ShowColumns.TRAILER, show.getTrailer());
     if (show.getHomepage() != null) {
-      cv.put(ShowColumns.HOMEPAGE, show.getHomepage());
+      values.put(ShowColumns.HOMEPAGE, show.getHomepage());
     }
     if (show.getStatus() != null) {
-      cv.put(ShowColumns.STATUS, show.getStatus().toString());
+      values.put(ShowColumns.STATUS, show.getStatus().toString());
     }
 
-    cv.put(ShowColumns.TRAKT_ID, show.getIds().getTrakt());
-    cv.put(ShowColumns.SLUG, show.getIds().getSlug());
-    cv.put(ShowColumns.IMDB_ID, show.getIds().getImdb());
-    cv.put(ShowColumns.TVDB_ID, show.getIds().getTvdb());
-    cv.put(ShowColumns.TMDB_ID, show.getIds().getTmdb());
-    cv.put(ShowColumns.TVRAGE_ID, show.getIds().getTvrage());
+    values.put(ShowColumns.TRAKT_ID, show.getIds().getTrakt());
+    values.put(ShowColumns.SLUG, show.getIds().getSlug());
+    values.put(ShowColumns.IMDB_ID, show.getIds().getImdb());
+    values.put(ShowColumns.TVDB_ID, show.getIds().getTvdb());
+    values.put(ShowColumns.TMDB_ID, show.getIds().getTmdb());
+    values.put(ShowColumns.TVRAGE_ID, show.getIds().getTvrage());
     if (show.getUpdatedAt() != null) {
-      cv.put(ShowColumns.LAST_UPDATED, show.getUpdatedAt().getTimeInMillis());
+      values.put(ShowColumns.LAST_UPDATED, show.getUpdatedAt().getTimeInMillis());
     }
 
     if (show.getRating() != null) {
-      cv.put(ShowColumns.RATING, show.getRating());
+      values.put(ShowColumns.RATING, show.getRating());
     }
     if (show.getVotes() != null) {
-      cv.put(ShowColumns.VOTES, show.getVotes());
+      values.put(ShowColumns.VOTES, show.getVotes());
     }
 
-    return cv;
+    return values;
   }
 }

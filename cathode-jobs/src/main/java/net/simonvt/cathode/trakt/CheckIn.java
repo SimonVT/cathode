@@ -133,11 +133,11 @@ public class CheckIn {
     final long startedAt = System.currentTimeMillis();
     final long expiresAt = startedAt + runtime * DateUtils.MINUTE_IN_MILLIS;
 
-    ContentValues cv = new ContentValues();
-    cv.put(MovieColumns.CHECKED_IN, true);
-    cv.put(MovieColumns.STARTED_AT, startedAt);
-    cv.put(MovieColumns.EXPIRES_AT, expiresAt);
-    context.getContentResolver().update(Movies.withId(movieId), cv, null, null);
+    ContentValues values = new ContentValues();
+    values.put(MovieColumns.CHECKED_IN, true);
+    values.put(MovieColumns.STARTED_AT, startedAt);
+    values.put(MovieColumns.EXPIRES_AT, expiresAt);
+    context.getContentResolver().update(Movies.withId(movieId), values, null, null);
 
     try {
       CheckinItem item = new CheckinItem().movie(traktId)

@@ -73,22 +73,22 @@ public final class ListWrapper {
   }
 
   private static ContentValues getValues(CustomList list) {
-    ContentValues cv = new ContentValues();
+    ContentValues values = new ContentValues();
 
-    cv.put(ListsColumns.NAME, list.getName());
-    cv.put(ListsColumns.DESCRIPTION, list.getDescription());
+    values.put(ListsColumns.NAME, list.getName());
+    values.put(ListsColumns.DESCRIPTION, list.getDescription());
     if (list.getPrivacy() != null) {
-      cv.put(ListsColumns.PRIVACY, list.getPrivacy().toString());
+      values.put(ListsColumns.PRIVACY, list.getPrivacy().toString());
     }
-    cv.put(ListsColumns.DISPLAY_NUMBERS, list.getDisplayNumbers());
-    cv.put(ListsColumns.ALLOW_COMMENTS, list.getAllowComments());
+    values.put(ListsColumns.DISPLAY_NUMBERS, list.getDisplayNumbers());
+    values.put(ListsColumns.ALLOW_COMMENTS, list.getAllowComments());
     if (list.getUpdatedAt() != null) {
-      cv.put(ListsColumns.UPDATED_AT, list.getUpdatedAt().getTimeInMillis());
+      values.put(ListsColumns.UPDATED_AT, list.getUpdatedAt().getTimeInMillis());
     }
-    cv.put(ListsColumns.LIKES, list.getLikes());
-    cv.put(ListsColumns.SLUG, list.getIds().getSlug());
-    cv.put(ListsColumns.TRAKT_ID, list.getIds().getTrakt());
+    values.put(ListsColumns.LIKES, list.getLikes());
+    values.put(ListsColumns.SLUG, list.getIds().getSlug());
+    values.put(ListsColumns.TRAKT_ID, list.getIds().getTrakt());
 
-    return cv;
+    return values;
   }
 }

@@ -205,21 +205,21 @@ public final class MovieDatabaseHelper {
   }
 
   private long create(long traktId) {
-    ContentValues cv = new ContentValues();
-    cv.put(MovieColumns.TRAKT_ID, traktId);
-    cv.put(MovieColumns.NEEDS_SYNC, true);
+    ContentValues values = new ContentValues();
+    values.put(MovieColumns.TRAKT_ID, traktId);
+    values.put(MovieColumns.NEEDS_SYNC, true);
 
-    return Movies.getId(resolver.insert(Movies.MOVIES, cv));
+    return Movies.getId(resolver.insert(Movies.MOVIES, values));
   }
 
   public long fullUpdate(Movie movie) {
     IdResult result = getIdOrCreate(movie.getIds().getTrakt());
     final long id = result.movieId;
 
-    ContentValues cv = getContentValues(movie);
-    cv.put(MovieColumns.NEEDS_SYNC, false);
-    cv.put(MovieColumns.LAST_SYNC, System.currentTimeMillis());
-    resolver.update(Movies.withId(id), cv, null, null);
+    ContentValues values = getValues(movie);
+    values.put(MovieColumns.NEEDS_SYNC, false);
+    values.put(MovieColumns.LAST_SYNC, System.currentTimeMillis());
+    resolver.update(Movies.withId(id), values, null, null);
 
     if (movie.getGenres() != null) {
       insertGenres(id, movie.getGenres());
@@ -232,8 +232,8 @@ public final class MovieDatabaseHelper {
     IdResult result = getIdOrCreate(movie.getIds().getTrakt());
     final long id = result.movieId;
 
-    ContentValues cv = getContentValues(movie);
-    resolver.update(Movies.withId(id), cv, null, null);
+    ContentValues values = getValues(movie);
+    resolver.update(Movies.withId(id), values, null, null);
 
     if (movie.getGenres() != null) {
       insertGenres(id, movie.getGenres());
@@ -266,44 +266,44 @@ public final class MovieDatabaseHelper {
     }
   }
 
-  private static ContentValues getContentValues(Movie movie) {
-    ContentValues cv = new ContentValues();
+  private static ContentValues getValues(Movie movie) {
+    ContentValues values = new ContentValues();
 
-    cv.put(MovieColumns.TITLE, movie.getTitle());
-    cv.put(MovieColumns.TITLE_NO_ARTICLE, DatabaseUtils.removeLeadingArticle(movie.getTitle()));
-    if (movie.getYear() != null) cv.put(MovieColumns.YEAR, movie.getYear());
-    if (movie.getReleased() != null) cv.put(MovieColumns.RELEASED, movie.getReleased());
-    if (movie.getRuntime() != null) cv.put(MovieColumns.RUNTIME, movie.getRuntime());
-    if (movie.getTagline() != null) cv.put(MovieColumns.TAGLINE, movie.getTagline());
-    if (movie.getOverview() != null) cv.put(MovieColumns.OVERVIEW, movie.getOverview());
+    values.put(MovieColumns.TITLE, movie.getTitle());
+    values.put(MovieColumns.TITLE_NO_ARTICLE, DatabaseUtils.removeLeadingArticle(movie.getTitle()));
+    if (movie.getYear() != null) values.put(MovieColumns.YEAR, movie.getYear());
+    if (movie.getReleased() != null) values.put(MovieColumns.RELEASED, movie.getReleased());
+    if (movie.getRuntime() != null) values.put(MovieColumns.RUNTIME, movie.getRuntime());
+    if (movie.getTagline() != null) values.put(MovieColumns.TAGLINE, movie.getTagline());
+    if (movie.getOverview() != null) values.put(MovieColumns.OVERVIEW, movie.getOverview());
 
-    cv.put(MovieColumns.TRAKT_ID, movie.getIds().getTrakt());
-    cv.put(MovieColumns.SLUG, movie.getIds().getSlug());
-    cv.put(MovieColumns.IMDB_ID, movie.getIds().getImdb());
-    cv.put(MovieColumns.TMDB_ID, movie.getIds().getTmdb());
+    values.put(MovieColumns.TRAKT_ID, movie.getIds().getTrakt());
+    values.put(MovieColumns.SLUG, movie.getIds().getSlug());
+    values.put(MovieColumns.IMDB_ID, movie.getIds().getImdb());
+    values.put(MovieColumns.TMDB_ID, movie.getIds().getTmdb());
 
-    if (movie.getLanguage() != null) cv.put(MovieColumns.LANGUAGE, movie.getLanguage());
+    if (movie.getLanguage() != null) values.put(MovieColumns.LANGUAGE, movie.getLanguage());
 
     if (movie.getCertification() != null) {
-      cv.put(MovieColumns.CERTIFICATION, movie.getCertification());
+      values.put(MovieColumns.CERTIFICATION, movie.getCertification());
     }
 
     if (movie.getTrailer() != null) {
-      cv.put(MovieColumns.TRAILER, movie.getTrailer());
+      values.put(MovieColumns.TRAILER, movie.getTrailer());
     }
 
     if (movie.getHomepage() != null) {
-      cv.put(MovieColumns.HOMEPAGE, movie.getHomepage());
+      values.put(MovieColumns.HOMEPAGE, movie.getHomepage());
     }
 
     if (movie.getRating() != null) {
-      cv.put(MovieColumns.RATING, movie.getRating());
+      values.put(MovieColumns.RATING, movie.getRating());
     }
     if (movie.getVotes() != null) {
-      cv.put(MovieColumns.VOTES, movie.getVotes());
+      values.put(MovieColumns.VOTES, movie.getVotes());
     }
 
-    return cv;
+    return values;
   }
 
   public void checkIn(long movieId) {
@@ -318,11 +318,11 @@ public final class MovieDatabaseHelper {
     final long startedAt = System.currentTimeMillis();
     final long expiresAt = startedAt + runtime * DateUtils.MINUTE_IN_MILLIS;
 
-    ContentValues cv = new ContentValues();
-    cv.put(MovieColumns.CHECKED_IN, true);
-    cv.put(MovieColumns.STARTED_AT, startedAt);
-    cv.put(MovieColumns.EXPIRES_AT, expiresAt);
-    context.getContentResolver().update(Movies.withId(movieId), cv, null, null);
+    ContentValues values = new ContentValues();
+    values.put(MovieColumns.CHECKED_IN, true);
+    values.put(MovieColumns.STARTED_AT, startedAt);
+    values.put(MovieColumns.EXPIRES_AT, expiresAt);
+    context.getContentResolver().update(Movies.withId(movieId), values, null, null);
   }
 
   public void addToHistory(final long movieId, final long watchedAt) {
@@ -371,10 +371,10 @@ public final class MovieDatabaseHelper {
   }
 
   public void setIsInCollection(long movieId, boolean collected, long collectedAt) {
-    ContentValues cv = new ContentValues();
-    cv.put(MovieColumns.IN_COLLECTION, collected);
-    cv.put(MovieColumns.COLLECTED_AT, collectedAt);
-    resolver.update(Movies.withId(movieId), cv, null, null);
+    ContentValues values = new ContentValues();
+    values.put(MovieColumns.IN_COLLECTION, collected);
+    values.put(MovieColumns.COLLECTED_AT, collectedAt);
+    resolver.update(Movies.withId(movieId), values, null, null);
   }
 
   public void setIsInWatchlist(long movieId, boolean inWatchlist) {
@@ -382,9 +382,9 @@ public final class MovieDatabaseHelper {
   }
 
   public void setIsInWatchlist(long movieId, boolean inWatchlist, long listedAt) {
-    ContentValues cv = new ContentValues();
-    cv.put(MovieColumns.IN_WATCHLIST, inWatchlist);
-    cv.put(MovieColumns.LISTED_AT, listedAt);
-    resolver.update(Movies.withId(movieId), cv, null, null);
+    ContentValues values = new ContentValues();
+    values.put(MovieColumns.IN_WATCHLIST, inWatchlist);
+    values.put(MovieColumns.LISTED_AT, listedAt);
+    resolver.update(Movies.withId(movieId), values, null, null);
   }
 }

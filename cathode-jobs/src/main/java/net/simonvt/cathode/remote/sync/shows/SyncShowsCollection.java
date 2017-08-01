@@ -178,10 +178,10 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
 
             ContentProviderOperation.Builder builder =
                 ContentProviderOperation.newUpdate(Episodes.withId(episodeId));
-            ContentValues cv = new ContentValues();
-            cv.put(EpisodeColumns.IN_COLLECTION, true);
-            cv.put(EpisodeColumns.COLLECTED_AT, collectedAt);
-            builder.withValues(cv);
+            ContentValues values = new ContentValues();
+            values.put(EpisodeColumns.IN_COLLECTION, true);
+            values.put(EpisodeColumns.COLLECTED_AT, collectedAt);
+            builder.withValues(values);
             ops.add(builder.build());
           } else {
             episodeIds.remove(syncEpisode.id);
@@ -198,9 +198,9 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
     for (long episodeId : episodeIds) {
       ContentProviderOperation.Builder builder =
           ContentProviderOperation.newUpdate(Episodes.withId(episodeId));
-      ContentValues cv = new ContentValues();
-      cv.put(EpisodeColumns.IN_COLLECTION, false);
-      builder.withValues(cv);
+      ContentValues values = new ContentValues();
+      values.put(EpisodeColumns.IN_COLLECTION, false);
+      builder.withValues(values);
       ops.add(builder.build());
     }
     if (!apply(ops)) {

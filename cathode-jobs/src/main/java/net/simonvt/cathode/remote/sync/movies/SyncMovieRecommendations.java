@@ -73,10 +73,10 @@ public class SyncMovieRecommendations extends CallJob<List<Movie>> {
 
       movieIds.remove(movieId);
 
-      ContentValues cv = new ContentValues();
-      cv.put(MovieColumns.RECOMMENDATION_INDEX, index);
+      ContentValues values = new ContentValues();
+      values.put(MovieColumns.RECOMMENDATION_INDEX, index);
       ContentProviderOperation op =
-          ContentProviderOperation.newUpdate(Movies.withId(movieId)).withValues(cv).build();
+          ContentProviderOperation.newUpdate(Movies.withId(movieId)).withValues(values).build();
       ops.add(op);
     }
 
