@@ -40,8 +40,8 @@ import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
-import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.ui.EpisodeDetailsActivity;
 import net.simonvt.cathode.util.SqlColumn;
@@ -98,7 +98,7 @@ public class UpcomingWidgetService extends RemoteViewsService {
               + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED)
               + "<?)", new String[] {
               String.valueOf(currentTime - DateUtils.HOUR_IN_MILLIS), String.valueOf(upcomingTime)
-          }, ProviderSchematic.Shows.SORT_NEXT_EPISODE);
+          }, Shows.SORT_NEXT_EPISODE);
 
       cursorLoader.registerListener(LOADER_UPCOMING, this);
       cursorLoader.startLoading();

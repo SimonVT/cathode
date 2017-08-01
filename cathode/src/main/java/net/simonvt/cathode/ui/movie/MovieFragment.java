@@ -54,8 +54,8 @@ import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.RelatedMoviesColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
-import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
+import net.simonvt.cathode.provider.ProviderSchematic.MovieCast;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieGenres;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.RelatedMovies;
@@ -636,7 +636,7 @@ public class MovieFragment extends RefreshableAppBarFragment
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
           return new SimpleCursorLoader(getActivity(),
-              ProviderSchematic.MovieCast.fromMovie(movieId), CAST_PROJECTION,
+              MovieCast.fromMovie(movieId), CAST_PROJECTION,
               Tables.PEOPLE + "." + PersonColumns.NEEDS_SYNC + "=0", null, null);
         }
 

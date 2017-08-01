@@ -41,7 +41,8 @@ import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ListWrapper;
-import net.simonvt.cathode.provider.ProviderSchematic;
+import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
+import net.simonvt.cathode.provider.ProviderSchematic.Lists;
 import net.simonvt.cathode.remote.sync.lists.SyncList;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
@@ -212,7 +213,7 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
   private LoaderManager.LoaderCallbacks<SimpleCursor> infoLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getContext(), ProviderSchematic.Lists.withId(listId),
+          return new SimpleCursorLoader(getContext(), Lists.withId(listId),
               new String[] {
                   ListsColumns.ID, ListsColumns.NAME, ListsColumns.DESCRIPTION,
                   ListsColumns.PRIVACY, ListsColumns.DISPLAY_NUMBERS, ListsColumns.ALLOW_COMMENTS,
@@ -308,7 +309,7 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
   LoaderManager.LoaderCallbacks<SimpleCursor> itemsLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), ProviderSchematic.ListItems.inList(listId),
+          return new SimpleCursorLoader(getActivity(), ListItems.inList(listId),
               PROJECTION, null, null, null);
         }
 

@@ -18,12 +18,12 @@ package net.simonvt.cathode.ui.shows.upcoming;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import net.simonvt.cathode.provider.ProviderSchematic;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 
 public enum UpcomingSortBy {
-  TITLE("title", ProviderSchematic.Shows.SORT_TITLE),
-  NEXT_EPISODE("nextEpisode", ProviderSchematic.Shows.SORT_NEXT_EPISODE),
-  LAST_WATCHED("lastWatched", ProviderSchematic.Shows.SORT_LAST_WATCHED);
+  TITLE("title", Shows.SORT_TITLE),
+  NEXT_EPISODE("nextEpisode", Shows.SORT_NEXT_EPISODE),
+  LAST_WATCHED("lastWatched", Shows.SORT_LAST_WATCHED);
 
   private String key;
 

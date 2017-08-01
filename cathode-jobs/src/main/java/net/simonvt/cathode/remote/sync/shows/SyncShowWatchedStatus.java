@@ -23,9 +23,9 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.ShowProgress;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.jobqueue.JobPriority;
-import net.simonvt.cathode.provider.DatabaseContract;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
-import net.simonvt.cathode.provider.ProviderSchematic;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
@@ -98,8 +98,8 @@ public class SyncShowWatchedStatus extends CallJob<ShowProgress> {
         }
 
         ContentProviderOperation.Builder builder =
-            ContentProviderOperation.newUpdate(ProviderSchematic.Episodes.withId(episodeId));
-        builder.withValue(DatabaseContract.EpisodeColumns.WATCHED, episode.getCompleted());
+            ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
+                .withValue(EpisodeColumns.WATCHED, episode.getCompleted());
         ops.add(builder.build());
       }
     }

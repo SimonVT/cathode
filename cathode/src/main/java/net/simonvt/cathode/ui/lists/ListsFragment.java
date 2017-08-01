@@ -29,7 +29,7 @@ import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.provider.ProviderSchematic;
+import net.simonvt.cathode.provider.ProviderSchematic.Lists;
 import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.ui.ListNavigationListener;
 import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
@@ -112,7 +112,7 @@ public class ListsFragment extends ToolbarSwipeRefreshRecyclerFragment<ListsAdap
   }
 
   @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-    return new SimpleCursorLoader(getActivity(), ProviderSchematic.Lists.LISTS,
+    return new SimpleCursorLoader(getActivity(), Lists.LISTS,
         ListsAdapter.PROJECTION, null, null, null);
   }
 

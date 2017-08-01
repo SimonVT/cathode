@@ -34,12 +34,12 @@ import net.simonvt.cathode.common.event.ErrorEvent;
 import net.simonvt.cathode.jobs.BuildConfig;
 import net.simonvt.cathode.jobs.R;
 import net.simonvt.cathode.jobscheduler.Jobs;
-import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
+import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
-import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.service.SyncWatchingReceiver;
 import net.simonvt.cathode.util.DataHelper;
@@ -73,11 +73,11 @@ public class CheckIn {
     episode.close();
 
     Cursor show =
-        context.getContentResolver().query(ProviderSchematic.Shows.withId(showId), new String[] {
-            DatabaseContract.ShowColumns.RUNTIME,
+        context.getContentResolver().query(Shows.withId(showId), new String[] {
+            ShowColumns.RUNTIME,
         }, null, null, null);
     show.moveToFirst();
-    int runtime = Cursors.getInt(show, DatabaseContract.ShowColumns.RUNTIME);
+    int runtime = Cursors.getInt(show, ShowColumns.RUNTIME);
     show.close();
 
     try {

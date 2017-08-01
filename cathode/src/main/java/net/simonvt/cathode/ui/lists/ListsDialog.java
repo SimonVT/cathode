@@ -42,8 +42,8 @@ import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
-import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
+import net.simonvt.cathode.provider.ProviderSchematic.Lists;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
 import net.simonvt.schematic.Cursors;
 
@@ -251,7 +251,7 @@ public class ListsDialog extends DialogFragment {
   private LoaderManager.LoaderCallbacks<SimpleCursor> listsLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle bundle) {
-          return new SimpleCursorLoader(getActivity(), ProviderSchematic.Lists.LISTS,
+          return new SimpleCursorLoader(getActivity(), Lists.LISTS,
               LISTS_PROJECTION, null, null, null);
         }
 

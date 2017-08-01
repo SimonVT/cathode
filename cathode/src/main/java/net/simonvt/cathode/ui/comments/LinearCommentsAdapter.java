@@ -25,7 +25,8 @@ import android.widget.TextView;
 import java.text.DateFormat;
 import java.util.Date;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.provider.DatabaseContract;
+import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
+import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.widget.CircleTransformation;
 import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.schematic.Cursors;
@@ -42,23 +43,23 @@ public final class LinearCommentsAdapter {
     if (userComments != null) {
       userComments.moveToPosition(-1);
       while (userComments.moveToNext()) {
-        final long commentId = Cursors.getLong(userComments, DatabaseContract.CommentColumns.ID);
+        final long commentId = Cursors.getLong(userComments, CommentColumns.ID);
         final String comment =
-            Cursors.getString(userComments, DatabaseContract.CommentColumns.COMMENT);
+            Cursors.getString(userComments, CommentColumns.COMMENT);
         final boolean spoiler =
-            Cursors.getBoolean(userComments, DatabaseContract.CommentColumns.SPOILER);
+            Cursors.getBoolean(userComments, CommentColumns.SPOILER);
         final boolean review =
-            Cursors.getBoolean(userComments, DatabaseContract.CommentColumns.REVIEW);
+            Cursors.getBoolean(userComments, CommentColumns.REVIEW);
         final long createdAt =
-            Cursors.getLong(userComments, DatabaseContract.CommentColumns.CREATED_AT);
-        final long likes = Cursors.getLong(userComments, DatabaseContract.CommentColumns.LIKES);
+            Cursors.getLong(userComments, CommentColumns.CREATED_AT);
+        final long likes = Cursors.getLong(userComments, CommentColumns.LIKES);
         final int userRating =
-            Cursors.getInt(userComments, DatabaseContract.CommentColumns.USER_RATING);
+            Cursors.getInt(userComments, CommentColumns.USER_RATING);
 
         final String username =
-            Cursors.getString(userComments, DatabaseContract.UserColumns.USERNAME);
-        final String name = Cursors.getString(userComments, DatabaseContract.UserColumns.NAME);
-        final String avatar = Cursors.getString(userComments, DatabaseContract.UserColumns.AVATAR);
+            Cursors.getString(userComments, UserColumns.USERNAME);
+        final String name = Cursors.getString(userComments, UserColumns.NAME);
+        final String avatar = Cursors.getString(userComments, UserColumns.AVATAR);
 
         String visibleName;
         if (!TextUtils.isEmpty(name)) {
@@ -89,20 +90,20 @@ public final class LinearCommentsAdapter {
     if (comments != null) {
       comments.moveToPosition(-1);
       while (comments.moveToNext()) {
-        final long commentId = Cursors.getLong(comments, DatabaseContract.CommentColumns.ID);
-        final String comment = Cursors.getString(comments, DatabaseContract.CommentColumns.COMMENT);
+        final long commentId = Cursors.getLong(comments, CommentColumns.ID);
+        final String comment = Cursors.getString(comments, CommentColumns.COMMENT);
         final boolean spoiler =
-            Cursors.getBoolean(comments, DatabaseContract.CommentColumns.SPOILER);
-        final boolean review = Cursors.getBoolean(comments, DatabaseContract.CommentColumns.REVIEW);
+            Cursors.getBoolean(comments, CommentColumns.SPOILER);
+        final boolean review = Cursors.getBoolean(comments, CommentColumns.REVIEW);
         final long createdAt =
-            Cursors.getLong(comments, DatabaseContract.CommentColumns.CREATED_AT);
-        final long likes = Cursors.getLong(comments, DatabaseContract.CommentColumns.LIKES);
+            Cursors.getLong(comments, CommentColumns.CREATED_AT);
+        final long likes = Cursors.getLong(comments, CommentColumns.LIKES);
         final int userRating =
-            Cursors.getInt(comments, DatabaseContract.CommentColumns.USER_RATING);
+            Cursors.getInt(comments, CommentColumns.USER_RATING);
 
-        final String username = Cursors.getString(comments, DatabaseContract.UserColumns.USERNAME);
-        final String name = Cursors.getString(comments, DatabaseContract.UserColumns.NAME);
-        final String avatar = Cursors.getString(comments, DatabaseContract.UserColumns.AVATAR);
+        final String username = Cursors.getString(comments, UserColumns.USERNAME);
+        final String name = Cursors.getString(comments, UserColumns.NAME);
+        final String avatar = Cursors.getString(comments, UserColumns.AVATAR);
 
         String visibleName;
         if (!TextUtils.isEmpty(name)) {

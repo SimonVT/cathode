@@ -60,7 +60,8 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
-import net.simonvt.cathode.provider.ProviderSchematic;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.settings.Settings;
@@ -784,7 +785,7 @@ public class HomeActivity extends BaseActivity
   private LoaderManager.LoaderCallbacks<SimpleCursor> watchingShowCallback =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-          return new SimpleCursorLoader(HomeActivity.this, ProviderSchematic.Shows.SHOW_WATCHING,
+          return new SimpleCursorLoader(HomeActivity.this, Shows.SHOW_WATCHING,
               SHOW_WATCHING_PROJECTION, null, null, null);
         }
 
@@ -802,7 +803,7 @@ public class HomeActivity extends BaseActivity
   private LoaderManager.LoaderCallbacks<SimpleCursor> watchingMovieCallback =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-          return new SimpleCursorLoader(HomeActivity.this, ProviderSchematic.Movies.WATCHING, null,
+          return new SimpleCursorLoader(HomeActivity.this, Movies.WATCHING, null,
               null, null, null);
         }
 

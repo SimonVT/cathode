@@ -50,7 +50,6 @@ import net.simonvt.cathode.common.event.AuthFailedEvent;
 import net.simonvt.cathode.common.event.RequestFailedEvent;
 import net.simonvt.cathode.common.event.SyncEvent;
 import net.simonvt.cathode.common.event.SyncEvent.OnSyncListener;
-import net.simonvt.cathode.widget.PaletteTransformation;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobListener;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -58,9 +57,11 @@ import net.simonvt.cathode.jobscheduler.AuthJobHandlerJob;
 import net.simonvt.cathode.jobscheduler.DataJobHandlerJob;
 import net.simonvt.cathode.jobscheduler.SchedulerService;
 import net.simonvt.cathode.notification.NotificationService;
-import net.simonvt.cathode.provider.DatabaseContract;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.ProviderSchematic;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.ForceUpdateJob;
@@ -74,6 +75,7 @@ import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.StartPage;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.tmdb.api.SyncConfiguration;
+import net.simonvt.cathode.widget.PaletteTransformation;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 @SuppressLint("SetTextI18n") public abstract class BaseActivity extends AppCompatActivity {
@@ -196,22 +198,22 @@ import okhttp3.logging.HttpLoggingInterceptor;
             showId = Shows.getShowId(showUri);
 
             values = new ContentValues();
-            values.put(DatabaseContract.SeasonColumns.SHOW_ID, showId);
-            values.put(DatabaseContract.SeasonColumns.SEASON, 1);
-            Uri seasonUri = getContentResolver().insert(ProviderSchematic.Seasons.SEASONS, values);
-            long seasonId = ProviderSchematic.Seasons.getId(seasonUri);
+            values.put(SeasonColumns.SHOW_ID, showId);
+            values.put(SeasonColumns.SEASON, 1);
+            Uri seasonUri = getContentResolver().insert(Seasons.SEASONS, values);
+            long seasonId = Seasons.getId(seasonUri);
 
             long time = System.currentTimeMillis() - DateUtils.MINUTE_IN_MILLIS;
 
             for (int i = 1; i <= 10; i++) {
               values = new ContentValues();
-              values.put(DatabaseContract.EpisodeColumns.SHOW_ID, showId);
-              values.put(DatabaseContract.EpisodeColumns.SEASON_ID, seasonId);
-              values.put(DatabaseContract.EpisodeColumns.SEASON, 1);
-              values.put(DatabaseContract.EpisodeColumns.EPISODE, i);
-              values.put(DatabaseContract.EpisodeColumns.FIRST_AIRED, time);
-              values.put(DatabaseContract.EpisodeColumns.WATCHED, i == 1);
-              getContentResolver().insert(ProviderSchematic.Episodes.EPISODES, values);
+              values.put(EpisodeColumns.SHOW_ID, showId);
+              values.put(EpisodeColumns.SEASON_ID, seasonId);
+              values.put(EpisodeColumns.SEASON, 1);
+              values.put(EpisodeColumns.EPISODE, i);
+              values.put(EpisodeColumns.FIRST_AIRED, time);
+              values.put(EpisodeColumns.WATCHED, i == 1);
+              getContentResolver().insert(Episodes.EPISODES, values);
 
               time += DateUtils.MINUTE_IN_MILLIS;
             }

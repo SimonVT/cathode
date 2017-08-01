@@ -33,8 +33,8 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncTrendingShows;
@@ -343,7 +343,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
   private final LoaderManager.LoaderCallbacks<SimpleCursor> moviesWatchlistCallback =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), ProviderSchematic.Movies.MOVIES_WATCHLIST,
+          return new SimpleCursorLoader(getActivity(), Movies.MOVIES_WATCHLIST,
               DashboardMoviesAdapter.PROJECTION, null, null, null);
         }
 
@@ -358,7 +358,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
   private final LoaderManager.LoaderCallbacks<SimpleCursor> moviesTrendingCallback =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), ProviderSchematic.Movies.TRENDING,
+          return new SimpleCursorLoader(getActivity(), Movies.TRENDING,
               DashboardMoviesAdapter.PROJECTION, null, null, null);
         }
 
