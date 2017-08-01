@@ -188,7 +188,6 @@ public final class EpisodeDatabaseHelper {
     cv.put(EpisodeColumns.SEASON_ID, seasonId);
     cv.put(EpisodeColumns.SEASON, season);
     cv.put(EpisodeColumns.EPISODE, episode);
-    cv.put(EpisodeColumns.NEEDS_SYNC, 1);
 
     return Episodes.getId(resolver.insert(Episodes.EPISODES, cv));
   }
@@ -338,8 +337,6 @@ public final class EpisodeDatabaseHelper {
 
   public ContentValues getEpisodeCVs(Episode episode) {
     ContentValues cv = new ContentValues();
-
-    cv.put(EpisodeColumns.NEEDS_SYNC, 0);
 
     cv.put(EpisodeColumns.SEASON, episode.getSeason());
     cv.put(EpisodeColumns.EPISODE, episode.getNumber());

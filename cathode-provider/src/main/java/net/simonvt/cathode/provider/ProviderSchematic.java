@@ -541,11 +541,6 @@ public final class ProviderSchematic {
           + Tables.SHOWS
           + "."
           + ShowColumns.ID
-          + " AND "
-          + Tables.EPISODES
-          + "."
-          + EpisodeColumns.NEEDS_SYNC
-          + "=0"
           + ")";
     }
 
@@ -562,9 +557,7 @@ public final class ProviderSchematic {
           + " OR "
           + Tables.EPISODES + "." + EpisodeColumns.CHECKED_IN
           + "=1"
-          + ") AND "
-          + Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC
-          + "=0"
+          + ")"
           + ")";
     }
   }
@@ -690,11 +683,6 @@ public final class ProviderSchematic {
           + " AND "
           + Tables.EPISODES
           + "."
-          + EpisodeColumns.NEEDS_SYNC
-          + "=0"
-          + " AND "
-          + Tables.EPISODES
-          + "."
           + EpisodeColumns.SEASON
           + ">0"
           + ")";
@@ -722,11 +710,6 @@ public final class ProviderSchematic {
           + " AND "
           + Tables.EPISODES
           + "."
-          + EpisodeColumns.NEEDS_SYNC
-          + "=0"
-          + " AND "
-          + Tables.EPISODES
-          + "."
           + EpisodeColumns.SEASON
           + ">0"
           + ")";
@@ -751,11 +734,6 @@ public final class ProviderSchematic {
           + EpisodeColumns.FIRST_AIRED
           + "<="
           + (currentTime - firstAiredOffset)
-          + " AND "
-          + Tables.EPISODES
-          + "."
-          + EpisodeColumns.NEEDS_SYNC
-          + "=0"
           + " AND "
           + Tables.EPISODES
           + "."
@@ -788,11 +766,6 @@ public final class ProviderSchematic {
           + " AND "
           + Tables.EPISODES
           + "."
-          + EpisodeColumns.NEEDS_SYNC
-          + "=0"
-          + " AND "
-          + Tables.EPISODES
-          + "."
           + EpisodeColumns.SEASON
           + ">0"
           + " AND "
@@ -811,11 +784,6 @@ public final class ProviderSchematic {
           + Tables.SEASONS
           + "."
           + SeasonColumns.ID
-          + " AND "
-          + Tables.EPISODES
-          + "."
-          + EpisodeColumns.NEEDS_SYNC
-          + "=0"
           + ")";
     }
   }

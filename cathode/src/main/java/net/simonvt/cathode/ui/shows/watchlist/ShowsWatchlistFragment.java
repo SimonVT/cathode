@@ -33,7 +33,6 @@ import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
@@ -209,9 +208,7 @@ public class ShowsWatchlistFragment
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
           return new SimpleCursorLoader(getActivity(), Episodes.EPISODES_IN_WATCHLIST,
-              ShowWatchlistAdapter.PROJECTION_EPISODE,
-              Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC + "=0", null,
-              EpisodeColumns.SHOW_ID + " ASC");
+              ShowWatchlistAdapter.PROJECTION_EPISODE, null, null, EpisodeColumns.SHOW_ID + " ASC");
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {

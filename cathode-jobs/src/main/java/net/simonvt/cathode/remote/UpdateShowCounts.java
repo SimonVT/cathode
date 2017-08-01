@@ -48,20 +48,19 @@ public class UpdateShowCounts extends Job {
 
       Cursor watched = getContentResolver().query(Episodes.fromShow(showId), new String[] {
           EpisodeColumns.ID,
-      }, EpisodeColumns.WATCHED + "=1 AND " + EpisodeColumns.NEEDS_SYNC + "=0", null, null);
+      }, EpisodeColumns.WATCHED + "=1", null, null);
       final int watchedCount = watched.getCount();
       watched.close();
 
       Cursor collected = getContentResolver().query(Episodes.fromShow(showId), new String[] {
           EpisodeColumns.ID,
-      }, EpisodeColumns.IN_COLLECTION + "=1 AND " + EpisodeColumns.NEEDS_SYNC + "=0", null, null);
+      }, EpisodeColumns.IN_COLLECTION + "=1", null, null);
       final int collectedCount = collected.getCount();
       collected.close();
 
       Cursor airdate = getContentResolver().query(Episodes.fromShow(showId), new String[] {
-              EpisodeColumns.ID,
-          }, EpisodeColumns.FIRST_AIRED + " IS NOT NULL AND " + EpisodeColumns.NEEDS_SYNC + "=0", null,
-          null);
+          EpisodeColumns.ID,
+      }, EpisodeColumns.FIRST_AIRED + ">0", null, null);
       final int airdateCount = airdate.getCount();
       airdate.close();
 
@@ -84,20 +83,19 @@ public class UpdateShowCounts extends Job {
 
       Cursor watched = getContentResolver().query(Episodes.fromSeason(seasonId), new String[] {
           EpisodeColumns.ID,
-      }, EpisodeColumns.WATCHED + "=1 AND " + EpisodeColumns.NEEDS_SYNC + "=0", null, null);
+      }, EpisodeColumns.WATCHED + "=1", null, null);
       final int watchedCount = watched.getCount();
       watched.close();
 
       Cursor collected = getContentResolver().query(Episodes.fromSeason(seasonId), new String[] {
           EpisodeColumns.ID,
-      }, EpisodeColumns.IN_COLLECTION + "=1 AND " + EpisodeColumns.NEEDS_SYNC + "=0", null, null);
+      }, EpisodeColumns.IN_COLLECTION + "=1", null, null);
       final int collectedCount = collected.getCount();
       collected.close();
 
       Cursor airdate = getContentResolver().query(Episodes.fromSeason(seasonId), new String[] {
-              EpisodeColumns.ID,
-          }, EpisodeColumns.FIRST_AIRED + " IS NOT NULL" + " AND " + EpisodeColumns.NEEDS_SYNC + "=0",
-          null, null);
+          EpisodeColumns.ID,
+      }, EpisodeColumns.FIRST_AIRED + ">0", null, null);
       final int airdateCount = airdate.getCount();
       airdate.close();
 

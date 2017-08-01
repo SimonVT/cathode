@@ -235,7 +235,6 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String LAST_COMMENT_SYNC = "lastCommentSync";
 
     @DataType(INTEGER) @DefaultValue("0") String NOTIFICATION_DISMISSED = "notificationDismissed";
-    @DataType(INTEGER) @DefaultValue("0") String NEEDS_SYNC = "needsSync";
 
     String SHOW_TITLE = "episodeShowTitle";
   }

@@ -181,7 +181,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
       Cursor episodes = context.getContentResolver().query(Episodes.fromShow(showId), new String[] {
           EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
           EpisodeColumns.WATCHED, EpisodeColumns.FIRST_AIRED,
-      }, EpisodeColumns.FIRST_AIRED + ">? AND " + EpisodeColumns.NEEDS_SYNC + "=0", new String[] {
+      }, EpisodeColumns.FIRST_AIRED + ">?", new String[] {
           String.valueOf(time - 30 * DateUtils.DAY_IN_MILLIS),
       }, null);
 

@@ -39,7 +39,6 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowCrewColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.generated.CathodeDatabase;
-import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.cathode.util.SqlIndex;
 import net.simonvt.cathode.util.SqlUtils;
 import net.simonvt.schematic.annotation.DataType;
@@ -58,7 +57,7 @@ public final class DatabaseSchematic {
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 41;
+  static final int DATABASE_VERSION = 42;
 
   public interface Tables {
 
@@ -134,42 +133,37 @@ public final class DatabaseSchematic {
             + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE " + Tables.EPISODES + "."
             + EpisodeColumns.SEASON_ID + "=NEW." + EpisodeColumns.SEASON_ID + " AND "
             + Tables.EPISODES + "." + EpisodeColumns.WATCHED + "=1" + " AND " + Tables.EPISODES
-            + "." + EpisodeColumns.NEEDS_SYNC + "=0" + " AND " + Tables.EPISODES + "."
-            + EpisodeColumns.SEASON + ">0)" + " WHERE " + Tables.SEASONS + "." + SeasonColumns.ID
-            + "=NEW." + EpisodeColumns.SEASON_ID + ";";
+            + "." + EpisodeColumns.SEASON + ">0)" + " WHERE " + Tables.SEASONS + "."
+            + SeasonColumns.ID + "=NEW." + EpisodeColumns.SEASON_ID + ";";
 
     String SEASONS_UPDATE_COLLECTED =
         "UPDATE " + Tables.SEASONS + " SET " + SeasonColumns.IN_COLLECTION_COUNT
             + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE " + Tables.EPISODES + "."
             + EpisodeColumns.SEASON_ID + "=NEW." + EpisodeColumns.SEASON_ID + " AND "
             + Tables.EPISODES + "." + EpisodeColumns.IN_COLLECTION + "=1"
-            + " AND " + Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC + "=0" + " AND "
-            + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)" + " WHERE " + Tables.SEASONS
-            + "." + SeasonColumns.ID + "=NEW." + EpisodeColumns.SEASON_ID + ";";
+            + " AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)" + " WHERE "
+            + Tables.SEASONS + "." + SeasonColumns.ID + "=NEW." + EpisodeColumns.SEASON_ID + ";";
 
     String SEASONS_UPDATE_AIRDATE =
         "UPDATE " + Tables.SEASONS + " SET " + SeasonColumns.AIRDATE_COUNT
             + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE " + Tables.EPISODES + "."
             + EpisodeColumns.SEASON_ID + "=NEW." + EpisodeColumns.SEASON_ID + " AND "
             + Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED + " IS NOT NULL "
-            + " AND " + Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC + "=0" + " AND "
-            + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)" + " WHERE " + Tables.SEASONS
-            + "." + SeasonColumns.ID + "=NEW." + EpisodeColumns.SEASON_ID + ";";
+            + " AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)" + " WHERE "
+            + Tables.SEASONS + "." + SeasonColumns.ID + "=NEW." + EpisodeColumns.SEASON_ID + ";";
 
     String SHOWS_UPDATE_WATCHED =
         "UPDATE " + Tables.SHOWS + " SET " + ShowColumns.WATCHED_COUNT + "=(SELECT COUNT(*) FROM "
             + Tables.EPISODES + " WHERE " + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID + "=NEW."
             + EpisodeColumns.SHOW_ID + " AND " + Tables.EPISODES + "." + EpisodeColumns.WATCHED
-            + "=1" + " AND " + Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC + "=0" + " AND "
-            + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)" + " WHERE " + Tables.SHOWS + "."
-            + ShowColumns.ID + "=NEW." + EpisodeColumns.SHOW_ID + ";";
+            + "=1" + " AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)" + " WHERE "
+            + Tables.SHOWS + "." + ShowColumns.ID + "=NEW." + EpisodeColumns.SHOW_ID + ";";
 
     String SHOWS_UPDATE_COLLECTED =
         "UPDATE " + Tables.SHOWS + " SET " + ShowColumns.IN_COLLECTION_COUNT
             + "=(SELECT COUNT(*) FROM " + Tables.EPISODES + " WHERE " + Tables.EPISODES + "."
             + EpisodeColumns.SHOW_ID + "=NEW." + EpisodeColumns.SHOW_ID + " AND " + Tables.EPISODES
             + "." + EpisodeColumns.IN_COLLECTION + "=1" + " AND " + Tables.EPISODES + "."
-            + EpisodeColumns.NEEDS_SYNC + "=0" + " AND " + Tables.EPISODES + "."
             + EpisodeColumns.SEASON + ">0)" + " WHERE " + Tables.SHOWS + "." + ShowColumns.ID
             + "=NEW." + EpisodeColumns.SHOW_ID + ";";
 
@@ -177,9 +171,9 @@ public final class DatabaseSchematic {
         "UPDATE " + Tables.SHOWS + " SET " + ShowColumns.AIRDATE_COUNT + "=(SELECT COUNT(*) FROM "
             + Tables.EPISODES + " WHERE " + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID + "=NEW."
             + EpisodeColumns.SHOW_ID + " AND " + Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED
-            + " IS NOT NULL " + " AND " + Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC + "=0"
-            + " AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)" + " WHERE "
-            + Tables.SHOWS + "." + ShowColumns.ID + "=NEW." + EpisodeColumns.SHOW_ID + ";";
+            + " IS NOT NULL " + " AND " + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0)"
+            + " WHERE " + Tables.SHOWS + "." + ShowColumns.ID + "=NEW." + EpisodeColumns.SHOW_ID
+            + ";";
 
     String SHOWS_UPDATE_WATCHING = "UPDATE "
         + Tables.SHOWS
@@ -195,8 +189,6 @@ public final class DatabaseSchematic {
         + " OR "
         + Tables.EPISODES + "." + EpisodeColumns.CHECKED_IN + "=1"
         + ")"
-        + " AND "
-        + Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC + "=0"
         + " AND "
         + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0"
         + ")"
@@ -300,19 +292,18 @@ public final class DatabaseSchematic {
 
   @ExecOnCreate public static final String TRIGGER_EPISODE_UPDATE_AIRED =
       "CREATE TRIGGER IF NOT EXISTS " + TriggerName.EPISODE_UPDATE_AIRED + " AFTER UPDATE OF "
-          + EpisodeColumns.FIRST_AIRED + "," + EpisodeColumns.NEEDS_SYNC + " ON " + Tables.EPISODES
-          + " BEGIN " + Trigger.SEASONS_UPDATE_AIRDATE + Trigger.SHOWS_UPDATE_AIRDATE + " END;";
+          + EpisodeColumns.FIRST_AIRED + " ON " + Tables.EPISODES + " BEGIN "
+          + Trigger.SEASONS_UPDATE_AIRDATE + Trigger.SHOWS_UPDATE_AIRDATE + " END;";
 
   @ExecOnCreate public static final String TRIGGER_EPISODE_UPDATE_WATCHED =
       "CREATE TRIGGER IF NOT EXISTS " + TriggerName.EPISODE_UPDATE_WATCHED + " AFTER UPDATE OF "
-          + EpisodeColumns.WATCHED + "," + EpisodeColumns.NEEDS_SYNC + " ON " + Tables.EPISODES
-          + " BEGIN " + Trigger.SEASONS_UPDATE_WATCHED + Trigger.SHOWS_UPDATE_WATCHED + " END;";
+          + EpisodeColumns.WATCHED + " ON " + Tables.EPISODES + " BEGIN "
+          + Trigger.SEASONS_UPDATE_WATCHED + Trigger.SHOWS_UPDATE_WATCHED + " END;";
 
   @ExecOnCreate public static final String TRIGGER_EPISODE_UPDATE_COLLECTED =
       "CREATE TRIGGER IF NOT EXISTS " + TriggerName.EPISODE_UPDATE_COLLECTED + " AFTER UPDATE OF "
-          + EpisodeColumns.IN_COLLECTION + "," + EpisodeColumns.NEEDS_SYNC + " ON "
-          + Tables.EPISODES + " BEGIN " + Trigger.SEASONS_UPDATE_COLLECTED
-          + Trigger.SHOWS_UPDATE_COLLECTED + " END;";
+          + EpisodeColumns.IN_COLLECTION + " ON " + Tables.EPISODES + " BEGIN "
+          + Trigger.SEASONS_UPDATE_COLLECTED + Trigger.SHOWS_UPDATE_COLLECTED + " END;";
 
   @ExecOnCreate public static final String TRIGGER_EPISODE_UPDATE_WATCHING =
       "CREATE TRIGGER IF NOT EXISTS " + TriggerName.EPISODE_UPDATE_WATCHING + " AFTER UPDATE OF "
@@ -752,6 +743,15 @@ public final class DatabaseSchematic {
           DataType.Type.INTEGER, "0");
       SqlUtils.createColumnIfNotExists(db, Tables.SEASONS, SeasonColumns.POSTER, DataType.Type.TEXT,
           null);
+    }
+
+    if (oldVersion < 42) {
+      db.execSQL("DROP TRIGGER IF EXISTS " + TriggerName.EPISODE_UPDATE_WATCHED);
+      db.execSQL("DROP TRIGGER IF EXISTS " + TriggerName.EPISODE_UPDATE_COLLECTED);
+      db.execSQL("DROP TRIGGER IF EXISTS " + TriggerName.EPISODE_UPDATE_AIRED);
+      db.execSQL(TRIGGER_EPISODE_UPDATE_WATCHED);
+      db.execSQL(TRIGGER_EPISODE_UPDATE_COLLECTED);
+      db.execSQL(TRIGGER_EPISODE_UPDATE_AIRED);
     }
   }
 }

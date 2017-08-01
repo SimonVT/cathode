@@ -37,9 +37,7 @@ public interface Joins {
           + Tables.SHOWS + "." + DatabaseContract.ShowColumns.ID
           + " AND "
           + Tables.EPISODES + "." + EpisodeColumns.SEASON
-          + "<>0 AND "
-          + Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC
-          + "=0"
+          + "<>0"
           + " ORDER BY "
           + Tables.EPISODES + "." + EpisodeColumns.SEASON
           + " ASC, "
@@ -79,9 +77,6 @@ public interface Joins {
           + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID
           + "="
           + Tables.SHOWS + "." + DatabaseContract.ShowColumns.ID
-          + " AND "
-          + Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC
-          + "=0"
           + " AND ("
           + Tables.EPISODES + "." + EpisodeColumns.SEASON
           + ">"
@@ -137,9 +132,6 @@ public interface Joins {
           + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID
           + "="
           + Tables.SHOWS + "." + DatabaseContract.ShowColumns.ID
-          + " AND "
-          + Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC
-          + "=0"
           + " AND ("
           + Tables.EPISODES + "." + EpisodeColumns.SEASON
           + ">"
@@ -178,9 +170,6 @@ public interface Joins {
           + " AND "
           + Tables.EPISODES + "." + EpisodeColumns.SEASON
           + "<>0"
-          + "   AND "
-          + Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC
-          + "=0"
           + " ORDER BY "
           + Tables.EPISODES + "." + EpisodeColumns.SEASON
           + " ASC, "
@@ -205,9 +194,6 @@ public interface Joins {
           + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID
           + "="
           + Tables.SHOWS + "." + DatabaseContract.ShowColumns.ID
-          + " AND "
-          + Tables.EPISODES + "." + EpisodeColumns.NEEDS_SYNC
-          + "=0"
           + " ORDER BY "
           + Tables.EPISODES + "." + EpisodeColumns.SEASON
           + " ASC, "

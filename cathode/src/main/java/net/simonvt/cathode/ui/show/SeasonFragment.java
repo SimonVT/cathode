@@ -259,8 +259,7 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
           return new SimpleCursorLoader(getActivity(), Episodes.fromSeason(seasonId),
-              SeasonAdapter.PROJECTION, EpisodeColumns.NEEDS_SYNC + "=0", null,
-              EpisodeColumns.EPISODE + " ASC");
+              SeasonAdapter.PROJECTION, null, null, EpisodeColumns.EPISODE + " ASC");
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {

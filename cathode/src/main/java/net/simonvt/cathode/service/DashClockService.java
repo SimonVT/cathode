@@ -36,9 +36,6 @@ public class DashClockService extends DashClockExtension {
         + ">? AND "
         + EpisodeColumns.WATCHED
         + "=0"
-        + " AND "
-        + EpisodeColumns.NEEDS_SYNC
-        + "=0"
         + " AND ((SELECT "
         + Tables.SHOWS
         + "."
