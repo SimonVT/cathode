@@ -613,7 +613,6 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
     final boolean needsSync = Cursors.getBoolean(cursor, ShowColumns.NEEDS_SYNC);
     if (needsSync) {
-      Timber.d("Needs sync: %d", showId);
       showScheduler.sync(showId);
     }
 

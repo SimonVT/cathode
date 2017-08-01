@@ -207,6 +207,7 @@ public final class MovieDatabaseHelper {
   private long create(long traktId) {
     ContentValues cv = new ContentValues();
     cv.put(MovieColumns.TRAKT_ID, traktId);
+    cv.put(MovieColumns.NEEDS_SYNC, true);
 
     return Movies.getId(resolver.insert(Movies.MOVIES, cv));
   }

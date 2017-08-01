@@ -42,6 +42,7 @@ import net.simonvt.cathode.remote.sync.shows.SyncShow;
 import net.simonvt.cathode.remote.sync.shows.SyncShowCollectedStatus;
 import net.simonvt.cathode.remote.sync.shows.SyncShowCredits;
 import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
+import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.tmdb.api.show.SyncShowImages;
 import net.simonvt.schematic.Cursors;
 
@@ -184,6 +185,8 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
         }
 
         queue(new AddShowToHistory(traktId, watchedAt));
+        // No documentation on how exactly the trakt endpoint is implemented, so sync after.
+        queue(new SyncWatchedShows());
       }
     });
   }

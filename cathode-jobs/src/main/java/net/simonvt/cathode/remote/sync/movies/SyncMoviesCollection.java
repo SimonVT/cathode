@@ -80,11 +80,8 @@ public class SyncMoviesCollection extends CallJob<List<CollectionItem>> {
       }
     }
 
-    final int size = movieIds.size();
-
-    for (int i = 0; i < size; i++) {
-      final long id = movieIds.get(i);
-      movieHelper.setIsInCollection(id, false);
+    for (Long movieId : movieIds) {
+      movieHelper.setIsInCollection(movieId, false);
     }
 
     return true;

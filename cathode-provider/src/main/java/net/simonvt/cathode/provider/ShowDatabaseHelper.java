@@ -106,10 +106,6 @@ public final class ShowDatabaseHelper {
     }
   }
 
-  public boolean exists(long traktId) {
-    return getId(traktId) != -1L;
-  }
-
   public long getTraktId(long showId) {
     Cursor c = resolver.query(Shows.withId(showId), new String[] {
         ShowColumns.TRAKT_ID,
@@ -168,6 +164,7 @@ public final class ShowDatabaseHelper {
   private long create(long traktId) {
     ContentValues cv = new ContentValues();
     cv.put(ShowColumns.TRAKT_ID, traktId);
+    cv.put(ShowColumns.NEEDS_SYNC, true);
 
     return Shows.getShowId(resolver.insert(Shows.SHOWS, cv));
   }

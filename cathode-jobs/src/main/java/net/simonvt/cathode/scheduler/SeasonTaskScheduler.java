@@ -24,6 +24,7 @@ import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.action.shows.AddSeasonToHistory;
 import net.simonvt.cathode.remote.action.shows.CollectSeason;
 import net.simonvt.cathode.remote.action.shows.RemoveSeasonFromHistory;
+import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 
 public class SeasonTaskScheduler extends BaseTaskScheduler {
 
@@ -66,6 +67,8 @@ public class SeasonTaskScheduler extends BaseTaskScheduler {
 
         seasonHelper.addToHistory(seasonId, watched);
         queue(new AddSeasonToHistory(traktId, seasonNumber, watchedAt));
+        // No documentation on how exactly the trakt endpoint is implemented, so sync after.
+        queue(new SyncWatchedShows());
       }
     });
   }
