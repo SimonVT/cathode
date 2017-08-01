@@ -21,7 +21,7 @@ import android.preference.PreferenceManager;
 
 public final class TraktLinkSettings {
 
-  public static final String TRAKT_LINKED = "traktLoggedIn";
+  public static final String TRAKT_LINKED = "traktLinked";
   public static final String TRAKT_AUTH_FAILED = "traktAuthFailed";
 
   public static final String TRAKT_ACCESS_TOKEN = "traktToken";
