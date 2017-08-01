@@ -98,7 +98,8 @@
       <CheckBox
           android:id="@+id/allowComments"
           android:layout_column="2"
-          android:layout_gravity="right"/>
+          android:layout_gravity="right"
+          android:checked="true"/>
     </TableRow>
   </TableLayout>
 </LinearLayout>
