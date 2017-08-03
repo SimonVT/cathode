@@ -23,6 +23,7 @@ import com.squareup.picasso.Downloader;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
 import com.squareup.picasso.RequestHandler;
+import com.uwetrottmann.tmdb2.services.ConfigurationService;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -30,8 +31,9 @@ public class ImageRequestHandler extends BaseUrlRequestHandler {
 
   private final Downloader downloader;
 
-  public ImageRequestHandler(Context context, Downloader downloader) {
-    super(context);
+  public ImageRequestHandler(Context context, ConfigurationService configurationService,
+      Downloader downloader) {
+    super(context, configurationService);
     this.downloader = downloader;
   }
 

@@ -19,9 +19,11 @@ package net.simonvt.cathode.images;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
 import com.uwetrottmann.tmdb2.entities.Image;
+import com.uwetrottmann.tmdb2.services.ConfigurationService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,20 +35,28 @@ import static com.squareup.picasso.Picasso.LoadedFrom.NETWORK;
 
 public abstract class ItemRequestHandler extends BaseUrlRequestHandler {
 
-  private final ImageDownloader downloader;
+  private ImageDownloader downloader;
 
-  public ItemRequestHandler(Context context, ImageDownloader downloader) {
-    super(context);
+  public ItemRequestHandler(Context context, ConfigurationService configurationService,
+      ImageDownloader downloader) {
+    super(context, configurationService);
     this.downloader = downloader;
   }
 
   protected abstract int getTmdbId(long id);
 
+  public abstract long getLastCacheUpdate(long id);
+
   protected abstract String getCachedPath(ImageType imageType, long id);
 
   protected abstract void clearCachedPaths(long id);
 
-  protected abstract String queryPath(ImageType imageType, long id, int tmdbId) throws IOException;
+  protected abstract boolean updateCache(ImageType imageType, long id, int tmdbId)
+      throws IOException;
+
+  private boolean needsUpdate(long lastUpdated) {
+    return lastUpdated + DateUtils.WEEK_IN_MILLIS < System.currentTimeMillis();
+  }
 
   @Override public Result load(Request request, int networkPolicy) throws IOException {
     final String baseUrl = getBaseUrl();
@@ -60,42 +70,42 @@ public abstract class ItemRequestHandler extends BaseUrlRequestHandler {
     final long id = Long.valueOf(uri.getPathSegments().get(0));
     final int tmdbId = getTmdbId(id);
 
-    boolean wasCached = false;
-    String cachedPath = getCachedPath(imageType, id);
+    final long lastUpdated = getLastCacheUpdate(id);
+    final boolean needsUpdate = needsUpdate(lastUpdated);
 
     String path;
-    if (cachedPath != null) {
-      path = cachedPath;
-      wasCached = true;
-    } else {
-      path = queryPath(imageType, id, tmdbId);
+    if (needsUpdate) {
+      final boolean success = updateCache(imageType, id, tmdbId);
+      if (!success) {
+        return null;
+      }
     }
 
+    path = getCachedPath(imageType, id);
     if (TextUtils.isEmpty(path)) {
       return null;
     }
 
     path = transform(request, Uri.parse(path));
-
     okhttp3.Response response = downloader.load(Uri.parse(path), networkPolicy);
-
     if (response == null) {
       return null;
     }
 
-    if (wasCached && response.code() == 404) {
-      clearCachedPaths(id);
-      path = queryPath(imageType, id, tmdbId);
+    if (!needsUpdate && response.code() == 404) {
+      final boolean success = updateCache(imageType, id, tmdbId);
+      if (!success) {
+        clearCachedPaths(id);
+        return null;
+      }
+      path = getCachedPath(imageType, id);
       path = transform(request, Uri.parse(path));
-
       response = downloader.load(Uri.parse(path), networkPolicy);
     }
 
     if (response.isSuccessful()) {
-      boolean fromCache = response.cacheResponse() != null;
-
-      Picasso.LoadedFrom loadedFrom = fromCache ? DISK : NETWORK;
-
+      final boolean fromCache = response.cacheResponse() != null;
+      final Picasso.LoadedFrom loadedFrom = fromCache ? DISK : NETWORK;
       return new Result(response.body().byteStream(), loadedFrom);
     }
 

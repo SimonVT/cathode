@@ -21,26 +21,16 @@ import java.util.Locale;
 import java.util.Map;
 
 public enum ImageType {
-  POSTER("poster", 1.5f),
-  BACKDROP("backdrop", 0.5617977528f),
-  PROFILE("profile", 1.5f),
-  STILL("still", 0.5617977528f);
+  POSTER("poster"), BACKDROP("backdrop"), PROFILE("profile"), STILL("still");
 
   private final String value;
 
-  private final float ratio;
-
-  ImageType(String value, float ratio) {
+  ImageType(String value) {
     this.value = value;
-    this.ratio = ratio;
   }
 
   @Override public String toString() {
     return value;
-  }
-
-  public float getRatio() {
-    return ratio;
   }
 
   private static final Map<String, ImageType> STRING_MAPPING = new HashMap<>();

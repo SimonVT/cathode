@@ -25,8 +25,6 @@ import com.squareup.picasso.RequestHandler;
 import com.uwetrottmann.tmdb2.entities.Configuration;
 import com.uwetrottmann.tmdb2.services.ConfigurationService;
 import java.io.IOException;
-import javax.inject.Inject;
-import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.common.tmdb.TmdbRateLimiter;
 import net.simonvt.cathode.settings.Settings;
 import retrofit2.Call;
@@ -37,7 +35,7 @@ import static net.simonvt.cathode.images.ImageRequestTransformer.QUERY_SIZE;
 
 public abstract class BaseUrlRequestHandler extends RequestHandler {
 
-  @Inject ConfigurationService configurationService;
+  private ConfigurationService configurationService;
 
   protected final Context context;
 
@@ -47,11 +45,9 @@ public abstract class BaseUrlRequestHandler extends RequestHandler {
 
   private volatile String secureBaseUrl;
 
-  public BaseUrlRequestHandler(Context context) {
+  public BaseUrlRequestHandler(Context context, ConfigurationService configurationService) {
     this.context = context;
-
-    Injector.obtain().inject(this);
-
+    this.configurationService = configurationService;
     settings = PreferenceManager.getDefaultSharedPreferences(context);
   }
 

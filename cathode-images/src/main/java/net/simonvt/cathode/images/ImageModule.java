@@ -22,10 +22,21 @@ import android.os.StatFs;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Downloader;
 import com.squareup.picasso.Picasso;
+import com.uwetrottmann.tmdb2.services.ConfigurationService;
+import com.uwetrottmann.tmdb2.services.MoviesService;
+import com.uwetrottmann.tmdb2.services.PeopleService;
+import com.uwetrottmann.tmdb2.services.TvEpisodesService;
+import com.uwetrottmann.tmdb2.services.TvSeasonsService;
+import com.uwetrottmann.tmdb2.services.TvShowService;
 import dagger.Module;
 import dagger.Provides;
 import java.io.File;
 import javax.inject.Singleton;
+import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
+import net.simonvt.cathode.provider.MovieDatabaseHelper;
+import net.simonvt.cathode.provider.PersonDatabaseHelper;
+import net.simonvt.cathode.provider.SeasonDatabaseHelper;
+import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import okhttp3.OkHttpClient;
 import timber.log.Timber;
 
@@ -63,22 +74,18 @@ import timber.log.Timber;
     return new OkHttpClient.Builder().cache(new okhttp3.Cache(cacheDir, maxSize)).build();
   }
 
-  @Provides @Singleton Picasso providePicasso(Context context) {
-    final File cacheDir = createCacheDir(context);
-    final long cacheSize = calculateDiskCacheSize(cacheDir);
-    OkHttpClient okClient = defaultOkHttpClient(cacheDir, cacheSize);
-
-    Downloader downloader = new OkHttp3Downloader(okClient);
-    ImageDownloader imageDownloader = new ImageDownloader(okClient);
-
+  @Provides @Singleton Picasso providePicasso(Context context, Downloader downloader,
+      ImageRequestHandler imageRequestHandler, ShowRequestHandler showRequestHandler,
+      SeasonRequestHandler seasonRequestHandler, EpisodeRequestHandler episodeRequestHandler,
+      MovieRequestHandler movieRequestHandler, PersonRequestHandler personRequestHandler) {
     Picasso.Builder builder =
         new Picasso.Builder(context).requestTransformer(new ImageRequestTransformer(context))
-            .addRequestHandler(new ImageRequestHandler(context, downloader))
-            .addRequestHandler(new ShowRequestHandler(context, imageDownloader))
-            .addRequestHandler(new SeasonRequestHandler(context, imageDownloader))
-            .addRequestHandler(new EpisodeRequestHandler(context, imageDownloader))
-            .addRequestHandler(new MovieRequestHandler(context, imageDownloader))
-            .addRequestHandler(new PersonRequestHandler(context, imageDownloader))
+            .addRequestHandler(imageRequestHandler)
+            .addRequestHandler(showRequestHandler)
+            .addRequestHandler(seasonRequestHandler)
+            .addRequestHandler(episodeRequestHandler)
+            .addRequestHandler(movieRequestHandler)
+            .addRequestHandler(personRequestHandler)
             .downloader(downloader);
 
     if (BuildConfig.DEBUG) {
@@ -90,5 +97,61 @@ import timber.log.Timber;
     }
 
     return builder.build();
+  }
+
+  @Provides @Singleton @Images OkHttpClient provideOkHttpClient(Context context) {
+    final File cacheDir = createCacheDir(context);
+    final long cacheSize = calculateDiskCacheSize(cacheDir);
+    return defaultOkHttpClient(cacheDir, cacheSize);
+  }
+
+  @Provides @Singleton Downloader provideDownloader(@Images OkHttpClient okClient) {
+    return new OkHttp3Downloader(okClient);
+  }
+
+  @Provides @Singleton ImageDownloader provideImageDownloader(@Images OkHttpClient okClient) {
+    return new ImageDownloader(okClient);
+  }
+
+  @Provides @Singleton ImageRequestHandler provideImageRequestHandler(Context context,
+      ConfigurationService configurationService, Downloader downloader) {
+    return new ImageRequestHandler(context, configurationService, downloader);
+  }
+
+  @Provides @Singleton ShowRequestHandler provideShowRequestHandler(Context context,
+      ConfigurationService configurationService, ImageDownloader downloader,
+      TvShowService tvShowService, ShowDatabaseHelper showHelper) {
+    return new ShowRequestHandler(context, configurationService, downloader, tvShowService,
+        showHelper);
+  }
+
+  @Provides @Singleton SeasonRequestHandler provideSeasonRequestHandler(Context context,
+      ConfigurationService configurationService, ImageDownloader downloader,
+      TvSeasonsService tvSeasonService, ShowDatabaseHelper showHelper,
+      SeasonDatabaseHelper seasonHelper) {
+    return new SeasonRequestHandler(context, configurationService, downloader, tvSeasonService,
+        showHelper, seasonHelper);
+  }
+
+  @Provides @Singleton EpisodeRequestHandler provideEpisodeRequestHandler(Context context,
+      ConfigurationService configurationService, ImageDownloader downloader,
+      TvEpisodesService tvEpisodeService, ShowDatabaseHelper showHelper,
+      EpisodeDatabaseHelper episodeHelper) {
+    return new EpisodeRequestHandler(context, configurationService, downloader, tvEpisodeService,
+        showHelper, episodeHelper);
+  }
+
+  @Provides @Singleton MovieRequestHandler provideMovieRequestHandler(Context context,
+      ConfigurationService configurationService, ImageDownloader downloader,
+      MoviesService moviesService, MovieDatabaseHelper movieHelper) {
+    return new MovieRequestHandler(context, configurationService, downloader, moviesService,
+        movieHelper);
+  }
+
+  @Provides @Singleton PersonRequestHandler providePersonRequestHandler(Context context,
+      ConfigurationService configurationService, ImageDownloader downloader,
+      PeopleService peopleService, PersonDatabaseHelper personHelper) {
+    return new PersonRequestHandler(context, configurationService, downloader, peopleService,
+        personHelper);
   }
 }

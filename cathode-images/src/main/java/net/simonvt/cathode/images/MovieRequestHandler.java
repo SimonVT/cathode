@@ -19,13 +19,11 @@ package net.simonvt.cathode.images;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.text.TextUtils;
-import android.text.format.DateUtils;
 import com.squareup.picasso.Request;
 import com.uwetrottmann.tmdb2.entities.Movie;
+import com.uwetrottmann.tmdb2.services.ConfigurationService;
 import com.uwetrottmann.tmdb2.services.MoviesService;
 import java.io.IOException;
-import javax.inject.Inject;
 import net.simonvt.cathode.common.tmdb.TmdbRateLimiter;
 import net.simonvt.cathode.common.util.Closeables;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -36,12 +34,14 @@ import retrofit2.Response;
 
 public class MovieRequestHandler extends ItemRequestHandler {
 
-  @Inject MoviesService moviesService;
+  private MoviesService moviesService;
+  private MovieDatabaseHelper movieHelper;
 
-  @Inject MovieDatabaseHelper movieHelper;
-
-  public MovieRequestHandler(Context context, ImageDownloader downloader) {
-    super(context, downloader);
+  public MovieRequestHandler(Context context, ConfigurationService configurationService,
+      ImageDownloader downloader, MoviesService moviesService, MovieDatabaseHelper movieHelper) {
+    super(context, configurationService, downloader);
+    this.moviesService = moviesService;
+    this.movieHelper = movieHelper;
   }
 
   @Override public boolean canHandleRequest(Request data) {
@@ -50,6 +50,16 @@ public class MovieRequestHandler extends ItemRequestHandler {
 
   @Override protected int getTmdbId(long id) {
     return movieHelper.getTmdbId(id);
+  }
+
+  @Override public long getLastCacheUpdate(long id) {
+    Cursor c = context.getContentResolver().query(Movies.withId(id), new String[] {
+        MovieColumns.IMAGES_LAST_UPDATE,
+    }, null, null, null);
+    c.moveToFirst();
+    final long lastUpdate = Cursors.getLong(c, MovieColumns.IMAGES_LAST_UPDATE);
+    c.close();
+    return lastUpdate;
   }
 
   @Override protected String getCachedPath(ImageType imageType, long id) {
@@ -61,28 +71,16 @@ public class MovieRequestHandler extends ItemRequestHandler {
       }, null, null, null);
       c.moveToFirst();
 
-      final long lastUpdate = Cursors.getLong(c, MovieColumns.IMAGES_LAST_UPDATE);
-      final boolean needsUpdate =
-          lastUpdate + DateUtils.WEEK_IN_MILLIS < System.currentTimeMillis();
-
       if (imageType == ImageType.POSTER) {
-        String posterPath = Cursors.getString(c, MovieColumns.POSTER);
-        if (!needsUpdate && !TextUtils.isEmpty(posterPath)) {
-          return posterPath;
-        }
+        return Cursors.getString(c, MovieColumns.POSTER);
       } else if (imageType == ImageType.BACKDROP) {
-        String backdropPath = Cursors.getString(c, MovieColumns.BACKDROP);
-        if (!needsUpdate && !TextUtils.isEmpty(backdropPath)) {
-          return backdropPath;
-        }
+        return Cursors.getString(c, MovieColumns.BACKDROP);
       } else {
         throw new IllegalArgumentException("Unsupported image type: " + imageType.toString());
       }
     } finally {
       Closeables.closeQuietly(c);
     }
-
-    return null;
   }
 
   protected void clearCachedPaths(long id) {
@@ -93,38 +91,31 @@ public class MovieRequestHandler extends ItemRequestHandler {
     context.getContentResolver().update(Movies.withId(id), values, null, null);
   }
 
-  @Override protected String queryPath(ImageType imageType, long id, int tmdbId)
+  @Override protected boolean updateCache(ImageType imageType, long id, int tmdbId)
       throws IOException {
-    String path = null;
-
     TmdbRateLimiter.acquire();
     Response<Movie> response = moviesService.summary(tmdbId, "en").execute();
 
     if (response.isSuccessful()) {
       Movie movie = response.body();
-      path = retainImages(context, imageType, id, movie);
+      retainImages(context, imageType, id, movie);
+      return true;
     }
 
-    return path;
+    return false;
   }
 
   public static void retainImages(Context context, long id, Movie movie) {
     retainImages(context, null, id, movie);
   }
 
-  private static String retainImages(Context context, ImageType imageType, long id, Movie movie) {
+  private static void retainImages(Context context, ImageType imageType, long id, Movie movie) {
     ContentValues values = new ContentValues();
     values.put(MovieColumns.IMAGES_LAST_UPDATE, System.currentTimeMillis());
-
-    String path = null;
 
     if (movie.backdrop_path != null) {
       final String backdropPath = ImageUri.create(ImageType.BACKDROP, movie.backdrop_path);
       values.put(MovieColumns.BACKDROP, backdropPath);
-
-      if (imageType == ImageType.BACKDROP) {
-        path = backdropPath;
-      }
     } else {
       values.putNull(MovieColumns.BACKDROP);
     }
@@ -132,16 +123,10 @@ public class MovieRequestHandler extends ItemRequestHandler {
     if (movie.poster_path != null) {
       final String posterPath = ImageUri.create(ImageType.POSTER, movie.poster_path);
       values.put(MovieColumns.POSTER, posterPath);
-
-      if (imageType == ImageType.POSTER) {
-        path = posterPath;
-      }
     } else {
       values.putNull(MovieColumns.POSTER);
     }
 
     context.getContentResolver().update(Movies.withId(id), values, null, null);
-
-    return path;
   }
 }
