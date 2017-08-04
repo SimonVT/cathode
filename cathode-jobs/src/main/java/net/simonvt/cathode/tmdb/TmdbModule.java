@@ -31,18 +31,14 @@ import com.uwetrottmann.tmdb2.services.TvShowService;
 import dagger.Module;
 import dagger.Provides;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Singleton;
 import okhttp3.Cache;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 
 @Module(library = true, complete = false) public class TmdbModule {
 
-  @Provides @Singleton @Tmdb OkHttpClient.Builder okBuilder(Context context,
-      @Tmdb List<Interceptor> interceptors) {
+  @Provides @Singleton @Tmdb OkHttpClient.Builder okBuilder(Context context) {
     OkHttpClient.Builder builder = new OkHttpClient.Builder();
     builder.connectTimeout(15, TimeUnit.SECONDS);
     builder.readTimeout(20, TimeUnit.SECONDS);
@@ -50,16 +46,9 @@ import okhttp3.OkHttpClient;
     final File cacheDir = OkHttpUtils.getCacheDir(context);
     builder.cache(new Cache(cacheDir, OkHttpUtils.getCacheSize(cacheDir)));
 
-    builder.interceptors().addAll(interceptors);
     builder.networkInterceptors().add(new ImageLanguageInterceptor());
 
     return builder;
-  }
-
-  @Provides @Tmdb List<Interceptor> provideInterceptors() {
-    List<Interceptor> interceptors = new ArrayList<>();
-    // TODO:
-    return interceptors;
   }
 
   @Provides @Singleton TmdbSettings tmdbSettings(@TmdbApiKey String apiKey,

@@ -27,6 +27,9 @@ import net.simonvt.cathode.IntPreference;
 import net.simonvt.cathode.api.Trakt;
 import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.remote.InitialSyncJob;
+import net.simonvt.cathode.tmdb.Tmdb;
+import net.simonvt.cathode.tmdb.TmdbApiKey;
+import net.simonvt.cathode.tmdb.TmdbSettings;
 import net.simonvt.cathode.ui.BaseActivity;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -36,15 +39,11 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
-@Module(
-    addsTo = AppModule.class,
-    overrides = true,
+@Module(addsTo = AppModule.class, overrides = true,
 
     injects = {
         BaseActivity.DebugInjects.class, InitialSyncJob.class
-    }
-)
-public class DebugModule {
+    }) public class DebugModule {
 
   private Context context;
 
@@ -82,5 +81,11 @@ public class DebugModule {
   @Provides @Singleton @HttpStatusCode IntPreference provideHttpStatusCodePreference() {
     return new IntPreference(PreferenceManager.getDefaultSharedPreferences(context),
         "debug_httpStatusCode", 200);
+  }
+
+  @Provides @Singleton TmdbSettings tmdbSettings(@TmdbApiKey String apiKey,
+      @Tmdb OkHttpClient.Builder okBuilder, HttpLoggingInterceptor httpLoggingInterceptor) {
+    okBuilder.interceptors().add(httpLoggingInterceptor);
+    return new TmdbSettings(apiKey, okBuilder);
   }
 }
