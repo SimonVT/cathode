@@ -20,6 +20,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -291,7 +292,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
     overview.setText(showOverview);
 
     DividerItemDecoration decoration = new DividerItemDecoration(getActivity(), LinearLayoutManager.HORIZONTAL);
-    decoration.setDrawable(getContext().getDrawable(R.drawable.divider_4dp));
+    decoration.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.divider_4dp));
     seasons.addItemDecoration(decoration);
     seasons.setLayoutManager(
         new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
