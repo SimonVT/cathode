@@ -16,27 +16,22 @@
 
 package net.simonvt.cathode.remote.action.movies;
 
-import android.content.ContentValues;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.HiddenItems;
 import net.simonvt.cathode.api.entity.HideResponse;
 import net.simonvt.cathode.api.enumeration.HiddenSection;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.jobqueue.JobPriority;
-import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.MovieDatabaseHelper;
-import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 
 public class CalendarHideMovie extends CallJob<HideResponse> {
 
   @Inject transient UsersService usersService;
-  @Inject transient MovieDatabaseHelper movieHelper;
 
   private long traktId;
-
   private boolean hidden;
 
   public CalendarHideMovie(long traktId, boolean hidden) {
@@ -69,10 +64,7 @@ public class CalendarHideMovie extends CallJob<HideResponse> {
   }
 
   @Override public boolean handleResponse(HideResponse response) {
-    final long movieId = movieHelper.getId(traktId);
-    ContentValues values = new ContentValues();
-    values.put(MovieColumns.HIDDEN_CALENDAR, hidden);
-    getContentResolver().update(Movies.withId(movieId), values, null, null);
+    queue(new SyncUserActivity());
     return true;
   }
 }

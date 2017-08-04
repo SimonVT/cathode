@@ -22,6 +22,7 @@ import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 
 public class RemoveHistoryItem extends CallJob<SyncResponse> {
@@ -49,6 +50,7 @@ public class RemoveHistoryItem extends CallJob<SyncResponse> {
   }
 
   @Override public boolean handleResponse(SyncResponse response) {
+    queue(new SyncUserActivity());
     return true;
   }
 }

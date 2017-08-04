@@ -16,8 +16,6 @@
 
 package net.simonvt.cathode.remote.action.comments;
 
-import android.content.ContentValues;
-import android.database.Cursor;
 import java.io.IOException;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.CommentBody;
@@ -26,24 +24,18 @@ import net.simonvt.cathode.api.service.CommentsService;
 import net.simonvt.cathode.common.event.RequestFailedEvent;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.jobs.R;
-import net.simonvt.cathode.provider.CommentsHelper;
-import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
-import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.schematic.Cursors;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 import retrofit2.Response;
-import timber.log.Timber;
 
 public class CommentReplyJob extends CallJob<Comment> {
 
   @Inject transient CommentsService commentsService;
 
   private long parentId;
-
   private String comment;
-
   private Boolean spoiler;
 
   public CommentReplyJob(long parentId, String comment, boolean spoiler) {
@@ -85,27 +77,7 @@ public class CommentReplyJob extends CallJob<Comment> {
   }
 
   @Override public boolean handleResponse(Comment comment) {
-    ContentValues values = CommentsHelper.getValues(comment);
-    values.put(CommentColumns.IS_USER_COMMENT, true);
-
-    int itemType;
-    long itemId;
-    Cursor c = getContentResolver().query(Comments.withId(parentId), new String[] {
-        CommentColumns.ITEM_TYPE, CommentColumns.ITEM_ID
-    }, null, null, null);
-    if (c.moveToFirst()) {
-      itemType = Cursors.getInt(c, CommentColumns.ITEM_TYPE);
-      itemId = Cursors.getLong(c, CommentColumns.ITEM_ID);
-    } else {
-      Timber.e(new RuntimeException(), "Comment parent not found");
-      return true;
-    }
-    c.close();
-
-    values.put(CommentColumns.ITEM_TYPE, itemType);
-    values.put(CommentColumns.ITEM_ID, itemId);
-    getContentResolver().insert(Comments.COMMENTS, values);
-
+    queue(new SyncUserActivity());
     return true;
   }
 }

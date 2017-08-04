@@ -23,6 +23,7 @@ import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 
 public class RemoveSeason extends CallJob<ListItemActionResponse> {
@@ -30,9 +31,7 @@ public class RemoveSeason extends CallJob<ListItemActionResponse> {
   @Inject transient UsersService usersService;
 
   private long listId;
-
   private long showTraktId;
-
   private int seasonNumber;
 
   public RemoveSeason(long listId, long showTraktId, int seasonNumber) {
@@ -66,6 +65,7 @@ public class RemoveSeason extends CallJob<ListItemActionResponse> {
   }
 
   @Override public boolean handleResponse(ListItemActionResponse response) {
+    queue(new SyncUserActivity());
     return true;
   }
 }

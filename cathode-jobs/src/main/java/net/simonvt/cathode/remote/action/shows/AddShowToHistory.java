@@ -19,21 +19,17 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.jobqueue.JobPriority;
-import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 
 public class AddShowToHistory extends CallJob<SyncResponse> {
 
   @Inject transient SyncService syncService;
 
-  @Inject transient ShowDatabaseHelper showHelper;
-
   private long traktId;
-
   private String watchedAt;
 
   public AddShowToHistory(long traktId, String watchedAt) {
@@ -61,14 +57,7 @@ public class AddShowToHistory extends CallJob<SyncResponse> {
   }
 
   @Override public boolean handleResponse(SyncResponse response) {
-    final long showId = showHelper.getId(traktId);
-
-    if (SyncItems.TIME_RELEASED.equals(watchedAt)) {
-      showHelper.addToHistory(showId, ShowDatabaseHelper.WATCHED_RELEASE);
-    } else {
-      showHelper.addToHistory(showId, TimeUtils.getMillis(watchedAt));
-    }
-
+    queue(new SyncUserActivity());
     return true;
   }
 }

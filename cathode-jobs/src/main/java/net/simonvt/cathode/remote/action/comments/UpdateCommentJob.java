@@ -16,7 +16,6 @@
 
 package net.simonvt.cathode.remote.action.comments;
 
-import android.content.ContentValues;
 import java.io.IOException;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.CommentBody;
@@ -25,10 +24,9 @@ import net.simonvt.cathode.api.service.CommentsService;
 import net.simonvt.cathode.common.event.RequestFailedEvent;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.jobs.R;
-import net.simonvt.cathode.provider.CommentsHelper;
-import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -37,9 +35,7 @@ public class UpdateCommentJob extends CallJob<Comment> {
   @Inject transient CommentsService commentsService;
 
   private long commentId;
-
   private String comment;
-
   private Boolean spoiler;
 
   public UpdateCommentJob(long commentId, String comment, boolean spoiler) {
@@ -86,8 +82,7 @@ public class UpdateCommentJob extends CallJob<Comment> {
   }
 
   @Override public boolean handleResponse(Comment comment) {
-    ContentValues values = CommentsHelper.getValues(comment);
-    getContentResolver().update(Comments.withId(commentId), values, null, null);
+    queue(new SyncUserActivity());
     return true;
   }
 }

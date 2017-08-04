@@ -23,6 +23,7 @@ import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 
 public class AddMovie extends CallJob<ListItemActionResponse> {
@@ -30,7 +31,6 @@ public class AddMovie extends CallJob<ListItemActionResponse> {
   @Inject transient UsersService usersService;
 
   private long listId;
-
   private long traktId;
 
   public AddMovie(long listId, long traktId) {
@@ -58,6 +58,7 @@ public class AddMovie extends CallJob<ListItemActionResponse> {
   }
 
   @Override public boolean handleResponse(ListItemActionResponse response) {
+    queue(new SyncUserActivity());
     return true;
   }
 }

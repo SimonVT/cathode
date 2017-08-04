@@ -21,23 +21,17 @@ import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.jobqueue.JobPriority;
-import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
-import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 
 public class RemoveEpisodeFromHistory extends CallJob<SyncResponse> {
 
   @Inject transient SyncService syncService;
 
-  @Inject transient ShowDatabaseHelper showHelper;
-  @Inject transient EpisodeDatabaseHelper episodeHelper;
-
   private long traktId;
-
   private int season;
-
   private int episode;
 
   public RemoveEpisodeFromHistory(long traktId, int season, int episode) {
@@ -72,9 +66,7 @@ public class RemoveEpisodeFromHistory extends CallJob<SyncResponse> {
   }
 
   @Override public boolean handleResponse(SyncResponse response) {
-    final long showId = showHelper.getId(traktId);
-    final long episodeId = episodeHelper.getId(showId, season, episode);
-    episodeHelper.removeFromHistory(episodeId);
+    queue(new SyncUserActivity());
     return true;
   }
 }

@@ -19,23 +19,18 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.jobqueue.JobPriority;
-import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 
 public class CollectMovie extends CallJob<SyncResponse> {
 
   @Inject transient SyncService syncService;
 
-  @Inject transient MovieDatabaseHelper movieHelper;
-
   private long traktId;
-
   private boolean collected;
-
   private String collectedAt;
 
   public CollectMovie(long traktId, boolean collected, String collectedAt) {
@@ -75,8 +70,7 @@ public class CollectMovie extends CallJob<SyncResponse> {
   }
 
   @Override public boolean handleResponse(SyncResponse response) {
-    final long movieId = movieHelper.getId(traktId);
-    movieHelper.setIsInCollection(movieId, collected, TimeUtils.getMillis(collectedAt));
+    queue(new SyncUserActivity());
     return true;
   }
 }

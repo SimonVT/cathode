@@ -20,22 +20,17 @@ import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.jobqueue.JobPriority;
-import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchlist;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 
 public class WatchlistMovie extends CallJob<SyncResponse> {
 
   @Inject transient SyncService syncService;
 
-  @Inject transient MovieDatabaseHelper movieHelper;
-
   private long traktId;
-
   private boolean inWatchlist;
-
   private String listedAt;
 
   public WatchlistMovie(long traktId, boolean inWatchlist, String listedAt) {
@@ -75,7 +70,7 @@ public class WatchlistMovie extends CallJob<SyncResponse> {
   }
 
   @Override public boolean handleResponse(SyncResponse response) {
-    queue(new SyncMoviesWatchlist());
+    queue(new SyncUserActivity());
     return true;
   }
 }

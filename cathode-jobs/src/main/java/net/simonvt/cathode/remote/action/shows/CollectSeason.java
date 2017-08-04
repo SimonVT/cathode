@@ -19,25 +19,19 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.jobqueue.JobPriority;
-import net.simonvt.cathode.provider.SeasonDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 
 public class CollectSeason extends CallJob<SyncResponse> {
 
   @Inject transient SyncService syncService;
 
-  @Inject transient SeasonDatabaseHelper seasonHelper;
-
   private long traktId;
-
   private int season;
-
   private boolean inCollection;
-
   private String collectedAt;
 
   public CollectSeason(long traktId, int season, boolean inCollection, String collectedAt) {
@@ -81,7 +75,7 @@ public class CollectSeason extends CallJob<SyncResponse> {
   }
 
   @Override public boolean handleResponse(SyncResponse response) {
-    seasonHelper.setIsInCollection(traktId, season, inCollection, TimeUtils.getMillis(collectedAt));
+    queue(new SyncUserActivity());
     return true;
   }
 }

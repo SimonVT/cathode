@@ -20,26 +20,19 @@ import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.jobqueue.JobPriority;
-import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 
 public class WatchlistEpisode extends CallJob<SyncResponse> {
 
   @Inject transient SyncService syncService;
 
-  @Inject transient EpisodeDatabaseHelper episodeHelper;
-
   private long traktId;
-
   private int season;
-
   private int episode;
-
   private boolean inWatchlist;
-
   private String listedAt;
 
   public WatchlistEpisode(long traktId, int season, int episode, boolean inWatchlist,
@@ -87,7 +80,7 @@ public class WatchlistEpisode extends CallJob<SyncResponse> {
   }
 
   @Override public boolean handleResponse(SyncResponse response) {
-    queue(new SyncEpisodeWatchlist());
+    queue(new SyncUserActivity());
     return true;
   }
 }

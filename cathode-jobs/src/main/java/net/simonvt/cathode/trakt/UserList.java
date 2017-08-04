@@ -24,8 +24,10 @@ import net.simonvt.cathode.api.entity.CustomList;
 import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.common.event.ErrorEvent;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.jobs.R;
 import net.simonvt.cathode.provider.ListWrapper;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -35,6 +37,7 @@ public class UserList {
 
   @Inject Context context;
   @Inject UsersService usersServie;
+  @Inject JobManager jobManager;
 
   public UserList() {
     Injector.obtain().inject(this);
@@ -52,6 +55,7 @@ public class UserList {
       if (response.isSuccessful()) {
         CustomList userList = response.body();
         ListWrapper.updateOrInsert(context.getContentResolver(), userList);
+        jobManager.addJob(new SyncUserActivity());
         return true;
       }
     } catch (IOException e) {
@@ -74,6 +78,7 @@ public class UserList {
       if (response.isSuccessful()) {
         CustomList userList = response.body();
         ListWrapper.updateOrInsert(context.getContentResolver(), userList);
+        jobManager.addJob(new SyncUserActivity());
         return true;
       }
     } catch (IOException e) {
@@ -90,6 +95,7 @@ public class UserList {
       Response<ResponseBody> response = call.execute();
       if (response.isSuccessful()) {
         ResponseBody body = response.body();
+        jobManager.addJob(new SyncUserActivity());
         return true;
       }
     } catch (IOException e) {

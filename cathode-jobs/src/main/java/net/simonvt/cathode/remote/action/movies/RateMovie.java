@@ -22,6 +22,7 @@ import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 
 public class RateMovie extends CallJob<SyncResponse> {
@@ -29,10 +30,8 @@ public class RateMovie extends CallJob<SyncResponse> {
   @Inject transient SyncService syncService;
 
   private long traktId;
-
   private int rating;
-
-  String ratedAt;
+  private String ratedAt;
 
   public RateMovie(long traktId, int rating, String ratedAt) {
     super(Flags.REQUIRES_AUTH);
@@ -60,6 +59,7 @@ public class RateMovie extends CallJob<SyncResponse> {
   }
 
   @Override public boolean handleResponse(SyncResponse response) {
+    queue(new SyncUserActivity());
     return true;
   }
 }
