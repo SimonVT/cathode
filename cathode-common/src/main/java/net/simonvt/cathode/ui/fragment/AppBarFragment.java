@@ -49,6 +49,7 @@ public abstract class AppBarFragment extends BaseFragment {
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
     appBarLayout = Views.findRequired(view, R.id.appBarLayout);
+    appBarLayout.setTitle(title);
     backdrop = Views.findRequired(view, R.id.backdrop);
     backdrop.setImage(backdropUri);
   }
