@@ -59,6 +59,10 @@ import timber.log.Timber;
     Jobs.scheduleNotPending(context, jobInfo);
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public static void cancel(Context context) {
+    Jobs.cancel(context, ID);
+  }
+
   public AuthJobHandlerJob(SchedulerService service, JobParameters params) {
     this.service = service;
     this.params = params;

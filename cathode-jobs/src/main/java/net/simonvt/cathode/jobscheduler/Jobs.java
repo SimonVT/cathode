@@ -52,6 +52,12 @@ public final class Jobs {
   }
 
   @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+  public static void cancel(Context context, int jobId) {
+    JobScheduler scheduler = getScheduler(context);
+    scheduler.cancel(jobId);
+  }
+
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public static JobInfo getPendingJob(Context context, int jobId) {
     JobScheduler scheduler = getScheduler(context);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

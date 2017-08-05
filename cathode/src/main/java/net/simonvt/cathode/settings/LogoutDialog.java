@@ -18,7 +18,6 @@ package net.simonvt.cathode.settings;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,8 +26,11 @@ import javax.inject.Inject;
 import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobqueue.JobManager;
+import net.simonvt.cathode.jobscheduler.AuthJobHandlerJob;
+import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.LogoutJob;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.settings.login.LoginActivity;
 
 public class LogoutDialog extends DialogFragment {
@@ -40,7 +42,6 @@ public class LogoutDialog extends DialogFragment {
         .setMessage(R.string.logout_message)
         .setPositiveButton(R.string.logout_button, new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
-            final Context context = getActivity().getApplicationContext();
             Injector.obtain().inject(LogoutDialog.this);
 
             PreferenceManager.getDefaultSharedPreferences(getActivity())
@@ -54,6 +55,11 @@ public class LogoutDialog extends DialogFragment {
 
             jobManager.addJob(new LogoutJob());
             jobManager.removeJobsWithFlag(Flags.REQUIRES_AUTH);
+
+            if (Jobs.usesScheduler()) {
+              AuthJobHandlerJob.cancel(getActivity());
+              SyncUserActivity.cancel(getActivity());
+            }
 
             Intent login = new Intent(getActivity(), LoginActivity.class);
             login.putExtra(LoginActivity.EXTRA_TASK, LoginActivity.TASK_LOGIN);

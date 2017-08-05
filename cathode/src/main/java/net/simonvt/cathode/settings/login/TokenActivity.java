@@ -31,7 +31,10 @@ import net.simonvt.cathode.api.TraktSettings;
 import net.simonvt.cathode.api.entity.AccessToken;
 import net.simonvt.cathode.api.entity.UserSettings;
 import net.simonvt.cathode.jobqueue.JobManager;
+import net.simonvt.cathode.jobscheduler.AuthJobHandlerJob;
+import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.remote.sync.SyncJob;
+import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.TraktLinkSettings;
@@ -105,6 +108,10 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
     Accounts.setupAccount(this);
 
     jobManager.addJob(new SyncJob());
+    if (Jobs.usesScheduler()) {
+      AuthJobHandlerJob.schedulePeriodic(this);
+      SyncUserActivity.schedulePeriodic(this);
+    }
 
     if (wasLinked) {
       Intent home = new Intent(this, HomeActivity.class);

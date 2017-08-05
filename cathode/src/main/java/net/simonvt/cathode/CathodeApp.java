@@ -126,9 +126,14 @@ public class CathodeApp extends Application {
     if (Jobs.usesScheduler()) {
       SyncUpdatedShows.schedulePeriodic(this);
       SyncUpdatedMovies.schedulePeriodic(this);
-      SyncUserActivity.schedulePeriodic(this);
-      AuthJobHandlerJob.schedulePeriodic(this);
       DataJobHandlerJob.schedulePeriodic(this);
+      if (TraktLinkSettings.isLinked(this)) {
+        AuthJobHandlerJob.schedulePeriodic(this);
+        SyncUserActivity.schedulePeriodic(this);
+      } else {
+        AuthJobHandlerJob.cancel(this);
+        SyncUserActivity.cancel(this);
+      }
     }
   }
 

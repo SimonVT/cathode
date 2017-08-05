@@ -64,6 +64,10 @@ public class SyncUserActivity extends CallJob<LastActivity> {
     Jobs.scheduleNotPending(context, jobInfo);
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public static void cancel(Context context) {
+    Jobs.cancel(context, ID);
+  }
+
   public SyncUserActivity() {
     super(Flags.REQUIRES_AUTH);
   }
