@@ -118,16 +118,16 @@ public class ListsDialog extends DialogFragment {
 
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
-    return inflater.inflate(R.layout.dialog_lists, container, false);
+    View view = inflater.inflate(R.layout.dialog_lists, container, false);
+    LinearLayout listsContainer = (LinearLayout) view.findViewById(R.id.container);
+    loading = inflater.inflate(R.layout.dialog_lists_loading, listsContainer, false);
+    empty = inflater.inflate(R.layout.dialog_lists_empty, listsContainer, false);
+    return view;
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle inState) {
     super.onViewCreated(view, inState);
     unbinder = ButterKnife.bind(this, view);
-
-    loading = getLayoutInflater(inState).inflate(R.layout.dialog_lists_loading, container, false);
-    empty = getLayoutInflater(inState).inflate(R.layout.dialog_lists_empty, container, false);
-
     updateList();
   }
 
@@ -251,8 +251,8 @@ public class ListsDialog extends DialogFragment {
   private LoaderManager.LoaderCallbacks<SimpleCursor> listsLoader =
       new LoaderManager.LoaderCallbacks<SimpleCursor>() {
         @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle bundle) {
-          return new SimpleCursorLoader(getActivity(), Lists.LISTS,
-              LISTS_PROJECTION, null, null, null);
+          return new SimpleCursorLoader(getActivity(), Lists.LISTS, LISTS_PROJECTION, null, null,
+              null);
         }
 
         @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
