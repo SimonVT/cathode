@@ -81,6 +81,13 @@ public class JobExecutor {
     }
   }
 
+  public void unhalt() {
+    synchronized (lock) {
+      halt = false;
+      startJobs();
+    }
+  }
+
   public boolean hasJobs() {
     synchronized (lock) {
       if (runningJobCount > 0) {

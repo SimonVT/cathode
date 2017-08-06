@@ -88,21 +88,13 @@ import timber.log.Timber;
     @Override public void onQueueEmpty() {
       Timber.d("[jobFinished][success] %d", params.getJobId());
       service.jobFinished(params, false);
-      MainHandler.post(new Runnable() {
-        @Override public void run() {
-          jobHandler.unregisterListener(listener);
-        }
-      });
+      jobHandler.unregisterListener(listener);
     }
 
     @Override public void onQueueFailed() {
       Timber.d("[jobFinished][failure] %d", params.getJobId());
       service.jobFinished(params, true);
-      MainHandler.post(new Runnable() {
-        @Override public void run() {
-          jobHandler.unregisterListener(listener);
-        }
-      });
+      jobHandler.unregisterListener(listener);
     }
   };
 }

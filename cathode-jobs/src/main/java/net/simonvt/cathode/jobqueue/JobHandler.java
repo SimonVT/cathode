@@ -35,7 +35,7 @@ public class JobHandler {
   /**
    * Execution is restarted after this delay on failure.
    */
-  private static final long FAILURE_DELAY = DateUtils.MINUTE_IN_MILLIS;
+  private static final long FAILURE_DELAY = 30 * DateUtils.SECOND_IN_MILLIS;
 
   public interface JobHandlerListener {
 
@@ -49,14 +49,14 @@ public class JobHandler {
 
   private JobExecutor executor;
 
-  private List<JobHandlerListener> listeners = new ArrayList<>();
+  private final List<JobHandlerListener> listeners = new ArrayList<>();
 
-  private boolean running = false;
+  private boolean started = false;
+  private boolean resumed = false;
 
   public JobHandler(int withFlags, int withoutFlags, int threadCount) {
     Injector.obtain().inject(this);
     executor = new JobExecutor(jobManager, executorListener, threadCount, withFlags, withoutFlags);
-    executor.start();
   }
 
   private JobExecutor.JobExecutorListener executorListener = new JobExecutor.JobExecutorListener() {
@@ -74,7 +74,11 @@ public class JobHandler {
     @Override public void onQueueFailed() {
       Timber.d("%s queue failed", getClass().getSimpleName());
       pause();
-      MainHandler.postDelayed(resumeRunnable, FAILURE_DELAY);
+      MainHandler.postDelayed(new Runnable() {
+        @Override public void run() {
+          executor.unhalt();
+        }
+      }, FAILURE_DELAY);
       dispatchQueueFailed();
     }
   };
@@ -84,51 +88,52 @@ public class JobHandler {
   }
 
   private void dispatchQueueEmpty() {
-    for (JobHandlerListener listener : listeners) {
-      listener.onQueueEmpty();
+    synchronized (listeners) {
+      for (int i = listeners.size() - 1; i >= 0; i--) {
+        JobHandlerListener listener = listeners.get(i);
+        listener.onQueueEmpty();
+      }
     }
   }
 
   private void dispatchQueueFailed() {
-    for (JobHandlerListener listener : listeners) {
-      listener.onQueueFailed();
+    synchronized (listeners) {
+      for (int i = listeners.size() - 1; i >= 0; i--) {
+        JobHandlerListener listener = listeners.get(i);
+        listener.onQueueFailed();
+      }
     }
   }
 
   private void start() {
-    Timber.d("[start]");
-    executor.start();
-    onStart();
-  }
-
-  private void resume() {
-    Timber.d("[resume] %b", running);
-    if (!running) {
-      running = true;
-      MainHandler.removeCallbacks(resumeRunnable);
-      MainHandler.removeCallbacks(stopRunnable);
-      onResume();
-    }
-  }
-
-  private void pause() {
-    Timber.d("[pause] %b", running);
-    if (running) {
-      running = false;
-      MainHandler.removeCallbacks(resumeRunnable);
-      MainHandler.removeCallbacks(stopRunnable);
-      onPause();
+    Timber.d("[start] %b", started);
+    if (!started) {
+      started = true;
+      executor.start();
     }
   }
 
   private void stop() {
     Timber.d("[stop]");
-    executor.stop();
-    pause();
-    onStop();
+    if (started) {
+      started = false;
+      executor.stop();
+      onStop();
+    }
   }
 
-  protected void onStart() {
+  private void resume() {
+    if (!resumed) {
+      resumed = true;
+      onResume();
+    }
+  }
+
+  private void pause() {
+    if (resumed) {
+      resumed = false;
+      onPause();
+    }
   }
 
   protected void onResume() {
@@ -141,33 +146,26 @@ public class JobHandler {
   }
 
   public void registerListener(JobHandlerListener listener) {
-    listeners.add(listener);
-    MainHandler.removeCallbacks(resumeRunnable);
-    MainHandler.removeCallbacks(stopRunnable);
-    if (listeners.size() == 1) {
+    synchronized (listeners) {
+      listeners.add(listener);
+      MainHandler.removeCallbacks(stopRunnable);
       start();
+      Timber.d("%d listeners, resuming", listeners.size());
     }
-
-    Timber.d("%d listeners, resuming", listeners.size());
   }
 
   public void unregisterListener(JobHandlerListener listener) {
-    listeners.remove(listener);
+    synchronized (listeners) {
+      listeners.remove(listener);
 
-    if (listeners.isEmpty()) {
-      Timber.d("No more listeners, posting stop");
-      MainHandler.postDelayed(stopRunnable, STOP_DELAY);
-    } else {
-      Timber.d("%d listeners", listeners.size());
+      if (listeners.isEmpty()) {
+        Timber.d("No more listeners, posting stop");
+        MainHandler.postDelayed(stopRunnable, STOP_DELAY);
+      } else {
+        Timber.d("%d listeners", listeners.size());
+      }
     }
   }
-
-  private Runnable resumeRunnable = new Runnable() {
-    @Override public void run() {
-      executor.start();
-      resume();
-    }
-  };
 
   private Runnable stopRunnable = new Runnable() {
     @Override public void run() {
