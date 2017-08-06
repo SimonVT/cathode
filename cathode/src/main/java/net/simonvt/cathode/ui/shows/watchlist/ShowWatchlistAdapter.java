@@ -201,7 +201,6 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
 
       vh.rating.setValue(rating);
 
-      final View view = holder.itemView;
       vh.overflow.setListener(new OverflowView.OverflowActionListener() {
 
         @Override public void onPopupShown() {
@@ -238,7 +237,6 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
       vh.firstAired.setTimeInMillis(firstAired);
       final String episodeNumber = activity.getString(R.string.season_x_episode_y, season, episode);
       vh.episode.setText(episodeNumber);
-      final View view = holder.itemView;
       vh.overflow.setListener(new OverflowView.OverflowActionListener() {
 
         @Override public void onPopupShown() {

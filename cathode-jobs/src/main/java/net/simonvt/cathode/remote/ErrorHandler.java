@@ -39,7 +39,6 @@ public final class ErrorHandler {
       // Resource doesn't exist on Trakt.
       return false;
     } else if (statusCode == 412) {
-      response.raw().request().url().toString();
       Timber.i("Url: %s", response.raw().request().url().toString());
 
       Headers headers = response.headers();

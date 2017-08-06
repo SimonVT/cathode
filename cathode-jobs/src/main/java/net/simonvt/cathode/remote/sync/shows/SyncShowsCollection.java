@@ -252,7 +252,7 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
 
     long collectedAt;
 
-    public CollectedEpisode(long id, int number, long collectedAt) {
+    CollectedEpisode(long id, int number, long collectedAt) {
       this.id = id;
       this.number = number;
       this.collectedAt = collectedAt;

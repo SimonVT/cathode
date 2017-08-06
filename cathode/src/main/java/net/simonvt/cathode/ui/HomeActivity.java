@@ -582,7 +582,6 @@ public class HomeActivity extends BaseActivity
   ///////////////////////////////////////////////////////////////////////////
 
   @Override public void onHomeClicked() {
-    final boolean drawerVisible = drawer.isDrawerVisible(Gravity.LEFT);
     if (stack.size() == 1) {
       drawer.openDrawer(Gravity.LEFT);
       return;
@@ -748,7 +747,6 @@ public class HomeActivity extends BaseActivity
       final long episodeId = Cursors.getLong(watchingShow, "episodeId");
       final String episodeTitle =
           DataHelper.getEpisodeTitle(this, watchingShow, season, episode, false);
-      final boolean checkedIn = Cursors.getBoolean(watchingShow, EpisodeColumns.CHECKED_IN);
       final long startTime = Cursors.getLong(watchingShow, EpisodeColumns.STARTED_AT);
       final long endTime = Cursors.getLong(watchingShow, EpisodeColumns.EXPIRES_AT);
 
@@ -777,7 +775,6 @@ public class HomeActivity extends BaseActivity
       DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.TITLE,
       DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SEASON,
       DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.EPISODE,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.CHECKED_IN,
       DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.STARTED_AT,
       DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.EXPIRES_AT,
   };

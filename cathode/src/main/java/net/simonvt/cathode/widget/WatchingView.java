@@ -551,7 +551,6 @@ public class WatchingView extends ViewGroup {
 
   @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-    final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 
     if (widthMode == MeasureSpec.UNSPECIFIED) {
       throw new IllegalStateException("Must measure with an exact width");

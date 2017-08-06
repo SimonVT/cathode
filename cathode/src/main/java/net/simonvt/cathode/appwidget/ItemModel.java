@@ -92,8 +92,6 @@ public class ItemModel {
     calendar.set(Calendar.HOUR_OF_DAY, 0);
     calendar.set(Calendar.MINUTE, 0);
 
-    final long currentDay = calendar.getTimeInMillis();
-
     DayInfo lastDay = null;
 
     cursor.moveToPosition(-1);

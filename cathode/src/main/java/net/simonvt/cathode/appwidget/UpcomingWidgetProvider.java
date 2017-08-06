@@ -29,10 +29,6 @@ import net.simonvt.cathode.ui.HomeActivity;
 
 public class UpcomingWidgetProvider extends AppWidgetProvider {
 
-  @Override public void onReceive(Context context, Intent intent) {
-    super.onReceive(context, intent);
-  }
-
   @Override
   public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
     for (int appWidgetId : appWidgetIds) {

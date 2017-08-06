@@ -15,15 +15,14 @@
  */
 package net.simonvt.cathode.settings;
 
+import android.support.v4.util.LongSparseArray;
 import android.text.format.DateUtils;
-import java.util.HashMap;
-import java.util.Map;
 import net.simonvt.cathode.R;
 
 public enum NotificationTime {
   MINUTES_15(R.string.preference_notification_time_minutes_15, 15 * DateUtils.MINUTE_IN_MILLIS),
   MINUTES_30(R.string.preference_notification_time_minutes_30, 30 * DateUtils.MINUTE_IN_MILLIS),
-  HOURS_1(R.string.preference_notification_time_hours_1, 1 * DateUtils.HOUR_IN_MILLIS),
+  HOURS_1(R.string.preference_notification_time_hours_1, DateUtils.HOUR_IN_MILLIS),
   HOURS_2(R.string.preference_notification_time_hours_2, 2 * DateUtils.HOUR_IN_MILLIS);
 
   private int stringRes;
@@ -42,7 +41,7 @@ public enum NotificationTime {
     return notificationTime;
   }
 
-  private static final Map<Long, NotificationTime> TIME_MAPPING = new HashMap<>();
+  private static final LongSparseArray<NotificationTime> TIME_MAPPING = new LongSparseArray<>();
 
   static {
     for (NotificationTime time : NotificationTime.values()) {

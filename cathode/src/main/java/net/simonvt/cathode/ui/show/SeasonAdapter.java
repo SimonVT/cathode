@@ -49,8 +49,7 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
 
   public static final String[] PROJECTION = {
       EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
-      EpisodeColumns.WATCHED, EpisodeColumns.IN_COLLECTION, EpisodeColumns.IN_WATCHLIST,
-      EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN, EpisodeColumns.FIRST_AIRED,
+      EpisodeColumns.WATCHED, EpisodeColumns.IN_COLLECTION, EpisodeColumns.FIRST_AIRED,
       EpisodeColumns.SHOW_TITLE, LastModifiedColumns.LAST_MODIFIED,
   };
 
@@ -119,9 +118,6 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
     final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
     final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
     final boolean inCollection = Cursors.getBoolean(cursor, EpisodeColumns.IN_COLLECTION);
-    final boolean inWatchlist = Cursors.getBoolean(cursor, EpisodeColumns.IN_WATCHLIST);
-    final boolean watching = Cursors.getBoolean(cursor, EpisodeColumns.WATCHING);
-    final boolean checkedIn = Cursors.getBoolean(cursor, EpisodeColumns.CHECKED_IN);
     final long firstAired = DataHelper.getFirstAired(cursor);
     final String title = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, watched);
     final String showTitle = Cursors.getString(cursor, EpisodeColumns.SHOW_TITLE);

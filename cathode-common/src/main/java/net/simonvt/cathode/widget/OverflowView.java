@@ -78,8 +78,6 @@ public class OverflowView extends AppCompatImageView {
 
   @Override protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
     super.onLayout(changed, left, top, right, bottom);
-
-    final int height = bottom - top;
     final int width = right - left;
 
     if (changed || overflowDelegate == null) {

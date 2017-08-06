@@ -46,6 +46,7 @@ import static com.google.common.truth.Truth.assertThat;
 
     Cursor seasons = db.query(Tables.SEASONS, null, null, null, null, null, null);
     assertThat(seasons.getCount()).isEqualTo(1);
+    seasons.close();
 
     ContentValues episodeCV = new ContentValues();
     episodeCV.put(EpisodeColumns.SEASON_ID, seasonId);
@@ -54,14 +55,17 @@ import static com.google.common.truth.Truth.assertThat;
 
     Cursor episodes = db.query(Tables.EPISODES, null, null, null, null, null, null);
     assertThat(episodes.getCount()).isEqualTo(1);
+    episodes.close();
 
     db.delete(Tables.SEASONS, SeasonColumns.ID + "=" + seasonId, null);
 
     seasons = db.query(Tables.SEASONS, null, null, null, null, null, null);
     assertThat(seasons.getCount()).isEqualTo(0);
+    seasons.close();
 
     episodes = db.query(Tables.EPISODES, null, null, null, null, null, null);
     assertThat(episodes.getCount()).isEqualTo(0);
+    episodes.close();
 
     db.close();
   }
@@ -84,6 +88,7 @@ import static com.google.common.truth.Truth.assertThat;
 
     Cursor seasons = db.query(Tables.SEASONS, null, null, null, null, null, null);
     assertThat(seasons.getCount()).isEqualTo(1);
+    seasons.close();
 
     // Create episode
     ContentValues episodeCV = new ContentValues();
@@ -93,6 +98,7 @@ import static com.google.common.truth.Truth.assertThat;
 
     Cursor episodes = db.query(Tables.EPISODES, null, null, null, null, null, null);
     assertThat(episodes.getCount()).isEqualTo(1);
+    episodes.close();
 
     // Create comment
     ContentValues commentCV = new ContentValues();
@@ -103,18 +109,22 @@ import static com.google.common.truth.Truth.assertThat;
 
     Cursor comments = db.query(Tables.COMMENTS, null, null, null, null, null, null);
     assertThat(comments.getCount()).isEqualTo(1);
+    comments.close();
 
     // Delete show and check that other tables are empty
     db.delete(Tables.SHOWS, ShowColumns.ID + "=" + showId, null);
 
     seasons = db.query(Tables.SEASONS, null, null, null, null, null, null);
     assertThat(seasons.getCount()).isEqualTo(0);
+    seasons.close();
 
     episodes = db.query(Tables.EPISODES, null, null, null, null, null, null);
     assertThat(episodes.getCount()).isEqualTo(0);
+    episodes.close();
 
     comments = db.query(Tables.COMMENTS, null, null, null, null, null, null);
     assertThat(comments.getCount()).isEqualTo(0);
+    comments.close();
 
     db.close();
   }

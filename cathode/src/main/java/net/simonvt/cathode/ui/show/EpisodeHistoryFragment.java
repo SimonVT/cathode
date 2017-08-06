@@ -135,7 +135,6 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
     final String title =
         DataHelper.getEpisodeTitle(getContext(), episode, season, episodeNumber, watched);
     final String screenshot = Cursors.getString(episode, EpisodeColumns.SCREENSHOT);
-    final long firstAired = DataHelper.getFirstAired(episode);
     final String firstAiredString =
         DateStringUtils.getAirdateInterval(getActivity(), DataHelper.getFirstAired(episode), true);
     showTitle = Cursors.getString(episode, EpisodeColumns.SHOW_TITLE);
@@ -264,8 +263,7 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
 
   private static final String[] EPISODE_PROJECTION = new String[] {
       EpisodeColumns.TRAKT_ID, EpisodeColumns.TITLE, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
-      EpisodeColumns.SCREENSHOT, EpisodeColumns.WATCHED, EpisodeColumns.FIRST_AIRED,
-      EpisodeColumns.SHOW_TITLE,
+      EpisodeColumns.SCREENSHOT, EpisodeColumns.WATCHED, EpisodeColumns.SHOW_TITLE,
   };
 
   private LoaderManager.LoaderCallbacks<SimpleCursor> episodeCallbacks =

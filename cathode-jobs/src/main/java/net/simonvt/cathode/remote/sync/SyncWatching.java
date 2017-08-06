@@ -113,7 +113,7 @@ public class SyncWatching extends CallJob<Watching> {
     }
     movieWatchingCursor.close();
 
-    ContentProviderOperation op = null;
+    ContentProviderOperation op;
 
     if (watching != null) {
       if (watching.getType() != null) {

@@ -21,7 +21,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -103,10 +102,6 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
 
     setEmptyText(R.string.empty_show_watched);
     setTitle(R.string.title_shows_watched);
-  }
-
-  @Override public void onViewCreated(View view, Bundle inState) {
-    super.onViewCreated(view, inState);
   }
 
   @Override public void createMenu(Toolbar toolbar) {

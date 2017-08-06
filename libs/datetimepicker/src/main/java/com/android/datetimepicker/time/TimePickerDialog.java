@@ -42,7 +42,6 @@ import com.android.datetimepicker.time.RadialPickerLayout.OnValueSelectedListene
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Locale;
-import timber.log.Timber;
 
 /**
  * Dialog to set a time.

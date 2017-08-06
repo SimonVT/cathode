@@ -75,8 +75,6 @@ public class SyncRelatedShows extends CallJob<List<Show>> {
 
     int relatedIndex = 0;
     for (Show show : shows) {
-      final long traktId = show.getIds().getTrakt();
-      final int tmdbId = show.getIds().getTmdb();
       final long relatedShowId = showHelper.partialUpdate(show);
 
       ContentProviderOperation op = ContentProviderOperation.newInsert(RelatedShows.RELATED)

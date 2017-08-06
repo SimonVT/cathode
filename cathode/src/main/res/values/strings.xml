@@ -70,7 +70,7 @@
   <string name="title_view_on">View on</string>
   <string name="title_related">Related</string>
 
-  <string name="related_rating">%1$s (%2$s votes)</string>
+  <string name="related_rating">%1$s (%2$d votes)</string>
   <string name="related_rating_thousands">%1$s (%2$sk votes)</string>
 
   <string name="person_department_cast">Cast</string>
