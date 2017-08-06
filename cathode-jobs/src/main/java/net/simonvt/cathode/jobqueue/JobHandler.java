@@ -57,7 +57,6 @@ public class JobHandler {
     Injector.obtain().inject(this);
     executor = new JobExecutor(jobManager, executorListener, threadCount, withFlags, withoutFlags);
     executor.start();
-    running = executor.hasJobs();
   }
 
   private JobExecutor.JobExecutorListener executorListener = new JobExecutor.JobExecutorListener() {
