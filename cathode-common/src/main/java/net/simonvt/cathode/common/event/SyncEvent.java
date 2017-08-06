@@ -61,23 +61,31 @@ public final class SyncEvent {
   }
 
   public static void authExecutorStarted() {
-    authSyncing = true;
-    postSyncEvent();
+    synchronized (LISTENERS) {
+      authSyncing = true;
+      postSyncEvent();
+    }
   }
 
   public static void authExecutorStopped() {
-    authSyncing = false;
-    postSyncEvent();
+    synchronized (LISTENERS) {
+      authSyncing = false;
+      postSyncEvent();
+    }
   }
 
   public static void dataExecutorStarted() {
-    dataSyncing = true;
-    postSyncEvent();
+    synchronized (LISTENERS) {
+      dataSyncing = true;
+      postSyncEvent();
+    }
   }
 
   public static void dataExecutorStopped() {
-    dataSyncing = false;
-    postSyncEvent();
+    synchronized (LISTENERS) {
+      dataSyncing = false;
+      postSyncEvent();
+    }
   }
 
   private static void postSyncEvent() {
