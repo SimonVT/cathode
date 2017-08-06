@@ -327,7 +327,7 @@ public class AppBarRelativeLayout extends RelativeLayout {
       toolbar.offsetTopAndBottom(insetsTop - toolbar.getTop());
     }
 
-    // TODO: Is the design lib way betteR?
+    // TODO: Is the design lib way better?
     dummyView.getDrawingRect(dummyBounds);
     offsetDescendantRectToMyCoords(dummyView, dummyBounds);
 

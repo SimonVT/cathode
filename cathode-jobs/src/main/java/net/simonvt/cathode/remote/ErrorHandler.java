@@ -36,7 +36,7 @@ public final class ErrorHandler {
       AuthFailedEvent.post();
       return true;
     } else if (response.code() == 404) {
-      // TODO: Check body?
+      // Resource doesn't exist on Trakt.
       return false;
     } else if (statusCode == 412) {
       response.raw().request().url().toString();
