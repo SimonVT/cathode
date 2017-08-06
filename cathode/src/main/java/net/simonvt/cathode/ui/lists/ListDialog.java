@@ -21,6 +21,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import java.util.ArrayList;
@@ -92,7 +93,7 @@ public class ListDialog extends DialogFragment {
     return dialog;
   }
 
-  @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+  @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
     Callback c;
     Fragment target = getTargetFragment();
     if (target == null) {

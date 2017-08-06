@@ -27,6 +27,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -213,8 +214,8 @@ public class SettingsActivity extends BaseActivity {
       }, PERMISSION_REQUEST_CALENDAR);
     }
 
-    @Override public void onRequestPermissionsResult(int requestCode, String[] permissions,
-        int[] grantResults) {
+    @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+        @NonNull int[] grantResults) {
       if (requestCode == PERMISSION_REQUEST_CALENDAR) {
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
           Timber.d("Calendar permission granted");

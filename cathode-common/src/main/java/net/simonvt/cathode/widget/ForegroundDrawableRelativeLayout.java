@@ -21,6 +21,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 
@@ -84,7 +85,7 @@ public class ForegroundDrawableRelativeLayout extends RelativeLayout {
     }
   }
 
-  @Override protected boolean verifyDrawable(Drawable who) {
+  @Override protected boolean verifyDrawable(@NonNull Drawable who) {
     return super.verifyDrawable(who) || (who == foreground);
   }
 

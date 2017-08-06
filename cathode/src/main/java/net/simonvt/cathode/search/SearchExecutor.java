@@ -15,6 +15,7 @@
  */
 package net.simonvt.cathode.search;
 
+import android.support.annotation.NonNull;
 import java.util.concurrent.Executor;
 
 public class SearchExecutor implements Executor {
@@ -22,7 +23,7 @@ public class SearchExecutor implements Executor {
   ExecutorRunnable active;
   ExecutorRunnable next;
 
-  public void execute(final Runnable r) {
+  public void execute(@NonNull final Runnable r) {
     synchronized (this) {
       if (next != null) {
         next.runnable.cancel();

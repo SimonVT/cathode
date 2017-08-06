@@ -23,6 +23,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
@@ -108,7 +109,7 @@ public class CheckInDialog extends DialogFragment {
     Injector.obtain().inject(this);
   }
 
-  @SuppressWarnings("InflateParams") @Override
+  @NonNull @SuppressWarnings("InflateParams") @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     AlertDialog.Builder builder =

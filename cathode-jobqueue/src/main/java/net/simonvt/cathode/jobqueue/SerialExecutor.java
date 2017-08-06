@@ -16,6 +16,7 @@
 
 package net.simonvt.cathode.jobqueue;
 
+import android.support.annotation.NonNull;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.Executor;
@@ -46,12 +47,12 @@ public final class SerialExecutor {
     private Runnable active;
 
     private Executor executor = new Executor() {
-      @Override public void execute(Runnable r) {
+      @Override public void execute(@NonNull Runnable r) {
         new Thread(r).start();
       }
     };
 
-    public synchronized void execute(final Runnable r) {
+    public synchronized void execute(@NonNull final Runnable r) {
       tasks.offer(new Runnable() {
         @Override public void run() {
           try {

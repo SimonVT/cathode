@@ -23,6 +23,7 @@ import android.graphics.drawable.Animatable2;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v7.widget.RecyclerView;
@@ -156,7 +157,7 @@ public class CheckInDrawable extends Drawable implements Drawable.Callback {
     cancelDrawable.setBounds(bounds);
   }
 
-  @Override public void draw(Canvas canvas) {
+  @Override public void draw(@NonNull Canvas canvas) {
     if (currentDrawable != null) {
       currentDrawable.draw(canvas);
     }
@@ -178,15 +179,15 @@ public class CheckInDrawable extends Drawable implements Drawable.Callback {
     return checkInDrawable.getOpacity();
   }
 
-  @Override public void invalidateDrawable(Drawable who) {
+  @Override public void invalidateDrawable(@NonNull Drawable who) {
     invalidateSelf();
   }
 
-  @Override public void scheduleDrawable(Drawable who, Runnable what, long when) {
+  @Override public void scheduleDrawable(@NonNull Drawable who, @NonNull Runnable what, long when) {
     scheduleSelf(what, when);
   }
 
-  @Override public void unscheduleDrawable(Drawable who, Runnable what) {
+  @Override public void unscheduleDrawable(@NonNull Drawable who, @NonNull Runnable what) {
     unscheduleSelf(what);
   }
 }

@@ -16,6 +16,7 @@
 package net.simonvt.cathode.scheduler;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.Executor;
@@ -27,7 +28,7 @@ import net.simonvt.cathode.jobqueue.JobManager;
 public class BaseTaskScheduler {
 
   private static final Executor EXECUTOR = new Executor() {
-    @Override public void execute(Runnable r) {
+    @Override public void execute(@NonNull Runnable r) {
       new Thread(r).start();
     }
   };
@@ -56,7 +57,7 @@ public class BaseTaskScheduler {
     final Queue<Runnable> tasks = new ArrayDeque<>();
     Runnable active;
 
-    public synchronized void execute(final Runnable r) {
+    public synchronized void execute(@NonNull final Runnable r) {
       tasks.offer(new Runnable() {
         @Override public void run() {
           try {

@@ -20,6 +20,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import javax.inject.Inject;
 import net.simonvt.cathode.Injector;
@@ -50,7 +51,7 @@ public class DeleteListDialog extends DialogFragment {
     navigationListener = (NavigationListener) activity;
   }
 
-  @Override public Dialog onCreateDialog(Bundle inState) {
+  @NonNull @Override public Dialog onCreateDialog(Bundle inState) {
     final long listId = getArguments().getLong(ARG_LIST_ID);
 
     return new AlertDialog.Builder(getActivity()).setTitle(R.string.list_delete_title)

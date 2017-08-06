@@ -49,7 +49,7 @@ public abstract class BaseFragment extends Fragment
     }
   }
 
-  public Toolbar getToolbar() {
+  public @Nullable Toolbar getToolbar() {
     return toolbar;
   }
 

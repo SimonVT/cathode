@@ -19,6 +19,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -64,7 +65,8 @@ public class AddCommentDialog extends DialogFragment {
     id = args.getLong(ARG_ID);
   }
 
-  @SuppressWarnings("InflateParams") @Override public Dialog onCreateDialog(Bundle inState) {
+  @NonNull @SuppressWarnings("InflateParams") @Override
+  public Dialog onCreateDialog(Bundle inState) {
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
     View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_comment, null);
