@@ -185,7 +185,7 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     } else if (toCollect == 0 && unairedCount > 0) {
       summary = resources.getQuantityString(R.plurals.x_unaired, unairedCount, unairedCount);
     } else {
-      summary = resources.getString(R.string.all_watched);
+      summary = resources.getString(R.string.all_collected);
     }
 
     holder.summary.setText(summary);
