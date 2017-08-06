@@ -200,6 +200,8 @@
   <string name="history_watched_now">Now</string>
   <string name="history_watched_release">Release date</string>
   <string name="history_watched_other">Other date</string>
+  <string name="history_watched_date">Date</string>
+  <string name="history_watched_time">Time</string>
 
   <string name="history_unwatched_title">Remove from history?</string>
   <string name="history_unwatched_all">All plays</string>
