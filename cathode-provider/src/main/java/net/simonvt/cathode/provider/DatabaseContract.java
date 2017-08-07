@@ -281,8 +281,8 @@ public final class DatabaseContract {
 
     @DataType(INTEGER) @DefaultValue("0") String LAST_UPDATED = "lastUpdated";
 
-    @DataType(INTEGER) @DefaultValue("0") String TRENDING_INDEX = "trendingIndex";
-    @DataType(INTEGER) @DefaultValue("0") String RECOMMENDATION_INDEX = "recommendationIndex";
+    @DataType(INTEGER) @DefaultValue("-1") String TRENDING_INDEX = "trendingIndex";
+    @DataType(INTEGER) @DefaultValue("-1") String RECOMMENDATION_INDEX = "recommendationIndex";
     @DataType(INTEGER) @DefaultValue("-1") String ANTICIPATED_INDEX = "anticipatedIndex";
 
     @DataType(INTEGER) @DefaultValue("0") String WATCHING = "watching";
