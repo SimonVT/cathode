@@ -123,7 +123,7 @@ public final class Upgrader {
         settings.edit().remove(Settings.START_PAGE).apply();
       }
       if (currentVersion <= 50303) {
-        settings.edit().putLong(SETTINGS_VERSION, 0).apply();
+        settings.edit().putInt(SETTINGS_VERSION, 0).apply();
         settings.edit().remove("showHidden").apply();
         final boolean loggedIn = settings.getBoolean("traktLoggedIn", false);
         settings.edit().putBoolean(TraktLinkSettings.TRAKT_LINKED, loggedIn).apply();
