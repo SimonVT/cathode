@@ -21,7 +21,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import net.simonvt.cathode.api.util.TimeUtils;
+import android.text.format.DateUtils;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.remote.ForceUpdateJob;
@@ -69,16 +69,15 @@ public final class Upgrader {
           }
         }
 
-        final String showsLastUpdated = settings.getString(Settings.SHOWS_LAST_UPDATED, null);
-        if (showsLastUpdated != null) {
-          final long showsLastUpdatedMillis = TimeUtils.getMillis(showsLastUpdated);
-          settings.edit().putLong(Settings.SHOWS_LAST_UPDATED, showsLastUpdatedMillis).apply();
-        }
-        final String moviesLastUpdated = settings.getString(Settings.MOVIES_LAST_UPDATED, null);
-        if (moviesLastUpdated != null) {
-          final long moviesLastUpdatedMillis = TimeUtils.getMillis(moviesLastUpdated);
-          settings.edit().putLong(Settings.MOVIES_LAST_UPDATED, moviesLastUpdatedMillis).apply();
-        }
+        settings.edit()
+            .remove(Settings.SHOWS_LAST_UPDATED)
+            .remove(Settings.MOVIES_LAST_UPDATED)
+            .apply();
+        final long lastUpdated = System.currentTimeMillis() - DateUtils.WEEK_IN_MILLIS;
+        settings.edit()
+            .putLong(Settings.SHOWS_LAST_UPDATED, lastUpdated)
+            .putLong(Settings.MOVIES_LAST_UPDATED, lastUpdated)
+            .apply();
       }
 
       settings.edit().putInt(SETTINGS_VERSION, VERSION).apply();
