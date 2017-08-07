@@ -36,7 +36,7 @@ import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
   @Inject JobInjector injector;
 
   public JobCreator() {
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   public Job create(JobParameters params) {

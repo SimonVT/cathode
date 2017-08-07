@@ -42,7 +42,7 @@ public class LogoutDialog extends DialogFragment {
         .setMessage(R.string.logout_message)
         .setPositiveButton(R.string.logout_button, new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
-            Injector.obtain().inject(LogoutDialog.this);
+            Injector.inject(LogoutDialog.this);
 
             PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .edit()

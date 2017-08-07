@@ -63,7 +63,7 @@ public final class ShowDatabaseHelper {
 
     resolver = context.getContentResolver();
 
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   public long getId(long traktId) {

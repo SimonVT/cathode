@@ -64,7 +64,7 @@ public class NotificationSettingsActivity extends BaseActivity {
 
     @Override public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
-      Injector.obtain().inject(this);
+      Injector.inject(this);
       settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
       isTablet = getResources().getBoolean(R.bool.isTablet);

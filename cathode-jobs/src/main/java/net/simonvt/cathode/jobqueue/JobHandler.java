@@ -55,7 +55,7 @@ public class JobHandler {
   private boolean resumed = false;
 
   public JobHandler(int withFlags, int withoutFlags, int threadCount) {
-    Injector.obtain().inject(this);
+    Injector.inject(this);
     executor = new JobExecutor(jobManager, executorListener, threadCount, withFlags, withoutFlags);
   }
 

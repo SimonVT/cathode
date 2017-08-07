@@ -68,7 +68,7 @@ public class MovieHistoryLoader extends BaseAsyncLoader<MovieHistoryLoader.Resul
   public MovieHistoryLoader(Context context, long movieId) {
     super(context);
     this.movieId = movieId;
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   @Override public Result loadInBackground() {

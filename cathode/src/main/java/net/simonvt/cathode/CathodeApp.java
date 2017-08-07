@@ -98,7 +98,7 @@ public class CathodeApp extends Application {
     });
 
     Injector.install(ObjectGraph.create(Modules.list(this)));
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     AuthFailedEvent.registerListener(authFailedListener);
 

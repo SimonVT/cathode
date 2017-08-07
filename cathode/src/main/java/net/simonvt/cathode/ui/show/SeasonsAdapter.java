@@ -81,7 +81,7 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
   public SeasonsAdapter(FragmentActivity activity, SeasonClickListener clickListener,
       LibraryType type) {
     super(activity, null);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
     this.activity = activity;
     resources = activity.getResources();
     this.clickListener = clickListener;

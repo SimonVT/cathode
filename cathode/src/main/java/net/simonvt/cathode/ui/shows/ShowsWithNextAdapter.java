@@ -90,7 +90,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
   public ShowsWithNextAdapter(FragmentActivity activity, ShowClickListener clickListener,
       Cursor cursor, LibraryType libraryType) {
     super(activity, cursor);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
     this.activity = activity;
     this.clickListener = clickListener;
     this.libraryType = libraryType;

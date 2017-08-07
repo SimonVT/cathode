@@ -66,7 +66,7 @@ public class ShowsWatchlistFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     getLoaderManager().initLoader(LOADER_SHOWS_WATCHLIST, null, showsCallback);
     getLoaderManager().initLoader(LOADER_EPISODES_WATCHLIST, null, episodeCallback);

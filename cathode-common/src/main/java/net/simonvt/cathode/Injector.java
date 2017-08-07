@@ -29,11 +29,11 @@ public final class Injector {
     objectGraph = graph;
   }
 
-  public static ObjectGraph obtain() {
+  public static <T> T inject(T target) {
     if (objectGraph == null) {
       throw new RuntimeException("ObjectGraph not yet initialized");
     }
 
-    return objectGraph;
+    return objectGraph.inject(target);
   }
 }

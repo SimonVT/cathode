@@ -63,7 +63,7 @@ public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHol
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     Bundle args = getArguments();
     commentId = args.getLong(ARG_COMMENT_ID);

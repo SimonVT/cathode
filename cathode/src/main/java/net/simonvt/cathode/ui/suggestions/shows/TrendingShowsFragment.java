@@ -119,7 +119,7 @@ public class TrendingShowsFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     sortBy =

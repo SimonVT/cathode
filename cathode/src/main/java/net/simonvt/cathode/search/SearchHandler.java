@@ -78,7 +78,7 @@ public class SearchHandler {
 
   public SearchHandler(Context context) {
     this.context = context;
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   public void addListener(SearchListener listener) {

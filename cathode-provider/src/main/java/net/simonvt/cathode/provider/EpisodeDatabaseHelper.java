@@ -60,7 +60,7 @@ public final class EpisodeDatabaseHelper {
 
     resolver = context.getContentResolver();
 
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   public Cursor query(long id, String... columns) {

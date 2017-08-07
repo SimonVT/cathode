@@ -59,7 +59,7 @@ public class CheckInDialog extends DialogFragment {
     @Inject MovieTaskScheduler movieScheduler;
 
     public Injections(Context context) {
-      Injector.obtain().inject(this);
+      Injector.inject(this);
     }
   }
 
@@ -106,7 +106,7 @@ public class CheckInDialog extends DialogFragment {
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   @NonNull @SuppressWarnings("InflateParams") @Override

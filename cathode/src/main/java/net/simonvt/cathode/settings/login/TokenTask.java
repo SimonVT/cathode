@@ -99,7 +99,7 @@ public class TokenTask extends AsyncTask<Void, Void, TokenTask.Result> {
     this.context = context.getApplicationContext();
     this.code = code;
 
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   public void setCallback(Callback callback) {

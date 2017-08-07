@@ -55,7 +55,7 @@ public abstract class MoviesFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     getLoaderManager().initLoader(getLoaderId(), null, this);
 

@@ -40,7 +40,7 @@ public class UserList {
   @Inject JobManager jobManager;
 
   public UserList() {
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   public boolean create(String name, String description, Privacy privacy, boolean displayNumbers,

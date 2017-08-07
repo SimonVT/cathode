@@ -70,7 +70,7 @@ public class RatingDialog extends DialogFragment {
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     Bundle args = getArguments();
     type = (Type) args.getSerializable(ARG_TYPE);

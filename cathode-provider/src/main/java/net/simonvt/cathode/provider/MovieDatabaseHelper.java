@@ -68,7 +68,7 @@ public final class MovieDatabaseHelper {
 
     resolver = context.getContentResolver();
 
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   public long getTraktId(long movieId) {

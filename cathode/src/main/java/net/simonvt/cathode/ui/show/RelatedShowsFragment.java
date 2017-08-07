@@ -76,7 +76,7 @@ public class RelatedShowsFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     showId = getArguments().getLong(ARG_SHOW_ID);
 

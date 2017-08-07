@@ -158,7 +158,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     Bundle args = getArguments();
     episodeId = args.getLong(ARG_EPISODEID);

@@ -46,7 +46,7 @@ public class AuthJobService extends Service {
   @Override public void onCreate() {
     super.onCreate();
     Timber.d("AuthJobService started");
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     WakeLock.acquire(this, WAKELOCK_TAG);
 

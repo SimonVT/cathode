@@ -80,7 +80,7 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     Bundle args = getArguments();
     itemType = (ItemType) args.getSerializable(ARG_ITEM_TYPE);

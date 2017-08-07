@@ -126,7 +126,7 @@ public class PersonFragment extends RefreshableAppBarFragment {
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     Bundle args = getArguments();
     personId = args.getLong(ARG_PERSON_ID);

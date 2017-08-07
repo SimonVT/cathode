@@ -30,7 +30,7 @@ public class SyncWatchingReceiver extends BroadcastReceiver {
   @Inject JobManager jobManager;
 
   @Override public void onReceive(Context context, Intent intent) {
-    Injector.obtain().inject(this);
+    Injector.inject(this);
     jobManager.addJob(new SyncWatching());
     Intent i = new Intent(context, AuthJobService.class);
     context.startService(i);

@@ -55,7 +55,7 @@ public class CheckIn {
   @Inject CheckinService checkinService;
 
   public CheckIn() {
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   public boolean episode(long episodeId, String message, boolean facebook, boolean twitter,

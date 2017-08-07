@@ -38,7 +38,7 @@ public class BaseTaskScheduler {
   protected Context context;
 
   public BaseTaskScheduler(Context context) {
-    Injector.obtain().inject(this);
+    Injector.inject(this);
     this.context = context;
   }
 

@@ -108,7 +108,7 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     Bundle args = getArguments();
     showId = args.getLong(ARG_SHOW_ID);

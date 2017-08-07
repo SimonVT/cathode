@@ -53,7 +53,7 @@ public class LoginActivity extends BaseActivity {
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     Intent intent = getIntent();
     task = intent.getIntExtra(EXTRA_TASK, TASK_LOGIN);

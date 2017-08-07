@@ -170,7 +170,7 @@ public class HomeActivity extends BaseActivity
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
     Timber.d("onCreate");
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     setContentView(R.layout.activity_home);
 

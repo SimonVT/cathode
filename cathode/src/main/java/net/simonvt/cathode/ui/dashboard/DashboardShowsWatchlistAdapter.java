@@ -80,7 +80,7 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
     this.context = context;
     this.callback = callback;
 
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   public void changeShowsCursor(Cursor cursor) {

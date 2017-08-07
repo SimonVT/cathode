@@ -96,7 +96,7 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     Bundle args = getArguments();
     listId = args.getLong(ARG_LIST_ID);

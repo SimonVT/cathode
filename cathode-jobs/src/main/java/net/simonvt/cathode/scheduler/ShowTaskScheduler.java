@@ -54,7 +54,7 @@ public class ShowTaskScheduler extends BaseTaskScheduler {
 
   public ShowTaskScheduler(Context context) {
     super(context);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   public void sync(final long showId) {

@@ -53,7 +53,7 @@ public class NotificationActionService extends IntentService {
 
   @Override public void onCreate() {
     super.onCreate();
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   @Override public void onDestroy() {

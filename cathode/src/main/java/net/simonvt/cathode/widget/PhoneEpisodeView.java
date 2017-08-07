@@ -54,7 +54,7 @@ public class PhoneEpisodeView extends ViewGroup {
   }
 
   private void init(Context context) {
-    if (!isInEditMode()) Injector.obtain().inject(this);
+    if (!isInEditMode()) Injector.inject(this);
     minHeight = getResources().getDimensionPixelSize(R.dimen.showItemMinHeight);
   }
 

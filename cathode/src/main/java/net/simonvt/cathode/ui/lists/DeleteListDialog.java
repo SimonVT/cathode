@@ -58,7 +58,7 @@ public class DeleteListDialog extends DialogFragment {
         .setMessage(R.string.list_delete_message)
         .setPositiveButton(R.string.list_dialog_delete, new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
-            Injector.obtain().inject(DeleteListDialog.this);
+            Injector.inject(DeleteListDialog.this);
 
             listScheduler.deleteList(listId);
             navigationListener.onListDeleted(listId);

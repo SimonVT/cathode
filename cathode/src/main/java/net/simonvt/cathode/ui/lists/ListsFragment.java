@@ -56,7 +56,7 @@ public class ListsFragment extends ToolbarSwipeRefreshRecyclerFragment<ListsAdap
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
     setTitle(R.string.navigation_lists);
     setEmptyText(R.string.empty_lists);
     getLoaderManager().initLoader(LOADER_LISTS, null, this);

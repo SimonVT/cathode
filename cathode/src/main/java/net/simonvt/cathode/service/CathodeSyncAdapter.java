@@ -44,7 +44,7 @@ public class CathodeSyncAdapter extends AbstractThreadedSyncAdapter {
     super(context, true);
     // This might not be true when Android restores backup on install.
     if (context.getApplicationContext() instanceof CathodeApp) {
-      Injector.obtain().inject(this);
+      Injector.inject(this);
     }
   }
 

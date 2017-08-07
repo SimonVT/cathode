@@ -84,7 +84,7 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     Bundle args = getArguments();
     movieId = args.getLong(ARG_MOVIEID);

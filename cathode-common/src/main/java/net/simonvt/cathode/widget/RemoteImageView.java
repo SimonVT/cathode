@@ -96,7 +96,7 @@ public class RemoteImageView extends AspectRatioView implements Target {
   public RemoteImageView(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
     if (!isInEditMode()) {
-      Injector.obtain().inject(this);
+      Injector.inject(this);
     }
 
     TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RemoteImageView,

@@ -56,7 +56,7 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
   public BaseMoviesAdapter(FragmentActivity activity, MovieClickListener listener, Cursor c,
       LibraryType libraryType) {
     super(activity, c);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
     this.activity = activity;
     this.listener = listener;
     this.libraryType = libraryType;

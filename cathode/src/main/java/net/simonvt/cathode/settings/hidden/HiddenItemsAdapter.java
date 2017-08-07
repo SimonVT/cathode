@@ -92,7 +92,7 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
     super();
     this.context = context;
     this.onItemClickListener = onItemClickListener;
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   @Override public long getLastModified(int position) {

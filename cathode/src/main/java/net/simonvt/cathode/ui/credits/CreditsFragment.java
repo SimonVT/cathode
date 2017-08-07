@@ -118,7 +118,7 @@ public class CreditsFragment extends RefreshableToolbarFragment {
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     Bundle args = getArguments();
     itemId = args.getLong(ARG_ITEM_ID);

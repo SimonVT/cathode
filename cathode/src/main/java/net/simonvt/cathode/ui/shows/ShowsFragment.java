@@ -54,7 +54,7 @@ public abstract class ShowsFragment<D extends Cursor>
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     getLoaderManager().initLoader(getLoaderId(), null, this);
 

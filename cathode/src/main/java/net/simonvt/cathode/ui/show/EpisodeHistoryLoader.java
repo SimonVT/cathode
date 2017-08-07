@@ -68,7 +68,7 @@ public class EpisodeHistoryLoader extends BaseAsyncLoader<EpisodeHistoryLoader.R
   public EpisodeHistoryLoader(Context context, long episodeId) {
     super(context);
     this.episodeId = episodeId;
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   @Override public Result loadInBackground() {

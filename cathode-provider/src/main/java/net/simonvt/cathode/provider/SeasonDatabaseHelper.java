@@ -62,7 +62,7 @@ public final class SeasonDatabaseHelper {
 
     resolver = context.getContentResolver();
 
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   public long getId(long showId, int season) {

@@ -63,7 +63,7 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
 
     setContentView(R.layout.activity_login_token);
     ButterKnife.bind(this);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     if (TokenTask.runningInstance != null) {
       TokenTask.runningInstance.setCallback(this);

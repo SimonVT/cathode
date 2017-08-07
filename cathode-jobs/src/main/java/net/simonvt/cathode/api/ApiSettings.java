@@ -126,7 +126,7 @@ public class ApiSettings implements TraktSettings {
     synchronized (this) {
       if (!isRefreshingToken()) {
         if (authService == null) {
-          Injector.obtain().inject(this);
+          Injector.inject(this);
         }
 
         if (!isTokenExpired()) {

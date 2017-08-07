@@ -279,7 +279,7 @@ public class HiddenItems extends BaseActivity
 
     @Override public void onCreate(Bundle inState) {
       super.onCreate(inState);
-      Injector.obtain().inject(this);
+      Injector.inject(this);
 
       setTitle(R.string.preference_hidden_items);
       setEmptyText(R.string.preference_hidden_empty);

@@ -61,7 +61,7 @@ public class RemoveFromHistoryDialog extends DialogFragment {
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   public static RemoveFromHistoryDialog newInstance(Type type, long id, String title) {

@@ -51,7 +51,7 @@ public class MovieSearchAdapter extends BaseMoviesAdapter<MovieSearchAdapter.Vie
 
   public MovieSearchAdapter(FragmentActivity activity, MovieClickListener listener, Cursor cursor) {
     super(activity, listener, cursor, LibraryType.WATCHED);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

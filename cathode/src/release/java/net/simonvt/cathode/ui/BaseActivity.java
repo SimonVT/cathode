@@ -23,6 +23,6 @@ public abstract class BaseActivity extends ActionBarActivity {
 
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 }

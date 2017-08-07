@@ -97,7 +97,7 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     this.onItemClickListener = onItemClickListener;
     this.onRemoveListener = onRemoveListener;
 
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     setHasStableIds(true);
   }

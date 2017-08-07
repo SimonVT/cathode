@@ -265,7 +265,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
     Timber.d("ShowFragment#onCreate");
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     Bundle args = getArguments();
     showId = args.getLong(ARG_SHOWID);

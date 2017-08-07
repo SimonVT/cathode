@@ -90,8 +90,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.obtain().inject(this);
-    Injector.obtain().inject(injects);
+    Injector.inject(this);
+    Injector.inject(injects);
 
     super.setContentView(R.layout.debug_home);
 

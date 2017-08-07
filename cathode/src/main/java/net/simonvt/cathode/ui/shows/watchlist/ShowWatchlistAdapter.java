@@ -102,7 +102,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
     this.activity = activity;
     this.onItemClickListener = onItemClickListener;
     this.onRemoveListener = onRemoveListener;
-    Injector.obtain().inject(this);
+    Injector.inject(this);
     setHasStableIds(false);
   }
 

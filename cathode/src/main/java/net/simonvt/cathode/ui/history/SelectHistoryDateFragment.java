@@ -112,7 +112,7 @@ public class SelectHistoryDateFragment extends AppBarFragment
 
   @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     type = (Type) getArguments().getSerializable(ARG_TYPE);
     id = getArguments().getLong(ARG_ID);

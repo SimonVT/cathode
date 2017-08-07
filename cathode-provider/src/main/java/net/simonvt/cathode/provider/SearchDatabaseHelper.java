@@ -45,7 +45,7 @@ public final class SearchDatabaseHelper {
 
     resolver = context.getContentResolver();
 
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   public void insertRecentQuery(String query) {

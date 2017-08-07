@@ -54,7 +54,7 @@ public class DashboardMoviesAdapter
     super(context);
     this.callback = callback;
 
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

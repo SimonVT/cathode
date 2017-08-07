@@ -75,7 +75,7 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
     super(context);
     this.listener = listener;
 
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   @Override public int getItemViewType(int position) {

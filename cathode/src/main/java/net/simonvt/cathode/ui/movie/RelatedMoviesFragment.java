@@ -79,7 +79,7 @@ public class RelatedMoviesFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     movieId = getArguments().getLong(ARG_MOVIE_ID);
 

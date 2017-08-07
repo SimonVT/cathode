@@ -97,7 +97,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     setTitle(R.string.title_dashboard);
 

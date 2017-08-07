@@ -52,7 +52,7 @@ public class UserDatabaseHelper {
 
     resolver = context.getContentResolver();
 
-    Injector.obtain().inject(this);
+    Injector.inject(this);
   }
 
   public static final class IdResult {

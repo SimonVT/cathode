@@ -66,7 +66,7 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
   public SeasonAdapter(FragmentActivity activity, EpisodeClickListener clickListener, Cursor cursor,
       LibraryType type) {
     super(activity, cursor);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
     this.activity = activity;
     this.clickListener = clickListener;
     this.type = type;

@@ -72,7 +72,7 @@ public class UpcomingWidgetService extends RemoteViewsService {
     public UpcomingRemoteViewsFactory(Context context, Intent intent) {
       this.context = context;
 
-      Injector.obtain().inject(this);
+      Injector.inject(this);
 
       appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
           AppWidgetManager.INVALID_APPWIDGET_ID);

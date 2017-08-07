@@ -43,6 +43,6 @@ public class JobInjectorImpl implements JobInjector {
   }
 
   @Override public void injectInto(Job job) {
-    Injector.obtain().inject(job);
+    Injector.inject(job);
   }
 }

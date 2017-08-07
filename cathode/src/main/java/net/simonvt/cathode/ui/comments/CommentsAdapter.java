@@ -98,7 +98,7 @@ public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewH
     this.showsReplies = showsReplies;
     this.listener = listener;
 
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     tintColor = context.getResources().getColor(R.color.commentIconTint);
     likedTintColor = context.getResources().getColor(R.color.commentLikedTint);

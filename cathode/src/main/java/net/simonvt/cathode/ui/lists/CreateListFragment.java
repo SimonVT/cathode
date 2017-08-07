@@ -56,7 +56,7 @@ public class CreateListFragment extends DialogFragment {
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     if (getShowsDialog()) {
       setStyle(DialogFragment.STYLE_NO_TITLE, 0);

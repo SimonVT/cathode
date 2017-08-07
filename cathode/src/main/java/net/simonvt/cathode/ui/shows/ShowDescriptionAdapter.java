@@ -63,14 +63,14 @@ public class ShowDescriptionAdapter
 
   public ShowDescriptionAdapter(Context context, ShowClickListener listener, Cursor cursor) {
     this(context, listener, cursor, true);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
     this.listener = listener;
   }
 
   public ShowDescriptionAdapter(Context context, ShowClickListener listener, Cursor cursor,
       boolean displayRating) {
     super(context, cursor);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
     this.listener = listener;
     this.displayRating = displayRating;
   }

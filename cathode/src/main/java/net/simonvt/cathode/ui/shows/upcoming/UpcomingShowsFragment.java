@@ -79,7 +79,7 @@ public class UpcomingShowsFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.obtain().inject(this);
+    Injector.inject(this);
 
     sortBy = upcomingSortByPreference.get();
     upcomingSortByPreference.registerListener(upcomingSortByListener);
