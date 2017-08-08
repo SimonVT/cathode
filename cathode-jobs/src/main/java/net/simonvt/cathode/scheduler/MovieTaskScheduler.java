@@ -243,25 +243,30 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
             MovieColumns.RUNTIME, MovieColumns.EXPIRES_AT,
         }, null, null, null);
 
-        watching.moveToFirst();
-        final long currentTime = System.currentTimeMillis();
-        final int runtime = Cursors.getInt(watching, MovieColumns.RUNTIME);
-        final long expires = Cursors.getLong(watching, MovieColumns.EXPIRES_AT);
-        final long watchSlop = (long) (runtime * DateUtils.MINUTE_IN_MILLIS * 0.8f);
+        if (watching.moveToFirst()) {
+          final long currentTime = System.currentTimeMillis();
+          final int runtime = Cursors.getInt(watching, MovieColumns.RUNTIME);
+          final long expires = Cursors.getLong(watching, MovieColumns.EXPIRES_AT);
+          final long watchSlop = (long) (runtime * DateUtils.MINUTE_IN_MILLIS * 0.8f);
 
-        Cursor movie = context.getContentResolver().query(Movies.withId(movieId), new String[] {
-            MovieColumns.TITLE,
-        }, null, null, null);
-        movie.moveToFirst();
-        final String title = Cursors.getString(movie, MovieColumns.TITLE);
-        movie.close();
+          Cursor movie = context.getContentResolver().query(Movies.withId(movieId), new String[] {
+              MovieColumns.TITLE,
+          }, null, null, null);
+          movie.moveToFirst();
+          final String title = Cursors.getString(movie, MovieColumns.TITLE);
+          movie.close();
 
-        if (watching.getCount() == 0 || ((expires - watchSlop) < currentTime && expires > 0)) {
+          if ((expires - watchSlop) < currentTime && expires > 0) {
+            if (checkIn.movie(movieId, message, facebook, twitter, tumblr)) {
+              movieHelper.checkIn(movieId);
+            }
+          } else {
+            ErrorEvent.post(context.getString(R.string.checkin_error_watching, title));
+          }
+        } else {
           if (checkIn.movie(movieId, message, facebook, twitter, tumblr)) {
             movieHelper.checkIn(movieId);
           }
-        } else {
-          ErrorEvent.post(context.getString(R.string.checkin_error_watching, title));
         }
 
         watching.close();
