@@ -16,9 +16,7 @@
 package net.simonvt.cathode.settings.login;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.TextView;
 import butterknife.BindView;
@@ -36,6 +34,7 @@ import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.settings.Accounts;
+import net.simonvt.cathode.settings.ProfileSettings;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.setup.CalendarSetupActivity;
@@ -93,17 +92,16 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
   }
 
   @Override public void onTokenFetched(AccessToken accessToken, UserSettings userSettings) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+    final boolean wasLinked = Settings.get(this).getBoolean(TraktLinkSettings.TRAKT_LINKED, false);
 
-    final boolean wasLinked = settings.getBoolean(TraktLinkSettings.TRAKT_LINKED, false);
-
-    settings.edit()
+    Settings.get(this)
+        .edit()
         .putBoolean(TraktLinkSettings.TRAKT_LINKED, true)
         .putBoolean(TraktLinkSettings.TRAKT_AUTH_FAILED, false)
         .apply();
 
-    Settings.clearProfile(this);
-    Settings.updateProfile(this, userSettings);
+    ProfileSettings.clearProfile(this);
+    ProfileSettings.updateProfile(this, userSettings);
 
     Accounts.setupAccount(this);
 

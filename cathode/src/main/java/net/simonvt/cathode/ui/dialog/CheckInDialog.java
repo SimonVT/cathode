@@ -20,9 +20,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -36,7 +34,7 @@ import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
-import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.ProfileSettings;
 import timber.log.Timber;
 
 public class CheckInDialog extends DialogFragment {
@@ -71,10 +69,12 @@ public class CheckInDialog extends DialogFragment {
       return true;
     }
 
-    final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
-    final boolean facebookShare = settings.getBoolean(Settings.Profile.CONNECTION_FACEBOOK, false);
-    final boolean twitterShare = settings.getBoolean(Settings.Profile.CONNECTION_TWITTER, false);
-    final boolean tumblrShare = settings.getBoolean(Settings.Profile.CONNECTION_TUMBLR, false);
+    final boolean facebookShare =
+        ProfileSettings.get(activity).getBoolean(ProfileSettings.CONNECTION_FACEBOOK, false);
+    final boolean twitterShare =
+        ProfileSettings.get(activity).getBoolean(ProfileSettings.CONNECTION_TWITTER, false);
+    final boolean tumblrShare =
+        ProfileSettings.get(activity).getBoolean(ProfileSettings.CONNECTION_TUMBLR, false);
 
     if (facebookShare || twitterShare || tumblrShare) {
       newInstance(type, title, id).show(activity.getSupportFragmentManager(), DIALOG_TAG);
@@ -111,7 +111,6 @@ public class CheckInDialog extends DialogFragment {
 
   @NonNull @SuppressWarnings("InflateParams") @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
-    final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
     AlertDialog.Builder builder =
         new AlertDialog.Builder(getActivity()).setTitle(R.string.action_checkin);
 
@@ -128,9 +127,12 @@ public class CheckInDialog extends DialogFragment {
     final CheckBox tumblr = (CheckBox) view.findViewById(R.id.tumblr);
 
     title.setText(titleArg);
-    final boolean facebookShare = settings.getBoolean(Settings.Profile.CONNECTION_FACEBOOK, false);
-    final boolean twitterShare = settings.getBoolean(Settings.Profile.CONNECTION_TWITTER, false);
-    final boolean tumblrShare = settings.getBoolean(Settings.Profile.CONNECTION_TUMBLR, false);
+    final boolean facebookShare =
+        ProfileSettings.get(getActivity()).getBoolean(ProfileSettings.CONNECTION_FACEBOOK, false);
+    final boolean twitterShare =
+        ProfileSettings.get(getActivity()).getBoolean(ProfileSettings.CONNECTION_TWITTER, false);
+    final boolean tumblrShare =
+        ProfileSettings.get(getActivity()).getBoolean(ProfileSettings.CONNECTION_TUMBLR, false);
     facebook.setVisibility(facebookShare ? View.VISIBLE : View.GONE);
     twitter.setVisibility(twitterShare ? View.VISIBLE : View.GONE);
     tumblr.setVisibility(tumblrShare ? View.VISIBLE : View.GONE);
@@ -145,8 +147,9 @@ public class CheckInDialog extends DialogFragment {
       view.findViewById(R.id.share_title).setVisibility(View.GONE);
     }
 
-    String shareMessage = settings.getString(Settings.Profile.SHARING_TEXT_WATCHING,
-        getString(R.string.checkin_message_default));
+    String shareMessage = ProfileSettings.get(getContext())
+        .getString(ProfileSettings.SHARING_TEXT_WATCHING,
+            getString(R.string.checkin_message_default));
     shareMessage = shareMessage.replace("[item]", titleArg);
     message.setText(shareMessage);
 
@@ -157,11 +160,12 @@ public class CheckInDialog extends DialogFragment {
         final boolean tumblrShare = tumblr.isChecked();
         final String shareMessage = message.getText().toString();
 
-        settings.edit()
-            .putBoolean(Settings.Profile.CONNECTION_FACEBOOK, facebookShare)
-            .putBoolean(Settings.Profile.CONNECTION_TWITTER, twitterShare)
-            .putBoolean(Settings.Profile.CONNECTION_TUMBLR, tumblrShare)
-            .putString(Settings.Profile.SHARING_TEXT_WATCHING, shareMessage)
+        ProfileSettings.get(getContext())
+            .edit()
+            .putBoolean(ProfileSettings.CONNECTION_FACEBOOK, facebookShare)
+            .putBoolean(ProfileSettings.CONNECTION_TWITTER, twitterShare)
+            .putBoolean(ProfileSettings.CONNECTION_TUMBLR, tumblrShare)
+            .putString(ProfileSettings.SHARING_TEXT_WATCHING, shareMessage)
             .apply();
 
         if (type == Type.SHOW) {

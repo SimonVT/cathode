@@ -17,10 +17,8 @@ package net.simonvt.cathode.settings.setup;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import butterknife.ButterKnife;
@@ -36,14 +34,10 @@ public class CalendarSetupActivity extends BaseActivity {
 
   private static final int PERMISSION_REQUEST_CALENDAR = 11;
 
-  private SharedPreferences settings;
-
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
     setContentView(R.layout.setup_calendar);
     ButterKnife.bind(this);
-
-    settings = PreferenceManager.getDefaultSharedPreferences(this);
   }
 
   @OnClick(R.id.yes) void syncCalendar() {
@@ -58,18 +52,18 @@ public class CalendarSetupActivity extends BaseActivity {
 
   void doSync() {
     Timber.d("doSync");
-    settings.edit().putBoolean(Settings.CALENDAR_SYNC, true).apply();
+    Settings.get(this).edit().putBoolean(Settings.CALENDAR_SYNC, true).apply();
     toNotifications();
   }
 
   @OnClick(R.id.no) void dontSync() {
     Timber.d("dontSync");
-    settings.edit().putBoolean(Settings.CALENDAR_SYNC, false).apply();
+    Settings.get(this).edit().putBoolean(Settings.CALENDAR_SYNC, false).apply();
     toNotifications();
   }
 
   @Override public void onBackPressed() {
-    settings.edit().putBoolean(Settings.CALENDAR_SYNC, false).apply();
+    Settings.get(this).edit().putBoolean(Settings.CALENDAR_SYNC, false).apply();
     toHome();
   }
 

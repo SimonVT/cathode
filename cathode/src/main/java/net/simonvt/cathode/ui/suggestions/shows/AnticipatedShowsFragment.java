@@ -16,10 +16,8 @@
 package net.simonvt.cathode.ui.suggestions.shows;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.MenuItem;
@@ -37,7 +35,7 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.shows.SyncAnticipatedShows;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.settings.TraktTimestamps;
+import net.simonvt.cathode.settings.SuggestionsTimestamps;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.fragment.SwipeRefreshRecyclerFragment;
@@ -101,8 +99,6 @@ public class AnticipatedShowsFragment
 
   @Inject JobManager jobManager;
 
-  private SharedPreferences settings;
-
   private SortBy sortBy;
 
   private Cursor cursor;
@@ -120,9 +116,8 @@ public class AnticipatedShowsFragment
     super.onCreate(inState);
     Injector.inject(this);
 
-    settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-    sortBy = SortBy.fromValue(
-        settings.getString(Settings.Sort.SHOW_ANTICIPATED, SortBy.ANTICIPATED.getKey()));
+    sortBy = SortBy.fromValue(Settings.get(getContext())
+        .getString(Settings.Sort.SHOW_ANTICIPATED, SortBy.ANTICIPATED.getKey()));
 
     getLoaderManager().initLoader(LOADER_SHOWS_ANTICIPATED, null, this);
 
@@ -130,10 +125,11 @@ public class AnticipatedShowsFragment
     setTitle(R.string.title_shows_anticipated);
     setEmptyText(R.string.shows_loading_anticipated);
 
-    if (TraktTimestamps.suggestionsNeedsUpdate(getActivity(),
-        Settings.SUGGESTIONS_SHOWS_ANTICIPATED)) {
+    if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
+        SuggestionsTimestamps.SHOWS_ANTICIPATED)) {
       jobManager.addJob(new SyncAnticipatedShows());
-      TraktTimestamps.updateSuggestions(getActivity(), Settings.SUGGESTIONS_SHOWS_ANTICIPATED);
+      SuggestionsTimestamps.updateSuggestions(getActivity(),
+          SuggestionsTimestamps.SHOWS_ANTICIPATED);
     }
   }
 
@@ -173,7 +169,8 @@ public class AnticipatedShowsFragment
       case R.id.sort_viewers:
         if (sortBy != SortBy.ANTICIPATED) {
           sortBy = SortBy.ANTICIPATED;
-          settings.edit()
+          Settings.get(getContext())
+              .edit()
               .putString(Settings.Sort.SHOW_ANTICIPATED, SortBy.ANTICIPATED.getKey())
               .apply();
           getLoaderManager().restartLoader(LOADER_SHOWS_ANTICIPATED, null, this);
@@ -184,7 +181,10 @@ public class AnticipatedShowsFragment
       case R.id.sort_title:
         if (sortBy != SortBy.TITLE) {
           sortBy = SortBy.TITLE;
-          settings.edit().putString(Settings.Sort.SHOW_ANTICIPATED, SortBy.TITLE.getKey()).apply();
+          Settings.get(getContext())
+              .edit()
+              .putString(Settings.Sort.SHOW_ANTICIPATED, SortBy.TITLE.getKey())
+              .apply();
           getLoaderManager().restartLoader(LOADER_SHOWS_ANTICIPATED, null, this);
           scrollToTop = true;
         }

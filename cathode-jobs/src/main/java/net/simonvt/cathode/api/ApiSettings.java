@@ -17,8 +17,6 @@
 package net.simonvt.cathode.api;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import java.io.IOException;
 import javax.inject.Inject;
@@ -28,6 +26,7 @@ import net.simonvt.cathode.api.entity.TokenRequest;
 import net.simonvt.cathode.api.enumeration.GrantType;
 import net.simonvt.cathode.api.service.AuthorizationService;
 import net.simonvt.cathode.jobs.BuildConfig;
+import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -51,32 +50,30 @@ public class ApiSettings implements TraktSettings {
 
   private Context context;
 
-  private SharedPreferences settings;
-
   @Inject AuthorizationService authService;
 
   private volatile boolean refreshingToken;
 
   public ApiSettings(Context context) {
     this.context = context;
-    settings = PreferenceManager.getDefaultSharedPreferences(context);
   }
 
   @Override public String getAccessToken() {
     synchronized (this) {
-      return settings.getString(TraktLinkSettings.TRAKT_ACCESS_TOKEN, null);
+      return Settings.get(context).getString(TraktLinkSettings.TRAKT_ACCESS_TOKEN, null);
     }
   }
 
   @Override public String getRefreshToken() {
     synchronized (this) {
-      return settings.getString(TraktLinkSettings.TRAKT_REFRESH_TOKEN, null);
+      return Settings.get(context).getString(TraktLinkSettings.TRAKT_REFRESH_TOKEN, null);
     }
   }
 
   private boolean isTokenExpired() {
     synchronized (this) {
-      return settings.getLong(TraktLinkSettings.TRAKT_TOKEN_EXPIRATION, 0) < System.currentTimeMillis();
+      return Settings.get(context).getLong(TraktLinkSettings.TRAKT_TOKEN_EXPIRATION, 0)
+          < System.currentTimeMillis();
     }
   }
 
@@ -96,7 +93,8 @@ public class ApiSettings implements TraktSettings {
     synchronized (this) {
       final long expirationMillis =
           System.currentTimeMillis() + (tokens.getExpiresIn() * DateUtils.SECOND_IN_MILLIS);
-      settings.edit()
+      Settings.get(context)
+          .edit()
           .putString(TraktLinkSettings.TRAKT_ACCESS_TOKEN, tokens.getAccessToken())
           .putString(TraktLinkSettings.TRAKT_REFRESH_TOKEN, tokens.getRefreshToken())
           .putLong(TraktLinkSettings.TRAKT_TOKEN_EXPIRATION, expirationMillis)
@@ -118,7 +116,7 @@ public class ApiSettings implements TraktSettings {
 
   private void clearRefreshToken() {
     synchronized (this) {
-      settings.edit().remove(TraktLinkSettings.TRAKT_REFRESH_TOKEN).apply();
+      Settings.get(context).edit().remove(TraktLinkSettings.TRAKT_REFRESH_TOKEN).apply();
     }
   }
 

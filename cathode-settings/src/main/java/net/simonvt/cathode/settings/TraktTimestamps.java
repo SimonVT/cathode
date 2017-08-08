@@ -17,154 +17,176 @@ package net.simonvt.cathode.settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import net.simonvt.cathode.api.entity.LastActivity;
-import net.simonvt.cathode.settings.Settings.ActivityTimestamp;
 
 public final class TraktTimestamps {
+
+  private static final String SETTINGS_FILE = "trakt_timestamps";
+
+  private static final String SHOW_RATING = "showRating";
+  private static final String SHOW_WATCHLIST = "showWatchlist";
+  private static final String SHOW_COMMENT = "showComment";
+  private static final String SHOW_HIDE = "showHide";
+
+  private static final String SEASON_RATING = "seasonRating";
+  private static final String SEASON_COMMENT = "seasonComment";
+
+  private static final String EPISODE_WATCHED = "episodeWatched";
+  private static final String EPISODE_COLLECTION = "episodeCollection";
+  private static final String EPISODE_RATING = "episodeRating";
+  private static final String EPISODE_WATCHLIST = "episodeWatchlist";
+  private static final String EPISODE_COMMENT = "episodeComment";
+
+  private static final String MOVIE_WATCHED = "movieWatched";
+  private static final String MOVIE_COLLECTION = "movieCollection";
+  private static final String MOVIE_RATING = "movieRating";
+  private static final String MOVIE_WATCHLIST = "movieWatchlist";
+  private static final String MOVIE_COMMENT = "movieComment";
+  private static final String MOVIE_HIDE = "movieHide";
+
+  private static final String COMMENT_LIKED_AT = "commentLikedAt";
+
+  private static final String LIST_UPDATED_AT = "listUpdatedAt";
 
   private TraktTimestamps() {
   }
 
-  public static boolean episodeWatchedNeedsUpdate(Context context, long lastUpdated) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+  private static SharedPreferences getSettings(Context context) {
+    return context.getSharedPreferences(SETTINGS_FILE, Context.MODE_PRIVATE);
+  }
 
-    long lastActivity = settings.getLong(ActivityTimestamp.EPISODE_WATCHED, -1);
+  public static boolean episodeWatchedNeedsUpdate(Context context, long lastUpdated) {
+    SharedPreferences settings = getSettings(context);
+
+    long lastActivity = settings.getLong(EPISODE_WATCHED, -1);
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
   public static boolean episodeCollectedNeedsUpdate(Context context, long lastUpdated) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
 
-    long lastActivity = settings.getLong(ActivityTimestamp.EPISODE_COLLECTION, -1);
+    long lastActivity = settings.getLong(EPISODE_COLLECTION, -1);
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
   public static boolean episodeWatchlistNeedsUpdate(Context context, long lastUpdated) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
 
-    long lastActivity = settings.getLong(ActivityTimestamp.EPISODE_WATCHLIST, -1);
+    long lastActivity = settings.getLong(EPISODE_WATCHLIST, -1);
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
   public static boolean episodeRatingsNeedsUpdate(Context context, long lastUpdated) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
 
-    long lastActivity = settings.getLong(ActivityTimestamp.EPISODE_RATING, -1);
+    long lastActivity = settings.getLong(EPISODE_RATING, -1);
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
   public static boolean episodeCommentsNeedsUpdate(Context context, long lastUpdated) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
 
-    long lastActivity = settings.getLong(ActivityTimestamp.EPISODE_COMMENT, -1);
+    long lastActivity = settings.getLong(EPISODE_COMMENT, -1);
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
   public static boolean seasonRatingsNeedsUpdate(Context context, long lastUpdated) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
 
-    long lastActivity = settings.getLong(ActivityTimestamp.SEASON_RATING, -1);
+    long lastActivity = settings.getLong(SEASON_RATING, -1);
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
   public static boolean seasonCommentsNeedsUpdate(Context context, long lastUpdated) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
 
-    long lastActivity = settings.getLong(ActivityTimestamp.SEASON_COMMENT, -1);
+    long lastActivity = settings.getLong(SEASON_COMMENT, -1);
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
   public static boolean showWatchlistNeedsUpdate(Context context, long lastUpdated) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
 
-    long lastActivity = settings.getLong(ActivityTimestamp.SHOW_WATCHLIST, -1);
+    long lastActivity = settings.getLong(SHOW_WATCHLIST, -1);
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
   public static boolean showRatingsNeedsUpdate(Context context, long lastUpdated) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
 
-    long lastActivity = settings.getLong(ActivityTimestamp.SEASON_RATING, -1);
+    long lastActivity = settings.getLong(SEASON_RATING, -1);
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
   public static boolean showCommentsNeedsUpdate(Context context, long lastUpdated) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
 
-    long lastActivity = settings.getLong(ActivityTimestamp.SHOW_COMMENT, -1);
+    long lastActivity = settings.getLong(SHOW_COMMENT, -1);
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
   public static boolean showHideNeedsUpdate(Context context, long lastUpdated) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
 
-    long lastActivity = settings.getLong(ActivityTimestamp.SHOW_HIDE, -1);
+    long lastActivity = settings.getLong(SHOW_HIDE, -1);
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
   public static boolean movieWatchedNeedsUpdate(Context context, long lastUpdated) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
 
-    long lastActivity = settings.getLong(ActivityTimestamp.MOVIE_WATCHED, -1);
+    long lastActivity = settings.getLong(MOVIE_WATCHED, -1);
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
   public static boolean movieCollectedNeedsUpdate(Context context, long lastUpdated) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
 
-    long lastActivity = settings.getLong(ActivityTimestamp.MOVIE_COLLECTION, -1);
+    long lastActivity = settings.getLong(MOVIE_COLLECTION, -1);
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
   public static boolean movieWatchlistNeedsUpdate(Context context, long lastUpdated) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
 
-    long lastActivity = settings.getLong(ActivityTimestamp.MOVIE_WATCHLIST, -1);
+    long lastActivity = settings.getLong(MOVIE_WATCHLIST, -1);
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
   public static boolean movieRatingsNeedsUpdate(Context context, long lastUpdated) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
 
-    long lastActivity = settings.getLong(ActivityTimestamp.MOVIE_RATING, -1);
+    long lastActivity = settings.getLong(MOVIE_RATING, -1);
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
   public static boolean movieCommentsNeedsUpdate(Context context, long lastUpdated) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
 
-    long lastActivity = settings.getLong(ActivityTimestamp.MOVIE_COMMENT, -1);
+    long lastActivity = settings.getLong(MOVIE_COMMENT, -1);
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
   public static boolean movieHideNeedsUpdate(Context context, long lastUpdated) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
 
-    long lastActivity = settings.getLong(ActivityTimestamp.MOVIE_HIDE, -1);
+    long lastActivity = settings.getLong(MOVIE_HIDE, -1);
     return lastActivity == -1 || lastUpdated > lastActivity;
   }
 
   public static boolean commentLikedNeedsUpdate(Context context, long lastLiked) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
 
-    long lastActivity = settings.getLong(ActivityTimestamp.COMMENT_LIKED_AT, -1);
+    long lastActivity = settings.getLong(COMMENT_LIKED_AT, -1);
     return lastActivity == -1 || lastLiked > lastActivity;
   }
 
   public static boolean listNeedsUpdate(Context context, long lastUpdated) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
 
-    long lastActivity = settings.getLong(ActivityTimestamp.LIST_UPDATED_AT, -1);
+    long lastActivity = settings.getLong(LIST_UPDATED_AT, -1);
     return lastActivity == -1 || lastUpdated > lastActivity;
-  }
-
-  public static boolean suggestionsNeedsUpdate(Context context, String key) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-
-    final long lastActivity = settings.getLong(key, -1);
-    return System.currentTimeMillis() > lastActivity + 6 * DateUtils.HOUR_IN_MILLIS;
   }
 
   public static boolean shouldSyncComments(long lastSync) {
@@ -175,115 +197,68 @@ public final class TraktTimestamps {
     return System.currentTimeMillis() > lastSync + 24 * DateUtils.HOUR_IN_MILLIS;
   }
 
-  public static boolean shouldPurge(Context context) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-
-    final long lastPurge = settings.getLong(Settings.LAST_PURGE, 0);
-    if (lastPurge == 0) {
-      return true;
-    }
-
-    final boolean shouldPurge =
-        System.currentTimeMillis() > lastPurge + 7 * DateUtils.DAY_IN_MILLIS;
-
-    if (shouldPurge) {
-      settings.edit().putLong(Settings.LAST_PURGE, System.currentTimeMillis()).apply();
-    }
-
-    return shouldPurge;
-  }
-
   public static void update(Context context, LastActivity lastActivity) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
     SharedPreferences.Editor editor = settings.edit();
 
-    editor.putLong(ActivityTimestamp.SHOW_RATING,
-        lastActivity.getShows().getRatedAt().getTimeInMillis());
-    editor.putLong(ActivityTimestamp.SHOW_WATCHLIST,
-        lastActivity.getShows().getWatchlistedAt().getTimeInMillis());
-    editor.putLong(ActivityTimestamp.SHOW_COMMENT,
-        lastActivity.getShows().getCommentedAt().getTimeInMillis());
+    editor.putLong(SHOW_RATING, lastActivity.getShows().getRatedAt().getTimeInMillis());
+    editor.putLong(SHOW_WATCHLIST, lastActivity.getShows().getWatchlistedAt().getTimeInMillis());
+    editor.putLong(SHOW_COMMENT, lastActivity.getShows().getCommentedAt().getTimeInMillis());
+    editor.putLong(SHOW_HIDE, lastActivity.getShows().getHiddenAt().getTimeInMillis());
 
-    editor.putLong(ActivityTimestamp.SEASON_COMMENT,
-        lastActivity.getSeasons().getCommentedAt().getTimeInMillis());
-    editor.putLong(ActivityTimestamp.SEASON_RATING,
-        lastActivity.getSeasons().getRatedAt().getTimeInMillis());
+    editor.putLong(SEASON_COMMENT, lastActivity.getSeasons().getCommentedAt().getTimeInMillis());
+    editor.putLong(SEASON_RATING, lastActivity.getSeasons().getRatedAt().getTimeInMillis());
 
-    editor.putLong(ActivityTimestamp.EPISODE_WATCHED,
-        lastActivity.getEpisodes().getWatchedAt().getTimeInMillis());
-    editor.putLong(ActivityTimestamp.EPISODE_COLLECTION,
+    editor.putLong(EPISODE_WATCHED, lastActivity.getEpisodes().getWatchedAt().getTimeInMillis());
+    editor.putLong(EPISODE_COLLECTION,
         lastActivity.getEpisodes().getCollectedAt().getTimeInMillis());
-    editor.putLong(ActivityTimestamp.EPISODE_RATING,
-        lastActivity.getEpisodes().getRatedAt().getTimeInMillis());
-    editor.putLong(ActivityTimestamp.EPISODE_WATCHLIST,
+    editor.putLong(EPISODE_RATING, lastActivity.getEpisodes().getRatedAt().getTimeInMillis());
+    editor.putLong(EPISODE_WATCHLIST,
         lastActivity.getEpisodes().getWatchlistedAt().getTimeInMillis());
-    editor.putLong(ActivityTimestamp.EPISODE_COMMENT,
-        lastActivity.getEpisodes().getCommentedAt().getTimeInMillis());
+    editor.putLong(EPISODE_COMMENT, lastActivity.getEpisodes().getCommentedAt().getTimeInMillis());
 
-    editor.putLong(ActivityTimestamp.MOVIE_WATCHED,
-        lastActivity.getMovies().getWatchedAt().getTimeInMillis());
-    editor.putLong(ActivityTimestamp.MOVIE_COLLECTION,
-        lastActivity.getMovies().getCollectedAt().getTimeInMillis());
-    editor.putLong(ActivityTimestamp.MOVIE_RATING,
-        lastActivity.getMovies().getRatedAt().getTimeInMillis());
-    editor.putLong(ActivityTimestamp.MOVIE_WATCHLIST,
-        lastActivity.getMovies().getWatchlistedAt().getTimeInMillis());
-    editor.putLong(ActivityTimestamp.MOVIE_COMMENT,
-        lastActivity.getMovies().getCommentedAt().getTimeInMillis());
+    editor.putLong(MOVIE_WATCHED, lastActivity.getMovies().getWatchedAt().getTimeInMillis());
+    editor.putLong(MOVIE_COLLECTION, lastActivity.getMovies().getCollectedAt().getTimeInMillis());
+    editor.putLong(MOVIE_RATING, lastActivity.getMovies().getRatedAt().getTimeInMillis());
+    editor.putLong(MOVIE_WATCHLIST, lastActivity.getMovies().getWatchlistedAt().getTimeInMillis());
+    editor.putLong(MOVIE_COMMENT, lastActivity.getMovies().getCommentedAt().getTimeInMillis());
+    editor.putLong(MOVIE_HIDE, lastActivity.getMovies().getHiddenAt().getTimeInMillis());
 
-    editor.putLong(ActivityTimestamp.COMMENT_LIKED_AT,
-        lastActivity.getComments().getLikedAt().getTimeInMillis());
+    editor.putLong(COMMENT_LIKED_AT, lastActivity.getComments().getLikedAt().getTimeInMillis());
 
-    editor.putLong(ActivityTimestamp.LIST_UPDATED_AT,
-        lastActivity.getLists().getUpdatedAt().getTimeInMillis());
+    editor.putLong(LIST_UPDATED_AT, lastActivity.getLists().getUpdatedAt().getTimeInMillis());
 
     editor.apply();
   }
 
-  public static void updateSuggestions(Context context, String key) {
-    final long currentTimeMillis = System.currentTimeMillis();
-    PreferenceManager.getDefaultSharedPreferences(context)
-        .edit()
-        .putLong(key, currentTimeMillis)
-        .apply();
-  }
-
-  public static void updateHidden(Context context) {
-    final long currentTimeMillis = System.currentTimeMillis();
-    PreferenceManager.getDefaultSharedPreferences(context)
-        .edit()
-        .putLong(Settings.LAST_SYNC_HIDDEN, currentTimeMillis)
-        .apply();
-  }
-
   public static void clear(Context context) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    SharedPreferences settings = getSettings(context);
     SharedPreferences.Editor editor = settings.edit();
 
-    editor.remove(ActivityTimestamp.EPISODE_WATCHED);
-    editor.remove(ActivityTimestamp.EPISODE_COLLECTION);
-    editor.remove(ActivityTimestamp.EPISODE_RATING);
-    editor.remove(ActivityTimestamp.EPISODE_WATCHLIST);
-    editor.remove(ActivityTimestamp.EPISODE_COMMENT);
+    editor.remove(EPISODE_WATCHED);
+    editor.remove(EPISODE_COLLECTION);
+    editor.remove(EPISODE_RATING);
+    editor.remove(EPISODE_WATCHLIST);
+    editor.remove(EPISODE_COMMENT);
 
-    editor.remove(ActivityTimestamp.SHOW_RATING);
-    editor.remove(ActivityTimestamp.SHOW_WATCHLIST);
-    editor.remove(ActivityTimestamp.SHOW_COMMENT);
-    editor.remove(ActivityTimestamp.SHOW_HIDE);
+    editor.remove(SHOW_RATING);
+    editor.remove(SHOW_WATCHLIST);
+    editor.remove(SHOW_COMMENT);
+    editor.remove(SHOW_HIDE);
 
-    editor.remove(ActivityTimestamp.SEASON_COMMENT);
-    editor.remove(ActivityTimestamp.SEASON_RATING);
+    editor.remove(SEASON_COMMENT);
+    editor.remove(SEASON_RATING);
 
-    editor.remove(ActivityTimestamp.MOVIE_WATCHED);
-    editor.remove(ActivityTimestamp.MOVIE_COLLECTION);
-    editor.remove(ActivityTimestamp.MOVIE_RATING);
-    editor.remove(ActivityTimestamp.MOVIE_WATCHLIST);
-    editor.remove(ActivityTimestamp.MOVIE_COMMENT);
-    editor.remove(ActivityTimestamp.MOVIE_HIDE);
+    editor.remove(MOVIE_WATCHED);
+    editor.remove(MOVIE_COLLECTION);
+    editor.remove(MOVIE_RATING);
+    editor.remove(MOVIE_WATCHLIST);
+    editor.remove(MOVIE_COMMENT);
+    editor.remove(MOVIE_HIDE);
 
-    editor.remove(ActivityTimestamp.COMMENT_LIKED_AT);
+    editor.remove(COMMENT_LIKED_AT);
 
-    editor.remove(ActivityTimestamp.LIST_UPDATED_AT);
+    editor.remove(LIST_UPDATED_AT);
 
     editor.apply();
   }

@@ -18,9 +18,7 @@ package net.simonvt.cathode;
 import android.accounts.Account;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobscheduler.Jobs;
@@ -28,13 +26,14 @@ import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.UpdateShowCounts;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.Timestamps;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.TraktTimestamps;
 
 public final class Upgrader {
 
   private static final String SETTINGS_VERSION = "settingsVersion";
-  private static final int VERSION = 1;
+  private static final int VERSION = 2;
 
   public interface JobQueue {
 
@@ -47,10 +46,10 @@ public final class Upgrader {
   public static void upgrade(Context context, final JobQueue jobQueue) {
     legacyUpgrade(context, jobQueue);
 
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-    final int currentVersion = settings.getInt(SETTINGS_VERSION, -1);
+    final int currentVersion = Settings.get(context).getInt(SETTINGS_VERSION, -1);
     if (currentVersion == -1) {
-      settings.edit()
+      Settings.get(context)
+          .edit()
           .putInt(SETTINGS_VERSION, VERSION)
           .putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE)
           .apply();
@@ -68,37 +67,47 @@ public final class Upgrader {
             ContentResolver.setIsSyncable(account, BuildConfig.PROVIDER_AUTHORITY, 0);
           }
         }
+      }
 
-        settings.edit()
-            .remove(Settings.SHOWS_LAST_UPDATED)
-            .remove(Settings.MOVIES_LAST_UPDATED)
+      if (currentVersion < 2) {
+        Settings.get(context)
+            .edit()
+            .remove("suggestions")
+            .remove("lastSyncHidden")
+            .remove("lastPurge")
+            .remove("tmdbLastConfigurationUpdate")
+            .apply();
+
+        Timestamps.get(context)
+            .edit()
+            .remove(Timestamps.SHOWS_LAST_UPDATED)
+            .remove(Timestamps.MOVIES_LAST_UPDATED)
             .apply();
         final long lastUpdated = System.currentTimeMillis() - DateUtils.WEEK_IN_MILLIS;
-        settings.edit()
-            .putLong(Settings.SHOWS_LAST_UPDATED, lastUpdated)
-            .putLong(Settings.MOVIES_LAST_UPDATED, lastUpdated)
+        Timestamps.get(context)
+            .edit()
+            .putLong(Timestamps.SHOWS_LAST_UPDATED, lastUpdated)
+            .putLong(Timestamps.MOVIES_LAST_UPDATED, lastUpdated)
             .apply();
       }
 
-      settings.edit().putInt(SETTINGS_VERSION, VERSION).apply();
+      Settings.get(context).edit().putInt(SETTINGS_VERSION, VERSION).apply();
     }
 
-    settings.edit().putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE).apply();
+    Settings.get(context).edit().putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE).apply();
   }
 
   public static void legacyUpgrade(Context context, final JobQueue jobQueue) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-
-    final int currentVersion = settings.getInt(Settings.VERSION_CODE, -1);
+    final int currentVersion = Settings.get(context).getInt(Settings.VERSION_CODE, -1);
     if (currentVersion == -1) {
-      settings.edit().putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE).apply();
+      Settings.get(context).edit().putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE).apply();
       return;
     }
 
     if (currentVersion != BuildConfig.VERSION_CODE) {
       if (currentVersion < 20002) {
         Accounts.removeAccount(context);
-        settings.edit().clear().apply();
+        Settings.get(context).edit().clear().apply();
       }
       if (currentVersion < 20501) {
         TraktTimestamps.clear(context);
@@ -119,16 +128,16 @@ public final class Upgrader {
         Accounts.requestCalendarSync(context);
       }
       if (currentVersion <= 37000) {
-        settings.edit().remove(Settings.START_PAGE).apply();
+        Settings.get(context).edit().remove(Settings.START_PAGE).apply();
       }
       if (currentVersion <= 50303) {
-        settings.edit().putInt(SETTINGS_VERSION, 0).apply();
-        settings.edit().remove("showHidden").apply();
-        final boolean loggedIn = settings.getBoolean("traktLoggedIn", false);
-        settings.edit().putBoolean(TraktLinkSettings.TRAKT_LINKED, loggedIn).apply();
+        Settings.get(context).edit().putInt(SETTINGS_VERSION, 0).apply();
+        Settings.get(context).edit().remove("showHidden").apply();
+        final boolean loggedIn = Settings.get(context).getBoolean("traktLoggedIn", false);
+        Settings.get(context).edit().putBoolean(TraktLinkSettings.TRAKT_LINKED, loggedIn).apply();
       }
 
-      settings.edit().putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE).apply();
+      Settings.get(context).edit().putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE).apply();
     }
   }
 }

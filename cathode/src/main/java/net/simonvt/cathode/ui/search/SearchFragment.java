@@ -16,10 +16,8 @@
 package net.simonvt.cathode.ui.search;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -56,9 +54,7 @@ public class SearchFragment extends ToolbarGridFragment<SearchAdapter.ViewHolder
     implements SearchHandler.SearchListener, SearchAdapter.OnResultClickListener {
 
   public enum SortBy {
-    TITLE("title"),
-    RATING("rating"),
-    RELEVANCE("relevance");
+    TITLE("title"), RATING("rating"), RELEVANCE("relevance");
 
     private String key;
 
@@ -102,8 +98,6 @@ public class SearchFragment extends ToolbarGridFragment<SearchAdapter.ViewHolder
   private SearchView searchView;
   private boolean requestFocus;
 
-  private SharedPreferences settings;
-
   private SortBy sortBy;
 
   private SearchAdapter adapter;
@@ -124,9 +118,8 @@ public class SearchFragment extends ToolbarGridFragment<SearchAdapter.ViewHolder
     super.onCreate(inState);
     Injector.inject(this);
 
-    settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-
-    sortBy = SortBy.fromValue(settings.getString(Settings.Sort.SEARCH, SortBy.TITLE.getKey()));
+    sortBy = SortBy.fromValue(
+        Settings.get(getContext()).getString(Settings.Sort.SEARCH, SortBy.TITLE.getKey()));
 
     adapter = new SearchAdapter(this);
     setAdapter(adapter);

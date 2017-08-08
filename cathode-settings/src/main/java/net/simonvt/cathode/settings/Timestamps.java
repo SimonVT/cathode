@@ -17,24 +17,25 @@
 package net.simonvt.cathode.settings;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
-public final class TraktLinkSettings {
+public final class Timestamps {
 
-  public static final String TRAKT_LINKED = "traktLinked";
-  public static final String TRAKT_AUTH_FAILED = "traktAuthFailed";
+  private static final String SETTINGS_FILE = "cathode_timestamps";
 
-  public static final String TRAKT_ACCESS_TOKEN = "traktToken";
-  public static final String TRAKT_REFRESH_TOKEN = "traktRefreshToken";
-  public static final String TRAKT_TOKEN_EXPIRATION = "traktTokenExpiration";
+  public static final String LAST_FULL_SYNC = "fullSync";
+  public static final String LAST_CONFIG_SYNC = "configSync";
+  public static final String SHOWS_LAST_UPDATED = "showsLastUpdated";
+  public static final String MOVIES_LAST_UPDATED = "moviesLastUpdated";
 
-  private TraktLinkSettings() {
+  private Timestamps() {
   }
 
-  public static boolean isLinked(Context context) {
-    return Settings.get(context).getBoolean(TRAKT_LINKED, false);
+  public static SharedPreferences get(Context context) {
+    return context.getSharedPreferences(SETTINGS_FILE, Context.MODE_PRIVATE);
   }
 
-  public static boolean hasAuthFailed(Context context) {
-    return Settings.get(context).getBoolean(TRAKT_AUTH_FAILED, false);
+  public static void clear(Context context) {
+    get(context).edit().clear().apply();
   }
 }

@@ -20,9 +20,7 @@ import android.content.ComponentName;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.text.format.DateUtils;
 import java.util.ArrayList;
@@ -39,7 +37,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.SeparatePagesCallJob;
-import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.Timestamps;
 import retrofit2.Call;
 
 public class SyncUpdatedShows extends SeparatePagesCallJob<UpdatedItem> {
@@ -51,10 +49,10 @@ public class SyncUpdatedShows extends SeparatePagesCallJob<UpdatedItem> {
   @Inject transient ShowsService showsService;
   @Inject transient ShowDatabaseHelper showHelper;
 
-  private transient SharedPreferences settings;
   private transient long currentTime;
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public static void schedulePeriodic(Context context) {
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+  public static void schedulePeriodic(Context context) {
     JobInfo jobInfo = new JobInfo.Builder(ID, new ComponentName(context, SchedulerService.class)) //
         .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
         .setRequiresCharging(true)
@@ -78,8 +76,8 @@ public class SyncUpdatedShows extends SeparatePagesCallJob<UpdatedItem> {
   }
 
   @Override public Call<List<UpdatedItem>> getCall(int page) {
-    settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-    final long lastUpdated = settings.getLong(Settings.SHOWS_LAST_UPDATED, currentTime);
+    final long lastUpdated =
+        Timestamps.get(getContext()).getLong(Timestamps.SHOWS_LAST_UPDATED, currentTime);
     final long millis = lastUpdated - 12 * DateUtils.HOUR_IN_MILLIS;
     final String updatedSince = TimeUtils.getIsoTime(millis);
     return showsService.getUpdatedShows(updatedSince, page, LIMIT);
@@ -117,7 +115,7 @@ public class SyncUpdatedShows extends SeparatePagesCallJob<UpdatedItem> {
       queue(new SyncPendingShows());
     }
 
-    settings.edit().putLong(Settings.SHOWS_LAST_UPDATED, currentTime).apply();
+    Timestamps.get(getContext()).edit().putLong(Timestamps.SHOWS_LAST_UPDATED, currentTime).apply();
     return true;
   }
 }

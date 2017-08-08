@@ -16,7 +16,6 @@
 package net.simonvt.cathode.module;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
 import com.google.gson.Gson;
 import dagger.Module;
 import dagger.Provides;
@@ -27,6 +26,7 @@ import net.simonvt.cathode.IntPreference;
 import net.simonvt.cathode.api.Trakt;
 import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.remote.InitialSyncJob;
+import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.tmdb.Tmdb;
 import net.simonvt.cathode.tmdb.TmdbApiKey;
 import net.simonvt.cathode.tmdb.TmdbSettings;
@@ -70,7 +70,7 @@ import timber.log.Timber;
         return response;
       }
     });
-    builder.networkInterceptors().add(loggingInterceptor);
+    builder.interceptors().add(loggingInterceptor);
     return new Retrofit.Builder() //
         .baseUrl(TraktModule.API_URL)
         .client(builder.build())
@@ -79,8 +79,7 @@ import timber.log.Timber;
   }
 
   @Provides @Singleton @HttpStatusCode IntPreference provideHttpStatusCodePreference() {
-    return new IntPreference(PreferenceManager.getDefaultSharedPreferences(context),
-        "debug_httpStatusCode", 200);
+    return new IntPreference(Settings.get(context), "debug_httpStatusCode", 200);
   }
 
   @Provides @Singleton TmdbSettings tmdbSettings(@TmdbApiKey String apiKey,

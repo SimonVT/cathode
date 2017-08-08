@@ -21,9 +21,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.StrictMode;
-import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import com.crashlytics.android.Crashlytics;
 import dagger.ObjectGraph;
@@ -48,6 +46,7 @@ import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.Timestamps;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.settings.login.LoginActivity;
@@ -60,8 +59,6 @@ public class CathodeApp extends Application {
   private static final int AUTH_NOTIFICATION = 2;
 
   private static final long SYNC_DELAY = 15 * DateUtils.MINUTE_IN_MILLIS;
-
-  private SharedPreferences settings;
 
   @Inject JobManager jobManager;
 
@@ -84,8 +81,6 @@ public class CathodeApp extends Application {
     UpcomingSortByPreference.init(this);
     UpcomingTimePreference.init(this);
     FirstAiredOffsetPreference.init(this);
-
-    settings = PreferenceManager.getDefaultSharedPreferences(this);
 
     Upgrader.upgrade(this, new Upgrader.JobQueue() {
       @Override public void add(final Job job) {
@@ -141,7 +136,8 @@ public class CathodeApp extends Application {
     @Override public void run() {
       Timber.d("Performing periodic sync");
       final long currentTime = System.currentTimeMillis();
-      final long lastFullSync = settings.getLong(Settings.LAST_FULL_SYNC, 0);
+      final long lastFullSync =
+          Timestamps.get(CathodeApp.this).getLong(Timestamps.LAST_FULL_SYNC, 0);
 
       if (lastFullSync + DateUtils.DAY_IN_MILLIS < currentTime) {
         jobManager.addJob(new SyncJob());
@@ -208,9 +204,10 @@ public class CathodeApp extends Application {
   private OnAuthFailedListener authFailedListener = new OnAuthFailedListener() {
     @Override public void onAuthFailed() {
       Timber.i("onAuthFailure");
-
-      SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(CathodeApp.this);
-      settings.edit().putBoolean(TraktLinkSettings.TRAKT_AUTH_FAILED, true).apply();
+      Settings.get(CathodeApp.this)
+          .edit()
+          .putBoolean(TraktLinkSettings.TRAKT_AUTH_FAILED, true)
+          .apply();
 
       Intent intent = new Intent(CathodeApp.this, LoginActivity.class);
       intent.setAction(HomeActivity.ACTION_LOGIN);

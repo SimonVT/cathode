@@ -17,10 +17,8 @@ package net.simonvt.cathode.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -209,8 +207,7 @@ public class HomeActivity extends BaseActivity
       stack.replace(StartPage.SHOWS_UPCOMING.getPageClass(), StartPage.SHOWS_UPCOMING.getTag());
     } else {
       if (stack.size() == 0) {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        final String startPagePref = settings.getString(Settings.START_PAGE, null);
+        final String startPagePref = Settings.get(this).getString(Settings.START_PAGE, null);
         StartPage startPage = StartPage.fromValue(startPagePref, StartPage.DASHBOARD);
         navigation.setSelectedId(startPage.getMenuId());
         stack.replace(startPage.getPageClass(), startPage.getTag());

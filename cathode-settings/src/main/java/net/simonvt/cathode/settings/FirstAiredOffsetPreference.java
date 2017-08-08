@@ -17,8 +17,6 @@
 package net.simonvt.cathode.settings;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 
 public class FirstAiredOffsetPreference {
@@ -26,7 +24,6 @@ public class FirstAiredOffsetPreference {
   private static FirstAiredOffsetPreference instance;
 
   private Context context;
-  private SharedPreferences settings;
 
   public static void init(Context context) {
     if (instance == null) {
@@ -44,15 +41,14 @@ public class FirstAiredOffsetPreference {
 
   private FirstAiredOffsetPreference(Context context) {
     this.context = context;
-    settings = PreferenceManager.getDefaultSharedPreferences(context);
   }
 
   public void set(int offsetHours) {
-    settings.edit().putInt(Settings.SHOWS_OFFSET, offsetHours).apply();
+    Settings.get(context).edit().putInt(Settings.SHOWS_OFFSET, offsetHours).apply();
   }
 
   public int getOffsetHours() {
-    return settings.getInt(Settings.SHOWS_OFFSET, 0);
+    return Settings.get(context).getInt(Settings.SHOWS_OFFSET, 0);
   }
 
   public long getOffsetMillis() {

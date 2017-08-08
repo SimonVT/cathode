@@ -22,7 +22,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.People;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.SyncJob;
-import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.ProfileSettings;
 import net.simonvt.cathode.settings.TraktTimestamps;
 
 public class InitialSyncJob extends Job {
@@ -40,7 +40,7 @@ public class InitialSyncJob extends Job {
   @Override public boolean perform() {
     jobManager.clear();
 
-    Settings.clearProfile(getContext());
+    ProfileSettings.clearProfile(getContext());
     TraktTimestamps.clear(getContext());
 
     getContentResolver().delete(Shows.SHOWS, null, null);

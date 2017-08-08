@@ -16,9 +16,7 @@
 package net.simonvt.cathode.ui.suggestions.movies;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.MenuItem;
@@ -37,7 +35,7 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.settings.TraktTimestamps;
+import net.simonvt.cathode.settings.SuggestionsTimestamps;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.fragment.SwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
@@ -50,8 +48,7 @@ public class MovieRecommendationsFragment
     MovieRecommendationsAdapter.DismissListener, ListDialog.Callback {
 
   private enum SortBy {
-    RELEVANCE("relevance", Movies.SORT_RECOMMENDED),
-    RATING("rating", Movies.SORT_RATING);
+    RELEVANCE("relevance", Movies.SORT_RECOMMENDED), RATING("rating", Movies.SORT_RATING);
 
     private String key;
 
@@ -104,8 +101,6 @@ public class MovieRecommendationsFragment
 
   private SimpleCursor cursor;
 
-  private SharedPreferences settings;
-
   private SortBy sortBy;
 
   private int columnCount;
@@ -121,9 +116,8 @@ public class MovieRecommendationsFragment
     super.onCreate(inState);
     Injector.inject(this);
 
-    settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-    sortBy = SortBy.fromValue(
-        settings.getString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey()));
+    sortBy = SortBy.fromValue(Settings.get(getContext())
+        .getString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey()));
 
     getLoaderManager().initLoader(LOADER_MOVIES_RECOMMENDATIONS, null, this);
 
@@ -132,10 +126,11 @@ public class MovieRecommendationsFragment
     setTitle(R.string.title_movies_recommended);
     setEmptyText(R.string.recommendations_empty);
 
-    if (TraktTimestamps.suggestionsNeedsUpdate(getActivity(),
-        Settings.SUGGESTIONS_MOVIES_RECOMMENDED)) {
+    if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
+        SuggestionsTimestamps.MOVIES_RECOMMENDED)) {
       jobManager.addJob(new SyncMovieRecommendations());
-      TraktTimestamps.updateSuggestions(getActivity(), Settings.SUGGESTIONS_MOVIES_RECOMMENDED);
+      SuggestionsTimestamps.updateSuggestions(getActivity(),
+          SuggestionsTimestamps.MOVIES_RECOMMENDED);
     }
   }
 
@@ -175,7 +170,8 @@ public class MovieRecommendationsFragment
       case R.id.sort_relevance:
         if (sortBy != SortBy.RELEVANCE) {
           sortBy = SortBy.RELEVANCE;
-          settings.edit()
+          Settings.get(getContext())
+              .edit()
               .putString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey())
               .apply();
           getLoaderManager().restartLoader(LOADER_MOVIES_RECOMMENDATIONS, null, this);
@@ -186,7 +182,8 @@ public class MovieRecommendationsFragment
       case R.id.sort_rating:
         if (sortBy != SortBy.RATING) {
           sortBy = SortBy.RATING;
-          settings.edit()
+          Settings.get(getContext())
+              .edit()
               .putString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RATING.getKey())
               .apply();
           getLoaderManager().restartLoader(LOADER_MOVIES_RECOMMENDATIONS, null, this);

@@ -15,11 +15,9 @@
  */
 package net.simonvt.cathode.settings;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import net.simonvt.cathode.Injector;
@@ -58,16 +56,9 @@ public class NotificationSettingsActivity extends BaseActivity {
     private static final String DIALOG_NOTIFIACTION_TIME =
         "net.simonvt.cathode.settings.NotifiactionSettingsActivity.NotificationSettingsFragment.notificationTIme";
 
-    SharedPreferences settings;
-
-    private boolean isTablet;
-
     @Override public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       Injector.inject(this);
-      settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-
-      isTablet = getResources().getBoolean(R.bool.isTablet);
 
       addPreferencesFromResource(R.xml.settings_notifications);
 
@@ -83,8 +74,9 @@ public class NotificationSettingsActivity extends BaseActivity {
           new Preference.OnPreferenceClickListener() {
             @Override public boolean onPreferenceClick(Preference preference) {
               NotificationTime notificationTime = NotificationTime.fromValue(
-                  settings.getLong(Settings.NOTIFICACTION_TIME,
-                      NotificationTime.HOURS_1.getNotificationTime()));
+                  Settings.get(getActivity())
+                      .getLong(Settings.NOTIFICACTION_TIME,
+                          NotificationTime.HOURS_1.getNotificationTime()));
               NotificationTimeDialog dialog = NotificationTimeDialog.newInstance(notificationTime);
               dialog.setTargetFragment(NotificationSettingsFragment.this, 0);
               dialog.show(getFragmentManager(), DIALOG_NOTIFIACTION_TIME);
@@ -98,7 +90,10 @@ public class NotificationSettingsActivity extends BaseActivity {
     }
 
     @Override public void onNotificationTimeSelected(NotificationTime value) {
-      settings.edit().putLong(Settings.NOTIFICACTION_TIME, value.getNotificationTime()).apply();
+      Settings.get(getActivity())
+          .edit()
+          .putLong(Settings.NOTIFICACTION_TIME, value.getNotificationTime())
+          .apply();
       scheduleNotificationService();
     }
   }

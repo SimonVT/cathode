@@ -17,9 +17,7 @@
 package net.simonvt.cathode.util;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.preference.PreferenceManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.R;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
@@ -50,8 +48,8 @@ public final class DataHelper {
 
   public static String getEpisodeTitle(Context context, String title, int season, int episode,
       boolean watched, boolean withNumber) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-    final boolean avoidSpoilers = settings.getBoolean(Settings.SHOWS_AVOID_SPOILERS, false);
+    final boolean avoidSpoilers =
+        Settings.get(context).getBoolean(Settings.SHOWS_AVOID_SPOILERS, false);
 
     if (avoidSpoilers && !watched) {
       return context.getString(R.string.season_x_episode, season, episode);
@@ -73,8 +71,8 @@ public final class DataHelper {
   }
 
   public static String getEpisodeOverview(Context context, Cursor cursor, boolean watched) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-    final boolean avoidSpoilers = settings.getBoolean(Settings.SHOWS_AVOID_SPOILERS, false);
+    final boolean avoidSpoilers =
+        Settings.get(context).getBoolean(Settings.SHOWS_AVOID_SPOILERS, false);
 
     if (avoidSpoilers && !watched) {
       return context.getString(R.string.episode_overview_nospoiler);

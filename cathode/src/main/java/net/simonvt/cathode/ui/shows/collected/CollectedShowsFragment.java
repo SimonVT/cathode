@@ -15,10 +15,8 @@
  */
 package net.simonvt.cathode.ui.shows.collected;
 
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -45,8 +43,7 @@ public class CollectedShowsFragment extends ShowsFragment implements ListDialog.
   private static final int LOADER_SHOWS_COLLECTION = 1;
 
   private enum SortBy {
-    TITLE("title", Shows.SORT_TITLE),
-    COLLECTED("collected", Shows.SORT_COLLECTED);
+    TITLE("title", Shows.SORT_TITLE), COLLECTED("collected", Shows.SORT_COLLECTED);
 
     private String key;
 
@@ -89,14 +86,11 @@ public class CollectedShowsFragment extends ShowsFragment implements ListDialog.
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.fragment.ShowCollectionFragment.sortDialog";
 
-  private SharedPreferences settings;
-
   private SortBy sortBy;
 
   @Override public void onCreate(Bundle inState) {
-    settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-    sortBy =
-        SortBy.fromValue(settings.getString(Settings.Sort.SHOW_COLLECTED, SortBy.TITLE.getKey()));
+    sortBy = SortBy.fromValue(
+        Settings.get(getContext()).getString(Settings.Sort.SHOW_COLLECTED, SortBy.TITLE.getKey()));
 
     super.onCreate(inState);
 
@@ -139,7 +133,10 @@ public class CollectedShowsFragment extends ShowsFragment implements ListDialog.
       case R.id.sort_title:
         if (sortBy != SortBy.TITLE) {
           sortBy = SortBy.TITLE;
-          settings.edit().putString(Settings.Sort.SHOW_COLLECTED, SortBy.TITLE.getKey()).apply();
+          Settings.get(getContext())
+              .edit()
+              .putString(Settings.Sort.SHOW_COLLECTED, SortBy.TITLE.getKey())
+              .apply();
           getLoaderManager().restartLoader(getLoaderId(), null, this);
           scrollToTop = true;
         }
@@ -148,7 +145,8 @@ public class CollectedShowsFragment extends ShowsFragment implements ListDialog.
       case R.id.sort_collected:
         if (sortBy != SortBy.COLLECTED) {
           sortBy = SortBy.COLLECTED;
-          settings.edit()
+          Settings.get(getContext())
+              .edit()
               .putString(Settings.Sort.SHOW_COLLECTED, SortBy.COLLECTED.getKey())
               .apply();
           getLoaderManager().restartLoader(getLoaderId(), null, this);

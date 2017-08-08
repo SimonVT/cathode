@@ -15,10 +15,8 @@
  */
 package net.simonvt.cathode.ui.suggestions.movies;
 
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -36,7 +34,7 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.movies.SyncAnticipatedMovies;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.settings.TraktTimestamps;
+import net.simonvt.cathode.settings.SuggestionsTimestamps;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
@@ -90,23 +88,21 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
 
   private static final int LOADER_MOVIES_ANTICIPATED = 1;
 
-  private SharedPreferences settings;
-
   private SortBy sortBy;
 
   @Override public void onCreate(Bundle inState) {
-    settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-    sortBy = SortBy.fromValue(
-        settings.getString(Settings.Sort.MOVIE_ANTICIPATED, SortBy.ANTICIPATED.getKey()));
+    sortBy = SortBy.fromValue(Settings.get(getContext())
+        .getString(Settings.Sort.MOVIE_ANTICIPATED, SortBy.ANTICIPATED.getKey()));
     super.onCreate(inState);
 
     setTitle(R.string.title_movies_anticipated);
     setEmptyText(R.string.movies_loading_anticipated);
 
-    if (TraktTimestamps.suggestionsNeedsUpdate(getActivity(),
-        Settings.SUGGESTIONS_MOVIES_ANTICIPATED)) {
+    if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
+        SuggestionsTimestamps.MOVIES_ANTICIPATED)) {
       jobManager.addJob(new SyncAnticipatedMovies());
-      TraktTimestamps.updateSuggestions(getActivity(), Settings.SUGGESTIONS_MOVIES_ANTICIPATED);
+      SuggestionsTimestamps.updateSuggestions(getActivity(),
+          SuggestionsTimestamps.MOVIES_ANTICIPATED);
     }
   }
 
@@ -146,7 +142,8 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
       case R.id.sort_anticipated:
         if (sortBy != SortBy.ANTICIPATED) {
           sortBy = SortBy.ANTICIPATED;
-          settings.edit()
+          Settings.get(getContext())
+              .edit()
               .putString(Settings.Sort.MOVIE_ANTICIPATED, SortBy.ANTICIPATED.getKey())
               .apply();
           getLoaderManager().restartLoader(LOADER_MOVIES_ANTICIPATED, null, this);
@@ -157,7 +154,10 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
       case R.id.sort_title:
         if (sortBy != SortBy.TITLE) {
           sortBy = SortBy.TITLE;
-          settings.edit().putString(Settings.Sort.MOVIE_ANTICIPATED, SortBy.TITLE.getKey()).apply();
+          Settings.get(getContext())
+              .edit()
+              .putString(Settings.Sort.MOVIE_ANTICIPATED, SortBy.TITLE.getKey())
+              .apply();
           getLoaderManager().restartLoader(LOADER_MOVIES_ANTICIPATED, null, this);
           scrollToTop = true;
         }

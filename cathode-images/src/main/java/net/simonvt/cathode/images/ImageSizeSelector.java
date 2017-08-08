@@ -17,14 +17,11 @@
 package net.simonvt.cathode.images;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import net.simonvt.cathode.settings.Settings;
 
 public class ImageSizeSelector {
 
@@ -82,15 +79,13 @@ public class ImageSizeSelector {
   }
 
   public void updateSizes() {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-
-    Set<String> posterSizes = settings.getStringSet(Settings.TMDB_IMAGES_POSTER_SIZES, null);
+    Set<String> posterSizes = ImageSettings.getPosterSizes(context);
     parseImageSizes(posterSizes, posterImageSizes);
-    Set<String> backdropSizes = settings.getStringSet(Settings.TMDB_IMAGES_BACKDROP_SIZES, null);
+    Set<String> backdropSizes = ImageSettings.getBackdropSizes(context);
     parseImageSizes(backdropSizes, backdropImageSizes);
-    Set<String> profileSizes = settings.getStringSet(Settings.TMDB_IMAGES_PROFILE_SIZES, null);
+    Set<String> profileSizes = ImageSettings.getProfileSizes(context);
     parseImageSizes(profileSizes, profileImageSizes);
-    Set<String> stillSizes = settings.getStringSet(Settings.TMDB_IMAGES_STILL_SIZES, null);
+    Set<String> stillSizes = ImageSettings.getStillSizes(context);
     parseImageSizes(stillSizes, stillImageSizes);
 
     sort(posterImageSizes);

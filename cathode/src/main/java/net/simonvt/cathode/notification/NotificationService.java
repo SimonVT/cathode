@@ -22,12 +22,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
@@ -115,18 +113,17 @@ public class NotificationService extends IntentService {
 
     long nextNotificationTime = Long.MAX_VALUE;
 
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-    final boolean enabled = settings.getBoolean(Settings.NOTIFICACTIONS_ENABLED, false);
+    final boolean enabled = Settings.get(this).getBoolean(Settings.NOTIFICACTIONS_ENABLED, false);
 
     if (!enabled) {
       nm.cancel(GROUP_NOTIFICATION_ID);
       return;
     }
 
-    final long advanceMillis = settings.getLong(Settings.NOTIFICACTION_TIME,
-        NotificationTime.HOURS_1.getNotificationTime());
-    final boolean vibrate = settings.getBoolean(Settings.NOTIFICACTION_VIBRATE, true);
-    final boolean sound = settings.getBoolean(Settings.NOTIFICACTION_SOUND, true);
+    final long advanceMillis = Settings.get(this)
+        .getLong(Settings.NOTIFICACTION_TIME, NotificationTime.HOURS_1.getNotificationTime());
+    final boolean vibrate = Settings.get(this).getBoolean(Settings.NOTIFICACTION_VIBRATE, true);
+    final boolean sound = Settings.get(this).getBoolean(Settings.NOTIFICACTION_SOUND, true);
 
     Cursor episodes = getContentResolver().query(Episodes.EPISODES_WITH_SHOW, PROJECTION,
         "(" + SqlColumn.table(Tables.SHOWS).column(ShowColumns.WATCHED_COUNT) + ">0 OR " + SqlColumn

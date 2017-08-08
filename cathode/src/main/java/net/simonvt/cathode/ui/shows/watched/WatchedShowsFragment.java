@@ -15,9 +15,7 @@
  */
 package net.simonvt.cathode.ui.shows.watched;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -45,8 +43,7 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
   private static final int LOADER_SHOWS_WATCHED = 1;
 
   private enum SortBy {
-    TITLE("title", Shows.SORT_TITLE),
-    WATCHED("watched", Shows.SORT_WATCHED);
+    TITLE("title", Shows.SORT_TITLE), WATCHED("watched", Shows.SORT_WATCHED);
 
     private String key;
 
@@ -89,14 +86,11 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.shows.watched.WatchedShowsFragment.sortDialog";
 
-  private SharedPreferences settings;
-
   private SortBy sortBy;
 
   @Override public void onCreate(Bundle inState) {
-    settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-    sortBy =
-        SortBy.fromValue(settings.getString(Settings.Sort.SHOW_WATCHED, SortBy.TITLE.getKey()));
+    sortBy = SortBy.fromValue(
+        Settings.get(getContext()).getString(Settings.Sort.SHOW_WATCHED, SortBy.TITLE.getKey()));
 
     super.onCreate(inState);
 
@@ -140,7 +134,10 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
       case R.id.sort_title:
         if (sortBy != SortBy.TITLE) {
           sortBy = SortBy.TITLE;
-          settings.edit().putString(Settings.Sort.SHOW_WATCHED, SortBy.TITLE.getKey()).apply();
+          Settings.get(getContext())
+              .edit()
+              .putString(Settings.Sort.SHOW_WATCHED, SortBy.TITLE.getKey())
+              .apply();
           getLoaderManager().restartLoader(getLoaderId(), null, this);
           scrollToTop = true;
         }
@@ -149,7 +146,10 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
       case R.id.sort_watched:
         if (sortBy != SortBy.WATCHED) {
           sortBy = SortBy.WATCHED;
-          settings.edit().putString(Settings.Sort.SHOW_WATCHED, SortBy.WATCHED.getKey()).apply();
+          Settings.get(getContext())
+              .edit()
+              .putString(Settings.Sort.SHOW_WATCHED, SortBy.WATCHED.getKey())
+              .apply();
           getLoaderManager().restartLoader(getLoaderId(), null, this);
           scrollToTop = true;
         }

@@ -16,10 +16,8 @@
 package net.simonvt.cathode.ui.suggestions.shows;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.MenuItem;
@@ -37,7 +35,7 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.shows.SyncTrendingShows;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.settings.TraktTimestamps;
+import net.simonvt.cathode.settings.SuggestionsTimestamps;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.fragment.SwipeRefreshRecyclerFragment;
@@ -50,8 +48,7 @@ public class TrendingShowsFragment
     implements LoaderManager.LoaderCallbacks<SimpleCursor>, ListDialog.Callback, ShowClickListener {
 
   private enum SortBy {
-    VIEWERS("viewers", Shows.SORT_VIEWERS),
-    RATING("rating", Shows.SORT_RATING);
+    VIEWERS("viewers", Shows.SORT_VIEWERS), RATING("rating", Shows.SORT_RATING);
 
     private String key;
 
@@ -102,8 +99,6 @@ public class TrendingShowsFragment
 
   @Inject JobManager jobManager;
 
-  private SharedPreferences settings;
-
   private SortBy sortBy;
 
   private Cursor cursor;
@@ -121,9 +116,8 @@ public class TrendingShowsFragment
     super.onCreate(inState);
     Injector.inject(this);
 
-    settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-    sortBy =
-        SortBy.fromValue(settings.getString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey()));
+    sortBy = SortBy.fromValue(
+        Settings.get(getContext()).getString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey()));
 
     getLoaderManager().initLoader(LOADER_SHOWS_TRENDING, null, this);
 
@@ -131,10 +125,10 @@ public class TrendingShowsFragment
     setTitle(R.string.title_shows_trending);
     setEmptyText(R.string.shows_loading_trending);
 
-    if (TraktTimestamps.suggestionsNeedsUpdate(getActivity(),
-        Settings.SUGGESTIONS_SHOWS_TRENDING)) {
+    if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
+        SuggestionsTimestamps.SHOWS_TRENDING)) {
       jobManager.addJob(new SyncTrendingShows());
-      TraktTimestamps.updateSuggestions(getActivity(), Settings.SUGGESTIONS_SHOWS_TRENDING);
+      SuggestionsTimestamps.updateSuggestions(getActivity(), SuggestionsTimestamps.SHOWS_TRENDING);
     }
   }
 
@@ -174,7 +168,10 @@ public class TrendingShowsFragment
       case R.id.sort_viewers:
         if (sortBy != SortBy.VIEWERS) {
           sortBy = SortBy.VIEWERS;
-          settings.edit().putString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey()).apply();
+          Settings.get(getContext())
+              .edit()
+              .putString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey())
+              .apply();
           getLoaderManager().restartLoader(LOADER_SHOWS_TRENDING, null, this);
           scrollToTop = true;
         }
@@ -183,7 +180,10 @@ public class TrendingShowsFragment
       case R.id.sort_rating:
         if (sortBy != SortBy.RATING) {
           sortBy = SortBy.RATING;
-          settings.edit().putString(Settings.Sort.SHOW_TRENDING, SortBy.RATING.getKey()).apply();
+          Settings.get(getContext())
+              .edit()
+              .putString(Settings.Sort.SHOW_TRENDING, SortBy.RATING.getKey())
+              .apply();
           getLoaderManager().restartLoader(LOADER_SHOWS_TRENDING, null, this);
           scrollToTop = true;
         }

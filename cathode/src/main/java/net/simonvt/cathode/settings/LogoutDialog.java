@@ -21,7 +21,6 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import javax.inject.Inject;
 import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
@@ -44,13 +43,14 @@ public class LogoutDialog extends DialogFragment {
           @Override public void onClick(DialogInterface dialog, int which) {
             Injector.inject(LogoutDialog.this);
 
-            PreferenceManager.getDefaultSharedPreferences(getActivity())
+            Settings.get(getActivity())
                 .edit()
                 .putBoolean(TraktLinkSettings.TRAKT_LINKED, false)
                 .putBoolean(TraktLinkSettings.TRAKT_AUTH_FAILED, false)
                 .apply();
 
-            Settings.clearUserSettings(getActivity());
+            Settings.clearSettings(getActivity());
+            SuggestionsTimestamps.clear(getActivity());
             TraktTimestamps.clear(getActivity());
 
             jobManager.addJob(new LogoutJob());

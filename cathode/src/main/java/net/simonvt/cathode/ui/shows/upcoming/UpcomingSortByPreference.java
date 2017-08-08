@@ -16,8 +16,6 @@
 package net.simonvt.cathode.ui.shows.upcoming;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +32,6 @@ public class UpcomingSortByPreference {
   private static UpcomingSortByPreference instance;
 
   private Context context;
-  private SharedPreferences settings;
 
   private final List<WeakReference<UpcomingSortByListener>> listeners = new ArrayList<>();
 
@@ -54,17 +51,16 @@ public class UpcomingSortByPreference {
 
   private UpcomingSortByPreference(Context context) {
     this.context = context;
-    settings = PreferenceManager.getDefaultSharedPreferences(context);
   }
 
   public void set(UpcomingSortBy sortBy) {
-    settings.edit().putString(Settings.Sort.SHOW_UPCOMING, sortBy.getKey()).apply();
+    Settings.get(context).edit().putString(Settings.Sort.SHOW_UPCOMING, sortBy.getKey()).apply();
     post(sortBy);
   }
 
   public UpcomingSortBy get() {
-    return UpcomingSortBy.fromValue(
-        settings.getString(Settings.Sort.SHOW_UPCOMING, UpcomingSortBy.NEXT_EPISODE.getKey()));
+    return UpcomingSortBy.fromValue(Settings.get(context)
+        .getString(Settings.Sort.SHOW_UPCOMING, UpcomingSortBy.NEXT_EPISODE.getKey()));
   }
 
   public void registerListener(UpcomingSortByListener listener) {

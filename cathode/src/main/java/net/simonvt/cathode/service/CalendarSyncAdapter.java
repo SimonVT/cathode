@@ -22,13 +22,11 @@ import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
-import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.CalendarContract;
 import android.provider.ContactsContract;
@@ -97,15 +95,14 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
       return;
     }
 
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-    final boolean syncCalendar = settings.getBoolean(Settings.CALENDAR_SYNC, false);
+    final boolean syncCalendar = Settings.get(context).getBoolean(Settings.CALENDAR_SYNC, false);
     if (!syncCalendar) {
       deleteCalendar(account, calendarId);
       return;
     }
 
     final boolean updateCalendarColor =
-        settings.getBoolean(Settings.CALENDAR_COLOR_NEEDS_UPDATE, false);
+        Settings.get(context).getBoolean(Settings.CALENDAR_COLOR_NEEDS_UPDATE, false);
     if (updateCalendarColor) {
       updateCalendarColor(calendarId);
     }
@@ -304,8 +301,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
   }
 
   private int getCalendarColor() {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-    return settings.getInt(Settings.CALENDAR_COLOR, Settings.CALENDAR_COLOR_DEFAULT);
+    return Settings.get(context).getInt(Settings.CALENDAR_COLOR, Settings.CALENDAR_COLOR_DEFAULT);
   }
 
   private void updateCalendarColor(long calendarId) {
@@ -320,10 +316,7 @@ public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {
                 String.valueOf(calendarId),
             });
 
-    PreferenceManager.getDefaultSharedPreferences(context)
-        .edit()
-        .putBoolean(Settings.CALENDAR_COLOR_NEEDS_UPDATE, false)
-        .apply();
+    Settings.get(context).edit().putBoolean(Settings.CALENDAR_COLOR_NEEDS_UPDATE, false).apply();
   }
 
   private long getCalendar(Account account) {

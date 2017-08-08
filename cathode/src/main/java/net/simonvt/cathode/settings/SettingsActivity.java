@@ -19,13 +19,11 @@ import android.Manifest;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -86,8 +84,6 @@ public class SettingsActivity extends BaseActivity {
 
     @Inject UpcomingTimePreference upcomingTimePreference;
 
-    SharedPreferences settings;
-
     SwitchPreference syncCalendar;
 
     private boolean isTablet;
@@ -95,7 +91,6 @@ public class SettingsActivity extends BaseActivity {
     @Override public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       Injector.inject(this);
-      settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
       isTablet = getResources().getBoolean(R.bool.isTablet);
 
@@ -122,8 +117,8 @@ public class SettingsActivity extends BaseActivity {
       findPreference("calendarColor").setOnPreferenceClickListener(
           new Preference.OnPreferenceClickListener() {
             @Override public boolean onPreferenceClick(Preference preference) {
-              final int calendarColor =
-                  settings.getInt(Settings.CALENDAR_COLOR, Settings.CALENDAR_COLOR_DEFAULT);
+              final int calendarColor = Settings.get(getActivity())
+                  .getInt(Settings.CALENDAR_COLOR, Settings.CALENDAR_COLOR_DEFAULT);
               final int size =
                   isTablet ? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL;
               ColorPickerDialog dialog =
@@ -132,7 +127,7 @@ public class SettingsActivity extends BaseActivity {
               dialog.setTargetFragment(SettingsFragment.this, 0);
               dialog.show(getFragmentManager(), DIALOG_COLOR_PICKER);
 
-              if (settings.getBoolean(Settings.CALENDAR_SYNC, false)) {
+              if (Settings.get(getActivity()).getBoolean(Settings.CALENDAR_SYNC, false)) {
                 Accounts.requestCalendarSync(getActivity());
               }
 
@@ -159,8 +154,8 @@ public class SettingsActivity extends BaseActivity {
       findPreference("upcomingTime").setOnPreferenceClickListener(
           new Preference.OnPreferenceClickListener() {
             @Override public boolean onPreferenceClick(Preference preference) {
-              UpcomingTime upcomingTime = UpcomingTime.fromValue(
-                  settings.getLong(Settings.UPCOMING_TIME, UpcomingTime.WEEKS_1.getCacheTime()));
+              UpcomingTime upcomingTime = UpcomingTime.fromValue(Settings.get(getActivity())
+                  .getLong(Settings.UPCOMING_TIME, UpcomingTime.WEEKS_1.getCacheTime()));
               UpcomingTimeDialog dialog = UpcomingTimeDialog.newInstance(upcomingTime);
               dialog.setTargetFragment(SettingsFragment.this, 0);
               dialog.show(getFragmentManager(), DIALOG_UPCOMING_TIME);
@@ -173,7 +168,7 @@ public class SettingsActivity extends BaseActivity {
             @Override public boolean onPreferenceChange(Preference preference, Object newValue) {
               Adapters.notifyAdapters();
 
-              if (settings.getBoolean(Settings.CALENDAR_SYNC, false)) {
+              if (Settings.get(getActivity()).getBoolean(Settings.CALENDAR_SYNC, false)) {
                 Accounts.requestCalendarSync(getActivity());
               }
               return true;
@@ -231,10 +226,11 @@ public class SettingsActivity extends BaseActivity {
     }
 
     @Override public void onColorSelected(int color) {
-      final int calendarColor =
-          settings.getInt(Settings.CALENDAR_COLOR, Settings.CALENDAR_COLOR_DEFAULT);
+      final int calendarColor = Settings.get(getActivity())
+          .getInt(Settings.CALENDAR_COLOR, Settings.CALENDAR_COLOR_DEFAULT);
       if (color != calendarColor) {
-        settings.edit()
+        Settings.get(getActivity())
+            .edit()
             .putInt(Settings.CALENDAR_COLOR, color)
             .putBoolean(Settings.CALENDAR_COLOR_NEEDS_UPDATE, true)
             .apply();

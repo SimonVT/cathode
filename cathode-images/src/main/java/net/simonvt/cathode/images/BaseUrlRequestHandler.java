@@ -17,16 +17,13 @@
 package net.simonvt.cathode.images;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import com.squareup.picasso.Request;
 import com.squareup.picasso.RequestHandler;
 import com.uwetrottmann.tmdb2.entities.Configuration;
 import com.uwetrottmann.tmdb2.services.ConfigurationService;
 import java.io.IOException;
 import net.simonvt.cathode.common.tmdb.TmdbRateLimiter;
-import net.simonvt.cathode.settings.Settings;
 import retrofit2.Call;
 import retrofit2.Response;
 import timber.log.Timber;
@@ -39,8 +36,6 @@ public abstract class BaseUrlRequestHandler extends RequestHandler {
 
   protected final Context context;
 
-  protected final SharedPreferences settings;
-
   private static final Object LOCK_BASE_URL = new Object();
 
   private volatile String secureBaseUrl;
@@ -48,14 +43,13 @@ public abstract class BaseUrlRequestHandler extends RequestHandler {
   public BaseUrlRequestHandler(Context context, ConfigurationService configurationService) {
     this.context = context;
     this.configurationService = configurationService;
-    settings = PreferenceManager.getDefaultSharedPreferences(context);
   }
 
   String getBaseUrl() throws IOException {
     if (secureBaseUrl == null) {
       synchronized (LOCK_BASE_URL) {
         if (secureBaseUrl == null) {
-          String s = settings.getString(Settings.TMDB_IMAGES_SECURE_BASE_URL, null);
+          String s = ImageSettings.getSecureBaseUrl(context);
           if (s == null) {
             TmdbRateLimiter.acquire();
             Call<Configuration> call = configurationService.configuration();
@@ -63,7 +57,6 @@ public abstract class BaseUrlRequestHandler extends RequestHandler {
             if (response.isSuccessful()) {
               Configuration configuration = response.body();
               secureBaseUrl = configuration.images.secure_base_url;
-
               ImageSettings.updateTmdbConfiguration(context, configuration);
             }
           } else {

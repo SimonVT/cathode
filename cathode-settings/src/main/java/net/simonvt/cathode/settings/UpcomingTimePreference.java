@@ -17,8 +17,6 @@
 package net.simonvt.cathode.settings;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +31,6 @@ public class UpcomingTimePreference {
   private static UpcomingTimePreference instance;
 
   private Context context;
-  private SharedPreferences settings;
 
   private final List<WeakReference<UpcomingTimeChangeListener>> listeners = new ArrayList<>();
 
@@ -53,17 +50,19 @@ public class UpcomingTimePreference {
 
   private UpcomingTimePreference(Context context) {
     this.context = context;
-    settings = PreferenceManager.getDefaultSharedPreferences(context);
   }
 
   public void set(UpcomingTime upcomingTime) {
-    settings.edit().putLong(Settings.UPCOMING_TIME, upcomingTime.getCacheTime()).apply();
+    Settings.get(context)
+        .edit()
+        .putLong(Settings.UPCOMING_TIME, upcomingTime.getCacheTime())
+        .apply();
     onUpcomingTimeChanged(upcomingTime);
   }
 
   public UpcomingTime get() {
     return UpcomingTime.fromValue(
-        settings.getLong(Settings.UPCOMING_TIME, UpcomingTime.WEEKS_1.getCacheTime()));
+        Settings.get(context).getLong(Settings.UPCOMING_TIME, UpcomingTime.WEEKS_1.getCacheTime()));
   }
 
   public void registerListener(UpcomingTimeChangeListener listener) {

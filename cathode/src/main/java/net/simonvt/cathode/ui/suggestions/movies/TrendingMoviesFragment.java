@@ -15,10 +15,8 @@
  */
 package net.simonvt.cathode.ui.suggestions.movies;
 
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -36,7 +34,7 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.settings.TraktTimestamps;
+import net.simonvt.cathode.settings.SuggestionsTimestamps;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
@@ -45,8 +43,7 @@ import net.simonvt.cathode.ui.movies.MoviesFragment;
 public class TrendingMoviesFragment extends MoviesFragment implements ListDialog.Callback {
 
   private enum SortBy {
-    VIEWERS("viewers", Movies.SORT_VIEWERS),
-    RATING("rating", Movies.SORT_RATING);
+    VIEWERS("viewers", Movies.SORT_VIEWERS), RATING("rating", Movies.SORT_RATING);
 
     private String key;
 
@@ -91,23 +88,20 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
 
   private static final int LOADER_MOVIES_TRENDING = 1;
 
-  private SharedPreferences settings;
-
   private SortBy sortBy;
 
   @Override public void onCreate(Bundle inState) {
-    settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-    sortBy =
-        SortBy.fromValue(settings.getString(Settings.Sort.MOVIE_TRENDING, SortBy.VIEWERS.getKey()));
+    sortBy = SortBy.fromValue(Settings.get(getContext())
+        .getString(Settings.Sort.MOVIE_TRENDING, SortBy.VIEWERS.getKey()));
     super.onCreate(inState);
 
     setTitle(R.string.title_movies_trending);
     setEmptyText(R.string.movies_loading_trending);
 
-    if (TraktTimestamps.suggestionsNeedsUpdate(getActivity(),
-        Settings.SUGGESTIONS_MOVIES_TRENDING)) {
+    if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
+        SuggestionsTimestamps.MOVIES_TRENDING)) {
       jobManager.addJob(new SyncTrendingMovies());
-      TraktTimestamps.updateSuggestions(getActivity(), Settings.SUGGESTIONS_MOVIES_TRENDING);
+      SuggestionsTimestamps.updateSuggestions(getActivity(), SuggestionsTimestamps.MOVIES_TRENDING);
     }
   }
 
@@ -147,7 +141,10 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
       case R.id.sort_viewers:
         if (sortBy != SortBy.VIEWERS) {
           sortBy = SortBy.VIEWERS;
-          settings.edit().putString(Settings.Sort.MOVIE_TRENDING, SortBy.VIEWERS.getKey()).apply();
+          Settings.get(getContext())
+              .edit()
+              .putString(Settings.Sort.MOVIE_TRENDING, SortBy.VIEWERS.getKey())
+              .apply();
           getLoaderManager().restartLoader(LOADER_MOVIES_TRENDING, null, this);
           scrollToTop = true;
         }
@@ -156,7 +153,10 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
       case R.id.sort_rating:
         if (sortBy != SortBy.RATING) {
           sortBy = SortBy.RATING;
-          settings.edit().putString(Settings.Sort.MOVIE_TRENDING, SortBy.RATING.getKey()).apply();
+          Settings.get(getContext())
+              .edit()
+              .putString(Settings.Sort.MOVIE_TRENDING, SortBy.RATING.getKey())
+              .apply();
           getLoaderManager().restartLoader(LOADER_MOVIES_TRENDING, null, this);
           scrollToTop = true;
         }

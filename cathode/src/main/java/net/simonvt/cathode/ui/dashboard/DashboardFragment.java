@@ -38,8 +38,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncTrendingShows;
-import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.settings.TraktTimestamps;
+import net.simonvt.cathode.settings.SuggestionsTimestamps;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.adapter.CategoryAdapter;
@@ -120,16 +119,16 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
     adapter.initCategory(R.string.category_movies_watchlist);
     adapter.initCategory(R.string.category_movies_suggestions);
 
-    if (TraktTimestamps.suggestionsNeedsUpdate(getActivity(),
-        Settings.SUGGESTIONS_SHOWS_TRENDING)) {
+    if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
+        SuggestionsTimestamps.SHOWS_TRENDING)) {
       jobManager.addJob(new SyncTrendingShows());
-      TraktTimestamps.updateSuggestions(getActivity(), Settings.SUGGESTIONS_SHOWS_TRENDING);
+      SuggestionsTimestamps.updateSuggestions(getActivity(), SuggestionsTimestamps.SHOWS_TRENDING);
     }
 
-    if (TraktTimestamps.suggestionsNeedsUpdate(getActivity(),
-        Settings.SUGGESTIONS_MOVIES_TRENDING)) {
+    if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
+        SuggestionsTimestamps.MOVIES_TRENDING)) {
       jobManager.addJob(new SyncTrendingMovies());
-      TraktTimestamps.updateSuggestions(getActivity(), Settings.SUGGESTIONS_MOVIES_TRENDING);
+      SuggestionsTimestamps.updateSuggestions(getActivity(), SuggestionsTimestamps.MOVIES_TRENDING);
     }
   }
 

@@ -22,10 +22,8 @@ import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
@@ -86,16 +84,12 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
   final DebugInjects injects = new DebugInjects();
 
-  private SharedPreferences settings;
-
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
     Injector.inject(this);
     Injector.inject(injects);
 
     super.setContentView(R.layout.debug_home);
-
-    settings = PreferenceManager.getDefaultSharedPreferences(this);
 
     Context drawerContext = new ContextThemeWrapper(this, R.style.Theme_AppCompat);
     LayoutInflater.from(drawerContext)
@@ -111,14 +105,18 @@ import okhttp3.logging.HttpLoggingInterceptor;
       @Override
       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         StartPage startPage = startPageAdapter.getItem(position);
-        settings.edit().putString(Settings.START_PAGE, startPage.toString()).apply();
+        Settings.get(BaseActivity.this)
+            .edit()
+            .putString(Settings.START_PAGE, startPage.toString())
+            .apply();
       }
 
       @Override public void onNothingSelected(AdapterView<?> parent) {
       }
     });
     StartPage startPage =
-        StartPage.fromValue(settings.getString(Settings.START_PAGE, null), StartPage.DASHBOARD);
+        StartPage.fromValue(Settings.get(this).getString(Settings.START_PAGE, null),
+            StartPage.DASHBOARD);
     debugViews.startPage.setSelection(startPageAdapter.getPositionForValue(startPage));
 
     debugViews.recreateActivity.setOnClickListener(new View.OnClickListener() {
@@ -156,19 +154,23 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
     debugViews.removeAccessToken.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        settings.edit().remove(TraktLinkSettings.TRAKT_ACCESS_TOKEN).apply();
+        Settings.get(BaseActivity.this).edit().remove(TraktLinkSettings.TRAKT_ACCESS_TOKEN).apply();
       }
     });
 
     debugViews.removeRefreshToken.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        settings.edit().remove(TraktLinkSettings.TRAKT_REFRESH_TOKEN).apply();
+        Settings.get(BaseActivity.this)
+            .edit()
+            .remove(TraktLinkSettings.TRAKT_REFRESH_TOKEN)
+            .apply();
       }
     });
 
     debugViews.invalidateAccessToken.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        settings.edit()
+        Settings.get(BaseActivity.this)
+            .edit()
             .putString(TraktLinkSettings.TRAKT_ACCESS_TOKEN, "invalid token")
             .putLong(TraktLinkSettings.TRAKT_TOKEN_EXPIRATION, 0L)
             .apply();
@@ -177,7 +179,10 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
     debugViews.invalidateRefreshToken.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        settings.edit().putString(TraktLinkSettings.TRAKT_REFRESH_TOKEN, "invalid token").apply();
+        Settings.get(BaseActivity.this)
+            .edit()
+            .putString(TraktLinkSettings.TRAKT_REFRESH_TOKEN, "invalid token")
+            .apply();
       }
     });
 

@@ -16,11 +16,9 @@
 package net.simonvt.cathode.ui.suggestions.shows;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.MenuItem;
@@ -39,7 +37,7 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.shows.SyncShowRecommendations;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.settings.TraktTimestamps;
+import net.simonvt.cathode.settings.SuggestionsTimestamps;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.fragment.SwipeRefreshRecyclerFragment;
@@ -53,8 +51,7 @@ public class ShowRecommendationsFragment
     ShowRecommendationsAdapter.DismissListener, ListDialog.Callback, ShowClickListener {
 
   private enum SortBy {
-    RELEVANCE("relevance", Shows.SORT_RECOMMENDED),
-    RATING("rating", Shows.SORT_RATING);
+    RELEVANCE("relevance", Shows.SORT_RECOMMENDED), RATING("rating", Shows.SORT_RATING);
 
     private String key;
 
@@ -105,11 +102,7 @@ public class ShowRecommendationsFragment
 
   @Inject JobManager jobManager;
 
-  private boolean isTablet;
-
   private SimpleCursor cursor;
-
-  private SharedPreferences settings;
 
   private SortBy sortBy;
 
@@ -126,23 +119,21 @@ public class ShowRecommendationsFragment
     super.onCreate(inState);
     Injector.inject(this);
 
-    settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-    sortBy = SortBy.fromValue(
-        settings.getString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey()));
+    sortBy = SortBy.fromValue(Settings.get(getContext())
+        .getString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey()));
 
     getLoaderManager().initLoader(LOADER_SHOWS_RECOMMENDATIONS, null, this);
-
-    isTablet = getResources().getBoolean(R.bool.isTablet);
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
 
     setTitle(R.string.title_shows_recommended);
     setEmptyText(R.string.recommendations_empty);
 
-    if (TraktTimestamps.suggestionsNeedsUpdate(getActivity(),
-        Settings.SUGGESTIONS_SHOWS_RECOMMENDED)) {
+    if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
+        SuggestionsTimestamps.SHOWS_RECOMMENDED)) {
       jobManager.addJob(new SyncShowRecommendations());
-      TraktTimestamps.updateSuggestions(getActivity(), Settings.SUGGESTIONS_SHOWS_RECOMMENDED);
+      SuggestionsTimestamps.updateSuggestions(getActivity(),
+          SuggestionsTimestamps.SHOWS_RECOMMENDED);
     }
   }
 
@@ -182,7 +173,8 @@ public class ShowRecommendationsFragment
       case R.id.sort_relevance:
         if (sortBy != SortBy.RELEVANCE) {
           sortBy = SortBy.RELEVANCE;
-          settings.edit()
+          Settings.get(getContext())
+              .edit()
               .putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey())
               .apply();
           getLoaderManager().restartLoader(LOADER_SHOWS_RECOMMENDATIONS, null, this);
@@ -193,7 +185,10 @@ public class ShowRecommendationsFragment
       case R.id.sort_rating:
         if (sortBy != SortBy.RATING) {
           sortBy = SortBy.RATING;
-          settings.edit().putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RATING.getKey()).apply();
+          Settings.get(getContext())
+              .edit()
+              .putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RATING.getKey())
+              .apply();
           getLoaderManager().restartLoader(LOADER_SHOWS_RECOMMENDATIONS, null, this);
           scrollToTop = true;
         }

@@ -20,9 +20,7 @@ import android.content.ComponentName;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.text.format.DateUtils;
 import java.util.ArrayList;
@@ -39,7 +37,7 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.SeparatePagesCallJob;
-import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.Timestamps;
 import retrofit2.Call;
 
 public class SyncUpdatedMovies extends SeparatePagesCallJob<UpdatedItem> {
@@ -51,7 +49,6 @@ public class SyncUpdatedMovies extends SeparatePagesCallJob<UpdatedItem> {
   @Inject transient MoviesService moviesService;
   @Inject transient MovieDatabaseHelper movieHelper;
 
-  private transient SharedPreferences settings;
   private transient long currentTime;
 
   @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -79,8 +76,8 @@ public class SyncUpdatedMovies extends SeparatePagesCallJob<UpdatedItem> {
   }
 
   @Override public Call<List<UpdatedItem>> getCall(int page) {
-    settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-    final long lastUpdated = settings.getLong(Settings.MOVIES_LAST_UPDATED, currentTime);
+    final long lastUpdated =
+        Timestamps.get(getContext()).getLong(Timestamps.MOVIES_LAST_UPDATED, currentTime);
     final long millis = lastUpdated - 12 * DateUtils.HOUR_IN_MILLIS;
     final String updatedSince = TimeUtils.getIsoTime(millis);
     return moviesService.updated(updatedSince, page, LIMIT);
@@ -120,7 +117,7 @@ public class SyncUpdatedMovies extends SeparatePagesCallJob<UpdatedItem> {
       queue(new SyncPendingMovies());
     }
 
-    settings.edit().putLong(Settings.MOVIES_LAST_UPDATED, currentTime).apply();
+    Timestamps.get(getContext()).edit().putLong(Timestamps.MOVIES_LAST_UPDATED, currentTime).apply();
     return true;
   }
 }

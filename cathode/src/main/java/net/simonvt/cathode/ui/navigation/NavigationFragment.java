@@ -21,7 +21,6 @@ import android.content.SharedPreferences;
 import android.graphics.Outline;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.widget.TextViewCompat;
@@ -36,6 +35,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.settings.ProfileSettings;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.StartPage;
 import net.simonvt.cathode.ui.fragment.AbsAdapterFragment;
@@ -104,8 +104,6 @@ public class NavigationFragment extends AbsAdapterFragment {
 
   private int selectedPosition = 1;
 
-  private SharedPreferences settings;
-
   private NavigationAdapter adapter;
 
   @Override public void onAttach(Activity activity) {
@@ -119,16 +117,15 @@ public class NavigationFragment extends AbsAdapterFragment {
     if (inState != null) {
       selectedPosition = inState.getInt(STATE_SELECTED_POSITION);
     } else {
-      SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-      final String startPagePref = settings.getString(Settings.START_PAGE, null);
+      final String startPagePref = Settings.get(getContext()).getString(Settings.START_PAGE, null);
       StartPage startPage = StartPage.fromValue(startPagePref, StartPage.DASHBOARD);
       selectedPosition = getPositionForId(startPage.getMenuId());
     }
 
-    settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-    settings.registerOnSharedPreferenceChangeListener(settingsListener);
-    String username = settings.getString(Settings.Profile.USERNAME, null);
-    String avatar = settings.getString(Settings.Profile.AVATAR, null);
+    ProfileSettings.get(getContext())
+        .registerOnSharedPreferenceChangeListener(profileSettingsListener);
+    String username = ProfileSettings.get(getContext()).getString(ProfileSettings.USERNAME, null);
+    String avatar = ProfileSettings.get(getContext()).getString(ProfileSettings.AVATAR, null);
 
     adapter = new NavigationAdapter(getActivity(), menuItems);
     adapter.setUsername(username);
@@ -147,12 +144,11 @@ public class NavigationFragment extends AbsAdapterFragment {
     return 1;
   }
 
-  private SharedPreferences.OnSharedPreferenceChangeListener settingsListener =
+  private SharedPreferences.OnSharedPreferenceChangeListener profileSettingsListener =
       new SharedPreferences.OnSharedPreferenceChangeListener() {
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-          if (Settings.Profile.AVATAR.equals(key)) {
-            String avatar = settings.getString(Settings.Profile.AVATAR, null);
+        @Override public void onSharedPreferenceChanged(SharedPreferences settings, String key) {
+          if (ProfileSettings.AVATAR.equals(key)) {
+            String avatar = settings.getString(ProfileSettings.AVATAR, null);
 
             if (getAdapterView() != null) {
               final int firstPos = getAdapterView().getFirstVisiblePosition();
@@ -162,8 +158,8 @@ public class NavigationFragment extends AbsAdapterFragment {
               }
             }
           }
-          if (Settings.Profile.USERNAME.equals(key)) {
-            final String username = sharedPreferences.getString(Settings.Profile.USERNAME, null);
+          if (ProfileSettings.USERNAME.equals(key)) {
+            final String username = settings.getString(ProfileSettings.USERNAME, null);
             adapter.setUsername(username);
           }
         }
@@ -185,7 +181,8 @@ public class NavigationFragment extends AbsAdapterFragment {
   }
 
   @Override public void onDestroy() {
-    settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
+    ProfileSettings.get(getContext())
+        .unregisterOnSharedPreferenceChangeListener(profileSettingsListener);
     super.onDestroy();
   }
 

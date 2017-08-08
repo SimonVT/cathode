@@ -15,8 +15,6 @@
  */
 package net.simonvt.cathode.remote.sync;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobPriority;
@@ -24,7 +22,7 @@ import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
-import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.Timestamps;
 import net.simonvt.cathode.tmdb.api.SyncConfiguration;
 
 public class SyncJob extends Job {
@@ -42,24 +40,32 @@ public class SyncJob extends Job {
   }
 
   @Override public boolean perform() {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
     final long currentTime = System.currentTimeMillis();
-    final long lastConfigSync = settings.getLong(Settings.LAST_CONFIG_SYNC, 0L);
-    final long lastShowSync = settings.getLong(Settings.SHOWS_LAST_UPDATED, 0L);
-    final long lastMovieSync = settings.getLong(Settings.MOVIES_LAST_UPDATED, 0L);
+    final long lastConfigSync =
+        Timestamps.get(getContext()).getLong(Timestamps.LAST_CONFIG_SYNC, 0L);
+    final long lastShowSync =
+        Timestamps.get(getContext()).getLong(Timestamps.SHOWS_LAST_UPDATED, 0L);
+    final long lastMovieSync =
+        Timestamps.get(getContext()).getLong(Timestamps.MOVIES_LAST_UPDATED, 0L);
 
     if (lastConfigSync + DateUtils.DAY_IN_MILLIS < currentTime) {
       queue(new SyncUserSettings());
       queue(new SyncConfiguration());
-      settings.edit().putLong(Settings.LAST_CONFIG_SYNC, currentTime).apply();
+      Timestamps.get(getContext()).edit().putLong(Timestamps.LAST_CONFIG_SYNC, currentTime).apply();
     }
     if (lastShowSync == 0L) {
-      settings.edit().putLong(Settings.SHOWS_LAST_UPDATED, currentTime).apply();
+      Timestamps.get(getContext())
+          .edit()
+          .putLong(Timestamps.SHOWS_LAST_UPDATED, currentTime)
+          .apply();
     } else if (lastShowSync + getUpdatedSyncDelay() * DateUtils.DAY_IN_MILLIS < currentTime) {
       queue(new SyncUpdatedShows());
     }
     if (lastMovieSync == 0L) {
-      settings.edit().putLong(Settings.MOVIES_LAST_UPDATED, currentTime).apply();
+      Timestamps.get(getContext())
+          .edit()
+          .putLong(Timestamps.MOVIES_LAST_UPDATED, currentTime)
+          .apply();
     } else if (lastMovieSync + getUpdatedSyncDelay() * DateUtils.DAY_IN_MILLIS < currentTime) {
       queue(new SyncUpdatedMovies());
     }
@@ -67,7 +73,7 @@ public class SyncJob extends Job {
     queue(new SyncUserActivity());
     queue(new SyncWatching());
 
-    settings.edit().putLong(Settings.LAST_FULL_SYNC, currentTime).apply();
+    Timestamps.get(getContext()).edit().putLong(Timestamps.LAST_FULL_SYNC, currentTime).apply();
     return true;
   }
 

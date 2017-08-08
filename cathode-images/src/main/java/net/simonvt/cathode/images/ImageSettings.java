@@ -18,25 +18,61 @@ package net.simonvt.cathode.images;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import com.uwetrottmann.tmdb2.entities.Configuration;
 import java.util.Set;
 import net.simonvt.cathode.common.util.Lists;
-import net.simonvt.cathode.settings.Settings;
 
 public final class ImageSettings {
+
+  private static final String SETTINGS_FILE = "cathode_images";
+
+  // themoviedb image configuration
+  private static final String TMDB_IMAGES_BASE_URL = "tmdbImagesBaseUrl";
+  private static final String TMDB_IMAGES_SECURE_BASE_URL = "tmdbImagesSecureBaseUrl";
+  private static final String TMDB_IMAGES_BACKDROP_SIZES = "tmdbImagesBackdropSizes";
+  private static final String TMDB_IMAGES_LOGO_SIZES = "tmdbImagesLogoSizes";
+  private static final String TMDB_IMAGES_STILL_SIZES = "tmdbImagesStillSizes";
+  private static final String TMDB_IMAGES_POSTER_SIZES = "tmdbImagesPosterSizes";
+  private static final String TMDB_IMAGES_PROFILE_SIZES = "tmdbImagesProfileSizes";
 
   private ImageSettings() {
   }
 
+  public static SharedPreferences get(Context context) {
+    return context.getSharedPreferences(SETTINGS_FILE, Context.MODE_PRIVATE);
+  }
+
+  public static String getSecureBaseUrl(Context context) {
+    return get(context).getString(TMDB_IMAGES_SECURE_BASE_URL, null);
+  }
+
+  public static Set<String> getBackdropSizes(Context context) {
+    return get(context).getStringSet(TMDB_IMAGES_BACKDROP_SIZES, null);
+  }
+
+  public static Set<String> getLogoSizes(Context context) {
+    return get(context).getStringSet(TMDB_IMAGES_LOGO_SIZES, null);
+  }
+
+  public static Set<String> getStillSizes(Context context) {
+    return get(context).getStringSet(TMDB_IMAGES_STILL_SIZES, null);
+  }
+
+  public static Set<String> getPosterSizes(Context context) {
+    return get(context).getStringSet(TMDB_IMAGES_POSTER_SIZES, null);
+  }
+
+  public static Set<String> getProfileSizes(Context context) {
+    return get(context).getStringSet(TMDB_IMAGES_PROFILE_SIZES, null);
+  }
+
   public static void updateTmdbConfiguration(Context context, Configuration configuration) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-    SharedPreferences.Editor editor = settings.edit();
+    SharedPreferences.Editor editor = get(context).edit();
 
     Configuration.ImagesConfiguration images = configuration.images;
 
-    editor.putString(Settings.TMDB_IMAGES_BASE_URL, images.base_url);
-    editor.putString(Settings.TMDB_IMAGES_SECURE_BASE_URL, images.secure_base_url);
+    editor.putString(TMDB_IMAGES_BASE_URL, images.base_url);
+    editor.putString(TMDB_IMAGES_SECURE_BASE_URL, images.secure_base_url);
 
     Set<String> backdropSizes = Lists.asSet(images.backdrop_sizes);
     Set<String> logoSizes = Lists.asSet(images.logo_sizes);
@@ -44,11 +80,11 @@ public final class ImageSettings {
     Set<String> posterSizes = Lists.asSet(images.poster_sizes);
     Set<String> profileSizes = Lists.asSet(images.profile_sizes);
 
-    editor.putStringSet(Settings.TMDB_IMAGES_BACKDROP_SIZES, backdropSizes);
-    editor.putStringSet(Settings.TMDB_IMAGES_LOGO_SIZES, logoSizes);
-    editor.putStringSet(Settings.TMDB_IMAGES_STILL_SIZES, stillSizes);
-    editor.putStringSet(Settings.TMDB_IMAGES_POSTER_SIZES, posterSizes);
-    editor.putStringSet(Settings.TMDB_IMAGES_PROFILE_SIZES, profileSizes);
+    editor.putStringSet(TMDB_IMAGES_BACKDROP_SIZES, backdropSizes);
+    editor.putStringSet(TMDB_IMAGES_LOGO_SIZES, logoSizes);
+    editor.putStringSet(TMDB_IMAGES_STILL_SIZES, stillSizes);
+    editor.putStringSet(TMDB_IMAGES_POSTER_SIZES, posterSizes);
+    editor.putStringSet(TMDB_IMAGES_PROFILE_SIZES, profileSizes);
 
     editor.apply();
 

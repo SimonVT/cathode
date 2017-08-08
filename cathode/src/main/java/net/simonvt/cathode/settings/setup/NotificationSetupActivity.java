@@ -16,9 +16,7 @@
 package net.simonvt.cathode.settings.setup;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import net.simonvt.cathode.R;
@@ -28,18 +26,14 @@ import net.simonvt.cathode.ui.HomeActivity;
 
 public class NotificationSetupActivity extends BaseActivity {
 
-  private SharedPreferences settings;
-
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
     setContentView(R.layout.setup_notifications);
     ButterKnife.bind(this);
-
-    settings = PreferenceManager.getDefaultSharedPreferences(this);
   }
 
   @OnClick(R.id.yes) void enableNotifications() {
-    settings.edit().putBoolean(Settings.NOTIFICACTIONS_ENABLED, true).apply();
+    Settings.get(this).edit().putBoolean(Settings.NOTIFICACTIONS_ENABLED, true).apply();
     startHome();
   }
 
