@@ -19,8 +19,8 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -194,7 +194,8 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-    Drawable linkDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_link_black_24dp);
+    Drawable linkDrawable =
+        VectorDrawableCompat.create(getResources(), R.drawable.ic_link_black_24dp, null);
     viewOnTrakt.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null);
   }
 
