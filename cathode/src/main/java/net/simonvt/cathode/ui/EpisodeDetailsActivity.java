@@ -53,12 +53,16 @@ public class EpisodeDetailsActivity extends NavigationListenerActivity {
 
     if (CalendarContract.ACTION_HANDLE_CUSTOM_EVENT.equals(intent.getAction())) {
       String uriString = intent.getStringExtra(CalendarContract.EXTRA_CUSTOM_APP_URI);
-      Uri uri = Uri.parse(uriString);
-      String idSegment = uri.getPathSegments().get(0);
-      if (!TextUtils.isEmpty(idSegment)) {
-        id = Long.parseLong(idSegment);
-      } else {
+      if (TextUtils.isEmpty(uriString)) {
         finish();
+      } else {
+        Uri uri = Uri.parse(uriString);
+        String idSegment = uri.getPathSegments().get(0);
+        if (!TextUtils.isEmpty(idSegment)) {
+          id = Long.parseLong(idSegment);
+        } else {
+          finish();
+        }
       }
     } else {
       id = intent.getLongExtra(EXTRA_ID, -1L);
