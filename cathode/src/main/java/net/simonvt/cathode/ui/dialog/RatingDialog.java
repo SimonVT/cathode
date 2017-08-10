@@ -49,12 +49,9 @@ public class RatingDialog extends DialogFragment {
   @Inject MovieTaskScheduler movieScheduler;
 
   private Type type;
-
   private long id;
 
-  private int rating;
-
-  private String[] ratingText;
+  private String[] ratingTexts;
 
   public static RatingDialog newInstance(Type type, long id, int rating) {
     RatingDialog dialog = new RatingDialog();
@@ -75,42 +72,44 @@ public class RatingDialog extends DialogFragment {
     Bundle args = getArguments();
     type = (Type) args.getSerializable(ARG_TYPE);
     id = args.getLong(ARG_ID);
-    rating = args.getInt(ARG_RATING);
 
-    ratingText = getResources().getStringArray(R.array.ratings);
+    ratingTexts = getResources().getStringArray(R.array.ratings);
   }
 
   @NonNull @SuppressWarnings("InflateParams") @Override
   public Dialog onCreateDialog(Bundle inState) {
-    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    final int ratingArg = getArguments().getInt(ARG_RATING);
+    final float initialRating = ratingArg / 2.0f;
 
+    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_rating, null);
-    final int rating = getArguments().getInt(ARG_RATING);
     final TextView ratingText = (TextView) v.findViewById(R.id.ratingText);
-    ratingText.setText(this.ratingText[this.rating]);
+    ratingText.setText(this.ratingTexts[ratingArg]);
     final RatingBar ratingBar = (RatingBar) v.findViewById(R.id.rating);
-    ratingBar.setRating(rating);
+    ratingBar.setRating(initialRating);
     ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
       @Override public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-        RatingDialog.this.rating = (int) v;
-        ratingText.setText(RatingDialog.this.ratingText[(int) v]);
+        final int rating = (int) (v * 2);
+        ratingText.setText(ratingTexts[rating]);
       }
     });
 
     builder.setView(v);
     builder.setPositiveButton(R.string.action_rate, new DialogInterface.OnClickListener() {
       @Override public void onClick(DialogInterface dialogInterface, int i) {
+        final int rating = (int) (ratingBar.getRating() * 2);
+
         switch (type) {
           case SHOW:
-            showScheduler.rate(id, (int) ratingBar.getRating());
+            showScheduler.rate(id, rating);
             break;
 
           case EPISODE:
-            episodeScheduler.rate(id, (int) ratingBar.getRating());
+            episodeScheduler.rate(id, rating);
             break;
 
           case MOVIE:
-            movieScheduler.rate(id, (int) ratingBar.getRating());
+            movieScheduler.rate(id, rating);
             break;
         }
       }

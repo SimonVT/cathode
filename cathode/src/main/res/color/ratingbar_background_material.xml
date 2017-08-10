@@ -13,20 +13,16 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-  <item android:id="@android:id/background">
-    <bitmap
-        android:src="@drawable/ic_star_border_black_36dp"
-        android:tint="@color/ratingbar_background_material"/>
-  </item>
-  <item android:id="@android:id/secondaryProgress">
-    <bitmap
-        android:src="@drawable/ic_star_half_black_36dp"
-        android:tint="?attr/colorControlActivated"/>
-  </item>
-  <item android:id="@android:id/progress">
-    <bitmap
-        android:src="@drawable/ic_star_black_36dp"
-        android:tint="?attr/colorControlActivated"/>
-  </item>
-</layer-list>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+  <item
+      android:state_pressed="true"
+      android:color="?attr/colorControlActivated"
+      android:alpha="?android:attr/disabledAlpha"/>
+  <item
+      android:state_focused="true"
+      android:color="?attr/colorControlActivated"
+      android:alpha="?android:attr/disabledAlpha"/>
+  <item
+      android:color="?attr/colorControlNormal"
+      android:alpha="?android:attr/disabledAlpha"/>
+</selector>

@@ -26,10 +26,12 @@
       android:id="@+id/rating"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:numStars="10"
-      android:stepSize="1.0"
+      android:numStars="5"
+      android:stepSize="0.5"
       android:isIndicator="false"
-      style="?android:attr/ratingBarStyleSmall"/>
+      android:progressDrawable="@drawable/ratingbar"
+      android:minHeight="36dp"
+      android:maxHeight="36dp"/>
 
   <TextView
       android:id="@+id/ratingText"
