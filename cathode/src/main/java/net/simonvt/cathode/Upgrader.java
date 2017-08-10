@@ -24,6 +24,7 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.UpdateShowCounts;
+import net.simonvt.cathode.remote.sync.shows.SyncEpisodesRatings;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.Timestamps;
@@ -33,7 +34,7 @@ import net.simonvt.cathode.settings.TraktTimestamps;
 public final class Upgrader {
 
   private static final String SETTINGS_VERSION = "settingsVersion";
-  private static final int VERSION = 2;
+  private static final int VERSION = 3;
 
   public interface JobQueue {
 
@@ -89,6 +90,10 @@ public final class Upgrader {
             .putLong(Timestamps.SHOWS_LAST_UPDATED, lastUpdated)
             .putLong(Timestamps.MOVIES_LAST_UPDATED, lastUpdated)
             .apply();
+      }
+
+      if (currentVersion < 3) {
+        jobQueue.add(new SyncEpisodesRatings());
       }
 
       Settings.get(context).edit().putInt(SETTINGS_VERSION, VERSION).apply();

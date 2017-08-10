@@ -101,7 +101,7 @@ public class SyncEpisodesRatings extends CallJob<List<RatingItem>> {
         }
       }
 
-      episodeIds.remove(seasonId);
+      episodeIds.remove(episodeId);
 
       ContentProviderOperation op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
           .withValue(EpisodeColumns.USER_RATING, rating.getRating())
