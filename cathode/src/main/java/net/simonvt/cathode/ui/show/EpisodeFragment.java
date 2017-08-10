@@ -17,8 +17,10 @@ package net.simonvt.cathode.ui.show;
 
 import android.app.Activity;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -99,6 +101,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
   @BindView(R.id.rating) CircularProgressIndicator rating;
 
+  @BindView(R.id.checkmarks) View checkmarks;
   @BindView(R.id.isWatched) View watchedView;
   @BindView(R.id.inCollection) View inCollectionView;
   @BindView(R.id.inWatchlist) View inWatchlistView;
@@ -107,7 +110,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
   @BindView(R.id.commentsHeader) View commentsHeader;
   @BindView(R.id.commentsContainer) LinearLayout commentsContainer;
 
-  @BindView(R.id.viewOnTrakt) View viewOnTrakt;
+  @BindView(R.id.viewOnTrakt) TextView viewOnTrakt;
 
   private Cursor userComments;
 
@@ -187,6 +190,12 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
   @Override public View createView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_episode, container, false);
+  }
+
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
+    Drawable linkDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_link_black_24dp);
+    viewOnTrakt.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null);
   }
 
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
@@ -349,6 +358,8 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
       checkInDrawable.setWatching(watching || checkedIn);
     }
 
+    final boolean hasCheckmark = watched || collected || inWatchlist;
+    checkmarks.setVisibility(hasCheckmark ? View.VISIBLE : View.GONE);
     watchedView.setVisibility(watched ? View.VISIBLE : View.GONE);
     inCollectionView.setVisibility(collected ? View.VISIBLE : View.GONE);
     inWatchlistView.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);

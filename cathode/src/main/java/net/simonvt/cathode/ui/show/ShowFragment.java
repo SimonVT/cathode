@@ -17,6 +17,7 @@ package net.simonvt.cathode.ui.show;
 
 import android.app.Activity;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -160,11 +161,10 @@ public class ShowFragment extends RefreshableAppBarFragment {
   @BindView(R.id.genresTitle) View genresTitle;
   @BindView(R.id.genres) TextView genres;
 
+  @BindView(R.id.checkmarks) View checkmarks;
   @BindView(R.id.isWatched) TextView watched;
   @BindView(R.id.inCollection) TextView collection;
   @BindView(R.id.inWatchlist) TextView watchlist;
-
-  @BindView(R.id.trailer) View trailer;
 
   @BindView(R.id.castParent) View castParent;
   @BindView(R.id.castHeader) View castHeader;
@@ -180,13 +180,12 @@ public class ShowFragment extends RefreshableAppBarFragment {
   @BindView(R.id.related) LinearLayout related;
   @BindView(R.id.relatedContainer) LinearLayout relatedContainer;
 
-  @BindView(R.id.websiteTitle) View websiteTitle;
+  @BindView(R.id.trailer) TextView trailer;
   @BindView(R.id.website) TextView website;
-
-  @BindView(R.id.viewOnTrakt) View viewOnTrakt;
-  @BindView(R.id.viewOnImdb) View viewOnImdb;
-  @BindView(R.id.viewOnTvdb) View viewOnTvdb;
-  @BindView(R.id.viewOnTmdb) View viewOnTmdb;
+  @BindView(R.id.viewOnTrakt) TextView viewOnTrakt;
+  @BindView(R.id.viewOnImdb) TextView viewOnImdb;
+  @BindView(R.id.viewOnTvdb) TextView viewOnTvdb;
+  @BindView(R.id.viewOnTmdb) TextView viewOnTmdb;
 
   private Cursor userComments;
   private Cursor comments;
@@ -289,6 +288,17 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
+    Drawable linkDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_link_black_24dp);
+    website.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null);
+    viewOnTrakt.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null);
+    viewOnImdb.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null);
+    viewOnTmdb.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null);
+    viewOnTvdb.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null);
+
+    Drawable playDrawable =
+        ContextCompat.getDrawable(getContext(), R.drawable.ic_play_arrow_black_24do);
+    trailer.setCompoundDrawablesWithIntrinsicBounds(playDrawable, null, null, null);
+
     overview.setText(showOverview);
 
     DividerItemDecoration decoration = new DividerItemDecoration(getActivity(), LinearLayoutManager.HORIZONTAL);
@@ -544,8 +554,12 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
     calendarHidden = Cursors.getBoolean(cursor, ShowColumns.HIDDEN_CALENDAR);
 
-    watched.setVisibility(watchedCount > 0 ? View.VISIBLE : View.GONE);
-    collection.setVisibility(inCollectionCount > 0 ? View.VISIBLE : View.GONE);
+    final boolean isWatched = watchedCount > 0;
+    final boolean isCollected = inCollectionCount > 0;
+    final boolean hasCheckmark = isWatched || isCollected || inWatchlist;
+    checkmarks.setVisibility(hasCheckmark ? View.VISIBLE : View.GONE);
+    watched.setVisibility(isWatched ? View.VISIBLE : View.GONE);
+    collection.setVisibility(isCollected ? View.VISIBLE : View.GONE);
     watchlist.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
 
     String airTimeString = null;
@@ -636,9 +650,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
     final String website = Cursors.getString(cursor, ShowColumns.HOMEPAGE);
     if (!TextUtils.isEmpty(website)) {
-      this.websiteTitle.setVisibility(View.VISIBLE);
       this.website.setVisibility(View.VISIBLE);
-
       this.website.setText(website);
       this.website.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
@@ -646,7 +658,6 @@ public class ShowFragment extends RefreshableAppBarFragment {
         }
       });
     } else {
-      this.websiteTitle.setVisibility(View.GONE);
       this.website.setVisibility(View.GONE);
     }
 
@@ -654,6 +665,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
     final int tvdbId = Cursors.getInt(cursor, ShowColumns.TVDB_ID);
     final int tmdbId = Cursors.getInt(cursor, ShowColumns.TMDB_ID);
 
+    viewOnTrakt.setVisibility(View.VISIBLE);
     viewOnTrakt.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         Intents.openUrl(getContext(), TraktUtils.getTraktShowUrl(traktId));

@@ -20,20 +20,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:animateLayoutChanges="true"
-    android:paddingTop="@dimen/detailContentPaddingTop">
+    android:animateLayoutChanges="true">
 
-  <TextView
-      android:id="@+id/overviewTitle"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:text="@string/overview"
-      style="@style/Widget.InfoTitle"/>
+  <include layout="@layout/checkmarks"/>
 
   <TextView
       android:id="@+id/overview"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:layout_marginTop="4dp"
       tools:text="A long description of a show."
       style="@style/Widget.InfoText"/>
 
@@ -54,25 +49,6 @@
       tools:visibility="visible"
       tools:text="Comedy"
       style="@style/Widget.InfoText"/>
-
-  <android.support.v7.widget.CardView
-      android:id="@+id/trailer"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginLeft="@dimen/trailerMargin"
-      android:layout_marginTop="12dp"
-      android:layout_marginRight="@dimen/trailerMargin"
-      android:foreground="?attr/selectableItemBackground"
-      android:visibility="gone"
-      tools:visibility="visible">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/watch_trailer"
-        style="@style/Widget.InfoTrailer"/>
-  </android.support.v7.widget.CardView>
 
   <TextView
       android:id="@+id/seasonsTitle"
@@ -112,80 +88,69 @@
       android:visibility="gone"
       tools:visibility="visible"/>
 
+  <View
+      android:layout_width="match_parent"
+      android:layout_height="1dp"
+      android:layout_margin="8dp"/>
+
   <TextView
-      android:id="@+id/websiteTitle"
+      android:id="@+id/externalTitle"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="@string/title_website"
+      android:text="@string/title_links"
+      style="@style/Widget.InfoTitle"/>
+
+  <TextView
+      android:id="@+id/trailer"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/info_trailer"
       android:visibility="gone"
-      style="@style/Widget.InfoTitle.ReducedPadding"/>
+      tools:visibility="visible"
+      style="@style/InfoTrailer"/>
 
   <TextView
       android:id="@+id/website"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:background="?attr/selectableItemBackground"
-      android:paddingTop="4dp"
-      android:paddingBottom="4dp"
       android:visibility="gone"
-      style="@style/Widget.InfoText"/>
+      tools:visibility="visible"
+      tools:text="A website"
+      style="@style/InfoLink"/>
 
   <TextView
-      android:id="@+id/viewOnTitle"
+      android:id="@+id/viewOnTrakt"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:text="@string/info_trakt"
+      style="@style/InfoLink"/>
+
+  <TextView
+      android:id="@+id/viewOnImdb"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="@string/title_view_on"
-      style="@style/Widget.InfoTitle.ReducedPadding.ReducedMargin"/>
+      android:text="@string/info_imdb"
+      android:visibility="gone"
+      tools:visibility="visible"
+      style="@style/InfoLink"/>
 
-  <LinearLayout
-      android:id="@+id/viewOnContainer"
+  <TextView
+      android:id="@+id/viewOnTmdb"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:orientation="vertical">
+      android:text="@string/info_tmdb"
+      android:visibility="gone"
+      tools:visibility="visible"
+      style="@style/InfoLink"/>
 
-    <TextView
-        android:id="@+id/viewOnTrakt"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?attr/selectableItemBackground"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:text="@string/info_trakt"
-        style="@style/Widget.InfoText"/>
-
-    <TextView
-        android:id="@+id/viewOnImdb"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?attr/selectableItemBackground"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:visibility="gone"
-        android:text="@string/info_imdb"
-        style="@style/Widget.InfoText"/>
-
-    <TextView
-        android:id="@+id/viewOnTvdb"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?attr/selectableItemBackground"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:visibility="gone"
-        android:text="@string/info_tvdb"
-        style="@style/Widget.InfoText"/>
-
-    <TextView
-        android:id="@+id/viewOnTmdb"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?attr/selectableItemBackground"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:visibility="gone"
-        android:text="@string/info_tmdb"
-        style="@style/Widget.InfoText"/>
-  </LinearLayout>
+  <TextView
+      android:id="@+id/viewOnTvdb"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/info_tvdb"
+      android:visibility="gone"
+      tools:visibility="visible"
+      style="@style/InfoLink"/>
 
   <include layout="@layout/show_info_episodes"/>
 </LinearLayout>

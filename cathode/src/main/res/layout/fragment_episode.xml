@@ -31,7 +31,5 @@
       android:layout_height="wrap_content">
 
     <include layout="@layout/fragment_episode_content"/>
-
-    <include layout="@layout/checkmarks"/>
   </FrameLayout>
 </LinearLayout>

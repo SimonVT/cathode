@@ -17,8 +17,10 @@ package net.simonvt.cathode.ui.movie;
 
 import android.app.Activity;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -114,12 +116,11 @@ public class MovieFragment extends RefreshableAppBarFragment
   @BindView(R.id.genresTitle) View genresTitle;
   @BindView(R.id.genres) TextView genres;
 
+  @BindView(R.id.checkmarks) View checkmarks;
   @BindView(R.id.isWatched) TextView isWatched;
   @BindView(R.id.inCollection) TextView collection;
   @BindView(R.id.inWatchlist) TextView watchlist;
   @BindView(R.id.rating) CircularProgressIndicator rating;
-
-  @BindView(R.id.trailer) View trailer;
 
   @BindView(R.id.castParent) View castParent;
   @BindView(R.id.castHeader) View castHeader;
@@ -135,12 +136,11 @@ public class MovieFragment extends RefreshableAppBarFragment
   @BindView(R.id.related) LinearLayout related;
   @BindView(R.id.relatedContainer) LinearLayout relatedContainer;
 
-  @BindView(R.id.websiteTitle) View websiteTitle;
+  @BindView(R.id.trailer) TextView trailer;
   @BindView(R.id.website) TextView website;
-
-  @BindView(R.id.viewOnTrakt) View viewOnTrakt;
-  @BindView(R.id.viewOnImdb) View viewOnImdb;
-  @BindView(R.id.viewOnTmdb) View viewOnTmdb;
+  @BindView(R.id.viewOnTrakt) TextView viewOnTrakt;
+  @BindView(R.id.viewOnImdb) TextView viewOnImdb;
+  @BindView(R.id.viewOnTmdb) TextView viewOnTmdb;
 
   private Cursor userComments;
   private Cursor comments;
@@ -210,6 +210,16 @@ public class MovieFragment extends RefreshableAppBarFragment
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
+    Drawable linkDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_link_black_24dp);
+    website.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null);
+    viewOnTrakt.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null);
+    viewOnImdb.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null);
+    viewOnTmdb.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null);
+
+    Drawable playDrawable =
+        ContextCompat.getDrawable(getContext(), R.drawable.ic_play_arrow_black_24do);
+    trailer.setCompoundDrawablesWithIntrinsicBounds(playDrawable, null, null, null);
+
     overview.setText(movieOverview);
 
     getLoaderManager().initLoader(LOADER_MOVIE, null, this);
@@ -383,6 +393,8 @@ public class MovieFragment extends RefreshableAppBarFragment
       checkInDrawable.setWatching(watching || checkedIn);
     }
 
+    final boolean hasCheckmark = watched || collected || inWatchlist;
+    checkmarks.setVisibility(hasCheckmark ? View.VISIBLE : View.GONE);
     isWatched.setVisibility(watched ? View.VISIBLE : View.GONE);
     collection.setVisibility(collected ? View.VISIBLE : View.GONE);
     watchlist.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
@@ -426,9 +438,7 @@ public class MovieFragment extends RefreshableAppBarFragment
 
     final String website = Cursors.getString(cursor, MovieColumns.HOMEPAGE);
     if (!TextUtils.isEmpty(website)) {
-      this.websiteTitle.setVisibility(View.VISIBLE);
       this.website.setVisibility(View.VISIBLE);
-
       this.website.setText(website);
       this.website.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
@@ -436,7 +446,6 @@ public class MovieFragment extends RefreshableAppBarFragment
         }
       });
     } else {
-      this.websiteTitle.setVisibility(View.GONE);
       this.website.setVisibility(View.GONE);
     }
 

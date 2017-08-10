@@ -23,7 +23,7 @@
   <dimen name="appWidgetPosterWidth">43dp</dimen>
 
   <dimen name="detailContentPadding">8dp</dimen>
-  <dimen name="detailContentPaddingTop">18dp</dimen>
+  <dimen name="detailContentPaddingTop">8dp</dimen>
   <dimen name="detailContentPaddingBottom">8dp</dimen>
 
   <dimen name="profileIconDropShadow">2dp</dimen>

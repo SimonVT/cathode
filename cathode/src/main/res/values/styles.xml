@@ -64,6 +64,25 @@
     <item name="android:gravity">center</item>
   </style>
 
+  <style name="InfoLink">
+    <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+    <item name="android:fontFamily">sans-light</item>
+    <item name="android:textColor">#FF777777</item>
+    <item name="android:lineSpacingExtra">2dp</item>
+    <item name="android:paddingLeft">@dimen/detailContentPadding</item>
+    <item name="android:paddingTop">4dp</item>
+    <item name="android:paddingBottom">4dp</item>
+    <item name="android:gravity">center_vertical</item>
+    <item name="android:paddingRight">@dimen/detailContentPadding</item>
+    <!--item name="android:drawableLeft">@drawable/ic_link_black_24dp</item-->
+    <item name="android:drawablePadding">@dimen/detailContentPadding</item>
+    <item name="android:maxLines">1</item>
+  </style>
+
+  <style name="InfoTrailer" parent="InfoLink">
+    <!--item name="android:drawableLeft">@drawable/ic_play_arrow_black_24do</item-->
+  </style>
+
   <style name="Widget.Person">
     <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
     <item name="android:fontFamily">sans-serif-light</item>

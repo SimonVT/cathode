@@ -385,19 +385,16 @@
       tools:visibility="visible"/>
 
   <TextView
-      android:id="@+id/viewOnTitle"
+      android:id="@+id/linksTitle"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="@string/title_view_on"
+      android:text="@string/title_links"
       style="@style/Widget.InfoTitle.ReducedPadding.ReducedMargin"/>
 
   <TextView
       android:id="@+id/viewOnTrakt"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:background="?attr/selectableItemBackground"
-      android:paddingTop="4dp"
-      android:paddingBottom="4dp"
       android:text="@string/info_trakt"
-      style="@style/Widget.InfoText"/>
+      style="@style/InfoLink"/>
 </LinearLayout>

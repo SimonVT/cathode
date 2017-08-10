@@ -16,9 +16,11 @@
 package net.simonvt.cathode.ui.person;
 
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -103,7 +105,7 @@ public class PersonFragment extends RefreshableAppBarFragment {
   @BindView(R.id.camera_header) LinearLayout cameraHeader;
   @BindView(R.id.camera_items) LinearLayout cameraItems;
 
-  @BindView(R.id.viewOnTrakt) View viewOnTrakt;
+  @BindView(R.id.viewOnTrakt) TextView viewOnTrakt;
 
   private NavigationListener navigationListener;
 
@@ -153,6 +155,8 @@ public class PersonFragment extends RefreshableAppBarFragment {
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
+    Drawable linkDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_link_black_24dp);
+    viewOnTrakt.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null);
     updateView(person);
   }
 

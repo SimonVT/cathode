@@ -30,7 +30,5 @@
       android:layout_height="wrap_content">
 
     <include layout="@layout/fragment_movie_content"/>
-
-    <include layout="@layout/checkmarks"/>
   </FrameLayout>
 </LinearLayout>

@@ -59,7 +59,7 @@
   <string name="to_collect">To collect</string>
   <string name="last_watched">Last watched</string>
   <string name="last_collected">Last collected</string>
-  <string name="watch_trailer">Watch trailer</string>
+  <string name="info_trailer">Trailer</string>
 
   <string name="title_cast">Cast</string>
   <string name="title_comments">Comments</string>
@@ -67,7 +67,7 @@
   <string name="title_comment_update">Update comment</string>
   <string name="title_comment_reply">Reply</string>
   <string name="title_website">Website</string>
-  <string name="title_view_on">View on</string>
+  <string name="title_links">Links</string>
   <string name="title_related">Related</string>
 
   <string name="related_rating">%1$s (%2$d votes)</string>
@@ -114,10 +114,10 @@
   <string name="category_movies_watchlist">Movie watchlist</string>
   <string name="category_movies_suggestions">Movie suggestions</string>
 
-  <string name="info_trakt">trakt</string>
-  <string name="info_imdb">imdb</string>
-  <string name="info_tvdb">tvdb</string>
-  <string name="info_tmdb">tmdb</string>
+  <string name="info_trakt">Trakt</string>
+  <string name="info_imdb">IMDb</string>
+  <string name="info_tvdb">TheTVDB</string>
+  <string name="info_tmdb">TMDb</string>
 
   <string name="title_settings">Settings</string>
 
