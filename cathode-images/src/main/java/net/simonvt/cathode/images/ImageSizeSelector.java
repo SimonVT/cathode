@@ -79,14 +79,30 @@ public class ImageSizeSelector {
   }
 
   public void updateSizes() {
+    posterImageSizes.clear();
+    backdropImageSizes.clear();
+    profileImageSizes.clear();
+    stillImageSizes.clear();
+
     Set<String> posterSizes = ImageSettings.getPosterSizes(context);
-    parseImageSizes(posterSizes, posterImageSizes);
+    if (posterImageSizes != null) {
+      parseImageSizes(posterSizes, posterImageSizes);
+    }
+
     Set<String> backdropSizes = ImageSettings.getBackdropSizes(context);
-    parseImageSizes(backdropSizes, backdropImageSizes);
+    if (backdropSizes != null) {
+      parseImageSizes(backdropSizes, backdropImageSizes);
+    }
+
     Set<String> profileSizes = ImageSettings.getProfileSizes(context);
-    parseImageSizes(profileSizes, profileImageSizes);
+    if (profileSizes != null) {
+      parseImageSizes(profileSizes, profileImageSizes);
+    }
+
     Set<String> stillSizes = ImageSettings.getStillSizes(context);
-    parseImageSizes(stillSizes, stillImageSizes);
+    if (stillSizes != null) {
+      parseImageSizes(stillSizes, stillImageSizes);
+    }
 
     sort(posterImageSizes);
     sort(backdropImageSizes);
@@ -95,10 +111,6 @@ public class ImageSizeSelector {
   }
 
   private void parseImageSizes(Set<String> sizeSet, List<ImageSize> imageSizes) {
-    if (sizeSet == null) {
-      return;
-    }
-
     for (String s : sizeSet) {
       if (s.startsWith("w")) {
         String number = s.replace("w", "");
