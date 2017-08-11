@@ -18,9 +18,13 @@ package net.simonvt.cathode.ui.dialog;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RatingBar;
@@ -93,6 +97,24 @@ public class RatingDialog extends DialogFragment {
         ratingText.setText(ratingTexts[rating]);
       }
     });
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+      LayerDrawable ld = (LayerDrawable) ratingBar.getProgressDrawable();
+      Drawable background = ld.findDrawableByLayerId(android.R.id.background);
+      background = DrawableCompat.wrap(background);
+      Drawable secondaryProgress = ld.findDrawableByLayerId(android.R.id.secondaryProgress);
+      secondaryProgress = DrawableCompat.wrap(secondaryProgress);
+      Drawable progress = ld.findDrawableByLayerId(android.R.id.progress);
+      progress = DrawableCompat.wrap(progress);
+
+      DrawableCompat.setTint(background, 0xFF009688);
+      DrawableCompat.setTint(secondaryProgress, 0xFF009688);
+      DrawableCompat.setTint(progress, 0xFF009688);
+
+      ld.setDrawableByLayerId(android.R.id.background, background);
+      ld.setDrawableByLayerId(android.R.id.secondaryProgress, secondaryProgress);
+      ld.setDrawableByLayerId(android.R.id.progress, progress);
+    }
 
     builder.setView(v);
     builder.setPositiveButton(R.string.action_rate, new DialogInterface.OnClickListener() {
