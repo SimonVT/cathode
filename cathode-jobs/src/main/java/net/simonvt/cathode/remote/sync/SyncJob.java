@@ -58,7 +58,7 @@ public class SyncJob extends Job {
           .edit()
           .putLong(Timestamps.SHOWS_LAST_UPDATED, currentTime)
           .apply();
-    } else if (lastShowSync + getUpdatedSyncDelay() * DateUtils.DAY_IN_MILLIS < currentTime) {
+    } else if (lastShowSync + getUpdatedSyncDelay() < currentTime) {
       queue(new SyncUpdatedShows());
     }
     if (lastMovieSync == 0L) {
@@ -66,7 +66,7 @@ public class SyncJob extends Job {
           .edit()
           .putLong(Timestamps.MOVIES_LAST_UPDATED, currentTime)
           .apply();
-    } else if (lastMovieSync + getUpdatedSyncDelay() * DateUtils.DAY_IN_MILLIS < currentTime) {
+    } else if (lastMovieSync + getUpdatedSyncDelay() < currentTime) {
       queue(new SyncUpdatedMovies());
     }
 
