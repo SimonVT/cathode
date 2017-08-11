@@ -65,6 +65,7 @@
   </style>
 
   <style name="InfoLink">
+    <item name="android:background">?attr/selectableItemBackground</item>
     <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
     <item name="android:fontFamily">sans-light</item>
     <item name="android:textColor">#FF777777</item>
