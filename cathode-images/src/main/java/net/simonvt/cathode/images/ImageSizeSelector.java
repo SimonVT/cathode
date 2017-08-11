@@ -85,7 +85,7 @@ public class ImageSizeSelector {
     stillImageSizes.clear();
 
     Set<String> posterSizes = ImageSettings.getPosterSizes(context);
-    if (posterImageSizes != null) {
+    if (posterSizes != null) {
       parseImageSizes(posterSizes, posterImageSizes);
     }
 
