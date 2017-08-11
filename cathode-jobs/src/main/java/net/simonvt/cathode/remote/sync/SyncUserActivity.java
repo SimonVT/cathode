@@ -20,6 +20,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.text.format.DateUtils;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.LastActivity;
 import net.simonvt.cathode.api.enumeration.ItemTypes;
@@ -58,7 +59,7 @@ public class SyncUserActivity extends CallJob<LastActivity> {
         .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
         .setRequiresCharging(true)
         .setRequiresDeviceIdle(true)
-        .setPeriodic(android.text.format.DateUtils.DAY_IN_MILLIS)
+        .setPeriodic(DateUtils.DAY_IN_MILLIS)
         .setPersisted(true)
         .build();
     Jobs.scheduleNotPending(context, jobInfo);

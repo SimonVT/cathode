@@ -57,7 +57,7 @@ public class SyncUpdatedMovies extends SeparatePagesCallJob<UpdatedItem> {
         .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
         .setRequiresCharging(true)
         .setRequiresDeviceIdle(true)
-        .setPeriodic(android.text.format.DateUtils.DAY_IN_MILLIS)
+        .setPeriodic(DateUtils.DAY_IN_MILLIS)
         .setPersisted(true)
         .build();
     Jobs.scheduleNotPending(context, jobInfo);
