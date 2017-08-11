@@ -77,8 +77,8 @@ public class UpdateCommentDialog extends DialogFragment {
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
     View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_comment, null);
-    final EditText commentView = (EditText) v.findViewById(R.id.comment);
-    final CheckBox spoilerView = (CheckBox) v.findViewById(R.id.spoiler);
+    final EditText commentView = v.findViewById(R.id.comment);
+    final CheckBox spoilerView = v.findViewById(R.id.spoiler);
     commentView.setText(comment);
     spoilerView.setChecked(spoiler);
 

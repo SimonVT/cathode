@@ -119,7 +119,7 @@ public class ListsDialog extends DialogFragment {
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     View view = inflater.inflate(R.layout.dialog_lists, container, false);
-    LinearLayout listsContainer = (LinearLayout) view.findViewById(R.id.container);
+    LinearLayout listsContainer = view.findViewById(R.id.container);
     loading = inflater.inflate(R.layout.dialog_lists_loading, listsContainer, false);
     empty = inflater.inflate(R.layout.dialog_lists_empty, listsContainer, false);
     return view;
@@ -214,8 +214,8 @@ public class ListsDialog extends DialogFragment {
     View v =
         LayoutInflater.from(getActivity()).inflate(R.layout.row_dialog_lists, container, false);
 
-    final TextView name = (TextView) v.findViewById(R.id.name);
-    final CheckBox checkBox = (CheckBox) v.findViewById(R.id.checkBox);
+    final TextView name = v.findViewById(R.id.name);
+    final CheckBox checkBox = v.findViewById(R.id.checkBox);
 
     name.setText(listName);
     checkBox.setChecked(checked);

@@ -94,10 +94,10 @@ public class LicensesDialog extends DialogFragment {
         v = LayoutInflater.from(getActivity()).inflate(R.layout.row_license, parent, false);
       }
 
-      TextView library = (TextView) v.findViewById(R.id.library);
+      TextView library = v.findViewById(R.id.library);
       library.setText(item.library);
 
-      TextView license = (TextView) v.findViewById(R.id.license);
+      TextView license = v.findViewById(R.id.license);
       license.setText(item.license);
 
       return v;

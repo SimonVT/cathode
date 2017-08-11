@@ -25,7 +25,6 @@ import android.view.View;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import net.simonvt.cathode.common.R;
-import net.simonvt.cathode.common.util.Views;
 import net.simonvt.cathode.ui.FragmentCallbacks;
 import net.simonvt.cathode.ui.FragmentContract;
 
@@ -89,7 +88,7 @@ public abstract class BaseFragment extends Fragment
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
     unbinder = ButterKnife.bind(this, view);
-    toolbar = Views.find(view, R.id.toolbar);
+    toolbar = view.findViewById(R.id.toolbar);
     if (toolbar != null) {
       toolbar.setOnMenuItemClickListener(this);
 

@@ -84,8 +84,8 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
 
   public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-    progressContainer = Views.find(view, R.id.progressContainer);
-    listContainer = Views.find(view, R.id.listContainer);
+    progressContainer = view.findViewById(R.id.progressContainer);
+    listContainer = view.findViewById(R.id.listContainer);
     recyclerView = Views.findRequired(view, android.R.id.list);
     empty = Views.findRequired(view, android.R.id.empty);
 

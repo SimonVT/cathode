@@ -70,11 +70,11 @@ public final class LinearCommentsAdapter {
 
         View post =
             LayoutInflater.from(context).inflate(R.layout.comment_post_short, parent, false);
-        RemoteImageView avatarView = (RemoteImageView) post.findViewById(R.id.avatar);
+        RemoteImageView avatarView = post.findViewById(R.id.avatar);
         avatarView.addTransformation(new CircleTransformation());
-        TextView usernameView = (TextView) post.findViewById(R.id.username);
-        TextView date = (TextView) post.findViewById(R.id.date);
-        TextView commentText = (TextView) post.findViewById(R.id.commentText);
+        TextView usernameView = post.findViewById(R.id.username);
+        TextView date = post.findViewById(R.id.date);
+        TextView commentText = post.findViewById(R.id.commentText);
 
         avatarView.setImage(avatar);
         usernameView.setText(visibleName);
@@ -114,11 +114,11 @@ public final class LinearCommentsAdapter {
 
         View post =
             LayoutInflater.from(context).inflate(R.layout.comment_post_short, parent, false);
-        RemoteImageView avatarView = (RemoteImageView) post.findViewById(R.id.avatar);
+        RemoteImageView avatarView = post.findViewById(R.id.avatar);
         avatarView.addTransformation(new CircleTransformation());
-        TextView usernameView = (TextView) post.findViewById(R.id.username);
-        TextView date = (TextView) post.findViewById(R.id.date);
-        TextView commentText = (TextView) post.findViewById(R.id.commentText);
+        TextView usernameView = post.findViewById(R.id.username);
+        TextView date = post.findViewById(R.id.date);
+        TextView commentText = post.findViewById(R.id.commentText);
 
         avatarView.setImage(avatar);
         String usernameText = context.getResources()

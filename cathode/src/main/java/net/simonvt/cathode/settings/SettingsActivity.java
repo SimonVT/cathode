@@ -61,7 +61,7 @@ public class SettingsActivity extends BaseActivity {
           .commit();
     }
 
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    Toolbar toolbar = findViewById(R.id.toolbar);
     toolbar.setTitle(R.string.title_settings);
     toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
     toolbar.setNavigationOnClickListener(new View.OnClickListener() {

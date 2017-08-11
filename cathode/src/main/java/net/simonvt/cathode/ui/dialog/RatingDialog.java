@@ -87,9 +87,9 @@ public class RatingDialog extends DialogFragment {
 
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_rating, null);
-    final TextView ratingText = (TextView) v.findViewById(R.id.ratingText);
+    final TextView ratingText = v.findViewById(R.id.ratingText);
     ratingText.setText(this.ratingTexts[ratingArg]);
-    final RatingBar ratingBar = (RatingBar) v.findViewById(R.id.rating);
+    final RatingBar ratingBar = v.findViewById(R.id.rating);
     ratingBar.setRating(initialRating);
     ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
       @Override public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {

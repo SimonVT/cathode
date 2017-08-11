@@ -19,7 +19,6 @@ package net.simonvt.cathode.common.util;
 import android.support.annotation.CheckResult;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.View;
 
 public final class Views {
@@ -27,14 +26,9 @@ public final class Views {
   private Views() {
   }
 
-  @SuppressWarnings("unchecked") @CheckResult @Nullable
-  public static <T extends View> T find(@NonNull View view, @IdRes int id) {
-    return (T) view.findViewById(id);
-  }
-
   @SuppressWarnings("unchecked") @CheckResult
   public static <T extends View> T findRequired(@NonNull View view, @IdRes int id) {
-    T found = (T) view.findViewById(id);
+    T found = view.findViewById(id);
     if (found == null) {
       throw new IllegalStateException("Required view not found");
     }

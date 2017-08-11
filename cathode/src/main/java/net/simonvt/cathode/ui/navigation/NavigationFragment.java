@@ -330,12 +330,11 @@ public class NavigationFragment extends AbsAdapterFragment {
         if (v == null) {
           v = LayoutInflater.from(context)
               .inflate(R.layout.fragment_navigation_header, parent, false);
-          RemoteImageView headerBackground =
-              (RemoteImageView) v.findViewById(R.id.headerBackground);
+          RemoteImageView headerBackground = v.findViewById(R.id.headerBackground);
           headerBackground.setImage(R.drawable.drawer_header_background);
 
           v.setTag(R.id.username, v.findViewById(R.id.username));
-          final RemoteImageView profileIcon = (RemoteImageView) v.findViewById(R.id.profileIcon);
+          final RemoteImageView profileIcon = v.findViewById(R.id.profileIcon);
 
           profileIcon.addTransformation(new RoundTransformation());
 

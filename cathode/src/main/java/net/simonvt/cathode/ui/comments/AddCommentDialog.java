@@ -70,8 +70,8 @@ public class AddCommentDialog extends DialogFragment {
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
     View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_comment, null);
-    final EditText commentView = (EditText) v.findViewById(R.id.comment);
-    final CheckBox spoilerView = (CheckBox) v.findViewById(R.id.spoiler);
+    final EditText commentView = v.findViewById(R.id.comment);
+    final CheckBox spoilerView = v.findViewById(R.id.spoiler);
 
     builder.setView(v);
     if (type == ItemType.COMMENT) {

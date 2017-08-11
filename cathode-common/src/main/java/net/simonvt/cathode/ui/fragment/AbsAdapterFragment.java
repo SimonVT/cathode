@@ -70,8 +70,8 @@ public abstract class AbsAdapterFragment extends BaseFragment {
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-    progressContainer = Views.find(view, R.id.progressContainer);
-    listContainer = Views.find(view, R.id.listContainer);
+    progressContainer = view.findViewById(R.id.progressContainer);
+    listContainer = view.findViewById(R.id.listContainer);
     adapterView = Views.findRequired(view, android.R.id.list);
     empty = Views.findRequired(view, android.R.id.empty);
 

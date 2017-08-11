@@ -120,11 +120,11 @@ public class CheckInDialog extends DialogFragment {
     final long id = args.getLong(ARG_ID);
 
     View view = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_check_in, null);
-    TextView title = (TextView) view.findViewById(R.id.title);
-    final EditText message = (EditText) view.findViewById(R.id.message);
-    final CheckBox facebook = (CheckBox) view.findViewById(R.id.facebook);
-    final CheckBox twitter = (CheckBox) view.findViewById(R.id.twitter);
-    final CheckBox tumblr = (CheckBox) view.findViewById(R.id.tumblr);
+    TextView title = view.findViewById(R.id.title);
+    final EditText message = view.findViewById(R.id.message);
+    final CheckBox facebook = view.findViewById(R.id.facebook);
+    final CheckBox twitter = view.findViewById(R.id.twitter);
+    final CheckBox tumblr = view.findViewById(R.id.tumblr);
 
     title.setText(titleArg);
     final boolean facebookShare =

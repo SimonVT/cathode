@@ -72,7 +72,7 @@ public class SearchView extends LinearLayout implements CollapsibleActionView {
 
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
-    inputView = (EditText) findViewById(R.id.search_input);
+    inputView = findViewById(R.id.search_input);
     clearView = findViewById(R.id.search_clear);
 
     inputView.setOnKeyListener(inputKeyListener);

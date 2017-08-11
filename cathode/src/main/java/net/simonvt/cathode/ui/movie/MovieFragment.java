@@ -531,14 +531,14 @@ public class MovieFragment extends RefreshableAppBarFragment
 
       final String headshotUri = ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, personId);
 
-      RemoteImageView headshot = (RemoteImageView) v.findViewById(R.id.headshot);
+      RemoteImageView headshot = v.findViewById(R.id.headshot);
       headshot.addTransformation(new CircleTransformation());
       headshot.setImage(headshotUri);
 
-      TextView name = (TextView) v.findViewById(R.id.person_name);
+      TextView name = v.findViewById(R.id.person_name);
       name.setText(Cursors.getString(c, PersonColumns.NAME));
 
-      TextView character = (TextView) v.findViewById(R.id.person_job);
+      TextView character = v.findViewById(R.id.person_job);
       character.setText(Cursors.getString(c, MovieCastColumns.CHARACTER));
 
       v.setOnClickListener(new View.OnClickListener() {
@@ -575,11 +575,11 @@ public class MovieFragment extends RefreshableAppBarFragment
 
       final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, relatedMovieId);
 
-      RemoteImageView posterView = (RemoteImageView) v.findViewById(R.id.related_poster);
+      RemoteImageView posterView = v.findViewById(R.id.related_poster);
       posterView.addTransformation(new CircleTransformation());
       posterView.setImage(poster);
 
-      TextView titleView = (TextView) v.findViewById(R.id.related_title);
+      TextView titleView = v.findViewById(R.id.related_title);
       titleView.setText(title);
 
       final String formattedRating = String.format(Locale.getDefault(), "%.1f", rating);
@@ -593,7 +593,7 @@ public class MovieFragment extends RefreshableAppBarFragment
         ratingText = getString(R.string.related_rating, formattedRating, votes);
       }
 
-      TextView ratingView = (TextView) v.findViewById(R.id.related_rating);
+      TextView ratingView = v.findViewById(R.id.related_rating);
       ratingView.setText(ratingText);
 
       v.setOnClickListener(new View.OnClickListener() {

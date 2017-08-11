@@ -160,7 +160,7 @@ public class AppBarRelativeLayout extends RelativeLayout {
 
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
-    toolbar = (Toolbar) findViewById(R.id.toolbar);
+    toolbar = findViewById(R.id.toolbar);
     contentView = findViewById(contentTopViewId);
   }
 
