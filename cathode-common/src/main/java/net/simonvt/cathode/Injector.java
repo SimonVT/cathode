@@ -29,6 +29,10 @@ public final class Injector {
     objectGraph = graph;
   }
 
+  public static boolean isInstalled() {
+    return objectGraph != null;
+  }
+
   public static <T> T inject(T target) {
     if (objectGraph == null) {
       throw new RuntimeException("ObjectGraph not yet initialized");

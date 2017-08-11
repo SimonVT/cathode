@@ -21,18 +21,13 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.os.StrictMode;
 import android.text.format.DateUtils;
-import com.crashlytics.android.Crashlytics;
-import dagger.ObjectGraph;
-import io.fabric.sdk.android.Fabric;
 import javax.inject.Inject;
 import net.simonvt.cathode.common.event.AuthFailedEvent;
 import net.simonvt.cathode.common.event.AuthFailedEvent.OnAuthFailedListener;
 import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.jobqueue.AuthJobHandler;
 import net.simonvt.cathode.jobqueue.DataJobHandler;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobHandler;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.jobscheduler.AuthJobHandlerJob;
@@ -44,14 +39,11 @@ import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
 import net.simonvt.cathode.settings.Accounts;
-import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.Timestamps;
 import net.simonvt.cathode.settings.TraktLinkSettings;
-import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.settings.login.LoginActivity;
 import net.simonvt.cathode.ui.HomeActivity;
-import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference;
 import timber.log.Timber;
 
 public class CathodeApp extends Application {
@@ -60,39 +52,14 @@ public class CathodeApp extends Application {
 
   private static final long SYNC_DELAY = 15 * DateUtils.MINUTE_IN_MILLIS;
 
-  @Inject JobManager jobManager;
-
   private int homeActivityResumedCount;
   private long lastSync;
 
+  @Inject JobManager jobManager;
+
   @Override public void onCreate() {
     super.onCreate();
-    if (BuildConfig.DEBUG) {
-      Timber.plant(new Timber.DebugTree());
-
-      StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build());
-      StrictMode.setThreadPolicy(
-          new StrictMode.ThreadPolicy.Builder().detectAll().permitDiskReads().penaltyLog().build());
-    } else {
-      Fabric.with(this, new Crashlytics());
-      Timber.plant(new CrashlyticsTree());
-    }
-
-    UpcomingSortByPreference.init(this);
-    UpcomingTimePreference.init(this);
-    FirstAiredOffsetPreference.init(this);
-
-    Upgrader.upgrade(this, new Upgrader.JobQueue() {
-      @Override public void add(final Job job) {
-        MainHandler.post(new Runnable() {
-          @Override public void run() {
-            jobManager.addJob(job);
-          }
-        });
-      }
-    });
-
-    Injector.install(ObjectGraph.create(Modules.list(this)));
+    CathodeInitProvider.ensureInjector(this);
     Injector.inject(this);
 
     AuthFailedEvent.registerListener(authFailedListener);

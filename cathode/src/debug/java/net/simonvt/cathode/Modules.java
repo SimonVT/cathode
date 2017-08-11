@@ -15,6 +15,7 @@
  */
 package net.simonvt.cathode;
 
+import android.content.Context;
 import net.simonvt.cathode.module.AppModule;
 import net.simonvt.cathode.module.DebugModule;
 
@@ -23,9 +24,9 @@ public final class Modules {
   private Modules() {
   }
 
-  public static Object[] list(CathodeApp app) {
+  public static Object[] list(Context context) {
     return new Object[] {
-        new AppModule(app), new DebugModule(app),
+        new AppModule(context), new DebugModule(context),
     };
   }
 }

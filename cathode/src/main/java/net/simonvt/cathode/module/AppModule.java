@@ -20,6 +20,7 @@ import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
 import net.simonvt.cathode.CathodeApp;
+import net.simonvt.cathode.CathodeInitProvider;
 import net.simonvt.cathode.DatabaseHelperModule;
 import net.simonvt.cathode.JobsModule;
 import net.simonvt.cathode.api.ApiModule;
@@ -347,22 +348,22 @@ import net.simonvt.cathode.widget.RemoteImageView;
         // Misc
         SearchHandler.class, ApiSettings.class, EpisodeHistoryLoader.class, CheckIn.class,
         MovieHistoryLoader.class, AuthJobHandler.class, DataJobHandler.class, JobCreator.class,
-        UserList.class,
+        UserList.class, CathodeInitProvider.class,
     }) //
 public class AppModule {
 
-  private final Context app;
+  private final Context context;
 
-  public AppModule(Context app) {
-    this.app = app;
+  public AppModule(Context context) {
+    this.context = context;
   }
 
   @Provides Context provideContext() {
-    return app;
+    return context;
   }
 
   @Provides @Singleton SearchHandler provideSearchHandler() {
-    return new SearchHandler(app);
+    return new SearchHandler(context);
   }
 
   @Provides @Singleton UpcomingTimePreference provideUpcomingTimePreference() {

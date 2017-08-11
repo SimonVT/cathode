@@ -124,6 +124,11 @@
 
     <!-- Providers -->
     <provider
+        android:authorities="${applicationId}.CathodeInitProvider"
+        android:name="net.simonvt.cathode.CathodeInitProvider"
+        android:exported="false"/>
+
+    <provider
         android:name="net.simonvt.cathode.provider.generated.CathodeProvider"
         android:authorities="@string/authority_provider"
         android:exported="true"
