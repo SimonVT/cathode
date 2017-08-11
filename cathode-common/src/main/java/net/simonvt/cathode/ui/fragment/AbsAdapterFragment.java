@@ -36,8 +36,6 @@ public abstract class AbsAdapterFragment extends BaseFragment {
   private static final int STATE_PROGRESS_VISIBLE = 0;
   private static final int STATE_LIST_VISIBLE = 1;
 
-  private static final int ANIMATION_DURATION = 600;
-
   private BaseAdapter adapter;
 
   @Nullable private View progressContainer;

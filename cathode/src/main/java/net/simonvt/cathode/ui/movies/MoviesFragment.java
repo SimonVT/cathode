@@ -42,8 +42,6 @@ public abstract class MoviesFragment
 
   private MoviesNavigationListener navigationListener;
 
-  private Cursor cursor;
-
   private int columnCount;
 
   protected boolean scrollToTop;
@@ -95,7 +93,6 @@ public abstract class MoviesFragment
   }
 
   void setCursor(Cursor cursor) {
-    this.cursor = cursor;
     if (getAdapter() == null) {
       setAdapter(getAdapter(cursor));
     } else {

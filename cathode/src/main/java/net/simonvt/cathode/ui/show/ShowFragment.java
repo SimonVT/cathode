@@ -111,8 +111,6 @@ public class ShowFragment extends RefreshableAppBarFragment {
       "net.simonvt.cathode.ui.show.ShowFragment.ratingDialog";
   private static final String DIALOG_LISTS_ADD =
       "net.simonvt.cathode.ui.show.ShowFragment.listsAddDialog";
-  private static final String DIALOG_COMMENT_UPDATE =
-      "net.simonvt.cathode.ui.show.ShowFragment.updateCommentDialog";
 
   private static final int LOADER_SHOW = 1;
   private static final int LOADER_SHOW_WATCH = 2;

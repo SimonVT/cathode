@@ -208,7 +208,6 @@ import net.simonvt.cathode.ui.movies.watched.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.movies.watchlist.MovieWatchlistFragment;
 import net.simonvt.cathode.ui.person.PersonCreditsAdapter;
 import net.simonvt.cathode.ui.person.PersonFragment;
-import net.simonvt.cathode.ui.search.MovieSearchAdapter;
 import net.simonvt.cathode.ui.search.SearchAdapter;
 import net.simonvt.cathode.ui.search.SearchFragment;
 import net.simonvt.cathode.ui.show.EpisodeFragment;
@@ -286,12 +285,11 @@ import net.simonvt.cathode.widget.RemoteImageView;
 
         // ListAdapters
         SeasonAdapter.class, SeasonsAdapter.class, ShowDescriptionAdapter.class,
-        MoviesAdapter.class, MovieSearchAdapter.class, ShowRecommendationsAdapter.class,
-        MovieRecommendationsAdapter.class, ShowsWithNextAdapter.class, ShowWatchlistAdapter.class,
-        UpcomingAdapter.class, CommentsAdapter.class, HiddenItemsAdapter.class,
-        DashboardShowsWatchlistAdapter.class, ListAdapter.class, DashboardMoviesAdapter.class,
-        PersonCreditsAdapter.class, DashboardShowsAdapter.class,
-        DashboardUpcomingShowsAdapter.class, SearchAdapter.class,
+        MoviesAdapter.class, ShowRecommendationsAdapter.class, MovieRecommendationsAdapter.class,
+        ShowsWithNextAdapter.class, ShowWatchlistAdapter.class, UpcomingAdapter.class,
+        CommentsAdapter.class, HiddenItemsAdapter.class, DashboardShowsWatchlistAdapter.class,
+        ListAdapter.class, DashboardMoviesAdapter.class, PersonCreditsAdapter.class,
+        DashboardShowsAdapter.class, DashboardUpcomingShowsAdapter.class, SearchAdapter.class,
 
         // Views
         PhoneEpisodeView.class, RemoteImageView.class,

@@ -149,7 +149,6 @@ public class HomeActivity extends BaseActivity
   private FragmentStack stack;
 
   @BindView(R.id.drawer) DrawerLayout drawer;
-  private int drawerState = DrawerLayout.STATE_IDLE;
   private NavigationFragment navigation;
 
   @BindView(R.id.watching_parent) ViewGroup watchingParent;
@@ -349,7 +348,6 @@ public class HomeActivity extends BaseActivity
     }
 
     @Override public void onDrawerStateChanged(int newState) {
-      drawerState = newState;
       if (newState == DrawerLayout.STATE_DRAGGING) {
         pendingReplacement = null;
       }

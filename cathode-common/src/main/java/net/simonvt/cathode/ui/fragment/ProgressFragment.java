@@ -28,8 +28,6 @@ public abstract class ProgressFragment extends BaseFragment {
   private static final int STATE_PROGRESS_VISIBLE = 0;
   private static final int STATE_CONTENT_VISIBLE = 1;
 
-  private static final int ANIMATION_DURATION = 600;
-
   private View content;
   private View progress;
 

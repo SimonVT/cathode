@@ -56,8 +56,6 @@ public class RelatedMoviesFragment
 
   private MoviesAdapter movieAdapter;
 
-  private SimpleCursor cursor;
-
   private int columnCount;
 
   public static String getTag(long movieId) {
@@ -110,7 +108,6 @@ public class RelatedMoviesFragment
   }
 
   protected void setCursor(SimpleCursor c) {
-    this.cursor = c;
     if (movieAdapter == null) {
       movieAdapter = new MoviesAdapter(getActivity(), this, c, LibraryType.WATCHED);
       setAdapter(movieAdapter);

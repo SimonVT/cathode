@@ -54,7 +54,7 @@ public class MoviesAdapter extends BaseMoviesAdapter<BaseMoviesAdapter.ViewHolde
 
   public MoviesAdapter(FragmentActivity activity, MovieClickListener listener, Cursor c,
       int rowLayout, LibraryType libraryType) {
-    super(activity, listener, c, libraryType);
+    super(activity, listener, c);
     this.rowLayout = rowLayout;
   }
 

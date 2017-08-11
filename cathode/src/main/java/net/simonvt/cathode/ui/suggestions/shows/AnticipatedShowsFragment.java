@@ -101,8 +101,6 @@ public class AnticipatedShowsFragment
 
   private SortBy sortBy;
 
-  private Cursor cursor;
-
   private int columnCount;
 
   private boolean scrollToTop;
@@ -197,8 +195,6 @@ public class AnticipatedShowsFragment
   }
 
   private void setCursor(Cursor cursor) {
-    this.cursor = cursor;
-
     if (showsAdapter == null) {
       showsAdapter = new ShowDescriptionAdapter(getActivity(), this, cursor, false);
       setAdapter(showsAdapter);

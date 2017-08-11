@@ -87,10 +87,6 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
       "net.simonvt.cathode.ui.show.EpisodeFragment.ratingDialog";
   private static final String DIALOG_LISTS_ADD =
       "net.simonvt.cathode.ui.show.EpisodeFragment.listsAddDialog";
-  private static final String DIALOG_COMMENT_ADD =
-      "net.simonvt.cathode.ui.show.EpisodeFragment.addCommentDialog";
-  private static final String DIALOG_COMMENT_UPDATE =
-      "net.simonvt.cathode.ui.show.EpisodeFragment.updateCommentDialog";
 
   @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;

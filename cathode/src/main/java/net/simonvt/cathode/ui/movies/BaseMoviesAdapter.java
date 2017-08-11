@@ -30,7 +30,6 @@ import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
-import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
@@ -51,15 +50,11 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
 
   protected MovieClickListener listener;
 
-  protected LibraryType libraryType;
-
-  public BaseMoviesAdapter(FragmentActivity activity, MovieClickListener listener, Cursor c,
-      LibraryType libraryType) {
+  public BaseMoviesAdapter(FragmentActivity activity, MovieClickListener listener, Cursor c) {
     super(activity, c);
     Injector.inject(this);
     this.activity = activity;
     this.listener = listener;
-    this.libraryType = libraryType;
   }
 
   @Override public void onViewRecycled(ViewHolder holder) {

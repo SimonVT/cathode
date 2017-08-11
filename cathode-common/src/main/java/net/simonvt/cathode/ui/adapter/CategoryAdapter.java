@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.common.R;
 import net.simonvt.cathode.common.R2;
-import timber.log.Timber;
 
 public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -57,7 +56,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void setAdapter(RecyclerView.Adapter adapter) {
-      Timber.d("Setting adapter");
       if (this.adapter != null) {
         this.adapter.unregisterAdapterDataObserver(this);
       }
@@ -68,8 +66,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private void onAdapterChanged() {
       final int adapterCount = adapter.getItemCount();
-
-      Timber.d("onAdapterChanged: %d - %d", this.adapterCount, adapterCount);
 
       if (adapterCount == 0 && this.adapterCount > 0) {
         onHideCategory(this);
@@ -150,7 +146,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
   }
 
   private void onShowCategory(Category category) {
-    Timber.d("onShowCategory");
     if (allCategoriesLoaded) {
       final int position = getPositionOfCategory(category);
       notifyItemRangeInserted(position, 2);
@@ -158,7 +153,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
   }
 
   private void onHideCategory(Category category) {
-    Timber.d("onHideCategory");
     if (allCategoriesLoaded) {
       final int position = getPositionOfCategory(category);
       notifyItemRangeRemoved(position, 2);

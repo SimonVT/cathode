@@ -100,10 +100,6 @@ public class MovieFragment extends RefreshableAppBarFragment
       "net.simonvt.cathode.ui.movie.MovieFragment.ratingDialog";
   private static final String DIALOG_LISTS_ADD =
       "net.simonvt.cathode.ui.movie.MovieFragment.listsAddDialog";
-  private static final String DIALOG_COMMENT_ADD =
-      "net.simonvt.cathode.ui.movie.MovieFragment.addCommentDialog";
-  private static final String DIALOG_COMMENT_UPDATE =
-      "net.simonvt.cathode.ui.movie.MovieFragment.updateCommentDialog";
 
   @Inject MovieTaskScheduler movieScheduler;
   @Inject PersonTaskScheduler personScheduler;
