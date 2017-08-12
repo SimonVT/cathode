@@ -81,7 +81,7 @@
   </style>
 
   <style name="InfoTrailer" parent="InfoLink">
-    <!--item name="android:drawableLeft">@drawable/ic_play_arrow_black_24do</item-->
+    <!--item name="android:drawableLeft">@drawable/ic_play_arrow_black_24dp</item-->
   </style>
 
   <style name="Widget.Person">

@@ -296,7 +296,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
     viewOnTvdb.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null);
 
     Drawable playDrawable =
-        VectorDrawableCompat.create(getResources(), R.drawable.ic_play_arrow_black_24do, null);
+        VectorDrawableCompat.create(getResources(), R.drawable.ic_play_arrow_black_24dp, null);
     trailer.setCompoundDrawablesWithIntrinsicBounds(playDrawable, null, null, null);
 
     overview.setText(showOverview);
