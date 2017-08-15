@@ -16,14 +16,17 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
   <item android:id="@android:id/background">
     <bitmap
-        android:src="@drawable/ic_star_border_black_36dp"/>
+        android:src="@drawable/ic_star_border_black_36dp"
+        android:tint="@color/ratingbar_background_material"/>
   </item>
   <item android:id="@android:id/secondaryProgress">
     <bitmap
-        android:src="@drawable/ic_star_half_black_36dp"/>
+        android:src="@drawable/ic_star_half_black_36dp"
+        android:tint="?attr/colorControlActivated"/>
   </item>
   <item android:id="@android:id/progress">
     <bitmap
-        android:src="@drawable/ic_star_black_36dp"/>
+        android:src="@drawable/ic_star_black_36dp"
+        android:tint="?attr/colorControlActivated"/>
   </item>
 </layer-list>
