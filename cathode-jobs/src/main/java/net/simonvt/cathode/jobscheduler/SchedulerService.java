@@ -21,8 +21,11 @@ import android.app.job.JobService;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.SparseArray;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.jobqueue.Job;
 import timber.log.Timber;
 
@@ -34,9 +37,17 @@ import timber.log.Timber;
   private ExecutorService executor;
   private SparseArray<Job> runningJobs = new SparseArray<>();
 
+  String onCreatePackage;
+  String appContextClass;
+
   @Override public void onCreate() {
     super.onCreate();
-    jobCreator = new JobCreator();
+    if (Injector.isInstalled()) {
+      jobCreator = new JobCreator();
+    } else {
+      onCreatePackage = getPackageName();
+      appContextClass = getApplicationContext().getClass().getName();
+    }
     executor = Executors.newFixedThreadPool(THREAD_COUNT);
   }
 
@@ -47,15 +58,53 @@ import timber.log.Timber;
 
   @Override public boolean onStartJob(final JobParameters params) {
     Timber.d("[onStartJob] %d", params.getJobId());
+    if (jobCreator == null) {
+      if (Injector.isInstalled()) {
+        jobCreator = new JobCreator();
+        Timber.e(new RuntimeException("Wasn't installed in onCreate"),
+            "Package name was: %s, app context was: %s, now it's %s", onCreatePackage,
+            appContextClass, getApplicationContext().getClass().getName());
+      } else {
+        Fabric.with(this, new Crashlytics());
+
+        if ("net.simonvt.cathode".equals(onCreatePackage)) {
+          Crashlytics.logException(
+              new RuntimeException("Package matched in onCreate: " + appContextClass));
+          throw new RuntimeException("Package matched in onCreate: " + appContextClass);
+        } else {
+          if ("net.simonvt.cathode".equals(getPackageName())) {
+            Crashlytics.logException(new RuntimeException("Didn't match, now it does: "
+                + onCreatePackage
+                + " - "
+                + appContextClass
+                + " - "
+                + getPackageName()));
+
+            throw new RuntimeException("Didn't match, now it does: "
+                + onCreatePackage
+                + " - "
+                + appContextClass
+                + " - "
+                + getPackageName());
+          } else {
+            Crashlytics.logException(new RuntimeException(
+                "Package doesn't match: " + onCreatePackage + " - " + appContextClass));
+
+            throw new RuntimeException(
+                "Package doesn't match: " + onCreatePackage + " - " + appContextClass);
+          }
+        }
+      }
+    }
 
     switch (params.getJobId()) {
       case AuthJobHandlerJob.ID:
-        case AuthJobHandlerJob.ID_ONESHOT: {
-          Job job = new AuthJobHandlerJob(this, params);
-          runningJobs.put(params.getJobId(), job);
-          job.perform();
-          return true;
-        }
+      case AuthJobHandlerJob.ID_ONESHOT: {
+        Job job = new AuthJobHandlerJob(this, params);
+        runningJobs.put(params.getJobId(), job);
+        job.perform();
+        return true;
+      }
 
       case DataJobHandlerJob.ID: {
         Job job = new DataJobHandlerJob(this, params);
