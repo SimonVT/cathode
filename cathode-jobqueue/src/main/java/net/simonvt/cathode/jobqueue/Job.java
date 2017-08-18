@@ -24,7 +24,6 @@ import android.os.RemoteException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import javax.inject.Inject;
 import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
@@ -40,7 +39,7 @@ public abstract class Job {
   @Inject transient JobManager jobManager;
   @Inject transient Context context;
 
-  private final AtomicBoolean stopped = new AtomicBoolean();
+  private transient volatile boolean stopped;
 
   private int flags;
 
@@ -112,11 +111,11 @@ public abstract class Job {
   }
 
   public void stop() {
-    stopped.set(true);
+    stopped = true;
   }
 
   public boolean isStopped() {
-    return stopped.get();
+    return stopped;
   }
 
   public boolean hasFlags(int flags) {
