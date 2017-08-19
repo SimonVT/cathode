@@ -17,7 +17,7 @@
   <item android:id="@android:id/background">
     <bitmap
         android:src="@drawable/ic_star_border_black_36dp"
-        android:tint="?attr/colorControlActivated"/>
+        android:tint="@color/ratingbar_background_material"/>
   </item>
   <item android:id="@android:id/secondaryProgress">
     <bitmap
