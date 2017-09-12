@@ -37,16 +37,10 @@ import timber.log.Timber;
   private ExecutorService executor;
   private SparseArray<Job> runningJobs = new SparseArray<>();
 
-  String onCreatePackage;
-  String appContextClass;
-
   @Override public void onCreate() {
     super.onCreate();
     if (Injector.isInstalled()) {
       jobCreator = new JobCreator();
-    } else {
-      onCreatePackage = getPackageName();
-      appContextClass = getApplicationContext().getClass().getName();
     }
     executor = Executors.newFixedThreadPool(THREAD_COUNT);
   }
@@ -58,43 +52,16 @@ import timber.log.Timber;
 
   @Override public boolean onStartJob(final JobParameters params) {
     Timber.d("[onStartJob] %d", params.getJobId());
+
+    // There's a bug in Android N where backup can leave the process in an unusable state. When that
+    // happens, have JobScheduler reschedule the job.
     if (jobCreator == null) {
-      if (Injector.isInstalled()) {
-        jobCreator = new JobCreator();
-        Timber.e(new RuntimeException("Wasn't installed in onCreate"),
-            "Package name was: %s, app context was: %s, now it's %s", onCreatePackage,
-            appContextClass, getApplicationContext().getClass().getName());
-      } else {
+      if (!Fabric.isInitialized()) {
         Fabric.with(this, new Crashlytics());
-
-        if ("net.simonvt.cathode".equals(onCreatePackage)) {
-          Crashlytics.logException(
-              new RuntimeException("Package matched in onCreate: " + appContextClass));
-          throw new RuntimeException("Package matched in onCreate: " + appContextClass);
-        } else {
-          if ("net.simonvt.cathode".equals(getPackageName())) {
-            Crashlytics.logException(new RuntimeException("Didn't match, now it does: "
-                + onCreatePackage
-                + " - "
-                + appContextClass
-                + " - "
-                + getPackageName()));
-
-            throw new RuntimeException("Didn't match, now it does: "
-                + onCreatePackage
-                + " - "
-                + appContextClass
-                + " - "
-                + getPackageName());
-          } else {
-            Crashlytics.logException(new RuntimeException(
-                "Package doesn't match: " + onCreatePackage + " - " + appContextClass));
-
-            throw new RuntimeException(
-                "Package doesn't match: " + onCreatePackage + " - " + appContextClass);
-          }
-        }
       }
+      Crashlytics.logException(new RuntimeException("Process in unusable state, rescheduling"));
+      jobFinished(params, true);
+      return false;
     }
 
     switch (params.getJobId()) {
