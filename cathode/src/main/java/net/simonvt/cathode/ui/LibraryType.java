@@ -19,7 +19,4 @@ public enum LibraryType {
   WATCHED,
   COLLECTION,
   WATCHLIST,
-  TRENDING,
-  RECOMMENDED,
-  ANTICIPATED,
 }

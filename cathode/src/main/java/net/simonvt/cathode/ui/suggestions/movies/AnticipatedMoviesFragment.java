@@ -35,7 +35,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.movies.SyncAnticipatedMovies;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.SuggestionsTimestamps;
-import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
 import net.simonvt.cathode.ui.movies.MoviesFragment;
@@ -166,12 +165,7 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
   }
 
   protected RecyclerView.Adapter<MoviesAdapter.ViewHolder> getAdapter(Cursor cursor) {
-    return new MoviesAdapter(getActivity(), this, cursor, R.layout.list_row_movie,
-        LibraryType.WATCHED);
-  }
-
-  @Override protected LibraryType getLibraryType() {
-    return LibraryType.ANTICIPATED;
+    return new MoviesAdapter(getActivity(), this, cursor, R.layout.list_row_movie);
   }
 
   @Override protected int getLoaderId() {

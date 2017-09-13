@@ -25,7 +25,6 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
-import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.widget.OverflowView;
 import net.simonvt.schematic.Cursors;
@@ -47,13 +46,12 @@ public class MoviesAdapter extends BaseMoviesAdapter<BaseMoviesAdapter.ViewHolde
 
   private int rowLayout;
 
-  public MoviesAdapter(FragmentActivity activity, MovieClickListener listener, Cursor c,
-      LibraryType libraryType) {
-    this(activity, listener, c, R.layout.list_row_movie, libraryType);
+  public MoviesAdapter(FragmentActivity activity, MovieClickListener listener, Cursor c) {
+    this(activity, listener, c, R.layout.list_row_movie);
   }
 
   public MoviesAdapter(FragmentActivity activity, MovieClickListener listener, Cursor c,
-      int rowLayout, LibraryType libraryType) {
+      int rowLayout) {
     super(activity, listener, c);
     this.rowLayout = rowLayout;
   }

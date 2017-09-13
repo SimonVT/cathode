@@ -30,7 +30,6 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.ProviderSchematic.RelatedMovies;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
-import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
@@ -109,7 +108,7 @@ public class RelatedMoviesFragment
 
   protected void setCursor(SimpleCursor c) {
     if (movieAdapter == null) {
-      movieAdapter = new MoviesAdapter(getActivity(), this, c, LibraryType.WATCHED);
+      movieAdapter = new MoviesAdapter(getActivity(), this, c);
       setAdapter(movieAdapter);
       return;
     }

@@ -28,7 +28,6 @@ import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
@@ -89,7 +88,7 @@ public abstract class MoviesFragment
   }
 
   protected RecyclerView.Adapter<MoviesAdapter.ViewHolder> getAdapter(Cursor cursor) {
-    return new MoviesAdapter(getActivity(), this, cursor, getLibraryType());
+    return new MoviesAdapter(getActivity(), this, cursor);
   }
 
   void setCursor(Cursor cursor) {
@@ -104,8 +103,6 @@ public abstract class MoviesFragment
       scrollToTop = false;
     }
   }
-
-  protected abstract LibraryType getLibraryType();
 
   protected abstract int getLoaderId();
 

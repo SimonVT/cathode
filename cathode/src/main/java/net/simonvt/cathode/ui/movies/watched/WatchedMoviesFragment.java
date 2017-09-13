@@ -31,7 +31,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
 import net.simonvt.cathode.ui.movies.MoviesFragment;
@@ -155,10 +154,6 @@ public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.
         }
         break;
     }
-  }
-
-  @Override protected LibraryType getLibraryType() {
-    return LibraryType.WATCHED;
   }
 
   @Override protected int getLoaderId() {
