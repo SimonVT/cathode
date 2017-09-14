@@ -26,6 +26,11 @@ public final class Alarms {
   private Alarms() {
   }
 
+  public static void set(Context context, int type, long triggerAtMillis, PendingIntent pi) {
+    AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+    am.set(type, triggerAtMillis, pi);
+  }
+
   public static void setExactAndAllowWhileIdle(Context context, int type, long triggerAtMillis,
       PendingIntent pi) {
     AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);

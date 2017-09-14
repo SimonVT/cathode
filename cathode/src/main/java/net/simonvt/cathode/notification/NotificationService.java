@@ -91,7 +91,13 @@ public class NotificationService extends IntentService {
     context.startService(i);
   }
 
-  public static void scheduleAt(Context context, long millis) {
+  public static void schedule(Context context, long millis) {
+    Intent i = new Intent(context, NotificationService.class);
+    PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
+    Alarms.set(context, AlarmManager.RTC_WAKEUP, millis, pi);
+  }
+
+  public static void scheduleExact(Context context, long millis) {
     Intent i = new Intent(context, NotificationReceiver.class);
     PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
     Alarms.setExactAndAllowWhileIdle(context, AlarmManager.RTC_WAKEUP, millis, pi);
@@ -122,13 +128,7 @@ public class NotificationService extends IntentService {
   }
 
   @Override protected void onHandleIntent(Intent intent) {
-    createReminderChannel();
-
-    final long currentTime = System.currentTimeMillis();
-    long nextNotificationTime = Long.MAX_VALUE;
-
     final boolean enabled = Settings.get(this).getBoolean(Settings.NOTIFICACTIONS_ENABLED, false);
-
     if (!enabled) {
       nm.cancel(GROUP_NOTIFICATION_ID);
       return;
@@ -139,19 +139,23 @@ public class NotificationService extends IntentService {
     final boolean vibrate = Settings.get(this).getBoolean(Settings.NOTIFICACTION_VIBRATE, true);
     final boolean sound = Settings.get(this).getBoolean(Settings.NOTIFICACTION_SOUND, true);
 
+    createReminderChannel();
+
+    final long currentTime = System.currentTimeMillis();
+    long nextNotificationTime = Long.MAX_VALUE;
+
     Cursor episodes = getContentResolver().query(Episodes.EPISODES_WITH_SHOW, PROJECTION,
         "(" + SqlColumn.table(Tables.SHOWS).column(ShowColumns.WATCHED_COUNT) + ">0 OR " + SqlColumn
             .table(Tables.SHOWS)
             .column(ShowColumns.IN_WATCHLIST) + "=1) AND " + SqlColumn.table(Tables.SHOWS)
             .column(ShowColumns.HIDDEN_CALENDAR) + "=0 AND (" + SqlColumn.table(Tables.EPISODES)
             .column(EpisodeColumns.FIRST_AIRED) + ">?)", new String[] {
-            String.valueOf(currentTime - 6 * DateUtils.HOUR_IN_MILLIS)
+            String.valueOf(currentTime - 12 * DateUtils.HOUR_IN_MILLIS)
         }, Shows.SORT_NEXT_EPISODE);
 
     while (episodes.moveToNext()) {
       final long showId = Cursors.getLong(episodes, ShowColumns.ID);
       final String showTitle = Cursors.getString(episodes, ShowColumns.TITLE);
-      final int runtime = Cursors.getInt(episodes, ShowColumns.RUNTIME);
 
       final long episodeId = Cursors.getLong(episodes, "episodeId");
       final int season = Cursors.getInt(episodes, EpisodeColumns.SEASON);
@@ -160,21 +164,25 @@ public class NotificationService extends IntentService {
       final String episodeTitle =
           DataHelper.getEpisodeTitle(this, episodes, season, episode, watched);
       final long firstAired = DataHelper.getFirstAired(episodes);
+      final long advanceTime = firstAired - advanceMillis;
       final boolean notificationDismissed =
           Cursors.getBoolean(episodes, EpisodeColumns.NOTIFICATION_DISMISSED);
-
-      final long airingEnd = firstAired + runtime * DateUtils.MINUTE_IN_MILLIS;
-      final long advanceTime = firstAired - advanceMillis;
 
       if (notificationDismissed) {
         continue;
       }
 
-      if (advanceTime > currentTime) {
+      final long notifyAiredBefore =
+          currentTime + Math.max(advanceMillis, 30 * DateUtils.MINUTE_IN_MILLIS);
+      if (firstAired > notifyAiredBefore) {
         if (nextNotificationTime > advanceTime) {
           nextNotificationTime = advanceTime;
         }
-      } else if (advanceTime <= currentTime && firstAired > currentTime) {
+      } else if (firstAired < currentTime) {
+        // Airing or aired
+        displayNotification(showId, showTitle, episodeId, episodeTitle, season, episode, watched,
+            firstAired, true);
+      } else {
         // Advance notification
         displayNotification(showId, showTitle, episodeId, episodeTitle, season, episode, watched,
             firstAired, false);
@@ -182,16 +190,6 @@ public class NotificationService extends IntentService {
         if (nextNotificationTime > firstAired) {
           nextNotificationTime = firstAired;
         }
-      } else if (airingEnd > currentTime) {
-        // Airing
-        displayNotification(showId, showTitle, episodeId, episodeTitle, season, episode, watched,
-            firstAired, true);
-
-        if (nextNotificationTime > airingEnd) {
-          nextNotificationTime = airingEnd;
-        }
-      } else {
-        nm.cancel(Longs.hashCode(episodeId));
       }
     }
 
@@ -227,7 +225,9 @@ public class NotificationService extends IntentService {
     }
 
     if (nextNotificationTime < Long.MAX_VALUE) {
-      scheduleAt(this, nextNotificationTime);
+      scheduleExact(this, nextNotificationTime);
+    } else {
+      schedule(this, currentTime + 12 * DateUtils.HOUR_IN_MILLIS);
     }
   }
 
