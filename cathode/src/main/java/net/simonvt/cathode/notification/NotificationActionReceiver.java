@@ -18,7 +18,6 @@ package net.simonvt.cathode.notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import net.simonvt.cathode.common.util.WakeLock;
 
 public class NotificationActionReceiver extends BroadcastReceiver {
 
@@ -37,15 +36,13 @@ public class NotificationActionReceiver extends BroadcastReceiver {
     switch (action) {
       case ACTION_CHECK_IN:
       case ACTION_DISMISS: {
-        WakeLock.acquire(context, NotificationActionService.LOCK_TAG);
         final int notificationId = intent.getIntExtra(EXTRA_NOTIFICATION_ID, -1);
         final long id = intent.getLongExtra(EXTRA_ID, -1L);
 
-        Intent actionIntent = new Intent(context, NotificationActionService.class);
-        actionIntent.setAction(action);
+        Intent actionIntent = new Intent(action);
         actionIntent.putExtra(EXTRA_ID, id);
         actionIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
-        context.startService(actionIntent);
+        NotificationActionService.enqueueWork(context, actionIntent);
       }
     }
   }

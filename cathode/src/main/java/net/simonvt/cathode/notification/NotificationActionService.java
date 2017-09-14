@@ -15,7 +15,6 @@
  */
 package net.simonvt.cathode.notification;
 
-import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentValues;
@@ -23,13 +22,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.v4.app.JobIntentService;
 import android.support.v4.app.NotificationCompat;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.util.Longs;
-import net.simonvt.cathode.common.util.WakeLock;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
@@ -40,16 +40,16 @@ import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
-public class NotificationActionService extends IntentService {
+public class NotificationActionService extends JobIntentService {
 
-  static final String LOCK_TAG = "NotificationActionService";
+  static final int JOB_ID = 50;
 
   @Inject JobManager jobManager;
   @Inject EpisodeDatabaseHelper episodeHelper;
   @Inject CheckIn checkIn;
 
-  public NotificationActionService() {
-    super("NotificationActionService");
+  static void enqueueWork(Context context, Intent work) {
+    enqueueWork(context, NotificationActionService.class, JOB_ID, work);
   }
 
   @Override public void onCreate() {
@@ -57,16 +57,7 @@ public class NotificationActionService extends IntentService {
     Injector.inject(this);
   }
 
-  @Override public void onDestroy() {
-    WakeLock.release(this, LOCK_TAG);
-    super.onDestroy();
-  }
-
-  @Override protected void onHandleIntent(Intent intent) {
-    if (intent == null || intent.getAction() == null) {
-      return;
-    }
-
+  @Override protected void onHandleWork(@NonNull Intent intent) {
     final String action = intent.getAction();
     int notificationId = intent.getIntExtra(NotificationActionReceiver.EXTRA_NOTIFICATION_ID, -1);
     final long id = intent.getLongExtra(NotificationActionReceiver.EXTRA_ID, -1L);
