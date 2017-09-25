@@ -1,11 +1,11 @@
 ext {
   daggerVersion = '1.2.5'
-  okhttpVersion = '3.8.1'
+  okhttpVersion = '3.9.0'
   retrofitVersion = '2.3.0'
 
-  butterknifeVersion = '8.7.0'
+  butterknifeVersion = '8.8.1'
 
-  supportLibrariesVersion = '26.0.0'
+  supportLibrariesVersion = '26.1.0'
 
   lintVersion = '25.3.3'
 
@@ -24,7 +24,7 @@ ext {
       schematic           : 'net.simonvt.schematic:schematic:0.7.0',
       schematicCompiler   : 'net.simonvt.schematic:schematic-compiler:0.7.0',
 
-      gson                : 'com.google.code.gson:gson:2.8.1',
+      gson                : 'com.google.code.gson:gson:2.8.2',
 
       dagger              : "com.squareup.dagger:dagger:$daggerVersion",
       daggerCompiler      : "com.squareup.dagger:dagger-compiler:$daggerVersion",
@@ -53,7 +53,7 @@ ext {
 
       dashclockApi        : 'com.google.android.apps.dashclock:dashclock-api:2.0.0',
 
-      tmdb                : 'com.uwetrottmann.tmdb2:tmdb-java:1.8.0',
+      tmdb                : 'com.uwetrottmann.tmdb2:tmdb-java:1.8.1',
 
       junit               : 'junit:junit:4.12',
       robolectric         : 'org.robolectric:robolectric:3.2.1',
