@@ -33,6 +33,7 @@ import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.SeasonService;
 import net.simonvt.cathode.api.service.ShowsService;
+import net.simonvt.cathode.common.event.ItemsUpdatedEvent;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.jobscheduler.SchedulerService;
@@ -152,6 +153,8 @@ public class SyncPendingShows extends ErrorHandlerJob {
           }
         }
       }
+
+      ItemsUpdatedEvent.post();
 
       if (isStopped()) {
         return false;

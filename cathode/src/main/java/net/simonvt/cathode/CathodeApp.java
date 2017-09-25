@@ -29,6 +29,8 @@ import android.text.format.DateUtils;
 import javax.inject.Inject;
 import net.simonvt.cathode.common.event.AuthFailedEvent;
 import net.simonvt.cathode.common.event.AuthFailedEvent.OnAuthFailedListener;
+import net.simonvt.cathode.common.event.ItemsUpdatedEvent;
+import net.simonvt.cathode.common.event.ItemsUpdatedEvent.OnItemsUpdatedListener;
 import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.jobqueue.AuthJobHandler;
 import net.simonvt.cathode.jobqueue.DataJobHandler;
@@ -37,6 +39,7 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.jobscheduler.AuthJobHandlerJob;
 import net.simonvt.cathode.jobscheduler.DataJobHandlerJob;
 import net.simonvt.cathode.jobscheduler.Jobs;
+import net.simonvt.cathode.notification.NotificationService;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.remote.sync.SyncWatching;
@@ -90,6 +93,8 @@ public class CathodeApp extends Application {
         }
       }
     });
+
+    ItemsUpdatedEvent.registerListener(onItemsUpdatedListener);
 
     if (Jobs.usesScheduler()) {
       SyncUpdatedShows.schedulePeriodic(this);
@@ -171,6 +176,13 @@ public class CathodeApp extends Application {
 
     @Override public void onQueueFailed() {
       Timber.d("Data job queue failed");
+    }
+  };
+
+  private OnItemsUpdatedListener onItemsUpdatedListener = new OnItemsUpdatedListener() {
+    @Override public void onItemsUpdated() {
+      NotificationService.schedule(CathodeApp.this,
+          System.currentTimeMillis() + 5 * DateUtils.MINUTE_IN_MILLIS);
     }
   };
 

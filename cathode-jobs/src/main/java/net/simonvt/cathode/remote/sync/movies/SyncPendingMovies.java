@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.MoviesService;
+import net.simonvt.cathode.common.event.ItemsUpdatedEvent;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.jobscheduler.SchedulerService;
@@ -97,6 +98,8 @@ public class SyncPendingMovies extends ErrorHandlerJob<Movie> {
           }
         }
       }
+
+      ItemsUpdatedEvent.post();
 
       if (isStopped()) {
         return false;

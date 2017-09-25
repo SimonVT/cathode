@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.SeasonService;
+import net.simonvt.cathode.common.event.ItemsUpdatedEvent;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.jobscheduler.SchedulerService;
@@ -129,6 +130,8 @@ public class SyncPendingSeasons extends ErrorHandlerJob<List<Episode>> {
           }
         }
       }
+
+      ItemsUpdatedEvent.post();
 
       if (isStopped()) {
         return false;

@@ -92,7 +92,7 @@ public class NotificationService extends IntentService {
   }
 
   public static void schedule(Context context, long millis) {
-    Intent i = new Intent(context, NotificationService.class);
+    Intent i = new Intent(context, NotificationReceiver.class);
     PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
     Alarms.set(context, AlarmManager.RTC_WAKEUP, millis, pi);
   }
