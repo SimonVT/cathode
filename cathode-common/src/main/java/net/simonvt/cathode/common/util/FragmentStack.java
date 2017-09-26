@@ -116,8 +116,6 @@ public final class FragmentStack {
   private int popStackEnterAnimation;
   private int popStackExitAnimation;
 
-  private boolean paused;
-
   private FragmentStack(FragmentActivity activity, int containerId, Callback callback) {
     this.activity = activity;
     fragmentManager = activity.getSupportFragmentManager();
@@ -125,29 +123,24 @@ public final class FragmentStack {
     this.callback = callback;
   }
 
-  public void pause() {
-    paused = true;
-  }
-
-  public void resume() {
-    paused = false;
-    commit();
-  }
-
   private boolean allowTransactions() {
-    if (paused || fragmentManager.isDestroyed()) {
+    if (fragmentManager.isStateSaved() || fragmentManager.isDestroyed()) {
       return false;
     }
 
     return true;
   }
 
-  public int positionInstack(Fragment fragment) {
+  public int positionInStack(Fragment fragment) {
     return stack.indexOf(fragment);
   }
 
   /** Removes all added fragments and clears the stack. */
   public void destroy() {
+    if (!allowTransactions()) {
+      return;
+    }
+
     commit();
 
     ensureTransaction();
@@ -433,8 +426,13 @@ public final class FragmentStack {
   }
 
   public void attachTop() {
+    if (!allowTransactions()) {
+      return;
+    }
+
     Fragment f = stack.peekLast();
     attachFragment(f, f.getTag());
+    commit();
   }
 
   private void detachTop() {
@@ -511,7 +509,7 @@ public final class FragmentStack {
     popStackExitAnimation = popExit;
   }
 
-  public void commit() {
+  private void commit() {
     if (!allowTransactions()) {
       return;
     }

@@ -234,12 +234,10 @@ public class HiddenItems extends BaseActivity
       Fragment f = stack.peek();
       if (f instanceof ShowFragment && ((ShowFragment) f).getShowId() == showId) {
         stack.attachTop();
-        stack.commit();
       } else if (seasonId >= 0
           && f instanceof SeasonFragment
           && ((SeasonFragment) f).getSeasonId() == seasonId) {
         stack.attachTop();
-        stack.commit();
       } else {
         stack.putFragment(ShowFragment.class, ShowFragment.getTag(showId),
             ShowFragment.getArgs(showId, showTitle, null, LibraryType.WATCHED));
@@ -254,7 +252,7 @@ public class HiddenItems extends BaseActivity
   }
 
   @Override public boolean isFragmentTopLevel(Fragment fragment) {
-    return stack.positionInstack(fragment) == 0;
+    return stack.positionInStack(fragment) == 0;
   }
 
   public static class HiddenItemsFragment
