@@ -19,7 +19,7 @@
   <shortcut
       android:shortcutId="search"
       android:enabled="true"
-      android:icon="@drawable/shortcut_search"
+      android:icon="@mipmap/shortcut_search"
       android:shortcutShortLabel="@string/shortcut_label_search"
       android:shortcutLongLabel="@string/shortcut_label_search"
       android:shortcutDisabledMessage="@string/shortcut_not_available">
@@ -33,7 +33,7 @@
   <shortcut
       android:shortcutId="upcoming"
       android:enabled="true"
-      android:icon="@drawable/shortcut_upcoming"
+      android:icon="@mipmap/shortcut_upcoming"
       android:shortcutShortLabel="@string/shortcut_label_upcoming"
       android:shortcutLongLabel="@string/shortcut_label_upcoming"
       android:shortcutDisabledMessage="@string/shortcut_not_available">

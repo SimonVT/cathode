@@ -14,6 +14,7 @@
   ~ limitations under the License.
   -->
 <resources>
+  <color name="adaptive_icon_background">#FFFFFFFF</color>
 
   <color name="lighter_gray">#FFDDDDDD</color>
   <color name="darker_gray">#FFAAAAAA</color>

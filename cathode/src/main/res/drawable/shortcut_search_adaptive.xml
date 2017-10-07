@@ -1,0 +1,25 @@
+<!--
+  ~ Copyright (C) 2017 Simon Vig Therkildsen
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportHeight="108.0"
+    android:viewportWidth="108.0">
+  <path
+      android:fillColor="#FFCC80FF"
+      android:pathData="M60.44,57.87L59.09,57.87L58.6,57.4C60.29,55.45 61.3,52.91 61.3,50.15C61.3,43.99 56.31,39 50.15,39C43.99,39 39,43.99 39,50.15C39,56.31 43.99,61.3 50.15,61.3C52.91,61.3 55.45,60.29 57.4,58.6L57.87,59.09L57.87,60.44L66.44,69L69,66.44L60.44,57.87ZM50.15,57.87C45.88,57.87 42.43,54.42 42.43,50.15C42.43,45.88 45.88,42.43 50.15,42.43C54.42,42.43 57.87,45.88 57.87,50.15C57.87,54.42 54.42,57.87 50.15,57.87Z"/>
+</vector>

@@ -33,19 +33,12 @@
       android:orientation="horizontal"
       android:background="@color/colorPrimary">
 
-    <ImageView
-        android:id="@+id/widget_logo"
-        android:layout_width="32dip"
-        android:layout_height="32dip"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="8dp"
-        android:src="@drawable/ic_launcher"/>
-
     <LinearLayout
         android:id="@+id/widget_header"
-        android:layout_width="0dip"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:orientation="vertical">
 
       <TextView
