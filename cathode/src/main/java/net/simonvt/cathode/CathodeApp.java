@@ -39,7 +39,7 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.jobscheduler.AuthJobHandlerJob;
 import net.simonvt.cathode.jobscheduler.DataJobHandlerJob;
 import net.simonvt.cathode.jobscheduler.Jobs;
-import net.simonvt.cathode.notification.NotificationService;
+import net.simonvt.cathode.notification.NotificationHelper;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.remote.sync.SyncWatching;
@@ -181,7 +181,7 @@ public class CathodeApp extends Application {
 
   private OnItemsUpdatedListener onItemsUpdatedListener = new OnItemsUpdatedListener() {
     @Override public void onItemsUpdated() {
-      NotificationService.schedule(CathodeApp.this,
+      NotificationHelper.schedule(CathodeApp.this,
           System.currentTimeMillis() + 5 * DateUtils.MINUTE_IN_MILLIS);
     }
   };

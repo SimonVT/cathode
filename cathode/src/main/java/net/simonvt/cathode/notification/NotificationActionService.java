@@ -71,14 +71,14 @@ public class NotificationActionService extends JobIntentService {
           int notificationCount = -1;
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             notificationCount =
-                NotificationService.getGroupNotificationCount(nm, NotificationService.GROUP);
+                NotificationHelper.getGroupNotificationCount(nm, NotificationHelper.GROUP);
           }
 
           nm.cancel(notificationId);
 
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             if (notificationCount <= 1) {
-              nm.cancel(NotificationService.GROUP_NOTIFICATION_ID);
+              nm.cancel(NotificationHelper.GROUP_NOTIFICATION_ID);
             }
           }
         }
