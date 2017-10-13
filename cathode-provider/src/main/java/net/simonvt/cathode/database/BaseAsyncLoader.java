@@ -39,15 +39,9 @@ public abstract class BaseAsyncLoader<T> extends AsyncTaskLoader<T> {
 
   private T data;
 
-  private long waitUntil;
-
   private Handler handler = new Handler(Looper.getMainLooper());
-
-  private Runnable postResult = new Runnable() {
-    @Override public void run() {
-      deliverResult(data);
-    }
-  };
+  private Runnable pendingOnChange;
+  private long nextUpdate;
 
   public BaseAsyncLoader(Context context) {
     super(context);
@@ -79,7 +73,7 @@ public abstract class BaseAsyncLoader<T> extends AsyncTaskLoader<T> {
   }
 
   private void registerUri(Uri uri) {
-    ContentObserver observer = new ForceLoadContentObserver();
+    ContentObserver observer = new ThrottledContentObserver();
     observers.put(uri, observer);
 
     if (isStarted()) {
@@ -92,23 +86,12 @@ public abstract class BaseAsyncLoader<T> extends AsyncTaskLoader<T> {
     getContext().getContentResolver().unregisterContentObserver(observer);
   }
 
-  public void throttle(long ms) {
-    waitUntil = System.currentTimeMillis() + ms;
-  }
-
   @Override public void deliverResult(T cursor) {
     if (isReset()) {
       return;
     }
 
     this.data = cursor;
-    handler.removeCallbacks(postResult);
-
-    final long now = System.currentTimeMillis();
-    if (now < waitUntil) {
-      handler.postDelayed(postResult, waitUntil - now + 250);
-      return;
-    }
 
     if (isStarted()) {
       super.deliverResult(cursor);
@@ -128,9 +111,9 @@ public abstract class BaseAsyncLoader<T> extends AsyncTaskLoader<T> {
       }
     }
 
-    //if (takeContentChanged() || data == null) {
-    forceLoad();
-    //}
+    if (takeContentChanged() || data == null) {
+      forceLoad();
+    }
   }
 
   @Override protected void onStopLoading() {
@@ -148,9 +131,36 @@ public abstract class BaseAsyncLoader<T> extends AsyncTaskLoader<T> {
     data = null;
   }
 
-  public final class ForceLoadContentObserver extends ContentObserver {
-    public ForceLoadContentObserver() {
-      super(new Handler(Looper.getMainLooper()));
+  public void throttle(long delayMillis) {
+    if (pendingOnChange != null) {
+      final long currentTime = System.currentTimeMillis();
+      if (currentTime + delayMillis > nextUpdate) {
+        handler.removeCallbacks(pendingOnChange);
+        pendingOnChange = null;
+      }
+    }
+    postOnChange(delayMillis);
+  }
+
+  private void postOnChange(long delayMillis) {
+    if (pendingOnChange == null) {
+      final long currentTime = System.currentTimeMillis();
+      nextUpdate = currentTime + delayMillis;
+      pendingOnChange = new Runnable() {
+        @Override public void run() {
+          onContentChanged();
+          nextUpdate = 0L;
+          pendingOnChange = null;
+        }
+      };
+      handler.postDelayed(pendingOnChange, delayMillis);
+    }
+  }
+
+  private final class ThrottledContentObserver extends ContentObserver {
+
+    ThrottledContentObserver() {
+      super(handler);
     }
 
     @Override public boolean deliverSelfNotifications() {
@@ -158,7 +168,7 @@ public abstract class BaseAsyncLoader<T> extends AsyncTaskLoader<T> {
     }
 
     @Override public void onChange(boolean selfChange) {
-      onContentChanged();
+      postOnChange(DEFAULT_UPDATE_THROTTLE);
     }
   }
 }
