@@ -30,7 +30,7 @@
       android:layout_height="wrap_content"
       android:orientation="vertical">
 
-    <net.simonvt.cathode.widget.RemoteImageView
+    <net.simonvt.cathode.common.widget.RemoteImageView
         android:id="@+id/screen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
             android:textSize="16sp"
             tools:text="Some Random Episode That is really long"/>
 
-        <net.simonvt.cathode.widget.TimeStamp
+        <net.simonvt.cathode.common.widget.TimeStamp
             android:id="@+id/firstAired"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

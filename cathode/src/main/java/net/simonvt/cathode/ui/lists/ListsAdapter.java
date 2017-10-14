@@ -25,8 +25,8 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
-import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.schematic.Cursors;
 
 public class ListsAdapter extends RecyclerCursorAdapter<ListsAdapter.ViewHolder> {

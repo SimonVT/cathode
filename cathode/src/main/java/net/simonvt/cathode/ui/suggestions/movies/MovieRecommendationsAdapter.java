@@ -19,9 +19,9 @@ import android.database.Cursor;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
-import net.simonvt.cathode.widget.OverflowView;
 
 public class MovieRecommendationsAdapter extends MoviesAdapter {
 

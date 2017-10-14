@@ -15,7 +15,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<net.simonvt.cathode.widget.AppBarScrollParent xmlns:android="http://schemas.android.com/apk/res/android"
+<net.simonvt.cathode.common.widget.AppBarScrollParent xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -27,13 +27,13 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent">
 
-    <net.simonvt.cathode.widget.ObservableScrollView
+    <net.simonvt.cathode.common.widget.ObservableScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
 
-      <net.simonvt.cathode.widget.AppBarRelativeLayout
+      <net.simonvt.cathode.common.widget.AppBarRelativeLayout
           android:id="@+id/appBarLayout"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
             android:paddingBottom="16dp"/>
 
         <include layout="@layout/appbar_toolbar"/>
-      </net.simonvt.cathode.widget.AppBarRelativeLayout>
-    </net.simonvt.cathode.widget.ObservableScrollView>
+      </net.simonvt.cathode.common.widget.AppBarRelativeLayout>
+    </net.simonvt.cathode.common.widget.ObservableScrollView>
   </android.support.v4.widget.SwipeRefreshLayout>
-</net.simonvt.cathode.widget.AppBarScrollParent>
+</net.simonvt.cathode.common.widget.AppBarScrollParent>

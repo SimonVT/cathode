@@ -21,7 +21,7 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.Executor;
 import javax.inject.Inject;
-import net.simonvt.cathode.Injector;
+import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 

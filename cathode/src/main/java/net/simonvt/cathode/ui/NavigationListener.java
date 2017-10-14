@@ -17,6 +17,7 @@ package net.simonvt.cathode.ui;
 
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.common.ui.FragmentCallbacks;
 
 public interface NavigationListener
     extends FragmentCallbacks, ShowsNavigationListener, MoviesNavigationListener,

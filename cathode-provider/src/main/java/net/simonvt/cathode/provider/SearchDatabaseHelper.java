@@ -18,7 +18,7 @@ package net.simonvt.cathode.provider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import net.simonvt.cathode.Injector;
+import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.provider.ProviderSchematic.RecentQueries;
 
 public final class SearchDatabaseHelper {

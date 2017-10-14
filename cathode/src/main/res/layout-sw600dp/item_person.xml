@@ -26,7 +26,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-  <net.simonvt.cathode.widget.RemoteImageView
+  <net.simonvt.cathode.common.widget.RemoteImageView
       android:id="@+id/headshot"
       android:layout_width="148dp"
       android:layout_height="148dp"

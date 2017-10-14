@@ -18,6 +18,7 @@ package net.simonvt.cathode;
 
 import android.app.Application;
 import dagger.ObjectGraph;
+import net.simonvt.cathode.common.Injector;
 
 public class TestApp extends Application {
 

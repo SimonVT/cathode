@@ -23,6 +23,7 @@ import net.simonvt.cathode.api.ApiModule;
 import net.simonvt.cathode.api.ApiSettings;
 import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.appwidget.UpcomingWidgetService.UpcomingRemoteViewsFactory;
+import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.images.EpisodeRequestHandler;
 import net.simonvt.cathode.images.ImageModule;
 import net.simonvt.cathode.images.ImageRequestHandler;
@@ -236,7 +237,6 @@ import net.simonvt.cathode.ui.suggestions.shows.ShowRecommendationsAdapter;
 import net.simonvt.cathode.ui.suggestions.shows.ShowRecommendationsFragment;
 import net.simonvt.cathode.ui.suggestions.shows.TrendingShowsFragment;
 import net.simonvt.cathode.widget.PhoneEpisodeView;
-import net.simonvt.cathode.widget.RemoteImageView;
 
 @Module(//
     includes = {

@@ -24,9 +24,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import net.simonvt.cathode.BuildConfig;
-import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.Authorization;
+import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.Intents;
 import net.simonvt.cathode.ui.BaseActivity;
 

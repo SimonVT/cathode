@@ -14,13 +14,13 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<net.simonvt.cathode.widget.ObservableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<net.simonvt.cathode.common.widget.ObservableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-  <net.simonvt.cathode.widget.AppBarRelativeLayout
+  <net.simonvt.cathode.common.widget.AppBarRelativeLayout
       android:id="@+id/appBarLayout"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -40,5 +40,5 @@
         android:orientation="vertical"/>
 
     <include layout="@layout/appbar_toolbar"/>
-  </net.simonvt.cathode.widget.AppBarRelativeLayout>
-</net.simonvt.cathode.widget.ObservableScrollView>
+  </net.simonvt.cathode.common.widget.AppBarRelativeLayout>
+</net.simonvt.cathode.common.widget.ObservableScrollView>

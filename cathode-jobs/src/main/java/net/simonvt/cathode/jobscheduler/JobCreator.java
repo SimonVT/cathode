@@ -20,7 +20,7 @@ import android.app.job.JobParameters;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import javax.inject.Inject;
-import net.simonvt.cathode.Injector;
+import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobInjector;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;

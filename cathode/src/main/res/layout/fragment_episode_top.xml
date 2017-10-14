@@ -47,7 +47,7 @@
           android:fontFamily="sans-light"
           tools:text="This is an episode name that is very long indeed. Maybe even so long it spans three lines."/>
 
-      <net.simonvt.cathode.widget.TimeStamp
+      <net.simonvt.cathode.common.widget.TimeStamp
           android:id="@+id/firstAired"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
           tools:text="2010"/>
     </LinearLayout>
 
-    <net.simonvt.cathode.widget.CircularProgressIndicator
+    <net.simonvt.cathode.common.widget.CircularProgressIndicator
         android:id="@+id/rating"
         android:layout_width="wrap_content"
         android:layout_height="60dp"

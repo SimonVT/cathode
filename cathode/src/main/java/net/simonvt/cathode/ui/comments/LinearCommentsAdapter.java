@@ -25,10 +25,10 @@ import android.widget.TextView;
 import java.text.DateFormat;
 import java.util.Date;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.widget.CircleTransformation;
+import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
-import net.simonvt.cathode.widget.CircleTransformation;
-import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.schematic.Cursors;
 
 public final class LinearCommentsAdapter {

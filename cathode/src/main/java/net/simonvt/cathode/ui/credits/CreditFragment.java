@@ -23,10 +23,10 @@ import java.util.List;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.ui.NavigationListener;
-import net.simonvt.cathode.ui.fragment.ToolbarGridFragment;
 
 public class CreditFragment extends ToolbarGridFragment<CreditAdapter.ViewHolder>
     implements CreditAdapter.OnCreditClickListener {

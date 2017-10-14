@@ -26,7 +26,7 @@
     android:paddingRight="8dp"
     android:background="?android:attr/selectableItemBackground">
 
-  <net.simonvt.cathode.widget.RemoteImageView
+  <net.simonvt.cathode.common.widget.RemoteImageView
       android:id="@+id/episodeScreenshot"
       android:layout_width="wrap_content"
       android:layout_height="64dp"
@@ -74,7 +74,7 @@
 
   </RelativeLayout>
 
-  <net.simonvt.cathode.widget.OverflowView
+  <net.simonvt.cathode.common.widget.OverflowView
       android:id="@+id/episodeOverflow"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"

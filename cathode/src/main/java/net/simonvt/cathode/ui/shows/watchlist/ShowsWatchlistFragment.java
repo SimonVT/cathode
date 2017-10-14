@@ -26,8 +26,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import javax.inject.Inject;
-import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.Injector;
+import net.simonvt.cathode.common.ui.adapter.HeaderSpanLookup;
+import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
@@ -39,8 +41,6 @@ import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchlist;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
-import net.simonvt.cathode.ui.adapter.HeaderSpanLookup;
-import net.simonvt.cathode.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 
 public class ShowsWatchlistFragment
     extends ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>

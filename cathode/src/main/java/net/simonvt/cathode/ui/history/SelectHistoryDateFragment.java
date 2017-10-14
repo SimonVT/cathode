@@ -32,8 +32,9 @@ import com.android.datetimepicker.time.TimePickerDialog;
 import java.text.DateFormat;
 import java.util.Calendar;
 import javax.inject.Inject;
-import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.Injector;
+import net.simonvt.cathode.common.ui.fragment.AppBarFragment;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
@@ -41,7 +42,6 @@ import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.NavigationListener;
-import net.simonvt.cathode.ui.fragment.AppBarFragment;
 
 public class SelectHistoryDateFragment extends AppBarFragment
     implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {

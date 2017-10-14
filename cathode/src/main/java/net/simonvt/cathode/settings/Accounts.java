@@ -23,8 +23,8 @@ import android.os.Build;
 import android.os.Bundle;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.account.AccountAuthenticator;
+import net.simonvt.cathode.jobscheduler.Jobs;
 import timber.log.Timber;
 
 public final class Accounts {

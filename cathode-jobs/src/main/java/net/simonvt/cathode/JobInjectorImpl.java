@@ -17,6 +17,7 @@
 package net.simonvt.cathode;
 
 import android.content.Context;
+import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobInjector;
 

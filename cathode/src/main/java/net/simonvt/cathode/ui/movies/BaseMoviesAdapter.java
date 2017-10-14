@@ -24,21 +24,21 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import javax.inject.Inject;
-import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.Injector;
+import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
+import net.simonvt.cathode.common.widget.CircularProgressIndicator;
+import net.simonvt.cathode.common.widget.OverflowView;
+import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
-import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
-import net.simonvt.cathode.widget.CircularProgressIndicator;
-import net.simonvt.cathode.widget.OverflowView;
-import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.schematic.Cursors;
 
 public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>

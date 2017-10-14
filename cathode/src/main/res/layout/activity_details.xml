@@ -14,7 +14,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<net.simonvt.cathode.widget.CatchSystemInsets
+<net.simonvt.cathode.common.widget.CatchSystemInsets
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/contentFrameLayout"
     android:layout_width="match_parent"
@@ -24,4 +24,4 @@
       android:id="@+id/content"
       android:layout_width="match_parent"
       android:layout_height="match_parent"/>
-</net.simonvt.cathode.widget.CatchSystemInsets>
+</net.simonvt.cathode.common.widget.CatchSystemInsets>

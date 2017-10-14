@@ -24,7 +24,7 @@ import android.os.Bundle;
 import java.util.concurrent.CountDownLatch;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
-import net.simonvt.cathode.Injector;
+import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.jobqueue.AuthJobHandler;
 import net.simonvt.cathode.jobqueue.DataJobHandler;
 import net.simonvt.cathode.jobqueue.Job;

@@ -28,7 +28,7 @@
     android:paddingBottom="8dp"
     android:background="?attr/selectableItemBackground">
 
-  <net.simonvt.cathode.widget.RemoteImageView
+  <net.simonvt.cathode.common.widget.RemoteImageView
       android:id="@+id/related_poster"
       android:layout_width="48dp"
       android:layout_height="48dp"

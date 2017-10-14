@@ -26,7 +26,7 @@
       android:layout_height="wrap_content"
       android:orientation="vertical">
 
-    <net.simonvt.cathode.widget.RemoteImageView
+    <net.simonvt.cathode.common.widget.RemoteImageView
         android:id="@+id/poster"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
             tools:text="Show name"/>
       </LinearLayout>
 
-      <net.simonvt.cathode.widget.OverflowView
+      <net.simonvt.cathode.common.widget.OverflowView
           android:id="@+id/overflow"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"

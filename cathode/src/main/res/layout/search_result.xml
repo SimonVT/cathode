@@ -28,7 +28,7 @@
       android:layout_height="84dp"
       android:minHeight="64dp">
 
-    <net.simonvt.cathode.widget.RemoteImageView
+    <net.simonvt.cathode.common.widget.RemoteImageView
         android:id="@+id/poster"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -66,7 +66,7 @@
           tools:text="This is a description of the search result. It can be long. And multiline. Lots of lots of lines. Even more lines"/>
     </LinearLayout>
 
-    <net.simonvt.cathode.widget.CircularProgressIndicator
+    <net.simonvt.cathode.common.widget.CircularProgressIndicator
         android:id="@+id/rating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

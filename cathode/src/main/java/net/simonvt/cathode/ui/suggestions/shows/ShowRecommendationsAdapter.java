@@ -19,9 +19,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.view.View;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.ui.shows.ShowClickListener;
 import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
-import net.simonvt.cathode.widget.OverflowView;
 
 public class ShowRecommendationsAdapter extends ShowDescriptionAdapter {
 

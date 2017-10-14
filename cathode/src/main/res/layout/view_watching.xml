@@ -27,7 +27,7 @@
     android:elevation="@dimen/watchingElevation"
     tools:ignore="UnusedAttribute">
 
-  <net.simonvt.cathode.widget.RemoteImageView
+  <net.simonvt.cathode.common.widget.RemoteImageView
       android:id="@+id/poster"
       android:layout_width="@dimen/watchingPosterWidth"
       android:layout_height="wrap_content"

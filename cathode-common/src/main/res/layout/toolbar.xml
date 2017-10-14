@@ -14,7 +14,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<net.simonvt.cathode.widget.InsetsFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<net.simonvt.cathode.common.widget.InsetsFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -27,4 +27,4 @@
       android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
       app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
       style="@style/Toolbar"/>
-</net.simonvt.cathode.widget.InsetsFrameLayout>
+</net.simonvt.cathode.common.widget.InsetsFrameLayout>

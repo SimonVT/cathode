@@ -36,7 +36,7 @@
       android:paddingTop="8dp"
       android:paddingBottom="8dp">
 
-    <net.simonvt.cathode.widget.RemoteImageView
+    <net.simonvt.cathode.common.widget.RemoteImageView
         android:id="@+id/avatar"
         android:layout_width="48dp"
         android:layout_height="48dp"

@@ -20,8 +20,8 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.notification.NotificationService;
 import net.simonvt.cathode.ui.BaseActivity;
 

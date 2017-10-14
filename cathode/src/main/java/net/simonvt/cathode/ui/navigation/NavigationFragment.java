@@ -35,13 +35,13 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.ui.fragment.AbsAdapterFragment;
+import net.simonvt.cathode.common.widget.CircularShadowTransformation;
+import net.simonvt.cathode.common.widget.RemoteImageView;
+import net.simonvt.cathode.common.widget.RoundTransformation;
 import net.simonvt.cathode.settings.ProfileSettings;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.StartPage;
-import net.simonvt.cathode.ui.fragment.AbsAdapterFragment;
-import net.simonvt.cathode.widget.CircularShadowTransformation;
-import net.simonvt.cathode.widget.RemoteImageView;
-import net.simonvt.cathode.widget.RoundTransformation;
 
 public class NavigationFragment extends AbsAdapterFragment {
 

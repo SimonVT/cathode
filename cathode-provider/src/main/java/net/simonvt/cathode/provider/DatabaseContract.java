@@ -16,8 +16,8 @@
 package net.simonvt.cathode.provider;
 
 import android.provider.BaseColumns;
+import net.simonvt.cathode.common.ui.adapter.LastModifiedColumn;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
-import net.simonvt.cathode.ui.adapter.LastModifiedColumn;
 import net.simonvt.schematic.annotation.AutoIncrement;
 import net.simonvt.schematic.annotation.DataType;
 import net.simonvt.schematic.annotation.DefaultValue;

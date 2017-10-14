@@ -84,7 +84,7 @@ public class CollectedShowsFragment extends ShowsFragment implements ListDialog.
   }
 
   private static final String DIALOG_SORT =
-      "net.simonvt.cathode.ui.fragment.ShowCollectionFragment.sortDialog";
+      "net.simonvt.cathode.common.ui.fragment.ShowCollectionFragment.sortDialog";
 
   private SortBy sortBy;
 

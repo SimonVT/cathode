@@ -26,8 +26,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
-import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.Injector;
+import net.simonvt.cathode.common.ui.fragment.SwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
@@ -37,7 +38,6 @@ import net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.SuggestionsTimestamps;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
-import net.simonvt.cathode.ui.fragment.SwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
@@ -89,7 +89,7 @@ public class MovieRecommendationsFragment
   }
 
   private static final String DIALOG_SORT =
-      "net.simonvt.cathode.ui.fragment.RecommendedMoviesFragment.sortDialog";
+      "net.simonvt.cathode.common.ui.fragment.RecommendedMoviesFragment.sortDialog";
 
   private static final int LOADER_MOVIES_RECOMMENDATIONS = 1;
 

@@ -38,6 +38,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.util.ViewUtils;
+import net.simonvt.cathode.common.widget.RemoteImageView;
 
 public class WatchingView extends ViewGroup {
 

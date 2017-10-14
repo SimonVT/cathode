@@ -35,17 +35,17 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.inject.Inject;
-import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.Injector;
+import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
+import net.simonvt.cathode.common.widget.CircleTransformation;
+import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.scheduler.CommentsTaskScheduler;
-import net.simonvt.cathode.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.util.SqlColumn;
-import net.simonvt.cathode.widget.CircleTransformation;
-import net.simonvt.cathode.widget.RemoteImageView;
 import net.simonvt.schematic.Cursors;
 
 public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewHolder> {

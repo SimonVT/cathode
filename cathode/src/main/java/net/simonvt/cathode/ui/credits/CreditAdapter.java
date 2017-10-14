@@ -25,7 +25,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import java.util.List;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.widget.RemoteImageView;
+import net.simonvt.cathode.common.widget.RemoteImageView;
 
 public class CreditAdapter extends RecyclerView.Adapter<CreditAdapter.ViewHolder> {
 

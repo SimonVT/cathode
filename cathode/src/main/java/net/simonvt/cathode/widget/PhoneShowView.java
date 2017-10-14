@@ -22,6 +22,8 @@ import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.widget.OverflowView;
+import net.simonvt.cathode.common.widget.RemoteImageView;
 
 public class PhoneShowView extends ViewGroup {
 

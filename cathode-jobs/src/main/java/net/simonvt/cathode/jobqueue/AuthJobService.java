@@ -25,7 +25,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.text.format.DateUtils;
-import net.simonvt.cathode.Injector;
+import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.WakeLock;
 import timber.log.Timber;
 

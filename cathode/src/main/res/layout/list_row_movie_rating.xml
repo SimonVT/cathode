@@ -27,7 +27,7 @@
       android:layout_height="84dp"
       android:minHeight="64dp">
 
-    <net.simonvt.cathode.widget.RemoteImageView
+    <net.simonvt.cathode.common.widget.RemoteImageView
         android:id="@+id/poster"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -64,7 +64,7 @@
           tools:text="This is a description of the show. It can be long. And multiline. Lots of lots of lines. Even more lines"/>
     </LinearLayout>
 
-    <net.simonvt.cathode.widget.CircularProgressIndicator
+    <net.simonvt.cathode.common.widget.CircularProgressIndicator
         android:id="@+id/rating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
         android:layout_marginLeft="4dp"
         app:textMargin="10dp"/>
 
-    <net.simonvt.cathode.widget.OverflowView
+    <net.simonvt.cathode.common.widget.OverflowView
         android:id="@+id/overflow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

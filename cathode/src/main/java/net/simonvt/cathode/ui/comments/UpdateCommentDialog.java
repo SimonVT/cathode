@@ -27,9 +27,9 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import javax.inject.Inject;
-import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.service.CommentsService;
+import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.TextUtils;
 import net.simonvt.cathode.scheduler.CommentsTaskScheduler;
 

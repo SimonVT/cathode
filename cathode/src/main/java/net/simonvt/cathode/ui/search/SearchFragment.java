@@ -33,9 +33,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
-import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.Injector;
+import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.Debouncer;
+import net.simonvt.cathode.common.widget.ErrorView;
+import net.simonvt.cathode.common.widget.SearchView;
 import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract.RecentQueriesColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.RecentQueries;
@@ -45,9 +48,6 @@ import net.simonvt.cathode.search.SearchHandler;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
-import net.simonvt.cathode.ui.fragment.ToolbarGridFragment;
-import net.simonvt.cathode.widget.ErrorView;
-import net.simonvt.cathode.widget.SearchView;
 import net.simonvt.schematic.Cursors;
 
 public class SearchFragment extends ToolbarGridFragment<SearchAdapter.ViewHolder>

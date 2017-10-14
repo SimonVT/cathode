@@ -21,7 +21,7 @@ import android.text.format.DateUtils;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import net.simonvt.cathode.Injector;
+import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.MainHandler;
 import timber.log.Timber;
 

@@ -23,7 +23,7 @@
     android:layout_marginBottom="8dp"
     android:background="@android:color/white">
 
-  <net.simonvt.cathode.widget.RemoteImageView
+  <net.simonvt.cathode.common.widget.RemoteImageView
       android:id="@+id/episodeScreenshot"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"

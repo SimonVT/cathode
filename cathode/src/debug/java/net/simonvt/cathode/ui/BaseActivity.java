@@ -40,14 +40,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import javax.inject.Inject;
 import net.simonvt.cathode.HttpStatusCode;
-import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.IntPreference;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.TraktSettings;
+import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.event.AuthFailedEvent;
 import net.simonvt.cathode.common.event.RequestFailedEvent;
 import net.simonvt.cathode.common.event.SyncEvent;
 import net.simonvt.cathode.common.event.SyncEvent.OnSyncListener;
+import net.simonvt.cathode.common.widget.PaletteTransformation;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobListener;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -75,7 +76,6 @@ import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.StartPage;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.tmdb.api.SyncConfiguration;
-import net.simonvt.cathode.widget.PaletteTransformation;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 @SuppressLint("SetTextI18n") public abstract class BaseActivity extends AppCompatActivity {

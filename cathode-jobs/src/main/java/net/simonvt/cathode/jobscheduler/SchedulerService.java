@@ -25,7 +25,7 @@ import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import net.simonvt.cathode.Injector;
+import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.jobqueue.Job;
 import timber.log.Timber;
 

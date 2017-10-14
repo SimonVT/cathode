@@ -34,7 +34,7 @@
       android:gravity="center_horizontal"
       android:orientation="vertical">
 
-    <net.simonvt.cathode.widget.RemoteImageView
+    <net.simonvt.cathode.common.widget.RemoteImageView
         android:id="@+id/headshot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

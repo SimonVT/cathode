@@ -18,6 +18,7 @@ package net.simonvt.cathode.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.widget.OverflowView;
 
 public class CheckInView extends OverflowView {
 

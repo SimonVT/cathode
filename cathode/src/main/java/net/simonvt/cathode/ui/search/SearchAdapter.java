@@ -29,11 +29,11 @@ import butterknife.ButterKnife;
 import java.util.List;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.common.widget.CircularProgressIndicator;
+import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.search.Result;
-import net.simonvt.cathode.widget.CircularProgressIndicator;
-import net.simonvt.cathode.widget.RemoteImageView;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
 

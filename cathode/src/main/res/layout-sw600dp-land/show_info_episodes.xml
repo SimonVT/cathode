@@ -48,7 +48,7 @@
           layout="@layout/show_info_episode"/>
     </LinearLayout>
 
-    <net.simonvt.cathode.widget.OverflowView
+    <net.simonvt.cathode.common.widget.OverflowView
         android:id="@+id/episodeOverflow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
           layout="@layout/show_info_episode"/>
     </LinearLayout>
 
-    <net.simonvt.cathode.widget.OverflowView
+    <net.simonvt.cathode.common.widget.OverflowView
         android:id="@+id/episodeOverflow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -114,7 +114,7 @@
           layout="@layout/show_info_episode"/>
     </LinearLayout>
 
-    <net.simonvt.cathode.widget.OverflowView
+    <net.simonvt.cathode.common.widget.OverflowView
         android:id="@+id/episodeOverflow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -146,7 +146,7 @@
           layout="@layout/show_info_episode"/>
     </LinearLayout>
 
-    <net.simonvt.cathode.widget.OverflowView
+    <net.simonvt.cathode.common.widget.OverflowView
         android:id="@+id/episodeOverflow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

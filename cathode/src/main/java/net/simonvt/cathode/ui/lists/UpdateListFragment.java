@@ -31,9 +31,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import javax.inject.Inject;
-import net.simonvt.cathode.Injector;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Privacy;
+import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
 

@@ -24,7 +24,7 @@
     tools:context=".settings.login.LoginActivity"
     tools:ignore="MergeRootFrame">
 
-  <net.simonvt.cathode.widget.MaxSizeLinearLayout
+  <net.simonvt.cathode.common.widget.MaxSizeLinearLayout
       android:id="@+id/buttonContainer"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
         android:gravity="center"
         tools:visibility="visible"
         tools:text="Login failed"/>
-  </net.simonvt.cathode.widget.MaxSizeLinearLayout>
+  </net.simonvt.cathode.common.widget.MaxSizeLinearLayout>
 
   <LinearLayout
       android:id="@+id/progressContainer"

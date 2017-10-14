@@ -32,7 +32,7 @@
       android:paddingTop="8dp"
       android:paddingRight="16dp">
 
-    <net.simonvt.cathode.widget.RemoteImageView
+    <net.simonvt.cathode.common.widget.RemoteImageView
         android:id="@+id/headshot"
         android:layout_width="96dp"
         android:layout_height="wrap_content"

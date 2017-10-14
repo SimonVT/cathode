@@ -42,7 +42,7 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp">
 
-      <net.simonvt.cathode.widget.RemoteImageView
+      <net.simonvt.cathode.common.widget.RemoteImageView
           android:id="@+id/avatar"
           android:layout_width="32dp"
           android:layout_height="32dp"

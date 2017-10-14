@@ -19,8 +19,8 @@ import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.ui.fragment.BaseFragment;
 import net.simonvt.cathode.common.util.ViewPagerUtils;
-import net.simonvt.cathode.ui.fragment.BaseFragment;
 
 public class ShowSuggestionsPagerAdapter extends FragmentPagerAdapter {
 

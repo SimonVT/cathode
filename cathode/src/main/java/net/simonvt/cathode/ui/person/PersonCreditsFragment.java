@@ -22,11 +22,11 @@ import android.support.v4.content.Loader;
 import java.util.List;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
+import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
-import net.simonvt.cathode.ui.fragment.ToolbarGridFragment;
 
 public class PersonCreditsFragment extends ToolbarGridFragment<PersonCreditsAdapter.ViewHolder>
     implements PersonCreditsAdapter.OnCreditClickListener {

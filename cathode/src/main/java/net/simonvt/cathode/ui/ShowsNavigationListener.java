@@ -15,6 +15,8 @@
  */
 package net.simonvt.cathode.ui;
 
+import net.simonvt.cathode.common.ui.FragmentCallbacks;
+
 public interface ShowsNavigationListener extends NavigationClickListener, FragmentCallbacks {
 
   void onDisplayShow(long showId, String title, String overview, LibraryType type);

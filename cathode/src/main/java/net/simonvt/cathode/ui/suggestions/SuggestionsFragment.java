@@ -26,8 +26,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import butterknife.BindView;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.ui.fragment.BaseFragment;
 import net.simonvt.cathode.ui.NavigationListener;
-import net.simonvt.cathode.ui.fragment.BaseFragment;
 
 public abstract class SuggestionsFragment extends BaseFragment {
 

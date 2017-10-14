@@ -46,7 +46,7 @@
         tools:text="Returning series"/>
   </LinearLayout>
 
-  <net.simonvt.cathode.widget.CircularProgressIndicator
+  <net.simonvt.cathode.common.widget.CircularProgressIndicator
       android:id="@+id/rating"
       android:layout_width="wrap_content"
       android:layout_height="match_parent"
