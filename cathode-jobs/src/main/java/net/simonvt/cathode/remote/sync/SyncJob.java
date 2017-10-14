@@ -21,7 +21,9 @@ import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
+import net.simonvt.cathode.remote.sync.movies.SyncUserMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
+import net.simonvt.cathode.remote.sync.shows.SyncUserShows;
 import net.simonvt.cathode.settings.Timestamps;
 import net.simonvt.cathode.tmdb.api.SyncConfiguration;
 
@@ -70,6 +72,8 @@ public class SyncJob extends Job {
       queue(new SyncUpdatedMovies());
     }
 
+    queue(new SyncUserShows());
+    queue(new SyncUserMovies());
     queue(new SyncUserActivity());
     queue(new SyncWatching());
 

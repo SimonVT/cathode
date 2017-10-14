@@ -117,6 +117,7 @@ import net.simonvt.cathode.remote.sync.movies.SyncPendingMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncRelatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
+import net.simonvt.cathode.remote.sync.movies.SyncUserMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies;
 import net.simonvt.cathode.remote.sync.people.SyncPersonMovieCredits;
 import net.simonvt.cathode.remote.sync.people.SyncPersonShowCredits;
@@ -139,6 +140,7 @@ import net.simonvt.cathode.remote.sync.shows.SyncShowsRatings;
 import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncTrendingShows;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
+import net.simonvt.cathode.remote.sync.shows.SyncUserShows;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.remote.upgrade.EnsureSync;
 import net.simonvt.cathode.remote.upgrade.UpperCaseGenres;
@@ -337,7 +339,8 @@ import net.simonvt.cathode.widget.RemoteImageView;
         AddShowToHistory.class, AddSeasonToHistory.class, AddEpisodeToHistory.class,
         AddMovieToHistory.class, RemoveSeasonFromHistory.class, RemoveEpisodeFromHistory.class,
         RemoveMovieFromHistory.class, RemoveHistoryItem.class, SyncPendingShows.class,
-        SyncPendingSeasons.class, SyncPendingMovies.class,
+        SyncPendingSeasons.class, SyncPendingMovies.class, SyncUserMovies.class,
+        SyncUserShows.class,
 
         // Scheduler jobs
         AuthJobHandlerJob.class, DataJobHandlerJob.class,

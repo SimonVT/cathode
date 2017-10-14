@@ -152,6 +152,25 @@ public final class MovieDatabaseHelper {
     }
   }
 
+  public long lastSync(long movieId) {
+    Cursor movie = null;
+    try {
+      movie = resolver.query(Movies.withId(movieId), new String[] {
+          MovieColumns.LAST_SYNC,
+      }, null, null, null);
+
+      if (movie.moveToFirst()) {
+        return Cursors.getLong(movie, MovieColumns.LAST_SYNC);
+      }
+
+      return 0L;
+    } finally {
+      if (movie != null) {
+        movie.close();
+      }
+    }
+  }
+
   public boolean isUpdated(long traktId, long lastUpdated) {
     Cursor movie = null;
     try {

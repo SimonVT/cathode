@@ -153,15 +153,18 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
   public void addToHistory(final long movieId, final String watchedAt) {
     execute(new Runnable() {
       @Override public void run() {
-        final long traktId = movieHelper.getTraktId(movieId);
-
         if (SyncItems.TIME_RELEASED.equals(watchedAt)) {
           movieHelper.addToHistory(movieId, MovieDatabaseHelper.WATCHED_RELEASE);
         } else {
           movieHelper.addToHistory(movieId, TimeUtils.getMillis(watchedAt));
         }
 
+        final long traktId = movieHelper.getTraktId(movieId);
         queue(new AddMovieToHistory(traktId, watchedAt));
+
+        if (movieHelper.lastSync(movieId) == 0L) {
+          sync(movieId);
+        }
       }
     });
   }
@@ -201,10 +204,12 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         }
 
         final long traktId = movieHelper.getTraktId(movieId);
-
         movieHelper.setIsInWatchlist(movieId, inWatchlist, listedAtMillis);
-
         queue(new WatchlistMovie(traktId, inWatchlist, listedAt));
+
+        if (movieHelper.lastSync(movieId) == 0L) {
+          sync(movieId);
+        }
       }
     });
   }
@@ -220,9 +225,12 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
         }
 
         final long traktId = movieHelper.getTraktId(movieId);
-
         movieHelper.setIsInCollection(movieId, inCollection, collectedAtMillis);
         queue(new CollectMovie(traktId, inCollection, collectedAt));
+
+        if (movieHelper.lastSync(movieId) == 0L) {
+          sync(movieId);
+        }
       }
     });
   }
@@ -271,6 +279,10 @@ public class MovieTaskScheduler extends BaseTaskScheduler {
 
         watching.close();
         queue(new SyncWatching());
+
+        if (movieHelper.lastSync(movieId) == 0L) {
+          sync(movieId);
+        }
       }
     });
   }

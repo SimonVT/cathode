@@ -27,9 +27,11 @@ import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.movies.SyncPendingMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
+import net.simonvt.cathode.remote.sync.movies.SyncUserMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncPendingSeasons;
 import net.simonvt.cathode.remote.sync.shows.SyncPendingShows;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
+import net.simonvt.cathode.remote.sync.shows.SyncUserShows;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public class JobCreator {
 
@@ -44,8 +46,14 @@ import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
       case SyncUpdatedShows.ID:
         return inject(new SyncUpdatedShows());
 
+      case SyncUserShows.ID:
+        return inject(new SyncUserShows());
+
       case SyncUpdatedMovies.ID:
         return inject(new SyncUpdatedMovies());
+
+      case SyncUserMovies.ID:
+        return inject(new SyncUserMovies());
 
       case SyncUserActivity.ID:
         return inject(new SyncUserActivity());

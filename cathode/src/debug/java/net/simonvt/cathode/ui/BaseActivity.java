@@ -68,7 +68,9 @@ import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
+import net.simonvt.cathode.remote.sync.movies.SyncUserMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
+import net.simonvt.cathode.remote.sync.shows.SyncUserShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.StartPage;
 import net.simonvt.cathode.settings.TraktLinkSettings;
@@ -290,7 +292,9 @@ import okhttp3.logging.HttpLoggingInterceptor;
     debugViews.updated.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         injects.jobManager.addJob(new SyncUpdatedShows());
+        injects.jobManager.addJob(new SyncUserShows());
         injects.jobManager.addJob(new SyncUpdatedMovies());
+        injects.jobManager.addJob(new SyncUserMovies());
       }
     });
 

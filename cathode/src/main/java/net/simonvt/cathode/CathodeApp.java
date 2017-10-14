@@ -44,7 +44,9 @@ import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
+import net.simonvt.cathode.remote.sync.movies.SyncUserMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
+import net.simonvt.cathode.remote.sync.shows.SyncUserShows;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.Timestamps;
@@ -98,7 +100,9 @@ public class CathodeApp extends Application {
 
     if (Jobs.usesScheduler()) {
       SyncUpdatedShows.schedulePeriodic(this);
+      SyncUserShows.schedulePeriodic(this);
       SyncUpdatedMovies.schedulePeriodic(this);
+      SyncUserMovies.schedulePeriodic(this);
       DataJobHandlerJob.schedulePeriodic(this);
       if (TraktLinkSettings.isLinked(this)) {
         AuthJobHandlerJob.schedulePeriodic(this);
