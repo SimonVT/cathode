@@ -136,7 +136,7 @@
 
     <provider
         android:authorities="@string/authority_dummy_calendar"
-        android:name="net.simonvt.cathode.provider.DummyCalendarProvider"
+        android:name="net.simonvt.cathode.calendar.DummyCalendarProvider"
         android:exported="true"
         android:label="@string/sync_calendar"/>
 
@@ -157,7 +157,7 @@
         android:permission="android.permission.BIND_JOB_SERVICE"/>
 
     <service
-        android:name="net.simonvt.cathode.service.DashClockService"
+        android:name="net.simonvt.cathode.dashclock.DashClockService"
         android:icon="@drawable/ic_dashclock_search"
         android:label="@string/dashclock_title"
         android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
@@ -177,7 +177,7 @@
     </service>
 
     <service
-        android:name="net.simonvt.cathode.service.AuthenticatorService"
+        android:name="net.simonvt.cathode.account.AuthenticatorService"
         android:exported="true">
       <intent-filter>
         <action android:name="android.accounts.AccountAuthenticator"/>
@@ -188,7 +188,7 @@
     </service>
 
     <service
-        android:name="net.simonvt.cathode.service.SyncAdapterService"
+        android:name="net.simonvt.cathode.syncadapter.SyncAdapterService"
         android:exported="true">
       <intent-filter>
         <action android:name="android.content.SyncAdapter"/>
@@ -199,7 +199,7 @@
     </service>
 
     <service
-        android:name="net.simonvt.cathode.service.CalendarService"
+        android:name="net.simonvt.cathode.calendar.CalendarService"
         android:exported="true">
       <intent-filter>
         <action android:name="android.content.SyncAdapter"/>

@@ -16,7 +16,6 @@
 package net.simonvt.cathode;
 
 import android.content.Context;
-import net.simonvt.cathode.module.AppModule;
 import net.simonvt.cathode.module.DebugModule;
 
 public final class Modules {

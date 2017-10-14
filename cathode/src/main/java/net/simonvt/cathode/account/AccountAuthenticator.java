@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.service;
+package net.simonvt.cathode.account;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;

@@ -16,10 +16,10 @@
 package net.simonvt.cathode.ui;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import net.simonvt.cathode.Injector;
 
-public abstract class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);

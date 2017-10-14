@@ -21,6 +21,7 @@ import dagger.Module;
 import dagger.Provides;
 import java.io.IOException;
 import javax.inject.Singleton;
+import net.simonvt.cathode.AppModule;
 import net.simonvt.cathode.HttpStatusCode;
 import net.simonvt.cathode.IntPreference;
 import net.simonvt.cathode.api.Trakt;

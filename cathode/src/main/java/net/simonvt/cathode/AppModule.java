@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.module;
+package net.simonvt.cathode;
 
 import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
-import net.simonvt.cathode.CathodeApp;
-import net.simonvt.cathode.CathodeInitProvider;
-import net.simonvt.cathode.DatabaseHelperModule;
-import net.simonvt.cathode.JobsModule;
 import net.simonvt.cathode.api.ApiModule;
 import net.simonvt.cathode.api.ApiSettings;
 import net.simonvt.cathode.api.TraktModule;
@@ -154,7 +150,6 @@ import net.simonvt.cathode.scheduler.SearchTaskScheduler;
 import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.search.SearchHandler;
-import net.simonvt.cathode.service.CathodeSyncAdapter;
 import net.simonvt.cathode.service.SyncWatchingReceiver;
 import net.simonvt.cathode.settings.LogoutDialog;
 import net.simonvt.cathode.settings.NotificationSettingsActivity;
@@ -167,6 +162,7 @@ import net.simonvt.cathode.settings.login.TokenActivity;
 import net.simonvt.cathode.settings.login.TokenTask;
 import net.simonvt.cathode.settings.setup.CalendarSetupActivity;
 import net.simonvt.cathode.settings.setup.NotificationSetupActivity;
+import net.simonvt.cathode.syncadapter.CathodeSyncAdapter;
 import net.simonvt.cathode.tmdb.TmdbModule;
 import net.simonvt.cathode.tmdb.api.SyncConfiguration;
 import net.simonvt.cathode.tmdb.api.movie.SyncMovieImages;

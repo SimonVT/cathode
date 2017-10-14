@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.service;
+package net.simonvt.cathode.dashclock;
 
 import android.database.Cursor;
 import com.google.android.apps.dashclock.api.DashClockExtension;

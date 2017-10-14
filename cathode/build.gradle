@@ -88,9 +88,9 @@ android {
   buildTypes {
     debug {
       buildConfigField "String", "AUTHORITY_DUMMY_CALENDAR",
-          "\"net.simonvt.cathode.debug.provider.DummyCalendarProvider\""
+          "\"net.simonvt.cathode.debug.calendar.DummyCalendarProvider\""
       resValue "string", "authority_dummy_calendar",
-          "net.simonvt.cathode.debug.provider.DummyCalendarProvider"
+          "net.simonvt.cathode.debug.calendar.DummyCalendarProvider"
 
       applicationIdSuffix ".debug"
 
@@ -98,9 +98,9 @@ android {
     }
     release {
       buildConfigField "String", "AUTHORITY_DUMMY_CALENDAR",
-          "\"net.simonvt.cathode.provider.DummyCalendarProvider\""
+          "\"net.simonvt.cathode.calendar.DummyCalendarProvider\""
       resValue "string", "authority_dummy_calendar",
-          "net.simonvt.cathode.provider.DummyCalendarProvider"
+          "net.simonvt.cathode.calendar.DummyCalendarProvider"
 
       signingConfig signingConfigs.release
 

@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.service;
+package net.simonvt.cathode.calendar;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-public class SyncAdapterService extends Service {
+public class CalendarService extends Service {
 
-  private static CathodeSyncAdapter sSyncAdapter;
+  private static CalendarSyncAdapter sSyncAdapter;
 
   @Override public IBinder onBind(Intent intent) {
     return getSyncAdapter().getSyncAdapterBinder();
   }
 
-  private CathodeSyncAdapter getSyncAdapter() {
+  private CalendarSyncAdapter getSyncAdapter() {
     if (sSyncAdapter == null) {
-      sSyncAdapter = new CathodeSyncAdapter(getApplicationContext());
+      sSyncAdapter = new CalendarSyncAdapter(getApplicationContext());
     }
     return sSyncAdapter;
   }

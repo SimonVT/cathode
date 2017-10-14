@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.service;
+package net.simonvt.cathode.calendar;
 
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
