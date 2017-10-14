@@ -14,26 +14,22 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.util;
+package net.simonvt.cathode.provider.util;
 
-import net.simonvt.cathode.api.util.Joiner;
+public class SqlColumn {
 
-public class SqlCoalesce {
-
-  private SqlCoalesce() {
+  private SqlColumn() {
   }
 
-  StringBuilder builder = new StringBuilder();
+  String table;
 
-  public static SqlCoalesce coaloesce(String... columns) {
-    SqlCoalesce coalesce = new SqlCoalesce();
-    coalesce.builder.append("coalesce(");
-    coalesce.builder.append(Joiner.on(", ").join(columns));
-    coalesce.builder.append(")");
-    return coalesce;
+  public static SqlColumn table(String table) {
+    SqlColumn column = new SqlColumn();
+    column.table = table;
+    return column;
   }
 
-  public String as(String column) {
-    return builder.append(" AS ").append(column).toString();
+  public String column(String column) {
+    return this.table += "." + column;
   }
 }

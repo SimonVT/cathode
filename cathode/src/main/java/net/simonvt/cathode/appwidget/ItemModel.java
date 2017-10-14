@@ -25,8 +25,8 @@ import net.simonvt.cathode.common.util.DateStringUtils;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
-import net.simonvt.cathode.util.DataHelper;
-import net.simonvt.cathode.util.SqlColumn;
+import net.simonvt.cathode.provider.util.DataHelper;
+import net.simonvt.cathode.provider.util.SqlColumn;
 import net.simonvt.schematic.Cursors;
 
 public class ItemModel {

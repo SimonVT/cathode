@@ -29,12 +29,12 @@ import butterknife.BindView;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.fragment.BaseFragment;
 import net.simonvt.cathode.common.util.DateStringUtils;
-import net.simonvt.cathode.database.BaseAsyncLoader;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.provider.database.BaseAsyncLoader;
 import net.simonvt.schematic.Cursors;
 
 public class StatsFragment extends BaseFragment implements LoaderCallbacks<StatsFragment.Stats> {

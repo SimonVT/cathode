@@ -28,7 +28,7 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.ShowDatabaseHelper;
+import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.action.shows.AddShowToHistory;
 import net.simonvt.cathode.remote.action.shows.CalendarHideShow;
 import net.simonvt.cathode.remote.action.shows.CollectedHideShow;

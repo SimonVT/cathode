@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.provider;
+package net.simonvt.cathode.provider.helper;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import net.simonvt.cathode.common.Injector;
+import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.ProviderSchematic.RecentQueries;
 
 public final class SearchDatabaseHelper {

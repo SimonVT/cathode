@@ -32,8 +32,8 @@ import java.util.List;
 import net.simonvt.cathode.common.tmdb.TmdbRateLimiter;
 import net.simonvt.cathode.common.util.Closeables;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
-import net.simonvt.cathode.provider.PersonDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.People;
+import net.simonvt.cathode.provider.helper.PersonDatabaseHelper;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Response;
 

@@ -26,7 +26,7 @@ import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.event.ErrorEvent;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.jobs.R;
-import net.simonvt.cathode.provider.ListWrapper;
+import net.simonvt.cathode.provider.helper.ListWrapper;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import okhttp3.ResponseBody;
 import retrofit2.Call;

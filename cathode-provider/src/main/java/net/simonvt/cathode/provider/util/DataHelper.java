@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.util;
+package net.simonvt.cathode.provider.util;
 
 import android.content.Context;
 import android.database.Cursor;

@@ -21,7 +21,7 @@ import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.PeopleService;
 import net.simonvt.cathode.jobqueue.JobPriority;
-import net.simonvt.cathode.provider.PersonDatabaseHelper;
+import net.simonvt.cathode.provider.helper.PersonDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import retrofit2.Call;
 

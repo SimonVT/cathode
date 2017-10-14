@@ -18,12 +18,12 @@ package net.simonvt.cathode.ui.comments;
 
 import android.content.Context;
 import android.database.Cursor;
-import net.simonvt.cathode.database.BaseAsyncLoader;
-import net.simonvt.cathode.database.DatabaseUtils;
-import net.simonvt.cathode.database.SimpleMergeCursor;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
+import net.simonvt.cathode.provider.database.BaseAsyncLoader;
+import net.simonvt.cathode.provider.database.DatabaseUtils;
+import net.simonvt.cathode.provider.database.SimpleMergeCursor;
 
 public class CommentAndRepliesLoader extends BaseAsyncLoader<SimpleMergeCursor> {
 

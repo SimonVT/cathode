@@ -31,11 +31,12 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.adapter.HeaderSpanLookup;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
-import net.simonvt.cathode.database.SimpleCursor;
-import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.provider.database.SimpleCursor;
+import net.simonvt.cathode.provider.database.SimpleCursorLoader;
+import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.settings.UpcomingTime;
@@ -43,7 +44,6 @@ import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference.UpcomingSortByListener;
-import net.simonvt.cathode.util.DataHelper;
 
 public class UpcomingShowsFragment
     extends ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>

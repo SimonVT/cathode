@@ -21,7 +21,7 @@ import com.uwetrottmann.tmdb2.services.TvShowService;
 import javax.inject.Inject;
 import net.simonvt.cathode.images.ShowRequestHandler;
 import net.simonvt.cathode.jobqueue.JobPriority;
-import net.simonvt.cathode.provider.ShowDatabaseHelper;
+import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.tmdb.api.TmdbCallJob;
 import retrofit2.Call;
 

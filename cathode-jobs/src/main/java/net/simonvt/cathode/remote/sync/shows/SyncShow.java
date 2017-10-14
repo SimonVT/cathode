@@ -21,7 +21,7 @@ import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.SeasonService;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.jobqueue.JobPriority;
-import net.simonvt.cathode.provider.ShowDatabaseHelper;
+import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import retrofit2.Call;
 

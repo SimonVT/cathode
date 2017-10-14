@@ -37,9 +37,9 @@ import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
+import net.simonvt.cathode.provider.util.SqlColumn;
 import net.simonvt.cathode.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
-import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.schematic.Cursors;
 
 public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder> {

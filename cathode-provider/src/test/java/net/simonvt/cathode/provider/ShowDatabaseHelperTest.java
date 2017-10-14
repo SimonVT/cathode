@@ -29,6 +29,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
+import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.schematic.Cursors;
 import org.junit.Before;
 import org.junit.Test;

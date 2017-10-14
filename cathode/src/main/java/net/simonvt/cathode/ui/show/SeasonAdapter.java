@@ -36,13 +36,13 @@ import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
+import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
 import net.simonvt.cathode.ui.listener.EpisodeClickListener;
-import net.simonvt.cathode.util.DataHelper;
 import net.simonvt.schematic.Cursors;
 
 public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolder> {

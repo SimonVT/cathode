@@ -38,12 +38,12 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.Injector;
-import net.simonvt.cathode.database.SimpleCursor;
-import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
 import net.simonvt.cathode.provider.ProviderSchematic.Lists;
+import net.simonvt.cathode.provider.database.SimpleCursor;
+import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.scheduler.ListsTaskScheduler;
 import net.simonvt.schematic.Cursors;
 

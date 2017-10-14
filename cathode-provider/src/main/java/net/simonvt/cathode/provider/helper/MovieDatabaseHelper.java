@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.provider;
+package net.simonvt.cathode.provider.helper;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
@@ -31,11 +31,11 @@ import java.util.Locale;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.TextUtils;
-import net.simonvt.cathode.database.DatabaseUtils;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieGenres;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
+import net.simonvt.cathode.provider.database.DatabaseUtils;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.schematic.Cursors;
 import timber.log.Timber;

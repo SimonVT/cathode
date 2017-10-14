@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode;
+package net.simonvt.cathode.provider.helper;
 
 import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
-import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
-import net.simonvt.cathode.provider.MovieDatabaseHelper;
-import net.simonvt.cathode.provider.PersonDatabaseHelper;
-import net.simonvt.cathode.provider.SearchDatabaseHelper;
-import net.simonvt.cathode.provider.SeasonDatabaseHelper;
-import net.simonvt.cathode.provider.ShowDatabaseHelper;
-import net.simonvt.cathode.provider.UserDatabaseHelper;
 
 @Module(complete = false, library = true) public class DatabaseHelperModule {
 

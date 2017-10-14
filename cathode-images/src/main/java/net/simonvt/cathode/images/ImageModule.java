@@ -32,11 +32,11 @@ import dagger.Module;
 import dagger.Provides;
 import java.io.File;
 import javax.inject.Singleton;
-import net.simonvt.cathode.provider.EpisodeDatabaseHelper;
-import net.simonvt.cathode.provider.MovieDatabaseHelper;
-import net.simonvt.cathode.provider.PersonDatabaseHelper;
-import net.simonvt.cathode.provider.SeasonDatabaseHelper;
-import net.simonvt.cathode.provider.ShowDatabaseHelper;
+import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper;
+import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
+import net.simonvt.cathode.provider.helper.PersonDatabaseHelper;
+import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
+import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import okhttp3.OkHttpClient;
 import timber.log.Timber;
 

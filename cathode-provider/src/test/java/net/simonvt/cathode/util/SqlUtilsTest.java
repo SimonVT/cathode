@@ -17,6 +17,7 @@
 package net.simonvt.cathode.util;
 
 import android.database.sqlite.SQLiteDatabase;
+import net.simonvt.cathode.provider.util.SqlUtils;
 import net.simonvt.schematic.annotation.DataType;
 import org.junit.Test;
 import org.junit.runner.RunWith;

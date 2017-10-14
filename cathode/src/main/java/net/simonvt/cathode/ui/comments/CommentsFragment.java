@@ -27,10 +27,10 @@ import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.guava.Preconditions;
-import net.simonvt.cathode.database.SimpleCursor;
-import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
+import net.simonvt.cathode.provider.database.SimpleCursor;
+import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.ui.NavigationListener;
 
 public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHolder> {

@@ -18,10 +18,10 @@ package net.simonvt.cathode.ui.movies.watchlist;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.database.SimpleCursor;
-import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
+import net.simonvt.cathode.provider.database.SimpleCursor;
+import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchlist;
 import net.simonvt.cathode.ui.movies.MoviesFragment;
 

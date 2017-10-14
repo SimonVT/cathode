@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
-import net.simonvt.cathode.database.BaseAsyncLoader;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
@@ -36,7 +35,8 @@ import net.simonvt.cathode.provider.ProviderSchematic.MovieCast;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieCrew;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCast;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCrew;
-import net.simonvt.cathode.util.SqlColumn;
+import net.simonvt.cathode.provider.database.BaseAsyncLoader;
+import net.simonvt.cathode.provider.util.SqlColumn;
 import net.simonvt.schematic.Cursors;
 
 public class CreditsLoader extends BaseAsyncLoader<Credits> {

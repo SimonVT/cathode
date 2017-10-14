@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.provider;
+package net.simonvt.cathode.provider.helper;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -26,11 +26,13 @@ import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.TextUtils;
-import net.simonvt.cathode.database.DatabaseUtils;
+import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.provider.database.DatabaseUtils;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.schematic.Cursors;
 import timber.log.Timber;

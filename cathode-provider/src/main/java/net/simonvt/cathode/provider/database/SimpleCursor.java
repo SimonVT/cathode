@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.database;
+package net.simonvt.cathode.provider.database;
 
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;

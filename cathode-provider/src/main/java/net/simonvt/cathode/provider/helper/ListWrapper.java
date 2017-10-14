@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.provider;
+package net.simonvt.cathode.provider.helper;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;

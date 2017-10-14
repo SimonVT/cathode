@@ -26,7 +26,7 @@ import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.guava.Preconditions;
-import net.simonvt.cathode.database.SimpleMergeCursor;
+import net.simonvt.cathode.provider.database.SimpleMergeCursor;
 
 public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHolder> {
 

@@ -21,7 +21,7 @@ import com.uwetrottmann.tmdb2.services.MoviesService;
 import javax.inject.Inject;
 import net.simonvt.cathode.images.MovieRequestHandler;
 import net.simonvt.cathode.jobqueue.JobPriority;
-import net.simonvt.cathode.provider.MovieDatabaseHelper;
+import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 import net.simonvt.cathode.tmdb.api.TmdbCallJob;
 import retrofit2.Call;
 

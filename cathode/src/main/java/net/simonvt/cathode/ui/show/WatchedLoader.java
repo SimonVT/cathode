@@ -18,13 +18,13 @@ package net.simonvt.cathode.ui.show;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import net.simonvt.cathode.database.BaseAsyncLoader;
-import net.simonvt.cathode.database.DatabaseUtils;
-import net.simonvt.cathode.database.SimpleMergeCursor;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.provider.database.BaseAsyncLoader;
+import net.simonvt.cathode.provider.database.DatabaseUtils;
+import net.simonvt.cathode.provider.database.SimpleMergeCursor;
 import net.simonvt.schematic.Cursors;
 
 public class WatchedLoader extends BaseAsyncLoader<SimpleMergeCursor> {

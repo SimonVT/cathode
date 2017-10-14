@@ -33,8 +33,6 @@ import java.util.Date;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.Injector;
-import net.simonvt.cathode.database.SimpleCursor;
-import net.simonvt.cathode.database.SimpleCursorLoader;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -42,9 +40,11 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.provider.database.SimpleCursor;
+import net.simonvt.cathode.provider.database.SimpleCursorLoader;
+import net.simonvt.cathode.provider.util.SqlColumn;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.ui.EpisodeDetailsActivity;
-import net.simonvt.cathode.util.SqlColumn;
 import timber.log.Timber;
 
 public class UpcomingWidgetService extends RemoteViewsService {

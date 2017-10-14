@@ -27,8 +27,8 @@ import java.io.IOException;
 import net.simonvt.cathode.common.tmdb.TmdbRateLimiter;
 import net.simonvt.cathode.common.util.Closeables;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
+import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Response;
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.database;
+package net.simonvt.cathode.provider.database;
 
 import android.database.AbstractCursor;
 import android.database.Cursor;

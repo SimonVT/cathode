@@ -17,7 +17,7 @@ package net.simonvt.cathode.scheduler;
 
 import android.content.Context;
 import javax.inject.Inject;
-import net.simonvt.cathode.provider.SearchDatabaseHelper;
+import net.simonvt.cathode.provider.helper.SearchDatabaseHelper;
 
 public class SearchTaskScheduler extends BaseTaskScheduler {
 

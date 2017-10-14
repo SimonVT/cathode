@@ -46,11 +46,11 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
+import net.simonvt.cathode.provider.util.DataHelper;
+import net.simonvt.cathode.provider.util.SqlColumn;
 import net.simonvt.cathode.settings.NotificationTime;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.EpisodeDetailsActivity;
-import net.simonvt.cathode.util.DataHelper;
-import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.schematic.Cursors;
 
 public class NotificationHelper {

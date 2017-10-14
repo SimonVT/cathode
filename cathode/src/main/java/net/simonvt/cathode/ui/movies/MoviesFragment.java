@@ -28,8 +28,8 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
-import net.simonvt.cathode.database.SimpleCursor;
 import net.simonvt.cathode.jobqueue.JobManager;
+import net.simonvt.cathode.provider.database.SimpleCursor;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.listener.MovieClickListener;
 

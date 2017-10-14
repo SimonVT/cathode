@@ -44,8 +44,8 @@ import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
+import net.simonvt.cathode.provider.util.SqlColumn;
 import net.simonvt.cathode.scheduler.CommentsTaskScheduler;
-import net.simonvt.cathode.util.SqlColumn;
 import net.simonvt.schematic.Cursors;
 
 public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewHolder> {
