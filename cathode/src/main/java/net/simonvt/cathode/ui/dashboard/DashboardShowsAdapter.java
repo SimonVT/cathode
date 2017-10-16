@@ -33,7 +33,7 @@ import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
-import net.simonvt.cathode.scheduler.ShowTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.schematic.Cursors;
 
 public class DashboardShowsAdapter extends RecyclerCursorAdapter<DashboardShowsAdapter.ViewHolder> {

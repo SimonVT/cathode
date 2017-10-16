@@ -44,7 +44,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
 import net.simonvt.cathode.provider.ProviderSchematic.Lists;
 import net.simonvt.cathode.provider.database.SimpleCursor;
 import net.simonvt.cathode.provider.database.SimpleCursorLoader;
-import net.simonvt.cathode.scheduler.ListsTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler;
 import net.simonvt.schematic.Cursors;
 
 public class ListsDialog extends DialogFragment {

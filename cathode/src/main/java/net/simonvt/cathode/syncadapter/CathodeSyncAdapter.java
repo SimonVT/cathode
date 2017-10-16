@@ -25,14 +25,14 @@ import java.util.concurrent.CountDownLatch;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.common.Injector;
-import net.simonvt.cathode.jobqueue.AuthJobHandler;
-import net.simonvt.cathode.jobqueue.DataJobHandler;
 import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobHandler;
 import net.simonvt.cathode.jobqueue.JobInjector;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.TraktLinkSettings;
+import net.simonvt.cathode.sync.jobqueue.AuthJobHandler;
+import net.simonvt.cathode.sync.jobqueue.DataJobHandler;
+import net.simonvt.cathode.sync.jobqueue.JobHandler;
 import timber.log.Timber;
 
 public class CathodeSyncAdapter extends AbstractThreadedSyncAdapter {

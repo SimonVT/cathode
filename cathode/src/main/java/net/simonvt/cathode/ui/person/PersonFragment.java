@@ -44,10 +44,10 @@ import net.simonvt.cathode.common.util.Intents;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.scheduler.MovieTaskScheduler;
-import net.simonvt.cathode.scheduler.PersonTaskScheduler;
-import net.simonvt.cathode.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.settings.TraktTimestamps;
+import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.PersonTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
 

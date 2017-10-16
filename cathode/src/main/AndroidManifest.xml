@@ -153,7 +153,7 @@
     <service android:name="net.simonvt.cathode.notification.NotificationService"/>
 
     <service
-        android:name="net.simonvt.cathode.jobscheduler.SchedulerService"
+        android:name=".sync.jobscheduler.SchedulerService"
         android:permission="android.permission.BIND_JOB_SERVICE"/>
 
     <service

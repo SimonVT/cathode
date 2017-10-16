@@ -32,9 +32,9 @@ import android.widget.TextView;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.Injector;
-import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
-import net.simonvt.cathode.scheduler.MovieTaskScheduler;
-import net.simonvt.cathode.scheduler.ShowTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 
 public class RatingDialog extends DialogFragment {
 

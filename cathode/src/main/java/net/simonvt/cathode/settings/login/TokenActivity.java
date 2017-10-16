@@ -29,8 +29,6 @@ import net.simonvt.cathode.api.entity.AccessToken;
 import net.simonvt.cathode.api.entity.UserSettings;
 import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.jobscheduler.AuthJobHandlerJob;
-import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.settings.Accounts;
@@ -38,6 +36,8 @@ import net.simonvt.cathode.settings.ProfileSettings;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.setup.CalendarSetupActivity;
+import net.simonvt.cathode.sync.jobscheduler.AuthJobHandlerJob;
+import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.HomeActivity;
 

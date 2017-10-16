@@ -35,7 +35,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.guava.Preconditions;
-import net.simonvt.cathode.scheduler.ListsTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler;
 
 public class UpdateListFragment extends DialogFragment {
 

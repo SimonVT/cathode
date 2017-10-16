@@ -33,7 +33,7 @@ import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
-import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
 import net.simonvt.schematic.Cursors;
 
 public class DashboardMoviesAdapter

@@ -31,7 +31,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.service.CommentsService;
 import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.TextUtils;
-import net.simonvt.cathode.scheduler.CommentsTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.CommentsTaskScheduler;
 
 public class UpdateCommentDialog extends DialogFragment {
 

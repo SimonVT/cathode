@@ -52,9 +52,6 @@ import net.simonvt.cathode.common.widget.PaletteTransformation;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobListener;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.jobscheduler.AuthJobHandlerJob;
-import net.simonvt.cathode.jobscheduler.DataJobHandlerJob;
-import net.simonvt.cathode.jobscheduler.SchedulerService;
 import net.simonvt.cathode.notification.NotificationService;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
@@ -75,7 +72,10 @@ import net.simonvt.cathode.remote.sync.shows.SyncUserShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.StartPage;
 import net.simonvt.cathode.settings.TraktLinkSettings;
-import net.simonvt.cathode.tmdb.api.SyncConfiguration;
+import net.simonvt.cathode.sync.jobscheduler.AuthJobHandlerJob;
+import net.simonvt.cathode.sync.jobscheduler.DataJobHandlerJob;
+import net.simonvt.cathode.sync.jobscheduler.SchedulerService;
+import net.simonvt.cathode.sync.tmdb.api.SyncConfiguration;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 @SuppressLint("SetTextI18n") public abstract class BaseActivity extends AppCompatActivity {

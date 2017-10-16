@@ -21,7 +21,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.UpdateShowCounts;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodesRatings;
@@ -30,6 +29,7 @@ import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.Timestamps;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.TraktTimestamps;
+import net.simonvt.cathode.sync.jobscheduler.Jobs;
 
 public final class Upgrader {
 

@@ -28,8 +28,8 @@ import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.common.widget.RemoteImageView;
-import net.simonvt.cathode.scheduler.MovieTaskScheduler;
-import net.simonvt.cathode.scheduler.ShowTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 
 public class PersonCreditsAdapter extends RecyclerView.Adapter<PersonCreditsAdapter.ViewHolder> {
 

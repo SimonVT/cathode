@@ -37,10 +37,10 @@ import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.fragment.AppBarFragment;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
-import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
-import net.simonvt.cathode.scheduler.MovieTaskScheduler;
-import net.simonvt.cathode.scheduler.SeasonTaskScheduler;
-import net.simonvt.cathode.scheduler.ShowTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.SeasonTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.NavigationListener;
 
 public class SelectHistoryDateFragment extends AppBarFragment

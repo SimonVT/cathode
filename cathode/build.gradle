@@ -6,9 +6,9 @@ apply plugin: 'com.kageiit.lintrules'
 dependencies {
   compile project(':cathode-common')
   compile project(':cathode-jobqueue')
-  compile project(':cathode-jobs')
   compile project(':cathode-provider')
   compile project(':cathode-settings')
+  compile project(':cathode-sync')
   compile project(':trakt-api')
   compile project(':libs:colorpicker')
   compile project(':libs:datetimepicker')
@@ -72,13 +72,13 @@ android {
         "net.simonvt.cathode.provider.BuildConfig.PROVIDER_AUTHORITY"
 
     buildConfigField "String", "TRAKT_CLIENT_ID",
-        "net.simonvt.cathode.jobs.BuildConfig.TRAKT_CLIENT_ID"
+        "net.simonvt.cathode.sync.BuildConfig.TRAKT_CLIENT_ID"
     buildConfigField "String", "TRAKT_SECRET",
-        "net.simonvt.cathode.jobs.BuildConfig.TRAKT_SECRET"
+        "net.simonvt.cathode.sync.BuildConfig.TRAKT_SECRET"
     buildConfigField "String", "TRAKT_REDIRECT_URL",
-        "net.simonvt.cathode.jobs.BuildConfig.TRAKT_REDIRECT_URL"
+        "net.simonvt.cathode.sync.BuildConfig.TRAKT_REDIRECT_URL"
     buildConfigField "String", "TMDB_API_KEY",
-        "net.simonvt.cathode.jobs.BuildConfig.TMDB_API_KEY"
+        "net.simonvt.cathode.sync.BuildConfig.TMDB_API_KEY"
   }
 
   signingConfigs {

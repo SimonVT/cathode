@@ -47,7 +47,7 @@ import net.simonvt.cathode.provider.helper.ListWrapper;
 import net.simonvt.cathode.provider.util.SqlCoalesce;
 import net.simonvt.cathode.provider.util.SqlColumn;
 import net.simonvt.cathode.remote.sync.lists.SyncList;
-import net.simonvt.cathode.scheduler.ListsTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.schematic.Cursors;

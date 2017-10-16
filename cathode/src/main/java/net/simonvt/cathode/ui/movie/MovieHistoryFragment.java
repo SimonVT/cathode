@@ -38,7 +38,7 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.database.SimpleCursor;
 import net.simonvt.cathode.provider.database.SimpleCursorLoader;
-import net.simonvt.cathode.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
 import net.simonvt.schematic.Cursors;
 
 public class MovieHistoryFragment extends RefreshableAppBarFragment {

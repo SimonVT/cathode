@@ -35,7 +35,7 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.util.DataHelper;
-import net.simonvt.cathode.trakt.CheckIn;
+import net.simonvt.cathode.sync.trakt.CheckIn;
 import net.simonvt.cathode.ui.EpisodeDetailsActivity;
 import net.simonvt.schematic.Cursors;
 import timber.log.Timber;

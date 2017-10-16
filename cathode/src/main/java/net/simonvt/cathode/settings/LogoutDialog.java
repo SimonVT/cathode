@@ -25,12 +25,12 @@ import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.jobscheduler.AuthJobHandlerJob;
-import net.simonvt.cathode.jobscheduler.Jobs;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.LogoutJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.settings.login.LoginActivity;
+import net.simonvt.cathode.sync.jobscheduler.AuthJobHandlerJob;
+import net.simonvt.cathode.sync.jobscheduler.Jobs;
 
 public class LogoutDialog extends DialogFragment {
 

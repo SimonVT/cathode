@@ -40,7 +40,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.database.SimpleCursor;
 import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.util.DataHelper;
-import net.simonvt.cathode.scheduler.EpisodeTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
 import net.simonvt.schematic.Cursors;
 
 public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
