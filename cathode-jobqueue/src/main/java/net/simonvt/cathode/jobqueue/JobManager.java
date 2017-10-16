@@ -24,7 +24,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.common.util.MainHandler;
-import net.simonvt.cathode.jobqueue.JobDatabase.Tables;
+import net.simonvt.cathode.jobqueue.JobDatabaseSchematic.Tables;
 import net.simonvt.cathode.jobqueue.database.JobDatabase;
 import net.simonvt.schematic.Cursors;
 import timber.log.Timber;

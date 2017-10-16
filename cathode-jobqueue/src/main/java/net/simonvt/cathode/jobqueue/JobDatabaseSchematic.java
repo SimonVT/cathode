@@ -23,12 +23,14 @@ import net.simonvt.schematic.annotation.OnUpgrade;
 import net.simonvt.schematic.annotation.Table;
 
 @Database(
-    version = 8,
-    packageName = "net.simonvt.cathode.jobqueue.database"
+    className = "JobDatabase",
+    packageName = "net.simonvt.cathode.jobqueue.database",
+    fileName = "jobDatabase.db",
+    version = 8
 )
-public class JobDatabase {
+public class JobDatabaseSchematic {
 
-  private JobDatabase() {
+  private JobDatabaseSchematic() {
   }
 
   public static class Tables {
