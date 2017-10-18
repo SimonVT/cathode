@@ -25,7 +25,9 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.common.util.FragmentStack.StackEntry;
 import net.simonvt.cathode.ui.comments.CommentsFragment;
+import net.simonvt.cathode.ui.history.SelectHistoryDateFragment;
 import net.simonvt.cathode.ui.show.EpisodeFragment;
+import net.simonvt.cathode.ui.show.EpisodeHistoryFragment;
 import net.simonvt.cathode.ui.show.ShowFragment;
 import timber.log.Timber;
 
@@ -112,15 +114,30 @@ public class EpisodeDetailsActivity extends NavigationListenerActivity {
   }
 
   @Override public void onDisplayComments(ItemType type, long itemId) {
+    displayOnTop(CommentsFragment.class, CommentsFragment.TAG,
+        CommentsFragment.getArgs(ItemType.EPISODE, itemId));
+  }
+
+  @Override public void onDisplayEpisodeHistory(long episodeId, String showTitle) {
+    displayOnTop(EpisodeHistoryFragment.class, EpisodeHistoryFragment.getTag(episodeId),
+        EpisodeHistoryFragment.getArgs(episodeId, showTitle));
+  }
+
+  @Override public void onSelectEpisodeWatchedDate(long episodeId, String title) {
+    displayOnTop(SelectHistoryDateFragment.class, SelectHistoryDateFragment.TAG,
+        SelectHistoryDateFragment.getArgs(SelectHistoryDateFragment.Type.EPISODE, episodeId,
+            title));
+  }
+
+  private void displayOnTop(Class fragment, String tag, Bundle args) {
     ArrayList<StackEntry> stack = new ArrayList<>();
 
     StackEntry episodeEntry = new StackEntry(EpisodeFragment.class, EpisodeFragment.getTag(id),
         EpisodeFragment.getArgs(id, showTitle));
     stack.add(episodeEntry);
 
-    StackEntry commentsEntry = new StackEntry(CommentsFragment.class, CommentsFragment.TAG,
-        CommentsFragment.getArgs(ItemType.EPISODE, itemId));
-    stack.add(commentsEntry);
+    StackEntry entryOnTop = new StackEntry(fragment, tag, args);
+    stack.add(entryOnTop);
 
     Intent i = new Intent(this, HomeActivity.class);
     i.setAction(HomeActivity.ACTION_REPLACE_STACK);
