@@ -495,12 +495,9 @@ public class MovieFragment extends RefreshableAppBarFragment
   private void updateGenreViews(final Cursor cursor) {
     if (cursor.getCount() > 0) {
       StringBuilder sb = new StringBuilder();
-      final int genreColumnIndex = cursor.getColumnIndex(MovieGenreColumns.GENRE);
-
       cursor.moveToPosition(-1);
-
       while (cursor.moveToNext()) {
-        sb.append(cursor.getString(genreColumnIndex));
+        sb.append(Cursors.getString(cursor, MovieGenreColumns.GENRE));
         if (!cursor.isLast()) sb.append(", ");
       }
 

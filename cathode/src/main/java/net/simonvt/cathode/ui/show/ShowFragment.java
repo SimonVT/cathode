@@ -710,12 +710,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private void updateGenreViews(final Cursor cursor) {
     if (cursor.getCount() > 0) {
       StringBuilder sb = new StringBuilder();
-      final int genreColumnIndex = cursor.getColumnIndex(ShowGenreColumns.GENRE);
-
       cursor.moveToPosition(-1);
-
       while (cursor.moveToNext()) {
-        sb.append(cursor.getString(genreColumnIndex));
+        sb.append(Cursors.getString(cursor, ShowGenreColumns.GENRE));
         if (!cursor.isLast()) sb.append(", ");
       }
 
