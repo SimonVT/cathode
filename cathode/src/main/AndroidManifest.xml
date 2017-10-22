@@ -149,7 +149,9 @@
     </receiver>
 
     <!-- Services -->
-    <service android:name="net.simonvt.cathode.notification.NotificationActionService"/>
+    <service
+        android:name="net.simonvt.cathode.notification.NotificationActionService"
+        android:permission="android.permission.BIND_JOB_SERVICE"/>
     <service android:name="net.simonvt.cathode.notification.NotificationService"/>
 
     <service
