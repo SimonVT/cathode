@@ -20,18 +20,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import net.simonvt.cathode.common.util.WakeLock;
+import net.simonvt.cathode.settings.Settings;
 
 public class NotificationReceiver extends BroadcastReceiver {
 
   @Override public void onReceive(Context context, Intent intent) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      PendingResult pendingResult = goAsync();
-      NotificationHelper.displayNotifications(context);
-      NotificationHelper.scheduleNextNotification(context);
-      pendingResult.finish();
-    } else {
-      WakeLock.acquire(context, NotificationService.LOCK_TAG);
-      NotificationService.start(context);
+    if (Settings.get(context).getBoolean(Settings.NOTIFICACTIONS_ENABLED, false)) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        PendingResult pendingResult = goAsync();
+        NotificationHelper.displayNotifications(context);
+        NotificationHelper.scheduleNextNotification(context);
+        pendingResult.finish();
+      } else {
+        WakeLock.acquire(context, NotificationService.LOCK_TAG);
+        NotificationService.start(context);
+      }
     }
   }
 }
