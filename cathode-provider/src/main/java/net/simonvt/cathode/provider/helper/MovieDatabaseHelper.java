@@ -171,6 +171,12 @@ public final class MovieDatabaseHelper {
     }
   }
 
+  public void markPending(long movieId) {
+    ContentValues values = new ContentValues();
+    values.put(MovieColumns.NEEDS_SYNC, true);
+    resolver.update(Movies.withId(movieId), values, null, null);
+  }
+
   public boolean isUpdated(long traktId, long lastUpdated) {
     Cursor movie = null;
     try {

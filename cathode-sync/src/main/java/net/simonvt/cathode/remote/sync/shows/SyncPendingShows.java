@@ -23,6 +23,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.support.v4.util.LongSparseArray;
 import android.text.format.DateUtils;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,10 +36,14 @@ import net.simonvt.cathode.api.service.SeasonService;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.common.event.ItemsUpdatedEvent;
 import net.simonvt.cathode.jobqueue.JobPriority;
+import net.simonvt.cathode.provider.DatabaseContract.ItemType;
+import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
+import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.ErrorHandlerJob;
@@ -58,6 +63,7 @@ public class SyncPendingShows extends ErrorHandlerJob {
 
   @Inject transient ShowDatabaseHelper showHelper;
   @Inject transient SeasonDatabaseHelper seasonHelper;
+  @Inject transient EpisodeDatabaseHelper episodeHelper;
 
   @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public static void schedule(Context context) {
     JobInfo jobInfo = new JobInfo.Builder(ID, new ComponentName(context, SchedulerService.class)) //
@@ -77,7 +83,20 @@ public class SyncPendingShows extends ErrorHandlerJob {
     return JobPriority.SHOWS;
   }
 
+  static class SyncItem {
+
+    final long showId;
+    final long traktId;
+
+    SyncItem(long showId, long traktId) {
+      this.showId = showId;
+      this.traktId = traktId;
+    }
+  }
+
   @Override public boolean perform() {
+    LongSparseArray<SyncItem> syncItems = new LongSparseArray<>();
+
     final String where = ShowColumns.NEEDS_SYNC
         + "=1 AND ("
         + ShowColumns.WATCHED_COUNT
@@ -88,24 +107,71 @@ public class SyncPendingShows extends ErrorHandlerJob {
         + ">0 OR "
         + ShowColumns.IN_WATCHLIST
         + "=1)";
-    Cursor shows = getContentResolver().query(Shows.SHOWS, new String[] {
-        ShowColumns.ID, ShowColumns.TRAKT_ID, ShowColumns.WATCHED_COUNT,
-        ShowColumns.IN_COLLECTION_COUNT, ShowColumns.IN_WATCHLIST_COUNT, ShowColumns.IN_WATCHLIST,
+    Cursor userShows = getContentResolver().query(Shows.SHOWS, new String[] {
+        ShowColumns.ID, ShowColumns.TRAKT_ID,
     }, where, null, null);
+    while (userShows.moveToNext()) {
+      final long showId = Cursors.getLong(userShows, ShowColumns.ID);
+      final long traktId = Cursors.getLong(userShows, ShowColumns.TRAKT_ID);
+
+      if (syncItems.get(showId) == null) {
+        syncItems.append(showId, new SyncItem(showId, traktId));
+      }
+    }
+    userShows.close();
+
+    Cursor listShows = getContentResolver().query(ListItems.LIST_ITEMS, new String[] {
+        ListItemColumns.ITEM_ID,
+    }, ListItemColumns.ITEM_TYPE + "=" + ItemType.SHOW, null, null);
+    while (listShows.moveToNext()) {
+      final long showId = Cursors.getLong(listShows, ListItemColumns.ITEM_ID);
+      if (syncItems.get(showId) == null) {
+        final long traktId = showHelper.getTraktId(showId);
+        final boolean needsSync = showHelper.needsSync(showId);
+        if (needsSync) {
+          syncItems.append(showId, new SyncItem(showId, traktId));
+        }
+      }
+    }
+    listShows.close();
+
+    Cursor listSeasons = getContentResolver().query(ListItems.LIST_ITEMS, new String[] {
+        ListItemColumns.ITEM_ID,
+    }, ListItemColumns.ITEM_TYPE + "=" + ItemType.SEASON, null, null);
+    while (listSeasons.moveToNext()) {
+      final long seasonId = Cursors.getLong(listShows, ListItemColumns.ITEM_ID);
+      final long showId = seasonHelper.getShowId(seasonId);
+      if (syncItems.get(showId) == null) {
+        final long traktId = showHelper.getTraktId(showId);
+        final boolean needsSync = showHelper.needsSync(showId);
+        if (needsSync) {
+          syncItems.append(showId, new SyncItem(showId, traktId));
+        }
+      }
+    }
+    listSeasons.close();
+
+    Cursor listEpisodes = getContentResolver().query(ListItems.LIST_ITEMS, new String[] {
+        ListItemColumns.ITEM_ID,
+    }, ListItemColumns.ITEM_TYPE + "=" + ItemType.EPISODE, null, null);
+    while (listEpisodes.moveToNext()) {
+      final long episodeId = Cursors.getLong(listShows, ListItemColumns.ITEM_ID);
+      final long showId = episodeHelper.getShowId(episodeId);
+      if (syncItems.get(showId) == null) {
+        final long traktId = showHelper.getTraktId(showId);
+        final boolean needsSync = showHelper.needsSync(showId);
+        if (needsSync) {
+          syncItems.append(showId, new SyncItem(showId, traktId));
+        }
+      }
+    }
+    listEpisodes.close();
 
     try {
-      while (shows.moveToNext() && !isStopped()) {
-        final long showId = Cursors.getLong(shows, ShowColumns.ID);
-        final long traktId = Cursors.getLong(shows, ShowColumns.TRAKT_ID);
-        final int watchedCount = Cursors.getInt(shows, ShowColumns.WATCHED_COUNT);
-        final int collectedCount = Cursors.getInt(shows, ShowColumns.IN_COLLECTION_COUNT);
-        final int watchlistCount = Cursors.getInt(shows, ShowColumns.IN_WATCHLIST_COUNT);
-        final boolean inWatchlist = Cursors.getBoolean(shows, ShowColumns.IN_WATCHLIST);
-
-        if (watchedCount == 0 && collectedCount == 0 && watchlistCount == 0 && !inWatchlist) {
-          continue;
-        }
-
+      for (int i = 0, size = syncItems.size(); i < size && !isStopped(); i++) {
+        SyncItem syncItem = syncItems.get(syncItems.keyAt(i));
+        final long showId = syncItem.showId;
+        final long traktId = syncItem.traktId;
         Timber.d("Syncing pending show %d", traktId);
 
         Call<Show> showCall = showsService.getSummary(traktId, Extended.FULL);
@@ -170,10 +236,6 @@ public class SyncPendingShows extends ErrorHandlerJob {
     } catch (IOException e) {
       Timber.d(e);
       return false;
-    } finally {
-      if (shows != null) {
-        shows.close();
-      }
     }
   }
 }

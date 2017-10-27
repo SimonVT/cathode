@@ -41,9 +41,9 @@ import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncPerson;
-import net.simonvt.cathode.remote.sync.movies.SyncMovie;
-import net.simonvt.cathode.remote.sync.shows.SyncSeason;
-import net.simonvt.cathode.remote.sync.shows.SyncShow;
+import net.simonvt.cathode.remote.sync.movies.SyncPendingMovies;
+import net.simonvt.cathode.remote.sync.shows.SyncPendingShows;
+import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
@@ -119,17 +119,20 @@ public class SyncList extends CallJob<List<ListItem>> {
     c.close();
 
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+    boolean syncPendingShows = false;
+    boolean syncPendingMovies = false;
 
     for (ListItem item : items) {
-
       switch (item.getType()) {
         case SHOW: {
           Show show = item.getShow();
           final long showTraktId = show.getIds().getTrakt();
           ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(showTraktId);
           final long showId = showResult.showId;
-          if (showResult.didCreate) {
-            queue(new SyncShow(showTraktId));
+          final long lastSync = showHelper.lastSync(showId);
+          if (lastSync == 0L) {
+            showHelper.markPending(showId);
+            syncPendingShows = true;
           }
 
           final int itemPosition =
@@ -154,20 +157,16 @@ public class SyncList extends CallJob<List<ListItem>> {
           final long showTraktId = show.getIds().getTrakt();
           ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(showTraktId);
           final long showId = showResult.showId;
-          final boolean didShowExist = !showResult.didCreate;
-          if (showResult.didCreate) {
-            queue(new SyncShow(showTraktId));
-          }
+          final long lastSync = showHelper.lastSync(showId);
 
           Season season = item.getSeason();
           final int seasonNumber = season.getNumber();
           SeasonDatabaseHelper.IdResult seasonResult =
               seasonHelper.getIdOrCreate(showId, seasonNumber);
           final long seasonId = seasonResult.id;
-          if (seasonResult.didCreate) {
-            if (didShowExist) {
-              queue(new SyncShow(showTraktId));
-            }
+          if (lastSync == 0L || seasonResult.didCreate) {
+            showHelper.markPending(showId);
+            syncPendingShows = true;
           }
 
           final int itemPosition =
@@ -194,29 +193,19 @@ public class SyncList extends CallJob<List<ListItem>> {
           final long showTraktId = show.getIds().getTrakt();
           ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(showTraktId);
           final long showId = showResult.showId;
-          final boolean didShowExist = !showResult.didCreate;
-          if (showResult.didCreate) {
-            queue(new SyncShow(showTraktId));
-          }
+          final long lastSync = showHelper.lastSync(showId);
 
           final int seasonNumber = episode.getSeason();
           SeasonDatabaseHelper.IdResult seasonResult =
               seasonHelper.getIdOrCreate(showId, seasonNumber);
           final long seasonId = seasonResult.id;
-          final boolean didSeasonExist = !seasonResult.didCreate;
-          if (seasonResult.didCreate) {
-            if (didShowExist) {
-              queue(new SyncShow(showTraktId));
-            }
-          }
 
           EpisodeDatabaseHelper.IdResult episodeResult =
               episodeHelper.getIdOrCreate(showId, seasonId, episode.getNumber());
           final long episodeId = episodeResult.id;
-          if (episodeResult.didCreate) {
-            if (didShowExist && didSeasonExist) {
-              queue(new SyncSeason(showTraktId, seasonNumber));
-            }
+          if (lastSync == 0L || episodeResult.didCreate) {
+            showHelper.markPending(showId);
+            syncPendingShows = true;
           }
 
           final int itemPosition =
@@ -241,8 +230,10 @@ public class SyncList extends CallJob<List<ListItem>> {
           final long movieTraktId = movie.getIds().getTrakt();
           MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(movieTraktId);
           final long movieId = result.movieId;
-          if (result.didCreate) {
-            queue(new SyncMovie(movieTraktId));
+          final long lastSync = movieHelper.lastSync(movieId);
+          if (lastSync == 0L) {
+            movieHelper.markPending(movieId);
+            syncPendingMovies = true;
           }
 
           final int itemPosition =
@@ -297,6 +288,21 @@ public class SyncList extends CallJob<List<ListItem>> {
                       String.valueOf(item.itemType), String.valueOf(item.itemId),
                   });
       ops.add(opBuilder.build());
+    }
+
+    if (syncPendingShows) {
+      if (Jobs.usesScheduler()) {
+        SyncPendingShows.schedule(getContext());
+      } else {
+        queue(new SyncPendingShows());
+      }
+    }
+    if (syncPendingMovies) {
+      if (Jobs.usesScheduler()) {
+        SyncPendingMovies.schedule(getContext());
+      } else {
+        queue(new SyncPendingMovies());
+      }
     }
 
     return applyBatch(ops);

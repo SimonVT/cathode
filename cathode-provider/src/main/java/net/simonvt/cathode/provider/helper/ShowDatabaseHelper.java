@@ -265,6 +265,31 @@ public final class ShowDatabaseHelper {
     }
   }
 
+  public long lastSync(long showId) {
+    Cursor show = null;
+    try {
+      show = resolver.query(Shows.withId(showId), new String[] {
+          ShowColumns.LAST_SYNC,
+      }, null, null, null);
+
+      if (show.moveToFirst()) {
+        return Cursors.getLong(show, ShowColumns.LAST_SYNC);
+      }
+
+      return 0L;
+    } finally {
+      if (show != null) {
+        show.close();
+      }
+    }
+  }
+
+  public void markPending(long showId) {
+    ContentValues values = new ContentValues();
+    values.put(ShowColumns.NEEDS_SYNC, true);
+    resolver.update(Shows.withId(showId), values, null, null);
+  }
+
   public boolean isUpdated(long traktId, long lastUpdated) {
     Cursor show = null;
     try {
