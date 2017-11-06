@@ -13,12 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.images;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import javax.inject.Qualifier;
+package net.simonvt.cathode.common.dagger;
 
-@Qualifier @Documented @Retention(RetentionPolicy.RUNTIME) public @interface Images {
+import android.view.View;
+import dagger.Module;
+import dagger.android.AndroidInjector;
+import dagger.multibindings.Multibinds;
+import java.util.Map;
+
+@Module public abstract class CathodeAndroidInjectionModule {
+
+  @Multibinds
+  abstract Map<String, AndroidInjector.Factory<? extends View>> viewInjectorFactoriesWithStringKeys();
+
+  @Multibinds
+  abstract Map<Class<? extends View>, AndroidInjector.Factory<? extends View>> viewInjectorFactories();
+
+  private CathodeAndroidInjectionModule() {
+  }
 }

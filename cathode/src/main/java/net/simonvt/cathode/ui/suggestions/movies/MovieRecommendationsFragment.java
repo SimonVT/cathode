@@ -21,13 +21,13 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.MenuItem;
 import android.view.View;
+import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.fragment.SwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -37,14 +37,15 @@ import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.SuggestionsTimestamps;
+import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
-import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.ui.lists.ListDialog;
+import net.simonvt.cathode.ui.movies.BaseMoviesAdapter;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
 
 public class MovieRecommendationsFragment
     extends SwipeRefreshRecyclerFragment<MoviesAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<SimpleCursor>, MovieClickListener,
+    implements LoaderManager.LoaderCallbacks<SimpleCursor>, BaseMoviesAdapter.Callbacks,
     MovieRecommendationsAdapter.DismissListener, ListDialog.Callback {
 
   private enum SortBy {
@@ -95,6 +96,8 @@ public class MovieRecommendationsFragment
 
   @Inject JobManager jobManager;
 
+  @Inject MovieTaskScheduler movieScheduler;
+
   private MoviesNavigationListener navigationListener;
 
   private MovieRecommendationsAdapter movieAdapter;
@@ -114,7 +117,7 @@ public class MovieRecommendationsFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     sortBy = SortBy.fromValue(Settings.get(getContext())
         .getString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey()));
@@ -197,7 +200,33 @@ public class MovieRecommendationsFragment
     navigationListener.onDisplayMovie(movieId, title, overview);
   }
 
+  @Override public void onCheckin(long movieId) {
+    movieScheduler.checkin(movieId, null, false, false, false);
+  }
+
+  @Override public void onCancelCheckin() {
+    movieScheduler.cancelCheckin();
+  }
+
+  @Override public void onWatchlistAdd(long movieId) {
+    movieScheduler.setIsInWatchlist(movieId, true);
+  }
+
+  @Override public void onWatchlistRemove(long movieId) {
+    movieScheduler.setIsInWatchlist(movieId, false);
+  }
+
+  @Override public void onCollectionAdd(long movieId) {
+    movieScheduler.setIsInCollection(movieId, true);
+  }
+
+  @Override public void onCollectionRemove(long movieId) {
+    movieScheduler.setIsInCollection(movieId, false);
+  }
+
   @Override public void onDismissItem(final View view, final long id) {
+    movieScheduler.dismissRecommendation(id);
+
     Loader loader = getLoaderManager().getLoader(LOADER_MOVIES_RECOMMENDATIONS);
     if (loader != null) {
       SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;

@@ -17,7 +17,6 @@ package net.simonvt.cathode.ui.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
@@ -29,9 +28,9 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.settings.ProfileSettings;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
@@ -52,15 +51,6 @@ public class CheckInDialog extends DialogFragment {
   @Inject EpisodeTaskScheduler episodeScheduler;
   @Inject MovieTaskScheduler movieScheduler;
 
-  public static class Injections {
-    @Inject EpisodeTaskScheduler episodeScheduler;
-    @Inject MovieTaskScheduler movieScheduler;
-
-    public Injections(Context context) {
-      Injector.inject(this);
-    }
-  }
-
   public static boolean showDialogIfNecessary(FragmentActivity activity, Type type, String title,
       long id) {
     if (title == null) {
@@ -80,14 +70,6 @@ public class CheckInDialog extends DialogFragment {
       newInstance(type, title, id).show(activity.getSupportFragmentManager(), DIALOG_TAG);
       return true;
     } else {
-      Injections injections = new Injections(activity);
-
-      if (type == Type.SHOW) {
-        injections.episodeScheduler.checkin(id, null, false, false, false);
-      } else {
-        injections.movieScheduler.checkin(id, null, false, false, false);
-      }
-
       return false;
     }
   }
@@ -106,7 +88,7 @@ public class CheckInDialog extends DialogFragment {
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
   }
 
   @NonNull @SuppressWarnings("InflateParams") @Override

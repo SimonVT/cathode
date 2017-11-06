@@ -22,7 +22,6 @@ import net.simonvt.cathode.api.body.ListInfoBody;
 import net.simonvt.cathode.api.entity.CustomList;
 import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.event.ErrorEvent;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.helper.ListWrapper;
@@ -35,12 +34,14 @@ import timber.log.Timber;
 
 public class UserList {
 
-  @Inject Context context;
-  @Inject UsersService usersServie;
-  @Inject JobManager jobManager;
+  private Context context;
+  private UsersService usersServie;
+  private JobManager jobManager;
 
-  public UserList() {
-    Injector.inject(this);
+  @Inject public UserList(Context context, UsersService usersServie, JobManager jobManager) {
+    this.context = context;
+    this.usersServie = usersServie;
+    this.jobManager = jobManager;
   }
 
   public boolean create(String name, String description, Privacy privacy, boolean displayNumbers,

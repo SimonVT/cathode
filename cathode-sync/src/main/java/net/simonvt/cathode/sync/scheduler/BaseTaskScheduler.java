@@ -20,8 +20,6 @@ import android.support.annotation.NonNull;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.Executor;
-import javax.inject.Inject;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 
@@ -33,13 +31,12 @@ public class BaseTaskScheduler {
     }
   };
 
-  @Inject JobManager jobManager;
-
   protected Context context;
+  private JobManager jobManager;
 
-  public BaseTaskScheduler(Context context) {
-    Injector.inject(this);
+  public BaseTaskScheduler(Context context, JobManager jobManager) {
     this.context = context;
+    this.jobManager = jobManager;
   }
 
   protected final void queue(final Job task) {

@@ -31,13 +31,13 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
@@ -100,7 +100,7 @@ public class ListsDialog extends DialogFragment {
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     Bundle args = getArguments();
     itemType = args.getInt(ARG_TYPE);

@@ -25,11 +25,12 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
+import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
+import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
@@ -37,6 +38,7 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.database.SimpleCursor;
 import net.simonvt.cathode.provider.database.SimpleCursorLoader;
+import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
 import net.simonvt.schematic.Cursors;
 
@@ -59,6 +61,8 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
   private MovieHistoryLoader.Result result;
 
   @Inject MovieTaskScheduler movieScheduler;
+  @Inject SyncService syncService;
+  @Inject MovieDatabaseHelper movieHelper;
 
   private long movieId;
   private String movieTitle;
@@ -83,7 +87,7 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     Bundle args = getArguments();
     movieId = args.getLong(ARG_MOVIEID);
@@ -276,7 +280,7 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
   LoaderManager.LoaderCallbacks<MovieHistoryLoader.Result> historyCallbacks =
       new LoaderManager.LoaderCallbacks<MovieHistoryLoader.Result>() {
         @Override public Loader<MovieHistoryLoader.Result> onCreateLoader(int id, Bundle args) {
-          return new MovieHistoryLoader(getContext(), movieId);
+          return new MovieHistoryLoader(getContext(), movieId, syncService, movieHelper);
         }
 
         @Override public void onLoadFinished(Loader<MovieHistoryLoader.Result> loader,

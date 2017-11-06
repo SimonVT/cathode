@@ -24,9 +24,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.adapter.HeaderCursorAdapter;
 import net.simonvt.cathode.common.widget.OverflowView.OverflowActionListener;
 import net.simonvt.cathode.common.widget.RemoteImageView;
@@ -38,8 +36,6 @@ import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.util.DataHelper;
-import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
-import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
@@ -48,9 +44,13 @@ import net.simonvt.schematic.Cursors;
 
 public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder> {
 
-  public interface OnItemClickListener {
+  public interface Callbacks {
 
     void onEpisodeClicked(long episodeId, String showTitle);
+
+    void onCheckin(long episodeId);
+
+    void onCancelCheckin();
   }
 
   private static final String COLUMN_EPISODE_ID = "episodeId";
@@ -80,24 +80,17 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
     void onRemove(long showId);
   }
 
-  @Inject ShowTaskScheduler showScheduler;
-
-  @Inject EpisodeTaskScheduler episodeScheduler;
-
   private OnRemoveListener onRemoveListener;
 
   private FragmentActivity activity;
 
-  private OnItemClickListener onItemClickListener;
+  private Callbacks callbacks;
 
-  public UpcomingAdapter(FragmentActivity activity, OnItemClickListener onItemClickListener,
+  public UpcomingAdapter(FragmentActivity activity, Callbacks callbacks,
       OnRemoveListener onRemoveListener) {
-    super();
     this.activity = activity;
-    this.onItemClickListener = onItemClickListener;
+    this.callbacks = callbacks;
     this.onRemoveListener = onRemoveListener;
-
-    Injector.inject(this);
 
     setHasStableIds(true);
   }
@@ -126,10 +119,10 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
           final String showTitle = Cursors.getString(cursor, ShowColumns.TITLE);
 
           if (holder.watching) {
-            onItemClickListener.onEpisodeClicked(holder.watchingId, showTitle);
+            callbacks.onEpisodeClicked(holder.watchingId, showTitle);
           } else {
             final long episodeId = Cursors.getLong(cursor, COLUMN_EPISODE_ID);
-            onItemClickListener.onEpisodeClicked(episodeId, showTitle);
+            callbacks.onEpisodeClicked(episodeId, showTitle);
           }
         }
       }
@@ -212,13 +205,14 @@ public class UpcomingAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder
         if (position != RecyclerView.NO_POSITION) {
           switch (action) {
             case R.id.action_checkin_cancel:
-              episodeScheduler.cancelCheckin();
+              callbacks.onCancelCheckin();
               vh.checkIn.setWatching(false);
               break;
 
             case R.id.action_checkin:
               if (!CheckInDialog.showDialogIfNecessary(activity, Type.SHOW, episodeTitle,
                   episodeId)) {
+                callbacks.onCheckin(episodeId);
                 vh.checkIn.setWatching(true);
               }
               break;

@@ -21,12 +21,14 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import dagger.android.support.AndroidSupportInjection;
+import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.provider.database.SimpleMergeCursor;
+import net.simonvt.cathode.sync.scheduler.CommentsTaskScheduler;
 
 public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHolder> {
 
@@ -44,6 +46,8 @@ public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHol
       "net.simonvt.cathode.ui.comments.CommentFragment.adapterState";
 
   private static final int LOADER_COMMENT = 1;
+
+  @Inject CommentsTaskScheduler commentsScheduler;
 
   private long commentId;
 
@@ -63,7 +67,7 @@ public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHol
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     Bundle args = getArguments();
     commentId = args.getLong(ARG_COMMENT_ID);
@@ -106,14 +110,22 @@ public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHol
     }
   }
 
-  private CommentsAdapter.OnCommentClickListener commentClickListener =
-      new CommentsAdapter.OnCommentClickListener() {
+  private CommentsAdapter.CommentCallbacks commentClickListener =
+      new CommentsAdapter.CommentCallbacks() {
         @Override public void onCommentClick(long commentId, String comment, boolean spoiler,
             boolean isUserComment) {
           if (isUserComment) {
             UpdateCommentDialog.newInstance(commentId, comment, spoiler)
                 .show(getFragmentManager(), DIALOG_COMMENT_UPDATE);
           }
+        }
+
+        @Override public void onLikeComment(long commentId) {
+          commentsScheduler.like(commentId);
+        }
+
+        @Override public void onUnlikeComment(long commentId) {
+          commentsScheduler.unlike(commentId);
         }
       };
 

@@ -22,15 +22,17 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import dagger.android.support.AndroidSupportInjection;
+import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.database.SimpleCursor;
 import net.simonvt.cathode.provider.database.SimpleCursorLoader;
+import net.simonvt.cathode.sync.scheduler.CommentsTaskScheduler;
 import net.simonvt.cathode.ui.NavigationListener;
 
 public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHolder> {
@@ -51,6 +53,8 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
       "net.simonvt.cathode.ui.comments.CommentFragment.adapterState";
 
   private static final int LOADER_COMMENTS = 1;
+
+  @Inject CommentsTaskScheduler commentsScheduler;
 
   private NavigationListener navigationListener;
 
@@ -80,7 +84,7 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     Bundle args = getArguments();
     itemType = (ItemType) args.getSerializable(ARG_ITEM_TYPE);
@@ -119,8 +123,8 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
     }
   }
 
-  private CommentsAdapter.OnCommentClickListener commentClickListener =
-      new CommentsAdapter.OnCommentClickListener() {
+  private CommentsAdapter.CommentCallbacks commentCallbacks =
+      new CommentsAdapter.CommentCallbacks() {
         @Override public void onCommentClick(long commentId, String comment, boolean spoiler,
             boolean isUserComment) {
           if (isUserComment) {
@@ -130,11 +134,19 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
             navigationListener.onDisplayComment(commentId);
           }
         }
+
+        @Override public void onLikeComment(long commentId) {
+          commentsScheduler.like(commentId);
+        }
+
+        @Override public void onUnlikeComment(long commentId) {
+          commentsScheduler.unlike(commentId);
+        }
       };
 
   private void setCursor(SimpleCursor cursor) {
     if (adapter == null) {
-      adapter = new CommentsAdapter(getActivity(), null, false, commentClickListener);
+      adapter = new CommentsAdapter(getActivity(), null, false, commentCallbacks);
       if (adapterState != null) {
         adapter.restoreState(adapterState);
       }

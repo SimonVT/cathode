@@ -24,16 +24,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
-import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.schematic.Cursors;
 
 public class DashboardShowsAdapter extends RecyclerCursorAdapter<DashboardShowsAdapter.ViewHolder> {
@@ -45,15 +42,11 @@ public class DashboardShowsAdapter extends RecyclerCursorAdapter<DashboardShowsA
       DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
   };
 
-  @Inject ShowTaskScheduler showScheduler;
-
   private DashboardFragment.OverviewCallback callback;
 
   public DashboardShowsAdapter(Context context, DashboardFragment.OverviewCallback callback) {
     super(context);
     this.callback = callback;
-
-    Injector.inject(this);
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

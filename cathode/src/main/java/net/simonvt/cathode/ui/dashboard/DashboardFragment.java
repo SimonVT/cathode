@@ -27,9 +27,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.adapter.CategoryAdapter;
 import net.simonvt.cathode.common.ui.fragment.ToolbarRecyclerFragment;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -96,7 +96,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     setTitle(R.string.title_dashboard);
 

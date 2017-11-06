@@ -21,10 +21,8 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.HistoryItem;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.provider.database.BaseAsyncLoader;
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 import retrofit2.Call;
@@ -57,18 +55,19 @@ public class MovieHistoryLoader extends BaseAsyncLoader<MovieHistoryLoader.Resul
     }
   }
 
-  @Inject SyncService syncService;
+  private SyncService syncService;
 
-  @Inject MovieDatabaseHelper movieHelper;
+  private MovieDatabaseHelper movieHelper;
 
   private long movieId;
 
   private DateFormat df = DateFormat.getDateTimeInstance();
 
-  public MovieHistoryLoader(Context context, long movieId) {
+  public MovieHistoryLoader(Context context, long movieId, SyncService syncService, MovieDatabaseHelper movieHelper) {
     super(context);
     this.movieId = movieId;
-    Injector.inject(this);
+    this.syncService = syncService;
+    this.movieHelper = movieHelper;
   }
 
   @Override public Result loadInBackground() {

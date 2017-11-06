@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Simon Vig Therkildsen
+ * Copyright (C) 2018 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,30 +14,15 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.common;
+package net.simonvt.cathode.jobqueue;
 
-import dagger.ObjectGraph;
+import dagger.MapKey;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-public final class Injector {
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-  private Injector() {
-  }
-
-  private static ObjectGraph objectGraph;
-
-  public static void install(ObjectGraph graph) {
-    objectGraph = graph;
-  }
-
-  public static boolean isInstalled() {
-    return objectGraph != null;
-  }
-
-  public static <T> T inject(T target) {
-    if (objectGraph == null) {
-      throw new RuntimeException("ObjectGraph not yet initialized");
-    }
-
-    return objectGraph.inject(target);
-  }
+@MapKey @Target(METHOD) @Retention(RUNTIME) public @interface JobKey {
+  Class<? extends Job> value();
 }

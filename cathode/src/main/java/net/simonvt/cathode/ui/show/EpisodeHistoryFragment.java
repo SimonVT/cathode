@@ -25,11 +25,12 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
+import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
+import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.common.util.DateStringUtils;
 import net.simonvt.cathode.common.util.Ids;
@@ -38,6 +39,7 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.database.SimpleCursor;
 import net.simonvt.cathode.provider.database.SimpleCursorLoader;
+import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
 import net.simonvt.schematic.Cursors;
@@ -61,6 +63,8 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
   private EpisodeHistoryLoader.Result result;
 
   @Inject EpisodeTaskScheduler episodeScheduler;
+  @Inject SyncService syncService;
+  @Inject EpisodeDatabaseHelper episodeHelper;
 
   private long episodeId;
   private String showTitle;
@@ -85,7 +89,7 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     Bundle args = getArguments();
     episodeId = args.getLong(ARG_EPISODEID);
@@ -284,7 +288,7 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
   LoaderManager.LoaderCallbacks<EpisodeHistoryLoader.Result> historyCallbacks =
       new LoaderManager.LoaderCallbacks<EpisodeHistoryLoader.Result>() {
         @Override public Loader<EpisodeHistoryLoader.Result> onCreateLoader(int id, Bundle args) {
-          return new EpisodeHistoryLoader(getContext(), episodeId);
+          return new EpisodeHistoryLoader(getContext(), episodeId, syncService, episodeHelper);
         }
 
         @Override public void onLoadFinished(Loader<EpisodeHistoryLoader.Result> loader,

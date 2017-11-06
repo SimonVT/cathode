@@ -38,12 +38,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.AndroidInjection;
 import javax.inject.Inject;
-import net.simonvt.cathode.HttpStatusCode;
+import javax.inject.Named;
 import net.simonvt.cathode.IntPreference;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.TraktSettings;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.event.AuthFailedEvent;
 import net.simonvt.cathode.common.event.RequestFailedEvent;
 import net.simonvt.cathode.common.event.SyncEvent;
@@ -78,18 +78,23 @@ import net.simonvt.cathode.sync.jobscheduler.SchedulerService;
 import net.simonvt.cathode.sync.tmdb.api.SyncConfiguration;
 import okhttp3.logging.HttpLoggingInterceptor;
 
+import static net.simonvt.cathode.module.DebugModule.NAMED_STATUS_CODE;
+
 @SuppressLint("SetTextI18n") public abstract class BaseActivity extends AppCompatActivity {
 
   private static final long FAKE_SHOW_ID = Long.MAX_VALUE;
 
   final DebugViews debugViews = new DebugViews();
 
-  final DebugInjects injects = new DebugInjects();
+  @Inject @Named(NAMED_STATUS_CODE) IntPreference httpStatusCodePreference;
+  @Inject JobManager jobManager;
+  @Inject TraktSettings traktSettings;
+  @Inject HttpLoggingInterceptor loggingInterceptor;
+  @Inject ShowDatabaseHelper showHelper;
 
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
-    Injector.inject(injects);
+    AndroidInjection.inject(this);
 
     super.setContentView(R.layout.debug_home);
 
@@ -192,7 +197,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
       @Override public void onClick(View v) {
         new Thread(new Runnable() {
           @Override public void run() {
-            long showId = injects.showHelper.getId(FAKE_SHOW_ID);
+            long showId = showHelper.getId(FAKE_SHOW_ID);
             if (showId > -1L) {
               getContentResolver().delete(Shows.withId(showId), null, null);
             }
@@ -231,7 +236,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
     debugViews.removeFakeShow.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        final long showId = injects.showHelper.getId(FAKE_SHOW_ID);
+        final long showId = showHelper.getId(FAKE_SHOW_ID);
         if (showId > -1L) {
           getContentResolver().delete(Shows.withId(showId), null, null);
         }
@@ -245,14 +250,14 @@ import okhttp3.logging.HttpLoggingInterceptor;
       @Override
       public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
         HttpLoggingInterceptor.Level logLevel = logLevelAdapter.getItem(position);
-        injects.loggingInterceptor.setLevel(logLevel);
+        loggingInterceptor.setLevel(logLevel);
       }
 
       @Override public void onNothingSelected(AdapterView<?> adapterView) {
       }
     });
     debugViews.logLevel.setSelection(
-        logLevelAdapter.getPositionForValue(injects.loggingInterceptor.getLevel()));
+        logLevelAdapter.getPositionForValue(loggingInterceptor.getLevel()));
 
     int[] statusCodes = new int[] {
         200, 401, 404, 409, 412, 502,
@@ -262,55 +267,55 @@ import okhttp3.logging.HttpLoggingInterceptor;
     debugViews.httpStatusCode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
       @Override
       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        injects.httpStatusCodePreference.set(httpStatusCodeAdapter.getItem(position));
+        httpStatusCodePreference.set(httpStatusCodeAdapter.getItem(position));
       }
 
       @Override public void onNothingSelected(AdapterView<?> parent) {
       }
     });
     debugViews.httpStatusCode.setSelection(
-        httpStatusCodeAdapter.getPositionForValue(injects.httpStatusCodePreference.get()));
+        httpStatusCodeAdapter.getPositionForValue(httpStatusCodePreference.get()));
 
     debugViews.syncConfiguration.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        injects.jobManager.addJob(new SyncConfiguration());
+        jobManager.addJob(new SyncConfiguration());
       }
     });
 
     debugViews.initialSync.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        injects.jobManager.addJob(new InitialSyncJob());
+        jobManager.addJob(new InitialSyncJob());
       }
     });
 
     debugViews.forceUpdate.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        injects.jobManager.addJob(new ForceUpdateJob());
+        jobManager.addJob(new ForceUpdateJob());
       }
     });
 
     debugViews.updated.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        injects.jobManager.addJob(new SyncUpdatedShows());
-        injects.jobManager.addJob(new SyncUserShows());
-        injects.jobManager.addJob(new SyncUpdatedMovies());
-        injects.jobManager.addJob(new SyncUserMovies());
+        jobManager.addJob(new SyncUpdatedShows());
+        jobManager.addJob(new SyncUserShows());
+        jobManager.addJob(new SyncUpdatedMovies());
+        jobManager.addJob(new SyncUserMovies());
       }
     });
 
     debugViews.syncWatching.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        injects.jobManager.addJob(new SyncWatching());
+        jobManager.addJob(new SyncWatching());
       }
     });
 
     debugViews.syncLists.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        injects.jobManager.addJob(new SyncLists());
+        jobManager.addJob(new SyncLists());
       }
     });
 
-    injects.jobManager.addJobListener(jobListener);
+    jobManager.addJobListener(jobListener);
 
     debugViews.startPeriodicJobs.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
@@ -318,33 +323,28 @@ import okhttp3.logging.HttpLoggingInterceptor;
           JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
 
           JobInfo job = new JobInfo.Builder(SyncUpdatedShows.ID,
-              new ComponentName(BaseActivity.this, SchedulerService.class))
-              .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-              .build();
+              new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
+              JobInfo.NETWORK_TYPE_ANY).build();
           scheduler.schedule(job);
 
           job = new JobInfo.Builder(SyncUpdatedMovies.ID,
-              new ComponentName(BaseActivity.this, SchedulerService.class))
-              .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-              .build();
+              new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
+              JobInfo.NETWORK_TYPE_ANY).build();
           scheduler.schedule(job);
 
           job = new JobInfo.Builder(SyncUserActivity.ID,
-              new ComponentName(BaseActivity.this, SchedulerService.class))
-              .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-              .build();
+              new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
+              JobInfo.NETWORK_TYPE_ANY).build();
           scheduler.schedule(job);
 
           job = new JobInfo.Builder(AuthJobHandlerJob.ID,
-              new ComponentName(BaseActivity.this, SchedulerService.class))
-              .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-              .build();
+              new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
+              JobInfo.NETWORK_TYPE_ANY).build();
           scheduler.schedule(job);
 
           job = new JobInfo.Builder(DataJobHandlerJob.ID,
-              new ComponentName(BaseActivity.this, SchedulerService.class))
-              .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-              .build();
+              new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
+              JobInfo.NETWORK_TYPE_ANY).build();
           scheduler.schedule(job);
         }
       }
@@ -371,7 +371,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
   }
 
   @Override protected void onDestroy() {
-    injects.jobManager.removeJobListener(jobListener);
+    jobManager.removeJobListener(jobListener);
     SyncEvent.unregisterListener(debugSyncListener);
     super.onDestroy();
   }
@@ -391,19 +391,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
       }
     }
   };
-
-  public static class DebugInjects {
-
-    @Inject @HttpStatusCode IntPreference httpStatusCodePreference;
-
-    @Inject JobManager jobManager;
-
-    @Inject TraktSettings traktSettings;
-
-    @Inject HttpLoggingInterceptor loggingInterceptor;
-
-    @Inject ShowDatabaseHelper showHelper;
-  }
 
   static class DebugViews {
 

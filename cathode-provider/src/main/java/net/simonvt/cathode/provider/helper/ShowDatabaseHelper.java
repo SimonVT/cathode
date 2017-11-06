@@ -22,7 +22,6 @@ import android.content.Context;
 import android.database.Cursor;
 import java.util.List;
 import net.simonvt.cathode.api.entity.Show;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.TextUtils;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -38,31 +37,16 @@ public final class ShowDatabaseHelper {
 
   public static final long WATCHED_RELEASE = -1L;
 
-  private static volatile ShowDatabaseHelper instance;
-
-  public static ShowDatabaseHelper getInstance(Context context) {
-    if (instance == null) {
-      synchronized (ShowDatabaseHelper.class) {
-        if (instance == null) {
-          instance = new ShowDatabaseHelper(context.getApplicationContext());
-        }
-      }
-    }
-    return instance;
-  }
-
   private static final Object LOCK_ID = new Object();
 
   private Context context;
 
   private ContentResolver resolver;
 
-  private ShowDatabaseHelper(Context context) {
+  public ShowDatabaseHelper(Context context) {
     this.context = context;
 
     resolver = context.getContentResolver();
-
-    Injector.inject(this);
   }
 
   public long getId(long traktId) {
@@ -389,9 +373,10 @@ public final class ShowDatabaseHelper {
     final long firstAiredOffset = FirstAiredOffsetPreference.getInstance().getOffsetMillis();
     final long millis = System.currentTimeMillis() - firstAiredOffset;
 
-    resolver.update(Episodes.fromShow(showId), values, EpisodeColumns.FIRST_AIRED + "<?", new String[] {
-        String.valueOf(millis),
-    });
+    resolver.update(Episodes.fromShow(showId), values, EpisodeColumns.FIRST_AIRED + "<?",
+        new String[] {
+            String.valueOf(millis),
+        });
   }
 
   private static ContentValues getValues(Show show) {

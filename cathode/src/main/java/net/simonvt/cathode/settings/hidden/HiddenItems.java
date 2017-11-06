@@ -22,11 +22,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
+import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.FragmentContract;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.common.util.FragmentStack;
@@ -39,6 +39,8 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.database.SimpleCursor;
 import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.SyncHiddenItems;
+import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationClickListener;
@@ -257,9 +259,12 @@ public class HiddenItems extends BaseActivity
 
   public static class HiddenItemsFragment
       extends ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>
-      implements HiddenItemsAdapter.OnItemClickListener {
+      implements HiddenItemsAdapter.ItemCallbacks {
 
     @Inject JobManager jobManager;
+
+    @Inject ShowTaskScheduler showScheduler;
+    @Inject MovieTaskScheduler movieScheduler;
 
     private HiddenItemsAdapter adapter;
 
@@ -277,7 +282,7 @@ public class HiddenItems extends BaseActivity
 
     @Override public void onCreate(Bundle inState) {
       super.onCreate(inState);
-      Injector.inject(this);
+      AndroidSupportInjection.inject(this);
 
       setTitle(R.string.preference_hidden_items);
       setEmptyText(R.string.preference_hidden_empty);
@@ -308,8 +313,24 @@ public class HiddenItems extends BaseActivity
       navigationListener.onDisplayShow(showId, title, overview, LibraryType.WATCHED);
     }
 
+    @Override public void displayShowInCalendar(long showId) {
+      showScheduler.hideFromCalendar(showId, false);
+    }
+
+    @Override public void displayShowInWatched(long showId) {
+      showScheduler.hideFromWatched(showId, false);
+    }
+
+    @Override public void displayShowInCollection(long showId) {
+      showScheduler.hideFromCollected(showId, false);
+    }
+
     @Override public void onMovieClicked(long movieId, String title, String overview) {
       navigationListener.onDisplayMovie(movieId, title, overview);
+    }
+
+    @Override public void displayMovieInCalendar(long movieId) {
+      movieScheduler.hideFromCalendar(movieId, false);
     }
 
     private void ensureAdapter() {

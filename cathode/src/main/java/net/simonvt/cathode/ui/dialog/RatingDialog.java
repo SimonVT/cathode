@@ -29,9 +29,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
@@ -71,7 +71,7 @@ public class RatingDialog extends DialogFragment {
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     Bundle args = getArguments();
     type = (Type) args.getSerializable(ARG_TYPE);

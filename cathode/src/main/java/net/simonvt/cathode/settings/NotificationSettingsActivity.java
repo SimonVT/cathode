@@ -20,8 +20,8 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import dagger.android.AndroidInjection;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.notification.NotificationService;
 import net.simonvt.cathode.ui.BaseActivity;
 
@@ -58,7 +58,7 @@ public class NotificationSettingsActivity extends BaseActivity {
 
     @Override public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
-      Injector.inject(this);
+      AndroidInjection.inject(this);
 
       addPreferencesFromResource(R.xml.settings_notifications);
 

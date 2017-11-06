@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Simon Vig Therkildsen
+ * Copyright (C) 2018 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.sync.tmdb;
+package net.simonvt.cathode.dagger.views;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import javax.inject.Qualifier;
+import android.view.View;
+import dagger.Module;
+import dagger.android.AndroidInjector;
+import dagger.multibindings.Multibinds;
+import java.util.Map;
 
-@Qualifier @Documented @Retention(RetentionPolicy.RUNTIME)
-public @interface TmdbApiKey {
+@Module public abstract class ViewBindingModule {
+
+  @Multibinds
+  public abstract Map<Class<? extends View>, AndroidInjector.Factory<? extends View>> viewInjectorFactories();
+
+  @Multibinds
+  public abstract Map<String, AndroidInjector.Factory<? extends View>> viewStringInjectorFactories();
 }

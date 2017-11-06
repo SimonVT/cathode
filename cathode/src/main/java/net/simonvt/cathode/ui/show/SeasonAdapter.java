@@ -26,9 +26,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.common.widget.TimeStamp;
@@ -37,15 +35,19 @@ import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.util.DataHelper;
-import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
-import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
-import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 import net.simonvt.schematic.Cursors;
 
 public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolder> {
+
+  public interface EpisodeCallbacks {
+
+    void onEpisodeClick(long episodeId);
+
+    void setEpisodeCollected(long episodeId, boolean collected);
+  }
 
   public static final String[] PROJECTION = {
       EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
@@ -53,22 +55,18 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
       EpisodeColumns.SHOW_TITLE, LastModifiedColumns.LAST_MODIFIED,
   };
 
-  @Inject ShowTaskScheduler showScheduler;
-  @Inject EpisodeTaskScheduler episodeScheduler;
-
   private FragmentActivity activity;
   private Resources resources;
 
   private LibraryType type;
 
-  private EpisodeClickListener clickListener;
+  private EpisodeCallbacks callbacks;
 
-  public SeasonAdapter(FragmentActivity activity, EpisodeClickListener clickListener, Cursor cursor,
+  public SeasonAdapter(FragmentActivity activity, EpisodeCallbacks callbacks, Cursor cursor,
       LibraryType type) {
     super(activity, cursor);
-    Injector.inject(this);
     this.activity = activity;
-    this.clickListener = clickListener;
+    this.callbacks = callbacks;
     this.type = type;
     resources = activity.getResources();
   }
@@ -82,7 +80,7 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
       @Override public void onClick(View v) {
         final int position = holder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
-          clickListener.onEpisodeClick(holder.getItemId());
+          callbacks.onEpisodeClick(holder.getItemId());
         }
       }
     });
@@ -93,7 +91,7 @@ public class SeasonAdapter extends RecyclerCursorAdapter<SeasonAdapter.ViewHolde
           final boolean activated = holder.number.isActivated();
           if (type == LibraryType.COLLECTION) {
             holder.number.setActivated(!activated);
-            episodeScheduler.setIsInCollection(holder.getItemId(), !activated);
+            callbacks.setEpisodeCollected(holder.getItemId(), !activated);
           } else {
             if (activated) {
               RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.EPISODE,

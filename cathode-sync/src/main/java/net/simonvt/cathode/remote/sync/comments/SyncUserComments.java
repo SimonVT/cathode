@@ -24,7 +24,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import net.simonvt.cathode.api.Trakt;
+import javax.inject.Named;
 import net.simonvt.cathode.api.entity.Comment;
 import net.simonvt.cathode.api.entity.CommentItem;
 import net.simonvt.cathode.api.entity.Episode;
@@ -54,6 +54,8 @@ import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import timber.log.Timber;
 
+import static net.simonvt.cathode.api.TraktModule.NAMED_TRAKT;
+
 public class SyncUserComments extends PagedCallJob<CommentItem> {
 
   public static class DuplicateCommentException extends Exception {
@@ -69,7 +71,7 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
   @Inject transient MovieDatabaseHelper movieHelper;
   @Inject transient UserDatabaseHelper userHelper;
 
-  @Inject @Trakt transient Gson gson;
+  @Inject @Named(NAMED_TRAKT) transient Gson gson;
 
   private ItemTypes itemTypes;
 

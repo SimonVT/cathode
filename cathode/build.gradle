@@ -22,9 +22,11 @@ dependencies {
   implementation deps.cardView
   implementation deps.recyclerView
   implementation deps.androidDesign
-
   implementation deps.dagger
+  implementation deps.daggerAndroid
+  implementation deps.daggerAndroidSupport
   annotationProcessor deps.daggerCompiler
+  annotationProcessor deps.daggerAndroidApt
   implementation deps.picasso
   implementation deps.picassoOkHttp
   implementation deps.retrofit

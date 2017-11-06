@@ -21,13 +21,13 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.MenuItem;
+import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.fragment.SwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -37,15 +37,16 @@ import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.shows.SyncTrendingShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.SuggestionsTimestamps;
+import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.lists.ListDialog;
-import net.simonvt.cathode.ui.shows.ShowClickListener;
 import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
 
 public class TrendingShowsFragment
     extends SwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<SimpleCursor>, ListDialog.Callback, ShowClickListener {
+    implements LoaderManager.LoaderCallbacks<SimpleCursor>, ListDialog.Callback,
+    ShowDescriptionAdapter.ShowCallbacks {
 
   private enum SortBy {
     VIEWERS("viewers", Shows.SORT_VIEWERS), RATING("rating", Shows.SORT_RATING);
@@ -99,6 +100,8 @@ public class TrendingShowsFragment
 
   @Inject JobManager jobManager;
 
+  @Inject ShowTaskScheduler showScheduler;
+
   private SortBy sortBy;
 
   private Cursor cursor;
@@ -114,7 +117,7 @@ public class TrendingShowsFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     sortBy = SortBy.fromValue(
         Settings.get(getContext()).getString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey()));
@@ -193,6 +196,10 @@ public class TrendingShowsFragment
 
   @Override public void onShowClick(long showId, String title, String overview) {
     navigationListener.onDisplayShow(showId, title, overview, LibraryType.WATCHED);
+  }
+
+  @Override public void setIsInWatchlist(long showId, boolean inWatchlist) {
+    showScheduler.setIsInWatchlist(showId, inWatchlist);
   }
 
   private void setCursor(Cursor cursor) {

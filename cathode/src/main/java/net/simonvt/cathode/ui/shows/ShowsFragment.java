@@ -22,20 +22,25 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.JobManager;
+import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 
 public abstract class ShowsFragment<D extends Cursor>
     extends ToolbarSwipeRefreshRecyclerFragment<ShowsWithNextAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<D>, ShowClickListener {
+    implements LoaderManager.LoaderCallbacks<D>, ShowsWithNextAdapter.Callbacks {
 
   @Inject protected JobManager jobManager;
+
+  @Inject ShowTaskScheduler showScheduler;
+  @Inject EpisodeTaskScheduler episodeScheduler;
 
   protected RecyclerCursorAdapter showsAdapter;
 
@@ -54,7 +59,7 @@ public abstract class ShowsFragment<D extends Cursor>
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     getLoaderManager().initLoader(getLoaderId(), null, this);
 
@@ -87,6 +92,30 @@ public abstract class ShowsFragment<D extends Cursor>
 
   @Override public void onShowClick(long showId, String title, String overview) {
     navigationListener.onDisplayShow(showId, title, overview, getLibraryType());
+  }
+
+  @Override public void onRemoveFromWatchlist(long showId) {
+    showScheduler.setIsInWatchlist(showId, false);
+  }
+
+  @Override public void onCheckin(long episodeId) {
+    episodeScheduler.checkin(episodeId, null, false, false, false);
+  }
+
+  @Override public void onCancelCheckin() {
+    episodeScheduler.cancelCheckin();
+  }
+
+  @Override public void onCollectNext(long showId) {
+    showScheduler.collectedNext(showId);
+  }
+
+  @Override public void onHideFromWatched(long showId) {
+    showScheduler.hideFromWatched(showId, true);
+  }
+
+  @Override public void onHideFromCollection(long showId) {
+    showScheduler.hideFromCollected(showId, true);
   }
 
   protected ShowsWithNextAdapter getAdapter(Cursor cursor) {

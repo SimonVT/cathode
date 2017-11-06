@@ -32,13 +32,17 @@ import dagger.Module;
 import dagger.Provides;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 
-@Module(library = true, complete = false) public class TmdbModule {
+@Module public class TmdbModule {
 
-  @Provides @Singleton @Tmdb OkHttpClient.Builder okBuilder(Context context) {
+  public static final String NAMED_TMDB = "tmdb";
+  public static final String NAMED_TMDB_API_KEY = "tmdbApiKey";
+
+  @Provides @Singleton @Named(NAMED_TMDB) OkHttpClient.Builder okBuilder(Context context) {
     OkHttpClient.Builder builder = new OkHttpClient.Builder();
     builder.connectTimeout(15, TimeUnit.SECONDS);
     builder.readTimeout(20, TimeUnit.SECONDS);
@@ -51,8 +55,8 @@ import okhttp3.OkHttpClient;
     return builder;
   }
 
-  @Provides @Singleton TmdbSettings tmdbSettings(@TmdbApiKey String apiKey,
-      @Tmdb OkHttpClient.Builder okBuilder) {
+  @Provides @Singleton TmdbSettings tmdbSettings(@Named(NAMED_TMDB_API_KEY) String apiKey,
+      @Named(NAMED_TMDB) OkHttpClient.Builder okBuilder) {
     return new TmdbSettings(apiKey, okBuilder);
   }
 

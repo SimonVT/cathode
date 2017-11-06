@@ -21,12 +21,14 @@ import android.database.Cursor;
 import android.text.format.DateUtils;
 import java.io.IOException;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.CheckinService;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.common.event.ErrorEvent;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
@@ -53,14 +55,19 @@ import retrofit2.Call;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class MovieTaskScheduler extends BaseTaskScheduler {
+@Singleton public class MovieTaskScheduler extends BaseTaskScheduler {
 
-  @Inject MovieDatabaseHelper movieHelper;
-  @Inject CheckinService checkinService;
-  @Inject CheckIn checkIn;
+  private MovieDatabaseHelper movieHelper;
+  private CheckinService checkinService;
+  private CheckIn checkIn;
 
-  public MovieTaskScheduler(Context context) {
-    super(context);
+  @Inject
+  public MovieTaskScheduler(Context context, JobManager jobManager, MovieDatabaseHelper movieHelper,
+      CheckinService checkinService, CheckIn checkIn) {
+    super(context, jobManager);
+    this.movieHelper = movieHelper;
+    this.checkinService = checkinService;
+    this.checkIn = checkIn;
   }
 
   public void sync(final long movieId) {

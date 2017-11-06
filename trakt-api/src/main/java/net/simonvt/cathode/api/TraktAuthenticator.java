@@ -16,19 +16,29 @@
 
 package net.simonvt.cathode.api;
 
+import dagger.Lazy;
 import java.io.IOException;
+import net.simonvt.cathode.api.entity.AccessToken;
+import net.simonvt.cathode.api.entity.TokenRequest;
+import net.simonvt.cathode.api.enumeration.GrantType;
+import net.simonvt.cathode.api.service.AuthorizationService;
 import okhttp3.Authenticator;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.Route;
+import retrofit2.Call;
 import timber.log.Timber;
 
 public class TraktAuthenticator implements Authenticator {
 
   private TraktSettings settings;
+  private Lazy<AuthorizationService> authService;
 
-  public TraktAuthenticator(TraktSettings settings) {
+  private volatile boolean refreshingToken;
+
+  public TraktAuthenticator(TraktSettings settings, Lazy<AuthorizationService> authService) {
     this.settings = settings;
+    this.authService = authService;
   }
 
   @Override public Request authenticate(Route route, Response response) throws IOException {
@@ -46,7 +56,7 @@ public class TraktAuthenticator implements Authenticator {
           return null;
         }
 
-        final String newToken = settings.refreshToken();
+        final String newToken = refreshToken();
         if (newToken == null) {
           return null;
         }
@@ -61,11 +71,89 @@ public class TraktAuthenticator implements Authenticator {
     }
   }
 
+  private String refreshToken() {
+    synchronized (this) {
+      if (!isRefreshingToken()) {
+        if (!settings.isTokenExpired()) {
+          Timber.d("Token still valid");
+          return settings.getAccessToken();
+        }
+
+        final String refreshToken = settings.getRefreshToken();
+        if (refreshToken == null) {
+          return null;
+        }
+
+        try {
+          setRefreshingToken(true);
+
+          TokenRequest tokenRequest =
+              TokenRequest.refreshToken(refreshToken, settings.getClientId(), settings.getSecret(),
+                  settings.getRedirectUrl(), GrantType.REFRESH_TOKEN);
+
+          Timber.d("Getting new tokens, with refresh token: %s", refreshToken);
+          Call<AccessToken> call = authService.get().getToken(tokenRequest);
+          retrofit2.Response<AccessToken> response = call.execute();
+          if (response.isSuccessful()) {
+            AccessToken token = response.body();
+            settings.updateTokens(token);
+            return token.getAccessToken();
+          } else {
+            if (response.code() == 401) {
+              settings.clearRefreshToken();
+              return null;
+            }
+
+            String message = "Code: " + response.code();
+            Timber.e(new TokenRefreshFailedException(message), "Unable to get token");
+          }
+        } catch (IOException e) {
+          Timber.d(e, "Unable to get new tokens");
+        } finally {
+          setRefreshingToken(false);
+        }
+      }
+    }
+
+    return null;
+  }
+
+  private boolean isRefreshingToken() {
+    synchronized (this) {
+      return refreshingToken;
+    }
+  }
+
+  public void setRefreshingToken(boolean refreshingToken) {
+    synchronized (this) {
+      this.refreshingToken = refreshingToken;
+    }
+  }
+
   private int responseCount(Response response) {
     int result = 1;
     while ((response = response.priorResponse()) != null) {
       result++;
     }
     return result;
+  }
+
+  public static class TokenRefreshFailedException extends Exception {
+
+    public TokenRefreshFailedException() {
+      super();
+    }
+
+    public TokenRefreshFailedException(String detailMessage) {
+      super(detailMessage);
+    }
+
+    public TokenRefreshFailedException(String detailMessage, Throwable throwable) {
+      super(detailMessage, throwable);
+    }
+
+    public TokenRefreshFailedException(Throwable throwable) {
+      super(throwable);
+    }
   }
 }

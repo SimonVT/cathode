@@ -32,13 +32,13 @@ import android.view.ViewPropertyAnimator;
 import android.widget.ProgressBar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.AndroidInjection;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.event.AuthFailedEvent;
 import net.simonvt.cathode.common.event.AuthFailedEvent.OnAuthFailedListener;
 import net.simonvt.cathode.common.event.ErrorEvent;
@@ -168,7 +168,7 @@ public class HomeActivity extends BaseActivity
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
     Timber.d("onCreate");
-    Injector.inject(this);
+    AndroidInjection.inject(this);
 
     setContentView(R.layout.activity_home);
 

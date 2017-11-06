@@ -40,13 +40,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.support.AndroidSupportInjection;
 import java.util.Locale;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.enumeration.ShowStatus;
 import net.simonvt.cathode.api.util.TraktUtils;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.common.util.DateStringUtils;
 import net.simonvt.cathode.common.util.Ids;
@@ -91,11 +91,9 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
-import net.simonvt.cathode.ui.listener.SeasonClickListener;
 import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.widget.AdapterCountDataObserver;
 import net.simonvt.schematic.Cursors;
-import timber.log.Timber;
 
 public class ShowFragment extends RefreshableAppBarFragment {
 
@@ -263,8 +261,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Timber.d("ShowFragment#onCreate");
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     Bundle args = getArguments();
     showId = args.getLong(ARG_SHOWID);
@@ -274,7 +271,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
     setTitle(showTitle);
 
-    seasonsAdapter = new SeasonsAdapter(getActivity(), new SeasonClickListener() {
+    seasonsAdapter = new SeasonsAdapter(getActivity(), new SeasonsAdapter.SeasonClickListener() {
       @Override
       public void onSeasonClick(long showId, long seasonId, String showTitle, int seasonNumber) {
         navigationListener.onDisplaySeason(showId, seasonId, showTitle, seasonNumber, type);

@@ -20,8 +20,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
@@ -47,20 +49,31 @@ import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.sync.trakt.UserList;
 import net.simonvt.schematic.Cursors;
 
-public class ListsTaskScheduler extends BaseTaskScheduler {
+@Singleton public class ListsTaskScheduler extends BaseTaskScheduler {
 
-  @Inject SyncService syncService;
+  private SyncService syncService;
 
-  @Inject ShowDatabaseHelper showHelper;
-  @Inject SeasonDatabaseHelper seasonHelper;
-  @Inject EpisodeDatabaseHelper episodeHelper;
-  @Inject MovieDatabaseHelper movieHelper;
-  @Inject transient PersonDatabaseHelper personHelper;
+  private ShowDatabaseHelper showHelper;
+  private SeasonDatabaseHelper seasonHelper;
+  private EpisodeDatabaseHelper episodeHelper;
+  private MovieDatabaseHelper movieHelper;
+  private PersonDatabaseHelper personHelper;
 
-  @Inject UserList userList;
+  private UserList userList;
 
-  public ListsTaskScheduler(Context context) {
-    super(context);
+  @Inject
+  public ListsTaskScheduler(Context context, JobManager jobManager, SyncService syncService,
+      ShowDatabaseHelper showHelper, SeasonDatabaseHelper seasonHelper,
+      EpisodeDatabaseHelper episodeHelper, MovieDatabaseHelper movieHelper,
+      PersonDatabaseHelper personHelper, UserList userList) {
+    super(context, jobManager);
+    this.syncService = syncService;
+    this.showHelper = showHelper;
+    this.seasonHelper = seasonHelper;
+    this.episodeHelper = episodeHelper;
+    this.movieHelper = movieHelper;
+    this.personHelper = personHelper;
+    this.userList = userList;
   }
 
   public void createList(final String name, final String description, final Privacy privacy,

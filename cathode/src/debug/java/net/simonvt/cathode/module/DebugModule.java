@@ -20,18 +20,11 @@ import com.google.gson.Gson;
 import dagger.Module;
 import dagger.Provides;
 import java.io.IOException;
-import javax.inject.Singleton;
-import net.simonvt.cathode.AppModule;
-import net.simonvt.cathode.HttpStatusCode;
+import javax.inject.Named;
 import net.simonvt.cathode.IntPreference;
-import net.simonvt.cathode.api.Trakt;
 import net.simonvt.cathode.api.TraktModule;
-import net.simonvt.cathode.remote.InitialSyncJob;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.sync.tmdb.Tmdb;
-import net.simonvt.cathode.sync.tmdb.TmdbApiKey;
 import net.simonvt.cathode.sync.tmdb.TmdbSettings;
-import net.simonvt.cathode.ui.BaseActivity;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
@@ -40,24 +33,21 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
-@Module(addsTo = AppModule.class, overrides = true,
+import static net.simonvt.cathode.api.TraktModule.NAMED_TRAKT;
+import static net.simonvt.cathode.sync.tmdb.TmdbModule.NAMED_TMDB;
+import static net.simonvt.cathode.sync.tmdb.TmdbModule.NAMED_TMDB_API_KEY;
 
-    injects = {
-        BaseActivity.DebugInjects.class, InitialSyncJob.class
-    }) public class DebugModule {
+@Module
+public class DebugModule {
 
-  private Context context;
+  public static final String NAMED_STATUS_CODE = "httpStatusCode";
 
-  public DebugModule(Context context) {
-    this.context = context;
-  }
-
-  @Provides @Singleton HttpLoggingInterceptor provideLoggingInterceptor() {
+  @Provides HttpLoggingInterceptor provideLoggingInterceptor() {
     return new HttpLoggingInterceptor();
   }
 
-  @Provides @Singleton @Trakt Retrofit provideRestAdapter(@Trakt OkHttpClient client,
-      @Trakt Gson gson, @HttpStatusCode final IntPreference httpStatusCode,
+  @Provides @Named(NAMED_TRAKT) Retrofit provideRestAdapter(@Named(NAMED_TRAKT) OkHttpClient client,
+      @Named(NAMED_TRAKT) Gson gson, @Named(NAMED_STATUS_CODE) final IntPreference httpStatusCode,
       HttpLoggingInterceptor loggingInterceptor) {
     OkHttpClient.Builder builder = client.newBuilder();
     builder.networkInterceptors().add(new Interceptor() {
@@ -79,12 +69,13 @@ import timber.log.Timber;
         .build();
   }
 
-  @Provides @Singleton @HttpStatusCode IntPreference provideHttpStatusCodePreference() {
+  @Provides @Named(NAMED_STATUS_CODE) IntPreference provideHttpStatusCodePreference(Context context) {
     return new IntPreference(Settings.get(context), "debug_httpStatusCode", 200);
   }
 
-  @Provides @Singleton TmdbSettings tmdbSettings(@TmdbApiKey String apiKey,
-      @Tmdb OkHttpClient.Builder okBuilder, HttpLoggingInterceptor httpLoggingInterceptor) {
+  @Provides TmdbSettings tmdbSettings(@Named(NAMED_TMDB_API_KEY) String apiKey,
+      @Named(NAMED_TMDB) OkHttpClient.Builder okBuilder,
+      HttpLoggingInterceptor httpLoggingInterceptor) {
     okBuilder.interceptors().add(httpLoggingInterceptor);
     return new TmdbSettings(apiKey, okBuilder);
   }

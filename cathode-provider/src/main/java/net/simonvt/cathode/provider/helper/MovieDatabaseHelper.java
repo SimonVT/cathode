@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import net.simonvt.cathode.api.entity.Movie;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.TextUtils;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
@@ -44,31 +43,16 @@ public final class MovieDatabaseHelper {
 
   public static final long WATCHED_RELEASE = -1L;
 
-  private static volatile MovieDatabaseHelper instance;
-
-  public static MovieDatabaseHelper getInstance(Context context) {
-    if (instance == null) {
-      synchronized (MovieDatabaseHelper.class) {
-        if (instance == null) {
-          instance = new MovieDatabaseHelper(context.getApplicationContext());
-        }
-      }
-    }
-    return instance;
-  }
-
   private static final Object LOCK_ID = new Object();
 
   private Context context;
 
   private ContentResolver resolver;
 
-  private MovieDatabaseHelper(Context context) {
+  public MovieDatabaseHelper(Context context) {
     this.context = context;
 
     resolver = context.getContentResolver();
-
-    Injector.inject(this);
   }
 
   public long getTraktId(long movieId) {

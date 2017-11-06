@@ -21,18 +21,30 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
+import android.content.ContentProvider;
 import android.content.Intent;
 import android.os.Build;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.text.format.DateUtils;
+import android.view.View;
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasActivityInjector;
+import dagger.android.HasContentProviderInjector;
+import dagger.android.HasFragmentInjector;
+import dagger.android.HasServiceInjector;
+import dagger.android.support.HasSupportFragmentInjector;
 import javax.inject.Inject;
-import net.simonvt.cathode.common.Injector;
+import net.simonvt.cathode.common.dagger.HasViewInjector;
 import net.simonvt.cathode.common.event.AuthFailedEvent;
 import net.simonvt.cathode.common.event.AuthFailedEvent.OnAuthFailedListener;
 import net.simonvt.cathode.common.event.ItemsUpdatedEvent;
 import net.simonvt.cathode.common.event.ItemsUpdatedEvent.OnItemsUpdatedListener;
 import net.simonvt.cathode.common.util.MainHandler;
+import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.notification.NotificationHelper;
 import net.simonvt.cathode.remote.sync.SyncJob;
@@ -56,7 +68,9 @@ import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import net.simonvt.cathode.ui.HomeActivity;
 import timber.log.Timber;
 
-public class CathodeApp extends Application {
+public class CathodeApp extends Application
+    implements HasActivityInjector, HasFragmentInjector, HasSupportFragmentInjector, HasServiceInjector,
+    HasViewInjector, HasContentProviderInjector {
 
   public static final String CHANNEL_ERRORS = "channel_errors";
 
@@ -67,12 +81,25 @@ public class CathodeApp extends Application {
   private int homeActivityResumedCount;
   private long lastSync;
 
+  private AppComponent appComponent;
+  private CathodeComponent cathodeComponent;
+
+  @Inject AuthJobHandler authJobHandler;
+  @Inject DataJobHandler dataJobHandler;
   @Inject JobManager jobManager;
+
+  private volatile boolean injected = false;
+  @Inject DispatchingAndroidInjector<Activity> activityInjector;
+  @Inject DispatchingAndroidInjector<android.app.Fragment> fragmentInjector;
+  @Inject DispatchingAndroidInjector<Fragment> supportFragmentInjector;
+  @Inject DispatchingAndroidInjector<Service> serviceInjector;
+  @Inject DispatchingAndroidInjector<ContentProvider> contentProviderInjector;
+  @Inject DispatchingAndroidInjector<Job> jobInjector;
+  @Inject DispatchingAndroidInjector<View> viewInjector;
 
   @Override public void onCreate() {
     super.onCreate();
-    CathodeInitProvider.ensureInjector(this);
-    Injector.inject(this);
+    ensureInjection();
 
     AuthFailedEvent.registerListener(authFailedListener);
 
@@ -115,6 +142,19 @@ public class CathodeApp extends Application {
     }
   }
 
+  public void ensureInjection() {
+    if (!injected) {
+      synchronized (this) {
+        if (!injected) {
+          appComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
+          cathodeComponent = appComponent.plusCathodeComponent();
+          cathodeComponent.inject(this);
+          injected = true;
+        }
+      }
+    }
+  }
+
   private Runnable syncRunnable = new Runnable() {
     @Override public void run() {
       Timber.d("Performing periodic sync");
@@ -147,8 +187,8 @@ public class CathodeApp extends Application {
         MainHandler.postDelayed(syncRunnable, delay);
       }
 
-      AuthJobHandler.getInstance().registerListener(authJobListener);
-      DataJobHandler.getInstance().registerListener(dataJobListener);
+      authJobHandler.registerListener(authJobListener);
+      dataJobHandler.registerListener(dataJobListener);
     }
   }
 
@@ -157,8 +197,8 @@ public class CathodeApp extends Application {
     if (homeActivityResumedCount == 0) {
       Timber.d("Pausing periodic sync");
       MainHandler.removeCallbacks(syncRunnable);
-      AuthJobHandler.getInstance().unregisterListener(authJobListener);
-      DataJobHandler.getInstance().unregisterListener(dataJobListener);
+      authJobHandler.unregisterListener(authJobListener);
+      dataJobHandler.unregisterListener(dataJobListener);
     }
   }
 
@@ -233,5 +273,30 @@ public class CathodeApp extends Application {
       channel.enableVibration(true);
       nm.createNotificationChannel(channel);
     }
+  }
+
+  @Override public AndroidInjector<Activity> activityInjector() {
+    return activityInjector;
+  }
+
+  @Override public AndroidInjector<android.app.Fragment> fragmentInjector() {
+    return fragmentInjector;
+  }
+
+  @Override public AndroidInjector<Fragment> supportFragmentInjector() {
+    return supportFragmentInjector;
+  }
+
+  @Override public AndroidInjector<Service> serviceInjector() {
+    return serviceInjector;
+  }
+
+  @Override public AndroidInjector<View> viewInjector() {
+    return viewInjector;
+  }
+
+  @Override public AndroidInjector<ContentProvider> contentProviderInjector() {
+    ensureInjection();
+    return contentProviderInjector;
   }
 }

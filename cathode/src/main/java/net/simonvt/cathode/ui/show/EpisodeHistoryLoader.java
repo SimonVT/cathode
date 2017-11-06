@@ -21,10 +21,8 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.HistoryItem;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.provider.database.BaseAsyncLoader;
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper;
 import retrofit2.Call;
@@ -57,18 +55,20 @@ public class EpisodeHistoryLoader extends BaseAsyncLoader<EpisodeHistoryLoader.R
     }
   }
 
-  @Inject SyncService syncService;
+  private SyncService syncService;
 
-  @Inject EpisodeDatabaseHelper episodeHelper;
+  private EpisodeDatabaseHelper episodeHelper;
 
   private long episodeId;
 
   private DateFormat df = DateFormat.getDateTimeInstance();
 
-  public EpisodeHistoryLoader(Context context, long episodeId) {
+  public EpisodeHistoryLoader(Context context, long episodeId, SyncService syncService,
+      EpisodeDatabaseHelper episodeHelper) {
     super(context);
     this.episodeId = episodeId;
-    Injector.inject(this);
+    this.syncService = syncService;
+    this.episodeHelper = episodeHelper;
   }
 
   @Override public Result loadInBackground() {

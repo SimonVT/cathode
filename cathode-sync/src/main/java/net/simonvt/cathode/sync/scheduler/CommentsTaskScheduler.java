@@ -20,8 +20,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper;
@@ -36,17 +38,25 @@ import net.simonvt.cathode.remote.action.comments.UnlikeCommentJob;
 import net.simonvt.cathode.remote.action.comments.UpdateCommentJob;
 import net.simonvt.schematic.Cursors;
 
-public class CommentsTaskScheduler extends BaseTaskScheduler {
+@Singleton public class CommentsTaskScheduler extends BaseTaskScheduler {
 
-  @Inject SyncService syncService;
+  private SyncService syncService;
 
-  @Inject ShowDatabaseHelper showHelper;
-  @Inject SeasonDatabaseHelper seasonHelper;
-  @Inject EpisodeDatabaseHelper episodeHelper;
-  @Inject MovieDatabaseHelper movieHelper;
+  private ShowDatabaseHelper showHelper;
+  private SeasonDatabaseHelper seasonHelper;
+  private EpisodeDatabaseHelper episodeHelper;
+  private MovieDatabaseHelper movieHelper;
 
-  public CommentsTaskScheduler(Context context) {
-    super(context);
+  @Inject
+  public CommentsTaskScheduler(Context context, JobManager jobManager, SyncService syncService,
+      ShowDatabaseHelper showHelper, SeasonDatabaseHelper seasonHelper,
+      EpisodeDatabaseHelper episodeHelper, MovieDatabaseHelper movieHelper) {
+    super(context, jobManager);
+    this.syncService = syncService;
+    this.showHelper = showHelper;
+    this.seasonHelper = seasonHelper;
+    this.episodeHelper = episodeHelper;
+    this.movieHelper = movieHelper;
   }
 
   public void comment(final ItemType type, final long itemId, final String comment,

@@ -24,6 +24,8 @@ public interface TraktSettings {
 
   String getRefreshToken();
 
+  void clearRefreshToken();
+
   void updateTokens(AccessToken tokens);
 
   String getClientId();
@@ -32,5 +34,5 @@ public interface TraktSettings {
 
   String getRedirectUrl();
 
-  String refreshToken();
+  boolean isTokenExpired();
 }

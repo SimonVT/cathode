@@ -17,12 +17,12 @@ package net.simonvt.cathode.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import net.simonvt.cathode.common.Injector;
+import dagger.android.AndroidInjection;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidInjection.inject(this);
   }
 }

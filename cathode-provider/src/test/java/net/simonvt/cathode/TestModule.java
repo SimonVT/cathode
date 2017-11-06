@@ -17,10 +17,6 @@
 package net.simonvt.cathode;
 
 import dagger.Module;
-import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 
-@Module(injects = {
-    ShowDatabaseHelper.class,
-}) //
-public class TestModule {
+@Module public class TestModule {
 }

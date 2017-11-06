@@ -19,10 +19,9 @@ package net.simonvt.cathode.sync.jobscheduler;
 import android.app.job.JobParameters;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import dagger.android.DispatchingAndroidInjector;
 import javax.inject.Inject;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobInjector;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.movies.SyncPendingMovies;
@@ -35,10 +34,10 @@ import net.simonvt.cathode.remote.sync.shows.SyncUserShows;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public class JobCreator {
 
-  @Inject JobInjector injector;
+  @Inject DispatchingAndroidInjector<Job> jobInjector;
 
-  public JobCreator() {
-    Injector.inject(this);
+  @Inject public JobCreator(DispatchingAndroidInjector<Job> jobInjector) {
+    this.jobInjector = jobInjector;
   }
 
   public Job create(JobParameters params) {
@@ -76,7 +75,7 @@ import net.simonvt.cathode.remote.sync.shows.SyncUserShows;
   }
 
   private Job inject(Job job) {
-    injector.injectInto(job);
+    jobInjector.inject(job);
     return job;
   }
 }

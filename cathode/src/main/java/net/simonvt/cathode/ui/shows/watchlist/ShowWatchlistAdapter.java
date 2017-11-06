@@ -24,9 +24,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.adapter.HeaderCursorAdapter;
 import net.simonvt.cathode.common.widget.CircularProgressIndicator;
 import net.simonvt.cathode.common.widget.OverflowView;
@@ -39,8 +37,6 @@ import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.util.DataHelper;
-import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
-import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.widget.IndicatorView;
 import net.simonvt.schematic.Cursors;
@@ -52,11 +48,15 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
     void onRemoveItem(int position, long itemId);
   }
 
-  public interface OnItemClickListener {
+  public interface ItemCallbacks {
 
     void onShowClicked(long showId, String title, String overview);
 
+    void onRemoveShowFromWatchlist(long showId);
+
     void onEpisodeClicked(long episodeId, String showTitle);
+
+    void onRemoveEpisodeFromWatchlist(long episodeId);
   }
 
   static final String[] PROJECTION_SHOW = new String[] {
@@ -86,23 +86,17 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
 
   private static final int TYPE_EPISODE = 1;
 
-  @Inject ShowTaskScheduler showScheduler;
-
-  @Inject EpisodeTaskScheduler episodeScheduler;
-
   private FragmentActivity activity;
 
   private RemoveListener onRemoveListener;
 
-  private OnItemClickListener onItemClickListener;
+  private ItemCallbacks itemCallbacks;
 
-  public ShowWatchlistAdapter(FragmentActivity activity, OnItemClickListener onItemClickListener,
+  public ShowWatchlistAdapter(FragmentActivity activity, ItemCallbacks itemCallbacks,
       RemoveListener onRemoveListener) {
-    super();
     this.activity = activity;
-    this.onItemClickListener = onItemClickListener;
+    this.itemCallbacks = itemCallbacks;
     this.onRemoveListener = onRemoveListener;
-    Injector.inject(this);
     setHasStableIds(false);
   }
 
@@ -136,7 +130,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
             final long id = getItemId(position);
             final String title = Cursors.getString(cursor, ShowColumns.TITLE);
             final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
-            onItemClickListener.onShowClicked(id, title, overview);
+            itemCallbacks.onShowClicked(id, title, overview);
           }
         }
       });
@@ -152,7 +146,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
             Cursor cursor = getCursor(position);
             final long id = getItemId(position);
             final String showTitle = Cursors.getString(cursor, ShowColumns.TITLE);
-            onItemClickListener.onEpisodeClicked(id, showTitle);
+            itemCallbacks.onEpisodeClicked(id, showTitle);
           }
         }
       });
@@ -214,8 +208,8 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
           if (position != RecyclerView.NO_POSITION) {
             switch (action) {
               case R.id.action_watchlist_remove:
+                itemCallbacks.onRemoveShowFromWatchlist(id);
                 onRemoveListener.onRemoveItem(position, id);
-                showScheduler.setIsInWatchlist(id, false);
             }
           }
         }
@@ -255,8 +249,8 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
                 break;
 
               case R.id.action_watchlist_remove:
+                itemCallbacks.onRemoveEpisodeFromWatchlist(id);
                 onRemoveListener.onRemoveItem(position, id);
-                episodeScheduler.setIsInWatchlist(id, false);
                 break;
             }
           }

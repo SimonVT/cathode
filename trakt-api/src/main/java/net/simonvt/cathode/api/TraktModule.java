@@ -13,6 +13,7 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
 import java.io.File;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import net.simonvt.cathode.api.entity.IsoTime;
 import net.simonvt.cathode.api.enumeration.Action;
@@ -54,12 +56,14 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-@Module(library = true, complete = false) public class TraktModule {
+@Module public class TraktModule {
 
   public static final String API_URL = "https://api.trakt.tv";
 
-  @Provides @Singleton @Trakt Retrofit provideRestAdapter(@Trakt OkHttpClient client,
-      @Trakt Gson gson) {
+  public static final String NAMED_TRAKT = "Trakt";
+
+  @Provides @Singleton @Named(NAMED_TRAKT) Retrofit provideRestAdapter(
+      @Named(NAMED_TRAKT) OkHttpClient client, @Named(NAMED_TRAKT) Gson gson) {
     return new Retrofit.Builder() //
         .baseUrl(API_URL)
         .client(client)
@@ -67,8 +71,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
         .build();
   }
 
-  @Provides @Singleton @Trakt OkHttpClient provideOkHttpClient(Context context,
-      TraktSettings settings, @Trakt List<Interceptor> interceptors) {
+  @Provides @Singleton @Named(NAMED_TRAKT) OkHttpClient provideOkHttpClient(Context context,
+      TraktSettings settings, @Named(NAMED_TRAKT) List<Interceptor> interceptors,
+      Lazy<AuthorizationService> authService) {
     OkHttpClient.Builder builder = new OkHttpClient.Builder();
     builder.connectTimeout(15, TimeUnit.SECONDS);
     builder.readTimeout(20, TimeUnit.SECONDS);
@@ -79,61 +84,61 @@ import retrofit2.converter.gson.GsonConverterFactory;
     builder.interceptors().addAll(interceptors);
     builder.interceptors().add(new ApiInterceptor(settings));
     builder.interceptors().add(new AuthInterceptor(settings));
-    builder.authenticator(new TraktAuthenticator(settings));
+    builder.authenticator(new TraktAuthenticator(settings, authService));
 
     return builder.build();
   }
 
-  @Provides @Singleton AuthorizationService provideAuthorizationService(@Trakt Retrofit adapter) {
+  @Provides @Singleton AuthorizationService provideAuthorizationService(@Named(NAMED_TRAKT) Retrofit adapter) {
     return adapter.create(AuthorizationService.class);
   }
 
-  @Provides @Singleton CheckinService provideCheckinService(@Trakt Retrofit adapter) {
+  @Provides @Singleton CheckinService provideCheckinService(@Named(NAMED_TRAKT) Retrofit adapter) {
     return adapter.create(CheckinService.class);
   }
 
-  @Provides @Singleton CommentsService provideCommentsService(@Trakt Retrofit adapter) {
+  @Provides @Singleton CommentsService provideCommentsService(@Named(NAMED_TRAKT) Retrofit adapter) {
     return adapter.create(CommentsService.class);
   }
 
-  @Provides @Singleton EpisodeService provideEpisodeService(@Trakt Retrofit adapter) {
+  @Provides @Singleton EpisodeService provideEpisodeService(@Named(NAMED_TRAKT) Retrofit adapter) {
     return adapter.create(EpisodeService.class);
   }
 
-  @Provides @Singleton MoviesService provideMoviesService(@Trakt Retrofit adapter) {
+  @Provides @Singleton MoviesService provideMoviesService(@Named(NAMED_TRAKT) Retrofit adapter) {
     return adapter.create(MoviesService.class);
   }
 
-  @Provides @Singleton PeopleService providePeopleService(@Trakt Retrofit adapter) {
+  @Provides @Singleton PeopleService providePeopleService(@Named(NAMED_TRAKT) Retrofit adapter) {
     return adapter.create(PeopleService.class);
   }
 
   @Provides @Singleton RecommendationsService provideRecommendationsService(
-      @Trakt Retrofit adapter) {
+      @Named(NAMED_TRAKT) Retrofit adapter) {
     return adapter.create(RecommendationsService.class);
   }
 
-  @Provides @Singleton SearchService provideSearchService(@Trakt Retrofit adapter) {
+  @Provides @Singleton SearchService provideSearchService(@Named(NAMED_TRAKT) Retrofit adapter) {
     return adapter.create(SearchService.class);
   }
 
-  @Provides @Singleton SeasonService provideSeasonService(@Trakt Retrofit adapter) {
+  @Provides @Singleton SeasonService provideSeasonService(@Named(NAMED_TRAKT) Retrofit adapter) {
     return adapter.create(SeasonService.class);
   }
 
-  @Provides @Singleton ShowsService provideShowsService(@Trakt Retrofit adapter) {
+  @Provides @Singleton ShowsService provideShowsService(@Named(NAMED_TRAKT) Retrofit adapter) {
     return adapter.create(ShowsService.class);
   }
 
-  @Provides @Singleton SyncService provideSyncService(@Trakt Retrofit adapter) {
+  @Provides @Singleton SyncService provideSyncService(@Named(NAMED_TRAKT) Retrofit adapter) {
     return adapter.create(SyncService.class);
   }
 
-  @Provides @Singleton UsersService provideUsersService(@Trakt Retrofit adapter) {
+  @Provides @Singleton UsersService provideUsersService(@Named(NAMED_TRAKT) Retrofit adapter) {
     return adapter.create(UsersService.class);
   }
 
-  @Provides @Singleton @Trakt Gson provideGson() {
+  @Provides @Singleton @Named(NAMED_TRAKT) Gson provideGson() {
     GsonBuilder builder = new GsonBuilder();
     builder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
 

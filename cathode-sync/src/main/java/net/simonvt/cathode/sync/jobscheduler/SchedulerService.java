@@ -22,10 +22,12 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.SparseArray;
 import com.crashlytics.android.Crashlytics;
+import dagger.android.AndroidInjection;
+import dagger.android.DispatchingAndroidInjector;
 import io.fabric.sdk.android.Fabric;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import net.simonvt.cathode.common.Injector;
+import javax.inject.Inject;
 import net.simonvt.cathode.jobqueue.Job;
 import timber.log.Timber;
 
@@ -33,15 +35,16 @@ import timber.log.Timber;
 
   private static final int THREAD_COUNT = 3;
 
-  private JobCreator jobCreator;
+  @Inject DispatchingAndroidInjector<Job> jobInjector;
+  @Inject JobCreator jobCreator;
+
   private ExecutorService executor;
   private SparseArray<Job> runningJobs = new SparseArray<>();
 
   @Override public void onCreate() {
     super.onCreate();
-    if (Injector.isInstalled()) {
-      jobCreator = new JobCreator();
-    }
+    // TODO: Stop if not app context
+    AndroidInjection.inject(this);
     executor = Executors.newFixedThreadPool(THREAD_COUNT);
   }
 
@@ -68,6 +71,7 @@ import timber.log.Timber;
       case AuthJobHandlerJob.ID:
       case AuthJobHandlerJob.ID_ONESHOT: {
         Job job = new AuthJobHandlerJob(this, params);
+        jobInjector.inject(job);
         runningJobs.put(params.getJobId(), job);
         job.perform();
         return true;
@@ -75,6 +79,7 @@ import timber.log.Timber;
 
       case DataJobHandlerJob.ID: {
         Job job = new DataJobHandlerJob(this, params);
+        jobInjector.inject(job);
         runningJobs.put(params.getJobId(), job);
         job.perform();
         return true;

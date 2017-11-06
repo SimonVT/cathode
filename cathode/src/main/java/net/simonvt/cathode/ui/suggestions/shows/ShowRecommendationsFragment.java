@@ -23,13 +23,13 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.MenuItem;
 import android.view.View;
+import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.fragment.SwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -39,16 +39,17 @@ import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.shows.SyncShowRecommendations;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.SuggestionsTimestamps;
+import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.lists.ListDialog;
-import net.simonvt.cathode.ui.shows.ShowClickListener;
 import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
 
 public class ShowRecommendationsFragment
     extends SwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>
     implements LoaderManager.LoaderCallbacks<SimpleCursor>,
-    ShowRecommendationsAdapter.DismissListener, ListDialog.Callback, ShowClickListener {
+    ShowRecommendationsAdapter.DismissListener, ListDialog.Callback,
+    ShowDescriptionAdapter.ShowCallbacks {
 
   private enum SortBy {
     RELEVANCE("relevance", Shows.SORT_RECOMMENDED), RATING("rating", Shows.SORT_RATING);
@@ -102,6 +103,8 @@ public class ShowRecommendationsFragment
 
   @Inject JobManager jobManager;
 
+  @Inject ShowTaskScheduler showScheduler;
+
   private SimpleCursor cursor;
 
   private SortBy sortBy;
@@ -117,7 +120,7 @@ public class ShowRecommendationsFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     sortBy = SortBy.fromValue(Settings.get(getContext())
         .getString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey()));
@@ -200,7 +203,13 @@ public class ShowRecommendationsFragment
     navigationListener.onDisplayShow(showId, title, overview, LibraryType.WATCHED);
   }
 
+  @Override public void setIsInWatchlist(long showId, boolean inWatchlist) {
+    showScheduler.setIsInWatchlist(showId, inWatchlist);
+  }
+
   @Override public void onDismissItem(final View view, final long id) {
+    showScheduler.dismissRecommendation(id);
+
     Loader loader = getLoaderManager().getLoader(LOADER_SHOWS_RECOMMENDATIONS);
     if (loader != null) {
       SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;

@@ -24,9 +24,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.common.widget.RemoteImageView;
@@ -41,10 +39,6 @@ import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.util.DataHelper;
-import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
-import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
-import net.simonvt.cathode.sync.scheduler.PersonTaskScheduler;
-import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.schematic.Cursors;
 
 public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolder> {
@@ -64,18 +58,11 @@ public class ListAdapter extends RecyclerCursorAdapter<ListAdapter.ListViewHolde
     void onRemoveItem(int position, long id);
   }
 
-  @Inject ShowTaskScheduler showScheduler;
-  @Inject MovieTaskScheduler movieScheduler;
-  @Inject EpisodeTaskScheduler episodeScheduler;
-  @Inject PersonTaskScheduler personScheduler;
-
   ListListener listener;
 
   public ListAdapter(Context context, ListListener listener) {
     super(context);
     this.listener = listener;
-
-    Injector.inject(this);
   }
 
   @Override public int getItemViewType(int position) {

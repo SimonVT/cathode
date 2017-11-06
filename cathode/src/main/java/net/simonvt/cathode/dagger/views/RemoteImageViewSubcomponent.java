@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Simon Vig Therkildsen
+ * Copyright (C) 2018 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.sync.tmdb;
+package net.simonvt.cathode.dagger.views;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import javax.inject.Qualifier;
+import dagger.Subcomponent;
+import dagger.android.AndroidInjector;
+import net.simonvt.cathode.common.widget.RemoteImageView;
 
-@Qualifier @Documented @Retention(RetentionPolicy.RUNTIME)
-public @interface Tmdb {
+@Subcomponent public interface RemoteImageViewSubcomponent
+    extends AndroidInjector<RemoteImageView> {
+
+  @Subcomponent.Builder abstract class Builder extends AndroidInjector.Builder<RemoteImageView> {
+  }
 }

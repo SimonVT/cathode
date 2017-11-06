@@ -17,13 +17,10 @@
 package net.simonvt.cathode;
 
 import android.app.Application;
-import dagger.ObjectGraph;
-import net.simonvt.cathode.common.Injector;
 
 public class TestApp extends Application {
 
   @Override public void onCreate() {
     super.onCreate();
-    Injector.install(ObjectGraph.create(new TestModule()));
   }
 }

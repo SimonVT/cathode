@@ -58,7 +58,7 @@ import static com.google.common.truth.Truth.assertThat;
   @Test public void getNextEpisodeId() throws Exception {
     final long showId = insertShow("Test show");
 
-    ShowDatabaseHelper showHelper = ShowDatabaseHelper.getInstance(RuntimeEnvironment.application);
+    ShowDatabaseHelper showHelper = new ShowDatabaseHelper(RuntimeEnvironment.application);
 
     long nextEpisode = showHelper.getNextEpisodeId(showId);
     assertNextEpisode(nextEpisode, 1, 1);

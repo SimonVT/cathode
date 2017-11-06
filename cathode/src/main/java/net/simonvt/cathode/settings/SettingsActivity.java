@@ -29,11 +29,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import dagger.android.AndroidInjection;
 import javax.inject.Inject;
 import net.simonvt.android.colorpicker.ColorPickerDialog;
 import net.simonvt.android.colorpicker.ColorPickerSwatch;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.adapter.Adapters;
 import net.simonvt.cathode.common.util.VersionCodes;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -90,7 +90,7 @@ public class SettingsActivity extends BaseActivity {
 
     @Override public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
-      Injector.inject(this);
+      AndroidInjection.inject(this);
 
       isTablet = getResources().getBoolean(R.bool.isTablet);
 

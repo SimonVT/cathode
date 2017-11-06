@@ -21,25 +21,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import net.simonvt.cathode.api.entity.Profile;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Users;
 import net.simonvt.schematic.Cursors;
 
 public class UserDatabaseHelper {
-
-  private static volatile UserDatabaseHelper instance;
-
-  public static UserDatabaseHelper getInstance(Context context) {
-    if (instance == null) {
-      synchronized (UserDatabaseHelper.class) {
-        if (instance == null) {
-          instance = new UserDatabaseHelper(context.getApplicationContext());
-        }
-      }
-    }
-    return instance;
-  }
 
   private static final Object LOCK_ID = new Object();
 
@@ -47,12 +33,10 @@ public class UserDatabaseHelper {
 
   private ContentResolver resolver;
 
-  private UserDatabaseHelper(Context context) {
+  public UserDatabaseHelper(Context context) {
     this.context = context;
 
     resolver = context.getContentResolver();
-
-    Injector.inject(this);
   }
 
   public static final class IdResult {

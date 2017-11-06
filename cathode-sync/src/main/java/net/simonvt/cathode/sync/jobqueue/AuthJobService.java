@@ -25,7 +25,8 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.text.format.DateUtils;
-import net.simonvt.cathode.common.Injector;
+import dagger.android.AndroidInjection;
+import javax.inject.Inject;
 import net.simonvt.cathode.common.util.WakeLock;
 import timber.log.Timber;
 
@@ -37,7 +38,7 @@ public class AuthJobService extends Service {
 
   private static final long MAX_RETRY_DELAY = 5 * DateUtils.HOUR_IN_MILLIS;
 
-  private AuthJobHandler executor;
+  @Inject AuthJobHandler authJobHandler;
 
   private volatile long retryDelay = -1;
 
@@ -46,12 +47,11 @@ public class AuthJobService extends Service {
   @Override public void onCreate() {
     super.onCreate();
     Timber.d("AuthJobService started");
-    Injector.inject(this);
+    AndroidInjection.inject(this);
 
     WakeLock.acquire(this, WAKELOCK_TAG);
 
-    executor = AuthJobHandler.getInstance();
-    executor.registerListener(handlerListener);
+    authJobHandler.registerListener(handlerListener);
   }
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
@@ -66,7 +66,7 @@ public class AuthJobService extends Service {
       }
     }
 
-    if (!executor.hasJobs()) {
+    if (!authJobHandler.hasJobs()) {
       stopSelfResult(startId);
     }
 
@@ -111,7 +111,7 @@ public class AuthJobService extends Service {
 
   @Override public void onDestroy() {
     Timber.d("AuthJobService stopped");
-    executor.unregisterListener(handlerListener);
+    authJobHandler.unregisterListener(handlerListener);
     WakeLock.release(this, WAKELOCK_TAG);
     super.onDestroy();
   }

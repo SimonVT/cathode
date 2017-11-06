@@ -23,9 +23,7 @@ import android.view.View;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.common.widget.CircularProgressIndicator;
 import net.simonvt.cathode.common.widget.OverflowView;
@@ -33,28 +31,40 @@ import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
-import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.schematic.Cursors;
 
 public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
     extends RecyclerCursorAdapter<T> {
 
-  @Inject protected MovieTaskScheduler movieScheduler;
+  public interface Callbacks {
+
+    void onMovieClicked(long movieId, String title, String overview);
+
+    void onCheckin(long movieId);
+
+    void onCancelCheckin();
+
+    void onWatchlistAdd(long movieId);
+
+    void onWatchlistRemove(long movieId);
+
+    void onCollectionAdd(long movieId);
+
+    void onCollectionRemove(long movieId);
+  }
 
   protected FragmentActivity activity;
 
-  protected MovieClickListener listener;
+  protected Callbacks callbacks;
 
-  public BaseMoviesAdapter(FragmentActivity activity, MovieClickListener listener, Cursor c) {
+  public BaseMoviesAdapter(FragmentActivity activity, Callbacks callbacks, Cursor c) {
     super(activity, c);
-    Injector.inject(this);
     this.activity = activity;
-    this.listener = listener;
+    this.callbacks = callbacks;
   }
 
   @Override public void onViewRecycled(ViewHolder holder) {
@@ -120,27 +130,29 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
         break;
 
       case R.id.action_checkin:
-        CheckInDialog.showDialogIfNecessary(activity, Type.MOVIE, title, id);
+        if (!CheckInDialog.showDialogIfNecessary(activity, Type.MOVIE, title, id)) {
+          callbacks.onCheckin(id);
+        }
         break;
 
       case R.id.action_checkin_cancel:
-        movieScheduler.cancelCheckin();
+        callbacks.onCancelCheckin();
         break;
 
       case R.id.action_watchlist_add:
-        movieScheduler.setIsInWatchlist(id, true);
+        callbacks.onWatchlistAdd(id);
         break;
 
       case R.id.action_watchlist_remove:
-        movieScheduler.setIsInWatchlist(id, false);
+        callbacks.onWatchlistRemove(id);
         break;
 
       case R.id.action_collection_add:
-        movieScheduler.setIsInCollection(id, true);
+        callbacks.onCollectionAdd(id);
         break;
 
       case R.id.action_collection_remove:
-        movieScheduler.setIsInCollection(id, false);
+        callbacks.onCollectionRemove(id);
         break;
     }
   }

@@ -26,7 +26,6 @@ import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
-import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.schematic.Cursors;
 
 public class MoviesAdapter extends BaseMoviesAdapter<BaseMoviesAdapter.ViewHolder> {
@@ -46,13 +45,13 @@ public class MoviesAdapter extends BaseMoviesAdapter<BaseMoviesAdapter.ViewHolde
 
   private int rowLayout;
 
-  public MoviesAdapter(FragmentActivity activity, MovieClickListener listener, Cursor c) {
-    this(activity, listener, c, R.layout.list_row_movie);
+  public MoviesAdapter(FragmentActivity activity, Callbacks callbacks, Cursor c) {
+    this(activity, callbacks, c, R.layout.list_row_movie);
   }
 
-  public MoviesAdapter(FragmentActivity activity, MovieClickListener listener, Cursor c,
+  public MoviesAdapter(FragmentActivity activity, Callbacks callbacks, Cursor c,
       int rowLayout) {
-    super(activity, listener, c);
+    super(activity, callbacks, c);
     this.rowLayout = rowLayout;
   }
 
@@ -67,7 +66,7 @@ public class MoviesAdapter extends BaseMoviesAdapter<BaseMoviesAdapter.ViewHolde
           Cursor cursor = getCursor(position);
           final String title = Cursors.getString(cursor, MovieColumns.TITLE);
           final String overview = Cursors.getString(cursor, MovieColumns.OVERVIEW);
-          listener.onMovieClicked(holder.getItemId(), title, overview);
+          callbacks.onMovieClicked(holder.getItemId(), title, overview);
         }
       }
     });

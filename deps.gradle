@@ -1,5 +1,5 @@
 ext {
-  daggerVersion = '1.2.5'
+  daggerVersion = '2.19'
   okhttpVersion = '3.12.0'
   retrofitVersion = '2.4.0'
 
@@ -25,14 +25,19 @@ ext {
 
       gson                : 'com.google.code.gson:gson:2.8.5',
 
-      dagger              : "com.squareup.dagger:dagger:$daggerVersion",
-      daggerCompiler      : "com.squareup.dagger:dagger-compiler:$daggerVersion",
+      dagger              : "com.google.dagger:dagger:$daggerVersion",
+      daggerCompiler      : "com.google.dagger:dagger-compiler:$daggerVersion",
+      daggerAndroid       : "com.google.dagger:dagger-android:$daggerVersion",
+      daggerAndroidSupport: "com.google.dagger:dagger-android-support:$daggerVersion",
+      daggerAndroidApt    : "com.google.dagger:dagger-android-processor:$daggerVersion",
+
       okhttp              : "com.squareup.okhttp3:okhttp:$okhttpVersion",
       okhttpLogger        : "com.squareup.okhttp3:logging-interceptor:$okhttpVersion",
       picasso             : 'com.squareup.picasso:picasso:2.5.2',
       picassoOkHttp       : 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0',
       retrofit            : "com.squareup.retrofit2:retrofit:$retrofitVersion",
       retrofitGson        : "com.squareup.retrofit2:converter-gson:$retrofitVersion",
+      javapoet            : "com.squareup:javapoet:1.11.1",
 
       timber              : 'com.jakewharton.timber:timber:4.7.1',
       butterknife         : "com.jakewharton:butterknife:$butterknifeVersion",

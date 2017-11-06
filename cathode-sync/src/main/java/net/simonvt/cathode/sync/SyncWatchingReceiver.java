@@ -19,8 +19,8 @@ package net.simonvt.cathode.sync;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import dagger.android.AndroidInjection;
 import javax.inject.Inject;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.sync.jobqueue.AuthJobService;
@@ -30,7 +30,7 @@ public class SyncWatchingReceiver extends BroadcastReceiver {
   @Inject JobManager jobManager;
 
   @Override public void onReceive(Context context, Intent intent) {
-    Injector.inject(this);
+    AndroidInjection.inject(this, context);
     jobManager.addJob(new SyncWatching());
     Intent i = new Intent(context, AuthJobService.class);
     context.startService(i);

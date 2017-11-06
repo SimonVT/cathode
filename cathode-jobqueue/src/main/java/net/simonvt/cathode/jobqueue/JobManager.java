@@ -20,20 +20,23 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import dagger.android.DispatchingAndroidInjector;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.jobqueue.JobDatabaseSchematic.Tables;
 import net.simonvt.cathode.jobqueue.database.JobDatabase;
 import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
-public final class JobManager {
+@Singleton public final class JobManager {
 
   private Context context;
 
-  private JobInjector jobInjector;
+  private DispatchingAndroidInjector<Job> jobInjector;
 
   private JobDatabase database;
 
@@ -46,7 +49,7 @@ public final class JobManager {
 
   private List<WeakReference<JobListener>> jobListeners = new ArrayList<>();
 
-  public JobManager(Context context, JobInjector jobInjector) {
+  @Inject public JobManager(Context context, DispatchingAndroidInjector<Job> jobInjector) {
     this.context = context.getApplicationContext();
     this.jobInjector = jobInjector;
 
@@ -192,7 +195,7 @@ public final class JobManager {
     synchronized (jobs) {
       boolean added = false;
 
-      jobInjector.injectInto(job);
+      jobInjector.inject(job);
 
       for (int i = 0; i < jobs.size(); i++) {
         if (isMoreImportantThan(job, jobs.get(i))) {

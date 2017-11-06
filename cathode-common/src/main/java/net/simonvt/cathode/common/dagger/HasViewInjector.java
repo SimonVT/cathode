@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2017 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.jobqueue;
+package net.simonvt.cathode.common.dagger;
 
-public interface JobInjector {
+import android.view.View;
+import dagger.android.AndroidInjector;
 
-  void injectInto(Job job);
+public interface HasViewInjector {
+
+  AndroidInjector<View> viewInjector();
 }

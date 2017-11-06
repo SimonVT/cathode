@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2018 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode;
 
-import android.content.Context;
+package net.simonvt.cathode.dagger.jobs;
 
-public final class Modules {
+import dagger.MapKey;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import net.simonvt.cathode.jobqueue.Job;
 
-  private Modules() {
-  }
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-  public static Object[] list(Context context) {
-    return new Object[] {
-        new AppModule(context),
-    };
-  }
+@MapKey @Target(METHOD) @Retention(RUNTIME) public @interface JobKey {
+  Class<? extends Job> value();
 }
+

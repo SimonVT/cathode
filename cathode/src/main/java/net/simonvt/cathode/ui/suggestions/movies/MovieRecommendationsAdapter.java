@@ -20,7 +20,6 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.widget.OverflowView;
-import net.simonvt.cathode.ui.listener.MovieClickListener;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
 
 public class MovieRecommendationsAdapter extends MoviesAdapter {
@@ -32,9 +31,9 @@ public class MovieRecommendationsAdapter extends MoviesAdapter {
 
   private DismissListener dismissListener;
 
-  public MovieRecommendationsAdapter(FragmentActivity activity, MovieClickListener clickListener,
+  public MovieRecommendationsAdapter(FragmentActivity activity, Callbacks callbacks,
       Cursor c, DismissListener dismissListener) {
-    super(activity, clickListener, c, R.layout.list_row_movie_rating);
+    super(activity, callbacks, c, R.layout.list_row_movie_rating);
     this.dismissListener = dismissListener;
   }
 
@@ -49,7 +48,6 @@ public class MovieRecommendationsAdapter extends MoviesAdapter {
       String title) {
     switch (action) {
       case R.id.action_dismiss:
-        movieScheduler.dismissRecommendation(id);
         dismissListener.onDismissItem(view, id);
         break;
 

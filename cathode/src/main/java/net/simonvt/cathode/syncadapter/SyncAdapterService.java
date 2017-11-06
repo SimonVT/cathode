@@ -18,10 +18,27 @@ package net.simonvt.cathode.syncadapter;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import dagger.android.AndroidInjection;
+import dagger.android.DispatchingAndroidInjector;
+import javax.inject.Inject;
+import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobManager;
+import net.simonvt.cathode.sync.jobqueue.AuthJobHandler;
+import net.simonvt.cathode.sync.jobqueue.DataJobHandler;
 
 public class SyncAdapterService extends Service {
 
   private static CathodeSyncAdapter sSyncAdapter;
+
+  @Inject AuthJobHandler authJobHandler;
+  @Inject DataJobHandler dataJobHandler;
+  @Inject JobManager jobManager;
+  @Inject DispatchingAndroidInjector<Job> jobInjector;
+
+  @Override public void onCreate() {
+    super.onCreate();
+    AndroidInjection.inject(this);
+  }
 
   @Override public IBinder onBind(Intent intent) {
     return getSyncAdapter().getSyncAdapterBinder();
@@ -29,7 +46,8 @@ public class SyncAdapterService extends Service {
 
   private CathodeSyncAdapter getSyncAdapter() {
     if (sSyncAdapter == null) {
-      sSyncAdapter = new CathodeSyncAdapter(getApplicationContext());
+      sSyncAdapter = new CathodeSyncAdapter(getApplicationContext(), authJobHandler, dataJobHandler,
+          jobManager, jobInjector);
     }
     return sSyncAdapter;
   }

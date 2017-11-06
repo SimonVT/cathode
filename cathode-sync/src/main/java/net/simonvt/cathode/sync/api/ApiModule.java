@@ -21,35 +21,27 @@ import dagger.Module;
 import dagger.Provides;
 import java.util.ArrayList;
 import java.util.List;
-import javax.inject.Singleton;
-import net.simonvt.cathode.api.Trakt;
-import net.simonvt.cathode.api.TraktModule;
+import javax.inject.Named;
 import net.simonvt.cathode.api.TraktSettings;
 import net.simonvt.cathode.sync.BuildConfig;
-import net.simonvt.cathode.sync.tmdb.TmdbApiKey;
 import okhttp3.Interceptor;
 
-@Module(
-    complete = false,
-    library = true,
+import static net.simonvt.cathode.api.TraktModule.NAMED_TRAKT;
+import static net.simonvt.cathode.sync.tmdb.TmdbModule.NAMED_TMDB_API_KEY;
 
-    includes = {
-        TraktModule.class
-    }
-)
-public class ApiModule {
+@Module public class ApiModule {
 
-  @Provides @Singleton TraktSettings provideTraktSettings(Context context) {
-    return ApiSettings.getInstance(context);
+  @Provides TraktSettings bindTraktSettings(Context context) {
+    return new ApiSettings(context);
   }
 
-  @Provides @Trakt List<Interceptor> provideInterceptors() {
+  @Provides @Named(NAMED_TRAKT) List<Interceptor> provideInterceptors() {
     List<Interceptor> interceptors = new ArrayList<>();
     interceptors.add(new LoggingInterceptor());
     return interceptors;
   }
 
-  @Provides @TmdbApiKey String tmdbApiKey() {
+  @Provides @Named(NAMED_TMDB_API_KEY) String tmdbApiKey() {
     return BuildConfig.TMDB_API_KEY;
   }
 }

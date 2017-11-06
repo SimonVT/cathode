@@ -24,11 +24,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.adapter.HeaderSpanLookup;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.Job;
@@ -41,6 +41,7 @@ import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.settings.UpcomingTime;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
+import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference.UpcomingSortByListener;
@@ -48,7 +49,7 @@ import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference.UpcomingSo
 public class UpcomingShowsFragment
     extends ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>
     implements UpcomingAdapter.OnRemoveListener, ListDialog.Callback, LoaderCallbacks<SimpleCursor>,
-    UpcomingAdapter.OnItemClickListener {
+    UpcomingAdapter.Callbacks {
 
   public static final String TAG = "net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment";
 
@@ -58,6 +59,8 @@ public class UpcomingShowsFragment
       "net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment.sortDialog";
 
   @Inject JobManager jobManager;
+
+  @Inject EpisodeTaskScheduler episodeScheduler;
 
   @Inject UpcomingTimePreference upcomingTimePreference;
   @Inject UpcomingSortByPreference upcomingSortByPreference;
@@ -79,7 +82,7 @@ public class UpcomingShowsFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     sortBy = upcomingSortByPreference.get();
     upcomingSortByPreference.registerListener(upcomingSortByListener);
@@ -154,6 +157,14 @@ public class UpcomingShowsFragment
 
   @Override public void onEpisodeClicked(long episodeId, String showTitle) {
     navigationListener.onDisplayEpisode(episodeId, showTitle);
+  }
+
+  @Override public void onCheckin(long episodeId) {
+    episodeScheduler.checkin(episodeId, null, false, false, false);
+  }
+
+  @Override public void onCancelCheckin() {
+    episodeScheduler.cancelCheckin();
   }
 
   @Override public void onItemSelected(int id) {

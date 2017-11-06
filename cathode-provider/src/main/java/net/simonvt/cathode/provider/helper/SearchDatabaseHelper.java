@@ -18,35 +18,18 @@ package net.simonvt.cathode.provider.helper;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.ProviderSchematic.RecentQueries;
 
 public final class SearchDatabaseHelper {
 
-  private static volatile SearchDatabaseHelper instance;
-
-  public static SearchDatabaseHelper getInstance(Context context) {
-    if (instance == null) {
-      synchronized (SearchDatabaseHelper.class) {
-        if (instance == null) {
-          instance = new SearchDatabaseHelper(context.getApplicationContext());
-        }
-      }
-    }
-    return instance;
-  }
-
   private Context context;
 
   private ContentResolver resolver;
 
-  private SearchDatabaseHelper(Context context) {
+  public SearchDatabaseHelper(Context context) {
     this.context = context;
-
     resolver = context.getContentResolver();
-
-    Injector.inject(this);
   }
 
   public void insertRecentQuery(String query) {

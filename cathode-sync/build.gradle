@@ -7,11 +7,15 @@ dependencies {
   implementation project(':cathode-common')
   implementation project(':cathode-images')
   implementation project(':cathode-jobqueue')
+  annotationProcessor project(':cathode-jobqueue-compiler')
   implementation project(':cathode-provider')
   implementation project(':cathode-settings')
   implementation project(':trakt-api')
   implementation deps.dagger
+  implementation deps.daggerAndroid
+  implementation deps.daggerAndroidSupport
   annotationProcessor deps.daggerCompiler
+  annotationProcessor deps.daggerAndroidApt
   implementation deps.retrofit
   implementation deps.schematic
   implementation deps.supportAnnotations

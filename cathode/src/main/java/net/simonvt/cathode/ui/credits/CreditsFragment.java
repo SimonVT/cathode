@@ -27,12 +27,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.OnClick;
+import dagger.android.support.AndroidSupportInjection;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.fragment.RefreshableToolbarFragment;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
@@ -117,7 +117,7 @@ public class CreditsFragment extends RefreshableToolbarFragment {
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     Bundle args = getArguments();
     itemId = args.getLong(ARG_ITEM_ID);

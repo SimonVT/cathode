@@ -31,6 +31,7 @@ import com.uwetrottmann.tmdb2.services.TvService;
 import dagger.Module;
 import dagger.Provides;
 import java.io.File;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
@@ -40,7 +41,7 @@ import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import okhttp3.OkHttpClient;
 import timber.log.Timber;
 
-@Module(complete = false, library = true) public class ImageModule {
+@Module public class ImageModule {
 
   private static final String PICASSO_CACHE = "picasso-cache";
   private static final int MIN_DISK_CACHE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -99,17 +100,17 @@ import timber.log.Timber;
     return builder.build();
   }
 
-  @Provides @Singleton @Images OkHttpClient provideOkHttpClient(Context context) {
+  @Provides @Singleton @Named("Images") OkHttpClient provideOkHttpClient(Context context) {
     final File cacheDir = createCacheDir(context);
     final long cacheSize = calculateDiskCacheSize(cacheDir);
     return defaultOkHttpClient(cacheDir, cacheSize);
   }
 
-  @Provides @Singleton Downloader provideDownloader(@Images OkHttpClient okClient) {
+  @Provides @Singleton Downloader provideDownloader(@Named("Images") OkHttpClient okClient) {
     return new OkHttp3Downloader(okClient);
   }
 
-  @Provides @Singleton ImageDownloader provideImageDownloader(@Images OkHttpClient okClient) {
+  @Provides @Singleton ImageDownloader provideImageDownloader(@Named("Images") OkHttpClient okClient) {
     return new ImageDownloader(okClient);
   }
 

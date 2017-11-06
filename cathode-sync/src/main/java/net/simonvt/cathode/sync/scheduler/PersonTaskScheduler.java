@@ -19,7 +19,9 @@ package net.simonvt.cathode.sync.scheduler;
 import android.content.ContentValues;
 import android.content.Context;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.People;
 import net.simonvt.cathode.provider.helper.PersonDatabaseHelper;
@@ -28,12 +30,14 @@ import net.simonvt.cathode.remote.sync.people.SyncPersonShowCredits;
 import net.simonvt.cathode.sync.tmdb.api.people.SyncPersonBackdrop;
 import net.simonvt.cathode.sync.tmdb.api.people.SyncPersonHeadshot;
 
-public class PersonTaskScheduler extends BaseTaskScheduler {
+@Singleton public class PersonTaskScheduler extends BaseTaskScheduler {
 
-  @Inject transient PersonDatabaseHelper personHelper;
+  private PersonDatabaseHelper personHelper;
 
-  public PersonTaskScheduler(Context context) {
-    super(context);
+  @Inject public PersonTaskScheduler(Context context, JobManager jobManager,
+      PersonDatabaseHelper personHelper) {
+    super(context, jobManager);
+    this.personHelper = personHelper;
   }
 
   public void sync(final long personId) {

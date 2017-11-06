@@ -34,12 +34,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.OnClick;
+import dagger.android.support.AndroidSupportInjection;
 import java.util.Locale;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TraktUtils;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.Intents;
@@ -189,7 +189,7 @@ public class MovieFragment extends RefreshableAppBarFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     Bundle args = getArguments();
     movieId = args.getLong(ARG_ID);
@@ -327,6 +327,7 @@ public class MovieFragment extends RefreshableAppBarFragment
           } else {
             if (!CheckInDialog.showDialogIfNecessary(getActivity(), Type.MOVIE, movieTitle,
                 movieId)) {
+              movieScheduler.checkin(movieId, null, false, false, false);
               checkInDrawable.setWatching(true);
             }
           }

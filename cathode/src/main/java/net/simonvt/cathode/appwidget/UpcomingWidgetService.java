@@ -27,12 +27,12 @@ import android.text.format.DateUtils;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 import com.squareup.picasso.Picasso;
+import dagger.android.AndroidInjection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -51,14 +51,21 @@ public class UpcomingWidgetService extends RemoteViewsService {
 
   private static final int LOADER_UPCOMING = 1;
 
+  @Inject Picasso picasso;
+
+  @Override public void onCreate() {
+    super.onCreate();
+    AndroidInjection.inject(this);
+  }
+
   @Override public RemoteViewsFactory onGetViewFactory(Intent intent) {
-    return new UpcomingRemoteViewsFactory(this.getApplicationContext(), intent);
+    return new UpcomingRemoteViewsFactory(this.getApplicationContext(), picasso, intent);
   }
 
   public static class UpcomingRemoteViewsFactory
       implements RemoteViewsFactory, Loader.OnLoadCompleteListener<SimpleCursor> {
 
-    @Inject Picasso picasso;
+    private Picasso picasso;
 
     private Context context;
 
@@ -69,10 +76,9 @@ public class UpcomingWidgetService extends RemoteViewsService {
 
     private ItemModel items;
 
-    public UpcomingRemoteViewsFactory(Context context, Intent intent) {
+    public UpcomingRemoteViewsFactory(Context context, Picasso picasso, Intent intent) {
       this.context = context;
-
-      Injector.inject(this);
+      this.picasso = picasso;
 
       appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
           AppWidgetManager.INVALID_APPWIDGET_ID);

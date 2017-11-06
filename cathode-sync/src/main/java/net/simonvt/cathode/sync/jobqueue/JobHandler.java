@@ -20,8 +20,6 @@ import android.content.Context;
 import android.text.format.DateUtils;
 import java.util.ArrayList;
 import java.util.List;
-import javax.inject.Inject;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobExecutor;
@@ -47,8 +45,8 @@ public class JobHandler {
     void onQueueFailed();
   }
 
-  @Inject Context context;
-  @Inject JobManager jobManager;
+  protected Context context;
+  private JobManager jobManager;
 
   private JobExecutor executor;
 
@@ -57,8 +55,10 @@ public class JobHandler {
   private boolean started = false;
   private boolean resumed = false;
 
-  public JobHandler(int withFlags, int withoutFlags, int threadCount) {
-    Injector.inject(this);
+  public JobHandler(Context context, JobManager jobManager, int withFlags, int withoutFlags,
+      int threadCount) {
+    this.context = context;
+    this.jobManager = jobManager;
     executor = new JobExecutor(jobManager, executorListener, threadCount, withFlags, withoutFlags);
   }
 

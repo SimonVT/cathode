@@ -29,11 +29,11 @@ import butterknife.OnClick;
 import com.android.datetimepicker.date.DatePickerDialog;
 import com.android.datetimepicker.time.RadialPickerLayout;
 import com.android.datetimepicker.time.TimePickerDialog;
+import dagger.android.support.AndroidSupportInjection;
 import java.text.DateFormat;
 import java.util.Calendar;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.fragment.AppBarFragment;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
@@ -112,7 +112,7 @@ public class SelectHistoryDateFragment extends AppBarFragment
 
   @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     type = (Type) getArguments().getSerializable(ARG_TYPE);
     id = getArguments().getLong(ARG_ID);

@@ -25,9 +25,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.adapter.HeaderSpanLookup;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.Job;
@@ -39,12 +39,14 @@ import net.simonvt.cathode.provider.database.SimpleCursor;
 import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchlist;
+import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
+import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 
 public class ShowsWatchlistFragment
     extends ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>
-    implements ShowWatchlistAdapter.RemoveListener, ShowWatchlistAdapter.OnItemClickListener {
+    implements ShowWatchlistAdapter.RemoveListener, ShowWatchlistAdapter.ItemCallbacks {
 
   public static final String TAG = "net.simonvt.cathode.ui.shows.watchlist.ShowsWatchlistFragment";
 
@@ -52,6 +54,9 @@ public class ShowsWatchlistFragment
   private static final int LOADER_EPISODES_WATCHLIST = 2;
 
   @Inject JobManager jobManager;
+
+  @Inject ShowTaskScheduler showScheduler;
+  @Inject EpisodeTaskScheduler episodeScheduler;
 
   private ShowsNavigationListener navigationListener;
 
@@ -66,7 +71,7 @@ public class ShowsWatchlistFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     getLoaderManager().initLoader(LOADER_SHOWS_WATCHLIST, null, showsCallback);
     getLoaderManager().initLoader(LOADER_EPISODES_WATCHLIST, null, episodeCallback);
@@ -135,8 +140,16 @@ public class ShowsWatchlistFragment
     navigationListener.onDisplayShow(showId, title, overview, LibraryType.WATCHED);
   }
 
+  @Override public void onRemoveShowFromWatchlist(long showId) {
+    showScheduler.setIsInWatchlist(showId, false);
+  }
+
   @Override public void onEpisodeClicked(long episodeId, String showTitle) {
     navigationListener.onDisplayEpisode(episodeId, showTitle);
+  }
+
+  @Override public void onRemoveEpisodeFromWatchlist(long episodeId) {
+    episodeScheduler.setIsInWatchlist(episodeId, false);
   }
 
   private void throttleLoaders() {

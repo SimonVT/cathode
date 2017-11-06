@@ -1,0 +1,16 @@
+apply plugin: 'java'
+apply plugin: 'checkstyle'
+
+targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_1_8
+
+dependencies {
+  compile deps.dagger
+  compile deps.daggerAndroid
+  compile deps.javapoet
+}
+
+checkstyle {
+  configFile project.file('../config/checkstyle/checkstyle.xml')
+  showViolations true
+}

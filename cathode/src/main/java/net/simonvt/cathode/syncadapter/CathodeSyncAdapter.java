@@ -21,12 +21,9 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
+import dagger.android.DispatchingAndroidInjector;
 import java.util.concurrent.CountDownLatch;
-import javax.inject.Inject;
-import net.simonvt.cathode.CathodeApp;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobInjector;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.settings.TraktLinkSettings;
@@ -37,15 +34,19 @@ import timber.log.Timber;
 
 public class CathodeSyncAdapter extends AbstractThreadedSyncAdapter {
 
-  @Inject JobManager jobManager;
-  @Inject JobInjector injector;
+  AuthJobHandler authJobHandler;
+  DataJobHandler dataJobHandler;
+  JobManager jobManager;
+  DispatchingAndroidInjector<Job> jobInjector;
 
-  public CathodeSyncAdapter(Context context) {
+  public CathodeSyncAdapter(Context context, AuthJobHandler authJobHandler,
+      DataJobHandler dataJobHandler, JobManager jobManager,
+      DispatchingAndroidInjector<Job> jobInjector) {
     super(context, true);
-    // This might not be true when Android restores backup on install.
-    if (context.getApplicationContext() instanceof CathodeApp) {
-      Injector.inject(this);
-    }
+    this.authJobHandler = authJobHandler;
+    this.dataJobHandler = dataJobHandler;
+    this.jobManager = jobManager;
+    this.jobInjector = jobInjector;
   }
 
   @Override public void onPerformSync(Account account, Bundle extras, String authority,
@@ -60,9 +61,6 @@ public class CathodeSyncAdapter extends AbstractThreadedSyncAdapter {
 
     if (inject(new SyncJob()).perform()) {
       final CountDownLatch latch = new CountDownLatch(2);
-
-      final AuthJobHandler authJobHandler = AuthJobHandler.getInstance();
-      final DataJobHandler dataJobHandler = DataJobHandler.getInstance();
 
       if (authJobHandler.hasJobs()) {
         authJobHandler.registerListener(new JobHandler.JobHandlerListener() {
@@ -109,7 +107,7 @@ public class CathodeSyncAdapter extends AbstractThreadedSyncAdapter {
   }
 
   private Job inject(Job job) {
-    injector.injectInto(job);
+    jobInjector.inject(job);
     return job;
   }
 }

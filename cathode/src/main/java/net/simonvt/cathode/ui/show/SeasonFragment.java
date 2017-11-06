@@ -24,9 +24,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.provider.DatabaseContract;
@@ -34,17 +34,17 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.database.SimpleCursor;
 import net.simonvt.cathode.provider.database.SimpleCursorLoader;
+import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
-import net.simonvt.cathode.ui.listener.EpisodeClickListener;
 import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.schematic.Cursors;
 
 public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder>
-    implements EpisodeClickListener {
+    implements SeasonAdapter.EpisodeCallbacks {
 
   public static final String TAG = "net.simonvt.cathode.ui.show.SeasonFragment";
 
@@ -62,6 +62,7 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
       "net.simonvt.cathode.ui.show.SeasonFragment.listsAddDialog";
 
   @Inject SeasonTaskScheduler seasonScheduler;
+  @Inject EpisodeTaskScheduler episodeScheduler;
 
   private long showId;
 
@@ -108,7 +109,7 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     Bundle args = getArguments();
     showId = args.getLong(ARG_SHOW_ID);
@@ -209,8 +210,12 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
     }
   };
 
-  @Override public void onEpisodeClick(long id) {
-    navigationListener.onDisplayEpisode(id, title);
+  @Override public void onEpisodeClick(long episodeId) {
+    navigationListener.onDisplayEpisode(episodeId, title);
+  }
+
+  @Override public void setEpisodeCollected(long episodeId, boolean collected) {
+    episodeScheduler.setIsInCollection(episodeId, collected);
   }
 
   private void setCursor(Cursor cursor) {

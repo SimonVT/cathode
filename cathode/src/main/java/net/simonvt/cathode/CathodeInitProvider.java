@@ -16,14 +16,12 @@
 
 package net.simonvt.cathode;
 
-import android.content.Context;
 import android.os.StrictMode;
 import com.crashlytics.android.Crashlytics;
-import dagger.ObjectGraph;
+import dagger.android.AndroidInjection;
 import io.fabric.sdk.android.Fabric;
 import javax.inject.Inject;
 import net.simonvt.cathode.common.InitProvider;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -36,12 +34,6 @@ public class CathodeInitProvider extends InitProvider {
 
   @Inject JobManager jobManager;
 
-  public static void ensureInjector(Context context) {
-    if (!Injector.isInstalled()) {
-      Injector.install(ObjectGraph.create(Modules.list(context)));
-    }
-  }
-
   @Override public boolean onCreate() {
     if (BuildConfig.DEBUG) {
       Timber.plant(new Timber.DebugTree());
@@ -53,6 +45,9 @@ public class CathodeInitProvider extends InitProvider {
       Fabric.with(getContext(), new Crashlytics());
       Timber.plant(new CrashlyticsTree());
     }
+
+    ((CathodeApp) getContext().getApplicationContext()).ensureInjection();
+    AndroidInjection.inject(this);
 
     UpcomingSortByPreference.init(getContext());
     UpcomingTimePreference.init(getContext());
@@ -67,9 +62,6 @@ public class CathodeInitProvider extends InitProvider {
         });
       }
     });
-
-    ensureInjector(getContext());
-    Injector.inject(this);
 
     return true;
   }

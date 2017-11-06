@@ -29,9 +29,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.images.ImageType;
@@ -39,12 +37,15 @@ import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
-import net.simonvt.cathode.sync.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.cathode.ui.listener.SeasonClickListener;
 import net.simonvt.schematic.Cursors;
 
 public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHolder> {
+
+  public interface SeasonClickListener {
+
+    void onSeasonClick(long showId, long seasonId, String showTitle, int seasonNumber);
+  }
 
   public static final String[] PROJECTION = new String[] {
       SeasonColumns.ID, SeasonColumns.SHOW_ID, SeasonColumns.SEASON, SeasonColumns.UNAIRED_COUNT,
@@ -65,8 +66,6 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
       + ") AS seasonShowTitle",
   };
 
-  @Inject SeasonTaskScheduler seasonScheduler;
-
   private FragmentActivity activity;
 
   private Resources resources;
@@ -81,7 +80,6 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
   public SeasonsAdapter(FragmentActivity activity, SeasonClickListener clickListener,
       LibraryType type) {
     super(activity, null);
-    Injector.inject(this);
     this.activity = activity;
     resources = activity.getResources();
     this.clickListener = clickListener;

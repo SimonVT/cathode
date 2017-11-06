@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2017 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.ui.listener;
 
-public interface SeasonClickListener {
+package net.simonvt.cathode.common.dagger;
 
-  void onSeasonClick(long showId, long seasonId, String showTitle, int seasonNumber);
+import android.content.Context;
+import android.view.View;
+import dagger.android.AndroidInjector;
+
+public final class CathodeAndroidInjection {
+
+  private CathodeAndroidInjection() {
+  }
+
+  public static void inject(View view, Context context) {
+    HasViewInjector injector = (HasViewInjector) context.getApplicationContext();
+    AndroidInjector<View> androidInjector = injector.viewInjector();
+    androidInjector.inject(view);
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2018 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.ui.listener;
 
-public interface MovieClickListener {
+package net.simonvt.cathode;
 
-  void onMovieClicked(long movieId, String title, String overview);
+import dagger.Subcomponent;
+import net.simonvt.cathode.dagger.ActivityBindingModule;
+import net.simonvt.cathode.module.DebugModule;
+
+@Subcomponent(modules = { DebugModule.class, ActivityBindingModule.class, })
+public interface CathodeComponent {
+
+  void inject(CathodeApp app);
 }

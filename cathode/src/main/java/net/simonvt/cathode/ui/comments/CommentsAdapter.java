@@ -34,9 +34,7 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.common.widget.CircleTransformation;
 import net.simonvt.cathode.common.widget.RemoteImageView;
@@ -45,7 +43,6 @@ import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.util.SqlColumn;
-import net.simonvt.cathode.sync.scheduler.CommentsTaskScheduler;
 import net.simonvt.schematic.Cursors;
 
 public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewHolder> {
@@ -58,9 +55,13 @@ public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewH
   private static final int USER_COMMENT = 2;
   private static final int USER_REPLY = 3;
 
-  public interface OnCommentClickListener {
+  public interface CommentCallbacks {
 
     void onCommentClick(long commentId, String comment, boolean spoiler, boolean isUserComment);
+
+    void onLikeComment(long commentId);
+
+    void onUnlikeComment(long commentId);
   }
 
   public static final String[] PROJECTION = {
@@ -80,11 +81,9 @@ public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewH
       SqlColumn.table(Tables.USERS).column(UserColumns.AVATAR),
   };
 
-  @Inject CommentsTaskScheduler commentsScheduler;
-
   private boolean showsReplies;
 
-  private OnCommentClickListener listener;
+  private CommentCallbacks callbacks;
 
   private Set<Long> revealedSpoilers = new HashSet<>();
 
@@ -93,12 +92,10 @@ public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewH
   private int likedTintColor;
 
   public CommentsAdapter(Context context, Cursor cursor, boolean showsReplies,
-      OnCommentClickListener listener) {
+      CommentCallbacks callbacks) {
     super(context, cursor);
     this.showsReplies = showsReplies;
-    this.listener = listener;
-
-    Injector.inject(this);
+    this.callbacks = callbacks;
 
     tintColor = context.getResources().getColor(R.color.commentIconTint);
     likedTintColor = context.getResources().getColor(R.color.commentLikedTint);
@@ -174,7 +171,7 @@ public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewH
               }
             });
           } else {
-            listener.onCommentClick(holder.getItemId(), holder.comment, holder.isSpoiler,
+            callbacks.onCommentClick(holder.getItemId(), holder.comment, holder.isSpoiler,
                 holder.isUserComment);
           }
         }
@@ -186,12 +183,12 @@ public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewH
         final boolean liked = holder.liked;
 
         if (liked) {
-          commentsScheduler.unlike(holder.getItemId());
+          callbacks.onLikeComment(holder.getItemId());
 
           holder.likeCount--;
           DrawableCompat.setTint(holder.likeDrawable, tintColor);
         } else {
-          commentsScheduler.like(holder.getItemId());
+          callbacks.onUnlikeComment(holder.getItemId());
 
           holder.likeCount++;
           DrawableCompat.setTint(holder.likeDrawable, likedTintColor);

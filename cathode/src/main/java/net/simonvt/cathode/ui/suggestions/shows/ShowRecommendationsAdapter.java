@@ -20,7 +20,6 @@ import android.database.Cursor;
 import android.view.View;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.widget.OverflowView;
-import net.simonvt.cathode.ui.shows.ShowClickListener;
 import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
 
 public class ShowRecommendationsAdapter extends ShowDescriptionAdapter {
@@ -32,9 +31,9 @@ public class ShowRecommendationsAdapter extends ShowDescriptionAdapter {
 
   private DismissListener listener;
 
-  public ShowRecommendationsAdapter(Context context, ShowClickListener clickListener, Cursor cursor,
+  public ShowRecommendationsAdapter(Context context, ShowCallbacks callbacks, Cursor cursor,
       DismissListener listener) {
-    super(context, clickListener, cursor);
+    super(context, callbacks, cursor);
     this.listener = listener;
   }
 
@@ -46,7 +45,6 @@ public class ShowRecommendationsAdapter extends ShowDescriptionAdapter {
   protected void onOverflowActionSelected(View view, long id, int action, int position) {
     switch (action) {
       case R.id.action_dismiss:
-        showScheduler.dismissRecommendation(id);
         listener.onDismissItem(view, id);
         break;
 

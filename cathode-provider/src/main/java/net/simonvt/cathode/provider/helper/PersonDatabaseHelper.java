@@ -27,24 +27,11 @@ import net.simonvt.schematic.Cursors;
 
 public final class PersonDatabaseHelper {
 
-  private static volatile PersonDatabaseHelper instance;
-
-  public static PersonDatabaseHelper getInstance(Context context) {
-    if (instance == null) {
-      synchronized (PersonDatabaseHelper.class) {
-        if (instance == null) {
-          instance = new PersonDatabaseHelper(context.getApplicationContext());
-        }
-      }
-    }
-    return instance;
-  }
-
   private Context context;
 
   private ContentResolver resolver;
 
-  private PersonDatabaseHelper(Context context) {
+  public PersonDatabaseHelper(Context context) {
     this.context = context;
     resolver = context.getContentResolver();
   }

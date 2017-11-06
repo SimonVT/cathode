@@ -17,14 +17,18 @@ package net.simonvt.cathode.sync.scheduler;
 
 import android.content.Context;
 import javax.inject.Inject;
+import javax.inject.Singleton;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.helper.SearchDatabaseHelper;
 
-public class SearchTaskScheduler extends BaseTaskScheduler {
+@Singleton public class SearchTaskScheduler extends BaseTaskScheduler {
 
-  @Inject SearchDatabaseHelper searchHelper;
+  private SearchDatabaseHelper searchHelper;
 
-  public SearchTaskScheduler(Context context) {
-    super(context);
+  @Inject public SearchTaskScheduler(Context context, JobManager jobManager,
+      SearchDatabaseHelper searchHelper) {
+    super(context, jobManager);
+    this.searchHelper = searchHelper;
   }
 
   public void insertRecentQuery(final String query) {

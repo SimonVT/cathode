@@ -20,9 +20,9 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
@@ -34,12 +34,11 @@ import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
-import net.simonvt.cathode.ui.shows.ShowClickListener;
 import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
 
 public class RelatedShowsFragment
     extends ToolbarSwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>
-    implements ShowClickListener {
+    implements ShowDescriptionAdapter.ShowCallbacks {
 
   private static final String TAG = "net.simonvt.cathode.ui.show.RelatedShowsFragment";
 
@@ -76,7 +75,7 @@ public class RelatedShowsFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     showId = getArguments().getLong(ARG_SHOW_ID);
 
@@ -98,6 +97,10 @@ public class RelatedShowsFragment
 
   @Override public void onShowClick(long showId, String title, String overview) {
     navigationListener.onDisplayShow(showId, title, overview, LibraryType.WATCHED);
+  }
+
+  @Override public void setIsInWatchlist(long showId, boolean inWatchlist) {
+    showScheduler.setIsInWatchlist(showId, inWatchlist);
   }
 
   private void setCursor(Cursor cursor) {

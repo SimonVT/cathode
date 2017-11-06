@@ -22,12 +22,14 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dagger.android.AndroidInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.TraktSettings;
 import net.simonvt.cathode.api.entity.AccessToken;
 import net.simonvt.cathode.api.entity.UserSettings;
-import net.simonvt.cathode.common.Injector;
+import net.simonvt.cathode.api.service.AuthorizationService;
+import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
@@ -48,6 +50,9 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
   @Inject JobManager jobManager;
   @Inject TraktSettings traktSettings;
 
+  @Inject AuthorizationService authorizationService;
+  @Inject UsersService usersService;
+
   @BindView(R.id.buttonContainer) View buttonContainer;
   @BindView(R.id.error_message) TextView errorMessage;
 
@@ -57,18 +62,18 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
 
   @Override protected void onCreate(Bundle inState) {
     super.onCreate(inState);
+    AndroidInjection.inject(this);
     Intent intent = getIntent();
     task = intent.getIntExtra(LoginActivity.EXTRA_TASK, LoginActivity.TASK_LOGIN);
 
     setContentView(R.layout.activity_login_token);
     ButterKnife.bind(this);
-    Injector.inject(this);
 
     if (TokenTask.runningInstance != null) {
       TokenTask.runningInstance.setCallback(this);
     } else {
       final String code = getIntent().getStringExtra(EXTRA_CODE);
-      TokenTask.start(code, this);
+      TokenTask.start(code, authorizationService, usersService, traktSettings, this);
     }
 
     setRefreshing(true);

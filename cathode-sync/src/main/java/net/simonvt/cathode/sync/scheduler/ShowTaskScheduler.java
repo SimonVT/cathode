@@ -19,11 +19,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TimeUtils;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
@@ -46,15 +47,16 @@ import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.sync.tmdb.api.show.SyncShowImages;
 import net.simonvt.schematic.Cursors;
 
-public class ShowTaskScheduler extends BaseTaskScheduler {
+@Singleton public class ShowTaskScheduler extends BaseTaskScheduler {
 
-  @Inject EpisodeTaskScheduler episodeScheduler;
+  private EpisodeTaskScheduler episodeScheduler;
+  private ShowDatabaseHelper showHelper;
 
-  @Inject ShowDatabaseHelper showHelper;
-
-  public ShowTaskScheduler(Context context) {
-    super(context);
-    Injector.inject(this);
+  @Inject public ShowTaskScheduler(Context context, JobManager jobManager,
+      EpisodeTaskScheduler episodeScheduler, ShowDatabaseHelper showHelper) {
+    super(context, jobManager);
+    this.episodeScheduler = episodeScheduler;
+    this.showHelper = showHelper;
   }
 
   public void sync(final long showId) {

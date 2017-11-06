@@ -18,42 +18,15 @@ package net.simonvt.cathode.sync.api;
 
 import android.content.Context;
 import android.text.format.DateUtils;
-import java.io.IOException;
-import javax.inject.Inject;
 import net.simonvt.cathode.api.TraktSettings;
 import net.simonvt.cathode.api.entity.AccessToken;
-import net.simonvt.cathode.api.entity.TokenRequest;
-import net.simonvt.cathode.api.enumeration.GrantType;
-import net.simonvt.cathode.api.service.AuthorizationService;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.sync.BuildConfig;
-import retrofit2.Call;
-import retrofit2.Response;
-import timber.log.Timber;
 
 public class ApiSettings implements TraktSettings {
 
-  private static volatile ApiSettings instance;
-
-  public static ApiSettings getInstance(Context context) {
-    if (instance == null) {
-      synchronized (ApiSettings.class) {
-        if (instance == null) {
-          instance = new ApiSettings(context.getApplicationContext());
-        }
-      }
-    }
-
-    return instance;
-  }
-
   private Context context;
-
-  @Inject AuthorizationService authService;
-
-  private volatile boolean refreshingToken;
 
   public ApiSettings(Context context) {
     this.context = context;
@@ -71,22 +44,10 @@ public class ApiSettings implements TraktSettings {
     }
   }
 
-  private boolean isTokenExpired() {
+  @Override public boolean isTokenExpired() {
     synchronized (this) {
       return Settings.get(context).getLong(TraktLinkSettings.TRAKT_TOKEN_EXPIRATION, 0)
           < System.currentTimeMillis();
-    }
-  }
-
-  private boolean isRefreshingToken() {
-    synchronized (this) {
-      return refreshingToken;
-    }
-  }
-
-  public void setRefreshingToken(boolean refreshingToken) {
-    synchronized (this) {
-      this.refreshingToken = refreshingToken;
     }
   }
 
@@ -115,79 +76,9 @@ public class ApiSettings implements TraktSettings {
     return BuildConfig.TRAKT_REDIRECT_URL;
   }
 
-  private void clearRefreshToken() {
+  @Override public void clearRefreshToken() {
     synchronized (this) {
       Settings.get(context).edit().remove(TraktLinkSettings.TRAKT_REFRESH_TOKEN).apply();
-    }
-  }
-
-  @Override public String refreshToken() {
-    synchronized (this) {
-      if (!isRefreshingToken()) {
-        if (authService == null) {
-          Injector.inject(this);
-        }
-
-        if (!isTokenExpired()) {
-          Timber.d("Token still valid");
-          return getAccessToken();
-        }
-
-        final String refreshToken = getRefreshToken();
-        if (refreshToken == null) {
-          return null;
-        }
-
-        try {
-          setRefreshingToken(true);
-
-          TokenRequest tokenRequest =
-              TokenRequest.refreshToken(refreshToken, getClientId(), getSecret(), getRedirectUrl(),
-                  GrantType.REFRESH_TOKEN);
-
-          Timber.d("Getting new tokens, with refresh token: %s", refreshToken);
-          Call<AccessToken> call = authService.getToken(tokenRequest);
-          Response<AccessToken> response = call.execute();
-          if (response.isSuccessful()) {
-            AccessToken token = response.body();
-            updateTokens(token);
-            return token.getAccessToken();
-          } else {
-            if (response.code() == 401) {
-              clearRefreshToken();
-              return null;
-            }
-
-            String message = "Code: " + response.code();
-            Timber.e(new TokenRefreshFailedException(message), "Unable to get token");
-          }
-        } catch (IOException e) {
-          Timber.d(e, "Unable to get new tokens");
-        } finally {
-          setRefreshingToken(false);
-        }
-      }
-    }
-
-    return null;
-  }
-
-  public static class TokenRefreshFailedException extends Exception {
-
-    public TokenRefreshFailedException() {
-      super();
-    }
-
-    public TokenRefreshFailedException(String detailMessage) {
-      super(detailMessage);
-    }
-
-    public TokenRefreshFailedException(String detailMessage, Throwable throwable) {
-      super(detailMessage, throwable);
-    }
-
-    public TokenRefreshFailedException(Throwable throwable) {
-      super(throwable);
     }
   }
 }

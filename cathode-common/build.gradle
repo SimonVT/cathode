@@ -7,6 +7,10 @@ dependencies {
   implementation deps.butterknife
   annotationProcessor deps.butterknifeCompiler
   implementation deps.dagger
+  implementation deps.daggerAndroid
+  implementation deps.daggerAndroidSupport
+  annotationProcessor deps.daggerCompiler
+  annotationProcessor deps.daggerAndroidApt
   implementation deps.androidDesign
   implementation deps.supportPalette
   implementation deps.picasso

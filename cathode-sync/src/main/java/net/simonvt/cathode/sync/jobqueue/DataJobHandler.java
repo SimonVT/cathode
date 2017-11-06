@@ -16,21 +16,19 @@
 
 package net.simonvt.cathode.sync.jobqueue;
 
+import android.content.Context;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import net.simonvt.cathode.common.event.SyncEvent;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.Flags;
 
-public class DataJobHandler extends JobHandler {
+@Singleton public class DataJobHandler extends JobHandler {
 
   private static final int THREAD_COUNT = 3;
 
-  private static volatile DataJobHandler instance = new DataJobHandler();
-
-  public static DataJobHandler getInstance() {
-    return instance;
-  }
-
-  public DataJobHandler() {
-    super(0, Flags.REQUIRES_AUTH, THREAD_COUNT);
+  @Inject public DataJobHandler(Context context, JobManager jobManager) {
+    super(context, jobManager, 0, Flags.REQUIRES_AUTH, THREAD_COUNT);
   }
 
   @Override protected void onResume() {

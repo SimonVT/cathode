@@ -21,9 +21,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.text.format.DateUtils;
-import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Episode;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -35,34 +33,22 @@ public final class EpisodeDatabaseHelper {
 
   public static final long WATCHED_RELEASE = -1L;
 
-  private static volatile EpisodeDatabaseHelper instance;
-
-  public static EpisodeDatabaseHelper getInstance(Context context) {
-    if (instance == null) {
-      synchronized (EpisodeDatabaseHelper.class) {
-        if (instance == null) {
-          instance = new EpisodeDatabaseHelper(context.getApplicationContext());
-        }
-      }
-    }
-    return instance;
-  }
-
   private static final Object LOCK_ID = new Object();
-
-  @Inject ShowDatabaseHelper showHelper;
-  @Inject SeasonDatabaseHelper seasonHelper;
 
   private Context context;
 
+  private ShowDatabaseHelper showHelper;
+  private SeasonDatabaseHelper seasonHelper;
+
   private ContentResolver resolver;
 
-  private EpisodeDatabaseHelper(Context context) {
+  public EpisodeDatabaseHelper(Context context, ShowDatabaseHelper showHelper,
+      SeasonDatabaseHelper seasonHelper) {
     this.context = context;
+    this.showHelper = showHelper;
+    this.seasonHelper = seasonHelper;
 
     resolver = context.getContentResolver();
-
-    Injector.inject(this);
   }
 
   public Cursor query(long id, String... columns) {

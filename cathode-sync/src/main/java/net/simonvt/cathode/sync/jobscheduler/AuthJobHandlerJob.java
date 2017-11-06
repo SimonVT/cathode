@@ -23,6 +23,7 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.text.format.DateUtils;
+import javax.inject.Inject;
 import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.sync.jobqueue.AuthJobHandler;
@@ -34,7 +35,7 @@ import timber.log.Timber;
   public static final int ID = 1;
   public static final int ID_ONESHOT = 2;
 
-  private AuthJobHandler jobHandler;
+  @Inject AuthJobHandler authJobHandler;
 
   private SchedulerService service;
   private JobParameters params;
@@ -66,7 +67,6 @@ import timber.log.Timber;
   public AuthJobHandlerJob(SchedulerService service, JobParameters params) {
     this.service = service;
     this.params = params;
-    jobHandler = AuthJobHandler.getInstance();
   }
 
   @Override public String key() {
@@ -78,8 +78,8 @@ import timber.log.Timber;
   }
 
   public boolean perform() {
-    if (jobHandler.hasJobs()) {
-      jobHandler.registerListener(listener);
+    if (authJobHandler.hasJobs()) {
+      authJobHandler.registerListener(listener);
     } else {
       // https://issuetracker.google.com/issues/37018640
       MainHandler.post(new Runnable() {
@@ -95,20 +95,20 @@ import timber.log.Timber;
 
   @Override public void stop() {
     super.stop();
-    jobHandler.unregisterListener(listener);
+    authJobHandler.unregisterListener(listener);
   }
 
   private JobHandler.JobHandlerListener listener = new JobHandler.JobHandlerListener() {
     @Override public void onQueueEmpty() {
       Timber.d("[jobFinished][success] %d", params.getJobId());
       service.jobFinished(params, false);
-      jobHandler.unregisterListener(listener);
+      authJobHandler.unregisterListener(listener);
     }
 
     @Override public void onQueueFailed() {
       Timber.d("[jobFinished][failure] %d", params.getJobId());
       service.jobFinished(params, true);
-      jobHandler.unregisterListener(listener);
+      authJobHandler.unregisterListener(listener);
     }
   };
 }

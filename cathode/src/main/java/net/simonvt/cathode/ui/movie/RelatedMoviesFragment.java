@@ -19,9 +19,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
@@ -32,12 +32,12 @@ import net.simonvt.cathode.provider.database.SimpleCursor;
 import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
-import net.simonvt.cathode.ui.listener.MovieClickListener;
+import net.simonvt.cathode.ui.movies.BaseMoviesAdapter;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
 
 public class RelatedMoviesFragment
     extends ToolbarSwipeRefreshRecyclerFragment<MoviesAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<SimpleCursor>, MovieClickListener {
+    implements LoaderManager.LoaderCallbacks<SimpleCursor>, BaseMoviesAdapter.Callbacks {
 
   private static final String TAG = "net.simonvt.cathode.ui.movie.RelatedMoviesFragment";
 
@@ -76,7 +76,7 @@ public class RelatedMoviesFragment
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     movieId = getArguments().getLong(ARG_MOVIE_ID);
 
@@ -104,6 +104,30 @@ public class RelatedMoviesFragment
 
   @Override public void onMovieClicked(long movieId, String title, String overview) {
     navigationListener.onDisplayMovie(movieId, title, overview);
+  }
+
+  @Override public void onCheckin(long movieId) {
+    movieScheduler.checkin(movieId, null, false, false, false);
+  }
+
+  @Override public void onCancelCheckin() {
+    movieScheduler.cancelCheckin();
+  }
+
+  @Override public void onWatchlistAdd(long movieId) {
+    movieScheduler.setIsInWatchlist(movieId, true);
+  }
+
+  @Override public void onWatchlistRemove(long movieId) {
+    movieScheduler.setIsInWatchlist(movieId, false);
+  }
+
+  @Override public void onCollectionAdd(long movieId) {
+    movieScheduler.setIsInCollection(movieId, true);
+  }
+
+  @Override public void onCollectionRemove(long movieId) {
+    movieScheduler.setIsInCollection(movieId, false);
   }
 
   protected void setCursor(SimpleCursor c) {

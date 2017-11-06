@@ -21,10 +21,11 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.ui.NavigationListener;
 
@@ -51,6 +52,11 @@ public class DeleteListDialog extends DialogFragment {
     navigationListener = (NavigationListener) activity;
   }
 
+  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    AndroidSupportInjection.inject(this);
+  }
+
   @NonNull @Override public Dialog onCreateDialog(Bundle inState) {
     final long listId = getArguments().getLong(ARG_LIST_ID);
 
@@ -58,8 +64,6 @@ public class DeleteListDialog extends DialogFragment {
         .setMessage(R.string.list_delete_message)
         .setPositiveButton(R.string.list_dialog_delete, new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
-            Injector.inject(DeleteListDialog.this);
-
             listScheduler.deleteList(listId);
             navigationListener.onListDeleted(listId);
           }

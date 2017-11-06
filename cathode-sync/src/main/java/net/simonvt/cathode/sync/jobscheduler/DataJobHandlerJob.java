@@ -23,6 +23,7 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.text.format.DateUtils;
+import javax.inject.Inject;
 import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.sync.jobqueue.DataJobHandler;
@@ -33,7 +34,7 @@ import timber.log.Timber;
 
   public static final int ID = 3;
 
-  private DataJobHandler jobHandler;
+  @Inject DataJobHandler jobHandler;
 
   private SchedulerService service;
   private JobParameters params;
@@ -52,7 +53,6 @@ import timber.log.Timber;
   public DataJobHandlerJob(SchedulerService service, JobParameters params) {
     this.service = service;
     this.params = params;
-    jobHandler = DataJobHandler.getInstance();
   }
 
   @Override public String key() {

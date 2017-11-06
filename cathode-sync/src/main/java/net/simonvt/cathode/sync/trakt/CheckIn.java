@@ -29,7 +29,6 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.body.CheckinItem;
 import net.simonvt.cathode.api.entity.CheckinResponse;
 import net.simonvt.cathode.api.service.CheckinService;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.event.ErrorEvent;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -50,12 +49,15 @@ import timber.log.Timber;
 
 public class CheckIn {
 
-  @Inject Context context;
-  @Inject EpisodeDatabaseHelper episodeHelper;
-  @Inject CheckinService checkinService;
+  private Context context;
+  private EpisodeDatabaseHelper episodeHelper;
+  private CheckinService checkinService;
 
-  public CheckIn() {
-    Injector.inject(this);
+  @Inject public CheckIn(Context context, EpisodeDatabaseHelper episodeHelper,
+      CheckinService checkinService) {
+    this.context = context;
+    this.episodeHelper = episodeHelper;
+    this.checkinService = checkinService;
   }
 
   public boolean episode(long episodeId, String message, boolean facebook, boolean twitter,
@@ -72,10 +74,9 @@ public class CheckIn {
     String title = DataHelper.getEpisodeTitle(context, episode, season, number, watched);
     episode.close();
 
-    Cursor show =
-        context.getContentResolver().query(Shows.withId(showId), new String[] {
-            ShowColumns.RUNTIME,
-        }, null, null, null);
+    Cursor show = context.getContentResolver().query(Shows.withId(showId), new String[] {
+        ShowColumns.RUNTIME,
+    }, null, null, null);
     show.moveToFirst();
     int runtime = Cursors.getInt(show, ShowColumns.RUNTIME);
     show.close();

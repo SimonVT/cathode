@@ -25,9 +25,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.common.widget.CircularProgressIndicator;
 import net.simonvt.cathode.common.widget.OverflowView;
@@ -36,12 +34,18 @@ import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
-import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.widget.IndicatorView;
 import net.simonvt.schematic.Cursors;
 
 public class ShowDescriptionAdapter
     extends RecyclerCursorAdapter<ShowDescriptionAdapter.ViewHolder> {
+
+  public interface ShowCallbacks {
+
+    void onShowClick(long showId, String title, String overview);
+
+    void setIsInWatchlist(long showId, boolean inWatchlist);
+  }
 
   public static final String[] PROJECTION = new String[] {
       Tables.SHOWS + "." + ShowColumns.ID,
@@ -55,23 +59,19 @@ public class ShowDescriptionAdapter
       Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
   };
 
-  @Inject protected ShowTaskScheduler showScheduler;
-
-  private ShowClickListener listener;
+  private ShowCallbacks callbacks;
 
   private boolean displayRating;
 
-  public ShowDescriptionAdapter(Context context, ShowClickListener listener, Cursor cursor) {
-    this(context, listener, cursor, true);
-    Injector.inject(this);
-    this.listener = listener;
+  public ShowDescriptionAdapter(Context context, ShowCallbacks callbacks, Cursor cursor) {
+    this(context, callbacks, cursor, true);
+    this.callbacks = callbacks;
   }
 
-  public ShowDescriptionAdapter(Context context, ShowClickListener listener, Cursor cursor,
+  public ShowDescriptionAdapter(Context context, ShowCallbacks callbacks, Cursor cursor,
       boolean displayRating) {
     super(context, cursor);
-    Injector.inject(this);
-    this.listener = listener;
+    this.callbacks = callbacks;
     this.displayRating = displayRating;
   }
 
@@ -93,7 +93,7 @@ public class ShowDescriptionAdapter
           Cursor cursor = getCursor(position);
           final String title = Cursors.getString(cursor, ShowColumns.TITLE);
           final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
-          listener.onShowClick(holder.getItemId(), title, overview);
+          callbacks.onShowClick(holder.getItemId(), title, overview);
         }
       }
     });
@@ -158,7 +158,7 @@ public class ShowDescriptionAdapter
   protected void onOverflowActionSelected(View view, long id, int action, int position) {
     switch (action) {
       case R.id.action_watchlist_add:
-        showScheduler.setIsInWatchlist(id, true);
+        callbacks.setIsInWatchlist(id, true);
         break;
 
       case R.id.action_watchlist_remove:
@@ -168,7 +168,7 @@ public class ShowDescriptionAdapter
   }
 
   protected void onWatchlistRemove(long showId) {
-    showScheduler.setIsInWatchlist(showId, false);
+    callbacks.setIsInWatchlist(showId, false);
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {

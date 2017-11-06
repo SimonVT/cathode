@@ -17,8 +17,10 @@ package net.simonvt.cathode.sync.scheduler;
 
 import android.content.Context;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.util.TimeUtils;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.action.shows.AddSeasonToHistory;
@@ -26,13 +28,17 @@ import net.simonvt.cathode.remote.action.shows.CollectSeason;
 import net.simonvt.cathode.remote.action.shows.RemoveSeasonFromHistory;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 
-public class SeasonTaskScheduler extends BaseTaskScheduler {
+@Singleton public class SeasonTaskScheduler extends BaseTaskScheduler {
 
-  @Inject ShowDatabaseHelper showHelper;
-  @Inject SeasonDatabaseHelper seasonHelper;
+  private ShowDatabaseHelper showHelper;
+  private SeasonDatabaseHelper seasonHelper;
 
-  public SeasonTaskScheduler(Context context) {
-    super(context);
+  @Inject
+  public SeasonTaskScheduler(Context context, JobManager jobManager, ShowDatabaseHelper showHelper,
+      SeasonDatabaseHelper seasonHelper) {
+    super(context, jobManager);
+    this.showHelper = showHelper;
+    this.seasonHelper = seasonHelper;
   }
 
   public void addToHistoryNow(final long seasonId) {

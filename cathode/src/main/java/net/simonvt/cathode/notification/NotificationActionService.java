@@ -25,10 +25,10 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.JobIntentService;
 import android.support.v4.app.NotificationCompat;
+import dagger.android.AndroidInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.Longs;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -54,7 +54,7 @@ public class NotificationActionService extends JobIntentService {
 
   @Override public void onCreate() {
     super.onCreate();
-    Injector.inject(this);
+    AndroidInjection.inject(this);
   }
 
   @Override protected void onHandleWork(@NonNull Intent intent) {

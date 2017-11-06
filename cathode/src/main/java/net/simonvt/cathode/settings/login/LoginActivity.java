@@ -23,10 +23,10 @@ import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dagger.android.AndroidInjection;
 import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.Authorization;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.Intents;
 import net.simonvt.cathode.ui.BaseActivity;
 
@@ -53,7 +53,7 @@ public class LoginActivity extends BaseActivity {
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Injector.inject(this);
+    AndroidInjection.inject(this);
 
     Intent intent = getIntent();
     task = intent.getIntExtra(EXTRA_TASK, TASK_LOGIN);

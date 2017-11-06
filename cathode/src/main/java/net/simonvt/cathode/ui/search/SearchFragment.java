@@ -27,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.BindView;
+import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +35,6 @@ import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.Debouncer;
 import net.simonvt.cathode.common.widget.ErrorView;
@@ -116,7 +116,7 @@ public class SearchFragment extends ToolbarGridFragment<SearchAdapter.ViewHolder
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     sortBy = SortBy.fromValue(
         Settings.get(getContext()).getString(Settings.Sort.SEARCH, SortBy.TITLE.getKey()));

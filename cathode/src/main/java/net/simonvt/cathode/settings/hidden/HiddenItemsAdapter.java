@@ -25,9 +25,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.adapter.HeaderCursorAdapter;
 import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.common.widget.RemoteImageView;
@@ -38,17 +36,23 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.util.SqlColumn;
-import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
-import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.schematic.Cursors;
 
 public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder> {
 
-  public interface OnItemClickListener {
+  public interface ItemCallbacks {
 
     void onShowClicked(long showId, String title, String overview);
 
+    void displayShowInCalendar(long showId);
+
+    void displayShowInWatched(long showId);
+
+    void displayShowInCollection(long showId);
+
     void onMovieClicked(long movieId, String title, String overview);
+
+    void displayMovieInCalendar(long movieId);
   }
 
   public static final String[] PROJECTION_SHOW = new String[] {
@@ -78,21 +82,15 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
 
   private static final int TYPE_MOVIE = 1;
 
-  @Inject ShowTaskScheduler showScheduler;
-
-  @Inject MovieTaskScheduler movieScheduler;
-
   private Context context;
 
-  private OnItemClickListener onItemClickListener;
+  private ItemCallbacks itemCallbacks;
 
   private long nextId;
 
-  public HiddenItemsAdapter(Context context, OnItemClickListener onItemClickListener) {
-    super();
+  public HiddenItemsAdapter(Context context, ItemCallbacks itemCallbacks) {
     this.context = context;
-    this.onItemClickListener = onItemClickListener;
-    Injector.inject(this);
+    this.itemCallbacks = itemCallbacks;
   }
 
   @Override public long getLastModified(int position) {
@@ -174,11 +172,11 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
               case R.id.action_unhide:
                 Header header = getHeader(position);
                 if (header.header == R.string.header_hidden_calendar_shows) {
-                  showScheduler.hideFromCalendar(itemId, false);
+                  itemCallbacks.displayShowInCalendar(itemId);
                 } else if (header.header == R.string.header_hidden_watched_shows) {
-                  showScheduler.hideFromWatched(itemId, false);
+                  itemCallbacks.displayShowInWatched(itemId);
                 } else {
-                  showScheduler.hideFromCollected(itemId, false);
+                  itemCallbacks.displayShowInCollection(itemId);
                 }
                 break;
             }
@@ -197,7 +195,7 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
             final String title = Cursors.getString(cursor, ShowColumns.TITLE);
             final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
 
-            onItemClickListener.onShowClicked(itemId, title, overview);
+            itemCallbacks.onShowClicked(itemId, title, overview);
           }
         }
       });
@@ -224,7 +222,7 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
               case R.id.action_unhide:
                 Header header = getHeader(position);
                 if (header.header == R.string.header_hidden_calendar_movies) {
-                  movieScheduler.hideFromCalendar(itemId, false);
+                  itemCallbacks.displayMovieInCalendar(itemId);
                 }
                 break;
             }
@@ -243,7 +241,7 @@ public class HiddenItemsAdapter extends HeaderCursorAdapter<RecyclerView.ViewHol
             final String title = Cursors.getString(cursor, MovieColumns.TITLE);
             final String overview = Cursors.getString(cursor, MovieColumns.OVERVIEW);
 
-            onItemClickListener.onMovieClicked(itemId, title, overview);
+            itemCallbacks.onMovieClicked(itemId, title, overview);
           }
         }
       });

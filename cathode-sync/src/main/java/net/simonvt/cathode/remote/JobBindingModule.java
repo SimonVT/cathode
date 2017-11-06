@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2018 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.ui.listener;
 
-public interface EpisodeClickListener {
+package net.simonvt.cathode.remote;
 
-  void onEpisodeClick(long id);
+import android.view.View;
+import dagger.Module;
+import dagger.android.AndroidInjector;
+import dagger.multibindings.Multibinds;
+import java.util.Map;
+import net.simonvt.cathode.jobqueue.Job;
+
+@Module public abstract class JobBindingModule {
+
+  @Multibinds
+  public abstract Map<Class<? extends View>, AndroidInjector.Factory<? extends Job>> jobInjectorFactories();
+
+  @Multibinds
+  public abstract Map<String, AndroidInjector.Factory<? extends Job>> jobStringInjectorFactories();
 }

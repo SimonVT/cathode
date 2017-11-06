@@ -28,7 +28,6 @@ import net.simonvt.cathode.api.entity.UserSettings;
 import net.simonvt.cathode.api.enumeration.GrantType;
 import net.simonvt.cathode.api.service.AuthorizationService;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.common.Injector;
 import retrofit2.Call;
 import retrofit2.Response;
 import timber.log.Timber;
@@ -82,20 +81,23 @@ public class TokenTask extends AsyncTask<Void, Void, TokenTask.Result> {
 
   private WeakReference<Callback> callback;
 
-  public static void start(String code, Callback callback) {
+  public static void start(String code, AuthorizationService authorizationService,
+      UsersService usersService, TraktSettings traktSettings, Callback callback) {
     if (runningInstance != null) {
       throw new IllegalStateException("TokenTask already executing");
     }
 
-    runningInstance = new TokenTask(code);
+    runningInstance = new TokenTask(code, authorizationService, usersService, traktSettings);
     runningInstance.execute();
     runningInstance.setCallback(callback);
   }
 
-  private TokenTask(String code) {
+  public TokenTask(String code, AuthorizationService authorizationService,
+      UsersService usersService, TraktSettings traktSettings) {
     this.code = code;
-
-    Injector.inject(this);
+    this.authorizationService = authorizationService;
+    this.usersService = usersService;
+    this.traktSettings = traktSettings;
   }
 
   public void setCallback(Callback callback) {

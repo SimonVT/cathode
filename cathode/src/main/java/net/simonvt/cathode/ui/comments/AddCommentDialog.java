@@ -26,11 +26,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.CommentsService;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.TextUtils;
 import net.simonvt.cathode.sync.scheduler.CommentsTaskScheduler;
 
@@ -58,7 +58,7 @@ public class AddCommentDialog extends DialogFragment {
 
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     Bundle args = getArguments();
     type = (ItemType) args.getSerializable(ARG_TYPE);

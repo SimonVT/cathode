@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2017 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,19 @@
 
 package net.simonvt.cathode.jobqueue;
 
-import android.content.Context;
 import dagger.Module;
-import dagger.Provides;
-import javax.inject.Singleton;
+import dagger.android.AndroidInjector;
+import dagger.multibindings.Multibinds;
+import java.util.Map;
 
-@Module(library = true, complete = false) public class JobModule {
+@Module public abstract class JobInjectionModule {
 
-  @Provides @Singleton JobManager provideJobManager(Context context, JobInjector jobInjector) {
-    return new JobManager(context, jobInjector);
+  @Multibinds
+  abstract Map<String, AndroidInjector.Factory<? extends Job>> jobInjectorFactoriesWithStringKeys();
+
+  @Multibinds
+  abstract Map<Class<? extends Job>, AndroidInjector.Factory<? extends Job>> jobInjectorFactories();
+
+  private JobInjectionModule() {
   }
 }

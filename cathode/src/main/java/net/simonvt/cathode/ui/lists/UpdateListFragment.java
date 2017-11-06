@@ -30,10 +30,10 @@ import android.widget.Spinner;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Privacy;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler;
 
@@ -83,7 +83,7 @@ public class UpdateListFragment extends DialogFragment {
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Injector.inject(this);
+    AndroidSupportInjection.inject(this);
 
     if (getShowsDialog()) {
       setStyle(DialogFragment.STYLE_NO_TITLE, 0);

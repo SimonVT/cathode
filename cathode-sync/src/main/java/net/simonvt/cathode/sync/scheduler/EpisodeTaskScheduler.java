@@ -21,12 +21,14 @@ import android.database.Cursor;
 import android.text.format.DateUtils;
 import java.io.IOException;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.CheckinService;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.common.event.ErrorEvent;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
@@ -53,15 +55,21 @@ import retrofit2.Call;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class EpisodeTaskScheduler extends BaseTaskScheduler {
+@Singleton public class EpisodeTaskScheduler extends BaseTaskScheduler {
 
-  @Inject ShowDatabaseHelper showHelper;
-  @Inject EpisodeDatabaseHelper episodeHelper;
-  @Inject CheckinService checkinService;
-  @Inject CheckIn checkIn;
+  private ShowDatabaseHelper showHelper;
+  private EpisodeDatabaseHelper episodeHelper;
+  private CheckinService checkinService;
+  private CheckIn checkIn;
 
-  public EpisodeTaskScheduler(Context context) {
-    super(context);
+  @Inject
+  public EpisodeTaskScheduler(Context context, JobManager jobManager, ShowDatabaseHelper showHelper,
+      EpisodeDatabaseHelper episodeHelper, CheckinService checkinService, CheckIn checkIn) {
+    super(context, jobManager);
+    this.showHelper = showHelper;
+    this.episodeHelper = episodeHelper;
+    this.checkinService = checkinService;
+    this.checkIn = checkIn;
   }
 
   public void sync(final long episodeId, final Job.OnDoneListener onDoneListener) {

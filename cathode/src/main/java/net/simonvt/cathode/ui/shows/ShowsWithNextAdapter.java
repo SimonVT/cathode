@@ -25,9 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.common.widget.RemoteImageView;
@@ -39,8 +37,6 @@ import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.util.DataHelper;
-import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
-import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
@@ -51,6 +47,23 @@ import net.simonvt.schematic.Cursors;
  * A show adapter that displays the next episode as well.
  */
 public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAdapter.ViewHolder> {
+
+  public interface Callbacks {
+
+    void onShowClick(long showId, String title, String overview);
+
+    void onRemoveFromWatchlist(long showId);
+
+    void onCheckin(long episodeId);
+
+    void onCancelCheckin();
+
+    void onCollectNext(long showId);
+
+    void onHideFromWatched(long showId);
+
+    void onHideFromCollection(long showId);
+  }
 
   private static final String COLUMN_EPISODE_ID = "episodeId";
   private static final String COLUMN_EPISODE_LAST_UPDATED = "episodeLastUpdated";
@@ -73,26 +86,22 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
       Tables.EPISODES + "." + EpisodeColumns.LAST_MODIFIED + " AS " + COLUMN_EPISODE_LAST_UPDATED,
   };
 
-  @Inject ShowTaskScheduler showScheduler;
-  @Inject EpisodeTaskScheduler episodeScheduler;
-
   private FragmentActivity activity;
 
   private final LibraryType libraryType;
 
-  protected ShowClickListener clickListener;
+  protected Callbacks callbacks;
 
-  public ShowsWithNextAdapter(FragmentActivity activity, ShowClickListener clickListener,
+  public ShowsWithNextAdapter(FragmentActivity activity, Callbacks callbacks,
       LibraryType libraryType) {
-    this(activity, clickListener, null, libraryType);
+    this(activity, callbacks, null, libraryType);
   }
 
-  public ShowsWithNextAdapter(FragmentActivity activity, ShowClickListener clickListener,
+  public ShowsWithNextAdapter(FragmentActivity activity, Callbacks callbacks,
       Cursor cursor, LibraryType libraryType) {
     super(activity, cursor);
-    Injector.inject(this);
     this.activity = activity;
-    this.clickListener = clickListener;
+    this.callbacks = callbacks;
     this.libraryType = libraryType;
   }
 
@@ -117,7 +126,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
           Cursor cursor = getCursor(position);
           final String title = Cursors.getString(cursor, ShowColumns.TITLE);
           final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
-          clickListener.onShowClick(holder.getItemId(), title, overview);
+          callbacks.onShowClick(holder.getItemId(), title, overview);
         }
       }
     });
@@ -135,7 +144,7 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
         if (position != RecyclerView.NO_POSITION) {
           switch (action) {
             case R.id.action_watchlist_remove:
-              showScheduler.setIsInWatchlist(holder.getItemId(), false);
+              callbacks.onRemoveFromWatchlist(holder.getItemId());
               break;
 
             case R.id.action_history_add:
@@ -145,24 +154,26 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
               break;
 
             case R.id.action_checkin:
-              CheckInDialog.showDialogIfNecessary(activity, Type.SHOW, holder.episodeTitle,
-                  holder.episodeId);
+              if (!CheckInDialog.showDialogIfNecessary(activity, Type.SHOW, holder.episodeTitle,
+                  holder.episodeId)) {
+                callbacks.onCheckin(holder.episodeId);
+              }
               break;
 
             case R.id.action_checkin_cancel:
-              episodeScheduler.cancelCheckin();
+              callbacks.onCancelCheckin();
               break;
 
             case R.id.action_collection_add:
-              showScheduler.collectedNext(holder.getItemId());
+              callbacks.onCollectNext(holder.getItemId());
               break;
 
             case R.id.action_watched_hide:
-              showScheduler.hideFromWatched(holder.getItemId(), true);
+              callbacks.onHideFromWatched(holder.getItemId());
               break;
 
             case R.id.action_collection_hide:
-              showScheduler.hideFromCollected(holder.getItemId(), true);
+              callbacks.onHideFromCollection(holder.getItemId());
               break;
           }
         }
@@ -245,11 +256,6 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
     holder.showAiredCount = showAiredCount;
     holder.episodeTitle = episodeTitle;
     holder.episodeId = episodeId;
-  }
-
-  protected void onWatchNext(View view, int position, long showId, int watchedCount,
-      int airedCount) {
-    showScheduler.watchedNext(showId);
   }
 
   protected void setupOverflowItems(OverflowView overflow, int typeCount, int airedCount,

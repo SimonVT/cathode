@@ -34,7 +34,6 @@ import net.simonvt.cathode.api.enumeration.Enums;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.SearchService;
-import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -58,13 +57,13 @@ public class SearchHandler {
 
   private static final int LIMIT = 50;
 
-  @Inject SearchService searchService;
+  private SearchService searchService;
 
-  @Inject ShowTaskScheduler showScheduler;
-  @Inject MovieTaskScheduler movieScheduler;
+  private ShowTaskScheduler showScheduler;
+  private MovieTaskScheduler movieScheduler;
 
-  @Inject ShowDatabaseHelper showHelper;
-  @Inject MovieDatabaseHelper movieHelper;
+  private ShowDatabaseHelper showHelper;
+  private MovieDatabaseHelper movieHelper;
 
   private final List<WeakReference<SearchListener>> listeners = new ArrayList<>();
 
@@ -76,9 +75,15 @@ public class SearchHandler {
 
   private SearchExecutor executor = new SearchExecutor();
 
-  public SearchHandler(Context context) {
+  @Inject public SearchHandler(Context context, SearchService searchService,
+      ShowTaskScheduler showScheduler, MovieTaskScheduler movieScheduler,
+      ShowDatabaseHelper showHelper, MovieDatabaseHelper movieHelper) {
     this.context = context;
-    Injector.inject(this);
+    this.searchService = searchService;
+    this.showScheduler = showScheduler;
+    this.movieScheduler = movieScheduler;
+    this.showHelper = showHelper;
+    this.movieHelper = movieHelper;
   }
 
   public void addListener(SearchListener listener) {

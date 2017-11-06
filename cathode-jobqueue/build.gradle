@@ -5,7 +5,10 @@ dependencies {
   implementation project(':cathode-common')
   implementation project(':cathode-provider')
   implementation deps.dagger
+  implementation deps.daggerAndroid
+  implementation deps.daggerAndroidSupport
   annotationProcessor deps.daggerCompiler
+  annotationProcessor deps.daggerAndroidApt
   implementation deps.gson
   implementation deps.schematic
   annotationProcessor deps.schematicCompiler
