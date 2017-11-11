@@ -2,16 +2,17 @@ apply plugin: 'com.android.library'
 apply plugin: 'checkstyle'
 
 dependencies {
-  compile project(':cathode-common')
-  compile project(':cathode-provider')
-  compile project(':cathode-settings')
-  compile deps.dagger
+  implementation project(':cathode-common')
+  implementation project(':cathode-provider')
+  implementation project(':cathode-settings')
+  implementation deps.dagger
   annotationProcessor deps.daggerCompiler
-  compile deps.picasso
-  compile deps.picassoOkHttp
-  compile deps.supportAnnotations
-  compile deps.timber
-  compile deps.tmdb
+  api deps.picasso
+  implementation deps.picassoOkHttp
+  implementation deps.supportAnnotations
+  implementation deps.schematic
+  implementation deps.timber
+  implementation deps.tmdb
 }
 
 android {

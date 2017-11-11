@@ -26,7 +26,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import java.util.List;
 import javax.inject.Inject;
@@ -221,9 +220,9 @@ public class CreditsFragment extends RefreshableToolbarFragment {
         View view =
             LayoutInflater.from(getContext()).inflate(R.layout.credit_item_credit, items, false);
 
-        RemoteImageView headshot = ButterKnife.findById(view, R.id.headshot);
-        TextView name = ButterKnife.findById(view, R.id.name);
-        TextView job = ButterKnife.findById(view, R.id.job);
+        RemoteImageView headshot = view.findViewById(R.id.headshot);
+        TextView name = view.findViewById(R.id.name);
+        TextView job = view.findViewById(R.id.job);
 
         headshot.setImage(credit.getHeadshot());
         name.setText(credit.getName());

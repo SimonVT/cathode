@@ -2,13 +2,13 @@ apply plugin: 'com.android.library'
 apply plugin: 'checkstyle'
 
 dependencies {
-  compile project(':cathode-common')
-  compile project(':trakt-api')
-  compile deps.tmdb
+  implementation project(':cathode-common')
+  implementation project(':trakt-api')
+  implementation deps.tmdb
 
-  testCompile deps.junit
-  testCompile deps.robolectric
-  testCompile deps.truth
+  testImplementation deps.junit
+  testImplementation deps.robolectric
+  testImplementation deps.truth
 }
 
 android {

@@ -20,7 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import butterknife.ButterKnife;
 import java.util.Locale;
 
 public class EnumAdapter<T extends Enum<T>> extends BaseAdapter {
@@ -60,7 +59,7 @@ public class EnumAdapter<T extends Enum<T>> extends BaseAdapter {
           .inflate(android.R.layout.simple_spinner_item, parent, false);
     }
 
-    TextView tv = ButterKnife.findById(v, android.R.id.text1);
+    TextView tv = v.findViewById(android.R.id.text1);
 
     tv.setText(String.format(Locale.US, "%s", values[position]));
 

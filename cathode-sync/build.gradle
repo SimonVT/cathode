@@ -4,17 +4,22 @@ apply plugin: 'com.android.library'
 apply plugin: 'checkstyle'
 
 dependencies {
-  compile project(':cathode-common')
-  compile project(':cathode-images')
-  compile project(':cathode-jobqueue')
-  compile project(':cathode-provider')
-  compile project(':cathode-settings')
-  compile deps.dagger
+  implementation project(':cathode-common')
+  implementation project(':cathode-images')
+  implementation project(':cathode-jobqueue')
+  implementation project(':cathode-provider')
+  implementation project(':cathode-settings')
+  implementation project(':trakt-api')
+  implementation deps.dagger
   annotationProcessor deps.daggerCompiler
-  compile deps.retrofit
-  compile deps.timber
+  implementation deps.retrofit
+  implementation deps.schematic
+  implementation deps.supportAnnotations
+  implementation deps.supportCoreUtils
+  implementation deps.timber
+  implementation deps.tmdb
 
-  compile(deps.crashlytics) {
+  implementation(deps.crashlytics) {
     transitive = true
   }
 }

@@ -2,18 +2,20 @@ apply plugin: 'com.android.library'
 apply plugin: 'checkstyle'
 
 dependencies {
-  compile project(':cathode-common')
-  compile project(':cathode-settings')
-  compile deps.dagger
+  implementation project(':cathode-common')
+  implementation project(':cathode-settings')
+  implementation project(':trakt-api')
+  implementation deps.dagger
   annotationProcessor deps.daggerCompiler
-  compile deps.schematic
+  implementation deps.schematic
   annotationProcessor deps.schematicCompiler
-  compile deps.supportCoreUtils
+  implementation deps.supportCoreUtils
+  implementation deps.timber
 
-  testCompile deps.junit
-  testCompile deps.robolectric
-  testCompile deps.truth
-  testCompile deps.dagger
+  testImplementation deps.junit
+  testImplementation deps.robolectric
+  testImplementation deps.truth
+  testImplementation deps.dagger
   testAnnotationProcessor deps.daggerCompiler
 }
 

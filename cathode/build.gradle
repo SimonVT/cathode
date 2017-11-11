@@ -4,50 +4,51 @@ apply plugin: 'checkstyle'
 apply plugin: 'com.kageiit.lintrules'
 
 dependencies {
-  compile project(':cathode-common')
-  compile project(':cathode-jobqueue')
-  compile project(':cathode-provider')
-  compile project(':cathode-settings')
-  compile project(':cathode-sync')
-  compile project(':trakt-api')
-  compile project(':libs:colorpicker')
-  compile project(':libs:datetimepicker')
+  implementation project(':cathode-common')
+  implementation project(':cathode-images')
+  implementation project(':cathode-jobqueue')
+  implementation project(':cathode-provider')
+  implementation project(':cathode-settings')
+  implementation project(':cathode-sync')
+  implementation project(':trakt-api')
+  implementation project(':libs:colorpicker')
+  implementation project(':libs:datetimepicker')
 
-  compile deps.schematic
+  implementation deps.schematic
   annotationProcessor deps.schematicCompiler
 
-  compile deps.gson
+  implementation deps.gson
 
-  compile deps.appcompat
-  compile deps.cardView
-  compile deps.recyclerView
-  compile deps.androidDesign
+  implementation deps.appcompat
+  implementation deps.cardView
+  implementation deps.recyclerView
+  implementation deps.androidDesign
 
-  compile deps.dagger
+  implementation deps.dagger
   annotationProcessor deps.daggerCompiler
-  compile deps.picasso
-  compile deps.picassoOkHttp
-  compile deps.retrofit
-  compile deps.okhttp
-  debugCompile deps.okhttpLogger
+  implementation deps.picasso
+  implementation deps.picassoOkHttp
+  implementation deps.retrofit
+  implementation deps.okhttp
+  debugImplementation deps.okhttpLogger
 
-  compile deps.butterknife
+  implementation deps.butterknife
   annotationProcessor deps.butterknifeCompiler
-  compile deps.timber
+  implementation deps.timber
 
-  compile deps.dashclockApi
+  implementation deps.dashclockApi
 
-  compile deps.tmdb
+  implementation deps.tmdb
 
-  compile(deps.crashlytics) {
+  implementation(deps.crashlytics) {
     transitive = true
   }
 
   lintRules project(':cathode-lint')
 
-  testCompile deps.junit
-  testCompile deps.robolectric
-  testCompile deps.truth
+  testImplementation deps.junit
+  testImplementation deps.robolectric
+  testImplementation deps.truth
 }
 
 android {

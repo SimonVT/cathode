@@ -20,7 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import butterknife.ButterKnife;
 import net.simonvt.cathode.settings.StartPage;
 
 public class StartPageAdapter extends BaseAdapter {
@@ -56,7 +55,7 @@ public class StartPageAdapter extends BaseAdapter {
           .inflate(android.R.layout.simple_spinner_item, parent, false);
     }
 
-    TextView tv = ButterKnife.findById(v, android.R.id.text1);
+    TextView tv = v.findViewById(android.R.id.text1);
 
     tv.setText(startPages[position].getLabel());
 

@@ -25,7 +25,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -228,8 +227,8 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
           final long id = (long) v.getTag(R.id.historyId);
 
           if (item.historyId == id) {
-            TextView watchedAt = ButterKnife.findById(v, R.id.watchedAt);
-            View remove = ButterKnife.findById(v, R.id.remove);
+            TextView watchedAt = v.findViewById(R.id.watchedAt);
+            View remove = v.findViewById(R.id.remove);
 
             watchedAt.setText(item.watchedAt);
             remove.setOnClickListener(new View.OnClickListener() {
@@ -244,8 +243,8 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
 
         v = LayoutInflater.from(watchedAtContainer.getContext())
             .inflate(R.layout.history_row, watchedAtContainer, false);
-        TextView watchedAt = ButterKnife.findById(v, R.id.watchedAt);
-        View remove = ButterKnife.findById(v, R.id.remove);
+        TextView watchedAt = v.findViewById(R.id.watchedAt);
+        View remove = v.findViewById(R.id.remove);
 
         v.setTag(Type.ITEM);
         v.setTag(R.id.historyId, item.historyId);

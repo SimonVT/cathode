@@ -18,11 +18,11 @@ android {
 }
 
 dependencies {
-  compile deps.supportCoreUi
-  compile deps.supportFragment
-  compile deps.recyclerView
+  implementation deps.supportCoreUi
+  implementation deps.supportFragment
+  implementation deps.recyclerView
 
-  compile deps.timber
+  implementation deps.timber
 }
 
 apply from: rootProject.file('deps.gradle')

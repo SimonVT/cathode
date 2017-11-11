@@ -29,7 +29,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import java.util.List;
 import javax.inject.Inject;
@@ -265,9 +264,9 @@ public class PersonFragment extends RefreshableAppBarFragment {
         View view =
             LayoutInflater.from(getContext()).inflate(R.layout.person_item_credit, items, false);
 
-        RemoteImageView poster = ButterKnife.findById(view, R.id.poster);
-        TextView title = ButterKnife.findById(view, R.id.title);
-        TextView job = ButterKnife.findById(view, R.id.job);
+        RemoteImageView poster = view.findViewById(R.id.poster);
+        TextView title = view.findViewById(R.id.title);
+        TextView job = view.findViewById(R.id.job);
 
         poster.setImage(credit.getPoster());
         title.setText(credit.getTitle());

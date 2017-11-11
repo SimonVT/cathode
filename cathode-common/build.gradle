@@ -3,22 +3,22 @@ apply plugin: 'checkstyle'
 apply plugin: 'com.jakewharton.butterknife'
 
 dependencies {
-  compile deps.appcompat
-  compile deps.butterknife
+  implementation deps.appcompat
+  implementation deps.butterknife
   annotationProcessor deps.butterknifeCompiler
-  compile deps.dagger
-  compile deps.androidDesign
-  compile deps.supportPalette
-  compile deps.picasso
-  compile deps.recyclerView
-  compile deps.schematic
-  compile deps.supportAnnotations
-  compile deps.supportFragment
-  compile deps.timber
+  implementation deps.dagger
+  implementation deps.androidDesign
+  implementation deps.supportPalette
+  implementation deps.picasso
+  implementation deps.recyclerView
+  implementation deps.schematic
+  implementation deps.supportAnnotations
+  implementation deps.supportFragment
+  implementation deps.timber
 
-  testCompile deps.junit
-  testCompile deps.robolectric
-  testCompile deps.truth
+  testImplementation deps.junit
+  testImplementation deps.robolectric
+  testImplementation deps.truth
 }
 
 android {

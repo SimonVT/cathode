@@ -2,18 +2,18 @@ apply plugin: 'com.android.library'
 apply plugin: 'checkstyle'
 
 dependencies {
-  compile deps.gson
+  implementation deps.gson
 
-  compile deps.timber
+  implementation deps.timber
 
-  compile deps.dagger
+  implementation deps.dagger
   annotationProcessor deps.daggerCompiler
-  compile deps.retrofit
-  compile deps.retrofitGson
-  compile deps.okhttp
+  implementation deps.retrofit
+  implementation deps.retrofitGson
+  implementation deps.okhttp
 
-  testCompile deps.junit
-  testCompile deps.truth
+  testImplementation deps.junit
+  testImplementation deps.truth
 }
 
 android {

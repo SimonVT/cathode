@@ -5,9 +5,8 @@ buildscript {
     google()
     jcenter()
     maven { url 'https://maven.fabric.io/public' }
-    maven {
-      url "https://plugins.gradle.org/m2/"
-    }
+    maven { url "https://plugins.gradle.org/m2/" }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
   }
 
   dependencies {
@@ -23,6 +22,7 @@ allprojects {
     google()
     jcenter()
     maven { url 'https://maven.fabric.io/public' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
   }
 }
 
@@ -38,8 +38,8 @@ ext {
   minSdkVersion = 16
   targetSdkVersion = 26
 
-  compileSdkVersion = 26
-  buildToolsVersion = '26.0.1'
+  compileSdkVersion = 27
+  buildToolsVersion = '27.0.1'
 }
 
 def getProperty(String propertyFile, String field) {

@@ -95,7 +95,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
     Context drawerContext = new ContextThemeWrapper(this, R.style.Theme_AppCompat);
     LayoutInflater.from(drawerContext)
-        .inflate(R.layout.debug_drawer, (ViewGroup) ButterKnife.findById(this, R.id.debug_drawer));
+        .inflate(R.layout.debug_drawer, (ViewGroup) findViewById(R.id.debug_drawer));
 
     ButterKnife.bind(debugViews, this);
 
