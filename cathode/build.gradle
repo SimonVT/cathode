@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'checkstyle'
-apply plugin: 'com.kageiit.lintrules'
 
 dependencies {
   implementation project(':cathode-common')
@@ -44,7 +43,7 @@ dependencies {
     transitive = true
   }
 
-  lintRules project(':cathode-lint')
+  lintChecks project(':cathode-lint')
 
   testImplementation deps.junit
   testImplementation deps.robolectric

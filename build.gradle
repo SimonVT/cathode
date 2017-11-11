@@ -12,7 +12,6 @@ buildscript {
   dependencies {
     classpath deps.androidPlugin
     classpath deps.fabricGradle
-    classpath deps.lintrules
     classpath deps.butterknifeGradle
   }
 }

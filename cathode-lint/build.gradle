@@ -10,8 +10,8 @@ targetCompatibility = JavaVersion.VERSION_1_8
 sourceCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
-  implementation deps.lintApi
-  implementation deps.lintChecks
+  compileOnly deps.lintApi
+  compileOnly deps.lintChecks
 
   testImplementation deps.junit
   testImplementation deps.lint
@@ -21,7 +21,7 @@ dependencies {
 
 jar {
   manifest {
-    attributes('Lint-Registry': 'net.simonvt.cathode.lint.IssueRegistry')
+    attributes('Lint-Registry-v2': 'net.simonvt.cathode.lint.IssueRegistry')
   }
 }
 

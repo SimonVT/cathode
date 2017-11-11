@@ -1,6 +1,7 @@
 package net.simonvt.cathode.lint;
 
 import com.android.tools.lint.client.api.JavaEvaluator;
+import com.android.tools.lint.client.api.UElementHandler;
 import com.android.tools.lint.detector.api.Category;
 import com.android.tools.lint.detector.api.Detector;
 import com.android.tools.lint.detector.api.Implementation;
@@ -8,19 +9,19 @@ import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
-import com.intellij.psi.JavaElementVisitor;
-import com.intellij.psi.JavaRecursiveElementVisitor;
 import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiModifierList;
 import java.util.Collections;
 import java.util.List;
+import org.jetbrains.uast.UClass;
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UField;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
 
 public final class InjectedFieldInJobNotTransientDetector extends Detector
-    implements Detector.JavaPsiScanner {
+    implements Detector.UastScanner {
 
   private static final String ISSUE_ID = "InjectedFieldInJobNotTransientDetector";
   private static final String LINT_ERROR_TITLE = "Injected field not transient";
@@ -36,22 +37,22 @@ public final class InjectedFieldInJobNotTransientDetector extends Detector
           Severity.ERROR,
           new Implementation(InjectedFieldInJobNotTransientDetector.class, Scope.JAVA_FILE_SCOPE));
 
-  @Override public List<Class<? extends PsiElement>> getApplicablePsiTypes() {
-    return Collections.<Class<? extends PsiElement>>singletonList(PsiClass.class);
+  @Override public List<Class<? extends UElement>> getApplicableUastTypes() {
+    return Collections.singletonList(UClass.class);
   }
 
-  @Override public JavaElementVisitor createPsiVisitor(final JavaContext context) {
-    return new JavaElementVisitor() {
-      @Override public void visitClass(PsiClass node) {
-        node.accept(new R2UsageVisitor(context));
+  @Override public UElementHandler createUastHandler(final JavaContext context) {
+    return new UElementHandler() {
+      @Override public void visitClass(UClass node) {
+        node.accept(new JobVisitor(context));
       }
     };
   }
 
-  private static class R2UsageVisitor extends JavaRecursiveElementVisitor {
+  private static class JobVisitor extends AbstractUastVisitor {
     private final JavaContext context;
 
-    R2UsageVisitor(JavaContext context) {
+    JobVisitor(JavaContext context) {
       this.context = context;
     }
 
@@ -78,21 +79,21 @@ public final class InjectedFieldInJobNotTransientDetector extends Detector
       return false;
     }
 
-    @Override public void visitField(PsiField field) {
+    @Override public boolean visitField(UField field) {
       PsiModifierList modifierList = field.getModifierList();
       if (modifierList == null || modifierList.hasModifierProperty(PsiModifier.TRANSIENT)) {
-        return;
+        return false;
       }
 
       if (!isInJob(field)) {
-        return;
+        return false;
       }
 
       if (hasAnnotation(modifierList, JAVAX_INJECT)) {
         context.report(ISSUE, context.getLocation(field), LINT_ERROR_MESSAGE);
       }
 
-      super.visitField(field);
+      return super.visitField(field);
     }
   }
 }
