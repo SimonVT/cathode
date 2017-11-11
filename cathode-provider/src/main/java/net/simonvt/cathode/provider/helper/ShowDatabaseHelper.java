@@ -20,10 +20,8 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.text.format.DateUtils;
 import java.util.List;
 import net.simonvt.cathode.api.entity.Show;
-import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.common.Injector;
 import net.simonvt.cathode.common.util.TextUtils;
 import net.simonvt.cathode.provider.DatabaseContract;
@@ -35,7 +33,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.database.DatabaseUtils;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.schematic.Cursors;
-import timber.log.Timber;
 
 public final class ShowDatabaseHelper {
 
@@ -301,17 +298,6 @@ public final class ShowDatabaseHelper {
 
       if (show.moveToFirst()) {
         final long showLastUpdated = Cursors.getLong(show, ShowColumns.LAST_UPDATED);
-        final long currentTime = System.currentTimeMillis();
-
-        // Every so often shows can get "stuck" out of date. Try to debug this.
-        if (showLastUpdated > currentTime + DateUtils.DAY_IN_MILLIS) {
-          Timber.e(new IllegalArgumentException("Last updated: "
-              + TimeUtils.getIsoTime(showLastUpdated)
-              + " - current time: "
-              + TimeUtils.getIsoTime(currentTime)), "Wrong LAST_UPDATED");
-          return true;
-        }
-
         return lastUpdated > showLastUpdated;
       }
 
