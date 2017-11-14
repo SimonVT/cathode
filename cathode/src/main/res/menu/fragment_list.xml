@@ -21,7 +21,7 @@
       android:id="@+id/menu_list_edit"
       android:icon="@drawable/ic_list_edit_24dp"
       android:title="@string/action_list_edit"
-      app:showAsAction="always"/>
+      app:showAsAction="ifRoom"/>
 
   <item
       android:id="@+id/menu_list_delete"

@@ -31,7 +31,8 @@
     <ImageView
         android:id="@+id/poster"
         android:layout_width="@dimen/appWidgetPosterWidth"
-        android:layout_height="@dimen/appWidgetPosterHeight"/>
+        android:layout_height="@dimen/appWidgetPosterHeight"
+        android:contentDescription="@null"/>
 
     <LinearLayout
         android:id="@+id/infoParent"

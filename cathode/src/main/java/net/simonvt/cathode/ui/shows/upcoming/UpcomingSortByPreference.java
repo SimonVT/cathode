@@ -15,6 +15,7 @@
  */
 package net.simonvt.cathode.ui.shows.upcoming;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class UpcomingSortByPreference {
     void onUpcomingSortByChanged(UpcomingSortBy sortBy);
   }
 
-  private static UpcomingSortByPreference instance;
+  @SuppressLint("StaticFieldLeak") private static UpcomingSortByPreference instance;
 
   private Context context;
 
@@ -50,7 +51,7 @@ public class UpcomingSortByPreference {
   }
 
   private UpcomingSortByPreference(Context context) {
-    this.context = context;
+    this.context = context.getApplicationContext();
   }
 
   public void set(UpcomingSortBy sortBy) {

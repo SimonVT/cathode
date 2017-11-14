@@ -19,8 +19,6 @@
 
   <dimen name="watchingPosterWidth">72dp</dimen>
 
-  <dimen name="trailerMargin">0dp</dimen>
-
   <dimen name="dashboardItemWidth">196dp</dimen>
 
 </resources>

@@ -17,6 +17,5 @@
 <resources>
 
   <dimen name="detailContentPadding">16dp</dimen>
-  <dimen name="detailContentPaddingTop">36dp</dimen>
 
 </resources>

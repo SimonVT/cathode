@@ -15,7 +15,6 @@
  */
 package net.simonvt.cathode.settings.login;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -57,11 +56,11 @@ public class TokenTask extends AsyncTask<Void, Void, TokenTask.Result> {
       this.success = false;
     }
 
-    public static Result success(AccessToken accessToken, UserSettings userSettings) {
+    static Result success(AccessToken accessToken, UserSettings userSettings) {
       return new Result(accessToken, userSettings);
     }
 
-    public static Result error(int errorMessage) {
+    static Result error(int errorMessage) {
       return new Result(errorMessage);
     }
   }
@@ -79,24 +78,21 @@ public class TokenTask extends AsyncTask<Void, Void, TokenTask.Result> {
   @Inject UsersService usersService;
   @Inject TraktSettings traktSettings;
 
-  final Context context;
-
   private String code;
 
-  WeakReference<Callback> callback;
+  private WeakReference<Callback> callback;
 
-  public static void start(Context context, String code, Callback callback) {
+  public static void start(String code, Callback callback) {
     if (runningInstance != null) {
       throw new IllegalStateException("TokenTask already executing");
     }
 
-    runningInstance = new TokenTask(context, code);
+    runningInstance = new TokenTask(code);
     runningInstance.execute();
     runningInstance.setCallback(callback);
   }
 
-  private TokenTask(Context context, String code) {
-    this.context = context.getApplicationContext();
+  private TokenTask(String code) {
     this.code = code;
 
     Injector.inject(this);

@@ -14,9 +14,10 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
 <animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:drawable="@drawable/ic_action_checkin_24dp">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:drawable="@drawable/ic_action_checkin_24dp"
+    tools:ignore="NewApi">
 
   <target
       android:animation="@animator/checkin_to_cancel"

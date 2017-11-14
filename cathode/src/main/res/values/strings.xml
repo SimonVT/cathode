@@ -51,7 +51,6 @@
   <string name="twitter">Twitter</string>
   <string name="tumblr">Tumblr</string>
 
-  <string name="overview">Overview</string>
   <string name="genres">Genres</string>
   <string name="biography">Biography</string>
 
@@ -66,7 +65,6 @@
   <string name="title_comment_add">Add comment</string>
   <string name="title_comment_update">Update comment</string>
   <string name="title_comment_reply">Reply</string>
-  <string name="title_website">Website</string>
   <string name="title_links">Links</string>
   <string name="title_related">Related</string>
 

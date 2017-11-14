@@ -15,13 +15,14 @@
  */
 package net.simonvt.cathode.calendar;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
 public class CalendarService extends Service {
 
-  private static CalendarSyncAdapter sSyncAdapter;
+  @SuppressLint("StaticFieldLeak") private static CalendarSyncAdapter sSyncAdapter;
 
   @Override public IBinder onBind(Intent intent) {
     return getSyncAdapter().getSyncAdapterBinder();

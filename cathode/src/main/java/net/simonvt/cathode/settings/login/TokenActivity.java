@@ -68,7 +68,7 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
       TokenTask.runningInstance.setCallback(this);
     } else {
       final String code = getIntent().getStringExtra(EXTRA_CODE);
-      TokenTask.start(this, code, this);
+      TokenTask.start(code, this);
     }
 
     setRefreshing(true);

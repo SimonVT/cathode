@@ -14,9 +14,10 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
 <animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:drawable="@drawable/search_refresh_24dp">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:drawable="@drawable/search_refresh_24dp"
+    tools:ignore="NewApi">
 
   <target
       android:animation="@animator/rotation"
