@@ -17,7 +17,7 @@
 <resources>
 
   <string name="license_schematic">Schematic</string>
-  <string name="license_text_schematic">Copyright 2014 Simon Vig Therkildsen
+  <string name="license_schematic_text">Copyright 2014 Simon Vig Therkildsen
 
     \n\nLicensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@
   </string>
 
   <string name="license_gson">GSON</string>
-  <string name="license_text_gson">Copyright © 2008 Google Inc.
+  <string name="license_gson_text">Copyright © 2008 Google Inc.
     \n\nLicensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -111,6 +111,22 @@
     limitations under the License.
   </string>
 
+  <string name="license_picasso_downloader">Picasso 2 OkHttp 3 Downloader</string>
+  <string name="license_picasso_downloader_text">Copyright 2016 Jake Wharton
+
+    \n\nLicensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    \n\nhttp://www.apache.org/licenses/LICENSE-2.0
+
+    \n\nUnless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+  </string>
+
   <string name="license_retrofit">Retrofit</string>
   <string name="license_retrofit_text">Copyright 2013 Square, Inc.
 
@@ -143,7 +159,7 @@
     limitations under the License.
   </string>
 
-  <string name="license_timber">Butterknife</string>
+  <string name="license_timber">Timber</string>
   <string name="license_timber_text">Copyright 2013 Jake Wharton
 
     \n\nLicensed under the Apache License, Version 2.0 (the "License");

@@ -53,17 +53,20 @@ public class LicensesDialog extends DialogFragment {
     List<License> licenses = new ArrayList<>();
 
     private LicenseAdapter() {
-      licenses.add(new License(R.string.license_gson, R.string.license_text_gson));
       licenses.add(new License(R.string.license_android_support_library,
           R.string.license_android_support_library_text));
+      licenses.add(new License(R.string.license_gson, R.string.license_gson_text));
       licenses.add(new License(R.string.license_dagger, R.string.license_dagger_text));
       licenses.add(new License(R.string.license_okhttp, R.string.license_okhttp_text));
       licenses.add(new License(R.string.license_picasso, R.string.license_picasso_text));
+      licenses.add(new License(R.string.license_picasso_downloader,
+          R.string.license_picasso_downloader_text));
       licenses.add(new License(R.string.license_retrofit, R.string.license_retrofit_text));
       licenses.add(new License(R.string.license_butterknife, R.string.license_butterknife_text));
       licenses.add(new License(R.string.license_timber, R.string.license_timber_text));
       licenses.add(new License(R.string.license_dashclock, R.string.license_dashclock_text));
       licenses.add(new License(R.string.license_tmdb_java, R.string.license_tmdb_java_text));
+      licenses.add(new License(R.string.license_schematic, R.string.license_schematic_text));
     }
 
     @Override public int getCount() {
