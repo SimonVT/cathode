@@ -32,6 +32,10 @@ public class ApiSettings implements TraktSettings {
     this.context = context;
   }
 
+  @Override public boolean isLinked() {
+    return TraktLinkSettings.isLinked(context);
+  }
+
   @Override public String getAccessToken() {
     synchronized (this) {
       return Settings.get(context).getString(TraktLinkSettings.TRAKT_ACCESS_TOKEN, null);

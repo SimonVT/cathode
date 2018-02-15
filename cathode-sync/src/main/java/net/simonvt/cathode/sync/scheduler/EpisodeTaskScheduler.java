@@ -47,6 +47,7 @@ import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.comments.SyncComments;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.sync.R;
 import net.simonvt.cathode.sync.tmdb.api.show.SyncEpisodeImages;
 import net.simonvt.cathode.sync.trakt.CheckIn;
@@ -130,7 +131,9 @@ import timber.log.Timber;
           episodeHelper.addToHistory(episodeId, TimeUtils.getMillis(watchedAt));
         }
 
-        queue(new AddEpisodeToHistory(traktId, season, number, watchedAt));
+        if (TraktLinkSettings.isLinked(context)) {
+          queue(new AddEpisodeToHistory(traktId, season, number, watchedAt));
+        }
       }
     });
   }
@@ -138,18 +141,20 @@ import timber.log.Timber;
   public void removeFromHistory(final long episodeId) {
     execute(new Runnable() {
       @Override public void run() {
-        Cursor c = episodeHelper.query(episodeId, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON,
-            EpisodeColumns.EPISODE);
-        c.moveToFirst();
-        final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
-        final long traktId = showHelper.getTraktId(showId);
-        final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
-        final int number = Cursors.getInt(c, EpisodeColumns.EPISODE);
-        c.close();
-
         episodeHelper.removeFromHistory(episodeId);
 
-        queue(new RemoveEpisodeFromHistory(traktId, season, number));
+        if (TraktLinkSettings.isLinked(context)) {
+          Cursor c = episodeHelper.query(episodeId, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON,
+              EpisodeColumns.EPISODE);
+          c.moveToFirst();
+          final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
+          final long traktId = showHelper.getTraktId(showId);
+          final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
+          final int number = Cursors.getInt(c, EpisodeColumns.EPISODE);
+          c.close();
+
+          queue(new RemoveEpisodeFromHistory(traktId, season, number));
+        }
       }
     });
   }
@@ -158,15 +163,16 @@ import timber.log.Timber;
       final boolean lastItem) {
     execute(new Runnable() {
       @Override public void run() {
-        queue(new RemoveHistoryItem(historyId));
-
         if (lastItem) {
           episodeHelper.removeFromHistory(episodeId);
         }
 
-        final long showId = episodeHelper.getShowId(episodeId);
-        final long traktId = showHelper.getTraktId(showId);
-        queue(new SyncShowWatchedStatus(traktId));
+        if (TraktLinkSettings.isLinked(context)) {
+          final long showId = episodeHelper.getShowId(episodeId);
+          final long traktId = showHelper.getTraktId(showId);
+          queue(new RemoveHistoryItem(historyId));
+          queue(new SyncShowWatchedStatus(traktId));
+        }
       }
     });
   }
@@ -281,18 +287,20 @@ import timber.log.Timber;
           collectedAtMillis = TimeUtils.getMillis(collectedAt);
         }
 
-        Cursor c = episodeHelper.query(episodeId, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON,
-            EpisodeColumns.EPISODE);
-        c.moveToFirst();
-        final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
-        final long traktId = showHelper.getTraktId(showId);
-        final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
-        final int number = Cursors.getInt(c, EpisodeColumns.EPISODE);
-        c.close();
-
         episodeHelper.setInCollection(episodeId, inCollection, collectedAtMillis);
 
-        queue(new CollectEpisode(traktId, season, number, inCollection, collectedAt));
+        if (TraktLinkSettings.isLinked(context)) {
+          Cursor c = episodeHelper.query(episodeId, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON,
+              EpisodeColumns.EPISODE);
+          c.moveToFirst();
+          final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
+          final long traktId = showHelper.getTraktId(showId);
+          final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
+          final int number = Cursors.getInt(c, EpisodeColumns.EPISODE);
+          c.close();
+
+          queue(new CollectEpisode(traktId, season, number, inCollection, collectedAt));
+        }
       }
     });
   }
@@ -307,18 +315,20 @@ import timber.log.Timber;
           listeddAtMillis = TimeUtils.getMillis(listedAt);
         }
 
-        Cursor c = episodeHelper.query(episodeId, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON,
-            EpisodeColumns.EPISODE);
-        c.moveToFirst();
-        final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
-        final long traktId = showHelper.getTraktId(showId);
-        final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
-        final int number = Cursors.getInt(c, EpisodeColumns.EPISODE);
-        c.close();
-
         episodeHelper.setIsInWatchlist(episodeId, inWatchlist, listeddAtMillis);
 
-        queue(new WatchlistEpisode(traktId, season, number, inWatchlist, listedAt));
+        if (TraktLinkSettings.isLinked(context)) {
+          Cursor c = episodeHelper.query(episodeId, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON,
+              EpisodeColumns.EPISODE);
+          c.moveToFirst();
+          final long showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID);
+          final long traktId = showHelper.getTraktId(showId);
+          final int season = Cursors.getInt(c, EpisodeColumns.SEASON);
+          final int number = Cursors.getInt(c, EpisodeColumns.EPISODE);
+          c.close();
+
+          queue(new WatchlistEpisode(traktId, season, number, inWatchlist, listedAt));
+        }
       }
     });
   }
@@ -350,7 +360,9 @@ import timber.log.Timber;
           values.put(EpisodeColumns.RATED_AT, ratedAtMillis);
           context.getContentResolver().update(Episodes.withId(episodeId), values, null, null);
 
-          queue(new RateEpisode(showTraktId, season, episode, rating, ratedAt));
+          if (TraktLinkSettings.isLinked(context)) {
+            queue(new RateEpisode(showTraktId, season, episode, rating, ratedAt));
+          }
         }
         c.close();
       }

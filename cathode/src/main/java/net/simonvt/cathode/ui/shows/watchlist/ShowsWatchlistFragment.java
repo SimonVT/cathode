@@ -37,6 +37,7 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchlist;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
@@ -103,6 +104,7 @@ public class ShowsWatchlistFragment
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
     getToolbar().setNavigationOnClickListener(navigationClickListener);
+    getSwipeRefreshLayout().setEnabled(TraktLinkSettings.isLinked(requireContext()));
   }
 
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {

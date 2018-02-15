@@ -21,10 +21,13 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.fragment.BaseFragment;
 import net.simonvt.cathode.common.util.ViewPagerUtils;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 
 public class ShowSuggestionsPagerAdapter extends FragmentPagerAdapter {
 
   private Context context;
+
+  final boolean traktLinked;
 
   private ShowRecommendationsFragment recommendationsFragment;
   private TrendingShowsFragment trendingFragment;
@@ -34,10 +37,14 @@ public class ShowSuggestionsPagerAdapter extends FragmentPagerAdapter {
     super(fm);
     this.context = context;
 
-    recommendationsFragment =
-        (ShowRecommendationsFragment) fm.findFragmentByTag(makeFragmentName(0));
-    if (recommendationsFragment == null) {
-      recommendationsFragment = new ShowRecommendationsFragment();
+    traktLinked = TraktLinkSettings.isLinked(context);
+
+    if (traktLinked) {
+      recommendationsFragment =
+          (ShowRecommendationsFragment) fm.findFragmentByTag(makeFragmentName(0));
+      if (recommendationsFragment == null) {
+        recommendationsFragment = new ShowRecommendationsFragment();
+      }
     }
 
     trendingFragment = (TrendingShowsFragment) fm.findFragmentByTag(makeFragmentName(1));
@@ -56,26 +63,42 @@ public class ShowSuggestionsPagerAdapter extends FragmentPagerAdapter {
   }
 
   @Override public BaseFragment getItem(int position) {
-    if (position == 0) {
-      return recommendationsFragment;
-    } else if (position == 1) {
-      return trendingFragment;
+    if (traktLinked) {
+      if (position == 0) {
+        return recommendationsFragment;
+      } else if (position == 1) {
+        return trendingFragment;
+      } else {
+        return anticipatedFragment;
+      }
     } else {
-      return anticipatedFragment;
+      if (position == 0) {
+        return trendingFragment;
+      } else {
+        return anticipatedFragment;
+      }
     }
   }
 
   @Override public int getCount() {
-    return 3;
+    return traktLinked ? 3 : 2;
   }
 
   @Override public CharSequence getPageTitle(int position) {
-    if (position == 0) {
-      return context.getString(R.string.title_recommended);
-    } else if (position == 1) {
-      return context.getString(R.string.title_trending);
+    if (traktLinked) {
+      if (position == 0) {
+        return context.getString(R.string.title_recommended);
+      } else if (position == 1) {
+        return context.getString(R.string.title_trending);
+      } else {
+        return context.getString(R.string.title_anticipated);
+      }
     } else {
-      return context.getString(R.string.title_anticipated);
+      if (position == 0) {
+        return context.getString(R.string.title_trending);
+      } else {
+        return context.getString(R.string.title_anticipated);
+      }
     }
   }
 }

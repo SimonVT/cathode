@@ -20,6 +20,8 @@ import net.simonvt.cathode.api.entity.AccessToken;
 
 public interface TraktSettings {
 
+  boolean isLinked();
+
   String getAccessToken();
 
   String getRefreshToken();

@@ -63,13 +63,21 @@
       android:summary="@string/preference_shows_offset_sum"/>
 
   <PreferenceCategory
+      android:title="@string/preference_trakt"/>
+
+  <Preference
+      android:key="traktLink"
+      android:title="@string/preference_trakt_link"
+      android:summary="@string/preference_trakt_link_sum"/>
+
+  <Preference
+      android:key="traktUnlink"
+      android:title="@string/preference_trakt_unlink"/>
+
+  <PreferenceCategory
       android:title="@string/preference_other"/>
 
   <Preference
       android:key="about"
       android:title="@string/preference_about"/>
-
-  <Preference
-      android:key="logout"
-      android:title="@string/preference_logout"/>
 </PreferenceScreen>

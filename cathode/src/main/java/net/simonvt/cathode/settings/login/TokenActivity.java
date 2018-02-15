@@ -101,6 +101,7 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
 
     Settings.get(this)
         .edit()
+        .putBoolean(TraktLinkSettings.TRAKT_LINK_PROMPTED, true)
         .putBoolean(TraktLinkSettings.TRAKT_LINKED, true)
         .putBoolean(TraktLinkSettings.TRAKT_AUTH_FAILED, false)
         .apply();

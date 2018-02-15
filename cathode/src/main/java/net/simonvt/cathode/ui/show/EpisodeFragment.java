@@ -50,6 +50,7 @@ import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.util.DataHelper;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
@@ -203,6 +204,15 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
     Drawable linkDrawable =
         VectorDrawableCompat.create(getResources(), R.drawable.ic_link_black_24dp, null);
     viewOnTrakt.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null);
+
+    if (TraktLinkSettings.isLinked(requireContext())) {
+      rating.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          RatingDialog.newInstance(RatingDialog.Type.EPISODE, episodeId, currentRating)
+              .show(getFragmentManager(), DIALOG_RATING);
+        }
+      });
+    }
   }
 
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
@@ -215,11 +225,6 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
     episodeScheduler.sync(episodeId, onDoneListener);
   }
 
-  @OnClick(R.id.rating) void onRatingClick() {
-    RatingDialog.newInstance(RatingDialog.Type.EPISODE, episodeId, currentRating)
-        .show(getFragmentManager(), DIALOG_RATING);
-  }
-
   @OnClick(R.id.commentsHeader) void onShowComments() {
     navigationListener.onDisplayComments(ItemType.EPISODE, episodeId);
   }
@@ -227,27 +232,28 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
   @Override public void createMenu(Toolbar toolbar) {
     if (loaded) {
       Menu menu = toolbar.getMenu();
+      if (TraktLinkSettings.isLinked(requireContext())) {
+        if (checkInDrawable == null) {
+          checkInDrawable = new CheckInDrawable(toolbar.getContext());
+          checkInDrawable.setWatching(watching || checkedIn);
+          checkInDrawable.setId(episodeId);
+        }
 
-      if (checkInDrawable == null) {
-        checkInDrawable = new CheckInDrawable(toolbar.getContext());
-        checkInDrawable.setWatching(watching || checkedIn);
-        checkInDrawable.setId(episodeId);
-      }
+        MenuItem checkInItem;
 
-      MenuItem checkInItem;
+        if (watching || checkedIn) {
+          checkInItem = menu.add(0, R.id.action_checkin, 1, R.string.action_checkin_cancel);
+        } else {
+          checkInItem = menu.add(0, R.id.action_checkin, 1, R.string.action_checkin);
+        }
 
-      if (watching || checkedIn) {
-        checkInItem = menu.add(0, R.id.action_checkin, 1, R.string.action_checkin_cancel);
-      } else {
-        checkInItem = menu.add(0, R.id.action_checkin, 1, R.string.action_checkin);
-      }
+        checkInItem.setIcon(checkInDrawable).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
-      checkInItem.setIcon(checkInDrawable).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
-      if (watching) {
-        checkInItem.setEnabled(false);
-      } else {
-        checkInItem.setEnabled(true);
+        if (watching) {
+          checkInItem.setEnabled(false);
+        } else {
+          checkInItem.setEnabled(true);
+        }
       }
 
       menu.add(0, R.id.action_history_add, 3, R.string.action_history_add);
@@ -280,8 +286,12 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
         return true;
 
       case R.id.action_history_remove:
-        RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.EPISODE, episodeId,
-            episodeTitle, showTitle).show(getFragmentManager(), RemoveFromHistoryDialog.TAG);
+        if (TraktLinkSettings.isLinked(requireContext())) {
+          RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.EPISODE, episodeId,
+              episodeTitle, showTitle).show(getFragmentManager(), RemoveFromHistoryDialog.TAG);
+        } else {
+          episodeScheduler.removeFromHistory(episodeId);
+        }
         return true;
 
       case R.id.action_checkin:

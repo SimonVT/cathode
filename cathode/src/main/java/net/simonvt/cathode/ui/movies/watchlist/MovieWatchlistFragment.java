@@ -16,10 +16,12 @@
 package net.simonvt.cathode.ui.movies.watchlist;
 
 import android.os.Bundle;
+import android.view.View;
 import androidx.lifecycle.ViewModelProviders;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchlist;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.ui.movies.MoviesFragment;
 
 public class MovieWatchlistFragment extends MoviesFragment {
@@ -35,6 +37,11 @@ public class MovieWatchlistFragment extends MoviesFragment {
 
     viewModel = ViewModelProviders.of(this).get(MovieWatchlistViewModel.class);
     viewModel.getMovies().observe(this, observer);
+  }
+
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
+    getSwipeRefreshLayout().setEnabled(TraktLinkSettings.isLinked(requireContext()));
   }
 
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {

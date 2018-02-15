@@ -29,6 +29,7 @@ import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.common.entity.Comment;
 import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.guava.Preconditions;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.sync.scheduler.CommentsTaskScheduler;
 import net.simonvt.cathode.ui.NavigationListener;
 
@@ -111,7 +112,9 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
 
   @Override public void createMenu(Toolbar toolbar) {
     super.createMenu(toolbar);
-    toolbar.inflateMenu(R.menu.fragment_comments);
+    if (TraktLinkSettings.isLinked(requireContext())) {
+      toolbar.inflateMenu(R.menu.fragment_comments);
+    }
   }
 
   @Override public boolean onMenuItemClick(MenuItem item) {

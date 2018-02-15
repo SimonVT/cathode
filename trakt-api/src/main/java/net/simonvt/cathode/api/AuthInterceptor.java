@@ -32,7 +32,7 @@ public class AuthInterceptor implements Interceptor {
   }
 
   @Override public Response intercept(Chain chain) throws IOException {
-    if (settings.getAccessToken() != null) {
+    if (settings.isLinked()) {
       Request request = chain.request()
           .newBuilder()
           .addHeader(HEADER_AUTHORIZATION, "Bearer " + settings.getAccessToken())

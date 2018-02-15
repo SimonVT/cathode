@@ -43,6 +43,10 @@ public class TraktAuthenticator implements Authenticator {
 
   @Override public Request authenticate(Route route, Response response) throws IOException {
     synchronized (TraktAuthenticator.class) {
+      if (!settings.isLinked()) {
+        return null;
+      }
+
       if (responseCount(response) >= 2) {
         Timber.d("Failed 2 times, giving up");
         return null;

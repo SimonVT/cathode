@@ -20,6 +20,7 @@ import android.content.Context;
 
 public final class TraktLinkSettings {
 
+  public static final String TRAKT_LINK_PROMPTED = "traktLinkPrompted";
   public static final String TRAKT_LINKED = "traktLinked";
   public static final String TRAKT_AUTH_FAILED = "traktAuthFailed";
 
@@ -28,6 +29,10 @@ public final class TraktLinkSettings {
   public static final String TRAKT_TOKEN_EXPIRATION = "traktTokenExpiration";
 
   private TraktLinkSettings() {
+  }
+
+  public static boolean isLinkPrompted(Context context) {
+    return Settings.get(context).getBoolean(TRAKT_LINK_PROMPTED, false);
   }
 
   public static boolean isLinked(Context context) {

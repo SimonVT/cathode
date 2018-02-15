@@ -34,6 +34,7 @@ import net.simonvt.cathode.common.widget.TimeStamp;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.util.DataHelper;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
@@ -94,9 +95,11 @@ public class SeasonAdapter extends BaseAdapter<Episode, SeasonAdapter.ViewHolder
             callbacks.setEpisodeCollected(holder.getItemId(), !activated);
           } else {
             if (activated) {
-              RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.EPISODE,
-                  holder.getItemId(), holder.episodeTitle, holder.showTitle)
-                  .show(activity.getSupportFragmentManager(), RemoveFromHistoryDialog.TAG);
+              if (TraktLinkSettings.isLinked(getContext())) {
+                RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.EPISODE,
+                    holder.getItemId(), holder.episodeTitle, holder.showTitle)
+                    .show(activity.getSupportFragmentManager(), RemoveFromHistoryDialog.TAG);
+              }
             } else {
               AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.EPISODE, holder.getItemId(),
                   holder.episodeTitle)

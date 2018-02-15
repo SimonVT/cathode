@@ -47,6 +47,7 @@ import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieCredits;
 import net.simonvt.cathode.remote.sync.movies.SyncRelatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.sync.R;
 import net.simonvt.cathode.sync.tmdb.api.movie.SyncMovieImages;
 import net.simonvt.cathode.sync.trakt.CheckIn;
@@ -166,11 +167,13 @@ import timber.log.Timber;
           movieHelper.addToHistory(movieId, TimeUtils.getMillis(watchedAt));
         }
 
-        final long traktId = movieHelper.getTraktId(movieId);
-        queue(new AddMovieToHistory(traktId, watchedAt));
-
         if (movieHelper.lastSync(movieId) == 0L) {
           sync(movieId);
+        }
+
+        if (TraktLinkSettings.isLinked(context)) {
+          final long traktId = movieHelper.getTraktId(movieId);
+          queue(new AddMovieToHistory(traktId, watchedAt));
         }
       }
     });
@@ -179,9 +182,12 @@ import timber.log.Timber;
   public void removeFromHistory(final long movieId) {
     execute(new Runnable() {
       @Override public void run() {
-        final long traktId = movieHelper.getTraktId(movieId);
         movieHelper.removeFromHistory(movieId);
-        queue(new RemoveMovieFromHistory(traktId));
+
+        if (TraktLinkSettings.isLinked(context)) {
+          final long traktId = movieHelper.getTraktId(movieId);
+          queue(new RemoveMovieFromHistory(traktId));
+        }
       }
     });
   }
@@ -189,13 +195,14 @@ import timber.log.Timber;
   public void removeHistoryItem(final long movieId, final long historyId, final boolean lastItem) {
     execute(new Runnable() {
       @Override public void run() {
-        queue(new RemoveHistoryItem(historyId));
-
         if (lastItem) {
           movieHelper.removeFromHistory(movieId);
         }
 
-        queue(new SyncWatchedMovies());
+        if (TraktLinkSettings.isLinked(context)) {
+          queue(new RemoveHistoryItem(historyId));
+          queue(new SyncWatchedMovies());
+        }
       }
     });
   }
@@ -210,12 +217,11 @@ import timber.log.Timber;
           listedAtMillis = TimeUtils.getMillis(listedAt);
         }
 
-        final long traktId = movieHelper.getTraktId(movieId);
         movieHelper.setIsInWatchlist(movieId, inWatchlist, listedAtMillis);
-        queue(new WatchlistMovie(traktId, inWatchlist, listedAt));
 
-        if (movieHelper.lastSync(movieId) == 0L) {
-          sync(movieId);
+        if (TraktLinkSettings.isLinked(context)) {
+          final long traktId = movieHelper.getTraktId(movieId);
+          queue(new WatchlistMovie(traktId, inWatchlist, listedAt));
         }
       }
     });
@@ -231,12 +237,15 @@ import timber.log.Timber;
           collectedAtMillis = TimeUtils.getMillis(collectedAt);
         }
 
-        final long traktId = movieHelper.getTraktId(movieId);
         movieHelper.setIsInCollection(movieId, inCollection, collectedAtMillis);
-        queue(new CollectMovie(traktId, inCollection, collectedAt));
 
         if (movieHelper.lastSync(movieId) == 0L) {
           sync(movieId);
+        }
+
+        if (TraktLinkSettings.isLinked(context)) {
+          final long traktId = movieHelper.getTraktId(movieId);
+          queue(new CollectMovie(traktId, inCollection, collectedAt));
         }
       }
     });
@@ -370,14 +379,15 @@ import timber.log.Timber;
         String ratedAt = TimeUtils.getIsoTime();
         long ratedAtMillis = TimeUtils.getMillis(ratedAt);
 
-        final long traktId = movieHelper.getTraktId(movieId);
-
         ContentValues values = new ContentValues();
         values.put(MovieColumns.USER_RATING, rating);
         values.put(MovieColumns.RATED_AT, ratedAtMillis);
         context.getContentResolver().update(Movies.withId(movieId), values, null, null);
 
-        queue(new RateMovie(traktId, rating, ratedAt));
+        if (TraktLinkSettings.isLinked(context)) {
+          final long traktId = movieHelper.getTraktId(movieId);
+          queue(new RateMovie(traktId, rating, ratedAt));
+        }
       }
     });
   }
@@ -385,12 +395,14 @@ import timber.log.Timber;
   public void hideFromCalendar(final long movieId, final boolean hidden) {
     execute(new Runnable() {
       @Override public void run() {
-        final long traktId = movieHelper.getTraktId(movieId);
-        queue(new CalendarHideMovie(traktId, hidden));
-
         ContentValues values = new ContentValues();
         values.put(MovieColumns.HIDDEN_CALENDAR, hidden);
         context.getContentResolver().update(Movies.withId(movieId), values, null, null);
+
+        if (TraktLinkSettings.isLinked(context)) {
+          final long traktId = movieHelper.getTraktId(movieId);
+          queue(new CalendarHideMovie(traktId, hidden));
+        }
       }
     });
   }

@@ -26,7 +26,6 @@ import java.util.concurrent.CountDownLatch;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncJob;
-import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.sync.jobqueue.AuthJobHandler;
 import net.simonvt.cathode.sync.jobqueue.DataJobHandler;
 import net.simonvt.cathode.sync.jobqueue.JobHandler;
@@ -52,10 +51,6 @@ public class CathodeSyncAdapter extends AbstractThreadedSyncAdapter {
   @Override public void onPerformSync(Account account, Bundle extras, String authority,
       ContentProviderClient provider, SyncResult syncResult) {
     if (jobManager == null) {
-      return;
-    }
-
-    if (!TraktLinkSettings.isLinked(getContext())) {
       return;
     }
 

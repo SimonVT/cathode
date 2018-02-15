@@ -35,6 +35,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 
 public class CreateListFragment extends DialogFragment {
 
@@ -98,11 +99,15 @@ public class CreateListFragment extends DialogFragment {
       }
     });
 
-    ArrayAdapter<CharSequence> adapter =
-        ArrayAdapter.createFromResource(getActivity(), R.array.list_privacy,
-            android.R.layout.simple_spinner_item);
-    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    privacy.setAdapter(adapter);
+    if (TraktLinkSettings.isLinked(requireContext())) {
+      ArrayAdapter<CharSequence> adapter =
+          ArrayAdapter.createFromResource(requireContext(), R.array.list_privacy, android.R.layout.simple_spinner_item);
+      adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+      privacy.setAdapter(adapter);
+    } else {
+      privacy.setVisibility(View.GONE);
+      allowComments.setVisibility(View.GONE);
+    }
   }
 
   @Override public void onDestroyView() {

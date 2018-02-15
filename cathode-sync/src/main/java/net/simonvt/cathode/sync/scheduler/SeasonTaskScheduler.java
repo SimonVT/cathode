@@ -27,6 +27,7 @@ import net.simonvt.cathode.remote.action.shows.AddSeasonToHistory;
 import net.simonvt.cathode.remote.action.shows.CollectSeason;
 import net.simonvt.cathode.remote.action.shows.RemoveSeasonFromHistory;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 
 @Singleton public class SeasonTaskScheduler extends BaseTaskScheduler {
 
@@ -62,19 +63,21 @@ import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
   public void addToHistory(final long seasonId, final String watchedAt) {
     execute(new Runnable() {
       @Override public void run() {
-        final long showId = seasonHelper.getShowId(seasonId);
-        final long traktId = showHelper.getTraktId(showId);
-        final int seasonNumber = seasonHelper.getNumber(seasonId);
-
         long watched = SeasonDatabaseHelper.WATCHED_RELEASE;
         if (!SyncItems.TIME_RELEASED.equals(watchedAt)) {
           watched = TimeUtils.getMillis(watchedAt);
         }
 
         seasonHelper.addToHistory(seasonId, watched);
-        queue(new AddSeasonToHistory(traktId, seasonNumber, watchedAt));
-        // No documentation on how exactly the trakt endpoint is implemented, so sync after.
-        queue(new SyncWatchedShows());
+
+        if (TraktLinkSettings.isLinked(context)) {
+          final long showId = seasonHelper.getShowId(seasonId);
+          final long traktId = showHelper.getTraktId(showId);
+          final int seasonNumber = seasonHelper.getNumber(seasonId);
+          queue(new AddSeasonToHistory(traktId, seasonNumber, watchedAt));
+          // No documentation on how exactly the trakt endpoint is implemented, so sync after.
+          queue(new SyncWatchedShows());
+        }
       }
     });
   }
@@ -84,11 +87,12 @@ import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
       @Override public void run() {
         seasonHelper.removeFromHistory(seasonId);
 
-        final long showId = seasonHelper.getShowId(seasonId);
-        final long traktId = showHelper.getTraktId(showId);
-        final int seasonNumber = seasonHelper.getNumber(seasonId);
-
-        queue(new RemoveSeasonFromHistory(traktId, seasonNumber));
+        if (TraktLinkSettings.isLinked(context)) {
+          final long showId = seasonHelper.getShowId(seasonId);
+          final long traktId = showHelper.getTraktId(showId);
+          final int seasonNumber = seasonHelper.getNumber(seasonId);
+          queue(new RemoveSeasonFromHistory(traktId, seasonNumber));
+        }
       }
     });
   }
@@ -103,12 +107,14 @@ import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
           collectedAtMillis = TimeUtils.getMillis(collectedAt);
         }
 
-        final long showId = seasonHelper.getShowId(seasonId);
-        final long traktId = showHelper.getTraktId(showId);
-        final int seasonNumber = seasonHelper.getNumber(seasonId);
-
-        queue(new CollectSeason(traktId, seasonNumber, inCollection, collectedAt));
         seasonHelper.setIsInCollection(seasonId, inCollection, collectedAtMillis);
+
+        if (TraktLinkSettings.isLinked(context)) {
+          final long showId = seasonHelper.getShowId(seasonId);
+          final long traktId = showHelper.getTraktId(showId);
+          final int seasonNumber = seasonHelper.getNumber(seasonId);
+          queue(new CollectSeason(traktId, seasonNumber, inCollection, collectedAt));
+        }
       }
     });
   }

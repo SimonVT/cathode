@@ -47,6 +47,7 @@ import net.simonvt.cathode.remote.action.lists.RemovePerson;
 import net.simonvt.cathode.remote.action.lists.RemoveSeason;
 import net.simonvt.cathode.remote.action.lists.RemoveShow;
 import net.simonvt.cathode.remote.sync.lists.SyncLists;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.sync.trakt.UserList;
 
 @Singleton public class ListsTaskScheduler extends BaseTaskScheduler {
@@ -80,8 +81,18 @@ import net.simonvt.cathode.sync.trakt.UserList;
       final boolean displayNumbers, final boolean allowComments) {
     execute(new Runnable() {
       @Override public void run() {
-        userList.create(name, description, privacy, displayNumbers, allowComments);
-        queue(new SyncLists());
+        if (TraktLinkSettings.isLinked(context)) {
+          userList.create(name, description, privacy, displayNumbers, allowComments);
+          queue(new SyncLists());
+        } else {
+          ContentValues values = new ContentValues();
+          values.put(ListsColumns.NAME, name);
+          values.put(ListsColumns.DESCRIPTION, description);
+          values.put(ListsColumns.PRIVACY, Privacy.PRIVATE.toString());
+          values.put(ListsColumns.DISPLAY_NUMBERS, false);
+          values.put(ListsColumns.ALLOW_COMMENTS, true);
+          context.getContentResolver().insert(Lists.LISTS, values);
+        }
       }
     });
   }
@@ -90,9 +101,19 @@ import net.simonvt.cathode.sync.trakt.UserList;
       final Privacy privacy, final boolean displayNumbers, final boolean allowComments) {
     execute(new Runnable() {
       @Override public void run() {
-        final long traktId = ListWrapper.getTraktId(context.getContentResolver(), listId);
-        userList.update(traktId, name, description, privacy, displayNumbers, allowComments);
-        queue(new SyncLists());
+        if (TraktLinkSettings.isLinked(context)) {
+          final long traktId = ListWrapper.getTraktId(context.getContentResolver(), listId);
+          userList.update(traktId, name, description, privacy, displayNumbers, allowComments);
+          queue(new SyncLists());
+        } else {
+          ContentValues values = new ContentValues();
+          values.put(ListsColumns.NAME, name);
+          values.put(ListsColumns.DESCRIPTION, description);
+          values.put(ListsColumns.PRIVACY, Privacy.PRIVATE.toString());
+          values.put(ListsColumns.DISPLAY_NUMBERS, false);
+          values.put(ListsColumns.ALLOW_COMMENTS, true);
+          context.getContentResolver().update(Lists.withId(listId), values, null, null);
+        }
       }
     });
   }
@@ -105,14 +126,20 @@ import net.simonvt.cathode.sync.trakt.UserList;
         }, null, null, null);
         if (list.moveToFirst()) {
           final String name = Cursors.getString(list, ListsColumns.NAME);
-          final long traktId = Cursors.getLong(list, ListsColumns.TRAKT_ID);
 
-          if (userList.delete(traktId, name)) {
+          if (TraktLinkSettings.isLinked(context)) {
+            final long traktId = Cursors.getLong(list, ListsColumns.TRAKT_ID);
+
+            if (userList.delete(traktId, name)) {
+              context.getContentResolver().delete(ListItems.inList(listId), null, null);
+              context.getContentResolver().delete(Lists.withId(listId), null, null);
+            }
+
+            queue(new SyncLists());
+          } else {
             context.getContentResolver().delete(ListItems.inList(listId), null, null);
             context.getContentResolver().delete(Lists.withId(listId), null, null);
           }
-
-          queue(new SyncLists());
         }
         list.close();
       }
@@ -149,65 +176,67 @@ import net.simonvt.cathode.sync.trakt.UserList;
                   });
         }
 
-        switch (itemType) {
-          case DatabaseContract.ItemType.SHOW: {
-            final long showTraktId = showHelper.getTraktId(itemId);
+        if (TraktLinkSettings.isLinked(context)) {
+          switch (itemType) {
+            case DatabaseContract.ItemType.SHOW: {
+              final long showTraktId = showHelper.getTraktId(itemId);
 
-            if (add) {
-              queue(new AddShow(listTraktId, showTraktId));
-            } else {
-              queue(new RemoveShow(listTraktId, showTraktId));
+              if (add) {
+                queue(new AddShow(listTraktId, showTraktId));
+              } else {
+                queue(new RemoveShow(listTraktId, showTraktId));
+              }
+              break;
             }
-            break;
-          }
 
-          case DatabaseContract.ItemType.SEASON: {
-            final long showId = seasonHelper.getShowId(itemId);
-            final long showTraktId = showHelper.getTraktId(showId);
-            final int seasonNumber = seasonHelper.getNumber(itemId);
+            case DatabaseContract.ItemType.SEASON: {
+              final long showId = seasonHelper.getShowId(itemId);
+              final long showTraktId = showHelper.getTraktId(showId);
+              final int seasonNumber = seasonHelper.getNumber(itemId);
 
-            if (add) {
-              queue(new AddSeason(listTraktId, showTraktId, seasonNumber));
-            } else {
-              queue(new RemoveSeason(listTraktId, showTraktId, seasonNumber));
+              if (add) {
+                queue(new AddSeason(listTraktId, showTraktId, seasonNumber));
+              } else {
+                queue(new RemoveSeason(listTraktId, showTraktId, seasonNumber));
+              }
+              break;
             }
-            break;
-          }
 
-          case DatabaseContract.ItemType.EPISODE: {
-            final long showId = episodeHelper.getShowId(itemId);
-            final long showTraktId = showHelper.getTraktId(showId);
-            final int seasonNumber = episodeHelper.getSeason(itemId);
-            final int episodeNumber = episodeHelper.getNumber(itemId);
+            case DatabaseContract.ItemType.EPISODE: {
+              final long showId = episodeHelper.getShowId(itemId);
+              final long showTraktId = showHelper.getTraktId(showId);
+              final int seasonNumber = episodeHelper.getSeason(itemId);
+              final int episodeNumber = episodeHelper.getNumber(itemId);
 
-            if (add) {
-              queue(new AddEpisode(listTraktId, showTraktId, seasonNumber, episodeNumber));
-            } else {
-              queue(new RemoveEpisode(listTraktId, showTraktId, seasonNumber, episodeNumber));
+              if (add) {
+                queue(new AddEpisode(listTraktId, showTraktId, seasonNumber, episodeNumber));
+              } else {
+                queue(new RemoveEpisode(listTraktId, showTraktId, seasonNumber, episodeNumber));
+              }
+              break;
             }
-            break;
-          }
 
-          case DatabaseContract.ItemType.MOVIE: {
-            final long movieTraktId = movieHelper.getTraktId(itemId);
+            case DatabaseContract.ItemType.MOVIE: {
+              final long movieTraktId = movieHelper.getTraktId(itemId);
 
-            if (add) {
-              queue(new AddMovie(listTraktId, movieTraktId));
-            } else {
-              queue(new RemoveMovie(listTraktId, movieTraktId));
+              if (add) {
+                queue(new AddMovie(listTraktId, movieTraktId));
+              } else {
+                queue(new RemoveMovie(listTraktId, movieTraktId));
+              }
+              break;
             }
-            break;
-          }
 
-          case DatabaseContract.ItemType.PERSON: {
-            final long personTraktId = personHelper.getTraktId(itemId);
+            case DatabaseContract.ItemType.PERSON: {
+              final long personTraktId = personHelper.getTraktId(itemId);
 
-            if (add) {
-              queue(new AddPerson(listTraktId, personTraktId));
-            } else {
-              queue(new RemovePerson(listTraktId, personTraktId));
+              if (add) {
+                queue(new AddPerson(listTraktId, personTraktId));
+              } else {
+                queue(new RemovePerson(listTraktId, personTraktId));
+              }
+              break;
             }
-            break;
           }
         }
       }

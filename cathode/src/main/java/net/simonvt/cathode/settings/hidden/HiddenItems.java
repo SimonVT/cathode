@@ -17,6 +17,7 @@ package net.simonvt.cathode.settings.hidden;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -36,6 +37,7 @@ import net.simonvt.cathode.common.util.FragmentStack;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncHiddenItems;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.BaseActivity;
@@ -314,6 +316,11 @@ public class HiddenItems extends BaseActivity
               new ArrayList<Object>(movies));
         }
       });
+    }
+
+    @Override public void onViewCreated(View view, Bundle inState) {
+      super.onViewCreated(view, inState);
+      getSwipeRefreshLayout().setEnabled(TraktLinkSettings.isLinked(requireContext()));
     }
 
     @Override public void onRefresh() {

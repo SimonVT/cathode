@@ -31,6 +31,7 @@ import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
@@ -126,8 +127,10 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
         break;
 
       case R.id.action_history_remove:
-        RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.MOVIE, id, title)
-            .show(activity.getSupportFragmentManager(), RemoveFromHistoryDialog.TAG);
+        if (TraktLinkSettings.isLinked(getContext())) {
+          RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.MOVIE, id, title)
+              .show(activity.getSupportFragmentManager(), RemoveFromHistoryDialog.TAG);
+        }
         break;
 
       case R.id.action_checkin:

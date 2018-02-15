@@ -58,6 +58,7 @@ import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.SettingsActivity;
+import net.simonvt.cathode.settings.StartActivity;
 import net.simonvt.cathode.settings.StartPage;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.login.LoginActivity;
@@ -209,7 +210,11 @@ public class HomeActivity extends BaseActivity
       }
     }
 
-    if (!TraktLinkSettings.isLinked(this) || isLoginAction(getIntent())) {
+    if (!TraktLinkSettings.isLinkPrompted(this)) {
+      Intent i = new Intent(this, StartActivity.class);
+      startActivity(i);
+      finish();
+    } else if (isLoginAction(getIntent())) {
       startLoginActivity();
     } else if (isReplaceStackAction(intent)) {
       ArrayList<StackEntry> stackEntries =

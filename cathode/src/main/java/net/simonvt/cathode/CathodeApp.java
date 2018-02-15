@@ -45,8 +45,10 @@ import net.simonvt.cathode.common.event.ItemsUpdatedEvent;
 import net.simonvt.cathode.common.event.ItemsUpdatedEvent.OnItemsUpdatedListener;
 import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.jobqueue.Job;
+import net.simonvt.cathode.jobqueue.JobListener;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.notification.NotificationHelper;
+import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.remote.sync.SyncWatching;
@@ -86,7 +88,9 @@ public class CathodeApp extends Application
 
   @Inject AuthJobHandler authJobHandler;
   @Inject DataJobHandler dataJobHandler;
+
   @Inject JobManager jobManager;
+  private JobListener jobListener;
 
   private volatile boolean injected = false;
   @Inject DispatchingAndroidInjector<Activity> activityInjector;
@@ -101,13 +105,28 @@ public class CathodeApp extends Application
     super.onCreate();
     ensureInjection();
 
+    if (BuildConfig.DEBUG) {
+      jobListener = new JobListener() {
+        @Override public void onJobsLoaded(JobManager jobManager) {
+        }
+
+        @Override public void onJobAdded(JobManager jobManager, Job job) {
+          if (job.hasFlags(Flags.REQUIRES_AUTH) && !TraktLinkSettings.isLinked(CathodeApp.this)) {
+            throw new RuntimeException(
+                "Added job " + job.key() + " that requires authentication when not authenticated");
+          }
+        }
+
+        @Override public void onJobRemoved(JobManager jobManager, Job job) {
+        }
+      };
+
+      jobManager.addJobListener(jobListener);
+    }
+
     AuthFailedEvent.registerListener(authFailedListener);
 
-    if (TraktLinkSettings.isLinked(this)) {
-      Accounts.setupAccount(this);
-    } else {
-      Accounts.removeAccount(this);
-    }
+    Accounts.setupAccount(this);
 
     registerActivityLifecycleCallbacks(new SimpleActivityLifecycleCallbacks() {
 
@@ -165,8 +184,10 @@ public class CathodeApp extends Application
       if (lastFullSync + DateUtils.DAY_IN_MILLIS < currentTime) {
         jobManager.addJob(new SyncJob());
       } else {
-        jobManager.addJob(new SyncUserActivity());
-        jobManager.addJob(new SyncWatching());
+        if (TraktLinkSettings.isLinked(CathodeApp.this)) {
+          jobManager.addJob(new SyncUserActivity());
+          jobManager.addJob(new SyncWatching());
+        }
       }
 
       lastSync = System.currentTimeMillis();

@@ -56,6 +56,7 @@ import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.PersonTaskScheduler;
@@ -247,16 +248,20 @@ public class MovieFragment extends RefreshableAppBarFragment {
 
     overview.setText(movieOverview);
 
+    if (TraktLinkSettings.isLinked(requireContext())) {
+      rating.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          RatingDialog.newInstance(RatingDialog.Type.MOVIE, movieId, currentRating)
+              .show(getFragmentManager(), DIALOG_RATING);
+        }
+      });
+    }
+
     updateView();
     updateGenreViews();
     updateCast();
     updateRelatedView();
     updateComments();
-  }
-
-  @OnClick(R.id.rating) void onRatingClick() {
-    RatingDialog.newInstance(RatingDialog.Type.MOVIE, movieId, currentRating)
-        .show(getFragmentManager(), DIALOG_RATING);
   }
 
   @OnClick(R.id.castHeader) void onDisplayCast() {
@@ -337,8 +342,12 @@ public class MovieFragment extends RefreshableAppBarFragment {
         return true;
 
       case R.id.action_history_remove:
-        RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.MOVIE, movieId, movieTitle)
-            .show(getFragmentManager(), RemoveFromHistoryDialog.TAG);
+        if (TraktLinkSettings.isLinked(requireContext())) {
+          RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.MOVIE, movieId,
+              movieTitle).show(getFragmentManager(), RemoveFromHistoryDialog.TAG);
+        } else {
+          movieScheduler.removeFromHistory(movieId);
+        }
         return true;
 
       case R.id.action_checkin:

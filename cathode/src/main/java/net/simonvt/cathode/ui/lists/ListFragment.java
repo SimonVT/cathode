@@ -18,6 +18,7 @@ package net.simonvt.cathode.ui.lists;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -34,6 +35,7 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.helper.ListWrapper;
 import net.simonvt.cathode.remote.sync.lists.SyncList;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
@@ -103,6 +105,11 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
         setListItems(listItems);
       }
     });
+  }
+
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
+    getSwipeRefreshLayout().setEnabled(TraktLinkSettings.isLinked(requireContext()));
   }
 
   @Override protected int getColumnCount() {

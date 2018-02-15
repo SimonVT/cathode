@@ -34,7 +34,7 @@ import net.simonvt.cathode.sync.jobscheduler.Jobs;
 public final class Upgrader {
 
   private static final String SETTINGS_VERSION = "settingsVersion";
-  private static final int VERSION = 3;
+  private static final int VERSION = 4;
 
   public interface JobQueue {
 
@@ -94,6 +94,16 @@ public final class Upgrader {
 
       if (currentVersion < 3) {
         jobQueue.add(new SyncEpisodesRatings());
+      }
+
+      if (currentVersion < 4) {
+        boolean linked = Settings.get(context).getBoolean(TraktLinkSettings.TRAKT_LINKED, false);
+        if (linked) {
+          Settings.get(context)
+              .edit()
+              .putBoolean(TraktLinkSettings.TRAKT_LINK_PROMPTED, true)
+              .apply();
+        }
       }
 
       Settings.get(context).edit().putInt(SETTINGS_VERSION, VERSION).apply();

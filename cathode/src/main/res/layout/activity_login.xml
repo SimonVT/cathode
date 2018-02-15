@@ -14,50 +14,60 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center"
-    android:gravity="center"
-    tools:context=".settings.login.LoginActivity"
-    tools:ignore="MergeRootFrame">
+    android:orientation="vertical"
+    tools:context=".settings.login.LoginActivity">
 
-  <net.simonvt.cathode.common.widget.MaxSizeLinearLayout
-      android:id="@+id/buttonContainer"
+  <include layout="@layout/toolbar"/>
+
+  <FrameLayout
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
+      android:layout_height="0dp"
+      android:layout_weight="1"
       android:layout_gravity="center"
-      android:orientation="vertical"
       android:gravity="center"
-      app:maxWidth="460dp"
-      android:padding="16dp">
+      tools:context=".settings.login.LoginActivity"
+      tools:ignore="MergeRootFrame">
 
-    <TextView
+    <net.simonvt.cathode.common.widget.MaxSizeLinearLayout
+        android:id="@+id/buttonContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:gravity="center_horizontal"
-        android:text="@string/login_description"/>
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:maxWidth="460dp"
+        android:padding="16dp">
 
-    <Button
-        android:id="@+id/login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/login_sign_in"/>
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="16dp"
+          android:gravity="center_horizontal"
+          android:text="@string/login_description"/>
 
-    <TextView
-        android:id="@+id/login_in_app"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:paddingLeft="32dp"
-        android:paddingRight="32dp"
-        android:background="?selectableItemBackground"
-        android:textAllCaps="true"
-        android:text="@string/login_in_app"/>
-  </net.simonvt.cathode.common.widget.MaxSizeLinearLayout>
-</FrameLayout>
+      <Button
+          android:id="@+id/login"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/login_sign_in"/>
+
+      <TextView
+          android:id="@+id/login_in_app"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="16dp"
+          android:paddingTop="16dp"
+          android:paddingBottom="16dp"
+          android:paddingLeft="32dp"
+          android:paddingRight="32dp"
+          android:background="?selectableItemBackground"
+          android:textAllCaps="true"
+          android:text="@string/login_in_app"/>
+    </net.simonvt.cathode.common.widget.MaxSizeLinearLayout>
+  </FrameLayout>
+</LinearLayout>

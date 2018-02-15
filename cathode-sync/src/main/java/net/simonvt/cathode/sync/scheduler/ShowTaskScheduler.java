@@ -46,6 +46,7 @@ import net.simonvt.cathode.remote.sync.shows.SyncShowCredits;
 import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.sync.tmdb.api.show.SyncShowImages;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 
 @Singleton public class ShowTaskScheduler extends BaseTaskScheduler {
 
@@ -72,13 +73,16 @@ import net.simonvt.cathode.sync.tmdb.api.show.SyncShowImages;
         final long traktId = showHelper.getTraktId(showId);
         final int tmdbId = showHelper.getTmdbId(showId);
         queue(new SyncShow(traktId));
+
+        if (TraktLinkSettings.isLinked(context)) {
+          queue(new SyncShowWatchedStatus(traktId));
+          queue(new SyncShowCollectedStatus(traktId));
+        }
+
         queue(new SyncShowImages(tmdbId));
         queue(new SyncComments(ItemType.SHOW, traktId));
-        queue(new SyncShowWatchedStatus(traktId));
         queue(new SyncShowCredits(traktId));
-        queue(new SyncRelatedShows(traktId));
-
-        Job job = new SyncShowCollectedStatus(traktId);
+        Job job = new SyncRelatedShows(traktId);
         job.registerOnDoneListener(onDoneListener);
         queue(job);
       }
@@ -178,17 +182,18 @@ import net.simonvt.cathode.sync.tmdb.api.show.SyncShowImages;
   public void addToHistory(final long showId, final String watchedAt) {
     execute(new Runnable() {
       @Override public void run() {
-        final long traktId = showHelper.getTraktId(showId);
-
         if (SyncItems.TIME_RELEASED.equals(watchedAt)) {
           showHelper.addToHistory(showId, ShowDatabaseHelper.WATCHED_RELEASE);
         } else {
           showHelper.addToHistory(showId, TimeUtils.getMillis(watchedAt));
         }
 
-        queue(new AddShowToHistory(traktId, watchedAt));
-        // No documentation on how exactly the trakt endpoint is implemented, so sync after.
-        queue(new SyncWatchedShows());
+        if (TraktLinkSettings.isLinked(context)) {
+          final long traktId = showHelper.getTraktId(showId);
+          queue(new AddShowToHistory(traktId, watchedAt));
+          // No documentation on how exactly the trakt endpoint is implemented, so sync after.
+          queue(new SyncWatchedShows());
+        }
       }
     });
   }
@@ -210,11 +215,14 @@ import net.simonvt.cathode.sync.tmdb.api.show.SyncShowImages;
 
           final long traktId = Cursors.getLong(c, ShowColumns.TRAKT_ID);
           showHelper.setIsInWatchlist(showId, inWatchlist, listedAtMillis);
-          queue(new WatchlistShow(traktId, inWatchlist, listedAt));
 
           final int episodeCount = Cursors.getInt(c, ShowColumns.EPISODE_COUNT);
           if (episodeCount == 0) {
             queue(new SyncShow(traktId));
+          }
+
+          if (TraktLinkSettings.isLinked(context)) {
+            queue(new WatchlistShow(traktId, inWatchlist, listedAt));
           }
         }
 
@@ -251,14 +259,15 @@ import net.simonvt.cathode.sync.tmdb.api.show.SyncShowImages;
         String ratedAt = TimeUtils.getIsoTime();
         long ratedAtMillis = TimeUtils.getMillis(ratedAt);
 
-        final long traktId = showHelper.getTraktId(showId);
-
         ContentValues values = new ContentValues();
         values.put(ShowColumns.USER_RATING, rating);
         values.put(ShowColumns.RATED_AT, ratedAtMillis);
         context.getContentResolver().update(Shows.withId(showId), values, null, null);
 
-        queue(new RateShow(traktId, rating, ratedAt));
+        if (TraktLinkSettings.isLinked(context)) {
+          final long traktId = showHelper.getTraktId(showId);
+          queue(new RateShow(traktId, rating, ratedAt));
+        }
       }
     });
   }
@@ -266,12 +275,14 @@ import net.simonvt.cathode.sync.tmdb.api.show.SyncShowImages;
   public void hideFromCalendar(final long showId, final boolean hidden) {
     execute(new Runnable() {
       @Override public void run() {
-        final long traktId = showHelper.getTraktId(showId);
-        queue(new CalendarHideShow(traktId, hidden));
-
         ContentValues values = new ContentValues();
         values.put(ShowColumns.HIDDEN_CALENDAR, hidden);
         context.getContentResolver().update(Shows.withId(showId), values, null, null);
+
+        if (TraktLinkSettings.isLinked(context)) {
+          final long traktId = showHelper.getTraktId(showId);
+          queue(new CalendarHideShow(traktId, hidden));
+        }
       }
     });
   }
@@ -279,12 +290,14 @@ import net.simonvt.cathode.sync.tmdb.api.show.SyncShowImages;
   public void hideFromWatched(final long showId, final boolean hidden) {
     execute(new Runnable() {
       @Override public void run() {
-        final long traktId = showHelper.getTraktId(showId);
-        queue(new WatchedHideShow(traktId, hidden));
-
         ContentValues values = new ContentValues();
         values.put(ShowColumns.HIDDEN_WATCHED, hidden);
         context.getContentResolver().update(Shows.withId(showId), values, null, null);
+
+        if (TraktLinkSettings.isLinked(context)) {
+          final long traktId = showHelper.getTraktId(showId);
+          queue(new WatchedHideShow(traktId, hidden));
+        }
       }
     });
   }
@@ -292,12 +305,14 @@ import net.simonvt.cathode.sync.tmdb.api.show.SyncShowImages;
   public void hideFromCollected(final long showId, final boolean hidden) {
     execute(new Runnable() {
       @Override public void run() {
-        final long traktId = showHelper.getTraktId(showId);
-        queue(new CollectedHideShow(traktId, hidden));
-
         ContentValues values = new ContentValues();
         values.put(ShowColumns.HIDDEN_COLLECTED, hidden);
         context.getContentResolver().update(Shows.withId(showId), values, null, null);
+
+        if (TraktLinkSettings.isLinked(context)) {
+          final long traktId = showHelper.getTraktId(showId);
+          queue(new CollectedHideShow(traktId, hidden));
+        }
       }
     });
   }

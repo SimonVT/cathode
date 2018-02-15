@@ -39,6 +39,7 @@ import net.simonvt.cathode.common.util.VersionCodes;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.settings.hidden.HiddenItems;
+import net.simonvt.cathode.settings.login.LoginActivity;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.HomeActivity;
 import timber.log.Timber;
@@ -186,18 +187,35 @@ public class SettingsActivity extends BaseActivity {
             }
           });
 
+      Preference traktLink = findPreference("traktLink");
+      Preference traktUnlink = findPreference("traktUnlink");
+
+      traktLink.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        @Override public boolean onPreferenceClick(Preference preference) {
+          Intent i = new Intent(getActivity(), LoginActivity.class);
+          i.putExtra(LoginActivity.EXTRA_TASK, LoginActivity.TASK_LINK);
+          startActivity(i);
+          return true;
+        }
+      });
+
+      traktUnlink.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        @Override public boolean onPreferenceClick(Preference preference) {
+          new LogoutDialog().show(getFragmentManager(), HomeActivity.DIALOG_LOGOUT);
+          return true;
+        }
+      });
+
+      if (TraktLinkSettings.isLinked(getActivity())) {
+        getPreferenceScreen().removePreference(traktLink);
+      } else {
+        getPreferenceScreen().removePreference(traktUnlink);
+      }
+
       findPreference("about").setOnPreferenceClickListener(
           new Preference.OnPreferenceClickListener() {
             @Override public boolean onPreferenceClick(Preference preference) {
               new AboutDialog().show(getFragmentManager(), HomeActivity.DIALOG_ABOUT);
-              return true;
-            }
-          });
-
-      findPreference("logout").setOnPreferenceClickListener(
-          new Preference.OnPreferenceClickListener() {
-            @Override public boolean onPreferenceClick(Preference preference) {
-              new LogoutDialog().show(getFragmentManager(), HomeActivity.DIALOG_LOGOUT);
               return true;
             }
           });

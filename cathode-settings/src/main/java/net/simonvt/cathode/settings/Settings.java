@@ -77,6 +77,7 @@ public final class Settings {
   public static void clearSettings(Context context) {
     SharedPreferences.Editor editor = get(context).edit();
 
+    editor.remove(TraktLinkSettings.TRAKT_LINK_PROMPTED);
     editor.remove(TraktLinkSettings.TRAKT_LINKED);
     editor.remove(TraktLinkSettings.TRAKT_AUTH_FAILED);
     editor.remove(TraktLinkSettings.TRAKT_ACCESS_TOKEN);

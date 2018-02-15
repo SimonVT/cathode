@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -28,7 +29,10 @@ import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.Authorization;
 import net.simonvt.cathode.common.util.Intents;
+import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.ui.BaseActivity;
+import net.simonvt.cathode.ui.HomeActivity;
 
 public class LoginActivity extends BaseActivity {
 
@@ -36,6 +40,7 @@ public class LoginActivity extends BaseActivity {
 
   public static final int TASK_LOGIN = 0;
   public static final int TASK_TOKEN_REFRESH = 1;
+  public static final int TASK_LINK = 2;
 
   static final String HOST_OAUTH = "oauth";
   static final String PATH_AUTHORIZE = "authorize";
@@ -43,6 +48,7 @@ public class LoginActivity extends BaseActivity {
 
   private static final int REQUEST_OAUTH = 1;
 
+  @BindView(R.id.toolbar) Toolbar toolbar;
   @BindView(R.id.login_in_app) View loginInApp;
 
   private int task;
@@ -60,6 +66,28 @@ public class LoginActivity extends BaseActivity {
 
     setContentView(R.layout.activity_login);
     ButterKnife.bind(this);
+
+    toolbar.setTitle(R.string.login_title);
+    toolbar.setNavigationIcon(R.drawable.ic_action_cancel_24dp);
+    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        if (task != TASK_TOKEN_REFRESH) {
+          Settings.get(LoginActivity.this)
+              .edit()
+              .putBoolean(TraktLinkSettings.TRAKT_LINK_PROMPTED, true)
+              .putBoolean(TraktLinkSettings.TRAKT_LINKED, false)
+              .putBoolean(TraktLinkSettings.TRAKT_AUTH_FAILED, false)
+              .apply();
+        }
+
+        if (task == TASK_LOGIN) {
+          Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+          startActivity(i);
+        }
+
+        finish();
+      }
+    });
 
     browserIntent = new Intent(Intent.ACTION_VIEW);
     browserIntent.setData(Uri.parse(

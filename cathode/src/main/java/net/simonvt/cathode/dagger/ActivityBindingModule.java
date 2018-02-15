@@ -20,6 +20,7 @@ import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 import net.simonvt.cathode.settings.NotificationSettingsActivity;
 import net.simonvt.cathode.settings.SettingsActivity;
+import net.simonvt.cathode.settings.StartActivity;
 import net.simonvt.cathode.settings.hidden.HiddenItems;
 import net.simonvt.cathode.settings.login.LoginActivity;
 import net.simonvt.cathode.settings.login.OauthWebViewActivity;
@@ -32,6 +33,8 @@ import net.simonvt.cathode.ui.HomeActivity;
 @Module public abstract class ActivityBindingModule {
 
   @ContributesAndroidInjector abstract HomeActivity homeActivity();
+
+  @ContributesAndroidInjector abstract StartActivity startActivity();
 
   @ContributesAndroidInjector abstract LoginActivity loginActivity();
 

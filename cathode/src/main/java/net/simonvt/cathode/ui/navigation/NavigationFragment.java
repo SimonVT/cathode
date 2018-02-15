@@ -42,6 +42,7 @@ import net.simonvt.cathode.common.widget.RoundTransformation;
 import net.simonvt.cathode.settings.ProfileSettings;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.StartPage;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 
 public class NavigationFragment extends AbsAdapterFragment {
 
@@ -352,11 +353,19 @@ public class NavigationFragment extends AbsAdapterFragment {
           v.setTag(R.id.profileIcon, profileIcon);
         }
 
-        TextView username = (TextView) v.getTag(R.id.username);
-        username.setText(this.username);
-
         RemoteImageView profileIcon = (RemoteImageView) v.getTag(R.id.profileIcon);
-        profileIcon.setImage(avatar);
+        TextView username = (TextView) v.getTag(R.id.username);
+
+        if (TraktLinkSettings.isLinked(requireContext())) {
+          username.setText(this.username);
+          profileIcon.setImage(avatar);
+
+          username.setVisibility(View.VISIBLE);
+          profileIcon.setVisibility(View.VISIBLE);
+        } else {
+          username.setVisibility(View.GONE);
+          profileIcon.setVisibility(View.GONE);
+        }
 
         return v;
       }

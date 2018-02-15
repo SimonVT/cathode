@@ -19,6 +19,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.widget.OverflowView;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 
 public class CheckInView extends OverflowView {
 
@@ -64,10 +65,15 @@ public class CheckInView extends OverflowView {
   private void updateItems(boolean watching) {
     removeItems();
 
-    if (watching) {
+    final boolean traktLinked = TraktLinkSettings.isLinked(getContext());
+
+    if (watching && traktLinked) {
       addItem(R.id.action_checkin_cancel, R.string.action_checkin_cancel);
     } else {
-      addItem(R.id.action_checkin, R.string.action_checkin);
+      if (traktLinked) {
+        addItem(R.id.action_checkin, R.string.action_checkin);
+      }
+
       addItem(R.id.action_history_add, R.string.action_history_add);
     }
   }

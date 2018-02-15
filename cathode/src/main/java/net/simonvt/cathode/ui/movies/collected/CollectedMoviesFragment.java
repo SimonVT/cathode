@@ -17,6 +17,7 @@ package net.simonvt.cathode.ui.movies.collected;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesCollection;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.movies.MoviesFragment;
 
@@ -95,6 +97,11 @@ public class CollectedMoviesFragment extends MoviesFragment implements ListDialo
 
     viewModel = ViewModelProviders.of(this).get(CollectedMoviesViewModel.class);
     viewModel.getMovies().observe(this, observer);
+  }
+
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
+    getSwipeRefreshLayout().setEnabled(TraktLinkSettings.isLinked(requireContext()));
   }
 
   @Override public void createMenu(Toolbar toolbar) {

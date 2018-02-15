@@ -31,6 +31,7 @@ import net.simonvt.cathode.common.entity.Episode;
 import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.provider.DatabaseContract;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
@@ -176,9 +177,13 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
         return true;
 
       case R.id.action_history_remove:
-        RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.SEASON, seasonId,
-            getContext().getString(R.string.season_x, seasonNumber))
-            .show(getFragmentManager(), RemoveFromHistoryDialog.TAG);
+        if (TraktLinkSettings.isLinked(requireContext())) {
+          RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.SEASON, seasonId,
+              requireContext().getString(R.string.season_x, seasonNumber))
+              .show(getFragmentManager(), RemoveFromHistoryDialog.TAG);
+        } else {
+          seasonScheduler.removeFromHistory(seasonId);
+        }
         return true;
 
       case R.id.action_collection_add:

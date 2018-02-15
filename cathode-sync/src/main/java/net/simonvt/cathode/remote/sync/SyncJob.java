@@ -24,14 +24,11 @@ import net.simonvt.cathode.remote.sync.movies.SyncUserMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncUserShows;
 import net.simonvt.cathode.settings.Timestamps;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import net.simonvt.cathode.sync.tmdb.api.SyncConfiguration;
 
 public class SyncJob extends Job {
-
-  public SyncJob() {
-    super(Flags.REQUIRES_AUTH);
-  }
 
   @Override public String key() {
     return "SyncJob";
@@ -51,7 +48,10 @@ public class SyncJob extends Job {
         Timestamps.get(getContext()).getLong(Timestamps.MOVIES_LAST_UPDATED, 0L);
 
     if (lastConfigSync + DateUtils.DAY_IN_MILLIS < currentTime) {
-      queue(new SyncUserSettings());
+      if (TraktLinkSettings.isLinked(getContext())) {
+        queue(new SyncUserSettings());
+      }
+
       queue(new SyncConfiguration());
       Timestamps.get(getContext()).edit().putLong(Timestamps.LAST_CONFIG_SYNC, currentTime).apply();
     }
@@ -74,8 +74,11 @@ public class SyncJob extends Job {
 
     queue(new SyncUserShows());
     queue(new SyncUserMovies());
-    queue(new SyncUserActivity());
-    queue(new SyncWatching());
+
+    if (TraktLinkSettings.isLinked(getContext())) {
+      queue(new SyncUserActivity());
+      queue(new SyncWatching());
+    }
 
     Timestamps.get(getContext()).edit().putLong(Timestamps.LAST_FULL_SYNC, currentTime).apply();
     return true;

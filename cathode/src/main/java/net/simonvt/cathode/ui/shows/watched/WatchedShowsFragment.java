@@ -17,6 +17,7 @@ package net.simonvt.cathode.ui.shows.watched;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.settings.Settings;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.shows.ShowsFragment;
@@ -96,6 +98,11 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
 
     viewModel = ViewModelProviders.of(this).get(WatchedShowsViewModel.class);
     viewModel.getShows().observe(this, observer);
+  }
+
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
+    getSwipeRefreshLayout().setEnabled(TraktLinkSettings.isLinked(requireContext()));
   }
 
   @Override public void createMenu(Toolbar toolbar) {

@@ -67,6 +67,7 @@ import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.util.DataHelper;
+import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.PersonTaskScheduler;
@@ -362,12 +363,14 @@ public class ShowFragment extends RefreshableAppBarFragment {
       seasonsView.setVisibility(View.GONE);
     }
 
-    rating.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        RatingDialog.newInstance(RatingDialog.Type.SHOW, showId, currentRating)
-            .show(getFragmentManager(), DIALOG_RATING);
-      }
-    });
+    if (TraktLinkSettings.isLinked(requireContext())) {
+      rating.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View view) {
+          RatingDialog.newInstance(RatingDialog.Type.SHOW, showId, currentRating)
+              .show(getFragmentManager(), DIALOG_RATING);
+        }
+      });
+    }
 
     castHeader.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
