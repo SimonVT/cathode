@@ -17,7 +17,7 @@
 package net.simonvt.cathode.sync.tmdb.api.show;
 
 import com.uwetrottmann.tmdb2.entities.TvShow;
-import com.uwetrottmann.tmdb2.services.TvShowService;
+import com.uwetrottmann.tmdb2.services.TvService;
 import javax.inject.Inject;
 import net.simonvt.cathode.images.ShowRequestHandler;
 import net.simonvt.cathode.jobqueue.JobPriority;
@@ -27,7 +27,7 @@ import retrofit2.Call;
 
 public class SyncShowImages extends TmdbCallJob<TvShow> {
 
-  @Inject transient TvShowService tvShowService;
+  @Inject transient TvService tvService;
 
   @Inject transient ShowDatabaseHelper showHelper;
 
@@ -46,7 +46,7 @@ public class SyncShowImages extends TmdbCallJob<TvShow> {
   }
 
   @Override public Call<TvShow> getCall() {
-    return tvShowService.tv(tmdbId, "en");
+    return tvService.tv(tmdbId, "en");
   }
 
   @Override public boolean handleResponse(TvShow show) {

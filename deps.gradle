@@ -1,16 +1,16 @@
 ext {
   daggerVersion = '1.2.5'
-  okhttpVersion = '3.9.0'
-  retrofitVersion = '2.3.0'
+  okhttpVersion = '3.10.0'
+  retrofitVersion = '2.4.0'
 
   butterknifeVersion = '9.0.0-SNAPSHOT'
 
-  supportLibrariesVersion = '27.0.1'
+  supportLibrariesVersion = '27.1.0'
 
   lintVersion = '26.0.0'
 
   deps = [
-      androidPlugin       : 'com.android.tools.build:gradle:3.0.0',
+      androidPlugin       : 'com.android.tools.build:gradle:3.1.0',
       fabricGradle        : 'io.fabric.tools:gradle:1.+',
 
       lint                : "com.android.tools.lint:lint:${lintVersion}",
@@ -18,7 +18,7 @@ ext {
       lintChecks          : "com.android.tools.lint:lint-checks:${lintVersion}",
       lintTests           : "com.android.tools.lint:lint-tests:${lintVersion}",
 
-      crashlytics         : 'com.crashlytics.sdk.android:crashlytics:2.7.1@aar',
+      crashlytics         : 'com.crashlytics.sdk.android:crashlytics:2.9.1@aar',
 
       schematic           : 'net.simonvt.schematic:schematic:0.7.0',
       schematicCompiler   : 'net.simonvt.schematic:schematic-compiler:0.7.0',
@@ -34,7 +34,7 @@ ext {
       retrofit            : "com.squareup.retrofit2:retrofit:$retrofitVersion",
       retrofitGson        : "com.squareup.retrofit2:converter-gson:$retrofitVersion",
 
-      timber              : 'com.jakewharton.timber:timber:4.5.1',
+      timber              : 'com.jakewharton.timber:timber:4.6.1',
       butterknife         : "com.jakewharton:butterknife:$butterknifeVersion",
       butterknifeCompiler : "com.jakewharton:butterknife-compiler:$butterknifeVersion",
       butterknifeGradle   : "com.jakewharton:butterknife-gradle-plugin:$butterknifeVersion",
@@ -52,7 +52,7 @@ ext {
 
       dashclockApi        : 'com.google.android.apps.dashclock:dashclock-api:2.0.0',
 
-      tmdb                : 'com.uwetrottmann.tmdb2:tmdb-java:1.8.1',
+      tmdb                : 'com.uwetrottmann.tmdb2:tmdb-java:1.8.3',
 
       junit               : 'junit:junit:4.12',
       robolectric         : 'org.robolectric:robolectric:3.2.1',

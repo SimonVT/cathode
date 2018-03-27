@@ -27,7 +27,7 @@ import com.uwetrottmann.tmdb2.services.PeopleService;
 import com.uwetrottmann.tmdb2.services.SearchService;
 import com.uwetrottmann.tmdb2.services.TvEpisodesService;
 import com.uwetrottmann.tmdb2.services.TvSeasonsService;
-import com.uwetrottmann.tmdb2.services.TvShowService;
+import com.uwetrottmann.tmdb2.services.TvService;
 import dagger.Module;
 import dagger.Provides;
 import java.io.File;
@@ -88,7 +88,7 @@ import okhttp3.OkHttpClient;
     return tmdb.searchService();
   }
 
-  @Provides @Singleton TvShowService tvShowService(TmdbSettings tmdb) {
+  @Provides @Singleton TvService tvService(TmdbSettings tmdb) {
     return tmdb.tvService();
   }
 

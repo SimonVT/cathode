@@ -22,7 +22,7 @@ import android.database.Cursor;
 import com.squareup.picasso.Request;
 import com.uwetrottmann.tmdb2.entities.TvShow;
 import com.uwetrottmann.tmdb2.services.ConfigurationService;
-import com.uwetrottmann.tmdb2.services.TvShowService;
+import com.uwetrottmann.tmdb2.services.TvService;
 import java.io.IOException;
 import net.simonvt.cathode.common.tmdb.TmdbRateLimiter;
 import net.simonvt.cathode.common.util.Closeables;
@@ -34,13 +34,13 @@ import retrofit2.Response;
 
 public class ShowRequestHandler extends ItemRequestHandler {
 
-  private TvShowService tvShowService;
+  private TvService tvService;
   private ShowDatabaseHelper showHelper;
 
   public ShowRequestHandler(Context context, ConfigurationService configurationService,
-      ImageDownloader downloader, TvShowService tvShowService, ShowDatabaseHelper showHelper) {
+      ImageDownloader downloader, TvService tvService, ShowDatabaseHelper showHelper) {
     super(context, configurationService, downloader);
-    this.tvShowService = tvShowService;
+    this.tvService = tvService;
     this.showHelper = showHelper;
   }
 
@@ -94,7 +94,7 @@ public class ShowRequestHandler extends ItemRequestHandler {
   @Override protected boolean updateCache(ImageType imageType, long id, int tmdbId)
       throws IOException {
     TmdbRateLimiter.acquire();
-    Response<TvShow> response = tvShowService.tv(tmdbId, "en").execute();
+    Response<TvShow> response = tvService.tv(tmdbId, "en").execute();
 
     if (response.isSuccessful()) {
       TvShow show = response.body();

@@ -27,7 +27,7 @@ import com.uwetrottmann.tmdb2.services.MoviesService;
 import com.uwetrottmann.tmdb2.services.PeopleService;
 import com.uwetrottmann.tmdb2.services.TvEpisodesService;
 import com.uwetrottmann.tmdb2.services.TvSeasonsService;
-import com.uwetrottmann.tmdb2.services.TvShowService;
+import com.uwetrottmann.tmdb2.services.TvService;
 import dagger.Module;
 import dagger.Provides;
 import java.io.File;
@@ -120,7 +120,7 @@ import timber.log.Timber;
 
   @Provides @Singleton ShowRequestHandler provideShowRequestHandler(Context context,
       ConfigurationService configurationService, ImageDownloader downloader,
-      TvShowService tvShowService, ShowDatabaseHelper showHelper) {
+      TvService tvShowService, ShowDatabaseHelper showHelper) {
     return new ShowRequestHandler(context, configurationService, downloader, tvShowService,
         showHelper);
   }
