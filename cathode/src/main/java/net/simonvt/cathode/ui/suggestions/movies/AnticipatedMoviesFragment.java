@@ -21,7 +21,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,8 +30,6 @@ import java.util.Map;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.movies.SyncAnticipatedMovies;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.SuggestionsTimestamps;
@@ -41,7 +39,7 @@ import net.simonvt.cathode.ui.movies.MoviesFragment;
 
 public class AnticipatedMoviesFragment extends MoviesFragment implements ListDialog.Callback {
 
-  private enum SortBy {
+  enum SortBy {
     ANTICIPATED("anticipated", Movies.SORT_ANTICIPATED), TITLE("title", Movies.SORT_TITLE);
 
     private String key;
@@ -85,7 +83,7 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.suggestions.movies.AnticipatedMoviesFragment.sortDialog";
 
-  private static final int LOADER_MOVIES_ANTICIPATED = 1;
+  private AnticipatedMoviesViewModel viewModel;
 
   private SortBy sortBy;
 
@@ -96,6 +94,9 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
 
     setTitle(R.string.title_movies_anticipated);
     setEmptyText(R.string.movies_loading_anticipated);
+
+    viewModel = ViewModelProviders.of(this).get(AnticipatedMoviesViewModel.class);
+    viewModel.getAnticipated().observe(this, observer);
 
     if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
         SuggestionsTimestamps.MOVIES_ANTICIPATED)) {
@@ -145,7 +146,7 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
               .edit()
               .putString(Settings.Sort.MOVIE_ANTICIPATED, SortBy.ANTICIPATED.getKey())
               .apply();
-          getLoaderManager().restartLoader(LOADER_MOVIES_ANTICIPATED, null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
@@ -157,7 +158,7 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
               .edit()
               .putString(Settings.Sort.MOVIE_ANTICIPATED, SortBy.TITLE.getKey())
               .apply();
-          getLoaderManager().restartLoader(LOADER_MOVIES_ANTICIPATED, null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
@@ -166,14 +167,5 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
 
   protected RecyclerView.Adapter<MoviesAdapter.ViewHolder> getAdapter(Cursor cursor) {
     return new MoviesAdapter(getActivity(), this, cursor, R.layout.list_row_movie);
-  }
-
-  @Override protected int getLoaderId() {
-    return LOADER_MOVIES_ANTICIPATED;
-  }
-
-  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    return new SimpleCursorLoader(getActivity(), Movies.ANTICIPATED, null, null, null,
-        sortBy.getSortOrder());
   }
 }

@@ -18,7 +18,7 @@ package net.simonvt.cathode.ui.shows.watched;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.ViewModelProviders;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -26,23 +26,18 @@ import java.util.Map;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.shows.ShowsFragment;
-import net.simonvt.cathode.ui.shows.ShowsWithNextAdapter;
 
 public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Callback {
 
   public static final String TAG = "net.simonvt.cathode.ui.shows.watched.WatchedShowsFragment";
 
-  private static final int LOADER_SHOWS_WATCHED = 1;
-
-  private enum SortBy {
+  enum SortBy {
     TITLE("title", Shows.SORT_TITLE), WATCHED("watched", Shows.SORT_WATCHED);
 
     private String key;
@@ -86,6 +81,8 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.shows.watched.WatchedShowsFragment.sortDialog";
 
+  private WatchedShowsViewModel viewModel;
+
   private SortBy sortBy;
 
   @Override public void onCreate(Bundle inState) {
@@ -96,6 +93,9 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
 
     setEmptyText(R.string.empty_show_watched);
     setTitle(R.string.title_shows_watched);
+
+    viewModel = ViewModelProviders.of(this).get(WatchedShowsViewModel.class);
+    viewModel.getShows().observe(this, observer);
   }
 
   @Override public void createMenu(Toolbar toolbar) {
@@ -138,7 +138,7 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
               .edit()
               .putString(Settings.Sort.SHOW_WATCHED, SortBy.TITLE.getKey())
               .apply();
-          getLoaderManager().restartLoader(getLoaderId(), null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
@@ -150,7 +150,7 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
               .edit()
               .putString(Settings.Sort.SHOW_WATCHED, SortBy.WATCHED.getKey())
               .apply();
-          getLoaderManager().restartLoader(getLoaderId(), null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
@@ -159,14 +159,5 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
 
   @Override protected LibraryType getLibraryType() {
     return LibraryType.WATCHED;
-  }
-
-  protected int getLoaderId() {
-    return LOADER_SHOWS_WATCHED;
-  }
-
-  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    return new SimpleCursorLoader(getActivity(), Shows.SHOWS_WATCHED,
-        ShowsWithNextAdapter.PROJECTION, null, null, sortBy.getSortOrder());
   }
 }

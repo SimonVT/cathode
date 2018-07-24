@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Simon Vig Therkildsen
+ * Copyright (C) 2018 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.List;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.common.data.ListenableLiveData;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
@@ -40,11 +41,10 @@ import net.simonvt.cathode.provider.ProviderSchematic.MovieCrew;
 import net.simonvt.cathode.provider.ProviderSchematic.People;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCast;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCrew;
-import net.simonvt.cathode.provider.database.BaseAsyncLoader;
 import net.simonvt.cathode.provider.util.SqlColumn;
 import net.simonvt.schematic.Cursors;
 
-public class PersonLoader extends BaseAsyncLoader<Person> {
+public class PersonLiveData extends ListenableLiveData<Person> {
 
   private static final String[] SHOW_CAST_PROJECTION = new String[] {
       SqlColumn.table(Tables.SHOW_CAST).column(ShowCastColumns.SHOW_ID),
@@ -80,7 +80,7 @@ public class PersonLoader extends BaseAsyncLoader<Person> {
 
   private ContentResolver resolver;
 
-  public PersonLoader(Context context, long personId) {
+  public PersonLiveData(Context context, long personId) {
     super(context);
     this.personId = personId;
     resolver = context.getContentResolver();
@@ -92,7 +92,7 @@ public class PersonLoader extends BaseAsyncLoader<Person> {
     addNotificationUri(MovieCrew.withPerson(personId));
   }
 
-  @Override public Person loadInBackground() {
+  @Override protected Person loadInBackground() {
     Cursor person = resolver.query(People.withId(personId), new String[] {
         PersonColumns.TRAKT_ID, PersonColumns.NAME, PersonColumns.BIOGRAPHY, PersonColumns.BIRTHDAY,
         PersonColumns.DEATH, PersonColumns.BIRTHPLACE, PersonColumns.HOMEPAGE,

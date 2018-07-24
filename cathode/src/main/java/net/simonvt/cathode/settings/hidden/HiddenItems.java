@@ -19,8 +19,8 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
@@ -32,12 +32,6 @@ import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragmen
 import net.simonvt.cathode.common.util.FragmentStack;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.SyncHiddenItems;
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
@@ -69,11 +63,6 @@ public class HiddenItems extends BaseActivity
       "net.simonvt.cathode.settings.hidden.HiddenItems.HiddenItemsFragment";
 
   private static final String STATE_STACK = "net.simonvt.cathode.ui.HomeActivity.stack";
-
-  private static final int LOADER_SHOWS_CALENDAR = 1;
-  private static final int LOADER_SHOWS_WATCHED = 2;
-  private static final int LOADER_SHOWS_COLLECTED = 3;
-  private static final int LOADER_MOVIES_CALENDAR = 4;
 
   private FragmentStack stack;
 
@@ -266,6 +255,8 @@ public class HiddenItems extends BaseActivity
     @Inject ShowTaskScheduler showScheduler;
     @Inject MovieTaskScheduler movieScheduler;
 
+    private HiddenViewModel viewModel;
+
     private HiddenItemsAdapter adapter;
 
     Cursor hiddenShowsCalendar;
@@ -287,10 +278,35 @@ public class HiddenItems extends BaseActivity
       setTitle(R.string.preference_hidden_items);
       setEmptyText(R.string.preference_hidden_empty);
 
-      getLoaderManager().initLoader(LOADER_SHOWS_CALENDAR, null, hiddenShowsCalendarCallback);
-      getLoaderManager().initLoader(LOADER_SHOWS_WATCHED, null, hiddenShowsWatchedCallback);
-      getLoaderManager().initLoader(LOADER_SHOWS_COLLECTED, null, hiddenShowsCollectedCallback);
-      getLoaderManager().initLoader(LOADER_MOVIES_CALENDAR, null, hiddenMoviesCalendarCallback);
+      viewModel = ViewModelProviders.of(this).get(HiddenViewModel.class);
+      viewModel.getShowsCalendar().observe(this, new Observer<Cursor>() {
+        @Override public void onChanged(Cursor cursor) {
+          ensureAdapter();
+          adapter.updateCursorForHeader(R.string.header_hidden_calendar_shows, cursor);
+          hiddenShowsCalendar = cursor;
+        }
+      });
+      viewModel.getShowsWatched().observe(this, new Observer<Cursor>() {
+        @Override public void onChanged(Cursor cursor) {
+          ensureAdapter();
+          adapter.updateCursorForHeader(R.string.header_hidden_watched_shows, cursor);
+          hiddenShowsWatched = cursor;
+        }
+      });
+      viewModel.getShowsCalendar().observe(this, new Observer<Cursor>() {
+        @Override public void onChanged(Cursor cursor) {
+          ensureAdapter();
+          adapter.updateCursorForHeader(R.string.header_hidden_collected_shows, cursor);
+          hiddenShowsCollected = cursor;
+        }
+      });
+      viewModel.getMoviesCalendar().observe(this, new Observer<Cursor>() {
+        @Override public void onChanged(Cursor cursor) {
+          ensureAdapter();
+          adapter.updateCursorForHeader(R.string.header_hidden_calendar_movies, cursor);
+          hiddenMoviesCalendar = cursor;
+        }
+      });
     }
 
     @Override public void onRefresh() {
@@ -343,77 +359,5 @@ public class HiddenItems extends BaseActivity
         setAdapter(adapter);
       }
     }
-
-    private LoaderManager.LoaderCallbacks<SimpleCursor> hiddenShowsCalendarCallback =
-        new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-          @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-            return new SimpleCursorLoader(getActivity(), Shows.SHOWS,
-                HiddenItemsAdapter.PROJECTION_SHOW, ShowColumns.HIDDEN_CALENDAR + "=1", null,
-                Shows.SORT_TITLE);
-          }
-
-          @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-            ensureAdapter();
-            adapter.updateCursorForHeader(R.string.header_hidden_calendar_shows, data);
-            hiddenShowsCalendar = data;
-          }
-
-          @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-          }
-        };
-
-    private LoaderManager.LoaderCallbacks<SimpleCursor> hiddenShowsWatchedCallback =
-        new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-          @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-            return new SimpleCursorLoader(getActivity(), Shows.SHOWS,
-                HiddenItemsAdapter.PROJECTION_SHOW, ShowColumns.HIDDEN_WATCHED + "=1", null,
-                Shows.SORT_TITLE);
-          }
-
-          @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-            ensureAdapter();
-            adapter.updateCursorForHeader(R.string.header_hidden_watched_shows, data);
-            hiddenShowsWatched = data;
-          }
-
-          @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-          }
-        };
-
-    private LoaderManager.LoaderCallbacks<SimpleCursor> hiddenShowsCollectedCallback =
-        new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-          @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-            return new SimpleCursorLoader(getActivity(), Shows.SHOWS,
-                HiddenItemsAdapter.PROJECTION_SHOW, ShowColumns.HIDDEN_COLLECTED + "=1", null,
-                Shows.SORT_TITLE);
-          }
-
-          @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-            ensureAdapter();
-            adapter.updateCursorForHeader(R.string.header_hidden_collected_shows, data);
-            hiddenShowsCollected = data;
-          }
-
-          @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-          }
-        };
-
-    private LoaderManager.LoaderCallbacks<SimpleCursor> hiddenMoviesCalendarCallback =
-        new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-          @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-            return new SimpleCursorLoader(getActivity(), Movies.MOVIES,
-                HiddenItemsAdapter.PROJECTION_MOVIES, MovieColumns.HIDDEN_CALENDAR + "=1", null,
-                Movies.SORT_TITLE);
-          }
-
-          @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-            ensureAdapter();
-            adapter.updateCursorForHeader(R.string.header_hidden_calendar_movies, data);
-            hiddenMoviesCalendar = data;
-          }
-
-          @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-          }
-        };
   }
 }

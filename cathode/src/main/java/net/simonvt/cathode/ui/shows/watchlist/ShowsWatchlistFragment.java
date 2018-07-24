@@ -21,22 +21,18 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import androidx.appcompat.widget.Toolbar;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.database.SimpleCursor;
 import net.simonvt.cathode.common.ui.adapter.HeaderSpanLookup;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist;
 import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchlist;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
@@ -50,15 +46,14 @@ public class ShowsWatchlistFragment
 
   public static final String TAG = "net.simonvt.cathode.ui.shows.watchlist.ShowsWatchlistFragment";
 
-  private static final int LOADER_SHOWS_WATCHLIST = 1;
-  private static final int LOADER_EPISODES_WATCHLIST = 2;
-
   @Inject JobManager jobManager;
 
   @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;
 
   private ShowsNavigationListener navigationListener;
+
+  private ShowsWatchlistViewModel viewModel;
 
   private int columnCount;
 
@@ -73,13 +68,22 @@ public class ShowsWatchlistFragment
     super.onCreate(inState);
     AndroidSupportInjection.inject(this);
 
-    getLoaderManager().initLoader(LOADER_SHOWS_WATCHLIST, null, showsCallback);
-    getLoaderManager().initLoader(LOADER_EPISODES_WATCHLIST, null, episodeCallback);
-
     columnCount = getResources().getInteger(R.integer.showsColumns);
 
     setEmptyText(R.string.empty_show_watchlist);
     setTitle(R.string.title_shows_watchlist);
+
+    viewModel = ViewModelProviders.of(this).get(ShowsWatchlistViewModel.class);
+    viewModel.getShows().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        setShowCursor(cursor);
+      }
+    });
+    viewModel.getEpisodes().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        setEpisodeCursor(cursor);
+      }
+    });
   }
 
   @Override public boolean displaysMenuIcon() {
@@ -152,22 +156,7 @@ public class ShowsWatchlistFragment
     episodeScheduler.setIsInWatchlist(episodeId, false);
   }
 
-  private void throttleLoaders() {
-    Loader l = getLoaderManager().getLoader(LOADER_EPISODES_WATCHLIST);
-    if (l != null) {
-      SimpleCursorLoader loader = (SimpleCursorLoader) l;
-      loader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
-    }
-
-    l = getLoaderManager().getLoader(LOADER_SHOWS_WATCHLIST);
-    if (l != null) {
-      SimpleCursorLoader loader = (SimpleCursorLoader) l;
-      loader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
-    }
-  }
-
   @Override public void onRemoveItem(int position, long itemId) {
-    throttleLoaders();
     SimpleCursor cursor =
         (SimpleCursor) (((ShowWatchlistAdapter) getAdapter()).getCursor(position));
     cursor.remove(itemId);
@@ -189,7 +178,6 @@ public class ShowsWatchlistFragment
       setAdapter(ensureAdapter());
     }
 
-    //throttleLoaders();
     ((ShowWatchlistAdapter) getAdapter()).updateCursorForHeader(R.string.header_shows, cursor);
   }
 
@@ -198,37 +186,6 @@ public class ShowsWatchlistFragment
       setAdapter(ensureAdapter());
     }
 
-    //throttleLoaders();
     ((ShowWatchlistAdapter) getAdapter()).updateCursorForHeader(R.string.header_episodes, cursor);
   }
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> showsCallback =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), Shows.SHOWS_WATCHLIST,
-              ShowWatchlistAdapter.PROJECTION_SHOW, null, null, Shows.DEFAULT_SORT);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          setShowCursor(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> episodeCallback =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), Episodes.EPISODES_IN_WATCHLIST,
-              ShowWatchlistAdapter.PROJECTION_EPISODE, null, null, EpisodeColumns.SHOW_ID + " ASC");
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          setEpisodeCursor(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
 }

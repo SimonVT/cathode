@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2018 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.provider.database;
+package net.simonvt.cathode.common.database;
 
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
@@ -55,19 +55,19 @@ public class SimpleCursor extends AbsSimpleCursor {
       for (int i = 0; i < columnCount; i++) {
         final int type = source.getType(i);
         switch (type) {
-          case Cursor.FIELD_TYPE_BLOB:
+          case FIELD_TYPE_BLOB:
             data[i] = source.getBlob(i);
             break;
 
-          case Cursor.FIELD_TYPE_FLOAT:
+          case FIELD_TYPE_FLOAT:
             data[i] = source.getFloat(i);
             break;
 
-          case Cursor.FIELD_TYPE_INTEGER:
+          case FIELD_TYPE_INTEGER:
             data[i] = source.getLong(i);
             break;
 
-          case Cursor.FIELD_TYPE_STRING:
+          case FIELD_TYPE_STRING:
             data[i] = source.getString(i);
             break;
         }

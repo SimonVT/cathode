@@ -24,8 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
@@ -33,11 +33,6 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.adapter.CategoryAdapter;
 import net.simonvt.cathode.common.ui.fragment.ToolbarRecyclerFragment;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncTrendingShows;
 import net.simonvt.cathode.settings.SuggestionsTimestamps;
@@ -45,8 +40,6 @@ import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.movies.watchlist.MovieWatchlistFragment;
 import net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment;
-import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortBy;
-import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference;
 import net.simonvt.cathode.ui.shows.watchlist.ShowsWatchlistFragment;
 import net.simonvt.cathode.ui.suggestions.movies.MovieSuggestionsFragment;
 import net.simonvt.cathode.ui.suggestions.shows.ShowSuggestionsFragment;
@@ -64,21 +57,14 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
   public static final String TAG = "net.simonvt.cathode.ui.dashboard.DashboardFragment";
 
-  private static final int LOADER_SHOWS_UPCOMING = 1;
-  private static final int LOADER_SHOWS_WATCHLIST = 2;
-  private static final int LOADER_EPISODES_WATCHLIST = 3;
-  private static final int LOADER_SHOWS_TRENDING = 4;
-  private static final int LOADER_MOVIES_WATCHLIST = 5;
-  private static final int LOADER_MOVIES_TRENDING = 6;
-
   @Inject JobManager jobManager;
+
+  @Inject DashboardViewModelFactory viewModelFactory;
+  private DashboardViewModel viewModel;
 
   CategoryAdapter adapter;
 
   DashboardUpcomingShowsAdapter upcomingShowsAdapter;
-  UpcomingSortBy upcomingSortBy;
-  @Inject UpcomingSortByPreference upcomingSortByPreference;
-
   DashboardShowsAdapter trendingShowsAdapter;
   DashboardMoviesAdapter movieWatchlistAdapter;
   DashboardMoviesAdapter trendingMoviesAdapter;
@@ -100,16 +86,6 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
     setTitle(R.string.title_dashboard);
 
-    upcomingSortByPreference.registerListener(upcomingSortByListener);
-    upcomingSortBy = upcomingSortByPreference.get();
-
-    getLoaderManager().initLoader(LOADER_SHOWS_UPCOMING, null, showsUpcomingCallback);
-    getLoaderManager().initLoader(LOADER_SHOWS_WATCHLIST, null, showsWatchlistCallback);
-    getLoaderManager().initLoader(LOADER_EPISODES_WATCHLIST, null, episodeWatchlistCallback);
-    getLoaderManager().initLoader(LOADER_SHOWS_TRENDING, null, showsTrendingCallback);
-    getLoaderManager().initLoader(LOADER_MOVIES_WATCHLIST, null, moviesWatchlistCallback);
-    getLoaderManager().initLoader(LOADER_MOVIES_TRENDING, null, moviesTrendingCallback);
-
     adapter = new CategoryAdapter(getActivity(), categoryClickListener);
     setAdapter(adapter);
 
@@ -130,11 +106,38 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
       jobManager.addJob(new SyncTrendingMovies());
       SuggestionsTimestamps.updateSuggestions(getActivity(), SuggestionsTimestamps.MOVIES_TRENDING);
     }
-  }
 
-  @Override public void onDestroy() {
-    upcomingSortByPreference.unregisterListener(upcomingSortByListener);
-    super.onDestroy();
+    viewModel = ViewModelProviders.of(this, viewModelFactory).get(DashboardViewModel.class);
+    viewModel.getUpcomingShows().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        updateShowsUpcomingCursor(cursor);
+      }
+    });
+    viewModel.getShowsWatchlist().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        updateShowsWatchlistCursor(cursor);
+      }
+    });
+    viewModel.getEpisodeWatchlist().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        updateEpisodeWatchlistCursor(cursor);
+      }
+    });
+    viewModel.getTrendingShows().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        updateShowsTrendingCursor(cursor);
+      }
+    });
+    viewModel.getMovieWatchlist().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        updateMoviesWatchlistCursor(cursor);
+      }
+    });
+    viewModel.getTrendingMovies().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        updateMoviesTrendingCursor(cursor);
+      }
+    });
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
@@ -159,14 +162,6 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
     return super.onMenuItemClick(item);
   }
-
-  private UpcomingSortByPreference.UpcomingSortByListener upcomingSortByListener =
-      new UpcomingSortByPreference.UpcomingSortByListener() {
-        @Override public void onUpcomingSortByChanged(UpcomingSortBy sortBy) {
-          DashboardFragment.this.upcomingSortBy = sortBy;
-          getLoaderManager().restartLoader(LOADER_SHOWS_UPCOMING, null, showsUpcomingCallback);
-        }
-      };
 
   private final CategoryAdapter.CategoryClickListener categoryClickListener =
       new CategoryAdapter.CategoryClickListener() {
@@ -214,7 +209,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
     }
   };
 
-  private void updateShowsUpcomingCursor(SimpleCursor cursor) {
+  private void updateShowsUpcomingCursor(Cursor cursor) {
     if (upcomingShowsAdapter == null) {
       upcomingShowsAdapter = new DashboardUpcomingShowsAdapter(getContext(), callback);
       adapter.setAdapter(R.string.category_shows_upcoming, upcomingShowsAdapter);
@@ -223,7 +218,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
     upcomingShowsAdapter.changeCursor(cursor);
   }
 
-  private void updateShowsWatchlistCursor(SimpleCursor cursor) {
+  private void updateShowsWatchlistCursor(Cursor cursor) {
     showsWatchlistCursor = cursor;
     if (showsWatchlistAdapter == null) {
       checkWatchlistAdapter();
@@ -252,7 +247,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
     }
   }
 
-  private void updateShowsTrendingCursor(SimpleCursor cursor) {
+  private void updateShowsTrendingCursor(Cursor cursor) {
     if (trendingShowsAdapter == null) {
       trendingShowsAdapter = new DashboardShowsAdapter(getContext(), callback);
       adapter.setAdapter(R.string.category_shows_suggestions, trendingShowsAdapter);
@@ -261,7 +256,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
     trendingShowsAdapter.changeCursor(cursor);
   }
 
-  private void updateMoviesWatchlistCursor(SimpleCursor cursor) {
+  private void updateMoviesWatchlistCursor(Cursor cursor) {
     if (movieWatchlistAdapter == null) {
       movieWatchlistAdapter = new DashboardMoviesAdapter(getContext(), callback);
       adapter.setAdapter(R.string.category_movies_watchlist, movieWatchlistAdapter);
@@ -270,7 +265,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
     movieWatchlistAdapter.changeCursor(cursor);
   }
 
-  private void updateMoviesTrendingCursor(SimpleCursor cursor) {
+  private void updateMoviesTrendingCursor(Cursor cursor) {
     if (trendingMoviesAdapter == null) {
       trendingMoviesAdapter = new DashboardMoviesAdapter(getContext(), callback);
       adapter.setAdapter(R.string.category_movies_suggestions, trendingMoviesAdapter);
@@ -278,94 +273,4 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
     trendingMoviesAdapter.changeCursor(cursor);
   }
-
-  private final LoaderManager.LoaderCallbacks<SimpleCursor> showsUpcomingCallback =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), Shows.SHOWS_UPCOMING,
-              DashboardUpcomingShowsAdapter.PROJECTION, null, null, upcomingSortBy.getSortOrder());
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          updateShowsUpcomingCursor(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
-
-  private final LoaderManager.LoaderCallbacks<SimpleCursor> showsWatchlistCallback =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), Shows.SHOWS_WATCHLIST,
-              DashboardShowsWatchlistAdapter.PROJECTION, null, null, null);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          updateShowsWatchlistCursor(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
-
-  private final LoaderManager.LoaderCallbacks<SimpleCursor> episodeWatchlistCallback =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), Episodes.EPISODES_IN_WATCHLIST,
-              DashboardShowsWatchlistAdapter.PROJECTION_EPISODE, null, null, null);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          updateEpisodeWatchlistCursor(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
-
-  private final LoaderManager.LoaderCallbacks<SimpleCursor> showsTrendingCallback =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), Shows.SHOWS_TRENDING,
-              DashboardShowsAdapter.PROJECTION, null, null, null);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          updateShowsTrendingCursor(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
-
-  private final LoaderManager.LoaderCallbacks<SimpleCursor> moviesWatchlistCallback =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), Movies.MOVIES_WATCHLIST,
-              DashboardMoviesAdapter.PROJECTION, null, null, null);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          updateMoviesWatchlistCursor(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
-
-  private final LoaderManager.LoaderCallbacks<SimpleCursor> moviesTrendingCallback =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), Movies.TRENDING,
-              DashboardMoviesAdapter.PROJECTION, null, null, null);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          updateMoviesTrendingCursor(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
 }

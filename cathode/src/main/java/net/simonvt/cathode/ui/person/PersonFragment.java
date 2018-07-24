@@ -25,8 +25,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -57,13 +57,13 @@ public class PersonFragment extends RefreshableAppBarFragment {
   private static final String ARG_PERSON_ID =
       "net.simonvt.cathode.ui.person.PersonFragment.personId";
 
-  private static final int LOADER_PERSON = 1;
-
   @Inject PersonTaskScheduler personScheduler;
   @Inject ShowTaskScheduler showScheduler;
   @Inject MovieTaskScheduler movieScheduler;
 
   private long personId;
+
+  private PersonViewModel viewModel;
 
   private Person person;
 
@@ -134,7 +134,13 @@ public class PersonFragment extends RefreshableAppBarFragment {
 
     itemCount = getResources().getInteger(R.integer.personCreditColumns);
 
-    getLoaderManager().initLoader(LOADER_PERSON, null, personLoader);
+    viewModel = ViewModelProviders.of(this).get(PersonViewModel.class);
+    viewModel.setPersonId(personId);
+    viewModel.getPerson().observe(this, new Observer<Person>() {
+      @Override public void onChanged(Person person) {
+        updateView(person);
+      }
+    });
   }
 
   @Override public void onRefresh() {
@@ -296,18 +302,4 @@ public class PersonFragment extends RefreshableAppBarFragment {
       items.setVisibility(View.GONE);
     }
   }
-
-  private LoaderManager.LoaderCallbacks<Person> personLoader =
-      new LoaderManager.LoaderCallbacks<Person>() {
-        @Override public Loader<Person> onCreateLoader(int id, Bundle args) {
-          return new PersonLoader(getContext(), personId);
-        }
-
-        @Override public void onLoadFinished(Loader<Person> loader, Person data) {
-          updateView(data);
-        }
-
-        @Override public void onLoaderReset(Loader<Person> loader) {
-        }
-      };
 }

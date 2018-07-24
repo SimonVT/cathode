@@ -15,7 +15,6 @@
  */
 package net.simonvt.cathode.ui.show;
 
-import android.content.Context;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -23,13 +22,13 @@ import java.util.Date;
 import java.util.List;
 import net.simonvt.cathode.api.entity.HistoryItem;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.provider.database.BaseAsyncLoader;
+import net.simonvt.cathode.common.data.AsyncLiveData;
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper;
 import retrofit2.Call;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class EpisodeHistoryLoader extends BaseAsyncLoader<EpisodeHistoryLoader.Result> {
+public class EpisodeHistoryLiveData extends AsyncLiveData<EpisodeHistoryLiveData.Result> {
 
   public static class Result {
 
@@ -63,15 +62,14 @@ public class EpisodeHistoryLoader extends BaseAsyncLoader<EpisodeHistoryLoader.R
 
   private DateFormat df = DateFormat.getDateTimeInstance();
 
-  public EpisodeHistoryLoader(Context context, long episodeId, SyncService syncService,
+  public EpisodeHistoryLiveData(long episodeId, SyncService syncService,
       EpisodeDatabaseHelper episodeHelper) {
-    super(context);
     this.episodeId = episodeId;
     this.syncService = syncService;
     this.episodeHelper = episodeHelper;
   }
 
-  @Override public Result loadInBackground() {
+  @Override protected Result loadInBackground() {
     try {
       final long traktId = episodeHelper.getTraktId(episodeId);
       Call<List<HistoryItem>> call = syncService.getEpisodeHistory(traktId);

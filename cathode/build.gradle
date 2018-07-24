@@ -22,6 +22,8 @@ dependencies {
   implementation deps.androidx.cardView
   implementation deps.androidx.recyclerView
   implementation deps.androidx.design
+  implementation deps.androidx.lifecycle.extensions
+  annotationProcessor deps.androidx.lifecycle.compiler
   implementation deps.dagger
   implementation deps.daggerAndroid
   implementation deps.daggerAndroidSupport

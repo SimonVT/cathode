@@ -15,11 +15,10 @@
  */
 package net.simonvt.cathode.ui.shows.collected;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.ViewModelProviders;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -27,22 +26,17 @@ import java.util.Map;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.shows.SyncShowsCollection;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.lists.ListDialog;
 import net.simonvt.cathode.ui.shows.ShowsFragment;
-import net.simonvt.cathode.ui.shows.ShowsWithNextAdapter;
 
 public class CollectedShowsFragment extends ShowsFragment implements ListDialog.Callback {
 
   public static final String TAG = "net.simonvt.cathode.ui.shows.collected.ShowsCollectionFragment";
 
-  private static final int LOADER_SHOWS_COLLECTION = 1;
-
-  private enum SortBy {
+  enum SortBy {
     TITLE("title", Shows.SORT_TITLE), COLLECTED("collected", Shows.SORT_COLLECTED);
 
     private String key;
@@ -86,6 +80,8 @@ public class CollectedShowsFragment extends ShowsFragment implements ListDialog.
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.common.ui.fragment.ShowCollectionFragment.sortDialog";
 
+  private CollectedShowsViewModel viewModel;
+
   private SortBy sortBy;
 
   @Override public void onCreate(Bundle inState) {
@@ -96,6 +92,9 @@ public class CollectedShowsFragment extends ShowsFragment implements ListDialog.
 
     setEmptyText(R.string.empty_show_collection);
     setTitle(R.string.title_shows_collection);
+
+    viewModel = ViewModelProviders.of(this).get(CollectedShowsViewModel.class);
+    viewModel.getShows().observe(this, observer);
   }
 
   @Override public void createMenu(Toolbar toolbar) {
@@ -137,7 +136,7 @@ public class CollectedShowsFragment extends ShowsFragment implements ListDialog.
               .edit()
               .putString(Settings.Sort.SHOW_COLLECTED, SortBy.TITLE.getKey())
               .apply();
-          getLoaderManager().restartLoader(getLoaderId(), null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
@@ -149,7 +148,7 @@ public class CollectedShowsFragment extends ShowsFragment implements ListDialog.
               .edit()
               .putString(Settings.Sort.SHOW_COLLECTED, SortBy.COLLECTED.getKey())
               .apply();
-          getLoaderManager().restartLoader(getLoaderId(), null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
@@ -158,15 +157,5 @@ public class CollectedShowsFragment extends ShowsFragment implements ListDialog.
 
   @Override protected LibraryType getLibraryType() {
     return LibraryType.COLLECTION;
-  }
-
-  @Override protected int getLoaderId() {
-    return LOADER_SHOWS_COLLECTION;
-  }
-
-  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    final Uri contentUri = Shows.SHOWS_COLLECTION;
-    return new SimpleCursorLoader(getActivity(), contentUri, ShowsWithNextAdapter.PROJECTION, null,
-        null, sortBy.getSortOrder());
   }
 }

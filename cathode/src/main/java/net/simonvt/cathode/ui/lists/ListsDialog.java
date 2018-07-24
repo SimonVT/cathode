@@ -16,6 +16,7 @@
 package net.simonvt.cathode.ui.lists;
 
 import android.app.Dialog;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,8 +27,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -40,10 +41,6 @@ import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
-import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
-import net.simonvt.cathode.provider.ProviderSchematic.Lists;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler;
 import net.simonvt.schematic.Cursors;
 
@@ -66,8 +63,13 @@ public class ListsDialog extends DialogFragment {
   private static final String ARG_TYPE = "net.simonvt.cathode.ui.lists.ListsDialog.itemType";
   private static final String ARG_ID = "net.simonvt.cathode.ui.lists.ListsDialog.itemId";
 
-  private static final int LOADER_DIALOG_LISTS = 1;
-  private static final int LOADER_DIALOG_LISTS_STATUS = 2;
+  static final String[] LISTS_PROJECTION = {
+      ListsColumns.ID, ListsColumns.TRAKT_ID, ListsColumns.NAME,
+  };
+
+  static final String[] LIST_ITEM_PROJECTION = {
+      ListItemColumns.ID, ListItemColumns.LIST_ID,
+  };
 
   @Inject ListsTaskScheduler listScheduler;
 
@@ -75,8 +77,10 @@ public class ListsDialog extends DialogFragment {
 
   private long itemId;
 
-  private SimpleCursor listsCursor;
-  private SimpleCursor listItemCursor;
+  private ListsDialogViewModel viewModel;
+
+  private Cursor listsCursor;
+  private Cursor listItemCursor;
 
   private List<Item> lists = new ArrayList<>();
 
@@ -106,8 +110,18 @@ public class ListsDialog extends DialogFragment {
     itemType = args.getInt(ARG_TYPE);
     itemId = args.getLong(ARG_ID);
 
-    getLoaderManager().initLoader(LOADER_DIALOG_LISTS, null, listsLoader);
-    getLoaderManager().initLoader(LOADER_DIALOG_LISTS_STATUS, null, listItemLoader);
+    viewModel = ViewModelProviders.of(this).get(ListsDialogViewModel.class);
+    viewModel.setItemTypeAndId(itemType, itemId);
+    viewModel.getList().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        setListsCursor(cursor);
+      }
+    });
+    viewModel.getListItems().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        setListItemCursor(cursor);
+      }
+    });
   }
 
   @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -139,12 +153,12 @@ public class ListsDialog extends DialogFragment {
     super.onDestroyView();
   }
 
-  private void setListsCursor(SimpleCursor listsCursor) {
+  private void setListsCursor(Cursor listsCursor) {
     this.listsCursor = listsCursor;
     updateList();
   }
 
-  private void setListItemCursor(SimpleCursor listItemCursor) {
+  private void setListItemCursor(Cursor listItemCursor) {
     this.listItemCursor = listItemCursor;
     updateList();
   }
@@ -222,11 +236,6 @@ public class ListsDialog extends DialogFragment {
 
     v.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        Loader listsLoader = getLoaderManager().getLoader(LOADER_DIALOG_LISTS);
-        Loader listItemLoader = getLoaderManager().getLoader(LOADER_DIALOG_LISTS_STATUS);
-        ((SimpleCursorLoader) listsLoader).throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
-        ((SimpleCursorLoader) listItemLoader).throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
-
         if (checkBox.isChecked()) {
           checkBox.setChecked(false);
           listScheduler.removeItem(listId, itemType, itemId);
@@ -239,46 +248,4 @@ public class ListsDialog extends DialogFragment {
 
     return v;
   }
-
-  private static final String[] LISTS_PROJECTION = {
-      ListsColumns.ID, ListsColumns.TRAKT_ID, ListsColumns.NAME,
-  };
-
-  private static final String[] LIST_ITEM_PROJECTION = {
-      ListItemColumns.ID, ListItemColumns.LIST_ID,
-  };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> listsLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle bundle) {
-          return new SimpleCursorLoader(getActivity(), Lists.LISTS, LISTS_PROJECTION, null, null,
-              null);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          setListsCursor(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-          setListsCursor(null);
-        }
-      };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> listItemLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle bundle) {
-          return new SimpleCursorLoader(getActivity(), ListItems.LIST_ITEMS, LIST_ITEM_PROJECTION,
-              ListItemColumns.ITEM_TYPE + "=? AND " + ListItemColumns.ITEM_ID + "=?", new String[] {
-              String.valueOf(itemType), String.valueOf(itemId),
-          }, null);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          setListItemCursor(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-          setListItemCursor(null);
-        }
-      };
 }

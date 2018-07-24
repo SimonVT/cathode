@@ -19,6 +19,8 @@ dependencies {
   implementation deps.androidx.annotations
   implementation deps.androidx.fragment
   implementation deps.timber
+  implementation deps.androidx.lifecycle.extensions
+  annotationProcessor deps.androidx.lifecycle.compiler
 
   testImplementation deps.junit
   testImplementation deps.robolectric

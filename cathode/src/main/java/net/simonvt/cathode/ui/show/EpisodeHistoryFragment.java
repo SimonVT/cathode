@@ -22,8 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
@@ -36,9 +36,6 @@ import net.simonvt.cathode.common.util.DateStringUtils;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
@@ -51,16 +48,19 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
   private static final String ARG_EPISODEID = TAG + ".episodeId";
   private static final String ARG_SHOW_TITLE = TAG + ".showTitle";
 
-  private static final int LOADER_EPISODE = 1;
-  private static final int LOADER_HISTORY = 2;
-
   enum Type {
     LOADING, ERROR, EMPTY, ITEM
   }
 
+  static final String[] EPISODE_PROJECTION = new String[] {
+      EpisodeColumns.TRAKT_ID, EpisodeColumns.TITLE, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
+      EpisodeColumns.SCREENSHOT, EpisodeColumns.WATCHED, EpisodeColumns.SHOW_TITLE,
+      EpisodeColumns.FIRST_AIRED,
+  };
+
   private Cursor episode;
 
-  private EpisodeHistoryLoader.Result result;
+  private EpisodeHistoryLiveData.Result result;
 
   @Inject EpisodeTaskScheduler episodeScheduler;
   @Inject SyncService syncService;
@@ -68,6 +68,9 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
 
   private long episodeId;
   private String showTitle;
+
+  @Inject EpisodeHistoryViewModelFactory viewModelFactory;
+  private EpisodeHistoryViewModel viewModel;
 
   @BindView(R.id.topTitle) TextView title;
   @BindView(R.id.topSubtitle) TextView firstAired;
@@ -96,8 +99,18 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
     showTitle = args.getString(ARG_SHOW_TITLE);
     setTitle(showTitle);
 
-    getLoaderManager().initLoader(LOADER_EPISODE, null, episodeCallbacks);
-    getLoaderManager().initLoader(LOADER_HISTORY, null, historyCallbacks);
+    viewModel = ViewModelProviders.of(this, viewModelFactory).get(EpisodeHistoryViewModel.class);
+    viewModel.getEpisode().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        setEpisode(cursor);
+      }
+    });
+    viewModel.getHistory().observe(this, new Observer<EpisodeHistoryLiveData.Result>() {
+      @Override public void onChanged(EpisodeHistoryLiveData.Result result) {
+        setResult(result);
+        setRefreshing(false);
+      }
+    });
   }
 
   @Override
@@ -118,7 +131,7 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
   }
 
   @Override public void onRefresh() {
-    getLoaderManager().getLoader(LOADER_HISTORY).forceLoad();
+    viewModel.getHistory().loadData();
   }
 
   private void setEpisode(Cursor episode) {
@@ -162,7 +175,7 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
     return false;
   }
 
-  private void setResult(EpisodeHistoryLoader.Result result) {
+  private void setResult(EpisodeHistoryLiveData.Result result) {
     this.result = result;
 
     if (getView() == null) {
@@ -263,41 +276,4 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
       }
     }
   }
-
-  private static final String[] EPISODE_PROJECTION = new String[] {
-      EpisodeColumns.TRAKT_ID, EpisodeColumns.TITLE, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
-      EpisodeColumns.SCREENSHOT, EpisodeColumns.WATCHED, EpisodeColumns.SHOW_TITLE,
-      EpisodeColumns.FIRST_AIRED,
-  };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> episodeCallbacks =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), Episodes.withId(episodeId),
-              EPISODE_PROJECTION, null, null, null);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
-          setEpisode(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
-        }
-      };
-
-  LoaderManager.LoaderCallbacks<EpisodeHistoryLoader.Result> historyCallbacks =
-      new LoaderManager.LoaderCallbacks<EpisodeHistoryLoader.Result>() {
-        @Override public Loader<EpisodeHistoryLoader.Result> onCreateLoader(int id, Bundle args) {
-          return new EpisodeHistoryLoader(getContext(), episodeId, syncService, episodeHelper);
-        }
-
-        @Override public void onLoadFinished(Loader<EpisodeHistoryLoader.Result> loader,
-            EpisodeHistoryLoader.Result result) {
-          setResult(result);
-          setRefreshing(false);
-        }
-
-        @Override public void onLoaderReset(Loader<EpisodeHistoryLoader.Result> loader) {
-        }
-      };
 }

@@ -18,28 +18,28 @@ package net.simonvt.cathode.ui.show;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import net.simonvt.cathode.common.data.ListenableLiveData;
+import net.simonvt.cathode.common.database.DatabaseUtils;
+import net.simonvt.cathode.common.database.SimpleMergeCursor;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.database.BaseAsyncLoader;
-import net.simonvt.cathode.provider.database.DatabaseUtils;
-import net.simonvt.cathode.provider.database.SimpleMergeCursor;
 import net.simonvt.schematic.Cursors;
 
-public class WatchedLoader extends BaseAsyncLoader<SimpleMergeCursor> {
+public class WatchedLiveData extends ListenableLiveData<Cursor> {
 
   private long showId;
 
   private String[] projection;
 
-  public WatchedLoader(Context context, long showId, String[] projection) {
+  public WatchedLiveData(Context context, long showId, String[] projection) {
     super(context);
     this.showId = showId;
     this.projection = projection;
   }
 
-  @Override public SimpleMergeCursor loadInBackground() {
+  @Override protected SimpleMergeCursor loadInBackground() {
     clearNotificationUris();
 
     Cursor show = getContext().getContentResolver().query(Shows.withId(showId), new String[] {

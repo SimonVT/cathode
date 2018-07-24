@@ -19,15 +19,14 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.guava.Preconditions;
-import net.simonvt.cathode.provider.database.SimpleMergeCursor;
 import net.simonvt.cathode.sync.scheduler.CommentsTaskScheduler;
 
 public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHolder> {
@@ -45,13 +44,13 @@ public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHol
   private static final String STATE_ADAPTER =
       "net.simonvt.cathode.ui.comments.CommentFragment.adapterState";
 
-  private static final int LOADER_COMMENT = 1;
-
   @Inject CommentsTaskScheduler commentsScheduler;
 
   private long commentId;
 
   private int columnCount;
+
+  private CommentViewModel viewModel;
 
   private CommentsAdapter adapter;
 
@@ -81,7 +80,13 @@ public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHol
 
     setTitle(R.string.title_comments);
 
-    getLoaderManager().initLoader(LOADER_COMMENT, null, commentLoader);
+    viewModel = ViewModelProviders.of(this).get(CommentViewModel.class);
+    viewModel.setCommentId(commentId);
+    viewModel.getCommentAndReplies().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        setCursor(cursor);
+      }
+    });
   }
 
   @Override public void onSaveInstanceState(Bundle outState) {
@@ -141,19 +146,4 @@ public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHol
 
     adapter.changeCursor(cursor);
   }
-
-  private LoaderManager.LoaderCallbacks<SimpleMergeCursor> commentLoader =
-      new LoaderManager.LoaderCallbacks<SimpleMergeCursor>() {
-        @Override public Loader<SimpleMergeCursor> onCreateLoader(int id, Bundle args) {
-          return new CommentAndRepliesLoader(getContext(), commentId);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<SimpleMergeCursor> loader, SimpleMergeCursor data) {
-          setCursor(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleMergeCursor> loader) {
-        }
-      };
 }

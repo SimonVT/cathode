@@ -18,6 +18,7 @@ package net.simonvt.cathode.ui.movies.collected;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.content.Loader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,8 +27,8 @@ import java.util.Map;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
+import net.simonvt.cathode.common.database.SimpleCursor;
+import net.simonvt.cathode.common.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesCollection;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.lists.ListDialog;
@@ -36,7 +37,7 @@ import net.simonvt.cathode.ui.movies.MoviesFragment;
 
 public class CollectedMoviesFragment extends MoviesFragment implements ListDialog.Callback {
 
-  private enum SortBy {
+  enum SortBy {
     TITLE("title", Movies.SORT_TITLE), COLLECTED("collected", Movies.SORT_COLLECTED);
 
     private String key;
@@ -83,7 +84,7 @@ public class CollectedMoviesFragment extends MoviesFragment implements ListDialo
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.movies.collected.MovieCollectionFragment.sortDialog";
 
-  private static final int LOADER_MOVIES_COLLECTION = 1;
+  private CollectedMoviesViewModel viewModel;
 
   private SortBy sortBy;
 
@@ -95,6 +96,9 @@ public class CollectedMoviesFragment extends MoviesFragment implements ListDialo
 
     setEmptyText(R.string.empty_movie_collection);
     setTitle(R.string.title_movies_collection);
+
+    viewModel = ViewModelProviders.of(this).get(CollectedMoviesViewModel.class);
+    viewModel.getMovies().observe(this, observer);
   }
 
   @Override public void createMenu(Toolbar toolbar) {
@@ -136,7 +140,7 @@ public class CollectedMoviesFragment extends MoviesFragment implements ListDialo
               .edit()
               .putString(Settings.Sort.MOVIE_COLLECTED, SortBy.TITLE.getKey())
               .apply();
-          getLoaderManager().restartLoader(getLoaderId(), null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
@@ -148,19 +152,10 @@ public class CollectedMoviesFragment extends MoviesFragment implements ListDialo
               .edit()
               .putString(Settings.Sort.MOVIE_COLLECTED, SortBy.COLLECTED.getKey())
               .apply();
-          getLoaderManager().restartLoader(getLoaderId(), null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
     }
-  }
-
-  @Override protected int getLoaderId() {
-    return LOADER_MOVIES_COLLECTION;
-  }
-
-  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    return new SimpleCursorLoader(getActivity(), Movies.MOVIES_COLLECTED, MoviesAdapter.PROJECTION,
-        null, null, sortBy.getSortOrder());
   }
 }

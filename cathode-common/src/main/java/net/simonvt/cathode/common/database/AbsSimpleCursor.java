@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Simon Vig Therkildsen
+ * Copyright (C) 2018 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.provider.database;
+package net.simonvt.cathode.common.database;
 
 import android.content.ContentResolver;
 import android.database.CharArrayBuffer;

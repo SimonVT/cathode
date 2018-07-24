@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.common.data.ListenableLiveData;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
@@ -35,11 +36,10 @@ import net.simonvt.cathode.provider.ProviderSchematic.MovieCast;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieCrew;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCast;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCrew;
-import net.simonvt.cathode.provider.database.BaseAsyncLoader;
 import net.simonvt.cathode.provider.util.SqlColumn;
 import net.simonvt.schematic.Cursors;
 
-public class CreditsLoader extends BaseAsyncLoader<Credits> {
+public class CreditsLiveData extends ListenableLiveData<Credits> {
 
   private static final String[] SHOW_CAST_PROJECTION = new String[] {
       SqlColumn.table(Tables.SHOW_CAST).column(ShowCastColumns.SHOW_ID),
@@ -75,7 +75,7 @@ public class CreditsLoader extends BaseAsyncLoader<Credits> {
 
   private ContentResolver resolver;
 
-  public CreditsLoader(Context context, ItemType itemType, long itemId) {
+  public CreditsLiveData(Context context, ItemType itemType, long itemId) {
     super(context);
     this.itemType = itemType;
     this.itemId = itemId;
@@ -90,7 +90,7 @@ public class CreditsLoader extends BaseAsyncLoader<Credits> {
     }
   }
 
-  @Override public Credits loadInBackground() {
+  @Override protected Credits loadInBackground() {
     if (itemType == ItemType.SHOW) {
       return loadShowCredits();
     } else {
@@ -201,10 +201,8 @@ public class CreditsLoader extends BaseAsyncLoader<Credits> {
     List<Credit> sound = parseMovieCrew(crewUri, Department.SOUND);
     List<Credit> camera = parseMovieCrew(crewUri, Department.CAMERA);
 
-    Credits credits =
-        new Credits(cast, production, art, crew, costumeAndMakeUp, directing, writing, sound,
-            camera);
-    return credits;
+    return new Credits(cast, production, art, crew, costumeAndMakeUp, directing, writing, sound,
+        camera);
   }
 
   private List<Credit> parseMovieCrew(Uri uri, Department department) {

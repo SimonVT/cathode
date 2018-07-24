@@ -29,7 +29,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.database.DatabaseUtils;
+import net.simonvt.cathode.common.database.DatabaseUtils;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.schematic.Cursors;
 

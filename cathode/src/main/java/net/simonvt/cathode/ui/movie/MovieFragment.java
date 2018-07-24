@@ -29,8 +29,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -51,22 +51,11 @@ import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract;
-import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.RelatedMoviesColumns;
-import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
-import net.simonvt.cathode.provider.ProviderSchematic.Comments;
-import net.simonvt.cathode.provider.ProviderSchematic.MovieCast;
-import net.simonvt.cathode.provider.ProviderSchematic.MovieGenres;
-import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.provider.ProviderSchematic.RelatedMovies;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
-import net.simonvt.cathode.provider.util.SqlColumn;
 import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.PersonTaskScheduler;
@@ -81,17 +70,9 @@ import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.widget.CheckInDrawable;
 import net.simonvt.schematic.Cursors;
 
-public class MovieFragment extends RefreshableAppBarFragment
-    implements LoaderManager.LoaderCallbacks<SimpleCursor> {
+public class MovieFragment extends RefreshableAppBarFragment {
 
   private static final String TAG = "net.simonvt.cathode.ui.movie.MovieFragment";
-
-  private static final int LOADER_MOVIE = 1;
-  private static final int LOADER_MOVIE_GENRES = 2;
-  private static final int LOADER_MOVIE_CAST = 3;
-  private static final int LOADER_MOVIE_USER_COMMENTS = 4;
-  private static final int LOADER_MOVIE_COMMENTS = 5;
-  private static final int LOADER_RELATED = 6;
 
   private static final String ARG_ID = "net.simonvt.cathode.ui.movie.MovieFragment.id";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.movie.MovieFragment.title";
@@ -140,6 +121,8 @@ public class MovieFragment extends RefreshableAppBarFragment
   @BindView(R.id.viewOnTrakt) TextView viewOnTrakt;
   @BindView(R.id.viewOnImdb) TextView viewOnImdb;
   @BindView(R.id.viewOnTmdb) TextView viewOnTmdb;
+
+  private MovieViewModel movieViewModel;
 
   private Cursor userComments;
   private Cursor comments;
@@ -197,6 +180,8 @@ public class MovieFragment extends RefreshableAppBarFragment
     movieOverview = args.getString(ARG_OVERVIEW);
 
     setTitle(movieTitle);
+
+    movieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
   }
 
   public long getMovieId() {
@@ -222,12 +207,39 @@ public class MovieFragment extends RefreshableAppBarFragment
 
     overview.setText(movieOverview);
 
-    getLoaderManager().initLoader(LOADER_MOVIE, null, this);
-    getLoaderManager().initLoader(LOADER_MOVIE_GENRES, null, genresLoader);
-    getLoaderManager().initLoader(LOADER_MOVIE_CAST, null, castLoader);
-    getLoaderManager().initLoader(LOADER_MOVIE_USER_COMMENTS, null, userCommentsLoader);
-    getLoaderManager().initLoader(LOADER_MOVIE_COMMENTS, null, commentsLoader);
-    getLoaderManager().initLoader(LOADER_RELATED, null, relatedLoader);
+    movieViewModel.setMovieId(movieId);
+    movieViewModel.getMovie().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        updateView(cursor);
+      }
+    });
+    movieViewModel.getGenres().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        updateGenreViews(cursor);
+      }
+    });
+    movieViewModel.getCast().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        updateCast(cursor);
+      }
+    });
+    movieViewModel.getUserComments().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        userComments = cursor;
+        updateComments();
+      }
+    });
+    movieViewModel.getComments().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        comments = cursor;
+        updateComments();
+      }
+    });
+    movieViewModel.getRelatedMovies().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        updateRelatedView(cursor);
+      }
+    });
   }
 
   @OnClick(R.id.rating) void onRatingClick() {
@@ -485,17 +497,6 @@ public class MovieFragment extends RefreshableAppBarFragment
     invalidateMenu();
   }
 
-  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    return new SimpleCursorLoader(getActivity(), Movies.withId(movieId), null, null, null, null);
-  }
-
-  @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor cursor) {
-    updateView(cursor);
-  }
-
-  @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
-  }
-
   private void updateGenreViews(final Cursor cursor) {
     if (cursor.getCount() > 0) {
       StringBuilder sb = new StringBuilder();
@@ -612,117 +613,4 @@ public class MovieFragment extends RefreshableAppBarFragment
     LinearCommentsAdapter.updateComments(getContext(), commentsContainer, userComments, comments);
     commentsParent.setVisibility(View.VISIBLE);
   }
-
-  private static final String[] GENRES_PROJECTION = new String[] {
-      MovieGenreColumns.GENRE,
-  };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> genresLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), MovieGenres.fromMovie(movieId),
-              GENRES_PROJECTION, null, null, null);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          updateGenreViews(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
-
-  private static final String[] CAST_PROJECTION = new String[] {
-      Tables.MOVIE_CAST + "." + MovieCastColumns.ID,
-      Tables.MOVIE_CAST + "." + MovieCastColumns.PERSON_ID,
-      Tables.MOVIE_CAST + "." + MovieCastColumns.CHARACTER,
-      Tables.PEOPLE + "." + PersonColumns.NAME,
-  };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> castLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-          return new SimpleCursorLoader(getActivity(),
-              MovieCast.fromMovie(movieId), CAST_PROJECTION,
-              Tables.PEOPLE + "." + PersonColumns.NEEDS_SYNC + "=0", null, null);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor cursor) {
-          updateCast(cursor);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
-        }
-      };
-
-  private static final String[] COMMENTS_PROJECTION = new String[] {
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.ID),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.COMMENT),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.SPOILER),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.REVIEW),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.CREATED_AT),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.LIKES),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.USER_RATING),
-      SqlColumn.table(Tables.USERS).column(UserColumns.USERNAME),
-      SqlColumn.table(Tables.USERS).column(UserColumns.NAME),
-      SqlColumn.table(Tables.USERS).column(UserColumns.AVATAR),
-  };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> userCommentsLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getContext(), Comments.fromMovie(movieId),
-              COMMENTS_PROJECTION, CommentColumns.IS_USER_COMMENT + "=1", null, null);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          userComments = data;
-          updateComments();
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> commentsLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getContext(), Comments.fromMovie(movieId),
-              COMMENTS_PROJECTION,
-              CommentColumns.IS_USER_COMMENT + "=0 AND " + CommentColumns.SPOILER + "=0", null,
-              CommentColumns.LIKES + " DESC LIMIT 3");
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          comments = data;
-          updateComments();
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
-
-  private static final String[] RELATED_PROJECTION = new String[] {
-      SqlColumn.table(Tables.MOVIE_RELATED).column(RelatedMoviesColumns.RELATED_MOVIE_ID),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.TITLE),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.OVERVIEW),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.RATING),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.VOTES),
-  };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> relatedLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getContext(), RelatedMovies.fromMovie(movieId),
-              RELATED_PROJECTION, null, null, RelatedMoviesColumns.RELATED_INDEX + " ASC LIMIT 3");
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          updateRelatedView(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
 }

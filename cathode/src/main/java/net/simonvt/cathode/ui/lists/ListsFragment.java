@@ -20,32 +20,29 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.provider.ProviderSchematic.Lists;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.ui.ListNavigationListener;
 
 public class ListsFragment extends ToolbarSwipeRefreshRecyclerFragment<ListsAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<SimpleCursor>, ListsAdapter.OnListClickListener {
+    implements ListsAdapter.OnListClickListener {
 
   public static final String TAG = "net.simonvt.cathode.ui.lists.ListsFragment";
 
   static final String DIALOG_LIST_CREATE = "net.simonvt.cathode.ui.HomeActivity.createListFragment";
 
-  private static final int LOADER_LISTS = 1;
-
   @Inject JobManager jobManager;
 
   private ListNavigationListener listener;
+
+  private ListsViewModel viewModel;
 
   private ListsAdapter adapter;
 
@@ -59,7 +56,13 @@ public class ListsFragment extends ToolbarSwipeRefreshRecyclerFragment<ListsAdap
     AndroidSupportInjection.inject(this);
     setTitle(R.string.navigation_lists);
     setEmptyText(R.string.empty_lists);
-    getLoaderManager().initLoader(LOADER_LISTS, null, this);
+
+    viewModel = ViewModelProviders.of(this).get(ListsViewModel.class);
+    viewModel.getLists().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        setCursor(cursor);
+      }
+    });
   }
 
   @Override protected int getColumnCount() {
@@ -109,17 +112,5 @@ public class ListsFragment extends ToolbarSwipeRefreshRecyclerFragment<ListsAdap
     }
 
     adapter.changeCursor(cursor);
-  }
-
-  @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-    return new SimpleCursorLoader(getActivity(), Lists.LISTS,
-        ListsAdapter.PROJECTION, null, null, null);
-  }
-
-  @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-    setCursor(data);
-  }
-
-  @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
   }
 }

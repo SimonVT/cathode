@@ -22,8 +22,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import androidx.appcompat.widget.Toolbar;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
@@ -31,9 +31,6 @@ import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
@@ -47,8 +44,6 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
     implements SeasonAdapter.EpisodeCallbacks {
 
   public static final String TAG = "net.simonvt.cathode.ui.show.SeasonFragment";
-
-  private static final int LOADER_SEASON = 1;
 
   private static final String ARG_SHOW_ID = "net.simonvt.cathode.ui.show.SeasonFragment.showId";
   private static final String ARG_SEASONID = "net.simonvt.cathode.ui.show.SeasonFragment.seasonId";
@@ -73,6 +68,8 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
   private String title;
 
   private int seasonNumber = -1;
+
+  private SeasonViewModel viewModel;
 
   private SeasonAdapter episodeAdapter;
 
@@ -121,9 +118,15 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
     setTitle(title);
     updateSubtitle();
 
-    getLoaderManager().initLoader(LOADER_SEASON, null, episodesLoader);
-
     columnCount = getResources().getInteger(R.integer.episodesColumns);
+
+    viewModel = ViewModelProviders.of(this).get(SeasonViewModel.class);
+    viewModel.setSeasonId(seasonId);
+    viewModel.getEpisodes().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        setCursor(cursor);
+      }
+    });
   }
 
   public void updateSubtitle() {
@@ -259,19 +262,4 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
 
     episodeAdapter.changeCursor(cursor);
   }
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> episodesLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), Episodes.fromSeason(seasonId),
-              SeasonAdapter.PROJECTION, null, null, EpisodeColumns.EPISODE + " ASC");
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
-          setCursor(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
-        }
-      };
 }

@@ -20,8 +20,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
@@ -29,13 +28,12 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.provider.database.SimpleCursor;
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 
 public abstract class MoviesFragment
     extends ToolbarSwipeRefreshRecyclerFragment<MoviesAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<SimpleCursor>, BaseMoviesAdapter.Callbacks {
+    implements BaseMoviesAdapter.Callbacks {
 
   @Inject protected JobManager jobManager;
 
@@ -55,8 +53,6 @@ public abstract class MoviesFragment
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
     AndroidSupportInjection.inject(this);
-
-    getLoaderManager().initLoader(getLoaderId(), null, this);
 
     columnCount = getResources().getInteger(R.integer.movieColumns);
   }
@@ -117,6 +113,12 @@ public abstract class MoviesFragment
     return new MoviesAdapter(getActivity(), this, cursor);
   }
 
+  protected Observer<Cursor> observer = new Observer<Cursor>() {
+    @Override public void onChanged(Cursor cursor) {
+      setCursor(cursor);
+    }
+  };
+
   void setCursor(Cursor cursor) {
     if (getAdapter() == null) {
       setAdapter(getAdapter(cursor));
@@ -128,14 +130,5 @@ public abstract class MoviesFragment
       getRecyclerView().scrollToPosition(0);
       scrollToTop = false;
     }
-  }
-
-  protected abstract int getLoaderId();
-
-  @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-    setCursor(data);
-  }
-
-  @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
   }
 }

@@ -16,9 +16,10 @@
 package net.simonvt.cathode.ui.movie;
 
 import android.app.Activity;
+import android.database.Cursor;
 import android.os.Bundle;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
@@ -27,9 +28,6 @@ import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.provider.ProviderSchematic.RelatedMovies;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.ui.MoviesNavigationListener;
 import net.simonvt.cathode.ui.movies.BaseMoviesAdapter;
@@ -37,14 +35,12 @@ import net.simonvt.cathode.ui.movies.MoviesAdapter;
 
 public class RelatedMoviesFragment
     extends ToolbarSwipeRefreshRecyclerFragment<MoviesAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<SimpleCursor>, BaseMoviesAdapter.Callbacks {
+    implements BaseMoviesAdapter.Callbacks {
 
   private static final String TAG = "net.simonvt.cathode.ui.movie.RelatedMoviesFragment";
 
   private static final String ARG_MOVIE_ID =
       "net.simonvt.cathode.ui.movie.RelatedMoviesFragment.movieId";
-
-  private static final int LOADER_MOVIES_RELATED = 1;
 
   @Inject JobManager jobManager;
   @Inject MovieTaskScheduler movieScheduler;
@@ -52,6 +48,8 @@ public class RelatedMoviesFragment
   private MoviesNavigationListener navigationListener;
 
   private long movieId;
+
+  private RelatedMoviesViewModel viewModel;
 
   private MoviesAdapter movieAdapter;
 
@@ -80,12 +78,18 @@ public class RelatedMoviesFragment
 
     movieId = getArguments().getLong(ARG_MOVIE_ID);
 
-    getLoaderManager().initLoader(LOADER_MOVIES_RELATED, null, this);
-
     columnCount = getResources().getInteger(R.integer.movieColumns);
 
     setTitle(R.string.title_related);
     setEmptyText(R.string.empty_movie_related);
+
+    viewModel = ViewModelProviders.of(this).get(RelatedMoviesViewModel.class);
+    viewModel.setMovieId(movieId);
+    viewModel.getMovies().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        setCursor(cursor);
+      }
+    });
   }
 
   @Override protected int getColumnCount() {
@@ -130,7 +134,7 @@ public class RelatedMoviesFragment
     movieScheduler.setIsInCollection(movieId, false);
   }
 
-  protected void setCursor(SimpleCursor c) {
+  protected void setCursor(Cursor c) {
     if (movieAdapter == null) {
       movieAdapter = new MoviesAdapter(getActivity(), this, c);
       setAdapter(movieAdapter);
@@ -138,17 +142,5 @@ public class RelatedMoviesFragment
     }
 
     movieAdapter.changeCursor(c);
-  }
-
-  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    return new SimpleCursorLoader(getActivity(), RelatedMovies.fromMovie(movieId),
-        MoviesAdapter.PROJECTION, null, null, null);
-  }
-
-  @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-    setCursor(data);
-  }
-
-  @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
   }
 }

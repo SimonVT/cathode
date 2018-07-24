@@ -18,6 +18,7 @@ package net.simonvt.cathode.ui.movies.watched;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.content.Loader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,8 +27,8 @@ import java.util.Map;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
+import net.simonvt.cathode.common.database.SimpleCursor;
+import net.simonvt.cathode.common.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies;
 import net.simonvt.cathode.settings.Settings;
@@ -37,7 +38,7 @@ import net.simonvt.cathode.ui.movies.MoviesFragment;
 
 public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.Callback {
 
-  private enum SortBy {
+  enum SortBy {
     TITLE("title", Movies.SORT_TITLE), WATCHED("watched", Movies.SORT_WATCHED);
 
     private String key;
@@ -83,7 +84,7 @@ public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.movies.watched.WatchedMoviesFragment.sortDialog";
 
-  private static final int LOADER_MOVIES_WATCHED = 1;
+  private WatchedMoviesViewModel viewModel;
 
   private SortBy sortBy;
 
@@ -95,6 +96,9 @@ public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.
 
     setEmptyText(R.string.empty_movie_watched);
     setTitle(R.string.title_movies_watched);
+
+    viewModel = ViewModelProviders.of(this).get(WatchedMoviesViewModel.class);
+    viewModel.getMovies().observe(this, observer);
   }
 
   @Override public void createMenu(Toolbar toolbar) {
@@ -137,7 +141,7 @@ public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.
               .edit()
               .putString(Settings.Sort.MOVIE_WATCHED, SortBy.TITLE.getKey())
               .apply();
-          getLoaderManager().restartLoader(getLoaderId(), null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
@@ -149,24 +153,10 @@ public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.
               .edit()
               .putString(Settings.Sort.MOVIE_WATCHED, SortBy.WATCHED.getKey())
               .apply();
-          getLoaderManager().restartLoader(getLoaderId(), null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
     }
-  }
-
-  @Override protected int getLoaderId() {
-    return LOADER_MOVIES_WATCHED;
-  }
-
-  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    return new SimpleCursorLoader(getActivity(), Movies.MOVIES_WATCHED, MoviesAdapter.PROJECTION,
-        null, null, sortBy.getSortOrder());
-  }
-
-  @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-    data.moveToPosition(-1);
-    super.onLoadFinished(loader, data);
   }
 }

@@ -16,11 +16,12 @@
 package net.simonvt.cathode.ui.suggestions.movies;
 
 import android.app.Activity;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,12 +29,11 @@ import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.database.SimpleCursor;
 import net.simonvt.cathode.common.ui.fragment.SwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.SuggestionsTimestamps;
@@ -45,10 +45,10 @@ import net.simonvt.cathode.ui.movies.MoviesAdapter;
 
 public class MovieRecommendationsFragment
     extends SwipeRefreshRecyclerFragment<MoviesAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<SimpleCursor>, BaseMoviesAdapter.Callbacks,
-    MovieRecommendationsAdapter.DismissListener, ListDialog.Callback {
+    implements BaseMoviesAdapter.Callbacks, MovieRecommendationsAdapter.DismissListener,
+    ListDialog.Callback {
 
-  private enum SortBy {
+  enum SortBy {
     RELEVANCE("relevance", Movies.SORT_RECOMMENDED), RATING("rating", Movies.SORT_RATING);
 
     private String key;
@@ -92,14 +92,13 @@ public class MovieRecommendationsFragment
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.common.ui.fragment.RecommendedMoviesFragment.sortDialog";
 
-  private static final int LOADER_MOVIES_RECOMMENDATIONS = 1;
-
   @Inject JobManager jobManager;
 
   @Inject MovieTaskScheduler movieScheduler;
 
   private MoviesNavigationListener navigationListener;
 
+  private MovieRecommendationsViewModel viewModel;
   private MovieRecommendationsAdapter movieAdapter;
 
   private SimpleCursor cursor;
@@ -122,12 +121,17 @@ public class MovieRecommendationsFragment
     sortBy = SortBy.fromValue(Settings.get(getContext())
         .getString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey()));
 
-    getLoaderManager().initLoader(LOADER_MOVIES_RECOMMENDATIONS, null, this);
-
     columnCount = getResources().getInteger(R.integer.movieColumns);
 
     setTitle(R.string.title_movies_recommended);
     setEmptyText(R.string.recommendations_empty);
+
+    viewModel = ViewModelProviders.of(this).get(MovieRecommendationsViewModel.class);
+    viewModel.getRecommendations().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        setCursor((SimpleCursor) cursor);
+      }
+    });
 
     if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
         SuggestionsTimestamps.MOVIES_RECOMMENDED)) {
@@ -177,7 +181,7 @@ public class MovieRecommendationsFragment
               .edit()
               .putString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey())
               .apply();
-          getLoaderManager().restartLoader(LOADER_MOVIES_RECOMMENDATIONS, null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
@@ -189,7 +193,7 @@ public class MovieRecommendationsFragment
               .edit()
               .putString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RATING.getKey())
               .apply();
-          getLoaderManager().restartLoader(LOADER_MOVIES_RECOMMENDATIONS, null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
@@ -227,11 +231,7 @@ public class MovieRecommendationsFragment
   @Override public void onDismissItem(final View view, final long id) {
     movieScheduler.dismissRecommendation(id);
 
-    Loader loader = getLoaderManager().getLoader(LOADER_MOVIES_RECOMMENDATIONS);
-    if (loader != null) {
-      SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
-      cursorLoader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
-
+    if (cursor != null) {
       cursor.remove(id);
       movieAdapter.notifyChanged();
     }
@@ -251,17 +251,5 @@ public class MovieRecommendationsFragment
       getRecyclerView().scrollToPosition(0);
       scrollToTop = false;
     }
-  }
-
-  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    return new SimpleCursorLoader(getActivity(), Movies.RECOMMENDED, null, null, null,
-        sortBy.getSortOrder());
-  }
-
-  @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-    setCursor(data);
-  }
-
-  @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
   }
 }

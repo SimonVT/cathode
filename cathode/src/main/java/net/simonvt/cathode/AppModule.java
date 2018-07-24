@@ -15,6 +15,7 @@
  */
 package net.simonvt.cathode;
 
+import android.app.Application;
 import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
@@ -23,14 +24,18 @@ import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference;
 
 @Module public class AppModule {
 
-  private final Context context;
+  private final Application application;
 
-  public AppModule(Context context) {
-    this.context = context;
+  public AppModule(Application application) {
+    this.application = application;
   }
 
   @Provides Context provideContext() {
-    return context;
+    return application;
+  }
+
+  @Provides Application provideApplication() {
+    return application;
   }
 
   @Provides UpcomingTimePreference provideUpcomingTimePreference() {

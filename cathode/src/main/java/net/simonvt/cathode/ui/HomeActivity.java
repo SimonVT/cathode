@@ -28,8 +28,8 @@ import android.view.ViewPropertyAnimator;
 import android.widget.ProgressBar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
@@ -58,10 +58,6 @@ import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
-import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.SettingsActivity;
@@ -137,8 +133,16 @@ public class HomeActivity extends BaseActivity
   public static final String ACTION_SEARCH = "net.simonvt.cathode.SEARCH";
   public static final String ACTION_UPCOMING = "net.simonvt.cathode.UPCOMING";
 
-  private static final int LOADER_SHOW_WATCHING = 1;
-  private static final int LOADER_MOVIE_WATCHING = 2;
+  static final String[] SHOW_WATCHING_PROJECTION = new String[] {
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
+      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.ID + " AS episodeId",
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.TITLE,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SEASON,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.EPISODE,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.STARTED_AT,
+      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.EXPIRES_AT,
+  };
 
   @Inject ShowTaskScheduler showScheduler;
   @Inject MovieTaskScheduler movieScheduler;
@@ -157,6 +161,8 @@ public class HomeActivity extends BaseActivity
 
   @BindView(R.id.authFailedView) View authFailedView;
   @BindView(R.id.authFailedAction) View authFailedAction;
+
+  private HomeViewModel viewModel;
 
   private Cursor watchingShow;
   private Cursor watchingMovie;
@@ -233,8 +239,19 @@ public class HomeActivity extends BaseActivity
     ErrorEvent.registerListener(checkInFailedListener);
     AuthFailedEvent.registerListener(onAuthFailedListener);
 
-    getSupportLoaderManager().initLoader(LOADER_SHOW_WATCHING, null, watchingShowCallback);
-    getSupportLoaderManager().initLoader(LOADER_MOVIE_WATCHING, null, watchingMovieCallback);
+    viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
+    viewModel.getWatchingShow().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        watchingShow = cursor;
+        updateWatching();
+      }
+    });
+    viewModel.getWatchingMovie().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        watchingMovie = cursor;
+        updateWatching();
+      }
+    });
   }
 
   @Override protected void onNewIntent(Intent intent) {
@@ -751,51 +768,4 @@ public class HomeActivity extends BaseActivity
       watchingView.clearWatching();
     }
   }
-
-  private static final String[] SHOW_WATCHING_PROJECTION = new String[] {
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.ID + " AS episodeId",
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.TITLE,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SEASON,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.EPISODE,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.STARTED_AT,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.EXPIRES_AT,
-  };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> watchingShowCallback =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-          return new SimpleCursorLoader(HomeActivity.this, Shows.SHOW_WATCHING,
-              SHOW_WATCHING_PROJECTION, null, null, null);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor cursor) {
-          watchingShow = cursor;
-          updateWatching();
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
-          watchingShow = null;
-        }
-      };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> watchingMovieCallback =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-          return new SimpleCursorLoader(HomeActivity.this, Movies.WATCHING, null,
-              null, null, null);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor cursor) {
-          watchingMovie = cursor;
-          updateWatching();
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
-          watchingMovie = null;
-        }
-      };
 }

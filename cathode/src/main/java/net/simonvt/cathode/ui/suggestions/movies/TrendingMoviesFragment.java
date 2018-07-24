@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
@@ -28,10 +29,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.database.SimpleCursor;
+import net.simonvt.cathode.common.database.SimpleCursorLoader;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.SuggestionsTimestamps;
@@ -41,7 +42,7 @@ import net.simonvt.cathode.ui.movies.MoviesFragment;
 
 public class TrendingMoviesFragment extends MoviesFragment implements ListDialog.Callback {
 
-  private enum SortBy {
+  enum SortBy {
     VIEWERS("viewers", Movies.SORT_VIEWERS), RATING("rating", Movies.SORT_RATING);
 
     private String key;
@@ -85,7 +86,7 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.suggestions.movies.TrendingMoviesFragment.sortDialog";
 
-  private static final int LOADER_MOVIES_TRENDING = 1;
+  private TrendingMoviesViewModel viewModel;
 
   private SortBy sortBy;
 
@@ -96,6 +97,9 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
 
     setTitle(R.string.title_movies_trending);
     setEmptyText(R.string.movies_loading_trending);
+
+    viewModel = ViewModelProviders.of(this).get(TrendingMoviesViewModel.class);
+    viewModel.getTrending().observe(this, observer);
 
     if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
         SuggestionsTimestamps.MOVIES_TRENDING)) {
@@ -144,7 +148,7 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
               .edit()
               .putString(Settings.Sort.MOVIE_TRENDING, SortBy.VIEWERS.getKey())
               .apply();
-          getLoaderManager().restartLoader(LOADER_MOVIES_TRENDING, null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
@@ -156,7 +160,7 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
               .edit()
               .putString(Settings.Sort.MOVIE_TRENDING, SortBy.RATING.getKey())
               .apply();
-          getLoaderManager().restartLoader(LOADER_MOVIES_TRENDING, null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
@@ -165,14 +169,5 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
 
   protected RecyclerView.Adapter<MoviesAdapter.ViewHolder> getAdapter(Cursor cursor) {
     return new MoviesAdapter(getActivity(), this, cursor, R.layout.list_row_movie_rating);
-  }
-
-  @Override protected int getLoaderId() {
-    return LOADER_MOVIES_TRENDING;
-  }
-
-  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    return new SimpleCursorLoader(getActivity(), Movies.TRENDING, null, null, null,
-        sortBy.getSortOrder());
   }
 }

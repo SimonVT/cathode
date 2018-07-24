@@ -19,8 +19,8 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,8 +32,6 @@ import net.simonvt.cathode.common.ui.fragment.SwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.shows.SyncAnticipatedShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.SuggestionsTimestamps;
@@ -45,10 +43,9 @@ import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
 
 public class AnticipatedShowsFragment
     extends SwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<SimpleCursor>, ListDialog.Callback,
-    ShowDescriptionAdapter.ShowCallbacks {
+    implements ListDialog.Callback, ShowDescriptionAdapter.ShowCallbacks {
 
-  private enum SortBy {
+  enum SortBy {
     ANTICIPATED("anticipated", Shows.SORT_ANTICIPATED), TITLE("title", Shows.SORT_TITLE);
 
     private String key;
@@ -92,8 +89,7 @@ public class AnticipatedShowsFragment
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.suggestions.shows.AnticipatedShowsFragment.sortDialog";
 
-  private static final int LOADER_SHOWS_ANTICIPATED = 1;
-
+  private AnticipatedShowsViewModel viewModel;
   private ShowDescriptionAdapter showsAdapter;
 
   private ShowsNavigationListener navigationListener;
@@ -120,11 +116,16 @@ public class AnticipatedShowsFragment
     sortBy = SortBy.fromValue(Settings.get(getContext())
         .getString(Settings.Sort.SHOW_ANTICIPATED, SortBy.ANTICIPATED.getKey()));
 
-    getLoaderManager().initLoader(LOADER_SHOWS_ANTICIPATED, null, this);
-
     columnCount = getResources().getInteger(R.integer.showsColumns);
     setTitle(R.string.title_shows_anticipated);
     setEmptyText(R.string.shows_loading_anticipated);
+
+    viewModel = ViewModelProviders.of(this).get(AnticipatedShowsViewModel.class);
+    viewModel.getAnticipated().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        setCursor(cursor);
+      }
+    });
 
     if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
         SuggestionsTimestamps.SHOWS_ANTICIPATED)) {
@@ -174,7 +175,7 @@ public class AnticipatedShowsFragment
               .edit()
               .putString(Settings.Sort.SHOW_ANTICIPATED, SortBy.ANTICIPATED.getKey())
               .apply();
-          getLoaderManager().restartLoader(LOADER_SHOWS_ANTICIPATED, null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
@@ -186,7 +187,7 @@ public class AnticipatedShowsFragment
               .edit()
               .putString(Settings.Sort.SHOW_ANTICIPATED, SortBy.TITLE.getKey())
               .apply();
-          getLoaderManager().restartLoader(LOADER_SHOWS_ANTICIPATED, null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
@@ -213,17 +214,5 @@ public class AnticipatedShowsFragment
       getRecyclerView().scrollToPosition(0);
       scrollToTop = false;
     }
-  }
-
-  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    return new SimpleCursorLoader(getActivity(), Shows.SHOWS_ANTICIPATED,
-        ShowDescriptionAdapter.PROJECTION, null, null, sortBy.getSortOrder());
-  }
-
-  @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-    setCursor(data);
-  }
-
-  @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
   }
 }

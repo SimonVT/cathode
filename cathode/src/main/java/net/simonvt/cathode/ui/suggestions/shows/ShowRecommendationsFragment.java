@@ -17,12 +17,11 @@ package net.simonvt.cathode.ui.suggestions.shows;
 
 import android.app.Activity;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,12 +29,11 @@ import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.database.SimpleCursor;
 import net.simonvt.cathode.common.ui.fragment.SwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.shows.SyncShowRecommendations;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.SuggestionsTimestamps;
@@ -47,11 +45,10 @@ import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
 
 public class ShowRecommendationsFragment
     extends SwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<SimpleCursor>,
-    ShowRecommendationsAdapter.DismissListener, ListDialog.Callback,
+    implements ShowRecommendationsAdapter.DismissListener, ListDialog.Callback,
     ShowDescriptionAdapter.ShowCallbacks {
 
-  private enum SortBy {
+  enum SortBy {
     RELEVANCE("relevance", Shows.SORT_RECOMMENDED), RATING("rating", Shows.SORT_RATING);
 
     private String key;
@@ -95,8 +92,7 @@ public class ShowRecommendationsFragment
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.suggestions.shows.ShowRecommendationsFragment.sortDialog";
 
-  private static final int LOADER_SHOWS_RECOMMENDATIONS = 1;
-
+  private ShowRecommendationsViewModel viewModel;
   private ShowRecommendationsAdapter showsAdapter;
 
   private ShowsNavigationListener navigationListener;
@@ -125,12 +121,17 @@ public class ShowRecommendationsFragment
     sortBy = SortBy.fromValue(Settings.get(getContext())
         .getString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey()));
 
-    getLoaderManager().initLoader(LOADER_SHOWS_RECOMMENDATIONS, null, this);
-
     columnCount = getResources().getInteger(R.integer.showsColumns);
 
     setTitle(R.string.title_shows_recommended);
     setEmptyText(R.string.recommendations_empty);
+
+    viewModel = ViewModelProviders.of(this).get(ShowRecommendationsViewModel.class);
+    viewModel.getRecommendations().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        setCursor(cursor);
+      }
+    });
 
     if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
         SuggestionsTimestamps.SHOWS_RECOMMENDED)) {
@@ -180,7 +181,7 @@ public class ShowRecommendationsFragment
               .edit()
               .putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey())
               .apply();
-          getLoaderManager().restartLoader(LOADER_SHOWS_RECOMMENDATIONS, null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
@@ -192,7 +193,7 @@ public class ShowRecommendationsFragment
               .edit()
               .putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RATING.getKey())
               .apply();
-          getLoaderManager().restartLoader(LOADER_SHOWS_RECOMMENDATIONS, null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
@@ -210,11 +211,7 @@ public class ShowRecommendationsFragment
   @Override public void onDismissItem(final View view, final long id) {
     showScheduler.dismissRecommendation(id);
 
-    Loader loader = getLoaderManager().getLoader(LOADER_SHOWS_RECOMMENDATIONS);
-    if (loader != null) {
-      SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
-      cursorLoader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
-
+    if (cursor != null) {
       cursor.remove(id);
       showsAdapter.notifyChanged();
     }
@@ -235,18 +232,5 @@ public class ShowRecommendationsFragment
       getRecyclerView().scrollToPosition(0);
       scrollToTop = false;
     }
-  }
-
-  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    final Uri contentUri = Shows.SHOWS_RECOMMENDED;
-    return new SimpleCursorLoader(getActivity(), contentUri, ShowDescriptionAdapter.PROJECTION,
-        null, null, sortBy.getSortOrder());
-  }
-
-  @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-    setCursor(data);
-  }
-
-  @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
   }
 }

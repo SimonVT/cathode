@@ -23,9 +23,4 @@ public final class Modules {
   private Modules() {
   }
 
-  public static Object[] list(Context context) {
-    return new Object[] {
-        new AppModule(context), new DebugModule(),
-    };
-  }
 }

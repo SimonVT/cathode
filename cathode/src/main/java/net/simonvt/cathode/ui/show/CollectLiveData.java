@@ -18,25 +18,25 @@ package net.simonvt.cathode.ui.show;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import net.simonvt.cathode.common.data.ListenableLiveData;
+import net.simonvt.cathode.common.database.DatabaseUtils;
+import net.simonvt.cathode.common.database.SimpleMergeCursor;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.cathode.provider.database.BaseAsyncLoader;
-import net.simonvt.cathode.provider.database.DatabaseUtils;
-import net.simonvt.cathode.provider.database.SimpleMergeCursor;
 
-public class CollectLoader extends BaseAsyncLoader<SimpleMergeCursor> {
+public class CollectLiveData extends ListenableLiveData<Cursor> {
 
   private long showId;
 
   private String[] projection;
 
-  public CollectLoader(Context context, long showId, String[] projection) {
+  public CollectLiveData(Context context, long showId, String[] projection) {
     super(context);
     this.showId = showId;
     this.projection = projection;
   }
 
-  @Override public SimpleMergeCursor loadInBackground() {
+  @Override protected SimpleMergeCursor loadInBackground() {
     clearNotificationUris();
 
     Cursor toCollect = getContext().getContentResolver()

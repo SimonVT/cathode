@@ -18,23 +18,23 @@ package net.simonvt.cathode.ui.comments;
 
 import android.content.Context;
 import android.database.Cursor;
+import net.simonvt.cathode.common.data.ListenableLiveData;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
-import net.simonvt.cathode.provider.database.BaseAsyncLoader;
-import net.simonvt.cathode.provider.database.DatabaseUtils;
-import net.simonvt.cathode.provider.database.SimpleMergeCursor;
+import net.simonvt.cathode.common.database.DatabaseUtils;
+import net.simonvt.cathode.common.database.SimpleMergeCursor;
 
-public class CommentAndRepliesLoader extends BaseAsyncLoader<SimpleMergeCursor> {
+public class CommentAndRepliesLiveData extends ListenableLiveData<Cursor> {
 
   private long commentId;
 
-  public CommentAndRepliesLoader(Context context, long commentId) {
+  public CommentAndRepliesLiveData(Context context, long commentId) {
     super(context);
     this.commentId = commentId;
   }
 
-  @Override public SimpleMergeCursor loadInBackground() {
+  @Override protected SimpleMergeCursor loadInBackground() {
     Cursor comment = getContext().getContentResolver()
         .query(Comments.COMMENTS_WITH_PROFILE, CommentsAdapter.PROJECTION,
             Tables.COMMENTS + "." + CommentColumns.ID + "=?", new String[] {

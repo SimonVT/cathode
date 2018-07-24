@@ -16,19 +16,16 @@
 package net.simonvt.cathode.ui.search;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.Nullable;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.CursorLoader;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import dagger.android.support.AndroidSupportInjection;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -39,16 +36,12 @@ import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.Debouncer;
 import net.simonvt.cathode.common.widget.ErrorView;
 import net.simonvt.cathode.common.widget.SearchView;
-import net.simonvt.cathode.provider.DatabaseContract.RecentQueriesColumns;
-import net.simonvt.cathode.provider.ProviderSchematic.RecentQueries;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.search.Result;
 import net.simonvt.cathode.search.SearchHandler;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.sync.scheduler.SearchTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
-import net.simonvt.schematic.Cursors;
 
 public class SearchFragment extends ToolbarGridFragment<SearchAdapter.ViewHolder>
     implements SearchHandler.SearchListener, SearchAdapter.OnResultClickListener {
@@ -85,8 +78,6 @@ public class SearchFragment extends ToolbarGridFragment<SearchAdapter.ViewHolder
 
   public static final String TAG = "net.simonvt.cathode.ui.search.SearchFragment";
 
-  private static final int LOADER_RECENTS = 1;
-
   private static final long DEBOUNCE_MILLIS = 350;
 
   @Inject SearchHandler searchHandler;
@@ -94,6 +85,8 @@ public class SearchFragment extends ToolbarGridFragment<SearchAdapter.ViewHolder
   @Inject SearchTaskScheduler searchScheduler;
 
   @BindView(R.id.errorView) ErrorView errorView;
+
+  private SearchViewModel viewModel;
 
   private SearchView searchView;
   private boolean requestFocus;
@@ -125,13 +118,18 @@ public class SearchFragment extends ToolbarGridFragment<SearchAdapter.ViewHolder
     setAdapter(adapter);
     setEmptyText(R.string.search_empty);
 
-    getLoaderManager().initLoader(LOADER_RECENTS, null, recents);
-
     searchHandler.addListener(this);
 
     if (inState == null) {
       requestFocus = true;
     }
+
+    viewModel = ViewModelProviders.of(this).get(SearchViewModel.class);
+    viewModel.getRecents().observe(this, new Observer<List<String>>() {
+      @Override public void onChanged(List<String> recentQueries) {
+        adapter.setRecentQueries(recentQueries);
+      }
+    });
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
@@ -257,29 +255,4 @@ public class SearchFragment extends ToolbarGridFragment<SearchAdapter.ViewHolder
       updateErroView();
     }
   }
-
-  private LoaderManager.LoaderCallbacks<Cursor> recents =
-      new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-          CursorLoader loader =
-              new CursorLoader(getActivity(), RecentQueries.RECENT_QUERIES, new String[] {
-                  RecentQueriesColumns.QUERY,
-              }, null, null, RecentQueriesColumns.QUERIED_AT + " DESC LIMIT 3");
-          loader.setUpdateThrottle(SimpleCursorLoader.DEFAULT_UPDATE_THROTTLE);
-          return loader;
-        }
-
-        @Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-          List<String> recentQueries = new ArrayList<>();
-          data.moveToPosition(-1);
-          while (data.moveToNext()) {
-            final String query = Cursors.getString(data, RecentQueriesColumns.QUERY);
-            recentQueries.add(query);
-          }
-          adapter.setRecentQueries(recentQueries);
-        }
-
-        @Override public void onLoaderReset(Loader<Cursor> loader) {
-        }
-      };
 }

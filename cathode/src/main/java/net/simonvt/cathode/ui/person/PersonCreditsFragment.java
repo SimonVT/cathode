@@ -17,8 +17,8 @@ package net.simonvt.cathode.ui.person;
 
 import android.app.Activity;
 import android.os.Bundle;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import java.util.List;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
@@ -39,9 +39,9 @@ public class PersonCreditsFragment extends ToolbarGridFragment<PersonCreditsAdap
   private static final String ARG_DEPARTMENT =
       "net.simonvt.cathode.ui.person.CreditsFragment.department";
 
-  private static final int LOADER_PERSON = 1;
-
   long personId;
+
+  private PersonViewModel viewModel;
 
   private Department department;
 
@@ -111,7 +111,49 @@ public class PersonCreditsFragment extends ToolbarGridFragment<PersonCreditsAdap
         break;
     }
 
-    getLoaderManager().initLoader(LOADER_PERSON, null, personLoader);
+    viewModel = ViewModelProviders.of(this).get(PersonViewModel.class);
+    viewModel.setPersonId(personId);
+    viewModel.getPerson().observe(this, new Observer<Person>() {
+      @Override public void onChanged(Person person) {
+        switch (department) {
+          case CAST:
+            setCredits(person.getCredits().getCast());
+            break;
+
+          case PRODUCTION:
+            setCredits(person.getCredits().getProduction());
+            break;
+
+          case ART:
+            setCredits(person.getCredits().getArt());
+            break;
+
+          case CREW:
+            setCredits(person.getCredits().getCrew());
+            break;
+
+          case COSTUME_AND_MAKEUP:
+            setCredits(person.getCredits().getCostumeAndMakeUp());
+            break;
+
+          case DIRECTING:
+            setCredits(person.getCredits().getDirecting());
+            break;
+
+          case WRITING:
+            setCredits(person.getCredits().getWriting());
+            break;
+
+          case SOUND:
+            setCredits(person.getCredits().getSound());
+            break;
+
+          case CAMERA:
+            setCredits(person.getCredits().getCamera());
+            break;
+        }
+      }
+    });
   }
 
   @Override protected int getColumnCount() {
@@ -134,54 +176,4 @@ public class PersonCreditsFragment extends ToolbarGridFragment<PersonCreditsAdap
       adapter.setCredits(credits);
     }
   }
-
-  private LoaderManager.LoaderCallbacks<Person> personLoader =
-      new LoaderManager.LoaderCallbacks<Person>() {
-        @Override public Loader<Person> onCreateLoader(int id, Bundle args) {
-          return new PersonLoader(getContext(), personId);
-        }
-
-        @Override public void onLoadFinished(Loader<Person> loader, Person data) {
-          switch (department) {
-            case CAST:
-              setCredits(data.getCredits().getCast());
-              break;
-
-            case PRODUCTION:
-              setCredits(data.getCredits().getProduction());
-              break;
-
-            case ART:
-              setCredits(data.getCredits().getArt());
-              break;
-
-            case CREW:
-              setCredits(data.getCredits().getCrew());
-              break;
-
-            case COSTUME_AND_MAKEUP:
-              setCredits(data.getCredits().getCostumeAndMakeUp());
-              break;
-
-            case DIRECTING:
-              setCredits(data.getCredits().getDirecting());
-              break;
-
-            case WRITING:
-              setCredits(data.getCredits().getWriting());
-              break;
-
-            case SOUND:
-              setCredits(data.getCredits().getSound());
-              break;
-
-            case CAMERA:
-              setCredits(data.getCredits().getCamera());
-              break;
-          }
-        }
-
-        @Override public void onLoaderReset(Loader<Person> loader) {
-        }
-      };
 }

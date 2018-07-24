@@ -15,34 +15,22 @@
  */
 package net.simonvt.cathode.ui.stats;
 
-import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.fragment.BaseFragment;
 import net.simonvt.cathode.common.util.DateStringUtils;
-import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.database.BaseAsyncLoader;
-import net.simonvt.schematic.Cursors;
 
-public class StatsFragment extends BaseFragment implements
-    LoaderManager.LoaderCallbacks<StatsFragment.Stats> {
+public class StatsFragment extends BaseFragment {
 
   public static final String TAG = "net.simonvt.cathode.ui.stats.StatsFragment";
-
-  private static final int LOADER_STATS = 1;
 
   @BindView(R.id.stats_shows) View statsShows;
   @BindView(R.id.episodeTime) TextView episodeTime;
@@ -53,12 +41,21 @@ public class StatsFragment extends BaseFragment implements
   @BindView(R.id.movieCount) TextView movieCount;
   @BindView(R.id.moviesTime) TextView movieTime;
 
+  private StatsViewModel viewModel;
+
   private Stats stats;
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setTitle(R.string.navigation_stats);
-    getLoaderManager().initLoader(LOADER_STATS, null, this);
+
+    viewModel = ViewModelProviders.of(this).get(StatsViewModel.class);
+    viewModel.getStats().observe(this, new Observer<Stats>() {
+      @Override public void onChanged(Stats stats) {
+        StatsFragment.this.stats = stats;
+        updateViews();
+      }
+    });
   }
 
   @Override public boolean displaysMenuIcon() {
@@ -73,14 +70,10 @@ public class StatsFragment extends BaseFragment implements
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
-    updateStats();
+    updateViews();
   }
 
-  @Override public Loader<Stats> onCreateLoader(int id, Bundle args) {
-    return new StatsLoader(getContext());
-  }
-
-  private void updateStats() {
+  private void updateViews() {
     if (stats != null && getView() != null) {
       statsShows.setVisibility(View.VISIBLE);
       episodeTime.setText(DateStringUtils.getStatsString(getContext(), stats.episodeTime));
@@ -94,79 +87,6 @@ public class StatsFragment extends BaseFragment implements
       movieCount.setText(getResources().getQuantityString(R.plurals.stats_movies, stats.movieCount,
           stats.movieCount));
       movieTime.setText(DateStringUtils.getStatsString(getContext(), stats.moviesTime));
-    }
-  }
-
-  @Override public void onLoadFinished(Loader<Stats> loader, Stats stats) {
-    this.stats = stats;
-    updateStats();
-  }
-
-  @Override public void onLoaderReset(Loader<Stats> loader) {
-  }
-
-  public static class Stats {
-
-    long episodeTime;
-    int episodeCount;
-    int showCount;
-
-    long moviesTime;
-    int movieCount;
-
-    public Stats(long episodeTime, int episodeCount, int showCount, long moviesTime,
-        int movieCount) {
-      this.episodeTime = episodeTime;
-      this.episodeCount = episodeCount;
-      this.showCount = showCount;
-      this.moviesTime = moviesTime;
-      this.movieCount = movieCount;
-    }
-  }
-
-  public static class StatsLoader extends BaseAsyncLoader<Stats> {
-
-    public StatsLoader(Context context) {
-      super(context);
-
-      addNotificationUri(Shows.SHOWS);
-      addNotificationUri(Episodes.EPISODES);
-      addNotificationUri(Movies.MOVIES);
-    }
-
-    @Override public Stats loadInBackground() {
-      Cursor shows = getContext().getContentResolver().query(Shows.SHOWS_WATCHED, new String[] {
-          ShowColumns.WATCHED_COUNT, ShowColumns.RUNTIME,
-      }, null, null, null);
-
-      final int showCount = shows.getCount();
-      int episodeCount = 0;
-      long episodeTime = 0L;
-      while (shows.moveToNext()) {
-        final int watchedCount = Cursors.getInt(shows, ShowColumns.WATCHED_COUNT);
-        final int runtime = Cursors.getInt(shows, ShowColumns.RUNTIME);
-
-        episodeCount += watchedCount;
-        episodeTime += (watchedCount * runtime);
-      }
-
-      shows.close();
-
-      Cursor movies = getContext().getContentResolver().query(Movies.MOVIES_WATCHED, new String[] {
-          MovieColumns.RUNTIME,
-      }, null, null, null);
-
-      final int movieCount = movies.getCount();
-      long moviesTime = 0L;
-
-      while (movies.moveToNext()) {
-        final int runtime = Cursors.getInt(movies, MovieColumns.RUNTIME);
-        moviesTime += runtime;
-      }
-
-      movies.close();
-
-      return new Stats(episodeTime, episodeCount, showCount, moviesTime, movieCount);
     }
   }
 }

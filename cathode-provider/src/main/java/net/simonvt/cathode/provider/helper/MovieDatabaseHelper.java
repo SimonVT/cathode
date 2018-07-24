@@ -34,7 +34,7 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieGenres;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.provider.database.DatabaseUtils;
+import net.simonvt.cathode.common.database.DatabaseUtils;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
 import net.simonvt.schematic.Cursors;
 import timber.log.Timber;

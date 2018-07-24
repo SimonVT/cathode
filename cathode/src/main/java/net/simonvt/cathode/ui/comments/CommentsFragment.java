@@ -16,22 +16,18 @@
 package net.simonvt.cathode.ui.comments;
 
 import android.app.Activity;
-import android.net.Uri;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.guava.Preconditions;
-import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
-import net.simonvt.cathode.provider.ProviderSchematic.Comments;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.sync.scheduler.CommentsTaskScheduler;
 import net.simonvt.cathode.ui.NavigationListener;
 
@@ -52,8 +48,6 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
   private static final String STATE_ADAPTER =
       "net.simonvt.cathode.ui.comments.CommentFragment.adapterState";
 
-  private static final int LOADER_COMMENTS = 1;
-
   @Inject CommentsTaskScheduler commentsScheduler;
 
   private NavigationListener navigationListener;
@@ -61,6 +55,8 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
   private ItemType itemType;
 
   private long itemId;
+
+  private CommentsViewModel viewModel;
 
   private int columnCount;
 
@@ -99,7 +95,13 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
 
     setTitle(R.string.title_comments);
 
-    getLoaderManager().initLoader(LOADER_COMMENTS, null, commentsLoader);
+    viewModel = ViewModelProviders.of(this).get(CommentsViewModel.class);
+    viewModel.setItemTypeAndId(itemType, itemId);
+    viewModel.getComments().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        setCursor(cursor);
+      }
+    });
   }
 
   @Override protected int getColumnCount() {
@@ -144,7 +146,7 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
         }
       };
 
-  private void setCursor(SimpleCursor cursor) {
+  private void setCursor(Cursor cursor) {
     if (adapter == null) {
       adapter = new CommentsAdapter(getActivity(), null, false, commentCallbacks);
       if (adapterState != null) {
@@ -155,42 +157,4 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
 
     adapter.changeCursor(cursor);
   }
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> commentsLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          Uri uri;
-          switch (itemType) {
-            case SHOW:
-              uri = Comments.fromShow(itemId);
-              break;
-
-            case EPISODE:
-              uri = Comments.fromEpisode(itemId);
-              break;
-
-            case MOVIE:
-              uri = Comments.fromMovie(itemId);
-              break;
-
-            default:
-              throw new IllegalArgumentException("Type " + itemType.toString() + " not supported");
-          }
-
-          return new SimpleCursorLoader(getContext(), uri, CommentsAdapter.PROJECTION,
-              CommentColumns.PARENT_ID + "=0", null, CommentColumns.IS_USER_COMMENT
-              + " DESC, "
-              + CommentColumns.LIKES
-              + " DESC, "
-              + CommentColumns.CREATED_AT
-              + " DESC");
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          setCursor(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
 }

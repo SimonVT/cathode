@@ -20,8 +20,8 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import dagger.android.support.AndroidSupportInjection;
@@ -29,18 +29,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.database.SimpleCursor;
 import net.simonvt.cathode.common.ui.adapter.HeaderSpanLookup;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
-import net.simonvt.cathode.settings.UpcomingTime;
-import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.lists.ListDialog;
@@ -48,13 +44,9 @@ import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference.UpcomingSo
 
 public class UpcomingShowsFragment
     extends ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>
-    implements UpcomingAdapter.OnRemoveListener, ListDialog.Callback,
-    LoaderManager.LoaderCallbacks<SimpleCursor>,
-    UpcomingAdapter.Callbacks {
+    implements UpcomingAdapter.OnRemoveListener, ListDialog.Callback, UpcomingAdapter.Callbacks {
 
   public static final String TAG = "net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment";
-
-  private static final int LOADER_SHOWS_UPCOMING = 1;
 
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment.sortDialog";
@@ -63,12 +55,14 @@ public class UpcomingShowsFragment
 
   @Inject EpisodeTaskScheduler episodeScheduler;
 
-  @Inject UpcomingTimePreference upcomingTimePreference;
   @Inject UpcomingSortByPreference upcomingSortByPreference;
 
   UpcomingSortBy sortBy;
 
   private ShowsNavigationListener navigationListener;
+
+  @Inject UpcomingViewModelFactory viewModelFactory;
+  private UpcomingViewModel viewModel;
 
   private int columnCount;
 
@@ -93,21 +87,23 @@ public class UpcomingShowsFragment
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
 
-    upcomingTimePreference.registerListener(upcomingTimeChangeListener);
-
-    getLoaderManager().initLoader(LOADER_SHOWS_UPCOMING, null, this);
+    viewModel = ViewModelProviders.of(this, viewModelFactory).get(UpcomingViewModel.class);
+    viewModel.getShows().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        // TODO: Types!
+        setCursor((SimpleCursor) cursor);
+      }
+    });
   }
 
   private UpcomingSortByListener upcomingSortByListener = new UpcomingSortByListener() {
     @Override public void onUpcomingSortByChanged(UpcomingSortBy sortBy) {
       UpcomingShowsFragment.this.sortBy = sortBy;
       scrollToTop = true;
-      getLoaderManager().restartLoader(LOADER_SHOWS_UPCOMING, null, UpcomingShowsFragment.this);
     }
   };
 
   @Override public void onDestroy() {
-    upcomingTimePreference.unregisterListener(upcomingTimeChangeListener);
     upcomingSortByPreference.unregisterListener(upcomingSortByListener);
     super.onDestroy();
   }
@@ -119,13 +115,6 @@ public class UpcomingShowsFragment
   @Override protected GridLayoutManager.SpanSizeLookup getSpanSizeLookup() {
     return new HeaderSpanLookup(ensureAdapter(), columnCount);
   }
-
-  private UpcomingTimePreference.UpcomingTimeChangeListener upcomingTimeChangeListener =
-      new UpcomingTimePreference.UpcomingTimeChangeListener() {
-        @Override public void onUpcomingTimeChanged(UpcomingTime upcomingTime) {
-          getLoaderManager().restartLoader(LOADER_SHOWS_UPCOMING, null, UpcomingShowsFragment.this);
-        }
-      };
 
   @Override public boolean displaysMenuIcon() {
     return amITopLevel();
@@ -191,18 +180,12 @@ public class UpcomingShowsFragment
   }
 
   @Override public void onRemove(long showId) {
-    Loader loader = getLoaderManager().getLoader(LOADER_SHOWS_UPCOMING);
-    if (loader != null) {
-      SimpleCursorLoader cursorLoader = (SimpleCursorLoader) loader;
-      cursorLoader.throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
-
-      List<Cursor> cursors = ((UpcomingAdapter) getAdapter()).getCursors();
-      for (Cursor cursor : cursors) {
-        ((SimpleCursor) cursor).remove(showId);
-      }
-
-      ((UpcomingAdapter) getAdapter()).notifyChanged();
+    List<Cursor> cursors = ((UpcomingAdapter) getAdapter()).getCursors();
+    for (Cursor cursor : cursors) {
+      ((SimpleCursor) cursor).remove(showId);
     }
+
+    ((UpcomingAdapter) getAdapter()).notifyChanged();
   }
 
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
@@ -258,17 +241,5 @@ public class UpcomingShowsFragment
       getRecyclerView().scrollToPosition(0);
       scrollToTop = false;
     }
-  }
-
-  @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-    return new SimpleCursorLoader(getActivity(), Shows.SHOWS_UPCOMING, UpcomingAdapter.PROJECTION,
-        null, null, sortBy.getSortOrder());
-  }
-
-  @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-    setCursor(data);
-  }
-
-  @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
   }
 }

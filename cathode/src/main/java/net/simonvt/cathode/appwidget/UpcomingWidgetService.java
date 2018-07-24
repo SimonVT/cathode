@@ -20,12 +20,14 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import com.squareup.picasso.Picasso;
 import dagger.android.AndroidInjection;
 import java.text.DateFormat;
@@ -33,6 +35,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.data.CursorLiveData;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -40,16 +43,12 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.util.SqlColumn;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.ui.EpisodeDetailsActivity;
 import timber.log.Timber;
 
 public class UpcomingWidgetService extends RemoteViewsService {
-
-  private static final int LOADER_UPCOMING = 1;
 
   @Inject Picasso picasso;
 
@@ -62,8 +61,7 @@ public class UpcomingWidgetService extends RemoteViewsService {
     return new UpcomingRemoteViewsFactory(this.getApplicationContext(), picasso, intent);
   }
 
-  public static class UpcomingRemoteViewsFactory
-      implements RemoteViewsFactory, Loader.OnLoadCompleteListener<SimpleCursor> {
+  public static class UpcomingRemoteViewsFactory implements RemoteViewsFactory {
 
     private Picasso picasso;
 
@@ -72,7 +70,7 @@ public class UpcomingWidgetService extends RemoteViewsService {
     private AppWidgetManager widgetManager;
     private int appWidgetId;
 
-    private SimpleCursorLoader cursorLoader;
+    private LiveData<Cursor> upcomingEpisodes;
 
     private ItemModel items;
 
@@ -91,8 +89,8 @@ public class UpcomingWidgetService extends RemoteViewsService {
       final long upcomingTime =
           currentTime + UpcomingTimePreference.getInstance().get().getCacheTime();
 
-      cursorLoader =
-          new SimpleCursorLoader(context, Episodes.EPISODES_WITH_SHOW, ItemModel.PROJECTION, "("
+      upcomingEpisodes =
+          new CursorLiveData(context, Episodes.EPISODES_WITH_SHOW, ItemModel.PROJECTION, "("
               + SqlColumn.table(Tables.SHOWS).column(ShowColumns.WATCHED_COUNT)
               + ">0 OR "
               + SqlColumn.table(Tables.SHOWS).column(ShowColumns.IN_WATCHLIST)
@@ -106,43 +104,40 @@ public class UpcomingWidgetService extends RemoteViewsService {
               String.valueOf(currentTime - DateUtils.HOUR_IN_MILLIS), String.valueOf(upcomingTime)
           }, Shows.SORT_NEXT_EPISODE);
 
-      cursorLoader.registerListener(LOADER_UPCOMING, this);
-      cursorLoader.startLoading();
+      upcomingEpisodes.observeForever(upcomingObserver);
     }
 
-    @Override public void onLoadComplete(Loader loader, SimpleCursor data) {
-      if (data == null) {
-        return;
+    private Observer<Cursor> upcomingObserver = new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        Timber.d("Load completed: %d", cursor.getCount());
+        items = ItemModel.fromCursor(context, cursor);
+        widgetManager.notifyAppWidgetViewDataChanged(appWidgetId, android.R.id.list);
+
+        final long nextUpdateTime = items.getNextUpdateTime();
+
+        DateFormat df = SimpleDateFormat.getDateTimeInstance();
+        Timber.d("Next update: %s", df.format(new Date(nextUpdateTime)));
+
+        final AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(context, UpcomingWidgetProvider.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        int[] ids = {
+            appWidgetId,
+        };
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+
+        PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
+        am.cancel(pi);
+        am.set(AlarmManager.RTC, nextUpdateTime, pi);
       }
-
-      Timber.d("Load completed: %d", data.getCount());
-      items = ItemModel.fromCursor(context, data);
-      widgetManager.notifyAppWidgetViewDataChanged(appWidgetId, android.R.id.list);
-
-      final long nextUpdateTime = items.getNextUpdateTime();
-
-      DateFormat df = SimpleDateFormat.getDateTimeInstance();
-      Timber.d("Next update: %s", df.format(new Date(nextUpdateTime)));
-
-      final AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-      Intent intent = new Intent(context, UpcomingWidgetProvider.class);
-      intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-      int[] ids = {
-          appWidgetId,
-      };
-      intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-
-      PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
-      am.cancel(pi);
-      am.set(AlarmManager.RTC, nextUpdateTime, pi);
-    }
+    };
 
     @Override public void onDataSetChanged() {
     }
 
     @Override public void onDestroy() {
-      cursorLoader.stopLoading();
+      upcomingEpisodes.removeObserver(upcomingObserver);
     }
 
     @Override public int getCount() {

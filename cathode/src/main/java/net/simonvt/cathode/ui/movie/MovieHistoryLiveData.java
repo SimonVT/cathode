@@ -15,7 +15,6 @@
  */
 package net.simonvt.cathode.ui.movie;
 
-import android.content.Context;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -23,13 +22,13 @@ import java.util.Date;
 import java.util.List;
 import net.simonvt.cathode.api.entity.HistoryItem;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.provider.database.BaseAsyncLoader;
+import net.simonvt.cathode.common.data.AsyncLiveData;
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 import retrofit2.Call;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class MovieHistoryLoader extends BaseAsyncLoader<MovieHistoryLoader.Result> {
+public class MovieHistoryLiveData extends AsyncLiveData<MovieHistoryLiveData.Result> {
 
   public static class Result {
 
@@ -63,14 +62,14 @@ public class MovieHistoryLoader extends BaseAsyncLoader<MovieHistoryLoader.Resul
 
   private DateFormat df = DateFormat.getDateTimeInstance();
 
-  public MovieHistoryLoader(Context context, long movieId, SyncService syncService, MovieDatabaseHelper movieHelper) {
-    super(context);
+  public MovieHistoryLiveData(long movieId, SyncService syncService,
+      MovieDatabaseHelper movieHelper) {
     this.movieId = movieId;
     this.syncService = syncService;
     this.movieHelper = movieHelper;
   }
 
-  @Override public Result loadInBackground() {
+  @Override protected Result loadInBackground() {
     try {
       final long traktId = movieHelper.getTraktId(movieId);
       Call<List<HistoryItem>> call = syncService.getMovieHistory(traktId);

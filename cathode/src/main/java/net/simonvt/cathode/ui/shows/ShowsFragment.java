@@ -20,8 +20,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
 import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
@@ -35,7 +34,7 @@ import net.simonvt.cathode.ui.ShowsNavigationListener;
 
 public abstract class ShowsFragment<D extends Cursor>
     extends ToolbarSwipeRefreshRecyclerFragment<ShowsWithNextAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<D>, ShowsWithNextAdapter.Callbacks {
+    implements ShowsWithNextAdapter.Callbacks {
 
   @Inject protected JobManager jobManager;
 
@@ -60,8 +59,6 @@ public abstract class ShowsFragment<D extends Cursor>
   @Override public void onCreate(Bundle inState) {
     super.onCreate(inState);
     AndroidSupportInjection.inject(this);
-
-    getLoaderManager().initLoader(getLoaderId(), null, this);
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
   }
@@ -122,6 +119,12 @@ public abstract class ShowsFragment<D extends Cursor>
     return new ShowsWithNextAdapter(getActivity(), this, cursor, getLibraryType());
   }
 
+  protected Observer<Cursor> observer = new Observer<Cursor>() {
+    @Override public void onChanged(Cursor cursor) {
+      setCursor(cursor);
+    }
+  };
+
   protected void setCursor(Cursor cursor) {
     this.cursor = cursor;
 
@@ -140,13 +143,4 @@ public abstract class ShowsFragment<D extends Cursor>
   }
 
   protected abstract LibraryType getLibraryType();
-
-  protected abstract int getLoaderId();
-
-  @Override public void onLoadFinished(Loader<D> cursorLoader, D cursor) {
-    setCursor(cursor);
-  }
-
-  @Override public void onLoaderReset(Loader<D> cursorLoader) {
-  }
 }

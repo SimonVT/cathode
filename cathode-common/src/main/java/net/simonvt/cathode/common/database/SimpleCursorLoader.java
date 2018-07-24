@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2018 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.provider.database;
+package net.simonvt.cathode.common.database;
 
 import android.content.Context;
 import android.database.Cursor;

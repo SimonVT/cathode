@@ -18,8 +18,8 @@ package net.simonvt.cathode.ui.show;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
@@ -28,9 +28,6 @@ import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.provider.ProviderSchematic.RelatedShows;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
@@ -45,14 +42,14 @@ public class RelatedShowsFragment
   private static final String ARG_SHOW_ID =
       "net.simonvt.cathode.ui.show.RelatedShowsFragment.showId";
 
-  private static final int LOADER_SHOWS_RELATED = 1;
-
   @Inject JobManager jobManager;
   @Inject ShowTaskScheduler showScheduler;
 
   private ShowsNavigationListener navigationListener;
 
   private long showId;
+
+  private RelatedShowsViewModel viewModel;
 
   private ShowDescriptionAdapter showsAdapter;
 
@@ -82,7 +79,13 @@ public class RelatedShowsFragment
     setEmptyText(R.string.empty_show_related);
     setTitle(R.string.title_related);
 
-    getLoaderManager().initLoader(LOADER_SHOWS_RELATED, null, relatedLoader);
+    viewModel = ViewModelProviders.of(this).get(RelatedShowsViewModel.class);
+    viewModel.setShowId(showId);
+    viewModel.getShows().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        setCursor(cursor);
+      }
+    });
   }
 
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
@@ -112,19 +115,4 @@ public class RelatedShowsFragment
 
     showsAdapter.changeCursor(cursor);
   }
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> relatedLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), RelatedShows.fromShow(showId),
-              ShowDescriptionAdapter.PROJECTION, null, null, null);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          setCursor(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
 }

@@ -31,8 +31,8 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -69,15 +69,6 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
-import net.simonvt.cathode.provider.ProviderSchematic.Comments;
-import net.simonvt.cathode.provider.ProviderSchematic.RelatedShows;
-import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
-import net.simonvt.cathode.provider.ProviderSchematic.ShowCast;
-import net.simonvt.cathode.provider.ProviderSchematic.ShowGenres;
-import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
-import net.simonvt.cathode.provider.database.SimpleMergeCursor;
 import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.provider.util.SqlColumn;
 import net.simonvt.cathode.settings.TraktTimestamps;
@@ -109,17 +100,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private static final String DIALOG_LISTS_ADD =
       "net.simonvt.cathode.ui.show.ShowFragment.listsAddDialog";
 
-  private static final int LOADER_SHOW = 1;
-  private static final int LOADER_SHOW_WATCH = 2;
-  private static final int LOADER_SHOW_COLLECT = 3;
-  private static final int LOADER_SHOW_GENRES = 4;
-  private static final int LOADER_SHOW_SEASONS = 5;
-  private static final int LOADER_SHOW_CAST = 6;
-  private static final int LOADER_SHOW_USER_COMMENTS = 7;
-  private static final int LOADER_SHOW_COMMENTS = 8;
-  private static final int LOADER_RELATED = 9;
-
-  private static final String[] SHOW_PROJECTION = new String[] {
+  static final String[] SHOW_PROJECTION = new String[] {
       ShowColumns.TRAKT_ID, ShowColumns.TITLE, ShowColumns.YEAR, ShowColumns.AIR_TIME,
       ShowColumns.AIR_DAY, ShowColumns.NETWORK, ShowColumns.CERTIFICATION, ShowColumns.STATUS,
       ShowColumns.USER_RATING, ShowColumns.RATING, ShowColumns.OVERVIEW, ShowColumns.IN_WATCHLIST,
@@ -129,14 +110,41 @@ public class ShowFragment extends RefreshableAppBarFragment {
       ShowColumns.TMDB_ID, ShowColumns.NEEDS_SYNC, ShowColumns.HIDDEN_CALENDAR,
   };
 
-  private static final String[] EPISODE_PROJECTION = new String[] {
+  static final String[] EPISODE_PROJECTION = new String[] {
       EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.FIRST_AIRED, EpisodeColumns.SEASON,
       EpisodeColumns.EPISODE, EpisodeColumns.WATCHED, EpisodeColumns.WATCHING,
       EpisodeColumns.CHECKED_IN,
   };
 
-  private static final String[] GENRES_PROJECTION = new String[] {
+  static final String[] GENRES_PROJECTION = new String[] {
       ShowGenreColumns.GENRE,
+  };
+
+  static final String[] RELATED_PROJECTION = new String[] {
+      SqlColumn.table(Tables.SHOW_RELATED).column(RelatedShowsColumns.RELATED_SHOW_ID),
+      SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
+      SqlColumn.table(Tables.SHOWS).column(ShowColumns.OVERVIEW),
+      SqlColumn.table(Tables.SHOWS).column(ShowColumns.RATING),
+      SqlColumn.table(Tables.SHOWS).column(ShowColumns.VOTES),
+  };
+
+  static final String[] CAST_PROJECTION = new String[] {
+      Tables.SHOW_CAST + "." + ShowCastColumns.ID,
+      Tables.SHOW_CAST + "." + ShowCastColumns.CHARACTER,
+      Tables.SHOW_CAST + "." + ShowCastColumns.PERSON_ID, Tables.PEOPLE + "." + PersonColumns.NAME,
+  };
+
+  static final String[] COMMENTS_PROJECTION = new String[] {
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.ID),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.COMMENT),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.SPOILER),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.REVIEW),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.CREATED_AT),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.LIKES),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.USER_RATING),
+      SqlColumn.table(Tables.USERS).column(UserColumns.USERNAME),
+      SqlColumn.table(Tables.USERS).column(UserColumns.NAME),
+      SqlColumn.table(Tables.USERS).column(UserColumns.AVATAR),
   };
 
   private static final long SYNC_INTERVAL = 2 * DateUtils.DAY_IN_MILLIS;
@@ -184,6 +192,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
   @BindView(R.id.viewOnImdb) TextView viewOnImdb;
   @BindView(R.id.viewOnTvdb) TextView viewOnTvdb;
   @BindView(R.id.viewOnTmdb) TextView viewOnTmdb;
+
+  private ShowViewModel viewModel;
 
   private Cursor userComments;
   private Cursor comments;
@@ -277,6 +287,56 @@ public class ShowFragment extends RefreshableAppBarFragment {
         navigationListener.onDisplaySeason(showId, seasonId, showTitle, seasonNumber, type);
       }
     }, type);
+
+    viewModel = ViewModelProviders.of(this).get(ShowViewModel.class);
+    viewModel.setShowId(showId);
+    viewModel.getShow().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        updateShowView(cursor);
+      }
+    });
+    viewModel.getGenres().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        updateGenreViews(cursor);
+      }
+    });
+    viewModel.getSeasons().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        seasonsAdapter.changeCursor(cursor);
+      }
+    });
+    viewModel.getCast().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        updateCastViews(cursor);
+      }
+    });
+    viewModel.getUserComments().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        userComments = cursor;
+        updateComments();
+      }
+    });
+    viewModel.getComments().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        comments = cursor;
+        updateComments();
+      }
+    });
+    viewModel.getRelated().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        updateRelatedView(cursor);
+      }
+    });
+    viewModel.getToWatch().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        updateEpisodeWatchViews(cursor);
+      }
+    });
+    viewModel.getToCollect().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        updateEpisodeCollectViews(cursor);
+      }
+    });
   }
 
   @Override public View createView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
@@ -299,7 +359,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
     overview.setText(showOverview);
 
-    DividerItemDecoration decoration = new DividerItemDecoration(getActivity(), LinearLayoutManager.HORIZONTAL);
+    DividerItemDecoration decoration =
+        new DividerItemDecoration(getActivity(), LinearLayoutManager.HORIZONTAL);
     decoration.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.divider_4dp));
     seasons.addItemDecoration(decoration);
     seasons.setLayoutManager(
@@ -457,16 +518,6 @@ public class ShowFragment extends RefreshableAppBarFragment {
         }
       });
     }
-
-    getLoaderManager().initLoader(LOADER_SHOW, null, showCallbacks);
-    getLoaderManager().initLoader(LOADER_SHOW_GENRES, null, genreCallbacks);
-    getLoaderManager().initLoader(LOADER_SHOW_CAST, null, castCallback);
-    getLoaderManager().initLoader(LOADER_SHOW_WATCH, null, episodeWatchCallbacks);
-    getLoaderManager().initLoader(LOADER_SHOW_COLLECT, null, episodeCollectCallbacks);
-    getLoaderManager().initLoader(LOADER_SHOW_SEASONS, null, seasonsLoader);
-    getLoaderManager().initLoader(LOADER_SHOW_USER_COMMENTS, null, userCommentsLoader);
-    getLoaderManager().initLoader(LOADER_SHOW_COMMENTS, null, commentsLoader);
-    getLoaderManager().initLoader(LOADER_RELATED, null, relatedLoader);
   }
 
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
@@ -629,7 +680,6 @@ public class ShowFragment extends RefreshableAppBarFragment {
     if (needsSync || System.currentTimeMillis() > lastSync + SYNC_INTERVAL) {
       showScheduler.sync(showId);
     }
-
 
     final long lastCommentSync = Cursors.getLong(cursor, ShowColumns.LAST_COMMENT_SYNC);
     if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {
@@ -973,171 +1023,4 @@ public class ShowFragment extends RefreshableAppBarFragment {
     LinearCommentsAdapter.updateComments(getContext(), commentsContainer, userComments, comments);
     commentsParent.setVisibility(View.VISIBLE);
   }
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> showCallbacks =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), Shows.withId(showId), SHOW_PROJECTION, null,
-              null, null);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
-          updateShowView(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
-        }
-      };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> genreCallbacks =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), ShowGenres.fromShow(showId),
-              GENRES_PROJECTION, null, null, ShowGenres.DEFAULT_SORT);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
-          updateGenreViews(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
-        }
-      };
-
-  private static final String[] CAST_PROJECTION = new String[] {
-      Tables.SHOW_CAST + "." + ShowCastColumns.ID,
-      Tables.SHOW_CAST + "." + ShowCastColumns.CHARACTER,
-      Tables.SHOW_CAST + "." + ShowCastColumns.PERSON_ID, Tables.PEOPLE + "." + PersonColumns.NAME,
-  };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> castCallback =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), ShowCast.fromShow(showId),
-              CAST_PROJECTION, Tables.PEOPLE + "." + PersonColumns.NEEDS_SYNC + "=0", null, null);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          updateCastViews(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
-
-  private LoaderManager.LoaderCallbacks<SimpleMergeCursor> episodeWatchCallbacks =
-      new LoaderManager.LoaderCallbacks<SimpleMergeCursor>() {
-        @Override public Loader<SimpleMergeCursor> onCreateLoader(int i, Bundle bundle) {
-          return new WatchedLoader(getActivity(), showId, EPISODE_PROJECTION);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleMergeCursor> cursorLoader,
-            SimpleMergeCursor cursor) {
-          updateEpisodeWatchViews(cursor);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleMergeCursor> cursorLoader) {
-        }
-      };
-
-  private LoaderManager.LoaderCallbacks<SimpleMergeCursor> episodeCollectCallbacks =
-      new LoaderManager.LoaderCallbacks<SimpleMergeCursor>() {
-        @Override public Loader<SimpleMergeCursor> onCreateLoader(int i, Bundle bundle) {
-          return new CollectLoader(getActivity(), showId, EPISODE_PROJECTION);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleMergeCursor> cursorLoader,
-            SimpleMergeCursor cursor) {
-          updateEpisodeCollectViews(cursor);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleMergeCursor> cursorLoader) {
-        }
-      };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> seasonsLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), Seasons.fromShow(showId),
-              SeasonsAdapter.PROJECTION, null, null, Seasons.DEFAULT_SORT);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
-          seasonsAdapter.changeCursor(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
-          seasonsAdapter.changeCursor(null);
-        }
-      };
-
-  private static final String[] COMMENTS_PROJECTION = new String[] {
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.ID),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.COMMENT),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.SPOILER),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.REVIEW),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.CREATED_AT),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.LIKES),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.USER_RATING),
-      SqlColumn.table(Tables.USERS).column(UserColumns.USERNAME),
-      SqlColumn.table(Tables.USERS).column(UserColumns.NAME),
-      SqlColumn.table(Tables.USERS).column(UserColumns.AVATAR),
-  };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> userCommentsLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getContext(), Comments.fromShow(showId),
-              COMMENTS_PROJECTION, CommentColumns.IS_USER_COMMENT + "=1", null, null);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          userComments = data;
-          updateComments();
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> commentsLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getContext(), Comments.fromShow(showId),
-              COMMENTS_PROJECTION,
-              CommentColumns.IS_USER_COMMENT + "=0 AND " + CommentColumns.SPOILER + "=0", null,
-              CommentColumns.LIKES + " DESC LIMIT 3");
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          comments = data;
-          updateComments();
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
-
-  private static final String[] RELATED_PROJECTION = new String[] {
-      SqlColumn.table(Tables.SHOW_RELATED).column(RelatedShowsColumns.RELATED_SHOW_ID),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.OVERVIEW),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.RATING),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.VOTES),
-  };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> relatedLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getContext(), RelatedShows.fromShow(showId),
-              RELATED_PROJECTION, null, null, RelatedShowsColumns.RELATED_INDEX + " ASC LIMIT 3");
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          updateRelatedView(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
 }

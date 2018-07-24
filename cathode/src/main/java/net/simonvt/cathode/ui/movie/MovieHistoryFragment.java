@@ -22,8 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
@@ -35,9 +35,6 @@ import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
 import net.simonvt.schematic.Cursors;
@@ -49,16 +46,18 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
   private static final String ARG_MOVIEID = TAG + ".movieId";
   private static final String ARG_MOVIETITLE = TAG + ".movieTitle";
 
-  private static final int LOADER_MOVIE = 1;
-  private static final int LOADER_HISTORY = 2;
-
   enum Type {
     LOADING, ERROR, EMPTY, ITEM
   }
 
+  static final String[] MOVIE_PROJECTION = new String[] {
+      MovieColumns.TRAKT_ID, MovieColumns.TITLE, MovieColumns.BACKDROP, MovieColumns.RELEASED,
+      MovieColumns.RATING,
+  };
+
   private Cursor movie;
 
-  private MovieHistoryLoader.Result result;
+  private MovieHistoryLiveData.Result result;
 
   @Inject MovieTaskScheduler movieScheduler;
   @Inject SyncService syncService;
@@ -66,6 +65,9 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
 
   private long movieId;
   private String movieTitle;
+
+  @Inject MovieHistoryViewModelFactory viewModelFactory;
+  private MovieHistoryViewModel viewModel;
 
   @BindView(R.id.topTitle) TextView released;
   @BindView(R.id.topSubtitle) TextView rating;
@@ -94,8 +96,19 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
     movieTitle = args.getString(ARG_MOVIETITLE);
     setTitle(movieTitle);
 
-    getLoaderManager().initLoader(LOADER_MOVIE, null, movieCallbacks);
-    getLoaderManager().initLoader(LOADER_HISTORY, null, historyCallbacks);
+    viewModel = ViewModelProviders.of(this, viewModelFactory).get(MovieHistoryViewModel.class);
+    viewModel.setMovieId(movieId);
+    viewModel.getMovie().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        setMovie(cursor);
+      }
+    });
+    viewModel.getHistory().observe(this, new Observer<MovieHistoryLiveData.Result>() {
+      @Override public void onChanged(MovieHistoryLiveData.Result result) {
+        setResult(result);
+        setRefreshing(false);
+      }
+    });
   }
 
   @Override
@@ -116,7 +129,7 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
   }
 
   @Override public void onRefresh() {
-    getLoaderManager().getLoader(LOADER_HISTORY).forceLoad();
+    viewModel.getHistory().loadData();
   }
 
   private void setMovie(Cursor movie) {
@@ -155,7 +168,7 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
     return false;
   }
 
-  private void setResult(MovieHistoryLoader.Result result) {
+  private void setResult(MovieHistoryLiveData.Result result) {
     this.result = result;
 
     if (getView() == null) {
@@ -256,40 +269,4 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
       }
     }
   }
-
-  private static final String[] MOVIE_PROJECTION = new String[] {
-      MovieColumns.TRAKT_ID, MovieColumns.TITLE, MovieColumns.BACKDROP, MovieColumns.RELEASED,
-      MovieColumns.RATING,
-  };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> movieCallbacks =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), Movies.withId(movieId), MOVIE_PROJECTION,
-              null, null, null);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
-          setMovie(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
-        }
-      };
-
-  LoaderManager.LoaderCallbacks<MovieHistoryLoader.Result> historyCallbacks =
-      new LoaderManager.LoaderCallbacks<MovieHistoryLoader.Result>() {
-        @Override public Loader<MovieHistoryLoader.Result> onCreateLoader(int id, Bundle args) {
-          return new MovieHistoryLoader(getContext(), movieId, syncService, movieHelper);
-        }
-
-        @Override public void onLoadFinished(Loader<MovieHistoryLoader.Result> loader,
-            MovieHistoryLoader.Result result) {
-          setResult(result);
-          setRefreshing(false);
-        }
-
-        @Override public void onLoaderReset(Loader<MovieHistoryLoader.Result> loader) {
-        }
-      };
 }

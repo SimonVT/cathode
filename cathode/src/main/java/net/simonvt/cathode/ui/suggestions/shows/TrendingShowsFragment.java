@@ -19,8 +19,8 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,8 +32,6 @@ import net.simonvt.cathode.common.ui.fragment.SwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.shows.SyncTrendingShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.SuggestionsTimestamps;
@@ -45,10 +43,9 @@ import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
 
 public class TrendingShowsFragment
     extends SwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>
-    implements LoaderManager.LoaderCallbacks<SimpleCursor>, ListDialog.Callback,
-    ShowDescriptionAdapter.ShowCallbacks {
+    implements ListDialog.Callback, ShowDescriptionAdapter.ShowCallbacks {
 
-  private enum SortBy {
+  enum SortBy {
     VIEWERS("viewers", Shows.SORT_VIEWERS), RATING("rating", Shows.SORT_RATING);
 
     private String key;
@@ -92,8 +89,7 @@ public class TrendingShowsFragment
   private static final String DIALOG_SORT =
       "net.simonvt.cathode.ui.suggestions.shows.TrendingShowsFragment.sortDialog";
 
-  private static final int LOADER_SHOWS_TRENDING = 1;
-
+  private TrendingShowsViewModel viewModel;
   private ShowDescriptionAdapter showsAdapter;
 
   private ShowsNavigationListener navigationListener;
@@ -122,11 +118,16 @@ public class TrendingShowsFragment
     sortBy = SortBy.fromValue(
         Settings.get(getContext()).getString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey()));
 
-    getLoaderManager().initLoader(LOADER_SHOWS_TRENDING, null, this);
-
     columnCount = getResources().getInteger(R.integer.showsColumns);
     setTitle(R.string.title_shows_trending);
     setEmptyText(R.string.shows_loading_trending);
+
+    viewModel = ViewModelProviders.of(this).get(TrendingShowsViewModel.class);
+    viewModel.getTrending().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        setCursor(cursor);
+      }
+    });
 
     if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
         SuggestionsTimestamps.SHOWS_TRENDING)) {
@@ -175,7 +176,7 @@ public class TrendingShowsFragment
               .edit()
               .putString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey())
               .apply();
-          getLoaderManager().restartLoader(LOADER_SHOWS_TRENDING, null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
@@ -187,7 +188,7 @@ public class TrendingShowsFragment
               .edit()
               .putString(Settings.Sort.SHOW_TRENDING, SortBy.RATING.getKey())
               .apply();
-          getLoaderManager().restartLoader(LOADER_SHOWS_TRENDING, null, this);
+          viewModel.setSortBy(sortBy);
           scrollToTop = true;
         }
         break;
@@ -216,17 +217,5 @@ public class TrendingShowsFragment
       getRecyclerView().scrollToPosition(0);
       scrollToTop = false;
     }
-  }
-
-  @Override public Loader<SimpleCursor> onCreateLoader(int i, Bundle bundle) {
-    return new SimpleCursorLoader(getActivity(), Shows.SHOWS_TRENDING,
-        ShowDescriptionAdapter.PROJECTION, null, null, sortBy.getSortOrder());
-  }
-
-  @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-    setCursor(data);
-  }
-
-  @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
   }
 }

@@ -20,12 +20,13 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Privacy;
+import net.simonvt.cathode.common.database.SimpleCursor;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.jobqueue.Job;
@@ -39,10 +40,6 @@ import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
-import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
-import net.simonvt.cathode.provider.ProviderSchematic.Lists;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.helper.ListWrapper;
 import net.simonvt.cathode.provider.util.SqlCoalesce;
 import net.simonvt.cathode.provider.util.SqlColumn;
@@ -63,8 +60,84 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
   static final String DIALOG_UPDATE = "net.simonvt.cathode.ui.lists.ListFragment.updateListsDialog";
   static final String DIALOG_DELETE = "net.simonvt.cathode.ui.lists.ListFragment.deleteListsDialog";
 
-  private static final int LOADER_LIST_INFO = 1;
-  private static final int LOADER_LIST_ITEMS = 2;
+  static final String[] LIST_PROJECTION = new String[] {
+      ListsColumns.ID, ListsColumns.NAME, ListsColumns.DESCRIPTION, ListsColumns.PRIVACY,
+      ListsColumns.DISPLAY_NUMBERS, ListsColumns.ALLOW_COMMENTS,
+  };
+
+  static final String[] ITEMS_PROJECTION = {
+      SqlColumn.table(Tables.LIST_ITEMS).column(ListItemColumns.ID), ListItemColumns.ITEM_TYPE,
+      ListItemColumns.ITEM_ID,
+
+      SqlCoalesce.coaloesce(SqlColumn.table(Tables.SHOWS).column(ShowColumns.OVERVIEW),
+          SqlColumn.table(Tables.MOVIES).column(MovieColumns.OVERVIEW)).as(
+          ListItemColumns.OVERVIEW),
+
+      SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
+      SqlColumn.table(Tables.SHOWS).column(ShowColumns.WATCHED_COUNT),
+      SqlColumn.table(Tables.SHOWS).column(ShowColumns.IN_COLLECTION_COUNT),
+      SqlColumn.table(Tables.SHOWS).column(ShowColumns.IN_WATCHLIST),
+      SqlColumn.table(Tables.SHOWS).column(ShowColumns.RATING),
+      SqlColumn.table(Tables.SHOWS).column(LastModifiedColumns.LAST_MODIFIED),
+
+      SqlColumn.table(Tables.SEASONS).column(SeasonColumns.SEASON),
+      SqlColumn.table(Tables.SEASONS).column(SeasonColumns.SHOW_ID),
+      SqlColumn.table(Tables.SEASONS).column(LastModifiedColumns.LAST_MODIFIED), "(SELECT "
+      + ShowColumns.TITLE
+      + " FROM "
+      + Tables.SHOWS
+      + " WHERE "
+      + Tables.SHOWS
+      + "."
+      + ShowColumns.ID
+      + "="
+      + Tables.SEASONS
+      + "."
+      + SeasonColumns.SHOW_ID
+      + ") AS seasonShowTitle", "(SELECT "
+      + ShowColumns.POSTER
+      + " FROM "
+      + Tables.SHOWS
+      + " WHERE "
+      + Tables.SHOWS
+      + "."
+      + ShowColumns.ID
+      + "="
+      + Tables.SEASONS
+      + "."
+      + SeasonColumns.SHOW_ID
+      + ") AS seasonShowPoster",
+
+      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.TITLE),
+      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.SEASON),
+      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.EPISODE),
+      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.WATCHED),
+      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED),
+      SqlColumn.table(Tables.EPISODES).column(LastModifiedColumns.LAST_MODIFIED), "(SELECT "
+      + ShowColumns.TITLE
+      + " FROM "
+      + Tables.SHOWS
+      + " WHERE "
+      + Tables.SHOWS
+      + "."
+      + ShowColumns.ID
+      + "="
+      + Tables.EPISODES
+      + "."
+      + EpisodeColumns.SHOW_ID
+      + ") AS episodeShowTitle",
+
+      SqlColumn.table(Tables.MOVIES).column(MovieColumns.TITLE),
+      SqlColumn.table(Tables.MOVIES).column(MovieColumns.WATCHED),
+      SqlColumn.table(Tables.MOVIES).column(MovieColumns.IN_COLLECTION),
+      SqlColumn.table(Tables.MOVIES).column(MovieColumns.IN_WATCHLIST),
+      SqlColumn.table(Tables.MOVIES).column(MovieColumns.WATCHING),
+      SqlColumn.table(Tables.MOVIES).column(MovieColumns.CHECKED_IN),
+      SqlColumn.table(Tables.MOVIES).column(LastModifiedColumns.LAST_MODIFIED),
+
+      SqlColumn.table(Tables.PEOPLE).column(PersonColumns.NAME),
+      SqlColumn.table(Tables.PEOPLE).column(LastModifiedColumns.LAST_MODIFIED),
+  };
 
   @Inject ListsTaskScheduler listScheduler;
 
@@ -73,6 +146,8 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
   private NavigationListener navigationListener;
 
   private long listId;
+
+  private ListViewModel viewModel;
 
   private ListAdapter adapter;
 
@@ -105,8 +180,22 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
 
     columnCount = getResources().getInteger(R.integer.listColumns);
 
-    getLoaderManager().initLoader(LOADER_LIST_ITEMS, null, itemsLoader);
-    getLoaderManager().initLoader(LOADER_LIST_INFO, null, infoLoader);
+    viewModel = ViewModelProviders.of(this).get(ListViewModel.class);
+    viewModel.setListId(listId);
+    viewModel.getList().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        listInfo = cursor;
+        if (listInfo.moveToFirst()) {
+          final String name = Cursors.getString(listInfo, ListsColumns.NAME);
+          setTitle(name);
+        }
+      }
+    });
+    viewModel.getListItems().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        setCursor(cursor);
+      }
+    });
   }
 
   @Override protected int getColumnCount() {
@@ -186,11 +275,6 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
   }
 
   @Override public void onRemoveItem(int position, long id) {
-    Loader loader = getLoaderManager().getLoader(LOADER_LIST_ITEMS);
-    if (loader != null) {
-      ((SimpleCursorLoader) loader).throttle(SimpleCursorLoader.DEFAULT_THROTTLE);
-    }
-
     final SimpleCursor cursor = (SimpleCursor) adapter.getCursor(position);
 
     final long itemId = Cursors.getLong(cursor, ListItemColumns.ITEM_ID);
@@ -201,7 +285,7 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
     adapter.notifyChanged();
   }
 
-  private void setCursor(SimpleCursor cursor) {
+  private void setCursor(Cursor cursor) {
     if (adapter == null) {
       adapter = new ListAdapter(getActivity(), this);
       setAdapter(adapter);
@@ -209,115 +293,4 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
 
     adapter.changeCursor(cursor);
   }
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> infoLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getContext(), Lists.withId(listId),
-              new String[] {
-                  ListsColumns.ID, ListsColumns.NAME, ListsColumns.DESCRIPTION,
-                  ListsColumns.PRIVACY, ListsColumns.DISPLAY_NUMBERS, ListsColumns.ALLOW_COMMENTS,
-              }, null, null, null);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          listInfo = data;
-          if (listInfo.moveToFirst()) {
-            final String name = Cursors.getString(listInfo, ListsColumns.NAME);
-            setTitle(name);
-          }
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
-
-  private static final String[] PROJECTION = {
-      SqlColumn.table(Tables.LIST_ITEMS).column(ListItemColumns.ID), ListItemColumns.ITEM_TYPE,
-      ListItemColumns.ITEM_ID,
-
-      SqlCoalesce.coaloesce(SqlColumn.table(Tables.SHOWS).column(ShowColumns.OVERVIEW),
-          SqlColumn.table(Tables.MOVIES).column(MovieColumns.OVERVIEW)).as(
-          ListItemColumns.OVERVIEW),
-
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.WATCHED_COUNT),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.IN_COLLECTION_COUNT),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.IN_WATCHLIST),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.RATING),
-      SqlColumn.table(Tables.SHOWS).column(LastModifiedColumns.LAST_MODIFIED),
-
-      SqlColumn.table(Tables.SEASONS).column(SeasonColumns.SEASON),
-      SqlColumn.table(Tables.SEASONS).column(SeasonColumns.SHOW_ID),
-      SqlColumn.table(Tables.SEASONS).column(LastModifiedColumns.LAST_MODIFIED), "(SELECT "
-      + ShowColumns.TITLE
-      + " FROM "
-      + Tables.SHOWS
-      + " WHERE "
-      + Tables.SHOWS
-      + "."
-      + ShowColumns.ID
-      + "="
-      + Tables.SEASONS
-      + "."
-      + SeasonColumns.SHOW_ID
-      + ") AS seasonShowTitle", "(SELECT "
-      + ShowColumns.POSTER
-      + " FROM "
-      + Tables.SHOWS
-      + " WHERE "
-      + Tables.SHOWS
-      + "."
-      + ShowColumns.ID
-      + "="
-      + Tables.SEASONS
-      + "."
-      + SeasonColumns.SHOW_ID
-      + ") AS seasonShowPoster",
-
-      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.TITLE),
-      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.SEASON),
-      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.EPISODE),
-      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.WATCHED),
-      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED),
-      SqlColumn.table(Tables.EPISODES).column(LastModifiedColumns.LAST_MODIFIED), "(SELECT "
-      + ShowColumns.TITLE
-      + " FROM "
-      + Tables.SHOWS
-      + " WHERE "
-      + Tables.SHOWS
-      + "."
-      + ShowColumns.ID
-      + "="
-      + Tables.EPISODES
-      + "."
-      + EpisodeColumns.SHOW_ID
-      + ") AS episodeShowTitle",
-
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.TITLE),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.WATCHED),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.IN_COLLECTION),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.IN_WATCHLIST),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.WATCHING),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.CHECKED_IN),
-      SqlColumn.table(Tables.MOVIES).column(LastModifiedColumns.LAST_MODIFIED),
-
-      SqlColumn.table(Tables.PEOPLE).column(PersonColumns.NAME),
-      SqlColumn.table(Tables.PEOPLE).column(LastModifiedColumns.LAST_MODIFIED),
-  };
-
-  LoaderManager.LoaderCallbacks<SimpleCursor> itemsLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), ListItems.inList(listId),
-              PROJECTION, null, null, null);
-        }
-
-        @Override public void onLoadFinished(Loader loader, SimpleCursor data) {
-          setCursor(data);
-        }
-
-        @Override public void onLoaderReset(Loader loader) {
-        }
-      };
 }

@@ -27,8 +27,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -51,10 +51,6 @@ import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
-import net.simonvt.cathode.provider.ProviderSchematic.Comments;
-import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.cathode.provider.database.SimpleCursor;
-import net.simonvt.cathode.provider.database.SimpleCursorLoader;
 import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.provider.util.SqlColumn;
 import net.simonvt.cathode.settings.TraktTimestamps;
@@ -75,9 +71,6 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
   private static final String TAG = "net.simonvt.cathode.ui.show.EpisodeFragment";
 
-  private static final int LOADER_EPISODE = 1;
-  private static final int LOADER_EPISODE_USER_COMMENTS = 2;
-
   private static final String ARG_EPISODEID =
       "net.simonvt.cathode.ui.show.EpisodeFragment.episodeId";
   private static final String ARG_SHOW_TITLE =
@@ -87,6 +80,28 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
       "net.simonvt.cathode.ui.show.EpisodeFragment.ratingDialog";
   private static final String DIALOG_LISTS_ADD =
       "net.simonvt.cathode.ui.show.EpisodeFragment.listsAddDialog";
+
+  static final String[] EPISODE_PROJECTION = new String[] {
+      EpisodeColumns.TRAKT_ID, EpisodeColumns.TITLE, EpisodeColumns.OVERVIEW,
+      EpisodeColumns.FIRST_AIRED, EpisodeColumns.WATCHED, EpisodeColumns.IN_COLLECTION,
+      EpisodeColumns.IN_WATCHLIST, EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN,
+      EpisodeColumns.USER_RATING, EpisodeColumns.RATING, EpisodeColumns.SEASON,
+      EpisodeColumns.EPISODE, EpisodeColumns.LAST_COMMENT_SYNC, EpisodeColumns.SHOW_ID,
+      EpisodeColumns.SEASON_ID, EpisodeColumns.SHOW_TITLE,
+  };
+
+  static final String[] COMMENTS_PROJECTION = new String[] {
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.ID),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.COMMENT),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.SPOILER),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.REVIEW),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.CREATED_AT),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.LIKES),
+      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.USER_RATING),
+      SqlColumn.table(Tables.USERS).column(UserColumns.USERNAME),
+      SqlColumn.table(Tables.USERS).column(UserColumns.NAME),
+      SqlColumn.table(Tables.USERS).column(UserColumns.AVATAR),
+  };
 
   @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;
@@ -108,7 +123,10 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
   @BindView(R.id.viewOnTrakt) TextView viewOnTrakt;
 
+  private EpisodeViewModel viewModel;
+
   private Cursor userComments;
+  private Cursor comments;
 
   private long episodeId;
 
@@ -164,8 +182,25 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
     showTitle = args.getString(ARG_SHOW_TITLE);
     setTitle(showTitle);
 
-    getLoaderManager().initLoader(LOADER_EPISODE, null, episodeCallbacks);
-    getLoaderManager().initLoader(LOADER_EPISODE_USER_COMMENTS, null, userCommentsLoader);
+    viewModel = ViewModelProviders.of(this).get(EpisodeViewModel.class);
+    viewModel.setEpisodeId(episodeId);
+    viewModel.getEpisode().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        updateEpisodeViews(cursor);
+      }
+    });
+    viewModel.getUserComments().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        userComments = cursor;
+        updateComments();
+      }
+    });
+    viewModel.getComments().observe(this, new Observer<Cursor>() {
+      @Override public void onChanged(Cursor cursor) {
+        comments = cursor;
+        updateComments();
+      }
+    });
   }
 
   public long getEpisodeId() {
@@ -381,62 +416,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
   }
 
   private void updateComments() {
-    LinearCommentsAdapter.updateComments(getContext(), commentsContainer, userComments, null);
+    LinearCommentsAdapter.updateComments(getContext(), commentsContainer, userComments, comments);
     commentsParent.setVisibility(View.VISIBLE);
   }
-
-  private static final String[] EPISODE_PROJECTION = new String[] {
-      EpisodeColumns.TRAKT_ID, EpisodeColumns.TITLE, EpisodeColumns.OVERVIEW,
-      EpisodeColumns.FIRST_AIRED, EpisodeColumns.WATCHED, EpisodeColumns.IN_COLLECTION,
-      EpisodeColumns.IN_WATCHLIST, EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN,
-      EpisodeColumns.USER_RATING, EpisodeColumns.RATING, EpisodeColumns.SEASON,
-      EpisodeColumns.EPISODE, EpisodeColumns.LAST_COMMENT_SYNC, EpisodeColumns.SHOW_ID,
-      EpisodeColumns.SEASON_ID, EpisodeColumns.SHOW_TITLE,
-  };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> episodeCallbacks =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getActivity(), Episodes.withId(episodeId),
-              EPISODE_PROJECTION, null, null, null);
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> cursorLoader, SimpleCursor data) {
-          updateEpisodeViews(data);
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> cursorLoader) {
-        }
-      };
-
-  private static final String[] COMMENTS_PROJECTION = new String[] {
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.ID),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.COMMENT),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.SPOILER),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.REVIEW),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.CREATED_AT),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.LIKES),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.USER_RATING),
-      SqlColumn.table(Tables.USERS).column(UserColumns.USERNAME),
-      SqlColumn.table(Tables.USERS).column(UserColumns.NAME),
-      SqlColumn.table(Tables.USERS).column(UserColumns.AVATAR),
-  };
-
-  private LoaderManager.LoaderCallbacks<SimpleCursor> userCommentsLoader =
-      new LoaderManager.LoaderCallbacks<SimpleCursor>() {
-        @Override public Loader<SimpleCursor> onCreateLoader(int id, Bundle args) {
-          return new SimpleCursorLoader(getContext(), Comments.fromEpisode(episodeId),
-              COMMENTS_PROJECTION,
-              CommentColumns.IS_USER_COMMENT + "=0 AND " + CommentColumns.SPOILER + "=0", null,
-              CommentColumns.LIKES + " DESC LIMIT 3");
-        }
-
-        @Override public void onLoadFinished(Loader<SimpleCursor> loader, SimpleCursor data) {
-          userComments = data;
-          updateComments();
-        }
-
-        @Override public void onLoaderReset(Loader<SimpleCursor> loader) {
-        }
-      };
 }

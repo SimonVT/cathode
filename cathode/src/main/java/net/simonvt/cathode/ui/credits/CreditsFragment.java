@@ -23,8 +23,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.OnClick;
 import dagger.android.support.AndroidSupportInjection;
@@ -51,8 +51,6 @@ public class CreditsFragment extends RefreshableToolbarFragment {
   private static final String ARG_ITEM_ID = "net.simonvt.cathode.ui.credits.CreditsFragment.itemId";
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.credits.CreditsFragment.title";
 
-  private static final int LOADER_CREDITS = 1;
-
   @Inject ShowTaskScheduler showScheduler;
   @Inject MovieTaskScheduler movieScheduler;
   @Inject PersonTaskScheduler personScheduler;
@@ -64,6 +62,8 @@ public class CreditsFragment extends RefreshableToolbarFragment {
   private long itemId;
 
   private String title;
+
+  private CreditsViewModel viewModel;
 
   private Credits credits;
 
@@ -128,7 +128,13 @@ public class CreditsFragment extends RefreshableToolbarFragment {
 
     itemCount = getResources().getInteger(R.integer.creditColumns);
 
-    getLoaderManager().initLoader(LOADER_CREDITS, null, creditsLoader);
+    viewModel = ViewModelProviders.of(this).get(CreditsViewModel.class);
+    viewModel.setItemTypeAndId(itemType, itemId);
+    viewModel.getCredits().observe(this, new Observer<Credits>() {
+      @Override public void onChanged(Credits credits) {
+        updateView(credits);
+      }
+    });
   }
 
   @Override public void onRefresh() {
@@ -245,18 +251,4 @@ public class CreditsFragment extends RefreshableToolbarFragment {
       items.setVisibility(View.GONE);
     }
   }
-
-  private LoaderManager.LoaderCallbacks<Credits> creditsLoader =
-      new LoaderManager.LoaderCallbacks<Credits>() {
-        @Override public Loader<Credits> onCreateLoader(int id, Bundle args) {
-          return new CreditsLoader(getContext(), itemType, itemId);
-        }
-
-        @Override public void onLoadFinished(Loader<Credits> loader, Credits data) {
-          updateView(data);
-        }
-
-        @Override public void onLoaderReset(Loader<Credits> loader) {
-        }
-      };
 }
