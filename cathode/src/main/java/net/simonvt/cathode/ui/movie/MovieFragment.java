@@ -106,6 +106,7 @@ public class MovieFragment extends RefreshableAppBarFragment
 
   @BindView(R.id.year) TextView year;
   @BindView(R.id.certification) TextView certification;
+  @BindView(R.id.runtime) TextView runtime;
   //@BindView(R.id.poster) RemoteImageView poster;
   @BindView(R.id.overview) TextView overview;
 
@@ -371,6 +372,21 @@ public class MovieFragment extends RefreshableAppBarFragment
     }
     final int year = Cursors.getInt(cursor, MovieColumns.YEAR);
     final String certification = Cursors.getString(cursor, MovieColumns.CERTIFICATION);
+    final Integer runtimeInt = Cursors.getIntOrNull(cursor, MovieColumns.RUNTIME);
+
+    if (runtimeInt != null){
+      String runtimeString;
+      if (runtimeInt > 60){
+        runtimeString = String.format(getString(R.string.runtime_minutes_and_hours), runtimeInt / 60, runtimeInt % 60);
+      }else{
+        runtimeString = String.format(getString(R.string.runtime_minutes), runtimeInt);
+      }
+      runtime.setText(runtimeString);
+      runtime.setVisibility(View.VISIBLE);
+    }else{
+      runtime.setVisibility(View.GONE);
+    }
+
 
     final String backdropUri = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.BACKDROP, movieId);
     setBackdrop(backdropUri, true);

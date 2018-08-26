@@ -44,6 +44,13 @@
         android:layout_height="wrap_content"
         android:textColor="?android:attr/textColorPrimary"
         tools:text="TV-MA"/>
+
+    <TextView
+        android:id="@+id/runtime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?android:attr/textColorPrimary"
+        tools:text="0min"/>
   </LinearLayout>
 
   <net.simonvt.cathode.common.widget.CircularProgressIndicator

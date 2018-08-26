@@ -71,6 +71,9 @@
   <string name="related_rating">%1$s (%2$d votes)</string>
   <string name="related_rating_thousands">%1$s (%2$sk votes)</string>
 
+  <string name="runtime_minutes">%dmin</string>
+  <string name="runtime_minutes_and_hours">%1$dh %2$dmin</string>
+
   <string name="person_department_cast">Cast</string>
   <string name="person_department_production">Production</string>
   <string name="person_department_art">Art</string>
