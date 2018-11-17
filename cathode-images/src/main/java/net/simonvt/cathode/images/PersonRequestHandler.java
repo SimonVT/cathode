@@ -98,7 +98,7 @@ public class PersonRequestHandler extends ItemRequestHandler {
   @Override protected boolean updateCache(ImageType imageType, long id, int tmdbId)
       throws IOException {
     TmdbRateLimiter.acquire();
-    Response<Person> personResponse = peopleService.summary(tmdbId).execute();
+    Response<Person> personResponse = peopleService.summary(tmdbId, null).execute();
     TmdbRateLimiter.acquire();
     Response<TaggedImagesResultsPage> stillResponse =
         peopleService.taggedImages(tmdbId, 1, "en").execute();

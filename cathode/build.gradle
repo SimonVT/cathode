@@ -55,15 +55,15 @@ android {
   buildToolsVersion parent.ext.buildToolsVersion
 
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_7
-    targetCompatibility JavaVersion.VERSION_1_7
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
   }
 
   defaultConfig {
     minSdkVersion parent.ext.minSdkVersion
     targetSdkVersion parent.ext.targetSdkVersion
 
-    versionCode = parent.ext.versionCode;
+    versionCode = parent.ext.versionCode
     versionName = parent.ext.versionName
 
     vectorDrawables.useSupportLibrary = true
