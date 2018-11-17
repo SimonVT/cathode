@@ -15,7 +15,6 @@
   ~ limitations under the License.
   -->
 <resources>
-  <string name="sync_shows_movies">Sync shows &amp; movies</string>
   <string name="sync_calendar">Sync calendar</string>
 
   <string name="dashclock_title">@string/app_name</string>

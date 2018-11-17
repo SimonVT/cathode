@@ -18,10 +18,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.simonvt.cathode.sync">
 
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
   <application>
     <receiver android:name="net.simonvt.cathode.sync.jobqueue.AuthJobReceiver"/>
     <receiver android:name="net.simonvt.cathode.sync.SyncWatchingReceiver"/>
 
     <service android:name="net.simonvt.cathode.sync.jobqueue.AuthJobService"/>
+
+    <service
+        android:name="net.simonvt.cathode.sync.jobscheduler.SchedulerService"
+        android:permission="android.permission.BIND_JOB_SERVICE"/>
   </application>
 </manifest>

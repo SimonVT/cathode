@@ -15,6 +15,8 @@
   ~ limitations under the License.
   -->
 <resources>
+  <string name="sync_shows_movies">Sync shows &amp; movies</string>
+
   <string name="episode_x">Episode %d</string>
   <string name="special_x">Special %d</string>
   <string name="season_x_episode">%1$dx%2$d</string>

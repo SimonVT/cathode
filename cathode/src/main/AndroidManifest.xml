@@ -130,12 +130,6 @@
         android:exported="false"/>
 
     <provider
-        android:name="net.simonvt.cathode.provider.generated.CathodeProvider"
-        android:authorities="@string/authority_provider"
-        android:exported="true"
-        android:label="@string/sync_shows_movies"/>
-
-    <provider
         android:authorities="@string/authority_dummy_calendar"
         android:name="net.simonvt.cathode.calendar.DummyCalendarProvider"
         android:exported="true"
@@ -154,10 +148,6 @@
         android:name="net.simonvt.cathode.notification.NotificationActionService"
         android:permission="android.permission.BIND_JOB_SERVICE"/>
     <service android:name="net.simonvt.cathode.notification.NotificationService"/>
-
-    <service
-        android:name=".sync.jobscheduler.SchedulerService"
-        android:permission="android.permission.BIND_JOB_SERVICE"/>
 
     <service
         android:name="net.simonvt.cathode.dashclock.DashClockService"
