@@ -30,7 +30,6 @@ import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.remote.sync.movies.SyncPendingMovies;
 import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import net.simonvt.cathode.sync.jobscheduler.SchedulerService;
 import net.simonvt.schematic.Cursors;
@@ -89,9 +88,9 @@ public class SyncUserShows extends Job {
     shows.close();
 
     if (Jobs.usesScheduler()) {
-      SyncPendingMovies.schedule(getContext());
+      SyncPendingShows.schedule(getContext());
     } else {
-      queue(new SyncPendingMovies());
+      queue(new SyncPendingShows());
     }
 
     if (!applyBatch(ops)) {

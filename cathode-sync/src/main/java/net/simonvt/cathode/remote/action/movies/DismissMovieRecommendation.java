@@ -36,7 +36,7 @@ public class DismissMovieRecommendation extends CallJob<ResponseBody> {
   }
 
   @Override public String key() {
-    return "DismissShowRecommendation" + "&traktId=" + traktId;
+    return "DismissMovieRecommendation" + "&traktId=" + traktId;
   }
 
   @Override public int getPriority() {
