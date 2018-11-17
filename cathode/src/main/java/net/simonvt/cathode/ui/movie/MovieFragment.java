@@ -24,6 +24,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -100,6 +101,8 @@ public class MovieFragment extends RefreshableAppBarFragment
       "net.simonvt.cathode.ui.movie.MovieFragment.ratingDialog";
   private static final String DIALOG_LISTS_ADD =
       "net.simonvt.cathode.ui.movie.MovieFragment.listsAddDialog";
+
+  private static final long SYNC_INTERVAL = 2 * DateUtils.DAY_IN_MILLIS;
 
   @Inject MovieTaskScheduler movieScheduler;
   @Inject PersonTaskScheduler personScheduler;
@@ -413,11 +416,11 @@ public class MovieFragment extends RefreshableAppBarFragment
     }
 
     final boolean needsSync = Cursors.getBoolean(cursor, MovieColumns.NEEDS_SYNC);
-    if (needsSync) {
+    final long lastSync = Cursors.getLong(cursor, MovieColumns.LAST_SYNC);
+    if (needsSync || System.currentTimeMillis() > lastSync + SYNC_INTERVAL) {
       movieScheduler.sync(movieId);
     }
 
-    final long lastSync = Cursors.getLong(cursor, MovieColumns.LAST_SYNC);
     final long lastCommentSync = Cursors.getLong(cursor, MovieColumns.LAST_COMMENT_SYNC);
     if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {
       movieScheduler.syncComments(movieId);

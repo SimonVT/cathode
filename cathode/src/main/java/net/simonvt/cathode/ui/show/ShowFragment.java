@@ -30,6 +30,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -139,6 +140,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private static final String[] GENRES_PROJECTION = new String[] {
       ShowGenreColumns.GENRE,
   };
+
+  private static final long SYNC_INTERVAL = 2 * DateUtils.DAY_IN_MILLIS;
 
   @Inject PersonTaskScheduler personScheduler;
 
@@ -625,11 +628,11 @@ public class ShowFragment extends RefreshableAppBarFragment {
     }
 
     final boolean needsSync = Cursors.getBoolean(cursor, ShowColumns.NEEDS_SYNC);
-    if (needsSync) {
+    final long lastSync = Cursors.getLong(cursor, ShowColumns.LAST_SYNC);
+    if (needsSync || System.currentTimeMillis() > lastSync + SYNC_INTERVAL) {
       showScheduler.sync(showId);
     }
 
-    final long lastSync = Cursors.getLong(cursor, ShowColumns.LAST_SYNC);
 
     final long lastCommentSync = Cursors.getLong(cursor, ShowColumns.LAST_COMMENT_SYNC);
     if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {
