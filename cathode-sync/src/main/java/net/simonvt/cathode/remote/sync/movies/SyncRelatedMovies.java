@@ -69,8 +69,8 @@ public class SyncRelatedMovies extends CallJob<List<Movie>> {
         Tables.MOVIE_RELATED + "." + RelatedMoviesColumns.ID,
     }, null, null, null);
     while (related.moveToNext()) {
-      final long relatedShowId = Cursors.getLong(related, RelatedMoviesColumns.ID);
-      relatedIds.add(relatedShowId);
+      final long relatedMovieId = Cursors.getLong(related, RelatedMoviesColumns.ID);
+      relatedIds.add(relatedMovieId);
     }
     related.close();
 
