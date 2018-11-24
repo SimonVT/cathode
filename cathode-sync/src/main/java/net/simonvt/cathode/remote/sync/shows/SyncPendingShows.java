@@ -139,7 +139,7 @@ public class SyncPendingShows extends ErrorHandlerJob {
         ListItemColumns.ITEM_ID,
     }, ListItemColumns.ITEM_TYPE + "=" + ItemType.SEASON, null, null);
     while (listSeasons.moveToNext()) {
-      final long seasonId = Cursors.getLong(listShows, ListItemColumns.ITEM_ID);
+      final long seasonId = Cursors.getLong(listSeasons, ListItemColumns.ITEM_ID);
       final long showId = seasonHelper.getShowId(seasonId);
       if (syncItems.get(showId) == null) {
         final long traktId = showHelper.getTraktId(showId);
@@ -155,7 +155,7 @@ public class SyncPendingShows extends ErrorHandlerJob {
         ListItemColumns.ITEM_ID,
     }, ListItemColumns.ITEM_TYPE + "=" + ItemType.EPISODE, null, null);
     while (listEpisodes.moveToNext()) {
-      final long episodeId = Cursors.getLong(listShows, ListItemColumns.ITEM_ID);
+      final long episodeId = Cursors.getLong(listEpisodes, ListItemColumns.ITEM_ID);
       final long showId = episodeHelper.getShowId(episodeId);
       if (syncItems.get(showId) == null) {
         final long traktId = showHelper.getTraktId(showId);
