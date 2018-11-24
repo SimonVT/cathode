@@ -18,10 +18,10 @@ dependencies {
 
   implementation deps.gson
 
-  implementation deps.appcompat
-  implementation deps.cardView
-  implementation deps.recyclerView
-  implementation deps.androidDesign
+  implementation deps.androidx.appcompat
+  implementation deps.androidx.cardView
+  implementation deps.androidx.recyclerView
+  implementation deps.androidx.design
   implementation deps.dagger
   implementation deps.daggerAndroid
   implementation deps.daggerAndroidSupport

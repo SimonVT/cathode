@@ -3,14 +3,12 @@ ext {
   okhttpVersion = '3.12.0'
   retrofitVersion = '2.4.0'
 
-  butterknifeVersion = '9.0.0-SNAPSHOT'
-
-  supportLibrariesVersion = '28.0.0'
+  butterknifeVersion = '9.0.0-rc2'
 
   lintVersion = '26.2.1'
 
   deps = [
-      androidPlugin       : 'com.android.tools.build:gradle:3.2.1',
+      androidPlugin       : 'com.android.tools.build:gradle:3.3.0-rc01',
       fabricGradle        : 'io.fabric.tools:gradle:1.+',
 
       lint                : "com.android.tools.lint:lint:${lintVersion}",
@@ -44,17 +42,6 @@ ext {
       butterknifeCompiler : "com.jakewharton:butterknife-compiler:$butterknifeVersion",
       butterknifeGradle   : "com.jakewharton:butterknife-gradle-plugin:$butterknifeVersion",
 
-      appcompat           : "com.android.support:appcompat-v7:$supportLibrariesVersion",
-      cardView            : "com.android.support:cardview-v7:$supportLibrariesVersion",
-      recyclerView        : "com.android.support:recyclerview-v7:$supportLibrariesVersion",
-      androidDesign       : "com.android.support:design:$supportLibrariesVersion",
-
-      supportAnnotations  : "com.android.support:support-annotations:$supportLibrariesVersion",
-      supportCoreUi       : "com.android.support:support-core-ui:$supportLibrariesVersion",
-      supportCoreUtils    : "com.android.support:support-core-utils:$supportLibrariesVersion",
-      supportFragment     : "com.android.support:support-fragment:$supportLibrariesVersion",
-      supportPalette      : "com.android.support:palette-v7:$supportLibrariesVersion",
-
       dashclockApi        : 'com.google.android.apps.dashclock:dashclock-api:2.0.0',
 
       tmdb                : 'com.uwetrottmann.tmdb2:tmdb-java:1.10.1',
@@ -62,6 +49,17 @@ ext {
       junit               : 'junit:junit:4.12',
       robolectric         : 'org.robolectric:robolectric:3.2.1',
       truth               : 'com.google.truth:truth:0.31'
+  ]
+
+  deps.androidx = [
+      annotations         : "androidx.annotation:annotation:1.0.0",
+      appcompat           : "androidx.appcompat:appcompat:1.0.0",
+      cardView            : "androidx.cardview:cardview:1.0.0",
+      design              : "com.google.android.material:material:1.0.0",
+      fragment            : "androidx.fragment:fragment:1.0.0",
+      loader              : "androidx.loader:loader:1.0.0",
+      palette             : "androidx.palette:palette:1.0.0",
+      recyclerView        : "androidx.recyclerview:recyclerview:1.0.0"
   ]
 
   isCi = "true".equals(System.getenv('CI'))

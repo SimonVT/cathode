@@ -18,11 +18,11 @@ package net.simonvt.cathode.common.widget;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.WindowInsets;
 import android.widget.FrameLayout;
+import androidx.annotation.RequiresApi;
 
 public class CatchSystemInsets extends FrameLayout {
 

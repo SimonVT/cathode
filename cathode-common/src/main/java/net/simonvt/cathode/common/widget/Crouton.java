@@ -22,9 +22,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.view.ViewPropertyAnimator;
+import androidx.appcompat.widget.AppCompatTextView;
 import java.util.LinkedList;
 
 public class Crouton extends AppCompatTextView {

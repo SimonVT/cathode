@@ -21,7 +21,7 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.content.AsyncTaskLoader;
+import androidx.loader.content.AsyncTaskLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

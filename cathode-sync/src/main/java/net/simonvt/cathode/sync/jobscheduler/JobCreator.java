@@ -18,7 +18,7 @@ package net.simonvt.cathode.sync.jobscheduler;
 
 import android.app.job.JobParameters;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.RequiresApi;
 import dagger.android.DispatchingAndroidInjector;
 import javax.inject.Inject;
 import net.simonvt.cathode.jobqueue.Job;

@@ -18,9 +18,8 @@ android {
 }
 
 dependencies {
-  implementation deps.supportCoreUi
-  implementation deps.supportFragment
-  implementation deps.recyclerView
+  implementation deps.androidx.fragment
+  implementation deps.androidx.recyclerView
 
   implementation deps.timber
 }

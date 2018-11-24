@@ -16,8 +16,8 @@
 
 package net.simonvt.cathode.common.ui.fragment;
 
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import net.simonvt.cathode.common.R;
 import net.simonvt.cathode.common.widget.GridLayoutItemSpacing;
 

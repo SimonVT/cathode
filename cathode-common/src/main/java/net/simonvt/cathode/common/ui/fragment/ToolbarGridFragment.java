@@ -17,10 +17,10 @@
 package net.simonvt.cathode.common.ui.fragment;
 
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.recyclerview.widget.RecyclerView;
 import net.simonvt.cathode.common.R;
 
 public abstract class ToolbarGridFragment<T extends RecyclerView.ViewHolder>

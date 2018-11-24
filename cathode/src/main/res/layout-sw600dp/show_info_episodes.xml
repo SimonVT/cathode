@@ -32,7 +32,7 @@
       android:orientation="horizontal"
       android:layout_marginBottom="8dp">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/toWatch"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -63,9 +63,9 @@
           android:layout_marginRight="8dp"
           android:layout_gravity="right"
           tools:ignore="DuplicateIds,InconsistentLayout"/>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/lastWatched"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
           android:layout_marginRight="8dp"
           android:layout_gravity="right"
           tools:ignore="DuplicateIds,InconsistentLayout"/>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
   </LinearLayout>
 
   <LinearLayout
@@ -105,7 +105,7 @@
       android:baselineAligned="false"
       android:orientation="horizontal">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/toCollect"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -136,9 +136,9 @@
           android:layout_marginRight="8dp"
           android:layout_gravity="right"
           tools:ignore="DuplicateIds,InconsistentLayout"/>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/lastCollected"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -169,6 +169,6 @@
           android:layout_marginRight="8dp"
           android:layout_gravity="right"
           tools:ignore="DuplicateIds,InconsistentLayout"/>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
   </LinearLayout>
 </LinearLayout>

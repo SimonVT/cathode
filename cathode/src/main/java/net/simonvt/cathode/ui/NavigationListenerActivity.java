@@ -15,7 +15,7 @@
  */
 package net.simonvt.cathode.ui;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
 

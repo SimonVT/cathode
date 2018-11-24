@@ -16,7 +16,7 @@
 
 package net.simonvt.cathode.jobqueue;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.Executor;

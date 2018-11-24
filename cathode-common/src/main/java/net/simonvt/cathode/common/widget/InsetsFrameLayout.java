@@ -22,10 +22,10 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.WindowInsets;
 import android.widget.FrameLayout;
+import androidx.annotation.RequiresApi;
 import net.simonvt.cathode.common.R;
 
 public class InsetsFrameLayout extends FrameLayout {

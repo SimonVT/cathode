@@ -15,7 +15,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<android.support.v7.widget.CardView
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -102,4 +102,4 @@
           tools:src="@drawable/ic_action_checkin_32dp"/>
     </LinearLayout>
   </LinearLayout>
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>

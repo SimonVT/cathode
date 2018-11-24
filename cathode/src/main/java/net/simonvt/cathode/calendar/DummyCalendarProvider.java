@@ -19,7 +19,7 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class DummyCalendarProvider extends ContentProvider {
   @Override public boolean onCreate() {

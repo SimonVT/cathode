@@ -15,7 +15,7 @@
  */
 package net.simonvt.cathode.search;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import java.util.concurrent.Executor;
 
 public class SearchExecutor implements Executor {

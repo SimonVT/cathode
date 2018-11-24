@@ -19,7 +19,7 @@ package net.simonvt.cathode.common.ui.adapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.BaseColumns;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 
 public abstract class RecyclerCursorAdapter<VH extends RecyclerView.ViewHolder>
     extends BaseAdapter<VH> {

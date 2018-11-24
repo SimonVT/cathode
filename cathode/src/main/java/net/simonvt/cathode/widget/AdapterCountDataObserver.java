@@ -16,7 +16,7 @@
 
 package net.simonvt.cathode.widget;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 
 public abstract class AdapterCountDataObserver extends RecyclerView.AdapterDataObserver {
 

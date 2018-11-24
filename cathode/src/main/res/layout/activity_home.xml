@@ -21,7 +21,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-  <android.support.v4.widget.DrawerLayout
+  <androidx.drawerlayout.widget.DrawerLayout
       android:id="@+id/drawer"
       android:layout_width="match_parent"
       android:layout_height="match_parent">
@@ -85,7 +85,7 @@
     </FrameLayout>
 
     <include layout="@layout/drawer"/>
-  </android.support.v4.widget.DrawerLayout>
+  </androidx.drawerlayout.widget.DrawerLayout>
 
   <ProgressBar
       android:id="@+id/progress_top"

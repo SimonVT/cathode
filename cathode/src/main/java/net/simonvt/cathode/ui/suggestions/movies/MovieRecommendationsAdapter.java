@@ -16,8 +16,8 @@
 package net.simonvt.cathode.ui.suggestions.movies;
 
 import android.database.Cursor;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import androidx.fragment.app.FragmentActivity;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;

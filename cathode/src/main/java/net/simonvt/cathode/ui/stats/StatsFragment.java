@@ -18,13 +18,13 @@ package net.simonvt.cathode.ui.stats;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.annotation.Nullable;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 import butterknife.BindView;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.fragment.BaseFragment;
@@ -37,7 +37,8 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.database.BaseAsyncLoader;
 import net.simonvt.schematic.Cursors;
 
-public class StatsFragment extends BaseFragment implements LoaderCallbacks<StatsFragment.Stats> {
+public class StatsFragment extends BaseFragment implements
+    LoaderManager.LoaderCallbacks<StatsFragment.Stats> {
 
   public static final String TAG = "net.simonvt.cathode.ui.stats.StatsFragment";
 

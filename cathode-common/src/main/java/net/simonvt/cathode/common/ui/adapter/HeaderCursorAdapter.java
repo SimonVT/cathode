@@ -18,10 +18,10 @@ package net.simonvt.cathode.common.ui.adapter;
 
 import android.database.Cursor;
 import android.provider.BaseColumns;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.ViewGroup;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.schematic.Cursors;

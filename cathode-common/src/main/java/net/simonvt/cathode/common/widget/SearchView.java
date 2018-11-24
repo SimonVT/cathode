@@ -19,8 +19,6 @@ package net.simonvt.cathode.common.widget;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.view.CollapsibleActionView;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -33,6 +31,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import androidx.appcompat.view.CollapsibleActionView;
+import androidx.core.content.ContextCompat;
 import net.simonvt.cathode.common.R;
 
 public class SearchView extends LinearLayout implements CollapsibleActionView {
@@ -184,8 +184,7 @@ public class SearchView extends LinearLayout implements CollapsibleActionView {
 
   private int getPreferredWidth() {
     return getContext().getResources()
-        .getDimensionPixelSize(
-            android.support.v7.appcompat.R.dimen.abc_search_view_preferred_width);
+        .getDimensionPixelSize(androidx.appcompat.R.dimen.abc_search_view_preferred_width);
   }
 
   @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {

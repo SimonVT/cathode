@@ -16,7 +16,7 @@
 
 package net.simonvt.cathode.common.ui.adapter;
 
-import android.support.v7.widget.GridLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 
 public class HeaderSpanLookup extends GridLayoutManager.SpanSizeLookup {
 

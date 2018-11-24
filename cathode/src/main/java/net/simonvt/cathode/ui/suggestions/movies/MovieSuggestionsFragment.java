@@ -16,10 +16,10 @@
 package net.simonvt.cathode.ui.suggestions.movies;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.view.PagerAdapter;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.PagerAdapter;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.ui.suggestions.SuggestionsFragment;
 

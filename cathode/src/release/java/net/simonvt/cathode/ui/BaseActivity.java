@@ -16,7 +16,7 @@
 package net.simonvt.cathode.ui;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import dagger.android.AndroidInjection;
 
 public abstract class BaseActivity extends AppCompatActivity {

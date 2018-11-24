@@ -9,7 +9,7 @@ dependencies {
   annotationProcessor deps.daggerCompiler
   api deps.picasso
   implementation deps.picassoOkHttp
-  implementation deps.supportAnnotations
+  implementation deps.androidx.annotations
   implementation deps.schematic
   implementation deps.timber
   implementation deps.tmdb

@@ -9,8 +9,8 @@ dependencies {
   annotationProcessor deps.daggerCompiler
   implementation deps.schematic
   annotationProcessor deps.schematicCompiler
-  implementation deps.supportCoreUtils
   implementation deps.timber
+  implementation deps.androidx.loader
 
   testImplementation deps.junit
   testImplementation deps.robolectric

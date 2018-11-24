@@ -17,7 +17,6 @@ package net.simonvt.cathode.common.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -25,6 +24,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import androidx.annotation.Nullable;
 import net.simonvt.cathode.common.R;
 import net.simonvt.cathode.common.util.Views;
 

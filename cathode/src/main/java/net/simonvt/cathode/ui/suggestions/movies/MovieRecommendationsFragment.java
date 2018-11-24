@@ -17,10 +17,10 @@ package net.simonvt.cathode.ui.suggestions.movies;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.view.MenuItem;
 import android.view.View;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.HashMap;

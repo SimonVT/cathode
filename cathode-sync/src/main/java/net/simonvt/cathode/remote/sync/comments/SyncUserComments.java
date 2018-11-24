@@ -19,7 +19,7 @@ package net.simonvt.cathode.remote.sync.comments;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.support.v4.util.LongSparseArray;
+import androidx.collection.LongSparseArray;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;

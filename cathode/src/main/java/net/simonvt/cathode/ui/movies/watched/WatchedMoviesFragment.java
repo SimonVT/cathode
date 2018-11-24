@@ -16,9 +16,9 @@
 package net.simonvt.cathode.ui.movies.watched;
 
 import android.os.Bundle;
-import android.support.v4.content.Loader;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import androidx.appcompat.widget.Toolbar;
+import androidx.loader.content.Loader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;

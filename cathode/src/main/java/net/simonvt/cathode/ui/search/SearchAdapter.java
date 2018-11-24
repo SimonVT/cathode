@@ -16,14 +16,14 @@
 package net.simonvt.cathode.ui.search;
 
 import android.graphics.drawable.Animatable;
-import android.support.graphics.drawable.VectorDrawableCompat;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import java.util.List;

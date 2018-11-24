@@ -16,8 +16,8 @@
 package net.simonvt.cathode.widget;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
+import androidx.appcompat.widget.AppCompatTextView;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.ui.LibraryType;
 

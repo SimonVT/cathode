@@ -20,7 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.support.v7.graphics.Palette;
+import androidx.palette.graphics.Palette;
 import com.squareup.picasso.Transformation;
 
 public class PaletteTransformation implements Transformation {

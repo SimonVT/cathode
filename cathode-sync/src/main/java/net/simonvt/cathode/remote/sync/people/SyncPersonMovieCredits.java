@@ -18,7 +18,7 @@ package net.simonvt.cathode.remote.sync.people;
 
 import android.content.ContentProviderOperation;
 import android.database.Cursor;
-import android.support.v4.util.LongSparseArray;
+import androidx.collection.LongSparseArray;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;

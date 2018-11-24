@@ -21,7 +21,7 @@
 
   <include layout="@layout/appbar_backdrop"/>
 
-  <android.support.v4.widget.SwipeRefreshLayout
+  <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
       android:id="@+id/swipeRefresh"
       android:layout_width="match_parent"
       android:layout_height="match_parent">
@@ -57,5 +57,5 @@
         <include layout="@layout/appbar_toolbar"/>
       </net.simonvt.cathode.common.widget.AppBarRelativeLayout>
     </net.simonvt.cathode.common.widget.ObservableScrollView>
-  </android.support.v4.widget.SwipeRefreshLayout>
+  </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </net.simonvt.cathode.common.widget.AppBarScrollParent>

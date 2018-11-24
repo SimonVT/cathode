@@ -15,8 +15,8 @@
  */
 package net.simonvt.cathode.settings;
 
-import android.support.v4.util.LongSparseArray;
 import android.text.format.DateUtils;
+import androidx.collection.LongSparseArray;
 import net.simonvt.cathode.R;
 
 public enum NotificationTime {

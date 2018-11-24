@@ -15,7 +15,7 @@
   -->
 <resources>
 
-  <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
+  <style name="BaseTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
   </style>
 
   <style name="Theme" parent="BaseTheme">

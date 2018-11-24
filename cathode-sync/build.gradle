@@ -18,8 +18,7 @@ dependencies {
   annotationProcessor deps.daggerAndroidApt
   implementation deps.retrofit
   implementation deps.schematic
-  implementation deps.supportAnnotations
-  implementation deps.supportCoreUtils
+  implementation deps.androidx.annotations
   implementation deps.timber
   implementation deps.tmdb
 

@@ -16,7 +16,7 @@
 
 package net.simonvt.cathode.common.ui.adapter;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 
 public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder>
     extends RecyclerView.Adapter<VH> {

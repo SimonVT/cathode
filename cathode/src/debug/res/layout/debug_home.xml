@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/debug_drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -31,4 +31,4 @@
       android:layout_height="match_parent"
       android:layout_gravity="end"
       android:background="#FF222222"/>
-</android.support.v4.widget.DrawerLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -16,7 +16,7 @@
   -->
 <resources>
 
-  <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
+  <style name="BaseTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
     <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     <item name="android:statusBarColor">@android:color/transparent</item>
   </style>

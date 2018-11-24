@@ -18,12 +18,12 @@ package net.simonvt.cathode.ui.shows.upcoming;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import androidx.appcompat.widget.Toolbar;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,8 @@ import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference.UpcomingSo
 
 public class UpcomingShowsFragment
     extends ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>
-    implements UpcomingAdapter.OnRemoveListener, ListDialog.Callback, LoaderCallbacks<SimpleCursor>,
+    implements UpcomingAdapter.OnRemoveListener, ListDialog.Callback,
+    LoaderManager.LoaderCallbacks<SimpleCursor>,
     UpcomingAdapter.Callbacks {
 
   public static final String TAG = "net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment";

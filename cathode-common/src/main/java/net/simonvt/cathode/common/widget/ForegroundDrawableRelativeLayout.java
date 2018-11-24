@@ -21,9 +21,9 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
+import androidx.annotation.NonNull;
 
 public class ForegroundDrawableRelativeLayout extends RelativeLayout {
 
