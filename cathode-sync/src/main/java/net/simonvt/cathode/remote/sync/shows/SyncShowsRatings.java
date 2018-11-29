@@ -30,6 +30,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 
 public class SyncShowsRatings extends CallJob<List<RatingItem>> {
@@ -70,9 +71,6 @@ public class SyncShowsRatings extends CallJob<List<RatingItem>> {
       final long traktId = rating.getShow().getIds().getTrakt();
       ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
       final long showId = showResult.showId;
-      if (showResult.didCreate) {
-        queue(new SyncShow(traktId));
-      }
 
       showIds.remove(showId);
 
@@ -81,6 +79,12 @@ public class SyncShowsRatings extends CallJob<List<RatingItem>> {
           .withValue(ShowColumns.RATED_AT, rating.getRatedAt().getTimeInMillis())
           .build();
       ops.add(op);
+    }
+
+    if (Jobs.usesScheduler()) {
+      SyncPendingShows.schedule(getContext());
+    } else {
+      queue(new SyncPendingShows());
     }
 
     for (Long showId : showIds) {

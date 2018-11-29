@@ -35,7 +35,9 @@ import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.PagedCallJob;
-import net.simonvt.cathode.remote.sync.shows.SyncShow;
+import net.simonvt.cathode.remote.sync.movies.SyncPendingMovies;
+import net.simonvt.cathode.remote.sync.shows.SyncPendingShows;
+import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 
 public class SyncHiddenWatched extends PagedCallJob<HiddenItem> {
@@ -91,9 +93,6 @@ public class SyncHiddenWatched extends PagedCallJob<HiddenItem> {
           final long traktId = show.getIds().getTrakt();
           ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
           final long showId = showResult.showId;
-          if (showResult.didCreate) {
-            queue(new SyncShow(traktId));
-          }
 
           if (!unhandledShows.remove(showId)) {
             ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(showId))
@@ -109,9 +108,6 @@ public class SyncHiddenWatched extends PagedCallJob<HiddenItem> {
           final long traktId = show.getIds().getTrakt();
           ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
           final long showId = showResult.showId;
-          if (showResult.didCreate) {
-            queue(new SyncShow(traktId));
-          }
 
           Season season = item.getSeason();
           final int seasonNumber = season.getNumber();
@@ -119,7 +115,7 @@ public class SyncHiddenWatched extends PagedCallJob<HiddenItem> {
           final long seasonId = result.id;
           if (result.didCreate) {
             if (!showResult.didCreate) {
-              queue(new SyncShow(show.getIds().getTrakt()));
+              showHelper.markPending(showId);
             }
           }
 
@@ -133,6 +129,14 @@ public class SyncHiddenWatched extends PagedCallJob<HiddenItem> {
           break;
         }
       }
+    }
+
+    if (Jobs.usesScheduler()) {
+      SyncPendingShows.schedule(getContext());
+      SyncPendingMovies.schedule(getContext());
+    } else {
+      queue(new SyncPendingShows());
+      queue(new SyncPendingMovies());
     }
 
     for (long showId : unhandledShows) {

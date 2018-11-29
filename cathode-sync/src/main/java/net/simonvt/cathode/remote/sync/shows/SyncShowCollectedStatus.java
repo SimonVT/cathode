@@ -30,6 +30,7 @@ import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 
 public class SyncShowCollectedStatus extends CallJob<ShowProgress> {
@@ -62,10 +63,7 @@ public class SyncShowCollectedStatus extends CallJob<ShowProgress> {
   @Override public boolean handleResponse(ShowProgress progress) {
     ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
     final long showId = showResult.showId;
-    final boolean didShowExist = !showResult.didCreate;
-    if (showResult.didCreate) {
-      queue(new SyncShow(traktId));
-    }
+    boolean needsSync = !showResult.didCreate;
 
     List<ShowProgress.Season> seasons = progress.getSeasons();
 
@@ -76,12 +74,7 @@ public class SyncShowCollectedStatus extends CallJob<ShowProgress> {
 
       SeasonDatabaseHelper.IdResult seasonResult = seasonHelper.getIdOrCreate(showId, seasonNumber);
       final long seasonId = seasonResult.id;
-      final boolean didSeasonExist = !seasonResult.didCreate;
-      if (seasonResult.didCreate) {
-        if (didShowExist) {
-          queue(new SyncShow(traktId));
-        }
-      }
+      needsSync = needsSync || seasonResult.didCreate;
 
       List<ShowProgress.Episode> episodes = season.getEpisodes();
       for (ShowProgress.Episode episode : episodes) {
@@ -90,11 +83,7 @@ public class SyncShowCollectedStatus extends CallJob<ShowProgress> {
         EpisodeDatabaseHelper.IdResult episodeResult =
             episodeHelper.getIdOrCreate(showId, seasonId, episodeNumber);
         final long episodeId = episodeResult.id;
-        if (episodeResult.didCreate) {
-          if (didShowExist && didSeasonExist) {
-            queue(new SyncSeason(traktId, seasonNumber));
-          }
-        }
+        needsSync = needsSync || episodeResult.didCreate;
 
         ContentProviderOperation.Builder builder =
             ContentProviderOperation.newUpdate(Episodes.withId(episodeId));
@@ -106,6 +95,14 @@ public class SyncShowCollectedStatus extends CallJob<ShowProgress> {
           builder.withValue(EpisodeColumns.COLLECTED_AT, null);
         }
         ops.add(builder.build());
+      }
+    }
+
+    if (needsSync) {
+      if (Jobs.usesScheduler()) {
+        SyncPendingShows.schedule(getContext());
+      } else {
+        queue(new SyncPendingShows());
       }
     }
 

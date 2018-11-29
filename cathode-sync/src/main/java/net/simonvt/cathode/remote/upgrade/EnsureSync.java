@@ -16,16 +16,16 @@
 
 package net.simonvt.cathode.remote.upgrade;
 
-import android.database.Cursor;
-import net.simonvt.cathode.common.database.Cursors;
+import android.content.ContentValues;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.remote.sync.movies.SyncMovie;
-import net.simonvt.cathode.remote.sync.shows.SyncShow;
+import net.simonvt.cathode.remote.sync.movies.SyncPendingMovies;
+import net.simonvt.cathode.remote.sync.shows.SyncPendingShows;
+import net.simonvt.cathode.sync.jobscheduler.Jobs;
 
 public class EnsureSync extends Job {
 
@@ -38,48 +38,21 @@ public class EnsureSync extends Job {
   }
 
   @Override public boolean perform() {
-    Cursor shows = getContentResolver().query(Shows.SHOWS, new String[] {
-        ShowColumns.TRAKT_ID, ShowColumns.NEEDS_SYNC, ShowColumns.IN_WATCHLIST,
-        ShowColumns.WATCHED_COUNT, ShowColumns.IN_COLLECTION_COUNT, ShowColumns.IN_WATCHLIST_COUNT,
-    }, null, null, null);
+    ContentValues values = new ContentValues();
+    values.put(ShowColumns.NEEDS_SYNC, true);
+    getContentResolver().update(Shows.SHOWS, values, null, null);
 
-    while (shows.moveToNext()) {
-      final long traktId = Cursors.getLong(shows, ShowColumns.TRAKT_ID);
-      final boolean needsSync = Cursors.getBoolean(shows, ShowColumns.NEEDS_SYNC);
-      final int watchedCount = Cursors.getInt(shows, ShowColumns.WATCHED_COUNT);
-      final int collectedCount = Cursors.getInt(shows, ShowColumns.IN_COLLECTION_COUNT);
-      final int watchlistCount = Cursors.getInt(shows, ShowColumns.IN_WATCHLIST_COUNT);
-      final boolean inWatchlist = Cursors.getBoolean(shows, ShowColumns.IN_WATCHLIST);
+    values.clear();
+    values.put(MovieColumns.NEEDS_SYNC, true);
+    getContentResolver().update(Movies.MOVIES, values, null, null);
 
-      if (needsSync) {
-        if (watchedCount > 0 || collectedCount > 0 || watchlistCount > 0 || inWatchlist) {
-          queue(new SyncShow(traktId));
-        }
-      }
+    if (Jobs.usesScheduler()) {
+      SyncPendingShows.schedule(getContext());
+      SyncPendingMovies.schedule(getContext());
+    } else {
+      queue(new SyncPendingShows());
+      queue(new SyncPendingMovies());
     }
-
-    shows.close();
-
-    Cursor movies = getContentResolver().query(Movies.MOVIES, new String[] {
-        MovieColumns.TRAKT_ID, MovieColumns.NEEDS_SYNC, MovieColumns.WATCHED,
-        MovieColumns.IN_COLLECTION, MovieColumns.IN_WATCHLIST,
-    }, null, null, null);
-
-    while (movies.moveToNext()) {
-      final long traktId = Cursors.getLong(movies, MovieColumns.TRAKT_ID);
-      final boolean needsSync = Cursors.getBoolean(movies, MovieColumns.NEEDS_SYNC);
-      final boolean watched = Cursors.getBoolean(movies, MovieColumns.WATCHED);
-      final boolean collected = Cursors.getBoolean(movies, MovieColumns.IN_COLLECTION);
-      final boolean inWatchlist = Cursors.getBoolean(movies, MovieColumns.IN_WATCHLIST);
-
-      if (needsSync) {
-        if (watched || collected || inWatchlist) {
-          queue(new SyncMovie(traktId));
-        }
-      }
-    }
-
-    movies.close();
 
     return true;
   }

@@ -95,6 +95,8 @@ public class SyncPendingMovies extends ErrorHandlerJob<Movie> {
         + MovieColumns.IN_COLLECTION
         + "=1 OR "
         + MovieColumns.IN_WATCHLIST
+        + "=1 OR "
+        + MovieColumns.HIDDEN_CALENDAR
         + "=1)";
     Cursor userMovies = getContentResolver().query(Movies.MOVIES, new String[] {
         MovieColumns.ID, MovieColumns.TRAKT_ID,

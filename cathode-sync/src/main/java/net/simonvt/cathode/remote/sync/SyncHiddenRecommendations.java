@@ -35,8 +35,9 @@ import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.PagedCallJob;
-import net.simonvt.cathode.remote.sync.movies.SyncMovie;
-import net.simonvt.cathode.remote.sync.shows.SyncShow;
+import net.simonvt.cathode.remote.sync.movies.SyncPendingMovies;
+import net.simonvt.cathode.remote.sync.shows.SyncPendingShows;
+import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 
 public class SyncHiddenRecommendations extends PagedCallJob<HiddenItem> {
@@ -92,9 +93,6 @@ public class SyncHiddenRecommendations extends PagedCallJob<HiddenItem> {
           final long traktId = show.getIds().getTrakt();
           ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
           final long showId = showResult.showId;
-          if (showResult.didCreate) {
-            queue(new SyncShow(traktId));
-          }
 
           if (!unhandledShows.remove(showId)) {
             ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(showId))
@@ -110,9 +108,6 @@ public class SyncHiddenRecommendations extends PagedCallJob<HiddenItem> {
           final long traktId = movie.getIds().getTrakt();
           MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(traktId);
           final long movieId = result.movieId;
-          if (result.didCreate) {
-            queue(new SyncMovie(traktId));
-          }
 
           if (!unhandledMovies.remove(movieId)) {
             ContentProviderOperation op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
@@ -123,6 +118,14 @@ public class SyncHiddenRecommendations extends PagedCallJob<HiddenItem> {
           break;
         }
       }
+    }
+
+    if (Jobs.usesScheduler()) {
+      SyncPendingShows.schedule(getContext());
+      SyncPendingMovies.schedule(getContext());
+    } else {
+      queue(new SyncPendingShows());
+      queue(new SyncPendingMovies());
     }
 
     for (long showId : unhandledShows) {

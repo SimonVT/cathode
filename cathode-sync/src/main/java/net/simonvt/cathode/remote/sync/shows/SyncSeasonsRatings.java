@@ -31,6 +31,7 @@ import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 
 public class SyncSeasonsRatings extends CallJob<List<RatingItem>> {
@@ -76,16 +77,11 @@ public class SyncSeasonsRatings extends CallJob<List<RatingItem>> {
       ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(showTraktId);
       final long showId = showResult.showId;
       final boolean didShowExist = !showResult.didCreate;
-      if (showResult.didCreate) {
-        queue(new SyncShow(showTraktId));
-      }
 
       SeasonDatabaseHelper.IdResult seasonResult = seasonHelper.getIdOrCreate(showId, seasonNumber);
       final long seasonId = seasonResult.id;
-      if (seasonResult.didCreate) {
-        if (didShowExist) {
-          queue(new SyncShow(showTraktId));
-        }
+      if (seasonResult.didCreate && didShowExist) {
+        showHelper.markPending(showId);
       }
 
       seasonIds.remove(seasonId);
@@ -95,6 +91,12 @@ public class SyncSeasonsRatings extends CallJob<List<RatingItem>> {
           .withValue(SeasonColumns.RATED_AT, rating.getRatedAt().getTimeInMillis())
           .build();
       ops.add(op);
+    }
+
+    if (Jobs.usesScheduler()) {
+      SyncPendingShows.schedule(getContext());
+    } else {
+      queue(new SyncPendingShows());
     }
 
     for (Long seasonId : seasonIds) {

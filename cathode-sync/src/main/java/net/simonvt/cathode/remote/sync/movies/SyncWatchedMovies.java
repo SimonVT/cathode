@@ -28,6 +28,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 
 public class SyncWatchedMovies extends CallJob<List<WatchedItem>> {
@@ -72,15 +73,17 @@ public class SyncWatchedMovies extends CallJob<List<WatchedItem>> {
 
       if (!movieIds.remove(movieId)) {
         movieHelper.addToHistory(movieId, watchedAt);
-
-        if (movieHelper.needsSync(movieId)) {
-          queue(new SyncMovie(traktId));
-        }
       }
     }
 
     for (Long movieId : movieIds) {
       movieHelper.removeFromHistory(movieId);
+    }
+
+    if (Jobs.usesScheduler()) {
+      SyncPendingMovies.schedule(getContext());
+    } else {
+      queue(new SyncPendingMovies());
     }
 
     return true;

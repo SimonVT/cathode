@@ -30,6 +30,7 @@ import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 
 public class SyncShowWatchedStatus extends CallJob<ShowProgress> {
@@ -62,10 +63,7 @@ public class SyncShowWatchedStatus extends CallJob<ShowProgress> {
   @Override public boolean handleResponse(ShowProgress progress) {
     ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
     final long showId = showResult.showId;
-    final boolean didShowExist = !showResult.didCreate;
-    if (showResult.didCreate) {
-      queue(new SyncShow(traktId));
-    }
+    boolean needsSync = showResult.didCreate;
 
     List<ShowProgress.Season> seasons = progress.getSeasons();
 
@@ -79,28 +77,26 @@ public class SyncShowWatchedStatus extends CallJob<ShowProgress> {
         SeasonDatabaseHelper.IdResult seasonResult =
             seasonHelper.getIdOrCreate(showId, seasonNumber);
         final long seasonId = seasonResult.id;
-        final boolean didSeasonExist = !seasonResult.didCreate;
-        if (seasonResult.didCreate) {
-          if (didShowExist) {
-            queue(new SyncShow(traktId));
-          }
-        }
+        needsSync = needsSync || seasonResult.didCreate;
 
         final int episodeNumber = episode.getNumber();
         EpisodeDatabaseHelper.IdResult episodeResult =
             episodeHelper.getIdOrCreate(showId, seasonId, episodeNumber);
         final long episodeId = episodeResult.id;
-
-        if (episodeResult.didCreate) {
-          if (didSeasonExist && didShowExist) {
-            queue(new SyncSeason(traktId, seasonNumber));
-          }
-        }
+        needsSync = needsSync || episodeResult.didCreate;
 
         ContentProviderOperation.Builder builder =
             ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
                 .withValue(EpisodeColumns.WATCHED, episode.getCompleted());
         ops.add(builder.build());
+      }
+    }
+
+    if (needsSync) {
+      if (Jobs.usesScheduler()) {
+        SyncPendingShows.schedule(getContext());
+      } else {
+        queue(new SyncPendingShows());
       }
     }
 

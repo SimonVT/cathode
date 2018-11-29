@@ -38,6 +38,7 @@ import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 import timber.log.Timber;
 
@@ -123,18 +124,21 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
 
       WatchedShow watchedShow = showsMap.get(traktId);
 
-      boolean didShowExist = true;
+      long showId;
+      boolean markedPending = false;
+      boolean didShowExist;
       if (watchedShow == null) {
         ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
-        final long showId = showResult.showId;
+        showId = showResult.showId;
         didShowExist = !showResult.didCreate;
-
-        if (showHelper.needsSync(showId)) {
-          queue(new SyncShow(traktId));
+        if (!didShowExist) {
+          markedPending = true;
         }
 
         watchedShow = new WatchedShow(traktId, showId);
         showsMap.put(traktId, watchedShow);
+      } else {
+        showId = watchedShow.id;
       }
 
       IsoTime lastWatched = item.getLastWatchedAt();
@@ -148,15 +152,14 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
       for (WatchedItem.Season season : seasons) {
         final int seasonNumber = season.getNumber();
         WatchedSeason watchedSeason = watchedShow.seasons.get(seasonNumber);
-        boolean didSeasonExist = true;
         if (watchedSeason == null) {
           SeasonDatabaseHelper.IdResult seasonResult =
               seasonHelper.getIdOrCreate(watchedShow.id, seasonNumber);
           final long seasonId = seasonResult.id;
           if (seasonResult.didCreate) {
-            didSeasonExist = false;
-            if (didShowExist) {
-              queue(new SyncShow(traktId));
+            if (!markedPending) {
+              showHelper.markPending(showId);
+              markedPending = true;
             }
           }
           watchedSeason = new WatchedSeason(seasonNumber, seasonId);
@@ -174,8 +177,9 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
                 episodeHelper.getIdOrCreate(watchedShow.id, watchedSeason.id, episodeNumber);
             final long episodeId = episodeResult.id;
             if (episodeResult.didCreate) {
-              if (didShowExist && didSeasonExist) {
-                queue(new SyncSeason(traktId, seasonNumber));
+              if (!markedPending) {
+                showHelper.markPending(showId);
+                markedPending = true;
               }
             }
 
@@ -201,6 +205,13 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
         }
       }
 
+      if (markedPending) {
+        if (Jobs.usesScheduler()) {
+          SyncPendingShows.schedule(getContext());
+        } else {
+          queue(new SyncPendingShows());
+        }
+      }
       if (!apply(ops)) {
         return false;
       }
@@ -214,6 +225,7 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
       builder.withValues(values);
       ops.add(builder.build());
     }
+
     if (!apply(ops)) {
       return false;
     }

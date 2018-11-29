@@ -16,9 +16,8 @@
 
 package net.simonvt.cathode.remote;
 
-import android.database.Cursor;
+import android.content.ContentValues;
 import javax.inject.Inject;
-import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -26,8 +25,9 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
-import net.simonvt.cathode.remote.sync.movies.SyncMovie;
-import net.simonvt.cathode.remote.sync.shows.SyncShow;
+import net.simonvt.cathode.remote.sync.movies.SyncPendingMovies;
+import net.simonvt.cathode.remote.sync.shows.SyncPendingShows;
+import net.simonvt.cathode.sync.jobscheduler.Jobs;
 
 public class ForceUpdateJob extends Job {
 
@@ -42,27 +42,21 @@ public class ForceUpdateJob extends Job {
   }
 
   @Override public boolean perform() {
-    Cursor shows = getContentResolver().query(Shows.SHOWS, new String[] {
-        ShowColumns.ID, ShowColumns.TRAKT_ID,
-    }, null, null, null);
+    ContentValues values = new ContentValues();
+    values.put(ShowColumns.NEEDS_SYNC, true);
+    getContentResolver().update(Shows.SHOWS, values, null, null);
 
-    while (shows.moveToNext()) {
-      final long traktId = Cursors.getLong(shows, ShowColumns.TRAKT_ID);
-      queue(new SyncShow(traktId));
+    values.clear();
+    values.put(MovieColumns.NEEDS_SYNC, true);
+    getContentResolver().update(Movies.MOVIES, values, null, null);
+
+    if (Jobs.usesScheduler()) {
+      SyncPendingShows.schedule(getContext());
+      SyncPendingMovies.schedule(getContext());
+    } else {
+      queue(new SyncPendingShows());
+      queue(new SyncPendingMovies());
     }
-
-    shows.close();
-
-    Cursor movies = getContentResolver().query(Movies.MOVIES, new String[] {
-        MovieColumns.TRAKT_ID,
-    }, null, null, null);
-
-    while (movies.moveToNext()) {
-      final long traktId = Cursors.getLong(movies, MovieColumns.TRAKT_ID);
-      queue(new SyncMovie(traktId));
-    }
-
-    movies.close();
 
     return true;
   }

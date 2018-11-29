@@ -48,9 +48,9 @@ import net.simonvt.cathode.provider.helper.UserDatabaseHelper;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.PagedCallJob;
 import net.simonvt.cathode.remote.sync.SyncUserProfile;
-import net.simonvt.cathode.remote.sync.movies.SyncMovie;
-import net.simonvt.cathode.remote.sync.shows.SyncSeason;
-import net.simonvt.cathode.remote.sync.shows.SyncShow;
+import net.simonvt.cathode.remote.sync.movies.SyncPendingMovies;
+import net.simonvt.cathode.remote.sync.shows.SyncPendingShows;
+import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 import timber.log.Timber;
 
@@ -139,9 +139,6 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
           final long traktId = commentItem.getShow().getIds().getTrakt();
           ShowDatabaseHelper.IdResult result = showHelper.getIdOrCreate(traktId);
           final long showId = result.showId;
-          if (result.didCreate) {
-            queue(new SyncShow(traktId));
-          }
 
           values.put(CommentColumns.ITEM_TYPE, DatabaseContract.ItemType.SHOW);
           values.put(CommentColumns.ITEM_ID, showId);
@@ -152,9 +149,6 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
           final long traktId = commentItem.getShow().getIds().getTrakt();
           ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
           final long showId = showResult.showId;
-          if (showResult.didCreate) {
-            queue(new SyncShow(traktId));
-          }
 
           Season season = commentItem.getSeason();
           final int seasonNumber = season.getNumber();
@@ -163,7 +157,7 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
           final long seasonId = seasonResult.id;
           if (seasonResult.didCreate) {
             if (!showResult.didCreate) {
-              queue(new SyncShow(traktId));
+              showHelper.markPending(showId);
             }
           }
 
@@ -176,9 +170,6 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
           final long traktId = commentItem.getShow().getIds().getTrakt();
           ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
           final long showId = showResult.showId;
-          if (showResult.didCreate) {
-            queue(new SyncShow(traktId));
-          }
 
           Episode episode = commentItem.getEpisode();
           final int seasonNumber = episode.getSeason();
@@ -189,7 +180,7 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
           final long seasonId = seasonResult.id;
           if (seasonResult.didCreate) {
             if (!showResult.didCreate) {
-              queue(new SyncShow(traktId));
+              showHelper.markPending(showId);
             }
           }
 
@@ -198,7 +189,7 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
           final long episodeId = episodeResult.id;
           if (episodeResult.didCreate) {
             if (!showResult.didCreate && !seasonResult.didCreate) {
-              queue(new SyncSeason(traktId, seasonNumber));
+              showHelper.markPending(showId);
             }
           }
 
@@ -212,9 +203,6 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
           final long traktId = movie.getIds().getTrakt();
           MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(traktId);
           final long movieId = result.movieId;
-          if (result.didCreate) {
-            queue(new SyncMovie(traktId));
-          }
 
           values.put(CommentColumns.ITEM_TYPE, DatabaseContract.ItemType.MOVIE);
           values.put(CommentColumns.ITEM_ID, movieId);
@@ -247,6 +235,14 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
 
         addedLater.put(commentId, commentItem);
       }
+    }
+
+    if (Jobs.usesScheduler()) {
+      SyncPendingShows.schedule(getContext());
+      SyncPendingMovies.schedule(getContext());
+    } else {
+      queue(new SyncPendingShows());
+      queue(new SyncPendingMovies());
     }
 
     for (Long id : existingComments) {

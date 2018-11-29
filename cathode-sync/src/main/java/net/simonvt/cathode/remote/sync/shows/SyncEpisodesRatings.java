@@ -32,6 +32,7 @@ import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 
 public class SyncEpisodesRatings extends CallJob<List<RatingItem>> {
@@ -79,26 +80,19 @@ public class SyncEpisodesRatings extends CallJob<List<RatingItem>> {
       ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(showTraktId);
       final long showId = showResult.showId;
       final boolean didShowExist = !showResult.didCreate;
-      if (showResult.didCreate) {
-        queue(new SyncShow(showTraktId));
-      }
 
       SeasonDatabaseHelper.IdResult seasonResult = seasonHelper.getIdOrCreate(showId, seasonNumber);
       final long seasonId = seasonResult.id;
       final boolean didSeasonExist = !seasonResult.didCreate;
-      if (seasonResult.didCreate) {
-        if (didShowExist) {
-          queue(new SyncShow(showTraktId));
-        }
+      if (seasonResult.didCreate && didShowExist) {
+        showHelper.markPending(showId);
       }
 
       EpisodeDatabaseHelper.IdResult episodeResult =
           episodeHelper.getIdOrCreate(showId, seasonId, episodeNumber);
       final long episodeId = episodeResult.id;
-      if (episodeResult.didCreate) {
-        if (didShowExist && didSeasonExist) {
-          queue(new SyncSeason(showTraktId, seasonNumber));
-        }
+      if (episodeResult.didCreate && didShowExist && didSeasonExist) {
+        showHelper.markPending(showId);
       }
 
       episodeIds.remove(episodeId);
@@ -108,6 +102,12 @@ public class SyncEpisodesRatings extends CallJob<List<RatingItem>> {
           .withValue(EpisodeColumns.RATED_AT, rating.getRatedAt().getTimeInMillis())
           .build();
       ops.add(op);
+    }
+
+    if (Jobs.usesScheduler()) {
+      SyncPendingShows.schedule(getContext());
+    } else {
+      queue(new SyncPendingShows());
     }
 
     for (Long episodeId : episodeIds) {

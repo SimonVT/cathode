@@ -44,7 +44,6 @@ import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies;
-import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
 import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
 import net.simonvt.cathode.sync.jobscheduler.Jobs;
@@ -148,7 +147,7 @@ public class SyncWatching extends CallJob<Watching> {
             final long episodeId = episodeResult.id;
             if (episodeResult.didCreate) {
               if (didShowExist && didSeasonExist) {
-                queue(new SyncSeason(showTraktId, seasonNumber));
+                queue(new SyncShow(showTraktId));
               }
             }
 

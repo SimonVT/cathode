@@ -30,6 +30,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 
 public class SyncMoviesRatings extends CallJob<List<RatingItem>> {
@@ -71,9 +72,6 @@ public class SyncMoviesRatings extends CallJob<List<RatingItem>> {
       final long traktId = rating.getMovie().getIds().getTrakt();
       MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(traktId);
       final long movieId = result.movieId;
-      if (result.didCreate) {
-        queue(new SyncMovie(traktId));
-      }
 
       movieIds.remove(movieId);
 
@@ -90,6 +88,12 @@ public class SyncMoviesRatings extends CallJob<List<RatingItem>> {
           .withValue(MovieColumns.RATED_AT, 0)
           .build();
       ops.add(op);
+    }
+
+    if (Jobs.usesScheduler()) {
+      SyncPendingMovies.schedule(getContext());
+    } else {
+      queue(new SyncPendingMovies());
     }
 
     return applyBatch(ops);
