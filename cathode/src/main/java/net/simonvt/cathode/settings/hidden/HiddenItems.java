@@ -16,17 +16,20 @@
 package net.simonvt.cathode.settings.hidden;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import dagger.android.support.AndroidSupportInjection;
+import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.common.entity.Movie;
+import net.simonvt.cathode.common.entity.Show;
 import net.simonvt.cathode.common.ui.FragmentContract;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.common.util.FragmentStack;
@@ -259,10 +262,10 @@ public class HiddenItems extends BaseActivity
 
     private HiddenItemsAdapter adapter;
 
-    Cursor hiddenShowsCalendar;
-    Cursor hiddenShowsWatched;
-    Cursor hiddenShowsCollected;
-    Cursor hiddenMoviesCalendar;
+    List<Show> hiddenShowsCalendar;
+    List<Show> hiddenShowsWatched;
+    List<Show> hiddenShowsCollected;
+    List<Movie> hiddenMoviesCalendar;
 
     NavigationListener navigationListener;
 
@@ -279,32 +282,36 @@ public class HiddenItems extends BaseActivity
       setEmptyText(R.string.preference_hidden_empty);
 
       viewModel = ViewModelProviders.of(this).get(HiddenViewModel.class);
-      viewModel.getShowsCalendar().observe(this, new Observer<Cursor>() {
-        @Override public void onChanged(Cursor cursor) {
+      viewModel.getShowsCalendar().observe(this, new Observer<List<Show>>() {
+        @Override public void onChanged(List<Show> shows) {
+          hiddenShowsCalendar = shows;
           ensureAdapter();
-          adapter.updateCursorForHeader(R.string.header_hidden_calendar_shows, cursor);
-          hiddenShowsCalendar = cursor;
+          adapter.updateHeaderItems(R.string.header_hidden_calendar_shows,
+              new ArrayList<Object>(shows));
         }
       });
-      viewModel.getShowsWatched().observe(this, new Observer<Cursor>() {
-        @Override public void onChanged(Cursor cursor) {
+      viewModel.getShowsWatched().observe(this, new Observer<List<Show>>() {
+        @Override public void onChanged(List<Show> shows) {
+          hiddenShowsWatched = shows;
           ensureAdapter();
-          adapter.updateCursorForHeader(R.string.header_hidden_watched_shows, cursor);
-          hiddenShowsWatched = cursor;
+          adapter.updateHeaderItems(R.string.header_hidden_watched_shows,
+              new ArrayList<Object>(shows));
         }
       });
-      viewModel.getShowsCalendar().observe(this, new Observer<Cursor>() {
-        @Override public void onChanged(Cursor cursor) {
+      viewModel.getShowsCollected().observe(this, new Observer<List<Show>>() {
+        @Override public void onChanged(List<Show> shows) {
+          hiddenShowsCollected = shows;
           ensureAdapter();
-          adapter.updateCursorForHeader(R.string.header_hidden_collected_shows, cursor);
-          hiddenShowsCollected = cursor;
+          adapter.updateHeaderItems(R.string.header_hidden_collected_shows,
+              new ArrayList<Object>(shows));
         }
       });
-      viewModel.getMoviesCalendar().observe(this, new Observer<Cursor>() {
-        @Override public void onChanged(Cursor cursor) {
+      viewModel.getMoviesCalendar().observe(this, new Observer<List<Movie>>() {
+        @Override public void onChanged(List<Movie> movies) {
+          hiddenMoviesCalendar = movies;
           ensureAdapter();
-          adapter.updateCursorForHeader(R.string.header_hidden_calendar_movies, cursor);
-          hiddenMoviesCalendar = cursor;
+          adapter.updateHeaderItems(R.string.header_hidden_calendar_movies,
+              new ArrayList<Object>(movies));
         }
       });
     }

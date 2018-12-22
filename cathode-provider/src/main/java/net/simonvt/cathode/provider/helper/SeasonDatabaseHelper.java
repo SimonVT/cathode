@@ -22,13 +22,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import net.simonvt.cathode.api.entity.Season;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
-import net.simonvt.schematic.Cursors;
 
 public final class SeasonDatabaseHelper {
 

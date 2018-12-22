@@ -24,13 +24,13 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.RecommendationsService;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
 public class SyncMovieRecommendations extends CallJob<List<Movie>> {

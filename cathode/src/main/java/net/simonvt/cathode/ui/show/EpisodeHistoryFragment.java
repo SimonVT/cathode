@@ -15,7 +15,6 @@
  */
 package net.simonvt.cathode.ui.show;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,15 +30,17 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.common.entity.Episode;
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.common.util.DateStringUtils;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
+import net.simonvt.cathode.images.ImageType;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
-import net.simonvt.schematic.Cursors;
 
 public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
 
@@ -58,7 +59,7 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
       EpisodeColumns.FIRST_AIRED,
   };
 
-  private Cursor episode;
+  private Episode episode;
 
   private EpisodeHistoryLiveData.Result result;
 
@@ -100,9 +101,9 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
     setTitle(showTitle);
 
     viewModel = ViewModelProviders.of(this, viewModelFactory).get(EpisodeHistoryViewModel.class);
-    viewModel.getEpisode().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        setEpisode(cursor);
+    viewModel.getEpisode().observe(this, new Observer<Episode>() {
+      @Override public void onChanged(Episode episode) {
+        setEpisode(episode);
       }
     });
     viewModel.getHistory().observe(this, new Observer<EpisodeHistoryLiveData.Result>() {
@@ -134,31 +135,23 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
     viewModel.getHistory().loadData();
   }
 
-  private void setEpisode(Cursor episode) {
+  private void setEpisode(Episode episode) {
     this.episode = episode;
 
-    if (episode == null) {
-      return;
-    }
-
-    if (!episode.moveToFirst()) {
-      return;
-    }
-
-    final int season = Cursors.getInt(episode, EpisodeColumns.SEASON);
-    final int episodeNumber = Cursors.getInt(episode, EpisodeColumns.EPISODE);
-    final boolean watched = Cursors.getBoolean(episode, EpisodeColumns.WATCHED);
     final String title =
-        DataHelper.getEpisodeTitle(getContext(), episode, season, episodeNumber, watched);
-    final String screenshot = Cursors.getString(episode, EpisodeColumns.SCREENSHOT);
+        DataHelper.getEpisodeTitle(getContext(), episode.getTitle(), episode.getSeason(),
+            episode.getEpisode(), episode.getWatched());
+
     final String firstAiredString =
-        DateStringUtils.getAirdateInterval(getActivity(), DataHelper.getFirstAired(episode), true);
-    showTitle = Cursors.getString(episode, EpisodeColumns.SHOW_TITLE);
+        DateStringUtils.getAirdateInterval(getActivity(), episode.getFirstAired(), true);
+    this.firstAired.setText(firstAiredString);
+
+    showTitle = episode.getShowTitle();
 
     setTitle(showTitle);
     this.title.setText(title);
-    this.firstAired.setText(firstAiredString);
-    setBackdrop(screenshot);
+    final String screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, episodeId);
+    setBackdrop(screenshotUri);
   }
 
   private boolean typeOrClear(ViewGroup parent, Type type) {

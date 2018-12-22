@@ -16,7 +16,6 @@
 package net.simonvt.cathode.ui.shows.upcoming;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
@@ -29,12 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.database.SimpleCursor;
+import net.simonvt.cathode.common.entity.ShowWithEpisode;
 import net.simonvt.cathode.common.ui.adapter.HeaderSpanLookup;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
@@ -88,10 +86,9 @@ public class UpcomingShowsFragment
     columnCount = getResources().getInteger(R.integer.showsColumns);
 
     viewModel = ViewModelProviders.of(this, viewModelFactory).get(UpcomingViewModel.class);
-    viewModel.getShows().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        // TODO: Types!
-        setCursor((SimpleCursor) cursor);
+    viewModel.getShows().observe(this, new Observer<List<ShowWithEpisode>>() {
+      @Override public void onChanged(List<ShowWithEpisode> shows) {
+        setShows(shows);
       }
     });
   }
@@ -179,13 +176,8 @@ public class UpcomingShowsFragment
     }
   }
 
-  @Override public void onRemove(long showId) {
-    List<Cursor> cursors = ((UpcomingAdapter) getAdapter()).getCursors();
-    for (Cursor cursor : cursors) {
-      ((SimpleCursor) cursor).remove(showId);
-    }
-
-    ((UpcomingAdapter) getAdapter()).notifyChanged();
+  @Override public void onRemove(ShowWithEpisode showWithEpisode) {
+    adapter.removeItem(showWithEpisode);
   }
 
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
@@ -211,7 +203,7 @@ public class UpcomingShowsFragment
     return adapter;
   }
 
-  protected void setCursor(SimpleCursor cursor) {
+  protected void setShows(List<ShowWithEpisode> shows) {
     UpcomingAdapter adapter = (UpcomingAdapter) getAdapter();
     if (adapter == null) {
       adapter = ensureAdapter();
@@ -220,22 +212,20 @@ public class UpcomingShowsFragment
 
     final long currentTime = System.currentTimeMillis();
 
-    SimpleCursor airedCursor = new SimpleCursor(cursor.getColumnNames());
-    SimpleCursor unairedCursor = new SimpleCursor(cursor.getColumnNames());
+    List<ShowWithEpisode> airedShows = new ArrayList<>();
+    List<ShowWithEpisode> unairedShows = new ArrayList<>();
 
-    cursor.moveToPosition(-1);
-    while (cursor.moveToNext()) {
-      Object[] data = cursor.get();
-      final long firstAired = DataHelper.getFirstAired(cursor);
+    for (ShowWithEpisode showWithEpisode : shows) {
+      long firstAired = showWithEpisode.getEpisode().getFirstAired();
       if (firstAired <= currentTime) {
-        airedCursor.add(data);
+        airedShows.add(showWithEpisode);
       } else {
-        unairedCursor.add(data);
+        unairedShows.add(showWithEpisode);
       }
     }
 
-    adapter.updateCursorForHeader(R.string.header_aired, airedCursor);
-    adapter.updateCursorForHeader(R.string.header_upcoming, unairedCursor);
+    adapter.updateHeaderItems(R.string.header_aired, airedShows);
+    adapter.updateHeaderItems(R.string.header_upcoming, unairedShows);
 
     if (scrollToTop) {
       getRecyclerView().scrollToPosition(0);

@@ -16,9 +16,9 @@
 package net.simonvt.cathode.ui.suggestions.shows;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.view.View;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.entity.Show;
 import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
 
@@ -26,14 +26,14 @@ public class ShowRecommendationsAdapter extends ShowDescriptionAdapter {
 
   public interface DismissListener {
 
-    void onDismissItem(View view, long id);
+    void onDismissItem(View view, Show show);
   }
 
   private DismissListener listener;
 
-  public ShowRecommendationsAdapter(Context context, ShowCallbacks callbacks, Cursor cursor,
+  public ShowRecommendationsAdapter(Context context, ShowCallbacks callbacks,
       DismissListener listener) {
-    super(context, callbacks, cursor);
+    super(context, callbacks);
     this.listener = listener;
   }
 
@@ -45,7 +45,8 @@ public class ShowRecommendationsAdapter extends ShowDescriptionAdapter {
   protected void onOverflowActionSelected(View view, long id, int action, int position) {
     switch (action) {
       case R.id.action_dismiss:
-        listener.onDismissItem(view, id);
+        Show show = getList().get(position);
+        listener.onDismissItem(view, show);
         break;
 
       default:

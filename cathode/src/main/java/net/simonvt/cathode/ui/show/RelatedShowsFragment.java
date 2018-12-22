@@ -16,13 +16,14 @@
 package net.simonvt.cathode.ui.show;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.os.Bundle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
+import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.entity.Show;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
@@ -81,9 +82,9 @@ public class RelatedShowsFragment
 
     viewModel = ViewModelProviders.of(this).get(RelatedShowsViewModel.class);
     viewModel.setShowId(showId);
-    viewModel.getShows().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        setCursor(cursor);
+    viewModel.getShows().observe(this, new Observer<List<Show>>() {
+      @Override public void onChanged(List<Show> shows) {
+        setShows(shows);
       }
     });
   }
@@ -106,13 +107,12 @@ public class RelatedShowsFragment
     showScheduler.setIsInWatchlist(showId, inWatchlist);
   }
 
-  private void setCursor(Cursor cursor) {
+  private void setShows(List<Show> shows) {
     if (showsAdapter == null) {
-      showsAdapter = new ShowDescriptionAdapter(getActivity(), this, cursor, false);
+      showsAdapter = new ShowDescriptionAdapter(getActivity(), this, false);
       setAdapter(showsAdapter);
-      return;
     }
 
-    showsAdapter.changeCursor(cursor);
+    showsAdapter.setList(shows);
   }
 }

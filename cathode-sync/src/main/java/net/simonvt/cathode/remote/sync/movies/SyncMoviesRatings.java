@@ -23,13 +23,13 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.RatingItem;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
 public class SyncMoviesRatings extends CallJob<List<RatingItem>> {

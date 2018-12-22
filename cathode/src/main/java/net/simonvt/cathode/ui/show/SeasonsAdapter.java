@@ -19,52 +19,31 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
+import net.simonvt.cathode.common.entity.Season;
+import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.ui.LibraryType;
-import net.simonvt.schematic.Cursors;
 
-public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHolder> {
+public class SeasonsAdapter extends BaseAdapter<Season, SeasonsAdapter.ViewHolder> {
 
   public interface SeasonClickListener {
 
     void onSeasonClick(long showId, long seasonId, String showTitle, int seasonNumber);
   }
-
-  public static final String[] PROJECTION = new String[] {
-      SeasonColumns.ID, SeasonColumns.SHOW_ID, SeasonColumns.SEASON, SeasonColumns.UNAIRED_COUNT,
-      SeasonColumns.WATCHED_COUNT, SeasonColumns.IN_COLLECTION_COUNT, SeasonColumns.AIRED_COUNT,
-      SeasonColumns.WATCHED_AIRED_COUNT, SeasonColumns.COLLECTED_AIRED_COUNT,
-      SeasonColumns.LAST_MODIFIED, "(SELECT "
-      + ShowColumns.TITLE
-      + " FROM "
-      + Tables.SHOWS
-      + " WHERE "
-      + Tables.SHOWS
-      + "."
-      + ShowColumns.ID
-      + "="
-      + Tables.SEASONS
-      + "."
-      + SeasonColumns.SHOW_ID
-      + ") AS seasonShowTitle",
-  };
 
   private FragmentActivity activity;
 
@@ -79,11 +58,12 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
 
   public SeasonsAdapter(FragmentActivity activity, SeasonClickListener clickListener,
       LibraryType type) {
-    super(activity, null);
+    super(activity);
     this.activity = activity;
     resources = activity.getResources();
     this.clickListener = clickListener;
     this.type = type;
+    setHasStableIds(true);
 
     TypedArray a = activity.obtainStyledAttributes(new int[] {
         android.R.attr.textColorPrimary, android.R.attr.textColorSecondary,
@@ -92,6 +72,18 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     //noinspection ResourceType
     secondaryColor = a.getColorStateList(1);
     a.recycle();
+  }
+
+  @Override public long getItemId(int position) {
+    return getList().get(position).getId();
+  }
+
+  @Override protected boolean areItemsTheSame(@NonNull Season oldItem, @NonNull Season newItem) {
+    return oldItem.getId() == newItem.getId();
+  }
+
+  @Override protected boolean areContentsTheSame(@NonNull Season oldItem, @NonNull Season newItem) {
+    return oldItem.equals(newItem);
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewGroup) {
@@ -103,11 +95,9 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
       @Override public void onClick(View v) {
         final int position = holder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
-          Cursor cursor = getCursor(position);
-          final long showId = Cursors.getLong(cursor, SeasonColumns.SHOW_ID);
-          final int seasonNumber = Cursors.getInt(cursor, SeasonColumns.SEASON);
-          final String showTitle = Cursors.getString(cursor, "seasonShowTitle");
-          clickListener.onSeasonClick(showId, holder.getItemId(), showTitle, seasonNumber);
+          Season season = getList().get(position);
+          clickListener.onSeasonClick(season.getShowId(), season.getId(), season.getShowTitle(),
+              season.getSeason());
         }
       }
     });
@@ -115,18 +105,19 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     return holder;
   }
 
-  @Override protected void onBindViewHolder(final ViewHolder holder, Cursor cursor, int position) {
-    final int seasonId = Cursors.getInt(cursor, SeasonColumns.ID);
-    final int seasonNumber = Cursors.getInt(cursor, SeasonColumns.SEASON);
+  @Override public void onBindViewHolder(final ViewHolder holder, int position) {
+    Season season = getList().get(position);
+    final Long seasonId = season.getId();
+    final int seasonNumber = season.getSeason();
 
     switch (type) {
       case WATCHLIST:
       case WATCHED:
-        bindWatched(getContext(), holder, cursor);
+        bindWatched(getContext(), holder, season);
         break;
 
       case COLLECTION:
-        bindCollection(getContext(), holder, cursor);
+        bindCollection(getContext(), holder, season);
         break;
     }
 
@@ -140,10 +131,10 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     holder.poster.setImage(posterUri);
   }
 
-  private void bindWatched(Context context, ViewHolder holder, Cursor cursor) {
-    final int unairedCount = Cursors.getInt(cursor, SeasonColumns.UNAIRED_COUNT);
-    final int airedCount = Cursors.getInt(cursor, SeasonColumns.AIRED_COUNT);
-    final int watchedAiredCount = Cursors.getInt(cursor, SeasonColumns.WATCHED_AIRED_COUNT);
+  private void bindWatched(Context context, ViewHolder holder, Season season) {
+    final int unairedCount = season.getUnairedCount();
+    final int airedCount = season.getAiredCount();
+    final int watchedAiredCount = season.getWatchedAiredCount();
     final int toWatch = airedCount - watchedAiredCount;
 
     holder.progress.setMax(airedCount);
@@ -164,11 +155,10 @@ public class SeasonsAdapter extends RecyclerCursorAdapter<SeasonsAdapter.ViewHol
     holder.summary.setText(summary);
   }
 
-  private void bindCollection(Context context, ViewHolder holder, Cursor cursor) {
-    final int unairedCount = Cursors.getInt(cursor, SeasonColumns.UNAIRED_COUNT);
-
-    final int airedCount = Cursors.getInt(cursor, SeasonColumns.AIRED_COUNT);
-    final int collectedAiredCount = Cursors.getInt(cursor, SeasonColumns.COLLECTED_AIRED_COUNT);
+  private void bindCollection(Context context, ViewHolder holder, Season season) {
+    final int unairedCount = season.getUnairedCount();
+    final int airedCount = season.getAiredCount();
+    final int collectedAiredCount = season.getCollectedAiredCount();
     final int toCollect = airedCount - collectedAiredCount;
 
     holder.progress.setMax(airedCount);

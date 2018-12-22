@@ -16,18 +16,19 @@
 package net.simonvt.cathode.appwidget;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.text.format.DateUtils;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import net.simonvt.cathode.common.entity.Episode;
+import net.simonvt.cathode.common.entity.Show;
+import net.simonvt.cathode.common.entity.ShowWithEpisode;
 import net.simonvt.cathode.common.util.DateStringUtils;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.provider.util.SqlColumn;
-import net.simonvt.schematic.Cursors;
 
 public class ItemModel {
 
@@ -85,7 +86,7 @@ public class ItemModel {
     return updateTime;
   }
 
-  public static ItemModel fromCursor(Context context, Cursor cursor) {
+  public static ItemModel fromItems(Context context, List<ShowWithEpisode> showsWithEpisodes) {
     List<WidgetItem> items = new ArrayList<>();
 
     Calendar calendar = Calendar.getInstance();
@@ -94,26 +95,19 @@ public class ItemModel {
 
     DayInfo lastDay = null;
 
-    cursor.moveToPosition(-1);
-    while (cursor.moveToNext()) {
-      final long showId = Cursors.getLong(cursor, ShowColumns.ID);
-      final String showTitle = Cursors.getString(cursor, ShowColumns.TITLE);
-      final String showOverview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
+    for (ShowWithEpisode showWithEpisode : showsWithEpisodes) {
+      Show show = showWithEpisode.getShow();
+      Episode episode = showWithEpisode.getEpisode();
 
-      final long episodeId = Cursors.getLong(cursor, COLUMN_EPISODE_ID);
-      final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
-      final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-      final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
-      final long firstAired = DataHelper.getFirstAired(cursor);
-
-      final String episodeTitle =
-          DataHelper.getEpisodeTitle(context, cursor, season, episode, watched);
-
+      final long firstAired = episode.getFirstAired();
       String airTime = DateStringUtils.getTimeString(context, firstAired);
+      final String episodeTitle =
+          DataHelper.getEpisodeTitle(context, episode.getTitle(), episode.getSeason(),
+              episode.getEpisode(), episode.getWatched());
 
       ItemInfo item =
-          new ItemInfo(showId, showTitle, showOverview, episodeId, episodeTitle, season, episode,
-              firstAired, airTime);
+          new ItemInfo(show.getId(), show.getTitle(), show.getOverview(), episode.getId(),
+              episodeTitle, episode.getSeason(), episode.getEpisode(), firstAired, airTime);
 
       calendar.setTimeInMillis(firstAired);
       calendar.set(Calendar.HOUR_OF_DAY, 0);

@@ -26,6 +26,7 @@ import net.simonvt.cathode.api.entity.Season;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.enumeration.HiddenSection;
 import net.simonvt.cathode.api.service.UsersService;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
@@ -35,7 +36,6 @@ import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.PagedCallJob;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
-import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
 public class SyncHiddenCollected extends PagedCallJob<HiddenItem> {

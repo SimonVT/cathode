@@ -24,9 +24,9 @@ import androidx.lifecycle.LiveData;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.provider.DatabaseContract.RecentQueriesColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.RecentQueries;
-import net.simonvt.schematic.Cursors;
 
 public class SearchViewModel extends AndroidViewModel {
 

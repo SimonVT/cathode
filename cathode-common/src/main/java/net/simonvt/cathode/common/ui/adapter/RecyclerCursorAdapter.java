@@ -22,7 +22,7 @@ import android.provider.BaseColumns;
 import androidx.recyclerview.widget.RecyclerView;
 
 public abstract class RecyclerCursorAdapter<VH extends RecyclerView.ViewHolder>
-    extends BaseAdapter<VH> {
+    extends BaseCursorAdapter<VH> {
 
   private Context context;
 

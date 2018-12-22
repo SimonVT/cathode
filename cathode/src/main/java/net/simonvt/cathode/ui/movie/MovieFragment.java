@@ -16,7 +16,6 @@
 package net.simonvt.cathode.ui.movie;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -35,14 +34,19 @@ import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import butterknife.BindView;
 import butterknife.OnClick;
 import dagger.android.support.AndroidSupportInjection;
+import java.util.List;
 import java.util.Locale;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TraktUtils;
+import net.simonvt.cathode.common.entity.CastMember;
+import net.simonvt.cathode.common.entity.Comment;
+import net.simonvt.cathode.common.entity.Movie;
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.Intents;
+import net.simonvt.cathode.common.util.Joiner;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.common.widget.CircleTransformation;
 import net.simonvt.cathode.common.widget.CircularProgressIndicator;
@@ -51,11 +55,6 @@ import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract;
-import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
-import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
-import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
-import net.simonvt.cathode.provider.DatabaseContract.RelatedMoviesColumns;
 import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.PersonTaskScheduler;
@@ -68,7 +67,6 @@ import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
 import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.widget.CheckInDrawable;
-import net.simonvt.schematic.Cursors;
 
 public class MovieFragment extends RefreshableAppBarFragment {
 
@@ -88,13 +86,22 @@ public class MovieFragment extends RefreshableAppBarFragment {
   @Inject MovieTaskScheduler movieScheduler;
   @Inject PersonTaskScheduler personScheduler;
 
+  private MovieViewModel movieViewModel;
+
+  private Movie movie;
+  private List<String> genres;
+  private List<CastMember> cast;
+  private List<Comment> userComments;
+  private List<Comment> comments;
+  private List<Movie> related;
+
   @BindView(R.id.year) TextView year;
   @BindView(R.id.certification) TextView certification;
   //@BindView(R.id.poster) RemoteImageView poster;
   @BindView(R.id.overview) TextView overview;
 
   @BindView(R.id.genresTitle) View genresTitle;
-  @BindView(R.id.genres) TextView genres;
+  @BindView(R.id.genres) TextView genresView;
 
   @BindView(R.id.checkmarks) View checkmarks;
   @BindView(R.id.isWatched) TextView isWatched;
@@ -104,7 +111,7 @@ public class MovieFragment extends RefreshableAppBarFragment {
 
   @BindView(R.id.castParent) View castParent;
   @BindView(R.id.castHeader) View castHeader;
-  @BindView(R.id.cast) LinearLayout cast;
+  @BindView(R.id.cast) LinearLayout castView;
   @BindView(R.id.castContainer) LinearLayout castContainer;
 
   @BindView(R.id.commentsParent) View commentsParent;
@@ -113,7 +120,7 @@ public class MovieFragment extends RefreshableAppBarFragment {
 
   @BindView(R.id.relatedParent) View relatedParent;
   @BindView(R.id.relatedHeader) View relatedHeader;
-  @BindView(R.id.related) LinearLayout related;
+  @BindView(R.id.related) LinearLayout relatedView;
   @BindView(R.id.relatedContainer) LinearLayout relatedContainer;
 
   @BindView(R.id.trailer) TextView trailer;
@@ -121,11 +128,6 @@ public class MovieFragment extends RefreshableAppBarFragment {
   @BindView(R.id.viewOnTrakt) TextView viewOnTrakt;
   @BindView(R.id.viewOnImdb) TextView viewOnImdb;
   @BindView(R.id.viewOnTmdb) TextView viewOnTmdb;
-
-  private MovieViewModel movieViewModel;
-
-  private Cursor userComments;
-  private Cursor comments;
 
   private long movieId;
 
@@ -182,6 +184,43 @@ public class MovieFragment extends RefreshableAppBarFragment {
     setTitle(movieTitle);
 
     movieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
+    movieViewModel.setMovieId(movieId);
+    movieViewModel.getMovie().observe(this, new Observer<Movie>() {
+      @Override public void onChanged(Movie movie) {
+        MovieFragment.this.movie = movie;
+        updateView();
+      }
+    });
+    movieViewModel.getGenres().observe(this, new Observer<List<String>>() {
+      @Override public void onChanged(List<String> genres) {
+        MovieFragment.this.genres = genres;
+        updateGenreViews();
+      }
+    });
+    movieViewModel.getCast().observe(this, new Observer<List<CastMember>>() {
+      @Override public void onChanged(List<CastMember> castMembers) {
+        cast = castMembers;
+        updateCast();
+      }
+    });
+    movieViewModel.getUserComments().observe(this, new Observer<List<Comment>>() {
+      @Override public void onChanged(List<Comment> userComments) {
+        MovieFragment.this.userComments = userComments;
+        updateComments();
+      }
+    });
+    movieViewModel.getComments().observe(this, new Observer<List<Comment>>() {
+      @Override public void onChanged(List<Comment> comments) {
+        MovieFragment.this.comments = comments;
+        updateComments();
+      }
+    });
+    movieViewModel.getRelatedMovies().observe(this, new Observer<List<Movie>>() {
+      @Override public void onChanged(List<Movie> movies) {
+        related = movies;
+        updateRelatedView();
+      }
+    });
   }
 
   public long getMovieId() {
@@ -207,39 +246,11 @@ public class MovieFragment extends RefreshableAppBarFragment {
 
     overview.setText(movieOverview);
 
-    movieViewModel.setMovieId(movieId);
-    movieViewModel.getMovie().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        updateView(cursor);
-      }
-    });
-    movieViewModel.getGenres().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        updateGenreViews(cursor);
-      }
-    });
-    movieViewModel.getCast().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        updateCast(cursor);
-      }
-    });
-    movieViewModel.getUserComments().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        userComments = cursor;
-        updateComments();
-      }
-    });
-    movieViewModel.getComments().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        comments = cursor;
-        updateComments();
-      }
-    });
-    movieViewModel.getRelatedMovies().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        updateRelatedView(cursor);
-      }
-    });
+    updateView();
+    updateGenreViews();
+    updateCast();
+    updateRelatedView();
+    updateComments();
   }
 
   @OnClick(R.id.rating) void onRatingClick() {
@@ -375,32 +386,32 @@ public class MovieFragment extends RefreshableAppBarFragment {
     return super.onMenuItemClick(item);
   }
 
-  private void updateView(final Cursor cursor) {
-    if (cursor == null || !cursor.moveToFirst()) return;
+  private void updateView() {
+    if (getView() == null || movie == null) {
+      return;
+    }
+
     loaded = true;
 
-    final long traktId = Cursors.getLong(cursor, MovieColumns.TRAKT_ID);
-    final String title = Cursors.getString(cursor, MovieColumns.TITLE);
+    final long traktId = movie.getTraktId();
+    final String title = movie.getTitle();
     if (title != null && !title.equals(movieTitle)) {
       movieTitle = title;
       setTitle(movieTitle);
     }
-    final int year = Cursors.getInt(cursor, MovieColumns.YEAR);
-    final String certification = Cursors.getString(cursor, MovieColumns.CERTIFICATION);
 
     final String backdropUri = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.BACKDROP, movieId);
     setBackdrop(backdropUri, true);
 
-    currentRating = Cursors.getInt(cursor, MovieColumns.USER_RATING);
-    final float ratingAll = Cursors.getFloat(cursor, MovieColumns.RATING);
-    rating.setValue(ratingAll);
+    currentRating = movie.getUserRating();
+    rating.setValue(movie.getRating());
 
-    movieOverview = Cursors.getString(cursor, MovieColumns.OVERVIEW);
-    watched = Cursors.getBoolean(cursor, MovieColumns.WATCHED);
-    collected = Cursors.getBoolean(cursor, MovieColumns.IN_COLLECTION);
-    inWatchlist = Cursors.getBoolean(cursor, MovieColumns.IN_WATCHLIST);
-    watching = Cursors.getBoolean(cursor, MovieColumns.WATCHING);
-    checkedIn = Cursors.getBoolean(cursor, MovieColumns.CHECKED_IN);
+    movieOverview = movie.getOverview();
+    watched = movie.getWatched();
+    collected = movie.getInCollection();
+    inWatchlist = movie.getInWatchlist();
+    watching = movie.getWatching();
+    checkedIn = movie.getCheckedIn();
 
     if (checkInDrawable != null) {
       checkInDrawable.setWatching(watching || checkedIn);
@@ -412,11 +423,11 @@ public class MovieFragment extends RefreshableAppBarFragment {
     collection.setVisibility(collected ? View.VISIBLE : View.GONE);
     watchlist.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
 
-    this.year.setText(String.valueOf(year));
-    this.certification.setText(certification);
+    this.year.setText(String.valueOf(movie.getYear()));
+    this.certification.setText(movie.getCertification());
     this.overview.setText(movieOverview);
 
-    final String trailer = Cursors.getString(cursor, MovieColumns.TRAILER);
+    final String trailer = movie.getTrailer();
     if (!TextUtils.isEmpty(trailer)) {
       this.trailer.setVisibility(View.VISIBLE);
       this.trailer.setOnClickListener(new View.OnClickListener() {
@@ -428,28 +439,28 @@ public class MovieFragment extends RefreshableAppBarFragment {
       this.trailer.setVisibility(View.GONE);
     }
 
-    final boolean needsSync = Cursors.getBoolean(cursor, MovieColumns.NEEDS_SYNC);
-    final long lastSync = Cursors.getLong(cursor, MovieColumns.LAST_SYNC);
+    final boolean needsSync = movie.getNeedsSync();
+    final long lastSync = movie.getLastSync();
     if (needsSync || System.currentTimeMillis() > lastSync + SYNC_INTERVAL) {
       movieScheduler.sync(movieId);
     }
 
-    final long lastCommentSync = Cursors.getLong(cursor, MovieColumns.LAST_COMMENT_SYNC);
+    final long lastCommentSync = movie.getLastCommentSync();
     if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {
       movieScheduler.syncComments(movieId);
     }
 
-    final long lastCreditsSync = Cursors.getLong(cursor, MovieColumns.LAST_CREDITS_SYNC);
+    final long lastCreditsSync = movie.getLastCreditsSync();
     if (lastSync > lastCreditsSync) {
       movieScheduler.syncCredits(movieId, null);
     }
 
-    final long lastRelatedSync = Cursors.getLong(cursor, MovieColumns.LAST_RELATED_SYNC);
+    final long lastRelatedSync = movie.getLastRelatedSync();
     if (lastSync > lastRelatedSync) {
       movieScheduler.syncRelated(movieId, null);
     }
 
-    final String website = Cursors.getString(cursor, MovieColumns.HOMEPAGE);
+    final String website = movie.getHomepage();
     if (!TextUtils.isEmpty(website)) {
       this.website.setVisibility(View.VISIBLE);
       this.website.setText(website);
@@ -462,8 +473,8 @@ public class MovieFragment extends RefreshableAppBarFragment {
       this.website.setVisibility(View.GONE);
     }
 
-    final String imdbId = Cursors.getString(cursor, MovieColumns.IMDB_ID);
-    final int tmdbId = Cursors.getInt(cursor, MovieColumns.TMDB_ID);
+    final String imdbId = movie.getImdbId();
+    final int tmdbId = movie.getTmdbId();
 
     viewOnTrakt.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
@@ -497,119 +508,115 @@ public class MovieFragment extends RefreshableAppBarFragment {
     invalidateMenu();
   }
 
-  private void updateGenreViews(final Cursor cursor) {
-    if (cursor.getCount() > 0) {
-      StringBuilder sb = new StringBuilder();
-      cursor.moveToPosition(-1);
-      while (cursor.moveToNext()) {
-        sb.append(Cursors.getString(cursor, MovieGenreColumns.GENRE));
-        if (!cursor.isLast()) sb.append(", ");
-      }
+  private void updateGenreViews() {
+    if (getView() == null) {
+      return;
+    }
+
+    if (genres == null || genres.size() == 0) {
+      genresTitle.setVisibility(View.GONE);
+      genresView.setVisibility(View.GONE);
+    } else {
+      final String joinedGenres = Joiner.on(", ").join(genres);
 
       genresTitle.setVisibility(View.VISIBLE);
-      genres.setVisibility(View.VISIBLE);
-      genres.setText(sb.toString());
-    } else {
-      genresTitle.setVisibility(View.GONE);
-      genres.setVisibility(View.GONE);
+      genresView.setVisibility(View.VISIBLE);
+      genresView.setText(joinedGenres);
     }
   }
 
-  private void updateCast(Cursor c) {
+  private void updateCast() {
+    if (getView() == null) {
+      return;
+    }
+
     castContainer.removeAllViews();
+    if (cast == null) {
+      castParent.setVisibility(View.GONE);
+    } else {
+      castParent.setVisibility(View.VISIBLE);
 
-    final int count = c.getCount();
-    final int visibility = count > 0 ? View.VISIBLE : View.GONE;
-    castParent.setVisibility(visibility);
+      for (CastMember castMember : cast) {
+        View v =
+            LayoutInflater.from(getActivity()).inflate(R.layout.item_person, castContainer, false);
 
-    int index = 0;
+        final String headshotUri =
+            ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, castMember.getPerson().getId());
 
-    c.moveToPosition(-1);
-    while (c.moveToNext() && index < 3) {
-      View v =
-          LayoutInflater.from(getActivity()).inflate(R.layout.item_person, castContainer, false);
+        RemoteImageView headshot = v.findViewById(R.id.headshot);
+        headshot.addTransformation(new CircleTransformation());
+        headshot.setImage(headshotUri);
 
-      final long personId = Cursors.getLong(c, MovieCastColumns.PERSON_ID);
+        TextView name = v.findViewById(R.id.person_name);
+        name.setText(castMember.getPerson().getName());
 
-      final String headshotUri = ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, personId);
+        TextView character = v.findViewById(R.id.person_job);
+        character.setText(castMember.getCharacter());
 
-      RemoteImageView headshot = v.findViewById(R.id.headshot);
-      headshot.addTransformation(new CircleTransformation());
-      headshot.setImage(headshotUri);
+        v.setOnClickListener(new View.OnClickListener() {
+          @Override public void onClick(View v) {
+            navigationListener.onDisplayPerson(castMember.getPerson().getId());
+          }
+        });
 
-      TextView name = v.findViewById(R.id.person_name);
-      name.setText(Cursors.getString(c, PersonColumns.NAME));
-
-      TextView character = v.findViewById(R.id.person_job);
-      character.setText(Cursors.getString(c, MovieCastColumns.CHARACTER));
-
-      v.setOnClickListener(new View.OnClickListener() {
-        @Override public void onClick(View v) {
-          navigationListener.onDisplayPerson(personId);
-        }
-      });
-
-      castContainer.addView(v);
-
-      index++;
+        castContainer.addView(v);
+      }
     }
   }
 
-  private void updateRelatedView(Cursor related) {
+  private void updateRelatedView() {
+    if (getView() == null) {
+      return;
+    }
+
     relatedContainer.removeAllViews();
+    if (related == null || related.size() == 0) {
+      relatedParent.setVisibility(View.GONE);
+    } else {
+      relatedParent.setVisibility(View.VISIBLE);
 
-    final int count = related.getCount();
-    final int visibility = count > 0 ? View.VISIBLE : View.GONE;
-    relatedParent.setVisibility(visibility);
+      for (Movie movie : related) {
+        View v = LayoutInflater.from(getActivity())
+            .inflate(R.layout.item_related, relatedContainer, false);
 
-    int index = 0;
+        final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, movie.getId());
 
-    related.moveToPosition(-1);
-    while (related.moveToNext() && index < 3) {
-      View v = LayoutInflater.from(getActivity())
-          .inflate(R.layout.item_related, relatedContainer, false);
+        RemoteImageView posterView = v.findViewById(R.id.related_poster);
+        posterView.addTransformation(new CircleTransformation());
+        posterView.setImage(poster);
 
-      final long relatedMovieId = Cursors.getLong(related, RelatedMoviesColumns.RELATED_MOVIE_ID);
-      final String title = Cursors.getString(related, MovieColumns.TITLE);
-      final String overview = Cursors.getString(related, MovieColumns.OVERVIEW);
-      final float rating = Cursors.getFloat(related, MovieColumns.RATING);
-      final int votes = Cursors.getInt(related, MovieColumns.VOTES);
+        TextView titleView = v.findViewById(R.id.related_title);
+        titleView.setText(movie.getTitle());
 
-      final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, relatedMovieId);
+        final String formattedRating = String.format(Locale.getDefault(), "%.1f", movie.getRating());
 
-      RemoteImageView posterView = v.findViewById(R.id.related_poster);
-      posterView.addTransformation(new CircleTransformation());
-      posterView.setImage(poster);
-
-      TextView titleView = v.findViewById(R.id.related_title);
-      titleView.setText(title);
-
-      final String formattedRating = String.format(Locale.getDefault(), "%.1f", rating);
-
-      String ratingText;
-      if (votes >= 1000) {
-        final float convertedVotes = votes / 1000.0f;
-        final String formattedVotes = String.format(Locale.getDefault(), "%.1f", convertedVotes);
-        ratingText = getString(R.string.related_rating_thousands, formattedRating, formattedVotes);
-      } else {
-        ratingText = getString(R.string.related_rating, formattedRating, votes);
-      }
-
-      TextView ratingView = v.findViewById(R.id.related_rating);
-      ratingView.setText(ratingText);
-
-      v.setOnClickListener(new View.OnClickListener() {
-        @Override public void onClick(View v) {
-          navigationListener.onDisplayMovie(relatedMovieId, title, overview);
+        String ratingText;
+        if (movie.getVotes() >= 1000) {
+          final float convertedVotes = movie.getVotes() / 1000.0f;
+          final String formattedVotes = String.format(Locale.getDefault(), "%.1f", convertedVotes);
+          ratingText = getString(R.string.related_rating_thousands, formattedRating, formattedVotes);
+        } else {
+          ratingText = getString(R.string.related_rating, formattedRating, movie.getVotes());
         }
-      });
-      relatedContainer.addView(v);
 
-      index++;
+        TextView ratingView = v.findViewById(R.id.related_rating);
+        ratingView.setText(ratingText);
+
+        v.setOnClickListener(new View.OnClickListener() {
+          @Override public void onClick(View v) {
+            navigationListener.onDisplayMovie(movie.getId(), movie.getTitle(), movie.getOverview());
+          }
+        });
+        relatedContainer.addView(v);
+      }
     }
   }
 
   private void updateComments() {
+    if (getView() == null) {
+      return;
+    }
+
     LinearCommentsAdapter.updateComments(getContext(), commentsContainer, userComments, comments);
     commentsParent.setVisibility(View.VISIBLE);
   }

@@ -16,7 +16,6 @@
 package net.simonvt.cathode.ui.show;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,12 +24,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
+import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.entity.Episode;
 import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.provider.DatabaseContract;
-import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.SeasonTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
@@ -38,7 +38,6 @@ import net.simonvt.cathode.ui.ShowsNavigationListener;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
 import net.simonvt.cathode.ui.lists.ListsDialog;
-import net.simonvt.schematic.Cursors;
 
 public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder>
     implements SeasonAdapter.EpisodeCallbacks {
@@ -71,7 +70,7 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
 
   private SeasonViewModel viewModel;
 
-  private SeasonAdapter episodeAdapter;
+  private SeasonAdapter seasonAdapter;
 
   private ShowsNavigationListener navigationListener;
 
@@ -122,9 +121,9 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
 
     viewModel = ViewModelProviders.of(this).get(SeasonViewModel.class);
     viewModel.setSeasonId(seasonId);
-    viewModel.getEpisodes().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        setCursor(cursor);
+    viewModel.getEpisodes().observe(this, new Observer<List<Episode>>() {
+      @Override public void onChanged(List<Episode> episodes) {
+        setEpisodes(episodes);
       }
     });
   }
@@ -221,45 +220,37 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
     episodeScheduler.setIsInCollection(episodeId, collected);
   }
 
-  private void setCursor(Cursor cursor) {
-    if (cursor != null) {
-      cursor.moveToPosition(-1);
-      final int count = cursor.getCount();
-      int watchedCount = 0;
-      int collectedCount = 0;
-      while (cursor.moveToNext()) {
-        final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
-        final boolean collected = Cursors.getBoolean(cursor, EpisodeColumns.IN_COLLECTION);
+  private void setEpisodes(List<Episode> episodes) {
+    int count = episodes.size();
+    int watchedCount = 0;
+    int collectedCount = 0;
+    for (Episode episode : episodes) {
+      final boolean watched = episode.getWatched();
+      final boolean collected = episode.getInCollection();
 
-        if (watched) {
-          watchedCount++;
-        }
-        if (collected) {
-          collectedCount++;
-        }
+      if (watched) {
+        watchedCount++;
       }
-
-      if (count != this.count
-          || watchedCount != this.watchedCount
-          || collectedCount != this.collectedCount) {
-        this.count = count;
-        this.watchedCount = watchedCount;
-        this.collectedCount = collectedCount;
-
-        invalidateMenu();
+      if (collected) {
+        collectedCount++;
       }
-    } else {
-      count = -1;
-      watchedCount = -1;
-      collectedCount = -1;
     }
 
-    if (episodeAdapter == null) {
-      episodeAdapter = new SeasonAdapter(getActivity(), this, cursor, type);
-      setAdapter(episodeAdapter);
-      return;
+    if (count != this.count
+        || watchedCount != this.watchedCount
+        || collectedCount != this.collectedCount) {
+      this.count = count;
+      this.watchedCount = watchedCount;
+      this.collectedCount = collectedCount;
+
+      invalidateMenu();
     }
 
-    episodeAdapter.changeCursor(cursor);
+    if (seasonAdapter == null) {
+      seasonAdapter = new SeasonAdapter(getActivity(), this, type);
+      setAdapter(seasonAdapter);
+    }
+
+    seasonAdapter.setList(episodes);
   }
 }

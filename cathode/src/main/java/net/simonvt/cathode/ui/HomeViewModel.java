@@ -17,33 +17,36 @@
 package net.simonvt.cathode.ui;
 
 import android.app.Application;
-import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.Movie;
+import net.simonvt.cathode.common.entity.ShowWithEpisode;
+import net.simonvt.cathode.entitymapper.MovieMapper;
+import net.simonvt.cathode.entitymapper.ShowWithEpisodeMapper;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 
 public class HomeViewModel extends AndroidViewModel {
 
-  private LiveData<Cursor> watchingShow;
-  private LiveData<Cursor> watchingMovie;
+  private LiveData<ShowWithEpisode> watchingShow;
+  private LiveData<Movie> watchingMovie;
 
   public HomeViewModel(@NonNull Application application) {
     super(application);
-    watchingShow =
-        new CursorLiveData(application, Shows.SHOW_WATCHING, HomeActivity.SHOW_WATCHING_PROJECTION,
-            null, null, null);
+    watchingShow = new MappedCursorLiveData<>(application, Shows.SHOW_WATCHING,
+        ShowWithEpisodeMapper.PROJECTION, null, null, null, new ShowWithEpisodeMapper());
     watchingMovie =
-        new CursorLiveData(application, ProviderSchematic.Movies.WATCHING, null, null, null, null);
+        new MappedCursorLiveData<>(application, ProviderSchematic.Movies.WATCHING, null, null, null,
+            null, new MovieMapper());
   }
 
-  public LiveData<Cursor> getWatchingShow() {
+  public LiveData<ShowWithEpisode> getWatchingShow() {
     return watchingShow;
   }
 
-  public LiveData<Cursor> getWatchingMovie() {
+  public LiveData<Movie> getWatchingMovie() {
     return watchingMovie;
   }
 }

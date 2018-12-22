@@ -17,18 +17,25 @@
 package net.simonvt.cathode.ui.movie;
 
 import android.app.Application;
-import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import java.util.List;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.data.StringMapper;
+import net.simonvt.cathode.common.entity.CastMember;
+import net.simonvt.cathode.common.entity.Comment;
+import net.simonvt.cathode.common.entity.Movie;
+import net.simonvt.cathode.entitymapper.CommentListMapper;
+import net.simonvt.cathode.entitymapper.MovieCastMapper;
+import net.simonvt.cathode.entitymapper.MovieListMapper;
+import net.simonvt.cathode.entitymapper.MovieMapper;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.DatabaseContract.RelatedMoviesColumns;
-import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieCast;
@@ -43,28 +50,9 @@ public class MovieViewModel extends AndroidViewModel {
       DatabaseContract.MovieGenreColumns.GENRE,
   };
 
-  private static final String[] CAST_PROJECTION = new String[] {
-      Tables.MOVIE_CAST + "." + MovieCastColumns.ID,
-      Tables.MOVIE_CAST + "." + MovieCastColumns.PERSON_ID,
-      Tables.MOVIE_CAST + "." + MovieCastColumns.CHARACTER,
-      Tables.PEOPLE + "." + PersonColumns.NAME,
-  };
-
-  private static final String[] COMMENTS_PROJECTION = new String[] {
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.ID),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.COMMENT),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.SPOILER),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.REVIEW),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.CREATED_AT),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.LIKES),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.USER_RATING),
-      SqlColumn.table(Tables.USERS).column(UserColumns.USERNAME),
-      SqlColumn.table(Tables.USERS).column(UserColumns.NAME),
-      SqlColumn.table(Tables.USERS).column(UserColumns.AVATAR),
-  };
-
   private static final String[] RELATED_PROJECTION = new String[] {
       SqlColumn.table(Tables.MOVIE_RELATED).column(RelatedMoviesColumns.RELATED_MOVIE_ID),
+      SqlColumn.table(Tables.MOVIES).column(MovieColumns.ID),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.TITLE),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.OVERVIEW),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.RATING),
@@ -73,12 +61,12 @@ public class MovieViewModel extends AndroidViewModel {
 
   private long movieId = -1L;
 
-  private LiveData<Cursor> movie;
-  private LiveData<Cursor> genres;
-  private LiveData<Cursor> cast;
-  private LiveData<Cursor> userComments;
-  private LiveData<Cursor> comments;
-  private LiveData<Cursor> relatedMovies;
+  private LiveData<Movie> movie;
+  private LiveData<List<String>> genres;
+  private LiveData<List<CastMember>> cast;
+  private LiveData<List<Comment>> userComments;
+  private LiveData<List<Comment>> comments;
+  private LiveData<List<Movie>> relatedMovies;
 
   public MovieViewModel(@NonNull Application application) {
     super(application);
@@ -87,46 +75,48 @@ public class MovieViewModel extends AndroidViewModel {
   public void setMovieId(long movieId) {
     if (this.movieId == -1L) {
       this.movieId = movieId;
-      movie = new CursorLiveData(getApplication(), Movies.withId(movieId), null, null, null, null);
-      genres =
-          new CursorLiveData(getApplication(), MovieGenres.fromMovie(movieId), GENRES_PROJECTION,
-              null, null, null);
-      cast = new CursorLiveData(getApplication(), MovieCast.fromMovie(movieId), CAST_PROJECTION,
-          Tables.PEOPLE + "." + PersonColumns.NEEDS_SYNC + "=0", null, null);
-      userComments =
-          new CursorLiveData(getApplication(), Comments.fromMovie(movieId), COMMENTS_PROJECTION,
-              CommentColumns.IS_USER_COMMENT + "=1", null, null);
-      comments =
-          new CursorLiveData(getApplication(), Comments.fromMovie(movieId), COMMENTS_PROJECTION,
-              CommentColumns.IS_USER_COMMENT + "=0 AND " + CommentColumns.SPOILER + "=0", null,
-              CommentColumns.LIKES + " DESC LIMIT 3");
-      relatedMovies =
-          new CursorLiveData(getApplication(), RelatedMovies.fromMovie(movieId), RELATED_PROJECTION,
-              null, null, RelatedMoviesColumns.RELATED_INDEX + " ASC LIMIT 3");
+      movie = new MappedCursorLiveData<>(getApplication(), Movies.withId(movieId), null, null, null,
+          null, new MovieMapper());
+      genres = new MappedCursorLiveData<>(getApplication(), MovieGenres.fromMovie(movieId),
+          GENRES_PROJECTION, null, null, null,
+          new StringMapper(DatabaseContract.MovieGenreColumns.GENRE));
+      cast = new MappedCursorLiveData<>(getApplication(), MovieCast.fromMovie(movieId),
+          MovieCastMapper.PROJECTION, Tables.PEOPLE + "." + PersonColumns.NEEDS_SYNC + "=0", null,
+          Tables.MOVIE_CAST + "." + MovieCastColumns.ID + " ASC LIMIT 3", new MovieCastMapper());
+      userComments = new MappedCursorLiveData<>(getApplication(), Comments.fromMovie(movieId),
+          CommentListMapper.PROJECTION, CommentColumns.IS_USER_COMMENT + "=1", null, null,
+          new CommentListMapper());
+      comments = new MappedCursorLiveData<>(getApplication(), Comments.fromMovie(movieId),
+          CommentListMapper.PROJECTION,
+          CommentColumns.IS_USER_COMMENT + "=0 AND " + CommentColumns.SPOILER + "=0", null,
+          CommentColumns.LIKES + " DESC LIMIT 3", new CommentListMapper());
+      relatedMovies = new MappedCursorLiveData<>(getApplication(), RelatedMovies.fromMovie(movieId),
+          RELATED_PROJECTION, null, null, RelatedMoviesColumns.RELATED_INDEX + " ASC LIMIT 3",
+          new MovieListMapper());
     }
   }
 
-  public LiveData<Cursor> getMovie() {
+  public LiveData<Movie> getMovie() {
     return movie;
   }
 
-  public LiveData<Cursor> getGenres() {
+  public LiveData<List<String>> getGenres() {
     return genres;
   }
 
-  public LiveData<Cursor> getCast() {
+  public LiveData<List<CastMember>> getCast() {
     return cast;
   }
 
-  public LiveData<Cursor> getUserComments() {
+  public LiveData<List<Comment>> getUserComments() {
     return userComments;
   }
 
-  public LiveData<Cursor> getComments() {
+  public LiveData<List<Comment>> getComments() {
     return comments;
   }
 
-  public LiveData<Cursor> getRelatedMovies() {
+  public LiveData<List<Movie>> getRelatedMovies() {
     return relatedMovies;
   }
 

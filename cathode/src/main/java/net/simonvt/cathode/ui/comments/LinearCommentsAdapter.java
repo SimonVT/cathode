@@ -16,7 +16,6 @@
 package net.simonvt.cathode.ui.comments;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,48 +23,29 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.entity.Comment;
 import net.simonvt.cathode.common.widget.CircleTransformation;
 import net.simonvt.cathode.common.widget.RemoteImageView;
-import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
-import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
-import net.simonvt.schematic.Cursors;
 
 public final class LinearCommentsAdapter {
 
   private LinearCommentsAdapter() {
   }
 
-  public static void updateComments(Context context, ViewGroup parent, Cursor userComments,
-      Cursor comments) {
+  public static void updateComments(Context context, ViewGroup parent, List<Comment> userComments,
+      List<Comment> comments) {
     parent.removeAllViews();
 
     if (userComments != null) {
-      userComments.moveToPosition(-1);
-      while (userComments.moveToNext()) {
-        final long commentId = Cursors.getLong(userComments, CommentColumns.ID);
-        final String comment =
-            Cursors.getString(userComments, CommentColumns.COMMENT);
-        final boolean spoiler =
-            Cursors.getBoolean(userComments, CommentColumns.SPOILER);
-        final boolean review =
-            Cursors.getBoolean(userComments, CommentColumns.REVIEW);
-        final long createdAt =
-            Cursors.getLong(userComments, CommentColumns.CREATED_AT);
-        final long likes = Cursors.getLong(userComments, CommentColumns.LIKES);
-        final int userRating =
-            Cursors.getInt(userComments, CommentColumns.USER_RATING);
-
-        final String username =
-            Cursors.getString(userComments, UserColumns.USERNAME);
-        final String name = Cursors.getString(userComments, UserColumns.NAME);
-        final String avatar = Cursors.getString(userComments, UserColumns.AVATAR);
+      for (Comment comment : userComments) {
 
         String visibleName;
-        if (!TextUtils.isEmpty(name)) {
-          visibleName = name;
+        if (!TextUtils.isEmpty(comment.getUser().getName())) {
+          visibleName = comment.getUser().getName();
         } else {
-          visibleName = username;
+          visibleName = comment.getUser().getUsername();
         }
 
         View post =
@@ -76,40 +56,24 @@ public final class LinearCommentsAdapter {
         TextView date = post.findViewById(R.id.date);
         TextView commentText = post.findViewById(R.id.commentText);
 
-        avatarView.setImage(avatar);
+        avatarView.setImage(comment.getUser().getAvatar());
         usernameView.setText(visibleName);
         DateFormat format = DateFormat.getDateTimeInstance();
-        final String dateString = format.format(new Date(createdAt));
+        final String dateString = format.format(new Date(comment.getCreatedAt()));
         date.setText(dateString);
-        commentText.setText(comment);
+        commentText.setText(comment.getComment());
 
         parent.addView(post);
       }
     }
 
     if (comments != null) {
-      comments.moveToPosition(-1);
-      while (comments.moveToNext()) {
-        final long commentId = Cursors.getLong(comments, CommentColumns.ID);
-        final String comment = Cursors.getString(comments, CommentColumns.COMMENT);
-        final boolean spoiler =
-            Cursors.getBoolean(comments, CommentColumns.SPOILER);
-        final boolean review = Cursors.getBoolean(comments, CommentColumns.REVIEW);
-        final long createdAt =
-            Cursors.getLong(comments, CommentColumns.CREATED_AT);
-        final long likes = Cursors.getLong(comments, CommentColumns.LIKES);
-        final int userRating =
-            Cursors.getInt(comments, CommentColumns.USER_RATING);
-
-        final String username = Cursors.getString(comments, UserColumns.USERNAME);
-        final String name = Cursors.getString(comments, UserColumns.NAME);
-        final String avatar = Cursors.getString(comments, UserColumns.AVATAR);
-
+      for (Comment comment : comments) {
         String visibleName;
-        if (!TextUtils.isEmpty(name)) {
-          visibleName = name;
+        if (!TextUtils.isEmpty(comment.getUser().getName())) {
+          visibleName = comment.getUser().getName();
         } else {
-          visibleName = username;
+          visibleName = comment.getUser().getUsername();
         }
 
         View post =
@@ -120,14 +84,14 @@ public final class LinearCommentsAdapter {
         TextView date = post.findViewById(R.id.date);
         TextView commentText = post.findViewById(R.id.commentText);
 
-        avatarView.setImage(avatar);
+        avatarView.setImage(comment.getUser().getAvatar());
         String usernameText = context.getResources()
-            .getString(R.string.comments_username_rating, visibleName, userRating);
+            .getString(R.string.comments_username_rating, visibleName, comment.getUserRating());
         usernameView.setText(usernameText);
         DateFormat format = DateFormat.getDateTimeInstance();
-        final String dateString = format.format(new Date(createdAt));
+        final String dateString = format.format(new Date(comment.getCreatedAt()));
         date.setText(dateString);
-        commentText.setText(comment);
+        commentText.setText(comment.getComment());
 
         parent.addView(post);
       }

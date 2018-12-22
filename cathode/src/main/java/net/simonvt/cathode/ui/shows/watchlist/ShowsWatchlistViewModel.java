@@ -17,34 +17,38 @@
 package net.simonvt.cathode.ui.shows.watchlist;
 
 import android.app.Application;
-import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import java.util.List;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.Episode;
+import net.simonvt.cathode.common.entity.Show;
+import net.simonvt.cathode.entitymapper.EpisodeListMapper;
+import net.simonvt.cathode.entitymapper.ShowListMapper;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 
 public class ShowsWatchlistViewModel extends AndroidViewModel {
 
-  private LiveData<Cursor> shows;
-  private LiveData<Cursor> episodes;
+  private LiveData<List<Show>> shows;
+  private LiveData<List<Episode>> episodes;
 
   public ShowsWatchlistViewModel(@NonNull Application application) {
     super(application);
-    shows =
-        new CursorLiveData(application, Shows.SHOWS_WATCHLIST, ShowWatchlistAdapter.PROJECTION_SHOW,
-            null, null, Shows.DEFAULT_SORT);
-    episodes = new CursorLiveData(application, Episodes.EPISODES_IN_WATCHLIST,
-        ShowWatchlistAdapter.PROJECTION_EPISODE, null, null, EpisodeColumns.SHOW_ID + " ASC");
+    shows = new MappedCursorLiveData<>(application, Shows.SHOWS_WATCHLIST,
+        ShowWatchlistAdapter.PROJECTION_SHOW, null, null, Shows.DEFAULT_SORT, new ShowListMapper());
+    episodes = new MappedCursorLiveData<>(application, Episodes.EPISODES_IN_WATCHLIST,
+        ShowWatchlistAdapter.PROJECTION_EPISODE, null, null, EpisodeColumns.SHOW_ID + " ASC",
+        new EpisodeListMapper());
   }
 
-  public LiveData<Cursor> getShows() {
+  public LiveData<List<Show>> getShows() {
     return shows;
   }
 
-  public LiveData<Cursor> getEpisodes() {
+  public LiveData<List<Episode>> getEpisodes() {
     return episodes;
   }
 }

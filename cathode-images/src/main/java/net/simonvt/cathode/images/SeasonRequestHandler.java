@@ -24,13 +24,13 @@ import com.uwetrottmann.tmdb2.entities.TvSeason;
 import com.uwetrottmann.tmdb2.services.ConfigurationService;
 import com.uwetrottmann.tmdb2.services.TvSeasonsService;
 import java.io.IOException;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.common.tmdb.TmdbRateLimiter;
 import net.simonvt.cathode.common.util.Closeables;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
-import net.simonvt.schematic.Cursors;
 import retrofit2.Response;
 
 public class SeasonRequestHandler extends ItemRequestHandler {

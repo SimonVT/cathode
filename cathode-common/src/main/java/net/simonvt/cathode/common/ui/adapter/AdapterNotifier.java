@@ -37,11 +37,11 @@ public class AdapterNotifier {
     }
   }
 
-  private BaseAdapter adapter;
+  private BaseCursorAdapter adapter;
 
   private List<Item> items;
 
-  public AdapterNotifier(BaseAdapter adapter) {
+  public AdapterNotifier(BaseCursorAdapter adapter) {
     this.adapter = adapter;
   }
 

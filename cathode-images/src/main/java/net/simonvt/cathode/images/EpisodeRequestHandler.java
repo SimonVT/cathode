@@ -25,13 +25,13 @@ import com.uwetrottmann.tmdb2.entities.Images;
 import com.uwetrottmann.tmdb2.services.ConfigurationService;
 import com.uwetrottmann.tmdb2.services.TvEpisodesService;
 import java.io.IOException;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.common.tmdb.TmdbRateLimiter;
 import net.simonvt.cathode.common.util.Closeables;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
-import net.simonvt.schematic.Cursors;
 import retrofit2.Response;
 
 public class EpisodeRequestHandler extends ItemRequestHandler {

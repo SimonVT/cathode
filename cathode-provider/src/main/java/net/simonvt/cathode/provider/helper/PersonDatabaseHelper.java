@@ -21,9 +21,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import net.simonvt.cathode.api.entity.Person;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.People;
-import net.simonvt.schematic.Cursors;
 
 public final class PersonDatabaseHelper {
 

@@ -23,13 +23,13 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.ShowsService;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.RelatedShowsColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.RelatedShows;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
-import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
 public class SyncRelatedShows extends CallJob<List<Show>> {

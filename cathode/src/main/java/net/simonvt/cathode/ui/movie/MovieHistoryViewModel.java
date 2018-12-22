@@ -17,12 +17,13 @@
 package net.simonvt.cathode.ui.movie;
 
 import android.app.Application;
-import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.Movie;
+import net.simonvt.cathode.entitymapper.MovieMapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 
@@ -33,7 +34,7 @@ public class MovieHistoryViewModel extends AndroidViewModel {
   private SyncService syncService;
   private MovieDatabaseHelper movieHelper;
 
-  private LiveData<Cursor> movie;
+  private LiveData<Movie> movie;
   private MovieHistoryLiveData history;
 
   public MovieHistoryViewModel(@NonNull Application application, SyncService syncService,
@@ -47,13 +48,13 @@ public class MovieHistoryViewModel extends AndroidViewModel {
     if (this.movieId == -1L) {
       this.movieId = movieId;
 
-      movie = new CursorLiveData(getApplication(), Movies.withId(movieId),
-          MovieHistoryFragment.MOVIE_PROJECTION, null, null, null);
+      movie = new MappedCursorLiveData<>(getApplication(), Movies.withId(movieId),
+          MovieHistoryFragment.MOVIE_PROJECTION, null, null, null, new MovieMapper());
       history = new MovieHistoryLiveData(movieId, syncService, movieHelper);
     }
   }
 
-  public LiveData<Cursor> getMovie() {
+  public LiveData<Movie> getMovie() {
     return movie;
   }
 

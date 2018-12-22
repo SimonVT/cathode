@@ -18,14 +18,19 @@ package net.simonvt.cathode.ui.comments;
 
 import android.content.Context;
 import android.database.Cursor;
+import java.util.List;
 import net.simonvt.cathode.common.data.ListenableLiveData;
+import net.simonvt.cathode.common.database.DatabaseUtils;
+import net.simonvt.cathode.common.database.SimpleMergeCursor;
+import net.simonvt.cathode.common.entity.Comment;
+import net.simonvt.cathode.entitymapper.CommentListMapper;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
-import net.simonvt.cathode.common.database.DatabaseUtils;
-import net.simonvt.cathode.common.database.SimpleMergeCursor;
 
-public class CommentAndRepliesLiveData extends ListenableLiveData<Cursor> {
+public class CommentAndRepliesLiveData extends ListenableLiveData<List<Comment>> {
+
+  private static final CommentListMapper MAPPER = new CommentListMapper();
 
   private long commentId;
 
@@ -34,19 +39,20 @@ public class CommentAndRepliesLiveData extends ListenableLiveData<Cursor> {
     this.commentId = commentId;
   }
 
-  @Override protected SimpleMergeCursor loadInBackground() {
+  @Override protected List<Comment> loadInBackground() {
     Cursor comment = getContext().getContentResolver()
-        .query(Comments.COMMENTS_WITH_PROFILE, CommentsAdapter.PROJECTION,
+        .query(Comments.COMMENTS_WITH_PROFILE, CommentListMapper.PROJECTION,
             Tables.COMMENTS + "." + CommentColumns.ID + "=?", new String[] {
                 String.valueOf(commentId),
             }, null);
     Cursor replies = getContext().getContentResolver()
-        .query(Comments.withParent(commentId), CommentsAdapter.PROJECTION, null, null,
+        .query(Comments.withParent(commentId), CommentListMapper.PROJECTION, null, null,
             CommentColumns.CREATED_AT + " DESC");
 
     addNotificationUri(DatabaseUtils.getNotificationUri(comment));
     addNotificationUri(DatabaseUtils.getNotificationUri(replies));
 
-    return new SimpleMergeCursor(comment, replies);
+    Cursor comments = new SimpleMergeCursor(comment, replies);
+    return MAPPER.map(comments);
   }
 }

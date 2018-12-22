@@ -23,6 +23,7 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.RatingItem;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
@@ -30,7 +31,6 @@ import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
 public class SyncSeasonsRatings extends CallJob<List<RatingItem>> {

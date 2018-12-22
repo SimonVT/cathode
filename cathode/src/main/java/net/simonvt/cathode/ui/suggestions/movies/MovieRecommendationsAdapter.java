@@ -15,10 +15,10 @@
  */
 package net.simonvt.cathode.ui.suggestions.movies;
 
-import android.database.Cursor;
 import android.view.View;
 import androidx.fragment.app.FragmentActivity;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.entity.Movie;
 import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
 
@@ -26,14 +26,14 @@ public class MovieRecommendationsAdapter extends MoviesAdapter {
 
   public interface DismissListener {
 
-    void onDismissItem(View view, long id);
+    void onDismissItem(View view, Movie movie);
   }
 
   private DismissListener dismissListener;
 
   public MovieRecommendationsAdapter(FragmentActivity activity, Callbacks callbacks,
-      Cursor c, DismissListener dismissListener) {
-    super(activity, callbacks, c, R.layout.list_row_movie_rating);
+      DismissListener dismissListener) {
+    super(activity, callbacks, R.layout.list_row_movie_rating);
     this.dismissListener = dismissListener;
   }
 
@@ -48,7 +48,8 @@ public class MovieRecommendationsAdapter extends MoviesAdapter {
       String title) {
     switch (action) {
       case R.id.action_dismiss:
-        dismissListener.onDismissItem(view, id);
+        Movie movie = getList().get(position);
+        dismissListener.onDismissItem(view, movie);
         break;
 
       default:

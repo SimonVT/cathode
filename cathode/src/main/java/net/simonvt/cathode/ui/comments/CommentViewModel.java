@@ -33,6 +33,7 @@ public class CommentViewModel extends AndroidViewModel {
   public void setCommentId(long commentId) {
     if (this.commentId == -1L) {
       this.commentId = commentId;
+      commentAndReplies = new CommentAndRepliesLiveData(getApplication(), commentId);
     }
   }
 

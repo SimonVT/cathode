@@ -15,28 +15,26 @@
  */
 package net.simonvt.cathode.ui.suggestions.movies;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.loader.content.Loader;
-import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.database.SimpleCursor;
-import net.simonvt.cathode.common.database.SimpleCursorLoader;
+import net.simonvt.cathode.common.entity.Movie;
+import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.SuggestionsTimestamps;
 import net.simonvt.cathode.ui.lists.ListDialog;
+import net.simonvt.cathode.ui.movies.BaseMoviesAdapter;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
 import net.simonvt.cathode.ui.movies.MoviesFragment;
 
@@ -99,7 +97,6 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
     setEmptyText(R.string.movies_loading_trending);
 
     viewModel = ViewModelProviders.of(this).get(TrendingMoviesViewModel.class);
-    viewModel.getTrending().observe(this, observer);
 
     if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
         SuggestionsTimestamps.MOVIES_TRENDING)) {
@@ -110,6 +107,11 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
     return inflater.inflate(R.layout.fragment_swiperefresh_recyclerview, container, false);
+  }
+
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
+    viewModel.getTrending().observe(this, observer);
   }
 
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
@@ -167,7 +169,7 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
     }
   }
 
-  protected RecyclerView.Adapter<MoviesAdapter.ViewHolder> getAdapter(Cursor cursor) {
-    return new MoviesAdapter(getActivity(), this, cursor, R.layout.list_row_movie_rating);
+  @Override protected BaseAdapter<Movie, BaseMoviesAdapter.ViewHolder> createAdapter() {
+    return new MoviesAdapter(getActivity(), this, R.layout.list_row_movie_rating);
   }
 }

@@ -15,18 +15,17 @@
  */
 package net.simonvt.cathode.ui.movies;
 
-import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.entity.Movie;
 import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
-import net.simonvt.schematic.Cursors;
 
 public class MoviesAdapter extends BaseMoviesAdapter<BaseMoviesAdapter.ViewHolder> {
 
@@ -45,13 +44,12 @@ public class MoviesAdapter extends BaseMoviesAdapter<BaseMoviesAdapter.ViewHolde
 
   private int rowLayout;
 
-  public MoviesAdapter(FragmentActivity activity, Callbacks callbacks, Cursor c) {
-    this(activity, callbacks, c, R.layout.list_row_movie);
+  public MoviesAdapter(FragmentActivity activity, Callbacks callbacks) {
+    this(activity, callbacks, R.layout.list_row_movie);
   }
 
-  public MoviesAdapter(FragmentActivity activity, Callbacks callbacks, Cursor c,
-      int rowLayout) {
-    super(activity, callbacks, c);
+  public MoviesAdapter(FragmentActivity activity, Callbacks callbacks, int rowLayout) {
+    super(activity, callbacks);
     this.rowLayout = rowLayout;
   }
 
@@ -63,10 +61,8 @@ public class MoviesAdapter extends BaseMoviesAdapter<BaseMoviesAdapter.ViewHolde
       @Override public void onClick(View v) {
         final int position = holder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
-          Cursor cursor = getCursor(position);
-          final String title = Cursors.getString(cursor, MovieColumns.TITLE);
-          final String overview = Cursors.getString(cursor, MovieColumns.OVERVIEW);
-          callbacks.onMovieClicked(holder.getItemId(), title, overview);
+          Movie movie = getList().get(position);
+          callbacks.onMovieClicked(movie.getId(), movie.getTitle(), movie.getOverview());
         }
       }
     });

@@ -17,11 +17,15 @@
 package net.simonvt.cathode.settings.hidden;
 
 import android.app.Application;
-import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import java.util.List;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.Movie;
+import net.simonvt.cathode.common.entity.Show;
+import net.simonvt.cathode.entitymapper.MovieListMapper;
+import net.simonvt.cathode.entitymapper.ShowListMapper;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
@@ -29,39 +33,41 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 
 public class HiddenViewModel extends AndroidViewModel {
 
-  private LiveData<Cursor> showsCalendar;
-  private LiveData<Cursor> showsWatched;
-  private LiveData<Cursor> showsCollected;
-  private LiveData<Cursor> moviesCalendar;
+  private LiveData<List<Show>> showsCalendar;
+  private LiveData<List<Show>> showsWatched;
+  private LiveData<List<Show>> showsCollected;
+  private LiveData<List<Movie>> moviesCalendar;
 
   public HiddenViewModel(@NonNull Application application) {
     super(application);
 
-    showsCalendar = new CursorLiveData(application, Shows.SHOWS, HiddenItemsAdapter.PROJECTION_SHOW,
-        ShowColumns.HIDDEN_CALENDAR + "=1", null, Shows.SORT_TITLE);
-    showsWatched = new CursorLiveData(application, Shows.SHOWS, HiddenItemsAdapter.PROJECTION_SHOW,
-        ShowColumns.HIDDEN_WATCHED + "=1", null, Shows.SORT_TITLE);
+    showsCalendar =
+        new MappedCursorLiveData<>(application, Shows.SHOWS, HiddenItemsAdapter.PROJECTION_SHOW,
+            ShowColumns.HIDDEN_CALENDAR + "=1", null, Shows.SORT_TITLE, new ShowListMapper());
+    showsWatched =
+        new MappedCursorLiveData<>(application, Shows.SHOWS, HiddenItemsAdapter.PROJECTION_SHOW,
+            ShowColumns.HIDDEN_WATCHED + "=1", null, Shows.SORT_TITLE, new ShowListMapper());
     showsCollected =
-        new CursorLiveData(application, Shows.SHOWS, HiddenItemsAdapter.PROJECTION_SHOW,
-            ShowColumns.HIDDEN_COLLECTED + "=1", null, Shows.SORT_TITLE);
+        new MappedCursorLiveData<>(application, Shows.SHOWS, HiddenItemsAdapter.PROJECTION_SHOW,
+            ShowColumns.HIDDEN_COLLECTED + "=1", null, Shows.SORT_TITLE, new ShowListMapper());
     moviesCalendar =
-        new CursorLiveData(application, Movies.MOVIES, HiddenItemsAdapter.PROJECTION_MOVIES,
-            MovieColumns.HIDDEN_CALENDAR + "=1", null, Movies.SORT_TITLE);
+        new MappedCursorLiveData<>(application, Movies.MOVIES, HiddenItemsAdapter.PROJECTION_MOVIES,
+            MovieColumns.HIDDEN_CALENDAR + "=1", null, Movies.SORT_TITLE, new MovieListMapper());
   }
 
-  public LiveData<Cursor> getShowsCalendar() {
+  public LiveData<List<Show>> getShowsCalendar() {
     return showsCalendar;
   }
 
-  public LiveData<Cursor> getShowsWatched() {
+  public LiveData<List<Show>> getShowsWatched() {
     return showsWatched;
   }
 
-  public LiveData<Cursor> getShowsCollected() {
+  public LiveData<List<Show>> getShowsCollected() {
     return showsCollected;
   }
 
-  public LiveData<Cursor> getMoviesCalendar() {
+  public LiveData<List<Movie>> getMoviesCalendar() {
     return moviesCalendar;
   }
 }

@@ -17,11 +17,13 @@
 package net.simonvt.cathode.ui.movies.watched;
 
 import android.app.Application;
-import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import java.util.List;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.Movie;
+import net.simonvt.cathode.entitymapper.MovieListMapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
@@ -29,7 +31,7 @@ import net.simonvt.cathode.ui.movies.watched.WatchedMoviesFragment.SortBy;
 
 public class WatchedMoviesViewModel extends AndroidViewModel {
 
-  private CursorLiveData movies;
+  private MappedCursorLiveData<List<Movie>> movies;
 
   private SortBy sortBy;
 
@@ -38,8 +40,8 @@ public class WatchedMoviesViewModel extends AndroidViewModel {
     sortBy = SortBy.fromValue(
         Settings.get(application).getString(Settings.Sort.MOVIE_WATCHED, SortBy.TITLE.getKey()));
     movies =
-        new CursorLiveData(application, Movies.MOVIES_WATCHED, MoviesAdapter.PROJECTION, null, null,
-            sortBy.getSortOrder());
+        new MappedCursorLiveData<>(application, Movies.MOVIES_WATCHED, MoviesAdapter.PROJECTION,
+            null, null, sortBy.getSortOrder(), new MovieListMapper());
   }
 
   public void setSortBy(SortBy sortBy) {
@@ -47,7 +49,7 @@ public class WatchedMoviesViewModel extends AndroidViewModel {
     movies.setSortOrder(sortBy.getSortOrder());
   }
 
-  public LiveData<Cursor> getMovies() {
+  public LiveData<List<Movie>> getMovies() {
     return movies;
   }
 }

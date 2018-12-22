@@ -39,6 +39,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.common.util.Alarms;
 import net.simonvt.cathode.common.util.Longs;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -51,7 +52,6 @@ import net.simonvt.cathode.provider.util.SqlColumn;
 import net.simonvt.cathode.settings.NotificationTime;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.EpisodeDetailsActivity;
-import net.simonvt.schematic.Cursors;
 
 public class NotificationHelper {
 

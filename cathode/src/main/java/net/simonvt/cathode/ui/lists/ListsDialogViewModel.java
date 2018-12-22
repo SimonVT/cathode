@@ -17,22 +17,26 @@
 package net.simonvt.cathode.ui.lists;
 
 import android.app.Application;
-import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import java.util.List;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.UserList;
+import net.simonvt.cathode.entitymapper.UserListListMapper;
+import net.simonvt.cathode.entitymapper.UserListMapper;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
 import net.simonvt.cathode.provider.ProviderSchematic.Lists;
+import net.simonvt.cathode.ui.lists.DialogListItemListMapper.DialogListItem;
 
 public class ListsDialogViewModel extends AndroidViewModel {
 
   private int itemType;
   private long itemId = -1L;
 
-  private LiveData<Cursor> list;
-  private LiveData<Cursor> listItems;
+  private LiveData<List<UserList>> lists;
+  private LiveData<List<DialogListItem>> listItems;
 
   public ListsDialogViewModel(@NonNull Application application) {
     super(application);
@@ -43,21 +47,22 @@ public class ListsDialogViewModel extends AndroidViewModel {
       this.itemType = itemType;
       this.itemId = itemId;
 
-      list = new CursorLiveData(getApplication(), Lists.LISTS, ListsDialog.LISTS_PROJECTION, null,
-          null, null);
-      listItems = new CursorLiveData(getApplication(), ListItems.LIST_ITEMS,
-          ListsDialog.LIST_ITEM_PROJECTION,
+      lists =
+          new MappedCursorLiveData<>(getApplication(), Lists.LISTS, UserListMapper.PROJECTION, null,
+              null, null, new UserListListMapper());
+      listItems = new MappedCursorLiveData<>(getApplication(), ListItems.LIST_ITEMS,
+          DialogListItemListMapper.PROJECTION,
           ListItemColumns.ITEM_TYPE + "=? AND " + ListItemColumns.ITEM_ID + "=?", new String[] {
           String.valueOf(itemType), String.valueOf(itemId),
-      }, null);
+      }, null, new DialogListItemListMapper());
     }
   }
 
-  public LiveData<Cursor> getList() {
-    return list;
+  public LiveData<List<UserList>> getLists() {
+    return lists;
   }
 
-  public LiveData<Cursor> getListItems() {
+  public LiveData<List<DialogListItem>> getListItems() {
     return listItems;
   }
 }

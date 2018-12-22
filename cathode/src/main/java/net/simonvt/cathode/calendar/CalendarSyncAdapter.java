@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
@@ -45,7 +46,6 @@ import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.settings.Permissions;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.EpisodeDetailsActivity;
-import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
 public class CalendarSyncAdapter extends AbstractThreadedSyncAdapter {

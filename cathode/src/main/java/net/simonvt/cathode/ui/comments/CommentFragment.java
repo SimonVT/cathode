@@ -15,16 +15,17 @@
  */
 package net.simonvt.cathode.ui.comments;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
+import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.common.entity.Comment;
 import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.sync.scheduler.CommentsTaskScheduler;
@@ -82,9 +83,9 @@ public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHol
 
     viewModel = ViewModelProviders.of(this).get(CommentViewModel.class);
     viewModel.setCommentId(commentId);
-    viewModel.getCommentAndReplies().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        setCursor(cursor);
+    viewModel.getCommentAndReplies().observe(this, new Observer<List<Comment>>() {
+      @Override public void onChanged(List<Comment> comments) {
+        setComments(comments);
       }
     });
   }
@@ -134,9 +135,9 @@ public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHol
         }
       };
 
-  private void setCursor(Cursor cursor) {
+  private void setComments(List<Comment> comments) {
     if (adapter == null) {
-      adapter = new CommentsAdapter(getActivity(), null, true, commentClickListener);
+      adapter = new CommentsAdapter(getActivity(), true, commentClickListener);
       if (adapterState != null) {
         adapter.restoreState(adapterState);
         adapterState = null;
@@ -144,6 +145,6 @@ public class CommentFragment extends ToolbarGridFragment<CommentsAdapter.ViewHol
       setAdapter(adapter);
     }
 
-    adapter.changeCursor(cursor);
+    adapter.setList(comments);
   }
 }

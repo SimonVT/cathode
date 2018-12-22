@@ -17,24 +17,28 @@
 package net.simonvt.cathode.ui.lists;
 
 import android.app.Application;
-import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import java.util.List;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.UserList;
+import net.simonvt.cathode.entitymapper.UserListListMapper;
+import net.simonvt.cathode.entitymapper.UserListMapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Lists;
 
 public class ListsViewModel extends AndroidViewModel {
 
-  private LiveData<Cursor> lists;
+  private LiveData<List<UserList>> lists;
 
   public ListsViewModel(@NonNull Application application) {
     super(application);
-    lists = new CursorLiveData(application, Lists.LISTS, ListsAdapter.PROJECTION, null, null,
-        null);
+    lists =
+        new MappedCursorLiveData<>(application, Lists.LISTS, UserListMapper.PROJECTION, null, null,
+            null, new UserListListMapper());
   }
 
-  public LiveData<Cursor> getLists() {
+  public LiveData<List<UserList>> getLists() {
     return lists;
   }
 }

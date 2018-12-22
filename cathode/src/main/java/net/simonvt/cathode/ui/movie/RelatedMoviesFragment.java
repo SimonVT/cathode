@@ -16,13 +16,15 @@
 package net.simonvt.cathode.ui.movie;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.os.Bundle;
+import android.view.View;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
+import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.entity.Movie;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
@@ -85,9 +87,13 @@ public class RelatedMoviesFragment
 
     viewModel = ViewModelProviders.of(this).get(RelatedMoviesViewModel.class);
     viewModel.setMovieId(movieId);
-    viewModel.getMovies().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        setCursor(cursor);
+  }
+
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
+    viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
+      @Override public void onChanged(List<Movie> movies) {
+        setMovies(movies);
       }
     });
   }
@@ -134,13 +140,12 @@ public class RelatedMoviesFragment
     movieScheduler.setIsInCollection(movieId, false);
   }
 
-  protected void setCursor(Cursor c) {
+  protected void setMovies(List<Movie> movies) {
     if (movieAdapter == null) {
-      movieAdapter = new MoviesAdapter(getActivity(), this, c);
+      movieAdapter = new MoviesAdapter(getActivity(), this);
       setAdapter(movieAdapter);
-      return;
     }
 
-    movieAdapter.changeCursor(c);
+    movieAdapter.setList(movies);
   }
 }

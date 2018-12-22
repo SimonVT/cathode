@@ -16,47 +16,24 @@
 package net.simonvt.cathode.ui.dashboard;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
+import net.simonvt.cathode.common.entity.ShowWithEpisode;
+import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
-import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.util.DataHelper;
-import net.simonvt.schematic.Cursors;
 
 public class DashboardUpcomingShowsAdapter
-    extends RecyclerCursorAdapter<DashboardUpcomingShowsAdapter.ViewHolder> {
-
-  private static final String COLUMN_EPISODE_ID = "episodeId";
-  private static final String COLUMN_EPISODE_LAST_UPDATED = "episodeLastUpdated";
-
-  public static final String[] PROJECTION = new String[] {
-      Tables.SHOWS + "." + ShowColumns.ID,
-      Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.OVERVIEW,
-      Tables.SHOWS + "." + ShowColumns.STATUS,
-      ShowColumns.WATCHING,
-      Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
-      Tables.EPISODES + "." + EpisodeColumns.ID + " AS " + COLUMN_EPISODE_ID,
-      Tables.EPISODES + "." + EpisodeColumns.TITLE,
-      Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
-      Tables.EPISODES + "." + EpisodeColumns.SEASON,
-      Tables.EPISODES + "." + EpisodeColumns.EPISODE,
-      Tables.EPISODES + "." + EpisodeColumns.WATCHED,
-      Tables.EPISODES + "." + EpisodeColumns.LAST_MODIFIED + " AS " + COLUMN_EPISODE_LAST_UPDATED,
-  };
+    extends BaseAdapter<ShowWithEpisode, DashboardUpcomingShowsAdapter.ViewHolder> {
 
   private DashboardFragment.OverviewCallback callback;
 
@@ -64,15 +41,16 @@ public class DashboardUpcomingShowsAdapter
       DashboardFragment.OverviewCallback callback) {
     super(context);
     this.callback = callback;
+    setHasStableIds(true);
   }
 
-  @Override public long getLastModified(int position) {
-    Cursor cursor = getCursor(position);
+  @Override public long getItemId(int position) {
+    return getList().get(position).getShow().getId();
+  }
 
-    final long showLastModified = Cursors.getLong(cursor, LastModifiedColumns.LAST_MODIFIED);
-    final long episodeLastModified = Cursors.getLong(cursor, COLUMN_EPISODE_LAST_UPDATED);
-
-    return showLastModified + episodeLastModified;
+  @Override protected boolean areItemsTheSame(@NonNull ShowWithEpisode oldItem,
+      @NonNull ShowWithEpisode newItem) {
+    return oldItem.getShow().getId() == newItem.getShow().getId();
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -84,10 +62,9 @@ public class DashboardUpcomingShowsAdapter
       @Override public void onClick(View v) {
         final int position = holder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
-          Cursor cursor = getCursor(position);
-          final long episodeId = Cursors.getLong(cursor, COLUMN_EPISODE_ID);
-          final String showTitle = Cursors.getString(cursor, ShowColumns.TITLE);
-          callback.onDisplayEpisode(episodeId, showTitle);
+          ShowWithEpisode showWithEpisode = getList().get(position);
+          callback.onDisplayEpisode(showWithEpisode.getEpisode().getId(),
+              showWithEpisode.getShow().getTitle());
         }
       }
     });
@@ -95,22 +72,22 @@ public class DashboardUpcomingShowsAdapter
     return holder;
   }
 
-  @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
-    final long id = Cursors.getLong(cursor, ShowColumns.ID);
-    final String title = Cursors.getString(cursor, ShowColumns.TITLE);
-    final boolean watching = Cursors.getBoolean(cursor, ShowColumns.WATCHING);
-    final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
-    final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-    final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
+  @Override public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    ShowWithEpisode showWithEpisode = getList().get(position);
+
+    final int season = showWithEpisode.getEpisode().getSeason();
+    final int episode = showWithEpisode.getEpisode().getEpisode();
+    final boolean watched = showWithEpisode.getEpisode().getWatched();
     final String episodeTitle =
-        DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, watched, true);
+        DataHelper.getEpisodeTitle(getContext(), showWithEpisode.getEpisode().getTitle(), season,
+            episode, watched, true);
 
-    final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
-
+    final String poster =
+        ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, showWithEpisode.getShow().getId());
     holder.poster.setImage(poster);
-    holder.title.setText(title);
+    holder.title.setText(showWithEpisode.getShow().getTitle());
 
-    if (watching) {
+    if (showWithEpisode.getShow().getWatching()) {
       holder.nextEpisode.setText(R.string.show_watching);
     } else {
       holder.nextEpisode.setText(episodeTitle);

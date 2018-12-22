@@ -19,14 +19,19 @@ package net.simonvt.cathode.ui.shows.upcoming;
 import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import androidx.lifecycle.LiveData;
+import java.util.List;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.ShowWithEpisode;
+import net.simonvt.cathode.entitymapper.ShowWithEpisodeListMapper;
+import net.simonvt.cathode.entitymapper.ShowWithEpisodeMapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.settings.UpcomingTime;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
 
 public class UpcomingViewModel extends AndroidViewModel {
 
-  private CursorLiveData shows;
+  private MappedCursorLiveData<List<ShowWithEpisode>> shows;
 
   private UpcomingTimePreference upcomingTimePreference;
   private UpcomingSortByPreference upcomingSortByPreference;
@@ -39,8 +44,9 @@ public class UpcomingViewModel extends AndroidViewModel {
     this.upcomingSortByPreference = upcomingSortByPreference;
     upcomingTimePreference.registerListener(upcomingTimeChangeListener);
     upcomingSortByPreference.registerListener(upcomingSortByListener);
-    shows = new CursorLiveData(application, Shows.SHOWS_UPCOMING, UpcomingAdapter.PROJECTION, null,
-        null, upcomingSortByPreference.get().getSortOrder());
+    shows = new MappedCursorLiveData<>(application, Shows.SHOWS_UPCOMING,
+        ShowWithEpisodeMapper.PROJECTION, null, null, upcomingSortByPreference.get().getSortOrder(),
+        new ShowWithEpisodeListMapper());
   }
 
   @Override protected void onCleared() {
@@ -62,7 +68,7 @@ public class UpcomingViewModel extends AndroidViewModel {
         }
       };
 
-  public CursorLiveData getShows() {
+  public LiveData<List<ShowWithEpisode>> getShows() {
     return shows;
   }
 }

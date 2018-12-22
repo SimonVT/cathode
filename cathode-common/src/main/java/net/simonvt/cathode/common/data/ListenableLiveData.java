@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import timber.log.Timber;
 
 public abstract class ListenableLiveData<D> extends AsyncLiveData<D>
     implements ThrottleContentObserver.Callback {
@@ -40,10 +41,28 @@ public abstract class ListenableLiveData<D> extends AsyncLiveData<D>
     return context;
   }
 
+  @Override protected void onActive() {
+    super.onActive();
+    Timber.d("onActive");
+    for (Uri uri : notificationUris) {
+      registerUri(uri);
+    }
+  }
+
+  @Override protected void onInactive() {
+    super.onInactive();
+    Timber.d("onInactive");
+    for (Uri uri : notificationUris) {
+      unregisterUri(uri);
+    }
+  }
+
   public void addNotificationUri(Uri uri) {
     synchronized (notificationUris) {
       notificationUris.add(uri);
-      registerUri(uri);
+      if (hasActiveObservers()) {
+        registerUri(uri);
+      }
     }
   }
 
@@ -59,20 +78,27 @@ public abstract class ListenableLiveData<D> extends AsyncLiveData<D>
 
   public void removeNotificationUri(Uri uri) {
     synchronized (notificationUris) {
-      unregisterUri(uri);
       notificationUris.remove(uri);
+      if (hasActiveObservers()) {
+        unregisterUri(uri);
+      }
     }
   }
 
   protected void registerUri(Uri uri) {
+    Timber.d("registerUri");
     ContentObserver observer = new ThrottleContentObserver(this);
     observers.put(uri, observer);
     context.getContentResolver().registerContentObserver(uri, true, observer);
   }
 
   protected void unregisterUri(Uri uri) {
-    ContentObserver observer = observers.get(uri);
-    context.getContentResolver().unregisterContentObserver(observer);
+    Timber.d("unregisterUri");
+    if (observers.containsKey(uri)) {
+      ContentObserver observer = observers.get(uri);
+      observers.remove(uri);
+      context.getContentResolver().unregisterContentObserver(observer);
+    }
   }
 
   @Override public void onContentChanged() {

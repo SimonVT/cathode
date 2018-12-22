@@ -34,6 +34,7 @@ import net.simonvt.cathode.api.entity.Season;
 import net.simonvt.cathode.api.enumeration.CommentType;
 import net.simonvt.cathode.api.enumeration.ItemTypes;
 import net.simonvt.cathode.api.service.UsersService;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.CommentsHelper;
 import net.simonvt.cathode.provider.DatabaseContract;
@@ -50,7 +51,6 @@ import net.simonvt.cathode.remote.sync.SyncUserProfile;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncSeason;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
-import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 import timber.log.Timber;
 

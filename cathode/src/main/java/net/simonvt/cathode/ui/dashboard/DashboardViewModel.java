@@ -17,24 +17,34 @@
 package net.simonvt.cathode.ui.dashboard;
 
 import android.app.Application;
-import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import java.util.List;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.Episode;
+import net.simonvt.cathode.common.entity.Movie;
+import net.simonvt.cathode.common.entity.Show;
+import net.simonvt.cathode.common.entity.ShowWithEpisode;
+import net.simonvt.cathode.entitymapper.EpisodeListMapper;
+import net.simonvt.cathode.entitymapper.MovieListMapper;
+import net.simonvt.cathode.entitymapper.ShowListMapper;
+import net.simonvt.cathode.entitymapper.ShowWithEpisodeListMapper;
+import net.simonvt.cathode.entitymapper.ShowWithEpisodeMapper;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
+import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortBy;
 import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference;
 
 public class DashboardViewModel extends AndroidViewModel {
 
-  private CursorLiveData upcomingShows;
-  private LiveData<Cursor> showsWatchlist;
-  private LiveData<Cursor> episodeWatchlist;
-  private LiveData<Cursor> trendingShows;
-  private LiveData<Cursor> movieWatchlist;
-  private LiveData<Cursor> trendingMovies;
+  private MappedCursorLiveData<List<ShowWithEpisode>> upcomingShows;
+  private LiveData<List<Show>> showsWatchlist;
+  private LiveData<List<Episode>> episodeWatchlist;
+  private LiveData<List<Show>> trendingShows;
+  private LiveData<List<Movie>> movieWatchlist;
+  private LiveData<List<Movie>> trendingMovies;
 
   private UpcomingSortByPreference upcomingSortByPreference;
 
@@ -45,26 +55,27 @@ public class DashboardViewModel extends AndroidViewModel {
     upcomingSortByPreference.registerListener(upcomingSortByListener);
     UpcomingSortBy upcomingSortBy = upcomingSortByPreference.get();
 
-    upcomingShows = new CursorLiveData(application, ProviderSchematic.Shows.SHOWS_UPCOMING,
-        DashboardUpcomingShowsAdapter.PROJECTION, null, null, upcomingSortBy.getSortOrder());
+    upcomingShows = new MappedCursorLiveData<>(application, Shows.SHOWS_UPCOMING,
+        ShowWithEpisodeMapper.PROJECTION, null, null, upcomingSortBy.getSortOrder(),
+        new ShowWithEpisodeListMapper());
 
-    showsWatchlist = new CursorLiveData(application, ProviderSchematic.Shows.SHOWS_WATCHLIST,
-        DashboardShowsWatchlistAdapter.PROJECTION, null, null, null);
+    showsWatchlist = new MappedCursorLiveData<>(application, Shows.SHOWS_WATCHLIST,
+        DashboardShowsWatchlistAdapter.PROJECTION, null, null, null, new ShowListMapper());
 
     episodeWatchlist =
-        new CursorLiveData(application, ProviderSchematic.Episodes.EPISODES_IN_WATCHLIST,
-            DashboardShowsWatchlistAdapter.PROJECTION_EPISODE, null, null, null);
+        new MappedCursorLiveData<>(application, ProviderSchematic.Episodes.EPISODES_IN_WATCHLIST,
+            DashboardShowsWatchlistAdapter.PROJECTION_EPISODE, null, null, null,
+            new EpisodeListMapper());
 
-    trendingShows = new CursorLiveData(application, ProviderSchematic.Shows.SHOWS_TRENDING,
-        DashboardShowsAdapter.PROJECTION, null, null, null);
+    trendingShows = new MappedCursorLiveData<>(application, Shows.SHOWS_TRENDING,
+        DashboardShowsAdapter.PROJECTION, null, null, null, new ShowListMapper());
 
-    movieWatchlist =
-        new CursorLiveData(application, Movies.MOVIES_WATCHLIST, DashboardMoviesAdapter.PROJECTION,
-            null, null, null);
+    movieWatchlist = new MappedCursorLiveData<>(application, Movies.MOVIES_WATCHLIST,
+        DashboardMoviesAdapter.PROJECTION, null, null, null, new MovieListMapper());
 
     trendingMovies =
-        new CursorLiveData(application, Movies.TRENDING, DashboardMoviesAdapter.PROJECTION, null,
-            null, null);
+        new MappedCursorLiveData<>(application, Movies.TRENDING, DashboardMoviesAdapter.PROJECTION,
+            null, null, null, new MovieListMapper());
   }
 
   @Override protected void onCleared() {
@@ -78,27 +89,31 @@ public class DashboardViewModel extends AndroidViewModel {
         }
       };
 
-  public CursorLiveData getUpcomingShows() {
+  public MappedCursorLiveData<List<ShowWithEpisode>> getUpcomingShows() {
     return upcomingShows;
   }
 
-  public LiveData<Cursor> getShowsWatchlist() {
+  public LiveData<List<Show>> getShowsWatchlist() {
     return showsWatchlist;
   }
 
-  public LiveData<Cursor> getEpisodeWatchlist() {
+  public LiveData<List<Episode>> getEpisodeWatchlist() {
     return episodeWatchlist;
   }
 
-  public LiveData<Cursor> getTrendingShows() {
+  public LiveData<List<Show>> getTrendingShows() {
     return trendingShows;
   }
 
-  public LiveData<Cursor> getMovieWatchlist() {
+  public LiveData<List<Movie>> getMovieWatchlist() {
     return movieWatchlist;
   }
 
-  public LiveData<Cursor> getTrendingMovies() {
+  public LiveData<List<Movie>> getTrendingMovies() {
     return trendingMovies;
+  }
+
+  public UpcomingSortByPreference getUpcomingSortByPreference() {
+    return upcomingSortByPreference;
   }
 }

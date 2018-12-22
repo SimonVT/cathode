@@ -178,6 +178,8 @@ public final class DatabaseContract {
 
     @DataType(INTEGER) @DefaultValue("0") String NEEDS_SYNC = "needsSync";
 
+    String SHOW_TITLE = "seasonShowTitle";
+
     String AIRED_COUNT = "airedCount";
     String UNAIRED_COUNT = "unairedCount";
     String WATCHED_AIRED_COUNT = "watchedAiredCount";

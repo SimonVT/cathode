@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
@@ -36,7 +37,6 @@ import net.simonvt.cathode.remote.action.comments.DeleteCommentJob;
 import net.simonvt.cathode.remote.action.comments.LikeCommentJob;
 import net.simonvt.cathode.remote.action.comments.UnlikeCommentJob;
 import net.simonvt.cathode.remote.action.comments.UpdateCommentJob;
-import net.simonvt.schematic.Cursors;
 
 @Singleton public class CommentsTaskScheduler extends BaseTaskScheduler {
 

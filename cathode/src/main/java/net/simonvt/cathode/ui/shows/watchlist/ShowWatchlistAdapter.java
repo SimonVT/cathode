@@ -15,7 +15,6 @@
  */
 package net.simonvt.cathode.ui.shows.watchlist;
 
-import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.ui.adapter.HeaderCursorAdapter;
+import net.simonvt.cathode.common.entity.Episode;
+import net.simonvt.cathode.common.entity.Show;
+import net.simonvt.cathode.common.ui.adapter.HeaderAdapter;
 import net.simonvt.cathode.common.widget.CircularProgressIndicator;
 import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.common.widget.RemoteImageView;
@@ -33,19 +34,17 @@ import net.simonvt.cathode.common.widget.TimeStamp;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.widget.IndicatorView;
-import net.simonvt.schematic.Cursors;
 
-public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewHolder> {
+public class ShowWatchlistAdapter extends HeaderAdapter<Object, RecyclerView.ViewHolder> {
 
   public interface RemoveListener {
 
-    void onRemoveItem(int position, long itemId);
+    void onRemoveItem(Object object);
   }
 
   public interface ItemCallbacks {
@@ -60,25 +59,19 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
   }
 
   static final String[] PROJECTION_SHOW = new String[] {
-      Tables.SHOWS + "." + ShowColumns.ID,
-      Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.OVERVIEW,
-      Tables.SHOWS + "." + ShowColumns.TVDB_ID,
+      Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.TVDB_ID,
       Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
       Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
-      Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST,
-      Tables.SHOWS + "." + ShowColumns.RATING,
-      Tables.SHOWS + "." + LastModifiedColumns.LAST_MODIFIED,
+      Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST, Tables.SHOWS + "." + ShowColumns.RATING,
   };
 
   static final String[] PROJECTION_EPISODE = new String[] {
-      Tables.EPISODES + "." + EpisodeColumns.ID,
-      Tables.EPISODES + "." + EpisodeColumns.TITLE,
+      Tables.EPISODES + "." + EpisodeColumns.ID, Tables.EPISODES + "." + EpisodeColumns.TITLE,
       Tables.EPISODES + "." + EpisodeColumns.WATCHED,
       Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
-      Tables.EPISODES + "." + EpisodeColumns.SEASON,
-      Tables.EPISODES + "." + EpisodeColumns.EPISODE,
-      Tables.EPISODES + "." + LastModifiedColumns.LAST_MODIFIED,
+      Tables.EPISODES + "." + EpisodeColumns.SEASON, Tables.EPISODES + "." + EpisodeColumns.EPISODE,
+      Tables.EPISODES + "." + EpisodeColumns.TVDB_ID,
       Tables.SHOWS + "." + ShowColumns.TITLE,
   };
 
@@ -94,27 +87,27 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
 
   public ShowWatchlistAdapter(FragmentActivity activity, ItemCallbacks itemCallbacks,
       RemoveListener onRemoveListener) {
+    super(activity);
     this.activity = activity;
     this.itemCallbacks = itemCallbacks;
     this.onRemoveListener = onRemoveListener;
-    setHasStableIds(false);
+    setHasStableIds(true);
   }
 
-  @Override public long getLastModified(int position) {
-    if (!isHeader(position)) {
-      Cursor cursor = getCursor(position);
-      return Cursors.getLong(cursor, LastModifiedColumns.LAST_MODIFIED);
-    }
-
-    return super.getLastModified(position);
-  }
-
-  @Override protected int getItemViewType(int headerRes, Cursor cursor) {
+  @Override protected int getItemViewType(int headerRes, Object item) {
     if (headerRes == R.string.header_shows) {
       return TYPE_SHOW;
     }
 
     return TYPE_EPISODE;
+  }
+
+  @Override protected long getItemId(Object item) {
+    if (item instanceof Episode) {
+      return ((Episode) item).getTvdbId();
+    }
+
+    return ((Show) item).getTvdbId();
   }
 
   @Override protected RecyclerView.ViewHolder onCreateItemHolder(ViewGroup parent, int viewType) {
@@ -126,11 +119,8 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
         @Override public void onClick(View view) {
           final int position = holder.getAdapterPosition();
           if (position != RecyclerView.NO_POSITION) {
-            Cursor cursor = getCursor(position);
-            final long id = getItemId(position);
-            final String title = Cursors.getString(cursor, ShowColumns.TITLE);
-            final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
-            itemCallbacks.onShowClicked(id, title, overview);
+            Show show = (Show) getItem(position);
+            itemCallbacks.onShowClicked(show.getId(), show.getTitle(), show.getOverview());
           }
         }
       });
@@ -143,10 +133,8 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
         @Override public void onClick(View view) {
           final int position = holder.getAdapterPosition();
           if (position != RecyclerView.NO_POSITION) {
-            Cursor cursor = getCursor(position);
-            final long id = getItemId(position);
-            final String showTitle = Cursors.getString(cursor, ShowColumns.TITLE);
-            itemCallbacks.onEpisodeClicked(id, showTitle);
+            Episode episode = (Episode) getItem(position);
+            itemCallbacks.onEpisodeClicked(episode.getId(), episode.getShowTitle());
           }
         }
       });
@@ -172,28 +160,24 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
     ((HeaderViewHolder) holder).header.setText(headerRes);
   }
 
-  @Override protected void onBindViewHolder(final RecyclerView.ViewHolder holder, Cursor cursor,
-      final int position) {
+  @Override
+  protected void onBindViewHolder(RecyclerView.ViewHolder holder, Object object, int position) {
     if (holder.getItemViewType() == TYPE_SHOW) {
       final ShowViewHolder vh = (ShowViewHolder) holder;
+      Show show = (Show) object;
 
-      final long id = Cursors.getLong(cursor, ShowColumns.ID);
-      final boolean watched = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT) > 0;
-      final boolean inCollection = Cursors.getInt(cursor, ShowColumns.IN_COLLECTION_COUNT) > 1;
-      final boolean inWatchlist = Cursors.getBoolean(cursor, ShowColumns.IN_WATCHLIST);
-      final float rating = Cursors.getFloat(cursor, ShowColumns.RATING);
-
+      final long id = show.getId();
       final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
 
-      vh.indicator.setWatched(watched);
-      vh.indicator.setCollected(inCollection);
-      vh.indicator.setInWatchlist(inWatchlist);
+      vh.indicator.setWatched(show.getWatchedCount() > 0);
+      vh.indicator.setCollected(show.getInCollectionCount() > 1);
+      vh.indicator.setInWatchlist(show.getInWatchlist());
 
       vh.poster.setImage(poster);
-      vh.title.setText(Cursors.getString(cursor, ShowColumns.TITLE));
-      vh.overview.setText(Cursors.getString(cursor, ShowColumns.OVERVIEW));
+      vh.title.setText(show.getTitle());
+      vh.overview.setText(show.getOverview());
 
-      vh.rating.setValue(rating);
+      vh.rating.setValue(show.getRating());
 
       vh.overflow.setListener(new OverflowView.OverflowActionListener() {
 
@@ -209,27 +193,29 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
             switch (action) {
               case R.id.action_watchlist_remove:
                 itemCallbacks.onRemoveShowFromWatchlist(id);
-                onRemoveListener.onRemoveItem(position, id);
+                onRemoveListener.onRemoveItem(object);
             }
           }
         }
       });
     } else {
       EpisodeViewHolder vh = (EpisodeViewHolder) holder;
+      Episode episode = (Episode) object;
 
-      final long id = Cursors.getLong(cursor, EpisodeColumns.ID);
-      final long firstAired = DataHelper.getFirstAired(cursor);
-      final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
-      final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-      final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
-      final String title = DataHelper.getEpisodeTitle(activity, cursor, season, episode, watched);
+      final long id = episode.getId();
+      final long firstAired = episode.getFirstAired();
+      final int season = episode.getSeason();
+      final int number = episode.getEpisode();
+      final boolean watched = episode.getWatched();
+      final String title =
+          DataHelper.getEpisodeTitle(activity, episode.getTitle(), season, number, watched);
 
       final String screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, id);
 
       vh.screen.setImage(screenshotUri);
       vh.title.setText(title);
       vh.firstAired.setTimeInMillis(firstAired);
-      final String episodeNumber = activity.getString(R.string.season_x_episode_y, season, episode);
+      final String episodeNumber = activity.getString(R.string.season_x_episode_y, season, number);
       vh.episode.setText(episodeNumber);
       vh.overflow.setListener(new OverflowView.OverflowActionListener() {
 
@@ -250,7 +236,7 @@ public class ShowWatchlistAdapter extends HeaderCursorAdapter<RecyclerView.ViewH
 
               case R.id.action_watchlist_remove:
                 itemCallbacks.onRemoveEpisodeFromWatchlist(id);
-                onRemoveListener.onRemoveItem(position, id);
+                onRemoveListener.onRemoveItem(object);
                 break;
             }
           }

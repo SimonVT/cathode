@@ -22,12 +22,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.text.format.DateUtils;
 import net.simonvt.cathode.api.entity.Episode;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
-import net.simonvt.schematic.Cursors;
 
 public final class EpisodeDatabaseHelper {
 

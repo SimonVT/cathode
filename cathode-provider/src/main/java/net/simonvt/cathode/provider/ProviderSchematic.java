@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.common.util.Joiner;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -48,7 +49,6 @@ import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.util.SqlColumn;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
-import net.simonvt.schematic.Cursors;
 import net.simonvt.schematic.annotation.ContentProvider;
 import net.simonvt.schematic.annotation.ContentUri;
 import net.simonvt.schematic.annotation.InexactContentUri;
@@ -568,11 +568,13 @@ public final class ProviderSchematic {
     @MapColumns public static Map<String, String> mapColumns() {
       Map<String, String> map = new HashMap<>();
 
+      map.put(SeasonColumns.SHOW_TITLE, getShowTitleQuery());
       map.put(SeasonColumns.AIRED_COUNT, getAiredQuery());
       map.put(SeasonColumns.UNAIRED_COUNT, getUnairedQuery());
       map.put(SeasonColumns.WATCHED_AIRED_COUNT, getWatchedAiredCount());
       map.put(SeasonColumns.COLLECTED_AIRED_COUNT, getCollectedAiredCount());
       map.put(SeasonColumns.EPISODE_COUNT, getEpisodeCountQuery());
+      map.put(Tables.SEASONS + "." + SeasonColumns.SHOW_TITLE, getShowTitleQuery());
       map.put(Tables.SEASONS + "." + SeasonColumns.AIRED_COUNT, getAiredQuery());
       map.put(Tables.SEASONS + "." + SeasonColumns.UNAIRED_COUNT, getUnairedQuery());
       map.put(Tables.SEASONS + "." + SeasonColumns.WATCHED_AIRED_COUNT, getWatchedAiredCount());
@@ -659,6 +661,20 @@ public final class ProviderSchematic {
       return new Uri[] {
           Shows.SHOWS, Seasons.SEASONS,
       };
+    }
+
+    private static String getShowTitleQuery() {
+      return "(SELECT " + ShowColumns.TITLE + " FROM "
+          + Tables.SHOWS
+          + " WHERE "
+          + Tables.SEASONS
+          + "."
+          + SeasonColumns.SHOW_ID
+          + "="
+          + Tables.SHOWS
+          + "."
+          + ShowColumns.ID
+          + ")";
     }
 
     public static String getAiredQuery() {

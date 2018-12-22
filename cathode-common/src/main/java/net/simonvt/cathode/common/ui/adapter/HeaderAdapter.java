@@ -1,0 +1,260 @@
+/*
+ * Copyright (C) 2014 Simon Vig Therkildsen
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package net.simonvt.cathode.common.ui.adapter;
+
+import android.content.Context;
+import android.util.SparseArray;
+import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.AsyncListDiffer;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class HeaderAdapter<Type, T extends RecyclerView.ViewHolder>
+    extends RecyclerView.Adapter<T> {
+
+  public static class Header<Type> {
+
+    public final int header;
+
+    public long headerId;
+
+    public List<Type> items;
+
+    int size;
+
+    private Header(int header, long headerId) {
+      this.header = header;
+      this.headerId = headerId;
+    }
+
+    void updateSize() {
+      final int size = items != null ? items.size() : 0;
+      if (size > 0) {
+        this.size = size + 1;
+      } else {
+        this.size = 0;
+      }
+    }
+
+    void setItems(List<Type> items) {
+      this.items = items;
+      updateSize();
+    }
+  }
+
+  public static class Item<Type> {
+
+    boolean isHeader;
+
+    long headerId;
+
+    int headerRes;
+
+    Type item;
+
+    public Item(long headerId, int headerRes) {
+      this.headerId = headerId;
+      this.headerRes = headerRes;
+      isHeader = true;
+    }
+
+    public Item(Type item) {
+      this.item = item;
+      isHeader = false;
+    }
+  }
+
+  private DiffUtil.ItemCallback<Item<Type>> diffCallback = new DiffUtil.ItemCallback<Item<Type>>() {
+    @Override
+    public boolean areItemsTheSame(@NonNull Item<Type> oldItem, @NonNull Item<Type> newItem) {
+      return HeaderAdapter.this.areItemsTheSame(oldItem, newItem);
+    }
+
+    @Override
+    public boolean areContentsTheSame(@NonNull Item<Type> oldItem, @NonNull Item<Type> newItem) {
+      return HeaderAdapter.this.areContentsTheSame(oldItem, newItem);
+    }
+  };
+
+  private Context context;
+
+  AsyncListDiffer<Item<Type>> asyncDiffer = new AsyncListDiffer<>(this, diffCallback);
+
+  List<Header<Type>> headers = new ArrayList<>();
+  long headerIdOffset;
+
+  int itemCount;
+
+  final List<Integer> headerPositions = new ArrayList<>();
+
+  private SparseArray<Long> itemIds = new SparseArray<>();
+
+  public HeaderAdapter(Context context) {
+    this.context = context;
+    setHasStableIds(true);
+  }
+
+  public Context getContext() {
+    return context;
+  }
+
+  @Override public int getItemCount() {
+    return asyncDiffer.getCurrentList().size();
+  }
+
+  private List<Item<Type>> getList() {
+    return asyncDiffer.getCurrentList();
+  }
+
+  public void removeItem(Type item) {
+    final int position = getList().indexOf(item);
+    Header<Type> header = getHeader(position);
+    List<Type> newList = new ArrayList<>(header.items);
+    updateHeaderItems(header.header, newList);
+  }
+
+  public Type getItem(int position) {
+    Item<Type> item = getList().get(position);
+    if (item.isHeader) {
+      throw new IllegalArgumentException("getItem can not be used to get a Header");
+    }
+
+    return item.item;
+  }
+
+  public void addHeader(int header) {
+    addHeader(header, null);
+  }
+
+  public void addHeader(int headerRes, List<Type> items) {
+    final long headerId = Long.MAX_VALUE - headerIdOffset--;
+    Header<Type> header = new Header<>(headerRes, headerId);
+    header.setItems(items);
+    headers.add(header);
+
+    submitNewList();
+  }
+
+  private void submitNewList() {
+    List<Item<Type>> items = new ArrayList<>();
+    for (Header<Type> header : headers) {
+      if (header.size > 0) {
+        items.add(new Item<Type>(header.headerId, header.header));
+
+        for (Type item : header.items) {
+          items.add(new Item<Type>(item));
+        }
+      }
+    }
+
+    asyncDiffer.submitList(items);
+  }
+
+  public void updateHeaderItems(int headerRes, List<Type> items) {
+    for (Header<Type> header : headers) {
+      if (headerRes == header.header) {
+        header.setItems(items);
+        submitNewList();
+        return;
+      }
+    }
+
+    throw new IllegalArgumentException("No header for resource id " + headerRes + " found");
+  }
+
+  @Override public final long getItemId(int position) {
+    Item<Type> item = getList().get(position);
+    if (item.isHeader) {
+      return item.headerId;
+    }
+
+    return getItemId(item.item);
+  }
+
+  protected abstract long getItemId(Type item);
+
+  private boolean areItemsTheSame(@NonNull Item<Type> oldItem, @NonNull Item<Type> newItem) {
+    if (oldItem.isHeader && newItem.isHeader) {
+      return oldItem.headerId == newItem.headerId;
+    } else if (!oldItem.isHeader && !newItem.isHeader) {
+      return getItemId(oldItem.item) == getItemId(newItem.item);
+    }
+
+    return false;
+  }
+
+  private boolean areContentsTheSame(@NonNull Item<Type> oldItem, @NonNull Item<Type> newItem) {
+    if (oldItem.isHeader && newItem.isHeader) {
+      return oldItem.headerRes == newItem.headerRes;
+    }
+
+    return oldItem.item.equals(newItem.item);
+  }
+
+  public Header getHeader(int position) {
+    int offset = 0;
+
+    for (Header header : headers) {
+      if (position < offset + header.size) {
+        return header;
+      }
+
+      offset += header.size;
+    }
+
+    throw new RuntimeException(
+        "[" + this.getClass().getName() + "] No header found for position " + position);
+  }
+
+  @Override public final int getItemViewType(int position) {
+    Item<Type> item = getList().get(position);
+    if (item.isHeader) {
+      return HeaderSpanLookup.TYPE_HEADER;
+    }
+
+    return getItemViewType(getHeader(position).header, item.item);
+  }
+
+  protected abstract int getItemViewType(int headerRes, Type item);
+
+  @Override public final T onCreateViewHolder(ViewGroup parent, int viewType) {
+    if (viewType == HeaderSpanLookup.TYPE_HEADER) {
+      return onCreateHeaderHolder(parent);
+    } else {
+      return onCreateItemHolder(parent, viewType);
+    }
+  }
+
+  protected abstract T onCreateItemHolder(ViewGroup parent, int viewType);
+
+  protected abstract T onCreateHeaderHolder(ViewGroup parent);
+
+  @Override public final void onBindViewHolder(T holder, int position) {
+    if (holder.getItemViewType() == HeaderSpanLookup.TYPE_HEADER) {
+      onBindHeader(holder, getHeader(position).header);
+    } else {
+      onBindViewHolder(holder, getList().get(position).item, position);
+    }
+  }
+
+  protected abstract void onBindHeader(T holder, int headerRes);
+
+  protected abstract void onBindViewHolder(T holder, Type type, int position);
+}

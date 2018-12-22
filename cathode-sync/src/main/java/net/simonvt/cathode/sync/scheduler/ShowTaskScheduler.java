@@ -23,6 +23,7 @@ import javax.inject.Singleton;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TimeUtils;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -45,7 +46,6 @@ import net.simonvt.cathode.remote.sync.shows.SyncShowCredits;
 import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
 import net.simonvt.cathode.sync.tmdb.api.show.SyncShowImages;
-import net.simonvt.schematic.Cursors;
 
 @Singleton public class ShowTaskScheduler extends BaseTaskScheduler {
 

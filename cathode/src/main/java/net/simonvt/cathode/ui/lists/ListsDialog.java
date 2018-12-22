@@ -16,7 +16,6 @@
 package net.simonvt.cathode.ui.lists;
 
 import android.app.Dialog;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,10 +38,10 @@ import java.util.Comparator;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
+import net.simonvt.cathode.common.entity.UserList;
 import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler;
-import net.simonvt.schematic.Cursors;
+import net.simonvt.cathode.ui.lists.DialogListItemListMapper.DialogListItem;
+import timber.log.Timber;
 
 public class ListsDialog extends DialogFragment {
 
@@ -63,14 +62,6 @@ public class ListsDialog extends DialogFragment {
   private static final String ARG_TYPE = "net.simonvt.cathode.ui.lists.ListsDialog.itemType";
   private static final String ARG_ID = "net.simonvt.cathode.ui.lists.ListsDialog.itemId";
 
-  static final String[] LISTS_PROJECTION = {
-      ListsColumns.ID, ListsColumns.TRAKT_ID, ListsColumns.NAME,
-  };
-
-  static final String[] LIST_ITEM_PROJECTION = {
-      ListItemColumns.ID, ListItemColumns.LIST_ID,
-  };
-
   @Inject ListsTaskScheduler listScheduler;
 
   private int itemType;
@@ -79,8 +70,8 @@ public class ListsDialog extends DialogFragment {
 
   private ListsDialogViewModel viewModel;
 
-  private Cursor listsCursor;
-  private Cursor listItemCursor;
+  private List<UserList> userLists;
+  private List<DialogListItem> listItems;
 
   private List<Item> lists = new ArrayList<>();
 
@@ -112,14 +103,14 @@ public class ListsDialog extends DialogFragment {
 
     viewModel = ViewModelProviders.of(this).get(ListsDialogViewModel.class);
     viewModel.setItemTypeAndId(itemType, itemId);
-    viewModel.getList().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        setListsCursor(cursor);
+    viewModel.getLists().observe(this, new Observer<List<UserList>>() {
+      @Override public void onChanged(List<UserList> userLists) {
+        setUserLists(userLists);
       }
     });
-    viewModel.getListItems().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        setListItemCursor(cursor);
+    viewModel.getListItems().observe(this, new Observer<List<DialogListItem>>() {
+      @Override public void onChanged(List<DialogListItem> listItems) {
+        setListItems(listItems);
       }
     });
   }
@@ -153,37 +144,39 @@ public class ListsDialog extends DialogFragment {
     super.onDestroyView();
   }
 
-  private void setListsCursor(Cursor listsCursor) {
-    this.listsCursor = listsCursor;
+  private void setUserLists(List<UserList> userLists) {
+    Timber.d("setUserLists");
+    this.userLists = userLists;
     updateList();
   }
 
-  private void setListItemCursor(Cursor listItemCursor) {
-    this.listItemCursor = listItemCursor;
+  private void setListItems(List<DialogListItem> listItems) {
+    this.listItems = listItems;
     updateList();
   }
 
   private void updateList() {
+    Timber.d("updateList");
     if (getView() == null) {
       return;
     }
 
     container.removeAllViews();
 
-    if (listsCursor == null || listItemCursor == null) {
+    if (userLists == null || listItems == null) {
+      Timber.d("Something is null");
       container.addView(loading);
       return;
     }
 
-    if (listsCursor.getCount() == 0) {
+    if (userLists.isEmpty()) {
       container.addView(empty);
       return;
     }
 
-    listsCursor.moveToPosition(-1);
-    while (listsCursor.moveToNext()) {
-      final long id = Cursors.getLong(listsCursor, ListsColumns.ID);
-      final String name = Cursors.getString(listsCursor, ListsColumns.NAME);
+    for (UserList userList : userLists) {
+      long id = userList.getId();
+      String name = userList.getName();
       Item item = getItem(id);
       if (item == null) {
         item = new Item(id, name);
@@ -196,9 +189,8 @@ public class ListsDialog extends DialogFragment {
 
     Collections.sort(lists, comparator);
 
-    listItemCursor.moveToPosition(-1);
-    while (listItemCursor.moveToNext()) {
-      final long listId = Cursors.getLong(listItemCursor, ListItemColumns.LIST_ID);
+    for (DialogListItem listItem : listItems) {
+      long listId = listItem.getListId();
       getItem(listId).checked = true;
     }
 

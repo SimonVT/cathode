@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Watching;
 import net.simonvt.cathode.api.enumeration.Action;
 import net.simonvt.cathode.api.service.UsersService;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -48,7 +49,6 @@ import net.simonvt.cathode.remote.sync.shows.SyncShow;
 import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
 import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import net.simonvt.cathode.sync.jobscheduler.SchedulerService;
-import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
 public class SyncWatching extends CallJob<Watching> {

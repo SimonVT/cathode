@@ -17,13 +17,9 @@
 package net.simonvt.cathode.common.data;
 
 import android.content.Context;
-import android.database.ContentObserver;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import net.simonvt.cathode.common.database.DatabaseUtils;
 import net.simonvt.cathode.common.database.SimpleCursor;
 
@@ -61,22 +57,28 @@ abstract class BaseCursorLiveData<D> extends ListenableLiveData<D>
   }
 
   public Cursor loadCursor() {
-    Cursor cursor =
-        context.getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);
-    SimpleCursor result = null;
-    if (cursor != null) {
-      Uri oldNotificationUri = notificationUri;
-      notificationUri = DatabaseUtils.getNotificationUri(cursor);
-      if (oldNotificationUri == null) {
-        registerUri(notificationUri);
-      } else if (!oldNotificationUri.equals(notificationUri)) {
-        unregisterUri(oldNotificationUri);
-        registerUri(notificationUri);
-      }
+    try {
+      Cursor cursor =
+          context.getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);
+      SimpleCursor result = null;
+      if (cursor != null) {
+        Uri oldNotificationUri = notificationUri;
+        notificationUri = DatabaseUtils.getNotificationUri(cursor);
+        if (oldNotificationUri == null) {
+          registerUri(notificationUri);
+        } else if (!oldNotificationUri.equals(notificationUri)) {
+          unregisterUri(oldNotificationUri);
+          registerUri(notificationUri);
+        }
 
-      result = new SimpleCursor(cursor);
-      cursor.close();
+        result = new SimpleCursor(cursor);
+        cursor.close();
+      }
+      return result;
+    } catch (SQLiteException e) {
+      e.printStackTrace();
     }
-    return result;
+
+    return null;
   }
 }

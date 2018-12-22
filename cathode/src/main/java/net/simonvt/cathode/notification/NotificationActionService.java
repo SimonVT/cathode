@@ -29,6 +29,7 @@ import dagger.android.AndroidInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.CathodeApp;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.common.util.Longs;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -37,7 +38,6 @@ import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.sync.trakt.CheckIn;
 import net.simonvt.cathode.ui.EpisodeDetailsActivity;
-import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
 public class NotificationActionService extends JobIntentService {

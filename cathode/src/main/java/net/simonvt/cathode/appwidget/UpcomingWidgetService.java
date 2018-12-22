@@ -20,7 +20,6 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.format.DateUtils;
@@ -33,9 +32,13 @@ import dagger.android.AndroidInjection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.ShowWithEpisode;
+import net.simonvt.cathode.entitymapper.ShowWithEpisodeListMapper;
+import net.simonvt.cathode.entitymapper.ShowWithEpisodeMapper;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -70,7 +73,7 @@ public class UpcomingWidgetService extends RemoteViewsService {
     private AppWidgetManager widgetManager;
     private int appWidgetId;
 
-    private LiveData<Cursor> upcomingEpisodes;
+    private LiveData<List<ShowWithEpisode>> upcomingEpisodes;
 
     private ItemModel items;
 
@@ -89,49 +92,50 @@ public class UpcomingWidgetService extends RemoteViewsService {
       final long upcomingTime =
           currentTime + UpcomingTimePreference.getInstance().get().getCacheTime();
 
-      upcomingEpisodes =
-          new CursorLiveData(context, Episodes.EPISODES_WITH_SHOW, ItemModel.PROJECTION, "("
-              + SqlColumn.table(Tables.SHOWS).column(ShowColumns.WATCHED_COUNT)
-              + ">0 OR "
-              + SqlColumn.table(Tables.SHOWS).column(ShowColumns.IN_WATCHLIST)
-              + "=1) AND "
-              + SqlColumn.table(Tables.SHOWS).column(ShowColumns.HIDDEN_CALENDAR)
-              + "=0 AND ("
-              + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED)
-              + ">? AND "
-              + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED)
-              + "<?)", new String[] {
-              String.valueOf(currentTime - DateUtils.HOUR_IN_MILLIS), String.valueOf(upcomingTime)
-          }, Shows.SORT_NEXT_EPISODE);
+      upcomingEpisodes = new MappedCursorLiveData<>(context, Episodes.EPISODES_WITH_SHOW,
+          ShowWithEpisodeMapper.PROJECTION, "("
+          + SqlColumn.table(Tables.SHOWS).column(ShowColumns.WATCHED_COUNT)
+          + ">0 OR "
+          + SqlColumn.table(Tables.SHOWS).column(ShowColumns.IN_WATCHLIST)
+          + "=1) AND "
+          + SqlColumn.table(Tables.SHOWS).column(ShowColumns.HIDDEN_CALENDAR)
+          + "=0 AND ("
+          + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED)
+          + ">? AND "
+          + SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED)
+          + "<?)", new String[] {
+          String.valueOf(currentTime - DateUtils.HOUR_IN_MILLIS), String.valueOf(upcomingTime)
+      }, Shows.SORT_NEXT_EPISODE, new ShowWithEpisodeListMapper());
 
       upcomingEpisodes.observeForever(upcomingObserver);
     }
 
-    private Observer<Cursor> upcomingObserver = new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        Timber.d("Load completed: %d", cursor.getCount());
-        items = ItemModel.fromCursor(context, cursor);
-        widgetManager.notifyAppWidgetViewDataChanged(appWidgetId, android.R.id.list);
+    private Observer<List<ShowWithEpisode>> upcomingObserver =
+        new Observer<List<ShowWithEpisode>>() {
+          @Override public void onChanged(List<ShowWithEpisode> showsWithEpisode) {
+            Timber.d("Load completed: %d", showsWithEpisode.size());
+            items = ItemModel.fromItems(context, showsWithEpisode);
+            widgetManager.notifyAppWidgetViewDataChanged(appWidgetId, android.R.id.list);
 
-        final long nextUpdateTime = items.getNextUpdateTime();
+            final long nextUpdateTime = items.getNextUpdateTime();
 
-        DateFormat df = SimpleDateFormat.getDateTimeInstance();
-        Timber.d("Next update: %s", df.format(new Date(nextUpdateTime)));
+            DateFormat df = SimpleDateFormat.getDateTimeInstance();
+            Timber.d("Next update: %s", df.format(new Date(nextUpdateTime)));
 
-        final AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            final AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        Intent intent = new Intent(context, UpcomingWidgetProvider.class);
-        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        int[] ids = {
-            appWidgetId,
+            Intent intent = new Intent(context, UpcomingWidgetProvider.class);
+            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            int[] ids = {
+                appWidgetId,
+            };
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+
+            PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
+            am.cancel(pi);
+            am.set(AlarmManager.RTC, nextUpdateTime, pi);
+          }
         };
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-
-        PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
-        am.cancel(pi);
-        am.set(AlarmManager.RTC, nextUpdateTime, pi);
-      }
-    };
 
     @Override public void onDataSetChanged() {
     }

@@ -17,11 +17,13 @@
 package net.simonvt.cathode.ui.movie;
 
 import android.app.Application;
-import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import java.util.List;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.Movie;
+import net.simonvt.cathode.entitymapper.MovieListMapper;
 import net.simonvt.cathode.provider.ProviderSchematic.RelatedMovies;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
 
@@ -29,7 +31,7 @@ public class RelatedMoviesViewModel extends AndroidViewModel {
 
   private long movieId = -1L;
 
-  private LiveData<Cursor> movies;
+  private LiveData<List<Movie>> movies;
 
   public RelatedMoviesViewModel(@NonNull Application application) {
     super(application);
@@ -38,12 +40,12 @@ public class RelatedMoviesViewModel extends AndroidViewModel {
   public void setMovieId(long movieId) {
     if (this.movieId == -1L) {
       this.movieId = movieId;
-      movies = new CursorLiveData(getApplication(), RelatedMovies.fromMovie(movieId),
-          MoviesAdapter.PROJECTION, null, null, null);
+      movies = new MappedCursorLiveData<>(getApplication(), RelatedMovies.fromMovie(movieId),
+          MoviesAdapter.PROJECTION, null, null, null, new MovieListMapper());
     }
   }
 
-  public LiveData<Cursor> getMovies() {
+  public LiveData<List<Movie>> getMovies() {
     return movies;
   }
 }

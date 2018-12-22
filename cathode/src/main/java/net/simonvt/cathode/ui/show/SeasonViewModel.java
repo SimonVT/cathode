@@ -17,19 +17,28 @@
 package net.simonvt.cathode.ui.show;
 
 import android.app.Application;
-import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import net.simonvt.cathode.common.data.CursorLiveData;
-import net.simonvt.cathode.provider.DatabaseContract;
-import net.simonvt.cathode.provider.ProviderSchematic;
+import java.util.List;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.Episode;
+import net.simonvt.cathode.entitymapper.EpisodeListMapper;
+import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
+import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 
 public class SeasonViewModel extends AndroidViewModel {
 
+  public static final String[] PROJECTION = {
+      EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
+      EpisodeColumns.WATCHED, EpisodeColumns.IN_COLLECTION, EpisodeColumns.FIRST_AIRED,
+      EpisodeColumns.SHOW_TITLE, LastModifiedColumns.LAST_MODIFIED,
+  };
+
   private long seasonId = -1L;
 
-  private LiveData<Cursor> episodes;
+  private LiveData<List<Episode>> episodes;
 
   public SeasonViewModel(@NonNull Application application) {
     super(application);
@@ -40,13 +49,12 @@ public class SeasonViewModel extends AndroidViewModel {
       this.seasonId = seasonId;
 
       episodes =
-          new CursorLiveData(getApplication(), ProviderSchematic.Episodes.fromSeason(seasonId),
-              SeasonAdapter.PROJECTION, null, null,
-              DatabaseContract.EpisodeColumns.EPISODE + " ASC");
+          new MappedCursorLiveData<>(getApplication(), Episodes.fromSeason(seasonId), PROJECTION,
+              null, null, EpisodeColumns.EPISODE + " ASC", new EpisodeListMapper());
     }
   }
 
-  public LiveData<Cursor> getEpisodes() {
+  public LiveData<List<Episode>> getEpisodes() {
     return episodes;
   }
 }

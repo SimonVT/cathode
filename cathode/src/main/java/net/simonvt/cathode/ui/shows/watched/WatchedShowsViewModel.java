@@ -17,30 +17,32 @@
 package net.simonvt.cathode.ui.shows.watched;
 
 import android.app.Application;
-import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import java.util.List;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.ShowWithEpisode;
+import net.simonvt.cathode.entitymapper.ShowWithEpisodeListMapper;
+import net.simonvt.cathode.entitymapper.ShowWithEpisodeMapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.ui.shows.ShowsWithNextAdapter;
 import net.simonvt.cathode.ui.shows.watched.WatchedShowsFragment.SortBy;
 
 public class WatchedShowsViewModel extends AndroidViewModel {
 
-  private CursorLiveData shows;
+  private MappedCursorLiveData<List<ShowWithEpisode>> shows;
 
   public WatchedShowsViewModel(@NonNull Application application) {
     super(application);
     SortBy sortBy = SortBy.fromValue(
         Settings.get(application).getString(Settings.Sort.SHOW_WATCHED, SortBy.TITLE.getKey()));
-    shows =
-        new CursorLiveData(application, Shows.SHOWS_WATCHED, ShowsWithNextAdapter.PROJECTION, null,
-            null, sortBy.getSortOrder());
+    shows = new MappedCursorLiveData<>(application, Shows.SHOWS_WATCHED,
+        ShowWithEpisodeMapper.PROJECTION, null, null, sortBy.getSortOrder(),
+        new ShowWithEpisodeListMapper());
   }
 
-  public LiveData<Cursor> getShows() {
+  public LiveData<List<ShowWithEpisode>> getShows() {
     return shows;
   }
 

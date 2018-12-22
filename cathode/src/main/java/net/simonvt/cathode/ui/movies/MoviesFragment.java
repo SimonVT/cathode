@@ -16,16 +16,16 @@
 package net.simonvt.cathode.ui.movies;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
-import androidx.recyclerview.widget.RecyclerView;
 import dagger.android.support.AndroidSupportInjection;
+import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
+import net.simonvt.cathode.common.entity.Movie;
+import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
@@ -40,6 +40,8 @@ public abstract class MoviesFragment
   @Inject MovieTaskScheduler movieScheduler;
 
   private MoviesNavigationListener navigationListener;
+
+  private BaseAdapter<Movie, BaseMoviesAdapter.ViewHolder> adapter;
 
   private int columnCount;
 
@@ -109,22 +111,23 @@ public abstract class MoviesFragment
     movieScheduler.setIsInCollection(movieId, false);
   }
 
-  protected RecyclerView.Adapter<MoviesAdapter.ViewHolder> getAdapter(Cursor cursor) {
-    return new MoviesAdapter(getActivity(), this, cursor);
+  protected BaseAdapter<Movie, BaseMoviesAdapter.ViewHolder> createAdapter() {
+    return new MoviesAdapter(getActivity(), this);
   }
 
-  protected Observer<Cursor> observer = new Observer<Cursor>() {
-    @Override public void onChanged(Cursor cursor) {
-      setCursor(cursor);
+  protected Observer<List<Movie>> observer = new Observer<List<Movie>>() {
+    @Override public void onChanged(List<Movie> movies) {
+      setMovies(movies);
     }
   };
 
-  void setCursor(Cursor cursor) {
-    if (getAdapter() == null) {
-      setAdapter(getAdapter(cursor));
-    } else {
-      ((RecyclerCursorAdapter) getAdapter()).changeCursor(cursor);
+  void setMovies(List<Movie> movies) {
+    if (adapter == null) {
+      adapter = createAdapter();
+      setAdapter(adapter);
     }
+
+    adapter.setList(movies);
 
     if (scrollToTop) {
       getRecyclerView().scrollToPosition(0);

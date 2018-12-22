@@ -16,41 +16,41 @@
 package net.simonvt.cathode.ui.lists;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
+import net.simonvt.cathode.common.entity.UserList;
+import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
-import net.simonvt.schematic.Cursors;
 
-public class ListsAdapter extends RecyclerCursorAdapter<ListsAdapter.ViewHolder> {
+public class ListsAdapter extends BaseAdapter<UserList, ListsAdapter.ViewHolder> {
 
   public interface OnListClickListener {
 
     void onListClicked(long listId, String listName);
   }
 
-  public static final String[] PROJECTION = new String[] {
-      ListsColumns.ID, ListsColumns.NAME, ListsColumns.DESCRIPTION, ListsColumns.LAST_MODIFIED,
-      ListsColumns.TRAKT_ID,
-  };
-
   private OnListClickListener listener;
 
   public ListsAdapter(OnListClickListener listener, Context context) {
     super(context);
     this.listener = listener;
+    setHasStableIds(true);
   }
 
-  public ListsAdapter(OnListClickListener listener, Context context, Cursor cursor) {
-    super(context, cursor);
-    this.listener = listener;
+  @Override public long getItemId(int position) {
+    return getList().get(position).getId();
+  }
+
+  @Override
+  protected boolean areItemsTheSame(@NonNull UserList oldItem, @NonNull UserList newItem) {
+    return oldItem.getId() == newItem.getId();
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -66,12 +66,11 @@ public class ListsAdapter extends RecyclerCursorAdapter<ListsAdapter.ViewHolder>
     return vh;
   }
 
-  @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
-    final String name = Cursors.getString(cursor, ListsColumns.NAME);
-    final String description = Cursors.getString(cursor, ListsColumns.DESCRIPTION);
+  @Override public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    UserList userList = getList().get(position);
 
-    holder.name.setText(name);
-    holder.description.setText(description);
+    holder.name.setText(userList.getName());
+    holder.description.setText(userList.getDescription());
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {

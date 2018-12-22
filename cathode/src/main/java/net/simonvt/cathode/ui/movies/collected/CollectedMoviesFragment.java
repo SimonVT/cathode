@@ -19,7 +19,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.loader.content.Loader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -27,12 +26,9 @@ import java.util.Map;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.common.database.SimpleCursor;
-import net.simonvt.cathode.common.database.SimpleCursorLoader;
 import net.simonvt.cathode.remote.sync.movies.SyncMoviesCollection;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.lists.ListDialog;
-import net.simonvt.cathode.ui.movies.MoviesAdapter;
 import net.simonvt.cathode.ui.movies.MoviesFragment;
 
 public class CollectedMoviesFragment extends MoviesFragment implements ListDialog.Callback {

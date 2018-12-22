@@ -17,7 +17,6 @@ package net.simonvt.cathode.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -39,6 +38,8 @@ import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.common.entity.Movie;
+import net.simonvt.cathode.common.entity.ShowWithEpisode;
 import net.simonvt.cathode.common.event.AuthFailedEvent;
 import net.simonvt.cathode.common.event.AuthFailedEvent.OnAuthFailedListener;
 import net.simonvt.cathode.common.event.ErrorEvent;
@@ -54,10 +55,6 @@ import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.common.widget.Crouton;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
-import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic;
 import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.SettingsActivity;
@@ -98,7 +95,6 @@ import net.simonvt.cathode.ui.suggestions.movies.MovieSuggestionsFragment;
 import net.simonvt.cathode.ui.suggestions.shows.ShowSuggestionsFragment;
 import net.simonvt.cathode.widget.WatchingView;
 import net.simonvt.cathode.widget.WatchingView.WatchingViewListener;
-import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
 public class HomeActivity extends BaseActivity
@@ -133,17 +129,6 @@ public class HomeActivity extends BaseActivity
   public static final String ACTION_SEARCH = "net.simonvt.cathode.SEARCH";
   public static final String ACTION_UPCOMING = "net.simonvt.cathode.UPCOMING";
 
-  static final String[] SHOW_WATCHING_PROJECTION = new String[] {
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.ID + " AS episodeId",
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.TITLE,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.SEASON,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.EPISODE,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.STARTED_AT,
-      DatabaseSchematic.Tables.EPISODES + "." + EpisodeColumns.EXPIRES_AT,
-  };
-
   @Inject ShowTaskScheduler showScheduler;
   @Inject MovieTaskScheduler movieScheduler;
 
@@ -164,8 +149,8 @@ public class HomeActivity extends BaseActivity
 
   private HomeViewModel viewModel;
 
-  private Cursor watchingShow;
-  private Cursor watchingMovie;
+  private ShowWithEpisode watchingShow;
+  private Movie watchingMovie;
 
   private PendingReplacement pendingReplacement;
 
@@ -240,15 +225,15 @@ public class HomeActivity extends BaseActivity
     AuthFailedEvent.registerListener(onAuthFailedListener);
 
     viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-    viewModel.getWatchingShow().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        watchingShow = cursor;
+    viewModel.getWatchingShow().observe(this, new Observer<ShowWithEpisode>() {
+      @Override public void onChanged(ShowWithEpisode showWithEpisode) {
+        watchingShow = showWithEpisode;
         updateWatching();
       }
     });
-    viewModel.getWatchingMovie().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        watchingMovie = cursor;
+    viewModel.getWatchingMovie().observe(this, new Observer<Movie>() {
+      @Override public void onChanged(Movie movie) {
+        watchingMovie = movie;
         updateWatching();
       }
     });
@@ -739,27 +724,29 @@ public class HomeActivity extends BaseActivity
   ///////////////////////////////////////////////////////////////////////////
 
   private void updateWatching() {
-    if (watchingShow != null && watchingShow.moveToFirst()) {
-      final long showId = Cursors.getLong(watchingShow, ShowColumns.ID);
-      final String show = Cursors.getString(watchingShow, ShowColumns.TITLE);
-      final int season = Cursors.getInt(watchingShow, EpisodeColumns.SEASON);
-      final int episode = Cursors.getInt(watchingShow, EpisodeColumns.EPISODE);
+    if (watchingShow != null) {
+      final long showId = watchingShow.getShow().getId();
+      final String showTitle = watchingShow.getShow().getTitle();
+      final int season = watchingShow.getEpisode().getSeason();
+      final int episode = watchingShow.getEpisode().getEpisode();
 
-      final long episodeId = Cursors.getLong(watchingShow, "episodeId");
+      final long episodeId = watchingShow.getEpisode().getId();
       final String episodeTitle =
-          DataHelper.getEpisodeTitle(this, watchingShow, season, episode, false);
-      final long startTime = Cursors.getLong(watchingShow, EpisodeColumns.STARTED_AT);
-      final long endTime = Cursors.getLong(watchingShow, EpisodeColumns.EXPIRES_AT);
+          DataHelper.getEpisodeTitle(this, watchingShow.getEpisode().getTitle(), season, episode,
+              false);
+      final long startTime = watchingShow.getEpisode().getCheckinStartedAt();
+      final long endTime = watchingShow.getEpisode().getCheckinExpiresAt();
 
       final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, showId);
 
-      watchingView.watchingShow(showId, show, episodeId, episodeTitle, poster, startTime, endTime);
-    } else if (watchingMovie != null && watchingMovie.moveToFirst()) {
-      final long id = Cursors.getLong(watchingMovie, MovieColumns.ID);
-      final String title = Cursors.getString(watchingMovie, MovieColumns.TITLE);
-      final String overview = Cursors.getString(watchingMovie, MovieColumns.OVERVIEW);
-      final long startTime = Cursors.getLong(watchingMovie, MovieColumns.STARTED_AT);
-      final long endTime = Cursors.getLong(watchingMovie, MovieColumns.EXPIRES_AT);
+      watchingView.watchingShow(showId, showTitle, episodeId, episodeTitle, poster, startTime,
+          endTime);
+    } else if (watchingMovie != null) {
+      final long id = watchingMovie.getId();
+      final String title = watchingMovie.getTitle();
+      final String overview = watchingMovie.getOverview();
+      final long startTime = watchingMovie.getCheckinStartedAt();
+      final long endTime = watchingMovie.getCheckinExpiresAt();
 
       final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
 

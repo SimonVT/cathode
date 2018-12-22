@@ -26,13 +26,13 @@ import android.os.Build;
 import android.text.format.DateUtils;
 import androidx.annotation.RequiresApi;
 import java.util.ArrayList;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import net.simonvt.cathode.sync.jobscheduler.SchedulerService;
-import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
 public class SyncUserMovies extends Job {

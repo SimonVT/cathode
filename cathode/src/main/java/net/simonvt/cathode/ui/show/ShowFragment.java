@@ -16,7 +16,6 @@
 package net.simonvt.cathode.ui.show;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -41,16 +40,23 @@ import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.support.AndroidSupportInjection;
+import java.util.List;
 import java.util.Locale;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.enumeration.ShowStatus;
 import net.simonvt.cathode.api.util.TraktUtils;
+import net.simonvt.cathode.common.entity.CastMember;
+import net.simonvt.cathode.common.entity.Comment;
+import net.simonvt.cathode.common.entity.Episode;
+import net.simonvt.cathode.common.entity.Season;
+import net.simonvt.cathode.common.entity.Show;
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.common.util.DateStringUtils;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.Intents;
+import net.simonvt.cathode.common.util.Joiner;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.common.widget.CircleTransformation;
 import net.simonvt.cathode.common.widget.CircularProgressIndicator;
@@ -60,17 +66,7 @@ import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract;
-import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
-import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
-import net.simonvt.cathode.provider.DatabaseContract.RelatedShowsColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowCastColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
-import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.util.DataHelper;
-import net.simonvt.cathode.provider.util.SqlColumn;
 import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.PersonTaskScheduler;
@@ -84,7 +80,6 @@ import net.simonvt.cathode.ui.dialog.RatingDialog;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.widget.AdapterCountDataObserver;
-import net.simonvt.schematic.Cursors;
 
 public class ShowFragment extends RefreshableAppBarFragment {
 
@@ -100,53 +95,6 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private static final String DIALOG_LISTS_ADD =
       "net.simonvt.cathode.ui.show.ShowFragment.listsAddDialog";
 
-  static final String[] SHOW_PROJECTION = new String[] {
-      ShowColumns.TRAKT_ID, ShowColumns.TITLE, ShowColumns.YEAR, ShowColumns.AIR_TIME,
-      ShowColumns.AIR_DAY, ShowColumns.NETWORK, ShowColumns.CERTIFICATION, ShowColumns.STATUS,
-      ShowColumns.USER_RATING, ShowColumns.RATING, ShowColumns.OVERVIEW, ShowColumns.IN_WATCHLIST,
-      ShowColumns.IN_COLLECTION_COUNT, ShowColumns.WATCHED_COUNT, ShowColumns.LAST_SYNC,
-      ShowColumns.LAST_COMMENT_SYNC, ShowColumns.LAST_CREDITS_SYNC, ShowColumns.LAST_RELATED_SYNC,
-      ShowColumns.HOMEPAGE, ShowColumns.TRAILER, ShowColumns.IMDB_ID, ShowColumns.TVDB_ID,
-      ShowColumns.TMDB_ID, ShowColumns.NEEDS_SYNC, ShowColumns.HIDDEN_CALENDAR,
-  };
-
-  static final String[] EPISODE_PROJECTION = new String[] {
-      EpisodeColumns.ID, EpisodeColumns.TITLE, EpisodeColumns.FIRST_AIRED, EpisodeColumns.SEASON,
-      EpisodeColumns.EPISODE, EpisodeColumns.WATCHED, EpisodeColumns.WATCHING,
-      EpisodeColumns.CHECKED_IN,
-  };
-
-  static final String[] GENRES_PROJECTION = new String[] {
-      ShowGenreColumns.GENRE,
-  };
-
-  static final String[] RELATED_PROJECTION = new String[] {
-      SqlColumn.table(Tables.SHOW_RELATED).column(RelatedShowsColumns.RELATED_SHOW_ID),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.OVERVIEW),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.RATING),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.VOTES),
-  };
-
-  static final String[] CAST_PROJECTION = new String[] {
-      Tables.SHOW_CAST + "." + ShowCastColumns.ID,
-      Tables.SHOW_CAST + "." + ShowCastColumns.CHARACTER,
-      Tables.SHOW_CAST + "." + ShowCastColumns.PERSON_ID, Tables.PEOPLE + "." + PersonColumns.NAME,
-  };
-
-  static final String[] COMMENTS_PROJECTION = new String[] {
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.ID),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.COMMENT),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.SPOILER),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.REVIEW),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.CREATED_AT),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.LIKES),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.USER_RATING),
-      SqlColumn.table(Tables.USERS).column(UserColumns.USERNAME),
-      SqlColumn.table(Tables.USERS).column(UserColumns.NAME),
-      SqlColumn.table(Tables.USERS).column(UserColumns.AVATAR),
-  };
-
   private static final long SYNC_INTERVAL = 2 * DateUtils.DAY_IN_MILLIS;
 
   @Inject PersonTaskScheduler personScheduler;
@@ -155,8 +103,21 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   private long showId;
 
+  private ShowViewModel viewModel;
+
+  private Show show;
+  private List<String> genres;
+  private List<CastMember> cast;
+  private List<Comment> userComments;
+  private List<Comment> comments;
+  private List<Show> related;
+  private Episode toWatch;
+  private Episode lastWatched;
+  private Episode toCollect;
+  private Episode lastCollected;
+
   @BindView(R.id.seasonsTitle) View seasonsTitle;
-  @BindView(R.id.seasons) RecyclerView seasons;
+  @BindView(R.id.seasons) RecyclerView seasonsView;
   private SeasonsAdapter seasonsAdapter;
 
   @BindView(R.id.rating) CircularProgressIndicator rating;
@@ -165,7 +126,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
   @BindView(R.id.overview) TextView overview;
 
   @BindView(R.id.genresTitle) View genresTitle;
-  @BindView(R.id.genres) TextView genres;
+  @BindView(R.id.genres) TextView genresView;
 
   @BindView(R.id.checkmarks) View checkmarks;
   @BindView(R.id.isWatched) TextView watched;
@@ -174,7 +135,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   @BindView(R.id.castParent) View castParent;
   @BindView(R.id.castHeader) View castHeader;
-  @BindView(R.id.cast) LinearLayout cast;
+  @BindView(R.id.cast) LinearLayout castView;
   @BindView(R.id.castContainer) LinearLayout castContainer;
 
   @BindView(R.id.commentsParent) View commentsParent;
@@ -183,7 +144,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   @BindView(R.id.relatedParent) View relatedParent;
   @BindView(R.id.relatedHeader) View relatedHeader;
-  @BindView(R.id.related) LinearLayout related;
+  @BindView(R.id.related) LinearLayout relatedView;
   @BindView(R.id.relatedContainer) LinearLayout relatedContainer;
 
   @BindView(R.id.trailer) TextView trailer;
@@ -193,27 +154,22 @@ public class ShowFragment extends RefreshableAppBarFragment {
   @BindView(R.id.viewOnTvdb) TextView viewOnTvdb;
   @BindView(R.id.viewOnTmdb) TextView viewOnTmdb;
 
-  private ShowViewModel viewModel;
-
-  private Cursor userComments;
-  private Cursor comments;
-
   @BindView(R.id.episodes) LinearLayout episodes;
 
-  @BindView(R.id.toWatch) View toWatch;
+  @BindView(R.id.toWatch) View toWatchView;
   private EpisodeHolder toWatchHolder;
   private long toWatchId = -1;
   private String toWatchTitle;
 
-  @BindView(R.id.lastWatched) @Nullable View lastWatched;
+  @BindView(R.id.lastWatched) @Nullable View lastWatchedView;
   private EpisodeHolder lastWatchedHolder;
   private long lastWatchedId = -1;
 
-  @BindView(R.id.toCollect) View toCollect;
+  @BindView(R.id.toCollect) View toCollectView;
   private EpisodeHolder toCollectHolder;
   private long toCollectId = -1;
 
-  @BindView(R.id.lastCollected) @Nullable View lastCollected;
+  @BindView(R.id.lastCollected) @Nullable View lastCollectedView;
   private EpisodeHolder lastCollectedHolder;
   private long lastCollectedId = -1;
 
@@ -290,51 +246,69 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
     viewModel = ViewModelProviders.of(this).get(ShowViewModel.class);
     viewModel.setShowId(showId);
-    viewModel.getShow().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        updateShowView(cursor);
+    viewModel.getShow().observe(this, new Observer<Show>() {
+      @Override public void onChanged(Show show) {
+        ShowFragment.this.show = show;
+        updateShowView();
       }
     });
-    viewModel.getGenres().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        updateGenreViews(cursor);
+    viewModel.getGenres().observe(this, new Observer<List<String>>() {
+      @Override public void onChanged(List<String> genres) {
+        ShowFragment.this.genres = genres;
+        updateGenreViews();
       }
     });
-    viewModel.getSeasons().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        seasonsAdapter.changeCursor(cursor);
+    viewModel.getSeasons().observe(this, new Observer<List<Season>>() {
+      @Override public void onChanged(List<Season> seasons) {
+        seasonsAdapter.setList(seasons);
       }
     });
-    viewModel.getCast().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        updateCastViews(cursor);
+    viewModel.getCast().observe(this, new Observer<List<CastMember>>() {
+      @Override public void onChanged(List<CastMember> castMembers) {
+        cast = castMembers;
+        updateCastViews();
       }
     });
-    viewModel.getUserComments().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        userComments = cursor;
+    viewModel.getUserComments().observe(this, new Observer<List<Comment>>() {
+      @Override public void onChanged(List<Comment> userComments) {
+        ShowFragment.this.userComments = userComments;
         updateComments();
       }
     });
-    viewModel.getComments().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        comments = cursor;
+    viewModel.getComments().observe(this, new Observer<List<Comment>>() {
+      @Override public void onChanged(List<Comment> comments) {
+        ShowFragment.this.comments = comments;
         updateComments();
       }
     });
-    viewModel.getRelated().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        updateRelatedView(cursor);
+    viewModel.getRelated().observe(this, new Observer<List<Show>>() {
+      @Override public void onChanged(List<Show> relatedShows) {
+        related = relatedShows;
+        updateRelatedView();
       }
     });
-    viewModel.getToWatch().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        updateEpisodeWatchViews(cursor);
+    viewModel.getToWatch().observe(this, new Observer<Episode>() {
+      @Override public void onChanged(Episode episode) {
+        toWatch = episode;
+        updateToWatch();
       }
     });
-    viewModel.getToCollect().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        updateEpisodeCollectViews(cursor);
+    viewModel.getLastWatched().observe(this, new Observer<Episode>() {
+      @Override public void onChanged(Episode episode) {
+        lastWatched = episode;
+        updateLastWatched();
+      }
+    });
+    viewModel.getToCollect().observe(this, new Observer<Episode>() {
+      @Override public void onChanged(Episode episode) {
+        toCollect = episode;
+        updateToCollect();
+      }
+    });
+    viewModel.getLastCollected().observe(this, new Observer<Episode>() {
+      @Override public void onChanged(Episode episode) {
+        lastCollected = episode;
+        updateLastCollected();
       }
     });
   }
@@ -362,30 +336,30 @@ public class ShowFragment extends RefreshableAppBarFragment {
     DividerItemDecoration decoration =
         new DividerItemDecoration(getActivity(), LinearLayoutManager.HORIZONTAL);
     decoration.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.divider_4dp));
-    seasons.addItemDecoration(decoration);
-    seasons.setLayoutManager(
+    seasonsView.addItemDecoration(decoration);
+    seasonsView.setLayoutManager(
         new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-    seasons.setAdapter(seasonsAdapter);
-    ((DefaultItemAnimator) seasons.getItemAnimator()).setSupportsChangeAnimations(false);
+    seasonsView.setAdapter(seasonsAdapter);
+    ((DefaultItemAnimator) seasonsView.getItemAnimator()).setSupportsChangeAnimations(false);
     seasonsAdapter.registerAdapterDataObserver(new AdapterCountDataObserver(seasonsAdapter) {
       @Override public void onCountChanged(int itemCount) {
-        if (seasonsTitle != null && seasons != null) {
+        if (seasonsTitle != null) {
           if (itemCount == 0) {
             seasonsTitle.setVisibility(View.GONE);
-            seasons.setVisibility(View.GONE);
+            seasonsView.setVisibility(View.GONE);
           } else {
             seasonsTitle.setVisibility(View.VISIBLE);
-            seasons.setVisibility(View.VISIBLE);
+            seasonsView.setVisibility(View.VISIBLE);
           }
         }
       }
     });
     if (seasonsAdapter.getItemCount() > 0) {
       seasonsTitle.setVisibility(View.VISIBLE);
-      seasons.setVisibility(View.VISIBLE);
+      seasonsView.setVisibility(View.VISIBLE);
     } else {
       seasonsTitle.setVisibility(View.GONE);
-      seasons.setVisibility(View.GONE);
+      seasonsView.setVisibility(View.GONE);
     }
 
     rating.setOnClickListener(new View.OnClickListener() {
@@ -413,8 +387,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
       }
     });
 
-    toWatchHolder = new EpisodeHolder(toWatch);
-    toWatch.setOnClickListener(new View.OnClickListener() {
+    toWatchHolder = new EpisodeHolder(toWatchView);
+    toWatchView.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         if (toWatchId != -1) navigationListener.onDisplayEpisode(toWatchId, showTitle);
       }
@@ -450,9 +424,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
       }
     });
 
-    if (lastWatched != null) {
-      lastWatchedHolder = new EpisodeHolder(lastWatched);
-      lastWatched.setOnClickListener(new View.OnClickListener() {
+    if (lastWatchedView != null) {
+      lastWatchedHolder = new EpisodeHolder(lastWatchedView);
+      lastWatchedView.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View view) {
           if (lastWatchedId != -1) {
             navigationListener.onDisplayEpisode(lastWatchedId, showTitle);
@@ -461,8 +435,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
       });
     }
 
-    toCollectHolder = new EpisodeHolder(toCollect);
-    toCollect.setOnClickListener(new View.OnClickListener() {
+    toCollectHolder = new EpisodeHolder(toCollectView);
+    toCollectView.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         if (toCollectId != -1) navigationListener.onDisplayEpisode(toCollectId, showTitle);
       }
@@ -488,9 +462,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
       }
     });
 
-    if (lastCollected != null) {
-      lastCollectedHolder = new EpisodeHolder(lastCollected);
-      lastCollected.setOnClickListener(new View.OnClickListener() {
+    if (lastCollectedView != null) {
+      lastCollectedHolder = new EpisodeHolder(lastCollectedView);
+      lastCollectedView.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View view) {
           if (lastCollectedId != -1) {
             navigationListener.onDisplayEpisode(lastCollectedId, showTitle);
@@ -518,6 +492,16 @@ public class ShowFragment extends RefreshableAppBarFragment {
         }
       });
     }
+
+    updateShowView();
+    updateGenreViews();
+    updateCastViews();
+    updateRelatedView();
+    updateToWatch();
+    updateLastWatched();
+    updateToCollect();
+    updateLastCollected();
+    updateComments();
   }
 
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
@@ -576,40 +560,35 @@ public class ShowFragment extends RefreshableAppBarFragment {
     return super.onMenuItemClick(item);
   }
 
-  private void updateShowView(final Cursor cursor) {
-    if (cursor == null || !cursor.moveToFirst()) return;
-
-    final long traktId = Cursors.getLong(cursor, ShowColumns.TRAKT_ID);
-    String title = Cursors.getString(cursor, ShowColumns.TITLE);
-    if (!TextUtils.equals(title, showTitle)) {
-      showTitle = title;
-      setTitle(title);
+  private void updateShowView() {
+    if (getView() == null || show == null) {
+      return;
     }
-    final String airTime = Cursors.getString(cursor, ShowColumns.AIR_TIME);
-    final String airDay = Cursors.getString(cursor, ShowColumns.AIR_DAY);
-    final String network = Cursors.getString(cursor, ShowColumns.NETWORK);
-    final String certification = Cursors.getString(cursor, ShowColumns.CERTIFICATION);
-    final String showStatus = Cursors.getString(cursor, ShowColumns.STATUS);
+
+    showTitle = show.getTitle();
+    setTitle(show.getTitle());
     final String backdropUri = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.BACKDROP, showId);
     setBackdrop(backdropUri, true);
-    showOverview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
-    inWatchlist = Cursors.getBoolean(cursor, ShowColumns.IN_WATCHLIST);
-    final int inCollectionCount = Cursors.getInt(cursor, ShowColumns.IN_COLLECTION_COUNT);
-    final int watchedCount = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT);
+    showOverview = show.getOverview();
 
-    currentRating = Cursors.getInt(cursor, ShowColumns.USER_RATING);
-    final float ratingAll = Cursors.getFloat(cursor, ShowColumns.RATING);
-    rating.setValue(ratingAll);
+    currentRating = show.getUserRating();
+    rating.setValue(show.getRating());
 
-    calendarHidden = Cursors.getBoolean(cursor, ShowColumns.HIDDEN_CALENDAR);
+    calendarHidden = show.getHiddenCalendar();
 
-    final boolean isWatched = watchedCount > 0;
-    final boolean isCollected = inCollectionCount > 0;
+    final boolean isWatched = show.getWatchedCount() > 0;
+    final boolean isCollected = show.getInCollectionCount() > 0;
+    inWatchlist = show.getInWatchlist();
     final boolean hasCheckmark = isWatched || isCollected || inWatchlist;
     checkmarks.setVisibility(hasCheckmark ? View.VISIBLE : View.GONE);
     watched.setVisibility(isWatched ? View.VISIBLE : View.GONE);
     collection.setVisibility(isCollected ? View.VISIBLE : View.GONE);
     watchlist.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
+
+    String airDay = show.getAirDay();
+    String airTime = show.getAirTime();
+    String network = show.getNetwork();
+    String certification = show.getCertification();
 
     String airTimeString = null;
     if (airDay != null && airTime != null) {
@@ -632,10 +611,9 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
     this.airTime.setText(airTimeString);
 
+    ShowStatus status = show.getStatus();
     String statusString = null;
-    if (showStatus != null) {
-      final ShowStatus status = ShowStatus.fromValue(showStatus);
-
+    if (status != null) {
       switch (status) {
         case ENDED:
           statusString = getString(R.string.show_status_ended);
@@ -663,7 +641,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
     this.overview.setText(showOverview);
 
-    final String trailer = Cursors.getString(cursor, ShowColumns.TRAILER);
+    final String trailer = show.getTrailer();
     if (!TextUtils.isEmpty(trailer)) {
       this.trailer.setVisibility(View.VISIBLE);
       this.trailer.setOnClickListener(new View.OnClickListener() {
@@ -675,28 +653,24 @@ public class ShowFragment extends RefreshableAppBarFragment {
       this.trailer.setVisibility(View.GONE);
     }
 
-    final boolean needsSync = Cursors.getBoolean(cursor, ShowColumns.NEEDS_SYNC);
-    final long lastSync = Cursors.getLong(cursor, ShowColumns.LAST_SYNC);
-    if (needsSync || System.currentTimeMillis() > lastSync + SYNC_INTERVAL) {
+    final long lastSync = show.getLastSync();
+    if (show.getNeedsSync() || System.currentTimeMillis() > lastSync + SYNC_INTERVAL) {
       showScheduler.sync(showId);
     }
 
-    final long lastCommentSync = Cursors.getLong(cursor, ShowColumns.LAST_COMMENT_SYNC);
-    if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {
+    if (TraktTimestamps.shouldSyncComments(show.getLastCommentSync())) {
       showScheduler.syncComments(showId);
     }
 
-    final long lastActorsSync = Cursors.getLong(cursor, ShowColumns.LAST_CREDITS_SYNC);
-    if (lastSync > lastActorsSync) {
+    if (lastSync > show.getLastCreditsSync()) {
       showScheduler.syncCredits(showId, null);
     }
 
-    final long lastRelatedSync = Cursors.getLong(cursor, ShowColumns.LAST_RELATED_SYNC);
-    if (lastSync > lastRelatedSync) {
+    if (lastSync > show.getLastRelatedSync()) {
       showScheduler.syncRelated(showId, null);
     }
 
-    final String website = Cursors.getString(cursor, ShowColumns.HOMEPAGE);
+    String website = show.getHomepage();
     if (!TextUtils.isEmpty(website)) {
       this.website.setVisibility(View.VISIBLE);
       this.website.setText(website);
@@ -709,9 +683,10 @@ public class ShowFragment extends RefreshableAppBarFragment {
       this.website.setVisibility(View.GONE);
     }
 
-    final String imdbId = Cursors.getString(cursor, ShowColumns.IMDB_ID);
-    final int tvdbId = Cursors.getInt(cursor, ShowColumns.TVDB_ID);
-    final int tmdbId = Cursors.getInt(cursor, ShowColumns.TMDB_ID);
+    Long traktId = show.getTraktId();
+    String imdbId = show.getImdbId();
+    Integer tvdbId = show.getTvdbId();
+    Integer tmdbId = show.getTmdbId();
 
     viewOnTrakt.setVisibility(View.VISIBLE);
     viewOnTrakt.setOnClickListener(new View.OnClickListener() {
@@ -757,130 +732,138 @@ public class ShowFragment extends RefreshableAppBarFragment {
     invalidateMenu();
   }
 
-  private void updateGenreViews(final Cursor cursor) {
-    if (cursor.getCount() > 0) {
-      StringBuilder sb = new StringBuilder();
-      cursor.moveToPosition(-1);
-      while (cursor.moveToNext()) {
-        sb.append(Cursors.getString(cursor, ShowGenreColumns.GENRE));
-        if (!cursor.isLast()) sb.append(", ");
-      }
+  private void updateGenreViews() {
+    if (getView() == null) {
+      return;
+    }
 
-      genresTitle.setVisibility(View.VISIBLE);
-      genres.setVisibility(View.VISIBLE);
-      genres.setText(sb.toString());
-    } else {
+    if (genres == null || genres.size() == 0) {
       genresTitle.setVisibility(View.GONE);
-      genres.setVisibility(View.GONE);
+      genresView.setVisibility(View.GONE);
+    } else {
+      genresTitle.setVisibility(View.VISIBLE);
+      genresView.setVisibility(View.VISIBLE);
+      genresView.setText(Joiner.on(", ").join(genres));
     }
   }
 
-  private void updateCastViews(Cursor c) {
+  private void updateCastViews() {
+    if (getView() == null) {
+      return;
+    }
+
     castContainer.removeAllViews();
+    if (cast == null || cast.size() == 0) {
+      castParent.setVisibility(View.GONE);
+    } else {
+      castParent.setVisibility(View.VISIBLE);
 
-    final int count = c.getCount();
-    final int visibility = count > 0 ? View.VISIBLE : View.GONE;
-    castParent.setVisibility(visibility);
+      for (CastMember castMember : cast) {
+        View v =
+            LayoutInflater.from(getActivity()).inflate(R.layout.item_person, castContainer, false);
 
-    int index = 0;
+        final long personId = castMember.getPerson().getId();
+        final String headshotUrl = ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, personId);
 
-    c.moveToPosition(-1);
-    while (c.moveToNext() && index < 3) {
-      View v =
-          LayoutInflater.from(getActivity()).inflate(R.layout.item_person, castContainer, false);
+        RemoteImageView headshot = v.findViewById(R.id.headshot);
+        headshot.addTransformation(new CircleTransformation());
+        headshot.setImage(headshotUrl);
 
-      final long personId = Cursors.getLong(c, ShowCastColumns.PERSON_ID);
-      final String headshotUrl = ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, personId);
+        TextView name = v.findViewById(R.id.person_name);
+        name.setText(castMember.getPerson().getName());
 
-      RemoteImageView headshot = v.findViewById(R.id.headshot);
-      headshot.addTransformation(new CircleTransformation());
-      headshot.setImage(headshotUrl);
+        TextView character = v.findViewById(R.id.person_job);
+        character.setText(castMember.getCharacter());
 
-      TextView name = v.findViewById(R.id.person_name);
-      name.setText(Cursors.getString(c, PersonColumns.NAME));
+        v.setOnClickListener(new View.OnClickListener() {
+          @Override public void onClick(View v) {
+            navigationListener.onDisplayPerson(personId);
+          }
+        });
 
-      TextView character = v.findViewById(R.id.person_job);
-      character.setText(Cursors.getString(c, ShowCastColumns.CHARACTER));
-
-      v.setOnClickListener(new View.OnClickListener() {
-        @Override public void onClick(View v) {
-          navigationListener.onDisplayPerson(personId);
-        }
-      });
-
-      castContainer.addView(v);
-
-      index++;
-    }
-  }
-
-  private void updateRelatedView(Cursor related) {
-    relatedContainer.removeAllViews();
-
-    final int count = related.getCount();
-    final int visibility = count > 0 ? View.VISIBLE : View.GONE;
-    relatedParent.setVisibility(visibility);
-
-    int index = 0;
-
-    related.moveToPosition(-1);
-    while (related.moveToNext() && index < 3) {
-      View v = LayoutInflater.from(getActivity())
-          .inflate(R.layout.item_related, this.relatedContainer, false);
-
-      final long relatedShowId = Cursors.getLong(related, RelatedShowsColumns.RELATED_SHOW_ID);
-      final String title = Cursors.getString(related, ShowColumns.TITLE);
-      final String overview = Cursors.getString(related, ShowColumns.OVERVIEW);
-      final float rating = Cursors.getFloat(related, ShowColumns.RATING);
-      final int votes = Cursors.getInt(related, ShowColumns.VOTES);
-
-      final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, relatedShowId);
-
-      RemoteImageView posterView = v.findViewById(R.id.related_poster);
-      posterView.addTransformation(new CircleTransformation());
-      posterView.setImage(poster);
-
-      TextView titleView = v.findViewById(R.id.related_title);
-      titleView.setText(title);
-
-      final String formattedRating = String.format(Locale.getDefault(), "%.1f", rating);
-
-      String ratingText;
-      if (votes >= 1000) {
-        final float convertedVotes = votes / 1000.0f;
-        final String formattedVotes = String.format(Locale.getDefault(), "%.1f", convertedVotes);
-        ratingText = getString(R.string.related_rating_thousands, formattedRating, formattedVotes);
-      } else {
-        ratingText = getString(R.string.related_rating, formattedRating, votes);
+        castContainer.addView(v);
       }
-
-      TextView ratingView = v.findViewById(R.id.related_rating);
-      ratingView.setText(ratingText);
-
-      v.setOnClickListener(new View.OnClickListener() {
-        @Override public void onClick(View v) {
-          navigationListener.onDisplayShow(relatedShowId, title, overview, LibraryType.WATCHED);
-        }
-      });
-      relatedContainer.addView(v);
-
-      index++;
     }
   }
 
-  private void updateEpisodeWatchViews(Cursor cursor) {
-    if (cursor.moveToFirst()) {
-      toWatch.setVisibility(View.VISIBLE);
+  private void updateRelatedView() {
+    if (getView() == null) {
+      return;
+    }
 
-      toWatchId = Cursors.getLong(cursor, EpisodeColumns.ID);
+    relatedContainer.removeAllViews();
+    if (related == null) {
+      relatedParent.setVisibility(View.GONE);
+    } else {
+      relatedParent.setVisibility(View.VISIBLE);
 
-      final long firstAired = DataHelper.getFirstAired(cursor);
+      for (Show show : related) {
+        View v = LayoutInflater.from(getActivity())
+            .inflate(R.layout.item_related, this.relatedContainer, false);
 
-      final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
-      final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-      final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
-      toWatchTitle = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, watched);
-      final String toWatchEpisodeText = getString(R.string.season_x_episode_y, season, episode);
+        final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, show.getId());
+
+        RemoteImageView posterView = v.findViewById(R.id.related_poster);
+        posterView.addTransformation(new CircleTransformation());
+        posterView.setImage(poster);
+
+        TextView titleView = v.findViewById(R.id.related_title);
+        titleView.setText(show.getTitle());
+
+        final String formattedRating = String.format(Locale.getDefault(), "%.1f", show.getRating());
+
+        String ratingText;
+        if (show.getVotes() >= 1000) {
+          final float convertedVotes = show.getVotes() / 1000.0f;
+          final String formattedVotes = String.format(Locale.getDefault(), "%.1f", convertedVotes);
+          ratingText = getString(R.string.related_rating_thousands, formattedRating, formattedVotes);
+        } else {
+          ratingText = getString(R.string.related_rating, formattedRating, show.getVotes());
+        }
+
+        TextView ratingView = v.findViewById(R.id.related_rating);
+        ratingView.setText(ratingText);
+
+        v.setOnClickListener(new View.OnClickListener() {
+          @Override public void onClick(View v) {
+            navigationListener.onDisplayShow(show.getId(), show.getTitle(), show.getOverview(),
+                LibraryType.WATCHED);
+          }
+        });
+        relatedContainer.addView(v);
+      }
+    }
+  }
+
+  private void updateEpisodesContainer() {
+    if (getView() == null) {
+      return;
+    }
+
+    if (toWatchId == -1 && lastWatchedId == -1 && toCollectId == -1 && lastCollectedId == -1) {
+      episodes.setVisibility(View.GONE);
+    } else {
+      episodes.setVisibility(View.VISIBLE);
+    }
+  }
+
+  private void updateToWatch() {
+    if (getView() == null) {
+      return;
+    }
+
+    if (toWatch == null) {
+      toWatchView.setVisibility(View.GONE);
+      toWatchId = -1;
+    } else {
+      toWatchView.setVisibility(View.VISIBLE);
+      toWatchId = toWatch.getId();
+
+      toWatchTitle =
+          DataHelper.getEpisodeTitle(getContext(), toWatch.getTitle(), toWatch.getSeason(),
+              toWatch.getEpisode(), toWatch.getWatched());
+      final String toWatchEpisodeText =
+          getString(R.string.season_x_episode_y, toWatch.getSeason(), toWatch.getEpisode());
 
       toWatchHolder.episodeTitle.setText(toWatchTitle);
       toWatchHolder.episodeEpisode.setText(toWatchEpisodeText);
@@ -890,136 +873,128 @@ public class ShowFragment extends RefreshableAppBarFragment {
       toWatchHolder.episodeScreenshot.setImage(screenshotUri);
 
       String firstAiredString =
-          DateStringUtils.getAirdateInterval(getActivity(), firstAired, false);
-
-      final boolean watching = Cursors.getBoolean(cursor, EpisodeColumns.WATCHING);
-      final boolean checkedIn = Cursors.getBoolean(cursor, EpisodeColumns.CHECKED_IN);
+          DateStringUtils.getAirdateInterval(getActivity(), toWatch.getFirstAired(), false);
 
       toWatchHolder.episodeOverflow.removeItems();
-      if (checkedIn) {
+      if (toWatch.getCheckedIn()) {
         toWatchHolder.episodeOverflow.addItem(R.id.action_checkin_cancel,
             R.string.action_checkin_cancel);
         firstAiredString = getResources().getString(R.string.show_watching);
-      } else if (!watching) {
+      } else if (!toWatch.getWatching()) {
         toWatchHolder.episodeOverflow.addItem(R.id.action_checkin, R.string.action_checkin);
         toWatchHolder.episodeOverflow.addItem(R.id.action_history_add, R.string.action_history_add);
       }
 
       toWatchHolder.episodeAirTime.setText(firstAiredString);
-    } else {
-      toWatch.setVisibility(View.GONE);
-      toWatchId = -1;
     }
 
-    if (lastWatched != null) {
-      if (cursor.moveToNext()) {
-        lastWatched.setVisibility(View.VISIBLE);
-
-        lastWatchedId = Cursors.getLong(cursor, EpisodeColumns.ID);
-
-        final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
-        final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-        final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
-        final String title =
-            DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, watched);
-
-        lastWatchedHolder.episodeTitle.setText(title);
-
-        final long firstAired = DataHelper.getFirstAired(cursor);
-        final String firstAiredString =
-            DateStringUtils.getAirdateInterval(getActivity(), firstAired, false);
-        lastWatchedHolder.episodeAirTime.setText(firstAiredString);
-
-        final String lastWatchedEpisodeText =
-            getString(R.string.season_x_episode_y, season, episode);
-        lastWatchedHolder.episodeEpisode.setText(lastWatchedEpisodeText);
-
-        final String screenshotUri =
-            ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, lastWatchedId);
-        lastWatchedHolder.episodeScreenshot.setImage(screenshotUri);
-      } else {
-        lastWatched.setVisibility(toWatchId == -1 ? View.GONE : View.INVISIBLE);
-        lastWatchedId = -1;
-      }
-    }
-
-    if (toWatchId == -1 && lastWatchedId == -1 && toCollectId == -1 && lastCollectedId == -1) {
-      episodes.setVisibility(View.GONE);
-    } else {
-      episodes.setVisibility(View.VISIBLE);
-    }
+    updateEpisodesContainer();
   }
 
-  private void updateEpisodeCollectViews(Cursor cursor) {
-    if (cursor.moveToFirst()) {
-      toCollect.setVisibility(View.VISIBLE);
+  private void updateLastWatched() {
+    if (lastWatchedView == null) {
+      return;
+    }
 
-      toCollectId = Cursors.getLong(cursor, EpisodeColumns.ID);
+    if (lastWatched == null) {
+      lastWatchedView.setVisibility(View.VISIBLE);
+      lastWatchedId = lastWatched.getId();
 
-      final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
-      final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-      final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
       final String title =
-          DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, watched);
+          DataHelper.getEpisodeTitle(getContext(), lastWatched.getTitle(), lastWatched.getSeason(),
+              lastWatched.getEpisode(), lastWatched.getWatched());
+      lastWatchedHolder.episodeTitle.setText(title);
 
+      final String firstAiredString =
+          DateStringUtils.getAirdateInterval(getActivity(), lastWatched.getFirstAired(), false);
+      lastWatchedHolder.episodeAirTime.setText(firstAiredString);
+
+      final String lastWatchedEpisodeText =
+          getString(R.string.season_x_episode_y, lastWatched.getSeason(), lastWatched.getEpisode());
+      lastWatchedHolder.episodeEpisode.setText(lastWatchedEpisodeText);
+
+      final String screenshotUri =
+          ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, lastWatchedId);
+      lastWatchedHolder.episodeScreenshot.setImage(screenshotUri);
+    } else {
+      lastWatchedView.setVisibility(toWatchId == -1 ? View.GONE : View.INVISIBLE);
+      lastWatchedId = -1;
+    }
+
+    updateEpisodesContainer();
+  }
+
+  private void updateToCollect() {
+    if (getView() == null) {
+      return;
+    }
+
+    if (toCollect == null) {
+      toCollectView.setVisibility(View.GONE);
+      toCollectId = -1;
+    } else {
+      toCollectView.setVisibility(View.VISIBLE);
+      toCollectId = toCollect.getId();
+
+      final String title =
+          DataHelper.getEpisodeTitle(getContext(), toCollect.getTitle(), toCollect.getSeason(),
+              toCollect.getEpisode(), toCollect.getWatched());
       toCollectHolder.episodeTitle.setText(title);
 
-      final long firstAired = DataHelper.getFirstAired(cursor);
       final String firstAiredString =
-          DateStringUtils.getAirdateInterval(getActivity(), firstAired, false);
+          DateStringUtils.getAirdateInterval(getActivity(), toCollect.getFirstAired(), false);
       toCollectHolder.episodeAirTime.setText(firstAiredString);
 
-      final String toCollectEpisodeText = getString(R.string.season_x_episode_y, season, episode);
+      final String toCollectEpisodeText =
+          getString(R.string.season_x_episode_y, toCollect.getSeason(), toCollect.getEpisode());
       toCollectHolder.episodeEpisode.setText(toCollectEpisodeText);
 
       final String screenshotUri =
           ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, toCollectId);
       toCollectHolder.episodeScreenshot.setImage(screenshotUri);
+    }
+
+    updateEpisodesContainer();
+  }
+
+  private void updateLastCollected() {
+    if (lastCollectedView == null) {
+      return;
+    }
+
+    if (lastCollected == null) {
+      lastCollectedId = -1;
+      lastCollectedView.setVisibility(View.INVISIBLE);
     } else {
-      toCollect.setVisibility(View.GONE);
-      toCollectId = -1;
+      lastCollectedView.setVisibility(View.VISIBLE);
+      lastCollectedId = lastCollected.getId();
+
+      final String title = DataHelper.getEpisodeTitle(getContext(), lastCollected.getTitle(),
+          lastCollected.getSeason(), lastCollected.getEpisode(), lastCollected.getWatched());
+      lastCollectedHolder.episodeTitle.setText(title);
+
+      final String firstAiredString =
+          DateStringUtils.getAirdateInterval(getActivity(), lastCollected.getFirstAired(), false);
+      lastCollectedHolder.episodeAirTime.setText(firstAiredString);
+
+      final String lastCollectedEpisodeText =
+          getString(R.string.season_x_episode_y, lastCollected.getSeason(),
+              lastCollected.getEpisode());
+      lastCollectedHolder.episodeEpisode.setText(lastCollectedEpisodeText);
+
+      final String screenshotUri =
+          ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, lastCollectedId);
+      lastCollectedHolder.episodeScreenshot.setImage(screenshotUri);
     }
 
-    if (lastCollected != null) {
-      if (cursor.moveToNext()) {
-        lastCollected.setVisibility(View.VISIBLE);
-
-        lastCollectedId = Cursors.getLong(cursor, EpisodeColumns.ID);
-
-        final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
-        final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-        final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
-        final String title =
-            DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, watched);
-
-        lastCollectedHolder.episodeTitle.setText(title);
-
-        final long firstAired = DataHelper.getFirstAired(cursor);
-        final String firstAiredString =
-            DateStringUtils.getAirdateInterval(getActivity(), firstAired, false);
-        lastCollectedHolder.episodeAirTime.setText(firstAiredString);
-
-        final String lastCollectedEpisodeText =
-            getString(R.string.season_x_episode_y, season, episode);
-        lastCollectedHolder.episodeEpisode.setText(lastCollectedEpisodeText);
-
-        final String screenshotUri =
-            ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, lastCollectedId);
-        lastCollectedHolder.episodeScreenshot.setImage(screenshotUri);
-      } else {
-        lastCollectedId = -1;
-        lastCollected.setVisibility(View.INVISIBLE);
-      }
-    }
-
-    if (toWatchId == -1 && lastWatchedId == -1 && toCollectId == -1 && lastCollectedId == -1) {
-      episodes.setVisibility(View.GONE);
-    } else {
-      episodes.setVisibility(View.VISIBLE);
-    }
+    updateEpisodesContainer();
   }
 
   private void updateComments() {
+    if (getView() == null) {
+      return;
+    }
+
     LinearCommentsAdapter.updateComments(getContext(), commentsContainer, userComments, comments);
     commentsParent.setVisibility(View.VISIBLE);
   }

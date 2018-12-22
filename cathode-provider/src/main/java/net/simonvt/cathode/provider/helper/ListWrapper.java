@@ -20,9 +20,9 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import net.simonvt.cathode.api.entity.CustomList;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Lists;
-import net.simonvt.schematic.Cursors;
 
 public final class ListWrapper {
 

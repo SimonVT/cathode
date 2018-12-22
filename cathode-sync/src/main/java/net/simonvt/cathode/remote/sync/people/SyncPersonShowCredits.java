@@ -29,6 +29,7 @@ import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.PeopleService;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCastColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCrewColumns;
@@ -38,7 +39,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.ShowCrew;
 import net.simonvt.cathode.provider.helper.PersonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
-import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
 public class SyncPersonShowCredits extends CallJob<Credits> {

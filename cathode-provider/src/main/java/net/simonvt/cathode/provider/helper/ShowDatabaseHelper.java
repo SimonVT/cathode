@@ -22,6 +22,8 @@ import android.content.Context;
 import android.database.Cursor;
 import java.util.List;
 import net.simonvt.cathode.api.entity.Show;
+import net.simonvt.cathode.common.database.Cursors;
+import net.simonvt.cathode.common.database.DatabaseUtils;
 import net.simonvt.cathode.common.util.TextUtils;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -29,9 +31,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.common.database.DatabaseUtils;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
-import net.simonvt.schematic.Cursors;
 
 public final class ShowDatabaseHelper {
 

@@ -16,25 +16,24 @@
 package net.simonvt.cathode.ui.dashboard;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
+import net.simonvt.cathode.common.entity.Movie;
+import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic;
-import net.simonvt.schematic.Cursors;
 
-public class DashboardMoviesAdapter
-    extends RecyclerCursorAdapter<DashboardMoviesAdapter.ViewHolder> {
+public class DashboardMoviesAdapter extends BaseAdapter<Movie, DashboardMoviesAdapter.ViewHolder> {
 
   public static final String[] PROJECTION = new String[] {
       DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.ID,
@@ -48,6 +47,15 @@ public class DashboardMoviesAdapter
   public DashboardMoviesAdapter(Context context, DashboardFragment.OverviewCallback callback) {
     super(context);
     this.callback = callback;
+    setHasStableIds(true);
+  }
+
+  @Override public long getItemId(int position) {
+    return getList().get(position).getId();
+  }
+
+  @Override protected boolean areItemsTheSame(@NonNull Movie oldItem, @NonNull Movie newItem) {
+    return oldItem.getId() == newItem.getId();
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -59,10 +67,8 @@ public class DashboardMoviesAdapter
       @Override public void onClick(View v) {
         final int position = holder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
-          Cursor cursor = getCursor(position);
-          final String title = Cursors.getString(cursor, MovieColumns.TITLE);
-          final String overview = Cursors.getString(cursor, MovieColumns.OVERVIEW);
-          callback.onDisplayMovie(holder.getItemId(), title, overview);
+          Movie movie = getList().get(position);
+          callback.onDisplayMovie(holder.getItemId(), movie.getTitle(), movie.getOverview());
         }
       }
     });
@@ -70,12 +76,11 @@ public class DashboardMoviesAdapter
     return holder;
   }
 
-  @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
-    final long id = Cursors.getLong(cursor, MovieColumns.ID);
-    final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
-
+  @Override public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    Movie movie = getList().get(position);
+    final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, movie.getId());
     holder.poster.setImage(poster);
-    holder.title.setText(Cursors.getString(cursor, MovieColumns.TITLE));
+    holder.title.setText(movie.getTitle());
   }
 
   static class ViewHolder extends RecyclerView.ViewHolder {

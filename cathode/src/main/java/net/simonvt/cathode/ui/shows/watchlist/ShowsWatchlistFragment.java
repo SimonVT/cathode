@@ -16,7 +16,6 @@
 package net.simonvt.cathode.ui.shows.watchlist;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,9 +25,12 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import dagger.android.support.AndroidSupportInjection;
+import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.database.SimpleCursor;
+import net.simonvt.cathode.common.entity.Episode;
+import net.simonvt.cathode.common.entity.Show;
 import net.simonvt.cathode.common.ui.adapter.HeaderSpanLookup;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.Job;
@@ -74,14 +76,14 @@ public class ShowsWatchlistFragment
     setTitle(R.string.title_shows_watchlist);
 
     viewModel = ViewModelProviders.of(this).get(ShowsWatchlistViewModel.class);
-    viewModel.getShows().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        setShowCursor(cursor);
+    viewModel.getShows().observe(this, new Observer<List<Show>>() {
+      @Override public void onChanged(List<Show> shows) {
+        setShows(shows);
       }
     });
-    viewModel.getEpisodes().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        setEpisodeCursor(cursor);
+    viewModel.getEpisodes().observe(this, new Observer<List<Episode>>() {
+      @Override public void onChanged(List<Episode> episodes) {
+        setEpisodes(episodes);
       }
     });
   }
@@ -156,11 +158,8 @@ public class ShowsWatchlistFragment
     episodeScheduler.setIsInWatchlist(episodeId, false);
   }
 
-  @Override public void onRemoveItem(int position, long itemId) {
-    SimpleCursor cursor =
-        (SimpleCursor) (((ShowWatchlistAdapter) getAdapter()).getCursor(position));
-    cursor.remove(itemId);
-    ((ShowWatchlistAdapter) getAdapter()).notifyChanged();
+  @Override public void onRemoveItem(Object item) {
+    adapter.removeItem(item);
   }
 
   private ShowWatchlistAdapter ensureAdapter() {
@@ -173,19 +172,21 @@ public class ShowsWatchlistFragment
     return adapter;
   }
 
-  private void setShowCursor(Cursor cursor) {
+  private void setShows(List<Show> shows) {
     if (getAdapter() == null) {
       setAdapter(ensureAdapter());
     }
 
-    ((ShowWatchlistAdapter) getAdapter()).updateCursorForHeader(R.string.header_shows, cursor);
+    List<Object> items = new ArrayList<>(shows);
+    ((ShowWatchlistAdapter) getAdapter()).updateHeaderItems(R.string.header_shows, items);
   }
 
-  private void setEpisodeCursor(Cursor cursor) {
+  private void setEpisodes(List<Episode> episodes) {
     if (getAdapter() == null) {
       setAdapter(ensureAdapter());
     }
 
-    ((ShowWatchlistAdapter) getAdapter()).updateCursorForHeader(R.string.header_episodes, cursor);
+    List<Object> items = new ArrayList<>(episodes);
+    ((ShowWatchlistAdapter) getAdapter()).updateHeaderItems(R.string.header_episodes, items);
   }
 }

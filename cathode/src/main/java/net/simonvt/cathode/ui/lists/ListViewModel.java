@@ -17,11 +17,16 @@
 package net.simonvt.cathode.ui.lists;
 
 import android.app.Application;
-import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import java.util.List;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.ListItem;
+import net.simonvt.cathode.common.entity.UserList;
+import net.simonvt.cathode.entitymapper.ListItemListMapper;
+import net.simonvt.cathode.entitymapper.ListItemMapper;
+import net.simonvt.cathode.entitymapper.UserListMapper;
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems;
 import net.simonvt.cathode.provider.ProviderSchematic.Lists;
 
@@ -29,8 +34,8 @@ public class ListViewModel extends AndroidViewModel {
 
   private long listId = -1L;
 
-  private LiveData<Cursor> list;
-  private LiveData<Cursor> listItems;
+  private LiveData<UserList> list;
+  private LiveData<List<ListItem>> listItems;
 
   public ListViewModel(@NonNull Application application) {
     super(application);
@@ -40,19 +45,18 @@ public class ListViewModel extends AndroidViewModel {
     if (this.listId == -1L) {
       this.listId = itemId;
 
-      list =
-          new CursorLiveData(getApplication(), Lists.withId(listId), ListFragment.LIST_PROJECTION,
-              null, null, null);
-      listItems = new CursorLiveData(getApplication(), ListItems.inList(listId),
-          ListFragment.ITEMS_PROJECTION, null, null, null);
+      list = new MappedCursorLiveData<>(getApplication(), Lists.withId(listId),
+          UserListMapper.PROJECTION, null, null, null, new UserListMapper());
+      listItems = new MappedCursorLiveData<>(getApplication(), ListItems.inList(listId),
+          ListItemMapper.PROJECTION, null, null, null, new ListItemListMapper());
     }
   }
 
-  public LiveData<Cursor> getList() {
+  public LiveData<UserList> getList() {
     return list;
   }
 
-  public LiveData<Cursor> getListItems() {
+  public LiveData<List<ListItem>> getListItems() {
     return listItems;
   }
 }

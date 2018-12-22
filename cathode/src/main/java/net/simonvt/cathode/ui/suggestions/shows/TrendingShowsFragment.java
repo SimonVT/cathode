@@ -16,7 +16,6 @@
 package net.simonvt.cathode.ui.suggestions.shows;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.lifecycle.Observer;
@@ -24,10 +23,12 @@ import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.entity.Show;
 import net.simonvt.cathode.common.ui.fragment.SwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -100,8 +101,6 @@ public class TrendingShowsFragment
 
   private SortBy sortBy;
 
-  private Cursor cursor;
-
   private int columnCount;
 
   private boolean scrollToTop;
@@ -123,9 +122,9 @@ public class TrendingShowsFragment
     setEmptyText(R.string.shows_loading_trending);
 
     viewModel = ViewModelProviders.of(this).get(TrendingShowsViewModel.class);
-    viewModel.getTrending().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        setCursor(cursor);
+    viewModel.getTrending().observe(this, new Observer<List<Show>>() {
+      @Override public void onChanged(List<Show> shows) {
+        setShows(shows);
       }
     });
 
@@ -203,16 +202,14 @@ public class TrendingShowsFragment
     showScheduler.setIsInWatchlist(showId, inWatchlist);
   }
 
-  private void setCursor(Cursor cursor) {
-    this.cursor = cursor;
-
+  private void setShows(List<Show> shows) {
     if (showsAdapter == null) {
-      showsAdapter = new ShowDescriptionAdapter(getActivity(), this, cursor);
+      showsAdapter = new ShowDescriptionAdapter(getActivity(), this);
       setAdapter(showsAdapter);
-      return;
     }
 
-    showsAdapter.changeCursor(cursor);
+    showsAdapter.setList(shows);
+
     if (scrollToTop) {
       getRecyclerView().scrollToPosition(0);
       scrollToTop = false;

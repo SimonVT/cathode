@@ -16,38 +16,27 @@
 package net.simonvt.cathode.ui.lists;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
+import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.api.enumeration.Privacy;
-import net.simonvt.cathode.common.database.SimpleCursor;
+import net.simonvt.cathode.common.entity.ListItem;
+import net.simonvt.cathode.common.entity.UserList;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
-import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
-import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
+import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.helper.ListWrapper;
-import net.simonvt.cathode.provider.util.SqlCoalesce;
-import net.simonvt.cathode.provider.util.SqlColumn;
 import net.simonvt.cathode.remote.sync.lists.SyncList;
 import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
-import net.simonvt.schematic.Cursors;
 
 public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHolder>
     implements ListAdapter.ListListener {
@@ -59,85 +48,6 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
 
   static final String DIALOG_UPDATE = "net.simonvt.cathode.ui.lists.ListFragment.updateListsDialog";
   static final String DIALOG_DELETE = "net.simonvt.cathode.ui.lists.ListFragment.deleteListsDialog";
-
-  static final String[] LIST_PROJECTION = new String[] {
-      ListsColumns.ID, ListsColumns.NAME, ListsColumns.DESCRIPTION, ListsColumns.PRIVACY,
-      ListsColumns.DISPLAY_NUMBERS, ListsColumns.ALLOW_COMMENTS,
-  };
-
-  static final String[] ITEMS_PROJECTION = {
-      SqlColumn.table(Tables.LIST_ITEMS).column(ListItemColumns.ID), ListItemColumns.ITEM_TYPE,
-      ListItemColumns.ITEM_ID,
-
-      SqlCoalesce.coaloesce(SqlColumn.table(Tables.SHOWS).column(ShowColumns.OVERVIEW),
-          SqlColumn.table(Tables.MOVIES).column(MovieColumns.OVERVIEW)).as(
-          ListItemColumns.OVERVIEW),
-
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.WATCHED_COUNT),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.IN_COLLECTION_COUNT),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.IN_WATCHLIST),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.RATING),
-      SqlColumn.table(Tables.SHOWS).column(LastModifiedColumns.LAST_MODIFIED),
-
-      SqlColumn.table(Tables.SEASONS).column(SeasonColumns.SEASON),
-      SqlColumn.table(Tables.SEASONS).column(SeasonColumns.SHOW_ID),
-      SqlColumn.table(Tables.SEASONS).column(LastModifiedColumns.LAST_MODIFIED), "(SELECT "
-      + ShowColumns.TITLE
-      + " FROM "
-      + Tables.SHOWS
-      + " WHERE "
-      + Tables.SHOWS
-      + "."
-      + ShowColumns.ID
-      + "="
-      + Tables.SEASONS
-      + "."
-      + SeasonColumns.SHOW_ID
-      + ") AS seasonShowTitle", "(SELECT "
-      + ShowColumns.POSTER
-      + " FROM "
-      + Tables.SHOWS
-      + " WHERE "
-      + Tables.SHOWS
-      + "."
-      + ShowColumns.ID
-      + "="
-      + Tables.SEASONS
-      + "."
-      + SeasonColumns.SHOW_ID
-      + ") AS seasonShowPoster",
-
-      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.TITLE),
-      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.SEASON),
-      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.EPISODE),
-      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.WATCHED),
-      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED),
-      SqlColumn.table(Tables.EPISODES).column(LastModifiedColumns.LAST_MODIFIED), "(SELECT "
-      + ShowColumns.TITLE
-      + " FROM "
-      + Tables.SHOWS
-      + " WHERE "
-      + Tables.SHOWS
-      + "."
-      + ShowColumns.ID
-      + "="
-      + Tables.EPISODES
-      + "."
-      + EpisodeColumns.SHOW_ID
-      + ") AS episodeShowTitle",
-
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.TITLE),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.WATCHED),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.IN_COLLECTION),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.IN_WATCHLIST),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.WATCHING),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.CHECKED_IN),
-      SqlColumn.table(Tables.MOVIES).column(LastModifiedColumns.LAST_MODIFIED),
-
-      SqlColumn.table(Tables.PEOPLE).column(PersonColumns.NAME),
-      SqlColumn.table(Tables.PEOPLE).column(LastModifiedColumns.LAST_MODIFIED),
-  };
 
   @Inject ListsTaskScheduler listScheduler;
 
@@ -153,7 +63,7 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
 
   private int columnCount;
 
-  private Cursor listInfo;
+  private UserList listInfo;
 
   public static Bundle getArgs(long listId, String listName) {
     Preconditions.checkArgument(listId >= 0, "listId must be >= 0");
@@ -182,18 +92,15 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
 
     viewModel = ViewModelProviders.of(this).get(ListViewModel.class);
     viewModel.setListId(listId);
-    viewModel.getList().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        listInfo = cursor;
-        if (listInfo.moveToFirst()) {
-          final String name = Cursors.getString(listInfo, ListsColumns.NAME);
-          setTitle(name);
-        }
+    viewModel.getList().observe(this, new Observer<UserList>() {
+      @Override public void onChanged(UserList userList) {
+        listInfo = userList;
+        setTitle(userList.getName());
       }
     });
-    viewModel.getListItems().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        setCursor(cursor);
+    viewModel.getListItems().observe(this, new Observer<List<ListItem>>() {
+      @Override public void onChanged(List<ListItem> listItems) {
+        setListItems(listItems);
       }
     });
   }
@@ -230,17 +137,12 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_list_edit:
-        if (listInfo != null && listInfo.moveToFirst()) {
-          final String name = Cursors.getString(listInfo, ListsColumns.NAME);
-          final String description = Cursors.getString(listInfo, ListsColumns.DESCRIPTION);
-          final Privacy privacy =
-              Privacy.fromValue(Cursors.getString(listInfo, ListsColumns.PRIVACY));
-          final boolean displayNumbers = Cursors.getBoolean(listInfo, ListsColumns.DISPLAY_NUMBERS);
-          final boolean allowComments = Cursors.getBoolean(listInfo, ListsColumns.ALLOW_COMMENTS);
+        if (listInfo != null) {
           UpdateListFragment updateFragment = new UpdateListFragment();
           updateFragment.setArguments(
-              UpdateListFragment.getArgs(listId, name, description, privacy, displayNumbers,
-                  allowComments));
+              UpdateListFragment.getArgs(listId, listInfo.getName(), listInfo.getDescription(),
+                  listInfo.getPrivacy(), listInfo.getDisplayNumbers(),
+                  listInfo.getAllowComments()));
           updateFragment.show(getFragmentManager(), DIALOG_UPDATE);
         }
         return true;
@@ -274,23 +176,38 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
     navigationListener.onDisplayPerson(personId);
   }
 
-  @Override public void onRemoveItem(int position, long id) {
-    final SimpleCursor cursor = (SimpleCursor) adapter.getCursor(position);
+  @Override public void onRemoveItem(int position, ListItem listItem) {
+    int itemType;
+    switch (listItem.getType()) {
+      case SHOW:
+        itemType = DatabaseContract.ItemType.SHOW;
+        break;
+      case SEASON:
+        itemType = DatabaseContract.ItemType.SEASON;
+        break;
+      case EPISODE:
+        itemType = DatabaseContract.ItemType.EPISODE;
+        break;
+      case MOVIE:
+        itemType = DatabaseContract.ItemType.MOVIE;
+        break;
+      case PERSON:
+        itemType = DatabaseContract.ItemType.PERSON;
+        break;
+      default:
+        throw new IllegalStateException("Unknown item type: " + listItem.getType().toString());
+    }
 
-    final long itemId = Cursors.getLong(cursor, ListItemColumns.ITEM_ID);
-    final int itemType = Cursors.getInt(cursor, ListItemColumns.ITEM_TYPE);
-    listScheduler.removeItem(listId, itemType, itemId);
-
-    cursor.remove(id);
-    adapter.notifyChanged();
+    listScheduler.removeItem(listId, itemType, listItem.getListItemId());
+    adapter.removeItem(listItem);
   }
 
-  private void setCursor(Cursor cursor) {
+  private void setListItems(List<ListItem> items) {
     if (adapter == null) {
       adapter = new ListAdapter(getActivity(), this);
       setAdapter(adapter);
     }
 
-    adapter.changeCursor(cursor);
+    adapter.setList(items);
   }
 }

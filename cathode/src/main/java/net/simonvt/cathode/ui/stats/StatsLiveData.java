@@ -20,11 +20,11 @@ import android.content.Context;
 import android.database.Cursor;
 import androidx.annotation.Nullable;
 import net.simonvt.cathode.common.data.AsyncLiveData;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.schematic.Cursors;
 
 public class StatsLiveData extends AsyncLiveData<Stats> {
 

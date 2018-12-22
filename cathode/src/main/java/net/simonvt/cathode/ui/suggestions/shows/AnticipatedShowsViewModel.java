@@ -17,11 +17,13 @@
 package net.simonvt.cathode.ui.suggestions.shows;
 
 import android.app.Application;
-import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import java.util.List;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.Show;
+import net.simonvt.cathode.entitymapper.ShowListMapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
@@ -29,7 +31,7 @@ import net.simonvt.cathode.ui.suggestions.shows.AnticipatedShowsFragment.SortBy;
 
 public class AnticipatedShowsViewModel extends AndroidViewModel {
 
-  private CursorLiveData anticipated;
+  private MappedCursorLiveData<List<Show>> anticipated;
 
   private SortBy sortBy;
 
@@ -37,9 +39,8 @@ public class AnticipatedShowsViewModel extends AndroidViewModel {
     super(application);
     sortBy = SortBy.fromValue(Settings.get(application)
         .getString(Settings.Sort.SHOW_ANTICIPATED, SortBy.ANTICIPATED.getKey()));
-    anticipated =
-        new CursorLiveData(application, Shows.SHOWS_ANTICIPATED, ShowDescriptionAdapter.PROJECTION,
-            null, null, sortBy.getSortOrder());
+    anticipated = new MappedCursorLiveData<>(application, Shows.SHOWS_ANTICIPATED,
+        ShowDescriptionAdapter.PROJECTION, null, null, sortBy.getSortOrder(), new ShowListMapper());
   }
 
   public void setSortBy(SortBy sortBy) {
@@ -47,7 +48,7 @@ public class AnticipatedShowsViewModel extends AndroidViewModel {
     anticipated.setSortOrder(sortBy.getSortOrder());
   }
 
-  public LiveData<Cursor> getAnticipated() {
+  public LiveData<List<Show>> getAnticipated() {
     return anticipated;
   }
 }

@@ -24,6 +24,7 @@ import java.util.List;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.common.data.ListenableLiveData;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns;
@@ -37,7 +38,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.MovieCrew;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCast;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowCrew;
 import net.simonvt.cathode.provider.util.SqlColumn;
-import net.simonvt.schematic.Cursors;
 
 public class CreditsLiveData extends ListenableLiveData<Credits> {
 

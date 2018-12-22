@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.jobqueue.JobDatabaseSchematic.Tables;
 import net.simonvt.cathode.jobqueue.database.JobDatabase;
-import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
 @Singleton public final class JobManager {

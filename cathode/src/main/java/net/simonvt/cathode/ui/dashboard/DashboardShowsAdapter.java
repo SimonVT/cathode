@@ -16,30 +16,28 @@
 package net.simonvt.cathode.ui.dashboard;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
+import net.simonvt.cathode.common.entity.Show;
+import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic;
-import net.simonvt.schematic.Cursors;
+import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 
-public class DashboardShowsAdapter extends RecyclerCursorAdapter<DashboardShowsAdapter.ViewHolder> {
+public class DashboardShowsAdapter extends BaseAdapter<Show, DashboardShowsAdapter.ViewHolder> {
 
   static final String[] PROJECTION = new String[] {
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.ID,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.TITLE,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.OVERVIEW,
-      DatabaseSchematic.Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
+      Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
   };
 
   private DashboardFragment.OverviewCallback callback;
@@ -47,6 +45,15 @@ public class DashboardShowsAdapter extends RecyclerCursorAdapter<DashboardShowsA
   public DashboardShowsAdapter(Context context, DashboardFragment.OverviewCallback callback) {
     super(context);
     this.callback = callback;
+    setHasStableIds(true);
+  }
+
+  @Override public long getItemId(int position) {
+    return getList().get(position).getId();
+  }
+
+  @Override protected boolean areItemsTheSame(@NonNull Show oldItem, @NonNull Show newItem) {
+    return oldItem.getId() == newItem.getId();
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -58,10 +65,8 @@ public class DashboardShowsAdapter extends RecyclerCursorAdapter<DashboardShowsA
       @Override public void onClick(View v) {
         final int position = holder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
-          Cursor cursor = getCursor(position);
-          final String title = Cursors.getString(cursor, ShowColumns.TITLE);
-          final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
-          callback.onDisplayShow(holder.getItemId(), title, overview);
+          Show show = getList().get(position);
+          callback.onDisplayShow(show.getId(), show.getTitle(), show.getOverview());
         }
       }
     });
@@ -69,12 +74,11 @@ public class DashboardShowsAdapter extends RecyclerCursorAdapter<DashboardShowsA
     return holder;
   }
 
-  @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
-    final long id = Cursors.getLong(cursor, ShowColumns.ID);
-    final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
-
+  @Override public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    Show show = getList().get(position);
+    final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, show.getId());
     holder.poster.setImage(poster);
-    holder.title.setText(Cursors.getString(cursor, ShowColumns.TITLE));
+    holder.title.setText(show.getTitle());
   }
 
   static class ViewHolder extends RecyclerView.ViewHolder {

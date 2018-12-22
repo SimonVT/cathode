@@ -17,11 +17,13 @@
 package net.simonvt.cathode.ui.suggestions.shows;
 
 import android.app.Application;
-import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import java.util.List;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.Show;
+import net.simonvt.cathode.entitymapper.ShowListMapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
@@ -29,7 +31,7 @@ import net.simonvt.cathode.ui.suggestions.shows.TrendingShowsFragment.SortBy;
 
 public class TrendingShowsViewModel extends AndroidViewModel {
 
-  private CursorLiveData trending;
+  private MappedCursorLiveData<List<Show>> trending;
 
   private SortBy sortBy;
 
@@ -37,9 +39,8 @@ public class TrendingShowsViewModel extends AndroidViewModel {
     super(application);
     sortBy = SortBy.fromValue(
         Settings.get(application).getString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey()));
-    trending =
-        new CursorLiveData(application, Shows.SHOWS_TRENDING, ShowDescriptionAdapter.PROJECTION,
-            null, null, sortBy.getSortOrder());
+    trending = new MappedCursorLiveData<>(application, Shows.SHOWS_TRENDING,
+        ShowDescriptionAdapter.PROJECTION, null, null, sortBy.getSortOrder(), new ShowListMapper());
   }
 
   public void setSortBy(SortBy sortBy) {
@@ -47,7 +48,7 @@ public class TrendingShowsViewModel extends AndroidViewModel {
     trending.setSortOrder(sortBy.getSortOrder());
   }
 
-  public LiveData<Cursor> getTrending() {
+  public LiveData<List<Show>> getTrending() {
     return trending;
   }
 }

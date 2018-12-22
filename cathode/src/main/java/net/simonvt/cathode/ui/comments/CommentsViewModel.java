@@ -17,13 +17,15 @@
 package net.simonvt.cathode.ui.comments;
 
 import android.app.Application;
-import android.database.Cursor;
 import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import java.util.List;
 import net.simonvt.cathode.api.enumeration.ItemType;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.Comment;
+import net.simonvt.cathode.entitymapper.CommentListMapper;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 
@@ -32,7 +34,7 @@ public class CommentsViewModel extends AndroidViewModel {
   private ItemType itemType;
   private long itemId;
 
-  private LiveData<Cursor> comments;
+  private LiveData<List<Comment>> comments;
 
   public CommentsViewModel(@NonNull Application application) {
     super(application);
@@ -61,17 +63,17 @@ public class CommentsViewModel extends AndroidViewModel {
           throw new IllegalArgumentException("Type " + itemType.toString() + " not supported");
       }
 
-      comments = new CursorLiveData(getApplication(), uri, CommentsAdapter.PROJECTION,
+      comments = new MappedCursorLiveData<>(getApplication(), uri, CommentListMapper.PROJECTION,
           CommentColumns.PARENT_ID + "=0", null, CommentColumns.IS_USER_COMMENT
           + " DESC, "
           + CommentColumns.LIKES
           + " DESC, "
           + CommentColumns.CREATED_AT
-          + " DESC");
+          + " DESC", new CommentListMapper());
     }
   }
 
-  public LiveData<Cursor> getComments() {
+  public LiveData<List<Comment>> getComments() {
     return comments;
   }
 }

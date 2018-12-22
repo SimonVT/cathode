@@ -19,29 +19,31 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import net.simonvt.cathode.common.data.ListenableLiveData;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.common.database.DatabaseUtils;
-import net.simonvt.cathode.common.database.SimpleMergeCursor;
+import net.simonvt.cathode.common.entity.Episode;
+import net.simonvt.cathode.entitymapper.EpisodeMapper;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.schematic.Cursors;
 
-public class WatchedLiveData extends ListenableLiveData<Cursor> {
+public class WatchedLiveData extends ListenableLiveData<Episode> {
 
   private long showId;
 
   private String[] projection;
 
+  private Uri notificationUri;
+
   public WatchedLiveData(Context context, long showId, String[] projection) {
     super(context);
     this.showId = showId;
     this.projection = projection;
+    addNotificationUri(Episodes.fromShow(showId));
   }
 
-  @Override protected SimpleMergeCursor loadInBackground() {
-    clearNotificationUris();
-
+  @Override protected Episode loadInBackground() {
     Cursor show = getContext().getContentResolver().query(Shows.withId(showId), new String[] {
         ShowColumns.WATCHING,
     }, null, null, null);
@@ -49,19 +51,16 @@ public class WatchedLiveData extends ListenableLiveData<Cursor> {
     final boolean watching = Cursors.getBoolean(show, ShowColumns.WATCHING);
     show.close();
 
-    Cursor lastWatched = null;
-    if (!watching) {
-      lastWatched = getContext().getContentResolver()
-          .query(Episodes.fromShow(showId), projection, EpisodeColumns.WATCHED + "=1", null,
-              EpisodeColumns.SEASON + " DESC, " + EpisodeColumns.EPISODE + " DESC LIMIT 1");
-    }
-
     Cursor toWatch;
     if (watching) {
       toWatch = getContext().getContentResolver()
           .query(Episodes.fromShow(showId), projection,
               EpisodeColumns.WATCHING + "=1 OR " + EpisodeColumns.CHECKED_IN + "=1", null, null);
     } else {
+      Cursor lastWatched = getContext().getContentResolver()
+          .query(Episodes.fromShow(showId), projection, EpisodeColumns.WATCHED + "=1", null,
+              EpisodeColumns.SEASON + " DESC, " + EpisodeColumns.EPISODE + " DESC LIMIT 1");
+
       long lastWatchedSeason = 0;
       long lastWatchedEpisode = -1;
       if (lastWatched.moveToFirst()) {
@@ -93,19 +92,17 @@ public class WatchedLiveData extends ListenableLiveData<Cursor> {
               EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1");
     }
 
-    Uri notiUri = DatabaseUtils.getNotificationUri(toWatch);
-    addNotificationUri(notiUri);
-
-    if (toWatch.getCount() == 0 || watching) {
-      if (!watching) {
-        lastWatched.close();
+    if (toWatch.moveToFirst()) {
+      if (notificationUri != null) {
+        removeNotificationUri(notificationUri);
       }
-      return new SimpleMergeCursor(toWatch);
+      notificationUri = DatabaseUtils.getNotificationUri(toWatch);
+      addNotificationUri(notificationUri);
+      return EpisodeMapper.mapEpisode(toWatch);
+    } else {
+      removeNotificationUri(notificationUri);
+      notificationUri = null;
+      return null;
     }
-
-    notiUri = DatabaseUtils.getNotificationUri(lastWatched);
-    addNotificationUri(notiUri);
-
-    return new SimpleMergeCursor(toWatch, lastWatched);
   }
 }

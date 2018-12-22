@@ -28,6 +28,7 @@ import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.entity.Season;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.service.UsersService;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
@@ -44,7 +45,6 @@ import net.simonvt.cathode.remote.sync.SyncPerson;
 import net.simonvt.cathode.remote.sync.movies.SyncPendingMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncPendingShows;
 import net.simonvt.cathode.sync.jobscheduler.Jobs;
-import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
 public class SyncList extends CallJob<List<ListItem>> {

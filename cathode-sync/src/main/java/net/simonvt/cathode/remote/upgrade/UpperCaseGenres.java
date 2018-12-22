@@ -18,6 +18,7 @@ package net.simonvt.cathode.remote.upgrade;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.common.util.TextUtils;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobPriority;
@@ -25,7 +26,6 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieGenres;
 import net.simonvt.cathode.provider.ProviderSchematic.ShowGenres;
-import net.simonvt.schematic.Cursors;
 
 public class UpperCaseGenres extends Job {
 

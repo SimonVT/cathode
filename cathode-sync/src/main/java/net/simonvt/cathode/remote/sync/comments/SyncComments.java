@@ -30,6 +30,7 @@ import net.simonvt.cathode.api.service.CommentsService;
 import net.simonvt.cathode.api.service.EpisodeService;
 import net.simonvt.cathode.api.service.MoviesService;
 import net.simonvt.cathode.api.service.ShowsService;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.CommentsHelper;
@@ -42,7 +43,6 @@ import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.provider.helper.UserDatabaseHelper;
 import net.simonvt.cathode.remote.PagedCallJob;
-import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
 public class SyncComments extends PagedCallJob<Comment> {

@@ -15,7 +15,6 @@
  */
 package net.simonvt.cathode.ui.movie;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,16 +27,19 @@ import butterknife.BindView;
 import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.common.entity.Movie;
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
+import net.simonvt.cathode.images.ImageType;
+import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
-import net.simonvt.schematic.Cursors;
 
 public class MovieHistoryFragment extends RefreshableAppBarFragment {
 
@@ -55,7 +57,7 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
       MovieColumns.RATING,
   };
 
-  private Cursor movie;
+  private Movie movie;
 
   private MovieHistoryLiveData.Result result;
 
@@ -98,9 +100,9 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
 
     viewModel = ViewModelProviders.of(this, viewModelFactory).get(MovieHistoryViewModel.class);
     viewModel.setMovieId(movieId);
-    viewModel.getMovie().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        setMovie(cursor);
+    viewModel.getMovie().observe(this, new Observer<Movie>() {
+      @Override public void onChanged(Movie movie) {
+        setMovie(movie);
       }
     });
     viewModel.getHistory().observe(this, new Observer<MovieHistoryLiveData.Result>() {
@@ -132,26 +134,15 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
     viewModel.getHistory().loadData();
   }
 
-  private void setMovie(Cursor movie) {
+  private void setMovie(Movie movie) {
     this.movie = movie;
+    movieTitle = movie.getTitle();
 
-    if (movie == null) {
-      return;
-    }
-
-    if (!movie.moveToFirst()) {
-      return;
-    }
-
-    movieTitle = Cursors.getString(movie, MovieColumns.TITLE);
-    final String backdrop = Cursors.getString(movie, MovieColumns.BACKDROP);
-    final String released = Cursors.getString(movie, MovieColumns.RELEASED);
-    final String rating = Cursors.getString(movie, MovieColumns.RATING);
-
+    final String backdropUri = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.BACKDROP, movieId);
     setTitle(movieTitle);
-    setBackdrop(backdrop);
-    this.released.setText(released);
-    this.rating.setText(rating);
+    setBackdrop(backdropUri);
+    this.released.setText(movie.getReleased());
+    this.rating.setText(String.format(Locale.getDefault(), "%.1f", movie.getRating()));
   }
 
   private boolean typeOrClear(ViewGroup parent, Type type) {

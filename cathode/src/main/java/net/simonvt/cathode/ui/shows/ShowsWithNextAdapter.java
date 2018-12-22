@@ -15,38 +15,37 @@
  */
 package net.simonvt.cathode.ui.shows;
 
-import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
+import net.simonvt.cathode.common.entity.Episode;
+import net.simonvt.cathode.common.entity.Show;
+import net.simonvt.cathode.common.entity.ShowWithEpisode;
+import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.common.widget.TimeStamp;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
-import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
-import net.simonvt.schematic.Cursors;
 
 /**
  * A show adapter that displays the next episode as well.
  */
-public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAdapter.ViewHolder> {
+public class ShowsWithNextAdapter
+    extends BaseAdapter<ShowWithEpisode, ShowsWithNextAdapter.ViewHolder> {
 
   public interface Callbacks {
 
@@ -65,27 +64,6 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
     void onHideFromCollection(long showId);
   }
 
-  private static final String COLUMN_EPISODE_ID = "episodeId";
-  private static final String COLUMN_EPISODE_LAST_UPDATED = "episodeLastUpdated";
-
-  public static final String[] PROJECTION = new String[] {
-      Tables.SHOWS + "." + ShowColumns.ID,
-      Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.OVERVIEW,
-      ShowColumns.AIRED_COUNT,
-      Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
-      Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
-      Tables.SHOWS + "." + ShowColumns.STATUS,
-      ShowColumns.WATCHING, Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
-      Tables.EPISODES + "." + EpisodeColumns.ID + " AS " + COLUMN_EPISODE_ID,
-      Tables.EPISODES + "." + EpisodeColumns.TITLE,
-      Tables.EPISODES + "." + EpisodeColumns.WATCHED,
-      Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
-      Tables.EPISODES + "." + EpisodeColumns.SEASON,
-      Tables.EPISODES + "." + EpisodeColumns.EPISODE,
-      Tables.EPISODES + "." + EpisodeColumns.LAST_MODIFIED + " AS " + COLUMN_EPISODE_LAST_UPDATED,
-  };
-
   private FragmentActivity activity;
 
   private final LibraryType libraryType;
@@ -94,24 +72,20 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
 
   public ShowsWithNextAdapter(FragmentActivity activity, Callbacks callbacks,
       LibraryType libraryType) {
-    this(activity, callbacks, null, libraryType);
-  }
-
-  public ShowsWithNextAdapter(FragmentActivity activity, Callbacks callbacks,
-      Cursor cursor, LibraryType libraryType) {
-    super(activity, cursor);
+    super(activity);
     this.activity = activity;
     this.callbacks = callbacks;
     this.libraryType = libraryType;
+    setHasStableIds(true);
   }
 
-  @Override public long getLastModified(int position) {
-    Cursor cursor = getCursor(position);
+  @Override public long getItemId(int position) {
+    return getList().get(position).getShow().getId();
+  }
 
-    final long showLastModified = Cursors.getLong(cursor, LastModifiedColumns.LAST_MODIFIED);
-    final long episodeLastModified = Cursors.getLong(cursor, COLUMN_EPISODE_LAST_UPDATED);
-
-    return showLastModified + episodeLastModified;
+  @Override protected boolean areItemsTheSame(@NonNull ShowWithEpisode oldItem,
+      @NonNull ShowWithEpisode newItem) {
+    return oldItem.getShow().getId() == newItem.getShow().getId();
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -123,10 +97,9 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
       @Override public void onClick(View v) {
         final int position = holder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
-          Cursor cursor = getCursor(position);
-          final String title = Cursors.getString(cursor, ShowColumns.TITLE);
-          final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
-          callbacks.onShowClick(holder.getItemId(), title, overview);
+          ShowWithEpisode showWithEpisode = getList().get(position);
+          callbacks.onShowClick(holder.getItemId(), showWithEpisode.getShow().getTitle(),
+              showWithEpisode.getShow().getOverview());
         }
       }
     });
@@ -187,42 +160,36 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
     holder.overflow.dismiss();
   }
 
-  @Override protected void onBindViewHolder(ViewHolder holder, Cursor cursor, int position) {
-    final long id = Cursors.getLong(cursor, ShowColumns.ID);
-    final String showTitle = Cursors.getString(cursor, ShowColumns.TITLE);
-    final String showStatus = Cursors.getString(cursor, ShowColumns.STATUS);
-    final boolean watching = Cursors.getBoolean(cursor, ShowColumns.WATCHING);
+  @Override public void onBindViewHolder(ViewHolder holder, int position) {
+    ShowWithEpisode showWithEpisode = getList().get(position);
+    Show show = showWithEpisode.getShow();
+    Episode episode = showWithEpisode.getEpisode();
 
-    final String showPosterUri = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
+    final String showPosterUri =
+        ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, show.getId());
 
-    final int showAiredCount = Cursors.getInt(cursor, ShowColumns.AIRED_COUNT);
+    final int showAiredCount = show.getAiredCount();
     int count = 0;
     switch (libraryType) {
       case WATCHED:
       case WATCHLIST:
-        count = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT);
+        count = show.getWatchedCount();
         break;
 
       case COLLECTION:
-        count = Cursors.getInt(cursor, ShowColumns.IN_COLLECTION_COUNT);
+        count = show.getInCollectionCount();
         break;
     }
     final int showTypeCount = count;
 
-    final long episodeId = Cursors.getLong(cursor, COLUMN_EPISODE_ID);
-    final long episodeFirstAired = DataHelper.getFirstAired(cursor);
-    final int episodeSeasonNumber = Cursors.getInt(cursor, EpisodeColumns.SEASON);
-    final int episodeNumber = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-    final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
-
     String episodeTitle = null;
-    if (episodeSeasonNumber > 0) {
+    if (episode.getSeason() > 0) {
       episodeTitle =
-          DataHelper.getEpisodeTitle(getContext(), cursor, episodeSeasonNumber, episodeNumber,
-              watched, true);
+          DataHelper.getEpisodeTitle(getContext(), episode.getTitle(), episode.getSeason(),
+              episode.getEpisode(), episode.getWatched(), true);
     }
 
-    holder.title.setText(showTitle);
+    holder.title.setText(show.getTitle());
 
     holder.progressBar.setMax(showAiredCount);
     holder.progressBar.setProgress(showTypeCount);
@@ -231,16 +198,17 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
 
     String episodeText;
     if (episodeTitle == null) {
-      episodeText = showStatus;
+      episodeText = show.getStatus().toString();
       holder.firstAired.setVisibility(View.GONE);
     } else {
-      if (watching) {
+      if (show.getWatching()) {
         episodeText = getContext().getString(R.string.show_watching);
       } else {
         episodeText = getContext().getString(R.string.episode_next, episodeTitle);
       }
+
       holder.firstAired.setVisibility(View.VISIBLE);
-      holder.firstAired.setTimeInMillis(episodeFirstAired);
+      holder.firstAired.setTimeInMillis(episode.getFirstAired());
     }
     holder.nextEpisode.setText(episodeText);
 
@@ -248,14 +216,14 @@ public class ShowsWithNextAdapter extends RecyclerCursorAdapter<ShowsWithNextAda
 
     holder.overflow.removeItems();
     setupOverflowItems(holder.overflow, showTypeCount, showAiredCount, episodeTitle != null,
-        watching);
+        show.getWatching());
 
     holder.poster.setImage(showPosterUri);
 
     holder.showTypeCount = showTypeCount;
     holder.showAiredCount = showAiredCount;
     holder.episodeTitle = episodeTitle;
-    holder.episodeId = episodeId;
+    holder.episodeId = episode.getId();
   }
 
   protected void setupOverflowItems(OverflowView overflow, int typeCount, int airedCount,

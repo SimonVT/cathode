@@ -27,6 +27,7 @@ import net.simonvt.cathode.api.entity.Like;
 import net.simonvt.cathode.api.entity.Profile;
 import net.simonvt.cathode.api.enumeration.ItemTypes;
 import net.simonvt.cathode.api.service.UsersService;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.CommentsHelper;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
@@ -34,7 +35,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 import net.simonvt.cathode.provider.helper.UserDatabaseHelper;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.PagedCallJob;
-import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
 public class SyncCommentLikes extends PagedCallJob<Like> {

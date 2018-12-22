@@ -17,11 +17,13 @@
 package net.simonvt.cathode.ui.show;
 
 import android.app.Application;
-import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import java.util.List;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.Show;
+import net.simonvt.cathode.entitymapper.ShowListMapper;
 import net.simonvt.cathode.provider.ProviderSchematic.RelatedShows;
 import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
 
@@ -29,7 +31,7 @@ public class RelatedShowsViewModel extends AndroidViewModel {
 
   private long showId = -1L;
 
-  private LiveData<Cursor> shows;
+  private LiveData<List<Show>> shows;
 
   public RelatedShowsViewModel(@NonNull Application application) {
     super(application);
@@ -38,12 +40,12 @@ public class RelatedShowsViewModel extends AndroidViewModel {
   public void setShowId(long showId) {
     if (this.showId == -1L) {
       this.showId = showId;
-      shows = new CursorLiveData(getApplication(), RelatedShows.fromShow(showId),
-          ShowDescriptionAdapter.PROJECTION, null, null, null);
+      shows = new MappedCursorLiveData<>(getApplication(), RelatedShows.fromShow(showId),
+          ShowDescriptionAdapter.PROJECTION, null, null, null, new ShowListMapper());
     }
   }
 
-  public LiveData<Cursor> getShows() {
+  public LiveData<List<Show>> getShows() {
     return shows;
   }
 }

@@ -16,7 +16,6 @@
 package net.simonvt.cathode.ui.comments;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -25,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,17 +35,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
+import net.simonvt.cathode.common.entity.Comment;
+import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.CircleTransformation;
 import net.simonvt.cathode.common.widget.RemoteImageView;
-import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
-import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
-import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
-import net.simonvt.cathode.provider.util.SqlColumn;
-import net.simonvt.schematic.Cursors;
 
-public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewHolder> {
+public class CommentsAdapter extends BaseAdapter<Comment, CommentsAdapter.ViewHolder> {
 
   private static final String STATE_REVEALED_SPOILERS =
       "net.simonvt.cathode.ui.comments.CommentsAdapter";
@@ -64,23 +59,6 @@ public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewH
     void onUnlikeComment(long commentId);
   }
 
-  public static final String[] PROJECTION = {
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.ID),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.COMMENT),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.SPOILER),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.REVIEW),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.CREATED_AT),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.REPLIES),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.LIKES),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.USER_RATING),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.LIKED),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.IS_USER_COMMENT),
-      SqlColumn.table(Tables.COMMENTS).column(LastModifiedColumns.LAST_MODIFIED),
-      SqlColumn.table(Tables.USERS).column(UserColumns.USERNAME),
-      SqlColumn.table(Tables.USERS).column(UserColumns.NAME),
-      SqlColumn.table(Tables.USERS).column(UserColumns.AVATAR),
-  };
-
   private boolean showsReplies;
 
   private CommentCallbacks callbacks;
@@ -91,11 +69,11 @@ public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewH
 
   private int likedTintColor;
 
-  public CommentsAdapter(Context context, Cursor cursor, boolean showsReplies,
-      CommentCallbacks callbacks) {
-    super(context, cursor);
+  public CommentsAdapter(Context context, boolean showsReplies, CommentCallbacks callbacks) {
+    super(context);
     this.showsReplies = showsReplies;
     this.callbacks = callbacks;
+    setHasStableIds(true);
 
     tintColor = context.getResources().getColor(R.color.commentIconTint);
     likedTintColor = context.getResources().getColor(R.color.commentLikedTint);
@@ -122,12 +100,20 @@ public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewH
     return state;
   }
 
+  @Override public long getItemId(int position) {
+    return getList().get(position).getId();
+  }
+
   @Override public int getItemViewType(int position) {
     if (showsReplies && position > 0) {
       return REPLY;
     }
 
     return COMMENT;
+  }
+
+  @Override protected boolean areItemsTheSame(@NonNull Comment oldItem, @NonNull Comment newItem) {
+    return oldItem.getId() == newItem.getId();
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -213,48 +199,35 @@ public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewH
     }
   }
 
-  @Override protected void onBindViewHolder(final ViewHolder holder, Cursor cursor, int position) {
-    final long commentId = Cursors.getLong(cursor, CommentColumns.ID);
-    final String comment = Cursors.getString(cursor, CommentColumns.COMMENT);
-    final boolean spoiler = Cursors.getBoolean(cursor, CommentColumns.SPOILER);
-    final boolean review = Cursors.getBoolean(cursor, CommentColumns.REVIEW);
-    final long createdAt = Cursors.getLong(cursor, CommentColumns.CREATED_AT);
-    final int likes = Cursors.getInt(cursor, CommentColumns.LIKES);
-    final int replies = Cursors.getInt(cursor, CommentColumns.REPLIES);
-    final int userRating = Cursors.getInt(cursor, CommentColumns.USER_RATING);
-    final boolean liked = Cursors.getBoolean(cursor, CommentColumns.LIKED);
-    final boolean isUserComment = Cursors.getBoolean(cursor, CommentColumns.IS_USER_COMMENT);
+  @Override public void onBindViewHolder(final ViewHolder holder, int position) {
+    Comment comment = getList().get(position);
 
-    final String username = Cursors.getString(cursor, UserColumns.USERNAME);
-    final String name = Cursors.getString(cursor, UserColumns.NAME);
-    final String avatar = Cursors.getString(cursor, UserColumns.AVATAR);
-
-    final boolean revealed = revealedSpoilers.contains(commentId);
+    final boolean revealed = revealedSpoilers.contains(comment.getId());
 
     DateFormat format = DateFormat.getDateTimeInstance();
-    final String dateString = format.format(new Date(createdAt));
+    final String dateString = format.format(new Date(comment.getCreatedAt()));
 
     String visibleName;
-    if (!TextUtils.isEmpty(name)) {
-      visibleName = name;
+    if (!TextUtils.isEmpty(comment.getUser().getName())) {
+      visibleName = comment.getUser().getName();
     } else {
-      visibleName = username;
+      visibleName = comment.getUser().getUsername();
     }
 
-    holder.avatar.setImage(avatar);
+    holder.avatar.setImage(comment.getUser().getAvatar());
     String usernameText = getContext().getResources()
-        .getString(R.string.comments_username_rating, visibleName, userRating);
+        .getString(R.string.comments_username_rating, visibleName, comment.getUserRating());
     holder.username.setText(usernameText);
     holder.date.setText(dateString);
-    holder.commentText.setText(comment);
-    holder.likes.setText(String.valueOf(likes));
+    holder.commentText.setText(comment.getComment());
+    holder.likes.setText(String.valueOf(comment.getLikes()));
     if (holder.replies != null) {
-      holder.replies.setText(String.valueOf(replies));
+      holder.replies.setText(String.valueOf(comment.getReplies()));
     }
 
-    holder.likeCount = likes;
+    holder.likeCount = comment.getLikes();
 
-    if (liked) {
+    if (comment.isLiked()) {
       DrawableCompat.setTint(holder.likeDrawable, likedTintColor);
     } else {
       DrawableCompat.setTint(holder.likeDrawable, tintColor);
@@ -262,7 +235,7 @@ public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewH
 
     holder.isRevealed = revealed;
 
-    if (spoiler && !revealed) {
+    if (comment.isSpoiler() && !revealed) {
       holder.commentText.setVisibility(View.GONE);
       holder.spoilerOverlay.setVisibility(View.VISIBLE);
       holder.spoilerOverlay.setAlpha(1.0f);
@@ -273,7 +246,7 @@ public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewH
     }
 
     if (showsReplies) {
-      if (spoiler && !revealed) {
+      if (comment.isSpoiler() && !revealed) {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
           @Override public void onClick(View v) {
             revealedSpoilers.add(holder.getItemId());
@@ -295,12 +268,12 @@ public class CommentsAdapter extends RecyclerCursorAdapter<CommentsAdapter.ViewH
       }
     }
 
-    holder.spoiler.setVisibility(spoiler ? View.VISIBLE : View.INVISIBLE);
+    holder.spoiler.setVisibility(comment.isSpoiler() ? View.VISIBLE : View.INVISIBLE);
 
-    holder.comment = comment;
-    holder.isSpoiler = spoiler;
-    holder.isUserComment = isUserComment;
-    holder.liked = liked;
+    holder.comment = comment.getComment();
+    holder.isSpoiler = comment.isSpoiler();
+    holder.isUserComment = comment.isUserComment();
+    holder.liked = comment.isLiked();
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {

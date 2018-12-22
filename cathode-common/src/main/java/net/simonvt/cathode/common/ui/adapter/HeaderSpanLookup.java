@@ -17,22 +17,23 @@
 package net.simonvt.cathode.common.ui.adapter;
 
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class HeaderSpanLookup extends GridLayoutManager.SpanSizeLookup {
 
   public static final int TYPE_HEADER = 0x11EAD;
 
-  private HeaderCursorAdapter headerAdapter;
+  private RecyclerView.Adapter<?> adapter;
 
   private int columnCount;
 
-  public HeaderSpanLookup(HeaderCursorAdapter headerAdapter, int columnCount) {
-    this.headerAdapter = headerAdapter;
+  public HeaderSpanLookup(RecyclerView.Adapter adapter, int columnCount) {
+    this.adapter = adapter;
     this.columnCount = columnCount;
     setSpanIndexCacheEnabled(true);
   }
 
   @Override public int getSpanSize(int position) {
-    return headerAdapter.getItemViewType(position) == TYPE_HEADER ? columnCount : 1;
+    return adapter.getItemViewType(position) == TYPE_HEADER ? columnCount : 1;
   }
 }

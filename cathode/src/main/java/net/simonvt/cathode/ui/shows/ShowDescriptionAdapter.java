@@ -16,17 +16,18 @@
 package net.simonvt.cathode.ui.shows;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
+import net.simonvt.cathode.common.entity.Show;
+import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.CircularProgressIndicator;
 import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.common.widget.RemoteImageView;
@@ -35,10 +36,8 @@ import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.widget.IndicatorView;
-import net.simonvt.schematic.Cursors;
 
-public class ShowDescriptionAdapter
-    extends RecyclerCursorAdapter<ShowDescriptionAdapter.ViewHolder> {
+public class ShowDescriptionAdapter extends BaseAdapter<Show, ShowDescriptionAdapter.ViewHolder> {
 
   public interface ShowCallbacks {
 
@@ -48,14 +47,11 @@ public class ShowDescriptionAdapter
   }
 
   public static final String[] PROJECTION = new String[] {
-      Tables.SHOWS + "." + ShowColumns.ID,
-      Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.OVERVIEW,
-      Tables.SHOWS + "." + ShowColumns.TVDB_ID,
+      Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.TVDB_ID,
       Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
       Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
-      Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST,
-      Tables.SHOWS + "." + ShowColumns.RATING,
+      Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST, Tables.SHOWS + "." + ShowColumns.RATING,
       Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
   };
 
@@ -63,16 +59,24 @@ public class ShowDescriptionAdapter
 
   private boolean displayRating;
 
-  public ShowDescriptionAdapter(Context context, ShowCallbacks callbacks, Cursor cursor) {
-    this(context, callbacks, cursor, true);
+  public ShowDescriptionAdapter(Context context, ShowCallbacks callbacks) {
+    this(context, callbacks, true);
     this.callbacks = callbacks;
   }
 
-  public ShowDescriptionAdapter(Context context, ShowCallbacks callbacks, Cursor cursor,
-      boolean displayRating) {
-    super(context, cursor);
+  public ShowDescriptionAdapter(Context context, ShowCallbacks callbacks, boolean displayRating) {
+    super(context);
     this.callbacks = callbacks;
     this.displayRating = displayRating;
+    setHasStableIds(true);
+  }
+
+  @Override public long getItemId(int position) {
+    return getList().get(position).getId();
+  }
+
+  @Override protected boolean areItemsTheSame(@NonNull Show oldItem, @NonNull Show newItem) {
+    return oldItem.getId() == newItem.getId();
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -90,10 +94,8 @@ public class ShowDescriptionAdapter
       @Override public void onClick(View v) {
         final int position = holder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
-          Cursor cursor = getCursor(position);
-          final String title = Cursors.getString(cursor, ShowColumns.TITLE);
-          final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
-          callbacks.onShowClick(holder.getItemId(), title, overview);
+          Show show = getList().get(position);
+          callbacks.onShowClick(show.getId(), show.getTitle(), show.getOverview());
         }
       }
     });
@@ -121,26 +123,25 @@ public class ShowDescriptionAdapter
     holder.overflow.dismiss();
   }
 
-  @Override protected void onBindViewHolder(final ViewHolder holder, Cursor cursor, int position) {
-    final long id = Cursors.getLong(cursor, ShowColumns.ID);
+  @Override public void onBindViewHolder(final ViewHolder holder, int position) {
+    Show show = getList().get(position);
 
-    final boolean watched = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT) > 0;
-    final boolean inCollection = Cursors.getInt(cursor, ShowColumns.IN_COLLECTION_COUNT) > 1;
-    final boolean inWatchlist = Cursors.getBoolean(cursor, ShowColumns.IN_WATCHLIST);
+    final boolean watched = show.getWatchedCount() > 0;
+    final boolean inCollection = show.getInCollectionCount() > 1;
+    final boolean inWatchlist = show.getInWatchlist();
 
-    final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
+    final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, show.getId());
 
     holder.indicator.setWatched(watched);
     holder.indicator.setCollected(inCollection);
     holder.indicator.setInWatchlist(inWatchlist);
 
     holder.poster.setImage(poster);
-    holder.title.setText(Cursors.getString(cursor, ShowColumns.TITLE));
-    holder.overview.setText(Cursors.getString(cursor, ShowColumns.OVERVIEW));
+    holder.title.setText(show.getTitle());
+    holder.overview.setText(show.getOverview());
 
     if (displayRating) {
-      final float rating = Cursors.getFloat(cursor, ShowColumns.RATING);
-      holder.rating.setValue(rating);
+      holder.rating.setValue(show.getRating());
     }
 
     holder.overflow.removeItems();

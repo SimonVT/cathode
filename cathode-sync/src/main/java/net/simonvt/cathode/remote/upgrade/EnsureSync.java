@@ -17,6 +17,7 @@
 package net.simonvt.cathode.remote.upgrade;
 
 import android.database.Cursor;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
@@ -25,7 +26,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
-import net.simonvt.schematic.Cursors;
 
 public class EnsureSync extends Job {
 

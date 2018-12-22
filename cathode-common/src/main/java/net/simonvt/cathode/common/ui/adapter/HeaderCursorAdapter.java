@@ -24,11 +24,11 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
-import net.simonvt.schematic.Cursors;
+import net.simonvt.cathode.common.database.Cursors;
 import timber.log.Timber;
 
 public abstract class HeaderCursorAdapter<T extends RecyclerView.ViewHolder>
-    extends BaseAdapter<T> {
+    extends BaseCursorAdapter<T> {
 
   public static class Header {
 

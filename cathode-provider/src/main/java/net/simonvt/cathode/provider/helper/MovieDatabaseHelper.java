@@ -29,14 +29,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import net.simonvt.cathode.api.entity.Movie;
+import net.simonvt.cathode.common.database.Cursors;
+import net.simonvt.cathode.common.database.DatabaseUtils;
 import net.simonvt.cathode.common.util.TextUtils;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.MovieGenres;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
-import net.simonvt.cathode.common.database.DatabaseUtils;
 import net.simonvt.cathode.provider.generated.CathodeProvider;
-import net.simonvt.schematic.Cursors;
 import timber.log.Timber;
 
 public final class MovieDatabaseHelper {

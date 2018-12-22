@@ -16,15 +16,16 @@
 package net.simonvt.cathode.ui.shows;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import dagger.android.support.AndroidSupportInjection;
+import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
+import net.simonvt.cathode.common.entity.ShowWithEpisode;
+import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
@@ -32,7 +33,7 @@ import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 
-public abstract class ShowsFragment<D extends Cursor>
+public abstract class ShowsFragment
     extends ToolbarSwipeRefreshRecyclerFragment<ShowsWithNextAdapter.ViewHolder>
     implements ShowsWithNextAdapter.Callbacks {
 
@@ -41,11 +42,9 @@ public abstract class ShowsFragment<D extends Cursor>
   @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;
 
-  protected RecyclerCursorAdapter showsAdapter;
+  protected BaseAdapter<ShowWithEpisode, ShowsWithNextAdapter.ViewHolder> showsAdapter;
 
   private ShowsNavigationListener navigationListener;
-
-  private Cursor cursor;
 
   private int columnCount;
 
@@ -115,26 +114,24 @@ public abstract class ShowsFragment<D extends Cursor>
     showScheduler.hideFromCollected(showId, true);
   }
 
-  protected ShowsWithNextAdapter getAdapter(Cursor cursor) {
-    return new ShowsWithNextAdapter(getActivity(), this, cursor, getLibraryType());
+  protected ShowsWithNextAdapter createAdapter() {
+    return new ShowsWithNextAdapter(getActivity(), this, getLibraryType());
   }
 
-  protected Observer<Cursor> observer = new Observer<Cursor>() {
-    @Override public void onChanged(Cursor cursor) {
-      setCursor(cursor);
-    }
-  };
+  protected Observer<List<ShowWithEpisode>> observer =
+      new Observer<List<ShowWithEpisode>>() {
+        @Override public void onChanged(List<ShowWithEpisode> shows) {
+          setShows(shows);
+        }
+      };
 
-  protected void setCursor(Cursor cursor) {
-    this.cursor = cursor;
-
+  protected void setShows(List<ShowWithEpisode> shows) {
     if (showsAdapter == null) {
-      showsAdapter = getAdapter(cursor);
+      showsAdapter = createAdapter();
       setAdapter(showsAdapter);
-      return;
     }
 
-    showsAdapter.changeCursor(cursor);
+    showsAdapter.setList(shows);
 
     if (scrollToTop) {
       getRecyclerView().scrollToPosition(0);

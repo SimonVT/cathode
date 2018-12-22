@@ -17,26 +17,28 @@
 package net.simonvt.cathode.ui.movies.watchlist;
 
 import android.app.Application;
-import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import net.simonvt.cathode.common.data.CursorLiveData;
+import java.util.List;
+import net.simonvt.cathode.common.data.MappedCursorLiveData;
+import net.simonvt.cathode.common.entity.Movie;
+import net.simonvt.cathode.entitymapper.MovieListMapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
 
 public class MovieWatchlistViewModel extends AndroidViewModel {
 
-  private CursorLiveData movies;
+  private LiveData<List<Movie>> movies;
 
   public MovieWatchlistViewModel(@NonNull Application application) {
     super(application);
     movies =
-        new CursorLiveData(application, Movies.MOVIES_WATCHLIST, MoviesAdapter.PROJECTION, null,
-            null, Movies.DEFAULT_SORT);
+        new MappedCursorLiveData<>(application, Movies.MOVIES_WATCHLIST, MoviesAdapter.PROJECTION,
+            null, null, Movies.DEFAULT_SORT, new MovieListMapper());
   }
 
-  public LiveData<Cursor> getMovies() {
+  public LiveData<List<Movie>> getMovies() {
     return movies;
   }
 }

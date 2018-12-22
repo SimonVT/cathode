@@ -16,15 +16,16 @@
 package net.simonvt.cathode.ui.lists;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
+import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.entity.UserList;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -58,9 +59,9 @@ public class ListsFragment extends ToolbarSwipeRefreshRecyclerFragment<ListsAdap
     setEmptyText(R.string.empty_lists);
 
     viewModel = ViewModelProviders.of(this).get(ListsViewModel.class);
-    viewModel.getLists().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        setCursor(cursor);
+    viewModel.getLists().observe(this, new Observer<List<UserList>>() {
+      @Override public void onChanged(List<UserList> userLists) {
+        setLists(userLists);
       }
     });
   }
@@ -105,12 +106,12 @@ public class ListsFragment extends ToolbarSwipeRefreshRecyclerFragment<ListsAdap
     return super.onMenuItemClick(item);
   }
 
-  private void setCursor(Cursor cursor) {
+  private void setLists(List<UserList> userLists) {
     if (adapter == null) {
       adapter = new ListsAdapter(this, getActivity());
       setAdapter(adapter);
     }
 
-    adapter.changeCursor(cursor);
+    adapter.setList(userLists);
   }
 }

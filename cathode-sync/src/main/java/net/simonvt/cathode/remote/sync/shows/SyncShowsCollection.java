@@ -27,6 +27,7 @@ import net.simonvt.cathode.api.entity.CollectionItem;
 import net.simonvt.cathode.api.entity.IsoTime;
 import net.simonvt.cathode.api.entity.Show;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -37,7 +38,6 @@ import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
 public class SyncShowsCollection extends CallJob<List<CollectionItem>> {

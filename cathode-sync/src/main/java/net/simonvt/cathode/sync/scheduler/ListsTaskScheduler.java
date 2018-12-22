@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.api.service.SyncService;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
@@ -47,7 +48,6 @@ import net.simonvt.cathode.remote.action.lists.RemoveSeason;
 import net.simonvt.cathode.remote.action.lists.RemoveShow;
 import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.sync.trakt.UserList;
-import net.simonvt.schematic.Cursors;
 
 @Singleton public class ListsTaskScheduler extends BaseTaskScheduler {
 

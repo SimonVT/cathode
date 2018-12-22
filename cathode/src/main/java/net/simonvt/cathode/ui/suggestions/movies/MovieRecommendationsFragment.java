@@ -16,7 +16,6 @@
 package net.simonvt.cathode.ui.suggestions.movies;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,11 +24,12 @@ import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.database.SimpleCursor;
+import net.simonvt.cathode.common.entity.Movie;
 import net.simonvt.cathode.common.ui.fragment.SwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -101,8 +101,6 @@ public class MovieRecommendationsFragment
   private MovieRecommendationsViewModel viewModel;
   private MovieRecommendationsAdapter movieAdapter;
 
-  private SimpleCursor cursor;
-
   private SortBy sortBy;
 
   private int columnCount;
@@ -127,11 +125,6 @@ public class MovieRecommendationsFragment
     setEmptyText(R.string.recommendations_empty);
 
     viewModel = ViewModelProviders.of(this).get(MovieRecommendationsViewModel.class);
-    viewModel.getRecommendations().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        setCursor((SimpleCursor) cursor);
-      }
-    });
 
     if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
         SuggestionsTimestamps.MOVIES_RECOMMENDED)) {
@@ -139,6 +132,15 @@ public class MovieRecommendationsFragment
       SuggestionsTimestamps.updateSuggestions(getActivity(),
           SuggestionsTimestamps.MOVIES_RECOMMENDED);
     }
+  }
+
+  @Override public void onViewCreated(View view, Bundle inState) {
+    super.onViewCreated(view, inState);
+    viewModel.getRecommendations().observe(this, new Observer<List<Movie>>() {
+      @Override public void onChanged(List<Movie> movies) {
+        setMovies(movies);
+      }
+    });
   }
 
   @Override protected int getColumnCount() {
@@ -228,24 +230,18 @@ public class MovieRecommendationsFragment
     movieScheduler.setIsInCollection(movieId, false);
   }
 
-  @Override public void onDismissItem(final View view, final long id) {
-    movieScheduler.dismissRecommendation(id);
-
-    if (cursor != null) {
-      cursor.remove(id);
-      movieAdapter.notifyChanged();
-    }
+  @Override public void onDismissItem(final View view, Movie movie) {
+    movieScheduler.dismissRecommendation(movie.getId());
+    movieAdapter.removeItem(movie);
   }
 
-  protected void setCursor(SimpleCursor c) {
-    this.cursor = c;
+  protected void setMovies(List<Movie> movies) {
     if (movieAdapter == null) {
-      movieAdapter = new MovieRecommendationsAdapter(getActivity(), this, c, this);
+      movieAdapter = new MovieRecommendationsAdapter(getActivity(), this, this);
       setAdapter(movieAdapter);
-      return;
     }
 
-    movieAdapter.changeCursor(c);
+    movieAdapter.setList(movies);
 
     if (scrollToTop) {
       getRecyclerView().scrollToPosition(0);

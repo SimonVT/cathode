@@ -3,6 +3,7 @@ apply plugin: 'checkstyle'
 apply plugin: 'com.jakewharton.butterknife'
 
 dependencies {
+  implementation project(':trakt-api')
   implementation deps.androidx.appcompat
   implementation deps.butterknife
   annotationProcessor deps.butterknifeCompiler

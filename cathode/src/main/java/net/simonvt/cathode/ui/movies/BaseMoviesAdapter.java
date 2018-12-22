@@ -15,30 +15,29 @@
  */
 package net.simonvt.cathode.ui.movies;
 
-import android.database.Cursor;
 import android.view.View;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.ui.adapter.RecyclerCursorAdapter;
+import net.simonvt.cathode.common.entity.Movie;
+import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.CircularProgressIndicator;
 import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
-import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.ui.dialog.CheckInDialog;
 import net.simonvt.cathode.ui.dialog.CheckInDialog.Type;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
-import net.simonvt.schematic.Cursors;
 
 public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
-    extends RecyclerCursorAdapter<T> {
+    extends BaseAdapter<Movie, T> {
 
   public interface Callbacks {
 
@@ -61,38 +60,40 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
 
   protected Callbacks callbacks;
 
-  public BaseMoviesAdapter(FragmentActivity activity, Callbacks callbacks, Cursor c) {
-    super(activity, c);
+  public BaseMoviesAdapter(FragmentActivity activity, Callbacks callbacks) {
+    super(activity);
     this.activity = activity;
     this.callbacks = callbacks;
+    setHasStableIds(true);
+  }
+
+  @Override public long getItemId(int position) {
+    return getList().get(position).getId();
+  }
+
+  @Override protected boolean areItemsTheSame(@NonNull Movie oldItem, @NonNull Movie newItem) {
+    return oldItem.getId() == newItem.getId();
   }
 
   @Override public void onViewRecycled(ViewHolder holder) {
     holder.overflow.dismiss();
   }
 
-  @Override protected void onBindViewHolder(T holder, Cursor cursor, int position) {
-    final long id = Cursors.getLong(cursor, MovieColumns.ID);
-    final String title = Cursors.getString(cursor, MovieColumns.TITLE);
-    final boolean watched = Cursors.getBoolean(cursor, MovieColumns.WATCHED);
-    final boolean collected = Cursors.getBoolean(cursor, MovieColumns.IN_COLLECTION);
-    final boolean inWatchlist = Cursors.getBoolean(cursor, MovieColumns.IN_WATCHLIST);
-    final boolean watching = Cursors.getBoolean(cursor, MovieColumns.WATCHING);
-    final boolean checkedIn = Cursors.getBoolean(cursor, MovieColumns.CHECKED_IN);
+  @Override public void onBindViewHolder(T holder, int position) {
+    Movie movie = getList().get(position);
 
-    final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id);
-
+    final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, movie.getId());
     holder.poster.setImage(poster);
-    holder.title.setText(title);
-    holder.overview.setText(Cursors.getString(cursor, MovieColumns.OVERVIEW));
+    holder.title.setText(movie.getTitle());
+    holder.overview.setText(movie.getOverview());
 
     if (holder.rating != null) {
-      final float rating = Cursors.getFloat(cursor, MovieColumns.RATING);
-      holder.rating.setValue(rating);
+      holder.rating.setValue(movie.getRating());
     }
 
     holder.overflow.removeItems();
-    setupOverflowItems(holder.overflow, watched, collected, inWatchlist, watching, checkedIn);
+    setupOverflowItems(holder.overflow, movie.getWatched(), movie.getInCollection(),
+        movie.getInWatchlist(), movie.getWatching(), movie.getCheckedIn());
   }
 
   protected void setupOverflowItems(OverflowView overflow, boolean watched, boolean collected,

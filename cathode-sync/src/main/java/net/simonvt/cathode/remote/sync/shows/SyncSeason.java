@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.Episode;
 import net.simonvt.cathode.api.enumeration.Extended;
 import net.simonvt.cathode.api.service.SeasonService;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns;
@@ -32,7 +33,6 @@ import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
-import net.simonvt.schematic.Cursors;
 import retrofit2.Call;
 
 public class SyncSeason extends CallJob<List<Episode>> {

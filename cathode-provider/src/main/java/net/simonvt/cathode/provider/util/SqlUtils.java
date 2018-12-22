@@ -20,7 +20,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import java.util.HashSet;
 import java.util.Set;
-import net.simonvt.schematic.Cursors;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.schematic.annotation.DataType;
 
 public final class SqlUtils {

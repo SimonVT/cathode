@@ -16,7 +16,6 @@
 package net.simonvt.cathode.ui.show;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -33,10 +32,13 @@ import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import butterknife.BindView;
 import butterknife.OnClick;
 import dagger.android.support.AndroidSupportInjection;
+import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TraktUtils;
+import net.simonvt.cathode.common.entity.Comment;
+import net.simonvt.cathode.common.entity.Episode;
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.common.util.DateStringUtils;
 import net.simonvt.cathode.common.util.Ids;
@@ -47,12 +49,7 @@ import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.provider.DatabaseContract;
-import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
-import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.util.DataHelper;
-import net.simonvt.cathode.provider.util.SqlColumn;
 import net.simonvt.cathode.settings.TraktTimestamps;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
@@ -65,7 +62,6 @@ import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog;
 import net.simonvt.cathode.ui.lists.ListsDialog;
 import net.simonvt.cathode.widget.CheckInDrawable;
-import net.simonvt.schematic.Cursors;
 
 public class EpisodeFragment extends RefreshableAppBarFragment {
 
@@ -80,28 +76,6 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
       "net.simonvt.cathode.ui.show.EpisodeFragment.ratingDialog";
   private static final String DIALOG_LISTS_ADD =
       "net.simonvt.cathode.ui.show.EpisodeFragment.listsAddDialog";
-
-  static final String[] EPISODE_PROJECTION = new String[] {
-      EpisodeColumns.TRAKT_ID, EpisodeColumns.TITLE, EpisodeColumns.OVERVIEW,
-      EpisodeColumns.FIRST_AIRED, EpisodeColumns.WATCHED, EpisodeColumns.IN_COLLECTION,
-      EpisodeColumns.IN_WATCHLIST, EpisodeColumns.WATCHING, EpisodeColumns.CHECKED_IN,
-      EpisodeColumns.USER_RATING, EpisodeColumns.RATING, EpisodeColumns.SEASON,
-      EpisodeColumns.EPISODE, EpisodeColumns.LAST_COMMENT_SYNC, EpisodeColumns.SHOW_ID,
-      EpisodeColumns.SEASON_ID, EpisodeColumns.SHOW_TITLE,
-  };
-
-  static final String[] COMMENTS_PROJECTION = new String[] {
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.ID),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.COMMENT),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.SPOILER),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.REVIEW),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.CREATED_AT),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.LIKES),
-      SqlColumn.table(Tables.COMMENTS).column(CommentColumns.USER_RATING),
-      SqlColumn.table(Tables.USERS).column(UserColumns.USERNAME),
-      SqlColumn.table(Tables.USERS).column(UserColumns.NAME),
-      SqlColumn.table(Tables.USERS).column(UserColumns.AVATAR),
-  };
 
   @Inject ShowTaskScheduler showScheduler;
   @Inject EpisodeTaskScheduler episodeScheduler;
@@ -125,10 +99,11 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
   private EpisodeViewModel viewModel;
 
-  private Cursor userComments;
-  private Cursor comments;
+  private List<Comment> userComments;
+  private List<Comment> comments;
 
   private long episodeId;
+  private Episode episode;
 
   private String episodeTitle;
 
@@ -184,20 +159,20 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
     viewModel = ViewModelProviders.of(this).get(EpisodeViewModel.class);
     viewModel.setEpisodeId(episodeId);
-    viewModel.getEpisode().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        updateEpisodeViews(cursor);
+    viewModel.getEpisode().observe(this, new Observer<Episode>() {
+      @Override public void onChanged(Episode episode) {
+        updateEpisodeViews(episode);
       }
     });
-    viewModel.getUserComments().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        userComments = cursor;
+    viewModel.getUserComments().observe(this, new Observer<List<Comment>>() {
+      @Override public void onChanged(List<Comment> userComments) {
+        EpisodeFragment.this.userComments = userComments;
         updateComments();
       }
     });
-    viewModel.getComments().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        comments = cursor;
+    viewModel.getComments().observe(this, new Observer<List<Comment>>() {
+      @Override public void onChanged(List<Comment> comments) {
+        EpisodeFragment.this.comments = comments;
         updateComments();
       }
     });
@@ -356,36 +331,36 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
     }
   }
 
-  private void updateEpisodeViews(final Cursor cursor) {
-    if (cursor == null || !cursor.moveToFirst()) return;
+  private void updateEpisodeViews(Episode episode) {
+    this.episode = episode;
 
     loaded = true;
 
-    final long traktId = Cursors.getLong(cursor, EpisodeColumns.TRAKT_ID);
-    showId = Cursors.getLong(cursor, EpisodeColumns.SHOW_ID);
-    seasonId = Cursors.getLong(cursor, EpisodeColumns.SEASON_ID);
-    showTitle = Cursors.getString(cursor, EpisodeColumns.SHOW_TITLE);
+    showId = episode.getShowId();
+    seasonId = episode.getSeasonId();
+    showTitle = episode.getShowTitle();
 
-    season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
-    final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-    episodeTitle = DataHelper.getEpisodeTitle(getContext(), cursor, season, episode, watched);
+    watched = episode.getWatched();
+    collected = episode.getInCollection();
+    inWatchlist = episode.getInWatchlist();
+    watching = episode.getWatching();
+    checkedIn = episode.getCheckedIn();
+
+    season = episode.getSeason();
+    episodeTitle =
+        DataHelper.getEpisodeTitle(getContext(), episode.getTitle(), season, episode.getEpisode(),
+            episode.getWatched());
 
     title.setText(episodeTitle);
 
-    final String overviewText = DataHelper.getEpisodeOverview(getContext(), cursor, watched);
-    overview.setText(overviewText);
+    overview.setText(episode.getOverview());
 
     final String screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, episodeId);
 
     setBackdrop(screenshotUri, true);
-    firstAired.setText(
-        DateStringUtils.getAirdateInterval(getActivity(), DataHelper.getFirstAired(cursor), true));
 
-    watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
-    collected = Cursors.getBoolean(cursor, EpisodeColumns.IN_COLLECTION);
-    inWatchlist = Cursors.getBoolean(cursor, EpisodeColumns.IN_WATCHLIST);
-    watching = Cursors.getBoolean(cursor, EpisodeColumns.WATCHING);
-    checkedIn = Cursors.getBoolean(cursor, EpisodeColumns.CHECKED_IN);
+    firstAired.setText(
+        DateStringUtils.getAirdateInterval(getActivity(), episode.getFirstAired(), true));
 
     if (checkInDrawable != null) {
       checkInDrawable.setWatching(watching || checkedIn);
@@ -397,18 +372,17 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
     inCollectionView.setVisibility(collected ? View.VISIBLE : View.GONE);
     inWatchlistView.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
 
-    currentRating = Cursors.getInt(cursor, EpisodeColumns.USER_RATING);
-    final float ratingAll = Cursors.getFloat(cursor, EpisodeColumns.RATING);
+    currentRating = episode.getUserRating();
+    final float ratingAll = episode.getRating();
     rating.setValue(ratingAll);
 
     viewOnTrakt.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        Intents.openUrl(getContext(), TraktUtils.getTraktEpisodeUrl(traktId));
+        Intents.openUrl(getContext(), TraktUtils.getTraktEpisodeUrl(episode.getTraktId()));
       }
     });
 
-    final long lastCommentSync = Cursors.getLong(cursor, EpisodeColumns.LAST_COMMENT_SYNC);
-    if (TraktTimestamps.shouldSyncComments(lastCommentSync)) {
+    if (TraktTimestamps.shouldSyncComments(episode.getLastCommentSync())) {
       episodeScheduler.syncComments(episodeId);
     }
 

@@ -16,7 +16,6 @@
 package net.simonvt.cathode.ui.suggestions.shows;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,11 +24,12 @@ import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.database.SimpleCursor;
+import net.simonvt.cathode.common.entity.Show;
 import net.simonvt.cathode.common.ui.fragment.SwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -101,7 +101,7 @@ public class ShowRecommendationsFragment
 
   @Inject ShowTaskScheduler showScheduler;
 
-  private SimpleCursor cursor;
+  private List<Show> shows;
 
   private SortBy sortBy;
 
@@ -127,9 +127,9 @@ public class ShowRecommendationsFragment
     setEmptyText(R.string.recommendations_empty);
 
     viewModel = ViewModelProviders.of(this).get(ShowRecommendationsViewModel.class);
-    viewModel.getRecommendations().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        setCursor(cursor);
+    viewModel.getRecommendations().observe(this, new Observer<List<Show>>() {
+      @Override public void onChanged(List<Show> shows) {
+        setShows(shows);
       }
     });
 
@@ -208,25 +208,21 @@ public class ShowRecommendationsFragment
     showScheduler.setIsInWatchlist(showId, inWatchlist);
   }
 
-  @Override public void onDismissItem(final View view, final long id) {
-    showScheduler.dismissRecommendation(id);
-
-    if (cursor != null) {
-      cursor.remove(id);
-      showsAdapter.notifyChanged();
-    }
+  @Override public void onDismissItem(final View view, Show show) {
+    showScheduler.dismissRecommendation(show.getId());
+    showsAdapter.removeItem(show);
   }
 
-  private void setCursor(Cursor c) {
-    cursor = (SimpleCursor) c;
+  private void setShows(List<Show> shows) {
+    this.shows = shows;
 
     if (showsAdapter == null) {
-      showsAdapter = new ShowRecommendationsAdapter(getActivity(), this, cursor, this);
+      showsAdapter = new ShowRecommendationsAdapter(getActivity(), this, this);
       setAdapter(showsAdapter);
       return;
     }
 
-    showsAdapter.changeCursor(cursor);
+    showsAdapter.setList(shows);
 
     if (scrollToTop) {
       getRecyclerView().scrollToPosition(0);

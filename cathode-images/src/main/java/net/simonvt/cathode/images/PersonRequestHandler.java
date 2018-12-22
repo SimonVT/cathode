@@ -29,12 +29,12 @@ import com.uwetrottmann.tmdb2.services.PeopleService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.common.tmdb.TmdbRateLimiter;
 import net.simonvt.cathode.common.util.Closeables;
 import net.simonvt.cathode.provider.DatabaseContract.PersonColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.People;
 import net.simonvt.cathode.provider.helper.PersonDatabaseHelper;
-import net.simonvt.schematic.Cursors;
 import retrofit2.Response;
 
 public class PersonRequestHandler extends ItemRequestHandler {

@@ -16,7 +16,6 @@
 package net.simonvt.cathode.ui.dashboard;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -28,8 +27,13 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import dagger.android.support.AndroidSupportInjection;
+import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.entity.Episode;
+import net.simonvt.cathode.common.entity.Movie;
+import net.simonvt.cathode.common.entity.Show;
+import net.simonvt.cathode.common.entity.ShowWithEpisode;
 import net.simonvt.cathode.common.ui.adapter.CategoryAdapter;
 import net.simonvt.cathode.common.ui.fragment.ToolbarRecyclerFragment;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -70,8 +74,8 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
   DashboardMoviesAdapter trendingMoviesAdapter;
 
   DashboardShowsWatchlistAdapter showsWatchlistAdapter;
-  private Cursor showsWatchlistCursor;
-  private Cursor episodeWatchlistCursor;
+  private List<Show> showWatchlist;
+  private List<Episode> episodeWatchlist;
 
   private NavigationListener navigationListener;
 
@@ -108,34 +112,34 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
     }
 
     viewModel = ViewModelProviders.of(this, viewModelFactory).get(DashboardViewModel.class);
-    viewModel.getUpcomingShows().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        updateShowsUpcomingCursor(cursor);
+    viewModel.getUpcomingShows().observe(this, new Observer<List<ShowWithEpisode>>() {
+      @Override public void onChanged(List<ShowWithEpisode> shows) {
+        updateShowsUpcomingCursor(shows);
       }
     });
-    viewModel.getShowsWatchlist().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        updateShowsWatchlistCursor(cursor);
+    viewModel.getShowsWatchlist().observe(this, new Observer<List<Show>>() {
+      @Override public void onChanged(List<Show> shows) {
+        updateShowsWatchlistCursor(shows);
       }
     });
-    viewModel.getEpisodeWatchlist().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        updateEpisodeWatchlistCursor(cursor);
+    viewModel.getEpisodeWatchlist().observe(this, new Observer<List<Episode>>() {
+      @Override public void onChanged(List<Episode> episodes) {
+        updateEpisodeWatchlistCursor(episodes);
       }
     });
-    viewModel.getTrendingShows().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        updateShowsTrendingCursor(cursor);
+    viewModel.getTrendingShows().observe(this, new Observer<List<Show>>() {
+      @Override public void onChanged(List<Show> shows) {
+        updateShowsTrendingCursor(shows);
       }
     });
-    viewModel.getMovieWatchlist().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        updateMoviesWatchlistCursor(cursor);
+    viewModel.getMovieWatchlist().observe(this, new Observer<List<Movie>>() {
+      @Override public void onChanged(List<Movie> movies) {
+        updateMoviesWatchlistCursor(movies);
       }
     });
-    viewModel.getTrendingMovies().observe(this, new Observer<Cursor>() {
-      @Override public void onChanged(Cursor cursor) {
-        updateMoviesTrendingCursor(cursor);
+    viewModel.getTrendingMovies().observe(this, new Observer<List<Movie>>() {
+      @Override public void onChanged(List<Movie> movies) {
+        updateMoviesTrendingCursor(movies);
       }
     });
   }
@@ -209,68 +213,68 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
     }
   };
 
-  private void updateShowsUpcomingCursor(Cursor cursor) {
+  private void updateShowsUpcomingCursor(List<ShowWithEpisode> shows) {
     if (upcomingShowsAdapter == null) {
       upcomingShowsAdapter = new DashboardUpcomingShowsAdapter(getContext(), callback);
       adapter.setAdapter(R.string.category_shows_upcoming, upcomingShowsAdapter);
     }
 
-    upcomingShowsAdapter.changeCursor(cursor);
+    upcomingShowsAdapter.setList(shows);
   }
 
-  private void updateShowsWatchlistCursor(Cursor cursor) {
-    showsWatchlistCursor = cursor;
+  private void updateShowsWatchlistCursor(List<Show> shows) {
+    showWatchlist = shows;
     if (showsWatchlistAdapter == null) {
       checkWatchlistAdapter();
     } else {
-      showsWatchlistAdapter.changeShowsCursor(cursor);
+      showsWatchlistAdapter.changeShowList(shows);
     }
   }
 
-  private void updateEpisodeWatchlistCursor(Cursor cursor) {
-    episodeWatchlistCursor = cursor;
+  private void updateEpisodeWatchlistCursor(List<Episode> episodes) {
+    episodeWatchlist = episodes;
     if (showsWatchlistAdapter == null) {
       checkWatchlistAdapter();
     } else {
-      showsWatchlistAdapter.changeEpisodeCursor(cursor);
+      showsWatchlistAdapter.changeEpisodeList(episodes);
     }
   }
 
   private void checkWatchlistAdapter() {
     if (showsWatchlistAdapter == null) {
-      if (episodeWatchlistCursor != null && showsWatchlistCursor != null) {
+      if (episodeWatchlist != null && showWatchlist != null) {
         showsWatchlistAdapter = new DashboardShowsWatchlistAdapter(getContext(), callback);
-        showsWatchlistAdapter.changeShowsCursor(showsWatchlistCursor);
-        showsWatchlistAdapter.changeEpisodeCursor(episodeWatchlistCursor);
+        showsWatchlistAdapter.changeShowList(showWatchlist);
+        showsWatchlistAdapter.changeEpisodeList(episodeWatchlist);
         adapter.setAdapter(R.string.category_shows_watchlist, showsWatchlistAdapter);
       }
     }
   }
 
-  private void updateShowsTrendingCursor(Cursor cursor) {
+  private void updateShowsTrendingCursor(List<Show> shows) {
     if (trendingShowsAdapter == null) {
       trendingShowsAdapter = new DashboardShowsAdapter(getContext(), callback);
       adapter.setAdapter(R.string.category_shows_suggestions, trendingShowsAdapter);
     }
 
-    trendingShowsAdapter.changeCursor(cursor);
+    trendingShowsAdapter.setList(shows);
   }
 
-  private void updateMoviesWatchlistCursor(Cursor cursor) {
+  private void updateMoviesWatchlistCursor(List<Movie> movies) {
     if (movieWatchlistAdapter == null) {
       movieWatchlistAdapter = new DashboardMoviesAdapter(getContext(), callback);
       adapter.setAdapter(R.string.category_movies_watchlist, movieWatchlistAdapter);
     }
 
-    movieWatchlistAdapter.changeCursor(cursor);
+    movieWatchlistAdapter.setList(movies);
   }
 
-  private void updateMoviesTrendingCursor(Cursor cursor) {
+  private void updateMoviesTrendingCursor(List<Movie> movies) {
     if (trendingMoviesAdapter == null) {
       trendingMoviesAdapter = new DashboardMoviesAdapter(getContext(), callback);
       adapter.setAdapter(R.string.category_movies_suggestions, trendingMoviesAdapter);
     }
 
-    trendingMoviesAdapter.changeCursor(cursor);
+    trendingMoviesAdapter.setList(movies);
   }
 }

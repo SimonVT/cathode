@@ -16,16 +16,19 @@
 package net.simonvt.cathode.ui.dashboard;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.provider.BaseColumns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import java.util.ArrayList;
+import java.util.List;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.entity.Episode;
+import net.simonvt.cathode.common.entity.Show;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.images.ImageType;
@@ -35,24 +38,19 @@ import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.util.DataHelper;
-import net.simonvt.schematic.Cursors;
 
-public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.ViewHolder> {
+public class DashboardShowsWatchlistAdapter extends BaseAdapter<Object, RecyclerView.ViewHolder> {
 
   static final String[] PROJECTION = new String[] {
-      Tables.SHOWS + "." + ShowColumns.ID,
-      Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.OVERVIEW,
-      Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
+      Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
   };
 
   static final String[] PROJECTION_EPISODE = new String[] {
-      Tables.EPISODES + "." + EpisodeColumns.ID,
-      Tables.EPISODES + "." + EpisodeColumns.TITLE,
+      Tables.EPISODES + "." + EpisodeColumns.ID, Tables.EPISODES + "." + EpisodeColumns.TITLE,
       Tables.EPISODES + "." + EpisodeColumns.WATCHED,
       Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
-      Tables.EPISODES + "." + EpisodeColumns.SEASON,
-      Tables.EPISODES + "." + EpisodeColumns.EPISODE,
+      Tables.EPISODES + "." + EpisodeColumns.SEASON, Tables.EPISODES + "." + EpisodeColumns.EPISODE,
       Tables.EPISODES + "." + LastModifiedColumns.LAST_MODIFIED,
       Tables.SHOWS + "." + ShowColumns.TITLE,
   };
@@ -64,55 +62,63 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
 
   private DashboardFragment.OverviewCallback callback;
 
-  private Cursor showsWatchlist;
+  private List<Show> showsWatchlist;
 
-  private Cursor episodeWatchlist;
+  private List<Episode> episodeWatchlist;
 
   public DashboardShowsWatchlistAdapter(Context context,
       DashboardFragment.OverviewCallback callback) {
+    super(context);
     this.context = context;
     this.callback = callback;
   }
 
-  public void changeShowsCursor(Cursor cursor) {
-    showsWatchlist = cursor;
-    notifyChanged();
+  @Override protected boolean areItemsTheSame(@NonNull Object oldItem, @NonNull Object newItem) {
+    if (oldItem instanceof Show && newItem instanceof Show) {
+      return ((Show) oldItem).getId() == ((Show) newItem).getId();
+    } else if (oldItem instanceof Episode && newItem instanceof Episode) {
+      return ((Episode) oldItem).getId() == ((Episode) newItem).getId();
+    }
+
+    return false;
   }
 
-  public void changeEpisodeCursor(Cursor cursor) {
-    episodeWatchlist = cursor;
-    notifyChanged();
+  public void changeShowList(List<Show> shows) {
+    showsWatchlist = shows;
+    updateItems();
+  }
+
+  public void changeEpisodeList(List<Episode> episodes) {
+    episodeWatchlist = episodes;
+    updateItems();
+  }
+
+  private void updateItems() {
+    List<Object> items = new ArrayList<>();
+    if (showsWatchlist != null) {
+      items.addAll(showsWatchlist);
+    }
+    if (episodeWatchlist != null) {
+      items.addAll(episodeWatchlist);
+    }
+    setList(items);
   }
 
   @Override public int getItemViewType(int position) {
-    if (position < showsWatchlist.getCount()) {
+    if (position < showsWatchlist.size()) {
       return TYPE_SHOW;
     }
 
     return TYPE_EPISODE;
   }
 
-  private Cursor getCursor(int position) {
-    final int showCount = showsWatchlist.getCount();
-    if (position < showCount) {
-      showsWatchlist.moveToPosition(position);
-      return showsWatchlist;
-    } else {
-      episodeWatchlist.moveToPosition(position - showCount);
-      return episodeWatchlist;
-    }
-  }
-
   @Override public long getItemId(int position) {
-    return Cursors.getLong(getCursor(position), BaseColumns._ID);
-  }
-
-  @Override public int getItemCount() {
-    if (showsWatchlist == null || episodeWatchlist == null) {
-      return 0;
+    // TODO: Better way=
+    if (getItemViewType(position) == TYPE_SHOW) {
+      return ((Show) getList().get(position)).getTvdbId();
     }
 
-    return showsWatchlist.getCount() + episodeWatchlist.getCount();
+    return ((Episode) getList().get(position)).getTvdbId();
   }
 
   @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -125,11 +131,8 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
         @Override public void onClick(View v) {
           final int position = holder.getAdapterPosition();
           if (position != RecyclerView.NO_POSITION) {
-            Cursor cursor = getCursor(position);
-            final long id = Cursors.getLong(cursor, ShowColumns.ID);
-            final String title = Cursors.getString(cursor, ShowColumns.TITLE);
-            final String overview = Cursors.getString(cursor, ShowColumns.OVERVIEW);
-            callback.onDisplayShow(id, title, overview);
+            Show show = (Show) getList().get(position);
+            callback.onDisplayShow(show.getId(), show.getTitle(), show.getOverview());
           }
         }
       });
@@ -144,10 +147,8 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
         @Override public void onClick(View v) {
           final int position = holder.getAdapterPosition();
           if (position != RecyclerView.NO_POSITION) {
-            Cursor cursor = getCursor(position);
-            final long id = Cursors.getLong(cursor, EpisodeColumns.ID);
-            final String showTitle = Cursors.getString(cursor, ShowColumns.TITLE);
-            callback.onDisplayEpisode(id, showTitle);
+            Episode episode = (Episode) getList().get(position);
+            callback.onDisplayEpisode(episode.getId(), episode.getShowTitle());
           }
         }
       });
@@ -157,36 +158,26 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<RecyclerView.Vie
   }
 
   @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-    Cursor cursor = getCursor(position);
     if (holder.getItemViewType() == TYPE_SHOW) {
       ShowViewHolder showHolder = (ShowViewHolder) holder;
+      Show show = (Show) getList().get(position);
 
-      final long id = Cursors.getLong(cursor, ShowColumns.ID);
-      final String title = Cursors.getString(cursor, ShowColumns.TITLE);
-
-      final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, id);
-
+      final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, show.getId());
       showHolder.poster.setImage(poster);
-      showHolder.title.setText(title);
+      showHolder.title.setText(show.getTitle());
     } else {
       EpisodeViewHolder episodeHolder = (EpisodeViewHolder) holder;
+      Episode episode = (Episode) getList().get(position);
 
-      final long id = Cursors.getLong(cursor, EpisodeColumns.ID);
-      final int season = Cursors.getInt(cursor, EpisodeColumns.SEASON);
-      final int episode = Cursors.getInt(cursor, EpisodeColumns.EPISODE);
-      final boolean watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED);
-      final String title =
-          DataHelper.getEpisodeTitle(context, cursor, season, episode, watched, true);
-
-      final String screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, id);
-
+      final String screenshotUri =
+          ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, episode.getId());
       episodeHolder.screenshot.setImage(screenshotUri);
+
+      final String title =
+          DataHelper.getEpisodeTitle(context, episode.getTitle(), episode.getSeason(),
+              episode.getEpisode(), episode.getWatched(), true);
       episodeHolder.title.setText(title);
     }
-  }
-
-  @Override public long getLastModified(int position) {
-    return Cursors.getLong(getCursor(position), LastModifiedColumns.LAST_MODIFIED);
   }
 
   static class ShowViewHolder extends RecyclerView.ViewHolder {
