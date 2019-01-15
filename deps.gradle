@@ -8,7 +8,7 @@ ext {
   lintVersion = '26.2.1'
 
   deps = [
-      androidPlugin       : 'com.android.tools.build:gradle:3.3.0-rc01',
+      androidPlugin       : 'com.android.tools.build:gradle:3.3.0',
       fabricGradle        : 'io.fabric.tools:gradle:1.+',
 
       lint                : "com.android.tools.lint:lint:${lintVersion}",
