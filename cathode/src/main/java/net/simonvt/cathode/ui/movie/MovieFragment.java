@@ -44,6 +44,7 @@ import net.simonvt.cathode.common.entity.CastMember;
 import net.simonvt.cathode.common.entity.Comment;
 import net.simonvt.cathode.common.entity.Movie;
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment;
+import net.simonvt.cathode.common.util.DateStringUtils;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.Intents;
 import net.simonvt.cathode.common.util.Joiner;
@@ -95,8 +96,8 @@ public class MovieFragment extends RefreshableAppBarFragment {
   private List<Comment> comments;
   private List<Movie> related;
 
-  @BindView(R.id.year) TextView year;
-  @BindView(R.id.certification) TextView certification;
+  @BindView(R.id.info1) TextView info1;
+  @BindView(R.id.info2) TextView info2;
   //@BindView(R.id.poster) RemoteImageView poster;
   @BindView(R.id.overview) TextView overview;
 
@@ -423,8 +424,22 @@ public class MovieFragment extends RefreshableAppBarFragment {
     collection.setVisibility(collected ? View.VISIBLE : View.GONE);
     watchlist.setVisibility(inWatchlist ? View.VISIBLE : View.GONE);
 
-    this.year.setText(String.valueOf(movie.getYear()));
-    this.certification.setText(movie.getCertification());
+    String infoOneText = "";
+    if (movie.getYear() != null && movie.getYear() > 0) {
+      infoOneText = movie.getYear().toString();
+      if (!TextUtils.isEmpty(movie.getCertification())) {
+        infoOneText += ", " + movie.getCertification();
+      }
+    } else {
+      infoOneText = movie.getCertification();
+    }
+    info1.setText(infoOneText);
+
+    if (movie.getRuntime() != null && movie.getRuntime() > 0) {
+      String runtime = DateStringUtils.getRuntimeString(requireContext(), movie.getRuntime());
+      info2.setText(runtime);
+    }
+
     this.overview.setText(movieOverview);
 
     final String trailer = movie.getTrailer();

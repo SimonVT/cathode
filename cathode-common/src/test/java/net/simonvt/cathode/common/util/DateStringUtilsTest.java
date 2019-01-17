@@ -251,22 +251,22 @@ public class DateStringUtilsTest {
 
     final long zeroMinutes = 0L;
     final String zeroMinutesString =
-        DateStringUtils.getStatsString(RuntimeEnvironment.application, zeroMinutes);
+        DateStringUtils.getRuntimeString(RuntimeEnvironment.application, zeroMinutes);
     assertThat(zeroMinutesString).isEqualTo("0m");
 
     final long thirtyMinutes = 30L;
     final String thirtyMinutesString =
-        DateStringUtils.getStatsString(RuntimeEnvironment.application, thirtyMinutes);
+        DateStringUtils.getRuntimeString(RuntimeEnvironment.application, thirtyMinutes);
     assertThat(thirtyMinutesString).isEqualTo("30m");
 
     final long sixHoursThirtyMinutes = 6 * hourInMinutes + 30;
     final String sixHoursThirtyMinutesString =
-        DateStringUtils.getStatsString(RuntimeEnvironment.application, sixHoursThirtyMinutes);
+        DateStringUtils.getRuntimeString(RuntimeEnvironment.application, sixHoursThirtyMinutes);
     assertThat(sixHoursThirtyMinutesString).isEqualTo("6h 30m");
 
     final long twoDaysSixHoursThirtyMinutes = 2 * dayInMinutes + 6 * hourInMinutes + 30;
     final String twoDaysSixHoursThirtyMinutesString =
-        DateStringUtils.getStatsString(RuntimeEnvironment.application,
+        DateStringUtils.getRuntimeString(RuntimeEnvironment.application,
             twoDaysSixHoursThirtyMinutes);
     assertThat(twoDaysSixHoursThirtyMinutesString).isEqualTo("2d 6h 30m");
   }

@@ -32,18 +32,18 @@
       style="@style/TopBarContent">
 
     <TextView
-        android:id="@+id/year"
+        android:id="@+id/info1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="?android:attr/textColorPrimary"
-        tools:text="2013"/>
+        tools:text="2013, TV-MA"/>
 
     <TextView
-        android:id="@+id/certification"
+        android:id="@+id/info2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="?android:attr/textColorPrimary"
-        tools:text="TV-MA"/>
+        tools:text="1h 2min"/>
   </LinearLayout>
 
   <net.simonvt.cathode.common.widget.CircularProgressIndicator

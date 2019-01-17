@@ -241,7 +241,7 @@ public final class DateStringUtils {
     return sb.toString();
   }
 
-  public static String getStatsString(Context context, long timeInMinutes) {
+  public static String getRuntimeString(Context context, long timeInMinutes) {
     Resources res = context.getResources();
 
     if (timeInMinutes == 0L) {
