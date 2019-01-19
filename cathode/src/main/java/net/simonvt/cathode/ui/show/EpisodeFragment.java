@@ -292,7 +292,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
               checkInDrawable.setWatching(false);
             }
           } else {
-            if (!CheckInDialog.showDialogIfNecessary(getActivity(), Type.SHOW, episodeTitle,
+            if (!CheckInDialog.showDialogIfNecessary(requireActivity(), Type.SHOW, episodeTitle,
                 episodeId)) {
               episodeScheduler.checkin(episodeId, null, false, false, false);
               checkInDrawable.setWatching(true);
@@ -347,9 +347,8 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
     checkedIn = episode.getCheckedIn();
 
     season = episode.getSeason();
-    episodeTitle =
-        DataHelper.getEpisodeTitle(getContext(), episode.getTitle(), season, episode.getEpisode(),
-            episode.getWatched());
+    episodeTitle = DataHelper.getEpisodeTitle(requireContext(), episode.getTitle(), season,
+        episode.getEpisode(), episode.getWatched());
 
     title.setText(episodeTitle);
 
@@ -360,7 +359,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
     setBackdrop(screenshotUri, true);
 
     firstAired.setText(
-        DateStringUtils.getAirdateInterval(getActivity(), episode.getFirstAired(), true));
+        DateStringUtils.getAirdateInterval(requireContext(), episode.getFirstAired(), true));
 
     if (checkInDrawable != null) {
       checkInDrawable.setWatching(watching || checkedIn);
@@ -378,7 +377,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
     viewOnTrakt.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        Intents.openUrl(getContext(), TraktUtils.getTraktEpisodeUrl(episode.getTraktId()));
+        Intents.openUrl(requireContext(), TraktUtils.getTraktEpisodeUrl(episode.getTraktId()));
       }
     });
 
@@ -390,7 +389,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
   }
 
   private void updateComments() {
-    LinearCommentsAdapter.updateComments(getContext(), commentsContainer, userComments, comments);
+    LinearCommentsAdapter.updateComments(requireContext(), commentsContainer, userComments, comments);
     commentsParent.setVisibility(View.VISIBLE);
   }
 }

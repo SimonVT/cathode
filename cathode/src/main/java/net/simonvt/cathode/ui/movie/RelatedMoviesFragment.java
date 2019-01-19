@@ -142,7 +142,7 @@ public class RelatedMoviesFragment
 
   protected void setMovies(List<Movie> movies) {
     if (movieAdapter == null) {
-      movieAdapter = new MoviesAdapter(getActivity(), this);
+      movieAdapter = new MoviesAdapter(requireActivity(), this);
       setAdapter(movieAdapter);
     }
 

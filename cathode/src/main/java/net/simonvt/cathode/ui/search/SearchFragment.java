@@ -112,7 +112,7 @@ public class SearchFragment extends ToolbarGridFragment<SearchAdapter.ViewHolder
     AndroidSupportInjection.inject(this);
 
     sortBy = SortBy.fromValue(
-        Settings.get(getContext()).getString(Settings.Sort.SEARCH, SortBy.TITLE.getKey()));
+        Settings.get(requireContext()).getString(Settings.Sort.SEARCH, SortBy.TITLE.getKey()));
 
     adapter = new SearchAdapter(this);
     setAdapter(adapter);

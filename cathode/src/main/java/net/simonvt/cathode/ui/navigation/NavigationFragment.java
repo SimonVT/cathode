@@ -117,17 +117,19 @@ public class NavigationFragment extends AbsAdapterFragment {
     if (inState != null) {
       selectedPosition = inState.getInt(STATE_SELECTED_POSITION);
     } else {
-      final String startPagePref = Settings.get(getContext()).getString(Settings.START_PAGE, null);
+      final String startPagePref =
+          Settings.get(requireContext()).getString(Settings.START_PAGE, null);
       StartPage startPage = StartPage.fromValue(startPagePref, StartPage.DASHBOARD);
       selectedPosition = getPositionForId(startPage.getMenuId());
     }
 
-    ProfileSettings.get(getContext())
+    ProfileSettings.get(requireContext())
         .registerOnSharedPreferenceChangeListener(profileSettingsListener);
-    String username = ProfileSettings.get(getContext()).getString(ProfileSettings.USERNAME, null);
-    String avatar = ProfileSettings.get(getContext()).getString(ProfileSettings.AVATAR, null);
+    String username =
+        ProfileSettings.get(requireContext()).getString(ProfileSettings.USERNAME, null);
+    String avatar = ProfileSettings.get(requireContext()).getString(ProfileSettings.AVATAR, null);
 
-    adapter = new NavigationAdapter(getActivity(), menuItems);
+    adapter = new NavigationAdapter(requireContext(), menuItems);
     adapter.setUsername(username);
     adapter.setAvatar(avatar);
     setAdapter(adapter);
@@ -181,7 +183,7 @@ public class NavigationFragment extends AbsAdapterFragment {
   }
 
   @Override public void onDestroy() {
-    ProfileSettings.get(getContext())
+    ProfileSettings.get(requireContext())
         .unregisterOnSharedPreferenceChangeListener(profileSettingsListener);
     super.onDestroy();
   }

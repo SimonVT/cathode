@@ -349,7 +349,7 @@ public class MovieFragment extends RefreshableAppBarFragment {
               checkInDrawable.setWatching(false);
             }
           } else {
-            if (!CheckInDialog.showDialogIfNecessary(getActivity(), Type.MOVIE, movieTitle,
+            if (!CheckInDialog.showDialogIfNecessary(requireActivity(), Type.MOVIE, movieTitle,
                 movieId)) {
               movieScheduler.checkin(movieId, null, false, false, false);
               checkInDrawable.setWatching(true);
@@ -447,7 +447,7 @@ public class MovieFragment extends RefreshableAppBarFragment {
       this.trailer.setVisibility(View.VISIBLE);
       this.trailer.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          Intents.openUrl(getActivity(), trailer);
+          Intents.openUrl(requireContext(), trailer);
         }
       });
     } else {
@@ -481,7 +481,7 @@ public class MovieFragment extends RefreshableAppBarFragment {
       this.website.setText(website);
       this.website.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          Intents.openUrl(getContext(), website);
+          Intents.openUrl(requireContext(), website);
         }
       });
     } else {
@@ -493,7 +493,7 @@ public class MovieFragment extends RefreshableAppBarFragment {
 
     viewOnTrakt.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        Intents.openUrl(getContext(), TraktUtils.getTraktMovieUrl(traktId));
+        Intents.openUrl(requireContext(), TraktUtils.getTraktMovieUrl(traktId));
       }
     });
 
@@ -502,7 +502,7 @@ public class MovieFragment extends RefreshableAppBarFragment {
       viewOnImdb.setVisibility(View.VISIBLE);
       viewOnImdb.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          Intents.openUrl(getContext(), TraktUtils.getImdbUrl(imdbId));
+          Intents.openUrl(requireContext(), TraktUtils.getImdbUrl(imdbId));
         }
       });
     } else {
@@ -513,7 +513,7 @@ public class MovieFragment extends RefreshableAppBarFragment {
       viewOnTmdb.setVisibility(View.VISIBLE);
       viewOnTmdb.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          Intents.openUrl(getContext(), TraktUtils.getTmdbMovieUrl(tmdbId));
+          Intents.openUrl(requireContext(), TraktUtils.getTmdbMovieUrl(tmdbId));
         }
       });
     } else {
@@ -553,7 +553,7 @@ public class MovieFragment extends RefreshableAppBarFragment {
 
       for (CastMember castMember : cast) {
         View v =
-            LayoutInflater.from(getActivity()).inflate(R.layout.item_person, castContainer, false);
+            LayoutInflater.from(requireContext()).inflate(R.layout.item_person, castContainer, false);
 
         final String headshotUri =
             ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, castMember.getPerson().getId());
@@ -591,7 +591,7 @@ public class MovieFragment extends RefreshableAppBarFragment {
       relatedParent.setVisibility(View.VISIBLE);
 
       for (Movie movie : related) {
-        View v = LayoutInflater.from(getActivity())
+        View v = LayoutInflater.from(requireContext())
             .inflate(R.layout.item_related, relatedContainer, false);
 
         final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, movie.getId());
@@ -632,7 +632,7 @@ public class MovieFragment extends RefreshableAppBarFragment {
       return;
     }
 
-    LinearCommentsAdapter.updateComments(getContext(), commentsContainer, userComments, comments);
+    LinearCommentsAdapter.updateComments(requireContext(), commentsContainer, userComments, comments);
     commentsParent.setVisibility(View.VISIBLE);
   }
 }

@@ -74,7 +74,7 @@ public abstract class ProgressFragment extends BaseFragment {
   @Override public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
     Animation animation = null;
     if (nextAnim != 0) {
-      animation = AnimationUtils.loadAnimation(getActivity(), nextAnim);
+      animation = AnimationUtils.loadAnimation(requireContext(), nextAnim);
       animation.setAnimationListener(new Animation.AnimationListener() {
         @Override public void onAnimationStart(Animation animation) {
           animating = true;

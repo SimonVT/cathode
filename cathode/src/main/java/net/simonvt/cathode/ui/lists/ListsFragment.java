@@ -108,7 +108,7 @@ public class ListsFragment extends ToolbarSwipeRefreshRecyclerFragment<ListsAdap
 
   private void setLists(List<UserList> userLists) {
     if (adapter == null) {
-      adapter = new ListsAdapter(this, getActivity());
+      adapter = new ListsAdapter(this, requireContext());
       setAdapter(adapter);
     }
 

@@ -218,7 +218,7 @@ public class ListsDialog extends DialogFragment {
 
   private View createView(final long listId, String listName, boolean checked) {
     View v =
-        LayoutInflater.from(getActivity()).inflate(R.layout.row_dialog_lists, container, false);
+        LayoutInflater.from(requireContext()).inflate(R.layout.row_dialog_lists, container, false);
 
     final TextView name = v.findViewById(R.id.name);
     final CheckBox checkBox = v.findViewById(R.id.checkBox);

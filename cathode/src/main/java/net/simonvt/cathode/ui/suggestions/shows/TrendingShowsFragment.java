@@ -115,7 +115,7 @@ public class TrendingShowsFragment
     AndroidSupportInjection.inject(this);
 
     sortBy = SortBy.fromValue(
-        Settings.get(getContext()).getString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey()));
+        Settings.get(requireContext()).getString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey()));
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
     setTitle(R.string.title_shows_trending);
@@ -128,10 +128,10 @@ public class TrendingShowsFragment
       }
     });
 
-    if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
+    if (SuggestionsTimestamps.suggestionsNeedsUpdate(requireContext(),
         SuggestionsTimestamps.SHOWS_TRENDING)) {
       jobManager.addJob(new SyncTrendingShows());
-      SuggestionsTimestamps.updateSuggestions(getActivity(), SuggestionsTimestamps.SHOWS_TRENDING);
+      SuggestionsTimestamps.updateSuggestions(requireContext(), SuggestionsTimestamps.SHOWS_TRENDING);
     }
   }
 
@@ -171,7 +171,7 @@ public class TrendingShowsFragment
       case R.id.sort_viewers:
         if (sortBy != SortBy.VIEWERS) {
           sortBy = SortBy.VIEWERS;
-          Settings.get(getContext())
+          Settings.get(requireContext())
               .edit()
               .putString(Settings.Sort.SHOW_TRENDING, SortBy.VIEWERS.getKey())
               .apply();
@@ -183,7 +183,7 @@ public class TrendingShowsFragment
       case R.id.sort_rating:
         if (sortBy != SortBy.RATING) {
           sortBy = SortBy.RATING;
-          Settings.get(getContext())
+          Settings.get(requireContext())
               .edit()
               .putString(Settings.Sort.SHOW_TRENDING, SortBy.RATING.getKey())
               .apply();
@@ -204,7 +204,7 @@ public class TrendingShowsFragment
 
   private void setShows(List<Show> shows) {
     if (showsAdapter == null) {
-      showsAdapter = new ShowDescriptionAdapter(getActivity(), this);
+      showsAdapter = new ShowDescriptionAdapter(requireContext(), this);
       setAdapter(showsAdapter);
     }
 

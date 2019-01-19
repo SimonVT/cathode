@@ -237,7 +237,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
     setTitle(showTitle);
 
-    seasonsAdapter = new SeasonsAdapter(getActivity(), new SeasonsAdapter.SeasonClickListener() {
+    seasonsAdapter = new SeasonsAdapter(requireActivity(), new SeasonsAdapter.SeasonClickListener() {
       @Override
       public void onSeasonClick(long showId, long seasonId, String showTitle, int seasonNumber) {
         navigationListener.onDisplaySeason(showId, seasonId, showTitle, seasonNumber, type);
@@ -334,11 +334,11 @@ public class ShowFragment extends RefreshableAppBarFragment {
     overview.setText(showOverview);
 
     DividerItemDecoration decoration =
-        new DividerItemDecoration(getActivity(), LinearLayoutManager.HORIZONTAL);
-    decoration.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.divider_4dp));
+        new DividerItemDecoration(requireContext(), LinearLayoutManager.HORIZONTAL);
+    decoration.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.divider_4dp));
     seasonsView.addItemDecoration(decoration);
     seasonsView.setLayoutManager(
-        new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
     seasonsView.setAdapter(seasonsAdapter);
     ((DefaultItemAnimator) seasonsView.getItemAnimator()).setSupportsChangeAnimations(false);
     seasonsAdapter.registerAdapterDataObserver(new AdapterCountDataObserver(seasonsAdapter) {
@@ -405,7 +405,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
         switch (action) {
           case R.id.action_checkin:
             if (toWatchId != -1) {
-              CheckInDialog.showDialogIfNecessary(getActivity(), Type.SHOW, toWatchTitle,
+              CheckInDialog.showDialogIfNecessary(requireActivity(), Type.SHOW, toWatchTitle,
                   toWatchId);
             }
             break;
@@ -646,7 +646,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       this.trailer.setVisibility(View.VISIBLE);
       this.trailer.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          Intents.openUrl(getActivity(), trailer);
+          Intents.openUrl(requireContext(), trailer);
         }
       });
     } else {
@@ -676,7 +676,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       this.website.setText(website);
       this.website.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          Intents.openUrl(getContext(), website);
+          Intents.openUrl(requireContext(), website);
         }
       });
     } else {
@@ -691,7 +691,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
     viewOnTrakt.setVisibility(View.VISIBLE);
     viewOnTrakt.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        Intents.openUrl(getContext(), TraktUtils.getTraktShowUrl(traktId));
+        Intents.openUrl(requireContext(), TraktUtils.getTraktShowUrl(traktId));
       }
     });
 
@@ -700,7 +700,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       viewOnImdb.setVisibility(View.VISIBLE);
       viewOnImdb.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          Intents.openUrl(getContext(), TraktUtils.getImdbUrl(imdbId));
+          Intents.openUrl(requireContext(), TraktUtils.getImdbUrl(imdbId));
         }
       });
     } else {
@@ -711,7 +711,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       viewOnTvdb.setVisibility(View.VISIBLE);
       viewOnTvdb.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          Intents.openUrl(getContext(), TraktUtils.getTvdbUrl(tvdbId));
+          Intents.openUrl(requireContext(), TraktUtils.getTvdbUrl(tvdbId));
         }
       });
     } else {
@@ -722,7 +722,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       viewOnTmdb.setVisibility(View.VISIBLE);
       viewOnTmdb.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          Intents.openUrl(getContext(), TraktUtils.getTmdbTvUrl(tmdbId));
+          Intents.openUrl(requireContext(), TraktUtils.getTmdbTvUrl(tmdbId));
         }
       });
     } else {
@@ -760,7 +760,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
       for (CastMember castMember : cast) {
         View v =
-            LayoutInflater.from(getActivity()).inflate(R.layout.item_person, castContainer, false);
+            LayoutInflater.from(requireContext()).inflate(R.layout.item_person, castContainer, false);
 
         final long personId = castMember.getPerson().getId();
         final String headshotUrl = ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, personId);
@@ -798,7 +798,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       relatedParent.setVisibility(View.VISIBLE);
 
       for (Show show : related) {
-        View v = LayoutInflater.from(getActivity())
+        View v = LayoutInflater.from(requireContext())
             .inflate(R.layout.item_related, this.relatedContainer, false);
 
         final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, show.getId());
@@ -860,7 +860,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       toWatchId = toWatch.getId();
 
       toWatchTitle =
-          DataHelper.getEpisodeTitle(getContext(), toWatch.getTitle(), toWatch.getSeason(),
+          DataHelper.getEpisodeTitle(requireContext(), toWatch.getTitle(), toWatch.getSeason(),
               toWatch.getEpisode(), toWatch.getWatched());
       final String toWatchEpisodeText =
           getString(R.string.season_x_episode_y, toWatch.getSeason(), toWatch.getEpisode());
@@ -873,7 +873,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       toWatchHolder.episodeScreenshot.setImage(screenshotUri);
 
       String firstAiredString =
-          DateStringUtils.getAirdateInterval(getActivity(), toWatch.getFirstAired(), false);
+          DateStringUtils.getAirdateInterval(requireContext(), toWatch.getFirstAired(), false);
 
       toWatchHolder.episodeOverflow.removeItems();
       if (toWatch.getCheckedIn()) {
@@ -901,12 +901,12 @@ public class ShowFragment extends RefreshableAppBarFragment {
       lastWatchedId = lastWatched.getId();
 
       final String title =
-          DataHelper.getEpisodeTitle(getContext(), lastWatched.getTitle(), lastWatched.getSeason(),
+          DataHelper.getEpisodeTitle(requireContext(), lastWatched.getTitle(), lastWatched.getSeason(),
               lastWatched.getEpisode(), lastWatched.getWatched());
       lastWatchedHolder.episodeTitle.setText(title);
 
       final String firstAiredString =
-          DateStringUtils.getAirdateInterval(getActivity(), lastWatched.getFirstAired(), false);
+          DateStringUtils.getAirdateInterval(requireContext(), lastWatched.getFirstAired(), false);
       lastWatchedHolder.episodeAirTime.setText(firstAiredString);
 
       final String lastWatchedEpisodeText =
@@ -937,12 +937,12 @@ public class ShowFragment extends RefreshableAppBarFragment {
       toCollectId = toCollect.getId();
 
       final String title =
-          DataHelper.getEpisodeTitle(getContext(), toCollect.getTitle(), toCollect.getSeason(),
+          DataHelper.getEpisodeTitle(requireContext(), toCollect.getTitle(), toCollect.getSeason(),
               toCollect.getEpisode(), toCollect.getWatched());
       toCollectHolder.episodeTitle.setText(title);
 
       final String firstAiredString =
-          DateStringUtils.getAirdateInterval(getActivity(), toCollect.getFirstAired(), false);
+          DateStringUtils.getAirdateInterval(requireContext(), toCollect.getFirstAired(), false);
       toCollectHolder.episodeAirTime.setText(firstAiredString);
 
       final String toCollectEpisodeText =
@@ -969,12 +969,12 @@ public class ShowFragment extends RefreshableAppBarFragment {
       lastCollectedView.setVisibility(View.VISIBLE);
       lastCollectedId = lastCollected.getId();
 
-      final String title = DataHelper.getEpisodeTitle(getContext(), lastCollected.getTitle(),
+      final String title = DataHelper.getEpisodeTitle(requireContext(), lastCollected.getTitle(),
           lastCollected.getSeason(), lastCollected.getEpisode(), lastCollected.getWatched());
       lastCollectedHolder.episodeTitle.setText(title);
 
       final String firstAiredString =
-          DateStringUtils.getAirdateInterval(getActivity(), lastCollected.getFirstAired(), false);
+          DateStringUtils.getAirdateInterval(requireContext(), lastCollected.getFirstAired(), false);
       lastCollectedHolder.episodeAirTime.setText(firstAiredString);
 
       final String lastCollectedEpisodeText =
@@ -995,7 +995,8 @@ public class ShowFragment extends RefreshableAppBarFragment {
       return;
     }
 
-    LinearCommentsAdapter.updateComments(getContext(), commentsContainer, userComments, comments);
+    LinearCommentsAdapter.updateComments(requireContext(), commentsContainer, userComments,
+        comments);
     commentsParent.setVisibility(View.VISIBLE);
   }
 }

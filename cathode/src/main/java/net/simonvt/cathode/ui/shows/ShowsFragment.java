@@ -115,7 +115,7 @@ public abstract class ShowsFragment
   }
 
   protected ShowsWithNextAdapter createAdapter() {
-    return new ShowsWithNextAdapter(getActivity(), this, getLibraryType());
+    return new ShowsWithNextAdapter(requireActivity(), this, getLibraryType());
   }
 
   protected Observer<List<ShowWithEpisode>> observer =

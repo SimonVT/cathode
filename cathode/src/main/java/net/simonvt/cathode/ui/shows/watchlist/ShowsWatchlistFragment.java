@@ -164,7 +164,7 @@ public class ShowsWatchlistFragment
 
   private ShowWatchlistAdapter ensureAdapter() {
     if (adapter == null) {
-      adapter = new ShowWatchlistAdapter(getActivity(), this, this);
+      adapter = new ShowWatchlistAdapter(requireActivity(), this, this);
       adapter.addHeader(R.string.header_shows);
       adapter.addHeader(R.string.header_episodes);
     }

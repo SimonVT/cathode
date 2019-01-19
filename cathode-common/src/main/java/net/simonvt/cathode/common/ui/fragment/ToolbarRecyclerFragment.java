@@ -32,6 +32,6 @@ public abstract class ToolbarRecyclerFragment<T extends RecyclerView.ViewHolder>
   }
 
   @Override protected RecyclerView.LayoutManager getLayoutManager() {
-    return new LinearLayoutManager(getActivity());
+    return new LinearLayoutManager(requireContext());
   }
 }

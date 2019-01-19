@@ -85,7 +85,7 @@ public class RatingDialog extends DialogFragment {
     final int ratingArg = getArguments().getInt(ARG_RATING);
     final float initialRating = ratingArg / 2.0f;
 
-    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
     View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_rating, null);
     final TextView ratingText = v.findViewById(R.id.ratingText);
     ratingText.setText(this.ratingTexts[ratingArg]);

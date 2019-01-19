@@ -74,7 +74,7 @@ public class UpdateCommentDialog extends DialogFragment {
 
   @NonNull @SuppressWarnings("InflateParams") @Override
   public Dialog onCreateDialog(Bundle inState) {
-    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
 
     View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_comment, null);
     final EditText commentView = v.findViewById(R.id.comment);
@@ -92,7 +92,7 @@ public class UpdateCommentDialog extends DialogFragment {
         if (TextUtils.wordCount(comment) >= CommentsService.MIN_WORD_COUNT) {
           commentsScheduler.updateComment(commentId, comment, spoiler);
         } else {
-          Snackbar.make(getActivity().findViewById(android.R.id.content),
+          Snackbar.make(requireActivity().findViewById(android.R.id.content),
               R.string.comment_too_short, Snackbar.LENGTH_LONG).show();
         }
       }

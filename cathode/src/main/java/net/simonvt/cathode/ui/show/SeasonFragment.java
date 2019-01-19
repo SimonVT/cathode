@@ -247,7 +247,7 @@ public class SeasonFragment extends ToolbarGridFragment<SeasonAdapter.ViewHolder
     }
 
     if (seasonAdapter == null) {
-      seasonAdapter = new SeasonAdapter(getActivity(), this, type);
+      seasonAdapter = new SeasonAdapter(requireActivity(), this, type);
       setAdapter(seasonAdapter);
     }
 

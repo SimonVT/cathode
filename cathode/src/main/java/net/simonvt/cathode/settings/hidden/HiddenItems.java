@@ -358,7 +358,7 @@ public class HiddenItems extends BaseActivity
 
     private void ensureAdapter() {
       if (adapter == null) {
-        adapter = new HiddenItemsAdapter(getActivity(), this);
+        adapter = new HiddenItemsAdapter(requireContext(), this);
         adapter.addHeader(R.string.header_hidden_calendar_shows);
         adapter.addHeader(R.string.header_hidden_watched_shows);
         adapter.addHeader(R.string.header_hidden_collected_shows);

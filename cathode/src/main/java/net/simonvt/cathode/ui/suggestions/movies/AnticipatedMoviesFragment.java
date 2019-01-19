@@ -89,7 +89,7 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
   private SortBy sortBy;
 
   @Override public void onCreate(Bundle inState) {
-    sortBy = SortBy.fromValue(Settings.get(getContext())
+    sortBy = SortBy.fromValue(Settings.get(requireContext())
         .getString(Settings.Sort.MOVIE_ANTICIPATED, SortBy.ANTICIPATED.getKey()));
     super.onCreate(inState);
 
@@ -98,10 +98,10 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
 
     viewModel = ViewModelProviders.of(this).get(AnticipatedMoviesViewModel.class);
 
-    if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
+    if (SuggestionsTimestamps.suggestionsNeedsUpdate(requireContext(),
         SuggestionsTimestamps.MOVIES_ANTICIPATED)) {
       jobManager.addJob(new SyncAnticipatedMovies());
-      SuggestionsTimestamps.updateSuggestions(getActivity(),
+      SuggestionsTimestamps.updateSuggestions(requireContext(),
           SuggestionsTimestamps.MOVIES_ANTICIPATED);
     }
   }
@@ -147,7 +147,7 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
       case R.id.sort_anticipated:
         if (sortBy != SortBy.ANTICIPATED) {
           sortBy = SortBy.ANTICIPATED;
-          Settings.get(getContext())
+          Settings.get(requireContext())
               .edit()
               .putString(Settings.Sort.MOVIE_ANTICIPATED, SortBy.ANTICIPATED.getKey())
               .apply();
@@ -159,7 +159,7 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
       case R.id.sort_title:
         if (sortBy != SortBy.TITLE) {
           sortBy = SortBy.TITLE;
-          Settings.get(getContext())
+          Settings.get(requireContext())
               .edit()
               .putString(Settings.Sort.MOVIE_ANTICIPATED, SortBy.TITLE.getKey())
               .apply();
@@ -171,6 +171,6 @@ public class AnticipatedMoviesFragment extends MoviesFragment implements ListDia
   }
 
   @Override protected BaseAdapter<Movie, BaseMoviesAdapter.ViewHolder> createAdapter() {
-    return new MoviesAdapter(getActivity(), this, R.layout.list_row_movie);
+    return new MoviesAdapter(requireActivity(), this, R.layout.list_row_movie);
   }
 }

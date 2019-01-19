@@ -112,7 +112,7 @@ public abstract class MoviesFragment
   }
 
   protected BaseAdapter<Movie, BaseMoviesAdapter.ViewHolder> createAdapter() {
-    return new MoviesAdapter(getActivity(), this);
+    return new MoviesAdapter(requireActivity(), this);
   }
 
   protected Observer<List<Movie>> observer = new Observer<List<Movie>>() {

@@ -86,8 +86,8 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
   private SortBy sortBy;
 
   @Override public void onCreate(Bundle inState) {
-    sortBy = SortBy.fromValue(
-        Settings.get(getContext()).getString(Settings.Sort.SHOW_WATCHED, SortBy.TITLE.getKey()));
+    sortBy = SortBy.fromValue(Settings.get(requireContext())
+        .getString(Settings.Sort.SHOW_WATCHED, SortBy.TITLE.getKey()));
 
     super.onCreate(inState);
 
@@ -134,7 +134,7 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
       case R.id.sort_title:
         if (sortBy != SortBy.TITLE) {
           sortBy = SortBy.TITLE;
-          Settings.get(getContext())
+          Settings.get(requireContext())
               .edit()
               .putString(Settings.Sort.SHOW_WATCHED, SortBy.TITLE.getKey())
               .apply();
@@ -146,7 +146,7 @@ public class WatchedShowsFragment extends ShowsFragment implements ListDialog.Ca
       case R.id.sort_watched:
         if (sortBy != SortBy.WATCHED) {
           sortBy = SortBy.WATCHED;
-          Settings.get(getContext())
+          Settings.get(requireContext())
               .edit()
               .putString(Settings.Sort.SHOW_WATCHED, SortBy.WATCHED.getKey())
               .apply();

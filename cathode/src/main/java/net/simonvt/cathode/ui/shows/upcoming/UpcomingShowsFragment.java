@@ -195,7 +195,7 @@ public class UpcomingShowsFragment
 
   private UpcomingAdapter ensureAdapter() {
     if (adapter == null) {
-      adapter = new UpcomingAdapter(getActivity(), this, this);
+      adapter = new UpcomingAdapter(requireActivity(), this, this);
       adapter.addHeader(R.string.header_aired);
       adapter.addHeader(R.string.header_upcoming);
     }

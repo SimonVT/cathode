@@ -109,7 +109,7 @@ public class RelatedShowsFragment
 
   private void setShows(List<Show> shows) {
     if (showsAdapter == null) {
-      showsAdapter = new ShowDescriptionAdapter(getActivity(), this, false);
+      showsAdapter = new ShowDescriptionAdapter(requireContext(), this, false);
       setAdapter(showsAdapter);
     }
 

@@ -67,7 +67,7 @@ public class AddCommentDialog extends DialogFragment {
 
   @NonNull @SuppressWarnings("InflateParams") @Override
   public Dialog onCreateDialog(Bundle inState) {
-    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
 
     View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_comment, null);
     final EditText commentView = v.findViewById(R.id.comment);
@@ -91,7 +91,7 @@ public class AddCommentDialog extends DialogFragment {
             commentsScheduler.comment(type, id, comment, spoiler);
           }
         } else {
-          Snackbar.make(getActivity().findViewById(android.R.id.content),
+          Snackbar.make(requireActivity().findViewById(android.R.id.content),
               R.string.comment_too_short, Snackbar.LENGTH_LONG).show();
         }
       }

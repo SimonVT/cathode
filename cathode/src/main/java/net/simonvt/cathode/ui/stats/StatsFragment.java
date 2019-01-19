@@ -76,7 +76,7 @@ public class StatsFragment extends BaseFragment {
   private void updateViews() {
     if (stats != null && getView() != null) {
       statsShows.setVisibility(View.VISIBLE);
-      episodeTime.setText(DateStringUtils.getRuntimeString(getContext(), stats.episodeTime));
+      episodeTime.setText(DateStringUtils.getRuntimeString(requireContext(), stats.episodeTime));
       episodeCount.setText(
           getResources().getQuantityString(R.plurals.stats_episodes, stats.episodeCount,
               stats.episodeCount));
@@ -86,7 +86,7 @@ public class StatsFragment extends BaseFragment {
       statsMovies.setVisibility(View.VISIBLE);
       movieCount.setText(getResources().getQuantityString(R.plurals.stats_movies, stats.movieCount,
           stats.movieCount));
-      movieTime.setText(DateStringUtils.getRuntimeString(getContext(), stats.moviesTime));
+      movieTime.setText(DateStringUtils.getRuntimeString(requireContext(), stats.moviesTime));
     }
   }
 }

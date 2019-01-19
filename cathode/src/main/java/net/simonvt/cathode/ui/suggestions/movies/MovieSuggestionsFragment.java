@@ -33,7 +33,7 @@ public class MovieSuggestionsFragment extends SuggestionsFragment {
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setTitle(R.string.title_suggestions);
-    adapter = new MovieSuggestionsPagerAdapter(getContext(), getChildFragmentManager());
+    adapter = new MovieSuggestionsPagerAdapter(requireContext(), getChildFragmentManager());
   }
 
   @Override protected PagerAdapter getAdapter() {

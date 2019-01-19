@@ -114,7 +114,7 @@ public class AnticipatedShowsFragment
     super.onCreate(inState);
     AndroidSupportInjection.inject(this);
 
-    sortBy = SortBy.fromValue(Settings.get(getContext())
+    sortBy = SortBy.fromValue(Settings.get(requireContext())
         .getString(Settings.Sort.SHOW_ANTICIPATED, SortBy.ANTICIPATED.getKey()));
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
@@ -128,10 +128,10 @@ public class AnticipatedShowsFragment
       }
     });
 
-    if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
+    if (SuggestionsTimestamps.suggestionsNeedsUpdate(requireContext(),
         SuggestionsTimestamps.SHOWS_ANTICIPATED)) {
       jobManager.addJob(new SyncAnticipatedShows());
-      SuggestionsTimestamps.updateSuggestions(getActivity(),
+      SuggestionsTimestamps.updateSuggestions(requireContext(),
           SuggestionsTimestamps.SHOWS_ANTICIPATED);
     }
   }
@@ -172,7 +172,7 @@ public class AnticipatedShowsFragment
       case R.id.sort_viewers:
         if (sortBy != SortBy.ANTICIPATED) {
           sortBy = SortBy.ANTICIPATED;
-          Settings.get(getContext())
+          Settings.get(requireContext())
               .edit()
               .putString(Settings.Sort.SHOW_ANTICIPATED, SortBy.ANTICIPATED.getKey())
               .apply();
@@ -184,7 +184,7 @@ public class AnticipatedShowsFragment
       case R.id.sort_title:
         if (sortBy != SortBy.TITLE) {
           sortBy = SortBy.TITLE;
-          Settings.get(getContext())
+          Settings.get(requireContext())
               .edit()
               .putString(Settings.Sort.SHOW_ANTICIPATED, SortBy.TITLE.getKey())
               .apply();
@@ -205,7 +205,7 @@ public class AnticipatedShowsFragment
 
   private void setShows(List<Show> shows) {
     if (showsAdapter == null) {
-      showsAdapter = new ShowDescriptionAdapter(getActivity(), this, false);
+      showsAdapter = new ShowDescriptionAdapter(requireContext(), this, false);
       setAdapter(showsAdapter);
       return;
     }

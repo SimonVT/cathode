@@ -60,7 +60,7 @@ public class DeleteListDialog extends DialogFragment {
   @NonNull @Override public Dialog onCreateDialog(Bundle inState) {
     final long listId = getArguments().getLong(ARG_LIST_ID);
 
-    return new AlertDialog.Builder(getActivity()).setTitle(R.string.list_delete_title)
+    return new AlertDialog.Builder(requireContext()).setTitle(R.string.list_delete_title)
         .setMessage(R.string.list_delete_message)
         .setPositiveButton(R.string.list_dialog_delete, new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {

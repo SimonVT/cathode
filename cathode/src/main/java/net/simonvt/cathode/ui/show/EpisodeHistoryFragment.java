@@ -139,11 +139,11 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
     this.episode = episode;
 
     final String title =
-        DataHelper.getEpisodeTitle(getContext(), episode.getTitle(), episode.getSeason(),
+        DataHelper.getEpisodeTitle(requireContext(), episode.getTitle(), episode.getSeason(),
             episode.getEpisode(), episode.getWatched());
 
     final String firstAiredString =
-        DateStringUtils.getAirdateInterval(getActivity(), episode.getFirstAired(), true);
+        DateStringUtils.getAirdateInterval(requireContext(), episode.getFirstAired(), true);
     this.firstAired.setText(firstAiredString);
 
     showTitle = episode.getShowTitle();

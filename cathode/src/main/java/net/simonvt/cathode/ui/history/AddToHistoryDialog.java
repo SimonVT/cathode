@@ -78,7 +78,7 @@ public class AddToHistoryDialog extends DialogFragment {
     final long id = getArguments().getLong(ARG_ID);
     final String title = getArguments().getString(ARG_TITLE);
 
-    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+    AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
     builder.setTitle(R.string.history_watched_when);
 
     builder.setNegativeButton(R.string.history_watched_other,

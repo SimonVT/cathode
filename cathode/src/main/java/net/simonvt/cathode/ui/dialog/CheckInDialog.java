@@ -94,7 +94,7 @@ public class CheckInDialog extends DialogFragment {
   @NonNull @SuppressWarnings("InflateParams") @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     AlertDialog.Builder builder =
-        new AlertDialog.Builder(getActivity()).setTitle(R.string.action_checkin);
+        new AlertDialog.Builder(requireContext()).setTitle(R.string.action_checkin);
 
     Bundle args = getArguments();
     final Type type = (Type) args.getSerializable(ARG_TYPE);
@@ -110,11 +110,11 @@ public class CheckInDialog extends DialogFragment {
 
     title.setText(titleArg);
     final boolean facebookShare =
-        ProfileSettings.get(getActivity()).getBoolean(ProfileSettings.CONNECTION_FACEBOOK, false);
+        ProfileSettings.get(requireContext()).getBoolean(ProfileSettings.CONNECTION_FACEBOOK, false);
     final boolean twitterShare =
-        ProfileSettings.get(getActivity()).getBoolean(ProfileSettings.CONNECTION_TWITTER, false);
+        ProfileSettings.get(requireContext()).getBoolean(ProfileSettings.CONNECTION_TWITTER, false);
     final boolean tumblrShare =
-        ProfileSettings.get(getActivity()).getBoolean(ProfileSettings.CONNECTION_TUMBLR, false);
+        ProfileSettings.get(requireContext()).getBoolean(ProfileSettings.CONNECTION_TUMBLR, false);
     facebook.setVisibility(facebookShare ? View.VISIBLE : View.GONE);
     twitter.setVisibility(twitterShare ? View.VISIBLE : View.GONE);
     tumblr.setVisibility(tumblrShare ? View.VISIBLE : View.GONE);
@@ -129,7 +129,7 @@ public class CheckInDialog extends DialogFragment {
       view.findViewById(R.id.share_title).setVisibility(View.GONE);
     }
 
-    String shareMessage = ProfileSettings.get(getContext())
+    String shareMessage = ProfileSettings.get(requireContext())
         .getString(ProfileSettings.SHARING_TEXT_WATCHING,
             getString(R.string.checkin_message_default));
     shareMessage = shareMessage.replace("[item]", titleArg);
@@ -142,7 +142,7 @@ public class CheckInDialog extends DialogFragment {
         final boolean tumblrShare = tumblr.isChecked();
         final String shareMessage = message.getText().toString();
 
-        ProfileSettings.get(getContext())
+        ProfileSettings.get(requireContext())
             .edit()
             .putBoolean(ProfileSettings.CONNECTION_FACEBOOK, facebookShare)
             .putBoolean(ProfileSettings.CONNECTION_TWITTER, twitterShare)

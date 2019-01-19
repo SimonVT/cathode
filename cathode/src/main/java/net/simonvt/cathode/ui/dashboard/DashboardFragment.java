@@ -90,7 +90,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
     setTitle(R.string.title_dashboard);
 
-    adapter = new CategoryAdapter(getActivity(), categoryClickListener);
+    adapter = new CategoryAdapter(requireContext(), categoryClickListener);
     setAdapter(adapter);
 
     adapter.initCategory(R.string.category_shows_upcoming);
@@ -99,16 +99,16 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
     adapter.initCategory(R.string.category_movies_watchlist);
     adapter.initCategory(R.string.category_movies_suggestions);
 
-    if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
+    if (SuggestionsTimestamps.suggestionsNeedsUpdate(requireContext(),
         SuggestionsTimestamps.SHOWS_TRENDING)) {
       jobManager.addJob(new SyncTrendingShows());
-      SuggestionsTimestamps.updateSuggestions(getActivity(), SuggestionsTimestamps.SHOWS_TRENDING);
+      SuggestionsTimestamps.updateSuggestions(requireContext(), SuggestionsTimestamps.SHOWS_TRENDING);
     }
 
-    if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
+    if (SuggestionsTimestamps.suggestionsNeedsUpdate(requireContext(),
         SuggestionsTimestamps.MOVIES_TRENDING)) {
       jobManager.addJob(new SyncTrendingMovies());
-      SuggestionsTimestamps.updateSuggestions(getActivity(), SuggestionsTimestamps.MOVIES_TRENDING);
+      SuggestionsTimestamps.updateSuggestions(requireContext(), SuggestionsTimestamps.MOVIES_TRENDING);
     }
 
     viewModel = ViewModelProviders.of(this, viewModelFactory).get(DashboardViewModel.class);
@@ -215,7 +215,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
   private void updateShowsUpcomingCursor(List<ShowWithEpisode> shows) {
     if (upcomingShowsAdapter == null) {
-      upcomingShowsAdapter = new DashboardUpcomingShowsAdapter(getContext(), callback);
+      upcomingShowsAdapter = new DashboardUpcomingShowsAdapter(requireContext(), callback);
       adapter.setAdapter(R.string.category_shows_upcoming, upcomingShowsAdapter);
     }
 
@@ -243,7 +243,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
   private void checkWatchlistAdapter() {
     if (showsWatchlistAdapter == null) {
       if (episodeWatchlist != null && showWatchlist != null) {
-        showsWatchlistAdapter = new DashboardShowsWatchlistAdapter(getContext(), callback);
+        showsWatchlistAdapter = new DashboardShowsWatchlistAdapter(requireContext(), callback);
         showsWatchlistAdapter.changeShowList(showWatchlist);
         showsWatchlistAdapter.changeEpisodeList(episodeWatchlist);
         adapter.setAdapter(R.string.category_shows_watchlist, showsWatchlistAdapter);
@@ -253,7 +253,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
   private void updateShowsTrendingCursor(List<Show> shows) {
     if (trendingShowsAdapter == null) {
-      trendingShowsAdapter = new DashboardShowsAdapter(getContext(), callback);
+      trendingShowsAdapter = new DashboardShowsAdapter(requireContext(), callback);
       adapter.setAdapter(R.string.category_shows_suggestions, trendingShowsAdapter);
     }
 
@@ -262,7 +262,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
   private void updateMoviesWatchlistCursor(List<Movie> movies) {
     if (movieWatchlistAdapter == null) {
-      movieWatchlistAdapter = new DashboardMoviesAdapter(getContext(), callback);
+      movieWatchlistAdapter = new DashboardMoviesAdapter(requireContext(), callback);
       adapter.setAdapter(R.string.category_movies_watchlist, movieWatchlistAdapter);
     }
 
@@ -271,7 +271,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
   private void updateMoviesTrendingCursor(List<Movie> movies) {
     if (trendingMoviesAdapter == null) {
-      trendingMoviesAdapter = new DashboardMoviesAdapter(getContext(), callback);
+      trendingMoviesAdapter = new DashboardMoviesAdapter(requireContext(), callback);
       adapter.setAdapter(R.string.category_movies_suggestions, trendingMoviesAdapter);
     }
 

@@ -85,8 +85,8 @@ public class CollectedShowsFragment extends ShowsFragment implements ListDialog.
   private SortBy sortBy;
 
   @Override public void onCreate(Bundle inState) {
-    sortBy = SortBy.fromValue(
-        Settings.get(getContext()).getString(Settings.Sort.SHOW_COLLECTED, SortBy.TITLE.getKey()));
+    sortBy = SortBy.fromValue(Settings.get(requireContext())
+        .getString(Settings.Sort.SHOW_COLLECTED, SortBy.TITLE.getKey()));
 
     super.onCreate(inState);
 
@@ -132,7 +132,7 @@ public class CollectedShowsFragment extends ShowsFragment implements ListDialog.
       case R.id.sort_title:
         if (sortBy != SortBy.TITLE) {
           sortBy = SortBy.TITLE;
-          Settings.get(getContext())
+          Settings.get(requireContext())
               .edit()
               .putString(Settings.Sort.SHOW_COLLECTED, SortBy.TITLE.getKey())
               .apply();
@@ -144,7 +144,7 @@ public class CollectedShowsFragment extends ShowsFragment implements ListDialog.
       case R.id.sort_collected:
         if (sortBy != SortBy.COLLECTED) {
           sortBy = SortBy.COLLECTED;
-          Settings.get(getContext())
+          Settings.get(requireContext())
               .edit()
               .putString(Settings.Sort.SHOW_COLLECTED, SortBy.COLLECTED.getKey())
               .apply();

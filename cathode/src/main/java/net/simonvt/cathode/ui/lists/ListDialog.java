@@ -97,7 +97,7 @@ public class ListDialog extends DialogFragment {
     Callback c;
     Fragment target = getTargetFragment();
     if (target == null) {
-      c = (Callback) getActivity();
+      c = (Callback) requireActivity();
     } else {
       c = (Callback) target;
     }
@@ -111,7 +111,7 @@ public class ListDialog extends DialogFragment {
       items[i] = text;
     }
 
-    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()).setItems(items,
+    AlertDialog.Builder builder = new AlertDialog.Builder(requireContext()).setItems(items,
         new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
             callback.onItemSelected(listItems.get(which).getId());

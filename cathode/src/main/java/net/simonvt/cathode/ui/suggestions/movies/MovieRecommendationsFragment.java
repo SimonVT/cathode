@@ -116,7 +116,7 @@ public class MovieRecommendationsFragment
     super.onCreate(inState);
     AndroidSupportInjection.inject(this);
 
-    sortBy = SortBy.fromValue(Settings.get(getContext())
+    sortBy = SortBy.fromValue(Settings.get(requireContext())
         .getString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey()));
 
     columnCount = getResources().getInteger(R.integer.movieColumns);
@@ -126,10 +126,10 @@ public class MovieRecommendationsFragment
 
     viewModel = ViewModelProviders.of(this).get(MovieRecommendationsViewModel.class);
 
-    if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
+    if (SuggestionsTimestamps.suggestionsNeedsUpdate(requireContext(),
         SuggestionsTimestamps.MOVIES_RECOMMENDED)) {
       jobManager.addJob(new SyncMovieRecommendations());
-      SuggestionsTimestamps.updateSuggestions(getActivity(),
+      SuggestionsTimestamps.updateSuggestions(requireContext(),
           SuggestionsTimestamps.MOVIES_RECOMMENDED);
     }
   }
@@ -179,7 +179,7 @@ public class MovieRecommendationsFragment
       case R.id.sort_relevance:
         if (sortBy != SortBy.RELEVANCE) {
           sortBy = SortBy.RELEVANCE;
-          Settings.get(getContext())
+          Settings.get(requireContext())
               .edit()
               .putString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RELEVANCE.getKey())
               .apply();
@@ -191,7 +191,7 @@ public class MovieRecommendationsFragment
       case R.id.sort_rating:
         if (sortBy != SortBy.RATING) {
           sortBy = SortBy.RATING;
-          Settings.get(getContext())
+          Settings.get(requireContext())
               .edit()
               .putString(Settings.Sort.MOVIE_RECOMMENDED, SortBy.RATING.getKey())
               .apply();
@@ -237,7 +237,7 @@ public class MovieRecommendationsFragment
 
   protected void setMovies(List<Movie> movies) {
     if (movieAdapter == null) {
-      movieAdapter = new MovieRecommendationsAdapter(getActivity(), this, this);
+      movieAdapter = new MovieRecommendationsAdapter(requireActivity(), this, this);
       setAdapter(movieAdapter);
     }
 

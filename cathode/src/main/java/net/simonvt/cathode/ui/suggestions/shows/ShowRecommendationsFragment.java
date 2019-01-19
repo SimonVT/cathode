@@ -118,7 +118,7 @@ public class ShowRecommendationsFragment
     super.onCreate(inState);
     AndroidSupportInjection.inject(this);
 
-    sortBy = SortBy.fromValue(Settings.get(getContext())
+    sortBy = SortBy.fromValue(Settings.get(requireContext())
         .getString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey()));
 
     columnCount = getResources().getInteger(R.integer.showsColumns);
@@ -133,10 +133,10 @@ public class ShowRecommendationsFragment
       }
     });
 
-    if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
+    if (SuggestionsTimestamps.suggestionsNeedsUpdate(requireContext(),
         SuggestionsTimestamps.SHOWS_RECOMMENDED)) {
       jobManager.addJob(new SyncShowRecommendations());
-      SuggestionsTimestamps.updateSuggestions(getActivity(),
+      SuggestionsTimestamps.updateSuggestions(requireContext(),
           SuggestionsTimestamps.SHOWS_RECOMMENDED);
     }
   }
@@ -177,7 +177,7 @@ public class ShowRecommendationsFragment
       case R.id.sort_relevance:
         if (sortBy != SortBy.RELEVANCE) {
           sortBy = SortBy.RELEVANCE;
-          Settings.get(getContext())
+          Settings.get(requireContext())
               .edit()
               .putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.getKey())
               .apply();
@@ -189,7 +189,7 @@ public class ShowRecommendationsFragment
       case R.id.sort_rating:
         if (sortBy != SortBy.RATING) {
           sortBy = SortBy.RATING;
-          Settings.get(getContext())
+          Settings.get(requireContext())
               .edit()
               .putString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RATING.getKey())
               .apply();
@@ -217,7 +217,7 @@ public class ShowRecommendationsFragment
     this.shows = shows;
 
     if (showsAdapter == null) {
-      showsAdapter = new ShowRecommendationsAdapter(getActivity(), this, this);
+      showsAdapter = new ShowRecommendationsAdapter(requireContext(), this, this);
       setAdapter(showsAdapter);
       return;
     }

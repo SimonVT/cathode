@@ -85,8 +85,8 @@ public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.
   private SortBy sortBy;
 
   @Override public void onCreate(Bundle inState) {
-    sortBy = SortBy.fromValue(
-        Settings.get(getContext()).getString(Settings.Sort.MOVIE_WATCHED, SortBy.TITLE.getKey()));
+    sortBy = SortBy.fromValue(Settings.get(requireContext())
+        .getString(Settings.Sort.MOVIE_WATCHED, SortBy.TITLE.getKey()));
 
     super.onCreate(inState);
 
@@ -133,7 +133,7 @@ public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.
       case R.id.sort_title:
         if (sortBy != SortBy.TITLE) {
           sortBy = SortBy.TITLE;
-          Settings.get(getContext())
+          Settings.get(requireContext())
               .edit()
               .putString(Settings.Sort.MOVIE_WATCHED, SortBy.TITLE.getKey())
               .apply();
@@ -145,7 +145,7 @@ public class WatchedMoviesFragment extends MoviesFragment implements ListDialog.
       case R.id.sort_watched:
         if (sortBy != SortBy.WATCHED) {
           sortBy = SortBy.WATCHED;
-          Settings.get(getContext())
+          Settings.get(requireContext())
               .edit()
               .putString(Settings.Sort.MOVIE_WATCHED, SortBy.WATCHED.getKey())
               .apply();

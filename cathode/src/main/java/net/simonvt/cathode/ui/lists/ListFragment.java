@@ -122,7 +122,7 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
   @Override public void onRefresh() {
     new Thread(new Runnable() {
       @Override public void run() {
-        final long traktId = ListWrapper.getTraktId(getActivity().getContentResolver(), listId);
+        final long traktId = ListWrapper.getTraktId(requireContext().getContentResolver(), listId);
         Job job = new SyncList(traktId);
         job.registerOnDoneListener(onDoneListener);
         jobManager.addJob(job);
@@ -204,7 +204,7 @@ public class ListFragment extends ToolbarSwipeRefreshRecyclerFragment<ListAdapte
 
   private void setListItems(List<ListItem> items) {
     if (adapter == null) {
-      adapter = new ListAdapter(getActivity(), this);
+      adapter = new ListAdapter(requireContext(), this);
       setAdapter(adapter);
     }
 

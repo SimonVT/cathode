@@ -246,7 +246,7 @@ public class PersonFragment extends RefreshableAppBarFragment {
 
       viewOnTrakt.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          Intents.openUrl(getContext(), TraktUtils.getTraktPersonUrl(person.getTraktId()));
+          Intents.openUrl(requireContext(), TraktUtils.getTraktPersonUrl(person.getTraktId()));
         }
       });
 
@@ -267,8 +267,8 @@ public class PersonFragment extends RefreshableAppBarFragment {
       for (int i = 0; i < size && i < itemCount; i++) {
         final PersonCredit credit = credits.get(i);
 
-        View view =
-            LayoutInflater.from(getContext()).inflate(R.layout.person_item_credit, items, false);
+        View view = LayoutInflater.from(requireContext())
+            .inflate(R.layout.person_item_credit, items, false);
 
         RemoteImageView poster = view.findViewById(R.id.poster);
         TextView title = view.findViewById(R.id.title);

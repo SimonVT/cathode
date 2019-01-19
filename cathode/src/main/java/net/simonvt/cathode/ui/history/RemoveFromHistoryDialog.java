@@ -88,7 +88,7 @@ public class RemoveFromHistoryDialog extends DialogFragment {
     final String title = getArguments().getString(ARG_TITLE);
     final String showTitle = getArguments().getString(ARG_SHOW_TITLE);
 
-    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+    AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
     builder.setTitle(R.string.history_unwatched_title);
 
     if (type == Type.EPISODE || type == Type.MOVIE) {

@@ -89,7 +89,7 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
   private SortBy sortBy;
 
   @Override public void onCreate(Bundle inState) {
-    sortBy = SortBy.fromValue(Settings.get(getContext())
+    sortBy = SortBy.fromValue(Settings.get(requireContext())
         .getString(Settings.Sort.MOVIE_TRENDING, SortBy.VIEWERS.getKey()));
     super.onCreate(inState);
 
@@ -98,10 +98,10 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
 
     viewModel = ViewModelProviders.of(this).get(TrendingMoviesViewModel.class);
 
-    if (SuggestionsTimestamps.suggestionsNeedsUpdate(getActivity(),
+    if (SuggestionsTimestamps.suggestionsNeedsUpdate(requireContext(),
         SuggestionsTimestamps.MOVIES_TRENDING)) {
       jobManager.addJob(new SyncTrendingMovies());
-      SuggestionsTimestamps.updateSuggestions(getActivity(), SuggestionsTimestamps.MOVIES_TRENDING);
+      SuggestionsTimestamps.updateSuggestions(requireContext(), SuggestionsTimestamps.MOVIES_TRENDING);
     }
   }
 
@@ -146,7 +146,7 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
       case R.id.sort_viewers:
         if (sortBy != SortBy.VIEWERS) {
           sortBy = SortBy.VIEWERS;
-          Settings.get(getContext())
+          Settings.get(requireContext())
               .edit()
               .putString(Settings.Sort.MOVIE_TRENDING, SortBy.VIEWERS.getKey())
               .apply();
@@ -158,7 +158,7 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
       case R.id.sort_rating:
         if (sortBy != SortBy.RATING) {
           sortBy = SortBy.RATING;
-          Settings.get(getContext())
+          Settings.get(requireContext())
               .edit()
               .putString(Settings.Sort.MOVIE_TRENDING, SortBy.RATING.getKey())
               .apply();
@@ -170,6 +170,6 @@ public class TrendingMoviesFragment extends MoviesFragment implements ListDialog
   }
 
   @Override protected BaseAdapter<Movie, BaseMoviesAdapter.ViewHolder> createAdapter() {
-    return new MoviesAdapter(getActivity(), this, R.layout.list_row_movie_rating);
+    return new MoviesAdapter(requireActivity(), this, R.layout.list_row_movie_rating);
   }
 }

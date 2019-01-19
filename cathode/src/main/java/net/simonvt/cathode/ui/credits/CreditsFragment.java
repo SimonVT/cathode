@@ -224,7 +224,7 @@ public class CreditsFragment extends RefreshableToolbarFragment {
         final Credit credit = credits.get(i);
 
         View view =
-            LayoutInflater.from(getContext()).inflate(R.layout.credit_item_credit, items, false);
+            LayoutInflater.from(requireContext()).inflate(R.layout.credit_item_credit, items, false);
 
         RemoteImageView headshot = view.findViewById(R.id.headshot);
         TextView name = view.findViewById(R.id.name);

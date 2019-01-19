@@ -55,7 +55,7 @@ public abstract class GridRecyclerViewFragment<T extends RecyclerView.ViewHolder
   }
 
   @Override protected RecyclerView.LayoutManager getLayoutManager() {
-    GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), getColumnCount());
+    GridLayoutManager layoutManager = new GridLayoutManager(requireContext(), getColumnCount());
     GridLayoutManager.SpanSizeLookup spanSizeLookup = getSpanSizeLookup();
     if (spanSizeLookup != null) {
       layoutManager.setSpanSizeLookup(spanSizeLookup);

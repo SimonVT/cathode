@@ -149,7 +149,7 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
 
   private void setComments(List<Comment> comments) {
     if (adapter == null) {
-      adapter = new CommentsAdapter(getActivity(), false, commentCallbacks);
+      adapter = new CommentsAdapter(requireContext(), false, commentCallbacks);
       if (adapterState != null) {
         adapter.restoreState(adapterState);
       }
