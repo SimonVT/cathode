@@ -60,8 +60,6 @@
           android:resource="@xml/shortcuts"/>
     </activity>
 
-    <activity android:name="net.simonvt.cathode.settings.StartActivity"/>
-
     <activity
         android:name="net.simonvt.cathode.ui.EpisodeDetailsActivity"
         android:label="@string/app_name"
@@ -104,14 +102,6 @@
         android:label="@string/app_name"
         android:configChanges="orientation|screenSize"
         android:theme="@style/Theme.Login"/>
-
-    <activity
-        android:name="net.simonvt.cathode.settings.setup.CalendarSetupActivity"
-        android:theme="@style/SetupTheme"/>
-
-    <activity
-        android:name="net.simonvt.cathode.settings.setup.NotificationSetupActivity"
-        android:theme="@style/SetupTheme"/>
 
     <activity
         android:name="net.simonvt.cathode.settings.SettingsActivity"

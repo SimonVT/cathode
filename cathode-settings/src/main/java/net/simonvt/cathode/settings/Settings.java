@@ -33,6 +33,8 @@ public final class Settings {
 
   public static final String VERSION_CODE = "versionCode";
 
+  public static final String SETUP_PROMPTED = "setupPrompted";
+
   // Whether upcoming shows should be added to the calendar
   public static final String CALENDAR_SYNC = "calendarSync";
   public static final String CALENDAR_COLOR = "calendarColor";

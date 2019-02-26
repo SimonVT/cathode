@@ -71,20 +71,6 @@ public class LoginActivity extends BaseActivity {
     toolbar.setNavigationIcon(R.drawable.ic_action_cancel_24dp);
     toolbar.setNavigationOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        if (task != TASK_TOKEN_REFRESH) {
-          Settings.get(LoginActivity.this)
-              .edit()
-              .putBoolean(TraktLinkSettings.TRAKT_LINK_PROMPTED, true)
-              .putBoolean(TraktLinkSettings.TRAKT_LINKED, false)
-              .putBoolean(TraktLinkSettings.TRAKT_AUTH_FAILED, false)
-              .apply();
-        }
-
-        if (task == TASK_LOGIN) {
-          Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-          startActivity(i);
-        }
-
         finish();
       }
     });

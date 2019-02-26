@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+  <LinearLayout    xmlns:android="http://schemas.android.com/apk/res/android"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:background="#FFFFFFFF"
+      android:paddingBottom="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="?attr/dialogPreferredPadding"
+        android:paddingRight="?attr/dialogPreferredPadding"
+        android:paddingTop="@dimen/abc_dialog_padding_top_material"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textAlignment="viewStart"
+        android:text="Get notified"
+        style="?android:attr/windowTitleStyle"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:paddingRight="?attr/dialogPreferredPadding">
+
+      <TextView
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:paddingLeft="?attr/dialogPreferredPadding"
+          android:paddingRight="?attr/dialogPreferredPadding"
+          android:text="Calendar integration"
+          style="@style/TextAppearance.AppCompat.Subhead"/>
+
+      <androidx.appcompat.widget.SwitchCompat
+          android:id="@+id/prompt_setup_calendar_switch"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:paddingRight="?attr/dialogPreferredPadding">
+
+      <TextView
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:paddingLeft="?attr/dialogPreferredPadding"
+          android:paddingRight="?attr/dialogPreferredPadding"
+          android:text="Notifications for upcoming episodes"
+          style="@style/TextAppearance.AppCompat.Subhead"/>
+
+      <androidx.appcompat.widget.SwitchCompat
+          android:id="@+id/prompt_setup_notification_switch"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"/>
+    </LinearLayout>
+  </LinearLayout>

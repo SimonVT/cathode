@@ -38,7 +38,6 @@ import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.Timestamps;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.link.TraktLinkActivity;
-import net.simonvt.cathode.settings.setup.CalendarSetupActivity;
 import net.simonvt.cathode.sync.jobscheduler.AuthJobHandlerJob;
 import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import net.simonvt.cathode.ui.BaseActivity;
@@ -122,13 +121,8 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
           .putBoolean(TraktLinkSettings.TRAKT_AUTH_FAILED, false)
           .apply();
 
-      if (wasLinked) {
         Intent home = new Intent(this, HomeActivity.class);
         startActivity(home);
-      } else {
-        Intent setup = new Intent(this, CalendarSetupActivity.class);
-        startActivity(setup);
-      }
     }
 
     finish();

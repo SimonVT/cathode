@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#FFFFFFFF"
+    android:clickable="false">
+
+  <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingLeft="?attr/dialogPreferredPadding"
+      android:paddingRight="?attr/dialogPreferredPadding"
+      android:paddingTop="@dimen/abc_dialog_padding_top_material"
+      android:ellipsize="end"
+      android:singleLine="true"
+      android:textAlignment="viewStart"
+      android:text="Link with Trakt"
+      style="?android:attr/windowTitleStyle"/>
+
+  <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingLeft="?attr/dialogPreferredPadding"
+      android:paddingRight="?attr/dialogPreferredPadding"
+      android:text="Would you like with link with your Trakt account?"
+      style="@style/TextAppearance.AppCompat.Subhead"/>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="end"
+      android:orientation="horizontal"
+      android:paddingLeft="12dp"
+      android:paddingRight="12dp">
+
+    <TextView
+        android:id="@+id/prompt_link_no"
+        style="?attr/buttonBarNegativeButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:text="@string/no"/>
+
+    <TextView
+        android:id="@+id/prompt_link_yes"
+        style="?attr/buttonBarPositiveButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:text="@string/yes"/>
+  </LinearLayout>
+</LinearLayout>

@@ -56,9 +56,10 @@ import net.simonvt.cathode.common.widget.Crouton;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.util.DataHelper;
+import net.simonvt.cathode.settings.LinkPromptBottomSheet;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.SettingsActivity;
-import net.simonvt.cathode.settings.StartActivity;
+import net.simonvt.cathode.settings.SetupPromptBottomSheet;
 import net.simonvt.cathode.settings.StartPage;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.login.LoginActivity;
@@ -99,7 +100,8 @@ import net.simonvt.cathode.widget.WatchingView.WatchingViewListener;
 import timber.log.Timber;
 
 public class HomeActivity extends BaseActivity
-    implements NavigationFragment.OnMenuClickListener, NavigationListener {
+    implements NavigationFragment.OnMenuClickListener, NavigationListener,
+    LinkPromptBottomSheet.LinkPromptDismissListener {
 
   private class PendingReplacement {
 
@@ -115,6 +117,9 @@ public class HomeActivity extends BaseActivity
 
   public static final String DIALOG_ABOUT = "net.simonvt.cathode.ui.BaseActivity.aboutDialog";
   public static final String DIALOG_LOGOUT = "net.simonvt.cathode.ui.HomeActivity.logoutDialog";
+
+  private static final String PROMPT_LINK = "net.simonvt.cathode.ui.HomeActivity.linkPrompt";
+  private static final String PROMPT_SETUP = "net.simonvt.cathode.ui.HomeActivity.setupPrompt";
 
   private static final String STATE_STACK = "net.simonvt.cathode.ui.HomeActivity.stack";
 
@@ -211,15 +216,19 @@ public class HomeActivity extends BaseActivity
     }
 
     if (!TraktLinkSettings.isLinkPrompted(this)) {
-      Intent i = new Intent(this, StartActivity.class);
-      startActivity(i);
-      finish();
+      displayLinkPrompt();
     } else if (isLoginAction(getIntent())) {
       startLoginActivity();
-    } else if (isReplaceStackAction(intent)) {
-      ArrayList<StackEntry> stackEntries =
-          getIntent().getParcelableArrayListExtra(EXTRA_STACK_ENTRIES);
-      replaceStack(stackEntries);
+    } else {
+      if (isReplaceStackAction(intent)) {
+        ArrayList<StackEntry> stackEntries =
+            getIntent().getParcelableArrayListExtra(EXTRA_STACK_ENTRIES);
+        replaceStack(stackEntries);
+      }
+
+      if (!Settings.get(this).getBoolean(Settings.SETUP_PROMPTED, false)) {
+        displaySetupPrompt();
+      }
     }
 
     intent.setAction(ACTION_CONSUMED);
@@ -306,6 +315,22 @@ public class HomeActivity extends BaseActivity
 
   private boolean isShowUpcomingAction(Intent intent) {
     return ACTION_UPCOMING.equals(intent.getAction());
+  }
+
+  private void displayLinkPrompt() {
+    LinkPromptBottomSheet linkPrompt = new LinkPromptBottomSheet();
+    linkPrompt.show(getSupportFragmentManager(), PROMPT_LINK);
+  }
+
+  @Override public void onDismissLinkPrompt() {
+    if (!Settings.get(this).getBoolean(Settings.SETUP_PROMPTED, false)) {
+      displaySetupPrompt();
+    }
+  }
+
+  private void displaySetupPrompt() {
+    SetupPromptBottomSheet setupPrompt = new SetupPromptBottomSheet();
+    setupPrompt.show(getSupportFragmentManager(), PROMPT_SETUP);
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {

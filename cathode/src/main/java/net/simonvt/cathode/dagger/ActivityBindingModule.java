@@ -20,23 +20,18 @@ import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 import net.simonvt.cathode.settings.NotificationSettingsActivity;
 import net.simonvt.cathode.settings.SettingsActivity;
-import net.simonvt.cathode.settings.StartActivity;
 import net.simonvt.cathode.settings.hidden.HiddenItems;
 import net.simonvt.cathode.settings.link.TraktLinkActivity;
 import net.simonvt.cathode.settings.link.TraktLinkSyncActivity;
 import net.simonvt.cathode.settings.login.LoginActivity;
 import net.simonvt.cathode.settings.login.OauthWebViewActivity;
 import net.simonvt.cathode.settings.login.TokenActivity;
-import net.simonvt.cathode.settings.setup.CalendarSetupActivity;
-import net.simonvt.cathode.settings.setup.NotificationSetupActivity;
 import net.simonvt.cathode.ui.EpisodeDetailsActivity;
 import net.simonvt.cathode.ui.HomeActivity;
 
 @Module public abstract class ActivityBindingModule {
 
   @ContributesAndroidInjector abstract HomeActivity homeActivity();
-
-  @ContributesAndroidInjector abstract StartActivity startActivity();
 
   @ContributesAndroidInjector abstract LoginActivity loginActivity();
 
@@ -49,10 +44,6 @@ import net.simonvt.cathode.ui.HomeActivity;
   @ContributesAndroidInjector abstract OauthWebViewActivity oauthWebViewActivity();
 
   @ContributesAndroidInjector abstract TokenActivity tokenActivity();
-
-  @ContributesAndroidInjector abstract CalendarSetupActivity calendarSetupActivity();
-
-  @ContributesAndroidInjector abstract NotificationSetupActivity notificationSetupActivity();
 
   @ContributesAndroidInjector abstract SettingsActivity settingsActivity();
 
