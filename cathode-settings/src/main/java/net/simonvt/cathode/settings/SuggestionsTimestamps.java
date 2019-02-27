@@ -48,7 +48,7 @@ public final class SuggestionsTimestamps {
     get(context).edit().putLong(key, currentTimeMillis).apply();
   }
 
-  public static void clear(Context context) {
-    get(context).edit().clear().apply();
+  public static void clearRecommended(Context context) {
+    get(context).edit().remove(SHOWS_RECOMMENDED).remove(MOVIES_RECOMMENDED).apply();
   }
 }

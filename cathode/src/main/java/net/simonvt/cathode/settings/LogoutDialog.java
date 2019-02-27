@@ -50,7 +50,7 @@ public class LogoutDialog extends DialogFragment {
                 .apply();
 
             Settings.clearSettings(getActivity());
-            SuggestionsTimestamps.clear(getActivity());
+            SuggestionsTimestamps.clearRecommended(getActivity());
             TraktTimestamps.clear(getActivity());
 
             jobManager.addJob(new LogoutJob());
@@ -60,11 +60,6 @@ public class LogoutDialog extends DialogFragment {
               AuthJobHandlerJob.cancel(getActivity());
               SyncUserActivity.cancel(getActivity());
             }
-
-            Intent login = new Intent(getActivity(), LoginActivity.class);
-            login.putExtra(LoginActivity.EXTRA_TASK, LoginActivity.TASK_LOGIN);
-            login.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(login);
           }
         })
         .setNegativeButton(R.string.cancel, null)

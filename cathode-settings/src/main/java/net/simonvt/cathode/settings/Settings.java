@@ -79,32 +79,11 @@ public final class Settings {
   public static void clearSettings(Context context) {
     SharedPreferences.Editor editor = get(context).edit();
 
-    editor.remove(TraktLinkSettings.TRAKT_LINK_PROMPTED);
     editor.remove(TraktLinkSettings.TRAKT_LINKED);
     editor.remove(TraktLinkSettings.TRAKT_AUTH_FAILED);
     editor.remove(TraktLinkSettings.TRAKT_ACCESS_TOKEN);
     editor.remove(TraktLinkSettings.TRAKT_REFRESH_TOKEN);
     editor.remove(TraktLinkSettings.TRAKT_TOKEN_EXPIRATION);
-
-    editor.remove(START_PAGE);
-
-    editor.remove(CALENDAR_SYNC);
-    editor.remove(CALENDAR_COLOR);
-    editor.remove(CALENDAR_COLOR_NEEDS_UPDATE);
-
-    // Clear sorting options
-    editor.remove(Sort.SHOW_UPCOMING);
-    editor.remove(Sort.SEARCH);
-    editor.remove(Sort.SHOW_TRENDING);
-    editor.remove(Sort.SHOW_RECOMMENDED);
-    editor.remove(Sort.SHOW_WATCHED);
-    editor.remove(Sort.SHOW_COLLECTED);
-
-    editor.remove(Sort.MOVIE_SEARCH);
-    editor.remove(Sort.MOVIE_TRENDING);
-    editor.remove(Sort.MOVIE_RECOMMENDED);
-    editor.remove(Sort.MOVIE_WATCHED);
-    editor.remove(Sort.MOVIE_COLLECTED);
 
     editor.apply();
   }
