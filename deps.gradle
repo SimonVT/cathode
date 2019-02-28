@@ -1,14 +1,14 @@
 ext {
   daggerVersion = '2.19'
-  okhttpVersion = '3.12.0'
-  retrofitVersion = '2.4.0'
+  okhttpVersion = '3.13.1'
+  retrofitVersion = '2.5.0'
 
   butterknifeVersion = '9.0.0-rc2'
 
-  lintVersion = '26.2.1'
+  lintVersion = '26.3.1'
 
   deps = [
-      androidPlugin       : 'com.android.tools.build:gradle:3.3.0',
+      androidPlugin       : 'com.android.tools.build:gradle:3.3.1',
       fabricGradle        : 'io.fabric.tools:gradle:1.+',
 
       lint                : "com.android.tools.lint:lint:${lintVersion}",
@@ -16,7 +16,7 @@ ext {
       lintChecks          : "com.android.tools.lint:lint-checks:${lintVersion}",
       lintTests           : "com.android.tools.lint:lint-tests:${lintVersion}",
 
-      crashlytics         : 'com.crashlytics.sdk.android:crashlytics:2.9.6@aar',
+      crashlytics         : 'com.crashlytics.sdk.android:crashlytics:2.9.9@aar',
 
       schematic           : 'net.simonvt.schematic:schematic:0.7.0',
       schematicCompiler   : 'net.simonvt.schematic:schematic-compiler:0.7.0',
@@ -44,7 +44,7 @@ ext {
 
       dashclockApi        : 'com.google.android.apps.dashclock:dashclock-api:2.0.0',
 
-      tmdb                : 'com.uwetrottmann.tmdb2:tmdb-java:1.10.1',
+      tmdb                : 'com.uwetrottmann.tmdb2:tmdb-java:2.0.1',
 
       junit               : 'junit:junit:4.12',
       robolectric         : 'org.robolectric:robolectric:3.2.1',
@@ -52,8 +52,8 @@ ext {
   ]
 
   deps.androidx = [
-      annotations         : "androidx.annotation:annotation:1.0.0",
-      appcompat           : "androidx.appcompat:appcompat:1.0.0",
+      annotations         : "androidx.annotation:annotation:1.0.2",
+      appcompat           : "androidx.appcompat:appcompat:1.0.2",
       cardView            : "androidx.cardview:cardview:1.0.0",
       design              : "com.google.android.material:material:1.0.0",
       fragment            : "androidx.fragment:fragment:1.0.0",
