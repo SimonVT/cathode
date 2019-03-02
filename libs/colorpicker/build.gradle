@@ -1,5 +1,9 @@
 apply plugin: 'com.android.library'
 
+dependencies {
+  implementation deps.androidx.appcompat
+}
+
 android {
   compileSdkVersion rootProject.ext.compileSdkVersion
   buildToolsVersion rootProject.ext.buildToolsVersion
@@ -8,7 +12,7 @@ android {
     minSdkVersion rootProject.ext.minSdkVersion
     targetSdkVersion rootProject.ext.targetSdkVersion
 
-    versionCode = rootProject.ext.versionCode;
+    versionCode = rootProject.ext.versionCode
     versionName = rootProject.ext.versionName
   }
 

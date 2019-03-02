@@ -17,13 +17,13 @@
 package net.simonvt.android.colorpicker;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
+import androidx.appcompat.app.AlertDialog;
 import net.simonvt.android.colorpicker.ColorPickerSwatch.OnColorSelectedListener;
 
 /**

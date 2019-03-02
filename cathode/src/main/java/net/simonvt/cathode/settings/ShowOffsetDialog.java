@@ -15,13 +15,13 @@
  */
 package net.simonvt.cathode.settings;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import net.simonvt.cathode.R;
 
 public class ShowOffsetDialog extends DialogFragment {

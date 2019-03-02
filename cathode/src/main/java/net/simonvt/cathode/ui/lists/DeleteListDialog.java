@@ -16,12 +16,12 @@
 package net.simonvt.cathode.ui.lists;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;

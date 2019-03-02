@@ -15,7 +15,6 @@
  */
 package net.simonvt.cathode.ui.dialog;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
@@ -27,6 +26,7 @@ import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.DialogFragment;
 import dagger.android.support.AndroidSupportInjection;

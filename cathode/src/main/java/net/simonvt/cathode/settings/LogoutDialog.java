@@ -15,12 +15,11 @@
  */
 package net.simonvt.cathode.settings;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
+import androidx.appcompat.app.AlertDialog;
 import dagger.android.AndroidInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
@@ -28,7 +27,6 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.LogoutJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
-import net.simonvt.cathode.settings.login.LoginActivity;
 import net.simonvt.cathode.sync.jobscheduler.AuthJobHandlerJob;
 import net.simonvt.cathode.sync.jobscheduler.Jobs;
 
