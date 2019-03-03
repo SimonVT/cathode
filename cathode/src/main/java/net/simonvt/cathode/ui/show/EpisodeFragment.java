@@ -83,6 +83,7 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
 
   @BindView(R.id.title) TextView title;
   @BindView(R.id.overview) TextView overview;
+  @BindView(R.id.episodeNumber) TextView episodeNumber;
   @BindView(R.id.firstAired) TextView firstAired;
 
   @BindView(R.id.rating) CircularProgressIndicator rating;
@@ -361,6 +362,8 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
         episode.getEpisode(), episode.getWatched());
 
     title.setText(episodeTitle);
+    episodeNumber.setText(getString(R.string.season_x_episode, season,
+        episode.getEpisode()));
 
     overview.setText(episode.getOverview());
 
