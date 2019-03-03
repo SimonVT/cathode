@@ -35,4 +35,6 @@ public interface ShowsNavigationListener extends NavigationClickListener, Fragme
   void onSelectSeasonWatchedDate(long seasonId, String title);
 
   void onSelectEpisodeWatchedDate(long episodeId, String title);
+
+  void onSelectOlderEpisodeWatchedDate(long episodeId, String title);
 }

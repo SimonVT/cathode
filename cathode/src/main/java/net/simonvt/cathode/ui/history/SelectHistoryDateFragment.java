@@ -71,7 +71,7 @@ public class SelectHistoryDateFragment extends AppBarFragment
       "net.simonvt.cathode.ui.dialog.SelectHistoryDateFragment.minute";
 
   public enum Type {
-    SHOW, SEASON, EPISODE, MOVIE,
+    SHOW, SEASON, EPISODE, EPISODE_OLDER, MOVIE,
   }
 
   @Inject ShowTaskScheduler showScheduler;
@@ -130,6 +130,7 @@ public class SelectHistoryDateFragment extends AppBarFragment
         backdrop = ImageUri.create(ImageUri.ITEM_SEASON, ImageType.BACKDROP, id);
         break;
 
+      case EPISODE_OLDER:
       case EPISODE:
         backdrop = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, id);
         break;
@@ -197,6 +198,11 @@ public class SelectHistoryDateFragment extends AppBarFragment
 
         case EPISODE:
           episodeScheduler.addToHistory(id, year, month, day, hour, minute);
+          navigationListener.popIfTop(this);
+          break;
+
+        case EPISODE_OLDER:
+          episodeScheduler.addOlderToHistory(id, year, month, day, hour, minute);
           navigationListener.popIfTop(this);
           break;
 

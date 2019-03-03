@@ -55,6 +55,7 @@
 
   <item name="action_history_add" type="id"/>
   <item name="action_history_remove" type="id"/>
+  <item name="action_history_add_older" type="id"/>
   <item name="action_watched_hide" type="id"/>
   <item name="action_watched_unhide" type="id"/>
   <item name="action_checkin" type="id"/>

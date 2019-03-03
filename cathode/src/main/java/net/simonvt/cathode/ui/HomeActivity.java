@@ -656,6 +656,12 @@ public class HomeActivity extends BaseActivity
             title));
   }
 
+  @Override public void onSelectOlderEpisodeWatchedDate(long episodeId, String title) {
+    stack.push(SelectHistoryDateFragment.class, SelectHistoryDateFragment.TAG,
+        SelectHistoryDateFragment.getArgs(SelectHistoryDateFragment.Type.EPISODE_OLDER, episodeId,
+            title));
+  }
+
   @Override public void onDisplayMovie(long movieId, String title, String overview) {
     stack.push(MovieFragment.class, MovieFragment.getTag(movieId),
         MovieFragment.getArgs(movieId, title, overview));

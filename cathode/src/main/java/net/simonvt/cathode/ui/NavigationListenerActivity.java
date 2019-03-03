@@ -120,6 +120,10 @@ public class NavigationListenerActivity extends BaseActivity implements Navigati
     throw new RuntimeException("Not implemented");
   }
 
+  @Override public void onSelectOlderEpisodeWatchedDate(long episodeId, String title) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Override public void onHomeClicked() {
     throw new RuntimeException("Not implemented");
   }

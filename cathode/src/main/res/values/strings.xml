@@ -141,6 +141,7 @@
   <string name="action_sort_by">Sort by</string>
   <string name="action_history_add">Add to history</string>
   <string name="action_history_remove">Remove from history</string>
+  <string name="action_history_add_older">Add previous to history</string>
   <string name="action_watched_hide">Hide</string>
   <string name="action_checkin">Check in</string>
   <string name="action_checkin_cancel">Cancel checkin</string>

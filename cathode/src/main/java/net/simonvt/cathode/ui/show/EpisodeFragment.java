@@ -269,13 +269,15 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
         }
       }
 
+      menu.add(0, R.id.action_history_add_older, 7, R.string.action_history_add_older);
+
       if (collected) {
-        menu.add(0, R.id.action_collection_remove, 7, R.string.action_collection_remove);
+        menu.add(0, R.id.action_collection_remove, 8, R.string.action_collection_remove);
       } else {
-        menu.add(0, R.id.action_collection_add, 8, R.string.action_collection_add);
+        menu.add(0, R.id.action_collection_add, 9, R.string.action_collection_add);
       }
 
-      menu.add(0, R.id.action_list_add, 9, R.string.action_list_add);
+      menu.add(0, R.id.action_list_add, 10, R.string.action_list_add);
     }
   }
 
@@ -293,6 +295,11 @@ public class EpisodeFragment extends RefreshableAppBarFragment {
         } else {
           episodeScheduler.removeFromHistory(episodeId);
         }
+        return true;
+
+      case R.id.action_history_add_older:
+        AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.EPISODE_OLDER, episodeId,
+            episodeTitle).show(getFragmentManager(), AddToHistoryDialog.TAG);
         return true;
 
       case R.id.action_checkin:

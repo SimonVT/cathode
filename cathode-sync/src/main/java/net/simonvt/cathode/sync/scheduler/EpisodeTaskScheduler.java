@@ -99,8 +99,78 @@ import timber.log.Timber;
     addToHistory(episodeId, System.currentTimeMillis());
   }
 
+  private Cursor getOlderEpisodes(long episodeId) {
+    long showId = episodeHelper.getShowId(episodeId);
+    int season = episodeHelper.getSeason(episodeId);
+    int episode = episodeHelper.getNumber(episodeId);
+    Cursor episodes = context.getContentResolver().query(Episodes.EPISODES, new String[] {
+        EpisodeColumns.ID, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
+    }, EpisodeColumns.SHOW_ID
+        + "="
+        + showId
+        + " AND "
+        + EpisodeColumns.WATCHED
+        + "=0 AND "
+        + EpisodeColumns.SEASON
+        + ">0 AND (("
+        + EpisodeColumns.SEASON
+        + "="
+        + season
+        + " AND "
+        + EpisodeColumns.EPISODE
+        + "<"
+        + episode
+        + ") OR "
+        + EpisodeColumns.SEASON
+        + "<"
+        + season
+        + ")", null, null);
+
+    return episodes;
+  }
+
+  public void addOlderToHistoryNow(final long episodeId) {
+    execute(new Runnable() {
+      @Override public void run() {
+        Cursor episodes = getOlderEpisodes(episodeId);
+        while (episodes.moveToNext()) {
+          long id = Cursors.getLong(episodes, EpisodeColumns.ID);
+          addToHistoryNow(id);
+        }
+        episodes.close();
+      }
+    });
+  }
+
   public void addToHistoryOnRelease(final long episodeId) {
     addToHistory(episodeId, SyncItems.TIME_RELEASED);
+  }
+
+  public void addOlderToHistoryOnRelease(final long episodeId) {
+    execute(new Runnable() {
+      @Override public void run() {
+        Cursor episodes = getOlderEpisodes(episodeId);
+        while (episodes.moveToNext()) {
+          long id = Cursors.getLong(episodes, EpisodeColumns.ID);
+          addToHistory(id, SyncItems.TIME_RELEASED);
+        }
+        episodes.close();
+      }
+    });
+  }
+
+  public void addOlderToHistory(final long episodeId, final int year, final int month,
+      final int day, final int hour, final int minute) {
+    execute(new Runnable() {
+      @Override public void run() {
+        Cursor episodes = getOlderEpisodes(episodeId);
+        while (episodes.moveToNext()) {
+          long id = Cursors.getLong(episodes, EpisodeColumns.ID);
+          addToHistory(id, TimeUtils.getMillis(year, month, day, hour, minute));
+        }
+        episodes.close();
+      }
+    });
   }
 
   public void addToHistory(final long episodeId, final long watchedAt) {

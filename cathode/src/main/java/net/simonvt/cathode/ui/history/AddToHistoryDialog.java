@@ -41,7 +41,7 @@ public class AddToHistoryDialog extends DialogFragment {
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.history.AddToHistoryDialog.title";
 
   public enum Type {
-    SHOW, SEASON, EPISODE, MOVIE,
+    SHOW, SEASON, EPISODE, EPISODE_OLDER, MOVIE,
   }
 
   @Inject ShowTaskScheduler showScheduler;
@@ -97,6 +97,10 @@ public class AddToHistoryDialog extends DialogFragment {
                 navigationListener.onSelectEpisodeWatchedDate(id, title);
                 break;
 
+              case EPISODE_OLDER:
+                navigationListener.onSelectOlderEpisodeWatchedDate(id, title);
+                break;
+
               case MOVIE:
                 navigationListener.onSelectMovieWatchedDate(id, title);
                 break;
@@ -120,6 +124,10 @@ public class AddToHistoryDialog extends DialogFragment {
                 episodeScheduler.addToHistoryOnRelease(id);
                 break;
 
+              case EPISODE_OLDER:
+                episodeScheduler.addOlderToHistoryOnRelease(id);
+                break;
+
               case MOVIE:
                 movieScheduler.addToHistoryOnRelease(id);
                 break;
@@ -140,6 +148,10 @@ public class AddToHistoryDialog extends DialogFragment {
 
           case EPISODE:
             episodeScheduler.addToHistoryNow(id);
+            break;
+
+          case EPISODE_OLDER:
+            episodeScheduler.addOlderToHistoryNow(id);
             break;
 
           case MOVIE:
