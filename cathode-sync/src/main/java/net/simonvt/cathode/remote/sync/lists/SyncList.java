@@ -44,7 +44,6 @@ import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncPerson;
 import net.simonvt.cathode.remote.sync.movies.SyncPendingMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncPendingShows;
-import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 
 public class SyncList extends CallJob<List<ListItem>> {
@@ -291,18 +290,10 @@ public class SyncList extends CallJob<List<ListItem>> {
     }
 
     if (syncPendingShows) {
-      if (Jobs.usesScheduler()) {
-        SyncPendingShows.schedule(getContext());
-      } else {
-        queue(new SyncPendingShows());
-      }
+      SyncPendingShows.schedule(getContext());
     }
     if (syncPendingMovies) {
-      if (Jobs.usesScheduler()) {
-        SyncPendingMovies.schedule(getContext());
-      } else {
-        queue(new SyncPendingMovies());
-      }
+      SyncPendingMovies.schedule(getContext());
     }
 
     return applyBatch(ops);

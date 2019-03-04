@@ -32,7 +32,6 @@ import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 
 public class SyncEpisodesRatings extends CallJob<List<RatingItem>> {
@@ -104,11 +103,7 @@ public class SyncEpisodesRatings extends CallJob<List<RatingItem>> {
       ops.add(op);
     }
 
-    if (Jobs.usesScheduler()) {
-      SyncPendingShows.schedule(getContext());
-    } else {
-      queue(new SyncPendingShows());
-    }
+    SyncPendingShows.schedule(getContext());
 
     for (Long episodeId : episodeIds) {
       ContentProviderOperation op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))

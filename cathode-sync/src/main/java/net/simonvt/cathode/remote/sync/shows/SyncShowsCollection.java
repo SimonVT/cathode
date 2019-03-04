@@ -38,7 +38,6 @@ import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 
 public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
@@ -201,11 +200,7 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
       }
     }
 
-    if (Jobs.usesScheduler()) {
-      SyncPendingShows.schedule(getContext());
-    } else {
-      queue(new SyncPendingShows());
-    }
+    SyncPendingShows.schedule(getContext());
 
     ops.clear();
     for (long episodeId : episodeIds) {

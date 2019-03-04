@@ -19,7 +19,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Outline;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,14 +28,12 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import androidx.annotation.RequiresApi;
 import androidx.core.widget.TextViewCompat;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.fragment.AbsAdapterFragment;
-import net.simonvt.cathode.common.widget.CircularShadowTransformation;
 import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.common.widget.RoundTransformation;
 import net.simonvt.cathode.settings.ProfileSettings;
@@ -312,7 +309,6 @@ public class NavigationFragment extends AbsAdapterFragment {
       return 4;
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private void setupCircularOutline(final RemoteImageView imageView) {
       imageView.setOutlineProvider(new ViewOutlineProvider() {
         @Override public void getOutline(View view, Outline outline) {
@@ -340,16 +336,7 @@ public class NavigationFragment extends AbsAdapterFragment {
           final RemoteImageView profileIcon = v.findViewById(R.id.profileIcon);
 
           profileIcon.addTransformation(new RoundTransformation());
-
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setupCircularOutline(profileIcon);
-          } else {
-            final int dropShadowSize =
-                (int) parent.getResources().getDimension(R.dimen.profileIconDropShadow);
-            profileIcon.setResizeInsets(2 * dropShadowSize, 3 * dropShadowSize);
-            profileIcon.addTransformation(new CircularShadowTransformation(dropShadowSize));
-          }
-
+          setupCircularOutline(profileIcon);
           v.setTag(R.id.profileIcon, profileIcon);
         }
 

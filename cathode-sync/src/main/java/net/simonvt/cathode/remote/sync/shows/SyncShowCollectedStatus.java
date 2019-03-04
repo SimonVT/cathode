@@ -30,7 +30,6 @@ import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 
 public class SyncShowCollectedStatus extends CallJob<ShowProgress> {
@@ -99,11 +98,7 @@ public class SyncShowCollectedStatus extends CallJob<ShowProgress> {
     }
 
     if (needsSync) {
-      if (Jobs.usesScheduler()) {
-        SyncPendingShows.schedule(getContext());
-      } else {
-        queue(new SyncPendingShows());
-      }
+      SyncPendingShows.schedule(getContext());
     }
 
     return applyBatch(ops);

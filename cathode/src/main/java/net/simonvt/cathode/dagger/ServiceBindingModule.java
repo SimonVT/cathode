@@ -24,7 +24,6 @@ import net.simonvt.cathode.calendar.CalendarService;
 import net.simonvt.cathode.dashclock.DashClockService;
 import net.simonvt.cathode.notification.NotificationActionService;
 import net.simonvt.cathode.sync.jobscheduler.SchedulerService;
-import net.simonvt.cathode.syncadapter.SyncAdapterService;
 
 @Module public abstract class ServiceBindingModule {
 
@@ -33,8 +32,6 @@ import net.simonvt.cathode.syncadapter.SyncAdapterService;
   @ContributesAndroidInjector abstract DashClockService dashClockService();
 
   @ContributesAndroidInjector abstract AuthenticatorService authenticatorService();
-
-  @ContributesAndroidInjector abstract SyncAdapterService syncAdapterService();
 
   @ContributesAndroidInjector abstract CalendarService calendarService();
 

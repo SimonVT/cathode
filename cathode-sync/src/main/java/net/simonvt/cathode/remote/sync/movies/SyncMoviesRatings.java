@@ -30,7 +30,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 
 public class SyncMoviesRatings extends CallJob<List<RatingItem>> {
@@ -90,11 +89,7 @@ public class SyncMoviesRatings extends CallJob<List<RatingItem>> {
       ops.add(op);
     }
 
-    if (Jobs.usesScheduler()) {
-      SyncPendingMovies.schedule(getContext());
-    } else {
-      queue(new SyncPendingMovies());
-    }
+    SyncPendingMovies.schedule(getContext());
 
     return applyBatch(ops);
   }

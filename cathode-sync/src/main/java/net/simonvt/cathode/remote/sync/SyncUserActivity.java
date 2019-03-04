@@ -18,9 +18,7 @@ package net.simonvt.cathode.remote.sync;
 import android.app.job.JobInfo;
 import android.content.ComponentName;
 import android.content.Context;
-import android.os.Build;
 import android.text.format.DateUtils;
-import androidx.annotation.RequiresApi;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.LastActivity;
 import net.simonvt.cathode.api.enumeration.ItemTypes;
@@ -53,7 +51,6 @@ public class SyncUserActivity extends CallJob<LastActivity> {
 
   @Inject transient SyncService syncService;
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public static void schedulePeriodic(Context context) {
     JobInfo jobInfo = new JobInfo.Builder(ID, new ComponentName(context, SchedulerService.class)) //
         .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
@@ -65,7 +62,7 @@ public class SyncUserActivity extends CallJob<LastActivity> {
     Jobs.scheduleNotPending(context, jobInfo);
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public static void cancel(Context context) {
+  public static void cancel(Context context) {
     Jobs.cancel(context, ID);
   }
 

@@ -145,19 +145,17 @@ public class CathodeApp extends Application
 
     ItemsUpdatedEvent.registerListener(onItemsUpdatedListener);
 
-    if (Jobs.usesScheduler()) {
-      SyncUpdatedShows.schedulePeriodic(this);
-      SyncUserShows.schedulePeriodic(this);
-      SyncUpdatedMovies.schedulePeriodic(this);
-      SyncUserMovies.schedulePeriodic(this);
-      DataJobHandlerJob.schedulePeriodic(this);
-      if (TraktLinkSettings.isLinked(this)) {
-        AuthJobHandlerJob.schedulePeriodic(this);
-        SyncUserActivity.schedulePeriodic(this);
-      } else {
-        AuthJobHandlerJob.cancel(this);
-        SyncUserActivity.cancel(this);
-      }
+    SyncUpdatedShows.schedulePeriodic(this);
+    SyncUserShows.schedulePeriodic(this);
+    SyncUpdatedMovies.schedulePeriodic(this);
+    SyncUserMovies.schedulePeriodic(this);
+    DataJobHandlerJob.schedulePeriodic(this);
+    if (TraktLinkSettings.isLinked(this)) {
+      AuthJobHandlerJob.schedulePeriodic(this);
+      SyncUserActivity.schedulePeriodic(this);
+    } else {
+      AuthJobHandlerJob.cancel(this);
+      SyncUserActivity.cancel(this);
     }
   }
 

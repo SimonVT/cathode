@@ -59,14 +59,12 @@ public final class Upgrader {
 
     if (currentVersion < VERSION) {
       if (currentVersion < 1) {
-        if (Jobs.usesScheduler()) {
-          if (TraktLinkSettings.isLinked(context)) {
-            Account account = Accounts.getAccount(context);
-            ContentResolver.removePeriodicSync(account, BuildConfig.PROVIDER_AUTHORITY,
-                new Bundle());
-            ContentResolver.setSyncAutomatically(account, BuildConfig.PROVIDER_AUTHORITY, false);
-            ContentResolver.setIsSyncable(account, BuildConfig.PROVIDER_AUTHORITY, 0);
-          }
+        if (TraktLinkSettings.isLinked(context)) {
+          Account account = Accounts.getAccount(context);
+          ContentResolver.removePeriodicSync(account, BuildConfig.PROVIDER_AUTHORITY,
+              new Bundle());
+          ContentResolver.setSyncAutomatically(account, BuildConfig.PROVIDER_AUTHORITY, false);
+          ContentResolver.setIsSyncable(account, BuildConfig.PROVIDER_AUTHORITY, 0);
         }
       }
 

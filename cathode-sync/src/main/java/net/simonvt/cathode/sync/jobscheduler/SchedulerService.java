@@ -18,9 +18,7 @@ package net.simonvt.cathode.sync.jobscheduler;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;
-import android.os.Build;
 import android.util.SparseArray;
-import androidx.annotation.RequiresApi;
 import com.crashlytics.android.Crashlytics;
 import dagger.android.AndroidInjection;
 import dagger.android.DispatchingAndroidInjector;
@@ -31,7 +29,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.jobqueue.Job;
 import timber.log.Timber;
 
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public class SchedulerService extends JobService {
+public class SchedulerService extends JobService {
 
   private static final int THREAD_COUNT = 3;
 

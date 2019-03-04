@@ -37,7 +37,6 @@ import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.PagedCallJob;
 import net.simonvt.cathode.remote.sync.movies.SyncPendingMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncPendingShows;
-import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 
 public class SyncHiddenRecommendations extends PagedCallJob<HiddenItem> {
@@ -120,13 +119,8 @@ public class SyncHiddenRecommendations extends PagedCallJob<HiddenItem> {
       }
     }
 
-    if (Jobs.usesScheduler()) {
-      SyncPendingShows.schedule(getContext());
-      SyncPendingMovies.schedule(getContext());
-    } else {
-      queue(new SyncPendingShows());
-      queue(new SyncPendingMovies());
-    }
+    SyncPendingShows.schedule(getContext());
+    SyncPendingMovies.schedule(getContext());
 
     for (long showId : unhandledShows) {
       ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(showId))

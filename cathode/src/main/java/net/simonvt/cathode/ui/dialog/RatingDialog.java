@@ -98,24 +98,6 @@ public class RatingDialog extends DialogFragment {
       }
     });
 
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-      LayerDrawable ld = (LayerDrawable) ratingBar.getProgressDrawable();
-      Drawable background = ld.findDrawableByLayerId(android.R.id.background);
-      background = DrawableCompat.wrap(background);
-      Drawable secondaryProgress = ld.findDrawableByLayerId(android.R.id.secondaryProgress);
-      secondaryProgress = DrawableCompat.wrap(secondaryProgress);
-      Drawable progress = ld.findDrawableByLayerId(android.R.id.progress);
-      progress = DrawableCompat.wrap(progress);
-
-      DrawableCompat.setTint(background, 0xFF009688);
-      DrawableCompat.setTint(secondaryProgress, 0xFF009688);
-      DrawableCompat.setTint(progress, 0xFF009688);
-
-      ld.setDrawableByLayerId(android.R.id.background, background);
-      ld.setDrawableByLayerId(android.R.id.secondaryProgress, secondaryProgress);
-      ld.setDrawableByLayerId(android.R.id.progress, progress);
-    }
-
     builder.setView(v);
     builder.setPositiveButton(R.string.action_rate, new DialogInterface.OnClickListener() {
       @Override public void onClick(DialogInterface dialogInterface, int i) {

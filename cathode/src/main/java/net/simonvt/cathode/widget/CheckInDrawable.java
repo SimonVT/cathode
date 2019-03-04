@@ -110,7 +110,7 @@ public class CheckInDrawable extends Drawable implements Drawable.Callback {
     if (watching != this.watching) {
       if (id == RecyclerView.NO_ID || Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
         updateWatchingDrawable(watching);
-      } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      } else {
         AnimatedVectorDrawable d = (AnimatedVectorDrawable) currentDrawable;
 
         if (d.isRunning()) {

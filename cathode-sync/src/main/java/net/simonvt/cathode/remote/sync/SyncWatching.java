@@ -20,9 +20,7 @@ import android.content.ComponentName;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Build;
 import android.text.format.DateUtils;
-import androidx.annotation.RequiresApi;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -61,7 +59,6 @@ public class SyncWatching extends CallJob<Watching> {
   @Inject transient EpisodeDatabaseHelper episodeHelper;
   @Inject transient MovieDatabaseHelper movieHelper;
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public static void schedule(Context context, long delayMillis) {
     JobInfo jobInfo = new JobInfo.Builder(ID, new ComponentName(context, SchedulerService.class)) //
         .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)

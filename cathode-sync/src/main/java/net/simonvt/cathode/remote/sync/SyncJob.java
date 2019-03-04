@@ -18,17 +18,17 @@ package net.simonvt.cathode.remote.sync;
 import android.text.format.DateUtils;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobPriority;
-import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncUserMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncUserShows;
 import net.simonvt.cathode.settings.Timestamps;
 import net.simonvt.cathode.settings.TraktLinkSettings;
-import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import net.simonvt.cathode.sync.tmdb.api.SyncConfiguration;
 
 public class SyncJob extends Job {
+
+  private static final long UPDATE_SYNC_DELAY = 7 * DateUtils.DAY_IN_MILLIS;
 
   @Override public String key() {
     return "SyncJob";
@@ -60,7 +60,7 @@ public class SyncJob extends Job {
           .edit()
           .putLong(Timestamps.SHOWS_LAST_UPDATED, currentTime)
           .apply();
-    } else if (lastShowSync + getUpdatedSyncDelay() < currentTime) {
+    } else if (lastShowSync + UPDATE_SYNC_DELAY < currentTime) {
       queue(new SyncUpdatedShows());
     }
     if (lastMovieSync == 0L) {
@@ -68,7 +68,7 @@ public class SyncJob extends Job {
           .edit()
           .putLong(Timestamps.MOVIES_LAST_UPDATED, currentTime)
           .apply();
-    } else if (lastMovieSync + getUpdatedSyncDelay() < currentTime) {
+    } else if (lastMovieSync + UPDATE_SYNC_DELAY < currentTime) {
       queue(new SyncUpdatedMovies());
     }
 
@@ -82,13 +82,5 @@ public class SyncJob extends Job {
 
     Timestamps.get(getContext()).edit().putLong(Timestamps.LAST_FULL_SYNC, currentTime).apply();
     return true;
-  }
-
-  private long getUpdatedSyncDelay() {
-    if (Jobs.usesScheduler()) {
-      return 7 * DateUtils.DAY_IN_MILLIS;
-    } else {
-      return 2 * DateUtils.DAY_IN_MILLIS;
-    }
   }
 }

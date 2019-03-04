@@ -49,8 +49,8 @@ public class CommentAndRepliesLiveData extends ListenableLiveData<List<Comment>>
         .query(Comments.withParent(commentId), CommentListMapper.PROJECTION, null, null,
             CommentColumns.CREATED_AT + " DESC");
 
-    addNotificationUri(DatabaseUtils.getNotificationUri(comment));
-    addNotificationUri(DatabaseUtils.getNotificationUri(replies));
+    addNotificationUri(comment.getNotificationUri());
+    addNotificationUri(replies.getNotificationUri());
 
     Cursor comments = new SimpleMergeCursor(comment, replies);
     return MAPPER.map(comments);

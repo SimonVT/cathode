@@ -17,14 +17,12 @@
 package net.simonvt.cathode.sync.jobqueue;
 
 import android.content.Context;
-import android.content.Intent;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.simonvt.cathode.common.event.SyncEvent;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.sync.jobscheduler.AuthJobHandlerJob;
-import net.simonvt.cathode.sync.jobscheduler.Jobs;
 
 @Singleton public class AuthJobHandler extends JobHandler {
 
@@ -44,12 +42,7 @@ import net.simonvt.cathode.sync.jobscheduler.Jobs;
 
   @Override protected void onStop() {
     if (hasJobs()) {
-      if (Jobs.usesScheduler()) {
-        AuthJobHandlerJob.schedule(context);
-      } else {
-        Intent i = new Intent(context, AuthJobService.class);
-        context.startService(i);
-      }
+      AuthJobHandlerJob.schedule(context);
     }
   }
 }

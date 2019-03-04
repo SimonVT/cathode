@@ -38,7 +38,6 @@ import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 import timber.log.Timber;
 
@@ -206,11 +205,7 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
       }
 
       if (markedPending) {
-        if (Jobs.usesScheduler()) {
-          SyncPendingShows.schedule(getContext());
-        } else {
-          queue(new SyncPendingShows());
-        }
+        SyncPendingShows.schedule(getContext());
       }
       if (!apply(ops)) {
         return false;

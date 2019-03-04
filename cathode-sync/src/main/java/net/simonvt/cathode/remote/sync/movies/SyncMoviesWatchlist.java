@@ -29,7 +29,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 
 public class SyncMoviesWatchlist extends CallJob<List<WatchlistItem>> {
@@ -82,11 +81,7 @@ public class SyncMoviesWatchlist extends CallJob<List<WatchlistItem>> {
       movieHelper.setIsInWatchlist(movieId, false);
     }
 
-    if (Jobs.usesScheduler()) {
-      SyncPendingMovies.schedule(getContext());
-    } else {
-      queue(new SyncPendingMovies());
-    }
+    SyncPendingMovies.schedule(getContext());
 
     return true;
   }

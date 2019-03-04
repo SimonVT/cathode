@@ -20,10 +20,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Outline;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Rect;
-import android.graphics.RectF;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -33,7 +30,6 @@ import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import androidx.annotation.RequiresApi;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
@@ -100,8 +96,6 @@ public class WatchingView extends ViewGroup {
 
   @BindView(R.id.subtitle) TextView subtitleView;
 
-  private static final boolean IS_LOLLIPOP = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
-
   private WatchingViewListener watchingViewListener;
 
   private Type type;
@@ -159,13 +153,7 @@ public class WatchingView extends ViewGroup {
     expandedDiameter = ViewUtils.dpToPx(context, 16);
     diameter = expandedDiameter;
 
-    if (IS_LOLLIPOP) {
-      initOutlineProvider();
-    }
-
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-      setLayerType(LAYER_TYPE_SOFTWARE, null);
-    }
+    initOutlineProvider();
 
     if (getResources().getBoolean(R.bool.isTablet)) {
       maxWidth = ViewUtils.dpToPx(context, 400);
@@ -177,7 +165,7 @@ public class WatchingView extends ViewGroup {
     handler = new Handler();
   }
 
-  @RequiresApi(Build.VERSION_CODES.LOLLIPOP) private void initOutlineProvider() {
+  private void initOutlineProvider() {
     setOutlineProvider(new ViewOutlineProvider() {
       @Override public void getOutline(View view, Outline outline) {
         Rect outlineRect = new Rect();
@@ -441,13 +429,7 @@ public class WatchingView extends ViewGroup {
     radiusAnimation(radiusProgress);
 
     invalidate();
-    invalidateOutlineCompat();
-  }
-
-  private void invalidateOutlineCompat() {
-    if (IS_LOLLIPOP) {
-      invalidateOutline();
-    }
+    invalidateOutline();
   }
 
   public float getAnimationProgress() {
@@ -456,72 +438,8 @@ public class WatchingView extends ViewGroup {
 
   @Override protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
-    if (IS_LOLLIPOP) {
-      canvas.drawRect(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(),
-          getHeight() - getPaddingBottom(), backgroundPaint);
-    }
-  }
-
-  @Override protected void dispatchDraw(Canvas canvas) {
-    if (IS_LOLLIPOP) {
-      super.dispatchDraw(canvas);
-    } else {
-      Path clipPath = new Path();
-
-      final int width = getWidth();
-      final int height = getHeight();
-
-      final int posterOffset = (int) posterView.getTranslationX();
-
-      RectF topLeft = new RectF();
-      topLeft.left = getPaddingLeft() + posterOffset;
-      topLeft.top = getPaddingTop() + topBottomOffset;
-      topLeft.right = topLeft.left + diameter;
-      topLeft.bottom = topLeft.top + diameter;
-
-      RectF topRight = new RectF();
-      topRight.right = width - getPaddingRight();
-      topRight.top = getPaddingTop() + topBottomOffset;
-      topRight.left = topRight.right - diameter;
-      topRight.bottom = topRight.top + diameter;
-
-      RectF bottomRight = new RectF();
-      bottomRight.right = width - getPaddingRight();
-      bottomRight.bottom = height - getPaddingBottom() - topBottomOffset;
-      bottomRight.left = bottomRight.right - diameter;
-      bottomRight.top = bottomRight.bottom - diameter;
-
-      RectF bottomLeft = new RectF();
-      bottomLeft.left = getPaddingLeft() + posterOffset;
-      bottomLeft.bottom = height - getPaddingBottom() - topBottomOffset;
-      bottomLeft.right = bottomLeft.left + diameter;
-      bottomLeft.top = bottomLeft.bottom - diameter;
-
-      clipPath.moveTo(getPaddingLeft() + posterOffset,
-          getPaddingTop() + diameter + topBottomOffset);
-      clipPath.arcTo(topLeft, 180f, 90f, false);
-      clipPath.lineTo(width - getPaddingRight() - diameter, getPaddingTop() + topBottomOffset);
-      clipPath.arcTo(topRight, 270f, 90f, false);
-      clipPath.lineTo(width - getPaddingRight(),
-          height - getPaddingBottom() - diameter - topBottomOffset);
-      clipPath.arcTo(bottomRight, 0f, 90f, false);
-      clipPath.lineTo(getPaddingLeft() + diameter + posterOffset,
-          height - getPaddingBottom() - topBottomOffset);
-      clipPath.arcTo(bottomLeft, 90f, 90f, false);
-      clipPath.lineTo(getPaddingLeft() + posterOffset,
-          getPaddingTop() + diameter + topBottomOffset);
-      clipPath.close();
-
-      final int save = canvas.save();
-      canvas.clipPath(clipPath);
-
-      canvas.drawRect(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(),
-          getHeight() - getPaddingBottom(), backgroundPaint);
-
-      super.dispatchDraw(canvas);
-
-      canvas.restoreToCount(save);
-    }
+    canvas.drawRect(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(),
+        getHeight() - getPaddingBottom(), backgroundPaint);
   }
 
   @Override protected void onLayout(boolean changed, int l, int t, int r, int b) {

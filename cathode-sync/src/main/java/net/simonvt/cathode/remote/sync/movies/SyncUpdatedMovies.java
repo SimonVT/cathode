@@ -20,9 +20,7 @@ import android.content.ComponentName;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
-import android.os.Build;
 import android.text.format.DateUtils;
-import androidx.annotation.RequiresApi;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -51,7 +49,6 @@ public class SyncUpdatedMovies extends SeparatePagesCallJob<UpdatedItem> {
 
   private transient long currentTime;
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public static void schedulePeriodic(Context context) {
     JobInfo jobInfo = new JobInfo.Builder(ID, new ComponentName(context, SchedulerService.class)) //
         .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
@@ -111,13 +108,11 @@ public class SyncUpdatedMovies extends SeparatePagesCallJob<UpdatedItem> {
   }
 
   @Override public boolean onDone() {
-    if (Jobs.usesScheduler()) {
-      SyncPendingMovies.schedule(getContext());
-    } else {
-      queue(new SyncPendingMovies());
-    }
-
-    Timestamps.get(getContext()).edit().putLong(Timestamps.MOVIES_LAST_UPDATED, currentTime).apply();
+    SyncPendingMovies.schedule(getContext());
+    Timestamps.get(getContext())
+        .edit()
+        .putLong(Timestamps.MOVIES_LAST_UPDATED, currentTime)
+        .apply();
     return true;
   }
 }

@@ -27,7 +27,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.sync.movies.SyncPendingMovies;
 import net.simonvt.cathode.remote.sync.shows.SyncPendingShows;
-import net.simonvt.cathode.sync.jobscheduler.Jobs;
 
 public class ForceUpdateJob extends Job {
 
@@ -50,13 +49,8 @@ public class ForceUpdateJob extends Job {
     values.put(MovieColumns.NEEDS_SYNC, true);
     getContentResolver().update(Movies.MOVIES, values, null, null);
 
-    if (Jobs.usesScheduler()) {
-      SyncPendingShows.schedule(getContext());
-      SyncPendingMovies.schedule(getContext());
-    } else {
-      queue(new SyncPendingShows());
-      queue(new SyncPendingMovies());
-    }
+    SyncPendingShows.schedule(getContext());
+    SyncPendingMovies.schedule(getContext());
 
     return true;
   }

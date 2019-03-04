@@ -21,9 +21,7 @@ import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Build;
 import android.text.format.DateUtils;
-import androidx.annotation.RequiresApi;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +54,7 @@ public class SyncPendingSeasons extends ErrorHandlerJob<List<Episode>> {
   @Inject transient ShowDatabaseHelper showHelper;
   @Inject transient EpisodeDatabaseHelper episodeHelper;
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public static void schedule(Context context) {
+  public static void schedule(Context context) {
     JobInfo jobInfo = new JobInfo.Builder(ID, new ComponentName(context, SchedulerService.class)) //
         .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
         .setRequiresCharging(true)

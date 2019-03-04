@@ -17,8 +17,6 @@
 package net.simonvt.cathode.sync.jobscheduler;
 
 import android.app.job.JobParameters;
-import android.os.Build;
-import androidx.annotation.RequiresApi;
 import dagger.android.DispatchingAndroidInjector;
 import javax.inject.Inject;
 import net.simonvt.cathode.jobqueue.Job;
@@ -32,7 +30,7 @@ import net.simonvt.cathode.remote.sync.shows.SyncPendingShows;
 import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncUserShows;
 
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public class JobCreator {
+public class JobCreator {
 
   @Inject DispatchingAndroidInjector<Job> jobInjector;
 

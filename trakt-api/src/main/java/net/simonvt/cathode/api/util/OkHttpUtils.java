@@ -45,11 +45,7 @@ public class OkHttpUtils {
     try {
       StatFs statFs = new StatFs(dir.getAbsolutePath());
       long available;
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-        available = statFs.getBlockCountLong() * statFs.getBlockSizeLong();
-      } else {
-        available = ((long) statFs.getBlockCount()) * statFs.getBlockSize();
-      }
+      available = statFs.getBlockCountLong() * statFs.getBlockSizeLong();
 
       size = available / 50;
     } catch (IllegalArgumentException e) {

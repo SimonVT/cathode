@@ -20,9 +20,7 @@ import android.app.job.JobInfo;
 import android.app.job.JobParameters;
 import android.content.ComponentName;
 import android.content.Context;
-import android.os.Build;
 import android.text.format.DateUtils;
-import androidx.annotation.RequiresApi;
 import javax.inject.Inject;
 import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.jobqueue.Job;
@@ -30,7 +28,7 @@ import net.simonvt.cathode.sync.jobqueue.AuthJobHandler;
 import net.simonvt.cathode.sync.jobqueue.JobHandler;
 import timber.log.Timber;
 
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public class AuthJobHandlerJob extends Job {
+public class AuthJobHandlerJob extends Job {
 
   public static final int ID = 1;
   public static final int ID_ONESHOT = 2;
@@ -60,7 +58,7 @@ import timber.log.Timber;
     Jobs.scheduleNotPending(context, jobInfo);
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public static void cancel(Context context) {
+  public static void cancel(Context context) {
     Jobs.cancel(context, ID);
   }
 

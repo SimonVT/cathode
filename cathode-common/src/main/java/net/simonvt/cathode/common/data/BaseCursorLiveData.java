@@ -63,7 +63,7 @@ abstract class BaseCursorLiveData<D> extends ListenableLiveData<D>
       SimpleCursor result = null;
       if (cursor != null) {
         Uri oldNotificationUri = notificationUri;
-        notificationUri = DatabaseUtils.getNotificationUri(cursor);
+        notificationUri = cursor.getNotificationUri();
         if (oldNotificationUri == null) {
           registerUri(notificationUri);
         } else if (!oldNotificationUri.equals(notificationUri)) {

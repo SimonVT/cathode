@@ -319,34 +319,32 @@ import static net.simonvt.cathode.module.DebugModule.NAMED_STATUS_CODE;
 
     debugViews.startPeriodicJobs.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-          JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
 
-          JobInfo job = new JobInfo.Builder(SyncUpdatedShows.ID,
-              new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
-              JobInfo.NETWORK_TYPE_ANY).build();
-          scheduler.schedule(job);
+        JobInfo job = new JobInfo.Builder(SyncUpdatedShows.ID,
+            new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
+            JobInfo.NETWORK_TYPE_ANY).build();
+        scheduler.schedule(job);
 
-          job = new JobInfo.Builder(SyncUpdatedMovies.ID,
-              new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
-              JobInfo.NETWORK_TYPE_ANY).build();
-          scheduler.schedule(job);
+        job = new JobInfo.Builder(SyncUpdatedMovies.ID,
+            new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
+            JobInfo.NETWORK_TYPE_ANY).build();
+        scheduler.schedule(job);
 
-          job = new JobInfo.Builder(SyncUserActivity.ID,
-              new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
-              JobInfo.NETWORK_TYPE_ANY).build();
-          scheduler.schedule(job);
+        job = new JobInfo.Builder(SyncUserActivity.ID,
+            new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
+            JobInfo.NETWORK_TYPE_ANY).build();
+        scheduler.schedule(job);
 
-          job = new JobInfo.Builder(AuthJobHandlerJob.ID,
-              new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
-              JobInfo.NETWORK_TYPE_ANY).build();
-          scheduler.schedule(job);
+        job = new JobInfo.Builder(AuthJobHandlerJob.ID,
+            new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
+            JobInfo.NETWORK_TYPE_ANY).build();
+        scheduler.schedule(job);
 
-          job = new JobInfo.Builder(DataJobHandlerJob.ID,
-              new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
-              JobInfo.NETWORK_TYPE_ANY).build();
-          scheduler.schedule(job);
-        }
+        job = new JobInfo.Builder(DataJobHandlerJob.ID,
+            new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
+            JobInfo.NETWORK_TYPE_ANY).build();
+        scheduler.schedule(job);
       }
     });
   }

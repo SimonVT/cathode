@@ -105,10 +105,9 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
     Accounts.setupAccount(this);
 
     jobManager.addJob(new SyncJob());
-    if (Jobs.usesScheduler()) {
-      AuthJobHandlerJob.schedulePeriodic(this);
-      SyncUserActivity.schedulePeriodic(this);
-    }
+
+    AuthJobHandlerJob.schedulePeriodic(this);
+    SyncUserActivity.schedulePeriodic(this);
 
     if (task == LoginActivity.TASK_LINK) {
       Intent traktSync = new Intent(this, TraktLinkActivity.class);

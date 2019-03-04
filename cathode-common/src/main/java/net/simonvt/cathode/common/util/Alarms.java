@@ -37,10 +37,8 @@ public final class Alarms {
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       am.setExactAndAllowWhileIdle(type, triggerAtMillis, pi);
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-      am.setExact(type, triggerAtMillis, pi);
     } else {
-      am.set(type, triggerAtMillis, pi);
+      am.setExact(type, triggerAtMillis, pi);
     }
   }
 }

@@ -16,13 +16,9 @@
 
 package net.simonvt.cathode.sync.trakt;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
-import android.os.SystemClock;
 import android.text.format.DateUtils;
 import java.io.IOException;
 import javax.inject.Inject;
@@ -41,8 +37,6 @@ import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.sync.BuildConfig;
 import net.simonvt.cathode.sync.R;
-import net.simonvt.cathode.sync.SyncWatchingReceiver;
-import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 import retrofit2.Response;
 import timber.log.Timber;
@@ -94,16 +88,7 @@ public class CheckIn {
       Response<CheckinResponse> response = call.execute();
 
       if (response.isSuccessful()) {
-        if (Jobs.usesScheduler()) {
-          SyncWatching.schedule(context, runtime * DateUtils.MINUTE_IN_MILLIS);
-        } else {
-          Intent i = new Intent(context, SyncWatchingReceiver.class);
-          PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
-
-          AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-          am.set(AlarmManager.ELAPSED_REALTIME,
-              SystemClock.elapsedRealtime() + runtime * DateUtils.MINUTE_IN_MILLIS, pi);
-        }
+        SyncWatching.schedule(context, runtime * DateUtils.MINUTE_IN_MILLIS);
         return true;
       } else {
         if (response.code() == 409) {
@@ -153,16 +138,7 @@ public class CheckIn {
       Response<CheckinResponse> response = call.execute();
 
       if (response.isSuccessful()) {
-        if (Jobs.usesScheduler()) {
-          SyncWatching.schedule(context, runtime * DateUtils.MINUTE_IN_MILLIS);
-        } else {
-          Intent i = new Intent(context, SyncWatchingReceiver.class);
-          PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
-
-          AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-          am.set(AlarmManager.ELAPSED_REALTIME,
-              SystemClock.elapsedRealtime() + runtime * DateUtils.MINUTE_IN_MILLIS, pi);
-        }
+        SyncWatching.schedule(context, runtime * DateUtils.MINUTE_IN_MILLIS);
         return true;
       } else {
         if (response.code() == 409) {

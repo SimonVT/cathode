@@ -20,7 +20,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import net.simonvt.cathode.common.data.ListenableLiveData;
 import net.simonvt.cathode.common.database.Cursors;
-import net.simonvt.cathode.common.database.DatabaseUtils;
 import net.simonvt.cathode.common.entity.Episode;
 import net.simonvt.cathode.entitymapper.EpisodeMapper;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -96,7 +95,7 @@ public class WatchedLiveData extends ListenableLiveData<Episode> {
         if (notificationUri != null) {
           removeNotificationUri(notificationUri);
         }
-        notificationUri = DatabaseUtils.getNotificationUri(toWatch);
+        notificationUri = toWatch.getNotificationUri();
         addNotificationUri(notificationUri);
         return EpisodeMapper.mapEpisode(toWatch);
       } else {

@@ -49,8 +49,7 @@ public class CollectLiveData extends ListenableLiveData<Cursor> {
                 + ">0", null,
             EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1");
 
-    Uri notiUri = DatabaseUtils.getNotificationUri(toCollect);
-    addNotificationUri(notiUri);
+    addNotificationUri(toCollect.getNotificationUri());
 
     if (toCollect.getCount() == 0) {
       SimpleMergeCursor cursor = new SimpleMergeCursor(toCollect);

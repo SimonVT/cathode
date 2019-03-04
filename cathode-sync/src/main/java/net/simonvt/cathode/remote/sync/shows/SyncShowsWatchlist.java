@@ -30,7 +30,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import retrofit2.Call;
 
 public class SyncShowsWatchlist extends CallJob<List<WatchlistItem>> {
@@ -83,11 +82,7 @@ public class SyncShowsWatchlist extends CallJob<List<WatchlistItem>> {
       showHelper.setIsInWatchlist(showId, false);
     }
 
-    if (Jobs.usesScheduler()) {
-      SyncPendingShows.schedule(getContext());
-    } else {
-      queue(new SyncPendingShows());
-    }
+    SyncPendingShows.schedule(getContext());
 
     return true;
   }

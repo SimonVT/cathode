@@ -17,16 +17,12 @@
 package net.simonvt.cathode.common.widget;
 
 import android.content.Context;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.WindowInsets;
 import android.widget.FrameLayout;
-import androidx.annotation.RequiresApi;
 
 public class CatchSystemInsets extends FrameLayout {
-
-  public static final boolean CATCH_INSETS = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
 
   WindowInsets insets;
 
@@ -46,30 +42,20 @@ public class CatchSystemInsets extends FrameLayout {
   }
 
   private void init() {
-    if (CATCH_INSETS) {
-      setFitsSystemWindows(true);
-      setSystemUiVisibility(SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-    }
+    setFitsSystemWindows(true);
+    setSystemUiVisibility(SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
   }
 
-  @RequiresApi(Build.VERSION_CODES.LOLLIPOP) @Override
-  public WindowInsets onApplyWindowInsets(WindowInsets insets) {
-    if (CATCH_INSETS) {
-      this.insets = new WindowInsets(insets);
-      return insets.consumeSystemWindowInsets();
-    }
-
-    return super.onApplyWindowInsets(insets);
+  @Override public WindowInsets onApplyWindowInsets(WindowInsets insets) {
+    this.insets = new WindowInsets(insets);
+    return insets.consumeSystemWindowInsets();
   }
 
-  @RequiresApi(Build.VERSION_CODES.LOLLIPOP) @Override
-  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    if (CATCH_INSETS) {
-      if (insets != null) {
-        for (int i = 0, childCount = getChildCount(); i < childCount; i++) {
-          View child = getChildAt(i);
-          child.dispatchApplyWindowInsets(insets);
-        }
+  @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    if (insets != null) {
+      for (int i = 0, childCount = getChildCount(); i < childCount; i++) {
+        View child = getChildAt(i);
+        child.dispatchApplyWindowInsets(insets);
       }
     }
 

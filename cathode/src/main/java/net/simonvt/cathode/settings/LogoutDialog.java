@@ -54,10 +54,8 @@ public class LogoutDialog extends DialogFragment {
             jobManager.addJob(new LogoutJob());
             jobManager.removeJobsWithFlag(Flags.REQUIRES_AUTH);
 
-            if (Jobs.usesScheduler()) {
-              AuthJobHandlerJob.cancel(getActivity());
-              SyncUserActivity.cancel(getActivity());
-            }
+            AuthJobHandlerJob.cancel(getActivity());
+            SyncUserActivity.cancel(getActivity());
           }
         })
         .setNegativeButton(R.string.cancel, null)

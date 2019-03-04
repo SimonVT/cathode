@@ -21,11 +21,6 @@
   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
   <application>
-    <receiver android:name="net.simonvt.cathode.sync.jobqueue.AuthJobReceiver"/>
-    <receiver android:name="net.simonvt.cathode.sync.SyncWatchingReceiver"/>
-
-    <service android:name="net.simonvt.cathode.sync.jobqueue.AuthJobService"/>
-
     <service
         android:name="net.simonvt.cathode.sync.jobscheduler.SchedulerService"
         android:permission="android.permission.BIND_JOB_SERVICE"/>

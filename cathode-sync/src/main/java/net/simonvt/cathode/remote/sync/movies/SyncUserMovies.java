@@ -22,9 +22,7 @@ import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Build;
 import android.text.format.DateUtils;
-import androidx.annotation.RequiresApi;
 import java.util.ArrayList;
 import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.Job;
@@ -41,7 +39,6 @@ public class SyncUserMovies extends Job {
 
   private static final long SYNC_INTERVAL = 30 * DateUtils.DAY_IN_MILLIS;
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public static void schedulePeriodic(Context context) {
     JobInfo jobInfo = new JobInfo.Builder(ID, new ComponentName(context, SchedulerService.class)) //
         .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
@@ -88,11 +85,7 @@ public class SyncUserMovies extends Job {
     }
     movies.close();
 
-    if (Jobs.usesScheduler()) {
-      SyncPendingMovies.schedule(getContext());
-    } else {
-      queue(new SyncPendingMovies());
-    }
+    SyncPendingMovies.schedule(getContext());
 
     if (!applyBatch(ops)) {
       return false;

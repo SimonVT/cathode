@@ -22,9 +22,7 @@ import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Build;
 import android.text.format.DateUtils;
-import androidx.annotation.RequiresApi;
 import java.util.ArrayList;
 import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.Job;
@@ -40,7 +38,6 @@ public class SyncUserShows extends Job {
 
   private static final long SYNC_INTERVAL = 30 * DateUtils.DAY_IN_MILLIS;
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public static void schedulePeriodic(Context context) {
     JobInfo jobInfo = new JobInfo.Builder(ID, new ComponentName(context, SchedulerService.class)) //
         .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
@@ -87,11 +84,7 @@ public class SyncUserShows extends Job {
     }
     shows.close();
 
-    if (Jobs.usesScheduler()) {
-      SyncPendingShows.schedule(getContext());
-    } else {
-      queue(new SyncPendingShows());
-    }
+    SyncPendingShows.schedule(getContext());
 
     if (!applyBatch(ops)) {
       return false;

@@ -24,7 +24,6 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
@@ -32,7 +31,6 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewOutlineProvider;
-import androidx.annotation.RequiresApi;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Target;
@@ -107,15 +105,13 @@ public class RemoteImageView extends AspectRatioView implements Target {
 
     a.recycle();
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      setupOutlineProvider();
-    }
+    setupOutlineProvider();
 
     colorMatrix = new ColorMatrix();
     colorMatrixColorFilter = new ColorMatrixColorFilter(colorMatrix);
   }
 
-  @RequiresApi(Build.VERSION_CODES.LOLLIPOP) private void setupOutlineProvider() {
+  private void setupOutlineProvider() {
     setOutlineProvider(ViewOutlineProvider.PADDED_BOUNDS);
   }
 
@@ -277,9 +273,7 @@ public class RemoteImageView extends AspectRatioView implements Target {
       }
 
       invalidate();
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        invalidateOutline();
-      }
+      invalidateOutline();
     }
   }
 

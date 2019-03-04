@@ -20,9 +20,7 @@ import android.app.job.JobInfo;
 import android.content.ComponentName;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Build;
 import android.text.format.DateUtils;
-import androidx.annotation.RequiresApi;
 import androidx.collection.LongSparseArray;
 import java.io.IOException;
 import javax.inject.Inject;
@@ -52,7 +50,7 @@ public class SyncPendingMovies extends ErrorHandlerJob<Movie> {
   @Inject transient MoviesService moviesService;
   @Inject transient MovieDatabaseHelper movieHelper;
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) public static void schedule(Context context) {
+  public static void schedule(Context context) {
     JobInfo jobInfo = new JobInfo.Builder(ID, new ComponentName(context, SchedulerService.class)) //
         .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
         .setRequiresCharging(true)

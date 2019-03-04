@@ -28,22 +28,15 @@ public final class Jobs {
   private Jobs() {
   }
 
-  public static boolean usesScheduler() {
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
-  }
-
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public static JobScheduler getScheduler(Context context) {
     return (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public static void schedule(Context context, JobInfo job) {
     JobScheduler scheduler = getScheduler(context);
     scheduler.schedule(job);
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public static void scheduleNotPending(Context context, JobInfo job) {
     JobScheduler scheduler = getScheduler(context);
     if (getPendingJob(context, job.getId()) == null) {
@@ -51,13 +44,11 @@ public final class Jobs {
     }
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public static void cancel(Context context, int jobId) {
     JobScheduler scheduler = getScheduler(context);
     scheduler.cancel(jobId);
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public static JobInfo getPendingJob(Context context, int jobId) {
     JobScheduler scheduler = getScheduler(context);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
