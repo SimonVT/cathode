@@ -51,58 +51,63 @@ public class WatchedLiveData extends ListenableLiveData<Episode> {
     final boolean watching = Cursors.getBoolean(show, ShowColumns.WATCHING);
     show.close();
 
-    Cursor toWatch;
-    if (watching) {
-      toWatch = getContext().getContentResolver()
-          .query(Episodes.fromShow(showId), projection,
-              EpisodeColumns.WATCHING + "=1 OR " + EpisodeColumns.CHECKED_IN + "=1", null, null);
-    } else {
-      Cursor lastWatched = getContext().getContentResolver()
-          .query(Episodes.fromShow(showId), projection, EpisodeColumns.WATCHED + "=1", null,
-              EpisodeColumns.SEASON + " DESC, " + EpisodeColumns.EPISODE + " DESC LIMIT 1");
+    Cursor toWatch = null;
+    try {
+      if (watching) {
+        toWatch = getContext().getContentResolver()
+            .query(Episodes.fromShow(showId), projection,
+                EpisodeColumns.WATCHING + "=1 OR " + EpisodeColumns.CHECKED_IN + "=1", null, null);
+      } else {
+        Cursor lastWatched = getContext().getContentResolver()
+            .query(Episodes.fromShow(showId), projection, EpisodeColumns.WATCHED + "=1", null,
+                EpisodeColumns.SEASON + " DESC, " + EpisodeColumns.EPISODE + " DESC LIMIT 1");
 
-      long lastWatchedSeason = 0;
-      long lastWatchedEpisode = -1;
-      if (lastWatched.moveToFirst()) {
-        lastWatchedSeason = Cursors.getInt(lastWatched, EpisodeColumns.SEASON);
-        lastWatchedEpisode = Cursors.getInt(lastWatched, EpisodeColumns.EPISODE);
+        long lastWatchedSeason = 0;
+        long lastWatchedEpisode = -1;
+        if (lastWatched.moveToFirst()) {
+          lastWatchedSeason = Cursors.getInt(lastWatched, EpisodeColumns.SEASON);
+          lastWatchedEpisode = Cursors.getInt(lastWatched, EpisodeColumns.EPISODE);
+        }
+
+        toWatch = getContext().getContentResolver()
+            .query(Episodes.fromShow(showId), projection, EpisodeColumns.WATCHED
+                + "=0 AND "
+                + EpisodeColumns.FIRST_AIRED
+                + " IS NOT NULL"
+                + " AND "
+                + EpisodeColumns.SEASON
+                + ">0"
+                + " AND ("
+                + EpisodeColumns.SEASON
+                + ">"
+                + lastWatchedSeason
+                + " OR ("
+                + EpisodeColumns.SEASON
+                + "="
+                + lastWatchedSeason
+                + " AND "
+                + EpisodeColumns.EPISODE
+                + ">"
+                + lastWatchedEpisode
+                + "))", null, EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1");
       }
 
-      toWatch = getContext().getContentResolver()
-          .query(Episodes.fromShow(showId), projection, EpisodeColumns.WATCHED
-                  + "=0 AND "
-                  + EpisodeColumns.FIRST_AIRED
-                  + " IS NOT NULL"
-                  + " AND "
-                  + EpisodeColumns.SEASON
-                  + ">0"
-                  + " AND ("
-                  + EpisodeColumns.SEASON
-                  + ">"
-                  + lastWatchedSeason
-                  + " OR ("
-                  + EpisodeColumns.SEASON
-                  + "="
-                  + lastWatchedSeason
-                  + " AND "
-                  + EpisodeColumns.EPISODE
-                  + ">"
-                  + lastWatchedEpisode
-                  + "))", null,
-              EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1");
-    }
-
-    if (toWatch.moveToFirst()) {
-      if (notificationUri != null) {
+      if (toWatch.moveToFirst()) {
+        if (notificationUri != null) {
+          removeNotificationUri(notificationUri);
+        }
+        notificationUri = DatabaseUtils.getNotificationUri(toWatch);
+        addNotificationUri(notificationUri);
+        return EpisodeMapper.mapEpisode(toWatch);
+      } else {
         removeNotificationUri(notificationUri);
+        notificationUri = null;
+        return null;
       }
-      notificationUri = DatabaseUtils.getNotificationUri(toWatch);
-      addNotificationUri(notificationUri);
-      return EpisodeMapper.mapEpisode(toWatch);
-    } else {
-      removeNotificationUri(notificationUri);
-      notificationUri = null;
-      return null;
+    } finally {
+      if (toWatch != null) {
+        toWatch.close();
+      }
     }
   }
 }
