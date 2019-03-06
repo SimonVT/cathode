@@ -899,7 +899,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
       return;
     }
 
-    if (lastWatched == null) {
+    if (lastWatched != null) {
       lastWatchedView.setVisibility(View.VISIBLE);
       lastWatchedId = lastWatched.getId();
 
