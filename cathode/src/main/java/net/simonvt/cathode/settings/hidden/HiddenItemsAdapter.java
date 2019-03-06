@@ -56,6 +56,7 @@ public class HiddenItemsAdapter extends HeaderAdapter<Object, RecyclerView.ViewH
 
   public static final String[] PROJECTION_SHOW = new String[] {
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.ID),
+      SqlColumn.table(Tables.SHOWS).column(ShowColumns.TRAKT_ID),
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.OVERVIEW),
       SqlColumn.table(Tables.SHOWS).column(ShowColumns.WATCHED_COUNT),
@@ -67,6 +68,7 @@ public class HiddenItemsAdapter extends HeaderAdapter<Object, RecyclerView.ViewH
 
   public static final String[] PROJECTION_MOVIES = new String[] {
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.ID),
+      SqlColumn.table(Tables.MOVIES).column(MovieColumns.TRAKT_ID),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.TITLE),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.OVERVIEW),
       SqlColumn.table(Tables.MOVIES).column(MovieColumns.WATCHED),
