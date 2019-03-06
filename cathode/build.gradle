@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
 apply plugin: 'checkstyle'
+
+if (file("google-services.json").exists()) {
+  apply plugin: 'com.google.gms.google-services'
+  apply plugin: 'io.fabric'
+}
 
 dependencies {
   implementation project(':cathode-common')
@@ -43,9 +47,8 @@ dependencies {
 
   implementation deps.tmdb
 
-  implementation(deps.crashlytics) {
-    transitive = true
-  }
+  implementation deps.firebase.core
+  implementation deps.firebase.crashlytics
 
   lintChecks project(':cathode-lint')
 

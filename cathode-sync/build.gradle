@@ -22,9 +22,7 @@ dependencies {
   implementation deps.timber
   implementation deps.tmdb
 
-  implementation(deps.crashlytics) {
-    transitive = true
-  }
+  implementation deps.firebase.crashlytics
 }
 
 android {

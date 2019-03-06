@@ -12,7 +12,8 @@ buildscript {
 
   dependencies {
     classpath deps.androidPlugin
-    classpath deps.fabricGradle
+    classpath deps.google.services
+    classpath deps.firebase.fabric
     classpath deps.butterknifeGradle
   }
 }
@@ -22,7 +23,6 @@ allprojects {
     google()
     mavenCentral()
     jcenter()
-    maven { url 'https://maven.fabric.io/public' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
   }
 }

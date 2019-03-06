@@ -9,14 +9,11 @@ ext {
 
   deps = [
       androidPlugin       : 'com.android.tools.build:gradle:3.3.1',
-      fabricGradle        : 'io.fabric.tools:gradle:1.+',
 
       lint                : "com.android.tools.lint:lint:${lintVersion}",
       lintApi             : "com.android.tools.lint:lint-api:${lintVersion}",
       lintChecks          : "com.android.tools.lint:lint-checks:${lintVersion}",
       lintTests           : "com.android.tools.lint:lint-tests:${lintVersion}",
-
-      crashlytics         : 'com.crashlytics.sdk.android:crashlytics:2.9.9@aar',
 
       schematic           : 'net.simonvt.schematic:schematic:0.7.0',
       schematicCompiler   : 'net.simonvt.schematic:schematic-compiler:0.7.0',
@@ -49,6 +46,16 @@ ext {
       junit               : 'junit:junit:4.12',
       robolectric         : 'org.robolectric:robolectric:3.2.1',
       truth               : 'com.google.truth:truth:0.31'
+  ]
+
+  deps.google = [
+      services            : 'com.google.gms:google-services:4.2.0'
+  ]
+
+  deps.firebase = [
+      core                :'com.google.firebase:firebase-core:16.0.7',
+      fabric              : 'io.fabric.tools:gradle:1.26.1',
+      crashlytics         : 'com.crashlytics.sdk.android:crashlytics:2.9.9'
   ]
 
   deps.androidx = [
