@@ -13,6 +13,9 @@ build
 # OSX
 .DS_Store
 
+# Firebase
+google-services.json
+
 # Crashlytics
 crashlytics.properties
 
