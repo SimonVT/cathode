@@ -3,7 +3,11 @@ package net.simonvt.cathode.dagger;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 import net.simonvt.cathode.settings.LogoutDialog;
+import net.simonvt.cathode.settings.NotificationSettingsActivity;
+import net.simonvt.cathode.settings.NotificationSettingsActivity.NotificationSettingsFragment;
 import net.simonvt.cathode.settings.SettingsActivity;
+import net.simonvt.cathode.settings.hidden.HiddenItems;
+import net.simonvt.cathode.settings.hidden.HiddenItems.HiddenItemsFragment;
 import net.simonvt.cathode.ui.comments.AddCommentDialog;
 import net.simonvt.cathode.ui.comments.CommentFragment;
 import net.simonvt.cathode.ui.comments.CommentsFragment;
@@ -133,4 +137,8 @@ import net.simonvt.cathode.ui.suggestions.shows.TrendingShowsFragment;
   @ContributesAndroidInjector abstract AddToHistoryDialog addToHistoryDialog();
 
   @ContributesAndroidInjector abstract RemoveFromHistoryDialog removeFromHistoryDialog();
+
+  @ContributesAndroidInjector abstract NotificationSettingsFragment notificationSettingsFragment();
+
+  @ContributesAndroidInjector abstract HiddenItemsFragment hiddenItemsFragment();
 }
