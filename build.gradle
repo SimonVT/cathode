@@ -12,6 +12,8 @@ buildscript {
 
   dependencies {
     classpath deps.androidPlugin
+    classpath deps.kotlin.plugin
+    classpath deps.kotlin.ktlint
     classpath deps.google.services
     classpath deps.firebase.fabric
     classpath deps.butterknifeGradle

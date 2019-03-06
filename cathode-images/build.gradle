@@ -1,12 +1,18 @@
-apply plugin: 'com.android.library'
-apply plugin: 'checkstyle'
+plugins {
+  id 'com.android.library'
+  id 'kotlin-android'
+  id 'kotlin-kapt'
+  id 'org.jlleitschuh.gradle.ktlint'
+  id 'checkstyle'
+}
 
 dependencies {
   implementation project(':cathode-common')
   implementation project(':cathode-provider')
   implementation project(':cathode-settings')
+  implementation deps.kotlin.stdlib
   implementation deps.dagger
-  annotationProcessor deps.daggerCompiler
+  kapt deps.daggerCompiler
   api deps.picasso
   implementation deps.picassoOkHttp
   implementation deps.androidx.annotations

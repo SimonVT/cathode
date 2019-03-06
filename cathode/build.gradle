@@ -1,9 +1,15 @@
-apply plugin: 'com.android.application'
-apply plugin: 'checkstyle'
+plugins {
+  id 'com.android.application'
+  id 'kotlin-android'
+  id 'kotlin-android-extensions'
+  id 'kotlin-kapt'
+  id 'org.jlleitschuh.gradle.ktlint'
+  id 'checkstyle'
+  id 'io.fabric'
+}
 
 if (file("google-services.json").exists()) {
   apply plugin: 'com.google.gms.google-services'
-  apply plugin: 'io.fabric'
 }
 
 dependencies {
@@ -17,8 +23,13 @@ dependencies {
   implementation project(':libs:colorpicker')
   implementation project(':libs:datetimepicker')
 
+  implementation deps.kotlin.stdlib
+  implementation deps.kotlin.coroutines.common
+  implementation deps.kotlin.coroutines.jdk8
+  implementation deps.kotlin.coroutines.android
+
   implementation deps.schematic
-  annotationProcessor deps.schematicCompiler
+  kapt deps.schematicCompiler
 
   implementation deps.gson
 
@@ -27,12 +38,12 @@ dependencies {
   implementation deps.androidx.recyclerView
   implementation deps.androidx.design
   implementation deps.androidx.lifecycle.extensions
-  annotationProcessor deps.androidx.lifecycle.compiler
+  kapt deps.androidx.lifecycle.compiler
   implementation deps.dagger
   implementation deps.daggerAndroid
   implementation deps.daggerAndroidSupport
-  annotationProcessor deps.daggerCompiler
-  annotationProcessor deps.daggerAndroidApt
+  kapt deps.daggerCompiler
+  kapt deps.daggerAndroidApt
   implementation deps.picasso
   implementation deps.picassoOkHttp
   implementation deps.retrofit
@@ -40,7 +51,7 @@ dependencies {
   debugImplementation deps.okhttpLogger
 
   implementation deps.butterknife
-  annotationProcessor deps.butterknifeCompiler
+  kapt deps.butterknifeCompiler
   implementation deps.timber
 
   implementation deps.dashclockApi
@@ -121,6 +132,8 @@ android {
 
   packagingOptions {
     exclude 'META-INF/services/javax.annotation.processing.Processor'
+    exclude 'META-INF/*.kotlin_module'
+    exclude 'META-INF/*.version'
   }
 }
 
