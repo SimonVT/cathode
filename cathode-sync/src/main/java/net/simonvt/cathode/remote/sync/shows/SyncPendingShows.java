@@ -106,6 +106,10 @@ public class SyncPendingShows extends ErrorHandlerJob {
         + ShowColumns.IN_WATCHLIST
         + "=1 OR "
         + ShowColumns.HIDDEN_CALENDAR
+        + "=1 OR "
+        + ShowColumns.HIDDEN_WATCHED
+        + "=1 OR "
+        + ShowColumns.HIDDEN_COLLECTED
         + "=1)";
     Cursor userShows = getContentResolver().query(Shows.SHOWS, new String[] {
         ShowColumns.ID, ShowColumns.TRAKT_ID,
