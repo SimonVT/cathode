@@ -36,8 +36,17 @@ public class ShowMapper implements MappedCursorLiveData.CursorMapper<Show> {
     Long traktId = Cursors.getLongOrNull(cursor, ShowColumns.TRAKT_ID);
     String imdbId = Cursors.getStringOrNull(cursor, ShowColumns.IMDB_ID);
     Integer tvdbId = Cursors.getIntOrNull(cursor, ShowColumns.TVDB_ID);
+    if (tvdbId == null) {
+      tvdbId = 0;
+    }
     Integer tmdbId = Cursors.getIntOrNull(cursor, ShowColumns.TMDB_ID);
+    if (tmdbId == null) {
+      tmdbId = 0;
+    }
     Long tvrageId = Cursors.getLongOrNull(cursor, ShowColumns.TVRAGE_ID);
+    if (tvrageId == null) {
+      tvrageId = 0L;
+    }
     Long lastUpdated = Cursors.getLongOrNull(cursor, ShowColumns.LAST_UPDATED);
     String trailer = Cursors.getStringOrNull(cursor, ShowColumns.TRAILER);
     String homepage = Cursors.getStringOrNull(cursor, ShowColumns.HOMEPAGE);
