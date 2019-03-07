@@ -44,16 +44,20 @@ public abstract class ListenableLiveData<D> extends AsyncLiveData<D>
   @Override protected void onActive() {
     super.onActive();
     Timber.d("onActive");
-    for (Uri uri : notificationUris) {
-      registerUri(uri);
+    synchronized (notificationUris) {
+      for (Uri uri : notificationUris) {
+        registerUri(uri);
+      }
     }
   }
 
   @Override protected void onInactive() {
     super.onInactive();
     Timber.d("onInactive");
-    for (Uri uri : notificationUris) {
-      unregisterUri(uri);
+    synchronized (notificationUris) {
+      for (Uri uri : notificationUris) {
+        unregisterUri(uri);
+      }
     }
   }
 
@@ -87,17 +91,21 @@ public abstract class ListenableLiveData<D> extends AsyncLiveData<D>
 
   protected void registerUri(Uri uri) {
     Timber.d("registerUri");
-    ContentObserver observer = new ThrottleContentObserver(this);
-    observers.put(uri, observer);
-    context.getContentResolver().registerContentObserver(uri, true, observer);
+    synchronized (observers) {
+      ContentObserver observer = new ThrottleContentObserver(this);
+      observers.put(uri, observer);
+      context.getContentResolver().registerContentObserver(uri, true, observer);
+    }
   }
 
   protected void unregisterUri(Uri uri) {
     Timber.d("unregisterUri");
-    if (observers.containsKey(uri)) {
-      ContentObserver observer = observers.get(uri);
-      observers.remove(uri);
-      context.getContentResolver().unregisterContentObserver(observer);
+    synchronized (observers) {
+      if (observers.containsKey(uri)) {
+        ContentObserver observer = observers.get(uri);
+        observers.remove(uri);
+        context.getContentResolver().unregisterContentObserver(observer);
+      }
     }
   }
 
