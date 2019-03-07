@@ -114,11 +114,15 @@ public class UpcomingWidgetService extends RemoteViewsService {
     private Observer<List<ShowWithEpisode>> upcomingObserver =
         new Observer<List<ShowWithEpisode>>() {
           @Override public void onChanged(List<ShowWithEpisode> showsWithEpisode) {
-            Timber.d("Load completed: %d", showsWithEpisode.size());
-            items = ItemModel.fromItems(context, showsWithEpisode);
-            widgetManager.notifyAppWidgetViewDataChanged(appWidgetId, android.R.id.list);
-
-            final long nextUpdateTime = items.getNextUpdateTime();
+            long nextUpdateTime;
+            if (showsWithEpisode != null) {
+              Timber.d("Load completed: %d", showsWithEpisode.size());
+              items = ItemModel.fromItems(context, showsWithEpisode);
+              widgetManager.notifyAppWidgetViewDataChanged(appWidgetId, android.R.id.list);
+              nextUpdateTime = items.getNextUpdateTime();
+            } else {
+              nextUpdateTime = System.currentTimeMillis() + 6 * DateUtils.HOUR_IN_MILLIS;
+            }
 
             DateFormat df = SimpleDateFormat.getDateTimeInstance();
             Timber.d("Next update: %s", df.format(new Date(nextUpdateTime)));
