@@ -37,6 +37,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.data.MappedCursorLiveData;
 import net.simonvt.cathode.common.entity.ShowWithEpisode;
+import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.entitymapper.ShowWithEpisodeListMapper;
 import net.simonvt.cathode.entitymapper.ShowWithEpisodeMapper;
 import net.simonvt.cathode.images.ImageType;
@@ -141,7 +142,11 @@ public class UpcomingWidgetService extends RemoteViewsService {
     }
 
     @Override public void onDestroy() {
-      upcomingEpisodes.removeObserver(upcomingObserver);
+      MainHandler.post(new Runnable() {
+        @Override public void run() {
+          upcomingEpisodes.removeObserver(upcomingObserver);
+        }
+      });
     }
 
     @Override public int getCount() {
