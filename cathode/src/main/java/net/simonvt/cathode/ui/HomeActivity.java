@@ -318,8 +318,10 @@ public class HomeActivity extends BaseActivity
   }
 
   private void displayLinkPrompt() {
-    LinkPromptBottomSheet linkPrompt = new LinkPromptBottomSheet();
-    linkPrompt.show(getSupportFragmentManager(), PROMPT_LINK);
+    if (getSupportFragmentManager().findFragmentByTag(PROMPT_LINK) == null) {
+      LinkPromptBottomSheet linkPrompt = new LinkPromptBottomSheet();
+      linkPrompt.show(getSupportFragmentManager(), PROMPT_LINK);
+    }
   }
 
   @Override public void onDismissLinkPrompt() {
@@ -329,8 +331,10 @@ public class HomeActivity extends BaseActivity
   }
 
   private void displaySetupPrompt() {
-    SetupPromptBottomSheet setupPrompt = new SetupPromptBottomSheet();
-    setupPrompt.show(getSupportFragmentManager(), PROMPT_SETUP);
+    if (getSupportFragmentManager().findFragmentByTag(PROMPT_SETUP) == null) {
+      SetupPromptBottomSheet setupPrompt = new SetupPromptBottomSheet();
+      setupPrompt.show(getSupportFragmentManager(), PROMPT_SETUP);
+    }
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {

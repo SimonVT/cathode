@@ -1,8 +1,6 @@
 package net.simonvt.cathode.settings;
 
 import android.Manifest;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,7 +13,6 @@ import androidx.appcompat.widget.SwitchCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import net.simonvt.cathode.R;
 import timber.log.Timber;
@@ -31,6 +28,7 @@ public class SetupPromptBottomSheet extends BottomSheetDialogFragment {
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    setCancelable(false);
   }
 
   @Nullable @Override
@@ -58,16 +56,12 @@ public class SetupPromptBottomSheet extends BottomSheetDialogFragment {
         }
       }
     });
-    notificationSwitch.setOnCheckedChangeListener(
-        new CompoundButton.OnCheckedChangeListener() {
-          @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            Timber.d("Notification toggled: %b", isChecked);
-            Settings.get(requireContext())
-                .edit()
-                .putBoolean(Settings.CALENDAR_SYNC, isChecked)
-                .apply();
-          }
-        });
+    notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+      @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        Timber.d("Notification toggled: %b", isChecked);
+        Settings.get(requireContext()).edit().putBoolean(Settings.CALENDAR_SYNC, isChecked).apply();
+      }
+    });
     ((SwitchCompat) view.findViewById(
         R.id.prompt_setup_notification_switch)).setOnCheckedChangeListener(
         new CompoundButton.OnCheckedChangeListener() {
@@ -79,6 +73,12 @@ public class SetupPromptBottomSheet extends BottomSheetDialogFragment {
                 .apply();
           }
         });
+    view.findViewById(R.id.prompt_setup_done).setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        Settings.get(requireContext()).edit().putBoolean(Settings.SETUP_PROMPTED, true).apply();
+        dismiss();
+      }
+    });
   }
 
   @Override public void onDestroyView() {
@@ -111,16 +111,5 @@ public class SetupPromptBottomSheet extends BottomSheetDialogFragment {
         dontSyncCalendar();
       }
     }
-  }
-
-  @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
-    BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
-    dialog.setCanceledOnTouchOutside(false);
-    return dialog;
-  }
-
-  @Override public void onDismiss(DialogInterface dialog) {
-    super.onDismiss(dialog);
-    Settings.get(requireContext()).edit().putBoolean(Settings.SETUP_PROMPTED, true).apply();
   }
 }

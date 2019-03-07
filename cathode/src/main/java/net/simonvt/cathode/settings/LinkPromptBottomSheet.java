@@ -1,6 +1,5 @@
 package net.simonvt.cathode.settings;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,7 +10,6 @@ import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.settings.login.LoginActivity;
-import timber.log.Timber;
 
 public class LinkPromptBottomSheet extends BottomSheetDialogFragment {
 
@@ -32,6 +30,7 @@ public class LinkPromptBottomSheet extends BottomSheetDialogFragment {
     super.onResume();
     if (TraktLinkSettings.isLinkPrompted(requireContext())) {
       dismiss();
+      dismissListener.onDismissLinkPrompt();
     }
   }
 
@@ -50,6 +49,7 @@ public class LinkPromptBottomSheet extends BottomSheetDialogFragment {
             .putBoolean(TraktLinkSettings.TRAKT_LINK_PROMPTED, true)
             .apply();
         dismiss();
+        dismissListener.onDismissLinkPrompt();
       }
     });
     view.findViewById(R.id.prompt_link_yes).setOnClickListener(new View.OnClickListener() {
@@ -58,10 +58,5 @@ public class LinkPromptBottomSheet extends BottomSheetDialogFragment {
         startActivity(i);
       }
     });
-  }
-
-  @Override public void onDismiss(DialogInterface dialog) {
-    super.onDismiss(dialog);
-    dismissListener.onDismissLinkPrompt();
   }
 }
