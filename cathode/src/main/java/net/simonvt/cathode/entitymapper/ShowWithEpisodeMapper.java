@@ -17,6 +17,7 @@
 package net.simonvt.cathode.entitymapper;
 
 import android.database.Cursor;
+import android.text.TextUtils;
 import net.simonvt.cathode.api.enumeration.ShowStatus;
 import net.simonvt.cathode.common.data.MappedCursorLiveData;
 import net.simonvt.cathode.common.database.Cursors;
@@ -33,21 +34,15 @@ public class ShowWithEpisodeMapper implements MappedCursorLiveData.CursorMapper<
   private static final String COLUMN_EPISODE_ID = "episodeId";
 
   public static final String[] PROJECTION = new String[] {
-      Tables.SHOWS + "." + ShowColumns.ID,
-      Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.OVERVIEW,
-      ShowColumns.AIRED_COUNT,
+      Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
+      Tables.SHOWS + "." + ShowColumns.OVERVIEW, ShowColumns.AIRED_COUNT,
       Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
-      Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
-      Tables.SHOWS + "." + ShowColumns.STATUS,
-      ShowColumns.WATCHING,
-      ShowColumns.WATCHING_EPISODE_ID,
+      Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT, Tables.SHOWS + "." + ShowColumns.STATUS,
+      ShowColumns.WATCHING, ShowColumns.WATCHING_EPISODE_ID,
       Tables.EPISODES + "." + EpisodeColumns.ID + " AS " + COLUMN_EPISODE_ID,
-      Tables.EPISODES + "." + EpisodeColumns.TITLE,
-      Tables.EPISODES + "." + EpisodeColumns.WATCHED,
+      Tables.EPISODES + "." + EpisodeColumns.TITLE, Tables.EPISODES + "." + EpisodeColumns.WATCHED,
       Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
-      Tables.EPISODES + "." + EpisodeColumns.SEASON,
-      Tables.EPISODES + "." + EpisodeColumns.EPISODE,
+      Tables.EPISODES + "." + EpisodeColumns.SEASON, Tables.EPISODES + "." + EpisodeColumns.EPISODE,
       Tables.EPISODES + "." + EpisodeColumns.STARTED_AT,
       Tables.EPISODES + "." + EpisodeColumns.EXPIRES_AT,
   };
@@ -67,15 +62,18 @@ public class ShowWithEpisodeMapper implements MappedCursorLiveData.CursorMapper<
     final int airedCount = Cursors.getInt(cursor, ShowColumns.AIRED_COUNT);
     final int watchedCount = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT);
     final int collectedCount = Cursors.getInt(cursor, ShowColumns.IN_COLLECTION_COUNT);
-    final String status = Cursors.getString(cursor, ShowColumns.STATUS);
-    final ShowStatus showStatus = ShowStatus.fromValue(status);
+    final String statusString = Cursors.getString(cursor, ShowColumns.STATUS);
+    ShowStatus status = null;
+    if (!TextUtils.isEmpty(statusString)) {
+      status = ShowStatus.fromValue(statusString);
+    }
     boolean watching = Cursors.getBoolean(cursor, ShowColumns.WATCHING);
     long watchingEpisodeId = Cursors.getLong(cursor, ShowColumns.WATCHING_EPISODE_ID);
     Show show =
         new Show(showId, showTitle, null, null, null, null, showOverview, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, showStatus, null,
+            null, null, null, null, null, null, null, null, null, null, null, status, null, null,
             null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, watchedCount, null, collectedCount, null, null, null, null, null, null, watching,
+            watchedCount, null, collectedCount, null, null, null, null, null, null, watching,
             airedCount, null, null, watchingEpisodeId);
 
     long episodeId = Cursors.getLong(cursor, COLUMN_EPISODE_ID);
