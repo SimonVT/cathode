@@ -38,7 +38,9 @@ public class MappedCursorLiveData<D> extends BaseCursorLiveData<D> {
 
   @Nullable @Override protected D loadInBackground() {
     Cursor cursor = loadCursor();
-    D data = mapper.map(cursor);
-    return data;
+    if (cursor != null) {
+      return mapper.map(cursor);
+    }
+    return null;
   }
 }
