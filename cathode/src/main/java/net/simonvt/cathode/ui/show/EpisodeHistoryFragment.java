@@ -101,6 +101,7 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
     setTitle(showTitle);
 
     viewModel = ViewModelProviders.of(this, viewModelFactory).get(EpisodeHistoryViewModel.class);
+    viewModel.setEpisodeId(episodeId);
     viewModel.getEpisode().observe(this, new Observer<Episode>() {
       @Override public void onChanged(Episode episode) {
         setEpisode(episode);
