@@ -37,6 +37,9 @@ public class MovieMapper implements MappedCursorLiveData.CursorMapper<Movie> {
     Long traktId = Cursors.getLongOrNull(cursor, MovieColumns.TRAKT_ID);
     String imdbId = Cursors.getStringOrNull(cursor, MovieColumns.IMDB_ID);
     Integer tmdbId = Cursors.getIntOrNull(cursor, MovieColumns.TMDB_ID);
+    if (tmdbId == null) {
+      tmdbId = 0;
+    }
     String title = Cursors.getString(cursor, MovieColumns.TITLE);
     String titleNoArticle = Cursors.getStringOrNull(cursor, MovieColumns.TITLE_NO_ARTICLE);
     Integer year = Cursors.getIntOrNull(cursor, MovieColumns.YEAR);
