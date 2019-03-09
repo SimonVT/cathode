@@ -209,9 +209,6 @@
   <string name="history_list_error">Unable to get watched history</string>
   <string name="history_episode_list_empty">This episode has not been watched</string>
 
-  <!-- Start activity -->
-  <string name="start_trakt_connect">Would you like to connect to Trakt?</string>
-
   <!-- Login -->
   <string name="login_title">Sign in to Trakt</string>
   <string name="login_sign_in">Sign in</string>
@@ -235,10 +232,6 @@
   <string name="trakt_link_sync_action_forget">Never mind</string>
   <string name="trakt_link_sync_action_sync">Sync it</string>
 
-  <!-- Setup activities -->
-  <string name="setup_calendar_text">Would you like upcoming shows to be added to your calendar?</string>
-  <string name="setup_notifications_text">Would you like a notification when a tv show is about to air?</string>
-
   <!-- Settings -->
   <string name="preference_startpage">Start page</string>
   <string name="preference_calendar">Display upcoming shows in calendar</string>
@@ -256,7 +249,6 @@
 
   <string name="preference_other">Other</string>
   <string name="preference_about">About</string>
-  <string name="preference_logout">Logout</string>
 
   <string name="preference_upcoming">Upcoming shows</string>
 
