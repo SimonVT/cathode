@@ -78,7 +78,7 @@ public class ImageSizeSelector {
     updateSizes();
   }
 
-  public void updateSizes() {
+  public synchronized void updateSizes() {
     posterImageSizes.clear();
     backdropImageSizes.clear();
     profileImageSizes.clear();
@@ -148,7 +148,7 @@ public class ImageSizeSelector {
     return "original";
   }
 
-  public String getSize(ImageType imageType, int width, int height) {
+  public synchronized String getSize(ImageType imageType, int width, int height) {
     switch (imageType) {
       case POSTER:
         return getSize(posterImageSizes, width, height);
