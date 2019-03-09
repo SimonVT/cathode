@@ -116,11 +116,25 @@ public abstract class HeaderAdapter<Type, T extends RecyclerView.ViewHolder>
   }
 
   public void removeItem(Type item) {
-    final int position = getList().indexOf(item);
-    Header<Type> header = getHeader(position);
-    List<Type> newList = new ArrayList<>(header.items);
-    newList.remove(item);
-    updateHeaderItems(header.headerRes, newList);
+    final int position = getPosition(item);
+    if (position > 0) {
+      Header<Type> header = getHeader(getHeaderRes(position));
+      List<Type> newList = new ArrayList<>(header.items);
+      newList.remove(item);
+      updateHeaderItems(header.headerRes, newList);
+    }
+  }
+
+  private int getPosition(Type item) {
+    List<Item<Type>> items = getList();
+    for (int i = 0; i < items.size(); i++) {
+      Item<Type> listItem = items.get(i);
+      if (!listItem.isHeader && item == listItem.item) {
+        return i;
+      }
+    }
+
+    return -1;
   }
 
   public Type getItem(int position) {
