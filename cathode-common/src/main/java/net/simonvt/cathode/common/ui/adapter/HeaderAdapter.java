@@ -17,7 +17,6 @@
 package net.simonvt.cathode.common.ui.adapter;
 
 import android.content.Context;
-import android.util.SparseArray;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.AsyncListDiffer;
@@ -31,16 +30,16 @@ public abstract class HeaderAdapter<Type, T extends RecyclerView.ViewHolder>
 
   public static class Header<Type> {
 
-    public final int header;
+    final int headerRes;
 
-    public long headerId;
+    final long headerId;
 
     public List<Type> items;
 
     int size;
 
-    private Header(int header, long headerId) {
-      this.header = header;
+    private Header(int headerRes, long headerId) {
+      this.headerRes = headerRes;
       this.headerId = headerId;
     }
 
@@ -95,16 +94,10 @@ public abstract class HeaderAdapter<Type, T extends RecyclerView.ViewHolder>
 
   private Context context;
 
-  AsyncListDiffer<Item<Type>> asyncDiffer = new AsyncListDiffer<>(this, diffCallback);
+  private AsyncListDiffer<Item<Type>> asyncDiffer = new AsyncListDiffer<>(this, diffCallback);
 
-  List<Header<Type>> headers = new ArrayList<>();
-  long headerIdOffset;
-
-  int itemCount;
-
-  final List<Integer> headerPositions = new ArrayList<>();
-
-  private SparseArray<Long> itemIds = new SparseArray<>();
+  private List<Header<Type>> headers = new ArrayList<>();
+  private long headerIdOffset;
 
   public HeaderAdapter(Context context) {
     this.context = context;
@@ -127,7 +120,8 @@ public abstract class HeaderAdapter<Type, T extends RecyclerView.ViewHolder>
     final int position = getList().indexOf(item);
     Header<Type> header = getHeader(position);
     List<Type> newList = new ArrayList<>(header.items);
-    updateHeaderItems(header.header, newList);
+    newList.remove(item);
+    updateHeaderItems(header.headerRes, newList);
   }
 
   public Type getItem(int position) {
@@ -156,7 +150,7 @@ public abstract class HeaderAdapter<Type, T extends RecyclerView.ViewHolder>
     List<Item<Type>> items = new ArrayList<>();
     for (Header<Type> header : headers) {
       if (header.size > 0) {
-        items.add(new Item<Type>(header.headerId, header.header));
+        items.add(new Item<Type>(header.headerId, header.headerRes));
 
         for (Type item : header.items) {
           items.add(new Item<Type>(item));
@@ -169,7 +163,7 @@ public abstract class HeaderAdapter<Type, T extends RecyclerView.ViewHolder>
 
   public void updateHeaderItems(int headerRes, List<Type> items) {
     for (Header<Type> header : headers) {
-      if (headerRes == header.header) {
+      if (headerRes == header.headerRes) {
         header.setItems(items);
         submitNewList();
         return;
@@ -208,19 +202,31 @@ public abstract class HeaderAdapter<Type, T extends RecyclerView.ViewHolder>
     return oldItem.item.equals(newItem.item);
   }
 
-  public Header getHeader(int position) {
-    int offset = 0;
+  public int getHeaderRes(int position) {
+    return getHeaderItem(position).headerRes;
+  }
 
-    for (Header header : headers) {
-      if (position < offset + header.size) {
-        return header;
+  private Item<Type> getHeaderItem(int position) {
+    for (int i = position; i >= 0; i--) {
+      Item<Type> item = getList().get(i);
+      if (item.isHeader) {
+        return item;
       }
-
-      offset += header.size;
     }
 
     throw new RuntimeException(
-        "[" + this.getClass().getName() + "] No header found for position " + position);
+        "[" + this.getClass().getName() + "] No header item found for position " + position);
+  }
+
+  private Header<Type> getHeader(int headerRes) {
+    for (Header<Type> header : headers) {
+      if (headerRes == header.headerRes) {
+        return header;
+      }
+    }
+
+    throw new RuntimeException(
+        "[" + this.getClass().getName() + "] No Header found for headerRes " + headerRes);
   }
 
   @Override public final int getItemViewType(int position) {
@@ -229,7 +235,7 @@ public abstract class HeaderAdapter<Type, T extends RecyclerView.ViewHolder>
       return HeaderSpanLookup.TYPE_HEADER;
     }
 
-    return getItemViewType(getHeader(position).header, item.item);
+    return getItemViewType(getHeaderRes(position), item.item);
   }
 
   protected abstract int getItemViewType(int headerRes, Type item);
@@ -248,7 +254,7 @@ public abstract class HeaderAdapter<Type, T extends RecyclerView.ViewHolder>
 
   @Override public final void onBindViewHolder(T holder, int position) {
     if (holder.getItemViewType() == HeaderSpanLookup.TYPE_HEADER) {
-      onBindHeader(holder, getHeader(position).header);
+      onBindHeader(holder, getHeaderRes(position));
     } else {
       onBindViewHolder(holder, getList().get(position).item, position);
     }

@@ -136,10 +136,10 @@ public class HiddenItemsAdapter extends HeaderAdapter<Object, RecyclerView.ViewH
 
             switch (action) {
               case R.id.action_unhide:
-                Header header = getHeader(position);
-                if (header.header == R.string.header_hidden_calendar_shows) {
+                int headerRes = getHeaderRes(position);
+                if (headerRes == R.string.header_hidden_calendar_shows) {
                   itemCallbacks.displayShowInCalendar(itemId);
-                } else if (header.header == R.string.header_hidden_watched_shows) {
+                } else if (headerRes == R.string.header_hidden_watched_shows) {
                   itemCallbacks.displayShowInWatched(itemId);
                 } else {
                   itemCallbacks.displayShowInCollection(itemId);
@@ -181,8 +181,8 @@ public class HiddenItemsAdapter extends HeaderAdapter<Object, RecyclerView.ViewH
 
             switch (action) {
               case R.id.action_unhide:
-                Header header = getHeader(position);
-                if (header.header == R.string.header_hidden_calendar_movies) {
+                int headerRes = getHeaderRes(position);
+                if (headerRes == R.string.header_hidden_calendar_movies) {
                   itemCallbacks.displayMovieInCalendar(itemId);
                 }
                 break;
