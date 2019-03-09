@@ -44,7 +44,7 @@ import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference.UpcomingSo
 
 public class UpcomingShowsFragment
     extends ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>
-    implements UpcomingAdapter.OnRemoveListener, ListDialog.Callback, UpcomingAdapter.Callbacks {
+    implements ListDialog.Callback, UpcomingAdapter.Callbacks {
 
   public static final String TAG = "net.simonvt.cathode.ui.shows.upcoming.UpcomingShowsFragment";
 
@@ -183,10 +183,6 @@ public class UpcomingShowsFragment
     }
   }
 
-  @Override public void onRemove(ShowWithEpisode showWithEpisode) {
-    adapter.removeItem(showWithEpisode);
-  }
-
   private Job.OnDoneListener onDoneListener = new Job.OnDoneListener() {
     @Override public void onDone(Job job) {
       setRefreshing(false);
@@ -202,7 +198,7 @@ public class UpcomingShowsFragment
 
   private UpcomingAdapter ensureAdapter() {
     if (adapter == null) {
-      adapter = new UpcomingAdapter(requireActivity(), this, this);
+      adapter = new UpcomingAdapter(requireActivity(), this);
       adapter.addHeader(R.string.header_aired);
       adapter.addHeader(R.string.header_upcoming);
     }

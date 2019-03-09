@@ -50,22 +50,14 @@ public class UpcomingAdapter extends HeaderAdapter<ShowWithEpisode, RecyclerView
 
   private static final int TYPE_ITEM = 0;
 
-  public interface OnRemoveListener {
-    void onRemove(ShowWithEpisode showWithEpisode);
-  }
-
-  private OnRemoveListener onRemoveListener;
-
   private FragmentActivity activity;
 
   private Callbacks callbacks;
 
-  public UpcomingAdapter(FragmentActivity activity, Callbacks callbacks,
-      OnRemoveListener onRemoveListener) {
+  public UpcomingAdapter(FragmentActivity activity, Callbacks callbacks) {
     super(activity);
     this.activity = activity;
     this.callbacks = callbacks;
-    this.onRemoveListener = onRemoveListener;
 
     setHasStableIds(true);
   }
@@ -184,10 +176,6 @@ public class UpcomingAdapter extends HeaderAdapter<ShowWithEpisode, RecyclerView
               break;
 
             case R.id.action_history_add:
-              if (watchedCount + 1 >= airedCount) {
-                onRemoveListener.onRemove(showWithEpisode);
-              }
-
               AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.EPISODE, episodeId,
                   episodeTitle).show(activity.getSupportFragmentManager(), AddToHistoryDialog.TAG);
               break;
