@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -93,14 +94,6 @@ public class HiddenItemsAdapter extends HeaderAdapter<Object, RecyclerView.ViewH
     this.itemCallbacks = itemCallbacks;
   }
 
-  @Override protected long getItemId(Object item) {
-    if (item instanceof Show) {
-      return ((Show) item).getTraktId();
-    }
-
-    return ((Movie) item).getTraktId();
-  }
-
   @Override protected int getItemViewType(int headerRes, Object item) {
     switch (headerRes) {
       case R.string.header_hidden_calendar_shows:
@@ -111,6 +104,18 @@ public class HiddenItemsAdapter extends HeaderAdapter<Object, RecyclerView.ViewH
       default:
         return TYPE_MOVIE;
     }
+  }
+
+  @Override protected boolean areItemsTheSame(@NonNull Object oldItem, @NonNull Object newItem) {
+    if (oldItem.getClass() == newItem.getClass()) {
+      if (oldItem instanceof Show) {
+        return ((Show) oldItem).getId() == ((Show) newItem).getId();
+      } else if (oldItem instanceof Movie) {
+        return ((Movie) oldItem).getId() == ((Movie) newItem).getId();
+      }
+    }
+
+    return false;
   }
 
   @Override protected RecyclerView.ViewHolder onCreateItemHolder(ViewGroup parent, int viewType) {

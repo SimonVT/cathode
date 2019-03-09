@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -91,7 +92,6 @@ public class ShowWatchlistAdapter extends HeaderAdapter<Object, RecyclerView.Vie
     this.activity = activity;
     this.itemCallbacks = itemCallbacks;
     this.onRemoveListener = onRemoveListener;
-    setHasStableIds(true);
   }
 
   @Override protected int getItemViewType(int headerRes, Object item) {
@@ -102,12 +102,16 @@ public class ShowWatchlistAdapter extends HeaderAdapter<Object, RecyclerView.Vie
     return TYPE_EPISODE;
   }
 
-  @Override protected long getItemId(Object item) {
-    if (item instanceof Episode) {
-      return ((Episode) item).getTvdbId();
+  @Override protected boolean areItemsTheSame(@NonNull Object oldItem, @NonNull Object newItem) {
+    if (oldItem.getClass() == newItem.getClass()) {
+      if (oldItem instanceof Show) {
+        return ((Show) oldItem).getId() == ((Show) newItem).getId();
+      } else if (oldItem instanceof Episode) {
+        return ((Episode) oldItem).getId() == ((Episode) newItem).getId();
+      }
     }
 
-    return ((Show) item).getTvdbId();
+    return false;
   }
 
   @Override protected RecyclerView.ViewHolder onCreateItemHolder(ViewGroup parent, int viewType) {

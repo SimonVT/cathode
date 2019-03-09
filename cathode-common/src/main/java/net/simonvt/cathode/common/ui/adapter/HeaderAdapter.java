@@ -101,7 +101,6 @@ public abstract class HeaderAdapter<Type, T extends RecyclerView.ViewHolder>
 
   public HeaderAdapter(Context context) {
     this.context = context;
-    setHasStableIds(true);
   }
 
   public Context getContext() {
@@ -182,16 +181,22 @@ public abstract class HeaderAdapter<Type, T extends RecyclerView.ViewHolder>
     return getItemId(item.item);
   }
 
-  protected abstract long getItemId(Type item);
+  protected long getItemId(Type item) {
+    return RecyclerView.NO_ID;
+  }
 
   private boolean areItemsTheSame(@NonNull Item<Type> oldItem, @NonNull Item<Type> newItem) {
     if (oldItem.isHeader && newItem.isHeader) {
       return oldItem.headerId == newItem.headerId;
     } else if (!oldItem.isHeader && !newItem.isHeader) {
-      return getItemId(oldItem.item) == getItemId(newItem.item);
+      return areItemsTheSame(oldItem.item, newItem.item);
     }
 
     return false;
+  }
+
+  protected boolean areItemsTheSame(@NonNull Type oldItem, @NonNull Type newItem) {
+    return getItemId(oldItem) == getItemId(newItem);
   }
 
   private boolean areContentsTheSame(@NonNull Item<Type> oldItem, @NonNull Item<Type> newItem) {
