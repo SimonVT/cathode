@@ -196,9 +196,11 @@ public class ShowsWithNextAdapter
     final String typeCount = getContext().getString(R.string.x_of_y, showTypeCount, showAiredCount);
     holder.watched.setText(typeCount);
 
-    String episodeText;
+    String episodeText = null;
     if (episodeTitle == null) {
-      episodeText = show.getStatus().toString();
+      if (show.getStatus() != null) {
+        episodeText = show.getStatus().toString();
+      }
       holder.firstAired.setVisibility(View.GONE);
     } else {
       if (show.getWatching()) {
