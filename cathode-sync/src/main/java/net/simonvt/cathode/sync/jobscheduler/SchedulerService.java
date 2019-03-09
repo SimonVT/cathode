@@ -21,6 +21,7 @@ import android.app.job.JobService;
 import android.util.SparseArray;
 import dagger.android.AndroidInjection;
 import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasServiceInjector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.inject.Inject;
@@ -39,8 +40,10 @@ public class SchedulerService extends JobService {
 
   @Override public void onCreate() {
     super.onCreate();
-    // TODO: Stop if not app context
-    AndroidInjection.inject(this);
+    // Avoid crash during Android N backup bug. Jobs are rescheduled in onStartJob.
+    if (getApplicationContext() instanceof HasServiceInjector) {
+      AndroidInjection.inject(this);
+    }
     executor = Executors.newFixedThreadPool(THREAD_COUNT);
   }
 
