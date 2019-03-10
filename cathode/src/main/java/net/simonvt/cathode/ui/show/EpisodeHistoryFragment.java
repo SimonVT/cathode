@@ -54,9 +54,9 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
   }
 
   static final String[] EPISODE_PROJECTION = new String[] {
-      EpisodeColumns.TRAKT_ID, EpisodeColumns.TITLE, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
-      EpisodeColumns.SCREENSHOT, EpisodeColumns.WATCHED, EpisodeColumns.SHOW_TITLE,
-      EpisodeColumns.FIRST_AIRED,
+      EpisodeColumns.ID, EpisodeColumns.TRAKT_ID, EpisodeColumns.TITLE, EpisodeColumns.SEASON,
+      EpisodeColumns.EPISODE, EpisodeColumns.SCREENSHOT, EpisodeColumns.WATCHED,
+      EpisodeColumns.SHOW_TITLE, EpisodeColumns.FIRST_AIRED,
   };
 
   private Episode episode;
