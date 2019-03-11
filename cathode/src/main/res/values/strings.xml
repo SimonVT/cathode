@@ -177,7 +177,7 @@
   <string name="search_no_results">No results</string>
   <string name="search_recent">Recent queries</string>
   <string name="search_searching">Searching…</string>
-  <string name="search_local_results">Searching Trakt failed, showing local results</string>
+  <string name="search_error">Search failed, please try again</string>
 
   <string name="episode_next">Next: %1$s</string>
   <string name="show_watching">Watching</string>

@@ -38,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:text="@string/search_local_results"
+        android:text="@string/search_error"
         style="@style/SearchErrorView"/>
   </FrameLayout>
 </LinearLayout>
