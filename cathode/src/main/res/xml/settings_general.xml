@@ -15,73 +15,90 @@
   ~ limitations under the License.
   -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <ListPreference
-      android:key="startPage"
-      android:title="@string/preference_startpage"
+      android:defaultValue="@string/settings_startpage_default"
       android:dialogTitle="@string/preference_startpage"
       android:entries="@array/setting_startpage"
       android:entryValues="@array/setting_startpage_values"
-      android:defaultValue="@string/settings_startpage_default"/>
+      android:key="startPage"
+      android:title="@string/preference_startpage"
+      app:iconSpaceReserved="false"/>
 
-  <SwitchPreference
-      android:key="calendarSync"
-      android:title="@string/preference_calendar"/>
-
-  <Preference
-      android:key="calendarColor"
-      android:title="@string/preference_calendar_color"/>
-
-  <Preference
-      android:key="notifications"
-      android:title="@string/preference_notifications"/>
+  <PreferenceCategory
+      android:title="@string/preference_data"
+      app:iconSpaceReserved="false"/>
 
   <Preference
       android:key="hiddenItems"
-      android:title="@string/preference_hidden_items"/>
-
-  <PreferenceCategory
-      android:title="@string/preference_upcoming"/>
-
-  <Preference
-      android:key="upcomingTime"
-      android:title="@string/preference_upcoming_time"
-      android:summary="@string/preference_upcoming_time_summary"/>
-
-  <PreferenceCategory
-      android:title="@string/preference_shows"/>
+      android:title="@string/preference_hidden_items"
+      app:iconSpaceReserved="false"/>
 
   <CheckBoxPreference
       android:key="showsAvoidSpoilers"
+      android:summary="@string/preference_shows_avoid_spoilers_sum"
       android:title="@string/preference_shows_avoid_spoilers"
-      android:summary="@string/preference_shows_avoid_spoilers_sum"/>
+      app:iconSpaceReserved="false"/>
 
   <Preference
       android:key="showsOffset"
+      android:summary="@string/preference_shows_offset_sum"
       android:title="@string/preference_shows_offset"
-      android:summary="@string/preference_shows_offset_sum"/>
+      app:iconSpaceReserved="false"/>
+
+  <Preference
+      android:key="upcomingTime"
+      android:summary="@string/preference_upcoming_time_summary"
+      android:title="@string/preference_upcoming_time"
+      app:iconSpaceReserved="false"/>
 
   <PreferenceCategory
-      android:title="@string/preference_trakt"/>
+      android:title="@string/preference_integration"
+      app:iconSpaceReserved="false"/>
+
+  <SwitchPreference
+      android:key="calendarSync"
+      android:title="@string/preference_calendar"
+      app:iconSpaceReserved="false"/>
+
+  <Preference
+      android:key="calendarColor"
+      android:title="@string/preference_calendar_color"
+      app:iconSpaceReserved="false"/>
+
+  <Preference
+      android:key="notifications"
+      android:title="@string/preference_notifications"
+      app:iconSpaceReserved="false"/>
+
+  <PreferenceCategory
+      android:title="@string/preference_trakt"
+      app:iconSpaceReserved="false"/>
 
   <Preference
       android:key="traktLink"
+      android:summary="@string/preference_trakt_link_sum"
       android:title="@string/preference_trakt_link"
-      android:summary="@string/preference_trakt_link_sum"/>
+      app:iconSpaceReserved="false"/>
 
   <Preference
       android:key="traktUnlink"
-      android:title="@string/preference_trakt_unlink"/>
+      android:title="@string/preference_trakt_unlink"
+      app:iconSpaceReserved="false"/>
 
   <PreferenceCategory
-      android:title="@string/preference_other"/>
+      android:title="@string/preference_other"
+      app:iconSpaceReserved="false"/>
 
   <Preference
       android:key="about"
-      android:title="@string/preference_about"/>
+      android:title="@string/preference_about"
+      app:iconSpaceReserved="false"/>
 
   <Preference
-    android:key="privacy"
-    android:title="@string/preference_privacy"/>
+      android:key="privacy"
+      android:title="@string/preference_privacy"
+      app:iconSpaceReserved="false"/>
 </PreferenceScreen>

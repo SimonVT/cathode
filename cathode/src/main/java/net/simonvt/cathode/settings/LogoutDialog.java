@@ -16,11 +16,11 @@
 package net.simonvt.cathode.settings;
 
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
-import dagger.android.AndroidInjection;
+import androidx.appcompat.app.AppCompatDialogFragment;
+import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -28,14 +28,13 @@ import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.LogoutJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.sync.jobscheduler.AuthJobHandlerJob;
-import net.simonvt.cathode.sync.jobscheduler.Jobs;
 
-public class LogoutDialog extends DialogFragment {
+public class LogoutDialog extends AppCompatDialogFragment {
 
   @Inject JobManager jobManager;
 
   @Override public Dialog onCreateDialog(Bundle inState) {
-    AndroidInjection.inject(this);
+    AndroidSupportInjection.inject(this);
 
     return new AlertDialog.Builder(getActivity()).setTitle(R.string.logout_title)
         .setMessage(R.string.logout_message)

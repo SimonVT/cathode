@@ -15,30 +15,35 @@
   ~ limitations under the License.
   -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <SwitchPreference
       android:key="notificationsEnabled"
+      android:summary="@string/preference_notifications_summary"
       android:title="@string/preference_notifications"
-      android:summary="@string/preference_notifications_summary"/>
+      app:iconSpaceReserved="false"/>
 
   <Preference
+      android:dependency="notificationsEnabled"
       android:key="notificationTime"
-      android:title="@string/preference_notification_time"
       android:summary="@string/preference_notification_time_summary"
-      android:dependency="notificationsEnabled"/>
+      android:title="@string/preference_notification_time"
+      app:iconSpaceReserved="false"/>
 
   <SwitchPreference
+      android:defaultValue="true"
+      android:dependency="notificationsEnabled"
       android:key="notificationVibrate"
-      android:title="@string/preference_notification_vibrate"
       android:summary="@string/preference_notification_vibrate_sum"
-      android:dependency="notificationsEnabled"
-      android:defaultValue="true"/>
+      android:title="@string/preference_notification_vibrate"
+      app:iconSpaceReserved="false"/>
 
   <SwitchPreference
-      android:key="notificationSound"
-      android:title="@string/preference_notification_sound"
-      android:summary="@string/preference_notification_sound_sum"
+      android:defaultValue="true"
       android:dependency="notificationsEnabled"
-      android:defaultValue="true"/>
+      android:key="notificationSound"
+      android:summary="@string/preference_notification_sound_sum"
+      android:title="@string/preference_notification_sound"
+      app:iconSpaceReserved="false"/>
 </PreferenceScreen>

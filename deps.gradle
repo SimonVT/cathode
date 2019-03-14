@@ -81,6 +81,7 @@ ext {
       fragment: "androidx.fragment:fragment:1.0.0",
       loader: "androidx.loader:loader:1.0.0",
       palette: "androidx.palette:palette:1.0.0",
+      preference: "androidx.preference:preference:1.1.0-alpha05",
       recyclerView: "androidx.recyclerview:recyclerview:1.0.0"
   ]
 

@@ -35,6 +35,7 @@ dependencies {
 
   implementation deps.androidx.appcompat
   implementation deps.androidx.cardView
+  implementation deps.androidx.preference
   implementation deps.androidx.recyclerView
   implementation deps.androidx.design
   implementation deps.androidx.lifecycle.extensions

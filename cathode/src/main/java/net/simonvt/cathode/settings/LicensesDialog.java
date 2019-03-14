@@ -16,7 +16,6 @@
 package net.simonvt.cathode.settings;
 
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,11 +23,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDialogFragment;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.R;
 
-public class LicensesDialog extends DialogFragment {
+public class LicensesDialog extends AppCompatDialogFragment {
 
   @Override public Dialog onCreateDialog(Bundle inState) {
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()) //

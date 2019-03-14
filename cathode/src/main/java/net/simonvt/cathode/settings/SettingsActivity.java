@@ -22,14 +22,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.SwitchPreference;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
-import dagger.android.AndroidInjection;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreference;
+import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.android.colorpicker.ColorPickerDialog;
 import net.simonvt.android.colorpicker.ColorPickerSwatch;
@@ -56,9 +56,9 @@ public class SettingsActivity extends BaseActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_toolbar);
-    if (getFragmentManager().findFragmentByTag(FRAGMENT_SETTINGS) == null) {
+    if (getSupportFragmentManager().findFragmentByTag(FRAGMENT_SETTINGS) == null) {
       SettingsFragment settings = new SettingsFragment();
-      getFragmentManager().beginTransaction()
+      getSupportFragmentManager().beginTransaction()
           .add(R.id.content, settings, FRAGMENT_SETTINGS)
           .commit();
     }
@@ -73,7 +73,7 @@ public class SettingsActivity extends BaseActivity {
     });
   }
 
-  public static class SettingsFragment extends PreferenceFragment
+  public static class SettingsFragment extends PreferenceFragmentCompat
       implements UpcomingTimeDialog.UpcomingTimeSelectedListener,
       ColorPickerSwatch.OnColorSelectedListener, ShowOffsetDialog.ShowOffsetSelectedListener {
 
@@ -92,10 +92,12 @@ public class SettingsActivity extends BaseActivity {
 
     @Override public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
-      AndroidInjection.inject(this);
+      AndroidSupportInjection.inject(this);
 
       isTablet = getResources().getBoolean(R.bool.isTablet);
+    }
 
+    @Override public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
       addPreferencesFromResource(R.xml.settings_general);
 
       syncCalendar = (SwitchPreference) findPreference(Settings.CALENDAR_SYNC);
@@ -127,7 +129,7 @@ public class SettingsActivity extends BaseActivity {
                   ColorPickerDialog.newInstance(R.string.preference_calendar_color,
                       Settings.CALENDAR_COLORS, calendarColor, 5, size);
               dialog.setTargetFragment(SettingsFragment.this, 0);
-              dialog.show(getFragmentManager(), DIALOG_COLOR_PICKER);
+              dialog.show(requireFragmentManager(), DIALOG_COLOR_PICKER);
 
               if (Settings.get(getActivity()).getBoolean(Settings.CALENDAR_SYNC, false)) {
                 Accounts.requestCalendarSync(getActivity());
@@ -160,7 +162,7 @@ public class SettingsActivity extends BaseActivity {
                   .getLong(Settings.UPCOMING_TIME, UpcomingTime.WEEKS_1.getCacheTime()));
               UpcomingTimeDialog dialog = UpcomingTimeDialog.newInstance(upcomingTime);
               dialog.setTargetFragment(SettingsFragment.this, 0);
-              dialog.show(getFragmentManager(), DIALOG_UPCOMING_TIME);
+              dialog.show(requireFragmentManager(), DIALOG_UPCOMING_TIME);
               return true;
             }
           });
@@ -183,7 +185,7 @@ public class SettingsActivity extends BaseActivity {
               final int offset = FirstAiredOffsetPreference.getInstance().getOffsetHours();
               ShowOffsetDialog dialog = ShowOffsetDialog.newInstance(offset);
               dialog.setTargetFragment(SettingsFragment.this, 0);
-              dialog.show(getFragmentManager(), DIALOG_SHOW_OFFSET);
+              dialog.show(requireFragmentManager(), DIALOG_SHOW_OFFSET);
               return true;
             }
           });
@@ -202,7 +204,7 @@ public class SettingsActivity extends BaseActivity {
 
       traktUnlink.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
         @Override public boolean onPreferenceClick(Preference preference) {
-          new LogoutDialog().show(getFragmentManager(), HomeActivity.DIALOG_LOGOUT);
+          new LogoutDialog().show(requireFragmentManager(), HomeActivity.DIALOG_LOGOUT);
           return true;
         }
       });
@@ -216,7 +218,7 @@ public class SettingsActivity extends BaseActivity {
       findPreference("about").setOnPreferenceClickListener(
           new Preference.OnPreferenceClickListener() {
             @Override public boolean onPreferenceClick(Preference preference) {
-              new AboutDialog().show(getFragmentManager(), HomeActivity.DIALOG_ABOUT);
+              new AboutDialog().show(requireFragmentManager(), HomeActivity.DIALOG_ABOUT);
               return true;
             }
           });

@@ -15,12 +15,12 @@
  */
 package net.simonvt.cathode.settings;
 
-import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.appcompat.app.AppCompatDialogFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -29,7 +29,7 @@ import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.util.Intents;
 
-public class AboutDialog extends DialogFragment {
+public class AboutDialog extends AppCompatDialogFragment {
 
   private static final String DIALOG_CREDITS = "net.simonvt.cathode.settings.AboutDialog.credits";
   private static final String DIALOG_LICENSES = "net.simonvt.cathode.settings.AboutDialog.licenses";
@@ -61,11 +61,11 @@ public class AboutDialog extends DialogFragment {
   }
 
   @OnClick(R.id.credits) public void showCredits() {
-    new CreditsDialog().show(getFragmentManager(), DIALOG_CREDITS);
+    new CreditsDialog().show(requireFragmentManager(), DIALOG_CREDITS);
   }
 
   @OnClick(R.id.licenses) public void showLicenses() {
-    new LicensesDialog().show(getFragmentManager(), DIALOG_LICENSES);
+    new LicensesDialog().show(requireFragmentManager(), DIALOG_LICENSES);
   }
 
   @OnClick({

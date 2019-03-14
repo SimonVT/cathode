@@ -234,11 +234,22 @@
 
   <!-- Settings -->
   <string name="preference_startpage">Start page</string>
-  <string name="preference_calendar">Display upcoming shows in calendar</string>
-  <string name="preference_calendar_color">Calendar color</string>
+
+  <string name="preference_data">Data</string>
   <string name="preference_hidden_items">Hidden items</string>
   <string name="preference_hidden_empty">You have no hidden items</string>
+  <string name="preference_shows_avoid_spoilers">Avoid spoilers</string>
+  <string name="preference_shows_avoid_spoilers_sum">Hide episode titles and descriptions until episode is watched</string>
+  <string name="preference_upcoming_time">Next episode air date</string>
+  <string name="preference_upcoming_time_summary">
+    Display show in upcoming if the next episode airs within this timeframe
+  </string>
+  <string name="preference_shows_offset">Offset air time</string>
+  <string name="preference_shows_offset_sum">Number of hours to offset show air dates by</string>
 
+  <string name="preference_integration">Integration</string>
+  <string name="preference_calendar">Display upcoming shows in calendar</string>
+  <string name="preference_calendar_color">Calendar color</string>
   <string name="preference_notifications">Notifications</string>
   <string name="preference_notifications_summary">Display a notification when a tv show is about to air</string>
 
@@ -250,19 +261,6 @@
   <string name="preference_other">Other</string>
   <string name="preference_about">About</string>
   <string name="preference_privacy">Privacy policy</string>
-
-  <string name="preference_upcoming">Upcoming shows</string>
-
-  <string name="preference_upcoming_time">Next episode air date</string>
-  <string name="preference_upcoming_time_summary">
-    Display show in upcoming if the next episode airs within this timeframe
-  </string>
-
-  <string name="preference_shows">Shows</string>
-  <string name="preference_shows_avoid_spoilers">Avoid spoilers</string>
-  <string name="preference_shows_avoid_spoilers_sum">Hide episode titles and descriptions until episode is watched</string>
-  <string name="preference_shows_offset">Offset air time</string>
-  <string name="preference_shows_offset_sum">Number of hours to offset show air dates by</string>
 
   <string name="preference_notification_time">When</string>
   <string name="preference_notification_time_summary">
