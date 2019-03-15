@@ -15,23 +15,28 @@
   ~ limitations under the License.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp">
+    android:orientation="vertical"
+    android:paddingBottom="8dp"
+    android:paddingTop="8dp">
 
   <TextView
       android:id="@+id/library"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:paddingLeft="24dp"
-      android:textStyle="bold"/>
+      android:paddingEnd="16dp"
+      android:paddingStart="16dp"
+      android:textAppearance="?attr/textAppearanceSubtitle1"
+      tools:text="Library"/>
 
   <TextView
       android:id="@+id/license"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:paddingLeft="16dp"
-      android:paddingRight="16dp"/>
+      android:paddingEnd="16dp"
+      android:paddingStart="16dp"
+      android:textAppearance="?attr/textAppearanceBody2"
+      tools:text="License text"/>
 </LinearLayout>

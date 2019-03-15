@@ -14,39 +14,56 @@
   ~ limitations under the License.
   -->
 <resources>
-  <color name="adaptive_icon_background">#FFFFFFFF</color>
+  <!-- UI colors -->
+  <color name="primaryColor">#FF455A64</color>
+  <!--color name="primaryLightColor">#FF718792</color-->
+  <color name="primaryDarkColor">#FF1C313A</color>
+  <color name="secondaryColor">#FF81C784</color>
+  <!--color name="secondaryLightColor">#FFB2FAB4</color-->
+  <color name="secondaryDarkColor">#FF519657</color>
+  <color name="primaryTextColor">#FFFFFFFF</color>
+  <color name="secondaryTextColor">#FF000000</color>
 
-  <color name="lighter_gray">#FFDDDDDD</color>
-  <color name="darker_gray">#FFAAAAAA</color>
-
-  <color name="nav_item">#FF757575</color>
-
-  <color name="drawerBackground">#FFFFFFFF</color>
+  <color name="blue_grey_50">#FFECEFF1</color>
+  <color name="blue_grey_100">#FFCFD8DC</color>
 
   <color name="calendarColor">#FF4CAF50</color>
   <color name="watchedColor">#FF2196F3</color>
   <color name="collectedColor">#FFFF9800</color>
   <color name="watchlistColor">#FFF44336</color>
-  <color name="defaultColor">#FF7E7E7E</color>
+  <color name="indicatorDefaultColor">@color/grey_500</color>
 
+  <color name="red_500">#FFF44336</color>
+
+  <color name="blue_500">#FF42A5F5</color>
+
+  <color name="grey_200">#FFEEEEEE</color>
+  <color name="grey_500">#FF9E9E9E</color>
+  <color name="grey_900">#ff212121</color>
+
+  <!-- General -->
+  <color name="divider">@color/blue_grey_100</color>
+  <color name="activatedItemBackground">#FFDFE6ED</color>
+  <color name="adaptive_icon_background">#FFFFFFFF</color>
   <color name="placeholderBackground">#FF1C1C1E</color>
 
-  <color name="showHeaderBackground">#FFFFFFFF</color>
+  <color name="listRatingTextBackground">#80FFFFFF</color>
 
-  <!--color name="titleTextColor">#FFFF7F2A</color-->
-  <color name="titleTextColor">@color/colorPrimary</color>
+  <!-- Navigation -->
+  <color name="drawerBackground">#FFFFFFFF</color>
+  <color name="nav_item">#FF757575</color>
 
-  <!--color name="activatedItemBackground">#332C3E50</color-->
-  <color name="activatedItemBackground">#FFDFE6ED</color>
+  <!-- Details -->
+  <color name="contentTopBackground">@color/blue_grey_50</color>
 
-  <color name="colorPrimary">#FF34495E</color>
-  <color name="colorPrimaryDark">#FF2C3E50</color>
+  <color name="commentIconTint">@color/grey_500</color>
+  <color name="commentLikedTint">@color/blue_500</color>
+  <color name="commentSpoilerIndicator">@color/red_500</color>
 
-  <color name="profilePlaceholder">#FF1C1C1E</color>
+  <color name="episode_number_pressed">#FFDDDDDD</color>
+  <color name="episode_number_default">#FFAAAAAA</color>
 
-  <color name="commentIconTint">#FF8C8C8C</color>
-  <color name="commentLikedTint">@android:color/holo_blue_dark</color>
-
+  <!-- App widget -->
   <color name="appwidget_toolbar_title">#FFFFFFFF</color>
   <color name="appwidget_item_title">#DE000000</color>
   <color name="appwidget_item_subtitle">#8A000000</color>

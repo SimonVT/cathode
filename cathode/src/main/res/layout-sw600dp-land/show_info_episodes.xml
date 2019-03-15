@@ -21,15 +21,18 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
     android:orientation="horizontal"
+    android:paddingEnd="@dimen/detailContentPadding"
+    android:paddingStart="@dimen/detailContentPadding"
     android:visibility="gone"
     tools:visibility="visible">
 
-  <androidx.cardview.widget.CardView
+  <FrameLayout
       android:id="@+id/toWatch"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
+      android:layout_marginEnd="8dp"
       android:layout_weight="1"
-      android:layout_marginRight="8dp"
+      android:background="@drawable/card_rounded"
       android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
@@ -40,7 +43,7 @@
       <TextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:padding="16dp"
+          android:padding="8dp"
           android:text="@string/to_watch"
           style="@style/Card.Title"/>
 
@@ -52,17 +55,18 @@
         android:id="@+id/episodeOverflow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        android:layout_gravity="right"
+        android:layout_gravity="end"
+        android:layout_marginEnd="8dp"
         tools:ignore="DuplicateIds,InconsistentLayout"/>
-  </androidx.cardview.widget.CardView>
+  </FrameLayout>
 
-  <androidx.cardview.widget.CardView
+  <FrameLayout
       android:id="@+id/lastWatched"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
+      android:layout_marginEnd="8dp"
       android:layout_weight="1"
-      android:layout_marginRight="8dp"
+      android:background="@drawable/card_rounded"
       android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
@@ -73,7 +77,7 @@
       <TextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:padding="16dp"
+          android:padding="8dp"
           android:text="@string/last_watched"
           style="@style/Card.Title"/>
 
@@ -85,17 +89,18 @@
         android:id="@+id/episodeOverflow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        android:layout_gravity="right"
+        android:layout_gravity="end"
+        android:layout_marginEnd="8dp"
         tools:ignore="DuplicateIds,InconsistentLayout"/>
-  </androidx.cardview.widget.CardView>
+  </FrameLayout>
 
-  <androidx.cardview.widget.CardView
+  <FrameLayout
       android:id="@+id/toCollect"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
+      android:layout_marginEnd="8dp"
       android:layout_weight="1"
-      android:layout_marginRight="8dp"
+      android:background="@drawable/card_rounded"
       android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
@@ -106,7 +111,7 @@
       <TextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:padding="16dp"
+          android:padding="8dp"
           android:text="@string/to_collect"
           style="@style/Card.Title"/>
 
@@ -118,16 +123,17 @@
         android:id="@+id/episodeOverflow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        android:layout_gravity="right"
+        android:layout_gravity="end"
+        android:layout_marginEnd="8dp"
         tools:ignore="DuplicateIds,InconsistentLayout"/>
-  </androidx.cardview.widget.CardView>
+  </FrameLayout>
 
-  <androidx.cardview.widget.CardView
+  <FrameLayout
       android:id="@+id/lastCollected"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_weight="1"
+      android:background="@drawable/card_rounded"
       android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
@@ -138,7 +144,7 @@
       <TextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:padding="16dp"
+          android:padding="8dp"
           android:text="@string/last_collected"
           style="@style/Card.Title"/>
 
@@ -150,8 +156,8 @@
         android:id="@+id/episodeOverflow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        android:layout_gravity="right"
+        android:layout_gravity="end"
+        android:layout_marginEnd="8dp"
         tools:ignore="DuplicateIds,InconsistentLayout"/>
-  </androidx.cardview.widget.CardView>
+  </FrameLayout>
 </LinearLayout>

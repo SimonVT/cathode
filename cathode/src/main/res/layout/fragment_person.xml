@@ -19,52 +19,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:animateLayoutChanges="true"
     android:background="@color/contentBackground"
+    android:orientation="vertical"
     android:paddingBottom="16dp">
 
   <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="horizontal"
-      android:paddingLeft="16dp"
-      android:paddingTop="8dp"
-      android:paddingRight="16dp">
+      android:paddingEnd="@dimen/detailContentPadding"
+      android:paddingStart="@dimen/detailContentPadding"
+      android:paddingTop="8dp">
 
     <net.simonvt.cathode.common.widget.RemoteImageView
         android:id="@+id/headshot"
         android:layout_width="96dp"
         android:layout_height="wrap_content"
-        app:dominantMeasurement="width"
-        app:aspectRatio="1.5"/>
+        app:aspectRatio="1.5"
+        app:dominantMeasurement="width"/>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
         android:orientation="vertical">
 
       <TextView
           android:id="@+id/bornTitle"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:textStyle="italic"
-          android:text="@string/person_born"/>
+          android:text="@string/person_born"
+          android:textAppearance="?attr/textAppearanceCaption"/>
 
       <TextView
           android:id="@+id/birthday"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
+          android:textAppearance="?attr/textAppearanceBody2"
           tools:text="1956-03-07"/>
 
       <TextView
           android:id="@+id/birthplace"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
+          android:textAppearance="?attr/textAppearanceBody2"
           tools:text="San Fernando Valley, California, USA"/>
 
       <TextView
@@ -72,13 +74,14 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="8dp"
-          android:textStyle="italic"
-          android:text="@string/person_death"/>
+          android:text="@string/person_death"
+          android:textAppearance="?attr/textAppearanceCaption"/>
 
       <TextView
           android:id="@+id/death"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
+          android:textAppearance="?attr/textAppearanceBody2"
           tools:text="1956-03-07"/>
     </LinearLayout>
   </LinearLayout>
@@ -102,7 +105,7 @@
       android:layout_height="wrap_content"
       android:visibility="gone"
       tools:visibility="visible"
-      style="@style/Person.Header">
+      style="@style/Card.HeaderParent">
 
     <TextView
         android:layout_width="0dp"
@@ -115,17 +118,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card_more"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?android:attr/textColorSecondary"/>
+        style="@style/Card.More"/>
   </LinearLayout>
 
   <LinearLayout
       android:id="@+id/cast_items"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:weightSum="@integer/personCreditColumns"
       android:orientation="horizontal"
+      android:paddingEnd="@dimen/detailContentPadding"
+      android:paddingStart="@dimen/detailContentPadding"
       android:visibility="gone"
+      android:weightSum="@integer/personCreditColumns"
       tools:visibility="visible"/>
 
   <LinearLayout
@@ -134,7 +138,7 @@
       android:layout_height="wrap_content"
       android:visibility="gone"
       tools:visibility="visible"
-      style="@style/Person.Header">
+      style="@style/Card.HeaderParent">
 
     <TextView
         android:layout_width="0dp"
@@ -147,17 +151,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card_more"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?android:attr/textColorSecondary"/>
+        style="@style/Card.More"/>
   </LinearLayout>
 
   <LinearLayout
       android:id="@+id/production_items"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:weightSum="@integer/personCreditColumns"
       android:orientation="horizontal"
+      android:paddingEnd="@dimen/detailContentPadding"
+      android:paddingStart="@dimen/detailContentPadding"
       android:visibility="gone"
+      android:weightSum="@integer/personCreditColumns"
       tools:visibility="visible"/>
 
   <LinearLayout
@@ -166,7 +171,7 @@
       android:layout_height="wrap_content"
       android:visibility="gone"
       tools:visibility="visible"
-      style="@style/Person.Header">
+      style="@style/Card.HeaderParent">
 
     <TextView
         android:layout_width="0dp"
@@ -179,17 +184,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card_more"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?android:attr/textColorSecondary"/>
+        style="@style/Card.More"/>
   </LinearLayout>
 
   <LinearLayout
       android:id="@+id/art_items"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:weightSum="@integer/personCreditColumns"
       android:orientation="horizontal"
+      android:paddingEnd="@dimen/detailContentPadding"
+      android:paddingStart="@dimen/detailContentPadding"
       android:visibility="gone"
+      android:weightSum="@integer/personCreditColumns"
       tools:visibility="visible"/>
 
   <LinearLayout
@@ -198,7 +204,7 @@
       android:layout_height="wrap_content"
       android:visibility="gone"
       tools:visibility="visible"
-      style="@style/Person.Header">
+      style="@style/Card.HeaderParent">
 
     <TextView
         android:layout_width="0dp"
@@ -211,17 +217,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card_more"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?android:attr/textColorSecondary"/>
+        style="@style/Card.More"/>
   </LinearLayout>
 
   <LinearLayout
       android:id="@+id/crew_items"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:weightSum="@integer/personCreditColumns"
       android:orientation="horizontal"
+      android:paddingEnd="@dimen/detailContentPadding"
+      android:paddingStart="@dimen/detailContentPadding"
       android:visibility="gone"
+      android:weightSum="@integer/personCreditColumns"
       tools:visibility="visible"/>
 
   <LinearLayout
@@ -230,7 +237,7 @@
       android:layout_height="wrap_content"
       android:visibility="gone"
       tools:visibility="visible"
-      style="@style/Person.Header">
+      style="@style/Card.HeaderParent">
 
     <TextView
         android:layout_width="0dp"
@@ -243,17 +250,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card_more"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?android:attr/textColorSecondary"/>
+        style="@style/Card.More"/>
   </LinearLayout>
 
   <LinearLayout
       android:id="@+id/costume_makeup_items"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:weightSum="@integer/personCreditColumns"
       android:orientation="horizontal"
+      android:paddingEnd="@dimen/detailContentPadding"
+      android:paddingStart="@dimen/detailContentPadding"
       android:visibility="gone"
+      android:weightSum="@integer/personCreditColumns"
       tools:visibility="visible"/>
 
   <LinearLayout
@@ -262,7 +270,7 @@
       android:layout_height="wrap_content"
       android:visibility="gone"
       tools:visibility="visible"
-      style="@style/Person.Header">
+      style="@style/Card.HeaderParent">
 
     <TextView
         android:layout_width="0dp"
@@ -275,17 +283,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card_more"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?android:attr/textColorSecondary"/>
+        style="@style/Card.More"/>
   </LinearLayout>
 
   <LinearLayout
       android:id="@+id/directing_items"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:weightSum="@integer/personCreditColumns"
       android:orientation="horizontal"
+      android:paddingEnd="@dimen/detailContentPadding"
+      android:paddingStart="@dimen/detailContentPadding"
       android:visibility="gone"
+      android:weightSum="@integer/personCreditColumns"
       tools:visibility="visible"/>
 
   <LinearLayout
@@ -294,7 +303,7 @@
       android:layout_height="wrap_content"
       android:visibility="gone"
       tools:visibility="visible"
-      style="@style/Person.Header">
+      style="@style/Card.HeaderParent">
 
     <TextView
         android:layout_width="0dp"
@@ -307,17 +316,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card_more"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?android:attr/textColorSecondary"/>
+        style="@style/Card.More"/>
   </LinearLayout>
 
   <LinearLayout
       android:id="@+id/writing_items"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:weightSum="@integer/personCreditColumns"
       android:orientation="horizontal"
+      android:paddingEnd="@dimen/detailContentPadding"
+      android:paddingStart="@dimen/detailContentPadding"
       android:visibility="gone"
+      android:weightSum="@integer/personCreditColumns"
       tools:visibility="visible"/>
 
   <LinearLayout
@@ -326,7 +336,7 @@
       android:layout_height="wrap_content"
       android:visibility="gone"
       tools:visibility="visible"
-      style="@style/Person.Header">
+      style="@style/Card.HeaderParent">
 
     <TextView
         android:layout_width="0dp"
@@ -339,17 +349,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card_more"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?android:attr/textColorSecondary"/>
+        style="@style/Card.More"/>
   </LinearLayout>
 
   <LinearLayout
       android:id="@+id/sound_items"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:weightSum="@integer/personCreditColumns"
       android:orientation="horizontal"
+      android:paddingEnd="@dimen/detailContentPadding"
+      android:paddingStart="@dimen/detailContentPadding"
       android:visibility="gone"
+      android:weightSum="@integer/personCreditColumns"
       tools:visibility="visible"/>
 
   <LinearLayout
@@ -358,7 +369,7 @@
       android:layout_height="wrap_content"
       android:visibility="gone"
       tools:visibility="visible"
-      style="@style/Person.Header">
+      style="@style/Card.HeaderParent">
 
     <TextView
         android:layout_width="0dp"
@@ -371,17 +382,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card_more"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?android:attr/textColorSecondary"/>
+        style="@style/Card.More"/>
   </LinearLayout>
 
   <LinearLayout
       android:id="@+id/camera_items"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:weightSum="@integer/personCreditColumns"
       android:orientation="horizontal"
+      android:paddingEnd="@dimen/detailContentPadding"
+      android:paddingStart="@dimen/detailContentPadding"
       android:visibility="gone"
+      android:weightSum="@integer/personCreditColumns"
       tools:visibility="visible"/>
 
   <TextView

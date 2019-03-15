@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2014 Simon Vig Therkildsen
+  ~ Copyright (C) 2019 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,17 +16,5 @@
   -->
 <resources>
 
-  <style name="BaseTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-    <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-    <item name="android:statusBarColor">@android:color/transparent</item>
-  </style>
-
-  <style name="Theme.Oauth">
-    <item name="android:statusBarColor">@color/colorPrimaryDark</item>
-  </style>
-
-  <style name="Theme.Login">
-    <item name="android:statusBarColor">?attr/colorPrimaryDark</item>
-  </style>
-
+  <style name="ToolbarPopupThemeOverlay" parent="ThemeOverlay.MaterialComponents.Dark"/>
 </resources>

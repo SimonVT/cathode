@@ -15,45 +15,21 @@
   ~ limitations under the License.
   -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="180dp"
-    android:background="#FFFFFFFF">
+    android:layout_height="wrap_content"
+    android:background="@color/grey_900"
+    android:paddingTop="24dp">
 
-  <net.simonvt.cathode.common.widget.RemoteImageView
-      android:id="@+id/headerBackground"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      app:placeholder="?attr/colorPrimaryDark"/>
-
-  <LinearLayout
+  <TextView
+      android:id="@+id/username"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_gravity="bottom"
-      android:orientation="vertical">
-
-    <net.simonvt.cathode.common.widget.RemoteImageView
-        android:id="@+id/profileIcon"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="32dp"
-        android:elevation="4dp"
-        app:dominantMeasurement="width"
-        app:placeholder="@drawable/ic_account_circle"
-        tools:ignore="UnusedAttribute"/>
-
-    <TextView
-        android:id="@+id/username"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_margin="16dp"
-        android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceLargeInverse"
-        android:textSize="14sp"
-        android:fontFamily="sans-serif"
-        tools:text="Cathode"/>
-  </LinearLayout>
+      android:layout_margin="16dp"
+      android:fontFamily="sans-serif"
+      android:singleLine="true"
+      android:textAppearance="?attr/textAppearanceSubtitle1"
+      android:textColor="@android:color/white"
+      tools:text="Cathode"/>
 </FrameLayout>

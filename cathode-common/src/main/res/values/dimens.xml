@@ -15,13 +15,16 @@
   ~ limitations under the License.
   -->
 <resources>
+  <!-- SearchView -->
   <dimen name="searchViewMaxWidth">0dp</dimen>
 
+  <!-- AppBar -->
   <dimen name="appBarContentOffset">0dp</dimen>
   <dimen name="appBarContentMargin">0dp</dimen>
   <dimen name="appBarTitleMarginStart">48dp</dimen>
   <dimen name="appBarTitleMarginEnd">32dp</dimen>
 
+  <!-- RecyclerView -->
   <dimen name="recyclerViewVerticalSpacing">4dp</dimen>
   <dimen name="recyclerViewHorizontalSpacing">4dp</dimen>
 </resources>

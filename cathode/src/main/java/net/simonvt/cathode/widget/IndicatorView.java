@@ -59,7 +59,7 @@ public class IndicatorView extends View {
     watchedColor = getResources().getColor(R.color.watchedColor);
     collectedColor = getResources().getColor(R.color.collectedColor);
     watchlistColor = getResources().getColor(R.color.watchlistColor);
-    defaultColor = getResources().getColor(R.color.defaultColor);
+    defaultColor = getResources().getColor(R.color.indicatorDefaultColor);
 
     if (isInEditMode()) {
       watched = true;

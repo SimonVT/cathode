@@ -14,31 +14,31 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
   <LinearLayout
-      android:orientation="horizontal"
       android:layout_width="match_parent"
-      android:layout_height="84dp">
+      android:layout_height="84dp"
+      android:orientation="horizontal">
 
     <net.simonvt.cathode.common.widget.RemoteImageView
         android:id="@+id/poster"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        app:dominantMeasurement="height"
-        app:aspectRatio="0.68"/>
+        app:aspectRatio="0.68"
+        app:dominantMeasurement="height"/>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1"
         android:orientation="vertical">
 
       <TextView
@@ -46,16 +46,15 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginBottom="4dp"
-          android:textAppearance="?android:attr/textAppearanceMedium"
-          android:textColor="?android:attr/textColorSecondary"
-          tools:text="Season X"/>
+          tools:text="Season X"
+          style="@style/ListRowTitle"/>
 
       <TextView
           android:id="@+id/show"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:textColor="?android:attr/textColorHint"
-          tools:text="Show name"/>
+          tools:text="Show name"
+          style="@style/ListRowCaption"/>
     </LinearLayout>
   </LinearLayout>
 
@@ -63,6 +62,6 @@
       android:id="@+id/overflow"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_gravity="right"/>
-</androidx.cardview.widget.CardView>
+      android:layout_gravity="end"/>
+</com.google.android.material.card.MaterialCardView>
 

@@ -37,7 +37,7 @@
       android:name="net.simonvt.cathode.CathodeApp"
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
-      android:theme="@style/Theme"
+      android:theme="@style/SplashTheme"
       android:allowBackup="true"
       android:fullBackupContent="@xml/backup_scheme"
       android:supportsRtl="false"
@@ -50,6 +50,7 @@
     <!-- Activities -->
     <activity
         android:name="net.simonvt.cathode.ui.HomeActivity"
+        android:theme="@style/SplashTheme"
         android:label="@string/app_name"
         android:launchMode="singleTask">
 
@@ -66,6 +67,7 @@
 
     <activity
         android:name="net.simonvt.cathode.ui.EpisodeDetailsActivity"
+        android:theme="@style/SplashTheme"
         android:label="@string/app_name"
         android:launchMode="singleTask">
 

@@ -66,7 +66,7 @@ public class CreateListFragment extends DialogFragment {
 
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
-    return inflater.inflate(R.layout.fragment_list_create, container, false);
+    return inflater.inflate(R.layout.dialog_list_create, container, false);
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

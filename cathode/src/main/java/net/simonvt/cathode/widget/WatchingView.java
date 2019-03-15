@@ -169,9 +169,9 @@ public class WatchingView extends ViewGroup {
     setOutlineProvider(new ViewOutlineProvider() {
       @Override public void getOutline(View view, Outline outline) {
         Rect outlineRect = new Rect();
-        outlineRect.left = (int) (getPaddingLeft() + posterView.getTranslationX());
+        outlineRect.left = (int) (getPaddingStart() + posterView.getTranslationX());
         outlineRect.top = getPaddingTop() + topBottomOffset;
-        outlineRect.right = getWidth() - getPaddingRight();
+        outlineRect.right = getWidth() - getPaddingEnd();
         outlineRect.bottom = getHeight() - getPaddingBottom() - topBottomOffset;
         outline.setRoundRect(outlineRect, diameter / 2);
       }
@@ -387,8 +387,8 @@ public class WatchingView extends ViewGroup {
 
   private void expandAnimation(float progress) {
     final int width = getWidth();
-    final int pl = getPaddingLeft();
-    final int pr = getPaddingRight();
+    final int pl = getPaddingStart();
+    final int pr = getPaddingEnd();
     final int posterWidth = posterView.getWidth();
     final int totalPosterOffset = width - pl - pr - posterWidth;
 
@@ -438,7 +438,7 @@ public class WatchingView extends ViewGroup {
 
   @Override protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
-    canvas.drawRect(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(),
+    canvas.drawRect(getPaddingStart(), getPaddingTop(), getWidth() - getPaddingEnd(),
         getHeight() - getPaddingBottom(), backgroundPaint);
   }
 
@@ -449,14 +449,14 @@ public class WatchingView extends ViewGroup {
     LayoutParams posterParams = (LayoutParams) posterView.getLayoutParams();
     LayoutParams infoParams = (LayoutParams) infoParent.getLayoutParams();
 
-    final int posterLeft = getPaddingLeft() + posterParams.leftMargin;
+    final int posterLeft = getPaddingStart() + posterParams.leftMargin;
     final int posterTop = getPaddingTop() + posterParams.topMargin;
     final int posterRight = posterLeft + posterView.getMeasuredWidth();
     final int posterBottom = posterTop + posterView.getMeasuredHeight();
     posterView.layout(posterLeft, posterTop, posterRight, posterBottom);
 
     final int infoLeft = posterRight + posterParams.rightMargin + infoParams.leftMargin;
-    final int infoRight = width - getPaddingRight() - infoParams.rightMargin;
+    final int infoRight = width - getPaddingEnd() - infoParams.rightMargin;
     final int infoHeight = infoParent.getMeasuredHeight();
     final int infoTop = (height - infoHeight) / 2 + getPaddingTop();
     final int infoBottom = infoTop + infoHeight;
@@ -484,11 +484,11 @@ public class WatchingView extends ViewGroup {
     LayoutParams posterParams = (LayoutParams) posterView.getLayoutParams();
 
     int leftoverWidth = width
-        - getPaddingLeft()
+        - getPaddingStart()
         - posterParams.leftMargin
         - posterView.getMeasuredWidth()
         - posterParams.rightMargin
-        - getPaddingRight();
+        - getPaddingEnd();
 
     LayoutParams infoParams = (LayoutParams) infoParent.getLayoutParams();
     int infoWidth = leftoverWidth - infoParams.leftMargin - infoParams.rightMargin;

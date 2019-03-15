@@ -19,13 +19,15 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingEnd="@dimen/dialogContentPadding"
+    android:paddingStart="@dimen/dialogContentPadding">
 
   <EditText
       android:id="@+id/comment"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:hint="@string/comment_hint"/>
+      android:hint="@string/comment_hint"
+      android:inputType="text"/>
 
   <LinearLayout
       android:layout_width="match_parent"
@@ -37,7 +39,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:singleLine="true"
-        android:text="@string/comment_spoiler"/>
+        android:text="@string/comment_spoiler"
+        android:textAppearance="?attr/textAppearanceBody2"/>
 
     <CheckBox
         android:id="@+id/spoiler"

@@ -14,13 +14,12 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="@dimen/cardCornerRadius"
     android:minHeight="64dp">
 
   <LinearLayout
@@ -32,41 +31,42 @@
     <net.simonvt.cathode.common.widget.RemoteImageView
         android:id="@+id/screen"
         android:layout_width="wrap_content"
-        android:layout_marginRight="8dp"
         android:layout_height="64dp"
+        android:layout_marginEnd="8dp"
         app:aspectRatio="0.68"
         app:dominantMeasurement="height"/>
 
     <RelativeLayout
-        android:orientation="vertical"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_gravity="center_vertical"
-        android:layout_marginRight="16dp"
-        android:gravity="center_vertical">
+        android:layout_marginEnd="16dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
 
       <TextView
           android:id="@+id/title"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:textAppearance="?android:attr/textAppearanceMedium"
-          android:textSize="16sp"
-          tools:text="This is an episode title"/>
+          tools:text="This is an episode title"
+          style="@style/ListRowTitle"/>
 
       <net.simonvt.cathode.common.widget.TimeStamp
           android:id="@+id/firstAired"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_below="@id/title"
-          tools:text="Jan 17, 2013"/>
+          tools:text="Jan 17, 2013"
+          style="@style/ListRowCaption"/>
 
       <TextView
           android:id="@+id/episode"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_below="@id/title"
           android:layout_alignParentRight="true"
+          android:layout_below="@id/title"
+          android:textAppearance="?attr/textAppearanceCaption"
           tools:text="1x20"/>
     </RelativeLayout>
   </LinearLayout>
@@ -75,5 +75,5 @@
       android:id="@+id/overflow"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_gravity="right"/>
-</androidx.cardview.widget.CardView>
+      android:layout_gravity="end"/>
+</com.google.android.material.card.MaterialCardView>

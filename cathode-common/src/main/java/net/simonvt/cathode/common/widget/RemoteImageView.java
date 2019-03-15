@@ -148,7 +148,7 @@ public class RemoteImageView extends AspectRatioView implements Target {
     startTimeMillis = 0;
     animating = false;
 
-    if (getWidth() - getPaddingLeft() - getPaddingRight() > 0
+    if (getWidth() - getPaddingStart() - getPaddingEnd() > 0
         && getHeight() - getPaddingTop() - getPaddingBottom() > 0) {
       loadBitmap(animate);
     }
@@ -166,7 +166,7 @@ public class RemoteImageView extends AspectRatioView implements Target {
     startTimeMillis = 0;
     animating = false;
 
-    if (getWidth() - getPaddingLeft() - getPaddingRight() > 0
+    if (getWidth() - getPaddingStart() - getPaddingEnd() > 0
         && getHeight() - getPaddingTop() - getPaddingBottom() > 0) {
       loadBitmap(false);
     }
@@ -177,7 +177,7 @@ public class RemoteImageView extends AspectRatioView implements Target {
   private void loadBitmap(boolean animate) {
     fraction = 0.0f;
     image = null;
-    final int width = getWidth() - getPaddingLeft() - getPaddingRight();
+    final int width = getWidth() - getPaddingStart() - getPaddingEnd();
     final int height = getHeight() - getPaddingTop() - getPaddingBottom();
 
     RequestCreator creator = null;
@@ -226,7 +226,7 @@ public class RemoteImageView extends AspectRatioView implements Target {
     super.onSizeChanged(w, h, oldw, oldh);
 
     if ((imageUrl != null || imageResource > 0)
-        && w - getPaddingLeft() - getPaddingRight() > 0
+        && w - getPaddingStart() - getPaddingEnd() > 0
         && h - getPaddingTop() - getPaddingBottom() > 0) {
       loadBitmap(false);
     }
@@ -280,7 +280,7 @@ public class RemoteImageView extends AspectRatioView implements Target {
   protected void drawPlaceholder(Canvas canvas, Drawable placeholder, int alpha) {
     final int width = getWidth();
     final int height = getHeight();
-    placeHolder.setBounds(getPaddingLeft(), getPaddingTop(), width - getPaddingRight(),
+    placeHolder.setBounds(getPaddingStart(), getPaddingTop(), width - getPaddingEnd(),
         height - getPaddingBottom());
     placeholder.setAlpha(alpha);
     placeholder.setAlpha(alpha);
@@ -297,7 +297,7 @@ public class RemoteImageView extends AspectRatioView implements Target {
       paint.setColorFilter(null);
     }
 
-    canvas.drawBitmap(bitmap, getPaddingLeft(), getPaddingTop(), paint);
+    canvas.drawBitmap(bitmap, getPaddingStart(), getPaddingTop(), paint);
   }
 
   @Override protected Parcelable onSaveInstanceState() {

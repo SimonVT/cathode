@@ -15,55 +15,49 @@
   -->
 <resources>
 
-  <style name="BaseTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+  <style name="SplashTheme" parent="Theme.MaterialComponents.NoActionBar">
+    <item name="android:windowBackground">@color/grey_900</item>
+    <item name="android:statusBarColor">@color/grey_900</item>
+  </style>
+
+  <style name="BaseTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <item name="android:windowBackground">@color/windowBackground</item>
+    <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    <item name="android:statusBarColor">@android:color/transparent</item>
+
+    <!-- Material colors -->
+    <item name="colorPrimary">@color/primaryColor</item>
+    <item name="colorPrimaryVariant">@color/primaryDarkColor</item>
+    <item name="colorOnPrimary">@color/primaryTextColor</item>
+    <item name="colorSecondary">@color/secondaryColor</item>
+    <item name="colorSecondaryVariant">@color/secondaryDarkColor</item>
+    <item name="colorOnSecondary">@color/secondaryTextColor</item>
+    <item name="colorAccent">@color/secondaryColor</item>
+
+    <!-- Material text appearances -->
+    <item name="textAppearanceSubtitle1">@style/TextAppearance.Cathode.Subtitle1</item>
+    <item name="textAppearanceSubtitle2">@style/TextAppearance.Cathode.Subtitle2</item>
+    <item name="textAppearanceBody2">@style/TextAppearance.Cathode.Body2</item>
+    <item name="textAppearanceCaption">@style/TextAppearance.Cathode.Caption</item>
+
+    <!-- Component styles -->
+    <item name="circularProgressIndicatorStyle">@style/CircularProgressIndicator</item>
+    <item name="remoteImageViewStyle">@style/RemoteImageViewStyle</item>
   </style>
 
   <style name="Theme" parent="BaseTheme">
-    <!-- The primary branding color for the app. By default, this is the color applied to the
-         action bar background. -->
-    <item name="colorPrimary">@color/colorPrimary</item>
-
-    <!-- Dark variant of the primary branding color. By default, this is the color applied to
-         the status bar (via statusBarColor) and navigation bar (via navigationBarColor). -->
-    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-
-    <!-- Bright complement to the primary branding color. By default, this is the color applied
-         to framework controls (via colorControlActivated). -->
-    <!--item name="colorAccent">@color/colorAccent</item-->
-
-    <!-- The color applied to framework controls in their normal state. -->
-    <!--item name="colorControlNormal">#FFFF0000</item-->
-
-    <!-- The color applied to framework controls in their activated (ex. checked) state. -->
-    <!--item name="colorControlActivated">#33FF7F2A</item-->
-
-    <!-- The color applied to framework control highlights (ex. ripples, list selectors). -->
-    <!--item name="colorControlHighlight">#66FF7F2A</item-->
-
-    <!-- The color applied to framework buttons in their normal state. -->
-    <!--item name="colorButtonNormal">#FF00FFFF</item-->
-
-    <item name="circularProgressIndicatorStyle">@style/CircularProgressIndicator</item>
-    <item name="remoteImageViewStyle">@style/RemoteImageViewStyle</item>
-
-    <item name="android:windowBackground">@color/contentBackground</item>
   </style>
 
-  <style name="Theme.Oauth"/>
+  <style name="Theme.Oauth">
+    <item name="android:statusBarColor">@color/grey_900</item>
+  </style>
 
-  <style name="Theme.Login"/>
+  <style name="Theme.Login">
+    <item name="android:statusBarColor">@color/grey_900</item>
+  </style>
 
   <style name="SettingsTheme" parent="BaseTheme">
-
-    <!-- The primary branding color for the app. By default, this is the color applied to the
-         action bar background. -->
-    <item name="colorPrimary">@color/colorPrimary</item>
-
-    <!-- Dark variant of the primary branding color. By default, this is the color applied to
-         the status bar (via statusBarColor) and navigation bar (via navigationBarColor). -->
-    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-
-    <item name="android:windowBackground">@color/contentBackground</item>
+    <item name="android:windowBackground">@color/windowBackground</item>
   </style>
 
 </resources>

@@ -24,8 +24,8 @@
     android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeightSmall"
     android:paddingBottom="8dp"
-    android:paddingLeft="?attr/listPreferredItemPaddingLeft"
-    android:paddingRight="?attr/listPreferredItemPaddingRight"
+    android:paddingEnd="?attr/listPreferredItemPaddingEnd"
+    android:paddingStart="?attr/listPreferredItemPaddingStart"
     android:paddingTop="8dp"
-    android:textColor="?android:attr/textColorPrimary"
+    android:textAppearance="?attr/textAppearanceSubtitle1"
     tools:text="Menu item"/>

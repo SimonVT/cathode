@@ -19,8 +19,8 @@
     android:id="@+id/episodes"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="@dimen/detailContentPadding"
-    android:layout_marginRight="@dimen/detailContentPadding"
+    android:layout_marginEnd="@dimen/detailContentPadding"
+    android:layout_marginStart="@dimen/detailContentPadding"
     android:layout_marginTop="16dp"
     android:orientation="vertical"
     android:visibility="gone"
@@ -29,15 +29,16 @@
   <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:orientation="horizontal"
-      android:layout_marginBottom="8dp">
+      android:layout_marginBottom="8dp"
+      android:orientation="horizontal">
 
-    <androidx.cardview.widget.CardView
+    <FrameLayout
         android:id="@+id/toWatch"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_weight="1"
-        android:layout_marginRight="8dp"
+        android:background="@drawable/card_rounded"
         android:foreground="?android:attr/selectableItemBackground">
 
       <LinearLayout
@@ -60,16 +61,17 @@
           android:id="@+id/episodeOverflow"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginRight="8dp"
-          android:layout_gravity="right"
+          android:layout_gravity="end"
+          android:layout_marginEnd="8dp"
           tools:ignore="DuplicateIds,InconsistentLayout"/>
-    </androidx.cardview.widget.CardView>
+    </FrameLayout>
 
-    <androidx.cardview.widget.CardView
+    <FrameLayout
         android:id="@+id/lastWatched"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:background="@drawable/card_rounded"
         android:foreground="?android:attr/selectableItemBackground"
         tools:ignore="InconsistentLayout">
 
@@ -93,10 +95,10 @@
           android:id="@+id/episodeOverflow"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginRight="8dp"
-          android:layout_gravity="right"
+          android:layout_gravity="end"
+          android:layout_marginEnd="8dp"
           tools:ignore="DuplicateIds,InconsistentLayout"/>
-    </androidx.cardview.widget.CardView>
+    </FrameLayout>
   </LinearLayout>
 
   <LinearLayout
@@ -105,12 +107,13 @@
       android:baselineAligned="false"
       android:orientation="horizontal">
 
-    <androidx.cardview.widget.CardView
+    <FrameLayout
         android:id="@+id/toCollect"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_weight="1"
-        android:layout_marginRight="8dp"
+        android:background="@drawable/card_rounded"
         android:foreground="?android:attr/selectableItemBackground">
 
       <LinearLayout
@@ -133,16 +136,17 @@
           android:id="@+id/episodeOverflow"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginRight="8dp"
-          android:layout_gravity="right"
+          android:layout_gravity="end"
+          android:layout_marginEnd="8dp"
           tools:ignore="DuplicateIds,InconsistentLayout"/>
-    </androidx.cardview.widget.CardView>
+    </FrameLayout>
 
-    <androidx.cardview.widget.CardView
+    <FrameLayout
         android:id="@+id/lastCollected"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:background="@drawable/card_rounded"
         android:foreground="?android:attr/selectableItemBackground"
         tools:ignore="InconsistentLayout">
 
@@ -166,9 +170,9 @@
           android:id="@+id/episodeOverflow"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginRight="8dp"
-          android:layout_gravity="right"
+          android:layout_gravity="end"
+          android:layout_marginEnd="8dp"
           tools:ignore="DuplicateIds,InconsistentLayout"/>
-    </androidx.cardview.widget.CardView>
+    </FrameLayout>
   </LinearLayout>
 </LinearLayout>

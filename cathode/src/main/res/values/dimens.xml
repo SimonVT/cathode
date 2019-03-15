@@ -15,24 +15,28 @@
   -->
 <resources>
 
-  <dimen name="cardCornerRadius">2dp</dimen>
+  <!-- General -->
+  <dimen name="dialogContentPadding">8dp</dimen>
 
-  <dimen name="showItemMinHeight">72dp</dimen>
-
+  <!-- App widget -->
   <dimen name="appWidgetPosterHeight">64dp</dimen>
   <dimen name="appWidgetPosterWidth">43dp</dimen>
 
+  <!-- Dashboard -->
+  <dimen name="dashboardItemWidth">128dp</dimen>
+
+  <!-- Details -->
   <dimen name="detailContentPadding">8dp</dimen>
   <dimen name="detailContentPaddingBottom">8dp</dimen>
+  <dimen name="detailsSectionMargin">@dimen/detailContentPadding</dimen>
+  <dimen name="seasonPosterWidth">128dp</dimen>
 
+  <!-- Watching -->
   <dimen name="watchingElevation">5dp</dimen>
   <dimen name="watchingPosterWidth">48dp</dimen>
 
-  <dimen name="detailsCardMargin">@dimen/detailContentPadding</dimen>
-  <dimen name="detailsCardRadius">2dp</dimen>
+  <!-- Season -->
+  <dimen name="showItemMinHeight">72dp</dimen>
 
-  <dimen name="dashboardItemWidth">128dp</dimen>
-
-  <dimen name="seasonPosterWidth">128dp</dimen>
 
 </resources>

@@ -15,14 +15,13 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="@dimen/cardCornerRadius"
     tools:layout_width="250dp">
 
   <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -31,15 +30,15 @@
       android:id="@id/front"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:orientation="vertical"
-      android:gravity="center_vertical">
+      android:gravity="center_vertical"
+      android:orientation="vertical">
 
     <net.simonvt.cathode.common.widget.RemoteImageView
         android:id="@+id/poster"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:dominantMeasurement="width"
-        app:aspectRatio="1.4705"/>
+        app:aspectRatio="1.4705"
+        app:dominantMeasurement="width"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -50,22 +49,20 @@
           android:id="@+id/infoParent"
           android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:layout_weight="1"
-          android:layout_marginLeft="8dp"
-          android:layout_marginTop="4dp"
           android:layout_marginBottom="8dp"
-          android:orientation="vertical"
-          android:gravity="center_vertical">
+          android:layout_marginStart="8dp"
+          android:layout_marginTop="4dp"
+          android:layout_weight="1"
+          android:gravity="center_vertical"
+          android:orientation="vertical">
 
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="?android:attr/textColorSecondary"
-            tools:text="Title"/>
+            tools:text="Title"
+            style="@style/ListRowTitle"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -78,16 +75,16 @@
               android:layout_height="wrap_content"
               android:layout_weight="1"
               android:singleLine="true"
-              android:textColor="?android:attr/textColorHint"
-              tools:text="1x07 Awesome new episode"/>
+              tools:text="1x07 Awesome new episode"
+              style="@style/ListRowCaption"/>
 
           <net.simonvt.cathode.common.widget.TimeStamp
               android:id="@+id/firstAired"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_marginLeft="8dp"
+              android:layout_marginStart="8dp"
               android:singleLine="true"
-              android:textColor="?android:attr/textColorHint"
+              android:textAppearance="?attr/textAppearanceCaption"
               tools:text="May 20."/>
         </LinearLayout>
       </LinearLayout>
@@ -97,9 +94,9 @@
           android:layout_width="wrap_content"
           android:layout_height="match_parent"
           android:background="?android:attr/selectableItemBackground"
-          android:paddingRight="8dp"
-          android:paddingLeft="8dp"
+          android:paddingEnd="8dp"
+          android:paddingStart="8dp"
           tools:src="@drawable/ic_action_checkin_32dp"/>
     </LinearLayout>
   </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

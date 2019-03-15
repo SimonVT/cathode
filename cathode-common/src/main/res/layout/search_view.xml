@@ -19,21 +19,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center_vertical"
-    android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
   <EditText
       android:id="@+id/search_input"
-      android:layout_height="36dp"
       android:layout_width="0dp"
+      android:layout_height="36dp"
       android:layout_weight="1"
-      android:minWidth="160dp"
-      android:paddingLeft="@dimen/abc_dropdownitem_text_padding_left"
-      android:paddingRight="@dimen/abc_dropdownitem_text_padding_right"
-      android:singleLine="true"
-      android:ellipsize="end"
       android:background="@null"
-      android:inputType="text|textAutoComplete|textNoSuggestions"/>
+      android:ellipsize="end"
+      android:inputType="text|textAutoComplete|textNoSuggestions"
+      android:minWidth="160dp"
+      android:paddingEnd="@dimen/abc_dropdownitem_text_padding_right"
+      android:paddingStart="@dimen/abc_dropdownitem_text_padding_left"
+      android:singleLine="true"/>
 
   <ImageView
       android:id="@+id/search_clear"
@@ -41,9 +41,9 @@
       android:layout_height="match_parent"
       android:layout_gravity="center_vertical"
       android:background="?attr/selectableItemBackgroundBorderless"
-      android:paddingLeft="8dp"
-      android:paddingRight="8dp"
-      android:src="@drawable/ic_clear"
+      android:contentDescription="@string/abc_searchview_description_clear"
       android:focusable="true"
-      android:contentDescription="@string/abc_searchview_description_clear"/>
+      android:paddingEnd="8dp"
+      android:paddingStart="8dp"
+      android:src="@drawable/ic_clear"/>
 </net.simonvt.cathode.common.widget.SearchView>

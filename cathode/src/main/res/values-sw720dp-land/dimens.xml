@@ -15,7 +15,9 @@
   ~ limitations under the License.
   -->
 <resources>
+  <!-- General -->
+  <dimen name="dialogContentPadding">32dp</dimen>
 
+  <!-- Details -->
   <dimen name="detailContentPadding">32dp</dimen>
-
 </resources>

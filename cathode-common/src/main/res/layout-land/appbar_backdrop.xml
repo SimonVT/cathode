@@ -19,5 +19,5 @@
     android:id="@+id/backdrop"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_scrollMode="parallex"
-    app:layout_parallexMultiplier="0.33"/>
+    app:layout_parallexMultiplier="0.33"
+    app:layout_scrollMode="parallex"/>

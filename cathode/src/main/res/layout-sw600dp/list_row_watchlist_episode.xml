@@ -14,7 +14,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -34,32 +34,31 @@
         app:dominantMeasurement="width"/>
 
     <View
+        android:id="@+id/divider"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/colorPrimary"/>
+        android:layout_height="1dp"
+        android:layout_below="@id/screen"
+        android:background="@color/divider"/>
 
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/screen"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="16dp"
-        android:fontFamily="sans-serif-light"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="16sp"
-        tools:text="Some Random Episode"/>
+        android:layout_below="@id/divider"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        tools:text="Some Random Episode"
+        style="@style/ListRowTitle"/>
 
     <net.simonvt.cathode.common.widget.TimeStamp
         android:id="@+id/firstAired"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/title"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="16dp"
-        android:textColor="?android:attr/textColorSecondary"
-        android:textSize="14sp"
-        tools:text="OCT 20, 2010 (MON)"/>
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        tools:text="OCT 20, 2010 (MON)"
+        style="@style/ListRowCaption"/>
 
     <TextView
         android:id="@+id/episode"
@@ -67,9 +66,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@id/title"
-        android:layout_marginRight="16dp"
-        android:textColor="?android:attr/textColorHint"
-        android:textSize="14sp"
+        android:layout_marginEnd="16dp"
+        android:textAppearance="?attr/textAppearanceCaption"
         tools:text="S10E20"/>
   </RelativeLayout>
 
@@ -77,6 +75,6 @@
       android:id="@+id/overflow"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_gravity="bottom|right"/>
-</androidx.cardview.widget.CardView>
+      android:layout_gravity="bottom|end"/>
+</com.google.android.material.card.MaterialCardView>
 

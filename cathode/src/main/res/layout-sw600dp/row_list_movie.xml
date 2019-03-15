@@ -14,13 +14,12 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="@dimen/cardCornerRadius"
     tools:layout_width="400dp">
 
   <LinearLayout
@@ -32,8 +31,8 @@
         android:id="@+id/poster"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:dominantMeasurement="width"
-        app:aspectRatio="1.4705"/>
+        app:aspectRatio="1.4705"
+        app:dominantMeasurement="width"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -43,38 +42,34 @@
       <LinearLayout
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:orientation="vertical"
           android:layout_gravity="center_vertical"
-          android:paddingLeft="8dp"
-          android:paddingRight="16dp"
-          android:paddingTop="4dp"
-          android:paddingBottom="4dp">
+          android:orientation="vertical"
+          android:paddingBottom="4dp"
+          android:paddingEnd="16dp"
+          android:paddingStart="8dp"
+          android:paddingTop="4dp">
 
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:text="Title"/>
+            tools:text="Title"
+            style="@style/ListRowTitle"/>
 
         <TextView
             android:id="@+id/overview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:fontFamily="sans-light"
-            android:maxLines="3"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textSize="12sp"
-            tools:text="This is a description of the show. It can be long. And multiline. Lots of lots of lines. Even more lines"/>
+            android:minLines="3"
+            tools:text="This is a description of the show. It can be long. And multiline. Lots of lots of lines. Even more lines"
+            style="@style/ListRowCaption"/>
       </LinearLayout>
 
       <net.simonvt.cathode.common.widget.OverflowView
           android:id="@+id/overflow"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_gravity="right"/>
+          android:layout_gravity="end"/>
     </FrameLayout>
   </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

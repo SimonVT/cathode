@@ -2,35 +2,34 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="#FFFFFFFF">
+    android:background="?attr/colorBackgroundFloating"
+    android:orientation="vertical">
 
   <TextView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:paddingLeft="?attr/dialogPreferredPadding"
-      android:paddingRight="?attr/dialogPreferredPadding"
-      android:paddingTop="@dimen/abc_dialog_padding_top_material"
       android:ellipsize="end"
+      android:paddingEnd="?attr/dialogPreferredPadding"
+      android:paddingStart="?attr/dialogPreferredPadding"
+      android:paddingTop="@dimen/abc_dialog_padding_top_material"
       android:singleLine="true"
-      android:textAlignment="viewStart"
-      android:text="Get notified"
-      style="?android:attr/windowTitleStyle"/>
+      android:text="@string/prompt_integration"
+      android:textAppearance="?attr/textAppearanceSubtitle1"/>
 
   <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginTop="4dp"
-      android:paddingRight="?attr/dialogPreferredPadding">
+      android:paddingEnd="?attr/dialogPreferredPadding">
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:paddingLeft="?attr/dialogPreferredPadding"
-        android:paddingRight="?attr/dialogPreferredPadding"
-        android:text="Calendar integration"
-        style="@style/TextAppearance.AppCompat.Subhead"/>
+        android:paddingEnd="?attr/dialogPreferredPadding"
+        android:paddingStart="?attr/dialogPreferredPadding"
+        android:text="@string/prompt_integration_calendar"
+        android:textAppearance="?attr/textAppearanceBody2"/>
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/prompt_setup_calendar_switch"
@@ -42,16 +41,16 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginTop="4dp"
-      android:paddingRight="?attr/dialogPreferredPadding">
+      android:paddingEnd="?attr/dialogPreferredPadding">
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:paddingLeft="?attr/dialogPreferredPadding"
-        android:paddingRight="?attr/dialogPreferredPadding"
-        android:text="Notifications for upcoming episodes"
-        style="@style/TextAppearance.AppCompat.Subhead"/>
+        android:paddingEnd="?attr/dialogPreferredPadding"
+        android:paddingStart="?attr/dialogPreferredPadding"
+        android:text="@string/prompt_integration_notifications"
+        android:textAppearance="?attr/textAppearanceBody2"/>
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/prompt_setup_notification_switch"
@@ -64,15 +63,16 @@
       android:layout_height="wrap_content"
       android:gravity="end"
       android:orientation="horizontal"
-      android:paddingLeft="12dp"
-      android:paddingRight="12dp">
+      android:paddingEnd="12dp"
+      android:paddingStart="12dp">
 
     <TextView
         android:id="@+id/prompt_setup_done"
-        style="?attr/buttonBarPositiveButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
-        android:text="@string/done"/>
+        android:text="@string/done"
+        android:textAppearance="?attr/textAppearanceButton"
+        style="?attr/buttonBarPositiveButtonStyle"/>
   </LinearLayout>
 </LinearLayout>

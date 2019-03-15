@@ -30,8 +30,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"/>
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"/>
 
     <include layout="@layout/recyclerview"/>
   </FrameLayout>

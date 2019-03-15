@@ -48,6 +48,7 @@ public class EpisodeDetailsActivity extends NavigationListenerActivity {
   private String showOverview;
 
   @Override protected void onCreate(Bundle inState) {
+    setTheme(R.style.Theme);
     super.onCreate(inState);
     setContentView(R.layout.activity_details);
 

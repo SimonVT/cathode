@@ -56,6 +56,18 @@
 
   <string name="settings_startpage_default">dashboard</string>
 
+  <string-array name="setting_darkmode">
+    <item>System setting</item>
+    <item>Always</item>
+  </string-array>
+
+  <string-array name="setting_darkmode_values">
+    <item>system</item>
+    <item>always</item>
+  </string-array>
+
+  <string name="settings_darkmode_default">system</string>
+
   <string-array name="setting_shows_offset">
     <item>-12</item>
     <item>-11</item>

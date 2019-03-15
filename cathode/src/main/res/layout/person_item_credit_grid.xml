@@ -15,14 +15,13 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="@dimen/cardCornerRadius"
     tools:layout_width="100dp">
 
   <LinearLayout
@@ -35,18 +34,18 @@
         android:id="@+id/poster"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:dominantMeasurement="width"
-        app:aspectRatio="1.5"/>
+        app:aspectRatio="1.5"
+        app:dominantMeasurement="width"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginRight="8dp"
         android:layout_marginBottom="4dp"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
       <TextView
           android:id="@+id/title"
@@ -65,4 +64,4 @@
           style="@style/Person.Job"/>
     </LinearLayout>
   </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

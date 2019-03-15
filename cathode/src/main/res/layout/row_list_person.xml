@@ -15,24 +15,24 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
   <LinearLayout
-      android:orientation="horizontal"
       android:layout_width="match_parent"
       android:layout_height="84dp"
-      android:gravity="center_vertical">
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
 
     <net.simonvt.cathode.common.widget.RemoteImageView
         android:id="@+id/headshot"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        app:dominantMeasurement="height"
         app:aspectRatio="0.68"
+        app:dominantMeasurement="height"
         app:placeholder="@drawable/list_placeholder_person"/>
 
     <TextView
@@ -40,16 +40,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:paddingLeft="8dp"
-        android:paddingRight="16dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="?android:attr/textColorSecondary"
-        tools:text="A. Person"/>
+        android:paddingEnd="16dp"
+        android:paddingStart="8dp"
+        tools:text="A. Person"
+        style="@style/ListRowTitle"/>
   </LinearLayout>
 
   <net.simonvt.cathode.common.widget.OverflowView
       android:id="@+id/overflow"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_gravity="right"/>
-</androidx.cardview.widget.CardView>
+      android:layout_gravity="end"/>
+</com.google.android.material.card.MaterialCardView>

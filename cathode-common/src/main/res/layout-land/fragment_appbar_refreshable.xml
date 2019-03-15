@@ -36,22 +36,22 @@
           android:id="@+id/appBarLayout"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:orientation="vertical"
           android:fitsSystemWindows="@bool/drawsBehindStatusBar"
-          app:expandedTitleMarginStart="@dimen/appBarTitleMarginStart"
-          app:expandedTitleMarginEnd="@dimen/appBarTitleMarginEnd">
+          android:orientation="vertical"
+          app:expandedTitleMarginEnd="@dimen/appBarTitleMarginEnd"
+          app:expandedTitleMarginStart="@dimen/appBarTitleMarginStart">
 
         <FrameLayout
             android:id="@id/appBarContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/appBarContentOffset"
-            android:layout_marginLeft="@dimen/appBarContentMargin"
-            android:layout_marginRight="@dimen/appBarContentMargin"
-            android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true"
-            android:orientation="vertical"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="@dimen/appBarContentMargin"
+            android:layout_marginStart="@dimen/appBarContentMargin"
+            android:layout_marginTop="@dimen/appBarContentOffset"
             android:background="@color/contentBackground"
+            android:orientation="vertical"
             android:paddingBottom="16dp"/>
 
         <include layout="@layout/appbar_toolbar"/>

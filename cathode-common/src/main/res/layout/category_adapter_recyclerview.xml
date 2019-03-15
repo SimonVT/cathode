@@ -19,8 +19,8 @@
     android:id="@android:id/list"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="4dp"
-    android:paddingTop="4dp"
-    android:paddingRight="4dp"
+    android:clipToPadding="false"
     android:paddingBottom="4dp"
-    android:clipToPadding="false"/>
+    android:paddingEnd="4dp"
+    android:paddingStart="4dp"
+    android:paddingTop="4dp"/>

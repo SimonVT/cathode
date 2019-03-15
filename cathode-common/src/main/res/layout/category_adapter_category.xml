@@ -19,25 +19,25 @@
     android:id="@+id/categoryContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingRight="8dp"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp"
-    android:background="?attr/selectableItemBackground">
+    android:background="?attr/selectableItemBackground"
+    android:paddingBottom="12dp"
+    android:paddingEnd="8dp"
+    android:paddingStart="8dp"
+    android:paddingTop="12dp">
 
   <TextView
       android:id="@+id/category"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_weight="1"
-      android:layout_marginLeft="8dp"
-      style="@style/Category"
+      android:textAppearance="?attr/textAppearanceSubtitle1"
       tools:text="Aired"/>
 
   <TextView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center_vertical"
-      android:textAppearance="@style/TextAppearance.AppCompat.Button"
-      android:textColor="?android:attr/textColorSecondary"
-      android:text="@string/card_more"/>
+      android:text="@string/card_more"
+      android:textAppearance="?attr/textAppearanceButton"
+      android:textColor="?android:attr/textColorSecondary"/>
 </LinearLayout>

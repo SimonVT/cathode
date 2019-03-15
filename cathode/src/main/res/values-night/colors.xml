@@ -1,0 +1,35 @@
+<!--
+  ~ Copyright (C) 2013 Simon Vig Therkildsen
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<resources>
+  <!-- UI colors -->
+  <color name="primaryColor">#FF7986CB</color>
+  <!--color name="primaryLightColor">#FFE2F1F8</color-->
+  <color name="primaryDarkColor">#FF49599A</color>
+
+  <color name="indicatorDefaultColor">@color/grey_200</color>
+
+  <!-- General -->
+  <color name="divider">#2AFFFFFF</color>
+  <color name="activatedItemBackground">#FF383838</color>
+
+  <!-- Navigation -->
+  <color name="drawerBackground">#FF282828</color>
+  <color name="nav_item">#FFEEEEEE</color>
+
+  <!-- Details -->
+  <color name="contentTopBackground">#FF484848</color>
+
+</resources>

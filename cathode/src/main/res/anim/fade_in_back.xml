@@ -15,16 +15,16 @@
   ~ limitations under the License.
   -->
 <set
-    android:interpolator="@android:anim/accelerate_interpolator"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/accelerate_interpolator">
 
   <scale
       android:duration="@android:integer/config_shortAnimTime"
+      android:fromXScale="0.9"
+      android:fromYScale="0.9"
       android:pivotX="50.0%"
       android:pivotY="0.0%"
-      android:fromXScale="0.9"
       android:toXScale="1.0"
-      android:fromYScale="0.9"
       android:toYScale="1.0"/>
 
   <alpha

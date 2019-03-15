@@ -24,8 +24,8 @@
 
   <item>
     <bitmap
-        android:src="@drawable/placeholder_tv"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:src="@drawable/placeholder_tv"/>
   </item>
 
 </layer-list>

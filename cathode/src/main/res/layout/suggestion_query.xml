@@ -15,15 +15,15 @@
   ~ limitations under the License.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center_vertical"
+    android:minHeight="?android:attr/listPreferredItemHeightSmall"
     android:orientation="horizontal"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-    android:minHeight="?android:attr/listPreferredItemHeightSmall">
+    android:paddingEnd="8dp"
+    android:paddingStart="8dp">
 
   <ImageView
       android:layout_width="32dp"
@@ -37,6 +37,7 @@
       android:id="@+id/title"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:paddingLeft="8dp"
-      android:textAppearance="?android:attr/textAppearanceListItemSmall"/>
+      android:paddingStart="8dp"
+      android:textAppearance="?attr/textAppearanceBody2"
+      tools:text="Suggestion"/>
 </LinearLayout>

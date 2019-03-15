@@ -10,6 +10,11 @@ dependencies {
   implementation project(':cathode-common')
   implementation project(':trakt-api')
   implementation deps.kotlin.stdlib
+  implementation deps.dagger
+  implementation deps.daggerAndroid
+  implementation deps.daggerAndroidSupport
+  kapt deps.daggerCompiler
+  kapt deps.daggerAndroidApt
   implementation deps.tmdb
 
   testImplementation deps.junit

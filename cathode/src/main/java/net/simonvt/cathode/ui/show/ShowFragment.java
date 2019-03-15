@@ -117,6 +117,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
   private Episode toCollect;
   private Episode lastCollected;
 
+  @BindView(R.id.seasonsDivider) View seasonsDivider;
   @BindView(R.id.seasonsTitle) View seasonsTitle;
   @BindView(R.id.seasons) RecyclerView seasonsView;
   private SeasonsAdapter seasonsAdapter;
@@ -126,6 +127,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
   @BindView(R.id.status) TextView status;
   @BindView(R.id.overview) TextView overview;
 
+  @BindView(R.id.genresDivider) View genresDivider;
   @BindView(R.id.genresTitle) View genresTitle;
   @BindView(R.id.genres) TextView genresView;
 
@@ -136,7 +138,6 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   @BindView(R.id.castParent) View castParent;
   @BindView(R.id.castHeader) View castHeader;
-  @BindView(R.id.cast) LinearLayout castView;
   @BindView(R.id.castContainer) LinearLayout castContainer;
 
   @BindView(R.id.commentsParent) View commentsParent;
@@ -145,7 +146,6 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
   @BindView(R.id.relatedParent) View relatedParent;
   @BindView(R.id.relatedHeader) View relatedHeader;
-  @BindView(R.id.related) LinearLayout relatedView;
   @BindView(R.id.relatedContainer) LinearLayout relatedContainer;
 
   @BindView(R.id.trailer) TextView trailer;
@@ -346,9 +346,11 @@ public class ShowFragment extends RefreshableAppBarFragment {
       @Override public void onCountChanged(int itemCount) {
         if (seasonsTitle != null) {
           if (itemCount == 0) {
+            seasonsDivider.setVisibility(View.GONE);
             seasonsTitle.setVisibility(View.GONE);
             seasonsView.setVisibility(View.GONE);
           } else {
+            seasonsDivider.setVisibility(View.VISIBLE);
             seasonsTitle.setVisibility(View.VISIBLE);
             seasonsView.setVisibility(View.VISIBLE);
           }
@@ -356,9 +358,11 @@ public class ShowFragment extends RefreshableAppBarFragment {
       }
     });
     if (seasonsAdapter.getItemCount() > 0) {
+      seasonsDivider.setVisibility(View.VISIBLE);
       seasonsTitle.setVisibility(View.VISIBLE);
       seasonsView.setVisibility(View.VISIBLE);
     } else {
+      seasonsDivider.setVisibility(View.GONE);
       seasonsTitle.setVisibility(View.GONE);
       seasonsView.setVisibility(View.GONE);
     }
@@ -741,9 +745,11 @@ public class ShowFragment extends RefreshableAppBarFragment {
     }
 
     if (genres == null || genres.size() == 0) {
+      genresDivider.setVisibility(View.GONE);
       genresTitle.setVisibility(View.GONE);
       genresView.setVisibility(View.GONE);
     } else {
+      genresDivider.setVisibility(View.VISIBLE);
       genresTitle.setVisibility(View.VISIBLE);
       genresView.setVisibility(View.VISIBLE);
       genresView.setText(Joiner.on(", ").join(genres));
@@ -763,7 +769,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
       for (CastMember castMember : cast) {
         View v =
-            LayoutInflater.from(requireContext()).inflate(R.layout.item_person, castContainer, false);
+            LayoutInflater.from(requireContext()).inflate(R.layout.section_people_item, castContainer, false);
 
         final long personId = castMember.getPerson().getId();
         final String headshotUrl = ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, personId);
@@ -802,7 +808,7 @@ public class ShowFragment extends RefreshableAppBarFragment {
 
       for (Show show : related) {
         View v = LayoutInflater.from(requireContext())
-            .inflate(R.layout.item_related, this.relatedContainer, false);
+            .inflate(R.layout.section_related_item, this.relatedContainer, false);
 
         final String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, show.getId());
 

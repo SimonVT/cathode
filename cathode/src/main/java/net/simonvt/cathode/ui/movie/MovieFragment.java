@@ -102,6 +102,7 @@ public class MovieFragment extends RefreshableAppBarFragment {
   //@BindView(R.id.poster) RemoteImageView poster;
   @BindView(R.id.overview) TextView overview;
 
+  @BindView(R.id.genresDivider) View genresDivider;
   @BindView(R.id.genresTitle) View genresTitle;
   @BindView(R.id.genres) TextView genresView;
 
@@ -113,7 +114,6 @@ public class MovieFragment extends RefreshableAppBarFragment {
 
   @BindView(R.id.castParent) View castParent;
   @BindView(R.id.castHeader) View castHeader;
-  @BindView(R.id.cast) LinearLayout castView;
   @BindView(R.id.castContainer) LinearLayout castContainer;
 
   @BindView(R.id.commentsParent) View commentsParent;
@@ -122,7 +122,6 @@ public class MovieFragment extends RefreshableAppBarFragment {
 
   @BindView(R.id.relatedParent) View relatedParent;
   @BindView(R.id.relatedHeader) View relatedHeader;
-  @BindView(R.id.related) LinearLayout relatedView;
   @BindView(R.id.relatedContainer) LinearLayout relatedContainer;
 
   @BindView(R.id.trailer) TextView trailer;
@@ -538,11 +537,13 @@ public class MovieFragment extends RefreshableAppBarFragment {
     }
 
     if (genres == null || genres.size() == 0) {
+      genresDivider.setVisibility(View.GONE);
       genresTitle.setVisibility(View.GONE);
       genresView.setVisibility(View.GONE);
     } else {
       final String joinedGenres = Joiner.on(", ").join(genres);
 
+      genresDivider.setVisibility(View.VISIBLE);
       genresTitle.setVisibility(View.VISIBLE);
       genresView.setVisibility(View.VISIBLE);
       genresView.setText(joinedGenres);
@@ -562,7 +563,7 @@ public class MovieFragment extends RefreshableAppBarFragment {
 
       for (CastMember castMember : cast) {
         View v =
-            LayoutInflater.from(requireContext()).inflate(R.layout.item_person, castContainer, false);
+            LayoutInflater.from(requireContext()).inflate(R.layout.section_people_item, castContainer, false);
 
         final String headshotUri =
             ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, castMember.getPerson().getId());
@@ -601,7 +602,7 @@ public class MovieFragment extends RefreshableAppBarFragment {
 
       for (Movie movie : related) {
         View v = LayoutInflater.from(requireContext())
-            .inflate(R.layout.item_related, relatedContainer, false);
+            .inflate(R.layout.section_related_item, relatedContainer, false);
 
         final String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, movie.getId());
 

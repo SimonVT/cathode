@@ -63,12 +63,12 @@ public abstract class AspectRatioView extends View {
         switch (dominantMeasurement) {
           case MEASUREMENT_HEIGHT:
             width = (int) ((height - getPaddingTop() - getPaddingBottom()) * aspectRatio)
-                + getPaddingLeft()
-                + getPaddingRight();
+                + getPaddingStart()
+                + getPaddingEnd();
             break;
 
           case MEASUREMENT_WIDTH:
-            height = (int) ((width - getPaddingLeft() - getPaddingRight()) * aspectRatio)
+            height = (int) ((width - getPaddingStart() - getPaddingEnd()) * aspectRatio)
                 + getPaddingTop()
                 + getPaddingBottom();
             break;

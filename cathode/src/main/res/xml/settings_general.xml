@@ -27,6 +27,15 @@
       android:title="@string/preference_startpage"
       app:iconSpaceReserved="false"/>
 
+  <ListPreference
+      android:defaultValue="@string/settings_darkmode_default"
+      android:dialogTitle="@string/preference_darkmode"
+      android:entries="@array/setting_darkmode"
+      android:entryValues="@array/setting_darkmode_values"
+      android:key="darkMode"
+      android:title="@string/preference_darkmode"
+      app:iconSpaceReserved="false"/>
+
   <PreferenceCategory
       android:title="@string/preference_data"
       app:iconSpaceReserved="false"/>

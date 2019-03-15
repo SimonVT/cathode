@@ -20,6 +20,6 @@
     tools:ignore="NewApi">
 
   <target
-      android:animation="@animator/checkin_to_cancel"
-      android:name="icon"/>
+      android:name="icon"
+      android:animation="@animator/checkin_to_cancel"/>
 </animated-vector>

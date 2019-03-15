@@ -14,33 +14,32 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    app:cardCornerRadius="@dimen/detailsCardRadius">
+    android:layout_marginTop="8dp">
 
   <LinearLayout
-      android:orientation="horizontal"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:background="?attr/selectableItemBackground"
       android:baselineAligned="false"
-      android:paddingRight="16dp">
+      android:orientation="horizontal"
+      android:paddingEnd="16dp">
 
     <LinearLayout
         android:id="@+id/infoPane"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:background="?attr/selectableItemBackground"
         android:gravity="center_horizontal"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp">
+        android:orientation="vertical"
+        android:paddingBottom="8dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp">
 
       <net.simonvt.cathode.common.widget.RemoteImageView
           android:id="@+id/avatar"
@@ -53,12 +52,11 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="4dp"
-          android:gravity="center_vertical"
-          android:textColor="?attr/colorPrimary"
-          android:textAllCaps="true"
-          android:textAppearance="?android:attr/textAppearanceSmall"
-          android:textSize="14sp"
           android:drawablePadding="4dp"
+          android:gravity="center_vertical"
+          android:textAllCaps="true"
+          android:textAppearance="?attr/textAppearanceCaption"
+          android:textSize="14sp"
           tools:drawableLeft="@drawable/ic_thumb_up"
           tools:drawableTint="@color/commentLikedTint"
           tools:text="5"/>
@@ -69,10 +67,9 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="4dp"
           android:text="@string/comment_spoiler"
-          android:textColor="@android:color/holo_red_dark"
           android:textAllCaps="true"
-          android:textAppearance="?android:attr/textAppearanceSmall"
-          android:textSize="10sp"/>
+          android:textAppearance="?attr/textAppearanceCaption"
+          android:textColor="@android:color/holo_red_dark"/>
     </LinearLayout>
 
     <LinearLayout
@@ -80,21 +77,21 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp">
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp">
 
       <TextView
           android:id="@+id/username"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:textColor="?android:attr/textColorPrimary"
+          android:textAppearance="?attr/textAppearanceSubtitle2"
           tools:text="Username (10)"/>
 
       <TextView
           android:id="@+id/date"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:textColor="?android:attr/textColorSecondary"
+          android:textAppearance="?attr/textAppearanceCaption"
           tools:text="19/10-2015"/>
 
       <FrameLayout
@@ -106,7 +103,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:textColor="?android:attr/textColorPrimary"
+            android:textAppearance="?attr/textAppearanceBody2"
             tools:text="A comment"/>
 
         <TextView
@@ -115,8 +112,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="@string/comment_reveal"/>
+            android:text="@string/comment_reveal"
+            android:textAppearance="?attr/textAppearanceBody2"/>
       </FrameLayout>
     </LinearLayout>
   </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

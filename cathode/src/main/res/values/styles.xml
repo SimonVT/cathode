@@ -15,27 +15,36 @@
   -->
 <resources>
 
-  <style name="Widget" parent="android:Widget.Holo"/>
+  <style name="Widget" parent="android:Widget.Material"/>
 
   <style name="Crouton">
     <item name="android:gravity">center</item>
-    <item name="android:paddingLeft">16dp</item>
+    <item name="android:paddingStart">16dp</item>
     <item name="android:paddingTop">8dp</item>
-    <item name="android:paddingRight">16dp</item>
+    <item name="android:paddingEnd">16dp</item>
     <item name="android:paddingBottom">8dp</item>
+    <item name="android:textAppearance">?attr/textAppearanceCaption</item>
     <item name="android:textColor">?android:attr/textColorPrimaryInverseNoDisable</item>
   </style>
 
+  <style name="ListRowTitle">
+    <item name="android:textAppearance">?attr/textAppearanceSubtitle1</item>
+    <item name="android:singleLine">true</item>
+  </style>
+
+  <style name="ListRowCaption">
+    <item name="android:textAppearance">?attr/textAppearanceCaption</item>
+    <item name="android:fontFamily">sans-light</item>
+    <item name="android:ellipsize">end</item>
+    <item name="android:maxLines">3</item>
+  </style>
+
   <style name="Widget.InfoTitle">
-    <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-    <!--item name="android:textStyle">italic</item>
-    <item name="android:fontFamily">sans-serif-light</item-->
-    <item name="android:layout_marginTop">4dp</item>
-    <item name="android:paddingTop">8dp</item>
-    <item name="android:paddingBottom">8dp</item>
-    <item name="android:paddingLeft">@dimen/detailContentPadding</item>
-    <item name="android:paddingRight">@dimen/detailContentPadding</item>
-    <item name="android:textColor">@color/titleTextColor</item>
+    <item name="android:textAppearance">?attr/textAppearanceSubtitle2</item>
+    <item name="android:layout_marginTop">8dp</item>
+    <item name="android:layout_marginBottom">8dp</item>
+    <item name="android:paddingStart">@dimen/detailContentPadding</item>
+    <item name="android:paddingEnd">@dimen/detailContentPadding</item>
   </style>
 
   <style name="Widget.InfoTitle.ReducedPadding">
@@ -47,43 +56,34 @@
   </style>
 
   <style name="Widget.InfoText">
-    <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-    <item name="android:fontFamily">sans-light</item>
-    <item name="android:textColor">#FF777777</item>
-    <item name="android:lineSpacingExtra">2dp</item>
-    <item name="android:paddingLeft">@dimen/detailContentPadding</item>
-    <item name="android:paddingRight">@dimen/detailContentPadding</item>
+    <item name="android:layout_marginBottom">8dp</item>
+    <item name="android:textAppearance">?attr/textAppearanceBody2</item>
+    <item name="android:paddingStart">@dimen/detailContentPadding</item>
+    <item name="android:paddingEnd">@dimen/detailContentPadding</item>
   </style>
 
   <style name="InfoLink">
     <item name="android:background">?attr/selectableItemBackground</item>
-    <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-    <item name="android:fontFamily">sans-light</item>
-    <item name="android:textColor">#FF777777</item>
-    <item name="android:lineSpacingExtra">2dp</item>
-    <item name="android:paddingLeft">@dimen/detailContentPadding</item>
+    <item name="android:textAppearance">?attr/textAppearanceBody2</item>
+    <item name="android:paddingStart">@dimen/detailContentPadding</item>
     <item name="android:paddingTop">4dp</item>
     <item name="android:paddingBottom">4dp</item>
     <item name="android:gravity">center_vertical</item>
-    <item name="android:paddingRight">@dimen/detailContentPadding</item>
+    <item name="android:paddingEnd">@dimen/detailContentPadding</item>
     <!--item name="android:drawableLeft">@drawable/ic_link_black_24dp</item-->
     <item name="android:drawablePadding">@dimen/detailContentPadding</item>
     <item name="android:maxLines">1</item>
   </style>
 
-  <style name="InfoTrailer" parent="InfoLink">
-    <!--item name="android:drawableLeft">@drawable/ic_play_arrow_black_24dp</item-->
-  </style>
-
   <style name="Widget.CheckMark">
     <item name="android:gravity">center_vertical</item>
     <item name="android:textAllCaps">true</item>
-    <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+    <item name="android:textAppearance">?attr/textAppearanceCaption</item>
     <item name="android:textSize">10sp</item>
     <item name="android:drawablePadding">4dp</item>
   </style>
 
-  <style name="AboutText" parent="android:TextAppearance.DeviceDefault.Small">
+  <style name="AboutText">
     <item name="android:gravity">center</item>
   </style>
 
@@ -91,55 +91,59 @@
     <item name="android:textStyle">bold</item>
     <item name="android:textAllCaps">true</item>
     <item name="android:layout_marginTop">16dp</item>
+    <item name="android:textAppearance">?attr/textAppearanceSubtitle2</item>
   </style>
 
   <style name="AboutText.Clickable">
-    <item name="android:textColor">@android:color/holo_blue_dark</item>
+    <item name="android:textAppearance">?attr/textAppearanceButton</item>
+    <item name="android:textColor">?attr/colorPrimary</item>
     <item name="android:background">?android:attr/selectableItemBackground</item>
   </style>
 
   <style name="Widget.UpcomingHeader">
-    <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-    <!--item name="android:textStyle">italic</item-->
-    <!--item name="android:fontFamily">sans-serif-light</item-->
+    <item name="android:textAppearance">?attr/textAppearanceSubtitle1</item>
     <item name="android:layout_marginBottom">4dp</item>
     <item name="android:paddingTop">8dp</item>
     <item name="android:paddingBottom">8dp</item>
-    <item name="android:textColor">@color/titleTextColor</item>
   </style>
 
   <style name="Card"/>
 
   <style name="Card.Title">
-    <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-    <item name="android:textColor">@color/titleTextColor</item>
+    <item name="android:textAppearance">?attr/textAppearanceSubtitle2</item>
+  </style>
+
+  <style name="Card.HeaderParent">
+    <item name="android:paddingTop">8dp</item>
+    <item name="android:paddingBottom">8dp</item>
+    <item name="android:paddingStart">@dimen/detailContentPadding</item>
+    <item name="android:paddingEnd">@dimen/detailContentPadding</item>
+    <item name="android:background">?attr/selectableItemBackground</item>
+  </style>
+
+  <style name="Card.More">
+    <item name="android:textAppearance">?attr/textAppearanceSubtitle2</item>
+    <item name="android:textColor">?android:attr/textColorSecondary</item>
+    <item name="android:textAllCaps">true</item>
   </style>
 
   <style name="Person"/>
 
   <style name="Person.Name">
-    <item name="android:textColor">?android:attr/textColorPrimary</item>
+    <item name="android:textAppearance">?attr/textAppearanceSubtitle1</item>
   </style>
 
   <style name="Person.Job">
-    <item name="android:textColor">?android:attr/textColorSecondary</item>
+    <item name="android:textAppearance">?attr/textAppearanceBody2</item>
   </style>
 
   <style name="Person.Header">
     <item name="android:layout_marginTop">8dp</item>
     <item name="android:background">?attr/selectableItemBackground</item>
-    <item name="android:paddingLeft">8dp</item>
-    <item name="android:paddingRight">16dp</item>
+    <item name="android:paddingStart">8dp</item>
+    <item name="android:paddingEnd">16dp</item>
     <item name="android:paddingTop">8dp</item>
     <item name="android:paddingBottom">8dp</item>
-  </style>
-
-  <style name="TopBarDivider">
-    <item name="android:layout_gravity">top</item>
-  </style>
-
-  <style name="TopBarContent">
-    <item name="android:layout_marginTop">2dp</item>
   </style>
 
   <style name="RemoteImageViewStyle">
@@ -148,18 +152,17 @@
 
   <style name="StatsText">
     <item name="android:layout_gravity">center_horizontal</item>
-    <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+    <item name="android:textAppearance">?attr/textAppearanceCaption</item>
   </style>
 
   <style name="StatsValue">
     <item name="android:layout_gravity">center_horizontal</item>
     <item name="android:gravity">center</item>
-    <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
-    <item name="android:textColor">?attr/colorPrimary</item>
+    <item name="android:textAppearance">?attr/textAppearanceBody1</item>
   </style>
 
   <style name="StatsDivider">
-    <item name="android:background">@color/darker_gray</item>
+    <item name="android:background">@color/divider</item>
     <item name="android:layout_width">match_parent</item>
     <item name="android:layout_height">2dp</item>
     <item name="android:layout_marginTop">8dp</item>
@@ -167,19 +170,18 @@
   </style>
 
   <style name="SearchRecentTitle">
-    <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-    <item name="android:textColor">?android:attr/textColorSecondary</item>
-    <item name="android:layout_marginLeft">8dp</item>
+    <item name="android:textAppearance">?attr/textAppearanceSubtitle2</item>
+    <item name="android:layout_marginStart">8dp</item>
     <item name="android:layout_marginTop">4dp</item>
-    <item name="android:layout_marginRight">8dp</item>
+    <item name="android:layout_marginEnd">8dp</item>
     <item name="android:layout_marginBottom">4dp</item>
   </style>
 
   <style name="SearchRecentQuery">
-    <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
-    <item name="android:paddingLeft">16dp</item>
+    <item name="android:textAppearance">?attr/textAppearanceSubtitle1</item>
+    <item name="android:paddingStart">16dp</item>
     <item name="android:paddingTop">8dp</item>
-    <item name="android:paddingRight">8dp</item>
+    <item name="android:paddingEnd">8dp</item>
     <item name="android:paddingBottom">8dp</item>
     <item name="android:drawablePadding">16dp</item>
     <item name="android:gravity">center_vertical</item>
@@ -189,11 +191,12 @@
 
   <style name="SearchErrorView">
     <item name="android:background">@android:color/holo_red_dark</item>
+    <item name="android:textAppearance">?attr/textAppearanceBody2</item>
     <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     <item name="android:gravity">center</item>
-    <item name="android:paddingLeft">16dp</item>
+    <item name="android:paddingStart">16dp</item>
     <item name="android:paddingTop">4dp</item>
-    <item name="android:paddingRight">16dp</item>
+    <item name="android:paddingEnd">16dp</item>
     <item name="android:paddingBottom">4dp</item>
   </style>
 

@@ -31,13 +31,13 @@
       style="@style/Widget.InfoTitle"/>
 
   <include
+      layout="@layout/show_info_episode"
       android:id="@+id/toWatch"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginBottom="8dp"
       android:visibility="gone"
-      tools:visibility="visible"
-      layout="@layout/show_info_episode"/>
+      tools:visibility="visible"/>
 
   <TextView
       android:id="@+id/collectTitle"
@@ -47,10 +47,10 @@
       style="@style/Widget.InfoTitle"/>
 
   <include
+      layout="@layout/show_info_episode"
       android:id="@+id/toCollect"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:visibility="gone"
-      tools:visibility="visible"
-      layout="@layout/show_info_episode"/>
+      tools:visibility="visible"/>
 </LinearLayout>

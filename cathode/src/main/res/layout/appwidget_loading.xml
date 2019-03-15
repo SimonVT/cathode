@@ -20,5 +20,6 @@
     android:background="@android:drawable/screen_background_dark_transparent"
     android:gravity="center"
     android:padding="16dp"
-    android:textColor="@android:color/white"
-    android:text="@string/loading"/>
+    android:text="@string/loading"
+    android:textAppearance="?attr/textAppearanceBody1"
+    android:textColor="@android:color/white"/>

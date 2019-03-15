@@ -24,15 +24,15 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:gravity="center"
-      android:paddingLeft="16dp"
-      android:paddingRight="16dp"/>
+      android:paddingEnd="16dp"
+      android:paddingStart="16dp"/>
 
   <ListView
       android:id="@android:id/list"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:clipToPadding="false"
-      android:scrollbarStyle="outsideOverlay"
+      android:divider="@null"
       android:dividerHeight="0dp"
-      android:divider="@null"/>
+      android:scrollbarStyle="outsideOverlay"/>
 </FrameLayout>

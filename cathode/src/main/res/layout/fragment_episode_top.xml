@@ -15,36 +15,34 @@
   ~ limitations under the License.
   -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="60dp"
-    android:background="@android:color/white">
+    android:background="@color/contentTopBackground"
+    android:minHeight="48dp">
 
   <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:orientation="horizontal"
-      style="@style/TopBarContent">
+      android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/detailContentPadding"
-        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="@dimen/detailContentPadding"
+        android:layout_weight="1"
         android:orientation="vertical">
 
       <TextView
           android:id="@+id/title"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_marginTop="4dp"
           android:layout_marginBottom="4dp"
-          android:textAppearance="?android:attr/textAppearanceMedium"
+          android:layout_marginTop="4dp"
           android:fontFamily="sans-light"
+          android:textAppearance="?attr/textAppearanceCaption"
           tools:text="This is an episode name that is very long indeed. Maybe even so long it spans three lines."/>
 
       <LinearLayout
@@ -56,15 +54,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
-            android:layout_marginRight="4dp"
-            android:textColor="?android:attr/textColorSecondary"
+            android:textAppearance="?attr/textAppearanceCaption"
             tools:text="10x25"/>
 
         <net.simonvt.cathode.common.widget.TimeStamp
             android:id="@+id/firstAired"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="?android:attr/textColorPrimary"
+            android:textAppearance="?attr/textAppearanceCaption"
             tools:text="2010"/>
       </LinearLayout>
     </LinearLayout>
@@ -72,15 +69,18 @@
     <net.simonvt.cathode.common.widget.CircularProgressIndicator
         android:id="@+id/rating"
         android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:layout_gravity="center_vertical|right"
-        android:background="?android:attr/selectableItemBackground"
-        app:circleBackgroundColor="@color/circleProgressBackgroundColor"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginBottom="2dp"
+        android:layout_marginEnd="@dimen/detailContentPadding"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="2dp"
+        android:background="?android:attr/selectableItemBackground"/>
   </LinearLayout>
 
   <View
       android:layout_width="match_parent"
-      android:layout_height="2dp"
-      android:background="@color/colorPrimary"
-      style="@style/TopBarDivider"/>
+      android:layout_height="1dp"
+      android:layout_gravity="bottom"
+      android:background="@color/divider"/>
 </FrameLayout>

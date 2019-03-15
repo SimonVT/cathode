@@ -49,7 +49,7 @@ public final class LinearCommentsAdapter {
         }
 
         View post =
-            LayoutInflater.from(context).inflate(R.layout.comment_post_short, parent, false);
+            LayoutInflater.from(context).inflate(R.layout.section_comments_item, parent, false);
         RemoteImageView avatarView = post.findViewById(R.id.avatar);
         avatarView.addTransformation(new CircleTransformation());
         TextView usernameView = post.findViewById(R.id.username);
@@ -77,7 +77,7 @@ public final class LinearCommentsAdapter {
         }
 
         View post =
-            LayoutInflater.from(context).inflate(R.layout.comment_post_short, parent, false);
+            LayoutInflater.from(context).inflate(R.layout.section_comments_item, parent, false);
         RemoteImageView avatarView = post.findViewById(R.id.avatar);
         avatarView.addTransformation(new CircleTransformation());
         TextView usernameView = post.findViewById(R.id.username);
@@ -99,7 +99,7 @@ public final class LinearCommentsAdapter {
 
     final int count = parent.getChildCount();
     if (count == 0) {
-      LayoutInflater.from(context).inflate(R.layout.comments_none, parent, true);
+      LayoutInflater.from(context).inflate(R.layout.section_comments_none, parent, true);
     }
   }
 }

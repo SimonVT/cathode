@@ -26,17 +26,18 @@
       android:id="@+id/rating"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:numStars="5"
-      android:stepSize="0.5"
       android:isIndicator="false"
-      android:progressDrawable="@drawable/ratingbar"
+      android:maxHeight="36dp"
       android:minHeight="36dp"
-      android:maxHeight="36dp"/>
+      android:numStars="5"
+      android:progressDrawable="@drawable/ratingbar"
+      android:stepSize="0.5"/>
 
   <TextView
       android:id="@+id/ratingText"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:paddingBottom="8dp"
+      android:textAppearance="?attr/textAppearanceCaption"
       tools:text="Weak sauce :("/>
 </LinearLayout>

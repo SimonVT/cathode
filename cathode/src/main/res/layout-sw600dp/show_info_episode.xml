@@ -20,51 +20,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    android:background="@android:color/white">
+    android:layout_marginBottom="4dp">
 
   <net.simonvt.cathode.common.widget.RemoteImageView
       android:id="@+id/episodeScreenshot"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      app:dominantMeasurement="width"
-      app:aspectRatio="0.5625"/>
+      app:aspectRatio="0.5625"
+      app:dominantMeasurement="width"/>
 
   <View
+      android:id="@+id/divider"
       android:layout_width="match_parent"
-      android:layout_height="2dp"
-      android:background="@color/colorPrimary"/>
+      android:layout_height="1dp"
+      android:layout_below="@id/episodeScreenshot"
+      android:background="@color/divider"/>
 
   <TextView
       android:id="@+id/episodeTitle"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginLeft="8dp"
-      android:layout_below="@id/episodeScreenshot"
-      android:fontFamily="sans-serif-light"
-      android:textColor="?android:attr/textColorPrimary"
-      android:textSize="16sp"
+      android:layout_below="@id/divider"
+      android:layout_marginStart="8dp"
+      android:layout_marginTop="4dp"
+      android:singleLine="true"
+      android:textAppearance="?attr/textAppearanceSubtitle2"
       tools:text="Some Random Episode"/>
 
   <TextView
       android:id="@+id/episodeAirTime"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginLeft="8dp"
       android:layout_below="@id/episodeTitle"
-      android:textColor="?android:attr/textColorSecondary"
-      android:textSize="14sp"
+      android:layout_marginStart="8dp"
+      android:fontFamily="sans-light"
+      android:singleLine="true"
+      android:textAppearance="?attr/textAppearanceCaption"
       tools:text="OCT 20, 2010 (MON)"/>
 
   <TextView
       android:id="@+id/episodeEpisode"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginRight="8dp"
+      android:layout_alignParentEnd="true"
       android:layout_below="@id/episodeTitle"
-      android:layout_alignParentRight="true"
-      android:textSize="14sp"
-      android:textColor="?android:attr/textColorHint"
+      android:layout_marginEnd="8dp"
+      android:textAppearance="?attr/textAppearanceCaption"
       tools:text="S10E20"/>
 </RelativeLayout>
 

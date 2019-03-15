@@ -15,11 +15,12 @@
   ~ limitations under the License.
   -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="16dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginRight="16dp"
     android:layout_marginBottom="16dp"
-    android:text="@string/comments_none"/>
+    android:layout_marginEnd="@dimen/detailContentPadding"
+    android:layout_marginStart="@dimen/detailContentPadding"
+    android:layout_marginTop="8dp"
+    android:orientation="horizontal"
+    android:text="@string/comments_none"
+    android:textAppearance="?attr/textAppearanceBody2"/>

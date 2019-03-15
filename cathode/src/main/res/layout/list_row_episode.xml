@@ -14,14 +14,13 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="@dimen/cardCornerRadius">
+    android:foreground="?android:attr/selectableItemBackground">
 
   <net.simonvt.cathode.widget.PhoneEpisodeView
       android:layout_width="match_parent"
@@ -33,20 +32,20 @@
         android:id="@+id/screen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        app:dominantMeasurement="height"
-        app:aspectRatio="0.68"/>
+        android:layout_marginEnd="8dp"
+        app:aspectRatio="0.68"
+        app:dominantMeasurement="height"/>
 
     <TextView
         android:id="@+id/number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:paddingRight="16dp"
-        android:paddingLeft="16dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
         android:textSize="30sp"
-        tools:textColor="@color/episode_number_watched"
-        tools:text="1"/>
+        tools:text="1"
+        tools:textColor="@color/selector_watched"/>
 
     <TextView
         android:id="@+id/title"
@@ -54,14 +53,14 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="16sp"
-        tools:text="This is a very long episode title"/>
+        tools:text="This is a very long episode title"
+        style="@style/ListRowTitle"/>
 
     <net.simonvt.cathode.common.widget.TimeStamp
         android:id="@+id/firstAired"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Sep 15, 2012"/>
+        tools:text="Sep 15, 2012"
+        style="@style/ListRowCaption"/>
   </net.simonvt.cathode.widget.PhoneEpisodeView>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

@@ -15,6 +15,7 @@
   ~ limitations under the License.
   -->
 <resources>
+  <!-- AppBar -->
   <dimen name="appBarContentOffset">300dp</dimen>
   <dimen name="appBarContentMargin">64dp</dimen>
   <dimen name="appBarTitleMarginStart">80dp</dimen>

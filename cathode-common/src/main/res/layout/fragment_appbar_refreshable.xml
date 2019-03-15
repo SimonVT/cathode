@@ -29,11 +29,11 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:fitsSystemWindows="@bool/drawsBehindStatusBar"
+        android:orientation="vertical"
         android:paddingBottom="16dp"
-        app:expandedTitleMarginStart="@dimen/appBarTitleMarginStart"
-        app:expandedTitleMarginEnd="@dimen/appBarTitleMarginEnd">
+        app:expandedTitleMarginEnd="@dimen/appBarTitleMarginEnd"
+        app:expandedTitleMarginStart="@dimen/appBarTitleMarginStart">
 
       <include layout="@layout/appbar_backdrop"/>
 
@@ -42,6 +42,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_below="@id/backdrop"
+          android:background="@color/contentBackground"
           android:orientation="vertical"/>
 
       <include layout="@layout/appbar_toolbar"/>

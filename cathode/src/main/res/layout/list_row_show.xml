@@ -14,14 +14,13 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="@dimen/cardCornerRadius">
+    android:foreground="?android:attr/selectableItemBackground">
 
   <net.simonvt.cathode.widget.PhoneShowView
       android:id="@id/front"
@@ -32,17 +31,17 @@
         android:id="@+id/poster"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        app:dominantMeasurement="height"
-        app:aspectRatio="0.68"/>
+        app:aspectRatio="0.68"
+        app:dominantMeasurement="height"/>
 
     <LinearLayout
         android:id="@+id/infoParent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="16dp"
-        android:orientation="vertical"
-        android:gravity="center_vertical">
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
 
       <LinearLayout
           android:layout_width="fill_parent"
@@ -54,9 +53,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:text="Title"/>
+            tools:text="Title"
+            style="@style/ListRowTitle"/>
 
         <TextView
             android:id="@+id/watched"
@@ -81,16 +79,17 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:singleLine="true"
-            tools:text="Next episode: 1x07 Awesome new episode"/>
+            tools:text="Next episode: 1x07 Awesome new episode"
+            style="@style/ListRowCaption"/>
 
         <net.simonvt.cathode.common.widget.TimeStamp
             android:id="@+id/firstAired"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:singleLine="true"
-            tools:text="May 20."/>
+            tools:text="May 20"
+            style="?attr/textAppearanceCaption"/>
       </LinearLayout>
     </LinearLayout>
 
@@ -99,4 +98,4 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
   </net.simonvt.cathode.widget.PhoneShowView>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

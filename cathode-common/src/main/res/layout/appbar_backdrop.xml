@@ -19,7 +19,7 @@
     android:id="@+id/backdrop"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:dominantMeasurement="width"
-    app:aspectRatio="0.5627"
+    app:layout_parallexMultiplier="0.33"
     app:layout_scrollMode="parallex"
-    app:layout_parallexMultiplier="0.33"/>
+    app:aspectRatio="0.5627"
+    app:dominantMeasurement="width"/>

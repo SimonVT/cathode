@@ -42,8 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card_more"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?android:attr/textColorSecondary"/>
+        style="@style/Card.More"/>
   </LinearLayout>
 
   <LinearLayout
@@ -74,8 +73,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card_more"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?android:attr/textColorSecondary"/>
+        style="@style/Card.More"/>
   </LinearLayout>
 
   <LinearLayout
@@ -106,8 +104,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card_more"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?android:attr/textColorSecondary"/>
+        style="@style/Card.More"/>
   </LinearLayout>
 
   <LinearLayout
@@ -138,8 +135,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card_more"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?android:attr/textColorSecondary"/>
+        style="@style/Card.More"/>
   </LinearLayout>
 
   <LinearLayout
@@ -170,8 +166,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card_more"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?android:attr/textColorSecondary"/>
+        style="@style/Card.More"/>
   </LinearLayout>
 
   <LinearLayout
@@ -202,8 +197,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card_more"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?android:attr/textColorSecondary"/>
+        style="@style/Card.More"/>
   </LinearLayout>
 
   <LinearLayout
@@ -234,8 +228,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card_more"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?android:attr/textColorSecondary"/>
+        style="@style/Card.More"/>
   </LinearLayout>
 
   <LinearLayout
@@ -266,8 +259,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card_more"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?android:attr/textColorSecondary"/>
+        style="@style/Card.More"/>
   </LinearLayout>
 
   <LinearLayout
@@ -298,8 +290,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card_more"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?android:attr/textColorSecondary"/>
+        style="@style/Card.More"/>
   </LinearLayout>
 
   <LinearLayout

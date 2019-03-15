@@ -22,7 +22,7 @@
       class="net.simonvt.cathode.ui.navigation.NavigationFragment"
       android:layout_width="320dp"
       android:layout_height="match_parent"
-      android:layout_gravity="left"
+      android:layout_gravity="start"
       android:tag="net.simonvt.cathode.ui.navigation.NavigationFragment"
       tools:layout="@layout/fragment_navigation"/>
 </merge>

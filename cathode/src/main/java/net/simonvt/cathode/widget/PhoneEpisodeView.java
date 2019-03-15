@@ -66,9 +66,9 @@ public class PhoneEpisodeView extends ViewGroup {
     final int width = r - l;
     final int height = b - t;
 
-    final int paddingLeft = getPaddingLeft();
+    final int paddingStart = getPaddingStart();
     final int paddingTop = getPaddingTop();
-    final int paddingRight = getPaddingRight();
+    final int paddingEnd = getPaddingEnd();
     final int paddingBottom = getPaddingBottom();
 
     LayoutParams posterLp = (LayoutParams) poster.getLayoutParams();
@@ -76,13 +76,13 @@ public class PhoneEpisodeView extends ViewGroup {
     LayoutParams titleLp = (LayoutParams) title.getLayoutParams();
     LayoutParams firstAiredLp = (LayoutParams) firstAired.getLayoutParams();
 
-    final int posterLeft = paddingLeft + posterLp.leftMargin;
+    final int posterLeft = paddingStart + posterLp.leftMargin;
     final int posterRight = posterLeft + poster.getMeasuredWidth();
     final int posterTop = paddingTop + posterLp.topMargin;
     final int posterBottom = posterTop + poster.getMeasuredHeight();
     poster.layout(posterLeft, posterTop, posterRight, posterBottom);
 
-    final int numberRight = width - paddingRight - numberLp.rightMargin;
+    final int numberRight = width - paddingEnd - numberLp.rightMargin;
     final int numberLeft = numberRight - number.getMeasuredWidth();
     final int numberTop = paddingTop + numberLp.topMargin;
     final int numberBottom = numberTop + number.getMeasuredHeight();
@@ -153,14 +153,14 @@ public class PhoneEpisodeView extends ViewGroup {
 
     // Measure title and timestamp
     final int leftoverWidth = width
-        - getPaddingLeft()
+        - getPaddingStart()
         - posterLp.leftMargin
         - posterWidth
         - posterLp.rightMargin
         - numberLp.leftMargin
         - numberWidth
         - numberLp.rightMargin
-        - getPaddingRight();
+        - getPaddingEnd();
 
     final int titleMaxWidth = leftoverWidth - titleLp.leftMargin - titleLp.rightMargin;
     final int titleWidthMeasureSpec =

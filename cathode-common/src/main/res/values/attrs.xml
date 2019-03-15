@@ -17,34 +17,34 @@
 <resources>
 
   <declare-styleable name="AspectRatioView">
-    <attr name="dominantMeasurement" format="enum">
+    <attr format="enum" name="dominantMeasurement">
       <enum name="height" value="0"/>
       <enum name="width" value="1"/>
     </attr>
 
-    <attr name="aspectRatio" format="float"/>
+    <attr format="float" name="aspectRatio"/>
   </declare-styleable>
 
   <declare-styleable name="MaxSizeLinearLayout">
-    <attr name="maxWidth" format="dimension"/>
-    <attr name="maxHeight" format="dimension"/>
+    <attr format="dimension" name="maxWidth"/>
+    <attr format="dimension" name="maxHeight"/>
   </declare-styleable>
 
-  <attr name="circularProgressIndicatorStyle" format="reference"/>
+  <attr format="reference" name="circularProgressIndicatorStyle"/>
 
   <declare-styleable name="CircularProgressIndicator">
-    <attr name="textMargin" format="dimension"/>
-    <attr name="textColor" format="color"/>
-    <attr name="textSize" format="dimension"/>
-    <attr name="textBackgroundColor" format="color"/>
-    <attr name="circleStrokeWidth" format="dimension"/>
-    <attr name="maxValue" format="float"/>
-    <attr name="circleColor" format="color"/>
-    <attr name="circleBackgroundColor" format="color"/>
+    <attr format="dimension" name="textMargin"/>
+    <attr format="color" name="textColor"/>
+    <attr format="dimension" name="textSize"/>
+    <attr format="color" name="textBackgroundColor"/>
+    <attr format="dimension" name="circleStrokeWidth"/>
+    <attr format="float" name="maxValue"/>
+    <attr format="color" name="circleColor"/>
+    <attr format="color" name="circleBackgroundColor"/>
   </declare-styleable>
 
   <declare-styleable name="InsetsFrameLayout">
-    <attr name="insetsColor" format="color"/>
+    <attr format="color" name="insetsColor"/>
   </declare-styleable>
 
   <declare-styleable name="AppBarRelativeLayout">
@@ -60,7 +60,7 @@
     <attr name="expandedTitleTextAppearance"/>
     <attr name="collapsedTitleTextAppearance"/>
 
-    <attr name="contentTopViewId" format="reference"/>
+    <attr format="reference" name="contentTopViewId"/>
   </declare-styleable>
 
   <declare-styleable name="AppBar_LayoutParams">
@@ -70,11 +70,11 @@
       <enum name="parallex" value="2"/>
     </attr>
 
-    <attr name="layout_parallexMultiplier" format="float"/>
+    <attr format="float" name="layout_parallexMultiplier"/>
   </declare-styleable>
 
-  <attr name="remoteImageViewStyle" format="reference"/>
+  <attr format="reference" name="remoteImageViewStyle"/>
   <declare-styleable name="RemoteImageView">
-    <attr name="placeholder" format="reference"/>
+    <attr format="reference" name="placeholder"/>
   </declare-styleable>
 </resources>

@@ -14,14 +14,13 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="@dimen/cardCornerRadius">
+    android:foreground="?android:attr/selectableItemBackground">
 
   <LinearLayout
       android:layout_width="match_parent"
@@ -32,32 +31,31 @@
         android:id="@+id/screen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        app:dominantMeasurement="height"
-        app:aspectRatio="0.68"/>
+        android:layout_marginEnd="8dp"
+        app:aspectRatio="0.68"
+        app:dominantMeasurement="height"/>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="vertical">
 
       <TextView
           android:id="@+id/title"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginBottom="4dp"
-          android:singleLine="true"
-          android:textAppearance="?android:attr/textAppearanceMedium"
-          android:textSize="16sp"
-          tools:text="This is a very long episode title"/>
+          tools:text="This is a very long episode title"
+          style="@style/ListRowTitle"/>
 
       <TextView
           android:id="@+id/showTitle"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          tools:text="Some show"/>
+          tools:text="Some show"
+          style="@style/ListRowCaption"/>
     </LinearLayout>
   </LinearLayout>
 
@@ -65,5 +63,5 @@
       android:id="@+id/overflow"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_gravity="right"/>
-</androidx.cardview.widget.CardView>
+      android:layout_gravity="end"/>
+</com.google.android.material.card.MaterialCardView>

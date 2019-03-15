@@ -22,17 +22,17 @@
   <LinearLayout
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:gravity="center_horizontal"
       android:minWidth="260dp"
       android:orientation="vertical"
-      android:gravity="center_horizontal"
       android:padding="16dp">
 
     <ImageView
         android:id="@+id/logo"
         android:layout_width="fill_parent"
         android:layout_height="128dp"
-        android:src="@drawable/about_icon"
         android:scaleType="fitCenter"
+        android:src="@drawable/about_icon"
         tools:ignore="ContentDescription"/>
 
     <TextView

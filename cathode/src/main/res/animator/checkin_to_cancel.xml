@@ -17,8 +17,8 @@
 <objectAnimator
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:duration="300"
+    android:interpolator="@android:anim/linear_interpolator"
     android:propertyName="pathData"
     android:valueFrom="@string/drawable_action_checkin"
     android:valueTo="@string/drawable_action_cancel"
-    android:valueType="pathType"
-    android:interpolator="@android:anim/linear_interpolator"/>
+    android:valueType="pathType"/>

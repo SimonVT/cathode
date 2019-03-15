@@ -58,7 +58,7 @@ public class PhoneShowView extends ViewGroup {
   }
 
   @Override protected void onLayout(boolean changed, int l, int t, int r, int b) {
-    final int paddingLeft = getPaddingLeft();
+    final int paddingStart = getPaddingStart();
     final int paddingTop = getPaddingTop();
 
     final int width = r - l;
@@ -67,7 +67,7 @@ public class PhoneShowView extends ViewGroup {
     final int posterWidth = poster.getMeasuredWidth();
     final int posterHeight = poster.getMeasuredHeight();
 
-    final int posterLeft = paddingLeft + posterLp.leftMargin;
+    final int posterLeft = paddingStart + posterLp.leftMargin;
     final int posterTop = paddingTop + posterLp.topMargin;
     poster.layout(posterLeft, posterTop, posterLeft + posterWidth, posterTop + posterHeight);
 
@@ -104,12 +104,12 @@ public class PhoneShowView extends ViewGroup {
 
     final int viewWidth = MeasureSpec.getSize(widthMeasureSpec);
 
-    final int paddingLeft = getPaddingLeft();
+    final int paddingStart = getPaddingStart();
     final int paddingTop = getPaddingTop();
-    final int paddingRight = getPaddingRight();
+    final int paddingEnd = getPaddingEnd();
     final int paddingBottom = getPaddingBottom();
 
-    int leftoverWidth = viewWidth - paddingLeft - paddingRight;
+    int leftoverWidth = viewWidth - paddingStart - paddingEnd;
 
     final int viewHeight = Math.max(infoParentHeight + paddingTop + paddingBottom, minHeight);
 

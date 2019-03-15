@@ -14,9 +14,9 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:layout_width="400dp">
@@ -30,8 +30,8 @@
         android:id="@+id/headshot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:dominantMeasurement="width"
-        app:aspectRatio="1.4705"/>
+        app:aspectRatio="1.4705"
+        app:dominantMeasurement="width"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -42,19 +42,18 @@
           android:id="@+id/person_name"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:paddingLeft="8dp"
-          android:paddingRight="16dp"
-          android:paddingTop="4dp"
           android:paddingBottom="4dp"
-          android:textAppearance="?android:attr/textAppearanceMedium"
-          android:textColor="?android:attr/textColorSecondary"
-          tools:text="A. Person"/>
+          android:paddingEnd="16dp"
+          android:paddingStart="8dp"
+          android:paddingTop="4dp"
+          tools:text="A. Person"
+          style="@style/ListRowTitle"/>
 
       <net.simonvt.cathode.common.widget.OverflowView
           android:id="@+id/overflow"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_gravity="right"/>
+          android:layout_gravity="end"/>
     </FrameLayout>
   </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

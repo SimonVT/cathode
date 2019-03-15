@@ -16,8 +16,10 @@
   ~ limitations under the License.
   -->
 <resources>
+  <!-- SearchView -->
   <dimen name="searchViewMaxWidth">320dp</dimen>
 
+  <!-- RecyclerView -->
   <dimen name="recyclerViewVerticalSpacing">8dp</dimen>
   <dimen name="recyclerViewHorizontalSpacing">8dp</dimen>
 </resources>

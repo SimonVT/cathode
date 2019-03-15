@@ -15,11 +15,11 @@
   -->
 
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="32dp"
     android:height="32dp"
-    android:viewportWidth="24.0"
+    android:tint="@color/primaryColor"
     android:viewportHeight="24.0"
-    android:tint="@color/action_item_light">
+    android:viewportWidth="24.0"
+    android:width="32dp">
 
   <!--path
       android:fillColor="#FF000000"

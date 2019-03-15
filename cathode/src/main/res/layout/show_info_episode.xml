@@ -21,55 +21,51 @@
     android:id="@+id/episodeContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
     android:orientation="horizontal"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-    android:background="?android:attr/selectableItemBackground">
+    android:paddingEnd="8dp"
+    android:paddingStart="8dp">
 
   <net.simonvt.cathode.common.widget.RemoteImageView
       android:id="@+id/episodeScreenshot"
       android:layout_width="wrap_content"
       android:layout_height="64dp"
-      app:dominantMeasurement="height"
       app:aspectRatio="0.68"
+      app:dominantMeasurement="height"
       app:placeholder="@drawable/placeholder"/>
 
   <RelativeLayout
       android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:layout_weight="1"
       android:layout_gravity="center_vertical"
+      android:layout_weight="1"
       android:orientation="vertical">
 
     <TextView
         android:id="@+id/episodeTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
         android:layout_marginBottom="4dp"
-        android:fontFamily="sans-serif-light"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="16sp"
-        tools:text="Some Random Episode"/>
+        android:layout_marginStart="8dp"
+        tools:text="Some Random Episode"
+        style="@style/ListRowTitle"/>
 
     <TextView
         android:id="@+id/episodeAirTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
         android:layout_below="@id/episodeTitle"
-        android:textColor="?android:attr/textColorSecondary"
-        android:textSize="14sp"
-        tools:text="OCT 20, 2010 (MON)"/>
+        android:layout_marginStart="8dp"
+        tools:text="OCT 20, 2010 (MON)"
+        style="@style/ListRowCaption"/>
 
     <TextView
         android:id="@+id/episodeEpisode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/episodeTitle"
         android:layout_alignParentRight="true"
-        android:textSize="14sp"
-        android:textColor="?android:attr/textColorHint"
+        android:layout_below="@id/episodeTitle"
+        android:textAppearance="?attr/textAppearanceCaption"
         tools:text="S10E20"/>
 
   </RelativeLayout>

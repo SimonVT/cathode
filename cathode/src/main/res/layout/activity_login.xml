@@ -27,8 +27,8 @@
   <FrameLayout
       android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:layout_weight="1"
       android:layout_gravity="center"
+      android:layout_weight="1"
       android:gravity="center"
       tools:context=".settings.login.LoginActivity"
       tools:ignore="MergeRootFrame">
@@ -38,36 +38,38 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="vertical"
         android:gravity="center"
-        app:maxWidth="460dp"
-        android:padding="16dp">
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:maxWidth="460dp">
 
       <TextView
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginBottom="16dp"
           android:gravity="center_horizontal"
-          android:text="@string/login_description"/>
+          android:text="@string/login_description"
+          android:textAppearance="?attr/textAppearanceSubtitle2"/>
 
       <Button
           android:id="@+id/login"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:text="@string/login_sign_in"/>
+          android:text="@string/login_sign_in"
+          android:textAppearance="?attr/textAppearanceButton"/>
 
       <TextView
           android:id="@+id/login_in_app"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="16dp"
-          android:paddingTop="16dp"
-          android:paddingBottom="16dp"
-          android:paddingLeft="32dp"
-          android:paddingRight="32dp"
           android:background="?selectableItemBackground"
-          android:textAllCaps="true"
-          android:text="@string/login_in_app"/>
+          android:paddingBottom="16dp"
+          android:paddingEnd="32dp"
+          android:paddingStart="32dp"
+          android:paddingTop="16dp"
+          android:text="@string/login_in_app"
+          android:textAppearance="?attr/textAppearanceButton"/>
     </net.simonvt.cathode.common.widget.MaxSizeLinearLayout>
   </FrameLayout>
 </LinearLayout>

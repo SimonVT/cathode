@@ -18,8 +18,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:animateLayoutChanges="true"
+    android:orientation="vertical"
     android:paddingBottom="16dp">
 
   <include layout="@layout/checkmarks"/>
@@ -31,6 +31,14 @@
       android:layout_marginTop="4dp"
       tools:text="A long description of a movie."
       style="@style/Widget.InfoText"/>
+
+  <View
+      android:id="@+id/genresDivider"
+      android:layout_width="match_parent"
+      android:layout_height="1dp"
+      android:background="@color/divider"
+      android:visibility="gone"
+      tools:visibility="visible"/>
 
   <TextView
       android:id="@+id/genresTitle"
@@ -46,24 +54,30 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:visibility="gone"
-      tools:visibility="visible"
       tools:text="Comedy"
+      tools:visibility="visible"
       style="@style/Widget.InfoText"/>
 
   <include
-      layout="@layout/card_cast"
+      layout="@layout/section_cast"
       android:visibility="gone"
       tools:visibility="visible"/>
 
   <include
-      layout="@layout/card_comments"
+      layout="@layout/section_comments"
       android:visibility="gone"
       tools:visibility="visible"/>
 
   <include
-      layout="@layout/card_related"
+      layout="@layout/section_related"
       android:visibility="gone"
       tools:visibility="visible"/>
+
+  <View
+      android:id="@+id/linksDivider"
+      android:layout_width="match_parent"
+      android:layout_height="1dp"
+      android:background="@color/divider"/>
 
   <TextView
       android:id="@+id/externalTitle"
@@ -79,15 +93,15 @@
       android:text="@string/info_trailer"
       android:visibility="gone"
       tools:visibility="visible"
-      style="@style/InfoTrailer"/>
+      style="@style/InfoLink"/>
 
   <TextView
       android:id="@+id/website"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:visibility="gone"
-      tools:visibility="visible"
       tools:text="A website"
+      tools:visibility="visible"
       style="@style/InfoLink"/>
 
   <TextView

@@ -16,49 +16,48 @@
   -->
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="60dp"
-    android:background="@android:color/white">
+    android:background="@color/contentTopBackground"
+    android:minHeight="48dp">
 
   <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_gravity="center_vertical"
-      android:paddingLeft="8dp"
       android:orientation="vertical"
-      style="@style/TopBarContent">
+      android:paddingStart="@dimen/detailContentPadding">
 
     <TextView
         android:id="@+id/info1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?android:attr/textColorPrimary"
+        android:textAppearance="?attr/textAppearanceCaption"
         tools:text="2013, TV-MA"/>
 
     <TextView
         android:id="@+id/info2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?android:attr/textColorPrimary"
+        android:textAppearance="?attr/textAppearanceCaption"
         tools:text="1h 2min"/>
   </LinearLayout>
 
   <net.simonvt.cathode.common.widget.CircularProgressIndicator
       android:id="@+id/rating"
       android:layout_width="wrap_content"
-      android:layout_height="match_parent"
-      android:layout_gravity="center_vertical|right"
-      android:background="?android:attr/selectableItemBackground"
-      app:circleBackgroundColor="@color/circleProgressBackgroundColor"
-      style="@style/TopBarContent"/>
-
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical|end"
+      android:layout_marginBottom="2dp"
+      android:layout_marginEnd="@dimen/detailContentPadding"
+      android:layout_marginStart="2dp"
+      android:layout_marginTop="2dp"
+      android:background="?android:attr/selectableItemBackground"/>
 
   <View
       android:layout_width="match_parent"
-      android:layout_height="2dp"
-      android:background="@color/colorPrimary"
-      style="@style/TopBarDivider"/>
+      android:layout_height="1dp"
+      android:layout_gravity="bottom"
+      android:background="@color/divider"/>
 </FrameLayout>

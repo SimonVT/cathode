@@ -49,30 +49,30 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_gravity="bottom"
-          android:orientation="horizontal"
-          android:background="@android:color/holo_red_dark">
+          android:background="@android:color/holo_red_dark"
+          android:orientation="horizontal">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingLeft="16dp"
-            android:paddingTop="8dp"
-            android:paddingRight="16dp"
             android:paddingBottom="8dp"
-            android:textColor="?android:attr/textColorPrimaryInverseNoDisable"
-            android:text="@string/auth_failed_crouton"/>
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:text="@string/auth_failed_crouton"
+            android:textColor="?android:attr/textColorPrimaryInverseNoDisable"/>
 
         <TextView
             android:id="@+id/authFailedAction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingTop="8dp"
-            android:paddingRight="16dp"
             android:paddingBottom="8dp"
-            android:textColor="?android:attr/textColorPrimaryInverseNoDisable"
-            android:text="@string/auth_failed_crouton_action"/>
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:text="@string/auth_failed_crouton_action"
+            android:textColor="?android:attr/textColorPrimaryInverseNoDisable"/>
       </LinearLayout>
 
       <net.simonvt.cathode.common.widget.Crouton
@@ -94,7 +94,7 @@
       android:layout_marginTop="-8dp"
       android:indeterminate="true"
       android:visibility="gone"
+      tools:ignore="MissingPrefix"
       tools:visibility="visible"
-      style="@android:style/Widget.Holo.ProgressBar.Horizontal"
-      tools:ignore="MissingPrefix"/>
+      style="@android:style/Widget.Holo.ProgressBar.Horizontal"/>
 </net.simonvt.cathode.common.widget.CatchSystemInsets>

@@ -15,10 +15,12 @@
   ~ limitations under the License.
   -->
 <resources>
-  <dimen name="detailContentPaddingBottom">16dp</dimen>
-
-  <dimen name="watchingPosterWidth">72dp</dimen>
-
+  <!-- Dashboard -->
   <dimen name="dashboardItemWidth">196dp</dimen>
 
+  <!-- Watching -->
+  <dimen name="watchingPosterWidth">72dp</dimen>
+
+  <!-- Details -->
+  <dimen name="detailContentPaddingBottom">16dp</dimen>
 </resources>

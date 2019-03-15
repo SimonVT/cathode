@@ -15,10 +15,10 @@
   ~ limitations under the License.
   -->
 <resources>
+  <!-- General -->
+  <dimen name="dialogContentPadding">16dp</dimen>
 
+  <!-- Details -->
   <dimen name="detailContentPadding">16dp</dimen>
-
-  <dimen name="detailsCardMargin">0dp</dimen>
-  <dimen name="detailsCardRadius">0dp</dimen>
-
+  <dimen name="detailsSectionMargin">0dp</dimen>
 </resources>

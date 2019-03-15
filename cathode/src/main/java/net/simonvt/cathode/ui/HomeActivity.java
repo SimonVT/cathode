@@ -163,6 +163,7 @@ public class HomeActivity extends BaseActivity
   private boolean isSyncing = false;
 
   @Override protected void onCreate(Bundle inState) {
+    setTheme(R.style.Theme);
     super.onCreate(inState);
     Timber.d("onCreate");
     AndroidInjection.inject(this);

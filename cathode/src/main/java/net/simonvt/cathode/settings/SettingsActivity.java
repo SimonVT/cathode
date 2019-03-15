@@ -223,12 +223,13 @@ public class SettingsActivity extends BaseActivity {
             }
           });
 
-      findPreference("privacy").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-        @Override public boolean onPreferenceClick(Preference preference) {
-          Intents.openUrl(getActivity(), getString(R.string.privacy_policy_url));
-          return true;
-        }
-      });
+      findPreference("privacy").setOnPreferenceClickListener(
+          new Preference.OnPreferenceClickListener() {
+            @Override public boolean onPreferenceClick(Preference preference) {
+              Intents.openUrl(getActivity(), getString(R.string.privacy_policy_url));
+              return true;
+            }
+          });
     }
 
     @RequiresApi(Build.VERSION_CODES.M) private void requestPermission() {

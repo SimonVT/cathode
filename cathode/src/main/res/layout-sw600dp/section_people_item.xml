@@ -16,46 +16,41 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical"
+    android:layout_weight="1"
     android:background="?attr/selectableItemBackground"
-    android:paddingLeft="16dp"
-    android:paddingTop="8dp"
-    android:paddingRight="16dp"
-    android:paddingBottom="8dp">
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:padding="16dp">
 
   <net.simonvt.cathode.common.widget.RemoteImageView
       android:id="@+id/headshot"
-      android:layout_width="48dp"
-      android:layout_height="48dp"
+      android:layout_width="148dp"
+      android:layout_height="148dp"
+      android:layout_gravity="center_horizontal"
       app:placeholder="@drawable/placeholder_person"/>
 
-  <LinearLayout
-      android:layout_width="0dp"
+  <TextView
+      android:id="@+id/person_name"
+      android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_weight="1"
-      android:orientation="vertical"
-      android:animateLayoutChanges="true"
-      android:gravity="bottom"
-      android:paddingLeft="8dp"
-      android:paddingRight="16dp">
+      android:layout_gravity="center_horizontal"
+      android:layout_marginTop="8dp"
+      android:paddingEnd="8dp"
+      android:paddingStart="8dp"
+      tools:text="A. Person"
+      style="@style/Person.Name"/>
 
-    <TextView
-        android:id="@+id/person_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="A. Person"
-        style="@style/Person.Name"/>
-
-    <TextView
-        android:id="@+id/person_job"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="Some Job"
-        style="@style/Person.Job"/>
-  </LinearLayout>
+  <TextView
+      android:id="@+id/person_job"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:paddingEnd="8dp"
+      android:paddingStart="8dp"
+      tools:text="Some Job"
+      style="@style/Person.Job"/>
 </LinearLayout>

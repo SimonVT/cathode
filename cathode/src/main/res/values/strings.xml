@@ -209,6 +209,13 @@
   <string name="history_list_error">Unable to get watched history</string>
   <string name="history_episode_list_empty">This episode has not been watched</string>
 
+  <!-- Prompt -->
+  <string name="prompt_link">Link with Trakt</string>
+  <string name="prompt_link_summary">Would you like with link with your Trakt account?</string>
+  <string name="prompt_integration">Get notified</string>
+  <string name="prompt_integration_calendar">Calendar integration</string>
+  <string name="prompt_integration_notifications">Notifications for upcoming episodes</string>
+
   <!-- Login -->
   <string name="login_title">Sign in to Trakt</string>
   <string name="login_sign_in">Sign in</string>
@@ -218,6 +225,7 @@
   <string name="login_description">Sign in to through the Trakt website and give Cathode access to your account</string>
   <string name="login_error_unknown">Unable to fetch token, please try again</string>
   <string name="login_error_5xx">Trakt has encountered a server error, please try again</string>
+  <string name="not_logged_in">Not logged in</string>
 
   <!-- Link activity -->
   <string name="trakt_link">What should happen to your local data?\n\n
@@ -234,6 +242,7 @@
 
   <!-- Settings -->
   <string name="preference_startpage">Start page</string>
+  <string name="preference_darkmode">Dark mode</string>
 
   <string name="preference_data">Data</string>
   <string name="preference_hidden_items">Hidden items</string>

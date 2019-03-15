@@ -27,8 +27,8 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:background="?attr/colorPrimary"
-      app:tabTextColor="?android:attr/textColorSecondaryInverse"
-      app:tabSelectedTextColor="?android:attr/textColorPrimaryInverse"/>
+      app:tabSelectedTextColor="?android:attr/textColorPrimaryInverse"
+      app:tabTextColor="?android:attr/textColorSecondaryInverse"/>
 
   <androidx.viewpager.widget.ViewPager
       android:id="@+id/pager"

@@ -29,10 +29,10 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_gravity="center"
-      android:orientation="vertical"
       android:gravity="center"
-      app:maxWidth="460dp"
-      android:padding="16dp">
+      android:orientation="vertical"
+      android:padding="16dp"
+      app:maxWidth="460dp">
 
     <Button
         android:id="@+id/retry"
@@ -44,13 +44,14 @@
         android:id="@+id/error_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingBottom="16dp"
-        android:visibility="gone"
-        android:textColor="@android:color/holo_red_dark"
         android:gravity="center"
-        tools:visibility="visible"
-        tools:text="Login failed"/>
+        android:paddingBottom="16dp"
+        android:paddingTop="8dp"
+        android:textAppearance="?attr/textAppearanceBody2"
+        android:textColor="@android:color/holo_red_dark"
+        android:visibility="gone"
+        tools:text="Login failed"
+        tools:visibility="visible"/>
   </net.simonvt.cathode.common.widget.MaxSizeLinearLayout>
 
   <LinearLayout
@@ -71,6 +72,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/logging_in"/>
+        android:text="@string/logging_in"
+        android:textAppearance="?attr/textAppearanceBody2"/>
   </LinearLayout>
 </FrameLayout>

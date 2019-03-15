@@ -56,10 +56,10 @@ public class AppBarRelativeLayout extends RelativeLayout {
 
   private int offset;
 
-  private int expandedMarginLeft;
+  private int expandedMarginStart;
   private int expandedMarginTop;
   private int expandedMarginBottom;
-  private int expandedMarginRight;
+  private int expandedMarginEnd;
 
   private Drawable contentScrim;
   private Drawable statusBarScrim;
@@ -99,15 +99,15 @@ public class AppBarRelativeLayout extends RelativeLayout {
     contentTopViewId =
         a.getResourceId(R.styleable.AppBarRelativeLayout_contentTopViewId, R.id.appBarContent);
 
-    expandedMarginLeft = expandedMarginTop = expandedMarginRight = expandedMarginBottom =
+    expandedMarginStart = expandedMarginTop = expandedMarginEnd = expandedMarginBottom =
         a.getDimensionPixelSize(R.styleable.AppBarRelativeLayout_expandedTitleMargin, 0);
 
     if (a.hasValue(R.styleable.AppBarRelativeLayout_expandedTitleMarginStart)) {
-      expandedMarginLeft =
+      expandedMarginStart =
           a.getDimensionPixelSize(R.styleable.AppBarRelativeLayout_expandedTitleMarginStart, 0);
     }
     if (a.hasValue(R.styleable.AppBarRelativeLayout_expandedTitleMarginEnd)) {
-      expandedMarginRight =
+      expandedMarginEnd =
           a.getDimensionPixelSize(R.styleable.AppBarRelativeLayout_expandedTitleMarginEnd, 0);
     }
 
@@ -340,9 +340,9 @@ public class AppBarRelativeLayout extends RelativeLayout {
     collapsedBounds.offset(0, offset);
     textHelper.setCollapsedBounds(collapsedBounds);
 
-    expandedBounds.left = left + expandedMarginLeft;
+    expandedBounds.left = left + expandedMarginStart;
     expandedBounds.top = dummyBounds.bottom + expandedMarginTop;
-    expandedBounds.right = (right - left) - expandedMarginRight;
+    expandedBounds.right = (right - left) - expandedMarginEnd;
     expandedBounds.bottom = contentView.getTop() - expandedMarginBottom;
     expandedBounds.offset(0, offset);
     textHelper.setExpandedBounds(expandedBounds);

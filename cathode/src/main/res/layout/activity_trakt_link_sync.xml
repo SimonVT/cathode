@@ -25,10 +25,11 @@
   <TextView
       android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:layout_weight="1"
       android:layout_margin="32dp"
+      android:layout_weight="1"
       android:gravity="center"
-      android:text="@string/trakt_link_sync"/>
+      android:text="@string/trakt_link_sync"
+      android:textAppearance="?attr/textAppearanceBody1"/>
 
   <LinearLayout
       android:layout_width="match_parent"
@@ -42,6 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="@string/trakt_link_sync_action_forget"
+        android:textAppearance="?attr/textAppearanceButton"
         style="?attr/buttonBarButtonStyle"/>
 
     <TextView
@@ -50,6 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="@string/trakt_link_sync_action_sync"
+        android:textAppearance="?attr/textAppearanceButton"
         style="?attr/buttonBarButtonStyle"/>
   </LinearLayout>
 </LinearLayout>

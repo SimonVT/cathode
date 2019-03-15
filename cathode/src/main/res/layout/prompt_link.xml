@@ -3,52 +3,55 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="#FFFFFFFF"
-    android:clickable="false">
+    android:background="?attr/colorBackgroundFloating"
+    android:clickable="false"
+    android:orientation="vertical">
 
   <TextView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:paddingLeft="?attr/dialogPreferredPadding"
-      android:paddingRight="?attr/dialogPreferredPadding"
-      android:paddingTop="@dimen/abc_dialog_padding_top_material"
       android:ellipsize="end"
+      android:paddingEnd="?attr/dialogPreferredPadding"
+      android:paddingStart="?attr/dialogPreferredPadding"
+      android:paddingTop="@dimen/abc_dialog_padding_top_material"
       android:singleLine="true"
+      android:text="@string/prompt_link"
       android:textAlignment="viewStart"
-      android:text="Link with Trakt"
+      android:textAppearance="?attr/textAppearanceSubtitle1"
       style="?android:attr/windowTitleStyle"/>
 
   <TextView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:paddingLeft="?attr/dialogPreferredPadding"
-      android:paddingRight="?attr/dialogPreferredPadding"
-      android:text="Would you like with link with your Trakt account?"
-      style="@style/TextAppearance.AppCompat.Subhead"/>
+      android:paddingEnd="?attr/dialogPreferredPadding"
+      android:paddingStart="?attr/dialogPreferredPadding"
+      android:text="@string/prompt_link_summary"
+      android:textAppearance="?attr/textAppearanceBody1"/>
 
   <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:gravity="end"
       android:orientation="horizontal"
-      android:paddingLeft="12dp"
-      android:paddingRight="12dp">
+      android:paddingEnd="12dp"
+      android:paddingStart="12dp">
 
     <TextView
         android:id="@+id/prompt_link_no"
-        style="?attr/buttonBarNegativeButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
-        android:text="@string/no"/>
+        android:text="@string/no"
+        android:textAppearance="?attr/textAppearanceButton"
+        style="?attr/buttonBarNegativeButtonStyle"/>
 
     <TextView
         android:id="@+id/prompt_link_yes"
-        style="?attr/buttonBarPositiveButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
-        android:text="@string/yes"/>
+        android:text="@string/yes"
+        android:textAppearance="?attr/textAppearanceButton"
+        style="?attr/buttonBarPositiveButtonStyle"/>
   </LinearLayout>
 </LinearLayout>

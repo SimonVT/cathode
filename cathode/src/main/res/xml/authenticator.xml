@@ -17,5 +17,5 @@
 <account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
     android:accountType="@string/accountType"
     android:icon="@mipmap/ic_launcher"
-    android:smallIcon="@mipmap/ic_launcher"
-    android:label="@string/accountName"/>
+    android:label="@string/accountName"
+    android:smallIcon="@mipmap/ic_launcher"/>

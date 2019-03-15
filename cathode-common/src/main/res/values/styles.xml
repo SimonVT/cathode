@@ -20,8 +20,8 @@
     <item name="expandedTitleMargin">32dp</item>
     <item name="expandedTitleTextAppearance">@style/ExpandedTitleTextAppearance</item>
     <item name="collapsedTitleTextAppearance">@style/CollapsedTitleTextAppearance</item>
-    <item name="contentScrim">?attr/colorPrimary</item>
-    <item name="statusBarScrim">?attr/colorPrimaryDark</item>
+    <item name="contentScrim">@color/toolbarColor</item>
+    <item name="statusBarScrim">@color/statusBarColor</item>
   </style>
 
   <style name="ExpandedTitleTextAppearance" parent="TextAppearance.AppCompat.Display1">
@@ -37,19 +37,9 @@
     <item name="textColor">?android:attr/textColorPrimary</item>
     <item name="textSize">12sp</item>
     <item name="circleStrokeWidth">2dp</item>
-    <item name="circleColor">@color/circleProgressColor</item>
-    <item name="circleBackgroundColor">@color/circleProgressBackgroundColor</item>
+    <item name="circleColor">?attr/colorSecondary</item>
+    <item name="circleBackgroundColor">?attr/colorPrimary</item>
   </style>
 
-  <style name="Toolbar">
-    <item name="android:background">?attr/colorPrimary</item>
-  </style>
-
-  <style name="Category">
-    <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-    <item name="android:layout_marginBottom">4dp</item>
-    <item name="android:paddingTop">8dp</item>
-    <item name="android:paddingBottom">8dp</item>
-    <item name="android:textColor">?attr/colorPrimary</item>
-  </style>
+  <style name="ToolbarPopupThemeOverlay" parent="ThemeOverlay.MaterialComponents.Light"/>
 </resources>

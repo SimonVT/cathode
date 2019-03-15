@@ -14,14 +14,13 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="@dimen/cardCornerRadius">
+    android:foreground="?android:attr/selectableItemBackground">
 
   <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -34,13 +33,13 @@
         android:id="@+id/screen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:dominantMeasurement="width"
-        app:aspectRatio="0.5625"/>
+        app:aspectRatio="0.5625"
+        app:dominantMeasurement="width"/>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/colorPrimary"/>
+        android:layout_height="1dp"
+        android:background="@color/divider"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -57,21 +56,17 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:fontFamily="sans-serif-light"
-            android:singleLine="true"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="16sp"
-            tools:text="Some Random Episode That is really long"/>
+            android:layout_marginStart="16dp"
+            tools:text="Some Random Episode That is really long"
+            style="@style/ListRowTitle"/>
 
         <net.simonvt.cathode.common.widget.TimeStamp
             android:id="@+id/firstAired"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:textColor="?android:attr/textColorSecondary"
-            android:textSize="14sp"
-            tools:text="OCT 20, 2010 (MON)"/>
+            android:layout_marginStart="16dp"
+            tools:text="OCT 20, 2010 (MON)"
+            style="@style/ListRowCaption"/>
       </LinearLayout>
 
       <TextView
@@ -79,13 +74,13 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:gravity="center_vertical"
-          android:paddingRight="16dp"
-          android:paddingLeft="16dp"
-          android:paddingTop="8dp"
           android:paddingBottom="8dp"
+          android:paddingEnd="16dp"
+          android:paddingStart="16dp"
+          android:paddingTop="8dp"
           android:textSize="30sp"
-          tools:textColor="@color/episode_number_watched"
-          tools:text="1"/>
+          tools:text="1"
+          tools:textColor="@color/selector_watched"/>
     </LinearLayout>
   </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

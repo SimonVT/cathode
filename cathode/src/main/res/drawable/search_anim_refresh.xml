@@ -20,6 +20,6 @@
     tools:ignore="NewApi">
 
   <target
-      android:animation="@animator/rotation"
-      android:name="rotationGroup"/>
+      android:name="rotationGroup"
+      android:animation="@animator/rotation"/>
 </animated-vector>

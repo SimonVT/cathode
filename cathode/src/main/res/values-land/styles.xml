@@ -16,12 +16,5 @@
   -->
 <resources>
 
-  <style name="TopBarDivider">
-    <item name="android:layout_gravity">bottom</item>
-  </style>
-
-  <style name="TopBarContent">
-    <item name="android:layout_marginBottom">2dp</item>
-  </style>
 
 </resources>

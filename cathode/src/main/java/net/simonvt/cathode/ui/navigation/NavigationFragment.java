@@ -147,17 +147,6 @@ public class NavigationFragment extends AbsAdapterFragment {
   private SharedPreferences.OnSharedPreferenceChangeListener profileSettingsListener =
       new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override public void onSharedPreferenceChanged(SharedPreferences settings, String key) {
-          if (ProfileSettings.AVATAR.equals(key)) {
-            String avatar = settings.getString(ProfileSettings.AVATAR, null);
-
-            if (getAdapterView() != null) {
-              final int firstPos = getAdapterView().getFirstVisiblePosition();
-              if (firstPos == 0 && getAdapterView().getChildCount() > 0) {
-                ((RemoteImageView) getAdapterView().getChildAt(0)
-                    .getTag(R.id.profileIcon)).setImage(avatar);
-              }
-            }
-          }
           if (ProfileSettings.USERNAME.equals(key)) {
             final String username = settings.getString(ProfileSettings.USERNAME, null);
             adapter.setUsername(username);
@@ -315,8 +304,8 @@ public class NavigationFragment extends AbsAdapterFragment {
           final int width = view.getWidth();
           final int height = view.getHeight();
           float radius = Math.min(width / 2, height / 2);
-          outline.setRoundRect(view.getPaddingLeft(), view.getPaddingRight(),
-              width - view.getPaddingRight(), height - view.getPaddingBottom(), radius);
+          outline.setRoundRect(view.getPaddingStart(), view.getPaddingEnd(),
+              width - view.getPaddingEnd(), height - view.getPaddingBottom(), radius);
           outline.setAlpha(imageView.getFraction());
         }
       });
@@ -329,29 +318,15 @@ public class NavigationFragment extends AbsAdapterFragment {
         if (v == null) {
           v = LayoutInflater.from(context)
               .inflate(R.layout.fragment_navigation_header, parent, false);
-          RemoteImageView headerBackground = v.findViewById(R.id.headerBackground);
-          headerBackground.setImage(R.drawable.drawer_header_background);
-
           v.setTag(R.id.username, v.findViewById(R.id.username));
-          final RemoteImageView profileIcon = v.findViewById(R.id.profileIcon);
-
-          profileIcon.addTransformation(new RoundTransformation());
-          setupCircularOutline(profileIcon);
-          v.setTag(R.id.profileIcon, profileIcon);
         }
 
-        RemoteImageView profileIcon = (RemoteImageView) v.getTag(R.id.profileIcon);
         TextView username = (TextView) v.getTag(R.id.username);
 
         if (TraktLinkSettings.isLinked(requireContext())) {
           username.setText(this.username);
-          profileIcon.setImage(avatar);
-
-          username.setVisibility(View.VISIBLE);
-          profileIcon.setVisibility(View.VISIBLE);
         } else {
-          username.setVisibility(View.GONE);
-          profileIcon.setVisibility(View.GONE);
+          username.setText(R.string.not_logged_in);
         }
 
         return v;

@@ -14,53 +14,48 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="16dp"
-    android:paddingTop="8dp"
-    android:paddingRight="16dp"
-    android:paddingBottom="8dp"
-    android:background="?attr/selectableItemBackground">
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="4dp"
+    android:paddingEnd="@dimen/detailsSectionMargin"
+    android:paddingStart="@dimen/detailsSectionMargin"
+    android:paddingTop="4dp">
 
   <net.simonvt.cathode.common.widget.RemoteImageView
-      android:id="@+id/avatar"
-      android:layout_width="32dp"
-      android:layout_height="32dp"
-      android:layout_marginRight="16dp"
+      android:id="@+id/headshot"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
       app:placeholder="@drawable/placeholder_person"/>
 
   <LinearLayout
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_weight="1"
-      android:orientation="vertical">
+      android:animateLayoutChanges="true"
+      android:gravity="bottom"
+      android:orientation="vertical"
+      android:paddingEnd="16dp"
+      android:paddingStart="8dp">
 
     <TextView
-        android:id="@+id/username"
+        android:id="@+id/person_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?android:attr/textColorPrimary"
-        tools:text="Username (10)"/>
+        tools:text="A. Person"
+        style="@style/Person.Name"/>
 
     <TextView
-        android:id="@+id/date"
+        android:id="@+id/person_job"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?android:attr/textColorSecondary"
-        tools:text="19/10-2015"/>
-
-    <TextView
-        android:id="@+id/commentText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:maxLines="4"
-        android:ellipsize="end"
-        android:textColor="?android:attr/textColorPrimary"
-        tools:text="Show comment"/>
+        tools:text="Some Job"
+        style="@style/Person.Job"/>
   </LinearLayout>
 </LinearLayout>

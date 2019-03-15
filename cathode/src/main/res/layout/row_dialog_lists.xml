@@ -16,27 +16,28 @@
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="?attr/listPreferredItemHeight"
     android:gravity="center_vertical"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp">
+    android:orientation="horizontal"
+    android:paddingBottom="4dp"
+    android:paddingEnd="16dp"
+    android:paddingStart="16dp"
+    android:paddingTop="4dp">
 
   <CheckBox
       android:id="@+id/checkBox"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:focusable="false"
-      android:clickable="false"/>
+      android:clickable="false"
+      android:focusable="false"/>
 
   <TextView
       android:id="@+id/name"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
+      android:layout_marginStart="8dp"
       android:layout_weight="1"
-      android:layout_marginLeft="8dp"
-      tools:text="List name"/>
+      tools:text="List name"
+      style="@style/ListRowTitle"/>
 </LinearLayout>

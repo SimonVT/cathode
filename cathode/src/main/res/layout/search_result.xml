@@ -14,14 +14,13 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="@dimen/cardCornerRadius">
+    android:foreground="?android:attr/selectableItemBackground">
 
   <RelativeLayout
       android:layout_width="match_parent"
@@ -33,37 +32,32 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:background="#FF00FF00"
-        app:dominantMeasurement="height"
-        app:aspectRatio="0.68"/>
+        app:aspectRatio="0.68"
+        app:dominantMeasurement="height"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/poster"
-        android:layout_toLeftOf="@id/rating"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="4dp"
-        android:paddingBottom="2dp"
-        android:orientation="vertical">
+        android:layout_marginStart="4dp"
+        android:layout_toLeftOf="@id/rating"
+        android:layout_toRightOf="@id/poster"
+        android:orientation="vertical"
+        android:paddingBottom="2dp">
 
       <TextView
           android:id="@+id/title"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:singleLine="true"
-          android:textAppearance="?android:attr/textAppearanceMedium"
-          tools:text="Title"/>
+          tools:text="Title"
+          style="@style/ListRowTitle"/>
 
       <TextView
           android:id="@+id/overview"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:ellipsize="end"
-          android:fontFamily="sans-light"
-          android:maxLines="3"
-          android:textAppearance="?android:attr/textAppearanceSmall"
-          android:textSize="12sp"
-          tools:text="This is a description of the search result. It can be long. And multiline. Lots of lots of lines. Even more lines"/>
+          tools:text="This is a description of the search result. It can be long. And multiline. Lots of lots of lines. Even more lines"
+          style="@style/ListRowCaption"/>
     </LinearLayout>
 
     <net.simonvt.cathode.common.widget.CircularProgressIndicator
@@ -72,8 +66,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="4dp"
-        android:layout_marginLeft="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="4dp"
         app:textMargin="10dp"/>
   </RelativeLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
