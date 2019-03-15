@@ -54,6 +54,10 @@ public abstract class BaseAdapter<Type, VH extends RecyclerView.ViewHolder>
     asyncDiffer.submitList(list);
   }
 
+  public void setList(List<Type> list, Runnable commitCallback) {
+    asyncDiffer.submitList(list, commitCallback);
+  }
+
   public void removeItem(Type item) {
     final int position = getList().indexOf(item);
     if (position >= 0) {

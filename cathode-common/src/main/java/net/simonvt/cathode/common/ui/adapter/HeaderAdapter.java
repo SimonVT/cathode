@@ -35,6 +35,7 @@ public abstract class HeaderAdapter<Type, T extends RecyclerView.ViewHolder>
     final long headerId;
 
     public List<Type> items;
+    List<Type> pendingItems;
 
     int size;
 
@@ -159,10 +160,33 @@ public abstract class HeaderAdapter<Type, T extends RecyclerView.ViewHolder>
     submitNewList();
   }
 
+  private class PendingChange {
+
+    final Header<Type> header;
+    final List<Type> pendingItems;
+
+    public PendingChange(Header<Type> header, List<Type> pendingItems) {
+      this.header = header;
+      this.pendingItems = pendingItems;
+    }
+  }
+
   private void submitNewList() {
+    final List<PendingChange> changes = new ArrayList<>();
+
     List<Item<Type>> items = new ArrayList<>();
     for (Header<Type> header : headers) {
-      if (header.size > 0) {
+      if (header.pendingItems != null) {
+        if (header.pendingItems.size() > 0) {
+          items.add(new Item<Type>(header.headerId, header.headerRes));
+
+          for (Type item : header.pendingItems) {
+            items.add(new Item<Type>(item));
+          }
+        }
+
+        changes.add(new PendingChange(header, header.pendingItems));
+      } else if (header.size > 0) {
         items.add(new Item<Type>(header.headerId, header.headerRes));
 
         for (Type item : header.items) {
@@ -171,13 +195,22 @@ public abstract class HeaderAdapter<Type, T extends RecyclerView.ViewHolder>
       }
     }
 
-    asyncDiffer.submitList(items);
+    asyncDiffer.submitList(items, new Runnable() {
+      @Override public void run() {
+        for (PendingChange change : changes) {
+          change.header.setItems(change.pendingItems);
+          if (change.header.pendingItems == change.pendingItems) {
+            change.header.pendingItems = null;
+          }
+        }
+      }
+    });
   }
 
   public void updateHeaderItems(int headerRes, List<Type> items) {
     for (Header<Type> header : headers) {
       if (headerRes == header.headerRes) {
-        header.setItems(items);
+        header.pendingItems = items;
         submitNewList();
         return;
       }

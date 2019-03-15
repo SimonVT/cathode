@@ -44,9 +44,8 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<Object, Recycler
 
   private DashboardFragment.OverviewCallback callback;
 
-  private List<Show> showsWatchlist;
-
-  private List<Episode> episodeWatchlist;
+  private List<Show> shows;
+  private List<Episode> episodes;
 
   public DashboardShowsWatchlistAdapter(Context context,
       DashboardFragment.OverviewCallback callback) {
@@ -66,28 +65,31 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<Object, Recycler
   }
 
   public void changeShowList(List<Show> shows) {
-    showsWatchlist = shows;
+    this.shows = shows;
     updateItems();
   }
 
   public void changeEpisodeList(List<Episode> episodes) {
-    episodeWatchlist = episodes;
+    this.episodes = episodes;
     updateItems();
   }
 
   private void updateItems() {
     List<Object> items = new ArrayList<>();
-    if (showsWatchlist != null) {
-      items.addAll(showsWatchlist);
+
+    if (shows != null) {
+      items.addAll(shows);
     }
-    if (episodeWatchlist != null) {
-      items.addAll(episodeWatchlist);
+
+    if (episodes != null) {
+      items.addAll(episodes);
     }
+
     setList(items);
   }
 
   @Override public int getItemViewType(int position) {
-    if (position < showsWatchlist.size()) {
+    if (getList().get(position) instanceof Show) {
       return TYPE_SHOW;
     }
 
