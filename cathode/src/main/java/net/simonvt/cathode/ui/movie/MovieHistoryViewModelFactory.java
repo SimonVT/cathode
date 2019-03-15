@@ -39,7 +39,7 @@ public class MovieHistoryViewModelFactory extends ViewModelProvider.NewInstanceF
   }
 
   @NonNull @Override public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-    if (modelClass.isAssignableFrom(EpisodeHistoryViewModel.class)) {
+    if (modelClass.isAssignableFrom(MovieHistoryViewModel.class)) {
       return (T) new MovieHistoryViewModel(application, syncService, movieHelper);
     }
 
