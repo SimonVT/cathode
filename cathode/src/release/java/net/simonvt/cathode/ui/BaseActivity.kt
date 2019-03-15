@@ -13,16 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.ui;
+package net.simonvt.cathode.ui
 
-import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import dagger.android.AndroidInjection;
-
-public abstract class BaseActivity extends AppCompatActivity {
-
-  @Override protected void onCreate(Bundle inState) {
-    super.onCreate(inState);
-    AndroidInjection.inject(this);
-  }
-}
+abstract class BaseActivity : CathodeActivity()

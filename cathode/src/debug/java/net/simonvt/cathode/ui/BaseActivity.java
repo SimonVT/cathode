@@ -33,7 +33,6 @@ import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import butterknife.BindView;
@@ -80,7 +79,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 import static net.simonvt.cathode.module.DebugModule.NAMED_STATUS_CODE;
 
-@SuppressLint("SetTextI18n") public abstract class BaseActivity extends AppCompatActivity {
+@SuppressLint("SetTextI18n") public abstract class BaseActivity extends CathodeActivity {
 
   private static final long FAKE_SHOW_ID = Long.MAX_VALUE;
 
