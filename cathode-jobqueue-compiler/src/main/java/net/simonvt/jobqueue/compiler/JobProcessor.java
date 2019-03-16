@@ -11,6 +11,7 @@ import com.squareup.javapoet.WildcardTypeName;
 import dagger.Binds;
 import dagger.Module;
 import dagger.Subcomponent;
+import dagger.multibindings.ClassKey;
 import dagger.multibindings.IntoMap;
 import java.io.IOException;
 import java.io.Writer;
@@ -163,14 +164,14 @@ public class JobProcessor extends AbstractProcessor {
         // Create bind method for each subcomponent
         for (JobSubcomponent subcomponent : subcomponents) {
           ParameterizedTypeName androidInjectorFactory =
-              ParameterizedTypeName.get(ANDROID_INJECTOR_FACTORY, WildcardTypeName.subtypeOf(JOB));
+              ParameterizedTypeName.get(ANDROID_INJECTOR_FACTORY,
+                  WildcardTypeName.subtypeOf(Object.class));
           MethodSpec bindMethod =
               MethodSpec.methodBuilder("bind" + subcomponent.subcomponent.simpleName())
                   .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                   .addAnnotation(Binds.class)
                   .addAnnotation(IntoMap.class)
-                  .addAnnotation(AnnotationSpec.builder(
-                      ClassName.get("net.simonvt.cathode.jobqueue", "JobKey"))
+                  .addAnnotation(AnnotationSpec.builder(ClassKey.class)
                       .addMember("value", "$T.class", subcomponent.jobClass)
                       .build())
                   .addParameter(subcomponent.builder, "builder")

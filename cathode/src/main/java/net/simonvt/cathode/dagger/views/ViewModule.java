@@ -20,6 +20,7 @@ import android.view.View;
 import dagger.Binds;
 import dagger.Module;
 import dagger.android.AndroidInjector;
+import dagger.multibindings.ClassKey;
 import dagger.multibindings.IntoMap;
 import net.simonvt.cathode.common.widget.RemoteImageView;
 
@@ -27,7 +28,7 @@ import net.simonvt.cathode.common.widget.RemoteImageView;
     RemoteImageViewSubcomponent.class,
 }) public abstract class ViewModule {
 
-  @Binds @IntoMap @ViewKey(RemoteImageView.class)
-  public abstract AndroidInjector.Factory<? extends View> bindRemoteImageViewSubcomponent(
+  @Binds @IntoMap @ClassKey(RemoteImageView.class)
+  abstract AndroidInjector.Factory<?> bindRemoteImageViewSubcomponent(
       RemoteImageViewSubcomponent.Builder builder);
 }
