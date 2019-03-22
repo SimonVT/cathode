@@ -17,16 +17,21 @@
 package net.simonvt.cathode.remote.upgrade;
 
 import android.content.ContentValues;
+import androidx.work.WorkManager;
+import javax.inject.Inject;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
-import net.simonvt.cathode.remote.sync.movies.SyncPendingMovies;
-import net.simonvt.cathode.remote.sync.shows.SyncPendingShows;
+import net.simonvt.cathode.work.WorkManagerUtils;
+import net.simonvt.cathode.work.movies.SyncPendingMoviesWorker;
+import net.simonvt.cathode.work.shows.SyncPendingShowsWorker;
 
 public class EnsureSync extends Job {
+
+  @Inject transient WorkManager workManager;
 
   @Override public String key() {
     return "EnsureSync";
@@ -45,8 +50,8 @@ public class EnsureSync extends Job {
     values.put(MovieColumns.NEEDS_SYNC, true);
     getContentResolver().update(Movies.MOVIES, values, null, null);
 
-    SyncPendingShows.schedule(getContext());
-    SyncPendingMovies.schedule(getContext());
+    WorkManagerUtils.enqueueUniqueNow(workManager, SyncPendingShowsWorker.TAG, SyncPendingShowsWorker.class);
+    WorkManagerUtils.enqueueUniqueNow(workManager, SyncPendingMoviesWorker.TAG, SyncPendingMoviesWorker.class);
 
     return true;
   }

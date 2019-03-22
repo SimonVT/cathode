@@ -20,6 +20,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.text.format.DateUtils;
+import androidx.work.WorkManager;
 import java.io.IOException;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.CheckinItem;
@@ -34,9 +35,10 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.util.DataHelper;
-import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.sync.BuildConfig;
 import net.simonvt.cathode.sync.R;
+import net.simonvt.cathode.work.WorkManagerUtils;
+import net.simonvt.cathode.work.user.SyncWatchingWorker;
 import retrofit2.Call;
 import retrofit2.Response;
 import timber.log.Timber;
@@ -44,12 +46,15 @@ import timber.log.Timber;
 public class CheckIn {
 
   private Context context;
+  private WorkManager workManager;
   private EpisodeDatabaseHelper episodeHelper;
   private CheckinService checkinService;
 
-  @Inject public CheckIn(Context context, EpisodeDatabaseHelper episodeHelper,
+  @Inject
+  public CheckIn(Context context, WorkManager workManager, EpisodeDatabaseHelper episodeHelper,
       CheckinService checkinService) {
     this.context = context;
+    this.workManager = workManager;
     this.episodeHelper = episodeHelper;
     this.checkinService = checkinService;
   }
@@ -88,7 +93,8 @@ public class CheckIn {
       Response<CheckinResponse> response = call.execute();
 
       if (response.isSuccessful()) {
-        SyncWatching.schedule(context, runtime * DateUtils.MINUTE_IN_MILLIS);
+        WorkManagerUtils.enqueueDelayed(workManager, SyncWatchingWorker.class,
+            runtime * DateUtils.MINUTE_IN_MILLIS);
         return true;
       } else {
         if (response.code() == 409) {
@@ -138,7 +144,8 @@ public class CheckIn {
       Response<CheckinResponse> response = call.execute();
 
       if (response.isSuccessful()) {
-        SyncWatching.schedule(context, runtime * DateUtils.MINUTE_IN_MILLIS);
+        WorkManagerUtils.enqueueDelayed(workManager, SyncWatchingWorker.class,
+            runtime * DateUtils.MINUTE_IN_MILLIS);
         return true;
       } else {
         if (response.code() == 409) {

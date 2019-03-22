@@ -23,7 +23,6 @@ import net.simonvt.cathode.appwidget.UpcomingWidgetService;
 import net.simonvt.cathode.calendar.CalendarService;
 import net.simonvt.cathode.dashclock.DashClockService;
 import net.simonvt.cathode.notification.NotificationActionService;
-import net.simonvt.cathode.sync.jobscheduler.SchedulerService;
 
 @Module public abstract class ServiceBindingModule {
 
@@ -36,6 +35,4 @@ import net.simonvt.cathode.sync.jobscheduler.SchedulerService;
   @ContributesAndroidInjector abstract CalendarService calendarService();
 
   @ContributesAndroidInjector abstract UpcomingWidgetService upcomingWidgetService();
-
-  @ContributesAndroidInjector abstract SchedulerService schedulerService();
 }

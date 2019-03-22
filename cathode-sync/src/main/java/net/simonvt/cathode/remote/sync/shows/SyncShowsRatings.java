@@ -18,6 +18,7 @@ package net.simonvt.cathode.remote.sync.shows;
 
 import android.content.ContentProviderOperation;
 import android.database.Cursor;
+import androidx.work.WorkManager;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -33,6 +34,8 @@ import net.simonvt.cathode.remote.Flags;
 import retrofit2.Call;
 
 public class SyncShowsRatings extends CallJob<List<RatingItem>> {
+
+  @Inject transient WorkManager workManager;
 
   @Inject transient SyncService syncService;
   @Inject transient ShowDatabaseHelper showHelper;
@@ -79,8 +82,6 @@ public class SyncShowsRatings extends CallJob<List<RatingItem>> {
           .build();
       ops.add(op);
     }
-
-    SyncPendingShows.schedule(getContext());
 
     for (Long showId : showIds) {
       ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(showId))

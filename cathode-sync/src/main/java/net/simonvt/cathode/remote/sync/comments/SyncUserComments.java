@@ -48,8 +48,6 @@ import net.simonvt.cathode.provider.helper.UserDatabaseHelper;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.PagedCallJob;
 import net.simonvt.cathode.remote.sync.SyncUserProfile;
-import net.simonvt.cathode.remote.sync.movies.SyncPendingMovies;
-import net.simonvt.cathode.remote.sync.shows.SyncPendingShows;
 import retrofit2.Call;
 import timber.log.Timber;
 
@@ -235,9 +233,6 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
         addedLater.put(commentId, commentItem);
       }
     }
-
-    SyncPendingShows.schedule(getContext());
-    SyncPendingMovies.schedule(getContext());
 
     for (Long id : existingComments) {
       ContentProviderOperation.Builder op = ContentProviderOperation.newDelete(Comments.withId(id));

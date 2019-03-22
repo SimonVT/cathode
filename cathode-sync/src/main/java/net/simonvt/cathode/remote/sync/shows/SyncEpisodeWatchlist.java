@@ -16,6 +16,7 @@
 package net.simonvt.cathode.remote.sync.shows;
 
 import android.database.Cursor;
+import androidx.work.WorkManager;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -33,9 +34,13 @@ import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.work.WorkManagerUtils;
+import net.simonvt.cathode.work.shows.SyncPendingShowsWorker;
 import retrofit2.Call;
 
 public class SyncEpisodeWatchlist extends CallJob<List<WatchlistItem>> {
+
+  @Inject transient WorkManager workManager;
 
   @Inject transient SyncService syncService;
 
@@ -109,7 +114,7 @@ public class SyncEpisodeWatchlist extends CallJob<List<WatchlistItem>> {
       episodeHelper.setIsInWatchlist(episodeId, false, 0L);
     }
 
-    SyncPendingShows.schedule(getContext());
+    WorkManagerUtils.enqueueUniqueNow(workManager, SyncPendingShowsWorker.TAG, SyncPendingShowsWorker.class);
 
     return true;
   }

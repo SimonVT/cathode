@@ -26,7 +26,7 @@ import net.simonvt.schematic.annotation.Table;
     className = "JobDatabase",
     packageName = "net.simonvt.cathode.jobqueue.database",
     fileName = "jobDatabase.db",
-    version = 9
+    version = 10
 )
 public class JobDatabaseSchematic {
 
@@ -85,6 +85,17 @@ public class JobDatabaseSchematic {
       deleteJob(db, "net.simonvt.cathode.tmdb.api.people.SyncPersonHeadshot");
       deleteJob(db, "net.simonvt.cathode.tmdb.api.show.SyncEpisodeImages");
       deleteJob(db, "net.simonvt.cathode.tmdb.api.show.SyncShowImages");
+    }
+
+    if (oldVersion < 10) {
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncPendingSeasons");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncPendingShows");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncUserShows");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.movies.SyncMovie");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.movies.SyncPendingMovies");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.movies.SyncUserMovies");
     }
   }
 

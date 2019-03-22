@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2019 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,11 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.remote;
+package net.simonvt.cathode.work.di
 
-public class FourOneTwoException extends Exception {
+import com.squareup.inject.assisted.dagger2.AssistedModule
+import dagger.Module
 
-  public FourOneTwoException() {
-    super();
-  }
-
-  public FourOneTwoException(String detailMessage) {
-    super(detailMessage);
-  }
-
-  public FourOneTwoException(String detailMessage, Throwable throwable) {
-    super(detailMessage, throwable);
-  }
-
-  public FourOneTwoException(Throwable throwable) {
-    super(throwable);
-  }
-}
+@Module(includes = [AssistedInject_WorkerAssistedModule::class])
+@AssistedModule
+interface WorkerAssistedModule

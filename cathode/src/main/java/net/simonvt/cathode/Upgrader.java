@@ -29,7 +29,6 @@ import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.Timestamps;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.TraktTimestamps;
-import net.simonvt.cathode.sync.jobscheduler.Jobs;
 
 public final class Upgrader {
 

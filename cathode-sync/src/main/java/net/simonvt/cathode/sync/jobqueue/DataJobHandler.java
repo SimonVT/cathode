@@ -17,6 +17,7 @@
 package net.simonvt.cathode.sync.jobqueue;
 
 import android.content.Context;
+import androidx.work.WorkManager;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.simonvt.cathode.common.event.SyncEvent;
@@ -27,8 +28,8 @@ import net.simonvt.cathode.remote.Flags;
 
   private static final int THREAD_COUNT = 3;
 
-  @Inject public DataJobHandler(Context context, JobManager jobManager) {
-    super(context, jobManager, 0, Flags.REQUIRES_AUTH, THREAD_COUNT);
+  @Inject public DataJobHandler(Context context, WorkManager workManager, JobManager jobManager) {
+    super(context, workManager, jobManager, 0, Flags.REQUIRES_AUTH, THREAD_COUNT);
   }
 
   @Override protected void onResume() {

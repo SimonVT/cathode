@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2019 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,13 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.remote;
+package net.simonvt.cathode.work.di
 
-public class FourOhFourException extends Exception {
+import androidx.work.ListenableWorker
+import dagger.MapKey
+import kotlin.reflect.KClass
 
-  public FourOhFourException() {
-    super();
-  }
-
-  public FourOhFourException(String detailMessage) {
-    super(detailMessage);
-  }
-
-  public FourOhFourException(String detailMessage, Throwable throwable) {
-    super(detailMessage, throwable);
-  }
-
-  public FourOhFourException(Throwable throwable) {
-    super(throwable);
-  }
-}
+@MapKey
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION)
+annotation class WorkerKey(val value: KClass<out ListenableWorker>)

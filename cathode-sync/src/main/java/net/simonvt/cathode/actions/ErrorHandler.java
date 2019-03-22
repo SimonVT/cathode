@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.remote;
+package net.simonvt.cathode.actions;
 
 import java.io.IOException;
 import net.simonvt.cathode.common.event.AuthFailedEvent;

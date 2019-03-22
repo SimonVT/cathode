@@ -47,6 +47,11 @@
         android:name="firebase_crashlytics_collection_enabled"
         android:value="${enableCrashlytics}"/>
 
+    <provider
+        android:name="androidx.work.impl.WorkManagerInitializer"
+        android:authorities="${applicationId}.workmanager-init"
+        android:enabled="false"/>
+
     <!-- Activities -->
     <activity
         android:name="net.simonvt.cathode.ui.HomeActivity"

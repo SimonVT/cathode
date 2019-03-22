@@ -39,12 +39,16 @@ dependencies {
   implementation deps.androidx.recyclerView
   implementation deps.androidx.design
   implementation deps.androidx.lifecycle.extensions
+  implementation deps.androidx.work
+  implementation deps.androidx.workKtx
   kapt deps.androidx.lifecycle.compiler
   implementation deps.dagger
   implementation deps.daggerAndroid
   implementation deps.daggerAndroidSupport
   kapt deps.daggerCompiler
   kapt deps.daggerAndroidApt
+  implementation deps.assistedInject.annotations
+  kapt deps.assistedInject.processor
   implementation deps.picasso
   implementation deps.picassoOkHttp
   implementation deps.retrofit

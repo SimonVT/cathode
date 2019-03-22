@@ -49,7 +49,7 @@ public class SyncPerson extends CallJob<Person> {
   }
 
   @Override public boolean handleResponse(Person person) {
-    personHelper.updateOrInsert(person);
+    personHelper.fullUpdate(person);
     return true;
   }
 }

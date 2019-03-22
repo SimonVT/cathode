@@ -26,6 +26,7 @@ dependencies {
   implementation deps.schematic
   implementation deps.androidx.annotations
   implementation deps.androidx.fragment
+  implementation deps.retrofit
   implementation deps.timber
   implementation deps.androidx.lifecycle.extensions
   kapt deps.androidx.lifecycle.compiler

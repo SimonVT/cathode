@@ -16,6 +16,7 @@
 package net.simonvt.cathode.remote.sync.movies;
 
 import android.database.Cursor;
+import androidx.work.WorkManager;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -29,9 +30,13 @@ import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 import net.simonvt.cathode.remote.CallJob;
 import net.simonvt.cathode.remote.Flags;
+import net.simonvt.cathode.work.WorkManagerUtils;
+import net.simonvt.cathode.work.movies.SyncPendingMoviesWorker;
 import retrofit2.Call;
 
 public class SyncMoviesCollection extends CallJob<List<CollectionItem>> {
+
+  @Inject transient WorkManager workManager;
 
   @Inject transient SyncService syncService;
   @Inject transient MovieDatabaseHelper movieHelper;
@@ -80,7 +85,7 @@ public class SyncMoviesCollection extends CallJob<List<CollectionItem>> {
       movieHelper.setIsInCollection(movieId, false);
     }
 
-    SyncPendingMovies.schedule(getContext());
+    WorkManagerUtils.enqueueUniqueNow(workManager, SyncPendingMoviesWorker.TAG, SyncPendingMoviesWorker.class);
 
     return true;
   }

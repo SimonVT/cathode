@@ -52,10 +52,6 @@ import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncJob;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.remote.sync.SyncWatching;
-import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
-import net.simonvt.cathode.remote.sync.movies.SyncUserMovies;
-import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
-import net.simonvt.cathode.remote.sync.shows.SyncUserShows;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.Timestamps;
@@ -64,10 +60,8 @@ import net.simonvt.cathode.settings.login.LoginActivity;
 import net.simonvt.cathode.sync.jobqueue.AuthJobHandler;
 import net.simonvt.cathode.sync.jobqueue.DataJobHandler;
 import net.simonvt.cathode.sync.jobqueue.JobHandler;
-import net.simonvt.cathode.sync.jobscheduler.AuthJobHandlerJob;
-import net.simonvt.cathode.sync.jobscheduler.DataJobHandlerJob;
-import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import net.simonvt.cathode.ui.HomeActivity;
+import net.simonvt.cathode.work.PeriodicWorkInitializer;
 import timber.log.Timber;
 
 public class CathodeApp extends Application
@@ -89,6 +83,7 @@ public class CathodeApp extends Application
   @Inject AuthJobHandler authJobHandler;
   @Inject DataJobHandler dataJobHandler;
 
+  @Inject PeriodicWorkInitializer periodicWorkInitializer;
   @Inject JobManager jobManager;
   private JobListener jobListener;
 
@@ -145,17 +140,11 @@ public class CathodeApp extends Application
 
     ItemsUpdatedEvent.registerListener(onItemsUpdatedListener);
 
-    SyncUpdatedShows.schedulePeriodic(this);
-    SyncUserShows.schedulePeriodic(this);
-    SyncUpdatedMovies.schedulePeriodic(this);
-    SyncUserMovies.schedulePeriodic(this);
-    DataJobHandlerJob.schedulePeriodic(this);
+    periodicWorkInitializer.init();
     if (TraktLinkSettings.isLinked(this)) {
-      AuthJobHandlerJob.schedulePeriodic(this);
-      SyncUserActivity.schedulePeriodic(this);
+      periodicWorkInitializer.initAuthWork();
     } else {
-      AuthJobHandlerJob.cancel(this);
-      SyncUserActivity.cancel(this);
+      periodicWorkInitializer.cancelAuthWork();
     }
   }
 

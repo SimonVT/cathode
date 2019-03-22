@@ -27,6 +27,8 @@ import net.simonvt.cathode.provider.ProviderSchematic.People;
 
 public final class PersonDatabaseHelper {
 
+  private static final Object LOCK_ID = new Object();
+
   private Context context;
 
   private ContentResolver resolver;
@@ -88,7 +90,7 @@ public final class PersonDatabaseHelper {
     return id;
   }
 
-  public long createPerson(long traktId) {
+  private long createPerson(long traktId) {
     ContentValues values = new ContentValues();
     values.put(PersonColumns.TRAKT_ID, traktId);
     values.put(PersonColumns.NEEDS_SYNC, true);
@@ -96,17 +98,35 @@ public final class PersonDatabaseHelper {
     return People.getId(resolver.insert(People.PEOPLE, values));
   }
 
-  public long updateOrInsert(Person person) {
-    final long traktId = person.getIds().getTrakt();
-    long personId = getId(traktId);
-
-    if (personId == -1L) {
-      personId = People.getId(resolver.insert(People.PEOPLE, getValues(person)));
-    } else {
-      resolver.update(People.withId(personId), getValues(person), null, null);
+  public long getIdOrCreate(Person person) {
+    synchronized (LOCK_ID) {
+      final long traktId = person.getIds().getTrakt();
+      long personId = getId(traktId);
+      if (personId == -1L) {
+        return createPerson(traktId);
+      } else {
+        return personId;
+      }
     }
+  }
 
-    return personId;
+  public long partialUpdate(Person person) {
+    long id = getIdOrCreate(person);
+
+    ContentValues values = getValues(person);
+    resolver.update(People.withId(id), values, null, null);
+
+    return id;
+  }
+
+  public long fullUpdate(Person person) {
+    long id = getIdOrCreate(person);
+
+    ContentValues values = getValues(person);
+    values.put(PersonColumns.NEEDS_SYNC, false);
+    resolver.update(People.withId(id), values, null, null);
+
+    return id;
   }
 
   private static ContentValues getValues(Person person) {
@@ -132,8 +152,6 @@ public final class PersonDatabaseHelper {
     }
     values.put(PersonColumns.BIRTHPLACE, person.getBirthplace());
     values.put(PersonColumns.HOMEPAGE, person.getHomepage());
-
-    values.put(PersonColumns.NEEDS_SYNC, false);
 
     return values;
   }

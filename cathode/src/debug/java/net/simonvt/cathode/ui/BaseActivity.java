@@ -16,9 +16,6 @@
 package net.simonvt.cathode.ui;
 
 import android.annotation.SuppressLint;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +32,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.work.WorkManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
@@ -61,20 +59,17 @@ import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.InitialSyncJob;
-import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.remote.sync.SyncWatching;
 import net.simonvt.cathode.remote.sync.lists.SyncLists;
-import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
-import net.simonvt.cathode.remote.sync.movies.SyncUserMovies;
-import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
-import net.simonvt.cathode.remote.sync.shows.SyncUserShows;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.StartPage;
 import net.simonvt.cathode.settings.TraktLinkSettings;
-import net.simonvt.cathode.sync.jobscheduler.AuthJobHandlerJob;
-import net.simonvt.cathode.sync.jobscheduler.DataJobHandlerJob;
-import net.simonvt.cathode.sync.jobscheduler.SchedulerService;
 import net.simonvt.cathode.sync.tmdb.api.SyncConfiguration;
+import net.simonvt.cathode.work.WorkManagerUtils;
+import net.simonvt.cathode.work.movies.MarkSyncUserMoviesWorker;
+import net.simonvt.cathode.work.movies.SyncUpdatedMoviesWorker;
+import net.simonvt.cathode.work.shows.MarkSyncUserShowsWorker;
+import net.simonvt.cathode.work.shows.SyncUpdatedShowsWorker;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 import static net.simonvt.cathode.module.DebugModule.NAMED_STATUS_CODE;
@@ -86,6 +81,7 @@ import static net.simonvt.cathode.module.DebugModule.NAMED_STATUS_CODE;
   final DebugViews debugViews = new DebugViews();
 
   @Inject @Named(NAMED_STATUS_CODE) IntPreference httpStatusCodePreference;
+  @Inject WorkManager workManager;
   @Inject JobManager jobManager;
   @Inject TraktSettings traktSettings;
   @Inject HttpLoggingInterceptor loggingInterceptor;
@@ -295,10 +291,14 @@ import static net.simonvt.cathode.module.DebugModule.NAMED_STATUS_CODE;
 
     debugViews.updated.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        jobManager.addJob(new SyncUpdatedShows());
-        jobManager.addJob(new SyncUserShows());
-        jobManager.addJob(new SyncUpdatedMovies());
-        jobManager.addJob(new SyncUserMovies());
+        WorkManagerUtils.enqueueUniqueNow(workManager, SyncUpdatedShowsWorker.TAG,
+            SyncUpdatedShowsWorker.class);
+        WorkManagerUtils.enqueueUniqueNow(workManager, MarkSyncUserShowsWorker.TAG,
+            MarkSyncUserShowsWorker.class);
+        WorkManagerUtils.enqueueUniqueNow(workManager, SyncUpdatedMoviesWorker.TAG,
+            SyncUpdatedMoviesWorker.class);
+        WorkManagerUtils.enqueueUniqueNow(workManager, MarkSyncUserMoviesWorker.TAG,
+            MarkSyncUserMoviesWorker.class);
       }
     });
 
@@ -315,37 +315,6 @@ import static net.simonvt.cathode.module.DebugModule.NAMED_STATUS_CODE;
     });
 
     jobManager.addJobListener(jobListener);
-
-    debugViews.startPeriodicJobs.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-
-        JobInfo job = new JobInfo.Builder(SyncUpdatedShows.ID,
-            new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
-            JobInfo.NETWORK_TYPE_ANY).build();
-        scheduler.schedule(job);
-
-        job = new JobInfo.Builder(SyncUpdatedMovies.ID,
-            new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
-            JobInfo.NETWORK_TYPE_ANY).build();
-        scheduler.schedule(job);
-
-        job = new JobInfo.Builder(SyncUserActivity.ID,
-            new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
-            JobInfo.NETWORK_TYPE_ANY).build();
-        scheduler.schedule(job);
-
-        job = new JobInfo.Builder(AuthJobHandlerJob.ID,
-            new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
-            JobInfo.NETWORK_TYPE_ANY).build();
-        scheduler.schedule(job);
-
-        job = new JobInfo.Builder(DataJobHandlerJob.ID,
-            new ComponentName(BaseActivity.this, SchedulerService.class)).setRequiredNetworkType(
-            JobInfo.NETWORK_TYPE_ANY).build();
-        scheduler.schedule(job);
-      }
-    });
   }
 
   private JobListener jobListener = new JobListener() {
@@ -442,7 +411,5 @@ import static net.simonvt.cathode.module.DebugModule.NAMED_STATUS_CODE;
     @BindView(R.id.debug_dataHandlerStatus) TextView dataHandlerStatus;
 
     @BindView(R.id.debug_jobCount) TextView jobCount;
-
-    @BindView(R.id.debug_startPeriodicJobs) View startPeriodicJobs;
   }
 }

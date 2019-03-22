@@ -18,6 +18,7 @@ package net.simonvt.cathode.sync.jobqueue;
 
 import android.content.Context;
 import android.text.format.DateUtils;
+import androidx.work.WorkManager;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.common.util.MainHandler;
@@ -46,6 +47,7 @@ public class JobHandler {
   }
 
   protected Context context;
+  protected WorkManager workManager;
   private JobManager jobManager;
 
   private JobExecutor executor;
@@ -55,9 +57,11 @@ public class JobHandler {
   private boolean started = false;
   private boolean resumed = false;
 
-  public JobHandler(Context context, JobManager jobManager, int withFlags, int withoutFlags,
+  public JobHandler(Context context, WorkManager workManager, JobManager jobManager, int withFlags,
+      int withoutFlags,
       int threadCount) {
     this.context = context;
+    this.workManager = workManager;
     this.jobManager = jobManager;
     executor = new JobExecutor(jobManager, executorListener, threadCount, withFlags, withoutFlags);
   }

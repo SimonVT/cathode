@@ -18,6 +18,7 @@ package net.simonvt.cathode.remote.sync;
 
 import android.content.ContentProviderOperation;
 import android.database.Cursor;
+import androidx.work.WorkManager;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -35,11 +36,14 @@ import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.PagedCallJob;
-import net.simonvt.cathode.remote.sync.movies.SyncPendingMovies;
-import net.simonvt.cathode.remote.sync.shows.SyncPendingShows;
+import net.simonvt.cathode.work.WorkManagerUtils;
+import net.simonvt.cathode.work.movies.SyncPendingMoviesWorker;
+import net.simonvt.cathode.work.shows.SyncPendingShowsWorker;
 import retrofit2.Call;
 
 public class SyncHiddenWatched extends PagedCallJob<HiddenItem> {
+
+  @Inject transient WorkManager workManager;
 
   @Inject transient UsersService usersService;
 
@@ -130,8 +134,8 @@ public class SyncHiddenWatched extends PagedCallJob<HiddenItem> {
       }
     }
 
-    SyncPendingShows.schedule(getContext());
-    SyncPendingMovies.schedule(getContext());
+    WorkManagerUtils.enqueueUniqueNow(workManager, SyncPendingShowsWorker.TAG, SyncPendingShowsWorker.class);
+    WorkManagerUtils.enqueueUniqueNow(workManager, SyncPendingMoviesWorker.TAG, SyncPendingMoviesWorker.class);
 
     for (long showId : unhandledShows) {
       ContentProviderOperation op = ContentProviderOperation.newUpdate(Shows.withId(showId))

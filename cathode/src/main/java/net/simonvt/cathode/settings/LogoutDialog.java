@@ -26,11 +26,11 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.LogoutJob;
-import net.simonvt.cathode.remote.sync.SyncUserActivity;
-import net.simonvt.cathode.sync.jobscheduler.AuthJobHandlerJob;
+import net.simonvt.cathode.work.PeriodicWorkInitializer;
 
 public class LogoutDialog extends AppCompatDialogFragment {
 
+  @Inject PeriodicWorkInitializer periodicWorkInitializer;
   @Inject JobManager jobManager;
 
   @Override public Dialog onCreateDialog(Bundle inState) {
@@ -53,8 +53,7 @@ public class LogoutDialog extends AppCompatDialogFragment {
             jobManager.addJob(new LogoutJob());
             jobManager.removeJobsWithFlag(Flags.REQUIRES_AUTH);
 
-            AuthJobHandlerJob.cancel(getActivity());
-            SyncUserActivity.cancel(getActivity());
+            periodicWorkInitializer.cancelAuthWork();
           }
         })
         .setNegativeButton(R.string.cancel, null)

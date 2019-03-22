@@ -17,6 +17,7 @@
 package net.simonvt.cathode.remote;
 
 import java.io.IOException;
+import net.simonvt.cathode.actions.ErrorHandler;
 import net.simonvt.cathode.jobqueue.Job;
 import retrofit2.Response;
 import timber.log.Timber;

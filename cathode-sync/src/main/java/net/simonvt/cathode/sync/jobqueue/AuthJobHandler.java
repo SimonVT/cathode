@@ -17,19 +17,21 @@
 package net.simonvt.cathode.sync.jobqueue;
 
 import android.content.Context;
+import androidx.work.WorkManager;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.simonvt.cathode.common.event.SyncEvent;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.cathode.sync.jobscheduler.AuthJobHandlerJob;
+import net.simonvt.cathode.work.WorkManagerUtils;
+import net.simonvt.cathode.work.jobs.AuthJobHandlerWorker;
 
 @Singleton public class AuthJobHandler extends JobHandler {
 
   private static final int THREAD_COUNT = 1;
 
-  @Inject public AuthJobHandler(Context context, JobManager jobManager) {
-    super(context, jobManager, Flags.REQUIRES_AUTH, 0, THREAD_COUNT);
+  @Inject public AuthJobHandler(Context context, WorkManager workManager, JobManager jobManager) {
+    super(context, workManager, jobManager, Flags.REQUIRES_AUTH, 0, THREAD_COUNT);
   }
 
   @Override protected void onResume() {
@@ -42,7 +44,7 @@ import net.simonvt.cathode.sync.jobscheduler.AuthJobHandlerJob;
 
   @Override protected void onStop() {
     if (hasJobs()) {
-      AuthJobHandlerJob.schedule(context);
+      WorkManagerUtils.enqueueNow(workManager, AuthJobHandlerWorker.class);
     }
   }
 }

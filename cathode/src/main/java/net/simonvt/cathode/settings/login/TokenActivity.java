@@ -31,22 +31,21 @@ import net.simonvt.cathode.api.service.AuthorizationService;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.sync.SyncJob;
-import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.ProfileSettings;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.Timestamps;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.link.TraktLinkActivity;
-import net.simonvt.cathode.sync.jobscheduler.AuthJobHandlerJob;
-import net.simonvt.cathode.sync.jobscheduler.Jobs;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.HomeActivity;
+import net.simonvt.cathode.work.PeriodicWorkInitializer;
 
 public class TokenActivity extends BaseActivity implements TokenTask.Callback {
 
   static final String EXTRA_CODE = "code";
 
+  @Inject PeriodicWorkInitializer periodicWorkInitializer;
   @Inject JobManager jobManager;
   @Inject TraktSettings traktSettings;
 
@@ -105,9 +104,7 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
     Accounts.setupAccount(this);
 
     jobManager.addJob(new SyncJob());
-
-    AuthJobHandlerJob.schedulePeriodic(this);
-    SyncUserActivity.schedulePeriodic(this);
+    periodicWorkInitializer.initAuthWork();
 
     if (task == LoginActivity.TASK_LINK) {
       Intent traktSync = new Intent(this, TraktLinkActivity.class);

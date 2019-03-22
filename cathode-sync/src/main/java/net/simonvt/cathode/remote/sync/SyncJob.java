@@ -16,19 +16,25 @@
 package net.simonvt.cathode.remote.sync;
 
 import android.text.format.DateUtils;
+import androidx.work.WorkManager;
+import javax.inject.Inject;
+import net.simonvt.cathode.actions.shows.SyncUpdatedShows;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobPriority;
-import net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies;
-import net.simonvt.cathode.remote.sync.movies.SyncUserMovies;
-import net.simonvt.cathode.remote.sync.shows.SyncUpdatedShows;
-import net.simonvt.cathode.remote.sync.shows.SyncUserShows;
 import net.simonvt.cathode.settings.Timestamps;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.sync.tmdb.api.SyncConfiguration;
+import net.simonvt.cathode.work.WorkManagerUtils;
+import net.simonvt.cathode.work.movies.MarkSyncUserMoviesWorker;
+import net.simonvt.cathode.work.movies.SyncUpdatedMoviesWorker;
+import net.simonvt.cathode.work.shows.MarkSyncUserShowsWorker;
+import net.simonvt.cathode.work.shows.SyncUpdatedShowsWorker;
 
 public class SyncJob extends Job {
 
   private static final long UPDATE_SYNC_DELAY = 7 * DateUtils.DAY_IN_MILLIS;
+
+  @Inject transient WorkManager workManager;
 
   @Override public String key() {
     return "SyncJob";
@@ -61,7 +67,8 @@ public class SyncJob extends Job {
           .putLong(Timestamps.SHOWS_LAST_UPDATED, currentTime)
           .apply();
     } else if (lastShowSync + UPDATE_SYNC_DELAY < currentTime) {
-      queue(new SyncUpdatedShows());
+      WorkManagerUtils.enqueueUniqueNow(workManager, SyncUpdatedShows.TAG,
+          SyncUpdatedShowsWorker.class);
     }
     if (lastMovieSync == 0L) {
       Timestamps.get(getContext())
@@ -69,11 +76,12 @@ public class SyncJob extends Job {
           .putLong(Timestamps.MOVIES_LAST_UPDATED, currentTime)
           .apply();
     } else if (lastMovieSync + UPDATE_SYNC_DELAY < currentTime) {
-      queue(new SyncUpdatedMovies());
+      WorkManagerUtils.enqueueUniqueNow(workManager, SyncUpdatedShows.TAG,
+          SyncUpdatedMoviesWorker.class);
     }
 
-    queue(new SyncUserShows());
-    queue(new SyncUserMovies());
+    WorkManagerUtils.enqueueNow(workManager, MarkSyncUserShowsWorker.class);
+    WorkManagerUtils.enqueueNow(workManager, MarkSyncUserMoviesWorker.class);
 
     if (TraktLinkSettings.isLinked(getContext())) {
       queue(new SyncUserActivity());

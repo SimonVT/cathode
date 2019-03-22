@@ -15,14 +15,8 @@
   ~ limitations under the License.
   -->
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
     package="net.simonvt.cathode.sync">
 
-  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-
-  <application>
-    <service
-        android:name="net.simonvt.cathode.sync.jobscheduler.SchedulerService"
-        android:permission="android.permission.BIND_JOB_SERVICE"/>
-  </application>
+  <application/>
 </manifest>

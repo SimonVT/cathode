@@ -23,6 +23,7 @@ import dagger.android.support.AndroidSupportInjectionModule;
 import javax.inject.Singleton;
 import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.common.dagger.CathodeAndroidInjectionModule;
+import net.simonvt.cathode.dagger.AppAssistedModule;
 import net.simonvt.cathode.dagger.FragmentBindingModule;
 import net.simonvt.cathode.dagger.ServiceBindingModule;
 import net.simonvt.cathode.dagger.views.ViewModule;
@@ -32,12 +33,14 @@ import net.simonvt.cathode.provider.DatabaseHelperModule;
 import net.simonvt.cathode.remote.JobModule;
 import net.simonvt.cathode.sync.api.ApiModule;
 import net.simonvt.cathode.sync.tmdb.TmdbModule;
+import net.simonvt.cathode.work.di.WorkerModule;
 
 @Singleton @Component(modules = {
     ServiceBindingModule.class, FragmentBindingModule.class, AndroidInjectionModule.class,
     AndroidSupportInjectionModule.class, CathodeAndroidInjectionModule.class, AppModule.class,
     ApiModule.class, TraktModule.class, TmdbModule.class, ImageModule.class, ProviderModule.class,
     DatabaseHelperModule.class, ViewModule.class, JobModule.class, JobInjectionModule.class,
+    WorkerModule.class, AppAssistedModule.class,
 }) //
 public interface AppComponent {
 

@@ -22,9 +22,13 @@ dependencies {
   implementation deps.daggerAndroidSupport
   kapt deps.daggerCompiler
   kapt deps.daggerAndroidApt
+  implementation deps.assistedInject.annotations
+  kapt deps.assistedInject.processor
   implementation deps.retrofit
   implementation deps.schematic
   implementation deps.androidx.annotations
+  implementation deps.androidx.work
+  implementation deps.androidx.workKtx
   implementation deps.timber
   implementation deps.tmdb
 

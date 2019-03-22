@@ -74,7 +74,7 @@ public class SyncShowCredits extends CallJob<People> {
     if (characters != null) {
       for (CastMember character : characters) {
         Person person = character.getPerson();
-        final long personId = personHelper.updateOrInsert(person);
+        final long personId = personHelper.partialUpdate(person);
 
         ContentProviderOperation op = ContentProviderOperation.newInsert(ShowCast.SHOW_CAST)
             .withValue(ShowCastColumns.SHOW_ID, showId)
@@ -105,7 +105,7 @@ public class SyncShowCredits extends CallJob<People> {
     if (crew != null) {
       for (CrewMember member : crew) {
         Person person = member.getPerson();
-        final long personId = personHelper.updateOrInsert(person);
+        final long personId = personHelper.partialUpdate(person);
 
         ContentProviderOperation op = ContentProviderOperation.newInsert(ShowCrew.SHOW_CREW)
             .withValue(ShowCrewColumns.SHOW_ID, showId)
