@@ -90,7 +90,7 @@ public class SyncSeasonsRatings extends CallJob<List<RatingItem>> {
 
       ContentProviderOperation op = ContentProviderOperation.newUpdate(Seasons.withId(seasonId))
           .withValue(SeasonColumns.USER_RATING, rating.getRating())
-          .withValue(SeasonColumns.RATED_AT, rating.getRatedAt().getTimeInMillis())
+          .withValue(SeasonColumns.RATED_AT, rating.getRated_at().getTimeInMillis())
           .build();
       ops.add(op);
     }

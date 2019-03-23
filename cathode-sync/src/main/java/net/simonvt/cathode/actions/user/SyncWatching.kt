@@ -76,90 +76,88 @@ class SyncWatching @Inject constructor(
     var op: ContentProviderOperation
 
     if (response != null) {
-      if (response.type != null) {
-        when (response.type) {
-          ItemType.EPISODE -> {
-            val showTraktId = response.show.ids.trakt!!
+      when (response.type) {
+        ItemType.EPISODE -> {
+          val showTraktId = response.show!!.ids.trakt!!
 
-            val showResult = showHelper.getIdOrCreate(showTraktId)
-            val showId = showResult.showId
+          val showResult = showHelper.getIdOrCreate(showTraktId)
+          val showId = showResult.showId
 
-            if (showHelper.needsSync(showId)) {
+          if (showHelper.needsSync(showId)) {
+            jobManager.addJob(SyncShow(showTraktId))
+          }
+
+          val didShowExist = !showResult.didCreate
+
+          val seasonNumber = response.episode!!.season!!
+          val seasonResult = seasonHelper.getIdOrCreate(showId, seasonNumber)
+          val seasonId = seasonResult.id
+          val didSeasonExist = !seasonResult.didCreate
+          if (seasonResult.didCreate) {
+            if (didShowExist) {
               jobManager.addJob(SyncShow(showTraktId))
             }
-
-            val didShowExist = !showResult.didCreate
-
-            val seasonNumber = response.episode.season!!
-            val seasonResult = seasonHelper.getIdOrCreate(showId, seasonNumber)
-            val seasonId = seasonResult.id
-            val didSeasonExist = !seasonResult.didCreate
-            if (seasonResult.didCreate) {
-              if (didShowExist) {
-                jobManager.addJob(SyncShow(showTraktId))
-              }
-            }
-
-            val episodeNumber = response.episode.number!!
-
-            val episodeResult = episodeHelper.getIdOrCreate(showId, seasonId, episodeNumber)
-            val episodeId = episodeResult.id
-            if (episodeResult.didCreate) {
-              if (didShowExist && didSeasonExist) {
-                jobManager.addJob(SyncShow(showTraktId))
-              }
-            }
-
-            episodeWatching.remove(episodeId)
-
-            if (response.action == Action.CHECKIN) {
-              op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
-                .withValue(EpisodeColumns.CHECKED_IN, true)
-                .withValue(EpisodeColumns.WATCHING, false)
-                .withValue(EpisodeColumns.STARTED_AT, response.startedAt.timeInMillis)
-                .withValue(EpisodeColumns.EXPIRES_AT, response.expiresAt.timeInMillis)
-                .build()
-            } else {
-              op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
-                .withValue(EpisodeColumns.CHECKED_IN, false)
-                .withValue(EpisodeColumns.WATCHING, true)
-                .withValue(EpisodeColumns.STARTED_AT, response.startedAt.timeInMillis)
-                .withValue(EpisodeColumns.EXPIRES_AT, response.expiresAt.timeInMillis)
-                .build()
-            }
-            ops.add(op)
           }
 
-          ItemType.MOVIE -> {
-            val movieTraktId = response.movie.ids.trakt!!
-            val result = movieHelper.getIdOrCreate(movieTraktId)
-            val movieId = result.movieId
+          val episodeNumber = response.episode!!.number!!
 
-            if (movieHelper.needsSync(movieId)) {
-              jobManager.addJob(SyncMovie(movieTraktId))
+          val episodeResult = episodeHelper.getIdOrCreate(showId, seasonId, episodeNumber)
+          val episodeId = episodeResult.id
+          if (episodeResult.didCreate) {
+            if (didShowExist && didSeasonExist) {
+              jobManager.addJob(SyncShow(showTraktId))
             }
-
-            movieWatching.remove(movieId)
-
-            if (response.action == Action.CHECKIN) {
-              op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
-                .withValue(MovieColumns.CHECKED_IN, true)
-                .withValue(MovieColumns.WATCHING, false)
-                .withValue(MovieColumns.STARTED_AT, response.startedAt.timeInMillis)
-                .withValue(MovieColumns.EXPIRES_AT, response.expiresAt.timeInMillis)
-                .build()
-            } else {
-              op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
-                .withValue(MovieColumns.CHECKED_IN, false)
-                .withValue(MovieColumns.WATCHING, true)
-                .withValue(MovieColumns.STARTED_AT, response.startedAt.timeInMillis)
-                .withValue(MovieColumns.EXPIRES_AT, response.expiresAt.timeInMillis)
-                .build()
-            }
-            ops.add(op)
           }
-          else -> throw ActionFailedException("Unknown item type " + response.type.toString())
+
+          episodeWatching.remove(episodeId)
+
+          if (response.action == Action.CHECKIN) {
+            op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
+              .withValue(EpisodeColumns.CHECKED_IN, true)
+              .withValue(EpisodeColumns.WATCHING, false)
+              .withValue(EpisodeColumns.STARTED_AT, response.started_at.timeInMillis)
+              .withValue(EpisodeColumns.EXPIRES_AT, response.expires_at.timeInMillis)
+              .build()
+          } else {
+            op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
+              .withValue(EpisodeColumns.CHECKED_IN, false)
+              .withValue(EpisodeColumns.WATCHING, true)
+              .withValue(EpisodeColumns.STARTED_AT, response.started_at.timeInMillis)
+              .withValue(EpisodeColumns.EXPIRES_AT, response.expires_at.timeInMillis)
+              .build()
+          }
+          ops.add(op)
         }
+
+        ItemType.MOVIE -> {
+          val movieTraktId = response.movie!!.ids.trakt!!
+          val result = movieHelper.getIdOrCreate(movieTraktId)
+          val movieId = result.movieId
+
+          if (movieHelper.needsSync(movieId)) {
+            jobManager.addJob(SyncMovie(movieTraktId))
+          }
+
+          movieWatching.remove(movieId)
+
+          if (response.action == Action.CHECKIN) {
+            op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
+              .withValue(MovieColumns.CHECKED_IN, true)
+              .withValue(MovieColumns.WATCHING, false)
+              .withValue(MovieColumns.STARTED_AT, response.started_at.timeInMillis)
+              .withValue(MovieColumns.EXPIRES_AT, response.expires_at.timeInMillis)
+              .build()
+          } else {
+            op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
+              .withValue(MovieColumns.CHECKED_IN, false)
+              .withValue(MovieColumns.WATCHING, true)
+              .withValue(MovieColumns.STARTED_AT, response.started_at.timeInMillis)
+              .withValue(MovieColumns.EXPIRES_AT, response.expires_at.timeInMillis)
+              .build()
+          }
+          ops.add(op)
+        }
+        else -> throw ActionFailedException("Unknown item type " + response.type.toString())
       }
     }
 

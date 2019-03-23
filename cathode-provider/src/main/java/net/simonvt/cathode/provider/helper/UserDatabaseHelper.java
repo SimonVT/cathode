@@ -101,10 +101,10 @@ public class UserDatabaseHelper {
     values.put(UserColumns.USERNAME, profile.getUsername());
     values.put(UserColumns.IS_PRIVATE, profile.isPrivate());
     values.put(UserColumns.NAME, profile.getName());
-    values.put(UserColumns.VIP, profile.isVip());
-    values.put(UserColumns.VIP_EP, profile.isVipEP());
-    if (profile.getJoinedAt() != null) {
-      values.put(UserColumns.JOINED_AT, profile.getJoinedAt().getTimeInMillis());
+    values.put(UserColumns.VIP, profile.getVip());
+    values.put(UserColumns.VIP_EP, profile.getVip_ep());
+    if (profile.getJoined_at() != null) {
+      values.put(UserColumns.JOINED_AT, profile.getJoined_at().getTimeInMillis());
     }
     values.put(UserColumns.LOCATION, profile.getLocation());
     values.put(UserColumns.ABOUT, profile.getAbout());

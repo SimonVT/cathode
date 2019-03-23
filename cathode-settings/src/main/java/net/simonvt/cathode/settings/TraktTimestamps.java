@@ -201,32 +201,32 @@ public final class TraktTimestamps {
     SharedPreferences settings = getSettings(context);
     SharedPreferences.Editor editor = settings.edit();
 
-    editor.putLong(SHOW_RATING, lastActivity.getShows().getRatedAt().getTimeInMillis());
-    editor.putLong(SHOW_WATCHLIST, lastActivity.getShows().getWatchlistedAt().getTimeInMillis());
-    editor.putLong(SHOW_COMMENT, lastActivity.getShows().getCommentedAt().getTimeInMillis());
-    editor.putLong(SHOW_HIDE, lastActivity.getShows().getHiddenAt().getTimeInMillis());
+    editor.putLong(SHOW_RATING, lastActivity.getShows().getRated_at().getTimeInMillis());
+    editor.putLong(SHOW_WATCHLIST, lastActivity.getShows().getWatchlisted_at().getTimeInMillis());
+    editor.putLong(SHOW_COMMENT, lastActivity.getShows().getCommented_at().getTimeInMillis());
+    editor.putLong(SHOW_HIDE, lastActivity.getShows().getHidden_at().getTimeInMillis());
 
-    editor.putLong(SEASON_COMMENT, lastActivity.getSeasons().getCommentedAt().getTimeInMillis());
-    editor.putLong(SEASON_RATING, lastActivity.getSeasons().getRatedAt().getTimeInMillis());
+    editor.putLong(SEASON_COMMENT, lastActivity.getSeasons().getCommented_at().getTimeInMillis());
+    editor.putLong(SEASON_RATING, lastActivity.getSeasons().getRated_at().getTimeInMillis());
 
-    editor.putLong(EPISODE_WATCHED, lastActivity.getEpisodes().getWatchedAt().getTimeInMillis());
+    editor.putLong(EPISODE_WATCHED, lastActivity.getEpisodes().getWatched_at().getTimeInMillis());
     editor.putLong(EPISODE_COLLECTION,
-        lastActivity.getEpisodes().getCollectedAt().getTimeInMillis());
-    editor.putLong(EPISODE_RATING, lastActivity.getEpisodes().getRatedAt().getTimeInMillis());
+        lastActivity.getEpisodes().getCollected_at().getTimeInMillis());
+    editor.putLong(EPISODE_RATING, lastActivity.getEpisodes().getRated_at().getTimeInMillis());
     editor.putLong(EPISODE_WATCHLIST,
-        lastActivity.getEpisodes().getWatchlistedAt().getTimeInMillis());
-    editor.putLong(EPISODE_COMMENT, lastActivity.getEpisodes().getCommentedAt().getTimeInMillis());
+        lastActivity.getEpisodes().getWatchlisted_at().getTimeInMillis());
+    editor.putLong(EPISODE_COMMENT, lastActivity.getEpisodes().getCommented_at().getTimeInMillis());
 
-    editor.putLong(MOVIE_WATCHED, lastActivity.getMovies().getWatchedAt().getTimeInMillis());
-    editor.putLong(MOVIE_COLLECTION, lastActivity.getMovies().getCollectedAt().getTimeInMillis());
-    editor.putLong(MOVIE_RATING, lastActivity.getMovies().getRatedAt().getTimeInMillis());
-    editor.putLong(MOVIE_WATCHLIST, lastActivity.getMovies().getWatchlistedAt().getTimeInMillis());
-    editor.putLong(MOVIE_COMMENT, lastActivity.getMovies().getCommentedAt().getTimeInMillis());
-    editor.putLong(MOVIE_HIDE, lastActivity.getMovies().getHiddenAt().getTimeInMillis());
+    editor.putLong(MOVIE_WATCHED, lastActivity.getMovies().getWatched_at().getTimeInMillis());
+    editor.putLong(MOVIE_COLLECTION, lastActivity.getMovies().getCollected_at().getTimeInMillis());
+    editor.putLong(MOVIE_RATING, lastActivity.getMovies().getRated_at().getTimeInMillis());
+    editor.putLong(MOVIE_WATCHLIST, lastActivity.getMovies().getWatchlisted_at().getTimeInMillis());
+    editor.putLong(MOVIE_COMMENT, lastActivity.getMovies().getCommented_at().getTimeInMillis());
+    editor.putLong(MOVIE_HIDE, lastActivity.getMovies().getHidden_at().getTimeInMillis());
 
-    editor.putLong(COMMENT_LIKED_AT, lastActivity.getComments().getLikedAt().getTimeInMillis());
+    editor.putLong(COMMENT_LIKED_AT, lastActivity.getComments().getLiked_at().getTimeInMillis());
 
-    editor.putLong(LIST_UPDATED_AT, lastActivity.getLists().getUpdatedAt().getTimeInMillis());
+    editor.putLong(LIST_UPDATED_AT, lastActivity.getLists().getUpdated_at().getTimeInMillis());
 
     editor.apply();
   }

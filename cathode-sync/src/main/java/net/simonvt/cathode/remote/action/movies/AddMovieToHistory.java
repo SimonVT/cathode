@@ -51,8 +51,7 @@ public class AddMovieToHistory extends CallJob<SyncResponse> {
   }
 
   @Override public Call<SyncResponse> getCall() {
-    SyncItems items = new SyncItems();
-    items.movie(traktId).watchedAt(watchedAt);
+    SyncItems items = new SyncItems.Builder().movie(traktId, watchedAt, null, null).build();
     return syncService.watched(items);
   }
 

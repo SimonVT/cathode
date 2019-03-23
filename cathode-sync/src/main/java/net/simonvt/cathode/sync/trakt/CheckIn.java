@@ -25,6 +25,7 @@ import java.io.IOException;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.CheckinItem;
 import net.simonvt.cathode.api.entity.CheckinResponse;
+import net.simonvt.cathode.api.entity.Sharing;
 import net.simonvt.cathode.api.service.CheckinService;
 import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.common.event.ErrorEvent;
@@ -81,14 +82,12 @@ public class CheckIn {
     show.close();
 
     try {
-      CheckinItem item = new CheckinItem() //
-          .episode(traktId)
+      CheckinItem item = new CheckinItem.Builder().episode(traktId)
           .message(message)
-          .facebook(facebook)
-          .twitter(twitter)
-          .tumblr(tumblr)
+          .sharing(new Sharing(facebook, twitter, tumblr))
           .appVersion(BuildConfig.VERSION_NAME)
-          .appDate(BuildConfig.BUILD_TIME);
+          .appDate(BuildConfig.BUILD_TIME)
+          .build();
       Call<CheckinResponse> call = checkinService.checkin(item);
       Response<CheckinResponse> response = call.execute();
 
@@ -132,13 +131,12 @@ public class CheckIn {
     context.getContentResolver().update(Movies.withId(movieId), values, null, null);
 
     try {
-      CheckinItem item = new CheckinItem().movie(traktId)
+      CheckinItem item = new CheckinItem.Builder().movie(traktId)
           .message(message)
-          .facebook(facebook)
-          .twitter(twitter)
-          .tumblr(tumblr)
+          .sharing(new Sharing(facebook, twitter, tumblr))
           .appVersion(BuildConfig.VERSION_NAME)
-          .appDate(BuildConfig.BUILD_TIME);
+          .appDate(BuildConfig.BUILD_TIME)
+          .build();
 
       Call<CheckinResponse> call = checkinService.checkin(item);
       Response<CheckinResponse> response = call.execute();

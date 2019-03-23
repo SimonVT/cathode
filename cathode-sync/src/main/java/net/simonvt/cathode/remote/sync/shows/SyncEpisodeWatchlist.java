@@ -82,7 +82,7 @@ public class SyncEpisodeWatchlist extends CallJob<List<WatchlistItem>> {
       final long showTraktId = show.getIds().getTrakt();
       final int seasonNumber = episode.getSeason();
       final int episodeNumber = episode.getNumber();
-      final long listedAt = item.getListedAt().getTimeInMillis();
+      final long listedAt = item.getListed_at().getTimeInMillis();
 
       ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(showTraktId);
       final long showId = showResult.showId;

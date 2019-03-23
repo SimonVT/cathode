@@ -3,6 +3,7 @@ ext {
   kotlinCoroutinesVersion = '1.2.1'
 
   daggerVersion = '2.21'
+  moshiVersion = '1.8.0'
   okhttpVersion = '3.13.1'
   retrofitVersion = '2.5.0'
 
@@ -34,7 +35,7 @@ ext {
       picasso: 'com.squareup.picasso:picasso:2.5.2',
       picassoOkHttp: 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0',
       retrofit: "com.squareup.retrofit2:retrofit:$retrofitVersion",
-      retrofitGson: "com.squareup.retrofit2:converter-gson:$retrofitVersion",
+      retrofitMoshi: "com.squareup.retrofit2:converter-moshi:$retrofitVersion",
       javapoet: "com.squareup:javapoet:1.11.1",
 
       timber: 'com.jakewharton.timber:timber:4.7.1',
@@ -95,6 +96,13 @@ ext {
   deps.assistedInject = [
       annotations: 'com.squareup.inject:assisted-inject-annotations-dagger2:0.3.2',
       processor: 'com.squareup.inject:assisted-inject-processor-dagger2:0.3.2'
+  ]
+
+  deps.moshi = [
+      version: '1.8.0',
+      moshi: "com.squareup.moshi:moshi:$moshiVersion",
+      kotlin: "com.squareup.moshi:moshi-kotlin:$moshiVersion",
+      codegen: "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
   ]
 
   isCi = "true".equals(System.getenv('CI'))

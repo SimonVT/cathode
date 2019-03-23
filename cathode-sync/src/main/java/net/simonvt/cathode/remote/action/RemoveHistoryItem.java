@@ -44,9 +44,7 @@ public class RemoveHistoryItem extends CallJob<SyncResponse> {
   }
 
   @Override public Call<SyncResponse> getCall() {
-    RemoveHistoryBody body = new RemoveHistoryBody();
-    body.id(historyId);
-    return syncService.removeHistory(body);
+    return syncService.removeHistory(new RemoveHistoryBody.Builder().id(historyId).build());
   }
 
   @Override public boolean handleResponse(SyncResponse response) {

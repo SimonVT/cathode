@@ -16,8 +16,6 @@
 
 package net.simonvt.cathode.provider.util;
 
-import net.simonvt.cathode.api.util.Joiner;
-
 public class SqlIndex {
 
   private String name;

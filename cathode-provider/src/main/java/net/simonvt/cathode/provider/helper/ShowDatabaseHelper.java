@@ -414,8 +414,8 @@ public final class ShowDatabaseHelper {
     values.put(ShowColumns.TVDB_ID, show.getIds().getTvdb());
     values.put(ShowColumns.TMDB_ID, show.getIds().getTmdb());
     values.put(ShowColumns.TVRAGE_ID, show.getIds().getTvrage());
-    if (show.getUpdatedAt() != null) {
-      values.put(ShowColumns.LAST_UPDATED, show.getUpdatedAt().getTimeInMillis());
+    if (show.getUpdated_at() != null) {
+      values.put(ShowColumns.LAST_UPDATED, show.getUpdated_at().getTimeInMillis());
     }
 
     if (show.getRating() != null) {

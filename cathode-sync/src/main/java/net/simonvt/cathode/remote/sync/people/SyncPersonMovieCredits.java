@@ -22,7 +22,9 @@ import androidx.collection.LongSparseArray;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import net.simonvt.cathode.api.entity.Credit;
 import net.simonvt.cathode.api.entity.Credits;
+import net.simonvt.cathode.api.entity.Crew;
 import net.simonvt.cathode.api.entity.Movie;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.Extended;
@@ -80,9 +82,9 @@ public class SyncPersonMovieCredits extends CallJob<Credits> {
     }
     oldCastCursor.close();
 
-    List<Credits.Credit> cast = credits.getCast();
+    List<Credit> cast = credits.getCast();
     if (cast != null) {
-      for (Credits.Credit credit : cast) {
+      for (Credit credit : cast) {
         Movie movie = credit.getMovie();
         final long movieId = movieHelper.partialUpdate(movie);
 
@@ -112,12 +114,12 @@ public class SyncPersonMovieCredits extends CallJob<Credits> {
       ops.add(op);
     }
 
-    Credits.Crew crew = credits.getCrew();
+    Crew crew = credits.getCrew();
     if (crew != null) {
       insertCrew(ops, personId, Department.PRODUCTION, crew.getProduction());
       insertCrew(ops, personId, Department.ART, crew.getArt());
       insertCrew(ops, personId, Department.CREW, crew.getCrew());
-      insertCrew(ops, personId, Department.COSTUME_AND_MAKEUP, crew.getCostumeAndMakeUp());
+      insertCrew(ops, personId, Department.COSTUME_AND_MAKEUP, crew.getCostume_and_make_up());
       insertCrew(ops, personId, Department.DIRECTING, crew.getDirecting());
       insertCrew(ops, personId, Department.WRITING, crew.getWriting());
       insertCrew(ops, personId, Department.SOUND, crew.getSound());
@@ -128,7 +130,7 @@ public class SyncPersonMovieCredits extends CallJob<Credits> {
   }
 
   private void insertCrew(ArrayList<ContentProviderOperation> ops, long personId,
-      Department department, List<Credits.Credit> crew) {
+      Department department, List<Credit> crew) {
     Cursor oldCrewCursor = getContentResolver().query(MovieCrew.withPerson(personId), new String[] {
         Tables.MOVIE_CREW + "." + MovieCrewColumns.ID, MovieCrewColumns.MOVIE_ID,
     }, MovieCrewColumns.CATEGORY + "=?", new String[] {
@@ -145,7 +147,7 @@ public class SyncPersonMovieCredits extends CallJob<Credits> {
     oldCrewCursor.close();
 
     if (crew != null) {
-      for (Credits.Credit credit : crew) {
+      for (Credit credit : crew) {
         Movie movie = credit.getMovie();
         final long movieId = movieHelper.partialUpdate(movie);
 

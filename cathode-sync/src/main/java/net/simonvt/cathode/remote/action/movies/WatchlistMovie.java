@@ -59,13 +59,12 @@ public class WatchlistMovie extends CallJob<SyncResponse> {
   }
 
   @Override public Call<SyncResponse> getCall() {
-    SyncItems items = new SyncItems();
-    SyncItems.Movie movie = items.movie(traktId);
     if (inWatchlist) {
-      movie.listedAt(listedAt);
-      return syncService.watchlist(items);
+      return syncService.watchlist(
+          new SyncItems.Builder().movie(traktId, null, null, listedAt).build());
     } else {
-      return syncService.unwatchlist(items);
+      return syncService.unwatchlist(
+          new SyncItems.Builder().movie(traktId, null, null, null).build());
     }
   }
 

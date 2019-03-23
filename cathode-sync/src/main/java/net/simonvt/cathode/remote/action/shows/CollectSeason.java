@@ -64,12 +64,11 @@ public class CollectSeason extends CallJob<SyncResponse> {
 
   @Override public Call<SyncResponse> getCall() {
     if (inCollection) {
-      SyncItems items = new SyncItems();
-      items.show(traktId).season(season).collectedAt(collectedAt);
+      SyncItems items =
+          new SyncItems.Builder().season(traktId, season, null, collectedAt, null).build();
       return syncService.collect(items);
     } else {
-      SyncItems items = new SyncItems();
-      items.show(traktId).season(season);
+      SyncItems items = new SyncItems.Builder().season(traktId, season, null, null, null).build();
       return syncService.uncollect(items);
     }
   }

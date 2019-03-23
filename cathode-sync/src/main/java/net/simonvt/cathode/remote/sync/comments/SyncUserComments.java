@@ -24,7 +24,6 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import javax.inject.Named;
 import net.simonvt.cathode.api.entity.Comment;
 import net.simonvt.cathode.api.entity.CommentItem;
 import net.simonvt.cathode.api.entity.Episode;
@@ -49,14 +48,8 @@ import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.PagedCallJob;
 import net.simonvt.cathode.remote.sync.SyncUserProfile;
 import retrofit2.Call;
-import timber.log.Timber;
-
-import static net.simonvt.cathode.api.TraktModule.NAMED_TRAKT;
 
 public class SyncUserComments extends PagedCallJob<CommentItem> {
-
-  public static class DuplicateCommentException extends Exception {
-  }
 
   private static final int LIMIT = 100;
 
@@ -67,8 +60,6 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
   @Inject transient EpisodeDatabaseHelper episodeHelper;
   @Inject transient MovieDatabaseHelper movieHelper;
   @Inject transient UserDatabaseHelper userHelper;
-
-  @Inject @Named(NAMED_TRAKT) transient Gson gson;
 
   private ItemTypes itemTypes;
 
@@ -109,14 +100,8 @@ public class SyncUserComments extends PagedCallJob<CommentItem> {
       Comment comment = commentItem.getComment();
       final long commentId = comment.getId();
 
+      // Old issue where two comments could have the same ID.
       if (addedLater.get(commentId) != null) {
-        CommentItem otherCommentItem = addedLater.get(commentId);
-        String otherComment = gson.toJson(otherCommentItem);
-        String thisComment = gson.toJson(commentItem);
-        Timber.i("Other comment: %s", otherComment);
-        Timber.i("Comment: %s", thisComment);
-        Timber.e(new DuplicateCommentException(), "Comment with id %d appears twice in result",
-            commentId);
         continue;
       }
 

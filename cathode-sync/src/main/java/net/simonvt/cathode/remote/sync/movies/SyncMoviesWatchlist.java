@@ -71,7 +71,7 @@ public class SyncMoviesWatchlist extends CallJob<List<WatchlistItem>> {
 
     for (WatchlistItem item : watchlist) {
       final Movie movie = item.getMovie();
-      final long listedAt = item.getListedAt().getTimeInMillis();
+      final long listedAt = item.getListed_at().getTimeInMillis();
       final long traktId = movie.getIds().getTrakt();
 
       MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(traktId);

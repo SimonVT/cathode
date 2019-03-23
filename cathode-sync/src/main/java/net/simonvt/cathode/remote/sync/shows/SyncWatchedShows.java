@@ -26,7 +26,9 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.IsoTime;
 import net.simonvt.cathode.api.entity.Show;
+import net.simonvt.cathode.api.entity.WatchedEpisode;
 import net.simonvt.cathode.api.entity.WatchedItem;
+import net.simonvt.cathode.api.entity.WatchedSeason;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.JobPriority;
@@ -100,17 +102,17 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
         watchedShow = showsMap.get(showTraktId);
       }
 
-      WatchedSeason syncSeason = watchedShow.seasons.get(season);
+      LocalWatchedSeason syncSeason = watchedShow.seasons.get(season);
       if (syncSeason == null) {
-        syncSeason = new WatchedSeason(season, seasonId);
+        syncSeason = new LocalWatchedSeason(season, seasonId);
         watchedShow.seasons.put(season, syncSeason);
       }
 
       final int number = Cursors.getInt(c, EpisodeColumns.EPISODE);
 
-      WatchedEpisode syncEpisode = syncSeason.episodes.get(number);
+      LocalWatchedEpisode syncEpisode = syncSeason.episodes.get(number);
       if (syncEpisode == null) {
-        syncEpisode = new WatchedEpisode(id, number, lastWatchedAt);
+        syncEpisode = new LocalWatchedEpisode(id, number, lastWatchedAt);
         syncSeason.episodes.put(number, syncEpisode);
       }
 
@@ -145,18 +147,18 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
         showId = watchedShow.id;
       }
 
-      IsoTime lastWatched = item.getLastWatchedAt();
+      IsoTime lastWatched = item.getLast_watched_at();
       final long lastWatchedMillis = lastWatched.getTimeInMillis();
 
       ops.add(ContentProviderOperation.newUpdate(Shows.withId(watchedShow.id))
           .withValue(ShowColumns.LAST_WATCHED_AT, lastWatchedMillis)
           .build());
 
-      List<WatchedItem.Season> seasons = item.getSeasons();
-      for (WatchedItem.Season season : seasons) {
+      List<WatchedSeason> seasons = item.getSeasons();
+      for (WatchedSeason season : seasons) {
         final int seasonNumber = season.getNumber();
-        WatchedSeason watchedSeason = watchedShow.seasons.get(seasonNumber);
-        if (watchedSeason == null) {
+        LocalWatchedSeason localWatchedSeason = watchedShow.seasons.get(seasonNumber);
+        if (localWatchedSeason == null) {
           SeasonDatabaseHelper.IdResult seasonResult =
               seasonHelper.getIdOrCreate(watchedShow.id, seasonNumber);
           final long seasonId = seasonResult.id;
@@ -166,19 +168,19 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
               markedPending = true;
             }
           }
-          watchedSeason = new WatchedSeason(seasonNumber, seasonId);
-          watchedShow.seasons.put(seasonNumber, watchedSeason);
+          localWatchedSeason = new LocalWatchedSeason(seasonNumber, seasonId);
+          watchedShow.seasons.put(seasonNumber, localWatchedSeason);
         }
 
-        List<WatchedItem.Episode> episodes = season.getEpisodes();
-        for (WatchedItem.Episode episode : episodes) {
+        List<WatchedEpisode> episodes = season.getEpisodes();
+        for (WatchedEpisode episode : episodes) {
           final int episodeNumber = episode.getNumber();
-          final long lastWatchedAt = episode.getLastWatchedAt().getTimeInMillis();
-          WatchedEpisode syncEpisode = watchedSeason.episodes.get(episodeNumber);
+          final long lastWatchedAt = episode.getLast_watched_at().getTimeInMillis();
+          LocalWatchedEpisode syncEpisode = localWatchedSeason.episodes.get(episodeNumber);
 
           if (syncEpisode == null) {
             EpisodeDatabaseHelper.IdResult episodeResult =
-                episodeHelper.getIdOrCreate(watchedShow.id, watchedSeason.id, episodeNumber);
+                episodeHelper.getIdOrCreate(watchedShow.id, localWatchedSeason.id, episodeNumber);
             final long episodeId = episodeResult.id;
             if (episodeResult.didCreate) {
               if (!markedPending) {
@@ -250,24 +252,24 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
       this.id = id;
     }
 
-    SparseArrayCompat<WatchedSeason> seasons = new SparseArrayCompat<>();
+    SparseArrayCompat<LocalWatchedSeason> seasons = new SparseArrayCompat<>();
   }
 
-  private static class WatchedSeason {
+  private static class LocalWatchedSeason {
 
     int season;
 
     long id;
 
-    WatchedSeason(int season, long id) {
+    LocalWatchedSeason(int season, long id) {
       this.season = season;
       this.id = id;
     }
 
-    SparseArrayCompat<WatchedEpisode> episodes = new SparseArrayCompat<>();
+    SparseArrayCompat<LocalWatchedEpisode> episodes = new SparseArrayCompat<>();
   }
 
-  private static class WatchedEpisode {
+  private static class LocalWatchedEpisode {
 
     long id;
 
@@ -275,7 +277,7 @@ public class SyncWatchedShows extends CallJob<List<WatchedItem>> {
 
     long lastWatched;
 
-    WatchedEpisode(long id, int number, long lastWatched) {
+    LocalWatchedEpisode(long id, int number, long lastWatched) {
       this.id = id;
       this.number = number;
       this.lastWatched = lastWatched;

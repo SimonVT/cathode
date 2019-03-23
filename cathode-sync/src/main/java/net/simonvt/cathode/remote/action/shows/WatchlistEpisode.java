@@ -69,12 +69,12 @@ public class WatchlistEpisode extends CallJob<SyncResponse> {
 
   @Override public Call<SyncResponse> getCall() {
     if (inWatchlist) {
-      SyncItems items = new SyncItems();
-      items.show(traktId).season(season).episode(episode).listedAt(listedAt);
+      SyncItems items =
+          new SyncItems.Builder().episode(traktId, season, episode, null, null, listedAt).build();
       return syncService.watchlist(items);
     } else {
-      SyncItems items = new SyncItems();
-      items.show(traktId).season(season).episode(episode);
+      SyncItems items =
+          new SyncItems.Builder().episode(traktId, season, episode, null, null, null).build();
       return syncService.unwatchlist(items);
     }
   }

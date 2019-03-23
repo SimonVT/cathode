@@ -31,8 +31,6 @@ dependencies {
   implementation deps.schematic
   kapt deps.schematicCompiler
 
-  implementation deps.gson
-
   implementation deps.androidx.appcompat
   implementation deps.androidx.cardView
   implementation deps.androidx.preference
@@ -49,6 +47,9 @@ dependencies {
   kapt deps.daggerAndroidApt
   implementation deps.assistedInject.annotations
   kapt deps.assistedInject.processor
+  implementation deps.moshi.moshi
+  implementation deps.moshi.kotlin
+  kapt deps.moshi.codegen
   implementation deps.picasso
   implementation deps.picassoOkHttp
   implementation deps.retrofit

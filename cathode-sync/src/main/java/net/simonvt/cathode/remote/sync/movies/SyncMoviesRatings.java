@@ -79,7 +79,7 @@ public class SyncMoviesRatings extends CallJob<List<RatingItem>> {
 
       ContentProviderOperation op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
           .withValue(MovieColumns.USER_RATING, rating.getRating())
-          .withValue(MovieColumns.RATED_AT, rating.getRatedAt().getTimeInMillis())
+          .withValue(MovieColumns.RATED_AT, rating.getRated_at().getTimeInMillis())
           .build();
       ops.add(op);
     }

@@ -147,7 +147,7 @@ public class SyncList extends CallJob<List<ListItem>> {
 
           ContentProviderOperation.Builder opBuilder =
               ContentProviderOperation.newInsert(ListItems.LIST_ITEMS)
-                  .withValue(ListItemColumns.LISTED_AT, item.getListedAt().getTimeInMillis())
+                  .withValue(ListItemColumns.LISTED_AT, item.getListed_at().getTimeInMillis())
                   .withValue(ListItemColumns.LIST_ID, listId)
                   .withValue(ListItemColumns.ITEM_TYPE, DatabaseContract.ItemType.SHOW)
                   .withValue(ListItemColumns.ITEM_ID, showId);
@@ -181,7 +181,7 @@ public class SyncList extends CallJob<List<ListItem>> {
 
           ContentProviderOperation.Builder opBuilder =
               ContentProviderOperation.newInsert(ListItems.LIST_ITEMS)
-                  .withValue(ListItemColumns.LISTED_AT, item.getListedAt().getTimeInMillis())
+                  .withValue(ListItemColumns.LISTED_AT, item.getListed_at().getTimeInMillis())
                   .withValue(ListItemColumns.LIST_ID, listId)
                   .withValue(ListItemColumns.ITEM_TYPE, DatabaseContract.ItemType.SEASON)
                   .withValue(ListItemColumns.ITEM_ID, seasonId);
@@ -220,7 +220,7 @@ public class SyncList extends CallJob<List<ListItem>> {
 
           ContentProviderOperation.Builder opBuilder =
               ContentProviderOperation.newInsert(ListItems.LIST_ITEMS)
-                  .withValue(ListItemColumns.LISTED_AT, item.getListedAt().getTimeInMillis())
+                  .withValue(ListItemColumns.LISTED_AT, item.getListed_at().getTimeInMillis())
                   .withValue(ListItemColumns.LIST_ID, listId)
                   .withValue(ListItemColumns.ITEM_TYPE, DatabaseContract.ItemType.EPISODE)
                   .withValue(ListItemColumns.ITEM_ID, episodeId);
@@ -248,7 +248,7 @@ public class SyncList extends CallJob<List<ListItem>> {
 
           ContentProviderOperation.Builder opBuilder =
               ContentProviderOperation.newInsert(ListItems.LIST_ITEMS)
-                  .withValue(ListItemColumns.LISTED_AT, item.getListedAt().getTimeInMillis())
+                  .withValue(ListItemColumns.LISTED_AT, item.getListed_at().getTimeInMillis())
                   .withValue(ListItemColumns.LIST_ID, listId)
                   .withValue(ListItemColumns.ITEM_TYPE, DatabaseContract.ItemType.MOVIE)
                   .withValue(ListItemColumns.ITEM_ID, movieId);
@@ -273,7 +273,7 @@ public class SyncList extends CallJob<List<ListItem>> {
 
           ContentProviderOperation.Builder opBuilder =
               ContentProviderOperation.newInsert(ListItems.LIST_ITEMS)
-                  .withValue(ListItemColumns.LISTED_AT, item.getListedAt().getTimeInMillis())
+                  .withValue(ListItemColumns.LISTED_AT, item.getListed_at().getTimeInMillis())
                   .withValue(ListItemColumns.LIST_ID, listId)
                   .withValue(ListItemColumns.ITEM_TYPE, DatabaseContract.ItemType.PERSON)
                   .withValue(ListItemColumns.ITEM_ID, personId);

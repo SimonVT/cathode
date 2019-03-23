@@ -29,14 +29,14 @@ public final class CommentsHelper {
 
     values.put(DatabaseContract.CommentColumns.ID, comments.getId());
     values.put(DatabaseContract.CommentColumns.COMMENT, comments.getComment());
-    values.put(DatabaseContract.CommentColumns.SPOILER, comments.isSpoiler());
-    values.put(DatabaseContract.CommentColumns.REVIEW, comments.isReview());
-    values.put(DatabaseContract.CommentColumns.PARENT_ID, comments.getParentId());
+    values.put(DatabaseContract.CommentColumns.SPOILER, comments.getSpoiler());
+    values.put(DatabaseContract.CommentColumns.REVIEW, comments.getReview());
+    values.put(DatabaseContract.CommentColumns.PARENT_ID, comments.getParent_id());
     values.put(DatabaseContract.CommentColumns.CREATED_AT,
-        comments.getCreatedAt().getTimeInMillis());
+        comments.getCreated_at().getTimeInMillis());
     values.put(DatabaseContract.CommentColumns.REPLIES, comments.getReplies());
     values.put(DatabaseContract.CommentColumns.LIKES, comments.getLikes());
-    values.put(DatabaseContract.CommentColumns.USER_RATING, comments.getUserRating());
+    values.put(DatabaseContract.CommentColumns.USER_RATING, comments.getUser_rating());
 
     return values;
   }

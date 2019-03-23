@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.CastMember;
 import net.simonvt.cathode.api.entity.CrewMember;
 import net.simonvt.cathode.api.entity.People;
+import net.simonvt.cathode.api.entity.PeopleCrew;
 import net.simonvt.cathode.api.entity.Person;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.Extended;
@@ -85,12 +86,12 @@ public class SyncShowCredits extends CallJob<People> {
       }
     }
 
-    People.Crew crew = people.getCrew();
+    PeopleCrew crew = people.getCrew();
     if (crew != null) {
       insertCrew(ops, showId, Department.PRODUCTION, crew.getProduction());
       insertCrew(ops, showId, Department.ART, crew.getArt());
       insertCrew(ops, showId, Department.CREW, crew.getCrew());
-      insertCrew(ops, showId, Department.COSTUME_AND_MAKEUP, crew.getCostumeAndMakeUp());
+      insertCrew(ops, showId, Department.COSTUME_AND_MAKEUP, crew.getCostume_and_make_up());
       insertCrew(ops, showId, Department.DIRECTING, crew.getDirecting());
       insertCrew(ops, showId, Department.WRITING, crew.getWriting());
       insertCrew(ops, showId, Department.SOUND, crew.getSound());

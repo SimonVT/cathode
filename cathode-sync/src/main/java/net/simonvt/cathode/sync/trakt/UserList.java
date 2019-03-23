@@ -47,11 +47,8 @@ public class UserList {
   public boolean create(String name, String description, Privacy privacy, boolean displayNumbers,
       boolean allowComments) {
     try {
-      Call<CustomList> call = usersServie.createList(ListInfoBody.name(name)
-          .description(description)
-          .privacy(privacy)
-          .displayNumbers(displayNumbers)
-          .allowComments(allowComments));
+      Call<CustomList> call = usersServie.createList(
+          new ListInfoBody(name, description, privacy, displayNumbers, allowComments));
       Response<CustomList> response = call.execute();
       if (response.isSuccessful()) {
         CustomList userList = response.body();
@@ -70,11 +67,8 @@ public class UserList {
   public boolean update(long traktId, String name, String description, Privacy privacy,
       boolean displayNumbers, boolean allowComments) {
     try {
-      Call<CustomList> call = usersServie.updateList(traktId, ListInfoBody.name(name)
-          .description(description)
-          .privacy(privacy)
-          .displayNumbers(displayNumbers)
-          .allowComments(allowComments));
+      Call<CustomList> call = usersServie.updateList(traktId,
+          new ListInfoBody(name, description, privacy, displayNumbers, allowComments));
       Response<CustomList> response = call.execute();
       if (response.isSuccessful()) {
         CustomList userList = response.body();

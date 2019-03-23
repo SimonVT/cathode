@@ -80,10 +80,10 @@ public final class ListWrapper {
     if (list.getPrivacy() != null) {
       values.put(ListsColumns.PRIVACY, list.getPrivacy().toString());
     }
-    values.put(ListsColumns.DISPLAY_NUMBERS, list.getDisplayNumbers());
-    values.put(ListsColumns.ALLOW_COMMENTS, list.getAllowComments());
-    if (list.getUpdatedAt() != null) {
-      values.put(ListsColumns.UPDATED_AT, list.getUpdatedAt().getTimeInMillis());
+    values.put(ListsColumns.DISPLAY_NUMBERS, list.getDisplay_numbers());
+    values.put(ListsColumns.ALLOW_COMMENTS, list.getAllow_comments());
+    if (list.getUpdated_at() != null) {
+      values.put(ListsColumns.UPDATED_AT, list.getUpdated_at().getTimeInMillis());
     }
     values.put(ListsColumns.LIKES, list.getLikes());
     values.put(ListsColumns.SLUG, list.getIds().getSlug());

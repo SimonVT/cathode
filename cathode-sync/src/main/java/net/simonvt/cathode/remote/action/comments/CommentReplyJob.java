@@ -58,11 +58,7 @@ public class CommentReplyJob extends CallJob<Comment> {
   }
 
   @Override public Call<Comment> getCall() {
-    CommentBody body = CommentBody.comment(comment);
-    if (spoiler) {
-      body.spoiler();
-    }
-
+    CommentBody body = new CommentBody(comment, spoiler, null, null, null);
     return commentsService.reply(parentId, body);
   }
 

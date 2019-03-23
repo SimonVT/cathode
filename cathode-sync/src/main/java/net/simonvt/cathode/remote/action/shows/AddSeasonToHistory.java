@@ -59,8 +59,8 @@ public class AddSeasonToHistory extends CallJob<SyncResponse> {
   }
 
   @Override public Call<SyncResponse> getCall() {
-    SyncItems items = new SyncItems();
-    items.show(traktId).season(season).watchedAt(watchedAt);
+    SyncItems items =
+        new SyncItems.Builder().season(traktId, season, watchedAt, null, null).build();
     return syncService.watched(items);
   }
 

@@ -63,11 +63,7 @@ public class UpdateCommentJob extends CallJob<Comment> {
   }
 
   @Override public Call<Comment> getCall() {
-    CommentBody body = CommentBody.comment(comment);
-    if (spoiler) {
-      body.spoiler();
-    }
-
+    CommentBody body = new CommentBody(comment, spoiler, null, null, null);
     return commentsService.update(commentId, body);
   }
 

@@ -80,7 +80,7 @@ public class MovieHistoryLiveData extends AsyncLiveData<MovieHistoryLiveData.Res
         List<net.simonvt.cathode.ui.movie.HistoryItem> historyItems = new ArrayList<>();
         for (HistoryItem item : items) {
           final long id = item.getId();
-          final String date = df.format(new Date(item.getWatchedAt().getTimeInMillis()));
+          final String date = df.format(new Date(item.getWatched_at().getTimeInMillis()));
           net.simonvt.cathode.ui.movie.HistoryItem historyItem =
               new net.simonvt.cathode.ui.movie.HistoryItem(id, date);
           historyItems.add(historyItem);

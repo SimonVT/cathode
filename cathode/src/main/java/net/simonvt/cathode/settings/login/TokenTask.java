@@ -22,7 +22,7 @@ import net.simonvt.cathode.BuildConfig;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.TraktSettings;
 import net.simonvt.cathode.api.entity.AccessToken;
-import net.simonvt.cathode.api.entity.TokenRequest;
+import net.simonvt.cathode.api.body.TokenRequest;
 import net.simonvt.cathode.api.enumeration.GrantType;
 import net.simonvt.cathode.api.service.AuthorizationService;
 import net.simonvt.cathode.api.service.UsersService;
@@ -102,7 +102,7 @@ public class TokenTask extends AsyncTask<Void, Void, TokenTask.Result> {
   @Override protected TokenTask.Result doInBackground(Void... voids) {
     try {
       Call<AccessToken> call = authorizationService.getToken(
-          TokenRequest.getAccessToken(code, BuildConfig.TRAKT_CLIENT_ID, BuildConfig.TRAKT_SECRET,
+          new TokenRequest(code, null, BuildConfig.TRAKT_CLIENT_ID, BuildConfig.TRAKT_SECRET,
               BuildConfig.TRAKT_REDIRECT_URL, GrantType.AUTHORIZATION_CODE));
       Response<AccessToken> response = call.execute();
 

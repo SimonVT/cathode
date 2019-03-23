@@ -80,7 +80,7 @@ public class EpisodeHistoryLiveData extends AsyncLiveData<EpisodeHistoryLiveData
         List<net.simonvt.cathode.ui.show.HistoryItem> historyItems = new ArrayList<>();
         for (HistoryItem item : items) {
           final long id = item.getId();
-          final String date = df.format(new Date(item.getWatchedAt().getTimeInMillis()));
+          final String date = df.format(new Date(item.getWatched_at().getTimeInMillis()));
           net.simonvt.cathode.ui.show.HistoryItem historyItem =
               new net.simonvt.cathode.ui.show.HistoryItem(id, date);
           historyItems.add(historyItem);

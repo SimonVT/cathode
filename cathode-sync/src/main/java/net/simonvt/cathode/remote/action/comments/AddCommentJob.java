@@ -19,6 +19,7 @@ package net.simonvt.cathode.remote.action.comments;
 import java.io.IOException;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.body.CommentBody;
+import net.simonvt.cathode.api.body.TraktIdItem;
 import net.simonvt.cathode.api.entity.Comment;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.CommentsService;
@@ -61,22 +62,18 @@ public class AddCommentJob extends CallJob<Comment> {
   }
 
   @Override public Call<Comment> getCall() {
-    CommentBody body = CommentBody.comment(comment);
-    if (spoiler) {
-      body.spoiler();
-    }
-
+    CommentBody body;
     switch (type) {
       case SHOW:
-        body.show(traktId);
+        body = new CommentBody(comment, spoiler, TraktIdItem.withId(traktId), null, null);
         break;
 
       case EPISODE:
-        body.episode(traktId);
+        body = new CommentBody(comment, spoiler, null, TraktIdItem.withId(traktId), null);
         break;
 
       case MOVIE:
-        body.movie(traktId);
+        body = new CommentBody(comment, spoiler, null, null, TraktIdItem.withId(traktId));
         break;
 
       default:

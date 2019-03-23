@@ -328,16 +328,16 @@ public final class EpisodeDatabaseHelper {
 
     values.put(EpisodeColumns.SEASON, episode.getSeason());
     values.put(EpisodeColumns.EPISODE, episode.getNumber());
-    values.put(EpisodeColumns.NUMBER_ABS, episode.getNumberAbs());
+    values.put(EpisodeColumns.NUMBER_ABS, episode.getNumber_abs());
 
     if (episode.getTitle() != null) values.put(EpisodeColumns.TITLE, episode.getTitle());
     if (episode.getOverview() != null) values.put(EpisodeColumns.OVERVIEW, episode.getOverview());
 
-    if (episode.getFirstAired() != null) {
-      values.put(EpisodeColumns.FIRST_AIRED, episode.getFirstAired().getTimeInMillis());
+    if (episode.getFirst_aired() != null) {
+      values.put(EpisodeColumns.FIRST_AIRED, episode.getFirst_aired().getTimeInMillis());
     }
-    if (episode.getUpdatedAt() != null) {
-      values.put(EpisodeColumns.UPDATED_AT, episode.getUpdatedAt().getTimeInMillis());
+    if (episode.getUpdated_at() != null) {
+      values.put(EpisodeColumns.UPDATED_AT, episode.getUpdated_at().getTimeInMillis());
     }
 
     values.put(EpisodeColumns.TRAKT_ID, episode.getIds().getTrakt());

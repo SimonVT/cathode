@@ -59,13 +59,12 @@ public class CollectMovie extends CallJob<SyncResponse> {
   }
 
   @Override public Call<SyncResponse> getCall() {
-    SyncItems items = new SyncItems();
-    SyncItems.Movie movie = items.movie(traktId);
     if (collected) {
-      movie.collectedAt(collectedAt);
-      return syncService.collect(items);
+      return syncService.collect(
+          new SyncItems.Builder().movie(traktId, null, collectedAt, null).build());
     } else {
-      return syncService.uncollect(items);
+      return syncService.uncollect(
+          new SyncItems.Builder().movie(traktId, null, null, null).build());
     }
   }
 

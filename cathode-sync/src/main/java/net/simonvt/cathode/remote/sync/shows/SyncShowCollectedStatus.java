@@ -21,6 +21,8 @@ import androidx.work.WorkManager;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import net.simonvt.cathode.api.entity.ProgressEpisode;
+import net.simonvt.cathode.api.entity.ProgressSeason;
 import net.simonvt.cathode.api.entity.ShowProgress;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.jobqueue.JobPriority;
@@ -69,19 +71,19 @@ public class SyncShowCollectedStatus extends CallJob<ShowProgress> {
     final long showId = showResult.showId;
     boolean needsSync = !showResult.didCreate;
 
-    List<ShowProgress.Season> seasons = progress.getSeasons();
+    List<ProgressSeason> seasons = progress.getSeasons();
 
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
-    for (ShowProgress.Season season : seasons) {
+    for (ProgressSeason season : seasons) {
       final int seasonNumber = season.getNumber();
 
       SeasonDatabaseHelper.IdResult seasonResult = seasonHelper.getIdOrCreate(showId, seasonNumber);
       final long seasonId = seasonResult.id;
       needsSync = needsSync || seasonResult.didCreate;
 
-      List<ShowProgress.Episode> episodes = season.getEpisodes();
-      for (ShowProgress.Episode episode : episodes) {
+      List<ProgressEpisode> episodes = season.getEpisodes();
+      for (ProgressEpisode episode : episodes) {
         final int episodeNumber = episode.getNumber();
 
         EpisodeDatabaseHelper.IdResult episodeResult =
@@ -92,9 +94,9 @@ public class SyncShowCollectedStatus extends CallJob<ShowProgress> {
         ContentProviderOperation.Builder builder =
             ContentProviderOperation.newUpdate(Episodes.withId(episodeId));
         builder.withValue(EpisodeColumns.IN_COLLECTION, episode.getCompleted());
-        if (episode.getCollectedAt() != null) {
+        if (episode.getCollected_at() != null) {
           builder.withValue(EpisodeColumns.COLLECTED_AT,
-              episode.getCollectedAt().getTimeInMillis());
+              episode.getCollected_at().getTimeInMillis());
         } else {
           builder.withValue(EpisodeColumns.COLLECTED_AT, null);
         }

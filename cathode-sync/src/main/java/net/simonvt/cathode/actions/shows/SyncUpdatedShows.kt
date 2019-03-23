@@ -51,9 +51,9 @@ class SyncUpdatedShows @Inject constructor(
     val ops = arrayListOf<ContentProviderOperation>()
 
     for (item in response) {
-      val updatedAt = item.updatedAt.timeInMillis!!
+      val updatedAt = item.updated_at.timeInMillis
 
-      val show = item.show
+      val show = item.show!!
       val traktId = show.ids.trakt!!
       val id = showHelper.getId(traktId)
       if (id != -1L) {

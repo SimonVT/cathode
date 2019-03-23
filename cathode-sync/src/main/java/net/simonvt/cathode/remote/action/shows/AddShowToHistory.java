@@ -51,8 +51,7 @@ public class AddShowToHistory extends CallJob<SyncResponse> {
   }
 
   @Override public Call<SyncResponse> getCall() {
-    SyncItems items = new SyncItems();
-    items.show(traktId).watchedAt(watchedAt);
+    SyncItems items = new SyncItems.Builder().show(traktId, watchedAt, null, null).build();
     return syncService.watched(items);
   }
 

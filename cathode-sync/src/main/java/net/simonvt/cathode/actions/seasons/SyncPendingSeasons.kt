@@ -26,6 +26,7 @@ import net.simonvt.cathode.common.database.Cursors
 import net.simonvt.cathode.common.database.forEach
 import net.simonvt.cathode.common.database.getLong
 import net.simonvt.cathode.common.event.ItemsUpdatedEvent
+import net.simonvt.cathode.common.http.requireBody
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes
@@ -65,7 +66,7 @@ class SyncPendingSeasons @Inject constructor(
         val response = call.execute()
         if (response.isSuccessful) {
           val episodeIds = mutableListOf<Long>()
-          val episodes = response.body()
+          val episodes = response.requireBody()
 
           val episodesCursor = context.contentResolver.query(
             Episodes.fromSeason(seasonId),
@@ -77,8 +78,8 @@ class SyncPendingSeasons @Inject constructor(
           }
           episodesCursor.close()
 
-          episodes?.forEach { episode ->
-            val episodeResult = episodeHelper.getIdOrCreate(showId, seasonId, episode.number)
+          episodes.forEach { episode ->
+            val episodeResult = episodeHelper.getIdOrCreate(showId, seasonId, episode.number!!)
             val episodeId = episodeResult.id
             episodeHelper.updateEpisode(episodeId, episode)
             episodeIds.remove(episodeId)

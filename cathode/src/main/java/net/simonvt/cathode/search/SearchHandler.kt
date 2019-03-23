@@ -49,14 +49,14 @@ class SearchHandler @Inject constructor(
 
   fun search(query: String): SearchResult {
     MainHandler.removeCallbacks(pruneRunnable)
-    val types = Enums.of(ItemType.SHOW, ItemType.MOVIE)
+    val types = Enums(ItemType.SHOW, ItemType.MOVIE)
     try {
       val cachedResults = cache[query]
       if (cachedResults != null) {
         return SearchResult(true, cachedResults.toList())
       }
 
-      val call = searchService.search(types, query, Extended.FULL, RESULT_LIMIT)
+      val call = searchService.search(types, query, extended = Extended.FULL)
       val response = call.execute()
 
       if (response.isSuccessful) {
@@ -68,7 +68,7 @@ class SearchHandler @Inject constructor(
           ?.filter { !it.show?.title.isNullOrBlank() || !it.movie?.title.isNullOrBlank() }
           ?.forEach { searchResult ->
             if (searchResult.type == ItemType.SHOW) {
-              val show = searchResult.show
+              val show = searchResult.show!!
               if (!TextUtils.isEmpty(show.title)) {
                 val showId = showHelper.partialUpdate(show)
                 val result = SearchItem(
@@ -78,13 +78,13 @@ class SearchHandler @Inject constructor(
                 results.add(result)
               }
             } else if (searchResult.type == ItemType.MOVIE) {
-              val movie = searchResult.movie
+              val movie = searchResult.movie!!
               if (!TextUtils.isEmpty(movie.title)) {
                 val movieId = movieHelper.partialUpdate(movie)
 
                 val title = movie.title
                 val overview = movie.overview
-                val rating = if (movie.rating == null) 0.0f else movie.rating
+                val rating = movie.rating ?: 0.0f
 
                 val result =
                   SearchItem(ItemType.MOVIE, movieId, title, overview, rating, relevance++)

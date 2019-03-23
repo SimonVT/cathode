@@ -53,8 +53,7 @@ public class CalendarHideShow extends CallJob<HideResponse> {
   }
 
   @Override public Call<HideResponse> getCall() {
-    HiddenItems items = new HiddenItems();
-    items.show(traktId);
+    HiddenItems items = new HiddenItems.Builder().show(traktId).build();
 
     if (hidden) {
       return usersService.addHiddenItems(HiddenSection.CALENDAR, items);

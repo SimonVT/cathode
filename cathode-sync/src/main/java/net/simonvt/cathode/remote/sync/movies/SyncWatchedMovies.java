@@ -73,7 +73,7 @@ public class SyncWatchedMovies extends CallJob<List<WatchedItem>> {
       final long traktId = movie.getIds().getTrakt();
       MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(traktId);
       final long movieId = result.movieId;
-      final long watchedAt = item.getLastWatchedAt().getTimeInMillis();
+      final long watchedAt = item.getLast_watched_at().getTimeInMillis();
 
       if (!movieIds.remove(movieId)) {
         movieHelper.addToHistory(movieId, watchedAt);

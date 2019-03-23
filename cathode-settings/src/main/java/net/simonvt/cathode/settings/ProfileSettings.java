@@ -67,10 +67,10 @@ public class ProfileSettings {
       putInt(editor, AGE, profile.getAge());
       putString(editor, LOCATION, profile.getLocation());
       putString(editor, ABOUT, profile.getAbout());
-      putLong(editor, JOINED, profile.getJoinedAt().getTimeInMillis());
+      putLong(editor, JOINED, profile.getJoined_at().getTimeInMillis());
 
       putBoolean(editor, PRIVATE, profile.isPrivate());
-      putBoolean(editor, VIP, profile.isVip());
+      putBoolean(editor, VIP, profile.getVip());
 
       Images images = profile.getImages();
       putString(editor, AVATAR, images.getAvatar().getFull());
@@ -79,7 +79,7 @@ public class ProfileSettings {
     Account account = userSettings.getAccount();
     if (account != null) {
       putString(editor, TIMEZONE, account.getTimezone());
-      putString(editor, COVER_IMAGE, account.getCoverImage());
+      putString(editor, COVER_IMAGE, account.getCover_image());
     }
 
     Connections connection = userSettings.getConnections();
@@ -89,7 +89,7 @@ public class ProfileSettings {
       putBoolean(editor, CONNECTION_TUMBLR, connection.getTumblr());
     }
 
-    SharingText sharingText = userSettings.getSharingText();
+    SharingText sharingText = userSettings.getSharing_text();
     if (sharingText != null) {
       putString(editor, SHARING_TEXT_WATCHING, sharingText.getWatching());
       putString(editor, SHARING_TEXT_WATCHED, sharingText.getWatched());

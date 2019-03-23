@@ -21,6 +21,8 @@ import androidx.work.WorkManager;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import net.simonvt.cathode.api.entity.ProgressEpisode;
+import net.simonvt.cathode.api.entity.ProgressSeason;
 import net.simonvt.cathode.api.entity.ShowProgress;
 import net.simonvt.cathode.api.service.ShowsService;
 import net.simonvt.cathode.jobqueue.JobPriority;
@@ -69,15 +71,15 @@ public class SyncShowWatchedStatus extends CallJob<ShowProgress> {
     final long showId = showResult.showId;
     boolean needsSync = showResult.didCreate;
 
-    List<ShowProgress.Season> seasons = progress.getSeasons();
+    List<ProgressSeason> seasons = progress.getSeasons();
 
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
-    for (ShowProgress.Season season : seasons) {
+    for (ProgressSeason season : seasons) {
       final int seasonNumber = season.getNumber();
 
-      List<ShowProgress.Episode> episodes = season.getEpisodes();
-      for (ShowProgress.Episode episode : episodes) {
+      List<ProgressEpisode> episodes = season.getEpisodes();
+      for (ProgressEpisode episode : episodes) {
         SeasonDatabaseHelper.IdResult seasonResult =
             seasonHelper.getIdOrCreate(showId, seasonNumber);
         final long seasonId = seasonResult.id;

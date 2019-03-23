@@ -9,15 +9,18 @@ plugins {
 dependencies {
   implementation deps.kotlin.stdlib
 
-  implementation deps.gson
+  implementation deps.moshi.moshi
+  implementation deps.moshi.kotlin
+  kapt deps.moshi.codegen
 
   implementation deps.timber
 
   implementation deps.dagger
   kapt deps.daggerCompiler
   implementation deps.retrofit
-  implementation deps.retrofitGson
+  implementation deps.retrofitMoshi
   implementation deps.okhttp
+  debugImplementation deps.okhttpLogger
 
   testImplementation deps.junit
   testImplementation deps.truth

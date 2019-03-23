@@ -24,6 +24,8 @@ import androidx.work.WorkManager;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import net.simonvt.cathode.api.entity.CollectedEpisode;
+import net.simonvt.cathode.api.entity.CollectedSeason;
 import net.simonvt.cathode.api.entity.CollectionItem;
 import net.simonvt.cathode.api.entity.IsoTime;
 import net.simonvt.cathode.api.entity.Show;
@@ -99,18 +101,18 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
         collectedShow = showsMap.get(showTraktId);
       }
 
-      CollectedSeason syncSeason = collectedShow.seasons.get(season);
-      if (syncSeason == null) {
-        syncSeason = new CollectedSeason(season, seasonId);
-        collectedShow.seasons.put(season, syncSeason);
+      LocalCollectedSeason localCollectedSeason = collectedShow.seasons.get(season);
+      if (localCollectedSeason == null) {
+        localCollectedSeason = new LocalCollectedSeason(season, seasonId);
+        collectedShow.seasons.put(season, localCollectedSeason);
       }
 
       final int number = Cursors.getInt(c, EpisodeColumns.EPISODE);
 
-      CollectedEpisode syncEpisode = syncSeason.episodes.get(number);
-      if (syncEpisode == null) {
-        syncEpisode = new CollectedEpisode(id, number, collectedAt);
-        syncSeason.episodes.put(number, syncEpisode);
+      LocalCollectedEpisode localCollectedEpisode = localCollectedSeason.episodes.get(number);
+      if (localCollectedEpisode == null) {
+        localCollectedEpisode = new LocalCollectedEpisode(id, number, collectedAt);
+        localCollectedSeason.episodes.put(number, localCollectedEpisode);
       }
 
       episodeIds.add(id);
@@ -142,17 +144,17 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
         showId = collectedShow.id;
       }
 
-      IsoTime lastCollected = item.getLastCollectedAt();
+      IsoTime lastCollected = item.getLast_collected_at();
       final long lastCollectedMillis = lastCollected.getTimeInMillis();
 
       ops.add(ContentProviderOperation.newUpdate(Shows.withId(collectedShow.id))
           .withValue(ShowColumns.LAST_COLLECTED_AT, lastCollectedMillis)
           .build());
 
-      List<CollectionItem.Season> seasons = item.getSeasons();
-      for (CollectionItem.Season season : seasons) {
+      List<CollectedSeason> seasons = item.getSeasons();
+      for (CollectedSeason season : seasons) {
         final int seasonNumber = season.getNumber();
-        CollectedSeason collectedSeason = collectedShow.seasons.get(seasonNumber);
+        LocalCollectedSeason collectedSeason = collectedShow.seasons.get(seasonNumber);
         if (collectedSeason == null) {
           SeasonDatabaseHelper.IdResult seasonResult =
               seasonHelper.getIdOrCreate(collectedShow.id, seasonNumber);
@@ -165,15 +167,15 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
             }
           }
 
-          collectedSeason = new CollectedSeason(seasonNumber, seasonId);
+          collectedSeason = new LocalCollectedSeason(seasonNumber, seasonId);
           collectedShow.seasons.put(seasonNumber, collectedSeason);
         }
 
-        List<CollectionItem.Episode> episodes = season.getEpisodes();
-        for (CollectionItem.Episode episode : episodes) {
+        List<CollectedEpisode> episodes = season.getEpisodes();
+        for (CollectedEpisode episode : episodes) {
           final int episodeNumber = episode.getNumber();
-          final long collectedAt = episode.getCollectedAt().getTimeInMillis();
-          CollectedEpisode syncEpisode = collectedSeason.episodes.get(episodeNumber);
+          final long collectedAt = episode.getCollected_at().getTimeInMillis();
+          LocalCollectedEpisode syncEpisode = collectedSeason.episodes.get(episodeNumber);
 
           if (syncEpisode == null || collectedAt != syncEpisode.collectedAt) {
             EpisodeDatabaseHelper.IdResult episodeResult =
@@ -240,24 +242,24 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
       this.id = id;
     }
 
-    SparseArrayCompat<CollectedSeason> seasons = new SparseArrayCompat<>();
+    SparseArrayCompat<LocalCollectedSeason> seasons = new SparseArrayCompat<>();
   }
 
-  private static class CollectedSeason {
+  private static class LocalCollectedSeason {
 
     int season;
 
     long id;
 
-    CollectedSeason(int season, long id) {
+    LocalCollectedSeason(int season, long id) {
       this.season = season;
       this.id = id;
     }
 
-    SparseArrayCompat<CollectedEpisode> episodes = new SparseArrayCompat<>();
+    SparseArrayCompat<LocalCollectedEpisode> episodes = new SparseArrayCompat<>();
   }
 
-  private static class CollectedEpisode {
+  private static class LocalCollectedEpisode {
 
     long id;
 
@@ -265,7 +267,7 @@ public class SyncShowsCollection extends CallJob<List<CollectionItem>> {
 
     long collectedAt;
 
-    CollectedEpisode(long id, int number, long collectedAt) {
+    LocalCollectedEpisode(long id, int number, long collectedAt) {
       this.id = id;
       this.number = number;
       this.collectedAt = collectedAt;

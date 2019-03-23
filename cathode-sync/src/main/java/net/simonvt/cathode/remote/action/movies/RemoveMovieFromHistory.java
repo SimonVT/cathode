@@ -50,8 +50,7 @@ public class RemoveMovieFromHistory extends CallJob<SyncResponse> {
   }
 
   @Override public Call<SyncResponse> getCall() {
-    SyncItems items = new SyncItems();
-    items.movie(traktId);
+    SyncItems items = new SyncItems.Builder().movie(traktId, null, null, null).build();
     return syncService.unwatched(items);
   }
 

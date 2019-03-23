@@ -17,7 +17,7 @@
 package net.simonvt.cathode.remote.action.lists;
 
 import javax.inject.Inject;
-import net.simonvt.cathode.api.body.ListItemActionBody;
+import net.simonvt.cathode.api.body.IdsBody;
 import net.simonvt.cathode.api.entity.ListItemActionResponse;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.jobqueue.JobPriority;
@@ -52,9 +52,7 @@ public class AddShow extends CallJob<ListItemActionResponse> {
   }
 
   @Override public Call<ListItemActionResponse> getCall() {
-    ListItemActionBody body = new ListItemActionBody();
-    body.show(traktId);
-    return usersService.addItems(listId, body);
+    return usersService.addItems(listId, new IdsBody.Builder().show(traktId).build());
   }
 
   @Override public boolean handleResponse(ListItemActionResponse response) {

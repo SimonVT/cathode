@@ -63,7 +63,7 @@ public class SyncHiddenWatched extends PagedCallJob<HiddenItem> {
   }
 
   @Override public Call<List<HiddenItem>> getCall(int page) {
-    return usersService.getHiddenItems(HiddenSection.PROGRESS_WATCHED, page, 25);
+    return usersService.getHiddenItems(HiddenSection.PROGRESS_WATCHED, null, page, 25);
   }
 
   @Override public boolean handleResponse(List<HiddenItem> items) {

@@ -73,7 +73,7 @@ public class SyncShowsWatchlist extends CallJob<List<WatchlistItem>> {
 
     for (WatchlistItem item : watchlist) {
       final Show show = item.getShow();
-      final long listedAt = item.getListedAt().getTimeInMillis();
+      final long listedAt = item.getListed_at().getTimeInMillis();
       final long traktId = show.getIds().getTrakt();
       ShowDatabaseHelper.IdResult showResult = showHelper.getIdOrCreate(traktId);
       final long showId = showResult.showId;

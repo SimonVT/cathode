@@ -78,7 +78,7 @@ public class SyncCommentLikes extends PagedCallJob<Like> {
     for (Like like : likes) {
       Comment comment = like.getComment();
       final long commentId = comment.getId();
-      final long likedAt = like.getLikedAt().getTimeInMillis();
+      final long likedAt = like.getLiked_at().getTimeInMillis();
 
       boolean exists = existingLikes.contains(commentId);
       if (!exists) {

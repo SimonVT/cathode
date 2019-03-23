@@ -63,7 +63,7 @@ public class SyncHiddenCalendar extends PagedCallJob<HiddenItem> {
   }
 
   @Override public Call<List<HiddenItem>> getCall(int page) {
-    return usersService.getHiddenItems(HiddenSection.CALENDAR, page, 25);
+    return usersService.getHiddenItems(HiddenSection.CALENDAR, null, page, 25);
   }
 
   @Override public boolean handleResponse(List<HiddenItem> items) {

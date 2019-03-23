@@ -53,8 +53,7 @@ public class RateShow extends CallJob<SyncResponse> {
   }
 
   @Override public Call<SyncResponse> getCall() {
-    RateItems items = new RateItems();
-    items.show(traktId).rating(rating).ratedAt(ratedAt);
+    RateItems items = new RateItems.Builder().show(traktId, rating, ratedAt).build();
     return syncService.rate(items);
   }
 

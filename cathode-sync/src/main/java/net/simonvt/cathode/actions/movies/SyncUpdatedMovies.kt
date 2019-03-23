@@ -55,8 +55,8 @@ class SyncUpdatedMovies @Inject constructor(
     val ops = arrayListOf<ContentProviderOperation>()
 
     for (item in response) {
-      val updatedAt = item.updatedAt.timeInMillis!!
-      val movie = item.movie
+      val updatedAt = item.updated_at.timeInMillis
+      val movie = item.movie!!
       val traktId = movie.ids.trakt!!
 
       val movieId = movieHelper.getId(traktId)

@@ -52,8 +52,8 @@ public class RemoveSeasonFromHistory extends CallJob<SyncResponse> {
   }
 
   @Override public Call<SyncResponse> getCall() {
-    SyncItems items = new SyncItems();
-    items.show(traktId).season(season);
+    SyncItems items =
+        new SyncItems.Builder().season(traktId, season, null, null, null).build();
     return syncService.unwatched(items);
   }
 

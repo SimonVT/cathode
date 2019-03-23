@@ -58,11 +58,11 @@ public class ApiSettings implements TraktSettings {
   @Override public void updateTokens(AccessToken tokens) {
     synchronized (this) {
       final long expirationMillis =
-          System.currentTimeMillis() + (tokens.getExpiresIn() * DateUtils.SECOND_IN_MILLIS);
+          System.currentTimeMillis() + (tokens.getExpires_in() * DateUtils.SECOND_IN_MILLIS);
       Settings.get(context)
           .edit()
-          .putString(TraktLinkSettings.TRAKT_ACCESS_TOKEN, tokens.getAccessToken())
-          .putString(TraktLinkSettings.TRAKT_REFRESH_TOKEN, tokens.getRefreshToken())
+          .putString(TraktLinkSettings.TRAKT_ACCESS_TOKEN, tokens.getAccess_token())
+          .putString(TraktLinkSettings.TRAKT_REFRESH_TOKEN, tokens.getRefresh_token())
           .putLong(TraktLinkSettings.TRAKT_TOKEN_EXPIRATION, expirationMillis)
           .apply();
     }

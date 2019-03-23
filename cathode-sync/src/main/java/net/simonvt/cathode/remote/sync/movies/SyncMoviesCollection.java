@@ -74,7 +74,7 @@ public class SyncMoviesCollection extends CallJob<List<CollectionItem>> {
       final long traktId = movie.getIds().getTrakt();
       MovieDatabaseHelper.IdResult result = movieHelper.getIdOrCreate(traktId);
       final long movieId = result.movieId;
-      final long collectedAt = item.getCollectedAt().getTimeInMillis();
+      final long collectedAt = item.getCollected_at().getTimeInMillis();
 
       if (!movieIds.remove(movieId)) {
         movieHelper.setIsInCollection(movieId, true, collectedAt);

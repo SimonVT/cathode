@@ -63,7 +63,7 @@ public class SyncHiddenRecommendations extends PagedCallJob<HiddenItem> {
   }
 
   @Override public Call<List<HiddenItem>> getCall(int page) {
-    return usersService.getHiddenItems(HiddenSection.RECOMMENDATIONS, page, 25);
+    return usersService.getHiddenItems(HiddenSection.RECOMMENDATIONS, null, page, 25);
   }
 
   @Override public boolean handleResponse(List<HiddenItem> items) {

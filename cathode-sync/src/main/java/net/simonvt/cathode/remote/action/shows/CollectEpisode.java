@@ -69,12 +69,13 @@ public class CollectEpisode extends CallJob<SyncResponse> {
 
   @Override public Call<SyncResponse> getCall() {
     if (inCollection) {
-      SyncItems items = new SyncItems();
-      items.show(traktId).season(season).episode(episode).collectedAt(collectedAt);
+      SyncItems items =
+          new SyncItems.Builder().episode(traktId, season, episode, null, collectedAt, null)
+              .build();
       return syncService.collect(items);
     } else {
-      SyncItems items = new SyncItems();
-      items.show(traktId).season(season).episode(episode);
+      SyncItems items =
+          new SyncItems.Builder().episode(traktId, season, episode, null, null, null).build();
       return syncService.uncollect(items);
     }
   }

@@ -101,7 +101,7 @@ public class SyncEpisodesRatings extends CallJob<List<RatingItem>> {
 
       ContentProviderOperation op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
           .withValue(EpisodeColumns.USER_RATING, rating.getRating())
-          .withValue(EpisodeColumns.RATED_AT, rating.getRatedAt().getTimeInMillis())
+          .withValue(EpisodeColumns.RATED_AT, rating.getRated_at().getTimeInMillis())
           .build();
       ops.add(op);
     }

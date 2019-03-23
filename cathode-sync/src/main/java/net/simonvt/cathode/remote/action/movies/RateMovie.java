@@ -53,8 +53,7 @@ public class RateMovie extends CallJob<SyncResponse> {
   }
 
   @Override public Call<SyncResponse> getCall() {
-    RateItems items = new RateItems();
-    items.movie(traktId).rating(rating).ratedAt(ratedAt);
+    RateItems items = new RateItems.Builder().movie(traktId, rating, ratedAt).build();
     return syncService.rate(items);
   }
 

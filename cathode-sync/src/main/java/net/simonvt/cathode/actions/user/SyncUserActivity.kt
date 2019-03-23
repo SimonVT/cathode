@@ -49,32 +49,32 @@ class SyncUserActivity @Inject constructor(
   override fun getCall(params: Unit): Call<LastActivity> = syncService.lastActivity()
 
   override suspend fun handleResponse(params: Unit, response: LastActivity) {
-    val showLastWatchlist = response.shows.watchlistedAt.timeInMillis!!
-    val showLastRating = response.shows.ratedAt.timeInMillis!!
-    val showLastComment = response.shows.commentedAt.timeInMillis!!
-    val showLastHide = response.shows.hiddenAt.timeInMillis!!
+    val showLastWatchlist = response.shows.watchlisted_at?.timeInMillis ?: 0L
+    val showLastRating = response.shows.rated_at?.timeInMillis ?: 0L
+    val showLastComment = response.shows.commented_at?.timeInMillis ?: 0L
+    val showLastHide = response.shows.hidden_at?.timeInMillis ?: 0L
 
-    val seasonLastRating = response.seasons.ratedAt.timeInMillis!!
-    val seasonLastWatchlist = response.seasons.watchlistedAt.timeInMillis!!
-    val seasonLastComment = response.seasons.commentedAt.timeInMillis!!
-    val seasonLastHide = response.seasons.hiddenAt.timeInMillis!!
+    val seasonLastRating = response.seasons.rated_at?.timeInMillis ?: 0L
+    val seasonLastWatchlist = response.seasons.watchlisted_at?.timeInMillis ?: 0L
+    val seasonLastComment = response.seasons.commented_at?.timeInMillis ?: 0L
+    val seasonLastHide = response.seasons.hidden_at?.timeInMillis ?: 0L
 
-    val episodeLastWatched = response.episodes.watchedAt.timeInMillis!!
-    val episodeLastCollected = response.episodes.collectedAt.timeInMillis!!
-    val episodeLastWatchlist = response.episodes.watchlistedAt.timeInMillis!!
-    val episodeLastRating = response.episodes.ratedAt.timeInMillis!!
-    val episodeLastComment = response.episodes.commentedAt.timeInMillis!!
+    val episodeLastWatched = response.episodes.watched_at?.timeInMillis ?: 0L
+    val episodeLastCollected = response.episodes.collected_at?.timeInMillis ?: 0L
+    val episodeLastWatchlist = response.episodes.watchlisted_at?.timeInMillis ?: 0L
+    val episodeLastRating = response.episodes.rated_at?.timeInMillis ?: 0L
+    val episodeLastComment = response.episodes.commented_at?.timeInMillis ?: 0L
 
-    val movieLastWatched = response.movies.watchedAt.timeInMillis!!
-    val movieLastCollected = response.movies.collectedAt.timeInMillis!!
-    val movieLastWatchlist = response.movies.watchlistedAt.timeInMillis!!
-    val movieLastRating = response.movies.ratedAt.timeInMillis!!
-    val movieLastComment = response.movies.commentedAt.timeInMillis!!
-    val movieLastHide = response.movies.hiddenAt.timeInMillis!!
+    val movieLastWatched = response.movies.watched_at?.timeInMillis ?: 0L
+    val movieLastCollected = response.movies.collected_at?.timeInMillis ?: 0L
+    val movieLastWatchlist = response.movies.watchlisted_at?.timeInMillis ?: 0L
+    val movieLastRating = response.movies.rated_at?.timeInMillis ?: 0L
+    val movieLastComment = response.movies.commented_at?.timeInMillis ?: 0L
+    val movieLastHide = response.movies.hidden_at?.timeInMillis ?: 0L
 
-    val commentLastLiked = response.comments.likedAt.timeInMillis!!
+    val commentLastLiked = response.comments.liked_at?.timeInMillis ?: 0L
 
-    val listLastUpdated = response.lists.updatedAt.timeInMillis!!
+    val listLastUpdated = response.lists.updated_at?.timeInMillis ?: 0L
 
     if (TraktTimestamps.episodeWatchedNeedsUpdate(context, episodeLastWatched)) {
       jobManager.addJob(SyncWatchedShows())
