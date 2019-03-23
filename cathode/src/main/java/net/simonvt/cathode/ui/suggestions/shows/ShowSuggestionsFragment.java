@@ -30,8 +30,8 @@ public class ShowSuggestionsFragment extends SuggestionsFragment {
 
   private ShowSuggestionsPagerAdapter adapter;
 
-  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override public void onCreate(@Nullable Bundle inState) {
+    super.onCreate(inState);
     setTitle(R.string.title_suggestions);
     adapter = new ShowSuggestionsPagerAdapter(requireContext(), getChildFragmentManager());
   }

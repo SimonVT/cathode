@@ -24,6 +24,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
@@ -41,8 +42,8 @@ public class OauthWebViewActivity extends AppCompatActivity {
 
   @BindView(R.id.webview) WebView webView;
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override protected void onCreate(@Nullable Bundle inState) {
+    super.onCreate(inState);
     setContentView(R.layout.activity_oauth);
     ButterKnife.bind(this);
 

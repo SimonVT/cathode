@@ -438,6 +438,8 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String IS_USER_COMMENT = "isUserComment";
     @DataType(INTEGER) @DefaultValue("0") String LIKED = "liked";
     @DataType(INTEGER) @DefaultValue("0") String LIKED_AT = "likedAt";
+
+    @DataType(INTEGER) @DefaultValue("0") String LAST_SYNC = "lastSync";
   }
 
   public interface RelatedShowsColumns {

@@ -35,7 +35,7 @@ import net.simonvt.cathode.api.enumeration.ItemTypes;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.jobqueue.JobPriority;
-import net.simonvt.cathode.provider.CommentsHelper;
+import net.simonvt.cathode.provider.helper.CommentsHelper;
 import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;

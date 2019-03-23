@@ -59,8 +59,8 @@ public class RemoveFromHistoryDialog extends DialogFragment {
     navigationListener = (NavigationListener) activity;
   }
 
-  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override public void onCreate(@Nullable Bundle inState) {
+    super.onCreate(inState);
     AndroidSupportInjection.inject(this);
   }
 
@@ -82,7 +82,7 @@ public class RemoveFromHistoryDialog extends DialogFragment {
     return dialog;
   }
 
-  @NonNull @Override public Dialog onCreateDialog(Bundle inState) {
+  @NonNull @Override public Dialog onCreateDialog(@Nullable Bundle inState) {
     final Type type = (Type) getArguments().getSerializable(ARG_TYPE);
     final long id = getArguments().getLong(ARG_ID);
     final String title = getArguments().getString(ARG_TITLE);

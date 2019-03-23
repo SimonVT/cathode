@@ -17,6 +17,7 @@ package net.simonvt.cathode.settings;
 
 import android.os.Bundle;
 import android.view.View;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -29,8 +30,8 @@ public class NotificationSettingsActivity extends BaseActivity {
   private static final String FRAGMENT_SETTINGS =
       "net.simonvt.cathode.settings.SettingsActivity.settingsFragment";
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override protected void onCreate(@Nullable Bundle inState) {
+    super.onCreate(inState);
     setContentView(R.layout.activity_toolbar);
     if (getFragmentManager().findFragmentByTag(FRAGMENT_SETTINGS) == null) {
       NotificationSettingsFragment settings = new NotificationSettingsFragment();
@@ -55,7 +56,7 @@ public class NotificationSettingsActivity extends BaseActivity {
     private static final String DIALOG_NOTIFIACTION_TIME =
         "net.simonvt.cathode.settings.NotifiactionSettingsActivity.NotificationSettingsFragment.notificationTIme";
 
-    @Override public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+    @Override public void onCreatePreferences(@Nullable Bundle inState, String rootKey) {
       addPreferencesFromResource(R.xml.settings_notifications);
 
       findPreference(Settings.NOTIFICACTIONS_ENABLED).setOnPreferenceChangeListener(

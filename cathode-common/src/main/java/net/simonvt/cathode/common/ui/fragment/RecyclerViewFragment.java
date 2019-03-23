@@ -24,6 +24,8 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 import net.simonvt.cathode.common.R;
@@ -55,7 +57,7 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
 
   private boolean forceDisplayProgress;
 
-  @Override public void onCreate(Bundle inState) {
+  @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
     appContext = requireContext().getApplicationContext();
 
@@ -78,11 +80,13 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
 
   protected abstract RecyclerView.LayoutManager getLayoutManager();
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+  @Override
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+      @Nullable Bundle inState) {
     return inflater.inflate(R.layout.fragment_recyclerview, container, false);
   }
 
-  public void onViewCreated(View view, Bundle inState) {
+  public void onViewCreated(@NonNull View view, @Nullable Bundle inState) {
     super.onViewCreated(view, inState);
     progressContainer = view.findViewById(R.id.progressContainer);
     listContainer = view.findViewById(R.id.listContainer);

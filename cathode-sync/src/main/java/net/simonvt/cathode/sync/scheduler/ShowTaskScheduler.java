@@ -21,10 +21,8 @@ import android.database.Cursor;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.simonvt.cathode.api.body.SyncItems;
-import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.common.database.Cursors;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -38,14 +36,8 @@ import net.simonvt.cathode.remote.action.shows.DismissShowRecommendation;
 import net.simonvt.cathode.remote.action.shows.RateShow;
 import net.simonvt.cathode.remote.action.shows.WatchedHideShow;
 import net.simonvt.cathode.remote.action.shows.WatchlistShow;
-import net.simonvt.cathode.remote.sync.comments.SyncComments;
-import net.simonvt.cathode.remote.sync.shows.SyncRelatedShows;
 import net.simonvt.cathode.remote.sync.shows.SyncShow;
-import net.simonvt.cathode.remote.sync.shows.SyncShowCollectedStatus;
-import net.simonvt.cathode.remote.sync.shows.SyncShowCredits;
-import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
 import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows;
-import net.simonvt.cathode.sync.tmdb.api.show.SyncShowImages;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 
 @Singleton public class ShowTaskScheduler extends BaseTaskScheduler {
@@ -58,78 +50,6 @@ import net.simonvt.cathode.settings.TraktLinkSettings;
     super(context, jobManager);
     this.episodeScheduler = episodeScheduler;
     this.showHelper = showHelper;
-  }
-
-  public void sync(final long showId) {
-    sync(showId, null);
-  }
-
-  public void sync(final long showId, final Job.OnDoneListener onDoneListener) {
-    execute(new Runnable() {
-      @Override public void run() {
-        ContentValues values = new ContentValues();
-        values.put(ShowColumns.FULL_SYNC_REQUESTED, System.currentTimeMillis());
-        context.getContentResolver().update(Shows.withId(showId), values, null, null);
-        final long traktId = showHelper.getTraktId(showId);
-        final int tmdbId = showHelper.getTmdbId(showId);
-        queue(new SyncShow(traktId));
-
-        if (TraktLinkSettings.isLinked(context)) {
-          queue(new SyncShowWatchedStatus(traktId));
-          queue(new SyncShowCollectedStatus(traktId));
-        }
-
-        queue(new SyncShowImages(tmdbId));
-        queue(new SyncComments(ItemType.SHOW, traktId));
-        queue(new SyncShowCredits(traktId));
-        Job job = new SyncRelatedShows(traktId);
-        job.registerOnDoneListener(onDoneListener);
-        queue(job);
-      }
-    });
-  }
-
-  public void syncComments(final long showId) {
-    execute(new Runnable() {
-      @Override public void run() {
-        final long traktId = showHelper.getTraktId(showId);
-        queue(new SyncComments(ItemType.SHOW, traktId));
-
-        ContentValues values = new ContentValues();
-        values.put(ShowColumns.LAST_COMMENT_SYNC, System.currentTimeMillis());
-        context.getContentResolver().update(Shows.withId(showId), values, null, null);
-      }
-    });
-  }
-
-  public void syncRelated(final long showId, final Job.OnDoneListener onDoneListener) {
-    execute(new Runnable() {
-      @Override public void run() {
-        final long traktId = showHelper.getTraktId(showId);
-        Job job = new SyncRelatedShows(traktId);
-        job.registerOnDoneListener(onDoneListener);
-        queue(job);
-
-        ContentValues values = new ContentValues();
-        values.put(ShowColumns.LAST_RELATED_SYNC, System.currentTimeMillis());
-        context.getContentResolver().update(Shows.withId(showId), values, null, null);
-      }
-    });
-  }
-
-  public void syncCredits(final long showId, final Job.OnDoneListener onDoneListener) {
-    execute(new Runnable() {
-      @Override public void run() {
-        final long traktId = showHelper.getTraktId(showId);
-        Job job = new SyncShowCredits(traktId);
-        job.registerOnDoneListener(onDoneListener);
-        queue(job);
-
-        ContentValues values = new ContentValues();
-        values.put(ShowColumns.LAST_CREDITS_SYNC, System.currentTimeMillis());
-        context.getContentResolver().update(Shows.withId(showId), values, null, null);
-      }
-    });
   }
 
   public void watchedNext(final long showId) {

@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
@@ -36,10 +37,7 @@ import net.simonvt.cathode.common.entity.Show;
 import net.simonvt.cathode.common.entity.ShowWithEpisode;
 import net.simonvt.cathode.common.ui.adapter.CategoryAdapter;
 import net.simonvt.cathode.common.ui.fragment.ToolbarRecyclerFragment;
-import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies;
-import net.simonvt.cathode.remote.sync.shows.SyncTrendingShows;
-import net.simonvt.cathode.settings.SuggestionsTimestamps;
+import net.simonvt.cathode.ui.CathodeViewModelFactory;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.movies.watchlist.MovieWatchlistFragment;
@@ -61,9 +59,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
   public static final String TAG = "net.simonvt.cathode.ui.dashboard.DashboardFragment";
 
-  @Inject JobManager jobManager;
-
-  @Inject DashboardViewModelFactory viewModelFactory;
+  @Inject CathodeViewModelFactory viewModelFactory;
   private DashboardViewModel viewModel;
 
   CategoryAdapter adapter;
@@ -84,8 +80,8 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
     navigationListener = (NavigationListener) activity;
   }
 
-  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override public void onCreate(@Nullable Bundle inState) {
+    super.onCreate(inState);
     AndroidSupportInjection.inject(this);
 
     setTitle(R.string.title_dashboard);
@@ -98,18 +94,6 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
     adapter.initCategory(R.string.category_shows_suggestions);
     adapter.initCategory(R.string.category_movies_watchlist);
     adapter.initCategory(R.string.category_movies_suggestions);
-
-    if (SuggestionsTimestamps.suggestionsNeedsUpdate(requireContext(),
-        SuggestionsTimestamps.SHOWS_TRENDING)) {
-      jobManager.addJob(new SyncTrendingShows());
-      SuggestionsTimestamps.updateSuggestions(requireContext(), SuggestionsTimestamps.SHOWS_TRENDING);
-    }
-
-    if (SuggestionsTimestamps.suggestionsNeedsUpdate(requireContext(),
-        SuggestionsTimestamps.MOVIES_TRENDING)) {
-      jobManager.addJob(new SyncTrendingMovies());
-      SuggestionsTimestamps.updateSuggestions(requireContext(), SuggestionsTimestamps.MOVIES_TRENDING);
-    }
 
     viewModel = ViewModelProviders.of(this, viewModelFactory).get(DashboardViewModel.class);
     viewModel.getUpcomingShows().observe(this, new Observer<List<ShowWithEpisode>>() {
@@ -144,7 +128,9 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
     });
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+  @Override
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+      @Nullable Bundle inState) {
     return inflater.inflate(R.layout.fragment_dashboard, container, false);
   }
 

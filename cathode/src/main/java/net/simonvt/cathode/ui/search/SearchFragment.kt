@@ -32,6 +32,7 @@ import net.simonvt.cathode.common.widget.SearchView
 import net.simonvt.cathode.search.SearchHandler.SearchResult
 import net.simonvt.cathode.settings.Settings
 import net.simonvt.cathode.sync.scheduler.SearchTaskScheduler
+import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.LibraryType
 import net.simonvt.cathode.ui.NavigationListener
 import java.util.Locale
@@ -47,7 +48,7 @@ class SearchFragment : ToolbarGridFragment<ViewHolder>(), SearchAdapter.OnResult
   var errorView: ErrorView? = null
 
   @Inject
-  lateinit var viewModelFactory: SearchViewModel.Factory
+  lateinit var viewModelFactory: CathodeViewModelFactory
   private lateinit var viewModel: SearchViewModel
 
   private var searchView: SearchView? = null
@@ -165,8 +166,8 @@ class SearchFragment : ToolbarGridFragment<ViewHolder>(), SearchAdapter.OnResult
     super.onDestroyView()
   }
 
-  override fun onViewStateRestored(savedInstanceState: Bundle?) {
-    super.onViewStateRestored(savedInstanceState)
+  override fun onViewStateRestored(inState: Bundle?) {
+    super.onViewStateRestored(inState)
     updateScrollPosition()
   }
 

@@ -18,6 +18,7 @@ package net.simonvt.cathode.ui.comments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -80,7 +81,7 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
     navigationListener = (NavigationListener) activity;
   }
 
-  @Override public void onCreate(Bundle inState) {
+  @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
     AndroidSupportInjection.inject(this);
 

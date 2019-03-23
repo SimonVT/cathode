@@ -54,7 +54,7 @@ public abstract class AbsAdapterFragment extends BaseFragment {
   private int currentState = STATE_PROGRESS_VISIBLE;
   private int pendingStateChange = STATE_NONE;
 
-  @Override public void onCreate(Bundle inState) {
+  @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
     appContext = requireContext().getApplicationContext();
 
@@ -68,7 +68,7 @@ public abstract class AbsAdapterFragment extends BaseFragment {
     super.onSaveInstanceState(outState);
   }
 
-  @Override public void onViewCreated(View view, Bundle inState) {
+  @Override public void onViewCreated(View view, @Nullable Bundle inState) {
     super.onViewCreated(view, inState);
     progressContainer = view.findViewById(R.id.progressContainer);
     listContainer = view.findViewById(R.id.listContainer);

@@ -21,6 +21,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import net.simonvt.cathode.common.R;
 import net.simonvt.cathode.common.util.Views;
@@ -30,7 +32,9 @@ public abstract class RefreshableAppBarFragment extends AppBarFragment
 
   private SwipeRefreshLayout swipeRefreshLayout;
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+  @Override
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+      @Nullable Bundle inState) {
     View v = inflater.inflate(R.layout.fragment_appbar_refreshable, container, false);
 
     FrameLayout appBarContent = Views.findRequired(v, R.id.appBarContent);
@@ -41,7 +45,7 @@ public abstract class RefreshableAppBarFragment extends AppBarFragment
     return v;
   }
 
-  @Override public void onViewCreated(View view, Bundle inState) {
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle inState) {
     super.onViewCreated(view, inState);
     swipeRefreshLayout = Views.findRequired(view, R.id.swipeRefresh);
     swipeRefreshLayout.setOnRefreshListener(this);

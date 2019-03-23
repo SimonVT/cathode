@@ -19,6 +19,8 @@ public class Person {
 
   private long traktId;
 
+  private int tmdbId;
+
   private String name;
 
   private String headshot;
@@ -39,10 +41,12 @@ public class Person {
 
   private PersonCredits credits;
 
-  public Person(long traktId, String name, String headshot, String screenshot, String biography,
+  public Person(long traktId, int tmdbId, String name, String headshot, String screenshot,
+      String biography,
       String birthday, String death, String birthplace, String homepage, long lastSync,
       PersonCredits credits) {
     this.traktId = traktId;
+    this.tmdbId = tmdbId;
     this.name = name;
     this.headshot = headshot;
     this.screenshot = screenshot;
@@ -57,6 +61,10 @@ public class Person {
 
   public long getTraktId() {
     return traktId;
+  }
+
+  public int getTmdbId() {
+    return tmdbId;
   }
 
   public String getName() {

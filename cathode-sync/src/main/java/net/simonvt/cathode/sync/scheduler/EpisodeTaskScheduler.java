@@ -23,12 +23,10 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.simonvt.cathode.api.body.SyncItems;
-import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.CheckinService;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.common.event.ErrorEvent;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
@@ -44,12 +42,8 @@ import net.simonvt.cathode.remote.action.shows.RateEpisode;
 import net.simonvt.cathode.remote.action.shows.RemoveEpisodeFromHistory;
 import net.simonvt.cathode.remote.action.shows.WatchlistEpisode;
 import net.simonvt.cathode.remote.sync.SyncWatching;
-import net.simonvt.cathode.remote.sync.comments.SyncComments;
-import net.simonvt.cathode.remote.sync.shows.SyncSeason;
-import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.sync.R;
-import net.simonvt.cathode.sync.tmdb.api.show.SyncEpisodeImages;
 import net.simonvt.cathode.sync.trakt.CheckIn;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -71,28 +65,6 @@ import timber.log.Timber;
     this.episodeHelper = episodeHelper;
     this.checkinService = checkinService;
     this.checkIn = checkIn;
-  }
-
-  public void sync(final long episodeId, final Job.OnDoneListener onDoneListener) {
-    execute(new Runnable() {
-      @Override public void run() {
-        final long showId = episodeHelper.getShowId(episodeId);
-        final int showTmdbId = showHelper.getTmdbId(showId);
-        final long traktId = showHelper.getTraktId(showId);
-        final int season = episodeHelper.getSeason(episodeId);
-        final int episode = episodeHelper.getNumber(episodeId);
-
-        queue(new SyncSeason(traktId, season));
-        queue(new SyncEpisodeImages(showTmdbId, season, episode));
-        Job syncComments = new SyncComments(ItemType.EPISODE, traktId, season, episode);
-        syncComments.registerOnDoneListener(onDoneListener);
-        queue(syncComments);
-
-        ContentValues values = new ContentValues();
-        values.put(EpisodeColumns.LAST_COMMENT_SYNC, System.currentTimeMillis());
-        context.getContentResolver().update(Episodes.withId(episodeId), values, null, null);
-      }
-    });
   }
 
   public void addToHistoryNow(final long episodeId) {
@@ -238,10 +210,7 @@ import timber.log.Timber;
         }
 
         if (TraktLinkSettings.isLinked(context)) {
-          final long showId = episodeHelper.getShowId(episodeId);
-          final long traktId = showHelper.getTraktId(showId);
           queue(new RemoveHistoryItem(historyId));
-          queue(new SyncShowWatchedStatus(traktId));
         }
       }
     });
@@ -435,22 +404,6 @@ import timber.log.Timber;
           }
         }
         c.close();
-      }
-    });
-  }
-
-  public void syncComments(final long episodeId) {
-    execute(new Runnable() {
-      @Override public void run() {
-        final long showId = episodeHelper.getShowId(episodeId);
-        final long traktId = showHelper.getTraktId(showId);
-        final int season = episodeHelper.getSeason(episodeId);
-        final int episode = episodeHelper.getNumber(episodeId);
-        queue(new SyncComments(ItemType.EPISODE, traktId, season, episode));
-
-        ContentValues values = new ContentValues();
-        values.put(EpisodeColumns.LAST_COMMENT_SYNC, System.currentTimeMillis());
-        context.getContentResolver().update(Episodes.withId(episodeId), values, null, null);
       }
     });
   }

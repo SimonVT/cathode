@@ -52,9 +52,9 @@ public class ListsDialogViewModel extends AndroidViewModel {
               null, null, new UserListListMapper());
       listItems = new MappedCursorLiveData<>(getApplication(), ListItems.LIST_ITEMS,
           DialogListItemListMapper.PROJECTION,
-          ListItemColumns.ITEM_TYPE + "=? AND " + ListItemColumns.ITEM_ID + "=?", new String[] {
-          String.valueOf(itemType), String.valueOf(itemId),
-      }, null, new DialogListItemListMapper());
+          ListItemColumns.ITEM_TYPE + "=? AND " + ListItemColumns.ITEM_ID + "=?",
+          new String[] { String.valueOf(itemType), String.valueOf(itemId), }, null,
+          new DialogListItemListMapper());
     }
   }
 

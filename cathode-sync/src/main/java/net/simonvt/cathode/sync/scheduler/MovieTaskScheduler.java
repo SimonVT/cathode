@@ -23,12 +23,10 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.simonvt.cathode.api.body.SyncItems;
-import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.CheckinService;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.common.event.ErrorEvent;
-import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
@@ -42,14 +40,10 @@ import net.simonvt.cathode.remote.action.movies.RateMovie;
 import net.simonvt.cathode.remote.action.movies.RemoveMovieFromHistory;
 import net.simonvt.cathode.remote.action.movies.WatchlistMovie;
 import net.simonvt.cathode.remote.sync.SyncWatching;
-import net.simonvt.cathode.remote.sync.comments.SyncComments;
 import net.simonvt.cathode.remote.sync.movies.SyncMovie;
-import net.simonvt.cathode.remote.sync.movies.SyncMovieCredits;
-import net.simonvt.cathode.remote.sync.movies.SyncRelatedMovies;
 import net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.sync.R;
-import net.simonvt.cathode.sync.tmdb.api.movie.SyncMovieImages;
 import net.simonvt.cathode.sync.trakt.CheckIn;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -69,70 +63,6 @@ import timber.log.Timber;
     this.movieHelper = movieHelper;
     this.checkinService = checkinService;
     this.checkIn = checkIn;
-  }
-
-  public void sync(final long movieId) {
-    sync(movieId, null);
-  }
-
-  public void sync(final long movieId, final Job.OnDoneListener onDoneListener) {
-    execute(new Runnable() {
-      @Override public void run() {
-        final long traktId = movieHelper.getTraktId(movieId);
-        final int tmdbId = movieHelper.getTmdbId(movieId);
-        queue(new SyncMovie(traktId));
-        queue(new SyncMovieImages(tmdbId));
-        queue(new SyncMovieCredits(traktId));
-        queue(new SyncRelatedMovies(traktId));
-
-        Job job = new SyncComments(ItemType.MOVIE, traktId);
-        job.registerOnDoneListener(onDoneListener);
-        queue(job);
-      }
-    });
-  }
-
-  public void syncComments(final long movieId) {
-    execute(new Runnable() {
-      @Override public void run() {
-        final long traktId = movieHelper.getTraktId(movieId);
-        queue(new SyncComments(ItemType.MOVIE, traktId));
-
-        ContentValues values = new ContentValues();
-        values.put(MovieColumns.LAST_COMMENT_SYNC, System.currentTimeMillis());
-        context.getContentResolver().update(Movies.withId(movieId), values, null, null);
-      }
-    });
-  }
-
-  public void syncRelated(final long movieId, final Job.OnDoneListener onDoneListener) {
-    execute(new Runnable() {
-      @Override public void run() {
-        final long traktId = movieHelper.getTraktId(movieId);
-        Job job = new SyncRelatedMovies(traktId);
-        job.registerOnDoneListener(onDoneListener);
-        queue(job);
-
-        ContentValues values = new ContentValues();
-        values.put(MovieColumns.LAST_RELATED_SYNC, System.currentTimeMillis());
-        context.getContentResolver().update(Movies.withId(movieId), values, null, null);
-      }
-    });
-  }
-
-  public void syncCredits(final long movieId, final Job.OnDoneListener onDoneListener) {
-    execute(new Runnable() {
-      @Override public void run() {
-        final long traktId = movieHelper.getTraktId(movieId);
-        Job job = new SyncMovieCredits(traktId);
-        job.registerOnDoneListener(onDoneListener);
-        queue(job);
-
-        ContentValues values = new ContentValues();
-        values.put(MovieColumns.LAST_CREDITS_SYNC, System.currentTimeMillis());
-        context.getContentResolver().update(Movies.withId(movieId), values, null, null);
-      }
-    });
   }
 
   public void addToHistoryNow(final long movieId) {
@@ -168,7 +98,8 @@ import timber.log.Timber;
         }
 
         if (movieHelper.lastSync(movieId) == 0L) {
-          sync(movieId);
+          long traktId = movieHelper.getTraktId(movieId);
+          queue(new SyncMovie(traktId));
         }
 
         if (TraktLinkSettings.isLinked(context)) {
@@ -240,7 +171,8 @@ import timber.log.Timber;
         movieHelper.setIsInCollection(movieId, inCollection, collectedAtMillis);
 
         if (movieHelper.lastSync(movieId) == 0L) {
-          sync(movieId);
+          long traktId = movieHelper.getTraktId(movieId);
+          queue(new SyncMovie(traktId));
         }
 
         if (TraktLinkSettings.isLinked(context)) {
@@ -295,10 +227,6 @@ import timber.log.Timber;
 
         watching.close();
         queue(new SyncWatching());
-
-        if (movieHelper.lastSync(movieId) == 0L) {
-          sync(movieId);
-        }
       }
     });
   }

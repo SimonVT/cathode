@@ -24,6 +24,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.Preference;
@@ -53,8 +54,8 @@ public class SettingsActivity extends BaseActivity {
   private static final String DIALOG_COLOR_PICKER =
       "net.simonvt.cathode.settings.SettingsActivity.ColorPicker";
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override protected void onCreate(@Nullable Bundle inState) {
+    super.onCreate(inState);
     setContentView(R.layout.activity_toolbar);
     if (getSupportFragmentManager().findFragmentByTag(FRAGMENT_SETTINGS) == null) {
       SettingsFragment settings = new SettingsFragment();
@@ -90,14 +91,14 @@ public class SettingsActivity extends BaseActivity {
 
     private boolean isTablet;
 
-    @Override public void onCreate(Bundle savedInstanceState) {
-      super.onCreate(savedInstanceState);
+    @Override public void onCreate(@Nullable Bundle inState) {
+      super.onCreate(inState);
       AndroidSupportInjection.inject(this);
 
       isTablet = getResources().getBoolean(R.bool.isTablet);
     }
 
-    @Override public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+    @Override public void onCreatePreferences(@Nullable Bundle inState, String rootKey) {
       addPreferencesFromResource(R.xml.settings_general);
 
       syncCalendar = (SwitchPreference) findPreference(Settings.CALENDAR_SYNC);

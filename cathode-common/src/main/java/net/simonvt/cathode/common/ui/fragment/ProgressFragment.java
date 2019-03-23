@@ -19,6 +19,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import net.simonvt.cathode.common.R;
 import net.simonvt.cathode.common.util.Views;
 
@@ -38,7 +40,7 @@ public abstract class ProgressFragment extends BaseFragment {
   private int currentState = STATE_PROGRESS_VISIBLE;
   private int pendingStateChange = STATE_NONE;
 
-  @Override public void onViewCreated(View view, Bundle inState) {
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle inState) {
     super.onViewCreated(view, inState);
     content = Views.findRequired(view, R.id.contentContainer);
     progress = Views.findRequired(view, R.id.progressContainer);

@@ -17,15 +17,18 @@ package net.simonvt.cathode.ui.credits;
 
 import android.app.Activity;
 import android.os.Bundle;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import java.util.List;
+import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
+import net.simonvt.cathode.ui.CathodeViewModelFactory;
 import net.simonvt.cathode.ui.NavigationListener;
 
 public class CreditFragment extends ToolbarGridFragment<CreditAdapter.ViewHolder>
@@ -45,6 +48,7 @@ public class CreditFragment extends ToolbarGridFragment<CreditAdapter.ViewHolder
 
   private Department department;
 
+  @Inject CathodeViewModelFactory viewModelFactory;
   private CreditsViewModel viewModel;
 
   private CreditAdapter adapter;
@@ -72,7 +76,7 @@ public class CreditFragment extends ToolbarGridFragment<CreditAdapter.ViewHolder
     navigationListener = (NavigationListener) activity;
   }
 
-  @Override public void onCreate(Bundle inState) {
+  @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
     Bundle args = getArguments();
     itemType = (ItemType) args.getSerializable(ARG_ITEM_TYPE);
@@ -119,7 +123,7 @@ public class CreditFragment extends ToolbarGridFragment<CreditAdapter.ViewHolder
         break;
     }
 
-    viewModel = ViewModelProviders.of(this).get(CreditsViewModel.class);
+    viewModel = ViewModelProviders.of(this, viewModelFactory).get(CreditsViewModel.class);
     viewModel.setItemTypeAndId(itemType, itemId);
     viewModel.getCredits().observe(this, new Observer<Credits>() {
       @Override public void onChanged(Credits credits) {

@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.widget.ProgressBar;
+import androidx.annotation.Nullable;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -162,7 +163,7 @@ public class HomeActivity extends BaseActivity
 
   private boolean isSyncing = false;
 
-  @Override protected void onCreate(Bundle inState) {
+  @Override protected void onCreate(@Nullable Bundle inState) {
     setTheme(R.style.Theme);
     super.onCreate(inState);
     Timber.d("onCreate");

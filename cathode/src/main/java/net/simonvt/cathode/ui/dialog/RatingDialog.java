@@ -26,6 +26,7 @@ import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.DialogFragment;
@@ -69,7 +70,7 @@ public class RatingDialog extends DialogFragment {
     return dialog;
   }
 
-  @Override public void onCreate(Bundle inState) {
+  @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
     AndroidSupportInjection.inject(this);
 
@@ -81,7 +82,7 @@ public class RatingDialog extends DialogFragment {
   }
 
   @NonNull @SuppressWarnings("InflateParams") @Override
-  public Dialog onCreateDialog(Bundle inState) {
+  public Dialog onCreateDialog(@Nullable Bundle inState) {
     final int ratingArg = getArguments().getInt(ARG_RATING);
     final float initialRating = ratingArg / 2.0f;
 

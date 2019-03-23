@@ -41,8 +41,11 @@ interface CommentsService {
   @DELETE("/comments/{id}")
   fun delete(@Path("id") id: Long): Call<ResponseBody>
 
+  @GET("/comment/{id}")
+  fun comment(@Path("id") id: Long): Call<Comment>
+
   @GET("/comments/{id}/replies")
-  fun getReplies(
+  fun replies(
     @Path("id") id: Long,
     @Query("page") page: Int,
     @Query("limit") limit: Int,

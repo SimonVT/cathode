@@ -57,7 +57,7 @@ public final class DatabaseSchematic {
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 42;
+  static final int DATABASE_VERSION = 43;
 
   public interface Tables {
 
@@ -752,6 +752,11 @@ public final class DatabaseSchematic {
       db.execSQL(TRIGGER_EPISODE_UPDATE_WATCHED);
       db.execSQL(TRIGGER_EPISODE_UPDATE_COLLECTED);
       db.execSQL(TRIGGER_EPISODE_UPDATE_AIRED);
+    }
+
+    if (oldVersion < 43) {
+      SqlUtils.createColumnIfNotExists(db, Tables.COMMENTS, CommentColumns.LAST_SYNC,
+          DataType.Type.INTEGER, "0");
     }
   }
 }

@@ -23,7 +23,6 @@ import androidx.lifecycle.ViewModelProvider;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
-import net.simonvt.cathode.ui.show.EpisodeHistoryViewModel;
 
 public class MovieHistoryViewModelFactory extends ViewModelProvider.NewInstanceFactory {
 

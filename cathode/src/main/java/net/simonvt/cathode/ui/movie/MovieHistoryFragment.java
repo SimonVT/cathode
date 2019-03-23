@@ -21,6 +21,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
@@ -89,7 +91,7 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
     return args;
   }
 
-  @Override public void onCreate(Bundle inState) {
+  @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
     AndroidSupportInjection.inject(this);
 
@@ -114,11 +116,12 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
   }
 
   @Override
-  protected View createView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+  protected View createView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+      @Nullable Bundle inState) {
     return inflater.inflate(R.layout.history_fragment, container, false);
   }
 
-  @Override public void onViewCreated(View view, Bundle inState) {
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle inState) {
     super.onViewCreated(view, inState);
     setResult(result);
   }

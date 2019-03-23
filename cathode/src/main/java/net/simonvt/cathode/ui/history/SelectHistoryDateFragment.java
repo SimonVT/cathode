@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
@@ -158,7 +159,7 @@ public class SelectHistoryDateFragment extends AppBarFragment
     }
   }
 
-  @Override public void onSaveInstanceState(Bundle outState) {
+  @Override public void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
     outState.putInt(STATE_YEAR, year);
     outState.putInt(STATE_MONTH, month);
@@ -168,7 +169,8 @@ public class SelectHistoryDateFragment extends AppBarFragment
   }
 
   @Override
-  protected View createView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+  protected View createView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+      @Nullable Bundle inState) {
     return inflater.inflate(R.layout.history_select_date, container, false);
   }
 

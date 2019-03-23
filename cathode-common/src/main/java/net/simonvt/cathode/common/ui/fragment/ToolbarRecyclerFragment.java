@@ -20,6 +20,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import net.simonvt.cathode.common.R;
@@ -27,7 +29,9 @@ import net.simonvt.cathode.common.R;
 public abstract class ToolbarRecyclerFragment<T extends RecyclerView.ViewHolder>
     extends RecyclerViewFragment<T> {
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+  @Override
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+      @Nullable Bundle inState) {
     return inflater.inflate(R.layout.fragment_toolbarrecyclerview, container, false);
   }
 

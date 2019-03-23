@@ -19,6 +19,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -59,7 +60,7 @@ public class TokenActivity extends BaseActivity implements TokenTask.Callback {
 
   private int task;
 
-  @Override protected void onCreate(Bundle inState) {
+  @Override protected void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
     AndroidInjection.inject(this);
     Intent intent = getIntent();

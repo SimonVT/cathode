@@ -52,12 +52,12 @@ public class DeleteListDialog extends DialogFragment {
     navigationListener = (NavigationListener) activity;
   }
 
-  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override public void onCreate(@Nullable Bundle inState) {
+    super.onCreate(inState);
     AndroidSupportInjection.inject(this);
   }
 
-  @NonNull @Override public Dialog onCreateDialog(Bundle inState) {
+  @NonNull @Override public Dialog onCreateDialog(@Nullable Bundle inState) {
     final long listId = getArguments().getLong(ARG_LIST_ID);
 
     return new AlertDialog.Builder(requireContext()).setTitle(R.string.list_delete_title)

@@ -23,6 +23,7 @@ abstract class ErrorHandlerAction<Params> : Action<Params> {
 abstract class CallAction<Params, T> : ErrorHandlerAction<Params>() {
 
   override suspend fun invoke(params: Params) {
+    Timber.d("Invoking action: %s", javaClass.name)
     try {
       val response = getCall(params).execute()
 
@@ -51,6 +52,7 @@ abstract class CallAction<Params, T> : ErrorHandlerAction<Params>() {
 abstract class OptionalBodyCallAction<Params, T> : ErrorHandlerAction<Params>() {
 
   override suspend fun invoke(params: Params) {
+    Timber.d("Invoking action: %s", javaClass.name)
     try {
       val response = getCall(params).execute()
 
@@ -79,6 +81,7 @@ abstract class OptionalBodyCallAction<Params, T> : ErrorHandlerAction<Params>() 
 abstract class TmdbCallAction<Params, T> : CallAction<Params, T>() {
 
   override suspend fun invoke(params: Params) {
+    Timber.d("Invoking action: %s", javaClass.name)
     TmdbRateLimiter.acquire()
     super.invoke(params)
   }
@@ -87,6 +90,7 @@ abstract class TmdbCallAction<Params, T> : CallAction<Params, T>() {
 abstract class PagedAction<Params, T> : ErrorHandlerAction<Params>() {
 
   final override suspend fun invoke(params: Params) {
+    Timber.d("Invoking action: %s", javaClass.name)
     try {
       var page = 1
       var pageCount = 0

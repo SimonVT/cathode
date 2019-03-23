@@ -26,7 +26,7 @@ import net.simonvt.schematic.annotation.Table;
     className = "JobDatabase",
     packageName = "net.simonvt.cathode.jobqueue.database",
     fileName = "jobDatabase.db",
-    version = 10
+    version = 11
 )
 public class JobDatabaseSchematic {
 
@@ -96,6 +96,33 @@ public class JobDatabaseSchematic {
       deleteJob(db, "net.simonvt.cathode.remote.sync.movies.SyncPendingMovies");
       deleteJob(db, "net.simonvt.cathode.remote.sync.movies.SyncUpdatedMovies");
       deleteJob(db, "net.simonvt.cathode.remote.sync.movies.SyncUserMovies");
+    }
+
+    if (oldVersion < 11) {
+      deleteJob(db, "net.simonvt.cathode.remote.sync.SyncHiddenCalendar");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.SyncHiddenCollected");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.SyncHiddenRecommendations");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.SyncHiddenWatched");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.SyncPerson");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.comments.SyncComments");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.lists.SyncList");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.movies.SyncAnticipatedMovies");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.movies.SyncMovieCredits");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.movies.SyncMovieRecommendations");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.movies.SyncRelatedMovies");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.movies.SyncTrendingMovies");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.people.SyncPersonMovieCredits");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.people.SyncPersonShowCredits");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncAnticipatedShows");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncRelatedShows");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncShowCollectedStatus");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncShowCredits");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncShowRecommendations");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncTrendingShows");
+      
+      deleteJob(db, "net.simonvt.cathode.sync.tmdb.api.people.SyncPersonBackdrop");
+      deleteJob(db, "net.simonvt.cathode.sync.tmdb.api.people.SyncPersonHeadshot");
     }
   }
 

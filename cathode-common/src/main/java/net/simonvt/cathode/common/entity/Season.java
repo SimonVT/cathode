@@ -65,6 +65,7 @@ public class Season {
     this.inCollectionCount = inCollectionCount;
     this.inWatchlistCount = inWatchlistCount;
     this.needsSync = needsSync;
+    this.showTitle = showTitle;
     this.airedCount = airedCount;
     this.unairedCount = unairedCount;
     this.watchedAiredCount = watchedAiredCount;

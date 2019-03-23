@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
@@ -34,8 +35,8 @@ import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Privacy;
-import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.settings.TraktLinkSettings;
+import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler;
 
 public class CreateListFragment extends DialogFragment {
 
@@ -55,8 +56,8 @@ public class CreateListFragment extends DialogFragment {
 
   @BindView(R.id.allowComments) CheckBox allowComments;
 
-  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override public void onCreate(@Nullable Bundle inState) {
+    super.onCreate(inState);
     AndroidSupportInjection.inject(this);
 
     if (getShowsDialog()) {
@@ -64,13 +65,14 @@ public class CreateListFragment extends DialogFragment {
     }
   }
 
-  @Nullable @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+  @Override
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+      @Nullable Bundle inState) {
     return inflater.inflate(R.layout.dialog_list_create, container, false);
   }
 
-  @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle inState) {
+    super.onViewCreated(view, inState);
     unbinder = ButterKnife.bind(this, view);
 
     toolbar.setTitle(R.string.action_list_create);
@@ -101,7 +103,8 @@ public class CreateListFragment extends DialogFragment {
 
     if (TraktLinkSettings.isLinked(requireContext())) {
       ArrayAdapter<CharSequence> adapter =
-          ArrayAdapter.createFromResource(requireContext(), R.array.list_privacy, android.R.layout.simple_spinner_item);
+          ArrayAdapter.createFromResource(requireContext(), R.array.list_privacy,
+              android.R.layout.simple_spinner_item);
       adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
       privacy.setAdapter(adapter);
     } else {

@@ -33,6 +33,7 @@ import net.simonvt.cathode.provider.DatabaseHelperModule;
 import net.simonvt.cathode.remote.JobModule;
 import net.simonvt.cathode.sync.api.ApiModule;
 import net.simonvt.cathode.sync.tmdb.TmdbModule;
+import net.simonvt.cathode.ui.di.ViewModelModule;
 import net.simonvt.cathode.work.di.WorkerModule;
 
 @Singleton @Component(modules = {
@@ -40,7 +41,7 @@ import net.simonvt.cathode.work.di.WorkerModule;
     AndroidSupportInjectionModule.class, CathodeAndroidInjectionModule.class, AppModule.class,
     ApiModule.class, TraktModule.class, TmdbModule.class, ImageModule.class, ProviderModule.class,
     DatabaseHelperModule.class, ViewModule.class, JobModule.class, JobInjectionModule.class,
-    WorkerModule.class, AppAssistedModule.class,
+    WorkerModule.class, AppAssistedModule.class, ViewModelModule.class,
 }) //
 public interface AppComponent {
 

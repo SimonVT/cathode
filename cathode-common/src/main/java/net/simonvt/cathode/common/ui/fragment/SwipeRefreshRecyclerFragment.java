@@ -20,6 +20,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import net.simonvt.cathode.common.R;
@@ -30,11 +32,13 @@ public abstract class SwipeRefreshRecyclerFragment<T extends RecyclerView.ViewHo
 
   private SwipeRefreshLayout swipeRefreshLayout;
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+  @Override
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+      @Nullable Bundle inState) {
     return inflater.inflate(R.layout.fragment_swiperefresh_recyclerview, container, false);
   }
 
-  @Override public void onViewCreated(View view, Bundle inState) {
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle inState) {
     super.onViewCreated(view, inState);
     swipeRefreshLayout = Views.findRequired(view, R.id.swipeRefresh);
     swipeRefreshLayout.setOnRefreshListener(this);

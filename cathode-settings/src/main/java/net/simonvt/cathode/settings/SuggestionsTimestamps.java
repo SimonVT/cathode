@@ -17,7 +17,6 @@ package net.simonvt.cathode.settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.text.format.DateUtils;
 
 public final class SuggestionsTimestamps {
 
@@ -33,19 +32,8 @@ public final class SuggestionsTimestamps {
   private SuggestionsTimestamps() {
   }
 
-  private static SharedPreferences get(Context context) {
+  public static SharedPreferences get(Context context) {
     return context.getSharedPreferences(SETTINGS_FILE, Context.MODE_PRIVATE);
-  }
-
-  public static boolean suggestionsNeedsUpdate(Context context, String key) {
-    SharedPreferences settings = get(context);
-    final long lastActivity = settings.getLong(key, -1);
-    return System.currentTimeMillis() > lastActivity + 6 * DateUtils.HOUR_IN_MILLIS;
-  }
-
-  public static void updateSuggestions(Context context, String key) {
-    final long currentTimeMillis = System.currentTimeMillis();
-    get(context).edit().putLong(key, currentTimeMillis).apply();
   }
 
   public static void clearRecommended(Context context) {

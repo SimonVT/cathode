@@ -26,19 +26,19 @@ public class SetupPromptBottomSheet extends BottomSheetDialogFragment {
   @BindView(R.id.prompt_setup_calendar_switch) SwitchCompat calendarSwitch;
   @BindView(R.id.prompt_setup_notification_switch) SwitchCompat notificationSwitch;
 
-  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override public void onCreate(@Nullable Bundle inState) {
+    super.onCreate(inState);
     setCancelable(false);
   }
 
   @Nullable @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-      @Nullable Bundle savedInstanceState) {
+      @Nullable Bundle inState) {
     return inflater.inflate(R.layout.prompt_setup, container, false);
   }
 
-  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle inState) {
+    super.onViewCreated(view, inState);
     unbinder = ButterKnife.bind(this, view);
     calendarSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

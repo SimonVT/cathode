@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,8 +54,8 @@ public class LoginActivity extends BaseActivity {
 
   private boolean browserAvailable = true;
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override protected void onCreate(@Nullable Bundle inState) {
+    super.onCreate(inState);
     Intent intent = getIntent();
     task = intent.getIntExtra(EXTRA_TASK, TASK_LOGIN);
 

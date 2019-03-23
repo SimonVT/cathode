@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -93,7 +94,7 @@ public class ListDialog extends DialogFragment {
     return dialog;
   }
 
-  @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+  @NonNull @Override public Dialog onCreateDialog(@Nullable Bundle inState) {
     Callback c;
     Fragment target = getTargetFragment();
     if (target == null) {

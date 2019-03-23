@@ -28,6 +28,8 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.widget.TextViewCompat;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import java.util.ArrayList;
@@ -35,7 +37,6 @@ import java.util.List;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.fragment.AbsAdapterFragment;
 import net.simonvt.cathode.common.widget.RemoteImageView;
-import net.simonvt.cathode.common.widget.RoundTransformation;
 import net.simonvt.cathode.settings.ProfileSettings;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.StartPage;
@@ -109,7 +110,7 @@ public class NavigationFragment extends AbsAdapterFragment {
     listener = (OnMenuClickListener) activity;
   }
 
-  @Override public void onCreate(Bundle inState) {
+  @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
 
     if (inState != null) {
@@ -159,11 +160,13 @@ public class NavigationFragment extends AbsAdapterFragment {
     outState.putInt(STATE_SELECTED_POSITION, selectedPosition);
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+  @Override
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+      @Nullable Bundle inState) {
     return inflater.inflate(R.layout.fragment_navigation, container, false);
   }
 
-  @Override public void onViewCreated(View view, Bundle inState) {
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle inState) {
     super.onViewCreated(view, inState);
     getAdapterView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
     getAdapterView().setItemChecked(selectedPosition, true);

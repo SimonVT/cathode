@@ -18,10 +18,12 @@ package net.simonvt.cathode;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class SimpleActivityLifecycleCallbacks implements Application.ActivityLifecycleCallbacks {
 
-  @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+  @Override public void onActivityCreated(Activity activity, @Nullable Bundle inState) {
   }
 
   @Override public void onActivityStarted(Activity activity) {

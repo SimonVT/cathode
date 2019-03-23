@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
@@ -81,8 +82,8 @@ public class UpdateListFragment extends DialogFragment {
     return args;
   }
 
-  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override public void onCreate(@Nullable Bundle inState) {
+    super.onCreate(inState);
     AndroidSupportInjection.inject(this);
 
     if (getShowsDialog()) {
@@ -90,13 +91,13 @@ public class UpdateListFragment extends DialogFragment {
     }
   }
 
-  @Nullable @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+      @Nullable Bundle inState) {
     return inflater.inflate(R.layout.dialog_list_create, container, false);
   }
 
-  @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle inState) {
+    super.onViewCreated(view, inState);
     unbinder = ButterKnife.bind(this, view);
 
     Bundle args = getArguments();

@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.text.TextUtils;
+import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
@@ -47,7 +48,7 @@ public class EpisodeDetailsActivity extends NavigationListenerActivity {
 
   private String showOverview;
 
-  @Override protected void onCreate(Bundle inState) {
+  @Override protected void onCreate(@Nullable Bundle inState) {
     setTheme(R.style.Theme);
     super.onCreate(inState);
     setContentView(R.layout.activity_details);

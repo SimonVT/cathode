@@ -16,8 +16,8 @@
 package net.simonvt.cathode.remote.sync.movies
 
 import kotlinx.coroutines.runBlocking
+import net.simonvt.cathode.actions.ActionManager
 import net.simonvt.cathode.actions.movies.SyncMovie
-import net.simonvt.cathode.actions.movies.SyncMovie.Params
 import net.simonvt.cathode.jobqueue.Job
 import net.simonvt.cathode.jobqueue.JobPriority
 import javax.inject.Inject
@@ -37,7 +37,13 @@ class SyncMovie(val traktId: Long) : Job() {
   }
 
   override fun perform(): Boolean {
-    runBlocking { syncMovie(Params(traktId)) }
+    runBlocking {
+      ActionManager.invokeSync(
+        SyncMovie.key(traktId),
+        syncMovie,
+        SyncMovie.Params(traktId)
+      )
+    }
     return true
   }
 }

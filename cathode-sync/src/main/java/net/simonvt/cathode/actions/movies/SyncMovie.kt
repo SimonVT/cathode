@@ -37,4 +37,11 @@ class SyncMovie @Inject constructor(
   }
 
   data class Params(val traktId: Long)
+
+  companion object {
+
+    fun key(traktId: Long): String {
+      return "SyncMovie&traktId=$traktId"
+    }
+  }
 }

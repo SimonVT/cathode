@@ -18,6 +18,7 @@ package net.simonvt.cathode.ui.shows;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import dagger.android.support.AndroidSupportInjection;
@@ -55,7 +56,7 @@ public abstract class ShowsFragment
     navigationListener = (ShowsNavigationListener) activity;
   }
 
-  @Override public void onCreate(Bundle inState) {
+  @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
     AndroidSupportInjection.inject(this);
 

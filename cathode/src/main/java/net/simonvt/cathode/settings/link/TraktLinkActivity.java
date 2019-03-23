@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import androidx.annotation.Nullable;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import dagger.android.AndroidInjection;
@@ -40,7 +41,7 @@ public class TraktLinkActivity extends BaseActivity {
 
   private SharedPreferences settings;
 
-  @Override protected void onCreate(Bundle inState) {
+  @Override protected void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
     AndroidInjection.inject(this);
     settings = PreferenceManager.getDefaultSharedPreferences(this);

@@ -30,6 +30,7 @@ import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.work.WorkManager;
@@ -87,7 +88,7 @@ import static net.simonvt.cathode.module.DebugModule.NAMED_STATUS_CODE;
   @Inject HttpLoggingInterceptor loggingInterceptor;
   @Inject ShowDatabaseHelper showHelper;
 
-  @Override protected void onCreate(Bundle inState) {
+  @Override protected void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
     AndroidInjection.inject(this);
 

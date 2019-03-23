@@ -50,8 +50,8 @@ public class ShowOffsetDialog extends AppCompatDialogFragment {
     return dialog;
   }
 
-  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override public void onCreate(@Nullable Bundle inState) {
+    super.onCreate(inState);
     if (getTargetFragment() != null) {
       listener = (ShowOffsetSelectedListener) getTargetFragment();
     } else {
@@ -62,7 +62,7 @@ public class ShowOffsetDialog extends AppCompatDialogFragment {
     selected = args.getInt(ARG_SELECTED);
   }
 
-  @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+  @Override public Dialog onCreateDialog(@Nullable Bundle inState) {
     final Resources resources = getResources();
     final String[] values = resources.getStringArray(R.array.setting_shows_offset);
     final int length = values.length;

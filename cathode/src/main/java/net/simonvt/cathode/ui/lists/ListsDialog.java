@@ -93,8 +93,8 @@ public class ListsDialog extends DialogFragment {
     return dialog;
   }
 
-  @Override public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override public void onCreate(@Nullable Bundle inState) {
+    super.onCreate(inState);
     AndroidSupportInjection.inject(this);
 
     Bundle args = getArguments();
@@ -115,14 +115,15 @@ public class ListsDialog extends DialogFragment {
     });
   }
 
-  @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
-    Dialog dialog = super.onCreateDialog(savedInstanceState);
+  @NonNull @Override public Dialog onCreateDialog(@Nullable Bundle inState) {
+    Dialog dialog = super.onCreateDialog(inState);
     dialog.setTitle(R.string.action_list_add);
     return dialog;
   }
 
   @Nullable @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle inState) {
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+      @Nullable Bundle inState) {
     View view = inflater.inflate(R.layout.dialog_lists, container, false);
     LinearLayout listsContainer = view.findViewById(R.id.container);
     loading = inflater.inflate(R.layout.dialog_lists_loading, listsContainer, false);
@@ -130,7 +131,7 @@ public class ListsDialog extends DialogFragment {
     return view;
   }
 
-  @Override public void onViewCreated(View view, @Nullable Bundle inState) {
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle inState) {
     super.onViewCreated(view, inState);
     unbinder = ButterKnife.bind(this, view);
     updateList();

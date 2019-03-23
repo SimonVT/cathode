@@ -18,6 +18,7 @@ package net.simonvt.cathode.settings;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import dagger.android.support.AndroidSupportInjection;
@@ -33,7 +34,7 @@ public class LogoutDialog extends AppCompatDialogFragment {
   @Inject PeriodicWorkInitializer periodicWorkInitializer;
   @Inject JobManager jobManager;
 
-  @Override public Dialog onCreateDialog(Bundle inState) {
+  @Override public Dialog onCreateDialog(@Nullable Bundle inState) {
     AndroidSupportInjection.inject(this);
 
     return new AlertDialog.Builder(getActivity()).setTitle(R.string.logout_title)

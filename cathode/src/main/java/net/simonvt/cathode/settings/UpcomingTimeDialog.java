@@ -50,8 +50,8 @@ public class UpcomingTimeDialog extends AppCompatDialogFragment {
     return dialog;
   }
 
-  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override public void onCreate(@Nullable Bundle inState) {
+    super.onCreate(inState);
     if (getTargetFragment() != null) {
       listener = (UpcomingTimeSelectedListener) getTargetFragment();
     } else {
@@ -62,7 +62,7 @@ public class UpcomingTimeDialog extends AppCompatDialogFragment {
     selected = (UpcomingTime) args.getSerializable(ARG_SELECTED);
   }
 
-  @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+  @Override public Dialog onCreateDialog(@Nullable Bundle inState) {
     final Resources resources = getResources();
     final UpcomingTime[] values = UpcomingTime.values();
     final int length = values.length;

@@ -89,8 +89,9 @@ ext {
   ]
 
   deps.androidx.lifecycle = [
-      extensions: "androidx.lifecycle:lifecycle-extensions:2.0.0",
-      compiler: "androidx.lifecycle:lifecycle-compiler:2.0.0"
+      extensions: "androidx.lifecycle:lifecycle-extensions:2.1.0-alpha03",
+      compiler: "androidx.lifecycle:lifecycle-compiler:2.1.0-alpha03",
+      viewModelKtx: "androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0-alpha03"
   ]
 
   deps.assistedInject = [

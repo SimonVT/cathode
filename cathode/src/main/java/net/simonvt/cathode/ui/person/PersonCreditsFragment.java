@@ -17,14 +17,18 @@ package net.simonvt.cathode.ui.person;
 
 import android.app.Activity;
 import android.os.Bundle;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import dagger.android.support.AndroidSupportInjection;
 import java.util.List;
+import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.Department;
 import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
+import net.simonvt.cathode.ui.CathodeViewModelFactory;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
 
@@ -41,6 +45,7 @@ public class PersonCreditsFragment extends ToolbarGridFragment<PersonCreditsAdap
 
   long personId;
 
+  @Inject CathodeViewModelFactory viewModelFactory;
   private PersonViewModel viewModel;
 
   private Department department;
@@ -67,8 +72,10 @@ public class PersonCreditsFragment extends ToolbarGridFragment<PersonCreditsAdap
     navigationListener = (NavigationListener) activity;
   }
 
-  @Override public void onCreate(Bundle inState) {
+  @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
+    AndroidSupportInjection.inject(this);
+
     Bundle args = getArguments();
     personId = args.getLong(ARG_PERSON_ID);
     department = (Department) args.getSerializable(ARG_DEPARTMENT);
@@ -111,7 +118,7 @@ public class PersonCreditsFragment extends ToolbarGridFragment<PersonCreditsAdap
         break;
     }
 
-    viewModel = ViewModelProviders.of(this).get(PersonViewModel.class);
+    viewModel = ViewModelProviders.of(this, viewModelFactory).get(PersonViewModel.class);
     viewModel.setPersonId(personId);
     viewModel.getPerson().observe(this, new Observer<Person>() {
       @Override public void onChanged(Person person) {

@@ -16,12 +16,10 @@
 
 package net.simonvt.cathode.ui.search
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -39,10 +37,10 @@ import net.simonvt.cathode.search.SearchHandler
 import net.simonvt.cathode.search.SearchHandler.SearchResult
 import javax.inject.Inject
 
-class SearchViewModel constructor(
-  application: Application,
+class SearchViewModel @Inject constructor(
+  context: Context,
   private val searchHandler: SearchHandler
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
   private val job = GlobalScope.launch(Dispatchers.Main) {
     start()
@@ -55,7 +53,7 @@ class SearchViewModel constructor(
 
   init {
     recents = MappedCursorLiveData(
-      application,
+      context,
       RecentQueries.RECENT_QUERIES,
       arrayOf(RecentQueriesColumns.QUERY),
       null,
@@ -89,16 +87,6 @@ class SearchViewModel constructor(
   override fun onCleared() {
     super.onCleared()
     job.cancel()
-  }
-
-  class Factory @Inject constructor(
-    val application: Application,
-    val searchHandler: SearchHandler
-  ) : ViewModelProvider.NewInstanceFactory() {
-
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-      return SearchViewModel(application, searchHandler) as T
-    }
   }
 
   companion object {

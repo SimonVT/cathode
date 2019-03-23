@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ import net.simonvt.cathode.R;
 
 public class LicensesDialog extends AppCompatDialogFragment {
 
-  @Override public Dialog onCreateDialog(Bundle inState) {
+  @Override public Dialog onCreateDialog(@Nullable Bundle inState) {
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()) //
         .setTitle(R.string.licenses).setAdapter(new LicenseAdapter(), null);
 

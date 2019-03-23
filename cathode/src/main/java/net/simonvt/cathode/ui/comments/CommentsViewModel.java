@@ -26,6 +26,7 @@ import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.common.data.MappedCursorLiveData;
 import net.simonvt.cathode.common.entity.Comment;
 import net.simonvt.cathode.entitymapper.CommentListMapper;
+import net.simonvt.cathode.entitymapper.CommentMapper;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Comments;
 
@@ -63,7 +64,7 @@ public class CommentsViewModel extends AndroidViewModel {
           throw new IllegalArgumentException("Type " + itemType.toString() + " not supported");
       }
 
-      comments = new MappedCursorLiveData<>(getApplication(), uri, CommentListMapper.PROJECTION,
+      comments = new MappedCursorLiveData<>(getApplication(), uri, CommentMapper.PROJECTION,
           CommentColumns.PARENT_ID + "=0", null, CommentColumns.IS_USER_COMMENT
           + " DESC, "
           + CommentColumns.LIKES

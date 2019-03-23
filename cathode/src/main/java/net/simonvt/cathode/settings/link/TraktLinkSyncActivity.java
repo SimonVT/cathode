@@ -19,6 +19,7 @@ package net.simonvt.cathode.settings.link;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import dagger.android.AndroidInjection;
@@ -39,7 +40,7 @@ public class TraktLinkSyncActivity extends BaseActivity {
   private TraktLinkSyncViewModel viewModel;
   private List<Job> syncJobs;
 
-  @Override protected void onCreate(Bundle inState) {
+  @Override protected void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
     AndroidInjection.inject(this);
     setContentView(R.layout.link_sync_progressbar);

@@ -20,8 +20,8 @@ public class LinkPromptBottomSheet extends BottomSheetDialogFragment {
 
   private LinkPromptDismissListener dismissListener;
 
-  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override public void onCreate(@Nullable Bundle inState) {
+    super.onCreate(inState);
     setCancelable(false);
     dismissListener = (LinkPromptDismissListener) requireActivity();
   }
@@ -36,12 +36,12 @@ public class LinkPromptBottomSheet extends BottomSheetDialogFragment {
 
   @Nullable @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-      @Nullable Bundle savedInstanceState) {
+      @Nullable Bundle inState) {
     return inflater.inflate(R.layout.prompt_link, container, false);
   }
 
-  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle inState) {
+    super.onViewCreated(view, inState);
     view.findViewById(R.id.prompt_link_no).setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         Settings.get(requireContext())

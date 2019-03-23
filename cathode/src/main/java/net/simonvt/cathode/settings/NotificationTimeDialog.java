@@ -50,8 +50,8 @@ public class NotificationTimeDialog extends AppCompatDialogFragment {
     return dialog;
   }
 
-  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  @Override public void onCreate(@Nullable Bundle inState) {
+    super.onCreate(inState);
     if (getTargetFragment() != null) {
       listener = (NotificationTimeSelectedListener) getTargetFragment();
     } else {
@@ -62,7 +62,7 @@ public class NotificationTimeDialog extends AppCompatDialogFragment {
     selected = (NotificationTime) args.getSerializable(ARG_SELECTED);
   }
 
-  @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+  @Override public Dialog onCreateDialog(@Nullable Bundle inState) {
     final Resources resources = getResources();
     final NotificationTime[] values = NotificationTime.values();
     final int length = values.length;

@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import com.google.android.material.snackbar.Snackbar;
@@ -62,7 +63,7 @@ public class UpdateCommentDialog extends DialogFragment {
     return dialog;
   }
 
-  @Override public void onCreate(Bundle inState) {
+  @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
     AndroidSupportInjection.inject(this);
 
@@ -73,7 +74,7 @@ public class UpdateCommentDialog extends DialogFragment {
   }
 
   @NonNull @SuppressWarnings("InflateParams") @Override
-  public Dialog onCreateDialog(Bundle inState) {
+  public Dialog onCreateDialog(@Nullable Bundle inState) {
     AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
 
     View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_comment, null);

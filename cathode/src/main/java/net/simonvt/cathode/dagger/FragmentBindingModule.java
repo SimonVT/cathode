@@ -3,11 +3,9 @@ package net.simonvt.cathode.dagger;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 import net.simonvt.cathode.settings.LogoutDialog;
-import net.simonvt.cathode.settings.NotificationSettingsActivity;
 import net.simonvt.cathode.settings.NotificationSettingsActivity.NotificationSettingsFragment;
 import net.simonvt.cathode.settings.SettingsActivity;
-import net.simonvt.cathode.settings.hidden.HiddenItems;
-import net.simonvt.cathode.settings.hidden.HiddenItems.HiddenItemsFragment;
+import net.simonvt.cathode.settings.hidden.HiddenItemsFragment;
 import net.simonvt.cathode.ui.comments.AddCommentDialog;
 import net.simonvt.cathode.ui.comments.CommentFragment;
 import net.simonvt.cathode.ui.comments.CommentsFragment;
@@ -31,6 +29,7 @@ import net.simonvt.cathode.ui.movie.RelatedMoviesFragment;
 import net.simonvt.cathode.ui.movies.collected.CollectedMoviesFragment;
 import net.simonvt.cathode.ui.movies.watched.WatchedMoviesFragment;
 import net.simonvt.cathode.ui.movies.watchlist.MovieWatchlistFragment;
+import net.simonvt.cathode.ui.person.PersonCreditsFragment;
 import net.simonvt.cathode.ui.person.PersonFragment;
 import net.simonvt.cathode.ui.search.SearchFragment;
 import net.simonvt.cathode.ui.show.EpisodeFragment;
@@ -113,6 +112,8 @@ import net.simonvt.cathode.ui.suggestions.shows.TrendingShowsFragment;
   @ContributesAndroidInjector abstract PersonFragment personFragment();
 
   @ContributesAndroidInjector abstract CreditsFragment creditsFragment();
+
+  @ContributesAndroidInjector abstract PersonCreditsFragment personCreditsFragment();
 
   @ContributesAndroidInjector abstract DashboardFragment dashboardFragment();
 

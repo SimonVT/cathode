@@ -94,13 +94,14 @@ public class PersonLiveData extends ListenableLiveData<Person> {
 
   @Override protected Person loadInBackground() {
     Cursor person = resolver.query(People.withId(personId), new String[] {
-        PersonColumns.TRAKT_ID, PersonColumns.NAME, PersonColumns.BIOGRAPHY, PersonColumns.BIRTHDAY,
-        PersonColumns.DEATH, PersonColumns.BIRTHPLACE, PersonColumns.HOMEPAGE,
-        PersonColumns.LAST_SYNC,
+        PersonColumns.TRAKT_ID, PersonColumns.TMDB_ID, PersonColumns.NAME, PersonColumns.BIOGRAPHY,
+        PersonColumns.BIRTHDAY, PersonColumns.DEATH, PersonColumns.BIRTHPLACE,
+        PersonColumns.HOMEPAGE, PersonColumns.LAST_SYNC,
     }, null, null, null);
     try {
       if (person.moveToFirst()) {
         final long traktId = Cursors.getLong(person, PersonColumns.TRAKT_ID);
+        final int tmdbId = Cursors.getInt(person, PersonColumns.TMDB_ID);
         final String name = Cursors.getString(person, PersonColumns.NAME);
         final String biography = Cursors.getString(person, PersonColumns.BIOGRAPHY);
         final String birthday = Cursors.getString(person, PersonColumns.BIRTHDAY);
@@ -126,7 +127,7 @@ public class PersonLiveData extends ListenableLiveData<Person> {
         Collections.sort(credits.getSound(), comparator);
         Collections.sort(credits.getCamera(), comparator);
 
-        return new Person(traktId, name, headshot, screenshot, biography, birthday, death,
+        return new Person(traktId, tmdbId, name, headshot, screenshot, biography, birthday, death,
             birthplace, homepage, lastSync, credits);
       }
     } finally {

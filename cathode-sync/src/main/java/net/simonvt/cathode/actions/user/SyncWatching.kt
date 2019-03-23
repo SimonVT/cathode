@@ -38,9 +38,7 @@ import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
 import net.simonvt.cathode.provider.query
 import net.simonvt.cathode.remote.sync.movies.SyncMovie
-import net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies
 import net.simonvt.cathode.remote.sync.shows.SyncShow
-import net.simonvt.cathode.remote.sync.shows.SyncShowWatchedStatus
 import retrofit2.Call
 import javax.inject.Inject
 
@@ -162,10 +160,6 @@ class SyncWatching @Inject constructor(
     }
 
     for (episodeId in episodeWatching) {
-      val showId = episodeHelper.getShowId(episodeId)
-      val showTraktId = showHelper.getTraktId(showId)
-      jobManager.addJob(SyncShowWatchedStatus(showTraktId))
-
       op = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
         .withValue(EpisodeColumns.CHECKED_IN, false)
         .withValue(EpisodeColumns.WATCHING, false)
@@ -174,8 +168,6 @@ class SyncWatching @Inject constructor(
     }
 
     for (movieId in movieWatching) {
-      jobManager.addJob(SyncWatchedMovies())
-
       op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
         .withValue(MovieColumns.CHECKED_IN, false)
         .withValue(MovieColumns.WATCHING, false)
