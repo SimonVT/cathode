@@ -20,6 +20,7 @@ import android.content.ContentValues
 import android.content.Context
 import androidx.work.WorkManager
 import net.simonvt.cathode.actions.CallAction
+import net.simonvt.cathode.actions.user.SyncWatchedShows.Params
 import net.simonvt.cathode.api.entity.WatchedItem
 import net.simonvt.cathode.api.service.SyncService
 import net.simonvt.cathode.common.database.Cursors
@@ -32,7 +33,8 @@ import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper
 import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
 import net.simonvt.cathode.provider.query
-import net.simonvt.cathode.work.WorkManagerUtils
+import net.simonvt.cathode.settings.TraktTimestamps
+import net.simonvt.cathode.work.enqueueUniqueNow
 import net.simonvt.cathode.work.shows.SyncPendingShowsWorker
 import retrofit2.Call
 import timber.log.Timber
@@ -46,11 +48,13 @@ class SyncWatchedShows @Inject constructor(
   private val episodeHelper: EpisodeDatabaseHelper,
   private val syncService: SyncService,
   private val workManager: WorkManager
-) : CallAction<Unit, List<WatchedItem>>() {
+) : CallAction<Params, List<WatchedItem>>() {
 
-  override fun getCall(params: Unit): Call<List<WatchedItem>> = syncService.getWatchedShows()
+  override fun key(params: Params): String = "SyncWatchedShows"
 
-  override suspend fun handleResponse(params: Unit, response: List<WatchedItem>) {
+  override fun getCall(params: Params): Call<List<WatchedItem>> = syncService.getWatchedShows()
+
+  override suspend fun handleResponse(params: Params, response: List<WatchedItem>) {
     val c = context.contentResolver.query(
       Episodes.EPISODES,
       arrayOf(
@@ -195,11 +199,7 @@ class SyncWatchedShows @Inject constructor(
       }
 
       if (markedPending) {
-        WorkManagerUtils.enqueueUniqueNow(
-          workManager,
-          SyncPendingShowsWorker.TAG,
-          SyncPendingShowsWorker::class.java
-        )
+        workManager.enqueueUniqueNow(SyncPendingShowsWorker.TAG, SyncPendingShowsWorker::class.java)
       }
 
       apply(ops)
@@ -214,6 +214,13 @@ class SyncWatchedShows @Inject constructor(
     }
 
     apply(ops)
+
+    if (params.userActivityTime > 0L) {
+      TraktTimestamps.getSettings(context)
+        .edit()
+        .putLong(TraktTimestamps.EPISODE_WATCHED, params.userActivityTime)
+        .apply()
+    }
   }
 
   private fun apply(ops: ArrayList<ContentProviderOperation>): Boolean {
@@ -222,27 +229,15 @@ class SyncWatchedShows @Inject constructor(
     return true
   }
 
-  private class WatchedShow(
-    var id: Long
-  ) {
-
+  private class WatchedShow(var id: Long) {
     var seasons = mutableMapOf<Int, LocalWatchedSeason>()
   }
 
-  private class LocalWatchedSeason(
-    var id: Long
-  ) {
-
+  private class LocalWatchedSeason(var id: Long) {
     var episodes = mutableMapOf<Int, LocalWatchedEpisode>()
   }
 
-  private class LocalWatchedEpisode(
-    var id: Long,
-    var lastWatched: Long
-  )
+  private class LocalWatchedEpisode(var id: Long, var lastWatched: Long)
 
-  companion object {
-
-    fun key() = "SyncWatchedShows"
-  }
+  data class Params(val userActivityTime: Long = 0L)
 }

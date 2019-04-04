@@ -8,6 +8,13 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+suspend fun <T> Action<T>.invokeSync(params: T) {
+  ActionManager.invokeSync(this, params)
+}
+
+suspend fun <T> Action<T>.invokeAsync(params: T): Deferred<*> =
+  ActionManager.invokeAsync(this, params)
+
 object ActionManager {
 
   private val job = SupervisorJob()
@@ -15,12 +22,13 @@ object ActionManager {
 
   private val inFlight = mutableMapOf<String, Deferred<*>>()
 
-  suspend fun <P> invokeSync(key: String, action: Action<P>, params: P) {
-    val deferred = invokeAsync(key, action, params)
+  suspend fun <P> invokeSync(action: Action<P>, params: P) {
+    val deferred = invokeAsync(action, params)
     deferred.await()
   }
 
-  suspend fun <P> invokeAsync(key: String, action: Action<P>, params: P): Deferred<*> {
+  suspend fun <P> invokeAsync(action: Action<P>, params: P): Deferred<*> {
+    val key = action.key(params)
     var deferred: Deferred<Unit>?
     synchronized(inFlight) {
       Timber.d("Invoking action: $key")
@@ -38,8 +46,10 @@ object ActionManager {
       try {
         Timber.d("Awaiting action: $key")
         deferred!!.await()
+      } catch (e: ActionFailedException) {
+        Timber.d(e, "Action failed: $key")
       } catch (t: Throwable) {
-        Timber.d(t, "Action failed: $key")
+        Timber.e(t, "Action failed: $key")
       }
 
       synchronized(inFlight) {

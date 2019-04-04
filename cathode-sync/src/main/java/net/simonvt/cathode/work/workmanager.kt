@@ -51,7 +51,6 @@ fun WorkManager.enqueueDelayed(
 ) {
   Timber.d("Enqueueing %s", clazz.name)
   val requestBuilder = OneTimeWorkRequest.Builder(clazz)
-  val constraintsBuilder = Constraints.Builder()
   if (delay > 0L) {
     requestBuilder.setInitialDelay(delay, MILLISECONDS)
   }
@@ -59,9 +58,9 @@ fun WorkManager.enqueueDelayed(
     requestBuilder.setInputData(data)
   }
   if (requiresNetwork) {
-    constraintsBuilder.setRequiredNetworkType(CONNECTED)
+    val constraintsBuilder = Constraints.Builder().setRequiredNetworkType(CONNECTED)
+    requestBuilder.setConstraints(constraintsBuilder.build())
   }
-  requestBuilder.setConstraints(constraintsBuilder.build())
   enqueue(requestBuilder.build())
   Timber.d("Enqueued %s", clazz.name)
 }

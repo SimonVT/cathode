@@ -201,12 +201,16 @@ class SearchFragment : ToolbarGridFragment<ViewHolder>(), SearchAdapter.OnResult
 
   override fun onShowClicked(showId: Long, title: String?, overview: String?) {
     navigationListener.onDisplayShow(showId, title, overview, LibraryType.WATCHED)
-    searchScheduler.insertRecentQuery(title)
+    if (title != null) {
+      searchScheduler.insertRecentQuery(title)
+    }
   }
 
   override fun onMovieClicked(movieId: Long, title: String?, overview: String?) {
     navigationListener.onDisplayMovie(movieId, title, overview)
-    searchScheduler.insertRecentQuery(title)
+    if (title != null) {
+      searchScheduler.insertRecentQuery(title)
+    }
   }
 
   override fun onQueryClicked(query: String) {

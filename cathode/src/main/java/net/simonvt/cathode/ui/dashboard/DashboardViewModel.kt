@@ -21,7 +21,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import net.simonvt.cathode.actions.ActionManager
+import net.simonvt.cathode.actions.invokeAsync
 import net.simonvt.cathode.actions.movies.SyncTrendingMovies
 import net.simonvt.cathode.actions.shows.SyncTrendingShows
 import net.simonvt.cathode.common.data.MappedCursorLiveData
@@ -133,7 +133,7 @@ class DashboardViewModel @Inject constructor(
           0L
         ) + TrendingShowsViewModel.SYNC_INTERNAL
       ) {
-        ActionManager.invokeAsync(SyncTrendingShows.key(), syncTrendingShows, Unit)
+        syncTrendingShows.invokeAsync(Unit)
       }
 
       if (System.currentTimeMillis() > SuggestionsTimestamps.get(context).getLong(
@@ -141,7 +141,7 @@ class DashboardViewModel @Inject constructor(
           0L
         ) + TrendingMoviesViewModel.SYNC_INTERNAL
       ) {
-        ActionManager.invokeAsync(SyncTrendingMovies.key(), syncTrendingMovies, Unit)
+        syncTrendingMovies.invokeAsync(Unit)
       }
     }
   }

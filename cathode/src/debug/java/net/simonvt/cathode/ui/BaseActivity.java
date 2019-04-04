@@ -29,7 +29,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
-import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -44,11 +43,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.TraktSettings;
 import net.simonvt.cathode.common.event.AuthFailedEvent;
 import net.simonvt.cathode.common.event.RequestFailedEvent;
-import net.simonvt.cathode.common.event.SyncEvent;
-import net.simonvt.cathode.common.event.SyncEvent.OnSyncListener;
 import net.simonvt.cathode.common.widget.PaletteTransformation;
-import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobListener;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.notification.NotificationService;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
@@ -59,13 +54,9 @@ import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
 import net.simonvt.cathode.remote.ForceUpdateJob;
-import net.simonvt.cathode.remote.InitialSyncJob;
-import net.simonvt.cathode.remote.sync.SyncWatching;
-import net.simonvt.cathode.remote.sync.lists.SyncLists;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.StartPage;
 import net.simonvt.cathode.settings.TraktLinkSettings;
-import net.simonvt.cathode.sync.tmdb.api.SyncConfiguration;
 import net.simonvt.cathode.work.WorkManagerUtils;
 import net.simonvt.cathode.work.movies.MarkSyncUserMoviesWorker;
 import net.simonvt.cathode.work.movies.SyncUpdatedMoviesWorker;
@@ -99,8 +90,6 @@ import static net.simonvt.cathode.module.DebugModule.NAMED_STATUS_CODE;
         .inflate(R.layout.debug_drawer, (ViewGroup) findViewById(R.id.debug_drawer));
 
     ButterKnife.bind(debugViews, this);
-
-    SyncEvent.registerListener(debugSyncListener);
 
     final StartPageAdapter startPageAdapter = new StartPageAdapter();
     debugViews.startPage.setAdapter(startPageAdapter);
@@ -272,18 +261,6 @@ import static net.simonvt.cathode.module.DebugModule.NAMED_STATUS_CODE;
     debugViews.httpStatusCode.setSelection(
         httpStatusCodeAdapter.getPositionForValue(httpStatusCodePreference.get()));
 
-    debugViews.syncConfiguration.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        jobManager.addJob(new SyncConfiguration());
-      }
-    });
-
-    debugViews.initialSync.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        jobManager.addJob(new InitialSyncJob());
-      }
-    });
-
     debugViews.forceUpdate.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         jobManager.addJob(new ForceUpdateJob());
@@ -302,62 +279,12 @@ import static net.simonvt.cathode.module.DebugModule.NAMED_STATUS_CODE;
             MarkSyncUserMoviesWorker.class);
       }
     });
-
-    debugViews.syncWatching.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        jobManager.addJob(new SyncWatching());
-      }
-    });
-
-    debugViews.syncLists.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        jobManager.addJob(new SyncLists());
-      }
-    });
-
-    jobManager.addJobListener(jobListener);
   }
-
-  private JobListener jobListener = new JobListener() {
-    @Override public void onJobsLoaded(JobManager jobManager) {
-      debugViews.jobCount.setText(String.valueOf(jobManager.jobCount()));
-    }
-
-    @Override public void onJobAdded(JobManager jobManager, Job job) {
-      debugViews.jobCount.setText(String.valueOf(jobManager.jobCount()));
-    }
-
-    @Override public void onJobRemoved(JobManager jobManager, Job job) {
-      debugViews.jobCount.setText(String.valueOf(jobManager.jobCount()));
-    }
-  };
 
   @Override public void setContentView(int layoutResID) {
     debugViews.container.removeAllViews();
     getLayoutInflater().inflate(layoutResID, debugViews.container);
   }
-
-  @Override protected void onDestroy() {
-    jobManager.removeJobListener(jobListener);
-    SyncEvent.unregisterListener(debugSyncListener);
-    super.onDestroy();
-  }
-
-  private OnSyncListener debugSyncListener = new OnSyncListener() {
-    @Override public void onSyncChanged(boolean authExecuting, boolean dataExecuting) {
-      if (authExecuting) {
-        debugViews.authHandlerStatus.setText("Running");
-      } else {
-        debugViews.authHandlerStatus.setText("Stopped");
-      }
-
-      if (dataExecuting) {
-        debugViews.dataHandlerStatus.setText("Running");
-      } else {
-        debugViews.dataHandlerStatus.setText("Stopped");
-      }
-    }
-  };
 
   static class DebugViews {
 
@@ -395,22 +322,8 @@ import static net.simonvt.cathode.module.DebugModule.NAMED_STATUS_CODE;
 
     @BindView(R.id.debug_drawer) ViewGroup drawerContent;
 
-    @BindView(R.id.debug_syncConfiguration) View syncConfiguration;
-
-    @BindView(R.id.debug_initialSync) View initialSync;
-
     @BindView(R.id.debug_forceUpdate) View forceUpdate;
 
     @BindView(R.id.debug_updated) View updated;
-
-    @BindView(R.id.debug_syncWatching) View syncWatching;
-
-    @BindView(R.id.debug_syncLists) View syncLists;
-
-    @BindView(R.id.debug_authHandlerStatus) TextView authHandlerStatus;
-
-    @BindView(R.id.debug_dataHandlerStatus) TextView dataHandlerStatus;
-
-    @BindView(R.id.debug_jobCount) TextView jobCount;
   }
 }

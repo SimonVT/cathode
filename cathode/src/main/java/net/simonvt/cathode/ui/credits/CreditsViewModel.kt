@@ -18,7 +18,7 @@ package net.simonvt.cathode.ui.credits
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import net.simonvt.cathode.actions.ActionManager
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.movies.SyncMovieCredits
 import net.simonvt.cathode.actions.movies.SyncMovieCredits.Params
 import net.simonvt.cathode.actions.shows.SyncShowCredits
@@ -57,19 +57,11 @@ class CreditsViewModel @Inject constructor(
     when (itemType) {
       SHOW -> {
         val traktId = showHelper.getTraktId(itemId)
-        ActionManager.invokeSync(
-          SyncShowCredits.key(traktId),
-          syncShowCredits,
-          SyncShowCredits.Params(traktId)
-        )
+        syncShowCredits.invokeSync(SyncShowCredits.Params(traktId))
       }
       MOVIE -> {
         val traktId = movieHelper.getTraktId(itemId)
-        ActionManager.invokeSync(
-          SyncMovieCredits.key(traktId),
-          syncMovieCredits,
-          Params(traktId)
-        )
+        syncMovieCredits.invokeSync(Params(traktId))
       }
       else -> IllegalArgumentException("Illegal item type: $itemType")
     }

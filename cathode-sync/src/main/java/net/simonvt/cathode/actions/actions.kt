@@ -8,6 +8,7 @@ import timber.log.Timber
 import java.io.IOException
 
 interface Action<in Params> {
+  fun key(params: Params): String
   suspend operator fun invoke(params: Params)
 }
 

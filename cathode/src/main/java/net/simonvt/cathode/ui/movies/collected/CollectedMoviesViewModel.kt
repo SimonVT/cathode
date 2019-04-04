@@ -17,7 +17,7 @@
 package net.simonvt.cathode.ui.movies.collected
 
 import android.content.Context
-import net.simonvt.cathode.actions.ActionManager
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.user.SyncMoviesCollection
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.common.entity.Movie
@@ -62,6 +62,6 @@ class CollectedMoviesViewModel @Inject constructor(
   }
 
   override suspend fun onRefresh() {
-    ActionManager.invokeSync(SyncMoviesCollection.key(), syncMoviesCollection, Unit)
+    syncMoviesCollection.invokeSync(SyncMoviesCollection.Params())
   }
 }

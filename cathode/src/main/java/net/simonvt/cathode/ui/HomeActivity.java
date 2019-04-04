@@ -551,14 +551,13 @@ public class HomeActivity extends BaseActivity
   };
 
   private OnSyncListener onSyncEvent = new OnSyncListener() {
-    @Override public void onSyncChanged(boolean authExecuting, boolean dataExecuting) {
-      final boolean isSyncing = authExecuting || dataExecuting;
-      if (isSyncing != HomeActivity.this.isSyncing) {
-        HomeActivity.this.isSyncing = isSyncing;
+    @Override public void onSyncChanged(boolean syncing) {
+      if (syncing != HomeActivity.this.isSyncing) {
+        HomeActivity.this.isSyncing = syncing;
 
         final int progressVisibility = progressTop.getVisibility();
         ViewPropertyAnimator progressAnimator = progressTop.animate();
-        if (isSyncing) {
+        if (syncing) {
           if (progressVisibility == View.GONE) {
             progressTop.setAlpha(0.0f);
             progressTop.setVisibility(View.VISIBLE);

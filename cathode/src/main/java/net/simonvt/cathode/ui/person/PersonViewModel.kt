@@ -22,7 +22,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import net.simonvt.cathode.actions.ActionManager
+import net.simonvt.cathode.actions.invokeAsync
 import net.simonvt.cathode.actions.people.SyncPerson
 import net.simonvt.cathode.actions.people.SyncPersonBackdrop
 import net.simonvt.cathode.actions.people.SyncPersonHeadshot
@@ -68,31 +68,11 @@ class PersonViewModel @Inject constructor(
         val traktId = person.traktId
         val tmdbId = person.tmdbId
 
-        ActionManager.invokeAsync(
-          SyncPerson.key(traktId),
-          syncPerson,
-          SyncPerson.Params(traktId)
-        )
-        ActionManager.invokeAsync(
-          SyncPersonShowCredits.key(traktId),
-          syncPersonShowCredits,
-          SyncPersonShowCredits.Params(traktId)
-        )
-        ActionManager.invokeAsync(
-          SyncPersonMovieCredits.key(traktId),
-          syncPersonMovieCredits,
-          SyncPersonMovieCredits.Params(traktId)
-        )
-        ActionManager.invokeAsync(
-          SyncPersonHeadshot.key(tmdbId),
-          syncPersonHeadshot,
-          SyncPersonHeadshot.Params(tmdbId)
-        )
-        ActionManager.invokeAsync(
-          SyncPersonBackdrop.key(tmdbId),
-          syncPersonBackdrop,
-          SyncPersonBackdrop.Params(tmdbId)
-        )
+        syncPerson.invokeAsync(SyncPerson.Params(traktId))
+        syncPersonShowCredits.invokeAsync(SyncPersonShowCredits.Params(traktId))
+        syncPersonMovieCredits.invokeAsync(SyncPersonMovieCredits.Params(traktId))
+        syncPersonHeadshot.invokeAsync(SyncPersonHeadshot.Params(tmdbId))
+        syncPersonBackdrop.invokeAsync(SyncPersonBackdrop.Params(tmdbId))
       }
     }
   }
@@ -101,31 +81,13 @@ class PersonViewModel @Inject constructor(
     val traktId = personHelper.getTraktId(personId)
     val tmdbId = personHelper.getTmdbId(personId)
 
-    val personDeferred = ActionManager.invokeAsync(
-      SyncPerson.key(traktId),
-      syncPerson,
-      SyncPerson.Params(traktId)
-    )
-    val showCreditsDeferred = ActionManager.invokeAsync(
-      SyncPersonShowCredits.key(traktId),
-      syncPersonShowCredits,
-      SyncPersonShowCredits.Params(traktId)
-    )
-    val movieCreditsDeferred = ActionManager.invokeAsync(
-      SyncPersonMovieCredits.key(traktId),
-      syncPersonMovieCredits,
-      SyncPersonMovieCredits.Params(traktId)
-    )
-    val headshotDeferred = ActionManager.invokeAsync(
-      SyncPersonHeadshot.key(tmdbId),
-      syncPersonHeadshot,
-      SyncPersonHeadshot.Params(tmdbId)
-    )
-    val backdropDeferred = ActionManager.invokeAsync(
-      SyncPersonBackdrop.key(tmdbId),
-      syncPersonBackdrop,
-      SyncPersonBackdrop.Params(tmdbId)
-    )
+    val personDeferred = syncPerson.invokeAsync(SyncPerson.Params(traktId))
+    val showCreditsDeferred =
+      syncPersonShowCredits.invokeAsync(SyncPersonShowCredits.Params(traktId))
+    val movieCreditsDeferred =
+      syncPersonMovieCredits.invokeAsync(SyncPersonMovieCredits.Params(traktId))
+    val headshotDeferred = syncPersonHeadshot.invokeAsync(SyncPersonHeadshot.Params(tmdbId))
+    val backdropDeferred = syncPersonBackdrop.invokeAsync(SyncPersonBackdrop.Params(tmdbId))
 
     personDeferred.await()
     showCreditsDeferred.await()

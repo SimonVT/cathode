@@ -20,7 +20,8 @@ import android.content.Context
 import android.text.format.DateUtils
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import net.simonvt.cathode.actions.ActionManager
+import net.simonvt.cathode.actions.invokeAsync
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.shows.SyncTrendingShows
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.common.entity.Show
@@ -65,7 +66,7 @@ class TrendingShowsViewModel @Inject constructor(
           0L
         ) + SYNC_INTERNAL
       ) {
-        ActionManager.invokeAsync(SyncTrendingShows.key(), syncTrendingShows, Unit)
+        syncTrendingShows.invokeAsync(Unit)
       }
     }
   }
@@ -76,7 +77,7 @@ class TrendingShowsViewModel @Inject constructor(
   }
 
   override suspend fun onRefresh() {
-    ActionManager.invokeSync(SyncTrendingShows.key(), syncTrendingShows, Unit)
+    syncTrendingShows.invokeSync(Unit)
   }
 
   companion object {

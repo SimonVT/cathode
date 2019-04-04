@@ -18,7 +18,7 @@ package net.simonvt.cathode.ui.shows.collected
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import net.simonvt.cathode.actions.ActionManager
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.user.SyncShowsCollection
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.common.entity.ShowWithEpisode
@@ -58,6 +58,6 @@ class CollectedShowsViewModel @Inject constructor(
   }
 
   override suspend fun onRefresh() {
-    ActionManager.invokeSync(SyncShowsCollection.key(), syncShowsCollection, Unit)
+    syncShowsCollection.invokeSync(SyncShowsCollection.Params())
   }
 }

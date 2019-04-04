@@ -7,6 +7,7 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.user.SyncUserActivity
 import net.simonvt.cathode.work.ChildWorkerFactory
 
@@ -19,7 +20,7 @@ class SyncUserActivityWorker @AssistedInject constructor(
   override val coroutineContext = Dispatchers.IO
 
   override suspend fun doWork(): Result = coroutineScope {
-    syncUserActivity(Unit)
+    syncUserActivity.invokeSync(Unit)
     Result.success()
   }
 

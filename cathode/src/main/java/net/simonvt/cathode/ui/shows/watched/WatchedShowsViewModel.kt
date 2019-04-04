@@ -17,7 +17,7 @@
 package net.simonvt.cathode.ui.shows.watched
 
 import android.content.Context
-import net.simonvt.cathode.actions.ActionManager
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.user.SyncWatchedShows
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.common.entity.ShowWithEpisode
@@ -59,6 +59,6 @@ class WatchedShowsViewModel @Inject constructor(
   }
 
   override suspend fun onRefresh() {
-    ActionManager.invokeSync(SyncWatchedShows.key(), syncWatchedShows, Unit)
+    syncWatchedShows.invokeSync(SyncWatchedShows.Params())
   }
 }

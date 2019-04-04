@@ -16,35 +16,42 @@
 
 package net.simonvt.cathode.actions.user
 
+import android.content.Context
 import net.simonvt.cathode.actions.Action
-import net.simonvt.cathode.actions.ActionManager
+import net.simonvt.cathode.actions.invokeAsync
+import net.simonvt.cathode.actions.user.SyncHiddenItems.Params
+import net.simonvt.cathode.settings.TraktTimestamps
 import javax.inject.Inject
 
 class SyncHiddenItems @Inject constructor(
+  private val context: Context,
   private val syncHiddenCalendar: SyncHiddenCalendar,
   private val syncHiddenCollected: SyncHiddenCollected,
   private val syncHiddenRecommendations: SyncHiddenRecommendations,
   private val syncHiddenWatched: SyncHiddenWatched
-) : Action<Unit> {
+) : Action<Params> {
 
-  override suspend fun invoke(params: Unit) {
-    val calendarDeferred =
-      ActionManager.invokeAsync(SyncHiddenCalendar.key(), syncHiddenCalendar, Unit)
-    val collectedDeferred =
-      ActionManager.invokeAsync(SyncHiddenCollected.key(), syncHiddenCollected, Unit)
-    val recommendationsDeferred =
-      ActionManager.invokeAsync(SyncHiddenRecommendations.key(), syncHiddenRecommendations, Unit)
-    val watchedDeferred =
-      ActionManager.invokeAsync(SyncHiddenWatched.key(), syncHiddenWatched, Unit)
+  override fun key(params: Params): String = "SyncHiddenItems"
+
+  override suspend fun invoke(params: Params) {
+    val calendarDeferred = syncHiddenCalendar.invokeAsync(Unit)
+    val collectedDeferred = syncHiddenCollected.invokeAsync(Unit)
+    val recommendationsDeferred = syncHiddenRecommendations.invokeAsync(Unit)
+    val watchedDeferred = syncHiddenWatched.invokeAsync(Unit)
 
     calendarDeferred.await()
     collectedDeferred.await()
     recommendationsDeferred.await()
     watchedDeferred.await()
+
+    if (params.showLastHidden > 0L || params.movieLastHidden > 0L) {
+      TraktTimestamps.getSettings(context)
+        .edit()
+        .putLong(TraktTimestamps.SHOW_HIDE, params.showLastHidden)
+        .putLong(TraktTimestamps.MOVIE_HIDE, params.movieLastHidden)
+        .apply()
+    }
   }
 
-  companion object {
-
-    fun key() = "SyncHiddenItems"
-  }
+  data class Params(val showLastHidden: Long = 0L, val movieLastHidden: Long = 0L)
 }

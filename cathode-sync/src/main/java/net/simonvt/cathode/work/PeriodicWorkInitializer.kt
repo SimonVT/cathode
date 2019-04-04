@@ -4,8 +4,7 @@ import android.os.Build
 import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.WorkManager
-import net.simonvt.cathode.work.jobs.AuthJobHandlerWorker
-import net.simonvt.cathode.work.jobs.DataJobHandlerWorker
+import net.simonvt.cathode.work.jobs.JobHandlerWorker
 import net.simonvt.cathode.work.movies.MarkSyncUserMoviesWorker
 import net.simonvt.cathode.work.movies.SyncPendingMoviesWorker
 import net.simonvt.cathode.work.movies.SyncUpdatedMoviesWorker
@@ -58,11 +57,6 @@ class PeriodicWorkInitializer @Inject constructor(private val workManager: WorkM
       SyncPendingMoviesWorker.TAG_DAILY,
       constraints
     )
-    workManager.enqueueDaily(
-      DataJobHandlerWorker::class.java,
-      DataJobHandlerWorker.TAG_DAILY,
-      constraints
-    )
   }
 
   fun initAuthWork() {
@@ -75,8 +69,8 @@ class PeriodicWorkInitializer @Inject constructor(private val workManager: WorkM
     val constraints = constraintsBuilder.build()
 
     workManager.enqueueDaily(
-      AuthJobHandlerWorker::class.java,
-      AuthJobHandlerWorker.TAG_DAILY,
+      JobHandlerWorker::class.java,
+      JobHandlerWorker.TAG_DAILY,
       constraints
     )
     workManager.enqueueDaily(
@@ -87,7 +81,7 @@ class PeriodicWorkInitializer @Inject constructor(private val workManager: WorkM
   }
 
   fun cancelAuthWork() {
-    workManager.cancelAllWorkByTag(AuthJobHandlerWorker.TAG_DAILY)
+    workManager.cancelAllWorkByTag(JobHandlerWorker.TAG_DAILY)
     workManager.cancelAllWorkByTag(SyncUserActivityWorker.TAG_DAILY)
   }
 }

@@ -2,15 +2,16 @@ package net.simonvt.cathode.work.movies
 
 import android.content.Context
 import androidx.work.CoroutineWorker
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.movies.SyncUpdatedMovies
 import net.simonvt.cathode.work.ChildWorkerFactory
+import net.simonvt.cathode.work.enqueueNow
 
 class SyncUpdatedMoviesWorker @AssistedInject constructor(
   @Assisted context: Context,
@@ -22,8 +23,8 @@ class SyncUpdatedMoviesWorker @AssistedInject constructor(
   override val coroutineContext = Dispatchers.IO
 
   override suspend fun doWork(): Result = coroutineScope {
-    syncUpdatedMovies(Unit)
-    workManager.enqueue(OneTimeWorkRequestBuilder<SyncPendingMoviesWorker>().build())
+    syncUpdatedMovies.invokeSync(Unit)
+    workManager.enqueueNow(SyncPendingMoviesWorker::class.java)
     Result.success()
   }
 

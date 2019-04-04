@@ -34,7 +34,7 @@ import net.simonvt.cathode.provider.batch
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
 import net.simonvt.cathode.provider.query
-import net.simonvt.cathode.work.WorkManagerUtils
+import net.simonvt.cathode.work.enqueueUniqueNow
 import net.simonvt.cathode.work.movies.SyncPendingMoviesWorker
 import net.simonvt.cathode.work.shows.SyncPendingShowsWorker
 import retrofit2.Call
@@ -47,6 +47,8 @@ class SyncHiddenCalendar @Inject constructor(
   private val usersService: UsersService,
   private val workManager: WorkManager
 ) : PagedAction<Unit, HiddenItem>() {
+
+  override fun key(params: Unit): String = "SyncHiddenCalendar"
 
   override fun getCall(params: Unit, page: Int): Call<List<HiddenItem>> =
     usersService.getHiddenItems(HiddenSection.CALENDAR, null, page, 25)
@@ -106,16 +108,8 @@ class SyncHiddenCalendar @Inject constructor(
       }
     }
 
-    WorkManagerUtils.enqueueUniqueNow(
-      workManager,
-      SyncPendingShowsWorker.TAG,
-      SyncPendingShowsWorker::class.java
-    )
-    WorkManagerUtils.enqueueUniqueNow(
-      workManager,
-      SyncPendingMoviesWorker.TAG,
-      SyncPendingMoviesWorker::class.java
-    )
+    workManager.enqueueUniqueNow(SyncPendingShowsWorker.TAG, SyncPendingShowsWorker::class.java)
+    workManager.enqueueUniqueNow(SyncPendingMoviesWorker.TAG, SyncPendingMoviesWorker::class.java)
 
     for (showId in unhandledShows) {
       val op = ContentProviderOperation.newUpdate(Shows.withId(showId))
@@ -132,10 +126,5 @@ class SyncHiddenCalendar @Inject constructor(
     }
 
     context.contentResolver.batch(ops)
-  }
-
-  companion object {
-
-    fun key() = "SyncHiddenCalendar"
   }
 }

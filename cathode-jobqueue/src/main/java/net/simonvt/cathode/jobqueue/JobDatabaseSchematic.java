@@ -26,7 +26,7 @@ import net.simonvt.schematic.annotation.Table;
     className = "JobDatabase",
     packageName = "net.simonvt.cathode.jobqueue.database",
     fileName = "jobDatabase.db",
-    version = 11
+    version = 12
 )
 public class JobDatabaseSchematic {
 
@@ -123,6 +123,40 @@ public class JobDatabaseSchematic {
       
       deleteJob(db, "net.simonvt.cathode.sync.tmdb.api.people.SyncPersonBackdrop");
       deleteJob(db, "net.simonvt.cathode.sync.tmdb.api.people.SyncPersonHeadshot");
+    }
+
+    if (oldVersion < 12) {
+      deleteJob(db, "net.simonvt.cathode.remote.sync.SyncHiddenItems");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.SyncJob");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.SyncUserProfile");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.SyncUserSettings");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.SyncWatching");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.comments.SyncCommentLikes");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.comments.SyncUserComments");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.lists.SyncLists");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.movies.SyncMovie");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.movies.SyncMoviesCollection");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.movies.SyncMoviesRatings");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchlist");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncEpisodesRatings");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncSeason");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncSeasons");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncSeasonsRatings");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncShow");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncShowsCollection");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncShowsRatings");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncShowsWatchlist");
+      deleteJob(db, "net.simonvt.cathode.remote.sync.shows.SyncWatchedShows");
+      deleteJob(db, "net.simonvt.cathode.remote.upgrade.EnsureSync");
+      deleteJob(db, "net.simonvt.cathode.remote.upgrade.UpperCaseGenres");
+
+      deleteJob(db, "net.simonvt.cathode.sync.tmdb.api.SyncConfiguration");
+      deleteJob(db, "net.simonvt.cathode.sync.tmdb.api.TmdbCallJob");
+      deleteJob(db, "net.simonvt.cathode.sync.tmdb.api.movie.SyncMovieImages");
+      deleteJob(db, "net.simonvt.cathode.sync.tmdb.api.show.SyncEpisodeImages");
+      deleteJob(db, "net.simonvt.cathode.sync.tmdb.api.show.SyncShowImages");
     }
   }
 

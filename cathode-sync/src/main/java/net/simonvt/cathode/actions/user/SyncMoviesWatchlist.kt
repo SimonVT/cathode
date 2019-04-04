@@ -18,6 +18,7 @@ package net.simonvt.cathode.actions.user
 import android.content.Context
 import androidx.work.WorkManager
 import net.simonvt.cathode.actions.CallAction
+import net.simonvt.cathode.actions.user.SyncMoviesWatchlist.Params
 import net.simonvt.cathode.api.entity.WatchlistItem
 import net.simonvt.cathode.api.service.SyncService
 import net.simonvt.cathode.common.database.forEach
@@ -26,7 +27,8 @@ import net.simonvt.cathode.provider.DatabaseContract.MovieColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Movies
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper
 import net.simonvt.cathode.provider.query
-import net.simonvt.cathode.work.WorkManagerUtils
+import net.simonvt.cathode.settings.TraktTimestamps
+import net.simonvt.cathode.work.enqueueUniqueNow
 import net.simonvt.cathode.work.movies.SyncPendingMoviesWorker
 import retrofit2.Call
 import javax.inject.Inject
@@ -36,11 +38,13 @@ class SyncMoviesWatchlist @Inject constructor(
   private val movieHelper: MovieDatabaseHelper,
   private val syncService: SyncService,
   private val workManager: WorkManager
-) : CallAction<Unit, List<WatchlistItem>>() {
+) : CallAction<Params, List<WatchlistItem>>() {
 
-  override fun getCall(params: Unit): Call<List<WatchlistItem>> = syncService.getMovieWatchlist()
+  override fun key(params: Params): String = "SyncMoviesWatchlist"
 
-  override suspend fun handleResponse(params: Unit, response: List<WatchlistItem>) {
+  override fun getCall(params: Params): Call<List<WatchlistItem>> = syncService.getMovieWatchlist()
+
+  override suspend fun handleResponse(params: Params, response: List<WatchlistItem>) {
     val movieIds = mutableListOf<Long>()
     val localWatchlist = context.contentResolver.query(
       Movies.MOVIES,
@@ -66,15 +70,15 @@ class SyncMoviesWatchlist @Inject constructor(
       movieHelper.setIsInWatchlist(movieId, false)
     }
 
-    WorkManagerUtils.enqueueUniqueNow(
-      workManager,
-      SyncPendingMoviesWorker.TAG,
-      SyncPendingMoviesWorker::class.java
-    )
+    workManager.enqueueUniqueNow(SyncPendingMoviesWorker.TAG, SyncPendingMoviesWorker::class.java)
+
+    if (params.userActivityTime > 0L) {
+      TraktTimestamps.getSettings(context)
+        .edit()
+        .putLong(TraktTimestamps.MOVIE_WATCHLIST, params.userActivityTime)
+        .apply()
+    }
   }
 
-  companion object {
-
-    fun key() = "SyncMoviesWatchlist"
-  }
+  data class Params(val userActivityTime: Long = 0L)
 }

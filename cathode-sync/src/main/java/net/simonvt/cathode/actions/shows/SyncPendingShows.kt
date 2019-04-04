@@ -18,7 +18,6 @@ package net.simonvt.cathode.actions.shows
 
 import android.content.ContentValues
 import android.content.Context
-import androidx.work.WorkManager
 import net.simonvt.cathode.actions.ActionFailedException
 import net.simonvt.cathode.actions.ErrorHandlerAction
 import net.simonvt.cathode.api.enumeration.Extended
@@ -47,13 +46,14 @@ import javax.inject.Inject
 
 class SyncPendingShows @Inject constructor(
   private val context: Context,
-  private val workManager: WorkManager,
   private val showsService: ShowsService,
   private val seasonService: SeasonService,
   private val showHelper: ShowDatabaseHelper,
   private val seasonHelper: SeasonDatabaseHelper,
   private val episodeHelper: EpisodeDatabaseHelper
 ) : ErrorHandlerAction<Unit>() {
+
+  override fun key(params: Unit): String = "SyncPendingShows"
 
   override suspend fun invoke(params: Unit) {
     val syncItems = mutableMapOf<Long, Long>()

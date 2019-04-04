@@ -17,15 +17,18 @@
 package net.simonvt.cathode.actions.user
 
 import android.content.Context
-import net.simonvt.cathode.actions.ActionManager
 import net.simonvt.cathode.actions.CallAction
+import net.simonvt.cathode.actions.invokeAsync
 import net.simonvt.cathode.actions.lists.SyncList
+import net.simonvt.cathode.actions.user.SyncLists.Params
 import net.simonvt.cathode.api.entity.CustomList
 import net.simonvt.cathode.api.service.UsersService
 import net.simonvt.cathode.common.database.Cursors
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Lists
 import net.simonvt.cathode.provider.helper.ListWrapper
+import net.simonvt.cathode.provider.query
+import net.simonvt.cathode.settings.TraktTimestamps
 import retrofit2.Call
 import javax.inject.Inject
 
@@ -33,14 +36,17 @@ class SyncLists @Inject constructor(
   private val context: Context,
   private val usersService: UsersService,
   private val syncList: SyncList
-) : CallAction<Unit, List<CustomList>>() {
+) : CallAction<Params, List<CustomList>>() {
 
-  override fun getCall(params: Unit): Call<List<CustomList>> = usersService.lists()
+  override fun key(params: Params): String = "SyncLists"
 
-  override suspend fun handleResponse(params: Unit, response: List<CustomList>) {
+  override fun getCall(params: Params): Call<List<CustomList>> = usersService.lists()
+
+  override suspend fun handleResponse(params: Params, response: List<CustomList>) {
     val listIds = mutableListOf<Long>()
-    val listsCursor = context.contentResolver.query(Lists.LISTS, PROJECTION, null, null, null)
-    while (listsCursor!!.moveToNext()) {
+    val listsCursor =
+      context.contentResolver.query(Lists.LISTS, arrayOf(ListsColumns.ID, ListsColumns.TRAKT_ID))
+    while (listsCursor.moveToNext()) {
       listIds.add(Cursors.getLong(listsCursor, ListsColumns.ID))
     }
     listsCursor.close()
@@ -49,18 +55,20 @@ class SyncLists @Inject constructor(
       val traktId = list.ids.trakt!!
       val listId = ListWrapper.updateOrInsert(context.contentResolver, list)
       listIds.remove(listId)
-      ActionManager.invokeAsync(SyncList.key(traktId), syncList, SyncList.Params(traktId))
+      syncList.invokeAsync(SyncList.Params(traktId))
     }.map { it.await() }
 
     for (id in listIds) {
       context.contentResolver.delete(Lists.withId(id), null, null)
     }
+
+    if (params.userActivityTime > 0L) {
+      TraktTimestamps.getSettings(context)
+        .edit()
+        .putLong(TraktTimestamps.LIST_UPDATED_AT, params.userActivityTime)
+        .apply()
+    }
   }
 
-  companion object {
-
-    private val PROJECTION = arrayOf(ListsColumns.ID, ListsColumns.TRAKT_ID)
-
-    fun key() = "SyncLists"
-  }
+  data class Params(val userActivityTime: Long = 0L)
 }

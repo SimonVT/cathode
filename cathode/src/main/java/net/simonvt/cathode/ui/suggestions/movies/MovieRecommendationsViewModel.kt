@@ -20,8 +20,8 @@ import android.content.Context
 import android.text.format.DateUtils
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import net.simonvt.cathode.actions.ActionManager
-import net.simonvt.cathode.actions.movies.SyncTrendingMovies
+import net.simonvt.cathode.actions.invokeAsync
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.user.SyncMovieRecommendations
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.common.entity.Movie
@@ -66,7 +66,7 @@ class MovieRecommendationsViewModel @Inject constructor(
           0L
         ) + SYNC_INTERNAL
       ) {
-        ActionManager.invokeAsync(SyncMovieRecommendations.key(), syncMovieRecommendations, Unit)
+        syncMovieRecommendations.invokeAsync(Unit)
       }
     }
   }
@@ -77,7 +77,7 @@ class MovieRecommendationsViewModel @Inject constructor(
   }
 
   override suspend fun onRefresh() {
-    ActionManager.invokeSync(SyncTrendingMovies.key(), syncMovieRecommendations, Unit)
+    syncMovieRecommendations.invokeSync(Unit)
   }
 
   companion object {

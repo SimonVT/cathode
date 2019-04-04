@@ -22,8 +22,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.async
-import net.simonvt.cathode.actions.ActionManager
 import net.simonvt.cathode.actions.comments.SyncEpisodeComments
+import net.simonvt.cathode.actions.invokeAsync
 import net.simonvt.cathode.actions.seasons.SyncSeason
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.common.entity.Comment
@@ -103,10 +103,12 @@ class EpisodeViewModel @Inject constructor(
       if (System.currentTimeMillis() > episode.lastCommentSync!! + SYNC_INTERVAL_COMMENTS) {
         val showId = episodeHelper.getShowId(episodeId)
         val traktId = showHelper.getTraktId(showId)
-        ActionManager.invokeAsync(
-          SyncEpisodeComments.key(traktId, episode.season, episode.episode),
-          syncEpisodeComments,
-          SyncEpisodeComments.Params(traktId, episode.season, episode.episode)
+        syncEpisodeComments.invokeAsync(
+          SyncEpisodeComments.Params(
+            traktId,
+            episode.season,
+            episode.episode
+          )
         )
       }
     }
@@ -118,16 +120,9 @@ class EpisodeViewModel @Inject constructor(
     val season = episodeHelper.getSeason(episodeId)
     val number = episodeHelper.getNumber(episodeId)
 
-    val seasonDeferred = ActionManager.invokeAsync(
-      SyncSeason.key(traktId, season),
-      syncSeason,
-      SyncSeason.Params(traktId, season)
-    )
-    val commentsDeferred = ActionManager.invokeAsync(
-      SyncEpisodeComments.key(traktId, season, number),
-      syncEpisodeComments,
-      SyncEpisodeComments.Params(traktId, season, number)
-    )
+    val seasonDeferred = syncSeason.invokeAsync(SyncSeason.Params(traktId, season))
+    val commentsDeferred =
+      syncEpisodeComments.invokeAsync(SyncEpisodeComments.Params(traktId, season, number))
 
     seasonDeferred.await()
     commentsDeferred.await()
@@ -137,7 +132,7 @@ class EpisodeViewModel @Inject constructor(
 
     private const val SYNC_INTERVAL_COMMENTS = 3 * DateUtils.HOUR_IN_MILLIS
 
-    internal val PROJECTION = arrayOf(
+    private val PROJECTION = arrayOf(
       EpisodeColumns.ID,
       EpisodeColumns.TRAKT_ID,
       EpisodeColumns.TITLE,

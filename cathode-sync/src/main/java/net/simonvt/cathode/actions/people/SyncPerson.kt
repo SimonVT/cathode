@@ -30,6 +30,8 @@ class SyncPerson @Inject constructor(
   private val peopleService: PeopleService
 ) : CallAction<Params, Person>() {
 
+  override fun key(params: Params): String = "SyncPerson&traktId=${params.traktId}"
+
   override fun getCall(params: Params): Call<Person> =
     peopleService.summary(params.traktId, Extended.FULL)
 
@@ -38,9 +40,4 @@ class SyncPerson @Inject constructor(
   }
 
   data class Params(val traktId: Long)
-
-  companion object {
-
-    fun key(traktId: Long) = "SyncPerson&traktId=$traktId"
-  }
 }

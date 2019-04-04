@@ -46,6 +46,8 @@ class SyncPersonMovieCredits @Inject constructor(
   private val peopleService: PeopleService
 ) : CallAction<Params, Credits>() {
 
+  override fun key(params: Params): String = "SyncPersonMovieCredits&traktId=${params.traktId}"
+
   override fun getCall(params: Params): Call<Credits> =
     peopleService.movies(params.traktId, Extended.FULL)
 
@@ -168,11 +170,4 @@ class SyncPersonMovieCredits @Inject constructor(
   }
 
   data class Params(val traktId: Long)
-
-  companion object {
-
-    fun key(traktId: Long): String {
-      return "SyncPersonMovieCredits&traktId=$traktId"
-    }
-  }
 }

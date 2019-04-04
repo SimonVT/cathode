@@ -18,7 +18,7 @@ package net.simonvt.cathode.ui.lists
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import net.simonvt.cathode.actions.ActionManager
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.user.SyncLists
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.common.entity.UserList
@@ -48,6 +48,6 @@ class ListsViewModel @Inject constructor(
   }
 
   override suspend fun onRefresh() {
-    ActionManager.invokeSync(SyncLists.key(), syncLists, Unit)
+    syncLists.invokeSync(SyncLists.Params())
   }
 }

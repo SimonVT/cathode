@@ -18,7 +18,7 @@ package net.simonvt.cathode.ui.shows.watchlist
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import net.simonvt.cathode.actions.ActionManager
+import net.simonvt.cathode.actions.invokeAsync
 import net.simonvt.cathode.actions.user.SyncEpisodeWatchlist
 import net.simonvt.cathode.actions.user.SyncShowsWatchlist
 import net.simonvt.cathode.common.data.MappedCursorLiveData
@@ -63,10 +63,8 @@ class ShowsWatchlistViewModel @Inject constructor(
   }
 
   override suspend fun onRefresh() {
-    val showsDeferred =
-      ActionManager.invokeAsync(SyncShowsWatchlist.key(), syncShowsWatchlist, Unit)
-    val episodesDeferred =
-      ActionManager.invokeAsync(SyncEpisodeWatchlist.key(), syncEpisodeWatchlist, Unit)
+    val showsDeferred = syncShowsWatchlist.invokeAsync(SyncShowsWatchlist.Params())
+    val episodesDeferred = syncEpisodeWatchlist.invokeAsync(SyncEpisodeWatchlist.Params())
 
     showsDeferred.await()
     episodesDeferred.await()

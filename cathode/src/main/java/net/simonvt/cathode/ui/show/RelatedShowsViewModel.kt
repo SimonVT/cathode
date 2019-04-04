@@ -18,7 +18,7 @@ package net.simonvt.cathode.ui.show
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import net.simonvt.cathode.actions.ActionManager
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.shows.SyncRelatedShows
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.common.entity.Show
@@ -57,10 +57,6 @@ class RelatedShowsViewModel @Inject constructor(
 
   override suspend fun onRefresh() {
     val traktId = showHelper.getTraktId(showId)
-    ActionManager.invokeSync(
-      SyncRelatedShows.key(traktId),
-      syncRelatedShows,
-      SyncRelatedShows.Params(traktId)
-    )
+    syncRelatedShows.invokeSync(SyncRelatedShows.Params(traktId))
   }
 }

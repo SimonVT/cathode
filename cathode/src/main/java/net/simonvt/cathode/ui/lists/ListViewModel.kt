@@ -18,7 +18,7 @@ package net.simonvt.cathode.ui.lists
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import net.simonvt.cathode.actions.ActionManager
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.lists.SyncList
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.common.entity.ListItem
@@ -71,6 +71,6 @@ class ListViewModel @Inject constructor(
 
   override suspend fun onRefresh() {
     val traktId = ListWrapper.getTraktId(context.contentResolver, listId)
-    ActionManager.invokeSync(SyncList.key(traktId), syncList, SyncList.Params(traktId))
+    syncList.invokeSync(SyncList.Params(traktId))
   }
 }

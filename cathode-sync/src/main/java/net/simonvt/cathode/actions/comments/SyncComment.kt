@@ -37,6 +37,8 @@ class SyncComment @Inject constructor(
   private val syncCommentReplies: SyncCommentReplies
 ) : CallAction<Params, Comment>() {
 
+  override fun key(params: Params): String = "SyncComment&traktId=${params.traktId}"
+
   override fun getCall(params: Params): Call<Comment> = commentsService.comment(params.traktId)
 
   override suspend fun handleResponse(params: Params, response: Comment) {
@@ -60,9 +62,4 @@ class SyncComment @Inject constructor(
   }
 
   data class Params(val traktId: Long)
-
-  companion object {
-
-    fun key(traktId: Long) = "SyncComment&traktId=$traktId"
-  }
 }

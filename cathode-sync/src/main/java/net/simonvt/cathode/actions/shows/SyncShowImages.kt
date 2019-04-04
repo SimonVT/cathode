@@ -32,6 +32,8 @@ class SyncShowImages @Inject constructor(
   private val showHelper: ShowDatabaseHelper
 ) : TmdbCallAction<Params, TvShow>() {
 
+  override fun key(params: Params): String = "SyncShowImages&tmdbId=${params.tmdbId}"
+
   override fun getCall(params: Params): Call<TvShow> = tvService.tv(params.tmdbId, "en")
 
   override suspend fun handleResponse(params: Params, response: TvShow) {
@@ -40,11 +42,4 @@ class SyncShowImages @Inject constructor(
   }
 
   data class Params(val tmdbId: Int)
-
-  companion object {
-
-    fun key(tmdbId: Int): String {
-      return "SyncShowImages&tmdbId=$tmdbId"
-    }
-  }
 }

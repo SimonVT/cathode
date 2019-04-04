@@ -37,6 +37,8 @@ class SyncUpdatedShows @Inject constructor(
   private val showHelper: ShowDatabaseHelper
 ) : PagedAction<Unit, UpdatedItem>() {
 
+  override fun key(params: Unit): String = "SyncUpdatedShows"
+
   private val currentTime = System.currentTimeMillis()
 
   override fun getCall(params: Unit, page: Int): Call<List<UpdatedItem>> {
@@ -73,7 +75,6 @@ class SyncUpdatedShows @Inject constructor(
   }
 
   companion object {
-    const val TAG = "SyncUpdatedShows"
     private const val LIMIT = 100
   }
 }

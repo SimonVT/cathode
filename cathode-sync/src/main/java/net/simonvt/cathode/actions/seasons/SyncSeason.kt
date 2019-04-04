@@ -45,6 +45,10 @@ class SyncSeason @Inject constructor(
   private val episodeHelper: EpisodeDatabaseHelper
 ) : CallAction<Params, List<Episode>>() {
 
+  override fun key(params: Params): String {
+    return "SyncSeason&traktId=${params.traktId}&season=${params.season}"
+  }
+
   override fun getCall(params: Params): Call<List<Episode>> =
     seasonService.getSeason(params.traktId, params.season, Extended.FULL)
 
@@ -78,9 +82,4 @@ class SyncSeason @Inject constructor(
   }
 
   data class Params(val traktId: Long, val season: Int)
-
-  companion object {
-
-    fun key(traktId: Long, season: Int) = "SyncSeason&traktId=$traktId&season=$season"
-  }
 }

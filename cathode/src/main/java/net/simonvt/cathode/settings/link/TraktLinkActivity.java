@@ -21,23 +21,23 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import androidx.annotation.Nullable;
+import androidx.work.WorkManager;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import dagger.android.AndroidInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.remote.sync.SyncJob;
-import net.simonvt.cathode.remote.sync.SyncUserSettings;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.TraktTimestamps;
-import net.simonvt.cathode.sync.tmdb.api.SyncConfiguration;
 import net.simonvt.cathode.ui.BaseActivity;
 import net.simonvt.cathode.ui.HomeActivity;
+import net.simonvt.cathode.work.WorkManagerUtils;
+import net.simonvt.cathode.work.user.PeriodicSyncWorker;
+import net.simonvt.cathode.work.user.SyncUserSettingsWorker;
 
 public class TraktLinkActivity extends BaseActivity {
 
-  @Inject JobManager jobManager;
+  @Inject WorkManager workManager;
 
   private SharedPreferences settings;
 
@@ -64,9 +64,8 @@ public class TraktLinkActivity extends BaseActivity {
         .putBoolean(TraktLinkSettings.TRAKT_AUTH_FAILED, false)
         .apply();
 
-    jobManager.addJob(new SyncConfiguration());
-    jobManager.addJob(new SyncUserSettings());
-    jobManager.addJob(new SyncJob());
+    WorkManagerUtils.enqueueNow(workManager, SyncUserSettingsWorker.class);
+    WorkManagerUtils.enqueueNow(workManager, PeriodicSyncWorker.class);
 
     Intent i = new Intent(this, HomeActivity.class);
     startActivity(i);

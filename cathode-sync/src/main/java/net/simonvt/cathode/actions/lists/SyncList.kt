@@ -19,8 +19,8 @@ package net.simonvt.cathode.actions.lists
 import android.content.ContentProviderOperation
 import android.content.Context
 import androidx.work.WorkManager
-import net.simonvt.cathode.actions.ActionManager
 import net.simonvt.cathode.actions.CallAction
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.lists.SyncList.Params
 import net.simonvt.cathode.actions.people.SyncPerson
 import net.simonvt.cathode.api.entity.ListItem
@@ -40,7 +40,7 @@ import net.simonvt.cathode.provider.helper.PersonDatabaseHelper
 import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
 import net.simonvt.cathode.provider.query
-import net.simonvt.cathode.work.WorkManagerUtils
+import net.simonvt.cathode.work.enqueueUniqueNow
 import net.simonvt.cathode.work.movies.SyncPendingMoviesWorker
 import net.simonvt.cathode.work.shows.SyncPendingShowsWorker
 import retrofit2.Call
@@ -73,6 +73,8 @@ class SyncList @Inject constructor(
 
     return -1
   }
+
+  override fun key(params: Params): String = "SyncList&traktId=${params.traktId}"
 
   override fun getCall(params: Params): Call<List<ListItem>> =
     usersService.listItems(params.traktId)
@@ -218,11 +220,7 @@ class SyncList @Inject constructor(
           var personId = personHelper.getId(traktId)
           if (personId == -1L) {
             personId = personHelper.partialUpdate(listItem.person)
-            ActionManager.invokeSync(
-              SyncPerson.key(traktId),
-              syncPerson,
-              SyncPerson.Params(traktId)
-            )
+            syncPerson.invokeSync(SyncPerson.Params(traktId))
           }
 
           val itemPosition = getItemPosition(oldItems, DatabaseContract.ItemType.PERSON, personId)
@@ -251,27 +249,14 @@ class SyncList @Inject constructor(
     }
 
     if (syncPendingShows) {
-      WorkManagerUtils.enqueueUniqueNow(
-        workManager,
-        SyncPendingShowsWorker.TAG,
-        SyncPendingShowsWorker::class.java
-      )
+      workManager.enqueueUniqueNow(SyncPendingShowsWorker.TAG, SyncPendingShowsWorker::class.java)
     }
     if (syncPendingMovies) {
-      WorkManagerUtils.enqueueUniqueNow(
-        workManager,
-        SyncPendingMoviesWorker.TAG,
-        SyncPendingMoviesWorker::class.java
-      )
+      workManager.enqueueUniqueNow(SyncPendingMoviesWorker.TAG, SyncPendingMoviesWorker::class.java)
     }
 
     context.contentResolver.batch(ops)
   }
 
   data class Params(val traktId: Long)
-
-  companion object {
-
-    fun key(traktId: Long) = "SyncList&traktId=$traktId"
-  }
 }

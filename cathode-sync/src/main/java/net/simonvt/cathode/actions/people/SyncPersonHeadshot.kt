@@ -38,6 +38,8 @@ class SyncPersonHeadshot @Inject constructor(
   private val peopleService: PeopleService
 ) : TmdbCallAction<Params, PersonImages>() {
 
+  override fun key(params: Params): String = "SyncPersonHeadshot&tmdbId=${params.tmdbId}"
+
   override fun getCall(params: Params): Call<PersonImages> = peopleService.images(params.tmdbId)
 
   override suspend fun handleResponse(params: Params, response: PersonImages) {
@@ -59,11 +61,4 @@ class SyncPersonHeadshot @Inject constructor(
   }
 
   data class Params(val tmdbId: Int)
-
-  companion object {
-
-    fun key(tmdbId: Int): String {
-      return "SyncPersonHeadshot&tmdbId=$tmdbId"
-    }
-  }
 }

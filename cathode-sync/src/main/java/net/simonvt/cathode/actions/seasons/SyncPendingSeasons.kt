@@ -47,6 +47,8 @@ class SyncPendingSeasons @Inject constructor(
   private val episodeHelper: EpisodeDatabaseHelper
 ) : ErrorHandlerAction<Unit>() {
 
+  override fun key(params: Unit): String = "SyncPendingSeasons"
+
   override suspend fun invoke(params: Unit) {
     val seasons = context.contentResolver.query(
       Seasons.SEASONS,

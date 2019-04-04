@@ -18,6 +18,7 @@ package net.simonvt.cathode.actions.user
 import android.content.Context
 import androidx.work.WorkManager
 import net.simonvt.cathode.actions.CallAction
+import net.simonvt.cathode.actions.user.SyncShowsWatchlist.Params
 import net.simonvt.cathode.api.entity.WatchlistItem
 import net.simonvt.cathode.api.service.SyncService
 import net.simonvt.cathode.common.database.forEach
@@ -27,7 +28,8 @@ import net.simonvt.cathode.provider.DatabaseSchematic
 import net.simonvt.cathode.provider.ProviderSchematic.Shows
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
 import net.simonvt.cathode.provider.query
-import net.simonvt.cathode.work.WorkManagerUtils
+import net.simonvt.cathode.settings.TraktTimestamps
+import net.simonvt.cathode.work.enqueueUniqueNow
 import net.simonvt.cathode.work.shows.SyncPendingShowsWorker
 import retrofit2.Call
 import javax.inject.Inject
@@ -37,11 +39,13 @@ class SyncShowsWatchlist @Inject constructor(
   private val showHelper: ShowDatabaseHelper,
   private val syncService: SyncService,
   private val workManager: WorkManager
-) : CallAction<Unit, List<WatchlistItem>>() {
+) : CallAction<Params, List<WatchlistItem>>() {
 
-  override fun getCall(params: Unit): Call<List<WatchlistItem>> = syncService.getShowWatchlist()
+  override fun key(params: Params): String = "SyncShowsWatchlist"
 
-  override suspend fun handleResponse(params: Unit, response: List<WatchlistItem>) {
+  override fun getCall(params: Params): Call<List<WatchlistItem>> = syncService.getShowWatchlist()
+
+  override suspend fun handleResponse(params: Params, response: List<WatchlistItem>) {
     val showIds = mutableListOf<Long>()
 
     val localWatchlist = context.contentResolver.query(
@@ -67,15 +71,15 @@ class SyncShowsWatchlist @Inject constructor(
       showHelper.setIsInWatchlist(showId, false)
     }
 
-    WorkManagerUtils.enqueueUniqueNow(
-      workManager,
-      SyncPendingShowsWorker.TAG,
-      SyncPendingShowsWorker::class.java
-    )
+    workManager.enqueueUniqueNow(SyncPendingShowsWorker.TAG, SyncPendingShowsWorker::class.java)
+
+    if (params.userActivityTime > 0L) {
+      TraktTimestamps.getSettings(context)
+        .edit()
+        .putLong(TraktTimestamps.SHOW_WATCHLIST, params.userActivityTime)
+        .apply()
+    }
   }
 
-  companion object {
-
-    fun key() = "SyncShowsWatchlist"
-  }
+  data class Params(val userActivityTime: Long = 0L)
 }

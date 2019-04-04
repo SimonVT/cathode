@@ -18,25 +18,29 @@ package net.simonvt.cathode.settings.link;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import androidx.work.WorkManager;
 import java.util.List;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.remote.Flags;
-import net.simonvt.cathode.remote.sync.SyncJob;
-import net.simonvt.cathode.remote.sync.SyncUserSettings;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.TraktTimestamps;
-import net.simonvt.cathode.sync.tmdb.api.SyncConfiguration;
+import net.simonvt.cathode.work.WorkManagerUtils;
+import net.simonvt.cathode.work.user.PeriodicSyncWorker;
+import net.simonvt.cathode.work.user.SyncUserSettingsWorker;
 
 public class SyncThread extends Thread {
 
   private Context context;
+  private WorkManager workManager;
   private JobManager jobManager;
   private List<Job> jobs;
 
-  public SyncThread(Context context, JobManager jobManager, List<Job> jobs) {
+  public SyncThread(Context context, WorkManager workManager, JobManager jobManager,
+      List<Job> jobs) {
     this.context = context;
+    this.workManager = workManager;
     this.jobManager = jobManager;
     this.jobs = jobs;
   }
@@ -56,8 +60,7 @@ public class SyncThread extends Thread {
       jobManager.addJobNow(job);
     }
 
-    jobManager.addJobNow(new SyncConfiguration());
-    jobManager.addJobNow(new SyncUserSettings());
-    jobManager.addJobNow(new SyncJob());
+    WorkManagerUtils.enqueueNow(workManager, SyncUserSettingsWorker.class);
+    WorkManagerUtils.enqueueNow(workManager, PeriodicSyncWorker.class);
   }
 }

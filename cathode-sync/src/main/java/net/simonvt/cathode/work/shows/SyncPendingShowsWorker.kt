@@ -7,6 +7,7 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.seasons.SyncPendingSeasons
 import net.simonvt.cathode.actions.shows.SyncPendingShows
 import net.simonvt.cathode.work.ChildWorkerFactory
@@ -21,8 +22,8 @@ class SyncPendingShowsWorker @AssistedInject constructor(
   override val coroutineContext = Dispatchers.IO
 
   override suspend fun doWork(): Result = coroutineScope {
-    syncPendingShows(Unit)
-    syncPendingSeasons(Unit)
+    syncPendingShows.invokeSync(Unit)
+    syncPendingSeasons.invokeSync(Unit)
     Result.success()
   }
 

@@ -38,6 +38,8 @@ class SyncShowRecommendations @Inject constructor(
   private val recommendationsService: RecommendationsService
 ) : CallAction<Unit, List<Show>>() {
 
+  override fun key(params: Unit): String = "SyncShowRecommendations"
+
   override fun getCall(params: Unit): Call<List<Show>> =
     recommendationsService.shows(LIMIT, Extended.FULL)
 
@@ -75,9 +77,6 @@ class SyncShowRecommendations @Inject constructor(
   }
 
   companion object {
-
     private const val LIMIT = 50
-
-    fun key() = "SyncShowRecommendations"
   }
 }

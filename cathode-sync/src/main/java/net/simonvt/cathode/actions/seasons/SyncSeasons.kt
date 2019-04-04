@@ -41,6 +41,8 @@ class SyncSeasons @Inject constructor(
   private val syncSeason: SyncSeason
 ) : CallAction<Params, List<Season>>() {
 
+  override fun key(params: Params): String = "SyncSeasons&traktId=${params.traktId}"
+
   override fun getCall(params: Params): Call<List<Season>> =
     seasonService.getSummary(params.traktId, Extended.FULL)
 
@@ -65,9 +67,4 @@ class SyncSeasons @Inject constructor(
   }
 
   data class Params(val traktId: Long)
-
-  companion object {
-
-    fun key(traktId: Long) = "SyncSeasons&traktId=$traktId"
-  }
 }

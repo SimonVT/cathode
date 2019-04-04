@@ -39,6 +39,8 @@ class SyncShowWatchedStatus @Inject constructor(
   private val episodeHelper: EpisodeDatabaseHelper
 ) : CallAction<Params, ShowProgress>() {
 
+  override fun key(params: Params): String = "SyncShowWatchedStatus&traktId=${params.traktId}"
+
   override fun getCall(params: Params): Call<ShowProgress> =
     showsService.getWatchedProgress(params.traktId)
 
@@ -67,11 +69,4 @@ class SyncShowWatchedStatus @Inject constructor(
   }
 
   data class Params(val traktId: Long)
-
-  companion object {
-
-    fun key(traktId: Long): String {
-      return "SyncShowWatchedStatus&traktId=$traktId"
-    }
-  }
 }

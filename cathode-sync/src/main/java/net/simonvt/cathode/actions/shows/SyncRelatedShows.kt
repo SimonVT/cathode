@@ -41,6 +41,8 @@ class SyncRelatedShows @Inject constructor(
   private val showHelper: ShowDatabaseHelper
 ) : CallAction<Params, List<Show>>() {
 
+  override fun key(params: Params): String = "SyncRelatedShows&traktId=${params.traktId}"
+
   override fun getCall(params: Params): Call<List<Show>> =
     showsService.getRelated(params.traktId, RELATED_COUNT, Extended.FULL)
 
@@ -84,11 +86,6 @@ class SyncRelatedShows @Inject constructor(
   data class Params(val traktId: Long)
 
   companion object {
-
     private const val RELATED_COUNT = 50
-
-    fun key(traktId: Long): String {
-      return "SyncRelatedShows&traktId=$traktId"
-    }
   }
 }

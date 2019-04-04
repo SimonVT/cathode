@@ -19,13 +19,15 @@ import android.content.ContentProviderOperation
 import android.content.Context
 import net.simonvt.cathode.actions.ActionFailedException
 import net.simonvt.cathode.actions.OptionalBodyCallAction
+import net.simonvt.cathode.actions.invokeSync
+import net.simonvt.cathode.actions.movies.SyncMovie
+import net.simonvt.cathode.actions.shows.SyncShow
 import net.simonvt.cathode.api.entity.Watching
 import net.simonvt.cathode.api.enumeration.Action
 import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.api.service.UsersService
 import net.simonvt.cathode.common.database.forEach
 import net.simonvt.cathode.common.database.getLong
-import net.simonvt.cathode.jobqueue.JobManager
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables
@@ -37,20 +39,21 @@ import net.simonvt.cathode.provider.helper.MovieDatabaseHelper
 import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
 import net.simonvt.cathode.provider.query
-import net.simonvt.cathode.remote.sync.movies.SyncMovie
-import net.simonvt.cathode.remote.sync.shows.SyncShow
 import retrofit2.Call
 import javax.inject.Inject
 
 class SyncWatching @Inject constructor(
   private val context: Context,
-  private val jobManager: JobManager,
   private val usersService: UsersService,
   private val showHelper: ShowDatabaseHelper,
   private val seasonHelper: SeasonDatabaseHelper,
   private val episodeHelper: EpisodeDatabaseHelper,
-  private val movieHelper: MovieDatabaseHelper
+  private val movieHelper: MovieDatabaseHelper,
+  private val syncShow: SyncShow,
+  private val syncMovie: SyncMovie
 ) : OptionalBodyCallAction<Unit, Watching>() {
+
+  override fun key(params: Unit): String = "SyncWatching"
 
   override fun getCall(params: Unit): Call<Watching> = usersService.watching()
 
@@ -77,35 +80,21 @@ class SyncWatching @Inject constructor(
       when (response.type) {
         ItemType.EPISODE -> {
           val showTraktId = response.show!!.ids.trakt!!
-
           val showResult = showHelper.getIdOrCreate(showTraktId)
           val showId = showResult.showId
 
-          if (showHelper.needsSync(showId)) {
-            jobManager.addJob(SyncShow(showTraktId))
-          }
-
-          val didShowExist = !showResult.didCreate
+          var needsSync = showHelper.needsSync(showId)
 
           val seasonNumber = response.episode!!.season!!
           val seasonResult = seasonHelper.getIdOrCreate(showId, seasonNumber)
           val seasonId = seasonResult.id
-          val didSeasonExist = !seasonResult.didCreate
-          if (seasonResult.didCreate) {
-            if (didShowExist) {
-              jobManager.addJob(SyncShow(showTraktId))
-            }
-          }
+          needsSync = needsSync && seasonResult.didCreate
 
           val episodeNumber = response.episode!!.number!!
 
           val episodeResult = episodeHelper.getIdOrCreate(showId, seasonId, episodeNumber)
           val episodeId = episodeResult.id
-          if (episodeResult.didCreate) {
-            if (didShowExist && didSeasonExist) {
-              jobManager.addJob(SyncShow(showTraktId))
-            }
-          }
+          needsSync = needsSync && episodeResult.didCreate
 
           episodeWatching.remove(episodeId)
 
@@ -125,6 +114,10 @@ class SyncWatching @Inject constructor(
               .build()
           }
           ops.add(op)
+
+          if (needsSync) {
+            syncShow.invokeSync(SyncShow.Params(showTraktId))
+          }
         }
 
         ItemType.MOVIE -> {
@@ -133,7 +126,7 @@ class SyncWatching @Inject constructor(
           val movieId = result.movieId
 
           if (movieHelper.needsSync(movieId)) {
-            jobManager.addJob(SyncMovie(movieTraktId))
+            syncMovie.invokeSync(SyncMovie.Params(movieTraktId))
           }
 
           movieWatching.remove(movieId)

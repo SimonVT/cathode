@@ -24,14 +24,12 @@ public final class SyncEvent {
 
   public interface OnSyncListener {
 
-    void onSyncChanged(boolean authExecuting, boolean dataExecuting);
+    void onSyncChanged(boolean syncing);
   }
 
   private static final List<WeakReference<OnSyncListener>> LISTENERS = new ArrayList<>();
 
-  private static boolean authSyncing;
-
-  private static boolean dataSyncing;
+  private static boolean syncing;
 
   public static void registerListener(final OnSyncListener listener) {
     synchronized (LISTENERS) {
@@ -39,7 +37,7 @@ public final class SyncEvent {
 
       MainHandler.post(new Runnable() {
         @Override public void run() {
-          listener.onSyncChanged(authSyncing, dataSyncing);
+          listener.onSyncChanged(syncing);
         }
       });
     }
@@ -60,30 +58,16 @@ public final class SyncEvent {
   private SyncEvent() {
   }
 
-  public static void authExecutorStarted() {
+  public static void executorStarted() {
     synchronized (LISTENERS) {
-      authSyncing = true;
+      syncing = true;
       postSyncEvent();
     }
   }
 
-  public static void authExecutorStopped() {
+  public static void executorStopped() {
     synchronized (LISTENERS) {
-      authSyncing = false;
-      postSyncEvent();
-    }
-  }
-
-  public static void dataExecutorStarted() {
-    synchronized (LISTENERS) {
-      dataSyncing = true;
-      postSyncEvent();
-    }
-  }
-
-  public static void dataExecutorStopped() {
-    synchronized (LISTENERS) {
-      dataSyncing = false;
+      syncing = false;
       postSyncEvent();
     }
   }
@@ -100,7 +84,7 @@ public final class SyncEvent {
               continue;
             }
 
-            l.onSyncChanged(authSyncing, dataSyncing);
+            l.onSyncChanged(syncing);
           }
         }
       }

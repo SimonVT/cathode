@@ -46,8 +46,8 @@
       android:layout_width="0dp"
       android:layout_columnSpan="2"
       android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
       android:text="Recreate activity"
+      android:textAllCaps="false"
       style="@style/DebugDrawerItem"/>
 
   <TextView
@@ -55,8 +55,8 @@
       android:layout_width="0dp"
       android:layout_columnSpan="2"
       android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
       android:text="Update notification"
+      android:textAllCaps="false"
       style="@style/DebugDrawerItem"/>
 
   <androidx.appcompat.widget.SwitchCompat
@@ -79,8 +79,8 @@
       android:layout_width="0dp"
       android:layout_columnSpan="2"
       android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
       android:text="RequestFailedEvent"
+      android:textAllCaps="false"
       style="@style/DebugDrawerItem"/>
 
   <TextView
@@ -95,8 +95,8 @@
       android:layout_width="0dp"
       android:layout_columnSpan="2"
       android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
       android:text="AuthFailedEvent"
+      android:textAllCaps="false"
       style="@style/DebugDrawerItem"/>
 
   <TextView
@@ -104,8 +104,8 @@
       android:layout_width="0dp"
       android:layout_columnSpan="2"
       android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
       android:text="Remove access token"
+      android:textAllCaps="false"
       style="@style/DebugDrawerItem"/>
 
   <TextView
@@ -113,8 +113,8 @@
       android:layout_width="0dp"
       android:layout_columnSpan="2"
       android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
       android:text="Remove refresh token"
+      android:textAllCaps="false"
       style="@style/DebugDrawerItem"/>
 
   <TextView
@@ -122,8 +122,8 @@
       android:layout_width="0dp"
       android:layout_columnSpan="2"
       android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
       android:text="Invalidate access token"
+      android:textAllCaps="false"
       style="@style/DebugDrawerItem"/>
 
   <TextView
@@ -131,8 +131,8 @@
       android:layout_width="0dp"
       android:layout_columnSpan="2"
       android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
       android:text="Invalidate refresh token"
+      android:textAllCaps="false"
       style="@style/DebugDrawerItem"/>
 
   <TextView
@@ -147,8 +147,8 @@
       android:layout_width="0dp"
       android:layout_columnSpan="2"
       android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
       android:text="Insert fake show"
+      android:textAllCaps="false"
       style="@style/DebugDrawerItem"/>
 
   <TextView
@@ -156,8 +156,8 @@
       android:layout_width="0dp"
       android:layout_columnSpan="2"
       android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
       android:text="Remove fake show"
+      android:textAllCaps="false"
       style="@style/DebugDrawerItem"/>
 
   <TextView
@@ -195,30 +195,12 @@
       style="@style/DebugDrawerTitle"/>
 
   <TextView
-      android:id="@+id/debug_syncConfiguration"
-      android:layout_width="0dp"
-      android:layout_columnSpan="2"
-      android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
-      android:text="Sync configuration"
-      style="@style/DebugDrawerItem"/>
-
-  <TextView
-      android:id="@+id/debug_initialSync"
-      android:layout_width="0dp"
-      android:layout_columnSpan="2"
-      android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
-      android:text="Perform initial sync"
-      style="@style/DebugDrawerItem"/>
-
-  <TextView
       android:id="@+id/debug_forceUpdate"
       android:layout_width="0dp"
       android:layout_columnSpan="2"
       android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
       android:text="Force update"
+      android:textAllCaps="false"
       style="@style/DebugDrawerItem"/>
 
   <TextView
@@ -226,83 +208,7 @@
       android:layout_width="0dp"
       android:layout_columnSpan="2"
       android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
       android:text="Sync updated"
+      android:textAllCaps="false"
       style="@style/DebugDrawerItem"/>
-
-  <TextView
-      android:id="@+id/debug_syncWatching"
-      android:layout_width="0dp"
-      android:layout_columnSpan="2"
-      android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
-      android:text="Sync watching"
-      style="@style/DebugDrawerItem"/>
-
-  <TextView
-      android:id="@+id/debug_syncLists"
-      android:layout_width="0dp"
-      android:layout_columnSpan="2"
-      android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
-      android:text="Sync lists"
-      style="@style/DebugDrawerItem"/>
-
-  <TextView
-      android:layout_width="0dp"
-      android:layout_columnSpan="2"
-      android:layout_gravity="start|fill_horizontal"
-      android:text="Job queue"
-      style="@style/DebugDrawerTitle"/>
-
-  <TextView
-      android:layout_width="0dp"
-      android:layout_columnSpan="1"
-      android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
-      android:text="Auth executor"
-      style="@style/DebugDrawerItem"/>
-
-  <TextView
-      android:id="@+id/debug_authHandlerStatus"
-      android:layout_width="0dp"
-      android:layout_columnSpan="1"
-      android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
-      android:text="Stopped"
-      style="@style/DebugDrawerValue"/>
-
-  <TextView
-      android:layout_width="0dp"
-      android:layout_columnSpan="1"
-      android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
-      android:text="Data executor"
-      style="@style/DebugDrawerItem"/>
-
-  <TextView
-      android:id="@+id/debug_dataHandlerStatus"
-      android:layout_width="0dp"
-      android:layout_columnSpan="1"
-      android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
-      android:text="Stopped"
-      style="@style/DebugDrawerValue"/>
-
-  <TextView
-      android:layout_width="0dp"
-      android:layout_columnSpan="1"
-      android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
-      android:text="Job count"
-      style="@style/DebugDrawerItem"/>
-
-  <TextView
-      android:id="@+id/debug_jobCount"
-      android:layout_width="0dp"
-      android:layout_columnSpan="1"
-      android:layout_gravity="start|fill_horizontal"
-      android:textAllCaps="false"
-      tools:text="10"
-      style="@style/DebugDrawerValue"/>
 </GridLayout>

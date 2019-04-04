@@ -16,26 +16,13 @@
 package net.simonvt.cathode.actions.user
 
 import android.content.Context
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.coroutineScope
 import net.simonvt.cathode.actions.CallAction
+import net.simonvt.cathode.actions.invokeAsync
 import net.simonvt.cathode.api.entity.LastActivity
-import net.simonvt.cathode.api.enumeration.ItemTypes
 import net.simonvt.cathode.api.service.SyncService
 import net.simonvt.cathode.jobqueue.JobManager
-import net.simonvt.cathode.remote.sync.SyncHiddenItems
-import net.simonvt.cathode.remote.sync.comments.SyncCommentLikes
-import net.simonvt.cathode.remote.sync.comments.SyncUserComments
-import net.simonvt.cathode.remote.sync.lists.SyncLists
-import net.simonvt.cathode.remote.sync.movies.SyncMoviesCollection
-import net.simonvt.cathode.remote.sync.movies.SyncMoviesRatings
-import net.simonvt.cathode.remote.sync.movies.SyncMoviesWatchlist
-import net.simonvt.cathode.remote.sync.movies.SyncWatchedMovies
-import net.simonvt.cathode.remote.sync.shows.SyncEpisodeWatchlist
-import net.simonvt.cathode.remote.sync.shows.SyncEpisodesRatings
-import net.simonvt.cathode.remote.sync.shows.SyncSeasonsRatings
-import net.simonvt.cathode.remote.sync.shows.SyncShowsCollection
-import net.simonvt.cathode.remote.sync.shows.SyncShowsRatings
-import net.simonvt.cathode.remote.sync.shows.SyncShowsWatchlist
-import net.simonvt.cathode.remote.sync.shows.SyncWatchedShows
 import net.simonvt.cathode.settings.TraktTimestamps
 import retrofit2.Call
 import javax.inject.Inject
@@ -43,12 +30,32 @@ import javax.inject.Inject
 class SyncUserActivity @Inject constructor(
   private val context: Context,
   private val syncService: SyncService,
-  private val jobManager: JobManager
+  private val jobManager: JobManager,
+  private val syncWatchedShows: SyncWatchedShows,
+  private val syncShowsCollection: SyncShowsCollection,
+  private val syncEpisodeWatchlist: SyncEpisodeWatchlist,
+  private val syncEpisodesRatings: SyncEpisodesRatings,
+  private val syncUserEpisodeComments: SyncUserEpisodeComments,
+  private val syncSeasonsRatings: SyncSeasonsRatings,
+  private val syncUserSeasonComments: SyncUserSeasonComments,
+  private val syncShowsWatchlist: SyncShowsWatchlist,
+  private val syncShowsRatings: SyncShowsRatings,
+  private val syncUserShowComments: SyncUserShowComments,
+  private val syncWatchedMovies: SyncWatchedMovies,
+  private val syncMoviesCollection: SyncMoviesCollection,
+  private val syncMoviesWatchlist: SyncMoviesWatchlist,
+  private val syncMoviesRatings: SyncMoviesRatings,
+  private val syncUserMovieComments: SyncUserMovieComments,
+  private val syncCommentLikes: SyncCommentLikes,
+  private val syncLists: SyncLists,
+  private val syncHiddenItems: SyncHiddenItems
 ) : CallAction<Unit, LastActivity>() {
+
+  override fun key(params: Unit): String = "SyncUserActivity"
 
   override fun getCall(params: Unit): Call<LastActivity> = syncService.lastActivity()
 
-  override suspend fun handleResponse(params: Unit, response: LastActivity) {
+  override suspend fun handleResponse(params: Unit, response: LastActivity) = coroutineScope {
     val showLastWatchlist = response.shows.watchlisted_at?.timeInMillis ?: 0L
     val showLastRating = response.shows.rated_at?.timeInMillis ?: 0L
     val showLastComment = response.shows.commented_at?.timeInMillis ?: 0L
@@ -76,82 +83,87 @@ class SyncUserActivity @Inject constructor(
 
     val listLastUpdated = response.lists.updated_at?.timeInMillis ?: 0L
 
+    val updates = mutableListOf<Deferred<*>>()
+
     if (TraktTimestamps.episodeWatchedNeedsUpdate(context, episodeLastWatched)) {
-      jobManager.addJob(SyncWatchedShows())
+      updates += syncWatchedShows.invokeAsync(SyncWatchedShows.Params(episodeLastWatched))
     }
 
     if (TraktTimestamps.episodeCollectedNeedsUpdate(context, episodeLastCollected)) {
-      jobManager.addJob(SyncShowsCollection())
+      updates += syncShowsCollection.invokeAsync(SyncShowsCollection.Params(episodeLastCollected))
     }
 
     if (TraktTimestamps.episodeWatchlistNeedsUpdate(context, episodeLastWatchlist)) {
-      jobManager.addJob(SyncEpisodeWatchlist())
+      updates += syncEpisodeWatchlist.invokeAsync(SyncEpisodeWatchlist.Params(episodeLastWatchlist))
     }
 
     if (TraktTimestamps.episodeRatingsNeedsUpdate(context, episodeLastRating)) {
-      jobManager.addJob(SyncEpisodesRatings())
+      updates += syncEpisodesRatings.invokeAsync(SyncEpisodesRatings.Params(episodeLastRating))
     }
 
     if (TraktTimestamps.episodeCommentsNeedsUpdate(context, episodeLastComment)) {
-      jobManager.addJob(SyncUserComments(ItemTypes.EPISODES))
+      updates += syncUserEpisodeComments.invokeAsync(
+        SyncUserEpisodeComments.Params(
+          episodeLastComment
+        )
+      )
     }
 
     if (TraktTimestamps.seasonRatingsNeedsUpdate(context, seasonLastRating)) {
-      jobManager.addJob(SyncSeasonsRatings())
+      updates += syncSeasonsRatings.invokeAsync(SyncSeasonsRatings.Params(seasonLastRating))
     }
 
     if (TraktTimestamps.seasonCommentsNeedsUpdate(context, seasonLastComment)) {
-      jobManager.addJob(SyncUserComments(ItemTypes.SEASONS))
+      updates += syncUserSeasonComments.invokeAsync(SyncUserSeasonComments.Params(seasonLastComment))
     }
 
     if (TraktTimestamps.showWatchlistNeedsUpdate(context, showLastWatchlist)) {
-      jobManager.addJob(SyncShowsWatchlist())
+      updates += syncShowsWatchlist.invokeAsync(SyncShowsWatchlist.Params(showLastWatchlist))
     }
 
     if (TraktTimestamps.showRatingsNeedsUpdate(context, showLastRating)) {
-      jobManager.addJob(SyncShowsRatings())
+      updates += syncShowsRatings.invokeAsync(SyncShowsRatings.Params(showLastRating))
     }
 
     if (TraktTimestamps.showCommentsNeedsUpdate(context, showLastComment)) {
-      jobManager.addJob(SyncUserComments(ItemTypes.SHOWS))
+      updates += syncUserShowComments.invokeAsync(SyncUserShowComments.Params(showLastComment))
     }
 
     if (TraktTimestamps.movieWatchedNeedsUpdate(context, movieLastWatched)) {
-      jobManager.addJob(SyncWatchedMovies())
+      updates += syncWatchedMovies.invokeAsync(SyncWatchedMovies.Params(movieLastWatched))
     }
 
     if (TraktTimestamps.movieCollectedNeedsUpdate(context, movieLastCollected)) {
-      jobManager.addJob(SyncMoviesCollection())
+      updates += syncMoviesCollection.invokeAsync(SyncMoviesCollection.Params(movieLastCollected))
     }
 
     if (TraktTimestamps.movieWatchlistNeedsUpdate(context, movieLastWatchlist)) {
-      jobManager.addJob(SyncMoviesWatchlist())
+      updates += syncMoviesWatchlist.invokeAsync(SyncMoviesWatchlist.Params(movieLastWatchlist))
     }
 
     if (TraktTimestamps.movieRatingsNeedsUpdate(context, movieLastRating)) {
-      jobManager.addJob(SyncMoviesRatings())
+      updates += syncMoviesRatings.invokeAsync(SyncMoviesRatings.Params(movieLastRating))
     }
 
     if (TraktTimestamps.movieCommentsNeedsUpdate(context, movieLastComment)) {
-      jobManager.addJob(SyncUserComments(ItemTypes.MOVIES))
+      updates += syncUserMovieComments.invokeAsync(SyncUserMovieComments.Params(movieLastComment))
     }
 
     if (TraktTimestamps.commentLikedNeedsUpdate(context, commentLastLiked)) {
-      jobManager.addJob(SyncCommentLikes())
+      updates += syncCommentLikes.invokeAsync(SyncCommentLikes.Params(commentLastLiked))
     }
 
     if (TraktTimestamps.listNeedsUpdate(context, listLastUpdated)) {
-      jobManager.addJob(SyncLists())
+      updates += syncLists.invokeAsync(SyncLists.Params(listLastUpdated))
     }
 
-    if (TraktTimestamps.showHideNeedsUpdate(
-        context,
-        showLastHide
-      ) || TraktTimestamps.movieHideNeedsUpdate(context, movieLastHide)
+    if (
+      TraktTimestamps.showHideNeedsUpdate(context, showLastHide) ||
+      TraktTimestamps.movieHideNeedsUpdate(context, movieLastHide)
     ) {
-      jobManager.addJob(SyncHiddenItems())
+      updates += syncHiddenItems.invokeAsync(SyncHiddenItems.Params(showLastHide, movieLastHide))
     }
 
-    TraktTimestamps.update(context, response)
+    updates.forEach { it.await() }
   }
 }

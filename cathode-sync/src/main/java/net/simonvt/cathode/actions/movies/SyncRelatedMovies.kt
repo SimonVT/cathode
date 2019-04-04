@@ -42,6 +42,8 @@ class SyncRelatedMovies @Inject constructor(
   private val moviesService: MoviesService
 ) : CallAction<Params, List<Movie>>() {
 
+  override fun key(params: Params): String = "SyncRelatedMovies&traktId=${params.traktId}"
+
   override fun getCall(params: Params): Call<List<Movie>> =
     moviesService.getRelated(params.traktId, RELATED_COUNT, Extended.FULL)
 
@@ -87,11 +89,6 @@ class SyncRelatedMovies @Inject constructor(
   data class Params(val traktId: Long)
 
   companion object {
-
     private const val RELATED_COUNT = 50
-
-    fun key(traktId: Long): String {
-      return "SyncRelatedMovies&traktId=$traktId"
-    }
   }
 }

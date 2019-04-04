@@ -39,6 +39,8 @@ class SyncAnticipatedShows @Inject constructor(
   private val showsService: ShowsService
 ) : CallAction<Unit, List<AnticipatedItem>>() {
 
+  override fun key(params: Unit): String = "SyncAnticipatedShows"
+
   override fun getCall(params: Unit): Call<List<AnticipatedItem>> =
     showsService.getAnticipatedShows(LIMIT, Extended.FULL)
 
@@ -77,9 +79,6 @@ class SyncAnticipatedShows @Inject constructor(
   }
 
   companion object {
-
     private const val LIMIT = 50
-
-    fun key() = "SyncAnticipatedShows"
   }
 }

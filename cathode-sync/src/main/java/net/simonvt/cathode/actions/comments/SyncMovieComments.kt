@@ -45,6 +45,8 @@ class SyncMovieComments @Inject constructor(
   private val moviesService: MoviesService
 ) : PagedAction<Params, Comment>() {
 
+  override fun key(params: Params): String = "SyncMovieComments&traktId=${params.traktId}"
+
   override fun getCall(params: Params, page: Int): Call<List<Comment>> {
     return moviesService.getComments(
       params.traktId,
@@ -129,11 +131,6 @@ class SyncMovieComments @Inject constructor(
   data class Params(val traktId: Long)
 
   companion object {
-
     private const val LIMIT = 100
-
-    fun key(traktId: Long): String {
-      return "SyncMovieComments&traktId=$traktId"
-    }
   }
 }

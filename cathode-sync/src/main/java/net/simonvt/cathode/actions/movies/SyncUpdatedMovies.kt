@@ -43,6 +43,8 @@ class SyncUpdatedMovies @Inject constructor(
 
   private val currentTime = System.currentTimeMillis()
 
+  override fun key(params: Unit): String = "SyncUpdatedMovies"
+
   override fun getCall(params: Unit, page: Int): Call<List<UpdatedItem>> {
     val lastUpdated =
       Timestamps.get(context).getLong(Timestamps.MOVIES_LAST_UPDATED, currentTime)
@@ -85,7 +87,6 @@ class SyncUpdatedMovies @Inject constructor(
   }
 
   companion object {
-    const val TAG = "SyncUpdatedMovies"
     private const val LIMIT = 100
   }
 }

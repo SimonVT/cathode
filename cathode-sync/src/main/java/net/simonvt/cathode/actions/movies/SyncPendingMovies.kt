@@ -40,6 +40,8 @@ class SyncPendingMovies @Inject constructor(
   val movieHelper: MovieDatabaseHelper
 ) : ErrorHandlerAction<Unit>() {
 
+  override fun key(params: Unit): String = "SyncPendingMovies"
+
   override suspend fun invoke(params: Unit) {
     val syncItems = mutableMapOf<Long, Long>()
 

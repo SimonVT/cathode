@@ -18,7 +18,7 @@ package net.simonvt.cathode.ui.movie
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import net.simonvt.cathode.actions.ActionManager
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.movies.SyncRelatedMovies
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.common.entity.Movie
@@ -57,10 +57,6 @@ class RelatedMoviesViewModel @Inject constructor(
 
   override suspend fun onRefresh() {
     val traktId = movieHelper.getTraktId(movieId)
-    ActionManager.invokeSync(
-      SyncRelatedMovies.key(traktId),
-      syncRelatedMovies,
-      SyncRelatedMovies.Params(traktId)
-    )
+    syncRelatedMovies.invokeSync(SyncRelatedMovies.Params(traktId))
   }
 }

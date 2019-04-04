@@ -17,7 +17,7 @@
 package net.simonvt.cathode.ui.movies.watched
 
 import android.content.Context
-import net.simonvt.cathode.actions.ActionManager
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.user.SyncWatchedMovies
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.common.entity.Movie
@@ -62,6 +62,6 @@ class WatchedMoviesViewModel @Inject constructor(
   }
 
   override suspend fun onRefresh() {
-    ActionManager.invokeSync(SyncWatchedMovies.key(), syncWatchedMovies, Unit)
+    syncWatchedMovies.invokeSync(SyncWatchedMovies.Params())
   }
 }

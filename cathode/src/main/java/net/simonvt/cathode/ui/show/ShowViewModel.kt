@@ -22,8 +22,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import net.simonvt.cathode.actions.ActionManager
 import net.simonvt.cathode.actions.comments.SyncShowComments
+import net.simonvt.cathode.actions.invokeAsync
 import net.simonvt.cathode.actions.shows.SyncRelatedShows
 import net.simonvt.cathode.actions.shows.SyncShow
 import net.simonvt.cathode.actions.shows.SyncShowCollectedStatus
@@ -215,35 +215,19 @@ class ShowViewModel @Inject constructor(
         val currentTime = System.currentTimeMillis()
         val needsSync = show.needsSync!!
         if (needsSync || currentTime > show.lastSync + SYNC_INTERVAL) {
-          ActionManager.invokeAsync(
-            SyncShow.key(show.traktId),
-            syncShow,
-            SyncShow.Params(show.traktId)
-          )
+          syncShow.invokeAsync(SyncShow.Params(show.traktId))
         }
 
         if (currentTime > show.lastCommentSync + SYNC_INTERVAL_COMMENTS) {
-          ActionManager.invokeAsync(
-            SyncShowComments.key(show.traktId),
-            syncShowComments,
-            SyncShowComments.Params(show.traktId)
-          )
+          syncShowComments.invokeAsync(SyncShowComments.Params(show.traktId))
         }
 
         if (show.lastSync > show.lastCreditsSync) {
-          ActionManager.invokeAsync(
-            SyncShowCredits.key(show.traktId),
-            syncShowCredits,
-            SyncShowCredits.Params(show.traktId)
-          )
+          syncShowCredits.invokeAsync(SyncShowCredits.Params(show.traktId))
         }
 
         if (show.lastSync > show.lastRelatedSync) {
-          ActionManager.invokeAsync(
-            SyncRelatedShows.key(show.traktId),
-            syncRelatedShows,
-            SyncRelatedShows.Params(show.traktId)
-          )
+          syncRelatedShows.invokeAsync(SyncRelatedShows.Params(show.traktId))
         }
       }
     }
@@ -253,48 +237,16 @@ class ShowViewModel @Inject constructor(
     val traktId = showHelper.getTraktId(showId)
     val tmdbId = showHelper.getTmdbId(showId)
 
-    val showDeferred = ActionManager.invokeAsync(
-      SyncShow.key(traktId),
-      syncShow,
-      SyncShow.Params(traktId)
-    )
-
-    val relatedDeferred = ActionManager.invokeAsync(
-      SyncRelatedShows.key(traktId),
-      syncRelatedShows,
-      SyncRelatedShows.Params(traktId)
-    )
-
-    val imagesDeferred = ActionManager.invokeAsync(
-      SyncShowImages.key(tmdbId),
-      syncShowImages,
-      SyncShowImages.Params(tmdbId)
-    )
-
-    val commentsDeferred = ActionManager.invokeAsync(
-      SyncShowComments.key(traktId),
-      syncShowComments,
-      SyncShowComments.Params(traktId)
-    )
-
-    val creditsDeferred = ActionManager.invokeAsync(
-      SyncShowCredits.key(traktId),
-      syncShowCredits,
-      SyncShowCredits.Params(traktId)
-    )
+    val showDeferred = syncShow.invokeAsync(SyncShow.Params(traktId))
+    val relatedDeferred = syncRelatedShows.invokeAsync(SyncRelatedShows.Params(traktId))
+    val imagesDeferred = syncShowImages.invokeAsync(SyncShowImages.Params(tmdbId))
+    val commentsDeferred = syncShowComments.invokeAsync(SyncShowComments.Params(traktId))
+    val creditsDeferred = syncShowCredits.invokeAsync(SyncShowCredits.Params(traktId))
 
     if (TraktLinkSettings.isLinked(context)) {
-      val watchedDeferred = ActionManager.invokeAsync(
-        SyncShowWatchedStatus.key(traktId),
-        syncShowWatchedStatus,
-        SyncShowWatchedStatus.Params(traktId)
-      )
+      val watchedDeferred = syncShowWatchedStatus.invokeAsync(SyncShowWatchedStatus.Params(traktId))
       val collectedDeferred =
-        ActionManager.invokeAsync(
-          SyncShowCollectedStatus.key(traktId),
-          syncShowCollectedStatus,
-          SyncShowCollectedStatus.Params(traktId)
-        )
+        syncShowCollectedStatus.invokeAsync(SyncShowCollectedStatus.Params(traktId))
       watchedDeferred.await()
       collectedDeferred.await()
     }

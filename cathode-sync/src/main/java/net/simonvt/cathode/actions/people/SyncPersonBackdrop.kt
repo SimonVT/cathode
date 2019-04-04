@@ -38,6 +38,8 @@ class SyncPersonBackdrop @Inject constructor(
   private val peopleService: PeopleService
 ) : TmdbCallAction<Params, TaggedImagesResultsPage>() {
 
+  override fun key(params: Params): String = "SyncPersonBackdrop&tmdbId=${params.tmdbId}"
+
   override fun getCall(params: Params): Call<TaggedImagesResultsPage> =
     peopleService.taggedImages(params.tmdbId, 1, "en")
 
@@ -60,11 +62,4 @@ class SyncPersonBackdrop @Inject constructor(
   }
 
   data class Params(val tmdbId: Int)
-
-  companion object {
-
-    fun key(tmdbId: Int): String {
-      return "SyncPersonBackdrop&tmdbId=$tmdbId"
-    }
-  }
 }

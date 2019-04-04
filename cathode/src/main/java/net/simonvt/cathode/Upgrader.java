@@ -23,7 +23,6 @@ import android.text.format.DateUtils;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.remote.UpdateShowCounts;
-import net.simonvt.cathode.remote.sync.shows.SyncEpisodesRatings;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.Timestamps;
@@ -90,7 +89,7 @@ public final class Upgrader {
       }
 
       if (currentVersion < 3) {
-        jobQueue.add(new SyncEpisodesRatings());
+        TraktTimestamps.getSettings(context).edit().remove(TraktTimestamps.EPISODE_RATING).apply();
       }
 
       if (currentVersion < 4) {

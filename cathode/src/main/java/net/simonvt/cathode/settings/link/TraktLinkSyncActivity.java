@@ -22,6 +22,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.work.WorkManager;
 import dagger.android.AndroidInjection;
 import java.util.List;
 import javax.inject.Inject;
@@ -33,6 +34,7 @@ import net.simonvt.cathode.ui.HomeActivity;
 
 public class TraktLinkSyncActivity extends BaseActivity {
 
+  @Inject WorkManager workManager;
   @Inject JobManager jobManager;
 
   @Inject TraktLinkSyncViewModelFactory viewModelFactory;
@@ -62,7 +64,7 @@ public class TraktLinkSyncActivity extends BaseActivity {
 
       findViewById(R.id.sync).setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          new SyncThread(TraktLinkSyncActivity.this, jobManager, syncJobs).start();
+          new SyncThread(TraktLinkSyncActivity.this, workManager, jobManager, syncJobs).start();
 
           Intent home = new Intent(TraktLinkSyncActivity.this, HomeActivity.class);
           startActivity(home);

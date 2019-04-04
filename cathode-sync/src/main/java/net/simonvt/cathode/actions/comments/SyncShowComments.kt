@@ -47,6 +47,8 @@ class SyncShowComments @Inject constructor(
   private val usersHelper: UserDatabaseHelper
 ) : PagedAction<Params, Comment>() {
 
+  override fun key(params: Params): String = "SyncShowComments&traktId=${params.traktId}"
+
   override fun getCall(params: Params, page: Int): Call<List<Comment>> =
     showsService.getComments(params.traktId, page, LIMIT, Extended.FULL_IMAGES)
 
@@ -124,11 +126,6 @@ class SyncShowComments @Inject constructor(
   data class Params(val traktId: Long)
 
   companion object {
-
     private const val LIMIT = 100
-
-    fun key(traktId: Long): String {
-      return "SyncShowComments&traktId=$traktId"
-    }
   }
 }

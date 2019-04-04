@@ -25,6 +25,7 @@ import net.simonvt.cathode.common.InitProvider;
 import net.simonvt.cathode.common.util.MainHandler;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
+import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
 import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference;
@@ -62,6 +63,8 @@ public class CathodeInitProvider extends InitProvider {
         });
       }
     });
+
+    Accounts.setupAccount(getContext());
 
     return true;
   }

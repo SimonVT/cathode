@@ -18,6 +18,7 @@ package net.simonvt.cathode.actions.user
 import android.content.Context
 import androidx.work.WorkManager
 import net.simonvt.cathode.actions.CallAction
+import net.simonvt.cathode.actions.user.SyncEpisodeWatchlist.Params
 import net.simonvt.cathode.api.entity.WatchlistItem
 import net.simonvt.cathode.api.service.SyncService
 import net.simonvt.cathode.common.database.forEach
@@ -29,7 +30,8 @@ import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper
 import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
 import net.simonvt.cathode.provider.query
-import net.simonvt.cathode.work.WorkManagerUtils
+import net.simonvt.cathode.settings.TraktTimestamps
+import net.simonvt.cathode.work.enqueueUniqueNow
 import net.simonvt.cathode.work.shows.SyncPendingShowsWorker
 import retrofit2.Call
 import javax.inject.Inject
@@ -41,11 +43,14 @@ class SyncEpisodeWatchlist @Inject constructor(
   private val episodeHelper: EpisodeDatabaseHelper,
   private val syncService: SyncService,
   private val workManager: WorkManager
-) : CallAction<Unit, List<WatchlistItem>>() {
+) : CallAction<Params, List<WatchlistItem>>() {
 
-  override fun getCall(params: Unit): Call<List<WatchlistItem>> = syncService.getEpisodeWatchlist()
+  override fun key(params: Params): String = "SyncEpisodeWatchlist"
 
-  override suspend fun handleResponse(params: Unit, response: List<WatchlistItem>) {
+  override fun getCall(params: Params): Call<List<WatchlistItem>> =
+    syncService.getEpisodeWatchlist()
+
+  override suspend fun handleResponse(params: Params, response: List<WatchlistItem>) {
     val episodeIds = mutableListOf<Long>()
     val localWatchlist = context.contentResolver.query(
       Episodes.EPISODES_IN_WATCHLIST,
@@ -89,15 +94,15 @@ class SyncEpisodeWatchlist @Inject constructor(
       episodeHelper.setIsInWatchlist(episodeId, false, 0L)
     }
 
-    WorkManagerUtils.enqueueUniqueNow(
-      workManager,
-      SyncPendingShowsWorker.TAG,
-      SyncPendingShowsWorker::class.java
-    )
+    workManager.enqueueUniqueNow(SyncPendingShowsWorker.TAG, SyncPendingShowsWorker::class.java)
+
+    if (params.userActivityTime > 0L) {
+      TraktTimestamps.getSettings(context)
+        .edit()
+        .putLong(TraktTimestamps.EPISODE_WATCHLIST, params.userActivityTime)
+        .apply()
+    }
   }
 
-  companion object {
-
-    fun key() = "SyncEpisodeWatchlist"
-  }
+  data class Params(val userActivityTime: Long = 0L)
 }

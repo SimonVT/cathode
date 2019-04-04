@@ -21,8 +21,9 @@ import android.text.format.DateUtils
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import net.simonvt.cathode.actions.ActionManager
 import net.simonvt.cathode.actions.comments.SyncComment
+import net.simonvt.cathode.actions.invokeAsync
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.common.entity.Comment
 import net.simonvt.cathode.entitymapper.CommentListMapper
@@ -81,22 +82,14 @@ class CommentViewModel @Inject constructor(
     if (comment != null) {
       viewModelScope.launch {
         if (System.currentTimeMillis() > comment.lastSync + SYNC_INTERVAL) {
-          ActionManager.invokeAsync(
-            SyncComment.key(commentId),
-            syncComment,
-            SyncComment.Params(commentId)
-          )
+          syncComment.invokeAsync(SyncComment.Params(commentId))
         }
       }
     }
   }
 
   override suspend fun onRefresh() {
-    ActionManager.invokeSync(
-      SyncComment.key(commentId),
-      syncComment,
-      SyncComment.Params(commentId)
-    )
+    syncComment.invokeSync(SyncComment.Params(commentId))
   }
 
   companion object {

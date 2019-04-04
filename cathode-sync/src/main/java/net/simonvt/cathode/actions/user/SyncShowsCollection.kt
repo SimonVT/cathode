@@ -20,6 +20,7 @@ import android.content.ContentValues
 import android.content.Context
 import androidx.work.WorkManager
 import net.simonvt.cathode.actions.CallAction
+import net.simonvt.cathode.actions.user.SyncShowsCollection.Params
 import net.simonvt.cathode.api.entity.CollectionItem
 import net.simonvt.cathode.api.service.SyncService
 import net.simonvt.cathode.common.database.Cursors
@@ -32,7 +33,8 @@ import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper
 import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
 import net.simonvt.cathode.provider.query
-import net.simonvt.cathode.work.WorkManagerUtils
+import net.simonvt.cathode.settings.TraktTimestamps
+import net.simonvt.cathode.work.enqueueUniqueNow
 import net.simonvt.cathode.work.shows.SyncPendingShowsWorker
 import retrofit2.Call
 import java.util.ArrayList
@@ -45,11 +47,13 @@ class SyncShowsCollection @Inject constructor(
   private val episodeHelper: EpisodeDatabaseHelper,
   private val syncService: SyncService,
   private val workManager: WorkManager
-) : CallAction<Unit, List<CollectionItem>>() {
+) : CallAction<Params, List<CollectionItem>>() {
 
-  override fun getCall(params: Unit): Call<List<CollectionItem>> = syncService.getShowCollection()
+  override fun key(params: Params): String = "SyncShowsCollection"
 
-  override suspend fun handleResponse(params: Unit, response: List<CollectionItem>) {
+  override fun getCall(params: Params): Call<List<CollectionItem>> = syncService.getShowCollection()
+
+  override suspend fun handleResponse(params: Params, response: List<CollectionItem>) {
     val c = context.contentResolver.query(
       Episodes.EPISODES,
       arrayOf(
@@ -186,11 +190,7 @@ class SyncShowsCollection @Inject constructor(
       apply(ops)
     }
 
-    WorkManagerUtils.enqueueUniqueNow(
-      workManager,
-      SyncPendingShowsWorker.TAG,
-      SyncPendingShowsWorker::class.java
-    )
+    workManager.enqueueUniqueNow(SyncPendingShowsWorker.TAG, SyncPendingShowsWorker::class.java)
 
     ops.clear()
     for (episodeId in episodeIds) {
@@ -202,6 +202,13 @@ class SyncShowsCollection @Inject constructor(
     }
 
     apply(ops)
+
+    if (params.userActivityTime > 0L) {
+      TraktTimestamps.getSettings(context)
+        .edit()
+        .putLong(TraktTimestamps.EPISODE_COLLECTION, params.userActivityTime)
+        .apply()
+    }
   }
 
   private fun apply(ops: ArrayList<ContentProviderOperation>) {
@@ -209,27 +216,15 @@ class SyncShowsCollection @Inject constructor(
     ops.clear()
   }
 
-  private class CollectedShow(
-    var id: Long
-  ) {
-
+  private class CollectedShow(var id: Long) {
     var seasons = mutableMapOf<Int, LocalCollectedSeason>()
   }
 
-  private class LocalCollectedSeason(
-    var id: Long
-  ) {
-
+  private class LocalCollectedSeason(var id: Long) {
     var episodes = mutableMapOf<Int, LocalCollectedEpisode>()
   }
 
-  private class LocalCollectedEpisode(
-    var id: Long,
-    var collectedAt: Long
-  )
+  private class LocalCollectedEpisode(var id: Long, var collectedAt: Long)
 
-  companion object {
-
-    fun key() = "SyncShowsCollection"
-  }
+  data class Params(val userActivityTime: Long = 0L)
 }

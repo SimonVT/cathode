@@ -32,6 +32,8 @@ class SyncMovieImages @Inject constructor(
   private val moviesService: MoviesService
 ) : TmdbCallAction<Params, Movie>() {
 
+  override fun key(params: Params): String = "SyncMovieImages&traktId=${params.tmdbId}"
+
   override fun getCall(params: Params): Call<Movie> = moviesService.summary(params.tmdbId, "en")
 
   override suspend fun handleResponse(params: Params, response: Movie) {
@@ -40,11 +42,4 @@ class SyncMovieImages @Inject constructor(
   }
 
   data class Params(val tmdbId: Int)
-
-  companion object {
-
-    fun key(tmdbId: Int): String {
-      return "SyncMovieImages&traktId=$tmdbId"
-    }
-  }
 }

@@ -24,35 +24,35 @@ public final class TraktTimestamps {
 
   private static final String SETTINGS_FILE = "trakt_timestamps";
 
-  private static final String SHOW_RATING = "showRating";
-  private static final String SHOW_WATCHLIST = "showWatchlist";
-  private static final String SHOW_COMMENT = "showComment";
-  private static final String SHOW_HIDE = "showHide";
+  public static final String SHOW_RATING = "showRating";
+  public static final String SHOW_WATCHLIST = "showWatchlist";
+  public static final String SHOW_COMMENT = "showComment";
+  public static final String SHOW_HIDE = "showHide";
 
-  private static final String SEASON_RATING = "seasonRating";
-  private static final String SEASON_COMMENT = "seasonComment";
+  public static final String SEASON_RATING = "seasonRating";
+  public static final String SEASON_COMMENT = "seasonComment";
 
-  private static final String EPISODE_WATCHED = "episodeWatched";
-  private static final String EPISODE_COLLECTION = "episodeCollection";
-  private static final String EPISODE_RATING = "episodeRating";
-  private static final String EPISODE_WATCHLIST = "episodeWatchlist";
-  private static final String EPISODE_COMMENT = "episodeComment";
+  public static final String EPISODE_WATCHED = "episodeWatched";
+  public static final String EPISODE_COLLECTION = "episodeCollection";
+  public static final String EPISODE_RATING = "episodeRating";
+  public static final String EPISODE_WATCHLIST = "episodeWatchlist";
+  public static final String EPISODE_COMMENT = "episodeComment";
 
-  private static final String MOVIE_WATCHED = "movieWatched";
-  private static final String MOVIE_COLLECTION = "movieCollection";
-  private static final String MOVIE_RATING = "movieRating";
-  private static final String MOVIE_WATCHLIST = "movieWatchlist";
-  private static final String MOVIE_COMMENT = "movieComment";
-  private static final String MOVIE_HIDE = "movieHide";
+  public static final String MOVIE_WATCHED = "movieWatched";
+  public static final String MOVIE_COLLECTION = "movieCollection";
+  public static final String MOVIE_RATING = "movieRating";
+  public static final String MOVIE_WATCHLIST = "movieWatchlist";
+  public static final String MOVIE_COMMENT = "movieComment";
+  public static final String MOVIE_HIDE = "movieHide";
 
-  private static final String COMMENT_LIKED_AT = "commentLikedAt";
+  public static final String COMMENT_LIKED_AT = "commentLikedAt";
 
-  private static final String LIST_UPDATED_AT = "listUpdatedAt";
+  public static final String LIST_UPDATED_AT = "listUpdatedAt";
 
   private TraktTimestamps() {
   }
 
-  private static SharedPreferences getSettings(Context context) {
+  public static SharedPreferences getSettings(Context context) {
     return context.getSharedPreferences(SETTINGS_FILE, Context.MODE_PRIVATE);
   }
 

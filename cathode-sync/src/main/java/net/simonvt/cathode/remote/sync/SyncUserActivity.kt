@@ -16,6 +16,7 @@
 package net.simonvt.cathode.remote.sync
 
 import kotlinx.coroutines.runBlocking
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.user.SyncUserActivity
 import net.simonvt.cathode.jobqueue.Job
 import net.simonvt.cathode.jobqueue.JobPriority
@@ -26,8 +27,7 @@ class SyncUserActivity : Job(Flags.REQUIRES_AUTH) {
 
   @Inject
   @Transient
-  @JvmField
-  var syncUserActivity: SyncUserActivity? = null
+  lateinit var syncUserActivity: SyncUserActivity
 
   override fun key(): String {
     return "SyncUserActivity"
@@ -38,7 +38,9 @@ class SyncUserActivity : Job(Flags.REQUIRES_AUTH) {
   }
 
   override fun perform(): Boolean {
-    runBlocking { syncUserActivity?.invoke(Unit) }
+    runBlocking {
+      syncUserActivity.invokeSync(Unit)
+    }
     return true
   }
 }

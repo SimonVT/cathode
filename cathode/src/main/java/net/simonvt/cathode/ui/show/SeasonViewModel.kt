@@ -18,7 +18,7 @@ package net.simonvt.cathode.ui.show
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import net.simonvt.cathode.actions.ActionManager
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.seasons.SyncSeason
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.common.entity.Episode
@@ -63,11 +63,7 @@ class SeasonViewModel @Inject constructor(
     val showId = seasonHelper.getShowId(seasonId)
     val traktId = showHelper.getTraktId(showId)
     val season = seasonHelper.getNumber(seasonId)
-    ActionManager.invokeSync(
-      SyncSeason.key(traktId, season),
-      syncSeason,
-      SyncSeason.Params(traktId, season)
-    )
+    syncSeason.invokeSync(SyncSeason.Params(traktId, season))
   }
 
   companion object {

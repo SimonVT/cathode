@@ -22,8 +22,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import net.simonvt.cathode.actions.ActionManager
 import net.simonvt.cathode.actions.comments.SyncMovieComments
+import net.simonvt.cathode.actions.invokeAsync
 import net.simonvt.cathode.actions.movies.SyncMovie
 import net.simonvt.cathode.actions.movies.SyncMovieCredits
 import net.simonvt.cathode.actions.movies.SyncMovieImages
@@ -153,35 +153,19 @@ class MovieViewModel @Inject constructor(
         val needsSync = movie.needsSync!!
         val lastSync = movie.lastSync!!
         if (needsSync || System.currentTimeMillis() > lastSync + SYNC_INTERVAL) {
-          ActionManager.invokeAsync(
-            SyncMovie.key(movie.traktId),
-            syncMovie,
-            SyncMovie.Params(movie.traktId)
-          )
+          syncMovie.invokeAsync(SyncMovie.Params(movie.traktId))
         }
 
         if (currentTime > movie.lastCommentSync + SYNC_INTERVAL_COMMENTS) {
-          ActionManager.invokeAsync(
-            SyncMovieComments.key(movie.traktId),
-            syncMovieComments,
-            SyncMovieComments.Params(movie.traktId)
-          )
+          syncMovieComments.invokeAsync(SyncMovieComments.Params(movie.traktId))
         }
 
         if (lastSync > movie.lastCreditsSync) {
-          ActionManager.invokeAsync(
-            SyncMovieCredits.key(movie.traktId),
-            syncMovieCredits,
-            SyncMovieCredits.Params(movie.traktId)
-          )
+          syncMovieCredits.invokeAsync(SyncMovieCredits.Params(movie.traktId))
         }
 
         if (lastSync > movie.lastRelatedSync) {
-          ActionManager.invokeAsync(
-            SyncRelatedMovies.key(movie.traktId),
-            syncRelatedMovies,
-            SyncRelatedMovies.Params(movie.traktId)
-          )
+          syncRelatedMovies.invokeAsync(SyncRelatedMovies.Params(movie.traktId))
         }
       }
     }
@@ -190,23 +174,10 @@ class MovieViewModel @Inject constructor(
   override suspend fun onRefresh() {
     val traktId = movieHelper.getTraktId(movieId)
     val tmdbId = movieHelper.getTmdbId(movieId)
-    val movieDeferred =
-      ActionManager.invokeAsync(SyncMovie.key(traktId), syncMovie, SyncMovie.Params(traktId))
-    val creditsDeferred = ActionManager.invokeAsync(
-      SyncMovieCredits.key(traktId),
-      syncMovieCredits,
-      SyncMovieCredits.Params(traktId)
-    )
-    val imagesDeferred = ActionManager.invokeAsync(
-      SyncMovieImages.key(tmdbId),
-      syncMovieImages,
-      SyncMovieImages.Params(tmdbId)
-    )
-    val relatedDeferred = ActionManager.invokeAsync(
-      SyncRelatedMovies.key(traktId),
-      syncRelatedMovies,
-      SyncRelatedMovies.Params(traktId)
-    )
+    val movieDeferred = syncMovie.invokeAsync(SyncMovie.Params(traktId))
+    val creditsDeferred = syncMovieCredits.invokeAsync(SyncMovieCredits.Params(traktId))
+    val imagesDeferred = syncMovieImages.invokeAsync(SyncMovieImages.Params(tmdbId))
+    val relatedDeferred = syncRelatedMovies.invokeAsync(SyncRelatedMovies.Params(traktId))
 
     movieDeferred.await()
     creditsDeferred.await()

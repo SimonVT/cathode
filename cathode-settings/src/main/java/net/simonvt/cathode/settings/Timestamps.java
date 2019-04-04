@@ -23,7 +23,6 @@ public final class Timestamps {
 
   private static final String SETTINGS_FILE = "cathode_timestamps";
 
-  public static final String LAST_FULL_SYNC = "fullSync";
   public static final String LAST_CONFIG_SYNC = "configSync";
   public static final String SHOWS_LAST_UPDATED = "showsLastUpdated";
   public static final String MOVIES_LAST_UPDATED = "moviesLastUpdated";

@@ -47,6 +47,9 @@ class SyncEpisodeComments @Inject constructor(
   private val episodeService: EpisodeService
 ) : PagedAction<Params, Comment>() {
 
+  override fun key(params: Params): String =
+    "SyncEpisodeComments&traktId=${params.traktId}&season=${params.season}&episode=${params.episode}"
+
   override fun getCall(params: Params, page: Int): Call<List<Comment>> {
     return episodeService.getComments(
       params.traktId,
@@ -134,11 +137,6 @@ class SyncEpisodeComments @Inject constructor(
   data class Params(val traktId: Long, val season: Int, val episode: Int)
 
   companion object {
-
     private const val LIMIT = 100
-
-    fun key(traktId: Long, season: Int, episode: Int): String {
-      return "SyncEpisodeComments&traktId=$traktId&season=$season&episode=$episode"
-    }
   }
 }
