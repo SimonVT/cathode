@@ -80,4 +80,8 @@
   <Preference
       android:key="about"
       android:title="@string/preference_about"/>
+
+  <Preference
+    android:key="privacy"
+    android:title="@string/preference_privacy"/>
 </PreferenceScreen>

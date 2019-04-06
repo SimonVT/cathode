@@ -28,5 +28,6 @@
   <string name="dev_gplus">https://plus.google.com/+SimonVigTherkildsen/posts</string>
   <string name="dev_github">https://github.com/SimonVT</string>
 
+  <string name="privacy_policy_url">https://simonvt.github.io/privacy/cathode</string>
 
 </resources>

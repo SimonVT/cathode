@@ -35,6 +35,7 @@ import net.simonvt.android.colorpicker.ColorPickerDialog;
 import net.simonvt.android.colorpicker.ColorPickerSwatch;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.adapter.Adapters;
+import net.simonvt.cathode.common.util.Intents;
 import net.simonvt.cathode.common.util.VersionCodes;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
@@ -219,6 +220,13 @@ public class SettingsActivity extends BaseActivity {
               return true;
             }
           });
+
+      findPreference("privacy").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        @Override public boolean onPreferenceClick(Preference preference) {
+          Intents.openUrl(getActivity(), getString(R.string.privacy_policy_url));
+          return true;
+        }
+      });
     }
 
     @RequiresApi(Build.VERSION_CODES.M) private void requestPermission() {
