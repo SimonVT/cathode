@@ -195,15 +195,6 @@
       style="@style/DebugDrawerTitle"/>
 
   <TextView
-      android:id="@+id/debug_forceUpdate"
-      android:layout_width="0dp"
-      android:layout_columnSpan="2"
-      android:layout_gravity="start|fill_horizontal"
-      android:text="Force update"
-      android:textAllCaps="false"
-      style="@style/DebugDrawerItem"/>
-
-  <TextView
       android:id="@+id/debug_updated"
       android:layout_width="0dp"
       android:layout_columnSpan="2"

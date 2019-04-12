@@ -19,10 +19,6 @@ import android.accounts.Account;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
-import android.text.format.DateUtils;
-import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.remote.ForceUpdateJob;
-import net.simonvt.cathode.remote.UpdateShowCounts;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.Timestamps;
@@ -32,19 +28,12 @@ import net.simonvt.cathode.settings.TraktTimestamps;
 public final class Upgrader {
 
   private static final String SETTINGS_VERSION = "settingsVersion";
-  private static final int VERSION = 4;
-
-  public interface JobQueue {
-
-    void add(Job job);
-  }
+  private static final int VERSION = 5;
 
   private Upgrader() {
   }
 
-  public static void upgrade(Context context, final JobQueue jobQueue) {
-    legacyUpgrade(context, jobQueue);
-
+  public static void upgrade(Context context) {
     final int currentVersion = Settings.get(context).getInt(SETTINGS_VERSION, -1);
     if (currentVersion == -1) {
       Settings.get(context)
@@ -74,18 +63,6 @@ public final class Upgrader {
             .remove("lastPurge")
             .remove("tmdbLastConfigurationUpdate")
             .apply();
-
-        Timestamps.get(context)
-            .edit()
-            .remove(Timestamps.SHOWS_LAST_UPDATED)
-            .remove(Timestamps.MOVIES_LAST_UPDATED)
-            .apply();
-        final long lastUpdated = System.currentTimeMillis() - DateUtils.WEEK_IN_MILLIS;
-        Timestamps.get(context)
-            .edit()
-            .putLong(Timestamps.SHOWS_LAST_UPDATED, lastUpdated)
-            .putLong(Timestamps.MOVIES_LAST_UPDATED, lastUpdated)
-            .apply();
       }
 
       if (currentVersion < 3) {
@@ -102,53 +79,22 @@ public final class Upgrader {
         }
       }
 
+      if (currentVersion < 5) {
+        long showsLastUpdated = Timestamps.get(context)
+            .getLong(Timestamps.SHOWS_LAST_UPDATED, System.currentTimeMillis());
+        long moviesLastUpdated = Timestamps.get(context)
+            .getLong(Timestamps.MOVIES_LAST_UPDATED, System.currentTimeMillis());
+        TraktTimestamps.clear(context);
+        Timestamps.get(context)
+            .edit()
+            .putLong(Timestamps.SHOWS_LAST_UPDATED, showsLastUpdated)
+            .putLong(Timestamps.MOVIES_LAST_UPDATED, moviesLastUpdated)
+            .apply();
+      }
+
       Settings.get(context).edit().putInt(SETTINGS_VERSION, VERSION).apply();
     }
 
     Settings.get(context).edit().putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE).apply();
-  }
-
-  public static void legacyUpgrade(Context context, final JobQueue jobQueue) {
-    final int currentVersion = Settings.get(context).getInt(Settings.VERSION_CODE, -1);
-    if (currentVersion == -1) {
-      Settings.get(context).edit().putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE).apply();
-      return;
-    }
-
-    if (currentVersion != BuildConfig.VERSION_CODE) {
-      if (currentVersion < 20002) {
-        Accounts.removeAccount(context);
-        Settings.get(context).edit().clear().apply();
-      }
-      if (currentVersion < 20501) {
-        TraktTimestamps.clear(context);
-      }
-      if (currentVersion < 21001) {
-        jobQueue.add(new ForceUpdateJob());
-      }
-      if (currentVersion <= 21001) {
-        jobQueue.add(new UpdateShowCounts());
-      }
-      if (currentVersion <= 31001) {
-        Account account = Accounts.getAccount(context);
-        ContentResolver.setIsSyncable(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, 1);
-        ContentResolver.setSyncAutomatically(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, true);
-        ContentResolver.addPeriodicSync(account, BuildConfig.AUTHORITY_DUMMY_CALENDAR, new Bundle(),
-            12 * 60 * 60 /* 12 hours in seconds */);
-
-        Accounts.requestCalendarSync(context);
-      }
-      if (currentVersion <= 37000) {
-        Settings.get(context).edit().remove(Settings.START_PAGE).apply();
-      }
-      if (currentVersion <= 50303) {
-        Settings.get(context).edit().putInt(SETTINGS_VERSION, 0).apply();
-        Settings.get(context).edit().remove("showHidden").apply();
-        final boolean loggedIn = Settings.get(context).getBoolean("traktLoggedIn", false);
-        Settings.get(context).edit().putBoolean(TraktLinkSettings.TRAKT_LINKED, loggedIn).apply();
-      }
-
-      Settings.get(context).edit().putInt(Settings.VERSION_CODE, BuildConfig.VERSION_CODE).apply();
-    }
   }
 }

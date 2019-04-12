@@ -53,7 +53,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper;
-import net.simonvt.cathode.remote.ForceUpdateJob;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.StartPage;
 import net.simonvt.cathode.settings.TraktLinkSettings;
@@ -261,12 +260,6 @@ import static net.simonvt.cathode.module.DebugModule.NAMED_STATUS_CODE;
     debugViews.httpStatusCode.setSelection(
         httpStatusCodeAdapter.getPositionForValue(httpStatusCodePreference.get()));
 
-    debugViews.forceUpdate.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        jobManager.addJob(new ForceUpdateJob());
-      }
-    });
-
     debugViews.updated.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         WorkManagerUtils.enqueueUniqueNow(workManager, SyncUpdatedShowsWorker.TAG,
@@ -321,8 +314,6 @@ import static net.simonvt.cathode.module.DebugModule.NAMED_STATUS_CODE;
     @BindView(R.id.debug_networkStatusCode) Spinner httpStatusCode;
 
     @BindView(R.id.debug_drawer) ViewGroup drawerContent;
-
-    @BindView(R.id.debug_forceUpdate) View forceUpdate;
 
     @BindView(R.id.debug_updated) View updated;
   }

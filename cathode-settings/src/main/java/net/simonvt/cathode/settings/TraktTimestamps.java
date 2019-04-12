@@ -228,34 +228,6 @@ public final class TraktTimestamps {
   }
 
   public static void clear(Context context) {
-    SharedPreferences settings = getSettings(context);
-    SharedPreferences.Editor editor = settings.edit();
-
-    editor.remove(EPISODE_WATCHED);
-    editor.remove(EPISODE_COLLECTION);
-    editor.remove(EPISODE_RATING);
-    editor.remove(EPISODE_WATCHLIST);
-    editor.remove(EPISODE_COMMENT);
-
-    editor.remove(SHOW_RATING);
-    editor.remove(SHOW_WATCHLIST);
-    editor.remove(SHOW_COMMENT);
-    editor.remove(SHOW_HIDE);
-
-    editor.remove(SEASON_COMMENT);
-    editor.remove(SEASON_RATING);
-
-    editor.remove(MOVIE_WATCHED);
-    editor.remove(MOVIE_COLLECTION);
-    editor.remove(MOVIE_RATING);
-    editor.remove(MOVIE_WATCHLIST);
-    editor.remove(MOVIE_COMMENT);
-    editor.remove(MOVIE_HIDE);
-
-    editor.remove(COMMENT_LIKED_AT);
-
-    editor.remove(LIST_UPDATED_AT);
-
-    editor.apply();
+    getSettings(context).edit().clear().apply();
   }
 }

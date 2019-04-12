@@ -20,11 +20,7 @@ import android.os.StrictMode;
 import com.crashlytics.android.Crashlytics;
 import dagger.android.AndroidInjection;
 import io.fabric.sdk.android.Fabric;
-import javax.inject.Inject;
 import net.simonvt.cathode.common.InitProvider;
-import net.simonvt.cathode.common.util.MainHandler;
-import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
 import net.simonvt.cathode.settings.UpcomingTimePreference;
@@ -32,8 +28,6 @@ import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference;
 import timber.log.Timber;
 
 public class CathodeInitProvider extends InitProvider {
-
-  @Inject JobManager jobManager;
 
   @Override public boolean onCreate() {
     if (BuildConfig.DEBUG) {
@@ -54,15 +48,7 @@ public class CathodeInitProvider extends InitProvider {
     UpcomingTimePreference.init(getContext());
     FirstAiredOffsetPreference.init(getContext());
 
-    Upgrader.upgrade(getContext(), new Upgrader.JobQueue() {
-      @Override public void add(final Job job) {
-        MainHandler.post(new Runnable() {
-          @Override public void run() {
-            jobManager.addJob(job);
-          }
-        });
-      }
-    });
+    Upgrader.upgrade(getContext());
 
     Accounts.setupAccount(getContext());
 
