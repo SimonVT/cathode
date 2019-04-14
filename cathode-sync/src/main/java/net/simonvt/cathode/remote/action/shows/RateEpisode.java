@@ -19,9 +19,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.body.RateItems;
 import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
-import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 
@@ -36,7 +34,7 @@ public class RateEpisode extends CallJob<SyncResponse> {
   private String ratedAt;
 
   public RateEpisode(long traktId, int season, int episode, int rating, String ratedAt) {
-    super(Flags.REQUIRES_AUTH);
+
     this.traktId = traktId;
     this.season = season;
     this.episode = episode;
@@ -56,14 +54,6 @@ public class RateEpisode extends CallJob<SyncResponse> {
         + rating
         + "&ratedAt="
         + ratedAt;
-  }
-
-  @Override public int getPriority() {
-    return JobPriority.ACTIONS;
-  }
-
-  @Override public boolean allowDuplicates() {
-    return true;
   }
 
   @Override public Call<SyncResponse> getCall() {

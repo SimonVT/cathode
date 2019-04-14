@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.jobqueue;
+package net.simonvt.cathode.jobqueue
 
-import dagger.Module;
-import dagger.android.AndroidInjector;
-import dagger.multibindings.Multibinds;
-import java.util.Map;
+import dagger.Module
+import dagger.android.AndroidInjector
+import dagger.multibindings.Multibinds
 
-@Module public abstract class JobInjectionModule {
-
-  @Multibinds
-  abstract Map<String, AndroidInjector.Factory<? extends Job>> jobInjectorFactoriesWithStringKeys();
+@Module
+abstract class JobInjectionModule private constructor() {
 
   @Multibinds
-  abstract Map<Class<? extends Job>, AndroidInjector.Factory<? extends Job>> jobInjectorFactories();
+  abstract fun jobInjectorFactoriesWithStringKeys(): Map<String, AndroidInjector.Factory<out Job>>
 
-  private JobInjectionModule() {
-  }
+  @Multibinds
+  abstract fun jobInjectorFactories(): Map<Class<out Job>, AndroidInjector.Factory<out Job>>
 }

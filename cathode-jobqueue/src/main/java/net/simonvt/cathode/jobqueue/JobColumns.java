@@ -34,6 +34,4 @@ public interface JobColumns {
   @DataType(TEXT) String KEY = "key";
 
   @DataType(BLOB) String JOB = "job";
-
-  @DataType(INTEGER) String FLAGS = "flags";
 }

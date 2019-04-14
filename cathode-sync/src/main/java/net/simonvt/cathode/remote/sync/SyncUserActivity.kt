@@ -19,11 +19,9 @@ import kotlinx.coroutines.runBlocking
 import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.user.SyncUserActivity
 import net.simonvt.cathode.jobqueue.Job
-import net.simonvt.cathode.jobqueue.JobPriority
-import net.simonvt.cathode.remote.Flags
 import javax.inject.Inject
 
-class SyncUserActivity : Job(Flags.REQUIRES_AUTH) {
+class SyncUserActivity : Job() {
 
   @Inject
   @Transient
@@ -31,10 +29,6 @@ class SyncUserActivity : Job(Flags.REQUIRES_AUTH) {
 
   override fun key(): String {
     return "SyncUserActivity"
-  }
-
-  override fun getPriority(): Int {
-    return JobPriority.USER_DATA
   }
 
   override fun perform(): Boolean {

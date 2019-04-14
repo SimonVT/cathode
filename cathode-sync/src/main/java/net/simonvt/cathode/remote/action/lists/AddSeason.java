@@ -20,9 +20,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.body.IdsBody;
 import net.simonvt.cathode.api.entity.ListItemActionResponse;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
-import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 
@@ -35,7 +33,7 @@ public class AddSeason extends CallJob<ListItemActionResponse> {
   private int seasonNumber;
 
   public AddSeason(long listId, long showTraktId, int seasonNumber) {
-    super(Flags.REQUIRES_AUTH);
+
     this.listId = listId;
     this.showTraktId = showTraktId;
     this.seasonNumber = seasonNumber;
@@ -48,14 +46,6 @@ public class AddSeason extends CallJob<ListItemActionResponse> {
         + showTraktId
         + "?seasonNumber="
         + seasonNumber;
-  }
-
-  @Override public int getPriority() {
-    return JobPriority.ACTIONS;
-  }
-
-  @Override public boolean allowDuplicates() {
-    return true;
   }
 
   @Override public Call<ListItemActionResponse> getCall() {

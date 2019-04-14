@@ -20,9 +20,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.body.RemoveHistoryBody;
 import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
-import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 
@@ -33,16 +31,12 @@ public class RemoveHistoryItem extends CallJob<SyncResponse> {
   private long historyId;
 
   public RemoveHistoryItem(long historyId) {
-    super(Flags.REQUIRES_AUTH);
+
     this.historyId = historyId;
   }
 
   @Override public String key() {
     return "RemoveHistoryItem&historyId=" + historyId;
-  }
-
-  @Override public int getPriority() {
-    return JobPriority.ACTIONS;
   }
 
   @Override public Call<SyncResponse> getCall() {

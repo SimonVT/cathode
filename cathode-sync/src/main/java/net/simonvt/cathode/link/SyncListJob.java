@@ -23,9 +23,7 @@ import net.simonvt.cathode.api.entity.CustomList;
 import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.provider.DatabaseContract;
-import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.action.lists.AddEpisode;
 import net.simonvt.cathode.remote.action.lists.AddMovie;
 import net.simonvt.cathode.remote.action.lists.AddPerson;
@@ -77,7 +75,7 @@ public class SyncListJob extends Job {
   List<ListItem> items;
 
   public SyncListJob(String name, String description, List<ListItem> items) {
-    super(Flags.REQUIRES_AUTH);
+    super();
     this.name = name;
     this.description = description;
     this.items = items;
@@ -85,10 +83,6 @@ public class SyncListJob extends Job {
 
   @Override public String key() {
     return "SyncListJob&name=" + name;
-  }
-
-  @Override public int getPriority() {
-    return JobPriority.ACTIONS;
   }
 
   @Override public boolean perform() {

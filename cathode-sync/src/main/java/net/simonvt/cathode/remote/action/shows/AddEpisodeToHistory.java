@@ -19,9 +19,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
-import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 
@@ -35,7 +33,7 @@ public class AddEpisodeToHistory extends CallJob<SyncResponse> {
   private String watchedAt;
 
   public AddEpisodeToHistory(long traktId, int season, int episode, String watchedAt) {
-    super(Flags.REQUIRES_AUTH);
+
     if (traktId == 0) throw new IllegalArgumentException("tvdb is 0");
     this.traktId = traktId;
     this.season = season;
@@ -53,14 +51,6 @@ public class AddEpisodeToHistory extends CallJob<SyncResponse> {
         + episode
         + "&watchedAt="
         + watchedAt;
-  }
-
-  @Override public int getPriority() {
-    return JobPriority.ACTIONS;
-  }
-
-  @Override public boolean allowDuplicates() {
-    return true;
   }
 
   @Override public Call<SyncResponse> getCall() {

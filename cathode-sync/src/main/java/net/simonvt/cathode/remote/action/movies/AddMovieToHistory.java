@@ -19,9 +19,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
-import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 
@@ -33,21 +31,13 @@ public class AddMovieToHistory extends CallJob<SyncResponse> {
   private String watchedAt;
 
   public AddMovieToHistory(long traktId, String watchedAt) {
-    super(Flags.REQUIRES_AUTH);
+
     this.traktId = traktId;
     this.watchedAt = watchedAt;
   }
 
   @Override public String key() {
     return "AddMovieToHistory" + "&traktId=" + traktId + "&watchedAt" + watchedAt;
-  }
-
-  @Override public int getPriority() {
-    return JobPriority.ACTIONS;
-  }
-
-  @Override public boolean allowDuplicates() {
-    return true;
   }
 
   @Override public Call<SyncResponse> getCall() {

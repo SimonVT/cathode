@@ -18,9 +18,7 @@ package net.simonvt.cathode.remote.action.comments;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.service.CommentsService;
-import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
-import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -32,20 +30,12 @@ public class UnlikeCommentJob extends CallJob<ResponseBody> {
   private long commentId;
 
   public UnlikeCommentJob(long commentId) {
-    super(Flags.REQUIRES_AUTH);
+
     this.commentId = commentId;
   }
 
   @Override public String key() {
     return "UnlikeCommentJob&commentId=" + commentId;
-  }
-
-  @Override public boolean allowDuplicates() {
-    return true;
-  }
-
-  @Override public int getPriority() {
-    return JobPriority.ACTIONS;
   }
 
   @Override public Call<ResponseBody> getCall() {

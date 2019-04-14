@@ -14,13 +14,29 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.jobqueue;
+package net.simonvt.cathode.jobqueue
 
-public interface JobListener {
+import android.content.ContentResolver
+import android.content.Context
+import javax.inject.Inject
 
-  void onJobsLoaded(JobManager jobManager);
+abstract class Job {
 
-  void onJobAdded(JobManager jobManager, Job job);
+  @Inject
+  @Transient
+  lateinit var jobManager: JobManager
+  @Inject
+  @Transient
+  lateinit var context: Context
 
-  void onJobRemoved(JobManager jobManager, Job job);
+  protected val contentResolver: ContentResolver
+    get() = context.contentResolver
+
+  abstract fun key(): String
+
+  abstract fun perform(): Boolean
+
+  protected fun queue(job: Job) {
+    jobManager.addJob(job)
+  }
 }

@@ -24,9 +24,7 @@ import net.simonvt.cathode.api.entity.Comment;
 import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.service.CommentsService;
 import net.simonvt.cathode.common.event.RequestFailedEvent;
-import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
-import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import net.simonvt.cathode.sync.R;
 import retrofit2.Call;
@@ -42,7 +40,6 @@ public class AddCommentJob extends CallJob<Comment> {
   private Boolean spoiler;
 
   public AddCommentJob(ItemType type, long traktId, String comment, boolean spoiler) {
-    super(Flags.REQUIRES_AUTH);
     this.type = type;
     this.traktId = traktId;
     this.comment = comment;
@@ -51,14 +48,6 @@ public class AddCommentJob extends CallJob<Comment> {
 
   @Override public String key() {
     return "AddCommentJob?type=" + type.toString() + "&traktId=" + traktId + "&comment=" + comment;
-  }
-
-  @Override public boolean allowDuplicates() {
-    return true;
-  }
-
-  @Override public int getPriority() {
-    return JobPriority.ACTIONS;
   }
 
   @Override public Call<Comment> getCall() {

@@ -42,42 +42,36 @@ class JobHandler @Inject constructor(
     fun onQueueFailed()
   }
 
-  private lateinit var executor: JobExecutor
+  private var executor: JobExecutor
 
   private val listeners = mutableListOf<JobHandlerListener>()
 
-  private var started = false
-  private var resumed = false
+  private var executing = false
 
   private val stopRunnable = Runnable { stop() }
 
   private val executorListener = object : JobExecutor.JobExecutorListener {
 
     override fun onStartJob(job: Job) {
-      resume()
+      executorStarted()
     }
 
     override fun onQueueEmpty() {
-      Timber.d("%s queue empty", javaClass.simpleName)
-      pause()
+      executorStopped()
       dispatchQueueEmpty()
     }
 
     override fun onQueueFailed() {
-      Timber.d("%s queue failed", javaClass.simpleName)
-      pause()
-      MainHandler.postDelayed({ executor.unhalt() }, FAILURE_DELAY)
+      executorStopped()
       dispatchQueueFailed()
     }
   }
 
   init {
-    executor = JobExecutor(jobManager, executorListener, THREAD_COUNT, 0, 0)
+    executor = JobExecutor(jobManager, executorListener)
   }
 
-  fun hasJobs(): Boolean {
-    return executor.hasJobs()
-  }
+  fun hasJobs() = executor.hasJobs()
 
   private fun dispatchQueueEmpty() {
     synchronized(listeners) {
@@ -98,17 +92,14 @@ class JobHandler @Inject constructor(
   }
 
   private fun start() {
-    Timber.d("[start] %b", started)
-    if (!started) {
-      started = true
+    if (!executor.started) {
       executor.start()
     }
   }
 
   private fun stop() {
     Timber.d("[stop]")
-    if (started) {
-      started = false
+    if (executor.started) {
       executor.stop()
 
       if (hasJobs()) {
@@ -117,16 +108,16 @@ class JobHandler @Inject constructor(
     }
   }
 
-  private fun resume() {
-    if (!resumed) {
-      resumed = true
+  private fun executorStarted() {
+    if (!executing) {
+      executing = true
       SyncEvent.executorStarted()
     }
   }
 
-  private fun pause() {
-    if (resumed) {
-      resumed = false
+  private fun executorStopped() {
+    if (executing) {
+      executing = false
       SyncEvent.executorStopped()
     }
   }
@@ -159,12 +150,5 @@ class JobHandler @Inject constructor(
      * Time to wait before stopping execution after all listeners are removed.
      */
     private const val STOP_DELAY = 2 * DateUtils.SECOND_IN_MILLIS
-
-    /**
-     * Execution is restarted after this delay on failure.
-     */
-    private const val FAILURE_DELAY = 30 * DateUtils.SECOND_IN_MILLIS
-
-    private const val THREAD_COUNT = 1
   }
 }

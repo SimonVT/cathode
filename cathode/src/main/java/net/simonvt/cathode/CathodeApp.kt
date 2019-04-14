@@ -53,7 +53,6 @@ import net.simonvt.cathode.jobqueue.Job
 import net.simonvt.cathode.jobqueue.JobListener
 import net.simonvt.cathode.jobqueue.JobManager
 import net.simonvt.cathode.notification.NotificationHelper
-import net.simonvt.cathode.remote.Flags
 import net.simonvt.cathode.settings.Settings
 import net.simonvt.cathode.settings.TraktLinkSettings
 import net.simonvt.cathode.settings.login.LoginActivity
@@ -79,7 +78,7 @@ class CathodeApp : Application(), HasActivityInjector, HasFragmentInjector,
   lateinit var periodicWorkInitializer: PeriodicWorkInitializer
   @Inject
   lateinit var jobManager: JobManager
-  private var jobListener: JobListener? = null
+  private lateinit var jobListener: JobListener
 
   @Inject
   lateinit var periodicSync: PeriodicSync
@@ -171,17 +170,13 @@ class CathodeApp : Application(), HasActivityInjector, HasFragmentInjector,
 
     if (BuildConfig.DEBUG) {
       jobListener = object : JobListener {
-        override fun onJobsLoaded(jobManager: JobManager) {}
-
-        override fun onJobAdded(jobManager: JobManager, job: Job) {
-          if (job.hasFlags(Flags.REQUIRES_AUTH) && !TraktLinkSettings.isLinked(this@CathodeApp)) {
+        override fun onJobAdded(job: Job) {
+          if (!TraktLinkSettings.isLinked(this@CathodeApp)) {
             throw RuntimeException(
               "Added job " + job.key() + " that requires authentication when not authenticated"
             )
           }
         }
-
-        override fun onJobRemoved(jobManager: JobManager, job: Job) {}
       }
 
       jobManager.addJobListener(jobListener)

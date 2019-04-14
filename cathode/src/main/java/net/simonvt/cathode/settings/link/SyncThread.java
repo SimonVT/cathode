@@ -22,7 +22,6 @@ import androidx.work.WorkManager;
 import java.util.List;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.settings.Settings;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.TraktTimestamps;
@@ -46,7 +45,7 @@ public class SyncThread extends Thread {
   }
 
   @SuppressLint("ApplySharedPref") @Override public void run() {
-    jobManager.removeJobsWithFlagNow(Flags.REQUIRES_AUTH);
+    jobManager.clear();
     TraktTimestamps.clear(context);
 
     Settings.get(context)

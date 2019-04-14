@@ -20,9 +20,7 @@ import javax.inject.Inject;
 import net.simonvt.cathode.api.body.SyncItems;
 import net.simonvt.cathode.api.entity.SyncResponse;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
-import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 
@@ -34,21 +32,13 @@ public class RemoveSeasonFromHistory extends CallJob<SyncResponse> {
   private int season;
 
   public RemoveSeasonFromHistory(long traktId, int season) {
-    super(Flags.REQUIRES_AUTH);
+
     this.traktId = traktId;
     this.season = season;
   }
 
   @Override public String key() {
     return "RemoveSeasonFromHistory" + "&traktId=" + traktId + "&season=" + season;
-  }
-
-  @Override public int getPriority() {
-    return JobPriority.ACTIONS;
-  }
-
-  @Override public boolean allowDuplicates() {
-    return true;
   }
 
   @Override public Call<SyncResponse> getCall() {

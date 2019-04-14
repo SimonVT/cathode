@@ -28,7 +28,7 @@ public abstract class ErrorHandlerJob<T> extends Job {
   }
 
   public ErrorHandlerJob(int flags) {
-    super(flags);
+    super();
   }
 
   /**

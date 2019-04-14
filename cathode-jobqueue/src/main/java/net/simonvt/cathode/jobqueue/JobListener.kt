@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Simon Vig Therkildsen
+ * Copyright (C) 2015 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.jobqueue;
+package net.simonvt.cathode.jobqueue
 
-public interface JobPriority {
+interface JobListener {
 
-  int CONFIGURATION = 11;
-  int ACTIONS = 10;
-  int USER_DATA = 9;
-  int IMAGES = 7;
-  int SEASONS = 6;
-  int SHOWS = 5;
-  int MOVIES = 4;
-  int SUGGESTIONS = 3;
-  int EXTRAS = 2;
-  int UPDATED = 1;
+  fun onJobAdded(job: Job)
 }

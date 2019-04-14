@@ -21,9 +21,7 @@ import net.simonvt.cathode.api.body.HiddenItems;
 import net.simonvt.cathode.api.entity.HideResponse;
 import net.simonvt.cathode.api.enumeration.HiddenSection;
 import net.simonvt.cathode.api.service.UsersService;
-import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
-import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import retrofit2.Call;
 
@@ -35,21 +33,13 @@ public class WatchedHideShow extends CallJob<HideResponse> {
   private boolean hidden;
 
   public WatchedHideShow(long traktId, boolean hidden) {
-    super(Flags.REQUIRES_AUTH);
+
     this.traktId = traktId;
     this.hidden = hidden;
   }
 
   @Override public String key() {
     return "WatchedHideShow?traktId=" + traktId + "&hidden=" + hidden;
-  }
-
-  @Override public boolean allowDuplicates() {
-    return true;
-  }
-
-  @Override public int getPriority() {
-    return JobPriority.ACTIONS;
   }
 
   @Override public Call<HideResponse> getCall() {

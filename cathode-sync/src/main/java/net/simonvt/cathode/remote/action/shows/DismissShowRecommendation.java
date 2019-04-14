@@ -17,9 +17,7 @@ package net.simonvt.cathode.remote.action.shows;
 
 import javax.inject.Inject;
 import net.simonvt.cathode.api.service.RecommendationsService;
-import net.simonvt.cathode.jobqueue.JobPriority;
 import net.simonvt.cathode.remote.CallJob;
-import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.sync.SyncUserActivity;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -31,16 +29,12 @@ public class DismissShowRecommendation extends CallJob<ResponseBody> {
   private long traktId;
 
   public DismissShowRecommendation(long traktId) {
-    super(Flags.REQUIRES_AUTH);
+
     this.traktId = traktId;
   }
 
   @Override public String key() {
     return "DismissShowRecommendation" + "&traktId=" + traktId;
-  }
-
-  @Override public int getPriority() {
-    return JobPriority.ACTIONS;
   }
 
   @Override public Call<ResponseBody> getCall() {

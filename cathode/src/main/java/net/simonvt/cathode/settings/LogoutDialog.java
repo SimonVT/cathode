@@ -25,7 +25,6 @@ import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobqueue.JobManager;
-import net.simonvt.cathode.remote.Flags;
 import net.simonvt.cathode.remote.LogoutJob;
 import net.simonvt.cathode.work.PeriodicWorkInitializer;
 
@@ -51,8 +50,8 @@ public class LogoutDialog extends AppCompatDialogFragment {
             SuggestionsTimestamps.clearRecommended(getActivity());
             TraktTimestamps.clear(getActivity());
 
+            jobManager.clear();
             jobManager.addJob(new LogoutJob());
-            jobManager.removeJobsWithFlag(Flags.REQUIRES_AUTH);
 
             periodicWorkInitializer.cancelAuthWork();
           }
