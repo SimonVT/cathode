@@ -15,9 +15,7 @@ build
 
 # Firebase
 google-services.json
-
-# Crashlytics
-crashlytics.properties
+fabric.properties
 
 # Trakt
 trakt.properties

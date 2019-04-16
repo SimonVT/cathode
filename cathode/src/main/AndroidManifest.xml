@@ -43,6 +43,10 @@
       android:supportsRtl="false"
       tools:ignore="UnusedAttribute">
 
+    <meta-data
+        android:name="firebase_crashlytics_collection_enabled"
+        android:value="${enableCrashlytics}"/>
+
     <!-- Activities -->
     <activity
         android:name="net.simonvt.cathode.ui.HomeActivity"

@@ -101,7 +101,7 @@ android {
 
       applicationIdSuffix ".debug"
 
-      ext.enableCrashlytics = false
+      manifestPlaceholders = [enableCrashlytics: false]
     }
     release {
       buildConfigField "String", "AUTHORITY_DUMMY_CALENDAR",
@@ -111,7 +111,7 @@ android {
 
       signingConfig signingConfigs.release
 
-      ext.enableCrashlytics = !isOnCI()
+      manifestPlaceholders = [enableCrashlytics: !isOnCI()]
     }
   }
 
