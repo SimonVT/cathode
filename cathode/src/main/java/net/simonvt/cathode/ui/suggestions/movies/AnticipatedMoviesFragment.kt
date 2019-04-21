@@ -23,8 +23,8 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
-import net.simonvt.cathode.common.entity.Movie
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter
+import net.simonvt.cathode.entity.Movie
 import net.simonvt.cathode.provider.ProviderSchematic.Movies
 import net.simonvt.cathode.settings.Settings
 import net.simonvt.cathode.ui.CathodeViewModelFactory

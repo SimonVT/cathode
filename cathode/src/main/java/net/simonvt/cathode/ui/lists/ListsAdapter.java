@@ -25,9 +25,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.entity.UserList;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
-import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
+import net.simonvt.cathode.entity.UserList;
 
 public class ListsAdapter extends BaseAdapter<UserList, ListsAdapter.ViewHolder> {
 

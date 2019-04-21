@@ -18,8 +18,8 @@ package net.simonvt.cathode.ui.suggestions.shows;
 import android.content.Context;
 import android.view.View;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.entity.Show;
 import net.simonvt.cathode.common.widget.OverflowView;
+import net.simonvt.cathode.entity.Show;
 import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter;
 
 public class ShowRecommendationsAdapter extends ShowDescriptionAdapter {

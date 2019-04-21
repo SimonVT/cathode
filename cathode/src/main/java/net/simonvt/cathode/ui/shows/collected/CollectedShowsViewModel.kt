@@ -21,7 +21,7 @@ import androidx.lifecycle.LiveData
 import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.user.SyncShowsCollection
 import net.simonvt.cathode.common.data.MappedCursorLiveData
-import net.simonvt.cathode.common.entity.ShowWithEpisode
+import net.simonvt.cathode.entity.ShowWithEpisode
 import net.simonvt.cathode.entitymapper.ShowWithEpisodeListMapper
 import net.simonvt.cathode.entitymapper.ShowWithEpisodeMapper
 import net.simonvt.cathode.provider.ProviderSchematic.Shows
@@ -45,11 +45,11 @@ class CollectedShowsViewModel @Inject constructor(
     _shows = MappedCursorLiveData(
       context,
       Shows.SHOWS_COLLECTION,
-      ShowWithEpisodeMapper.PROJECTION,
+      ShowWithEpisodeMapper.projection,
       null,
       null,
       sortBy.sortOrder,
-      ShowWithEpisodeListMapper()
+      ShowWithEpisodeListMapper
     )
   }
 

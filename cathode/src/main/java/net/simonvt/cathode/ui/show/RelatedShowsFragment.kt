@@ -21,10 +21,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
-import net.simonvt.cathode.common.entity.Show
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
 import net.simonvt.cathode.common.util.Ids
 import net.simonvt.cathode.common.util.guava.Preconditions
+import net.simonvt.cathode.entity.Show
 import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.LibraryType

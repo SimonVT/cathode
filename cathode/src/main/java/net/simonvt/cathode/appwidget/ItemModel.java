@@ -20,31 +20,13 @@ import android.text.format.DateUtils;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import net.simonvt.cathode.common.entity.Episode;
-import net.simonvt.cathode.common.entity.Show;
-import net.simonvt.cathode.common.entity.ShowWithEpisode;
 import net.simonvt.cathode.common.util.DateStringUtils;
-import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
+import net.simonvt.cathode.entity.NextEpisode;
+import net.simonvt.cathode.entity.Show;
+import net.simonvt.cathode.entity.ShowWithEpisode;
 import net.simonvt.cathode.provider.util.DataHelper;
-import net.simonvt.cathode.provider.util.SqlColumn;
 
 public class ItemModel {
-
-  private static final String COLUMN_EPISODE_ID = "episodeId";
-
-  public static final String[] PROJECTION = new String[] {
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.ID),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.OVERVIEW),
-      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.ID) + " AS " + COLUMN_EPISODE_ID,
-      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.TITLE),
-      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.SEASON),
-      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.EPISODE),
-      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.FIRST_AIRED),
-      SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.WATCHED),
-  };
 
   private List<WidgetItem> widgetItems;
 
@@ -97,7 +79,7 @@ public class ItemModel {
 
     for (ShowWithEpisode showWithEpisode : showsWithEpisodes) {
       Show show = showWithEpisode.getShow();
-      Episode episode = showWithEpisode.getEpisode();
+      NextEpisode episode = showWithEpisode.getEpisode();
 
       final long firstAired = episode.getFirstAired();
       String airTime = DateStringUtils.getTimeString(context, firstAired);

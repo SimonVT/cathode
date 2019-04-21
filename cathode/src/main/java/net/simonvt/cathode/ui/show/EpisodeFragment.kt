@@ -33,14 +33,14 @@ import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.api.util.TraktUtils
-import net.simonvt.cathode.common.entity.Comment
-import net.simonvt.cathode.common.entity.Episode
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment
 import net.simonvt.cathode.common.util.DateStringUtils
 import net.simonvt.cathode.common.util.Ids
 import net.simonvt.cathode.common.util.Intents
 import net.simonvt.cathode.common.util.guava.Preconditions
 import net.simonvt.cathode.common.widget.CircularProgressIndicator
+import net.simonvt.cathode.entity.Comment
+import net.simonvt.cathode.entity.Episode
 import net.simonvt.cathode.images.ImageType
 import net.simonvt.cathode.images.ImageUri
 import net.simonvt.cathode.provider.DatabaseContract
@@ -349,20 +349,20 @@ class EpisodeFragment : RefreshableAppBarFragment() {
 
     loaded = true
 
-    showId = episode.showId!!
-    seasonId = episode.seasonId!!
+    showId = episode.showId
+    seasonId = episode.seasonId
     showTitle = episode.showTitle
 
-    watched = episode.watched!!
-    collected = episode.inCollection!!
-    inWatchlist = episode.inWatchlist!!
-    watching = episode.watching!!
-    checkedIn = episode.checkedIn!!
+    watched = episode.watched
+    collected = episode.inCollection
+    inWatchlist = episode.inWatchlist
+    watching = episode.watching
+    checkedIn = episode.checkedIn
 
-    season = episode.season!!
+    season = episode.season
     episodeTitle = DataHelper.getEpisodeTitle(
       requireContext(), episode.title, season,
-      episode.episode!!, episode.watched!!
+      episode.episode, episode.watched
     )
 
     title!!.text = episodeTitle
@@ -378,7 +378,7 @@ class EpisodeFragment : RefreshableAppBarFragment() {
     setBackdrop(screenshotUri, true)
 
     firstAired!!.text =
-      DateStringUtils.getAirdateInterval(requireContext(), episode.firstAired!!, true)
+      DateStringUtils.getAirdateInterval(requireContext(), episode.firstAired, true)
 
     if (checkInDrawable != null) {
       checkInDrawable!!.setWatching(watching || checkedIn)
@@ -390,14 +390,14 @@ class EpisodeFragment : RefreshableAppBarFragment() {
     inCollectionView!!.visibility = if (collected) View.VISIBLE else View.GONE
     inWatchlistView!!.visibility = if (inWatchlist) View.VISIBLE else View.GONE
 
-    currentRating = episode.userRating!!
-    val ratingAll = episode.rating!!
+    currentRating = episode.userRating
+    val ratingAll = episode.rating
     rating!!.setValue(ratingAll)
 
     viewOnTrakt!!.setOnClickListener {
       Intents.openUrl(
         requireContext(),
-        TraktUtils.getTraktEpisodeUrl(episode.traktId!!)
+        TraktUtils.getTraktEpisodeUrl(episode.traktId)
       )
     }
 

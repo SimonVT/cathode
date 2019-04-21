@@ -14,6 +14,7 @@ if (file("google-services.json").exists()) {
 
 dependencies {
   implementation project(':cathode-common')
+  implementation project(':cathode-entity')
   implementation project(':cathode-images')
   implementation project(':cathode-jobqueue')
   implementation project(':cathode-provider')

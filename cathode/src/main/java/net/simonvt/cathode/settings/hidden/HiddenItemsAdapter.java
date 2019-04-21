@@ -25,18 +25,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.entity.Movie;
-import net.simonvt.cathode.common.entity.Show;
 import net.simonvt.cathode.common.ui.adapter.HeaderAdapter;
 import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.common.widget.RemoteImageView;
+import net.simonvt.cathode.entity.Movie;
+import net.simonvt.cathode.entity.Show;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
-import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
-import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
-import net.simonvt.cathode.provider.util.SqlColumn;
 
 public class HiddenItemsAdapter extends HeaderAdapter<Object, RecyclerView.ViewHolder> {
 
@@ -54,31 +49,6 @@ public class HiddenItemsAdapter extends HeaderAdapter<Object, RecyclerView.ViewH
 
     void displayMovieInCalendar(long movieId);
   }
-
-  public static final String[] PROJECTION_SHOW = new String[] {
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.ID),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.TRAKT_ID),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.OVERVIEW),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.WATCHED_COUNT),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.IN_COLLECTION_COUNT),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.IN_WATCHLIST),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.RATING),
-      SqlColumn.table(Tables.SHOWS).column(LastModifiedColumns.LAST_MODIFIED),
-  };
-
-  public static final String[] PROJECTION_MOVIES = new String[] {
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.ID),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.TRAKT_ID),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.TITLE),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.OVERVIEW),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.WATCHED),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.IN_COLLECTION),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.IN_WATCHLIST),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.WATCHING),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.CHECKED_IN),
-      SqlColumn.table(Tables.MOVIES).column(LastModifiedColumns.LAST_MODIFIED),
-  };
 
   private static final int TYPE_SHOW = 0;
 

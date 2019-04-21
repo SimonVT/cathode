@@ -21,10 +21,10 @@ import androidx.lifecycle.LiveData
 import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.seasons.SyncSeason
 import net.simonvt.cathode.common.data.MappedCursorLiveData
-import net.simonvt.cathode.common.entity.Episode
+import net.simonvt.cathode.entity.Episode
 import net.simonvt.cathode.entitymapper.EpisodeListMapper
+import net.simonvt.cathode.entitymapper.EpisodeMapper
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns
-import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes
 import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
@@ -50,11 +50,11 @@ class SeasonViewModel @Inject constructor(
       episodes = MappedCursorLiveData(
         context,
         Episodes.fromSeason(seasonId),
-        PROJECTION,
+        EpisodeMapper.projection,
         null,
         null,
         EpisodeColumns.EPISODE + " ASC",
-        EpisodeListMapper()
+        EpisodeListMapper
       )
     }
   }
@@ -64,20 +64,5 @@ class SeasonViewModel @Inject constructor(
     val traktId = showHelper.getTraktId(showId)
     val season = seasonHelper.getNumber(seasonId)
     syncSeason.invokeSync(SyncSeason.Params(traktId, season))
-  }
-
-  companion object {
-
-    val PROJECTION = arrayOf(
-      EpisodeColumns.ID,
-      EpisodeColumns.TITLE,
-      EpisodeColumns.SEASON,
-      EpisodeColumns.EPISODE,
-      EpisodeColumns.WATCHED,
-      EpisodeColumns.IN_COLLECTION,
-      EpisodeColumns.FIRST_AIRED,
-      EpisodeColumns.SHOW_TITLE,
-      LastModifiedColumns.LAST_MODIFIED
-    )
   }
 }

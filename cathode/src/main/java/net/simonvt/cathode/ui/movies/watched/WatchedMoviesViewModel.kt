@@ -20,12 +20,12 @@ import android.content.Context
 import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.user.SyncWatchedMovies
 import net.simonvt.cathode.common.data.MappedCursorLiveData
-import net.simonvt.cathode.common.entity.Movie
+import net.simonvt.cathode.entity.Movie
 import net.simonvt.cathode.entitymapper.MovieListMapper
+import net.simonvt.cathode.entitymapper.MovieMapper
 import net.simonvt.cathode.provider.ProviderSchematic.Movies
 import net.simonvt.cathode.settings.Settings
 import net.simonvt.cathode.ui.RefreshableViewModel
-import net.simonvt.cathode.ui.movies.MoviesAdapter
 import net.simonvt.cathode.ui.movies.watched.WatchedMoviesFragment.SortBy
 import javax.inject.Inject
 
@@ -48,11 +48,11 @@ class WatchedMoviesViewModel @Inject constructor(
     movies = MappedCursorLiveData(
       context,
       Movies.MOVIES_WATCHED,
-      MoviesAdapter.PROJECTION,
+      MovieMapper.projection,
       null,
       null,
       sortBy.sortOrder,
-      MovieListMapper()
+      MovieListMapper
     )
   }
 

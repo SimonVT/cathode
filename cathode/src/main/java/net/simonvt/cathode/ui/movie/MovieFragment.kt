@@ -34,9 +34,6 @@ import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.api.util.TraktUtils
-import net.simonvt.cathode.common.entity.CastMember
-import net.simonvt.cathode.common.entity.Comment
-import net.simonvt.cathode.common.entity.Movie
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment
 import net.simonvt.cathode.common.util.DateStringUtils
 import net.simonvt.cathode.common.util.Ids
@@ -46,6 +43,9 @@ import net.simonvt.cathode.common.util.guava.Preconditions
 import net.simonvt.cathode.common.widget.CircleTransformation
 import net.simonvt.cathode.common.widget.CircularProgressIndicator
 import net.simonvt.cathode.common.widget.RemoteImageView
+import net.simonvt.cathode.entity.CastMember
+import net.simonvt.cathode.entity.Comment
+import net.simonvt.cathode.entity.Movie
 import net.simonvt.cathode.images.ImageType
 import net.simonvt.cathode.images.ImageUri
 import net.simonvt.cathode.provider.DatabaseContract
@@ -410,9 +410,9 @@ class MovieFragment : RefreshableAppBarFragment() {
 
     loaded = true
 
-    val traktId = movie!!.traktId!!
+    val traktId = movie!!.traktId
     val title = movie!!.title
-    if (title != null && title != movieTitle) {
+    if (title != movieTitle) {
       movieTitle = title
       setTitle(movieTitle)
     }
@@ -420,15 +420,15 @@ class MovieFragment : RefreshableAppBarFragment() {
     val backdropUri = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.BACKDROP, movieId)
     setBackdrop(backdropUri, true)
 
-    currentRating = movie!!.userRating!!
-    rating!!.setValue(movie!!.rating!!)
+    currentRating = movie!!.userRating
+    rating!!.setValue(movie!!.rating)
 
     movieOverview = movie!!.overview
-    watched = movie!!.watched!!
-    collected = movie!!.inCollection!!
-    inWatchlist = movie!!.inWatchlist!!
-    watching = movie!!.watching!!
-    checkedIn = movie!!.checkedIn!!
+    watched = movie!!.watched
+    collected = movie!!.inCollection
+    inWatchlist = movie!!.inWatchlist
+    watching = movie!!.watching
+    checkedIn = movie!!.checkedIn
 
     if (checkInDrawable != null) {
       checkInDrawable!!.setWatching(watching || checkedIn)
@@ -441,20 +441,20 @@ class MovieFragment : RefreshableAppBarFragment() {
     watchlist!!.visibility = if (inWatchlist) View.VISIBLE else View.GONE
 
     var infoOneText = ""
-    if (movie!!.year != null && movie!!.year > 0) {
-      infoOneText = movie!!.year!!.toString()
+    if (movie?.year ?: 0 > 0) {
+      infoOneText = movie!!.year.toString()
       if (!TextUtils.isEmpty(movie!!.certification)) {
         infoOneText += ", " + movie!!.certification
       }
     } else {
       if (!movie!!.certification.isNullOrEmpty()) {
-        infoOneText = movie!!.certification
+        infoOneText = movie!!.certification!!
       }
     }
     info1!!.text = infoOneText
 
-    if (movie!!.runtime != null && movie!!.runtime > 0) {
-      val runtime = DateStringUtils.getRuntimeString(requireContext(), movie!!.runtime!!.toLong())
+    if (movie?.runtime ?: 0 > 0) {
+      val runtime = DateStringUtils.getRuntimeString(requireContext(), movie!!.runtime.toLong())
       info2!!.text = runtime
     }
 
@@ -478,7 +478,7 @@ class MovieFragment : RefreshableAppBarFragment() {
     }
 
     val imdbId = movie!!.imdbId
-    val tmdbId = movie!!.tmdbId!!
+    val tmdbId = movie!!.tmdbId
 
     viewOnTrakt!!.setOnClickListener {
       Intents.openUrl(
@@ -487,8 +487,7 @@ class MovieFragment : RefreshableAppBarFragment() {
       )
     }
 
-    val hasImdbId = !TextUtils.isEmpty(imdbId)
-    if (hasImdbId) {
+    if (!imdbId.isNullOrEmpty()) {
       viewOnImdb!!.visibility = View.VISIBLE
       viewOnImdb!!.setOnClickListener {
         Intents.openUrl(
@@ -550,7 +549,7 @@ class MovieFragment : RefreshableAppBarFragment() {
           .inflate(R.layout.section_people_item, castContainer, false)
 
         val headshotUri =
-          ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, castMember.person.id!!)
+          ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, castMember.person.id)
 
         val headshot = v.findViewById<RemoteImageView>(R.id.headshot)
         headshot.addTransformation(CircleTransformation())
@@ -562,7 +561,7 @@ class MovieFragment : RefreshableAppBarFragment() {
         val character = v.findViewById<TextView>(R.id.person_job)
         character.text = castMember.character
 
-        v.setOnClickListener { navigationListener.onDisplayPerson(castMember.person.id!!) }
+        v.setOnClickListener { navigationListener.onDisplayPerson(castMember.person.id) }
 
         castContainer!!.addView(v)
       }
@@ -597,7 +596,7 @@ class MovieFragment : RefreshableAppBarFragment() {
 
         val ratingText: String
         if (movie.votes >= 1000) {
-          val convertedVotes = movie.votes!! / 1000.0f
+          val convertedVotes = movie.votes / 1000.0f
           val formattedVotes = String.format(Locale.getDefault(), "%.1f", convertedVotes)
           ratingText = getString(R.string.related_rating_thousands, formattedRating, formattedVotes)
         } else {

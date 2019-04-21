@@ -22,10 +22,12 @@ import net.simonvt.cathode.actions.invokeAsync
 import net.simonvt.cathode.actions.user.SyncEpisodeWatchlist
 import net.simonvt.cathode.actions.user.SyncShowsWatchlist
 import net.simonvt.cathode.common.data.MappedCursorLiveData
-import net.simonvt.cathode.common.entity.Episode
-import net.simonvt.cathode.common.entity.Show
+import net.simonvt.cathode.entity.Episode
+import net.simonvt.cathode.entity.Show
 import net.simonvt.cathode.entitymapper.EpisodeListMapper
+import net.simonvt.cathode.entitymapper.EpisodeMapper
 import net.simonvt.cathode.entitymapper.ShowListMapper
+import net.simonvt.cathode.entitymapper.ShowMapper
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes
 import net.simonvt.cathode.provider.ProviderSchematic.Shows
@@ -45,20 +47,20 @@ class ShowsWatchlistViewModel @Inject constructor(
     shows = MappedCursorLiveData(
       context,
       Shows.SHOWS_WATCHLIST,
-      ShowWatchlistAdapter.PROJECTION_SHOW,
+      ShowMapper.projection,
       null,
       null,
       Shows.DEFAULT_SORT,
-      ShowListMapper()
+      ShowListMapper
     )
     episodes = MappedCursorLiveData(
       context,
       Episodes.EPISODES_IN_WATCHLIST,
-      ShowWatchlistAdapter.PROJECTION_EPISODE,
+      EpisodeMapper.projection,
       null,
       null,
       EpisodeColumns.SHOW_ID + " ASC",
-      EpisodeListMapper()
+      EpisodeListMapper
     )
   }
 

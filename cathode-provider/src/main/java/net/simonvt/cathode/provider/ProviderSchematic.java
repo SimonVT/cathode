@@ -834,7 +834,6 @@ public final class ProviderSchematic {
     @ContentUri(
         path = Path.EPISODES + "/" + Path.WATCHLIST,
         type = Type.EPISODE,
-        join = Joins.EPISODES_WITH_SHOW_TITLE,
         where = EpisodeColumns.IN_WATCHLIST + "=1")
     public static final Uri EPISODES_IN_WATCHLIST = buildUri(Path.EPISODES, Path.WATCHLIST);
 

@@ -24,9 +24,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
-import net.simonvt.cathode.common.entity.Episode
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
 import net.simonvt.cathode.common.util.guava.Preconditions
+import net.simonvt.cathode.entity.Episode
 import net.simonvt.cathode.provider.DatabaseContract
 import net.simonvt.cathode.settings.TraktLinkSettings
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler
@@ -211,8 +211,8 @@ class SeasonFragment : ToolbarSwipeRefreshRecyclerFragment<ViewHolder>(),
     var watchedCount = 0
     var collectedCount = 0
     for (episode in episodes) {
-      val watched = episode.watched!!
-      val collected = episode.inCollection!!
+      val watched = episode.watched
+      val collected = episode.inCollection
 
       if (watched) {
         watchedCount++

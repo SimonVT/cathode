@@ -1,0 +1,29 @@
+plugins {
+  id 'com.android.library'
+  id 'kotlin-android'
+  id 'kotlin-kapt'
+}
+
+dependencies {
+  implementation deps.kotlin.stdlib
+  implementation project(':trakt-api')
+}
+
+android {
+  compileSdkVersion parent.ext.compileSdkVersion
+  buildToolsVersion parent.ext.buildToolsVersion
+
+  defaultConfig {
+    minSdkVersion parent.ext.minSdkVersion
+    targetSdkVersion parent.ext.targetSdkVersion
+
+    versionCode = parent.ext.versionCode;
+    versionName = parent.ext.versionName
+  }
+
+  lintOptions {
+    abortOnError false
+  }
+}
+
+apply from: rootProject.file('deps.gradle')

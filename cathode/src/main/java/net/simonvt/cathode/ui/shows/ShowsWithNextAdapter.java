@@ -26,13 +26,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.entity.Episode;
-import net.simonvt.cathode.common.entity.Show;
-import net.simonvt.cathode.common.entity.ShowWithEpisode;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.common.widget.TimeStamp;
+import net.simonvt.cathode.entity.NextEpisode;
+import net.simonvt.cathode.entity.Show;
+import net.simonvt.cathode.entity.ShowWithEpisode;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.util.DataHelper;
@@ -163,7 +163,7 @@ public class ShowsWithNextAdapter
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
     ShowWithEpisode showWithEpisode = getList().get(position);
     Show show = showWithEpisode.getShow();
-    Episode episode = showWithEpisode.getEpisode();
+    NextEpisode episode = showWithEpisode.getEpisode();
 
     final String showPosterUri =
         ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, show.getId());

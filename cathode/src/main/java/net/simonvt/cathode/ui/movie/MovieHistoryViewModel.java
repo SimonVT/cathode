@@ -22,7 +22,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.common.data.MappedCursorLiveData;
-import net.simonvt.cathode.common.entity.Movie;
+import net.simonvt.cathode.entity.Movie;
 import net.simonvt.cathode.entitymapper.MovieMapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
@@ -49,7 +49,7 @@ public class MovieHistoryViewModel extends AndroidViewModel {
       this.movieId = movieId;
 
       movie = new MappedCursorLiveData<>(getApplication(), Movies.withId(movieId),
-          MovieHistoryFragment.MOVIE_PROJECTION, null, null, null, new MovieMapper());
+          MovieMapper.projection, null, null, null, MovieMapper.INSTANCE);
       history = new MovieHistoryLiveData(movieId, syncService, movieHelper);
     }
   }

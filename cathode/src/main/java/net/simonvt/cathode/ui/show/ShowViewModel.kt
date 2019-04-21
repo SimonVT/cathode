@@ -32,24 +32,23 @@ import net.simonvt.cathode.actions.shows.SyncShowImages
 import net.simonvt.cathode.actions.shows.SyncShowWatchedStatus
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.common.data.StringMapper
-import net.simonvt.cathode.common.entity.CastMember
-import net.simonvt.cathode.common.entity.Comment
-import net.simonvt.cathode.common.entity.Episode
-import net.simonvt.cathode.common.entity.Season
-import net.simonvt.cathode.common.entity.Show
+import net.simonvt.cathode.entity.CastMember
+import net.simonvt.cathode.entity.Comment
+import net.simonvt.cathode.entity.Episode
+import net.simonvt.cathode.entity.Season
+import net.simonvt.cathode.entity.Show
 import net.simonvt.cathode.entitymapper.CommentListMapper
 import net.simonvt.cathode.entitymapper.CommentMapper
 import net.simonvt.cathode.entitymapper.EpisodeMapper
 import net.simonvt.cathode.entitymapper.SeasonListMapper
+import net.simonvt.cathode.entitymapper.SeasonMapper
 import net.simonvt.cathode.entitymapper.ShowCastMapper
 import net.simonvt.cathode.entitymapper.ShowListMapper
 import net.simonvt.cathode.entitymapper.ShowMapper
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns
 import net.simonvt.cathode.provider.DatabaseContract.RelatedShowsColumns
-import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns
 import net.simonvt.cathode.provider.DatabaseContract.ShowCastColumns
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables
 import net.simonvt.cathode.provider.ProviderSchematic.Comments
@@ -60,7 +59,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.ShowCast
 import net.simonvt.cathode.provider.ProviderSchematic.ShowGenres
 import net.simonvt.cathode.provider.ProviderSchematic.Shows
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
-import net.simonvt.cathode.provider.util.SqlColumn
 import net.simonvt.cathode.settings.TraktLinkSettings
 import net.simonvt.cathode.ui.RefreshableViewModel
 import javax.inject.Inject
@@ -109,16 +107,16 @@ class ShowViewModel @Inject constructor(
       show = MappedCursorLiveData(
         context,
         Shows.withId(showId),
-        SHOW_PROJECTION,
+        ShowMapper.projection,
         null,
         null,
         null,
-        ShowMapper()
+        ShowMapper
       )
       genres = MappedCursorLiveData(
         context,
         ShowGenres.fromShow(showId),
-        GENRES_PROJECTION,
+        arrayOf(ShowGenreColumns.GENRE),
         null,
         null,
         null,
@@ -127,77 +125,77 @@ class ShowViewModel @Inject constructor(
       seasons = MappedCursorLiveData(
         context,
         Seasons.fromShow(showId),
-        SEASONS_PROJECTION,
+        SeasonMapper.projection,
         null,
         null,
         Seasons.DEFAULT_SORT,
-        SeasonListMapper()
+        SeasonListMapper
       )
       cast = MappedCursorLiveData(
         context,
         ShowCast.fromShow(showId),
-        ShowCastMapper.PROJECTION,
+        ShowCastMapper.projection,
         null,
         null,
         Tables.SHOW_CAST + "." + ShowCastColumns.ID + " ASC LIMIT 3",
-        ShowCastMapper()
+        ShowCastMapper
       )
       userComments = MappedCursorLiveData(
         context,
         Comments.fromShow(showId),
-        CommentMapper.PROJECTION,
+        CommentMapper.projection,
         CommentColumns.IS_USER_COMMENT + "=1",
         null,
         null,
-        CommentListMapper()
+        CommentListMapper
       )
       comments = MappedCursorLiveData(
         context,
         Comments.fromShow(showId),
-        CommentMapper.PROJECTION,
+        CommentMapper.projection,
         CommentColumns.IS_USER_COMMENT + "=0 AND " + CommentColumns.SPOILER + "=0",
         null,
         CommentColumns.LIKES + " DESC LIMIT 3",
-        CommentListMapper()
+        CommentListMapper
       )
       related = MappedCursorLiveData(
         context,
         RelatedShows.fromShow(showId),
-        RELATED_PROJECTION,
+        ShowMapper.projection,
         null,
         null,
         RelatedShowsColumns.RELATED_INDEX + " ASC LIMIT 3",
-        ShowListMapper()
+        ShowListMapper
       )
-      toWatch = WatchedLiveData(context, showId, EPISODE_PROJECTION)
+      toWatch = WatchedLiveData(context, showId)
       lastWatched = MappedCursorLiveData(
         context,
         Episodes.fromShow(showId),
-        EPISODE_PROJECTION,
+        EpisodeMapper.projection,
         EpisodeColumns.WATCHED + "=1",
         null,
         EpisodeColumns.SEASON + " DESC, " + EpisodeColumns.EPISODE + " DESC LIMIT 1",
-        EpisodeMapper()
+        EpisodeMapper
       )
       toCollect = MappedCursorLiveData(
         context,
         Episodes.fromShow(showId),
-        EPISODE_PROJECTION,
+        EpisodeMapper.projection,
         EpisodeColumns.IN_COLLECTION + "=0 AND " +
             EpisodeColumns.FIRST_AIRED + " IS NOT NULL AND " +
             EpisodeColumns.SEASON + ">0",
         null,
         EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1",
-        EpisodeMapper()
+        EpisodeMapper
       )
       lastCollected = MappedCursorLiveData(
         context,
         Episodes.fromShow(showId),
-        EPISODE_PROJECTION,
+        EpisodeMapper.projection,
         EpisodeColumns.IN_COLLECTION + "=1",
         null,
         EpisodeColumns.SEASON + " DESC, " + EpisodeColumns.EPISODE + " DESC LIMIT 1",
-        EpisodeMapper()
+        EpisodeMapper
       )
 
       show.observeForever(showObserver)
@@ -213,7 +211,7 @@ class ShowViewModel @Inject constructor(
     if (show != null) {
       viewModelScope.launch {
         val currentTime = System.currentTimeMillis()
-        val needsSync = show.needsSync!!
+        val needsSync = show.needsSync
         if (needsSync || currentTime > show.lastSync + SYNC_INTERVAL) {
           syncShow.invokeAsync(SyncShow.Params(show.traktId))
         }
@@ -263,70 +261,5 @@ class ShowViewModel @Inject constructor(
 
     private const val SYNC_INTERVAL = 2 * DateUtils.DAY_IN_MILLIS
     private const val SYNC_INTERVAL_COMMENTS = 3 * DateUtils.HOUR_IN_MILLIS
-
-    private val SHOW_PROJECTION = arrayOf(
-      ShowColumns.ID,
-      ShowColumns.TRAKT_ID,
-      ShowColumns.TITLE,
-      ShowColumns.YEAR,
-      ShowColumns.AIR_TIME,
-      ShowColumns.AIR_DAY,
-      ShowColumns.NETWORK,
-      ShowColumns.CERTIFICATION,
-      ShowColumns.STATUS,
-      ShowColumns.USER_RATING,
-      ShowColumns.RATING,
-      ShowColumns.OVERVIEW,
-      ShowColumns.IN_WATCHLIST,
-      ShowColumns.IN_COLLECTION_COUNT,
-      ShowColumns.WATCHED_COUNT,
-      ShowColumns.LAST_SYNC,
-      ShowColumns.LAST_COMMENT_SYNC,
-      ShowColumns.LAST_CREDITS_SYNC,
-      ShowColumns.LAST_RELATED_SYNC,
-      ShowColumns.HOMEPAGE,
-      ShowColumns.TRAILER,
-      ShowColumns.IMDB_ID,
-      ShowColumns.TVDB_ID,
-      ShowColumns.TMDB_ID,
-      ShowColumns.NEEDS_SYNC,
-      ShowColumns.HIDDEN_CALENDAR
-    )
-
-    private val SEASONS_PROJECTION = arrayOf(
-      SeasonColumns.ID,
-      SeasonColumns.SHOW_ID,
-      SeasonColumns.SEASON,
-      SeasonColumns.UNAIRED_COUNT,
-      SeasonColumns.WATCHED_COUNT,
-      SeasonColumns.IN_COLLECTION_COUNT,
-      SeasonColumns.AIRED_COUNT,
-      SeasonColumns.WATCHED_AIRED_COUNT,
-      SeasonColumns.COLLECTED_AIRED_COUNT,
-      SeasonColumns.LAST_MODIFIED,
-      SeasonColumns.SHOW_TITLE
-    )
-
-    private val EPISODE_PROJECTION = arrayOf(
-      EpisodeColumns.ID,
-      EpisodeColumns.TITLE,
-      EpisodeColumns.FIRST_AIRED,
-      EpisodeColumns.SEASON,
-      EpisodeColumns.EPISODE,
-      EpisodeColumns.WATCHED,
-      EpisodeColumns.WATCHING,
-      EpisodeColumns.CHECKED_IN
-    )
-
-    private val RELATED_PROJECTION = arrayOf(
-      SqlColumn.table(Tables.SHOW_RELATED).column(RelatedShowsColumns.RELATED_SHOW_ID),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.ID),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.OVERVIEW),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.RATING),
-      SqlColumn.table(Tables.SHOWS).column(ShowColumns.VOTES)
-    )
-
-    private val GENRES_PROJECTION = arrayOf(ShowGenreColumns.GENRE)
   }
 }

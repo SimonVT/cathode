@@ -30,18 +30,18 @@ import net.simonvt.cathode.actions.movies.SyncMovieImages
 import net.simonvt.cathode.actions.movies.SyncRelatedMovies
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.common.data.StringMapper
-import net.simonvt.cathode.common.entity.CastMember
-import net.simonvt.cathode.common.entity.Comment
-import net.simonvt.cathode.common.entity.Movie
+import net.simonvt.cathode.entity.CastMember
+import net.simonvt.cathode.entity.Comment
+import net.simonvt.cathode.entity.Movie
 import net.simonvt.cathode.entitymapper.CommentListMapper
 import net.simonvt.cathode.entitymapper.CommentMapper
 import net.simonvt.cathode.entitymapper.MovieCastMapper
 import net.simonvt.cathode.entitymapper.MovieListMapper
 import net.simonvt.cathode.entitymapper.MovieMapper
-import net.simonvt.cathode.provider.DatabaseContract
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns
 import net.simonvt.cathode.provider.DatabaseContract.MovieCastColumns
-import net.simonvt.cathode.provider.DatabaseContract.MovieColumns
+import net.simonvt.cathode.provider.DatabaseContract.MovieGenreColumns
+import net.simonvt.cathode.provider.DatabaseContract.PersonColumns
 import net.simonvt.cathode.provider.DatabaseContract.RelatedMoviesColumns
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables
 import net.simonvt.cathode.provider.ProviderSchematic.Comments
@@ -50,7 +50,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.MovieGenres
 import net.simonvt.cathode.provider.ProviderSchematic.Movies
 import net.simonvt.cathode.provider.ProviderSchematic.RelatedMovies
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper
-import net.simonvt.cathode.provider.util.SqlColumn
 import net.simonvt.cathode.ui.RefreshableViewModel
 import javax.inject.Inject
 
@@ -89,52 +88,52 @@ class MovieViewModel @Inject constructor(
         null,
         null,
         null,
-        MovieMapper()
+        MovieMapper
       )
       genres = MappedCursorLiveData(
         context,
         MovieGenres.fromMovie(movieId),
-        GENRES_PROJECTION,
+        arrayOf(MovieGenreColumns.GENRE),
         null,
         null,
         null,
-        StringMapper(DatabaseContract.MovieGenreColumns.GENRE)
+        StringMapper(MovieGenreColumns.GENRE)
       )
       cast = MappedCursorLiveData(
         context,
         MovieCast.fromMovie(movieId),
-        MovieCastMapper.PROJECTION,
-        Tables.PEOPLE,
+        MovieCastMapper.projection,
+        Tables.PEOPLE + "." + PersonColumns.NEEDS_SYNC + "=0",
         null,
         Tables.MOVIE_CAST + "." + MovieCastColumns.ID + " ASC LIMIT 3",
-        MovieCastMapper()
+        MovieCastMapper
       )
       userComments = MappedCursorLiveData(
         context,
         Comments.fromMovie(movieId),
-        CommentMapper.PROJECTION,
+        CommentMapper.projection,
         CommentColumns.IS_USER_COMMENT + "=1",
         null,
         null,
-        CommentListMapper()
+        CommentListMapper
       )
       comments = MappedCursorLiveData(
         context,
         Comments.fromMovie(movieId),
-        CommentMapper.PROJECTION,
+        CommentMapper.projection,
         CommentColumns.IS_USER_COMMENT + "=0 AND " + CommentColumns.SPOILER + "=0",
         null,
         CommentColumns.LIKES + " DESC LIMIT 3",
-        CommentListMapper()
+        CommentListMapper
       )
       relatedMovies = MappedCursorLiveData(
         context,
         RelatedMovies.fromMovie(movieId),
-        RELATED_PROJECTION,
+        MovieMapper.projection,
         null,
         null,
         RelatedMoviesColumns.RELATED_INDEX + " ASC LIMIT 3",
-        MovieListMapper()
+        MovieListMapper
       )
     }
 
@@ -150,8 +149,8 @@ class MovieViewModel @Inject constructor(
     if (movie != null) {
       viewModelScope.launch {
         val currentTime = System.currentTimeMillis()
-        val needsSync = movie.needsSync!!
-        val lastSync = movie.lastSync!!
+        val needsSync = movie.needsSync
+        val lastSync = movie.lastSync
         if (needsSync || System.currentTimeMillis() > lastSync + SYNC_INTERVAL) {
           syncMovie.invokeAsync(SyncMovie.Params(movie.traktId))
         }
@@ -189,16 +188,5 @@ class MovieViewModel @Inject constructor(
 
     private const val SYNC_INTERVAL = 2 * DateUtils.DAY_IN_MILLIS
     private const val SYNC_INTERVAL_COMMENTS = 3 * DateUtils.HOUR_IN_MILLIS
-
-    private val GENRES_PROJECTION = arrayOf(DatabaseContract.MovieGenreColumns.GENRE)
-
-    private val RELATED_PROJECTION = arrayOf(
-      SqlColumn.table(Tables.MOVIE_RELATED).column(RelatedMoviesColumns.RELATED_MOVIE_ID),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.ID),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.TITLE),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.OVERVIEW),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.RATING),
-      SqlColumn.table(Tables.MOVIES).column(MovieColumns.VOTES)
-    )
   }
 }

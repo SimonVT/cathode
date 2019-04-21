@@ -10,7 +10,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 public class DialogListItemListMapper
     implements MappedCursorLiveData.CursorMapper<List<DialogListItemListMapper.DialogListItem>> {
 
-  static class DialogListItem {
+  public static class DialogListItem {
 
     long id;
     long listId;

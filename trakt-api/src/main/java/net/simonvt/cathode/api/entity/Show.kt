@@ -23,7 +23,7 @@ data class Show(
   var year: Int? = null,
   var ids: Ids,
   var overview: String? = null,
-  var first_aired: String? = null,
+  var first_aired: IsoTime? = null,
   var airs: Airs? = null,
   var runtime: Int? = null,
   var certification: String? = null,

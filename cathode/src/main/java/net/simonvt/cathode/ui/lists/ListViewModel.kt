@@ -21,8 +21,8 @@ import androidx.lifecycle.LiveData
 import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.lists.SyncList
 import net.simonvt.cathode.common.data.MappedCursorLiveData
-import net.simonvt.cathode.common.entity.ListItem
-import net.simonvt.cathode.common.entity.UserList
+import net.simonvt.cathode.entity.ListItem
+import net.simonvt.cathode.entity.UserList
 import net.simonvt.cathode.entitymapper.ListItemListMapper
 import net.simonvt.cathode.entitymapper.ListItemMapper
 import net.simonvt.cathode.entitymapper.UserListMapper
@@ -51,20 +51,20 @@ class ListViewModel @Inject constructor(
       list = MappedCursorLiveData(
         context,
         Lists.withId(listId),
-        UserListMapper.PROJECTION,
+        UserListMapper.projection,
         null,
         null,
         null,
-        UserListMapper()
+        UserListMapper
       )
       listItems = MappedCursorLiveData(
         context,
         ListItems.inList(listId),
-        ListItemMapper.PROJECTION,
+        ListItemMapper.projection,
         null,
         null,
         null,
-        ListItemListMapper()
+        ListItemListMapper
       )
     }
   }

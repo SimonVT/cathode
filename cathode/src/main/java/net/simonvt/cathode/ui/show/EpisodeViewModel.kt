@@ -26,13 +26,12 @@ import net.simonvt.cathode.actions.comments.SyncEpisodeComments
 import net.simonvt.cathode.actions.invokeAsync
 import net.simonvt.cathode.actions.seasons.SyncSeason
 import net.simonvt.cathode.common.data.MappedCursorLiveData
-import net.simonvt.cathode.common.entity.Comment
-import net.simonvt.cathode.common.entity.Episode
+import net.simonvt.cathode.entity.Comment
+import net.simonvt.cathode.entity.Episode
 import net.simonvt.cathode.entitymapper.CommentListMapper
 import net.simonvt.cathode.entitymapper.CommentMapper
 import net.simonvt.cathode.entitymapper.EpisodeMapper
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns
-import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Comments
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper
@@ -64,29 +63,29 @@ class EpisodeViewModel @Inject constructor(
       episode = MappedCursorLiveData(
         context,
         Episodes.withId(episodeId),
-        PROJECTION,
+        EpisodeMapper.projection,
         null,
         null,
         null,
-        EpisodeMapper()
+        EpisodeMapper
       )
       userComments = MappedCursorLiveData(
         context,
         Comments.fromEpisode(episodeId),
-        CommentMapper.PROJECTION,
+        CommentMapper.projection,
         CommentColumns.IS_USER_COMMENT + "=1",
         null,
         null,
-        CommentListMapper()
+        CommentListMapper
       )
       comments = MappedCursorLiveData(
         context,
         Comments.fromEpisode(episodeId),
-        CommentMapper.PROJECTION,
+        CommentMapper.projection,
         CommentColumns.IS_USER_COMMENT + "=0 AND " + CommentColumns.SPOILER + "=0",
         null,
         CommentColumns.LIKES + " DESC LIMIT 3",
-        CommentListMapper()
+        CommentListMapper
       )
 
       episode.observeForever(episodeObserver)
@@ -100,7 +99,7 @@ class EpisodeViewModel @Inject constructor(
 
   private val episodeObserver = Observer<Episode> { episode ->
     viewModelScope.async {
-      if (System.currentTimeMillis() > episode.lastCommentSync!! + SYNC_INTERVAL_COMMENTS) {
+      if (System.currentTimeMillis() > episode.lastCommentSync + SYNC_INTERVAL_COMMENTS) {
         val showId = episodeHelper.getShowId(episodeId)
         val traktId = showHelper.getTraktId(showId)
         syncEpisodeComments.invokeAsync(
@@ -129,28 +128,6 @@ class EpisodeViewModel @Inject constructor(
   }
 
   companion object {
-
     private const val SYNC_INTERVAL_COMMENTS = 3 * DateUtils.HOUR_IN_MILLIS
-
-    private val PROJECTION = arrayOf(
-      EpisodeColumns.ID,
-      EpisodeColumns.TRAKT_ID,
-      EpisodeColumns.TITLE,
-      EpisodeColumns.OVERVIEW,
-      EpisodeColumns.FIRST_AIRED,
-      EpisodeColumns.WATCHED,
-      EpisodeColumns.IN_COLLECTION,
-      EpisodeColumns.IN_WATCHLIST,
-      EpisodeColumns.WATCHING,
-      EpisodeColumns.CHECKED_IN,
-      EpisodeColumns.USER_RATING,
-      EpisodeColumns.RATING,
-      EpisodeColumns.SEASON,
-      EpisodeColumns.EPISODE,
-      EpisodeColumns.LAST_COMMENT_SYNC,
-      EpisodeColumns.SHOW_ID,
-      EpisodeColumns.SEASON_ID,
-      EpisodeColumns.SHOW_TITLE
-    )
   }
 }

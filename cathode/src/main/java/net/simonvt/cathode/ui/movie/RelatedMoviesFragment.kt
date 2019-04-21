@@ -22,10 +22,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
-import net.simonvt.cathode.common.entity.Movie
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
 import net.simonvt.cathode.common.util.Ids
 import net.simonvt.cathode.common.util.guava.Preconditions
+import net.simonvt.cathode.entity.Movie
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.MoviesNavigationListener

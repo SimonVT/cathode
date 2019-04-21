@@ -39,10 +39,6 @@ import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.api.enumeration.ShowStatus
 import net.simonvt.cathode.api.util.TraktUtils
-import net.simonvt.cathode.common.entity.CastMember
-import net.simonvt.cathode.common.entity.Comment
-import net.simonvt.cathode.common.entity.Episode
-import net.simonvt.cathode.common.entity.Show
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment
 import net.simonvt.cathode.common.util.DateStringUtils
 import net.simonvt.cathode.common.util.Ids
@@ -53,6 +49,10 @@ import net.simonvt.cathode.common.widget.CircleTransformation
 import net.simonvt.cathode.common.widget.CircularProgressIndicator
 import net.simonvt.cathode.common.widget.OverflowView
 import net.simonvt.cathode.common.widget.RemoteImageView
+import net.simonvt.cathode.entity.CastMember
+import net.simonvt.cathode.entity.Comment
+import net.simonvt.cathode.entity.Episode
+import net.simonvt.cathode.entity.Show
 import net.simonvt.cathode.images.ImageType
 import net.simonvt.cathode.images.ImageUri
 import net.simonvt.cathode.provider.DatabaseContract
@@ -578,14 +578,14 @@ class ShowFragment : RefreshableAppBarFragment() {
     setBackdrop(backdropUri, true)
     showOverview = show!!.overview
 
-    currentRating = show!!.userRating!!
-    rating!!.setValue(show!!.rating!!)
+    currentRating = show!!.userRating
+    rating!!.setValue(show!!.rating)
 
-    calendarHidden = show!!.hiddenCalendar!!
+    calendarHidden = show!!.hiddenCalendar
 
     val isWatched = show!!.watchedCount > 0
     val isCollected = show!!.inCollectionCount > 0
-    inWatchlist = show!!.inWatchlist!!
+    inWatchlist = show!!.inWatchlist
     val hasCheckmark = isWatched || isCollected || inWatchlist
     checkmarks!!.visibility = if (hasCheckmark) View.VISIBLE else View.GONE
     watched!!.visibility = if (isWatched) View.VISIBLE else View.GONE
@@ -664,12 +664,11 @@ class ShowFragment : RefreshableAppBarFragment() {
     viewOnTrakt!!.setOnClickListener {
       Intents.openUrl(
         requireContext(),
-        TraktUtils.getTraktShowUrl(traktId!!)
+        TraktUtils.getTraktShowUrl(traktId)
       )
     }
 
-    val hasImdbId = !TextUtils.isEmpty(imdbId)
-    if (hasImdbId) {
+    if (!imdbId.isNullOrEmpty()) {
       viewOnImdb!!.visibility = View.VISIBLE
       viewOnImdb!!.setOnClickListener {
         Intents.openUrl(
@@ -686,7 +685,7 @@ class ShowFragment : RefreshableAppBarFragment() {
       viewOnTvdb!!.setOnClickListener {
         Intents.openUrl(
           requireContext(),
-          TraktUtils.getTvdbUrl(tvdbId!!)
+          TraktUtils.getTvdbUrl(tvdbId)
         )
       }
     } else {
@@ -698,7 +697,7 @@ class ShowFragment : RefreshableAppBarFragment() {
       viewOnTmdb!!.setOnClickListener {
         Intents.openUrl(
           requireContext(),
-          TraktUtils.getTmdbTvUrl(tmdbId!!)
+          TraktUtils.getTmdbTvUrl(tmdbId)
         )
       }
     } else {
@@ -741,7 +740,7 @@ class ShowFragment : RefreshableAppBarFragment() {
           LayoutInflater.from(requireContext())
             .inflate(R.layout.section_people_item, castContainer, false)
 
-        val personId = castMember.person.id!!
+        val personId = castMember.person.id
         val headshotUrl = ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, personId)
 
         val headshot = v.findViewById<RemoteImageView>(R.id.headshot)
@@ -789,7 +788,7 @@ class ShowFragment : RefreshableAppBarFragment() {
 
         val ratingText: String
         if (show.votes >= 1000) {
-          val convertedVotes = show.votes!! / 1000.0f
+          val convertedVotes = show.votes / 1000.0f
           val formattedVotes = String.format(Locale.getDefault(), "%.1f", convertedVotes)
           ratingText = getString(R.string.related_rating_thousands, formattedRating, formattedVotes)
         } else {
@@ -832,8 +831,11 @@ class ShowFragment : RefreshableAppBarFragment() {
       toWatchId = toWatch!!.id
 
       toWatchTitle = DataHelper.getEpisodeTitle(
-        requireContext(), toWatch!!.title, toWatch!!.season!!,
-        toWatch!!.episode!!, toWatch!!.watched!!
+        requireContext(),
+        toWatch!!.title,
+        toWatch!!.season,
+        toWatch!!.episode,
+        toWatch!!.watched
       )
       val toWatchEpisodeText =
         getString(R.string.season_x_episode_y, toWatch!!.season, toWatch!!.episode)
@@ -845,10 +847,10 @@ class ShowFragment : RefreshableAppBarFragment() {
       toWatchHolder!!.episodeScreenshot.setImage(screenshotUri)
 
       var firstAiredString =
-        DateStringUtils.getAirdateInterval(requireContext(), toWatch!!.firstAired!!, false)
+        DateStringUtils.getAirdateInterval(requireContext(), toWatch!!.firstAired, false)
 
       toWatchHolder!!.episodeOverflow.removeItems()
-      if (toWatch!!.checkedIn!!) {
+      if (toWatch!!.checkedIn) {
         toWatchHolder!!.episodeOverflow.addItem(
           R.id.action_checkin_cancel,
           R.string.action_checkin_cancel
@@ -878,13 +880,16 @@ class ShowFragment : RefreshableAppBarFragment() {
       lastWatchedId = lastWatched!!.id
 
       val title = DataHelper.getEpisodeTitle(
-        requireContext(), lastWatched!!.title, lastWatched!!.season!!,
-        lastWatched!!.episode!!, lastWatched!!.watched!!
+        requireContext(),
+        lastWatched!!.title,
+        lastWatched!!.season,
+        lastWatched!!.episode,
+        lastWatched!!.watched
       )
       lastWatchedHolder!!.episodeTitle.text = title
 
       val firstAiredString =
-        DateStringUtils.getAirdateInterval(requireContext(), lastWatched!!.firstAired!!, false)
+        DateStringUtils.getAirdateInterval(requireContext(), lastWatched!!.firstAired, false)
       lastWatchedHolder!!.episodeAirTime.text = firstAiredString
 
       val lastWatchedEpisodeText =
@@ -914,13 +919,16 @@ class ShowFragment : RefreshableAppBarFragment() {
       toCollectId = toCollect!!.id
 
       val title = DataHelper.getEpisodeTitle(
-        requireContext(), toCollect!!.title, toCollect!!.season!!,
-        toCollect!!.episode!!, toCollect!!.watched!!
+        requireContext(),
+        toCollect!!.title,
+        toCollect!!.season,
+        toCollect!!.episode,
+        toCollect!!.watched
       )
       toCollectHolder!!.episodeTitle.text = title
 
       val firstAiredString =
-        DateStringUtils.getAirdateInterval(requireContext(), toCollect!!.firstAired!!, false)
+        DateStringUtils.getAirdateInterval(requireContext(), toCollect!!.firstAired, false)
       toCollectHolder!!.episodeAirTime.text = firstAiredString
 
       val toCollectEpisodeText =
@@ -947,13 +955,16 @@ class ShowFragment : RefreshableAppBarFragment() {
       lastCollectedId = lastCollected!!.id
 
       val title = DataHelper.getEpisodeTitle(
-        requireContext(), lastCollected!!.title,
-        lastCollected!!.season!!, lastCollected!!.episode!!, lastCollected!!.watched!!
+        requireContext(),
+        lastCollected!!.title,
+        lastCollected!!.season,
+        lastCollected!!.episode,
+        lastCollected!!.watched
       )
       lastCollectedHolder!!.episodeTitle.text = title
 
       val firstAiredString =
-        DateStringUtils.getAirdateInterval(requireContext(), lastCollected!!.firstAired!!, false)
+        DateStringUtils.getAirdateInterval(requireContext(), lastCollected!!.firstAired, false)
       lastCollectedHolder!!.episodeAirTime.text = firstAiredString
 
       val lastCollectedEpisodeText = getString(

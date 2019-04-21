@@ -25,18 +25,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.entity.Episode;
-import net.simonvt.cathode.common.entity.Show;
 import net.simonvt.cathode.common.ui.adapter.HeaderAdapter;
 import net.simonvt.cathode.common.widget.CircularProgressIndicator;
 import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.common.widget.TimeStamp;
+import net.simonvt.cathode.entity.Episode;
+import net.simonvt.cathode.entity.Show;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
-import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.ui.history.AddToHistoryDialog;
 import net.simonvt.cathode.widget.IndicatorView;
@@ -58,23 +55,6 @@ public class ShowWatchlistAdapter extends HeaderAdapter<Object, RecyclerView.Vie
 
     void onRemoveEpisodeFromWatchlist(long episodeId);
   }
-
-  static final String[] PROJECTION_SHOW = new String[] {
-      Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.TVDB_ID,
-      Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
-      Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
-      Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST, Tables.SHOWS + "." + ShowColumns.RATING,
-  };
-
-  static final String[] PROJECTION_EPISODE = new String[] {
-      Tables.EPISODES + "." + EpisodeColumns.ID, Tables.EPISODES + "." + EpisodeColumns.TITLE,
-      Tables.EPISODES + "." + EpisodeColumns.WATCHED,
-      Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
-      Tables.EPISODES + "." + EpisodeColumns.SEASON, Tables.EPISODES + "." + EpisodeColumns.EPISODE,
-      Tables.EPISODES + "." + EpisodeColumns.TVDB_ID,
-      Tables.SHOWS + "." + ShowColumns.TITLE,
-  };
 
   private static final int TYPE_SHOW = 0;
 

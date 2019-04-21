@@ -23,8 +23,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
-import net.simonvt.cathode.common.entity.Movie
 import net.simonvt.cathode.common.ui.fragment.SwipeRefreshRecyclerFragment
+import net.simonvt.cathode.entity.Movie
 import net.simonvt.cathode.provider.ProviderSchematic.Movies
 import net.simonvt.cathode.settings.Settings
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler

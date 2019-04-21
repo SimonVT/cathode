@@ -25,15 +25,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.entity.Episode;
-import net.simonvt.cathode.common.entity.ListItem;
-import net.simonvt.cathode.common.entity.Movie;
-import net.simonvt.cathode.common.entity.Person;
-import net.simonvt.cathode.common.entity.Season;
-import net.simonvt.cathode.common.entity.Show;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.common.widget.RemoteImageView;
+import net.simonvt.cathode.entity.ListEpisode;
+import net.simonvt.cathode.entity.ListItem;
+import net.simonvt.cathode.entity.ListMovie;
+import net.simonvt.cathode.entity.ListPerson;
+import net.simonvt.cathode.entity.ListSeason;
+import net.simonvt.cathode.entity.ListShow;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.DatabaseContract;
@@ -99,7 +99,7 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
           final int position = showHolder.getAdapterPosition();
           if (position != RecyclerView.NO_POSITION) {
             ListItem item = getList().get(position);
-            Show show = item.getShow();
+            ListShow show = item.getShow();
             listener.onShowClick(show.getId(), show.getTitle(), show.getOverview());
           }
         }
@@ -114,7 +114,7 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
           final int position = seasonHolder.getAdapterPosition();
           if (position != RecyclerView.NO_POSITION) {
             ListItem item = getList().get(position);
-            Season season = item.getSeason();
+            ListSeason season = item.getSeason();
             listener.onSeasonClick(season.getShowId(), season.getId(), season.getShowTitle(),
                 season.getSeason());
           }
@@ -145,7 +145,7 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
           final int position = movieHolder.getAdapterPosition();
           if (position != RecyclerView.NO_POSITION) {
             ListItem item = getList().get(position);
-            Movie movie = item.getMovie();
+            ListMovie movie = item.getMovie();
             listener.onMovieClicked(movie.getId(), movie.getTitle(), movie.getOverview());
           }
         }
@@ -199,7 +199,7 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
     ListItem item = getList().get(position);
     if (holder.getItemViewType() == DatabaseContract.ItemType.SHOW) {
       ShowViewHolder showHolder = (ShowViewHolder) holder;
-      Show show = item.getShow();
+      ListShow show = item.getShow();
 
       String poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, show.getId());
       showHolder.poster.setImage(poster);
@@ -207,7 +207,7 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
       showHolder.overview.setText(show.getOverview());
     } else if (holder.getItemViewType() == DatabaseContract.ItemType.SEASON) {
       SeasonViewHolder seasonHolder = (SeasonViewHolder) holder;
-      Season season = item.getSeason();
+      ListSeason season = item.getSeason();
 
       String showPoster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, season.getShowId());
       seasonHolder.poster.setImage(showPoster);
@@ -216,7 +216,7 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
       seasonHolder.show.setText(season.getShowTitle());
     } else if (holder.getItemViewType() == DatabaseContract.ItemType.EPISODE) {
       EpisodeViewHolder episodeHolder = (EpisodeViewHolder) holder;
-      Episode episode = item.getEpisode();
+      ListEpisode episode = item.getEpisode();
 
       String title =
           DataHelper.getEpisodeTitle(getContext(), episode.getTitle(), episode.getSeason(),
@@ -228,7 +228,7 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
       episodeHolder.showTitle.setText(episode.getShowTitle());
     } else if (holder.getItemViewType() == DatabaseContract.ItemType.MOVIE) {
       MovieViewHolder movieHolder = (MovieViewHolder) holder;
-      Movie movie = item.getMovie();
+      ListMovie movie = item.getMovie();
 
       String poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, movie.getId());
       movieHolder.poster.setImage(poster);
@@ -236,7 +236,7 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
       movieHolder.overview.setText(movie.getOverview());
     } else {
       PersonViewHolder personHolder = (PersonViewHolder) holder;
-      Person person = item.getPerson();
+      ListPerson person = item.getPerson();
 
       String headshot = ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, person.getId());
       personHolder.headshot.setImage(headshot);

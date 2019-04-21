@@ -25,16 +25,19 @@ import net.simonvt.cathode.actions.invokeAsync
 import net.simonvt.cathode.actions.movies.SyncTrendingMovies
 import net.simonvt.cathode.actions.shows.SyncTrendingShows
 import net.simonvt.cathode.common.data.MappedCursorLiveData
-import net.simonvt.cathode.common.entity.Episode
-import net.simonvt.cathode.common.entity.Movie
-import net.simonvt.cathode.common.entity.Show
-import net.simonvt.cathode.common.entity.ShowWithEpisode
+import net.simonvt.cathode.entity.Episode
+import net.simonvt.cathode.entity.Movie
+import net.simonvt.cathode.entity.Show
+import net.simonvt.cathode.entity.ShowWithEpisode
 import net.simonvt.cathode.entitymapper.EpisodeListMapper
+import net.simonvt.cathode.entitymapper.EpisodeMapper
 import net.simonvt.cathode.entitymapper.MovieListMapper
+import net.simonvt.cathode.entitymapper.MovieMapper
 import net.simonvt.cathode.entitymapper.ShowListMapper
+import net.simonvt.cathode.entitymapper.ShowMapper
 import net.simonvt.cathode.entitymapper.ShowWithEpisodeListMapper
 import net.simonvt.cathode.entitymapper.ShowWithEpisodeMapper
-import net.simonvt.cathode.provider.ProviderSchematic
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes
 import net.simonvt.cathode.provider.ProviderSchematic.Movies
 import net.simonvt.cathode.provider.ProviderSchematic.Shows
 import net.simonvt.cathode.settings.SuggestionsTimestamps
@@ -66,61 +69,61 @@ class DashboardViewModel @Inject constructor(
     upcomingShows = MappedCursorLiveData(
       context,
       Shows.SHOWS_UPCOMING,
-      ShowWithEpisodeMapper.PROJECTION,
+      ShowWithEpisodeMapper.projection,
       null,
       null,
       upcomingSortBy.sortOrder,
-      ShowWithEpisodeListMapper()
+      ShowWithEpisodeListMapper
     )
 
     showsWatchlist = MappedCursorLiveData(
       context,
       Shows.SHOWS_WATCHLIST,
-      DashboardShowsWatchlistAdapter.PROJECTION,
+      ShowMapper.projection,
       null,
       null,
       null,
-      ShowListMapper()
+      ShowListMapper
     )
 
     episodeWatchlist = MappedCursorLiveData(
       context,
-      ProviderSchematic.Episodes.EPISODES_IN_WATCHLIST,
-      DashboardShowsWatchlistAdapter.PROJECTION_EPISODE,
+      Episodes.EPISODES_IN_WATCHLIST,
+      EpisodeMapper.projection,
       null,
       null,
       null,
-      EpisodeListMapper()
+      EpisodeListMapper
     )
 
     trendingShows = MappedCursorLiveData(
       context,
       Shows.SHOWS_TRENDING,
-      DashboardShowsAdapter.PROJECTION,
+      ShowMapper.projection,
       null,
       null,
       null,
-      ShowListMapper()
+      ShowListMapper
     )
 
     movieWatchlist = MappedCursorLiveData(
       context,
       Movies.MOVIES_WATCHLIST,
-      DashboardMoviesAdapter.PROJECTION,
+      MovieMapper.projection,
       null,
       null,
       null,
-      MovieListMapper()
+      MovieListMapper
     )
 
     trendingMovies = MappedCursorLiveData(
       context,
       Movies.TRENDING,
-      DashboardMoviesAdapter.PROJECTION,
+      MovieMapper.projection,
       null,
       null,
       null,
-      MovieListMapper()
+      MovieListMapper
     )
 
     upcomingSortByListener =

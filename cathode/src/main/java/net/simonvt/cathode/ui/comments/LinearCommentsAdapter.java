@@ -25,9 +25,9 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.entity.Comment;
 import net.simonvt.cathode.common.widget.CircleTransformation;
 import net.simonvt.cathode.common.widget.RemoteImageView;
+import net.simonvt.cathode.entity.Comment;
 
 public final class LinearCommentsAdapter {
 

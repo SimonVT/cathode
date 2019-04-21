@@ -21,26 +21,10 @@ import android.view.ViewGroup;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.entity.Movie;
 import net.simonvt.cathode.common.widget.OverflowView;
-import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
-import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
+import net.simonvt.cathode.entity.Movie;
 
 public class MoviesAdapter extends BaseMoviesAdapter<BaseMoviesAdapter.ViewHolder> {
-
-  public static final String[] PROJECTION = new String[] {
-      Tables.MOVIES + "." + MovieColumns.ID,
-      Tables.MOVIES + "." + MovieColumns.TITLE,
-      Tables.MOVIES + "." + MovieColumns.WATCHED,
-      Tables.MOVIES + "." + MovieColumns.IN_COLLECTION,
-      Tables.MOVIES + "." + MovieColumns.IN_WATCHLIST,
-      Tables.MOVIES + "." + MovieColumns.WATCHING,
-      Tables.MOVIES + "." + MovieColumns.CHECKED_IN,
-      Tables.MOVIES + "." + MovieColumns.OVERVIEW,
-      Tables.MOVIES + "." + MovieColumns.RATING,
-      Tables.MOVIES + "." + LastModifiedColumns.LAST_MODIFIED
-  };
 
   private int rowLayout;
 

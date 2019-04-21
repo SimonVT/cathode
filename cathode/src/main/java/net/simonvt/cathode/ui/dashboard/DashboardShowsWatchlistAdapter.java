@@ -27,33 +27,15 @@ import butterknife.ButterKnife;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.entity.Episode;
-import net.simonvt.cathode.common.entity.Show;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.RemoteImageView;
+import net.simonvt.cathode.entity.Episode;
+import net.simonvt.cathode.entity.Show;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
-import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
-import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.provider.util.DataHelper;
 
 public class DashboardShowsWatchlistAdapter extends BaseAdapter<Object, RecyclerView.ViewHolder> {
-
-  static final String[] PROJECTION = new String[] {
-      Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
-  };
-
-  static final String[] PROJECTION_EPISODE = new String[] {
-      Tables.EPISODES + "." + EpisodeColumns.ID, Tables.EPISODES + "." + EpisodeColumns.TITLE,
-      Tables.EPISODES + "." + EpisodeColumns.WATCHED,
-      Tables.EPISODES + "." + EpisodeColumns.FIRST_AIRED,
-      Tables.EPISODES + "." + EpisodeColumns.SEASON, Tables.EPISODES + "." + EpisodeColumns.EPISODE,
-      Tables.EPISODES + "." + LastModifiedColumns.LAST_MODIFIED,
-      Tables.SHOWS + "." + ShowColumns.TITLE,
-  };
 
   private static final int TYPE_SHOW = 0;
   private static final int TYPE_EPISODE = 1;

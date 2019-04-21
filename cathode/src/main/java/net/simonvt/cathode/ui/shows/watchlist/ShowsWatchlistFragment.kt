@@ -26,10 +26,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
-import net.simonvt.cathode.common.entity.Episode
-import net.simonvt.cathode.common.entity.Show
 import net.simonvt.cathode.common.ui.adapter.HeaderSpanLookup
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
+import net.simonvt.cathode.entity.Episode
+import net.simonvt.cathode.entity.Show
 import net.simonvt.cathode.settings.TraktLinkSettings
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler
 import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler

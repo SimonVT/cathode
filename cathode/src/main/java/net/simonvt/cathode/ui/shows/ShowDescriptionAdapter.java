@@ -26,15 +26,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.entity.Show;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.CircularProgressIndicator;
 import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.common.widget.RemoteImageView;
+import net.simonvt.cathode.entity.Show;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
-import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 import net.simonvt.cathode.widget.IndicatorView;
 
 public class ShowDescriptionAdapter extends BaseAdapter<Show, ShowDescriptionAdapter.ViewHolder> {
@@ -45,15 +43,6 @@ public class ShowDescriptionAdapter extends BaseAdapter<Show, ShowDescriptionAda
 
     void setIsInWatchlist(long showId, boolean inWatchlist);
   }
-
-  public static final String[] PROJECTION = new String[] {
-      Tables.SHOWS + "." + ShowColumns.ID, Tables.SHOWS + "." + ShowColumns.TITLE,
-      Tables.SHOWS + "." + ShowColumns.OVERVIEW, Tables.SHOWS + "." + ShowColumns.TVDB_ID,
-      Tables.SHOWS + "." + ShowColumns.WATCHED_COUNT,
-      Tables.SHOWS + "." + ShowColumns.IN_COLLECTION_COUNT,
-      Tables.SHOWS + "." + ShowColumns.IN_WATCHLIST, Tables.SHOWS + "." + ShowColumns.RATING,
-      Tables.SHOWS + "." + ShowColumns.LAST_MODIFIED,
-  };
 
   private ShowCallbacks callbacks;
 

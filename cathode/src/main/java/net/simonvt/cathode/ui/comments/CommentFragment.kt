@@ -23,9 +23,9 @@ import androidx.lifecycle.ViewModelProviders
 import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.ItemType
-import net.simonvt.cathode.common.entity.Comment
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
 import net.simonvt.cathode.common.util.guava.Preconditions
+import net.simonvt.cathode.entity.Comment
 import net.simonvt.cathode.settings.TraktLinkSettings
 import net.simonvt.cathode.sync.scheduler.CommentsTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory

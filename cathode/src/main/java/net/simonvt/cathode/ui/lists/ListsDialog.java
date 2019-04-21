@@ -38,7 +38,7 @@ import java.util.Comparator;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.entity.UserList;
+import net.simonvt.cathode.entity.UserList;
 import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.ui.lists.DialogListItemListMapper.DialogListItem;
 import timber.log.Timber;

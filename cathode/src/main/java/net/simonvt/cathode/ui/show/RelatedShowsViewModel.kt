@@ -21,12 +21,12 @@ import androidx.lifecycle.LiveData
 import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.shows.SyncRelatedShows
 import net.simonvt.cathode.common.data.MappedCursorLiveData
-import net.simonvt.cathode.common.entity.Show
+import net.simonvt.cathode.entity.Show
 import net.simonvt.cathode.entitymapper.ShowListMapper
+import net.simonvt.cathode.entitymapper.ShowMapper
 import net.simonvt.cathode.provider.ProviderSchematic.RelatedShows
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
 import net.simonvt.cathode.ui.RefreshableViewModel
-import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter
 import javax.inject.Inject
 
 class RelatedShowsViewModel @Inject constructor(
@@ -46,11 +46,11 @@ class RelatedShowsViewModel @Inject constructor(
       shows = MappedCursorLiveData<List<Show>>(
         context,
         RelatedShows.fromShow(showId),
-        ShowDescriptionAdapter.PROJECTION,
+        ShowMapper.projection,
         null,
         null,
         null,
-        ShowListMapper()
+        ShowListMapper
       )
     }
   }

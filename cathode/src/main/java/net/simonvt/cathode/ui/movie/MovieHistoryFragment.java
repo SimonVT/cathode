@@ -33,13 +33,12 @@ import java.util.Locale;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.common.entity.Movie;
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
+import net.simonvt.cathode.entity.Movie;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
-import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
 
@@ -53,11 +52,6 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
   enum Type {
     LOADING, ERROR, EMPTY, ITEM
   }
-
-  static final String[] MOVIE_PROJECTION = new String[] {
-      MovieColumns.TRAKT_ID, MovieColumns.TITLE, MovieColumns.BACKDROP, MovieColumns.RELEASED,
-      MovieColumns.RATING,
-  };
 
   private Movie movie;
 

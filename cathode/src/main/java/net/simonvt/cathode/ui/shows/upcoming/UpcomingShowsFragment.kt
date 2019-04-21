@@ -25,9 +25,9 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
-import net.simonvt.cathode.common.entity.ShowWithEpisode
 import net.simonvt.cathode.common.ui.adapter.HeaderSpanLookup
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
+import net.simonvt.cathode.entity.ShowWithEpisode
 import net.simonvt.cathode.settings.TraktLinkSettings
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
@@ -180,8 +180,8 @@ class UpcomingShowsFragment : ToolbarSwipeRefreshRecyclerFragment<RecyclerView.V
 
     val currentTime = System.currentTimeMillis()
 
-    val airedShows = shows.filter { show -> show.episode.firstAired!! <= currentTime }
-    val unairedShows = shows.filter { show -> show.episode.firstAired!! > currentTime }
+    val airedShows = shows.filter { show -> show.episode.firstAired <= currentTime }
+    val unairedShows = shows.filter { show -> show.episode.firstAired > currentTime }
 
     adapter.updateHeaderItems(R.string.header_aired, airedShows)
     adapter.updateHeaderItems(R.string.header_upcoming, unairedShows)

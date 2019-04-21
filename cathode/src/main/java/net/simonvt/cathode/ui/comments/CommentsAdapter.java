@@ -35,10 +35,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.entity.Comment;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.CircleTransformation;
 import net.simonvt.cathode.common.widget.RemoteImageView;
+import net.simonvt.cathode.entity.Comment;
 
 public class CommentsAdapter extends BaseAdapter<Comment, CommentsAdapter.ViewHolder> {
 

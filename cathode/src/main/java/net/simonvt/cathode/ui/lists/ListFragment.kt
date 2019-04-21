@@ -25,10 +25,10 @@ import androidx.lifecycle.ViewModelProviders
 import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.ItemType
-import net.simonvt.cathode.common.entity.ListItem
-import net.simonvt.cathode.common.entity.UserList
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
 import net.simonvt.cathode.common.util.guava.Preconditions
+import net.simonvt.cathode.entity.ListItem
+import net.simonvt.cathode.entity.UserList
 import net.simonvt.cathode.provider.DatabaseContract
 import net.simonvt.cathode.settings.TraktLinkSettings
 import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler
@@ -107,9 +107,12 @@ class ListFragment : ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHol
         if (listInfo != null) {
           val updateFragment = UpdateListFragment()
           updateFragment.arguments = UpdateListFragment.getArgs(
-            listId, listInfo!!.name, listInfo!!.description,
-            listInfo!!.privacy, listInfo!!.displayNumbers!!,
-            listInfo!!.allowComments!!
+            listId,
+            listInfo!!.name,
+            listInfo!!.description,
+            listInfo!!.privacy,
+            listInfo!!.displayNumbers,
+            listInfo!!.allowComments
           )
           updateFragment.show(fragmentManager!!, DIALOG_UPDATE)
         }

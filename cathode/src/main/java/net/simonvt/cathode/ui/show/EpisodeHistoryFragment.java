@@ -32,14 +32,13 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.service.SyncService;
-import net.simonvt.cathode.common.entity.Episode;
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.common.util.DateStringUtils;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
+import net.simonvt.cathode.entity.Episode;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
-import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
@@ -54,12 +53,6 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
   enum Type {
     LOADING, ERROR, EMPTY, ITEM
   }
-
-  static final String[] EPISODE_PROJECTION = new String[] {
-      EpisodeColumns.ID, EpisodeColumns.TRAKT_ID, EpisodeColumns.TITLE, EpisodeColumns.SEASON,
-      EpisodeColumns.EPISODE, EpisodeColumns.SCREENSHOT, EpisodeColumns.WATCHED,
-      EpisodeColumns.SHOW_TITLE, EpisodeColumns.FIRST_AIRED,
-  };
 
   private Episode episode;
 

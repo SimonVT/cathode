@@ -18,8 +18,8 @@ package net.simonvt.cathode.ui.suggestions.movies;
 import android.view.View;
 import androidx.fragment.app.FragmentActivity;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.entity.Movie;
 import net.simonvt.cathode.common.widget.OverflowView;
+import net.simonvt.cathode.entity.Movie;
 import net.simonvt.cathode.ui.movies.MoviesAdapter;
 
 public class MovieRecommendationsAdapter extends MoviesAdapter {

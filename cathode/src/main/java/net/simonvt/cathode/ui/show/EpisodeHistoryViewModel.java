@@ -22,7 +22,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.common.data.MappedCursorLiveData;
-import net.simonvt.cathode.common.entity.Episode;
+import net.simonvt.cathode.entity.Episode;
 import net.simonvt.cathode.entitymapper.EpisodeMapper;
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper;
@@ -49,7 +49,7 @@ public class EpisodeHistoryViewModel extends AndroidViewModel {
       this.episodeId = episodeId;
 
       episode = new MappedCursorLiveData<>(getApplication(), Episodes.withId(episodeId),
-          EpisodeHistoryFragment.EPISODE_PROJECTION, null, null, null, new EpisodeMapper());
+          EpisodeMapper.projection, null, null, null, EpisodeMapper.INSTANCE);
       history = new EpisodeHistoryLiveData(episodeId, syncService, episodeHelper);
     }
   }

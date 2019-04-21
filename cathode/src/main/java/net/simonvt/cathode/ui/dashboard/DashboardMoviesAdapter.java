@@ -25,22 +25,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.common.entity.Movie;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.RemoteImageView;
+import net.simonvt.cathode.entity.Movie;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
-import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
-import net.simonvt.cathode.provider.DatabaseSchematic;
 
 public class DashboardMoviesAdapter extends BaseAdapter<Movie, DashboardMoviesAdapter.ViewHolder> {
-
-  public static final String[] PROJECTION = new String[] {
-      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.ID,
-      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.TITLE,
-      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.OVERVIEW,
-      DatabaseSchematic.Tables.MOVIES + "." + MovieColumns.LAST_MODIFIED,
-  };
 
   private DashboardFragment.OverviewCallback callback;
 

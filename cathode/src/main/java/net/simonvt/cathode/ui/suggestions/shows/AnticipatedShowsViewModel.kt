@@ -24,13 +24,13 @@ import net.simonvt.cathode.actions.invokeAsync
 import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.shows.SyncAnticipatedShows
 import net.simonvt.cathode.common.data.MappedCursorLiveData
-import net.simonvt.cathode.common.entity.Show
+import net.simonvt.cathode.entity.Show
 import net.simonvt.cathode.entitymapper.ShowListMapper
+import net.simonvt.cathode.entitymapper.ShowMapper
 import net.simonvt.cathode.provider.ProviderSchematic.Shows
 import net.simonvt.cathode.settings.Settings
 import net.simonvt.cathode.settings.SuggestionsTimestamps
 import net.simonvt.cathode.ui.RefreshableViewModel
-import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter
 import net.simonvt.cathode.ui.suggestions.shows.AnticipatedShowsFragment.SortBy
 import javax.inject.Inject
 
@@ -53,11 +53,11 @@ class AnticipatedShowsViewModel @Inject constructor(
     anticipated = MappedCursorLiveData(
       context,
       Shows.SHOWS_ANTICIPATED,
-      ShowDescriptionAdapter.PROJECTION,
+      ShowMapper.projection,
       null,
       null,
       sortBy!!.sortOrder,
-      ShowListMapper()
+      ShowListMapper
     )
 
     viewModelScope.launch {

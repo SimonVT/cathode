@@ -21,10 +21,12 @@ import androidx.lifecycle.LiveData
 import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.user.SyncHiddenItems
 import net.simonvt.cathode.common.data.MappedCursorLiveData
-import net.simonvt.cathode.common.entity.Movie
-import net.simonvt.cathode.common.entity.Show
+import net.simonvt.cathode.entity.Movie
+import net.simonvt.cathode.entity.Show
 import net.simonvt.cathode.entitymapper.MovieListMapper
+import net.simonvt.cathode.entitymapper.MovieMapper
 import net.simonvt.cathode.entitymapper.ShowListMapper
+import net.simonvt.cathode.entitymapper.ShowMapper
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Movies
@@ -47,38 +49,38 @@ class HiddenViewModel @Inject constructor(
     showsCalendar = MappedCursorLiveData(
       context,
       Shows.SHOWS,
-      HiddenItemsAdapter.PROJECTION_SHOW,
+      ShowMapper.projection,
       ShowColumns.HIDDEN_CALENDAR + "=1",
       null,
       Shows.SORT_TITLE,
-      ShowListMapper()
+      ShowListMapper
     )
     showsWatched = MappedCursorLiveData(
       context,
       Shows.SHOWS,
-      HiddenItemsAdapter.PROJECTION_SHOW,
+      ShowMapper.projection,
       ShowColumns.HIDDEN_WATCHED + "=1",
       null,
       Shows.SORT_TITLE,
-      ShowListMapper()
+      ShowListMapper
     )
     showsCollected = MappedCursorLiveData(
       context,
       Shows.SHOWS,
-      HiddenItemsAdapter.PROJECTION_SHOW,
+      ShowMapper.projection,
       ShowColumns.HIDDEN_COLLECTED + "=1",
       null,
       Shows.SORT_TITLE,
-      ShowListMapper()
+      ShowListMapper
     )
     moviesCalendar = MappedCursorLiveData(
       context,
       Movies.MOVIES,
-      HiddenItemsAdapter.PROJECTION_MOVIES,
+      MovieMapper.projection,
       MovieColumns.HIDDEN_CALENDAR + "=1",
       null,
       Movies.SORT_TITLE,
-      MovieListMapper()
+      MovieListMapper
     )
   }
 

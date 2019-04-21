@@ -20,7 +20,7 @@ import android.content.Context
 import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.user.SyncWatchedShows
 import net.simonvt.cathode.common.data.MappedCursorLiveData
-import net.simonvt.cathode.common.entity.ShowWithEpisode
+import net.simonvt.cathode.entity.ShowWithEpisode
 import net.simonvt.cathode.entitymapper.ShowWithEpisodeListMapper
 import net.simonvt.cathode.entitymapper.ShowWithEpisodeMapper
 import net.simonvt.cathode.provider.ProviderSchematic.Shows
@@ -38,11 +38,11 @@ class UpcomingViewModel @Inject constructor(
   val shows: MappedCursorLiveData<List<ShowWithEpisode>> = MappedCursorLiveData(
     context,
     Shows.SHOWS_UPCOMING,
-    ShowWithEpisodeMapper.PROJECTION,
+    ShowWithEpisodeMapper.projection,
     null,
     null,
     upcomingSortByPreference.get().sortOrder,
-    ShowWithEpisodeListMapper()
+    ShowWithEpisodeListMapper
   )
 
   private val upcomingTimeChangeListener =

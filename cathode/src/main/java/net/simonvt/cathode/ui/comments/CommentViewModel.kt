@@ -25,7 +25,7 @@ import net.simonvt.cathode.actions.comments.SyncComment
 import net.simonvt.cathode.actions.invokeAsync
 import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.common.data.MappedCursorLiveData
-import net.simonvt.cathode.common.entity.Comment
+import net.simonvt.cathode.entity.Comment
 import net.simonvt.cathode.entitymapper.CommentListMapper
 import net.simonvt.cathode.entitymapper.CommentMapper
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns
@@ -52,21 +52,21 @@ class CommentViewModel @Inject constructor(
       comment = MappedCursorLiveData(
         context,
         Comments.COMMENTS_WITH_PROFILE,
-        CommentMapper.PROJECTION,
+        CommentMapper.projection,
         Tables.COMMENTS + "." + CommentColumns.ID + "=?",
         arrayOf(commentId.toString()),
         null,
-        CommentMapper()
+        CommentMapper
       )
 
       replies = MappedCursorLiveData(
         context,
         Comments.withParent(commentId),
-        CommentMapper.PROJECTION,
+        CommentMapper.projection,
         null,
         null,
         null,
-        CommentListMapper()
+        CommentListMapper
       )
 
       comment.observeForever(commentObserver)
