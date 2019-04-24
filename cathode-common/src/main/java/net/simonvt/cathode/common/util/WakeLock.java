@@ -18,6 +18,7 @@ package net.simonvt.cathode.common.util;
 
 import android.content.Context;
 import android.os.PowerManager;
+import android.text.format.DateUtils;
 import java.util.HashMap;
 import java.util.Map;
 import timber.log.Timber;
@@ -26,18 +27,21 @@ public final class WakeLock {
 
   private static final Map<String, PowerManager.WakeLock> WAKELOCKS = new HashMap<>();
 
+  private static final long TIMEOUT = 10 * DateUtils.MINUTE_IN_MILLIS;
+
   private WakeLock() {
   }
 
   private static PowerManager.WakeLock getLock(Context context, String tag) {
-    PowerManager.WakeLock wakeLock = WAKELOCKS.get(tag);
-    if (wakeLock == null) {
-      PowerManager mgr = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-      wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, tag);
-      WAKELOCKS.put(tag, wakeLock);
+    synchronized (WAKELOCKS) {
+      PowerManager.WakeLock wakeLock = WAKELOCKS.get(tag);
+      if (wakeLock == null || !wakeLock.isHeld()) {
+        PowerManager mgr = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, tag);
+        WAKELOCKS.put(tag, wakeLock);
+      }
+      return wakeLock;
     }
-
-    return wakeLock;
   }
 
   static boolean hasLock(Context context, String tag) {
@@ -49,15 +53,18 @@ public final class WakeLock {
     PowerManager.WakeLock lock = getLock(context, tag);
     if (!lock.isHeld()) {
       Timber.d("Acquiring wakelock for tag: %s", tag);
-      lock.acquire();
+      lock.acquire(TIMEOUT);
     }
   }
 
   public static void release(Context context, String tag) {
-    PowerManager.WakeLock lock = getLock(context, tag);
-    if (lock.isHeld()) {
-      Timber.d("Releasing wakelock for tag: %s", tag);
-      lock.release();
+    synchronized (WAKELOCKS) {
+      PowerManager.WakeLock lock = getLock(context, tag);
+      if (lock.isHeld()) {
+        Timber.d("Releasing wakelock for tag: %s", tag);
+        lock.release();
+      }
+      WAKELOCKS.remove(tag);
     }
   }
 }
