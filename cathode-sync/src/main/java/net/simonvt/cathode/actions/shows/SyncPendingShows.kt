@@ -27,7 +27,6 @@ import net.simonvt.cathode.common.database.Cursors
 import net.simonvt.cathode.common.database.forEach
 import net.simonvt.cathode.common.database.getLong
 import net.simonvt.cathode.common.event.ItemsUpdatedEvent
-import net.simonvt.cathode.provider.DatabaseContract.ItemType
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns
@@ -35,6 +34,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.ListItems
 import net.simonvt.cathode.provider.ProviderSchematic.Seasons
 import net.simonvt.cathode.provider.ProviderSchematic.Shows
 import net.simonvt.cathode.provider.delete
+import net.simonvt.cathode.provider.entity.ItemTypeString
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper
 import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
@@ -84,7 +84,8 @@ class SyncPendingShows @Inject constructor(
     val listShows = context.contentResolver.query(
       ListItems.LIST_ITEMS,
       arrayOf(ListItemColumns.ITEM_ID),
-      ListItemColumns.ITEM_TYPE + "=" + ItemType.SHOW
+      ListItemColumns.ITEM_TYPE + "=?",
+      arrayOf(ItemTypeString.SHOW)
     )
     listShows.forEach {
       val showId = Cursors.getLong(listShows, ListItemColumns.ITEM_ID)
@@ -101,7 +102,7 @@ class SyncPendingShows @Inject constructor(
     val listSeasons = context.contentResolver.query(
       ListItems.LIST_ITEMS,
       arrayOf(ListItemColumns.ITEM_ID),
-      ListItemColumns.ITEM_TYPE + "=" + ItemType.SEASON
+      ListItemColumns.ITEM_TYPE + "=" + ItemTypeString.SEASON
     )
     listSeasons.forEach {
       val seasonId = Cursors.getLong(listSeasons, ListItemColumns.ITEM_ID)
@@ -119,7 +120,7 @@ class SyncPendingShows @Inject constructor(
     val listEpisodes = context.contentResolver.query(
       ListItems.LIST_ITEMS,
       arrayOf(ListItemColumns.ITEM_ID),
-      ListItemColumns.ITEM_TYPE + "=" + ItemType.EPISODE
+      ListItemColumns.ITEM_TYPE + "=" + ItemTypeString.EPISODE
     )
     listEpisodes.forEach {
       val episodeId = Cursors.getLong(listEpisodes, ListItemColumns.ITEM_ID)

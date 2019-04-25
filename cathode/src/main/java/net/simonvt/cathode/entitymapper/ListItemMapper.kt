@@ -17,6 +17,7 @@
 package net.simonvt.cathode.entitymapper
 
 import android.database.Cursor
+import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.api.enumeration.ItemType.EPISODE
 import net.simonvt.cathode.api.enumeration.ItemType.MOVIE
 import net.simonvt.cathode.api.enumeration.ItemType.PERSON
@@ -30,7 +31,6 @@ import net.simonvt.cathode.entity.ListMovie
 import net.simonvt.cathode.entity.ListPerson
 import net.simonvt.cathode.entity.ListSeason
 import net.simonvt.cathode.entity.ListShow
-import net.simonvt.cathode.provider.DatabaseContract
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns
 import net.simonvt.cathode.provider.DatabaseContract.LastModifiedColumns
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns
@@ -51,12 +51,13 @@ object ListItemMapper : MappedCursorLiveData.CursorMapper<ListItem> {
 
   fun mapItem(cursor: Cursor): ListItem {
     val listItemId = Cursors.getLong(cursor, ListItemColumns.ID)
-    val itemType = Cursors.getInt(cursor, ListItemColumns.ITEM_TYPE)
+    val itemTypeString = Cursors.getString(cursor, ListItemColumns.ITEM_TYPE)
+    val itemType = ItemType.fromValue(itemTypeString)
     val itemId = Cursors.getLong(cursor, ListItemColumns.ITEM_ID)
     val listId = Cursors.getLong(cursor, ListItemColumns.LIST_ID)
 
     when (itemType) {
-      DatabaseContract.ItemType.SHOW -> {
+      SHOW -> {
         val title = Cursors.getString(cursor, ShowColumns.TITLE)
         val overview = Cursors.getString(cursor, ListItemColumns.OVERVIEW)
         val watchedCount = Cursors.getInt(cursor, ShowColumns.WATCHED_COUNT)
@@ -77,7 +78,7 @@ object ListItemMapper : MappedCursorLiveData.CursorMapper<ListItem> {
         return ListItem(listItemId, listId, SHOW, show = show)
       }
 
-      DatabaseContract.ItemType.SEASON -> {
+      SEASON -> {
         val seasonNumber = Cursors.getInt(cursor, SeasonColumns.SEASON)
         val showId = Cursors.getLong(cursor, SeasonColumns.SHOW_ID)
         val showTitle = Cursors.getString(cursor, "seasonShowTitle")
@@ -91,7 +92,7 @@ object ListItemMapper : MappedCursorLiveData.CursorMapper<ListItem> {
         )
       }
 
-      DatabaseContract.ItemType.EPISODE -> {
+      EPISODE -> {
         val title = Cursors.getString(cursor, EpisodeColumns.TITLE)
         val season = Cursors.getInt(cursor, EpisodeColumns.SEASON)
         val episodeNumber = Cursors.getInt(cursor, EpisodeColumns.EPISODE)
@@ -120,7 +121,7 @@ object ListItemMapper : MappedCursorLiveData.CursorMapper<ListItem> {
         )
       }
 
-      DatabaseContract.ItemType.MOVIE -> {
+      MOVIE -> {
         val title = Cursors.getString(cursor, MovieColumns.TITLE)
         val overview = Cursors.getString(cursor, ListItemColumns.OVERVIEW)
         val watched = Cursors.getBoolean(cursor, MovieColumns.WATCHED)
@@ -148,7 +149,7 @@ object ListItemMapper : MappedCursorLiveData.CursorMapper<ListItem> {
         )
       }
 
-      DatabaseContract.ItemType.PERSON -> {
+      PERSON -> {
         val name = Cursors.getString(cursor, PersonColumns.NAME)
         val person = ListPerson(itemId, name)
         return ListItem(

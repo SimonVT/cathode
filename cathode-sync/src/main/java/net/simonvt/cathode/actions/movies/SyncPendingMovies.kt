@@ -23,11 +23,11 @@ import net.simonvt.cathode.api.service.MoviesService
 import net.simonvt.cathode.common.database.forEach
 import net.simonvt.cathode.common.database.getLong
 import net.simonvt.cathode.common.event.ItemsUpdatedEvent
-import net.simonvt.cathode.provider.DatabaseContract.ItemType
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems
 import net.simonvt.cathode.provider.ProviderSchematic.Movies
+import net.simonvt.cathode.provider.entity.ItemTypeString
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper
 import net.simonvt.cathode.provider.query
 import timber.log.Timber
@@ -68,7 +68,8 @@ class SyncPendingMovies @Inject constructor(
     val listMovies = context.contentResolver.query(
       ListItems.LIST_ITEMS,
       arrayOf(ListItemColumns.ITEM_ID),
-      ListItemColumns.ITEM_TYPE + "=" + ItemType.MOVIE
+      ListItemColumns.ITEM_TYPE + "=?",
+      arrayOf(ItemTypeString.MOVIE)
     )
     listMovies.forEach { cursor ->
       val movieId = cursor.getLong(ListItemColumns.ITEM_ID)

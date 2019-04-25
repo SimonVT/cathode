@@ -26,12 +26,12 @@ import net.simonvt.cathode.api.service.CommentsService
 import net.simonvt.cathode.api.service.ShowsService
 import net.simonvt.cathode.common.database.Cursors
 import net.simonvt.cathode.common.database.forEach
-import net.simonvt.cathode.provider.DatabaseContract
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Comments
 import net.simonvt.cathode.provider.ProviderSchematic.Shows
 import net.simonvt.cathode.provider.batch
+import net.simonvt.cathode.provider.entity.ItemTypeString
 import net.simonvt.cathode.provider.helper.CommentsHelper
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
 import net.simonvt.cathode.provider.helper.UserDatabaseHelper
@@ -53,7 +53,6 @@ class SyncShowComments @Inject constructor(
     showsService.getComments(params.traktId, page, LIMIT, Extended.FULL_IMAGES)
 
   override suspend fun handleResponse(params: Params, page: Int, response: List<Comment>) {
-    val itemType = DatabaseContract.ItemType.SHOW
     val showId = showHelper.getId(params.traktId)
 
     val ops = arrayListOf<ContentProviderOperation>()
@@ -64,7 +63,7 @@ class SyncShowComments @Inject constructor(
       Comments.COMMENTS,
       arrayOf(CommentColumns.ID),
       CommentColumns.ITEM_TYPE + "=? AND " + CommentColumns.ITEM_ID + "=?",
-      arrayOf(itemType.toString(), showId.toString())
+      arrayOf(ItemTypeString.SHOW, showId.toString())
     )
     localComments.forEach { cursor ->
       val id = Cursors.getLong(cursor, CommentColumns.ID)
@@ -81,7 +80,7 @@ class SyncShowComments @Inject constructor(
       val values = CommentsHelper.getValues(comment)
       values.put(CommentColumns.USER_ID, userId)
 
-      values.put(CommentColumns.ITEM_TYPE, itemType)
+      values.put(CommentColumns.ITEM_TYPE, ItemTypeString.SHOW)
       values.put(CommentColumns.ITEM_ID, showId)
 
       val commentId = comment.id

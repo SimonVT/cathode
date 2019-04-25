@@ -27,12 +27,12 @@ import net.simonvt.cathode.api.entity.ListItem
 import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.api.service.UsersService
 import net.simonvt.cathode.common.database.forEach
-import net.simonvt.cathode.common.database.getInt
 import net.simonvt.cathode.common.database.getLong
-import net.simonvt.cathode.provider.DatabaseContract
+import net.simonvt.cathode.common.database.getString
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems
 import net.simonvt.cathode.provider.batch
+import net.simonvt.cathode.provider.entity.ItemTypeString
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper
 import net.simonvt.cathode.provider.helper.ListWrapper
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper
@@ -58,9 +58,9 @@ class SyncList @Inject constructor(
   private val workManager: WorkManager
 ) : CallAction<Params, List<ListItem>>() {
 
-  private class Item constructor(var itemType: Int, var itemId: Long)
+  private class Item constructor(var itemType: ItemType, var itemId: Long)
 
-  private fun getItemPosition(items: List<Item>, itemType: Int, itemId: Long): Int {
+  private fun getItemPosition(items: List<Item>, itemType: ItemType, itemId: Long): Int {
     var i = 0
     val count = items.size
     while (i < count) {
@@ -92,9 +92,11 @@ class SyncList @Inject constructor(
       arrayOf(ListItemColumns.ITEM_TYPE, ListItemColumns.ITEM_ID)
     )
     localListItems.forEach { cursor ->
+      val itemTypeString = cursor.getString(ListItemColumns.ITEM_TYPE)
+      val itemType = ItemType.fromValue(itemTypeString)
       oldItems.add(
         Item(
-          cursor.getInt(ListItemColumns.ITEM_TYPE),
+          itemType,
           cursor.getLong(ListItemColumns.ITEM_ID)
         )
       )
@@ -117,14 +119,14 @@ class SyncList @Inject constructor(
             syncPendingShows = true
           }
 
-          val itemPosition = getItemPosition(oldItems, DatabaseContract.ItemType.SHOW, showId)
+          val itemPosition = getItemPosition(oldItems, ItemType.SHOW, showId)
           if (itemPosition >= 0) {
             oldItems.removeAt(itemPosition)
           } else {
             val opBuilder = ContentProviderOperation.newInsert(ListItems.LIST_ITEMS)
               .withValue(ListItemColumns.LISTED_AT, listItem.listed_at.timeInMillis)
               .withValue(ListItemColumns.LIST_ID, listId)
-              .withValue(ListItemColumns.ITEM_TYPE, DatabaseContract.ItemType.SHOW)
+              .withValue(ListItemColumns.ITEM_TYPE, ItemTypeString.SHOW)
               .withValue(ListItemColumns.ITEM_ID, showId)
             ops.add(opBuilder.build())
           }
@@ -145,14 +147,14 @@ class SyncList @Inject constructor(
             syncPendingShows = true
           }
 
-          val itemPosition = getItemPosition(oldItems, DatabaseContract.ItemType.SEASON, seasonId)
+          val itemPosition = getItemPosition(oldItems, ItemType.SEASON, seasonId)
           if (itemPosition >= 0) {
             oldItems.removeAt(itemPosition)
           } else {
             val opBuilder = ContentProviderOperation.newInsert(ListItems.LIST_ITEMS)
               .withValue(ListItemColumns.LISTED_AT, listItem.listed_at.timeInMillis)
               .withValue(ListItemColumns.LIST_ID, listId)
-              .withValue(ListItemColumns.ITEM_TYPE, DatabaseContract.ItemType.SEASON)
+              .withValue(ListItemColumns.ITEM_TYPE, ItemTypeString.SEASON)
               .withValue(ListItemColumns.ITEM_ID, seasonId)
             ops.add(opBuilder.build())
           }
@@ -179,14 +181,14 @@ class SyncList @Inject constructor(
             syncPendingShows = true
           }
 
-          val itemPosition = getItemPosition(oldItems, DatabaseContract.ItemType.EPISODE, episodeId)
+          val itemPosition = getItemPosition(oldItems, ItemType.EPISODE, episodeId)
           if (itemPosition >= 0) {
             oldItems.removeAt(itemPosition)
           } else {
             val opBuilder = ContentProviderOperation.newInsert(ListItems.LIST_ITEMS)
               .withValue(ListItemColumns.LISTED_AT, listItem.listed_at.timeInMillis)
               .withValue(ListItemColumns.LIST_ID, listId)
-              .withValue(ListItemColumns.ITEM_TYPE, DatabaseContract.ItemType.EPISODE)
+              .withValue(ListItemColumns.ITEM_TYPE, ItemTypeString.EPISODE)
               .withValue(ListItemColumns.ITEM_ID, episodeId)
             ops.add(opBuilder.build())
           }
@@ -202,14 +204,14 @@ class SyncList @Inject constructor(
             syncPendingMovies = true
           }
 
-          val itemPosition = getItemPosition(oldItems, DatabaseContract.ItemType.MOVIE, movieId)
+          val itemPosition = getItemPosition(oldItems, ItemType.MOVIE, movieId)
           if (itemPosition >= 0) {
             oldItems.removeAt(itemPosition)
           } else {
             val opBuilder = ContentProviderOperation.newInsert(ListItems.LIST_ITEMS)
               .withValue(ListItemColumns.LISTED_AT, listItem.listed_at.timeInMillis)
               .withValue(ListItemColumns.LIST_ID, listId)
-              .withValue(ListItemColumns.ITEM_TYPE, DatabaseContract.ItemType.MOVIE)
+              .withValue(ListItemColumns.ITEM_TYPE, ItemTypeString.MOVIE)
               .withValue(ListItemColumns.ITEM_ID, movieId)
             ops.add(opBuilder.build())
           }
@@ -223,14 +225,14 @@ class SyncList @Inject constructor(
             syncPerson.invokeSync(SyncPerson.Params(traktId))
           }
 
-          val itemPosition = getItemPosition(oldItems, DatabaseContract.ItemType.PERSON, personId)
+          val itemPosition = getItemPosition(oldItems, ItemType.PERSON, personId)
           if (itemPosition >= 0) {
             oldItems.removeAt(itemPosition)
           } else {
             val opBuilder = ContentProviderOperation.newInsert(ListItems.LIST_ITEMS)
               .withValue(ListItemColumns.LISTED_AT, listItem.listed_at.timeInMillis)
               .withValue(ListItemColumns.LIST_ID, listId)
-              .withValue(ListItemColumns.ITEM_TYPE, DatabaseContract.ItemType.PERSON)
+              .withValue(ListItemColumns.ITEM_TYPE, ItemTypeString.PERSON)
               .withValue(ListItemColumns.ITEM_ID, personId)
             ops.add(opBuilder.build())
           }

@@ -15,6 +15,7 @@
  */
 package net.simonvt.cathode.provider;
 
+import net.simonvt.cathode.provider.entity.ItemTypeString;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables;
 
@@ -263,24 +264,24 @@ public interface Joins {
       "JOIN " + Tables.SHOWS + " AS " + Tables.SHOWS + " ON " + Tables.SHOWS + "."
           + DatabaseContract.ShowColumns.ID + "=" + Tables.EPISODES + "." + EpisodeColumns.SHOW_ID;
 
-  String LIST_SHOWS = "LEFT JOIN " + Tables.SHOWS + " ON " + DatabaseContract.ListItemColumns.ITEM_TYPE + "="
-      + DatabaseContract.ItemType.SHOW + " AND " + Tables.LIST_ITEMS + "."
+  String LIST_SHOWS = "LEFT JOIN " + Tables.SHOWS + " ON " + DatabaseContract.ListItemColumns.ITEM_TYPE + "='"
+      + ItemTypeString.SHOW + "' AND " + Tables.LIST_ITEMS + "."
       + DatabaseContract.ListItemColumns.ITEM_ID + "=" + Tables.SHOWS + "." + DatabaseContract.ShowColumns.ID;
 
-  String LIST_SEASONS = "LEFT JOIN " + Tables.SEASONS + " ON " + DatabaseContract.ListItemColumns.ITEM_TYPE + "="
-      + DatabaseContract.ItemType.SEASON + " AND " + Tables.LIST_ITEMS + "."
+  String LIST_SEASONS = "LEFT JOIN " + Tables.SEASONS + " ON " + DatabaseContract.ListItemColumns.ITEM_TYPE + "='"
+      + ItemTypeString.SEASON + "' AND " + Tables.LIST_ITEMS + "."
       + DatabaseContract.ListItemColumns.ITEM_ID + "=" + Tables.SEASONS + "." + DatabaseContract.SeasonColumns.ID;
 
-  String LIST_EPISODES = "LEFT JOIN " + Tables.EPISODES + " ON " + DatabaseContract.ListItemColumns.ITEM_TYPE + "="
-      + DatabaseContract.ItemType.EPISODE + " AND " + Tables.LIST_ITEMS + "."
+  String LIST_EPISODES = "LEFT JOIN " + Tables.EPISODES + " ON " + DatabaseContract.ListItemColumns.ITEM_TYPE + "='"
+      + ItemTypeString.EPISODE + "' AND " + Tables.LIST_ITEMS + "."
       + DatabaseContract.ListItemColumns.ITEM_ID + "=" + Tables.EPISODES + "." + EpisodeColumns.ID;
 
-  String LIST_MOVIES = "LEFT JOIN " + Tables.MOVIES + " ON " + DatabaseContract.ListItemColumns.ITEM_TYPE + "="
-      + DatabaseContract.ItemType.MOVIE + " AND " + Tables.LIST_ITEMS + "."
+  String LIST_MOVIES = "LEFT JOIN " + Tables.MOVIES + " ON " + DatabaseContract.ListItemColumns.ITEM_TYPE + "='"
+      + ItemTypeString.MOVIE + "' AND " + Tables.LIST_ITEMS + "."
       + DatabaseContract.ListItemColumns.ITEM_ID + "=" + Tables.MOVIES + "." + DatabaseContract.MovieColumns.ID;
 
-  String LIST_PEOPLE = "LEFT JOIN " + Tables.PEOPLE + " ON " + DatabaseContract.ListItemColumns.ITEM_TYPE + "="
-      + DatabaseContract.ItemType.PERSON + " AND " + Tables.LIST_ITEMS + "."
+  String LIST_PEOPLE = "LEFT JOIN " + Tables.PEOPLE + " ON " + DatabaseContract.ListItemColumns.ITEM_TYPE + "='"
+      + ItemTypeString.PERSON + "' AND " + Tables.LIST_ITEMS + "."
       + DatabaseContract.ListItemColumns.ITEM_ID + "=" + Tables.PEOPLE + "." + DatabaseContract.PersonColumns.ID;
 
   String LIST = LIST_SHOWS + " " + LIST_SEASONS + " " + LIST_EPISODES + " " + LIST_MOVIES + " "

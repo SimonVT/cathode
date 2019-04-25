@@ -38,6 +38,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowCrewColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowGenreColumns;
 import net.simonvt.cathode.provider.DatabaseContract.UserColumns;
+import net.simonvt.cathode.provider.entity.ItemTypeString;
 import net.simonvt.cathode.provider.generated.CathodeDatabase;
 import net.simonvt.cathode.provider.util.SqlIndex;
 import net.simonvt.cathode.provider.util.SqlUtils;
@@ -57,7 +58,7 @@ public final class DatabaseSchematic {
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 43;
+  static final int DATABASE_VERSION = 44;
 
   public interface Tables {
 
@@ -214,7 +215,7 @@ public final class DatabaseSchematic {
 
     String SHOW_DELETE_COMMENTS =
         "DELETE FROM " + Tables.COMMENTS + " WHERE " + Tables.COMMENTS + "."
-            + CommentColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.SHOW + " AND "
+            + CommentColumns.ITEM_TYPE + "='" + ItemTypeString.SHOW + "' AND "
             + Tables.COMMENTS + "." + CommentColumns.ITEM_ID + "=OLD." + ShowColumns.ID + ";";
 
     String SHOW_DELETE_RELATED =
@@ -227,7 +228,7 @@ public final class DatabaseSchematic {
 
     String EPISODE_DELETE_COMMENTS =
         "DELETE FROM " + Tables.COMMENTS + " WHERE " + Tables.COMMENTS + "."
-            + CommentColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.EPISODE + " AND "
+            + CommentColumns.ITEM_TYPE + "='" + ItemTypeString.EPISODE + "' AND "
             + Tables.COMMENTS + "." + CommentColumns.ITEM_ID + "=OLD." + EpisodeColumns.ID + ";";
 
     String MOVIE_DELETE_GENRES =
@@ -244,7 +245,7 @@ public final class DatabaseSchematic {
 
     String MOVIE_DELETE_COMMENTS =
         "DELETE FROM " + Tables.COMMENTS + " WHERE " + Tables.COMMENTS + "."
-            + CommentColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.MOVIE + " AND "
+            + CommentColumns.ITEM_TYPE + "='" + ItemTypeString.MOVIE + "' AND "
             + Tables.COMMENTS + "." + CommentColumns.ITEM_ID + "=OLD." + MovieColumns.ID + ";";
 
     String MOVIE_DELETE_RELATED =
@@ -757,6 +758,20 @@ public final class DatabaseSchematic {
     if (oldVersion < 43) {
       SqlUtils.createColumnIfNotExists(db, Tables.COMMENTS, CommentColumns.LAST_SYNC,
           DataType.Type.INTEGER, "0");
+    }
+
+    if (oldVersion < 44) {
+      db.execSQL("DROP TABLE IF EXISTS " + Tables.LIST_ITEMS);
+      db.execSQL("DROP TABLE IF EXISTS " + Tables.COMMENTS);
+      db.execSQL(CathodeDatabase.LIST_ITEMS);
+      db.execSQL(CathodeDatabase.COMMENTS);
+
+      db.execSQL("DROP TRIGGER IF EXISTS " + TriggerName.SHOW_DELETE);
+      db.execSQL("DROP TRIGGER IF EXISTS " + TriggerName.EPISODE_DELETE);
+      db.execSQL("DROP TRIGGER IF EXISTS " + TriggerName.MOVIE_DELETE);
+      db.execSQL(TRIGGER_SHOW_DELETE);
+      db.execSQL(TRIGGER_EPISODE_DELETE);
+      db.execSQL(TRIGGER_MOVIE_DELETE);
     }
   }
 }

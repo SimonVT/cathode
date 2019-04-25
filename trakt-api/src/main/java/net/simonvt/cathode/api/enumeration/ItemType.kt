@@ -31,6 +31,11 @@ enum class ItemType constructor(val value: String) {
   override fun toString(): String {
     return value
   }
+
+  companion object {
+    @JvmStatic
+    fun fromValue(value: String): ItemType = values().first { it.value == value }
+  }
 }
 
 class ItemTypeAdapter {

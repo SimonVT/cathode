@@ -43,7 +43,6 @@ import net.simonvt.cathode.entity.Comment
 import net.simonvt.cathode.entity.Episode
 import net.simonvt.cathode.images.ImageType
 import net.simonvt.cathode.images.ImageUri
-import net.simonvt.cathode.provider.DatabaseContract
 import net.simonvt.cathode.provider.util.DataHelper
 import net.simonvt.cathode.settings.TraktLinkSettings
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler
@@ -335,7 +334,7 @@ class EpisodeFragment : RefreshableAppBarFragment() {
       }
 
       R.id.action_list_add -> {
-        ListsDialog.newInstance(DatabaseContract.ItemType.EPISODE, episodeId)
+        ListsDialog.newInstance(ItemType.EPISODE, episodeId)
           .show(fragmentManager!!, DIALOG_LISTS_ADD)
         return true
       }

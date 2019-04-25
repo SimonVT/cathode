@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import net.simonvt.cathode.common.database.Cursors;
 import net.simonvt.cathode.common.util.Joiner;
+import net.simonvt.cathode.provider.entity.ItemTypeString;
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
@@ -1573,7 +1574,7 @@ public final class ProviderSchematic {
         type = Type.COMMENTS,
         name = "COMMENTS_FROM_SHOW",
         join = Joins.COMMENT_PROFILE,
-        where = CommentColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.SHOW,
+        where = CommentColumns.ITEM_TYPE + "='" + ItemTypeString.SHOW + "'",
         whereColumn = CommentColumns.ITEM_ID,
         pathSegment = 2)
     public static Uri fromShow(long showId) {
@@ -1585,7 +1586,7 @@ public final class ProviderSchematic {
         type = Type.COMMENTS,
         name = "COMMENTS_FROM_MOVIE",
         join = Joins.COMMENT_PROFILE,
-        where = CommentColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.MOVIE,
+        where = CommentColumns.ITEM_TYPE + "='" + ItemTypeString.MOVIE + "'",
         whereColumn = CommentColumns.ITEM_ID,
         pathSegment = 2)
     public static Uri fromMovie(long movieId) {
@@ -1597,7 +1598,7 @@ public final class ProviderSchematic {
         type = Type.COMMENTS,
         name = "COMMENTS_FROM_EPISODE",
         join = Joins.COMMENT_PROFILE,
-        where = CommentColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.EPISODE,
+        where = CommentColumns.ITEM_TYPE + "='" + ItemTypeString.EPISODE + "'",
         whereColumn = CommentColumns.ITEM_ID,
         pathSegment = 2)
     public static Uri fromEpisode(long episodeId) {

@@ -24,10 +24,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
+import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
 import net.simonvt.cathode.common.util.guava.Preconditions
 import net.simonvt.cathode.entity.Episode
-import net.simonvt.cathode.provider.DatabaseContract
 import net.simonvt.cathode.settings.TraktLinkSettings
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler
 import net.simonvt.cathode.sync.scheduler.SeasonTaskScheduler
@@ -144,8 +144,7 @@ class SeasonFragment : ToolbarSwipeRefreshRecyclerFragment<ViewHolder>(),
   override fun onMenuItemClick(item: MenuItem): Boolean {
     when (item.itemId) {
       R.id.action_list_add -> {
-        ListsDialog.newInstance(DatabaseContract.ItemType.SEASON, seasonId)
-          .show(fragmentManager!!, DIALOG_LISTS_ADD)
+        ListsDialog.newInstance(ItemType.SEASON, seasonId).show(fragmentManager!!, DIALOG_LISTS_ADD)
         return true
       }
 

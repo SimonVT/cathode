@@ -23,7 +23,6 @@ import net.simonvt.cathode.api.entity.CustomList;
 import net.simonvt.cathode.api.enumeration.Privacy;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.jobqueue.Job;
-import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.remote.action.lists.AddEpisode;
 import net.simonvt.cathode.remote.action.lists.AddMovie;
 import net.simonvt.cathode.remote.action.lists.AddPerson;
@@ -35,6 +34,15 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class SyncListJob extends Job {
+
+  public interface ListItemType {
+
+    int SHOW = 1;
+    int SEASON = 2;
+    int EPISODE = 3;
+    int MOVIE = 4;
+    int PERSON = 5;
+  }
 
   public static class ListItem {
 
@@ -102,27 +110,27 @@ public class SyncListJob extends Job {
 
       for (ListItem item : items) {
         switch (item.itemType) {
-          case DatabaseContract.ItemType.SHOW: {
+          case ListItemType.SHOW: {
             queue(new AddShow(listId, item.traktId));
             break;
           }
 
-          case DatabaseContract.ItemType.SEASON: {
+          case ListItemType.SEASON: {
             queue(new AddSeason(listId, item.traktId, item.season));
             break;
           }
 
-          case DatabaseContract.ItemType.EPISODE: {
+          case ListItemType.EPISODE: {
             queue(new AddEpisode(listId, item.traktId, item.season, item.episode));
             break;
           }
 
-          case DatabaseContract.ItemType.MOVIE: {
+          case ListItemType.MOVIE: {
             queue(new AddMovie(listId, item.traktId));
             break;
           }
 
-          case DatabaseContract.ItemType.PERSON: {
+          case ListItemType.PERSON: {
             queue(new AddPerson(listId, item.traktId));
             break;
           }

@@ -386,20 +386,10 @@ public final class DatabaseContract {
     String LIST_ID = "listId";
     @DataType(INTEGER) String LISTED_AT = "listedAt";
     @DataType(INTEGER) String ITEM_ID = "itemId";
-    @DataType(INTEGER) String ITEM_TYPE = "itemType";
+    @DataType(TEXT) String ITEM_TYPE = "itemType";
 
     String TITLE = "title";
     String OVERVIEW = "overview";
-  }
-
-  public interface ItemType {
-
-    int SHOW = 1;
-    int SEASON = 2;
-    int EPISODE = 3;
-    int MOVIE = 4;
-    int PERSON = 5;
-    int LIST = 6;
   }
 
   public interface UserColumns {
@@ -431,7 +421,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String USER_RATING = "userRating";
 
     @DataType(INTEGER) String ITEM_ID = "itemId";
-    @DataType(INTEGER) String ITEM_TYPE = "itemType";
+    @DataType(TEXT) String ITEM_TYPE = "itemType";
 
     @DataType(INTEGER) @References(table = Tables.USERS, column = UserColumns.ID)
     String USER_ID = "userId";

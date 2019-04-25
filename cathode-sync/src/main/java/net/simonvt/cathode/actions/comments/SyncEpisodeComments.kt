@@ -25,12 +25,12 @@ import net.simonvt.cathode.api.enumeration.Extended
 import net.simonvt.cathode.api.service.EpisodeService
 import net.simonvt.cathode.common.database.forEach
 import net.simonvt.cathode.common.database.getLong
-import net.simonvt.cathode.provider.DatabaseContract
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Comments
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes
 import net.simonvt.cathode.provider.batch
+import net.simonvt.cathode.provider.entity.ItemTypeString
 import net.simonvt.cathode.provider.helper.CommentsHelper
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
@@ -64,7 +64,6 @@ class SyncEpisodeComments @Inject constructor(
   override suspend fun handleResponse(params: Params, page: Int, response: List<Comment>) {
     val showId = showHelper.getId(params.traktId)
     val episodeId = episodeHelper.getId(showId, params.season, params.episode)
-    val itemType: Int = DatabaseContract.ItemType.EPISODE
 
     val ops = arrayListOf<ContentProviderOperation>()
     val existingComments = mutableListOf<Long>()
@@ -74,7 +73,7 @@ class SyncEpisodeComments @Inject constructor(
       Comments.COMMENTS,
       arrayOf(CommentColumns.ID),
       CommentColumns.ITEM_TYPE + "=? AND " + CommentColumns.ITEM_ID + "=?",
-      arrayOf(itemType.toString(), episodeId.toString())
+      arrayOf(ItemTypeString.EPISODE, episodeId.toString())
     )
     localComments.forEach { cursor ->
       val id = cursor.getLong(CommentColumns.ID)
@@ -91,7 +90,7 @@ class SyncEpisodeComments @Inject constructor(
       val values = CommentsHelper.getValues(comment)
       values.put(CommentColumns.USER_ID, userId)
 
-      values.put(CommentColumns.ITEM_TYPE, itemType)
+      values.put(CommentColumns.ITEM_TYPE, ItemTypeString.EPISODE)
       values.put(CommentColumns.ITEM_ID, episodeId)
 
       val commentId = comment.id

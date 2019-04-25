@@ -21,10 +21,10 @@ import android.content.Context
 import kotlinx.coroutines.launch
 import net.simonvt.cathode.actions.invokeAsync
 import net.simonvt.cathode.actions.user.SyncLists
+import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.api.enumeration.Privacy
 import net.simonvt.cathode.common.database.Cursors
 import net.simonvt.cathode.jobqueue.JobManager
-import net.simonvt.cathode.provider.DatabaseContract
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems
@@ -141,15 +141,15 @@ class ListsTaskScheduler @Inject constructor(
     }
   }
 
-  fun addItem(listId: Long, itemType: Int, itemId: Long) {
+  fun addItem(listId: Long, itemType: ItemType, itemId: Long) {
     updateListItem(listId, itemType, itemId, true)
   }
 
-  fun removeItem(listId: Long, itemType: Int, itemId: Long) {
+  fun removeItem(listId: Long, itemType: ItemType, itemId: Long) {
     updateListItem(listId, itemType, itemId, false)
   }
 
-  private fun updateListItem(listId: Long, itemType: Int, itemId: Long, add: Boolean) {
+  private fun updateListItem(listId: Long, itemType: ItemType, itemId: Long, add: Boolean) {
     scope.launch {
       val listTraktId = ListWrapper.getTraktId(context.contentResolver, listId)
       if (add) {
@@ -157,7 +157,7 @@ class ListsTaskScheduler @Inject constructor(
         values.put(ListItemColumns.LIST_ID, listId)
         values.put(ListItemColumns.LISTED_AT, System.currentTimeMillis())
         values.put(ListItemColumns.ITEM_ID, itemId)
-        values.put(ListItemColumns.ITEM_TYPE, itemType)
+        values.put(ListItemColumns.ITEM_TYPE, itemType.toString())
 
         context.contentResolver.insert(ListItems.LIST_ITEMS, values)
       } else {
@@ -171,7 +171,7 @@ class ListsTaskScheduler @Inject constructor(
 
       if (TraktLinkSettings.isLinked(context)) {
         when (itemType) {
-          DatabaseContract.ItemType.SHOW -> {
+          ItemType.SHOW -> {
             val showTraktId = showHelper.getTraktId(itemId)
 
             if (add) {
@@ -181,7 +181,7 @@ class ListsTaskScheduler @Inject constructor(
             }
           }
 
-          DatabaseContract.ItemType.SEASON -> {
+          ItemType.SEASON -> {
             val showId = seasonHelper.getShowId(itemId)
             val showTraktId = showHelper.getTraktId(showId)
             val seasonNumber = seasonHelper.getNumber(itemId)
@@ -193,7 +193,7 @@ class ListsTaskScheduler @Inject constructor(
             }
           }
 
-          DatabaseContract.ItemType.EPISODE -> {
+          ItemType.EPISODE -> {
             val showId = episodeHelper.getShowId(itemId)
             val showTraktId = showHelper.getTraktId(showId)
             val seasonNumber = episodeHelper.getSeason(itemId)
@@ -206,7 +206,7 @@ class ListsTaskScheduler @Inject constructor(
             }
           }
 
-          DatabaseContract.ItemType.MOVIE -> {
+          ItemType.MOVIE -> {
             val movieTraktId = movieHelper.getTraktId(itemId)
 
             if (add) {
@@ -216,7 +216,7 @@ class ListsTaskScheduler @Inject constructor(
             }
           }
 
-          DatabaseContract.ItemType.PERSON -> {
+          ItemType.PERSON -> {
             val personTraktId = personHelper.getTraktId(itemId)
 
             if (add) {
@@ -225,6 +225,8 @@ class ListsTaskScheduler @Inject constructor(
               queue(RemovePerson(listTraktId, personTraktId))
             }
           }
+
+          else -> throw RuntimeException("Unknown item type: $itemType")
         }
       }
     }

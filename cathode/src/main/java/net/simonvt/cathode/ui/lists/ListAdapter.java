@@ -36,7 +36,6 @@ import net.simonvt.cathode.entity.ListSeason;
 import net.simonvt.cathode.entity.ListShow;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
-import net.simonvt.cathode.provider.DatabaseContract;
 import net.simonvt.cathode.provider.util.DataHelper;
 
 public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolder> {
@@ -56,6 +55,12 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
     void onRemoveItem(int position, ListItem listItem);
   }
 
+  private static final int TYPE_SHOW = 1;
+  private static final int TYPE_SEASON = 2;
+  private static final int TYPE_EPISODE = 3;
+  private static final int TYPE_MOVIE = 4;
+  private static final int TYPE_PERSON = 5;
+
   ListListener listener;
 
   public ListAdapter(Context context, ListListener listener) {
@@ -72,15 +77,15 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
     ListItem item = getList().get(position);
     switch (item.getType()) {
       case SHOW:
-        return DatabaseContract.ItemType.SHOW;
+        return TYPE_SHOW;
       case SEASON:
-        return DatabaseContract.ItemType.SEASON;
+        return TYPE_SEASON;
       case EPISODE:
-        return DatabaseContract.ItemType.EPISODE;
+        return TYPE_EPISODE;
       case MOVIE:
-        return DatabaseContract.ItemType.MOVIE;
+        return TYPE_MOVIE;
       case PERSON:
-        return DatabaseContract.ItemType.PERSON;
+        return TYPE_PERSON;
       default:
         throw new IllegalStateException("Unsupported item type " + item.getType().toString());
     }
@@ -89,7 +94,7 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
   @Override public ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     ListViewHolder holder;
 
-    if (viewType == DatabaseContract.ItemType.SHOW) {
+    if (viewType == TYPE_SHOW) {
       View v = LayoutInflater.from(getContext()).inflate(R.layout.row_list_show, parent, false);
       final ShowViewHolder showHolder = new ShowViewHolder(v);
       holder = showHolder;
@@ -104,7 +109,7 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
           }
         }
       });
-    } else if (viewType == DatabaseContract.ItemType.SEASON) {
+    } else if (viewType == TYPE_SEASON) {
       View v = LayoutInflater.from(getContext()).inflate(R.layout.row_list_season, parent, false);
       final SeasonViewHolder seasonHolder = new SeasonViewHolder(v);
       holder = seasonHolder;
@@ -120,7 +125,7 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
           }
         }
       });
-    } else if (viewType == DatabaseContract.ItemType.EPISODE) {
+    } else if (viewType == TYPE_EPISODE) {
       View v = LayoutInflater.from(getContext()).inflate(R.layout.row_list_episode, parent, false);
 
       final EpisodeViewHolder episodeHolder = new EpisodeViewHolder(v);
@@ -135,7 +140,7 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
           }
         }
       });
-    } else if (viewType == DatabaseContract.ItemType.MOVIE) {
+    } else if (viewType == TYPE_MOVIE) {
       View v = LayoutInflater.from(getContext()).inflate(R.layout.row_list_movie, parent, false);
       final MovieViewHolder movieHolder = new MovieViewHolder(v);
       holder = movieHolder;
@@ -197,7 +202,7 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
 
   @Override public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
     ListItem item = getList().get(position);
-    if (holder.getItemViewType() == DatabaseContract.ItemType.SHOW) {
+    if (holder.getItemViewType() == TYPE_SHOW) {
       ShowViewHolder showHolder = (ShowViewHolder) holder;
       ListShow show = item.getShow();
 
@@ -205,7 +210,7 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
       showHolder.poster.setImage(poster);
       showHolder.title.setText(show.getTitle());
       showHolder.overview.setText(show.getOverview());
-    } else if (holder.getItemViewType() == DatabaseContract.ItemType.SEASON) {
+    } else if (holder.getItemViewType() == TYPE_SEASON) {
       SeasonViewHolder seasonHolder = (SeasonViewHolder) holder;
       ListSeason season = item.getSeason();
 
@@ -214,7 +219,7 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
       seasonHolder.season.setText(
           getContext().getResources().getString(R.string.season_x, season.getSeason()));
       seasonHolder.show.setText(season.getShowTitle());
-    } else if (holder.getItemViewType() == DatabaseContract.ItemType.EPISODE) {
+    } else if (holder.getItemViewType() == TYPE_EPISODE) {
       EpisodeViewHolder episodeHolder = (EpisodeViewHolder) holder;
       ListEpisode episode = item.getEpisode();
 
@@ -226,7 +231,7 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
       episodeHolder.screen.setImage(screenshotUri);
       episodeHolder.title.setText(title);
       episodeHolder.showTitle.setText(episode.getShowTitle());
-    } else if (holder.getItemViewType() == DatabaseContract.ItemType.MOVIE) {
+    } else if (holder.getItemViewType() == TYPE_MOVIE) {
       MovieViewHolder movieHolder = (MovieViewHolder) holder;
       ListMovie movie = item.getMovie();
 

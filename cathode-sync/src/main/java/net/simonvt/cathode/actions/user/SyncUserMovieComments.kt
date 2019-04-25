@@ -22,14 +22,15 @@ import net.simonvt.cathode.actions.PagedAction
 import net.simonvt.cathode.actions.user.SyncUserMovieComments.Params
 import net.simonvt.cathode.api.entity.CommentItem
 import net.simonvt.cathode.api.enumeration.CommentType
+import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.api.enumeration.ItemTypes
 import net.simonvt.cathode.api.service.UsersService
 import net.simonvt.cathode.common.database.forEach
 import net.simonvt.cathode.common.database.getLong
-import net.simonvt.cathode.provider.DatabaseContract
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Comments
 import net.simonvt.cathode.provider.batch
+import net.simonvt.cathode.provider.entity.ItemTypeString
 import net.simonvt.cathode.provider.helper.CommentsHelper
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper
 import net.simonvt.cathode.provider.helper.UserDatabaseHelper
@@ -58,7 +59,7 @@ class SyncUserMovieComments @Inject constructor(
     val localComments = context.contentResolver.query(
       Comments.COMMENTS,
       arrayOf(CommentColumns.ID),
-      CommentColumns.ITEM_TYPE + "=" + DatabaseContract.ItemType.MOVIE + " AND " + CommentColumns.IS_USER_COMMENT + "=1"
+      CommentColumns.ITEM_TYPE + "=" + ItemTypeString.MOVIE + " AND " + CommentColumns.IS_USER_COMMENT + "=1"
     )
     localComments.forEach { cursor -> existingComments.add(cursor.getLong(CommentColumns.ID)) }
     localComments.close()
@@ -89,7 +90,7 @@ class SyncUserMovieComments @Inject constructor(
       val result = movieHelper.getIdOrCreate(traktId)
       val movieId = result.movieId
 
-      values.put(CommentColumns.ITEM_TYPE, DatabaseContract.ItemType.MOVIE)
+      values.put(CommentColumns.ITEM_TYPE, ItemType.MOVIE.toString())
       values.put(CommentColumns.ITEM_ID, movieId)
 
       var exists = existingComments.contains(commentId)

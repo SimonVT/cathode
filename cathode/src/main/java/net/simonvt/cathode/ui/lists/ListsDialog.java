@@ -38,6 +38,7 @@ import java.util.Comparator;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.entity.UserList;
 import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.ui.lists.DialogListItemListMapper.DialogListItem;
@@ -64,7 +65,7 @@ public class ListsDialog extends DialogFragment {
 
   @Inject ListsTaskScheduler listScheduler;
 
-  private int itemType;
+  private ItemType itemType;
 
   private long itemId;
 
@@ -82,11 +83,11 @@ public class ListsDialog extends DialogFragment {
   private View loading;
   private View empty;
 
-  public static ListsDialog newInstance(int itemType, long itemId) {
+  public static ListsDialog newInstance(ItemType itemType, long itemId) {
     ListsDialog dialog = new ListsDialog();
 
     Bundle args = new Bundle();
-    args.putInt(ARG_TYPE, itemType);
+    args.putSerializable(ARG_TYPE, itemType);
     args.putLong(ARG_ID, itemId);
     dialog.setArguments(args);
 
@@ -98,7 +99,7 @@ public class ListsDialog extends DialogFragment {
     AndroidSupportInjection.inject(this);
 
     Bundle args = getArguments();
-    itemType = args.getInt(ARG_TYPE);
+    itemType = (ItemType) args.getSerializable(ARG_TYPE);
     itemId = args.getLong(ARG_ID);
 
     viewModel = ViewModelProviders.of(this).get(ListsDialogViewModel.class);

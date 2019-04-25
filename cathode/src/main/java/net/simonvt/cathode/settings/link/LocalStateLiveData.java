@@ -21,11 +21,12 @@ import android.database.Cursor;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.BuildConfig;
+import net.simonvt.cathode.api.enumeration.ItemType;
 import net.simonvt.cathode.api.util.TimeUtils;
 import net.simonvt.cathode.common.data.AsyncLiveData;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.link.SyncListJob;
-import net.simonvt.cathode.provider.DatabaseContract;
+import net.simonvt.cathode.link.SyncListJob.ListItemType;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns;
@@ -188,42 +189,43 @@ public class LocalStateLiveData extends AsyncLiveData<List<Job>> {
       Cursor listItemsCursor =
           resolver.query(ListItems.inList(id), PROJECTION_LIST_ITEMS, null, null, null);
       while (listItemsCursor.moveToNext()) {
-        final int itemType = Cursors.getInt(listItemsCursor, ListItemColumns.ITEM_TYPE);
+        final String itemTypeString = Cursors.getString(listItemsCursor, ListItemColumns.ITEM_TYPE);
+        final ItemType itemType = ItemType.fromValue(itemTypeString);
         final long itemId = Cursors.getInt(listItemsCursor, ListItemColumns.ITEM_ID);
 
         switch (itemType) {
-          case DatabaseContract.ItemType.SHOW: {
+          case SHOW: {
             final long traktId = showHelper.getTraktId(itemId);
-            items.add(new SyncListJob.ListItem(itemType, traktId));
+            items.add(new SyncListJob.ListItem(ListItemType.SHOW, traktId));
             break;
           }
 
-          case DatabaseContract.ItemType.SEASON: {
+          case SEASON: {
             final long showId = seasonHelper.getShowId(itemId);
             final long traktId = showHelper.getTraktId(showId);
             final int season = seasonHelper.getNumber(itemId);
-            items.add(new SyncListJob.ListItem(itemType, traktId, season));
+            items.add(new SyncListJob.ListItem(ListItemType.SEASON, traktId, season));
             break;
           }
 
-          case DatabaseContract.ItemType.EPISODE: {
+          case EPISODE: {
             final long showId = episodeHelper.getShowId(itemId);
             final long traktId = showHelper.getTraktId(showId);
             final int season = episodeHelper.getSeason(itemId);
             final int episode = episodeHelper.getNumber(itemId);
-            items.add(new SyncListJob.ListItem(itemType, traktId, season, episode));
+            items.add(new SyncListJob.ListItem(ListItemType.EPISODE, traktId, season, episode));
             break;
           }
 
-          case DatabaseContract.ItemType.MOVIE: {
+          case MOVIE: {
             final long traktId = movieHelper.getTraktId(itemId);
-            items.add(new SyncListJob.ListItem(itemType, traktId));
+            items.add(new SyncListJob.ListItem(ListItemType.MOVIE, traktId));
             break;
           }
 
-          case DatabaseContract.ItemType.PERSON: {
+          case PERSON: {
             final long traktId = personHelper.getTraktId(itemId);
-            items.add(new SyncListJob.ListItem(itemType, traktId));
+            items.add(new SyncListJob.ListItem(ListItemType.PERSON, traktId));
             break;
           }
         }

@@ -24,12 +24,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
-import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
 import net.simonvt.cathode.common.util.guava.Preconditions
 import net.simonvt.cathode.entity.ListItem
 import net.simonvt.cathode.entity.UserList
-import net.simonvt.cathode.provider.DatabaseContract
 import net.simonvt.cathode.settings.TraktLinkSettings
 import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
@@ -154,17 +152,7 @@ class ListFragment : ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHol
   }
 
   override fun onRemoveItem(position: Int, listItem: ListItem) {
-    val itemType: Int
-    when (listItem.type) {
-      ItemType.SHOW -> itemType = DatabaseContract.ItemType.SHOW
-      ItemType.SEASON -> itemType = DatabaseContract.ItemType.SEASON
-      ItemType.EPISODE -> itemType = DatabaseContract.ItemType.EPISODE
-      ItemType.MOVIE -> itemType = DatabaseContract.ItemType.MOVIE
-      ItemType.PERSON -> itemType = DatabaseContract.ItemType.PERSON
-      else -> throw IllegalStateException("Unknown item type: " + listItem.type.toString())
-    }
-
-    listScheduler.removeItem(listId, itemType, listItem.listItemId)
+    listScheduler.removeItem(listId, listItem.type, listItem.listItemId)
     adapter!!.removeItem(listItem)
   }
 

@@ -19,6 +19,7 @@ package net.simonvt.cathode.ui.lists
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.entity.UserList
 import net.simonvt.cathode.entitymapper.UserListListMapper
@@ -30,13 +31,13 @@ import net.simonvt.cathode.ui.lists.DialogListItemListMapper.DialogListItem
 
 class ListsDialogViewModel(application: Application) : AndroidViewModel(application) {
 
-  private var itemType: Int = 0
+  private lateinit var itemType: ItemType
   private var itemId = -1L
 
   lateinit var lists: LiveData<List<UserList>>
   lateinit var listItems: LiveData<List<DialogListItem>>
 
-  fun setItemTypeAndId(itemType: Int, itemId: Long) {
+  fun setItemTypeAndId(itemType: ItemType, itemId: Long) {
     if (this.itemId == -1L) {
       this.itemType = itemType
       this.itemId = itemId

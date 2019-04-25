@@ -25,12 +25,12 @@ import net.simonvt.cathode.api.enumeration.Extended
 import net.simonvt.cathode.api.service.MoviesService
 import net.simonvt.cathode.common.database.Cursors
 import net.simonvt.cathode.common.database.forEach
-import net.simonvt.cathode.provider.DatabaseContract
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Comments
 import net.simonvt.cathode.provider.ProviderSchematic.Movies
 import net.simonvt.cathode.provider.batch
+import net.simonvt.cathode.provider.entity.ItemTypeString
 import net.simonvt.cathode.provider.helper.CommentsHelper
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper
 import net.simonvt.cathode.provider.helper.UserDatabaseHelper
@@ -57,7 +57,6 @@ class SyncMovieComments @Inject constructor(
   }
 
   override suspend fun handleResponse(params: Params, page: Int, response: List<Comment>) {
-    val itemType = DatabaseContract.ItemType.MOVIE
     val movieId = movieHelper.getId(params.traktId)
 
     val ops = arrayListOf<ContentProviderOperation>()
@@ -68,7 +67,7 @@ class SyncMovieComments @Inject constructor(
       Comments.COMMENTS,
       arrayOf(CommentColumns.ID),
       CommentColumns.ITEM_TYPE + "=? AND " + CommentColumns.ITEM_ID + "=?",
-      arrayOf(itemType.toString(), movieId.toString())
+      arrayOf(ItemTypeString.MOVIE, movieId.toString())
     )
     localComments.forEach { cursor ->
       val id = Cursors.getLong(cursor, CommentColumns.ID)
@@ -85,7 +84,7 @@ class SyncMovieComments @Inject constructor(
       val values = CommentsHelper.getValues(comment)
       values.put(CommentColumns.USER_ID, userId)
 
-      values.put(CommentColumns.ITEM_TYPE, itemType)
+      values.put(CommentColumns.ITEM_TYPE, ItemTypeString.MOVIE)
       values.put(CommentColumns.ITEM_ID, movieId)
 
       val commentId = comment.id

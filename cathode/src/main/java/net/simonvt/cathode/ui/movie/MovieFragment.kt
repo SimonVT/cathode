@@ -48,7 +48,6 @@ import net.simonvt.cathode.entity.Comment
 import net.simonvt.cathode.entity.Movie
 import net.simonvt.cathode.images.ImageType
 import net.simonvt.cathode.images.ImageUri
-import net.simonvt.cathode.provider.DatabaseContract
 import net.simonvt.cathode.settings.TraktLinkSettings
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
@@ -394,7 +393,7 @@ class MovieFragment : RefreshableAppBarFragment() {
       }
 
       R.id.action_list_add -> {
-        ListsDialog.newInstance(DatabaseContract.ItemType.MOVIE, movieId)
+        ListsDialog.newInstance(ItemType.MOVIE, movieId)
           .show(fragmentManager!!, DIALOG_LISTS_ADD)
         return true
       }
