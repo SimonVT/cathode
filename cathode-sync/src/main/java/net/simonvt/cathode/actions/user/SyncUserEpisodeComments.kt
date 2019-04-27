@@ -63,7 +63,8 @@ class SyncUserEpisodeComments @Inject constructor(
     val localComments = context.contentResolver.query(
       Comments.COMMENTS,
       arrayOf(CommentColumns.ID),
-      CommentColumns.ITEM_TYPE + "=" + ItemTypeString.EPISODE + " AND " + CommentColumns.IS_USER_COMMENT + "=1"
+      CommentColumns.ITEM_TYPE + "=? AND " + CommentColumns.IS_USER_COMMENT + "=1",
+      arrayOf(ItemTypeString.EPISODE)
     )
     localComments.forEach { cursor -> existingComments.add(cursor.getLong(CommentColumns.ID)) }
     localComments.close()

@@ -18,6 +18,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <item
+      android:id="@+id/menu_sort"
+      android:icon="@drawable/ic_action_sort_24dp"
+      android:title="@string/action_sort_by"
+      app:showAsAction="always"/>
+
+  <item
       android:id="@+id/menu_list_edit"
       android:icon="@drawable/ic_list_edit_24dp"
       android:title="@string/action_list_edit"

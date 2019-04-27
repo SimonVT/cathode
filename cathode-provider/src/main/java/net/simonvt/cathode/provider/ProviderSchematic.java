@@ -664,7 +664,7 @@ public final class ProviderSchematic {
       };
     }
 
-    private static String getShowTitleQuery() {
+    public static String getShowTitleQuery() {
       return "(SELECT " + ShowColumns.TITLE + " FROM "
           + Tables.SHOWS
           + " WHERE "
@@ -929,7 +929,7 @@ public final class ProviderSchematic {
       };
     }
 
-    private static String getShowTitleQuery() {
+    public static String getShowTitleQuery() {
       return "(SELECT " + ShowColumns.TITLE + " FROM "
           + Tables.SHOWS
           + " WHERE "

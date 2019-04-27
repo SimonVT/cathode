@@ -19,6 +19,8 @@ import net.simonvt.cathode.api.enumeration.ItemTypesAdapter
 import net.simonvt.cathode.api.enumeration.PrivacyAdapter
 import net.simonvt.cathode.api.enumeration.ScopeAdapter
 import net.simonvt.cathode.api.enumeration.ShowStatusAdapter
+import net.simonvt.cathode.api.enumeration.SortByAdapter
+import net.simonvt.cathode.api.enumeration.SortOrientationAdapter
 import net.simonvt.cathode.api.enumeration.TokenTypeAdapter
 import net.simonvt.cathode.api.service.AuthorizationService
 import net.simonvt.cathode.api.service.CheckinService
@@ -170,6 +172,8 @@ class TraktModule {
       .add(PrivacyAdapter())
       .add(ScopeAdapter())
       .add(ShowStatusAdapter())
+      .add(SortByAdapter())
+      .add(SortOrientationAdapter())
       .add(TokenTypeAdapter())
       .add(KotlinJsonAdapterFactory())
     return builder.build()

@@ -385,6 +385,9 @@ public final class ShowDatabaseHelper {
     values.put(ShowColumns.TITLE, show.getTitle());
     values.put(ShowColumns.TITLE_NO_ARTICLE, DatabaseUtils.removeLeadingArticle(show.getTitle()));
     if (show.getYear() != null) values.put(ShowColumns.YEAR, show.getYear());
+    if (show.getFirst_aired() != null) {
+      values.put(ShowColumns.FIRST_AIRED, show.getFirst_aired().getTimeInMillis());
+    }
     if (show.getCountry() != null) values.put(ShowColumns.COUNTRY, show.getCountry());
     if (show.getOverview() != null) {
       values.put(ShowColumns.OVERVIEW, show.getOverview());

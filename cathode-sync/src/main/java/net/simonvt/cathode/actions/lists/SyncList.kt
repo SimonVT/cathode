@@ -34,7 +34,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.ListItems
 import net.simonvt.cathode.provider.batch
 import net.simonvt.cathode.provider.entity.ItemTypeString
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper
-import net.simonvt.cathode.provider.helper.ListWrapper
+import net.simonvt.cathode.provider.helper.ListDatabaseHelper
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper
 import net.simonvt.cathode.provider.helper.PersonDatabaseHelper
 import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper
@@ -80,7 +80,7 @@ class SyncList @Inject constructor(
     usersService.listItems(params.traktId)
 
   override suspend fun handleResponse(params: Params, response: List<ListItem>) {
-    val listId = ListWrapper.getId(context.contentResolver, params.traktId)
+    val listId = ListDatabaseHelper.getId(context.contentResolver, params.traktId)
     if (listId == -1L) {
       // List has been removed
       return

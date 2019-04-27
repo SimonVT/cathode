@@ -154,6 +154,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) @References(table = Tables.SHOWS, column = ShowColumns.ID)
     String SHOW_ID = "showId";
     @DataType(INTEGER) @NotNull String SEASON = "season";
+    @DataType(INTEGER) String FIRST_AIRED = "firstAired";
 
     @DataType(INTEGER) String TVDB_ID = "tvdbId";
     @DataType(INTEGER) String TMDB_ID = "tmdbId";
@@ -370,6 +371,8 @@ public final class DatabaseContract {
     @DataType(TEXT) String PRIVACY = "privacy";
     @DataType(INTEGER) String DISPLAY_NUMBERS = "displayNumbers";
     @DataType(INTEGER) String ALLOW_COMMENTS = "allowComments";
+    @DataType(TEXT) String SORT_BY = "sortBy";
+    @DataType(TEXT) String SORT_ORIENTATION = "sortOrientation";
 
     @DataType(INTEGER) String UPDATED_AT = "updatedAt";
 
@@ -387,9 +390,7 @@ public final class DatabaseContract {
     @DataType(INTEGER) String LISTED_AT = "listedAt";
     @DataType(INTEGER) String ITEM_ID = "itemId";
     @DataType(TEXT) String ITEM_TYPE = "itemType";
-
-    String TITLE = "title";
-    String OVERVIEW = "overview";
+    @DataType(INTEGER) String RANK = "rank";
   }
 
   public interface UserColumns {

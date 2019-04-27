@@ -58,7 +58,7 @@ public final class DatabaseSchematic {
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 44;
+  static final int DATABASE_VERSION = 45;
 
   public interface Tables {
 
@@ -772,6 +772,11 @@ public final class DatabaseSchematic {
       db.execSQL(TRIGGER_SHOW_DELETE);
       db.execSQL(TRIGGER_EPISODE_DELETE);
       db.execSQL(TRIGGER_MOVIE_DELETE);
+    }
+
+    if (oldVersion < 45) {
+      SqlUtils.createColumnIfNotExists(db, Tables.SEASONS, SeasonColumns.FIRST_AIRED,
+          DataType.Type.INTEGER, null);
     }
   }
 }

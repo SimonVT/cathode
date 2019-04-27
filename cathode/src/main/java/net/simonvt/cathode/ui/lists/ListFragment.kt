@@ -24,6 +24,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
+import net.simonvt.cathode.api.enumeration.SortBy
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
 import net.simonvt.cathode.common.util.guava.Preconditions
 import net.simonvt.cathode.entity.ListItem
@@ -36,7 +37,7 @@ import net.simonvt.cathode.ui.NavigationListener
 import javax.inject.Inject
 
 class ListFragment : ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHolder>(),
-  ListAdapter.ListListener {
+  ListAdapter.ListListener, ListDialog.Callback {
 
   @Inject
   lateinit var listScheduler: ListsTaskScheduler
@@ -78,6 +79,7 @@ class ListFragment : ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHol
     viewModel.list.observe(this, Observer { userList ->
       listInfo = userList
       setTitle(userList.name)
+      invalidateMenu()
     })
     viewModel.listItems.observe(this, Observer { listItems -> setListItems(listItems) })
   }
@@ -97,10 +99,27 @@ class ListFragment : ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHol
 
   override fun createMenu(toolbar: Toolbar) {
     toolbar.inflateMenu(R.menu.fragment_list)
+    toolbar.menu.findItem(R.id.menu_sort).isVisible = listInfo != null
   }
 
   override fun onMenuItemClick(item: MenuItem): Boolean {
     when (item.itemId) {
+      R.id.menu_sort -> {
+        val items = arrayListOf<ListDialog.Item>()
+        items.add(ListDialog.Item(R.id.sort_rank, R.string.sort_rank))
+        items.add(ListDialog.Item(R.id.sort_added, R.string.sort_added))
+        items.add(ListDialog.Item(R.id.sort_title, R.string.sort_title))
+        items.add(ListDialog.Item(R.id.sort_released, R.string.sort_released))
+        items.add(ListDialog.Item(R.id.sort_runtime, R.string.sort_runtime))
+        items.add(ListDialog.Item(R.id.sort_popularity, R.string.sort_popularity))
+        items.add(ListDialog.Item(R.id.sort_percentage, R.string.sort_percentage))
+        items.add(ListDialog.Item(R.id.sort_votes, R.string.sort_votes))
+        items.add(ListDialog.Item(R.id.sort_user_rating, R.string.sort_user_rating))
+        items.add(ListDialog.Item(R.id.sort_random, R.string.sort_random))
+        ListDialog.newInstance(R.string.action_sort_by, items, this)
+          .show(requireFragmentManager(), DIALOG_SORT)
+        return true
+      }
       R.id.menu_list_edit -> {
         if (listInfo != null) {
           val updateFragment = UpdateListFragment()
@@ -110,7 +129,9 @@ class ListFragment : ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHol
             listInfo!!.description,
             listInfo!!.privacy,
             listInfo!!.displayNumbers,
-            listInfo!!.allowComments
+            listInfo!!.allowComments,
+            listInfo!!.sortBy,
+            listInfo!!.sortOrientation
           )
           updateFragment.show(fragmentManager!!, DIALOG_UPDATE)
         }
@@ -123,6 +144,21 @@ class ListFragment : ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHol
       }
     }
     return super.onMenuItemClick(item)
+  }
+
+  override fun onItemSelected(id: Int) {
+    when (id) {
+      R.id.sort_rank -> viewModel.sortBy = SortBy.RANK
+      R.id.sort_added -> viewModel.sortBy = SortBy.ADDED
+      R.id.sort_title -> viewModel.sortBy = SortBy.TITLE
+      R.id.sort_released -> viewModel.sortBy = SortBy.RELEASED
+      R.id.sort_runtime -> viewModel.sortBy = SortBy.RUNTIME
+      R.id.sort_popularity -> viewModel.sortBy = SortBy.POPULARITY
+      R.id.sort_percentage -> viewModel.sortBy = SortBy.PERCENTAGE
+      R.id.sort_votes -> viewModel.sortBy = SortBy.VOTES
+      R.id.sort_user_rating -> viewModel.sortBy = SortBy.MY_RATING
+      R.id.sort_random -> viewModel.sortBy = SortBy.RANDOM
+    }
   }
 
   override fun onShowClick(showId: Long, title: String, overview: String) {
@@ -172,6 +208,7 @@ class ListFragment : ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHol
     private const val ARG_LIST_ID = "net.simonvt.cathode.ui.lists.ListFragment.lidtId"
     private const val ARG_LIST_NAME = "net.simonvt.cathode.ui.lists.ListFragment.listName"
 
+    private const val DIALOG_SORT = "net.simonvt.cathode.ui.lists.ListFragment.sortDialog"
     private const val DIALOG_UPDATE = "net.simonvt.cathode.ui.lists.ListFragment.updateListsDialog"
     private const val DIALOG_DELETE = "net.simonvt.cathode.ui.lists.ListFragment.deleteListsDialog"
 

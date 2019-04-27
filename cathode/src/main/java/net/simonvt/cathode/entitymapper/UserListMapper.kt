@@ -3,6 +3,8 @@ package net.simonvt.cathode.entitymapper
 import android.database.Cursor
 import android.text.TextUtils
 import net.simonvt.cathode.api.enumeration.Privacy
+import net.simonvt.cathode.api.enumeration.SortBy
+import net.simonvt.cathode.api.enumeration.SortOrientation
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.common.database.getBoolean
 import net.simonvt.cathode.common.database.getInt
@@ -23,13 +25,17 @@ object UserListMapper : MappedCursorLiveData.CursorMapper<UserList> {
     val name = cursor.getString(ListsColumns.NAME)
     val description = cursor.getStringOrNull(ListsColumns.DESCRIPTION)
     val privacyString = cursor.getStringOrNull(ListsColumns.PRIVACY)
-    val privacy: Privacy? = if (!TextUtils.isEmpty(privacyString)) {
+    val privacy = if (!TextUtils.isEmpty(privacyString)) {
       Privacy.fromValue(privacyString!!)
     } else {
-      null
+      Privacy.PRIVATE
     }
     val displayNumbers = cursor.getBoolean(ListsColumns.DISPLAY_NUMBERS)
     val allowComments = cursor.getBoolean(ListsColumns.ALLOW_COMMENTS)
+    val sortByString = cursor.getStringOrNull(ListsColumns.SORT_BY)
+    val sortBy = SortBy.fromValue(sortByString)
+    val sortOrientationString = cursor.getStringOrNull(ListsColumns.SORT_ORIENTATION)
+    val sortOrientation = SortOrientation.fromValue(sortOrientationString)
     val updatedAt = cursor.getLong(ListsColumns.UPDATED_AT)
     val likes = cursor.getInt(ListsColumns.LIKES)
     val slug = cursor.getStringOrNull(ListsColumns.SLUG)
@@ -42,6 +48,8 @@ object UserListMapper : MappedCursorLiveData.CursorMapper<UserList> {
       privacy,
       displayNumbers,
       allowComments,
+      sortBy,
+      sortOrientation,
       updatedAt,
       likes,
       slug,
@@ -56,6 +64,8 @@ object UserListMapper : MappedCursorLiveData.CursorMapper<UserList> {
     ListsColumns.PRIVACY,
     ListsColumns.DISPLAY_NUMBERS,
     ListsColumns.ALLOW_COMMENTS,
+    ListsColumns.SORT_BY,
+    ListsColumns.SORT_ORIENTATION,
     ListsColumns.UPDATED_AT,
     ListsColumns.LIKES,
     ListsColumns.SLUG,

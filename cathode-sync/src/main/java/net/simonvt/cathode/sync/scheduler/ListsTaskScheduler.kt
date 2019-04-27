@@ -23,6 +23,8 @@ import net.simonvt.cathode.actions.invokeAsync
 import net.simonvt.cathode.actions.user.SyncLists
 import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.api.enumeration.Privacy
+import net.simonvt.cathode.api.enumeration.SortBy
+import net.simonvt.cathode.api.enumeration.SortOrientation
 import net.simonvt.cathode.common.database.Cursors
 import net.simonvt.cathode.jobqueue.JobManager
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns
@@ -30,7 +32,7 @@ import net.simonvt.cathode.provider.DatabaseContract.ListsColumns
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems
 import net.simonvt.cathode.provider.ProviderSchematic.Lists
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper
-import net.simonvt.cathode.provider.helper.ListWrapper
+import net.simonvt.cathode.provider.helper.ListDatabaseHelper
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper
 import net.simonvt.cathode.provider.helper.PersonDatabaseHelper
 import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper
@@ -68,11 +70,21 @@ class ListsTaskScheduler @Inject constructor(
     description: String,
     privacy: Privacy,
     displayNumbers: Boolean,
-    allowComments: Boolean
+    allowComments: Boolean,
+    sortBy: SortBy,
+    sortOrientation: SortOrientation
   ) {
     scope.launch {
       if (TraktLinkSettings.isLinked(context)) {
-        userList.create(name, description, privacy, displayNumbers, allowComments)
+        userList.create(
+          name,
+          description,
+          privacy,
+          displayNumbers,
+          allowComments,
+          sortBy,
+          sortOrientation
+        )
         syncLists.invokeAsync(SyncLists.Params())
       } else {
         val values = ContentValues()
@@ -81,6 +93,8 @@ class ListsTaskScheduler @Inject constructor(
         values.put(ListsColumns.PRIVACY, Privacy.PRIVATE.toString())
         values.put(ListsColumns.DISPLAY_NUMBERS, false)
         values.put(ListsColumns.ALLOW_COMMENTS, true)
+        values.put(ListsColumns.SORT_BY, sortBy.toString())
+        values.put(ListsColumns.SORT_ORIENTATION, sortOrientation.toString())
         context.contentResolver.insert(Lists.LISTS, values)
       }
     }
@@ -92,12 +106,23 @@ class ListsTaskScheduler @Inject constructor(
     description: String,
     privacy: Privacy,
     displayNumbers: Boolean,
-    allowComments: Boolean
+    allowComments: Boolean,
+    sortBy: SortBy,
+    sortOrientation: SortOrientation
   ) {
     scope.launch {
       if (TraktLinkSettings.isLinked(context)) {
-        val traktId = ListWrapper.getTraktId(context.contentResolver, listId)
-        userList.update(traktId, name, description, privacy, displayNumbers, allowComments)
+        val traktId = ListDatabaseHelper.getTraktId(context.contentResolver, listId)
+        userList.update(
+          traktId,
+          name,
+          description,
+          privacy,
+          displayNumbers,
+          allowComments,
+          sortBy,
+          sortOrientation
+        )
         syncLists.invokeAsync(SyncLists.Params())
       } else {
         val values = ContentValues()
@@ -106,6 +131,8 @@ class ListsTaskScheduler @Inject constructor(
         values.put(ListsColumns.PRIVACY, Privacy.PRIVATE.toString())
         values.put(ListsColumns.DISPLAY_NUMBERS, false)
         values.put(ListsColumns.ALLOW_COMMENTS, true)
+        values.put(ListsColumns.SORT_BY, sortBy.toString())
+        values.put(ListsColumns.SORT_ORIENTATION, sortOrientation.toString())
         context.contentResolver.update(Lists.withId(listId), values, null, null)
       }
     }
@@ -151,7 +178,7 @@ class ListsTaskScheduler @Inject constructor(
 
   private fun updateListItem(listId: Long, itemType: ItemType, itemId: Long, add: Boolean) {
     scope.launch {
-      val listTraktId = ListWrapper.getTraktId(context.contentResolver, listId)
+      val listTraktId = ListDatabaseHelper.getTraktId(context.contentResolver, listId)
       if (add) {
         val values = ContentValues()
         values.put(ListItemColumns.LIST_ID, listId)

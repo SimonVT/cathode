@@ -239,6 +239,11 @@ public final class SeasonDatabaseHelper {
   private static ContentValues getValues(Season season) {
     ContentValues values = new ContentValues();
     values.put(SeasonColumns.SEASON, season.getNumber());
+    if (season.getFirst_aired() != null) {
+      values.put(SeasonColumns.FIRST_AIRED, season.getFirst_aired().getTimeInMillis());
+    } else {
+      values.putNull(SeasonColumns.FIRST_AIRED);
+    }
 
     values.put(SeasonColumns.TVDB_ID, season.getIds().getTvdb());
     values.put(SeasonColumns.TMDB_ID, season.getIds().getTmdb());

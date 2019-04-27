@@ -21,6 +21,8 @@ import net.simonvt.cathode.api.enumeration.ItemType
 data class ListItem(
   val listItemId: Long,
   val listId: Long,
+  val rank: Int,
+  val listedAt: Long,
   val type: ItemType,
   val show: ListShow? = null,
   val season: ListSeason? = null,
@@ -32,18 +34,29 @@ data class ListItem(
 data class ListShow(
   val id: Long,
   val title: String,
+  val titleNoArticle: String,
   val overview: String,
+  val firstAired: Long,
   val watchedCount: Int,
   val collectedCount: Int,
   val watchlistCount: Int,
-  val rating: Float
+  val rating: Float,
+  val votes: Int,
+  val airedRuntime: Int,
+  val userRating: Int
 )
 
 data class ListSeason(
   val id: Long,
   val season: Int,
   val showId: Long,
-  val showTitle: String
+  val firstAired: Long,
+  val votes: Int,
+  val rating: Float,
+  val userRating: Int,
+  val airedRuntime: Int,
+  val showTitle: String,
+  val showTitleNoArticle: String
 )
 
 data class ListEpisode(
@@ -51,20 +64,31 @@ data class ListEpisode(
   val season: Int,
   val episode: Int,
   val title: String,
+  val runtime: Int,
   val watched: Boolean,
   val firstAired: Long,
-  val showTitle: String
+  val votes: Int,
+  val rating: Float,
+  val userRating: Int,
+  val showTitle: String,
+  val showTitleNoArticle: String
 )
 
 data class ListMovie(
   val id: Long,
   val title: String,
+  val titleNoArticle: String,
   val overview: String,
+  val releaseDate: Long,
   val watched: Boolean,
   val collected: Boolean,
   val inWatchlist: Boolean,
   val watching: Boolean,
-  val checkedIn: Boolean
+  val checkedIn: Boolean,
+  val votes: Int,
+  val rating: Float,
+  val runtime: Int,
+  val userRating: Int
 )
 
 data class ListPerson(

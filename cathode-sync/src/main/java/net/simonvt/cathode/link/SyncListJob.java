@@ -21,6 +21,8 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.api.entity.CustomList;
 import net.simonvt.cathode.api.enumeration.Privacy;
+import net.simonvt.cathode.api.enumeration.SortBy;
+import net.simonvt.cathode.api.enumeration.SortOrientation;
 import net.simonvt.cathode.api.service.UsersService;
 import net.simonvt.cathode.jobqueue.Job;
 import net.simonvt.cathode.remote.action.lists.AddEpisode;
@@ -98,7 +100,8 @@ public class SyncListJob extends Job {
       long listId = getListTraktId(name);
 
       if (listId == -1L) {
-        if (!userList.create(name, description, Privacy.PUBLIC, true, true)) {
+        if (!userList.create(name, description, Privacy.PRIVATE, true, true, SortBy.RANK,
+            SortOrientation.ASC)) {
           return false;
         }
 

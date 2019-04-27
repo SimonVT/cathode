@@ -99,7 +99,8 @@
       <CheckBox
           android:id="@+id/displayNumbers"
           android:layout_column="2"
-          android:layout_gravity="end"/>
+          android:layout_gravity="end"
+          android:checked="true"/>
     </TableRow>
 
     <TableRow
@@ -118,6 +119,40 @@
           android:layout_column="2"
           android:layout_gravity="end"
           android:checked="true"/>
+    </TableRow>
+
+    <TableRow
+        android:gravity="center_vertical"
+        android:minHeight="48dp"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp">
+
+      <TextView
+          android:paddingEnd="8dp"
+          android:text="@string/list_create_sort_by"
+          android:textAppearance="?attr/textAppearanceBody2"/>
+
+      <Spinner
+          android:id="@+id/sortBy"
+          android:layout_column="2"
+          android:layout_gravity="center_vertical|end"/>
+    </TableRow>
+
+    <TableRow
+        android:gravity="center_vertical"
+        android:minHeight="48dp"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp">
+
+      <TextView
+          android:paddingEnd="8dp"
+          android:text="@string/list_create_sort_orientation"
+          android:textAppearance="?attr/textAppearanceBody2"/>
+
+      <Spinner
+          android:id="@+id/sortOrientation"
+          android:layout_column="2"
+          android:layout_gravity="center_vertical|end"/>
     </TableRow>
   </TableLayout>
 </LinearLayout>

@@ -17,11 +17,15 @@
 package net.simonvt.cathode.api.body
 
 import net.simonvt.cathode.api.enumeration.Privacy
+import net.simonvt.cathode.api.enumeration.SortBy
+import net.simonvt.cathode.api.enumeration.SortOrientation
 
 data class ListInfoBody constructor(
   val name: String,
   val description: String? = null,
   val privacy: Privacy? = null,
   val display_numbers: Boolean?,
-  val allow_comments: Boolean?
+  val allow_comments: Boolean?,
+  val sort_by: SortBy,
+  val sort_how: SortOrientation
 )

@@ -17,6 +17,8 @@
 package net.simonvt.cathode.api.entity
 
 import net.simonvt.cathode.api.enumeration.Privacy
+import net.simonvt.cathode.api.enumeration.SortBy
+import net.simonvt.cathode.api.enumeration.SortOrientation
 
 data class CustomList(
   val name: String,
@@ -24,6 +26,9 @@ data class CustomList(
   val privacy: Privacy,
   val display_numbers: Boolean,
   val allow_comments: Boolean,
+  val sort_by: SortBy,
+  val sort_how: SortOrientation,
+  val created_at: IsoTime? = null,
   val updated_at: IsoTime? = null,
   val item_count: Int,
   val comment_count: Int,

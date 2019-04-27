@@ -102,7 +102,8 @@ class SyncPendingShows @Inject constructor(
     val listSeasons = context.contentResolver.query(
       ListItems.LIST_ITEMS,
       arrayOf(ListItemColumns.ITEM_ID),
-      ListItemColumns.ITEM_TYPE + "=" + ItemTypeString.SEASON
+      ListItemColumns.ITEM_TYPE + "=?",
+      arrayOf(ItemTypeString.SEASON)
     )
     listSeasons.forEach {
       val seasonId = Cursors.getLong(listSeasons, ListItemColumns.ITEM_ID)
@@ -120,7 +121,8 @@ class SyncPendingShows @Inject constructor(
     val listEpisodes = context.contentResolver.query(
       ListItems.LIST_ITEMS,
       arrayOf(ListItemColumns.ITEM_ID),
-      ListItemColumns.ITEM_TYPE + "=" + ItemTypeString.EPISODE
+      ListItemColumns.ITEM_TYPE + "=?",
+      arrayOf(ItemTypeString.EPISODE)
     )
     listEpisodes.forEach {
       val episodeId = Cursors.getLong(listEpisodes, ListItemColumns.ITEM_ID)

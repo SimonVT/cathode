@@ -52,6 +52,15 @@
   <item name="sort_watched" type="id"/>
   <item name="sort_collected" type="id"/>
   <item name="sort_anticipated" type="id"/>
+  <item name="sort_rank" type="id"/>
+  <item name="sort_added" type="id"/>
+  <item name="sort_released" type="id"/>
+  <item name="sort_runtime" type="id"/>
+  <item name="sort_popularity" type="id"/>
+  <item name="sort_percentage" type="id"/>
+  <item name="sort_votes" type="id"/>
+  <item name="sort_user_rating" type="id"/>
+  <item name="sort_random" type="id"/>
 
   <item name="action_history_add" type="id"/>
   <item name="action_history_remove" type="id"/>

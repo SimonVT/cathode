@@ -20,5 +20,7 @@ data class Season(
   var number: Int,
   var ids: Ids,
   var rating: Float? = null,
-  var votes: Int? = null
+  var votes: Int? = null,
+  val first_aired: IsoTime? = null,
+  val network: String? = null
 )
