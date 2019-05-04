@@ -58,7 +58,7 @@ public final class DatabaseSchematic {
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 45;
+  static final int DATABASE_VERSION = 46;
 
   public interface Tables {
 
@@ -190,8 +190,6 @@ public final class DatabaseSchematic {
         + " OR "
         + Tables.EPISODES + "." + EpisodeColumns.CHECKED_IN + "=1"
         + ")"
-        + " AND "
-        + Tables.EPISODES + "." + EpisodeColumns.SEASON + ">0"
         + ")"
         + " WHERE "
         + Tables.SHOWS + "." + ShowColumns.ID + "=NEW." + EpisodeColumns.SHOW_ID
@@ -777,6 +775,11 @@ public final class DatabaseSchematic {
     if (oldVersion < 45) {
       SqlUtils.createColumnIfNotExists(db, Tables.SEASONS, SeasonColumns.FIRST_AIRED,
           DataType.Type.INTEGER, null);
+    }
+
+    if (oldVersion < 46) {
+      db.execSQL("DROP TRIGGER IF EXISTS " + TriggerName.EPISODE_UPDATE_WATCHING);
+      db.execSQL(TRIGGER_EPISODE_UPDATE_WATCHING);
     }
   }
 }
