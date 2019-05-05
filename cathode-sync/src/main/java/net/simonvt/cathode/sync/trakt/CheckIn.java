@@ -32,6 +32,7 @@ import net.simonvt.cathode.common.event.ErrorEvent;
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns;
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns;
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns;
+import net.simonvt.cathode.provider.ProviderSchematic.Episodes;
 import net.simonvt.cathode.provider.ProviderSchematic.Movies;
 import net.simonvt.cathode.provider.ProviderSchematic.Shows;
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper;
@@ -62,9 +63,11 @@ public class CheckIn {
 
   public boolean episode(long episodeId, String message, boolean facebook, boolean twitter,
       boolean tumblr) {
-    Cursor episode = episodeHelper.query(episodeId, EpisodeColumns.TRAKT_ID, EpisodeColumns.TITLE,
-        EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON, EpisodeColumns.EPISODE,
-        EpisodeColumns.WATCHED);
+    Cursor episode = context.getContentResolver()
+        .query(Episodes.withId(episodeId), new String[] {
+            EpisodeColumns.TRAKT_ID, EpisodeColumns.TITLE, EpisodeColumns.SHOW_ID,
+            EpisodeColumns.SEASON, EpisodeColumns.EPISODE, EpisodeColumns.WATCHED
+        }, null, null, null);
     episode.moveToFirst();
     long traktId = Cursors.getLong(episode, EpisodeColumns.TRAKT_ID);
     long showId = Cursors.getLong(episode, EpisodeColumns.SHOW_ID);

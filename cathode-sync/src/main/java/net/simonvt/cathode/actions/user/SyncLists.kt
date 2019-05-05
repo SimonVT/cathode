@@ -36,7 +36,8 @@ import javax.inject.Inject
 class SyncLists @Inject constructor(
   private val context: Context,
   private val usersService: UsersService,
-  private val syncList: SyncList
+  private val syncList: SyncList,
+  private val listHelper: ListDatabaseHelper
 ) : CallAction<Params, List<CustomList>>() {
 
   override fun key(params: Params): String = "SyncLists"
@@ -55,7 +56,7 @@ class SyncLists @Inject constructor(
     response.map { list ->
       Timber.d("Sort direction: %s", list.sort_how)
       val traktId = list.ids.trakt!!
-      val listId = ListDatabaseHelper.updateOrInsert(context.contentResolver, list)
+      val listId = listHelper.updateOrInsert(list)
       listIds.remove(listId)
       syncList.invokeAsync(SyncList.Params(traktId))
     }.map { it.await() }

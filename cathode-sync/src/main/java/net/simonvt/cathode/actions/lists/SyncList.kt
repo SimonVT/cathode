@@ -53,6 +53,7 @@ class SyncList @Inject constructor(
   private val episodeHelper: EpisodeDatabaseHelper,
   private val movieHelper: MovieDatabaseHelper,
   private val personHelper: PersonDatabaseHelper,
+  private val listHelper: ListDatabaseHelper,
   private val usersService: UsersService,
   private val syncPerson: SyncPerson,
   private val workManager: WorkManager
@@ -80,7 +81,7 @@ class SyncList @Inject constructor(
     usersService.listItems(params.traktId)
 
   override suspend fun handleResponse(params: Params, response: List<ListItem>) {
-    val listId = ListDatabaseHelper.getId(context.contentResolver, params.traktId)
+    val listId = listHelper.getId(params.traktId)
     if (listId == -1L) {
       // List has been removed
       return
@@ -221,7 +222,7 @@ class SyncList @Inject constructor(
           val traktId = listItem.person!!.ids.trakt!!
           var personId = personHelper.getId(traktId)
           if (personId == -1L) {
-            personId = personHelper.partialUpdate(listItem.person)
+            personId = personHelper.partialUpdate(listItem.person!!)
             syncPerson.invokeSync(SyncPerson.Params(traktId))
           }
 

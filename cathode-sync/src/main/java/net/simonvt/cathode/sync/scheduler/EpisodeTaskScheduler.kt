@@ -33,6 +33,7 @@ import net.simonvt.cathode.provider.ProviderSchematic.Episodes
 import net.simonvt.cathode.provider.ProviderSchematic.Shows
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
+import net.simonvt.cathode.provider.query
 import net.simonvt.cathode.provider.util.DataHelper
 import net.simonvt.cathode.remote.action.RemoveHistoryItem
 import net.simonvt.cathode.remote.action.shows.AddEpisodeToHistory
@@ -133,22 +134,15 @@ class EpisodeTaskScheduler @Inject constructor(
     addToHistory(episodeId, isoWhen)
   }
 
-  fun addToHistory(
-    episodeId: Long,
-    year: Int,
-    month: Int,
-    day: Int,
-    hour: Int,
-    minute: Int
-  ) {
+  fun addToHistory(episodeId: Long, year: Int, month: Int, day: Int, hour: Int, minute: Int) {
     addToHistory(episodeId, TimeUtils.getMillis(year, month, day, hour, minute))
   }
 
   fun addToHistory(episodeId: Long, watchedAt: String) {
     scope.launch {
-      val c = episodeHelper.query(
-        episodeId, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON,
-        EpisodeColumns.EPISODE
+      val c = context.contentResolver.query(
+        Episodes.withId(episodeId),
+        arrayOf(EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON, EpisodeColumns.EPISODE)
       )
       c.moveToFirst()
       val showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID)
@@ -174,9 +168,9 @@ class EpisodeTaskScheduler @Inject constructor(
       episodeHelper.removeFromHistory(episodeId)
 
       if (TraktLinkSettings.isLinked(context)) {
-        val c = episodeHelper.query(
-          episodeId, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON,
-          EpisodeColumns.EPISODE
+        val c = context.contentResolver.query(
+          Episodes.withId(episodeId),
+          arrayOf(EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON, EpisodeColumns.EPISODE)
         )
         c.moveToFirst()
         val showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID)
@@ -224,9 +218,15 @@ class EpisodeTaskScheduler @Inject constructor(
         expires = Cursors.getLong(watching, EpisodeColumns.EXPIRES_AT)
       }
 
-      val episode = episodeHelper.query(
-        episodeId, EpisodeColumns.SHOW_ID, EpisodeColumns.TITLE,
-        EpisodeColumns.SEASON, EpisodeColumns.EPISODE, EpisodeColumns.WATCHED
+      val episode = context.contentResolver.query(
+        Episodes.withId(episodeId),
+        arrayOf(
+          EpisodeColumns.SHOW_ID,
+          EpisodeColumns.TITLE,
+          EpisodeColumns.SEASON,
+          EpisodeColumns.EPISODE,
+          EpisodeColumns.WATCHED
+        )
       )
       episode.moveToFirst()
       val showId = Cursors.getLong(episode, EpisodeColumns.SHOW_ID)
@@ -326,9 +326,9 @@ class EpisodeTaskScheduler @Inject constructor(
       episodeHelper.setInCollection(episodeId, inCollection, collectedAtMillis)
 
       if (TraktLinkSettings.isLinked(context)) {
-        val c = episodeHelper.query(
-          episodeId, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON,
-          EpisodeColumns.EPISODE
+        val c = context.contentResolver.query(
+          Episodes.withId(episodeId),
+          arrayOf(EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON, EpisodeColumns.EPISODE)
         )
         c.moveToFirst()
         val showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID)
@@ -354,9 +354,9 @@ class EpisodeTaskScheduler @Inject constructor(
       episodeHelper.setIsInWatchlist(episodeId, inWatchlist, listeddAtMillis)
 
       if (TraktLinkSettings.isLinked(context)) {
-        val c = episodeHelper.query(
-          episodeId, EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON,
-          EpisodeColumns.EPISODE
+        val c = context.contentResolver.query(
+          Episodes.withId(episodeId),
+          arrayOf(EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON, EpisodeColumns.EPISODE)
         )
         c.moveToFirst()
         val showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID)
@@ -385,7 +385,10 @@ class EpisodeTaskScheduler @Inject constructor(
 
       val showId = episodeHelper.getShowId(episodeId)
       val showTraktId = showHelper.getTraktId(showId)
-      val c = episodeHelper.query(episodeId, EpisodeColumns.EPISODE, EpisodeColumns.SEASON)
+      val c = context.contentResolver.query(
+        Episodes.withId(episodeId),
+        arrayOf(EpisodeColumns.EPISODE, EpisodeColumns.SEASON)
+      )
 
       if (c.moveToFirst()) {
         val episode = Cursors.getInt(c, EpisodeColumns.EPISODE)

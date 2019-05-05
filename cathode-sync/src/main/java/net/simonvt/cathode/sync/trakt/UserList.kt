@@ -33,7 +33,8 @@ import javax.inject.Inject
 class UserList @Inject constructor(
   private val context: Context,
   private val usersServie: UsersService,
-  private val jobManager: JobManager
+  private val jobManager: JobManager,
+  private val listHelper: ListDatabaseHelper
 ) {
 
   fun create(
@@ -55,7 +56,7 @@ class UserList @Inject constructor(
       val response = call.execute()
       if (response.isSuccessful) {
         val userList = response.body()
-        ListDatabaseHelper.updateOrInsert(context.contentResolver, userList!!)
+        listHelper.updateOrInsert(userList!!)
         jobManager.addJob(SyncUserActivity())
         return true
       }
@@ -88,7 +89,7 @@ class UserList @Inject constructor(
       val response = call.execute()
       if (response.isSuccessful) {
         val userList = response.body()
-        ListDatabaseHelper.updateOrInsert(context.contentResolver, userList!!)
+        listHelper.updateOrInsert(userList!!)
         jobManager.addJob(SyncUserActivity())
         return true
       }

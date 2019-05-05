@@ -54,6 +54,7 @@ import javax.inject.Inject
 
 class ListViewModel @Inject constructor(
   private val context: Context,
+  private val listHelper: ListDatabaseHelper,
   private val syncList: SyncList
 ) : RefreshableViewModel() {
 
@@ -267,7 +268,7 @@ class ListViewModel @Inject constructor(
   }
 
   override suspend fun onRefresh() {
-    val traktId = ListDatabaseHelper.getTraktId(context.contentResolver, listId)
+    val traktId = listHelper.getTraktId(listId)
     syncList.invokeSync(SyncList.Params(traktId))
   }
 }

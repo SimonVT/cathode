@@ -16,50 +16,55 @@
 
 package net.simonvt.cathode.provider.helper
 
-import android.content.ContentResolver
 import android.content.ContentValues
+import android.content.Context
 import net.simonvt.cathode.api.entity.CustomList
-import net.simonvt.cathode.common.database.Cursors
+import net.simonvt.cathode.common.database.getLong
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Lists
 import net.simonvt.cathode.provider.query
+import javax.inject.Inject
+import javax.inject.Singleton
 
-object ListDatabaseHelper {
+@Singleton
+class ListDatabaseHelper @Inject constructor(
+  private val context: Context
+) {
 
-  fun getId(resolver: ContentResolver, traktId: Long): Long {
-    val c = resolver.query(
+  fun getId(traktId: Long): Long {
+    val c = context.contentResolver.query(
       Lists.LISTS,
       arrayOf(ListsColumns.ID),
       ListsColumns.TRAKT_ID + "=?",
       arrayOf(traktId.toString())
     )
-    val id = if (!c.moveToFirst()) -1L else Cursors.getLong(c, ListsColumns.ID)
+    val id = if (!c.moveToFirst()) -1L else c.getLong(ListsColumns.ID)
     c.close()
     return id
   }
 
-  fun getTraktId(resolver: ContentResolver, listId: Long): Long {
-    val c = resolver.query(Lists.withId(listId), arrayOf(ListsColumns.TRAKT_ID))
-    val traktId = if (!c.moveToFirst()) -1L else Cursors.getLong(c, ListsColumns.TRAKT_ID)
+  fun getTraktId(listId: Long): Long {
+    val c = context.contentResolver.query(Lists.withId(listId), arrayOf(ListsColumns.TRAKT_ID))
+    val traktId = if (!c.moveToFirst()) -1L else c.getLong(ListsColumns.TRAKT_ID)
     c.close()
     return traktId
   }
 
-  fun updateOrInsert(resolver: ContentResolver, list: CustomList): Long {
+  fun updateOrInsert(list: CustomList): Long {
     val traktId = list.ids.trakt!!
-    var listId = getId(resolver, traktId)
+    var listId = getId(traktId)
 
     if (listId == -1L) {
-      listId = Lists.getId(resolver.insert(Lists.LISTS, getValues(list))!!)
+      listId = Lists.getId(context.contentResolver.insert(Lists.LISTS, getValues(list))!!)
     } else {
-      update(resolver, listId, list)
+      update(listId, list)
     }
 
     return listId
   }
 
-  fun update(resolver: ContentResolver, listId: Long, list: CustomList) {
-    resolver.update(Lists.withId(listId), getValues(list), null, null)
+  fun update(listId: Long, list: CustomList) {
+    context.contentResolver.update(Lists.withId(listId), getValues(list), null, null)
   }
 
   private fun getValues(list: CustomList): ContentValues {

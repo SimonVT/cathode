@@ -61,6 +61,7 @@ class ListsTaskScheduler @Inject constructor(
   private val episodeHelper: EpisodeDatabaseHelper,
   private val movieHelper: MovieDatabaseHelper,
   private val personHelper: PersonDatabaseHelper,
+  private val listHelper: ListDatabaseHelper,
   private val userList: UserList,
   private val syncLists: SyncLists
 ) : BaseTaskScheduler(context, jobManager) {
@@ -112,7 +113,7 @@ class ListsTaskScheduler @Inject constructor(
   ) {
     scope.launch {
       if (TraktLinkSettings.isLinked(context)) {
-        val traktId = ListDatabaseHelper.getTraktId(context.contentResolver, listId)
+        val traktId = listHelper.getTraktId(listId)
         userList.update(
           traktId,
           name,
@@ -178,7 +179,7 @@ class ListsTaskScheduler @Inject constructor(
 
   private fun updateListItem(listId: Long, itemType: ItemType, itemId: Long, add: Boolean) {
     scope.launch {
-      val listTraktId = ListDatabaseHelper.getTraktId(context.contentResolver, listId)
+      val listTraktId = listHelper.getTraktId(listId)
       if (add) {
         val values = ContentValues()
         values.put(ListItemColumns.LIST_ID, listId)

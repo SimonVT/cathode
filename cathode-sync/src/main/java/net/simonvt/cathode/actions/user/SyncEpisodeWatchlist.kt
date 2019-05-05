@@ -69,7 +69,7 @@ class SyncEpisodeWatchlist @Inject constructor(
       val showId = showResult.showId
       val didShowExist = !showResult.didCreate
       if (showResult.didCreate) {
-        showHelper.partialUpdate(watchlistItem.show)
+        showHelper.partialUpdate(watchlistItem.show!!)
       }
 
       val seasonResult = seasonHelper.getIdOrCreate(showId, seasonNumber)
