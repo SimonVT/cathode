@@ -15,7 +15,7 @@
  */
 package net.simonvt.cathode.ui.lists
 
-import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -57,9 +57,9 @@ class ListFragment : ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHol
 
   private var listInfo: UserList? = null
 
-  override fun onAttach(activity: Activity) {
-    super.onAttach(activity)
-    navigationListener = activity as NavigationListener
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    navigationListener = requireActivity() as NavigationListener
   }
 
   override fun onCreate(inState: Bundle?) {
@@ -133,13 +133,13 @@ class ListFragment : ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHol
             listInfo!!.sortBy,
             listInfo!!.sortOrientation
           )
-          updateFragment.show(fragmentManager!!, DIALOG_UPDATE)
+          updateFragment.show(requireFragmentManager(), DIALOG_UPDATE)
         }
         return true
       }
 
       R.id.menu_list_delete -> {
-        DeleteListDialog.newInstance(listId).show(fragmentManager!!, DIALOG_DELETE)
+        DeleteListDialog.newInstance(listId).show(requireFragmentManager(), DIALOG_DELETE)
         return true
       }
     }

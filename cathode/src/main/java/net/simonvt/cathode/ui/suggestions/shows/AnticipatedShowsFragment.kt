@@ -15,7 +15,7 @@
  */
 package net.simonvt.cathode.ui.suggestions.shows
 
-import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.lifecycle.Observer
@@ -29,6 +29,7 @@ import net.simonvt.cathode.settings.Settings
 import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.LibraryType
+import net.simonvt.cathode.ui.NavigationListener
 import net.simonvt.cathode.ui.ShowsNavigationListener
 import net.simonvt.cathode.ui.lists.ListDialog
 import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter
@@ -67,9 +68,9 @@ class AnticipatedShowsFragment : SwipeRefreshRecyclerFragment<ShowDescriptionAda
     }
   }
 
-  override fun onAttach(activity: Activity) {
-    super.onAttach(activity)
-    navigationListener = activity as ShowsNavigationListener
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    navigationListener = requireActivity() as NavigationListener
   }
 
   override fun onCreate(inState: Bundle?) {
@@ -106,7 +107,7 @@ class AnticipatedShowsFragment : SwipeRefreshRecyclerFragment<ShowDescriptionAda
         items.add(ListDialog.Item(R.id.sort_anticipated, R.string.sort_anticipated))
         items.add(ListDialog.Item(R.id.sort_title, R.string.sort_title))
         ListDialog.newInstance(R.string.action_sort_by, items, this)
-          .show(fragmentManager!!, DIALOG_SORT)
+          .show(requireFragmentManager(), DIALOG_SORT)
         return true
       }
 

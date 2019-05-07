@@ -15,7 +15,6 @@
  */
 package net.simonvt.cathode.ui.navigation;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Outline;
@@ -105,9 +104,9 @@ public class NavigationFragment extends AbsAdapterFragment {
 
   private NavigationAdapter adapter;
 
-  @Override public void onAttach(Activity activity) {
-    super.onAttach(activity);
-    listener = (OnMenuClickListener) activity;
+  @Override public void onAttach(@NonNull Context context) {
+    super.onAttach(context);
+    listener = (OnMenuClickListener) requireActivity();
   }
 
   @Override public void onCreate(@Nullable Bundle inState) {

@@ -15,7 +15,7 @@
  */
 package net.simonvt.cathode.ui.movie
 
-import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
@@ -29,6 +29,7 @@ import net.simonvt.cathode.entity.Movie
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.MoviesNavigationListener
+import net.simonvt.cathode.ui.NavigationListener
 import net.simonvt.cathode.ui.movies.BaseMoviesAdapter
 import net.simonvt.cathode.ui.movies.MoviesAdapter
 import javax.inject.Inject
@@ -51,9 +52,9 @@ class RelatedMoviesFragment : ToolbarSwipeRefreshRecyclerFragment<BaseMoviesAdap
 
   private var columnCount: Int = 0
 
-  override fun onAttach(activity: Activity) {
-    super.onAttach(activity)
-    navigationListener = activity as MoviesNavigationListener
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    navigationListener = requireActivity() as NavigationListener
   }
 
   override fun onCreate(inState: Bundle?) {

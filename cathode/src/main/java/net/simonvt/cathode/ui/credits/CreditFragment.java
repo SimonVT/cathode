@@ -15,8 +15,9 @@
  */
 package net.simonvt.cathode.ui.credits;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -71,9 +72,9 @@ public class CreditFragment extends ToolbarGridFragment<CreditAdapter.ViewHolder
     return args;
   }
 
-  @Override public void onAttach(Activity activity) {
-    super.onAttach(activity);
-    navigationListener = (NavigationListener) activity;
+  @Override public void onAttach(@NonNull Context context) {
+    super.onAttach(context);
+    navigationListener = (NavigationListener) requireActivity();
   }
 
   @Override public void onCreate(@Nullable Bundle inState) {

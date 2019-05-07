@@ -15,7 +15,7 @@
  */
 package net.simonvt.cathode.ui.history;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -106,9 +106,9 @@ public class SelectHistoryDateFragment extends AppBarFragment
     return args;
   }
 
-  @Override public void onAttach(Activity activity) {
-    super.onAttach(activity);
-    navigationListener = (NavigationListener) activity;
+  @Override public void onAttach(@NonNull Context context) {
+    super.onAttach(context);
+    navigationListener = (NavigationListener) requireActivity();
   }
 
   @Override public void onCreate(@Nullable Bundle inState) {
@@ -251,12 +251,12 @@ public class SelectHistoryDateFragment extends AppBarFragment
   @OnClick(R.id.date) void selectDate() {
     DatePickerDialog dialog = DatePickerDialog.newInstance(year, month, day);
     dialog.setTargetFragment(this, 0);
-    dialog.show(getFragmentManager(), DIALOG_DATE);
+    dialog.show(requireFragmentManager(), DIALOG_DATE);
   }
 
   @OnClick(R.id.time) void selectTime() {
     TimePickerDialog dialog = TimePickerDialog.newInstance(hour, minute);
     dialog.setTargetFragment(this, 0);
-    dialog.show(getFragmentManager(), DIALOG_TIME);
+    dialog.show(requireFragmentManager(), DIALOG_TIME);
   }
 }

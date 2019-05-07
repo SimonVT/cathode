@@ -15,7 +15,7 @@
  */
 package net.simonvt.cathode.ui.show
 
-import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -33,6 +33,7 @@ import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler
 import net.simonvt.cathode.sync.scheduler.SeasonTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.LibraryType
+import net.simonvt.cathode.ui.NavigationListener
 import net.simonvt.cathode.ui.ShowsNavigationListener
 import net.simonvt.cathode.ui.history.AddToHistoryDialog
 import net.simonvt.cathode.ui.history.RemoveFromHistoryDialog
@@ -73,12 +74,11 @@ class SeasonFragment : ToolbarSwipeRefreshRecyclerFragment<ViewHolder>(),
   private var watchedCount = -1
   private var collectedCount = -1
 
-  private val navigationClickListener =
-    View.OnClickListener { navigationListener.onHomeClicked() }
+  private val navigationClickListener = View.OnClickListener { navigationListener.onHomeClicked() }
 
-  override fun onAttach(activity: Activity) {
-    super.onAttach(activity)
-    navigationListener = activity as ShowsNavigationListener
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    navigationListener = requireActivity() as NavigationListener
   }
 
   override fun onCreate(inState: Bundle?) {
@@ -144,7 +144,8 @@ class SeasonFragment : ToolbarSwipeRefreshRecyclerFragment<ViewHolder>(),
   override fun onMenuItemClick(item: MenuItem): Boolean {
     when (item.itemId) {
       R.id.action_list_add -> {
-        ListsDialog.newInstance(ItemType.SEASON, seasonId).show(fragmentManager!!, DIALOG_LISTS_ADD)
+        ListsDialog.newInstance(ItemType.SEASON, seasonId)
+          .show(requireFragmentManager(), DIALOG_LISTS_ADD)
         return true
       }
 
@@ -153,7 +154,7 @@ class SeasonFragment : ToolbarSwipeRefreshRecyclerFragment<ViewHolder>(),
           AddToHistoryDialog.Type.SEASON, seasonId,
           getString(R.string.season_x, seasonNumber)
         )
-          .show(fragmentManager!!, AddToHistoryDialog.TAG)
+          .show(requireFragmentManager(), AddToHistoryDialog.TAG)
         return true
       }
 
@@ -163,7 +164,7 @@ class SeasonFragment : ToolbarSwipeRefreshRecyclerFragment<ViewHolder>(),
             RemoveFromHistoryDialog.Type.SEASON, seasonId,
             requireContext().getString(R.string.season_x, seasonNumber)
           )
-            .show(fragmentManager!!, RemoveFromHistoryDialog.TAG)
+            .show(requireFragmentManager(), RemoveFromHistoryDialog.TAG)
         } else {
           seasonScheduler.removeFromHistory(seasonId)
         }

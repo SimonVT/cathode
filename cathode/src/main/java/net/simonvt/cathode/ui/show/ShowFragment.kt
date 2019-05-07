@@ -15,7 +15,7 @@
  */
 package net.simonvt.cathode.ui.show
 
-import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -246,9 +246,9 @@ class ShowFragment : RefreshableAppBarFragment() {
     val episodeOverflow: OverflowView = v.findViewById(R.id.episodeOverflow)
   }
 
-  override fun onAttach(activity: Activity) {
-    super.onAttach(activity)
-    navigationListener = activity as NavigationListener
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    navigationListener = requireActivity() as NavigationListener
   }
 
   override fun onCreate(inState: Bundle?) {
@@ -377,7 +377,7 @@ class ShowFragment : RefreshableAppBarFragment() {
     if (TraktLinkSettings.isLinked(requireContext())) {
       rating!!.setOnClickListener {
         RatingDialog.newInstance(RatingDialog.Type.SHOW, showId, currentRating)
-          .show(fragmentManager!!, DIALOG_RATING)
+          .show(requireFragmentManager(), DIALOG_RATING)
       }
     }
 
@@ -431,7 +431,7 @@ class ShowFragment : RefreshableAppBarFragment() {
             AddToHistoryDialog.newInstance(
               AddToHistoryDialog.Type.EPISODE, toWatchId,
               toWatchTitle
-            ).show(fragmentManager!!, AddToHistoryDialog.TAG)
+            ).show(requireFragmentManager(), AddToHistoryDialog.TAG)
           }
         }
       }
@@ -547,7 +547,8 @@ class ShowFragment : RefreshableAppBarFragment() {
       }
 
       R.id.action_list_add -> {
-        ListsDialog.newInstance(ItemType.SHOW, showId).show(fragmentManager!!, DIALOG_LISTS_ADD)
+        ListsDialog.newInstance(ItemType.SHOW, showId)
+          .show(requireFragmentManager(), DIALOG_LISTS_ADD)
         return true
       }
 

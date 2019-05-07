@@ -60,7 +60,7 @@ class CommentFragment : ToolbarSwipeRefreshRecyclerFragment<CommentsAdapter.View
     ) {
       if (isUserComment) {
         UpdateCommentDialog.newInstance(commentId, comment, spoiler)
-          .show(fragmentManager!!, DIALOG_COMMENT_UPDATE)
+          .show(requireFragmentManager(), DIALOG_COMMENT_UPDATE)
       }
     }
 
@@ -130,7 +130,7 @@ class CommentFragment : ToolbarSwipeRefreshRecyclerFragment<CommentsAdapter.View
     when (item.itemId) {
       R.id.menu_reply -> {
         AddCommentDialog.newInstance(ItemType.COMMENT, commentId)
-          .show(fragmentManager!!, DIALOG_COMMENT_ADD)
+          .show(requireFragmentManager(), DIALOG_COMMENT_ADD)
         return true
       }
 

@@ -15,7 +15,7 @@
  */
 package net.simonvt.cathode.ui.show
 
-import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -28,6 +28,7 @@ import net.simonvt.cathode.entity.Show
 import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.LibraryType
+import net.simonvt.cathode.ui.NavigationListener
 import net.simonvt.cathode.ui.ShowsNavigationListener
 import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter
 import javax.inject.Inject
@@ -49,9 +50,9 @@ class RelatedShowsFragment :
 
   private var showsAdapter: ShowDescriptionAdapter? = null
 
-  override fun onAttach(activity: Activity) {
-    super.onAttach(activity)
-    navigationListener = activity as ShowsNavigationListener
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    navigationListener = requireActivity() as NavigationListener
   }
 
   override fun onCreate(inState: Bundle?) {

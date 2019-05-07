@@ -15,7 +15,7 @@
  */
 package net.simonvt.cathode.ui.shows.watchlist
 
-import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -35,6 +35,7 @@ import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler
 import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.LibraryType
+import net.simonvt.cathode.ui.NavigationListener
 import net.simonvt.cathode.ui.ShowsNavigationListener
 import javax.inject.Inject
 
@@ -56,12 +57,11 @@ class ShowsWatchlistFragment : ToolbarSwipeRefreshRecyclerFragment<RecyclerView.
 
   private var adapter: ShowWatchlistAdapter? = null
 
-  private val navigationClickListener =
-    View.OnClickListener { navigationListener.onHomeClicked() }
+  private val navigationClickListener = View.OnClickListener { navigationListener.onHomeClicked() }
 
-  override fun onAttach(activity: Activity) {
-    super.onAttach(activity)
-    navigationListener = activity as ShowsNavigationListener
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    navigationListener = requireActivity() as NavigationListener
   }
 
   override fun onCreate(inState: Bundle?) {

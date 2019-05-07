@@ -15,9 +15,10 @@
  */
 package net.simonvt.cathode.ui.comments;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.MenuItem;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
@@ -76,9 +77,9 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
     return args;
   }
 
-  @Override public void onAttach(Activity activity) {
-    super.onAttach(activity);
-    navigationListener = (NavigationListener) activity;
+  @Override public void onAttach(@NonNull Context context) {
+    super.onAttach(context);
+    navigationListener = (NavigationListener) requireActivity();
   }
 
   @Override public void onCreate(@Nullable Bundle inState) {
@@ -122,7 +123,7 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
     switch (item.getItemId()) {
       case R.id.menu_comment_add:
         AddCommentDialog.newInstance(itemType, itemId)
-            .show(getFragmentManager(), DIALOG_COMMENT_ADD);
+            .show(requireFragmentManager(), DIALOG_COMMENT_ADD);
         return true;
 
       default:
@@ -136,7 +137,7 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
             boolean isUserComment) {
           if (isUserComment) {
             UpdateCommentDialog.newInstance(commentId, comment, spoiler)
-                .show(getFragmentManager(), DIALOG_COMMENT_UPDATE);
+                .show(requireFragmentManager(), DIALOG_COMMENT_UPDATE);
           } else {
             navigationListener.onDisplayComment(commentId);
           }

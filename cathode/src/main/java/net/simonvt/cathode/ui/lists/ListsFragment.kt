@@ -15,7 +15,7 @@
  */
 package net.simonvt.cathode.ui.lists
 
-import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -42,9 +42,9 @@ class ListsFragment : ToolbarSwipeRefreshRecyclerFragment<ListsAdapter.ViewHolde
 
   private var adapter: ListsAdapter? = null
 
-  override fun onAttach(activity: Activity) {
-    super.onAttach(activity)
-    listener = activity as ListNavigationListener
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    listener = requireActivity() as ListNavigationListener
   }
 
   override fun onCreate(inState: Bundle?) {
@@ -88,7 +88,7 @@ class ListsFragment : ToolbarSwipeRefreshRecyclerFragment<ListsAdapter.ViewHolde
     when (item.itemId) {
       R.id.menu_list_create -> {
         val dialog = CreateListFragment()
-        dialog.show(fragmentManager!!, DIALOG_LIST_CREATE)
+        dialog.show(requireFragmentManager(), DIALOG_LIST_CREATE)
         return true
       }
     }

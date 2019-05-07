@@ -1,6 +1,6 @@
 package net.simonvt.cathode.settings.hidden
 
-import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
@@ -41,9 +41,9 @@ class HiddenItemsFragment : ToolbarSwipeRefreshRecyclerFragment<RecyclerView.Vie
 
   private lateinit var navigationListener: NavigationListener
 
-  override fun onAttach(activity: Activity) {
-    super.onAttach(activity)
-    navigationListener = activity as NavigationListener
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    navigationListener = requireActivity() as NavigationListener
   }
 
   override fun onCreate(inState: Bundle?) {

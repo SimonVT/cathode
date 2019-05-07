@@ -15,7 +15,7 @@
  */
 package net.simonvt.cathode.ui.show
 
-import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -146,9 +146,9 @@ class EpisodeFragment : RefreshableAppBarFragment() {
 
   private var checkInDrawable: CheckInDrawable? = null
 
-  override fun onAttach(activity: Activity) {
-    super.onAttach(activity)
-    navigationListener = activity as NavigationListener
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    navigationListener = requireActivity() as NavigationListener
   }
 
   override fun onCreate(inState: Bundle?) {
@@ -198,7 +198,7 @@ class EpisodeFragment : RefreshableAppBarFragment() {
     if (TraktLinkSettings.isLinked(requireContext())) {
       rating!!.setOnClickListener {
         RatingDialog.newInstance(RatingDialog.Type.EPISODE, episodeId, currentRating)
-          .show(fragmentManager!!, DIALOG_RATING)
+          .show(requireFragmentManager(), DIALOG_RATING)
       }
     }
   }
@@ -263,7 +263,7 @@ class EpisodeFragment : RefreshableAppBarFragment() {
     when (item.itemId) {
       R.id.action_history_add -> {
         AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.EPISODE, episodeId, episodeTitle)
-          .show(fragmentManager!!, AddToHistoryDialog.TAG)
+          .show(requireFragmentManager(), AddToHistoryDialog.TAG)
         return true
       }
 
@@ -272,7 +272,7 @@ class EpisodeFragment : RefreshableAppBarFragment() {
           RemoveFromHistoryDialog.newInstance(
             RemoveFromHistoryDialog.Type.EPISODE, episodeId,
             episodeTitle, showTitle
-          ).show(fragmentManager!!, RemoveFromHistoryDialog.TAG)
+          ).show(requireFragmentManager(), RemoveFromHistoryDialog.TAG)
         } else {
           episodeScheduler.removeFromHistory(episodeId)
         }
@@ -283,7 +283,7 @@ class EpisodeFragment : RefreshableAppBarFragment() {
         AddToHistoryDialog.newInstance(
           AddToHistoryDialog.Type.EPISODE_OLDER, episodeId,
           episodeTitle
-        ).show(fragmentManager!!, AddToHistoryDialog.TAG)
+        ).show(requireFragmentManager(), AddToHistoryDialog.TAG)
         return true
       }
 
@@ -335,7 +335,7 @@ class EpisodeFragment : RefreshableAppBarFragment() {
 
       R.id.action_list_add -> {
         ListsDialog.newInstance(ItemType.EPISODE, episodeId)
-          .show(fragmentManager!!, DIALOG_LISTS_ADD)
+          .show(requireFragmentManager(), DIALOG_LISTS_ADD)
         return true
       }
 

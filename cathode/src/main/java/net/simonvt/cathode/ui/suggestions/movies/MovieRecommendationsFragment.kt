@@ -15,7 +15,7 @@
  */
 package net.simonvt.cathode.ui.suggestions.movies
 
-import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -30,6 +30,7 @@ import net.simonvt.cathode.settings.Settings
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.MoviesNavigationListener
+import net.simonvt.cathode.ui.NavigationListener
 import net.simonvt.cathode.ui.lists.ListDialog
 import net.simonvt.cathode.ui.movies.BaseMoviesAdapter
 import javax.inject.Inject
@@ -67,9 +68,9 @@ class MovieRecommendationsFragment : SwipeRefreshRecyclerFragment<BaseMoviesAdap
     }
   }
 
-  override fun onAttach(activity: Activity) {
-    super.onAttach(activity)
-    navigationListener = activity as MoviesNavigationListener
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    navigationListener = requireActivity() as NavigationListener
   }
 
   override fun onCreate(inState: Bundle?) {
@@ -109,7 +110,7 @@ class MovieRecommendationsFragment : SwipeRefreshRecyclerFragment<BaseMoviesAdap
         items.add(ListDialog.Item(R.id.sort_relevance, R.string.sort_relevance))
         items.add(ListDialog.Item(R.id.sort_rating, R.string.sort_rating))
         ListDialog.newInstance(R.string.action_sort_by, items, this)
-          .show(fragmentManager!!, DIALOG_SORT)
+          .show(requireFragmentManager(), DIALOG_SORT)
         return true
       }
 

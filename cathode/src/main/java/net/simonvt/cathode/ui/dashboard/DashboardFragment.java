@@ -15,7 +15,7 @@
  */
 package net.simonvt.cathode.ui.dashboard;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -75,9 +75,9 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
   private NavigationListener navigationListener;
 
-  @Override public void onAttach(Activity activity) {
-    super.onAttach(activity);
-    navigationListener = (NavigationListener) activity;
+  @Override public void onAttach(@NonNull Context context) {
+    super.onAttach(context);
+    navigationListener = (NavigationListener) requireActivity();
   }
 
   @Override public void onCreate(@Nullable Bundle inState) {

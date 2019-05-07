@@ -90,7 +90,7 @@ class TrendingMoviesFragment : MoviesFragment(), ListDialog.Callback {
         items.add(ListDialog.Item(R.id.sort_viewers, R.string.sort_viewers))
         items.add(ListDialog.Item(R.id.sort_rating, R.string.sort_rating))
         ListDialog.newInstance(R.string.action_sort_by, items, this)
-          .show(fragmentManager!!, DIALOG_SORT)
+          .show(requireFragmentManager(), DIALOG_SORT)
         return true
       }
 

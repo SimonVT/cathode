@@ -16,6 +16,7 @@
 package net.simonvt.cathode.common.ui.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,8 +43,9 @@ public abstract class BaseFragment extends Fragment
 
   private FragmentCallbacks fragmentCallbacks;
 
-  @Override public void onAttach(Activity activity) {
-    super.onAttach(activity);
+  @Override public void onAttach(@NonNull Context context) {
+    super.onAttach(context);
+    Activity activity = requireActivity();
     if (activity instanceof FragmentCallbacks) {
       fragmentCallbacks = (FragmentCallbacks) activity;
     }

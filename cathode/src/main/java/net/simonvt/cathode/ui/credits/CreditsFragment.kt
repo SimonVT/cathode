@@ -15,7 +15,7 @@
  */
 package net.simonvt.cathode.ui.credits
 
-import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -126,9 +126,9 @@ class CreditsFragment : RefreshableToolbarFragment() {
   @JvmField
   var cameraItems: LinearLayout? = null
 
-  override fun onAttach(activity: Activity) {
-    super.onAttach(activity)
-    navigationListener = activity as NavigationListener
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    navigationListener = requireActivity() as NavigationListener
   }
 
   override fun onCreate(inState: Bundle?) {

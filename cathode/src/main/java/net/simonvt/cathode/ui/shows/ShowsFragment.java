@@ -15,9 +15,10 @@
  */
 package net.simonvt.cathode.ui.shows;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.MenuItem;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
@@ -32,6 +33,7 @@ import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
+import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.ShowsNavigationListener;
 
 public abstract class ShowsFragment
@@ -51,9 +53,9 @@ public abstract class ShowsFragment
 
   protected boolean scrollToTop;
 
-  @Override public void onAttach(Activity activity) {
-    super.onAttach(activity);
-    navigationListener = (ShowsNavigationListener) activity;
+  @Override public void onAttach(@NonNull Context context) {
+    super.onAttach(context);
+    navigationListener = (NavigationListener) requireActivity();
   }
 
   @Override public void onCreate(@Nullable Bundle inState) {

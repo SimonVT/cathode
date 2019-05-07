@@ -88,7 +88,7 @@ class WatchedMoviesFragment : MoviesFragment(), ListDialog.Callback {
       items.add(ListDialog.Item(R.id.sort_title, R.string.sort_title))
       items.add(ListDialog.Item(R.id.sort_watched, R.string.sort_watched))
       ListDialog.newInstance(R.string.action_sort_by, items, this)
-        .show(fragmentManager!!, DIALOG_SORT)
+        .show(requireFragmentManager(), DIALOG_SORT)
       return true
     }
 

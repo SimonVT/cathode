@@ -15,7 +15,7 @@
  */
 package net.simonvt.cathode.ui.suggestions;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,9 +38,9 @@ public abstract class SuggestionsFragment extends BaseFragment {
 
   @BindView(R.id.pager) protected ViewPager pager;
 
-  @Override public void onAttach(Activity activity) {
-    super.onAttach(activity);
-    navigationListener = (NavigationListener) activity;
+  @Override public void onAttach(@NonNull Context context) {
+    super.onAttach(context);
+    navigationListener = (NavigationListener) requireActivity();
   }
 
   @Override public boolean displaysMenuIcon() {

@@ -15,8 +15,8 @@
  */
 package net.simonvt.cathode.ui.history;
 
-import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -54,9 +54,9 @@ public class RemoveFromHistoryDialog extends DialogFragment {
 
   private NavigationListener navigationListener;
 
-  @Override public void onAttach(Activity activity) {
-    super.onAttach(activity);
-    navigationListener = (NavigationListener) activity;
+  @Override public void onAttach(@NonNull Context context) {
+    super.onAttach(context);
+    navigationListener = (NavigationListener) requireActivity();
   }
 
   @Override public void onCreate(@Nullable Bundle inState) {

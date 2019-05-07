@@ -15,7 +15,7 @@
  */
 package net.simonvt.cathode.ui.movie
 
-import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -187,9 +187,9 @@ class MovieFragment : RefreshableAppBarFragment() {
 
   private var checkInDrawable: CheckInDrawable? = null
 
-  override fun onAttach(activity: Activity) {
-    super.onAttach(activity)
-    navigationListener = activity as NavigationListener
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    navigationListener = requireActivity() as NavigationListener
   }
 
   override fun onCreate(inState: Bundle?) {
@@ -253,7 +253,7 @@ class MovieFragment : RefreshableAppBarFragment() {
     if (TraktLinkSettings.isLinked(requireContext())) {
       rating!!.setOnClickListener {
         RatingDialog.newInstance(RatingDialog.Type.MOVIE, movieId, currentRating)
-          .show(fragmentManager!!, DIALOG_RATING)
+          .show(requireFragmentManager(), DIALOG_RATING)
       }
     }
 
@@ -330,7 +330,7 @@ class MovieFragment : RefreshableAppBarFragment() {
     when (item.itemId) {
       R.id.action_history_add -> {
         AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.MOVIE, movieId, movieTitle)
-          .show(fragmentManager!!, AddToHistoryDialog.TAG)
+          .show(requireFragmentManager(), AddToHistoryDialog.TAG)
         return true
       }
 
@@ -339,7 +339,7 @@ class MovieFragment : RefreshableAppBarFragment() {
           RemoveFromHistoryDialog.newInstance(
             RemoveFromHistoryDialog.Type.MOVIE, movieId,
             movieTitle
-          ).show(fragmentManager!!, RemoveFromHistoryDialog.TAG)
+          ).show(requireFragmentManager(), RemoveFromHistoryDialog.TAG)
         } else {
           movieScheduler.removeFromHistory(movieId)
         }
@@ -394,7 +394,7 @@ class MovieFragment : RefreshableAppBarFragment() {
 
       R.id.action_list_add -> {
         ListsDialog.newInstance(ItemType.MOVIE, movieId)
-          .show(fragmentManager!!, DIALOG_LISTS_ADD)
+          .show(requireFragmentManager(), DIALOG_LISTS_ADD)
         return true
       }
     }
