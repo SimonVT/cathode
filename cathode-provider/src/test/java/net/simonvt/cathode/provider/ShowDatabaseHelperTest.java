@@ -37,14 +37,14 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.android.controller.ContentProviderController;
 import org.robolectric.annotation.Config;
-import org.robolectric.util.ContentProviderController;
 
 import static com.google.common.truth.Truth.assertThat;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(application = TestApp.class, constants = BuildConfig.class, sdk = 21,
-    packageName = "net.simonvt.cathode") public class ShowDatabaseHelperTest {
+@Config(application = TestApp.class, sdk = 21, packageName = "net.simonvt.cathode")
+public class ShowDatabaseHelperTest {
 
   ContentProviderController<CathodeProvider> provider;
   ContentResolver contentResolver = RuntimeEnvironment.application.getContentResolver();

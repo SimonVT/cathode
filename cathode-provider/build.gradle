@@ -47,6 +47,12 @@ android {
       resValue "string", "authority_provider", "net.simonvt.cathode.provider.CathodeProvider"
     }
   }
+
+  testOptions {
+    unitTests {
+      includeAndroidResources = true
+    }
+  }
 }
 
 checkstyle {
