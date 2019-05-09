@@ -254,6 +254,7 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
     if (isLoginAction(intent)) {
       MainHandler.post(new Runnable() {
         @Override public void run() {

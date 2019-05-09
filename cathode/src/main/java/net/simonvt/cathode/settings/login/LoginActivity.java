@@ -83,6 +83,7 @@ public class LoginActivity extends BaseActivity {
   }
 
   @Override protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
     Uri uri = intent.getData();
     if (uri != null) {
       String host = uri.getHost();
@@ -99,6 +100,7 @@ public class LoginActivity extends BaseActivity {
   }
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == REQUEST_OAUTH && resultCode == RESULT_OK) {
       final String code = data.getStringExtra(QUERY_CODE);
       onCodeReceived(code);
