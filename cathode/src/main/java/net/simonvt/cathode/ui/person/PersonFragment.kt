@@ -28,7 +28,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import butterknife.BindView
 import butterknife.OnClick
-import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.Department
 import net.simonvt.cathode.api.enumeration.ItemType
@@ -38,24 +37,17 @@ import net.simonvt.cathode.common.util.Ids
 import net.simonvt.cathode.common.util.Intents
 import net.simonvt.cathode.common.util.guava.Preconditions
 import net.simonvt.cathode.common.widget.RemoteImageView
-import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler
-import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.LibraryType
 import net.simonvt.cathode.ui.NavigationListener
 import javax.inject.Inject
 
-class PersonFragment : RefreshableAppBarFragment() {
-
-  @Inject
-  lateinit var showScheduler: ShowTaskScheduler
-  @Inject
-  lateinit var movieScheduler: MovieTaskScheduler
+class PersonFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory
+) : RefreshableAppBarFragment() {
 
   private var personId: Long = -1L
 
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
   private lateinit var viewModel: PersonViewModel
 
   private var person: Person? = null
@@ -160,8 +152,6 @@ class PersonFragment : RefreshableAppBarFragment() {
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    AndroidSupportInjection.inject(this)
-
     personId = requireArguments().getLong(ARG_PERSON_ID)
 
     itemCount = resources.getInteger(R.integer.personCreditColumns)

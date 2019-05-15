@@ -30,14 +30,11 @@ import android.text.format.DateUtils
 import android.view.View
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.fragment.app.Fragment
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
 import dagger.android.HasContentProviderInjector
-import dagger.android.HasFragmentInjector
 import dagger.android.HasServiceInjector
-import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.coroutines.runBlocking
 import net.simonvt.cathode.actions.PeriodicSync
 import net.simonvt.cathode.actions.invokeAsync
@@ -62,8 +59,8 @@ import net.simonvt.cathode.work.PeriodicWorkInitializer
 import timber.log.Timber
 import javax.inject.Inject
 
-class CathodeApp : Application(), HasActivityInjector, HasFragmentInjector,
-  HasSupportFragmentInjector, HasServiceInjector, HasViewInjector, HasContentProviderInjector {
+class CathodeApp : Application(), HasActivityInjector, HasServiceInjector, HasViewInjector,
+  HasContentProviderInjector {
 
   private var resumedActivityCount: Int = 0
   private var lastSync: Long = 0
@@ -91,10 +88,6 @@ class CathodeApp : Application(), HasActivityInjector, HasFragmentInjector,
   private var injected = false
   @Inject
   lateinit var activityInjector: DispatchingAndroidInjector<Activity>
-  @Inject
-  lateinit var fragmentInjector: DispatchingAndroidInjector<android.app.Fragment>
-  @Inject
-  lateinit var supportFragmentInjector: DispatchingAndroidInjector<Fragment>
   @Inject
   lateinit var serviceInjector: DispatchingAndroidInjector<Service>
   @Inject
@@ -257,14 +250,6 @@ class CathodeApp : Application(), HasActivityInjector, HasFragmentInjector,
 
   override fun activityInjector(): AndroidInjector<Activity>? {
     return activityInjector
-  }
-
-  override fun fragmentInjector(): AndroidInjector<android.app.Fragment>? {
-    return fragmentInjector
-  }
-
-  override fun supportFragmentInjector(): AndroidInjector<Fragment>? {
-    return supportFragmentInjector
   }
 
   override fun serviceInjector(): AndroidInjector<Service>? {

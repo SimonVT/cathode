@@ -21,7 +21,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import dagger.android.support.AndroidSupportInjection;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
@@ -46,7 +45,7 @@ public class PersonCreditsFragment extends ToolbarGridFragment<PersonCreditsAdap
 
   long personId;
 
-  @Inject CathodeViewModelFactory viewModelFactory;
+  private CathodeViewModelFactory viewModelFactory;
   private PersonViewModel viewModel;
 
   private Department department;
@@ -68,6 +67,10 @@ public class PersonCreditsFragment extends ToolbarGridFragment<PersonCreditsAdap
     return args;
   }
 
+  @Inject public PersonCreditsFragment(CathodeViewModelFactory viewModelFactory) {
+    this.viewModelFactory = viewModelFactory;
+  }
+
   @Override public void onAttach(@NonNull Context context) {
     super.onAttach(context);
     navigationListener = (NavigationListener) requireActivity();
@@ -75,8 +78,6 @@ public class PersonCreditsFragment extends ToolbarGridFragment<PersonCreditsAdap
 
   @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
-    AndroidSupportInjection.inject(this);
-
     Bundle args = getArguments();
     personId = args.getLong(ARG_PERSON_ID);
     department = (Department) args.getSerializable(ARG_DEPARTMENT);

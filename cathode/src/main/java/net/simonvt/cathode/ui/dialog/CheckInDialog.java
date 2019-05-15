@@ -29,9 +29,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
-import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.ui.FragmentsUtils;
 import net.simonvt.cathode.settings.ProfileSettings;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
@@ -49,8 +49,8 @@ public class CheckInDialog extends DialogFragment {
 
   private static final String DIALOG_TAG = "net.simonvt.cathode.ui.dialog.CheckInDialog.dialog";
 
-  @Inject EpisodeTaskScheduler episodeScheduler;
-  @Inject MovieTaskScheduler movieScheduler;
+  private EpisodeTaskScheduler episodeScheduler;
+  private MovieTaskScheduler movieScheduler;
 
   public static boolean showDialogIfNecessary(FragmentActivity activity, Type type, String title,
       long id) {
@@ -68,28 +68,25 @@ public class CheckInDialog extends DialogFragment {
         ProfileSettings.get(activity).getBoolean(ProfileSettings.CONNECTION_TUMBLR, false);
 
     if (facebookShare || twitterShare || tumblrShare) {
-      newInstance(type, title, id).show(activity.getSupportFragmentManager(), DIALOG_TAG);
+      FragmentsUtils.instantiate(activity.getSupportFragmentManager(), CheckInDialog.class,
+          getArgs(type, title, id)).show(activity.getSupportFragmentManager(), DIALOG_TAG);
       return true;
     } else {
       return false;
     }
   }
 
-  private static CheckInDialog newInstance(Type type, String title, long id) {
-    CheckInDialog dialog = new CheckInDialog();
-
+  private static Bundle getArgs(Type type, String title, long id) {
     Bundle args = new Bundle();
     args.putSerializable(ARG_TYPE, type);
     args.putString(ARG_TITLE, title);
     args.putLong(ARG_ID, id);
-    dialog.setArguments(args);
-
-    return dialog;
+    return args;
   }
 
-  @Override public void onCreate(@Nullable Bundle inState) {
-    super.onCreate(inState);
-    AndroidSupportInjection.inject(this);
+  @Inject public CheckInDialog(EpisodeTaskScheduler episodeScheduler, MovieTaskScheduler movieScheduler) {
+    this.episodeScheduler = episodeScheduler;
+    this.movieScheduler = movieScheduler;
   }
 
   @NonNull @SuppressWarnings("InflateParams") @Override

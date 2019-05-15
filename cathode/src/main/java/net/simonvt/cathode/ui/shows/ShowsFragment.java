@@ -22,14 +22,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
-import dagger.android.support.AndroidSupportInjection;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment;
 import net.simonvt.cathode.entity.ShowWithEpisode;
-import net.simonvt.cathode.jobqueue.JobManager;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
 import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler;
 import net.simonvt.cathode.ui.LibraryType;
@@ -40,10 +38,8 @@ public abstract class ShowsFragment
     extends ToolbarSwipeRefreshRecyclerFragment<ShowsWithNextAdapter.ViewHolder>
     implements ShowsWithNextAdapter.Callbacks {
 
-  @Inject protected JobManager jobManager;
-
-  @Inject ShowTaskScheduler showScheduler;
-  @Inject EpisodeTaskScheduler episodeScheduler;
+  private ShowTaskScheduler showScheduler;
+  private EpisodeTaskScheduler episodeScheduler;
 
   protected BaseAdapter<ShowWithEpisode, ShowsWithNextAdapter.ViewHolder> showsAdapter;
 
@@ -53,6 +49,11 @@ public abstract class ShowsFragment
 
   protected boolean scrollToTop;
 
+  public ShowsFragment(ShowTaskScheduler showScheduler, EpisodeTaskScheduler episodeScheduler) {
+    this.showScheduler = showScheduler;
+    this.episodeScheduler = episodeScheduler;
+  }
+
   @Override public void onAttach(@NonNull Context context) {
     super.onAttach(context);
     navigationListener = (NavigationListener) requireActivity();
@@ -60,8 +61,6 @@ public abstract class ShowsFragment
 
   @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
-    AndroidSupportInjection.inject(this);
-
     columnCount = getResources().getInteger(R.integer.showsColumns);
   }
 

@@ -25,8 +25,10 @@ import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter
 import net.simonvt.cathode.entity.Movie
+import net.simonvt.cathode.jobqueue.JobManager
 import net.simonvt.cathode.provider.ProviderSchematic.Movies
 import net.simonvt.cathode.settings.Settings
+import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.lists.ListDialog
 import net.simonvt.cathode.ui.movies.BaseMoviesAdapter
@@ -34,7 +36,10 @@ import net.simonvt.cathode.ui.movies.MoviesAdapter
 import net.simonvt.cathode.ui.movies.MoviesFragment
 import javax.inject.Inject
 
-class AnticipatedMoviesFragment : MoviesFragment(), ListDialog.Callback {
+class AnticipatedMoviesFragment @Inject constructor(
+  jobManager: JobManager,
+  movieScheduler: MovieTaskScheduler
+) : MoviesFragment(jobManager, movieScheduler), ListDialog.Callback {
 
   @Inject
   lateinit var viewModelFactory: CathodeViewModelFactory
@@ -89,7 +94,7 @@ class AnticipatedMoviesFragment : MoviesFragment(), ListDialog.Callback {
         val items = arrayListOf<ListDialog.Item>()
         items.add(ListDialog.Item(R.id.sort_anticipated, R.string.sort_anticipated))
         items.add(ListDialog.Item(R.id.sort_title, R.string.sort_title))
-        ListDialog.newInstance(R.string.action_sort_by, items, this)
+        ListDialog.newInstance(requireFragmentManager(), R.string.action_sort_by, items, this)
           .show(requireFragmentManager(), DIALOG_SORT)
         return true
       }

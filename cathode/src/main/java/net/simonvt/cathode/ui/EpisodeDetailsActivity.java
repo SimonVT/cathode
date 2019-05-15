@@ -21,9 +21,12 @@ import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.text.TextUtils;
 import androidx.annotation.Nullable;
+import dagger.android.AndroidInjection;
 import java.util.ArrayList;
+import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.common.ui.FragmentsUtils;
 import net.simonvt.cathode.common.util.FragmentStack.StackEntry;
 import net.simonvt.cathode.ui.comments.CommentsFragment;
 import net.simonvt.cathode.ui.history.SelectHistoryDateFragment;
@@ -40,6 +43,8 @@ public class EpisodeDetailsActivity extends NavigationListenerActivity {
   public static final String EXTRA_SHOW_OVERVIEW =
       "net.simonvt.cathode.ui.DetailsActivity.showOverview";
 
+  @Inject CathodeFragmentFactory fragmentFactory;
+
   private long id;
 
   private long showId;
@@ -51,6 +56,8 @@ public class EpisodeDetailsActivity extends NavigationListenerActivity {
   @Override protected void onCreate(@Nullable Bundle inState) {
     setTheme(R.style.Theme);
     super.onCreate(inState);
+    AndroidInjection.inject(this);
+    getSupportFragmentManager().setFragmentFactory(fragmentFactory);
     setContentView(R.layout.activity_details);
 
     Intent intent = getIntent();
@@ -80,11 +87,11 @@ public class EpisodeDetailsActivity extends NavigationListenerActivity {
       finish();
     } else {
       if (inState == null) {
-        Bundle args = EpisodeFragment.getArgs(id, showTitle);
-        EpisodeFragment f = new EpisodeFragment();
-        f.setArguments(args);
+        EpisodeFragment fragment =
+            FragmentsUtils.instantiate(getSupportFragmentManager(), EpisodeFragment.class,
+                EpisodeFragment.getArgs(id, showTitle));
         getSupportFragmentManager().beginTransaction()
-            .add(R.id.content, f, EpisodeFragment.getTag(id))
+            .add(R.id.content, fragment, EpisodeFragment.getTag(id))
             .commitNow();
       }
     }

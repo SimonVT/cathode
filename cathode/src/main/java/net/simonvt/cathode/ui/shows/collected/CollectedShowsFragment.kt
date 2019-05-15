@@ -25,13 +25,18 @@ import net.simonvt.cathode.R
 import net.simonvt.cathode.provider.ProviderSchematic.Shows
 import net.simonvt.cathode.settings.Settings
 import net.simonvt.cathode.settings.TraktLinkSettings
+import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler
+import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.LibraryType
 import net.simonvt.cathode.ui.lists.ListDialog
 import net.simonvt.cathode.ui.shows.ShowsFragment
 import javax.inject.Inject
 
-class CollectedShowsFragment : ShowsFragment(), ListDialog.Callback {
+class CollectedShowsFragment @Inject constructor(
+  showScheduler: ShowTaskScheduler,
+  episodeScheduler: EpisodeTaskScheduler
+) : ShowsFragment(showScheduler, episodeScheduler), ListDialog.Callback {
 
   @Inject
   lateinit var viewModelFactory: CathodeViewModelFactory
@@ -88,7 +93,7 @@ class CollectedShowsFragment : ShowsFragment(), ListDialog.Callback {
       val items = arrayListOf<ListDialog.Item>()
       items.add(ListDialog.Item(R.id.sort_title, R.string.sort_title))
       items.add(ListDialog.Item(R.id.sort_collected, R.string.sort_collected))
-      ListDialog.newInstance(R.string.action_sort_by, items, this)
+      ListDialog.newInstance(requireFragmentManager(), R.string.action_sort_by, items, this)
         .show(requireFragmentManager(), DIALOG_SORT)
       return true
     }

@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.ui.FragmentsUtils;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.CircularProgressIndicator;
 import net.simonvt.cathode.common.widget.OverflowView;
@@ -122,13 +123,16 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
       String title) {
     switch (action) {
       case R.id.action_history_add:
-        AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.MOVIE, id, title)
+        FragmentsUtils.instantiate(activity.getSupportFragmentManager(), AddToHistoryDialog.class,
+            AddToHistoryDialog.getArgs(AddToHistoryDialog.Type.MOVIE, id, title))
             .show(activity.getSupportFragmentManager(), AddToHistoryDialog.TAG);
         break;
 
       case R.id.action_history_remove:
         if (TraktLinkSettings.isLinked(getContext())) {
-          RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.MOVIE, id, title)
+          FragmentsUtils.instantiate(activity.getSupportFragmentManager(),
+              RemoveFromHistoryDialog.class,
+              RemoveFromHistoryDialog.getArgs(RemoveFromHistoryDialog.Type.MOVIE, id, title, null))
               .show(activity.getSupportFragmentManager(), RemoveFromHistoryDialog.TAG);
         }
         break;

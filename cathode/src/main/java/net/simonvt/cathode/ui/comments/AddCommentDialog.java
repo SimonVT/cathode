@@ -27,7 +27,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import com.google.android.material.snackbar.Snackbar;
-import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
@@ -40,27 +39,25 @@ public class AddCommentDialog extends DialogFragment {
   private static final String ARG_TYPE = "net.simonvt.cathode.ui.comments.AddCommentDialog.type";
   private static final String ARG_ID = "net.simonvt.cathode.ui.comments.AddCommentDialog.id";
 
-  @Inject CommentsTaskScheduler commentsScheduler;
+  private CommentsTaskScheduler commentsScheduler;
 
   private ItemType type;
 
   private long id;
 
-  public static AddCommentDialog newInstance(ItemType type, long id) {
-    AddCommentDialog dialog = new AddCommentDialog();
-
+  public static Bundle getArgs(ItemType type, long id) {
     Bundle args = new Bundle();
     args.putSerializable(ARG_TYPE, type);
     args.putLong(ARG_ID, id);
-    dialog.setArguments(args);
+    return args;
+  }
 
-    return dialog;
+  @Inject public AddCommentDialog(CommentsTaskScheduler commentsScheduler) {
+    this.commentsScheduler = commentsScheduler;
   }
 
   @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
-    AndroidSupportInjection.inject(this);
-
     Bundle args = getArguments();
     type = (ItemType) args.getSerializable(ARG_TYPE);
     id = args.getLong(ARG_ID);

@@ -30,7 +30,6 @@ import butterknife.OnClick;
 import com.android.datetimepicker.date.DatePickerDialog;
 import com.android.datetimepicker.time.RadialPickerLayout;
 import com.android.datetimepicker.time.TimePickerDialog;
-import dagger.android.support.AndroidSupportInjection;
 import java.text.DateFormat;
 import java.util.Calendar;
 import javax.inject.Inject;
@@ -75,10 +74,10 @@ public class SelectHistoryDateFragment extends AppBarFragment
     SHOW, SEASON, EPISODE, EPISODE_OLDER, MOVIE,
   }
 
-  @Inject ShowTaskScheduler showScheduler;
-  @Inject SeasonTaskScheduler seasonScheduler;
-  @Inject EpisodeTaskScheduler episodeScheduler;
-  @Inject MovieTaskScheduler movieScheduler;
+  private ShowTaskScheduler showScheduler;
+  private SeasonTaskScheduler seasonScheduler;
+  private EpisodeTaskScheduler episodeScheduler;
+  private MovieTaskScheduler movieScheduler;
 
   private NavigationListener navigationListener;
 
@@ -106,6 +105,16 @@ public class SelectHistoryDateFragment extends AppBarFragment
     return args;
   }
 
+  @Inject public SelectHistoryDateFragment(ShowTaskScheduler showScheduler,
+      SeasonTaskScheduler seasonScheduler,
+      EpisodeTaskScheduler episodeScheduler,
+      MovieTaskScheduler movieScheduler) {
+    this.showScheduler = showScheduler;
+    this.seasonScheduler = seasonScheduler;
+    this.episodeScheduler = episodeScheduler;
+    this.movieScheduler = movieScheduler;
+  }
+
   @Override public void onAttach(@NonNull Context context) {
     super.onAttach(context);
     navigationListener = (NavigationListener) requireActivity();
@@ -113,8 +122,6 @@ public class SelectHistoryDateFragment extends AppBarFragment
 
   @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
-    AndroidSupportInjection.inject(this);
-
     type = (Type) getArguments().getSerializable(ARG_TYPE);
     id = getArguments().getLong(ARG_ID);
     title = getArguments().getString(ARG_TITLE);

@@ -34,12 +34,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import butterknife.BindView
-import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.api.enumeration.ShowStatus
 import net.simonvt.cathode.api.util.TraktUtils
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment
+import net.simonvt.cathode.common.ui.instantiate
 import net.simonvt.cathode.common.util.DateStringUtils
 import net.simonvt.cathode.common.util.Ids
 import net.simonvt.cathode.common.util.Intents
@@ -73,15 +73,17 @@ import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
 
-class ShowFragment : RefreshableAppBarFragment() {
+class ShowFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory,
+  private val showScheduler: ShowTaskScheduler,
+  private val episodeScheduler: EpisodeTaskScheduler
+) : RefreshableAppBarFragment() {
 
   lateinit var navigationListener: NavigationListener
 
   var showId: Long = 0
     private set
 
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
   lateinit var viewModel: ShowViewModel
 
   private var show: Show? = null
@@ -220,11 +222,6 @@ class ShowFragment : RefreshableAppBarFragment() {
   private var lastCollectedHolder: EpisodeHolder? = null
   private var lastCollectedId: Long = -1
 
-  @Inject
-  lateinit var showScheduler: ShowTaskScheduler
-  @Inject
-  lateinit var episodeScheduler: EpisodeTaskScheduler
-
   private var showTitle: String? = null
 
   private var showOverview: String? = null
@@ -253,8 +250,6 @@ class ShowFragment : RefreshableAppBarFragment() {
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    AndroidSupportInjection.inject(this)
-
     showId = requireArguments().getLong(ARG_SHOWID)
     showTitle = requireArguments().getString(ARG_TITLE)
     showOverview = requireArguments().getString(ARG_OVERVIEW)
@@ -376,8 +371,10 @@ class ShowFragment : RefreshableAppBarFragment() {
 
     if (TraktLinkSettings.isLinked(requireContext())) {
       rating!!.setOnClickListener {
-        RatingDialog.newInstance(RatingDialog.Type.SHOW, showId, currentRating)
-          .show(requireFragmentManager(), DIALOG_RATING)
+        requireFragmentManager().instantiate(
+          RatingDialog::class.java,
+          RatingDialog.getArgs(RatingDialog.Type.SHOW, showId, currentRating)
+        ).show(requireFragmentManager(), DIALOG_RATING)
       }
     }
 
@@ -428,9 +425,9 @@ class ShowFragment : RefreshableAppBarFragment() {
             episodeScheduler.cancelCheckin()
           }
           R.id.action_history_add -> if (toWatchId != -1L) {
-            AddToHistoryDialog.newInstance(
-              AddToHistoryDialog.Type.EPISODE, toWatchId,
-              toWatchTitle
+            requireFragmentManager().instantiate(
+              AddToHistoryDialog::class.java,
+              AddToHistoryDialog.getArgs(AddToHistoryDialog.Type.EPISODE, toWatchId, null)
             ).show(requireFragmentManager(), AddToHistoryDialog.TAG)
           }
         }
@@ -547,8 +544,10 @@ class ShowFragment : RefreshableAppBarFragment() {
       }
 
       R.id.action_list_add -> {
-        ListsDialog.newInstance(ItemType.SHOW, showId)
-          .show(requireFragmentManager(), DIALOG_LISTS_ADD)
+        requireFragmentManager().instantiate(
+          ListsDialog::class.java,
+          ListsDialog.getArgs(ItemType.SHOW, showId)
+        ).show(requireFragmentManager(), DIALOG_LISTS_ADD)
         return true
       }
 

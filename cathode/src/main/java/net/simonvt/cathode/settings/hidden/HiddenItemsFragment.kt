@@ -6,7 +6,6 @@ import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
-import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
 import net.simonvt.cathode.entity.Movie
@@ -20,16 +19,13 @@ import net.simonvt.cathode.ui.NavigationListener
 import java.util.ArrayList
 import javax.inject.Inject
 
-class HiddenItemsFragment : ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>(),
+class HiddenItemsFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory,
+  private val showScheduler: ShowTaskScheduler,
+  private val movieScheduler: MovieTaskScheduler
+) : ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>(),
   HiddenItemsAdapter.ItemCallbacks {
 
-  @Inject
-  lateinit var showScheduler: ShowTaskScheduler
-  @Inject
-  lateinit var movieScheduler: MovieTaskScheduler
-
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
   private lateinit var viewModel: HiddenViewModel
 
   private var adapter: HiddenItemsAdapter? = null
@@ -48,8 +44,6 @@ class HiddenItemsFragment : ToolbarSwipeRefreshRecyclerFragment<RecyclerView.Vie
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    AndroidSupportInjection.inject(this)
-
     setTitle(R.string.preference_hidden_items)
     setEmptyText(R.string.preference_hidden_empty)
 

@@ -40,14 +40,10 @@ public class ShowOffsetDialog extends AppCompatDialogFragment {
 
   private ShowOffsetSelectedListener listener;
 
-  public static ShowOffsetDialog newInstance(int selected) {
-    ShowOffsetDialog dialog = new ShowOffsetDialog();
-
+  public static Bundle getArgs(int selected) {
     Bundle args = new Bundle();
     args.putInt(ARG_SELECTED, selected);
-    dialog.setArguments(args);
-
-    return dialog;
+    return args;
   }
 
   @Override public void onCreate(@Nullable Bundle inState) {

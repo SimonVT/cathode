@@ -21,7 +21,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.fragment.SwipeRefreshRecyclerFragment
 import net.simonvt.cathode.entity.Show
@@ -36,21 +35,18 @@ import net.simonvt.cathode.ui.lists.ListDialog
 import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter
 import javax.inject.Inject
 
-class ShowRecommendationsFragment :
-  SwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>(),
+class ShowRecommendationsFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory,
+  private val showScheduler: ShowTaskScheduler
+) : SwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>(),
   ShowRecommendationsAdapter.DismissListener, ListDialog.Callback,
   ShowDescriptionAdapter.ShowCallbacks {
 
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
   private lateinit var viewModel: ShowRecommendationsViewModel
 
   private var showsAdapter: ShowRecommendationsAdapter? = null
 
   private lateinit var navigationListener: ShowsNavigationListener
-
-  @Inject
-  lateinit var showScheduler: ShowTaskScheduler
 
   private var shows: List<Show>? = null
 
@@ -80,8 +76,6 @@ class ShowRecommendationsFragment :
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    AndroidSupportInjection.inject(this)
-
     sortBy = SortBy.fromValue(
       Settings.get(requireContext())
         .getString(Settings.Sort.SHOW_RECOMMENDED, SortBy.RELEVANCE.key)!!
@@ -112,7 +106,7 @@ class ShowRecommendationsFragment :
         val items = arrayListOf<ListDialog.Item>()
         items.add(ListDialog.Item(R.id.sort_relevance, R.string.sort_relevance))
         items.add(ListDialog.Item(R.id.sort_rating, R.string.sort_rating))
-        ListDialog.newInstance(R.string.action_sort_by, items, this)
+        ListDialog.newInstance(requireFragmentManager(), R.string.action_sort_by, items, this)
           .show(requireFragmentManager(), DIALOG_SORT)
         return true
       }

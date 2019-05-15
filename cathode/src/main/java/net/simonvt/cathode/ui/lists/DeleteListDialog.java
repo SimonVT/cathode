@@ -23,7 +23,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler;
@@ -33,28 +32,23 @@ public class DeleteListDialog extends DialogFragment {
 
   private static final String ARG_LIST_ID = "net.simonvt.cathode.ui.lists.DeleteDialog.listId";
 
-  @Inject ListsTaskScheduler listScheduler;
+  private ListsTaskScheduler listScheduler;
 
   private NavigationListener navigationListener;
 
-  public static DeleteListDialog newInstance(long listId) {
-    DeleteListDialog dialog = new DeleteListDialog();
-
+  public static Bundle getArgs(long listId) {
     Bundle args = new Bundle();
     args.putLong(ARG_LIST_ID, listId);
-    dialog.setArguments(args);
+    return args;
+  }
 
-    return dialog;
+  @Inject public DeleteListDialog(ListsTaskScheduler listScheduler) {
+    this.listScheduler = listScheduler;
   }
 
   @Override public void onAttach(@NonNull Context context) {
     super.onAttach(context);
     navigationListener = (NavigationListener) requireActivity();
-  }
-
-  @Override public void onCreate(@Nullable Bundle inState) {
-    super.onCreate(inState);
-    AndroidSupportInjection.inject(this);
   }
 
   @NonNull @Override public Dialog onCreateDialog(@Nullable Bundle inState) {

@@ -23,7 +23,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
@@ -44,33 +43,34 @@ public class AddToHistoryDialog extends DialogFragment {
     SHOW, SEASON, EPISODE, EPISODE_OLDER, MOVIE,
   }
 
-  @Inject ShowTaskScheduler showScheduler;
-  @Inject SeasonTaskScheduler seasonScheduler;
-  @Inject EpisodeTaskScheduler episodeScheduler;
-  @Inject MovieTaskScheduler movieScheduler;
+  private ShowTaskScheduler showScheduler;
+  private SeasonTaskScheduler seasonScheduler;
+  private EpisodeTaskScheduler episodeScheduler;
+  private MovieTaskScheduler movieScheduler;
 
   private NavigationListener navigationListener;
 
-  @Override public void onAttach(@NonNull Context context) {
-    super.onAttach(context);
-    navigationListener = (NavigationListener) requireActivity();
-  }
-
-  @Override public void onCreate(@Nullable Bundle inState) {
-    super.onCreate(inState);
-    AndroidSupportInjection.inject(this);
-  }
-
-  public static AddToHistoryDialog newInstance(Type type, long id, String title) {
-    AddToHistoryDialog dialog = new AddToHistoryDialog();
-
+  public static Bundle getArgs(Type type, long id, String title) {
     Bundle args = new Bundle();
     args.putSerializable(ARG_TYPE, type);
     args.putLong(ARG_ID, id);
     args.putString(ARG_TITLE, title);
-    dialog.setArguments(args);
+    return args;
+  }
 
-    return dialog;
+  @Inject public AddToHistoryDialog(ShowTaskScheduler showScheduler,
+      SeasonTaskScheduler seasonScheduler,
+      EpisodeTaskScheduler episodeScheduler,
+      MovieTaskScheduler movieScheduler) {
+    this.showScheduler = showScheduler;
+    this.seasonScheduler = seasonScheduler;
+    this.episodeScheduler = episodeScheduler;
+    this.movieScheduler = movieScheduler;
+  }
+
+  @Override public void onAttach(@NonNull Context context) {
+    super.onAttach(context);
+    navigationListener = (NavigationListener) requireActivity();
   }
 
   @NonNull @Override public Dialog onCreateDialog(@Nullable Bundle inState) {

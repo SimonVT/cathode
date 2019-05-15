@@ -22,6 +22,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentFactory;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import java.util.HashSet;
@@ -236,7 +237,7 @@ public final class FragmentStack {
 
     Fragment f = fragmentManager.findFragmentByTag(tag);
     if (f == null) {
-      f = Fragment.instantiate(activity, fragment.getName(), args);
+      f = instantiateFragment(fragment, args);
     }
 
     ensureTransaction();
@@ -271,7 +272,7 @@ public final class FragmentStack {
 
     Fragment first = stack.peekFirst();
     if (firstFragment == null) {
-      Fragment f = Fragment.instantiate(activity, topLevel.fragment.getName(), topLevel.args);
+      Fragment f = instantiateFragment(topLevel.fragment, topLevel.args);
       attachFragment(f, topLevel.tag);
       commit();
 
@@ -305,7 +306,7 @@ public final class FragmentStack {
 
       for (int i = 1; i < stackSize; i++) {
         StackEntry entry = stackEntries.get(i);
-        Fragment f = Fragment.instantiate(activity, entry.fragment.getName(), entry.args);
+        Fragment f = instantiateFragment(entry.fragment, entry.args);
 
         ensureTransaction();
         attachFragment(f, entry.tag);
@@ -342,7 +343,7 @@ public final class FragmentStack {
     Fragment f = fragmentManager.findFragmentByTag(tag);
 
     if (f == null) {
-      f = Fragment.instantiate(activity, fragment.getName(), args);
+      f = instantiateFragment(fragment, args);
     }
 
     attachFragment(f, tag);
@@ -417,7 +418,7 @@ public final class FragmentStack {
       throw new IllegalStateException("Fragment with tag " + tag + " already exists");
     }
 
-    Fragment f = Fragment.instantiate(activity, fragment.getName(), args);
+    Fragment f = instantiateFragment(fragment, args);
 
     attachFragment(f, tag);
     stack.add(f);
@@ -507,6 +508,13 @@ public final class FragmentStack {
     exitAnimation = exit;
     popStackEnterAnimation = popEnter;
     popStackExitAnimation = popExit;
+  }
+
+  private Fragment instantiateFragment(Class fragment, Bundle args) {
+    FragmentFactory factory = fragmentManager.getFragmentFactory();
+    Fragment f = factory.instantiate(activity.getClassLoader(), fragment.getName());
+    f.setArguments(args);
+    return f;
   }
 
   private void commit() {

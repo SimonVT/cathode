@@ -26,7 +26,6 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
-import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -58,14 +57,14 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
 
   private EpisodeHistoryLiveData.Result result;
 
-  @Inject EpisodeTaskScheduler episodeScheduler;
-  @Inject SyncService syncService;
-  @Inject EpisodeDatabaseHelper episodeHelper;
+  private EpisodeTaskScheduler episodeScheduler;
+  private SyncService syncService;
+  private EpisodeDatabaseHelper episodeHelper;
 
   private long episodeId;
   private String showTitle;
 
-  @Inject EpisodeHistoryViewModelFactory viewModelFactory;
+  private EpisodeHistoryViewModelFactory viewModelFactory;
   private EpisodeHistoryViewModel viewModel;
 
   @BindView(R.id.topTitle) TextView title;
@@ -86,10 +85,18 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
     return args;
   }
 
+  @Inject public EpisodeHistoryFragment(
+      EpisodeTaskScheduler episodeScheduler, SyncService syncService,
+      EpisodeDatabaseHelper episodeHelper,
+      EpisodeHistoryViewModelFactory viewModelFactory) {
+    this.episodeScheduler = episodeScheduler;
+    this.syncService = syncService;
+    this.episodeHelper = episodeHelper;
+    this.viewModelFactory = viewModelFactory;
+  }
+
   @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
-    AndroidSupportInjection.inject(this);
-
     Bundle args = getArguments();
     episodeId = args.getLong(ARG_EPISODEID);
     showTitle = args.getString(ARG_SHOW_TITLE);

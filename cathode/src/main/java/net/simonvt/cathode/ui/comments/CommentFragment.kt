@@ -20,10 +20,10 @@ import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
+import net.simonvt.cathode.common.ui.instantiate
 import net.simonvt.cathode.common.util.guava.Preconditions
 import net.simonvt.cathode.entity.Comment
 import net.simonvt.cathode.settings.TraktLinkSettings
@@ -31,17 +31,15 @@ import net.simonvt.cathode.sync.scheduler.CommentsTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import javax.inject.Inject
 
-class CommentFragment : ToolbarSwipeRefreshRecyclerFragment<CommentsAdapter.ViewHolder>() {
-
-  @Inject
-  lateinit var commentsScheduler: CommentsTaskScheduler
+class CommentFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory,
+  private val commentsScheduler: CommentsTaskScheduler
+) : ToolbarSwipeRefreshRecyclerFragment<CommentsAdapter.ViewHolder>() {
 
   private var commentId: Long = 0
 
   private var columnCount: Int = 0
 
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
   private lateinit var viewModel: CommentViewModel
 
   private var adapter: CommentsAdapter? = null
@@ -59,8 +57,10 @@ class CommentFragment : ToolbarSwipeRefreshRecyclerFragment<CommentsAdapter.View
       isUserComment: Boolean
     ) {
       if (isUserComment) {
-        UpdateCommentDialog.newInstance(commentId, comment, spoiler)
-          .show(requireFragmentManager(), DIALOG_COMMENT_UPDATE)
+        requireFragmentManager().instantiate(
+          UpdateCommentDialog::class.java,
+          UpdateCommentDialog.getArgs(commentId, comment, spoiler)
+        ).show(requireFragmentManager(), DIALOG_COMMENT_UPDATE)
       }
     }
 
@@ -75,8 +75,6 @@ class CommentFragment : ToolbarSwipeRefreshRecyclerFragment<CommentsAdapter.View
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    AndroidSupportInjection.inject(this)
-
     val args = arguments
     commentId = args!!.getLong(ARG_COMMENT_ID)
 
@@ -129,8 +127,10 @@ class CommentFragment : ToolbarSwipeRefreshRecyclerFragment<CommentsAdapter.View
   override fun onMenuItemClick(item: MenuItem): Boolean {
     when (item.itemId) {
       R.id.menu_reply -> {
-        AddCommentDialog.newInstance(ItemType.COMMENT, commentId)
-          .show(requireFragmentManager(), DIALOG_COMMENT_ADD)
+        requireFragmentManager().instantiate(
+          AddCommentDialog::class.java,
+          AddCommentDialog.getArgs(ItemType.COMMENT, commentId)
+        ).show(requireFragmentManager(), DIALOG_COMMENT_ADD)
         return true
       }
 

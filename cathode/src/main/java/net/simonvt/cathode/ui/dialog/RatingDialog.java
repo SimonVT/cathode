@@ -17,9 +17,6 @@ package net.simonvt.cathode.ui.dialog;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,9 +25,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.DialogFragment;
-import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
@@ -47,33 +42,35 @@ public class RatingDialog extends DialogFragment {
   private static final String ARG_ID = "net.simonvt.cathode.ui.dialog.RatingDialog.id";
   private static final String ARG_RATING = "net.simonvt.cathode.ui.dialog.RatingDialog.rating";
 
-  @Inject ShowTaskScheduler showScheduler;
+  private ShowTaskScheduler showScheduler;
 
-  @Inject EpisodeTaskScheduler episodeScheduler;
+  private EpisodeTaskScheduler episodeScheduler;
 
-  @Inject MovieTaskScheduler movieScheduler;
+  private MovieTaskScheduler movieScheduler;
 
   private Type type;
   private long id;
 
   private String[] ratingTexts;
 
-  public static RatingDialog newInstance(Type type, long id, int rating) {
-    RatingDialog dialog = new RatingDialog();
-
+  public static Bundle getArgs(Type type, long id, int rating) {
     Bundle args = new Bundle();
     args.putSerializable(ARG_TYPE, type);
     args.putLong(ARG_ID, id);
     args.putInt(ARG_RATING, rating);
-    dialog.setArguments(args);
+    return args;
+  }
 
-    return dialog;
+  @Inject
+  public RatingDialog(ShowTaskScheduler showScheduler, EpisodeTaskScheduler episodeScheduler,
+      MovieTaskScheduler movieScheduler) {
+    this.showScheduler = showScheduler;
+    this.episodeScheduler = episodeScheduler;
+    this.movieScheduler = movieScheduler;
   }
 
   @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
-    AndroidSupportInjection.inject(this);
-
     Bundle args = getArguments();
     type = (Type) args.getSerializable(ARG_TYPE);
     id = args.getLong(ARG_ID);

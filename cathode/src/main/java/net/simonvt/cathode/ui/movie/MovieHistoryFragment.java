@@ -26,20 +26,17 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
-import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
-import net.simonvt.cathode.api.service.SyncService;
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.entity.Movie;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
-import net.simonvt.cathode.provider.helper.MovieDatabaseHelper;
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
 
 public class MovieHistoryFragment extends RefreshableAppBarFragment {
@@ -57,20 +54,24 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
 
   private MovieHistoryLiveData.Result result;
 
-  @Inject MovieTaskScheduler movieScheduler;
-  @Inject SyncService syncService;
-  @Inject MovieDatabaseHelper movieHelper;
+  private MovieTaskScheduler movieScheduler;
 
   private long movieId;
   private String movieTitle;
 
-  @Inject MovieHistoryViewModelFactory viewModelFactory;
+  private MovieHistoryViewModelFactory viewModelFactory;
   private MovieHistoryViewModel viewModel;
 
   @BindView(R.id.topTitle) TextView released;
   @BindView(R.id.topSubtitle) TextView rating;
 
   @BindView(R.id.watchedAtContainer) LinearLayout watchedAtContainer;
+
+  @Inject public MovieHistoryFragment(MovieTaskScheduler movieScheduler,
+      MovieHistoryViewModelFactory viewModelFactory) {
+    this.movieScheduler = movieScheduler;
+    this.viewModelFactory = viewModelFactory;
+  }
 
   public static String getTag(long movieId) {
     return TAG + "/" + movieId + "/history/" + Ids.newId();
@@ -87,8 +88,6 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
 
   @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
-    AndroidSupportInjection.inject(this);
-
     Bundle args = getArguments();
     movieId = args.getLong(ARG_MOVIEID);
     movieTitle = args.getString(ARG_MOVIETITLE);

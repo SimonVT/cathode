@@ -27,17 +27,16 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
-import dagger.android.support.AndroidSupportInjection;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.adapter.CategoryAdapter;
 import net.simonvt.cathode.common.ui.fragment.ToolbarRecyclerFragment;
-import net.simonvt.cathode.ui.CathodeViewModelFactory;
 import net.simonvt.cathode.entity.Episode;
 import net.simonvt.cathode.entity.Movie;
 import net.simonvt.cathode.entity.Show;
 import net.simonvt.cathode.entity.ShowWithEpisode;
+import net.simonvt.cathode.ui.CathodeViewModelFactory;
 import net.simonvt.cathode.ui.LibraryType;
 import net.simonvt.cathode.ui.NavigationListener;
 import net.simonvt.cathode.ui.movies.watchlist.MovieWatchlistFragment;
@@ -59,7 +58,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
   public static final String TAG = "net.simonvt.cathode.ui.dashboard.DashboardFragment";
 
-  @Inject CathodeViewModelFactory viewModelFactory;
+  private final CathodeViewModelFactory viewModelFactory;
   private DashboardViewModel viewModel;
 
   CategoryAdapter adapter;
@@ -75,6 +74,11 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
   private NavigationListener navigationListener;
 
+  @Inject
+  public DashboardFragment(CathodeViewModelFactory viewModelFactory) {
+    this.viewModelFactory = viewModelFactory;
+  }
+
   @Override public void onAttach(@NonNull Context context) {
     super.onAttach(context);
     navigationListener = (NavigationListener) requireActivity();
@@ -82,8 +86,6 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
 
   @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
-    AndroidSupportInjection.inject(this);
-
     setTitle(R.string.title_dashboard);
 
     adapter = new CategoryAdapter(requireContext(), categoryClickListener);

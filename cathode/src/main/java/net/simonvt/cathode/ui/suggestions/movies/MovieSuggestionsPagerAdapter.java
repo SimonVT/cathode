@@ -19,6 +19,7 @@ import android.content.Context;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.ui.FragmentsUtils;
 import net.simonvt.cathode.common.ui.fragment.BaseFragment;
 import net.simonvt.cathode.common.util.ViewPagerUtils;
 import net.simonvt.cathode.settings.TraktLinkSettings;
@@ -26,6 +27,7 @@ import net.simonvt.cathode.settings.TraktLinkSettings;
 public class MovieSuggestionsPagerAdapter extends FragmentPagerAdapter {
 
   private Context context;
+  private FragmentManager fragmentManager;
 
   final boolean traktLinked;
 
@@ -36,23 +38,26 @@ public class MovieSuggestionsPagerAdapter extends FragmentPagerAdapter {
   public MovieSuggestionsPagerAdapter(Context context, FragmentManager fm) {
     super(fm);
     this.context = context;
+    this.fragmentManager = fm;
 
     traktLinked = TraktLinkSettings.isLinked(context);
 
     recommendationsFragment =
         (MovieRecommendationsFragment) fm.findFragmentByTag(makeFragmentName(0));
     if (recommendationsFragment == null) {
-      recommendationsFragment = new MovieRecommendationsFragment();
+      recommendationsFragment =
+          FragmentsUtils.instantiate(fragmentManager, MovieRecommendationsFragment.class);
     }
 
     trendingFragment = (TrendingMoviesFragment) fm.findFragmentByTag(makeFragmentName(1));
     if (trendingFragment == null) {
-      trendingFragment = new TrendingMoviesFragment();
+      trendingFragment = FragmentsUtils.instantiate(fragmentManager, TrendingMoviesFragment.class);
     }
 
     anticipatedFragment = (AnticipatedMoviesFragment) fm.findFragmentByTag(makeFragmentName(2));
     if (anticipatedFragment == null) {
-      anticipatedFragment = new AnticipatedMoviesFragment();
+      anticipatedFragment =
+          FragmentsUtils.instantiate(fragmentManager, AnticipatedMoviesFragment.class);
     }
   }
 

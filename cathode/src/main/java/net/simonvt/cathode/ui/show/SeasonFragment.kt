@@ -22,10 +22,10 @@ import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
+import net.simonvt.cathode.common.ui.instantiate
 import net.simonvt.cathode.common.util.guava.Preconditions
 import net.simonvt.cathode.entity.Episode
 import net.simonvt.cathode.settings.TraktLinkSettings
@@ -41,13 +41,11 @@ import net.simonvt.cathode.ui.lists.ListsDialog
 import net.simonvt.cathode.ui.show.SeasonAdapter.ViewHolder
 import javax.inject.Inject
 
-class SeasonFragment : ToolbarSwipeRefreshRecyclerFragment<ViewHolder>(),
-  SeasonAdapter.EpisodeCallbacks {
-
-  @Inject
-  lateinit var seasonScheduler: SeasonTaskScheduler
-  @Inject
-  lateinit var episodeScheduler: EpisodeTaskScheduler
+class SeasonFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory,
+  private val seasonScheduler: SeasonTaskScheduler,
+  private val episodeScheduler: EpisodeTaskScheduler
+) : ToolbarSwipeRefreshRecyclerFragment<ViewHolder>(), SeasonAdapter.EpisodeCallbacks {
 
   private var showId: Long = 0
 
@@ -60,8 +58,6 @@ class SeasonFragment : ToolbarSwipeRefreshRecyclerFragment<ViewHolder>(),
 
   private var seasonNumber = -1
 
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
   private lateinit var viewModel: SeasonViewModel
 
   private var seasonAdapter: SeasonAdapter? = null
@@ -83,8 +79,6 @@ class SeasonFragment : ToolbarSwipeRefreshRecyclerFragment<ViewHolder>(),
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    AndroidSupportInjection.inject(this)
-
     val args = requireArguments()
     showId = args.getLong(ARG_SHOW_ID)
     seasonId = args.getLong(ARG_SEASON_ID)
@@ -144,27 +138,36 @@ class SeasonFragment : ToolbarSwipeRefreshRecyclerFragment<ViewHolder>(),
   override fun onMenuItemClick(item: MenuItem): Boolean {
     when (item.itemId) {
       R.id.action_list_add -> {
-        ListsDialog.newInstance(ItemType.SEASON, seasonId)
-          .show(requireFragmentManager(), DIALOG_LISTS_ADD)
+        requireFragmentManager().instantiate(
+          ListsDialog::class.java,
+          ListsDialog.getArgs(ItemType.SEASON, seasonId)
+        ).show(requireFragmentManager(), DIALOG_LISTS_ADD)
         return true
       }
 
       R.id.action_history_add -> {
-        AddToHistoryDialog.newInstance(
-          AddToHistoryDialog.Type.SEASON, seasonId,
-          getString(R.string.season_x, seasonNumber)
-        )
-          .show(requireFragmentManager(), AddToHistoryDialog.TAG)
+        requireFragmentManager().instantiate(
+          AddToHistoryDialog::class.java,
+          AddToHistoryDialog.getArgs(
+            AddToHistoryDialog.Type.SEASON,
+            seasonId,
+            getString(R.string.season_x, seasonNumber)
+          )
+        ).show(requireFragmentManager(), AddToHistoryDialog.TAG)
         return true
       }
 
       R.id.action_history_remove -> {
         if (TraktLinkSettings.isLinked(requireContext())) {
-          RemoveFromHistoryDialog.newInstance(
-            RemoveFromHistoryDialog.Type.SEASON, seasonId,
-            requireContext().getString(R.string.season_x, seasonNumber)
-          )
-            .show(requireFragmentManager(), RemoveFromHistoryDialog.TAG)
+          requireFragmentManager().instantiate(
+            RemoveFromHistoryDialog::class.java,
+            RemoveFromHistoryDialog.getArgs(
+              RemoveFromHistoryDialog.Type.SEASON,
+              seasonId,
+              requireContext().getString(R.string.season_x, seasonNumber),
+              null
+            )
+          ).show(requireFragmentManager(), RemoveFromHistoryDialog.TAG)
         } else {
           seasonScheduler.removeFromHistory(seasonId)
         }

@@ -22,6 +22,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.ui.FragmentsUtils;
 import net.simonvt.cathode.notification.NotificationService;
 import net.simonvt.cathode.ui.BaseActivity;
 
@@ -74,7 +75,9 @@ public class NotificationSettingsActivity extends BaseActivity {
                   Settings.get(getActivity())
                       .getLong(Settings.NOTIFICACTION_TIME,
                           NotificationTime.HOURS_1.getNotificationTime()));
-              NotificationTimeDialog dialog = NotificationTimeDialog.newInstance(notificationTime);
+              NotificationTimeDialog dialog =
+                  FragmentsUtils.instantiate(getFragmentManager(), NotificationTimeDialog.class,
+                      NotificationTimeDialog.getArgs(notificationTime));
               dialog.setTargetFragment(NotificationSettingsFragment.this, 0);
               dialog.show(requireFragmentManager(), DIALOG_NOTIFIACTION_TIME);
               return true;

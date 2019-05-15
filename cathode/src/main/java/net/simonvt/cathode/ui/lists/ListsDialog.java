@@ -31,7 +31,6 @@ import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import dagger.android.support.AndroidSupportInjection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -63,7 +62,7 @@ public class ListsDialog extends DialogFragment {
   private static final String ARG_TYPE = "net.simonvt.cathode.ui.lists.ListsDialog.itemType";
   private static final String ARG_ID = "net.simonvt.cathode.ui.lists.ListsDialog.itemId";
 
-  @Inject ListsTaskScheduler listScheduler;
+  private ListsTaskScheduler listScheduler;
 
   private ItemType itemType;
 
@@ -83,21 +82,19 @@ public class ListsDialog extends DialogFragment {
   private View loading;
   private View empty;
 
-  public static ListsDialog newInstance(ItemType itemType, long itemId) {
-    ListsDialog dialog = new ListsDialog();
-
+  public static Bundle getArgs(ItemType itemType, long itemId) {
     Bundle args = new Bundle();
     args.putSerializable(ARG_TYPE, itemType);
     args.putLong(ARG_ID, itemId);
-    dialog.setArguments(args);
+    return args;
+  }
 
-    return dialog;
+  @Inject public ListsDialog(ListsTaskScheduler listScheduler) {
+    this.listScheduler = listScheduler;
   }
 
   @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
-    AndroidSupportInjection.inject(this);
-
     Bundle args = getArguments();
     itemType = (ItemType) args.getSerializable(ARG_TYPE);
     itemId = args.getLong(ARG_ID);

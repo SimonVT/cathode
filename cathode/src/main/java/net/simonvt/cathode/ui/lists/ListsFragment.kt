@@ -22,22 +22,22 @@ import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
+import net.simonvt.cathode.common.ui.instantiate
 import net.simonvt.cathode.entity.UserList
 import net.simonvt.cathode.settings.TraktLinkSettings
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.ListNavigationListener
 import javax.inject.Inject
 
-class ListsFragment : ToolbarSwipeRefreshRecyclerFragment<ListsAdapter.ViewHolder>(),
+class ListsFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory
+) : ToolbarSwipeRefreshRecyclerFragment<ListsAdapter.ViewHolder>(),
   ListsAdapter.OnListClickListener {
 
   private lateinit var listener: ListNavigationListener
 
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
   private lateinit var viewModel: ListsViewModel
 
   private var adapter: ListsAdapter? = null
@@ -49,7 +49,6 @@ class ListsFragment : ToolbarSwipeRefreshRecyclerFragment<ListsAdapter.ViewHolde
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    AndroidSupportInjection.inject(this)
     setTitle(R.string.navigation_lists)
     setEmptyText(R.string.empty_lists)
 
@@ -87,8 +86,8 @@ class ListsFragment : ToolbarSwipeRefreshRecyclerFragment<ListsAdapter.ViewHolde
   override fun onMenuItemClick(item: MenuItem): Boolean {
     when (item.itemId) {
       R.id.menu_list_create -> {
-        val dialog = CreateListFragment()
-        dialog.show(requireFragmentManager(), DIALOG_LIST_CREATE)
+        requireFragmentManager().instantiate(CreateListFragment::class.java)
+          .show(requireFragmentManager(), DIALOG_LIST_CREATE)
         return true
       }
     }

@@ -40,14 +40,10 @@ public class NotificationTimeDialog extends AppCompatDialogFragment {
 
   private NotificationTimeSelectedListener listener;
 
-  public static NotificationTimeDialog newInstance(NotificationTime selected) {
-    NotificationTimeDialog dialog = new NotificationTimeDialog();
-
+  public static Bundle getArgs(NotificationTime selected) {
     Bundle args = new Bundle();
     args.putSerializable(ARG_SELECTED, selected);
-    dialog.setArguments(args);
-
-    return dialog;
+    return args;
   }
 
   @Override public void onCreate(@Nullable Bundle inState) {

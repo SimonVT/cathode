@@ -22,15 +22,20 @@ import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
+import net.simonvt.cathode.jobqueue.JobManager
 import net.simonvt.cathode.provider.ProviderSchematic.Movies
 import net.simonvt.cathode.settings.Settings
 import net.simonvt.cathode.settings.TraktLinkSettings
+import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.lists.ListDialog
 import net.simonvt.cathode.ui.movies.MoviesFragment
 import javax.inject.Inject
 
-class CollectedMoviesFragment : MoviesFragment(), ListDialog.Callback {
+class CollectedMoviesFragment @Inject constructor(
+  jobManager: JobManager,
+  movieScheduler: MovieTaskScheduler
+) : MoviesFragment(jobManager, movieScheduler), ListDialog.Callback {
 
   @Inject
   lateinit var viewModelFactory: CathodeViewModelFactory
@@ -87,7 +92,7 @@ class CollectedMoviesFragment : MoviesFragment(), ListDialog.Callback {
       val items = arrayListOf<ListDialog.Item>()
       items.add(ListDialog.Item(R.id.sort_title, R.string.sort_title))
       items.add(ListDialog.Item(R.id.sort_collected, R.string.sort_collected))
-      ListDialog.newInstance(R.string.action_sort_by, items, this)
+      ListDialog.newInstance(requireFragmentManager(), R.string.action_sort_by, items, this)
         .show(requireFragmentManager(), DIALOG_SORT)
       return true
     }

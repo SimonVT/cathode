@@ -20,7 +20,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.fragment.SwipeRefreshRecyclerFragment
 import net.simonvt.cathode.entity.Show
@@ -35,19 +34,17 @@ import net.simonvt.cathode.ui.lists.ListDialog
 import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter
 import javax.inject.Inject
 
-class AnticipatedShowsFragment : SwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>(),
+class AnticipatedShowsFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory,
+  private val showScheduler: ShowTaskScheduler
+) : SwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>(),
   ListDialog.Callback, ShowDescriptionAdapter.ShowCallbacks {
 
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
   private lateinit var viewModel: AnticipatedShowsViewModel
 
   private var showsAdapter: ShowDescriptionAdapter? = null
 
   private lateinit var navigationListener: ShowsNavigationListener
-
-  @Inject
-  lateinit var showScheduler: ShowTaskScheduler
 
   private lateinit var sortBy: SortBy
 
@@ -75,8 +72,6 @@ class AnticipatedShowsFragment : SwipeRefreshRecyclerFragment<ShowDescriptionAda
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    AndroidSupportInjection.inject(this)
-
     sortBy = SortBy.fromValue(
       Settings.get(requireContext())
         .getString(Settings.Sort.SHOW_ANTICIPATED, SortBy.ANTICIPATED.key)!!
@@ -106,7 +101,7 @@ class AnticipatedShowsFragment : SwipeRefreshRecyclerFragment<ShowDescriptionAda
         val items = arrayListOf<ListDialog.Item>()
         items.add(ListDialog.Item(R.id.sort_anticipated, R.string.sort_anticipated))
         items.add(ListDialog.Item(R.id.sort_title, R.string.sort_title))
-        ListDialog.newInstance(R.string.action_sort_by, items, this)
+        ListDialog.newInstance(requireFragmentManager(), R.string.action_sort_by, items, this)
           .show(requireFragmentManager(), DIALOG_SORT)
         return true
       }

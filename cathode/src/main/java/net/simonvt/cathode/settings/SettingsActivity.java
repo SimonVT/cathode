@@ -30,11 +30,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreference;
-import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.android.colorpicker.ColorPickerDialog;
 import net.simonvt.android.colorpicker.ColorPickerSwatch;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.ui.FragmentsUtils;
 import net.simonvt.cathode.common.ui.adapter.Adapters;
 import net.simonvt.cathode.common.util.Intents;
 import net.simonvt.cathode.common.util.VersionCodes;
@@ -58,7 +58,8 @@ public class SettingsActivity extends BaseActivity {
     super.onCreate(inState);
     setContentView(R.layout.activity_toolbar);
     if (getSupportFragmentManager().findFragmentByTag(FRAGMENT_SETTINGS) == null) {
-      SettingsFragment settings = new SettingsFragment();
+      SettingsFragment settings =
+          FragmentsUtils.instantiate(getSupportFragmentManager(), SettingsFragment.class);
       getSupportFragmentManager().beginTransaction()
           .add(R.id.content, settings, FRAGMENT_SETTINGS)
           .commit();
@@ -85,16 +86,18 @@ public class SettingsActivity extends BaseActivity {
 
     private static final int PERMISSION_REQUEST_CALENDAR = 11;
 
-    @Inject UpcomingTimePreference upcomingTimePreference;
+    private UpcomingTimePreference upcomingTimePreference;
 
     SwitchPreference syncCalendar;
 
     private boolean isTablet;
 
+    @Inject public SettingsFragment(UpcomingTimePreference upcomingTimePreference) {
+      this.upcomingTimePreference = upcomingTimePreference;
+    }
+
     @Override public void onCreate(@Nullable Bundle inState) {
       super.onCreate(inState);
-      AndroidSupportInjection.inject(this);
-
       isTablet = getResources().getBoolean(R.bool.isTablet);
     }
 
@@ -161,7 +164,9 @@ public class SettingsActivity extends BaseActivity {
             @Override public boolean onPreferenceClick(Preference preference) {
               UpcomingTime upcomingTime = UpcomingTime.fromValue(Settings.get(getActivity())
                   .getLong(Settings.UPCOMING_TIME, UpcomingTime.WEEKS_1.getCacheTime()));
-              UpcomingTimeDialog dialog = UpcomingTimeDialog.newInstance(upcomingTime);
+              UpcomingTimeDialog dialog =
+                  FragmentsUtils.instantiate(requireFragmentManager(), UpcomingTimeDialog.class,
+                      UpcomingTimeDialog.getArgs(upcomingTime));
               dialog.setTargetFragment(SettingsFragment.this, 0);
               dialog.show(requireFragmentManager(), DIALOG_UPCOMING_TIME);
               return true;
@@ -184,7 +189,9 @@ public class SettingsActivity extends BaseActivity {
           new Preference.OnPreferenceClickListener() {
             @Override public boolean onPreferenceClick(Preference preference) {
               final int offset = FirstAiredOffsetPreference.getInstance().getOffsetHours();
-              ShowOffsetDialog dialog = ShowOffsetDialog.newInstance(offset);
+              ShowOffsetDialog dialog =
+                  FragmentsUtils.instantiate(requireFragmentManager(), ShowOffsetDialog.class,
+                      ShowOffsetDialog.getArgs(offset));
               dialog.setTargetFragment(SettingsFragment.this, 0);
               dialog.show(requireFragmentManager(), DIALOG_SHOW_OFFSET);
               return true;
@@ -205,7 +212,8 @@ public class SettingsActivity extends BaseActivity {
 
       traktUnlink.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
         @Override public boolean onPreferenceClick(Preference preference) {
-          new LogoutDialog().show(requireFragmentManager(), HomeActivity.DIALOG_LOGOUT);
+          FragmentsUtils.instantiate(requireFragmentManager(), LogoutDialog.class)
+              .show(requireFragmentManager(), HomeActivity.DIALOG_LOGOUT);
           return true;
         }
       });

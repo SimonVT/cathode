@@ -27,7 +27,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import com.google.android.material.snackbar.Snackbar;
-import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.service.CommentsService;
@@ -43,7 +42,7 @@ public class UpdateCommentDialog extends DialogFragment {
   private static final String ARG_SPOILER =
       "net.simonvt.cathode.ui.comments.UpdateCommentDialog.spoiler";
 
-  @Inject CommentsTaskScheduler commentsScheduler;
+  private CommentsTaskScheduler commentsScheduler;
 
   private long commentId;
 
@@ -51,22 +50,20 @@ public class UpdateCommentDialog extends DialogFragment {
 
   private boolean spoiler;
 
-  public static UpdateCommentDialog newInstance(long commentId, String comment, boolean spoiler) {
-    UpdateCommentDialog dialog = new UpdateCommentDialog();
-
+  public static Bundle getArgs(long commentId, String comment, boolean spoiler) {
     Bundle args = new Bundle();
     args.putLong(ARG_COMMENT_ID, commentId);
     args.putString(ARG_COMMENT, comment);
     args.putBoolean(ARG_SPOILER, spoiler);
-    dialog.setArguments(args);
+    return args;
+  }
 
-    return dialog;
+  @Inject public UpdateCommentDialog(CommentsTaskScheduler commentsScheduler) {
+    this.commentsScheduler = commentsScheduler;
   }
 
   @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
-    AndroidSupportInjection.inject(this);
-
     Bundle args = getArguments();
     commentId = args.getLong(ARG_COMMENT_ID);
     comment = args.getString(ARG_COMMENT);

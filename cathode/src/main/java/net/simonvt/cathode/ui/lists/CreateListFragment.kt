@@ -28,7 +28,6 @@ import androidx.fragment.app.DialogFragment
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.Unbinder
-import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.Privacy
 import net.simonvt.cathode.api.enumeration.SortBy
@@ -37,10 +36,9 @@ import net.simonvt.cathode.settings.TraktLinkSettings
 import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler
 import javax.inject.Inject
 
-class CreateListFragment : DialogFragment() {
-
-  @Inject
-  lateinit var listsTaskScheduler: ListsTaskScheduler
+class CreateListFragment @Inject constructor(
+  private val listsTaskScheduler: ListsTaskScheduler
+) : DialogFragment() {
 
   private var unbinder: Unbinder? = null
 
@@ -78,8 +76,6 @@ class CreateListFragment : DialogFragment() {
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    AndroidSupportInjection.inject(this)
-
     if (showsDialog) {
       setStyle(DialogFragment.STYLE_NO_TITLE, 0)
     }

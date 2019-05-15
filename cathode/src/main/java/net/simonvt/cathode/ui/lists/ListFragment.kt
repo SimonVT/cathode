@@ -22,10 +22,10 @@ import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.SortBy
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
+import net.simonvt.cathode.common.ui.instantiate
 import net.simonvt.cathode.common.util.guava.Preconditions
 import net.simonvt.cathode.entity.ListItem
 import net.simonvt.cathode.entity.UserList
@@ -36,19 +36,17 @@ import net.simonvt.cathode.ui.LibraryType
 import net.simonvt.cathode.ui.NavigationListener
 import javax.inject.Inject
 
-class ListFragment : ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHolder>(),
+class ListFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory,
+  private val listScheduler: ListsTaskScheduler
+) : ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHolder>(),
   ListAdapter.ListListener, ListDialog.Callback {
-
-  @Inject
-  lateinit var listScheduler: ListsTaskScheduler
 
   private lateinit var navigationListener: NavigationListener
 
   var listId: Long = 0
     private set
 
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
   private lateinit var viewModel: ListViewModel
 
   private var adapter: ListAdapter? = null
@@ -64,8 +62,6 @@ class ListFragment : ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHol
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    AndroidSupportInjection.inject(this)
-
     val args = arguments
     listId = args!!.getLong(ARG_LIST_ID)
     val listName = args.getString(ARG_LIST_NAME)
@@ -116,30 +112,34 @@ class ListFragment : ToolbarSwipeRefreshRecyclerFragment<ListAdapter.ListViewHol
         items.add(ListDialog.Item(R.id.sort_votes, R.string.sort_votes))
         items.add(ListDialog.Item(R.id.sort_user_rating, R.string.sort_user_rating))
         items.add(ListDialog.Item(R.id.sort_random, R.string.sort_random))
-        ListDialog.newInstance(R.string.action_sort_by, items, this)
+        ListDialog.newInstance(requireFragmentManager(), R.string.action_sort_by, items, this)
           .show(requireFragmentManager(), DIALOG_SORT)
         return true
       }
       R.id.menu_list_edit -> {
         if (listInfo != null) {
-          val updateFragment = UpdateListFragment()
-          updateFragment.arguments = UpdateListFragment.getArgs(
-            listId,
-            listInfo!!.name,
-            listInfo!!.description,
-            listInfo!!.privacy,
-            listInfo!!.displayNumbers,
-            listInfo!!.allowComments,
-            listInfo!!.sortBy,
-            listInfo!!.sortOrientation
-          )
-          updateFragment.show(requireFragmentManager(), DIALOG_UPDATE)
+          requireFragmentManager().instantiate(
+            UpdateListFragment::class.java,
+            UpdateListFragment.getArgs(
+              listId,
+              listInfo!!.name,
+              listInfo!!.description,
+              listInfo!!.privacy,
+              listInfo!!.displayNumbers,
+              listInfo!!.allowComments,
+              listInfo!!.sortBy,
+              listInfo!!.sortOrientation
+            )
+          ).show(requireFragmentManager(), DIALOG_UPDATE)
         }
         return true
       }
 
       R.id.menu_list_delete -> {
-        DeleteListDialog.newInstance(listId).show(requireFragmentManager(), DIALOG_DELETE)
+        requireFragmentManager().instantiate(
+          DeleteListDialog::class.java,
+          DeleteListDialog.getArgs(listId)
+        ).show(requireFragmentManager(), DIALOG_DELETE)
         return true
       }
     }

@@ -19,12 +19,10 @@ package net.simonvt.cathode;
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.AndroidInjectionModule;
-import dagger.android.support.AndroidSupportInjectionModule;
 import javax.inject.Singleton;
 import net.simonvt.cathode.api.TraktModule;
 import net.simonvt.cathode.common.dagger.CathodeAndroidInjectionModule;
 import net.simonvt.cathode.dagger.AppAssistedModule;
-import net.simonvt.cathode.dagger.FragmentBindingModule;
 import net.simonvt.cathode.dagger.ServiceBindingModule;
 import net.simonvt.cathode.dagger.views.ViewModule;
 import net.simonvt.cathode.images.ImageModule;
@@ -32,15 +30,15 @@ import net.simonvt.cathode.jobqueue.JobInjectionModule;
 import net.simonvt.cathode.remote.JobModule;
 import net.simonvt.cathode.sync.api.ApiModule;
 import net.simonvt.cathode.sync.tmdb.TmdbModule;
+import net.simonvt.cathode.ui.di.FragmentModule;
 import net.simonvt.cathode.ui.di.ViewModelModule;
 import net.simonvt.cathode.work.di.WorkerModule;
 
 @Singleton @Component(modules = {
-    ServiceBindingModule.class, FragmentBindingModule.class, AndroidInjectionModule.class,
-    AndroidSupportInjectionModule.class, CathodeAndroidInjectionModule.class, AppModule.class,
-    ApiModule.class, TraktModule.class, TmdbModule.class, ImageModule.class, ProviderModule.class,
-    ViewModule.class, JobModule.class, JobInjectionModule.class,
-    WorkerModule.class, AppAssistedModule.class, ViewModelModule.class,
+    ServiceBindingModule.class, AndroidInjectionModule.class, CathodeAndroidInjectionModule.class,
+    AppModule.class, ApiModule.class, TraktModule.class, TmdbModule.class, ImageModule.class,
+    ProviderModule.class, ViewModule.class, JobModule.class, JobInjectionModule.class,
+    WorkerModule.class, AppAssistedModule.class, ViewModelModule.class, FragmentModule.class,
 }) //
 public interface AppComponent {
 

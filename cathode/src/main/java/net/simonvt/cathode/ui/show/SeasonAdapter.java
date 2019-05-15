@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.ui.FragmentsUtils;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.RemoteImageView;
 import net.simonvt.cathode.common.widget.TimeStamp;
@@ -96,13 +97,17 @@ public class SeasonAdapter extends BaseAdapter<Episode, SeasonAdapter.ViewHolder
           } else {
             if (activated) {
               if (TraktLinkSettings.isLinked(getContext())) {
-                RemoveFromHistoryDialog.newInstance(RemoveFromHistoryDialog.Type.EPISODE,
-                    holder.getItemId(), holder.episodeTitle, holder.showTitle)
+                FragmentsUtils.instantiate(activity.getSupportFragmentManager(),
+                    RemoveFromHistoryDialog.class,
+                    RemoveFromHistoryDialog.getArgs(RemoveFromHistoryDialog.Type.EPISODE,
+                        holder.getItemId(), holder.episodeTitle, holder.showTitle))
                     .show(activity.getSupportFragmentManager(), RemoveFromHistoryDialog.TAG);
               }
             } else {
-              AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.EPISODE, holder.getItemId(),
-                  holder.episodeTitle)
+              FragmentsUtils.instantiate(activity.getSupportFragmentManager(),
+                  AddToHistoryDialog.class,
+                  AddToHistoryDialog.getArgs(AddToHistoryDialog.Type.EPISODE, holder.getItemId(),
+                      holder.episodeTitle))
                   .show(activity.getSupportFragmentManager(), AddToHistoryDialog.TAG);
             }
           }

@@ -23,11 +23,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import dagger.android.support.AndroidSupportInjection;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.common.ui.FragmentsUtils;
 import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment;
 import net.simonvt.cathode.common.util.guava.Preconditions;
 import net.simonvt.cathode.entity.Comment;
@@ -52,7 +52,7 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
   private static final String STATE_ADAPTER =
       "net.simonvt.cathode.ui.comments.CommentFragment.adapterState";
 
-  @Inject CommentsTaskScheduler commentsScheduler;
+  private CommentsTaskScheduler commentsScheduler;
 
   private NavigationListener navigationListener;
 
@@ -67,6 +67,10 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
   private CommentsAdapter adapter;
 
   private Bundle adapterState;
+
+  @Inject public CommentsFragment(CommentsTaskScheduler commentsScheduler) {
+    this.commentsScheduler = commentsScheduler;
+  }
 
   public static Bundle getArgs(ItemType itemType, long itemId) {
     Preconditions.checkArgument(itemId >= 0, "itemId must be >= 0");
@@ -84,8 +88,6 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
 
   @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
-    AndroidSupportInjection.inject(this);
-
     Bundle args = getArguments();
     itemType = (ItemType) args.getSerializable(ARG_ITEM_TYPE);
     itemId = args.getLong(ARG_ITEM_ID);
@@ -122,7 +124,8 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_comment_add:
-        AddCommentDialog.newInstance(itemType, itemId)
+        FragmentsUtils.instantiate(requireFragmentManager(), AddCommentDialog.class,
+            AddCommentDialog.getArgs(itemType, itemId))
             .show(requireFragmentManager(), DIALOG_COMMENT_ADD);
         return true;
 
@@ -136,7 +139,8 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
         @Override public void onCommentClick(long commentId, String comment, boolean spoiler,
             boolean isUserComment) {
           if (isUserComment) {
-            UpdateCommentDialog.newInstance(commentId, comment, spoiler)
+            FragmentsUtils.instantiate(requireFragmentManager(), UpdateCommentDialog.class,
+                UpdateCommentDialog.getArgs(commentId, comment, spoiler))
                 .show(requireFragmentManager(), DIALOG_COMMENT_UPDATE);
           } else {
             navigationListener.onDisplayComment(commentId);

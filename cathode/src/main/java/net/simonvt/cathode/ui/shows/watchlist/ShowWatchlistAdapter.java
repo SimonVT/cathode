@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.ui.FragmentsUtils;
 import net.simonvt.cathode.common.ui.adapter.HeaderAdapter;
 import net.simonvt.cathode.common.widget.CircularProgressIndicator;
 import net.simonvt.cathode.common.widget.OverflowView;
@@ -214,7 +215,9 @@ public class ShowWatchlistAdapter extends HeaderAdapter<Object, RecyclerView.Vie
           if (position != RecyclerView.NO_POSITION) {
             switch (action) {
               case R.id.action_history_add:
-                AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.EPISODE, id, title)
+                FragmentsUtils.instantiate(activity.getSupportFragmentManager(),
+                    AddToHistoryDialog.class,
+                    AddToHistoryDialog.getArgs(AddToHistoryDialog.Type.EPISODE, id, title))
                     .show(activity.getSupportFragmentManager(), AddToHistoryDialog.TAG);
                 break;
 

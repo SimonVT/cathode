@@ -30,11 +30,11 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import butterknife.BindView
 import butterknife.OnClick
-import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.api.util.TraktUtils
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment
+import net.simonvt.cathode.common.ui.instantiate
 import net.simonvt.cathode.common.util.DateStringUtils
 import net.simonvt.cathode.common.util.Ids
 import net.simonvt.cathode.common.util.Intents
@@ -63,13 +63,11 @@ import net.simonvt.cathode.widget.CheckInDrawable
 import java.util.Locale
 import javax.inject.Inject
 
-class MovieFragment : RefreshableAppBarFragment() {
+class MovieFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory,
+  private val movieScheduler: MovieTaskScheduler
+) : RefreshableAppBarFragment() {
 
-  @Inject
-  lateinit var movieScheduler: MovieTaskScheduler
-
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
   lateinit var viewModel: MovieViewModel
 
   private var movie: Movie? = null
@@ -194,8 +192,6 @@ class MovieFragment : RefreshableAppBarFragment() {
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    AndroidSupportInjection.inject(this)
-
     val args = arguments
     movieId = args!!.getLong(ARG_ID)
     movieTitle = args.getString(ARG_TITLE)
@@ -252,8 +248,10 @@ class MovieFragment : RefreshableAppBarFragment() {
 
     if (TraktLinkSettings.isLinked(requireContext())) {
       rating!!.setOnClickListener {
-        RatingDialog.newInstance(RatingDialog.Type.MOVIE, movieId, currentRating)
-          .show(requireFragmentManager(), DIALOG_RATING)
+        requireFragmentManager().instantiate(
+          RatingDialog::class.java,
+          RatingDialog.getArgs(RatingDialog.Type.MOVIE, movieId, currentRating)
+        ).show(requireFragmentManager(), DIALOG_RATING)
       }
     }
 
@@ -329,16 +327,23 @@ class MovieFragment : RefreshableAppBarFragment() {
   override fun onMenuItemClick(item: MenuItem): Boolean {
     when (item.itemId) {
       R.id.action_history_add -> {
-        AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.MOVIE, movieId, movieTitle)
-          .show(requireFragmentManager(), AddToHistoryDialog.TAG)
+        requireFragmentManager().instantiate(
+          AddToHistoryDialog::class.java,
+          AddToHistoryDialog.getArgs(AddToHistoryDialog.Type.MOVIE, movieId, movieTitle)
+        ).show(requireFragmentManager(), AddToHistoryDialog.TAG)
         return true
       }
 
       R.id.action_history_remove -> {
         if (TraktLinkSettings.isLinked(requireContext())) {
-          RemoveFromHistoryDialog.newInstance(
-            RemoveFromHistoryDialog.Type.MOVIE, movieId,
-            movieTitle
+          requireFragmentManager().instantiate(
+            RemoveFromHistoryDialog::class.java,
+            RemoveFromHistoryDialog.getArgs(
+              RemoveFromHistoryDialog.Type.MOVIE,
+              movieId,
+              movieTitle,
+              null
+            )
           ).show(requireFragmentManager(), RemoveFromHistoryDialog.TAG)
         } else {
           movieScheduler.removeFromHistory(movieId)
@@ -393,8 +398,10 @@ class MovieFragment : RefreshableAppBarFragment() {
       }
 
       R.id.action_list_add -> {
-        ListsDialog.newInstance(ItemType.MOVIE, movieId)
-          .show(requireFragmentManager(), DIALOG_LISTS_ADD)
+        requireFragmentManager().instantiate(
+          ListsDialog::class.java,
+          ListsDialog.getArgs(ItemType.MOVIE, movieId)
+        ).show(requireFragmentManager(), DIALOG_LISTS_ADD)
         return true
       }
     }

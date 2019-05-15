@@ -23,7 +23,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
-import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.adapter.HeaderSpanLookup
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
@@ -37,21 +36,17 @@ import net.simonvt.cathode.ui.lists.ListDialog
 import net.simonvt.cathode.ui.shows.upcoming.UpcomingSortByPreference.UpcomingSortByListener
 import javax.inject.Inject
 
-class UpcomingShowsFragment : ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>(),
+class UpcomingShowsFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory,
+  private val episodeScheduler: EpisodeTaskScheduler,
+  private val upcomingSortByPreference: UpcomingSortByPreference
+) : ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>(),
   ListDialog.Callback, UpcomingAdapter.Callbacks {
-
-  @Inject
-  lateinit var episodeScheduler: EpisodeTaskScheduler
-
-  @Inject
-  lateinit var upcomingSortByPreference: UpcomingSortByPreference
 
   private lateinit var sortBy: UpcomingSortBy
 
   private lateinit var navigationListener: ShowsNavigationListener
 
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
   private lateinit var viewModel: UpcomingViewModel
 
   private var columnCount: Int = 0
@@ -72,8 +67,6 @@ class UpcomingShowsFragment : ToolbarSwipeRefreshRecyclerFragment<RecyclerView.V
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    AndroidSupportInjection.inject(this)
-
     sortBy = upcomingSortByPreference.get()
     upcomingSortByPreference.registerListener(upcomingSortByListener)
 
@@ -115,8 +108,12 @@ class UpcomingShowsFragment : ToolbarSwipeRefreshRecyclerFragment<RecyclerView.V
         items.add(ListDialog.Item(R.id.sort_title, R.string.sort_title))
         items.add(ListDialog.Item(R.id.sort_next_episode, R.string.sort_next_episode))
         items.add(ListDialog.Item(R.id.sort_last_watched, R.string.sort_last_watched))
-        ListDialog.newInstance(R.string.action_sort_by, items, this@UpcomingShowsFragment)
-          .show(requireFragmentManager(), DIALOG_SORT)
+        ListDialog.newInstance(
+          requireFragmentManager(),
+          R.string.action_sort_by,
+          items,
+          this@UpcomingShowsFragment
+        ).show(requireFragmentManager(), DIALOG_SORT)
         return true
       }
 

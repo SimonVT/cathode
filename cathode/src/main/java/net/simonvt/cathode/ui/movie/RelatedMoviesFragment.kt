@@ -20,7 +20,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
 import net.simonvt.cathode.common.util.Ids
@@ -34,18 +33,16 @@ import net.simonvt.cathode.ui.movies.BaseMoviesAdapter
 import net.simonvt.cathode.ui.movies.MoviesAdapter
 import javax.inject.Inject
 
-class RelatedMoviesFragment : ToolbarSwipeRefreshRecyclerFragment<BaseMoviesAdapter.ViewHolder>(),
+class RelatedMoviesFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory,
+  private val movieScheduler: MovieTaskScheduler
+) : ToolbarSwipeRefreshRecyclerFragment<BaseMoviesAdapter.ViewHolder>(),
   BaseMoviesAdapter.Callbacks {
-
-  @Inject
-  lateinit var movieScheduler: MovieTaskScheduler
 
   private lateinit var navigationListener: MoviesNavigationListener
 
   private var movieId: Long = -1L
 
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
   lateinit var viewModel: RelatedMoviesViewModel
 
   private var movieAdapter: MoviesAdapter? = null
@@ -59,8 +56,6 @@ class RelatedMoviesFragment : ToolbarSwipeRefreshRecyclerFragment<BaseMoviesAdap
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    AndroidSupportInjection.inject(this)
-
     movieId = arguments!!.getLong(ARG_MOVIE_ID)
 
     columnCount = resources.getInteger(R.integer.movieColumns)

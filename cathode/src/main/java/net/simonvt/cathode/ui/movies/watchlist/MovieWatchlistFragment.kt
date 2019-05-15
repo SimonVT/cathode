@@ -20,12 +20,17 @@ import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
+import net.simonvt.cathode.jobqueue.JobManager
 import net.simonvt.cathode.settings.TraktLinkSettings
+import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.movies.MoviesFragment
 import javax.inject.Inject
 
-class MovieWatchlistFragment : MoviesFragment() {
+class MovieWatchlistFragment @Inject constructor(
+  jobManager: JobManager,
+  movieScheduler: MovieTaskScheduler
+) : MoviesFragment(jobManager, movieScheduler) {
 
   @Inject
   lateinit var viewModelFactory: CathodeViewModelFactory

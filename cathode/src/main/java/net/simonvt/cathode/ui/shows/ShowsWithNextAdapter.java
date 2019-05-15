@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.ui.FragmentsUtils;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.common.widget.RemoteImageView;
@@ -121,8 +122,10 @@ public class ShowsWithNextAdapter
               break;
 
             case R.id.action_history_add:
-              AddToHistoryDialog.newInstance(AddToHistoryDialog.Type.EPISODE, holder.episodeId,
-                  holder.episodeTitle)
+              FragmentsUtils.instantiate(activity.getSupportFragmentManager(),
+                  AddToHistoryDialog.class,
+                  AddToHistoryDialog.getArgs(AddToHistoryDialog.Type.EPISODE, holder.episodeId,
+                      holder.episodeTitle))
                   .show(activity.getSupportFragmentManager(), AddToHistoryDialog.TAG);
               break;
 

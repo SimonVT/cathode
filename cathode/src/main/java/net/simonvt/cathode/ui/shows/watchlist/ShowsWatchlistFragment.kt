@@ -24,7 +24,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.adapter.HeaderSpanLookup
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
@@ -39,18 +38,15 @@ import net.simonvt.cathode.ui.NavigationListener
 import net.simonvt.cathode.ui.ShowsNavigationListener
 import javax.inject.Inject
 
-class ShowsWatchlistFragment : ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>(),
+class ShowsWatchlistFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory,
+  private val showScheduler: ShowTaskScheduler,
+  private val episodeScheduler: EpisodeTaskScheduler
+) : ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>(),
   ShowWatchlistAdapter.RemoveListener, ShowWatchlistAdapter.ItemCallbacks {
-
-  @Inject
-  lateinit var showScheduler: ShowTaskScheduler
-  @Inject
-  lateinit var episodeScheduler: EpisodeTaskScheduler
 
   lateinit var navigationListener: ShowsNavigationListener
 
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
   lateinit var viewModel: ShowsWatchlistViewModel
 
   private var columnCount: Int = 0
@@ -66,8 +62,6 @@ class ShowsWatchlistFragment : ToolbarSwipeRefreshRecyclerFragment<RecyclerView.
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    AndroidSupportInjection.inject(this)
-
     columnCount = resources.getInteger(R.integer.showsColumns)
 
     setEmptyText(R.string.empty_show_watchlist)

@@ -26,7 +26,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import butterknife.BindView
 import butterknife.OnClick
-import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.Department
 import net.simonvt.cathode.api.enumeration.ItemType
@@ -34,18 +33,13 @@ import net.simonvt.cathode.common.ui.fragment.RefreshableToolbarFragment
 import net.simonvt.cathode.common.util.Ids
 import net.simonvt.cathode.common.util.guava.Preconditions
 import net.simonvt.cathode.common.widget.RemoteImageView
-import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler
-import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.NavigationListener
 import javax.inject.Inject
 
-class CreditsFragment : RefreshableToolbarFragment() {
-
-  @Inject
-  lateinit var showScheduler: ShowTaskScheduler
-  @Inject
-  lateinit var movieScheduler: MovieTaskScheduler
+class CreditsFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory
+) : RefreshableToolbarFragment() {
 
   private lateinit var navigationListener: NavigationListener
 
@@ -55,8 +49,6 @@ class CreditsFragment : RefreshableToolbarFragment() {
 
   private var title: String? = null
 
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
   lateinit var viewModel: CreditsViewModel
 
   private var credits: Credits? = null
@@ -133,8 +125,6 @@ class CreditsFragment : RefreshableToolbarFragment() {
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    AndroidSupportInjection.inject(this)
-
     val args = requireArguments()
     itemId = args.getLong(ARG_ITEM_ID)
     title = args.getString(ARG_TITLE)

@@ -24,7 +24,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import butterknife.BindView
-import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment
 import net.simonvt.cathode.common.widget.ErrorView
@@ -38,17 +37,15 @@ import net.simonvt.cathode.ui.NavigationListener
 import java.util.Locale
 import javax.inject.Inject
 
-class SearchFragment : ToolbarGridFragment<ViewHolder>(), SearchAdapter.OnResultClickListener {
-
-  @Inject
-  lateinit var searchScheduler: SearchTaskScheduler
+class SearchFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory,
+  private val searchScheduler: SearchTaskScheduler
+) : ToolbarGridFragment<ViewHolder>(), SearchAdapter.OnResultClickListener {
 
   @BindView(R.id.errorView)
   @JvmField
   var errorView: ErrorView? = null
 
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
   private lateinit var viewModel: SearchViewModel
 
   private var searchView: SearchView? = null
@@ -91,8 +88,6 @@ class SearchFragment : ToolbarGridFragment<ViewHolder>(), SearchAdapter.OnResult
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    AndroidSupportInjection.inject(this)
-
     sortBy = SortBy.fromValue(
       Settings.get(requireContext()).getString(Settings.Sort.SEARCH, SortBy.TITLE.key)!!
     )

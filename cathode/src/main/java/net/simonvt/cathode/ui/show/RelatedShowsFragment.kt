@@ -19,7 +19,6 @@ import android.content.Context
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import dagger.android.support.AndroidSupportInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
 import net.simonvt.cathode.common.util.Ids
@@ -33,19 +32,16 @@ import net.simonvt.cathode.ui.ShowsNavigationListener
 import net.simonvt.cathode.ui.shows.ShowDescriptionAdapter
 import javax.inject.Inject
 
-class RelatedShowsFragment :
-  ToolbarSwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>(),
+class RelatedShowsFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory,
+  private val showScheduler: ShowTaskScheduler
+) : ToolbarSwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>(),
   ShowDescriptionAdapter.ShowCallbacks {
-
-  @Inject
-  lateinit var showScheduler: ShowTaskScheduler
 
   lateinit var navigationListener: ShowsNavigationListener
 
   private var showId: Long = -1L
 
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
   lateinit var viewModel: RelatedShowsViewModel
 
   private var showsAdapter: ShowDescriptionAdapter? = null
@@ -57,8 +53,6 @@ class RelatedShowsFragment :
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    AndroidSupportInjection.inject(this)
-
     showId = arguments!!.getLong(ARG_SHOW_ID)
 
     setEmptyText(R.string.empty_show_related)

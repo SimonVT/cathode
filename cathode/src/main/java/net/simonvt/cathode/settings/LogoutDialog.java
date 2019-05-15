@@ -21,7 +21,6 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
-import dagger.android.support.AndroidSupportInjection;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.jobqueue.JobManager;
@@ -30,12 +29,16 @@ import net.simonvt.cathode.work.PeriodicWorkInitializer;
 
 public class LogoutDialog extends AppCompatDialogFragment {
 
-  @Inject PeriodicWorkInitializer periodicWorkInitializer;
-  @Inject JobManager jobManager;
+  private PeriodicWorkInitializer periodicWorkInitializer;
+  private JobManager jobManager;
+
+  @Inject
+  public LogoutDialog(PeriodicWorkInitializer periodicWorkInitializer, JobManager jobManager) {
+    this.periodicWorkInitializer = periodicWorkInitializer;
+    this.jobManager = jobManager;
+  }
 
   @Override public Dialog onCreateDialog(@Nullable Bundle inState) {
-    AndroidSupportInjection.inject(this);
-
     return new AlertDialog.Builder(getActivity()).setTitle(R.string.logout_title)
         .setMessage(R.string.logout_message)
         .setPositiveButton(R.string.logout_button, new DialogInterface.OnClickListener() {

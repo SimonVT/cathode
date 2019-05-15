@@ -19,6 +19,7 @@ import android.content.Context;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import net.simonvt.cathode.R;
+import net.simonvt.cathode.common.ui.FragmentsUtils;
 import net.simonvt.cathode.common.ui.fragment.BaseFragment;
 import net.simonvt.cathode.common.util.ViewPagerUtils;
 import net.simonvt.cathode.settings.TraktLinkSettings;
@@ -26,6 +27,7 @@ import net.simonvt.cathode.settings.TraktLinkSettings;
 public class ShowSuggestionsPagerAdapter extends FragmentPagerAdapter {
 
   private Context context;
+  private FragmentManager fragmentManager;
 
   final boolean traktLinked;
 
@@ -36,6 +38,7 @@ public class ShowSuggestionsPagerAdapter extends FragmentPagerAdapter {
   public ShowSuggestionsPagerAdapter(Context context, FragmentManager fm) {
     super(fm);
     this.context = context;
+    this.fragmentManager = fm;
 
     traktLinked = TraktLinkSettings.isLinked(context);
 
@@ -43,18 +46,20 @@ public class ShowSuggestionsPagerAdapter extends FragmentPagerAdapter {
       recommendationsFragment =
           (ShowRecommendationsFragment) fm.findFragmentByTag(makeFragmentName(0));
       if (recommendationsFragment == null) {
-        recommendationsFragment = new ShowRecommendationsFragment();
+        recommendationsFragment =
+            FragmentsUtils.instantiate(fragmentManager, ShowRecommendationsFragment.class);
       }
     }
 
     trendingFragment = (TrendingShowsFragment) fm.findFragmentByTag(makeFragmentName(1));
     if (trendingFragment == null) {
-      trendingFragment = new TrendingShowsFragment();
+      trendingFragment = FragmentsUtils.instantiate(fragmentManager, TrendingShowsFragment.class);
     }
 
     anticipatedFragment = (AnticipatedShowsFragment) fm.findFragmentByTag(makeFragmentName(2));
     if (anticipatedFragment == null) {
-      anticipatedFragment = new AnticipatedShowsFragment();
+      anticipatedFragment =
+          FragmentsUtils.instantiate(fragmentManager, AnticipatedShowsFragment.class);
     }
   }
 

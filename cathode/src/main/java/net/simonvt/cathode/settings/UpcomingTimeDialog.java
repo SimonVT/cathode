@@ -40,14 +40,10 @@ public class UpcomingTimeDialog extends AppCompatDialogFragment {
 
   private UpcomingTimeSelectedListener listener;
 
-  public static UpcomingTimeDialog newInstance(UpcomingTime selected) {
-    UpcomingTimeDialog dialog = new UpcomingTimeDialog();
-
+  public static Bundle getArgs(UpcomingTime selected) {
     Bundle args = new Bundle();
     args.putSerializable(ARG_SELECTED, selected);
-    dialog.setArguments(args);
-
-    return dialog;
+    return args;
   }
 
   @Override public void onCreate(@Nullable Bundle inState) {

@@ -22,7 +22,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
-import dagger.android.support.AndroidSupportInjection;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
@@ -38,9 +37,9 @@ public abstract class MoviesFragment
     extends ToolbarSwipeRefreshRecyclerFragment<MoviesAdapter.ViewHolder>
     implements BaseMoviesAdapter.Callbacks {
 
-  @Inject protected JobManager jobManager;
+  protected JobManager jobManager;
 
-  @Inject MovieTaskScheduler movieScheduler;
+  private MovieTaskScheduler movieScheduler;
 
   private MoviesNavigationListener navigationListener;
 
@@ -50,6 +49,11 @@ public abstract class MoviesFragment
 
   protected boolean scrollToTop;
 
+  public MoviesFragment(JobManager jobManager, MovieTaskScheduler movieScheduler) {
+    this.jobManager = jobManager;
+    this.movieScheduler = movieScheduler;
+  }
+
   @Override public void onAttach(@NonNull Context context) {
     super.onAttach(context);
     navigationListener = (NavigationListener) requireActivity();
@@ -57,8 +61,6 @@ public abstract class MoviesFragment
 
   @Override public void onCreate(@Nullable Bundle inState) {
     super.onCreate(inState);
-    AndroidSupportInjection.inject(this);
-
     columnCount = getResources().getInteger(R.integer.movieColumns);
   }
 

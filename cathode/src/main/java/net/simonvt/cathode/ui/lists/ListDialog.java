@@ -25,7 +25,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import java.util.ArrayList;
+import net.simonvt.cathode.common.ui.FragmentsUtils;
 
 public class ListDialog extends DialogFragment {
 
@@ -80,18 +82,21 @@ public class ListDialog extends DialogFragment {
   private static final String ARG_TITLE = "net.simonvt.cathode.ui.lists.ListDialog.title";
   private static final String ARG_ITEMS = "net.simonvt.cathode.ui.lists.ListDialog.items";
 
-  public static ListDialog newInstance(int title, ArrayList<Item> items, Fragment target) {
-    ListDialog dialog = new ListDialog();
+  public static ListDialog newInstance(FragmentManager fragmentManager, int title,
+      ArrayList<Item> items, Fragment target) {
+    ListDialog dialog =
+        FragmentsUtils.instantiate(fragmentManager, ListDialog.class, getArgs(title, items));
     if (target != null) {
       dialog.setTargetFragment(target, 0);
     }
+    return dialog;
+  }
 
+  public static Bundle getArgs(int title, ArrayList<Item> items) {
     Bundle args = new Bundle();
     args.putInt(ARG_TITLE, title);
     args.putParcelableArrayList(ARG_ITEMS, items);
-    dialog.setArguments(args);
-
-    return dialog;
+    return args;
   }
 
   @NonNull @Override public Dialog onCreateDialog(@Nullable Bundle inState) {
