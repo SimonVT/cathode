@@ -21,14 +21,11 @@ import dagger.android.ContributesAndroidInjector;
 import net.simonvt.cathode.account.AuthenticatorService;
 import net.simonvt.cathode.appwidget.UpcomingWidgetService;
 import net.simonvt.cathode.calendar.CalendarService;
-import net.simonvt.cathode.dashclock.DashClockService;
 import net.simonvt.cathode.notification.NotificationActionService;
 
 @Module public abstract class ServiceBindingModule {
 
   @ContributesAndroidInjector abstract NotificationActionService notificationActionService();
-
-  @ContributesAndroidInjector abstract DashClockService dashClockService();
 
   @ContributesAndroidInjector abstract AuthenticatorService authenticatorService();
 

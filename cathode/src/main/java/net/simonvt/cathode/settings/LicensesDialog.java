@@ -65,7 +65,6 @@ public class LicensesDialog extends AppCompatDialogFragment {
       licenses.add(new License(R.string.license_retrofit, R.string.license_retrofit_text));
       licenses.add(new License(R.string.license_butterknife, R.string.license_butterknife_text));
       licenses.add(new License(R.string.license_timber, R.string.license_timber_text));
-      licenses.add(new License(R.string.license_dashclock, R.string.license_dashclock_text));
       licenses.add(new License(R.string.license_tmdb_java, R.string.license_tmdb_java_text));
       licenses.add(new License(R.string.license_schematic, R.string.license_schematic_text));
     }

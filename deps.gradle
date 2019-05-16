@@ -43,8 +43,6 @@ ext {
       butterknifeCompiler: "com.jakewharton:butterknife-compiler:$butterknifeVersion",
       butterknifeGradle: "com.jakewharton:butterknife-gradle-plugin:$butterknifeVersion",
 
-      dashclockApi: 'com.google.android.apps.dashclock:dashclock-api:2.0.0',
-
       tmdb: 'com.uwetrottmann.tmdb2:tmdb-java:2.0.1',
 
       junit: 'junit:junit:4.12',

@@ -17,9 +17,6 @@
 <resources>
   <string name="sync_calendar">Sync calendar</string>
 
-  <string name="dashclock_title">@string/app_name</string>
-  <string name="dashclock_description">Display the next upcoming episode</string>
-
   <string name="cancel">Cancel</string>
   <string name="yes">Yes</string>
   <string name="no">No</string>

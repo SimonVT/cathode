@@ -62,8 +62,6 @@ dependencies {
   kapt deps.butterknifeCompiler
   implementation deps.timber
 
-  implementation deps.dashclockApi
-
   implementation deps.tmdb
 
   implementation deps.firebase.core
