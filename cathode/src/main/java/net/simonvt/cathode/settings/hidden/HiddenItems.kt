@@ -92,7 +92,7 @@ class HiddenItems : BaseActivity(), NavigationClickListener, NavigationListener 
     throw RuntimeException("Searching from HiddenItems not supported")
   }
 
-  override fun onDisplayShow(showId: Long, title: String, overview: String, type: LibraryType) {
+  override fun onDisplayShow(showId: Long, title: String?, overview: String?, type: LibraryType) {
     stack.push(
       ShowFragment::class.java,
       ShowFragment.getTag(showId),
@@ -100,7 +100,7 @@ class HiddenItems : BaseActivity(), NavigationClickListener, NavigationListener 
     )
   }
 
-  override fun onDisplayEpisode(episodeId: Long, showTitle: String) {
+  override fun onDisplayEpisode(episodeId: Long, showTitle: String?) {
     stack.push(
       EpisodeFragment::class.java,
       EpisodeFragment.getTag(episodeId),
@@ -119,7 +119,7 @@ class HiddenItems : BaseActivity(), NavigationClickListener, NavigationListener 
   override fun onDisplaySeason(
     showId: Long,
     seasonId: Long,
-    showTitle: String,
+    showTitle: String?,
     seasonNumber: Int,
     type: LibraryType
   ) {
@@ -130,7 +130,7 @@ class HiddenItems : BaseActivity(), NavigationClickListener, NavigationListener 
     )
   }
 
-  override fun onDisplayRelatedShows(showId: Long, title: String) {
+  override fun onDisplayRelatedShows(showId: Long, title: String?) {
     stack.push(
       RelatedShowsFragment::class.java,
       RelatedShowsFragment.getTag(showId),
@@ -138,7 +138,7 @@ class HiddenItems : BaseActivity(), NavigationClickListener, NavigationListener 
     )
   }
 
-  override fun onSelectShowWatchedDate(showId: Long, title: String) {
+  override fun onSelectShowWatchedDate(showId: Long, title: String?) {
     stack.push(
       SelectHistoryDateFragment::class.java,
       SelectHistoryDateFragment.TAG,
@@ -146,7 +146,7 @@ class HiddenItems : BaseActivity(), NavigationClickListener, NavigationListener 
     )
   }
 
-  override fun onSelectSeasonWatchedDate(seasonId: Long, title: String) {
+  override fun onSelectSeasonWatchedDate(seasonId: Long, title: String?) {
     stack.push(
       SelectHistoryDateFragment::class.java,
       SelectHistoryDateFragment.TAG,
@@ -154,7 +154,7 @@ class HiddenItems : BaseActivity(), NavigationClickListener, NavigationListener 
     )
   }
 
-  override fun onSelectEpisodeWatchedDate(episodeId: Long, title: String) {
+  override fun onSelectEpisodeWatchedDate(episodeId: Long, title: String?) {
     stack.push(
       SelectHistoryDateFragment::class.java,
       SelectHistoryDateFragment.TAG,
@@ -162,7 +162,7 @@ class HiddenItems : BaseActivity(), NavigationClickListener, NavigationListener 
     )
   }
 
-  override fun onSelectOlderEpisodeWatchedDate(episodeId: Long, title: String) {
+  override fun onSelectOlderEpisodeWatchedDate(episodeId: Long, title: String?) {
     stack.push(
       SelectHistoryDateFragment::class.java,
       SelectHistoryDateFragment.TAG,
@@ -174,7 +174,7 @@ class HiddenItems : BaseActivity(), NavigationClickListener, NavigationListener 
     )
   }
 
-  override fun onDisplayMovie(movieId: Long, title: String, overview: String) {
+  override fun onDisplayMovie(movieId: Long, title: String?, overview: String?) {
     stack.push(
       MovieFragment::class.java,
       MovieFragment.getTag(movieId),
@@ -182,7 +182,7 @@ class HiddenItems : BaseActivity(), NavigationClickListener, NavigationListener 
     )
   }
 
-  override fun onDisplayRelatedMovies(movieId: Long, title: String) {
+  override fun onDisplayRelatedMovies(movieId: Long, title: String?) {
     stack.push(
       RelatedMoviesFragment::class.java,
       RelatedMoviesFragment.getTag(movieId),
@@ -190,7 +190,7 @@ class HiddenItems : BaseActivity(), NavigationClickListener, NavigationListener 
     )
   }
 
-  override fun onSelectMovieWatchedDate(movieId: Long, title: String) {
+  override fun onSelectMovieWatchedDate(movieId: Long, title: String?) {
     stack.push(
       SelectHistoryDateFragment::class.java,
       SelectHistoryDateFragment.TAG,
@@ -198,7 +198,7 @@ class HiddenItems : BaseActivity(), NavigationClickListener, NavigationListener 
     )
   }
 
-  override fun onDisplayMovieHistory(movieId: Long, title: String) {
+  override fun onDisplayMovieHistory(movieId: Long, title: String?) {
     stack.push(
       MovieHistoryFragment::class.java,
       MovieHistoryFragment.getTag(movieId),
@@ -255,7 +255,7 @@ class HiddenItems : BaseActivity(), NavigationClickListener, NavigationListener 
     )
   }
 
-  override fun onDisplayCredits(itemType: ItemType, itemId: Long, title: String) {
+  override fun onDisplayCredits(itemType: ItemType, itemId: Long, title: String?) {
     stack.push(
       CreditsFragment::class.java,
       CreditsFragment.getTag(itemId),
@@ -267,13 +267,12 @@ class HiddenItems : BaseActivity(), NavigationClickListener, NavigationListener 
     stack.push(clazz, tag, null)
   }
 
-  override fun upFromEpisode(showId: Long, showTitle: String, seasonId: Long) {
+  override fun upFromEpisode(showId: Long, showTitle: String?, seasonId: Long) {
     if (stack.removeTop()) {
       val f = stack.peek()
       if (f is ShowFragment && f.showId == showId) {
         stack.attachTop()
-      } else if (seasonId >= 0 && f is SeasonFragment && f.seasonId == seasonId
-      ) {
+      } else if (seasonId >= 0 && f is SeasonFragment && f.seasonId == seasonId) {
         stack.attachTop()
       } else {
         stack.putFragment(

@@ -43,7 +43,7 @@ class CreditsFragment @Inject constructor(
 
   private lateinit var navigationListener: NavigationListener
 
-  private var itemType: ItemType? = null
+  private lateinit var itemType: ItemType
 
   private var itemId: Long = 0
 
@@ -135,7 +135,7 @@ class CreditsFragment @Inject constructor(
     itemCount = resources.getInteger(R.integer.creditColumns)
 
     viewModel = ViewModelProviders.of(this, viewModelFactory).get(CreditsViewModel::class.java)
-    viewModel.setItemTypeAndId(itemType!!, itemId)
+    viewModel.setItemTypeAndId(itemType, itemId)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.credits.observe(this, Observer { credits -> updateView(credits) })
   }
@@ -265,7 +265,7 @@ class CreditsFragment @Inject constructor(
     }
 
     @JvmStatic
-    fun getArgs(itemType: ItemType, itemId: Long, title: String): Bundle {
+    fun getArgs(itemType: ItemType, itemId: Long, title: String?): Bundle {
       Preconditions.checkArgument(itemId >= 0, "itemId must be >= 0")
 
       val args = Bundle()

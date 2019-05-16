@@ -232,7 +232,7 @@ class ShowFragment @Inject constructor(
 
   private var calendarHidden: Boolean = false
 
-  private var type: LibraryType? = null
+  private lateinit var type: LibraryType
 
   private class EpisodeHolder(v: View) {
 
@@ -1010,7 +1010,7 @@ class ShowFragment @Inject constructor(
     }
 
     @JvmStatic
-    fun getArgs(showId: Long, title: String, overview: String?, type: LibraryType): Bundle {
+    fun getArgs(showId: Long, title: String?, overview: String?, type: LibraryType): Bundle {
       Preconditions.checkArgument(showId >= 0, "showId must be >= 0")
 
       val args = Bundle()

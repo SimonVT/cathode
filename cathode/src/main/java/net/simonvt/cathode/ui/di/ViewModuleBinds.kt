@@ -21,6 +21,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import net.simonvt.cathode.settings.hidden.HiddenViewModel
+import net.simonvt.cathode.settings.link.TraktLinkSyncViewModel
 import net.simonvt.cathode.ui.comments.CommentViewModel
 import net.simonvt.cathode.ui.credits.CreditsViewModel
 import net.simonvt.cathode.ui.dashboard.DashboardViewModel
@@ -185,4 +186,9 @@ abstract class ViewModuleBinds {
   @IntoMap
   @ViewModelKey(WatchedShowsViewModel::class)
   abstract fun watchedShowsViewModel(viewModel: WatchedShowsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelKey(TraktLinkSyncViewModel::class)
+  abstract fun traktLinkSyncViewModel(viewModel: TraktLinkSyncViewModel): ViewModel
 }

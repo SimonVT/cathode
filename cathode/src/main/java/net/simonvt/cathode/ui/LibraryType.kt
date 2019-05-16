@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Simon Vig Therkildsen
+ * Copyright (C) 2013 Simon Vig Therkildsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.ui;
+package net.simonvt.cathode.ui
 
-public interface ListNavigationListener {
-
-  void onShowList(long listId, String listName);
-
-  void onListDeleted(long listId);
+enum class LibraryType {
+  WATCHED,
+  COLLECTION,
+  WATCHLIST
 }

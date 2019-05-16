@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.ui;
+package net.simonvt.cathode.ui
 
-public interface MoviesNavigationListener extends NavigationClickListener {
+interface MoviesNavigationListener : NavigationClickListener {
 
-  void onDisplayMovie(long movieId, String title, String overview);
+  fun onDisplayMovie(movieId: Long, title: String?, overview: String?)
 
-  void onDisplayRelatedMovies(long movieId, String title);
+  fun onDisplayRelatedMovies(movieId: Long, title: String?)
 
-  void onSelectMovieWatchedDate(long movieId, String title);
+  fun onSelectMovieWatchedDate(movieId: Long, title: String?)
 
-  void onDisplayMovieHistory(long movieId, String title);
+  fun onDisplayMovieHistory(movieId: Long, title: String?)
 }

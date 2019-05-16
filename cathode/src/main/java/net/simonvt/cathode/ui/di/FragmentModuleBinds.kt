@@ -21,7 +21,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import net.simonvt.cathode.settings.LogoutDialog
-import net.simonvt.cathode.settings.SettingsActivity.SettingsFragment
+import net.simonvt.cathode.settings.SettingsFragment
 import net.simonvt.cathode.settings.hidden.HiddenItemsFragment
 import net.simonvt.cathode.ui.comments.AddCommentDialog
 import net.simonvt.cathode.ui.comments.CommentFragment

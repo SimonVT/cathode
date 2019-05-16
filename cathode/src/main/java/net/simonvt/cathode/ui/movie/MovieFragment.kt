@@ -613,11 +613,7 @@ class MovieFragment @Inject constructor(
         ratingView.text = ratingText
 
         v.setOnClickListener {
-          navigationListener.onDisplayMovie(
-            movie.id,
-            movie.title,
-            movie.overview
-          )
+          navigationListener.onDisplayMovie(movie.id, movie.title, movie.overview)
         }
         relatedContainer!!.addView(v)
       }

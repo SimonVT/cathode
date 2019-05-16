@@ -434,7 +434,7 @@ class EpisodeFragment @Inject constructor(
     }
 
     @JvmStatic
-    fun getArgs(episodeId: Long, showTitle: String): Bundle {
+    fun getArgs(episodeId: Long, showTitle: String?): Bundle {
       Preconditions.checkArgument(episodeId >= 0, "episodeId must be >= 0, was $episodeId")
 
       val args = Bundle()
