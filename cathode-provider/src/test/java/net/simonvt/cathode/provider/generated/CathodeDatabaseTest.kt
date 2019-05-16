@@ -17,6 +17,8 @@
 package net.simonvt.cathode.provider.generated
 
 import android.content.ContentValues
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import net.simonvt.cathode.DatabaseHelper
 import net.simonvt.cathode.api.enumeration.ItemType
@@ -28,7 +30,6 @@ import net.simonvt.cathode.provider.DatabaseSchematic.Tables
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 
 @RunWith(RobolectricTestRunner::class)
 class CathodeDatabaseTest {
@@ -36,7 +37,7 @@ class CathodeDatabaseTest {
   @Test
   @Throws(Exception::class)
   fun testSeasonDeleteTrigger() {
-    val helper = DatabaseHelper.getInstance(RuntimeEnvironment.application)
+    val helper = DatabaseHelper.getInstance(ApplicationProvider.getApplicationContext<Context>())
 
     val db = helper.writableDatabase
 
@@ -74,7 +75,7 @@ class CathodeDatabaseTest {
   @Test
   @Throws(Exception::class)
   fun testShowDeleteTrigger() {
-    val helper = DatabaseHelper.getInstance(RuntimeEnvironment.application)
+    val helper = DatabaseHelper.getInstance(ApplicationProvider.getApplicationContext<Context>())
 
     val db = helper.writableDatabase
 

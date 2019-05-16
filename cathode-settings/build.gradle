@@ -20,6 +20,8 @@ dependencies {
   testImplementation deps.junit
   testImplementation deps.robolectric
   testImplementation deps.truth
+  testImplementation deps.androidx.test.core
+  testImplementation deps.androidx.test.coreKtx
 }
 
 android {

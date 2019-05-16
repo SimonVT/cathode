@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode;
+package net.simonvt.cathode
 
-import android.app.Application;
+import android.app.Application
 
-public class TestApp extends Application {
-
-  @Override public void onCreate() {
-    super.onCreate();
-  }
-}
+class TestApp : Application()

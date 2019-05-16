@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode;
+package net.simonvt.cathode
 
-import dagger.Module;
+import dagger.Module
 
-@Module public class TestModule {
-}
+@Module
+class TestModule

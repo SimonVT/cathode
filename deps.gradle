@@ -94,6 +94,11 @@ ext {
       viewModelKtx: "androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0-alpha03"
   ]
 
+  deps.androidx.test = [
+      core: "androidx.test:core:1.1.0",
+      coreKtx: "androidx.test:core-ktx:1.1.0"
+  ]
+
   deps.assistedInject = [
       annotations: 'com.squareup.inject:assisted-inject-annotations-dagger2:0.3.2',
       processor: 'com.squareup.inject:assisted-inject-processor-dagger2:0.3.2'

@@ -1,6 +1,8 @@
 package net.simonvt.cathode.provider.generated
 
 import android.content.ContentValues
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import net.simonvt.cathode.DatabaseHelper
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns
@@ -10,14 +12,13 @@ import net.simonvt.cathode.provider.entity.ItemTypeString
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 
 @RunWith(RobolectricTestRunner::class)
 class ShowTriggersTest {
 
   @Test
   fun deleteCommentsTrigger() {
-    val helper = DatabaseHelper.getInstance(RuntimeEnvironment.application)
+    val helper = DatabaseHelper.getInstance(ApplicationProvider.getApplicationContext<Context>())
     val db = helper.writableDatabase
 
     // Create show

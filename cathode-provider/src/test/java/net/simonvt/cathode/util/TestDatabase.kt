@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.util;
+package net.simonvt.cathode.util
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import android.content.Context
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
 
-public class TestDatabase extends SQLiteOpenHelper {
+class TestDatabase(context: Context) : SQLiteOpenHelper(context, "testdb", null, 1) {
 
-  public TestDatabase(Context context) {
-    super(context, "testdb", null, 1);
-  }
+  override fun onCreate(db: SQLiteDatabase) {}
 
-  @Override public void onCreate(SQLiteDatabase db) {
-
-  }
-
-  @Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-  }
+  override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 }
