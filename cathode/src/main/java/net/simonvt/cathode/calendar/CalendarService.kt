@@ -13,25 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.simonvt.cathode.calendar;
+package net.simonvt.cathode.calendar
 
-import android.annotation.SuppressLint;
-import android.app.Service;
-import android.content.Intent;
-import android.os.IBinder;
+import android.annotation.SuppressLint
+import android.app.Service
+import android.content.Intent
+import android.os.IBinder
 
-public class CalendarService extends Service {
+class CalendarService : Service() {
 
-  @SuppressLint("StaticFieldLeak") private static CalendarSyncAdapter sSyncAdapter;
+  private val syncAdapter: CalendarSyncAdapter
+    get() {
+      if (sSyncAdapter == null) {
+        sSyncAdapter = CalendarSyncAdapter(applicationContext)
+      }
+      return sSyncAdapter!!
+    }
 
-  @Override public IBinder onBind(Intent intent) {
-    return getSyncAdapter().getSyncAdapterBinder();
+  override fun onBind(intent: Intent): IBinder? {
+    return syncAdapter.syncAdapterBinder
   }
 
-  private CalendarSyncAdapter getSyncAdapter() {
-    if (sSyncAdapter == null) {
-      sSyncAdapter = new CalendarSyncAdapter(getApplicationContext());
-    }
-    return sSyncAdapter;
+  companion object {
+
+    @SuppressLint("StaticFieldLeak")
+    private var sSyncAdapter: CalendarSyncAdapter? = null
   }
 }

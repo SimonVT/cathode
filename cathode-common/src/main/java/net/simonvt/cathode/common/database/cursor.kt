@@ -7,6 +7,15 @@ fun Cursor.getDouble(column: String): Double = getDouble(this.getColumnIndexOrTh
 fun Cursor.getFloat(column: String): Float = getFloat(this.getColumnIndexOrThrow(column))
 fun Cursor.getInt(column: String): Int = getInt(getColumnIndexOrThrow(column))
 fun Cursor.getLong(column: String): Long = getLong(getColumnIndexOrThrow(column))
+fun Cursor.getLongOrNull(column: String): Long? {
+  val index = getColumnIndex(column)
+  if (index == -1 || isNull(index)) {
+    return null
+  }
+
+  return getLong(column)
+}
+
 fun Cursor.getString(column: String): String = getString(this.getColumnIndexOrThrow(column))
 fun Cursor.getStringOrNull(column: String): String? {
   val index = getColumnIndex(column)
@@ -16,6 +25,7 @@ fun Cursor.getStringOrNull(column: String): String? {
 
   return getString(column)
 }
+
 fun Cursor.getBoolean(column: String): Boolean = getInt(column) == 1
 
 inline fun Cursor.forEach(action: (Cursor) -> Unit) {
