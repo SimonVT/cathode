@@ -23,27 +23,25 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import dagger.android.AndroidInjection
 import net.simonvt.cathode.R
-import net.simonvt.cathode.api.enumeration.ItemType
-import net.simonvt.cathode.common.ui.FragmentsUtils
+import net.simonvt.cathode.common.ui.instantiate
 import net.simonvt.cathode.common.util.FragmentStack.StackEntry
-import net.simonvt.cathode.ui.comments.CommentsFragment
-import net.simonvt.cathode.ui.history.SelectHistoryDateFragment
 import net.simonvt.cathode.ui.show.EpisodeFragment
-import net.simonvt.cathode.ui.show.EpisodeHistoryFragment
-import net.simonvt.cathode.ui.show.EpisodeViewModel
+import net.simonvt.cathode.ui.show.SeasonFragment
+import net.simonvt.cathode.ui.show.SeasonViewModel
 import net.simonvt.cathode.ui.show.ShowFragment
 import timber.log.Timber
 import java.util.ArrayList
 import javax.inject.Inject
 
-class EpisodeDetailsActivity : NavigationListenerActivity() {
+class SeasonDetailsActivity : NavigationListenerActivity() {
 
-  private var id: Long = -1L
+  private var seasonId: Long = -1L
   private var showId: Long = -1L
+  private var seasonNumber: Int = -1
 
   @Inject
   lateinit var viewModelFactory: CathodeViewModelFactory
-  private lateinit var viewModel: EpisodeViewModel
+  private lateinit var viewModel: SeasonViewModel
 
   override fun onCreate(inState: Bundle?) {
     setTheme(R.style.Theme)
@@ -51,30 +49,30 @@ class EpisodeDetailsActivity : NavigationListenerActivity() {
     AndroidInjection.inject(this)
     setContentView(R.layout.activity_details)
 
-    id = intent.getLongExtra(EXTRA_ID, -1L)
-    if (id == -1L) {
-      Timber.e(Exception("Invalid episode ID"))
+    seasonId = intent.getLongExtra(EXTRA_ID, -1L)
+
+    if (seasonId == -1L) {
+      Timber.e(Exception("Invalid season ID"))
       finish()
     } else {
       if (inState == null) {
-        val fragment = FragmentsUtils.instantiate(
-          supportFragmentManager,
-          EpisodeFragment::class.java,
-          EpisodeFragment.getArgs(id, null)
+        val fragment = supportFragmentManager.instantiate(
+          SeasonFragment::class.java,
+          SeasonFragment.getArgs(seasonId, null, seasonNumber, LibraryType.WATCHED)
         )
+
         supportFragmentManager.beginTransaction()
-          .add(R.id.content, fragment, EpisodeFragment.getTag(id))
+          .add(R.id.content, fragment, SeasonFragment.getTag(seasonId))
           .commit()
       }
 
-      viewModel = ViewModelProviders.of(this, viewModelFactory).get(EpisodeViewModel::class.java)
-      viewModel.setEpisodeId(id)
-      viewModel.episode.observe(this, Observer { showId = it.showId })
+      viewModel = ViewModelProviders.of(this, viewModelFactory).get(SeasonViewModel::class.java)
+      viewModel.setSeasonId(seasonId)
+      viewModel.season.observe(this, Observer {
+        showId = it.showId
+        seasonNumber = it.season
+      })
     }
-  }
-
-  override fun upFromEpisode(showId: Long, showTitle: String?, seasonId: Long) {
-    onHomeClicked()
   }
 
   override fun onHomeClicked() {
@@ -97,42 +95,31 @@ class EpisodeDetailsActivity : NavigationListenerActivity() {
     finish()
   }
 
-  override fun onDisplayComments(type: ItemType, itemId: Long) {
-    displayOnTop(
-      CommentsFragment::class.java,
-      CommentsFragment.TAG,
-      CommentsFragment.getArgs(ItemType.EPISODE, itemId)
-    )
-  }
+  override fun onDisplayEpisode(episodeId: Long, showTitle: String?) {
+    if (showId == -1L) return
 
-  override fun onDisplayEpisodeHistory(episodeId: Long, showTitle: String) {
-    displayOnTop(
-      EpisodeHistoryFragment::class.java,
-      EpisodeHistoryFragment.getTag(episodeId),
-      EpisodeHistoryFragment.getArgs(episodeId, showTitle)
-    )
-  }
-
-  override fun onSelectEpisodeWatchedDate(episodeId: Long, title: String?) {
-    displayOnTop(
-      SelectHistoryDateFragment::class.java,
-      SelectHistoryDateFragment.TAG,
-      SelectHistoryDateFragment.getArgs(SelectHistoryDateFragment.Type.EPISODE, episodeId, title)
-    )
-  }
-
-  private fun displayOnTop(fragment: Class<*>, tag: String, args: Bundle) {
     val stack = ArrayList<StackEntry>()
+
+    val showEntry = StackEntry(
+      ShowFragment::class.java,
+      ShowFragment.getTag(showId),
+      ShowFragment.getArgs(showId, null, null, LibraryType.WATCHED)
+    )
+    stack.add(showEntry)
+
+    val seasonEntry = StackEntry(
+      SeasonFragment::class.java,
+      SeasonFragment.getTag(seasonId),
+      SeasonFragment.getArgs(seasonId, null, -1, LibraryType.WATCHED)
+    )
+    stack.add(seasonEntry)
 
     val episodeEntry = StackEntry(
       EpisodeFragment::class.java,
-      EpisodeFragment.getTag(id),
-      EpisodeFragment.getArgs(id, null)
+      EpisodeFragment.getTag(episodeId),
+      EpisodeFragment.getArgs(showId, null)
     )
     stack.add(episodeEntry)
-
-    val entryOnTop = StackEntry(fragment, tag, args)
-    stack.add(entryOnTop)
 
     val i = Intent(this, HomeActivity::class.java)
     i.action = HomeActivity.ACTION_REPLACE_STACK
@@ -144,23 +131,22 @@ class EpisodeDetailsActivity : NavigationListenerActivity() {
 
   companion object {
 
-    const val EXTRA_ID = "net.simonvt.cathode.ui.DetailsActivity.id"
+    const val EXTRA_ID = "net.simonvt.cathode.ui.SeasonDetailsActivity.id"
 
     @JvmStatic
-    fun createUri(episodeId: Long): Uri {
-      return Uri.parse("cathode://episode/$episodeId")
+    fun createUri(seasonId: Long): Uri {
+      return Uri.parse("cathode://season/$seasonId")
     }
 
     fun createIntent(context: Context, uri: Uri): Intent? {
       val idSegment = uri.pathSegments[0]
       val id = if (!idSegment.isNullOrEmpty()) idSegment.toLong() else -1L
       if (id > -1L) {
-        val intent = Intent(context, EpisodeDetailsActivity::class.java)
+        val intent = Intent(context, SeasonDetailsActivity::class.java)
         intent.putExtra(EXTRA_ID, id)
         return intent
-      } else {
-        return null
       }
+      return null
     }
   }
 }

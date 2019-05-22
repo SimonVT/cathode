@@ -71,10 +71,10 @@
     </activity>
 
     <activity
-        android:name="net.simonvt.cathode.ui.EpisodeDetailsActivity"
-        android:theme="@style/SplashTheme"
+        android:name="net.simonvt.cathode.ui.CalendarEntryActivity"
         android:label="@string/app_name"
-        android:launchMode="singleTask">
+        android:launchMode="singleTask"
+        android:theme="@style/SplashTheme">
 
       <intent-filter>
         <action android:name="android.provider.calendar.action.HANDLE_CUSTOM_EVENT"/>
@@ -84,10 +84,22 @@
     </activity>
 
     <activity
-        android:name="net.simonvt.cathode.settings.login.LoginActivity"
+        android:name="net.simonvt.cathode.ui.EpisodeDetailsActivity"
         android:label="@string/app_name"
         android:launchMode="singleTask"
+        android:theme="@style/SplashTheme"/>
+
+    <activity
+        android:name="net.simonvt.cathode.ui.SeasonDetailsActivity"
+        android:label="@string/app_name"
+        android:launchMode="singleTask"
+        android:theme="@style/SplashTheme"/>
+
+    <activity
+        android:name="net.simonvt.cathode.settings.login.LoginActivity"
         android:configChanges="orientation|screenSize"
+        android:label="@string/app_name"
+        android:launchMode="singleTask"
         android:theme="@style/Theme.Login">
 
       <intent-filter>
@@ -97,8 +109,8 @@
         <category android:name="android.intent.category.BROWSABLE"/>
 
         <data
-            android:scheme="cathode"
-            android:host="*"/>
+            android:host="*"
+            android:scheme="cathode"/>
       </intent-filter>
     </activity>
 
@@ -201,5 +213,4 @@
         android:permission="android.permission.BIND_REMOTEVIEWS"
         android:exported="false"/>
   </application>
-
 </manifest>

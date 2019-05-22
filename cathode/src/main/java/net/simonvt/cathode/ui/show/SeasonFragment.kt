@@ -26,6 +26,7 @@ import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
 import net.simonvt.cathode.common.ui.instantiate
+import net.simonvt.cathode.common.util.Ids
 import net.simonvt.cathode.common.util.guava.Preconditions
 import net.simonvt.cathode.entity.Episode
 import net.simonvt.cathode.settings.TraktLinkSettings
@@ -46,8 +47,6 @@ class SeasonFragment @Inject constructor(
   private val seasonScheduler: SeasonTaskScheduler,
   private val episodeScheduler: EpisodeTaskScheduler
 ) : ToolbarSwipeRefreshRecyclerFragment<ViewHolder>(), SeasonAdapter.EpisodeCallbacks {
-
-  private var showId: Long = 0
 
   var seasonId: Long = 0
     private set
@@ -80,7 +79,6 @@ class SeasonFragment @Inject constructor(
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
     val args = requireArguments()
-    showId = args.getLong(ARG_SHOW_ID)
     seasonId = args.getLong(ARG_SEASON_ID)
     title = args.getString(ARG_SHOW_TITLE)
     seasonNumber = args.getInt(ARG_SEASON_NUMBER)
@@ -94,6 +92,12 @@ class SeasonFragment @Inject constructor(
     viewModel = ViewModelProviders.of(this, viewModelFactory).get(SeasonViewModel::class.java)
     viewModel.setSeasonId(seasonId)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
+    viewModel.season.observe(this, Observer { season ->
+      title = season.showTitle
+      setTitle(title)
+      seasonNumber = season.season
+      updateSubtitle()
+    })
     viewModel.episodes.observe(this, Observer { episodes -> setEpisodes(episodes) })
   }
 
@@ -245,7 +249,6 @@ class SeasonFragment @Inject constructor(
 
     const val TAG = "net.simonvt.cathode.ui.show.SeasonFragment"
 
-    private const val ARG_SHOW_ID = "net.simonvt.cathode.ui.show.SeasonFragment.showId"
     private const val ARG_SEASON_ID = "net.simonvt.cathode.ui.show.SeasonFragment.seasonId"
     private const val ARG_SHOW_TITLE = "net.simonvt.cathode.ui.show.SeasonFragment.showTitle"
     private const val ARG_SEASON_NUMBER = "net.simonvt.cathode.ui.show.SeasonFragment.seasonNumber"
@@ -254,18 +257,20 @@ class SeasonFragment @Inject constructor(
     private const val DIALOG_LISTS_ADD = "net.simonvt.cathode.ui.show.SeasonFragment.listsAddDialog"
 
     @JvmStatic
+    fun getTag(episodeId: Long): String {
+      return TAG + "/" + episodeId + "/" + Ids.newId()
+    }
+
+    @JvmStatic
     fun getArgs(
-      showId: Long,
       seasonId: Long,
       showTitle: String?,
       seasonNumber: Int,
       type: LibraryType
     ): Bundle {
-      Preconditions.checkArgument(showId >= 0, "showId must be >= 0")
       Preconditions.checkArgument(seasonId >= 0, "seasonId must be >= 0")
 
       val args = Bundle()
-      args.putLong(ARG_SHOW_ID, showId)
       args.putLong(ARG_SEASON_ID, seasonId)
       args.putString(ARG_SHOW_TITLE, showTitle)
       args.putInt(ARG_SEASON_NUMBER, seasonNumber)

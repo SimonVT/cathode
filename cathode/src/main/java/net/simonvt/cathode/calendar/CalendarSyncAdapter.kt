@@ -33,9 +33,12 @@ import android.text.format.DateUtils
 import android.text.format.Time
 import net.simonvt.cathode.CathodeApp
 import net.simonvt.cathode.R
-import net.simonvt.cathode.common.database.Cursors
+import net.simonvt.cathode.common.database.getBoolean
+import net.simonvt.cathode.common.database.getInt
 import net.simonvt.cathode.common.database.getLong
-import net.simonvt.cathode.common.database.getLongOrNull
+import net.simonvt.cathode.common.database.getString
+import net.simonvt.cathode.common.database.getStringOrNull
+import net.simonvt.cathode.common.util.toRanges
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes
@@ -45,6 +48,7 @@ import net.simonvt.cathode.provider.util.DataHelper
 import net.simonvt.cathode.settings.Permissions
 import net.simonvt.cathode.settings.Settings
 import net.simonvt.cathode.ui.EpisodeDetailsActivity
+import net.simonvt.cathode.ui.SeasonDetailsActivity
 import timber.log.Timber
 import java.util.ArrayList
 
@@ -56,10 +60,17 @@ class CalendarSyncAdapter(context: Context) : AbstractThreadedSyncAdapter(contex
   private class Event(cursor: Cursor) {
 
     val id = cursor.getLong(CalendarContract.Events._ID)
-    val start = cursor.getLong(CalendarContract.Events.DTSTART)
-    val end = cursor.getLong(CalendarContract.Events.DTEND)
-    val episodeId = cursor.getLong(CalendarContract.Events.SYNC_DATA1)
   }
+
+  class CalendarShow(val id: Long, val title: String, val runtime: Int) {
+    val entries = mutableMapOf<Long, MutableMap<Int, CalendarSeason>>()
+  }
+
+  class CalendarSeason(val id: Long) {
+    val episodes = mutableListOf<CalendarEpisode>()
+  }
+
+  class CalendarEpisode(val id: Long, val number: Int, val title: String)
 
   override fun onPerformSync(
     account: Account,
@@ -74,22 +85,27 @@ class CalendarSyncAdapter(context: Context) : AbstractThreadedSyncAdapter(contex
       return
     }
 
+    // User has not not granted calendar permission.
     if (!Permissions.hasCalendarPermission(context)) {
       Timber.d("Calendar permission not granted")
       return
     }
 
+    // Unable to query calendar provider for a calendar ID.
     val calendarId = getCalendar(account)
     if (calendarId == INVALID_ID) {
       return
     }
 
+    // If user has disabled calendar integration in settings, attempt to delete the calendar.
+    // Unfortunately this requires the user has granted the permission.
     val syncCalendar = Settings.get(context).getBoolean(Settings.CALENDAR_SYNC, false)
     if (!syncCalendar) {
       deleteCalendar(account, calendarId)
       return
     }
 
+    // If calendar color has been changed, update it.
     val updateCalendarColor =
       Settings.get(context).getBoolean(Settings.CALENDAR_COLOR_NEEDS_UPDATE, false)
     if (updateCalendarColor) {
@@ -98,142 +114,88 @@ class CalendarSyncAdapter(context: Context) : AbstractThreadedSyncAdapter(contex
 
     val ops = ArrayList<ContentProviderOperation>()
 
-    val c = context.contentResolver.query(
+    val existingEventsCursor = context.contentResolver.query(
       CalendarContract.Events.CONTENT_URI,
       arrayOf(
         CalendarContract.Events._ID,
         CalendarContract.Events.DTSTART,
         CalendarContract.Events.DTEND,
-        CalendarContract.Events.SYNC_DATA1
+        CalendarContract.Events.CUSTOM_APP_URI
       ),
       CalendarContract.Events.CALENDAR_ID + "=?",
       arrayOf(calendarId.toString()),
       null
     )
 
-    if (c == null) {
+    if (existingEventsCursor == null) {
       return
     }
 
-    val events = mutableMapOf<Long, Event>()
-    while (c.moveToNext()) {
-      val id = c.getLong(CalendarContract.Events._ID)
-      val episodeId = c.getLongOrNull(CalendarContract.Events.SYNC_DATA1)
-      if (episodeId != null) {
-        val event = events[episodeId]
-        val newEvent = Event(c)
+    val existingEvents = mutableMapOf<String, Event>()
+    while (existingEventsCursor.moveToNext()) {
+      val id = existingEventsCursor.getLong(CalendarContract.Events._ID)
+      val uri = existingEventsCursor.getStringOrNull(CalendarContract.Events.CUSTOM_APP_URI)
+
+      if (!uri.isNullOrEmpty()) {
+        val event = existingEvents[uri]
         if (event == null) {
-          events[episodeId] = newEvent
+          existingEvents[uri] = Event(existingEventsCursor)
         } else {
+          // Delete duplicate events.
           val op = ContentProviderOperation.newDelete(CalendarContract.Events.CONTENT_URI)
             .withSelection(CalendarContract.Events._ID + "=?", arrayOf(id.toString()))
             .build()
           ops.add(op)
         }
       } else {
+        // If event has no uri, delete it.
         val op = ContentProviderOperation.newDelete(CalendarContract.Events.CONTENT_URI)
           .withSelection(CalendarContract.Events._ID + "=?", arrayOf(id.toString()))
           .build()
         ops.add(op)
       }
     }
-    c.close()
+    existingEventsCursor.close()
 
-    val time = System.currentTimeMillis()
-
-    val shows = context.contentResolver.query(
-      Shows.SHOWS,
-      arrayOf(ShowColumns.ID, ShowColumns.TITLE, ShowColumns.RUNTIME),
-      "(" + ShowColumns.WATCHED_COUNT + ">0 OR " +
-          ShowColumns.IN_WATCHLIST_COUNT + ">0 OR " +
-          ShowColumns.IN_COLLECTION_COUNT + ">0" + ") AND " +
-          ShowColumns.HIDDEN_CALENDAR + "=0" + " AND " +
-          ShowColumns.LAST_SYNC + ">0"
-    )
-
-    while (shows.moveToNext()) {
-      val showId = Cursors.getLong(shows, ShowColumns.ID)
-      val showTitle = Cursors.getString(shows, ShowColumns.TITLE)
-      val runtime = Cursors.getLong(shows, ShowColumns.RUNTIME)
-
-      val episodes = context.contentResolver.query(
-        Episodes.fromShow(showId),
-        arrayOf(
-          EpisodeColumns.ID,
-          EpisodeColumns.TITLE,
-          EpisodeColumns.SEASON,
-          EpisodeColumns.EPISODE,
-          EpisodeColumns.WATCHED,
-          EpisodeColumns.FIRST_AIRED
-        ),
-        EpisodeColumns.FIRST_AIRED + ">?",
-        arrayOf((time - 30 * DateUtils.DAY_IN_MILLIS).toString()),
-        null
-      )
-
-      while (episodes!!.moveToNext()) {
-        val episodeId = Cursors.getLong(episodes, EpisodeColumns.ID)
-        val season = Cursors.getInt(episodes, EpisodeColumns.SEASON)
-        val episode = Cursors.getInt(episodes, EpisodeColumns.EPISODE)
-        val watched = Cursors.getBoolean(episodes, EpisodeColumns.WATCHED)
-        val episodeTitle =
-          DataHelper.getEpisodeTitle(context, episodes, season, episode, watched, true)
-        val firstAired = DataHelper.getFirstAired(episodes)
-
-        val eventTitle = "$showTitle - $episodeTitle"
-
-        addEvent(ops, events, calendarId, episodeId, eventTitle, firstAired, runtime)
+    val upcomingEpisodes = getUpcoming()
+    for (show in upcomingEpisodes) {
+      for ((firstAired, seasons) in show.entries) {
+        for ((seasonNumber, season) in seasons) {
+          if (season.episodes.size > 2) {
+            // Merge episodes into one entry.
+            val episodesString = season.episodes.map { it.number }.toRanges()
+            addSeasonEvent(
+              ops,
+              existingEvents,
+              calendarId,
+              season.id,
+              seasonNumber,
+              show.title,
+              episodesString,
+              firstAired,
+              show.runtime
+            )
+          } else {
+            // Create event for single episodes
+            for (episode in season.episodes) {
+              addEpisodeEvent(
+                ops,
+                existingEvents,
+                calendarId,
+                episode.id,
+                episode.title,
+                show.title,
+                firstAired,
+                show.runtime
+              )
+            }
+          }
+        }
       }
-      episodes.close()
-    }
-    shows.close()
-
-    val watchlistShows = context.contentResolver.query(
-      Shows.SHOWS_WATCHLIST,
-      arrayOf(ShowColumns.ID, ShowColumns.TITLE, ShowColumns.RUNTIME)
-    )
-
-    while (watchlistShows.moveToNext()) {
-      val showId = Cursors.getLong(watchlistShows, ShowColumns.ID)
-      val showTitle = Cursors.getString(watchlistShows, ShowColumns.TITLE)
-      val runtime = Cursors.getLong(watchlistShows, ShowColumns.RUNTIME)
-
-      val episodes = context.contentResolver.query(
-        Episodes.fromShow(showId),
-        arrayOf(
-          EpisodeColumns.ID,
-          EpisodeColumns.TITLE,
-          EpisodeColumns.SEASON,
-          EpisodeColumns.EPISODE,
-          EpisodeColumns.WATCHED,
-          EpisodeColumns.FIRST_AIRED
-        ),
-        EpisodeColumns.FIRST_AIRED + ">? AND " +
-            EpisodeColumns.EPISODE + "=1 AND " +
-            EpisodeColumns.SEASON + ">0",
-        arrayOf((time - 30 * DateUtils.DAY_IN_MILLIS).toString()),
-        EpisodeColumns.SEASON + " ASC LIMIT 1"
-      )
-
-      if (episodes!!.moveToFirst()) {
-        val episodeId = Cursors.getLong(episodes, EpisodeColumns.ID)
-        val season = Cursors.getInt(episodes, EpisodeColumns.SEASON)
-        val episode = Cursors.getInt(episodes, EpisodeColumns.EPISODE)
-        val watched = Cursors.getBoolean(episodes, EpisodeColumns.WATCHED)
-        val title = DataHelper.getEpisodeTitle(context, episodes, season, episode, watched)
-        val firstAired = DataHelper.getFirstAired(episodes)
-
-        val eventTitle = "$showTitle - ${season}x$episode $title"
-
-        addEvent(ops, events, calendarId, episodeId, eventTitle, firstAired, runtime)
-      }
-
-      episodes.close()
     }
 
-    watchlistShows.close()
-
-    for (event in events.values) {
+    // And now delete old events.
+    for (event in existingEvents.values) {
       val op = ContentProviderOperation.newDelete(CalendarContract.Events.CONTENT_URI)
         .withSelection(CalendarContract.Events._ID + "=?", arrayOf(event.id.toString()))
         .build()
@@ -249,16 +211,95 @@ class CalendarSyncAdapter(context: Context) : AbstractThreadedSyncAdapter(contex
     }
   }
 
-  private fun addEvent(
+  private fun getUpcoming(): List<CalendarShow> {
+    val upcoming = mutableListOf<CalendarShow>()
+    val currentTime = System.currentTimeMillis()
+
+    val shows = context.contentResolver.query(
+      Shows.SHOWS,
+      arrayOf(ShowColumns.ID, ShowColumns.TITLE, ShowColumns.RUNTIME),
+      "(" + ShowColumns.WATCHED_COUNT + ">0 OR " +
+          ShowColumns.IN_WATCHLIST_COUNT + ">0 OR " +
+          ShowColumns.IN_COLLECTION_COUNT + ">0 OR " +
+          ShowColumns.IN_WATCHLIST + ") AND " +
+          ShowColumns.HIDDEN_CALENDAR + "=0" + " AND " +
+          ShowColumns.LAST_SYNC + ">0"
+    )
+
+    while (shows.moveToNext()) {
+      val showId = shows.getLong(ShowColumns.ID)
+      val showTitle = shows.getString(ShowColumns.TITLE)
+      val runtime = shows.getInt(ShowColumns.RUNTIME)
+
+      val episodes = context.contentResolver.query(
+        Episodes.fromShow(showId),
+        arrayOf(
+          EpisodeColumns.ID,
+          EpisodeColumns.SEASON_ID,
+          EpisodeColumns.TITLE,
+          EpisodeColumns.SEASON,
+          EpisodeColumns.EPISODE,
+          EpisodeColumns.WATCHED,
+          EpisodeColumns.FIRST_AIRED
+        ),
+        EpisodeColumns.FIRST_AIRED + ">?",
+        arrayOf((currentTime - 30 * DateUtils.DAY_IN_MILLIS).toString())
+      )
+
+      if (episodes.count > 0) {
+        val calendarShow = CalendarShow(showId, showTitle, runtime)
+        upcoming.add(calendarShow)
+
+        while (episodes.moveToNext()) {
+          val episodeId = episodes.getLong(EpisodeColumns.ID)
+          val seasonId = episodes.getLong(EpisodeColumns.SEASON_ID)
+          val season = episodes.getInt(EpisodeColumns.SEASON)
+          val episode = episodes.getInt(EpisodeColumns.EPISODE)
+          val watched = episodes.getBoolean(EpisodeColumns.WATCHED)
+          val episodeTitle =
+            DataHelper.getEpisodeTitle(context, episodes, season, episode, watched, true)
+          val firstAired = DataHelper.getFirstAired(episodes)
+
+          var seasonEntry: CalendarSeason? = null
+          var seasonEntries = calendarShow.entries[firstAired]
+          if (seasonEntries != null) {
+            seasonEntry = seasonEntries[season]
+          } else {
+            seasonEntries = mutableMapOf()
+            calendarShow.entries[firstAired] = seasonEntries
+          }
+
+          if (seasonEntry == null) {
+            seasonEntry = CalendarSeason(seasonId)
+            seasonEntries[season] = seasonEntry
+          }
+
+          seasonEntry.episodes.add(CalendarEpisode(episodeId, episode, episodeTitle))
+        }
+      }
+      episodes.close()
+    }
+    shows.close()
+
+    return upcoming
+  }
+
+  private fun addSeasonEvent(
     ops: MutableList<ContentProviderOperation>,
-    events: MutableMap<Long, Event>,
+    events: MutableMap<String, Event>,
     calendarId: Long,
-    episodeId: Long,
-    eventTitle: String,
+    seasonId: Long,
+    seasonNumber: Int,
+    showTitle: String,
+    episodesString: String,
     firstAired: Long,
-    runtime: Long
+    runtime: Int
   ) {
-    val event = events[episodeId]
+    val eventTitle =
+      context.getString(R.string.calendar_entry_season, showTitle, seasonNumber, episodesString)
+    val seasonUri = SeasonDetailsActivity.createUri(seasonId).toString()
+
+    val event = events[seasonUri]
     if (event != null) {
       val op = ContentProviderOperation.newUpdate(CalendarContract.Events.CONTENT_URI)
         .withValue(CalendarContract.Events.DTSTART, firstAired)
@@ -268,7 +309,7 @@ class CalendarSyncAdapter(context: Context) : AbstractThreadedSyncAdapter(contex
         .withSelection(CalendarContract.Events._ID + "=?", arrayOf(event.id.toString()))
         .build()
       ops.add(op)
-      events.remove(episodeId)
+      events.remove(seasonUri)
     } else {
       val op = ContentProviderOperation.newInsert(
         CalendarContract.Events.CONTENT_URI.buildUpon()
@@ -287,12 +328,64 @@ class CalendarSyncAdapter(context: Context) : AbstractThreadedSyncAdapter(contex
         .withValue(CalendarContract.Events.DTEND, firstAired + runtime * DateUtils.MINUTE_IN_MILLIS)
         .withValue(CalendarContract.Events.EVENT_TIMEZONE, Time.TIMEZONE_UTC)
         .withValue(CalendarContract.Events.TITLE, eventTitle)
-        .withValue(CalendarContract.Events.SYNC_DATA1, episodeId)
         .withValue(CalendarContract.Events.CALENDAR_ID, calendarId)
         .withValue(CalendarContract.Events.CUSTOM_APP_PACKAGE, context.packageName)
         .withValue(
           CalendarContract.Events.CUSTOM_APP_URI,
-          EpisodeDetailsActivity.createUri(episodeId).toString()
+          seasonUri
+        )
+        .build()
+      ops.add(op)
+    }
+  }
+
+  private fun addEpisodeEvent(
+    ops: MutableList<ContentProviderOperation>,
+    events: MutableMap<String, Event>,
+    calendarId: Long,
+    episodeId: Long,
+    episodeTitle: String,
+    showTitle: String,
+    firstAired: Long,
+    runtime: Int
+  ) {
+    val eventTitle = "$showTitle - $episodeTitle"
+    val episodeUri = EpisodeDetailsActivity.createUri(episodeId).toString()
+
+    val event = events[episodeUri]
+    if (event != null) {
+      val op = ContentProviderOperation.newUpdate(CalendarContract.Events.CONTENT_URI)
+        .withValue(CalendarContract.Events.DTSTART, firstAired)
+        .withValue(CalendarContract.Events.DTEND, firstAired + runtime * DateUtils.MINUTE_IN_MILLIS)
+        .withValue(CalendarContract.Events.EVENT_TIMEZONE, Time.TIMEZONE_UTC)
+        .withValue(CalendarContract.Events.TITLE, eventTitle)
+        .withSelection(CalendarContract.Events._ID + "=?", arrayOf(event.id.toString()))
+        .build()
+      ops.add(op)
+      events.remove(episodeUri)
+    } else {
+      val op = ContentProviderOperation.newInsert(
+        CalendarContract.Events.CONTENT_URI.buildUpon()
+          .appendQueryParameter(ContactsContract.CALLER_IS_SYNCADAPTER, "true")
+          .appendQueryParameter(
+            CalendarContract.Calendars.ACCOUNT_NAME,
+            context.getString(R.string.accountName)
+          )
+          .appendQueryParameter(
+            CalendarContract.Calendars.ACCOUNT_TYPE,
+            context.getString(R.string.accountType)
+          )
+          .build()
+      )
+        .withValue(CalendarContract.Events.DTSTART, firstAired)
+        .withValue(CalendarContract.Events.DTEND, firstAired + runtime * DateUtils.MINUTE_IN_MILLIS)
+        .withValue(CalendarContract.Events.EVENT_TIMEZONE, Time.TIMEZONE_UTC)
+        .withValue(CalendarContract.Events.TITLE, eventTitle)
+        .withValue(CalendarContract.Events.CALENDAR_ID, calendarId)
+        .withValue(CalendarContract.Events.CUSTOM_APP_PACKAGE, context.packageName)
+        .withValue(
+          CalendarContract.Events.CUSTOM_APP_URI,
+          episodeUri
         )
         .build()
       ops.add(op)

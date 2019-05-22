@@ -28,8 +28,6 @@ import net.simonvt.cathode.CathodeApp
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.database.getBoolean
 import net.simonvt.cathode.common.database.getInt
-import net.simonvt.cathode.common.database.getLong
-import net.simonvt.cathode.common.database.getString
 import net.simonvt.cathode.common.util.Longs
 import net.simonvt.cathode.jobqueue.JobManager
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns
@@ -89,16 +87,12 @@ class NotificationActionService : JobIntentService() {
             Episodes.withId(id),
             arrayOf(
               EpisodeColumns.TITLE,
-              EpisodeColumns.SHOW_ID,
-              EpisodeColumns.SHOW_TITLE,
               EpisodeColumns.SEASON,
               EpisodeColumns.EPISODE,
               EpisodeColumns.WATCHED
             )
           )
           episode.moveToFirst()
-          val showId = episode.getLong(EpisodeColumns.SHOW_ID)
-          val showTitle = episode.getString(EpisodeColumns.SHOW_TITLE)
           val number = episode.getInt(EpisodeColumns.EPISODE)
           val season = episode.getInt(EpisodeColumns.SEASON)
           val watched = episode.getBoolean(EpisodeColumns.WATCHED)
@@ -134,8 +128,6 @@ class NotificationActionService : JobIntentService() {
           val contentIntent = Intent(this, EpisodeDetailsActivity::class.java)
           contentIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
           contentIntent.putExtra(EpisodeDetailsActivity.EXTRA_ID, id)
-          contentIntent.putExtra(EpisodeDetailsActivity.EXTRA_SHOW_ID, showId)
-          contentIntent.putExtra(EpisodeDetailsActivity.EXTRA_SHOW_TITLE, showTitle)
           contentIntent.data = Episodes.withId(id)
           val contentPI =
             PendingIntent.getActivity(this, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT)

@@ -177,9 +177,6 @@ class UpcomingWidgetService : RemoteViewsService() {
 
         val extras = Bundle()
         extras.putLong(EpisodeDetailsActivity.EXTRA_ID, itemInfo.getEpisodeId())
-        extras.putLong(EpisodeDetailsActivity.EXTRA_SHOW_ID, itemInfo.getShowId())
-        extras.putString(EpisodeDetailsActivity.EXTRA_SHOW_TITLE, itemInfo.getShowTitle())
-        extras.putString(EpisodeDetailsActivity.EXTRA_SHOW_OVERVIEW, itemInfo.getShowOverview())
 
         val fillInIntent = Intent()
         fillInIntent.putExtras(extras)

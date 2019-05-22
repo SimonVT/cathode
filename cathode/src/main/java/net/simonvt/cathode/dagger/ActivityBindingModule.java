@@ -26,8 +26,10 @@ import net.simonvt.cathode.settings.link.TraktLinkSyncActivity;
 import net.simonvt.cathode.settings.login.LoginActivity;
 import net.simonvt.cathode.settings.login.OauthWebViewActivity;
 import net.simonvt.cathode.settings.login.TokenActivity;
+import net.simonvt.cathode.ui.CalendarEntryActivity;
 import net.simonvt.cathode.ui.EpisodeDetailsActivity;
 import net.simonvt.cathode.ui.HomeActivity;
+import net.simonvt.cathode.ui.SeasonDetailsActivity;
 
 @Module public abstract class ActivityBindingModule {
 
@@ -39,7 +41,11 @@ import net.simonvt.cathode.ui.HomeActivity;
 
   @ContributesAndroidInjector abstract TraktLinkSyncActivity traktLinkSyncActivity();
 
+  @ContributesAndroidInjector abstract CalendarEntryActivity calendarEntryActivity();
+
   @ContributesAndroidInjector abstract EpisodeDetailsActivity episodeDetailsActivity();
+
+  @ContributesAndroidInjector abstract SeasonDetailsActivity seasonDetailsActivity();
 
   @ContributesAndroidInjector abstract OauthWebViewActivity oauthWebViewActivity();
 

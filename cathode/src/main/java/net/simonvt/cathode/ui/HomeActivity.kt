@@ -568,7 +568,7 @@ class HomeActivity : BaseActivity(), NavigationFragment.OnMenuClickListener, Nav
     stack.push(
       SeasonFragment::class.java,
       SeasonFragment.TAG,
-      SeasonFragment.getArgs(showId, seasonId, showTitle, seasonNumber, type)
+      SeasonFragment.getArgs(seasonId, showTitle, seasonNumber, type)
     )
   }
 

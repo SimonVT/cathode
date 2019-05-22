@@ -417,7 +417,7 @@
   <string name="season_x_episode_y">S%1$dE%2$d</string>
   <string name="season_special">Special</string>
   <string name="seasons">Seasons</string>
-
+  <string name="calendar_entry_season">%1$s - Season %2$d Episodes %3$s</string>
 
   <string name="loading">Loading…</string>
 

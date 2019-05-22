@@ -22,10 +22,13 @@ import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.seasons.SyncSeason
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.entity.Episode
+import net.simonvt.cathode.entity.Season
 import net.simonvt.cathode.entitymapper.EpisodeListMapper
 import net.simonvt.cathode.entitymapper.EpisodeMapper
+import net.simonvt.cathode.entitymapper.SeasonMapper
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes
+import net.simonvt.cathode.provider.ProviderSchematic.Seasons
 import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
 import net.simonvt.cathode.ui.RefreshableViewModel
@@ -40,12 +43,24 @@ class SeasonViewModel @Inject constructor(
 
   private var seasonId = -1L
 
+  lateinit var season: LiveData<Season>
+    private set
   lateinit var episodes: LiveData<List<Episode>>
     private set
 
   fun setSeasonId(seasonId: Long) {
     if (this.seasonId == -1L) {
       this.seasonId = seasonId
+
+      season = MappedCursorLiveData(
+        context,
+        Seasons.withId(seasonId),
+        SeasonMapper.projection,
+        null,
+        null,
+        null,
+        SeasonMapper
+      )
 
       episodes = MappedCursorLiveData(
         context,

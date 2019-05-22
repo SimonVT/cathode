@@ -67,7 +67,6 @@ object NotificationHelper {
   private const val EPISODE_ID = "episodeId"
 
   private val PROJECTION = arrayOf(
-    SqlColumn.table(Tables.SHOWS).column(ShowColumns.ID),
     SqlColumn.table(Tables.SHOWS).column(ShowColumns.RUNTIME),
     SqlColumn.table(Tables.SHOWS).column(ShowColumns.TITLE),
     SqlColumn.table(Tables.EPISODES).column(EpisodeColumns.ID) + " AS " + EPISODE_ID,
@@ -111,7 +110,6 @@ object NotificationHelper {
     )!!
 
     while (episodes.moveToNext()) {
-      val showId = episodes.getLong(ShowColumns.ID)
       val showTitle = episodes.getString(ShowColumns.TITLE)
 
       val episodeId = episodes.getLong("episodeId")
@@ -130,7 +128,6 @@ object NotificationHelper {
         // Airing or aired
         displayNotification(
           context,
-          showId,
           showTitle,
           episodeId,
           episodeTitle,
@@ -144,7 +141,6 @@ object NotificationHelper {
         // Advance notification
         displayNotification(
           context,
-          showId,
           showTitle,
           episodeId,
           episodeTitle,
@@ -240,7 +236,6 @@ object NotificationHelper {
 
   private fun displayNotification(
     context: Context,
-    showId: Long,
     showTitle: String,
     episodeId: Long,
     episodeTitle: String,
@@ -306,8 +301,6 @@ object NotificationHelper {
     val contentIntent = Intent(context, EpisodeDetailsActivity::class.java)
     contentIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
     contentIntent.putExtra(EpisodeDetailsActivity.EXTRA_ID, episodeId)
-    contentIntent.putExtra(EpisodeDetailsActivity.EXTRA_SHOW_ID, showId)
-    contentIntent.putExtra(EpisodeDetailsActivity.EXTRA_SHOW_TITLE, showTitle)
     contentIntent.data = Episodes.withId(episodeId)
     val contentPI =
       PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT)
